@@ -47,27 +47,24 @@ function names(): string[] {
 }
 
 describe('ArtenComponent', () => {
-  it('zeigt jede Art mit lateinischem Namen, Kurve und Tags', async () => {
+  it('zeigt jede Art mit lateinischem Namen und Tags', async () => {
     const { container } = await build();
 
     const row = screen.getByRole('button', { name: /Steinpilz/ });
     expect(within(row).getByText('Boletus edulis')).toBeInTheDocument();
     expect(within(row).getByText('Vorhersage')).toBeInTheDocument();
     expect(within(row).getByText('Geschützt')).toBeInTheDocument();
-    expect(within(row).getByRole('img', { name: /Saisonkurve Steinpilz/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Speisemorchel/ })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('zeichnet in jeder Zeile beide Reihen der Saisonkurve', async () => {
+  it('zeichnet in der Liste keine Kurve mehr', async () => {
     const { container } = await build();
 
-    // Die kleine Kurve zeigt dieselben zwei Reihen wie die Artseite: die Fläche
-    // aller Jahre und das laufende Jahr, das mit einem Punkt endet.
-    // Vier von fünf Zeilen: der Gallenröhrling hat keine Saison, und wo keine
-    // Kurve steht, zeichnet die Zeile auch keine.
-    expect(container.querySelectorAll('.spark__all')).toHaveLength(4);
-    expect(container.querySelectorAll('.spark__end')).toHaveLength(4);
+    // Seit D10 steht rechts das Titelbild. Auf 86 Pixeln liest die Kurve
+    // ohnehin niemand ab; sie bleibt auf der Artseite.
+    expect(container.querySelectorAll('.spark__all')).toHaveLength(0);
+    expect(container.querySelectorAll('.speciesrow__image')).toHaveLength(0);
   });
 
   it('stellt die Arten nach Stufe und darin nach Namen auf', async () => {

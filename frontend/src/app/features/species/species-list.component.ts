@@ -11,7 +11,6 @@ import {
   FormFieldComponent,
   NoteComponent,
   PageHeaderComponent,
-  SeasonCurveComponent,
   SpeciesRowComponent,
   type Chip,
 } from '../../ui';
@@ -69,15 +68,14 @@ interface Row {
   latin: string;
   active: boolean;
   badges: Marke[];
-  /** Ohne Saison zeichnet die Zeile keine Kurve, statt eine leere Achse zu zeigen. */
-  hasCurve: boolean;
-  curve: readonly number[];
-  current: readonly number[];
-  label: string;
+  /** Das Titelbild der Art. Ohne Bild bleibt rechts in der Zeile nichts. */
+  image: string | null;
 }
 
 /**
- * Der Reiter Arten: Suche, Chips und die Liste mit kleiner Saisonkurve. Der
+ * Der Reiter Arten: Suche, Chips und die Liste mit dem Titelbild. Die Kurve
+ * steht seit D10 nur noch auf der Artseite: auf 86 Pixeln liest sie niemand
+ * ab. Der
  * Katalog kommt einmal vom Server; Suche und Chips filtern im Speicher, weil
  * 85 Arten keine Anfrage je Tastendruck wert sind.
  *
@@ -96,7 +94,6 @@ interface Row {
     FormFieldComponent,
     NoteComponent,
     PageHeaderComponent,
-    SeasonCurveComponent,
     SpeciesRowComponent,
     TranslatePipe,
   ],
@@ -124,14 +121,6 @@ export class SpeciesListComponent {
       label: this.i18n.translate(EDIBILITY_TEXT[level]),
     })),
   ]);
-
-  /** Die Begehungen je Woche gelten für alle Arten gleich und stehen am Kopf. */
-  protected readonly begehungen = computed<readonly number[]>(
-    () => this.state.catalogue()?.begehungenJeWocheAlleJahre ?? [],
-  );
-  protected readonly visitsCurrentYear = computed<readonly number[]>(
-    () => this.state.catalogue()?.begehungenJeWocheLaufendesJahr ?? [],
-  );
 
   protected readonly rows = computed<Row[]>(() => {
     const query = this.search().trim().toLocaleLowerCase();
@@ -252,13 +241,7 @@ export class SpeciesListComponent {
       latin: art.lateinisch,
       active,
       badges: this.badges(art).slice(0, active ? 2 : 3),
-      hasCurve: art.saison !== null,
-      curve: art.saison?.alleJahre ?? [],
-      current: art.saison?.laufendesJahr ?? [],
-      label: this.i18n.translate('art.kurve.beschriftung', {
-        name: art.name,
-        hoechstwert: Math.round(art.saison?.hoechstwert ?? 0),
-      }),
+      image: art.titelbild,
     };
   }
 }

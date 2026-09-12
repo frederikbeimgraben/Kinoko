@@ -10,9 +10,13 @@ import {
 import { I18nService } from '../../core/i18n/i18n.service';
 
 /**
- * Eine Zeile der Artenliste: Name und lateinischer Name links, die Saisonkurve
- * rechts, die Tags darunter. Kurve und Tags kommen als Inhalt, damit die Zeile
- * weder Kurvendaten noch Badge-Varianten kennen muss.
+ * Eine Zeile der Artenliste: Name und lateinischer Name links, das Titelbild
+ * rechts, die Tags darunter. Die Tags kommen als Inhalt, damit die Zeile die
+ * Badge-Varianten nicht kennen muss.
+ *
+ * Ohne Bild bleibt rechts nichts — kein Platzhalter, keine graue Fläche. Der
+ * Text nimmt sich die Breite, die frei wird. Bei einem Bestand ohne Bilder
+ * wären 306 graue Kästchen schlimmer als keine.
  *
  * Die Marke „aktiv“ gehört der Zeile selbst. Ein Badge des Kits stünde auf der
  * aktiven Zeile Fläche auf Fläche in derselben Farbe und wäre unsichtbar.
@@ -30,6 +34,8 @@ export class SpeciesRowComponent {
   readonly name = input.required<string>();
   readonly latin = input.required<string>();
   readonly active = input(false);
+  /** Der Pfad des Titelbildes, klein. Leer heißt: die Art hat keins. */
+  readonly image = input<string | null>(null);
 
   readonly chosen = output();
 
