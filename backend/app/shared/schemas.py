@@ -94,6 +94,44 @@ class ImageState(StrEnum):
     REJECTED = "rejected"
 
 
+class TaxonRank(StrEnum):
+    """Die Stufe eines Taxons in der Einordnung, von weit nach eng.
+
+    Ein Rang mehr ist ein Glied hier und Zeilen in ``taxon``: die Tabelle
+    verkettet sich ueber sich selbst und kennt den Abstand zur Wurzel nicht.
+    Wie tief eine Stufe steht, sagt nicht die Stelle in dieser Liste, sondern
+    ``taxon.rank_order``. Wer einen Rang dazwischen setzt, schreibt sonst jede
+    vorhandene Zeile um.
+    """
+
+    DIVISION = "abteilung"
+    CLASS = "klasse"
+    ORDER = "ordnung"
+    FAMILY = "familie"
+    GENUS = "gattung"
+
+
+class TaxonStep(BaseSchema):
+    """Ein Taxon, so knapp wie eine Verweiszeile es braucht.
+
+    Der Schritt steht hier und nicht im Modul ``taxonomy``: die Artseite traegt
+    ihre Einordnung, und die Taxonomieseite traegt Arten. Beide Vertraege
+    zeigten sonst im Kreis aufeinander.
+    """
+
+    rank: TaxonRank = Field(validation_alias="rang", serialization_alias="rang")
+    # Wie tief der Rang steht, oben null. Die Oberflaeche ordnet danach, ohne
+    # die Reihenfolge der Raenge selbst zu kennen.
+    rank_order: int = Field(validation_alias="rangfolge", serialization_alias="rangfolge")
+    slug: str
+    name: str
+    # Leer, wo keine Quelle einen fuehrt. Dann steht der lateinische Name schon
+    # in ``name``, und die Oberflaeche zeigt ihn nur einmal.
+    latin_name: str | None = Field(
+        validation_alias="lateinisch", serialization_alias="lateinisch", default=None
+    )
+
+
 class Color(StrEnum):
     """Die sechs Farben aus den Mockups. Eine freie Farbwahl gibt es nicht."""
 

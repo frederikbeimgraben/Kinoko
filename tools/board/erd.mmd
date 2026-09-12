@@ -81,6 +81,16 @@ erDiagram
         DATETIME created_at
         DATETIME updated_at
     }
+    taxon {
+        VARCHAR(36) id PK
+        VARCHAR(16) rank
+        INTEGER rank_order
+        VARCHAR(80) slug UK
+        VARCHAR(120) name
+        VARCHAR(120) latin_name "optional"
+        VARCHAR(36) parent_id FK "optional"
+        TEXT description "optional"
+    }
     term {
         INTEGER id PK
         VARCHAR(32) kind
@@ -122,6 +132,7 @@ erDiagram
     permission ||--o{ role_permission : "permission_key"
     role ||--o{ role_permission : "role_id"
     role ||--o{ user_role : "role_id"
+    taxon |o--o{ taxon : "parent_id"
     user |o--o{ species_image : "reviewed_by"
     user |o--o{ text : "updated_by"
     user ||--o{ combination : "owner_sub"
