@@ -8,18 +8,17 @@
     [value]="search()"
     (valueChange)="search.set($event)"
   />
-  <app-chip-group
-    [chips]="chips()"
-    [value]="chip()"
-    [label]="'arten.filter' | t"
-    (valueChange)="selectChip($event)"
-  />
-  <app-chip-group
-    [chips]="edibilityChips()"
-    [value]="edibility()"
-    [label]="'arten.filter.speisewert' | t"
-    (valueChange)="selectEdibility($event)"
-  />
+  <div class="species__marks">
+    <button class="species__filter" type="button" (click)="openFilter()">
+      {{ 'filter.oeffnen' | t }}
+    </button>
+    @for (mark of marks(); track mark.key) {
+      <button class="species__mark" type="button" [attr.aria-label]="mark.label" (click)="drop(mark.key)">
+        {{ mark.text }}
+        <app-svg-icon name="zu" [size]="14" />
+      </button>
+    }
+  </div>
   <app-note class="species__count">{{ countText() }}</app-note>
   @if (rows().length === 0) {
     <app-empty-state icon="suche" [text]="'arten.leer' | t" />
@@ -40,6 +39,23 @@
             }
           </ng-container>
         </app-species-row>
+      }
+    </app-card>
+  }
+  @if (gapText(); as gap) {
+    <div class="species__gap">
+      <span>{{ gap }}</span>
+      <i></i>
+    </div>
+    <app-note variant="unter">{{ 'arten.nichtBeurteilbarHinweis' | t }}</app-note>
+    <app-card class="flush">
+      @for (row of unassessable(); track row.slug) {
+        <app-species-row
+          [name]="row.name"
+          [latin]="row.latin"
+          [image]="row.image"
+          (chosen)="open(row.slug)"
+        />
       }
     </app-card>
   }

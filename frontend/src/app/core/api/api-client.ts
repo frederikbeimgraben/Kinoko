@@ -7,7 +7,11 @@ import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
 
 /** Abfragewerte einer URL. `undefined` fällt weg, statt als Text zu landen. */
-export type Query = Record<string, string | number | boolean | undefined>;
+/**
+ * Ein Feld darf mehrfach stehen: `?wert=a&wert=b`. Der Filter des Katalogs
+ * wählt so mehrere Werte einer Gruppe, und der Dienst liest sie als Liste.
+ */
+export type Query = Record<string, string | number | boolean | readonly string[] | undefined>;
 
 /**
  * Der einzige Weg zur eigenen API. Jeder Fehler wird zu einem
@@ -84,7 +88,12 @@ export class ApiClient {
   private params(query?: Query): HttpParams {
     let params = new HttpParams();
     for (const [name, value] of Object.entries(query ?? {})) {
-      if (value !== undefined) params = params.set(name, String(value));
+      if (value === undefined) continue;
+      if (Array.isArray(value)) {
+        for (const one of value as readonly string[]) params = params.append(name, one);
+      } else {
+        params = params.set(name, String(value));
+      }
     }
     return params;
   }

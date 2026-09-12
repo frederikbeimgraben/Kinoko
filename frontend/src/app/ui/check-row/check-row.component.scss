@@ -68,3 +68,10 @@
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
 }
+
+.check__value {
+  margin-inline-start: auto;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}

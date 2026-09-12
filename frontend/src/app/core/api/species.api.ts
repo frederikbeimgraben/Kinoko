@@ -12,7 +12,13 @@ export class SpeciesApi {
    * Ohne Angabe kommt der ganze Katalog. `sammelbar` schränkt ein, in beide
    * Richtungen; es ist ein Filter wie jeder andere und keine Vorgabe.
    */
-  catalogue(query?: { sammelbar?: boolean }): Observable<SpeciesCatalogue> {
+  catalogue(query?: {
+    sammelbar?: boolean;
+    /** Ein gewählter Wert als `gruppe:wert`, mehrfach. */
+    wert?: readonly string[];
+    /** Gruppen, in denen Arten ohne Angabe zu den Treffern zählen. */
+    ohneAngabe?: readonly string[];
+  }): Observable<SpeciesCatalogue> {
     return this.api.get<SpeciesCatalogue>('/arten', query);
   }
 

@@ -1,0 +1,37 @@
+@if (viewport(); as viewport) {
+  <app-page-header [titel]="viewport.name" [back]="true" (backClick)="back()" />
+  <div class="group">
+    @for (part of viewport.parts; track part.name) {
+      <section>
+        @if (part.name) {
+          <h2 class="group__section">{{ part.name }}</h2>
+        }
+        <app-card class="flush">
+          @for (row of part.values; track row.value) {
+            <app-check-row
+              [titel]="row.name"
+              [value]="row.count"
+              [checked]="row.chosen"
+              (toggled)="pick(row.value)"
+            />
+          }
+        </app-card>
+      </section>
+    }
+    <app-note variant="unter">{{ 'filter.wertHinweis' | t }}</app-note>
+    @if (viewport.gap; as gap) {
+      <app-info-text>{{ gap }}</app-info-text>
+      <app-card class="flush">
+        <app-check-row
+          [titel]="'filter.ohneAngabeBehalten' | t"
+          [checked]="viewport.keeps"
+          (toggled)="keepUnknown()"
+        />
+      </app-card>
+    }
+  </div>
+  <app-action-bar [primary]="hits()" (mainClick)="back()" />
+} @else {
+  <app-page-header [titel]="'filter.titel' | t" [back]="true" (backClick)="back()" />
+  <app-empty-state [text]="'filter.leer' | t" />
+}

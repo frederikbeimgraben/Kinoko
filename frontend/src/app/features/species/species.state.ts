@@ -41,6 +41,26 @@ export class SpeciesState {
   readonly activeSpecies = this._activeSpecies.asReadonly();
   readonly origin = this._origin.asReadonly();
 
+  private readonly _filtered = signal<SpeciesCatalogue | null>(null);
+  /**
+   * Die Liste unter dem Filter. Sie kommt vom Server, weil dort die Regel
+   * steht, die auch die Zahlen rechnet: innerhalb einer Gruppe oder, zwischen
+   * den Gruppen und, und die Unbeurteilbaren als eigene Menge.
+   */
+  readonly filtered = this._filtered.asReadonly();
+
+  loadFiltered(query: { wert: readonly string[]; ohneAngabe: readonly string[] }): void {
+    const key = `gefiltert:${query.wert.join(',')}|${query.ohneAngabe.join(',')}`;
+    if (!this.begin(key)) return;
+    this.api.catalogue(query).subscribe({
+      next: (catalogue) => {
+        this._filtered.set(catalogue);
+        this.running.delete(key);
+      },
+      error: () => this.running.delete(key),
+    });
+  }
+
   loadCatalogue(): void {
     if (this._catalogue() !== null || !this.begin('liste')) return;
     this.api.catalogue().subscribe({

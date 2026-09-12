@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.filter {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px var(--pilz-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.filter__reset {
+  padding: 0;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--color-primary);
+  cursor: pointer;
+  background: none;
+  border: 0;
+}

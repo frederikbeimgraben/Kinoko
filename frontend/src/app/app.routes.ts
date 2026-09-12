@@ -19,6 +19,16 @@ export const routes: Routes = [
       import('./features/species/species-list.component').then((m) => m.SpeciesListComponent),
   },
   {
+    // Ein eigener Brocken: das Blatt öffnet nur, wer filtert.
+    path: 'arten/filter',
+    loadComponent: () => import('./features/species/filter.component').then((m) => m.SpeciesFilterComponent),
+  },
+  {
+    path: 'arten/filter/:gruppe',
+    loadComponent: () =>
+      import('./features/species/filter-group.component').then((m) => m.SpeciesFilterGroupComponent),
+  },
+  {
     path: 'arten/:slug',
     loadComponent: () => import('./features/species/species.component').then((m) => m.SpeciesComponent),
   },
