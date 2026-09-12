@@ -623,6 +623,30 @@ Abnahme:
 - „Weiß ich nicht" verliert keine Art
 - Das Ergebnis ist dieselbe Liste wie beim Filter, mit denselben Zahlen
 
+### D10 Bild in der Artenzeile
+
+Die Zeile in der Artenliste trägt heute Name, lateinischen Namen, eine
+Saisonkurve und bis zu drei Marken. Ein Bild wäre das fünfte. Statt zu
+verdichten, gibt die Zeile etwas her.
+
+Mockups: https://claude.ai/code/artifact/c48cca1a-6aed-401f-8798-789782aeb4d5
+Gewählt ist Satz 3.
+
+Umfang: Das Bild steht rechts, 64 × 64, wo heute die Saisonkurve steht. Die
+Kurve fällt aus der Liste und bleibt auf der Artseite — auf 86 Pixeln liest
+sie ohnehin niemand ab. Der Text bleibt links, wie in jeder anderen Liste.
+
+Hat eine Art kein Bild, bleibt rechts nichts: kein Platzhalter, keine Kurve.
+Der Text nimmt sich die frei werdende Breite. Das ist heute der Normalfall,
+denn der Bestand trägt null Bilder.
+
+Das Bild ist das Titelbild der Art aus I2, in der kleinen Größe.
+
+Abnahme:
+- Eine Art ohne Bild zeigt rechts nichts und keine leere Fläche
+- Der längste Name im Katalog bricht um, ohne die Marken zu verdrängen
+- Die Zeile bleibt in ihrer Höhe, ob mit Bild oder ohne
+
 ## Block 4, Offline und Feinschliff
 
 ### F1 Offline-Warteschlange und PWA
