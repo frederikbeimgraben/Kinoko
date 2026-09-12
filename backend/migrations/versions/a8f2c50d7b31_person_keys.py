@@ -17,7 +17,7 @@ down_revision: str | None = "e7c3b58a10d2"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-PERSON: Final = "nutzer"
+PERSON: Final = "user"
 
 # Tabelle, Spalte und Loeschregel kommen aus den Modellen, damit Schema und
 # Migration nicht auseinanderlaufen. Die Begruendung je Gruppe steht dort.
@@ -60,7 +60,7 @@ def upgrade() -> None:
     if broken:
         places = ", ".join(f"{place}: {count}" for place, count in sorted(broken.items()))
         raise RuntimeError(
-            "Es gibt Zeilen ohne Konto in nutzer. Erst muessen sie ein Konto"
+            "Es gibt Zeilen ohne Konto in user. Erst muessen sie ein Konto"
             f" bekommen oder weg, dann greift der Fremdschluessel. Gefunden: {places}."
         )
     for table, column, rule in KEYS:

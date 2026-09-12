@@ -14,7 +14,7 @@ down_revision: str | None = "a2d7f4c19b60"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-TABLE = "begriff"
+TABLE = "term"
 
 SMELL = [
     ("pilzig", "pilzig"),
@@ -101,25 +101,25 @@ def upgrade() -> None:
         op.create_table(
             TABLE,
             sa.Column("id", sa.Integer(), primary_key=True),
-            sa.Column("art", sa.String(length=32), nullable=False, index=True),
+            sa.Column("kind", sa.String(length=32), nullable=False, index=True),
             sa.Column("slug", sa.String(length=64), nullable=False),
             sa.Column("name", sa.String(length=120), nullable=False),
-            sa.Column("reihenfolge", sa.Integer(), nullable=False, server_default="0"),
-            sa.UniqueConstraint("art", "slug", name="uq_begriff_art_slug"),
+            sa.Column("position", sa.Integer(), nullable=False, server_default="0"),
+            sa.UniqueConstraint("kind", "slug", name="uq_term_kind_slug"),
         )
     terms = sa.table(
         TABLE,
-        sa.column("art", sa.String),
+        sa.column("kind", sa.String),
         sa.column("slug", sa.String),
         sa.column("name", sa.String),
-        sa.column("reihenfolge", sa.Integer),
+        sa.column("position", sa.Integer),
     )
     known = {
         (row[0], row[1])
-        for row in op.get_bind().execute(sa.select(terms.c["art"], terms.c["slug"]))
+        for row in op.get_bind().execute(sa.select(terms.c["kind"], terms.c["slug"]))
     }
     rows = [
-        {"art": kind, "slug": slug, "name": name, "reihenfolge": position}
+        {"kind": kind, "slug": slug, "name": name, "position": position}
         for kind, entries in (("geruch", SMELL), ("geschmack", TASTE), ("baum", TREES))
         for position, (slug, name) in enumerate(entries)
         if (kind, slug) not in known

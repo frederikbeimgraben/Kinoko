@@ -43,10 +43,10 @@ def upgrade() -> None:
 
     # SQLite kennt kein ``ADD COLUMN IF NOT EXISTS``. Auf einer leeren
     # Datenbank hat die Baseline die Spalten schon aus den Modellen gebaut.
-    present = _columns("nutzer")
+    present = _columns("user")
     for column, kind in PERSON_COLUMNS:
         if column not in present:
-            with op.batch_alter_table("nutzer") as batch:
+            with op.batch_alter_table("user") as batch:
                 batch.add_column(sa.Column(column, kind, nullable=True))
 
     permission = Base.metadata.tables["permission"]
@@ -77,8 +77,8 @@ def downgrade() -> None:
     connection = op.get_bind()
     for name in reversed(TABLES):
         connection.execute(DropTable(Base.metadata.tables[name], if_exists=True))
-    present = _columns("nutzer")
+    present = _columns("user")
     for column, _ in PERSON_COLUMNS:
         if column in present:
-            with op.batch_alter_table("nutzer") as batch:
+            with op.batch_alter_table("user") as batch:
                 batch.drop_column(column)

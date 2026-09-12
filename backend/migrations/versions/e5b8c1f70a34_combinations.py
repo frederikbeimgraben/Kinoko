@@ -16,7 +16,7 @@ down_revision: str | None = "c7d2e4a81f95"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-TABLES: tuple[str, ...] = ("kombination",)
+TABLES: tuple[str, ...] = ("combination",)
 
 
 def upgrade() -> None:

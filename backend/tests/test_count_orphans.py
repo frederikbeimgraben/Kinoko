@@ -16,15 +16,15 @@ from tools.count_orphans import database_path, orphans, report
 
 
 def a_database(tmp_path: Path) -> Path:
-    """Eine Datei mit ``nutzer`` und ``fund``, so weit das Zaehlen sie braucht."""
+    """Eine Datei mit ``user`` und ``find``, so weit das Zählen sie braucht."""
     file = tmp_path / "bestand.sqlite"
     with closing(sqlite3.connect(file)) as connection:
         connection.executescript(
-            "CREATE TABLE nutzer (sub VARCHAR(255) PRIMARY KEY);"
-            "CREATE TABLE fund (id VARCHAR(36) PRIMARY KEY, besitzer_sub VARCHAR(255));"
-            "CREATE TABLE marker (id VARCHAR(36) PRIMARY KEY, besitzer_sub VARCHAR(255));"
-            "CREATE TABLE zone (id VARCHAR(36) PRIMARY KEY, besitzer_sub VARCHAR(255));"
-            "CREATE TABLE kombination (id VARCHAR(36) PRIMARY KEY, besitzer_sub VARCHAR(255));"
+            'CREATE TABLE "user" (sub VARCHAR(255) PRIMARY KEY);'
+            "CREATE TABLE find (id VARCHAR(36) PRIMARY KEY, owner_sub VARCHAR(255));"
+            "CREATE TABLE marker (id VARCHAR(36) PRIMARY KEY, owner_sub VARCHAR(255));"
+            "CREATE TABLE zone (id VARCHAR(36) PRIMARY KEY, owner_sub VARCHAR(255));"
+            "CREATE TABLE combination (id VARCHAR(36) PRIMARY KEY, owner_sub VARCHAR(255));"
             "CREATE TABLE species_image (id VARCHAR(36) PRIMARY KEY,"
             " uploader_sub VARCHAR(255), reviewed_by VARCHAR(255));"
             "CREATE TABLE text (key VARCHAR(80) PRIMARY KEY, updated_by VARCHAR(255));"
@@ -42,19 +42,19 @@ def write(file: Path, statement: str) -> None:
 
 def test_a_row_whose_account_exists_is_no_orphan(tmp_path: Path) -> None:
     file = a_database(tmp_path)
-    write(file, "INSERT INTO nutzer VALUES ('nutzer-1')")
-    write(file, "INSERT INTO fund VALUES ('f1', 'nutzer-1')")
+    write(file, """INSERT INTO "user" VALUES ('nutzer-1')""")
+    write(file, "INSERT INTO find VALUES ('f1', 'nutzer-1')")
 
     with closing(sqlite3.connect(file)) as connection:
-        assert orphans(connection, "fund", "besitzer_sub") == 0
+        assert orphans(connection, "find", "owner_sub") == 0
 
 
 def test_a_row_without_its_account_counts(tmp_path: Path) -> None:
     file = a_database(tmp_path)
-    write(file, "INSERT INTO fund VALUES ('f1', 'niemand')")
+    write(file, "INSERT INTO find VALUES ('f1', 'niemand')")
 
     with closing(sqlite3.connect(file)) as connection:
-        assert orphans(connection, "fund", "besitzer_sub") == 1
+        assert orphans(connection, "find", "owner_sub") == 1
 
 
 def test_an_empty_value_points_at_nobody_and_counts_nothing(tmp_path: Path) -> None:
@@ -73,17 +73,17 @@ def test_the_report_names_every_column_and_counts_them(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     file = a_database(tmp_path)
-    write(file, "INSERT INTO nutzer VALUES ('nutzer-1')")
-    write(file, "INSERT INTO fund VALUES ('f1', 'niemand')")
+    write(file, """INSERT INTO "user" VALUES ('nutzer-1')""")
+    write(file, "INSERT INTO find VALUES ('f1', 'niemand')")
     write(file, "INSERT INTO zone VALUES ('z1', 'nutzer-1')")
 
     total = report(file)
     printed = capsys.readouterr().out
 
     assert total == 1
-    assert "nutzer: 1 Konten" in printed
-    assert "fund.besitzer_sub: 1 ohne Konto" in printed
-    assert "zone.besitzer_sub: 0 ohne Konto" in printed
+    assert "user: 1 Konten" in printed
+    assert "find.owner_sub: 1 ohne Konto" in printed
+    assert "zone.owner_sub: 0 ohne Konto" in printed
 
 
 def test_a_clean_database_ends_without_a_complaint(
@@ -107,7 +107,7 @@ def test_an_orphan_ends_with_a_failure(
     # Der Rueckgabewert traegt die Antwort: so laesst sich das Werkzeug vor
     # einem Deploy in ein Skript haengen.
     file = a_database(tmp_path)
-    write(file, "INSERT INTO fund VALUES ('f1', 'niemand')")
+    write(file, "INSERT INTO find VALUES ('f1', 'niemand')")
     monkeypatch.setattr("sys.argv", ["count_orphans", str(file)])
 
     with pytest.raises(SystemExit) as ended:

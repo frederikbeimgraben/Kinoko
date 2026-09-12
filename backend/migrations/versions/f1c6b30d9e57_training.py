@@ -14,8 +14,8 @@ down_revision: str | None = "e5b8c1f70a34"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-TABLE = "fund"
-COLUMN = "fuer_training"
+TABLE = "find"
+COLUMN = "for_training"
 
 
 def _columns(name: str) -> set[str]:
