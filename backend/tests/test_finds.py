@@ -675,3 +675,38 @@ async def test_a_find_from_yesterday_carries_its_date(
         created = await create_find(call, idp)
 
     assert created["datum"] == yesterday()
+
+
+async def test_a_find_without_a_species_is_kept(
+    call: httpx.AsyncClient,
+    idp: FakeIdp,
+) -> None:
+    """Wer einen Pilz nicht bestimmen kann, soll ihn trotzdem eintragen duerfen.
+
+    Ein geratener Slug waere schlechter als keiner, und Ort und Tag sind auch
+    ohne Namen etwas wert.
+    """
+    async with call:
+        body = find_body()
+        del body["artSlug"]
+        written = await call.post("/api/funde", json=body, headers=as_user(idp))
+        read_back = await call.get(f"/api/funde/{written.json()['id']}", headers=as_user(idp))
+
+    assert written.status_code == 201
+    assert written.json()["artSlug"] is None
+    assert read_back.json()["artSlug"] is None
+
+
+async def test_a_find_with_a_species_outside_the_catalogue_is_refused(
+    call: httpx.AsyncClient,
+    idp: FakeIdp,
+) -> None:
+    async with call:
+        answer = await call.post(
+            "/api/funde",
+            json=find_body(artSlug="gibt-es-nicht"),
+            headers=as_user(idp),
+        )
+
+    assert answer.status_code == 422
+    assert "gibt-es-nicht" in answer.text

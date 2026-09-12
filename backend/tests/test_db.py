@@ -9,7 +9,19 @@ from sqlalchemy.exc import IntegrityError
 
 from app.core.db import FILE_PREFIX, create_folder, db_session, engine
 from app.core.settings import get_settings
-from app.models import Base, Find, Person, Role, UiText, UserRole, Visibility
+from app.models import (
+    Base,
+    Edibility,
+    Find,
+    Group,
+    Person,
+    ProtectionStatus,
+    Role,
+    SpeciesRow,
+    UiText,
+    UserRole,
+    Visibility,
+)
 
 
 async def test_a_session_answers_a_query() -> None:
@@ -55,8 +67,7 @@ async def test_the_connection_enforces_foreign_keys() -> None:
 
 async def test_an_object_without_an_account_is_refused() -> None:
     """Ein Fund zeigt auf ein Konto. Zeigt er ins Leere, weist die Datenbank ihn ab."""
-    async with engine().begin() as connection:
-        await connection.run_sync(Base.metadata.create_all)
+    await a_species()
 
     async for open_ring in db_session():
         open_ring.add(
@@ -74,10 +85,32 @@ async def test_an_object_without_an_account_is_refused() -> None:
         await open_ring.rollback()
 
 
-async def a_person(sub: str = "nutzer-1") -> None:
-    """Legt Schema und ein Konto an, auf das ein Objekt zeigen kann."""
+async def a_species(slug: str = "steinpilz") -> None:
+    """Legt Schema und eine Art an, auf die ein Fund zeigen kann.
+
+    Seit R4b haengt ``find.species_slug`` an ``species.slug``. Ohne die Zeile
+    scheiterte jeder Fund im Test an der falschen Bedingung.
+    """
     async with engine().begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
+    async for open_ring in db_session():
+        open_ring.add(
+            SpeciesRow(
+                slug=slug,
+                name="Steinpilz",
+                latin_name="Boletus edulis",
+                group=Group.BOLETE,
+                edibility=Edibility.EDIBLE,
+                protection=ProtectionStatus.NONE,
+                protection_source="Bundesartenschutzverordnung, Anlage 1",
+            )
+        )
+        await open_ring.commit()
+
+
+async def a_person(sub: str = "nutzer-1") -> None:
+    """Legt Schema, eine Art und ein Konto an, auf das ein Objekt zeigen kann."""
+    await a_species()
     async for open_ring in db_session():
         open_ring.add(Person(sub=sub))
         await open_ring.commit()

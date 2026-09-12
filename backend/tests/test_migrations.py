@@ -156,6 +156,14 @@ PERSON_KEY = re.compile(
     r' REFERENCES "?user"? \(sub\)(?: ON DELETE [A-Z ]+)?'
 )
 
+# Dieselbe Sache fuer den Verweis auf eine Art aus R4b. Die Baseline baut aus
+# den heutigen Modellen und schreibt beide Bedingungen; der Bestand im Betrieb
+# ist aelter und traegt keine davon.
+SPECIES_KEY = re.compile(
+    r",\s*CONSTRAINT fk_\w+_species FOREIGN KEY\([^)]*\)"
+    r' REFERENCES "?species"? \(slug\)(?: ON DELETE [A-Z ]+)?'
+)
+
 # Die Tabellen, die nach R4a auf ein Konto zeigen.
 POINTING_AT_A_PERSON = (
     "find",
@@ -169,7 +177,7 @@ POINTING_AT_A_PERSON = (
 
 
 def as_before_the_keys(file: Path, table: str) -> None:
-    """Baut eine Tabelle ohne ihren Verweis auf ``user`` nach.
+    """Baut eine Tabelle ohne ihre Verweise auf ``user`` und ``species`` nach.
 
     Die Baseline legt das Schema aus den Modellen an, darum traegt schon eine
     frische Datenbank den Fremdschluessel. Der Bestand im Betrieb ist aelter
@@ -186,7 +194,7 @@ def as_before_the_keys(file: Path, table: str) -> None:
         connection.executescript(
             "PRAGMA legacy_alter_table=ON;"  # noqa: S608 - Name aus POINTING_AT_A_PERSON
             f"ALTER TABLE {table} RENAME TO {table}_alt;"
-            f"{PERSON_KEY.sub('', definition)};"
+            f"{SPECIES_KEY.sub('', PERSON_KEY.sub('', definition))};"
             f"INSERT INTO {table} SELECT * FROM {table}_alt;"
             f"DROP TABLE {table}_alt;"
             "PRAGMA legacy_alter_table=OFF;"
@@ -506,7 +514,8 @@ def test_the_upgrade_keeps_the_photo_pointing_at_its_find(
     command.upgrade(configuration(), "head")
 
     assert points_at(file, "photo") == {"find"}
-    assert points_at(file, "find") == {"user"}
+    # Seit R4b zeigt der Fund auch auf die Art, die er nennt.
+    assert points_at(file, "find") == {"user", "species"}
 
 
 def test_the_upgrade_renames_the_constraints_too(
