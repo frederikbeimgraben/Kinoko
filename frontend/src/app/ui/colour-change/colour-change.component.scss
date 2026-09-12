@@ -36,12 +36,16 @@
   grid-column: 3;
 }
 
-// Die Dauer steht unter den Flaechen und beginnt an der ersten.
+// Die Dauer steht unter den Flaechen und endet an derselben Kante wie sie.
+//
+// Linksbuendig haengt sie unter der Beschriftung statt unter der Farbe: die
+// Zelle richtet ihre Werte rechts aus, und die Dauer ist einer davon.
 .change__speed {
-  display: inline-flex;
+  display: flex;
   grid-column: 1 / -1;
   gap: 4px;
   align-items: center;
+  justify-content: flex-end;
   font-size: var(--fs-xs);
   white-space: nowrap;
 }

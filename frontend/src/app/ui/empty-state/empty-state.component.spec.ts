@@ -35,6 +35,18 @@ describe('EmptyStateComponent', () => {
     expect(order).toEqual(['empty__image', 'empty__text', 'empty__button']);
   });
 
+  it('trägt die Fläche einer Karte, weil er an der Stelle einer steht', async () => {
+    // Ohne Fläche liest sich der Leerzustand als Leerraum und nicht als der
+    // Platz, an dem der Inhalt stünde.
+    const { fixture } = await render(EmptyStateComponent, {
+      inputs: { text: 'Für diese Art gibt es noch kein Bild.' },
+    });
+
+    const host = getComputedStyle(fixture.nativeElement as Element);
+    expect(host.background).toContain('var(--color-surface)');
+    expect(host.borderRadius).toBe('var(--radius-lg)');
+  });
+
   it('führt mit einem Knopf hinaus', async () => {
     const { fixture } = await render(EmptyStateComponent, {
       inputs: { text: 'Eigene Einträge stehen im Konto.', action: 'Anmelden' },

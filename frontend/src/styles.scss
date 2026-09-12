@@ -6,9 +6,15 @@
 
 // Die App füllt das Gerät und scrollt nur innerhalb ihrer Flächen. Ein
 // Seitenscroll würde das Blatt und die Navigation vom Rand lösen.
+//
+// `dvh` und nicht `%`: am Telefon rechnet `100%` gegen den Bereich mit
+// eingeklappter Adressleiste. Steht sie noch, ist die Hülle höher als das
+// Sichtbare, und das untere Stück — Fußleiste und der letzte Abschnitt —
+// liegt unter der Leiste des Browsers, ohne dass man dorthin scrollen könnte.
+// `dvh` folgt dem sichtbaren Bereich, wenn die Adressleiste sich einklappt.
 html,
 body {
-  height: 100%;
+  height: 100dvh;
   overflow: hidden;
   overscroll-behavior: none;
 }
