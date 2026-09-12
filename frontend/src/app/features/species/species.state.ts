@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, type WritableSignal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { SpeciesApi } from '../../core/api/species.api';
 import { SpeciesImagesApi } from '../../core/api/species-images.api';
 import type { ProblemDetail } from '../../core/api/problem';
@@ -16,19 +16,19 @@ export class SpeciesState {
   private readonly running = new Set<string>();
 
   private readonly _catalogue = signal<SpeciesCatalogue | null>(null);
-  private readonly _verwechslungen = signal<SpeciesCatalogue | null>(null);
-  private readonly _alle = signal<SpeciesCatalogue | null>(null);
   private readonly _profile = signal<ReadonlyMap<string, Species>>(new Map());
   private readonly _unknown = signal<ReadonlySet<string>>(new Set());
   private readonly _images = signal<ReadonlyMap<string, readonly SpeciesImage[]>>(new Map());
   private readonly _activeSpecies = signal<string | null>(null);
   private readonly _origin = signal<{ slug: string; name: string } | null>(null);
 
+  /**
+   * Der ganze Katalog, ein Topf.
+   *
+   * Bis D9 waren es drei: die sammelbaren, die übrigen und beide zusammen. Der
+   * Grund war eine Vorgabe im Vertrag, die es nicht mehr gibt.
+   */
   readonly catalogue = this._catalogue.asReadonly();
-  /** Die nicht sammelbaren Profile. Sie kommen erst, wenn jemand sie sucht. */
-  readonly verwechslungen = this._verwechslungen.asReadonly();
-  /** Beide Töpfe zusammen, für die Suche über den ganzen Katalog. */
-  readonly alle = this._alle.asReadonly();
   readonly profile = this._profile.asReadonly();
   /** Slugs, die das Backend mit 404 beantwortet hat. */
   readonly unknown = this._unknown.asReadonly();
@@ -42,31 +42,13 @@ export class SpeciesState {
   readonly origin = this._origin.asReadonly();
 
   loadCatalogue(): void {
-    this.get('liste', this._catalogue, undefined);
-  }
-
-  /** Die nicht sammelbaren Profile, für den Chip „Giftig und Verwechslung“. */
-  loadLookalikes(): void {
-    this.get('verwechslungen', this._verwechslungen, { sammelbar: false });
-  }
-
-  /** Beide Töpfe, sobald jemand über den ganzen Katalog sucht. */
-  loadAll(): void {
-    this.get('alle', this._alle, { alle: true });
-  }
-
-  private get(
-    schluessel: string,
-    target: WritableSignal<SpeciesCatalogue | null>,
-    query: { sammelbar?: boolean; alle?: boolean } | undefined,
-  ): void {
-    if (target() !== null || !this.begin(schluessel)) return;
-    this.api.catalogue(query).subscribe({
+    if (this._catalogue() !== null || !this.begin('liste')) return;
+    this.api.catalogue().subscribe({
       next: (catalogue) => {
-        target.set(catalogue);
-        this.running.delete(schluessel);
+        this._catalogue.set(catalogue);
+        this.running.delete('liste');
       },
-      error: () => this.running.delete(schluessel),
+      error: () => this.running.delete('liste'),
     });
   }
 
@@ -101,13 +83,9 @@ export class SpeciesState {
     });
   }
 
-  /** Eine Art aus einem der geladenen Kataloge, sonst nichts. */
+  /** Eine Art aus dem geladenen Katalog, sonst nichts. */
   briefOf(slug: string): SpeciesBrief | null {
-    for (const catalogue of [this.alle(), this.catalogue(), this.verwechslungen()]) {
-      const found = catalogue?.arten.find((art) => art.slug === slug);
-      if (found) return found;
-    }
-    return null;
+    return this.catalogue()?.arten.find((art) => art.slug === slug) ?? null;
   }
 
   /**

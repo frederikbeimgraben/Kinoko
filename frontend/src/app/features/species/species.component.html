@@ -19,31 +19,25 @@
       </p>
     }
 
-    @if (!viewport.sammelbar) {
-      <app-info-text>{{ 'art.nichtSammelbar' | t }}</app-info-text>
-    }
-
-    @if (viewport.sammelbar) {
-      <section>
-        <h2 class="species__section">{{ 'art.saison' | t }}</h2>
-        @if (viewport.hasCurve && viewport.saison; as saison) {
-          <app-season-curve
-            [large]="true"
-            [alleJahre]="saison.alleJahre"
-            [laufendesJahr]="saison.laufendesJahr"
-            [visitsAllYears]="saison.begehungenJeWocheAlleJahre"
-            [visitsCurrentYearSeries]="saison.begehungenJeWocheLaufendesJahr"
-            [axis]="viewport.axis"
-            [months]="viewport.months"
-            [legendCurrent]="viewport.legendCurrent"
-            [legendYears]="viewport.legendYears"
-            [label]="viewport.label"
-          />
-        } @else {
-          <app-info-text>{{ 'art.keineKurve' | t }}</app-info-text>
-        }
-      </section>
-    }
+    <section>
+      <h2 class="species__section">{{ 'art.saison' | t }}</h2>
+      @if (viewport.hasCurve && viewport.saison; as saison) {
+        <app-season-curve
+          [large]="true"
+          [alleJahre]="saison.alleJahre"
+          [laufendesJahr]="saison.laufendesJahr"
+          [visitsAllYears]="saison.begehungenJeWocheAlleJahre"
+          [visitsCurrentYearSeries]="saison.begehungenJeWocheLaufendesJahr"
+          [axis]="viewport.axis"
+          [months]="viewport.months"
+          [legendCurrent]="viewport.legendCurrent"
+          [legendYears]="viewport.legendYears"
+          [label]="viewport.label"
+        />
+      } @else {
+        <app-info-text>{{ 'art.keineKurve' | t }}</app-info-text>
+      }
+    </section>
 
     <section>
       <h2 class="species__section">{{ 'art.abschnitt.einstufung' | t }}</h2>
@@ -264,17 +258,15 @@
       {{ viewport.geprueft }}
     </app-note>
   </div>
-  @if (viewport.sammelbar) {
-    <app-action-bar
-      [primary]="'art.aufKarte' | t"
-      mainIcon="karte"
-      [mainDisabled]="!viewport.kartenSlug"
-      [subline]="viewport.kartenSlug ? undefined : ('art.keineVorhersage' | t)"
-      (mainClick)="onMap()"
-    />
-  } @else {
-    <app-action-bar [secondary]="rueckweg()" (secondaryClick)="zumUrsprung()" />
-  }
+  <app-action-bar
+    [primary]="'art.aufKarte' | t"
+    mainIcon="karte"
+    [mainDisabled]="!viewport.kartenSlug"
+    [subline]="viewport.kartenSlug ? undefined : ('art.keineVorhersage' | t)"
+    [secondary]="vonAndererArt() ? rueckweg() : undefined"
+    (mainClick)="onMap()"
+    (secondaryClick)="zumUrsprung()"
+  />
 } @else if (unknown()) {
   <app-page-header [titel]="'nav.arten' | t" [back]="true" (backClick)="back()" />
   <app-empty-state [text]="'art.nichtGefunden' | t" />

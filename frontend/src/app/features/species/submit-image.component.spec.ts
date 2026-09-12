@@ -70,7 +70,7 @@ async function build(held: Permission[] = [], catalogue: SpeciesCatalogue = SPEC
   });
   const http = TestBed.inject(HttpTestingController);
   // Der Katalog nennt Namen und Schutz; der Schutz entscheidet über den Ort.
-  http.expectOne('/api/arten?alle=true').flush(catalogue);
+  http.expectOne('/api/arten').flush(catalogue);
   TestBed.inject(ApplicationRef).tick();
   detectChanges();
   return { container, http, router: TestBed.inject(Router), refresh: detectChanges };

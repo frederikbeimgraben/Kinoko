@@ -516,15 +516,19 @@ class Catalog:
     def listing(
         self,
         *,
-        only_collectable: bool | None = True,
+        only_collectable: bool | None = None,
         chosen: SpeciesFilter | None = None,
     ) -> SpeciesList:
         """Die Arten mit Stufe, Tags und der kleinen Kurve.
 
-        ``nur_sammelbare`` waehlt aus: ``True`` liefert die 85 sammelbaren,
-        ``False`` die Verwechslungsarten, ``None`` alle. Die Auswahl gehoert
-        hierher und nicht ins Frontend: der Reiter Arten zeigt sonst Giftpilze
-        zwischen den Speisepilzen.
+        Ohne Angabe kommt der ganze Katalog. ``only_collectable`` schraenkt auf
+        die sammelbaren ein oder auf die uebrigen; das ist ein Filter wie jeder
+        andere und keine Vorgabe.
+
+        Die wichtigste Sicherheitsaufgabe des Katalogs ist, gefaehrliche
+        Doppelgaenger auffindbar zu machen. Steht der Gruene Knollenblaetterpilz
+        nur hinter der Suche und nicht beim Blaettern, arbeitet die Liste gegen
+        ihren eigenen Zweck.
 
         ``chosen`` schraenkt weiter ein, ueber die strukturierten Felder.
         """

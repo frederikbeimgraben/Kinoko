@@ -34,7 +34,7 @@ async function build(entries: ImageSubmission[] = [OPEN], total?: number): Promi
     providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(ANY_ROUTE)],
   });
   const http = TestBed.inject(HttpTestingController);
-  http.expectOne('/api/arten?alle=true').flush(SPECIES_LIST);
+  http.expectOne('/api/arten').flush(SPECIES_LIST);
   http
     .expectOne('/api/species-images/submissions?state=submitted&offset=0&limit=25')
     .flush({ eintraege: entries, gesamt: total ?? entries.length, limit: 25, offset: 0 });

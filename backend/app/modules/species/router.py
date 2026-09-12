@@ -26,14 +26,14 @@ async def species_list(
 ) -> SpeciesList:
     """Liefert die Arten mit Stufe, Tags und der Saisonkurve aller Jahre.
 
-    Ohne Parameter kommen nur die sammelbaren Arten. Die Verwechslungsarten
-    gehoeren nicht in denselben Reiter wie die Speisepilze.
+    Ohne Parameter kommt der ganze Katalog. ``sammelbar`` ist ein Filter wie
+    jeder andere.
 
     Jedes strukturierte Feld ist eine Bedingung. Sie gelten zusammen, und was
     leer bleibt, schraenkt nicht ein.
     """
     return catalog.listing(
-        only_collectable=None if chosen.all_groups else chosen.collectable,
+        only_collectable=chosen.collectable,
         chosen=SpeciesFilter(
             group=chosen.group,
             tier=chosen.tier,

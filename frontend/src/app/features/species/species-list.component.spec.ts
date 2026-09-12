@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { FULL_LIST, SPECIES_LIST, LOOKALIKE_LIST } from '../../testing/species-fixture';
+import { SPECIES_LIST } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { SpeciesListComponent } from './species-list.component';
 import { SpeciesState } from './species.state';
@@ -64,6 +64,8 @@ describe('ArtenComponent', () => {
 
     // Die kleine Kurve zeigt dieselben zwei Reihen wie die Artseite: die Fläche
     // aller Jahre und das laufende Jahr, das mit einem Punkt endet.
+    // Vier von fünf Zeilen: der Gallenröhrling hat keine Saison, und wo keine
+    // Kurve steht, zeichnet die Zeile auch keine.
     expect(container.querySelectorAll('.spark__all')).toHaveLength(4);
     expect(container.querySelectorAll('.spark__end')).toHaveLength(4);
   });
@@ -73,7 +75,13 @@ describe('ArtenComponent', () => {
 
     // Vorhersage vor Saison vor Profil; die 23 Arten mit eigener Karte stehen
     // damit oben statt zwischen den Profilen verstreut.
-    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz', 'Semmelstoppelpilz', 'Speisemorchel']);
+    expect(names()).toEqual([
+      'Maronenröhrling',
+      'Steinpilz',
+      'Semmelstoppelpilz',
+      'Gallenröhrling',
+      'Speisemorchel',
+    ]);
   });
 
   it('lässt die aktive Art an ihrem Platz', async () => {
@@ -86,11 +94,10 @@ describe('ArtenComponent', () => {
   });
 
   it('sucht in Namen und lateinischen Namen', async () => {
-    const { refresh, nachlade } = await build();
+    const { refresh } = await build();
     const field = screen.getByLabelText('Art suchen');
 
     await userEvent.type(field, 'morch');
-    nachlade('/api/arten?alle=true', FULL_LIST);
     refresh();
     expect(names()).toEqual(['Speisemorchel']);
 
@@ -103,37 +110,35 @@ describe('ArtenComponent', () => {
   it('nennt, wie viele Arten die Liste gerade zeigt', async () => {
     const { refresh } = await build();
 
-    expect(screen.getByText('4 Arten')).toBeInTheDocument();
+    expect(screen.getByText('5 Arten')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Mit Vorhersage' }));
     refresh();
 
     // Ohne diese Zahl wirkte der Chip tot: die Liste steht nach Stufe, oben
     // bleiben dieselben Zeilen stehen.
-    expect(screen.getByText('2 von 4 Arten')).toBeInTheDocument();
+    expect(screen.getByText('2 von 5 Arten')).toBeInTheDocument();
   });
 
-  it('lässt die Verwechslungsprofile draußen, bis der Chip sie holt', async () => {
-    const { refresh, nachlade } = await build();
+  it('zeigt auch die Arten, die niemand sammelt', async () => {
+    const { refresh } = await build();
 
-    // Wer den Katalog durchblättert, sucht etwas zum Sammeln.
-    expect(names()).not.toContain('Gallenröhrling');
-    expect(screen.getByText('4 Arten')).toBeInTheDocument();
+    // Bis D9 stand der Gallenröhrling draußen und war nur über die Suche zu
+    // finden. Wer einen Pilz gesehen hat und nachschlägt, weiß vorher nicht,
+    // ob er sammelbar ist — das ist ja die Frage.
+    expect(names()).toContain('Gallenröhrling');
+    expect(screen.getByText('5 Arten')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Giftig und Verwechslung' }));
-    nachlade('/api/arten?sammelbar=false', LOOKALIKE_LIST);
+    await userEvent.click(screen.getByRole('button', { name: 'Sammelbar' }));
     refresh();
 
-    expect(names()).toEqual(['Gallenröhrling']);
-    expect(screen.getByText('1 Arten')).toBeInTheDocument();
+    expect(names()).not.toContain('Gallenröhrling');
+    expect(screen.getByText('4 von 5 Arten')).toBeInTheDocument();
   });
 
   it('filtert nach der Stufe der Essbarkeit', async () => {
-    const { refresh, nachlade } = await build();
+    const { refresh } = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Giftig und Verwechslung' }));
-    nachlade('/api/arten?sammelbar=false', LOOKALIKE_LIST);
-    refresh();
     await userEvent.click(screen.getByRole('button', { name: 'giftig' }));
     refresh();
 
@@ -147,14 +152,13 @@ describe('ArtenComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Jede Stufe' }));
     refresh();
 
-    expect(names()).toEqual(['Gallenröhrling']);
+    expect(names()).toHaveLength(5);
   });
 
   it('findet über die Suche auch einen Giftpilz und zeigt seine Stufe rot', async () => {
-    const { refresh, nachlade } = await build();
+    const { refresh } = await build();
 
     await userEvent.type(screen.getByLabelText('Art suchen'), 'Gallen');
-    nachlade('/api/arten?alle=true', FULL_LIST);
     refresh();
 
     const row = screen.getByRole('button', { name: /Gallenröhrling/ });
@@ -173,10 +177,9 @@ describe('ArtenComponent', () => {
   });
 
   it('zeigt einen Leerzustand, wenn nichts passt', async () => {
-    const { refresh, nachlade } = await build();
+    const { refresh } = await build();
 
     await userEvent.type(screen.getByLabelText('Art suchen'), 'Trüffel');
-    nachlade('/api/arten?alle=true', FULL_LIST);
     refresh();
 
     expect(screen.getByText('Keine Art passt zur Suche.')).toBeInTheDocument();
@@ -191,15 +194,16 @@ describe('ArtenComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Röhrlinge' }));
     refresh();
-    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz']);
+    // Der Gallenröhrling ist einer, auch wenn ihn niemand sammelt.
+    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz', 'Gallenröhrling']);
 
     await userEvent.click(screen.getByRole('button', { name: 'Herbst' }));
     refresh();
-    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz', 'Semmelstoppelpilz']);
+    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz', 'Semmelstoppelpilz', 'Gallenröhrling']);
 
     await userEvent.click(screen.getByRole('button', { name: 'Alle' }));
     refresh();
-    expect(names()).toHaveLength(4);
+    expect(names()).toHaveLength(5);
   });
 
   it('hebt die aktive Art der Karte hervor', async () => {
@@ -223,7 +227,7 @@ describe('ArtenComponent', () => {
     expect(screen.getByRole('button', { name: /Steinpilz/ })).toHaveFocus();
 
     await userEvent.keyboard('{ArrowDown}{ArrowDown}');
-    expect(screen.getByRole('button', { name: /Speisemorchel/ })).toHaveFocus();
+    expect(screen.getByRole('button', { name: /Gallenröhrling/ })).toHaveFocus();
 
     await userEvent.keyboard('{ArrowUp}{Enter}');
 

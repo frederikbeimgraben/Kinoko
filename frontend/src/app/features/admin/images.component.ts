@@ -131,7 +131,7 @@ export class AdminImagesComponent {
   constructor() {
     // Die Antwort nennt nur den Slug. Der Name steht im Katalog, und in der
     // Liste steht der Name.
-    this.species.loadAll();
+    this.species.loadCatalogue();
     this.held.restart();
   }
 

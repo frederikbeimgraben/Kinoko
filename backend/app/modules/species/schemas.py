@@ -1114,17 +1114,15 @@ class SpeciesQuery(BaseSchema):
     an einer Stelle stehen und die OpenAPI sie zusammen zeigt.
     """
 
-    collectable: bool = Field(
+    # Ohne Angabe kommt der ganze Katalog. Bis D9 kamen nur die sammelbaren
+    # 85 von 306, und das war keine Entscheidung, sondern der Rest einer
+    # Fehlerbehebung aus D1f. Wer einen Pilz nachschlaegt, weiss vorher nicht,
+    # ob er sammelbar ist — das ist ja die Frage.
+    collectable: bool | None = Field(
         validation_alias="sammelbar",
         serialization_alias="sammelbar",
-        default=True,
-        description="true liefert die sammelbaren Arten, false die Verwechslungsarten.",
-    )
-    all_groups: bool = Field(
-        validation_alias="alle",
-        serialization_alias="alle",
-        default=False,
-        description="Liefert beide Gruppen zusammen und schlaegt sammelbar.",
+        default=None,
+        description="true liefert nur die sammelbaren Arten, false nur die uebrigen.",
     )
     group: Group | None = Field(
         validation_alias="gruppe", serialization_alias="gruppe", default=None
