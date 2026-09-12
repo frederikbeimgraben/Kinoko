@@ -571,6 +571,58 @@ Abnahme:
 Reihenfolge: R4a hängt an nichts und geht sofort. R4d folgt, wenn wenige
 Zweige offen sind, es fasst alles an. R4b wartet auf D8, R4c auf R4b.
 
+### D7 Filter nach Eigenschaften
+
+Der Katalog trägt inzwischen achtzehn filterbare Merkmale, darunter Enums mit
+dreizehn Werten, Farben aus einer Palette, Zahlenspannen und einen Zeitraum.
+Die Reihe Pillen über der Liste kann davon drei zeigen. Sie wird ersetzt.
+
+Mockups: https://claude.ai/code/artifact/bc3b38d6-ec99-49f4-84b7-564a27bdae6a
+
+Umfang, drei Teile:
+
+**Über der Liste** steht ein Knopf „Filter" und daneben der Zustand als
+abnehmbare Marken. Die Marken zeigen an, sie stellen nicht ein. Passen sie
+nicht in eine Zeile, folgt „+2" statt eines Umbruchs.
+
+**Das Filterblatt** führt zwölf Gruppen, jede mit der Zahl der gewählten Werte
+und ihrer Abdeckung. Eine Gruppe führt in ihre eigene Auswahl: feste Werte mit
+Häkchen, Farben als Palette je Körperteil, Maße als Spanne mit zwei Griffen,
+Zeitraum als Band. Der Fuß nennt jederzeit, wie viele Arten übrig bleiben. Am
+Rechner ist dasselbe eine Spalte links, kein Blatt.
+
+**Die Lücke wird benannt, nicht verschwiegen.** Jeder Wert nennt die Zahl der
+Arten, die er trifft. Jede Gruppe nennt ihre Abdeckung, bevor man wählt, etwa
+„Hutform, 94 von 306 beschrieben". Wer nach einem Merkmal filtert, das nur ein
+Drittel der Arten trägt, schließt die übrigen aus, weil die Angabe fehlt, und
+nicht weil sie nicht passen. Darum steht im Ergebnis unter den Treffern eine
+abgesetzte Gruppe „Nicht beurteilbar", und in der Auswahl ein Schalter „Arten
+ohne Angabe behalten".
+
+Abnahme:
+- Ein Filter über drei Gruppen liefert dieselbe Menge wie die Summe der
+  einzelnen Bedingungen, geprüft gegen den Bestand
+- Die Zahl im Fuß stimmt mit der Länge der Liste überein
+- Eine Gruppe ohne Abdeckung nennt sie trotzdem, mit Null
+- Der Zustand überlebt einen Neustart der App und steht nicht in der Adresse
+
+### D7b Geführt bestimmen
+
+Ein Gegenentwurf zum Filter, kein Ersatz: eine Frage je Schritt, in der
+Reihenfolge, in der man einen Pilz ansieht. „Was trägt der Hut unten?" mit den
+fünf Werten der Fruchtschicht und der Zahl dahinter, dann Farbe, Größe, Stiel.
+Jeder Schritt nennt, wie viele Arten noch möglich sind, und lässt sich mit
+„Weiß ich nicht" überspringen.
+
+Der Filter ist für den, der weiß was er sucht. Der Schlüssel ist für den, der
+einen unbekannten Pilz in der Hand hält — und das ist der häufigere Fall.
+Artboard 8 der Mockups zeigt einen Schritt.
+
+Abnahme:
+- Sechs Schritte führen von 306 Arten auf eine überschaubare Menge
+- „Weiß ich nicht" verliert keine Art
+- Das Ergebnis ist dieselbe Liste wie beim Filter, mit denselben Zahlen
+
 ## Block 4, Offline und Feinschliff
 
 ### F1 Offline-Warteschlange und PWA
