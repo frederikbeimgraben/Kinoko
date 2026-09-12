@@ -142,6 +142,8 @@ export const SPECIES_LIST: SpeciesCatalogue = {
   // Der ganze Katalog, sammelbare und uebrige zusammen: seit D9 antwortet
   // ``GET /api/arten`` ohne Parameter so.
   arten: [PENNY_BUN_BRIEF, BAY_BOLETE_BRIEF, HEDGEHOG_BRIEF, MOREL_BRIEF, GALLENROEHRLING_KURZ],
+  unbeurteilbar: [],
+  luecken: [],
 };
 
 const SEASON: SeasonCurveData = {

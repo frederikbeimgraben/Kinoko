@@ -1253,6 +1253,25 @@ class SpeciesQuery(BaseSchema):
         validation_alias="monat", serialization_alias="monat", default=None, ge=1, le=12
     )
     colour: str | None = Field(validation_alias="farbe", serialization_alias="farbe", default=None)
+    # Die mehrwertige Auswahl aus D7. Ein Parameter je Gruppe, mehrfach
+    # angegeben: innerhalb einer Gruppe gilt oder, zwischen den Gruppen und.
+    # Die einwertigen Felder darueber sind der alte Weg; D7 loest sie ab,
+    # sobald die Oberflaeche nur noch diese hier schickt.
+    chosen_values: list[str] = Field(
+        validation_alias="wert",
+        serialization_alias="wert",
+        default_factory=list[str],
+        description=(
+            "Ein gewaehlter Wert als 'gruppe:wert', etwa 'speisewert:essbar'. "
+            "Mehrfach angeben, um mehrere Werte zu waehlen."
+        ),
+    )
+    keep_unknown: list[FacetKey] = Field(
+        validation_alias="ohneAngabe",
+        serialization_alias="ohneAngabe",
+        default_factory=list["FacetKey"],
+        description="Gruppen, in denen Arten ohne Angabe zu den Treffern zaehlen.",
+    )
     hymenophore: HymenophoreKind | None = Field(
         validation_alias="fruchtschicht", serialization_alias="fruchtschicht", default=None
     )
@@ -1279,11 +1298,25 @@ class SpeciesQuery(BaseSchema):
     )
 
 
+class Gap(BaseSchema):
+    """Wie viele Arten allein an einer Gruppe scheitern, weil die Angabe fehlt."""
+
+    key: FacetKey = Field(validation_alias="schluessel", serialization_alias="schluessel")
+    count: int = Field(validation_alias="anzahl", serialization_alias="anzahl")
+
+
 class SpeciesList(BaseSchema):
     """Die Antwort auf ``GET /api/arten``.
 
     ``begehungen``, ``jahre`` und die zwei ``begehungenJeWoche``-Reihen gelten
     fuer alle Arten gleich und stehen darum einmal am Kopf statt in jeder Zeile.
+
+    Die Arten kommen in zwei Mengen. ``arten`` sind die Treffer.
+    ``unbeurteilbar`` sind die, die an keiner Bedingung scheitern, sondern nur
+    daran, dass die Quelle zu einer gewaehlten Gruppe nichts sagt. Sie fallen
+    nicht still heraus: die Oberflaeche setzt sie unter die Treffer ab.
+    ``luecken`` sagt je Gruppe, wie viele allein an ihr haengen -- damit
+    jemand weiss, welchen Filter er fallen lassen muesste.
     """
 
     as_of: Week = Field(validation_alias="stand", serialization_alias="stand")
@@ -1298,3 +1331,11 @@ class SpeciesList(BaseSchema):
         serialization_alias="begehungenJeWocheLaufendesJahr",
     )
     species: list[SpeciesBrief] = Field(validation_alias="arten", serialization_alias="arten")
+    unassessable: list[SpeciesBrief] = Field(
+        validation_alias="unbeurteilbar",
+        serialization_alias="unbeurteilbar",
+        default_factory=list["SpeciesBrief"],
+    )
+    gaps: list[Gap] = Field(
+        validation_alias="luecken", serialization_alias="luecken", default_factory=list["Gap"]
+    )

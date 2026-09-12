@@ -759,6 +759,8 @@ async def test_the_listing_answers_in_camel_case(app: FastAPI) -> None:
         "begehungenJeWocheAlleJahre",
         "begehungenJeWocheLaufendesJahr",
         "arten",
+        "unbeurteilbar",
+        "luecken",
     }
     first_one = next(row for row in body["arten"] if row["slug"] == "steinpilz")
     assert set(first_one) == {
