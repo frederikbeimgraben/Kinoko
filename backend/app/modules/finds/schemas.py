@@ -30,9 +30,16 @@ class PhotoOut(BaseSchema):
 
 
 class FindIn(BaseSchema):
-    """Ein neuer Fund."""
+    """Ein neuer Fund.
 
-    species_slug: str = Field(validation_alias="artSlug", serialization_alias="artSlug")
+    Die Art darf fehlen. Wer einen Pilz findet und ihn nicht bestimmen kann,
+    soll ihn trotzdem eintragen duerfen: ein geratener Slug waere schlechter
+    als keiner, und der Ort und der Tag sind auch ohne Namen etwas wert.
+    """
+
+    species_slug: str | None = Field(
+        default=None, validation_alias="artSlug", serialization_alias="artSlug"
+    )
     lat: Latitude
     lon: Longitude
     found_on: FindDate = Field(validation_alias="datum", serialization_alias="datum")
@@ -79,7 +86,7 @@ class FindOut(BaseSchema):
     """Ein eigener Fund, mit genauem Ort."""
 
     id: str
-    species_slug: str = Field(validation_alias="artSlug", serialization_alias="artSlug")
+    species_slug: str | None = Field(validation_alias="artSlug", serialization_alias="artSlug")
     lat: float
     lon: float
     found_on: FindDate = Field(validation_alias="datum", serialization_alias="datum")
@@ -102,7 +109,7 @@ class SharedFind(BaseSchema):
     """
 
     id: str
-    species_slug: str = Field(validation_alias="artSlug", serialization_alias="artSlug")
+    species_slug: str | None = Field(validation_alias="artSlug", serialization_alias="artSlug")
     lat: float
     lon: float
     rounded: bool = Field(validation_alias="gerundet", serialization_alias="gerundet")

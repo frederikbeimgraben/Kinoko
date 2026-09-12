@@ -24,6 +24,7 @@ from app.core.settings import get_settings
 from app.main import build_app
 from app.models import Base
 from app.modules.species.dependencies import current_catalog
+from app.modules.species.store import species_rows
 from tests.objects import catalog_for_tests
 
 ISSUER = "https://sso.example.test/application/o/pilze/"
@@ -151,10 +152,22 @@ def auth_header(token: str) -> Mapping[str, str]:
 
 @pytest.fixture
 async def schema() -> AsyncIterator[None]:
-    """Legt das Schema in der SQLite-Datei des Tests an."""
+    """Legt das Schema in der SQLite-Datei des Tests an und setzt die Arten hinein.
+
+    Seit R4b zeigen ``find.species_slug`` und ``species_image.species_slug`` auf
+    ``species.slug``. Ein Fund im Test braucht seine Art darum als Zeile, sonst
+    lehnt SQLite ihn ab — genau wie im Betrieb.
+
+    Nur die Elternzeilen: die Kindtabellen braucht kein Test, der einen Fund
+    anlegt, und die Begriffe fuer die Schlagworte stehen erst nach der
+    Wanderung.
+    """
     engine_of_process = db.engine()
     async with engine_of_process.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
+    async with db.session_factory()() as writing:
+        writing.add_all(species_rows(catalog_for_tests().profiles))
+        await writing.commit()
     yield
     await engine_of_process.dispose()
 

@@ -61,9 +61,12 @@ SettingsDep = Annotated[Settings, Depends(get_settings)]
 CatalogDep = Annotated[Catalog, Depends(current_catalog)]
 
 
-def check_species(catalog: Catalog, slug: str) -> None:
-    """Weist einen Slug ab, den der Artenkatalog nicht kennt."""
-    if not catalog.has(slug):
+def check_species(catalog: Catalog, slug: str | None) -> None:
+    """Weist einen Slug ab, den der Artenkatalog nicht kennt.
+
+    Kein Slug ist kein Fehler: er heisst, dass die Art unbekannt ist.
+    """
+    if slug is not None and not catalog.has(slug):
         raise Invalid(f"Die Art {slug} steht nicht im Katalog.")
 
 
@@ -119,7 +122,10 @@ def place_for(find: Find, catalog: Catalog, sub: str | None) -> tuple[Point, boo
     exact: Point = (find.lon, find.lat)
     if find.owner_sub == sub:
         return exact, False
-    if catalog.is_protected(find.species_slug):
+    # Ohne Art gilt derselbe Zweifel wie bei einer unbekannten: der Ort geht
+    # grob heraus. Wer den Pilz nicht bestimmt hat, kann eine geschuetzte Art
+    # gefunden haben.
+    if find.species_slug is None or catalog.is_protected(find.species_slug):
         return to_grid(exact, GRID_KM), True
     return exact, False
 

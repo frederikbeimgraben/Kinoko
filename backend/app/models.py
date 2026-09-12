@@ -1,7 +1,7 @@
 """Tabellen der App. Die Baseline-Migration baut das Schema aus diesen Modellen."""
 
 from datetime import UTC, date, datetime
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import Final
 from uuid import uuid4
 
@@ -22,7 +22,33 @@ from sqlalchemy import Enum as SaEnum
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column, relationship
 from sqlalchemy.types import TypeDecorator
 
-from app.shared.schemas import Color, ImageState, Licence, Rule, TaxonRank, Visibility
+from app.shared.schemas import (
+    CapFeature,
+    CapMargin,
+    CapShape,
+    ChangeSpeed,
+    Color,
+    Edibility,
+    Frequency,
+    GillAttachment,
+    GillEdge,
+    GillSpacing,
+    Group,
+    HymenophoreKind,
+    ImageState,
+    Licence,
+    ProtectionStatus,
+    Reagent,
+    RedListStatus,
+    Rule,
+    Season,
+    StemFeature,
+    TaxonRank,
+    TraitKey,
+    TreeSpecies,
+    Unit,
+    Visibility,
+)
 
 # Eine UUID als Zeichenkette. Das Geraet vergibt sie schon offline, damit ein
 # Eintrag aus der Warteschlange dieselbe Kennung behaelt.
@@ -45,9 +71,14 @@ def _values(enumeration: type[Enum]) -> list[str]:
     return [str(member.value) for member in enumeration]
 
 
-def _enum_column(enumeration: type[Enum]) -> SaEnum:
-    """Eine Aufzaehlung als Textspalte mit Pruefung, so wie SQLite sie kann."""
-    return SaEnum(enumeration, native_enum=False, length=16, values_callable=_values)
+def _enum_column(enumeration: type[Enum], length: int = 16) -> SaEnum:
+    """Eine Aufzaehlung als Textspalte mit Pruefung, so wie SQLite sie kann.
+
+    Die Laenge ist die des laengsten Werts, aufgerundet. Sie steht nicht
+    automatisch da, weil eine gewachsene Spalte sie nicht mehr aendern soll:
+    ein neuer, laengerer Wert waere sonst still eine Schemaaenderung.
+    """
+    return SaEnum(enumeration, native_enum=False, length=length, values_callable=_values)
 
 
 class UtcTime(TypeDecorator[datetime]):
@@ -112,6 +143,23 @@ PERSON_KEYS: Final[tuple[tuple[str, str, str], ...]] = (
     ("text", "updated_by", TRACE_OF_PERSON),
     ("user_role", "user_sub", "CASCADE"),
 )
+
+
+# Die zwei Spalten, die auf eine Art zeigen, mit dem Namen ihrer Bedingung.
+# Wie ``PERSON_KEYS``: Migration und Zaehlwerkzeug lesen daraus, damit die
+# Liste nicht an zwei Stellen steht.
+#
+# ``RESTRICT``: eine Art verschwindet nicht, solange ein Fund sie nennt. Wer
+# eine Art aus dem Katalog nimmt, muss entscheiden, was mit den Funden wird.
+SPECIES_KEYS: Final[tuple[tuple[str, str], ...]] = (
+    ("find", "species_slug"),
+    ("species_image", "species_slug"),
+)
+
+
+def species_key(table: str, column: str) -> str:
+    """Der Name einer Bedingung auf ``species.slug``."""
+    return f"fk_{table}_{column}_species"
 
 
 class Person(Base):
@@ -329,7 +377,15 @@ class Find(MapObject):
     # Der Anzeigename friert beim Speichern ein. Ein spaeterer Namenswechsel im
     # SSO soll einen geteilten Fund nicht rueckwirkend umschreiben.
     owner_name: Mapped[str | None] = mapped_column(String(255), default=None)
-    species_slug: Mapped[str] = mapped_column(String(64), index=True)
+    # Leer heisst: die Art ist unbekannt. Wer einen Fund meldet, den er nicht
+    # bestimmen kann, soll ihn trotzdem eintragen duerfen; ein geratener Slug
+    # waere schlechter als keiner.
+    species_slug: Mapped[str | None] = mapped_column(
+        String(64),
+        ForeignKey("species.slug", ondelete="RESTRICT", name=species_key("find", "species_slug")),
+        default=None,
+        index=True,
+    )
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
     found_on: Mapped[date] = mapped_column(Date, index=True)
@@ -378,7 +434,18 @@ class SpeciesImage(Base):
     __tablename__ = "species_image"
 
     id: Mapped[str] = mapped_column(String(ID_LENGTH), primary_key=True, default=new_identifier)
-    species_slug: Mapped[str] = mapped_column(String(80), index=True)
+    # Der Verweis bleibt Pflicht, anders als beim Fund. Ein Artbild ohne Art
+    # gibt es heute nicht: der Endpunkt verlangt sie, und keine Zeile kann sie
+    # verlieren. Wahlfrei wird die Spalte mit R4c, wenn diese Tabelle und
+    # ``photo`` eine werden und ein Fundfoto ohne bestimmte Art dazukommt. Bis
+    # dahin waeren vier Abfragen auf einen Fall, den es nicht gibt, toter Code.
+    species_slug: Mapped[str] = mapped_column(
+        String(80),
+        ForeignKey(
+            "species.slug", ondelete="RESTRICT", name=species_key("species_image", "species_slug")
+        ),
+        index=True,
+    )
     uploader_sub: Mapped[str] = mapped_column(
         String(255),
         ForeignKey(
@@ -456,3 +523,346 @@ class Combination(Owned):
     name: Mapped[str] = mapped_column(String(80))
     rule: Mapped[Rule] = mapped_column(_enum_column(Rule), default=Rule.INTERSECTION)
     factors: Mapped[str] = mapped_column(Text)
+
+
+# --------------------------------------------------------------- Der Artenkatalog
+#
+# Die Profile lagen bis R4b nur als TOML neben dem Code. Jetzt tragen sie eine
+# Tabelle mit Kindtabellen, wie im Zieldiagramm. Die Dateien bleiben der
+# Anfangsbestand, so wie ``daten/texte.json`` es fuer die Oberflaechentexte ist:
+# die Wanderung liest sie ein, danach ist die Tabelle die Wahrheit.
+#
+# Diese Tabellen heissen englisch, anders als ihre aelteren Nachbarn. Das
+# Zielmodell nennt sie so, und R4d benennt ohnehin den Rest um; deutsche Namen
+# waeren zwei Umbenennungen statt einer.
+
+
+class NameKind(StrEnum):
+    """Warum ein Name neben dem Hauptnamen steht."""
+
+    COMMON = "weiterer"
+    SYNONYM = "synonym"
+
+
+class BodyPart(StrEnum):
+    """Der Teil des Pilzes, den eine Messung oder eine Farbe meint."""
+
+    CAP = "hut"
+    FRUITBODY = "fruchtkoerper"
+    HYMENIUM = "sporenlager"
+    STEM = "stiel"
+    FLESH = "fleisch"
+    SPORE_PRINT = "sporenpulver"
+    SPORE = "spore"
+
+
+class Dimension(StrEnum):
+    """Welche Strecke eine Messung nennt."""
+
+    WIDTH = "breite"
+    HEIGHT = "hoehe"
+    LENGTH = "laenge"
+    THICKNESS = "dicke"
+
+
+class ChangePart(StrEnum):
+    """Die zwei Seiten einer Verfaerbung: die Farbe vorher und die danach."""
+
+    FROM = "von"
+    TO = "nach"
+
+
+class SourceScope(StrEnum):
+    """Wofuer eine Quelle steht.
+
+    ``profil`` ist die Seite, gegen die das Profil geprueft wurde. Sie traegt
+    als einzige ein Pruefdatum. ``weiterfuehrend`` sind die Links, die die
+    Artseite unter den Merkmalen nennt.
+    """
+
+    PROFILE = "profil"
+    FURTHER = "weiterfuehrend"
+
+
+class Phase(StrEnum):
+    """Wann ein Merkmal gilt. Leer heisst: durchgehend.
+
+    Die Quelle schreibt oft "jung voll, spaeter hohl". Ohne diese Spalte waere
+    das entweder ein Widerspruch oder eine halbe Aussage.
+    """
+
+    YOUNG = "jung"
+    OLD = "alt"
+
+
+class SpeciesRow(Base):
+    """Eine Art. Die Zeile heisst ``SpeciesRow``, weil ``Species`` der Vertrag ist.
+
+    Alles, was genau einmal je Art vorkommt, steht hier. Was mehrfach vorkommt,
+    steht in einer Kindtabelle: Namen, Masse, Farben, Merkmale, Reagenzien,
+    Quellen, Begriffe und Verwechslungen.
+    """
+
+    __tablename__ = "species"
+
+    id: Mapped[str] = mapped_column(String(ID_LENGTH), primary_key=True, default=new_identifier)
+    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(120), unique=True)
+    latin_name: Mapped[str] = mapped_column(String(120))
+    group: Mapped[Group] = mapped_column(_enum_column(Group), index=True)
+    edibility: Mapped[Edibility] = mapped_column(_enum_column(Edibility), index=True)
+    collectable: Mapped[bool] = mapped_column(Boolean, default=True)
+    marketable: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Leer heisst: die Quelle sagt nichts zur Schweizer Marktliste. Das ist
+    # etwas anderes als "steht nicht darauf".
+    marketable_switzerland: Mapped[bool | None] = mapped_column(Boolean, default=None)
+    value_rating: Mapped[int | None] = mapped_column(Integer, default=None)
+    frequency: Mapped[Frequency | None] = mapped_column(_enum_column(Frequency), default=None)
+    red_list: Mapped[RedListStatus | None] = mapped_column(
+        _enum_column(RedListStatus, 24), default=None
+    )
+    warning: Mapped[str | None] = mapped_column(Text, default=None)
+    map_name: Mapped[str | None] = mapped_column(String(80), default=None)
+    edibility_note: Mapped[str | None] = mapped_column(Text, default=None)
+    protection_note: Mapped[str | None] = mapped_column(Text, default=None)
+    protection: Mapped[ProtectionStatus] = mapped_column(_enum_column(ProtectionStatus, 24))
+    # Die Fundstelle der Einstufung, als Zitat. Sie steht nicht in
+    # ``species_source``: die Tabelle traegt Adressen, das hier ist ein Satz.
+    protection_source: Mapped[str] = mapped_column(String(200))
+    period_start_month: Mapped[int | None] = mapped_column(Integer, default=None)
+    period_end_month: Mapped[int | None] = mapped_column(Integer, default=None)
+    period_peak_month: Mapped[int | None] = mapped_column(Integer, default=None)
+    smell_text: Mapped[str | None] = mapped_column(Text, default=None)
+    taste_text: Mapped[str | None] = mapped_column(Text, default=None)
+    hymenium_type: Mapped[HymenophoreKind | None] = mapped_column(
+        _enum_column(HymenophoreKind), default=None, index=True
+    )
+    gill_attachment: Mapped[GillAttachment | None] = mapped_column(
+        _enum_column(GillAttachment), default=None
+    )
+    gill_spacing: Mapped[GillSpacing | None] = mapped_column(
+        _enum_column(GillSpacing), default=None
+    )
+    gill_edge: Mapped[GillEdge | None] = mapped_column(_enum_column(GillEdge), default=None)
+    # Zwei Spalten statt einer Kindtabelle: die Form ist genau ein Umriss je
+    # Phase, nie eine Liste. Der Hutrand ist es, darum hat er eine Tabelle.
+    cap_shape_young: Mapped[CapShape | None] = mapped_column(_enum_column(CapShape), default=None)
+    cap_shape_old: Mapped[CapShape | None] = mapped_column(_enum_column(CapShape), default=None)
+    # Die Geschwindigkeit gehoert zur Verfaerbung, und die gibt es hoechstens
+    # einmal je Art. Ihre Farben stehen in ``species_colour_change``.
+    colour_change_speed: Mapped[ChangeSpeed | None] = mapped_column(
+        _enum_column(ChangeSpeed), default=None
+    )
+
+
+def _species_key() -> Mapped[str]:
+    """Der Verweis aufs Elternteil, wie ihn jede Kindtabelle traegt.
+
+    ``CASCADE``: eine Farbe ohne ihre Art sagt nichts. Die Kinder gehen mit dem
+    Profil, das ist der Unterschied zu allem, was einer Person gehoert.
+    """
+    return mapped_column(
+        String(ID_LENGTH),
+        ForeignKey("species.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+
+
+class SpeciesChild(Base):
+    """Was jede Kindtabelle des Profils teilt: der Verweis und die Reihenfolge.
+
+    ``position`` haelt die Reihenfolge der Datei fest. Ohne sie kaeme eine Liste
+    in beliebiger Folge zurueck, und der Vergleich gegen das Profil schluege
+    fehl, obwohl nichts fehlt.
+    """
+
+    __abstract__ = True
+
+    @declared_attr
+    @classmethod
+    def species_id(cls) -> Mapped[str]:
+        """Der Verweis auf die Art."""
+        return _species_key()
+
+    position: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+
+class SpeciesName(SpeciesChild):
+    """Ein weiterer Name oder ein Synonym. Der Hauptname steht an der Art."""
+
+    __tablename__ = "species_name"
+
+    name: Mapped[str] = mapped_column(String(120))
+    kind: Mapped[NameKind] = mapped_column(_enum_column(NameKind))
+
+
+class SpeciesMeasurement(Base):
+    """Eine Spanne: Koerperteil, Strecke, unten, oben, Einheit.
+
+    Teil und Strecke zusammen sind eindeutig, darum braucht diese Tabelle keine
+    Reihenfolge: die Artseite ordnet die Zeilen selbst.
+    """
+
+    __tablename__ = "species_measurement"
+
+    species_id: Mapped[str] = _species_key()
+    part: Mapped[BodyPart] = mapped_column(_enum_column(BodyPart), primary_key=True)
+    dimension: Mapped[Dimension] = mapped_column(_enum_column(Dimension), primary_key=True)
+    low: Mapped[float] = mapped_column(Float)
+    high: Mapped[float] = mapped_column(Float)
+    rare_low: Mapped[float | None] = mapped_column(Float, default=None)
+    rare_high: Mapped[float | None] = mapped_column(Float, default=None)
+    unit: Mapped[Unit] = mapped_column(_enum_column(Unit))
+    description: Mapped[str | None] = mapped_column(String(200), default=None)
+
+
+class SpeciesColour(Base):
+    """Eine Farbe an einem Koerperteil, in der Reihenfolge der Quelle."""
+
+    __tablename__ = "species_colour"
+
+    species_id: Mapped[str] = _species_key()
+    part: Mapped[BodyPart] = mapped_column(_enum_column(BodyPart), primary_key=True)
+    position: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(60))
+    hex: Mapped[str] = mapped_column(String(7))
+
+
+class SpeciesColourChange(Base):
+    """Eine Farbe der Verfaerbung, vor oder nach dem Schnitt.
+
+    Wie schnell sie kommt, steht an der Art: es gibt hoechstens eine
+    Verfaerbung je Profil, und eine Geschwindigkeit je Farbe waere erfunden.
+    """
+
+    __tablename__ = "species_colour_change"
+
+    species_id: Mapped[str] = _species_key()
+    part: Mapped[ChangePart] = mapped_column(_enum_column(ChangePart), primary_key=True)
+    position: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(60))
+    hex: Mapped[str] = mapped_column(String(7))
+
+
+class SpeciesCapFeature(SpeciesChild):
+    """Ein Hutmerkmal, das kein Umriss ist. ``phase`` leer heisst durchgehend."""
+
+    __tablename__ = "species_cap_feature"
+    __table_args__ = (UniqueConstraint("species_id", "feature", name="uq_cap_feature"),)
+
+    feature: Mapped[CapFeature] = mapped_column(_enum_column(CapFeature), index=True)
+    phase: Mapped[Phase | None] = mapped_column(_enum_column(Phase), default=None)
+
+
+class SpeciesCapMargin(SpeciesChild):
+    """Ein Zustand des Hutrands. Derselbe Rand kann jung und alt vorkommen."""
+
+    __tablename__ = "species_cap_margin"
+    __table_args__ = (UniqueConstraint("species_id", "margin", "phase", name="uq_cap_margin"),)
+
+    margin: Mapped[CapMargin] = mapped_column(_enum_column(CapMargin), index=True)
+    phase: Mapped[Phase | None] = mapped_column(_enum_column(Phase), default=None)
+
+
+class SpeciesStemFeature(SpeciesChild):
+    """Was der Stiel traegt. ``phase`` traegt "jung voll, spaeter hohl"."""
+
+    __tablename__ = "species_stem_feature"
+    __table_args__ = (UniqueConstraint("species_id", "feature", name="uq_stem_feature"),)
+
+    feature: Mapped[StemFeature] = mapped_column(_enum_column(StemFeature), index=True)
+    phase: Mapped[Phase | None] = mapped_column(_enum_column(Phase), default=None)
+
+
+class SpeciesReagent(SpeciesChild):
+    """Eine Chemikalie und die Farbe, die sie hervorruft."""
+
+    __tablename__ = "species_reagent"
+    __table_args__ = (UniqueConstraint("species_id", "reagent", name="uq_species_reagent"),)
+
+    reagent: Mapped[Reagent] = mapped_column(_enum_column(Reagent))
+    reaction: Mapped[str] = mapped_column(Text)
+
+
+class SpeciesTrait(Base):
+    """Eine Zeile der Merkmalstabelle: der Satz zu Hut, Stiel, Fleisch und Rest.
+
+    Der Schluessel ist eindeutig je Art, darum steht hier keine Reihenfolge:
+    die Artseite ordnet nach ``TraitKey``, nicht nach der Datei.
+    """
+
+    __tablename__ = "species_trait"
+
+    species_id: Mapped[str] = _species_key()
+    key: Mapped[TraitKey] = mapped_column(_enum_column(TraitKey), primary_key=True)
+    text: Mapped[str] = mapped_column(Text)
+
+
+class SpeciesSource(SpeciesChild):
+    """Eine Adresse zur Art: die geprueffte Quellseite oder ein weiterer Link."""
+
+    __tablename__ = "species_source"
+
+    scope: Mapped[SourceScope] = mapped_column(_enum_column(SourceScope))
+    title: Mapped[str | None] = mapped_column(String(120), default=None)
+    url: Mapped[str] = mapped_column(String(400))
+    # Nur die geprueffte Quellseite traegt ein Datum. Ein weiterfuehrender Link
+    # wird nicht Zeile fuer Zeile gegengelesen, und ein Datum daran waere eine
+    # Behauptung ueber eine Pruefung, die niemand gemacht hat.
+    checked_on: Mapped[str | None] = mapped_column(String(10), default=None)
+
+
+class SpeciesSeason(SpeciesChild):
+    """Eine Jahreszeit, in der die Art erscheint."""
+
+    __tablename__ = "species_season"
+    __table_args__ = (UniqueConstraint("species_id", "season", name="uq_species_season"),)
+
+    season: Mapped[Season] = mapped_column(_enum_column(Season), index=True)
+
+
+class SpeciesTree(SpeciesChild):
+    """Ein Baumpartner der Art.
+
+    ``from_experience`` trennt, was die Quellseite nennt, von dem, was das
+    Projekt selbst beobachtet hat. Beides steht in denselben Chips, aber wer
+    eine Angabe nachschlagen will, muss wissen, wo sie herkommt.
+    """
+
+    __tablename__ = "species_tree"
+    __table_args__ = (UniqueConstraint("species_id", "tree", name="uq_species_tree"),)
+
+    tree: Mapped[TreeSpecies] = mapped_column(_enum_column(TreeSpecies), index=True)
+    from_experience: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
+
+
+class SpeciesTerm(SpeciesChild):
+    """Ein Schlagwort zu Geruch oder Geschmack, aus dem Katalog ``term``.
+
+    Diese Werte stehen nicht als Enum im Code: die Verwaltung darf einen Geruch
+    hinzufuegen, ohne dass jemand deployt. Der Fremdschluessel sorgt dafuer,
+    dass kein Tippfehler als Schlagwort durchgeht.
+    """
+
+    __tablename__ = "species_term"
+    __table_args__ = (UniqueConstraint("species_id", "term_id", name="uq_species_term"),)
+
+    term_id: Mapped[int] = mapped_column(ForeignKey("term.id", ondelete="RESTRICT"), index=True)
+
+
+class SpeciesLookalike(SpeciesChild):
+    """Ein Paar von Arten, die man verwechselt. Es steht einmal, gilt aber beidseitig.
+
+    ``difference`` sagt, woran man die andere Art erkennt, ``own_difference``
+    woran man diese hier erkennt. Der Dienst liefert das Paar aus beiden
+    Richtungen; das ist keine zweite Zeile, sondern eine zweite Lesart.
+    """
+
+    __tablename__ = "species_lookalike"
+    __table_args__ = (UniqueConstraint("species_id", "other_id", name="uq_species_lookalike"),)
+
+    other_id: Mapped[str] = mapped_column(
+        String(ID_LENGTH), ForeignKey("species.id", ondelete="CASCADE"), index=True
+    )
+    difference: Mapped[str] = mapped_column(Text)
+    own_difference: Mapped[str | None] = mapped_column(Text, default=None)

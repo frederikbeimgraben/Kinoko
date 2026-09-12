@@ -82,20 +82,21 @@ async def training_finds(
 ) -> list[TrainingFind]:
     """Liefert jeden Fund, den sein Besitzer fuer das Training freigegeben hat.
 
-    Ein Fund, dessen Art nicht mehr im Katalog steht, faellt heraus. Die Kette
-    koennte ihn keiner Beobachtung zuordnen.
+    Ein Fund ohne Art oder mit einer, die nicht mehr im Katalog steht, faellt
+    heraus. Die Kette koennte ihn keiner Beobachtung zuordnen.
     """
     query = select(Find).where(Find.for_training).order_by(Find.found_on, Find.id)
     hit = await session.scalars(query)
     released: list[TrainingFind] = []
     for find in hit:
-        scientific = catalog.scientific(find.species_slug)
-        if scientific is None:
+        slug = find.species_slug
+        scientific = None if slug is None else catalog.scientific(slug)
+        if slug is None or scientific is None:
             continue
         released.append(
             TrainingFind(
                 id=find.id,
-                species_slug=find.species_slug,
+                species_slug=slug,
                 scientific=scientific,
                 lat=find.lat,
                 lon=find.lon,
