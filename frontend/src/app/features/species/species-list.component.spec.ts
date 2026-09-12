@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { SPECIES_LIST } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { SpeciesListComponent } from './species-list.component';
+import { SpeciesFilterState } from './filter.state';
 import { SpeciesState } from './species.state';
 
 interface Setup {
@@ -105,51 +106,67 @@ describe('ArtenComponent', () => {
   });
 
   it('nennt, wie viele Arten die Liste gerade zeigt', async () => {
-    const { refresh } = await build();
+    await build();
 
     expect(screen.getByText('5 Arten')).toBeInTheDocument();
+  });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Mit Vorhersage' }));
+  it('führt zum Filterblatt, statt über der Liste einzustellen', async () => {
+    const { router } = await build();
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+
+    expect(navigate).toHaveBeenCalledWith(['/arten/filter']);
+  });
+
+  it('zeigt je gesetzter Gruppe eine Marke und nimmt sie auf Druck ab', async () => {
+    const { refresh } = await build();
+    const filter = TestBed.inject(SpeciesFilterState);
+
+    filter.toggle('speisewert', 'essbar');
+    refresh();
+    const mark = screen.getByRole('button', { name: 'Speisewert nicht mehr filtern' });
+    // Die zweite Anfrage geht mit dem Filter heraus.
+    TestBed.inject(HttpTestingController).expectOne('/api/arten?wert=speisewert:essbar').flush(SPECIES_LIST);
     refresh();
 
-    // Ohne diese Zahl wirkte der Chip tot: die Liste steht nach Stufe, oben
-    // bleiben dieselben Zeilen stehen.
-    expect(screen.getByText('2 von 5 Arten')).toBeInTheDocument();
+    await userEvent.click(mark);
+    refresh();
+
+    expect(filter.any()).toBe(false);
   });
 
   it('zeigt auch die Arten, die niemand sammelt', async () => {
-    const { refresh } = await build();
+    await build();
 
     // Bis D9 stand der Gallenröhrling draußen und war nur über die Suche zu
     // finden. Wer einen Pilz gesehen hat und nachschlägt, weiß vorher nicht,
     // ob er sammelbar ist — das ist ja die Frage.
     expect(names()).toContain('Gallenröhrling');
     expect(screen.getByText('5 Arten')).toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Sammelbar' }));
-    refresh();
-
-    expect(names()).not.toContain('Gallenröhrling');
-    expect(screen.getByText('4 von 5 Arten')).toBeInTheDocument();
   });
 
-  it('filtert nach der Stufe der Essbarkeit', async () => {
+  it('setzt die Arten ohne Angabe abgesetzt unter die Treffer', async () => {
     const { refresh } = await build();
+    const filter = TestBed.inject(SpeciesFilterState);
 
-    await userEvent.click(screen.getByRole('button', { name: 'giftig' }));
+    filter.toggle('hutform', 'gewoelbt');
+    refresh();
+    TestBed.inject(HttpTestingController)
+      .expectOne('/api/arten?wert=hutform:gewoelbt')
+      .flush({
+        ...SPECIES_LIST,
+        arten: [SPECIES_LIST.arten[0]],
+        unbeurteilbar: [SPECIES_LIST.arten[1], SPECIES_LIST.arten[2]],
+        luecken: [{ schluessel: 'hutform', anzahl: 2 }],
+      });
     refresh();
 
-    expect(names()).toEqual(['Gallenröhrling']);
-
-    await userEvent.click(screen.getByRole('button', { name: 'tödlich giftig' }));
-    refresh();
-
-    expect(screen.getByText('Keine Art passt zur Suche.')).toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Jede Stufe' }));
-    refresh();
-
-    expect(names()).toHaveLength(5);
+    // Sie fallen nicht still heraus: die Zahl steht dran, und sie stehen
+    // unter den Treffern statt zwischen ihnen.
+    expect(screen.getByText('Nicht beurteilbar · 2')).toBeInTheDocument();
+    expect(names()).toHaveLength(3);
   });
 
   it('findet über die Suche auch einen Giftpilz und zeigt seine Stufe rot', async () => {
@@ -182,25 +199,23 @@ describe('ArtenComponent', () => {
     expect(screen.getByText('Keine Art passt zur Suche.')).toBeInTheDocument();
   });
 
-  it('filtert über die Chips nach Stufe, Gruppe und Jahreszeit', async () => {
+  it('fragt den Server, statt im Speicher zu filtern', async () => {
+    // Die Regel steht auf dem Server: oder in der Gruppe, und zwischen den
+    // Gruppen, dazu die Unbeurteilbaren. Zweimal gerechnet liefe sie auseinander.
     const { refresh } = await build();
+    const filter = TestBed.inject(SpeciesFilterState);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Mit Vorhersage' }));
+    filter.toggle('speisewert', 'essbar');
+    filter.toggle('speisewert', 'giftig');
+    filter.toggleKeepUnknown('hutform');
     refresh();
-    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz']);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Röhrlinge' }));
-    refresh();
-    // Der Gallenröhrling ist einer, auch wenn ihn niemand sammelt.
-    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz', 'Gallenröhrling']);
+    const call = TestBed.inject(HttpTestingController).expectOne(
+      '/api/arten?wert=speisewert:essbar&wert=speisewert:giftig&ohneAngabe=hutform',
+    );
+    call.flush(SPECIES_LIST);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Herbst' }));
-    refresh();
-    expect(names()).toEqual(['Maronenröhrling', 'Steinpilz', 'Semmelstoppelpilz', 'Gallenröhrling']);
-
-    await userEvent.click(screen.getByRole('button', { name: 'Alle' }));
-    refresh();
-    expect(names()).toHaveLength(5);
+    expect(call.request.method).toBe('GET');
   });
 
   it('hebt die aktive Art der Karte hervor', async () => {

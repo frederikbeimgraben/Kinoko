@@ -1,0 +1,25 @@
+<app-page-header [titel]="'filter.titel' | t" [back]="true" (backClick)="back()">
+  @if (any()) {
+    <button class="filter__reset" type="button" (click)="reset()">
+      {{ 'filter.zuruecksetzen' | t }}
+    </button>
+  }
+</app-page-header>
+<div class="filter">
+  @if (groups().length === 0) {
+    <app-note>{{ 'filter.leer' | t }}</app-note>
+  } @else {
+    <app-card class="flush">
+      @for (group of groups(); track group.key) {
+        <app-list-row
+          [titel]="group.name"
+          [subline]="group.coverage"
+          [value]="group.ready ? group.chosen : ('filter.nochNicht' | t)"
+          [clickable]="group.ready"
+          (chosen)="open(group)"
+        />
+      }
+    </app-card>
+  }
+</div>
+<app-action-bar [primary]="hits()" (mainClick)="back()" />

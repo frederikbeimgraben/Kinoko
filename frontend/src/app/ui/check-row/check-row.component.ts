@@ -23,6 +23,8 @@ export class CheckRowComponent {
   readonly titel = input.required<string>();
   readonly subline = input<string>();
   readonly checked = input(false);
+  /** Eine Zahl rechts in der Zeile. Der Filter nennt damit, was ein Wert trifft. */
+  readonly value = input<string>();
   /** Eine feste Rolle trägt jedes Recht und lässt es sich nicht abwählen. */
   readonly disabled = input(false);
 

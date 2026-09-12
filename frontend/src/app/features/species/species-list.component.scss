@@ -24,3 +24,53 @@
 .species__count {
   margin-block-start: -12px;
 }
+
+// Die Marken über der Liste: der Knopf zum Blatt, dann je Gruppe eine Marke,
+// die sich abnehmen lässt. Sie zeigen den Zustand, sie stellen ihn nicht ein.
+.species__marks {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.species__filter,
+.species__mark {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 6px;
+  align-items: center;
+  block-size: var(--pilz-chip-height);
+  padding: 0 13px;
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  background: none;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.species__mark {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+// Die Unbeurteilbaren stehen abgesetzt unter den Treffern, nicht mittendrin.
+.species__gap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-block-start: 4px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.species__gap i {
+  flex: 1;
+  block-size: 1px;
+  background: var(--color-border);
+}

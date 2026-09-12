@@ -1,23 +1,30 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChildren } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChildren,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { BadgeComponent, CardComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
-import { EDIBILITIES, type Essbarkeit, type SpeciesBrief, type Tag } from '../../core/api/models';
+import type { FacetKey, SpeciesBrief } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { TranslationKey } from '../../core/i18n/translations';
 import {
-  ChipGroupComponent,
   EmptyStateComponent,
   FormFieldComponent,
   NoteComponent,
   PageHeaderComponent,
   SpeciesRowComponent,
-  type Chip,
+  SvgIconComponent,
 } from '../../ui';
+import { FACET_TEXT } from './facet-labels';
+import { SpeciesFilterState } from './filter.state';
 import { SpeciesState } from './species.state';
 import {
   EDIBILITY_BADGE,
-  EDIBILITY_DANGER,
   EDIBILITY_TEXT,
   GEFAEHRLICH,
   LEVEL_BADGE,
@@ -27,33 +34,12 @@ import {
   TAG_TEXT,
 } from './labels';
 
-/**
- * Der Chip, der auf die sammelbaren Arten einschränkt.
- *
- * Bis D9 war das die Vorgabe und die übrigen 221 Profile standen draußen. Das
- * arbeitete gegen den Zweck der Liste: wer einen Pilz gesehen hat und
- * nachschlägt, weiß vorher nicht, ob er sammelbar ist. „sammelbar“ ist kein
- * Tag einer Art, sondern eine Bedingung an sie.
- */
-const CHIP_COLLECTABLE = 'sammelbar';
-
-/** „alle“ zeigt den ganzen Katalog, jeder andere Chip schränkt ein. */
-type ChipValue = 'alle' | typeof CHIP_COLLECTABLE | Tag;
-
-/**
- * Die fünf Chips der Mockups. Die Werte sind Enum-Werte des Backends, die
- * Beschriftungen stehen wörtlich in `docs/mockups/Arten.dc.html`.
- */
-const CHIPS: readonly { value: ChipValue; label: TranslationKey }[] = [
-  { value: 'alle', label: 'arten.chip.alle' },
-  { value: 'vorhersage', label: 'arten.chip.mitVorhersage' },
-  { value: 'roehrling', label: 'arten.chip.roehrlinge' },
-  { value: 'herbst', label: 'arten.chip.herbst' },
-  { value: CHIP_COLLECTABLE, label: 'arten.chip.sammelbar' },
-];
-
-/** Die Stufen der Essbarkeit als zweite Reihe. „alle“ schränkt nicht ein. */
-type LevelFilter = 'alle' | Essbarkeit;
+/** Eine abnehmbare Marke über der Liste: sie zeigt eine Gruppe, die filtert. */
+interface Mark {
+  key: FacetKey;
+  text: string;
+  label: string;
+}
 
 /** Ein Tag unter dem Namen einer Art. */
 interface Marke {
@@ -89,12 +75,12 @@ interface Row {
   imports: [
     BadgeComponent,
     CardComponent,
-    ChipGroupComponent,
     EmptyStateComponent,
     FormFieldComponent,
     NoteComponent,
     PageHeaderComponent,
     SpeciesRowComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './species-list.component.html',
@@ -102,47 +88,43 @@ interface Row {
 })
 export class SpeciesListComponent {
   private readonly state = inject(SpeciesState);
+  private readonly filter = inject(SpeciesFilterState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly rowRefs = viewChildren(SpeciesRowComponent);
 
   protected readonly search = signal('');
-  protected readonly chip = signal<ChipValue>('alle');
-  protected readonly edibility = signal<LevelFilter>('alle');
 
-  protected readonly chips = computed<Chip[]>(() =>
-    CHIPS.map((chip) => ({ value: chip.value, label: this.i18n.translate(chip.label) })),
+  /**
+   * Die Marken über der Liste zeigen den Zustand, sie stellen ihn nicht ein.
+   * Eingestellt wird im Blatt; sonst wären es wieder Pillen, nur mit mehr
+   * Schritten. Passen sie nicht in eine Zeile, folgt „+2“ statt eines Umbruchs.
+   */
+  protected readonly marks = computed<Mark[]>(() =>
+    [...this.filter.values().keys()].map((key) => ({
+      key,
+      text: this.i18n.translate(FACET_TEXT[key]),
+      label: this.i18n.translate('filter.marke.entfernen', {
+        gruppe: this.i18n.translate(FACET_TEXT[key]),
+      }),
+    })),
   );
 
-  protected readonly edibilityChips = computed<Chip[]>(() => [
-    { value: 'alle', label: this.i18n.translate('arten.chip.jedeStufe') },
-    ...EDIBILITIES.map((level) => ({
-      value: level,
-      label: this.i18n.translate(EDIBILITY_TEXT[level]),
-    })),
-  ]);
+  protected readonly rows = computed<Row[]>(() => this.build(this.grundmenge()));
 
-  protected readonly rows = computed<Row[]>(() => {
-    const query = this.search().trim().toLocaleLowerCase();
-    const chip = this.chip();
-    const active = this.state.activeSpecies();
-    // `filter` gibt schon eine eigene Liste zurück; `sort` rührt den Zustand nicht an.
-    const level = this.edibility();
-    const filtered = this.grundmenge()
-      .filter((art) => (chip === CHIP_COLLECTABLE ? art.sammelbar : true))
-      .filter((art) => chip === 'alle' || chip === CHIP_COLLECTABLE || art.tags.includes(chip))
-      .filter((art) => level === 'alle' || art.speisewert === level)
-      .filter((art) => this.matches(art, query));
-    // Sucht jemand nach einer Stufe der Essbarkeit, führt die Gefahr: wer nach
-    // „tödlich giftig“ filtert, sucht das Tödliche und nicht das Alphabet.
-    const byDanger = level !== 'alle';
-    filtered.sort(
-      (links, right) =>
-        (byDanger
-          ? EDIBILITY_DANGER[links.speisewert] - EDIBILITY_DANGER[right.speisewert]
-          : LEVEL_RANK[links.stufe] - LEVEL_RANK[right.stufe]) || links.name.localeCompare(right.name, 'de'),
-    );
-    return filtered.map((art) => this.row(art, art.slug === active));
+  /**
+   * Die Arten, die an keiner Bedingung scheitern, sondern nur daran, dass die
+   * Quelle zu einem gewählten Merkmal nichts sagt. Sie fallen nicht still
+   * heraus: sie stehen abgesetzt unter den Treffern.
+   */
+  protected readonly unassessable = computed<Row[]>(() =>
+    this.build(this.state.filtered()?.unbeurteilbar ?? []),
+  );
+
+  protected readonly gapText = computed<string | null>(() => {
+    const count = this.unassessable().length;
+    if (!count) return null;
+    return this.i18n.translate('arten.nichtBeurteilbar', { anzahl: String(count) });
   });
 
   /**
@@ -150,10 +132,8 @@ export class SpeciesListComponent {
    * wie tot: die Liste steht nach Stufe, die ersten Zeilen bleiben dieselben,
    * und dass aus 85 Arten 23 wurden, sieht man erst nach langem Scrollen.
    */
-  /** Ein Topf: der ganze Katalog. Die Chips schränken ihn ein. */
-  protected readonly grundmenge = computed<readonly SpeciesBrief[]>(
-    () => this.state.catalogue()?.arten ?? [],
-  );
+  /** Was der Server unter dem Filter liefert. Ohne Filter der ganze Katalog. */
+  protected readonly grundmenge = computed<readonly SpeciesBrief[]>(() => this.state.filtered()?.arten ?? []);
 
   protected readonly countText = computed(() => {
     const gesamt = this.grundmenge().length;
@@ -164,17 +144,28 @@ export class SpeciesListComponent {
   });
 
   constructor() {
-    this.state.loadCatalogue();
+    effect(() => {
+      this.state.loadFiltered(this.filter.query());
+    });
   }
 
-  protected selectChip(value: string): void {
-    const chip = CHIPS.find((candidate) => candidate.value === value);
-    if (chip) this.chip.set(chip.value);
+  protected openFilter(): void {
+    void this.router.navigate(['/arten/filter']);
   }
 
-  protected selectEdibility(value: string): void {
-    const level = EDIBILITIES.find((candidate) => candidate === value);
-    this.edibility.set(level ?? 'alle');
+  protected drop(key: FacetKey): void {
+    this.filter.clear(key);
+  }
+
+  private build(species: readonly SpeciesBrief[]): Row[] {
+    const query = this.search().trim().toLocaleLowerCase();
+    const active = this.state.activeSpecies();
+    const found = species.filter((art) => this.matches(art, query));
+    found.sort(
+      (links, right) =>
+        LEVEL_RANK[links.stufe] - LEVEL_RANK[right.stufe] || links.name.localeCompare(right.name, 'de'),
+    );
+    return found.map((art) => this.row(art, art.slug === active));
   }
 
   protected open(slug: string): void {
