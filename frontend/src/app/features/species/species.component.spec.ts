@@ -361,19 +361,30 @@ describe('ArtComponent', () => {
     await noViolations(container);
   }, 30_000);
 
-  it('nimmt einem Verwechslungsprofil Saison und Karte, gibt ihm den Rückweg', async () => {
+  it('sagt einer Art ohne Vorhersage, dass die Daten fehlen, nicht der Pilz', async () => {
     const { container } = await build(GALLENROEHRLING, 'gallenroehrling');
 
-    expect(
-      screen.getByText(
-        'Diese Art wird nicht gesammelt. Sie steht im Katalog, weil sammelbare Arten ihr ähnlich sehen.',
-      ),
-    ).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Saison' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Auf der Karte anzeigen' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Zu den Arten' })).toBeInTheDocument();
+    // Bis D9 stand hier „Diese Art wird nicht gesammelt“. Das ist eine Aussage
+    // über den Pilz, und die steht uns nicht zu. Die Seite sieht aus wie jede
+    // andere; nur wo Daten fehlen, sagt sie das.
+    expect(screen.getByRole('heading', { name: 'Saison' })).toBeInTheDocument();
+    expect(screen.getByText('Zu wenige Begehungen für eine Saisonkurve')).toBeInTheDocument();
+    const button = screen.getByRole('button', { name: 'Auf der Karte anzeigen' });
+    expect(button).toBeDisabled();
+    expect(screen.getByText('Für diese Art gibt es keine Vorhersage')).toBeInTheDocument();
     await noViolations(container);
   }, 30_000);
+
+  it('gibt den Rückweg nur, wenn der Sprung von einer anderen Art kam', async () => {
+    const { state, refresh } = await build(GALLENROEHRLING, 'gallenroehrling');
+
+    expect(screen.queryByRole('button', { name: 'Zu den Arten' })).not.toBeInTheDocument();
+
+    state.setOrigin({ slug: 'steinpilz', name: 'Steinpilz' });
+    refresh();
+
+    expect(screen.getByRole('button', { name: 'Zurück zu Steinpilz' })).toBeInTheDocument();
+  });
 
   it('führt vom Verwechslungsprofil zu der Art zurück, von der man kam', async () => {
     const { router, state, refresh } = await build(GALLENROEHRLING, 'gallenroehrling');

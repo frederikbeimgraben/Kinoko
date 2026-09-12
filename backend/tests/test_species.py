@@ -887,7 +887,7 @@ def _chain_maps(target: Path) -> Path:
 
 def test_the_tiers_follow_the_rendered_maps(tmp_path: Path) -> None:
     built = catalog(DATA, _chain_maps(tmp_path / "maps"))
-    levels = [species.tier for species in built.listing().species]
+    levels = [species.tier for species in built.listing(only_collectable=True).species]
 
     assert levels.count(Tier.FORECAST) == 13
     assert levels.count(Tier.SEASON) == 52
@@ -1267,8 +1267,21 @@ def test_the_mapping_names_only_fields_of_the_file() -> None:
     assert set(PROFILE_FIELD_ON_THE_WIRE) <= set(Profile.model_fields)
 
 
-def test_the_listing_shows_only_collectable_ones_without_a_parameter(built: Catalog) -> None:
+def test_the_listing_shows_the_whole_catalogue_without_a_parameter(built: Catalog) -> None:
+    # Bis D9 kamen hier nur die sammelbaren. Wer einen Pilz nachschlaegt, weiss
+    # vorher nicht, ob er sammelbar ist — das ist ja die Frage.
     species = built.listing().species
+
+    assert [species.slug for species in species] == [
+        "braetling",
+        "gallenroehrling",
+        "maipilz",
+        "steinpilz",
+    ]
+
+
+def test_the_listing_narrows_to_the_collectable_ones_on_request(built: Catalog) -> None:
+    species = built.listing(only_collectable=True).species
 
     assert [species.slug for species in species] == ["braetling", "maipilz", "steinpilz"]
     assert all(species.collectable for species in species)
@@ -1285,9 +1298,17 @@ def test_the_listing_shows_all_on_request(built: Catalog) -> None:
     assert len(built.listing(only_collectable=None).species) == 4
 
 
-async def test_the_endpoint_returns_the_collectable_ones_without_a_parameter(app: FastAPI) -> None:
+async def test_the_endpoint_returns_the_whole_catalogue_without_a_parameter(app: FastAPI) -> None:
     async with client(app) as call:
         response = await call.get("/api/arten")
+
+    slugs = [species["slug"] for species in response.json()["arten"]]
+    assert slugs == ["braetling", "gallenroehrling", "maipilz", "steinpilz"]
+
+
+async def test_the_endpoint_narrows_with_collectable_true(app: FastAPI) -> None:
+    async with client(app) as call:
+        response = await call.get("/api/arten", params={"sammelbar": "true"})
 
     slugs = [species["slug"] for species in response.json()["arten"]]
     assert slugs == ["braetling", "maipilz", "steinpilz"]
@@ -1300,25 +1321,81 @@ async def test_the_endpoint_returns_the_others_with_collectable_false(app: FastA
     assert [species["slug"] for species in response.json()["arten"]] == ["gallenroehrling"]
 
 
-async def test_the_endpoint_returns_both_groups_with_all(app: FastAPI) -> None:
+async def test_the_endpoint_has_no_parameter_for_both_groups_any_more(app: FastAPI) -> None:
+    # "alle" war der Schalter, der die stille Vorgabe aufhob. Ohne Vorgabe
+    # braucht es ihn nicht, und ein Rest davon waere ein zweiter Weg zum
+    # selben Ergebnis.
     async with client(app) as call:
-        response = await call.get("/api/arten", params={"alle": "true", "sammelbar": "false"})
+        response = await call.get("/api/arten", params={"alle": "true"})
 
-    assert len(response.json()["arten"]) == 4
+    assert response.status_code == 422
 
 
-async def test_the_real_listing_shows_eightyfive_species() -> None:
+async def test_the_real_listing_shows_all_threehundredsix() -> None:
     async with client(build_app()) as call:
         response = await call.get("/api/arten")
+
+    assert len(response.json()["arten"]) == 306
+
+
+async def test_the_real_listing_narrows_to_eightyfive_collectable_ones() -> None:
+    async with client(build_app()) as call:
+        response = await call.get("/api/arten", params={"sammelbar": "true"})
 
     assert len(response.json()["arten"]) == 85
 
 
-async def test_the_real_listing_knows_all_threehundredsix() -> None:
+async def test_a_species_without_a_season_carries_an_empty_curve() -> None:
+    # Der Absturz von D1f: die Liste rechnete an 224 Profilen ohne Zeile in der
+    # Saisontabelle. Die Antwort haelt sie seither aus, und "sammelbar" war nie
+    # der Schutz davor — er hat den Fehler nur versteckt.
     async with client(build_app()) as call:
-        response = await call.get("/api/arten", params={"alle": "true"})
+        response = await call.get("/api/arten")
 
-    assert len(response.json()["arten"]) == 306
+    rows = response.json()["arten"]
+    without = [row for row in rows if row["saison"] is None]
+
+    assert len(without) > 200
+    assert all(row["name"] for row in without)
+
+
+def test_the_listing_survives_a_catalogue_without_any_season(tmp_path: Path) -> None:
+    empty = tmp_path / "leer"
+    empty.mkdir()
+    (empty / "saison.json").write_text(
+        json.dumps(
+            {
+                "standJahr": 2026,
+                "standWoche": 3,
+                "vonJahr": 2015,
+                "bisJahr": 2025,
+                "minArten": 2,
+                "begehungenJeWoche": [0] * WEEKS,
+                "begehungenJeWocheLaufendesJahr": [0] * WEEKS,
+                "arten": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (empty / "arten").mkdir()
+    (empty / "arten" / "maipilz.toml").write_text(ST_GEORGES, encoding="utf-8")
+    (empty / "arten" / "gallenroehrling.toml").write_text(BITTER_BOLETE, encoding="utf-8")
+
+    listing = catalog(empty, tmp_path / "keine-karten").listing()
+
+    assert [species.slug for species in listing.species] == ["gallenroehrling", "maipilz"]
+    assert all(species.season is None for species in listing.species)
+
+
+async def test_every_species_of_the_catalogue_carries_a_row() -> None:
+    # Der Gruene Knollenblaetterpilz steht beim Blaettern, nicht nur hinter der
+    # Suche. Das ist der Zweck der Regel aus D9.
+    async with client(build_app()) as call:
+        response = await call.get("/api/arten")
+
+    slugs = {species["slug"] for species in response.json()["arten"]}
+    assert "gruener-knollenblaetterpilz" in slugs
+    assert "steinpilz" in slugs
 
 
 # ------------------------------------------------- Baeume, Warnung, Reagenzien
@@ -1378,7 +1455,11 @@ def test_the_poisonous_species_of_the_chain_warn(tmp_path: Path) -> None:
     built = catalog(DATA, tmp_path)
     poisonous = {Edibility.POISONOUS, Edibility.DEADLY}
 
-    warned = [species.slug for species in built.listing().species if species.edibility in poisonous]
+    warned = [
+        species.slug
+        for species in built.listing(only_collectable=True).species
+        if species.edibility in poisonous
+    ]
     assert sorted(warned) == [
         "erdritterling",
         "nebelkappe",
@@ -1539,7 +1620,6 @@ async def test_the_endpoint_takes_the_new_filters(app: FastAPI) -> None:
         response = await call.get(
             "/api/arten",
             params={
-                "alle": "true",
                 "hutform": "gewoelbt",
                 "hutmerkmal": "gebuckelt",
                 "hutrand": "eingerollt",
@@ -1644,9 +1724,7 @@ def test_the_filter_reaches_attachment_spacing_and_edge(built: Catalog) -> None:
 
 async def test_the_endpoint_takes_the_layer_filter(app: FastAPI) -> None:
     async with client(app) as call:
-        response = await call.get(
-            "/api/arten", params={"alle": "true", "fruchtschicht": "lamellen"}
-        )
+        response = await call.get("/api/arten", params={"fruchtschicht": "lamellen"})
 
     assert response.status_code == 200
 
@@ -1771,9 +1849,7 @@ def test_the_filter_holds_together_with_the_collectable_flag(built: Catalog) -> 
 
 async def test_the_endpoint_takes_the_edibility_filter(app: FastAPI) -> None:
     async with client(app) as call:
-        response = await call.get(
-            "/api/arten", params={"alle": "true", "speisewert": "ungeniessbar"}
-        )
+        response = await call.get("/api/arten", params={"speisewert": "ungeniessbar"})
 
     assert response.status_code == 200
     assert [row["slug"] for row in response.json()["arten"]] == ["gallenroehrling"]
@@ -1789,10 +1865,8 @@ async def test_a_level_outside_the_enum_is_rejected(app: FastAPI) -> None:
 
 async def test_the_real_listing_filters_by_level() -> None:
     async with client(build_app()) as call:
-        deadly = await call.get(
-            "/api/arten", params={"alle": "true", "speisewert": "toedlichGiftig"}
-        )
-        edible = await call.get("/api/arten", params={"alle": "true", "speisewert": "essbar"})
+        deadly = await call.get("/api/arten", params={"speisewert": "toedlichGiftig"})
+        edible = await call.get("/api/arten", params={"speisewert": "essbar"})
 
     assert len(deadly.json()["arten"]) == 21
     assert len(edible.json()["arten"]) == 180

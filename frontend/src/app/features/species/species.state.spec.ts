@@ -19,7 +19,7 @@ describe('ArtenZustand', () => {
     http.expectOne('/api/arten').flush(SPECIES_LIST);
     state.loadCatalogue();
 
-    expect(state.catalogue()?.arten).toHaveLength(4);
+    expect(state.catalogue()?.arten).toHaveLength(5);
     http.verify();
   });
 

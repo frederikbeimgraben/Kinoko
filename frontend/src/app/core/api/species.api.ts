@@ -9,10 +9,10 @@ export class SpeciesApi {
   private readonly api = inject(ApiClient);
 
   /**
-   * Ohne Angabe kommen nur die sammelbaren Arten. Die 221 Verwechslungsprofile
-   * holt `sammelbar: false`, beide Töpfe zusammen `alle: true`.
+   * Ohne Angabe kommt der ganze Katalog. `sammelbar` schränkt ein, in beide
+   * Richtungen; es ist ein Filter wie jeder andere und keine Vorgabe.
    */
-  catalogue(query?: { sammelbar?: boolean; alle?: boolean }): Observable<SpeciesCatalogue> {
+  catalogue(query?: { sammelbar?: boolean }): Observable<SpeciesCatalogue> {
     return this.api.get<SpeciesCatalogue>('/arten', query);
   }
 

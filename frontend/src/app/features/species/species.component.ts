@@ -223,7 +223,19 @@ export class SpeciesComponent {
     return art ? this.create(art) : null;
   });
 
-  /** Der Rückweg von einem Verwechslungsprofil: zur Art, von der man kam. */
+  /**
+   * Kam der Sprung von einer anderen Art? Dann steht der Rückweg zu ihr.
+   *
+   * Das hing bis D9 an `sammelbar`, und das war die falsche Frage: der Rückweg
+   * ist eine Sache des Weges, nicht des Pilzes. Wer vom Steinpilz zum
+   * Gallenröhrling springt, will zurück — und umgekehrt genauso.
+   */
+  protected readonly vonAndererArt = computed(() => {
+    const herkunft = this.origin();
+    return herkunft !== null && herkunft.slug !== this.slug();
+  });
+
+  /** Der Rückweg: zur Art, von der man kam. */
   protected readonly rueckweg = computed(() => {
     const herkunft = this.origin();
     return herkunft && herkunft.slug !== this.slug()

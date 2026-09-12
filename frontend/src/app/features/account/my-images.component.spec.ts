@@ -24,7 +24,7 @@ async function build(
     providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(ANY_ROUTE)],
   });
   const http = TestBed.inject(HttpTestingController);
-  http.expectOne('/api/arten?alle=true').flush(SPECIES_LIST);
+  http.expectOne('/api/arten').flush(SPECIES_LIST);
   http
     .expectOne('/api/species-images/mine?offset=0&limit=25')
     .flush({ eintraege: entries, gesamt: total ?? entries.length, limit: 25, offset: 0 });

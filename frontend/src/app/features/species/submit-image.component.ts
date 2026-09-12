@@ -126,7 +126,7 @@ export class SubmitImageComponent implements OnDestroy {
     effect(() => {
       // Der Katalog nennt Namen und Schutz. Beides braucht diese Seite, und
       // ein zweiter Weg über das Profil wäre eine Anfrage zu viel.
-      this.species.loadAll();
+      this.species.loadCatalogue();
       // Der Dienst hält einen Beobachter für die ganze App; ein zweiter Anstoß
       // kostet keine zweite Ortung.
       this.locating.start();

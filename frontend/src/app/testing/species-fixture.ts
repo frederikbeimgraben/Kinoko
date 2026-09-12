@@ -138,7 +138,9 @@ export const SPECIES_LIST: SpeciesCatalogue = {
   begehungen: 48_120,
   begehungenJeWocheAlleJahre: VISITS_ALL_YEARS,
   begehungenJeWocheLaufendesJahr: VISITS_CURRENT_YEAR,
-  arten: [PENNY_BUN_BRIEF, BAY_BOLETE_BRIEF, HEDGEHOG_BRIEF, MOREL_BRIEF],
+  // Der ganze Katalog, sammelbare und uebrige zusammen: seit D9 antwortet
+  // ``GET /api/arten`` ohne Parameter so.
+  arten: [PENNY_BUN_BRIEF, BAY_BOLETE_BRIEF, HEDGEHOG_BRIEF, MOREL_BRIEF, GALLENROEHRLING_KURZ],
 };
 
 const SEASON: SeasonCurveData = {
@@ -358,16 +360,4 @@ export const GALLENROEHRLING: Species = {
     },
   ],
   saison: null,
-};
-
-/** `GET /api/arten?sammelbar=false`: nur die Profile, die niemand sammelt. */
-export const LOOKALIKE_LIST: SpeciesCatalogue = {
-  ...SPECIES_LIST,
-  arten: [GALLENROEHRLING_KURZ],
-};
-
-/** `GET /api/arten?alle=true`: beide Töpfe, für die Suche über den Katalog. */
-export const FULL_LIST: SpeciesCatalogue = {
-  ...SPECIES_LIST,
-  arten: [...SPECIES_LIST.arten, GALLENROEHRLING_KURZ],
 };

@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  viewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { BadgeComponent, CardComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
 import { EDIBILITIES, type Essbarkeit, type SpeciesBrief, type Tag } from '../../core/api/models';
@@ -37,15 +29,17 @@ import {
 } from './labels';
 
 /**
- * Der einzige Chip, der die nicht sammelbaren Profile zeigt. Die 221 Profile
- * stehen sonst draußen: wer den Katalog durchblättert, sucht etwas zum
- * Sammeln. „nichtSammelbar“ ist kein Tag einer Art, sondern der Topf, aus dem
- * die Liste zieht.
+ * Der Chip, der auf die sammelbaren Arten einschränkt.
+ *
+ * Bis D9 war das die Vorgabe und die übrigen 221 Profile standen draußen. Das
+ * arbeitete gegen den Zweck der Liste: wer einen Pilz gesehen hat und
+ * nachschlägt, weiß vorher nicht, ob er sammelbar ist. „sammelbar“ ist kein
+ * Tag einer Art, sondern eine Bedingung an sie.
  */
-const CHIP_LOOKALIKE = 'nichtSammelbar';
+const CHIP_COLLECTABLE = 'sammelbar';
 
-/** „alle“ zeigt den ganzen Katalog, jeder andere Chip ist ein Tag einer Art. */
-type ChipValue = 'alle' | typeof CHIP_LOOKALIKE | Tag;
+/** „alle“ zeigt den ganzen Katalog, jeder andere Chip schränkt ein. */
+type ChipValue = 'alle' | typeof CHIP_COLLECTABLE | Tag;
 
 /**
  * Die fünf Chips der Mockups. Die Werte sind Enum-Werte des Backends, die
@@ -56,7 +50,7 @@ const CHIPS: readonly { value: ChipValue; label: TranslationKey }[] = [
   { value: 'vorhersage', label: 'arten.chip.mitVorhersage' },
   { value: 'roehrling', label: 'arten.chip.roehrlinge' },
   { value: 'herbst', label: 'arten.chip.herbst' },
-  { value: CHIP_LOOKALIKE, label: 'arten.chip.verwechslung' },
+  { value: CHIP_COLLECTABLE, label: 'arten.chip.sammelbar' },
 ];
 
 /** Die Stufen der Essbarkeit als zweite Reihe. „alle“ schränkt nicht ein. */
@@ -146,12 +140,13 @@ export class SpeciesListComponent {
     // `filter` gibt schon eine eigene Liste zurück; `sort` rührt den Zustand nicht an.
     const level = this.edibility();
     const filtered = this.grundmenge()
-      .filter((art) => chip === 'alle' || chip === CHIP_LOOKALIKE || art.tags.includes(chip))
+      .filter((art) => (chip === CHIP_COLLECTABLE ? art.sammelbar : true))
+      .filter((art) => chip === 'alle' || chip === CHIP_COLLECTABLE || art.tags.includes(chip))
       .filter((art) => level === 'alle' || art.speisewert === level)
       .filter((art) => this.matches(art, query));
-    // Unter „Giftig und Verwechslung“ führt die Gefahr, sonst die Stufe: wer
-    // dort nachschlägt, sucht das Tödliche und nicht das Alphabet.
-    const byDanger = chip === CHIP_LOOKALIKE;
+    // Sucht jemand nach einer Stufe der Essbarkeit, führt die Gefahr: wer nach
+    // „tödlich giftig“ filtert, sucht das Tödliche und nicht das Alphabet.
+    const byDanger = level !== 'alle';
     filtered.sort(
       (links, right) =>
         (byDanger
@@ -166,14 +161,10 @@ export class SpeciesListComponent {
    * wie tot: die Liste steht nach Stufe, die ersten Zeilen bleiben dieselben,
    * und dass aus 85 Arten 23 wurden, sieht man erst nach langem Scrollen.
    */
-  /** Sammelbar oder nicht: der Chip entscheidet, aus welchem Topf gefiltert wird. */
-  protected readonly grundmenge = computed<readonly SpeciesBrief[]>(() => {
-    if (this.chip() === CHIP_LOOKALIKE) return this.state.verwechslungen()?.arten ?? [];
-    // Wer einen Namen tippt, sucht über den ganzen Katalog: sonst fände er den
-    // Giftpilz nicht, den er in der Hand hält.
-    if (this.search().trim().length > 0) return this.state.alle()?.arten ?? [];
-    return this.state.catalogue()?.arten ?? [];
-  });
+  /** Ein Topf: der ganze Katalog. Die Chips schränken ihn ein. */
+  protected readonly grundmenge = computed<readonly SpeciesBrief[]>(
+    () => this.state.catalogue()?.arten ?? [],
+  );
 
   protected readonly countText = computed(() => {
     const gesamt = this.grundmenge().length;
@@ -185,11 +176,6 @@ export class SpeciesListComponent {
 
   constructor() {
     this.state.loadCatalogue();
-    // Beide Töpfe erst, wenn sie gebraucht werden.
-    effect(() => {
-      if (this.chip() === CHIP_LOOKALIKE) this.state.loadLookalikes();
-      if (this.search().trim().length > 0) this.state.loadAll();
-    });
   }
 
   protected selectChip(value: string): void {
