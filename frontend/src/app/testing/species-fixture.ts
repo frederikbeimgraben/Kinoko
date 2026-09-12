@@ -4,10 +4,23 @@ const WEEKS = 52;
 
 /** Der Weg des Steinpilzes von der Klasse bis zur Gattung. */
 export const STEINPILZ_TAXONOMIE: TaxonStep[] = [
-  { rang: 'klasse', slug: 'agaricomycetes', name: 'Agaricomycetes', lateinisch: 'Agaricomycetes' },
-  { rang: 'ordnung', slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
-  { rang: 'familie', slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
-  { rang: 'gattung', slug: 'boletus', name: 'Boletus', lateinisch: 'Boletus' },
+  {
+    rang: 'abteilung',
+    rangfolge: 0,
+    slug: 'basidiomycota',
+    name: 'Basidiomycota',
+    lateinisch: 'Basidiomycota',
+  },
+  {
+    rang: 'klasse',
+    rangfolge: 1,
+    slug: 'agaricomycetes',
+    name: 'Agaricomycetes',
+    lateinisch: 'Agaricomycetes',
+  },
+  { rang: 'ordnung', rangfolge: 2, slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
+  { rang: 'familie', rangfolge: 3, slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
+  { rang: 'gattung', rangfolge: 4, slug: 'boletus', name: 'Boletus', lateinisch: 'Boletus' },
 ];
 
 /** Der Schutzstatus, den die meisten Arten tragen. */
@@ -300,10 +313,23 @@ export const GALLENROEHRLING: Species = {
   name: 'Gallenröhrling',
   lateinisch: 'Tylopilus felleus',
   taxonomie: [
-    { rang: 'klasse', slug: 'agaricomycetes', name: 'Agaricomycetes', lateinisch: 'Agaricomycetes' },
-    { rang: 'ordnung', slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
-    { rang: 'familie', slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
-    { rang: 'gattung', slug: 'tylopilus', name: 'Rosasporröhrlinge', lateinisch: 'Tylopilus' },
+    {
+      rang: 'abteilung',
+      rangfolge: 0,
+      slug: 'basidiomycota',
+      name: 'Basidiomycota',
+      lateinisch: 'Basidiomycota',
+    },
+    {
+      rang: 'klasse',
+      rangfolge: 1,
+      slug: 'agaricomycetes',
+      name: 'Agaricomycetes',
+      lateinisch: 'Agaricomycetes',
+    },
+    { rang: 'ordnung', rangfolge: 2, slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
+    { rang: 'familie', rangfolge: 3, slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
+    { rang: 'gattung', rangfolge: 4, slug: 'tylopilus', name: 'Rosasporröhrlinge', lateinisch: 'Tylopilus' },
   ],
   stufe: 'profil',
   tags: ['profil', 'roehrling', 'sommer', 'herbst'],

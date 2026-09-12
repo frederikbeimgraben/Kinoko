@@ -24,8 +24,6 @@ from app.modules.taxonomy.service import sync_taxa
 from app.shared.schemas import TaxonRank
 from tests.objects import catalog_for_tests
 
-RANK_ORDER = list(TaxonRank)
-
 
 @pytest.fixture
 def taxonomy_app(migrated: None) -> FastAPI:  # noqa: ARG001
@@ -49,14 +47,15 @@ def test_the_slug_of_a_species_names_its_genus() -> None:
 
 
 def test_every_step_of_the_seed_hangs_under_a_wider_one() -> None:
+    """Die Tiefe steht in der Zeile, nicht in der Reihenfolge des Enums."""
     rows = {seed.slug: seed for seed in seed_taxa()}
 
     for seed in rows.values():
         if seed.parent is None:
-            assert seed.rank is TaxonRank.CLASS
+            assert seed.rank is TaxonRank.DIVISION
+            assert seed.rank_order == 0
             continue
-        above = rows[seed.parent]
-        assert RANK_ORDER.index(above.rank) < RANK_ORDER.index(seed.rank)
+        assert rows[seed.parent].rank_order < seed.rank_order
 
 
 def test_the_seed_carries_all_four_ranks() -> None:
@@ -118,8 +117,20 @@ async def test_a_genus_page_shows_its_way_up_and_its_species(call: httpx.AsyncCl
     body = answer.json()
     assert body["rang"] == "gattung"
     assert body["lateinisch"] == "Boletus"
-    assert [step["slug"] for step in body["pfad"]] == ["agaricomycetes", "boletales", "boletaceae"]
-    assert [step["rang"] for step in body["pfad"]] == ["klasse", "ordnung", "familie"]
+    assert [step["slug"] for step in body["pfad"]] == [
+        "basidiomycota",
+        "agaricomycetes",
+        "boletales",
+        "boletaceae",
+    ]
+    assert [step["rang"] for step in body["pfad"]] == [
+        "abteilung",
+        "klasse",
+        "ordnung",
+        "familie",
+    ]
+    assert [step["rangfolge"] for step in body["pfad"]] == [0, 1, 2, 3]
+    assert body["rangfolge"] == 4
     assert [art["slug"] for art in body["arten"]] == ["steinpilz"]
     assert body["artenZahl"] == 1
     assert body["kinder"] == []
@@ -159,12 +170,12 @@ async def test_the_order_carries_the_german_name_the_count_gave(call: httpx.Asyn
 
 async def test_a_step_without_a_count_keeps_its_latin_name(call: httpx.AsyncClient) -> None:
     async with call:
-        body = (await call.get("/api/taxonomie/klasse/agaricomycetes")).json()
+        body = (await call.get("/api/taxonomie/abteilung/basidiomycota")).json()
 
-    assert body["name"] == body["lateinisch"] == "Agaricomycetes"
+    assert body["name"] == body["lateinisch"] == "Basidiomycota"
     assert body["pfad"] == []
-    # Zwei Klassen stehen an der Wurzel, jede ist der Nachbar der anderen.
-    assert [step["slug"] for step in body["geschwister"]] == ["pezizomycetes"]
+    # Zwei Abteilungen stehen an der Wurzel, jede ist der Nachbar der anderen.
+    assert [step["slug"] for step in body["geschwister"]] == ["ascomycota"]
 
 
 async def test_the_rank_in_the_address_has_to_match(call: httpx.AsyncClient) -> None:
@@ -186,6 +197,7 @@ async def test_the_profile_of_a_species_carries_its_way_to_the_class(
         body = (await call.get("/api/arten/steinpilz")).json()
 
     assert [step["slug"] for step in body["taxonomie"]] == [
+        "basidiomycota",
         "agaricomycetes",
         "boletales",
         "boletaceae",

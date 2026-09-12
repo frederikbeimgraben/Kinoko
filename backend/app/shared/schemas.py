@@ -97,11 +97,14 @@ class ImageState(StrEnum):
 class TaxonRank(StrEnum):
     """Die Stufe eines Taxons in der Einordnung, von weit nach eng.
 
-    Die Reihenfolge der Glieder ist die Reihenfolge der Stufen. Ein Rang mehr
-    ist ein Glied hier und eine Zeile in ``taxon``: die Tabelle verkettet sich
-    ueber sich selbst und kennt den Abstand zur Wurzel nicht.
+    Ein Rang mehr ist ein Glied hier und Zeilen in ``taxon``: die Tabelle
+    verkettet sich ueber sich selbst und kennt den Abstand zur Wurzel nicht.
+    Wie tief eine Stufe steht, sagt nicht die Stelle in dieser Liste, sondern
+    ``taxon.rank_order``. Wer einen Rang dazwischen setzt, schreibt sonst jede
+    vorhandene Zeile um.
     """
 
+    DIVISION = "abteilung"
     CLASS = "klasse"
     ORDER = "ordnung"
     FAMILY = "familie"
@@ -117,6 +120,9 @@ class TaxonStep(BaseSchema):
     """
 
     rank: TaxonRank = Field(validation_alias="rang", serialization_alias="rang")
+    # Wie tief der Rang steht, oben null. Die Oberflaeche ordnet danach, ohne
+    # die Reihenfolge der Raenge selbst zu kennen.
+    rank_order: int = Field(validation_alias="rangfolge", serialization_alias="rangfolge")
     slug: str
     name: str
     # Leer, wo keine Quelle einen fuehrt. Dann steht der lateinische Name schon

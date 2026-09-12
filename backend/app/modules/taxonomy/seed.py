@@ -3,7 +3,9 @@
 ``daten/taxonomie.json`` entsteht in der Kette, in
 ``modell/src/pilze/taxonomy_fetch.py``. Die Einordnung kommt aus dem
 GBIF-Backbone, die deutschen Namen aus den Quellseiten von 123pilzsuche, durch
-Zaehlen. Ein Rang ohne Beleg traegt seinen lateinischen Namen.
+Zaehlen. Ein Rang ohne Beleg traegt seinen lateinischen Namen. Jede Zeile
+traegt die Tiefe ihres Rangs, damit ein Rang zwischen zweien die vorhandenen
+Zeilen nicht umschreibt.
 
 Die Datei ist die Vorgabe, nicht die Wahrheit: sobald die Tabelle ``taxon``
 steht, liest der Dienst nur noch aus ihr. Die Migration legt den Bestand an,
@@ -27,6 +29,7 @@ class TaxonSeed:
 
     slug: str
     rank: TaxonRank
+    rank_order: int
     name: str
     latin_name: str | None
     parent: str | None
@@ -44,6 +47,7 @@ def seed_taxa() -> tuple[TaxonSeed, ...]:
         entry["slug"]: TaxonSeed(
             slug=entry["slug"],
             rank=TaxonRank(entry["rang"]),
+            rank_order=entry["rangfolge"],
             name=entry["name"],
             latin_name=entry.get("lateinisch"),
             parent=entry["elter"],

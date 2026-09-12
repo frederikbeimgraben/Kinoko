@@ -7,16 +7,30 @@ import { PENNY_BUN_BRIEF } from './species-fixture';
  */
 export const BOLETUS: Taxon = {
   rang: 'gattung',
+  rangfolge: 4,
   slug: 'boletus',
   name: 'Boletus',
   lateinisch: 'Boletus',
   beschreibung: null,
   pfad: [
-    { rang: 'klasse', slug: 'agaricomycetes', name: 'Agaricomycetes', lateinisch: 'Agaricomycetes' },
-    { rang: 'ordnung', slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
-    { rang: 'familie', slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
+    {
+      rang: 'abteilung',
+      rangfolge: 0,
+      slug: 'basidiomycota',
+      name: 'Basidiomycota',
+      lateinisch: 'Basidiomycota',
+    },
+    {
+      rang: 'klasse',
+      rangfolge: 1,
+      slug: 'agaricomycetes',
+      name: 'Agaricomycetes',
+      lateinisch: 'Agaricomycetes',
+    },
+    { rang: 'ordnung', rangfolge: 2, slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
+    { rang: 'familie', rangfolge: 3, slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
   ],
-  geschwister: [{ rang: 'gattung', slug: 'imleria', name: 'Imleria', lateinisch: 'Imleria' }],
+  geschwister: [{ rang: 'gattung', rangfolge: 4, slug: 'imleria', name: 'Imleria', lateinisch: 'Imleria' }],
   kinder: [],
   arten: [PENNY_BUN_BRIEF],
   artenZahl: 1,
@@ -25,33 +39,59 @@ export const BOLETUS: Taxon = {
 /** Die Familie darüber: Gattungen als Kinder, keine Art unmittelbar an ihr. */
 export const BOLETACEAE: Taxon = {
   rang: 'familie',
+  rangfolge: 3,
   slug: 'boletaceae',
   name: 'Boletaceae',
   lateinisch: 'Boletaceae',
   beschreibung: null,
   pfad: [
-    { rang: 'klasse', slug: 'agaricomycetes', name: 'Agaricomycetes', lateinisch: 'Agaricomycetes' },
-    { rang: 'ordnung', slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
+    {
+      rang: 'abteilung',
+      rangfolge: 0,
+      slug: 'basidiomycota',
+      name: 'Basidiomycota',
+      lateinisch: 'Basidiomycota',
+    },
+    {
+      rang: 'klasse',
+      rangfolge: 1,
+      slug: 'agaricomycetes',
+      name: 'Agaricomycetes',
+      lateinisch: 'Agaricomycetes',
+    },
+    { rang: 'ordnung', rangfolge: 2, slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
   ],
-  geschwister: [{ rang: 'familie', slug: 'suillaceae', name: 'Suillaceae', lateinisch: 'Suillaceae' }],
+  geschwister: [
+    { rang: 'familie', rangfolge: 3, slug: 'suillaceae', name: 'Suillaceae', lateinisch: 'Suillaceae' },
+  ],
   kinder: [
-    { rang: 'gattung', slug: 'boletus', name: 'Boletus', lateinisch: 'Boletus', artenZahl: 1 },
-    { rang: 'gattung', slug: 'imleria', name: 'Imleria', lateinisch: 'Imleria', artenZahl: 0 },
+    { rang: 'gattung', rangfolge: 4, slug: 'boletus', name: 'Boletus', lateinisch: 'Boletus', artenZahl: 1 },
+    { rang: 'gattung', rangfolge: 4, slug: 'imleria', name: 'Imleria', lateinisch: 'Imleria', artenZahl: 0 },
   ],
   arten: [],
   artenZahl: 1,
 };
 
 /** Die Wurzel: kein Pfad, kein Nachbar. */
-export const AGARICOMYCETES: Taxon = {
-  rang: 'klasse',
-  slug: 'agaricomycetes',
-  name: 'Agaricomycetes',
-  lateinisch: 'Agaricomycetes',
+export const BASIDIOMYCOTA: Taxon = {
+  rang: 'abteilung',
+  rangfolge: 0,
+  slug: 'basidiomycota',
+  name: 'Basidiomycota',
+  lateinisch: 'Basidiomycota',
   beschreibung: null,
   pfad: [],
   geschwister: [],
-  kinder: [{ rang: 'ordnung', slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales', artenZahl: 1 }],
+  kinder: [
+    {
+      rang: 'klasse',
+      rangfolge: 1,
+      slug: 'agaricomycetes',
+      name: 'Agaricomycetes',
+      lateinisch: 'Agaricomycetes',
+      artenZahl: 1,
+    },
+  ],
   arten: [],
   artenZahl: 1,
 };

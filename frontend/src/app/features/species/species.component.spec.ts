@@ -120,6 +120,7 @@ describe('ArtComponent', () => {
       // einem eigenen Baustein, weil ihre Marke eine eigene Zeile braucht.
       'Kalilauge (KOH)',
       // Zuletzt die Einordnung: jede Stufe führt auf ihre eigene Seite.
+      'Basidiomycota',
       'Agaricomycetes',
       'Röhrlinge',
       'Boletaceae',

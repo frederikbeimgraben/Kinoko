@@ -1,64 +1,51 @@
 erDiagram
-    begriff {
-        INTEGER id PK
-        VARCHAR(32) art
-        VARCHAR(64) slug
-        VARCHAR(120) name
-        INTEGER reihenfolge
-    }
-    foto {
-        VARCHAR(36) id PK
-        VARCHAR(36) fund_id FK
-        VARCHAR(64) dateiname
-        INTEGER breite
-        INTEGER hoehe
-        DATETIME erstellt_am
-    }
-    fund {
-        VARCHAR(36) id PK
-        VARCHAR(255) besitzer_name "optional"
-        VARCHAR(64) art_slug
-        FLOAT lat
-        FLOAT lon
-        DATE datum
-        INTEGER anzahl "optional"
-        BOOLEAN fuer_training
-        VARCHAR(16) sichtbarkeit
-        TEXT notiz "optional"
-        DATETIME erstellt_am
-        DATETIME geaendert_am
-        VARCHAR(255) besitzer_sub FK
-    }
-    kombination {
+    combination {
         VARCHAR(36) id PK
         VARCHAR(80) name
-        VARCHAR(16) regel
-        TEXT faktoren
-        DATETIME erstellt_am
-        DATETIME geaendert_am
-        VARCHAR(255) besitzer_sub FK
+        VARCHAR(16) rule
+        TEXT factors
+        DATETIME created_at
+        DATETIME updated_at
+        VARCHAR(255) owner_sub FK
+    }
+    find {
+        VARCHAR(36) id PK
+        VARCHAR(255) owner_name "optional"
+        VARCHAR(64) species_slug
+        FLOAT lat
+        FLOAT lon
+        DATE found_on
+        INTEGER count "optional"
+        BOOLEAN for_training
+        VARCHAR(16) visibility
+        TEXT note "optional"
+        DATETIME created_at
+        DATETIME updated_at
+        VARCHAR(255) owner_sub FK
     }
     marker {
         VARCHAR(36) id PK
         VARCHAR(80) name
         FLOAT lat
         FLOAT lon
-        VARCHAR(16) farbe
-        VARCHAR(16) sichtbarkeit
-        TEXT notiz "optional"
-        DATETIME erstellt_am
-        DATETIME geaendert_am
-        VARCHAR(255) besitzer_sub FK
-    }
-    nutzer {
-        VARCHAR(255) sub PK
-        VARCHAR(255) email "optional"
-        VARCHAR(255) name "optional"
-        DATETIME erstellt_am
+        VARCHAR(16) color
+        VARCHAR(16) visibility
+        TEXT note "optional"
+        DATETIME created_at
+        DATETIME updated_at
+        VARCHAR(255) owner_sub FK
     }
     permission {
         VARCHAR(40) key PK
         VARCHAR(20) area
+    }
+    photo {
+        VARCHAR(36) id PK
+        VARCHAR(36) find_id FK
+        VARCHAR(64) filename
+        INTEGER width
+        INTEGER height
+        DATETIME created_at
     }
     role {
         VARCHAR(36) id PK
@@ -97,11 +84,19 @@ erDiagram
     taxon {
         VARCHAR(36) id PK
         VARCHAR(16) rank
+        INTEGER rank_order
         VARCHAR(80) slug UK
         VARCHAR(120) name
         VARCHAR(120) latin_name "optional"
         VARCHAR(36) parent_id FK "optional"
         TEXT description "optional"
+    }
+    term {
+        INTEGER id PK
+        VARCHAR(32) kind
+        VARCHAR(64) slug
+        VARCHAR(120) name
+        INTEGER position
     }
     text {
         VARCHAR(120) key PK
@@ -109,6 +104,12 @@ erDiagram
         TEXT value
         DATETIME updated_at
         VARCHAR(255) updated_by FK "optional"
+    }
+    user {
+        VARCHAR(255) sub PK
+        VARCHAR(255) email "optional"
+        VARCHAR(255) name "optional"
+        DATETIME created_at
     }
     user_role {
         VARCHAR(255) user_sub PK, FK
@@ -119,24 +120,24 @@ erDiagram
         VARCHAR(36) id PK
         VARCHAR(80) name
         TEXT polygon
-        FLOAT flaeche_ha
-        VARCHAR(16) farbe
-        VARCHAR(16) sichtbarkeit
-        TEXT notiz "optional"
-        DATETIME erstellt_am
-        DATETIME geaendert_am
-        VARCHAR(255) besitzer_sub FK
+        FLOAT area_ha
+        VARCHAR(16) color
+        VARCHAR(16) visibility
+        TEXT note "optional"
+        DATETIME created_at
+        DATETIME updated_at
+        VARCHAR(255) owner_sub FK
     }
-    fund ||--o{ foto : "fund_id"
-    nutzer |o--o{ species_image : "reviewed_by"
-    nutzer |o--o{ text : "updated_by"
-    nutzer ||--o{ fund : "besitzer_sub"
-    nutzer ||--o{ kombination : "besitzer_sub"
-    nutzer ||--o{ marker : "besitzer_sub"
-    nutzer ||--o{ species_image : "uploader_sub"
-    nutzer ||--o{ user_role : "user_sub"
-    nutzer ||--o{ zone : "besitzer_sub"
+    find ||--o{ photo : "find_id"
     permission ||--o{ role_permission : "permission_key"
     role ||--o{ role_permission : "role_id"
     role ||--o{ user_role : "role_id"
     taxon |o--o{ taxon : "parent_id"
+    user |o--o{ species_image : "reviewed_by"
+    user |o--o{ text : "updated_by"
+    user ||--o{ combination : "owner_sub"
+    user ||--o{ find : "owner_sub"
+    user ||--o{ marker : "owner_sub"
+    user ||--o{ species_image : "uploader_sub"
+    user ||--o{ user_role : "user_sub"
+    user ||--o{ zone : "owner_sub"

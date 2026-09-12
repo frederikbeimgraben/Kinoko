@@ -4,12 +4,13 @@
 Two sources, and neither is memory.
 
   The placement comes from the GBIF backbone. One `/v1/species/match` call per
-  Latin name returns class, order and family. The genus is the first word of
-  the Latin name in the profile, not the accepted genus of the match: the
-  profile name is what the app shows and what the season table is keyed on, so
-  the page of a species and the page of its genus must carry the same word.
+  Latin name returns division, class, order and family. The genus is the first
+  word of the Latin name in the profile, not the accepted genus of the match:
+  the profile name is what the app shows and what the season table is keyed on,
+  so the page of a species and the page of its genus must carry the same word.
   Seventeen of the profiles hold a name that GBIF keeps as a synonym; their
-  genus still gets the family, order and class that GBIF gives the name.
+  genus still gets the division, class, order and family that GBIF gives the
+  name.
 
   The German names come from the source pages of 123pilzsuche.de, by counting.
   Every page carries a line `Gattung:` with one to three German group names,
@@ -20,10 +21,12 @@ Two sources, and neither is memory.
   most frequent wins. A rank that no count reaches keeps its Latin name; it is
   not guessed.
 
-Output is `backend/daten/taxonomie.json`: the taxa with slug, rank, Latin name,
-German name, parent and the counts that carried the name. The species are not
-listed. A species hangs under the genus of its own Latin name, and the backend
-derives that where it needs it.
+Output is `backend/daten/taxonomie.json`: the taxa with slug, rank, the depth of
+that rank, Latin name, German name, parent and the counts that carried the name.
+The depth travels with the row so that a rank inserted between two others later
+leaves the rows that already exist correct. The species are not listed. A
+species hangs under the genus of its own Latin name, and the backend derives
+that where it needs it.
 
 Usage:
     python taxonomy_fetch.py --profiles ../backend/daten/arten \
@@ -56,14 +59,30 @@ GBIF_MATCH: Final = "https://api.gbif.org/v1/species/match"
 USER_AGENT: Final = "pilze-research/0.1 (fungal taxonomy; +https://gbif.org)"
 PAUSE_SECONDS: Final = 0.5
 
-# Von eng nach weit. Der Wert ist der Rang auf dem Draht; die App spricht
-# deutsch, ihre Bezeichner nicht.
+# Von eng nach weit, so wie die Suche nach dem Rang eines Namens laeuft. Der
+# Schluessel ist der Rang bei GBIF, der Wert der Rang auf dem Draht; die App
+# spricht deutsch, ihre Bezeichner nicht.
 RANKS: Final[dict[str, str]] = {
     "genus": "gattung",
     "family": "familie",
     "order": "ordnung",
     "class": "klasse",
+    "phylum": "abteilung",
 }
+
+# Die Tiefe eines Rangs, oben null. Sie steht in jeder Zeile, damit ein Rang,
+# den jemand spaeter dazwischen setzt, die vorhandenen Zeilen nicht umschreibt.
+DEPTHS: Final[dict[str, int]] = {
+    "phylum": 0,
+    "class": 1,
+    "order": 2,
+    "family": 3,
+    "genus": 4,
+}
+
+# Die Raenge ueber der Gattung, von eng nach weit. Die Gattung kommt aus dem
+# Namen im Profil, alles darueber aus dem Treffer bei GBIF.
+ABOVE_GENUS: Final = ("family", "order", "class", "phylum")
 
 # Ein Name gilt fuer einen Rang, wenn so viele seiner Nennungen darin liegen
 # und er mehr als diesen Anteil der Arten des Rangs benennt.
@@ -260,14 +279,14 @@ def build_taxa(
     for profile in profiles:
         genus = genus_of(profile.latin)
         latin_names["genus"].add(genus)
-        for rank in ("family", "order", "class"):
+        for rank in ABOVE_GENUS:
             if places[genus].get(rank):
                 latin_names[rank].add(places[genus][rank])
 
     parents = {}
     for profile in profiles:
         genus = genus_of(profile.latin)
-        chain = [genus, *(places[genus].get(rank) for rank in ("family", "order", "class"))]
+        chain = [genus, *(places[genus].get(rank) for rank in ABOVE_GENUS)]
         known = [step for step in chain if step]
         for step, above in zip(known, known[1:], strict=False):
             parents[step] = above
@@ -279,6 +298,7 @@ def build_taxa(
             row: dict[str, object] = {
                 "slug": slug_of(latin),
                 "rang": RANKS[rank],
+                "rangfolge": DEPTHS[rank],
                 "lateinisch": latin,
                 "name": counts[0][0] if counts else latin,
                 "elter": slug_of(parents[latin]) if latin in parents else None,
@@ -323,7 +343,7 @@ def cached_match(cache: Path) -> Callable[[str], dict[str, str]]:
         query = urllib.parse.urlencode({"name": latin, "kingdom": "Fungi", "strict": "false"})
         name = hashlib.sha1(latin.encode()).hexdigest()  # noqa: S324
         found = json.loads(_fetch(f"{GBIF_MATCH}?{query}", cache / "gbif" / f"{name}.json"))
-        return {rank: found[rank] for rank in ("family", "order", "class") if found.get(rank)}
+        return {rank: found[rank] for rank in ABOVE_GENUS if found.get(rank)}
 
     return match
 
@@ -338,7 +358,7 @@ def placements(
     places = {}
     for genus, matches in seen.items():
         place = {}
-        for rank in ("family", "order", "class"):
+        for rank in ABOVE_GENUS:
             counted = Counter(found[rank] for found in matches if found.get(rank))
             if counted:
                 place[rank] = counted.most_common(1)[0][0]

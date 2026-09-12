@@ -8,12 +8,14 @@
   "gattung",
   "familie",
   "ordnung",
-  "klasse"
+  "klasse",
+  "abteilung"
  ],
  "taxa": [
   {
    "slug": "agaricus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Agaricus",
    "name": "Champignon-Egerlinge",
    "elter": "agaricaceae",
@@ -24,6 +26,7 @@
   {
    "slug": "albatrellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Albatrellus",
    "name": "Albatrellus",
    "elter": "albatrellaceae"
@@ -31,6 +34,7 @@
   {
    "slug": "aleuria",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Aleuria",
    "name": "Aleuria",
    "elter": "pyronemataceae"
@@ -38,6 +42,7 @@
   {
    "slug": "amanita",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Amanita",
    "name": "Wulstlinge",
    "elter": "amanitaceae",
@@ -48,6 +53,7 @@
   {
    "slug": "aphroditeola",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Aphroditeola",
    "name": "Aphroditeola",
    "elter": "hygrophoraceae"
@@ -55,6 +61,7 @@
   {
    "slug": "apioperdon",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Apioperdon",
    "name": "Apioperdon",
    "elter": "lycoperdaceae"
@@ -62,6 +69,7 @@
   {
    "slug": "armillaria",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Armillaria",
    "name": "Armillaria",
    "elter": "physalacriaceae"
@@ -69,6 +77,7 @@
   {
    "slug": "atractosporocybe",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Atractosporocybe",
    "name": "Atractosporocybe",
    "elter": "tricholomataceae"
@@ -76,6 +85,7 @@
   {
    "slug": "aureoboletus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Aureoboletus",
    "name": "Goldporröhrlinge",
    "elter": "boletaceae",
@@ -86,6 +96,7 @@
   {
    "slug": "auricularia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Auricularia",
    "name": "Auricularia",
    "elter": "auriculariaceae"
@@ -93,6 +104,7 @@
   {
    "slug": "auriporia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Auriporia",
    "name": "Auriporia",
    "elter": "fomitopsidaceae"
@@ -100,6 +112,7 @@
   {
    "slug": "boletus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Boletus",
    "name": "Boletus",
    "elter": "boletaceae"
@@ -107,6 +120,7 @@
   {
    "slug": "bondarzewia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Bondarzewia",
    "name": "Bondarzewia",
    "elter": "bondarzewiaceae"
@@ -114,6 +128,7 @@
   {
    "slug": "butyriboletus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Butyriboletus",
    "name": "Butyriboletus",
    "elter": "boletaceae"
@@ -121,6 +136,7 @@
   {
    "slug": "caloboletus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Caloboletus",
    "name": "Caloboletus",
    "elter": "boletaceae"
@@ -128,6 +144,7 @@
   {
    "slug": "calocybe",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Calocybe",
    "name": "Calocybe",
    "elter": "lyophyllaceae"
@@ -135,6 +152,7 @@
   {
    "slug": "calvatia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Calvatia",
    "name": "Calvatia",
    "elter": "lycoperdaceae"
@@ -142,6 +160,7 @@
   {
    "slug": "cantharellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Cantharellus",
    "name": "Cantharellus",
    "elter": "hydnaceae"
@@ -149,6 +168,7 @@
   {
    "slug": "cerioporus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Cerioporus",
    "name": "Cerioporus",
    "elter": "polyporaceae"
@@ -156,6 +176,7 @@
   {
    "slug": "chlorophyllum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Chlorophyllum",
    "name": "Chlorophyllum",
    "elter": "agaricaceae"
@@ -163,6 +184,7 @@
   {
    "slug": "chroogomphus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Chroogomphus",
    "name": "Chroogomphus",
    "elter": "gomphidiaceae"
@@ -170,6 +192,7 @@
   {
    "slug": "chrysomphalina",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Chrysomphalina",
    "name": "Nabelinge",
    "elter": "hygrophoraceae",
@@ -181,6 +204,7 @@
   {
    "slug": "climacodon",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Climacodon",
    "name": "Stachelseitlinge",
    "elter": "meruliaceae",
@@ -191,6 +215,7 @@
   {
    "slug": "clitocybe",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Clitocybe",
    "name": "Clitocybe",
    "elter": "tricholomataceae"
@@ -198,6 +223,7 @@
   {
    "slug": "clitopilus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Clitopilus",
    "name": "Räslinge",
    "elter": "entolomataceae",
@@ -208,6 +234,7 @@
   {
    "slug": "coprinellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Coprinellus",
    "name": "Coprinellus",
    "elter": "psathyrellaceae"
@@ -215,6 +242,7 @@
   {
    "slug": "coprinopsis",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Coprinopsis",
    "name": "Coprinopsis",
    "elter": "psathyrellaceae"
@@ -222,6 +250,7 @@
   {
    "slug": "coprinus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Coprinus",
    "name": "Coprinus",
    "elter": "agaricaceae"
@@ -229,6 +258,7 @@
   {
    "slug": "cortinarius",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Cortinarius",
    "name": "Schleierlinge",
    "elter": "cortinariaceae",
@@ -239,6 +269,7 @@
   {
    "slug": "craterellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Craterellus",
    "name": "Craterellus",
    "elter": "hydnaceae"
@@ -246,6 +277,7 @@
   {
    "slug": "cyphella",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Cyphella",
    "name": "Basidiobecherlinge",
    "elter": "cyphellaceae",
@@ -256,6 +288,7 @@
   {
    "slug": "desarmillaria",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Desarmillaria",
    "name": "Desarmillaria",
    "elter": "physalacriaceae"
@@ -263,6 +296,7 @@
   {
    "slug": "discina",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Discina",
    "name": "Lorcheln",
    "elter": "discinaceae",
@@ -273,6 +307,7 @@
   {
    "slug": "echinoderma",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Echinoderma",
    "name": "Stachelschirmlinge",
    "elter": "agaricaceae",
@@ -283,6 +318,7 @@
   {
    "slug": "entoloma",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Entoloma",
    "name": "Rötlinge",
    "elter": "entolomataceae",
@@ -293,6 +329,7 @@
   {
    "slug": "exidia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Exidia",
    "name": "Drüslinge",
    "elter": "auriculariaceae",
@@ -303,6 +340,7 @@
   {
    "slug": "faerberia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Faerberia",
    "name": "Kohlenleistling",
    "elter": "polyporaceae",
@@ -313,6 +351,7 @@
   {
    "slug": "fistulina",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Fistulina",
    "name": "Fistulina",
    "elter": "fistulinaceae"
@@ -320,6 +359,7 @@
   {
    "slug": "flammulina",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Flammulina",
    "name": "Samtfußrüblinge",
    "elter": "physalacriaceae",
@@ -330,6 +370,7 @@
   {
    "slug": "fomitiporia",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Fomitiporia",
    "name": "Feuerschwämme",
    "elter": "hymenochaetaceae",
@@ -340,6 +381,7 @@
   {
    "slug": "galerina",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Galerina",
    "name": "Häublinge",
    "elter": "hymenogastraceae",
@@ -350,6 +392,7 @@
   {
    "slug": "geastrum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Geastrum",
    "name": "Geastrum",
    "elter": "geastraceae"
@@ -357,6 +400,7 @@
   {
    "slug": "gomphidius",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Gomphidius",
    "name": "Gomphidius",
    "elter": "gomphidiaceae"
@@ -364,6 +408,7 @@
   {
    "slug": "gomphus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Gomphus",
    "name": "Schweinsohr",
    "elter": "gomphaceae",
@@ -374,6 +419,7 @@
   {
    "slug": "grifola",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Grifola",
    "name": "Grifola",
    "elter": "grifolaceae"
@@ -381,6 +427,7 @@
   {
    "slug": "gymnopilus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Gymnopilus",
    "name": "Flämmlinge",
    "elter": "hymenogastraceae",
@@ -391,6 +438,7 @@
   {
    "slug": "gymnopus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Gymnopus",
    "name": "Gymnopus",
    "elter": "omphalotaceae"
@@ -398,6 +446,7 @@
   {
    "slug": "gyrodon",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Gyrodon",
    "name": "Erlengrüblinge",
    "elter": "paxillaceae",
@@ -408,6 +457,7 @@
   {
    "slug": "hapalopilus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hapalopilus",
    "name": "Hapalopilus",
    "elter": "phanerochaetaceae"
@@ -415,6 +465,7 @@
   {
    "slug": "hericium",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hericium",
    "name": "Hericium",
    "elter": "hericiaceae"
@@ -422,6 +473,7 @@
   {
    "slug": "hydnum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hydnum",
    "name": "Stoppelpilze",
    "elter": "hydnaceae",
@@ -432,6 +484,7 @@
   {
    "slug": "hygrocybe",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hygrocybe",
    "name": "Saftlinge",
    "elter": "hygrophoraceae",
@@ -442,6 +495,7 @@
   {
    "slug": "hygrophoropsis",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hygrophoropsis",
    "name": "Hygrophoropsis",
    "elter": "hygrophoropsidaceae"
@@ -449,6 +503,7 @@
   {
    "slug": "hygrophorus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hygrophorus",
    "name": "Schnecklinge",
    "elter": "hygrophoraceae",
@@ -459,6 +514,7 @@
   {
    "slug": "hypholoma",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Hypholoma",
    "name": "Schwefelköpfe",
    "elter": "strophariaceae",
@@ -469,6 +525,7 @@
   {
    "slug": "imleria",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Imleria",
    "name": "Imleria",
    "elter": "boletaceae"
@@ -476,6 +533,7 @@
   {
    "slug": "imperator",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Imperator",
    "name": "Imperator",
    "elter": "boletaceae"
@@ -483,6 +541,7 @@
   {
    "slug": "infundibulicybe",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Infundibulicybe",
    "name": "Infundibulicybe",
    "elter": "tricholomataceae"
@@ -490,6 +549,7 @@
   {
    "slug": "inocybe",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Inocybe",
    "name": "Inocybe",
    "elter": "inocybaceae"
@@ -497,6 +557,7 @@
   {
    "slug": "inonotus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Inonotus",
    "name": "Inonotus",
    "elter": "hymenochaetaceae"
@@ -504,6 +565,7 @@
   {
    "slug": "inosperma",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Inosperma",
    "name": "Inosperma",
    "elter": "inocybaceae"
@@ -511,6 +573,7 @@
   {
    "slug": "jahnoporus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Jahnoporus",
    "name": "Jahnoporus",
    "elter": "dacryobolaceae"
@@ -518,6 +581,7 @@
   {
    "slug": "kuehneromyces",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Kuehneromyces",
    "name": "Kuehneromyces",
    "elter": "strophariaceae"
@@ -525,6 +589,7 @@
   {
    "slug": "lactarius",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Lactarius",
    "name": "Milchlinge",
    "elter": "russulaceae",
@@ -536,6 +601,7 @@
   {
    "slug": "lactifluus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Lactifluus",
    "name": "Lactifluus",
    "elter": "russulaceae"
@@ -543,6 +609,7 @@
   {
    "slug": "laetiporus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Laetiporus",
    "name": "Laetiporus",
    "elter": "laetiporaceae"
@@ -550,6 +617,7 @@
   {
    "slug": "leccinellum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Leccinellum",
    "name": "Leccinellum",
    "elter": "boletaceae"
@@ -557,6 +625,7 @@
   {
    "slug": "leccinum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Leccinum",
    "name": "Raufußröhrlinge",
    "elter": "boletaceae",
@@ -567,6 +636,7 @@
   {
    "slug": "lepiota",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Lepiota",
    "name": "Lepiota",
    "elter": "agaricaceae"
@@ -574,6 +644,7 @@
   {
    "slug": "lepista",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Lepista",
    "name": "Rötelritterling",
    "elter": "tricholomataceae",
@@ -584,6 +655,7 @@
   {
    "slug": "leucoagaricus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Leucoagaricus",
    "name": "Egerlingsschirmlinge",
    "elter": "agaricaceae",
@@ -594,6 +666,7 @@
   {
    "slug": "leucopaxillus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Leucopaxillus",
    "name": "Krempentrichterlinge",
    "elter": "tricholomataceae",
@@ -605,6 +678,7 @@
   {
    "slug": "lycoperdon",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Lycoperdon",
    "name": "Lycoperdon",
    "elter": "lycoperdaceae"
@@ -612,6 +686,7 @@
   {
    "slug": "lyophyllum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Lyophyllum",
    "name": "Raslinge",
    "elter": "lyophyllaceae",
@@ -622,6 +697,7 @@
   {
    "slug": "macrolepiota",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Macrolepiota",
    "name": "Macrolepiota",
    "elter": "agaricaceae"
@@ -629,6 +705,7 @@
   {
    "slug": "marasmius",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Marasmius",
    "name": "Schwindlinge",
    "elter": "marasmiaceae",
@@ -639,6 +716,7 @@
   {
    "slug": "melanoleuca",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Melanoleuca",
    "name": "Weichritterlinge",
    "elter": "tricholomataceae",
@@ -649,6 +727,7 @@
   {
    "slug": "meripilus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Meripilus",
    "name": "Meripilus",
    "elter": "meripilaceae"
@@ -656,6 +735,7 @@
   {
    "slug": "mitrophora",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Mitrophora",
    "name": "Mitrophora",
    "elter": "morchellaceae"
@@ -663,6 +743,7 @@
   {
    "slug": "morchella",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Morchella",
    "name": "Morchella",
    "elter": "morchellaceae"
@@ -670,6 +751,7 @@
   {
    "slug": "mucidula",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Mucidula",
    "name": "Schleimrüblinge",
    "elter": "physalacriaceae",
@@ -680,6 +762,7 @@
   {
    "slug": "mucronella",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Mucronella",
    "name": "Stachelpilze",
    "elter": "clavariaceae",
@@ -690,6 +773,7 @@
   {
    "slug": "neoboletus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Neoboletus",
    "name": "Neoboletus",
    "elter": "boletaceae"
@@ -697,6 +781,7 @@
   {
    "slug": "neolentinus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Neolentinus",
    "name": "Knäuelinge",
    "elter": "gloeophyllaceae",
@@ -707,6 +792,7 @@
   {
    "slug": "omphalotus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Omphalotus",
    "name": "Omphalotus",
    "elter": "omphalotaceae"
@@ -714,6 +800,7 @@
   {
    "slug": "osteina",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Osteina",
    "name": "Hartporlinge",
    "elter": "dacryobolaceae",
@@ -724,6 +811,7 @@
   {
    "slug": "panellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Panellus",
    "name": "Muschelinge",
    "elter": "sarcomyxaceae",
@@ -734,6 +822,7 @@
   {
    "slug": "pholiota",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pholiota",
    "name": "Schüpplinge",
    "elter": "strophariaceae",
@@ -744,6 +833,7 @@
   {
    "slug": "piptoporus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Piptoporus",
    "name": "Piptoporus",
    "elter": "fomitopsidaceae"
@@ -751,6 +841,7 @@
   {
    "slug": "pleurocybella",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pleurocybella",
    "name": "Pleurocybella",
    "elter": "marasmiaceae"
@@ -758,6 +849,7 @@
   {
    "slug": "pleurotus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pleurotus",
    "name": "Pleurotus",
    "elter": "pleurotaceae"
@@ -765,6 +857,7 @@
   {
    "slug": "pluteus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pluteus",
    "name": "Dachpilze",
    "elter": "pluteaceae",
@@ -775,6 +868,7 @@
   {
    "slug": "polyporus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Polyporus",
    "name": "Polyporus",
    "elter": "polyporaceae"
@@ -782,6 +876,7 @@
   {
    "slug": "pseudocraterellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pseudocraterellus",
    "name": "Pseudocraterellus",
    "elter": "hydnaceae"
@@ -789,6 +884,7 @@
   {
    "slug": "pseudoinonotus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pseudoinonotus",
    "name": "Pseudoinonotus",
    "elter": "hymenochaetaceae"
@@ -796,6 +892,7 @@
   {
    "slug": "pycnoporellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Pycnoporellus",
    "name": "Pycnoporellus",
    "elter": "pycnoporellaceae"
@@ -803,6 +900,7 @@
   {
    "slug": "ramaria",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Ramaria",
    "name": "Korallen",
    "elter": "gomphaceae",
@@ -813,6 +911,7 @@
   {
    "slug": "rubroboletus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Rubroboletus",
    "name": "Rubroboletus",
    "elter": "boletaceae"
@@ -820,6 +919,7 @@
   {
    "slug": "russula",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Russula",
    "name": "Täublinge",
    "elter": "russulaceae",
@@ -830,6 +930,7 @@
   {
    "slug": "sarcodon",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Sarcodon",
    "name": "Sarcodon",
    "elter": "bankeraceae"
@@ -837,6 +938,7 @@
   {
    "slug": "sarcoscypha",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Sarcoscypha",
    "name": "Kelchbecherlinge",
    "elter": "sarcoscyphaceae",
@@ -847,6 +949,7 @@
   {
    "slug": "schizophyllum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Schizophyllum",
    "name": "Schizophyllum",
    "elter": "schizophyllaceae"
@@ -854,6 +957,7 @@
   {
    "slug": "sparassis",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Sparassis",
    "name": "Glucken",
    "elter": "sparassidaceae",
@@ -864,6 +968,7 @@
   {
    "slug": "suillellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Suillellus",
    "name": "Suillellus",
    "elter": "boletaceae"
@@ -871,6 +976,7 @@
   {
    "slug": "suillus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Suillus",
    "name": "Schmierröhrlinge",
    "elter": "suillaceae",
@@ -881,6 +987,7 @@
   {
    "slug": "tarzetta",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Tarzetta",
    "name": "Tarzetta",
    "elter": "tarzettaceae"
@@ -888,6 +995,7 @@
   {
    "slug": "tricholoma",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Tricholoma",
    "name": "Ritterlinge",
    "elter": "tricholomataceae",
@@ -899,6 +1007,7 @@
   {
    "slug": "tylopilus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Tylopilus",
    "name": "Rosasporröhrlinge",
    "elter": "boletaceae",
@@ -909,6 +1018,7 @@
   {
    "slug": "urnula",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Urnula",
    "name": "Urnula",
    "elter": "sarcosomataceae"
@@ -916,6 +1026,7 @@
   {
    "slug": "vascellum",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Vascellum",
    "name": "Vascellum",
    "elter": "lycoperdaceae"
@@ -923,6 +1034,7 @@
   {
    "slug": "verpa",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Verpa",
    "name": "Schlauchpilze",
    "elter": "morchellaceae",
@@ -933,6 +1045,7 @@
   {
    "slug": "xerocomellus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Xerocomellus",
    "name": "Xerocomellus",
    "elter": "boletaceae"
@@ -940,6 +1053,7 @@
   {
    "slug": "xerocomus",
    "rang": "gattung",
+   "rangfolge": 4,
    "lateinisch": "Xerocomus",
    "name": "Xerocomus",
    "elter": "boletaceae"
@@ -947,6 +1061,7 @@
   {
    "slug": "agaricaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Agaricaceae",
    "name": "Agaricaceae",
    "elter": "agaricales"
@@ -954,6 +1069,7 @@
   {
    "slug": "albatrellaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Albatrellaceae",
    "name": "Albatrellaceae",
    "elter": "russulales"
@@ -961,6 +1077,7 @@
   {
    "slug": "amanitaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Amanitaceae",
    "name": "Amanitaceae",
    "elter": "agaricales"
@@ -968,6 +1085,7 @@
   {
    "slug": "auriculariaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Auriculariaceae",
    "name": "Auriculariaceae",
    "elter": "auriculariales"
@@ -975,6 +1093,7 @@
   {
    "slug": "bankeraceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Bankeraceae",
    "name": "Bankeraceae",
    "elter": "thelephorales"
@@ -982,6 +1101,7 @@
   {
    "slug": "boletaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Boletaceae",
    "name": "Boletaceae",
    "elter": "boletales"
@@ -989,6 +1109,7 @@
   {
    "slug": "bondarzewiaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Bondarzewiaceae",
    "name": "Bondarzewiaceae",
    "elter": "russulales"
@@ -996,6 +1117,7 @@
   {
    "slug": "clavariaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Clavariaceae",
    "name": "Clavariaceae",
    "elter": "agaricales"
@@ -1003,6 +1125,7 @@
   {
    "slug": "cortinariaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Cortinariaceae",
    "name": "Cortinariaceae",
    "elter": "agaricales"
@@ -1010,6 +1133,7 @@
   {
    "slug": "cyphellaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Cyphellaceae",
    "name": "Cyphellaceae",
    "elter": "agaricales"
@@ -1017,6 +1141,7 @@
   {
    "slug": "dacryobolaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Dacryobolaceae",
    "name": "Dacryobolaceae",
    "elter": "polyporales"
@@ -1024,6 +1149,7 @@
   {
    "slug": "discinaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Discinaceae",
    "name": "Discinaceae",
    "elter": "pezizales"
@@ -1031,6 +1157,7 @@
   {
    "slug": "entolomataceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Entolomataceae",
    "name": "Entolomataceae",
    "elter": "agaricales"
@@ -1038,6 +1165,7 @@
   {
    "slug": "fistulinaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Fistulinaceae",
    "name": "Fistulinaceae",
    "elter": "agaricales"
@@ -1045,6 +1173,7 @@
   {
    "slug": "fomitopsidaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Fomitopsidaceae",
    "name": "Fomitopsidaceae",
    "elter": "polyporales"
@@ -1052,6 +1181,7 @@
   {
    "slug": "geastraceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Geastraceae",
    "name": "Geastraceae",
    "elter": "geastrales"
@@ -1059,6 +1189,7 @@
   {
    "slug": "gloeophyllaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Gloeophyllaceae",
    "name": "Gloeophyllaceae",
    "elter": "gloeophyllales"
@@ -1066,6 +1197,7 @@
   {
    "slug": "gomphaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Gomphaceae",
    "name": "Gomphaceae",
    "elter": "gomphales"
@@ -1073,6 +1205,7 @@
   {
    "slug": "gomphidiaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Gomphidiaceae",
    "name": "Schmierlinge",
    "elter": "boletales",
@@ -1083,6 +1216,7 @@
   {
    "slug": "grifolaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Grifolaceae",
    "name": "Grifolaceae",
    "elter": "polyporales"
@@ -1090,6 +1224,7 @@
   {
    "slug": "hericiaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Hericiaceae",
    "name": "Hericiaceae",
    "elter": "russulales"
@@ -1097,6 +1232,7 @@
   {
    "slug": "hydnaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Hydnaceae",
    "name": "Leistlinge",
    "elter": "cantharellales",
@@ -1107,6 +1243,7 @@
   {
    "slug": "hygrophoraceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Hygrophoraceae",
    "name": "Hygrophoraceae",
    "elter": "agaricales"
@@ -1114,6 +1251,7 @@
   {
    "slug": "hygrophoropsidaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Hygrophoropsidaceae",
    "name": "Hygrophoropsidaceae",
    "elter": "boletales"
@@ -1121,6 +1259,7 @@
   {
    "slug": "hymenochaetaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Hymenochaetaceae",
    "name": "Schillerporlinge",
    "elter": "hymenochaetales",
@@ -1131,6 +1270,7 @@
   {
    "slug": "hymenogastraceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Hymenogastraceae",
    "name": "Hymenogastraceae",
    "elter": "agaricales"
@@ -1138,6 +1278,7 @@
   {
    "slug": "inocybaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Inocybaceae",
    "name": "Risspilze",
    "elter": "agaricales",
@@ -1148,6 +1289,7 @@
   {
    "slug": "laetiporaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Laetiporaceae",
    "name": "Laetiporaceae",
    "elter": "polyporales"
@@ -1155,6 +1297,7 @@
   {
    "slug": "lycoperdaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Lycoperdaceae",
    "name": "Stäublinge",
    "elter": "agaricales",
@@ -1167,6 +1310,7 @@
   {
    "slug": "lyophyllaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Lyophyllaceae",
    "name": "Lyophyllaceae",
    "elter": "agaricales"
@@ -1174,6 +1318,7 @@
   {
    "slug": "marasmiaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Marasmiaceae",
    "name": "Marasmiaceae",
    "elter": "agaricales"
@@ -1181,6 +1326,7 @@
   {
    "slug": "meripilaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Meripilaceae",
    "name": "Meripilaceae",
    "elter": "polyporales"
@@ -1188,6 +1334,7 @@
   {
    "slug": "meruliaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Meruliaceae",
    "name": "Meruliaceae",
    "elter": "polyporales"
@@ -1195,6 +1342,7 @@
   {
    "slug": "morchellaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Morchellaceae",
    "name": "Morcheln",
    "elter": "pezizales",
@@ -1205,6 +1353,7 @@
   {
    "slug": "omphalotaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Omphalotaceae",
    "name": "Omphalotaceae",
    "elter": "agaricales"
@@ -1212,6 +1361,7 @@
   {
    "slug": "paxillaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Paxillaceae",
    "name": "Paxillaceae",
    "elter": "boletales"
@@ -1219,6 +1369,7 @@
   {
    "slug": "phanerochaetaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Phanerochaetaceae",
    "name": "Phanerochaetaceae",
    "elter": "polyporales"
@@ -1226,6 +1377,7 @@
   {
    "slug": "physalacriaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Physalacriaceae",
    "name": "Hallimasche",
    "elter": "agaricales",
@@ -1236,6 +1388,7 @@
   {
    "slug": "pleurotaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Pleurotaceae",
    "name": "Pleurotaceae",
    "elter": "agaricales"
@@ -1243,6 +1396,7 @@
   {
    "slug": "pluteaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Pluteaceae",
    "name": "Pluteaceae",
    "elter": "agaricales"
@@ -1250,6 +1404,7 @@
   {
    "slug": "polyporaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Polyporaceae",
    "name": "Polyporaceae",
    "elter": "polyporales"
@@ -1257,6 +1412,7 @@
   {
    "slug": "psathyrellaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Psathyrellaceae",
    "name": "Tintlinge",
    "elter": "agaricales",
@@ -1267,6 +1423,7 @@
   {
    "slug": "pycnoporellaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Pycnoporellaceae",
    "name": "Pycnoporellaceae",
    "elter": "polyporales"
@@ -1274,6 +1431,7 @@
   {
    "slug": "pyronemataceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Pyronemataceae",
    "name": "Pyronemataceae",
    "elter": "pezizales"
@@ -1281,6 +1439,7 @@
   {
    "slug": "russulaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Russulaceae",
    "name": "Russulaceae",
    "elter": "russulales"
@@ -1288,6 +1447,7 @@
   {
    "slug": "sarcomyxaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Sarcomyxaceae",
    "name": "Sarcomyxaceae",
    "elter": "agaricales"
@@ -1295,6 +1455,7 @@
   {
    "slug": "sarcoscyphaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Sarcoscyphaceae",
    "name": "Sarcoscyphaceae",
    "elter": "pezizales"
@@ -1302,6 +1463,7 @@
   {
    "slug": "sarcosomataceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Sarcosomataceae",
    "name": "Sarcosomataceae",
    "elter": "pezizales"
@@ -1309,6 +1471,7 @@
   {
    "slug": "schizophyllaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Schizophyllaceae",
    "name": "Schizophyllaceae",
    "elter": "agaricales"
@@ -1316,6 +1479,7 @@
   {
    "slug": "sparassidaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Sparassidaceae",
    "name": "Sparassidaceae",
    "elter": "polyporales"
@@ -1323,6 +1487,7 @@
   {
    "slug": "strophariaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Strophariaceae",
    "name": "Strophariaceae",
    "elter": "agaricales"
@@ -1330,6 +1495,7 @@
   {
    "slug": "suillaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Suillaceae",
    "name": "Suillaceae",
    "elter": "boletales"
@@ -1337,6 +1503,7 @@
   {
    "slug": "tarzettaceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Tarzettaceae",
    "name": "Tarzettaceae",
    "elter": "pezizales"
@@ -1344,6 +1511,7 @@
   {
    "slug": "tricholomataceae",
    "rang": "familie",
+   "rangfolge": 3,
    "lateinisch": "Tricholomataceae",
    "name": "Tricholomataceae",
    "elter": "agaricales"
@@ -1351,6 +1519,7 @@
   {
    "slug": "agaricales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Agaricales",
    "name": "Agaricales",
    "elter": "agaricomycetes"
@@ -1358,6 +1527,7 @@
   {
    "slug": "auriculariales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Auriculariales",
    "name": "Auriculariales",
    "elter": "agaricomycetes"
@@ -1365,6 +1535,7 @@
   {
    "slug": "boletales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Boletales",
    "name": "Röhrlinge",
    "elter": "agaricomycetes",
@@ -1375,6 +1546,7 @@
   {
    "slug": "cantharellales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Cantharellales",
    "name": "Cantharellales",
    "elter": "agaricomycetes"
@@ -1382,6 +1554,7 @@
   {
    "slug": "geastrales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Geastrales",
    "name": "Geastrales",
    "elter": "agaricomycetes"
@@ -1389,6 +1562,7 @@
   {
    "slug": "gloeophyllales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Gloeophyllales",
    "name": "Gloeophyllales",
    "elter": "agaricomycetes"
@@ -1396,6 +1570,7 @@
   {
    "slug": "gomphales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Gomphales",
    "name": "Gomphales",
    "elter": "agaricomycetes"
@@ -1403,6 +1578,7 @@
   {
    "slug": "hymenochaetales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Hymenochaetales",
    "name": "Hymenochaetales",
    "elter": "agaricomycetes"
@@ -1410,6 +1586,7 @@
   {
    "slug": "pezizales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Pezizales",
    "name": "Pezizales",
    "elter": "pezizomycetes"
@@ -1417,6 +1594,7 @@
   {
    "slug": "polyporales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Polyporales",
    "name": "Polyporales",
    "elter": "agaricomycetes"
@@ -1424,6 +1602,7 @@
   {
    "slug": "russulales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Russulales",
    "name": "Russulales",
    "elter": "agaricomycetes"
@@ -1431,6 +1610,7 @@
   {
    "slug": "thelephorales",
    "rang": "ordnung",
+   "rangfolge": 2,
    "lateinisch": "Thelephorales",
    "name": "Thelephorales",
    "elter": "agaricomycetes"
@@ -1438,15 +1618,33 @@
   {
    "slug": "agaricomycetes",
    "rang": "klasse",
+   "rangfolge": 1,
    "lateinisch": "Agaricomycetes",
    "name": "Agaricomycetes",
-   "elter": null
+   "elter": "basidiomycota"
   },
   {
    "slug": "pezizomycetes",
    "rang": "klasse",
+   "rangfolge": 1,
    "lateinisch": "Pezizomycetes",
    "name": "Pezizomycetes",
+   "elter": "ascomycota"
+  },
+  {
+   "slug": "ascomycota",
+   "rang": "abteilung",
+   "rangfolge": 0,
+   "lateinisch": "Ascomycota",
+   "name": "Ascomycota",
+   "elter": null
+  },
+  {
+   "slug": "basidiomycota",
+   "rang": "abteilung",
+   "rangfolge": 0,
+   "lateinisch": "Basidiomycota",
+   "name": "Basidiomycota",
    "elter": null
   }
  ]

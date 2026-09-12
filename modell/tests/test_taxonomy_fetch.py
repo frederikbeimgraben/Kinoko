@@ -16,6 +16,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src" / "pilze"))
 
 from taxonomy_fetch import (  # noqa: E402
+    DEPTHS,
     RANKS,
     Profile,
     build_taxa,
@@ -47,15 +48,13 @@ LINES = {
     "pfifferling": "Leistlinge.",
 }
 
+BASIDIO = {"class": "Agaricomycetes", "phylum": "Basidiomycota"}
+
 PLACES = {
-    "Boletus": {"family": "Boletaceae", "order": "Boletales", "class": "Agaricomycetes"},
-    "Imleria": {"family": "Boletaceae", "order": "Boletales", "class": "Agaricomycetes"},
-    "Suillus": {"family": "Suillaceae", "order": "Boletales", "class": "Agaricomycetes"},
-    "Cantharellus": {
-        "family": "Cantharellaceae",
-        "order": "Cantharellales",
-        "class": "Agaricomycetes",
-    },
+    "Boletus": {"family": "Boletaceae", "order": "Boletales", **BASIDIO},
+    "Imleria": {"family": "Boletaceae", "order": "Boletales", **BASIDIO},
+    "Suillus": {"family": "Suillaceae", "order": "Boletales", **BASIDIO},
+    "Cantharellus": {"family": "Cantharellaceae", "order": "Cantharellales", **BASIDIO},
 }
 
 PAGE = (
@@ -148,6 +147,7 @@ def test_build_taxa_chains_the_ranks_and_names_the_root_last() -> None:
     assert taxa["boletus"] == {
         "slug": "boletus",
         "rang": "gattung",
+        "rangfolge": 4,
         "lateinisch": "Boletus",
         "name": "Dickröhrlinge",
         "elter": "boletaceae",
@@ -156,10 +156,23 @@ def test_build_taxa_chains_the_ranks_and_names_the_root_last() -> None:
     assert taxa["boletaceae"]["elter"] == "boletales"
     assert taxa["boletaceae"]["name"] == "Boletaceae"
     assert taxa["boletales"]["name"] == "Röhrlinge"
-    assert taxa["agaricomycetes"]["elter"] is None
+    assert taxa["agaricomycetes"]["elter"] == "basidiomycota"
+    assert taxa["basidiomycota"]["elter"] is None
     # Ohne Beleg steht der lateinische Name da, geraten wird nichts.
     assert taxa["agaricomycetes"]["name"] == "Agaricomycetes"
     assert "belege" not in taxa["agaricomycetes"]
+
+
+def test_every_row_carries_the_depth_of_its_rank() -> None:
+    rows = build_taxa(PROFILES, PLACES, LINES)
+
+    depths = {row["rang"]: row["rangfolge"] for row in rows}
+    assert depths == {RANKS[rank]: DEPTHS[rank] for rank in RANKS}
+    # Ein Kind steht tiefer als sein Elter.
+    by_slug = {row["slug"]: row for row in rows}
+    for row in rows:
+        if row["elter"]:
+            assert by_slug[row["elter"]]["rangfolge"] < row["rangfolge"]
 
 
 def test_every_rank_of_the_chain_appears() -> None:

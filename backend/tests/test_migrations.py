@@ -576,10 +576,11 @@ def test_a_migrated_database_looks_like_a_fresh_one(
     db.engine.cache_clear()
     command.upgrade(configuration(), "head")
 
-    # Die Vorrichtung baut nur die drei Tabellen nach, um die es hier geht.
-    # Verglichen wird darum, was sie traegt, nicht was ihr fehlt.
+    # Die Vorrichtung baut die drei Tabellen von Hand nach, um die es hier
+    # geht; was eine spaetere Migration selbst anlegt, kommt dazu. Verglichen
+    # wird darum, was beide Datenbanken tragen, nicht was der einen fehlt.
     von_hand = schema_of(grown)
     frisch = schema_of(fresh)
-    assert set(von_hand) == {"user", "find", "photo"}
-    for name in von_hand:
+    assert {"user", "find", "photo"} <= set(von_hand)
+    for name in set(von_hand) & set(frisch):
         assert von_hand[name] == frisch[name], name

@@ -7,12 +7,14 @@
 import type { SpeciesBrief } from './species';
 
 /** Die Stufen der Einordnung, von weit nach eng. */
-export const TAXON_RANKS = ['klasse', 'ordnung', 'familie', 'gattung'] as const;
+export const TAXON_RANKS = ['abteilung', 'klasse', 'ordnung', 'familie', 'gattung'] as const;
 export type TaxonRank = (typeof TAXON_RANKS)[number];
 
 /** Ein Taxon, so knapp wie eine Verweiszeile es braucht. */
 export interface TaxonStep {
   rang: TaxonRank;
+  /** Wie tief der Rang steht, oben null. Ordnen ohne die Rangliste zu kennen. */
+  rangfolge: number;
   slug: string;
   name: string;
   /** Leer, wo keine Quelle einen führt. Dann steht er schon in `name`. */

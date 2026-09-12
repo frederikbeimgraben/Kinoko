@@ -219,12 +219,14 @@ class Term(Base):
 
 
 class Taxon(Base):
-    """Eine Stufe der Einordnung: Klasse, Ordnung, Familie, Gattung.
+    """Eine Stufe der Einordnung: Abteilung, Klasse, Ordnung, Familie, Gattung.
 
     Eine Tabelle fuer alle Raenge, verkettet ueber ``parent_id`` auf sich
     selbst und leer an der Wurzel. Ein Rang mehr ist damit eine Zeile und kein
     Umbau, und eine Art darf an jeder Stufe haengen: ist die Gattung strittig,
-    traegt die Familie sie.
+    traegt die Familie sie. Eine Art ohne Stufe ist noch nicht eingeordnet.
+    Nicht einzuordnen gibt es nicht: jede Art hat eine Stellung, wir kennen sie
+    nur nicht immer.
 
     Der Anfangsbestand kommt aus ``daten/taxonomie.json``. Danach ist diese
     Tabelle die Wahrheit, und der Start gleicht nur noch ab.
@@ -234,6 +236,10 @@ class Taxon(Base):
 
     id: Mapped[str] = mapped_column(String(ID_LENGTH), primary_key=True, default=new_identifier)
     rank: Mapped[TaxonRank] = mapped_column(_enum_column(TaxonRank), index=True)
+    # Wie tief der Rang steht, oben null. Die Zahl steht in der Zeile und nicht
+    # in der Reihenfolge des Enums: ein Rang, den jemand dazwischen setzt,
+    # schriebe sonst jede vorhandene Zeile um.
+    rank_order: Mapped[int] = mapped_column(Integer)
     slug: Mapped[str] = mapped_column(String(80), unique=True)
     name: Mapped[str] = mapped_column(String(120))
     # Leer, wo keine Quelle einen fuehrt. Geraten wird nichts.

@@ -5,7 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { Taxon } from '../../core/api/models';
-import { AGARICOMYCETES, BOLETACEAE, BOLETUS } from '../../testing/taxonomy-fixture';
+import { BASIDIOMYCOTA, BOLETACEAE, BOLETUS } from '../../testing/taxonomy-fixture';
 import { noViolations } from '../../testing/axe';
 import { TaxonomyComponent } from './taxonomy.component';
 
@@ -66,7 +66,7 @@ describe('TaxonomyComponent', () => {
   });
 
   it('sagt an der Wurzel, dass es darüber nichts gibt', async () => {
-    await build(AGARICOMYCETES, 'klasse', 'agaricomycetes');
+    await build(BASIDIOMYCOTA, 'abteilung', 'basidiomycota');
 
     expect(screen.getByText('Diese Stufe ist die oberste im Katalog.')).toBeTruthy();
     expect(screen.getByText('Keine weitere Stufe daneben.')).toBeTruthy();

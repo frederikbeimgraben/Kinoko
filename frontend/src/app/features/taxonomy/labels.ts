@@ -6,6 +6,7 @@ import type { TranslationKey } from '../../core/i18n/translations';
  * Wert, meldet es die Typprüfung und nicht erst eine leere Zeile im Katalog.
  */
 export const RANK_TEXT: Record<TaxonRank, TranslationKey> = {
+  abteilung: 'taxonomie.rang.abteilung',
   klasse: 'taxonomie.rang.klasse',
   ordnung: 'taxonomie.rang.ordnung',
   familie: 'taxonomie.rang.familie',

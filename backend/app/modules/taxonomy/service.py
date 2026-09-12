@@ -29,6 +29,7 @@ async def sync_taxa(session: AsyncSession) -> None:
             continue
         row = Taxon(
             rank=seed.rank,
+            rank_order=seed.rank_order,
             slug=seed.slug,
             name=seed.name,
             latin_name=seed.latin_name,
@@ -49,7 +50,13 @@ async def read_taxa(session: AsyncSession) -> dict[str, Taxon]:
 
 
 def _step(row: Taxon) -> TaxonStep:
-    return TaxonStep(rank=row.rank, slug=row.slug, name=row.name, latin_name=row.latin_name)
+    return TaxonStep(
+        rank=row.rank,
+        rank_order=row.rank_order,
+        slug=row.slug,
+        name=row.name,
+        latin_name=row.latin_name,
+    )
 
 
 def _by_identifier(taxa: Mapping[str, Taxon]) -> dict[str, Taxon]:
@@ -73,7 +80,8 @@ def species_per_taxon(species: Iterable[SpeciesBrief]) -> dict[str, list[Species
 
     Eine Art haengt heute an der Gattung ihres eigenen lateinischen Namens. Die
     Tabelle laesst jede Stufe zu; sobald die Art eine Zeile ist, steht der
-    Verweis dort und diese Ableitung faellt weg.
+    Verweis dort und diese Ableitung faellt weg. Keine Stufe heisst dann: noch
+    nicht eingeordnet.
     """
     below: dict[str, list[SpeciesBrief]] = defaultdict(list)
     for entry in species:
@@ -99,6 +107,7 @@ def _children(taxa: Mapping[str, Taxon], row: Taxon, counts: Mapping[str, int]) 
     return [
         TaxonChild(
             rank=child.rank,
+            rank_order=child.rank_order,
             slug=child.slug,
             name=child.name,
             latin_name=child.latin_name,
@@ -133,6 +142,7 @@ async def taxon_page(
     counts = counts_per_taxon(taxa, below)
     return TaxonPage(
         rank=row.rank,
+        rank_order=row.rank_order,
         slug=row.slug,
         name=row.name,
         latin_name=row.latin_name,

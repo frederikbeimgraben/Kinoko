@@ -1,7 +1,7 @@
 """Die Einordnung der Arten und ihr Anfangsbestand.
 
 Revision ID: b8e4d1a37f26
-Revises: a8f2c50d7b31
+Revises: c4e9b1d7a206
 """
 
 from collections.abc import Sequence
@@ -14,7 +14,7 @@ from app.models import Base, new_identifier
 from app.modules.taxonomy.seed import seed_taxa
 
 revision: str = "b8e4d1a37f26"
-down_revision: str | None = "a8f2c50d7b31"
+down_revision: str | None = "c4e9b1d7a206"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
@@ -38,7 +38,7 @@ def upgrade() -> None:
         str(row[0]): str(row[1])
         for row in connection.execute(sa.select(table.c.slug, table.c.id)).all()
     }
-    rows: list[dict[str, str | None]] = []
+    rows: list[dict[str, str | int | None]] = []
     for seed in seed_taxa():
         if seed.slug in known:
             continue
@@ -47,6 +47,7 @@ def upgrade() -> None:
             {
                 "id": known[seed.slug],
                 "rank": seed.rank.value,
+                "rank_order": seed.rank_order,
                 "slug": seed.slug,
                 "name": seed.name,
                 "latin_name": seed.latin_name,
