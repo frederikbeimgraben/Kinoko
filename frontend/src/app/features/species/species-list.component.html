@@ -30,19 +30,10 @@
           [name]="row.name"
           [latin]="row.latin"
           [active]="row.active"
+          [image]="row.image"
           (chosen)="open(row.slug)"
           (keydown)="onKey($event, i)"
         >
-          @if (row.hasCurve) {
-            <app-season-curve
-              curve
-              [alleJahre]="row.curve"
-              [laufendesJahr]="row.current"
-              [visitsAllYears]="begehungen()"
-              [visitsCurrentYearSeries]="visitsCurrentYear()"
-              [label]="row.label"
-            />
-          }
           <ng-container tags>
             @for (badge of row.badges; track badge.text) {
               <app-badge [variant]="badge.variant">{{ badge.text }}</app-badge>

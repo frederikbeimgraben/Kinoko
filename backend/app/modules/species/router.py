@@ -8,7 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.db import db_session
 from app.modules.species.catalog import Catalog, SpeciesFilter
 from app.modules.species.dependencies import current_catalog
-from app.modules.species.schemas import Species, SpeciesList, SpeciesQuery
+from app.modules.species.facets import facet_catalogue
+from app.modules.species.schemas import FacetCatalogue, Species, SpeciesList, SpeciesQuery
+from app.modules.species_images.leads import lead_images
 from app.modules.taxonomy.service import lineage_of
 
 router = APIRouter(prefix="/arten", tags=["arten"])
@@ -17,6 +19,7 @@ router = APIRouter(prefix="/arten", tags=["arten"])
 @router.get("", summary="Die sammelbaren Arten")
 async def species_list(
     catalog: Annotated[Catalog, Depends(current_catalog)],
+    session: Annotated[AsyncSession, Depends(db_session)],
     # Die Namen auf dem Draht bleiben deutsch, bis R3 den Vertrag umstellt.
     chosen: Annotated[SpeciesQuery, Query()],
 ) -> SpeciesList:
@@ -30,6 +33,7 @@ async def species_list(
     """
     return catalog.listing(
         only_collectable=chosen.collectable,
+        lead_images=await lead_images(session),
         chosen=SpeciesFilter(
             group=chosen.group,
             tier=chosen.tier,
@@ -54,6 +58,17 @@ async def species_list(
             stem_feature=chosen.stem_feature,
         ),
     )
+
+
+@router.get("/merkmale", summary="Was sich filtern laesst und was es kostet")
+async def species_facets(catalog: Annotated[Catalog, Depends(current_catalog)]) -> FacetCatalogue:
+    """Liefert je Gruppe die Abdeckung und je Wert die Zahl der Arten.
+
+    Die Zahlen sind absolut ueber den ganzen Katalog und haengen nicht am
+    uebrigen Filter: sie sagen, was eine Wahl kostet, bevor jemand sie trifft.
+    Der Pfad steht vor ``/{slug}``, sonst nimmt der Slug ihn.
+    """
+    return facet_catalogue(catalog)
 
 
 @router.get("/{slug}", summary="Profil einer Art")

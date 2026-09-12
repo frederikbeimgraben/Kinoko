@@ -9,7 +9,10 @@
 
 .speciesrow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 96px;
+  // Die zweite Spalte fällt zusammen, wo kein Bild steht. Die erste hat
+  // `minmax(0, …)`, sonst drückt ein langer Name die Zeile über den Rand
+  // hinaus, statt umzubrechen.
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto auto;
   column-gap: var(--pilz-gutter);
   align-items: center;
@@ -28,18 +31,26 @@
 }
 
 .speciesrow__name {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   font-size: 17px;
   font-weight: var(--fw-semibold);
   line-height: 1.3;
 }
 
-.speciesrow__curve {
+.speciesrow__image {
   grid-row: 1 / 3;
   grid-column: 2;
   align-self: center;
+  inline-size: 64px;
+  block-size: 64px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
 }
 
 .speciesrow__latin {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
   font-size: var(--fs-sm);
   font-style: italic;
   line-height: 1.3;

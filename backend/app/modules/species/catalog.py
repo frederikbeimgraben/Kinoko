@@ -9,7 +9,7 @@ Manifeste unter ``PILZE_MAPS``.
 """
 
 import tomllib
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -518,6 +518,7 @@ class Catalog:
         *,
         only_collectable: bool | None = None,
         chosen: SpeciesFilter | None = None,
+        lead_images: Mapping[str, str] | None = None,
     ) -> SpeciesList:
         """Die Arten mit Stufe, Tags und der kleinen Kurve.
 
@@ -531,6 +532,10 @@ class Catalog:
         ihren eigenen Zweck.
 
         ``chosen`` schraenkt weiter ein, ueber die strukturierten Felder.
+
+        ``lead_images`` traegt den Pfad des Titelbildes je Slug. Er kommt aus
+        der Datenbank und nicht aus den Dateien, darum reicht der Endpunkt ihn
+        herein. Was fehlt, bleibt leer: eine Art ohne Bild zeigt keins.
         """
         wanted = chosen or SpeciesFilter()
         species: list[SpeciesBrief] = []
@@ -549,7 +554,13 @@ class Catalog:
                     current_year=current,
                     maximum=max([*all_years, *current]),
                 )
-            species.append(SpeciesBrief(**common, season=season))
+            species.append(
+                SpeciesBrief(
+                    **common,
+                    season=season,
+                    lead_image=(lead_images or {}).get(slug),
+                )
+            )
         species.sort(key=lambda species: species.name)
         return SpeciesList(
             as_of=self._as_of,

@@ -784,6 +784,7 @@ async def test_the_listing_answers_in_camel_case(app: FastAPI) -> None:
         "synonyme",
         "vorhersageGeplant",
         "begehungenMitFund",
+        "titelbild",
         "spitzeWoche",
         "saison",
     }
@@ -1331,7 +1332,7 @@ async def test_the_endpoint_has_no_parameter_for_both_groups_any_more(app: FastA
     assert response.status_code == 422
 
 
-async def test_the_real_listing_shows_all_threehundredsix() -> None:
+async def test_the_real_listing_shows_all_threehundredsix(schema: None) -> None:  # noqa: ARG001
     async with client(build_app()) as call:
         response = await call.get("/api/arten")
 
@@ -1345,7 +1346,9 @@ async def test_the_real_listing_narrows_to_eightyfive_collectable_ones() -> None
     assert len(response.json()["arten"]) == 85
 
 
-async def test_a_species_without_a_season_carries_an_empty_curve() -> None:
+async def test_a_species_without_a_season_carries_an_empty_curve(
+    schema: None,  # noqa: ARG001
+) -> None:
     # Der Absturz von D1f: die Liste rechnete an 224 Profilen ohne Zeile in der
     # Saisontabelle. Die Antwort haelt sie seither aus, und "sammelbar" war nie
     # der Schutz davor — er hat den Fehler nur versteckt.
@@ -1863,7 +1866,7 @@ async def test_a_level_outside_the_enum_is_rejected(app: FastAPI) -> None:
     assert response.headers["content-type"].startswith("application/problem+json")
 
 
-async def test_the_real_listing_filters_by_level() -> None:
+async def test_the_real_listing_filters_by_level(schema: None) -> None:  # noqa: ARG001
     async with client(build_app()) as call:
         deadly = await call.get("/api/arten", params={"speisewert": "toedlichGiftig"})
         edible = await call.get("/api/arten", params={"speisewert": "essbar"})
@@ -2224,7 +2227,7 @@ def test_the_colour_filter_looks_at_every_part(tmp_path: Path) -> None:
     assert "steinpilz" in slugs
 
 
-async def test_the_endpoint_takes_every_filter() -> None:
+async def test_the_endpoint_takes_every_filter(schema: None) -> None:  # noqa: ARG001
     async with client(build_app()) as call:
         answer = await call.get(
             "/api/arten",
@@ -2248,7 +2251,7 @@ async def test_a_month_outside_the_calendar_is_rejected() -> None:
     assert answer.headers["content-type"].startswith("application/problem+json")
 
 
-async def test_the_tree_filter_answers_over_the_wire() -> None:
+async def test_the_tree_filter_answers_over_the_wire(schema: None) -> None:  # noqa: ARG001
     async with client(build_app()) as call:
         body = (await call.get("/api/arten", params={"baum": "laerche"})).json()
 

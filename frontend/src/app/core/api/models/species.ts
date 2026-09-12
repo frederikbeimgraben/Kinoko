@@ -487,6 +487,8 @@ export interface SpeciesBrief {
   /** Genug Funde für ein eigenes Modell, aber noch keine Karte. */
   vorhersageGeplant: boolean;
   begehungenMitFund: number;
+  /** Der Pfad des Titelbildes, klein. Leer heißt: die Art hat keins. */
+  titelbild: string | null;
   spitzeWoche: number | null;
   /** Eine Art ohne Zeile in der Saisontabelle trägt keine Kurve. */
   saison: SeasonCurveBrief | null;

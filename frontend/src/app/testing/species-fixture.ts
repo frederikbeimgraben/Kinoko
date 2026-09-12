@@ -60,6 +60,7 @@ function brief(
     synonyme: [],
     vorhersageGeplant: true,
     begehungenMitFund: 1853,
+    titelbild: null,
     spitzeWoche: 40,
     saison: { alleJahre: glocke(39, 32), laufendesJahr: glocke(39, 28).slice(0, 36), hoechstwert: 32 },
     ...art,
@@ -243,6 +244,7 @@ export const STEINPILZ: Species = {
   baeumeAusErfahrung: null,
   vorhersageGeplant: true,
   begehungenMitFund: 1853,
+  titelbild: null,
   spitzeWoche: 40,
   merkmale: [
     { schluessel: 'hut', text: '6 bis 25 cm, hell- bis dunkelbraun.' },

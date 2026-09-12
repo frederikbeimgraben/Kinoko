@@ -684,6 +684,89 @@ class Source(BaseSchema):
     )
 
 
+class FacetKey(StrEnum):
+    """Die Gruppen des Filterblatts. Der Name steht im i18n-Katalog, nicht hier."""
+
+    EDIBILITY = "speisewert"
+    PROTECTION = "schutz"
+    TIER = "stufe"
+    COLLECTABLE = "sammelbar"
+    SENSES = "sinne"
+    COLOUR = "farbe"
+    MEASUREMENTS = "masse"
+    PERIOD = "zeitraum"
+    HYMENOPHORE = "fruchtschicht"
+    STEM = "stielmerkmale"
+    TREES = "baeume"
+    RATING = "wertigkeit"
+    CAP_MARGIN = "hutrand"
+    FREQUENCY = "haeufigkeit"
+    CAP_SHAPE = "hutform"
+    CAP_FEATURES = "hutmerkmale"
+    REAGENTS = "reagenzien"
+    RED_LIST = "gefaehrdung"
+
+
+class FacetKind(StrEnum):
+    """Wie eine Gruppe gewaehlt wird. Die Oberflaeche schaltet danach."""
+
+    VALUES = "werte"
+    SWITCH = "schalter"
+    PARTS = "teile"
+    COLOUR = "farben"
+    SPAN = "spanne"
+    PERIOD = "zeitraum"
+
+
+class FacetValue(BaseSchema):
+    """Ein waehlbarer Wert mit der Zahl der Arten, die er trifft.
+
+    Die Zahl ist absolut ueber den ganzen Katalog. Sie sagt, was eine Wahl
+    kostet, nicht was nach ihr uebrig bleibt.
+    """
+
+    value: str = Field(validation_alias="wert", serialization_alias="wert")
+    count: int = Field(validation_alias="anzahl", serialization_alias="anzahl")
+
+
+class FacetPart(BaseSchema):
+    """Ein Teil einer Gruppe: ein Koerperteil, ein Sinn, ein Mass."""
+
+    key: str = Field(validation_alias="teil", serialization_alias="teil")
+    described: int = Field(validation_alias="beschrieben", serialization_alias="beschrieben")
+    values: list[FacetValue] = Field(validation_alias="werte", serialization_alias="werte")
+    unit: str | None = Field(
+        validation_alias="einheit", serialization_alias="einheit", default=None
+    )
+    # Die Grenzen eines Masses ueber den ganzen Katalog. Ohne eine einzige
+    # Angabe bleiben sie leer, und die Oberflaeche zeigt keinen Schieber.
+    minimum: float | None = Field(validation_alias="von", serialization_alias="von", default=None)
+    maximum: float | None = Field(validation_alias="bis", serialization_alias="bis", default=None)
+
+
+class FacetGroup(BaseSchema):
+    """Eine Gruppe mit ihrer Abdeckung.
+
+    ``described`` sagt, fuer wie viele Arten die Quelle das Merkmal nennt. Wer
+    danach filtert, schliesst die uebrigen aus, weil die Angabe fehlt, und
+    nicht weil sie nicht passen. Darum steht die Zahl vor der Wahl.
+    """
+
+    key: FacetKey = Field(validation_alias="schluessel", serialization_alias="schluessel")
+    kind: FacetKind = Field(validation_alias="art", serialization_alias="art")
+    described: int = Field(validation_alias="beschrieben", serialization_alias="beschrieben")
+    # Eine Gruppe traegt entweder Werte oder Teile, nie beides.
+    values: list[FacetValue] = Field(validation_alias="werte", serialization_alias="werte")
+    parts: list[FacetPart] = Field(validation_alias="teile", serialization_alias="teile")
+
+
+class FacetCatalogue(BaseSchema):
+    """Die Antwort auf ``GET /api/arten/merkmale``, nach Abdeckung geordnet."""
+
+    species: int = Field(validation_alias="arten", serialization_alias="arten")
+    groups: list[FacetGroup] = Field(validation_alias="gruppen", serialization_alias="gruppen")
+
+
 class Profile(BaseSchema):
     """Eine Datei unter ``daten/arten/<slug>.toml``.
 
@@ -1055,6 +1138,12 @@ class SpeciesCommon(BaseSchema):
     )
     visits_with_find: int = Field(
         validation_alias="begehungenMitFund", serialization_alias="begehungenMitFund"
+    )
+    # Das Titelbild der Art, klein. Es steht in der Datenbank und nicht im
+    # Profil, darum setzt es erst der Endpunkt. Leer heisst: es gibt keins,
+    # und dann steht rechts in der Zeile nichts.
+    lead_image: str | None = Field(
+        validation_alias="titelbild", serialization_alias="titelbild", default=None
     )
     peak_week: int | None = Field(validation_alias="spitzeWoche", serialization_alias="spitzeWoche")
 

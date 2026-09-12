@@ -7,24 +7,76 @@ import { SpeciesRowComponent } from './species-row.component';
 @Component({
   imports: [SpeciesRowComponent],
   template: `
-    <app-species-row name="Steinpilz" latin="Boletus edulis" [active]="true">
-      <span curve>Kurve</span>
+    <app-species-row
+      name="Steinpilz"
+      latin="Boletus edulis"
+      [active]="true"
+      [image]="'/api/species-images/bild-eins/thumb'"
+    >
       <span tags>Vorhersage</span>
     </app-species-row>
   `,
 })
 class HostComponent {}
 
+/** Dieselbe Zeile ohne Titelbild. Rechts steht dann nichts. */
+@Component({
+  imports: [SpeciesRowComponent],
+  template: `<app-species-row name="Steinpilz" latin="Boletus edulis" />`,
+})
+class BareHostComponent {}
+
+/**
+ * Der längste Name im Katalog in einer schmalen Zeile. Die Namensspalte muss
+ * `minmax(0, …)` tragen und das Bild eine feste Breite, sonst drückt der Name
+ * die Zeile über den Rand oder das Bild die Spalte auf einen Buchstaben.
+ */
+@Component({
+  imports: [SpeciesRowComponent],
+  template: `
+    <div style="inline-size: 240px">
+      <app-species-row
+        name="Schwarzhütiger Steinpilz aus dem Schönbuch"
+        latin="Boletus aereus subsp. reticulatus"
+        [image]="'/api/species-images/bild-eins/thumb'"
+      />
+    </div>
+  `,
+})
+class NarrowHostComponent {}
+
 describe('SpeciesRowComponent', () => {
-  it('zeigt Name, lateinischen Namen, Kurve und Tags', async () => {
+  it('zeigt Name, lateinischen Namen, Titelbild und Tags', async () => {
     const { container } = await render(HostComponent);
 
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
-    expect(screen.getByText('Kurve')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Steinpilz' })).toHaveAttribute(
+      'src',
+      '/api/species-images/bild-eins/thumb',
+    );
     expect(screen.getByText('Vorhersage')).toBeInTheDocument();
     expect(container.querySelector('.speciesrow--active')).not.toBeNull();
     await noViolations(container);
+  });
+
+  it('lässt rechts nichts stehen, wo die Art kein Bild hat', async () => {
+    const { container } = await render(BareHostComponent);
+
+    expect(container.querySelector('.speciesrow__image')).toBeNull();
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+  });
+
+  it('lässt den längsten Namen in einer schmalen Zeile umbrechen, nicht die Spalte zusammenfallen', async () => {
+    const { container } = await render(NarrowHostComponent);
+    const [row] = container.getElementsByClassName('speciesrow');
+    const [name] = container.getElementsByClassName('speciesrow__name');
+
+    // Ohne `minmax(0, …)` an der ersten Spalte wächst die Zeile über die 240
+    // Pixel hinaus; ohne feste Bildbreite schrumpft der Name auf einen Buchstaben.
+    expect(getComputedStyle(row).gridTemplateColumns).toBe('minmax(0, 1fr) auto');
+    expect(getComputedStyle(name).overflowWrap).toBe('anywhere');
+    expect(container.querySelector('.speciesrow__image')).not.toBeNull();
   });
 
   it('markiert die aktive Art für Auge und Hilfsmittel', async () => {
