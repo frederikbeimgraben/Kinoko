@@ -67,6 +67,21 @@ describe('SpeciesRowComponent', () => {
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
   });
 
+  it.each([
+    ['mit Bild', HostComponent],
+    ['ohne Bild', BareHostComponent],
+  ])('hält beide Namen in einem Block, %s', async (_fall, host) => {
+    // Als zwei Kinder des Rasters rutschte der lateinische Name in die freie
+    // Zelle rechts, sobald das Bild fehlt. Die Liste haette dann zwei
+    // Zeilenformen nebeneinander, sobald die ersten Bilder da sind. Der Block
+    // haelt sie zusammen, ohne dass eine Platzierungsregel darueber wacht.
+    const { container } = await render(host);
+    const [names] = container.getElementsByClassName('speciesrow__names');
+
+    expect(names.querySelector('.speciesrow__name')?.textContent).toBe('Steinpilz');
+    expect(names.querySelector('.speciesrow__latin')?.textContent).toBe('Boletus edulis');
+  });
+
   it('lässt den längsten Namen in einer schmalen Zeile umbrechen, nicht die Spalte zusammenfallen', async () => {
     const { container } = await render(NarrowHostComponent);
     const [row] = container.getElementsByClassName('speciesrow');

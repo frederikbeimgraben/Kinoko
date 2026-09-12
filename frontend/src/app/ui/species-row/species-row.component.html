@@ -6,11 +6,13 @@
   [attr.aria-current]="active() ? 'true' : null"
   (click)="chosen.emit()"
 >
-  <span class="speciesrow__name">{{ name() }}</span>
+  <span class="speciesrow__names">
+    <span class="speciesrow__name">{{ name() }}</span>
+    <span class="speciesrow__latin">{{ latin() }}</span>
+  </span>
   @if (image(); as source) {
     <img class="speciesrow__image" [src]="source" [alt]="name()" width="64" height="64" />
   }
-  <span class="speciesrow__latin">{{ latin() }}</span>
   <span class="speciesrow__tags">
     @if (active()) {
       <span class="speciesrow__badge">{{ activeText() }}</span>
