@@ -1339,7 +1339,7 @@ async def test_the_real_listing_shows_all_threehundredsix(schema: None) -> None:
     assert len(response.json()["arten"]) == 306
 
 
-async def test_the_real_listing_narrows_to_eightyfive_collectable_ones() -> None:
+async def test_the_real_listing_narrows_to_eightyfive_collectable_ones(schema: None) -> None:  # noqa: ARG001
     async with client(build_app()) as call:
         response = await call.get("/api/arten", params={"sammelbar": "true"})
 
@@ -1390,7 +1390,7 @@ def test_the_listing_survives_a_catalogue_without_any_season(tmp_path: Path) -> 
     assert all(species.season is None for species in listing.species)
 
 
-async def test_every_species_of_the_catalogue_carries_a_row() -> None:
+async def test_every_species_of_the_catalogue_carries_a_row(schema: None) -> None:  # noqa: ARG001
     # Der Gruene Knollenblaetterpilz steht beim Blaettern, nicht nur hinter der
     # Suche. Das ist der Zweck der Regel aus D9.
     async with client(build_app()) as call:
