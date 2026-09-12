@@ -25,6 +25,44 @@ describe('ColourChangeComponent', () => {
     await noViolations(container);
   });
 
+  it('setzt die Dauer unter die Flächen und an dieselbe rechte Kante', async () => {
+    // Linksbündig hing sie unter der Beschriftung statt unter der Farbe.
+    const { container } = await render(ColourChangeComponent, {
+      inputs: {
+        from: WHITE,
+        to: BLUE,
+        fromLabel: 'Farbe: weiß',
+        toLabel: 'Farbe: blau',
+        duration: 'langsam',
+        arrowLabel: 'wird zu',
+      },
+    });
+
+    const found = container.querySelector('.change__speed');
+    if (found === null) throw new Error('Die Dauer steht nicht im Baum.');
+    const speed = getComputedStyle(found);
+    expect(speed.gridColumn).toBe('1/-1');
+    expect(speed.justifyContent).toBe('flex-end');
+  });
+
+  it('lässt den Pfeil weg, wenn die Ausgangsfarbe fehlt', async () => {
+    // Kein Profil des Katalogs nennt eine Ausgangsfarbe. Der Pfeil stand
+    // darum immer allein vor einer einzelnen Fläche.
+    await render(ColourChangeComponent, {
+      inputs: {
+        from: [],
+        to: BLUE,
+        fromLabel: '',
+        toLabel: 'Farbe: blau',
+        duration: 'langsam',
+        arrowLabel: 'wird zu',
+      },
+    });
+
+    expect(screen.queryByRole('img', { name: 'wird zu' })).not.toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Farbe: blau' })).toBeInTheDocument();
+  });
+
   it('lässt den Pfeil weg, wenn die Farbe bleibt', async () => {
     await render(ColourChangeComponent, {
       inputs: {

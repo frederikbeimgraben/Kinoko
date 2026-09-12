@@ -1,4 +1,8 @@
 // Mittig und mit Luft: der Leerzustand ist kein Fehler, sondern eine Auskunft.
+//
+// Er traegt die Flaeche einer Karte, weil er an der Stelle einer steht: ohne
+// sie liest er sich als Leerraum und nicht als der Platz, an dem der Inhalt
+// stuende. Dieselben Werte wie `.card` des Kits.
 :host {
   display: flex;
   flex-direction: column;
@@ -6,6 +10,10 @@
   align-items: center;
   padding-block: var(--space-7);
   text-align: center;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .empty__image {
