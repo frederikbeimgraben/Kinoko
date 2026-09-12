@@ -216,21 +216,28 @@ export class SpeciesListComponent {
    *
    * Der Speisewert erscheint nur, wo er warnt. „Essbar“ an jeder zweiten Zeile
    * sagt nichts; „Tödlich giftig“ muss ins Auge springen.
+   *
+   * Und es steht vorn. Die Zeile zeigt nur die ersten zwei oder drei Marken,
+   * und der Speisewert stand an dritter Stelle: eine geschützte, tödlich
+   * giftige Art verlor ihre Warnung, sobald sie die aktive Art der Karte war.
+   * Was hinten steht, darf wegfallen — Baum und Jahreszeit. Die Warnung nie.
    */
   private badges(art: SpeciesBrief): Marke[] {
-    const badges: Marke[] = [
-      { text: this.i18n.translate(TAG_TEXT[art.stufe]), variant: LEVEL_BADGE[art.stufe] },
-    ];
-    if (art.schutz.status !== 'keiner') {
-      badges.push({
-        text: this.i18n.translate(PROTECTION_SHORT[art.schutz.status]),
-        variant: PROTECTION_BADGE[art.schutz.status],
-      });
-    }
+    const badges: Marke[] = [];
     if (GEFAEHRLICH.includes(art.speisewert)) {
       badges.push({
         text: this.i18n.translate(EDIBILITY_TEXT[art.speisewert]),
         variant: EDIBILITY_BADGE[art.speisewert],
+      });
+    }
+    badges.push({
+      text: this.i18n.translate(TAG_TEXT[art.stufe]),
+      variant: LEVEL_BADGE[art.stufe],
+    });
+    if (art.schutz.status !== 'keiner') {
+      badges.push({
+        text: this.i18n.translate(PROTECTION_SHORT[art.schutz.status]),
+        variant: PROTECTION_BADGE[art.schutz.status],
       });
     }
     // Der erste Baum ist der wichtigste: so stehen sie im Profil.
@@ -245,7 +252,9 @@ export class SpeciesListComponent {
 
   private row(art: SpeciesBrief, active: boolean): Row {
     // Die Zeile setzt bei einer aktiven Art selbst die Marke „aktiv“ davor,
-    // darum bleibt hier eine Marke weniger Platz.
+    // darum bleibt hier eine Marke weniger Platz. Gekürzt wird von hinten, und
+    // die Warnung steht vorn: sie ist die einzige Marke, deren Fehlen jemanden
+    // vergiften kann.
     return {
       slug: art.slug,
       name: art.name,

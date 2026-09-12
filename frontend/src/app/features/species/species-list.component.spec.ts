@@ -169,11 +169,36 @@ describe('ArtenComponent', () => {
   it('setzt die Marken einer Zeile in fester Reihenfolge', async () => {
     await build();
 
-    // Stufe, Schutz, Speisewert, Symbiosepartner, Jahreszeit — und nur, was
-    // etwas sagt: „Essbar“ an jeder zweiten Zeile sagt nichts.
+    // Warnung, Stufe, Schutz, Symbiosepartner, Jahreszeit — und nur, was etwas
+    // sagt: „essbar“ an jeder zweiten Zeile sagt nichts.
     const row = screen.getByRole('button', { name: /Steinpilz/ });
     const badges = [...row.querySelectorAll('.badge')].map((badge) => badge.textContent.trim());
     expect(badges).toEqual(['Vorhersage', 'Geschützt', 'Fichte']);
+  });
+
+  it('lässt die Warnung nie weg, auch wenn die Zeile kürzen muss', async () => {
+    // Der Gallenröhrling der Fixture trägt vier Marken: giftig, Profil,
+    // Geschützt, Röhrling-Baum. Die Zeile zeigt höchstens drei, bei der
+    // aktiven Art höchstens zwei — und stand die Warnung an dritter Stelle,
+    // verlor genau die aktive Art sie. Das ist die einzige Stelle, an der ein
+    // Darstellungsfehler in dieser App jemanden vergiften kann.
+    const { state, refresh } = await build();
+
+    const badgesOf = (): string[] =>
+      [...screen.getByRole('button', { name: /Gallenröhrling/ }).querySelectorAll('.badge')].map((badge) =>
+        badge.textContent.trim(),
+      );
+
+    expect(badgesOf()[0]).toBe('giftig');
+    expect(badgesOf()).toHaveLength(3);
+
+    state.select('gallenroehrling');
+    refresh();
+
+    // Eine Marke weniger Platz, weil „Aktiv“ davorsteht — die Warnung bleibt
+    // trotzdem an erster Stelle, und Baum und Jahreszeit weichen.
+    expect(badgesOf()).toHaveLength(2);
+    expect(badgesOf()[0]).toBe('giftig');
   });
 
   it('zeigt einen Leerzustand, wenn nichts passt', async () => {

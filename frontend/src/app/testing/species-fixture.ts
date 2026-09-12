@@ -116,6 +116,8 @@ export const GALLENROEHRLING_KURZ: SpeciesBrief = {
   stufe: 'profil',
   tags: ['profil', 'roehrling', 'sommer', 'herbst'],
   speisewert: 'giftig',
+  // Geschützt: so trägt die Zeile vier Marken und muss kürzen.
+  schutz: { status: 'besondersGeschuetzt', quelle: 'Bundesartenschutzverordnung, Anlage 1' },
   kartenSlug: null,
   sammelbar: false,
   marktfaehigkeit: { marktfaehig: false, schweiz: null },
@@ -124,7 +126,7 @@ export const GALLENROEHRLING_KURZ: SpeciesBrief = {
   gefaehrdung: null,
   warnung: null,
   jahreszeiten: ['sommer', 'herbst'],
-  baeume: [],
+  baeume: ['fichte'],
   baeumeAusErfahrung: null,
   vorhersageGeplant: false,
   begehungenMitFund: 0,
