@@ -74,7 +74,7 @@ class Base(DeclarativeBase):
     """Gemeinsame Wurzel aller Tabellen."""
 
 
-# Wie ein Verweis auf ``nutzer`` reagiert, wenn das Konto verschwindet.
+# Wie ein Verweis auf ``user`` reagiert, wenn das Konto verschwindet.
 #
 # ``RESTRICT`` traegt alles, was jemand angelegt hat und was ohne ihn weiter
 # gilt: Funde, Marker, Zonen, Kombinationen und eingereichte Bilder. Ein
@@ -86,13 +86,13 @@ OWNED_BY_PERSON: Final = "RESTRICT"
 
 
 def person_key(table: str, column: str) -> str:
-    """Der Name einer Bedingung auf ``nutzer.sub``.
+    """Der Name einer Bedingung auf ``user.sub``.
 
     Ein Name ist noetig, weil SQLite eine Bedingung nur ueber ihn wiederfindet:
     die Migration muss wissen, ob sie schon steht, und ein spaeterer Schritt
     muss sie loesen koennen.
     """
-    return f"fk_{table}_{column}_nutzer"
+    return f"fk_{table}_{column}_user"
 
 
 # ``SET NULL`` traegt die wahlfreien Spuren einer Handlung. Der geprueften
@@ -103,10 +103,10 @@ TRACE_OF_PERSON: Final = "SET NULL"
 # Die acht Spalten, die auf ein Konto zeigen, mit ihrer Loeschregel. Migration
 # und Zaehlwerkzeug lesen daraus, damit die Liste an einer Stelle steht.
 PERSON_KEYS: Final[tuple[tuple[str, str, str], ...]] = (
-    ("fund", "besitzer_sub", OWNED_BY_PERSON),
-    ("marker", "besitzer_sub", OWNED_BY_PERSON),
-    ("zone", "besitzer_sub", OWNED_BY_PERSON),
-    ("kombination", "besitzer_sub", OWNED_BY_PERSON),
+    ("find", "owner_sub", OWNED_BY_PERSON),
+    ("marker", "owner_sub", OWNED_BY_PERSON),
+    ("zone", "owner_sub", OWNED_BY_PERSON),
+    ("combination", "owner_sub", OWNED_BY_PERSON),
     ("species_image", "uploader_sub", OWNED_BY_PERSON),
     ("species_image", "reviewed_by", TRACE_OF_PERSON),
     ("text", "updated_by", TRACE_OF_PERSON),
@@ -122,12 +122,12 @@ class Person(Base):
     SSO gibt keine Liste heraus.
     """
 
-    __tablename__ = "nutzer"
+    __tablename__ = "user"
 
     sub: Mapped[str] = mapped_column(String(255), primary_key=True)
     email: Mapped[str | None] = mapped_column(String(255), default=None)
     name: Mapped[str | None] = mapped_column(String(255), default=None)
-    created_at: Mapped[datetime] = mapped_column("erstellt_am", UtcTime, default=utc_now)
+    created_at: Mapped[datetime] = mapped_column(UtcTime, default=utc_now)
 
 
 class Role(Base):
@@ -189,7 +189,7 @@ class UserRole(Base):
     # nichts und traegt nichts. Sie geht mit, wie sie mit der Rolle mitgeht.
     user_sub: Mapped[str] = mapped_column(
         String(255),
-        ForeignKey("nutzer.sub", ondelete="CASCADE", name=person_key("user_role", "user_sub")),
+        ForeignKey("user.sub", ondelete="CASCADE", name=person_key("user_role", "user_sub")),
         primary_key=True,
         index=True,
     )
@@ -208,14 +208,14 @@ class Term(Base):
     Der Slug steht in den Profilen, der Name nur hier.
     """
 
-    __tablename__ = "begriff"
-    __table_args__ = (UniqueConstraint("art", "slug", name="uq_begriff_art_slug"),)
+    __tablename__ = "term"
+    __table_args__ = (UniqueConstraint("kind", "slug", name="uq_term_kind_slug"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    kind: Mapped[str] = mapped_column("art", String(32), index=True)
+    kind: Mapped[str] = mapped_column(String(32), index=True)
     slug: Mapped[str] = mapped_column(String(64))
     name: Mapped[str] = mapped_column(String(120))
-    position: Mapped[int] = mapped_column("reihenfolge", Integer, default=0)
+    position: Mapped[int] = mapped_column(Integer, default=0)
 
 
 class UiText(Base):
@@ -235,7 +235,7 @@ class UiText(Base):
     # Wer zuletzt geschrieben hat. Leer heisst: so kam der Text aus der Vorgabe.
     updated_by: Mapped[str | None] = mapped_column(
         String(255),
-        ForeignKey("nutzer.sub", ondelete=TRACE_OF_PERSON, name=person_key("text", "updated_by")),
+        ForeignKey("user.sub", ondelete=TRACE_OF_PERSON, name=person_key("text", "updated_by")),
         default=None,
     )
 
@@ -261,20 +261,17 @@ class Owned(Base):
         zwei Bedingungen desselben Namens gaebe es nicht.
         """
         return mapped_column(
-            "besitzer_sub",
             String(255),
             ForeignKey(
-                "nutzer.sub",
+                "user.sub",
                 ondelete=OWNED_BY_PERSON,
-                name=person_key(cls.__tablename__, "besitzer_sub"),
+                name=person_key(cls.__tablename__, "owner_sub"),
             ),
             index=True,
         )
 
-    created_at: Mapped[datetime] = mapped_column("erstellt_am", UtcTime, default=utc_now)
-    updated_at: Mapped[datetime] = mapped_column(
-        "geaendert_am", UtcTime, default=utc_now, onupdate=utc_now
-    )
+    created_at: Mapped[datetime] = mapped_column(UtcTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(UtcTime, default=utc_now, onupdate=utc_now)
 
 
 class MapObject(Owned):
@@ -283,33 +280,30 @@ class MapObject(Owned):
     __abstract__ = True
 
     visibility: Mapped[Visibility] = mapped_column(
-        "sichtbarkeit",
         _enum_column(Visibility),
         default=Visibility.PRIVATE,
     )
-    note: Mapped[str | None] = mapped_column("notiz", Text, default=None)
+    note: Mapped[str | None] = mapped_column(Text, default=None)
 
 
 class Find(MapObject):
     """Ein gemeldeter Fund: eine Art an einem Ort an einem Tag."""
 
-    __tablename__ = "fund"
+    __tablename__ = "find"
 
     # Der Anzeigename friert beim Speichern ein. Ein spaeterer Namenswechsel im
     # SSO soll einen geteilten Fund nicht rueckwirkend umschreiben.
-    owner_name: Mapped[str | None] = mapped_column("besitzer_name", String(255), default=None)
-    species_slug: Mapped[str] = mapped_column("art_slug", String(64), index=True)
+    owner_name: Mapped[str | None] = mapped_column(String(255), default=None)
+    species_slug: Mapped[str] = mapped_column(String(64), index=True)
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
-    found_on: Mapped[date] = mapped_column("datum", Date, index=True)
-    count: Mapped[int | None] = mapped_column("anzahl", default=None)
+    found_on: Mapped[date] = mapped_column(Date, index=True)
+    count: Mapped[int | None] = mapped_column(default=None)
     # Wer das setzt, gibt den genauen Fundort an die Kette weiter. Die Vorgabe
     # ist darum nein, und nur der Besitzer kann sie aendern.
     # Ohne Index: die Kette liest die Liste einmal je Lauf, und eine Spalte
     # mit zwei Werten hilft SQLite dabei nicht.
-    for_training: Mapped[bool] = mapped_column(
-        "fuer_training", Boolean, default=False, server_default=false()
-    )
+    for_training: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
     photos: Mapped[list["Photo"]] = relationship(
         back_populates="find",
@@ -324,16 +318,14 @@ class Find(MapObject):
 class Photo(Base):
     """Ein Bild zu einem Fund. Die Datei liegt unter ``PILZE_FOTOS``."""
 
-    __tablename__ = "foto"
+    __tablename__ = "photo"
 
     id: Mapped[str] = mapped_column(String(ID_LENGTH), primary_key=True, default=new_identifier)
-    find_id: Mapped[str] = mapped_column(
-        "fund_id", ForeignKey("fund.id", ondelete="CASCADE"), index=True
-    )
-    filename: Mapped[str] = mapped_column("dateiname", String(64))
-    width: Mapped[int] = mapped_column("breite")
-    height: Mapped[int] = mapped_column("hoehe")
-    created_at: Mapped[datetime] = mapped_column("erstellt_am", UtcTime, default=utc_now)
+    find_id: Mapped[str] = mapped_column(ForeignKey("find.id", ondelete="CASCADE"), index=True)
+    filename: Mapped[str] = mapped_column(String(64))
+    width: Mapped[int] = mapped_column()
+    height: Mapped[int] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(UtcTime, default=utc_now)
 
     find: Mapped[Find] = relationship(back_populates="photos")
 
@@ -355,7 +347,7 @@ class SpeciesImage(Base):
     uploader_sub: Mapped[str] = mapped_column(
         String(255),
         ForeignKey(
-            "nutzer.sub", ondelete=OWNED_BY_PERSON, name=person_key("species_image", "uploader_sub")
+            "user.sub", ondelete=OWNED_BY_PERSON, name=person_key("species_image", "uploader_sub")
         ),
         index=True,
     )
@@ -381,7 +373,7 @@ class SpeciesImage(Base):
     reviewed_by: Mapped[str | None] = mapped_column(
         String(255),
         ForeignKey(
-            "nutzer.sub", ondelete=TRACE_OF_PERSON, name=person_key("species_image", "reviewed_by")
+            "user.sub", ondelete=TRACE_OF_PERSON, name=person_key("species_image", "reviewed_by")
         ),
         default=None,
     )
@@ -400,7 +392,7 @@ class Marker(MapObject):
     name: Mapped[str] = mapped_column(String(80))
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
-    color: Mapped[Color] = mapped_column("farbe", _enum_column(Color), default=Color.GREEN)
+    color: Mapped[Color] = mapped_column(_enum_column(Color), default=Color.GREEN)
 
 
 class Zone(MapObject):
@@ -412,8 +404,8 @@ class Zone(MapObject):
     # GeoJSON als Text. SQLite hat keinen Geometrietyp, und der Dienst rechnet
     # die Flaeche selbst.
     polygon: Mapped[str] = mapped_column(Text)
-    area_ha: Mapped[float] = mapped_column("flaeche_ha", Float)
-    color: Mapped[Color] = mapped_column("farbe", _enum_column(Color), default=Color.GREEN)
+    area_ha: Mapped[float] = mapped_column(Float)
+    color: Mapped[Color] = mapped_column(_enum_column(Color), default=Color.GREEN)
 
 
 class Combination(Owned):
@@ -424,8 +416,8 @@ class Combination(Owned):
     zweite Tabelle waere nur ein Verbund mehr je Zeile.
     """
 
-    __tablename__ = "kombination"
+    __tablename__ = "combination"
 
     name: Mapped[str] = mapped_column(String(80))
-    rule: Mapped[Rule] = mapped_column("regel", _enum_column(Rule), default=Rule.INTERSECTION)
-    factors: Mapped[str] = mapped_column("faktoren", Text)
+    rule: Mapped[Rule] = mapped_column(_enum_column(Rule), default=Rule.INTERSECTION)
+    factors: Mapped[str] = mapped_column(Text)

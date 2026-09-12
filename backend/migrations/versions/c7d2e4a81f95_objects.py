@@ -17,7 +17,7 @@ branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
 # Die Reihenfolge folgt den Fremdschluesseln: foto haengt an fund.
-TABLES: tuple[str, ...] = ("fund", "foto", "marker", "zone")
+TABLES: tuple[str, ...] = ("find", "photo", "marker", "zone")
 
 
 def upgrade() -> None:

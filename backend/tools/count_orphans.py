@@ -1,7 +1,7 @@
 """Zaehlt die Zeilen, deren Konto es in ``nutzer`` nicht gibt.
 
 Der Fremdschluessel aus R4a greift erst, wenn jede dieser Spalten auf eine
-Zeile in ``nutzer`` zeigt. Dieses Werkzeug sagt vorher, ob das so ist, ohne
+Zeile in ``user`` zeigt. Dieses Werkzeug sagt vorher, ob das so ist, ohne
 etwas zu aendern: es liest, es schreibt nie.
 
 Aufruf gegen die Datenbank des Dienstes::
@@ -35,9 +35,9 @@ def database_path(argument: str | None) -> Path:
 def orphans(connection: sqlite3.Connection, table: str, column: str) -> int:
     """Zaehlt in einer Spalte. Leere Werte zaehlen nicht: sie zeigen auf niemanden."""
     query = (
-        f"SELECT count(*) FROM {table} t"  # noqa: S608 - Namen stehen in PERSON_KEYS
+        f'SELECT count(*) FROM "{table}" t'  # noqa: S608 - Namen stehen in PERSON_KEYS
         f" WHERE t.{column} IS NOT NULL"
-        f" AND NOT EXISTS (SELECT 1 FROM nutzer p WHERE p.sub = t.{column})"
+        f' AND NOT EXISTS (SELECT 1 FROM "user" p WHERE p.sub = t.{column})'
     )
     return int(connection.execute(query).fetchone()[0])
 
@@ -49,8 +49,8 @@ def report(path: Path) -> int:
             f"{table}.{column}": orphans(connection, table, column)
             for table, column, _rule in PERSON_KEYS
         }
-        people = int(connection.execute("SELECT count(*) FROM nutzer").fetchone()[0])
-    print(f"nutzer: {people} Konten")
+        people = int(connection.execute('SELECT count(*) FROM "user"').fetchone()[0])
+    print(f"user: {people} Konten")
     for place, count in counts.items():
         print(f"{place}: {count} ohne Konto")
     return sum(counts.values())
