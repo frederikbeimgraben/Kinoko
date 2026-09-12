@@ -23,6 +23,8 @@ export {
   TIER_BEST,
   TIER_WEAKEST,
 } from './species';
+export { FACET_KEYS, FACET_KINDS } from './facets';
+export type { FacetCatalogue, FacetGroup, FacetKey, FacetKind, FacetPart, FacetValue, Gap } from './facets';
 export { TAXON_RANKS } from './taxonomy';
 export type { Taxon, TaxonChild, TaxonRank, TaxonStep } from './taxonomy';
 export { PERMISSIONS, PERMISSION_AREAS } from './access';

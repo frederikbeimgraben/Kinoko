@@ -6,6 +6,7 @@
  * bereit, wo eine Oberfläche die Werte einer Art einordnen muss.
  */
 
+import type { Gap } from './facets';
 import type { TaxonStep } from './taxonomy';
 
 /**
@@ -531,4 +532,12 @@ export interface SpeciesCatalogue {
   begehungenJeWocheAlleJahre: number[];
   begehungenJeWocheLaufendesJahr: number[];
   arten: SpeciesBrief[];
+  /**
+   * Die Arten, die an keiner Bedingung scheitern, sondern nur daran, dass die
+   * Quelle zu einer gewählten Gruppe nichts sagt. Sie fallen nicht still
+   * heraus; die Liste setzt sie unter die Treffer ab.
+   */
+  unbeurteilbar: SpeciesBrief[];
+  /** Je Gruppe: wie viele Arten allein an ihr hängen. */
+  luecken: Gap[];
 }

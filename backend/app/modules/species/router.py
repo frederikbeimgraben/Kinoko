@@ -10,6 +10,7 @@ from app.modules.species.catalog import Catalog, SpeciesFilter
 from app.modules.species.dependencies import current_catalog
 from app.modules.species.facets import facet_catalogue
 from app.modules.species.schemas import FacetCatalogue, Species, SpeciesList, SpeciesQuery
+from app.modules.species.selection import selection_of
 from app.modules.species_images.leads import lead_images
 from app.modules.taxonomy.service import lineage_of
 
@@ -32,6 +33,7 @@ async def species_list(
     leer bleibt, schraenkt nicht ein.
     """
     return catalog.listing(
+        selection=selection_of(chosen.chosen_values, chosen.keep_unknown),
         only_collectable=chosen.collectable,
         lead_images=await lead_images(session),
         chosen=SpeciesFilter(

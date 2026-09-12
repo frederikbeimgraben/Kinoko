@@ -11,242 +11,32 @@ Zwei Zahlen stehen an jeder Gruppe, bevor jemand waehlt.
   vor der Wahl sehen, was eine Wahl kostet; was danach uebrig bleibt, steht im
   Fuss der Auswahl und kommt aus der Liste.
 
-Beides steht fest, solange die Profile feststehen. Der Katalog wird darum
-einmal je Prozess gebaut und danach nur gelesen.
+Was eine Art in einer Gruppe traegt, steht in ``traits.py``. Diese Datei zaehlt
+nur, die Liste filtert mit derselben Auskunft.
 
 Die Gruppen stehen nach Abdeckung, die dichteste zuerst. Wer nach unten liest,
 sieht an den Zahlen selbst, dass es duenner wird.
 """
 
-from collections.abc import Callable, Sequence
-from dataclasses import dataclass, field
-from enum import StrEnum
-from typing import Final
+from collections.abc import Sequence
 
 from app.modules.species.catalog import Catalog
 from app.modules.species.schemas import (
-    MONTHS,
-    CapFeature,
-    CapMargin,
-    CapShape,
-    Edibility,
     FacetCatalogue,
     FacetGroup,
     FacetKey,
     FacetKind,
     FacetPart,
     FacetValue,
-    Frequency,
-    GillAttachment,
-    GillEdge,
-    GillSpacing,
-    HymenophoreKind,
-    Measurements,
     Profile,
-    ProtectionStatus,
-    RedListStatus,
-    StemFeature,
     Tier,
-    TreeSpecies,
 )
-
-# Die Wertigkeit von 123pilzsuche laeuft von 1 bis 6. Sie ist eine Zahl und
-# kein Enum, darum steht ihre Reihenfolge hier.
-RATINGS: Final = tuple(str(step) for step in range(1, 7))
-
-
-def _values(enumeration: type[StrEnum]) -> tuple[str, ...]:
-    """Die Werte einer Aufzaehlung in ihrer Reihenfolge."""
-    return tuple(str(member.value) for member in enumeration)
-
-
-def _months_of(profile: Profile) -> tuple[str, ...]:
-    """Die Monate, ueber die der Zeitraum einer Art laeuft, ueber den Jahreswechsel hinweg."""
-    period = profile.period
-    if period is None:
-        return ()
-    length = (period.end_month - period.start_month) % MONTHS + 1
-    return tuple(str((period.start_month - 1 + step) % MONTHS + 1) for step in range(length))
-
-
-def _trees_of(profile: Profile) -> tuple[str, ...]:
-    trees = list(profile.trees)
-    if profile.trees_from_experience:
-        trees += [tree for tree in profile.trees_from_experience.trees if tree not in trees]
-    return tuple(str(tree) for tree in trees)
-
-
-def _cap_shapes_of(profile: Profile) -> tuple[str, ...]:
-    shape = profile.cap_shape
-    if shape is None:
-        return ()
-    return tuple(dict.fromkeys(str(step) for step in (shape.start, shape.end) if step))
-
-
-def _cap_margins_of(profile: Profile) -> tuple[str, ...]:
-    margin = profile.cap_margin
-    if margin is None:
-        return ()
-    return tuple(dict.fromkeys(str(step) for step in [*margin.start, *(margin.end or [])]))
-
-
-def _colours_of(part: str) -> Callable[[Profile], tuple[str, ...]]:
-    def read(profile: Profile) -> tuple[str, ...]:
-        return tuple(dict.fromkeys(colour.name for colour in getattr(profile.colours, part)))
-
-    return read
-
-
-def _nothing(profile: Profile) -> tuple[str, ...]:  # noqa: ARG001
-    """Ein Teil ohne waehlbare Werte."""
-    return ()
-
-
-@dataclass(frozen=True)
-class Slice:
-    """Ein Teil einer Gruppe: ein Koerperteil, ein Sinn, ein Mass.
-
-    ``order`` gibt die feste Reihenfolge der Werte. Bleibt sie leer, ordnet die
-    Zahl: die Werte kommen aus den Profilen und haben keine Reihenfolge, die
-    jemand festgelegt haette.
-    """
-
-    key: str
-    # Ein Mass hat keine Werte, nur Grenzen. Dann bleibt der Leser leer.
-    read: Callable[[Profile], Sequence[str]] = _nothing
-    order: Sequence[str] = ()
-    unit: str | None = None
-
-
-@dataclass(frozen=True)
-class Facet:
-    """Eine Gruppe im Filterblatt."""
-
-    key: FacetKey
-    kind: FacetKind
-    slices: Sequence[Slice] = field(default_factory=tuple)
-
-
-def _one(read: Callable[[Profile], Sequence[str]], order: Sequence[str] = ()) -> tuple[Slice]:
-    """Eine Gruppe ohne Teile: ein einziger Schnitt ohne eigenen Namen."""
-    return (Slice(key="", read=read, order=order),)
-
-
-COLOUR_PARTS: Final = ("cap", "hymenium", "stem", "flesh", "spore_print")
-
-FACETS: Final[tuple[Facet, ...]] = (
-    Facet(
-        FacetKey.EDIBILITY,
-        FacetKind.VALUES,
-        _one(lambda p: (str(p.edibility),), _values(Edibility)),
-    ),
-    Facet(
-        FacetKey.PROTECTION,
-        FacetKind.VALUES,
-        _one(lambda p: (str(p.protection.status),), _values(ProtectionStatus)),
-    ),
-    # Die Stufe ist die einzige Gruppe, die nicht im Profil steht.
-    Facet(FacetKey.TIER, FacetKind.VALUES, (Slice("", order=_values(Tier)),)),
-    Facet(
-        FacetKey.COLLECTABLE,
-        FacetKind.SWITCH,
-        _one(lambda p: ("ja" if p.collectable else "nein",), ("ja", "nein")),
-    ),
-    Facet(
-        FacetKey.SENSES,
-        FacetKind.PARTS,
-        (
-            Slice("geruch", lambda p: tuple(p.smell.tags)),
-            Slice("geschmack", lambda p: tuple(p.taste.tags)),
-        ),
-    ),
-    Facet(
-        FacetKey.COLOUR,
-        FacetKind.COLOUR,
-        tuple(Slice(part, _colours_of(part)) for part in COLOUR_PARTS),
-    ),
-    Facet(
-        FacetKey.MEASUREMENTS,
-        FacetKind.SPAN,
-        tuple(
-            Slice(name, unit="cm" if name.endswith("_cm") else "um")
-            for name in Measurements.model_fields
-        ),
-    ),
-    Facet(FacetKey.PERIOD, FacetKind.PERIOD, _one(_months_of, tuple(str(m) for m in range(1, 13)))),
-    Facet(
-        FacetKey.HYMENOPHORE,
-        FacetKind.PARTS,
-        (
-            Slice(
-                "art",
-                lambda p: (str(p.hymenophore.kind),) if p.hymenophore else (),
-                _values(HymenophoreKind),
-            ),
-            Slice(
-                "ansatz",
-                lambda p: (
-                    (str(p.hymenophore.attachment),)
-                    if p.hymenophore and p.hymenophore.attachment
-                    else ()
-                ),
-                _values(GillAttachment),
-            ),
-            Slice(
-                "stand",
-                lambda p: (
-                    (str(p.hymenophore.spacing),) if p.hymenophore and p.hymenophore.spacing else ()
-                ),
-                _values(GillSpacing),
-            ),
-            Slice(
-                "schneide",
-                lambda p: (
-                    (str(p.hymenophore.edge),) if p.hymenophore and p.hymenophore.edge else ()
-                ),
-                _values(GillEdge),
-            ),
-        ),
-    ),
-    Facet(
-        FacetKey.STEM,
-        FacetKind.VALUES,
-        _one(lambda p: tuple(str(one) for one in p.stem_features), _values(StemFeature)),
-    ),
-    Facet(FacetKey.TREES, FacetKind.VALUES, _one(_trees_of, _values(TreeSpecies))),
-    Facet(
-        FacetKey.RATING,
-        FacetKind.VALUES,
-        _one(lambda p: (str(p.rating),) if p.rating else (), RATINGS),
-    ),
-    Facet(FacetKey.CAP_MARGIN, FacetKind.VALUES, _one(_cap_margins_of, _values(CapMargin))),
-    Facet(
-        FacetKey.FREQUENCY,
-        FacetKind.VALUES,
-        _one(lambda p: (str(p.frequency),) if p.frequency else (), _values(Frequency)),
-    ),
-    Facet(FacetKey.CAP_SHAPE, FacetKind.VALUES, _one(_cap_shapes_of, _values(CapShape))),
-    Facet(
-        FacetKey.CAP_FEATURES,
-        FacetKind.VALUES,
-        _one(lambda p: tuple(str(one) for one in p.cap_features), _values(CapFeature)),
-    ),
-    Facet(
-        FacetKey.REAGENTS,
-        FacetKind.VALUES,
-        _one(lambda p: tuple(str(entry.reagent) for entry in p.reagents)),
-    ),
-    Facet(
-        FacetKey.RED_LIST,
-        FacetKind.VALUES,
-        _one(lambda p: (str(p.red_list),) if p.red_list else (), _values(RedListStatus)),
-    ),
-)
+from app.modules.species.traits import FACETS, Facet, Slice, values_of
 
 
 def _tier_counts(catalog: Catalog) -> dict[str, int]:
     """Die Stufe steht nicht im Profil: sie faellt aus Datenlage und Karte."""
-    counted = dict.fromkeys(_values(Tier), 0)
+    counted = dict.fromkeys(values_of(Tier), 0)
     for entry in catalog.listing(only_collectable=None).species:
         counted[str(entry.tier)] += 1
     return counted

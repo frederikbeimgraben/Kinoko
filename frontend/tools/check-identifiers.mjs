@@ -299,6 +299,13 @@ const VERTRAG = new Set([
   'stielmerkmale',
   'ueberstehend',
   'entwicklung',
+  // Der Merkmalskatalog: Gruppe, Wert und Luecke stehen so auf dem Draht.
+  'werte',
+  'gruppen',
+  'teile',
+  'beschrieben',
+  'luecken',
+  'unbeurteilbar',
   // Die Einordnung: Rang und Kette stehen so auf dem Draht.
   'pfad',
   'klasse',

@@ -23,7 +23,9 @@ from app.modules.species.schemas import (
     CapShape,
     Colours,
     Edibility,
+    FacetKey,
     Frequency,
+    Gap,
     GillAttachment,
     GillEdge,
     GillSpacing,
@@ -55,6 +57,7 @@ from app.modules.species.schemas import (
     TreeSpecies,
     YearRange,
 )
+from app.modules.species.selection import Selection, gaps_per_group, judge
 from app.shared.schemas import TaxonStep, Week
 
 # Der Ordner liegt neben ``app`` und wird mit dem Backend ausgeliefert. Ein
@@ -518,6 +521,7 @@ class Catalog:
         *,
         only_collectable: bool | None = None,
         chosen: SpeciesFilter | None = None,
+        selection: Selection | None = None,
         lead_images: Mapping[str, str] | None = None,
     ) -> SpeciesList:
         """Die Arten mit Stufe, Tags und der kleinen Kurve.
@@ -533,17 +537,32 @@ class Catalog:
 
         ``chosen`` schraenkt weiter ein, ueber die strukturierten Felder.
 
+        ``selection`` ist die mehrwertige Auswahl aus D7: innerhalb einer
+        Gruppe oder, zwischen den Gruppen und. Wer nur an einer fehlenden
+        Angabe scheitert, faellt nicht heraus, sondern steht in
+        ``unbeurteilbar``.
+
         ``lead_images`` traegt den Pfad des Titelbildes je Slug. Er kommt aus
         der Datenbank und nicht aus den Dateien, darum reicht der Endpunkt ihn
         herein. Was fehlt, bleibt leer: eine Art ohne Bild zeigt keins.
         """
         wanted = chosen or SpeciesFilter()
+        picked = selection or Selection()
         species: list[SpeciesBrief] = []
+        unassessable: list[SpeciesBrief] = []
+        judged: list[tuple[str, Profile]] = []
+        outside: dict[str, dict[FacetKey, set[str]]] = {}
         for slug, profile in self.profiles.items():
             if only_collectable is not None and profile.collectable is not only_collectable:
                 continue
             common = self._common(slug, profile)
             if not wanted.matches(profile, common["tier"]):
+                continue
+            # Die Stufe steht nicht im Profil, sie faellt aus Datenlage und Karte.
+            outside[slug] = {FacetKey.TIER: {str(common["tier"])}}
+            judged.append((slug, profile))
+            verdict = judge(picked, profile, outside[slug])
+            if verdict.rejected:
                 continue
             counts = self._counts(profile)
             season = None
@@ -554,14 +573,10 @@ class Catalog:
                     current_year=current,
                     maximum=max([*all_years, *current]),
                 )
-            species.append(
-                SpeciesBrief(
-                    **common,
-                    season=season,
-                    lead_image=(lead_images or {}).get(slug),
-                )
-            )
+            row = SpeciesBrief(**common, season=season, lead_image=(lead_images or {}).get(slug))
+            (species if verdict.hit else unassessable).append(row)
         species.sort(key=lambda species: species.name)
+        unassessable.sort(key=lambda species: species.name)
         return SpeciesList(
             as_of=self._as_of,
             years=self._years,
@@ -569,6 +584,11 @@ class Catalog:
             visits_per_week_all_years=self._visits_all_years,
             visits_per_week_current_year=self._visits_current_year,
             species=species,
+            unassessable=unassessable,
+            gaps=[
+                Gap(key=key, count=count)
+                for key, count in gaps_per_group(picked, judged, outside).items()
+            ],
         )
 
     def has(self, slug: str) -> bool:
