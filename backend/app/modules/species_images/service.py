@@ -99,6 +99,20 @@ async def clear_lead(session: AsyncSession, species_slug: str, keep: str) -> Non
     )
 
 
+async def has_lead(session: AsyncSession, species_slug: str) -> bool:
+    """Sagt, ob die Art schon ein freigegebenes Titelbild hat."""
+    row = await session.execute(
+        select(SpeciesImage.id)
+        .where(
+            SpeciesImage.species_slug == species_slug,
+            SpeciesImage.lead.is_(True),
+            SpeciesImage.state == ImageState.APPROVED,
+        )
+        .limit(1),
+    )
+    return row.first() is not None
+
+
 @dataclass(frozen=True, slots=True)
 class Arrival:
     """Ein Bild, so wie es hereinkommt: die Angaben, sein grober Ort, sein Zustand.
@@ -130,6 +144,9 @@ async def create(
     identifier = new_identifier()
     rendered = write_files(settings, payload.species_slug, identifier, await payload.file.read())
     approved = state is ImageState.APPROVED
+    # Ohne Titelbild zeigt die Artenliste nichts, und niemand setzt es von Hand.
+    # Darum wird das erste freigegebene Bild einer Art ihr Titelbild.
+    lead = approved and (payload.lead or not await has_lead(session, payload.species_slug))
     image = SpeciesImage(
         id=identifier,
         species_slug=payload.species_slug,
@@ -141,7 +158,7 @@ async def create(
         caption=payload.caption,
         lat=None if place is None else place[1],
         lon=None if place is None else place[0],
-        lead=payload.lead and approved,
+        lead=lead,
         state=state,
         reviewed_by=user.sub if approved else None,
         reviewed_at=utc_now() if approved else None,
