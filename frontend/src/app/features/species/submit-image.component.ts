@@ -185,7 +185,10 @@ export class SubmitImageComponent implements OnDestroy {
         this.toasts.success(this.i18n.translate(this.publishes() ? 'bild.gespeichert' : 'bild.eingereicht'));
         this.leave();
       },
+      // Ohne Meldung sieht die einreichende Person nur, dass nichts passiert,
+      // und schickt dasselbe Bild noch einmal.
       error: () => {
+        this.toasts.error(this.i18n.translate('fehler.unbekannt'));
         this.busy.set(false);
       },
     });
