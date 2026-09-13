@@ -29,6 +29,10 @@
 // die sich abnehmen lässt. Sie zeigen den Zustand, sie stellen ihn nicht ein.
 .species__marks {
   display: flex;
+  // Ein Flex-Kind, dessen Overflow nicht `visible` ist, verliert sein
+  // selbsttaetiges `min-height: auto`. In der scrollenden Spalte fiel die
+  // Reihe damit auf null Pixel zusammen und schnitt den Knopf weg.
+  flex: 0 0 auto;
   gap: var(--space-2);
   overflow-x: auto;
   scrollbar-width: none;
