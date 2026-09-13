@@ -203,7 +203,12 @@ async def read_file(
     path = service.file_path(settings, image, size)
     if not path.is_file():
         raise NotFound("Diese Fassung des Bildes gibt es nicht.")
-    return FileResponse(path, media_type="image/jpeg")
+    # Kennung und Groesse benennen die Datei eindeutig, ihr Inhalt aendert sich
+    # nie. Ein freigegebenes Bild darf darum ein Jahr im Browser liegen; ein
+    # noch ungeprueftes sieht nur, wer darf, und bleibt aus jedem Zwischenspeicher.
+    public = image.state is ImageState.APPROVED
+    cache = "public, max-age=31536000, immutable" if public else "private, no-store"
+    return FileResponse(path, media_type="image/jpeg", headers={"Cache-Control": cache})
 
 
 @router.patch("/{image_id}", summary="Angaben zu einem Bild aendern")
@@ -256,6 +261,10 @@ async def approve(image_id: str, session: Session, user: Reviews) -> SubmissionO
     """Gibt ein Bild frei. Damit steht es oeffentlich an seiner Art."""
     image = await service.image_or_404(session, image_id)
     image.state = ImageState.APPROVED
+    # Das erste freigegebene Bild einer Art wird ihr Titelbild, sonst bleibt die
+    # Zeile in der Artenliste leer.
+    if not await service.has_lead(session, image.species_slug):
+        image.lead = True
     # Ein Grund an einem freigegebenen Bild waere eine Absage, die nicht gilt.
     image.reject_reason = None
     image.reviewed_by = user.sub

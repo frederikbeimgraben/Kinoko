@@ -852,3 +852,61 @@ def test_an_unknown_species_counts_as_strictly_protected() -> None:
     # Slug schon vorher ab; diese Regel traegt den Fall, falls sie es einmal
     # nicht tut.
     assert catalog_for_tests().protection_of("gibtsnicht") is ProtectionStatus.STRICT
+
+
+# ------------------------------------------------------------------ Titelbild von selbst
+
+
+async def test_the_first_published_image_becomes_the_lead(
+    call: httpx.AsyncClient,
+    idp: FakeIdp,
+) -> None:
+    # Niemand setzt das Titelbild von Hand. Ohne diese Regel bliebe die Zeile in
+    # der Artenliste leer, obwohl die Art ein Bild hat.
+    first = await published(call, idp)
+    second = await published(call, idp)
+
+    listed = await call.get("/api/species-images", params={"species": "steinpilz"})
+    leads = {entry["id"]: entry["lead"] for entry in listed.json()}
+
+    assert leads == {first["id"]: True, second["id"]: False}
+
+
+async def test_the_first_approved_submission_becomes_the_lead(
+    call: httpx.AsyncClient,
+    idp: FakeIdp,
+) -> None:
+    body = await submitted(call, idp)
+
+    approved = await call.post(
+        f"/api/species-images/{body['id']}/approval",
+        headers=as_root(idp),
+    )
+
+    assert approved.json()["lead"] is True
+
+
+async def test_an_approved_file_may_stay_in_the_browser(
+    call: httpx.AsyncClient,
+    idp: FakeIdp,
+) -> None:
+    # Kennung und Groesse benennen die Datei eindeutig, der Inhalt aendert sich
+    # nie. Ohne diesen Kopf laedt jede Ansicht das Bild neu.
+    body = await published(call, idp)
+
+    response = await call.get(body["thumbUrl"])
+
+    assert response.status_code == 200
+    assert response.headers["cache-control"].startswith("public")
+
+
+async def test_a_pending_file_stays_out_of_every_cache(
+    call: httpx.AsyncClient,
+    idp: FakeIdp,
+) -> None:
+    body = await submitted(call, idp)
+
+    response = await call.get(body["thumbUrl"], headers=as_root(idp))
+
+    assert response.status_code == 200
+    assert "no-store" in response.headers["cache-control"]
