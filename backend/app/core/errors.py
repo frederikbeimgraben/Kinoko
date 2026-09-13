@@ -26,7 +26,7 @@ TITLES: Final[Mapping[int, str]] = {
     404: "Nicht gefunden",
     409: "Konflikt",
     413: "Anfrage zu gross",
-    415: "Medientyp nicht unterstuetzt",
+    415: "Medientyp nicht unterstützt",
     422: "Eingabe ungueltig",
     500: "Interner Fehler",
 }

@@ -55,7 +55,7 @@ class Rendered:
 def _accepted(raw_bytes: bytes, max_bytes: int) -> Image.Image:
     """Prueft Groesse und Format und liefert das Bild als RGB."""
     if len(raw_bytes) > max_bytes:
-        raise UnsupportedMediaType(f"Das Bild ist groesser als {max_bytes // (1024 * 1024)} MB.")
+        raise UnsupportedMediaType(f"Das Bild ist größer als {max_bytes // (1024 * 1024)} MB.")
     try:
         with Image.open(io.BytesIO(raw_bytes)) as opened:
             if opened.format not in FORMATS:

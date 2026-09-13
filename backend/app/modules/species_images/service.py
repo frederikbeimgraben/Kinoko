@@ -27,7 +27,9 @@ from app.shared.schemas import ImageState
 
 # Ein Artbild laedt jemand am Rechner hoch, nicht aus dem Wald. Drei Megabyte
 # reichen fuer eine gute Aufnahme und halten die Platte klein.
-MAX_BYTES = 3 * 1024 * 1024
+# Dieselbe Grenze wie bei den Fundfotos. Drei MB lehnten das übliche Handyfoto
+# ab, obwohl der Dienst es ohnehin auf 1600 Pixel verkleinert.
+MAX_BYTES = images.MAX_BYTES
 
 
 def folder(settings: Settings, species_slug: str) -> Path:

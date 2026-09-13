@@ -202,16 +202,16 @@ async def test_a_file_that_is_not_a_photo_is_refused(
     assert response.headers["content-type"].startswith("application/problem+json")
 
 
-async def test_an_image_above_three_megabytes_is_refused(
+async def test_an_image_above_the_limit_is_refused(
     call: httpx.AsyncClient,
     idp: FakeIdp,
 ) -> None:
-    # Der Medientyp stimmt, die Datei ist nur zu gross. Der Dienst darf sie
-    # gar nicht erst oeffnen.
+    # Der Medientyp stimmt, die Datei ist nur zu groß. Der Dienst darf sie
+    # gar nicht erst öffnen.
     response = await upload(call, as_root(idp), data=b"\xff\xd8\xff" + b"0" * MAX_BYTES)
 
     assert response.status_code == 415
-    assert "3 MB" in response.json()["detail"]
+    assert "12 MB" in response.json()["detail"]
 
 
 async def test_an_unknown_species_is_refused(call: httpx.AsyncClient, idp: FakeIdp) -> None:
