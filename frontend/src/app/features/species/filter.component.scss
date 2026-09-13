@@ -10,8 +10,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px var(--pilz-gutter);
+  gap: var(--pilz-gutter);
+  padding: 14px var(--pilz-gutter);
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -24,4 +24,59 @@
   cursor: pointer;
   background: none;
   border: 0;
+}
+
+// Eine Gruppe im Blatt, nach dem Mockup: 60 px hoch, der Name links, die
+// Auswahl in Primärfarbe rechts, dahinter der Pfeil. Die Zeile ist ein Knopf
+// mit eigenem Polster, damit sie nicht das des Browsers erbt.
+.group {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  inline-size: 100%;
+  min-block-size: 60px;
+  padding: 10px 14px;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.group:last-child {
+  border-block-end: 0;
+}
+
+.group__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+
+.group__name {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+}
+
+.group__coverage {
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.group__chosen {
+  flex: none;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+
+.group__arrow {
+  flex: none;
+  color: var(--color-text-muted);
 }

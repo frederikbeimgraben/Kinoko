@@ -6,20 +6,27 @@
   }
 </app-page-header>
 <div class="filter">
-  @if (groups().length === 0) {
+  @if (cards().length === 0) {
     <app-note>{{ 'filter.leer' | t }}</app-note>
   } @else {
-    <app-card class="flush">
-      @for (group of groups(); track group.key) {
-        <app-list-row
-          [titel]="group.name"
-          [subline]="group.coverage"
-          [value]="group.ready ? group.chosen : ('filter.nochNicht' | t)"
-          [clickable]="group.ready"
-          (chosen)="open(group)"
-        />
-      }
-    </app-card>
+    @for (card of cards(); track card.key) {
+      <app-card class="flush">
+        @for (group of card.groups; track group.key) {
+          <button class="group" type="button" (click)="open(group)">
+            <span class="group__text">
+              <span class="group__name">{{ group.name }}</span>
+              @if (group.coverage) {
+                <span class="group__coverage">{{ group.coverage }}</span>
+              }
+            </span>
+            @if (group.chosen) {
+              <span class="group__chosen">{{ group.chosen }}</span>
+            }
+            <app-svg-icon class="group__arrow" name="rechts" [size]="12" />
+          </button>
+        }
+      </app-card>
+    }
   }
 </div>
 <app-action-bar [primary]="hits()" (mainClick)="back()" />

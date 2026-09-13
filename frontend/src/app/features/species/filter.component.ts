@@ -4,8 +4,8 @@ import { CardComponent } from '@stupa-makers/ui-kit';
 import type { FacetKey } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent, ListRowComponent, NoteComponent, PageHeaderComponent } from '../../ui';
-import { FACET_TEXT, NOT_YET } from './facet-labels';
+import { ActionBarComponent, NoteComponent, PageHeaderComponent, SvgIconComponent } from '../../ui';
+import { FACET_TEXT, HIDDEN, NOT_YET, SHEET } from './facet-labels';
 import { FacetState } from './facet.state';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesState } from './species.state';
@@ -14,18 +14,24 @@ import { SpeciesState } from './species.state';
 interface GroupRow {
   key: FacetKey;
   name: string;
-  coverage: string;
+  /** Nur, wo Arten fehlen. „306 von 306“ sagte auf jeder Zeile dasselbe. */
+  coverage: string | null;
   chosen: string | undefined;
-  ready: boolean;
+}
+
+/** Eine Karte des Blatts mit ihren Gruppen. */
+interface SheetCard {
+  key: number;
+  groups: GroupRow[];
 }
 
 /**
- * Das Filterblatt: alle Gruppen mit ihrer Abdeckung, bevor jemand wählt.
+ * Das Filterblatt: die Gruppen in drei Karten, wie im Mockup.
  *
  * „Hutform, 94 von 306 beschrieben" heißt: wer danach filtert, schließt 212
- * Arten aus, weil die Angabe fehlt, und nicht weil sie nicht passen. Die
- * Gruppen stehen nach Abdeckung, die dichteste zuerst — wer nach unten liest,
- * sieht an den Zahlen selbst, dass es dünner wird.
+ * Arten aus, weil die Angabe fehlt, und nicht weil sie nicht passen. Eine
+ * Gruppe, die diese Oberfläche noch nicht wählen lässt, steht nicht im Blatt:
+ * eine Zeile, die sich nicht öffnen lässt, ist eine kaputte Zeile.
  */
 @Component({
   selector: 'app-species-filter',
@@ -33,9 +39,9 @@ interface GroupRow {
   imports: [
     ActionBarComponent,
     CardComponent,
-    ListRowComponent,
     NoteComponent,
     PageHeaderComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './filter.component.html',
@@ -60,19 +66,31 @@ export class SpeciesFilterComponent {
 
   protected readonly any = this.filter.any;
 
-  protected readonly groups = computed<GroupRow[]>(() => {
+  protected readonly cards = computed<SheetCard[]>(() => {
     const catalogue = this.facets.catalogue();
     if (!catalogue) return [];
-    return catalogue.gruppen.map((group) => ({
-      key: group.schluessel,
-      name: this.i18n.translate(FACET_TEXT[group.schluessel]),
-      coverage: this.i18n.translate('filter.abdeckung', {
-        beschrieben: String(group.beschrieben),
-        gesamt: String(catalogue.arten),
+    const byKey = new Map(catalogue.gruppen.map((group) => [group.schluessel, group]));
+    return SHEET.map((keys, index) => ({
+      key: index,
+      groups: keys.flatMap((key) => {
+        const group = byKey.get(key);
+        if (!group || NOT_YET.includes(key) || HIDDEN.includes(key)) return [];
+        return [
+          {
+            key,
+            name: this.i18n.translate(FACET_TEXT[key]),
+            coverage:
+              group.beschrieben < catalogue.arten
+                ? this.i18n.translate('filter.abdeckung', {
+                    beschrieben: String(group.beschrieben),
+                    gesamt: String(catalogue.arten),
+                  })
+                : null,
+            chosen: this.chosenText(key),
+          },
+        ];
       }),
-      chosen: this.chosenText(group.schluessel),
-      ready: !NOT_YET.includes(group.schluessel),
-    }));
+    })).filter((card) => card.groups.length > 0);
   });
 
   /** Was der Fuß nennt: wie viele Arten die Auswahl gerade übrig lässt. */
@@ -87,7 +105,7 @@ export class SpeciesFilterComponent {
   }
 
   protected open(row: GroupRow): void {
-    if (row.ready) void this.router.navigate(['/arten/filter', row.key]);
+    void this.router.navigate(['/arten/filter', row.key]);
   }
 
   protected reset(): void {
