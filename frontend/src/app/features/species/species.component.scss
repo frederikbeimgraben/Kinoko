@@ -126,3 +126,47 @@
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
 }
+
+// Die Einordnung ist eine Liste von Stufen, keine Tabelle: der Name bekommt
+// die ganze Breite. In der Schlüsselspalte von 104 px brach „Agaricomycetes“
+// mitten im Wort, und der lateinische Name rechts stand allein.
+.species__lineage {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.species__taxon {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.species__taxon:nth-child(even) {
+  background: var(--color-bg);
+}
+
+.species__taxon:last-child {
+  border-block-end: 0;
+}
+
+.species__taxon-name {
+  font-weight: var(--fw-semibold);
+  color: var(--color-primary);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.species__taxon-name:hover {
+  text-decoration: underline;
+}
+
+.species__taxon-rank {
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}

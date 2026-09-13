@@ -48,11 +48,19 @@
 
 // Der Weg zum Einreichen steht am Ende des Streifens, gestrichelt statt
 // gefüllt: dort ist noch kein Bild.
+// Ein Platzhalter, ob im Streifen oder an der Stelle des Titelbilds: dieselbe
+// gestrichelte Flaeche. Zwei Leerzustaende nebeneinander waeren zwei Sprachen.
 .gallery__add {
   display: flex;
+  gap: var(--space-2);
   align-items: center;
   justify-content: center;
+  font-size: var(--fs-sm);
   color: var(--color-text-muted);
   background: transparent;
   border: 1px dashed var(--color-border-strong);
+}
+
+.gallery__add--still {
+  cursor: default;
 }

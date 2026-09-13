@@ -19,15 +19,30 @@ function providers(signedIn: boolean) {
 }
 
 describe('SpeciesImagesComponent', () => {
-  it('zeigt einen einheitlichen Leerzustand und keinen leeren Rahmen', async () => {
+  // Ohne Bild steht an der Stelle des Titelbilds dieselbe gestrichelte Flaeche
+  // wie die Hinzufuegen-Kachel im Streifen. Zwei Leerzustaende waeren zwei Sprachen.
+  it('zeigt ohne Anmeldung die Platzhalterflaeche ohne Knopf', async () => {
     const { container } = await render(SpeciesImagesComponent, {
       inputs: { images: [], speciesName: 'Steinpilz', slug: 'steinpilz' },
       providers: providers(false),
     });
 
     expect(screen.getByText('Zu dieser Art gibt es noch kein Bild.')).toBeInTheDocument();
-    expect(container.querySelector('.gallery__lead')).toBeNull();
+    expect(container.querySelector('.gallery__lead.gallery__add')).not.toBeNull();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('macht die Platzhalterflaeche mit Anmeldung zum Hinzufuegen-Knopf', async () => {
+    const { container } = await render(SpeciesImagesComponent, {
+      inputs: { images: [], speciesName: 'Steinpilz', slug: 'steinpilz' },
+      providers: providers(true),
+    });
+
+    const add = screen.getByRole('button', { name: 'Bild einreichen' });
+    expect(add).toHaveClass('gallery__lead', 'gallery__add');
+    expect(container.querySelector('app-empty-state')).toBeNull();
     await noViolations(container);
   });
 

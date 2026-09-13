@@ -37,12 +37,19 @@
     </ul>
   }
   <app-image-credit [photographer]="lead.photographer" [licence]="lead.licence" />
+} @else if (signedIn()) {
+  <button
+    type="button"
+    class="gallery__lead gallery__add"
+    [attr.aria-label]="'bild.einreichen' | t"
+    (click)="submit()"
+  >
+    <app-svg-icon name="plus" [size]="22" />
+    <span>{{ 'bild.einreichen' | t }}</span>
+  </button>
 } @else {
-  <app-empty-state
-    icon="bildluecke"
-    [text]="'bild.keine' | t"
-    [action]="signedIn() ? ('bild.einreichen' | t) : undefined"
-    (actionClick)="submit()"
-  />
+  <div class="gallery__lead gallery__add gallery__add--still">
+    <span>{{ 'bild.keine' | t }}</span>
+  </div>
 }
 <app-image-viewer [image]="open()" [titel]="speciesName()" (closed)="open.set(null)" />

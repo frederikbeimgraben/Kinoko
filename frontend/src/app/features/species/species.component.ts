@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { BadgeComponent, CardComponent } from '@stupa-makers/ui-kit';
 import type {
   Species,
   Entwicklung,
-  Farbe,
   Reagenzeintrag,
   SeasonCurveData,
   Link,
@@ -110,10 +109,6 @@ interface ConfusableRow {
   route: string;
   /** Der Weg zur Gegenüberstellung beider Arten. */
   vergleich: string;
-  /** Die Hutfarben des Partners. Leer, wo die Quelle keine nennt. */
-  farben: Farbe[];
-  /** Die Beschriftung des Farbfelds für Hilfsmittel. */
-  farbenLabel: string;
 }
 
 /** Eine Zeile der Fruchtschicht: das Wort links, der Wert rechts. */
@@ -132,7 +127,6 @@ interface Reagenzzeile {
 interface TaxonRow {
   name: string;
   rank: string;
-  latin: string | null;
   route: string;
 }
 
@@ -145,7 +139,6 @@ interface Viewport {
   sammelbar: boolean;
   saison: SeasonCurveData | null;
   hasCurve: boolean;
-  axis: string;
   months: MonthMark[];
   legendCurrent: string;
   legendYears: string;
@@ -197,6 +190,7 @@ interface Viewport {
     MeasurementComponent,
     NoteComponent,
     PageHeaderComponent,
+    RouterLink,
     SeasonCurveComponent,
     SpeciesImagesComponent,
     SvgIconComponent,
@@ -315,7 +309,6 @@ export class SpeciesComponent {
       // Eine Reihe ohne einen einzigen Fund wäre eine gerade Linie auf null und
       // sagte über die Saison nichts.
       hasCurve: saison !== null && saison.hoechstwert > 0,
-      axis: this.i18n.translate('art.kurve.achse', { wert: Math.round(saison?.hoechstwert ?? 0) }),
       months: MONTHS.map((month) => ({
         text: this.i18n.translate(month.schluessel),
         woche: month.woche,
@@ -350,10 +343,6 @@ export class SpeciesComponent {
         badge: this.essbar(confusable.speisewert),
         route: `/arten/${confusable.slug}`,
         vergleich: `/arten/${art.slug}/vergleich/${confusable.slug}`,
-        farben: confusable.hutFarben,
-        farbenLabel: this.i18n.translate('art.farbe.beschriftung', {
-          farben: confusable.hutFarben.map((farbe) => farbe.name).join(', '),
-        }),
       })),
       taxonomie: art.taxonomie.map((step) => this.taxonRow(step)),
       links: art.links,
@@ -369,8 +358,6 @@ export class SpeciesComponent {
     return {
       name: step.name,
       rank: this.i18n.translate(RANK_TEXT[step.rang]),
-      // Der lateinische Name steht nur, wo er nicht schon der Name ist.
-      latin: step.lateinisch === step.name ? null : step.lateinisch,
       route: `/taxonomie/${step.rang}/${step.slug}`,
     };
   }

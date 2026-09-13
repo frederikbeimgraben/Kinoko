@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { Farbe } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { ColourFieldComponent } from '../colour-field/colour-field.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /**
@@ -17,11 +15,14 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
  * Die Marke steht immer in einer eigenen Zeile und nie im Textfluss. Hing sie
  * hinter dem letzten Wort, sprang sie je nach Textlänge mal in dieselbe und mal
  * in die nächste Zeile, und der Abstand darüber wechselte von Zeile zu Zeile.
+ *
+ * Ein Farbfeld vor dem Namen gab es bis September 2026. Drei Flächen in Orange
+ * neben drei Reizkern unterschieden nichts und zogen den Blick vom Namen weg.
  */
 @Component({
   selector: 'app-lookalike-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ColourFieldComponent, RouterLink, SvgIconComponent],
+  imports: [RouterLink, SvgIconComponent],
   templateUrl: './lookalike-row.component.html',
   styleUrl: './lookalike-row.component.scss',
 })
@@ -31,10 +32,6 @@ export class LookalikeRowComponent {
   readonly name = input.required<string>();
   /** Der lateinische Name, wenn die Antwort ihn trägt. */
   readonly latin = input<string | null>(null);
-  /** Die Hutfarben des Partners, als Feld vor dem Namen. Leer heißt: keins. */
-  readonly colours = input<readonly Farbe[]>([]);
-  /** Die Beschriftung des Farbfelds für Hilfsmittel. */
-  readonly coloursLabel = input('');
   /** Das eigene Profil des Partners. Ohne Ziel fehlt das Zeichen. */
   readonly route = input<string | null>(null);
   /** Die Gegenüberstellung beider Arten. Ohne Ziel fehlt das Zeichen. */

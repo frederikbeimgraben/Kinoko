@@ -120,11 +120,6 @@ describe('ArtComponent', () => {
       // einem eigenen Baustein, weil ihre Marke eine eigene Zeile braucht.
       'Kalilauge (KOH)',
       // Zuletzt die Einordnung: jede Stufe führt auf ihre eigene Seite.
-      'Basidiomycota',
-      'Agaricomycetes',
-      'Röhrlinge',
-      'Boletaceae',
-      'Boletus',
     ]);
     const partner = [...container.querySelectorAll('.lookalike__name')].map((cell) =>
       cell.textContent.trim(),
@@ -278,12 +273,11 @@ describe('ArtComponent', () => {
     expect(screen.getByText('giftig')).toBeInTheDocument();
   });
 
-  it('nennt zur Kurve die Jahre, die Wochen und den Höchstwert', async () => {
+  it('nennt zur Kurve die Jahre und die Wochen', async () => {
     const { container } = await build(STEINPILZ);
 
     expect(screen.getByText('Schätzung dieses Jahr')).toBeInTheDocument();
     expect(screen.getByText('Mittelwert 2015 bis 2024')).toBeInTheDocument();
-    expect(screen.getByText('32 %')).toBeInTheDocument();
     // Die Kurve und die Jahresbahn tragen beide eine Marke für Januar.
     expect(screen.getAllByText('Jan').length).toBe(2);
     expect(screen.getByText('Dez')).toBeInTheDocument();
@@ -336,23 +330,6 @@ describe('ArtComponent', () => {
     );
   });
 
-  it('zeigt die Hutfarben des Partners in der Verwechslungszeile', async () => {
-    await build(STEINPILZ);
-
-    // Der Vertrag trägt die Farben mit. Ohne sie müsste die Seite für fünf
-    // Farbflächen fünf Profile nachladen.
-    expect(screen.getByRole('img', { name: 'Farbe: hellbraun' })).toBeInTheDocument();
-  });
-
-  it('lässt das Farbfeld weg, wo die Quelle keine Hutfarbe nennt', async () => {
-    const { container } = await build(STEINPILZ);
-
-    const rows = Array.from(container.querySelectorAll('app-lookalike-row'));
-    const satan = rows.find((row) => row.textContent.includes('Satansröhrling'));
-    expect(satan).toBeDefined();
-    expect(satan?.querySelector('app-colour-field')).toBeNull();
-  });
-
   it('warnt bei einer giftigen Art groß und mit Symbol', async () => {
     const { container } = await build(GALLENROEHRLING, 'gallenroehrling');
 
@@ -368,10 +345,11 @@ describe('ArtComponent', () => {
     // über den Pilz, und die steht uns nicht zu. Die Seite sieht aus wie jede
     // andere; nur wo Daten fehlen, sagt sie das.
     expect(screen.getByRole('heading', { name: 'Saison' })).toBeInTheDocument();
-    expect(screen.getByText('Zu wenige Begehungen für eine Saisonkurve')).toBeInTheDocument();
+    expect(screen.getByText('Zu wenige Funde für eine Saisonkurve')).toBeInTheDocument();
     const button = screen.getByRole('button', { name: 'Auf der Karte anzeigen' });
     expect(button).toBeDisabled();
-    expect(screen.getByText('Für diese Art gibt es keine Vorhersage')).toBeInTheDocument();
+    // Ein grauer Knopf sagt genug. Der Satz darunter wiederholte ihn nur.
+    expect(screen.queryByText('Für diese Art gibt es keine Vorhersage')).not.toBeInTheDocument();
     await noViolations(container);
   }, 30_000);
 
@@ -411,10 +389,9 @@ describe('ArtComponent', () => {
   it('zeigt ohne Vorhersage weder Kurve noch Sprung auf die Karte', async () => {
     const { container } = await build(MORCHEL, 'speisemorchel');
 
-    expect(screen.getByText('Zu wenige Begehungen für eine Saisonkurve')).toBeInTheDocument();
+    expect(screen.getByText('Zu wenige Funde für eine Saisonkurve')).toBeInTheDocument();
     expect(container.querySelector('.spark')).toBeNull();
     expect(screen.getByRole('button', { name: 'Auf der Karte anzeigen' })).toBeDisabled();
-    expect(screen.getByText('Für diese Art gibt es keine Vorhersage')).toBeInTheDocument();
     await noViolations(container);
   }, 30_000);
 
@@ -468,10 +445,11 @@ describe('ArtComponent', () => {
     // Wie oben: die Artseite ist mit den Abschnitten aus D4b länger geworden.
   }, 30_000);
 
-  it('zeigt zu einer Art ohne Bild den Leerzustand statt eines leeren Rahmens', async () => {
+  it('zeigt zu einer Art ohne Bild die Hinzufügen-Fläche statt eines leeren Rahmens', async () => {
     const { container } = await build(STEINPILZ);
 
-    expect(screen.getByText('Zu dieser Art gibt es noch kein Bild.')).toBeInTheDocument();
-    expect(container.querySelector('.gallery__lead')).toBeNull();
+    // Angemeldet: dieselbe gestrichelte Fläche wie im Streifen, als Knopf.
+    expect(screen.getByRole('button', { name: 'Bild einreichen' })).toHaveClass('gallery__add');
+    expect(container.querySelector('img.gallery__lead')).toBeNull();
   });
 });
