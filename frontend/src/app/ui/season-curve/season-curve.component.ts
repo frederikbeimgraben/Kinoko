@@ -69,13 +69,13 @@ interface Drawing {
  *
  * Die Zeichenfläche folgt der Breite des Wirts, damit die Kurve nie schmal in
  * der Mitte steht, während die Marken darunter über die ganze Breite laufen.
- * Was dabei nicht verzerren darf — die Zahl an der Achse und der Endpunkt —
- * steht neben dem SVG und nicht darin.
+ * Was dabei nicht verzerren darf — der Endpunkt — steht neben dem SVG und
+ * nicht darin.
  *
  * Gezeichnet wird ein gleitendes Mittel über drei Wochen. Eine Woche mehr oder
- * weniger ist Zufall des Meldeverhaltens, nicht der Saison. Die Achse behält
- * den Höchstwert der Rohdaten, damit die Zahl neben der Kurve dieselbe ist wie
- * in der Liste.
+ * weniger ist Zufall des Meldeverhaltens, nicht der Saison. Eine Zahl am
+ * Höchstwert steht nicht mehr daneben: ein „2 %“ über einer Kurve, die
+ * ohnehin bis oben reicht, sagte nichts und störte die Plaketten darüber.
  */
 @Component({
   selector: 'app-season-curve',
@@ -88,8 +88,6 @@ export class SeasonCurveComponent {
   readonly laufendesJahr = input.required<readonly number[]>();
   readonly label = input.required<string>();
   readonly large = input(false);
-  /** Der Höchstwert der Achse, oben links in die Kurve geschrieben. */
-  readonly axis = input<string>();
   /** Die Monatsnamen unter der Grundlinie, jeder auf seiner Woche. */
   readonly months = input<readonly MonthMark[]>([]);
   readonly legendCurrent = input<string>();

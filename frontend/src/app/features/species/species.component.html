@@ -28,14 +28,13 @@
           [laufendesJahr]="saison.laufendesJahr"
           [visitsAllYears]="saison.begehungenJeWocheAlleJahre"
           [visitsCurrentYearSeries]="saison.begehungenJeWocheLaufendesJahr"
-          [axis]="viewport.axis"
           [months]="viewport.months"
           [legendCurrent]="viewport.legendCurrent"
           [legendYears]="viewport.legendYears"
           [label]="viewport.label"
         />
       } @else {
-        <app-info-text>{{ 'art.keineKurve' | t }}</app-info-text>
+        <app-info-text>{{ 'art.zuWenigFunde' | t }}</app-info-text>
       }
     </section>
 
@@ -234,16 +233,14 @@
       <section>
         <h2 class="species__section">{{ 'taxonomie.abschnitt.einordnung' | t }}</h2>
         <app-card class="flush">
-          <app-key-value-table>
+          <ol class="species__lineage">
             @for (step of viewport.taxonomie; track step.route) {
-              <app-key-value-row
-                [schluessel]="step.name"
-                [keyRoute]="step.route"
-                [unter]="step.rank"
-                [value]="step.latin ?? ''"
-              />
+              <li class="species__taxon">
+                <a class="species__taxon-name" [routerLink]="step.route">{{ step.name }}</a>
+                <span class="species__taxon-rank">{{ step.rank }}</span>
+              </li>
             }
-          </app-key-value-table>
+          </ol>
         </app-card>
       </section>
     }
@@ -255,8 +252,6 @@
           <app-lookalike-row
             [name]="row.name"
             [latin]="row.lateinisch"
-            [colours]="row.farben"
-            [coloursLabel]="row.farbenLabel"
             [route]="row.route"
             [compareRoute]="row.vergleich"
             (click)="toLookalike(row)"
@@ -280,7 +275,6 @@
     [primary]="'art.aufKarte' | t"
     mainIcon="karte"
     [mainDisabled]="!viewport.kartenSlug"
-    [subline]="viewport.kartenSlug ? undefined : ('art.keineVorhersage' | t)"
     [secondary]="vonAndererArt() ? rueckweg() : undefined"
     (mainClick)="onMap()"
     (secondaryClick)="zumUrsprung()"

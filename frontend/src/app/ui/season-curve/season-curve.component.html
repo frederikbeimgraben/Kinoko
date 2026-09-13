@@ -56,9 +56,6 @@
       }
     </g>
   </svg>
-  @if (axis()) {
-    <span class="spark__axis">{{ axis() }}</span>
-  }
   @if (drawing().hasCurrent) {
     <span class="spark__end" [style.left.%]="drawing().endLeft" [style.top.%]="drawing().endTop"></span>
   }

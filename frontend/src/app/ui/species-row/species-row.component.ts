@@ -18,6 +18,9 @@ import { I18nService } from '../../core/i18n/i18n.service';
  * Text nimmt sich die Breite, die frei wird. Bei einem Bestand ohne Bilder
  * wären 306 graue Kästchen schlimmer als keine.
  *
+ * Mit Bild bleibt die Zeile so hoch wie ohne: das Bild steht neben Namen und
+ * Tags zusammen, die Tags laufen rechts aus, statt umzubrechen.
+ *
  * Die Marke „aktiv“ gehört der Zeile selbst. Ein Badge des Kits stünde auf der
  * aktiven Zeile Fläche auf Fläche in derselben Farbe und wäre unsichtbar.
  */

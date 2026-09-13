@@ -22,15 +22,6 @@
   block-size: 100%;
 }
 
-.spark__axis {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-start: 2px;
-  font-size: 9px;
-  line-height: 1.2;
-  color: var(--color-text-muted);
-}
-
 // Der Endpunkt des laufenden Jahres. Im verzerrten SVG wäre aus dem Kreis eine
 // Ellipse geworden.
 .spark__end {

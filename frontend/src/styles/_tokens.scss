@@ -33,3 +33,14 @@
   --pilz-icon-size: 22px;
   --pilz-sheet-schatten: var(--shadow-lg);
 }
+
+// Ein Grün. Das Kit kennt ein Primärgrün und ein Erfolgsgrün; nebeneinander
+// auf einer Zeile („Vorhersage“, „Geschützt“) wirken zwei Grüntöne wie ein
+// Versehen. Die Regel steht je Thema, weil das Kit die dunklen Werte mit
+// derselben Gewichtung setzt und die späteren gewinnen sollen.
+:root,
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+  --color-success: var(--color-primary);
+  --color-success-subtle: var(--color-primary-subtle);
+}

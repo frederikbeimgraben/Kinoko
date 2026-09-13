@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { EmptyStateComponent, ImageCreditComponent, ImageViewerComponent, SvgIconComponent } from '../../ui';
+import { ImageCreditComponent, ImageViewerComponent, SvgIconComponent } from '../../ui';
 import type { SpeciesImage } from '../../core/api/models';
 
 /**
@@ -16,7 +16,7 @@ import type { SpeciesImage } from '../../core/api/models';
 @Component({
   selector: 'app-species-images',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EmptyStateComponent, ImageCreditComponent, ImageViewerComponent, SvgIconComponent, TranslatePipe],
+  imports: [ImageCreditComponent, ImageViewerComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './species-images.component.html',
   styleUrl: './species-images.component.scss',
 })

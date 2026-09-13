@@ -1,10 +1,9 @@
-// Drei Spuren: die Farbe, der Name mit allem, was zu ihm gehoert, die Wege.
+// Zwei Spuren: der Name mit allem, was zu ihm gehört, und die Wege.
 //
 // Name und lateinischer Name standen bis 78 in zwei Spuren, wie Schlüssel und
 // Wert der Merkmalstabelle. Das trug nicht: beide benennen dieselbe Art, und
-// als das Farbfeld eine vierte Spur dazunahm, blieben der Wertspur 31 px. Ein
-// lateinischer Name brach darin Buchstabe für Buchstabe um. Sie stehen jetzt
-// gestapelt in einer Spur, wie in der Artenliste.
+// der Wertspur blieben 31 px. Ein lateinischer Name brach darin Buchstabe für
+// Buchstabe um. Sie stehen jetzt gestapelt in einer Spur, wie in der Artenliste.
 :host {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -16,22 +15,12 @@
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
-// Die Spur für das Farbfeld gibt es nur, wo eines steht. Sonst rückte der Name
-// in jeder Zeile ohne Farbe um die Breite der leeren Spur ein.
-:host:has(.lookalike__colour) {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-}
-
 :host(:nth-child(even)) {
   background: var(--color-bg);
 }
 
 :host(:last-child) {
   border-block-end: 0;
-}
-
-.lookalike__colour {
-  inline-size: 40px;
 }
 
 // Alles zum Namen in einem Stapel. ``min-inline-size: 0`` erlaubt der Spur zu

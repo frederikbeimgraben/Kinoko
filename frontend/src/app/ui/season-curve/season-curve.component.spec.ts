@@ -40,21 +40,19 @@ describe('SeasonCurveComponent', () => {
     await noViolations(container);
   });
 
-  it('zeichnet die große Kurve mit Achse und Legende', async () => {
+  it('zeichnet die große Kurve mit Legende', async () => {
     const { container } = await render(SeasonCurveComponent, {
       inputs: {
         alleJahre: ALLE,
         laufendesJahr: CURRENT,
         label: 'Saisonkurve',
         large: true,
-        axis: '32 %',
         legendCurrent: '2025 bis KW 39',
         legendYears: '2015 bis 2024',
       },
     });
 
     expect(screen.getByRole('img', { name: 'Saisonkurve' })).toHaveAttribute('viewBox', '0 0 330 72');
-    expect(screen.getByText('32 %')).toBeInTheDocument();
     expect(screen.getByText('2025 bis KW 39')).toBeInTheDocument();
     await noViolations(container);
   });

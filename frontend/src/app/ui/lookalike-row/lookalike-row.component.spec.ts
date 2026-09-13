@@ -12,17 +12,13 @@ import { LookalikeRowComponent } from './lookalike-row.component';
       latin="Omphalotus olearius"
       route="/arten/oelbaumtrichterling"
       compareRoute="/arten/pfifferling/vergleich/oelbaumtrichterling"
-      coloursLabel="Orange"
-      [colours]="colours"
     >
       <span>Giftig</span>
     </app-lookalike-row>
     <app-lookalike-row name="Sommersteinpilz" />
   `,
 })
-class HostComponent {
-  readonly colours = [{ name: 'Orange', hex: '#e08a3c' }];
-}
+class HostComponent {}
 
 /** Die gerechneten Stile eines Elements, das es geben muss. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
@@ -60,14 +56,6 @@ describe('LookalikeRowComponent', () => {
     expect(screen.getByText('Sommersteinpilz')).toBeInTheDocument();
   });
 
-  it('zeigt das Farbfeld des Partners, wo es Farben gibt', async () => {
-    const { container } = await render(HostComponent, { providers: [provideRouter([])] });
-
-    // Derselbe Baustein wie auf der Artseite: eine Fläche, kein zweites Muster.
-    expect(container.querySelectorAll('app-colour-field')).toHaveLength(1);
-    expect(screen.getByRole('img', { name: 'Orange' })).toBeInTheDocument();
-  });
-
   it('stellt die Marke unter den Text, nicht in den Fluss', async () => {
     const { container } = await render(HostComponent, { providers: [provideRouter([])] });
 
@@ -82,25 +70,16 @@ describe('LookalikeRowComponent', () => {
     const { container } = await render(HostComponent, { providers: [provideRouter([])] });
 
     // Der Grund für den Bruch nach PR 78: Name und lateinischer Name standen in
-    // zwei Rasterspuren. Das Farbfeld nahm eine dritte, und der Wertspur blieb
-    // so wenig, dass „Leccinum melaneum“ Buchstabe für Buchstabe umbrach. Beide
-    // Namen gehören zu einer Art, also stehen sie in einer Spur.
+    // zwei Rasterspuren, und der Wertspur blieb so wenig, dass „Leccinum
+    // melaneum“ Buchstabe für Buchstabe umbrach. Beide Namen gehören zu einer
+    // Art, also stehen sie in einer Spur.
     const row = container.querySelector('app-lookalike-row');
     const tracks = [...(row?.children ?? [])].map((child) => child.className);
-    expect(tracks).toEqual(['lookalike__colour', 'lookalike__text', 'lookalike__actions']);
+    expect(tracks).toEqual(['lookalike__text', 'lookalike__actions']);
 
     const stack = container.querySelector('.lookalike__text');
     expect(stack?.querySelector('.lookalike__name')).not.toBeNull();
     expect(stack?.querySelector('.lookalike__latin')).not.toBeNull();
-  });
-
-  it('nimmt ohne Farben nur zwei Spuren', async () => {
-    const { container } = await render(HostComponent, { providers: [provideRouter([])] });
-
-    const rows = container.querySelectorAll('app-lookalike-row');
-    const without = rows[1];
-    const tracks = [...without.children].map((child) => child.className);
-    expect(tracks).toEqual(['lookalike__text', 'lookalike__actions']);
   });
 
   it('lässt einen langen lateinischen Namen nicht Buchstabe für Buchstabe brechen', async () => {
@@ -113,7 +92,7 @@ describe('LookalikeRowComponent', () => {
     expect(stack.minInlineSize).toBe('0px');
     expect(stack.overflowWrap).toBe('anywhere');
     expect(styleOf(container.querySelector('app-lookalike-row')).gridTemplateColumns).toBe(
-      'auto minmax(0, 1fr) auto',
+      'minmax(0, 1fr) auto',
     );
   });
 });
