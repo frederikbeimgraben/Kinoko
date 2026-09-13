@@ -19,6 +19,11 @@
 // 160 px hoch und trägt die Vorschau randlos.
 .submit__pick {
   display: flex;
+  // Ein Flex-Kind, dessen Overflow nicht `visible` ist, verliert sein
+  // selbsttaetiges `min-height: auto`. In der scrollenden Spalte fiel die
+  // Flaeche darum trotz ihrer 160 px auf einen Strich zusammen, und niemand
+  // konnte ein Bild waehlen.
+  flex: 0 0 auto;
   block-size: 160px;
   align-items: center;
   justify-content: center;
