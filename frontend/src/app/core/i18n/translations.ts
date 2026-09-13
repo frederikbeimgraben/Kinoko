@@ -325,10 +325,7 @@ const de = {
   'filter.eineAnzeigen': 'Eine Art anzeigen',
   'filter.abdeckung': '{beschrieben} von {gesamt} beschrieben',
   'filter.gewaehlt': '{anzahl} gewählt',
-  'filter.nochNicht': 'Kommt noch',
   'filter.ohneAngabeBehalten': 'Arten ohne Angabe behalten',
-  'filter.wertHinweis':
-    'Die Zahl sagt, wie viele Arten der Wert trifft — nicht, wie viele danach übrig bleiben.',
   'filter.luecke':
     '{anzahl} der {gesamt} Arten tragen zu diesem Merkmal keine Angabe. Sie fallen aus dem Ergebnis, wenn du hier wählst.',
   'filter.marke.entfernen': '{gruppe} nicht mehr filtern',
@@ -1315,9 +1312,7 @@ const en: Record<TranslationKey, string> = {
   'filter.eineAnzeigen': 'Show one species',
   'filter.abdeckung': '{beschrieben} of {gesamt} described',
   'filter.gewaehlt': '{anzahl} chosen',
-  'filter.nochNicht': 'Not yet',
   'filter.ohneAngabeBehalten': 'Keep species without a value',
-  'filter.wertHinweis': 'The number says how many species the value hits — not how many are left afterwards.',
   'filter.luecke':
     '{anzahl} of the {gesamt} species carry no value for this feature. They drop out of the result once you choose here.',
   'filter.marke.entfernen': 'Stop filtering by {gruppe}',

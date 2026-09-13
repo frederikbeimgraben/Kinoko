@@ -10,7 +10,6 @@ import {
   CheckRowComponent,
   EmptyStateComponent,
   InfoTextComponent,
-  NoteComponent,
   PageHeaderComponent,
 } from '../../ui';
 import { FACET_TEXT, valueKey } from './facet-labels';
@@ -65,7 +64,6 @@ interface Viewport {
     CheckRowComponent,
     EmptyStateComponent,
     InfoTextComponent,
-    NoteComponent,
     PageHeaderComponent,
     TranslatePipe,
   ],

@@ -50,6 +50,24 @@ export const FACET_TEXT: Record<FacetKey, TranslationKey> = {
 export const NOT_YET: readonly FacetKey[] = ['farbe', 'masse', 'zeitraum', 'sinne'];
 
 /**
+ * Gruppen, die das Blatt nicht zeigt, obwohl der Katalog sie liefert.
+ * „Sammelbar“ sagt nichts über den Pilz: ob eine Art auf der Liste steht,
+ * ist eine Entscheidung dieser App, kein Merkmal.
+ */
+export const HIDDEN: readonly FacetKey[] = ['sammelbar'];
+
+/**
+ * Die Karten des Filterblatts, wie im Mockup: erst das Aussehen, dann das
+ * Umfeld, zuletzt die Einstufung. Eine Gruppe, die der Katalog nicht liefert
+ * oder die noch nicht wählbar ist, fällt aus ihrer Karte, die Karte bleibt.
+ */
+export const SHEET: readonly (readonly FacetKey[])[] = [
+  ['speisewert', 'fruchtschicht', 'hutform', 'hutrand', 'hutmerkmale', 'stielmerkmale', 'farbe', 'masse'],
+  ['zeitraum', 'sinne', 'baeume', 'haeufigkeit', 'reagenzien'],
+  ['schutz', 'gefaehrdung', 'wertigkeit', 'stufe'],
+];
+
+/**
  * Der Name eines Werts. Die Zuordnungen stehen schon für die Artseite; der
  * Filter nimmt dieselben, damit ein Wert nicht an zwei Stellen zwei Namen hat.
  *

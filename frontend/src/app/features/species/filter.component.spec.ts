@@ -20,26 +20,33 @@ async function build(): Promise<{ container: Element; router: Router; refresh: (
 }
 
 describe('SpeciesFilterComponent', () => {
-  it('nennt an jeder Gruppe ihre Abdeckung, bevor jemand wählt', async () => {
+  it('nennt die Abdeckung nur an Gruppen mit Lücke', async () => {
     const { container } = await build();
 
     expect(screen.getByText('Speisewert')).toBeInTheDocument();
-    // Zwei Gruppen sind vollständig beschrieben, darum steht die Zeile zweimal.
-    expect(screen.getAllByText('306 von 306 beschrieben')).toHaveLength(2);
+    // Vollständig beschrieben heißt: nichts zu sagen. Die Zeile wäre auf
+    // jeder Gruppe dieselbe.
+    expect(screen.queryByText('306 von 306 beschrieben')).toBeNull();
     // Hutform: 94 von 306 heißt, dass 212 Arten herausfallen, weil die Angabe
     // fehlt, und nicht weil sie nicht passen.
     expect(screen.getByText('94 von 306 beschrieben')).toBeInTheDocument();
     await noViolations(container);
   }, 30_000);
 
-  it('lässt die Gruppen, die noch nicht wählbar sind, nicht öffnen', async () => {
-    const { router } = await build();
-    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+  it('zeigt Gruppen, die noch nicht wählbar sind, gar nicht', async () => {
+    await build();
 
-    await userEvent.click(screen.getByText('Farbe'));
+    // Eine Zeile, die sich nicht öffnen lässt, ist eine kaputte Zeile.
+    expect(screen.queryByText('Farbe')).toBeNull();
+    expect(screen.queryByText('Kommt noch')).toBeNull();
+  });
 
-    expect(screen.getByText('Kommt noch')).toBeInTheDocument();
-    expect(navigate).not.toHaveBeenCalled();
+  it('stellt die Gruppen in Karten nach dem Mockup auf', async () => {
+    const { container } = await build();
+
+    const names = [...container.querySelectorAll('.group__name')].map((node) => node.textContent.trim());
+    expect(names).toEqual(['Speisewert', 'Fruchtschicht', 'Hutform']);
+    expect(container.querySelectorAll('app-card')).toHaveLength(1);
   });
 
   it('führt in eine Gruppe', async () => {
