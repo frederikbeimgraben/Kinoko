@@ -6,6 +6,7 @@ Revises: f3b7c92e480d
 
 from collections.abc import Sequence
 
+import sqlalchemy as sa
 from alembic import op
 
 revision: str = "c2d8e5f14a07"
@@ -39,11 +40,18 @@ WHERE state = 'approved'
 
 
 def upgrade() -> None:
-    op.execute(FIRST_LEAD)
+    """Setzt je Art das Titelbild auf das älteste freigegebene Bild, wo keins ist.
+
+    Ein Stand vor I1 kennt die Tabelle noch nicht. Die Testvorrichtungen bauen
+    solche Stände nach, darum fragt die Wanderung erst, ob es sie gibt.
+    """
+    if sa.inspect(op.get_bind()).has_table("species_image"):
+        op.execute(FIRST_LEAD)
 
 
 def downgrade() -> None:
-    # Welche Marke von Hand kam und welche von hier, lässt sich hinterher
-    # nicht mehr unterscheiden. Ein Rückschritt lässt sie darum stehen; ein
-    # gesetztes Titelbild schadet dem alten Stand nicht.
-    pass
+    """Lässt die Marke stehen.
+
+    Welche Marke von Hand kam und welche von hier, lässt sich hinterher nicht
+    mehr unterscheiden. Ein gesetztes Titelbild schadet dem alten Stand nicht.
+    """
