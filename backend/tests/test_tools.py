@@ -119,14 +119,14 @@ def test_violation_key_of_size() -> None:
     assert check_size.Violation("a.py", 300, 250).key == "a.py"
 
 
-def test_sync_contract_is_on_par(capsys: pytest.CaptureFixture[str]) -> None:
+def test_sync_contract_keeps_the_copy(capsys: pytest.CaptureFixture[str]) -> None:
     assert sync_contract.main() == 0
-    assert "Stand" in capsys.readouterr().out
+    assert "openapi.yaml" in capsys.readouterr().out
 
 
-def test_sync_texts_is_on_par(capsys: pytest.CaptureFixture[str]) -> None:
+def test_sync_texts_keeps_the_copy(capsys: pytest.CaptureFixture[str]) -> None:
     assert sync_texts.main() == 0
-    assert "Stand" in capsys.readouterr().out
+    assert "texte.json" in capsys.readouterr().out
 
 
 def test_sync_copies_a_changed_file(
