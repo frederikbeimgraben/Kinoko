@@ -1,3 +1,7 @@
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
 :host {
   display: contents;
 }

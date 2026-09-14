@@ -45,7 +45,7 @@
           [variant]="state.layersSheetOpen() ? 'primary' : 'default'"
           (pressed)="state.layersSheetOpen.set(!state.layersSheetOpen())"
         />
-        @if (!busy()) {
+        @if (!tall()) {
           <app-floating-button
             icon="location"
             [label]="'map.location' | t"
@@ -54,7 +54,7 @@
           />
         }
 
-        @if (!addEntry.running() && !busy()) {
+        @if (!addEntry.running() && !covered()) {
           <app-floating-button
             class="map__add"
             icon="plus"
@@ -72,7 +72,7 @@
   @if (!surfaceOnly()) {
     <app-object-sheet />
 
-    @if (!overlaid() && !wide()) {
+    @if (!overlaid() && !covered() && !wide()) {
       <div class="map__sheet">
         <app-sheet
           [label]="'nav.tab.map' | t"

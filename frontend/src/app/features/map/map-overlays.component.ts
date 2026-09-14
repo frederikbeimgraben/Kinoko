@@ -10,7 +10,7 @@ import { CombinationsComponent } from './combinations.component';
 import { FactorPickerComponent } from './factor-picker.component';
 import { FactorSheetComponent } from './factor-sheet.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { DETENT_SIZES } from './map-surface';
 import { MapView } from './map.view';
@@ -18,6 +18,11 @@ import type { Factor } from './factors';
 
 /** Welches Blatt gerade über der Karte liegt. */
 export type Overlay = 'species' | 'layer' | 'factors' | 'factor' | 'combinations' | 'save' | null;
+
+/** Ein Name braucht wenig Platz, jedes andere Blatt die ganze Höhe. */
+export function overlayDetent(open: Overlay): Detent {
+  return open === 'save' ? 1 : 2;
+}
 
 /** Die Blätter über der Karte. Über der Karte liegt immer nur eines. */
 @Component({
@@ -56,6 +61,9 @@ export class MapOverlaysComponent {
 
   /** Ein Blatt über der Karte steht in derselben obersten Raste. */
   protected readonly detents = DETENT_SIZES;
+
+  /** Der Name einer Kombination braucht wenig Platz, der Rest die ganze Höhe. */
+  protected readonly detent = computed(() => overlayDetent(this.open()));
 
   protected readonly name = signal('');
 
