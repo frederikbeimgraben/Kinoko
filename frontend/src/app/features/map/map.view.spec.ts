@@ -80,6 +80,27 @@ describe('MapView', () => {
     expect([...model.sources().keys()]).toContain('boletus-edulis');
   });
 
+  it('wählt die erste Art mit Vorhersage, wenn die gemerkte keine hat', async () => {
+    const { view: model, state } = await view();
+    state.species.set('amanita-phalloides');
+
+    expect(model.noSpecies()).toBe(false);
+    expect(model.slug()).toBe('boletus-edulis');
+    expect(model.title()).toBe('Steinpilz');
+  });
+
+  it('bittet um eine Art, wenn keine eine Vorhersage hat', async () => {
+    const { view: model } = await view();
+    const catalogue = TestBed.inject(SpeciesState) as unknown as {
+      bundle: () => SpeciesBundle | null;
+    };
+    catalogue.bundle = () => ({ items: [] });
+
+    expect(model.noSpecies()).toBe(true);
+    expect(model.title()).toBe('Art wählen');
+    expect(model.speciesName()).toBe('');
+  });
+
   it('meldet eine feste Ebene ohne Woche', async () => {
     const { view: model, state } = await view();
     state.view.set('layer');

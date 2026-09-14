@@ -94,13 +94,6 @@ export class MapComponent implements OnDestroy {
 
   protected readonly offline = computed(() => !this.sync.online());
 
-  /** Die Zahlen neben den Schaltern des Ebenen-Knopfs. */
-  protected readonly entryCounts = computed(() => ({
-    markers: this.entries.marker().length,
-    zones: this.entries.zones().length,
-    sharedFinds: this.entries.shared().length,
-  }));
-
   /** Ein Eintrag braucht eine Karte ohne Blatt darüber. */
   protected readonly covered = computed(() => this.overlay() !== null);
 
@@ -118,6 +111,9 @@ export class MapComponent implements OnDestroy {
   constructor() {
     effect(() => {
       if (!this.visible()) this.playback.stop();
+    });
+    effect(() => {
+      this.state.species.set(this.view.slug());
     });
     effect(() => void this.tiles.load(this.state.species()));
     void this.tiles.loadLayers();
@@ -147,12 +143,11 @@ export class MapComponent implements OnDestroy {
     inject(DestroyRef).onDestroy(() => {
       document.removeEventListener('visibilitychange', onVisible);
     });
-    afterNextRender(
-      () =>
-        void this.surface.start(this.host().nativeElement, this.wide(), () => {
-          this.surface.paint();
-        }),
-    );
+    afterNextRender(() => {
+      void this.surface.start(this.host().nativeElement, this.wide(), () => {
+        this.onMove();
+      });
+    });
   }
 
   ngOnDestroy(): void {
@@ -237,6 +232,13 @@ export class MapComponent implements OnDestroy {
     this.tiles.forget();
     void this.tiles.load(this.state.species());
     void this.tiles.loadLayers();
+  }
+
+  /** Ein Schwenk holt die geteilten Funde des neuen Ausschnitts. */
+  private onMove(): void {
+    this.surface.paint();
+    const view = this.surface.extent();
+    if (view !== null) void this.entries.loadShared(view.extent);
   }
 
   private async loadEntries(): Promise<void> {

@@ -192,10 +192,10 @@ export class ZoneSheetComponent implements OnDestroy {
       await this.tiles.load(art.kartenSlug ?? chosen);
       const manifest = this.tiles.manifestOf(art.kartenSlug ?? chosen);
       if (manifest === null) return;
-      const woche =
+      const week =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
-      if (woche === null) return;
-      this.value.set(await firstValueFrom(this.api.zoneValue(id, art.slug, woche.jahr, woche.woche)));
+      if (week === null) return;
+      this.value.set(await firstValueFrom(this.api.zoneValue(id, art.slug, week.year, week.week)));
     } catch {
       // Ohne Karte für diese Art und Woche bleibt die Zeile weg.
     }

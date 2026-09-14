@@ -16,6 +16,7 @@
 
 .row__content {
   display: flex;
+  inline-size: 100%;
   align-items: center;
   gap: var(--space-3);
   min-block-size: var(--choice-row-height);

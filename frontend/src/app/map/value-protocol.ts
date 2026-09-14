@@ -77,7 +77,7 @@ export function parseValueUrl(url: string): ValueUrl | null {
 
 /** Die Quelle einer Vorhersage-Art. */
 export function speciesSource(slug: string, top: number, existing: ReadonlySet<string>): ValueSource {
-  return { id: slug, scale: { art: 'wahrscheinlichkeit', top }, colors: FORECAST_RAMP, existing };
+  return { id: slug, scale: { kind: 'probability', top }, colors: FORECAST_RAMP, existing };
 }
 
 /**
@@ -163,7 +163,7 @@ export class ValueProtocol {
       bound: part.bound,
     }));
     return this.dispatch((id) => ({
-      kind: 'kombi',
+      kind: 'combination',
       id,
       parts,
       rule: source.rule,

@@ -18,7 +18,7 @@ export interface CombinationPart {
 }
 
 export interface CombinationJob {
-  kind: 'kombi';
+  kind: 'combination';
   id: number;
   parts: readonly CombinationPart[];
   rule: CombinationRule;

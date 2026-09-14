@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /** Spiegelt Board-Bilder und Kartenbilder der Artefakte nach `e2e/boards`. */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,9 +19,16 @@ function findSource(root, part) {
 }
 
 /** Kopiert jede PNG aus `from` nach `target`, ohne die gleichen noch einmal. */
-function copyImages(from, target, excluded = new Set()) {
+function copyImages(from, target, excluded = new Set(), sweep = false) {
   mkdirSync(target, { recursive: true });
   const files = [];
+  // Was die Quelle nicht mehr hat, bleibt sonst als totes Bild liegen.
+  if (sweep) {
+    const source = new Set(readdirSync(from));
+    for (const name of readdirSync(target)) {
+      if (name.endsWith('.png') && !source.has(name)) rmSync(join(target, name));
+    }
+  }
   let fresh = 0;
   let same = 0;
   for (const name of readdirSync(from)) {
@@ -55,7 +62,7 @@ export function sync(root) {
   // Bildern: sie sind Zutat des Tests, kein Board.
   const fixtureSource = findSource(root, 'artefakte/mockups/code/fixtures');
   const fixtures = fixtureSource
-    ? copyImages(fixtureSource, join(root, 'e2e/boards/fixtures'))
+    ? copyImages(fixtureSource, join(root, 'e2e/boards/fixtures'), new Set(), true)
     : { fresh: 0, same: 0, files: [] };
   return { from, target, fixtureSource, ...boards, fixtures };
 }

@@ -71,7 +71,7 @@ export class MapAdapterDouble implements MapAdapter {
   }
 
   /** Was für eine Rolle gefragt wurde, ohne die Abräum-Aufrufe. */
-  templates(role: Role = 'vorhersage'): string[] {
+  templates(role: Role = 'forecast'): string[] {
     return (this.templatesPerRole.get(role) ?? []).filter((value): value is string => value !== null);
   }
 
@@ -218,9 +218,9 @@ export const RAW_LAYERS = {
       tiles: 'layers_kacheln/regen_4w',
       zooms: [5, 7],
       have: { '7': ['66/42', '67/42'] },
-      histogramme: {
-        '2025W39': { klassen: [0, 50, 100, 151.9], anteile: [0.5, 0.3, 0.2] },
-        '2025W40': { klassen: [0, 50, 100, 151.9], anteile: [0.6, 0.3, 0.1] },
+      histograms: {
+        '2025W39': { classes: [0, 50, 100, 151.9], shares: [0.5, 0.3, 0.2] },
+        '2025W40': { classes: [0, 50, 100, 151.9], shares: [0.6, 0.3, 0.1] },
       },
     },
     temperatur: {
@@ -243,7 +243,7 @@ export const RAW_LAYERS = {
       tiles: 'layers_kacheln/wald',
       zooms: [5, 8],
       have: { '7': ['66/42'] },
-      histogramm: { klassen: [0, 0.5, 1], anteile: [0.7, 0.3] },
+      histogram: { classes: [0, 0.5, 1], shares: [0.7, 0.3] },
     },
     boden_ph: {
       label: 'Boden-pH',
@@ -277,7 +277,7 @@ export const RAW_MANIFEST = {
       tiles: 'boletus_edulis_kacheln/2025W40',
       mean: 0.1,
       max: 0.5,
-      histogramm: { klassen: [0, 0.25, 0.5], anteile: [0.8, 0.2] },
+      histogram: { classes: [0, 0.25, 0.5], shares: [0.8, 0.2] },
     },
     { year: 2025, week: 41, forecast: true, tiles: 'boletus_edulis_kacheln/2025W41', mean: 0.08, max: 0.4 },
   ],

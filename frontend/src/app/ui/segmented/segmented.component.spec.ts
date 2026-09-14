@@ -5,15 +5,15 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { SegmentedComponent, type SegmentOption } from './segmented.component';
 
 const OPTIONEN: SegmentOption[] = [
-  { value: 'vorhersage', label: 'Vorhersage' },
-  { value: 'ebene', label: 'Ebene' },
+  { value: 'forecast', label: 'Vorhersage' },
+  { value: 'layer', label: 'Ebene' },
   { value: 'kombination', label: 'Kombination' },
 ];
 
 describe('SegmentedComponent', () => {
   it('führt die Wahl als tablist', async () => {
     const { container } = await render(SegmentedComponent, {
-      inputs: { options: OPTIONEN, value: 'ebene', label: 'Darstellung' },
+      inputs: { options: OPTIONEN, value: 'layer', label: 'Darstellung' },
     });
 
     expect(screen.getByRole('tablist', { name: 'Darstellung' })).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('SegmentedComponent', () => {
 
   it('meldet einen Klick auf eine andere Wahl', async () => {
     const { fixture } = await render(SegmentedComponent, {
-      inputs: { options: OPTIONEN, value: 'ebene', label: 'Darstellung' },
+      inputs: { options: OPTIONEN, value: 'layer', label: 'Darstellung' },
     });
     const selected: string[] = [];
     fixture.componentInstance.valueChange.subscribe((value) => selected.push(value));
@@ -37,7 +37,7 @@ describe('SegmentedComponent', () => {
 
   it('wechselt mit den Pfeiltasten und läuft dabei um', async () => {
     const { fixture } = await render(SegmentedComponent, {
-      inputs: { options: OPTIONEN, value: 'vorhersage', label: 'Darstellung' },
+      inputs: { options: OPTIONEN, value: 'forecast', label: 'Darstellung' },
     });
     const selected: string[] = [];
     fixture.componentInstance.valueChange.subscribe((value) => selected.push(value));
@@ -47,7 +47,7 @@ describe('SegmentedComponent', () => {
     await userEvent.keyboard('{ArrowLeft}');
     await userEvent.keyboard('{Enter}');
 
-    expect(selected).toEqual(['ebene', 'kombination', 'vorhersage']);
+    expect(selected).toEqual(['layer', 'kombination', 'forecast']);
   });
 
   it('zeigt ein gesperrtes Segment ohne Wahl anzunehmen', async () => {
@@ -65,7 +65,7 @@ describe('SegmentedComponent', () => {
 
   it('trägt den Druckzustand an jeder Wahl', async () => {
     const { container } = await render(SegmentedComponent, {
-      inputs: { options: OPTIONEN, value: 'ebene', label: 'Darstellung' },
+      inputs: { options: OPTIONEN, value: 'layer', label: 'Darstellung' },
     });
 
     const choice = container.querySelector('.seg__choice');

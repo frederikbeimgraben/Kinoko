@@ -81,8 +81,8 @@ describe('Factoren', () => {
 
   it('gibt dem Worker die Bedingung in Bytes samt Randbreite', () => {
     expect(boundFor(FAKTOR, RAIN)).toEqual({
-      von: byteForValue(RAIN, 80),
-      bis: 255,
+      from: byteForValue(RAIN, 80),
+      to: 255,
       edge: Math.round(254 * EDGE_SHARE),
     });
   });

@@ -20,7 +20,7 @@ export class MapPlayback {
 
   select(week: { year: number; week: number }): void {
     this.stop();
-    this.state.week.set(weekKey({ jahr: week.year, woche: week.week }));
+    this.state.week.set(weekKey({ year: week.year, week: week.week }));
   }
 
   /** Eine Woche vor oder zurück, ohne über die Enden hinaus. */
@@ -28,10 +28,10 @@ export class MapPlayback {
     const manifest = this.view.manifest();
     const week = this.view.week();
     if (manifest === null || week === null) return;
-    const at = manifest.wochen.indexOf(week);
-    const target = Math.min(manifest.wochen.length - 1, Math.max(0, at + direction));
-    const next = manifest.wochen[target];
-    if (target !== at) this.select({ year: next.jahr, week: next.woche });
+    const at = manifest.weeks.indexOf(week);
+    const target = Math.min(manifest.weeks.length - 1, Math.max(0, at + direction));
+    const next = manifest.weeks[target];
+    if (target !== at) this.select({ year: next.year, week: next.week });
   }
 
   toggle(): void {
@@ -58,11 +58,11 @@ export class MapPlayback {
       this.stop();
       return;
     }
-    const next = manifest.wochen.indexOf(week) + 1;
-    if (next >= manifest.wochen.length) {
+    const next = manifest.weeks.indexOf(week) + 1;
+    if (next >= manifest.weeks.length) {
       this.stop();
       return;
     }
-    this.state.week.set(weekKey(manifest.wochen[next]));
+    this.state.week.set(weekKey(manifest.weeks[next]));
   }
 }

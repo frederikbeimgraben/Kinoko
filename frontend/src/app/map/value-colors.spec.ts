@@ -10,45 +10,45 @@ import {
   combinationIndex,
   combine,
   valueBytes,
-  zuRgb,
+  toRgb,
 } from './value-colors';
 
 describe('Wertfarben', () => {
   it('liest eine Farbe der Rampe', () => {
-    expect(zuRgb('#0d0827')).toEqual([13, 8, 39]);
-    expect(zuRgb('#fce79b')).toEqual([252, 231, 155]);
+    expect(toRgb('#0d0827')).toEqual([13, 8, 39]);
+    expect(toRgb('#fce79b')).toEqual([252, 231, 155]);
   });
 
   it('macht Byte 0 durchsichtig, denn es heißt „keine Daten“', () => {
-    const lut = createLut({ art: 'wahrscheinlichkeit', top: 0.5 });
+    const lut = createLut({ kind: 'probability', top: 0.5 });
 
     expect(lut).toHaveLength(LUT_SIZE);
     expect([lut[0], lut[1], lut[2], lut[3]]).toEqual([0, 0, 0, 0]);
   });
 
   it('beginnt bei Byte 1 am dunklen Ende der Rampe', () => {
-    const lut = createLut({ art: 'wahrscheinlichkeit', top: 0.5 });
-    const [r, g, b] = zuRgb(FORECAST_RAMP[0]);
+    const lut = createLut({ kind: 'probability', top: 0.5 });
+    const [r, g, b] = toRgb(FORECAST_RAMP[0]);
 
     expect([lut[4], lut[5], lut[6]]).toEqual([r, g, b]);
   });
 
   it('läuft mit `top` über die Rampe: Byte 255 einer Art mit top 1 ist das helle Ende', () => {
-    const full = createLut({ art: 'wahrscheinlichkeit', top: 1 });
-    const [r, g, b] = zuRgb(FORECAST_RAMP[FORECAST_RAMP.length - 1]);
+    const full = createLut({ kind: 'probability', top: 1 });
+    const [r, g, b] = toRgb(FORECAST_RAMP[FORECAST_RAMP.length - 1]);
 
     expect([full[255 * 4], full[255 * 4 + 1], full[255 * 4 + 2]]).toEqual([r, g, b]);
   });
 
   it('hält eine schwache Art dunkel: top 0,2 kommt nie über die Mitte der Rampe', () => {
-    const weak = createLut({ art: 'wahrscheinlichkeit', top: 0.2 });
-    const center = zuRgb(FORECAST_RAMP[4]);
+    const weak = createLut({ kind: 'probability', top: 0.2 });
+    const center = toRgb(FORECAST_RAMP[4]);
 
     expect(weak[255 * 4]).toBeLessThan(center[0]);
   });
 
   it('lässt die Deckkraft mit dem Wert steigen', () => {
-    const lut = createLut({ art: 'wahrscheinlichkeit', top: 0.5 });
+    const lut = createLut({ kind: 'probability', top: 0.5 });
 
     expect(lut[4 + 3]).toBeLessThan(lut[128 * 4 + 3]);
     expect(lut[128 * 4 + 3]).toBeLessThan(lut[255 * 4 + 3]);
@@ -56,7 +56,7 @@ describe('Wertfarben', () => {
   });
 
   it('färbt eine graue Kachel über die Tabelle', () => {
-    const lut = createLut({ art: 'wahrscheinlichkeit', top: 1 });
+    const lut = createLut({ kind: 'probability', top: 1 });
     const punkte = new Uint8ClampedArray([0, 0, 0, 255, 255, 255, 255, 255]);
 
     colorize(punkte, lut);
@@ -71,9 +71,9 @@ describe('Wertfarben', () => {
   });
 
   it('spannt eine Ebene über die ganze Rampe und lässt sie gleich deckend', () => {
-    const lut = createLut({ art: 'spanne', low: 4.7, high: 6.9 });
-    const dark = zuRgb(FORECAST_RAMP[0]);
-    const light = zuRgb(FORECAST_RAMP[FORECAST_RAMP.length - 1]);
+    const lut = createLut({ kind: 'range', low: 4.7, high: 6.9 });
+    const dark = toRgb(FORECAST_RAMP[0]);
+    const light = toRgb(FORECAST_RAMP[FORECAST_RAMP.length - 1]);
 
     expect([lut[4], lut[5], lut[6]]).toEqual(dark);
     expect([lut[255 * 4], lut[255 * 4 + 1], lut[255 * 4 + 2]]).toEqual(light);
@@ -83,13 +83,13 @@ describe('Wertfarben', () => {
   });
 
   it('rechnet ein Byte in den Wert der Quelle zurück', () => {
-    expect(valueBytes({ art: 'wahrscheinlichkeit', top: 0.5 }, 255)).toBeCloseTo(0.5);
-    expect(valueBytes({ art: 'spanne', low: 4.7, high: 6.9 }, 1)).toBeCloseTo(4.7);
-    expect(valueBytes({ art: 'spanne', low: 4.7, high: 6.9 }, 255)).toBeCloseTo(6.9);
+    expect(valueBytes({ kind: 'probability', top: 0.5 }, 255)).toBeCloseTo(0.5);
+    expect(valueBytes({ kind: 'range', low: 4.7, high: 6.9 }, 1)).toBeCloseTo(4.7);
+    expect(valueBytes({ kind: 'range', low: 4.7, high: 6.9 }, 255)).toBeCloseTo(6.9);
   });
 
   it('gibt vollen Grad innerhalb der Bedingung und fällt über den Rand ab', () => {
-    const bound = { von: 100, bis: 200, edge: 25 };
+    const bound = { from: 100, to: 200, edge: 25 };
 
     expect(fulfilment(150, bound)).toBe(1);
     expect(fulfilment(100, bound)).toBe(1);
@@ -100,13 +100,13 @@ describe('Wertfarben', () => {
   });
 
   it('kennt ohne Rand nur ganz oder gar nicht', () => {
-    expect(fulfilment(90, { von: 100, bis: 200, edge: 0 })).toBe(0);
+    expect(fulfilment(90, { from: 100, to: 200, edge: 0 })).toBe(0);
   });
 
   it('färbt die Schnittmenge nur, wo jede Bedingung zutrifft', () => {
     const bounds = [
-      { von: 100, bis: 200, edge: 25 },
-      { von: 50, bis: 255, edge: 25 },
+      { from: 100, to: 200, edge: 25 },
+      { from: 50, to: 255, edge: 25 },
     ];
 
     expect(combine([150, 200], bounds, 'intersection')).toBe(1);
@@ -115,8 +115,8 @@ describe('Wertfarben', () => {
 
   it('nimmt abgestuft das geometrische Mittel der Grade', () => {
     const bounds = [
-      { von: 100, bis: 200, edge: 25 },
-      { von: 100, bis: 200, edge: 25 },
+      { from: 100, to: 200, edge: 25 },
+      { from: 100, to: 200, edge: 25 },
     ];
 
     expect(combine([150, 150], bounds, 'graded')).toBe(1);
@@ -127,8 +127,8 @@ describe('Wertfarben', () => {
 
   it('lässt einen Punkt leer, sobald einer Quelle die Daten fehlen', () => {
     const bounds = [
-      { von: 1, bis: 255, edge: 25 },
-      { von: 1, bis: 255, edge: 25 },
+      { from: 1, to: 255, edge: 25 },
+      { from: 1, to: 255, edge: 25 },
     ];
 
     expect(combine([150, 0], bounds, 'intersection')).toBe(EMPTY_DOT);
@@ -138,7 +138,7 @@ describe('Wertfarben', () => {
 
   it('malt die Schnittmenge in einer Farbe, halb deckend', () => {
     const lut = createCombinationLut(['#004225'], 'intersection');
-    const [r, g, b] = zuRgb('#004225');
+    const [r, g, b] = toRgb('#004225');
 
     expect([lut[0], lut[1], lut[2], lut[3]]).toEqual([0, 0, 0, 0]);
     expect([lut[255 * 4], lut[255 * 4 + 1], lut[255 * 4 + 2], lut[255 * 4 + 3]]).toEqual([
@@ -152,9 +152,9 @@ describe('Wertfarben', () => {
   it('malt abgestuft über die ganze Rampe, mit der Deckkraft am Wert', () => {
     const lut = createCombinationLut(FORECAST_RAMP, 'graded');
 
-    expect([lut[4], lut[5], lut[6]]).toEqual(zuRgb(FORECAST_RAMP[0]));
+    expect([lut[4], lut[5], lut[6]]).toEqual(toRgb(FORECAST_RAMP[0]));
     expect([lut[255 * 4], lut[255 * 4 + 1], lut[255 * 4 + 2]]).toEqual(
-      zuRgb(FORECAST_RAMP[FORECAST_RAMP.length - 1]),
+      toRgb(FORECAST_RAMP[FORECAST_RAMP.length - 1]),
     );
     expect(lut[4 + 3]).toBeLessThan(lut[255 * 4 + 3]);
   });

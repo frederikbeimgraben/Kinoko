@@ -48,7 +48,7 @@ describe('MapState', () => {
       JSON.stringify({
         species: 'imleria-badia',
         week: 'kaputt',
-        view: 'ebene',
+        view: 'kaputt',
         layer: 'regen_4w',
         opacity: 0.4,
         background: 'light',

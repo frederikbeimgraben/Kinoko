@@ -157,7 +157,7 @@ interface Viewport {
   links: Link[];
   geprueft: string;
   kartenSlug: string | null;
-  woche: number;
+  week: number;
 }
 
 /**
@@ -335,7 +335,7 @@ export class SpeciesComponent {
         datum: longDate(art.quelle.geprueftAm, this.i18n.locale()),
       }),
       kartenSlug: art.kartenSlug,
-      woche: saison?.stand.woche ?? 0,
+      week: saison?.stand.woche ?? 0,
     };
   }
 
@@ -446,8 +446,8 @@ export class SpeciesComponent {
         values: saison.laufendesJahr,
         visits: saison.begehungenJeWocheLaufendesJahr,
         legend: this.i18n.translate('art.kurve.laufend', {
-          jahr: saison.stand.jahr,
-          woche: saison.stand.woche,
+          year: saison.stand.jahr,
+          week: saison.stand.woche,
         }),
       },
     ];

@@ -14,31 +14,13 @@ export type MaplibreModule = Pick<
   'Map' | 'AttributionControl' | 'addProtocol' | 'removeProtocol' | 'setWorkerUrl'
 >;
 
-/**
- * Wo der Worker von MapLibre liegt.
- *
- * MapLibre baut den Pfad sonst zur Laufzeit aus `import.meta.url` und sucht
- * `maplibre-gl-worker.mjs` neben dem Bündel. Dort liegt die Datei nicht: der
- * Bündler kopiert sie nicht mit, und der Webserver antwortet für einen
- * unbekannten Pfad mit der Seite selbst. Firefox lehnt den Worker dann wegen
- * des MIME-Typs ab, und die Karte bleibt leer. Die Datei wird darum als Asset
- * ausgeliefert (`angular.json`) und hier benannt.
- */
+/** Wo der Worker von MapLibre liegt. */
 export const WORKER_PATH = '/assets/maplibre/maplibre-gl-worker.mjs';
 
-/**
- * Wo das Stylesheet von MapLibre liegt.
- *
- * MapLibre haengt seine Bedienelemente selbst in den Baum, an Angular vorbei;
- * eingekapselte Komponentenstile erreichen sie nicht, das Stylesheet muss
- * global gelten. Global heisst aber nicht: im ersten Buendel. Es sind 84 kB,
- * die nur der Kartenreiter braucht, und ueber `styles.scss` lud sie jeder
- * Aufruf mit. Die Datei geht darum denselben Weg wie der Worker und kommt
- * erst, wenn die Karte entsteht.
- */
+/** Wo das Stylesheet von MapLibre liegt. */
 export const STYLE_PATH = '/assets/maplibre/maplibre-gl.css';
 
-/** Haengt das Stylesheet in den Kopf. Ein zweiter Aufruf tut nichts. */
+/** Haengt das Stylesheet in den Kopf. */
 export function ensureStyles(head: HTMLHeadElement): void {
   if (head.querySelector(`link[href="${STYLE_PATH}"]`) !== null) return;
   const link = head.ownerDocument.createElement('link');
@@ -50,13 +32,10 @@ export function ensureStyles(head: HTMLHeadElement): void {
 /** Südwest- und Nordostecke als [Länge, Breite]. */
 export type Bounds = readonly [readonly [number, number], readonly [number, number]];
 
-/**
- * Zwei Wertebenen liegen übereinander: die Vorhersage unten, die Eingabe-Ebene
- * darüber. Jede Rolle hat eigene Quellen und eine eigene Deckkraft.
- */
-export type Role = 'vorhersage' | 'ebene';
+/** Zwei Wertebenen liegen übereinander: die Vorhersage unten, die Eingabe-Ebene darüber. */
+export type Role = 'forecast' | 'layer';
 
-export const ROLES: readonly Role[] = ['vorhersage', 'ebene'];
+export const ROLES: readonly Role[] = ['forecast', 'layer'];
 
 /** Der freie Streifen der Karte: was Blatt, Navigation und Kopf verdecken. */
 export interface Padding {
@@ -84,11 +63,7 @@ export interface MapOptions {
   protocol: Protocol;
 }
 
-/**
- * Die eigenen Ebenen über der Vorhersage, von unten nach oben. Zonen liegen
- * als Fläche unten, Punkte darüber, damit ein Fund in seiner Zone anklickbar
- * bleibt.
- */
+/** Die eigenen Ebenen über der Vorhersage, von unten nach oben. */
 export const OBJECT_LAYERS = ['zonen', 'geteilteFunde', 'marker', 'funde', 'location'] as const;
 
 /** Ein Objekt unter dem Finger: seine Ebene, seine Kennung und sein Ort. */
@@ -99,18 +74,15 @@ export interface ObjectHit {
 }
 export type ObjectLayer = (typeof OBJECT_LAYERS)[number];
 
-/**
- * Was die Kartenseite von der Karte braucht. Die Seite kennt MapLibre nicht;
- * so bleibt sie ohne WebGL testbar.
- */
+/** Was die Kartenseite von der Karte braucht. */
 export interface MapAdapter {
   /** Holt MapLibre schon, bevor die Karte gebraucht wird. */
   warmUp(): void;
   start(host: HTMLElement, options: MapOptions): Promise<void>;
   setStyle(style: string): void;
-  /** Legt die Kacheln einer Rolle auf die Karte, ohne Flackern. `null` räumt sie ab. */
-  showValue(role: Role, template: string | null, bounds: Bounds, zoomVon: number, zoomBis: number): void;
-  /** Deckkraft einer Rolle, 0 bis 1. */
+  /** Legt die Kacheln einer Rolle auf die Karte, ohne Flackern. */
+  showValue(role: Role, template: string | null, bounds: Bounds, zoomFrom: number, zoomTo: number): void;
+  /** Deckkraft einer Rolle, null als durchsichtig, eins als deckend. */
   setOpacity(role: Role, value: number): void;
   fitBounds(bounds: Bounds, padding: Padding): void;
   setPadding(padding: Padding): void;
@@ -120,17 +92,17 @@ export interface MapAdapter {
   destroy(): void;
   /** Der Ort unter dem Fadenkreuz: die Mitte des freien Streifens. */
   center(): readonly [number, number] | null;
-  /** Fährt zu einem Ort. Ohne Zoom bleibt die Stufe, wie sie ist. */
+  /** Fährt zu einem Ort. */
   flyTo(centerPoint: readonly [number, number], zoom?: number): void;
   /** Legt die eigenen Objekte einer Ebene auf die Karte. */
   showObjects(layer: ObjectLayer, data: FeatureCollection): void;
   /** Nimmt eine Ebene von der Karte, ohne die anderen anzufassen. */
   hideObjects(layer: ObjectLayer): void;
-  /** Ein Tipp auf ein Objekt. Die Kennung steht in `id` des Features. */
+  /** Ein Tipp auf ein Objekt. */
   onObjectSelect(handler: (layer: ObjectLayer, id: string) => void): void;
   /** Das Objekt unter einem Punkt der Fläche, für das lange Drücken. */
   objectAt(x: number, y: number): ObjectHit | null;
-  /** Die rohe Karte für Terra Draw. `null`, solange sie nicht steht. */
+  /** Die rohe Karte für Terra Draw. */
   rawMap(): MapLibreMap | null;
 }
 
@@ -141,7 +113,7 @@ const SWAP_DEADLINE = 1500;
 interface RoleState {
   active: 0 | 1;
   template: string | null;
-  space: { bounds: Bounds; zoomVon: number; zoomBis: number } | null;
+  space: { bounds: Bounds; zoomFrom: number; zoomTo: number } | null;
   swap: (() => void) | null;
   opacity: number;
 }
@@ -150,7 +122,7 @@ function newRoleState(): RoleState {
   return { active: 0, template: null, space: null, swap: null, opacity: 1 };
 }
 
-/** Die beiden Ebenen-Namen einer Rolle. Sie wechseln sich beim Nachladen ab. */
+/** Die beiden Ebenen-Namen einer Rolle. */
 function layerName(role: Role, space: 0 | 1): string {
   return `wert-${role}-${space === 0 ? 'a' : 'b'}`;
 }
@@ -173,13 +145,7 @@ function layerPaintLayers(layer: ObjectLayer): string[] {
   return [`objekte-${layer}-punkt`];
 }
 
-/**
- * Wie eine Ebene aussieht. Die Farbe steht am Feature, nicht in der Schicht:
- * so trägt jede Zone und jeder Marker die gewählte der sechs Farben.
- *
- * Ein gerundeter geteilter Fund wird zum großen, blassen Kreis. Er behauptet
- * damit keinen Punkt, den es so nicht gibt.
- */
+/** Wie eine Ebene aussieht. */
 function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
   const source = sourceFor(layer);
   if (layer === 'zonen') {
@@ -254,29 +220,25 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
   ];
 }
 
-/**
- * MapLibre hinter der Schnittstelle.
- *
- * Der Wechsel einer Woche läuft über zwei Rasterquellen je Rolle: die neue
- * wird unsichtbar geladen und erst sichtbar geschaltet, wenn ihre Kacheln da
- * sind. Ein Tausch an einer Quelle würde die Karte kurz leer zeigen.
- */
+/** MapLibre hinter der Schnittstelle. */
 export class MapLibreAdapter implements MapAdapter {
   private module: MaplibreModule | null = null;
   private protocolName: string | null = null;
   private map: MapLibreMap | null = null;
   private readonly states = new Map<Role, RoleState>(ROLES.map((role) => [role, newRoleState()]));
-  /** Was auf den eigenen Ebenen liegt. Ein Stilwechsel legt es von hier neu auf. */
+  /** Was auf den eigenen Ebenen liegt. */
   private readonly objects = new Map<ObjectLayer, FeatureCollection>();
-  /** Die Klick-Anmeldungen je Ebene. Ein Stilwechsel löst sie und meldet neu an. */
+  /** Die Klick-Anmeldungen je Ebene. */
   private readonly abos = new Map<ObjectLayer, Subscription[]>();
   private chosen: ((layer: ObjectLayer, id: string) => void) | null = null;
+  /** Solange der Stil lädt, nimmt MapLibre keine Quelle an. */
+  private styleReady = false;
 
   constructor(private readonly load: () => Promise<MaplibreModule>) {}
 
   warmUp(): void {
-    // Der Modullader gibt beim zweiten Aufruf dasselbe Versprechen zurück; ein
-    // früher Anstoß kostet darum nichts und spart den Weg über den ersten Rahmen.
+    // Der Modullader gibt beim zweiten Aufruf dasselbe Versprechen zurück.
+    // Ein Anstoß vorab kostet darum nichts und spart einen Rahmen.
     void this.load();
   }
 
@@ -290,7 +252,9 @@ export class MapLibreAdapter implements MapAdapter {
     // Das Protokoll steht vor der Karte, sonst fiele die erste Kachel ins Leere.
     module.addProtocol(options.protocol.name, (request) => options.protocol.resolve(request.url));
     this.protocolName = options.protocol.name;
-    this.map = new module.Map({
+    // Die Karte bleibt unter Verschluss, solange der Stil lädt. Davor lehnt
+    // MapLibre jede Quelle ab.
+    const map = new module.Map({
       container: host,
       style: options.style,
       center: [options.centerPoint[0], options.centerPoint[1]],
@@ -302,30 +266,32 @@ export class MapLibreAdapter implements MapAdapter {
       // stünde doppelt da.
       attributionControl: false,
     });
-    // Der Hinweis steht unten links, weg von der Knopfgruppe oben und weg von
-    // „Eintragen“ unten rechts. Das Blatt deckt ihn nicht zu: `styles.scss`
-    // hebt ihn über dessen Kopf.
-    this.map.addControl(
+    // Der Hinweis steht unten links, weg von den Knöpfen. `styles.scss` hebt
+    // ihn über den Kopf des Blatts.
+    map.addControl(
       new module.AttributionControl({ compact: false, customAttribution: options.attribution }),
       'bottom-left',
     );
-    // Eine Quelle vor dem Stil wirft. `style.load` ist das erste Ereignis, nach
-    // dem der Stil steht; `load` wartet zusätzlich auf jede Kachel und bleibt
-    // über einer langsamen Leitung lange aus.
+    // `style.load` meldet den fertigen Stil. `load` wartet auf jede Kachel
+    // und bleibt über einer langsamen Leitung lange aus.
     await new Promise<void>((done) => {
-      this.map?.once('style.load', () => {
+      map.once('style.load', () => {
         done();
       });
     });
+    this.map = map;
+    this.styleReady = true;
   }
 
   setStyle(style: string): void {
     const map = this.map;
     if (!map) return;
     map.setStyle(style);
+    this.styleReady = false;
     // Ein neuer Stil wirft alle eigenen Quellen weg. Sie kommen zurück, sobald
     // der Stil steht, sonst wären Vorhersage und Ebene nach dem Wechsel fort.
     map.once('style.load', () => {
+      this.styleReady = true;
       for (const role of ROLES) {
         const state = this.state(role);
         const template = state.template;
@@ -333,13 +299,13 @@ export class MapLibreAdapter implements MapAdapter {
         state.active = 0;
         state.template = null;
         state.swap = null;
-        if (template && space) this.showValue(role, template, space.bounds, space.zoomVon, space.zoomBis);
+        if (template && space) this.showValue(role, template, space.bounds, space.zoomFrom, space.zoomTo);
       }
       for (const [layer, data] of this.objects) this.addObjectLayer(layer, data);
     });
   }
 
-  showValue(role: Role, template: string | null, bounds: Bounds, zoomVon: number, zoomBis: number): void {
+  showValue(role: Role, template: string | null, bounds: Bounds, zoomFrom: number, zoomTo: number): void {
     const map = this.map;
     const state = this.state(role);
     if (!map || template === state.template) return;
@@ -355,14 +321,14 @@ export class MapLibreAdapter implements MapAdapter {
       state.space = null;
       return;
     }
-    state.space = { bounds, zoomVon, zoomBis };
+    state.space = { bounds, zoomFrom, zoomTo };
     this.remove(next);
     map.addSource(next, {
       type: 'raster',
       tiles: [template],
       tileSize: 256,
-      minzoom: zoomVon,
-      maxzoom: zoomBis,
+      minzoom: zoomFrom,
+      maxzoom: zoomTo,
       bounds: [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]],
       attribution: '',
     });
@@ -377,11 +343,8 @@ export class MapLibreAdapter implements MapAdapter {
           // Woche ist da schon weg, und dazwischen bliebe die Karte leer.
           'raster-opacity-transition': { duration: 0, delay: 0 },
           'raster-fade-duration': 0,
-          // Die Kacheln reichen bis Zoom 8, das Raster darunter misst 500 m
-          // und ist geglättet. Weich hochgerechnet verliefe ein Rand bis zu
-          // einem Kilometer neben den Wald der Grundkarte, und das sähe aus wie
-          // ein Versatz. Als Quadrat sieht man die Zellgrenze und weiß, wie
-          // grob gemessen wird.
+          // Hochgerechnet läge ein weicher Rand weit neben dem Wald der
+          // Grundkarte. Als Quadrat zeigt die Kachel ihre eigene Grenze.
           'raster-resampling': 'nearest',
         },
       },
@@ -459,25 +422,18 @@ export class MapLibreAdapter implements MapAdapter {
     return state;
   }
 
-  /**
-   * Vor welcher Ebene die neue liegt. Die Vorhersage gehört unter die
-   * Eingabe-Ebene, sonst verdeckte sie die Ebene, die man gerade lesen will.
-   */
+  /** Vor welcher Ebene die neue liegt. */
   private ueber(role: Role): string | undefined {
     const map = this.map;
-    if (role !== 'vorhersage' || !map) return undefined;
+    if (role !== 'forecast' || !map) return undefined;
     for (const space of [0, 1] as const) {
-      const name = layerName('ebene', space);
+      const name = layerName('layer', space);
       if (map.getLayer(name)) return name;
     }
     return undefined;
   }
 
-  /**
-   * Blendet die neue Woche ein, sobald ihre Kacheln liegen, und nimmt die alte
-   * weg. Die Frist ist die Notbremse: fehlt eine Kachel dauerhaft, bliebe die
-   * neue Woche sonst für immer unsichtbar.
-   */
+  /** Blendet die neue Woche ein, sobald ihre Kacheln liegen, und nimmt die alte weg. */
   private swapAfterLoad(map: MapLibreMap, role: Role, alt: string, next: string): void {
     const state = this.state(role);
     const done = (): void => {
@@ -488,8 +444,7 @@ export class MapLibreAdapter implements MapAdapter {
       this.remove(alt);
     };
     const onData = (event: MapSourceDataEvent): void => {
-      // Die Meldungen zur Quelle selbst („Beschreibung gelesen“, „sichtbar
-      // geschaltet“) kommen, bevor die erste Kachel angefragt ist. Auf sie zu
+      // Meldungen zur Quelle selbst kommen vor der ersten Kachel. Auf sie zu
       // hören hieße, die alte Woche vor der neuen wegzunehmen.
       if (event.sourceId !== next) return;
       if (event.sourceDataType === 'metadata' || event.sourceDataType === 'visibility') return;
@@ -557,13 +512,11 @@ export class MapLibreAdapter implements MapAdapter {
     return this.map;
   }
 
-  /**
-   * Schreibt die Daten in die Quelle der Ebene und legt Quelle und Schichten
-   * an, falls der Stil sie noch nicht trägt.
-   */
+  /** Schreibt die Daten in die Quelle der Ebene und legt Quelle und Schichten an, falls der Stil … */
   private addObjectLayer(layer: ObjectLayer, data: FeatureCollection): void {
     const map = this.map;
-    if (!map) return;
+    // Die Daten liegen schon in `objects`; der Stil legt sie auf, sobald er steht.
+    if (!map || !this.styleReady) return;
     const source = sourceFor(layer);
     const existing = map.getSource<GeoJSONSource>(source);
     if (existing) {

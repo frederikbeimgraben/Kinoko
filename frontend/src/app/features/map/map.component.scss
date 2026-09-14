@@ -72,28 +72,27 @@
   gap: 12px;
 }
 
+// „Eintragen“ steht am Telefon als dritter Knopf unter den beiden anderen.
+.map__add {
+  position: absolute;
+  inset-block-start: calc(2 * (var(--size-floating) + 12px) + 12px);
+  inset-inline-end: 12px;
+  z-index: 1;
+}
+
+// Am Rechner beginnt die Gruppe vier Punkte tiefer, der Rand bleibt.
+:host-context(.shell--column) .map__buttons {
+  inset-block-start: 16px;
+}
+
 // Am Rechner steht „Eintragen“ unten rechts über der Karte, größer als die
 // Knöpfe darüber.
 :host-context(.shell--column) .map__add {
   --size-floating: 56px;
 
-  position: absolute;
+  inset-block-start: auto;
   inset-block-end: 24px;
   inset-inline-end: 24px;
-}
-
-.map__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  padding: 0;
-  cursor: pointer;
-  background: rgb(0 18 10 / 25%);
-  border: 0;
-}
-
-.map__sheet--layers {
-  z-index: 4;
 }
 
 // Melden und Objekt liegen über allem: sie sind der Grund, warum die Karte
@@ -104,13 +103,6 @@ app-object-sheet {
   inset: 0;
   z-index: 5;
   pointer-events: none;
-}
-
-// Die Abdunkelung gehört am Rechner über die Spalte, nicht über die Karte: die
-// bleibt sichtbar, damit man weiß, worüber man gerade entscheidet.
-:host-context(.shell--column) .map__scrim {
-  inset-inline-start: var(--size-rail);
-  inline-size: var(--size-column);
 }
 
 // Das Skelett liegt über der Fläche, solange kein Manifest da ist.

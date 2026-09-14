@@ -6,6 +6,7 @@ const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
   '/api/funde': { eintraege: [], gesamt: 0 },
+  '/api/funde/geteilt': { eintraege: [], gesamt: 0 },
   '/api/marker': { eintraege: [], gesamt: 0 },
   '/api/zonen': { eintraege: [], gesamt: 0 },
 };
@@ -39,7 +40,7 @@ test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) =>
     Object.defineProperty(navigator, 'onLine', { configurable: true, value: false });
     window.dispatchEvent(new Event('offline'));
   });
-  await expect(page.getByRole('status')).toContainText('Keine Verbindung');
+  await expect(page.locator('app-banner')).toContainText('Keine Verbindung');
   const asked: string[] = [];
   page.on('request', (request) => asked.push(request.url()));
 

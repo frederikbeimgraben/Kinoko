@@ -30,10 +30,10 @@ const RAW = {
       tiles: 'layers_kacheln/regen_4w',
       zooms: [5, 7],
       have: { '7': ['66/42'] },
-      histogramme: {
-        '2025W39': { klassen: [0, 50, 151.9], anteile: [0.5, 0.5] },
-        '2025W40': { klassen: [0, 50, 151.9], anteile: [0.8, 0.2] },
-        broken: { klassen: [0, 1], anteile: [] },
+      histograms: {
+        '2025W39': { classes: [0, 50, 151.9], shares: [0.5, 0.5] },
+        '2025W40': { classes: [0, 50, 151.9], shares: [0.8, 0.2] },
+        broken: { classes: [0, 1], shares: [] },
       },
     },
     wald: {
@@ -45,7 +45,7 @@ const RAW = {
       tiles: 'layers_kacheln/wald',
       zooms: [5, 8],
       have: { '8': ['132/82'] },
-      histogramm: { klassen: [0, 0.5, 1], anteile: [0.7, 0.3] },
+      histogram: { classes: [0, 0.5, 1], shares: [0.7, 0.3] },
     },
     broken: { label: 'Ohne Kacheln' },
   },
@@ -72,14 +72,14 @@ describe('Ebenen', () => {
       low: 0,
       high: 151.9,
       tilePath: 'layers_kacheln/regen_4w',
-      zoomVon: 5,
-      zoomBis: 7,
+      zoomFrom: 5,
+      zoomTo: 7,
       existing: new Set(['7/66/42']),
-      wochen: ['2025W39', '2025W40'],
-      histogramm: null,
-      histogramme: new Map([
-        ['2025W39', { klassen: [0, 50, 151.9], anteile: [0.5, 0.5] }],
-        ['2025W40', { klassen: [0, 50, 151.9], anteile: [0.8, 0.2] }],
+      weeks: ['2025W39', '2025W40'],
+      histogram: null,
+      histograms: new Map([
+        ['2025W39', { classes: [0, 50, 151.9], shares: [0.5, 0.5] }],
+        ['2025W40', { classes: [0, 50, 151.9], shares: [0.8, 0.2] }],
       ]),
     });
   });
@@ -144,21 +144,21 @@ describe('Ebenen', () => {
   });
 
   it('nimmt das Histogramm der Woche, bei einer festen Ebene das eine', () => {
-    expect(histogramFor(RAIN, '2025W39')?.anteile).toEqual([0.5, 0.5]);
-    expect(histogramFor(RAIN, '2026W10')?.anteile).toEqual([0.8, 0.2]);
-    expect(histogramFor(FOREST, '2025W39')?.anteile).toEqual([0.7, 0.3]);
-    expect(histogramFor({ ...RAIN, histogramme: new Map() }, '2025W39')).toBeNull();
+    expect(histogramFor(RAIN, '2025W39')?.shares).toEqual([0.5, 0.5]);
+    expect(histogramFor(RAIN, '2026W10')?.shares).toEqual([0.8, 0.2]);
+    expect(histogramFor(FOREST, '2025W39')?.shares).toEqual([0.7, 0.3]);
+    expect(histogramFor({ ...RAIN, histograms: new Map() }, '2025W39')).toBeNull();
   });
 
   it('lässt ein Histogramm weg, dessen Kanten nicht zu den Anteilen passen', () => {
-    expect(readHistogram({ klassen: [0, 1], anteile: [] })).toBeNull();
-    expect(readHistogram({ klassen: [0, 1, 2], anteile: [0.5] })).toBeNull();
+    expect(readHistogram({ classes: [0, 1], shares: [] })).toBeNull();
+    expect(readHistogram({ classes: [0, 1, 2], shares: [0.5] })).toBeNull();
     expect(readHistogram(null)).toBeNull();
-    expect(readHistogram({ klassen: [0, 1], anteile: [1] })).toEqual({ klassen: [0, 1], anteile: [1] });
+    expect(readHistogram({ classes: [0, 1], shares: [1] })).toEqual({ classes: [0, 1], shares: [1] });
   });
 
   it('rechnet den Anteil der Fläche, der eine Bedingung erfüllt', () => {
-    const distribution = { klassen: [0, 10, 20, 30], anteile: [0.5, 0.3, 0.2] };
+    const distribution = { classes: [0, 10, 20, 30], shares: [0.5, 0.3, 0.2] };
 
     expect(shareMet(distribution, 0, 30)).toBeCloseTo(1);
     expect(shareMet(distribution, 10, 20)).toBeCloseTo(0.3);

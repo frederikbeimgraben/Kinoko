@@ -11,7 +11,7 @@
     <h3 class="factor__title">{{ distribution() }}</h3>
     @if (histogram(); as shares) {
       <app-histogram
-        [shares]="shares.anteile"
+        [shares]="shares.shares"
         [label]="distribution()"
         [from]="fromShare()"
         [to]="toShare()"
