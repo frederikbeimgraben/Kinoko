@@ -61,6 +61,9 @@ export class ShellComponent {
    */
   protected readonly fullWidth = computed(() => this.active() === '/verwaltung');
 
+  /** Die Werkstatt ist kein Reiter. Eine Leiste darunter gehört nicht zu ihr. */
+  protected readonly bare = computed(() => this.active() === '/bausteine');
+
   /**
    * Solange ein Blatt der Karte offen ist, liegt die Karte über dem Reiter.
    * Die Knöpfe der Karte stehen am Rechner auf jedem Reiter; ihre Blätter

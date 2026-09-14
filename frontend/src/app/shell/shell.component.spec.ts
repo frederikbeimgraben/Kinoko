@@ -19,6 +19,7 @@ import { ShellComponent } from './shell.component';
 class PageComponent {}
 
 const ROUTES = [
+  { path: 'bausteine', component: PageComponent },
   { path: 'karte', component: PageComponent },
   { path: 'arten', component: PageComponent },
   { path: 'eintraege', component: PageComponent },
@@ -37,6 +38,14 @@ async function shell() {
 }
 
 describe('ShellComponent', () => {
+  it('lässt die Leiste auf der Werkstattseite weg', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/bausteine');
+
+    expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
+  });
+
   it('zeigt die drei Reiter und den Avatar über der Karte', async () => {
     const { container, navigate } = await shell();
     await navigate('/karte');

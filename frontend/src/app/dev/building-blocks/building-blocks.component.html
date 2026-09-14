@@ -576,7 +576,7 @@
   <section class="block">
     <h2 class="block__head">{{ 'blocks.infiniteList' | t }}</h2>
     <div class="block__card">
-      <app-infinite-list [pageSize]="40" [hasMore]="false">
+      <app-infinite-list [pageSize]="40" [hasMore]="true" [pending]="true">
         @for (row of speciesRows; track row.value) {
           <app-species-row [species]="row" />
         }

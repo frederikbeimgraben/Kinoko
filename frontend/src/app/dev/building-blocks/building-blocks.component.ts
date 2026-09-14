@@ -195,8 +195,8 @@ export class BuildingBlocksComponent {
   protected readonly infiniteRows = LATIN_NAMES;
 
   protected readonly seasonSeries = [
-    { shape: 'area' as const, values: SAMPLE_ALL_YEARS, legend: this.text('art.kurve.jahre') },
-    { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR, legend: this.text('art.kurve.laufend') },
+    { shape: 'area' as const, values: SAMPLE_ALL_YEARS, legend: this.text('beispiel.kurve.jahre') },
+    { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR, legend: this.text('beispiel.kurve.laufend') },
   ];
   protected readonly seasonPlain = [
     { shape: 'area' as const, values: SAMPLE_ALL_YEARS },
@@ -226,11 +226,10 @@ export class BuildingBlocksComponent {
 
   protected readonly badgeVariants: readonly { variant: BadgeVariant; label: string }[] = [
     { variant: 'neutral', label: this.text('beispiel.badge.neutral') },
-    { variant: 'primary', label: this.text('beispiel.badge.primaer') },
+    { variant: 'info', label: this.text('beispiel.badge.prognose') },
     { variant: 'success', label: this.text('beispiel.badge.gespeichert') },
     { variant: 'warning', label: this.text('beispiel.badge.geschuetzt') },
     { variant: 'danger', label: this.text('bild.zustand.abgelehnt') },
-    { variant: 'info', label: this.text('beispiel.badge.prognose') },
   ];
 
   protected readonly fleshOptions: SelectOption[] = [

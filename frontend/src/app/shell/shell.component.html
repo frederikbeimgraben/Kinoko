@@ -4,9 +4,11 @@
       <app-map class="shell__map" [class.shell__map--lead]="mapInFront()" [surfaceOnly]="!onTheMap()" />
     }
   }
-  <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'">
-    <app-avatar-button [name]="avatarName()" [label]="avatarLabel()" (pressed)="toAccount()" />
-  </app-nav>
+  @if (!bare()) {
+    <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'">
+      <app-avatar-button [name]="avatarName()" [label]="avatarLabel()" (pressed)="toAccount()" />
+    </app-nav>
+  }
   <main
     class="shell__content"
     [class.shell__content--off]="wide() && onTheMap()"
