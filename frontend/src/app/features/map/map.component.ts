@@ -61,7 +61,6 @@ import type { CombinationRule } from '../../map/value-colors';
 import { ThemeService } from '../../core/theme/theme.service';
 import {
   FloatingButtonComponent,
-  NoteComponent,
   DETENTS_DEFAULT,
   RampComponent,
   SegmentedComponent,
@@ -134,7 +133,6 @@ export function layerSourceId(layer: Layer): string {
     KombinationComponent,
     FloatingButtonComponent,
     MapObjectsDirective,
-    NoteComponent,
     ObjectSheetComponent,
     RampComponent,
     SegmentedComponent,

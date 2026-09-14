@@ -4,7 +4,7 @@ import { CheckboxComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { SpeciesBrief, Find, FindInput, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent, FormFieldComponent, NoteComponent, SegmentedComponent } from '../../ui';
+import { ActionBarComponent, FormFieldComponent, SegmentedComponent } from '../../ui';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { locationText } from '../../core/i18n/places';
@@ -37,7 +37,6 @@ export interface FindSubmission {
     FormFieldComponent,
     FormsModule,
     PhotoPickerComponent,
-    NoteComponent,
     SegmentedComponent,
     TranslatePipe,
   ],

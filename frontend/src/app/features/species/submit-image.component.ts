@@ -23,7 +23,6 @@ import {
   ActionBarComponent,
   FormFieldComponent,
   LICENCE_TEXT,
-  NoteComponent,
   PageHeaderComponent,
   SvgIconComponent,
 } from '../../ui';
@@ -47,7 +46,6 @@ import { SpeciesState } from './species.state';
     ButtonComponent,
     FormFieldComponent,
     FormsModule,
-    NoteComponent,
     PageHeaderComponent,
     SelectComponent,
     SvgIconComponent,

@@ -19,7 +19,7 @@
       </button>
     }
   </div>
-  <app-note class="species__count">{{ countText() }}</app-note>
+  <p class="note species__count">{{ countText() }}</p>
   @if (rows().length === 0) {
     <app-empty-state icon="suche" [text]="'arten.leer' | t" />
   } @else {
@@ -47,7 +47,7 @@
       <span>{{ gap }}</span>
       <i></i>
     </div>
-    <app-note variant="unter">{{ 'arten.nichtBeurteilbarHinweis' | t }}</app-note>
+    <p class="note note--sub">{{ 'arten.nichtBeurteilbarHinweis' | t }}</p>
     <app-card class="flush">
       @for (row of unassessable(); track row.slug) {
         <app-species-row

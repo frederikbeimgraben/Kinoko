@@ -6,7 +6,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
 import {
   ActionBarComponent,
-  NoteComponent,
   SegmentedComponent,
   SheetComponent,
   SliderComponent,
@@ -25,7 +24,6 @@ import {
     ActionBarComponent,
     CheckboxComponent,
     FormsModule,
-    NoteComponent,
     SegmentedComponent,
     SheetComponent,
     SliderComponent,

@@ -12,8 +12,8 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--pilz-gutter);
-  padding: 20px var(--pilz-gutter);
+  gap: var(--size-gutter);
+  padding: 20px var(--size-gutter);
   overflow-y: auto;
   // Wie auf den anderen Listenseiten: die App füllt das Gerät, ein Balken am
   // Rand gehörte zu einem Fenster.
@@ -48,8 +48,8 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  inline-size: var(--pilz-avatar-size);
-  block-size: var(--pilz-avatar-size);
+  inline-size: var(--size-avatar);
+  block-size: var(--size-avatar);
   font-weight: var(--fw-semibold);
   color: var(--color-primary);
   background: var(--color-primary-subtle);

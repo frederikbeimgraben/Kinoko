@@ -72,7 +72,7 @@
               (chosen)="selectWeek($event)"
             />
             @if (layerHint()) {
-              <app-note variant="unter">{{ layerHint() }}</app-note>
+              <p class="note note--sub">{{ layerHint() }}</p>
             }
           </app-sheet-head>
 
@@ -91,7 +91,7 @@
                   [label]="'kombination.regel' | t"
                   (valueChange)="chooseRule($event)"
                 />
-                <app-note variant="unter">{{ ruleHint() }}</app-note>
+                <p class="note note--sub">{{ ruleHint() }}</p>
               }
             </div>
 
@@ -119,7 +119,7 @@
                     (chosen)="selectLayer($event)"
                   />
                 } @else {
-                  <app-note>{{ 'ebene.keine' | t }}</app-note>
+                  <p class="note">{{ 'ebene.keine' | t }}</p>
                 }
               }
               @case ('kombination') {

@@ -28,16 +28,16 @@
 .map__switch {
   display: flex;
   flex-direction: column;
-  gap: var(--pilz-step);
+  gap: var(--space-3);
 }
 
 .map__content {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--pilz-block);
+  gap: var(--space-5);
   min-block-size: 0;
-  padding: var(--pilz-gutter) var(--pilz-gutter) var(--pilz-block);
+  padding: var(--size-gutter) var(--size-gutter) var(--space-5);
   overflow-y: auto;
   // Wie die Chip-Reihe und die Artenliste: die App füllt das Gerät, ein Balken
   // am Rand gehörte zu einem Fenster.
@@ -48,12 +48,12 @@
 // Karte füllt den Rest (Artboard `Desktop`).
 :host-context(.shell--column) {
   .map__canvas {
-    inset-inline-start: var(--pilz-column);
+    inset-inline-start: var(--size-column);
   }
 
   .map__sheet {
-    inset-block-start: var(--pilz-nav-height);
-    inline-size: var(--pilz-column);
+    inset-block-start: var(--size-nav);
+    inline-size: var(--size-column);
   }
 }
 
@@ -74,7 +74,7 @@
 // rechts.
 .map__add {
   position: absolute;
-  inset-block-end: calc(var(--pilz-sheet-inset, var(--pilz-sheet-head)) + 12px);
+  inset-block-end: calc(var(--pilz-sheet-inset, var(--size-sheet-head)) + 12px);
   inset-inline-end: 12px;
   // Über dem Blatt: dessen Wirt spannt über die ganze Karte, damit die Raste
   // ein Anteil dieser Höhe sein kann.
@@ -82,7 +82,7 @@
 }
 
 :host-context(.shell--column) .map__add {
-  inset-block-start: calc(2 * (var(--pilz-floating-size) + 12px) + 12px);
+  inset-block-start: calc(2 * (var(--size-floating) + 12px) + 12px);
   inset-block-end: auto;
 }
 
@@ -113,5 +113,5 @@ app-object-sheet {
 // Die Abdunkelung gehört am Rechner über die Spalte, nicht über die Karte: die
 // bleibt sichtbar, damit man weiß, worüber man gerade entscheidet.
 :host-context(.shell--column) .map__scrim {
-  inline-size: var(--pilz-column);
+  inline-size: var(--size-column);
 }

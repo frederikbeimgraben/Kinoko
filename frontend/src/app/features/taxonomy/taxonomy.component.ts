@@ -8,11 +8,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import {
   EmptyStateComponent,
-  InfoTextComponent,
   KeyValueRowComponent,
   KeyValueTableComponent,
   ListRowComponent,
-  NoteComponent,
   PageHeaderComponent,
   SpeciesRowComponent,
 } from '../../ui';
@@ -58,11 +56,9 @@ interface Viewport {
   imports: [
     CardComponent,
     EmptyStateComponent,
-    InfoTextComponent,
     KeyValueRowComponent,
     KeyValueTableComponent,
     ListRowComponent,
-    NoteComponent,
     PageHeaderComponent,
     SpeciesRowComponent,
     TranslatePipe,

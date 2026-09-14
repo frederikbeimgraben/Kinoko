@@ -46,7 +46,7 @@
   [closeLabel]="'objekt.schliessen' | t"
   (closed)="deleteAsk.set(false)"
 >
-  <app-note>{{ 'fund.loeschenText' | t }}</app-note>
+  <p class="note">{{ 'fund.loeschenText' | t }}</p>
   <div dialog-footer class="findsheet__dialogfooter">
     <app-action-bar
       [danger]="'objekt.loeschen' | t"

@@ -4,7 +4,7 @@
     <app-species-images [images]="images()" [speciesName]="viewport.name" [slug]="slug()" />
 
     <div class="species__head">
-      <app-note variant="unter" [italic]="true">{{ viewport.subtitle }}</app-note>
+      <p class="note note--sub note--italic">{{ viewport.subtitle }}</p>
       <div class="species__badges">
         @for (badge of viewport.badges; track badge.text) {
           <app-badge [variant]="badge.variant">{{ badge.text }}</app-badge>
@@ -34,7 +34,7 @@
           [label]="viewport.label"
         />
       } @else {
-        <app-info-text>{{ 'art.zuWenigFunde' | t }}</app-info-text>
+        <p class="info-text">{{ 'art.zuWenigFunde' | t }}</p>
       }
     </section>
 
@@ -182,10 +182,10 @@
               @if (row.tags.length) {
                 <app-tag-list [tags]="row.tags" [label]="row.label" />
               } @else {
-                <app-note variant="unter">{{ 'art.sinne.leer' | t }}</app-note>
+                <p class="note note--sub">{{ 'art.sinne.leer' | t }}</p>
               }
               @if (row.text; as text) {
-                <app-note variant="unter">{{ text }}</app-note>
+                <p class="note note--sub">{{ text }}</p>
               }
             </div>
           }
@@ -262,14 +262,14 @@
       </app-card>
     </section>
 
-    <app-note class="species__sources">
+    <p class="note species__sources">
       {{ 'art.weiterfuehrend' | t }}
       @for (link of viewport.links; track link.url; let letzter = $last) {
         <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.titel }}</a
         >{{ letzter ? '.' : ',' }}
       }
       {{ viewport.geprueft }}
-    </app-note>
+    </p>
   </div>
   <app-action-bar
     [primary]="'art.aufKarte' | t"

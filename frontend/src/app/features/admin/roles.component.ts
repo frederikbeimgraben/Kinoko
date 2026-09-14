@@ -8,7 +8,6 @@ import {
   ActionBarComponent,
   EmptyStateComponent,
   ListRowComponent,
-  NoteComponent,
   PageHeaderComponent,
   SvgIconComponent,
 } from '../../ui';
@@ -38,7 +37,6 @@ interface Row {
     CardComponent,
     EmptyStateComponent,
     ListRowComponent,
-    NoteComponent,
     PageHeaderComponent,
     SvgIconComponent,
     TranslatePipe,

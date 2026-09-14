@@ -9,7 +9,6 @@ import {
   EmptyStateComponent,
   FormFieldComponent,
   ListRowComponent,
-  NoteComponent,
   PageHeaderComponent,
 } from '../../ui';
 import { AdminState } from './admin.state';
@@ -47,7 +46,6 @@ interface Choice {
     EmptyStateComponent,
     FormFieldComponent,
     ListRowComponent,
-    NoteComponent,
     PageHeaderComponent,
     TranslatePipe,
   ],

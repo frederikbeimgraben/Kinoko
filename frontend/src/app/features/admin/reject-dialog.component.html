@@ -18,7 +18,7 @@
     [value]="reason()"
     (valueChange)="write($event)"
   />
-  <app-note variant="unter">{{ hint() }}</app-note>
+  <p class="note note--sub">{{ hint() }}</p>
   <div dialog-footer>
     <app-action-bar
       [danger]="'bild.ablehnen' | t"

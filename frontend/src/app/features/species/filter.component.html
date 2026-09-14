@@ -7,7 +7,7 @@
 </app-page-header>
 <div class="filter">
   @if (cards().length === 0) {
-    <app-note>{{ 'filter.leer' | t }}</app-note>
+    <p class="note">{{ 'filter.leer' | t }}</p>
   } @else {
     @for (card of cards(); track card.key) {
       <app-card class="flush">

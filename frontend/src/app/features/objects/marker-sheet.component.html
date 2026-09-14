@@ -26,7 +26,7 @@
   [closeLabel]="'objekt.schliessen' | t"
   (closed)="deleteAsk.set(false)"
 >
-  <app-note>{{ 'marker.loeschenText' | t }}</app-note>
+  <p class="note">{{ 'marker.loeschenText' | t }}</p>
   <div dialog-footer class="objectsheet__dialogfooter">
     <app-action-bar
       [danger]="'objekt.loeschen' | t"

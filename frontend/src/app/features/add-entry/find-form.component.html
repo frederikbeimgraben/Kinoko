@@ -8,7 +8,7 @@
   <div class="report__content">
     <div class="report__head">
       <h2 class="report__title">{{ titel() }}</h2>
-      <app-note variant="unter">{{ locationLine() }}</app-note>
+      <p class="note note--sub">{{ locationLine() }}</p>
     </div>
     <app-form-field
       [label]="'melden.art' | t"
@@ -58,9 +58,9 @@
       <app-checkbox [ngModel]="fuerTraining()" (ngModelChange)="setTraining($event)">{{
         'melden.training' | t
       }}</app-checkbox>
-      <app-note variant="unter">{{ 'melden.trainingUnter' | t }}</app-note>
+      <p class="note note--sub">{{ 'melden.trainingUnter' | t }}</p>
     </div>
-    <app-note>{{ 'melden.hinweis' | t }}</app-note>
+    <p class="note">{{ 'melden.hinweis' | t }}</p>
   </div>
   <app-action-bar
     [primary]="mainText()"

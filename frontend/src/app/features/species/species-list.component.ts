@@ -15,7 +15,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import {
   EmptyStateComponent,
   FormFieldComponent,
-  NoteComponent,
   PageHeaderComponent,
   SpeciesRowComponent,
   SvgIconComponent,
@@ -77,7 +76,6 @@ interface Row {
     CardComponent,
     EmptyStateComponent,
     FormFieldComponent,
-    NoteComponent,
     PageHeaderComponent,
     SpeciesRowComponent,
     SvgIconComponent,

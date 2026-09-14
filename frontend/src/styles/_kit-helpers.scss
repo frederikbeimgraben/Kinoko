@@ -139,3 +139,16 @@ app-card.flush {
   color: var(--color-text-muted);
   text-align: center;
 }
+// Das Kit legt den Inhalt in `.btn__label`, ohne ihn auszurichten.
+// Ein Piktogramm daneben stünde sonst auf der Grundlinie und zu hoch.
+.btn__label {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+.btn__label app-svg-icon {
+  flex: 0 0 auto;
+}

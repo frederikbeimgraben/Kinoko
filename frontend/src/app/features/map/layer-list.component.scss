@@ -4,7 +4,7 @@
 }
 
 .layers__group {
-  margin-block: var(--pilz-block) var(--space-2);
+  margin-block: var(--space-5) var(--space-2);
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
@@ -24,7 +24,7 @@
 
 .layers__card {
   display: flex;
-  gap: var(--pilz-step);
+  gap: var(--space-3);
   align-items: center;
   padding: var(--space-3) 14px;
   font: inherit;
@@ -49,11 +49,11 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  inline-size: var(--pilz-swatch-size);
-  block-size: var(--pilz-swatch-size);
+  inline-size: var(--size-swatch);
+  block-size: var(--size-swatch);
   color: var(--color-text-muted);
   background: var(--color-surface-sunken);
-  border-radius: var(--pilz-swatch-radius);
+  border-radius: var(--radius-lg);
 }
 
 .layers__card--active .layers__glyph {

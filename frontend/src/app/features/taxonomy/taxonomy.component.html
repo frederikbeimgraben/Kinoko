@@ -2,17 +2,17 @@
   <app-page-header [titel]="viewport.name" [back]="true" (backClick)="back()" />
   <div class="taxonomy">
     <div class="taxonomy__head">
-      <app-note variant="unter">{{ viewport.rank }}</app-note>
+      <p class="note note--sub">{{ viewport.rank }}</p>
       @if (viewport.latin; as latin) {
-        <app-note variant="unter" [italic]="true">{{ latin }}</app-note>
+        <p class="note note--sub note--italic">{{ latin }}</p>
       }
       @if (viewport.countText; as count) {
-        <app-note variant="unter">{{ count }}</app-note>
+        <p class="note note--sub">{{ count }}</p>
       }
     </div>
 
     @if (viewport.description; as description) {
-      <app-note>{{ description }}</app-note>
+      <p class="note">{{ description }}</p>
     }
 
     <section>
@@ -31,7 +31,7 @@
           </app-key-value-table>
         </app-card>
       } @else {
-        <app-info-text>{{ 'taxonomie.wurzel' | t }}</app-info-text>
+        <p class="info-text">{{ 'taxonomie.wurzel' | t }}</p>
       }
     </section>
 
@@ -49,7 +49,7 @@
           }
         </app-card>
       } @else {
-        <app-info-text>{{ 'taxonomie.keineGeschwister' | t }}</app-info-text>
+        <p class="info-text">{{ 'taxonomie.keineGeschwister' | t }}</p>
       }
     </section>
 
@@ -68,7 +68,7 @@
           }
         </app-card>
       } @else {
-        <app-info-text>{{ 'taxonomie.keineKinder' | t }}</app-info-text>
+        <p class="info-text">{{ 'taxonomie.keineKinder' | t }}</p>
       }
     </section>
 
@@ -81,7 +81,7 @@
           }
         </app-card>
       } @else {
-        <app-info-text>{{ 'taxonomie.keineArten' | t }}</app-info-text>
+        <p class="info-text">{{ 'taxonomie.keineArten' | t }}</p>
       }
     </section>
   </div>

@@ -11,7 +11,6 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import {
   EmptyStateComponent,
   LICENCE_TEXT,
-  NoteComponent,
   PageHeaderComponent,
   PrivateImageComponent,
   SegmentedComponent,
@@ -71,7 +70,6 @@ interface Task {
     ButtonComponent,
     CardComponent,
     EmptyStateComponent,
-    NoteComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     RejectDialogComponent,

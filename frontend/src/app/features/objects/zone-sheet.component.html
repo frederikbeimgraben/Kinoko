@@ -4,7 +4,7 @@
     <p class="objectsheet__sub">{{ subline() }}</p>
   </div>
   @if (editingCorners()) {
-    <app-note>{{ 'zone.eckpunkteHinweis' | t }}</app-note>
+    <p class="note">{{ 'zone.eckpunkteHinweis' | t }}</p>
   } @else {
     @if (forecastRow(); as row) {
       <app-card class="flush">
@@ -14,7 +14,7 @@
         </app-key-value-table>
       </app-card>
     } @else {
-      <app-note>{{ 'zone.wertFehlt' | t }}</app-note>
+      <p class="note">{{ 'zone.wertFehlt' | t }}</p>
     }
     <app-object-form
       [withoutName]="true"
@@ -49,7 +49,7 @@
   [closeLabel]="'objekt.schliessen' | t"
   (closed)="deleteAsk.set(false)"
 >
-  <app-note>{{ 'zone.loeschenText' | t }}</app-note>
+  <p class="note">{{ 'zone.loeschenText' | t }}</p>
   <div dialog-footer class="objectsheet__dialogfooter">
     <app-action-bar
       [danger]="'objekt.loeschen' | t"

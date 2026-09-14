@@ -12,7 +12,7 @@ import { DialogComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { Marker } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent, NoteComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { openGoogleMaps } from './map-links';
@@ -25,7 +25,7 @@ import { visibilityText } from '../add-entry/visibility';
 @Component({
   selector: 'app-marker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, DialogComponent, NoteComponent, ObjectFormComponent, TranslatePipe],
+  imports: [ActionBarComponent, DialogComponent, ObjectFormComponent, TranslatePipe],
   templateUrl: './marker-sheet.component.html',
   styleUrl: './marker-sheet.component.scss',
 })

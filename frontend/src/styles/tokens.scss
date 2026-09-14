@@ -1,0 +1,165 @@
+// Quelle der Werte ist das Token-Wörterbuch der Mockups.
+// Das Kit setzt dieselben Namen; diese Datei steht danach und gewinnt.
+
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: #f7f8f7;
+  --color-bg-elevated: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #eef0ee;
+  --color-border: #e0e3e0;
+  --color-border-strong: #828a84;
+
+  --color-text: #141815;
+  --color-text-muted: #666c67;
+  --color-text-inverse: #ffffff;
+
+  --color-primary: #004225;
+  --color-primary-hover: #00351e;
+  --color-primary-active: #002615;
+  --color-primary-subtle: #e9f1ec;
+  --color-on-primary: #ffffff;
+  --color-focus-ring: #2c6e48;
+
+  --color-accent: #8c6820;
+  --color-accent-soft: #c8a25a;
+
+  --color-danger: #8c1c16;
+  --color-danger-subtle: #f5e2e0;
+  --color-warning: #876010;
+  --color-warning-subtle: #f7eed8;
+  --color-info: #185468;
+  --color-info-subtle: #dfeef3;
+
+  --shadow-sm: 0 1px 2px rgb(0 38 21 / 6%), 0 1px 3px rgb(0 38 21 / 8%);
+  --shadow-md: 0 2px 6px rgb(0 38 21 / 8%), 0 6px 16px rgb(0 38 21 / 8%);
+  --shadow-lg: 0 8px 28px rgb(0 38 21 / 14%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: #101512;
+  --color-bg-elevated: #161c18;
+  --color-surface: #161c18;
+  --color-surface-sunken: #1d2420;
+  --color-border: #2a332d;
+
+  // Nicht `#46524a` aus den Mockups: der Wert trägt nur 2,1:1 gegen die Fläche.
+  --color-border-strong: #646f68;
+
+  --color-text: #e8eee9;
+  --color-text-muted: #95a09a;
+  --color-text-inverse: #08130c;
+
+  --color-primary: #4f9d6f;
+  --color-primary-hover: #72a384;
+  --color-primary-active: #a0c1ac;
+  --color-primary-subtle: #16291f;
+  --color-on-primary: #08130c;
+  --color-focus-ring: #4f9d6f;
+
+  --color-accent: #c8a25a;
+  --color-accent-soft: #e3c17f;
+
+  --color-danger: #d2685f;
+  --color-danger-subtle: #2a1a19;
+  --color-warning: #c8a25a;
+  --color-warning-subtle: #2a2013;
+  --color-info: #7fc4d9;
+  --color-info-subtle: #122a30;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-md: 0 2px 8px rgb(0 0 0 / 50%);
+  --shadow-lg: 0 10px 32px rgb(0 0 0 / 60%);
+}
+
+// Ein Grün: zwei Grüntöne auf einer Zeile lesen sich wie ein Versehen.
+:root,
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+  --color-success: var(--color-primary);
+  --color-success-subtle: var(--color-primary-subtle);
+}
+
+:root {
+  --size-row: 52px;
+  --size-row-tall: 62px;
+  --size-control: 36px;
+  --size-button: 46px;
+  --size-tap: 44px;
+  --size-icon-button: 40px;
+  --size-icon: 22px;
+  --size-checkbox: 20px;
+  --size-nav: 64px;
+  --size-rail: 88px;
+  --size-header: 64px;
+  --size-column: 400px;
+  --size-gutter: 16px;
+  --size-handle-width: 40px;
+  --size-handle-height: 24px;
+  --size-sheet-head: 152px;
+  --size-week-width: 44px;
+  --size-week-height: 48px;
+  --size-swatch: 36px;
+  --size-floating: 48px;
+  --size-avatar: 40px;
+  --size-thumb: 44px;
+  --size-tile: 88px;
+  --size-crosshair: 52px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+
+  --motion-press: 80ms;
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-page: 250ms;
+  --motion-sheet: 250ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+// Ohne diese Regeln markiert ein langer Druck Text und ein Tipp blitzt blau auf.
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
+
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-press: 0ms;
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-page: 0ms;
+    --motion-sheet: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

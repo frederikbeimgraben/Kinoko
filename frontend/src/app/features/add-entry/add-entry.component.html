@@ -49,7 +49,7 @@
         >
           <div class="addentry__brief">
             <h2 class="addentry__title">{{ 'melden.ortTitel' | t }}</h2>
-            <app-note variant="unter">{{ 'melden.ortAnleitung' | t }}</app-note>
+            <p class="note note--sub">{{ 'melden.ortAnleitung' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'melden.ortUebernehmen' | t"
@@ -68,7 +68,7 @@
         >
           <div class="addentry__brief">
             <h2 class="addentry__title">{{ 'marker.ortTitel' | t }}</h2>
-            <app-note variant="unter">{{ 'marker.ortAnleitung' | t }}</app-note>
+            <p class="note note--sub">{{ 'marker.ortAnleitung' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'marker.ortUebernehmen' | t"
@@ -87,7 +87,7 @@
         >
           <div class="addentry__brief">
             <h2 class="addentry__title">{{ 'zone.zeichnenTitel' | t }}</h2>
-            <app-note variant="unter">{{ drawInstructions() }}</app-note>
+            <p class="note note--sub">{{ drawInstructions() }}</p>
           </div>
           <app-action-bar
             [primary]="'zone.eckpunktSetzen' | t"
@@ -134,7 +134,7 @@
               [namePlaceholder]="'marker.namePlatzhalter' | t"
               [nameMissingText]="'marker.nameFehlt' | t"
             />
-            <app-note>{{ 'melden.hinweis' | t }}</app-note>
+            <p class="note">{{ 'melden.hinweis' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'eintragen.speichern' | t"
@@ -156,7 +156,7 @@
           <div class="addentry__content">
             <div class="addentry__head">
               <h2 class="addentry__title">{{ 'zone.titel' | t }}</h2>
-              <app-note variant="unter">{{ areaText() }}</app-note>
+              <p class="note note--sub">{{ areaText() }}</p>
             </div>
             <app-object-form
               [nameLabel]="'zone.name' | t"
@@ -164,7 +164,7 @@
               [nameMissingText]="'zone.nameFehlt' | t"
               (valuesChange)="onZoneValues($event)"
             />
-            <app-note>{{ 'melden.hinweis' | t }}</app-note>
+            <p class="note">{{ 'melden.hinweis' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'eintragen.speichern' | t"

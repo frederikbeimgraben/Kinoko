@@ -5,13 +5,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { Layer } from '../../core/tiles/layers';
 import type { Combination } from '../../core/api/models';
-import {
-  ActionBarComponent,
-  FactorRowComponent,
-  ListRowComponent,
-  NoteComponent,
-  SvgIconComponent,
-} from '../../ui';
+import { ActionBarComponent, FactorRowComponent, ListRowComponent, SvgIconComponent } from '../../ui';
 import { conditionText, type Faktor } from './factors';
 
 /** Ein Faktor, wie ihn die Zeile braucht: mit aufgelöster Quelle. */
@@ -39,7 +33,6 @@ interface Row {
     FormsModule,
     InputComponent,
     ListRowComponent,
-    NoteComponent,
     SvgIconComponent,
     TranslatePipe,
   ],

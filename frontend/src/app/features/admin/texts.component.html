@@ -15,7 +15,7 @@
     [label]="'texte.filter' | t"
     (valueChange)="selectChip($event)"
   />
-  <app-note class="texts__count">{{ countText() }}</app-note>
+  <p class="note texts__count">{{ countText() }}</p>
 
   @if (rows().length === 0) {
     <app-empty-state icon="suche" [text]="'texte.leer' | t" />
@@ -41,7 +41,7 @@
       }
     </app-card>
   }
-  <app-note>{{ 'texte.hinweis' | t }}</app-note>
+  <p class="note">{{ 'texte.hinweis' | t }}</p>
 </div>
 
 @if (draft(); as open) {

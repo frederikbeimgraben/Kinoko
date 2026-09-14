@@ -2,7 +2,7 @@
 
 <div class="role">
   @if (missing()) {
-    <app-note>{{ 'rolle.nichtGefunden' | t }}</app-note>
+    <p class="note">{{ 'rolle.nichtGefunden' | t }}</p>
   } @else {
     @if (!locked()) {
       <app-form-field
@@ -27,7 +27,7 @@
         (valueChange)="description.set($event)"
       />
     } @else {
-      <app-note>{{ 'rolle.festHinweis' | t }}</app-note>
+      <p class="note">{{ 'rolle.festHinweis' | t }}</p>
     }
 
     @for (group of areas(); track group.area) {
@@ -48,7 +48,7 @@
     }
 
     @if (!locked()) {
-      <app-note>{{ 'rolle.rechteHinweis' | t }}</app-note>
+      <p class="note">{{ 'rolle.rechteHinweis' | t }}</p>
     }
   }
 </div>

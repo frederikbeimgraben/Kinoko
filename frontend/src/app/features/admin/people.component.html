@@ -24,8 +24,8 @@
         />
       }
     </app-card>
-    <app-note variant="unter">{{ count() }}</app-note>
-    <app-note>{{ 'personen.hinweis' | t }}</app-note>
+    <p class="note note--sub">{{ count() }}</p>
+    <p class="note">{{ 'personen.hinweis' | t }}</p>
   }
 </div>
 
@@ -40,7 +40,7 @@
       <app-check-row [titel]="choice.name" [checked]="choice.checked" (toggled)="toggle(choice.id, $event)" />
     }
   </app-card>
-  <app-note>{{ 'personen.rollenHinweis' | t }}</app-note>
+  <p class="note">{{ 'personen.rollenHinweis' | t }}</p>
   <div dialog-footer class="people__actions">
     <app-button variant="secondary" (click)="close()">{{ 'personen.abbrechen' | t }}</app-button>
     <app-button variant="primary" [disabled]="saving()" (click)="save()">{{
