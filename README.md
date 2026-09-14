@@ -13,11 +13,11 @@ Live: https://pilze.beimgraben.net/
 | `frontend/` | Angular 22, `@stupa-makers/ui-kit`, MapLibre GL, Terra Draw, PWA |
 | `backend/` | Python 3.13, FastAPI, SQLAlchemy async, Alembic, SQLite, OIDC gegen Authentik |
 | `modell/` | Vorhersagekette: GBIF und DWD laden, LightGBM je Art, Kacheln rendern |
-| `docs/` | Konzept, Mockups, Betrieb, Arbeitspakete |
+| `docs/` | Betrieb und SSO |
 | `deploy/` | rsync-Skripte für den Homeserver |
 
 Einstieg: `CLAUDE.md`. Betrieb: `docs/betrieb.md`. Reihenfolge der Arbeit:
-`docs/arbeitspakete.md`.
+`~/Workspace/primordium/STATE.md`.
 
 ## Lizenz
 
