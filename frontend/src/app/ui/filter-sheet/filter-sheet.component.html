@@ -1,18 +1,18 @@
 <app-overlay-host [open]="open()" (closed)="closed.emit()">
-  <section class="filtersheet" role="dialog" aria-modal="true" [attr.aria-label]="'filter.titel' | t">
+  <section class="filtersheet" role="dialog" aria-modal="true" [attr.aria-label]="'common.filter' | t">
     <div class="filtersheet__handle"><span class="filtersheet__handle-line"></span></div>
     <header class="filtersheet__head">
-      <h2 class="filtersheet__title">{{ 'filter.titel' | t }}</h2>
+      <h2 class="filtersheet__title">{{ 'common.filter' | t }}</h2>
       @if (resetEnabled()) {
         <button class="filtersheet__reset tap" type="button" data-press="scale" (click)="resetClick.emit()">
-          {{ 'filter.zuruecksetzen' | t }}
+          {{ 'common.reset' | t }}
         </button>
       }
       <button
         class="filtersheet__close tap"
         type="button"
         data-press="scale"
-        [attr.aria-label]="'ebenenKnopf.schliessen' | t"
+        [attr.aria-label]="'common.close' | t"
         (click)="closed.emit()"
       >
         <app-svg-icon name="close" [size]="18" />

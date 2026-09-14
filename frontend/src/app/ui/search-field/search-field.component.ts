@@ -3,9 +3,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /**
- * Ein Suchfeld: Lupe, Eingabe, Löschen bei Inhalt. Ersetzt die Suchfelder in
- * Arten, Personen, Texten und der Artwahl, die bisher je Seite eigene
- * Auszeichnung trugen.
+ * Ein Suchfeld mit Lupe und Löschen. Das Löschen erscheint bei Inhalt.
  */
 @Component({
   selector: 'app-search-field',

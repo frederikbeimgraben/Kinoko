@@ -1,5 +1,5 @@
 <div class="queue">
-  <p class="queue__counter">{{ 'bild.vonGesamt' | t: { geladen: done(), gesamt: total() } }}</p>
+  <p class="queue__counter">{{ counter() }}</p>
   @if (current(); as item) {
     <div class="queue__stack">
       @if (behind(); as ghost) {
@@ -28,7 +28,7 @@
         class="queue__round queue__round--undo tap"
         data-press="scale"
         [disabled]="!canUndo()"
-        [attr.aria-label]="'filter.zuruecksetzen' | t"
+        [attr.aria-label]="'common.undo' | t"
         (click)="undo()"
       >
         <svg
@@ -50,7 +50,7 @@
         type="button"
         class="queue__round queue__round--reject tap"
         data-press="scale"
-        [attr.aria-label]="'bild.ablehnen' | t"
+        [attr.aria-label]="'image.reject' | t"
         (click)="reject()"
       >
         <svg
@@ -71,7 +71,7 @@
         type="button"
         class="queue__round queue__round--accept tap"
         data-press="scale"
-        [attr.aria-label]="'bild.freigeben' | t"
+        [attr.aria-label]="'image.approve' | t"
         (click)="accept()"
       >
         <svg

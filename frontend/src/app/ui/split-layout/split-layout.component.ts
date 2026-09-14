@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /**
- * Das Rechner-Raster: Seitenleiste, eine feste Steuerspalte, Inhalt rechts.
- * Unter 1024 px liegen die drei Slots einfach untereinander. Das Telefon
- * baut ohnehin eigene Blätter statt dieses Rasters.
+ * Das Rechner-Raster: Seitenleiste, Steuerspalte, Inhalt. Sonst untereinander.
  */
 @Component({
   selector: 'app-split-layout',

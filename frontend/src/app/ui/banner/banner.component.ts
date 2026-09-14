@@ -9,13 +9,12 @@ export type BannerKind = 'offline' | 'error';
 export type BannerIcon = 'offline';
 
 const TEXT: Record<BannerKind, TranslationKey> = {
-  offline: 'konto.abschnitt.offline',
-  error: 'fehler.netz',
+  offline: 'state.offlinePending',
+  error: 'state.noConnection',
 };
 
 /**
- * Die Zustandsleiste am Kopf einer Seite: kein Netz, oder Änderungen liegen
- * offline und warten auf den Abgleich. Beide Fälle sind Hinweis, kein Fehler.
+ * Die Zustandsleiste am Kopf einer Seite. Sie meldet kein Netz oder Abgleich.
  */
 @Component({
   selector: 'app-banner',

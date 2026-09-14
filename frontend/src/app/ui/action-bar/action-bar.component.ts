@@ -2,9 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { ButtonComponent } from '@stupa-makers/ui-kit';
 
 /**
- * Der Fuß eines Blatts oder einer Objektseite. Oben die Hauptaktion über
- * die volle Breite, darunter höchstens eine zweite. Die Knöpfe kommen aus
- * dem Kit, hier steht nur die Anordnung.
+ * Der Fuß trägt oben die Hauptaktion und darunter höchstens eine zweite.
  */
 @Component({
   selector: 'app-action-bar',

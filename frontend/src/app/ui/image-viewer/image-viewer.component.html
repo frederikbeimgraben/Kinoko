@@ -18,7 +18,7 @@
     }
     <app-key-value-table>
       @for (row of details(); track row.labelKey) {
-        <app-key-value-row [schluessel]="row.labelKey | t" [value]="row.text">
+        <app-key-value-row [key]="row.labelKey | t" [value]="row.text">
           @if (row.badgeKey || row.badgeText) {
             <app-badge variant="primary">{{ row.badgeKey ? (row.badgeKey | t) : row.badgeText }}</app-badge>
           }

@@ -6,10 +6,7 @@ export interface ColourSwatch {
   label: string;
 }
 
-/**
- * Die sechs Farben aus dem Artboard `Zone`. Der enge Typ ist kein Schmuck:
- * MapLibre und Terra Draw nehmen nur echte Hex-Werte an.
- */
+/** Die sechs Objektfarben. MapLibre nimmt nur echte Hex-Werte an. */
 export const OBJECT_COLORS: readonly `#${string}`[] = [
   '#004225',
   '#8c6820',
@@ -19,10 +16,7 @@ export const OBJECT_COLORS: readonly `#${string}`[] = [
   '#3a3f3b',
 ];
 
-/**
- * Die Farbwahl für ein Objekt auf der Karte. Rolle `radiogroup`, damit die
- * Pfeiltasten des Browsers die Wahl bedienen.
- */
+/** Die Farbwahl für ein Kartenobjekt. Rolle `radiogroup` trägt die Pfeiltasten. */
 @Component({
   selector: 'app-colour-swatches',
   changeDetection: ChangeDetectionStrategy.OnPush,

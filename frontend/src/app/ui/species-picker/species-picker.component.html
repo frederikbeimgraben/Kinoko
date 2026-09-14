@@ -1,9 +1,9 @@
-<app-search-field [value]="query()" [placeholder]="'arten.suche' | t" (valueChange)="query.set($event)" />
+<app-search-field [value]="query()" [placeholder]="'species.search.placeholder' | t" (valueChange)="query.set($event)" />
 <ng-content select="[season-curve]" />
 <div class="picker__rows" role="group" [attr.aria-label]="label()">
   @for (row of rows(); track row.value) {
     <app-species-row [species]="row" [active]="row.value === selected()" (chosen)="chosen.emit(row.value)" />
   } @empty {
-    <p class="picker__empty">{{ 'arten.leer' | t }}</p>
+    <p class="picker__empty">{{ 'state.noSpeciesMatch' | t }}</p>
   }
 </div>

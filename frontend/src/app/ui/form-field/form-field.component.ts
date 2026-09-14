@@ -9,10 +9,7 @@ type InputMode = 'text' | 'numeric' | 'decimal' | 'search';
 /** Die Beschriftung der Eingabetaste auf der Bildschirmtastatur. */
 type EnterKeyHint = 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
 
-/**
- * Ein Feld im Formular: Beschriftung, dann Kasten. Ein Anzeigefeld öffnet
- * beim Tippen eine Auswahl. Das Kit-Feld deckt `inputmode` nicht ab.
- */
+/** Ein Feld im Formular. Das Feld des Kits deckt `inputmode` nicht ab. */
 @Component({
   selector: 'app-form-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,19 +22,13 @@ export class FormFieldComponent {
   readonly value = input<string>('');
   readonly placeholder = input<string>('');
   readonly multiline = input(false);
-  /**
-   * Die Art des Feldes. `date` und `number` geben am Telefon die passende
-   * Tastatur und den Datumswähler des Systems, statt beides nachzubauen.
-   */
+  /** Die Art des Feldes. `date` und `number` holen die Tastatur des Systems. */
   readonly kind = input<'text' | 'number' | 'date'>('text');
   /** Ein Feld, das nur zeigt und beim Tippen eine Auswahl öffnet. */
   readonly readOnly = input(false);
   /** Ein Piktogramm vor der Eingabe, wie die Lupe im Suchfeld. */
   readonly icon = input<IconName>();
-  /**
-   * Versteckt die Beschriftung, ohne sie wegzulassen. Das Suchfeld der
-   * Mockups trägt keine sichtbare Beschriftung, ein Screenreader braucht sie.
-   */
+  /** Versteckt die Beschriftung, ohne sie wegzulassen. */
   readonly hideLabel = input(false);
   /** Überschreibt die aus `kind` hergeleitete Bildschirmtastatur. */
   readonly inputMode = input<InputMode>();

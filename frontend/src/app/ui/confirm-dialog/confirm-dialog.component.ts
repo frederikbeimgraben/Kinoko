@@ -3,9 +3,7 @@ import { ButtonComponent, DialogComponent } from '@stupa-makers/ui-kit';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /**
- * Eine Bestätigung mit Frage, optionaler Zahl als Kontext und zwei
- * Knöpfen: die Handlung, standardmäßig rot, und Abbrechen. Dialog und
- * Knopf kommen aus dem Kit, hier stehen nur Text und Anordnung.
+ * Eine Bestätigung mit Frage, Zahl als Kontext und zwei Knöpfen.
  */
 @Component({
   selector: 'app-confirm-dialog',

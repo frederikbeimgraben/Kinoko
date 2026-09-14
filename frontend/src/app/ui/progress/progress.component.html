@@ -4,7 +4,7 @@
   [attr.aria-valuenow]="clamped()"
   aria-valuemin="0"
   aria-valuemax="100"
-  [attr.aria-valuetext]="'karte.prozent' | t: { wert: clamped() }"
+  [attr.aria-valuetext]="'unit.percent' | t"
   [attr.aria-label]="'common.progress' | t"
 >
   <div class="progress__fill" [style.inline-size.%]="clamped()"></div>

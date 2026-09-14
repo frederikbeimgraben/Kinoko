@@ -3,7 +3,7 @@
     class="objectmenu__scrim tap"
     type="button"
     data-press="tint"
-    [attr.aria-label]="'objekt.schliessen' | t"
+    [attr.aria-label]="'common.close' | t"
     (click)="closed.emit()"
   ></button>
   <div
@@ -34,7 +34,7 @@
       >
         <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
       </svg>
-      <span>{{ 'fund.bearbeiten' | t }}</span>
+      <span>{{ 'common.edit' | t }}</span>
     </button>
     <button
       class="objectmenu__item tap"
@@ -44,7 +44,7 @@
       (click)="centre.emit()"
     >
       <app-svg-icon class="objectmenu__icon" name="location" [size]="18" />
-      <span>{{ 'karte.standort' | t }}</span>
+      <span>{{ 'map.centre' | t }}</span>
     </button>
     <button
       class="objectmenu__item objectmenu__item--danger tap"
@@ -54,7 +54,7 @@
       (click)="delete.emit()"
     >
       <app-svg-icon class="objectmenu__icon" name="trash" [size]="18" />
-      <span>{{ 'objekt.loeschen' | t }}</span>
+      <span>{{ 'common.delete' | t }}</span>
     </button>
   </div>
 }

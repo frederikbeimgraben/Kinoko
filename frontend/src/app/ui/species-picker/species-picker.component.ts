@@ -8,10 +8,7 @@ export interface SpeciesPickerEntry extends SpeciesRowSpecies {
   readonly value: string;
 }
 
-/**
- * Suchfeld plus Artenzeilen, für die Kartenwahl und ähnliche Sheets. Der
- * Slot vor den Zeilen nimmt eine Saisonkurve zur gerade gewählten Art auf.
- */
+/** Suchfeld plus Artenzeilen. Der Slot davor nimmt eine Saisonkurve auf. */
 @Component({
   selector: 'app-species-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,

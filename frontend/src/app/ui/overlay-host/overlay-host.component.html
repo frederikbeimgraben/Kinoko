@@ -3,7 +3,7 @@
     class="overlay__scrim tap"
     type="button"
     data-press="tint"
-    [attr.aria-label]="'ebenenKnopf.schliessen' | t"
+    [attr.aria-label]="'common.close' | t"
     (click)="closed.emit()"
   ></button>
   <div class="overlay__panel" tabindex="-1" (keydown)="onKeydown($event)">

@@ -9,8 +9,8 @@ interface Arrow {
   readonly icon: 'left' | 'right';
 }
 
-const BACK: Arrow = { key: 'zeitleiste.zurueck', icon: 'left' };
-const FORWARD: Arrow = { key: 'zeitleiste.vor', icon: 'right' };
+const BACK: Arrow = { key: 'map.week.previous', icon: 'left' };
+const FORWARD: Arrow = { key: 'map.week.next', icon: 'right' };
 
 /** Der Kopf des Blatts: Titel, Woche, Pfeilgruppe und darunter die Zeitleiste. */
 @Component({

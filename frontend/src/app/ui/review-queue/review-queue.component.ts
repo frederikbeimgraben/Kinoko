@@ -4,11 +4,13 @@ import {
   TemplateRef,
   computed,
   contentChild,
+  inject,
   input,
   output,
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** Ab dieser waagrechten Bewegung gilt ein Zug als Entscheidung, nicht als Zittern. */
@@ -18,9 +20,7 @@ const SWIPE_THRESHOLD = 120;
 const TILT_DIVISOR = 18;
 
 /**
- * Ein Prüfstapel: eine Karte je Element, rechts wischen nimmt an, links
- * lehnt ab. Der Inhalt einer Karte kommt als Vorlage von außen. Die
- * Warteschlange selbst hält nur Reihenfolge, Entscheidung und Rückgängig.
+ * Ein Prüfstapel. Rechts wischen nimmt an, links wischen lehnt ab.
  */
 @Component({
   selector: 'app-review-queue',
@@ -30,6 +30,8 @@ const TILT_DIVISOR = 18;
   styleUrl: './review-queue.component.scss',
 })
 export class ReviewQueueComponent<T> {
+  private readonly i18n = inject(I18nService);
+
   readonly items = input.required<readonly T[]>();
   readonly card = contentChild.required(TemplateRef);
 
@@ -43,6 +45,9 @@ export class ReviewQueueComponent<T> {
 
   protected readonly total = computed(() => this.items().length);
   protected readonly done = computed(() => Math.min(this.index(), this.total()));
+  protected readonly counter = computed(() =>
+    this.i18n.translate('common.counter', { done: this.done(), total: this.total() }),
+  );
   protected readonly current = computed<T | undefined>(() => this.items()[this.index()]);
   protected readonly behind = computed<T | undefined>(() => this.items()[this.index() + 1]);
   protected readonly canUndo = computed(() => this.index() > 0);

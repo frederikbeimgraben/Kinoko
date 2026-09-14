@@ -4,10 +4,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const FIRST_MONTH = 1;
 const LAST_MONTH = 12;
 
-/**
- * Ein Zeitraum im Jahr als Band mit zwei Griffen, Monat für Monat. Jeder
- * Griff ist ein eigener Schieberegler des Browsers, wie bei `app-range-slider`.
- */
+/** Ein Zeitraum im Jahr als Band mit zwei Griffen, Monat für Monat. */
 @Component({
   selector: 'app-year-band-input',
   changeDetection: ChangeDetectionStrategy.OnPush,

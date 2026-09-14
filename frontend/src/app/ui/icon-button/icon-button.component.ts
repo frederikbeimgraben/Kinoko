@@ -6,10 +6,7 @@ export type IconButtonIcon = 'check' | 'close' | 'delete';
 /** Primär füllt sich mit der Markenfarbe, sekundär bleibt nur umrandet. */
 export type IconButtonVariant = 'primary' | 'secondary';
 
-/**
- * Ein quadratischer 40-px-Knopf mit einem Icon statt einem Wort. Er steht in
- * Zeilen, wo ein Textknopf zu breit würde: Annehmen, Ablehnen, Löschen.
- */
+/** Ein quadratischer Knopf mit Icon. Er steht, wo ein Textknopf zu breit wäre. */
 @Component({
   selector: 'app-icon-button',
   changeDetection: ChangeDetectionStrategy.OnPush,

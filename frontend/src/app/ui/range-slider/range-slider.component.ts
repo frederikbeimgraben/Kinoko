@@ -1,16 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
-/**
- * Welche Griffe die Spur trägt. `from` und `to` sind die Bedingungen „über“
- * und „unter“: eine Grenze steht am Ende der Skala und lässt sich nicht ziehen.
- */
+/** Welche Griffe die Spur trägt. Eine feste Grenze steht am Ende der Skala. */
 export type Handles = 'both' | 'from' | 'to';
 
 /**
- * Ein oder zwei Griffe über einer Spur. Jeder Griff ist ein eigener
- * Schieberegler des Browsers, damit Tastatur und Hilfsmittel ohne eigenes
- * Zutun stimmen.
+ * Ein oder zwei Griffe über einer Spur. Jeder Griff ist ein Regler des Browsers.
  */
 @Component({
   selector: 'app-range-slider',

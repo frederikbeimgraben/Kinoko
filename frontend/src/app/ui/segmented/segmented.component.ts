@@ -7,9 +7,7 @@ export interface SegmentOption {
 }
 
 /**
- * Zwei, drei oder vier Wahlmöglichkeiten nebeneinander, Rolle `tablist`.
- * Pfeiltasten wechseln die Wahl. Ein gesperrtes Segment zeigt nur die Form,
- * ohne Tipp oder Fokus anzunehmen.
+ * Zwei, drei oder vier Werte nebeneinander. Pfeiltasten wechseln die Wahl.
  */
 @Component({
   selector: 'app-segmented',

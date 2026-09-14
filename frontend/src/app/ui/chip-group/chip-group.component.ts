@@ -9,9 +9,7 @@ export interface Chip {
 }
 
 /**
- * Mehrfachwahl oder Einfachwahl ab fünf Werten, in Formularen und Dialogen.
- * Die Reihe bricht um, sie läuft nicht über den Bildschirmrand. `addable`
- * hängt einen gestrichelten „+“-Chip für einen neuen Katalogbegriff an.
+ * Mehrfachwahl in Formularen und Dialogen. Die Reihe bricht um.
  */
 @Component({
   selector: 'app-chip-group',

@@ -7,10 +7,10 @@ import type { TranslationKey } from '../../core/i18n/translations';
 export type Extent = 'width' | 'height' | 'length' | 'thickness';
 
 const EXTENT_KEY: Record<Extent, TranslationKey> = {
-  width: 'art.mass.unter.breite',
-  height: 'art.mass.unter.hoehe',
-  length: 'art.mass.unter.laenge',
-  thickness: 'art.mass.unter.dicke',
+  width: 'enum.dimension.width',
+  height: 'enum.dimension.height',
+  length: 'enum.dimension.length',
+  thickness: 'enum.dimension.thickness',
 };
 
 /** Der Gedankenstrich der Spanne steht mit Leerzeichen, wie im Satz. */

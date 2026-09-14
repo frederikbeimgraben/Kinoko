@@ -4,7 +4,7 @@
     class="filterchip__remove tap"
     type="button"
     data-press="scale"
-    [attr.aria-label]="'filter.marke.entfernen' | t: { gruppe: label() }"
+    [attr.aria-label]="'common.remove' | t"
     (click)="removed.emit()"
   >
     <app-svg-icon name="close" [size]="15" />

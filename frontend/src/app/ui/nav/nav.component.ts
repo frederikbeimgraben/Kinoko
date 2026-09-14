@@ -15,9 +15,9 @@ interface NavTab {
 export type NavVariant = 'bottom' | 'rail';
 
 const TABS: readonly NavTab[] = [
-  { path: '/karte', icon: 'map', labelKey: 'nav.karte' },
-  { path: '/arten', icon: 'species', labelKey: 'nav.arten' },
-  { path: '/eintraege', icon: 'entries', labelKey: 'nav.eintraege' },
+  { path: '/karte', icon: 'map', labelKey: 'nav.tab.map' },
+  { path: '/arten', icon: 'species', labelKey: 'nav.tab.species' },
+  { path: '/eintraege', icon: 'entries', labelKey: 'nav.tab.entries' },
 ];
 
 /** Die drei Reiter. Der aktive Pfad kommt als Eingabe, nicht aus der Route. */

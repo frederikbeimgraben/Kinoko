@@ -10,10 +10,7 @@ interface Tile {
   readonly preview: string;
 }
 
-/**
- * Bildkacheln mit Vorschau, dazu eine Hinzufügen-Kachel. Höchstens drei
- * Bilder. Löst den Objekt-URL-Code aus dem Formular zum Bild einreichen ab.
- */
+/** Bildkacheln mit Vorschau und eine Kachel zum Hinzufügen. Höchstens drei. */
 @Component({
   selector: 'app-photo-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,7 +60,7 @@ export class PhotoPickerComponent implements OnDestroy {
     this.filesChange.emit(this.files().filter((entry) => entry !== file));
   }
 
-  /** Eine Objekt-URL bleibt sonst im Speicher, bis die Seite neu lädt. */
+  /** Eine Objekt-URL bleibt sonst im Speicher, wenn die Seite neu lädt. */
   ngOnDestroy(): void {
     for (const url of this.previews.values()) URL.revokeObjectURL(url);
     this.previews.clear();

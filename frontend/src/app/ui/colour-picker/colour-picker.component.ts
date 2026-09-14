@@ -8,9 +8,7 @@ export interface ColourPickerSwatch {
 }
 
 /**
- * Zwölf Standardfarben mit Namen im Raster, eine gewählt. Darunter, wenn
- * vorhanden, die nächsten Farbtöne aus dem Katalog als reine Vorschau ohne
- * eigenen Namen. Ersetzt die frühere Palette mit 18 Feldern.
+ * Zwölf Standardfarben mit Namen. Darunter stehen die nächsten Katalogtöne.
  */
 @Component({
   selector: 'app-colour-picker',

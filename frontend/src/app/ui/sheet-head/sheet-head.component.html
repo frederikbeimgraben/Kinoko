@@ -36,11 +36,11 @@
           class="head__arrow tap"
           type="button"
           data-press="scale"
-          [attr.aria-label]="(playing() ? 'zeitleiste.anhalten' : 'zeitleiste.abspielen') | t"
+          [attr.aria-label]="(playing() ? 'map.week.pause' : 'map.week.play') | t"
           [attr.aria-pressed]="playing()"
           (click)="playback.emit()"
         >
-          <app-svg-icon [name]="playing() ? 'pause' : 'abspielen'" [size]="12" />
+          <app-svg-icon [name]="playing() ? 'pause' : 'play'" [size]="12" />
         </button>
         <button
           class="head__arrow tap"

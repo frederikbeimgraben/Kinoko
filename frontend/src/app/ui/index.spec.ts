@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { reflectComponentType, type Type } from '@angular/core';
 import * as ui from './index';
 
-/** Die Liste aus `artefakte/komponenten.md`, Abschnitte Gerüst bis Zustände. */
+/** Die Liste aus `artefakte/komponenten.md`, Abschnitt Gerüst und weitere. */
 const BLOCKS = [
   'app-page-header',
   'app-nav',

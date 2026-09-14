@@ -1,4 +1,4 @@
-<nav class="nav" [class.nav--rail]="variant() === 'rail'" [attr.aria-label]="'nav.beschriftung' | t">
+<nav class="nav" [class.nav--rail]="variant() === 'rail'" [attr.aria-label]="'nav.label' | t">
   <div class="nav__tabs">
     @for (tab of tabs; track tab.path) {
       <a
