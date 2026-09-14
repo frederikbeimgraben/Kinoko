@@ -38,12 +38,13 @@ export const SAMPLE_HISTOGRAM: readonly number[] = Array.from({ length: 40 }, (_
   return Math.exp(-(one * one) / 90) + 0.35 * Math.exp(-(two * two) / 60);
 });
 
-/** Vier lateinische Artnamen für Zeilen, die kein Schlüssel deckt. */
+/** Fünf lateinische Artnamen für Zeilen, die kein Schlüssel deckt. */
 export const LATIN_NAMES: readonly string[] = [
   'Boletus edulis',
   'Cantharellus cibarius',
   'Leccinum scabrum',
   'Amanita muscaria',
+  'Imleria badia',
 ];
 
 /** Zwei Gattungen als Beispiel für eine Marke ohne Interaktion. */
@@ -66,12 +67,43 @@ export const MULTI_COLOURS: readonly Farbe[] = [
   { name: 'olivaceus', hex: '#6f7d3c' },
 ];
 
+/** Die zwölf Töne der Farbwahl, wie das Board sie zeigt. */
+export const PICKER_TONES: readonly string[] = [
+  '#f3efe6',
+  '#e8d9b5',
+  '#e0b446',
+  '#d1832f',
+  '#a0522d',
+  '#6b4423',
+  '#3e2a17',
+  '#7f8a3a',
+  '#4f7a3a',
+  '#b8322a',
+  '#7a3b6a',
+  '#8a8f8a',
+];
+
+/** Die sechs nächsten Töne des Katalogs unter der Farbwahl. */
+export const NEAREST_TONES: readonly string[] = [
+  '#6b4423',
+  '#5e3d22',
+  '#7a5230',
+  '#8a4e2b',
+  '#5a3a1e',
+  '#4a3220',
+];
+
+/** Der Wert des Farbcode-Felds. */
+export const COLOUR_CODE = '#7A3B6A';
+
 /** Zwei Spannen: die übliche Breite, darunter die seltene Ausnahme. */
 export const CAP_WIDTH_SPANS: readonly Span[] = [{ from: 4, to: 20 }];
 export const SPORE_LENGTH_SPANS: readonly Span[] = [
   { from: 12.4, to: 19.2 },
   { from: 4.5, to: 5.5 },
 ];
+export const STEM_HEIGHT_SPANS: readonly Span[] = [{ from: 5, to: 15 }];
+export const STEM_THICKNESS_SPANS: readonly Span[] = [{ from: 2, to: 6 }];
 
 const LICENCE: Licence = 'cc-by-sa-4';
 

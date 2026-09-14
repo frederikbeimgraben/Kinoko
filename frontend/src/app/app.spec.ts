@@ -48,11 +48,13 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
   });
 
-  it('kennt die Werkstattseite nur in der Entwicklung', async () => {
+  it('kennt die Werkstattseite', async () => {
     const { navigate } = await app();
 
     await navigate('/bausteine');
 
-    expect(await screen.findByRole('heading', { name: 'Bausteine' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'app-button · 44 / 48 px · radius 10 · rand 1' }),
+    ).toBeInTheDocument();
   }, 60_000);
 });

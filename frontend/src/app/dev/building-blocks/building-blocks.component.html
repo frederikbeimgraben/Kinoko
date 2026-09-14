@@ -1,165 +1,226 @@
-<ng-template #gallery>
-  <div class="gallery">
-    <!-- Gerüst -->
-    <app-card [headingLevel]="2" [heading]="'blocks.pageHeader' | t">
-      <app-page-header [title]="text('beispiel.artenTitel')" [back]="true" />
-    </app-card>
+<div class="board">
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.button' | t }}</h2>
+    <div class="block__row">
+      <app-button variant="primary">{{ 'common.save' | t }}</app-button>
+      <app-button variant="secondary">{{ 'common.cancel' | t }}</app-button>
+      <app-button variant="ghost">{{ 'common.more' | t }}</app-button>
+      <app-button variant="danger">{{ 'common.delete' | t }}</app-button>
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.nav' | t">
-      <div
-        class="gallery__stage gallery__stage--nav"
-        role="region"
-        [attr.aria-label]="text('blocks.nav') + ' 1'"
-      >
-        <app-nav variant="bottom" [active]="navTabs.map" />
-      </div>
-      <div
-        class="gallery__stage gallery__stage--rail"
-        role="region"
-        [attr.aria-label]="text('blocks.nav') + ' 2'"
-      >
-        <app-nav variant="rail" [active]="navTabs.species">
-          <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
-        </app-nav>
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.input' | t }}</h2>
+    <app-input [label]="text('common.name')" [ngModel]="text('beispiel.person')" />
+    <app-input
+      [label]="text('species.fieldLabel')"
+      [placeholder]="text('species.search.placeholder')"
+      [ngModel]="''"
+    />
+    <app-input [label]="text('melden.anzahl')" [error]="text('beispiel.feld.pflicht')" [ngModel]="''" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.sheet' | t">
-      <div class="gallery__stage gallery__stage--sheet">
-        <app-sheet
-          [label]="text('art.boletus_edulis')"
-          [detent]="detent()"
-          (detentChange)="detent.set($event)"
-        >
-          <app-sheet-head head [title]="text('art.boletus_edulis')" [week]="text('beispiel.woche')">
-            <app-timeline
-              [weeks]="weeks"
-              [active]="activeWeek()"
-              [label]="text('zeitleiste.beschriftung')"
-              (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
-            />
-          </app-sheet-head>
-          <app-ramp
-            [label]="text('beispiel.rampe')"
-            [from]="text('beispiel.rampeVon')"
-            [to]="text('beispiel.rampeBis')"
-          />
-        </app-sheet>
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.select' | t }}</h2>
+    <app-select [label]="text('species.field.flesh')" [options]="fleshOptions" [ngModel]="'candidus'" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.sheetHead' | t">
-      <app-sheet-head
-        [title]="text('art.pfifferling')"
-        [titleLink]="true"
-        [week]="text('beispiel.woche')"
-        [hint]="text('zeitleiste.prognose')"
-      >
-        <app-timeline
-          [weeks]="weeks"
-          [active]="activeWeek()"
-          [label]="text('zeitleiste.beschriftung')"
-          [dimmed]="true"
-        />
-      </app-sheet-head>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.checkbox' | t }}</h2>
+    <app-checkbox [ngModel]="true">{{ 'beispiel.schutz.bartschv' | t }}</app-checkbox>
+    <app-checkbox [ngModel]="false">{{ 'enum.protection.personal_use' | t }}</app-checkbox>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.overlayHost' | t">
-      <div class="gallery__stage gallery__stage--overlay">
-        <app-overlay-host [open]="overlayOpen()" (closed)="overlayOpen.set(false)">
-          <p class="gallery__note">{{ overlayText }}</p>
-        </app-overlay-host>
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.filterSheet' | t">
-      <div class="gallery__stage gallery__stage--overlay">
-        <app-filter-sheet
-          [open]="filterSheetOpen()"
-          [resetEnabled]="true"
-          [primaryLabel]="text('filter.showSpecies')"
-          (closed)="filterSheetOpen.set(false)"
-        >
-          <app-choice-row [label]="text('species.field.edibility')" [count]="'3'" [checked]="true" />
-          <app-choice-row [label]="text('species.field.habitat')" [count]="'5'" />
-        </app-filter-sheet>
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.objectMenu' | t">
-      <div class="gallery__stage gallery__stage--fixed">
-        <app-object-menu [target]="objectMenuTarget" />
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.actionBar' | t">
-      <app-action-bar [primary]="text('common.save')" />
-      <app-action-bar [primary]="text('common.save')" [secondary]="text('common.cancel')" />
-      <app-action-bar [primary]="text('common.delete')" [danger]="true" />
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.iconButton' | t">
-      <div class="gallery__row">
-        <app-icon-button icon="check" variant="primary" [label]="text('common.select')" />
-        <app-icon-button icon="check" variant="secondary" [label]="text('common.select')" />
-        <app-icon-button icon="close" variant="primary" [label]="text('common.cancel')" />
-        <app-icon-button icon="close" variant="secondary" [label]="text('common.cancel')" />
-        <app-icon-button icon="delete" variant="primary" [label]="text('common.delete')" />
-        <app-icon-button icon="delete" variant="secondary" [label]="text('common.delete')" />
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.splitLayout' | t">
-      <div class="gallery__stage gallery__stage--split">
-        <app-split-layout>
-          <p split-rail class="gallery__note">{{ splitRailLabel }}</p>
-          <app-search-field split-column [value]="searchValue()" [placeholder]="splitRailLabel" />
-          <p class="gallery__note">{{ splitContentText }}</p>
-        </app-split-layout>
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.confirmDialog' | t">
-      <div class="gallery__stage gallery__stage--fixed">
-        <app-confirm-dialog
-          [open]="true"
-          [title]="text('entry.fund.delete')"
-          [meta]="confirmDialogMeta"
-          [danger]="true"
-        />
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.reviewQueue' | t">
-      <div class="gallery__stage gallery__stage--review">
-        <app-review-queue [items]="reviewItems">
-          <ng-template let-item>
-            <div class="gallery__reviewcard">{{ item }}</div>
-          </ng-template>
-        </app-review-queue>
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.banner' | t">
-      <app-banner kind="offline" />
-      <app-banner kind="error" />
-    </app-card>
-
-    <!-- Zeilen -->
-    <app-card [headingLevel]="2" [heading]="'blocks.listRow' | t">
-      <app-list-row [title]="text('art.boletus_edulis')" />
-      <app-list-row [title]="text('art.pfifferling')" [subline]="text('beispiel.fund.pfifferlingMeta')" />
-      <app-list-row [title]="text('entry.finds')" [value]="'12'" />
-      <app-list-row [title]="text('species.section.compare')" [chevron]="true" />
-      <app-list-row [title]="text('art.reizker')" [clickable]="true" />
-      <app-list-row [title]="text('art.schopftintling')" [clickable]="true" [selected]="true" />
-      <app-list-row [title]="text('art.nebelkappe')">
-        <span lead class="gallery__dot"></span>
-        <app-badge trail variant="warning">{{ 'entry.badge.transferPending' | t }}</app-badge>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.card' | t }}</h2>
+    <app-card>
+      <app-list-row [title]="text('beispiel.avatar')" [subline]="text('beispiel.mail')">
+        <app-badge trail variant="primary">{{ 'account.role.admin' | t }}</app-badge>
       </app-list-row>
     </app-card>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.speciesRow' | t">
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.badge' | t }}</h2>
+    <div class="block__row block__row--tight">
+      @for (badge of badgeVariants; track badge.variant) {
+        <app-badge [variant]="badge.variant">{{ badge.label }}</app-badge>
+      }
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.dialog' | t }}</h2>
+    <div class="block__stage block__stage--dialog">
+      <app-dialog [open]="true" [title]="text('map.combination.save')">
+        <app-input [label]="text('common.name')" [ngModel]="text('beispiel.kombination')" />
+        <div dialog-footer class="block__stack">
+          <app-button variant="primary" [block]="true">{{ 'common.save' | t }}</app-button>
+          <app-button variant="secondary" [block]="true">{{ 'common.cancel' | t }}</app-button>
+        </div>
+      </app-dialog>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.toast' | t }}</h2>
+    <div class="block__stage block__stage--toast">
+      <app-toast />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.pageHeader' | t }}</h2>
+    <app-page-header [title]="text('entry.list.title')" [back]="true">
+      <app-button variant="primary">{{ 'entry.create' | t }}</app-button>
+    </app-page-header>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.nav' | t }}</h2>
+    <div class="block__stage block__stage--nav">
+      <app-nav variant="bottom" [active]="navTabs.map" />
+    </div>
+    <div class="block__stage block__stage--rail">
+      <app-nav variant="rail" [active]="navTabs.species">
+        <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
+      </app-nav>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.sheet' | t }}</h2>
+    <div class="block__stage block__stage--sheet">
+      <app-sheet
+        [label]="text('entry.reportFind.title')"
+        [detent]="detent()"
+        (detentChange)="detent.set($event)"
+      >
+        <app-sheet-head head [title]="text('entry.reportFind.title')" [arrows]="false" />
+      </app-sheet>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.sheetHead' | t }}</h2>
+    <app-sheet-head [title]="text('art.boletus_edulis')" [titleLink]="true" [week]="text('beispiel.woche')">
+      <app-timeline
+        [weeks]="weeks"
+        [active]="activeWeek()"
+        [label]="text('zeitleiste.beschriftung')"
+        (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
+      />
+    </app-sheet-head>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.overlayHost' | t }}</h2>
+    <div class="block__stage block__stage--overlay">
+      <app-overlay-host [open]="overlayOpen()" (closed)="overlayOpen.set(false)">
+        <app-sheet-head [title]="text('entry.fund.delete')" [arrows]="false" />
+      </app-overlay-host>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.filterSheet' | t }}</h2>
+    <div class="block__stage block__stage--filter">
+      <app-filter-sheet
+        [open]="filterSheetOpen()"
+        [resetEnabled]="true"
+        [primaryLabel]="text('filter.showSpecies')"
+        (closed)="filterSheetOpen.set(false)"
+      >
+        <app-choice-row [label]="text('entry.filter.own')" count="12" [checked]="true" />
+        <app-choice-row [label]="text('entry.filter.shared')" count="38" />
+      </app-filter-sheet>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.objectMenu' | t }}</h2>
+    <div class="block__stage block__stage--fixed">
+      <app-object-menu [target]="objectMenuTarget" />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.actionBar' | t }}</h2>
+    <app-action-bar [primary]="text('common.save')" [secondary]="text('common.cancel')" />
+    <app-action-bar [primary]="text('common.delete')" [danger]="true" />
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.iconButton' | t }}</h2>
+    <div class="block__row block__row--tight">
+      <app-icon-button icon="close" variant="secondary" [label]="text('common.cancel')" />
+      <app-icon-button icon="check" variant="primary" [label]="text('common.select')" />
+      <app-icon-button icon="delete" variant="secondary" [label]="text('common.delete')" />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.splitLayout' | t }}</h2>
+    <div class="block__stage block__stage--split">
+      <app-split-layout>
+        <app-nav split-rail variant="rail" [active]="navTabs.map" />
+        <app-search-field
+          split-column
+          [value]="searchValue()"
+          [placeholder]="text('species.search.placeholder')"
+        />
+      </app-split-layout>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.confirmDialog' | t }}</h2>
+    <div class="block__stage block__stage--confirm">
+      <app-confirm-dialog
+        [open]="true"
+        [title]="text('entry.fund.delete')"
+        [meta]="text('beispiel.dialogMeta')"
+        [danger]="true"
+      />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.reviewQueue' | t }}</h2>
+    <div class="block__stage block__stage--review">
+      <app-review-queue [items]="reviewItems">
+        <ng-template let-item>
+          <div class="block__reviewcard">{{ item }}</div>
+        </ng-template>
+      </app-review-queue>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.banner' | t }}</h2>
+    <app-banner kind="offline" />
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.listRow' | t }}</h2>
+    <div class="block__card">
+      <app-list-row [title]="text('beispiel.zeile.rollen')" value="4 · 12" [chevron]="true" />
+      <app-list-row [title]="text('beispiel.avatar')" [subline]="text('beispiel.mail')">
+        <app-badge trail variant="primary">{{ 'account.role.admin' | t }}</app-badge>
+      </app-list-row>
+      <app-list-row
+        [title]="text('account.profile')"
+        [subline]="text('beispiel.avatar')"
+        [chevron]="true"
+        [clickable]="true"
+        [selected]="true"
+      />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.speciesRow' | t }}</h2>
+    <div class="block__card">
       @for (row of speciesRows; track row.value) {
         <app-species-row
           [species]="row"
@@ -167,440 +228,377 @@
           (chosen)="speciesChoice.set(row.value)"
         />
       }
-    </app-card>
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.entryRow' | t">
-      <app-entry-row [entry]="entries[0]" [pending]="true" />
-      <app-entry-row [entry]="entries[1]" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.entryRow' | t }}</h2>
+    <app-entry-row [entry]="entries[0]" [pending]="true" />
+    <app-entry-row [entry]="entries[1]" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.checkRow' | t">
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.checkRow' | t }}</h2>
+    <div class="block__card">
       <app-check-row
-        [title]="text('recht.species.edit')"
-        [subline]="text('recht.species.editUnter')"
+        [title]="text('entry.filter.own')"
         [checked]="checked()"
         (toggled)="checked.set($event)"
       />
-      <app-check-row [title]="text('recht.text.edit')" [checked]="false" [locked]="true" />
-    </app-card>
+      <app-check-row [title]="text('entry.filter.shared')" [checked]="false" [locked]="true" />
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.factorRow' | t">
-      <app-factor-row [factor]="factor" [active]="factorActive()" (activeChange)="factorActive.set($event)" />
-      <app-factor-row [factor]="lockedFactor" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.factorRow' | t }}</h2>
+    <app-factor-row [factor]="factor" [active]="factorActive()" (activeChange)="factorActive.set($event)" />
+    <app-factor-row [factor]="soilFactor" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.keyValueTable' | t">
-      <app-key-value-table>
-        <app-key-value-row [key]="text('species.field.cap')" [value]="text('art.hutform.gewoelbt')" />
-        <app-key-value-row
-          [key]="text('species.field.stem')"
-          [values]="[text('art.stielmerkmal.voll'), text('art.stielmerkmal.hohl')]"
-        />
-        <app-key-value-row [key]="text('species.field.habitat')" [route]="'.'" [hint]="text('common.open')" />
-      </app-key-value-table>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.keyValueTable' | t }}</h2>
+    <app-key-value-table>
+      <app-key-value-row [key]="text('species.field.edibility')" [value]="text('enum.edibility.edible')" />
+      <app-key-value-row [key]="text('art.mass.zeichen.hutbreite')">
+        <app-measurement extent="width" [spans]="capWidthSpans" [unit]="text('unit.cm')" />
+      </app-key-value-row>
+      <app-key-value-row [key]="text('art.farbe.hut')">
+        <app-colour-field [colours]="gradientColours" mode="gradient" [label]="text('art.farbe.hut')" />
+      </app-key-value-row>
+      <app-key-value-row [key]="text('species.field.stem')" [value]="text('art.stielmerkmal.voll')" />
+      <app-key-value-row [key]="text('species.field.habitat')" route="." [hint]="text('common.open')" />
+    </app-key-value-table>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.keyValueRow' | t">
-      <app-key-value-table>
-        <app-key-value-row
-          [key]="text('species.field.smell')"
-          [value]="text('beispiel.notiz')"
-          [flow]="true"
-        />
-      </app-key-value-table>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.choiceRow' | t }}</h2>
+    <div class="block__card">
+      <app-choice-row [label]="text('enum.edibility.edible')" count="77" [checked]="true" />
+      <app-choice-row [label]="text('enum.edibility.conditionally_edible')" count="5" />
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.choiceRow' | t">
-      <app-choice-row [label]="text('filter.gruppe.speisewert')" [count]="'8'" [checked]="true" />
-      <app-choice-row [label]="text('filter.gruppe.schutz')" [count]="'3'" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.formField' | t }}</h2>
+    <app-form-field
+      [label]="text('melden.datum')"
+      [value]="text('beispiel.feld.datumWert')"
+      [readOnly]="true"
+    />
+    <app-form-field
+      [label]="text('entry.field.note')"
+      [value]="text('beispiel.feld.notizWert')"
+      [multiline]="true"
+      [readOnly]="true"
+    />
+    <app-form-field
+      [label]="text('admin.characteristic.colourCode')"
+      [value]="colourCode"
+      [readOnly]="true"
+    />
+  </section>
 
-    <!-- Eingabe -->
-    <app-card [headingLevel]="2" [heading]="'blocks.formField' | t">
-      <app-form-field
-        [label]="text('beispiel.feld.art')"
-        [value]="text('art.boletus_edulis')"
-        [readOnly]="true"
-      />
-      <app-form-field
-        class="gallery__gap"
-        [label]="text('beispiel.feld.notiz')"
-        [placeholder]="text('beispiel.feld.notizPlatzhalter')"
-        [value]="fieldValue()"
-        [multiline]="true"
-        (valueChange)="fieldValue.set($event)"
-      />
-      <app-form-field
-        class="gallery__gap"
-        [label]="text('common.search')"
-        [value]="searchValue()"
-        icon="search"
-        (valueChange)="searchValue.set($event)"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.searchField' | t }}</h2>
+    <app-search-field value="" [placeholder]="text('species.search.placeholder')" />
+    <app-search-field
+      [value]="searchValue()"
+      [placeholder]="text('species.search.placeholder')"
+      (valueChange)="searchValue.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.searchField' | t">
-      <app-search-field
-        [value]="searchValue()"
-        [placeholder]="text('species.search.placeholder')"
-        (valueChange)="searchValue.set($event)"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.segmented' | t }}</h2>
+    <app-segmented
+      [options]="viewModes"
+      [value]="viewMode()"
+      [label]="text('map.tab.layer')"
+      (valueChange)="viewMode.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.segmented' | t">
-      <app-segmented [options]="directions" value="from" [label]="text('common.from')" />
-      <app-segmented
-        class="gallery__gap"
-        [options]="viewModes"
-        [value]="viewMode()"
-        [label]="text('map.tab.layer')"
-        (valueChange)="viewMode.set($event)"
-      />
-      <app-segmented
-        class="gallery__gap"
-        [options]="fourWayOptions"
-        value="edit"
-        [label]="text('common.name')"
-      />
-      <app-segmented
-        class="gallery__gap"
-        [options]="lockedOptions"
-        value="liste"
-        [label]="text('map.combination.list')"
-        [locked]="true"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.chipGroup' | t }}</h2>
+    <app-chip-group
+      [chips]="speciesChips"
+      [value]="chip()"
+      [label]="text('beispiel.artenTitel')"
+      [addable]="true"
+      (valueChange)="chip.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.chipGroup' | t">
-      <app-chip-group
-        [chips]="speciesChips"
-        [value]="chip()"
-        [multiple]="true"
-        [label]="text('beispiel.artenTitel')"
-        (valueChange)="chip.set($event)"
-      />
-      <app-chip-group
-        class="gallery__gap"
-        [chips]="speciesChips"
-        [value]="chip()"
-        [label]="text('beispiel.artenTitel')"
-        [addable]="true"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.filterChip' | t }}</h2>
+    <div class="block__row block__row--tight">
+      @for (label of filterChips; track label) {
+        <app-filter-chip [label]="label" />
+      }
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.filterChip' | t">
-      <div class="gallery__row">
-        @for (label of filterChips; track label) {
-          <app-filter-chip [label]="label" />
-        }
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.rangeSlider' | t }}</h2>
+    <app-range-slider
+      [min]="0"
+      [max]="240"
+      [from]="from()"
+      [to]="to()"
+      (fromChange)="from.set($event)"
+      (toChange)="to.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.rangeSlider' | t">
-      <app-range-slider
-        [min]="0"
-        [max]="240"
-        [from]="from()"
-        [to]="to()"
-        (fromChange)="from.set($event)"
-        (toChange)="to.set($event)"
-      />
-      <app-range-slider
-        class="gallery__gap"
-        [min]="0"
-        [max]="240"
-        [from]="from()"
-        [to]="to()"
-        handles="from"
-        (fromChange)="from.set($event)"
-      />
-      <app-range-slider
-        class="gallery__gap"
-        [min]="0"
-        [max]="240"
-        [from]="from()"
-        [to]="to()"
-        handles="to"
-        (toChange)="to.set($event)"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.colourSwatches' | t }}</h2>
+    <app-colour-swatches
+      [colours]="colourSwatches"
+      [value]="farbe()"
+      [label]="text('common.colour')"
+      (valueChange)="farbe.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.colourSwatches' | t">
-      <app-colour-swatches
-        [colours]="colourSwatches"
-        [value]="farbe()"
-        [label]="text('common.colour')"
-        (valueChange)="farbe.set($event)"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.colourPicker' | t }}</h2>
+    <app-colour-picker
+      [colours]="colourPickerSwatches"
+      [value]="colourTone()"
+      [label]="text('art.farbe.hut')"
+      [nearest]="nearestTones"
+      (valueChange)="colourTone.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.colourPicker' | t">
-      <app-colour-picker
-        [colours]="colourPickerSwatches"
-        [value]="colourTone()"
-        [label]="text('filter.colour.title')"
-        [nearest]="objectColors"
-        (valueChange)="colourTone.set($event)"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.speciesPicker' | t }}</h2>
+    <app-species-picker
+      [species]="pickerRows"
+      [selected]="speciesChoice()"
+      [label]="text('beispiel.artenTitel')"
+      (chosen)="speciesChoice.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.speciesPicker' | t">
-      <app-species-picker
-        [species]="speciesRows"
-        [selected]="speciesChoice()"
-        [label]="text('beispiel.artenTitel')"
-        (chosen)="speciesChoice.set($event)"
-      >
-        <ng-template let-entry>
-          <app-season-curve trail [series]="seasonPlain" [label]="entry.name" />
-        </ng-template>
-      </app-species-picker>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.photoPicker' | t }}</h2>
+    <app-photo-picker [files]="photoFiles()" (filesChange)="photoFiles.set($event)" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.photoPicker' | t">
-      <app-photo-picker [files]="photoFiles()" (filesChange)="photoFiles.set($event)" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.yearBandInput' | t }}</h2>
+    <app-year-band-input
+      [from]="yearFrom()"
+      [to]="yearTo()"
+      [label]="text('species.growthPeriod')"
+      (fromChange)="yearFrom.set($event)"
+      (toChange)="yearTo.set($event)"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.yearBandInput' | t">
-      <app-year-band-input
-        [from]="yearFrom()"
-        [to]="yearTo()"
-        [label]="text('species.growthPeriod')"
-        (fromChange)="yearFrom.set($event)"
-        (toChange)="yearTo.set($event)"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.levelPill' | t }}</h2>
+    <div class="block__row block__row--tight">
+      <app-level-pill [text]="text('enum.edibility.edible')" colour="var(--color-success)" />
+      <app-level-pill [text]="text('enum.edibility.poisonous')" colour="var(--color-warning)" />
+      <app-level-pill [text]="text('enum.protection.none')" colour="var(--color-text-muted)" />
+    </div>
+  </section>
 
-    <!-- Anzeige -->
-    <app-card [headingLevel]="2" [heading]="'blocks.levelPill' | t">
-      <div class="gallery__row">
-        <app-level-pill [text]="text('art.essbar.essbar')" colour="var(--color-success)" />
-        <app-level-pill [text]="text('art.essbar.giftig')" colour="var(--color-warning)" />
-        <app-level-pill [text]="text('art.essbar.toedlichGiftig')" colour="var(--color-danger)" />
-        <app-level-pill [text]="text('species.badge.protected')" colour="var(--color-info)" />
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.tagList' | t }}</h2>
+    <app-tag-list [tags]="treeTags" [label]="text('filter.group.treePartner')" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.tagList' | t">
-      <app-tag-list [tags]="treeGenera" [label]="text('filter.group.treePartner')" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.colourField' | t }}</h2>
+    <app-key-value-table>
+      <app-key-value-row [key]="text('art.farbe.hut')">
+        <app-colour-field [colours]="gradientColours" mode="gradient" [label]="text('art.farbe.hut')" />
+      </app-key-value-row>
+      <app-key-value-row [key]="text('species.field.tubes')">
+        <app-colour-field [colours]="multiColours" mode="multiple" [label]="text('species.field.tubes')" />
+      </app-key-value-row>
+      <app-key-value-row [key]="text('art.farbe.sporenpulver')">
+        <app-colour-field [colours]="capColours" mode="single" [label]="text('art.farbe.sporenpulver')" />
+      </app-key-value-row>
+    </app-key-value-table>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.colourField' | t">
-      <app-key-value-table>
-        <app-key-value-row [key]="text('art.farbe.hut')">
-          <app-colour-field [colours]="capColours" mode="single" [label]="text('art.farbe.hut')" />
-        </app-key-value-row>
-        <app-key-value-row [key]="text('art.abschnitt.verfaerbung')">
-          <app-colour-field
-            [colours]="gradientColours"
-            mode="gradient"
-            [label]="text('art.abschnitt.verfaerbung')"
-          />
-        </app-key-value-row>
-        <app-key-value-row [key]="text('art.farbe.sporenpulver')">
-          <app-colour-field
-            [colours]="multiColours"
-            mode="multiple"
-            [label]="text('art.farbe.sporenpulver')"
-          />
-        </app-key-value-row>
-      </app-key-value-table>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.colourChange' | t }}</h2>
+    <app-colour-change
+      [triggers]="colourChangeTriggers"
+      [from]="colourChangeFrom"
+      [to]="colourChangeTo"
+      [fromLabels]="colourChangeFromLabels"
+      [toLabels]="colourChangeToLabels"
+      [speed]="colourChangeSpeed"
+      [arrowLabel]="text('art.verfaerbung.pfeil')"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.colourChange' | t">
-      <app-colour-change
-        [triggers]="colourChangeTriggers"
-        [from]="colourChangeFrom"
-        [to]="colourChangeTo"
-        [fromLabels]="colourChangeFromLabels"
-        [toLabels]="colourChangeToLabels"
-        [speed]="colourChangeSpeed"
-        [arrowLabel]="text('art.verfaerbung.pfeil')"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.measurement' | t }}</h2>
+    <app-key-value-table>
+      <app-key-value-row [key]="text('art.mass.zeichen.hutbreite')">
+        <app-measurement extent="width" [spans]="capWidthSpans" [unit]="text('unit.cm')" />
+      </app-key-value-row>
+    </app-key-value-table>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.measurement' | t">
-      <app-key-value-table>
-        <app-key-value-row [key]="text('art.mass.zeichen.hutbreite')">
-          <app-measurement extent="width" [spans]="capWidthSpans" [unit]="text('unit.cm')" />
-        </app-key-value-row>
-        <app-key-value-row [key]="text('art.mass.zeichen.sporenlaenge')">
-          <app-measurement extent="length" [spans]="sporeLengthSpans" [unit]="text('unit.um')" />
-        </app-key-value-row>
-      </app-key-value-table>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.measurementGroup' | t }}</h2>
+    <app-measurement-group [part]="text('species.field.cap')" [measurements]="capMeasurements" />
+    <app-measurement-group [part]="text('species.field.stem')" [measurements]="stemMeasurements" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.measurementGroup' | t">
-      <app-measurement-group [part]="text('species.field.cap')" [measurements]="measurementRows" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.yearBand' | t }}</h2>
+    <app-year-band
+      [fromMonth]="6"
+      [toMonth]="11"
+      [peakFromMonth]="8"
+      [peakToMonth]="10"
+      [months]="months"
+      [label]="text('species.growthPeriod')"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.yearBand' | t">
-      <app-year-band
-        [fromMonth]="6"
-        [toMonth]="11"
-        [peakFromMonth]="8"
-        [peakToMonth]="10"
-        [months]="[
-          text('art.monat.jan'),
-          text('art.monat.apr'),
-          text('art.monat.jul'),
-          text('art.monat.okt'),
-        ]"
-        [label]="text('species.growthPeriod')"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.seasonCurve' | t }}</h2>
+    <app-season-curve [series]="seasonSeries" [months]="monthMarks" [label]="text('saison.beschriftung')" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.seasonCurve' | t">
-      <app-season-curve [series]="seasonSeries" [months]="monthMarks" [label]="text('saison.beschriftung')" />
-      <app-season-curve
-        class="gallery__gap"
-        [series]="seasonSeries"
-        [large]="true"
-        [months]="monthMarks"
-        [label]="text('saison.beschriftung')"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.histogram' | t }}</h2>
+    <app-histogram
+      [shares]="histogramm"
+      [label]="text('beispiel.histogramm')"
+      [from]="from() / 240"
+      [to]="to() / 240"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.histogram' | t">
-      <app-histogram
-        [shares]="histogramm"
-        [label]="text('beispiel.histogramm')"
-        [from]="from() / 240"
-        [to]="to() / 240"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.ramp' | t }}</h2>
+    <app-ramp
+      [label]="text('map.legend.findProbability')"
+      [from]="text('beispiel.rampeVon')"
+      [to]="text('beispiel.rampeBis')"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.ramp' | t">
-      <app-ramp
-        [label]="text('beispiel.rampe')"
-        [from]="text('beispiel.rampeVon')"
-        [to]="text('beispiel.rampeBis')"
-        [note]="text('map.legend.findProbability')"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.timeline' | t }}</h2>
+    <app-timeline
+      [weeks]="weeks"
+      [active]="activeWeek()"
+      [label]="text('zeitleiste.beschriftung')"
+      (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
+    />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.timeline' | t">
-      <app-timeline
-        [weeks]="weeks"
-        [active]="activeWeek()"
-        [label]="text('zeitleiste.beschriftung')"
-        (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
-      />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.imageTile' | t }}</h2>
+    <app-image-tile [image]="sampleImage" [lead]="true" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.weekButton' | t">
-      <div class="gallery__row">
-        <app-week-button [year]="2025" [week]="38" [share]="0.7" [yearMark]="true" />
-        <app-week-button [year]="2025" [week]="39" [share]="0.88" />
-        <app-week-button [year]="2025" [week]="40" [share]="1" [active]="true" />
-        <app-week-button [year]="2026" [week]="41" [share]="0.4" [forecast]="true" />
-        <app-week-button [year]="2026" [week]="42" [share]="0.2" [forecast]="true" [locked]="true" />
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.imageTile' | t">
-      <div class="gallery__row">
-        <app-image-tile [image]="sampleImage" [lead]="true" />
-        <app-image-tile [image]="sampleImage" [lead]="false" />
-      </div>
-    </app-card>
-
-    <app-card [headingLevel]="2" [heading]="'blocks.imageCredit' | t">
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.imageCredit' | t }}</h2>
+    <div class="block__card">
       <app-image-credit [photographer]="sampleImage.photographer" [licence]="sampleImage.licence" />
-      <app-image-credit [photographer]="text('art.boletus_edulis')" licence="own" />
-    </app-card>
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.imageViewer' | t">
-      <div class="gallery__stage gallery__stage--fixed">
-        <app-image-viewer [image]="sampleImage" [title]="text('art.boletus_edulis')" />
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.imageViewer' | t }}</h2>
+    <div class="block__stage block__stage--viewer">
+      <app-image-viewer [image]="sampleImage" [title]="text('art.boletus_edulis')" />
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.privateImage' | t">
-      <app-private-image [path]="sampleImage.thumbUrl" [alt]="text('art.boletus_edulis')" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.privateImage' | t }}</h2>
+    <app-private-image [path]="sampleImage.thumbUrl" [alt]="text('art.boletus_edulis')" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.avatarButton' | t">
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.avatarButton' | t }}</h2>
+    <div class="block__row">
       <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
-    </app-card>
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.floatingButton' | t">
-      <div class="gallery__row">
-        <app-floating-button icon="layers" variant="default" [label]="text('beispiel.ebenen')" />
-        <app-floating-button icon="plus" variant="primary" [label]="text('beispiel.melden')" />
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.floatingButton' | t }}</h2>
+    <div class="block__row">
+      <app-floating-button icon="layers" variant="default" [label]="text('map.layers.title')" />
+      <app-floating-button icon="location" variant="default" [label]="text('map.centre')" />
+      <app-floating-button icon="plus" variant="primary" [label]="text('entry.create')" />
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.crosshair' | t">
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.crosshair' | t }}</h2>
+    <div class="block__stage block__stage--crosshair">
       <app-crosshair [label]="text('common.select')" />
-    </app-card>
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.svgIcon' | t">
-      <div class="gallery__row">
-        <app-svg-icon name="map" [label]="text('nav.tab.map')" />
-        <app-svg-icon name="species" [label]="text('nav.tab.species')" />
-        <app-svg-icon name="entries" [label]="text('nav.tab.entries')" />
-        <app-svg-icon name="plus" [label]="text('entry.create')" />
-        <app-svg-icon name="location" [label]="text('map.centre')" />
-        <app-svg-icon name="layers" [label]="text('map.layers.title')" />
-        <app-svg-icon name="check" [label]="text('common.select')" />
-        <app-svg-icon name="close" [label]="text('common.close')" />
-        <app-svg-icon name="search" [label]="text('common.search')" />
-        <app-svg-icon name="filter" [label]="text('common.filter')" />
-        <app-svg-icon name="warning" [label]="text('state.loadFailed')" />
-        <app-svg-icon name="empty" [label]="text('state.noSpeciesMatch')" />
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.svgIcon' | t }}</h2>
+    <div class="block__row">
+      <app-svg-icon name="map" [size]="24" [label]="text('nav.tab.map')" />
+      <app-svg-icon name="location" [size]="24" [label]="text('map.centre')" />
+      <app-svg-icon name="layers" [size]="24" [label]="text('map.layers.title')" />
+      <app-svg-icon name="plus" [size]="24" [label]="text('entry.create')" />
+      <app-svg-icon name="species" [size]="24" [label]="text('nav.tab.species')" />
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.statRow' | t">
-      <app-stat-row [stats]="stats" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.statRow' | t }}</h2>
+    <app-stat-row [stats]="stats" />
+  </section>
 
-    <!-- Zustände -->
-    <app-card [headingLevel]="2" [heading]="'blocks.emptyState' | t">
-      <app-empty-state [text]="text('state.noSpeciesMatch')" [action]="text('entry.create')" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.emptyState' | t }}</h2>
+    <app-empty-state icon="search" [text]="text('state.noSpeciesMatch')" [action]="text('common.reset')" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.errorState' | t">
-      <app-error-state [text]="text('state.loadFailed')" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.errorState' | t }}</h2>
+    <app-error-state [text]="text('state.loadFailed')" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.infiniteList' | t">
-      <div class="gallery__stage gallery__stage--list">
-        <app-infinite-list [pageSize]="40" [hasMore]="false">
-          @for (name of infiniteRows; track name) {
-            <app-list-row [title]="name" />
-          }
-        </app-infinite-list>
-      </div>
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.infiniteList' | t }}</h2>
+    <div class="block__card">
+      <app-infinite-list [pageSize]="40" [hasMore]="false">
+        @for (row of speciesRows; track row.value) {
+          <app-species-row [species]="row" />
+        }
+      </app-infinite-list>
+    </div>
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.skeleton' | t">
-      <app-skeleton kind="row" [count]="2" />
-      <app-skeleton kind="tile" />
-      <app-skeleton kind="card" />
-      <app-skeleton kind="block" />
-    </app-card>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.skeleton' | t }}</h2>
+    <app-skeleton kind="row" />
+    <app-skeleton kind="block" />
+  </section>
 
-    <app-card [headingLevel]="2" [heading]="'blocks.progress' | t">
-      <app-progress [value]="42" />
-      <app-progress class="gallery__gap" [value]="78" />
-    </app-card>
-  </div>
-</ng-template>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.progress' | t }}</h2>
+    <app-progress [value]="62" />
+  </section>
 
-<div class="workshop">
-  <header class="workshop__head">
-    <h1>{{ 'bausteine.titel' | t }}</h1>
-  </header>
-  <div class="workshop__fields">
-    <section class="workshop__field" role="region" [attr.aria-label]="'bausteine.hell' | t" #light>
-      <h2 class="workshop__fieldtitle">{{ 'bausteine.hell' | t }}</h2>
-      <ng-container [ngTemplateOutlet]="gallery" />
-    </section>
-    <section class="workshop__field" role="region" [attr.aria-label]="'bausteine.dunkel' | t" #dark>
-      <h2 class="workshop__fieldtitle">{{ 'bausteine.dunkel' | t }}</h2>
-      <ng-container [ngTemplateOutlet]="gallery" />
-    </section>
-  </div>
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.buttonBusy' | t }}</h2>
+    <div class="block__row">
+      <app-button variant="primary" size="lg" [loading]="true" [ariaLabel]="text('common.loading')" />
+    </div>
+  </section>
 </div>

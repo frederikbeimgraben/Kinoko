@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { BuildingBlocksComponent } from './building-blocks.component';
 
@@ -20,6 +20,9 @@ class ObserverStub {
   }
 }
 
+/** Die Karten des Boards, in seiner Reihenfolge. */
+const CARDS = 65;
+
 describe('BuildingBlocksComponent', () => {
   const providers = [provideRouter([]), provideHttpClient(), provideHttpClientTesting()];
 
@@ -28,35 +31,30 @@ describe('BuildingBlocksComponent', () => {
     vi.stubGlobal('URL', { ...URL, createObjectURL: () => 'blob:eins', revokeObjectURL: () => undefined });
   });
 
-  it('zeigt jeden Baustein zweimal, hell und dunkel', async () => {
+  it('zeigt jede Karte des Boards genau einmal', async () => {
     const { container } = await render(BuildingBlocksComponent, { providers });
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Bausteine' })).toBeInTheDocument();
-    const cards = container.querySelectorAll('app-card');
-    // Die Vorlage trägt 58 Bausteinkarten je Feld, macht 116 insgesamt.
-    expect(cards.length).toBe(116);
-    for (const selector of ['app-nav', 'app-sheet', 'app-list-row', 'app-svg-icon']) {
-      expect(container.querySelectorAll(selector).length).toBeGreaterThanOrEqual(2);
-    }
+    expect(container.querySelectorAll('.block')).toHaveLength(CARDS);
+    const heads = [...container.querySelectorAll('.block__head')].map((head) => head.textContent.trim());
+    expect(heads[0]).toContain('app-button');
+    expect(heads[CARDS - 1]).toContain('app-button busy');
+    expect(new Set(heads).size).toBe(CARDS);
   });
 
-  it('legt die Theme-Werte des Kits auf die beiden Felder', async () => {
-    const style = document.createElement('style');
-    style.textContent = ":root[data-theme='light']{--color-bg:#fff}:root[data-theme='dark']{--color-bg:#000}";
-    document.head.append(style);
+  it('stellt die Seite auf das dunkle Thema und gibt es beim Verlassen zurück', async () => {
+    document.documentElement.setAttribute('data-theme', 'light');
 
-    const { container } = await render(BuildingBlocksComponent, { providers });
-    const fields = container.querySelectorAll<HTMLElement>('.workshop__field');
+    const { fixture } = await render(BuildingBlocksComponent, { providers });
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 
-    expect(fields[0].style.getPropertyValue('--color-bg')).toBe('#fff');
-    expect(fields[1].style.getPropertyValue('--color-bg')).toBe('#000');
-    style.remove();
+    fixture.destroy();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   });
 
   it('bleibt frei von Verstößen gegen die Barrierefreiheit', async () => {
     const { container } = await render(BuildingBlocksComponent, { providers });
 
-    // Die Seite zeigt jeden Baustein zweimal. Eine Landmarke steht darum
+    // Die Seite zeigt manchen Baustein mehrfach. Eine Landmarke steht darum
     // doppelt, was nur hier gilt und keine Seite der App betrifft.
     await noViolations(container, ['landmark-unique']);
   }, 90_000);
