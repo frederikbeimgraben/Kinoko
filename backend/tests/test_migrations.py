@@ -66,3 +66,47 @@ def test_downgrade_empties_the_database(tmp_path: Path) -> None:
     command.upgrade(alembic_config(), "head")
     command.downgrade(alembic_config(), "base")
     assert tables_of(file) <= {"alembic_version"}
+
+
+def test_upgrade_resets_a_foreign_revision(tmp_path: Path) -> None:
+    file = tmp_path / "fremd.sqlite"
+    point_at(file)
+    made = create_engine(f"sqlite:///{file}")
+    with made.begin() as connection:
+        connection.exec_driver_sql(
+            "CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL)"
+        )
+        connection.exec_driver_sql("INSERT INTO alembic_version VALUES ('c2d8e5f14a07')")
+        connection.exec_driver_sql("CREATE TABLE relikt (id INTEGER)")
+    made.dispose()
+
+    command.upgrade(alembic_config(), "head")
+
+    found = tables_of(file)
+    assert set(Base.metadata.tables) <= found
+    assert "relikt" not in found
+
+    made = create_engine(f"sqlite:///{file}")
+    with made.connect() as connection:
+        version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
+    made.dispose()
+    assert version == "baseline"
+
+
+def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
+    file = tmp_path / "ohne_version.sqlite"
+    point_at(file)
+    made = create_engine(f"sqlite:///{file}")
+    Base.metadata.create_all(made)
+    made.dispose()
+
+    command.upgrade(alembic_config(), "head")
+
+    found = tables_of(file)
+    assert set(Base.metadata.tables) <= found
+
+    made = create_engine(f"sqlite:///{file}")
+    with made.connect() as connection:
+        version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
+    made.dispose()
+    assert version == "baseline"

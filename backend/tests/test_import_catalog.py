@@ -1,4 +1,4 @@
-"""Tests von ``tools.import_catalog``."""
+"""Tests des Katalogimports: Baulogik und die CLI darüber."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ from app.models import (
     SpeciesPartFeature,
     Taxon,
 )
+from app.modules.catalog import importer
 from app.shared.enums import (
     BodyPart,
     CapFeature,
@@ -44,8 +45,8 @@ from app.shared.enums import (
     TraitKey,
     Unit,
 )
-from tools import catalog_rows, import_catalog
 from tools import catalog_vocabulary as vocab
+from tools import import_catalog
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -74,7 +75,7 @@ ENUM_TABLES = [
 
 def species_file_count() -> int:
     """Zählt die TOML-Profile, unabhängig vom Datenstand."""
-    return len(list(import_catalog.SPECIES_DIR.glob("*.toml")))
+    return len(list(importer.SPECIES_DIR.glob("*.toml")))
 
 
 def _profile(**overrides: Any) -> dict[str, Any]:  # noqa: ANN401
@@ -94,21 +95,21 @@ def _profile(**overrides: Any) -> dict[str, Any]:  # noqa: ANN401
     return base
 
 
-def _context(profile: dict[str, Any], **overrides: Any) -> catalog_rows.BuildContext:  # noqa: ANN401
+def _context(profile: dict[str, Any], **overrides: Any) -> importer.BuildContext:  # noqa: ANN401
     defaults: dict[str, Any] = {
         "stem": "testpilz",
         "profile": profile,
         "species_id": uuid.uuid4(),
         "slug": "testus-fungus",
         "genus_ids": {},
-        "terms": catalog_rows.TermRegistry(rows=[], ids={}),
+        "terms": importer.TermRegistry(rows=[], ids={}),
         "colours": {},
         "species_ids": {},
-        "report": catalog_rows.Report(),
+        "report": importer.Report(),
         "seen_pairs": set(),
     }
     defaults.update(overrides)
-    return catalog_rows.BuildContext(**defaults)
+    return importer.BuildContext(**defaults)
 
 
 @pytest.mark.parametrize(("table", "enum_cls"), ENUM_TABLES)
@@ -128,7 +129,7 @@ def test_unknown_value_is_reported() -> None:
 def test_unknown_tree_is_reported() -> None:
     profiles = {"x": _profile(baeume=["nichtvorhandenerbaum"])}
     with pytest.raises(vocab.UnknownVocabulary):
-        catalog_rows.build_terms(profiles)
+        importer.build_terms(profiles)
 
 
 def test_slugify_handles_umlauts_and_spaces() -> None:
@@ -148,7 +149,7 @@ def test_find_colour_returns_none_without_match() -> None:
 
 def test_unknown_genus_is_counted() -> None:
     ctx = _context(_profile())
-    row, _children, _counts = catalog_rows.build_species(ctx)
+    row, _children, _counts = importer.build_species(ctx)
     assert row.taxon_id is None
     assert ctx.report.skipped["species_ohne_gattung"] == 1
 
@@ -156,7 +157,7 @@ def test_unknown_genus_is_counted() -> None:
 def test_unknown_lookalike_is_skipped_and_counted() -> None:
     profile = _profile(verwechslungen=[{"slug": "unbekannt", "unterschied": "x"}])
     ctx = _context(profile)
-    _row, _children, counts = catalog_rows.build_species(ctx)
+    _row, _children, counts = importer.build_species(ctx)
     assert counts["species_lookalike"] == 0
     assert ctx.report.skipped["verwechslung_unbekannt"] == 1
 
@@ -167,7 +168,7 @@ def test_sporenlager_without_bodypart_is_skipped() -> None:
         farben={"sporenlager": [{"name": "gelb", "hex": "#e8c33a"}]},
     )
     ctx = _context(profile)
-    _row, _children, counts = catalog_rows.build_species(ctx)
+    _row, _children, counts = importer.build_species(ctx)
     assert counts["species_colour"] == 0
     assert ctx.report.skipped["colour_ohne_koerperteil"] == 1
 
@@ -175,7 +176,7 @@ def test_sporenlager_without_bodypart_is_skipped() -> None:
 def test_reagent_without_colour_word_is_skipped() -> None:
     profile = _profile(reagenzien=[{"reagenz": "koh", "reaktion": "Ohne Reaktion."}])
     ctx = _context(profile)
-    _row, _children, counts = catalog_rows.build_species(ctx)
+    _row, _children, counts = importer.build_species(ctx)
     assert counts["species_colour_change"] == 0
     assert ctx.report.skipped["reagenz_ohne_zielfarbe"] == 1
 
@@ -190,7 +191,7 @@ def test_spore_and_fruitbody_measurements_land_in_the_table() -> None:
         },
     )
     ctx = _context(profile)
-    _row, children, counts = catalog_rows.build_species(ctx)
+    _row, children, counts = importer.build_species(ctx)
     assert counts["species_measurement"] == 4
     assert "measurement_ohne_koerperteil" not in ctx.report.skipped
     found = {(row.part, row.dimension) for row in children if isinstance(row, SpeciesMeasurement)}
@@ -205,16 +206,16 @@ def test_spore_and_fruitbody_measurements_land_in_the_table() -> None:
 def test_an_unknown_measurement_is_counted() -> None:
     profile = _profile(masse={"wurzelTiefeCm": {"von": 1.0, "bis": 2.0, "einheit": "cm"}})
     ctx = _context(profile)
-    _row, _children, counts = catalog_rows.build_species(ctx)
+    _row, _children, counts = importer.build_species(ctx)
     assert counts["species_measurement"] == 0
     assert ctx.report.skipped["measurement_ohne_koerperteil"] == 1
 
 
 def test_duplicate_species_term_is_collapsed() -> None:
     profile = _profile(geruch={"tags": ["pilzig", "pilzig"]})
-    terms = catalog_rows.TermRegistry(rows=[], ids={(TermKind.SMELL, "pilzig"): uuid.uuid4()})
+    terms = importer.TermRegistry(rows=[], ids={(TermKind.SMELL, "pilzig"): uuid.uuid4()})
     ctx = _context(profile, terms=terms)
-    _row, _children, counts = catalog_rows.build_species(ctx)
+    _row, _children, counts = importer.build_species(ctx)
     assert counts["species_term"] == 1
 
 
@@ -227,7 +228,7 @@ def test_duplicate_lookalike_pair_is_skipped_and_counted() -> None:
         ],
     )
     ctx = _context(profile, species_ids={"andere": other_id})
-    _row, _children, counts = catalog_rows.build_species(ctx)
+    _row, _children, counts = importer.build_species(ctx)
     assert counts["species_lookalike"] == 1
     assert ctx.report.skipped["verwechslung_doppelt"] == 1
 
@@ -235,7 +236,7 @@ def test_duplicate_lookalike_pair_is_skipped_and_counted() -> None:
 def test_cap_margin_without_change_applies_both_phases() -> None:
     profile = _profile(hutrand={"von": ["eingerollt"]})
     ctx = _context(profile)
-    _row, children, _counts = catalog_rows.build_species(ctx)
+    _row, children, _counts = importer.build_species(ctx)
     features = [c for c in children if isinstance(c, SpeciesPartFeature)]
     phases = {f.phase for f in features}
     assert phases == {Phase.YOUNG, Phase.OLD}
@@ -245,23 +246,23 @@ def test_cap_margin_without_change_applies_both_phases() -> None:
 def test_cap_margin_with_change_splits_by_phase() -> None:
     profile = _profile(hutrand={"von": ["eingerollt"], "nach": ["wellig"]})
     ctx = _context(profile)
-    _row, children, _counts = catalog_rows.build_species(ctx)
+    _row, children, _counts = importer.build_species(ctx)
     found = {(f.part, f.feature, f.phase) for f in children if isinstance(f, SpeciesPartFeature)}
     assert (BodyPart.CAP, CapMargin.INROLLED, Phase.YOUNG) in found
     assert (BodyPart.CAP, CapMargin.WAVY, Phase.OLD) in found
 
 
 async def test_import_writes_every_species(session: AsyncSession) -> None:
-    report = catalog_rows.Report()
-    await import_catalog.import_all(session, report)
+    report = importer.Report()
+    await importer.import_all(session, report)
     total = (await session.execute(select(func.count()).select_from(Species))).scalar_one()
     assert total == species_file_count()
     assert report.counts["species"] == species_file_count()
 
 
 async def test_boletus_edulis_details(session: AsyncSession) -> None:
-    report = catalog_rows.Report()
-    await import_catalog.import_all(session, report)
+    report = importer.Report()
+    await importer.import_all(session, report)
     row = (
         await session.execute(select(Species).where(Species.slug == "boletus-edulis"))
     ).scalar_one()
@@ -343,10 +344,10 @@ async def test_boletus_edulis_details(session: AsyncSession) -> None:
 
 
 async def test_second_run_does_not_duplicate(session: AsyncSession) -> None:
-    await import_catalog.import_all(session, catalog_rows.Report())
+    await importer.import_all(session, importer.Report())
     first = (await session.execute(select(func.count()).select_from(Species))).scalar_one()
 
-    await import_catalog.import_all(session, catalog_rows.Report())
+    await importer.import_all(session, importer.Report())
     second = (await session.execute(select(func.count()).select_from(Species))).scalar_one()
 
     assert first == second == species_file_count()
@@ -372,7 +373,7 @@ def test_parse_args_defaults_to_none() -> None:
 
 
 def test_print_report_lists_counts_and_skips(capsys: pytest.CaptureFixture[str]) -> None:
-    report = catalog_rows.Report()
+    report = importer.Report()
     report.counts["species"] = 3
     report.counts["species_name"] = 5
     report.skipped["measurement_ohne_koerperteil"] = 2
