@@ -1,7 +1,7 @@
 import { WorkerDouble } from '../testing/map-doubles';
 import { readManifest } from '../core/tiles/manifest';
 import { ValueProtocol, speciesSource, valueTemplate, parseValueUrl } from './value-protocol';
-import { FORECAST_RAMP } from '../ui/ramp/ramp-colors';
+import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 import type { ColorizeJob, CombinationJob, PrefetchJob } from './value-messages';
 
 const MANIFEST = readManifest(

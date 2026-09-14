@@ -60,8 +60,8 @@
             (forward)="step(1)"
           >
             <app-timeline
-              [wochen]="bar()"
-              [active]="woche()"
+              [weeks]="bar()"
+              [active]="activeWeek()"
               [dimmed]="fixedLayer()"
               [label]="'zeitleiste.beschriftung' | t"
               (chosen)="selectWeek($event)"
@@ -94,8 +94,8 @@
               @case ('vorhersage') {
                 <app-ramp
                   [label]="rampTitle()"
-                  [von]="rampFrom()"
-                  [bis]="rampTo()"
+                  [from]="rampFrom()"
+                  [to]="rampTo()"
                   [note]="'karte.aufloesung' | t"
                 />
               }
@@ -103,8 +103,8 @@
                 @if (layer(); as selected) {
                   <app-ramp
                     [label]="rampTitle()"
-                    [von]="rampFrom()"
-                    [bis]="rampTo()"
+                    [from]="rampFrom()"
+                    [to]="rampTo()"
                     [note]="'karte.aufloesung' | t"
                   />
                   <app-layer-list
@@ -121,8 +121,8 @@
                 @if (state.rule() === 'abgestuft') {
                   <app-ramp
                     [label]="rampTitle()"
-                    [von]="rampFrom()"
-                    [bis]="rampTo()"
+                    [from]="rampFrom()"
+                    [to]="rampTo()"
                     [note]="'karte.aufloesung' | t"
                   />
                 }

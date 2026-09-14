@@ -56,7 +56,7 @@ import {
   valueTemplate,
   type CombinationSourcePart,
 } from '../../map/value-protocol';
-import { FORECAST_RAMP } from '../../ui/ramp/ramp-colors';
+import { FORECAST_RAMP } from '../../ui/ramp/ramp-colours';
 import type { CombinationRule } from '../../map/value-colors';
 import { ThemeService } from '../../core/theme/theme.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -317,11 +317,17 @@ export class MapComponent implements OnDestroy {
     if (!manifest) return [];
     const anteile = barShares(manifest);
     return manifest.wochen.map((woche, i) => ({
-      jahr: woche.jahr,
-      woche: woche.woche,
+      year: woche.jahr,
+      week: woche.woche,
       share: anteile[i],
       forecast: woche.forecast,
     }));
+  });
+
+  /** Die gewählte Woche in der Sprache der Zeitleiste. */
+  protected readonly activeWeek = computed<{ year: number; week: number } | null>(() => {
+    const woche = this.woche();
+    return woche ? { year: woche.jahr, week: woche.woche } : null;
   });
 
   protected readonly speciesName = computed(() => this.i18n.translate(`art.${this.state.art()}`));
@@ -539,9 +545,9 @@ export class MapComponent implements OnDestroy {
     this.state.opacity.set(value);
   }
 
-  protected selectWeek(woche: { jahr: number; woche: number }): void {
+  protected selectWeek(week: { year: number; week: number }): void {
     this.stopPlaying();
-    this.state.woche.set(weekKey(woche));
+    this.state.woche.set(weekKey({ jahr: week.year, woche: week.week }));
   }
 
   /** Eine Woche vor oder zurück, ohne über die Enden hinaus. */
@@ -551,7 +557,8 @@ export class MapComponent implements OnDestroy {
     if (!manifest || !woche) return;
     const jetzt = manifest.wochen.indexOf(woche);
     const target = Math.min(manifest.wochen.length - 1, Math.max(0, jetzt + direction));
-    if (target !== jetzt) this.selectWeek(manifest.wochen[target]);
+    const next = manifest.wochen[target];
+    if (target !== jetzt) this.selectWeek({ year: next.jahr, week: next.woche });
   }
 
   protected togglePlay(): void {

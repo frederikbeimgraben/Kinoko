@@ -23,8 +23,8 @@ export class WeekButtonComponent {
   private readonly i18n = inject(I18nService);
   private readonly button = viewChild.required<ElementRef<HTMLButtonElement>>('button');
 
-  readonly jahr = input.required<number>();
-  readonly woche = input.required<number>();
+  readonly year = input.required<number>();
+  readonly week = input.required<number>();
   /** Balkenhöhe zwischen 0 und 1. */
   readonly share = input(0);
   readonly forecast = input(false);
@@ -46,7 +46,7 @@ export class WeekButtonComponent {
   }
 
   protected label(): string {
-    const text = this.i18n.translate('zeitleiste.woche', { woche: this.woche(), jahr: this.jahr() });
+    const text = this.i18n.translate('zeitleiste.woche', { woche: this.week(), jahr: this.year() });
     return this.forecast() ? `${text} · ${this.i18n.translate('zeitleiste.prognose')}` : text;
   }
 }

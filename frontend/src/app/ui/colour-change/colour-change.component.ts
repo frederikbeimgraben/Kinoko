@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import type { Farbe } from '../../core/api/models';
+import type { ColourValue } from '../colour-field/colour-field.component';
 import { ColourFieldComponent } from '../colour-field/colour-field.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
@@ -13,8 +13,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 })
 export class ColourChangeComponent {
   readonly triggers = input.required<readonly string[]>();
-  readonly from = input.required<readonly (readonly Farbe[])[]>();
-  readonly to = input.required<readonly (readonly Farbe[])[]>();
+  readonly from = input.required<readonly (readonly ColourValue[])[]>();
+  readonly to = input.required<readonly (readonly ColourValue[])[]>();
   readonly fromLabels = input.required<readonly string[]>();
   readonly toLabels = input.required<readonly string[]>();
   readonly speed = input.required<readonly string[]>();

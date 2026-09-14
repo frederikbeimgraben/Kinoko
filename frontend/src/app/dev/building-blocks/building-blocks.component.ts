@@ -70,7 +70,7 @@ import {
   WeekButtonComponent,
   YearBandComponent,
   YearBandInputComponent,
-  OBJECT_COLORS,
+  OBJECT_COLOURS,
   type Detent,
   type ObjectMenuTarget,
 } from '../../ui';
@@ -167,11 +167,11 @@ export class BuildingBlocksComponent {
   private readonly lightPane = viewChild.required<ElementRef<HTMLElement>>('light');
   private readonly darkPane = viewChild.required<ElementRef<HTMLElement>>('dark');
 
-  protected readonly wochen = SAMPLE_WEEKS;
+  protected readonly weeks = SAMPLE_WEEKS;
   protected readonly alleJahre = SAMPLE_ALL_YEARS;
   protected readonly laufendesJahr = SAMPLE_CURRENT_YEAR;
   protected readonly histogramm = SAMPLE_HISTOGRAM;
-  protected readonly objectColors = OBJECT_COLORS;
+  protected readonly objectColors = OBJECT_COLOURS;
   protected readonly sampleImage = SAMPLE_IMAGE;
   protected readonly treeGenera = TREE_GENERA;
   protected readonly capColours = CAP_COLOURS;
@@ -183,7 +183,7 @@ export class BuildingBlocksComponent {
   protected readonly sporeLengthSpans = SPORE_LENGTH_SPANS;
   protected readonly reviewItems = LATIN_NAMES;
 
-  protected readonly activeWeek = signal({ jahr: 2025, woche: 40 });
+  protected readonly activeWeek = signal({ year: 2025, week: 40 });
   protected readonly detent = signal<Detent>(1);
   protected readonly viewMode = signal('ebene');
   protected readonly chip = signal<readonly string[]>(['alle']);
@@ -191,8 +191,8 @@ export class BuildingBlocksComponent {
   protected readonly factorActive = signal(true);
   protected readonly from = signal(80);
   protected readonly to = signal(240);
-  protected readonly farbe = signal<string>(OBJECT_COLORS[0]);
-  protected readonly colourTone = signal<string | null>(OBJECT_COLORS[1]);
+  protected readonly farbe = signal<string>(OBJECT_COLOURS[0]);
+  protected readonly colourTone = signal<string | null>(OBJECT_COLOURS[1]);
   protected readonly fieldValue = signal('');
   protected readonly searchValue = signal('Steinpilz');
   protected readonly yearFrom = signal(4);
@@ -241,12 +241,12 @@ export class BuildingBlocksComponent {
     this.text('filter.group.treePartner'),
   ];
 
-  protected readonly colourSwatches = OBJECT_COLORS.map((value, i) => ({
+  protected readonly colourSwatches = OBJECT_COLOURS.map((value, i) => ({
     value,
     label: `${this.text('common.colour')} ${i + 1}`,
   }));
 
-  protected readonly colourPickerSwatches = OBJECT_COLORS.map((value, i) => ({
+  protected readonly colourPickerSwatches = OBJECT_COLOURS.map((value, i) => ({
     value,
     label: `${this.text('common.colour')} ${i + 1}`,
   }));

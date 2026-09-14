@@ -6,17 +6,17 @@
   [attr.aria-label]="label()"
   (keydown)="onKey($event)"
 >
-  @for (woche of shown(); track woche.schluessel; let i = $index) {
+  @for (week of shown(); track week.key; let i = $index) {
     <app-week-button
-      [jahr]="woche.jahr"
-      [woche]="woche.woche"
-      [share]="woche.share"
-      [forecast]="woche.forecast"
-      [yearMark]="woche.yearMark"
-      [active]="isActive(woche)"
+      [year]="week.year"
+      [week]="week.week"
+      [share]="week.share"
+      [forecast]="week.forecast"
+      [yearMark]="week.yearMark"
+      [active]="isActive(week)"
       [locked]="dimmed()"
       [inTabOrder]="i === activeIndex()"
-      (chosen)="chosen.emit(woche)"
+      (chosen)="chosen.emit(week)"
     />
   }
 </div>

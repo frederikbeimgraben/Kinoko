@@ -33,16 +33,16 @@
         >
           <app-sheet-head head [title]="text('art.boletus_edulis')" [week]="text('beispiel.woche')">
             <app-timeline
-              [wochen]="wochen"
+              [weeks]="weeks"
               [active]="activeWeek()"
               [label]="text('zeitleiste.beschriftung')"
-              (chosen)="activeWeek.set({ jahr: $event.jahr, woche: $event.woche })"
+              (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
             />
           </app-sheet-head>
           <app-ramp
             [label]="text('beispiel.rampe')"
-            [von]="text('beispiel.rampeVon')"
-            [bis]="text('beispiel.rampeBis')"
+            [from]="text('beispiel.rampeVon')"
+            [to]="text('beispiel.rampeBis')"
           />
         </app-sheet>
       </div>
@@ -56,7 +56,7 @@
         [hint]="text('zeitleiste.prognose')"
       >
         <app-timeline
-          [wochen]="wochen"
+          [weeks]="weeks"
           [active]="activeWeek()"
           [label]="text('zeitleiste.beschriftung')"
           [dimmed]="true"
@@ -327,7 +327,7 @@
 
     <app-card [headingLevel]="2" [heading]="'blocks.colourSwatches' | t">
       <app-colour-swatches
-        [colors]="colourSwatches"
+        [colours]="colourSwatches"
         [value]="farbe()"
         [label]="text('common.colour')"
         (valueChange)="farbe.set($event)"
@@ -476,38 +476,38 @@
 
     <app-card [headingLevel]="2" [heading]="'blocks.histogram' | t">
       <app-histogram
-        [anteile]="histogramm"
+        [shares]="histogramm"
         [label]="text('beispiel.histogramm')"
-        [von]="from() / 240"
-        [bis]="to() / 240"
+        [from]="from() / 240"
+        [to]="to() / 240"
       />
     </app-card>
 
     <app-card [headingLevel]="2" [heading]="'blocks.ramp' | t">
       <app-ramp
         [label]="text('beispiel.rampe')"
-        [von]="text('beispiel.rampeVon')"
-        [bis]="text('beispiel.rampeBis')"
+        [from]="text('beispiel.rampeVon')"
+        [to]="text('beispiel.rampeBis')"
         [note]="text('map.legend.findProbability')"
       />
     </app-card>
 
     <app-card [headingLevel]="2" [heading]="'blocks.timeline' | t">
       <app-timeline
-        [wochen]="wochen"
+        [weeks]="weeks"
         [active]="activeWeek()"
         [label]="text('zeitleiste.beschriftung')"
-        (chosen)="activeWeek.set({ jahr: $event.jahr, woche: $event.woche })"
+        (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
       />
     </app-card>
 
     <app-card [headingLevel]="2" [heading]="'blocks.weekButton' | t">
       <div class="gallery__row">
-        <app-week-button [jahr]="2025" [woche]="38" [share]="0.7" [yearMark]="true" />
-        <app-week-button [jahr]="2025" [woche]="39" [share]="0.88" />
-        <app-week-button [jahr]="2025" [woche]="40" [share]="1" [active]="true" />
-        <app-week-button [jahr]="2026" [woche]="41" [share]="0.4" [forecast]="true" />
-        <app-week-button [jahr]="2026" [woche]="42" [share]="0.2" [forecast]="true" [locked]="true" />
+        <app-week-button [year]="2025" [week]="38" [share]="0.7" [yearMark]="true" />
+        <app-week-button [year]="2025" [week]="39" [share]="0.88" />
+        <app-week-button [year]="2025" [week]="40" [share]="1" [active]="true" />
+        <app-week-button [year]="2026" [week]="41" [share]="0.4" [forecast]="true" />
+        <app-week-button [year]="2026" [week]="42" [share]="0.2" [forecast]="true" [locked]="true" />
       </div>
     </app-card>
 

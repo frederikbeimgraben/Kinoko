@@ -1,7 +1,7 @@
 <div class="spark__stage" [class.spark__stage--large]="large()">
   <svg
     class="spark"
-    [attr.viewBox]="'0 0 ' + drawing().breite + ' ' + drawing().hoehe"
+    [attr.viewBox]="'0 0 ' + drawing().width + ' ' + drawing().height"
     preserveAspectRatio="none"
     role="img"
     [attr.aria-label]="label()"
@@ -14,18 +14,18 @@
           maskUnits="userSpaceOnUse"
           x="0"
           y="0"
-          [attr.width]="drawing().breite"
-          [attr.height]="drawing().hoehe"
+          [attr.width]="drawing().width"
+          [attr.height]="drawing().height"
           color-interpolation="sRGB"
         >
-          <rect x="0" y="0" [attr.width]="drawing().breite" [attr.height]="drawing().hoehe" fill="#ffffff" />
+          <rect x="0" y="0" [attr.width]="drawing().width" [attr.height]="drawing().height" fill="#ffffff" />
           @for (strip of drawing().thin; track strip.x) {
             <rect
               class="spark__thin"
               [attr.x]="strip.x"
               y="0"
-              [attr.width]="strip.breite"
-              [attr.height]="drawing().hoehe"
+              [attr.width]="strip.width"
+              [attr.height]="drawing().height"
               fill="#8c8c8c"
             />
           }
@@ -35,17 +35,17 @@
     <line
       class="spark__base"
       x1="0"
-      [attr.y1]="drawing().hoehe - 0.5"
-      [attr.x2]="drawing().breite"
-      [attr.y2]="drawing().hoehe - 0.5"
+      [attr.y1]="drawing().height - 0.5"
+      [attr.x2]="drawing().width"
+      [attr.y2]="drawing().height - 0.5"
     />
     @for (badge of drawing().badges; track badge) {
       <line
         class="spark__badge"
         [attr.x1]="badge"
-        [attr.y1]="drawing().hoehe - 5"
+        [attr.y1]="drawing().height - 5"
         [attr.x2]="badge"
-        [attr.y2]="drawing().hoehe"
+        [attr.y2]="drawing().height"
       />
     }
     <g [attr.mask]="drawing().thin.length ? 'url(#' + maskId + ')' : null">

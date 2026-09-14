@@ -12,10 +12,10 @@
       <h3 class="factor__title">{{ distributionText() }}</h3>
       @if (histogramm(); as distribution) {
         <app-histogram
-          [anteile]="distribution.anteile"
+          [shares]="distribution.anteile"
           [label]="distributionText()"
-          [von]="fromShare()"
-          [bis]="toShare()"
+          [from]="fromShare()"
+          [to]="toShare()"
         />
       }
       <app-range-slider

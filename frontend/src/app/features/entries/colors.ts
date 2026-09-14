@@ -1,6 +1,6 @@
 import { COLORS, type Color } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
-import { type ColourSwatch, OBJECT_COLORS } from '../../ui/colour-swatches/colour-swatches.component';
+import { type ColourSwatch, OBJECT_COLOURS } from '../../ui/colour-swatches/colour-swatches.component';
 
 /**
  * Die sechs Farben des Backends und ihre Werte aus dem Artboard `Zone`.
@@ -11,12 +11,12 @@ import { type ColourSwatch, OBJECT_COLORS } from '../../ui/colour-swatches/colou
  */
 export function colorHex(farbe: Color): `#${string}` {
   const index = COLORS.indexOf(farbe);
-  return OBJECT_COLORS[index === -1 ? 0 : index];
+  return OBJECT_COLOURS[index === -1 ? 0 : index];
 }
 
 /** Die Umkehrung: welche Farbe des Vertrags zu diesem Wert gehört. */
 export function colorFromHex(hex: string): Color {
-  const index = OBJECT_COLORS.findIndex((farbe) => farbe === hex);
+  const index = OBJECT_COLOURS.findIndex((farbe) => farbe === hex);
   return index === -1 ? 'gruen' : COLORS[index];
 }
 

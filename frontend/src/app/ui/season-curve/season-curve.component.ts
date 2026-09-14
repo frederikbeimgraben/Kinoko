@@ -11,11 +11,11 @@ export function smooth(series: readonly number[], windowSize: number): readonly 
   if (windowSize <= 1) return series;
   const half = Math.floor(windowSize / 2);
   return series.map((_, i) => {
-    const von = Math.max(0, i - half);
-    const bis = Math.min(series.length - 1, i + half);
+    const first = Math.max(0, i - half);
+    const last = Math.min(series.length - 1, i + half);
     let sum = 0;
-    for (let k = von; k <= bis; k++) sum += series[k];
-    return sum / (bis - von + 1);
+    for (let k = first; k <= last; k++) sum += series[k];
+    return sum / (last - first + 1);
   });
 }
 
@@ -24,7 +24,7 @@ let nextNumber = 0;
 /** Ein Streifen über einer Woche, die auf wenigen Begehungen ruht. */
 interface Strip {
   x: number;
-  breite: number;
+  width: number;
 }
 
 /** Eine Monatsmarke unter der Kurve: der Name und die Woche, in der er beginnt. */
@@ -40,8 +40,8 @@ interface PlacedMark {
 }
 
 interface Drawing {
-  breite: number;
-  hoehe: number;
+  width: number;
+  height: number;
   alleJahre: string;
   currentArea: string;
   currentLine: string;
@@ -82,8 +82,8 @@ export class SeasonCurveComponent {
 
   private compute(): Drawing {
     const large = this.large();
-    const breite = large ? 330 : 88;
-    const hoehe = large ? 72 : 36;
+    const width = large ? 330 : 88;
+    const height = large ? 72 : 36;
     const windowSize = this.smoothing();
     const alle = smooth(this.alleJahre(), windowSize);
     const current = smooth(this.laufendesJahr(), windowSize);
@@ -91,23 +91,23 @@ export class SeasonCurveComponent {
     // Die kleinste Zahl als Boden schützt vor einer Teilung durch null.
     const top = Math.max(...this.alleJahre(), ...this.laufendesJahr(), Number.EPSILON);
     const point = (i: number, value: number): [number, number] => [
-      (i / 51) * breite,
-      hoehe - 3 - (value / top) * (hoehe - 8),
+      (i / 51) * width,
+      height - 3 - (value / top) * (height - 8),
     ];
     const alleP = alle.map((value, i) => point(i, value));
     const currentP = current.map((value, i) => point(i, value));
-    const last = currentP.at(-1) ?? [0, hoehe];
+    const last = currentP.at(-1) ?? [0, height];
     return {
-      breite,
-      hoehe,
-      alleJahre: `M0,${hoehe} ${alleP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${breite},${hoehe} Z`,
-      currentArea: `M0,${hoehe} ${currentP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${last[0].toFixed(1)},${hoehe} Z`,
+      width,
+      height,
+      alleJahre: `M0,${height} ${alleP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${width},${height} Z`,
+      currentArea: `M0,${height} ${currentP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${last[0].toFixed(1)},${height} Z`,
       currentLine: `M${currentP.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' L')}`,
       hasCurrent: currentP.length > 0,
-      badges: MONTH_MARKS.map((k) => (k / 51) * breite),
-      endLeft: (last[0] / breite) * 100,
-      endTop: (last[1] / hoehe) * 100,
-      thin: this.thinWeeks(breite),
+      badges: MONTH_MARKS.map((k) => (k / 51) * width),
+      endLeft: (last[0] / width) * 100,
+      endTop: (last[1] / height) * 100,
+      thin: this.thinWeeks(width),
     };
   }
 
@@ -120,19 +120,19 @@ export class SeasonCurveComponent {
   );
 
   /** Wochen, in denen eine Reihe auf wenigen Begehungen ruht, je eigener Skala. */
-  private thinWeeks(breite: number): Strip[] {
+  private thinWeeks(width: number): Strip[] {
     const rows = [this.visitsAllYears(), this.visitsCurrentYearSeries()].filter(
       (series) => series.length > 0,
     );
     if (rows.length === 0) return [];
     const thresholds = rows.map((series) => Math.max(...series) * THIN_BELOW);
-    const step = breite / 51;
+    const step = width / 51;
     const strip: Strip[] = [];
     for (let i = 0; i < Math.max(...rows.map((series) => series.length)); i++) {
       const thin = rows.some((series, r) => i < series.length && series[i] < thresholds[r]);
       if (!thin) continue;
       const x = Math.max(0, (i - 0.5) * step);
-      strip.push({ x, breite: Math.min(breite, (i + 0.5) * step) - x });
+      strip.push({ x, width: Math.min(width, (i + 0.5) * step) - x });
     }
     return strip;
   }

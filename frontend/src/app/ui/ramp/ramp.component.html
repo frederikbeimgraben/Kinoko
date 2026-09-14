@@ -1,12 +1,12 @@
 <p class="ramp__label">{{ label() }}</p>
-<div class="ramp" role="img" [attr.aria-label]="label() + ': ' + von() + ' – ' + bis()">
-  @for (farbe of colors(); track farbe) {
-    <i class="ramp__step" [style.background]="farbe"></i>
+<div class="ramp" role="img" [attr.aria-label]="label() + ': ' + from() + ' – ' + to()">
+  @for (colour of colours(); track colour) {
+    <i class="ramp__step" [style.background]="colour"></i>
   }
 </div>
 <div class="ramp__ends">
-  <span>{{ von() }}</span>
-  <span>{{ bis() }}</span>
+  <span>{{ from() }}</span>
+  <span>{{ to() }}</span>
 </div>
 @if (note(); as text) {
   <p class="note note--sub">{{ text }}</p>

@@ -284,9 +284,6 @@ const de = {
 
   'kopfleiste.zurueck': 'Zurück',
 
-  'schieber.untereGrenze': 'Untere Grenze',
-  'schieber.obereGrenze': 'Obere Grenze',
-
   'farben.beschriftung': 'Farbe',
 
   'fadenkreuz.beschriftung': 'Fundort',
@@ -1409,9 +1406,6 @@ const en: Record<TranslationKey, string> = {
   'zeitleiste.vor': 'Next week',
 
   'kopfleiste.zurueck': 'Back',
-
-  'schieber.untereGrenze': 'Lower limit',
-  'schieber.obereGrenze': 'Upper limit',
 
   'farben.beschriftung': 'Colour',
 

@@ -6,11 +6,15 @@ export { CheckRowComponent } from './check-row/check-row.component';
 export { ChipGroupComponent, type Chip } from './chip-group/chip-group.component';
 export { ChoiceRowComponent } from './choice-row/choice-row.component';
 export { ColourChangeComponent } from './colour-change/colour-change.component';
-export { ColourFieldComponent, type ColourMode } from './colour-field/colour-field.component';
+export {
+  ColourFieldComponent,
+  type ColourMode,
+  type ColourValue,
+} from './colour-field/colour-field.component';
 export { ColourPickerComponent, type ColourPickerSwatch } from './colour-picker/colour-picker.component';
 export {
   ColourSwatchesComponent,
-  OBJECT_COLORS,
+  OBJECT_COLOURS,
   type ColourSwatch,
 } from './colour-swatches/colour-swatches.component';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
@@ -51,7 +55,7 @@ export { PhotoPickerComponent } from './photo-picker/photo-picker.component';
 export { PrivateImageComponent } from './private-image/private-image.component';
 export { ProgressComponent } from './progress/progress.component';
 export { RampComponent } from './ramp/ramp.component';
-export { FORECAST_RAMP } from './ramp/ramp-colors';
+export { FORECAST_RAMP } from './ramp/ramp-colours';
 export { RangeSliderComponent, type Handles } from './range-slider/range-slider.component';
 export { ReviewQueueComponent } from './review-queue/review-queue.component';
 export { SearchFieldComponent } from './search-field/search-field.component';

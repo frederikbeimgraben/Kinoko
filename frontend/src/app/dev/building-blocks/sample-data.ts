@@ -4,19 +4,19 @@ import type { Span, TimelineWeek } from '../../ui';
 
 /** Die acht Wochen des Artboards. Die Jahresmarke fällt auf KW 41. */
 export const SAMPLE_WEEKS: readonly TimelineWeek[] = [
-  { jahr: 2025, woche: 38, share: 0.7, forecast: false },
-  { jahr: 2025, woche: 39, share: 0.88, forecast: false },
-  { jahr: 2025, woche: 40, share: 1, forecast: false },
-  { jahr: 2026, woche: 41, share: 0.76, forecast: true },
-  { jahr: 2026, woche: 42, share: 0.4, forecast: true },
-  { jahr: 2026, woche: 43, share: 0.2, forecast: true },
-  { jahr: 2026, woche: 44, share: 0.08, forecast: true },
-  { jahr: 2026, woche: 45, share: 0.04, forecast: true },
+  { year: 2025, week: 38, share: 0.7, forecast: false },
+  { year: 2025, week: 39, share: 0.88, forecast: false },
+  { year: 2025, week: 40, share: 1, forecast: false },
+  { year: 2026, week: 41, share: 0.76, forecast: true },
+  { year: 2026, week: 42, share: 0.4, forecast: true },
+  { year: 2026, week: 43, share: 0.2, forecast: true },
+  { year: 2026, week: 44, share: 0.08, forecast: true },
+  { year: 2026, week: 45, share: 0.04, forecast: true },
 ];
 
 /** Die Saisonkurve als Glocke um die Spitzenwoche. */
-function seasonValue(woche: number, peak: number, offset: number, factor: number): number {
-  const position = woche - peak - offset;
+function seasonValue(week: number, peak: number, offset: number, factor: number): number {
+  const position = week - peak - offset;
   return (
     factor *
     (Math.exp(-(position * position) / 26) + 0.25 * Math.exp(-((position + 6) * (position + 6)) / 40))

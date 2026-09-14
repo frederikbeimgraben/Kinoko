@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
-import { OBJECT_COLORS } from '../../ui/colour-swatches/colour-swatches.component';
+import { OBJECT_COLOURS } from '../../ui/colour-swatches/colour-swatches.component';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
 
 const LABELS = {
@@ -71,6 +71,6 @@ describe('ObjektFormularComponent', () => {
     await userEvent.click(screen.getByRole('radio', { name: 'Gold' }));
 
     expect(reported.at(-1)?.farbe).toBe('gold');
-    expect(OBJECT_COLORS).toContain('#876010');
+    expect(OBJECT_COLOURS).toContain('#876010');
   });
 });

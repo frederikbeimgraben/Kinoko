@@ -1,6 +1,6 @@
 import { tilePath } from '../core/tiles/tile-paths';
 import { tileKey } from '../core/tiles/manifest';
-import { FORECAST_RAMP } from '../ui/ramp/ramp-colors';
+import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 import type { CombinationBound, CombinationRule, ValueScale } from './value-colors';
 import type { ValueReply, ValueJob } from './value-messages';
 

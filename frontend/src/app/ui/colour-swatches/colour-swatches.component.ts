@@ -7,7 +7,7 @@ export interface ColourSwatch {
 }
 
 /** Die sechs Objektfarben. MapLibre nimmt nur echte Hex-Werte an. */
-export const OBJECT_COLORS: readonly `#${string}`[] = [
+export const OBJECT_COLOURS: readonly `#${string}`[] = [
   '#004225',
   '#8c6820',
   '#185468',
@@ -24,7 +24,7 @@ export const OBJECT_COLORS: readonly `#${string}`[] = [
   styleUrl: './colour-swatches.component.scss',
 })
 export class ColourSwatchesComponent {
-  readonly colors = input.required<readonly ColourSwatch[]>();
+  readonly colours = input.required<readonly ColourSwatch[]>();
   readonly value = input.required<string>();
   readonly label = input.required<string>();
 

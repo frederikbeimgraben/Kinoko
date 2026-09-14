@@ -1,5 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import type { Farbe } from '../../core/api/models';
+
+/** Eine Farbe mit Namen und Wert, wie die Bausteine sie brauchen. */
+export interface ColourValue {
+  readonly name: string;
+  readonly hex: string;
+}
 
 /** Wo die harten Kanten liegen, wenn ein Körper mehrere Farben trägt. */
 const ANGLE = 104;
@@ -15,7 +20,7 @@ export type ColourMode = 'single' | 'gradient' | 'multiple';
   styleUrl: './colour-field.component.scss',
 })
 export class ColourFieldComponent {
-  readonly colours = input.required<readonly Farbe[]>();
+  readonly colours = input.required<readonly ColourValue[]>();
   readonly mode = input<ColourMode>('multiple');
   /** Die Namen zusammen, für Hilfsmittel. Sichtbar stehen sie links am Merkmal. */
   readonly label = input.required<string>();
@@ -24,7 +29,7 @@ export class ColourFieldComponent {
 }
 
 /** Malt die Fläche nach ihrem Modus. Ohne Farbe bleibt sie durchsichtig. */
-export function paint(colours: readonly Farbe[], mode: ColourMode = 'multiple'): string {
+export function paint(colours: readonly ColourValue[], mode: ColourMode = 'multiple'): string {
   if (colours.length === 0) return 'transparent';
   if (colours.length === 1 || mode === 'single') return colours[0].hex;
   if (mode === 'gradient')

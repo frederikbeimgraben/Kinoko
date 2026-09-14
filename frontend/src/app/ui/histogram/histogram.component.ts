@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 interface Bar {
   x: number;
   y: number;
-  breite: number;
-  hoehe: number;
+  width: number;
+  height: number;
   inside: boolean;
 }
 
@@ -16,29 +16,29 @@ interface Bar {
   styleUrl: './histogram.component.scss',
 })
 export class HistogramComponent {
-  readonly anteile = input.required<readonly number[]>();
+  readonly shares = input.required<readonly number[]>();
   readonly label = input.required<string>();
   /** Untere und obere Grenze der Bedingung, Werte zwischen 0 und 1. */
-  readonly von = input(0);
-  readonly bis = input(1);
+  readonly from = input(0);
+  readonly to = input(1);
 
-  protected readonly breite = 326;
-  protected readonly hoehe = 64;
+  protected readonly width = 326;
+  protected readonly height = 64;
 
   protected readonly bars = computed<Bar[]>(() => {
-    const anteile = this.anteile();
-    const anzahl = anteile.length || 1;
-    const top = Math.max(...anteile, Number.EPSILON);
-    const step = this.breite / anzahl;
-    return anteile.map((value, i) => {
-      const hoehe = (value / top) * (this.hoehe - 4);
-      const position = i / anzahl;
+    const shares = this.shares();
+    const count = shares.length || 1;
+    const top = Math.max(...shares, Number.EPSILON);
+    const step = this.width / count;
+    return shares.map((value, i) => {
+      const height = (value / top) * (this.height - 4);
+      const position = i / count;
       return {
-        x: position * this.breite,
-        y: this.hoehe - hoehe,
-        breite: Math.max(step - 1.5, 0.5),
-        hoehe,
-        inside: position >= this.von() && position <= this.bis(),
+        x: position * this.width,
+        y: this.height - height,
+        width: Math.max(step - 1.5, 0.5),
+        height,
+        inside: position >= this.from() && position <= this.to(),
       };
     });
   });

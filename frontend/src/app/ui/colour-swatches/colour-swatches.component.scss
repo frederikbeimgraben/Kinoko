@@ -1,9 +1,9 @@
-.colors {
+.colours {
   display: flex;
   gap: var(--space-3);
 }
 
-.colors__field {
+.colours__field {
   inline-size: var(--pilz-swatch-size);
   block-size: var(--pilz-swatch-size);
   cursor: pointer;
@@ -11,7 +11,7 @@
   border-radius: var(--pilz-swatch-radius);
 }
 
-.colors__field--selected {
+.colours__field--selected {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }

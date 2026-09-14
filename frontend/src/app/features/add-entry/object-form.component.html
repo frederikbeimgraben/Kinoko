@@ -9,7 +9,7 @@
 <div>
   <p class="object__label">{{ 'farben.beschriftung' | t }}</p>
   <app-colour-swatches
-    [colors]="colors()"
+    [colours]="colors()"
     [value]="colorHexValue()"
     [label]="'farben.beschriftung' | t"
     (valueChange)="setColor($event)"
