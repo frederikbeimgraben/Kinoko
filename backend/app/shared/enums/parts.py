@@ -6,11 +6,13 @@ from enum import StrEnum
 class BodyPart(StrEnum):
     """Körperteil eines Fruchtkörpers."""
 
+    FRUITBODY = "fruitbody"
     CAP = "cap"
     STEM = "stem"
     GILLS = "gills"
     FLESH = "flesh"
     SPORE_PRINT = "spore_print"
+    SPORE = "spore"
     TUBES = "tubes"
     PORES = "pores"
 

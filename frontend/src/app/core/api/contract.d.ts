@@ -860,7 +860,7 @@ export interface components {
         /** @enum {string} */
         Protection: "none" | "personal_use" | "strict";
         /** @enum {string} */
-        BodyPart: "cap" | "stem" | "gills" | "flesh" | "spore_print" | "tubes" | "pores";
+        BodyPart: "fruitbody" | "cap" | "stem" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
         /** @enum {string} */
         Dimension: "width" | "height" | "thickness" | "length";
         /** @enum {string} */
@@ -1301,8 +1301,7 @@ export interface components {
         Photo: {
             /** Format: uuid */
             id: string;
-            /** Format: uuid */
-            ownerId: string;
+            ownerId: string | null;
             speciesId?: string | null;
             findId?: string | null;
             width: number;

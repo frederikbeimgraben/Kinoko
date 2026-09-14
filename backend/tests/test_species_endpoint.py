@@ -1,8 +1,12 @@
 """Der Katalog aus dem Import über die Schnittstelle."""
 
+import tomllib
+
 import httpx
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models import SpeciesMeasurement
 from tools import import_catalog
 from tools.catalog_rows import Report
 
@@ -65,3 +69,26 @@ async def test_the_bundle_carries_every_species(
     body = answer.json()
     assert len(body["items"]) == profile_count()
     assert len(body["standardColours"]) == 12
+
+
+def toml_measurements() -> int:
+    """Zählt die Maße in allen Profilen."""
+    total = 0
+    for file in import_catalog.SPECIES_DIR.glob("*.toml"):
+        with file.open("rb") as handle:
+            total += len(tomllib.load(handle).get("masse", {}))
+    return total
+
+
+async def test_every_measurement_of_the_profiles_is_in_the_table(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    report = Report()
+    await import_catalog.import_all(session, report)
+    assert "measurement_ohne_koerperteil" not in report.skipped
+    rows = await session.execute(select(func.count()).select_from(SpeciesMeasurement))
+    assert rows.scalar_one() == toml_measurements()
+    answer = await api.get("/species/boletus-edulis")
+    groups = {group["part"] for group in answer.json()["measurements"]}
+    assert "spore" in groups

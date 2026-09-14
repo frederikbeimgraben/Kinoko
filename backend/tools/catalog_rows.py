@@ -52,6 +52,10 @@ MEASUREMENTS: dict[str, tuple[BodyPart, Dimension]] = {
     "hutBreiteCm": (BodyPart.CAP, Dimension.WIDTH),
     "stielLaengeCm": (BodyPart.STEM, Dimension.LENGTH),
     "stielDickeCm": (BodyPart.STEM, Dimension.THICKNESS),
+    "sporenLaengeUm": (BodyPart.SPORE, Dimension.LENGTH),
+    "sporenBreiteUm": (BodyPart.SPORE, Dimension.WIDTH),
+    "fruchtkoerperBreiteCm": (BodyPart.FRUITBODY, Dimension.WIDTH),
+    "fruchtkoerperHoeheCm": (BodyPart.FRUITBODY, Dimension.HEIGHT),
 }
 
 COLOUR_PARTS: dict[str, BodyPart] = {

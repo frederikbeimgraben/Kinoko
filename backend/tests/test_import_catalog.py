@@ -181,8 +181,30 @@ def test_reagent_without_colour_word_is_skipped() -> None:
     assert ctx.report.skipped["reagenz_ohne_zielfarbe"] == 1
 
 
-def test_spore_measurement_has_no_bodypart() -> None:
-    profile = _profile(masse={"sporenLaengeUm": {"von": 4.0, "bis": 6.0, "einheit": "um"}})
+def test_spore_and_fruitbody_measurements_land_in_the_table() -> None:
+    profile = _profile(
+        masse={
+            "sporenLaengeUm": {"von": 4.0, "bis": 6.0, "einheit": "um"},
+            "sporenBreiteUm": {"von": 2.0, "bis": 3.0, "einheit": "um"},
+            "fruchtkoerperBreiteCm": {"von": 5.0, "bis": 9.0, "einheit": "cm"},
+            "fruchtkoerperHoeheCm": {"von": 6.0, "bis": 12.0, "einheit": "cm"},
+        },
+    )
+    ctx = _context(profile)
+    _row, children, counts = catalog_rows.build_species(ctx)
+    assert counts["species_measurement"] == 4
+    assert "measurement_ohne_koerperteil" not in ctx.report.skipped
+    found = {(row.part, row.dimension) for row in children if isinstance(row, SpeciesMeasurement)}
+    assert found == {
+        (BodyPart.SPORE, Dimension.LENGTH),
+        (BodyPart.SPORE, Dimension.WIDTH),
+        (BodyPart.FRUITBODY, Dimension.WIDTH),
+        (BodyPart.FRUITBODY, Dimension.HEIGHT),
+    }
+
+
+def test_an_unknown_measurement_is_counted() -> None:
+    profile = _profile(masse={"wurzelTiefeCm": {"von": 1.0, "bis": 2.0, "einheit": "cm"}})
     ctx = _context(profile)
     _row, _children, counts = catalog_rows.build_species(ctx)
     assert counts["species_measurement"] == 0
@@ -276,9 +298,11 @@ async def test_boletus_edulis_details(session: AsyncSession) -> None:
         .scalars()
         .all()
     )
-    assert len(measurements) == 1
-    assert measurements[0].part == BodyPart.CAP
-    assert measurements[0].dimension == Dimension.WIDTH
+    assert {(m.part, m.dimension) for m in measurements} == {
+        (BodyPart.CAP, Dimension.WIDTH),
+        (BodyPart.SPORE, Dimension.LENGTH),
+        (BodyPart.SPORE, Dimension.WIDTH),
+    }
 
     changes = (
         (

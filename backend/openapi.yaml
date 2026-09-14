@@ -2004,7 +2004,7 @@ components:
 
     BodyPart:
       type: string
-      enum: [cap, stem, gills, flesh, spore_print, tubes, pores]
+      enum: [fruitbody, cap, stem, gills, flesh, spore_print, spore, tubes, pores]
 
     Dimension:
       type: string
@@ -3269,8 +3269,10 @@ components:
           type: string
           format: uuid
         ownerId:
-          type: string
-          format: uuid
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
         speciesId:
           oneOf:
             - type: string
