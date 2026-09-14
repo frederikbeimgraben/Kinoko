@@ -14,6 +14,7 @@ from app.modules import system
 from app.modules.access import router as access_router
 from app.modules.access import seed as access_seed
 from app.modules.catalog import router as catalog_router
+from app.modules.catalog import seed as catalog_seed
 from app.modules.objects import router as objects_router
 from app.modules.photos import router as photos_router
 from app.modules.pipeline import router as pipeline_router
@@ -23,8 +24,9 @@ from app.modules.texts import service as texts_service
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
-    """Gleicht Rechte, Rollen und Texte ab und gibt die Verbindungen frei."""
+    """Importiert den Katalog bei Bedarf, gleicht Rechte, Rollen und Texte ab."""
     async with session_factory()() as db:
+        await catalog_seed.sync(db)
         await access_seed.sync(db)
         await texts_service.sync(db)
         await texts_service.load_titles(db)
