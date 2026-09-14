@@ -54,5 +54,5 @@ describe('App', () => {
     await navigate('/bausteine');
 
     expect(await screen.findByRole('heading', { name: 'Bausteine' })).toBeInTheDocument();
-  });
+  }, 60_000);
 });

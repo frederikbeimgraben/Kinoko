@@ -97,11 +97,15 @@ describe('SubmitImageComponent', () => {
 
   it('lässt ohne Bild und ohne Fotograf nichts abschicken', async () => {
     const { container, http } = await build();
+    const toasts = toastSpy();
 
-    expect(screen.getByRole('button', { name: 'Zur Prüfung einreichen' })).toBeDisabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Zur Prüfung einreichen' }));
+    expect(toasts.failure).toEqual(['Wähle zuerst ein Bild.']);
+
     await pick(container);
+    await userEvent.click(screen.getByRole('button', { name: 'Zur Prüfung einreichen' }));
+    expect(toasts.failure).toEqual(['Wähle zuerst ein Bild.', 'Trag ein, wer das Bild aufgenommen hat.']);
 
-    expect(screen.getByRole('button', { name: 'Zur Prüfung einreichen' })).toBeDisabled();
     http.expectNone('/api/species-images/submissions');
   });
 

@@ -6,9 +6,9 @@
 >
   <app-chip-group
     [chips]="chips()"
-    [value]="reason()"
+    [value]="reason() ? [reason()] : []"
     [label]="'bild.grundVorschlaege' | t"
-    (valueChange)="pick($event)"
+    (valueChange)="pick($event.at(0) ?? '')"
   />
   <app-form-field
     class="reject__field"
@@ -21,10 +21,10 @@
   <p class="note note--sub">{{ hint() }}</p>
   <div dialog-footer>
     <app-action-bar
-      [danger]="'bild.ablehnen' | t"
+      [primary]="'bild.ablehnen' | t"
+      [danger]="true"
       [secondary]="'objekt.abbrechen' | t"
-      [dangerDisabled]="!ready()"
-      (dangerClick)="confirm()"
+      (primaryClick)="confirm()"
       (secondaryClick)="cancel()"
     />
   </div>

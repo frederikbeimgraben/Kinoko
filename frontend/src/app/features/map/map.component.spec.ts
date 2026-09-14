@@ -26,7 +26,7 @@ import { MapState } from './map.state';
 
 /** Die Seite hängt am Router; nur so trägt ihre Adresse die Abfragewerte. */
 @Component({
-  selector: 'app-host',
+  selector: 'app-router-stub',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet],
   template: '<router-outlet />',
@@ -290,7 +290,7 @@ describe('KarteComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: '≥ 80 mm' }));
     await stable();
 
-    fireEvent.input(screen.getByRole('slider', { name: 'Untere Grenze' }), { target: { value: '40' } });
+    fireEvent.input(screen.getByRole('slider', { name: 'von' }), { target: { value: '40' } });
     await stable();
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
@@ -547,7 +547,7 @@ describe('KarteComponent', () => {
 
     expect(double.styles.at(-1)).toContain('dark');
 
-    const slider = screen.getByRole('slider', { name: 'Deckkraft der Wertebene' });
+    const slider = screen.getByRole('slider', { name: 'von' });
     fireEvent.input(slider, { target: { value: '40' } });
     await stable();
 
@@ -659,7 +659,10 @@ describe('KarteComponent', () => {
     const { stable } = await map('/karte?darstellung=kombination');
     await stable();
 
-    expect(screen.getByRole('button', { name: 'Zum Speichern anmelden' })).toBeDisabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Zum Speichern anmelden' }));
+    await stable();
+
+    expect(screen.queryByRole('dialog', { name: 'Kombination speichern' })).not.toBeInTheDocument();
   });
 
   it('speichert die Kombination unter einem Namen', async () => {

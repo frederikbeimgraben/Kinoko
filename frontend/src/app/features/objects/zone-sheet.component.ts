@@ -20,7 +20,9 @@ import { currentWeek, findWeek } from '../../core/tiles/manifest';
 import { ManifestService } from '../../core/tiles/manifest.service';
 import { NOW } from '../../core/tiles/now';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { ActionBarComponent, KeyValueTableComponent, MetricRowComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { colorHex } from '../entries/colors';
@@ -47,8 +49,8 @@ import type { Location } from '../add-entry/add-entry.state';
     ActionBarComponent,
     CardComponent,
     DialogComponent,
-    KeyValueTableComponent,
-    MetricRowComponent,
+    IconButtonComponent,
+    ListRowComponent,
     ObjectFormComponent,
     TranslatePipe,
   ],

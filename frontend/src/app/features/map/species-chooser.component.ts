@@ -5,7 +5,10 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { SpeciesBrief, SpeciesCatalogue } from '../../core/api/models';
 import { FORECAST_SLUGS, type ForecastSlug } from '../../core/tiles/tile-paths';
-import { ActionBarComponent, ListRowComponent, SeasonCurveComponent, SheetComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { SeasonCurveComponent } from '../../ui/season-curve/season-curve.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 /** Eine Art, wie die Wahl sie zeigt. */
 interface Row {

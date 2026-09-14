@@ -4,13 +4,10 @@ import { CheckboxComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
-import {
-  ActionBarComponent,
-  SegmentedComponent,
-  SheetComponent,
-  SliderComponent,
-  type SegmentOption,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
+import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 /**
  * Was auf der Karte liegt, unabhängig von der Darstellung: Hintergrund,
@@ -24,9 +21,9 @@ import {
     ActionBarComponent,
     CheckboxComponent,
     FormsModule,
+    RangeSliderComponent,
     SegmentedComponent,
     SheetComponent,
-    SliderComponent,
     TranslatePipe,
   ],
   templateUrl: './layers-sheet.component.html',

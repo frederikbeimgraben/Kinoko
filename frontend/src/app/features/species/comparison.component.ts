@@ -3,19 +3,10 @@ import { Router } from '@angular/router';
 import { CardComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import {
-  ColourChangeComponent,
-  ColourFieldComponent,
-  ComparisonCellComponent,
-  ComparisonRowComponent,
-  ComparisonTableComponent,
-  EmptyStateComponent,
-  LevelPillComponent,
-  MeasurementComponent,
-  PageHeaderComponent,
-  TagListComponent,
-  YearBandComponent,
-} from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
+import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SpeciesState } from './species.state';
 import { comparisonRows, type ComparisonRow } from './comparison';
 
@@ -26,34 +17,17 @@ interface Viewport {
   rows: ComparisonRow[];
 }
 
-/**
- * Die Gegenüberstellung zweier Arten (Artboards 15 und 16).
- *
- * Der Weg hierher führt über die zwei gegenläufigen Pfeile an einer
- * Verwechslungszeile. Gezeigt werden die Merkmale, die eine Verwechslung
- * entscheiden, in derselben Reihenfolge wie auf der Artseite und mit denselben
- * Bausteinen: ein Maß bleibt ein Maß, eine Farbe eine Fläche.
- *
- * Getönt sind die Zeilen, in denen sich die Arten unterscheiden. Wer zwei
- * Röhrlinge in der Hand hält, sucht genau die.
- */
+/** Die Gegenüberstellung zweier Arten, wie sie eine Verwechslungszeile öffnet. */
 @Component({
   selector: 'app-comparison',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CardComponent,
-    ColourChangeComponent,
-    ColourFieldComponent,
-    ComparisonCellComponent,
-    ComparisonRowComponent,
-    ComparisonTableComponent,
     EmptyStateComponent,
-    LevelPillComponent,
-    MeasurementComponent,
+    KeyValueRowComponent,
+    KeyValueTableComponent,
     PageHeaderComponent,
-    TagListComponent,
     TranslatePipe,
-    YearBandComponent,
   ],
   templateUrl: './comparison.component.html',
   styleUrl: './comparison.component.scss',

@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { layerGroups, type Layer } from '../../core/tiles/layers';
-import { ActionBarComponent, ListRowComponent, SheetComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 type GroupTitle = 'ebene.jeWoche' | 'ebene.fest' | 'faktor.arten';
 

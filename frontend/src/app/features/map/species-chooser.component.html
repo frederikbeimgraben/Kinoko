@@ -10,7 +10,7 @@
     <div class="speciespicker__list" role="group" [attr.aria-label]="'artWahl.titel' | t">
       @for (row of rows(); track row.art.slug) {
         <app-list-row
-          [titel]="row.art.name"
+          [title]="row.art.name"
           [subline]="row.art.lateinisch"
           [clickable]="true"
           [selected]="row.slug === selected()"
@@ -28,8 +28,8 @@
       } @empty {
         <p class="artwahl__leer">{{ (catalogue() === null ? 'artWahl.laedt' : 'artWahl.nichts') | t }}</p>
       }
-      <app-list-row [titel]="'artWahl.katalog' | t" [clickable]="true" (chosen)="zumKatalog.emit()" />
+      <app-list-row [title]="'artWahl.katalog' | t" [clickable]="true" (chosen)="zumKatalog.emit()" />
     </div>
   </div>
-  <app-action-bar [secondary]="'faktor.abbrechen' | t" (secondaryClick)="closed.emit()" />
+  <app-action-bar [primary]="'faktor.abbrechen' | t" (primaryClick)="closed.emit()" />
 </app-sheet>

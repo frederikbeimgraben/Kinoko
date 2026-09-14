@@ -1,6 +1,6 @@
 import { VISIBILITIES, type Visibility } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
-import type { SegmentOption } from '../../ui';
+import { type SegmentOption } from '../../ui/segmented/segmented.component';
 
 /** „Privat“ und „Geteilt“ als Segment-Schalter, wie in den Mockups. */
 export function visibilitySegments(i18n: I18nService): SegmentOption[] {

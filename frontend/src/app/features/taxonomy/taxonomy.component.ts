@@ -6,14 +6,13 @@ import { TAXON_RANKS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import {
-  EmptyStateComponent,
-  KeyValueRowComponent,
-  KeyValueTableComponent,
-  ListRowComponent,
-  PageHeaderComponent,
-  SpeciesRowComponent,
-} from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
+import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SpeciesRowComponent, type SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
+import { EDIBILITY_COLOUR, EDIBILITY_TEXT } from '../species/labels';
 import { RANK_TEXT } from './labels';
 import { TaxonomyState } from './taxonomy.state';
 
@@ -29,8 +28,7 @@ interface StepRow {
 /** Eine Zeile, die auf eine Art zeigt. */
 interface SpeciesRow {
   slug: string;
-  name: string;
-  latin: string;
+  species: SpeciesRowSpecies;
 }
 
 interface Viewport {
@@ -122,8 +120,13 @@ export class TaxonomyComponent {
       children: taxon.kinder.map((child) => this.step(child, child.artenZahl)),
       species: taxon.arten.map((art) => ({
         slug: art.slug,
-        name: art.name,
-        latin: art.lateinisch,
+        species: {
+          name: art.name,
+          latin: art.lateinisch,
+          levelText: this.i18n.translate(EDIBILITY_TEXT[art.speisewert]),
+          levelColour: EDIBILITY_COLOUR[art.speisewert],
+          image: art.titelbild,
+        },
       })),
       countText: taxon.artenZahl ? this.countText(taxon.artenZahl) : null,
     };

@@ -13,14 +13,11 @@ import type { Color } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import {
-  ActionBarComponent,
-  ActionRowComponent,
-  ActionSheetComponent,
-  CrosshairComponent,
-  SheetComponent,
-  type DetentSize,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { EntriesState, type SaveResult } from '../entries/entries.state';
 import { colorHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';
@@ -33,10 +30,10 @@ import { ObjectFormComponent, type ObjectValues } from './object-form.component'
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 
 /** Blätter, die nur einen Satz und eine Fußleiste tragen, folgen dem Inhalt. */
-const DETENTS_CONTENT: readonly [DetentSize, DetentSize, DetentSize] = ['inhalt', 'inhalt', 'inhalt'];
+const DETENTS_CONTENT = ['content', 'content', 'content'] as const;
 
 /** Das Formular steht auf 150 von 844 px, so wie im Artboard `MeldenFormular`. */
-const DETENTS_FORM: readonly [DetentSize, DetentSize, DetentSize] = [0.82, 0.82, 0.82];
+const DETENTS_FORM = [0.82, 0.82, 0.82] as const;
 
 /**
  * Der Ablauf hinter dem Plus-Knopf über der Karte: Aktionsblatt, Fadenkreuz,
@@ -51,13 +48,13 @@ const DETENTS_FORM: readonly [DetentSize, DetentSize, DetentSize] = [0.82, 0.82,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    ActionRowComponent,
-    ActionSheetComponent,
+    ListRowComponent,
     SheetHeightDirective,
     CrosshairComponent,
     FindFormComponent,
     ObjectFormComponent,
     SheetComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './add-entry.component.html',

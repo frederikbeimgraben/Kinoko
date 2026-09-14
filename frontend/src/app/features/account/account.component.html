@@ -1,4 +1,4 @@
-<app-page-header [titel]="'konto.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'konto.titel' | t" [back]="true" (backClick)="back()" />
 
 <div class="account">
   <section class="account__block">
@@ -48,7 +48,7 @@
     <section class="account__block">
       <h2 class="account__section">{{ 'konto.abschnitt.beitraege' | t }}</h2>
       <div class="account__list">
-        <app-list-row [titel]="'bild.meine' | t" [clickable]="true" (chosen)="toMyImages()" />
+        <app-list-row [title]="'bild.meine' | t" [clickable]="true" (chosen)="toMyImages()" />
       </div>
     </section>
   }
@@ -57,7 +57,7 @@
     <section class="account__block">
       <h2 class="account__section">{{ 'konto.verwaltung' | t }}</h2>
       <div class="account__list">
-        <app-list-row [titel]="'konto.verwaltung' | t" [clickable]="true" (chosen)="toAdministration()" />
+        <app-list-row [title]="'konto.verwaltung' | t" [clickable]="true" (chosen)="toAdministration()" />
       </div>
     </section>
   }
@@ -65,17 +65,17 @@
   <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.offline' | t }}</h2>
     <div class="account__list">
-      <app-list-row [titel]="'konto.offlineGebiete' | t" value="0" />
-      <app-list-row [titel]="'konto.ausstehend' | t" value="0" />
+      <app-list-row [title]="'konto.offlineGebiete' | t" value="0" />
+      <app-list-row [title]="'konto.ausstehend' | t" value="0" />
     </div>
   </section>
 
   <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.ueber' | t }}</h2>
     <div class="account__list">
-      <app-list-row [titel]="'konto.methode' | t" />
-      <app-list-row [titel]="'konto.quellen' | t" />
-      <app-list-row [titel]="'konto.version' | t" [value]="version()" />
+      <app-list-row [title]="'konto.methode' | t" />
+      <app-list-row [title]="'konto.quellen' | t" />
+      <app-list-row [title]="'konto.version' | t" [value]="version()" />
     </div>
   </section>
 </div>

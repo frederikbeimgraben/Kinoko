@@ -3,7 +3,7 @@ import { FORECAST_SLUGS, type ForecastSlug } from '../../core/tiles/tile-paths';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
 import type { CombinationRule } from '../../map/value-colors';
 import { encodeFactors, readFactors, type Faktor } from './factors';
-import type { Detent } from '../../ui';
+import { type Detent } from '../../ui/sheet/sheet.component';
 
 /** Die drei Darstellungen des Blatts. Die Kombination kommt in B2. */
 export type ViewMode = 'vorhersage' | 'ebene' | 'kombination';

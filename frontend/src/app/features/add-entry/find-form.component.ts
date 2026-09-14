@@ -4,14 +4,17 @@ import { CheckboxComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { SpeciesBrief, Find, FindInput, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent, FormFieldComponent, SegmentedComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { PhotoPickerComponent } from '../../ui/photo-picker/photo-picker.component';
+import { SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { locationText } from '../../core/i18n/places';
 import { isoDatum } from '../entries/formats';
 import { visibilitySegments } from './visibility';
-import { SpeciesPickerComponent } from './species-picker.component';
-import { PhotoPickerComponent } from './photo-picker.component';
+import { speciesPickerEntry } from './species-picker-entry';
 import type { Location } from './add-entry.state';
 
 /** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */
@@ -103,6 +106,10 @@ export class FindFormComponent {
 
   protected readonly speciesName = computed(() => this.selectedSpecies()?.name ?? '');
 
+  protected readonly pickerSpecies = computed(() =>
+    (this.arten.catalogue()?.arten ?? []).map((art) => speciesPickerEntry(art, this.i18n)),
+  );
+
   protected readonly locationLine = computed(() => {
     const [lon, lat] = this.location();
     const text = locationText(lat, lon, this.i18n.locale());
@@ -113,8 +120,8 @@ export class FindFormComponent {
     this.arten.loadCatalogue();
   }
 
-  protected selectSpecies(art: SpeciesBrief): void {
-    this.artSlug.set(art.slug);
+  protected selectSpecies(slug: string): void {
+    this.artSlug.set(slug);
     this.speciesPickerOpen.set(false);
   }
 

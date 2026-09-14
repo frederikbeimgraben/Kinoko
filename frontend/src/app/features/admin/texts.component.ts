@@ -1,21 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { TextEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TextCatalogService, areaOf } from '../../core/i18n/text-catalog.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SUPPORTED_LOCALES, type Locale } from '../../core/i18n/translations';
-import {
-  ActionBarComponent,
-  ChipGroupComponent,
-  EmptyStateComponent,
-  FormFieldComponent,
-  PageHeaderComponent,
-  SheetComponent,
-  type Chip,
-  type DetentSize,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { type Chip, ChipGroupComponent } from '../../ui/chip-group/chip-group.component';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 /** Der Chip ohne Bereich: er zeigt alles. */
 const ALL = 'alle';
@@ -24,7 +20,7 @@ const ALL = 'alle';
 const CHANGED = 'geaendert';
 
 /** Das Blatt trägt zwei Felder und die Knöpfe; eine Raste genügt. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['inhalt', 'inhalt', 'inhalt'];
+const DETENTS = ['content', 'content', 'content'] as const;
 
 /** Ein Schlüssel im Blatt, mit den Werten, die gerade im Feld stehen. */
 interface Draft {
@@ -49,6 +45,7 @@ interface Draft {
   imports: [
     ActionBarComponent,
     BadgeComponent,
+    ButtonComponent,
     CardComponent,
     ChipGroupComponent,
     EmptyStateComponent,
@@ -107,8 +104,8 @@ export class TextsComponent {
     return this.i18n.translate(`sprache.${locale}`);
   }
 
-  protected selectChip(value: string): void {
-    this.chip.set(value);
+  protected selectChip(values: readonly string[]): void {
+    this.chip.set(values[0] ?? ALL);
   }
 
   protected open(entry: TextEntry): void {

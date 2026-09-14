@@ -1,9 +1,14 @@
 @if (speciesPickerOpen()) {
   <div class="report__content">
     <h2 class="report__title">{{ 'melden.artWaehlen' | t }}</h2>
-    <app-species-picker [selected]="selectedSpecies()?.slug ?? null" (chosen)="selectSpecies($event)" />
+    <app-species-picker
+      [species]="pickerSpecies()"
+      [selected]="selectedSpecies()?.slug ?? null"
+      [label]="'melden.artWaehlen' | t"
+      (chosen)="selectSpecies($event)"
+    />
   </div>
-  <app-action-bar [ghost]="'eintragen.abbrechen' | t" (ghostClick)="speciesPickerOpen.set(false)" />
+  <app-action-bar [primary]="'eintragen.abbrechen' | t" (primaryClick)="speciesPickerOpen.set(false)" />
 } @else {
   <div class="report__content">
     <div class="report__head">
@@ -64,9 +69,8 @@
   </div>
   <app-action-bar
     [primary]="mainText()"
-    [mainDisabled]="busy()"
-    [ghost]="'eintragen.abbrechen' | t"
-    (mainClick)="submit()"
-    (ghostClick)="cancelled.emit()"
+    [secondary]="'eintragen.abbrechen' | t"
+    (primaryClick)="submit()"
+    (secondaryClick)="cancelled.emit()"
   />
 }

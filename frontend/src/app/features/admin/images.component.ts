@@ -8,13 +8,11 @@ import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import {
-  EmptyStateComponent,
-  LICENCE_TEXT,
-  PageHeaderComponent,
-  PrivateImageComponent,
-  SegmentedComponent,
-} from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
+import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesState } from '../species/species.state';
 import { RejectDialogComponent } from './reject-dialog.component';
 
@@ -186,7 +184,8 @@ export class AdminImagesComponent {
    * Datum nichts.
    */
   private subline(image: ImageSubmission): string {
-    const licence = this.i18n.translate(LICENCE_TEXT[image.licence]);
+    const licence =
+      image.licence === 'own' ? this.i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[image.licence];
     const person = image.submittedBy ?? this.i18n.translate('bild.unbekanntePerson');
     return this.i18n.translate('bild.eingereichtVon', {
       name: person,

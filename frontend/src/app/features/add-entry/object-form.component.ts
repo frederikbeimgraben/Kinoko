@@ -3,7 +3,9 @@ import { ToastService } from '@stupa-makers/ui-kit';
 import type { Color, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ColorSwatchesComponent, FormFieldComponent, SegmentedComponent } from '../../ui';
+import { ColourSwatchesComponent } from '../../ui/colour-swatches/colour-swatches.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { colorSwatches, colorFromHex, colorHex } from '../entries/colors';
 import { visibilitySegments } from './visibility';
 
@@ -25,7 +27,7 @@ export interface ObjectValues {
 @Component({
   selector: 'app-object-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ColorSwatchesComponent, FormFieldComponent, SegmentedComponent, TranslatePipe],
+  imports: [ColourSwatchesComponent, FormFieldComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './object-form.component.html',
   styleUrl: './object-form.component.scss',
 })

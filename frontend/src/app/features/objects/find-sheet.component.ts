@@ -16,7 +16,9 @@ import { ManifestService } from '../../core/tiles/manifest.service';
 import { NOW } from '../../core/tiles/now';
 import { currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import { valueAtPoint } from '../../core/tiles/value-at-point';
-import { ActionBarComponent, MetricRowComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { longDate } from '../../core/i18n/dates';
@@ -41,7 +43,8 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
     DialogComponent,
     PhotoGalleryComponent,
     FindFormComponent,
-    MetricRowComponent,
+    IconButtonComponent,
+    ListRowComponent,
     TranslatePipe,
   ],
   templateUrl: './find-sheet.component.html',

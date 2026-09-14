@@ -1,4 +1,4 @@
-<app-page-header [titel]="titel()" [back]="true" (backClick)="leave()" />
+<app-page-header [title]="titel()" [back]="true" (backClick)="leave()" />
 
 <div class="submit">
   <label class="submit__pick">
@@ -79,8 +79,7 @@
 
 <app-action-bar
   [primary]="action()"
-  [mainDisabled]="!ready() || busy()"
   [secondary]="'objekt.abbrechen' | t"
-  (mainClick)="save()"
+  (primaryClick)="save()"
   (secondaryClick)="leave()"
 />

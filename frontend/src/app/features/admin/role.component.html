@@ -1,4 +1,4 @@
-<app-page-header [titel]="title()" [back]="true" (backClick)="back()" />
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 
 <div class="role">
   @if (missing()) {
@@ -36,10 +36,10 @@
         <app-card>
           @for (right of group.rights; track right.key) {
             <app-check-row
-              [titel]="right.titel"
+              [title]="right.titel"
               [subline]="right.subline"
               [checked]="right.checked"
-              [disabled]="locked()"
+              [locked]="locked()"
               (toggled)="toggle(right.key, $event)"
             />
           }
@@ -56,10 +56,9 @@
 @if (!locked() && !missing()) {
   <app-action-bar
     [primary]="'rolle.speichern' | t"
-    [mainDisabled]="!ready() || saving()"
-    [danger]="creating() ? undefined : ('rolle.loeschen' | t)"
-    (mainClick)="save()"
-    (dangerClick)="confirming.set(true)"
+    [secondary]="creating() ? undefined : ('rolle.loeschen' | t)"
+    (primaryClick)="save()"
+    (secondaryClick)="confirming.set(true)"
   />
 }
 

@@ -7,7 +7,9 @@ import { ConfigService } from '../../core/config/config.service';
 import { I18nService, LANGUAGE_CHOICES, type LanguageChoice } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
-import { ListRowComponent, PageHeaderComponent, SegmentedComponent, type SegmentOption } from '../../ui';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { ADMIN_PERMISSIONS } from '../admin/admin.guard';
 
 /** Die drei Wahlmöglichkeiten der Darstellung, in der Reihenfolge des Artboards. */

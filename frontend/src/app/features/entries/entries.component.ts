@@ -7,13 +7,10 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { QueueKind, QueueEntry } from '../../core/offline/queue';
-import {
-  ChipGroupComponent,
-  EmptyStateComponent,
-  ListRowComponent,
-  PageHeaderComponent,
-  type Chip,
-} from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { visibilityText } from '../add-entry/visibility';
@@ -70,10 +67,10 @@ const FOREIGN_FIND = '#185468';
   imports: [
     BadgeComponent,
     CardComponent,
-    ChipGroupComponent,
     EmptyStateComponent,
     ListRowComponent,
     PageHeaderComponent,
+    SegmentedComponent,
     TranslatePipe,
   ],
   templateUrl: './entries.component.html',
@@ -90,7 +87,7 @@ export class EntriesComponent {
   protected readonly chip = signal<ChipValue>('funde');
   protected readonly signedIn = this.state.signedIn;
 
-  protected readonly chips = computed<Chip[]>(() =>
+  protected readonly chips = computed<SegmentOption[]>(() =>
     CHIPS.map((chip) => ({ value: chip.value, label: this.i18n.translate(chip.label) })),
   );
 

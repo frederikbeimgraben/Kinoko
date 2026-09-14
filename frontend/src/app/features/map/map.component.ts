@@ -59,19 +59,12 @@ import {
 import { FORECAST_RAMP } from '../../ui/ramp/ramp-colors';
 import type { CombinationRule } from '../../map/value-colors';
 import { ThemeService } from '../../core/theme/theme.service';
-import {
-  FloatingButtonComponent,
-  DETENTS_DEFAULT,
-  RampComponent,
-  SegmentedComponent,
-  SheetComponent,
-  SheetHeadComponent,
-  TimelineComponent,
-  detentInPx,
-  type Detent,
-  type SegmentOption,
-  type TimelineWeek,
-} from '../../ui';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
+import { RampComponent } from '../../ui/ramp/ramp.component';
+import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
+import { type Detent, SheetComponent } from '../../ui/sheet/sheet.component';
+import { TimelineComponent, type TimelineWeek } from '../../ui/timeline/timeline.component';
 import { SpeciesChooserComponent } from './species-chooser.component';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { SpeciesState } from '../species/species.state';
@@ -113,6 +106,17 @@ const MEAN_FALLBACK = '#004225';
 /** Die Kennung einer Ebene im Protokoll, damit sie nicht mit einer Art kollidiert. */
 export function layerSourceId(layer: Layer): string {
   return `ebene-${layer.id}`;
+}
+
+type DetentSize = number | `${number}px` | 'content';
+
+/** Die Rasten, mit denen `app-sheet` ohne eigene Vorgabe zeichnet. */
+const DETENTS_DEFAULT: readonly [DetentSize, DetentSize, DetentSize] = ['152px', 0.4, 0.9];
+
+/** Rechnet eine Raste in Punkte um, bezogen auf die Höhe des Wirts. */
+function detentInPx(size: DetentSize, hostHeight: number): number {
+  if (size === 'content') return hostHeight;
+  return typeof size === 'number' ? size * hostHeight : Number.parseFloat(size);
 }
 
 /**

@@ -14,13 +14,13 @@
     @if (!addEntry.dark() && state.object() === null) {
       <div class="map__buttons">
         <app-floating-button
-          icon="ebenen"
+          icon="layers"
           [label]="'ebenenKnopf.titel' | t"
-          [variant]="layersSheetOpen() ? 'primaer' : 'hell'"
+          [variant]="layersSheetOpen() ? 'primary' : 'default'"
           (pressed)="layersSheetOpen.set(!layersSheetOpen())"
         />
         <app-floating-button
-          icon="ort"
+          icon="location"
           [label]="'karte.standort' | t"
           [disabled]="!locating.allowed()"
           (pressed)="toMyLocation()"
@@ -31,7 +31,7 @@
         <app-floating-button
           class="map__add"
           icon="plus"
-          variant="primaer"
+          variant="primary"
           [label]="'eintragen.knopf' | t"
           (pressed)="openAddEntry()"
         />
@@ -46,17 +46,12 @@
 
     @if (!overlaid()) {
       <div class="map__sheet">
-        <app-sheet
-          [label]="'karte.blatt' | t"
-          [detent]="state.detent()"
-          [column]="wide()"
-          (detentChange)="setDetent($event)"
-        >
+        <app-sheet [label]="'karte.blatt' | t" [detent]="state.detent()" (detentChange)="setDetent($event)">
           <app-sheet-head
             head
-            [titel]="headTitle()"
-            [titleAsLink]="!showsLayer()"
-            [woche]="weekText()"
+            [title]="headTitle()"
+            [titleLink]="!showsLayer()"
+            [week]="weekText()"
             [hint]="forecastHint()"
             [playing]="playing()"
             (titleClick)="openSpeciesChooser()"

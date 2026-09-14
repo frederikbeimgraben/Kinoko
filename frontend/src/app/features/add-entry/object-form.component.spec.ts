@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
-import { OBJECT_COLORS } from '../../ui';
+import { OBJECT_COLORS } from '../../ui/colour-swatches/colour-swatches.component';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
 
 const LABELS = {

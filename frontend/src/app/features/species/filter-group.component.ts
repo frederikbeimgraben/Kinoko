@@ -5,7 +5,11 @@ import { FACET_KEYS, type FacetKey, type FacetValue } from '../../core/api/model
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import { ActionBarComponent, CheckRowComponent, EmptyStateComponent, PageHeaderComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { FACET_TEXT, valueKey } from './facet-labels';
 import { FacetState } from './facet.state';
 import { SpeciesFilterState } from './filter.state';
@@ -56,6 +60,7 @@ interface Viewport {
     ActionBarComponent,
     CardComponent,
     CheckRowComponent,
+    ChoiceRowComponent,
     EmptyStateComponent,
     PageHeaderComponent,
     TranslatePipe,

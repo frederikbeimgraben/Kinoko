@@ -44,17 +44,16 @@ async function build(): Promise<Setup> {
  * die niemand sammelt, hat keine Saison.
  */
 function names(): string[] {
-  return [...document.querySelectorAll('.speciesrow__name')].map((cell) => cell.textContent.trim());
+  return [...document.querySelectorAll('.row__name')].map((cell) => cell.textContent.trim());
 }
 
 describe('ArtenComponent', () => {
-  it('zeigt jede Art mit lateinischem Namen und Tags', async () => {
+  it('zeigt jede Art mit lateinischem Namen und Speisewert', async () => {
     const { container } = await build();
 
     const row = screen.getByRole('button', { name: /Steinpilz/ });
     expect(within(row).getByText('Boletus edulis')).toBeInTheDocument();
-    expect(within(row).getByText('Vorhersage')).toBeInTheDocument();
-    expect(within(row).getByText('Geschützt')).toBeInTheDocument();
+    expect(within(row).getByText('essbar')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Speisemorchel/ })).toBeInTheDocument();
     await noViolations(container);
   });
@@ -65,7 +64,6 @@ describe('ArtenComponent', () => {
     // Seit D10 steht rechts das Titelbild. Auf 86 Pixeln liest die Kurve
     // ohnehin niemand ab; sie bleibt auf der Artseite.
     expect(container.querySelectorAll('.spark__all')).toHaveLength(0);
-    expect(container.querySelectorAll('.speciesrow__image')).toHaveLength(0);
   });
 
   it('stellt die Arten nach Stufe und darin nach Namen auf', async () => {
@@ -169,50 +167,28 @@ describe('ArtenComponent', () => {
     expect(names()).toHaveLength(3);
   });
 
-  it('findet über die Suche auch einen Giftpilz und zeigt seine Stufe rot', async () => {
+  it('findet über die Suche auch einen Giftpilz und zeigt seinen Speisewert', async () => {
     const { refresh } = await build();
 
     await userEvent.type(screen.getByLabelText('Art suchen'), 'Gallen');
     refresh();
 
     const row = screen.getByRole('button', { name: /Gallenröhrling/ });
-    expect(within(row).getByText('Profil')).toBeInTheDocument();
     expect(within(row).getByText('giftig')).toBeInTheDocument();
   });
 
-  it('setzt die Marken einer Zeile in fester Reihenfolge', async () => {
-    await build();
-
-    // Warnung, Stufe, Schutz, Symbiosepartner, Jahreszeit — und nur, was etwas
-    // sagt: „essbar“ an jeder zweiten Zeile sagt nichts.
-    const row = screen.getByRole('button', { name: /Steinpilz/ });
-    const badges = [...row.querySelectorAll('.badge')].map((badge) => badge.textContent.trim());
-    expect(badges).toEqual(['Vorhersage', 'Geschützt', 'Fichte']);
-  });
-
-  it('lässt die Warnung nie weg, auch wenn die Zeile kürzen muss', async () => {
-    // Der Gallenröhrling der Fixture trägt vier Marken: giftig, Profil,
-    // Geschützt, Röhrling-Baum. Die Zeile zeigt höchstens drei, bei der
-    // aktiven Art höchstens zwei — und stand die Warnung an dritter Stelle,
-    // verlor genau die aktive Art sie. Das ist die einzige Stelle, an der ein
-    // Darstellungsfehler in dieser App jemanden vergiften kann.
+  it('zeigt die Warnung auch an der aktiven Art', async () => {
+    // Die einzige Marke der Zeile ist der Speisewert; sie bleibt an der
+    // aktiven Art dieselbe wie überall sonst.
     const { state, refresh } = await build();
 
-    const badgesOf = (): string[] =>
-      [...screen.getByRole('button', { name: /Gallenröhrling/ }).querySelectorAll('.badge')].map((badge) =>
-        badge.textContent.trim(),
-      );
-
-    expect(badgesOf()[0]).toBe('giftig');
-    expect(badgesOf()).toHaveLength(3);
+    const row = (): HTMLElement => screen.getByRole('button', { name: /Gallenröhrling/ });
+    expect(within(row()).getByText('giftig')).toBeInTheDocument();
 
     state.select('gallenroehrling');
     refresh();
 
-    // Eine Marke weniger Platz, weil „Aktiv“ davorsteht — die Warnung bleibt
-    // trotzdem an erster Stelle, und Baum und Jahreszeit weichen.
-    expect(badgesOf()).toHaveLength(2);
-    expect(badgesOf()[0]).toBe('giftig');
+    expect(within(row()).getByText('giftig')).toBeInTheDocument();
   });
 
   it('zeigt einen Leerzustand, wenn nichts passt', async () => {
@@ -251,7 +227,6 @@ describe('ArtenComponent', () => {
 
     const row = screen.getByRole('button', { name: /Maronenröhrling/ });
     expect(row).toHaveAttribute('aria-current', 'true');
-    expect(within(row).getByText('Aktiv')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Steinpilz/ })).not.toHaveAttribute('aria-current');
   });
 

@@ -1,112 +1,61 @@
 import type { Species } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
-import {
-  changeRow,
-  colourRow,
-  levelRows,
-  measureRows,
-  senseRows,
-  timeRow,
-  type ChangeRow,
-  type ColourRow,
-  type LevelRow,
-  type MeasureRow,
-  type SenseRow,
-  type TimeRow,
-} from './feature-rows';
+import { UNIT_TEXT } from './labels';
+import { changeRow, colourRow, levelRows, senseRows, timeRow } from './feature-rows';
 
-/**
- * Ein Wert in einer Zelle der Gegenüberstellung.
- *
- * Jede Form nennt den Baustein, der sie zeichnet. Eine Zelle trägt eine Liste
- * davon, nicht einen einzelnen Wert: die Hutform wird zwei tragen, jung und
- * alt, und eine Zelle, die nur einen kennt, müsste dafür aufgetrennt werden.
- */
-export type ComparisonValue =
-  | { kind: 'stufe'; pill: LevelRow['pill'] }
-  | { kind: 'mass'; measure: MeasureRow }
-  | { kind: 'farbe'; colour: ColourRow }
-  | { kind: 'wandel'; change: ChangeRow }
-  | { kind: 'tags'; sense: SenseRow }
-  | { kind: 'zeit'; time: TimeRow }
-  | { kind: 'text'; text: string };
+/** Die Gegenüberstellung mehrerer Arten, je Zeile ein Wort statt eines Bausteins. */
 
-/** Eine Zeile: die Beschriftung und je Art eine Zelle mit ihren Werten. */
+/** Eine Zeile: die Beschriftung und je Art ein Wert. */
 export interface ComparisonRow {
   key: string;
   label: string;
-  /** Unterscheiden sich die Arten? Dann ist die Zeile getönt. */
-  differs: boolean;
-  cells: readonly (readonly ComparisonValue[])[];
+  values: readonly string[];
 }
 
-/**
- * Was eine Zeile je Art liefert: die Werte und ein Kennzeichen, an dem sich
- * zwei Arten vergleichen lassen.
- *
- * Verglichen wird das Kennzeichen, nicht die Ansicht. Zwei Arten können
- * dieselbe Farbe anders benannt bekommen, und ein Unterschied im Wortlaut wäre
- * keiner in der Sache.
- */
-interface Extract {
-  values: readonly ComparisonValue[];
-  mark: string;
+function level(i18n: I18nService, art: Species): string {
+  return levelRows(i18n, art)[0].pill.text;
 }
 
-/** Eine Zeile ohne Wert bleibt leer und zählt als gleich, wenn sie überall fehlt. */
-const NOTHING: Extract = { values: [], mark: '' };
-
-function level(i18n: I18nService, art: Species): Extract {
-  const row = levelRows(i18n, art)[0];
-  return { values: [{ kind: 'stufe', pill: row.pill }], mark: art.speisewert };
+function capWidth(i18n: I18nService, art: Species): string {
+  const span = art.masse.hutBreiteCm;
+  if (span === null) return '';
+  const from = span.von;
+  const to = span.bis;
+  return `${from}–${to} ${i18n.translate(UNIT_TEXT[span.einheit])}`;
 }
 
-function capWidth(i18n: I18nService, art: Species): Extract {
-  const measure = measureRows(i18n, art.masse).find((row) => row.extent === 'hutbreite');
-  if (!measure) return NOTHING;
-  const mark = measure.spans.map((span) => `${span.von}-${span.bis}`).join('x');
-  return { values: [{ kind: 'mass', measure }], mark: `${mark}${measure.einheit}` };
-}
-
-function colour(i18n: I18nService, art: Species, field: 'hut' | 'sporenlager'): Extract {
+function colour(i18n: I18nService, art: Species, field: 'hut' | 'sporenlager'): string {
   const schluessel = field === 'hut' ? 'art.farbe.hut' : 'art.farbe.sporenlager';
   const row = colourRow(i18n, field, schluessel, art.farben);
-  if (row === null) return NOTHING;
-  return { values: [{ kind: 'farbe', colour: row }], mark: row.farben.map((one) => one.hex).join(',') };
+  return row?.unter ?? '';
 }
 
-function change(i18n: I18nService, art: Species): Extract {
+function change(i18n: I18nService, art: Species): string {
   const row = changeRow(i18n, art.farben);
-  if (row === null) return NOTHING;
-  const marks = [...row.von, ...row.nach].map((one) => one.hex).join(',');
-  return { values: [{ kind: 'wandel', change: row }], mark: marks };
+  return row === null ? '' : `${row.vonLabel} ${row.pfeil} ${row.nachLabel}`;
 }
 
-function feature(art: Species, key: 'stiel'): Extract {
-  const row = art.merkmale.find((entry) => entry.schluessel === key);
-  if (!row) return NOTHING;
-  return { values: [{ kind: 'text', text: row.text }], mark: row.text };
+function feature(art: Species, key: 'stiel'): string {
+  return art.merkmale.find((entry) => entry.schluessel === key)?.text ?? '';
 }
 
-function flavour(i18n: I18nService, art: Species): Extract {
+function flavour(i18n: I18nService, art: Species): string {
   const label = i18n.translate('art.zeile.geschmack');
   const row = senseRows(i18n, art).find((entry) => entry.schluessel === label);
-  if (!row) return NOTHING;
-  return { values: [{ kind: 'tags', sense: row }], mark: [...row.tags].sort().join(',') };
+  if (!row) return '';
+  return row.tags.length > 0 ? row.tags.join(', ') : (row.text ?? '');
 }
 
-function period(i18n: I18nService, art: Species): Extract {
-  const row = timeRow(i18n, art);
-  if (row === null) return NOTHING;
-  return { values: [{ kind: 'zeit', time: row }], mark: `${row.von}-${row.bis}` };
+function period(i18n: I18nService, art: Species): string {
+  return timeRow(i18n, art)?.text ?? '';
 }
 
 /** Die acht Zeilen des Vergleichs, in der Reihenfolge des Artboards. */
 const ROWS: readonly {
   key: string;
   label: TranslationKey;
-  take: (i18n: I18nService, art: Species) => Extract;
+  take: (i18n: I18nService, art: Species) => string;
 }[] = [
   { key: 'speisewert', label: 'art.zeile.speisewert', take: level },
   { key: 'hutbreite', label: 'art.mass.hut', take: capWidth },
@@ -130,15 +79,8 @@ const ROWS: readonly {
  */
 export function comparisonRows(i18n: I18nService, species: readonly Species[]): ComparisonRow[] {
   return ROWS.flatMap((row) => {
-    const taken = species.map((art) => row.take(i18n, art));
-    if (taken.every((entry) => entry.values.length === 0)) return [];
-    return [
-      {
-        key: row.key,
-        label: i18n.translate(row.label),
-        differs: new Set(taken.map((entry) => entry.mark)).size > 1,
-        cells: taken.map((entry) => entry.values),
-      },
-    ];
+    const values = species.map((art) => row.take(i18n, art));
+    if (values.every((value) => value === '')) return [];
+    return [{ key: row.key, label: i18n.translate(row.label), values }];
   });
 }

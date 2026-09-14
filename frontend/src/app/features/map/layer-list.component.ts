@@ -8,28 +8,28 @@ import { SvgIconComponent, type IconName } from '../../ui/svg-icon/svg-icon.comp
  * Zeichen: die Buche unterscheidet sich von der Fichte im Namen, nicht im Bild.
  */
 const GLYPHS: Record<string, IconName> = {
-  regen: 'wolke',
-  regen_2w: 'wolke',
-  regen_4w: 'kalender',
-  regen_8w: 'kalender',
-  regen_anomalie: 'ausschlag',
+  regen: 'cloud',
+  regen_2w: 'cloud',
+  regen_4w: 'calendar',
+  regen_8w: 'calendar',
+  regen_anomalie: 'rainfall',
   temperatur: 'thermometer',
   temperatur_min: 'frost',
-  wald: 'wald',
-  fichte: 'nadelbaum',
-  kiefer: 'nadelbaum',
-  nadelholz: 'nadelbaum',
-  buche: 'blatt',
-  eiche: 'blatt',
-  birke: 'blatt',
-  hoehe: 'hoehe',
-  hangneigung: 'hang',
-  nordexposition: 'kompass',
+  wald: 'forest',
+  fichte: 'conifer',
+  kiefer: 'conifer',
+  nadelholz: 'conifer',
+  buche: 'leaf',
+  eiche: 'leaf',
+  birke: 'leaf',
+  hoehe: 'elevation',
+  hangneigung: 'slope',
+  nordexposition: 'compass',
   relief: 'relief',
-  gelaendeposition: 'kuppe',
-  boden_ph: 'kolben',
-  boden_sand: 'koerner',
-  boden_kohlenstoff: 'bodenschichten',
+  gelaendeposition: 'ridge',
+  boden_ph: 'soil-layers',
+  boden_sand: 'grains',
+  boden_kohlenstoff: 'soil-layers',
 };
 
 /** Eine Ebene mit ihrem Zeichen. */
@@ -73,6 +73,6 @@ export class LayerListComponent {
 
   /** Eine unbekannte Ebene bekommt das allgemeine Zeichen der Ebenen. */
   private card(layer: Layer): LayerCard {
-    return { layer, glyph: GLYPHS[layer.id] ?? 'ebenen' };
+    return { layer, glyph: GLYPHS[layer.id] ?? 'layers' };
   }
 }

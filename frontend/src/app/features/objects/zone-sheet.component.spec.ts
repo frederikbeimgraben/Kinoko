@@ -83,7 +83,7 @@ async function answerValue(setup: Setup, value: ZoneValue | null = VALUE): Promi
   else request.flush(value);
   await vi.waitFor(() => {
     setup.refresh();
-    expect(setup.container.querySelectorAll('app-metric-row')).toHaveLength(value === null ? 0 : 2);
+    expect(setup.container.querySelectorAll('app-list-row')).toHaveLength(value === null ? 0 : 2);
   });
 }
 

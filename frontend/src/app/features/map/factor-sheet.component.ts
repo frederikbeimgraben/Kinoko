@@ -10,17 +10,14 @@ import {
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { shareMet, formatValue, type Layer, type Histogram } from '../../core/tiles/layers';
-import {
-  ActionBarComponent,
-  HistogramComponent,
-  KeyValueRowComponent,
-  RangeSliderComponent,
-  SegmentedComponent,
-  SheetComponent,
-  SheetHeadComponent,
-  type Handles,
-  type SegmentOption,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { HistogramComponent } from '../../ui/histogram/histogram.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
+import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
+import { type Handles, RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
+import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { conditionText, span, type Condition, type Faktor } from './factors';
 
 /** Wie fein der Griff läuft: fein genug zum Zielen, grob genug zum Ablesen. */
@@ -32,7 +29,7 @@ export function stepSize(layer: Layer): number {
 }
 
 /** Welche Griffe eine Bedingung braucht. */
-const HANDLES: Record<Condition, Handles> = { unter: 'oben', ueber: 'unten', zwischen: 'beide' };
+const HANDLES: Record<Condition, Handles> = { unter: 'to', ueber: 'from', zwischen: 'both' };
 
 /**
  * Der Screen `Faktor`: die Verteilung der Quelle über Deutschland, die
@@ -45,6 +42,7 @@ const HANDLES: Record<Condition, Handles> = { unter: 'oben', ueber: 'unten', zwi
   imports: [
     ActionBarComponent,
     HistogramComponent,
+    IconButtonComponent,
     KeyValueRowComponent,
     RangeSliderComponent,
     SegmentedComponent,

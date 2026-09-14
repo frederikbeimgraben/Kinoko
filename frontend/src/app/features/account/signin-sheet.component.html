@@ -9,9 +9,9 @@
       <app-action-bar
         #footer
         [primary]="'anmelden.knopf' | t"
-        [ghost]="'anmelden.spaeter' | t"
-        (mainClick)="signIn()"
-        (ghostClick)="later()"
+        [secondary]="'anmelden.spaeter' | t"
+        (primaryClick)="signIn()"
+        (secondaryClick)="later()"
       />
     </app-sheet>
   </div>

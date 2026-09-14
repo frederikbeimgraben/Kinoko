@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ImageCreditComponent, ImageViewerComponent, SvgIconComponent } from '../../ui';
+import { ImageCreditComponent } from '../../ui/image-credit/image-credit.component';
+import { ImageViewerComponent } from '../../ui/image-viewer/image-viewer.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import type { SpeciesImage } from '../../core/api/models';
 
 /**

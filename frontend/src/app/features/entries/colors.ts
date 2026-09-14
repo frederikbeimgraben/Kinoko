@@ -1,6 +1,6 @@
 import { COLORS, type Color } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
-import { OBJECT_COLORS, type ColorSwatch } from '../../ui';
+import { type ColourSwatch, OBJECT_COLORS } from '../../ui/colour-swatches/colour-swatches.component';
 
 /**
  * Die sechs Farben des Backends und ihre Werte aus dem Artboard `Zone`.
@@ -25,7 +25,7 @@ export function colorFromHex(hex: string): Color {
  * Baustein daraus den Hintergrund des Feldes macht; der Name steht daneben,
  * damit ein Bildschirmleser nicht „#004225“ vorliest.
  */
-export function colorSwatches(i18n: I18nService): ColorSwatch[] {
+export function colorSwatches(i18n: I18nService): ColourSwatch[] {
   return COLORS.map((farbe) => ({
     value: colorHex(farbe),
     label: i18n.translate(`farbe.${farbe}`),

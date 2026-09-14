@@ -7,7 +7,10 @@ import type { Permission, PermissionArea, Role } from '../../core/api/models';
 import { PERMISSION_AREAS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent, CheckRowComponent, FormFieldComponent, PageHeaderComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
 import { AREA_TEXT, PERMISSION_NOTE, PERMISSION_TEXT } from './labels';
 

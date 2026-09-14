@@ -1,4 +1,4 @@
-<app-page-header [titel]="'filter.titel' | t" [back]="true" (backClick)="back()">
+<app-page-header [title]="'filter.titel' | t" [back]="true" (backClick)="back()">
   @if (any()) {
     <button class="filter__reset" type="button" (click)="reset()">
       {{ 'filter.zuruecksetzen' | t }}
@@ -22,11 +22,11 @@
             @if (group.chosen) {
               <span class="group__chosen">{{ group.chosen }}</span>
             }
-            <app-svg-icon class="group__arrow" name="rechts" [size]="12" />
+            <app-svg-icon class="group__arrow" name="right" [size]="12" />
           </button>
         }
       </app-card>
     }
   }
 </div>
-<app-action-bar [primary]="hits()" (mainClick)="back()" />
+<app-action-bar [primary]="hits()" (primaryClick)="back()" />

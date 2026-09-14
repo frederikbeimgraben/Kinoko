@@ -45,10 +45,9 @@ describe('AdminComponent', () => {
     expect(screen.getByText('3 Rollen, 10 Rechte')).toBeInTheDocument();
   });
 
-  it('sagt bei einem Punkt ohne Arbeitspaket, wann er kommt', async () => {
+  it('lässt einen Punkt ohne Arbeitspaket ohne Weg', async () => {
     await build(['species.edit']);
 
-    expect(screen.getByText('Kommt mit Paket J1.')).toBeInTheDocument();
     // Ohne Weg bleibt die Zeile eine Zeile und keine Schaltfläche.
     expect(screen.queryByRole('button', { name: /Arten/ })).not.toBeInTheDocument();
   });

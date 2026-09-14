@@ -9,7 +9,9 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { EmptyStateComponent, ListRowComponent, PageHeaderComponent, SvgIconComponent } from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
 
 /** Ein Punkt der Verwaltung: das Recht dazu, der Abschnitt und der Weg. */
@@ -92,7 +94,6 @@ interface Row {
     ListRowComponent,
     PageHeaderComponent,
     RouterOutlet,
-    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './admin.component.html',

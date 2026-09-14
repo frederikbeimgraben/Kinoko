@@ -28,3 +28,14 @@
   font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
 }
+
+.factor__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--size-gutter);
+}
+
+.factor__actions {
+  flex: 1 1 auto;
+}

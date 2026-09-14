@@ -14,9 +14,12 @@
     <div>
       <div class="findsheet__head">
         <h2 class="findsheet__title">{{ speciesName() }}</h2>
-        @if (geteilt()) {
-          <app-badge variant="success">{{ 'eintraege.badge.geteilt' | t }}</app-badge>
-        }
+        <div class="findsheet__headActions">
+          @if (geteilt()) {
+            <app-badge variant="success">{{ 'eintraege.badge.geteilt' | t }}</app-badge>
+          }
+          <app-icon-button icon="delete" [label]="'fund.loeschen' | t" (pressed)="deleteAsk.set(true)" />
+        </div>
       </div>
       <p class="findsheet__sub">{{ subline() }}</p>
     </div>
@@ -26,18 +29,15 @@
     }
     @if (valueText(); as value) {
       <app-card class="flush">
-        <app-metric-row [label]="'fund.vorhersage' | t" [subline]="valueScope()" [value]="value" />
+        <app-list-row [title]="'fund.vorhersage' | t" [subline]="valueScope()" [value]="value" />
       </app-card>
     }
   </div>
   <app-action-bar
-    mainIcon="ort"
     [primary]="'fund.inGoogleMaps' | t"
     [secondary]="'fund.bearbeiten' | t"
-    [danger]="'fund.loeschen' | t"
-    (mainClick)="toGoogleMaps()"
+    (primaryClick)="toGoogleMaps()"
     (secondaryClick)="editing.set(true)"
-    (dangerClick)="deleteAsk.set(true)"
   />
 }
 <app-dialog
@@ -49,9 +49,10 @@
   <p class="note">{{ 'fund.loeschenText' | t }}</p>
   <div dialog-footer class="findsheet__dialogfooter">
     <app-action-bar
-      [danger]="'objekt.loeschen' | t"
+      [primary]="'objekt.loeschen' | t"
+      [danger]="true"
       [secondary]="'objekt.abbrechen' | t"
-      (dangerClick)="remove()"
+      (primaryClick)="remove()"
       (secondaryClick)="deleteAsk.set(false)"
     />
   </div>

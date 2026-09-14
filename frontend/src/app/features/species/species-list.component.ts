@@ -8,30 +8,19 @@ import {
   viewChildren,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, CardComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
+import { CardComponent } from '@stupa-makers/ui-kit';
 import type { FacetKey, SpeciesBrief } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import {
-  EmptyStateComponent,
-  FormFieldComponent,
-  PageHeaderComponent,
-  SpeciesRowComponent,
-  SvgIconComponent,
-} from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SpeciesRowComponent, type SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { FACET_TEXT } from './facet-labels';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesState } from './species.state';
-import {
-  EDIBILITY_BADGE,
-  EDIBILITY_TEXT,
-  GEFAEHRLICH,
-  LEVEL_BADGE,
-  LEVEL_RANK,
-  PROTECTION_BADGE,
-  PROTECTION_SHORT,
-  TAG_TEXT,
-} from './labels';
+import { EDIBILITY_COLOUR, EDIBILITY_TEXT, LEVEL_RANK } from './labels';
 
 /** Eine abnehmbare Marke über der Liste: sie zeigt eine Gruppe, die filtert. */
 interface Mark {
@@ -40,21 +29,11 @@ interface Mark {
   label: string;
 }
 
-/** Ein Tag unter dem Namen einer Art. */
-interface Marke {
-  text: string;
-  variant: BadgeVariant;
-}
-
 /** Eine Zeile der Liste, fertig für die Vorlage. */
 interface Row {
   slug: string;
-  name: string;
-  latin: string;
   active: boolean;
-  badges: Marke[];
-  /** Das Titelbild der Art. Ohne Bild bleibt rechts in der Zeile nichts. */
-  image: string | null;
+  species: SpeciesRowSpecies;
 }
 
 /**
@@ -72,7 +51,6 @@ interface Row {
   selector: 'app-species',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
     CardComponent,
     EmptyStateComponent,
     FormFieldComponent,
@@ -186,60 +164,18 @@ export class SpeciesListComponent {
     return art.name.toLocaleLowerCase().includes(query) || art.lateinisch.toLocaleLowerCase().includes(query);
   }
 
-  /**
-   * Die Marken einer Zeile, immer in derselben Reihenfolge: Stufe, Schutz,
-   * Speisewert, Symbiosepartner, Jahreszeit. Jede steht für einen Filter, nach
-   * dem man die Liste auch wirklich durchsuchen kann; vorher standen dort
-   * beliebige Tags, die nichts zu tun hatten.
-   *
-   * Der Speisewert erscheint nur, wo er warnt. „Essbar“ an jeder zweiten Zeile
-   * sagt nichts; „Tödlich giftig“ muss ins Auge springen.
-   *
-   * Und es steht vorn. Die Zeile zeigt nur die ersten zwei oder drei Marken,
-   * und der Speisewert stand an dritter Stelle: eine geschützte, tödlich
-   * giftige Art verlor ihre Warnung, sobald sie die aktive Art der Karte war.
-   * Was hinten steht, darf wegfallen — Baum und Jahreszeit. Die Warnung nie.
-   */
-  private badges(art: SpeciesBrief): Marke[] {
-    const badges: Marke[] = [];
-    if (GEFAEHRLICH.includes(art.speisewert)) {
-      badges.push({
-        text: this.i18n.translate(EDIBILITY_TEXT[art.speisewert]),
-        variant: EDIBILITY_BADGE[art.speisewert],
-      });
-    }
-    badges.push({
-      text: this.i18n.translate(TAG_TEXT[art.stufe]),
-      variant: LEVEL_BADGE[art.stufe],
-    });
-    if (art.schutz.status !== 'keiner') {
-      badges.push({
-        text: this.i18n.translate(PROTECTION_SHORT[art.schutz.status]),
-        variant: PROTECTION_BADGE[art.schutz.status],
-      });
-    }
-    // Der erste Baum ist der wichtigste: so stehen sie im Profil.
-    const tree = art.baeume.at(0) ?? art.baeumeAusErfahrung?.baeume.at(0);
-    if (tree) badges.push({ text: this.i18n.translate(TAG_TEXT[tree]), variant: 'neutral' });
-    const season = art.jahreszeiten.at(0);
-    if (season) {
-      badges.push({ text: this.i18n.translate(TAG_TEXT[season]), variant: 'neutral' });
-    }
-    return badges;
-  }
-
+  /** Die Zeile trägt nur noch eine Plakette: den Speisewert, die einzige Warnung. */
   private row(art: SpeciesBrief, active: boolean): Row {
-    // Die Zeile setzt bei einer aktiven Art selbst die Marke „aktiv“ davor,
-    // darum bleibt hier eine Marke weniger Platz. Gekürzt wird von hinten, und
-    // die Warnung steht vorn: sie ist die einzige Marke, deren Fehlen jemanden
-    // vergiften kann.
     return {
       slug: art.slug,
-      name: art.name,
-      latin: art.lateinisch,
       active,
-      badges: this.badges(art).slice(0, active ? 2 : 3),
-      image: art.titelbild,
+      species: {
+        name: art.name,
+        latin: art.lateinisch,
+        levelText: this.i18n.translate(EDIBILITY_TEXT[art.speisewert]),
+        levelColour: EDIBILITY_COLOUR[art.speisewert],
+        image: art.titelbild,
+      },
     };
   }
 }

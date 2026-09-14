@@ -13,36 +13,33 @@ import { TIER_WEAKEST } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import {
-  ActionBarComponent,
-  ColourChangeComponent,
-  ColourFieldComponent,
-  KeyValueRowComponent,
-  EmptyStateComponent,
-  KeyValueTableComponent,
-  LevelPillComponent,
-  LookalikeRowComponent,
-  MeasurementComponent,
-  PageHeaderComponent,
-  SeasonCurveComponent,
-  SvgIconComponent,
-  TagListComponent,
-  YearBandComponent,
-  type MonthMark,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ColourChangeComponent } from '../../ui/colour-change/colour-change.component';
+import { ColourFieldComponent } from '../../ui/colour-field/colour-field.component';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
+import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { MeasurementGroupComponent } from '../../ui/measurement-group/measurement-group.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { type MonthMark, SeasonCurveComponent } from '../../ui/season-curve/season-curve.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { TagListComponent } from '../../ui/tag-list/tag-list.component';
+import { YearBandComponent } from '../../ui/year-band/year-band.component';
 import {
   changeRow,
   colourRow,
   colourRows,
   levelRows,
-  measureRows,
+  measureGroups,
   senseRows,
   timeRow,
   type ChangeRow,
   type ColourRow,
   type LevelRow,
   type Marke,
-  type MeasureRow,
+  type MeasureGroup,
   type SenseRow,
   type TimeRow,
 } from './feature-rows';
@@ -142,7 +139,7 @@ interface Viewport {
   legendYears: string;
   label: string;
   einstufung: LevelRow[];
-  masse: MeasureRow[];
+  masse: MeasureGroup[];
   fruchtschicht: LayerRow[];
   hut: LayerRow[];
   stiel: LayerRow[];
@@ -183,8 +180,8 @@ interface Viewport {
     EmptyStateComponent,
     KeyValueTableComponent,
     LevelPillComponent,
-    LookalikeRowComponent,
-    MeasurementComponent,
+    ListRowComponent,
+    MeasurementGroupComponent,
     PageHeaderComponent,
     RouterLink,
     SeasonCurveComponent,
@@ -254,11 +251,12 @@ export class SpeciesComponent {
     this.back();
   }
 
-  /** Merkt, von welcher Art der Sprung kam, damit der Rückweg sie kennt. */
+  /** Merkt, von welcher Art der Sprung kam, damit der Rückweg sie kennt, und springt hin. */
   protected toLookalike(row: ConfusableRow): void {
     const viewport = this.viewport();
     if (!row.route || !viewport) return;
     this.state.setOrigin({ slug: viewport.slug, name: viewport.name });
+    void this.router.navigate([row.route]);
   }
 
   /**
@@ -322,7 +320,7 @@ export class SpeciesComponent {
         hoechstwert: Math.round(saison?.hoechstwert ?? 0),
       }),
       einstufung: levelRows(this.i18n, art),
-      masse: measureRows(this.i18n, art.masse),
+      masse: measureGroups(this.i18n, art.masse),
       fruchtschicht: this.layerRows(art),
       hut: this.capRows(art),
       stiel: this.stemRows(art),
