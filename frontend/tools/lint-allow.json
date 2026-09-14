@@ -445,15 +445,11 @@
     "src/app/features/species/species.component.ts:app-species"
   ],
   "german": [
-    "src/app/core/auth/auth.interceptor.ts#3af1e186",
-    "src/app/dev/building-blocks/building-blocks.component.ts#5281e4cf",
     "src/app/features/account/my-images.component.ts#a2d37bf3",
     "src/app/features/admin/images.component.ts#a2d37bf3",
     "src/app/features/map/factors.ts#26dd5303",
     "src/app/features/map/factors.ts#999f81f3",
     "src/app/features/map/factors.ts#fa93e119",
-    "src/app/features/species/comparison.ts#382f1ec4",
-    "src/app/features/species/comparison.ts#91107087",
     "src/app/features/species/species-images.component.ts#a2d37bf3"
   ]
 }

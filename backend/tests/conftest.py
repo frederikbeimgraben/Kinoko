@@ -16,7 +16,8 @@ from app.core.settings import get_settings
 from app.main import build_app
 from app.models import Base, User
 from app.modules.access import seed as access_seed
-from app.modules.texts import service as texts_service
+from app.modules.texts.seed import TextSeed
+from app.modules.texts.service import TextService
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -65,8 +66,8 @@ async def session(schema: None) -> AsyncIterator[AsyncSession]:  # noqa: ARG001
 async def seeded(session: AsyncSession) -> None:
     """Rechte, Rollen und Texte, so wie der Start sie schreibt."""
     await access_seed.sync(session)
-    await texts_service.sync(session)
-    await texts_service.load_titles(session)
+    await TextSeed().sync(session)
+    await TextService(session).load_titles()
 
 
 @pytest.fixture

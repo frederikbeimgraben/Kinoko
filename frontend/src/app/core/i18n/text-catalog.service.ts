@@ -3,9 +3,8 @@ import { firstValueFrom } from 'rxjs';
 import { TextsApi } from '../api/texts.api';
 import type { TextEntry } from '../api/models';
 import { I18nService, type LoadedTexts } from './i18n.service';
+import { TEXT_CACHE, type CachedTexts } from './text-cache';
 import type { Locale } from './translations';
-
-const STORAGE_KEY = 'pilzkarte.texte';
 
 /** Aus den Einträgen wird je Sprache ein Wörterbuch für den `I18nService`. */
 export function textsOf(entries: readonly TextEntry[]): LoadedTexts {
@@ -19,24 +18,16 @@ export function textsOf(entries: readonly TextEntry[]): LoadedTexts {
 }
 
 /**
- * Der Katalog der Oberflächentexte aus der Datenbank.
- *
- * Beim Start liegt zuerst der zuletzt geholte Katalog aus dem lokalen Speicher
- * an: Er steht ohne Netzweg bereit und trägt auch offline. Danach fragt der
- * Dienst den Server. Bleibt die Antwort aus, ändert sich nichts, und die App
- * läuft mit dem, was sie hat — im schlimmsten Fall mit dem Katalog, der im
- * Paket steckt.
- *
- * Eine Änderung aus der Verwaltung geht denselben Weg zurück: Der Server
- * antwortet mit dem neuen Eintrag, der Dienst legt ihn ab, und die Oberfläche
- * schreibt sich ohne Neuladen um.
+ * Die Texte aus der Datenbank: erst aus dem `TextCache`, dann vom Server.
  */
 @Injectable({ providedIn: 'root' })
 export class TextCatalogService {
   private readonly api = inject(TextsApi);
   private readonly i18n = inject(I18nService);
+  private readonly cache = inject(TEXT_CACHE);
 
   private readonly _entries = signal<readonly TextEntry[]>([]);
+  private etag: string | null = null;
 
   readonly entries = this._entries.asReadonly();
   /** Die Bereiche der Schlüssel: alles vor dem ersten Punkt, ohne Doppel. */
@@ -44,41 +35,47 @@ export class TextCatalogService {
     ...new Set(this._entries().map((entry) => areaOf(entry.key))),
   ]);
 
-  /** Der Katalog aus dem lokalen Speicher, noch vor dem ersten Netzweg. */
-  restore(): void {
-    const stored = this.read();
-    // Nicht über `adopt`: was gerade gelesen wurde, muss nicht zurückgeschrieben werden.
-    if (stored) this.apply(stored);
+  /** Der Katalog aus dem Zwischenspeicher, noch vor dem ersten Netzweg. */
+  async restore(): Promise<void> {
+    const stored = await this.held();
+    if (stored === null) return;
+    this.etag = stored.etag;
+    this.apply(stored.entries);
   }
 
   /** Holt den Katalog vom Server. Ein Fehler lässt den bisherigen stehen. */
   async load(): Promise<void> {
     try {
-      const catalogue = await firstValueFrom(this.api.catalogue());
-      this.adopt(catalogue.entries);
+      const answer = await firstValueFrom(this.api.catalogue(this.etag));
+      this.etag = answer.etag;
+      if (answer.body !== null) await this.adopt(answer.body.entries);
     } catch {
       // Der ApiClient hat den Fehler schon gemeldet. Ohne Server bleibt es
-      // beim gespeicherten Katalog, sonst beim eingebauten.
+      // beim abgelegten Katalog, sonst beim eingebauten.
     }
   }
 
   /** Setzt einen Text in einer Sprache. */
   async change(key: string, locale: Locale, value: string): Promise<void> {
-    this.replace(await firstValueFrom(this.api.change(key, locale, value)));
+    await this.replace(await firstValueFrom(this.api.change(key, locale, value)));
   }
 
   /** Holt die Vorgabe eines Textes zurück. */
   async reset(key: string, locale: Locale): Promise<void> {
-    this.replace(await firstValueFrom(this.api.reset(key, locale)));
+    await this.replace(await firstValueFrom(this.api.reset(key, locale)));
   }
 
-  private replace(entry: TextEntry): void {
-    this.adopt(this._entries().map((known) => (known.key === entry.key ? entry : known)));
+  private async replace(entry: TextEntry): Promise<void> {
+    await this.adopt(this._entries().map((known) => (known.key === entry.key ? entry : known)));
   }
 
-  private adopt(entries: readonly TextEntry[]): void {
+  private async adopt(entries: readonly TextEntry[]): Promise<void> {
     this.apply(entries);
-    this.write(entries);
+    try {
+      await this.cache.write({ etag: this.etag, entries });
+    } catch {
+      // Ohne Ablage holt der nächste Start den Katalog wieder vom Server.
+    }
   }
 
   private apply(entries: readonly TextEntry[]): void {
@@ -86,21 +83,12 @@ export class TextCatalogService {
     this.i18n.useTexts(textsOf(entries));
   }
 
-  private read(): readonly TextEntry[] | null {
+  private async held(): Promise<CachedTexts | null> {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw === null ? null : (JSON.parse(raw) as TextEntry[]);
+      return await this.cache.read();
     } catch {
-      // Gesperrter Speicher oder ein halber Eintrag. Dann führt der Server.
+      // Ein gesperrter Ablageort führt zum eingebauten Katalog.
       return null;
-    }
-  }
-
-  private write(entries: readonly TextEntry[]): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    } catch {
-      // Ohne Speicher holt der nächste Start den Katalog wieder vom Server.
     }
   }
 }

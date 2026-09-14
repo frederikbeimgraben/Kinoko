@@ -1,5 +1,11 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, InjectionToken, computed, inject, signal } from '@angular/core';
 import { CATALOG, DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale, type TranslationKey } from './translations';
+
+/** Die eingebauten Texte. Ein Test setzt sie leer und sieht nur Schlüssel. */
+export const FALLBACK_TEXTS = new InjectionToken<Record<Locale, Record<string, string>>>('FALLBACK_TEXTS', {
+  providedIn: 'root',
+  factory: () => CATALOG,
+});
 
 const STORAGE_KEY = 'pilzkarte.sprache';
 
@@ -31,6 +37,7 @@ export const LANGUAGE_CHOICES: readonly LanguageChoice[] = ['de', 'en', 'system'
  */
 @Injectable({ providedIn: 'root' })
 export class I18nService {
+  private readonly _fallback = signal<Record<Locale, Record<string, string>>>(inject(FALLBACK_TEXTS));
   private readonly _choice = signal<LanguageChoice>(this.read() ?? 'system');
   private readonly _texts = signal<LoadedTexts>({});
 
@@ -43,12 +50,23 @@ export class I18nService {
 
   /** Das aktive Wörterbuch, damit Vorlagen auf den Wechsel reagieren. */
   readonly dictionary = computed<Record<string, string>>(() => ({
-    ...CATALOG[this.locale()],
+    ...this._fallback()[this.locale()],
     ...this._texts()[this.locale()],
   }));
 
   constructor() {
     this.flip();
+  }
+
+  /** Nimmt die Tabelle einer Seite mit eigenen Schlüsseln dazu. */
+  addFallback(more: Record<Locale, Record<string, string>>): this {
+    this._fallback.update(
+      (known) =>
+        Object.fromEntries(
+          SUPPORTED_LOCALES.map((locale) => [locale, { ...known[locale], ...more[locale] }]),
+        ) as Record<Locale, Record<string, string>>,
+    );
+    return this;
   }
 
   /** Übernimmt die Texte aus der Datenbank. Sie wirken sofort. */
@@ -67,9 +85,9 @@ export class I18nService {
     this.setChoice(locale);
   }
 
-  /** Übersetzt einen Schlüssel. `{name}` im Text wird aus `params` gefüllt. */
+  /** Übersetzt einen Schlüssel. `{name}` kommt aus `params`, sonst steht er da. */
   translate(key: TranslationKey, params?: Record<string, string | number>): string {
-    const text = this.dictionary()[key] || CATALOG[DEFAULT_LOCALE][key];
+    const text = this.dictionary()[key] || this._fallback()[DEFAULT_LOCALE][key] || key;
     return params ? this.fill(text, params) : text;
   }
 

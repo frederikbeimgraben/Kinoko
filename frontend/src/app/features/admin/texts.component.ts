@@ -25,7 +25,7 @@ const DETENTS = ['content', 'content', 'content'] as const;
 /** Ein Schlüssel im Blatt, mit den Werten, die gerade im Feld stehen. */
 interface Draft {
   key: string;
-  values: Record<Locale, string>;
+  values: Record<string, string>;
 }
 
 /**

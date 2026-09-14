@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
 import type { Locale } from '../i18n/translations';
-import { ApiClient } from './api-client';
+import { ApiClient, type Tagged } from './api-client';
 import type { TextCatalogue, TextEntry } from './models';
 
 /**
@@ -12,8 +12,8 @@ import type { TextCatalogue, TextEntry } from './models';
 export class TextsApi {
   private readonly api = inject(ApiClient);
 
-  catalogue(): Observable<TextCatalogue> {
-    return this.api.get<TextCatalogue>('/texts');
+  catalogue(etag: string | null): Observable<Tagged<TextCatalogue>> {
+    return this.api.getTagged<TextCatalogue>('/texts', etag);
   }
 
   change(key: string, locale: Locale, value: string): Observable<TextEntry> {

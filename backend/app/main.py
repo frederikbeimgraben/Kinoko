@@ -19,7 +19,8 @@ from app.modules.objects import router as objects_router
 from app.modules.photos import router as photos_router
 from app.modules.pipeline import router as pipeline_router
 from app.modules.texts import router as texts_router
-from app.modules.texts import service as texts_service
+from app.modules.texts.seed import TextSeed
+from app.modules.texts.service import TextService
 
 
 @asynccontextmanager
@@ -28,8 +29,8 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
     async with session_factory()() as db:
         await catalog_seed.sync(db)
         await access_seed.sync(db)
-        await texts_service.sync(db)
-        await texts_service.load_titles(db)
+        await TextSeed().sync(db)
+        await TextService(db).load_titles()
     yield
     await engine().dispose()
 
