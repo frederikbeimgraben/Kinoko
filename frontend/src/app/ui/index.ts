@@ -61,7 +61,7 @@ export { ReviewQueueComponent } from './review-queue/review-queue.component';
 export { SearchFieldComponent } from './search-field/search-field.component';
 export { SeasonCurveComponent, type MonthMark } from './season-curve/season-curve.component';
 export { SegmentedComponent, type SegmentOption } from './segmented/segmented.component';
-export { SheetComponent, type Detent } from './sheet/sheet.component';
+export { SheetComponent, type Detent, type DetentSize } from './sheet/sheet.component';
 export { SheetHeadComponent } from './sheet-head/sheet-head.component';
 export { SkeletonComponent, type SkeletonKind } from './skeleton/skeleton.component';
 export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';

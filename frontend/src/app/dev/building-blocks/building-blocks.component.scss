@@ -54,6 +54,44 @@
   gap: 6px;
 }
 
+.block__band {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px 14px;
+}
+
+.block__bandhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 15px;
+}
+
+.block__muted {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+// Das Board legt den Balken auf einen Block und setzt den Wert darüber.
+.block__meter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: flex-end;
+  block-size: 50px;
+  padding: 0 10px 8px;
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-md);
+}
+
+.block__percent {
+  align-self: flex-end;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+}
+
 .block__stack {
   display: flex;
   flex-direction: column;
@@ -97,7 +135,7 @@
 }
 
 .block__stage--sheet {
-  block-size: 164px;
+  block-size: 128px;
   background: var(--color-surface-sunken);
 }
 
@@ -128,7 +166,7 @@
 }
 
 .block__stage--viewer {
-  block-size: 330px;
+  block-size: 212px;
 }
 
 .block__stage--fixed {
@@ -138,6 +176,16 @@
 
 .block__stage--confirm {
   block-size: 296px;
+}
+
+.block__stage--photo {
+  block-size: 108px;
+}
+
+// Das Board zeigt zwei Zeilen und eine Attrappe, der Baustein reiht drei.
+.block__card--list {
+  block-size: 190px;
+  overflow: hidden;
 }
 
 .block__stage--crosshair {

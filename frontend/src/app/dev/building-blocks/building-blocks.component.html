@@ -9,7 +9,7 @@
     </div>
   </section>
 
-  <section class="block">
+  <section class="block block--nolabel">
     <h2 class="block__head">{{ 'blocks.input' | t }}</h2>
     <app-input [label]="text('common.name')" [ngModel]="text('beispiel.person')" />
     <app-input
@@ -22,7 +22,7 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.select' | t }}</h2>
-    <app-select [label]="text('species.field.flesh')" [options]="fleshOptions" [ngModel]="'candidus'" />
+    <app-select [ariaLabel]="text('species.field.flesh')" [options]="fleshOptions" [ngModel]="'candidus'" />
   </section>
 
   <section class="block">
@@ -49,7 +49,7 @@
     </div>
   </section>
 
-  <section class="block">
+  <section class="block block--nolabel">
     <h2 class="block__head">{{ 'blocks.dialog' | t }}</h2>
     <div class="block__stage block__stage--dialog">
       <app-dialog [open]="true" [title]="text('map.combination.save')">
@@ -94,6 +94,7 @@
       <app-sheet
         [label]="text('entry.reportFind.title')"
         [detent]="detent()"
+        [detents]="sheetDetents"
         (detentChange)="detent.set($event)"
       >
         <app-sheet-head head [title]="text('entry.reportFind.title')" [arrows]="false" />
@@ -399,11 +400,9 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.levelPill' | t }}</h2>
-    <div class="block__row block__row--tight">
-      <app-level-pill [text]="text('enum.edibility.edible')" colour="var(--color-success)" />
-      <app-level-pill [text]="text('enum.edibility.poisonous')" colour="var(--color-warning)" />
-      <app-level-pill [text]="text('enum.protection.none')" colour="var(--color-text-muted)" />
-    </div>
+    <app-level-pill [text]="text('enum.edibility.edible')" colour="var(--color-success)" />
+    <app-level-pill [text]="text('enum.edibility.poisonous')" colour="var(--color-warning)" />
+    <app-level-pill [text]="text('enum.protection.none')" colour="var(--color-text-muted)" />
   </section>
 
   <section class="block">
@@ -456,14 +455,22 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.yearBand' | t }}</h2>
-    <app-year-band
-      [fromMonth]="6"
-      [toMonth]="11"
-      [peakFromMonth]="8"
-      [peakToMonth]="10"
-      [months]="months"
-      [label]="text('species.growthPeriod')"
-    />
+    <div class="block__card">
+      <div class="block__band">
+        <div class="block__bandhead">
+          <span>{{ 'art.zeile.wachstum' | t }}</span>
+          <span class="block__muted">{{ 'beispiel.wachstum.zeitraum' | t }}</span>
+        </div>
+        <app-year-band
+          [fromMonth]="6"
+          [toMonth]="11"
+          [peakFromMonth]="8"
+          [peakToMonth]="10"
+          [months]="months"
+          [label]="text('species.growthPeriod')"
+        />
+      </div>
+    </div>
   </section>
 
   <section class="block">
@@ -521,7 +528,9 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.privateImage' | t }}</h2>
-    <app-private-image [path]="sampleImage.thumbUrl" [alt]="text('art.boletus_edulis')" />
+    <div class="block__stage block__stage--photo">
+      <app-private-image [path]="sampleImage.thumbUrl" [alt]="text('art.boletus_edulis')" />
+    </div>
   </section>
 
   <section class="block">
@@ -575,7 +584,7 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.infiniteList' | t }}</h2>
-    <div class="block__card">
+    <div class="block__card block__card--list">
       <app-infinite-list [pageSize]="40" [hasMore]="true" [pending]="true">
         @for (row of speciesRows; track row.value) {
           <app-species-row [species]="row" />
@@ -592,7 +601,10 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.progress' | t }}</h2>
-    <app-progress [value]="62" />
+    <div class="block__meter">
+      <span class="block__percent">{{ 'beispiel.fortschritt' | t }}</span>
+      <app-progress [value]="62" />
+    </div>
   </section>
 
   <section class="block">

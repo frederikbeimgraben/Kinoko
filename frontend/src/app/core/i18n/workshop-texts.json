@@ -159,7 +159,9 @@
     "beispiel.tag.herbst": "Herbst",
     "beispiel.fund.pfifferlingNotiz": "unter Fichten am Hang",
     "beispiel.fund.steinpilzNotiz": "unter Fichten",
-    "beispiel.dialogMeta": "6 Funde · 0 Bilder"
+    "beispiel.dialogMeta": "6 Funde · 0 Bilder",
+    "beispiel.wachstum.zeitraum": "Juni bis Oktober",
+    "beispiel.fortschritt": "62 %"
   },
   "en": {
     "blocks.button": "app-button · 44 / 48 px · radius 10 · edge 1",
@@ -321,6 +323,8 @@
     "beispiel.tag.herbst": "Autumn",
     "beispiel.fund.pfifferlingNotiz": "under spruces on the slope",
     "beispiel.fund.steinpilzNotiz": "under spruces",
-    "beispiel.dialogMeta": "6 finds · 0 images"
+    "beispiel.dialogMeta": "6 finds · 0 images",
+    "beispiel.wachstum.zeitraum": "June to October",
+    "beispiel.fortschritt": "62 %"
   }
 }
