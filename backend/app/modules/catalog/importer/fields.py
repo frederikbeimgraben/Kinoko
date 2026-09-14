@@ -63,7 +63,7 @@ def species_row(ctx: BuildContext, taxon_id: uuid.UUID | None) -> Species:
             vocab.EDIBILITY, profile["speisewert"], field="speisewert", source=ctx.stem
         ),
         marketable=profile.get("marktfaehig", False),
-        forecast_enabled=False,
+        forecast_enabled="karte" in profile,
         frequency=optional_lookup(
             vocab.FREQUENCY, profile.get("haeufigkeit"), "haeufigkeit", ctx.stem
         ),

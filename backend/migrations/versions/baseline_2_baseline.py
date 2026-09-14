@@ -7,7 +7,7 @@ from alembic import op
 
 from app.models import Utc
 
-revision: str = "baseline"
+revision: str = "baseline_2"
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None

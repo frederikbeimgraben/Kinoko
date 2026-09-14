@@ -90,7 +90,31 @@ def test_upgrade_resets_a_foreign_revision(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline"
+    assert version == "baseline_2"
+
+
+def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
+    file = tmp_path / "alte_baseline.sqlite"
+    point_at(file)
+    made = create_engine(f"sqlite:///{file}")
+    with made.begin() as connection:
+        connection.exec_driver_sql(
+            "CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL)"
+        )
+        connection.exec_driver_sql("INSERT INTO alembic_version VALUES ('baseline')")
+    Base.metadata.create_all(made)
+    made.dispose()
+
+    command.upgrade(alembic_config(), "head")
+
+    found = tables_of(file)
+    assert set(Base.metadata.tables) <= found
+
+    made = create_engine(f"sqlite:///{file}")
+    with made.connect() as connection:
+        version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
+    made.dispose()
+    assert version == "baseline_2"
 
 
 def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
@@ -109,4 +133,4 @@ def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline"
+    assert version == "baseline_2"
