@@ -114,8 +114,8 @@ export class MapComponent implements OnDestroy {
     });
     effect(() => {
       this.state.species.set(this.view.slug());
-      void this.tiles.load(this.view.slug());
     });
+    effect(() => void this.tiles.load(this.state.species()));
     void this.tiles.loadLayers();
     effect(() => {
       if (this.view.onCombination()) void this.loadSpeciesManifests();
