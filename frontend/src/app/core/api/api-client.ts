@@ -1,10 +1,12 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { ToastService } from '@stupa-makers/ui-kit';
-import { catchError, throwError, type Observable } from 'rxjs';
+import { catchError, map, of, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
 import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
+
+const NOT_MODIFIED = 304;
 
 /** Abfragewerte einer URL. `undefined` fällt weg, statt als Text zu landen. */
 /**
@@ -12,6 +14,12 @@ import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem
  * wählt so mehrere Werte einer Gruppe, und der Dienst liest sie als Liste.
  */
 export type Query = Record<string, string | number | boolean | readonly string[] | undefined>;
+
+/** Eine Antwort mit ETag. Zum bekannten Stand bleibt `body` leer. */
+export interface Tagged<T> {
+  etag: string | null;
+  body: T | null;
+}
 
 /**
  * Der einzige Weg zur eigenen API. Jeder Fehler wird zu einem
@@ -29,6 +37,19 @@ export class ApiClient {
     return this.http
       .get<T>(this.url(path), { params: this.params(query) })
       .pipe(catchError((failure: unknown) => this.report(failure)));
+  }
+
+  /** Holt eine Antwort mit ETag. Zum bekannten Stand bleibt der Körper leer. */
+  getTagged<T>(path: string, etag: string | null): Observable<Tagged<T>> {
+    const headers = etag === null ? undefined : new HttpHeaders({ 'If-None-Match': etag });
+    return this.http.get<T>(this.url(path), { headers, observe: 'response' }).pipe(
+      map((answer) => ({ etag: answer.headers.get('ETag'), body: answer.body })),
+      catchError((failure: unknown) =>
+        failure instanceof HttpErrorResponse && failure.status === NOT_MODIFIED
+          ? of({ etag: failure.headers.get('ETag') ?? etag, body: null })
+          : this.report(failure),
+      ),
+    );
   }
 
   post<T>(path: string, body?: unknown): Observable<T> {
@@ -117,10 +138,10 @@ export class ApiClient {
       const withoutResponse = failure.status === 0;
       return {
         type: 'about:blank',
-        title: this.i18n.translate(withoutResponse ? 'fehler.netz' : 'fehler.unbekannt'),
+        title: this.i18n.translate(withoutResponse ? 'state.noConnection' : 'error.internal'),
         status: failure.status,
       };
     }
-    return { type: 'about:blank', title: this.i18n.translate('fehler.unbekannt'), status: 0 };
+    return { type: 'about:blank', title: this.i18n.translate('error.internal'), status: 0 };
   }
 }

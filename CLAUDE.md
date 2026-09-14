@@ -31,9 +31,10 @@ cd backend  && uv run python -m tools.sync_contract
 ```
 
 Erzeugte Dateien vor jedem PR nachziehen: `backend/daten/texte.json`
-(`uv run python -m tools.export_texts`), `tools/board/erd.mmd`
-(`uv run python -m tools.erd`), `frontend/src/app/core/api/contract.d.ts`
-(`npm run api:generate`).
+(`uv run python -m tools.sync_texts`), `backend/openapi.yaml`
+(`uv run python -m tools.sync_contract`),
+`frontend/src/app/core/i18n/texts.generated.json` (`npm run texts:sync`),
+`frontend/src/app/core/api/contract.d.ts` (`npm run api:generate`).
 
 ## PR
 

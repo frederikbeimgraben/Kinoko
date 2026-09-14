@@ -80,8 +80,8 @@ describe('ApiClient', () => {
     api.get('/config').subscribe({ error: (failure: ProblemDetail) => caught.push(failure) });
     http.expectOne('/api/config').error(new ProgressEvent('error'), { status: 0 });
 
-    expect(caught[0].title).toBe('Keine Verbindung zum Server.');
-    expect(toasts.toasts()[0].message).toBe('Keine Verbindung zum Server.');
+    expect(caught[0].title).toBe('Keine Verbindung');
+    expect(toasts.toasts()[0].message).toBe('Keine Verbindung');
   });
 
   it('macht aus einer Antwort ohne problem+json einen allgemeinen Fehler', () => {
@@ -91,7 +91,7 @@ describe('ApiClient', () => {
     api.get('/config').subscribe({ error: (failure: ProblemDetail) => caught.push(failure) });
     http.expectOne('/api/config').flush('kaputt', { status: 500, statusText: 'Server Error' });
 
-    expect(caught[0].title).toBe('Unbekannter Fehler.');
+    expect(caught[0].title).toBe('Interner Fehler');
     expect(caught[0].status).toBe(500);
   });
 
@@ -131,6 +131,6 @@ describe('ApiClient', () => {
     request.event({ type: 0 } as never);
     request.flush('kaputt', { status: 500, statusText: 'Server Error' });
 
-    expect(caught[0].title).toBe('Unbekannter Fehler.');
+    expect(caught[0].title).toBe('Interner Fehler');
   });
 });

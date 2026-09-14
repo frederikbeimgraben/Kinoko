@@ -19,6 +19,7 @@ declare module '*/tools/check-german.mjs' {
     line: number;
     text: string;
   }
+  export function isGerman(text: string): boolean;
   export function findViolations(root: string): Violation[];
   export function report(root: string, allowPath: string): Violation[];
   export function allowKey(violation: Violation): string;
@@ -52,6 +53,13 @@ declare module '*/tools/check-boards.mjs' {
     missing: string[];
   }
   export function checkBoards(root: string): BoardCoverage;
+}
+
+declare module '*/tools/sync-texts.mjs' {
+  export function sorted(
+    source: Record<string, Record<string, string>>,
+  ): Record<string, Record<string, string>>;
+  export function catalogue(): Record<string, Record<string, string>>;
 }
 
 declare module '*/tools/sync-boards.mjs' {

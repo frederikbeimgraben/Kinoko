@@ -24,10 +24,10 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(async () => {
       inject(ThemeService).init();
       const auth = inject(AuthService);
-      // Die Texte der letzten Sitzung liegen ohne Netzweg an. Der Server
-      // liefert danach den Stand der Datenbank nach.
+      // Der abgelegte Katalog liegt ohne Netzweg an. Der Server liefert
+      // danach den Stand der Datenbank nach.
       const texts = inject(TextCatalogService);
-      texts.restore();
+      await texts.restore();
       // Erst die Konfiguration: ohne Issuer und Client ID gibt es keine
       // Anmeldung. Die Sitzung kommt danach im Hintergrund, damit der Chunk
       // von oidc-client-ts und der iframe den ersten Frame nicht aufhalten.

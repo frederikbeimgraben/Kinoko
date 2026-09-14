@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { BadgeComponent, CardComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { WORKSHOP_TEXTS } from '../../core/i18n/workshop-texts';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import {
   ActionBarComponent,
@@ -163,7 +164,7 @@ import {
   styleUrl: './building-blocks.component.scss',
 })
 export class BuildingBlocksComponent {
-  private readonly i18n = inject(I18nService);
+  private readonly i18n = inject(I18nService).addFallback(inject(WORKSHOP_TEXTS));
   private readonly lightPane = viewChild.required<ElementRef<HTMLElement>>('light');
   private readonly darkPane = viewChild.required<ElementRef<HTMLElement>>('dark');
 

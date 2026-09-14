@@ -46,7 +46,7 @@ const FUNCTION_WORDS = new Set([
 ]);
 
 /** Erkennt deutschen Text: Umlaut oder ein Funktionswort als eigenes Wort. */
-function isGerman(text) {
+export function isGerman(text) {
   const letters = text.match(/[A-Za-zÄÖÜäöüß]/g) ?? [];
   if (letters.length < 2) return false;
   if (UMLAUT.test(text)) return true;

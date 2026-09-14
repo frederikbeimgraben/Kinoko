@@ -21,6 +21,7 @@
     "check:selectors": "node tools/check-selectors.mjs",
     "check:german": "node tools/check-german.mjs",
     "boards:sync": "node tools/sync-boards.mjs",
+    "texts:sync": "node tools/sync-texts.mjs",
     "api:generate": "openapi-typescript ../backend/openapi.yaml -o src/app/core/api/contract.d.ts",
     "e2e": "playwright test",
     "e2e:boards": "node tools/check-boards.mjs && playwright test --project=phone --project=desktop",

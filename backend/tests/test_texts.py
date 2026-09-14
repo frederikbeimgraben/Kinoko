@@ -1,3 +1,5 @@
+import json
+
 import httpx
 import pytest
 from sqlalchemy import select
@@ -5,14 +7,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import NotFound
 from app.models import TextEntry
-from app.modules.texts import service
+from app.modules.texts.seed import TextSeed
+from app.modules.texts.service import TextService
 from tests.conftest import app_of, make_user, sign_in
 
 
+def wanted() -> set[tuple[str, str]]:
+    """Jeder Schlüssel der Vorgabe, je Sprache."""
+    raw = json.loads(TextSeed.SOURCE.read_text(encoding="utf-8"))
+    return {(key, locale) for locale, entries in raw.items() for key in entries}
+
+
+async def test_seed_writes_every_key_of_the_file(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
+    added = await TextSeed().sync(session)
+
+    rows = (await session.execute(select(TextEntry))).scalars()
+    assert {(row.key, row.locale) for row in rows} == wanted()
+    assert added == len(wanted())
+
+
 async def test_sync_writes_only_missing_keys(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
-    first = await service.sync(session)
+    first = await TextSeed().sync(session)
     assert first > 0
-    assert await service.sync(session) == 0
+    assert await TextSeed().sync(session) == 0
 
 
 async def test_sync_keeps_a_changed_text(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
@@ -20,9 +37,19 @@ async def test_sync_keeps_a_changed_text(session: AsyncSession, seeded: None) ->
     row.value = "Von Hand"
     row.updated_by_id = None
     await session.commit()
-    await service.sync(session)
+    await TextSeed().sync(session)
     await session.refresh(row)
     assert row.value == "Von Hand"
+
+
+async def test_catalogue_holds_the_whole_file(api: httpx.AsyncClient) -> None:
+    answer = await api.get("/texts")
+
+    assert answer.status_code == 200
+    body = answer.json()
+    pairs = {(entry["key"], locale) for entry in body["entries"] for locale in entry["values"]}
+    assert pairs == wanted()
+    assert answer.headers["etag"]
 
 
 async def test_catalogue_has_both_locales(api: httpx.AsyncClient) -> None:
@@ -41,6 +68,7 @@ async def test_etag_answers_304(api: httpx.AsyncClient) -> None:
     tag = first.headers["etag"]
     again = await api.get("/texts", headers={"If-None-Match": tag})
     assert again.status_code == 304
+    assert again.headers["etag"] == tag
 
 
 async def test_put_needs_the_right(api: httpx.AsyncClient, session: AsyncSession) -> None:
@@ -82,9 +110,9 @@ async def test_new_locale_of_a_known_key(api: httpx.AsyncClient, session: AsyncS
     assert back.status_code == 204
 
 
-async def test_entry_of_unknown_key_raises(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
+async def test_change_of_unknown_key_raises(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
     with pytest.raises(NotFound):
-        service.entry_of(await service.entries(session), "gibt.es.nicht")
+        await TextService(session).reset("gibt.es.nicht", "de")
 
 
 async def test_titles_reach_the_errors(api: httpx.AsyncClient) -> None:

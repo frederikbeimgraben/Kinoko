@@ -1,6 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { I18nService } from './i18n.service';
-import { CATALOG, SUPPORTED_LOCALES } from './translations';
+import { FALLBACK_TEXTS, I18nService } from './i18n.service';
+import { CATALOG, SUPPORTED_LOCALES, type TranslationKey } from './translations';
+
+/** Ein Dienst ohne jeden eingebauten Text. */
+function withoutFallback(): I18nService {
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    providers: [{ provide: FALLBACK_TEXTS, useValue: { de: {}, en: {} } }],
+  });
+  return TestBed.inject(I18nService);
+}
 
 /**
  * Ein frischer Dienst je Test. Die Sprache wird beim Bauen gelesen; ohne
@@ -107,13 +116,21 @@ describe('I18nService', () => {
     write.mockRestore();
   });
 
+  it('gibt den Schlüssel zurück, wenn ihn kein Katalog kennt', () => {
+    expect(service().translate('gibt.es.nicht' as TranslationKey)).toBe('gibt.es.nicht');
+  });
+
+  it('zeigt ohne Rückfalltabelle jeden Schlüssel als Schlüssel', () => {
+    expect(withoutFallback().translate('nav.karte')).toBe('nav.karte');
+  });
+
   it('kennt jeden Schlüssel in beiden Katalogen', () => {
     const schluessel = Object.keys(CATALOG.de);
 
     for (const locale of SUPPORTED_LOCALES) {
       expect(Object.keys(CATALOG[locale])).toHaveLength(schluessel.length);
       for (const entry of schluessel) {
-        expect(CATALOG[locale][entry as keyof typeof CATALOG.de]).not.toBe('');
+        expect(CATALOG[locale][entry]).not.toBe('');
       }
     }
   });
