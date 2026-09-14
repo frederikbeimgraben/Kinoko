@@ -14,6 +14,11 @@ function pendingStems(): Set<string> {
   return new Set(JSON.parse(readFileSync(path, 'utf8')) as string[]);
 }
 
+/** Ein Board aus `pending.json` läuft gar nicht, auch nicht seine Schritte. */
+export function skipPending(board: string): void {
+  test.skip(pendingStems().has(board), `${board} steht in pending.json`);
+}
+
 /**
  * Vergleicht die Ansicht mit `baseline/<board>.png`, Toleranz 0,5 % Pixel.
  * Ein Board aus `pending.json` läuft nicht. Das Board läuft sonst nur in

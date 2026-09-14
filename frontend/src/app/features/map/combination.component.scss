@@ -2,42 +2,17 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-5);
   min-block-size: 0;
+  // Der Fuß gehört an den unteren Rand des Blatts, nicht an die Liste.
+  margin: 0 calc(var(--size-gutter) * -1) calc(var(--space-5) * -1);
+  overflow: hidden;
 }
 
 .combination__factors {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-}
-
-// Die Aktionen sitzen unten im Blatt, nicht am Ende der Liste.
-.combination__footer {
-  margin-block-start: auto;
-}
-
-.kombination__gespeichert {
-  display: flex;
-  flex-direction: column;
-}
-
-.kombination__titel {
-  margin-block-end: var(--space-1);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.combination__delete {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--size-tap);
-  block-size: var(--size-tap);
-  color: var(--color-text-muted);
-  cursor: pointer;
-  background: none;
-  border: 0;
+  min-block-size: 0;
+  overflow-y: auto;
+  padding-inline: var(--size-gutter);
 }

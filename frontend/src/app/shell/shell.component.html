@@ -4,10 +4,9 @@
       <app-map class="shell__map" [class.shell__map--lead]="mapInFront()" [surfaceOnly]="!onTheMap()" />
     }
   }
-  @if (offline()) {
-    <app-banner class="shell__banner" kind="offline" />
-  }
-  <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'" />
+  <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'">
+    <app-avatar-button [name]="avatarName()" [label]="avatarLabel()" (pressed)="toAccount()" />
+  </app-nav>
   <main
     class="shell__content"
     [class.shell__content--off]="wide() && onTheMap()"
@@ -15,7 +14,7 @@
   >
     <router-outlet />
   </main>
-  @if (onTheMap() || wide()) {
+  @if (onTheMap() && !wide()) {
     <app-avatar-button
       class="shell__avatar"
       [name]="avatarName()"

@@ -1,0 +1,21 @@
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
+:host {
+  display: contents;
+}
+
+.overlay-foot {
+  padding: var(--space-3) var(--size-gutter) var(--size-gutter);
+}
+
+app-species-picker,
+app-layer-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-block-size: 0;
+  overflow: hidden;
+}

@@ -9,44 +9,44 @@ import {
 } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { shareMet, formatValue, type Layer, type Histogram } from '../../core/tiles/layers';
+import type { TranslationKey } from '../../core/i18n/translations';
+import { formatValue, type Histogram, type Layer } from '../../core/tiles/layers';
+import type { Condition } from '../../core/api/models';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { HistogramComponent } from '../../ui/histogram/histogram.component';
-import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
 import { type Handles, RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
-import { SheetComponent } from '../../ui/sheet/sheet.component';
-import { conditionText, span, type Condition, type Faktor } from './factors';
+import { conditionText, span, type Factor } from './factors';
 
 /** Wie fein der Griff läuft: fein genug zum Zielen, grob genug zum Ablesen. */
 export function stepSize(layer: Layer): number {
-  const breite = layer.high - layer.low;
-  if (breite > 50) return 1;
-  if (breite > 5) return 0.1;
+  const width = layer.high - layer.low;
+  if (width > 50) return 1;
+  if (width > 5) return 0.1;
   return 0.01;
 }
 
 /** Welche Griffe eine Bedingung braucht. */
-const HANDLES: Record<Condition, Handles> = { unter: 'to', ueber: 'from', zwischen: 'both' };
+const HANDLES: Record<Condition, Handles> = { below: 'to', above: 'from', between: 'both' };
 
-/**
- * Der Screen `Faktor`: die Verteilung der Quelle über Deutschland, die
- * Bedingung darüber, und was sie von der Fläche übrig lässt. Die Änderung
- * bleibt hier, bis sie übernommen wird.
- */
+const CONDITION_KEY: Record<Condition, TranslationKey> = {
+  below: 'map.factor.operator.under',
+  above: 'map.factor.operator.over',
+  between: 'map.factor.operator.between',
+};
+
+/** Der Faktor: die Verteilung der Quelle und die Bedingung darüber. */
 @Component({
   selector: 'app-factor-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
     HistogramComponent,
-    IconButtonComponent,
     KeyValueRowComponent,
     RangeSliderComponent,
     SegmentedComponent,
-    SheetComponent,
     SheetHeadComponent,
     TranslatePipe,
   ],
@@ -56,26 +56,23 @@ const HANDLES: Record<Condition, Handles> = { unter: 'to', ueber: 'from', zwisch
 export class FactorSheetComponent {
   private readonly i18n = inject(I18nService);
 
-  readonly factor = input.required<Faktor>();
+  readonly factor = input.required<Factor>();
   readonly layer = input.required<Layer>();
-  readonly histogramm = input<Histogram | null>(null);
-  /** Der Zeitbezug für den Kopf: die Woche oder „zeitlich konstant“. */
-  readonly timeScope = input<string>();
+  readonly histogram = input<Histogram | null>(null);
 
-  readonly apply = output<Faktor>();
-  readonly remove = output<Faktor>();
-  readonly closed = output();
+  readonly apply = output<Factor>();
+  readonly removed = output<Factor>();
 
   /** Der Faktor in Arbeit. Ein neuer Faktor von außen setzt ihn zurück. */
-  protected readonly draft = linkedSignal<Faktor, Faktor>({
+  protected readonly draft = linkedSignal<Factor, Factor>({
     source: this.factor,
     computation: (factor) => factor,
   });
 
   protected readonly conditions = computed<SegmentOption[]>(() =>
-    (['unter', 'ueber', 'zwischen'] as const).map((value) => ({
+    (['below', 'above', 'between'] as const).map((value) => ({
       value,
-      label: this.i18n.translate(`faktor.${value}`),
+      label: this.i18n.translate(CONDITION_KEY[value]),
     })),
   );
 
@@ -83,53 +80,54 @@ export class FactorSheetComponent {
   protected readonly step = computed(() => stepSize(this.layer()));
   protected readonly values = computed(() => span(this.draft(), this.layer()));
 
-  protected readonly fromShare = computed(() => this.shareOnScale(this.values().von));
-  protected readonly toShare = computed(() => this.shareOnScale(this.values().bis));
+  protected readonly fromShare = computed(() => this.shareOnScale(this.values().low));
+  protected readonly toShare = computed(() => this.shareOnScale(this.values().high));
 
   protected readonly condition = computed(() =>
-    conditionText(this.draft(), this.layer(), this.i18n.locale(), this.i18n.translate('faktor.bis')),
+    conditionText(this.draft(), this.layer(), this.i18n.locale(), this.i18n.translate('common.to')),
   );
 
-  protected readonly scaleFrom = computed(() =>
-    formatValue(this.layer().low, this.layer(), this.i18n.locale()),
+  protected readonly scaleFrom = computed(() => this.text(this.layer().low));
+  protected readonly scaleTo = computed(() => this.text(this.layer().high));
+
+  /** Die Grenze, die der Griff gerade setzt, in der Mitte der Skala. */
+  protected readonly bound = computed(() =>
+    this.text(this.draft().condition === 'below' ? this.values().high : this.values().low),
   );
 
-  protected readonly scaleTo = computed(() =>
-    formatValue(this.layer().high, this.layer(), this.i18n.locale()),
+  protected readonly distribution = computed(() =>
+    this.i18n.translate('map.factor.distribution', { source: this.head() }),
   );
 
-  protected readonly distributionText = computed(() =>
-    this.i18n.translate('faktor.verteilung', { ebene: this.layer().label }),
-  );
-
-  /** Was die Bedingung von der Fläche Deutschlands übrig lässt. */
-  protected readonly shareText = computed(() => {
-    const distribution = this.histogramm();
-    if (!distribution) return this.i18n.translate('faktor.ohneVerteilung');
-    const values = this.values();
-    const share = shareMet(distribution, values.von, values.bis);
-    return this.i18n.translate('faktor.anteil', { anteil: Math.round(share * 100) });
+  /** Die Quelle mit ihrem Zeitraum, wie die Überschrift sie nennt. */
+  protected readonly head = computed(() => {
+    const layer = this.layer();
+    return layer.range === '' ? layer.label : `${layer.label} ${layer.range}`;
   });
 
   protected setCondition(value: string): void {
-    const condition = (['unter', 'ueber', 'zwischen'] as const).find((entry) => entry === value);
+    const condition = (['below', 'above', 'between'] as const).find((entry) => entry === value);
     if (!condition) return;
     // Die Spanne bleibt, wo sie war: der Wechsel der Form soll den Faktor
     // nicht auf einen anderen Ausschnitt der Skala werfen.
     const values = this.values();
-    this.draft.set({ ...this.draft(), condition, von: values.von, bis: values.bis });
+    this.draft.set({ ...this.draft(), condition, low: values.low, high: values.high });
   }
 
   protected setFrom(value: number): void {
-    this.draft.set({ ...this.draft(), von: Math.min(value, this.values().bis) });
+    this.draft.set({ ...this.draft(), low: Math.min(value, this.values().high) });
   }
 
   protected setTo(value: number): void {
-    this.draft.set({ ...this.draft(), bis: Math.max(value, this.values().von) });
+    this.draft.set({ ...this.draft(), high: Math.max(value, this.values().low) });
+  }
+
+  private text(value: number): string {
+    return formatValue(value, this.layer(), this.i18n.locale());
   }
 
   private shareOnScale(value: number): number {
-    const breite = this.layer().high - this.layer().low;
-    return breite === 0 ? 0 : Math.min(Math.max((value - this.layer().low) / breite, 0), 1);
+    const width = this.layer().high - this.layer().low;
+    return width === 0 ? 0 : Math.min(Math.max((value - this.layer().low) / width, 0), 1);
   }
 }

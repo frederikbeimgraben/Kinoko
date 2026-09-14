@@ -1,27 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { layerGroups, type Layer } from '../../core/tiles/layers';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { layerGroups, unitOf, type Layer } from '../../core/tiles/layers';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 
-type GroupTitle = 'ebene.jeWoche' | 'ebene.fest' | 'faktor.arten';
+type GroupTitle = 'map.layer.perWeek' | 'map.layer.fixed' | 'map.factor.species';
 
 interface Group {
-  titel: GroupTitle;
+  title: GroupTitle;
   layers: readonly Layer[];
 }
 
-/**
- * Die Wahl einer Quelle für einen neuen Faktor: die Eingabe-Ebenen und die
- * Arten mit Vorhersage. Was schon in der Liste steht, ist gesperrt; zweimal
- * dieselbe Quelle zu prüfen hilft niemandem.
- */
+/** Die Quelle eines neuen Faktors: Ebenen und Arten. Belegtes ist gesperrt. */
 @Component({
   selector: 'app-factor-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, ListRowComponent, SheetComponent, TranslatePipe],
+  imports: [ListRowComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './factor-picker.component.html',
   styleUrl: './factor-picker.component.scss',
 })
@@ -29,7 +24,7 @@ export class FactorPickerComponent {
   private readonly i18n = inject(I18nService);
 
   readonly layers = input.required<readonly Layer[]>();
-  readonly arten = input<readonly Layer[]>([]);
+  readonly species = input<readonly Layer[]>([]);
   /** Die Quellen, die schon einen Faktor haben. */
   readonly assigned = input<ReadonlySet<string>>(new Set());
 
@@ -40,16 +35,20 @@ export class FactorPickerComponent {
     const { perWeek, fixed } = layerGroups(this.layers());
     return (
       [
-        { titel: 'ebene.jeWoche', layers: perWeek },
-        { titel: 'ebene.fest', layers: fixed },
-        { titel: 'faktor.arten', layers: this.arten() },
+        { title: 'map.layer.perWeek', layers: perWeek },
+        { title: 'map.layer.fixed', layers: fixed },
+        { title: 'map.factor.species', layers: this.species() },
       ] as const
     )
-      .filter((gruppe) => gruppe.layers.length > 0)
-      .map((gruppe) => ({ titel: gruppe.titel, layers: gruppe.layers }));
+      .filter((group) => group.layers.length > 0)
+      .map((group) => ({ title: group.title, layers: group.layers }));
   });
 
+  protected unit(layer: Layer): string {
+    return unitOf(layer);
+  }
+
   protected subline(layer: Layer): string | undefined {
-    return this.assigned().has(layer.id) ? this.i18n.translate('faktor.schonDabei') : undefined;
+    return this.assigned().has(layer.id) ? this.i18n.translate('map.factor.assigned') : undefined;
   }
 }

@@ -3,10 +3,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { layerGroups, type Layer } from '../../core/tiles/layers';
 import { SvgIconComponent, type IconName } from '../../ui/svg-icon/svg-icon.component';
 
-/**
- * Das Zeichen je Ebene. Wo mehrere Ebenen dasselbe messen, tragen sie dasselbe
- * Zeichen: die Buche unterscheidet sich von der Fichte im Namen, nicht im Bild.
- */
+/** Ein Zeichen je Ebene. Ebenen mit demselben Maß tragen dasselbe Zeichen. */
 const GLYPHS: Record<string, IconName> = {
   regen: 'cloud',
   regen_2w: 'cloud',
@@ -43,11 +40,7 @@ interface Group {
   cards: readonly LayerCard[];
 }
 
-/**
- * Die Eingabe-Ebenen in zwei Gruppen: was der Woche folgt und was für alle
- * Wochen gilt. Jede Ebene ist eine Karte mit eigenem Zeichen; die Einheit
- * steht umrandet daneben, damit die Wahl schon sagt, worin die Ebene misst.
- */
+/** Die Ebenen in zwei Gruppen: der Woche folgend und zeitlich konstant. */
 @Component({
   selector: 'app-layer-list',
   changeDetection: ChangeDetectionStrategy.OnPush,

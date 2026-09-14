@@ -14,9 +14,8 @@
   inset: 0;
 }
 
-// Das Blatt sitzt am unteren Rand der Karte. Der Wirt spannt über die ganze
-// Karte, weil die Raste ein Anteil dieser Höhe ist. Er liegt über den
-// schwebenden Knöpfen: in der obersten Raste deckt das Blatt sie zu.
+// Der Wirt des Blatts spannt über die ganze Karte: die Raste ist ein Anteil
+// dieser Höhe, und die oberste Raste deckt die schwebenden Knöpfe zu.
 .map__sheet {
   position: absolute;
   inset: 0;
@@ -48,17 +47,21 @@
 // Karte füllt den Rest (Artboard `Desktop`).
 :host-context(.shell--column) {
   .map__canvas {
-    inset-inline-start: var(--size-column);
-  }
-
-  .map__sheet {
-    inset-block-start: var(--size-nav);
-    inline-size: var(--size-column);
+    inset-inline-start: calc(var(--size-rail) + var(--size-column));
   }
 }
 
-// Die schwebenden Knöpfe sitzen oben rechts, jetzt ohne den Urheberhinweis
-// über sich. Maße aus `docs/mockups/bauen.py`, Klasse `.schwebe`.
+// Am Rechner steht die Spalte hinter der Seitenleiste, die Karte rechts davon.
+:host-context(.shell--column) .map__column {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--size-rail);
+  z-index: 2;
+  inline-size: var(--size-column);
+  border-inline-end: var(--border-width) solid var(--color-border);
+}
+
+// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards.
 .map__buttons {
   position: absolute;
   inset-block-start: 12px;
@@ -69,21 +72,14 @@
   gap: 12px;
 }
 
-// Am Telefon schwebt „Eintragen“ unten rechts, wo der Daumen liegt, und bleibt
-// über dem Blatt. Am Rechner steht er als dritter Knopf in der Gruppe oben
-// rechts.
-.map__add {
-  position: absolute;
-  inset-block-end: calc(var(--pilz-sheet-inset, var(--size-sheet-head)) + 12px);
-  inset-inline-end: 12px;
-  // Über dem Blatt: dessen Wirt spannt über die ganze Karte, damit die Raste
-  // ein Anteil dieser Höhe sein kann.
-  z-index: 3;
-}
-
+// Am Rechner steht „Eintragen“ unten rechts über der Karte, größer als die
+// Knöpfe darüber.
 :host-context(.shell--column) .map__add {
-  inset-block-start: calc(2 * (var(--size-floating) + 12px) + 12px);
-  inset-block-end: auto;
+  --size-floating: 56px;
+
+  position: absolute;
+  inset-block-end: 24px;
+  inset-inline-end: 24px;
 }
 
 .map__scrim {
@@ -113,5 +109,43 @@ app-object-sheet {
 // Die Abdunkelung gehört am Rechner über die Spalte, nicht über die Karte: die
 // bleibt sichtbar, damit man weiß, worüber man gerade entscheidet.
 :host-context(.shell--column) .map__scrim {
+  inset-inline-start: var(--size-rail);
   inline-size: var(--size-column);
+}
+
+// Das Skelett liegt über der Fläche, solange kein Manifest da ist.
+.map__skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+// Ohne Verbindung liegt die Karte grau: zu sehen ist der letzte Stand.
+.map__grey {
+  position: absolute;
+  inset: 0 0 var(--pilz-sheet-inset, 0) 0;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--color-text-muted);
+  mix-blend-mode: saturation;
+  opacity: 0.7;
+}
+
+// Die Leiste liegt über der Karte am oberen Rand, wie im Board MapOffline.
+.map__banner {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 3;
+  padding-block-start: env(safe-area-inset-top);
+}
+
+// Am Rechner steht die Spalte links: Kopf oben, Inhalt darunter, keine Rasten.
+.map__column {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+  background: var(--color-surface);
+  padding-block-start: var(--space-3);
 }

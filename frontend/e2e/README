@@ -35,3 +35,18 @@ Die Kategorie Leistung warnt bis U12 ab 0,9. Gemessen ergibt sie in der CI
 0,53 und lokal 0,89, derselbe Build ohne dieses Paket ebenfalls 0,89.
 Die Lücke kommt vom Rechner der CI: die Total Blocking Time liegt dort bei
 1 570 ms gegen 140 ms lokal. U12 hebt die Zeile auf `error`.
+
+## Karten-Boards
+
+Die dreizehn Boards der Seite `map` haben je einen Test in
+`boards/map.spec.ts`. Der Test sperrt die Grundkarte und legt das
+Kartenbild aus `boards/fixtures` über die Fläche, damit das Bild jedes Mal
+dasselbe ist. `tools/sync-boards.mjs` holt die Bilder aus
+`artefakte/mockups/code/fixtures`.
+
+Ein Kartenbild je Kartenhöhe: `map-<art>-<höhe>.png`, oben links, ohne
+Skalierung. Die Höhe ist der freie Streifen über dem Blatt: 660 bei
+eingeklappt, 470 bei halb, 300 bei voll, 900 am Rechner.
+
+Die Boards stehen noch in `pending.json`. Die Abweichung liegt bei 2 bis
+9 %, die Toleranz bei 0,5 %. Was noch fehlt, steht im PR.

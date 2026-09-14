@@ -1,31 +1,25 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CheckboxComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import type { TranslationKey } from '../../core/i18n/translations';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { SheetComponent } from '../../ui/sheet/sheet.component';
 
-/**
- * Was auf der Karte liegt, unabhängig von der Darstellung: Hintergrund,
- * Deckkraft der Wertebene, in der Darstellung Ebene die Vorhersage darunter,
- * und die eigenen Marker, Zonen und die geteilten Funde.
- */
+/** Ein Text je Hintergrund, in der Reihenfolge des Boards. */
+const BACKGROUND_KEY: Record<Background, TranslationKey> = {
+  map: 'map.basemap.map',
+  light: 'map.basemap.light',
+  topo: 'map.basemap.topo',
+  satellite: 'map.basemap.satellite',
+};
+
+/** Was auf der Karte liegt: Hintergrund, eigene Objekte, Deckkraft. */
 @Component({
   selector: 'app-layers-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionBarComponent,
-    CheckboxComponent,
-    FormsModule,
-    RangeSliderComponent,
-    SegmentedComponent,
-    SheetComponent,
-    TranslatePipe,
-  ],
+  imports: [ChoiceRowComponent, RangeSliderComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './layers-sheet.component.html',
   styleUrl: './layers-sheet.component.scss',
 })
@@ -33,7 +27,7 @@ export class LayersSheetComponent {
   private readonly i18n = inject(I18nService);
 
   readonly background = input.required<Background>();
-  /** Deckkraft der Wertebene, 0 bis 1. */
+  /** Deckkraft der Wertebene, 0 als kein Wert, 1 als volle Deckung. */
   readonly opacity = input.required<number>();
   /** Nur in der Darstellung Ebene lässt sich die Vorhersage darunter legen. */
   readonly showsLayer = input(false);
@@ -41,6 +35,9 @@ export class LayersSheetComponent {
   readonly showMarkers = input(true);
   readonly showZones = input(true);
   readonly showSharedFinds = input(true);
+  readonly markerCount = input(0);
+  readonly zoneCount = input(0);
+  readonly sharedFindCount = input(0);
 
   readonly backgroundChange = output<Background>();
   readonly opacityChange = output<number>();
@@ -50,38 +47,22 @@ export class LayersSheetComponent {
   readonly showSharedFindsChange = output<boolean>();
   readonly closed = output();
 
-  /**
-   * Nur die drei wählbaren Hintergründe stehen im Schalter. Topo und Satellit
-   * wären dort tote Felder; sie stehen als Satz darunter.
-   */
-  protected readonly choices = computed<SegmentOption[]>(() => this.segment(backgroundAvailable));
-
-  /**
-   * Topo und Satellit stehen in einem eigenen, gesperrten Segment: sichtbar,
-   * damit klar ist, was noch kommt, aber ohne Wirkung.
-   */
-  protected readonly later = computed<SegmentOption[]>(() =>
-    this.segment((value) => !backgroundAvailable(value)),
+  protected readonly choices = computed<SegmentOption[]>(() =>
+    BACKGROUNDS.map((value) => ({ value, label: this.i18n.translate(BACKGROUND_KEY[value]) })),
   );
-
-  private segment(nimm: (value: Background) => boolean): SegmentOption[] {
-    return BACKGROUNDS.filter(nimm).map((value) => ({
-      value,
-      label: this.i18n.translate(`hintergrund.${value}`),
-    }));
-  }
 
   protected readonly percent = computed(() => Math.round(this.opacity() * 100));
 
-  protected readonly percentText = computed(() =>
-    this.i18n.translate('karte.prozent', { wert: this.percent() }),
-  );
-
   protected chooseBackground(value: string): void {
-    this.backgroundChange.emit(value as Background);
+    const chosen = BACKGROUNDS.find((entry) => entry === value);
+    if (chosen && backgroundAvailable(chosen)) this.backgroundChange.emit(chosen);
   }
 
   protected onOpacity(percent: number): void {
     this.opacityChange.emit(percent / 100);
+  }
+
+  protected count(value: number): string {
+    return new Intl.NumberFormat(this.i18n.locale()).format(value);
   }
 }

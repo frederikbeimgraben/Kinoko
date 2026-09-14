@@ -1,0 +1,18 @@
+<app-sheet-head
+  [title]="view.title()"
+  [titleLink]="!view.onCombination()"
+  [week]="view.weekText()"
+  [playing]="playing()"
+  (titleClick)="titleChosen.emit()"
+  (back)="stepped.emit(-1)"
+  (playback)="playToggled.emit()"
+  (forward)="stepped.emit(1)"
+>
+  <app-timeline
+    [weeks]="view.weeks()"
+    [active]="view.activeWeek()"
+    [dimmed]="dimmed()"
+    [label]="'map.timeline' | t"
+    (chosen)="weekChosen.emit($event)"
+  />
+</app-sheet-head>

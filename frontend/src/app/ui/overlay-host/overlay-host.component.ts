@@ -21,6 +21,8 @@ export class OverlayHostComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly open = input.required<boolean>();
+  /** Ein modales Blatt dunkelt ab; ein Blatt über der Karte lässt sie sehen. */
+  readonly modal = input(false);
 
   readonly closed = output();
 

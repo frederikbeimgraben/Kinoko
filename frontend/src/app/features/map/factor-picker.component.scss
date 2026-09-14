@@ -1,15 +1,24 @@
-.choose {
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
+:host {
+  display: contents;
+}
+
+.picker__card {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   min-block-size: 0;
-  padding: var(--size-gutter) var(--size-gutter) var(--space-4);
   overflow-y: auto;
-  scrollbar-width: none;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
 .picker__group {
-  margin-block: var(--space-3) var(--space-1);
+  padding: var(--space-3) var(--space-4) var(--space-1);
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
@@ -17,10 +26,6 @@
   letter-spacing: 0.08em;
 }
 
-.picker__group:first-child {
-  margin-block-start: 0;
-}
-
 .picker__row--off {
-  opacity: 0.55;
+  opacity: 0.5;
 }

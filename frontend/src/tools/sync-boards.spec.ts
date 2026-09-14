@@ -43,6 +43,35 @@ describe('sync-boards', () => {
     }
   });
 
+  it('spiegelt auch die Kartenbilder der Boards', () => {
+    const root = fixture();
+    try {
+      mkdirSync(join(root, 'artefakte', 'mockups', 'code', 'fixtures'), { recursive: true });
+      writeFileSync(join(root, 'artefakte', 'mockups', 'code', 'fixtures', 'map-stein.png'), 'A');
+
+      const result = sync(root);
+
+      expect(result?.fixtures.fresh).toBe(1);
+      expect(readFileSync(join(root, 'e2e', 'boards', 'fixtures', 'map-stein.png'), 'utf8')).toBe('A');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('kommt ohne Kartenbilder aus', () => {
+    const root = fixture();
+    try {
+      writeFileSync(join(root, 'artefakte', 'mockups', 'bilder', 'foo.png'), 'A');
+
+      const result = sync(root);
+
+      expect(result?.fixtureSource).toBeNull();
+      expect(result?.fixtures.fresh).toBe(0);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it('läuft ohne veralteten Stand durch', () => {
     const root = fixture();
     try {

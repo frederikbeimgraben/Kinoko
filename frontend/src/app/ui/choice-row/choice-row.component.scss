@@ -4,16 +4,14 @@
   --choice-row-height: 48px;
 
   display: block;
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-:host(:last-child) {
-  border-block-end: 0;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--pilz-swatch-radius);
 }
 
 .row {
   display: block;
   min-block-size: var(--choice-row-height);
+  padding-inline: 14px;
 }
 
 .row__content {

@@ -51,7 +51,6 @@ import { SpeciesImagesComponent } from './species-images.component';
 import { longDate } from '../../core/i18n/dates';
 import { SpeciesState } from './species.state';
 import { MapState } from '../map/map.state';
-import { FORECAST_SLUGS, type ForecastSlug } from '../../core/tiles/tile-paths';
 import { RANK_TEXT } from '../taxonomy/labels';
 import {
   ATTACHMENT_TEXT,
@@ -273,11 +272,7 @@ export class SpeciesComponent {
     this.state.select(this.slug());
     // Der Kartenzustand führt die Karte, nicht die Adresse. Die Art wird hier
     // gesetzt, und die Karte findet sie beim Öffnen schon vor.
-    const slug = (FORECAST_SLUGS as readonly string[]).includes(viewport.kartenSlug)
-      ? (viewport.kartenSlug as ForecastSlug)
-      : null;
-    if (slug === null) return;
-    this.map.art.set(slug);
+    this.map.species.set(this.slug());
     void this.router.navigate(['/karte']);
   }
 

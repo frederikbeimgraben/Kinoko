@@ -184,7 +184,7 @@ const OPTIONEN: MapOptions = {
     [16, 56],
   ],
   protocol: { name: 'wert', resolve: () => Promise.resolve({ data: new ArrayBuffer(0) }) },
-  compact: false,
+  attribution: '© OpenStreetMap',
 };
 
 function module(): {
@@ -548,17 +548,14 @@ describe('MapLibreAdapter', () => {
     expect(map.moved.at(-1)).toEqual({ center: [9.1, 48.8], zoom: 11, duration: 600 });
   });
 
-  it('klappt den Urheberhinweis am Telefon ein', async () => {
-    const { module: m } = module();
-    const host = document.createElement('div');
-    const hint = document.createElement('div');
-    hint.className = 'maplibregl-ctrl-attrib maplibregl-compact-show';
-    host.append(hint);
-    const a = new MapLibreAdapter(() => Promise.resolve(m));
+  it('nennt die Quelle der Grundkarte unten links', async () => {
+    const { map } = await adapter();
 
-    await a.start(host, { ...OPTIONEN, compact: true });
-
-    expect(hint.classList.contains('maplibregl-compact-show')).toBe(false);
-    expect(hint.classList.contains('maplibregl-compact')).toBe(true);
+    const shown = map.controls.at(-1);
+    expect(shown?.location).toBe('bottom-left');
+    expect((shown?.control as AttributionDouble).options).toEqual({
+      compact: false,
+      customAttribution: '© OpenStreetMap',
+    });
   });
 });

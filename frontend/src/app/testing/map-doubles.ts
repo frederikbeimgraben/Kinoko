@@ -4,7 +4,15 @@ import { MAP_ADAPTER, VALUE_WORKER } from '../map/map.tokens';
 import type { Viewbox } from '../map/tile-grid';
 import type { FeatureCollection } from 'geojson';
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import type { Bounds, MapOptions, MapAdapter, ObjectLayer, Padding, Role } from '../map/map-adapter';
+import type {
+  Bounds,
+  MapOptions,
+  MapAdapter,
+  ObjectHit,
+  ObjectLayer,
+  Padding,
+  Role,
+} from '../map/map-adapter';
 import type { ValueReply, ValueJob } from '../map/value-messages';
 import type { ColorizeWorker } from '../map/value-protocol';
 
@@ -105,6 +113,13 @@ export class MapAdapterDouble implements MapAdapter {
 
   onObjectSelect(handler: (layer: ObjectLayer, id: string) => void): void {
     this.chosen = handler;
+  }
+
+  /** Was unter dem Finger liegt. Ein Test setzt es selbst. */
+  hit: ObjectHit | null = null;
+
+  objectAt(): ObjectHit | null {
+    return this.hit;
   }
 
   /** Ohne WebGL gibt es keine echte Karte; ein Test setzt hier eine Attrappe. */
@@ -271,11 +286,48 @@ export const RAW_MANIFEST = {
 export const SAVED_COMBINATION = {
   id: 'k1',
   name: 'Buchenwald im Herbst',
-  regel: 'abgestuft',
-  faktoren: [
-    { quelle: 'wald', bedingung: 'ueber', von: 0.3, bis: null, aktiv: true },
-    { quelle: 'boden_ph', bedingung: 'unter', von: null, bis: 5.5, aktiv: true },
+  rule: 'graded',
+  factors: [
+    { source: 'wald', condition: 'above', low: 0.3, high: null, active: true },
+    { source: 'boden_ph', condition: 'below', low: null, high: 5.5, active: true },
   ],
-  erstelltAm: '2026-09-01T10:00:00+02:00',
-  geaendertAm: '2026-09-01T10:00:00+02:00',
+  createdAt: '2026-09-01T10:00:00+02:00',
+  updatedAt: '2026-09-01T10:00:00+02:00',
 };
+
+/** Das Bündel, wie die Karte es zur Artwahl braucht. */
+export const BUNDLE_ITEMS = [
+  {
+    id: '00000000-0000-4000-8000-000000000001',
+    slug: 'boletus-edulis',
+    name: 'Steinpilz',
+    scientificName: 'Boletus edulis',
+    group: 'bolete',
+    edibility: 'edible',
+    protection: 'none',
+    forecastEnabled: true,
+    updatedAt: '2025-10-01T00:00:00Z',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000002',
+    slug: 'cantharellus-cibarius',
+    name: 'Pfifferling',
+    scientificName: 'Cantharellus cibarius',
+    group: 'chanterelle',
+    edibility: 'edible',
+    protection: 'none',
+    forecastEnabled: true,
+    updatedAt: '2025-10-01T00:00:00Z',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000003',
+    slug: 'amanita-phalloides',
+    name: 'Knollenblätterpilz',
+    scientificName: 'Amanita phalloides',
+    group: 'amanita',
+    edibility: 'deadly',
+    protection: 'none',
+    forecastEnabled: false,
+    updatedAt: '2025-10-01T00:00:00Z',
+  },
+];

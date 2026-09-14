@@ -8,6 +8,7 @@ const BROWSER_PATH = process.env['BROWSER_PATH'];
 /** Ein Board ist ein Bild je Gerät. Ein Fluss läuft nur am Telefon. */
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1280, height: 820 };
+const WIDE = { width: 1440, height: 900 };
 
 export default defineConfig({
   testDir: 'e2e',
@@ -23,7 +24,7 @@ export default defineConfig({
     browserName: 'chromium',
     launchOptions: BROWSER_PATH ? { executablePath: BROWSER_PATH } : {},
     trace: 'retain-on-failure',
-    colorScheme: 'light',
+    colorScheme: 'dark',
     // Ein Service Worker fängt die Anfragen ab, bevor eine Attrappe greift.
     // Der Installationstest schaltet ihn für sich wieder an.
     serviceWorkers: 'block',
@@ -36,6 +37,7 @@ export default defineConfig({
   projects: [
     { name: 'phone', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: PHONE } },
     { name: 'desktop', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: DESKTOP } },
+    { name: 'wide', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: WIDE } },
     { name: 'flows', testMatch: /flows\/.*\.spec\.ts$/, use: { viewport: PHONE } },
   ],
   webServer: {

@@ -9,7 +9,7 @@ import {
   combinationKey,
   readFactors,
   span,
-  type Faktor,
+  type Factor,
 } from './factors';
 
 const RAIN = readLayers({
@@ -20,22 +20,22 @@ const RAIN = readLayers({
 
 const SHARE_LAYER: Layer = { ...RAIN, id: 'buche', label: 'Buche', unit: '', low: 0, high: 1 };
 
-const FAKTOR: Faktor = { source: 'regen_4w', condition: 'ueber', von: 80, bis: 0, active: true };
+const FAKTOR: Factor = { source: 'regen_4w', condition: 'above', low: 80, high: 0, active: true };
 
 /** Das Beispiel aus dem Konzept, als Prüfstein für Kodierung und Lesen. */
-const VIER: readonly Faktor[] = [
+const VIER: readonly Factor[] = [
   FAKTOR,
-  { source: 'temperatur', condition: 'zwischen', von: 8, bis: 16, active: true },
-  { source: 'buche', condition: 'ueber', von: 0.3, bis: 0, active: true },
-  { source: 'hangneigung', condition: 'unter', von: 0, bis: 15, active: true },
+  { source: 'temperatur', condition: 'between', low: 8, high: 16, active: true },
+  { source: 'buche', condition: 'above', low: 0.3, high: 0, active: true },
+  { source: 'hangneigung', condition: 'below', low: 0, high: 15, active: true },
 ];
 
-describe('Faktoren', () => {
+describe('Factoren', () => {
   it('kodiert die drei Formen der Bedingung', () => {
-    expect(encodeFactors(VIER)).toBe('regen_4w:ge:80,temperatur:zw:8:16,buche:ge:0.3,hangneigung:le:15');
+    expect(encodeFactors(VIER)).toBe('regen_4w:ge:80,temperatur:bw:8:16,buche:ge:0.3,hangneigung:le:15');
   });
 
-  it('kennzeichnet einen abgehakten Faktor', () => {
+  it('kennzeichnet einen abgehakten Factor', () => {
     expect(encodeFactors([{ ...FAKTOR, active: false }])).toBe('!regen_4w:ge:80');
   });
 
@@ -45,30 +45,30 @@ describe('Faktoren', () => {
   });
 
   it('dreht eine verkehrte Spanne um und lässt Unsinn weg', () => {
-    expect(readFactors('temperatur:zw:16:8')).toEqual([
-      { source: 'temperatur', condition: 'zwischen', von: 8, bis: 16, active: true },
+    expect(readFactors('temperatur:bw:16:8')).toEqual([
+      { source: 'temperatur', condition: 'between', low: 8, high: 16, active: true },
     ]);
-    expect(readFactors('regen_4w:xx:80,Regen!:ge:1,temperatur:zw:8')).toEqual([]);
+    expect(readFactors('regen_4w:xx:80,Regen!:ge:1,temperatur:bw:8')).toEqual([]);
     expect(readFactors(null)).toEqual([]);
     expect(readFactors('')).toEqual([]);
   });
 
   it('macht aus jeder Bedingung eine Spanne über der Skala', () => {
-    expect(span(FAKTOR, RAIN)).toEqual({ von: 80, bis: 100 });
-    expect(span({ ...FAKTOR, condition: 'unter', bis: 15 }, RAIN)).toEqual({ von: 0, bis: 15 });
-    expect(span({ ...FAKTOR, condition: 'zwischen', von: 8, bis: 16 }, RAIN)).toEqual({
-      von: 8,
-      bis: 16,
+    expect(span(FAKTOR, RAIN)).toEqual({ low: 80, high: 100 });
+    expect(span({ ...FAKTOR, condition: 'below', high: 15 }, RAIN)).toEqual({ low: 0, high: 15 });
+    expect(span({ ...FAKTOR, condition: 'between', low: 8, high: 16 }, RAIN)).toEqual({
+      low: 8,
+      high: 16,
     });
   });
 
   it('schreibt die Bedingung mit Einheit', () => {
     expect(conditionText(FAKTOR, RAIN, 'de', 'bis')).toBe('≥ 80 mm');
-    expect(conditionText({ ...FAKTOR, condition: 'unter', bis: 15 }, RAIN, 'de', 'bis')).toBe('≤ 15 mm');
-    expect(conditionText({ ...FAKTOR, condition: 'zwischen', von: 8, bis: 16 }, RAIN, 'de', 'bis')).toBe(
+    expect(conditionText({ ...FAKTOR, condition: 'below', high: 15 }, RAIN, 'de', 'bis')).toBe('≤ 15 mm');
+    expect(conditionText({ ...FAKTOR, condition: 'between', low: 8, high: 16 }, RAIN, 'de', 'bis')).toBe(
       '8 bis 16 mm',
     );
-    expect(conditionText({ ...FAKTOR, source: 'buche', von: 0.3 }, SHARE_LAYER, 'de', 'bis')).toBe('≥ 30 %');
+    expect(conditionText({ ...FAKTOR, source: 'buche', low: 0.3 }, SHARE_LAYER, 'de', 'bis')).toBe('≥ 30 %');
   });
 
   it('rechnet einen Wert in das Byte der Kachel', () => {
@@ -87,10 +87,10 @@ describe('Faktoren', () => {
     });
   });
 
-  it('hält je Quelle genau einen Faktor', () => {
-    const second: Faktor = { ...FAKTOR, von: 40 };
+  it('hält je Quelle genau einen Factor', () => {
+    const second: Factor = { ...FAKTOR, low: 40 };
 
-    expect(replaceFactor(VIER, second)[0].von).toBe(40);
+    expect(replaceFactor(VIER, second)[0].low).toBe(40);
     expect(replaceFactor(VIER, second)).toHaveLength(VIER.length);
     expect(replaceFactor(VIER, { ...FAKTOR, source: 'hoehe' })).toHaveLength(VIER.length + 1);
   });

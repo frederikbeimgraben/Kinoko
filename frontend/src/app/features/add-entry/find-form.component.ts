@@ -100,8 +100,8 @@ export class FindFormComponent {
     const alle = this.arten.catalogue()?.arten ?? [];
     const selected = this.artSlug() ?? this.start()?.artSlug ?? null;
     if (selected !== null) return alle.find((art) => art.slug === selected) ?? null;
-    const kartenSlug = this.map.art();
-    return alle.find((art) => art.kartenSlug === kartenSlug) ?? null;
+    const chosen = this.map.species();
+    return alle.find((art) => art.slug === chosen) ?? null;
   });
 
   protected readonly speciesName = computed(() => this.selectedSpecies()?.name ?? '');

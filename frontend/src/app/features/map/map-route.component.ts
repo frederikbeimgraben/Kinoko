@@ -2,13 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { MapComponent } from './map.component';
 
-/**
- * Der Reiter Karte als Route.
- *
- * Am Telefon füllt die Karte den Reiter. Am Rechner steht sie schon in der
- * Hülle und läuft weiter, während links ein anderer Reiter liegt; dort liefert
- * diese Route nichts, sonst gäbe es die Karte zweimal und den Adapter dazu.
- */
+/** Der Reiter Karte als Route. Am Rechner steht die Karte in der Hülle. */
 @Component({
   selector: 'app-map-route',
   changeDetection: ChangeDetectionStrategy.OnPush,

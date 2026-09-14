@@ -119,7 +119,7 @@ describe('wert://', () => {
     const bound = { von: 100, bis: 255, edge: 25 };
     value.reportCombination({
       id: 'kombi',
-      rule: 'schnitt',
+      rule: 'intersection',
       colors: ['#004225'],
       parts: [
         { folder: 'layers_kacheln/regen_4w/2025W40', bound, existing: MANIFEST.existing },
@@ -133,7 +133,7 @@ describe('wert://', () => {
     worker.answer({ id: job.id, shot });
 
     expect(job.kind).toBe('kombi');
-    expect(job.rule).toBe('schnitt');
+    expect(job.rule).toBe('intersection');
     expect(job.parts.map((part) => part.url)).toEqual([
       '/layers_kacheln/regen_4w/2025W40/7/66/42.png',
       '/layers_kacheln/wald/7/66/42.png',
@@ -146,7 +146,7 @@ describe('wert://', () => {
     const bound = { von: 1, bis: 255, edge: 25 };
     value.reportCombination({
       id: 'kombi',
-      rule: 'abgestuft',
+      rule: 'graded',
       colors: ['#0d0827'],
       parts: [
         { folder: 'a', bound, existing: MANIFEST.existing },
@@ -162,7 +162,7 @@ describe('wert://', () => {
 
   it('lässt eine Kombination ohne Teile leer', async () => {
     const { value } = protocol();
-    value.reportCombination({ id: 'kombi', rule: 'schnitt', colors: ['#004225'], parts: [] });
+    value.reportCombination({ id: 'kombi', rule: 'intersection', colors: ['#004225'], parts: [] });
 
     const reply = await value.resolve('wert://kombi/a1b2c3d4/7/66/42');
 

@@ -1,0 +1,24 @@
+<div class="overlay-body">
+  <h2 class="overlay-body__title">{{ 'map.combination.list' | t }}</h2>
+  <div class="combinations__card">
+    @for (row of rows(); track row.combination.id) {
+      <app-list-row
+        [title]="row.combination.name ?? ''"
+        [subline]="row.subline"
+        [clickable]="true"
+        (chosen)="picked.emit(row.combination)"
+      >
+        <button
+          action
+          class="combinations__remove tap"
+          type="button"
+          data-press="tint"
+          [attr.aria-label]="removeLabel(row.combination)"
+          (click)="removed.emit(row.combination)"
+        >
+          <app-svg-icon name="trash" [size]="18" />
+        </button>
+      </app-list-row>
+    }
+  </div>
+</div>

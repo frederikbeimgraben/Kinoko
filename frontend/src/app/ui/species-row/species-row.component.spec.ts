@@ -36,12 +36,26 @@ describe('SpeciesRowComponent', () => {
     await noViolations(container);
   });
 
-  it('lässt rechts nichts stehen, wo die Art kein Bild hat', async () => {
+  it('hält den Platz des Bildes mit den Tönen der Art frei', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: { ...STEINPILZ, image: null, tint: ['#7a5230', '#c9a877'] } },
+    });
+
+    const field = container.querySelector<HTMLElement>('.row__image--empty');
+    expect(field).not.toBeNull();
+    expect(field?.style.background).toContain('linear-gradient(140deg');
+    expect(container.querySelectorAll('.row__patch')).toHaveLength(2);
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('nimmt ohne eigene Töne den Standardverlauf', async () => {
     const { container } = await render(SpeciesRowComponent, {
       inputs: { species: { ...STEINPILZ, image: null } },
     });
 
-    expect(container.querySelector('.row__image')).toBeNull();
+    expect(container.querySelector<HTMLElement>('.row__image--empty')?.style.background).toContain(
+      'rgb(74, 90, 58)',
+    );
   });
 
   it('bleibt ohne Inhalt für den Hinten-Slot unsichtbar', async () => {

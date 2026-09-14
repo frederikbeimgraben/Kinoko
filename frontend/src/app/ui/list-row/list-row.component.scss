@@ -25,6 +25,11 @@
   text-align: start;
 }
 
+// Eine Zeile mit Unterzeile trägt zwei Textzeilen und ist darum höher.
+.row__field--tall {
+  min-block-size: var(--size-row-tall);
+}
+
 .row__field--button {
   font: inherit;
   color: inherit;

@@ -1,253 +1,161 @@
 import { Injectable, effect, signal } from '@angular/core';
-import { FORECAST_SLUGS, type ForecastSlug } from '../../core/tiles/tile-paths';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
-import type { CombinationRule } from '../../map/value-colors';
-import { encodeFactors, readFactors, type Faktor } from './factors';
-import { type Detent } from '../../ui/sheet/sheet.component';
+import type { Detent } from '../../ui/sheet/sheet.component';
 
-/** Die drei Darstellungen des Blatts. Die Kombination kommt in B2. */
-export type ViewMode = 'vorhersage' | 'ebene' | 'kombination';
+/** Die drei Darstellungen des Blatts. */
+export type ViewMode = 'forecast' | 'layer' | 'combination';
 
-export const VIEW_MODES: readonly ViewMode[] = ['vorhersage', 'ebene', 'kombination'];
+export const VIEW_MODES: readonly ViewMode[] = ['forecast', 'layer', 'combination'];
 
-/** Ohne Angabe zeigt die Karte den Steinpilz. */
-export const DEFAULT_SPECIES: ForecastSlug = 'boletus_edulis';
+/** Ohne Wahl zeigt die Karte diese Art. */
+export const DEFAULT_SPECIES = 'boletus-edulis';
 
-/**
- * Ohne Wahl steht der Niederschlag der letzten vier Wochen vorn: die Ebene,
- * nach der man zuerst schaut, und das Beispiel aus dem Konzept.
- */
+/** Ohne Wahl steht der Niederschlag der letzten vier Wochen vorn. */
 export const DEFAULT_LAYER = 'regen_4w';
 
 const WEEK_PATTERN = /^\d{4}-\d{2}$/;
+const SLUG_PATTERN = /^[a-z0-9-]{1,60}$/;
 const LAYER_PATTERN = /^[a-z0-9_]{1,40}$/;
 
-/**
- * Der Schlüssel im Speicher des Geräts. Die Zahl steht dahinter, damit eine
- * spätere Form die alte nicht falsch liest, sondern verwirft.
- */
-export const STORAGE_KEY = 'pilzkarte.karte.v1';
+/** Der Schlüssel im Speicher des Geräts. Eine spätere Form verwirft die alte. */
+export const STORAGE_KEY = 'pilzkarte.map.v1';
 
 /** So lange wird gewartet, bevor eine Änderung im Speicher landet. */
 export const SAVE_DELAY = 400;
 
-/** Was ein Link beim ersten Laden mitbringen darf. */
-export interface MapQuery {
-  art: string | null;
-  kw: string | null;
-  viewMode: string | null;
-  layer: string | null;
-  opacity: string | null;
-  rule: string | null;
-  f: string | null;
-  object: string | null;
-}
-
 /** Der Zustand, wie er im Speicher liegt. Jedes Feld darf fehlen. */
 interface Saved {
-  art?: unknown;
-  woche?: unknown;
-  viewMode?: unknown;
+  species?: unknown;
+  week?: unknown;
+  view?: unknown;
   layer?: unknown;
   opacity?: unknown;
-  rule?: unknown;
-  factors?: unknown;
   background?: unknown;
   forecastBelow?: unknown;
   showMarkers?: unknown;
   showZones?: unknown;
   showSharedFinds?: unknown;
+  detent?: unknown;
 }
 
 /** Die drei Arten von Objekt, die ein Blatt über der Karte zeigen kann. */
-export const OBJECT_KINDS = ['fund', 'marker', 'zone'] as const;
+export const OBJECT_KINDS = ['find', 'marker', 'zone'] as const;
 export type ObjectKind = (typeof OBJECT_KINDS)[number];
 
-/** Welches Objekt gerade offen ist. In der Adresse steht `fund:<id>`. */
+/** Welches Objekt gerade offen ist. */
 export interface OpenObject {
-  art: ObjectKind;
+  kind: ObjectKind;
   id: string;
 }
 
-/** Liest `fund:<id>` aus der Adresse. Alles andere zählt als „nichts offen“. */
-export function readObject(value: string | null): OpenObject | null {
-  if (value === null) return null;
-  const splitter = value.indexOf(':');
-  const art = value.slice(0, splitter);
-  const id = value.slice(splitter + 1);
-  if (splitter < 0 || id === '' || !(OBJECT_KINDS as readonly string[]).includes(art)) return null;
-  return { art: art as ObjectKind, id };
+function isView(value: unknown): value is ViewMode {
+  return typeof value === 'string' && (VIEW_MODES as readonly string[]).includes(value);
 }
 
-/** Schreibt ein Objekt in die Form, die die Adresse trägt. */
-export function writeObject(object: OpenObject): string {
-  return `${object.art}:${object.id}`;
-}
-
-function isSpecies(value: string | null): value is ForecastSlug {
-  return value !== null && (FORECAST_SLUGS as readonly string[]).includes(value);
-}
-
-function isView(value: string | null): value is ViewMode {
-  return value !== null && (VIEW_MODES as readonly string[]).includes(value);
-}
-
-function readPercent(value: string | null): number | null {
-  if (value === null) return null;
-  const number = Number(value);
-  if (!Number.isFinite(number)) return null;
-  return Math.min(Math.max(Math.round(number), 0), 100) / 100;
-}
-
-/**
- * Art, Woche, Darstellung, Ebene, Deckkraft, Regel und Faktoren der Karte.
- *
- * Dieser Dienst ist die einzige Quelle. Die Karte liest ihn, nie die Adresse:
- * Adresse und Zustand gegeneinander zu schreiben war die Ursache dafür, dass
- * ein Reiterwechsel die Art zurücksetzte.
- *
- * Der Zustand überlebt ein Neuladen im Speicher des Geräts. Ein Link darf ihn
- * einmal beim Eintritt setzen; danach ändert Navigation ihn nicht mehr.
- */
+/** Art, Woche, Darstellung, Ebene und Deckkraft. Die einzige Quelle. */
 @Injectable({ providedIn: 'root' })
 export class MapState {
-  readonly art = signal<ForecastSlug>(DEFAULT_SPECIES);
-  /**
-   * Ob das Ebenen-Blatt offen ist. Es hängt hier und nicht an der Kartenseite,
-   * weil der Knopf dazu am Rechner auch auf den anderen Reitern steht.
-   */
+  readonly species = signal<string>(DEFAULT_SPECIES);
+  /** Ob das Ebenen-Blatt offen ist. Der Knopf dazu steht auf jedem Reiter. */
   readonly layersSheetOpen = signal(false);
-  /** `2025-40` oder `null` für „die aktuelle Woche der Art“. */
-  readonly woche = signal<string | null>(null);
-  readonly viewMode = signal<ViewMode>('vorhersage');
+  /** Jahr und Woche als `JJJJ-WW`, oder `null` für die aktuelle Woche. */
+  readonly week = signal<string | null>(null);
+  readonly view = signal<ViewMode>('forecast');
   /** Die gewählte Eingabe-Ebene, `null` heißt „die erste der Liste“. */
   readonly layer = signal<string | null>(null);
-  /** Deckkraft der Wertebene, 0 bis 1. */
+  /** Deckkraft der Wertebene, 0 als kein Wert, 1 als volle Deckung. */
   readonly opacity = signal(1);
-  readonly background = signal<Background>('automatisch');
-  readonly rule = signal<CombinationRule>('schnitt');
-  readonly factors = signal<readonly Faktor[]>([]);
+  readonly background = signal<Background>('map');
   /** In der Darstellung Ebene: die Vorhersage der Art bleibt darunter liegen. */
   readonly forecastBelow = signal(false);
   readonly detent = signal<Detent>(1);
 
-  /**
-   * Was außer der Vorhersage auf der Karte liegt. Der Ebenen-Knopf schaltet
-   * genau diese drei Signale; die Karte zeichnet, was sie erlauben.
-   */
+  /** Was außer der Vorhersage auf der Karte liegt. */
   readonly showMarkers = signal(true);
   readonly showZones = signal(true);
   readonly showSharedFinds = signal(true);
 
-  /** Das Objekt-Blatt über der Karte, aus `?objekt=fund:<id>`. */
+  /** Das Objekt-Blatt über der Karte. */
   readonly object = signal<OpenObject | null>(null);
 
-  /**
-   * Die Höhe des Blatts, das gerade über der Karte liegt (Melden, Objekt), in
-   * Punkten. Die Karte rechnet ihr Polster darauf, damit die Mitte unter dem
-   * Fadenkreuz liegt und nicht hinter dem Blatt.
-   */
+  /** Die Höhe des Blatts über der Karte, in Punkten. Die Karte polstert darauf. */
   readonly overlayHeight = signal(0);
 
-  private schreiber: ReturnType<typeof setTimeout> | null = null;
+  private writer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.load();
     // Gedrosselt: beim Ziehen eines Reglers ändern sich Signale im Takt der
     // Finger, und jeder Schreibvorgang ginge synchron auf die Platte.
     effect(() => {
-      const stand = this.alsGesichert();
-      if (this.schreiber !== null) clearTimeout(this.schreiber);
-      this.schreiber = setTimeout(() => {
-        this.sichere(stand);
+      const state = this.asSaved();
+      if (this.writer !== null) clearTimeout(this.writer);
+      this.writer = setTimeout(() => {
+        this.store(state);
       }, SAVE_DELAY);
     });
   }
 
-  /**
-   * Übernimmt die Werte eines Links. Nur beim Eintritt: danach führt der
-   * Zustand, und die Adresse wird wieder sauber gemacht.
-   */
-  adopt(query: MapQuery): void {
-    if (isSpecies(query.art)) this.art.set(query.art);
-    if (query.kw !== null && WEEK_PATTERN.test(query.kw)) this.woche.set(query.kw);
-    if (isView(query.viewMode)) this.viewMode.set(query.viewMode);
-    if (query.layer !== null && LAYER_PATTERN.test(query.layer)) this.layer.set(query.layer);
-    const opacity = readPercent(query.opacity);
-    if (opacity !== null) this.opacity.set(opacity);
-    if (query.rule === 'abgestuft' || query.rule === 'schnitt') this.rule.set(query.rule);
-    if (query.f !== null) this.factors.set(readFactors(query.f));
-    if (query.object !== null) this.object.set(readObject(query.object));
-  }
-
-  /** Trägt der Link überhaupt etwas? Sonst bleibt der gesicherte Stand. */
-  static hasValues(query: MapQuery): boolean {
-    return Object.values(query).some((value) => value !== null);
-  }
-
   /** Nimmt nur an, was es gibt; ein fremder Wert aus dem Speicher fällt weg. */
   setBackground(choice: string): void {
-    const gefunden = BACKGROUNDS.find((entry) => entry === choice);
-    if (gefunden && backgroundAvailable(gefunden)) this.background.set(gefunden);
+    const found = BACKGROUNDS.find((entry) => entry === choice);
+    if (found && backgroundAvailable(found)) this.background.set(found);
   }
 
-  private alsGesichert(): Saved {
+  private asSaved(): Saved {
     return {
-      art: this.art(),
-      woche: this.woche(),
-      viewMode: this.viewMode(),
+      species: this.species(),
+      week: this.week(),
+      view: this.view(),
       layer: this.layer(),
       opacity: this.opacity(),
-      rule: this.rule(),
-      factors: encodeFactors(this.factors()),
       background: this.background(),
       forecastBelow: this.forecastBelow(),
       showMarkers: this.showMarkers(),
       showZones: this.showZones(),
       showSharedFinds: this.showSharedFinds(),
+      detent: this.detent(),
     };
   }
 
-  private sichere(stand: Saved): void {
+  private store(state: Saved): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stand));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
-      // Ein gesperrter oder voller Speicher ist kein Fehler; dann gilt der
-      // Zustand eben nur für diese Sitzung.
+      // Ein gesperrter Speicher ist kein Fehler. Der Zustand gilt dann nur
+      // für diese Sitzung.
     }
   }
 
   /** Ein Wert in falscher Form wird verworfen, nicht übernommen. */
   private load(): void {
-    let stand: Saved = {};
+    const state = this.readStored();
+    if (state === null) return;
+    if (typeof state.species === 'string' && SLUG_PATTERN.test(state.species)) {
+      this.species.set(state.species);
+    }
+    if (typeof state.week === 'string' && WEEK_PATTERN.test(state.week)) this.week.set(state.week);
+    if (isView(state.view)) this.view.set(state.view);
+    if (typeof state.layer === 'string' && LAYER_PATTERN.test(state.layer)) this.layer.set(state.layer);
+    if (typeof state.opacity === 'number' && Number.isFinite(state.opacity)) {
+      this.opacity.set(Math.min(Math.max(state.opacity, 0), 1));
+    }
+    if (typeof state.background === 'string') this.setBackground(state.background);
+    if (typeof state.forecastBelow === 'boolean') this.forecastBelow.set(state.forecastBelow);
+    if (typeof state.showMarkers === 'boolean') this.showMarkers.set(state.showMarkers);
+    if (typeof state.showZones === 'boolean') this.showZones.set(state.showZones);
+    if (typeof state.showSharedFinds === 'boolean') this.showSharedFinds.set(state.showSharedFinds);
+    if (state.detent === 0 || state.detent === 1 || state.detent === 2) this.detent.set(state.detent);
+  }
+
+  private readStored(): Saved | null {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw === null) return;
+      if (raw === null) return null;
       const got: Saved | null = JSON.parse(raw) as Saved | null;
-      if (typeof got !== 'object' || got === null) return;
-      stand = got;
+      return typeof got === 'object' ? got : null;
     } catch {
-      return;
-    }
-    if (typeof stand.art === 'string' && isSpecies(stand.art)) this.art.set(stand.art);
-    if (typeof stand.woche === 'string' && WEEK_PATTERN.test(stand.woche)) this.woche.set(stand.woche);
-    if (typeof stand.viewMode === 'string' && isView(stand.viewMode)) {
-      this.viewMode.set(stand.viewMode);
-    }
-    if (typeof stand.layer === 'string' && LAYER_PATTERN.test(stand.layer)) this.layer.set(stand.layer);
-    if (typeof stand.opacity === 'number' && Number.isFinite(stand.opacity)) {
-      this.opacity.set(Math.min(Math.max(stand.opacity, 0), 1));
-    }
-    if (stand.rule === 'abgestuft' || stand.rule === 'schnitt') this.rule.set(stand.rule);
-    if (typeof stand.factors === 'string') this.factors.set(readFactors(stand.factors));
-    if (typeof stand.background === 'string') this.setBackground(stand.background);
-    if (typeof stand.forecastBelow === 'boolean') {
-      this.forecastBelow.set(stand.forecastBelow);
-    }
-    if (typeof stand.showMarkers === 'boolean') this.showMarkers.set(stand.showMarkers);
-    if (typeof stand.showZones === 'boolean') this.showZones.set(stand.showZones);
-    if (typeof stand.showSharedFinds === 'boolean') {
-      this.showSharedFinds.set(stand.showSharedFinds);
+      return null;
     }
   }
 }

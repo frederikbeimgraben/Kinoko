@@ -73,6 +73,8 @@ export interface Protocol {
 }
 
 export interface MapOptions {
+  /** Die Quelle der Grundkarte, unten links auf der Karte. */
+  attribution: string;
   style: string;
   centerPoint: readonly [number, number];
   zoom: number;
@@ -80,8 +82,6 @@ export interface MapOptions {
   maxZoom: number;
   maxBounds: Bounds;
   protocol: Protocol;
-  /** Am Telefon steht der Urheberhinweis eingeklappt, sonst deckte er die Karte. */
-  compact: boolean;
 }
 
 /**
@@ -90,6 +90,13 @@ export interface MapOptions {
  * bleibt.
  */
 export const OBJECT_LAYERS = ['zonen', 'geteilteFunde', 'marker', 'funde', 'location'] as const;
+
+/** Ein Objekt unter dem Finger: seine Ebene, seine Kennung und sein Ort. */
+export interface ObjectHit {
+  layer: ObjectLayer;
+  id: string;
+  point: readonly [number, number];
+}
 export type ObjectLayer = (typeof OBJECT_LAYERS)[number];
 
 /**
@@ -121,6 +128,8 @@ export interface MapAdapter {
   hideObjects(layer: ObjectLayer): void;
   /** Ein Tipp auf ein Objekt. Die Kennung steht in `id` des Features. */
   onObjectSelect(handler: (layer: ObjectLayer, id: string) => void): void;
+  /** Das Objekt unter einem Punkt der Fläche, für das lange Drücken. */
+  objectAt(x: number, y: number): ObjectHit | null;
   /** Die rohe Karte für Terra Draw. `null`, solange sie nicht steht. */
   rawMap(): MapLibreMap | null;
 }
@@ -296,8 +305,10 @@ export class MapLibreAdapter implements MapAdapter {
     // Der Hinweis steht unten links, weg von der Knopfgruppe oben und weg von
     // „Eintragen“ unten rechts. Das Blatt deckt ihn nicht zu: `styles.scss`
     // hebt ihn über dessen Kopf.
-    this.map.addControl(new module.AttributionControl({ compact: options.compact }), 'bottom-left');
-    if (options.compact) this.collapseAttribution(host);
+    this.map.addControl(
+      new module.AttributionControl({ compact: false, customAttribution: options.attribution }),
+      'bottom-left',
+    );
     // Eine Quelle vor dem Stil wirft. `style.load` ist das erste Ereignis, nach
     // dem der Stil steht; `load` wartet zusätzlich auf jede Kachel und bleibt
     // über einer langsamen Leitung lange aus.
@@ -525,6 +536,23 @@ export class MapLibreAdapter implements MapAdapter {
     this.chosen = handler;
   }
 
+  objectAt(x: number, y: number): ObjectHit | null {
+    const map = this.map;
+    if (!map) return null;
+    for (const layer of OBJECT_LAYERS) {
+      if (layer === 'location') continue;
+      const ids = layerPaintLayers(layer).filter((id) => map.getLayer(id) !== undefined);
+      if (ids.length === 0) continue;
+      const found = map.queryRenderedFeatures([x, y], { layers: ids });
+      if (found.length === 0) continue;
+      const id = found[0].properties['id'] as string | undefined;
+      if (id === undefined) continue;
+      const centre = map.unproject([x, y]);
+      return { layer, id, point: [centre.lng, centre.lat] };
+    }
+    return null;
+  }
+
   rawMap(): MapLibreMap | null {
     return this.map;
   }
@@ -569,19 +597,5 @@ export class MapLibreAdapter implements MapAdapter {
     if (!map) return;
     if (map.getLayer(id)) map.removeLayer(id);
     if (map.getSource(id)) map.removeSource(id);
-  }
-
-  /**
-   * MapLibre zeigt den Hinweis zunächst offen. Am Telefon deckt er damit die
-   * halbe Karte; ein Tipp auf das i klappt ihn auf.
-   *
-   * Die Klasse `maplibregl-compact` wird hier von Hand gesetzt: MapLibre setzt
-   * sie erst, wenn der Text da ist, und hängt dabei jedes Mal wieder das
-   * offene `-show` an. Steht sie schon, lässt es beide in Ruhe.
-   */
-  private collapseAttribution(host: HTMLElement): void {
-    const hint = host.querySelector('.maplibregl-ctrl-attrib');
-    hint?.classList.add('maplibregl-compact');
-    hint?.classList.remove('maplibregl-compact-show');
   }
 }

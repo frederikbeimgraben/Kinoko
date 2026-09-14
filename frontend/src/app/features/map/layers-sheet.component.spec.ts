@@ -1,87 +1,92 @@
 import { fireEvent, render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
-import type { Background } from '../../map/background';
 import { LayersSheetComponent } from './layers-sheet.component';
 
-describe('EbenenBlattComponent', () => {
-  it('zeigt die Hintergründe, was noch fehlt, und die Deckkraft', async () => {
-    const { container } = await render(LayersSheetComponent, {
-      inputs: { background: 'automatisch' as Background, opacity: 0.7 },
-    });
+function sheet(inputs: Record<string, unknown> = {}) {
+  return render(LayersSheetComponent, {
+    inputs: {
+      background: 'map',
+      opacity: 0.8,
+      markerCount: 5,
+      zoneCount: 2,
+      sharedFindCount: 12,
+      ...inputs,
+    },
+  });
+}
 
-    expect(screen.getByRole('dialog', { name: 'Auf der Karte' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'System' })).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('tab', { name: 'Topografisch' })).toBeDisabled();
-    expect(screen.getByText('Topografisch und Satellit kommen später.')).toBeInTheDocument();
-    expect(screen.getByText(/70 %/)).toBeInTheDocument();
+describe('LayersSheetComponent', () => {
+  it('zeigt Hintergrund, die eigenen Objekte und die Deckkraft', async () => {
+    const { container } = await sheet();
+
+    expect(screen.getByRole('dialog', { name: 'Ebenen' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Karte' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Topo' })).toBeInTheDocument();
+    expect(screen.getByText('12')).toBeInTheDocument();
+    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByRole('slider', { name: 'Untere Grenze' })).toHaveValue('80');
     await noViolations(container);
   });
 
-  it('meldet Hintergrund und Deckkraft', async () => {
-    const { fixture } = await render(LayersSheetComponent, {
-      inputs: { background: 'automatisch' as Background, opacity: 1 },
-    });
-    const backgrounds: Background[] = [];
-    const opacity: number[] = [];
-    fixture.componentInstance.backgroundChange.subscribe((choice) => backgrounds.push(choice));
-    fixture.componentInstance.opacityChange.subscribe((value) => opacity.push(value));
+  it('meldet einen Hintergrund, den es gibt, und schluckt den Rest', async () => {
+    const { fixture } = await sheet();
+    const chosen: string[] = [];
+    fixture.componentInstance.backgroundChange.subscribe((value) => chosen.push(value));
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Dunkel' }));
-    fireEvent.input(screen.getByRole('slider'), { target: { value: '40' } });
+    await userEvent.click(screen.getByRole('tab', { name: 'Hell' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Topo' }));
 
-    expect(backgrounds).toEqual(['dunkel']);
-    expect(opacity[0]).toBeCloseTo(0.4);
+    expect(chosen).toEqual(['light']);
   });
 
-  it('lässt die gesperrte Wahl nicht zu', async () => {
-    const { fixture } = await render(LayersSheetComponent, {
-      inputs: { background: 'hell' as Background, opacity: 1 },
-    });
-    const backgrounds: Background[] = [];
-    fixture.componentInstance.backgroundChange.subscribe((choice) => backgrounds.push(choice));
+  it('meldet die Deckkraft als Anteil', async () => {
+    const { fixture } = await sheet();
+    const values: number[] = [];
+    fixture.componentInstance.opacityChange.subscribe((value) => values.push(value));
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Satellit' }));
+    fireEvent.input(screen.getByRole('slider', { name: 'Untere Grenze' }), { target: { value: '40' } });
 
-    expect(backgrounds).toEqual([]);
+    expect(values).toEqual([0.4]);
   });
 
-  it('bietet die Vorhersage darunter nur in der Darstellung Ebene', async () => {
-    const { rerender } = await render(LayersSheetComponent, {
-      inputs: { background: 'hell' as Background, opacity: 1, showsLayer: false },
-    });
+  it('zeigt die Vorhersage darunter nicht ohne die Darstellung Ebene', async () => {
+    await sheet();
 
-    expect(screen.queryByRole('checkbox', { name: 'Vorhersage darunter zeigen' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Vorhersage darunter')).not.toBeInTheDocument();
+  });
 
-    await rerender({ inputs: { background: 'hell' as Background, opacity: 1, showsLayer: true } });
+  it('bietet die Vorhersage darunter in der Darstellung Ebene', async () => {
+    const { fixture } = await sheet({ showsLayer: true });
+    let below: boolean | null = null;
+    fixture.componentInstance.forecastBelowChange.subscribe((value) => (below = value));
 
-    expect(screen.getByRole('checkbox', { name: 'Vorhersage darunter zeigen' })).toBeInTheDocument();
+    await userEvent.click(screen.getByText('Vorhersage darunter'));
+
+    expect(below).toBe(true);
   });
 
   it('schaltet Marker, Zonen und geteilte Funde', async () => {
-    const { fixture } = await render(LayersSheetComponent, {
-      inputs: { background: 'hell' as Background, opacity: 1 },
-    });
-    const toggled: string[] = [];
-    fixture.componentInstance.showMarkersChange.subscribe((an) => toggled.push(`marker:${an}`));
-    fixture.componentInstance.showZonesChange.subscribe((an) => toggled.push(`zonen:${an}`));
-    fixture.componentInstance.showSharedFindsChange.subscribe((an) => toggled.push(`funde:${an}`));
+    const { fixture } = await sheet();
+    const changes: string[] = [];
+    fixture.componentInstance.showMarkersChange.subscribe(() => changes.push('marker'));
+    fixture.componentInstance.showZonesChange.subscribe(() => changes.push('zone'));
+    fixture.componentInstance.showSharedFindsChange.subscribe(() => changes.push('shared'));
 
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Meine Marker' }));
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Zonen' }));
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Geteilte Funde' }));
+    await userEvent.click(screen.getByText('Meine Marker'));
+    await userEvent.click(screen.getByText('Zonen'));
+    await userEvent.click(screen.getByText('Geteilte Funde'));
 
-    expect(toggled).toEqual(['marker:false', 'zonen:false', 'funde:false']);
+    expect(changes).toEqual(['marker', 'zone', 'shared']);
   });
 
-  it('schließt über die Fußleiste', async () => {
-    const { fixture } = await render(LayersSheetComponent, {
-      inputs: { background: 'hell' as Background, opacity: 1 },
-    });
+  it('schließt über die Abdunkelung', async () => {
+    const { fixture } = await sheet();
     let closed = 0;
     fixture.componentInstance.closed.subscribe(() => (closed += 1));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Fertig' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
 
     expect(closed).toBe(1);
   });

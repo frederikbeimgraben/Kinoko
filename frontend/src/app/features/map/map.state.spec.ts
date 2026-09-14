@@ -1,181 +1,154 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  MapState,
-  SAVE_DELAY,
-  STORAGE_KEY,
-  DEFAULT_SPECIES,
-  DEFAULT_LAYER,
-  readObject,
-  writeObject,
-} from './map.state';
-
-const EMPTY = {
-  art: null,
-  kw: null,
-  viewMode: null,
-  layer: null,
-  opacity: null,
-  rule: null,
-  f: null,
-  object: null,
-};
+import { MapState, SAVE_DELAY, STORAGE_KEY, DEFAULT_SPECIES, DEFAULT_LAYER } from './map.state';
 
 /** Was nach der Drosselung im Speicher steht. */
-function gesichert(): Record<string, unknown> {
+function stored(): Record<string, unknown> {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, unknown>;
 }
 
-describe('KartenZustand', () => {
+describe('MapState', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('beginnt beim Steinpilz, der aktuellen Woche und der Vorhersage', () => {
     const state = TestBed.inject(MapState);
 
-    expect(DEFAULT_SPECIES).toBe('boletus_edulis');
+    expect(DEFAULT_SPECIES).toBe('boletus-edulis');
     expect(DEFAULT_LAYER).toBe('regen_4w');
-    expect(state.art()).toBe('boletus_edulis');
-    expect(state.woche()).toBeNull();
-    expect(state.viewMode()).toBe('vorhersage');
-    expect(state.factors()).toEqual([]);
+    expect(state.species()).toBe('boletus-edulis');
+    expect(state.week()).toBeNull();
+    expect(state.view()).toBe('forecast');
     expect(state.opacity()).toBe(1);
+    expect(state.detent()).toBe(1);
+    expect(state.background()).toBe('map');
   });
 
-  it('nimmt die Werte eines Links an', () => {
+  it('sichert den Stand nach der Drosselung', async () => {
+    vi.useFakeTimers();
     const state = TestBed.inject(MapState);
-
-    state.adopt({
-      ...EMPTY,
-      art: 'pfifferling',
-      kw: '2025-40',
-      viewMode: 'ebene',
-      layer: 'regen_4w',
-      opacity: '70',
-    });
-
-    expect(state.art()).toBe('pfifferling');
-    expect(state.woche()).toBe('2025-40');
-    expect(state.viewMode()).toBe('ebene');
-    expect(state.layer()).toBe('regen_4w');
-    expect(state.opacity()).toBeCloseTo(0.7);
-  });
-
-  it('lässt stehen, was ein Link nicht nennt, und verwirft Unsinn', () => {
-    const state = TestBed.inject(MapState);
-    state.adopt({ ...EMPTY, art: 'pfifferling', viewMode: 'ebene' });
-
-    state.adopt({ ...EMPTY, art: 'trüffel', kw: 'KW40', viewMode: 'unsinn', layer: 'Regen!' });
-
-    expect(state.art()).toBe('pfifferling');
-    expect(state.viewMode()).toBe('ebene');
-    expect(state.woche()).toBeNull();
-    expect(state.layer()).toBeNull();
-  });
-
-  it('erkennt einen Link ohne eigene Werte', () => {
-    expect(MapState.hasValues(EMPTY)).toBe(false);
-    expect(MapState.hasValues({ ...EMPTY, art: 'pfifferling' })).toBe(true);
-  });
-
-  it('liest Regel und Faktoren aus einem Link und schreibt sie in den Speicher', async () => {
-    const state = TestBed.inject(MapState);
-
-    state.adopt({
-      ...EMPTY,
-      viewMode: 'kombination',
-      rule: 'abgestuft',
-      f: 'regen_4w:ge:80,temperatur:zw:8:16,!buche:ge:0.3',
-    });
+    state.species.set('cantharellus-cibarius');
+    state.week.set('2025-40');
+    state.view.set('layer');
+    state.detent.set(0);
     TestBed.tick();
-    await new Promise((done) => setTimeout(done, SAVE_DELAY + 30));
 
-    expect(state.rule()).toBe('abgestuft');
-    expect(state.factors()).toEqual([
-      { source: 'regen_4w', condition: 'ueber', von: 80, bis: 0, active: true },
-      { source: 'temperatur', condition: 'zwischen', von: 8, bis: 16, active: true },
-      { source: 'buche', condition: 'ueber', von: 0.3, bis: 0, active: false },
-    ]);
-    expect(gesichert()['factors']).toBe('regen_4w:ge:80,temperatur:zw:8:16,!buche:ge:0.3');
-    expect(gesichert()['rule']).toBe('abgestuft');
+    await vi.advanceTimersByTimeAsync(SAVE_DELAY);
+
+    expect(stored()['species']).toBe('cantharellus-cibarius');
+    expect(stored()['week']).toBe('2025-40');
+    expect(stored()['view']).toBe('layer');
+    expect(stored()['detent']).toBe(0);
+    vi.useRealTimers();
   });
 
-  it('hält die Deckkraft zwischen null und voll und lässt Unsinn liegen', () => {
-    const state = TestBed.inject(MapState);
-
-    state.adopt({ ...EMPTY, opacity: '140' });
-    expect(state.opacity()).toBe(1);
-
-    state.adopt({ ...EMPTY, opacity: '-20' });
-    expect(state.opacity()).toBe(0);
-
-    state.adopt({ ...EMPTY, opacity: 'viel' });
-    expect(state.opacity()).toBe(0);
-  });
-
-  it('nimmt nur einen Hintergrund an, den es schon gibt', () => {
-    const state = TestBed.inject(MapState);
-
-    state.setBackground('dunkel');
-    expect(state.background()).toBe('dunkel');
-
-    state.setBackground('satellit');
-    expect(state.background()).toBe('dunkel');
-  });
-
-  it('steht nach einem Neuladen wieder da, wo er war', () => {
+  it('liest einen gesicherten Stand und verwirft Unsinn', () => {
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
-        art: 'pfifferling',
-        woche: '2025-39',
-        viewMode: 'ebene',
-        layer: 'wald',
+        species: 'imleria-badia',
+        week: 'kaputt',
+        view: 'ebene',
+        layer: 'regen_4w',
         opacity: 0.4,
-        rule: 'abgestuft',
-        factors: 'wald:ge:0.3',
-        background: 'dunkel',
+        background: 'light',
+        forecastBelow: true,
         showMarkers: false,
+        showZones: false,
+        showSharedFinds: false,
+        detent: 2,
       }),
     );
 
     const state = TestBed.inject(MapState);
 
-    expect(state.art()).toBe('pfifferling');
-    expect(state.woche()).toBe('2025-39');
-    expect(state.viewMode()).toBe('ebene');
-    expect(state.layer()).toBe('wald');
+    expect(state.species()).toBe('imleria-badia');
+    expect(state.week()).toBeNull();
+    expect(state.view()).toBe('forecast');
+    expect(state.layer()).toBe('regen_4w');
     expect(state.opacity()).toBeCloseTo(0.4);
-    expect(state.rule()).toBe('abgestuft');
-    expect(state.factors()).toHaveLength(1);
-    expect(state.background()).toBe('dunkel');
+    expect(state.background()).toBe('light');
+    expect(state.forecastBelow()).toBe(true);
     expect(state.showMarkers()).toBe(false);
+    expect(state.showZones()).toBe(false);
+    expect(state.showSharedFinds()).toBe(false);
+    expect(state.detent()).toBe(2);
   });
 
-  it('fällt auf die Vorgaben zurück, wenn der Speicher kaputt ist', () => {
-    localStorage.setItem(STORAGE_KEY, '{kein json');
+  it('nimmt einen unlesbaren Stand nicht an', () => {
+    localStorage.setItem(STORAGE_KEY, '{kaputt');
 
+    expect(TestBed.inject(MapState).species()).toBe(DEFAULT_SPECIES);
+  });
+
+  it('nimmt nur einen Hintergrund an, den es gibt', () => {
     const state = TestBed.inject(MapState);
 
-    expect(state.art()).toBe(DEFAULT_SPECIES);
-    expect(state.viewMode()).toBe('vorhersage');
+    state.setBackground('topo');
+    expect(state.background()).toBe('map');
+
+    state.setBackground('light');
+    expect(state.background()).toBe('light');
+  });
+});
+
+describe('MapState mit Unsinn im Speicher', () => {
+  beforeEach(() => {
+    localStorage.clear();
   });
 
-  it('überliest einzelne Werte in falscher Form', () => {
+  it('verwirft jeden Wert in falscher Form', () => {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ art: 42, woche: 'gestern', opacity: 'viel', viewMode: 'ebene' }),
+      JSON.stringify({
+        species: 42,
+        week: 7,
+        view: true,
+        layer: 'KAPUTT',
+        opacity: 'viel',
+        background: 5,
+        forecastBelow: 'ja',
+        showMarkers: 1,
+        showZones: 'nein',
+        showSharedFinds: null,
+        detent: 9,
+      }),
     );
 
     const state = TestBed.inject(MapState);
 
-    expect(state.art()).toBe(DEFAULT_SPECIES);
-    expect(state.woche()).toBeNull();
+    expect(state.species()).toBe(DEFAULT_SPECIES);
+    expect(state.week()).toBeNull();
+    expect(state.view()).toBe('forecast');
+    expect(state.layer()).toBeNull();
     expect(state.opacity()).toBe(1);
-    expect(state.viewMode()).toBe('ebene');
+    expect(state.background()).toBe('map');
+    expect(state.forecastBelow()).toBe(false);
+    expect(state.showMarkers()).toBe(true);
+    expect(state.showZones()).toBe(true);
+    expect(state.showSharedFinds()).toBe(true);
+    expect(state.detent()).toBe(1);
   });
 
-  it('liest und schreibt das offene Objekt in der Form der Adresse', () => {
-    expect(readObject('fund:abc')).toEqual({ art: 'fund', id: 'abc' });
-    expect(readObject('unsinn:abc')).toBeNull();
-    expect(readObject('fund:')).toBeNull();
-    expect(readObject(null)).toBeNull();
-    expect(writeObject({ art: 'zone', id: 'z1' })).toBe('zone:z1');
+  it('nimmt einen leeren Wert nicht an', () => {
+    localStorage.setItem(STORAGE_KEY, 'null');
+
+    expect(TestBed.inject(MapState).species()).toBe(DEFAULT_SPECIES);
+  });
+
+  it('übersteht einen gesperrten Speicher', async () => {
+    vi.useFakeTimers();
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('voll');
+    });
+    const state = TestBed.inject(MapState);
+    state.species.set('cantharellus-cibarius');
+    TestBed.tick();
+
+    await vi.advanceTimersByTimeAsync(SAVE_DELAY);
+
+    expect(write).toHaveBeenCalled();
+    write.mockRestore();
+    vi.useRealTimers();
   });
 });

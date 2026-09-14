@@ -158,7 +158,7 @@ describe('Färbe-Worker', () => {
     const shot = await combineTile({
       kind: 'kombi',
       id: 1,
-      rule: 'schnitt',
+      rule: 'intersection',
       colors: ['#004225'],
       parts: [
         { url: '/k1/7/1/1.png', bound: { von: 100, bis: 255, edge: 25 } },
@@ -193,7 +193,7 @@ describe('Färbe-Worker', () => {
     const shot = await combineTile({
       kind: 'kombi',
       id: 2,
-      rule: 'abgestuft',
+      rule: 'graded',
       colors: ['#0d0827', '#fce79b'],
       parts: [
         { url: '/f1/7/2/2.png', bound: { von: 1, bis: 255, edge: 25 } },
@@ -215,7 +215,7 @@ describe('Färbe-Worker', () => {
     range.send({
       kind: 'kombi',
       id: 9,
-      rule: 'abgestuft',
+      rule: 'graded',
       colors: RAMP,
       parts: [{ url: '/n/7/3/3.png', bound: { von: 1, bis: 255, edge: 25 } }],
     });

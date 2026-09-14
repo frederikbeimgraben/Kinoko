@@ -1,57 +1,45 @@
-<app-sheet [label]="'faktor.titel' | t" [detent]="2" [modal]="true">
-  <app-sheet-head head [title]="layer().label" [week]="timeScope()" [arrows]="false" />
-  <div class="factor">
-    <app-segmented
-      [options]="conditions()"
-      [value]="draft().condition"
-      [label]="'faktor.bedingung' | t"
-      (valueChange)="setCondition($event)"
-    />
+<app-sheet-head [title]="layer().label" [week]="layer().note" [arrows]="false" />
+<div class="factor">
+  <app-segmented
+    [options]="conditions()"
+    [value]="draft().condition"
+    [label]="'map.factor.condition' | t"
+    (valueChange)="setCondition($event)"
+  />
 
-    <div>
-      <h3 class="factor__title">{{ distributionText() }}</h3>
-      @if (histogramm(); as distribution) {
-        <app-histogram
-          [shares]="distribution.anteile"
-          [label]="distributionText()"
-          [from]="fromShare()"
-          [to]="toShare()"
-        />
-      }
-      <app-range-slider
-        [min]="layer().low"
-        [max]="layer().high"
-        [step]="step()"
-        [from]="values().von"
-        [to]="values().bis"
-        [handles]="handles()"
-        (fromChange)="setFrom($event)"
-        (toChange)="setTo($event)"
+  <div>
+    <h3 class="factor__title">{{ distribution() }}</h3>
+    @if (histogram(); as shares) {
+      <app-histogram
+        [shares]="shares.anteile"
+        [label]="distribution()"
+        [from]="fromShare()"
+        [to]="toShare()"
       />
-      <div class="factor__ends">
-        <span>{{ scaleFrom() }}</span>
-        <span>{{ condition() }}</span>
-        <span>{{ scaleTo() }}</span>
-      </div>
+    }
+    <app-range-slider
+      [min]="layer().low"
+      [max]="layer().high"
+      [step]="step()"
+      [from]="values().low"
+      [to]="values().high"
+      [handles]="handles()"
+      (fromChange)="setFrom($event)"
+      (toChange)="setTo($event)"
+    />
+    <div class="factor__ends">
+      <span>{{ scaleFrom() }}</span>
+      <span>{{ bound() }}</span>
+      <span>{{ scaleTo() }}</span>
     </div>
-
-    <app-key-value-row [key]="'faktor.bedingung' | t" [value]="condition()" />
-
-    <p class="note note--sub">{{ shareText() }}</p>
   </div>
-  <div class="factor__footer">
-    <app-icon-button
-      icon="delete"
-      variant="secondary"
-      [label]="'faktor.entfernen' | t"
-      (pressed)="remove.emit(draft())"
-    />
-    <app-action-bar
-      class="factor__actions"
-      [primary]="'faktor.uebernehmen' | t"
-      [secondary]="'faktor.abbrechen' | t"
-      (primaryClick)="apply.emit(draft())"
-      (secondaryClick)="closed.emit()"
-    />
-  </div>
-</app-sheet>
+
+  <app-key-value-row [key]="'map.factor.condition' | t" [value]="condition()" />
+</div>
+<app-action-bar
+  [primary]="'common.apply' | t"
+  [secondary]="'map.factor.remove' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="apply.emit(draft())"
+  (secondaryClick)="removed.emit(draft())"
+/>

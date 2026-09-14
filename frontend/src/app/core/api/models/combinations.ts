@@ -1,38 +1,16 @@
-/**
- * Die gespeicherten Kombinationen. Vertrag:
- * `backend/app/modules/combinations/schemas.py`.
- */
+import type { components } from '../contract';
 
 /** Wie die Karte die Faktoren zusammenrechnet. */
-export type Rule = 'schnitt' | 'abgestuft';
+export type Rule = components['schemas']['Rule'];
 
 /** Die drei Formen einer Bedingung. Alle drei sind eine Spanne der Skala. */
-export type Condition = 'unter' | 'ueber' | 'zwischen';
+export type Condition = components['schemas']['Condition'];
 
-/**
- * Ein Faktor auf dem Draht. Die Bedingung nennt nur die Grenze, die sie
- * braucht: `unter` trägt `bis`, `ueber` trägt `von`, `zwischen` beide. Die
- * andere bleibt leer, weil eine Zahl dort nichts messen würde.
- */
-export interface WireFactor {
-  quelle: string;
-  bedingung: Condition;
-  von: number | null;
-  bis: number | null;
-  aktiv: boolean;
-}
+/** Ein Faktor auf dem Draht, so wie der Vertrag ihn nennt. */
+export type WireFactor = components['schemas']['Factor'];
 
-export interface Combination {
-  id: string;
-  name: string;
-  regel: Rule;
-  faktoren: WireFactor[];
-  erstelltAm: string;
-  geaendertAm: string;
-}
+export type Combination = components['schemas']['Combination'];
 
-export interface CombinationInput {
-  name: string;
-  regel: Rule;
-  faktoren: WireFactor[];
-}
+export type CombinationInput = components['schemas']['CombinationWrite'];
+
+export type CombinationPage = components['schemas']['CombinationPage'];

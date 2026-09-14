@@ -19,8 +19,14 @@ export interface Histogram {
 /** Eine Eingabe-Ebene: Wald, Boden-pH, Niederschlag der letzten vier Wochen. */
 export interface Layer {
   id: string;
-  /** Der Name, wie ihn die Kette vergibt: „Niederschlag der letzten 4 Wochen“. */
+  /** Der kurze Name für Kopf und Liste: „Niederschlag 4 Wochen“. */
   label: string;
+  /** Der ganze Name für das Feld der Ebene. Ohne Angabe gleich `label`. */
+  title: string;
+  /** Herkunft und Raster, wie die Kette sie nennt: „5-km-Raster, DWD HYRAS“. */
+  note: string;
+  /** Der Zeitraum, den die Ebene misst, als fertiger Text der Kette. */
+  range: string;
   /** `mm`, `Grad`, `m` oder leer für einen Anteil. */
   unit: string;
   /** Eine feste Ebene gilt für alle Wochen; eine Wochenebene folgt der Zeitleiste. */
@@ -49,6 +55,10 @@ export interface LayersManifest {
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
+}
+
+function text(value: unknown): string | null {
+  return typeof value === 'string' && value !== '' ? value : null;
 }
 
 function number(value: unknown, fallback = 0): number {
@@ -99,6 +109,9 @@ function readLayer(id: string, raw: unknown): Layer | null {
   return {
     id,
     label: typeof raw['label'] === 'string' ? raw['label'] : id,
+    title: text(raw['title']) ?? text(raw['label']) ?? id,
+    note: text(raw['note']) ?? '',
+    range: text(raw['range']) ?? '',
     unit: typeof raw['unit'] === 'string' ? raw['unit'] : '',
     fixed: raw['static'] === true,
     low: number(raw['low']),

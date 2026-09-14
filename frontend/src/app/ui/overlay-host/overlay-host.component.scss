@@ -7,13 +7,17 @@
   inset: 0;
   z-index: var(--z-dialog);
   padding: 0;
-  background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  background: transparent;
   border: 0;
   transition: opacity var(--motion-sheet) var(--ease-standard);
 
   @starting-style {
     opacity: 0;
   }
+}
+
+.overlay__scrim--modal {
+  background: rgb(0 18 10 / 25%);
 }
 
 .overlay__panel {

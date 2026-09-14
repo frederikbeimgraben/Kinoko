@@ -1,49 +1,54 @@
-<app-sheet [label]="'ebenenKnopf.titel' | t" [detent]="2" [modal]="true">
-  <div class="layers-sheet">
-    <section class="layers-sheet__part">
-      <h3 class="layers-sheet__title">{{ 'ebenenKnopf.hintergrund' | t }}</h3>
-      <app-segmented
-        [options]="choices()"
-        [value]="background()"
-        [label]="'ebenenKnopf.hintergrund' | t"
-        (valueChange)="chooseBackground($event)"
+<button
+  class="layers__scrim tap"
+  type="button"
+  data-press="tint"
+  [attr.aria-label]="'common.close' | t"
+  (click)="closed.emit()"
+></button>
+<div class="layers__card" role="dialog" [attr.aria-label]="'map.layers.button' | t">
+  <section class="layers__part">
+    <h3 class="layers__title">{{ 'map.basemap.title' | t }}</h3>
+    <app-segmented
+      [options]="choices()"
+      [value]="background()"
+      [label]="'map.basemap.title' | t"
+      (valueChange)="chooseBackground($event)"
+    />
+  </section>
+
+  <section class="layers__part">
+    <h3 class="layers__title">{{ 'map.layers.title' | t }}</h3>
+    <div class="layers__switches">
+      <app-choice-row
+        [label]="'map.layers.sharedFinds' | t"
+        [count]="count(sharedFindCount())"
+        [checked]="showSharedFinds()"
+        (toggled)="showSharedFindsChange.emit($event)"
       />
-      <app-segmented
-        class="layers-sheet__later"
-        [options]="later()"
-        [locked]="true"
-        [label]="'hintergrund.spaeterBeschriftung' | t"
+      <app-choice-row
+        [label]="'map.layers.myMarkers' | t"
+        [count]="count(markerCount())"
+        [checked]="showMarkers()"
+        (toggled)="showMarkersChange.emit($event)"
       />
-      <p class="note note--sub">{{ 'hintergrund.gesperrt' | t }}</p>
-    </section>
+      <app-choice-row
+        [label]="'entry.zones' | t"
+        [count]="count(zoneCount())"
+        [checked]="showZones()"
+        (toggled)="showZonesChange.emit($event)"
+      />
+      @if (showsLayer()) {
+        <app-choice-row
+          [label]="'map.forecastBelow' | t"
+          [checked]="forecastBelow()"
+          (toggled)="forecastBelowChange.emit($event)"
+        />
+      }
+    </div>
+  </section>
 
-    <section class="layers-sheet__part">
-      <h3 class="layers-sheet__title">{{ 'ebenenKnopf.deckkraft' | t }} · {{ percentText() }}</h3>
-      <app-range-slider [from]="percent()" [to]="100" [handles]="'from'" (fromChange)="onOpacity($event)" />
-    </section>
-
-    @if (showsLayer()) {
-      <section class="layers-sheet__part">
-        <app-checkbox [ngModel]="forecastBelow()" (ngModelChange)="forecastBelowChange.emit($event)">{{
-          'ebenenKnopf.vorhersageDarunter' | t
-        }}</app-checkbox>
-      </section>
-    }
-
-    <section class="layers-sheet__part">
-      <h3 class="layers-sheet__title">{{ 'ebenenKnopf.eigenes' | t }}</h3>
-      <div class="layers-sheet__switches">
-        <app-checkbox [ngModel]="showMarkers()" (ngModelChange)="showMarkersChange.emit($event)">{{
-          'ebenenKnopf.marker' | t
-        }}</app-checkbox>
-        <app-checkbox [ngModel]="showZones()" (ngModelChange)="showZonesChange.emit($event)">{{
-          'ebenenKnopf.zonen' | t
-        }}</app-checkbox>
-        <app-checkbox [ngModel]="showSharedFinds()" (ngModelChange)="showSharedFindsChange.emit($event)">{{
-          'ebenenKnopf.geteilteFunde' | t
-        }}</app-checkbox>
-      </div>
-    </section>
-  </div>
-  <app-action-bar [primary]="'ebenenKnopf.fertig' | t" (primaryClick)="closed.emit()" />
-</app-sheet>
+  <section class="layers__part">
+    <h3 class="layers__title">{{ 'map.opacity' | t }}</h3>
+    <app-range-slider [from]="percent()" [to]="100" [handles]="'from'" (fromChange)="onOpacity($event)" />
+  </section>
+</div>

@@ -1,0 +1,36 @@
+// Der Inhalt eines Blatts über der Karte: Titel, Schließen und der Rumpf.
+// Die Regeln stehen hier, weil drei Blätter denselben Aufbau tragen und die
+// Kapselung von Angular eine Klasse nicht über Komponenten hinweg trägt.
+@mixin overlay-body {
+  .overlay-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-block-size: 0;
+    overflow: hidden;
+    padding: var(--space-1) var(--size-gutter) var(--size-gutter);
+  }
+
+  .overlay-body__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .overlay-body__title {
+    font-size: var(--fs-sheet-title);
+    font-weight: var(--fw-semibold);
+  }
+
+  .overlay-body__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 32px;
+    block-size: 32px;
+    color: var(--color-text-muted);
+    background: none;
+    border: 0;
+  }
+}

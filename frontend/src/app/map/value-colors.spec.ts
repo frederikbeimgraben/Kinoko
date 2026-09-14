@@ -109,8 +109,8 @@ describe('Wertfarben', () => {
       { von: 50, bis: 255, edge: 25 },
     ];
 
-    expect(combine([150, 200], bounds, 'schnitt')).toBe(1);
-    expect(combine([210, 200], bounds, 'schnitt')).toBe(0);
+    expect(combine([150, 200], bounds, 'intersection')).toBe(1);
+    expect(combine([210, 200], bounds, 'intersection')).toBe(0);
   });
 
   it('nimmt abgestuft das geometrische Mittel der Grade', () => {
@@ -119,10 +119,10 @@ describe('Wertfarben', () => {
       { von: 100, bis: 200, edge: 25 },
     ];
 
-    expect(combine([150, 150], bounds, 'abgestuft')).toBe(1);
+    expect(combine([150, 150], bounds, 'graded')).toBe(1);
     // Ein Faktor bei 0,52, einer bei 1: das geometrische Mittel ist die Wurzel.
-    expect(combine([212, 150], bounds, 'abgestuft')).toBeCloseTo(Math.sqrt(0.52), 2);
-    expect(combine([230, 150], bounds, 'abgestuft')).toBe(0);
+    expect(combine([212, 150], bounds, 'graded')).toBeCloseTo(Math.sqrt(0.52), 2);
+    expect(combine([230, 150], bounds, 'graded')).toBe(0);
   });
 
   it('lässt einen Punkt leer, sobald einer Quelle die Daten fehlen', () => {
@@ -131,13 +131,13 @@ describe('Wertfarben', () => {
       { von: 1, bis: 255, edge: 25 },
     ];
 
-    expect(combine([150, 0], bounds, 'schnitt')).toBe(EMPTY_DOT);
-    expect(combine([0, 150], bounds, 'abgestuft')).toBe(EMPTY_DOT);
-    expect(combine([], [], 'schnitt')).toBe(EMPTY_DOT);
+    expect(combine([150, 0], bounds, 'intersection')).toBe(EMPTY_DOT);
+    expect(combine([0, 150], bounds, 'graded')).toBe(EMPTY_DOT);
+    expect(combine([], [], 'intersection')).toBe(EMPTY_DOT);
   });
 
   it('malt die Schnittmenge in einer Farbe, halb deckend', () => {
-    const lut = createCombinationLut(['#004225'], 'schnitt');
+    const lut = createCombinationLut(['#004225'], 'intersection');
     const [r, g, b] = zuRgb('#004225');
 
     expect([lut[0], lut[1], lut[2], lut[3]]).toEqual([0, 0, 0, 0]);
@@ -150,7 +150,7 @@ describe('Wertfarben', () => {
   });
 
   it('malt abgestuft über die ganze Rampe, mit der Deckkraft am Wert', () => {
-    const lut = createCombinationLut(FORECAST_RAMP, 'abgestuft');
+    const lut = createCombinationLut(FORECAST_RAMP, 'graded');
 
     expect([lut[4], lut[5], lut[6]]).toEqual(zuRgb(FORECAST_RAMP[0]));
     expect([lut[255 * 4], lut[255 * 4 + 1], lut[255 * 4 + 2]]).toEqual(

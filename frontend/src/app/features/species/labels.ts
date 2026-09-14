@@ -19,7 +19,11 @@ import type {
   Tag,
   Wechseldauer,
 } from '../../core/api/models';
+import type { components } from '../../core/api/contract';
 import type { TranslationKey } from '../../core/i18n/translations';
+
+/** Der Speisewert, wie ihn der Vertrag nennt. */
+export type Edibility = components['schemas']['Edibility'];
 
 /**
  * Der Text zu jedem Enum-Wert des Katalogs. Als vollständige Zuordnung: fehlt
@@ -372,4 +376,29 @@ export const STEM_FEATURE_TEXT: Record<Stielmerkmal, TranslationKey> = {
   gerieft: 'art.stielmerkmal.gerieft',
   scheide: 'art.stielmerkmal.scheide',
   bruechig: 'art.stielmerkmal.bruechig',
+};
+
+/** Der Speisewert des Vertrags als Textschlüssel. */
+export const EDIBILITY_KEY: Record<Edibility, TranslationKey> = {
+  edible: 'enum.edibility.edible',
+  conditionally_edible: 'enum.edibility.conditionally_edible',
+  inedible: 'enum.edibility.inedible',
+  poisonous: 'enum.edibility.poisonous',
+  deadly: 'enum.edibility.deadly',
+};
+
+/** Die zwei Töne des Bildplatzhalters je Art, dunkel nach hell. */
+export const SPECIES_TINT: Record<string, readonly [string, string]> = {
+  'boletus-edulis': ['#7a5230', '#c9a877'],
+  'cantharellus-cibarius': ['#d9a441', '#e8c86a'],
+  'imleria-badia': ['#8a4e2b', '#4a3220'],
+};
+
+/** Grün, was in die Pfanne darf; rot, was schadet; grau der Rest. */
+export const EDIBILITY_TONE: Record<Edibility, string> = {
+  edible: '#4f9d6f',
+  conditionally_edible: '#9db44f',
+  inedible: '#95a09a',
+  poisonous: '#d2915f',
+  deadly: '#d2685f',
 };

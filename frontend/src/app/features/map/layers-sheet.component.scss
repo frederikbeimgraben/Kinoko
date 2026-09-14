@@ -1,24 +1,36 @@
-.layers-sheet {
+:host {
+  display: contents;
+}
+
+.layers__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-dialog, 40);
+  padding: 0;
+  background: rgb(0 18 10 / 25%);
+  border: 0;
+}
+
+// Der Knopf steht rechts oben; die Karte hängt darunter an derselben Kante.
+.layers__card {
+  position: absolute;
+  inset-block-start: 68px;
+  inset-inline-end: 12px;
+  z-index: calc(var(--z-dialog, 40) + 1);
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-5);
-  min-block-size: 0;
-  padding: var(--size-gutter) var(--size-gutter) var(--space-5);
-  overflow-y: auto;
-  // Wie im Blatt der Karte: die App füllt das Gerät, ein Balken am Rand
-  // gehörte zu einem Fenster.
-  scrollbar-width: none;
+  gap: var(--space-3);
+  inline-size: 300px;
+  max-inline-size: calc(100% - 24px);
+  padding: 18px;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-// Die zwei Segmente der Hintergrundwahl gehören zusammen.
-.layers-sheet__later {
-  display: block;
-  margin-block-start: var(--space-3);
-}
-
-.layers-sheet__title {
-  margin-block-end: var(--space-1);
+.layers__title {
+  margin-block-end: 10px;
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
@@ -26,20 +38,8 @@
   letter-spacing: 0.08em;
 }
 
-.layers-sheet__switches {
+.layers__switches {
   display: flex;
   flex-direction: column;
-}
-
-// Ein Kontrollkästchen ist eine Zeile des Rasters: so hoch wie ein Feld,
-// Kästchen und Text mittig zueinander. Ohne das säßen die Zeilen eng
-// aufeinander und die Fläche zum Tippen wäre kleiner als der Finger.
-.layers-sheet app-checkbox {
-  display: flex;
-  // Das Kit stellt sein Kästchen in eine Spalte, damit ein Hinweis darunter
-  // passt. Hier gibt es keinen, und die Spalte rückte Kästchen und Text in
-  // die Mitte der Zeile statt an ihren Anfang.
-  flex-direction: row;
-  align-items: center;
-  min-block-size: var(--size-tap);
+  gap: var(--space-2);
 }

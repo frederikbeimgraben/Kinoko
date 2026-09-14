@@ -21,6 +21,7 @@
       class="row__field row__field--button tap"
       type="button"
       data-press="tint"
+      [class.row__field--tall]="subline()"
       [class.row__field--selected]="selected()"
       [attr.aria-pressed]="selected() ? true : null"
       (click)="chosen.emit()"
@@ -28,7 +29,7 @@
       <ng-container [ngTemplateOutlet]="primary" />
     </button>
   } @else {
-    <div class="row__field" [class.row__field--selected]="selected()">
+    <div class="row__field" [class.row__field--tall]="subline()" [class.row__field--selected]="selected()">
       <ng-container [ngTemplateOutlet]="primary" />
     </div>
   }

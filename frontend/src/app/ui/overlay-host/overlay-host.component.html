@@ -1,6 +1,7 @@
 @if (open()) {
   <button
     class="overlay__scrim tap"
+    [class.overlay__scrim--modal]="modal()"
     type="button"
     data-press="tint"
     [attr.aria-label]="'common.close' | t"

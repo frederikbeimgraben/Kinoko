@@ -11,7 +11,7 @@ import type { SpeciesManifest } from './manifest';
  * `low` ist 0, `high` der Höchstwert der Art, und ohne Einheit liest sich das
  * als Prozent, was eine Fundwahrscheinlichkeit auch ist.
  */
-export function layerFromSpecies(manifest: SpeciesManifest, label: string): Layer {
+export function layerFromSpecies(manifest: SpeciesManifest, label: string, note = ''): Layer {
   const histogramme = new Map<string, Histogram>();
   for (const woche of manifest.wochen) {
     if (woche.histogramm) histogramme.set(layerWeek(woche.jahr, woche.woche), woche.histogramm);
@@ -19,6 +19,9 @@ export function layerFromSpecies(manifest: SpeciesManifest, label: string): Laye
   return {
     id: manifest.slug,
     label,
+    title: label,
+    note,
+    range: '',
     unit: '',
     fixed: false,
     low: 0,
