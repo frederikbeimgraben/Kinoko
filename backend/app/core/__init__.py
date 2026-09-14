@@ -1,1 +1,1 @@
-"""Bausteine, die jedes Modul benutzt: Einstellungen, Datenbank, Fehler, Anmeldung."""
+"""Querschnitt: Einstellungen, Datenbank, Fehler, Anmeldung."""

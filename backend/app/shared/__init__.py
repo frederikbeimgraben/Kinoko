@@ -1,1 +1,1 @@
-"""Vertrag zum Frontend: Basis-Modell und gemeinsame Typen."""
+"""Bausteine, die mehrere Module nutzen."""

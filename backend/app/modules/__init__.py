@@ -1,1 +1,1 @@
-"""Fachmodule. Jedes Modul bringt einen eigenen Router mit."""
+"""Die fachlichen Module der Anwendung."""

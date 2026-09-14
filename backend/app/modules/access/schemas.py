@@ -1,130 +1,184 @@
-"""Vertrag der Rollenverwaltung.
+"""Die Schemata des Moduls access: Konto, Rechte, Rollen, Personen."""
 
-Die Feldnamen sind neu und darum englisch. Nur der Umschlag der Personenliste
-trägt weiter ``eintraege`` und ``gesamt``: er kommt aus ``shared/paging`` und
-gilt für jede Liste des Dienstes. R3 dreht ihn für alle auf einmal.
+from __future__ import annotations
 
-Die Beschriftung eines Rechts steht nicht hier: sie ist Oberflächentext und
-gehört zu den übersetzbaren Zeichenketten. Die Antwort nennt nur Schlüssel
-und Bereich.
-"""
-
-from typing import Annotated
+import uuid
+from datetime import date
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import Field
 
-from app.models import Person, Role
-from app.modules.access.permissions import Area, Permission
-from app.shared.schemas import BaseSchema, Name, Timestamp
+from app.shared.enums import MarkerColour, ReviewState, Visibility
+from app.shared.schema import Schema, Timestamp
 
-Description = Annotated[str, Field(max_length=200)]
-# Ein Slug taugt als Teil einer Adresse und bleibt lesbar.
-Slug = Annotated[str, Field(min_length=1, max_length=64, pattern=r"^[a-z][a-z0-9-]*$")]
+if TYPE_CHECKING:
+    from app.models import Find, Marker
 
 
-class PermissionOut(BaseSchema):
-    """Ein Recht des Katalogs."""
+class Me(Schema):
+    """Das angemeldete Konto."""
 
-    key: Permission
-    area: Area
+    id: uuid.UUID
+    sub: str
+    email: str | None = None
+    name: str | None = None
 
 
-class RoleBrief(BaseSchema):
-    """Eine Rolle, so wie sie neben einer Person steht."""
+class MyPermissions(Schema):
+    """Die Rechte des angemeldeten Kontos."""
 
-    id: str
+    permissions: list[str]
+
+
+class PermissionEntry(Schema):
+    """Ein Recht mit seinem Bereich."""
+
+    key: str
+    area: str
+
+
+class RoleBrief(Schema):
+    """Eine Rolle, kurz."""
+
+    id: uuid.UUID
     slug: str
     name: str
 
 
-class RoleOut(BaseSchema):
+class Role(Schema):
     """Eine Rolle mit ihren Rechten."""
 
-    id: str
+    id: uuid.UUID
     slug: str
     name: str
-    description: str | None
+    description: str | None = None
     built_in: bool
-    permissions: list[Permission]
-    people: int
+    permissions: list[str]
+    people_count: int
     created_at: Timestamp
     updated_at: Timestamp
 
 
-class RoleIn(BaseSchema):
+class RoleCreate(Schema):
     """Eine neue Rolle."""
 
-    slug: Slug
-    name: Name
-    description: Description | None = None
-    permissions: list[Permission] = Field(default_factory=list[Permission])
+    slug: str = Field(pattern=r"^[a-z][a-z0-9-]*$")
+    name: str
+    description: str | None = None
+    permissions: list[str] = Field(default_factory=list)
 
 
-class RolePatch(BaseSchema):
-    """Was sich an einer Rolle ändern lässt. Weggelassene Felder bleiben."""
+class RoleUpdate(Schema):
+    """Die änderbaren Felder einer Rolle."""
 
-    name: Name | None = None
-    description: Description | None = None
-    permissions: list[Permission] | None = None
+    name: str | None = None
+    description: str | None = None
+    permissions: list[str] | None = None
 
 
-class PersonOut(BaseSchema):
-    """Ein Konto mit seinen Rollen.
+class Person(Schema):
+    """Ein Konto mit seinen Rollen."""
 
-    ``roles`` nennt nur die ausdrücklich vergebenen Rollen. Die feste Rolle
-    Nutzer hat jede angemeldete Person und steht in keiner Zuweisung.
-    """
-
+    id: uuid.UUID
     sub: str
-    email: str | None
-    name: str | None
+    email: str | None = None
+    name: str | None = None
     roles: list[RoleBrief]
     created_at: Timestamp
 
 
-class MyPermissions(BaseSchema):
-    """Die Rechte der angemeldeten Person, in der Reihenfolge des Katalogs."""
+class SetPersonRoles(Schema):
+    """Die neuen Rollen einer Person."""
 
-    permissions: list[Permission]
-
-
-class RoleAssignment(BaseSchema):
-    """Die Rollen, die eine Person danach trägt."""
-
-    roles: list[str]
+    role_ids: list[uuid.UUID]
 
 
-def permission_out(permission: Permission, area: Area) -> PermissionOut:
-    """Baut die Antwort zu einem Recht."""
-    return PermissionOut(key=permission, area=area)
+class GeoPolygon(Schema):
+    """Eine Fläche als GeoJSON-Polygon."""
+
+    kind: Literal["Polygon"] = Field(default="Polygon", alias="type")
+    coordinates: list[list[list[float]]]
 
 
-def role_brief(role: Role) -> RoleBrief:
-    """Baut die kurze Form einer Rolle."""
-    return RoleBrief(id=role.id, slug=role.slug, name=role.name)
+class Factor(Schema):
+    """Ein Faktor einer Kombination."""
+
+    source: str
+    condition: str
+    low: float | None = None
+    high: float | None = None
+    active: bool = True
 
 
-def role_out(role: Role, permissions: list[Permission], people: int) -> RoleOut:
-    """Baut die Antwort zu einer Rolle."""
-    return RoleOut(
-        id=role.id,
-        slug=role.slug,
-        name=role.name,
-        description=role.description,
-        built_in=role.built_in,
-        permissions=permissions,
-        people=people,
-        created_at=role.created_at,
-        updated_at=role.updated_at,
-    )
+class ExportFind(Schema):
+    """Ein eigener Fund im Datenexport."""
+
+    id: uuid.UUID
+    owner_id: uuid.UUID
+    species_id: uuid.UUID | None = None
+    lat: float
+    lon: float
+    found_on: date
+    count: int | None = None
+    for_training: bool
+    review_state: ReviewState
+    reviewed_by_id: uuid.UUID | None = None
+    reviewed_at: Timestamp | None = None
+    visibility: Visibility
+    note: str | None = None
+    created_at: Timestamp
+    updated_at: Timestamp
+    deleted: bool = False
+
+    @classmethod
+    def of(cls, row: Find) -> ExportFind:
+        """Baut den Eintrag aus einem Fund."""
+        return cls(
+            id=row.id,
+            owner_id=row.owner_id,
+            species_id=row.species_id,
+            lat=row.lat,
+            lon=row.lon,
+            found_on=row.found_on,
+            count=row.count,
+            for_training=row.for_training,
+            review_state=row.review_state,
+            reviewed_by_id=row.reviewed_by_id,
+            reviewed_at=row.reviewed_at,
+            visibility=row.visibility,
+            note=row.note,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
+        )
 
 
-def person_out(person: Person, roles: list[Role]) -> PersonOut:
-    """Baut die Antwort zu einer Person."""
-    return PersonOut(
-        sub=person.sub,
-        email=person.email,
-        name=person.name,
-        roles=[role_brief(role) for role in roles],
-        created_at=person.created_at,
-    )
+class ExportMarker(Schema):
+    """Ein eigener Marker im Datenexport."""
+
+    id: uuid.UUID
+    owner_id: uuid.UUID
+    name: str
+    lat: float
+    lon: float
+    colour: MarkerColour
+    visibility: Visibility
+    note: str | None = None
+    created_at: Timestamp
+    updated_at: Timestamp
+    deleted: bool = False
+
+    @classmethod
+    def of(cls, row: Marker) -> ExportMarker:
+        """Baut den Eintrag aus einem Marker."""
+        return cls(
+            id=row.id,
+            owner_id=row.owner_id,
+            name=row.name,
+            lat=row.lat,
+            lon=row.lon,
+            colour=row.colour,
+            visibility=row.visibility,
+            note=row.note,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
+        )

@@ -1,186 +1,152 @@
-"""Anmeldung ueber OIDC.
+"""Wer ruft, und was darf er."""
 
-Das Frontend holt sich bei Authentik ein Access-Token und schickt es als
-``Authorization: Bearer``. Der Dienst prueft es gegen die Signaturschluessel des
-Issuers. Es gibt keine Sitzung und kein Client-Secret.
-"""
+from __future__ import annotations
 
+import uuid
 from collections.abc import Mapping
-from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from dataclasses import dataclass, field
 from typing import Annotated, Any, Final, cast
 
-import httpx
 import jwt
-from fastapi import Depends
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jwt import PyJWK, PyJWTError
+from fastapi import Depends, Header
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import db_session
-from app.core.errors import NotAuthenticated
-from app.core.people import remember
+from app.core.db import session
+from app.core.errors import Forbidden, Unauthorized
+from app.core.jwks import cache
 from app.core.settings import get_settings
+from app.models import Permission, Role, RolePermission, User, UserRole
+from app.modules.access.service import AccessService
 
-# Authentik signiert mit dem Schluessel des Providers. Beide Verfahren kommen
-# vor, je nach hinterlegtem Zertifikat.
-ALGORITHMS: Final = ["RS256", "ES256"]
+BEARER: Final = "Bearer "
+GROUP_CLAIM: Final = "groups"
 
-# Der Issuer dreht seine Schluessel selten. Eine Stunde haelt die Last klein und
-# holt einen Wechsel spaetestens nach einer Stunde nach.
-JWKS_TTL: Final = timedelta(hours=1)
-
-NET_TIMEOUT: Final = 5.0
+Db = Annotated[AsyncSession, Depends(session)]
 
 
 @dataclass(frozen=True, slots=True)
-class User:
-    """Die angemeldete Person, so wie sie im Token steht."""
+class Viewer:
+    """Das Konto der Anfrage, seine Rechte und die Ansprüche des Tokens."""
 
-    sub: str
-    email: str | None
-    name: str | None
-    # Authentik legt die Gruppen als Liste in den Anspruch ``groups``. Sie
-    # entscheiden nur über den ersten Admin, alles Weitere steht in der
-    # Datenbank.
-    groups: tuple[str, ...] = ()
+    user: User | None
+    rights: frozenset[str]
+    claims: Mapping[str, Any] = field(default_factory=dict[str, Any])
 
+    @property
+    def sub(self) -> str:
+        """Die Kennung des Kontos im SSO."""
+        return str(self.claims.get("sub", ""))
 
-def net_client() -> httpx.AsyncClient:
-    """Liefert den Klienten fuer die Abfragen beim Issuer."""
-    return httpx.AsyncClient(timeout=NET_TIMEOUT)
+    @property
+    def signed_in(self) -> bool:
+        """Sagt, ob ein Konto hinter der Anfrage steht."""
+        return self.user is not None
 
+    def may(self, permission: str) -> bool:
+        """Sagt, ob das Konto ein Recht hat."""
+        return permission in self.rights
 
-def _mapping(value: object) -> Mapping[str, object] | None:
-    return cast("Mapping[str, object]", value) if isinstance(value, Mapping) else None
-
-
-def _string(data: Mapping[str, object], field: str) -> str | None:
-    value = data.get(field)
-    return value if isinstance(value, str) else None
-
-
-def _strings(data: Mapping[str, object], field: str) -> tuple[str, ...]:
-    value = data.get(field)
-    if not isinstance(value, list):
-        return ()
-    return tuple(entry for entry in cast("list[object]", value) if isinstance(entry, str))
+    def owns(self, owner_id: uuid.UUID | None) -> bool:
+        """Sagt, ob das Konto Eigentümer ist."""
+        return self.user is not None and owner_id == self.user.id
 
 
-class JwksCache:
-    """Haelt die Signaturschluessel des Issuers im Prozess."""
-
-    def __init__(self, ttl: timedelta = JWKS_TTL) -> None:
-        self._ttl = ttl
-        self._keys: dict[str, Any] = {}
-        self._loaded: datetime | None = None
-
-    def _fresh(self) -> bool:
-        return self._loaded is not None and datetime.now(UTC) - self._loaded < self._ttl
-
-    async def key(self, kid: str) -> Any | None:  # noqa: ANN401
-        """Liefert den Schluessel zu einer Kennung, oder None."""
-        if not self._fresh():
-            await self._load()
-        elif kid not in self._keys:
-            # Ein unbekannter kid heisst meistens: der Issuer hat gedreht. Das ist
-            # ein Grund zum Neuladen, kein Grund fuer 401.
-            await self._load()
-        return self._keys.get(kid)
-
-    async def _load(self) -> None:
-        async with net_client() as client:
-            response = await client.get(await self._jwks_url(client))
-            response.raise_for_status()
-            document = _mapping(response.json())
-        entries = document.get("keys") if document is not None else None
-        found: dict[str, Any] = {}
-        if isinstance(entries, list):
-            for raw in cast("list[object]", entries):
-                entry = _mapping(raw)
-                if entry is None:
-                    continue
-                identifier = _string(entry, "kid")
-                if identifier is not None:
-                    found[identifier] = PyJWK(dict(entry)).key
-        self._keys = found
-        self._loaded = datetime.now(UTC)
-
-    async def _jwks_url(self, client: httpx.AsyncClient) -> str:
-        settings = get_settings()
-        try:
-            response = await client.get(settings.discovery_url)
-            response.raise_for_status()
-            document = _mapping(response.json())
-            uri = _string(document, "jwks_uri") if document is not None else None
-        except (httpx.HTTPError, ValueError):
-            # Authentik liefert die Schluessel auch ohne Discovery unter jwks/.
-            return settings.jwks_url
-        return uri if uri is not None else settings.jwks_url
+def bearer(header: str | None) -> str | None:
+    """Zieht das Token aus der Kopfzeile."""
+    if header and header.startswith(BEARER):
+        return header.removeprefix(BEARER).strip() or None
+    return None
 
 
-_cache = JwksCache()
-
-_bearer = HTTPBearer(auto_error=False)
-
-
-async def user_from_token(token: str) -> User:
-    """Prueft ein Access-Token und liefert die Person dahinter."""
-    try:
-        header = jwt.get_unverified_header(token)
-    except PyJWTError as error:
-        raise NotAuthenticated("Das Token ist nicht lesbar.") from error
-
-    kid = _string(header, "kid")
-    if kid is None:
-        raise NotAuthenticated("Dem Token fehlt die Schluesselkennung.")
-
-    key = await _cache.key(kid)
-    if key is None:
-        raise NotAuthenticated("Der Schluessel des Tokens ist unbekannt.")
-
+async def claims_of(token: str) -> dict[str, Any]:
+    """Prüft das Token gegen den Issuer und liefert seine Ansprüche."""
     settings = get_settings()
     try:
-        data: Mapping[str, object] = jwt.decode(
+        kid = jwt.get_unverified_header(token).get("kid")
+    except jwt.PyJWTError as broken:
+        raise Unauthorized from broken
+    if not isinstance(kid, str):
+        raise Unauthorized
+    key = await cache().key(kid)
+    if key is None:
+        raise Unauthorized
+    try:
+        return jwt.decode(
             token,
-            key,
-            algorithms=ALGORITHMS,
+            key=key,
+            algorithms=["RS256", "ES256"],
             audience=settings.oidc_client_id,
             issuer=settings.oidc_issuer,
-            options={"require": ["exp", "iss", "aud", "sub"]},
         )
-    except PyJWTError as error:
-        raise NotAuthenticated("Das Token ist ungueltig.") from error
-
-    # ``require`` und die Pruefung in PyJWT lassen nur ein Token mit sub als
-    # Zeichenkette durch. Eine eigene Pruefung darauf waere unerreichbar.
-    return User(
-        sub=str(data["sub"]),
-        email=_string(data, "email"),
-        name=_string(data, "name"),
-        groups=_strings(data, "groups"),
-    )
+    except jwt.PyJWTError as broken:
+        raise Unauthorized from broken
 
 
-async def optional_user(
-    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
-) -> User | None:
-    """Liefert die Person, falls ein Token dabei ist. Ein falsches Token bleibt ein Fehler."""
-    if credentials is None:
-        return None
-    return await user_from_token(credentials.credentials)
+async def person_of(db: AsyncSession, sub: str) -> User | None:
+    """Liest das Konto zu einer Kennung, ohne es anzulegen."""
+    return (await db.execute(select(User).where(User.sub == sub))).scalar_one_or_none()
 
 
-async def current_user(
-    user: Annotated[User | None, Depends(optional_user)],
-    session: Annotated[AsyncSession, Depends(db_session)],
-) -> User:
-    """Liefert die angemeldete Person. Ohne Token endet die Anfrage mit 401.
-
-    Wer hier durchkommt, steht danach in der Personentabelle. Das ist der
-    einzige Ort, an dem der Dienst erfährt, dass es ein Konto gibt.
-    """
+async def rights_of(
+    db: AsyncSession, user: User | None, claims: Mapping[str, Any]
+) -> frozenset[str]:
+    """Liest die Rechte des Kontos, die Admin-Gruppe gibt alle."""
+    groups: object = claims.get(GROUP_CLAIM)
+    if isinstance(groups, list) and get_settings().admin_group in cast("list[object]", groups):
+        keys = await db.execute(select(Permission.key))
+        return frozenset(keys.scalars())
     if user is None:
-        raise NotAuthenticated("Fuer diesen Zugriff ist eine Anmeldung noetig.")
-    await remember(session, user.sub, user.email, user.name)
-    return user
+        return frozenset()
+    query = (
+        select(RolePermission.permission_key)
+        .join(Role, Role.id == RolePermission.role_id)
+        .join(UserRole, UserRole.role_id == Role.id)
+        .where(UserRole.user_id == user.id)
+    )
+    return frozenset((await db.execute(query)).scalars())
+
+
+async def viewer(
+    db: Db,
+    authorization: Annotated[str | None, Header()] = None,
+) -> Viewer:
+    """Dependency: der Aufrufer, auch ohne Anmeldung. Sie schreibt nicht."""
+    token = bearer(authorization)
+    if token is None:
+        return Viewer(None, frozenset())
+    claims = await claims_of(token)
+    if not str(claims.get("sub", "")):
+        raise Unauthorized
+    user = await person_of(db, str(claims["sub"]))
+    return Viewer(user, await rights_of(db, user, claims), claims)
+
+
+async def optional_user(who: Annotated[Viewer, Depends(viewer)]) -> User | None:
+    """Dependency: das Konto, falls eines da ist."""
+    return who.user
+
+
+async def current_user(db: Db, who: Annotated[Viewer, Depends(viewer)]) -> User:
+    """Dependency: das angemeldete Konto. Der Dienst legt es beim ersten Mal an."""
+    if not who.sub:
+        raise Unauthorized
+    return await AccessService(db).ensure_person(who)
+
+
+def requires(permission: str) -> Any:  # noqa: ANN401
+    """Baut eine Dependency, die ein Recht verlangt."""
+
+    async def guard(who: Annotated[Viewer, Depends(viewer)]) -> Viewer:
+        if not who.sub:
+            raise Unauthorized
+        if not who.may(permission):
+            raise Forbidden
+        return who
+
+    return Depends(guard)
+
+
+CurrentUser = Annotated[User, Depends(current_user)]
+OptionalUser = Annotated[User | None, Depends(optional_user)]
+CurrentViewer = Annotated[Viewer, Depends(viewer)]

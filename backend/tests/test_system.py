@@ -1,89 +1,54 @@
-"""Die Endpunkte ohne Fachbezug und die Fehlerform der App."""
-
 import httpx
-import pytest
-from fastapi import FastAPI
 
-from app.core.version import VERSION
-from app.main import build_app, lifespan
-from tests.conftest import CLIENT_ID, ISSUER, FakeIdp, auth_header
+from app.core.errors import allowed_methods
+from tests.conftest import app_of
 
 
-def client(app: FastAPI, *, fehler_durchreichen: bool = True) -> httpx.AsyncClient:
-    transport = httpx.ASGITransport(app=app, raise_app_exceptions=fehler_durchreichen)
-    return httpx.AsyncClient(transport=transport, base_url="http://test")
+async def test_health(api: httpx.AsyncClient) -> None:
+    answer = await api.get("/health")
+    assert answer.status_code == 200
+    assert answer.json() == {"status": "ok"}
 
 
-async def test_health_reports_ok() -> None:
-    async with client(build_app()) as call:
-        response = await call.get("/api/health")
-
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+async def test_config(api: httpx.AsyncClient) -> None:
+    answer = await api.get("/config")
+    assert answer.status_code == 200
+    assert answer.json()["oidcClientId"] == "pilze"
 
 
-async def test_config_returns_the_four_fields() -> None:
-    async with client(build_app()) as call:
-        response = await call.get("/api/config")
-
-    assert response.status_code == 200
-    assert response.json() == {
-        "oidcIssuer": ISSUER,
-        "oidcClientId": CLIENT_ID,
-        "origin": "http://localhost:4200",
-        "version": VERSION,
-    }
+async def test_unknown_path_is_a_problem(api: httpx.AsyncClient) -> None:
+    answer = await api.get("/nirgendwo")
+    assert answer.status_code == 404
+    assert answer.headers["content-type"].startswith("application/problem+json")
+    assert answer.json()["code"] == "not_found"
+    assert answer.json()["title"] == "Nicht gefunden"
 
 
-async def test_the_version_comes_from_the_pyproject() -> None:
-    async with client(build_app()) as call:
-        response = await call.get("/api/config")
-
-    assert response.json()["version"].count(".") >= 1
-
-
-@pytest.mark.usefixtures("schema")
-async def test_me_returns_the_person_from_the_token(idp: FakeIdp) -> None:
-    async with client(build_app()) as call:
-        response = await call.get("/api/ich", headers=auth_header(idp.token()))
-
-    assert response.status_code == 200
-    assert response.json() == {
-        "sub": "nutzer-1",
-        "email": "pilz@example.test",
-        "name": "Pilzsammlerin",
-    }
+async def test_unknown_query_parameter_is_rejected(api: httpx.AsyncClient) -> None:
+    answer = await api.get("/texts", params={"gibtEsNicht": "1"})
+    assert answer.status_code == 422
+    assert answer.json()["errors"][0]["field"] == "gibtEsNicht"
 
 
-async def test_me_without_a_token_is_401() -> None:
-    async with client(build_app()) as call:
-        response = await call.get("/api/ich")
-
-    assert response.status_code == 401
-    assert response.headers["content-type"].startswith("application/problem+json")
-    assert response.json()["code"] == "unauthorized"
+async def test_a_bracket_parameter_passes(api: httpx.AsyncClient) -> None:
+    assert (await api.get("/species", params={"colour[cap]": "#ffffff"})).status_code == 200
 
 
-async def test_an_unknown_path_is_problem_json() -> None:
-    async with client(build_app()) as call:
-        response = await call.get("/api/gibt-es-nicht")
-
-    assert response.status_code == 404
-    assert response.headers["content-type"].startswith("application/problem+json")
-    assert response.json()["code"] == "not_found"
+async def test_a_method_outside_the_contract_is_405(api: httpx.AsyncClient) -> None:
+    answer = await api.put("/species/bundle", json={})
+    assert answer.status_code == 405
+    assert answer.headers["allow"] == "GET, HEAD"
+    assert answer.json()["code"] == "method_not_allowed"
 
 
-@pytest.mark.usefixtures("schema")
-async def test_the_lifespan_releases_the_connections() -> None:
-    app = build_app()
-
-    async with lifespan(app):
-        pass
+async def test_allow_lists_the_methods_of_the_path(api: httpx.AsyncClient) -> None:
+    answer = await api.request("OPTIONS", "/species")
+    assert answer.status_code == 405
+    assert answer.headers["allow"] == "GET, HEAD, POST"
 
 
-@pytest.mark.parametrize("path", ["/api/health", "/api/config"])
-async def test_endpoints_allow_the_own_origin(path: str) -> None:
-    async with client(build_app()) as call:
-        response = await call.get(path, headers={"Origin": "http://localhost:4200"})
-
-    assert response.headers["access-control-allow-origin"] == "http://localhost:4200"
+async def test_the_method_index_is_built_once(api: httpx.AsyncClient) -> None:
+    built = app_of(api)
+    assert allowed_methods(built, "/api/health") == ["GET", "HEAD"]
+    assert allowed_methods(built, "/api/health") == ["GET", "HEAD"]
+    assert allowed_methods(built, "/api/gibt-es-nicht") == []

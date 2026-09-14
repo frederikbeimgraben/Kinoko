@@ -301,9 +301,7 @@ jobs:
         run: uv sync --all-extras
       - working-directory: backend
         run: uv run python -m tools.sync_contract
-      # Der Vertrag gilt ab U3. Bis dahin fehlen die englischen Pfade.
       - name: Jeder Pfad des Vertrags hat eine Route
-        continue-on-error: true
         working-directory: backend
         run: uv run pytest -m contract --no-cov -q
       - name: Datenbank anlegen
@@ -320,7 +318,6 @@ jobs:
           echo "::error::Backend antwortet nicht"
           exit 1
       - name: Schemathesis
-        continue-on-error: true
         working-directory: backend
         run: >
           uv run schemathesis run openapi.yaml

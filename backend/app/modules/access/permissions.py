@@ -1,54 +1,31 @@
-"""Der Rechtekatalog. Er steht im Code, nicht in der Datenbank.
+"""Die Rechte und die eingebauten Rollen."""
 
-Ein Recht kommt dazu, indem hier eine Zeile dazukommt. Der Dienst gleicht die
-Tabelle ``permission`` beim Start damit ab, und die feste Rolle Admin trägt
-jedes Recht, auch ein neues, ohne dass jemand etwas anhakt.
+from __future__ import annotations
 
-Der Schlüssel ist ``bereich.tätigkeit``. Der Bereich ordnet die Rechte in der
-Verwaltung zu Gruppen; die Beschriftung dazu steht nicht hier, sondern in den
-Oberflächentexten, damit sie übersetzbar bleibt.
-"""
+from typing import Any, Final
 
-from enum import StrEnum
-from typing import Final
+from app.shared.enums import Area
 
-
-class Area(StrEnum):
-    """Die Gruppe, unter der ein Recht in der Verwaltung steht."""
-
-    SPECIES = "species"
-    INTERFACE = "interface"
-    ACCESS = "access"
-    DATA = "data"
-
-
-class Permission(StrEnum):
-    """Jedes Recht, das der Dienst kennt."""
-
-    SPECIES_EDIT = "species.edit"
-    SPECIES_CREATE = "species.create"
-    SPECIES_DELETE = "species.delete"
-    IMAGE_UPLOAD = "image.upload"
-    IMAGE_REVIEW = "image.review"
-    TEXT_EDIT = "text.edit"
-    ROLE_MANAGE = "role.manage"
-    ROLE_ASSIGN = "role.assign"
-    FIND_REVIEW = "find.review"
-    RUN_MANAGE = "run.manage"
-
-
-AREA_OF: Final[dict[Permission, Area]] = {
-    Permission.SPECIES_EDIT: Area.SPECIES,
-    Permission.SPECIES_CREATE: Area.SPECIES,
-    Permission.SPECIES_DELETE: Area.SPECIES,
-    Permission.IMAGE_UPLOAD: Area.SPECIES,
-    Permission.IMAGE_REVIEW: Area.SPECIES,
-    Permission.TEXT_EDIT: Area.INTERFACE,
-    Permission.ROLE_MANAGE: Area.ACCESS,
-    Permission.ROLE_ASSIGN: Area.ACCESS,
-    Permission.FIND_REVIEW: Area.DATA,
-    Permission.RUN_MANAGE: Area.DATA,
+PERMISSIONS: Final[dict[str, Area]] = {
+    "species.edit": Area.SPECIES,
+    "image.review": Area.DATA,
+    "find.review": Area.DATA,
+    "run.manage": Area.DATA,
+    "role.manage": Area.ACCESS,
+    "role.assign": Area.ACCESS,
+    "text.edit": Area.INTERFACE,
 }
 
-# Jedes Recht des Katalogs. Admin trägt genau diese Menge.
-ALL_PERMISSIONS: Final = frozenset(Permission)
+BUILT_IN: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
+    "admin": ("account.role.admin", tuple(PERMISSIONS)),
+    "editorial": (
+        "account.role.editorial",
+        ("species.edit", "text.edit", "image.review"),
+    ),
+    "reviewer": ("account.role.reviewer", ("image.review", "find.review")),
+}
+
+
+def permission_entries() -> dict[str, Any]:
+    """Liefert alle bekannten Rechte mit ihrem Bereich."""
+    return {"items": [{"key": key, "area": area} for key, area in PERMISSIONS.items()]}

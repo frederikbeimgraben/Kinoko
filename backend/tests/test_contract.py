@@ -34,3 +34,18 @@ def service_paths() -> set[str]:
 def test_every_contract_path_has_a_route() -> None:
     missing = sorted(contract_paths() - service_paths())
     assert not missing, f"{len(missing)} Pfade ohne Route: {missing}"
+
+
+@pytest.mark.contract
+def test_every_contract_method_has_a_route() -> None:
+    data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+    mine = build_app().openapi()["paths"]
+    served = {(template(path), method) for path, item in mine.items() for method in item}
+    wanted = {
+        (template(f"/api{path}"), method)
+        for path, item in data["paths"].items()
+        for method in item
+        if method in {"get", "post", "put", "patch", "delete"}
+    }
+    missing = sorted(wanted - served)
+    assert not missing, f"{len(missing)} Methoden ohne Route: {missing}"

@@ -3,47 +3,31 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.db import engine, session_factory
 from app.core.errors import register_error_handlers
-from app.core.settings import get_settings
-from app.core.version import VERSION
-from app.modules import (
-    access,
-    combinations,
-    finds,
-    internal,
-    marker,
-    species,
-    species_images,
-    system,
-    taxonomy,
-    terms,
-    texts,
-    zones,
-)
-from app.modules.access.service import ensure_built_in_roles, sync_permissions
-from app.modules.taxonomy.service import sync_taxa
-from app.modules.texts.service import sync_texts
+from app.core.routing import reject_unknown_method, reject_unknown_query
+from app.core.settings import VERSION, get_settings
+from app.modules import system
+from app.modules.access import router as access_router
+from app.modules.access import seed as access_seed
+from app.modules.catalog import router as catalog_router
+from app.modules.objects import router as objects_router
+from app.modules.photos import router as photos_router
+from app.modules.pipeline import router as pipeline_router
+from app.modules.texts import router as texts_router
+from app.modules.texts import service as texts_service
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
-    """Gleicht Rechte, Rollen, Texte und Einordnung ab, gibt die Verbindungen frei.
-
-    Alle vier haben eine Vorgabe: Rechte und Rollen stehen im Code, Texte und
-    Einordnung als Datei. Der Abgleich beim Start erspart jedem neuen Recht,
-    jedem neuen Textschlüssel und jedem neuen Rang eine eigene Migration; die
-    Migration legt dasselbe an, damit eine frisch hochgezogene Datenbank auch
-    vor dem ersten Start vollständig ist.
-    """
-    async with session_factory()() as session:
-        await sync_permissions(session)
-        await ensure_built_in_roles(session)
-        await sync_texts(session)
-        await sync_taxa(session)
+    """Gleicht Rechte, Rollen und Texte ab und gibt die Verbindungen frei."""
+    async with session_factory()() as db:
+        await access_seed.sync(db)
+        await texts_service.sync(db)
+        await texts_service.load_titles(db)
     yield
     await engine().dispose()
 
@@ -52,12 +36,11 @@ def build_app() -> FastAPI:
     """Baut die App: Router, Fehlerbehandlung, CORS."""
     settings = get_settings()
     built = FastAPI(
-        title="Pilzkarte",
+        title="Primordium",
         version=VERSION,
         lifespan=lifespan,
+        dependencies=[Depends(reject_unknown_method), Depends(reject_unknown_query)],
     )
-    # In der Entwicklung laeuft das Frontend auf einem eigenen Ursprung. Im
-    # Betrieb liegt beides hinter derselben Domain, dann greift die Regel nicht.
     built.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.origin],
@@ -65,18 +48,17 @@ def build_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    built.include_router(system.router, prefix="/api")
-    built.include_router(access.router, prefix="/api")
-    built.include_router(species.router, prefix="/api")
-    built.include_router(species_images.router, prefix="/api")
-    built.include_router(taxonomy.router, prefix="/api")
-    built.include_router(terms.router, prefix="/api")
-    built.include_router(texts.router, prefix="/api")
-    built.include_router(finds.router, prefix="/api")
-    built.include_router(internal.router, prefix="/api")
-    built.include_router(combinations.router, prefix="/api")
-    built.include_router(marker.router, prefix="/api")
-    built.include_router(zones.router, prefix="/api")
+    for module in (
+        system.router,
+        access_router.router,
+        catalog_router.router,
+        objects_router.router,
+        photos_router.router,
+        texts_router.router,
+        pipeline_router.router,
+        pipeline_router.internal_router,
+    ):
+        built.include_router(module, prefix="/api")
     register_error_handlers(built)
     return built
 

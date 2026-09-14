@@ -19,7 +19,7 @@ cd "$(dirname "$0")"
 
 JAHR=$(date +%Y)
 WOCHEN=${WOCHEN:-90}
-APP_FUNDE=${APP_FUNDE:-http://127.0.0.1:8111/api/intern/training-funde}
+APP_FUNDE=${APP_FUNDE:-http://127.0.0.1:8111/api/internal/training-finds}
 LOG() { printf '%s  %s\n' "$(date +%H:%M:%S)" "$*"; }
 
 LOG "1/5 Wetter des laufenden Jahres holen"

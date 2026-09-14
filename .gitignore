@@ -1,6 +1,8 @@
 # Backend
 backend/.venv/
 backend/var/
+backend/.schemathesis/
+backend/schemathesis-report/
 backend/.env
 backend/deploy.stamp
 __pycache__/

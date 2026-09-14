@@ -1,5 +1,1 @@
-"""Rollen, Rechte und Personen."""
-
-from app.modules.access.router import router
-
-__all__ = ["router"]
+"""Rechte, Rollen, Personen und die eigenen Daten."""
