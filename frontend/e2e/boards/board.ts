@@ -8,11 +8,19 @@ function size(file: string): { width: number; height: number } {
   return { width: header.readUInt32BE(0), height: header.readUInt32BE(4) };
 }
 
+/** Liest die Stems aus `pending.json`. */
+function pendingStems(): Set<string> {
+  const path = join(test.info().config.rootDir, 'boards/pending.json');
+  return new Set(JSON.parse(readFileSync(path, 'utf8')) as string[]);
+}
+
 /**
  * Vergleicht die Ansicht mit `baseline/<board>.png`, Toleranz 0,5 % Pixel.
- * Das Board läuft nur in dem Projekt, dessen Fenster zum Bild passt.
+ * Ein Board aus `pending.json` läuft nicht. Das Board läuft sonst nur in
+ * dem Projekt, dessen Fenster zum Bild passt.
  */
 export async function expectBoard(page: Page, board: string): Promise<void> {
+  test.skip(pendingStems().has(board), `${board} steht in pending.json`);
   const image = size(join(test.info().config.rootDir, 'boards/baseline', `${board}.png`));
   const viewport = page.viewportSize();
   const fits = viewport?.width === image.width && viewport.height === image.height;
