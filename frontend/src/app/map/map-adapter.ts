@@ -73,6 +73,8 @@ export interface Protocol {
 }
 
 export interface MapOptions {
+  /** Die Quelle der Grundkarte, unten links auf der Karte. */
+  attribution: string;
   style: string;
   centerPoint: readonly [number, number];
   zoom: number;
@@ -80,8 +82,6 @@ export interface MapOptions {
   maxZoom: number;
   maxBounds: Bounds;
   protocol: Protocol;
-  /** Am Telefon steht der Urheberhinweis eingeklappt, sonst deckte er die Karte. */
-  compact: boolean;
 }
 
 /**
@@ -305,8 +305,10 @@ export class MapLibreAdapter implements MapAdapter {
     // Der Hinweis steht unten links, weg von der Knopfgruppe oben und weg von
     // „Eintragen“ unten rechts. Das Blatt deckt ihn nicht zu: `styles.scss`
     // hebt ihn über dessen Kopf.
-    this.map.addControl(new module.AttributionControl({ compact: options.compact }), 'bottom-left');
-    if (options.compact) this.collapseAttribution(host);
+    this.map.addControl(
+      new module.AttributionControl({ compact: false, customAttribution: options.attribution }),
+      'bottom-left',
+    );
     // Eine Quelle vor dem Stil wirft. `style.load` ist das erste Ereignis, nach
     // dem der Stil steht; `load` wartet zusätzlich auf jede Kachel und bleibt
     // über einer langsamen Leitung lange aus.
@@ -595,19 +597,5 @@ export class MapLibreAdapter implements MapAdapter {
     if (!map) return;
     if (map.getLayer(id)) map.removeLayer(id);
     if (map.getSource(id)) map.removeSource(id);
-  }
-
-  /**
-   * MapLibre zeigt den Hinweis zunächst offen. Am Telefon deckt er damit die
-   * halbe Karte; ein Tipp auf das i klappt ihn auf.
-   *
-   * Die Klasse `maplibregl-compact` wird hier von Hand gesetzt: MapLibre setzt
-   * sie erst, wenn der Text da ist, und hängt dabei jedes Mal wieder das
-   * offene `-show` an. Steht sie schon, lässt es beide in Ruhe.
-   */
-  private collapseAttribution(host: HTMLElement): void {
-    const hint = host.querySelector('.maplibregl-ctrl-attrib');
-    hint?.classList.add('maplibregl-compact');
-    hint?.classList.remove('maplibregl-compact-show');
   }
 }

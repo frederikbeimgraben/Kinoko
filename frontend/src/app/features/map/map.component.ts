@@ -102,6 +102,9 @@ export class MapComponent implements OnDestroy {
     sharedFinds: this.entries.shared().length,
   }));
 
+  /** Ort und Eintrag brauchen eine Karte ohne Blatt darüber, die schon steht. */
+  protected readonly busy = computed(() => this.overlay() !== null || this.asksName());
+
   /** Über der Karte liegt immer nur ein Blatt. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
 

@@ -25,6 +25,8 @@ export interface Layer {
   title: string;
   /** Herkunft und Raster, wie die Kette sie nennt: „5-km-Raster, DWD HYRAS“. */
   note: string;
+  /** Der Zeitraum, den die Ebene misst, als fertiger Text der Kette. */
+  range: string;
   /** `mm`, `Grad`, `m` oder leer für einen Anteil. */
   unit: string;
   /** Eine feste Ebene gilt für alle Wochen; eine Wochenebene folgt der Zeitleiste. */
@@ -109,6 +111,7 @@ function readLayer(id: string, raw: unknown): Layer | null {
     label: typeof raw['label'] === 'string' ? raw['label'] : id,
     title: text(raw['title']) ?? text(raw['label']) ?? id,
     note: text(raw['note']) ?? '',
+    range: text(raw['range']) ?? '',
     unit: typeof raw['unit'] === 'string' ? raw['unit'] : '',
     fixed: raw['static'] === true,
     low: number(raw['low']),

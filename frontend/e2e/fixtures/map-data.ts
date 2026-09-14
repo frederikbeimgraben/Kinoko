@@ -38,9 +38,17 @@ export const SPECIES_MANIFEST = {
   weeks: weeks(),
 };
 
+/** Die Verteilung aus dem Board `Faktor`: vierzig Klassen, ein Buckel links. */
+const CURVE = [
+  0.005354, 0.007244, 0.009528, 0.012283, 0.015591, 0.019213, 0.023228, 0.027402, 0.031654, 0.035827,
+  0.039606, 0.042756, 0.045276, 0.04685, 0.047479, 0.047087, 0.045827, 0.043701, 0.041024, 0.037953, 0.034803,
+  0.031732, 0.028898, 0.026535, 0.024646, 0.023228, 0.022205, 0.021496, 0.020787, 0.020157, 0.019291,
+  0.018189, 0.016772, 0.015118, 0.013228, 0.01126, 0.009291, 0.007402, 0.005748, 0.004331,
+];
+
 function share(count: number): { klassen: number[]; anteile: number[] } {
   const klassen = Array.from({ length: 41 }, (_, i) => (i * count) / 40);
-  return { klassen, anteile: Array.from({ length: 40 }, () => 0.025) };
+  return { klassen, anteile: CURVE };
 }
 
 /** Die Eingabe-Ebenen, mit denselben Namen wie in den Boards. */
@@ -54,6 +62,7 @@ export const LAYERS_MANIFEST = {
       label: 'Niederschlag 4 Wochen',
       title: 'Niederschlag der letzten 4 Wochen',
       note: 'je Woche, 5-km-Raster, DWD HYRAS',
+      range: 'KW 40',
       unit: 'mm',
       low: 0,
       high: 152,
@@ -65,6 +74,7 @@ export const LAYERS_MANIFEST = {
     niederschlag: {
       label: 'Niederschlag',
       note: 'Summe KW 37 bis 40',
+      range: 'KW 37 bis 40',
       unit: 'mm',
       low: 0,
       high: 240,
@@ -178,6 +188,45 @@ export const SPECIES_BUNDLE = {
     species('cantharellus-cibarius', 'Pfifferling', 'Cantharellus cibarius'),
     species('imleria-badia', 'Maronenröhrling', 'Imleria badia'),
   ],
+};
+
+function entries(count: number, kind: string): { eintraege: unknown[]; gesamt: number } {
+  const eintraege = Array.from({ length: count }, (_, i) => ({
+    id: `${kind}-${i}`,
+    lon: 9 + i * 0.05,
+    lat: 48.5 + i * 0.05,
+    name: `${kind} ${i}`,
+    farbe: 'gruen',
+    sichtbarkeit: 'privat',
+    angelegtAm: '2025-10-01T00:00:00Z',
+    eigen: false,
+    gerundet: false,
+  }));
+  return { eintraege, gesamt: count };
+}
+
+/** Die Zahlen aus dem Board `KarteEbenen`: 12 geteilte Funde, 5 Marker, 2 Zonen. */
+export const SHARED_FINDS = entries(12, 'fund');
+export const MARKERS = entries(5, 'marker');
+export const ZONES = {
+  eintraege: Array.from({ length: 2 }, (_, i) => ({
+    id: `zone-${i}`,
+    name: `Zone ${i}`,
+    farbe: 'gruen',
+    polygon: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [9, 48],
+          [9.1, 48],
+          [9.1, 48.1],
+          [9, 48],
+        ],
+      ],
+    },
+    angelegtAm: '2025-10-01T00:00:00Z',
+  })),
+  gesamt: 2,
 };
 
 /** Die gespeicherten Kombinationen aus dem Board `Combinations`. */

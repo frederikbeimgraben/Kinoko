@@ -45,23 +45,25 @@
           [variant]="state.layersSheetOpen() ? 'primary' : 'default'"
           (pressed)="state.layersSheetOpen.set(!state.layersSheetOpen())"
         />
-        <app-floating-button
-          icon="location"
-          [label]="'map.location' | t"
-          [disabled]="!locating.allowed()"
-          (pressed)="surface.locate()"
-        />
-      </div>
+        @if (!busy()) {
+          <app-floating-button
+            icon="location"
+            [label]="'map.location' | t"
+            [disabled]="!locating.allowed()"
+            (pressed)="surface.locate()"
+          />
+        }
 
-      @if (!addEntry.running()) {
-        <app-floating-button
-          class="map__add"
-          icon="plus"
-          variant="primary"
-          [label]="'entry.create' | t"
-          (pressed)="openAddEntry()"
-        />
-      }
+        @if (!addEntry.running() && !busy()) {
+          <app-floating-button
+            class="map__add"
+            icon="plus"
+            variant="primary"
+            [label]="'entry.create' | t"
+            (pressed)="openAddEntry()"
+          />
+        }
+      </div>
     }
 
     <app-add-entry />

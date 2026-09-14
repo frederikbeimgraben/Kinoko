@@ -48,3 +48,9 @@ body {
 .maplibregl-ctrl-attrib-inner {
   white-space: normal;
 }
+
+// Die Bedienelemente der Karte liegen über ihrer Fläche, nicht darunter.
+.maplibregl-control-container {
+  position: relative;
+  z-index: 2;
+}

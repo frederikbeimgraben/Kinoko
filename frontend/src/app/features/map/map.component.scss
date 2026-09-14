@@ -72,22 +72,12 @@
   gap: 12px;
 }
 
-// Am Telefon schwebt „Eintragen“ unten rechts, wo der Daumen liegt, und
-// bleibt über dem Blatt.
-.map__add {
-  position: absolute;
-  inset-block-end: calc(var(--pilz-sheet-inset, var(--size-sheet-head)) + 12px);
-  inset-inline-end: 12px;
-  // Über dem Blatt: dessen Wirt spannt über die ganze Karte, damit die Raste
-  // ein Anteil dieser Höhe sein kann.
-  z-index: 3;
-}
-
 // Am Rechner steht „Eintragen“ unten rechts über der Karte, größer als die
 // Knöpfe darüber.
 :host-context(.shell--column) .map__add {
   --size-floating: 56px;
 
+  position: absolute;
   inset-block-end: 24px;
   inset-inline-end: 24px;
 }
@@ -130,8 +120,7 @@ app-object-sheet {
   z-index: 1;
 }
 
-// Ohne Verbindung liegt die Karte grau: was zu sehen ist, ist der letzte
-// Stand, nicht der von jetzt.
+// Ohne Verbindung liegt die Karte grau: zu sehen ist der letzte Stand.
 .map__grey {
   position: absolute;
   inset: 0 0 var(--pilz-sheet-inset, 0) 0;

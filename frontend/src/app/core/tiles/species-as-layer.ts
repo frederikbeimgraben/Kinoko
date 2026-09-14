@@ -21,6 +21,7 @@ export function layerFromSpecies(manifest: SpeciesManifest, label: string, note 
     label,
     title: label,
     note,
+    range: '',
     unit: '',
     fixed: false,
     low: 0,

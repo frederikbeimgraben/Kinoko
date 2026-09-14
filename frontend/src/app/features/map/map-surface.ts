@@ -60,7 +60,7 @@ export class MapSurface {
       maxZoom: ZOOM_MAX,
       maxBounds: MAX_BOUNDS,
       protocol: { name: 'wert', resolve: this.protocol.resolve },
-      compact: !wide,
+      attribution: this.i18n.translate('map.attribution.osm'),
     });
     this.adapter.fitBounds(GERMANY, this.padding(this.state.detent(), wide, this.state.overlayHeight()));
     this.adapter.onMove(onMove);

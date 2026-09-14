@@ -12,6 +12,13 @@
   padding-block: var(--space-3);
 }
 
+.row__line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  inline-size: 100%;
+}
+
 .row__stack {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,5 @@
 <app-overlay-host [open]="open() !== null" (closed)="closed.emit()">
-  <app-sheet [label]="'nav.tab.map' | t" [detent]="2" [modal]="true">
+  <app-sheet [label]="'nav.tab.map' | t" [detent]="2" [detents]="detents" [modal]="true">
     @switch (open()) {
       @case ('species') {
         <div class="overlay-body">

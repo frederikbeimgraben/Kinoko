@@ -11,6 +11,7 @@ import { FactorSheetComponent } from './factor-sheet.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
+import { DETENT_SIZES } from './map-surface';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
 
@@ -55,6 +56,9 @@ export class MapOverlaysComponent {
   readonly sourceChosen = output<Layer>();
   readonly saved = output<string>();
   readonly nameCancelled = output();
+
+  /** Ein Blatt über der Karte steht in derselben obersten Raste. */
+  protected readonly detents = DETENT_SIZES;
 
   protected readonly name = signal('');
 

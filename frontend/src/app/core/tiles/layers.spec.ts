@@ -66,6 +66,7 @@ describe('Ebenen', () => {
       label: 'Niederschlag der letzten 4 Wochen',
       title: 'Niederschlag der letzten 4 Wochen',
       note: '',
+      range: '',
       unit: 'mm',
       fixed: false,
       low: 0,

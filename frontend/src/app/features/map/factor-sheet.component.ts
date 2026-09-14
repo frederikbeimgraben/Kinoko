@@ -99,9 +99,11 @@ export class FactorSheetComponent {
     this.i18n.translate('map.factor.distribution', { source: this.head() }),
   );
 
-  protected readonly head = computed(() =>
-    this.layer().note === '' ? this.layer().label : `${this.layer().label} ${this.layer().note}`,
-  );
+  /** Die Quelle mit ihrem Zeitraum, wie die Überschrift sie nennt. */
+  protected readonly head = computed(() => {
+    const layer = this.layer();
+    return layer.range === '' ? layer.label : `${layer.label} ${layer.range}`;
+  });
 
   protected setCondition(value: string): void {
     const condition = (['below', 'above', 'between'] as const).find((entry) => entry === value);
