@@ -1,12 +1,8 @@
 /** Die Objekte, die ohne Netz entstehen dürfen. */
-export const SYNC_KINDS = ['find', 'marker', 'zone'] as const;
-
-export type SyncKind = (typeof SYNC_KINDS)[number];
+export type SyncKind = 'find' | 'marker' | 'zone';
 
 /** Was mit einem Objekt geschehen soll. */
-export const SYNC_OPERATIONS = ['create', 'update', 'delete'] as const;
-
-export type SyncOperation = (typeof SYNC_OPERATIONS)[number];
+export type SyncOperation = 'create' | 'update' | 'delete';
 
 /** Der Weg der API je Art. */
 export const SYNC_PATHS: Record<SyncKind, string> = {
