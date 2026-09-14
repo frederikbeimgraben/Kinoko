@@ -19,9 +19,7 @@ from app.shared.enums import BodyPart, Phase, SourceScope, TermKind
 from tools import catalog_vocabulary as vocab
 
 
-def _both_phases(
-    species_id: uuid.UUID, part: BodyPart, feature: str
-) -> list[SpeciesPartFeature]:
+def _both_phases(species_id: uuid.UUID, part: BodyPart, feature: str) -> list[SpeciesPartFeature]:
     return [
         SpeciesPartFeature(species_id=species_id, part=part, feature=feature, phase=Phase.YOUNG),
         SpeciesPartFeature(species_id=species_id, part=part, feature=feature, phase=Phase.OLD),

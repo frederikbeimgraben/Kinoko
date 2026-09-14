@@ -93,12 +93,8 @@ def species_row(ctx: BuildContext, taxon_id: uuid.UUID | None) -> Species:
         gill_edge=optional_lookup(
             vocab.GILL_EDGE, hymenium.get("schneide"), "fruchtschicht.schneide", ctx.stem
         ),
-        cap_shape_young=optional_lookup(
-            vocab.CAP_SHAPE, shape.get("von"), "hutform.von", ctx.stem
-        ),
-        cap_shape_old=optional_lookup(
-            vocab.CAP_SHAPE, shape.get("nach"), "hutform.nach", ctx.stem
-        ),
+        cap_shape_young=optional_lookup(vocab.CAP_SHAPE, shape.get("von"), "hutform.von", ctx.stem),
+        cap_shape_old=optional_lookup(vocab.CAP_SHAPE, shape.get("nach"), "hutform.nach", ctx.stem),
     )
 
 
