@@ -1,0 +1,3330 @@
+openapi: 3.1.0
+info:
+  title: Primordium API
+  version: 1.0.0
+servers:
+  - url: /api
+security:
+  - bearerAuth: []
+tags:
+  - name: system
+  - name: account
+  - name: species
+  - name: taxa
+  - name: terms
+  - name: finds
+  - name: markers
+  - name: zones
+  - name: combinations
+  - name: photos
+  - name: texts
+  - name: access
+  - name: pipeline-runs
+  - name: internal
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags: [system]
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+
+  /config:
+    get:
+      operationId: getConfig
+      tags: [system]
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Config"
+
+  /me:
+    get:
+      operationId: getMe
+      tags: [account]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /me/permissions:
+    get:
+      operationId: getMyPermissions
+      tags: [account]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyPermissions"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /me/export:
+    get:
+      operationId: exportMyData
+      tags: [account]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountExport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /me/data:
+    delete:
+      operationId: deleteMyData
+      tags: [account]
+      responses:
+        "204":
+          description: No Content
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /species/bundle:
+    get:
+      operationId: getSpeciesBundle
+      tags: [species]
+      security: []
+      parameters:
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeciesBundle"
+        "304":
+          description: Not Modified
+
+  /species:
+    get:
+      operationId: listSpecies
+      tags: [species]
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Limit40"
+        - $ref: "#/components/parameters/Cursor"
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: taxonId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: "edibility[]"
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Edibility"
+        - name: "hymenium[]"
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/HymeniumType"
+        - name: "capShape[]"
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CapShape"
+        - name: "terms[]"
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+        - name: "months[]"
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: integer
+              minimum: 1
+              maximum: 12
+        - name: colour[cap]
+          in: query
+          description: A standard colour. A species matches when the nearest standard colour of one of its catalogue colours for this part is this colour.
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: colour[stem]
+          in: query
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: colour[gills]
+          in: query
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: colour[flesh]
+          in: query
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: colour[sporePrint]
+          in: query
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: colour[tubes]
+          in: query
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: colour[pores]
+          in: query
+          schema:
+            $ref: "#/components/schemas/HexColour"
+        - name: size
+          in: query
+          description: Repeatable. Key is part.dimension, value is min-max in the unit of the catalogue, one side may be empty.
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+              pattern: "^[0-9.]*-[0-9.]*$"
+            example:
+              cap.width: "4-20"
+              stem.height: "5-"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeciesPage"
+    post:
+      operationId: createSpecies
+      tags: [species]
+      x-permission: species.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpeciesWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Species"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /species/{slug}:
+    parameters:
+      - $ref: "#/components/parameters/SpeciesSlug"
+    get:
+      operationId: getSpecies
+      tags: [species]
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Species"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: replaceSpecies
+      tags: [species]
+      x-permission: species.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpeciesWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Species"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteSpecies
+      tags: [species]
+      x-permission: species.edit
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /species/{slug}/forecast:
+    parameters:
+      - $ref: "#/components/parameters/SpeciesSlug"
+    put:
+      operationId: setSpeciesForecast
+      tags: [species]
+      x-permission: species.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+              required: [enabled]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Species"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /species/{slug}/counts:
+    parameters:
+      - $ref: "#/components/parameters/SpeciesSlug"
+    get:
+      operationId: getSpeciesCounts
+      tags: [species]
+      x-permission: species.edit
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpeciesCounts"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /taxa/{rank}/{slug}:
+    get:
+      operationId: getTaxonPage
+      tags: [taxa]
+      security: []
+      parameters:
+        - name: rank
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/TaxonRank"
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaxonPage"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /terms:
+    get:
+      operationId: listTerms
+      tags: [terms]
+      security: []
+      parameters:
+        - name: kind
+          in: query
+          schema:
+            $ref: "#/components/schemas/TermKind"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Term"
+                required: [items]
+    post:
+      operationId: createTerm
+      tags: [terms]
+      x-permission: species.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TermCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Term"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /terms/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    patch:
+      operationId: updateTerm
+      tags: [terms]
+      x-permission: species.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TermUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Term"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /terms/{id}/merge:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: mergeTerm
+      tags: [terms]
+      x-permission: species.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                into:
+                  type: string
+                  format: uuid
+              required: [into]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /finds:
+    get:
+      operationId: listFinds
+      tags: [finds]
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Since"
+        - name: mine
+          in: query
+          schema:
+            type: boolean
+            default: true
+        - name: speciesId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: bbox
+          in: query
+          description: minLon,minLat,maxLon,maxLat
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindPage"
+    post:
+      operationId: createFind
+      tags: [finds]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FindWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Find"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /finds/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getFind
+      tags: [finds]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Find"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: putFind
+      tags: [finds]
+      description: Creates the find with this id, or replaces it. Idempotent for the offline queue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FindWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Find"
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Find"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteFind
+      tags: [finds]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /finds/{id}/review:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: reviewFind
+      tags: [finds]
+      x-permission: find.review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                decision:
+                  $ref: "#/components/schemas/ReviewDecision"
+              required: [decision]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Find"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /finds/reviews/accept-all:
+    post:
+      operationId: acceptAllOpenFinds
+      tags: [finds]
+      x-permission: find.review
+      responses:
+        "204":
+          description: No Content
+
+  /markers:
+    get:
+      operationId: listMarkers
+      tags: [markers]
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Since"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarkerPage"
+    post:
+      operationId: createMarker
+      tags: [markers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkerWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Marker"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /markers/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getMarker
+      tags: [markers]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Marker"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: putMarker
+      tags: [markers]
+      description: Creates the marker with this id, or replaces it. Idempotent for the offline queue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkerWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Marker"
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Marker"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteMarker
+      tags: [markers]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /zones:
+    get:
+      operationId: listZones
+      tags: [zones]
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Since"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZonePage"
+    post:
+      operationId: createZone
+      tags: [zones]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ZoneWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Zone"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /zones/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getZone
+      tags: [zones]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Zone"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: putZone
+      tags: [zones]
+      description: Creates the zone with this id, or replaces it. Idempotent for the offline queue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ZoneWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Zone"
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Zone"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteZone
+      tags: [zones]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /zones/{id}/value:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getZoneValue
+      tags: [zones]
+      parameters:
+        - name: speciesId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: week
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 53
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ZoneValue"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /combinations:
+    get:
+      operationId: listCombinations
+      tags: [combinations]
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Since"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CombinationPage"
+    post:
+      operationId: createCombination
+      tags: [combinations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CombinationWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Combination"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /combinations/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getCombination
+      tags: [combinations]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Combination"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: putCombination
+      tags: [combinations]
+      description: Creates the combination with this id, or replaces it. Idempotent for the offline queue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CombinationWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Combination"
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Combination"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteCombination
+      tags: [combinations]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /photos:
+    get:
+      operationId: listPhotos
+      tags: [photos]
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - name: state
+          in: query
+          schema:
+            $ref: "#/components/schemas/PhotoState"
+        - name: speciesId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: findId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: mine
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhotoPage"
+    post:
+      operationId: createPhoto
+      tags: [photos]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PhotoCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "413":
+          description: Payload Too Large
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /photos/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getPhoto
+      tags: [photos]
+      security:
+        - bearerAuth: []
+        - {}
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deletePhoto
+      tags: [photos]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /photos/{id}/{size}:
+    get:
+      operationId: getPhotoFile
+      tags: [photos]
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: size
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/PhotoSize"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /photos/{id}/approval:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: approvePhoto
+      tags: [photos]
+      x-permission: image.review
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /photos/{id}/rejection:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: rejectPhoto
+      tags: [photos]
+      x-permission: image.review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+              required: [reason]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /photos/{id}/lead:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    put:
+      operationId: setLeadPhoto
+      tags: [photos]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /texts:
+    get:
+      operationId: listTexts
+      tags: [texts]
+      security: []
+      parameters:
+        - name: If-None-Match
+          in: header
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TextsCatalogue"
+        "304":
+          description: Not Modified
+
+  /texts/{key}:
+    parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: putText
+      tags: [texts]
+      x-permission: text.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TextWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TextEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: resetText
+      tags: [texts]
+      x-permission: text.edit
+      parameters:
+        - name: locale
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /permissions:
+    get:
+      operationId: listPermissions
+      tags: [access]
+      x-permission: role.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PermissionEntry"
+                required: [items]
+
+  /roles:
+    get:
+      operationId: listRoles
+      tags: [access]
+      x-permission: role.manage
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RolePage"
+    post:
+      operationId: createRole
+      tags: [access]
+      x-permission: role.manage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /roles/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getRole
+      tags: [access]
+      x-permission: role.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateRole
+      tags: [access]
+      x-permission: role.manage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteRole
+      tags: [access]
+      x-permission: role.manage
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /people:
+    get:
+      operationId: listPeople
+      tags: [access]
+      x-permission: role.assign
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PersonPage"
+
+  /people/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getPerson
+      tags: [access]
+      x-permission: role.assign
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Person"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deletePerson
+      tags: [access]
+      x-permission: role.assign
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /people/{id}/roles:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    put:
+      operationId: setPersonRoles
+      tags: [access]
+      x-permission: role.assign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+              required: [roleIds]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Person"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /pipeline-runs:
+    get:
+      operationId: listPipelineRuns
+      tags: [pipeline-runs]
+      x-permission: run.manage
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunPage"
+    post:
+      operationId: createPipelineRun
+      tags: [pipeline-runs]
+      x-permission: run.manage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  $ref: "#/components/schemas/RunKind"
+              required: [kind]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunSummary"
+
+  /pipeline-runs/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getPipelineRun
+      tags: [pipeline-runs]
+      x-permission: run.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /internal/pipeline-runs/claim:
+    post:
+      operationId: claimPipelineRun
+      tags: [internal]
+      security:
+        - internalToken: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunSummary"
+        "204":
+          description: No Content
+
+  /internal/pipeline-runs/{id}/species/{speciesId}:
+    post:
+      operationId: reportPipelineRunSpecies
+      tags: [internal]
+      security:
+        - internalToken: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: speciesId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: string
+                recordCount:
+                  type: integer
+                  minimum: 0
+              required: [state, recordCount]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /internal/pipeline-runs/{id}/finish:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: finishPipelineRun
+      tags: [internal]
+      security:
+        - internalToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  $ref: "#/components/schemas/RunState"
+                logPath:
+                  type: string
+              required: [state]
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /internal/training-finds:
+    get:
+      operationId: listTrainingFinds
+      tags: [internal]
+      security:
+        - internalToken: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrainingFind"
+                required: [items]
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    internalToken:
+      type: apiKey
+      in: header
+      name: X-Internal-Token
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SpeciesSlug:
+      name: slug
+      in: path
+      required: true
+      schema:
+        type: string
+    Limit40:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 40
+        default: 40
+    Limit50:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 50
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+    Since:
+      name: since
+      in: query
+      schema:
+        type: string
+        format: date-time
+
+  responses:
+    NotFound:
+      description: Not Found
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Validation:
+      description: Unprocessable Entity
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        code:
+          type: string
+          description: Machine-readable key, for example not_found or last_admin.
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldError"
+      required: [type, title, status, code]
+
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+      required: [field, code]
+
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    Config:
+      type: object
+      properties:
+        oidcIssuer:
+          type: string
+        oidcClientId:
+          type: string
+        origin:
+          type: string
+        version:
+          type: string
+      required: [oidcIssuer, oidcClientId, origin, version]
+
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sub:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+      required: [id, sub, email, name]
+
+    MyPermissions:
+      type: object
+      properties:
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+      required: [permissions]
+
+    AccountExport:
+      type: object
+      properties:
+        me:
+          $ref: "#/components/schemas/Me"
+        finds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Find"
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        zones:
+          type: array
+          items:
+            $ref: "#/components/schemas/Zone"
+        combinations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Combination"
+        photos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Photo"
+      required: [me, finds, markers, zones, combinations, photos]
+
+    Permission:
+      type: string
+      enum:
+        - species.edit
+        - image.review
+        - find.review
+        - role.manage
+        - role.assign
+        - text.edit
+        - run.manage
+
+    Area:
+      type: string
+      enum: [species, interface, access, data]
+
+    PermissionEntry:
+      type: object
+      properties:
+        key:
+          $ref: "#/components/schemas/Permission"
+        area:
+          $ref: "#/components/schemas/Area"
+      required: [key, area]
+
+    Visibility:
+      type: string
+      enum: [private, shared]
+
+    ReviewState:
+      type: string
+      enum: [open, accepted, rejected]
+
+    ReviewDecision:
+      type: string
+      enum: [accepted, rejected]
+
+    PhotoState:
+      type: string
+      enum: [private, submitted, approved, rejected]
+
+    RunKind:
+      type: string
+      enum: [training, render, full]
+
+    RunState:
+      type: string
+      enum: [queued, running, finished, failed]
+
+    ColourMode:
+      type: string
+      enum: [single, gradient, distinct]
+
+    TriggerGroup:
+      type: string
+      enum: [mechanical, reagent, environment]
+
+    Edibility:
+      type: string
+      enum: [edible, conditionally_edible, inedible, poisonous, deadly]
+
+    Protection:
+      type: string
+      enum: [none, personal_use, strict]
+
+    BodyPart:
+      type: string
+      enum: [cap, stem, gills, flesh, spore_print, tubes, pores]
+
+    Dimension:
+      type: string
+      enum: [width, height, thickness, length]
+
+    Unit:
+      type: string
+      enum: [cm, mm, um]
+
+    Speed:
+      type: string
+      enum: ["immediate", "30s", "1min", "3min", "longer", "permanent"]
+
+    Rule:
+      type: string
+      enum: [intersection, graded]
+
+    Condition:
+      type: string
+      enum: [below, above, between]
+
+    TaxonRank:
+      type: string
+      enum: [division, class, order, family, genus]
+
+    Group:
+      type: string
+      enum:
+        - bolete
+        - rough_stemmed_bolete
+        - slippery_jack
+        - chanterelle
+        - hedgehog
+        - milkcap
+        - brittlegill
+        - parasol
+        - agaricus
+        - inkcap
+        - puffball
+        - funnel
+        - blewit
+        - honey_fungus
+        - scalycap
+        - toughshank
+        - porcelain
+        - oyster
+        - lions_mane
+        - polypore
+        - cauliflower
+        - knight
+        - parachute
+        - woodwax
+        - amanita
+        - morel
+        - jelly_ear
+        - spike
+        - webcap
+        - domecap
+        - pinkgill
+        - spine_fungus
+        - cup_fungus
+
+    Frequency:
+      type: string
+      enum: [very_common, common, scattered, rare, very_rare]
+
+    RedListStatus:
+      type: string
+      enum:
+        - critically_endangered
+        - endangered
+        - vulnerable
+        - unknown_extent
+        - extremely_rare
+        - near_threatened
+        - data_deficient
+
+    HymeniumType:
+      type: string
+      enum: [gills, tubes, pores, spines, folds]
+
+    GillAttachment:
+      type: string
+      enum: [free, adnate, emarginate, decurrent]
+
+    GillSpacing:
+      type: string
+      enum: [close, normal, distant]
+
+    GillEdge:
+      type: string
+      enum: [smooth, serrate, ciliate]
+
+    CapShape:
+      type: string
+      enum:
+        - hemispherical
+        - convex
+        - flat
+        - depressed
+        - funnel
+        - conical
+        - bell
+        - egg
+        - spherical
+        - shell
+        - pear
+        - club
+        - cylindrical
+
+    CapFeature:
+      type: string
+      enum: [umbonate, hygrophanous, zoned, sunken, irregular, navelled]
+
+    CapMargin:
+      type: string
+      enum:
+        - inrolled
+        - wavy
+        - striate
+        - cracked
+        - fringed
+        - incurved
+        - overhanging
+        - sharp
+        - lobed
+
+    StemFeature:
+      type: string
+      enum:
+        - ring
+        - bulb
+        - hollow
+        - fibrous
+        - flocked
+        - solid
+        - banded
+        - netted
+        - hairy
+        - rooting
+        - striate
+        - volva
+        - brittle
+
+    Phase:
+      type: string
+      enum: [young, old]
+
+    Season:
+      type: string
+      enum: [spring, summer, autumn, winter]
+
+    TermKind:
+      type: string
+      enum: [smell, taste, tree, trigger]
+
+    NameKind:
+      type: string
+      enum: [common, synonym]
+
+    SourceScope:
+      type: string
+      enum: [profile, further]
+
+    TraitKey:
+      type: string
+      enum:
+        - fruitbody
+        - cap
+        - tubes
+        - gills
+        - folds
+        - spines
+        - pores
+        - milk
+        - stem
+        - flesh
+        - smell
+        - taste
+        - spore_print
+        - reagents
+        - habitat
+        - season
+        - edibility
+        - protection
+
+    Licence:
+      type: string
+      enum: [own, cc0, cc_by_4, cc_by_sa_4, public_domain]
+
+    PhotoSize:
+      type: string
+      enum: [thumb, list, full]
+
+    MarkerColour:
+      type: string
+      enum: [green, brown, blue, red, gold, grey]
+
+    HexColour:
+      type: string
+      pattern: "^#[0-9a-f]{6}$"
+
+    GeoPoint:
+      type: object
+      properties:
+        type:
+          type: string
+          const: Point
+        coordinates:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+      required: [type, coordinates]
+
+    GeoPolygon:
+      type: object
+      properties:
+        type:
+          type: string
+          const: Polygon
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+      required: [type, coordinates]
+
+    ColourValue:
+      type: object
+      properties:
+        name:
+          type: string
+        hex:
+          $ref: "#/components/schemas/HexColour"
+      required: [name, hex]
+
+    TermRef:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+      required: [id, slug, name]
+
+    ColourGroup:
+      type: object
+      properties:
+        part:
+          $ref: "#/components/schemas/BodyPart"
+        mode:
+          $ref: "#/components/schemas/ColourMode"
+        colours:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColourValue"
+      required: [part, mode, colours]
+
+    ColourChange:
+      type: object
+      properties:
+        part:
+          $ref: "#/components/schemas/BodyPart"
+        kind:
+          $ref: "#/components/schemas/TriggerGroup"
+        from:
+          oneOf:
+            - $ref: "#/components/schemas/ColourValue"
+            - type: "null"
+        to:
+          $ref: "#/components/schemas/ColourValue"
+        speed:
+          oneOf:
+            - $ref: "#/components/schemas/Speed"
+            - type: "null"
+        triggers:
+          type: array
+          items:
+            $ref: "#/components/schemas/TermRef"
+      required: [part, kind, to, triggers]
+
+    Measurement:
+      type: object
+      properties:
+        dimension:
+          $ref: "#/components/schemas/Dimension"
+        unit:
+          $ref: "#/components/schemas/Unit"
+        low:
+          type: number
+        high:
+          type: number
+        rareLow:
+          oneOf:
+            - type: number
+            - type: "null"
+        rareHigh:
+          oneOf:
+            - type: number
+            - type: "null"
+        description:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [dimension, unit, low, high]
+
+    MeasurementGroup:
+      type: object
+      properties:
+        part:
+          $ref: "#/components/schemas/BodyPart"
+        measurements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Measurement"
+      required: [part, measurements]
+
+    CapFeatureEntry:
+      type: object
+      properties:
+        feature:
+          $ref: "#/components/schemas/CapFeature"
+        phase:
+          $ref: "#/components/schemas/Phase"
+      required: [feature, phase]
+
+    CapMarginEntry:
+      type: object
+      properties:
+        margin:
+          $ref: "#/components/schemas/CapMargin"
+        phase:
+          $ref: "#/components/schemas/Phase"
+      required: [margin, phase]
+
+    StemFeatureEntry:
+      type: object
+      properties:
+        feature:
+          $ref: "#/components/schemas/StemFeature"
+        phase:
+          $ref: "#/components/schemas/Phase"
+      required: [feature, phase]
+
+    Trait:
+      type: object
+      properties:
+        key:
+          $ref: "#/components/schemas/TraitKey"
+        text:
+          type: string
+      required: [key, text]
+
+    SourceEntry:
+      type: object
+      properties:
+        scope:
+          $ref: "#/components/schemas/SourceScope"
+        title:
+          type: string
+        url:
+          type: string
+        checkedOn:
+          type: string
+          format: date
+      required: [scope, title, url, checkedOn]
+
+    SpeciesNameEntry:
+      type: object
+      properties:
+        name:
+          type: string
+        kind:
+          $ref: "#/components/schemas/NameKind"
+      required: [name, kind]
+
+    SpeciesTermEntry:
+      type: object
+      properties:
+        term:
+          $ref: "#/components/schemas/TermRef"
+        fromExperience:
+          type: boolean
+      required: [term, fromExperience]
+
+    Lookalike:
+      type: object
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        scientificName:
+          type: string
+        edibility:
+          $ref: "#/components/schemas/Edibility"
+        warning:
+          oneOf:
+            - type: string
+            - type: "null"
+        capColours:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColourValue"
+        difference:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [slug, name, scientificName, edibility, capColours]
+
+    SpeciesSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        scientificName:
+          type: string
+        taxonId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        group:
+          $ref: "#/components/schemas/Group"
+        edibility:
+          $ref: "#/components/schemas/Edibility"
+        protection:
+          $ref: "#/components/schemas/Protection"
+        collectable:
+          type: boolean
+        forecastEnabled:
+          type: boolean
+        leadPhotoId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - slug
+        - name
+        - scientificName
+        - group
+        - edibility
+        - protection
+        - collectable
+        - forecastEnabled
+        - updatedAt
+
+    SpeciesWrite:
+      type: object
+      properties:
+        name:
+          type: string
+        scientificName:
+          type: string
+        taxonId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        group:
+          $ref: "#/components/schemas/Group"
+        edibility:
+          $ref: "#/components/schemas/Edibility"
+        collectable:
+          type: boolean
+        marketable:
+          type: boolean
+        valueRating:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 6
+            - type: "null"
+        frequency:
+          oneOf:
+            - $ref: "#/components/schemas/Frequency"
+            - type: "null"
+        redList:
+          oneOf:
+            - $ref: "#/components/schemas/RedListStatus"
+            - type: "null"
+        description:
+          oneOf:
+            - type: string
+            - type: "null"
+        warning:
+          oneOf:
+            - type: string
+            - type: "null"
+        edibilityNote:
+          oneOf:
+            - type: string
+            - type: "null"
+        protection:
+          $ref: "#/components/schemas/Protection"
+        protectionNote:
+          oneOf:
+            - type: string
+            - type: "null"
+        protectionSource:
+          oneOf:
+            - type: string
+            - type: "null"
+        periodStartMonth:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 12
+            - type: "null"
+        periodEndMonth:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 12
+            - type: "null"
+        periodPeakMonth:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 12
+            - type: "null"
+        smellText:
+          oneOf:
+            - type: string
+            - type: "null"
+        tasteText:
+          oneOf:
+            - type: string
+            - type: "null"
+        hymeniumType:
+          oneOf:
+            - $ref: "#/components/schemas/HymeniumType"
+            - type: "null"
+        gillAttachment:
+          oneOf:
+            - $ref: "#/components/schemas/GillAttachment"
+            - type: "null"
+        gillSpacing:
+          oneOf:
+            - $ref: "#/components/schemas/GillSpacing"
+            - type: "null"
+        gillEdge:
+          oneOf:
+            - $ref: "#/components/schemas/GillEdge"
+            - type: "null"
+        capShapeYoung:
+          oneOf:
+            - $ref: "#/components/schemas/CapShape"
+            - type: "null"
+        capShapeOld:
+          oneOf:
+            - $ref: "#/components/schemas/CapShape"
+            - type: "null"
+        names:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpeciesNameEntry"
+        measurements:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeasurementGroup"
+        colours:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColourGroup"
+        colourChanges:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColourChange"
+        capFeatures:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapFeatureEntry"
+        capMargins:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapMarginEntry"
+        stemFeatures:
+          type: array
+          items:
+            $ref: "#/components/schemas/StemFeatureEntry"
+        traits:
+          type: array
+          items:
+            $ref: "#/components/schemas/Trait"
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceEntry"
+        seasons:
+          type: array
+          items:
+            $ref: "#/components/schemas/Season"
+        terms:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpeciesTermEntry"
+        lookalikes:
+          type: array
+          items:
+            type: object
+            properties:
+              slug:
+                type: string
+              difference:
+                type: string
+            required: [slug, difference]
+      required: [name, scientificName, group, edibility, protection]
+
+    Species:
+      allOf:
+        - $ref: "#/components/schemas/SpeciesSummary"
+        - type: object
+          properties:
+            description:
+              oneOf:
+                - type: string
+                - type: "null"
+            warning:
+              oneOf:
+                - type: string
+                - type: "null"
+            marketable:
+              type: boolean
+            valueRating:
+              oneOf:
+                - type: integer
+                - type: "null"
+            frequency:
+              oneOf:
+                - $ref: "#/components/schemas/Frequency"
+                - type: "null"
+            redList:
+              oneOf:
+                - $ref: "#/components/schemas/RedListStatus"
+                - type: "null"
+            edibilityNote:
+              oneOf:
+                - type: string
+                - type: "null"
+            protectionNote:
+              oneOf:
+                - type: string
+                - type: "null"
+            protectionSource:
+              oneOf:
+                - type: string
+                - type: "null"
+            periodStartMonth:
+              oneOf:
+                - type: integer
+                - type: "null"
+            periodEndMonth:
+              oneOf:
+                - type: integer
+                - type: "null"
+            periodPeakMonth:
+              oneOf:
+                - type: integer
+                - type: "null"
+            smellText:
+              oneOf:
+                - type: string
+                - type: "null"
+            tasteText:
+              oneOf:
+                - type: string
+                - type: "null"
+            hymeniumType:
+              oneOf:
+                - $ref: "#/components/schemas/HymeniumType"
+                - type: "null"
+            gillAttachment:
+              oneOf:
+                - $ref: "#/components/schemas/GillAttachment"
+                - type: "null"
+            gillSpacing:
+              oneOf:
+                - $ref: "#/components/schemas/GillSpacing"
+                - type: "null"
+            gillEdge:
+              oneOf:
+                - $ref: "#/components/schemas/GillEdge"
+                - type: "null"
+            capShapeYoung:
+              oneOf:
+                - $ref: "#/components/schemas/CapShape"
+                - type: "null"
+            capShapeOld:
+              oneOf:
+                - $ref: "#/components/schemas/CapShape"
+                - type: "null"
+            names:
+              type: array
+              items:
+                $ref: "#/components/schemas/SpeciesNameEntry"
+            measurements:
+              type: array
+              items:
+                $ref: "#/components/schemas/MeasurementGroup"
+            colours:
+              type: array
+              items:
+                $ref: "#/components/schemas/ColourGroup"
+            colourChanges:
+              type: array
+              items:
+                $ref: "#/components/schemas/ColourChange"
+            capFeatures:
+              type: array
+              items:
+                $ref: "#/components/schemas/CapFeatureEntry"
+            capMargins:
+              type: array
+              items:
+                $ref: "#/components/schemas/CapMarginEntry"
+            stemFeatures:
+              type: array
+              items:
+                $ref: "#/components/schemas/StemFeatureEntry"
+            traits:
+              type: array
+              items:
+                $ref: "#/components/schemas/Trait"
+            sources:
+              type: array
+              items:
+                $ref: "#/components/schemas/SourceEntry"
+            seasons:
+              type: array
+              items:
+                $ref: "#/components/schemas/Season"
+            terms:
+              type: array
+              items:
+                $ref: "#/components/schemas/SpeciesTermEntry"
+            lookalikes:
+              type: array
+              items:
+                $ref: "#/components/schemas/Lookalike"
+          required:
+            - names
+            - measurements
+            - colours
+            - colourChanges
+            - capFeatures
+            - capMargins
+            - stemFeatures
+            - traits
+            - sources
+            - seasons
+            - terms
+            - lookalikes
+
+    SpeciesCounts:
+      type: object
+      properties:
+        records:
+          type: integer
+        finds:
+          type: integer
+        photos:
+          type: integer
+      required: [records, finds, photos]
+
+    SpeciesPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpeciesSummary"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    SpeciesBundle:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Species"
+      required: [items]
+
+    TaxonStep:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        rank:
+          $ref: "#/components/schemas/TaxonRank"
+      required: [id, slug, name, rank]
+
+    TaxonChild:
+      allOf:
+        - $ref: "#/components/schemas/TaxonStep"
+        - type: object
+          properties:
+            speciesCount:
+              type: integer
+          required: [speciesCount]
+
+    TaxonPage:
+      allOf:
+        - $ref: "#/components/schemas/TaxonStep"
+        - type: object
+          properties:
+            description:
+              oneOf:
+                - type: string
+                - type: "null"
+            path:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaxonStep"
+            siblings:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaxonStep"
+            children:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaxonChild"
+            species:
+              type: array
+              items:
+                $ref: "#/components/schemas/SpeciesSummary"
+            speciesCount:
+              type: integer
+          required: [path, siblings, children, species, speciesCount]
+
+    Term:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: "#/components/schemas/TermKind"
+        group:
+          oneOf:
+            - $ref: "#/components/schemas/TriggerGroup"
+            - type: "null"
+        slug:
+          type: string
+        name:
+          type: string
+        position:
+          type: integer
+      required: [id, kind, slug, name, position]
+
+    TermCreate:
+      type: object
+      properties:
+        kind:
+          $ref: "#/components/schemas/TermKind"
+        group:
+          oneOf:
+            - $ref: "#/components/schemas/TriggerGroup"
+            - type: "null"
+        slug:
+          type: string
+        name:
+          type: string
+        position:
+          type: integer
+      required: [kind, slug, name]
+
+    TermUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        group:
+          oneOf:
+            - $ref: "#/components/schemas/TriggerGroup"
+            - type: "null"
+        position:
+          type: integer
+
+    Find:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        speciesId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        lat:
+          type: number
+        lon:
+          type: number
+        foundOn:
+          type: string
+          format: date
+        count:
+          oneOf:
+            - type: integer
+            - type: "null"
+        forTraining:
+          type: boolean
+        reviewState:
+          $ref: "#/components/schemas/ReviewState"
+        reviewedById:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        reviewedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        note:
+          oneOf:
+            - type: string
+            - type: "null"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deleted:
+          type: boolean
+          default: false
+      required: [id, updatedAt]
+
+    FindWrite:
+      type: object
+      properties:
+        speciesId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        lat:
+          type: number
+        lon:
+          type: number
+        foundOn:
+          type: string
+          format: date
+        count:
+          oneOf:
+            - type: integer
+            - type: "null"
+        forTraining:
+          type: boolean
+          default: false
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        note:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [lat, lon, foundOn]
+
+    FindPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Find"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    Marker:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        colour:
+          $ref: "#/components/schemas/MarkerColour"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        note:
+          oneOf:
+            - type: string
+            - type: "null"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deleted:
+          type: boolean
+          default: false
+      required: [id, updatedAt]
+
+    MarkerWrite:
+      type: object
+      properties:
+        name:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        colour:
+          $ref: "#/components/schemas/MarkerColour"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        note:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [name, lat, lon]
+
+    MarkerPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    Zone:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        polygon:
+          $ref: "#/components/schemas/GeoPolygon"
+        areaHa:
+          type: number
+        colour:
+          $ref: "#/components/schemas/MarkerColour"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        note:
+          oneOf:
+            - type: string
+            - type: "null"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deleted:
+          type: boolean
+          default: false
+      required: [id, updatedAt]
+
+    ZoneWrite:
+      type: object
+      properties:
+        name:
+          type: string
+        polygon:
+          $ref: "#/components/schemas/GeoPolygon"
+        colour:
+          $ref: "#/components/schemas/MarkerColour"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        note:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [name, polygon]
+
+    ZonePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Zone"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    ZoneValue:
+      type: object
+      properties:
+        speciesId:
+          type: string
+          format: uuid
+        year:
+          type: integer
+        week:
+          type: integer
+        areaMean:
+          type: number
+        points:
+          type: integer
+        ownFinds:
+          type: integer
+      required: [speciesId, year, week, areaMean, points, ownFinds]
+
+    Factor:
+      type: object
+      properties:
+        source:
+          type: string
+        condition:
+          $ref: "#/components/schemas/Condition"
+        low:
+          oneOf:
+            - type: number
+            - type: "null"
+        high:
+          oneOf:
+            - type: number
+            - type: "null"
+        active:
+          type: boolean
+          default: true
+      required: [source, condition]
+
+    Combination:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        rule:
+          $ref: "#/components/schemas/Rule"
+        factors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Factor"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deleted:
+          type: boolean
+          default: false
+      required: [id, updatedAt]
+
+    CombinationWrite:
+      type: object
+      properties:
+        name:
+          type: string
+        rule:
+          $ref: "#/components/schemas/Rule"
+        factors:
+          type: array
+          minItems: 1
+          maxItems: 8
+          items:
+            $ref: "#/components/schemas/Factor"
+      required: [name, rule, factors]
+
+    CombinationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Combination"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    PhotoCreate:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        speciesId:
+          type: string
+          format: uuid
+        findId:
+          type: string
+          format: uuid
+        photographer:
+          type: string
+          minLength: 1
+          maxLength: 120
+        licence:
+          $ref: "#/components/schemas/Licence"
+        caption:
+          type: string
+          maxLength: 200
+        takenOn:
+          type: string
+          format: date
+      required: [file, photographer, licence]
+
+    Photo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ownerId:
+          type: string
+          format: uuid
+        speciesId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        findId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        width:
+          type: integer
+        height:
+          type: integer
+        photographer:
+          type: string
+        licence:
+          $ref: "#/components/schemas/Licence"
+        caption:
+          oneOf:
+            - type: string
+            - type: "null"
+        takenOn:
+          oneOf:
+            - type: string
+              format: date
+            - type: "null"
+        lat:
+          oneOf:
+            - type: number
+            - type: "null"
+        lon:
+          oneOf:
+            - type: number
+            - type: "null"
+        lead:
+          type: boolean
+        state:
+          $ref: "#/components/schemas/PhotoState"
+        rejectReason:
+          oneOf:
+            - type: string
+            - type: "null"
+        reviewedById:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        reviewedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - ownerId
+        - width
+        - height
+        - photographer
+        - licence
+        - lead
+        - state
+        - createdAt
+        - updatedAt
+
+    PhotoPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Photo"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    TextWrite:
+      type: object
+      properties:
+        locale:
+          type: string
+        value:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required: [locale, value]
+
+    TextEntry:
+      type: object
+      properties:
+        key:
+          type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+        changed:
+          type: boolean
+        updatedAt:
+          type: string
+          format: date-time
+      required: [key, values, changed, updatedAt]
+
+    TextsCatalogue:
+      type: object
+      properties:
+        revision:
+          type: string
+        locales:
+          type: array
+          items:
+            type: string
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/TextEntry"
+      required: [revision, locales, entries]
+
+    RoleBrief:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+      required: [id, slug, name]
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        description:
+          oneOf:
+            - type: string
+            - type: "null"
+        builtIn:
+          type: boolean
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+        peopleCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - slug
+        - name
+        - builtIn
+        - permissions
+        - peopleCount
+        - createdAt
+        - updatedAt
+
+    RoleCreate:
+      type: object
+      properties:
+        slug:
+          type: string
+          pattern: "^[a-z][a-z0-9-]*$"
+        name:
+          type: string
+        description:
+          type: string
+          maxLength: 200
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+      required: [slug, name]
+
+    RoleUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          oneOf:
+            - type: string
+            - type: "null"
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+
+    RolePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    Person:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sub:
+          type: string
+        email:
+          oneOf:
+            - type: string
+            - type: "null"
+        name:
+          oneOf:
+            - type: string
+            - type: "null"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleBrief"
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, sub, roles, createdAt]
+
+    PersonPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Person"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    PipelineRunSpeciesEntry:
+      type: object
+      properties:
+        speciesId:
+          type: string
+          format: uuid
+        state:
+          type: string
+        recordCount:
+          type: integer
+        findCount:
+          type: integer
+      required: [speciesId, state, recordCount, findCount]
+
+    PipelineRunSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: "#/components/schemas/RunKind"
+        state:
+          $ref: "#/components/schemas/RunState"
+        queuedAt:
+          type: string
+          format: date-time
+        startedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        finishedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        triggeredById:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+      required: [id, kind, state, queuedAt]
+
+    PipelineRunDetail:
+      allOf:
+        - $ref: "#/components/schemas/PipelineRunSummary"
+        - type: object
+          properties:
+            logPath:
+              oneOf:
+                - type: string
+                - type: "null"
+            species:
+              type: array
+              items:
+                $ref: "#/components/schemas/PipelineRunSpeciesEntry"
+          required: [species]
+
+    PipelineRunPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PipelineRunSummary"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    TrainingFind:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        speciesId:
+          type: string
+          format: uuid
+        lat:
+          type: number
+        lon:
+          type: number
+        foundOn:
+          type: string
+          format: date
+        count:
+          oneOf:
+            - type: integer
+            - type: "null"
+      required: [id, speciesId, lat, lon, foundOn]

@@ -428,6 +428,7 @@ function gehe(ordner) {
     }
     const endung = extname(pfad);
     if (!['.ts', '.html', '.scss'].includes(endung)) continue;
+    if (pfad.endsWith('core/api/contract.d.ts')) continue;
     const roh = readFileSync(pfad, 'utf8');
     const code = endung === '.html' ? ohneTextHtml(roh) : ohneTextTs(roh);
     const kurz = pfad.slice(WURZEL.length + 1);

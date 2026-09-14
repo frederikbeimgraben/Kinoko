@@ -3,3 +3,5 @@ dist
 .angular
 vendor
 package-lock.json
+e2e/boards/baseline
+src/app/core/api/contract.d.ts

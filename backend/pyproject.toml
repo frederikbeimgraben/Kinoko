@@ -27,6 +27,7 @@ dev = [
     "pytest-cov>=6.2",
     "ruff>=0.12",
     "basedpyright>=1.31",
+    "schemathesis>=4.27.1",
 ]
 
 # Der Dienst startet den Code aus dem Arbeitsverzeichnis, er installiert kein
@@ -40,7 +41,8 @@ package = false
 pythonpath = [".", "../tools/board"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-addopts = "--cov=app --cov=tools --cov-branch --cov-report=term-missing"
+addopts = "--cov=app --cov=tools --cov-branch --cov-report=term-missing -m 'not contract'"
+markers = ["contract: prueft den Vertrag, laeuft im Job be-contract"]
 
 # SQLAlchemy fuehrt den synchronen Treiber in einem greenlet aus. Ohne diesen
 # Hinweis verliert coverage jede Zeile hinter einem Wechsel des Stapels und

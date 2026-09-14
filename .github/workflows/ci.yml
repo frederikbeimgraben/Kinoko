@@ -1,11 +1,9 @@
 name: CI
 
-# Der Branch-Schutz auf main verlangt alle sieben Prüfungen. Damit er schon
-# greift, bevor A0 und A1 gemergt sind, prüft jeder Job zuerst, ob sein
-# Ordner da ist. Fehlt er, endet der Job grün mit einem Hinweis. Ein Job mit
-# `if` auf Job-Ebene wäre übersprungen und meldete dem Branch-Schutz nichts.
-# setup-uv führt oberhalb von v7 keinen mitlaufenden Major-Tag, darum die
-# genaue Version. Dependabot hebt sie an.
+# Jeder Job prüft zuerst, ob sein Ordner da ist. Fehlt er, endet der Job grün
+# mit einem Hinweis: ein Job mit `if` auf Job-Ebene wäre übersprungen und
+# meldete dem Branch-Schutz nichts. setup-uv führt oberhalb von v7 keinen
+# mitlaufenden Major-Tag, darum die genaue Version. Dependabot hebt sie an.
 
 on:
   pull_request:
@@ -49,6 +47,12 @@ jobs:
       - if: steps.ordner.outputs.da == 'true'
         working-directory: backend
         run: uv run ruff format --check .
+      - if: steps.ordner.outputs.da == 'true'
+        working-directory: backend
+        run: uv run python -m tools.check_comments
+      - if: steps.ordner.outputs.da == 'true'
+        working-directory: backend
+        run: uv run python -m tools.check_size
 
   be-typecheck:
     runs-on: ubuntu-latest
@@ -199,3 +203,136 @@ jobs:
       # und uv frei.
       - if: steps.ordner.outputs.da == 'true'
         run: nix develop ./modell#test -c python -m pytest modell/tests -q
+
+  fe-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - working-directory: frontend
+        run: npm ci
+      - id: pw
+        working-directory: frontend
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >>"$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - working-directory: frontend
+        run: npm run build
+      - name: Flüsse
+        working-directory: frontend
+        run: npm run e2e:flows
+      # Die Boards messen die Seiten gegen die Mockups. Sie werden ab U5 grün.
+      - name: Boards
+        continue-on-error: true
+        working-directory: frontend
+        run: npm run e2e:boards
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-diffs
+          path: |
+            frontend/e2e/ergebnisse
+            frontend/e2e/bericht
+          if-no-files-found: ignore
+          retention-days: 7
+
+  fe-lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - working-directory: frontend
+        run: npm ci
+      - working-directory: frontend
+        run: npm run build
+      # Kategorie PWA braucht U4, Kategorie Leistung braucht U12.
+      - name: Lighthouse
+        continue-on-error: true
+        working-directory: frontend
+        run: npm run lighthouse
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: frontend/lighthouse-bericht
+          if-no-files-found: ignore
+          retention-days: 7
+
+  fe-contract-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - working-directory: frontend
+        run: npm ci
+      - working-directory: frontend
+        run: npm run api:generate
+      - name: Der erzeugte Client ist auf dem Stand des Vertrags
+        run: git diff --exit-code -- frontend/src/app/core/api/contract.d.ts
+
+  be-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: |
+            backend/pyproject.toml
+            backend/uv.lock
+      - working-directory: backend
+        run: uv sync --all-extras
+      - working-directory: backend
+        run: uv run python -m tools.sync_contract
+      # Der Vertrag gilt ab U3. Bis dahin fehlen die englischen Pfade.
+      - name: Jeder Pfad des Vertrags hat eine Route
+        continue-on-error: true
+        working-directory: backend
+        run: uv run pytest -m contract --no-cov -q
+      - name: Datenbank anlegen
+        working-directory: backend
+        run: uv run alembic upgrade head
+      - name: Dienst starten
+        working-directory: backend
+        run: |
+          uv run uvicorn app.main:app --host 127.0.0.1 --port 8111 &
+          for _ in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8111/api/health >/dev/null && exit 0
+            sleep 1
+          done
+          echo "::error::Backend antwortet nicht"
+          exit 1
+      - name: Schemathesis
+        continue-on-error: true
+        working-directory: backend
+        run: >
+          uv run schemathesis run openapi.yaml
+          --url http://127.0.0.1:8111/api
+          --phases examples,coverage
+          --max-failures 25
+          --report junit
+          --report-dir schemathesis-report
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schemathesis
+          path: backend/schemathesis-report
+          if-no-files-found: ignore
+          retention-days: 7

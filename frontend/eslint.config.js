@@ -5,7 +5,16 @@ const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
   {
-    ignores: ['dist/**', 'coverage/**', '.angular/**', 'node_modules/**', 'vendor/**'],
+    ignores: [
+      'dist/**',
+      'coverage/**',
+      '.angular/**',
+      'node_modules/**',
+      'vendor/**',
+      'e2e/ergebnisse/**',
+      'e2e/bericht/**',
+      'src/app/core/api/contract.d.ts',
+    ],
   },
   {
     files: ['**/*.ts'],

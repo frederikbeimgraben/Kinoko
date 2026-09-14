@@ -4,7 +4,7 @@
 
 ## Abnahme
 
-<!-- Jedes Kriterium aus docs/arbeitspakete.md mit dem Beleg dahinter. -->
+<!-- Jedes Kriterium des Pakets aus STATE.md mit dem Beleg dahinter. -->
 
 - [ ] Tests belegen das Verhalten, kein `skip` ohne Grund
 - [ ] Lint und Typprüfung grün, keine toten Reste
