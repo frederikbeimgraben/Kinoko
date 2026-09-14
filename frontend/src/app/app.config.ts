@@ -27,11 +27,14 @@ export const appConfig: ApplicationConfig = {
       // Der abgelegte Katalog liegt ohne Netzweg an. Der Server liefert
       // danach den Stand der Datenbank nach.
       const texts = inject(TextCatalogService);
+      // Jedes `inject` steht vor dem ersten `await`: danach gibt es keinen
+      // Kontext mehr.
+      const config = inject(ConfigService);
       await texts.restore();
       // Erst die Konfiguration: ohne Issuer und Client ID gibt es keine
       // Anmeldung. Die Sitzung kommt danach im Hintergrund, damit der Chunk
       // von oidc-client-ts und der iframe den ersten Frame nicht aufhalten.
-      await inject(ConfigService).load();
+      await config.load();
       void auth.restoreSession();
       void texts.load();
     }),
