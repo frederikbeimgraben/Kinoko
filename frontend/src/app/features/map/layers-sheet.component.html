@@ -19,27 +19,27 @@
   <section class="layers__part">
     <h3 class="layers__title">{{ 'map.layers.title' | t }}</h3>
     <div class="layers__switches">
-      <app-check-row
-        [title]="'map.layers.sharedFinds' | t"
-        [value]="count(sharedFindCount())"
+      <app-choice-row
+        [label]="'map.layers.sharedFinds' | t"
+        [count]="count(sharedFindCount())"
         [checked]="showSharedFinds()"
         (toggled)="showSharedFindsChange.emit($event)"
       />
-      <app-check-row
-        [title]="'map.layers.myMarkers' | t"
-        [value]="count(markerCount())"
+      <app-choice-row
+        [label]="'map.layers.myMarkers' | t"
+        [count]="count(markerCount())"
         [checked]="showMarkers()"
         (toggled)="showMarkersChange.emit($event)"
       />
-      <app-check-row
-        [title]="'entry.zones' | t"
-        [value]="count(zoneCount())"
+      <app-choice-row
+        [label]="'entry.zones' | t"
+        [count]="count(zoneCount())"
         [checked]="showZones()"
         (toggled)="showZonesChange.emit($event)"
       />
       @if (showsLayer()) {
-        <app-check-row
-          [title]="'map.forecastBelow' | t"
+        <app-choice-row
+          [label]="'map.forecastBelow' | t"
           [checked]="forecastBelow()"
           (toggled)="forecastBelowChange.emit($event)"
         />

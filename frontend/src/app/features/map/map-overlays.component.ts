@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ButtonComponent, DialogComponent, InputComponent } from '@stupa-makers/ui-kit';
+import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { histogramFor, type Layer } from '../../core/tiles/layers';
 import type { Combination } from '../../core/api/models';
 import { LayerListComponent } from './layer-list.component';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { CombinationsComponent } from './combinations.component';
 import { FactorPickerComponent } from './factor-picker.component';
 import { FactorSheetComponent } from './factor-sheet.component';
@@ -16,20 +17,19 @@ import { MapView } from './map.view';
 import type { Factor } from './factors';
 
 /** Welches Blatt gerade über der Karte liegt. */
-export type Overlay = 'species' | 'layer' | 'factors' | 'factor' | 'combinations' | null;
+export type Overlay = 'species' | 'layer' | 'factors' | 'factor' | 'combinations' | 'save' | null;
 
 /** Die Blätter über der Karte. Über der Karte liegt immer nur eines. */
 @Component({
   selector: 'app-map-overlays',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ActionBarComponent,
     ButtonComponent,
     CombinationsComponent,
-    DialogComponent,
     FactorPickerComponent,
     FactorSheetComponent,
-    FormsModule,
-    InputComponent,
+    FormFieldComponent,
     LayerListComponent,
     OverlayHostComponent,
     SheetComponent,
@@ -47,15 +47,12 @@ export class MapOverlaysComponent {
   readonly open = input.required<Overlay>();
   /** Der Faktor, den das Blatt `Faktor` gerade bearbeitet. */
   readonly factor = input<Factor | null>(null);
-  readonly asksName = input(false);
-
   readonly closed = output();
   readonly toCatalogue = output();
   readonly factorApplied = output<Factor>();
   readonly factorRemoved = output<Factor>();
   readonly sourceChosen = output<Layer>();
   readonly saved = output<string>();
-  readonly nameCancelled = output();
 
   /** Ein Blatt über der Karte steht in derselben obersten Raste. */
   protected readonly detents = DETENT_SIZES;
@@ -106,6 +103,6 @@ export class MapOverlaysComponent {
 
   protected cancelName(): void {
     this.name.set('');
-    this.nameCancelled.emit();
+    this.closed.emit();
   }
 }

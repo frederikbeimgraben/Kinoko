@@ -6,15 +6,10 @@
   [disabled]="locked()"
   (ngModelChange)="toggled.emit($event)"
 >
-  <span class="row__line">
-    <span class="row__stack">
-      <span class="row__title">{{ title() }}</span>
-      @if (subline()) {
-        <span class="row__sub">{{ subline() }}</span>
-      }
-    </span>
-    @if (value(); as text) {
-      <span class="row__value">{{ text }}</span>
+  <span class="row__stack">
+    <span class="row__title">{{ title() }}</span>
+    @if (subline()) {
+      <span class="row__sub">{{ subline() }}</span>
     }
   </span>
 </app-checkbox>

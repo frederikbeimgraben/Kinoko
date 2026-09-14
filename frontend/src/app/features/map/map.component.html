@@ -102,14 +102,12 @@
     <app-map-overlays
       [open]="overlay()"
       [factor]="surface.inProgress()"
-      [asksName]="asksName()"
       (closed)="closeOverlay()"
       (toCatalogue)="toCatalogue()"
       (factorApplied)="applyFactor($event)"
       (factorRemoved)="removeFactor($event)"
       (sourceChosen)="chooseSource($event)"
       (saved)="saveCombination($event)"
-      (nameCancelled)="asksName.set(false)"
     />
   }
 

@@ -50,6 +50,24 @@
           }
         }
       }
+      @case ('save') {
+        <div class="overlay-body">
+          <h2 class="overlay-body__title">{{ 'map.combination.save' | t }}</h2>
+          <app-form-field
+            [label]="'common.name' | t"
+            [hideLabel]="true"
+            [value]="name()"
+            [placeholder]="'common.name' | t"
+            (valueChange)="name.set($event)"
+          />
+        </div>
+        <app-action-bar
+          [primary]="'common.save' | t"
+          [secondary]="'common.cancel' | t"
+          (primaryClick)="confirmName()"
+          (secondaryClick)="cancelName()"
+        />
+      }
       @case ('combinations') {
         <app-combinations
           [saved]="combination.saved()"
@@ -60,23 +78,3 @@
     }
   </app-sheet>
 </app-overlay-host>
-
-<app-dialog
-  [open]="asksName()"
-  [title]="'map.combination.save' | t"
-  [closeLabel]="'common.cancel' | t"
-  (closed)="cancelName()"
->
-  <app-input
-    [label]="'common.name' | t"
-    [required]="true"
-    [ngModel]="name()"
-    (ngModelChange)="name.set($event)"
-  />
-  <div dialog-footer>
-    <app-button variant="primary" [disabled]="name().trim() === ''" (click)="confirmName()">{{
-      'common.save' | t
-    }}</app-button>
-    <app-button variant="secondary" (click)="cancelName()">{{ 'common.cancel' | t }}</app-button>
-  </div>
-</app-dialog>

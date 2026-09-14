@@ -16,6 +16,10 @@
   }
 }
 
+.overlay__scrim--modal {
+  background: rgb(0 18 10 / 25%);
+}
+
 .overlay__panel {
   position: absolute;
   inset-block-end: 0;

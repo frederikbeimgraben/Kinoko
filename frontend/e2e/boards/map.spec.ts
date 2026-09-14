@@ -119,7 +119,7 @@ test('CombinationSave', async ({ page }) => {
   guard('CombinationSave', 'phone');
   await openSignedIn(page, BOARD_FACTORS);
   await askForName(page);
-  await expect(page.getByRole('dialog', { name: 'Kombination speichern' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Kombination speichern' })).toBeVisible();
   await page.getByRole('textbox').fill('Herbst Steinpilz');
   await board(page, 'CombinationSave', 'map-schnitt.png');
 });

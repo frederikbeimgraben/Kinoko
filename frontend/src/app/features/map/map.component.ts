@@ -90,7 +90,6 @@ export class MapComponent implements OnDestroy {
 
   protected readonly playback = inject(MapPlayback);
   protected readonly overlay = signal<Overlay>(null);
-  protected readonly asksName = signal(false);
   protected readonly menuAt = signal<ObjectMenuTarget | null>(null);
 
   protected readonly offline = computed(() => !this.sync.online());
@@ -103,7 +102,7 @@ export class MapComponent implements OnDestroy {
   }));
 
   /** Ort und Eintrag brauchen eine Karte ohne Blatt darüber, die schon steht. */
-  protected readonly busy = computed(() => this.overlay() !== null || this.asksName());
+  protected readonly busy = computed(() => this.overlay() !== null);
 
   /** Über der Karte liegt immer nur ein Blatt. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
@@ -196,11 +195,11 @@ export class MapComponent implements OnDestroy {
 
   /** Ohne Konto führt der Knopf zuerst zur Anmeldung. */
   protected async requestSave(): Promise<void> {
-    if (await this.auth.requestSignIn()) this.asksName.set(true);
+    if (await this.auth.requestSignIn()) this.overlay.set('save');
   }
 
   protected async saveCombination(name: string): Promise<void> {
-    this.asksName.set(false);
+    this.closeOverlay();
     await this.combination.save(name);
   }
 

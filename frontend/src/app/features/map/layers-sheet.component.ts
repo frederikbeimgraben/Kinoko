@@ -3,7 +3,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
-import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 
@@ -19,7 +19,7 @@ const BACKGROUND_KEY: Record<Background, TranslationKey> = {
 @Component({
   selector: 'app-layers-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CheckRowComponent, RangeSliderComponent, SegmentedComponent, TranslatePipe],
+  imports: [ChoiceRowComponent, RangeSliderComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './layers-sheet.component.html',
   styleUrl: './layers-sheet.component.scss',
 })
