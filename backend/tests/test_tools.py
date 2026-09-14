@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from tools import check_comments, check_size, sync_contract, sync_texts
+from tools import check_comments, check_size, mirror, sync_contract, sync_texts
 
 GOOD = '''"""Ein Modul."""
 
@@ -119,51 +119,64 @@ def test_violation_key_of_size() -> None:
     assert check_size.Violation("a.py", 300, 250).key == "a.py"
 
 
-def test_sync_contract_keeps_the_copy(capsys: pytest.CaptureFixture[str]) -> None:
-    assert sync_contract.main() == 0
-    assert "openapi.yaml" in capsys.readouterr().out
+def test_the_sync_tools_point_at_the_checked_in_copies() -> None:
+    assert sync_contract.TARGET.name == "openapi.yaml"
+    assert sync_texts.TARGET.parent.name == "daten"
 
 
-def test_sync_texts_keeps_the_copy(capsys: pytest.CaptureFixture[str]) -> None:
-    assert sync_texts.main() == 0
-    assert "texte.json" in capsys.readouterr().out
+def test_sync_keeps_an_equal_copy(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    found = tmp_path / "texte.json"
+    found.write_text("{}", encoding="utf-8")
+    target = tmp_path / "daten" / "texte.json"
+    target.parent.mkdir()
+    target.write_text("{}", encoding="utf-8")
+    assert mirror.sync(found, target) == 0
+    assert "auf dem Stand" in capsys.readouterr().out
 
 
 def test_sync_copies_a_changed_file(
-    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    source = tmp_path / "artefakte" / "texte.json"
-    source.parent.mkdir(parents=True)
-    source.write_text("{}", encoding="utf-8")
-    monkeypatch.setattr(sync_texts, "ROOT", tmp_path / "backend")
-    monkeypatch.setattr(sync_texts, "TARGET", tmp_path / "backend" / "daten" / "texte.json")
-    (tmp_path / "backend" / "daten").mkdir(parents=True)
-    assert sync_texts.main() == 0
+    found = tmp_path / "texte.json"
+    found.write_text('{"de": {}}', encoding="utf-8")
+    target = tmp_path / "daten" / "texte.json"
+    target.parent.mkdir()
+    assert mirror.sync(found, target) == 0
     assert "erneuert" in capsys.readouterr().out
-    assert sync_texts.main() == 0
+    assert target.read_text(encoding="utf-8") == '{"de": {}}'
 
 
 def test_sync_without_source_and_without_target(
-    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    monkeypatch.setattr(sync_contract, "ROOT", tmp_path)
-    monkeypatch.setattr(sync_contract, "TARGET", tmp_path / "openapi.yaml")
-    assert sync_contract.main() == 1
+    assert mirror.sync(None, tmp_path / "openapi.yaml") == 1
     assert "weder" in capsys.readouterr().out
 
 
 def test_sync_without_source_keeps_the_copy(
-    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     target = tmp_path / "openapi.yaml"
     target.write_text("x", encoding="utf-8")
-    monkeypatch.setattr(sync_contract, "ROOT", tmp_path)
-    monkeypatch.setattr(sync_contract, "TARGET", target)
-    assert sync_contract.main() == 0
+    assert mirror.sync(None, target) == 0
     assert "bleibt" in capsys.readouterr().out
+    assert target.read_text(encoding="utf-8") == "x"
+
+
+def test_source_finds_the_artefact_upwards(tmp_path: Path) -> None:
+    wanted = tmp_path / "artefakte" / "texte.json"
+    wanted.parent.mkdir()
+    wanted.write_text("{}", encoding="utf-8")
+    deep = tmp_path / "app" / "backend"
+    deep.mkdir(parents=True)
+    assert mirror.source("texte.json", deep) == wanted
+
+
+def test_source_without_an_artefact_is_none(tmp_path: Path) -> None:
+    assert mirror.source("nichts.json", tmp_path) is None

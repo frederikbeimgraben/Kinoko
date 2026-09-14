@@ -17,6 +17,7 @@ from app.modules.catalog.loader import build_facets, load_one, summary_of
 from app.modules.catalog.repository import SpeciesRepository
 from app.modules.catalog.schemas import Species, SpeciesCounts, SpeciesWrite
 from app.modules.catalog.taxonomy import subtree_ids
+from app.shared.enums import RunState
 from app.shared.paging import wrap
 
 if TYPE_CHECKING:
@@ -134,11 +135,14 @@ class SpeciesService:
         }
 
     async def records_of(self, ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, int]:
-        """Der Datenbestand je Art aus dem jüngsten Lauf."""
+        """Der Datenbestand je Art aus der jüngsten fertigen Zeile."""
         query = (
             select(PipelineRunSpecies.species_id, PipelineRunSpecies.record_count)
             .join(PipelineRun, PipelineRun.id == PipelineRunSpecies.run_id)
-            .where(PipelineRunSpecies.species_id.in_(ids))
+            .where(
+                PipelineRunSpecies.species_id.in_(ids),
+                PipelineRunSpecies.state == RunState.FINISHED,
+            )
             .order_by(PipelineRun.queued_at)
         )
         return {row[0]: row[1] for row in await self.db.execute(query)}
