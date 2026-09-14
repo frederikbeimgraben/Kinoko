@@ -86,6 +86,7 @@
   --size-row: 52px;
   --size-row-tall: 62px;
   --size-control: 36px;
+  --size-chip: 40px;
   --size-button: 46px;
   --size-tap: 44px;
   --size-icon-button: 40px;
@@ -132,6 +133,15 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
+}
+
+// Knopf, Eingabe, Auswahl und Meldung des Kits tragen Radius 10. Die eigenen
+// Bausteine bleiben bei Radius 8, den das Board für sie vorgibt.
+app-button,
+app-input,
+app-select,
+app-toast {
+  --radius-md: 10px;
 }
 
 // Ohne diese Regeln markiert ein langer Druck Text und ein Tipp blitzt blau auf.
