@@ -56,11 +56,11 @@ describe('I18nService', () => {
   it('füllt Platzhalter und lässt unbekannte stehen', () => {
     const i18n = service();
 
-    expect(i18n.translate('zeitleiste.woche', { woche: 40, jahr: 2025 })).toBe('KW 40 · 2025');
-    expect(i18n.translate('zeitleiste.woche', { woche: 40 })).toBe('KW 40 · {jahr}');
+    expect(i18n.translate('map.week.value', { week: 40, year: 2025 })).toBe('KW 40 · 2025');
+    expect(i18n.translate('map.week.value', { week: 40 })).toBe('KW 40 · {year}');
   });
 
-  it('nimmt die saved Sprache beim Start', async () => {
+  it('nimmt die gesicherte Sprache beim Start', async () => {
     localStorage.setItem('pilzkarte.sprache', 'en');
 
     await ready(service(), 'en');

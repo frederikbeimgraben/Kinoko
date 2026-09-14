@@ -205,7 +205,7 @@ describe('MapComponent', () => {
     });
     await stable();
 
-    expect(double.templates('ebene').at(-1)).toContain('kombi');
+    expect(double.templates('layer').at(-1)).toContain('combination');
   });
 
   it('wechselt die Regel der Kombination', async () => {

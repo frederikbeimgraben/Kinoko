@@ -17,7 +17,7 @@ import { boundFor, combinationKey, encodeFactors, type Factor } from './factors'
 const LOOKAHEAD = 2;
 
 /** Die Kennung der zusammengesetzten Quelle im Protokoll. */
-const COMBINATION_SOURCE = 'kombi';
+const COMBINATION_SOURCE = 'combination';
 
 /** Die Kennung einer Ebene im Protokoll, damit sie nicht mit einer Art kollidiert. */
 export function layerSourceId(layer: Layer): string {
@@ -47,7 +47,7 @@ export class MapPainter {
     this.protocol.prefetch(
       manifest.slug,
       [week.tilePath],
-      [...tilesAtZoom(manifest, manifest.zoomVon), ...tilesAtZoom(manifest, manifest.zoomVon + 1)],
+      [...tilesAtZoom(manifest, manifest.zoomFrom), ...tilesAtZoom(manifest, manifest.zoomFrom + 1)],
     );
   }
 
@@ -55,33 +55,33 @@ export class MapPainter {
   showForecast(manifest: SpeciesManifest | null, week: ManifestWeek | null, visible: boolean): void {
     if (manifest === null || week === null) return;
     this.adapter.showValue(
-      'vorhersage',
+      'forecast',
       visible ? valueTemplate(manifest.slug, week.tilePath) : null,
       manifest.bounds,
-      manifest.zoomVon,
-      manifest.zoomBis,
+      manifest.zoomFrom,
+      manifest.zoomTo,
     );
   }
 
   /** Nichts auf der oberen Ebene. */
   clearUpper(): void {
-    this.adapter.showValue('ebene', null, MAX_BOUNDS, ZOOM_MIN, ZOOM_MAX);
+    this.adapter.showValue('layer', null, MAX_BOUNDS, ZOOM_MIN, ZOOM_MAX);
   }
 
   showLayer(layer: Layer, manifest: LayersManifest, week: string | null): void {
     this.protocol.report({
       id: layerSourceId(layer),
-      scale: { art: 'spanne', low: layer.low, high: layer.high },
+      scale: { kind: 'range', low: layer.low, high: layer.high },
       colors: FORECAST_RAMP,
       existing: layer.existing,
     });
     const folder = layerFolders(layer, week);
     this.adapter.showValue(
-      'ebene',
+      'layer',
       folder === null ? null : valueTemplate(layerSourceId(layer), folder),
       manifest.bounds,
-      layer.zoomVon,
-      layer.zoomBis,
+      layer.zoomFrom,
+      layer.zoomTo,
     );
   }
 
@@ -101,8 +101,8 @@ export class MapPainter {
       const folder = layerFolders(layer, week);
       if (folder === null) continue;
       parts.push({ folder, bound: boundFor(factor, layer), existing: layer.existing });
-      zoomFrom = Math.max(zoomFrom, layer.zoomVon);
-      zoomTo = Math.min(zoomTo, layer.zoomBis);
+      zoomFrom = Math.max(zoomFrom, layer.zoomFrom);
+      zoomTo = Math.min(zoomTo, layer.zoomTo);
     }
     if (manifest === null || parts.length === 0 || zoomTo < zoomFrom) {
       this.clearUpper();
@@ -116,7 +116,7 @@ export class MapPainter {
     });
     const key = combinationKey([view.rule, encodeFactors(view.factors), week ?? 'fixed', view.colour]);
     this.adapter.showValue(
-      'ebene',
+      'layer',
       valueTemplate(COMBINATION_SOURCE, key),
       manifest.bounds,
       zoomFrom,
@@ -133,12 +133,12 @@ export class MapPainter {
   ): void {
     const view = this.adapter.extent();
     if (manifest === null || week === null || view === null) return;
-    const at = manifest.wochen.indexOf(week);
+    const at = manifest.weeks.indexOf(week);
     const folders: string[] = [];
     const layerFoldersFound: string[] = [];
     for (let gap = 1; gap <= LOOKAHEAD; gap++) {
       for (const index of [at + gap, at - gap]) {
-        const neighbour = manifest.wochen[index] as ManifestWeek | undefined;
+        const neighbour = manifest.weeks[index] as ManifestWeek | undefined;
         if (!neighbour) continue;
         folders.push(neighbour.tilePath);
         if (layer === null || layer.fixed) continue;
@@ -146,7 +146,7 @@ export class MapPainter {
         if (folder !== null) layerFoldersFound.push(folder);
       }
     }
-    const tiles = visibleTiles(view.extent, view.zoom, manifest.zoomVon, manifest.zoomBis);
+    const tiles = visibleTiles(view.extent, view.zoom, manifest.zoomFrom, manifest.zoomTo);
     this.protocol.prefetch(manifest.slug, folders, tiles);
     if (layer !== null && layerFoldersFound.length > 0) {
       this.protocol.prefetch(layerSourceId(layer), layerFoldersFound, tiles);

@@ -7,6 +7,7 @@ import { barShares, currentWeek, findWeek, type ManifestWeek } from '../../core/
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_KEY, EDIBILITY_TONE, SPECIES_TINT } from '../species/labels';
+import { EntriesState } from '../entries/entries.state';
 import { SpeciesState } from '../species/species.state';
 import { CombinationState } from './combination.state';
 import { DEFAULT_LAYER, MapState } from './map.state';
@@ -18,8 +19,16 @@ export class MapView {
   private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
   private readonly catalogue = inject(SpeciesState);
+  private readonly entries = inject(EntriesState);
   readonly state = inject(MapState);
   readonly combination = inject(CombinationState);
+
+  /** Die Zahlen neben den Schaltern des Ebenen-Knopfs. */
+  readonly entryCounts = computed(() => ({
+    markers: this.entries.marker().length,
+    zones: this.entries.zones().length,
+    sharedFinds: this.entries.shared().length,
+  }));
 
   readonly onLayer = computed(() => this.state.view() === 'layer');
   readonly onCombination = computed(() => this.state.view() === 'combination');
@@ -41,16 +50,16 @@ export class MapView {
 
   readonly weekKey = computed(() => {
     const week = this.week();
-    return week === null ? null : layerWeek(week.jahr, week.woche);
+    return week === null ? null : layerWeek(week.year, week.week);
   });
 
   readonly weeks = computed<TimelineWeek[]>(() => {
     const manifest = this.manifest();
     if (manifest === null) return [];
     const shares = barShares(manifest);
-    return manifest.wochen.map((week, i) => ({
-      year: week.jahr,
-      week: week.woche,
+    return manifest.weeks.map((week, i) => ({
+      year: week.year,
+      week: week.week,
       share: shares[i],
       forecast: week.forecast,
     }));
@@ -58,12 +67,12 @@ export class MapView {
 
   readonly activeWeek = computed(() => {
     const week = this.week();
-    return week === null ? null : { year: week.jahr, week: week.woche };
+    return week === null ? null : { year: week.year, week: week.week };
   });
 
   readonly weekText = computed(() => {
     const week = this.week();
-    return week === null ? '' : this.i18n.translate('map.week.value', { week: week.woche, year: week.jahr });
+    return week === null ? '' : this.i18n.translate('map.week.value', { week: week.week, year: week.year });
   });
 
   readonly layer = computed<Layer | null>(() => {

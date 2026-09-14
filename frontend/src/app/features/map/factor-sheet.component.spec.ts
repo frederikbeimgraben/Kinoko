@@ -19,7 +19,7 @@ const RAIN: Layer = readLayers({
   },
 }).layers[0];
 
-const DISTRIBUTION: Histogram = { klassen: [0, 50, 100], anteile: [0.6, 0.4] };
+const DISTRIBUTION: Histogram = { classes: [0, 50, 100], shares: [0.6, 0.4] };
 
 const FACTOR: Factor = { source: 'regen_4w', condition: 'above', low: 80, high: 0, active: true };
 

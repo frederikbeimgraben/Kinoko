@@ -68,7 +68,7 @@ export class FindSheetComponent {
   protected readonly editing = signal(false);
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
-  private readonly woche = signal<ManifestWeek | null>(null);
+  private readonly week = signal<ManifestWeek | null>(null);
   private readonly value = signal<number | null>(null);
 
   protected readonly art = computed(() => {
@@ -98,12 +98,12 @@ export class FindSheetComponent {
 
   /** „Steinpilz, KW 40 · 2025, je Begehung“ — jede Zahl nennt ihren Bezug. */
   protected readonly valueScope = computed(() => {
-    const woche = this.woche();
-    if (woche === null) return '';
+    const week = this.week();
+    if (week === null) return '';
     return this.i18n.translate('fund.vorhersageUnter', {
       art: this.speciesName(),
-      woche: woche.woche,
-      jahr: woche.jahr,
+      woche: week.week,
+      jahr: week.year,
     });
   });
 
@@ -145,18 +145,18 @@ export class FindSheetComponent {
    */
   private async fetchValue(find: Find, weekKey: string | null): Promise<void> {
     this.value.set(null);
-    this.woche.set(null);
+    this.week.set(null);
     const kartenSlug = this.art()?.kartenSlug ?? null;
     if (kartenSlug === null) return;
     try {
       await this.tiles.load(kartenSlug);
       const manifest = this.tiles.manifestOf(kartenSlug);
       if (manifest === null) return;
-      const woche =
+      const week =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
-      if (woche === null) return;
-      this.woche.set(woche);
-      this.value.set(await valueAtPoint(manifest, woche.tilePath, find.lon, find.lat));
+      if (week === null) return;
+      this.week.set(week);
+      this.value.set(await valueAtPoint(manifest, week.tilePath, find.lon, find.lat));
     } catch {
       // Ohne Manifest gibt es keine Zahl mit Bezug, also auch keine Zeile.
     }

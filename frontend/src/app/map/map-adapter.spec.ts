@@ -73,7 +73,7 @@ class MapDouble {
     if (index >= 0) this.handler.splice(index, 1);
   }
 
-  settle(kind: string, source = 'wert-vorhersage-a'): void {
+  settle(kind: string, source = 'wert-forecast-a'): void {
     const payload = { sourceId: source, sourceDataType: 'content', isSourceLoaded: this.sourceReady };
     for (const entry of [...this.handler]) if (entry.kind === kind) entry.handler(payload);
   }
@@ -261,50 +261,50 @@ describe('MapLibreAdapter', () => {
   it('legt die erste Woche sofort sichtbar auf die Karte', async () => {
     const { adapter: a, map } = await adapter();
 
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    expect(map.opacity.get('wert-vorhersage-b')).toBe(1);
-    expect(map.sources.has('wert-vorhersage-b')).toBe(true);
+    expect(map.opacity.get('wert-forecast-b')).toBe(1);
+    expect(map.sources.has('wert-forecast-b')).toBe(true);
   });
 
   it('blendet die zweite Woche erst ein, wenn ihre Kacheln da sind', async () => {
     const { adapter: a, map } = await adapter();
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
     map.sourceReady = false;
 
-    a.showValue('vorhersage', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    expect(map.opacity.get('wert-vorhersage-a')).toBe(0);
-    expect(map.layers.has('wert-vorhersage-b')).toBe(true);
+    expect(map.opacity.get('wert-forecast-a')).toBe(0);
+    expect(map.layers.has('wert-forecast-b')).toBe(true);
 
     map.settle('sourcedata');
 
-    expect(map.opacity.get('wert-vorhersage-a')).toBe(0);
+    expect(map.opacity.get('wert-forecast-a')).toBe(0);
 
     map.sourceReady = true;
-    map.settle('sourcedata', 'wert-vorhersage-b');
+    map.settle('sourcedata', 'wert-forecast-b');
 
-    expect(map.opacity.get('wert-vorhersage-a')).toBe(0);
+    expect(map.opacity.get('wert-forecast-a')).toBe(0);
 
     map.settle('sourcedata');
 
-    expect(map.opacity.get('wert-vorhersage-a')).toBe(1);
-    expect(map.layers.has('wert-vorhersage-b')).toBe(false);
-    expect(map.sources.has('wert-vorhersage-b')).toBe(false);
+    expect(map.opacity.get('wert-forecast-a')).toBe(1);
+    expect(map.layers.has('wert-forecast-b')).toBe(false);
+    expect(map.sources.has('wert-forecast-b')).toBe(false);
   });
 
   it('zeigt die neue Woche auch dann, wenn eine Kachel ausbleibt', async () => {
     vi.useFakeTimers();
     try {
       const { adapter: a, map } = await adapter();
-      a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+      a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
       map.sourceReady = false;
 
-      a.showValue('vorhersage', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+      a.showValue('forecast', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
       vi.advanceTimersByTime(1500);
 
-      expect(map.opacity.get('wert-vorhersage-a')).toBe(1);
-      expect(map.layers.has('wert-vorhersage-b')).toBe(false);
+      expect(map.opacity.get('wert-forecast-a')).toBe(1);
+      expect(map.layers.has('wert-forecast-b')).toBe(false);
     } finally {
       vi.useRealTimers();
     }
@@ -312,11 +312,11 @@ describe('MapLibreAdapter', () => {
 
   it('bringt einen offenen Tausch zu Ende, bevor die dritte Woche kommt', async () => {
     const { adapter: a, map } = await adapter();
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
     map.sourceReady = false;
-    a.showValue('vorhersage', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    a.showValue('vorhersage', 'wert://art/w42/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w42/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
     expect(map.layers.size).toBe(2);
     expect([...map.opacity.values()].some((value) => value === 1)).toBe(true);
@@ -325,15 +325,15 @@ describe('MapLibreAdapter', () => {
   it('legt dieselbe Woche nicht zweimal auf', async () => {
     const { adapter: a, map } = await adapter();
 
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
     expect(map.sources.size).toBe(1);
   });
 
   it('legt die Wertkacheln nach einem Stilwechsel wieder auf', async () => {
     const { adapter: a, map } = await adapter();
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
     map.sources.clear();
     map.layers.clear();
 
@@ -341,7 +341,7 @@ describe('MapLibreAdapter', () => {
     map.onceHandlers.get('style.load')?.();
 
     expect(map.styles).toEqual(['dunkel']);
-    expect(map.sources.has('wert-vorhersage-b')).toBe(true);
+    expect(map.sources.has('wert-forecast-b')).toBe(true);
   });
 
   it('passt ein, polstert und liest den Ausschnitt', async () => {
@@ -463,6 +463,20 @@ describe('MapLibreAdapter', () => {
     expect(map.sources.has('objekte-marker')).toBe(true);
   });
 
+  it('legt keine Quelle an, solange der Stil noch lädt', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.setStyle('dunkel');
+    map.sources.clear();
+    a.showObjects('marker', collection('marker-eins'));
+
+    expect(map.sources.has('objekte-marker')).toBe(false);
+
+    map.onceHandlers.get('style.load')?.();
+
+    expect(map.sources.has('objekte-marker')).toBe(true);
+  });
+
   it('gibt die rohe Karte für Terra Draw her', async () => {
     const { adapter: a, map } = await adapter();
 
@@ -478,7 +492,7 @@ describe('MapLibreAdapter', () => {
     const a = new MapLibreAdapter(() => Promise.resolve(module().module));
 
     a.setStyle('hell');
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
     a.fitBounds(OPTIONEN.maxBounds, { top: 0, bottom: 0, left: 0, right: 0 });
     a.setPadding({ top: 0, bottom: 0, left: 0, right: 0 });
     a.onMove(() => undefined);
@@ -493,20 +507,20 @@ describe('MapLibreAdapter', () => {
   it('legt die Vorhersage unter die Ebene', async () => {
     const { adapter: a, map } = await adapter();
 
-    a.showValue('ebene', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    expect(map.layers.has('wert-ebene-b')).toBe(true);
-    expect(map.layers.has('wert-vorhersage-b')).toBe(true);
-    expect(map.placedBefore.get('wert-vorhersage-b')).toBe('wert-ebene-b');
-    expect(map.placedBefore.get('wert-ebene-b')).toBeUndefined();
+    expect(map.layers.has('wert-layer-b')).toBe(true);
+    expect(map.layers.has('wert-forecast-b')).toBe(true);
+    expect(map.placedBefore.get('wert-forecast-b')).toBe('wert-layer-b');
+    expect(map.placedBefore.get('wert-layer-b')).toBeUndefined();
   });
 
   it('räumt eine Rolle ab, wenn sie nichts mehr zeigt', async () => {
     const { adapter: a, map } = await adapter();
-    a.showValue('ebene', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    a.showValue('ebene', null, OPTIONEN.maxBounds, 5, 8);
+    a.showValue('layer', null, OPTIONEN.maxBounds, 5, 8);
 
     expect(map.layers.size).toBe(0);
     expect(map.sources.size).toBe(0);
@@ -514,30 +528,30 @@ describe('MapLibreAdapter', () => {
 
   it('setzt die Deckkraft nur auf der sichtbaren Ebene einer Rolle', async () => {
     const { adapter: a, map } = await adapter();
-    a.showValue('vorhersage', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    a.setOpacity('vorhersage', 0.4);
+    a.setOpacity('forecast', 0.4);
 
-    expect(map.opacity.get('wert-vorhersage-b')).toBeCloseTo(0.4);
+    expect(map.opacity.get('wert-forecast-b')).toBeCloseTo(0.4);
 
     map.sourceReady = false;
-    a.showValue('vorhersage', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w41/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    expect(map.opacity.get('wert-vorhersage-a')).toBe(0);
+    expect(map.opacity.get('wert-forecast-a')).toBe(0);
 
     map.sourceReady = true;
-    map.settle('sourcedata', 'wert-vorhersage-a');
+    map.settle('sourcedata', 'wert-forecast-a');
 
-    expect(map.opacity.get('wert-vorhersage-a')).toBeCloseTo(0.4);
+    expect(map.opacity.get('wert-forecast-a')).toBeCloseTo(0.4);
   });
 
   it('hält die Deckkraft zwischen null und voll', async () => {
     const { adapter: a, map } = await adapter();
-    a.showValue('ebene', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    a.setOpacity('ebene', 3);
+    a.setOpacity('layer', 3);
 
-    expect(map.opacity.get('wert-ebene-b')).toBe(1);
+    expect(map.opacity.get('wert-layer-b')).toBe(1);
   });
 
   it('zentriert auf einen Punkt', async () => {

@@ -7,6 +7,7 @@ import { TileService } from '../../core/tiles/tile.service';
 import { layerWeek } from '../../core/tiles/layers';
 import { GERMANY, MAX_BOUNDS, ZOOM_MAX, ZOOM_MIN, styleFor } from '../../map/background';
 import type { Padding } from '../../map/map-adapter';
+import type { Viewbox } from '../../map/tile-grid';
 import { MAP_ADAPTER, VALUE_WORKER } from '../../map/map.tokens';
 import { ValueProtocol } from '../../map/value-protocol';
 import type { Detent } from '../../ui/sheet/sheet.component';
@@ -17,10 +18,10 @@ import { MapView } from './map.view';
 import type { Factor } from './factors';
 
 /** Die drei Rasten des Blatts in Punkten, aus den Boards. */
-export const DETENTS = [120, 310, 480] as const;
+export const DETENTS = [149, 310, 480] as const;
 
 /** Dieselben Rasten in der Schreibweise, die `app-sheet` erwartet. */
-export const DETENT_SIZES = ['120px', '310px', '480px'] as const;
+export const DETENT_SIZES = ['149px', '310px', '480px'] as const;
 
 /** British Racing Green, falls das Theme keine Farbe hergibt. */
 const MEAN_FALLBACK = '#004225';
@@ -73,12 +74,17 @@ export class MapSurface {
 
   setOpacity(value: number, onLayer: boolean): void {
     if (!this._ready()) return;
-    this.adapter.setOpacity('ebene', onLayer ? value : 1);
-    this.adapter.setOpacity('vorhersage', onLayer ? 1 : value);
+    this.adapter.setOpacity('layer', onLayer ? value : 1);
+    this.adapter.setOpacity('forecast', onLayer ? 1 : value);
   }
 
   setPadding(detent: Detent, wide: boolean, overlaid: number): void {
     if (this._ready()) this.adapter.setPadding(this.padding(detent, wide, overlaid));
+  }
+
+  /** Der Ausschnitt, den die Karte gerade zeigt. */
+  extent(): { zoom: number; extent: Viewbox } | null {
+    return this.adapter.extent();
   }
 
   centreOn(point: readonly [number, number]): void {
@@ -117,7 +123,7 @@ export class MapSurface {
     this.painter.showForecast(manifest, week, below);
     this.paintUpper();
     this.painter.prefetchNeighbours(manifest, week, this.view.layer(), (entry) =>
-      layerWeek(entry.jahr, entry.woche),
+      layerWeek(entry.year, entry.week),
     );
   }
 

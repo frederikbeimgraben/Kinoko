@@ -60,9 +60,9 @@ describe('TileStore', () => {
   });
 
   it('liest ein Manifest als JSON', async () => {
-    vi.stubGlobal('fetch', () => Promise.resolve(manifest('{"wochen":2}')));
+    vi.stubGlobal('fetch', () => Promise.resolve(manifest('{"weeks":2}')));
 
-    expect(await store().json('/art.json')).toEqual({ wochen: 2 });
+    expect(await store().json('/art.json')).toEqual({ weeks: 2 });
   });
 
   it('nimmt die Seite der App weder an noch auf', async () => {
@@ -76,12 +76,12 @@ describe('TileStore', () => {
   it('wirft einen Eintrag mit falschem Inhalt weg und fragt das Netz', async () => {
     const caching = stubCaches();
     await (await caching.open(TILE_CACHE)).put('/art.json', page());
-    const fetcher = vi.fn(() => Promise.resolve(manifest('{"wochen":3}')));
+    const fetcher = vi.fn(() => Promise.resolve(manifest('{"weeks":3}')));
     vi.stubGlobal('fetch', fetcher);
 
-    expect(await store().json('/art.json')).toEqual({ wochen: 3 });
+    expect(await store().json('/art.json')).toEqual({ weeks: 3 });
     expect(fetcher).toHaveBeenCalledTimes(1);
-    expect(await (await caching.match('/art.json'))?.text()).toBe('{"wochen":3}');
+    expect(await (await caching.match('/art.json'))?.text()).toBe('{"weeks":3}');
   });
 
   it('fragt im Hintergrund nicht das Netz', async () => {

@@ -72,14 +72,14 @@ test('Map', async ({ page }) => {
 test('MapCollapsed', async ({ page }) => {
   guard('MapCollapsed', 'phone');
   await openMap(page, { detent: 0 });
-  await board(page, 'MapCollapsed', 'map-stein-660.png');
+  await board(page, 'MapCollapsed', 'map-stein-631.png');
 });
 
 test('MapLayersButton', async ({ page }) => {
   guard('MapLayersButton', 'phone');
   await openMap(page, { detent: 0 });
   await page.getByRole('button', { name: 'Ebenen' }).click();
-  await board(page, 'MapLayersButton', 'map-stein-660.png');
+  await board(page, 'MapLayersButton', 'map-stein-631.png');
 });
 
 test('LayerTab', async ({ page }) => {

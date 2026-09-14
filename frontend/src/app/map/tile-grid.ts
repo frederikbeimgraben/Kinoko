@@ -32,10 +32,10 @@ export function tileIndex(length: number, breite: number, zoom: number): [number
 export function visibleTiles(
   extent: Viewbox,
   zoom: number,
-  zoomVon: number,
-  zoomBis: number,
+  zoomFrom: number,
+  zoomTo: number,
 ): [number, number, number][] {
-  const stufe = Math.round(Math.min(Math.max(zoom, zoomVon), zoomBis));
+  const stufe = Math.round(Math.min(Math.max(zoom, zoomFrom), zoomTo));
   const [x0, y0] = tileIndex(extent.west, extent.nord, stufe);
   const [x1, y1] = tileIndex(extent.ost, extent.south, stufe);
   const tiles: [number, number, number][] = [];

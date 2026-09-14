@@ -12,9 +12,9 @@ import type { SpeciesManifest } from './manifest';
  * als Prozent, was eine Fundwahrscheinlichkeit auch ist.
  */
 export function layerFromSpecies(manifest: SpeciesManifest, label: string, note = ''): Layer {
-  const histogramme = new Map<string, Histogram>();
-  for (const woche of manifest.wochen) {
-    if (woche.histogramm) histogramme.set(layerWeek(woche.jahr, woche.woche), woche.histogramm);
+  const histograms = new Map<string, Histogram>();
+  for (const week of manifest.weeks) {
+    if (week.histogram) histograms.set(layerWeek(week.year, week.week), week.histogram);
   }
   return {
     id: manifest.slug,
@@ -27,12 +27,12 @@ export function layerFromSpecies(manifest: SpeciesManifest, label: string, note 
     low: 0,
     high: manifest.top,
     tilePath: tileRoot(manifest),
-    zoomVon: manifest.zoomVon,
-    zoomBis: manifest.zoomBis,
+    zoomFrom: manifest.zoomFrom,
+    zoomTo: manifest.zoomTo,
     existing: manifest.existing,
-    wochen: manifest.wochen.map((woche) => layerWeek(woche.jahr, woche.woche)),
-    histogramm: null,
-    histogramme,
+    weeks: manifest.weeks.map((week) => layerWeek(week.year, week.week)),
+    histogram: null,
+    histograms,
   };
 }
 
@@ -42,7 +42,7 @@ export function layerFromSpecies(manifest: SpeciesManifest, label: string, note 
  * das Manifest.
  */
 function tileRoot(manifest: SpeciesManifest): string {
-  const first = manifest.wochen.at(0)?.tilePath ?? '';
-  const schnitt = first.lastIndexOf('/');
-  return schnitt > 0 ? first.slice(0, schnitt) : first;
+  const first = manifest.weeks.at(0)?.tilePath ?? '';
+  const cut = first.lastIndexOf('/');
+  return cut > 0 ? first.slice(0, cut) : first;
 }

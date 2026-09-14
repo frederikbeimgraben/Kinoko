@@ -91,8 +91,8 @@ export function byteForValue(layer: Layer, value: number): number {
 export function boundFor(factor: Factor, layer: Layer): CombinationBound {
   const values = span(factor, layer);
   return {
-    von: byteForValue(layer, values.low),
-    bis: byteForValue(layer, values.high),
+    from: byteForValue(layer, values.low),
+    to: byteForValue(layer, values.high),
     edge: Math.round(254 * EDGE_SHARE),
   };
 }

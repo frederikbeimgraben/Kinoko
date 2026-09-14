@@ -152,3 +152,11 @@ app-card.flush {
 .btn__label app-svg-icon {
   flex: 0 0 auto;
 }
+
+// Das Kästchen des Kits ist eine Inline-Fläche. Eine Zeile, die eine Zahl an
+// den rechten Rand stellt, braucht die volle Breite.
+app-choice-row label,
+app-choice-row .cbx__label {
+  display: flex;
+  inline-size: 100%;
+}

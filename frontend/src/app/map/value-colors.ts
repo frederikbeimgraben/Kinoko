@@ -14,8 +14,7 @@ export const LUT_SIZE = 256 * 4;
  * gestreckt (`input_layers.py`, `schreibe_feld`), der Wert ist also
  * `low + (byte - 1) / 254 * (high - low)` in der Einheit der Ebene.
  */
-export type ValueScale =
-  { art: 'wahrscheinlichkeit'; top: number } | { art: 'spanne'; low: number; high: number };
+export type ValueScale = { kind: 'probability'; top: number } | { kind: 'range'; low: number; high: number };
 
 /**
  * Bei der Vorhersage läuft die Deckkraft mit dem Wert, bei einer Ebene nicht.
@@ -33,7 +32,7 @@ const OPACITY_MAX = 240;
 const OPACITY_FLAT = 215;
 
 /** `#0d0827` → `[13, 8, 39]`. */
-export function zuRgb(farbe: string): [number, number, number] {
+export function toRgb(farbe: string): [number, number, number] {
   const number = Number.parseInt(farbe.replace('#', ''), 16);
   return [(number >> 16) & 255, (number >> 8) & 255, number & 255];
 }
@@ -41,7 +40,7 @@ export function zuRgb(farbe: string): [number, number, number] {
 /** Der Wert, den ein Byte bedeutet, in der Einheit der Quelle. */
 export function valueBytes(scale: ValueScale, byte: number): number {
   const relative = (byte - 1) / 254;
-  if (scale.art === 'wahrscheinlichkeit') return relative * scale.top;
+  if (scale.kind === 'probability') return relative * scale.top;
   return scale.low + relative * (scale.high - scale.low);
 }
 
@@ -51,8 +50,8 @@ export function valueBytes(scale: ValueScale, byte: number): number {
  */
 export function scaleKey(scale: ValueScale, colors: readonly string[]): string {
   const span =
-    scale.art === 'wahrscheinlichkeit' ? String(scale.top) : `${String(scale.low)}:${String(scale.high)}`;
-  return `${scale.art}|${span}|${colors.join(',')}`;
+    scale.kind === 'probability' ? String(scale.top) : `${String(scale.low)}:${String(scale.high)}`;
+  return `${scale.kind}|${span}|${colors.join(',')}`;
 }
 
 /**
@@ -61,13 +60,13 @@ export function scaleKey(scale: ValueScale, colors: readonly string[]): string {
  */
 export function createLut(scale: ValueScale, colors: readonly string[] = FORECAST_RAMP): Uint8ClampedArray {
   const lut = new Uint8ClampedArray(LUT_SIZE);
-  const levels = colors.map(zuRgb);
+  const levels = colors.map(toRgb);
   const last = levels.length - 1;
   for (let byte = 1; byte < 256; byte++) {
     const relative = (byte - 1) / 254;
     // Die Vorhersage färbt nach dem absoluten Wert, eine Ebene über ihre ganze
     // Spanne: sonst bliebe eine Ebene von 4,7 bis 6,9 pH einfarbig.
-    const spot = (scale.art === 'wahrscheinlichkeit' ? Math.min(relative * scale.top, 1) : relative) * last;
+    const spot = (scale.kind === 'probability' ? Math.min(relative * scale.top, 1) : relative) * last;
     const bottom = Math.floor(spot);
     const top = Math.min(bottom + 1, last);
     const share = spot - bottom;
@@ -76,7 +75,7 @@ export function createLut(scale: ValueScale, colors: readonly string[] = FORECAS
       lut[target + channel] = levels[bottom][channel] * (1 - share) + levels[top][channel] * share;
     }
     lut[target + 3] =
-      scale.art === 'wahrscheinlichkeit'
+      scale.kind === 'probability'
         ? Math.min(1, OPACITY_BASE + relative * OPACITY_RANGE) * OPACITY_MAX
         : OPACITY_FLAT;
   }
@@ -118,16 +117,16 @@ export const EMPTY_DOT = -1;
 
 /** Die Bedingung eines Faktors, schon in Bytes gerechnet. */
 export interface CombinationBound {
-  von: number;
-  bis: number;
+  from: number;
+  to: number;
   /** Breite des Randes in Bytes, über den der Grad auf null fällt. */
   edge: number;
 }
 
 /** Der Erfüllungsgrad eines Faktors an einem Punkt, 0 bis 1. */
 export function fulfilment(byte: number, bound: CombinationBound): number {
-  if (byte >= bound.von && byte <= bound.bis) return 1;
-  const gap = byte < bound.von ? bound.von - byte : byte - bound.bis;
+  if (byte >= bound.from && byte <= bound.to) return 1;
+  const gap = byte < bound.from ? bound.from - byte : byte - bound.to;
   if (bound.edge <= 0) return 0;
   return Math.max(0, 1 - gap / bound.edge);
 }
@@ -168,9 +167,9 @@ export function combine(
  * begraben.
  */
 export function createCombinationLut(colors: readonly string[], rule: CombinationRule): Uint8ClampedArray {
-  if (rule === 'graded') return createLut({ art: 'wahrscheinlichkeit', top: 1 }, colors);
+  if (rule === 'graded') return createLut({ kind: 'probability', top: 1 }, colors);
   const lut = new Uint8ClampedArray(LUT_SIZE);
-  const [r, g, b] = zuRgb(colors[0]);
+  const [r, g, b] = toRgb(colors[0]);
   for (let byte = 1; byte < 256; byte++) {
     const target = byte * 4;
     lut[target] = r;

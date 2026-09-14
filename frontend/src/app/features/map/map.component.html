@@ -52,17 +52,17 @@
             (pressed)="surface.locate()"
           />
         }
-
-        @if (!addEntry.running() && !covered()) {
-          <app-floating-button
-            class="map__add"
-            icon="plus"
-            variant="primary"
-            [label]="'entry.create' | t"
-            (pressed)="openAddEntry()"
-          />
-        }
       </div>
+
+      @if (!addEntry.running() && !covered()) {
+        <app-floating-button
+          class="map__add"
+          icon="plus"
+          variant="primary"
+          [label]="'entry.create' | t"
+          (pressed)="openAddEntry()"
+        />
+      }
     }
 
     <app-add-entry />
@@ -119,9 +119,9 @@
         [showMarkers]="state.showMarkers()"
         [showZones]="state.showZones()"
         [showSharedFinds]="state.showSharedFinds()"
-        [markerCount]="entryCounts().markers"
-        [zoneCount]="entryCounts().zones"
-        [sharedFindCount]="entryCounts().sharedFinds"
+        [markerCount]="view.entryCounts().markers"
+        [zoneCount]="view.entryCounts().zones"
+        [sharedFindCount]="view.entryCounts().sharedFinds"
         (backgroundChange)="state.setBackground($event)"
         (opacityChange)="state.opacity.set($event)"
         (forecastBelowChange)="state.forecastBelow.set($event)"

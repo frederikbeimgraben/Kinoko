@@ -46,7 +46,7 @@ export class WeekButtonComponent {
   }
 
   protected label(): string {
-    const text = this.i18n.translate('zeitleiste.woche', { woche: this.week(), jahr: this.year() });
-    return this.forecast() ? `${text} · ${this.i18n.translate('zeitleiste.prognose')}` : text;
+    const text = this.i18n.translate('map.week.value', { week: this.week(), year: this.year() });
+    return this.forecast() ? `${text} · ${this.i18n.translate('map.week.forecast')}` : text;
   }
 }

@@ -14,20 +14,24 @@ import { MapObjectsDirective } from './map-objects.directive';
 
 @Component({
   imports: [MapObjectsDirective],
-  template: `<div appMapObjects></div>`,
+  template: `<div appMapObjects (objectHeld)="held = $event"></div>`,
 })
-class HostComponent {}
+class HostComponent {
+  held: { x: number; y: number } | null = null;
+}
 
 interface Setup {
   map: MapAdapterDouble;
   state: MapState;
   router: Router;
   refresh: () => void;
+  host: HostComponent;
+  surface: HTMLElement;
 }
 
 async function build(): Promise<Setup> {
   const map = new MapAdapterDouble();
-  const { detectChanges } = await render(HostComponent, {
+  const { detectChanges, fixture, container } = await render(HostComponent, {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
@@ -58,10 +62,52 @@ async function build(): Promise<Setup> {
     state: TestBed.inject(MapState),
     router: TestBed.inject(Router),
     refresh: detectChanges,
+    host: fixture.componentInstance,
+    surface: container.querySelector('div') as HTMLElement,
   };
 }
 
-describe('KartenObjekteDirective', () => {
+describe('MapObjectsDirective', () => {
+  it('meldet ein Objekt erst nach einem halben Sekundenschlag', async () => {
+    vi.useFakeTimers();
+    const setup = await build();
+    setup.map.hit = { layer: 'funde', id: FIND.id, point: [9.1, 48.7] };
+
+    setup.surface.dispatchEvent(new PointerEvent('pointerdown', { clientX: 40, clientY: 60 }));
+    await vi.advanceTimersByTimeAsync(400);
+    expect(setup.host.held).toBeNull();
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(setup.host.held).toEqual({ x: 40, y: 60 });
+    vi.useRealTimers();
+  });
+
+  it('lässt ein Objekt in Ruhe, wenn der Finger vorher geht', async () => {
+    vi.useFakeTimers();
+    const setup = await build();
+    setup.map.hit = { layer: 'funde', id: FIND.id, point: [9.1, 48.7] };
+
+    setup.surface.dispatchEvent(new PointerEvent('pointerdown', { clientX: 40, clientY: 60 }));
+    await vi.advanceTimersByTimeAsync(300);
+    setup.surface.dispatchEvent(new PointerEvent('pointerup'));
+    await vi.advanceTimersByTimeAsync(400);
+
+    expect(setup.host.held).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it('meldet nichts, wo kein Objekt liegt', async () => {
+    vi.useFakeTimers();
+    const setup = await build();
+    setup.map.hit = null;
+
+    setup.surface.dispatchEvent(new PointerEvent('pointerdown', { clientX: 5, clientY: 5 }));
+    await vi.advanceTimersByTimeAsync(600);
+
+    expect(setup.host.held).toBeNull();
+    vi.useRealTimers();
+  });
+
   it('legt Zonen, Marker und Funde in ihrer Farbe auf die Karte', async () => {
     const setup = await build();
 

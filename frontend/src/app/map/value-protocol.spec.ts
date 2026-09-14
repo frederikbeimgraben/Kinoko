@@ -40,7 +40,7 @@ describe('wert://', () => {
 
   it('färbt eine vorhandene Kachel über den Worker', async () => {
     const { value, worker } = protocol();
-    const shot = { breite: 256 } as unknown as ImageBitmap;
+    const shot = { width: 256 } as unknown as ImageBitmap;
 
     const run = value.resolve('wert://boletus_edulis/boletus_edulis_kacheln/2025W40/7/66/42');
     const job = worker.jobs[0] as ColorizeJob;
@@ -50,7 +50,7 @@ describe('wert://', () => {
       kind: 'faerbe',
       id: 0,
       url: '/boletus_edulis_kacheln/2025W40/7/66/42.png',
-      scale: { art: 'wahrscheinlichkeit', top: 0.5 },
+      scale: { kind: 'probability', top: 0.5 },
       colors: FORECAST_RAMP,
     });
     await expect(run).resolves.toEqual({ data: shot });
@@ -116,9 +116,9 @@ describe('wert://', () => {
 
   it('fragt eine zusammengesetzte Quelle mit allen Teilen an', async () => {
     const { value, worker } = protocol();
-    const bound = { von: 100, bis: 255, edge: 25 };
+    const bound = { from: 100, to: 255, edge: 25 };
     value.reportCombination({
-      id: 'kombi',
+      id: 'combination',
       rule: 'intersection',
       colors: ['#004225'],
       parts: [
@@ -126,13 +126,13 @@ describe('wert://', () => {
         { folder: 'layers_kacheln/wald', bound, existing: MANIFEST.existing },
       ],
     });
-    const shot = { breite: 256 } as unknown as ImageBitmap;
+    const shot = { width: 256 } as unknown as ImageBitmap;
 
-    const run = value.resolve('wert://kombi/a1b2c3d4/7/66/42');
+    const run = value.resolve('wert://combination/a1b2c3d4/7/66/42');
     const job = worker.jobs[0] as CombinationJob;
     worker.answer({ id: job.id, shot });
 
-    expect(job.kind).toBe('kombi');
+    expect(job.kind).toBe('combination');
     expect(job.rule).toBe('intersection');
     expect(job.parts.map((part) => part.url)).toEqual([
       '/layers_kacheln/regen_4w/2025W40/7/66/42.png',
@@ -143,9 +143,9 @@ describe('wert://', () => {
 
   it('lässt die Kombination leer, wo einem Teil die Kachel fehlt', async () => {
     const { value, worker } = protocol();
-    const bound = { von: 1, bis: 255, edge: 25 };
+    const bound = { from: 1, to: 255, edge: 25 };
     value.reportCombination({
-      id: 'kombi',
+      id: 'combination',
       rule: 'graded',
       colors: ['#0d0827'],
       parts: [
@@ -154,7 +154,7 @@ describe('wert://', () => {
       ],
     });
 
-    const reply = await value.resolve('wert://kombi/a1b2c3d4/7/66/42');
+    const reply = await value.resolve('wert://combination/a1b2c3d4/7/66/42');
 
     expect((reply.data as ArrayBuffer).byteLength).toBe(0);
     expect(worker.jobs).toHaveLength(0);
@@ -162,9 +162,9 @@ describe('wert://', () => {
 
   it('lässt eine Kombination ohne Teile leer', async () => {
     const { value } = protocol();
-    value.reportCombination({ id: 'kombi', rule: 'intersection', colors: ['#004225'], parts: [] });
+    value.reportCombination({ id: 'combination', rule: 'intersection', colors: ['#004225'], parts: [] });
 
-    const reply = await value.resolve('wert://kombi/a1b2c3d4/7/66/42');
+    const reply = await value.resolve('wert://combination/a1b2c3d4/7/66/42');
 
     expect((reply.data as ArrayBuffer).byteLength).toBe(0);
   });

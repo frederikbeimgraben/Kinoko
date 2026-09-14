@@ -55,7 +55,7 @@ export async function valueAtPoint(
   lon: number,
   lat: number,
 ): Promise<number | null> {
-  for (let zoom = manifest.zoomBis; zoom >= manifest.zoomVon; zoom--) {
+  for (let zoom = manifest.zoomTo; zoom >= manifest.zoomFrom; zoom--) {
     const location = tileLocation(lon, lat, zoom);
     if (!manifest.existing.has(tileKey(location.z, location.x, location.y))) continue;
     const byte = await readByte(tilePath(weekFolder, location.z, location.x, location.y), location);

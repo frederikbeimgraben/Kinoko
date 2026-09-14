@@ -1,4 +1,4 @@
-import { INTERSECTION_OPACITY, createLut, zuRgb } from './value-colors';
+import { INTERSECTION_OPACITY, createLut, toRgb } from './value-colors';
 import { FORECAST_RAMP as RAMP } from '../ui/ramp/ramp-colours';
 import type { ValueReply, ValueJob } from './value-messages';
 
@@ -96,12 +96,12 @@ describe('Färbe-Worker', () => {
       kind: 'faerbe',
       id: 5,
       url: '/a/7/66/42.png',
-      scale: { art: 'wahrscheinlichkeit', top: 1 },
+      scale: { kind: 'probability', top: 1 },
       colors: RAMP,
     });
     await untilAllIdle();
 
-    const lut = createLut({ art: 'wahrscheinlichkeit', top: 1 }, RAMP);
+    const lut = createLut({ kind: 'probability', top: 1 }, RAMP);
     expect(fetcher).toHaveBeenCalledWith('/a/7/66/42.png');
     expect(range.replies[0].id).toBe(5);
     expect(range.replies[0].shot).toBe(CanvasDouble.last?.back);
@@ -119,7 +119,7 @@ describe('Färbe-Worker', () => {
       kind: 'faerbe',
       id: 1,
       url: '/fehlt/7/1/1.png',
-      scale: { art: 'wahrscheinlichkeit', top: 1 },
+      scale: { kind: 'probability', top: 1 },
       colors: RAMP,
     });
     await untilAllIdle();
@@ -140,7 +140,7 @@ describe('Färbe-Worker', () => {
       kind: 'faerbe',
       id: 2,
       url: '/v/7/1/1.png',
-      scale: { art: 'spanne', low: 0, high: 10 },
+      scale: { kind: 'range', low: 0, high: 10 },
       colors: RAMP,
     });
     await untilAllIdle();
@@ -159,19 +159,19 @@ describe('Färbe-Worker', () => {
     const { combineTile } = await import('./value.worker');
 
     const shot = await combineTile({
-      kind: 'kombi',
+      kind: 'combination',
       id: 1,
       rule: 'intersection',
       colors: ['#004225'],
       parts: [
-        { url: '/k1/7/1/1.png', bound: { von: 100, bis: 255, edge: 25 } },
-        { url: '/k2/7/1/1.png', bound: { von: 100, bis: 255, edge: 25 } },
+        { url: '/k1/7/1/1.png', bound: { from: 100, to: 255, edge: 25 } },
+        { url: '/k2/7/1/1.png', bound: { from: 100, to: 255, edge: 25 } },
       ],
     });
     const first = CanvasDouble.alle[0];
 
     expect(shot).not.toBeNull();
-    const [r, g, b] = zuRgb('#004225');
+    const [r, g, b] = toRgb('#004225');
     expect([first.punkte[0], first.punkte[1], first.punkte[2], first.punkte[3]]).toEqual([
       r,
       g,
@@ -190,13 +190,13 @@ describe('Färbe-Worker', () => {
     const { combineTile } = await import('./value.worker');
 
     const shot = await combineTile({
-      kind: 'kombi',
+      kind: 'combination',
       id: 2,
       rule: 'graded',
       colors: ['#0d0827', '#fce79b'],
       parts: [
-        { url: '/f1/7/2/2.png', bound: { von: 1, bis: 255, edge: 25 } },
-        { url: '/f2/7/2/2.png', bound: { von: 1, bis: 255, edge: 25 } },
+        { url: '/f1/7/2/2.png', bound: { from: 1, to: 255, edge: 25 } },
+        { url: '/f2/7/2/2.png', bound: { from: 1, to: 255, edge: 25 } },
       ],
     });
 
@@ -210,11 +210,11 @@ describe('Färbe-Worker', () => {
     takeJobs(range);
 
     range.send({
-      kind: 'kombi',
+      kind: 'combination',
       id: 9,
       rule: 'graded',
       colors: RAMP,
-      parts: [{ url: '/n/7/3/3.png', bound: { von: 1, bis: 255, edge: 25 } }],
+      parts: [{ url: '/n/7/3/3.png', bound: { from: 1, to: 255, edge: 25 } }],
     });
     await untilAllIdle();
 
