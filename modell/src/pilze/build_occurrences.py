@@ -70,8 +70,8 @@ COLUMNS = [
 GBIF = "gbif"
 APP = "app"
 
-# The file that `update.sh` fetches from the backend before this script runs.
-APP_FILE = Path("data/raw/app/funde.json")
+# The file that `tools/pipeline_worker.py` writes before the chain runs.
+APP_FILE = Path("data/raw/app/finds.json")
 
 
 def observer_hash(find_id: str) -> str:
@@ -93,14 +93,14 @@ def read_app(path: Path) -> pd.DataFrame:
     if not path.is_file():
         print(f"no app finds at {path}")
         return pd.DataFrame(columns=[*COLUMNS, "basis"])
-    records = json.loads(path.read_text(encoding="utf-8"))
+    records = json.loads(path.read_text(encoding="utf-8"))["items"]
     rows = []
     for record in records:
-        day = pd.Timestamp(record["datum"])
+        day = pd.Timestamp(record["foundOn"])
         rows.append({
             # `size` counts rows, so this only has to be unique and present.
             "gbifID": f"app:{record['id']}",
-            "species": record["lateinisch"],
+            "species": record["scientificName"],
             "class": TARGET_CLASS,
             "decimalLatitude": float(record["lat"]),
             "decimalLongitude": float(record["lon"]),

@@ -30,28 +30,29 @@ from build_occurrences import (  # noqa: E402
 FUNDE = [
     {
         "id": "3f2b-0001",
-        "artSlug": "steinpilz",
-        "lateinisch": "Boletus edulis",
+        "speciesId": "a1",
+        "scientificName": "Boletus edulis",
         "lat": 48.5203,
         "lon": 9.0511,
-        "datum": "2026-09-01",
-        "anzahl": 3,
+        "foundOn": "2026-09-01",
+        "count": 3,
     },
     {
         "id": "3f2b-0002",
-        "artSlug": "parasol",
-        "lateinisch": "Macrolepiota procera",
+        "speciesId": "a2",
+        "scientificName": "Macrolepiota procera",
         "lat": 48.6,
         "lon": 9.2,
-        "datum": "2026-09-02",
-        "anzahl": None,
+        "foundOn": "2026-09-02",
+        "count": None,
     },
 ]
 
 
 def _datei(tmp_path: Path, funde: list[dict[str, object]] | None = None) -> Path:
-    ziel = tmp_path / "funde.json"
-    ziel.write_text(json.dumps(funde if funde is not None else FUNDE), encoding="utf-8")
+    ziel = tmp_path / "finds.json"
+    items = funde if funde is not None else FUNDE
+    ziel.write_text(json.dumps({"items": items}), encoding="utf-8")
     return ziel
 
 

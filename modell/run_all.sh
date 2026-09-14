@@ -8,6 +8,8 @@ cd "$(dirname "$0")"
 LOGS=${LOGS:-reports/rebuild}; mkdir -p "$LOGS"
 run () {
   SLUG=$1; TAXA=$2; LABEL=$3; WALD=${4:-0.03}
+  # LISTE=1 druckt nur Slug und Taxa, damit der Arbeiter die Arten kennt.
+  if [ -n "${LISTE:-}" ]; then printf '%s\t%s\n' "$SLUG" "$TAXA"; return; fi
   # NUR="a b c" beschraenkt den Lauf auf diese Arten, etwa fuer zwei
   # Instanzen nebeneinander: jede rechnet mit acht Faeden.
   if [ -n "${NUR:-}" ] && ! echo " $NUR " | grep -q " $SLUG "; then return; fi
@@ -47,5 +49,7 @@ run schleimruebling "Mucidula mucida" "Buchen-Schleimruebling"
 # Der Schopftintling waechst an Wegraendern und auf Wiesen, nicht im Wald.
 # Die Waldmaske von 3 Prozent wuerde ihn dort ausblenden, wo er steht.
 run schopftintling "Coprinus comatus" "Schopftintling" 0.0
-python -u src/pilze/build_page.py
-echo "=========== ALL REBUILT $(date -Is) ==========="
+if [ -z "${LISTE:-}" ]; then
+  python -u src/pilze/build_page.py
+  echo "=========== ALL REBUILT $(date -Is) ==========="
+fi

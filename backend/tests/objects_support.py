@@ -26,6 +26,7 @@ async def make_species(
         group_key=Group.BOLETE,
         edibility=Edibility.EDIBLE,
         protection=protection,
+        forecast_enabled=True,
     )
     session.add(made)
     await session.commit()

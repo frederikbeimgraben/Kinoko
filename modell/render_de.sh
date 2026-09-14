@@ -5,6 +5,8 @@ set -u
 cd "$(dirname "$0")"
 karte () {
   SLUG=$1; LABEL=$2; WALD=${3:-0.03}
+  # NUR="a b c" beschraenkt den Lauf auf diese Arten.
+  if [ -n "${NUR:-}" ] && ! echo " $NUR " | grep -q " $SLUG "; then return; fi
   if [ "${NEU:-0}" != "1" ] && [ -d "reports/maps/${SLUG}_kacheln" ]; then
     echo "--- $LABEL steht schon, uebersprungen ---"; return
   fi
