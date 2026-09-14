@@ -40,6 +40,15 @@ describe('ActionBarComponent', () => {
     expect(container.querySelector('.btn--danger')).not.toBeNull();
   });
 
+  it('zeichnet die zweite Löschaktion als Umriss', async () => {
+    const { container } = await render(ActionBarComponent, {
+      inputs: { primary: 'Übernehmen', secondary: 'Faktor entfernen', secondaryDanger: true },
+    });
+
+    expect(container.querySelector('.btn--danger-outline')).not.toBeNull();
+    expect(container.querySelector('.btn--danger')).toBeNull();
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(ActionBarComponent, {
       inputs: { primary: 'Save', secondary: 'Cancel' },
