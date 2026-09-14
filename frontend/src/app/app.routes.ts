@@ -101,7 +101,6 @@ export const routes: Routes = [
       import('./features/account/signin-callback.component').then((m) => m.SignInCallbackComponent),
   },
   {
-    // Auch im Betrieb: der Pixeltest prüft die Werkstattseite im Build.
     path: 'bausteine',
     loadComponent: () =>
       import('./dev/building-blocks/building-blocks.component').then((m) => m.BuildingBlocksComponent),

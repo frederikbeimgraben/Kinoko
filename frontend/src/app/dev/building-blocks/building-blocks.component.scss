@@ -118,6 +118,7 @@
   border-radius: var(--radius-lg);
 }
 
+.block__stage app-popover,
 .block__stage app-reject-dialog,
 .block__stage app-sheet,
 .block__stage app-overlay-host,
@@ -172,6 +173,11 @@
 
 .block__stage--fixed {
   block-size: 136px;
+  background: var(--color-surface-sunken);
+}
+
+.block__stage--popover {
+  block-size: 300px;
   background: var(--color-surface-sunken);
 }
 

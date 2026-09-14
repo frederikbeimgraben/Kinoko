@@ -53,6 +53,7 @@ import {
   OverlayHostComponent,
   PageHeaderComponent,
   PhotoPickerComponent,
+  PopoverComponent,
   PrivateImageComponent,
   ProgressComponent,
   RampComponent,
@@ -78,6 +79,7 @@ import {
   type Detent,
   type DetentSize,
   type ObjectMenuTarget,
+  type PopoverAnchor,
 } from '../../ui';
 import {
   BRUISE_COLOURS,
@@ -151,6 +153,8 @@ const DARK = 'dark';
     OverlayHostComponent,
     PageHeaderComponent,
     PhotoPickerComponent,
+    PopoverComponent,
+    PopoverComponent,
     PrivateImageComponent,
     ProgressComponent,
     RampComponent,
@@ -223,6 +227,7 @@ export class BuildingBlocksComponent {
   protected readonly filterSheetOpen = signal(true);
 
   protected readonly objectMenuTarget: ObjectMenuTarget = { x: 90, y: 60 };
+  protected readonly popoverAnchor: PopoverAnchor = { top: 16, end: 16 };
 
   /** Das Board zeichnet die unterste Raste des Blatts 120 px hoch. */
   protected readonly sheetDetents: readonly [DetentSize, DetentSize, DetentSize] = ['120px', 0.4, 0.9];

@@ -4,6 +4,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
 import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
+import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
 import { RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 
@@ -19,12 +20,15 @@ const BACKGROUND_KEY: Record<Background, TranslationKey> = {
 @Component({
   selector: 'app-layers-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ChoiceRowComponent, RangeSliderComponent, SegmentedComponent, TranslatePipe],
+  imports: [ChoiceRowComponent, PopoverComponent, RangeSliderComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './layers-sheet.component.html',
   styleUrl: './layers-sheet.component.scss',
 })
 export class LayersSheetComponent {
   private readonly i18n = inject(I18nService);
+
+  /** Der Knopf steht rechts oben, die Karte hängt an derselben Kante. */
+  protected readonly anchor: PopoverAnchor = { top: 68, end: 12 };
 
   readonly background = input.required<Background>();
   /** Deckkraft der Wertebene, 0 als kein Wert, 1 als volle Deckung. */

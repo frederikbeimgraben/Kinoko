@@ -1,15 +1,7 @@
 @if (open()) {
   <div class="confirm__scrim" aria-hidden="true" (click)="cancelled.emit()"></div>
-  <div
-    #panel
-    class="confirm__panel"
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-    [attr.aria-labelledby]="titleId"
-    (keydown)="onKeydown($event)"
-  >
-    <h2 class="confirm__title" [id]="titleId">{{ title() }}</h2>
+  <div #layer="modalLayer" class="confirm__panel" appModalLayer (dismissed)="cancelled.emit()">
+    <h2 class="confirm__title" [id]="layer.labelId">{{ title() }}</h2>
     @if (meta(); as meta) {
       <p class="confirm__meta">{{ meta }}</p>
     }

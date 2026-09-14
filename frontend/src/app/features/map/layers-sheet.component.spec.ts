@@ -81,12 +81,12 @@ describe('LayersSheetComponent', () => {
     expect(changes).toEqual(['marker', 'zone', 'shared']);
   });
 
-  it('schließt über die Abdunkelung', async () => {
+  it('schließt über Escape', async () => {
     const { fixture } = await sheet();
     let closed = 0;
     fixture.componentInstance.closed.subscribe(() => (closed += 1));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
+    await userEvent.keyboard('{Escape}');
 
     expect(closed).toBe(1);
   });

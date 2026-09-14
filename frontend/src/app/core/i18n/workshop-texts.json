@@ -161,7 +161,8 @@
     "beispiel.dialogMeta": "6 Funde · 0 Bilder",
     "beispiel.wachstum.zeitraum": "Juni bis Oktober",
     "beispiel.fortschritt": "62 %",
-    "blocks.rejectDialog": "app-reject-dialog · radius 18 · griff 36 × 4"
+    "blocks.rejectDialog": "app-reject-dialog · radius 18 · griff 36 × 4",
+    "blocks.popover": "app-popover · 300 px · radius 12 · scrim"
   },
   "en": {
     "blocks.button": "app-button · 44 / 48 px · radius 10 · edge 1",
@@ -325,6 +326,7 @@
     "beispiel.dialogMeta": "6 finds · 0 images",
     "beispiel.wachstum.zeitraum": "June to October",
     "beispiel.fortschritt": "62 %",
-    "blocks.rejectDialog": "app-reject-dialog · radius 18 · handle 36 × 4"
+    "blocks.rejectDialog": "app-reject-dialog · radius 18 · handle 36 × 4",
+    "blocks.popover": "app-popover · 300 px · radius 12 · scrim"
   }
 }

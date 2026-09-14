@@ -1,0 +1,21 @@
+// Gemeinsame Flächen einer Schicht über der Seite.
+@mixin scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-dialog);
+  background: rgb(0 0 0 / 55%);
+}
+
+@mixin panel {
+  position: fixed;
+  z-index: calc(var(--z-dialog) + 1);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+
+  &:focus-visible {
+    outline: none;
+  }
+}

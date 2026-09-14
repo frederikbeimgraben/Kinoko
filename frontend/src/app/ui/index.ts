@@ -18,6 +18,8 @@ export {
   type ColourSwatch,
 } from './colour-swatches/colour-swatches.component';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+export { ModalLayerDirective } from './modal-layer/modal-layer.directive';
+export { PopoverComponent, type PopoverAnchor } from './popover/popover.component';
 export { RejectDialogComponent } from './reject-dialog/reject-dialog.component';
 export { CrosshairComponent } from './crosshair/crosshair.component';
 export { EmptyStateComponent } from './empty-state/empty-state.component';

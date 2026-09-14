@@ -1,0 +1,24 @@
+@use '../modal-layer/modal-layer';
+
+:host {
+  display: contents;
+}
+
+.popover__scrim {
+  @include modal-layer.scrim;
+
+  position: absolute;
+  background: rgb(0 18 10 / 25%);
+}
+
+.popover__card {
+  @include modal-layer.panel;
+
+  position: absolute;
+  gap: var(--space-3);
+  inline-size: 300px;
+  max-inline-size: calc(100% - 24px);
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}

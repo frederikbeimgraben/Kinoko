@@ -9,7 +9,7 @@ const BROWSER_PATH = process.env['BROWSER_PATH'];
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1280, height: 820 };
 const WIDE = { width: 1440, height: 900 };
-const BLOCKS = { width: 900, height: 8700 };
+const BLOCKS = { width: 900, height: 8723 };
 
 export default defineConfig({
   testDir: 'e2e',

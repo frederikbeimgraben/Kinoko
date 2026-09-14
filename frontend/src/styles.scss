@@ -55,10 +55,8 @@ body {
   z-index: 2;
 }
 
-// Das Kit zeichnet über jeder Eingabe eine Beschriftung. Das Board zeigt auf
-// den Karten `app-input` und `app-select` nur das Feld. Die Beschriftung bleibt
-// für Hilfsmittel stehen, sie nimmt nur keinen Platz mehr ein. Die Regel steht
-// global, weil ein Stilblatt der Seite nicht in den Baustein reicht.
+// Beschriftung nur für Hilfsmittel. Global, weil ein Stilblatt der Seite
+// nicht in den Baustein des Kits reicht.
 app-building-blocks .block--nolabel app-input label {
   position: absolute;
   inline-size: 1px;

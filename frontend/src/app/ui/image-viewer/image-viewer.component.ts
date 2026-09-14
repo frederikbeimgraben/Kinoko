@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  afterRenderEffect,
-  computed,
-  inject,
-  input,
-  output,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { longDate } from '../../core/i18n/dates';
 import { COARSE_DIGITS, GRID_KM } from '../../core/location/grid';
@@ -16,6 +6,7 @@ import { locationText } from '../../core/i18n/places';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
+import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../image-credit/licences';
 import { KeyValueRowComponent } from '../key-value-table/key-value-row.component';
 import { KeyValueTableComponent } from '../key-value-table/key-value-table.component';
@@ -31,12 +22,17 @@ interface Detail {
 }
 
 /** Ein Bild gross, darunter Fotograf, Lizenz, Aufnahmetag und Unterschrift. */
-let nextNumber = 0;
-
 @Component({
   selector: 'app-image-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, IconButtonComponent, KeyValueRowComponent, KeyValueTableComponent, TranslatePipe],
+  imports: [
+    BadgeComponent,
+    IconButtonComponent,
+    KeyValueRowComponent,
+    KeyValueTableComponent,
+    ModalLayerDirective,
+    TranslatePipe,
+  ],
   templateUrl: './image-viewer.component.html',
   styleUrl: './image-viewer.component.scss',
 })
@@ -48,24 +44,7 @@ export class ImageViewerComponent {
   /** Die Überschrift, meist der Name der Art. */
   readonly title = input.required<string>();
 
-  private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
-
   readonly closed = output();
-
-  protected readonly titleId = `app-image-viewer-${String(nextNumber++)}`;
-
-  constructor() {
-    // Der Fokus folgt dem offenen Blatt, damit Escape sofort greift.
-    afterRenderEffect(() => {
-      if (this.image() !== null) this.panel()?.nativeElement.focus();
-    });
-  }
-
-  protected onKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    event.preventDefault();
-    this.closed.emit();
-  }
 
   protected readonly alt = computed(() => this.image()?.caption ?? this.title());
 

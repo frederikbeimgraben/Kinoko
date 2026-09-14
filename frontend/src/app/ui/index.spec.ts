@@ -15,6 +15,7 @@ const BLOCKS = [
   'app-action-bar',
   'app-icon-button',
   'app-split-layout',
+  'app-popover',
   'app-confirm-dialog',
   'app-reject-dialog',
   'app-review-queue',

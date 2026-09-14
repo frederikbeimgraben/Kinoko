@@ -1,28 +1,17 @@
-// Das Blatt liegt über der Seite und hält Abstand zum Rand des Bildschirms.
+@use '../modal-layer/modal-layer';
+
 .viewer__scrim {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-dialog);
-  background: rgb(0 0 0 / 55%);
+  @include modal-layer.scrim;
 }
 
 .viewer__panel {
-  position: fixed;
+  @include modal-layer.panel;
+
   inset-block: var(--space-5);
   inset-inline: var(--space-5);
-  z-index: calc(var(--z-dialog) + 1);
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
   padding: var(--space-5);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-}
-
-.viewer__panel:focus-visible {
-  outline: none;
 }
 
 .viewer__head {
@@ -39,8 +28,7 @@
   font-weight: var(--fw-semibold);
 }
 
-// Das Bild führt, die Angaben stehen darunter. Die Höhe ist begrenzt, damit
-// ein hochkantes Bild die Tabelle nicht aus dem Fenster schiebt.
+// Begrenzt, sonst schiebt ein hochkantes Bild die Tabelle aus dem Fenster.
 .viewer__image {
   display: block;
   inline-size: 100%;

@@ -1,16 +1,8 @@
 @if (open()) {
   <div class="reject__scrim" aria-hidden="true" (click)="cancel()"></div>
-  <div
-    #panel
-    class="reject__panel"
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-    [attr.aria-labelledby]="titleId"
-    (keydown)="onKeydown($event)"
-  >
+  <div #layer="modalLayer" class="reject__panel" appModalLayer (dismissed)="cancel()">
     <span class="reject__handle" aria-hidden="true"></span>
-    <h2 class="reject__title" [id]="titleId">{{ 'bild.grundFrage' | t }}</h2>
+    <h2 class="reject__title" [id]="layer.labelId">{{ 'bild.grundFrage' | t }}</h2>
     <app-chip-group
       [chips]="chips()"
       [value]="reason() ? [reason()] : []"

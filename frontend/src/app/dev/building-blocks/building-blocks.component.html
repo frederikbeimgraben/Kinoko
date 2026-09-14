@@ -163,6 +163,17 @@
   </section>
 
   <section class="block">
+    <h2 class="block__head">{{ 'blocks.popover' | t }}</h2>
+    <div class="block__stage block__stage--popover">
+      <app-popover [open]="true" [anchor]="popoverAnchor" [label]="text('map.layers.button')">
+        <app-segmented [options]="viewModes" [value]="viewMode()" [label]="text('map.basemap.title')" />
+        <app-choice-row [label]="text('map.layers.sharedFinds')" count="12" [checked]="true" />
+        <app-choice-row [label]="text('map.layers.myMarkers')" count="5" [checked]="true" />
+      </app-popover>
+    </div>
+  </section>
+
+  <section class="block">
     <h2 class="block__head">{{ 'blocks.confirmDialog' | t }}</h2>
     <div class="block__stage block__stage--confirm">
       <app-confirm-dialog
@@ -171,6 +182,13 @@
         [meta]="text('beispiel.dialogMeta')"
         [danger]="true"
       />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.rejectDialog' | t }}</h2>
+    <div class="block__stage block__stage--reject">
+      <app-reject-dialog [open]="true" [person]="text('beispiel.avatar')" />
     </div>
   </section>
 
@@ -592,13 +610,6 @@
     <div class="block__meter">
       <span class="block__percent">{{ 'beispiel.fortschritt' | t }}</span>
       <app-progress [value]="62" />
-    </div>
-  </section>
-
-  <section class="block">
-    <h2 class="block__head">{{ 'blocks.rejectDialog' | t }}</h2>
-    <div class="block__stage block__stage--reject">
-      <app-reject-dialog [open]="true" [person]="text('beispiel.avatar')" />
     </div>
   </section>
 
