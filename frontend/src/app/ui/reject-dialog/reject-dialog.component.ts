@@ -1,11 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { DialogComponent } from '@stupa-makers/ui-kit';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { ChipGroupComponent } from '../../ui/chip-group/chip-group.component';
-import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ChipGroupComponent } from '../chip-group/chip-group.component';
+import { FormFieldComponent } from '../form-field/form-field.component';
 
 /** Die Vorschläge aus dem Artboard. Ein Tipp schreibt den Satz ins Feld. */
 const SUGGESTIONS: readonly TranslationKey[] = [
@@ -15,22 +25,19 @@ const SUGGESTIONS: readonly TranslationKey[] = [
   'bild.grund.falscheArt',
 ];
 
-/**
- * Das Blatt, das nach dem Grund einer Absage fragt.
- *
- * Der Grund ist ein eigener Schritt und kein Feld neben dem Knopf: wer
- * ablehnt, soll den Satz schreiben, den die einreichende Person liest. Ohne
- * Grund geht die Absage nicht hinaus.
- */
+let nextNumber = 0;
+
+/** Das Blatt nach dem Grund einer Absage. Ohne Grund geht sie nicht hinaus. */
 @Component({
   selector: 'app-reject-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, ChipGroupComponent, DialogComponent, FormFieldComponent, TranslatePipe],
+  imports: [ButtonComponent, ChipGroupComponent, FormFieldComponent, TranslatePipe],
   templateUrl: './reject-dialog.component.html',
   styleUrl: './reject-dialog.component.scss',
 })
 export class RejectDialogComponent {
   private readonly i18n = inject(I18nService);
+  private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
 
   /** Wessen Bild abgelehnt wird. Ohne Namen fragt das Blatt niemanden. */
   readonly person = input.required<string | null>();
@@ -40,6 +47,7 @@ export class RejectDialogComponent {
   readonly closed = output();
 
   protected readonly reason = signal('');
+  protected readonly titleId = `app-reject-dialog-${String(nextNumber++)}`;
 
   protected readonly chips = computed(() =>
     SUGGESTIONS.map((key) => {
@@ -57,6 +65,19 @@ export class RejectDialogComponent {
 
   /** Ein Grund aus Leerzeichen ist kein Grund. */
   protected readonly ready = computed(() => this.reason().trim().length > 0);
+
+  constructor() {
+    // Der Fokus folgt dem offenen Blatt, damit Escape sofort greift.
+    afterRenderEffect(() => {
+      if (this.open()) this.panel()?.nativeElement.focus();
+    });
+  }
+
+  protected onKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    this.cancel();
+  }
 
   protected pick(label: string): void {
     this.reason.set(label);

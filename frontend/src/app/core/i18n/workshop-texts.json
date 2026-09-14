@@ -6,7 +6,6 @@
     "blocks.checkbox": "app-checkbox · 20 px · radius 5 · rand 1",
     "blocks.card": "app-card · radius 12 · rand 1",
     "blocks.badge": "app-badge · 12 px · 3 / 10 px · radius 999",
-    "blocks.dialog": "app-dialog · radius 12 · rand 1",
     "blocks.toast": "app-toast · radius 10",
     "blocks.pageHeader": "app-page-header · 64 px",
     "blocks.nav": "app-nav · 64 px · seitenleiste 88 px",
@@ -161,7 +160,8 @@
     "beispiel.fund.steinpilzNotiz": "unter Fichten",
     "beispiel.dialogMeta": "6 Funde · 0 Bilder",
     "beispiel.wachstum.zeitraum": "Juni bis Oktober",
-    "beispiel.fortschritt": "62 %"
+    "beispiel.fortschritt": "62 %",
+    "blocks.rejectDialog": "app-reject-dialog · radius 18 · griff 36 × 4"
   },
   "en": {
     "blocks.button": "app-button · 44 / 48 px · radius 10 · edge 1",
@@ -170,7 +170,6 @@
     "blocks.checkbox": "app-checkbox · 20 px · radius 5 · edge 1",
     "blocks.card": "app-card · radius 12 · edge 1",
     "blocks.badge": "app-badge · 12 px · 3 / 10 px · radius 999",
-    "blocks.dialog": "app-dialog · radius 12 · edge 1",
     "blocks.toast": "app-toast · radius 10",
     "blocks.pageHeader": "app-page-header · 64 px",
     "blocks.nav": "app-nav · 64 px · side rail 88 px",
@@ -325,6 +324,7 @@
     "beispiel.fund.steinpilzNotiz": "under spruces",
     "beispiel.dialogMeta": "6 finds · 0 images",
     "beispiel.wachstum.zeitraum": "June to October",
-    "beispiel.fortschritt": "62 %"
+    "beispiel.fortschritt": "62 %",
+    "blocks.rejectDialog": "app-reject-dialog · radius 18 · handle 36 × 4"
   }
 }

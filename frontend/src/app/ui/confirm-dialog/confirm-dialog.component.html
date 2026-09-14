@@ -1,18 +1,31 @@
-<app-dialog [open]="open()" [title]="title()" [closeLabel]="'common.close' | t" (closed)="cancelled.emit()">
-  @if (meta(); as meta) {
-    <p class="confirm__meta">{{ meta }}</p>
-  }
-  <div class="confirm__actions">
-    <app-button
-      class="confirm__confirm"
-      [variant]="danger() ? 'danger' : 'primary'"
-      [block]="true"
-      (click)="confirmed.emit()"
-    >
-      {{ confirmLabel() ?? ('common.delete' | t) }}
-    </app-button>
-    <app-button class="confirm__cancel" variant="secondary" [block]="true" (click)="cancelled.emit()">
-      {{ 'common.cancel' | t }}
-    </app-button>
+@if (open()) {
+  <div class="confirm__scrim" aria-hidden="true" (click)="cancelled.emit()"></div>
+  <div
+    #panel
+    class="confirm__panel"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+    [attr.aria-labelledby]="titleId"
+    (keydown)="onKeydown($event)"
+  >
+    <h2 class="confirm__title" [id]="titleId">{{ title() }}</h2>
+    @if (meta(); as meta) {
+      <p class="confirm__meta">{{ meta }}</p>
+    }
+    <ng-content />
+    <div class="confirm__actions">
+      <app-button
+        [variant]="danger() ? 'danger' : 'primary'"
+        [block]="true"
+        [disabled]="confirmDisabled()"
+        (click)="confirmed.emit()"
+      >
+        {{ confirmLabel() ?? ('common.delete' | t) }}
+      </app-button>
+      <app-button variant="secondary" [block]="true" (click)="cancelled.emit()">
+        {{ 'common.cancel' | t }}
+      </app-button>
+    </div>
   </div>
-</app-dialog>
+}

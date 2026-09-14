@@ -6,6 +6,7 @@
       <app-button variant="secondary">{{ 'common.cancel' | t }}</app-button>
       <app-button variant="ghost">{{ 'common.more' | t }}</app-button>
       <app-button variant="danger">{{ 'common.delete' | t }}</app-button>
+      <app-button variant="danger-outline">{{ 'map.factor.remove' | t }}</app-button>
     </div>
   </section>
 
@@ -46,19 +47,6 @@
       @for (badge of badgeVariants; track badge.variant) {
         <app-badge [variant]="badge.variant">{{ badge.label }}</app-badge>
       }
-    </div>
-  </section>
-
-  <section class="block block--nolabel">
-    <h2 class="block__head">{{ 'blocks.dialog' | t }}</h2>
-    <div class="block__stage block__stage--dialog">
-      <app-dialog [open]="true" [title]="text('map.combination.save')">
-        <app-input [label]="text('common.name')" [ngModel]="text('beispiel.kombination')" />
-        <div dialog-footer class="block__stack">
-          <app-button variant="primary" [block]="true">{{ 'common.save' | t }}</app-button>
-          <app-button variant="secondary" [block]="true">{{ 'common.cancel' | t }}</app-button>
-        </div>
-      </app-dialog>
     </div>
   </section>
 
@@ -604,6 +592,13 @@
     <div class="block__meter">
       <span class="block__percent">{{ 'beispiel.fortschritt' | t }}</span>
       <app-progress [value]="62" />
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block__head">{{ 'blocks.rejectDialog' | t }}</h2>
+    <div class="block__stage block__stage--reject">
+      <app-reject-dialog [open]="true" [person]="text('beispiel.avatar')" />
     </div>
   </section>
 

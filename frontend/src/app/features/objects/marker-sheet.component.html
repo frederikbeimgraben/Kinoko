@@ -20,20 +20,11 @@
   (primaryClick)="save()"
   (secondaryClick)="toGoogleMaps()"
 />
-<app-dialog
+<app-confirm-dialog
   [open]="deleteAsk()"
   [title]="'marker.loeschenFrage' | t"
-  [closeLabel]="'objekt.schliessen' | t"
-  (closed)="deleteAsk.set(false)"
->
-  <p class="note">{{ 'marker.loeschenText' | t }}</p>
-  <div dialog-footer class="objectsheet__dialogfooter">
-    <app-action-bar
-      [primary]="'objekt.loeschen' | t"
-      [danger]="true"
-      [secondary]="'objekt.abbrechen' | t"
-      (primaryClick)="remove()"
-      (secondaryClick)="deleteAsk.set(false)"
-    />
-  </div>
-</app-dialog>
+  [meta]="'marker.loeschenText' | t"
+  [confirmLabel]="'objekt.loeschen' | t"
+  (confirmed)="remove()"
+  (cancelled)="deleteAsk.set(false)"
+/>

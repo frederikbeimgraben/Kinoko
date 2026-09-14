@@ -29,11 +29,14 @@
   }
 </div>
 
-<app-dialog
+<app-confirm-dialog
   [open]="editing() !== null"
   [title]="dialogTitle()"
-  [closeLabel]="'personen.abbrechen' | t"
-  (closed)="close()"
+  [danger]="false"
+  [confirmLabel]="'personen.speichern' | t"
+  [confirmDisabled]="saving()"
+  (confirmed)="save()"
+  (cancelled)="close()"
 >
   <app-card>
     @for (choice of choices(); track choice.id) {
@@ -41,10 +44,4 @@
     }
   </app-card>
   <p class="note">{{ 'personen.rollenHinweis' | t }}</p>
-  <div dialog-footer class="people__actions">
-    <app-button variant="secondary" (click)="close()">{{ 'personen.abbrechen' | t }}</app-button>
-    <app-button variant="primary" [disabled]="saving()" (click)="save()">{{
-      'personen.speichern' | t
-    }}</app-button>
-  </div>
-</app-dialog>
+</app-confirm-dialog>

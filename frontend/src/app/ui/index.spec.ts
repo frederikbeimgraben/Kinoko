@@ -16,6 +16,7 @@ const BLOCKS = [
   'app-icon-button',
   'app-split-layout',
   'app-confirm-dialog',
+  'app-reject-dialog',
   'app-review-queue',
   'app-banner',
   'app-list-row',

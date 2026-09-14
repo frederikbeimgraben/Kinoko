@@ -1,11 +1,18 @@
-<app-dialog
-  [open]="image() !== null"
-  [title]="title()"
-  size="lg"
-  [closeLabel]="'common.close' | t"
-  (closed)="closed.emit()"
->
-  @if (image(); as image) {
+@if (image(); as image) {
+  <div class="viewer__scrim" aria-hidden="true" (click)="closed.emit()"></div>
+  <div
+    #panel
+    class="viewer__panel"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+    [attr.aria-labelledby]="titleId"
+    (keydown)="onKeydown($event)"
+  >
+    <header class="viewer__head">
+      <h2 class="viewer__title" [id]="titleId">{{ title() }}</h2>
+      <app-icon-button icon="close" [label]="'common.close' | t" (pressed)="closed.emit()" />
+    </header>
     <img
       class="viewer__image"
       [src]="image.url"
@@ -25,5 +32,5 @@
         </app-key-value-row>
       }
     </app-key-value-table>
-  }
-</app-dialog>
+  </div>
+}

@@ -1,5 +1,40 @@
+// Die Bestätigung liegt über allem, was sie betrifft, und hält Abstand zum
+// Rand des Bildschirms. Maße aus dem Board `FindDelete`.
+.confirm__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-dialog);
+  background: rgb(0 0 0 / 55%);
+}
+
+.confirm__panel {
+  position: fixed;
+  inset-block-start: 50%;
+  inset-inline: var(--space-5);
+  z-index: calc(var(--z-dialog) + 1);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-50%);
+}
+
+.confirm__panel:focus-visible {
+  outline: none;
+}
+
+.confirm__title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
 .confirm__meta {
-  margin: 0 0 var(--space-4);
+  margin: 0;
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
   text-align: center;
@@ -8,5 +43,6 @@
 .confirm__actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
+  margin-block-start: 2px;
 }

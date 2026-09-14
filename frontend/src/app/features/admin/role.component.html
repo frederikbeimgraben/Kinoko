@@ -62,15 +62,11 @@
   />
 }
 
-<app-dialog
+<app-confirm-dialog
   [open]="confirming()"
   [title]="deleteQuestion()"
-  [closeLabel]="'rolle.abbrechen' | t"
-  (closed)="confirming.set(false)"
->
-  <p>{{ 'rolle.loeschenText' | t }}</p>
-  <div dialog-footer class="role__confirm">
-    <app-button variant="secondary" (click)="confirming.set(false)">{{ 'rolle.abbrechen' | t }}</app-button>
-    <app-button variant="danger" (click)="remove()">{{ 'rolle.loeschen' | t }}</app-button>
-  </div>
-</app-dialog>
+  [meta]="'rolle.loeschenText' | t"
+  [confirmLabel]="'rolle.loeschen' | t"
+  (confirmed)="remove()"
+  (cancelled)="confirming.set(false)"
+/>

@@ -18,6 +18,7 @@ export {
   type ColourSwatch,
 } from './colour-swatches/colour-swatches.component';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+export { RejectDialogComponent } from './reject-dialog/reject-dialog.component';
 export { CrosshairComponent } from './crosshair/crosshair.component';
 export { EmptyStateComponent } from './empty-state/empty-state.component';
 export { EntryRowComponent, type EntryRowEntry } from './entry-row/entry-row.component';

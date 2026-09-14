@@ -14,7 +14,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesState } from '../species/species.state';
-import { RejectDialogComponent } from './reject-dialog.component';
+import { RejectDialogComponent } from '../../ui/reject-dialog/reject-dialog.component';
 
 /** Die drei Sichten des Eingangs. Offen führt, dort liegt die Arbeit. */
 const VIEWS: readonly { value: ImageState; label: TranslationKey }[] = [

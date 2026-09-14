@@ -8,7 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { BadgeComponent, CardComponent, DialogComponent, ToastService } from '@stupa-makers/ui-kit';
+import { BadgeComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { Find } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -17,6 +17,7 @@ import { NOW } from '../../core/tiles/now';
 import { currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import { valueAtPoint } from '../../core/tiles/value-at-point';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
@@ -39,8 +40,8 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
   imports: [
     ActionBarComponent,
     BadgeComponent,
+    ConfirmDialogComponent,
     CardComponent,
-    DialogComponent,
     PhotoGalleryComponent,
     FindFormComponent,
     IconButtonComponent,
