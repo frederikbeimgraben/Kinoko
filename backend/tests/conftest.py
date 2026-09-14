@@ -91,7 +91,8 @@ async def make_user(session: AsyncSession, sub: str = "person-1") -> User:
 
 def sign_in(built: FastAPI, user: User, *rights: str) -> None:
     """Lässt jede Anfrage als dieses Konto laufen."""
-    viewer = Viewer(user, frozenset(rights))
+    claims = {"sub": user.sub, "email": user.email, "name": user.name}
+    viewer = Viewer(user, frozenset(rights), claims)
     built.dependency_overrides[auth.viewer] = lambda: viewer
 
 

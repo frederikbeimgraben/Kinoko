@@ -2315,10 +2315,6 @@ components:
           oneOf:
             - type: number
             - type: "null"
-        description:
-          oneOf:
-            - type: string
-            - type: "null"
       required: [dimension, unit, low, high]
 
     MeasurementGroup:
@@ -2411,10 +2407,6 @@ components:
           type: string
         edibility:
           $ref: "#/components/schemas/Edibility"
-        warning:
-          oneOf:
-            - type: string
-            - type: "null"
         capColours:
           type: array
           items:
@@ -2448,8 +2440,6 @@ components:
           $ref: "#/components/schemas/Edibility"
         protection:
           $ref: "#/components/schemas/Protection"
-        collectable:
-          type: boolean
         forecastEnabled:
           type: boolean
         leadPhotoId:
@@ -2468,7 +2458,6 @@ components:
         - group
         - edibility
         - protection
-        - collectable
         - forecastEnabled
         - updatedAt
 
@@ -2488,16 +2477,8 @@ components:
           $ref: "#/components/schemas/Group"
         edibility:
           $ref: "#/components/schemas/Edibility"
-        collectable:
-          type: boolean
         marketable:
           type: boolean
-        valueRating:
-          oneOf:
-            - type: integer
-              minimum: 1
-              maximum: 6
-            - type: "null"
         frequency:
           oneOf:
             - $ref: "#/components/schemas/Frequency"
@@ -2510,10 +2491,6 @@ components:
           oneOf:
             - type: string
             - type: "null"
-        warning:
-          oneOf:
-            - type: string
-            - type: "null"
         edibilityNote:
           oneOf:
             - type: string
@@ -2521,10 +2498,6 @@ components:
         protection:
           $ref: "#/components/schemas/Protection"
         protectionNote:
-          oneOf:
-            - type: string
-            - type: "null"
-        protectionSource:
           oneOf:
             - type: string
             - type: "null"
@@ -2643,16 +2616,8 @@ components:
               oneOf:
                 - type: string
                 - type: "null"
-            warning:
-              oneOf:
-                - type: string
-                - type: "null"
             marketable:
               type: boolean
-            valueRating:
-              oneOf:
-                - type: integer
-                - type: "null"
             frequency:
               oneOf:
                 - $ref: "#/components/schemas/Frequency"
@@ -2666,10 +2631,6 @@ components:
                 - type: string
                 - type: "null"
             protectionNote:
-              oneOf:
-                - type: string
-                - type: "null"
-            protectionSource:
               oneOf:
                 - type: string
                 - type: "null"

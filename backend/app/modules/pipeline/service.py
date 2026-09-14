@@ -91,7 +91,7 @@ class PipelineRunService:
         if entry is None:
             entry = PipelineRunSpecies(run_id=run.id, species_id=species_id)
             self.db.add(entry)
-        entry.state = state
+        entry.state = RunState(state)
         entry.record_count = record_count
         total = await self.db.execute(
             select(func.count())

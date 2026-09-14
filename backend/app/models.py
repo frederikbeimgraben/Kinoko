@@ -195,18 +195,14 @@ class Species(Base):
     taxon_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("taxon.id", ondelete="SET NULL"))
     group_key: Mapped[Group] = mapped_column(String(40))
     edibility: Mapped[Edibility] = mapped_column(String(30))
-    collectable: Mapped[bool] = mapped_column(Boolean, default=False)
     marketable: Mapped[bool] = mapped_column(Boolean, default=False)
-    value_rating: Mapped[int | None] = mapped_column(Integer)
     forecast_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     frequency: Mapped[Frequency | None] = mapped_column(String(20))
     red_list: Mapped[RedListStatus | None] = mapped_column(String(30))
     description: Mapped[str | None] = mapped_column(Text)
-    warning: Mapped[str | None] = mapped_column(Text)
     edibility_note: Mapped[str | None] = mapped_column(Text)
     protection: Mapped[Protection] = mapped_column(String(20), default=Protection.NONE)
     protection_note: Mapped[str | None] = mapped_column(Text)
-    protection_source: Mapped[str | None] = mapped_column(Text)
     period_start_month: Mapped[int | None] = mapped_column(Integer)
     period_end_month: Mapped[int | None] = mapped_column(Integer)
     period_peak_month: Mapped[int | None] = mapped_column(Integer)
@@ -254,7 +250,6 @@ class SpeciesMeasurement(Base):
     rare_low: Mapped[float | None] = mapped_column(Float)
     rare_high: Mapped[float | None] = mapped_column(Float)
     unit: Mapped[Unit] = mapped_column(String(10))
-    description: Mapped[str | None] = mapped_column(Text)
 
 
 class SpeciesColourRange(Base):
@@ -300,7 +295,6 @@ class SpeciesColourChange(Base):
     )
     position: Mapped[int] = mapped_column(Integer, primary_key=True)
     part: Mapped[BodyPart] = mapped_column(String(20))
-    kind: Mapped[TriggerGroup] = mapped_column(String(20))
     from_name: Mapped[str | None] = mapped_column(String(NAME_LENGTH))
     from_hex: Mapped[str | None] = mapped_column(String(HEX_LENGTH))
     to_name: Mapped[str] = mapped_column(String(NAME_LENGTH))
@@ -553,7 +547,6 @@ class TextEntry(Base):
     key: Mapped[str] = mapped_column(String(NAME_LENGTH), primary_key=True)
     locale: Mapped[str] = mapped_column(String(10), primary_key=True)
     value: Mapped[str] = mapped_column(Text)
-    changed: Mapped[bool] = mapped_column(Boolean, default=False)
     updated_at: Mapped[datetime] = stamp()
     updated_by_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("user.id", ondelete="SET NULL"),
@@ -623,6 +616,6 @@ class PipelineRunSpecies(Base):
         ForeignKey("species.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    state: Mapped[str] = mapped_column(String(20), default=RunState.QUEUED)
+    state: Mapped[RunState] = mapped_column(String(20), default=RunState.QUEUED)
     record_count: Mapped[int] = mapped_column(Integer, default=0)
     find_count: Mapped[int] = mapped_column(Integer, default=0)

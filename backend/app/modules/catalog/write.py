@@ -65,7 +65,6 @@ async def replace_children(db: AsyncSession, species_id: uuid.UUID, body: Specie
                     rare_low=measurement.rare_low,
                     rare_high=measurement.rare_high,
                     unit=measurement.unit,
-                    description=measurement.description,
                 ),
             )
     for entry in body.traits:
@@ -154,7 +153,6 @@ async def _write_colour_changes(
                 species_id=species_id,
                 position=position,
                 part=change.part,
-                kind=change.kind,
                 from_name=change.from_.name if change.from_ else None,
                 from_hex=change.from_.hex if change.from_ else None,
                 to_name=change.to.name,

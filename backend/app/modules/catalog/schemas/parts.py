@@ -122,7 +122,6 @@ class Lookalike(Schema):
     name: str
     scientific_name: str
     edibility: Edibility
-    warning: str | None = None
     cap_colours: list[ColourValue] = Field(default_factory=list)
     difference: str | None = None
 

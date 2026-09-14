@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from app.modules.catalog.colours import nearest_colour
 from app.modules.catalog.schemas import ColourChange, ColourGroup, ColourValue, TermRef
+from app.shared.enums import TriggerGroup
 
 if TYPE_CHECKING:
     import uuid
@@ -44,6 +45,14 @@ def _from_colour(row: SpeciesColourChange) -> ColourValue | None:
     return ColourValue(name=row.from_name, hex=row.from_hex)
 
 
+def _kind(terms: list[Term]) -> TriggerGroup:
+    """Die Gruppe einer Verfärbung kommt vom ersten Auslöser."""
+    for term in terms:
+        if term.group_key is not None:
+            return term.group_key
+    return TriggerGroup.MECHANICAL
+
+
 def colour_changes(
     species_id: uuid.UUID,
     child: ChildRows,
@@ -53,17 +62,16 @@ def colour_changes(
     result: list[ColourChange] = []
     for row in child.colour_changes.get(species_id, []):
         triggers = child.triggers.get((species_id, row.position), [])
+        found = [terms[t.term_id] for t in triggers if t.term_id in terms]
         result.append(
             ColourChange.model_validate(
                 {
                     "part": row.part,
-                    "kind": row.kind,
+                    "kind": _kind(found),
                     "from": _from_colour(row),
                     "to": ColourValue(name=row.to_name, hex=row.to_hex),
                     "speed": row.speed,
-                    "triggers": [
-                        term_ref(terms[t.term_id]) for t in triggers if t.term_id in terms
-                    ],
+                    "triggers": [term_ref(term) for term in found],
                 },
             ),
         )

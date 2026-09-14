@@ -9,11 +9,12 @@ from sqlalchemy import and_, or_
 
 from app.core.auth import Viewer
 from app.core.errors import Conflict, Forbidden, NotFound, Unauthorized
+from app.core.settings import get_settings
 from app.models import Photo, User, now
 from app.modules.photos.repository import PhotoRepository
 from app.modules.photos.schemas import PhotoOut
 from app.shared import images
-from app.shared.enums import PhotoState
+from app.shared.enums import PhotoSize, PhotoState
 from app.shared.paging import page
 
 if TYPE_CHECKING:
@@ -150,3 +151,12 @@ async def list_photos(  # noqa: PLR0913, PLR0917
         query = query.where(Photo.find_id == find_id)
     query = query.order_by(Photo.created_at.desc())
     return await page(db, query, paging, out)
+
+
+async def file(repo: PhotoRepository, photo_id: uuid.UUID, viewer: Viewer, size: PhotoSize) -> Path:
+    """Der Pfad einer Grösse eines sichtbaren Fotos."""
+    photo = await visible_or_404(repo, photo_id, viewer)
+    found = images.path_of(get_settings().photos, photo.id, size)
+    if found is None:
+        raise NotFound
+    return found

@@ -41,7 +41,7 @@ async def sync(db: AsyncSession) -> int:
         for key, value in entries.items():
             if (key, locale) in known:
                 continue
-            db.add(TextEntry(key=key, locale=locale, value=value, changed=False))
+            db.add(TextEntry(key=key, locale=locale, value=value))
             added += 1
     if added:
         await db.commit()
@@ -77,7 +77,7 @@ def catalogue(rows: Sequence[TextEntry]) -> dict[str, Any]:
     stamps: dict[str, str] = {}
     for row in rows:
         values.setdefault(row.key, {})[row.locale] = row.value
-        changed[row.key] = changed.get(row.key, False) or row.changed
+        changed[row.key] = changed.get(row.key, False) or row.updated_by_id is not None
         stamps[row.key] = max(stamps.get(row.key, ""), row.updated_at.isoformat())
     return {
         "revision": revision(rows),
@@ -102,7 +102,7 @@ def entry_of(rows: Sequence[TextEntry], key: str) -> dict[str, Any]:
     return {
         "key": key,
         "values": {row.locale: row.value for row in mine},
-        "changed": any(row.changed for row in mine),
+        "changed": any(row.updated_by_id is not None for row in mine),
         "updatedAt": max(row.updated_at for row in mine).isoformat(),
     }
 
@@ -123,7 +123,6 @@ async def change(
         found = TextEntry(key=key, locale=locale, value=value)
         db.add(found)
     found.value = value
-    found.changed = True
     found.updated_at = now()
     found.updated_by_id = user_id
     await db.commit()
@@ -141,7 +140,7 @@ async def reset(db: AsyncSession, key: str, locale: str) -> None:
         await db.delete(found)
     else:
         found.value = fallback
-        found.changed = False
+        found.updated_by_id = None
         found.updated_at = now()
     await db.commit()
 

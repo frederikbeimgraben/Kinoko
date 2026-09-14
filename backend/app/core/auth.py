@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from typing import Annotated, Any, Final, cast
 
 import jwt
@@ -16,6 +17,7 @@ from app.core.errors import Forbidden, Unauthorized
 from app.core.jwks import cache
 from app.core.settings import get_settings
 from app.models import Permission, Role, RolePermission, User, UserRole
+from app.modules.access.service import AccessService
 
 BEARER: Final = "Bearer "
 GROUP_CLAIM: Final = "groups"
@@ -25,10 +27,16 @@ Db = Annotated[AsyncSession, Depends(session)]
 
 @dataclass(frozen=True, slots=True)
 class Viewer:
-    """Das Konto der Anfrage mit seinen Rechten."""
+    """Das Konto der Anfrage, seine Rechte und die Ansprüche des Tokens."""
 
     user: User | None
     rights: frozenset[str]
+    claims: Mapping[str, Any] = field(default_factory=dict[str, Any])
+
+    @property
+    def sub(self) -> str:
+        """Die Kennung des Kontos im SSO."""
+        return str(self.claims.get("sub", ""))
 
     @property
     def signed_in(self) -> bool:
@@ -75,28 +83,21 @@ async def claims_of(token: str) -> dict[str, Any]:
         raise Unauthorized from broken
 
 
-async def remember(db: AsyncSession, claims: dict[str, Any]) -> User:
-    """Legt das Konto an oder zieht Name und Adresse nach."""
-    sub = str(claims.get("sub", ""))
-    if not sub:
-        raise Unauthorized
-    found = (await db.execute(select(User).where(User.sub == sub))).scalar_one_or_none()
-    if found is None:
-        found = User(sub=sub)
-        db.add(found)
-    found.email = claims.get("email")
-    found.name = claims.get("name")
-    await db.commit()
-    await db.refresh(found)
-    return found
+async def person_of(db: AsyncSession, sub: str) -> User | None:
+    """Liest das Konto zu einer Kennung, ohne es anzulegen."""
+    return (await db.execute(select(User).where(User.sub == sub))).scalar_one_or_none()
 
 
-async def rights_of(db: AsyncSession, user: User, claims: dict[str, Any]) -> frozenset[str]:
+async def rights_of(
+    db: AsyncSession, user: User | None, claims: Mapping[str, Any]
+) -> frozenset[str]:
     """Liest die Rechte des Kontos, die Admin-Gruppe gibt alle."""
     groups: object = claims.get(GROUP_CLAIM)
     if isinstance(groups, list) and get_settings().admin_group in cast("list[object]", groups):
         keys = await db.execute(select(Permission.key))
         return frozenset(keys.scalars())
+    if user is None:
+        return frozenset()
     query = (
         select(RolePermission.permission_key)
         .join(Role, Role.id == RolePermission.role_id)
@@ -110,13 +111,15 @@ async def viewer(
     db: Db,
     authorization: Annotated[str | None, Header()] = None,
 ) -> Viewer:
-    """Dependency: der Aufrufer, auch ohne Anmeldung."""
+    """Dependency: der Aufrufer, auch ohne Anmeldung. Sie schreibt nicht."""
     token = bearer(authorization)
     if token is None:
         return Viewer(None, frozenset())
     claims = await claims_of(token)
-    user = await remember(db, claims)
-    return Viewer(user, await rights_of(db, user, claims))
+    if not str(claims.get("sub", "")):
+        raise Unauthorized
+    user = await person_of(db, str(claims["sub"]))
+    return Viewer(user, await rights_of(db, user, claims), claims)
 
 
 async def optional_user(who: Annotated[Viewer, Depends(viewer)]) -> User | None:
@@ -124,18 +127,18 @@ async def optional_user(who: Annotated[Viewer, Depends(viewer)]) -> User | None:
     return who.user
 
 
-async def current_user(who: Annotated[Viewer, Depends(viewer)]) -> User:
-    """Dependency: das angemeldete Konto, sonst 401."""
-    if who.user is None:
+async def current_user(db: Db, who: Annotated[Viewer, Depends(viewer)]) -> User:
+    """Dependency: das angemeldete Konto. Der Dienst legt es beim ersten Mal an."""
+    if not who.sub:
         raise Unauthorized
-    return who.user
+    return await AccessService(db).ensure_person(who)
 
 
 def requires(permission: str) -> Any:  # noqa: ANN401
     """Baut eine Dependency, die ein Recht verlangt."""
 
     async def guard(who: Annotated[Viewer, Depends(viewer)]) -> Viewer:
-        if who.user is None:
+        if not who.sub:
             raise Unauthorized
         if not who.may(permission):
             raise Forbidden

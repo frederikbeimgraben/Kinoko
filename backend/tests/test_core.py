@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import auth, errors, jwks
 from app.core.settings import get_settings
 from app.models import Role, RolePermission, UserRole
+from app.modules.access.service import AccessService
 from tests.conftest import CLIENT_ID, ISSUER, app_of, make_user, sign_in, sign_out
 
 KID = "schluessel-1"
@@ -182,13 +183,30 @@ def test_viewer_knows_its_rights() -> None:
     assert not empty.owns(uuid.uuid4())
 
 
-async def test_remember_updates_the_account(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
-    first = await auth.remember(session, {"sub": "neu", "email": "a@b.test", "name": "A"})
-    again = await auth.remember(session, {"sub": "neu", "email": "c@d.test", "name": "C"})
+def a_viewer(email: str, name: str) -> auth.Viewer:
+    """Ein Aufrufer mit Token, aber noch ohne Zeile."""
+    return auth.Viewer(None, frozenset(), {"sub": "neu", "email": email, "name": name})
+
+
+async def test_ensure_person_creates_and_updates(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
+    service = AccessService(session)
+    first = await service.ensure_person(
+        auth.Viewer(None, frozenset(), {"sub": "neu", "email": "a@b.test", "name": "A"})
+    )
+    again = await service.ensure_person(
+        auth.Viewer(None, frozenset(), {"sub": "neu", "email": "c@d.test", "name": "C"})
+    )
     assert first.id == again.id
     assert again.email == "c@d.test"
-    with pytest.raises(errors.Unauthorized):
-        await auth.remember(session, {})
+    same = await service.ensure_person(
+        auth.Viewer(None, frozenset(), {"sub": "neu", "email": "c@d.test", "name": "C"})
+    )
+    assert same.id == first.id
+
+
+async def test_viewer_does_not_write(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
+    assert await auth.person_of(session, "gibt-es-nicht") is None
+    assert await auth.rights_of(session, None, {}) == frozenset()
 
 
 def test_requires_builds_a_dependency() -> None:

@@ -82,10 +82,16 @@ def write(root: Path, photo_id: uuid.UUID, rendered: Rendered) -> None:
         (folder / f"{size.value}.jpg").write_bytes(data)
 
 
+def path_of(root: Path, photo_id: uuid.UUID, size: PhotoSize) -> Path | None:
+    """Der Pfad einer Größe eines Fotos, oder nichts."""
+    file = folder_of(root, photo_id) / f"{size.value}.jpg"
+    return file if file.is_file() else None
+
+
 def read(root: Path, photo_id: uuid.UUID, size: PhotoSize) -> bytes | None:
     """Liest eine Größe eines Fotos, oder nichts."""
-    file = folder_of(root, photo_id) / f"{size.value}.jpg"
-    return file.read_bytes() if file.is_file() else None
+    file = path_of(root, photo_id, size)
+    return file.read_bytes() if file is not None else None
 
 
 def remove(root: Path, photo_id: uuid.UUID) -> None:

@@ -31,7 +31,6 @@ class LookalikeTarget:
     name: str
     latin_name: str
     edibility: Edibility
-    warning: str | None
     cap_colours: list[ColourValue]
 
 
@@ -54,7 +53,6 @@ def targets_of(
             name=row.name,
             latin_name=row.latin_name,
             edibility=row.edibility,
-            warning=row.warning,
             cap_colours=_cap_colours(child.colours.get(row.id, [])),
         )
         for row in species_rows
@@ -91,7 +89,6 @@ async def load_targets(
             name=row.name,
             latin_name=row.latin_name,
             edibility=row.edibility,
-            warning=row.warning,
             cap_colours=_cap_colours(by_species.get(row.id, [])),
         )
         for row in others
@@ -119,7 +116,6 @@ def build(
                 name=target.name,
                 scientific_name=target.latin_name,
                 edibility=target.edibility,
-                warning=target.warning,
                 cap_colours=target.cap_colours,
                 difference=difference,
             ),

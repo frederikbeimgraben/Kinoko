@@ -6,15 +6,14 @@ import uuid
 from datetime import date
 from typing import Annotated, Any
 
-from fastapi import APIRouter, File, Form, Path, Query, Response, UploadFile, status
+from fastapi import APIRouter, File, Form, Path, Query, UploadFile, status
+from fastapi.responses import FileResponse
 
 from app.core.auth import CurrentUser, CurrentViewer, Db, requires
-from app.core.errors import NotFound
 from app.core.settings import get_settings
 from app.modules.photos import service, uploads
 from app.modules.photos.repository import PhotoRepository
 from app.modules.photos.schemas import RejectionWrite
-from app.shared import images
 from app.shared.enums import Licence, PhotoSize, PhotoState
 from app.shared.paging import Page
 
@@ -96,14 +95,14 @@ async def get_photo_file(
     viewer: CurrentViewer,
     photo_id: Annotated[uuid.UUID, Path(alias="id")],
     size: PhotoSize,
-) -> Response:
+) -> FileResponse:
     """Liefert eine Größe eines Fotos als JPEG."""
-    repo = PhotoRepository(db)
-    photo = await service.visible_or_404(repo, photo_id, viewer)
-    data = images.read(get_settings().photos, photo.id, size)
-    if data is None:
-        raise NotFound
-    return Response(content=data, media_type="image/jpeg", headers={"Cache-Control": CACHE_CONTROL})
+    found = await service.file(PhotoRepository(db), photo_id, viewer, size)
+    return FileResponse(
+        found,
+        media_type="image/jpeg",
+        headers={"Cache-Control": CACHE_CONTROL},
+    )
 
 
 @router.post("/photos/{id}/approval", dependencies=[requires("image.review")])

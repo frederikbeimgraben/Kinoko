@@ -954,7 +954,6 @@ export interface components {
             high: number;
             rareLow?: number | null;
             rareHigh?: number | null;
-            description?: string | null;
         };
         MeasurementGroup: {
             part: components["schemas"]["BodyPart"];
@@ -996,7 +995,6 @@ export interface components {
             name: string;
             scientificName: string;
             edibility: components["schemas"]["Edibility"];
-            warning?: string | null;
             capColours: components["schemas"]["ColourValue"][];
             difference?: string | null;
         };
@@ -1010,7 +1008,6 @@ export interface components {
             group: components["schemas"]["Group"];
             edibility: components["schemas"]["Edibility"];
             protection: components["schemas"]["Protection"];
-            collectable: boolean;
             forecastEnabled: boolean;
             leadPhotoId?: string | null;
             /** Format: date-time */
@@ -1022,17 +1019,13 @@ export interface components {
             taxonId?: string | null;
             group: components["schemas"]["Group"];
             edibility: components["schemas"]["Edibility"];
-            collectable?: boolean;
             marketable?: boolean;
-            valueRating?: number | null;
             frequency?: components["schemas"]["Frequency"] | null;
             redList?: components["schemas"]["RedListStatus"] | null;
             description?: string | null;
-            warning?: string | null;
             edibilityNote?: string | null;
             protection: components["schemas"]["Protection"];
             protectionNote?: string | null;
-            protectionSource?: string | null;
             periodStartMonth?: number | null;
             periodEndMonth?: number | null;
             periodPeakMonth?: number | null;
@@ -1062,14 +1055,11 @@ export interface components {
         };
         Species: components["schemas"]["SpeciesSummary"] & {
             description?: string | null;
-            warning?: string | null;
             marketable?: boolean;
-            valueRating?: number | null;
             frequency?: components["schemas"]["Frequency"] | null;
             redList?: components["schemas"]["RedListStatus"] | null;
             edibilityNote?: string | null;
             protectionNote?: string | null;
-            protectionSource?: string | null;
             periodStartMonth?: number | null;
             periodEndMonth?: number | null;
             periodPeakMonth?: number | null;

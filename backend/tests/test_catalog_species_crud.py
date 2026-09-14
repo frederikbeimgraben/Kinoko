@@ -20,7 +20,6 @@ from app.shared.enums import (
     SourceScope,
     StemFeature,
     TermKind,
-    TriggerGroup,
 )
 from tests import catalog_factory as cf
 from tests.conftest import app_of, make_user, sign_in, sign_out
@@ -57,7 +56,6 @@ async def test_get_species_profile_assembles_all_child_rows(
         porcini,
         position=0,
         part=BodyPart.FLESH,
-        kind=TriggerGroup.MECHANICAL,
         to_name="blau",
         to_hex="#3a6ea8",
         triggers=[trigger],
@@ -257,7 +255,6 @@ async def test_replace_species_writes_every_child_kind(
             "name": other.name,
             "scientificName": other.latin_name,
             "edibility": other.edibility.value,
-            "warning": None,
             "capColours": [],
             "difference": "neu",
         },
@@ -289,7 +286,6 @@ async def test_replace_species_lookalike_sync_is_independent_per_side(
             "name": bay.name,
             "scientificName": bay.latin_name,
             "edibility": bay.edibility.value,
-            "warning": None,
             "capColours": [],
             "difference": "von porcini",
         },

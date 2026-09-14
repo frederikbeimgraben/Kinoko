@@ -18,7 +18,7 @@ async def test_sync_writes_only_missing_keys(session: AsyncSession, schema: None
 async def test_sync_keeps_a_changed_text(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
     row = (await session.execute(select(TextEntry).limit(1))).scalar_one()
     row.value = "Von Hand"
-    row.changed = True
+    row.updated_by_id = None
     await session.commit()
     await service.sync(session)
     await session.refresh(row)

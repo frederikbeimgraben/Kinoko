@@ -82,7 +82,6 @@ def summary_of(species: SpeciesRow, lead_photo_id: uuid.UUID | None) -> SpeciesS
         group=species.group_key,
         edibility=species.edibility,
         protection=species.protection,
-        collectable=species.collectable,
         forecast_enabled=species.forecast_enabled,
         lead_photo_id=lead_photo_id,
         updated_at=species.updated_at,
@@ -101,7 +100,6 @@ def _measurement_groups(rows: Sequence[SpeciesMeasurement]) -> list[MeasurementG
                 high=row.high,
                 rare_low=row.rare_low,
                 rare_high=row.rare_high,
-                description=row.description,
             ),
         )
     return [MeasurementGroup(part=part, measurements=ms) for part, ms in by_part.items()]
@@ -118,14 +116,11 @@ def assemble(
     return Species(
         **summary_of(species, child.lead_photos.get(species.id)).model_dump(),
         description=species.description,
-        warning=species.warning,
         marketable=species.marketable,
-        value_rating=species.value_rating,
         frequency=species.frequency,
         red_list=species.red_list,
         edibility_note=species.edibility_note,
         protection_note=species.protection_note,
-        protection_source=species.protection_source,
         period_start_month=species.period_start_month,
         period_end_month=species.period_end_month,
         period_peak_month=species.period_peak_month,

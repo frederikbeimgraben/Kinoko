@@ -42,7 +42,6 @@ from app.shared.enums import (
     TaxonRank,
     TermKind,
     TraitKey,
-    TriggerGroup,
     Unit,
 )
 from tools import catalog_rows, import_catalog
@@ -314,7 +313,6 @@ async def test_boletus_edulis_details(session: AsyncSession) -> None:
         .all()
     )
     assert len(changes) == 2
-    assert all(change.kind == TriggerGroup.REAGENT for change in changes)
 
     triggers = (
         (

@@ -9,8 +9,9 @@ from fastapi import APIRouter, Path, Query, status
 
 from app.core.auth import Db, requires
 from app.modules.access.account import router as account_router
+from app.modules.access.permissions import permission_entries
 from app.modules.access.schemas import RoleCreate, RoleUpdate, SetPersonRoles
-from app.modules.access.service import AccessService, permission_entries
+from app.modules.access.service import AccessService
 from app.shared.paging import Page
 
 router = APIRouter(tags=["access"])

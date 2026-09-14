@@ -126,17 +126,13 @@ def _assign(entity: Species, body: SpeciesWrite) -> None:
     entity.taxon_id = body.taxon_id
     entity.group_key = body.group
     entity.edibility = body.edibility
-    entity.collectable = body.collectable
     entity.marketable = body.marketable
-    entity.value_rating = body.value_rating
     entity.frequency = body.frequency
     entity.red_list = body.red_list
     entity.description = body.description
-    entity.warning = body.warning
     entity.edibility_note = body.edibility_note
     entity.protection = body.protection
     entity.protection_note = body.protection_note
-    entity.protection_source = body.protection_source
     entity.period_start_month = body.period_start_month
     entity.period_end_month = body.period_end_month
     entity.period_peak_month = body.period_peak_month

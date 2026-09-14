@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Any, Final
 
 from app.shared.enums import Area
 
@@ -24,3 +24,8 @@ BUILT_IN: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
     ),
     "reviewer": ("account.role.reviewer", ("image.review", "find.review")),
 }
+
+
+def permission_entries() -> dict[str, Any]:
+    """Liefert alle bekannten Rechte mit ihrem Bereich."""
+    return {"items": [{"key": key, "area": area} for key, area in PERMISSIONS.items()]}

@@ -21,14 +21,10 @@ if TYPE_CHECKING:
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
+    from app.core.auth import Viewer
     from app.shared.paging import Paging
 
 ADMIN_SLUG: Final = "admin"
-
-
-def permission_entries() -> dict[str, Any]:
-    """Liefert alle bekannten Rechte mit ihrem Bereich."""
-    return {"items": [{"key": key, "area": area} for key, area in PERMISSIONS.items()]}
 
 
 class AccessService:
@@ -38,6 +34,23 @@ class AccessService:
         self.db = db
         self.roles = RoleRepository(db)
         self.people = PersonRepository(db)
+
+    async def ensure_person(self, who: Viewer) -> User:
+        """Liefert das Konto zum Token. Beim ersten Aufruf legt es die Zeile an."""
+        query = select(User).where(User.sub == who.sub)
+        found = (await self.db.execute(query)).scalar_one_or_none()
+        email = who.claims.get("email")
+        name = who.claims.get("name")
+        if found is not None and found.email == email and found.name == name:
+            return found
+        if found is None:
+            found = User(sub=who.sub)
+            self.db.add(found)
+        found.email = email
+        found.name = name
+        await self.db.commit()
+        await self.db.refresh(found)
+        return found
 
     async def permissions_of(self, user: User) -> frozenset[str]:
         """Liest die Rechte eines Kontos aus seinen Rollen."""

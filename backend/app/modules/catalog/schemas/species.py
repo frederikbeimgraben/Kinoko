@@ -48,7 +48,6 @@ class SpeciesSummary(Schema):
     group: Group
     edibility: Edibility
     protection: Protection
-    collectable: bool
     forecast_enabled: bool
     lead_photo_id: uuid.UUID | None = None
     updated_at: Timestamp
@@ -58,14 +57,11 @@ class Species(SpeciesSummary):
     """Das volle Profil einer Art, mit allen Kindzeilen."""
 
     description: str | None = None
-    warning: str | None = None
     marketable: bool
-    value_rating: int | None = None
     frequency: Frequency | None = None
     red_list: RedListStatus | None = None
     edibility_note: str | None = None
     protection_note: str | None = None
-    protection_source: str | None = None
     period_start_month: int | None = None
     period_end_month: int | None = None
     period_peak_month: int | None = None
@@ -99,17 +95,13 @@ class SpeciesWrite(Schema):
     taxon_id: uuid.UUID | None = None
     group: Group
     edibility: Edibility
-    collectable: bool = False
     marketable: bool = False
-    value_rating: int | None = None
     frequency: Frequency | None = None
     red_list: RedListStatus | None = None
     description: str | None = None
-    warning: str | None = None
     edibility_note: str | None = None
     protection: Protection
     protection_note: str | None = None
-    protection_source: str | None = None
     period_start_month: int | None = None
     period_end_month: int | None = None
     period_peak_month: int | None = None

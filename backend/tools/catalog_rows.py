@@ -253,9 +253,7 @@ def _species_row(ctx: BuildContext, taxon_id: uuid.UUID | None) -> Species:
         edibility=vocab.lookup(
             vocab.EDIBILITY, profile["speisewert"], field="speisewert", source=ctx.stem
         ),
-        collectable=profile.get("sammelbar", True),
         marketable=profile.get("marktfaehig", False),
-        value_rating=profile.get("wertigkeit"),
         forecast_enabled=False,
         frequency=_optional_lookup(
             vocab.FREQUENCY, profile.get("haeufigkeit"), "haeufigkeit", ctx.stem
@@ -264,13 +262,11 @@ def _species_row(ctx: BuildContext, taxon_id: uuid.UUID | None) -> Species:
             vocab.RED_LIST, profile.get("gefaehrdung"), "gefaehrdung", ctx.stem
         ),
         description=None,
-        warning=profile.get("warnung"),
         edibility_note=profile.get("speisewertHinweis"),
         protection=vocab.lookup(
             vocab.PROTECTION, schutz["status"], field="schutz.status", source=ctx.stem
         ),
         protection_note=profile.get("schutzHinweis"),
-        protection_source=schutz.get("quelle"),
         period_start_month=period.get("vonMonat"),
         period_end_month=period.get("bisMonat"),
         period_peak_month=period.get("spitzeMonat"),
@@ -324,7 +320,6 @@ def _measurement_rows(ctx: BuildContext) -> list[SpeciesMeasurement]:
                 rare_low=span.get("seltenVon"),
                 rare_high=span.get("seltenBis"),
                 unit=vocab.lookup(vocab.UNIT, span["einheit"], field="einheit", source=ctx.stem),
-                description=span.get("beschreibung"),
             ),
         )
     return rows
@@ -372,7 +367,6 @@ def _mechanical_change_rows(
                 species_id=ctx.species_id,
                 position=position,
                 part=BodyPart.FLESH,
-                kind=TriggerGroup.MECHANICAL,
                 from_name=None,
                 from_hex=None,
                 to_name=colour["name"],
@@ -407,7 +401,6 @@ def _reagent_change_rows(
                 species_id=ctx.species_id,
                 position=position,
                 part=BodyPart.FLESH,
-                kind=TriggerGroup.REAGENT,
                 from_name=None,
                 from_hex=None,
                 to_name=name,
