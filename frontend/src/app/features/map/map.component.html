@@ -32,7 +32,7 @@
 
   @if (offline()) {
     <div class="map__grey" aria-hidden="true"></div>
-    <app-banner class="map__banner" kind="error" />
+    <app-banner class="map__banner" kind="noConnection" />
   }
 
   @if (!surfaceOnly() || wide()) {

@@ -4,27 +4,27 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { BannerComponent } from './banner.component';
 
 describe('BannerComponent', () => {
-  it('zeigt den Offline-Zustand', async () => {
+  it('meldet, dass keine Verbindung steht', async () => {
     const { container } = await render(BannerComponent, {
-      inputs: { kind: 'offline' },
-    });
-
-    expect(screen.getByRole('status')).toHaveTextContent('Offline');
-    await noViolations(container);
-  });
-
-  it('zeigt den Fehler-Zustand ohne Verbindung', async () => {
-    const { container } = await render(BannerComponent, {
-      inputs: { kind: 'error' },
+      inputs: { kind: 'noConnection' },
     });
 
     expect(screen.getByRole('status')).toHaveTextContent('Keine Verbindung');
     await noViolations(container);
   });
 
+  it('meldet, dass etwas auf die Übertragung wartet', async () => {
+    const { container } = await render(BannerComponent, {
+      inputs: { kind: 'pending' },
+    });
+
+    expect(screen.getByRole('status')).toHaveTextContent('Offline');
+    await noViolations(container);
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(BannerComponent, {
-      inputs: { kind: 'offline' },
+      inputs: { kind: 'noConnection' },
       providers: [EMPTY_CATALOG],
     });
 
