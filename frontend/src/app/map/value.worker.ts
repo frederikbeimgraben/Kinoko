@@ -57,14 +57,20 @@ async function get(url: string): Promise<ArrayBuffer | null> {
   return content;
 }
 
+/** Eine Kachel ist ein Bild. Die Seite der App ist keine. */
+function isImage(reply: Response): boolean {
+  return (reply.headers.get('content-type') ?? '').startsWith('image/');
+}
+
 /** Derselbe Speicher wie im Fenster, hier ohne Angular. */
 async function fromStore(url: string): Promise<ArrayBuffer | null> {
   const store = typeof caches === 'undefined' ? null : caches;
   try {
     const stored = await store?.match(url);
-    if (stored) return await stored.arrayBuffer();
+    if (stored && isImage(stored)) return await stored.arrayBuffer();
+    if (stored && store) await (await store.open(TILE_CACHE)).delete(url);
     const reply = await fetch(url);
-    if (!reply.ok) return null;
+    if (!reply.ok || !isImage(reply)) return null;
     if (store) await (await store.open(TILE_CACHE)).put(url, reply.clone());
     return await reply.arrayBuffer();
   } catch {

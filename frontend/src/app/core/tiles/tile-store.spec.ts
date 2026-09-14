@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { stubCaches } from '../../testing/cache-storage-double';
+import { TILE_CACHE } from './tile-cache';
 import { TileStore } from './tile-store';
 
 function store(): TileStore {
@@ -7,7 +8,19 @@ function store(): TileStore {
 }
 
 function reply(body: string, ok = true): Response {
-  return new Response(ok ? body : null, { status: ok ? 200 : 404 });
+  return new Response(ok ? body : null, {
+    status: ok ? 200 : 404,
+    headers: { 'content-type': 'image/png' },
+  });
+}
+
+/** Die Seite der App, wie ein Ursprung ohne Datei sie schickt. */
+function page(): Response {
+  return new Response('<!doctype html>', { headers: { 'content-type': 'text/html' } });
+}
+
+function manifest(body: string): Response {
+  return new Response(body, { headers: { 'content-type': 'application/json' } });
 }
 
 function setVisible(state: DocumentVisibilityState): void {
@@ -47,9 +60,28 @@ describe('TileStore', () => {
   });
 
   it('liest ein Manifest als JSON', async () => {
-    vi.stubGlobal('fetch', () => Promise.resolve(new Response('{"wochen":2}')));
+    vi.stubGlobal('fetch', () => Promise.resolve(manifest('{"wochen":2}')));
 
     expect(await store().json('/art.json')).toEqual({ wochen: 2 });
+  });
+
+  it('nimmt die Seite der App weder an noch auf', async () => {
+    const caching = stubCaches();
+    vi.stubGlobal('fetch', () => Promise.resolve(page()));
+
+    expect(await store().json('/art.json')).toBeNull();
+    expect(await caching.match('/art.json')).toBeUndefined();
+  });
+
+  it('wirft einen Eintrag mit falschem Inhalt weg und fragt das Netz', async () => {
+    const caching = stubCaches();
+    await (await caching.open(TILE_CACHE)).put('/art.json', page());
+    const fetcher = vi.fn(() => Promise.resolve(manifest('{"wochen":3}')));
+    vi.stubGlobal('fetch', fetcher);
+
+    expect(await store().json('/art.json')).toEqual({ wochen: 3 });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(await (await caching.match('/art.json'))?.text()).toBe('{"wochen":3}');
   });
 
   it('fragt im Hintergrund nicht das Netz', async () => {

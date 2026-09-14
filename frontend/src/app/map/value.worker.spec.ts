@@ -2,6 +2,15 @@ import { INTERSECTION_OPACITY, createLut, zuRgb } from './value-colors';
 import { FORECAST_RAMP as RAMP } from '../ui/ramp/ramp-colours';
 import type { ValueReply, ValueJob } from './value-messages';
 
+/** Eine Kachel aus dem Netz; der Inhaltstyp entscheidet über den Speicher. */
+function png(ok = true): Response {
+  return {
+    ok,
+    headers: new Headers({ 'content-type': 'image/png' }),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(ok ? 8 : 0)),
+  } as unknown as Response;
+}
+
 /** Ein Ersatz für OffscreenCanvas: er merkt sich die Punkte, die er bekommt. */
 class CanvasDouble {
   static last: CanvasDouble | null = null;
@@ -77,9 +86,7 @@ describe('Färbe-Worker', () => {
   });
 
   it('holt eine Kachel, färbt sie und schickt das Bild zurück', async () => {
-    const fetcher = vi.fn(() =>
-      Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }),
-    );
+    const fetcher = vi.fn(() => Promise.resolve(png()));
     vi.stubGlobal('fetch', fetcher);
     const { takeJobs } = await import('./value.worker');
     const range = new ScopeDouble();
@@ -121,9 +128,7 @@ describe('Färbe-Worker', () => {
   });
 
   it('holt vorgeladene Kacheln nur einmal', async () => {
-    const fetcher = vi.fn(() =>
-      Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }),
-    );
+    const fetcher = vi.fn(() => Promise.resolve(png()));
     vi.stubGlobal('fetch', fetcher);
     const { takeJobs } = await import('./value.worker');
     const range = new ScopeDouble();
@@ -145,9 +150,7 @@ describe('Färbe-Worker', () => {
   });
 
   it('rechnet mehrere Quellen zu einer Kachel zusammen', async () => {
-    vi.stubGlobal('fetch', () =>
-      Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }),
-    );
+    vi.stubGlobal('fetch', () => Promise.resolve(png()));
     // Punkt 1: beide innerhalb. Punkt 2: die zweite Quelle hat keine Daten.
     CanvasDouble.cache = [
       [200, 200, 200, 255, 200, 200, 200, 255],
@@ -182,11 +185,7 @@ describe('Färbe-Worker', () => {
     let call = 0;
     vi.stubGlobal('fetch', () => {
       call += 1;
-      return Promise.resolve(
-        call === 1
-          ? { ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }
-          : { ok: false, arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)) },
-      );
+      return Promise.resolve(call === 1 ? png() : png(false));
     });
     const { combineTile } = await import('./value.worker');
 
@@ -205,9 +204,7 @@ describe('Färbe-Worker', () => {
   });
 
   it('nimmt einen Kombi-Auftrag über die Nachrichten an', async () => {
-    vi.stubGlobal('fetch', () =>
-      Promise.resolve({ ok: true, arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)) }),
-    );
+    vi.stubGlobal('fetch', () => Promise.resolve(png()));
     const { takeJobs } = await import('./value.worker');
     const range = new ScopeDouble();
     takeJobs(range);

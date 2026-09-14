@@ -26,7 +26,12 @@ interface Setup {
 
 async function build(): Promise<Setup> {
   vi.stubGlobal('fetch', () =>
-    Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(RAW_MANIFEST) }),
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: () => Promise.resolve(RAW_MANIFEST),
+    }),
   );
   const map = new MapAdapterDouble();
   const { container, detectChanges } = await render(ObjectSheetComponent, {
