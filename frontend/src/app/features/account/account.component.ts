@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent, CardComponent } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ButtonComponent, CardComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { AuthService, type SignedInUser } from '../../core/auth';
 import { ConfigService } from '../../core/config/config.service';
 import { I18nService, LANGUAGE_CHOICES, type LanguageChoice } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { PwaService } from '../../core/pwa/pwa.service';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -28,6 +29,7 @@ const THEMES: readonly ThemeChoice[] = ['hell', 'dunkel', 'system'];
   selector: 'app-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    BadgeComponent,
     ButtonComponent,
     CardComponent,
     ListRowComponent,
@@ -45,6 +47,10 @@ export class AccountComponent {
   private readonly router = inject(Router);
   private readonly theme = inject(ThemeService);
   private readonly rights = inject(PermissionsService);
+  private readonly pwa = inject(PwaService);
+
+  protected readonly canInstall = this.pwa.canInstall;
+  protected readonly updateReady = this.pwa.updateReady;
 
   protected readonly user = this.auth.user;
   /** Ohne ein Recht der Verwaltung fehlt der Punkt ganz. */
@@ -85,6 +91,10 @@ export class AccountComponent {
   protected readonly themes = computed<SegmentOption[]>(() =>
     THEMES.map((choice) => ({ value: choice, label: this.i18n.translate(`theme.${choice}`) })),
   );
+
+  protected install(): void {
+    void this.pwa.install();
+  }
 
   protected back(): void {
     void this.router.navigateByUrl('/karte');

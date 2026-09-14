@@ -4,6 +4,9 @@
       <app-map class="shell__map" [class.shell__map--lead]="mapInFront()" [surfaceOnly]="!onTheMap()" />
     }
   }
+  @if (offline()) {
+    <app-banner class="shell__banner" kind="offline" />
+  }
   <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'" />
   <main
     class="shell__content"

@@ -1,0 +1,12 @@
+Die Quelle jedes Icons ist icon.svg.
+
+Das Motiv ist ein Pilz in Weiß auf dem Grün --color-primary aus
+src/styles/tokens.scss. Die Gruppe "any" trägt abgerundete Ecken, die Gruppe
+"maskable" füllt die Fläche und hält das Motiv in der sicheren Zone.
+
+So entstehen die PNG-Dateien neu:
+
+1. inkscape icon.svg --export-id=any --export-id-only --export-area-page --export-width=192 --export-height=192 --export-filename=icon-192.png
+2. inkscape icon.svg --export-id=any --export-id-only --export-area-page --export-width=512 --export-height=512 --export-filename=icon-512.png
+3. inkscape icon.svg --export-id=any --export-id-only --export-area-page --export-width=180 --export-height=180 --export-filename=apple-touch-icon.png
+4. inkscape icon.svg --export-id=maskable --export-id-only --export-area=512:0:1024:512 --export-width=512 --export-height=512 --export-filename=icon-maskable-512.png

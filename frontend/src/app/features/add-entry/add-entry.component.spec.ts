@@ -3,39 +3,23 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Queue } from '../../core/offline/queue';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_LIST } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND, MARKER, ZONE } from '../../testing/entries-fixture';
 import { MapAdapterDouble } from '../../testing/map-doubles';
+import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { AddEntryComponent } from './add-entry.component';
 import { AddEntryState } from './add-entry.state';
-
-/** Eine Warteschlange ohne IndexedDB. */
-class QueueStub {
-  readonly stored: string[] = [];
-  eintraege = (): [] => [];
-  put(art: string): Promise<{ id: string }> {
-    this.stored.push(art);
-    return Promise.resolve({ id: 'w-1' });
-  }
-  read(): Promise<[]> {
-    return Promise.resolve([]);
-  }
-  send(): Promise<number> {
-    return Promise.resolve(0);
-  }
-}
 
 interface Setup {
   container: Element;
   flow: AddEntryState;
   map: MapAdapterDouble;
   auth: AuthStub;
-  queue: QueueStub;
+  queue: SyncStub;
   http: HttpTestingController;
   toasts: ToastSpy;
   refresh: () => void;
@@ -44,13 +28,13 @@ interface Setup {
 async function build(): Promise<Setup> {
   const map = new MapAdapterDouble();
   const auth = new AuthStub();
-  const queue = new QueueStub();
+  const queue = new SyncStub();
   const { container, detectChanges } = await render(AddEntryComponent, {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
       { provide: MAP_ADAPTER, useValue: map },
-      { provide: Queue, useValue: queue },
+      ...syncStubProviders(queue),
       ...authStubProviders(auth),
     ],
   });
@@ -260,7 +244,7 @@ describe('EintragenComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     await vi.waitFor(() => {
-      expect(setup.queue.stored).toEqual(['fund']);
+      expect(setup.queue.stored.map((task) => task.kind)).toEqual(['find']);
     });
     expect(setup.toasts.success).toEqual(['Der Fund wartet auf die Übertragung.']);
   });

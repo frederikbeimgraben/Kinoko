@@ -1,0 +1,37 @@
+# Playwright und Lighthouse
+
+## Browser
+
+Playwright-Browser laufen auf NixOS nicht. Setze BROWSER_PATH auf das
+System-Chrome:
+
+    BROWSER_PATH=$(which google-chrome-stable) npm run e2e:flows
+
+Lighthouse liest CHROME_PATH statt BROWSER_PATH.
+
+## Projekte
+
+- `phone` und `desktop` messen die Boards gegen die Baselines in
+  `boards/baseline/`.
+- `flows` prüft die Abläufe aus `artefakte/nfr.md`.
+
+Ein Service Worker fängt Anfragen ab, bevor eine Attrappe greift. Darum
+sperrt `playwright.config.ts` ihn für alle Tests. Der Installationstest
+schaltet ihn mit `test.use({ serviceWorkers: 'allow' })` wieder an.
+
+## Lighthouse: Kategorie PWA
+
+Lighthouse 11 ist gepinnt, weil Lighthouse 12 die Kategorie PWA nicht mehr
+hat.
+
+Die Kategorie PWA ist scharf: `lighthouserc.json` bricht unter 0,9 ab, und
+der Job `fe-lighthouse` läuft ohne `continue-on-error`. Gemessen ergibt die
+Kategorie 1,0 (Manifest installierbar, Splash, Themenfarbe, Viewport,
+maskierbares Icon).
+
+## Lighthouse: Kategorie Leistung
+
+Die Kategorie Leistung warnt bis U12 ab 0,9. Gemessen ergibt sie in der CI
+0,53 und lokal 0,89, derselbe Build ohne dieses Paket ebenfalls 0,89.
+Die Lücke kommt vom Rechner der CI: die Total Blocking Time liegt dort bei
+1 570 ms gegen 140 ms lokal. U12 hebt die Zeile auf `error`.

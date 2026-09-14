@@ -19,6 +19,7 @@ import { AuthService } from '../../core/auth';
 import { CombinationsApi } from '../../core/api/combinations.api';
 import type { Combination } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { VisibilityService } from '../../core/visibility/visibility.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { LocationService } from '../../core/location/location.service';
@@ -164,6 +165,7 @@ export class MapComponent implements OnDestroy {
   private readonly layersService = inject(LayersService);
   private readonly arten = inject(SpeciesState);
   private readonly i18n = inject(I18nService);
+  private readonly visible = inject(VisibilityService).visible;
   private readonly theme = inject(ThemeService);
   private readonly viewport = inject(ViewportService);
   private readonly route = inject(ActivatedRoute);
@@ -399,6 +401,11 @@ export class MapComponent implements OnDestroy {
 
   constructor() {
     this.adapter.warmUp();
+
+    // Im Hintergrund pausiert die Karte: keine Wiedergabe, keine Kachelanfragen.
+    effect(() => {
+      if (!this.visible()) this.stopPlaying();
+    });
 
     this.nimmLinkAn();
 

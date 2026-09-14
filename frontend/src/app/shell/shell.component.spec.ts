@@ -5,6 +5,7 @@ import { render, screen } from '@testing-library/angular';
 import { AuthService } from '../core/auth';
 import { ViewportService } from '../core/layout/viewport.service';
 import { MapRouteComponent } from '../features/map/map-route.component';
+import { SyncStub, syncStubProviders } from '../testing/sync-double';
 import { ManagerDouble, authProvider, oidcUser } from '../testing/auth-double';
 import { mapWithDoubles, answerManifest, type MapAdapterDouble } from '../testing/map-doubles';
 import { noViolations } from '../testing/axe';
@@ -28,13 +29,25 @@ const ROUTES = [
 /** Je Test eine eigene Attrappe, sonst trüge eine Anmeldung in den nächsten. */
 async function shell() {
   const manager = new ManagerDouble();
+  const sync = new SyncStub();
   const result = await render(ShellComponent, {
-    providers: [provideRouter(ROUTES), ...authProvider(manager)],
+    providers: [provideRouter(ROUTES), ...authProvider(manager), ...syncStubProviders(sync)],
   });
-  return { ...result, manager };
+  return { ...result, manager, sync };
 }
 
 describe('ShellComponent', () => {
+  it('meldet auf der Karte, dass kein Netz da ist', async () => {
+    const { navigate, sync, detectChanges } = await shell();
+    await navigate('/karte');
+    expect(screen.queryByText('Offline')).toBeNull();
+
+    sync.online.set(false);
+    detectChanges();
+
+    expect(screen.getByText('Offline')).toBeInTheDocument();
+  });
+
   it('zeigt die drei Reiter und den Avatar über der Karte', async () => {
     const { container, navigate } = await shell();
     await navigate('/karte');

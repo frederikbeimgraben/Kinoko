@@ -1,8 +1,19 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { ApiClient } from '../../core/api/api-client';
+import type { components } from '../../core/api/contract';
+import { OfflineStore } from '../../core/offline/offline-store';
 import { SpeciesApi } from '../../core/api/species.api';
 import { SpeciesImagesApi } from '../../core/api/species-images.api';
 import type { ProblemDetail } from '../../core/api/problem';
 import type { Species, SpeciesBrief, SpeciesCatalogue, SpeciesImage } from '../../core/api/models';
+
+/** Der ganze Katalog in einem Zug, so wie ihn der Vertrag nennt. */
+export type SpeciesBundle = components['schemas']['SpeciesBundle'];
+
+const BUNDLE_PATH = '/species/bundle';
+const BUNDLE_KEY = 'bundle';
+const ETAG_KEY = 'etag';
 
 /**
  * Der Katalog im Speicher. Die Liste hängt an keiner Seite: sie wird einmal
@@ -12,9 +23,12 @@ import type { Species, SpeciesBrief, SpeciesCatalogue, SpeciesImage } from '../.
 @Injectable({ providedIn: 'root' })
 export class SpeciesState {
   private readonly api = inject(SpeciesApi);
+  private readonly client = inject(ApiClient);
+  private readonly offline = inject(OfflineStore);
   private readonly imagesApi = inject(SpeciesImagesApi);
   private readonly running = new Set<string>();
 
+  private readonly _bundle = signal<SpeciesBundle | null>(null);
   private readonly _catalogue = signal<SpeciesCatalogue | null>(null);
   private readonly _profile = signal<ReadonlyMap<string, Species>>(new Map());
   private readonly _unknown = signal<ReadonlySet<string>>(new Set());
@@ -28,6 +42,8 @@ export class SpeciesState {
    * Bis D9 waren es drei: die sammelbaren, die übrigen und beide zusammen. Der
    * Grund war eine Vorgabe im Vertrag, die es nicht mehr gibt.
    */
+  /** Der Katalog vom Gerät. Suche und Filter laufen gegen diesen Bestand. */
+  readonly bundle = this._bundle.asReadonly();
   readonly catalogue = this._catalogue.asReadonly();
   readonly profile = this._profile.asReadonly();
   /** Slugs, die das Backend mit 404 beantwortet hat. */
@@ -59,6 +75,21 @@ export class SpeciesState {
       },
       error: () => this.running.delete(key),
     });
+  }
+
+  /** Zeigt den Katalog vom Gerät und gleicht ihn danach mit ETag ab. */
+  async loadBundle(): Promise<void> {
+    const known = await this.offline.get<SpeciesBundle>('catalog', BUNDLE_KEY);
+    if (known !== null) this._bundle.set(known);
+    const etag = known === null ? null : await this.offline.get<string>('catalog', ETAG_KEY);
+    const answer = await firstValueFrom(
+      this.client.getTagged<SpeciesBundle>(BUNDLE_PATH, etag, { quiet: true }),
+    ).catch(() => null);
+    if (answer === null) return;
+    await this.offline.put('catalog', ETAG_KEY, answer.etag);
+    if (answer.body === null) return;
+    this._bundle.set(answer.body);
+    await this.offline.put('catalog', BUNDLE_KEY, answer.body);
   }
 
   loadCatalogue(): void {

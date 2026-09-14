@@ -6,7 +6,7 @@ import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import type { QueueKind, QueueEntry } from '../../core/offline/queue';
+import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -15,18 +15,18 @@ import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.state';
-import { EntriesState } from './entries.state';
+import { EntriesState, type EntryInput } from './entries.state';
 import { colorHex } from './colors';
 import { hectaresText, isoDatum, shortDate } from './formats';
 
 /** Die vier Chips über der Liste, wie im Artboard `Funde`. */
 type ChipValue = 'funde' | 'marker' | 'zonen' | 'geteilt';
 
-const CHIPS: readonly { value: ChipValue; label: TranslationKey; waiter: QueueKind }[] = [
-  { value: 'funde', label: 'eintraege.chip.funde', waiter: 'fund' },
+const CHIPS: readonly { value: ChipValue; label: TranslationKey; waiter: SyncKind }[] = [
+  { value: 'funde', label: 'eintraege.chip.funde', waiter: 'find' },
   { value: 'marker', label: 'eintraege.chip.marker', waiter: 'marker' },
   { value: 'zonen', label: 'eintraege.chip.zonen', waiter: 'zone' },
-  { value: 'geteilt', label: 'eintraege.chip.geteilt', waiter: 'fund' },
+  { value: 'geteilt', label: 'eintraege.chip.geteilt', waiter: 'find' },
 ];
 
 /** Ein Kennzeichen rechts an der Zeile. */
@@ -94,10 +94,10 @@ export class EntriesComponent {
   protected readonly rows = computed<Row[]>(() => {
     const chip = this.chip();
     if (chip === 'geteilt') return this.state.shared().map((fund) => this.sharedRow(fund));
-    const waiter = CHIPS.find((candidate) => candidate.value === chip)?.waiter ?? 'fund';
+    const waiter = CHIPS.find((candidate) => candidate.value === chip)?.waiter ?? 'find';
     const pending = this.state
       .pendingEntries()
-      .filter((entry) => entry.art === waiter)
+      .filter((entry) => entry.kind === waiter)
       .map((entry) => this.pendingRow(entry));
     if (chip === 'marker') {
       return [...pending, ...this.state.marker().map((entry) => this.markerRow(entry))];
@@ -213,7 +213,7 @@ export class EntriesComponent {
     };
   }
 
-  private pendingRow(entry: QueueEntry): Row {
+  private pendingRow(entry: SyncTask<EntryInput>): Row {
     const body = entry.body;
     const titel = 'artSlug' in body ? this.speciesName(body.artSlug) : body.name;
     const subline =

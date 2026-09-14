@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <g id="motif" fill="#ffffff">
+      <path d="M256 142c-78 0-140 62-140 140 0 10 8 18 18 18h244c10 0 18-8 18-18 0-78-62-140-140-140z" />
+      <path d="M218 320h76l12 62c2 12-12 22-50 22s-52-10-50-22z" />
+      <circle cx="200" cy="232" r="20" fill="#004225" />
+      <circle cx="300" cy="212" r="15" fill="#004225" />
+      <circle cx="266" cy="268" r="12" fill="#004225" />
+    </g>
+  </defs>
+  <g id="any">
+    <rect width="512" height="512" rx="112" fill="#004225" />
+    <use href="#motif" />
+  </g>
+  <g id="maskable" transform="translate(512 0)">
+    <rect width="512" height="512" fill="#004225" />
+    <use href="#motif" transform="translate(256 256) scale(0.78) translate(-256 -256)" />
+  </g>
+</svg>

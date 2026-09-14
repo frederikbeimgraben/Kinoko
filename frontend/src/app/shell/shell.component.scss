@@ -86,3 +86,12 @@
 .shell--column .shell__avatar {
   inset-inline-start: calc(var(--size-column) + 12px);
 }
+
+// Die Leiste liegt über der Karte am oberen Rand, wie im Board MapOffline.
+.shell__banner {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 3;
+  padding-block-start: env(safe-area-inset-top);
+}

@@ -9,7 +9,7 @@ import { WORKSHOP_TEXTS } from './workshop-texts';
 import { ShellComponent } from '../../shell/shell.component';
 import { ManagerDouble, authProvider } from '../../testing/auth-double';
 import { FALLBACK_TEXTS } from './i18n.service';
-import generated from './texts.generated.json';
+import generated from './texts.de.json';
 
 /** Ohne Rückfalltabelle und ohne Katalog trägt die Oberfläche nur Schlüssel. */
 const EMPTY = [
@@ -51,7 +51,7 @@ function leakedTexts(container: Element): string[] {
   const shown = words(container)
     .filter((word) => !KEY.test(word))
     .join(' ');
-  return [...new Set(Object.values(generated.de))].filter(
+  return [...new Set(Object.values(generated))].filter(
     (value) => value.length >= LONG_ENOUGH && shown.includes(value),
   );
 }

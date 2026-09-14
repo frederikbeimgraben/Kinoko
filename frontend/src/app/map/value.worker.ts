@@ -11,6 +11,9 @@ import {
 import { TileCache } from './value-cache';
 import type { ColorizeJob, CombinationJob, PrefetchJob, ValueReply, ValueJob } from './value-messages';
 
+/** Der Name muss zu `core/tiles/tile-cache.ts` passen. */
+const TILE_CACHE = 'primordium-tiles';
+
 /** 16 MB rohe Kacheln sind rund 500 Stück, also mehrere Wochen im Blickfeld. */
 const CACHE_LIMIT = 16 * 1024 * 1024;
 
@@ -45,19 +48,28 @@ function table(schluessel: string, create: () => Uint8ClampedArray): Uint8Clampe
   return lut;
 }
 
-/** Ein Netzfehler ist hier dasselbe wie eine fehlende Kachel: nichts zu zeigen. */
+/** Der Speicher des TileStore führt. Eine fehlende Kachel zeigt nichts. */
 async function get(url: string): Promise<ArrayBuffer | null> {
   const known = cache.get(url);
   if (known !== undefined) return known;
-  let content: ArrayBuffer | null = null;
-  try {
-    const reply = await fetch(url);
-    if (reply.ok) content = await reply.arrayBuffer();
-  } catch {
-    content = null;
-  }
+  const content = await fromStore(url);
   cache.put(url, content);
   return content;
+}
+
+/** Derselbe Speicher wie im Fenster, hier ohne Angular. */
+async function fromStore(url: string): Promise<ArrayBuffer | null> {
+  const store = typeof caches === 'undefined' ? null : caches;
+  try {
+    const stored = await store?.match(url);
+    if (stored) return await stored.arrayBuffer();
+    const reply = await fetch(url);
+    if (!reply.ok) return null;
+    if (store) await (await store.open(TILE_CACHE)).put(url, reply.clone());
+    return await reply.arrayBuffer();
+  } catch {
+    return null;
+  }
 }
 
 /** Holt eine Kachel und packt sie aus. Der rote Kanal trägt das Byte. */

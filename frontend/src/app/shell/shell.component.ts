@@ -9,7 +9,9 @@ import { I18nService } from '../core/i18n/i18n.service';
 // und nicht ueber `ui/index.ts`: das Sammelmodul zieht jeden Baustein in das
 // erste Buendel, auch die Saisonkurve und die Zeitleiste, die hier niemand
 // braucht. Das waren 81 kB.
+import { SyncService } from '../core/offline/sync.service';
 import { AvatarButtonComponent } from '../ui/avatar-button/avatar-button.component';
+import { BannerComponent } from '../ui/banner/banner.component';
 import { NavComponent } from '../ui/nav/nav.component';
 import { MapComponent } from '../features/map/map.component';
 import { MapState } from '../features/map/map.state';
@@ -28,7 +30,7 @@ import { AddEntryState } from '../features/add-entry/add-entry.state';
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarButtonComponent, NavComponent, MapComponent, RouterOutlet],
+  imports: [AvatarButtonComponent, BannerComponent, NavComponent, MapComponent, RouterOutlet],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
@@ -39,6 +41,7 @@ export class ShellComponent {
   private readonly auth = inject(AuthService);
   private readonly map = inject(MapState);
   private readonly addEntry = inject(AddEntryState);
+  private readonly sync = inject(SyncService);
 
   private readonly adresse = toSignal(
     this.router.events.pipe(
@@ -54,6 +57,9 @@ export class ShellComponent {
   protected readonly active = computed(() => `/${this.adresse().split(/[?#/]/)[1] || 'karte'}`);
 
   protected readonly onTheMap = computed(() => this.active() === '/karte');
+
+  /** Die Leiste steht über der Karte. Jeder Reiter meldet es selbst. */
+  protected readonly offline = computed(() => !this.sync.online() && this.onTheMap());
 
   /**
    * Die Verwaltung trägt am Rechner ihre eigenen zwei Spalten und braucht dafür

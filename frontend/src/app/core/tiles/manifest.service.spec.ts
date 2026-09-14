@@ -24,7 +24,7 @@ describe('ManifestDienst', () => {
     vi.stubGlobal('fetch', fetcher);
     const service = TestBed.inject(ManifestService);
 
-    await expect(service.get('gibtesnicht')).rejects.toThrow('404');
+    await expect(service.get('gibtesnicht')).rejects.toThrow('Manifest gibtesnicht fehlt');
 
     fetcher.mockResolvedValue(reply({ top: 1 }));
     await expect(service.get('gibtesnicht')).resolves.toBeDefined();

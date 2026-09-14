@@ -24,7 +24,7 @@ describe('EbenenDienst', () => {
     vi.stubGlobal('fetch', fetcher);
     const service = TestBed.inject(LayersService);
 
-    await expect(service.get()).rejects.toThrow('404');
+    await expect(service.get()).rejects.toThrow('Ebenen fehlen');
 
     fetcher.mockResolvedValue(reply({ layers: {} }));
     await expect(service.get()).resolves.toBeDefined();

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
@@ -7,6 +8,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { CONFIG, ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
 import { noViolations } from '../../testing/axe';
+import { PwaService } from '../../core/pwa/pwa.service';
 import { AccountComponent } from './account.component';
 import type { AppConfig } from '../../core/config/config.service';
 
@@ -32,7 +34,32 @@ async function build(signedIn = false, configuration: AppConfig | null = CONFIG)
   return { container, auth, manager, router: TestBed.inject(Router), refresh: detectChanges };
 }
 
+/** Ein Browser, der die Installation anbietet und eine Fassung bereithält. */
+function pwaProvider(): { provide: unknown; useValue: unknown } {
+  const ready = signal(true);
+  return {
+    provide: PwaService,
+    useValue: { canInstall: ready, updateReady: ready, install: () => Promise.resolve(true) },
+  };
+}
+
 describe('KontoComponent', () => {
+  it('bietet die Installation an und nennt die bereitstehende Fassung', async () => {
+    await render(AccountComponent, {
+      providers: [provideRouter([]), ...authProvider(new ManagerDouble()), pwaProvider()],
+    });
+
+    expect(screen.getByText('Als App installieren')).toBeInTheDocument();
+    expect(screen.getByText('Aktualisierung bereit')).toBeInTheDocument();
+  });
+
+  it('zeigt die Zeile zum Installieren nicht, wenn der Browser nicht fragt', async () => {
+    await build();
+
+    expect(screen.queryByText('Als App installieren')).toBeNull();
+    expect(screen.queryByText('Aktualisierung bereit')).toBeNull();
+  });
+
   it('zeigt ohne Anmeldung den Weg zum SSO', async () => {
     const { container, manager } = await build();
 
@@ -77,11 +104,14 @@ describe('KontoComponent', () => {
     const i18n = TestBed.inject(I18nService);
 
     await userEvent.click(screen.getByRole('tab', { name: 'English' }));
+    // Der englische Rückfall kommt als eigener Brocken, darum das Warten.
+    await vi.waitFor(() => {
+      expect(document.documentElement).toHaveAttribute('lang', 'en');
+    });
     refresh();
 
     expect(i18n.choice()).toBe('en');
     expect(localStorage.getItem('pilzkarte.sprache')).toBe('en');
-    expect(document.documentElement).toHaveAttribute('lang', 'en');
     expect(screen.getByRole('tab', { name: 'English' })).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -95,13 +125,9 @@ describe('KontoComponent', () => {
     expect(i18n.choice()).toBe('system');
   });
 
-  it('zeigt Offline und Über mit den Werten, die heute feststehen', async () => {
+  it('zeigt Über mit den Werten, die heute feststehen', async () => {
     await build();
 
-    for (const titel of ['Offline-Gebiete', 'Ausstehende Übertragungen']) {
-      expect(screen.getByText(titel)).toBeInTheDocument();
-    }
-    expect(screen.getAllByText('0')).toHaveLength(2);
     expect(screen.getByText('Methode')).toBeInTheDocument();
     expect(screen.getByText('Quellen und Lizenzen')).toBeInTheDocument();
     expect(screen.getByText('2026-09-09')).toBeInTheDocument();

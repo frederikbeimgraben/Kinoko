@@ -255,9 +255,8 @@ jobs:
         run: npm ci
       - working-directory: frontend
         run: npm run build
-      # Kategorie PWA braucht U4, Kategorie Leistung braucht U12.
+      # Kategorie PWA ist scharf. Kategorie Leistung warnt, bis U12 sie hebt.
       - name: Lighthouse
-        continue-on-error: true
         working-directory: frontend
         run: npm run lighthouse
       - if: always()

@@ -53,6 +53,19 @@
     </section>
   }
 
+  @if (canInstall()) {
+    <section class="account__block">
+      <div class="account__list">
+        <app-list-row
+          [title]="'konto.installieren' | t"
+          [clickable]="true"
+          [chevron]="true"
+          (chosen)="install()"
+        />
+      </div>
+    </section>
+  }
+
   @if (canAdminister()) {
     <section class="account__block">
       <h2 class="account__section">{{ 'konto.verwaltung' | t }}</h2>
@@ -63,19 +76,15 @@
   }
 
   <section class="account__block">
-    <h2 class="account__section">{{ 'konto.abschnitt.offline' | t }}</h2>
-    <div class="account__list">
-      <app-list-row [title]="'konto.offlineGebiete' | t" value="0" />
-      <app-list-row [title]="'konto.ausstehend' | t" value="0" />
-    </div>
-  </section>
-
-  <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.ueber' | t }}</h2>
     <div class="account__list">
       <app-list-row [title]="'konto.methode' | t" />
       <app-list-row [title]="'konto.quellen' | t" />
-      <app-list-row [title]="'konto.version' | t" [value]="version()" />
+      <app-list-row [title]="'konto.version' | t" [value]="version()">
+        @if (updateReady()) {
+          <app-badge trail variant="success">{{ 'konto.aktualisierungBereit' | t }}</app-badge>
+        }
+      </app-list-row>
     </div>
   </section>
 </div>

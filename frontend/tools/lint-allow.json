@@ -429,7 +429,6 @@
   "size": [
     "src/app/core/api/contract.d.ts",
     "src/app/core/api/models/species.ts",
-    "src/app/core/i18n/translations.ts",
     "src/app/features/add-entry/add-entry.component.html",
     "src/app/features/add-entry/add-entry.component.ts",
     "src/app/features/map/map.component.html",
