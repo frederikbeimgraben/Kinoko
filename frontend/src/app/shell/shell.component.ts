@@ -16,6 +16,9 @@ import { MapState } from '../features/map/map.state';
 import { AddEntryState } from '../features/add-entry/add-entry.state';
 import { SyncService } from '../core/offline/sync.service';
 
+/** Reiter, die am Rechner ihre eigenen Spalten mitbringen. */
+const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
+
 /**
  * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.
  *
@@ -64,7 +67,7 @@ export class ShellComponent {
    * Die Verwaltung trägt am Rechner ihre eigenen zwei Spalten und braucht dafür
    * die ganze Fläche, nicht nur die linke.
    */
-  protected readonly fullWidth = computed(() => this.active() === '/verwaltung');
+  protected readonly fullWidth = computed(() => FULL_WIDTH.includes(this.active()));
 
   /** Die Werkstatt ist kein Reiter. Eine Leiste darunter gehört nicht zu ihr. */
   protected readonly bare = computed(() => this.active() === '/bausteine');

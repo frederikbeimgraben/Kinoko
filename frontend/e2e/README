@@ -50,3 +50,16 @@ eingeklappt, 470 bei halb, 300 bei voll, 900 am Rechner.
 
 Die Boards stehen noch in `pending.json`. Die Abweichung liegt bei 2 bis
 9 %, die Toleranz bei 0,5 %. Was noch fehlt, steht im PR.
+
+## Arten-Boards
+
+Die vierzehn Boards der Seite `species` haben je einen Test in
+`boards/species.spec.ts`. Jeder Test legt seinen eigenen Katalog auf:
+`fixtures/species.ts` baut eine Art nach dem Vertrag, `fixtures/species-boards.ts`
+hält die Daten der einzelnen Boards, und `fixtures/species-catalogue.ts` baut
+den Katalog mit 306 Arten, dessen Zahlen zu den Brettern des Filters passen.
+`fixtures/filter-state.ts` legt die Filterwahl in den Speicher, bevor die Seite
+startet.
+
+Die Zeilen tragen keine Bilder: das Bündel nennt `leadPhotoId`, und
+`app-species-row` zeigt den Platzhalter aus den Hutfarben der Art.

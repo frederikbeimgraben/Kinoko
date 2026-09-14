@@ -1,5 +1,7 @@
 :host {
   display: block;
+  box-sizing: border-box;
+  block-size: var(--size-row-tall);
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
@@ -12,8 +14,8 @@
   align-items: center;
   gap: var(--space-3);
   inline-size: 100%;
-  min-block-size: var(--size-row-tall);
-  padding-inline: var(--size-gutter);
+  block-size: 100%;
+  padding-inline: 14px;
   font: inherit;
   color: inherit;
   text-align: start;
@@ -28,41 +30,41 @@
 
 .row__names {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 2px;
-  min-inline-size: 0;
+  min-inline-size: 128px;
 }
 
 .row__name {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-  font-size: var(--fs-md);
-  font-weight: var(--fw-semibold);
-  line-height: var(--lh-tight);
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: var(--fw-medium);
+  line-height: normal;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row__latin {
-  min-inline-size: 0;
-  overflow-wrap: anywhere;
-  font-size: var(--fs-sm);
+  overflow: hidden;
+  font-size: 12.5px;
   font-style: italic;
-  line-height: var(--lh-tight);
+  line-height: normal;
   color: var(--color-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-// Der Speisewert steht als eigenes Feld neben dem Namen.
-// Keine Fläche maskiert ihn bei Platzmangel.
-.row__level {
-  flex: none;
-}
-
-.row__trail {
-  flex: none;
-}
-
-.row__trail:empty {
-  display: none;
+// Die Plakette läuft am rechten Rand aus, statt umzubrechen.
+.row__marks {
+  display: flex;
+  flex: 0 1 auto;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding-inline-end: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  mask-image: linear-gradient(90deg, #000 calc(100% - 14px), transparent);
 }
 
 .row__image {

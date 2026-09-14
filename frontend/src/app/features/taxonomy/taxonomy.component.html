@@ -1,91 +1,40 @@
-@if (viewport(); as viewport) {
-  <app-page-header [title]="viewport.name" [back]="true" (backClick)="back()" />
-  <div class="taxonomy">
-    <div class="taxonomy__head">
-      <p class="note note--sub">{{ viewport.rank }}</p>
-      @if (viewport.latin; as latin) {
-        <p class="note note--sub note--italic">{{ latin }}</p>
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+<div class="taxonomy">
+  @if (unknown()) {
+    <app-empty-state [text]="'species.notFound' | t" />
+  } @else if (page()) {
+    <p class="taxonomy__trail">
+      @for (step of trail(); track step; let last = $last) {
+        <span>{{ step }}</span>
+        @if (!last) {
+          <i>{{ arrow }}</i>
+        }
       }
-      @if (viewport.countText; as count) {
-        <p class="note note--sub">{{ count }}</p>
-      }
-    </div>
-
-    @if (viewport.description; as description) {
-      <p class="note">{{ description }}</p>
+    </p>
+    @if (children().length > 0) {
+      <section>
+        <h2 class="taxonomy__title">{{ childrenTitle() }}</h2>
+        <div class="taxonomy__card">
+          @for (child of children(); track child.route) {
+            <app-list-row
+              [title]="child.name"
+              [value]="child.count"
+              [clickable]="true"
+              (chosen)="toStep(child.route)"
+            />
+          }
+        </div>
+      </section>
     }
-
-    <section>
-      <h2 class="taxonomy__section">{{ 'taxonomie.abschnitt.pfad' | t }}</h2>
-      @if (viewport.path.length) {
-        <app-card class="flush">
-          <app-key-value-table>
-            @for (step of viewport.path; track step.route) {
-              <app-key-value-row
-                [key]="step.name"
-                [route]="step.route"
-                [hint]="step.rank"
-                [value]="step.latin ?? ''"
-              />
-            }
-          </app-key-value-table>
-        </app-card>
-      } @else {
-        <p class="info-text">{{ 'taxonomie.wurzel' | t }}</p>
-      }
-    </section>
-
-    <section>
-      <h2 class="taxonomy__section">{{ 'taxonomie.abschnitt.geschwister' | t }}</h2>
-      @if (viewport.siblings.length) {
-        <app-card class="flush">
-          @for (step of viewport.siblings; track step.route) {
-            <app-list-row
-              [title]="step.name"
-              [subline]="step.latin ?? undefined"
-              [clickable]="true"
-              (chosen)="toStep(step.route)"
-            />
+    @if (species().length > 0) {
+      <section>
+        <h2 class="taxonomy__title">{{ speciesTitle() }}</h2>
+        <div class="taxonomy__card">
+          @for (row of species(); track row.slug) {
+            <app-species-row [species]="row.species" (chosen)="toSpecies(row.slug)" />
           }
-        </app-card>
-      } @else {
-        <p class="info-text">{{ 'taxonomie.keineGeschwister' | t }}</p>
-      }
-    </section>
-
-    <section>
-      <h2 class="taxonomy__section">{{ 'taxonomie.abschnitt.kinder' | t }}</h2>
-      @if (viewport.children.length) {
-        <app-card class="flush">
-          @for (step of viewport.children; track step.route) {
-            <app-list-row
-              [title]="step.name"
-              [subline]="step.latin ?? undefined"
-              [value]="step.count ?? undefined"
-              [clickable]="true"
-              (chosen)="toStep(step.route)"
-            />
-          }
-        </app-card>
-      } @else {
-        <p class="info-text">{{ 'taxonomie.keineKinder' | t }}</p>
-      }
-    </section>
-
-    <section>
-      <h2 class="taxonomy__section">{{ 'taxonomie.abschnitt.arten' | t }}</h2>
-      @if (viewport.species.length) {
-        <app-card class="flush">
-          @for (art of viewport.species; track art.slug) {
-            <app-species-row [species]="art.species" (chosen)="toSpecies(art.slug)" />
-          }
-        </app-card>
-      } @else {
-        <p class="info-text">{{ 'taxonomie.keineArten' | t }}</p>
-      }
-    </section>
-  </div>
-} @else if (unknown()) {
-  <app-page-header [title]="'taxonomie.titel' | t" [back]="true" (backClick)="back()" />
-  <app-empty-state [text]="'taxonomie.nichtGefunden' | t" />
-}
+        </div>
+      </section>
+    }
+  }
+</div>

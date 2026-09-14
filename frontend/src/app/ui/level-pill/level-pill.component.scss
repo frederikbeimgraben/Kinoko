@@ -13,7 +13,7 @@
   border-radius: var(--radius-pill);
   // Fläche und Schrift teilen sich dieselbe Farbe: Text kräftig, Fläche blass
   // vor der Fläche der App, damit 4,5:1 hält, gleich welche Farbe kommt.
-  background: color-mix(in srgb, var(--pilz-level-colour) 14%, var(--color-surface));
+  background: var(--pilz-level-area, color-mix(in srgb, var(--pilz-level-colour) 14%, var(--color-surface)));
   color: var(--pilz-level-colour);
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);

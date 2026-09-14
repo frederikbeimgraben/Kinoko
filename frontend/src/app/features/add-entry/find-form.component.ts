@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckboxComponent, ToastService } from '@stupa-makers/ui-kit';
-import type { SpeciesBrief, Find, FindInput, Visibility } from '../../core/api/models';
+import type { SpeciesEntry, Find, FindInput, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -92,12 +92,9 @@ export class FindFormComponent {
     () => this.trainingChoice() ?? this.start()?.fuerTraining ?? false,
   );
 
-  /**
-   * Die Vorgabe ist die Art der Karte. Der Katalog kennt sie unter ihrem
-   * eigenen Slug; die Karte kennt nur den Slug ihrer Kacheln.
-   */
-  protected readonly selectedSpecies = computed<SpeciesBrief | null>(() => {
-    const alle = this.arten.catalogue()?.arten ?? [];
+  /** Die Vorgabe ist die Art der Karte. */
+  protected readonly selectedSpecies = computed<SpeciesEntry | null>(() => {
+    const alle = this.arten.species();
     const selected = this.artSlug() ?? this.start()?.artSlug ?? null;
     if (selected !== null) return alle.find((art) => art.slug === selected) ?? null;
     const chosen = this.map.species();
@@ -107,7 +104,7 @@ export class FindFormComponent {
   protected readonly speciesName = computed(() => this.selectedSpecies()?.name ?? '');
 
   protected readonly pickerSpecies = computed(() =>
-    (this.arten.catalogue()?.arten ?? []).map((art) => speciesPickerEntry(art, this.i18n)),
+    this.arten.species().map((art) => speciesPickerEntry(art, this.i18n)),
   );
 
   protected readonly locationLine = computed(() => {
@@ -117,7 +114,7 @@ export class FindFormComponent {
   });
 
   constructor() {
-    this.arten.loadCatalogue();
+    void this.arten.loadBundle();
   }
 
   protected selectSpecies(slug: string): void {

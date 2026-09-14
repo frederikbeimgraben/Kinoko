@@ -1,0 +1,84 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+.results__list {
+  flex: 1;
+  min-block-size: 0;
+}
+
+.results__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-gutter);
+}
+
+.results__card {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.results__card--muted {
+  opacity: 0.62;
+}
+
+.results__skeleton {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  block-size: var(--size-row-tall);
+  padding-inline: 14px;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.results__bars {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.results__thumb {
+  flex: none;
+  inline-size: var(--size-thumb);
+  block-size: var(--size-thumb);
+  background: var(--color-surface-sunken);
+  border-radius: var(--pilz-colour-radius);
+}
+
+.results__skeleton:last-child {
+  border-block-end: 0;
+}
+
+.results__gap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 2px 6px;
+}
+
+.results__gap span {
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.results__gap i {
+  flex: 1;
+  block-size: 1px;
+  background: var(--color-border);
+}
+
+// Das Brett zentriert Leer- und Fehlerzustand über der ganzen Höhe des
+// Geräts, auch über dem Streifen der Navigationsleiste.
+app-empty-state,
+app-error-state {
+  margin-block-end: calc(var(--size-nav) * -1);
+}

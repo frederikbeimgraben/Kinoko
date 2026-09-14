@@ -59,9 +59,9 @@ describe('authInterceptor', () => {
   it('lässt eine Anfrage ohne Anmeldung unberührt', () => {
     const setup = build();
 
-    setup.http.get('/api/arten').subscribe();
+    setup.http.get('/api/species/bundle').subscribe();
 
-    const request = setup.control.expectOne('/api/arten');
+    const request = setup.control.expectOne('/api/species/bundle');
     expect(request.request.headers.has('Authorization')).toBe(false);
     request.flush([]);
   });

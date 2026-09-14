@@ -1,385 +1,24 @@
-import type { BadgeVariant } from '@stupa-makers/ui-kit';
 import type {
-  Einheit,
-  Essbarkeit,
-  Fruchtschichtart,
-  Hutform,
-  Hutmerkmal,
-  Hutrandmerkmal,
-  Stielmerkmal,
-  Lamellenansatz,
-  Lamellenschneide,
-  Lamellenstand,
-  Gefaehrdung,
-  Haeufigkeit,
-  FeatureKey,
-  Reagenz,
-  Level,
-  Schutzstufe,
-  Tag,
-  Wechseldauer,
+  BodyPart,
+  CapShape,
+  Dimension,
+  Edibility,
+  HymeniumType,
+  Protection,
 } from '../../core/api/models';
-import type { components } from '../../core/api/contract';
 import type { TranslationKey } from '../../core/i18n/translations';
+import type { GroupKey } from './facets';
 
-/** Der Speisewert, wie ihn der Vertrag nennt. */
-export type Edibility = components['schemas']['Edibility'];
-
-/**
- * Der Text zu jedem Enum-Wert des Katalogs. Als vollständige Zuordnung: fehlt
- * ein Wert, meldet es die Typprüfung und nicht erst eine leere Zeile im
- * Katalog.
- */
-export const TAG_TEXT: Record<Tag, TranslationKey> = {
-  vorhersage: 'art.tag.vorhersage',
-  saison: 'art.tag.saison',
-  profil: 'art.tag.profil',
-  roehrling: 'art.tag.roehrling',
-  raufussroehrling: 'art.tag.raufussroehrling',
-  schmierroehrling: 'art.tag.schmierroehrling',
-  leistling: 'art.tag.leistling',
-  stoppelpilz: 'art.tag.stoppelpilz',
-  milchling: 'art.tag.milchling',
-  taeubling: 'art.tag.taeubling',
-  schirmling: 'art.tag.schirmling',
-  champignon: 'art.tag.champignon',
-  tintling: 'art.tag.tintling',
-  staeubling: 'art.tag.staeubling',
-  trichterling: 'art.tag.trichterling',
-  roetelritterling: 'art.tag.roetelritterling',
-  hallimasch: 'art.tag.hallimasch',
-  schueppling: 'art.tag.schueppling',
-  ruebling: 'art.tag.ruebling',
-  schleimruebling: 'art.tag.schleimruebling',
-  seitling: 'art.tag.seitling',
-  stachelbart: 'art.tag.stachelbart',
-  porling: 'art.tag.porling',
-  glucke: 'art.tag.glucke',
-  ritterling: 'art.tag.ritterling',
-  schwindling: 'art.tag.schwindling',
-  schneckling: 'art.tag.schneckling',
-  wulstling: 'art.tag.wulstling',
-  morchel: 'art.tag.morchel',
-  ohrlappenpilz: 'art.tag.ohrlappenpilz',
-  gelbfuss: 'art.tag.gelbfuss',
-  schleierling: 'art.tag.schleierling',
-  rasling: 'art.tag.rasling',
-  roetling: 'art.tag.roetling',
-  stachelpilz: 'art.tag.stachelpilz',
-  becherling: 'art.tag.becherling',
-  fruehling: 'art.tag.fruehling',
-  sommer: 'art.tag.sommer',
-  herbst: 'art.tag.herbst',
-  winter: 'art.tag.winter',
-  fichte: 'art.tag.fichte',
-  kiefer: 'art.tag.kiefer',
-  tanne: 'art.tag.tanne',
-  laerche: 'art.tag.laerche',
-  douglasie: 'art.tag.douglasie',
-  buche: 'art.tag.buche',
-  eiche: 'art.tag.eiche',
-  birke: 'art.tag.birke',
-  erle: 'art.tag.erle',
-  robinie: 'art.tag.robinie',
-  eibe: 'art.tag.eibe',
-  goldregen: 'art.tag.goldregen',
-  heidelbeere: 'art.tag.heidelbeere',
-  steineiche: 'art.tag.steineiche',
-  hainbuche: 'art.tag.hainbuche',
-  hasel: 'art.tag.hasel',
-  pappel: 'art.tag.pappel',
-  weide: 'art.tag.weide',
-  linde: 'art.tag.linde',
-  esche: 'art.tag.esche',
-  ulme: 'art.tag.ulme',
-  ahorn: 'art.tag.ahorn',
-  kastanie: 'art.tag.kastanie',
-  holunder: 'art.tag.holunder',
-  obstbaum: 'art.tag.obstbaum',
+/** Plakettenfarbe und Fläche je Speisewert. */
+export const EDIBILITY_TONE: Record<Edibility, { colour: string; background: string }> = {
+  edible: { colour: '#4f9d6f', background: '#16291f' },
+  conditionally_edible: { colour: '#9db44f', background: '#20291a' },
+  inedible: { colour: '#95a09a', background: '#1d2420' },
+  poisonous: { colour: '#d2915f', background: '#2a2119' },
+  deadly: { colour: '#d2685f', background: '#2a1a19' },
 };
 
-export const FEATURE_TEXT: Record<FeatureKey, TranslationKey> = {
-  fruchtkoerper: 'art.merkmal.fruchtkoerper',
-  hut: 'art.merkmal.hut',
-  roehren: 'art.merkmal.roehren',
-  lamellen: 'art.merkmal.lamellen',
-  leisten: 'art.merkmal.leisten',
-  stacheln: 'art.merkmal.stacheln',
-  poren: 'art.merkmal.poren',
-  milch: 'art.merkmal.milch',
-  stiel: 'art.merkmal.stiel',
-  fleisch: 'art.merkmal.fleisch',
-  geruch: 'art.merkmal.geruch',
-  geschmack: 'art.merkmal.geschmack',
-  sporenpulver: 'art.merkmal.sporenpulver',
-  reagenzien: 'art.merkmal.reagenzien',
-  vorkommen: 'art.merkmal.vorkommen',
-  zeit: 'art.merkmal.zeit',
-  speisewert: 'art.merkmal.speisewert',
-  schutz: 'art.merkmal.schutz',
-};
-
-export const EDIBILITY_TEXT: Record<Essbarkeit, TranslationKey> = {
-  essbar: 'art.essbar.essbar',
-  bedingtEssbar: 'art.essbar.bedingtEssbar',
-  ungeniessbar: 'art.essbar.ungeniessbar',
-  giftig: 'art.essbar.giftig',
-  toedlichGiftig: 'art.essbar.toedlichGiftig',
-};
-
-/** Grün, was in die Pfanne darf; rot, was schadet; grau der Rest. */
-export const EDIBILITY_BADGE: Record<Essbarkeit, BadgeVariant> = {
-  essbar: 'success',
-  bedingtEssbar: 'warning',
-  ungeniessbar: 'warning',
-  giftig: 'danger',
-  toedlichGiftig: 'danger',
-};
-
-/**
- * Wie gefährlich die Stufe ist, tödlich zuerst. Der Chip mit den nicht
- * sammelbaren Arten stellt sie danach auf: wer dort nachschlägt, sucht die
- * Gefahr und nicht das Alphabet.
- */
-export const EDIBILITY_DANGER: Record<Essbarkeit, number> = {
-  toedlichGiftig: 0,
-  giftig: 1,
-  ungeniessbar: 2,
-  bedingtEssbar: 3,
-  essbar: 4,
-};
-
-/** Die drei Stufen der Mockups: Vorhersage primär, Saison info, Profil neutral. */
-export const LEVEL_BADGE: Record<Level, BadgeVariant> = {
-  vorhersage: 'primary',
-  saison: 'info',
-  profil: 'neutral',
-};
-
-/**
- * Die Reihenfolge der Artenliste. Oben steht, wozu die App am meisten sagen
- * kann; innerhalb einer Stufe entscheidet der Name.
- */
-export const LEVEL_RANK: Record<Level, number> = {
-  vorhersage: 0,
-  saison: 1,
-  profil: 2,
-};
-
-export const HAEUFIGKEIT_TEXT: Record<Haeufigkeit, TranslationKey> = {
-  sehrHaeufig: 'art.haeufigkeit.sehrHaeufig',
-  haeufig: 'art.haeufigkeit.haeufig',
-  zerstreut: 'art.haeufigkeit.zerstreut',
-  selten: 'art.haeufigkeit.selten',
-  sehrSelten: 'art.haeufigkeit.sehrSelten',
-};
-
-export const GEFAEHRDUNG_TEXT: Record<Gefaehrdung, TranslationKey> = {
-  vomAussterbenBedroht: 'art.gefaehrdung.vomAussterbenBedroht',
-  starkGefaehrdet: 'art.gefaehrdung.starkGefaehrdet',
-  gefaehrdet: 'art.gefaehrdung.gefaehrdet',
-  unbekanntesAusmass: 'art.gefaehrdung.unbekanntesAusmass',
-  extremSelten: 'art.gefaehrdung.extremSelten',
-  vorwarnliste: 'art.gefaehrdung.vorwarnliste',
-  datenUnzureichend: 'art.gefaehrdung.datenUnzureichend',
-};
-
-export const REAGENZ_TEXT: Record<Reagenz, TranslationKey> = {
-  koh: 'art.reagenz.koh',
-  naoh: 'art.reagenz.naoh',
-  feso4: 'art.reagenz.feso4',
-  guajak: 'art.reagenz.guajak',
-  melzer: 'art.reagenz.melzer',
-  anilin: 'art.reagenz.anilin',
-  phenol: 'art.reagenz.phenol',
-  ammoniak: 'art.reagenz.ammoniak',
-  sulfovanillin: 'art.reagenz.sulfovanillin',
-  formalin: 'art.reagenz.formalin',
-  fecl3: 'art.reagenz.fecl3',
-  wieland: 'art.reagenz.wieland',
-  schaeffer: 'art.reagenz.schaeffer',
-};
-
-/** Die Stufen, die eine Zeile der Liste rot markiert. */
-export const GEFAEHRLICH: readonly Essbarkeit[] = ['giftig', 'toedlichGiftig'];
-
-/** Was der Sammler nicht in die Pfanne tun darf. Die Artseite warnt dafür groß. */
-export const WARNUNG_TEXT: Partial<Record<Essbarkeit, TranslationKey>> = {
-  giftig: 'art.warnung.giftig',
-  toedlichGiftig: 'art.warnung.toedlich',
-};
-
-/**
- * Die Farbe je Stufe der Essbarkeit. Sie trägt die Warnung, darum steht sie
- * hier als Wert und nicht als Rolle des Kits: das Kit kennt fünf Rollen und
- * müsste „giftig“ und „tödlich giftig“ dieselbe geben.
- */
-export const EDIBILITY_COLOUR: Record<Essbarkeit, string> = {
-  essbar: '#4f9d6f',
-  bedingtEssbar: '#9db44f',
-  ungeniessbar: '#95a09a',
-  giftig: '#d2915f',
-  toedlichGiftig: '#d2685f',
-};
-
-/**
- * Die Farbe der Schutzstufe, im Ton der Speisewert-Farben.
- *
- * Sie sagt dasselbe wie die Marke vorher: grau, wo nichts gilt, grün, wo mit
- * Maß gesammelt werden darf, rot, wo es verboten ist.
- */
-export const PROTECTION_COLOUR: Record<Schutzstufe, string> = {
-  keiner: '#95a09a',
-  besondersGeschuetzt: '#4f9d6f',
-  strengGeschuetzt: '#d2685f',
-};
-
-/**
- * Der Handel ist gedämpft. Ob eine Art auf der Positivliste steht, ist eine
- * Auskunft und keine Warnung; eine eigene Farbe je Fall behauptete ein Urteil.
- */
-export const TRADE_COLOUR = '#95a09a';
-
-export const PROTECTION_TEXT: Record<Schutzstufe, TranslationKey> = {
-  keiner: 'art.schutz.keiner',
-  besondersGeschuetzt: 'art.schutz.besonders',
-  strengGeschuetzt: 'art.schutz.streng',
-};
-
-/**
- * Das kurze Wort für die Artenliste. Dort steht kein Platz für „für den
- * Eigenbedarf“, und die Zeile soll nur sagen, dass die Art unter Schutz steht.
- */
-export const PROTECTION_SHORT: Record<Schutzstufe, TranslationKey> = {
-  keiner: 'art.schutz.keiner',
-  besondersGeschuetzt: 'arten.geschuetzt',
-  strengGeschuetzt: 'art.schutz.streng',
-};
-
-/** Nur der Schutz warnt; „nicht geschützt“ ist keine Nachricht. */
-export const PROTECTION_BADGE: Record<Schutzstufe, BadgeVariant> = {
-  keiner: 'neutral',
-  besondersGeschuetzt: 'success',
-  strengGeschuetzt: 'danger',
-};
-
-export const UNIT_TEXT: Record<Einheit, TranslationKey> = {
-  cm: 'art.einheit.cm',
-  mm: 'art.einheit.mm',
-  um: 'art.einheit.um',
-};
-
-export const CHANGE_SPEED_TEXT: Record<Wechseldauer, TranslationKey> = {
-  schnell: 'art.verfaerbung.schnell',
-  langsam: 'art.verfaerbung.langsam',
-};
-
-/** Die vier Marken der Jahresbahn. Sie stehen auf Januar, April, Juli, Oktober. */
-export const YEAR_MARKS: readonly TranslationKey[] = [
-  'art.monat.jan',
-  'art.monat.apr',
-  'art.monat.jul',
-  'art.monat.okt',
-];
-
-/** Die zwölf Monate ausgeschrieben, für den Satz über der Bahn. */
-export const MONTH_NAMES: readonly TranslationKey[] = [
-  'art.monat.januar',
-  'art.monat.februar',
-  'art.monat.maerz',
-  'art.monat.april',
-  'art.monat.mai',
-  'art.monat.juni',
-  'art.monat.juli',
-  'art.monat.august',
-  'art.monat.september',
-  'art.monat.oktober',
-  'art.monat.november',
-  'art.monat.dezember',
-];
-
-export const HYMENOPHORE_TEXT: Record<Fruchtschichtart, TranslationKey> = {
-  lamellen: 'art.fruchtschicht.lamellen',
-  roehren: 'art.fruchtschicht.roehren',
-  poren: 'art.fruchtschicht.poren',
-  stacheln: 'art.fruchtschicht.stacheln',
-  leisten: 'art.fruchtschicht.leisten',
-};
-
-export const ATTACHMENT_TEXT: Record<Lamellenansatz, TranslationKey> = {
-  frei: 'art.ansatz.frei',
-  angewachsen: 'art.ansatz.angewachsen',
-  ausgebuchtet: 'art.ansatz.ausgebuchtet',
-  herablaufend: 'art.ansatz.herablaufend',
-};
-
-export const SPACING_TEXT: Record<Lamellenstand, TranslationKey> = {
-  eng: 'art.stand.eng',
-  normal: 'art.stand.normal',
-  weit: 'art.stand.weit',
-};
-
-export const EDGE_TEXT: Record<Lamellenschneide, TranslationKey> = {
-  glatt: 'art.schneide.glatt',
-  gesaegt: 'art.schneide.gesaegt',
-  bewimpert: 'art.schneide.bewimpert',
-};
-
-export const CAP_SHAPE_TEXT: Record<Hutform, TranslationKey> = {
-  halbkugelig: 'art.hutform.halbkugelig',
-  gewoelbt: 'art.hutform.gewoelbt',
-  flach: 'art.hutform.flach',
-  niedergedrueckt: 'art.hutform.niedergedrueckt',
-  trichterfoermig: 'art.hutform.trichterfoermig',
-  kegelig: 'art.hutform.kegelig',
-  glockig: 'art.hutform.glockig',
-  eifoermig: 'art.hutform.eifoermig',
-  kugelig: 'art.hutform.kugelig',
-  muschelfoermig: 'art.hutform.muschelfoermig',
-  birnenfoermig: 'art.hutform.birnenfoermig',
-  keulig: 'art.hutform.keulig',
-  zylindrisch: 'art.hutform.zylindrisch',
-};
-
-export const CAP_FEATURE_TEXT: Record<Hutmerkmal, TranslationKey> = {
-  gebuckelt: 'art.hutmerkmal.gebuckelt',
-  hygrophan: 'art.hutmerkmal.hygrophan',
-  gezont: 'art.hutmerkmal.gezont',
-  vertieft: 'art.hutmerkmal.vertieft',
-  unregelmaessig: 'art.hutmerkmal.unregelmaessig',
-  genabelt: 'art.hutmerkmal.genabelt',
-};
-
-export const CAP_MARGIN_TEXT: Record<Hutrandmerkmal, TranslationKey> = {
-  eingerollt: 'art.hutrand.eingerollt',
-  wellig: 'art.hutrand.wellig',
-  gerieft: 'art.hutrand.gerieft',
-  gerissen: 'art.hutrand.gerissen',
-  fransig: 'art.hutrand.fransig',
-  eingebogen: 'art.hutrand.eingebogen',
-  ueberstehend: 'art.hutrand.ueberstehend',
-  scharf: 'art.hutrand.scharf',
-  hoeckerig: 'art.hutrand.hoeckerig',
-};
-
-export const STEM_FEATURE_TEXT: Record<Stielmerkmal, TranslationKey> = {
-  ring: 'art.stielmerkmal.ring',
-  knolle: 'art.stielmerkmal.knolle',
-  hohl: 'art.stielmerkmal.hohl',
-  faserig: 'art.stielmerkmal.faserig',
-  beflockt: 'art.stielmerkmal.beflockt',
-  voll: 'art.stielmerkmal.voll',
-  genattert: 'art.stielmerkmal.genattert',
-  genetzt: 'art.stielmerkmal.genetzt',
-  behaart: 'art.stielmerkmal.behaart',
-  wurzelnd: 'art.stielmerkmal.wurzelnd',
-  gerieft: 'art.stielmerkmal.gerieft',
-  scheide: 'art.stielmerkmal.scheide',
-  bruechig: 'art.stielmerkmal.bruechig',
-};
-
-/** Der Speisewert des Vertrags als Textschlüssel. */
-export const EDIBILITY_KEY: Record<Edibility, TranslationKey> = {
+export const EDIBILITY_TEXT: Record<Edibility, TranslationKey> = {
   edible: 'enum.edibility.edible',
   conditionally_edible: 'enum.edibility.conditionally_edible',
   inedible: 'enum.edibility.inedible',
@@ -387,20 +26,136 @@ export const EDIBILITY_KEY: Record<Edibility, TranslationKey> = {
   deadly: 'enum.edibility.deadly',
 };
 
-/** Die zwei Töne des Bildplatzhalters je Art, dunkel nach hell. */
-export const SPECIES_TINT: Record<string, readonly [string, string]> = {
-  'boletus-edulis': ['#7a5230', '#c9a877'],
-  'cantharellus-cibarius': ['#d9a441', '#e8c86a'],
-  'imleria-badia': ['#8a4e2b', '#4a3220'],
-  'hydnum-repandum': ['#e2c79a', '#c9a877'],
-  'morchella-esculenta': ['#6b5a3a', '#b89a6a'],
+export const PROTECTION_TEXT: Record<Protection, TranslationKey> = {
+  none: 'enum.protection.none',
+  personal_use: 'enum.protection.personal_use',
+  strict: 'enum.protection.strict',
 };
 
-/** Grün, was in die Pfanne darf; rot, was schadet; grau der Rest. */
-export const EDIBILITY_TONE: Record<Edibility, string> = {
-  edible: '#4f9d6f',
-  conditionally_edible: '#9db44f',
-  inedible: '#95a09a',
-  poisonous: '#d2915f',
-  deadly: '#d2685f',
+export const HYMENIUM_TEXT: Record<HymeniumType, TranslationKey> = {
+  gills: 'enum.hymenium.gills',
+  tubes: 'enum.hymenium.tubes',
+  pores: 'enum.hymenium.pores',
+  spines: 'enum.hymenium.spines',
+  folds: 'enum.hymenium.folds',
+};
+
+export const CAP_SHAPE_TEXT: Record<CapShape, TranslationKey> = {
+  convex: 'enum.cap_shape.convex',
+  flat: 'enum.cap_shape.flat',
+  hemispherical: 'enum.cap_shape.hemispherical',
+  depressed: 'enum.cap_shape.depressed',
+  funnel: 'enum.cap_shape.funnel',
+  conical: 'enum.cap_shape.conical',
+  bell: 'enum.cap_shape.bell',
+  egg: 'enum.cap_shape.egg',
+  spherical: 'enum.cap_shape.spherical',
+  shell: 'enum.cap_shape.shell',
+  pear: 'enum.cap_shape.pear',
+  club: 'enum.cap_shape.club',
+  cylindrical: 'enum.cap_shape.cylindrical',
+};
+
+export const PART_TEXT: Record<BodyPart, TranslationKey> = {
+  fruitbody: 'species.field.fruitbody',
+  cap: 'species.field.cap',
+  stem: 'species.field.stem',
+  gills: 'species.field.gills',
+  flesh: 'species.field.flesh',
+  spore_print: 'species.field.sporePrint',
+  spore: 'species.field.spore',
+  tubes: 'species.field.tubes',
+  pores: 'species.field.pores',
+};
+
+export const DIMENSION_TEXT: Record<Dimension, TranslationKey> = {
+  width: 'enum.dimension.width',
+  height: 'enum.dimension.height',
+  thickness: 'enum.dimension.thickness',
+  length: 'enum.dimension.length',
+};
+
+export const GROUP_TEXT: Record<GroupKey, TranslationKey> = {
+  edibility: 'species.field.edibility',
+  hymenium: 'species.section.hymenium',
+  capShape: 'filter.group.hutform',
+  colour: 'filter.colour.title',
+  size: 'species.section.sizes',
+  period: 'filter.group.period',
+  senses: 'filter.group.senses',
+  treePartner: 'filter.group.treePartner',
+  genusFamily: 'filter.group.genusFamily',
+  protection: 'species.field.protection',
+  forecast: 'filter.group.forecast',
+};
+
+/** Die Körperteile mit eigener Farbwahl, in der Reihenfolge des Bretts. */
+export const COLOUR_PARTS: readonly BodyPart[] = ['cap', 'stem', 'gills', 'flesh', 'spore_print'];
+
+export const MONTH_TEXT: readonly TranslationKey[] = [
+  'enum.month.1',
+  'enum.month.2',
+  'enum.month.3',
+  'enum.month.4',
+  'enum.month.5',
+  'enum.month.6',
+  'enum.month.7',
+  'enum.month.8',
+  'enum.month.9',
+  'enum.month.10',
+  'enum.month.11',
+  'enum.month.12',
+];
+
+/** Der Schlüssel einer Standardfarbe im Katalog. */
+export const COLOUR_TEXT: Record<string, TranslationKey> = {
+  white: 'enum.colour.white',
+  cream: 'enum.colour.cream',
+  yellow: 'enum.colour.yellow',
+  orange: 'enum.colour.orange',
+  redBrown: 'enum.colour.redBrown',
+  brown: 'enum.colour.brown',
+  darkBrown: 'enum.colour.darkBrown',
+  olive: 'enum.colour.olive',
+  green: 'enum.colour.green',
+  red: 'enum.colour.red',
+  violet: 'enum.colour.violet',
+  grey: 'enum.colour.grey',
+};
+
+/** Der Name der Gruppe, die eine Art einordnet. */
+export const GROUP_NAME_TEXT: Record<string, TranslationKey> = {
+  bolete: 'enum.group.bolete',
+  rough_stemmed_bolete: 'enum.group.rough_stemmed_bolete',
+  slippery_jack: 'enum.group.slippery_jack',
+  chanterelle: 'enum.group.chanterelle',
+  hedgehog: 'enum.group.hedgehog',
+  milkcap: 'enum.group.milkcap',
+  brittlegill: 'enum.group.brittlegill',
+  parasol: 'enum.group.parasol',
+  agaricus: 'enum.group.agaricus',
+  inkcap: 'enum.group.inkcap',
+  puffball: 'enum.group.puffball',
+  funnel: 'enum.group.funnel',
+  blewit: 'enum.group.blewit',
+  honey_fungus: 'enum.group.honey_fungus',
+  scalycap: 'enum.group.scalycap',
+  toughshank: 'enum.group.toughshank',
+  porcelain: 'enum.group.porcelain',
+  oyster: 'enum.group.oyster',
+  lions_mane: 'enum.group.lions_mane',
+  polypore: 'enum.group.polypore',
+  cauliflower: 'enum.group.cauliflower',
+  knight: 'enum.group.knight',
+  parachute: 'enum.group.parachute',
+  woodwax: 'enum.group.woodwax',
+  amanita: 'enum.group.amanita',
+  morel: 'enum.group.morel',
+  jelly_ear: 'enum.group.jelly_ear',
+  spike: 'enum.group.spike',
+  webcap: 'enum.group.webcap',
+  domecap: 'enum.group.domecap',
+  pinkgill: 'enum.group.pinkgill',
+  spine_fungus: 'enum.group.spine_fungus',
+  cup_fungus: 'enum.group.cup_fungus',
 };

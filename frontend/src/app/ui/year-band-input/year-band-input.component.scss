@@ -2,6 +2,7 @@
   display: block;
   --year-band-lane: 28px;
   --year-band-track: 14px;
+  --year-band-radius: 6px;
   --year-band-handle: 24px;
 }
 
@@ -15,7 +16,7 @@
   position: absolute;
   inset-block-start: calc((var(--year-band-lane) - var(--year-band-track)) / 2);
   block-size: var(--year-band-track);
-  border-radius: var(--radius-sm);
+  border-radius: var(--year-band-radius);
 }
 
 .yearband__track {
@@ -63,8 +64,8 @@
 
 .yearband__marks {
   display: flex;
-  margin-block-start: var(--space-1);
-  font-size: var(--fs-xs);
+  margin-block-start: 5px;
+  font-size: 10px;
   color: var(--color-text-muted);
 }
 

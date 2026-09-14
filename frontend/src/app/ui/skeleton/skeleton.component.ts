@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal, type OnDestroy } from '@angular/core';
 
-export type SkeletonKind = 'row' | 'tile' | 'card' | 'block' | 'grid';
+export type SkeletonKind = 'row' | 'tile' | 'card' | 'block' | 'grid' | 'line';
 
 const DELAY_MS = 300;
 
@@ -15,6 +15,9 @@ const DELAY_MS = 300;
 export class SkeletonComponent implements OnDestroy {
   readonly kind = input<SkeletonKind>('row');
   readonly count = input(1);
+  /** Freie Breite und Höhe eines Balkens, wo eine Zeile ihr eigenes Maß hat. */
+  readonly width = input<string>();
+  readonly height = input<string>();
 
   protected readonly visible = signal(false);
   protected readonly bars = computed(() =>

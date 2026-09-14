@@ -13,7 +13,7 @@ import { NOW } from '../../core/tiles/now';
 import { barShares, currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
-import { EDIBILITY_KEY, EDIBILITY_TONE, SPECIES_TINT } from '../species/labels';
+import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesState } from '../entries/entries.state';
 import { SpeciesState } from '../species/species.state';
 import { CombinationState } from './combination.state';
@@ -104,15 +104,16 @@ export class MapView {
 
   /** Nur Arten mit Vorhersage bietet die Karte zur Wahl. */
   readonly speciesChoices = computed<readonly SpeciesPickerEntry[]>(() =>
-    (this.catalogue.bundle()?.items ?? [])
+    this.catalogue
+      .species()
       .filter((species) => species.forecastEnabled)
       .map((species) => ({
         value: species.slug,
         name: species.name,
         latin: species.scientificName,
-        levelText: this.i18n.translate(EDIBILITY_KEY[species.edibility]),
-        levelColour: EDIBILITY_TONE[species.edibility],
-        tint: SPECIES_TINT[species.slug],
+        levelText: this.i18n.translate(EDIBILITY_TEXT[species.edibility]),
+        levelColour: EDIBILITY_TONE[species.edibility].colour,
+        levelBackground: EDIBILITY_TONE[species.edibility].background,
       })),
   );
 

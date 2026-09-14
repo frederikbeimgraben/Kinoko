@@ -1,0 +1,13 @@
+<app-filter-sheet
+  [open]="filter.open()"
+  [title]="title()"
+  [back]="filter.group() !== null"
+  [resetEnabled]="resettable()"
+  [primaryLabel]="primaryLabel()"
+  (backClick)="filter.showGroup(null)"
+  (resetClick)="filter.clearAll()"
+  (primaryClick)="filter.closeSheet()"
+  (closed)="filter.closeSheet()"
+>
+  <app-species-filter-panel />
+</app-filter-sheet>

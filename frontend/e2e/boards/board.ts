@@ -19,17 +19,22 @@ export function skipPending(board: string): void {
   test.skip(pendingStems().has(board), `${board} steht in pending.json`);
 }
 
+/** Ein Board, dessen Seite noch lädt, wartet nicht auf Ruhe im Netz. */
+export interface BoardOptions {
+  idle?: boolean;
+}
+
 /**
  * Vergleicht die Ansicht mit `baseline/<board>.png`, Toleranz 0,5 % Pixel.
  * Ein Board aus `pending.json` läuft nicht. Das Board läuft sonst nur in
  * dem Projekt, dessen Fenster zum Bild passt.
  */
-export async function expectBoard(page: Page, board: string): Promise<void> {
+export async function expectBoard(page: Page, board: string, options: BoardOptions = {}): Promise<void> {
   test.skip(pendingStems().has(board), `${board} steht in pending.json`);
   const image = size(join(test.info().config.rootDir, 'boards/baseline', `${board}.png`));
   const viewport = page.viewportSize();
   const fits = viewport?.width === image.width && viewport.height === image.height;
   test.skip(!fits, `${board} gehört zu ${image.width}×${image.height}`);
-  await page.waitForLoadState('networkidle');
+  if (options.idle ?? true) await page.waitForLoadState('networkidle');
   await expect(page).toHaveScreenshot(`${board}.png`);
 }

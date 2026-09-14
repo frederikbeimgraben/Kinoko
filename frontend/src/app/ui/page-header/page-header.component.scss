@@ -3,7 +3,7 @@
   align-items: center;
   gap: var(--space-3);
   block-size: var(--size-header);
-  padding-inline: var(--space-5);
+  padding-inline: 20px;
   background: var(--color-surface);
   border-block-end: var(--border-width) solid var(--color-border);
 }
@@ -22,6 +22,7 @@
 
 .pageheader__title {
   overflow: hidden;
+  line-height: normal;
   font-size: var(--fs-xl);
   font-weight: var(--fw-semibold);
   white-space: nowrap;
@@ -34,4 +35,14 @@
 
 .pageheader__actions:empty {
   display: none;
+}
+
+.pageheader--compact {
+  block-size: 56px;
+  padding-inline: var(--size-gutter);
+  background: var(--color-bg);
+}
+
+.pageheader--compact .pageheader__title {
+  font-size: 19px;
 }

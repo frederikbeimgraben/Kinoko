@@ -26,7 +26,8 @@
 .year__marks {
   display: flex;
   margin-block-start: 5px;
-  font-size: var(--fs-xs);
+  font-size: 10px;
+  line-height: normal;
   color: var(--color-text-muted);
 }
 

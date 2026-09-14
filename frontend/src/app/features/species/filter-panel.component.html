@@ -1,0 +1,27 @@
+@switch (filter.group()) {
+  @case (null) {
+    @for (card of cards(); track $index) {
+      <div class="panel__card">
+        @for (row of card; track row.key) {
+          <app-list-row
+            [title]="row.label"
+            [value]="row.value"
+            [accent]="true"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="filter.showGroup(row.key)"
+          />
+        }
+      </div>
+    }
+  }
+  @case ('colour') {
+    <app-species-colour />
+  }
+  @case ('size') {
+    <app-species-size />
+  }
+  @default {
+    <app-species-group [group]="filter.group()!" />
+  }
+}

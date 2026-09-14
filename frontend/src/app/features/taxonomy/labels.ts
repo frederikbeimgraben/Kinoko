@@ -1,14 +1,26 @@
-import type { TaxonRank } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
+import type { TaxonRank } from '../../core/api/models';
 
-/**
- * Der Name eines Rangs in der Oberfläche. Als vollständige Zuordnung: fehlt ein
- * Wert, meldet es die Typprüfung und nicht erst eine leere Zeile im Katalog.
- */
 export const RANK_TEXT: Record<TaxonRank, TranslationKey> = {
-  abteilung: 'taxonomie.rang.abteilung',
-  klasse: 'taxonomie.rang.klasse',
-  ordnung: 'taxonomie.rang.ordnung',
-  familie: 'taxonomie.rang.familie',
-  gattung: 'taxonomie.rang.gattung',
+  division: 'species.taxonomy.division',
+  class: 'species.taxonomy.class',
+  order: 'species.taxonomy.order',
+  family: 'species.taxonomy.family',
+  genus: 'species.taxonomy.genus',
+};
+
+export const CHILDREN_TEXT: Record<TaxonRank, TranslationKey> = {
+  division: 'species.taxonomy.children.division',
+  class: 'species.taxonomy.children.class',
+  order: 'species.taxonomy.children.order',
+  family: 'species.taxonomy.children.family',
+  genus: 'species.taxonomy.children.genus',
+};
+
+export const SPECIES_OF_TEXT: Record<TaxonRank, TranslationKey> = {
+  division: 'species.taxonomy.speciesOf.division',
+  class: 'species.taxonomy.speciesOf.class',
+  order: 'species.taxonomy.speciesOf.order',
+  family: 'species.taxonomy.speciesOf.family',
+  genus: 'species.taxonomy.speciesOf.genus',
 };

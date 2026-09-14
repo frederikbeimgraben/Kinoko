@@ -3,34 +3,45 @@
   flex-direction: column;
   block-size: 100%;
   overflow: hidden;
-  background: var(--color-bg);
 }
 
-// Der Inhalt scrollt, die Kopfleiste bleibt stehen. Maße wie auf der Artseite,
-// aus `docs/mockups/bauen.py`, Klasse `.scroll`.
 .taxonomy {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 20px;
+  min-block-size: 0;
   padding: 20px var(--size-gutter);
   overflow-y: auto;
-  scrollbar-width: none;
 }
 
-.taxonomy__head {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-block-start: -4px;
+.taxonomy__trail {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: normal;
+  color: var(--color-text-muted);
 }
 
-// Die Abschnittsüberschrift der Mockups, Klasse `.h2`.
-.taxonomy__section {
+.taxonomy__trail i {
+  font-style: normal;
+  color: var(--color-border-strong);
+}
+
+.taxonomy__title {
   margin: 0 0 10px;
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
-  letter-spacing: 0.08em;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.taxonomy__card {
+  --pilz-row-inline: var(--size-gutter);
+
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }

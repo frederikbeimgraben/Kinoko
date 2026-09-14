@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { imageSubmission } from '../../testing/species-images-fixture';
 import type { ImageSubmission } from '../../core/api/models';
 import { AdminImagesComponent } from './images.component';
@@ -34,7 +34,9 @@ async function build(entries: ImageSubmission[] = [OPEN], total?: number): Promi
     providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(ANY_ROUTE)],
   });
   const http = TestBed.inject(HttpTestingController);
-  http.expectOne('/api/arten').flush(SPECIES_LIST);
+  await vi.waitFor(() => {
+    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+  });
   http
     .expectOne('/api/species-images/submissions?state=submitted&offset=0&limit=25')
     .flush({ eintraege: entries, gesamt: total ?? entries.length, limit: 25, offset: 0 });

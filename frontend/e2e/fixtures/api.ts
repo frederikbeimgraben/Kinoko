@@ -5,17 +5,8 @@ const REPLIES: Record<string, unknown> = {
   '/api/config': { oidcIssuer: '', oidcClientId: '', origin: '', version: 'e2e' },
   '/api/texts': { revision: 'e2e', locales: ['de', 'en'], entries: [] },
   '/api/me/permissions': { permissions: [], roles: [] },
-  '/api/arten/merkmale': { arten: 0, gruppen: [] },
-  '/api/species/bundle': { items: [], standardColours: [], facets: { species: 0, groups: [] } },
-  '/api/arten': {
-    stand: { jahr: 2026, woche: 37 },
-    jahre: { von: 2015, bis: 2026 },
-    begehungen: 0,
-    begehungenJeWocheAlleJahre: [],
-    begehungenJeWocheLaufendesJahr: [],
-    arten: [],
-    unbeurteilbar: [],
-  },
+  '/api/species/bundle': { items: [] },
+  '/api/terms': { items: [] },
 };
 
 /** Ein Bild aus vier Brauntönen. Ohne Bild meldet der Abruf einen Fehler. */

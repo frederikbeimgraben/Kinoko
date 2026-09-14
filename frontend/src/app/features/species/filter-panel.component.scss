@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-gutter);
+}
+
+// Die Gruppenzeile im Filter steht höher als eine gewöhnliche Listenzeile.
+.panel__card {
+  --size-row: 60px;
+  --pilz-row-title-weight: var(--fw-medium);
+
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}

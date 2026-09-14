@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CheckboxComponent } from '@stupa-makers/ui-kit';
-
-let nextNumber = 0;
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Wert im Filter: Kästchen, Name und die Zahl der treffenden Arten. */
 @Component({
   selector: 'app-choice-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CheckboxComponent, FormsModule],
+  imports: [SvgIconComponent],
   templateUrl: './choice-row.component.html',
   styleUrl: './choice-row.component.scss',
 })
@@ -19,5 +16,7 @@ export class ChoiceRowComponent {
 
   readonly toggled = output<boolean>();
 
-  protected readonly fieldId = `app-choice-row-${nextNumber++}`;
+  protected onChange(event: Event): void {
+    this.toggled.emit((event.target as HTMLInputElement).checked);
+  }
 }

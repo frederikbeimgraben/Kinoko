@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
@@ -29,7 +29,9 @@ async function build(start: Find | null = null): Promise<Setup> {
     providers: [provideHttpClient(), provideHttpClientTesting()],
   });
   TestBed.inject(MapState).species.set('steinpilz');
-  TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
+  await vi.waitFor(() => {
+    TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+  });
   detectChanges();
   const submissions: FindSubmission[] = [];
   let cancels = 0;
@@ -170,7 +172,9 @@ describe('FundFormularComponent', () => {
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     TestBed.inject(MapState).species.set('steinpilz');
-    TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    });
 
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-06');
     expect(screen.getByLabelText('Anzahl')).toHaveValue(3);
@@ -192,7 +196,9 @@ describe('FundFormularComponent', () => {
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     TestBed.inject(MapState).species.set('steinpilz');
-    TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    });
 
     expect(screen.getByLabelText('Anzahl')).toHaveValue(null);
   });
@@ -206,9 +212,9 @@ describe('FundFormularComponent', () => {
       },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    TestBed.inject(HttpTestingController)
-      .expectOne('/api/arten')
-      .flush({ ...SPECIES_LIST, arten: [] });
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush({ items: [] });
+    });
     detectChanges();
     const submissions: FindSubmission[] = [];
     fixture.componentInstance.submitted.subscribe((submission) => submissions.push(submission));

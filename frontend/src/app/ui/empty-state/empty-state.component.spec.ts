@@ -11,7 +11,7 @@ describe('EmptyStateComponent', () => {
     });
 
     expect(screen.getByText('Keine Art passt zur Suche.')).toBeInTheDocument();
-    expect(container.querySelector('.empty__image svg')).not.toBeNull();
+    expect(container.querySelector('.empty__badge svg')).not.toBeNull();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     await noViolations(container);
   });
@@ -21,7 +21,7 @@ describe('EmptyStateComponent', () => {
       inputs: { text: 'Noch kein Fund.', icon: 'entries' },
     });
 
-    expect(container.querySelector('.empty__image')).not.toBeNull();
+    expect(container.querySelector('.empty__badge')).not.toBeNull();
   });
 
   it('stellt Bild, Satz und Handlung in dieser Reihenfolge', async () => {
@@ -30,32 +30,39 @@ describe('EmptyStateComponent', () => {
     });
 
     // `querySelectorAll` gibt die Reihenfolge im Baum zurück.
-    const order = [...container.querySelectorAll('.empty__image, .empty__text, .empty__button')].map((part) =>
+    const order = [...container.querySelectorAll('.empty__badge, .empty__text, .empty__button')].map((part) =>
       part.className.split(' ').find((cssClass) => cssClass.startsWith('empty__')),
     );
-    expect(order).toEqual(['empty__image', 'empty__text', 'empty__button']);
+    expect(order).toEqual(['empty__badge', 'empty__text', 'empty__button']);
   });
 
-  it('trägt die Fläche einer Karte', async () => {
-    const { fixture } = await render(EmptyStateComponent, {
+  it('setzt das Bild in ein rundes Abzeichen von 56 px', async () => {
+    const { container } = await render(EmptyStateComponent, {
       inputs: { text: 'Für diese Art gibt es noch kein Bild.' },
     });
 
-    const host = getComputedStyle(fixture.nativeElement as Element);
-    expect(host.background).toContain('var(--color-surface)');
-    expect(host.borderRadius).toBe('var(--radius-lg)');
+    const badge = container.querySelector('.empty__badge');
+    if (badge === null) throw new Error('Das Abzeichen steht nicht im Baum.');
+    const style = getComputedStyle(badge);
+    expect(style.getPropertyValue('inline-size')).toBe('56px');
+    expect(style.getPropertyValue('block-size')).toBe('56px');
+    expect(style.borderRadius).toBe('50%');
   });
 
-  it('führt mit einem Knopf hinaus', async () => {
-    const { fixture } = await render(EmptyStateComponent, {
+  it('führt mit einem eigenen Knopf hinaus, nicht mit dem des Kits', async () => {
+    const { container, fixture } = await render(EmptyStateComponent, {
       inputs: { text: 'Eigene Einträge stehen im Konto.', action: 'Anmelden' },
     });
     let calls = 0;
     fixture.componentInstance.actionClick.subscribe(() => (calls += 1));
+    const button = screen.getByRole('button', { name: 'Anmelden' });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
+    await userEvent.click(button);
 
     expect(calls).toBe(1);
+    expect(container.querySelector('app-button')).toBeNull();
+    expect(button).toHaveClass('empty__button', 'tap');
+    expect(button).toHaveAttribute('data-press', 'scale');
   });
 
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {

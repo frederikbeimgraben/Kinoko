@@ -1,16 +1,16 @@
 :host {
   display: inline-flex;
-  --filter-chip-height: 32px;
+  flex: none;
 }
 
 .filterchip {
   display: inline-flex;
   flex: none;
+  gap: 7px;
   align-items: center;
-  gap: var(--space-2);
-  block-size: var(--filter-chip-height);
-  padding-inline: var(--space-3) var(--space-2);
-  font-size: var(--fs-sm);
+  block-size: 32px;
+  padding-inline: 12px 8px;
+  font-size: 13px;
   font-weight: var(--fw-semibold);
   color: var(--color-primary);
   white-space: nowrap;

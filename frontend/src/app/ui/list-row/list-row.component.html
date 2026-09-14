@@ -7,7 +7,7 @@
     }
   </span>
   @if (value()) {
-    <span class="row__value">{{ value() }}</span>
+    <span class="row__value" [class.row__value--accent]="accent()">{{ value() }}</span>
   }
   <span class="row__trail"><ng-content select="[trail]" /></span>
   @if (chevron()) {

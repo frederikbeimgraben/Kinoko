@@ -14,6 +14,8 @@ export class ListRowComponent {
   readonly title = input.required<string>();
   readonly subline = input<string>();
   readonly value = input<string>();
+  /** Ein Wert, der die Wahl einer Gruppe nennt, steht in der Primärfarbe. */
+  readonly accent = input(false);
   readonly chevron = input(false);
   readonly clickable = input(false);
   /** Eine gewählte Zeile meldet sich als gedrückt. */

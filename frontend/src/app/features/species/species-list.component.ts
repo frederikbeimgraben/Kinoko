@@ -1,61 +1,38 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  viewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { CardComponent } from '@stupa-makers/ui-kit';
-import type { FacetKey, SpeciesBrief } from '../../core/api/models';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
-import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { SpeciesRowComponent, type SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
+import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { FACET_TEXT } from './facet-labels';
+import { countUnknown, isActive, judge, type GroupKey } from './facets';
+import { chipsOf, type FilterChip } from './chips';
+import { GROUP_TEXT } from './labels';
+import { COLUMN_CARDS } from './filter-groups';
+import { SpeciesFilterPanelComponent } from './filter-panel.component';
+import { SpeciesFilterSheetComponent } from './filter-sheet.component';
 import { SpeciesFilterState } from './filter.state';
-import { SpeciesState } from './species.state';
-import { EDIBILITY_COLOUR, EDIBILITY_TEXT, LEVEL_RANK } from './labels';
+import { SpeciesDetailComponent } from './species-detail.component';
+import { SpeciesResultsComponent } from './species-results.component';
+import { SpeciesState, type CatalogueEntry } from './species.state';
+import { search } from './rows';
 
-/** Eine abnehmbare Marke über der Liste: sie zeigt eine Gruppe, die filtert. */
-interface Mark {
-  key: FacetKey;
-  text: string;
-  label: string;
-}
+const PAGE = 40;
 
-/** Eine Zeile der Liste, fertig für die Vorlage. */
-interface Row {
-  slug: string;
-  active: boolean;
-  species: SpeciesRowSpecies;
-}
-
-/**
- * Der Reiter Arten: Suche, Chips und die Liste mit dem Titelbild. Die Kurve
- * steht seit D10 nur noch auf der Artseite: auf 86 Pixeln liest sie niemand
- * ab. Der
- * Katalog kommt einmal vom Server; Suche und Chips filtern im Speicher, weil
- * 85 Arten keine Anfrage je Tastendruck wert sind.
- *
- * Die Liste steht nach Stufe, innerhalb nach Namen. So stehen unter „alle“ die
- * 23 Arten mit Vorhersage oben, statt zwischen 62 Profilen verstreut. Die
- * aktive Art bleibt an ihrem Platz, sonst spränge die Liste beim Auswählen.
- */
+/** Der Reiter Arten: Suche, Filter und die Liste aus dem lokalen Katalog. */
 @Component({
-  selector: 'app-species',
+  selector: 'app-species-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CardComponent,
-    EmptyStateComponent,
-    FormFieldComponent,
+    FilterChipComponent,
     PageHeaderComponent,
-    SpeciesRowComponent,
+    SearchFieldComponent,
+    SpeciesDetailComponent,
+    SpeciesFilterPanelComponent,
+    SpeciesFilterSheetComponent,
+    SpeciesResultsComponent,
     SvgIconComponent,
     TranslatePipe,
   ],
@@ -63,119 +40,110 @@ interface Row {
   styleUrl: './species-list.component.scss',
 })
 export class SpeciesListComponent {
-  private readonly state = inject(SpeciesState);
-  private readonly filter = inject(SpeciesFilterState);
+  protected readonly state = inject(SpeciesState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly rowRefs = viewChildren(SpeciesRowComponent);
+  private readonly viewport = inject(ViewportService);
+  protected readonly filter = inject(SpeciesFilterState);
 
-  protected readonly search = signal('');
+  protected readonly query = signal('');
+  protected readonly shown = signal(PAGE);
+  private readonly picked = signal<string | null>(null);
 
-  /**
-   * Die Marken über der Liste zeigen den Zustand, sie stellen ihn nicht ein.
-   * Eingestellt wird im Blatt; sonst wären es wieder Pillen, nur mit mehr
-   * Schritten. Passen sie nicht in eine Zeile, folgt „+2“ statt eines Umbruchs.
-   */
-  protected readonly marks = computed<Mark[]>(() =>
-    [...this.filter.values().keys()].map((key) => ({
-      key,
-      text: this.i18n.translate(FACET_TEXT[key]),
-      label: this.i18n.translate('filter.marke.entfernen', {
-        gruppe: this.i18n.translate(FACET_TEXT[key]),
-      }),
-    })),
-  );
+  protected readonly wide = this.viewport.wide;
+  protected readonly loading = this.state.loading;
+  protected readonly failed = this.state.failed;
 
-  protected readonly rows = computed<Row[]>(() => this.build(this.grundmenge()));
-
-  /**
-   * Die Arten, die an keiner Bedingung scheitern, sondern nur daran, dass die
-   * Quelle zu einem gewählten Merkmal nichts sagt. Sie fallen nicht still
-   * heraus: sie stehen abgesetzt unter den Treffern.
-   */
-  protected readonly unassessable = computed<Row[]>(() =>
-    this.build(this.state.filtered()?.unbeurteilbar ?? []),
-  );
-
-  protected readonly gapText = computed<string | null>(() => {
-    const count = this.unassessable().length;
-    if (!count) return null;
-    return this.i18n.translate('arten.nichtBeurteilbar', { anzahl: String(count) });
+  private readonly judged = computed(() => {
+    const selection = this.filter.selection();
+    const hits: CatalogueEntry[] = [];
+    const unknown: CatalogueEntry[] = [];
+    for (const one of search(this.state.entries(), this.query())) {
+      const verdict = judge(one.facts, selection);
+      if (verdict === 'hit') hits.push(one);
+      else if (verdict === 'unknown') unknown.push(one);
+    }
+    return { hits, unknown };
   });
 
-  /**
-   * Wie viele Arten die Liste gerade zeigt. Ohne diese Zeile wirkte ein Chip
-   * wie tot: die Liste steht nach Stufe, die ersten Zeilen bleiben dieselben,
-   * und dass aus 85 Arten 23 wurden, sieht man erst nach langem Scrollen.
-   */
-  /** Was der Server unter dem Filter liefert. Ohne Filter der ganze Katalog. */
-  protected readonly grundmenge = computed<readonly SpeciesBrief[]>(() => this.state.filtered()?.arten ?? []);
+  protected readonly hits = computed(() => this.judged().hits.slice(0, this.shown()));
+  protected readonly unassessable = computed(() => this.judged().unknown);
+  protected readonly hasMore = computed(() => this.judged().hits.length > this.shown());
 
-  protected readonly countText = computed(() => {
-    const gesamt = this.grundmenge().length;
-    const filtered = this.rows().length;
-    return filtered === gesamt
-      ? this.i18n.translate('arten.anzahlAlle', { gesamt })
-      : this.i18n.translate('arten.anzahlGefiltert', { gefiltert: filtered, gesamt });
+  /** Die Zahl im Kopf nennt, wie viele Arten der Katalog führt. */
+  protected readonly countText = computed(() =>
+    this.loading() || this.failed() ? '' : String(this.state.species().length),
+  );
+
+  protected readonly filtered = computed(() => isActive(this.filter.selection()));
+
+  /** Die Marken über der Liste; was keine Marke trägt, zählt daneben. */
+  protected readonly chips = computed<readonly FilterChip[]>(() =>
+    chipsOf(this.filter.selection(), this.state.entries(), this.i18n),
+  );
+
+  protected readonly extra = computed(() => this.filter.selection().sizes.size);
+
+  protected readonly columnCards = COLUMN_CARDS;
+
+  /** Die Zeile über der Trefferliste am Rechner: Zahl und die größte Lücke. */
+  protected readonly summary = computed(() => {
+    const count = this.i18n.translate('filter.countSpecies', {
+      anzahl: String(this.judged().hits.length),
+    });
+    const gap = this.largestGap();
+    if (gap === null) return count;
+    const text = this.i18n.translate('filter.withoutValue', {
+      anzahl: String(gap.count),
+      gruppe: this.i18n.translate(GROUP_TEXT[gap.key]),
+    });
+    return `${count} \u00b7 ${text}`;
   });
+
+  /** Die Marken stehen nur über der ungesuchten Liste, wie im Brett. */
+  protected readonly showsMarks = computed(
+    () => !this.loading() && !this.failed() && this.query().trim() === '',
+  );
+
+  protected readonly chosen = computed(() => this.picked() ?? this.hits().at(0)?.species.slug ?? null);
 
   constructor() {
+    void this.state.loadBundle();
     effect(() => {
-      this.state.loadFiltered(this.filter.query());
+      this.query();
+      this.filter.selection();
+      this.shown.set(PAGE);
     });
   }
 
-  protected openFilter(): void {
-    void this.router.navigate(['/arten/filter']);
-  }
-
-  protected drop(key: FacetKey): void {
-    this.filter.clear(key);
-  }
-
-  private build(species: readonly SpeciesBrief[]): Row[] {
-    const query = this.search().trim().toLocaleLowerCase();
-    const active = this.state.activeSpecies();
-    const found = species.filter((art) => this.matches(art, query));
-    found.sort(
-      (links, right) =>
-        LEVEL_RANK[links.stufe] - LEVEL_RANK[right.stufe] || links.name.localeCompare(right.name, 'de'),
-    );
-    return found.map((art) => this.row(art, art.slug === active));
-  }
-
   protected open(slug: string): void {
+    if (this.wide()) {
+      this.picked.set(slug);
+      return;
+    }
     void this.router.navigate(['/arten', slug]);
   }
 
-  /** Pfeil hoch und runter wandern durch die Liste; Enter öffnet die Zeile. */
-  protected onKey(event: KeyboardEvent, index: number): void {
-    const step = event.key === 'ArrowDown' ? 1 : event.key === 'ArrowUp' ? -1 : 0;
-    if (step === 0) return;
-    const rows = this.rowRefs();
-    const target = index + step;
-    if (target < 0 || target >= rows.length) return;
-    event.preventDefault();
-    rows[target].focus();
+  protected more(): void {
+    this.shown.update((count) => count + PAGE);
   }
 
-  private matches(art: SpeciesBrief, query: string): boolean {
-    if (query === '') return true;
-    return art.name.toLocaleLowerCase().includes(query) || art.lateinisch.toLocaleLowerCase().includes(query);
+  protected reset(): void {
+    this.filter.clearAll();
   }
 
-  /** Die Zeile trägt nur noch eine Plakette: den Speisewert, die einzige Warnung. */
-  private row(art: SpeciesBrief, active: boolean): Row {
-    return {
-      slug: art.slug,
-      active,
-      species: {
-        name: art.name,
-        latin: art.lateinisch,
-        levelText: this.i18n.translate(EDIBILITY_TEXT[art.speisewert]),
-        levelColour: EDIBILITY_COLOUR[art.speisewert],
-        image: art.titelbild,
-      },
-    };
+  private largestGap(): { key: GroupKey; count: number } | null {
+    const facts = this.state.facts();
+    let widest: { key: GroupKey; count: number } | null = null;
+    for (const key of this.filter.selection().values.keys()) {
+      const count = countUnknown(facts, key);
+      if (count > 0 && (widest === null || count > widest.count)) widest = { key, count };
+    }
+    return widest;
+  }
+
+  protected drop(chip: FilterChip): void {
+    if (chip.part === null) this.filter.dropValue(chip.group, chip.value);
+    else this.filter.dropColour(chip.part);
   }
 }

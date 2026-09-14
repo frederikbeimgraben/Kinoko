@@ -119,7 +119,7 @@ export class EntriesComponent {
   }
 
   constructor() {
-    this.arten.loadCatalogue();
+    void this.arten.loadBundle();
     void this.state.load();
     void this.state.loadShared();
   }
@@ -136,7 +136,7 @@ export class EntriesComponent {
   }
 
   private speciesName(slug: string): string {
-    return (this.arten.catalogue()?.arten ?? []).find((art) => art.slug === slug)?.name ?? slug;
+    return this.arten.nameOf(slug) ?? slug;
   }
 
   private datum(iso: string): string {

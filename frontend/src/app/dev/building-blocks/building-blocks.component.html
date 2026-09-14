@@ -116,6 +116,7 @@
     <div class="block__stage block__stage--filter">
       <app-filter-sheet
         [open]="filterSheetOpen()"
+        [title]="text('common.filter')"
         [resetEnabled]="true"
         [primaryLabel]="text('filter.showSpecies')"
         (closed)="filterSheetOpen.set(false)"

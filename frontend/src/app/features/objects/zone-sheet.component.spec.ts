@@ -8,7 +8,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { ZoneValue } from '../../core/api/models';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { ZONE } from '../../testing/entries-fixture';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
@@ -63,8 +63,8 @@ async function build(withMap = false): Promise<Setup> {
   });
   TestBed.inject(MapState).species.set('steinpilz');
   const http = TestBed.inject(HttpTestingController);
-  http.match('/api/arten').forEach((request) => {
-    request.flush(SPECIES_LIST);
+  await vi.waitFor(() => {
+    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   detectChanges();
   let closed = 0;

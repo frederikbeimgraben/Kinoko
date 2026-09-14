@@ -1,28 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { ApiClient } from './api-client';
-import type { Species, SpeciesCatalogue } from './models';
+import { ApiClient, type Tagged } from './api-client';
+import type { SpeciesBundle } from './models/catalogue';
 
-/** Die zwei Endpunkte des Artenkatalogs. Beide sind offen, auch ohne Anmeldung. */
+const BUNDLE_PATH = '/species/bundle';
+
+/** Der Artenkatalog in einem Zug. Er ist offen, auch ohne Anmeldung. */
 @Injectable({ providedIn: 'root' })
 export class SpeciesApi {
   private readonly api = inject(ApiClient);
 
-  /**
-   * Ohne Angabe kommt der ganze Katalog. `sammelbar` schränkt ein, in beide
-   * Richtungen; es ist ein Filter wie jeder andere und keine Vorgabe.
-   */
-  catalogue(query?: {
-    sammelbar?: boolean;
-    /** Ein gewählter Wert als `gruppe:wert`, mehrfach. */
-    wert?: readonly string[];
-    /** Gruppen, in denen Arten ohne Angabe zu den Treffern zählen. */
-    ohneAngabe?: readonly string[];
-  }): Observable<SpeciesCatalogue> {
-    return this.api.get<SpeciesCatalogue>('/arten', query);
-  }
-
-  profile(slug: string): Observable<Species> {
-    return this.api.get<Species>(`/arten/${encodeURIComponent(slug)}`);
+  /** Holt das Bündel. Zum bekannten ETag bleibt der Körper leer. */
+  bundle(etag: string | null): Observable<Tagged<SpeciesBundle>> {
+    return this.api.getTagged<SpeciesBundle>(BUNDLE_PATH, etag, { quiet: true });
   }
 }
