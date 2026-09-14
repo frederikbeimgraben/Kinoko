@@ -86,6 +86,7 @@
   --size-row: 52px;
   --size-row-tall: 62px;
   --size-control: 36px;
+  --size-chip: 40px;
   --size-button: 46px;
   --size-tap: 44px;
   --size-icon-button: 40px;
@@ -115,6 +116,8 @@
   --size-tile: 88px;
   --size-crosshair: 52px;
 
+  --lh-normal: 1.2;
+
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -132,6 +135,13 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
+}
+
+app-button,
+app-input,
+app-select,
+app-toast {
+  --radius-md: 10px;
 }
 
 // Ohne diese Regeln markiert ein langer Druck Text und ein Tipp blitzt blau auf.

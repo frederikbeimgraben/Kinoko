@@ -20,4 +20,6 @@ export class KeyValueRowComponent {
   readonly hint = input<string | null>(null);
   /** Ein Wert endet rechts, Fließtext beginnt links. */
   readonly flow = input(false);
+  /** Die Kopfzeile eines Vergleichs: die Werte sind die Namen der Spalten. */
+  readonly head = input(false);
 }

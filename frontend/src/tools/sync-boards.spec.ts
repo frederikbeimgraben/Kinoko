@@ -29,15 +29,15 @@ describe('sync-boards', () => {
   it('lässt ein Bild aus der Ausnahmeliste unverändert', () => {
     const root = fixture();
     try {
-      writeFileSync(join(root, 'artefakte', 'mockups', 'bilder', 'Blocks.png'), 'A');
+      writeFileSync(join(root, 'artefakte', 'mockups', 'bilder', 'SpecLevels.png'), 'A');
       mkdirSync(join(root, 'e2e', 'boards', 'baseline'), { recursive: true });
-      writeFileSync(join(root, 'e2e', 'boards', 'baseline', 'Blocks.png'), 'B');
+      writeFileSync(join(root, 'e2e', 'boards', 'baseline', 'SpecLevels.png'), 'B');
 
       const result = sync(root);
 
       expect(result?.fresh).toBe(0);
-      expect(result?.files).toContainEqual({ name: 'Blocks.png', action: 'skip-excluded' });
-      expect(readFileSync(join(root, 'e2e', 'boards', 'baseline', 'Blocks.png'), 'utf8')).toBe('B');
+      expect(result?.files).toContainEqual({ name: 'SpecLevels.png', action: 'skip-excluded' });
+      expect(readFileSync(join(root, 'e2e', 'boards', 'baseline', 'SpecLevels.png'), 'utf8')).toBe('B');
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

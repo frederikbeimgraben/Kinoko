@@ -1,14 +1,17 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  afterNextRender,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
-import { BadgeComponent, CardComponent } from '@stupa-makers/ui-kit';
+  BadgeComponent,
+  ButtonComponent,
+  CardComponent,
+  CheckboxComponent,
+  InputComponent,
+  SelectComponent,
+  ToastComponent,
+  ToastService,
+  type BadgeVariant,
+  type SelectOption,
+} from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { WORKSHOP_TEXTS } from '../../core/i18n/workshop-texts';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -50,10 +53,12 @@ import {
   OverlayHostComponent,
   PageHeaderComponent,
   PhotoPickerComponent,
+  PopoverComponent,
   PrivateImageComponent,
   ProgressComponent,
   RampComponent,
   RangeSliderComponent,
+  RejectDialogComponent,
   ReviewQueueComponent,
   SearchFieldComponent,
   SeasonCurveComponent,
@@ -68,41 +73,51 @@ import {
   SvgIconComponent,
   TagListComponent,
   TimelineComponent,
-  WeekButtonComponent,
   YearBandComponent,
   YearBandInputComponent,
   OBJECT_COLOURS,
   type Detent,
+  type DetentSize,
   type ObjectMenuTarget,
+  type PopoverAnchor,
 } from '../../ui';
 import {
   BRUISE_COLOURS,
   CAP_COLOURS,
   CAP_WIDTH_SPANS,
+  COLOUR_CODE,
   FLESH_COLOURS,
   GRADIENT_COLOURS,
   LATIN_NAMES,
   MULTI_COLOURS,
+  NEAREST_TONES,
+  PICKER_TONES,
   SAMPLE_ALL_YEARS,
   SAMPLE_CURRENT_YEAR,
   SAMPLE_HISTOGRAM,
   SAMPLE_IMAGE,
   SAMPLE_WEEKS,
-  SPORE_LENGTH_SPANS,
-  TREE_GENERA,
+  STEM_HEIGHT_SPANS,
+  STEM_THICKNESS_SPANS,
 } from './sample-data';
 
-/** Die Werkstattseite: jeder Baustein aus `ui/` in jeder Variante, hell und dunkel. */
+const THEME_ATTRIBUTE = 'data-theme';
+const DARK = 'dark';
+
+/** Die Werkstattseite: eine Karte je Baustein, in der Reihenfolge des Boards. */
 @Component({
   selector: 'app-building-blocks',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ToastService],
   imports: [
     ActionBarComponent,
     AvatarButtonComponent,
     BadgeComponent,
     BannerComponent,
+    ButtonComponent,
     CardComponent,
     CheckRowComponent,
+    CheckboxComponent,
     ChipGroupComponent,
     ChoiceRowComponent,
     ColourChangeComponent,
@@ -119,12 +134,14 @@ import {
     FilterSheetComponent,
     FloatingButtonComponent,
     FormFieldComponent,
+    FormsModule,
     HistogramComponent,
     IconButtonComponent,
     ImageCreditComponent,
     ImageTileComponent,
     ImageViewerComponent,
     InfiniteListComponent,
+    InputComponent,
     KeyValueRowComponent,
     KeyValueTableComponent,
     LevelPillComponent,
@@ -132,19 +149,22 @@ import {
     MeasurementComponent,
     MeasurementGroupComponent,
     NavComponent,
-    NgTemplateOutlet,
     ObjectMenuComponent,
     OverlayHostComponent,
     PageHeaderComponent,
     PhotoPickerComponent,
+    PopoverComponent,
+    PopoverComponent,
     PrivateImageComponent,
     ProgressComponent,
     RampComponent,
     RangeSliderComponent,
+    RejectDialogComponent,
     ReviewQueueComponent,
     SearchFieldComponent,
     SeasonCurveComponent,
     SegmentedComponent,
+    SelectComponent,
     SheetComponent,
     SheetHeadComponent,
     SkeletonComponent,
@@ -155,8 +175,8 @@ import {
     SvgIconComponent,
     TagListComponent,
     TimelineComponent,
+    ToastComponent,
     TranslatePipe,
-    WeekButtonComponent,
     YearBandComponent,
     YearBandInputComponent,
   ],
@@ -165,53 +185,66 @@ import {
 })
 export class BuildingBlocksComponent {
   private readonly i18n = inject(I18nService).addFallback(inject(WORKSHOP_TEXTS));
-  private readonly lightPane = viewChild.required<ElementRef<HTMLElement>>('light');
-  private readonly darkPane = viewChild.required<ElementRef<HTMLElement>>('dark');
 
   protected readonly weeks = SAMPLE_WEEKS;
+  protected readonly histogramm = SAMPLE_HISTOGRAM;
+  protected readonly objectColors = OBJECT_COLOURS;
+  protected readonly sampleImage = SAMPLE_IMAGE;
+  protected readonly capColours = CAP_COLOURS;
+  protected readonly gradientColours = GRADIENT_COLOURS;
+  protected readonly multiColours = MULTI_COLOURS;
+  protected readonly capWidthSpans = CAP_WIDTH_SPANS;
+  protected readonly nearestTones = NEAREST_TONES;
+  protected readonly colourCode = COLOUR_CODE;
+  protected readonly reviewItems = LATIN_NAMES;
+  protected readonly infiniteRows = LATIN_NAMES;
+
   protected readonly seasonSeries = [
-    { shape: 'area' as const, values: SAMPLE_ALL_YEARS, legend: this.text('art.kurve.jahre') },
-    { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR, legend: this.text('art.kurve.laufend') },
+    { shape: 'area' as const, values: SAMPLE_ALL_YEARS, legend: this.text('beispiel.kurve.jahre') },
+    { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR, legend: this.text('beispiel.kurve.laufend') },
   ];
   protected readonly seasonPlain = [
     { shape: 'area' as const, values: SAMPLE_ALL_YEARS },
     { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR },
   ];
-  protected readonly histogramm = SAMPLE_HISTOGRAM;
-  protected readonly objectColors = OBJECT_COLOURS;
-  protected readonly sampleImage = SAMPLE_IMAGE;
-  protected readonly treeGenera = TREE_GENERA;
-  protected readonly capColours = CAP_COLOURS;
-  protected readonly fleshColours = FLESH_COLOURS;
-  protected readonly bruiseColours = BRUISE_COLOURS;
-  protected readonly gradientColours = GRADIENT_COLOURS;
-  protected readonly multiColours = MULTI_COLOURS;
-  protected readonly capWidthSpans = CAP_WIDTH_SPANS;
-  protected readonly sporeLengthSpans = SPORE_LENGTH_SPANS;
-  protected readonly reviewItems = LATIN_NAMES;
 
   protected readonly activeWeek = signal({ year: 2025, week: 40 });
   protected readonly detent = signal<Detent>(1);
   protected readonly viewMode = signal('ebene');
-  protected readonly chip = signal<readonly string[]>(['alle']);
+  protected readonly chip = signal<readonly string[]>(['steinpilz']);
   protected readonly checked = signal(true);
   protected readonly factorActive = signal(true);
-  protected readonly from = signal(80);
+  protected readonly from = signal(84);
   protected readonly to = signal(240);
   protected readonly farbe = signal<string>(OBJECT_COLOURS[0]);
-  protected readonly colourTone = signal<string | null>(OBJECT_COLOURS[1]);
-  protected readonly fieldValue = signal('');
-  protected readonly searchValue = signal('Steinpilz');
+  protected readonly colourTone = signal<string | null>(PICKER_TONES[5]);
+  protected readonly searchValue = signal(this.text('beispiel.suche.stein'));
   protected readonly yearFrom = signal(4);
   protected readonly yearTo = signal(10);
   protected readonly speciesChoice = signal<string | null>(LATIN_NAMES[0]);
-  protected readonly photoFiles = signal<readonly File[]>([this.sampleFile()]);
+  protected readonly photoFiles = signal<readonly File[]>([this.sampleFile(), this.sampleFile()]);
   protected readonly overlayOpen = signal(true);
   protected readonly filterSheetOpen = signal(true);
 
   protected readonly objectMenuTarget: ObjectMenuTarget = { x: 90, y: 60 };
+  protected readonly popoverAnchor: PopoverAnchor = { top: 16, end: 16 };
 
-  protected readonly navTabs = { map: '/karte', species: '/arten', entries: '/eintraege' };
+  /** Das Board zeichnet die unterste Raste des Blatts 120 px hoch. */
+  protected readonly sheetDetents: readonly [DetentSize, DetentSize, DetentSize] = ['120px', 0.4, 0.9];
+  protected readonly navTabs = { map: '/karte', species: '/arten' };
+
+  protected readonly badgeVariants: readonly { variant: BadgeVariant; label: string }[] = [
+    { variant: 'neutral', label: this.text('beispiel.badge.neutral') },
+    { variant: 'info', label: this.text('beispiel.badge.prognose') },
+    { variant: 'success', label: this.text('beispiel.badge.gespeichert') },
+    { variant: 'warning', label: this.text('beispiel.badge.geschuetzt') },
+    { variant: 'danger', label: this.text('bild.zustand.abgelehnt') },
+  ];
+
+  protected readonly fleshOptions: SelectOption[] = [
+    { value: 'candidus', label: this.text('beispiel.farbe.fleisch') },
+    { value: 'caeruleus', label: this.text('beispiel.farbe.blau') },
+  ];
 
   protected readonly viewModes = [
     { value: 'vorhersage', label: this.text('map.tab.forecast') },
@@ -219,43 +252,21 @@ export class BuildingBlocksComponent {
     { value: 'kombination', label: this.text('map.tab.combination') },
   ];
 
-  protected readonly directions = [
-    { value: 'from', label: this.text('common.from') },
-    { value: 'to', label: this.text('common.to') },
-  ];
-
-  protected readonly fourWayOptions = [
-    { value: 'select', label: this.text('common.select') },
-    { value: 'edit', label: this.text('common.edit') },
-    { value: 'remove', label: this.text('common.remove') },
-    { value: 'close', label: this.text('common.close') },
-  ];
-
-  protected readonly lockedOptions = [
-    { value: 'liste', label: this.text('map.combination.list') },
-    { value: 'karte', label: this.text('nav.tab.map') },
-  ];
-
   protected readonly speciesChips = [
-    { value: 'alle', label: this.text('common.all') },
-    { value: 'vorhersage', label: this.text('map.tab.forecast') },
-    { value: 'geschuetzt', label: this.text('species.badge.protected') },
+    { value: 'steinpilz', label: this.text('beispiel.steinpilz') },
+    { value: 'birkenpilz', label: this.text('beispiel.birkenpilz') },
   ];
 
-  protected readonly filterChips = [
-    this.text('filter.group.hutform'),
-    this.text('filter.group.smellTaste'),
-    this.text('filter.group.treePartner'),
-  ];
+  protected readonly filterChips = [this.text('enum.edibility.edible'), this.text('enum.cap_shape.convex')];
 
   protected readonly colourSwatches = OBJECT_COLOURS.map((value, i) => ({
     value,
-    label: `${this.text('common.colour')} ${i + 1}`,
+    label: `${this.text('common.colour')} ${String(i + 1)}`,
   }));
 
-  protected readonly colourPickerSwatches = OBJECT_COLOURS.map((value, i) => ({
+  protected readonly colourPickerSwatches = PICKER_TONES.map((value, i) => ({
     value,
-    label: `${this.text('common.colour')} ${i + 1}`,
+    label: `${this.text('common.colour')} ${String(i + 1)}`,
   }));
 
   protected readonly speciesRows = [
@@ -263,37 +274,42 @@ export class BuildingBlocksComponent {
       value: LATIN_NAMES[0],
       name: this.text('art.boletus_edulis'),
       latin: LATIN_NAMES[0],
-      levelText: this.text('art.essbar.essbar'),
+      levelText: this.text('enum.edibility.edible'),
       levelColour: 'var(--color-success)',
       image: null,
     },
+    {
+      value: LATIN_NAMES[4],
+      name: this.text('beispiel.maronenroehrling'),
+      latin: LATIN_NAMES[4],
+      levelText: this.text('enum.edibility.edible'),
+      levelColour: 'var(--color-success)',
+      image: null,
+    },
+  ];
+
+  protected readonly pickerRows = [
+    this.speciesRows[0],
     {
       value: LATIN_NAMES[1],
-      name: this.text('art.pfifferling'),
+      name: this.text('beispiel.pfifferling'),
       latin: LATIN_NAMES[1],
-      levelText: this.text('art.essbar.essbar'),
+      levelText: this.text('enum.edibility.edible'),
       levelColour: 'var(--color-success)',
-      image: null,
-    },
-    {
-      value: LATIN_NAMES[3],
-      name: this.text('art.hexen_flock'),
-      latin: LATIN_NAMES[3],
-      levelText: this.text('art.essbar.toedlichGiftig'),
-      levelColour: 'var(--color-danger)',
       image: null,
     },
   ];
 
   protected readonly entries = [
     {
-      title: this.text('art.boletus_edulis'),
-      meta: this.text('beispiel.fund.steinpilzMeta'),
-      note: this.text('beispiel.notiz'),
+      title: this.text('beispiel.pfifferling'),
+      meta: this.text('beispiel.fund.pfifferlingMeta'),
+      note: this.text('beispiel.fund.pfifferlingNotiz'),
     },
     {
-      title: this.text('art.pfifferling'),
-      meta: this.text('beispiel.fund.pfifferlingMeta'),
+      title: this.text('art.boletus_edulis'),
+      meta: this.text('beispiel.fund.steinpilzMeta'),
+      note: this.text('beispiel.fund.steinpilzNotiz'),
     },
   ];
 
@@ -303,20 +319,26 @@ export class BuildingBlocksComponent {
     condition: this.text('beispiel.faktor.niederschlagBedingung'),
   };
 
-  protected readonly lockedFactor = {
-    name: this.text('beispiel.faktor.buche'),
-    condition: this.text('beispiel.faktor.bucheBedingung'),
+  protected readonly soilFactor = {
+    name: this.text('map.factor.soilPh'),
+    range: this.text('beispiel.faktor.bodenPhUnter'),
+    condition: this.text('beispiel.faktor.bodenPhBedingung'),
   };
 
   protected readonly stats = [
     { value: 12, label: this.text('entry.finds') },
     { value: 4, label: this.text('entry.markers') },
     { value: 2, label: this.text('entry.zones') },
+    { value: 3, label: this.text('entry.images') },
   ];
 
-  protected readonly measurementRows = [
-    { extent: 'width' as const, spans: this.capWidthSpans, unit: this.text('unit.cm') },
-    { extent: 'length' as const, spans: this.sporeLengthSpans, unit: this.text('unit.um') },
+  protected readonly capMeasurements = [
+    { extent: 'width' as const, spans: CAP_WIDTH_SPANS, unit: this.text('unit.cm') },
+  ];
+
+  protected readonly stemMeasurements = [
+    { extent: 'height' as const, spans: STEM_HEIGHT_SPANS, unit: this.text('unit.cm') },
+    { extent: 'thickness' as const, spans: STEM_THICKNESS_SPANS, unit: this.text('unit.cm') },
   ];
 
   protected readonly monthMarks = [
@@ -326,23 +348,41 @@ export class BuildingBlocksComponent {
     { text: this.text('art.monat.okt'), week: 40 },
   ];
 
+  protected readonly months = [
+    this.text('art.monat.jan'),
+    this.text('art.monat.apr'),
+    this.text('art.monat.jul'),
+    this.text('art.monat.okt'),
+  ];
+
+  protected readonly treeTags = [
+    this.text('art.tag.fichte'),
+    this.text('art.tag.buche'),
+    this.text('beispiel.tag.herbst'),
+  ];
+
   protected readonly colourChangeTriggers = [this.text('art.verfaerbung.zeile')];
-  protected readonly colourChangeFrom = [this.fleshColours];
-  protected readonly colourChangeTo = [this.bruiseColours];
+  protected readonly colourChangeFrom = [FLESH_COLOURS];
+  protected readonly colourChangeTo = [BRUISE_COLOURS];
   protected readonly colourChangeFromLabels = [this.text('art.farbe.fleisch')];
   protected readonly colourChangeToLabels = [this.text('art.abschnitt.farbe')];
   protected readonly colourChangeSpeed = [this.text('art.verfaerbung.schnell')];
 
-  protected readonly confirmDialogMeta = `${this.entries.length} ${this.text('entry.finds')}`;
-  protected readonly overlayText = this.text('common.filter');
   protected readonly splitRailLabel = this.text('nav.tab.species');
   protected readonly splitContentText = this.text('species.notFound');
-  protected readonly infiniteRows = LATIN_NAMES;
 
   constructor() {
-    afterNextRender(() => {
-      this.applyTheme();
+    const root = document.documentElement;
+    const before = root.getAttribute(THEME_ATTRIBUTE);
+    root.setAttribute(THEME_ATTRIBUTE, DARK);
+    inject(DestroyRef).onDestroy(() => {
+      if (before === null) root.removeAttribute(THEME_ATTRIBUTE);
+      else root.setAttribute(THEME_ATTRIBUTE, before);
     });
+
+    const toasts = inject(ToastService);
+    toasts.show(this.text('beispiel.meldung.gespeichert'), 'success', 0);
+    toasts.show(this.text('beispiel.meldung.fehlgeschlagen'), 'danger', 0);
   }
 
   protected text(schluessel: Parameters<I18nService['translate']>[0]): string {
@@ -351,26 +391,5 @@ export class BuildingBlocksComponent {
 
   private sampleFile(): File {
     return new File(['x'], 'pilz.jpg', { type: 'image/jpeg' });
-  }
-
-  /** Kopiert die Theme-Regeln des Kits auf beide Felder. Ein gesperrtes Stilblatt überspringt der Code. */
-  private applyTheme(): void {
-    let light = '';
-    let dark = '';
-    for (const sheet of Array.from(document.styleSheets)) {
-      let rules: CSSRuleList;
-      try {
-        rules = sheet.cssRules;
-      } catch {
-        continue;
-      }
-      for (const rule of Array.from(rules)) {
-        if (!(rule instanceof CSSStyleRule) || !rule.selectorText.includes('data-theme')) continue;
-        if (rule.selectorText.includes('dark')) dark += rule.style.cssText;
-        else if (rule.selectorText.includes('light')) light += rule.style.cssText;
-      }
-    }
-    this.lightPane().nativeElement.style.cssText = light;
-    this.darkPane().nativeElement.style.cssText = dark;
   }
 }

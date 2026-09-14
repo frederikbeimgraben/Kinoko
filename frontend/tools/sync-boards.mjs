@@ -4,7 +4,7 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from '
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const EXCLUDED = new Set(['SpecLevels.png', 'Blocks.png']);
+const EXCLUDED = new Set(['SpecLevels.png']);
 
 /** Sucht einen Ordner der Artefakte von `root` aufwärts. */
 function findSource(root, part) {

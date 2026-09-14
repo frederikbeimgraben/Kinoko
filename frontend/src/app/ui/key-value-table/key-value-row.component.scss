@@ -66,3 +66,17 @@
   color: var(--color-primary);
   text-decoration: none;
 }
+
+// Die Kopfzeile eines Vergleichs nennt die Spalten, sie trägt keinen Wert.
+.kv__label--head,
+.kv__value--head {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kv__value--head {
+  align-items: flex-start;
+}

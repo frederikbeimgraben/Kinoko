@@ -41,20 +41,11 @@
     (secondaryClick)="editCorners()"
   />
 }
-<app-dialog
+<app-confirm-dialog
   [open]="deleteAsk()"
   [title]="'zone.loeschenFrage' | t"
-  [closeLabel]="'objekt.schliessen' | t"
-  (closed)="deleteAsk.set(false)"
->
-  <p class="note">{{ 'zone.loeschenText' | t }}</p>
-  <div dialog-footer class="objectsheet__dialogfooter">
-    <app-action-bar
-      [primary]="'objekt.loeschen' | t"
-      [danger]="true"
-      [secondary]="'objekt.abbrechen' | t"
-      (primaryClick)="remove()"
-      (secondaryClick)="deleteAsk.set(false)"
-    />
-  </div>
-</app-dialog>
+  [meta]="'zone.loeschenText' | t"
+  [confirmLabel]="'objekt.loeschen' | t"
+  (confirmed)="remove()"
+  (cancelled)="deleteAsk.set(false)"
+/>

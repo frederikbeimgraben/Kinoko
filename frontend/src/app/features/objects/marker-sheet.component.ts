@@ -8,11 +8,12 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { DialogComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '@stupa-makers/ui-kit';
 import type { Marker } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
@@ -26,7 +27,13 @@ import { visibilityText } from '../add-entry/visibility';
 @Component({
   selector: 'app-marker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, DialogComponent, IconButtonComponent, ObjectFormComponent, TranslatePipe],
+  imports: [
+    ActionBarComponent,
+    ConfirmDialogComponent,
+    IconButtonComponent,
+    ObjectFormComponent,
+    TranslatePipe,
+  ],
   templateUrl: './marker-sheet.component.html',
   styleUrl: './marker-sheet.component.scss',
 })

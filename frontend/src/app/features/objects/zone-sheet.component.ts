@@ -10,7 +10,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { CardComponent, DialogComponent, ToastService } from '@stupa-makers/ui-kit';
+import { CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import { firstValueFrom } from 'rxjs';
 import { EntriesApi } from '../../core/api/entries.api';
 import type { Zone, ZoneValue } from '../../core/api/models';
@@ -21,6 +21,7 @@ import { TileService } from '../../core/tiles/tile.service';
 import { NOW } from '../../core/tiles/now';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
@@ -48,7 +49,7 @@ import type { Location } from '../add-entry/add-entry.state';
   imports: [
     ActionBarComponent,
     CardComponent,
-    DialogComponent,
+    ConfirmDialogComponent,
     IconButtonComponent,
     ListRowComponent,
     ObjectFormComponent,

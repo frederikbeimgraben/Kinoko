@@ -18,6 +18,9 @@ export {
   type ColourSwatch,
 } from './colour-swatches/colour-swatches.component';
 export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+export { ModalLayerDirective } from './modal-layer/modal-layer.directive';
+export { PopoverComponent, type PopoverAnchor } from './popover/popover.component';
+export { RejectDialogComponent } from './reject-dialog/reject-dialog.component';
 export { CrosshairComponent } from './crosshair/crosshair.component';
 export { EmptyStateComponent } from './empty-state/empty-state.component';
 export { EntryRowComponent, type EntryRowEntry } from './entry-row/entry-row.component';
@@ -61,7 +64,7 @@ export { ReviewQueueComponent } from './review-queue/review-queue.component';
 export { SearchFieldComponent } from './search-field/search-field.component';
 export { SeasonCurveComponent, type MonthMark } from './season-curve/season-curve.component';
 export { SegmentedComponent, type SegmentOption } from './segmented/segmented.component';
-export { SheetComponent, type Detent } from './sheet/sheet.component';
+export { SheetComponent, type Detent, type DetentSize } from './sheet/sheet.component';
 export { SheetHeadComponent } from './sheet-head/sheet-head.component';
 export { SkeletonComponent, type SkeletonKind } from './skeleton/skeleton.component';
 export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';

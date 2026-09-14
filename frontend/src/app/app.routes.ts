@@ -1,12 +1,7 @@
-import { isDevMode } from '@angular/core';
 import type { Routes } from '@angular/router';
 import { requiresPermission } from './features/admin/admin.guard';
 
-/**
- * Die vier Reiter. Wo das Arbeitspaket noch aussteht, steht ein Platzhalter.
- * Die Baustein-Seite gibt es nur in der Entwicklung, sonst läge eine
- * Werkstattseite im Betrieb.
- */
+/** Die vier Reiter. Wo das Arbeitspaket aussteht, steht ein Platzhalter. */
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'karte' },
   {
@@ -105,14 +100,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/account/signin-callback.component').then((m) => m.SignInCallbackComponent),
   },
-  ...(isDevMode()
-    ? [
-        {
-          path: 'bausteine',
-          loadComponent: () =>
-            import('./dev/building-blocks/building-blocks.component').then((m) => m.BuildingBlocksComponent),
-        },
-      ]
-    : []),
+  {
+    path: 'bausteine',
+    loadComponent: () =>
+      import('./dev/building-blocks/building-blocks.component').then((m) => m.BuildingBlocksComponent),
+  },
   { path: '**', redirectTo: 'karte' },
 ];

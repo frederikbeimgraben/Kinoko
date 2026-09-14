@@ -16,7 +16,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 export type Detent = 0 | 1 | 2;
 
 /** Anteil der Wirtshöhe zwischen 0 und 1, feste Höhe oder `content` für die Inhaltshöhe. */
-type DetentSize = number | `${number}px` | 'content';
+export type DetentSize = number | `${number}px` | 'content';
 
 // Die unterste Raste ist --size-sheet-head, 152 Pixel. Die Zug-Physik
 // braucht die Zahl vor dem Zeichnen des Blatts.

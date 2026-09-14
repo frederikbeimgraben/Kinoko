@@ -1,0 +1,13 @@
+@if (open()) {
+  <div class="popover__scrim" aria-hidden="true" (click)="closed.emit()"></div>
+  <div
+    class="popover__card"
+    appModalLayer
+    [attr.aria-label]="label()"
+    [style.inset-block-start.px]="anchor().top"
+    [style.inset-inline-end.px]="anchor().end"
+    (dismissed)="closed.emit()"
+  >
+    <ng-content />
+  </div>
+}

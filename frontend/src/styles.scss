@@ -54,3 +54,17 @@ body {
   position: relative;
   z-index: 2;
 }
+
+// Beschriftung nur für Hilfsmittel. Global, weil ein Stilblatt der Seite
+// nicht in den Baustein des Kits reicht.
+app-building-blocks .block--nolabel app-input label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

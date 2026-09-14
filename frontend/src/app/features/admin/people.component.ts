@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent, CardComponent, DialogComponent } from '@stupa-makers/ui-kit';
+import { CardComponent } from '@stupa-makers/ui-kit';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -37,10 +38,9 @@ interface Choice {
   selector: 'app-people',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ButtonComponent,
     CardComponent,
     CheckRowComponent,
-    DialogComponent,
+    ConfirmDialogComponent,
     EmptyStateComponent,
     FormFieldComponent,
     ListRowComponent,

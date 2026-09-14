@@ -1,5 +1,28 @@
+@use '../modal-layer/modal-layer';
+
+.confirm__scrim {
+  @include modal-layer.scrim;
+}
+
+.confirm__panel {
+  @include modal-layer.panel;
+
+  inset-block-start: 50%;
+  inset-inline: var(--space-5);
+  gap: 14px;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  transform: translateY(-50%);
+}
+
+.confirm__title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
 .confirm__meta {
-  margin: 0 0 var(--space-4);
+  margin: 0;
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
   text-align: center;
@@ -8,5 +31,6 @@
 .confirm__actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
+  margin-block-start: 2px;
 }

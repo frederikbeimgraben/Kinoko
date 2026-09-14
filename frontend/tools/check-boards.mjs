@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const EXCLUDED = new Set(['Blocks', 'SpecLevels']);
+const EXCLUDED = new Set(['SpecLevels']);
 const EXPECT_BOARD = /expectBoard\(\s*[^,]+,\s*['"]([^'"]+)['"]/g;
 
 /** Liest die Board-Stems aus den PNG-Dateien in `dir`. */

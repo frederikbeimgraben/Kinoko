@@ -1,11 +1,4 @@
-<button
-  class="layers__scrim tap"
-  type="button"
-  data-press="tint"
-  [attr.aria-label]="'common.close' | t"
-  (click)="closed.emit()"
-></button>
-<div class="layers__card" role="dialog" [attr.aria-label]="'map.layers.button' | t">
+<app-popover [open]="true" [anchor]="anchor" [label]="'map.layers.button' | t" (closed)="closed.emit()">
   <section class="layers__part">
     <h3 class="layers__title">{{ 'map.basemap.title' | t }}</h3>
     <app-segmented
@@ -51,4 +44,4 @@
     <h3 class="layers__title">{{ 'map.opacity' | t }}</h3>
     <app-range-slider [from]="percent()" [to]="100" [handles]="'from'" (fromChange)="onOpacity($event)" />
   </section>
-</div>
+</app-popover>

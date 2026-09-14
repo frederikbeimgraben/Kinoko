@@ -85,6 +85,25 @@ describe('TimelineComponent', () => {
     expect(selected).toHaveLength(0);
   });
 
+  it('schiebt die aktive Woche in die Mitte der Leiste', async () => {
+    const { container } = await render(TimelineComponent, {
+      inputs: { weeks: WEEKS, active: { year: 2026, week: 1 }, label: 'Wochen' },
+    });
+    const bar = container.querySelector<HTMLElement>('.bar');
+    if (bar === null) throw new Error('keine Leiste');
+    const scrollTo = vi.fn();
+    Object.defineProperty(bar, 'scrollTo', { value: scrollTo, configurable: true });
+    Object.defineProperty(bar, 'clientWidth', { value: 200, configurable: true });
+    const second = container.querySelectorAll<HTMLElement>('.week')[1];
+    Object.defineProperty(second, 'offsetLeft', { value: 120, configurable: true });
+    Object.defineProperty(second, 'offsetWidth', { value: 48, configurable: true });
+
+    screen.getByRole('button', { name: 'KW 52 · 2025' }).focus();
+    await userEvent.keyboard('{ArrowRight}');
+
+    expect(scrollTo).toHaveBeenCalledWith({ left: 120 - (200 - 48) / 2, behavior: 'smooth' });
+  });
+
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
     const { container } = await render(TimelineComponent, {
       providers: [EMPTY_CATALOG],

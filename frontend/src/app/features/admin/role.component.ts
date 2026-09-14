@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ButtonComponent, CardComponent, DialogComponent } from '@stupa-makers/ui-kit';
+import { CardComponent } from '@stupa-makers/ui-kit';
 import { map } from 'rxjs';
 import type { Permission, PermissionArea, Role } from '../../core/api/models';
 import { PERMISSION_AREAS } from '../../core/api/models';
@@ -9,6 +9,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
@@ -45,10 +46,9 @@ interface Area {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    ButtonComponent,
     CardComponent,
     CheckRowComponent,
-    DialogComponent,
+    ConfirmDialogComponent,
     FormFieldComponent,
     PageHeaderComponent,
     TranslatePipe,

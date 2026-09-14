@@ -24,7 +24,7 @@
     "texts:sync": "node tools/sync-texts.mjs",
     "api:generate": "openapi-typescript ../backend/openapi.yaml -o src/app/core/api/contract.d.ts",
     "e2e": "playwright test",
-    "e2e:boards": "node tools/check-boards.mjs && playwright test --project=phone --project=desktop --project=wide",
+    "e2e:boards": "node tools/check-boards.mjs && playwright test --project=phone --project=desktop --project=wide --project=blocks",
     "e2e:flows": "playwright test --project=flows",
     "lighthouse": "lhci autorun"
   },
@@ -36,7 +36,7 @@
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@angular/service-worker": "22.1.5",
-    "@stupa-makers/ui-kit": "file:vendor/stupa-makers-ui-kit-0.1.0.tgz",
+    "@stupa-makers/ui-kit": "file:vendor/stupa-makers-ui-kit-0.1.2.tgz",
     "@turf/area": "^7.4.0",
     "idb": "^8.0.3",
     "maplibre-gl": "^6.9.0",

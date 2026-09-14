@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent, DialogComponent } from '@stupa-makers/ui-kit';
+import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 
-/**
- * Eine Bestätigung mit Frage, Zahl als Kontext und zwei Knöpfen.
- */
+/** Eine Bestätigung: Frage, Zahl als Kontext, zwei Knöpfe. */
 @Component({
   selector: 'app-confirm-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, DialogComponent, TranslatePipe],
+  imports: [ButtonComponent, ModalLayerDirective, TranslatePipe],
   templateUrl: './confirm-dialog.component.html',
   styleUrl: './confirm-dialog.component.scss',
 })
@@ -20,6 +19,8 @@ export class ConfirmDialogComponent {
   readonly danger = input(true);
   /** Ohne Angabe steht dort „Löschen“. Andere Handlungen setzen ihr eigenes Wort. */
   readonly confirmLabel = input<string>();
+  /** Solange ein Schreibvorgang läuft, nimmt die Bestätigung keinen Tipp an. */
+  readonly confirmDisabled = input(false);
 
   readonly confirmed = output();
   readonly cancelled = output();

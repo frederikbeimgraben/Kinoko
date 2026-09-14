@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { BadgeComponent, DialogComponent } from '@stupa-makers/ui-kit';
+import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { longDate } from '../../core/i18n/dates';
 import { COARSE_DIGITS, GRID_KM } from '../../core/location/grid';
 import { locationText } from '../../core/i18n/places';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
+import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../image-credit/licences';
 import { KeyValueRowComponent } from '../key-value-table/key-value-row.component';
 import { KeyValueTableComponent } from '../key-value-table/key-value-table.component';
@@ -23,7 +25,14 @@ interface Detail {
 @Component({
   selector: 'app-image-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, DialogComponent, KeyValueRowComponent, KeyValueTableComponent, TranslatePipe],
+  imports: [
+    BadgeComponent,
+    IconButtonComponent,
+    KeyValueRowComponent,
+    KeyValueTableComponent,
+    ModalLayerDirective,
+    TranslatePipe,
+  ],
   templateUrl: './image-viewer.component.html',
   styleUrl: './image-viewer.component.scss',
 })
