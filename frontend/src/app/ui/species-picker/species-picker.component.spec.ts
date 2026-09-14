@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
@@ -20,6 +21,20 @@ const SPECIES: SpeciesPickerEntry[] = [
     levelColour: '#8c1c16',
   },
 ];
+
+@Component({
+  imports: [SpeciesPickerComponent],
+  template: `
+    <app-species-picker [species]="species" label="Art für die Karte">
+      <ng-template let-entry>
+        <span class="curve">{{ entry.value }}</span>
+      </ng-template>
+    </app-species-picker>
+  `,
+})
+class WithTemplateHostComponent {
+  readonly species = SPECIES;
+}
 
 describe('SpeciesPickerComponent', () => {
   it('zeigt Suchfeld und Artenzeilen', async () => {
@@ -71,6 +86,22 @@ describe('SpeciesPickerComponent', () => {
     });
 
     expect(container.querySelector('.row--active')).not.toBeNull();
+  });
+
+  it('bleibt ohne Vorlage wie heute, ohne Hinten-Slot je Zeile', async () => {
+    const { container } = await render(SpeciesPickerComponent, {
+      inputs: { species: SPECIES, label: 'Art für die Karte' },
+    });
+
+    expect(container.querySelector('.row__trail')).toBeEmptyDOMElement();
+  });
+
+  it('trägt mit einer Vorlage die passende Art je Zeile in den Hinten-Slot', async () => {
+    await render(WithTemplateHostComponent);
+
+    const rows = screen.getAllByRole('button');
+    expect(rows[0]).toHaveTextContent('steinpilz');
+    expect(rows[1]).toHaveTextContent('fliegenpilz');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

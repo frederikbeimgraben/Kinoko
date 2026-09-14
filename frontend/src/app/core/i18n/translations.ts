@@ -16,6 +16,8 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'de';
 
 const de = {
+  'common.rangeMax': 'Obere Grenze',
+  'common.rangeMin': 'Untere Grenze',
   'blocks.pageHeader': 'app-page-header',
   'blocks.nav': 'app-nav',
   'blocks.sheet': 'app-sheet',
@@ -170,10 +172,6 @@ const de = {
   'karte.beschriftung': 'Karte von Deutschland',
   'karte.standort': 'Auf meinen Standort',
   'artWahl.titel': 'Art für die Karte',
-  'artWahl.suche': 'Art suchen',
-  'artWahl.suchePlatzhalter': 'Steinpilz, Pfifferling …',
-  'artWahl.laedt': 'Die Arten werden geladen.',
-  'artWahl.nichts': 'Keine Art mit Karte passt zur Suche.',
   'artWahl.katalog': 'Alle Arten ansehen',
   'karte.ortFehler': 'Kein Standort. Ohne Freigabe oder ohne Signal bleibt die Karte stehen.',
 
@@ -1144,6 +1142,8 @@ const de = {
 export type TranslationKey = keyof typeof de;
 
 const en: Record<TranslationKey, string> = {
+  'common.rangeMax': 'Upper limit',
+  'common.rangeMin': 'Lower limit',
   'blocks.pageHeader': 'app-page-header',
   'blocks.nav': 'app-nav',
   'blocks.sheet': 'app-sheet',
@@ -1298,10 +1298,6 @@ const en: Record<TranslationKey, string> = {
   'karte.beschriftung': 'Map of Germany',
   'karte.standort': 'To my location',
   'artWahl.titel': 'Species for the map',
-  'artWahl.suche': 'Search a species',
-  'artWahl.suchePlatzhalter': 'Penny bun, chanterelle …',
-  'artWahl.laedt': 'Loading the species.',
-  'artWahl.nichts': 'No species with a map matches the search.',
   'artWahl.katalog': 'See every species',
   'karte.ortFehler': 'No location. Without permission or signal the map stays where it is.',
 

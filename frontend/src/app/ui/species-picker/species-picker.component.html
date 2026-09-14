@@ -3,10 +3,15 @@
   [placeholder]="'species.search.placeholder' | t"
   (valueChange)="query.set($event)"
 />
-<ng-content select="[season-curve]" />
 <div class="picker__rows" role="group" [attr.aria-label]="label()">
-  @for (row of rows(); track row.value) {
-    <app-species-row [species]="row" [active]="row.value === selected()" (chosen)="chosen.emit(row.value)" />
+  @for (entry of rows(); track entry.value) {
+    <app-species-row
+      [species]="entry"
+      [active]="entry.value === selected()"
+      (chosen)="chosen.emit(entry.value)"
+    >
+      <ng-container trail [ngTemplateOutlet]="row()!" [ngTemplateOutletContext]="{ $implicit: entry }" />
+    </app-species-row>
   } @empty {
     <p class="picker__empty">{{ 'state.noSpeciesMatch' | t }}</p>
   }

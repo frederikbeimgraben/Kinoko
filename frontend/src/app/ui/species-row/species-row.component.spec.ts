@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
@@ -11,6 +12,18 @@ const STEINPILZ: SpeciesRowSpecies = {
   levelColour: 'var(--color-success)',
   image: '/api/species-images/bild-eins/thumb',
 };
+
+@Component({
+  imports: [SpeciesRowComponent],
+  template: `
+    <app-species-row [species]="species">
+      <span trail>Kurve</span>
+    </app-species-row>
+  `,
+})
+class SlottedHostComponent {
+  readonly species = STEINPILZ;
+}
 
 describe('SpeciesRowComponent', () => {
   it('zeigt Name, lateinischen Namen, Speisewert und Titelbild', async () => {
@@ -29,6 +42,18 @@ describe('SpeciesRowComponent', () => {
     });
 
     expect(container.querySelector('.row__image')).toBeNull();
+  });
+
+  it('bleibt ohne Inhalt für den Hinten-Slot unsichtbar', async () => {
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
+
+    expect(container.querySelector('.row__trail')).toBeEmptyDOMElement();
+  });
+
+  it('nimmt den Hinten-Slot vor dem Bild an', async () => {
+    await render(SlottedHostComponent);
+
+    expect(screen.getByText('Kurve')).toBeInTheDocument();
   });
 
   it('bricht den längsten Namen um, statt die Zeile zu sprengen', async () => {

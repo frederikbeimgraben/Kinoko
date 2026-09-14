@@ -346,6 +346,54 @@ describe('KarteComponent', () => {
     expect(screen.getByRole('heading', { name: 'Arten' })).toBeInTheDocument();
   });
 
+  it('lässt sich aus der Artwahl ohne Wahl abbrechen', async () => {
+    const { stable, netz } = await map();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+    await stable();
+    netz.expectOne('/api/arten').flush(KATALOG);
+    await stable();
+    const dialog = screen.getByRole('dialog', { name: 'Art für die Karte' });
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Abbrechen' }));
+    await stable();
+
+    expect(screen.queryByRole('dialog', { name: 'Art für die Karte' })).not.toBeInTheDocument();
+    expect(TestBed.inject(MapState).art()).toBe('boletus_edulis');
+  });
+
+  it('zeigt in der Artwahl nur Arten mit Karte und markiert die aktuelle', async () => {
+    const { stable, netz } = await map();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+    await stable();
+    netz.expectOne('/api/arten').flush(KATALOG);
+    await stable();
+
+    const dialog = screen.getByRole('dialog', { name: 'Art für die Karte' });
+    expect(within(dialog).getByRole('button', { name: /Steinpilz/ })).toHaveAttribute('aria-current', 'true');
+    expect(within(dialog).getByRole('button', { name: /Pfifferling/ })).not.toHaveAttribute('aria-current');
+    // Ohne Kacheln keine Zeile: der Maronenröhrling trägt einen Kartenschlüssel
+    // ohne Kachelordner, die übrigen Arten der Fixture gar keinen.
+    expect(within(dialog).queryByRole('button', { name: /Maronenröhrling/ })).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole('button', { name: /Semmelstoppelpilz/ })).not.toBeInTheDocument();
+  });
+
+  it('sucht in der Artwahl über Namen und lateinischen Namen', async () => {
+    const { stable, netz } = await map();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+    await stable();
+    netz.expectOne('/api/arten').flush(KATALOG);
+    await stable();
+    const dialog = screen.getByRole('dialog', { name: 'Art für die Karte' });
+
+    await userEvent.type(within(dialog).getByRole('textbox', { name: 'Art suchen' }), 'cibarius');
+
+    expect(within(dialog).getByRole('button', { name: /Pfifferling/ })).toBeInTheDocument();
+    expect(within(dialog).queryByRole('button', { name: /Steinpilz/ })).not.toBeInTheDocument();
+  });
+
   it('bietet zum Hinzufügen die Ebenen und die Arten an', async () => {
     const { stable } = await map(VIER_FAKTOREN);
     await stable();

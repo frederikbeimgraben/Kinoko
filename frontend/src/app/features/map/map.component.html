@@ -179,13 +179,29 @@
         (click)="speciesChosen.set(false)"
       ></button>
       <div class="map__sheet map__sheet--layers">
-        <app-species-chooser
-          [catalogue]="speciesCatalogue()"
-          [selected]="state.art()"
-          (chosen)="selectSpecies($event)"
-          (zumKatalog)="toSpecies()"
-          (closed)="speciesChosen.set(false)"
-        />
+        <app-sheet [label]="'artWahl.titel' | t" [detent]="2" [modal]="true">
+          <div class="map__content">
+            <app-species-picker
+              [species]="speciesPickerEntries()"
+              [selected]="state.art()"
+              [label]="'artWahl.titel' | t"
+              (chosen)="selectSpecies($event)"
+            >
+              <ng-template let-entry>
+                <app-season-curve
+                  trail
+                  [alleJahre]="entry.curve"
+                  [laufendesJahr]="entry.current"
+                  [visitsAllYears]="begehungen()"
+                  [visitsCurrentYearSeries]="visitsCurrentYear()"
+                  [label]="entry.curveLabel"
+                />
+              </ng-template>
+            </app-species-picker>
+            <app-list-row [title]="'artWahl.katalog' | t" [clickable]="true" (chosen)="toSpecies()" />
+          </div>
+          <app-action-bar [primary]="'faktor.abbrechen' | t" (primaryClick)="speciesChosen.set(false)" />
+        </app-sheet>
       </div>
     }
 

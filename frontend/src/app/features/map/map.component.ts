@@ -36,7 +36,7 @@ import {
   type LayersManifest,
 } from '../../core/tiles/layers';
 import { layerFromSpecies } from '../../core/tiles/species-as-layer';
-import { FORECAST_SLUGS, type ForecastSlug } from '../../core/tiles/tile-paths';
+import { FORECAST_SLUGS } from '../../core/tiles/tile-paths';
 import {
   currentWeek,
   barShares,
@@ -59,13 +59,17 @@ import {
 import { FORECAST_RAMP } from '../../ui/ramp/ramp-colors';
 import type { CombinationRule } from '../../map/value-colors';
 import { ThemeService } from '../../core/theme/theme.service';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RampComponent } from '../../ui/ramp/ramp.component';
+import { SeasonCurveComponent } from '../../ui/season-curve/season-curve.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
 import { type Detent, SheetComponent } from '../../ui/sheet/sheet.component';
+import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { TimelineComponent, type TimelineWeek } from '../../ui/timeline/timeline.component';
-import { SpeciesChooserComponent } from './species-chooser.component';
+import { mapSpeciesPickerEntry, type MapSpeciesPickerEntry } from './species-picker-entry';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { SpeciesState } from '../species/species.state';
 import { FactorSheetComponent } from './factor-sheet.component';
@@ -128,9 +132,10 @@ function detentInPx(size: DetentSize, hostHeight: number): number {
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SpeciesChooserComponent,
+    ActionBarComponent,
     LayersSheetComponent,
     LayerListComponent,
+    ListRowComponent,
     FactorSheetComponent,
     FactorPickerComponent,
     AddEntryComponent,
@@ -139,9 +144,11 @@ function detentInPx(size: DetentSize, hostHeight: number): number {
     MapObjectsDirective,
     ObjectSheetComponent,
     RampComponent,
+    SeasonCurveComponent,
     SegmentedComponent,
     SheetComponent,
     SheetHeadComponent,
+    SpeciesPickerComponent,
     TimelineComponent,
     TranslatePipe,
   ],
@@ -289,6 +296,21 @@ export class MapComponent implements OnDestroy {
   protected readonly speciesAsLayers = computed(() => [...this.speciesLayers().values()]);
 
   protected readonly speciesCatalogue = this.arten.catalogue;
+
+  protected readonly begehungen = computed<readonly number[]>(
+    () => this.speciesCatalogue()?.begehungenJeWocheAlleJahre ?? [],
+  );
+  protected readonly visitsCurrentYear = computed<readonly number[]>(
+    () => this.speciesCatalogue()?.begehungenJeWocheLaufendesJahr ?? [],
+  );
+
+  /** Nur Arten mit Karte: eine Zeile ohne Wirkung ist schlimmer als keine Zeile. */
+  protected readonly speciesPickerEntries = computed<readonly MapSpeciesPickerEntry[]>(() =>
+    (this.speciesCatalogue()?.arten ?? []).flatMap((art) => {
+      const slug = FORECAST_SLUGS.find((known) => known === art.kartenSlug);
+      return slug ? [mapSpeciesPickerEntry(art, slug, this.i18n)] : [];
+    }),
+  );
 
   protected readonly bar = computed<TimelineWeek[]>(() => {
     const manifest = this.manifest();
@@ -604,7 +626,10 @@ export class MapComponent implements OnDestroy {
     this.speciesChosen.set(true);
   }
 
-  protected selectSpecies(slug: ForecastSlug): void {
+  /** Der Wahl kommt als roher Text; nur ein bekannter Kartenschlüssel zählt. */
+  protected selectSpecies(value: string): void {
+    const slug = FORECAST_SLUGS.find((known) => known === value);
+    if (!slug) return;
     this.state.art.set(slug);
     this.speciesChosen.set(false);
   }

@@ -57,6 +57,14 @@
   flex: none;
 }
 
+.row__trail {
+  flex: none;
+}
+
+.row__trail:empty {
+  display: none;
+}
+
 .row__image {
   flex: none;
   inline-size: var(--size-thumb);
