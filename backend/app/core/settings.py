@@ -1,15 +1,12 @@
-"""Einstellungen aus der Umgebung.
-
-Jede Variable traegt den Praefix ``PILZE_``. Die Liste und die Werte auf dem
-Homeserver stehen in ``docs/betrieb.md``. Die Vorgaben hier zeigen auf ``./var/``
-und passen zur Entwicklung auf dem eigenen Rechner.
-"""
+"""Einstellungen aus der Umgebung. Jede Variable trägt den Präfix ``PILZE_``."""
 
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+VERSION = "2.0.0"
 
 
 class Settings(BaseSettings):
@@ -23,34 +20,23 @@ class Settings(BaseSettings):
     )
 
     db: str = "sqlite+aiosqlite:///./var/pilze.sqlite"
-    # Der Name der Variablen ist ein Vertrag zum NixOS-Modul. Er bleibt
-    # deutsch, auch wenn das Feld englisch heisst.
+    # Der Name der Variablen ist ein Vertrag zum NixOS-Modul.
     photos: Path = Field(default=Path("./var/fotos"), validation_alias="PILZE_FOTOS")
     maps: Path = Path("./var/maps")
     oidc_issuer: str = "https://sso.beimgraben.net/application/o/pilze/"
     oidc_client_id: str = "pilze"
     origin: str = "http://localhost:4200"
     # Wer diese Gruppe im Token traegt, ist Admin, auch ohne Zeile in der
-    # Datenbank. Ohne sie wäre nach dem ersten Deploy niemand da, der Rollen
-    # vergeben kann.
+    # Datenbank.
     admin_group: str = "pilze-admins"
+    internal_token: str = "intern"  # noqa: S105
+    max_photo_bytes: int = 12 * 1024 * 1024
 
     @field_validator("oidc_issuer")
     @classmethod
     def _trailing_slash(cls, value: str) -> str:
-        # Discovery und JWKS haengen als Pfad direkt am Issuer. Fehlt der
-        # Schraegstrich, zeigt die URL auf den Elternpfad.
+        # Discovery und JWKS haengen als Pfad direkt am Issuer.
         return value if value.endswith("/") else value + "/"
-
-    @property
-    def species_images(self) -> Path:
-        """Die Ablage der Artbilder, ein Ordner je Art.
-
-        Sie liegt unter der Fotoablage und braucht darum keine eigene
-        Variable und keine Aenderung am NixOS-Modul. Ein Fundordner heisst
-        nach seiner UUID, ``arten`` kollidiert also mit keinem.
-        """
-        return self.photos / "arten"
 
     @property
     def discovery_url(self) -> str:
@@ -59,7 +45,7 @@ class Settings(BaseSettings):
 
     @property
     def jwks_url(self) -> str:
-        """URL der Signaturschluessel, falls die Discovery keine nennt."""
+        """URL der Signaturschlüssel, falls die Discovery keine nennt."""
         return f"{self.oidc_issuer}jwks/"
 
 

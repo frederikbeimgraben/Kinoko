@@ -1,82 +1,151 @@
-"""Der Bestand der Oberflaechentexte in der Datenbank.
+"""Der Textkatalog: Vorgabe aus der Datei, Änderungen in der Tabelle."""
 
-Wie beim Rechtekatalog gleicht der Start die Tabelle mit dem Code ab: ein neuer
-Schluessel im Frontend braucht keine eigene Migration, und ein Schluessel, den
-es nicht mehr gibt, verschwindet. Ein geaenderter Text bleibt dabei stehen; der
-Abgleich schreibt nur, was fehlt.
-"""
+from __future__ import annotations
 
-from collections.abc import Sequence
-from datetime import datetime
+import hashlib
+import json
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Final
 
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
-from app.models import UiText
-from app.modules.texts.schemas import Catalogue, TextOut
-from app.modules.texts.seed import Locale, seed_catalogue
+from app.core.errors import NotFound, set_titles
+from app.models import TextEntry, now
+from app.shared.enums import Area
 
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+    from uuid import UUID
 
-async def sync_texts(session: AsyncSession) -> None:
-    """Legt fehlende Texte aus der Vorgabe an und raeumt unbekannte Schluessel ab."""
-    catalogue = seed_catalogue()
-    known = {(row.key, row.locale): row for row in await session.scalars(select(UiText))}
-    wanted: set[tuple[str, str]] = set()
-    for locale, texts in catalogue.items():
-        for key, value in texts.items():
-            wanted.add((key, locale.value))
-            if (key, locale.value) not in known:
-                session.add(UiText(key=key, locale=locale.value, value=value))
-    for identity, row in known.items():
-        if identity not in wanted:
-            await session.delete(row)
-    await session.commit()
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+SOURCE: Final = Path(__file__).resolve().parents[3] / "daten" / "texte.json"
+ERROR_PREFIX: Final = "error."
+DEFAULT_LOCALE: Final = "de"
+AREA: Final = Area.INTERFACE
 
 
-async def revision(session: AsyncSession) -> str:
-    """Der ETag des Katalogs: Zeilenzahl und juengste Aenderung.
-
-    Beides zusammen deckt jede Aenderung ab: ein neuer oder entfernter
-    Schluessel bewegt die Zahl, ein geaenderter Text den Zeitpunkt. Der Client
-    spart sich damit den Katalog, solange sich nichts getan hat.
-    """
-    count = await session.scalar(select(func.count()).select_from(UiText)) or 0
-    newest = await session.scalar(select(func.max(UiText.updated_at)))
-    stamp = int(newest.timestamp() * 1_000_000) if isinstance(newest, datetime) else 0
-    return f'W/"{count}-{stamp}"'
+def defaults() -> dict[str, dict[str, str]]:
+    """Liest die Vorgabe aus ``daten/texte.json``."""
+    if not SOURCE.is_file():
+        return {}
+    raw: dict[str, dict[str, str]] = json.loads(SOURCE.read_text(encoding="utf-8"))
+    return raw
 
 
-def _entry(key: str, rows: Sequence[UiText]) -> TextOut:
-    """Baut die Antwort zu einem Schluessel aus seinen Zeilen."""
-    catalogue = seed_catalogue()
-    values = {Locale(row.locale): row.value for row in rows}
-    changed = any(catalogue[locale].get(key) != value for locale, value in values.items())
-    return TextOut(
-        key=key,
-        values=values,
-        changed=changed,
-        updated_at=max(row.updated_at for row in rows),
+async def sync(db: AsyncSession) -> int:
+    """Schreibt fehlende Schlüssel nach. Geänderte Texte bleiben stehen."""
+    known = {(row.key, row.locale) for row in (await db.execute(select(TextEntry))).scalars()}
+    added = 0
+    for locale, entries in defaults().items():
+        for key, value in entries.items():
+            if (key, locale) in known:
+                continue
+            db.add(TextEntry(key=key, locale=locale, value=value, changed=False))
+            added += 1
+    if added:
+        await db.commit()
+    return added
+
+
+async def load_titles(db: AsyncSession) -> None:
+    """Füllt die Titel der Fehler aus dem Katalog."""
+    query = select(TextEntry).where(
+        TextEntry.locale == DEFAULT_LOCALE,
+        TextEntry.key.startswith(ERROR_PREFIX),
     )
+    set_titles({row.key: row.value for row in (await db.execute(query)).scalars()})
 
 
-async def one_text(session: AsyncSession, key: str) -> TextOut:
-    """Liest einen Schluessel mit allen seinen Sprachen."""
-    rows = list(await session.scalars(select(UiText).where(UiText.key == key)))
-    return _entry(key, rows)
+async def entries(db: AsyncSession) -> Sequence[TextEntry]:
+    """Liest alle Texte, nach Schlüssel geordnet."""
+    query = select(TextEntry).order_by(TextEntry.key, TextEntry.locale)
+    return list((await db.execute(query)).scalars())
 
 
-async def whole_catalogue(session: AsyncSession, tag: str) -> Catalogue:
-    """Liest den ganzen Katalog, nach Schluessel sortiert.
+def revision(rows: Sequence[TextEntry]) -> str:
+    """Ein Fingerabdruck über den Bestand, für ETag und Abgleich."""
+    stamp = max((row.updated_at for row in rows), default=None)
+    raw = f"{len(rows)}:{stamp.isoformat() if stamp else ''}"
+    return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
-    Der ETag kommt von aussen: die Route hat ihn schon geholt, um die Anfrage
-    gegen ihn zu halten.
-    """
-    rows = list(await session.scalars(select(UiText).order_by(UiText.key, UiText.locale)))
-    grouped: dict[str, list[UiText]] = {}
+
+def catalogue(rows: Sequence[TextEntry]) -> dict[str, Any]:
+    """Baut den Katalog in der Form des Vertrags."""
+    values: dict[str, dict[str, str]] = {}
+    changed: dict[str, bool] = {}
+    stamps: dict[str, str] = {}
     for row in rows:
-        grouped.setdefault(row.key, []).append(row)
-    return Catalogue(
-        revision=tag,
-        locales=list(Locale),
-        entries=[_entry(key, group) for key, group in grouped.items()],
-    )
+        values.setdefault(row.key, {})[row.locale] = row.value
+        changed[row.key] = changed.get(row.key, False) or row.changed
+        stamps[row.key] = max(stamps.get(row.key, ""), row.updated_at.isoformat())
+    return {
+        "revision": revision(rows),
+        "locales": sorted({row.locale for row in rows}),
+        "entries": [
+            {
+                "key": key,
+                "values": values[key],
+                "changed": changed[key],
+                "updatedAt": stamps[key],
+            }
+            for key in sorted(values)
+        ],
+    }
+
+
+def entry_of(rows: Sequence[TextEntry], key: str) -> dict[str, Any]:
+    """Baut einen Eintrag des Katalogs."""
+    mine = [row for row in rows if row.key == key]
+    if not mine:
+        raise NotFound
+    return {
+        "key": key,
+        "values": {row.locale: row.value for row in mine},
+        "changed": any(row.changed for row in mine),
+        "updatedAt": max(row.updated_at for row in mine).isoformat(),
+    }
+
+
+async def change(
+    db: AsyncSession,
+    key: str,
+    locale: str,
+    value: str,
+    user_id: UUID,
+) -> dict[str, Any]:
+    """Setzt einen Text. Ein neuer Schlüssel entsteht hier nicht."""
+    rows = await entries(db)
+    if not any(row.key == key for row in rows):
+        raise NotFound
+    found = next((row for row in rows if row.key == key and row.locale == locale), None)
+    if found is None:
+        found = TextEntry(key=key, locale=locale, value=value)
+        db.add(found)
+    found.value = value
+    found.changed = True
+    found.updated_at = now()
+    found.updated_by_id = user_id
+    await db.commit()
+    return entry_of(await entries(db), key)
+
+
+async def reset(db: AsyncSession, key: str, locale: str) -> None:
+    """Setzt einen Text auf die Vorgabe zurück."""
+    query = select(TextEntry).where(TextEntry.key == key, TextEntry.locale == locale)
+    found = (await db.execute(query)).scalars().first()
+    if found is None:
+        raise NotFound
+    fallback = defaults().get(locale, {}).get(key)
+    if fallback is None:
+        await db.delete(found)
+    else:
+        found.value = fallback
+        found.changed = False
+        found.updated_at = now()
+    await db.commit()
+
+
+def fingerprint(catalogue_body: Mapping[str, Any]) -> str:
+    """Der ETag zum Katalog."""
+    return f'W/"{catalogue_body["revision"]}"'

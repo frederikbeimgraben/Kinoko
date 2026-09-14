@@ -1,195 +1,162 @@
-"""Fehler als problem+json nach RFC 9457.
+"""Fehler als Problemdokument nach RFC 9457."""
 
-Jeder Fehlerpfad der App endet hier. Die Antwort traegt den Medientyp
-``application/problem+json`` und immer dieselben Felder. Das FastAPI-eigene
-``detail``-Objekt verlaesst die App nie.
-"""
+from __future__ import annotations
 
-import logging
-from collections.abc import Mapping, Sequence
-from typing import ClassVar, Final, cast
+from http import HTTPStatus
+from typing import TYPE_CHECKING, Any, Final
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel
-from starlette.exceptions import HTTPException as StarletteHTTPException
-from starlette.responses import JSONResponse
+from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException
 
-_log: Final = logging.getLogger("pilze.fehler")
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
 
 MEDIA_TYPE: Final = "application/problem+json"
+TYPE_PREFIX: Final = "urn:primordium:error:"
+FALLBACK_LOCALE: Final = "de"
 
-TITLES: Final[Mapping[int, str]] = {
-    400: "Fehlerhafte Anfrage",
-    401: "Nicht angemeldet",
-    403: "Nicht erlaubt",
-    404: "Nicht gefunden",
-    409: "Konflikt",
-    413: "Anfrage zu gross",
-    415: "Medientyp nicht unterstützt",
-    422: "Eingabe ungueltig",
-    500: "Interner Fehler",
-}
-
-CODE: Final[Mapping[int, str]] = {
-    400: "bad_request",
-    401: "unauthorized",
-    403: "forbidden",
-    404: "not_found",
-    409: "conflict",
-    413: "payload_too_large",
-    415: "unsupported_media_type",
-    422: "validation_error",
-    500: "internal_error",
-}
+_titles: dict[str, str] = {}
 
 
-class FieldError(BaseModel):
-    """Ein einzelner Verstoss in der Eingabe."""
-
-    field: str
-    message: str
-
-
-class Problem(BaseModel):
-    """Der Antwortkoerper eines Fehlers."""
-
-    type: str
-    title: str
-    status: int
-    code: str
-    detail: str | None = None
-    errors: list[FieldError] | None = None
+def title_key(code: str) -> str:
+    """Der Textschlüssel zum Fehlercode, etwa ``not_found`` zu ``error.notFound``."""
+    head, *rest = code.split("_")
+    return "error." + head + "".join(part.capitalize() for part in rest)
 
 
-def code_for(status: int) -> str:
-    """Liefert den stabilen Fehlercode zu einem Status."""
-    return CODE.get(status, "error")
+def set_titles(titles: Mapping[str, str]) -> None:
+    """Setzt die Titel der Fehler aus dem Textkatalog."""
+    _titles.clear()
+    _titles.update(titles)
 
 
-def title_for(status: int) -> str:
-    """Liefert den lesbaren Titel zu einem Status."""
-    return TITLES.get(status, "Fehler")
+def title_of(code: str) -> str:
+    """Liefert den Titel eines Fehlercodes, ohne Katalog den Code selbst."""
+    return _titles.get(title_key(code), code)
 
 
 class AppError(Exception):
-    """Ein Fehler, den die App selbst wirft."""
+    """Ein Fehler, den die Anwendung als Problemdokument abgibt."""
 
-    status: ClassVar[int] = 500
-    headers: ClassVar[Mapping[str, str]] = {}
-
-    def __init__(self, detail: str | None = None) -> None:
+    def __init__(
+        self,
+        code: str,
+        status: int,
+        detail: str | None = None,
+        errors: Sequence[Mapping[str, str]] | None = None,
+    ) -> None:
+        super().__init__(code)
+        self.code = code
+        self.status = status
         self.detail = detail
-        super().__init__(detail or title_for(type(self).status))
-
-
-class NotAuthenticated(AppError):
-    """Das Token fehlt, ist abgelaufen oder traegt nicht."""
-
-    status: ClassVar[int] = 401
-    # Ohne diese Kopfzeile weiss ein Client nicht, welches Verfahren er braucht.
-    headers: ClassVar[Mapping[str, str]] = {"WWW-Authenticate": "Bearer"}
+        self.errors = list(errors or [])
 
 
 class NotFound(AppError):
-    """Das angefragte Objekt gibt es nicht, oder es gehoert einem anderen."""
+    """Die Zeile gibt es nicht, oder sie gehört jemand anderem."""
 
-    status: ClassVar[int] = 404
+    def __init__(self, detail: str | None = None) -> None:
+        super().__init__("not_found", HTTPStatus.NOT_FOUND, detail)
+
+
+class Unauthorized(AppError):
+    """Ohne gültiges Token."""
+
+    def __init__(self, detail: str | None = None) -> None:
+        super().__init__("unauthorized", HTTPStatus.UNAUTHORIZED, detail)
 
 
 class Forbidden(AppError):
-    """Die Person ist angemeldet, aber ihr fehlt das Recht."""
+    """Mit Token, aber ohne das nötige Recht."""
 
-    status: ClassVar[int] = 403
-
-
-class Invalid(AppError):
-    """Die Eingabe passt zum Vertrag, aber nicht zu den Regeln der App."""
-
-    status: ClassVar[int] = 422
-
-
-class UnsupportedMediaType(AppError):
-    """Der Dienst nimmt diesen Medientyp nicht an."""
-
-    status: ClassVar[int] = 415
+    def __init__(self, detail: str | None = None) -> None:
+        super().__init__("forbidden", HTTPStatus.FORBIDDEN, detail)
 
 
 class Conflict(AppError):
-    """Der Zustand des Objekts laesst diesen Schritt nicht zu."""
+    """Der Vorgang widerspricht dem Bestand."""
 
-    status: ClassVar[int] = 409
-
-
-def problem_response(
-    status: int,
-    *,
-    detail: str | None = None,
-    errors: Sequence[FieldError] | None = None,
-    headers: Mapping[str, str] | None = None,
-) -> JSONResponse:
-    """Baut die problem+json-Antwort zu einem Status."""
-    code = code_for(status)
-    problem = Problem(
-        type=f"urn:pilzkarte:fehler:{code}",
-        title=title_for(status),
-        status=status,
-        code=code,
-        detail=detail,
-        errors=list(errors) if errors else None,
-    )
-    return JSONResponse(
-        status_code=status,
-        content=problem.model_dump(exclude_none=True),
-        media_type=MEDIA_TYPE,
-        headers=dict(headers) if headers else None,
-    )
+    def __init__(self, code: str = "conflict", detail: str | None = None) -> None:
+        super().__init__(code, HTTPStatus.CONFLICT, detail)
 
 
-def _field_errors(raw_errors: Sequence[Mapping[str, object]]) -> list[FieldError]:
-    error: list[FieldError] = []
-    for entry in raw_errors:
-        place = cast("Sequence[object]", entry.get("loc", ()))
-        # Das erste Glied nennt nur die Quelle (body, query, path). Der Rest ist
-        # der Weg zum Feld und das, was das Frontend anzeigen kann.
-        field = ".".join(str(part) for part in list(place)[1:]) or str(entry.get("type", "eingabe"))
-        error.append(FieldError(field=field, message=str(entry.get("msg", ""))))
-    return error
+class TooLarge(AppError):
+    """Der Körper der Anfrage ist zu groß."""
+
+    def __init__(self, detail: str | None = None) -> None:
+        super().__init__("too_large", HTTPStatus.REQUEST_ENTITY_TOO_LARGE, detail)
 
 
-async def _app_error(_: Request, exc: Exception) -> Response:
-    error = cast("AppError", exc)
-    return problem_response(
-        type(error).status,
-        detail=error.detail,
-        headers=type(error).headers,
-    )
+class Invalid(AppError):
+    """Die Eingabe passt nicht zum Vertrag."""
+
+    def __init__(
+        self,
+        detail: str | None = None,
+        errors: Sequence[Mapping[str, str]] | None = None,
+    ) -> None:
+        super().__init__("validation", HTTPStatus.UNPROCESSABLE_ENTITY, detail, errors)
 
 
-async def _validation_error(_: Request, exc: Exception) -> Response:
-    error = cast("RequestValidationError", exc)
-    raw_errors = cast("Sequence[Mapping[str, object]]", error.errors())
-    return problem_response(
-        422,
-        detail="Die Anfrage passt nicht zum Vertrag.",
-        errors=_field_errors(raw_errors),
-    )
+def document(error: AppError) -> dict[str, Any]:
+    """Baut das Problemdokument zu einem Fehler."""
+    body: dict[str, Any] = {
+        "type": TYPE_PREFIX + error.code,
+        "title": title_of(error.code),
+        "status": error.status,
+        "code": error.code,
+    }
+    if error.detail:
+        body["detail"] = error.detail
+    if error.errors:
+        body["errors"] = error.errors
+    return body
 
 
-async def _http_error(_: Request, exc: Exception) -> Response:
-    error = cast("StarletteHTTPException", exc)
-    return problem_response(error.status_code, detail=error.detail, headers=error.headers)
+def problem_response(error: AppError) -> JSONResponse:
+    """Antwortet mit dem Problemdokument."""
+    return JSONResponse(document(error), status_code=error.status, media_type=MEDIA_TYPE)
 
 
-async def _unhandled(_: Request, exc: Exception) -> Response:
-    # Die Ursache gehoert ins Journal, nicht in die Antwort.
-    _log.exception("Unbehandelter Fehler", exc_info=exc)
-    return problem_response(500, detail="Der Dienst konnte die Anfrage nicht bearbeiten.")
+def field_errors(exception: RequestValidationError) -> list[dict[str, str]]:
+    """Übersetzt die Meldungen von Pydantic in Feld und Code."""
+    found: list[dict[str, str]] = []
+    for item in exception.errors():
+        parts = [str(part) for part in item["loc"] if part not in {"body", "query", "path"}]
+        found.append({"field": ".".join(parts) or "body", "code": str(item["type"])})
+    return found
 
 
-def register_error_handlers(app: FastAPI) -> None:
-    """Haengt die Handler in die App. Danach ist jede Fehlerantwort problem+json."""
-    app.add_exception_handler(AppError, _app_error)
-    app.add_exception_handler(RequestValidationError, _validation_error)
-    app.add_exception_handler(StarletteHTTPException, _http_error)
-    app.add_exception_handler(Exception, _unhandled)
+CODES: Final[dict[int, str]] = {
+    HTTPStatus.UNAUTHORIZED: "unauthorized",
+    HTTPStatus.FORBIDDEN: "forbidden",
+    HTTPStatus.NOT_FOUND: "not_found",
+    HTTPStatus.METHOD_NOT_ALLOWED: "method_not_allowed",
+    HTTPStatus.CONFLICT: "conflict",
+    HTTPStatus.REQUEST_ENTITY_TOO_LARGE: "too_large",
+    HTTPStatus.UNSUPPORTED_MEDIA_TYPE: "unsupported_media",
+    HTTPStatus.UNPROCESSABLE_ENTITY: "validation",
+}
+
+
+def register_error_handlers(built: FastAPI) -> None:
+    """Hängt die Fehlerbehandlung an die App."""
+
+    async def on_app_error(_: Request, exception: Exception) -> JSONResponse:
+        return problem_response(
+            exception if isinstance(exception, AppError) else AppError("internal", 500)
+        )
+
+    async def on_validation(_: Request, exception: Exception) -> JSONResponse:
+        found = field_errors(exception) if isinstance(exception, RequestValidationError) else []
+        return problem_response(Invalid(errors=found))
+
+    async def on_http(_: Request, exception: Exception) -> JSONResponse:
+        status = exception.status_code if isinstance(exception, HTTPException) else 500
+        return problem_response(AppError(CODES.get(status, "internal"), status))
+
+    built.add_exception_handler(AppError, on_app_error)
+    built.add_exception_handler(RequestValidationError, on_validation)
+    built.add_exception_handler(HTTPException, on_http)

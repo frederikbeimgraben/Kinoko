@@ -1,65 +1,29 @@
-"""Endpunkte ohne Fachbezug: Gesundheit, Konfiguration und die eigene Person."""
+"""Gesundheit und die Werte, die das Frontend beim Start braucht."""
 
-from typing import Annotated
+from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from typing import Any
 
-from app.core.auth import User, current_user
-from app.core.settings import Settings, get_settings
-from app.core.version import VERSION
-from app.shared.schemas import BaseSchema
+from fastapi import APIRouter
 
-router = APIRouter(tags=["basis"])
+from app.core.settings import VERSION, get_settings
 
-
-class Health(BaseSchema):
-    """Antwort des Health-Endpunkts."""
-
-    status: str
+router = APIRouter(tags=["system"])
 
 
-class Config(BaseSchema):
-    """Was das Frontend braucht, um sich anzumelden und sich zu verorten."""
-
-    oidc_issuer: str
-    oidc_client_id: str
-    origin: str
-    version: str
+@router.get("/health")
+async def get_health() -> dict[str, Any]:
+    """Sagt, dass der Dienst antwortet."""
+    return {"status": "ok"}
 
 
-class Me(BaseSchema):
-    """Die Person hinter dem Token, so wie das Backend sie sieht."""
-
-    sub: str
-    email: str | None
-    name: str | None
-
-
-@router.get("/health", summary="Laeuft der Dienst?")
-async def health() -> Health:
-    """Meldet, dass der Dienst Anfragen annimmt."""
-    return Health(status="ok")
-
-
-@router.get("/config", summary="Konfiguration fuer das Frontend")
-async def configuration(
-    settings: Annotated[Settings, Depends(get_settings)],
-) -> Config:
-    """Liefert Issuer, Client ID, Ursprung und Version."""
-    return Config(
-        oidc_issuer=settings.oidc_issuer,
-        oidc_client_id=settings.oidc_client_id,
-        origin=settings.origin,
-        version=VERSION,
-    )
-
-
-@router.get("/ich", summary="Wer bin ich?")
-async def me(user: Annotated[User, Depends(current_user)]) -> Me:
-    """Liefert die Ansprueche des Tokens zurueck.
-
-    Der Endpunkt traegt keine Fachlogik. Er ist der kuerzeste Weg, eine
-    Anmeldung zu pruefen: Ohne gueltiges Token antwortet er mit 401, und das
-    Frontend uebt daran seinen Weg ueber die stille Erneuerung.
-    """
-    return Me(sub=user.sub, email=user.email, name=user.name)
+@router.get("/config")
+async def get_config() -> dict[str, Any]:
+    """Liefert Issuer, Klient, Ursprung und Version."""
+    settings = get_settings()
+    return {
+        "oidcIssuer": settings.oidc_issuer,
+        "oidcClientId": settings.oidc_client_id,
+        "origin": settings.origin,
+        "version": VERSION,
+    }

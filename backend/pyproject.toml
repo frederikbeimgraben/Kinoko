@@ -1,7 +1,7 @@
 [project]
-name = "pilzkarte-backend"
+name = "primordium-backend"
 version = "0.1.0"
-description = "Backend der Pilzkarte-App"
+description = "Backend der App Primordium"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.116",
@@ -17,9 +17,8 @@ dependencies = [
     "python-multipart>=0.0.20",
 ]
 
-# Werkzeuge fuer Entwicklung und Tests. Als Gruppe, nicht als Extra: `uv sync`
-# installiert die Gruppe von allein, ein Extra nur mit zusaetzlichem Schalter.
-# Auf dem Server wird nichts davon installiert.
+# Werkzeuge fuer Entwicklung und Tests. Eine Gruppe installiert `uv sync` von
+# allein, ein Extra nur mit Schalter.
 [dependency-groups]
 dev = [
     "pytest>=8.4",
@@ -30,23 +29,19 @@ dev = [
     "schemathesis>=4.27.1",
 ]
 
-# Der Dienst startet den Code aus dem Arbeitsverzeichnis, er installiert kein
-# Paket. Lokal soll es genauso laufen.
+# Der Dienst startet den Code aus dem Arbeitsverzeichnis, ohne Paket.
 [tool.uv]
 package = false
 
 [tool.pytest.ini_options]
-# Das Brett liegt außerhalb des Backends und hängt an keinem Paket. Der
-# zweite Pfad lässt den Test der Diagrammseite es trotzdem laden.
-pythonpath = [".", "../tools/board"]
+pythonpath = ["."]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "--cov=app --cov=tools --cov-branch --cov-report=term-missing -m 'not contract'"
 markers = ["contract: prueft den Vertrag, laeuft im Job be-contract"]
 
-# SQLAlchemy fuehrt den synchronen Treiber in einem greenlet aus. Ohne diesen
-# Hinweis verliert coverage jede Zeile hinter einem Wechsel des Stapels und
-# meldet Routen als ungetestet, die der Test gerade durchlaufen hat.
+# SQLAlchemy laeuft in einem greenlet. Ohne diesen Hinweis verliert coverage
+# jede Zeile hinter einem Wechsel des Stapels.
 [tool.coverage.run]
 concurrency = ["thread", "greenlet"]
 
@@ -67,8 +62,7 @@ ignore = [
     "D213",
     # Der Formatter setzt die Kommas selbst.
     "COM812",
-    # Die Meldungen sind deutsche Prosa und stehen an der Wurfstelle, nicht in
-    # einer Variablen darueber.
+    # Die Meldung steht an der Wurfstelle, nicht in einer Variablen darueber.
     "EM101",
     "EM102",
     "TRY003",
@@ -81,6 +75,10 @@ ignore = [
     "CPY001",
     # Fachbegriffe sind deutsch: eine Ausnahme heisst Fehler, nicht Error.
     "N818",
+    # FastAPI und Pydantic lesen die Annotationen zur Laufzeit.
+    "TC001",
+    "TC002",
+    "TC003",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -106,12 +104,15 @@ ignore = [
 ]
 
 [tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "pydantic_settings.BaseSettings"]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+    "pydantic_settings.BaseSettings",
+    "app.shared.schema.Schema",
+]
 
 [tool.basedpyright]
 typeCheckingMode = "strict"
 pythonVersion = "3.13"
 include = ["app", "tests", "tools", "migrations"]
-extraPaths = ["../tools/board"]
 venvPath = "."
 venv = ".venv"
