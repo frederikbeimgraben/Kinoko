@@ -46,7 +46,8 @@
 }
 
 .week__number {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-control);
+  font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
 }

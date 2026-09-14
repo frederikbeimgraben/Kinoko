@@ -14,7 +14,7 @@
 .head__title {
   min-inline-size: 0;
   overflow: hidden;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-control);
   font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
   text-overflow: ellipsis;
@@ -37,7 +37,7 @@
 }
 
 .head__divider {
-  margin-inline: var(--space-1);
+  margin-inline: 6px;
   font-weight: var(--fw-medium);
   color: var(--color-text-muted);
 }
