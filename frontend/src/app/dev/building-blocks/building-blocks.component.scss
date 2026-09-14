@@ -109,8 +109,8 @@
   border-radius: var(--radius-xl);
 }
 
-// Eine Bühne hält einen Baustein, der sich sonst an das Fenster bindet.
-// `contain` macht sie zum Bezugsrahmen für `position: fixed`.
+// Die Bühne ist der Bildschirm: `contain` bindet `position: fixed` an sie,
+// der Abstand eines Dialogs zum Bildschirmrand liegt ausserhalb der Karte.
 .block__stage {
   position: relative;
   overflow: hidden;
@@ -131,7 +131,7 @@
 }
 
 .block__stage--rail {
-  block-size: 296px;
+  block-size: 288px;
 }
 
 .block__stage--sheet {
@@ -145,7 +145,7 @@
 }
 
 .block__stage--filter {
-  block-size: 277px;
+  block-size: 218px;
 }
 
 .block__stage--split {
@@ -154,15 +154,15 @@
 }
 
 .block__stage--dialog {
-  block-size: 370px;
+  block-size: 293px;
 }
 
 .block__stage--toast {
-  block-size: 120px;
+  block-size: 100px;
 }
 
 .block__stage--review {
-  block-size: 281px;
+  block-size: 273px;
 }
 
 .block__stage--viewer {
@@ -170,12 +170,12 @@
 }
 
 .block__stage--fixed {
-  block-size: 140px;
+  block-size: 136px;
   background: var(--color-surface-sunken);
 }
 
 .block__stage--confirm {
-  block-size: 296px;
+  block-size: 248px;
 }
 
 .block__stage--photo {
