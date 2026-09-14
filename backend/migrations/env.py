@@ -36,10 +36,11 @@ def known_revisions() -> set[str]:
 
 
 def reset_if_unknown(connection: Connection) -> None:
-    """Löscht alle Tabellen, wenn die eingetragene Revision fremd ist."""
+    """Löscht alle Tabellen, wenn ohne bekannte Revision welche stehen."""
     tables = existing_tables(connection)
     revision = stored_revision(connection, tables)
-    if revision is None or revision in known_revisions():
+    known = revision is not None and revision in known_revisions()
+    if known or not tables:
         connection.rollback()
         return
     for table in tables:

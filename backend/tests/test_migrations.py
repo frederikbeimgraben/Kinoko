@@ -91,3 +91,22 @@ def test_upgrade_resets_a_foreign_revision(tmp_path: Path) -> None:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
     assert version == "baseline"
+
+
+def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
+    file = tmp_path / "ohne_version.sqlite"
+    point_at(file)
+    made = create_engine(f"sqlite:///{file}")
+    Base.metadata.create_all(made)
+    made.dispose()
+
+    command.upgrade(alembic_config(), "head")
+
+    found = tables_of(file)
+    assert set(Base.metadata.tables) <= found
+
+    made = create_engine(f"sqlite:///{file}")
+    with made.connect() as connection:
+        version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
+    made.dispose()
+    assert version == "baseline"

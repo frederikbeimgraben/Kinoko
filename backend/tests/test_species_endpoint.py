@@ -7,13 +7,13 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import SpeciesMeasurement
-from tools import import_catalog
-from tools.catalog_rows import Report
+from app.modules.catalog import importer
+from app.modules.catalog.importer import Report
 
 
 def profile_count() -> int:
     """Die Zahl der TOML-Profile unter ``daten/arten``."""
-    return len(list(import_catalog.SPECIES_DIR.glob("*.toml")))
+    return len(list(importer.SPECIES_DIR.glob("*.toml")))
 
 
 async def pages(api: httpx.AsyncClient, path: str) -> list[dict[str, object]]:
@@ -37,7 +37,7 @@ async def test_species_list_serves_every_profile(
     api: httpx.AsyncClient,
     session: AsyncSession,
 ) -> None:
-    await import_catalog.import_all(session, Report())
+    await importer.import_all(session, Report())
     items = await pages(api, "/species")
     assert len(items) == profile_count()
     assert all(item["slug"] for item in items)
@@ -47,7 +47,7 @@ async def test_a_known_species_comes_from_the_table(
     api: httpx.AsyncClient,
     session: AsyncSession,
 ) -> None:
-    await import_catalog.import_all(session, Report())
+    await importer.import_all(session, Report())
     answer = await api.get("/species/boletus-edulis")
     assert answer.status_code == 200
     body = answer.json()
@@ -63,7 +63,7 @@ async def test_the_bundle_carries_every_species(
     api: httpx.AsyncClient,
     session: AsyncSession,
 ) -> None:
-    await import_catalog.import_all(session, Report())
+    await importer.import_all(session, Report())
     answer = await api.get("/species/bundle")
     assert answer.status_code == 200
     body = answer.json()
@@ -74,7 +74,7 @@ async def test_the_bundle_carries_every_species(
 def toml_measurements() -> int:
     """Zählt die Maße in allen Profilen."""
     total = 0
-    for file in import_catalog.SPECIES_DIR.glob("*.toml"):
+    for file in importer.SPECIES_DIR.glob("*.toml"):
         with file.open("rb") as handle:
             total += len(tomllib.load(handle).get("masse", {}))
     return total
@@ -85,7 +85,7 @@ async def test_every_measurement_of_the_profiles_is_in_the_table(
     session: AsyncSession,
 ) -> None:
     report = Report()
-    await import_catalog.import_all(session, report)
+    await importer.import_all(session, report)
     assert "measurement_ohne_koerperteil" not in report.skipped
     rows = await session.execute(select(func.count()).select_from(SpeciesMeasurement))
     assert rows.scalar_one() == toml_measurements()
