@@ -70,3 +70,23 @@ app-building-blocks .block--nolabel app-input label {
   white-space: nowrap;
   border: 0;
 }
+
+// Gefahr als Umriss: Fläche des Kartengrunds, Rand und Text in Gefahr-Farbe.
+// Das Kit füllt den Knopf und setzt das im eigenen Stilblatt fest. Die Regel
+// steht darum global und mit `!important`: von außen ist eine fremde
+// Bibliothek anders nicht zu erreichen.
+.btn--danger {
+  color: var(--color-danger) !important;
+  background: var(--color-surface) !important;
+  border-color: var(--color-danger) !important;
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-subtle) !important;
+  filter: none !important;
+}
+
+.btn--danger:active:not(:disabled) {
+  background: var(--color-danger-subtle) !important;
+  filter: brightness(0.94) !important;
+}
