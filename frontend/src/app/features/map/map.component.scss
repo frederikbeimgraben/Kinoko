@@ -14,9 +14,8 @@
   inset: 0;
 }
 
-// Das Blatt sitzt am unteren Rand der Karte. Der Wirt spannt über die ganze
-// Karte, weil die Raste ein Anteil dieser Höhe ist. Er liegt über den
-// schwebenden Knöpfen: in der obersten Raste deckt das Blatt sie zu.
+// Der Wirt des Blatts spannt über die ganze Karte: die Raste ist ein Anteil
+// dieser Höhe, und die oberste Raste deckt die schwebenden Knöpfe zu.
 .map__sheet {
   position: absolute;
   inset: 0;
@@ -62,8 +61,7 @@
   border-inline-end: var(--border-width) solid var(--color-border);
 }
 
-// Die schwebenden Knöpfe sitzen oben rechts, jetzt ohne den Urheberhinweis
-// über sich. Maße aus `docs/mockups/bauen.py`, Klasse `.schwebe`.
+// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards.
 .map__buttons {
   position: absolute;
   inset-block-start: 12px;
@@ -74,9 +72,8 @@
   gap: 12px;
 }
 
-// Am Telefon schwebt „Eintragen“ unten rechts, wo der Daumen liegt, und bleibt
-// über dem Blatt. Am Rechner steht er als dritter Knopf in der Gruppe oben
-// rechts.
+// Am Telefon schwebt „Eintragen“ unten rechts, wo der Daumen liegt, und
+// bleibt über dem Blatt.
 .map__add {
   position: absolute;
   inset-block-end: calc(var(--pilz-sheet-inset, var(--size-sheet-head)) + 12px);
@@ -86,9 +83,13 @@
   z-index: 3;
 }
 
+// Am Rechner steht „Eintragen“ unten rechts über der Karte, größer als die
+// Knöpfe darüber.
 :host-context(.shell--column) .map__add {
-  inset-block-start: calc(2 * (var(--size-floating) + 12px) + 12px);
-  inset-block-end: auto;
+  --size-floating: 56px;
+
+  inset-block-end: 24px;
+  inset-inline-end: 24px;
 }
 
 .map__scrim {

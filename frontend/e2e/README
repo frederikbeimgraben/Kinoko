@@ -35,3 +35,20 @@ Die Kategorie Leistung warnt bis U12 ab 0,9. Gemessen ergibt sie in der CI
 0,53 und lokal 0,89, derselbe Build ohne dieses Paket ebenfalls 0,89.
 Die Lücke kommt vom Rechner der CI: die Total Blocking Time liegt dort bei
 1 570 ms gegen 140 ms lokal. U12 hebt die Zeile auf `error`.
+
+## Karten-Boards ausstehend
+
+Die dreizehn Boards der Seite `map` haben je einen Test in
+`boards/map.spec.ts`. Sie stehen trotzdem in `pending.json`, weil drei
+Dinge im Bild liegen, die die Seite nicht setzt:
+
+1. Die Grundkarte. Das Board zeichnet einen Farbverlauf, die App zeichnet
+   OpenFreeMap. Der Test sperrt die Kachelquelle, damit das Bild gleich
+   bleibt. Die Fläche ist dann leer und deckt 35 bis 78 % des Bildes.
+2. Die Zeitleiste. Das Board steht am Anfang, die App schiebt die gewählte
+   Woche in die Mitte.
+3. Die Höhe des Blatts. Die Boards zeigen fünf Höhen (0,40, 0,46, 0,61,
+   0,67, 0,70 der Karte); `app-sheet` kennt drei Rasten.
+
+Die gemessene Abweichung steht im PR. Nimm die Stems aus `pending.json`,
+sobald die Boards und `app-sheet` zusammenpassen.

@@ -48,7 +48,7 @@
           icon="location"
           [label]="'map.location' | t"
           [disabled]="!locating.allowed()"
-          (pressed)="toMyLocation()"
+          (pressed)="surface.locate()"
         />
       </div>
 

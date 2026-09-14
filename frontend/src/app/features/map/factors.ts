@@ -80,10 +80,7 @@ export function conditionText(factor: Factor, layer: Layer, locale: string, to: 
   return `${left} ${to} ${formatValue(factor.high, layer, locale)}`;
 }
 
-/**
- * Der Wert als Byte der Wertkachel. Byte 0 heißt „keine Daten“, die Skala
- * beginnt darum bei 1.
- */
+/** Der Wert als Byte. Byte 0 heißt „keine Daten“, die Skala beginnt bei 1. */
 export function byteForValue(layer: Layer, value: number): number {
   const width = layer.high - layer.low;
   const relative = width === 0 ? 0 : (value - layer.low) / width;

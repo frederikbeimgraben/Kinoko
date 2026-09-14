@@ -58,12 +58,12 @@ export class MapState {
   readonly species = signal<string>(DEFAULT_SPECIES);
   /** Ob das Ebenen-Blatt offen ist. Der Knopf dazu steht auf jedem Reiter. */
   readonly layersSheetOpen = signal(false);
-  /** `2025-40` oder `null` für „die aktuelle Woche der Art“. */
+  /** Jahr und Woche als `JJJJ-WW`, oder `null` für die aktuelle Woche. */
   readonly week = signal<string | null>(null);
   readonly view = signal<ViewMode>('forecast');
   /** Die gewählte Eingabe-Ebene, `null` heißt „die erste der Liste“. */
   readonly layer = signal<string | null>(null);
-  /** Deckkraft der Wertebene, 0 bis 1. */
+  /** Deckkraft der Wertebene, 0 als kein Wert, 1 als volle Deckung. */
   readonly opacity = signal(1);
   readonly background = signal<Background>('map');
   /** In der Darstellung Ebene: die Vorhersage der Art bleibt darunter liegen. */

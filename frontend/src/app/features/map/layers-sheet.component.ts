@@ -27,7 +27,7 @@ export class LayersSheetComponent {
   private readonly i18n = inject(I18nService);
 
   readonly background = input.required<Background>();
-  /** Deckkraft der Wertebene, 0 bis 1. */
+  /** Deckkraft der Wertebene, 0 als kein Wert, 1 als volle Deckung. */
   readonly opacity = input.required<number>();
   /** Nur in der Darstellung Ebene lässt sich die Vorhersage darunter legen. */
   readonly showsLayer = input(false);

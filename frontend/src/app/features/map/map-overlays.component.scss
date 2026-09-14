@@ -1,3 +1,49 @@
 :host {
   display: contents;
 }
+
+.overlay-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-block-size: 0;
+  overflow: hidden;
+  padding: var(--space-1) var(--size-gutter) var(--size-gutter);
+}
+
+.overlay-body__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overlay-body__title {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+}
+
+.overlay-body__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+}
+
+.overlay-foot {
+  padding: var(--space-3) var(--size-gutter) var(--size-gutter);
+}
+
+app-species-picker,
+app-layer-list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-block-size: 0;
+  overflow: hidden;
+}

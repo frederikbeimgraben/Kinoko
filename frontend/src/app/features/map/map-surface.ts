@@ -1,4 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { ToastService } from '@stupa-makers/ui-kit';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { LocationService } from '../../core/location/location.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { TileService } from '../../core/tiles/tile.service';
 import { layerWeek } from '../../core/tiles/layers';
@@ -33,6 +36,9 @@ export class MapSurface {
   private readonly view = inject(MapView);
   private readonly state = inject(MapState);
   private readonly combination = inject(CombinationState);
+  private readonly toasts = inject(ToastService);
+  private readonly i18n = inject(I18nService);
+  private readonly locating = inject(LocationService);
 
   private host: HTMLElement | null = null;
   private readonly _ready = signal(false);
@@ -74,6 +80,28 @@ export class MapSurface {
 
   centreOn(point: readonly [number, number]): void {
     this.adapter.centerOn(point, ZOOM_LOCATION);
+  }
+
+  /** Zentriert auf den eigenen Standort. Ohne Signal bleibt die Karte stehen. */
+  locate(): void {
+    const own = this.locating.location();
+    if (own !== null) {
+      this.centreOn([own.lon, own.lat]);
+      return;
+    }
+    const api = navigator.geolocation as Partial<Geolocation> | undefined;
+    if (typeof api?.getCurrentPosition !== 'function') {
+      this.toasts.error(this.i18n.translate('map.locationDenied'));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (place) => {
+        this.centreOn([place.coords.longitude, place.coords.latitude]);
+      },
+      () => {
+        this.toasts.error(this.i18n.translate('map.locationDenied'));
+      },
+    );
   }
 
   /** Legt Vorhersage und obere Ebene auf die Karte. */

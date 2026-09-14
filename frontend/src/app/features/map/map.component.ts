@@ -13,9 +13,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastService } from '@stupa-makers/ui-kit';
 import { AuthService } from '../../core/auth';
-import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { LocationService } from '../../core/location/location.service';
@@ -72,11 +70,9 @@ export class MapComponent implements OnDestroy {
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly objects = viewChild(MapObjectsDirective);
   private readonly tiles = inject(TileService);
-  private readonly i18n = inject(I18nService);
   private readonly visible = inject(VisibilityService).visible;
   private readonly viewport = inject(ViewportService);
   private readonly router = inject(Router);
-  private readonly toasts = inject(ToastService);
   private readonly auth = inject(AuthService);
   private readonly entries = inject(EntriesState);
   private readonly sync = inject(SyncService);
@@ -227,26 +223,6 @@ export class MapComponent implements OnDestroy {
     const hit = this.objects()?.target() ?? null;
     this.menuAt.set(null);
     if (hit !== null) this.surface.centreOn(hit.point);
-  }
-
-  /** Zentriert auf den eigenen Standort. Ohne Signal bleibt die Karte stehen. */
-  protected toMyLocation(): void {
-    const own = this.locating.location();
-    if (own !== null) {
-      this.surface.centreOn([own.lon, own.lat]);
-      return;
-    }
-    const api = navigator.geolocation as Partial<Geolocation> | undefined;
-    if (typeof api?.getCurrentPosition !== 'function') {
-      this.toasts.error(this.i18n.translate('map.locationDenied'));
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (place) => {
-        this.surface.centreOn([place.coords.longitude, place.coords.latitude]);
-      },
-      () => this.toasts.error(this.i18n.translate('map.locationDenied')),
-    );
   }
 
   private async loadSpeciesManifests(): Promise<void> {
