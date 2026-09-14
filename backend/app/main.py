@@ -3,11 +3,12 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.db import engine, session_factory
 from app.core.errors import register_error_handlers
+from app.core.routing import reject_unknown_method, reject_unknown_query
 from app.core.settings import VERSION, get_settings
 from app.modules import system
 from app.modules.access import router as access_router
@@ -34,7 +35,12 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
 def build_app() -> FastAPI:
     """Baut die App: Router, Fehlerbehandlung, CORS."""
     settings = get_settings()
-    built = FastAPI(title="Primordium", version=VERSION, lifespan=lifespan)
+    built = FastAPI(
+        title="Primordium",
+        version=VERSION,
+        lifespan=lifespan,
+        dependencies=[Depends(reject_unknown_method), Depends(reject_unknown_query)],
+    )
     built.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.origin],

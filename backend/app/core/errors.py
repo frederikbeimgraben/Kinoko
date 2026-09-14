@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import re
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Any, Final
+from typing import TYPE_CHECKING, Any, Final, cast
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -13,6 +14,7 @@ from starlette.exceptions import HTTPException
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
 
+VERBS: Final = frozenset({"get", "post", "put", "patch", "delete"})
 MEDIA_TYPE: Final = "application/problem+json"
 TYPE_PREFIX: Final = "urn:primordium:error:"
 FALLBACK_LOCALE: Final = "de"
@@ -115,9 +117,17 @@ def document(error: AppError) -> dict[str, Any]:
     return body
 
 
-def problem_response(error: AppError) -> JSONResponse:
+def problem_response(
+    error: AppError,
+    headers: Mapping[str, str] | None = None,
+) -> JSONResponse:
     """Antwortet mit dem Problemdokument."""
-    return JSONResponse(document(error), status_code=error.status, media_type=MEDIA_TYPE)
+    return JSONResponse(
+        document(error),
+        status_code=error.status,
+        media_type=MEDIA_TYPE,
+        headers=dict(headers) if headers else None,
+    )
 
 
 def field_errors(exception: RequestValidationError) -> list[dict[str, str]]:
@@ -141,6 +151,41 @@ CODES: Final[dict[int, str]] = {
 }
 
 
+PARAMETER: Final = re.compile(r"\{[^}]+\}")
+INDEX_KEY: Final = "_method_index"
+
+
+def method_index(app: FastAPI) -> list[tuple[re.Pattern[str], int, set[str]]]:
+    """Ein Muster je Pfad des Schemas, mit Rang und Methoden."""
+    found = getattr(app.state, INDEX_KEY, None)
+    if found is not None:
+        return cast("list[tuple[re.Pattern[str], int, set[str]]]", found)
+    built: list[tuple[re.Pattern[str], int, set[str]]] = []
+    for path, item in app.openapi()["paths"].items():
+        escaped = re.escape(path).replace("\\{", "{").replace("\\}", "}")
+        pattern = re.compile("^" + PARAMETER.sub("[^/]+", escaped) + "$")
+        rank = sum(1 for part in path.split("/") if part and not part.startswith("{"))
+        methods = {method.upper() for method in item if method in VERBS}
+        if "GET" in methods:
+            methods.add("HEAD")
+        built.append((pattern, rank, methods))
+    setattr(app.state, INDEX_KEY, built)
+    return built
+
+
+def allowed_methods(app: FastAPI, path: str) -> list[str]:
+    """Die Methoden des Pfads, der am genauesten passt."""
+    hits = [(rank, methods) for pattern, rank, methods in method_index(app) if pattern.match(path)]
+    if not hits:
+        return []
+    best = max(rank for rank, _ in hits)
+    found: set[str] = set()
+    for rank, methods in hits:
+        if rank == best:
+            found |= methods
+    return sorted(found)
+
+
 def register_error_handlers(built: FastAPI) -> None:
     """Hängt die Fehlerbehandlung an die App."""
 
@@ -153,9 +198,17 @@ def register_error_handlers(built: FastAPI) -> None:
         found = field_errors(exception) if isinstance(exception, RequestValidationError) else []
         return problem_response(Invalid(errors=found))
 
-    async def on_http(_: Request, exception: Exception) -> JSONResponse:
-        status = exception.status_code if isinstance(exception, HTTPException) else 500
-        return problem_response(AppError(CODES.get(status, "internal"), status))
+    async def on_http(request: Request, exception: Exception) -> JSONResponse:
+        if not isinstance(exception, HTTPException):
+            return problem_response(AppError("internal", 500))
+        code = CODES.get(exception.status_code, "internal")
+        error = AppError(code, exception.status_code)
+        headers = dict(exception.headers or {})
+        if exception.status_code == HTTPStatus.METHOD_NOT_ALLOWED:
+            found = allowed_methods(request.app, request.url.path)
+            if found:
+                headers["Allow"] = ", ".join(found)
+        return problem_response(error, headers)
 
     built.add_exception_handler(AppError, on_app_error)
     built.add_exception_handler(RequestValidationError, on_validation)

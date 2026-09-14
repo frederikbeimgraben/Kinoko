@@ -80,10 +80,12 @@ async def get_photo(
 @router.delete("/photos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_photo(
     db: Db,
+    user: CurrentUser,
     viewer: CurrentViewer,
     photo_id: Annotated[uuid.UUID, Path(alias="id")],
 ) -> None:
     """Löscht ein Foto: die Zeile und seine Dateien."""
+    _ = user
     repo = PhotoRepository(db)
     await service.delete(db, get_settings().photos, repo, photo_id, viewer)
 
@@ -132,10 +134,12 @@ async def reject_photo(
 @router.put("/photos/{id}/lead")
 async def set_lead_photo(
     db: Db,
+    user: CurrentUser,
     viewer: CurrentViewer,
     photo_id: Annotated[uuid.UUID, Path(alias="id")],
 ) -> Any:  # noqa: ANN401
     """Macht ein Foto zum Titelbild seiner Art."""
+    _ = user
     repo = PhotoRepository(db)
     photo = await service.set_lead(db, repo, photo_id, viewer)
     return service.out(photo)

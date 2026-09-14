@@ -1451,6 +1451,15 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
+        /** @description Forbidden */
+        Forbidden: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
         /** @description Unprocessable Entity */
         Validation: {
             headers: {
@@ -1625,6 +1634,7 @@ export interface operations {
                 };
                 content?: never;
             };
+            422: components["responses"]["Validation"];
         };
     };
     listSpecies: {
@@ -1667,6 +1677,7 @@ export interface operations {
                     "application/json": components["schemas"]["SpeciesPage"];
                 };
             };
+            422: components["responses"]["Validation"];
         };
     };
     createSpecies: {
@@ -1691,6 +1702,8 @@ export interface operations {
                     "application/json": components["schemas"]["Species"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             422: components["responses"]["Validation"];
         };
     };
@@ -1715,6 +1728,7 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     replaceSpecies: {
@@ -1741,6 +1755,8 @@ export interface operations {
                     "application/json": components["schemas"]["Species"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Validation"];
         };
@@ -1763,6 +1779,8 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Conflict */
             409: {
@@ -1773,6 +1791,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            422: components["responses"]["Validation"];
         };
     };
     setSpeciesForecast: {
@@ -1801,7 +1820,10 @@ export interface operations {
                     "application/json": components["schemas"]["Species"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     getSpeciesCounts: {
@@ -1824,7 +1846,10 @@ export interface operations {
                     "application/json": components["schemas"]["SpeciesCounts"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     getTaxonPage: {
@@ -1849,6 +1874,7 @@ export interface operations {
                 };
             };
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listTerms: {
@@ -1873,6 +1899,7 @@ export interface operations {
                     };
                 };
             };
+            422: components["responses"]["Validation"];
         };
     };
     createTerm: {
@@ -1897,6 +1924,8 @@ export interface operations {
                     "application/json": components["schemas"]["Term"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             422: components["responses"]["Validation"];
         };
     };
@@ -1924,7 +1953,10 @@ export interface operations {
                     "application/json": components["schemas"]["Term"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     mergeTerm: {
@@ -1952,7 +1984,10 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listFinds: {
@@ -1981,6 +2016,8 @@ export interface operations {
                     "application/json": components["schemas"]["FindPage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["Validation"];
         };
     };
     createFind: {
@@ -2005,6 +2042,7 @@ export interface operations {
                     "application/json": components["schemas"]["Find"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2028,7 +2066,9 @@ export interface operations {
                     "application/json": components["schemas"]["Find"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     putFind: {
@@ -2064,6 +2104,7 @@ export interface operations {
                     "application/json": components["schemas"]["Find"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2085,7 +2126,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     reviewFind: {
@@ -2114,7 +2157,10 @@ export interface operations {
                     "application/json": components["schemas"]["Find"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     acceptAllOpenFinds: {
@@ -2133,6 +2179,8 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
         };
     };
     listMarkers: {
@@ -2157,6 +2205,8 @@ export interface operations {
                     "application/json": components["schemas"]["MarkerPage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["Validation"];
         };
     };
     createMarker: {
@@ -2181,6 +2231,7 @@ export interface operations {
                     "application/json": components["schemas"]["Marker"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2204,7 +2255,9 @@ export interface operations {
                     "application/json": components["schemas"]["Marker"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     putMarker: {
@@ -2240,6 +2293,7 @@ export interface operations {
                     "application/json": components["schemas"]["Marker"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2261,7 +2315,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listZones: {
@@ -2286,6 +2342,8 @@ export interface operations {
                     "application/json": components["schemas"]["ZonePage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["Validation"];
         };
     };
     createZone: {
@@ -2310,6 +2368,7 @@ export interface operations {
                     "application/json": components["schemas"]["Zone"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2333,7 +2392,9 @@ export interface operations {
                     "application/json": components["schemas"]["Zone"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     putZone: {
@@ -2369,6 +2430,7 @@ export interface operations {
                     "application/json": components["schemas"]["Zone"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2390,7 +2452,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     getZoneValue: {
@@ -2417,7 +2481,9 @@ export interface operations {
                     "application/json": components["schemas"]["ZoneValue"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listCombinations: {
@@ -2442,6 +2508,8 @@ export interface operations {
                     "application/json": components["schemas"]["CombinationPage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["Validation"];
         };
     };
     createCombination: {
@@ -2466,6 +2534,7 @@ export interface operations {
                     "application/json": components["schemas"]["Combination"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2489,7 +2558,9 @@ export interface operations {
                     "application/json": components["schemas"]["Combination"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     putCombination: {
@@ -2525,6 +2596,7 @@ export interface operations {
                     "application/json": components["schemas"]["Combination"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2546,7 +2618,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listPhotos: {
@@ -2574,6 +2648,8 @@ export interface operations {
                     "application/json": components["schemas"]["PhotoPage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["Validation"];
         };
     };
     createPhoto: {
@@ -2598,6 +2674,7 @@ export interface operations {
                     "application/json": components["schemas"]["Photo"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             /** @description Payload Too Large */
             413: {
                 headers: {
@@ -2630,7 +2707,9 @@ export interface operations {
                     "application/json": components["schemas"]["Photo"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     deletePhoto: {
@@ -2651,7 +2730,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     getPhotoFile: {
@@ -2676,7 +2757,9 @@ export interface operations {
                     "image/jpeg": string;
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     approvePhoto: {
@@ -2699,7 +2782,10 @@ export interface operations {
                     "application/json": components["schemas"]["Photo"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     rejectPhoto: {
@@ -2728,7 +2814,10 @@ export interface operations {
                     "application/json": components["schemas"]["Photo"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     setLeadPhoto: {
@@ -2751,7 +2840,9 @@ export interface operations {
                     "application/json": components["schemas"]["Photo"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listTexts: {
@@ -2782,6 +2873,7 @@ export interface operations {
                 };
                 content?: never;
             };
+            422: components["responses"]["Validation"];
         };
     };
     putText: {
@@ -2808,7 +2900,10 @@ export interface operations {
                     "application/json": components["schemas"]["TextEntry"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     resetText: {
@@ -2831,7 +2926,10 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listPermissions: {
@@ -2854,6 +2952,8 @@ export interface operations {
                     };
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
         };
     };
     listRoles: {
@@ -2877,6 +2977,9 @@ export interface operations {
                     "application/json": components["schemas"]["RolePage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
         };
     };
     createRole: {
@@ -2901,6 +3004,8 @@ export interface operations {
                     "application/json": components["schemas"]["Role"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             422: components["responses"]["Validation"];
         };
     };
@@ -2924,7 +3029,10 @@ export interface operations {
                     "application/json": components["schemas"]["Role"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     deleteRole: {
@@ -2945,6 +3053,8 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Conflict */
             409: {
@@ -2955,6 +3065,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            422: components["responses"]["Validation"];
         };
     };
     updateRole: {
@@ -2981,7 +3092,10 @@ export interface operations {
                     "application/json": components["schemas"]["Role"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listPeople: {
@@ -3006,6 +3120,9 @@ export interface operations {
                     "application/json": components["schemas"]["PersonPage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
         };
     };
     getPerson: {
@@ -3028,7 +3145,10 @@ export interface operations {
                     "application/json": components["schemas"]["Person"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     deletePerson: {
@@ -3049,6 +3169,8 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Conflict */
             409: {
@@ -3059,6 +3181,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            422: components["responses"]["Validation"];
         };
     };
     setPersonRoles: {
@@ -3087,6 +3210,8 @@ export interface operations {
                     "application/json": components["schemas"]["Person"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             /** @description Conflict */
             409: {
@@ -3097,6 +3222,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            422: components["responses"]["Validation"];
         };
     };
     listPipelineRuns: {
@@ -3120,6 +3246,9 @@ export interface operations {
                     "application/json": components["schemas"]["PipelineRunPage"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
         };
     };
     createPipelineRun: {
@@ -3146,6 +3275,9 @@ export interface operations {
                     "application/json": components["schemas"]["PipelineRunSummary"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
         };
     };
     getPipelineRun: {
@@ -3168,7 +3300,10 @@ export interface operations {
                     "application/json": components["schemas"]["PipelineRunDetail"];
                 };
             };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     claimPipelineRun: {
@@ -3196,6 +3331,7 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
     reportPipelineRunSpecies: {
@@ -3224,7 +3360,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     finishPipelineRun: {
@@ -3252,7 +3390,9 @@ export interface operations {
                 };
                 content?: never;
             };
+            401: components["responses"]["Unauthorized"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     listTrainingFinds: {
@@ -3275,6 +3415,7 @@ export interface operations {
                     };
                 };
             };
+            401: components["responses"]["Unauthorized"];
         };
     };
 }

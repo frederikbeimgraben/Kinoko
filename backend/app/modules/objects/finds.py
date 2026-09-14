@@ -74,7 +74,7 @@ def _values(body: FindWrite) -> dict[str, Any]:
 
 
 def _bbox(raw: str | None) -> tuple[float, float, float, float] | None:
-    if raw is None:
+    if not raw:
         return None
     box = parse_bbox(raw)
     if box is None:

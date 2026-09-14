@@ -124,6 +124,8 @@ paths:
                 $ref: "#/components/schemas/SpeciesBundle"
         "304":
           description: Not Modified
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /species:
     get:
@@ -229,6 +231,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SpeciesPage"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createSpecies
       tags: [species]
@@ -248,6 +253,10 @@ paths:
                 $ref: "#/components/schemas/Species"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /species/{slug}:
     parameters:
@@ -265,6 +274,9 @@ paths:
                 $ref: "#/components/schemas/Species"
         "404":
           $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     put:
       operationId: replaceSpecies
       tags: [species]
@@ -286,6 +298,11 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
     delete:
       operationId: deleteSpecies
       tags: [species]
@@ -301,6 +318,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /species/{slug}/forecast:
     parameters:
@@ -328,6 +351,12 @@ paths:
                 $ref: "#/components/schemas/Species"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /species/{slug}/counts:
     parameters:
@@ -345,6 +374,12 @@ paths:
                 $ref: "#/components/schemas/SpeciesCounts"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /taxa/{rank}/{slug}:
     get:
@@ -371,6 +406,8 @@ paths:
                 $ref: "#/components/schemas/TaxonPage"
         "404":
           $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /terms:
     get:
@@ -395,6 +432,9 @@ paths:
                     items:
                       $ref: "#/components/schemas/Term"
                 required: [items]
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createTerm
       tags: [terms]
@@ -414,6 +454,10 @@ paths:
                 $ref: "#/components/schemas/Term"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /terms/{id}:
     parameters:
@@ -437,6 +481,12 @@ paths:
                 $ref: "#/components/schemas/Term"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /terms/{id}/merge:
     parameters:
@@ -461,6 +511,12 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /finds:
     get:
@@ -495,6 +551,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FindPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createFind
       tags: [finds]
@@ -513,6 +574,8 @@ paths:
                 $ref: "#/components/schemas/Find"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /finds/{id}:
     parameters:
@@ -529,6 +592,11 @@ paths:
                 $ref: "#/components/schemas/Find"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     put:
       operationId: putFind
       tags: [finds]
@@ -554,6 +622,9 @@ paths:
                 $ref: "#/components/schemas/Find"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
     delete:
       operationId: deleteFind
       tags: [finds]
@@ -562,6 +633,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /finds/{id}/review:
     parameters:
@@ -589,6 +664,12 @@ paths:
                 $ref: "#/components/schemas/Find"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /finds/reviews/accept-all:
     post:
@@ -598,6 +679,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /markers:
     get:
@@ -614,6 +699,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MarkerPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createMarker
       tags: [markers]
@@ -632,6 +722,8 @@ paths:
                 $ref: "#/components/schemas/Marker"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /markers/{id}:
     parameters:
@@ -648,6 +740,11 @@ paths:
                 $ref: "#/components/schemas/Marker"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     put:
       operationId: putMarker
       tags: [markers]
@@ -673,6 +770,9 @@ paths:
                 $ref: "#/components/schemas/Marker"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
     delete:
       operationId: deleteMarker
       tags: [markers]
@@ -681,6 +781,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /zones:
     get:
@@ -697,6 +801,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ZonePage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createZone
       tags: [zones]
@@ -715,6 +824,8 @@ paths:
                 $ref: "#/components/schemas/Zone"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /zones/{id}:
     parameters:
@@ -731,6 +842,11 @@ paths:
                 $ref: "#/components/schemas/Zone"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     put:
       operationId: putZone
       tags: [zones]
@@ -756,6 +872,9 @@ paths:
                 $ref: "#/components/schemas/Zone"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
     delete:
       operationId: deleteZone
       tags: [zones]
@@ -764,6 +883,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /zones/{id}/value:
     parameters:
@@ -799,6 +922,10 @@ paths:
                 $ref: "#/components/schemas/ZoneValue"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /combinations:
     get:
@@ -815,6 +942,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CombinationPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createCombination
       tags: [combinations]
@@ -833,6 +965,8 @@ paths:
                 $ref: "#/components/schemas/Combination"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /combinations/{id}:
     parameters:
@@ -849,6 +983,11 @@ paths:
                 $ref: "#/components/schemas/Combination"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     put:
       operationId: putCombination
       tags: [combinations]
@@ -874,6 +1013,9 @@ paths:
                 $ref: "#/components/schemas/Combination"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
     delete:
       operationId: deleteCombination
       tags: [combinations]
@@ -882,6 +1024,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /photos:
     get:
@@ -919,6 +1065,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PhotoPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createPhoto
       tags: [photos]
@@ -943,6 +1094,8 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /photos/{id}:
     parameters:
@@ -962,6 +1115,11 @@ paths:
                 $ref: "#/components/schemas/Photo"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     delete:
       operationId: deletePhoto
       tags: [photos]
@@ -970,6 +1128,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /photos/{id}/{size}:
     get:
@@ -999,6 +1161,10 @@ paths:
                 format: binary
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /photos/{id}/approval:
     parameters:
@@ -1016,6 +1182,12 @@ paths:
                 $ref: "#/components/schemas/Photo"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /photos/{id}/rejection:
     parameters:
@@ -1045,6 +1217,12 @@ paths:
                 $ref: "#/components/schemas/Photo"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /photos/{id}/lead:
     parameters:
@@ -1061,6 +1239,10 @@ paths:
                 $ref: "#/components/schemas/Photo"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /texts:
     get:
@@ -1085,6 +1267,8 @@ paths:
                 $ref: "#/components/schemas/TextsCatalogue"
         "304":
           description: Not Modified
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /texts/{key}:
     parameters:
@@ -1112,6 +1296,13 @@ paths:
                 $ref: "#/components/schemas/TextEntry"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     delete:
       operationId: resetText
       tags: [texts]
@@ -1127,6 +1318,12 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /permissions:
     get:
@@ -1146,6 +1343,10 @@ paths:
                     items:
                       $ref: "#/components/schemas/PermissionEntry"
                 required: [items]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /roles:
     get:
@@ -1162,6 +1363,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RolePage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createRole
       tags: [access]
@@ -1181,6 +1389,10 @@ paths:
                 $ref: "#/components/schemas/Role"
         "422":
           $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /roles/{id}:
     parameters:
@@ -1198,6 +1410,13 @@ paths:
                 $ref: "#/components/schemas/Role"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     patch:
       operationId: updateRole
       tags: [access]
@@ -1217,6 +1436,13 @@ paths:
                 $ref: "#/components/schemas/Role"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     delete:
       operationId: deleteRole
       tags: [access]
@@ -1232,6 +1458,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /people:
     get:
@@ -1252,6 +1484,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PersonPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /people/{id}:
     parameters:
@@ -1269,6 +1507,13 @@ paths:
                 $ref: "#/components/schemas/Person"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     delete:
       operationId: deletePerson
       tags: [access]
@@ -1284,6 +1529,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /people/{id}/roles:
     parameters:
@@ -1320,6 +1571,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /pipeline-runs:
     get:
@@ -1336,6 +1593,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PipelineRunPage"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
     post:
       operationId: createPipelineRun
       tags: [pipeline-runs]
@@ -1357,6 +1621,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PipelineRunSummary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /pipeline-runs/{id}:
     parameters:
@@ -1374,6 +1644,12 @@ paths:
                 $ref: "#/components/schemas/PipelineRunDetail"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /internal/pipeline-runs/claim:
     post:
@@ -1390,6 +1666,8 @@ paths:
                 $ref: "#/components/schemas/PipelineRunSummary"
         "204":
           description: No Content
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /internal/pipeline-runs/{id}/species/{speciesId}:
     post:
@@ -1423,6 +1701,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /internal/pipeline-runs/{id}/finish:
     parameters:
@@ -1449,6 +1731,10 @@ paths:
           description: No Content
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /internal/training-finds:
     get:
@@ -1469,6 +1755,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/TrainingFind"
                 required: [items]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
 components:
   securitySchemes:
@@ -1532,6 +1820,12 @@ components:
             $ref: "#/components/schemas/Problem"
     Unauthorized:
       description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Forbidden:
+      description: Forbidden
       content:
         application/problem+json:
           schema:
