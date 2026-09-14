@@ -40,9 +40,7 @@ def test_every_contract_path_has_a_route() -> None:
 def test_every_contract_method_has_a_route() -> None:
     data = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
     mine = build_app().openapi()["paths"]
-    served = {
-        (template(path), method) for path, item in mine.items() for method in item
-    }
+    served = {(template(path), method) for path, item in mine.items() for method in item}
     wanted = {
         (template(f"/api{path}"), method)
         for path, item in data["paths"].items()
