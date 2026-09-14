@@ -1,13 +1,17 @@
 """Die Baseline und das Modell sagen dasselbe."""
 
+import os
 from pathlib import Path
 
 from alembic import command
 from alembic.autogenerate import compare_metadata
 from alembic.config import Config
 from alembic.migration import MigrationContext
+from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine, inspect
 
+from app.core import db
+from app.core.settings import get_settings
 from app.models import Base
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,63 +22,47 @@ def alembic_config() -> Config:
     return Config(ROOT / "alembic.ini")
 
 
-def test_one_head() -> None:
-    from alembic.script import ScriptDirectory
-
-    assert len(ScriptDirectory.from_config(alembic_config()).get_heads()) == 1
-
-
-def test_upgrade_builds_every_table(tmp_path: Path, monkeypatch: object) -> None:
-    file = tmp_path / "wanderung.sqlite"
-    import os
-
+def point_at(file: Path) -> None:
+    """Richtet die Einstellungen auf eine Datei aus."""
     os.environ["PILZE_DB"] = f"sqlite+aiosqlite:///{file}"
-    from app.core import db
-    from app.core.settings import get_settings
-
     get_settings.cache_clear()
     db.engine.cache_clear()
-    command.upgrade(alembic_config(), "head")
+
+
+def tables_of(file: Path) -> set[str]:
+    """Die Tabellen einer SQLite-Datei."""
     made = create_engine(f"sqlite:///{file}")
     with made.connect() as connection:
         found = set(inspect(connection).get_table_names())
     made.dispose()
-    assert set(Base.metadata.tables) <= found
+    return found
+
+
+def test_one_head() -> None:
+    assert len(ScriptDirectory.from_config(alembic_config()).get_heads()) == 1
+
+
+def test_upgrade_builds_every_table(tmp_path: Path) -> None:
+    file = tmp_path / "wanderung.sqlite"
+    point_at(file)
+    command.upgrade(alembic_config(), "head")
+    assert set(Base.metadata.tables) <= tables_of(file)
 
 
 def test_baseline_matches_the_model(tmp_path: Path) -> None:
     file = tmp_path / "abgleich.sqlite"
-    import os
-
-    os.environ["PILZE_DB"] = f"sqlite+aiosqlite:///{file}"
-    from app.core import db
-    from app.core.settings import get_settings
-
-    get_settings.cache_clear()
-    db.engine.cache_clear()
+    point_at(file)
     command.upgrade(alembic_config(), "head")
     made = create_engine(f"sqlite:///{file}")
     with made.connect() as connection:
-        context = MigrationContext.configure(connection)
-        difference = compare_metadata(context, Base.metadata)
+        difference = compare_metadata(MigrationContext.configure(connection), Base.metadata)
     made.dispose()
     assert not difference, difference
 
 
 def test_downgrade_empties_the_database(tmp_path: Path) -> None:
     file = tmp_path / "zurueck.sqlite"
-    import os
-
-    os.environ["PILZE_DB"] = f"sqlite+aiosqlite:///{file}"
-    from app.core import db
-    from app.core.settings import get_settings
-
-    get_settings.cache_clear()
-    db.engine.cache_clear()
+    point_at(file)
     command.upgrade(alembic_config(), "head")
     command.downgrade(alembic_config(), "base")
-    made = create_engine(f"sqlite:///{file}")
-    with made.connect() as connection:
-        found = set(inspect(connection).get_table_names())
-    made.dispose()
-    assert found <= {"alembic_version"}
+    assert tables_of(file) <= {"alembic_version"}

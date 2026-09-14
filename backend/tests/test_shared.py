@@ -1,6 +1,8 @@
 import base64
 import io
 import math
+import uuid
+from pathlib import Path
 
 import pytest
 from PIL import Image
@@ -12,6 +14,8 @@ from app.shared.schema import Schema
 
 
 class Example(Schema):
+    """Ein Schema für den Test."""
+
     long_name: str
     count: int
 
@@ -40,15 +44,20 @@ def test_paging_params_read_the_query() -> None:
     assert paging.small_paging_params(limit=5, cursor=paging.encode(5)).offset == 5
 
 
+def same(item: Example) -> Example:
+    """Gibt das Schema unverändert zurück."""
+    return item
+
+
 def test_wrap_reports_the_next_cursor() -> None:
     page = paging.wrap(
         [Example(long_name=str(at), count=at) for at in range(3)],
         paging.Paging(2, 0),
-        lambda item: item,
+        same,
     )
     assert len(page["items"]) == 2
     assert paging.decode(page["nextCursor"]) == 2
-    last = paging.wrap([], paging.Paging(2, 2), lambda item: item)
+    last = paging.wrap([], paging.Paging(2, 2), same)
     assert last["nextCursor"] is None
 
 
@@ -101,11 +110,8 @@ def test_accept_refuses_wrong_type_and_size() -> None:
         images.accept(b"kein Bild", "image/jpeg", 1 << 20)
 
 
-def test_write_read_remove(tmp_path: object) -> None:
-    import uuid
-    from pathlib import Path
-
-    root = Path(str(tmp_path))
+def test_write_read_remove(tmp_path: Path) -> None:
+    root = tmp_path
     photo_id = uuid.uuid4()
     rendered = images.accept(a_photo(), "image/jpeg", 1 << 20)
     images.write(root, photo_id, rendered)

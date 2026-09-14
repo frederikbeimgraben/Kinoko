@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import auth, errors, jwks
 from app.core.settings import get_settings
 from app.models import Role, RolePermission, UserRole
-from tests.conftest import CLIENT_ID, ISSUER, make_user
+from tests.conftest import CLIENT_ID, ISSUER, app_of, make_user, sign_in, sign_out
 
 KID = "schluessel-1"
 
@@ -36,6 +36,7 @@ class FakeIssuer:
         self.calls: list[str] = []
 
     def token(self, **claims: object) -> str:
+        """Stellt ein Token aus."""
         payload: dict[str, object] = {
             "iss": ISSUER,
             "aud": CLIENT_ID,
@@ -48,6 +49,7 @@ class FakeIssuer:
         return jwt.encode(payload, self.key, algorithm="RS256", headers={"kid": self.kid})
 
     def answer(self, request: httpx.Request) -> httpx.Response:
+        """Beantwortet Discovery und JWKS."""
         self.calls.append(str(request.url))
         if str(request.url).endswith(".well-known/openid-configuration"):
             return httpx.Response(200, json={"issuer": ISSUER, "jwks_uri": f"{ISSUER}jwks/"})
@@ -57,9 +59,13 @@ class FakeIssuer:
 @pytest.fixture
 def issuer(monkeypatch: pytest.MonkeyPatch) -> FakeIssuer:
     fake = FakeIssuer()
-    monkeypatch.setattr(jwks, "net_client", lambda: httpx.AsyncClient(
-        transport=httpx.MockTransport(fake.answer),
-    ))
+    monkeypatch.setattr(
+        jwks,
+        "net_client",
+        lambda: httpx.AsyncClient(
+            transport=httpx.MockTransport(fake.answer),
+        ),
+    )
     monkeypatch.setattr(jwks, "_cache", jwks.JwksCache())
     return fake
 
@@ -109,17 +115,26 @@ async def test_token_signs_in(api: httpx.AsyncClient, issuer: FakeIssuer) -> Non
     assert issuer.calls
 
 
-async def test_broken_token_is_unauthorized(api: httpx.AsyncClient, issuer: FakeIssuer) -> None:
+async def test_broken_token_is_unauthorized(api: httpx.AsyncClient, issuer: FakeIssuer) -> None:  # noqa: ARG001
     assert (await guarded(api, "kaputt")).status_code == 401
     other = FakeIssuer()
-    fremd = jwt.encode({"sub": "x", "aud": CLIENT_ID, "iss": ISSUER, "exp": 4102444800},
-                       other.key, algorithm="RS256", headers={"kid": KID})
+    fremd = jwt.encode(
+        {"sub": "x", "aud": CLIENT_ID, "iss": ISSUER, "exp": 4102444800},
+        other.key,
+        algorithm="RS256",
+        headers={"kid": KID},
+    )
     assert (await guarded(api, fremd)).status_code == 401
 
 
-async def test_token_without_kid_is_unauthorized(api: httpx.AsyncClient, issuer: FakeIssuer) -> None:
-    naked = jwt.encode({"sub": "x", "aud": CLIENT_ID, "iss": ISSUER, "exp": 4102444800},
-                       issuer.key, algorithm="RS256")
+async def test_token_without_kid_is_unauthorized(
+    api: httpx.AsyncClient, issuer: FakeIssuer
+) -> None:
+    naked = jwt.encode(
+        {"sub": "x", "aud": CLIENT_ID, "iss": ISSUER, "exp": 4102444800},
+        issuer.key,
+        algorithm="RS256",
+    )
     assert (await guarded(api, naked)).status_code == 401
 
 
@@ -132,7 +147,7 @@ async def test_unknown_kid_is_remembered(issuer: FakeIssuer) -> None:
     assert await cache.key(KID) is not None
 
 
-async def test_jwks_url_falls_back(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_jwks_url_falls_back() -> None:
     async def broken(request: httpx.Request) -> httpx.Response:
         if str(request.url).endswith("openid-configuration"):
             return httpx.Response(404)
@@ -181,8 +196,6 @@ def test_requires_builds_a_dependency() -> None:
 
 
 async def test_signed_in_helper(api: httpx.AsyncClient, session: AsyncSession) -> None:
-    from tests.conftest import app_of, sign_in, sign_out
-
     built: FastAPI = app_of(api)
     user = await make_user(session, "helfer")
     sign_in(built, user, "text.edit")
