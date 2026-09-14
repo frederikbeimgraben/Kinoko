@@ -4,13 +4,7 @@
       <app-map class="shell__map" [class.shell__map--lead]="mapInFront()" [surfaceOnly]="!onTheMap()" />
     }
   }
-  <app-bottom-nav
-    class="shell__nav"
-    [eintraege]="eintraege()"
-    [active]="active()"
-    [label]="'nav.beschriftung' | t"
-    [variant]="wide() ? 'spalte' : 'unten'"
-  />
+  <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'" />
   <main
     class="shell__content"
     [class.shell__content--off]="wide() && onTheMap()"

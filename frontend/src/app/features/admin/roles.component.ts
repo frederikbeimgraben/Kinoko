@@ -4,14 +4,11 @@ import { CardComponent } from '@stupa-makers/ui-kit';
 import type { Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import {
-  ActionBarComponent,
-  EmptyStateComponent,
-  ListRowComponent,
-  NoteComponent,
-  PageHeaderComponent,
-  SvgIconComponent,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { AdminState } from './admin.state';
 
 /** Eine Zeile der Rollenliste. */
@@ -38,7 +35,6 @@ interface Row {
     CardComponent,
     EmptyStateComponent,
     ListRowComponent,
-    NoteComponent,
     PageHeaderComponent,
     SvgIconComponent,
     TranslatePipe,

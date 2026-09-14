@@ -1,0 +1,36 @@
+// Mittig und ruhig, ohne Kasten: der Fehler steht an der Stelle des Inhalts.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: center;
+  padding-block: var(--space-7);
+  text-align: center;
+  --error-badge-size: 64px;
+}
+
+.error__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--error-badge-size);
+  block-size: var(--error-badge-size);
+  background: var(--color-danger-subtle);
+  border-radius: 50%;
+}
+
+.error__image {
+  color: var(--color-danger);
+}
+
+.error__text {
+  max-inline-size: 32ch;
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--color-text-muted);
+}
+
+.error__button {
+  min-block-size: var(--size-button);
+}

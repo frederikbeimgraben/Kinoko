@@ -1,0 +1,35 @@
+// Am Telefon gibt es keinen Zeiger und damit keinen Hover.
+// Eine Zeile tönt sich statt zu schrumpfen: sonst zöge sie die Liste mit.
+
+// Das Tippziel wächst unsichtbar auf 44 px, die Optik bleibt bei 36 px.
+.tap {
+  position: relative;
+}
+
+.tap::after {
+  position: absolute;
+  inset-block: calc((100% - var(--size-tap)) / 2);
+  inset-inline: 0;
+  min-block-size: var(--size-tap);
+  content: '';
+}
+
+[data-press] {
+  transition:
+    transform var(--motion-press) ease-out,
+    background-color var(--motion-press) ease-out;
+}
+
+[data-press='scale']:active {
+  transform: scale(0.97);
+}
+
+[data-press='tint']:active {
+  background: var(--color-surface-sunken);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-press='scale']:active {
+    transform: none;
+  }
+}

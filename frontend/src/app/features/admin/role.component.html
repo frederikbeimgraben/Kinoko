@@ -1,8 +1,8 @@
-<app-page-header [titel]="title()" [back]="true" (backClick)="back()" />
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 
 <div class="role">
   @if (missing()) {
-    <app-note>{{ 'rolle.nichtGefunden' | t }}</app-note>
+    <p class="note">{{ 'rolle.nichtGefunden' | t }}</p>
   } @else {
     @if (!locked()) {
       <app-form-field
@@ -27,7 +27,7 @@
         (valueChange)="description.set($event)"
       />
     } @else {
-      <app-note>{{ 'rolle.festHinweis' | t }}</app-note>
+      <p class="note">{{ 'rolle.festHinweis' | t }}</p>
     }
 
     @for (group of areas(); track group.area) {
@@ -36,10 +36,10 @@
         <app-card>
           @for (right of group.rights; track right.key) {
             <app-check-row
-              [titel]="right.titel"
+              [title]="right.titel"
               [subline]="right.subline"
               [checked]="right.checked"
-              [disabled]="locked()"
+              [locked]="locked()"
               (toggled)="toggle(right.key, $event)"
             />
           }
@@ -48,7 +48,7 @@
     }
 
     @if (!locked()) {
-      <app-note>{{ 'rolle.rechteHinweis' | t }}</app-note>
+      <p class="note">{{ 'rolle.rechteHinweis' | t }}</p>
     }
   }
 </div>
@@ -56,10 +56,9 @@
 @if (!locked() && !missing()) {
   <app-action-bar
     [primary]="'rolle.speichern' | t"
-    [mainDisabled]="!ready() || saving()"
-    [danger]="creating() ? undefined : ('rolle.loeschen' | t)"
-    (mainClick)="save()"
-    (dangerClick)="confirming.set(true)"
+    [secondary]="creating() ? undefined : ('rolle.loeschen' | t)"
+    (primaryClick)="save()"
+    (secondaryClick)="confirming.set(true)"
   />
 }
 

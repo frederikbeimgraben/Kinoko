@@ -6,19 +6,16 @@ const MONTH_MARKS = [0, 9, 18, 27, 36, 44] as const;
 /** Der Anteil des stärksten Wertes, unter dem eine Woche als dünn gilt. */
 const THIN_BELOW = 0.25;
 
-/**
- * Zentriertes gleitendes Mittel. Am Rand zählen die Nachbarn, die es gibt,
- * sonst zöge eine gedachte Null die erste und die letzte Woche nach unten.
- */
+/** Zentriertes gleitendes Mittel. Am Rand zählen nur die Nachbarn, die es gibt. */
 export function smooth(series: readonly number[], windowSize: number): readonly number[] {
   if (windowSize <= 1) return series;
   const half = Math.floor(windowSize / 2);
   return series.map((_, i) => {
-    const von = Math.max(0, i - half);
-    const bis = Math.min(series.length - 1, i + half);
+    const first = Math.max(0, i - half);
+    const last = Math.min(series.length - 1, i + half);
     let sum = 0;
-    for (let k = von; k <= bis; k++) sum += series[k];
-    return sum / (bis - von + 1);
+    for (let k = first; k <= last; k++) sum += series[k];
+    return sum / (last - first + 1);
   });
 }
 
@@ -27,25 +24,37 @@ let nextNumber = 0;
 /** Ein Streifen über einer Woche, die auf wenigen Begehungen ruht. */
 interface Strip {
   x: number;
-  breite: number;
+  width: number;
 }
 
 /** Eine Monatsmarke unter der Kurve: der Name und die Woche, in der er beginnt. */
 export interface MonthMark {
   text: string;
-  woche: number;
+  week: number;
+}
+
+/** Die Form einer Reihe: Fläche über alle Jahre, Linie für das laufende Jahr. */
+export type SeasonShape = 'area' | 'line';
+
+/** Eine Reihe der Kurve mit ihren Begehungen und ihrer Legende. */
+export interface SeasonSeries {
+  readonly shape: SeasonShape;
+  readonly values: readonly number[];
+  /** Begehungen je Kalenderwoche. Wenige Begehungen dünnen die Woche aus. */
+  readonly visits?: readonly number[];
+  readonly legend?: string;
 }
 
 /** Eine gesetzte Monatsmarke: Anteil der Breite, auf dem sie sitzt. */
 interface PlacedMark {
   text: string;
-  links: number;
+  left: number;
 }
 
 interface Drawing {
-  breite: number;
-  hoehe: number;
-  alleJahre: string;
+  width: number;
+  height: number;
+  area: string;
   currentArea: string;
   currentLine: string;
   hasCurrent: boolean;
@@ -57,26 +66,7 @@ interface Drawing {
   thin: Strip[];
 }
 
-/**
- * Die Saisonkurve einer Art: der Anteil der Begehungen mit Fund je
- * Kalenderwoche. Alle Jahre liegen schwach als Fläche darunter, das laufende
- * Jahr als Linie bis zur letzten vollen Woche. Beide Reihen teilen sich einen
- * Höchstwert, sonst ragte die eine über den Rand.
- *
- * Sind die Begehungen je Woche bekannt, verblassen die Wochen, die auf wenigen
- * Begehungen ruhen. Ohne diese Zahlen sähe eine Woche mit drei Begehungen aus
- * wie eine mit dreihundert.
- *
- * Die Zeichenfläche folgt der Breite des Wirts, damit die Kurve nie schmal in
- * der Mitte steht, während die Marken darunter über die ganze Breite laufen.
- * Was dabei nicht verzerren darf — der Endpunkt — steht neben dem SVG und
- * nicht darin.
- *
- * Gezeichnet wird ein gleitendes Mittel über drei Wochen. Eine Woche mehr oder
- * weniger ist Zufall des Meldeverhaltens, nicht der Saison. Eine Zahl am
- * Höchstwert steht nicht mehr daneben: ein „2 %“ über einer Kurve, die
- * ohnehin bis oben reicht, sagte nichts und störte die Plaketten darüber.
- */
+/** Saisonkurve einer Art: alle Jahre als Fläche, das laufende Jahr als Linie. */
 @Component({
   selector: 'app-season-curve',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,86 +74,83 @@ interface Drawing {
   styleUrl: './season-curve.component.scss',
 })
 export class SeasonCurveComponent {
-  readonly alleJahre = input.required<readonly number[]>();
-  readonly laufendesJahr = input.required<readonly number[]>();
+  readonly series = input.required<readonly SeasonSeries[]>();
   readonly label = input.required<string>();
   readonly large = input(false);
   /** Die Monatsnamen unter der Grundlinie, jeder auf seiner Woche. */
   readonly months = input<readonly MonthMark[]>([]);
-  readonly legendCurrent = input<string>();
-  readonly legendYears = input<string>();
-  /** Der Nenner der Fläche: Begehungen je Kalenderwoche über alle Jahre. */
-  readonly visitsAllYears = input<readonly number[]>([]);
-  /** Der Nenner der Linie: Begehungen je Kalenderwoche im laufenden Jahr. */
-  readonly visitsCurrentYearSeries = input<readonly number[]>([]);
   /** Breite des gleitenden Mittels in Wochen. 1 zeichnet die Rohwerte. */
   readonly smoothing = input(3);
 
   protected readonly maskId = `funke-dicht-${nextNumber++}`;
   protected readonly drawing = computed<Drawing>(() => this.compute());
 
+  /** Die Linie steht in der Legende vorn, so wie sie über der Fläche liegt. */
+  protected readonly legend = computed<readonly SeasonSeries[]>(() =>
+    [...this.series()]
+      .filter((row) => row.legend)
+      .sort((one, other) => Number(other.shape === 'line') - Number(one.shape === 'line')),
+  );
+
+  private values(shape: SeasonShape): readonly number[] {
+    return this.series().find((row) => row.shape === shape)?.values ?? [];
+  }
+
   private compute(): Drawing {
     const large = this.large();
-    const breite = large ? 330 : 88;
-    const hoehe = large ? 72 : 36;
+    const width = large ? 330 : 88;
+    const height = large ? 72 : 36;
     const windowSize = this.smoothing();
-    const alle = smooth(this.alleJahre(), windowSize);
-    const current = smooth(this.laufendesJahr(), windowSize);
+    const rawArea = this.values('area');
+    const rawLine = this.values('line');
+    const area = smooth(rawArea, windowSize);
+    const current = smooth(rawLine, windowSize);
     // Der Höchstwert kommt aus den Rohdaten, nicht aus der geglätteten Reihe.
-    // Sonst stiege die Kurve über die Zahl an der Achse hinaus.
-    // Ein Höchstwert von 0 teilte durch null; darum die kleinste Zahl als Boden.
-    const top = Math.max(...this.alleJahre(), ...this.laufendesJahr(), Number.EPSILON);
+    // Die kleinste Zahl als Boden schützt vor einer Teilung durch null.
+    const top = Math.max(...rawArea, ...rawLine, Number.EPSILON);
     const point = (i: number, value: number): [number, number] => [
-      (i / 51) * breite,
-      hoehe - 3 - (value / top) * (hoehe - 8),
+      (i / 51) * width,
+      height - 3 - (value / top) * (height - 8),
     ];
-    const alleP = alle.map((value, i) => point(i, value));
+    const areaP = area.map((value, i) => point(i, value));
     const currentP = current.map((value, i) => point(i, value));
-    const last = currentP.at(-1) ?? [0, hoehe];
+    const last = currentP.at(-1) ?? [0, height];
     return {
-      breite,
-      hoehe,
-      alleJahre: `M0,${hoehe} ${alleP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${breite},${hoehe} Z`,
-      currentArea: `M0,${hoehe} ${currentP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${last[0].toFixed(1)},${hoehe} Z`,
+      width,
+      height,
+      area: `M0,${height} ${areaP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${width},${height} Z`,
+      currentArea: `M0,${height} ${currentP.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ')} L${last[0].toFixed(1)},${height} Z`,
       currentLine: `M${currentP.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' L')}`,
       hasCurrent: currentP.length > 0,
-      badges: MONTH_MARKS.map((k) => (k / 51) * breite),
-      endLeft: (last[0] / breite) * 100,
-      endTop: (last[1] / hoehe) * 100,
-      thin: this.thinWeeks(breite),
+      badges: MONTH_MARKS.map((k) => (k / 51) * width),
+      endLeft: (last[0] / width) * 100,
+      endTop: (last[1] / height) * 100,
+      thin: this.thinWeeks(width),
     };
   }
 
-  /**
-   * Die Monatsmarken auf derselben Skala wie die Kurve: Woche 1 ganz links,
-   * Woche 52 ganz rechts. Als Anteil, damit die Marke bei jeder Breite unter
-   * ihrer Woche steht.
-   */
+  /** Die Monatsmarken auf derselben Skala wie die Kurve, als Anteil der Breite. */
   protected readonly monthMarks = computed<PlacedMark[]>(() =>
     this.months().map((badge) => ({
       text: badge.text,
-      links: ((badge.woche - 1) / 51) * 100,
+      left: ((badge.week - 1) / 51) * 100,
     })),
   );
 
-  /**
-   * Die Wochen, in denen wenigstens eine der beiden Reihen auf wenigen
-   * Begehungen ruht. Jede Reihe misst sich an ihrer eigenen stärksten Woche,
-   * weil das laufende Jahr naturgemäß weniger Begehungen trägt als zehn Jahre.
-   */
-  private thinWeeks(breite: number): Strip[] {
-    const rows = [this.visitsAllYears(), this.visitsCurrentYearSeries()].filter(
-      (series) => series.length > 0,
-    );
+  /** Wochen, in denen eine Reihe auf wenigen Begehungen ruht, je eigener Skala. */
+  private thinWeeks(width: number): Strip[] {
+    const rows = this.series()
+      .map((row) => row.visits ?? [])
+      .filter((visits) => visits.length > 0);
     if (rows.length === 0) return [];
     const thresholds = rows.map((series) => Math.max(...series) * THIN_BELOW);
-    const step = breite / 51;
+    const step = width / 51;
     const strip: Strip[] = [];
     for (let i = 0; i < Math.max(...rows.map((series) => series.length)); i++) {
       const thin = rows.some((series, r) => i < series.length && series[i] < thresholds[r]);
       if (!thin) continue;
       const x = Math.max(0, (i - 0.5) * step);
-      strip.push({ x, breite: Math.min(breite, (i + 0.5) * step) - x });
+      strip.push({ x, width: Math.min(width, (i + 0.5) * step) - x });
     }
     return strip;
   }

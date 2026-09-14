@@ -2,7 +2,7 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--pilz-block);
+  gap: var(--space-5);
   min-block-size: 0;
 }
 
@@ -34,8 +34,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--pilz-field-height);
-  block-size: var(--pilz-field-height);
+  inline-size: var(--size-tap);
+  block-size: var(--size-tap);
   color: var(--color-text-muted);
   cursor: pointer;
   background: none;

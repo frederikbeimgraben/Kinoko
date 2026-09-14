@@ -3,7 +3,9 @@ import { DialogComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import { ActionBarComponent, ChipGroupComponent, FormFieldComponent, NoteComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ChipGroupComponent } from '../../ui/chip-group/chip-group.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 
 /** Die Vorschläge aus dem Artboard. Ein Tipp schreibt den Satz ins Feld. */
 const SUGGESTIONS: readonly TranslationKey[] = [
@@ -23,14 +25,7 @@ const SUGGESTIONS: readonly TranslationKey[] = [
 @Component({
   selector: 'app-reject-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionBarComponent,
-    ChipGroupComponent,
-    DialogComponent,
-    FormFieldComponent,
-    NoteComponent,
-    TranslatePipe,
-  ],
+  imports: [ActionBarComponent, ChipGroupComponent, DialogComponent, FormFieldComponent, TranslatePipe],
   templateUrl: './reject-dialog.component.html',
   styleUrl: './reject-dialog.component.scss',
 })

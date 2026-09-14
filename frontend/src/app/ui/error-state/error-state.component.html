@@ -1,0 +1,7 @@
+<span class="error__badge">
+  <app-svg-icon class="error__image" [name]="icon()" [size]="28" />
+</span>
+<p class="error__text">{{ text() }}</p>
+<app-button class="error__button" variant="primary" (click)="retry.emit()">{{
+  'common.retry' | t
+}}</app-button>

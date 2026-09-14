@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: var(--space-5);
   min-block-size: 0;
-  padding: var(--pilz-gutter) var(--pilz-gutter) var(--space-4);
+  padding: var(--size-gutter) var(--size-gutter) var(--space-4);
   overflow-y: auto;
   // Wie im Blatt der Karte: die App füllt das Gerät, ein Balken am Rand
   // gehörte zu einem Fenster.
@@ -27,4 +27,15 @@
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
+}
+
+.factor__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--size-gutter);
+}
+
+.factor__actions {
+  flex: 1 1 auto;
 }

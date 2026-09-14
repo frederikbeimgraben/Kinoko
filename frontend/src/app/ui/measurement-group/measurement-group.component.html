@@ -1,0 +1,4 @@
+<h3 class="group__part" [class.group__part--bare]="!measurements().length">{{ part() }}</h3>
+@for (row of measurements(); track $index) {
+  <app-measurement [extent]="row.extent" [spans]="row.spans" [unit]="row.unit" />
+}

@@ -1,55 +1,13 @@
 .footer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
   margin-block-start: auto;
-  padding: var(--space-3) var(--pilz-gutter) var(--pilz-gutter);
+  padding: var(--space-3) var(--size-gutter) var(--size-gutter);
   background: var(--color-surface);
   border-block-start: var(--border-width) solid var(--color-border);
 }
 
-.footer__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-// Zwei Nebenaktionen teilen sich 390 px. Ohne dies wüchse ein langer Text wie
-// „Letzten Punkt entfernen“ aus dem Blatt heraus, statt zu kürzen; der
-// schmalere Innenabstand lässt ihn meist ganz stehen.
-.footer__row > * {
-  --space-5: var(--space-3);
-
-  min-inline-size: 0;
-}
-
-// Der Knopf des Kits füllt seinen Wirt in der Höhe; die Maße der Mockups
-// stehen deshalb hier und nicht im Kit. Der Innenabstand kommt dazu, sonst
-// wirkt die Hauptaktion gedrungen: das Kit rechnet ihn für eine Zeile ohne
-// Symbol.
-app-button {
-  min-block-size: var(--pilz-field-height);
-}
-
 .footer__main {
-  min-block-size: var(--pilz-action-height);
-}
-
-.footer__main .btn {
-  block-size: 100%;
-  padding-inline: var(--space-5);
-}
-
-// Gefahr ist im Mockup ein roter Rand auf heller Fläche, nicht eine rote
-// Fläche. Die zweite Variante des Kits trifft das, sobald ihre beiden Tokens
-// auf die Gefahrfarbe zeigen.
-.footer__danger {
-  --color-border-strong: var(--color-danger);
-  --color-text: var(--color-danger);
-}
-
-// Die Unterzeile erklaert eine abgeschaltete Hauptaktion und steht darum
-// mittig darunter, nicht am linken Rand wie ein Absatz.
-.footer__sub {
-  text-align: center;
+  min-block-size: var(--size-button);
 }

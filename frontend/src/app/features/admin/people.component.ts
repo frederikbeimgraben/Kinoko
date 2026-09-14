@@ -4,14 +4,11 @@ import { ButtonComponent, CardComponent, DialogComponent } from '@stupa-makers/u
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import {
-  CheckRowComponent,
-  EmptyStateComponent,
-  FormFieldComponent,
-  ListRowComponent,
-  NoteComponent,
-  PageHeaderComponent,
-} from '../../ui';
+import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
 
 /** Eine Zeile der Personenliste. */
@@ -47,7 +44,6 @@ interface Choice {
     EmptyStateComponent,
     FormFieldComponent,
     ListRowComponent,
-    NoteComponent,
     PageHeaderComponent,
     TranslatePipe,
   ],

@@ -1,7 +1,8 @@
 <button
-  class="floating"
+  class="floating tap"
   type="button"
-  [class.floating--primary]="variant() === 'primaer'"
+  data-press="scale"
+  [class.floating--primary]="variant() === 'primary'"
   [attr.aria-label]="label()"
   [disabled]="disabled()"
   (click)="pressed.emit()"

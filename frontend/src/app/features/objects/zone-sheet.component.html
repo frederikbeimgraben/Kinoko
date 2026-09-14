@@ -1,20 +1,21 @@
 <div class="objectsheet">
   <div class="objectsheet__head">
-    <h2 class="objectsheet__title">{{ zone().name }}</h2>
-    <p class="objectsheet__sub">{{ subline() }}</p>
+    <div class="objectsheet__heading">
+      <h2 class="objectsheet__title">{{ zone().name }}</h2>
+      <p class="objectsheet__sub">{{ subline() }}</p>
+    </div>
+    <app-icon-button icon="delete" [label]="'zone.loeschen' | t" (pressed)="deleteAsk.set(true)" />
   </div>
   @if (editingCorners()) {
-    <app-note>{{ 'zone.eckpunkteHinweis' | t }}</app-note>
+    <p class="note">{{ 'zone.eckpunkteHinweis' | t }}</p>
   } @else {
     @if (forecastRow(); as row) {
       <app-card class="flush">
-        <app-key-value-table>
-          <app-metric-row [label]="row.label" [subline]="'zone.vorhersageUnter' | t" [value]="row.value" />
-          <app-metric-row [label]="'zone.funde' | t" [subline]="'zone.fundeUnter' | t" [value]="row.finds" />
-        </app-key-value-table>
+        <app-list-row [title]="row.label" [subline]="'zone.vorhersageUnter' | t" [value]="row.value" />
+        <app-list-row [title]="'zone.funde' | t" [subline]="'zone.fundeUnter' | t" [value]="row.finds" />
       </app-card>
     } @else {
-      <app-note>{{ 'zone.wertFehlt' | t }}</app-note>
+      <p class="note">{{ 'zone.wertFehlt' | t }}</p>
     }
     <app-object-form
       [withoutName]="true"
@@ -28,19 +29,16 @@
 @if (editingCorners()) {
   <app-action-bar
     [primary]="'zone.eckpunkteFertig' | t"
-    [ghost]="'objekt.abbrechen' | t"
-    (mainClick)="applyCorners()"
-    (ghostClick)="cancelCorners()"
+    [secondary]="'objekt.abbrechen' | t"
+    (primaryClick)="applyCorners()"
+    (secondaryClick)="cancelCorners()"
   />
 } @else {
   <app-action-bar
     [primary]="'eintragen.speichern' | t"
-    [mainDisabled]="busy()"
     [secondary]="'zone.eckpunkteBearbeiten' | t"
-    [danger]="'zone.loeschen' | t"
-    (mainClick)="save()"
+    (primaryClick)="save()"
     (secondaryClick)="editCorners()"
-    (dangerClick)="deleteAsk.set(true)"
   />
 }
 <app-dialog
@@ -49,12 +47,13 @@
   [closeLabel]="'objekt.schliessen' | t"
   (closed)="deleteAsk.set(false)"
 >
-  <app-note>{{ 'zone.loeschenText' | t }}</app-note>
+  <p class="note">{{ 'zone.loeschenText' | t }}</p>
   <div dialog-footer class="objectsheet__dialogfooter">
     <app-action-bar
-      [danger]="'objekt.loeschen' | t"
+      [primary]="'objekt.loeschen' | t"
+      [danger]="true"
       [secondary]="'objekt.abbrechen' | t"
-      (dangerClick)="remove()"
+      (primaryClick)="remove()"
       (secondaryClick)="deleteAsk.set(false)"
     />
   </div>

@@ -1,86 +1,55 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  HostListener,
-  afterNextRender,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Ein Filter-Chip. */
+/** Ein Wert im Chip-Feld. */
 export interface Chip {
   value: string;
   label: string;
 }
 
-/** So viel schiebt ein Knopf: fast eine Breite, ein Chip bleibt als Anker stehen. */
-const STEP = 0.8;
-
 /**
- * Die waagerechte Chip-Reihe über Listen. Genau ein Chip ist gewählt; ein
- * Tipp auf den gewählten Chip lässt ihn gewählt, damit die Liste nie ohne
- * Filter dasteht.
- *
- * Am Telefon wischt man die Reihe. Am Rechner gibt es dafür nichts: dort
- * stehen zwei Knöpfe an den Rändern, und ein Verlauf zeigt, dass es weitergeht.
- * Sie verschwinden, sobald in ihrer Richtung nichts mehr steht.
+ * Mehrfachwahl in Formularen und Dialogen. Die Reihe bricht um.
  */
 @Component({
   selector: 'app-chip-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent],
+  imports: [SvgIconComponent, TranslatePipe],
   templateUrl: './chip-group.component.html',
   styleUrl: './chip-group.component.scss',
 })
 export class ChipGroupComponent {
-  private readonly i18n = inject(I18nService);
-  private readonly series = viewChild.required<ElementRef<HTMLElement>>('series');
-
   readonly chips = input.required<readonly Chip[]>();
-  readonly value = input.required<string>();
+  readonly value = input<readonly string[]>([]);
+  /** Mehr als ein Wert zugleich. Sonst ersetzt eine neue Wahl die vorige. */
+  readonly multiple = input(false);
   readonly label = input.required<string>();
+  readonly addable = input(false);
 
-  readonly valueChange = output<string>();
+  readonly valueChange = output<readonly string[]>();
+  readonly added = output();
 
-  protected readonly zurueckMoeglich = signal(false);
-  protected readonly vorMoeglich = signal(false);
+  /** Eigener Stand der Wahl. Ein neuer Wert von außen setzt ihn zurück. */
+  private readonly chosenValues = linkedSignal<readonly string[], readonly string[]>({
+    source: this.value,
+    computation: (value) => value,
+  });
 
-  constructor() {
-    afterNextRender(() => {
-      this.validate();
-    });
+  protected isChosen(chip: Chip): boolean {
+    return this.chosenValues().includes(chip.value);
   }
 
-  /** Wird das Fenster schmaler, passt plötzlich weniger in die Reihe. */
-  @HostListener('window:resize')
-  protected onResize(): void {
-    this.validate();
-  }
-
-  protected backText(): string {
-    return this.i18n.translate('chips.zurueck');
-  }
-
-  protected vorText(): string {
-    return this.i18n.translate('chips.vor');
-  }
-
-  protected schiebe(direction: 1 | -1): void {
-    const series = this.series().nativeElement;
-    series.scrollBy({ left: direction * series.clientWidth * STEP, behavior: 'smooth' });
-  }
-
-  /** Nach jedem Scrollen und beim Aufbau: was steht links, was rechts noch aus. */
-  protected validate(): void {
-    const series = this.series().nativeElement;
-    const rest = series.scrollWidth - series.clientWidth - series.scrollLeft;
-    this.zurueckMoeglich.set(series.scrollLeft > 1);
-    this.vorMoeglich.set(rest > 1);
+  protected toggle(chip: Chip): void {
+    const current = this.chosenValues();
+    const chosen = current.includes(chip.value);
+    const next = this.multiple()
+      ? chosen
+        ? current.filter((entry) => entry !== chip.value)
+        : [...current, chip.value]
+      : chosen
+        ? []
+        : [chip.value];
+    this.chosenValues.set(next);
+    this.valueChange.emit(next);
   }
 }

@@ -1,5 +1,5 @@
 @if (viewport(); as viewport) {
-  <app-page-header [titel]="viewport.name" [back]="true" (backClick)="back()" />
+  <app-page-header [title]="viewport.name" [back]="true" (backClick)="back()" />
   <div class="group">
     @for (part of viewport.parts; track part.name) {
       <section>
@@ -8,9 +8,9 @@
         }
         <app-card class="flush">
           @for (row of part.values; track row.value) {
-            <app-check-row
-              [titel]="row.name"
-              [value]="row.count"
+            <app-choice-row
+              [label]="row.name"
+              [count]="row.count"
               [checked]="row.chosen"
               (toggled)="pick(row.value)"
             />
@@ -19,18 +19,18 @@
       </section>
     }
     @if (viewport.gap; as gap) {
-      <app-info-text>{{ gap }}</app-info-text>
+      <p class="info-text">{{ gap }}</p>
       <app-card class="flush">
         <app-check-row
-          [titel]="'filter.ohneAngabeBehalten' | t"
+          [title]="'filter.ohneAngabeBehalten' | t"
           [checked]="viewport.keeps"
           (toggled)="keepUnknown()"
         />
       </app-card>
     }
   </div>
-  <app-action-bar [primary]="hits()" (mainClick)="back()" />
+  <app-action-bar [primary]="hits()" (primaryClick)="back()" />
 } @else {
-  <app-page-header [titel]="'filter.titel' | t" [back]="true" (backClick)="back()" />
+  <app-page-header [title]="'filter.titel' | t" [back]="true" (backClick)="back()" />
   <app-empty-state [text]="'filter.leer' | t" />
 }

@@ -8,7 +8,9 @@ import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import { EmptyStateComponent, NoteComponent, PageHeaderComponent, PrivateImageComponent } from '../../ui';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { SpeciesState } from '../species/species.state';
 
 const STATE_BADGE: Record<ImageState, BadgeVariant> = {
@@ -50,7 +52,6 @@ interface Row {
     ButtonComponent,
     CardComponent,
     EmptyStateComponent,
-    NoteComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     TranslatePipe,

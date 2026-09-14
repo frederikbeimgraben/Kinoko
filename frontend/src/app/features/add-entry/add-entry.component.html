@@ -17,27 +17,34 @@
           [detents]="detentsContent"
           [modal]="true"
         >
-          <app-action-sheet [titel]="'eintragen.titel' | t">
-            <app-action-row
-              icon="funde"
-              [titel]="'eintragen.fund' | t"
+          <div class="addentry__content">
+            <h2 class="addentry__title">{{ 'eintragen.titel' | t }}</h2>
+            <app-list-row
+              [clickable]="true"
+              [title]="'eintragen.fund' | t"
               [subline]="'eintragen.fundUnter' | t"
               (chosen)="startFind()"
-            />
-            <app-action-row
-              icon="ort"
-              [titel]="'eintragen.marker' | t"
+            >
+              <app-svg-icon lead name="entries" [size]="20" />
+            </app-list-row>
+            <app-list-row
+              [clickable]="true"
+              [title]="'eintragen.marker' | t"
               [subline]="'eintragen.markerUnter' | t"
               (chosen)="startMarker()"
-            />
-            <app-action-row
-              icon="zone"
-              [titel]="'eintragen.zone' | t"
+            >
+              <app-svg-icon lead name="location" [size]="20" />
+            </app-list-row>
+            <app-list-row
+              [clickable]="true"
+              [title]="'eintragen.zone' | t"
               [subline]="'eintragen.zoneUnter' | t"
               (chosen)="startZone()"
-            />
-          </app-action-sheet>
-          <app-action-bar [ghost]="'eintragen.abbrechen' | t" (ghostClick)="cancel()" />
+            >
+              <app-svg-icon lead name="zone" [size]="20" />
+            </app-list-row>
+          </div>
+          <app-action-bar [primary]="'eintragen.abbrechen' | t" (primaryClick)="cancel()" />
         </app-sheet>
       }
       @case ('fundOrt') {
@@ -49,13 +56,13 @@
         >
           <div class="addentry__brief">
             <h2 class="addentry__title">{{ 'melden.ortTitel' | t }}</h2>
-            <app-note variant="unter">{{ 'melden.ortAnleitung' | t }}</app-note>
+            <p class="note note--sub">{{ 'melden.ortAnleitung' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'melden.ortUebernehmen' | t"
-            [ghost]="'eintragen.abbrechen' | t"
-            (mainClick)="adoptLocation()"
-            (ghostClick)="cancel()"
+            [secondary]="'eintragen.abbrechen' | t"
+            (primaryClick)="adoptLocation()"
+            (secondaryClick)="cancel()"
           />
         </app-sheet>
       }
@@ -68,13 +75,13 @@
         >
           <div class="addentry__brief">
             <h2 class="addentry__title">{{ 'marker.ortTitel' | t }}</h2>
-            <app-note variant="unter">{{ 'marker.ortAnleitung' | t }}</app-note>
+            <p class="note note--sub">{{ 'marker.ortAnleitung' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'marker.ortUebernehmen' | t"
-            [ghost]="'eintragen.abbrechen' | t"
-            (mainClick)="adoptLocation()"
-            (ghostClick)="cancel()"
+            [secondary]="'eintragen.abbrechen' | t"
+            (primaryClick)="adoptLocation()"
+            (secondaryClick)="cancel()"
           />
         </app-sheet>
       }
@@ -87,17 +94,16 @@
         >
           <div class="addentry__brief">
             <h2 class="addentry__title">{{ 'zone.zeichnenTitel' | t }}</h2>
-            <app-note variant="unter">{{ drawInstructions() }}</app-note>
+            <p class="note note--sub">{{ drawInstructions() }}</p>
+            <button type="button" class="addentry__link tap" data-press="tint" (click)="removeCorner()">
+              {{ 'zone.letztenEntfernen' | t }}
+            </button>
           </div>
           <app-action-bar
             [primary]="'zone.eckpunktSetzen' | t"
-            [second]="'zone.letztenEntfernen' | t"
             [secondary]="'zone.abschliessen' | t"
-            [ghost]="'eintragen.abbrechen' | t"
-            (mainClick)="addCorner()"
-            (secondClick)="removeCorner()"
+            (primaryClick)="addCorner()"
             (secondaryClick)="closeZone()"
-            (ghostClick)="cancel()"
           />
         </app-sheet>
       }
@@ -134,14 +140,13 @@
               [namePlaceholder]="'marker.namePlatzhalter' | t"
               [nameMissingText]="'marker.nameFehlt' | t"
             />
-            <app-note>{{ 'melden.hinweis' | t }}</app-note>
+            <p class="note">{{ 'melden.hinweis' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'eintragen.speichern' | t"
-            [mainDisabled]="saving()"
-            [ghost]="'eintragen.abbrechen' | t"
-            (mainClick)="saveMarker()"
-            (ghostClick)="cancel()"
+            [secondary]="'eintragen.abbrechen' | t"
+            (primaryClick)="saveMarker()"
+            (secondaryClick)="cancel()"
           />
         </app-sheet>
       }
@@ -156,7 +161,7 @@
           <div class="addentry__content">
             <div class="addentry__head">
               <h2 class="addentry__title">{{ 'zone.titel' | t }}</h2>
-              <app-note variant="unter">{{ areaText() }}</app-note>
+              <p class="note note--sub">{{ areaText() }}</p>
             </div>
             <app-object-form
               [nameLabel]="'zone.name' | t"
@@ -164,14 +169,13 @@
               [nameMissingText]="'zone.nameFehlt' | t"
               (valuesChange)="onZoneValues($event)"
             />
-            <app-note>{{ 'melden.hinweis' | t }}</app-note>
+            <p class="note">{{ 'melden.hinweis' | t }}</p>
           </div>
           <app-action-bar
             [primary]="'eintragen.speichern' | t"
-            [mainDisabled]="saving()"
-            [ghost]="'eintragen.abbrechen' | t"
-            (mainClick)="saveZone()"
-            (ghostClick)="cancel()"
+            [secondary]="'eintragen.abbrechen' | t"
+            (primaryClick)="saveZone()"
+            (secondaryClick)="cancel()"
           />
         </app-sheet>
       }

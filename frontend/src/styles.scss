@@ -1,8 +1,8 @@
 @use '@stupa-makers/ui-kit/styles';
 @use 'styles/tokens';
 @use 'styles/kit-helpers';
-@use 'app/ui/hint';
-@use 'app/ui/button';
+@use 'styles/press';
+@use 'styles/stopgap';
 
 // Die App füllt das Gerät und scrollt nur innerhalb ihrer Flächen. Ein
 // Seitenscroll würde das Blatt und die Navigation vom Rand lösen.

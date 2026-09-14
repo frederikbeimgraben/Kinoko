@@ -3,15 +3,11 @@
  * Sucht deutschen Text ausserhalb von i18n.
  * Text für Personen kommt über `| t`, nicht fest im Code (CLAUDE.md).
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const APP_ROOT = join(ROOT, 'src', 'app');
-const ALLOW_PATH = join(ROOT, 'tools', 'lint-allow.json');
-const WRITE_ALLOW = process.argv.includes('--write-allow');
 const EXCLUDED_ZONES = ['core/i18n', 'testing'];
 
 const UMLAUT = /[äöüÄÖÜß]/;
@@ -146,13 +142,13 @@ function textNodesInHtml(source) {
   return found;
 }
 
-function collectFiles(folder, found) {
+function collectFiles(appRoot, folder, found) {
   for (const name of readdirSync(folder)) {
     const path = join(folder, name);
     if (statSync(path).isDirectory()) {
-      const relPath = relative(APP_ROOT, path);
+      const relPath = relative(appRoot, path);
       if (EXCLUDED_ZONES.some((zone) => relPath === zone || relPath.startsWith(zone + sep))) continue;
-      collectFiles(path, found);
+      collectFiles(appRoot, path, found);
       continue;
     }
     if (name.endsWith('.spec.ts')) continue;
@@ -161,11 +157,13 @@ function collectFiles(folder, found) {
   return found;
 }
 
-function allViolations() {
+/** Sucht deutschen Text unter `root`, ausser in `core/i18n` und `testing`. */
+export function findViolations(root) {
+  const appRoot = join(root, 'src', 'app');
   const found = [];
-  for (const file of collectFiles(APP_ROOT, [])) {
+  for (const file of collectFiles(appRoot, appRoot, [])) {
     const source = readFileSync(file, 'utf8');
-    const path = relative(ROOT, file);
+    const path = relative(root, file);
     const candidates = file.endsWith('.html') ? textNodesInHtml(source) : stringsInTs(source);
     for (const c of candidates) {
       if (isGerman(c.text)) found.push({ path, line: c.line, text: c.text.trim().slice(0, 60) });
@@ -174,38 +172,44 @@ function allViolations() {
   return found;
 }
 
-/** Der Schlüssel hängt am Text, nicht an der Zeile: eine Verschiebung zählt nicht. */
-function allowKey(v) {
+/** Der Schlüssel hängt am Text, nicht an der Zeile. Eine Verschiebung zählt nicht. */
+export function allowKey(v) {
   const text = v.text.replace(/\s+/g, ' ').trim();
   return `${v.path}#${createHash('sha256').update(text).digest('hex').slice(0, 8)}`;
 }
 
-function readAllow() {
+function readAllow(allowPath) {
   try {
-    return JSON.parse(readFileSync(ALLOW_PATH, 'utf8'));
+    return JSON.parse(readFileSync(allowPath, 'utf8'));
   } catch {
     return {};
   }
 }
 
-const violations = allViolations();
-const keys = [...new Set(violations.map(allowKey))].sort();
-
-if (WRITE_ALLOW) {
-  const allow = readAllow();
-  allow.german = keys;
-  const { writeFileSync } = await import('node:fs');
-  writeFileSync(ALLOW_PATH, JSON.stringify(allow, null, 2) + '\n');
-  console.log(`${keys.length} Ausnahmen für german geschrieben.`);
-  process.exit(0);
+/** Meldet deutsche Texte unter `root` ohne die in `allowPath` freigegebenen. */
+export function report(root, allowPath) {
+  const allowed = new Set(readAllow(allowPath).german ?? []);
+  return findViolations(root).filter((v) => !allowed.has(allowKey(v)));
 }
 
-const allowed = new Set(readAllow().german ?? []);
-const reported = violations.filter((v) => !allowed.has(allowKey(v)));
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
+  const ALLOW_PATH = join(ROOT, 'tools', 'lint-allow.json');
 
-for (const v of reported) console.log(`${v.path}:${v.line}  german  „${v.text}“`);
-if (reported.length > 0) {
-  console.error(`Neue deutsche Texte: ${reported.length}.`);
-  process.exit(1);
+  if (process.argv.includes('--write-allow')) {
+    const keys = [...new Set(findViolations(ROOT).map(allowKey))].sort();
+    const allow = readAllow(ALLOW_PATH);
+    allow.german = keys;
+    writeFileSync(ALLOW_PATH, JSON.stringify(allow, null, 2) + '\n');
+    console.log(`${keys.length} Ausnahmen für german geschrieben.`);
+    process.exit(0);
+  }
+
+  const reported = report(ROOT, ALLOW_PATH);
+  for (const v of reported) console.log(`${v.path}:${v.line}  german  „${v.text}“`);
+  if (reported.length > 0) {
+    console.error(`Neue deutsche Texte: ${reported.length}.`);
+    process.exit(1);
+  }
+  console.log('Keine neuen deutschen Texte.');
 }
-console.log('Keine neuen deutschen Texte.');

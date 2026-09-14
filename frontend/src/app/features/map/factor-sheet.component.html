@@ -1,5 +1,5 @@
 <app-sheet [label]="'faktor.titel' | t" [detent]="2" [modal]="true">
-  <app-sheet-head head [titel]="layer().label" [woche]="timeScope()" [arrows]="false" />
+  <app-sheet-head head [title]="layer().label" [week]="timeScope()" [arrows]="false" />
   <div class="factor">
     <app-segmented
       [options]="conditions()"
@@ -12,18 +12,18 @@
       <h3 class="factor__title">{{ distributionText() }}</h3>
       @if (histogramm(); as distribution) {
         <app-histogram
-          [anteile]="distribution.anteile"
+          [shares]="distribution.anteile"
           [label]="distributionText()"
-          [von]="fromShare()"
-          [bis]="toShare()"
+          [from]="fromShare()"
+          [to]="toShare()"
         />
       }
       <app-range-slider
         [min]="layer().low"
         [max]="layer().high"
         [step]="step()"
-        [von]="values().von"
-        [bis]="values().bis"
+        [from]="values().von"
+        [to]="values().bis"
         [handles]="handles()"
         (fromChange)="setFrom($event)"
         (toChange)="setTo($event)"
@@ -35,16 +35,23 @@
       </div>
     </div>
 
-    <app-key-value-row [schluessel]="'faktor.bedingung' | t" [value]="condition()" />
+    <app-key-value-row [key]="'faktor.bedingung' | t" [value]="condition()" />
 
-    <app-note variant="unter">{{ shareText() }}</app-note>
+    <p class="note note--sub">{{ shareText() }}</p>
   </div>
-  <app-action-bar
-    [primary]="'faktor.uebernehmen' | t"
-    [danger]="'faktor.entfernen' | t"
-    [secondary]="'faktor.abbrechen' | t"
-    (mainClick)="apply.emit(draft())"
-    (dangerClick)="remove.emit(draft())"
-    (secondaryClick)="closed.emit()"
-  />
+  <div class="factor__footer">
+    <app-icon-button
+      icon="delete"
+      variant="secondary"
+      [label]="'faktor.entfernen' | t"
+      (pressed)="remove.emit(draft())"
+    />
+    <app-action-bar
+      class="factor__actions"
+      [primary]="'faktor.uebernehmen' | t"
+      [secondary]="'faktor.abbrechen' | t"
+      (primaryClick)="apply.emit(draft())"
+      (secondaryClick)="closed.emit()"
+    />
+  </div>
 </app-sheet>

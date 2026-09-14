@@ -80,9 +80,11 @@ describe('RoleComponent', () => {
   });
 
   it('lässt sich ohne Namen und Kürzel nicht speichern', async () => {
-    await build('neu');
+    const { api } = await build('neu');
 
-    expect(screen.getByRole('button', { name: 'Speichern' })).toBeDisabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(api.created).toEqual([]);
   });
 
   it('gibt einer festen Rolle keine Felder, keine Haken und kein Löschen', async () => {

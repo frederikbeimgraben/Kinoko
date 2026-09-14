@@ -1,0 +1,28 @@
+// Notdurft für `features/`, solange U5 bis U10 die Seiten noch nicht neu bauen.
+// Die Bausteine `app-note` und `app-info-text` gibt es nicht mehr.
+
+.note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.note--sub {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+}
+
+.note--italic {
+  font-style: italic;
+}
+
+.info-text {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  color: var(--color-text-muted);
+}

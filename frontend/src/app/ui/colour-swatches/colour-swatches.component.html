@@ -1,0 +1,16 @@
+<div class="colours" role="radiogroup" [attr.aria-label]="label()">
+  @for (swatch of colours(); track swatch.value) {
+    <button
+      class="colours__field tap"
+      type="button"
+      role="radio"
+      data-press="scale"
+      [class.colours__field--selected]="swatch.value === value()"
+      [attr.aria-checked]="swatch.value === value()"
+      [attr.aria-label]="swatch.label"
+      [attr.tabindex]="swatch.value === value() ? 0 : -1"
+      [style.background]="swatch.value"
+      (click)="valueChange.emit(swatch.value)"
+    ></button>
+  }
+</div>

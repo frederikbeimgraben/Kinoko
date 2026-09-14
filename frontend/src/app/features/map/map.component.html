@@ -14,13 +14,13 @@
     @if (!addEntry.dark() && state.object() === null) {
       <div class="map__buttons">
         <app-floating-button
-          icon="ebenen"
+          icon="layers"
           [label]="'ebenenKnopf.titel' | t"
-          [variant]="layersSheetOpen() ? 'primaer' : 'hell'"
+          [variant]="layersSheetOpen() ? 'primary' : 'default'"
           (pressed)="layersSheetOpen.set(!layersSheetOpen())"
         />
         <app-floating-button
-          icon="ort"
+          icon="location"
           [label]="'karte.standort' | t"
           [disabled]="!locating.allowed()"
           (pressed)="toMyLocation()"
@@ -31,7 +31,7 @@
         <app-floating-button
           class="map__add"
           icon="plus"
-          variant="primaer"
+          variant="primary"
           [label]="'eintragen.knopf' | t"
           (pressed)="openAddEntry()"
         />
@@ -46,17 +46,12 @@
 
     @if (!overlaid()) {
       <div class="map__sheet">
-        <app-sheet
-          [label]="'karte.blatt' | t"
-          [detent]="state.detent()"
-          [column]="wide()"
-          (detentChange)="setDetent($event)"
-        >
+        <app-sheet [label]="'karte.blatt' | t" [detent]="state.detent()" (detentChange)="setDetent($event)">
           <app-sheet-head
             head
-            [titel]="headTitle()"
-            [titleAsLink]="!showsLayer()"
-            [woche]="weekText()"
+            [title]="headTitle()"
+            [titleLink]="!showsLayer()"
+            [week]="weekText()"
             [hint]="forecastHint()"
             [playing]="playing()"
             (titleClick)="openSpeciesChooser()"
@@ -65,14 +60,14 @@
             (forward)="step(1)"
           >
             <app-timeline
-              [wochen]="bar()"
-              [active]="woche()"
+              [weeks]="bar()"
+              [active]="activeWeek()"
               [dimmed]="fixedLayer()"
               [label]="'zeitleiste.beschriftung' | t"
               (chosen)="selectWeek($event)"
             />
             @if (layerHint()) {
-              <app-note variant="unter">{{ layerHint() }}</app-note>
+              <p class="note note--sub">{{ layerHint() }}</p>
             }
           </app-sheet-head>
 
@@ -91,7 +86,7 @@
                   [label]="'kombination.regel' | t"
                   (valueChange)="chooseRule($event)"
                 />
-                <app-note variant="unter">{{ ruleHint() }}</app-note>
+                <p class="note note--sub">{{ ruleHint() }}</p>
               }
             </div>
 
@@ -99,8 +94,8 @@
               @case ('vorhersage') {
                 <app-ramp
                   [label]="rampTitle()"
-                  [von]="rampFrom()"
-                  [bis]="rampTo()"
+                  [from]="rampFrom()"
+                  [to]="rampTo()"
                   [note]="'karte.aufloesung' | t"
                 />
               }
@@ -108,8 +103,8 @@
                 @if (layer(); as selected) {
                   <app-ramp
                     [label]="rampTitle()"
-                    [von]="rampFrom()"
-                    [bis]="rampTo()"
+                    [from]="rampFrom()"
+                    [to]="rampTo()"
                     [note]="'karte.aufloesung' | t"
                   />
                   <app-layer-list
@@ -119,15 +114,15 @@
                     (chosen)="selectLayer($event)"
                   />
                 } @else {
-                  <app-note>{{ 'ebene.keine' | t }}</app-note>
+                  <p class="note">{{ 'ebene.keine' | t }}</p>
                 }
               }
               @case ('kombination') {
                 @if (state.rule() === 'abgestuft') {
                   <app-ramp
                     [label]="rampTitle()"
-                    [von]="rampFrom()"
-                    [bis]="rampTo()"
+                    [from]="rampFrom()"
+                    [to]="rampTo()"
                     [note]="'karte.aufloesung' | t"
                   />
                 }
@@ -184,13 +179,22 @@
         (click)="speciesChosen.set(false)"
       ></button>
       <div class="map__sheet map__sheet--layers">
-        <app-species-chooser
-          [catalogue]="speciesCatalogue()"
-          [selected]="state.art()"
-          (chosen)="selectSpecies($event)"
-          (zumKatalog)="toSpecies()"
-          (closed)="speciesChosen.set(false)"
-        />
+        <app-sheet [label]="'artWahl.titel' | t" [detent]="2" [modal]="true">
+          <div class="map__content">
+            <app-species-picker
+              [species]="speciesPickerEntries()"
+              [selected]="state.art()"
+              [label]="'artWahl.titel' | t"
+              (chosen)="selectSpecies($event)"
+            >
+              <ng-template let-entry>
+                <app-season-curve trail [series]="entry.series" [label]="entry.curveLabel" />
+              </ng-template>
+            </app-species-picker>
+            <app-list-row [title]="'artWahl.katalog' | t" [clickable]="true" (chosen)="toSpecies()" />
+          </div>
+          <app-action-bar [primary]="'faktor.abbrechen' | t" (primaryClick)="speciesChosen.set(false)" />
+        </app-sheet>
       </div>
     }
 

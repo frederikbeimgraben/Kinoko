@@ -1,7 +1,7 @@
-<app-page-header [titel]="'nav.arten' | t" />
+<app-page-header [title]="'nav.arten' | t" />
 <div class="species">
   <app-form-field
-    icon="suche"
+    icon="search"
     [label]="'arten.suche' | t"
     [hideLabel]="true"
     [placeholder]="'arten.suche' | t"
@@ -15,30 +15,22 @@
     @for (mark of marks(); track mark.key) {
       <button class="species__mark" type="button" [attr.aria-label]="mark.label" (click)="drop(mark.key)">
         {{ mark.text }}
-        <app-svg-icon name="zu" [size]="14" />
+        <app-svg-icon name="close" [size]="14" />
       </button>
     }
   </div>
-  <app-note class="species__count">{{ countText() }}</app-note>
+  <p class="note species__count">{{ countText() }}</p>
   @if (rows().length === 0) {
-    <app-empty-state icon="suche" [text]="'arten.leer' | t" />
+    <app-empty-state icon="search" [text]="'arten.leer' | t" />
   } @else {
     <app-card class="flush">
       @for (row of rows(); track row.slug; let i = $index) {
         <app-species-row
-          [name]="row.name"
-          [latin]="row.latin"
+          [species]="row.species"
           [active]="row.active"
-          [image]="row.image"
           (chosen)="open(row.slug)"
           (keydown)="onKey($event, i)"
-        >
-          <ng-container tags>
-            @for (badge of row.badges; track badge.text) {
-              <app-badge [variant]="badge.variant">{{ badge.text }}</app-badge>
-            }
-          </ng-container>
-        </app-species-row>
+        />
       }
     </app-card>
   }
@@ -47,15 +39,10 @@
       <span>{{ gap }}</span>
       <i></i>
     </div>
-    <app-note variant="unter">{{ 'arten.nichtBeurteilbarHinweis' | t }}</app-note>
+    <p class="note note--sub">{{ 'arten.nichtBeurteilbarHinweis' | t }}</p>
     <app-card class="flush">
       @for (row of unassessable(); track row.slug) {
-        <app-species-row
-          [name]="row.name"
-          [latin]="row.latin"
-          [image]="row.image"
-          (chosen)="open(row.slug)"
-        />
+        <app-species-row [species]="row.species" (chosen)="open(row.slug)" />
       }
     </app-card>
   }

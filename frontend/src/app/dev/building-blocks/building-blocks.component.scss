@@ -9,11 +9,6 @@
   padding: var(--space-5) var(--space-5) 0;
 }
 
-.workshop__hint {
-  margin-block-start: var(--space-2);
-  color: var(--color-text-muted);
-}
-
 .workshop__fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
@@ -45,15 +40,6 @@
   gap: var(--space-4);
 }
 
-.gallery__title {
-  margin-block-end: 10px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .gallery__row {
   display: flex;
   flex-wrap: wrap;
@@ -67,13 +53,9 @@
   margin-block-start: var(--space-4);
 }
 
-.gallery__ends {
-  display: flex;
-  justify-content: space-between;
-  margin-block-start: 6px;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
+.gallery__note {
+  margin: 0;
+  color: var(--color-text);
 }
 
 // Der Fundpunkt der Liste ist kein eigener Baustein, sondern das Zeichen, das
@@ -88,21 +70,70 @@
   box-shadow: var(--shadow-sm);
 }
 
-.gallery__stage {
-  position: relative;
-  block-size: 260px;
-  overflow: hidden;
-  background: var(--color-surface-sunken);
+.gallery__reviewcard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  padding: var(--space-4);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
 }
 
-.gallery__stage app-sheet {
-  position: absolute;
-  inset: 0;
+// Ein Bühnenfeld hält einen Baustein, der sonst über die Karte hinausragt.
+.gallery__stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
-// Der Inhalt einer Karte im Kit hat keinen eigenen Abstand zwischen zwei
-// Bausteinen; auf der Werkstattseite braucht die Notiz darunter einen.
-.gallery app-note {
-  margin-block-start: var(--space-2);
+.gallery__stage--nav {
+  block-size: 80px;
+}
+
+.gallery__stage--rail {
+  block-size: 220px;
+}
+
+.gallery__stage--sheet {
+  block-size: 260px;
+  background: var(--color-surface-sunken);
+}
+
+.gallery__stage--overlay {
+  block-size: 200px;
+  background: var(--color-surface-sunken);
+}
+
+.gallery__stage--split {
+  block-size: 220px;
+  background: var(--color-surface-sunken);
+}
+
+.gallery__stage--review {
+  block-size: 220px;
+}
+
+.gallery__stage--list {
+  block-size: 200px;
+  overflow-y: auto;
+}
+
+// Ein Baustein mit `position: fixed` bindet sich sonst an das Fenster statt
+// an diese Bühne. `contain` macht die Bühne selbst zum Bezugsrahmen.
+.gallery__stage--fixed {
+  block-size: 220px;
+  contain: layout;
+  background: var(--color-surface-sunken);
+}
+
+.gallery__stage app-sheet,
+.gallery__stage app-overlay-host,
+.gallery__stage app-filter-sheet,
+.gallery__stage app-split-layout {
+  position: absolute;
+  inset: 0;
 }

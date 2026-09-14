@@ -1,0 +1,12 @@
+<span class="filterchip">
+  <span class="filterchip__label">{{ label() }}</span>
+  <button
+    class="filterchip__remove tap"
+    type="button"
+    data-press="scale"
+    [attr.aria-label]="'common.remove' | t"
+    (click)="removed.emit()"
+  >
+    <app-svg-icon name="close" [size]="15" />
+  </button>
+</span>

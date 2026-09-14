@@ -36,7 +36,7 @@ import {
   type LayersManifest,
 } from '../../core/tiles/layers';
 import { layerFromSpecies } from '../../core/tiles/species-as-layer';
-import { FORECAST_SLUGS, type ForecastSlug } from '../../core/tiles/tile-paths';
+import { FORECAST_SLUGS } from '../../core/tiles/tile-paths';
 import {
   currentWeek,
   barShares,
@@ -56,24 +56,20 @@ import {
   valueTemplate,
   type CombinationSourcePart,
 } from '../../map/value-protocol';
-import { FORECAST_RAMP } from '../../ui/ramp/ramp-colors';
+import { FORECAST_RAMP } from '../../ui/ramp/ramp-colours';
 import type { CombinationRule } from '../../map/value-colors';
 import { ThemeService } from '../../core/theme/theme.service';
-import {
-  FloatingButtonComponent,
-  NoteComponent,
-  DETENTS_DEFAULT,
-  RampComponent,
-  SegmentedComponent,
-  SheetComponent,
-  SheetHeadComponent,
-  TimelineComponent,
-  detentInPx,
-  type Detent,
-  type SegmentOption,
-  type TimelineWeek,
-} from '../../ui';
-import { SpeciesChooserComponent } from './species-chooser.component';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RampComponent } from '../../ui/ramp/ramp.component';
+import { SeasonCurveComponent } from '../../ui/season-curve/season-curve.component';
+import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
+import { type Detent, SheetComponent } from '../../ui/sheet/sheet.component';
+import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
+import { TimelineComponent, type TimelineWeek } from '../../ui/timeline/timeline.component';
+import { mapSpeciesPickerEntry, type MapSpeciesPickerEntry } from './species-picker-entry';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { SpeciesState } from '../species/species.state';
 import { FactorSheetComponent } from './factor-sheet.component';
@@ -116,6 +112,17 @@ export function layerSourceId(layer: Layer): string {
   return `ebene-${layer.id}`;
 }
 
+type DetentSize = number | `${number}px` | 'content';
+
+/** Die Rasten, mit denen `app-sheet` ohne eigene Vorgabe zeichnet. */
+const DETENTS_DEFAULT: readonly [DetentSize, DetentSize, DetentSize] = ['152px', 0.4, 0.9];
+
+/** Rechnet eine Raste in Punkte um, bezogen auf die Höhe des Wirts. */
+function detentInPx(size: DetentSize, hostHeight: number): number {
+  if (size === 'content') return hostHeight;
+  return typeof size === 'number' ? size * hostHeight : Number.parseFloat(size);
+}
+
 /**
  * Der Reiter Karte: Hintergrund von OpenFreeMap, darüber die Wertkacheln von
  * Vorhersage und Eingabe-Ebene, darunter das Blatt mit Kopf, Zeitleiste und
@@ -125,21 +132,23 @@ export function layerSourceId(layer: Layer): string {
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SpeciesChooserComponent,
+    ActionBarComponent,
     LayersSheetComponent,
     LayerListComponent,
+    ListRowComponent,
     FactorSheetComponent,
     FactorPickerComponent,
     AddEntryComponent,
     KombinationComponent,
     FloatingButtonComponent,
     MapObjectsDirective,
-    NoteComponent,
     ObjectSheetComponent,
     RampComponent,
+    SeasonCurveComponent,
     SegmentedComponent,
     SheetComponent,
     SheetHeadComponent,
+    SpeciesPickerComponent,
     TimelineComponent,
     TranslatePipe,
   ],
@@ -288,16 +297,38 @@ export class MapComponent implements OnDestroy {
 
   protected readonly speciesCatalogue = this.arten.catalogue;
 
+  protected readonly begehungen = computed<readonly number[]>(
+    () => this.speciesCatalogue()?.begehungenJeWocheAlleJahre ?? [],
+  );
+  protected readonly visitsCurrentYear = computed<readonly number[]>(
+    () => this.speciesCatalogue()?.begehungenJeWocheLaufendesJahr ?? [],
+  );
+
+  /** Nur Arten mit Karte: eine Zeile ohne Wirkung ist schlimmer als keine Zeile. */
+  protected readonly speciesPickerEntries = computed<readonly MapSpeciesPickerEntry[]>(() =>
+    (this.speciesCatalogue()?.arten ?? []).flatMap((art) => {
+      const slug = FORECAST_SLUGS.find((known) => known === art.kartenSlug);
+      const visits = { allYears: this.begehungen(), currentYear: this.visitsCurrentYear() };
+      return slug ? [mapSpeciesPickerEntry(art, slug, visits, this.i18n)] : [];
+    }),
+  );
+
   protected readonly bar = computed<TimelineWeek[]>(() => {
     const manifest = this.manifest();
     if (!manifest) return [];
     const anteile = barShares(manifest);
     return manifest.wochen.map((woche, i) => ({
-      jahr: woche.jahr,
-      woche: woche.woche,
+      year: woche.jahr,
+      week: woche.woche,
       share: anteile[i],
       forecast: woche.forecast,
     }));
+  });
+
+  /** Die gewählte Woche in der Sprache der Zeitleiste. */
+  protected readonly activeWeek = computed<{ year: number; week: number } | null>(() => {
+    const woche = this.woche();
+    return woche ? { year: woche.jahr, week: woche.woche } : null;
   });
 
   protected readonly speciesName = computed(() => this.i18n.translate(`art.${this.state.art()}`));
@@ -515,9 +546,9 @@ export class MapComponent implements OnDestroy {
     this.state.opacity.set(value);
   }
 
-  protected selectWeek(woche: { jahr: number; woche: number }): void {
+  protected selectWeek(week: { year: number; week: number }): void {
     this.stopPlaying();
-    this.state.woche.set(weekKey(woche));
+    this.state.woche.set(weekKey({ jahr: week.year, woche: week.week }));
   }
 
   /** Eine Woche vor oder zurück, ohne über die Enden hinaus. */
@@ -527,7 +558,8 @@ export class MapComponent implements OnDestroy {
     if (!manifest || !woche) return;
     const jetzt = manifest.wochen.indexOf(woche);
     const target = Math.min(manifest.wochen.length - 1, Math.max(0, jetzt + direction));
-    if (target !== jetzt) this.selectWeek(manifest.wochen[target]);
+    const next = manifest.wochen[target];
+    if (target !== jetzt) this.selectWeek({ year: next.jahr, week: next.woche });
   }
 
   protected togglePlay(): void {
@@ -602,7 +634,10 @@ export class MapComponent implements OnDestroy {
     this.speciesChosen.set(true);
   }
 
-  protected selectSpecies(slug: ForecastSlug): void {
+  /** Der Wahl kommt als roher Text; nur ein bekannter Kartenschlüssel zählt. */
+  protected selectSpecies(value: string): void {
+    const slug = FORECAST_SLUGS.find((known) => known === value);
+    if (!slug) return;
     this.state.art.set(slug);
     this.speciesChosen.set(false);
   }

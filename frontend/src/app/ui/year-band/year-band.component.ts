@@ -8,17 +8,7 @@ interface Body {
 
 const MONTHS = 12;
 
-/**
- * Das Jahr als Bahn, mit vier Marken.
- *
- * Zusammenhängende Monate sind ein Körper. Läuft eine Zeit über den
- * Jahreswechsel, zerfällt sie in zwei Körper statt in eine Ausnahme: der
- * Austernseitling steht dann links und rechts, nicht quer über die ganze Bahn.
- *
- * Die blasse Bahn ist der Zeitraum der Quelle, die kräftige die Hauptzeit aus
- * der Saisonkurve. Ohne Kurve steht die genannte Zeit allein und kräftig — es
- * gibt dann nichts, wovon sie sich abheben müsste.
- */
+/** Das Jahr als Bahn mit vier Marken. Hauptzeit kräftig, Randzeit blass. */
 @Component({
   selector: 'app-year-band',
   changeDetection: ChangeDetectionStrategy.OnPush,

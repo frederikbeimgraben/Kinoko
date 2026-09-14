@@ -1,0 +1,24 @@
+<span class="search tap" data-press="scale">
+  <app-svg-icon class="search__icon" name="search" [size]="18" />
+  <input
+    class="search__input"
+    type="text"
+    inputmode="search"
+    enterkeyhint="search"
+    [attr.aria-label]="placeholder() || null"
+    [value]="value()"
+    [attr.placeholder]="placeholder() || null"
+    (input)="onInput($event)"
+  />
+  @if (!empty()) {
+    <button
+      class="search__clear tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'common.clear' | t"
+      (click)="clear()"
+    >
+      <app-svg-icon name="close" [size]="15" />
+    </button>
+  }
+</span>

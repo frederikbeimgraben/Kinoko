@@ -1,6 +1,7 @@
 <button
   #button
-  class="week"
+  class="week tap"
+  data-press="scale"
   type="button"
   [class.week--active]="active()"
   [class.week--forecast]="forecast()"
@@ -11,9 +12,9 @@
   (click)="chosen.emit()"
 >
   @if (yearMark()) {
-    <span class="week__year" aria-hidden="true">{{ jahr() }}</span>
+    <span class="week__year" aria-hidden="true">{{ year() }}</span>
   }
-  <span class="week__kw" aria-hidden="true">{{ 'zeitleiste.kw' | t }}</span>
-  <span class="week__number" aria-hidden="true">{{ woche() }}</span>
+  <span class="week__kw" aria-hidden="true">{{ 'unit.week' | t }}</span>
+  <span class="week__number" aria-hidden="true">{{ week() }}</span>
   <span class="week__track" aria-hidden="true"><i class="week__bar" [style.inline-size]="bars()"></i></span>
 </button>

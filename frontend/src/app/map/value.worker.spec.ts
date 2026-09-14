@@ -1,5 +1,5 @@
 import { INTERSECTION_OPACITY, createLut, zuRgb } from './value-colors';
-import { FORECAST_RAMP as RAMP } from '../ui/ramp/ramp-colors';
+import { FORECAST_RAMP as RAMP } from '../ui/ramp/ramp-colours';
 import type { ValueReply, ValueJob } from './value-messages';
 
 /** Ein Ersatz für OffscreenCanvas: er merkt sich die Punkte, die er bekommt. */

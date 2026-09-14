@@ -1,14 +1,14 @@
-<app-page-header [titel]="'eintraege.titel' | t" />
+<app-page-header [title]="'eintraege.titel' | t" />
 <div class="entries">
-  <app-chip-group
-    [chips]="chips()"
+  <app-segmented
+    [options]="chips()"
     [value]="chip()"
     [label]="'eintraege.filter' | t"
     (valueChange)="selectChip($event)"
   />
   @if (rows().length === 0) {
     <app-empty-state
-      icon="funde"
+      icon="entries"
       [text]="emptyText() | t"
       [action]="needsSignIn() ? ('konto.anmelden' | t) : undefined"
       (actionClick)="signIn()"
@@ -17,9 +17,8 @@
     <app-card class="flush">
       @for (row of rows(); track row.schluessel) {
         <app-list-row
-          [titel]="row.titel"
+          [title]="row.titel"
           [subline]="row.subline"
-          [notiz]="row.notiz"
           [clickable]="row.object !== null"
           (chosen)="open(row)"
         >

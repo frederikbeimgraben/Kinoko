@@ -113,7 +113,7 @@ describe('SpeciesImagesComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Aufnahme von Steinpilz groß ansehen' }));
     detectChanges();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Bild schließen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
     detectChanges();
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

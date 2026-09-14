@@ -1,22 +1,19 @@
 <button
   #button
-  class="speciesrow"
+  class="row tap"
   type="button"
-  [class.speciesrow--active]="active()"
+  data-press="tint"
+  [class.row--active]="active()"
   [attr.aria-current]="active() ? 'true' : null"
   (click)="chosen.emit()"
 >
-  <span class="speciesrow__names">
-    <span class="speciesrow__name">{{ name() }}</span>
-    <span class="speciesrow__latin">{{ latin() }}</span>
+  <span class="row__names">
+    <span class="row__name">{{ species().name }}</span>
+    <span class="row__latin">{{ species().latin }}</span>
   </span>
-  @if (image(); as source) {
-    <img class="speciesrow__image" [src]="source" [alt]="name()" width="64" height="64" />
+  <app-level-pill class="row__level" [text]="species().levelText" [colour]="species().levelColour" />
+  <span class="row__trail"><ng-content select="[trail]" /></span>
+  @if (species().image; as source) {
+    <img class="row__image" [src]="source" [alt]="species().name" width="44" height="44" />
   }
-  <span class="speciesrow__tags">
-    @if (active()) {
-      <span class="speciesrow__badge">{{ activeText() }}</span>
-    }
-    <ng-content select="[tags]" />
-  </span>
 </button>

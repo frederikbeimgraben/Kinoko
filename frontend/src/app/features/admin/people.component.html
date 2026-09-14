@@ -1,8 +1,8 @@
-<app-page-header [titel]="'personen.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'personen.titel' | t" [back]="true" (backClick)="back()" />
 
 <div class="people">
   <app-form-field
-    icon="suche"
+    icon="search"
     [label]="'personen.suche' | t"
     [hideLabel]="true"
     [value]="search()"
@@ -16,7 +16,7 @@
     <app-card>
       @for (row of rows(); track row.sub) {
         <app-list-row
-          [titel]="row.name"
+          [title]="row.name"
           [subline]="row.email"
           [value]="row.roles"
           [clickable]="true"
@@ -24,8 +24,8 @@
         />
       }
     </app-card>
-    <app-note variant="unter">{{ count() }}</app-note>
-    <app-note>{{ 'personen.hinweis' | t }}</app-note>
+    <p class="note note--sub">{{ count() }}</p>
+    <p class="note">{{ 'personen.hinweis' | t }}</p>
   }
 </div>
 
@@ -37,10 +37,10 @@
 >
   <app-card>
     @for (choice of choices(); track choice.id) {
-      <app-check-row [titel]="choice.name" [checked]="choice.checked" (toggled)="toggle(choice.id, $event)" />
+      <app-check-row [title]="choice.name" [checked]="choice.checked" (toggled)="toggle(choice.id, $event)" />
     }
   </app-card>
-  <app-note>{{ 'personen.rollenHinweis' | t }}</app-note>
+  <p class="note">{{ 'personen.rollenHinweis' | t }}</p>
   <div dialog-footer class="people__actions">
     <app-button variant="secondary" (click)="close()">{{ 'personen.abbrechen' | t }}</app-button>
     <app-button variant="primary" [disabled]="saving()" (click)="save()">{{

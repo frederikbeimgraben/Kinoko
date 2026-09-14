@@ -1,0 +1,47 @@
+:host {
+  --objectmenu-width: 200px;
+}
+
+.objectmenu__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-dialog);
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.objectmenu {
+  position: fixed;
+  z-index: calc(var(--z-dialog) + 1);
+  inline-size: min(var(--objectmenu-width), calc(100vw - 2 * var(--space-4)));
+  overflow: hidden;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.objectmenu__item {
+  display: flex;
+  inline-size: 100%;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  text-align: start;
+  background: none;
+  border: 0;
+}
+
+.objectmenu__item + .objectmenu__item {
+  border-block-start: var(--border-width) solid var(--color-border);
+}
+
+.objectmenu__item--danger {
+  color: var(--color-danger);
+}
+
+.objectmenu__icon {
+  flex: none;
+}

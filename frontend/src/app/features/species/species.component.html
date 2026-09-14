@@ -1,10 +1,10 @@
 @if (viewport(); as viewport) {
-  <app-page-header [titel]="viewport.name" [back]="true" (backClick)="back()" />
+  <app-page-header [title]="viewport.name" [back]="true" (backClick)="back()" />
   <div class="species">
     <app-species-images [images]="images()" [speciesName]="viewport.name" [slug]="slug()" />
 
     <div class="species__head">
-      <app-note variant="unter" [italic]="true">{{ viewport.subtitle }}</app-note>
+      <p class="note note--sub note--italic">{{ viewport.subtitle }}</p>
       <div class="species__badges">
         @for (badge of viewport.badges; track badge.text) {
           <app-badge [variant]="badge.variant">{{ badge.text }}</app-badge>
@@ -14,7 +14,7 @@
 
     @if (viewport.warnung; as warnung) {
       <p class="species__warnung">
-        <app-svg-icon name="warnung" [size]="20" [label]="'art.warnung.beschriftung' | t" />
+        <app-svg-icon name="warning" [size]="20" [label]="'art.warnung.beschriftung' | t" />
         {{ warnung }}
       </p>
     }
@@ -24,17 +24,12 @@
       @if (viewport.hasCurve && viewport.saison; as saison) {
         <app-season-curve
           [large]="true"
-          [alleJahre]="saison.alleJahre"
-          [laufendesJahr]="saison.laufendesJahr"
-          [visitsAllYears]="saison.begehungenJeWocheAlleJahre"
-          [visitsCurrentYearSeries]="saison.begehungenJeWocheLaufendesJahr"
+          [series]="viewport.seasonSeries"
           [months]="viewport.months"
-          [legendCurrent]="viewport.legendCurrent"
-          [legendYears]="viewport.legendYears"
           [label]="viewport.label"
         />
       } @else {
-        <app-info-text>{{ 'art.zuWenigFunde' | t }}</app-info-text>
+        <p class="info-text">{{ 'art.zuWenigFunde' | t }}</p>
       }
     </section>
 
@@ -43,7 +38,7 @@
       <app-card class="flush">
         <app-key-value-table>
           @for (row of viewport.einstufung; track row.schluessel) {
-            <app-key-value-row [schluessel]="row.schluessel">
+            <app-key-value-row [key]="row.schluessel">
               <app-level-pill [text]="row.pill.text" [colour]="row.pill.colour" />
             </app-key-value-row>
           }
@@ -54,20 +49,11 @@
     @if (viewport.masse.length) {
       <section>
         <h2 class="species__section">{{ 'art.abschnitt.masse' | t }}</h2>
-        <app-card class="flush">
-          <app-key-value-table>
-            @for (row of viewport.masse; track row.schluessel) {
-              <app-key-value-row [schluessel]="row.schluessel" [unter]="row.unter">
-                <app-measurement
-                  [extent]="row.extent"
-                  [spans]="row.spans"
-                  [unit]="row.einheit"
-                  [label]="row.zeichen"
-                />
-              </app-key-value-row>
-            }
-          </app-key-value-table>
-        </app-card>
+        @for (group of viewport.masse; track group.part) {
+          <app-card class="flush">
+            <app-measurement-group [part]="group.part" [measurements]="group.rows" />
+          </app-card>
+        }
       </section>
     }
 
@@ -77,7 +63,7 @@
         <app-card class="flush">
           <app-key-value-table>
             @for (row of viewport.hut; track row.schluessel) {
-              <app-key-value-row [schluessel]="row.schluessel" [value]="row.wert" />
+              <app-key-value-row [key]="row.schluessel" [value]="row.wert" />
             }
           </app-key-value-table>
         </app-card>
@@ -90,7 +76,7 @@
         <app-card class="flush">
           <app-key-value-table>
             @for (row of viewport.stiel; track row.schluessel) {
-              <app-key-value-row [schluessel]="row.schluessel" [value]="row.wert" />
+              <app-key-value-row [key]="row.schluessel" [value]="row.wert" />
             }
           </app-key-value-table>
         </app-card>
@@ -103,10 +89,10 @@
         <app-card class="flush">
           <app-key-value-table>
             @for (row of viewport.fruchtschicht; track row.schluessel) {
-              <app-key-value-row [schluessel]="row.schluessel" [value]="row.wert" />
+              <app-key-value-row [key]="row.schluessel" [value]="row.wert" />
             }
             @if (viewport.sporenlager; as farbe) {
-              <app-key-value-row [schluessel]="farbe.schluessel" [unter]="farbe.unter">
+              <app-key-value-row [key]="farbe.schluessel" [hint]="farbe.unter">
                 <app-colour-field [colours]="farbe.farben" [label]="farbe.label" />
               </app-key-value-row>
             }
@@ -121,7 +107,7 @@
         <app-card class="flush">
           <app-key-value-table>
             @for (row of viewport.farben; track row.schluessel) {
-              <app-key-value-row [schluessel]="row.schluessel" [unter]="row.unter">
+              <app-key-value-row [key]="row.schluessel" [hint]="row.unter">
                 <app-colour-field [colours]="row.farben" [label]="row.label" />
               </app-key-value-row>
             }
@@ -135,13 +121,14 @@
         <h2 class="species__section">{{ 'art.abschnitt.verfaerbung' | t }}</h2>
         <app-card class="flush">
           <app-key-value-table>
-            <app-key-value-row [schluessel]="'art.verfaerbung.zeile' | t">
+            <app-key-value-row [key]="'art.verfaerbung.zeile' | t">
               <app-colour-change
-                [from]="wandel.von"
-                [to]="wandel.nach"
-                [fromLabel]="wandel.vonLabel"
-                [toLabel]="wandel.nachLabel"
-                [duration]="wandel.dauer"
+                [triggers]="['art.verfaerbung.zeile' | t]"
+                [from]="[wandel.von]"
+                [to]="[wandel.nach]"
+                [fromLabels]="[wandel.vonLabel]"
+                [toLabels]="[wandel.nachLabel]"
+                [speed]="[wandel.dauer]"
                 [arrowLabel]="wandel.pfeil"
               />
             </app-key-value-row>
@@ -182,10 +169,10 @@
               @if (row.tags.length) {
                 <app-tag-list [tags]="row.tags" [label]="row.label" />
               } @else {
-                <app-note variant="unter">{{ 'art.sinne.leer' | t }}</app-note>
+                <p class="note note--sub">{{ 'art.sinne.leer' | t }}</p>
               }
               @if (row.text; as text) {
-                <app-note variant="unter">{{ text }}</app-note>
+                <p class="note note--sub">{{ text }}</p>
               }
             </div>
           }
@@ -198,7 +185,7 @@
       <app-card class="flush">
         <app-key-value-table>
           @for (row of viewport.merkmale; track row.schluessel) {
-            <app-key-value-row [schluessel]="row.schluessel" [value]="row.text" [flow]="true">
+            <app-key-value-row [key]="row.schluessel" [value]="row.text" [flow]="true">
               @if (row.badge; as badge) {
                 <app-badge [variant]="badge.variant">{{ badge.text }}</app-badge>
               }
@@ -222,7 +209,7 @@
         <app-card class="flush">
           <app-key-value-table>
             @for (row of viewport.reagenzien; track row.reagenz) {
-              <app-key-value-row [schluessel]="row.reagenz" [value]="row.reaktion" [flow]="true" />
+              <app-key-value-row [key]="row.reagenz" [value]="row.reaktion" [flow]="true" />
             }
           </app-key-value-table>
         </app-card>
@@ -249,37 +236,35 @@
       <h2 class="species__section">{{ 'art.verwechslung' | t }}</h2>
       <app-card class="flush">
         @for (row of viewport.verwechslungen; track row.name) {
-          <app-lookalike-row
-            [name]="row.name"
-            [latin]="row.lateinisch"
-            [route]="row.route"
-            [compareRoute]="row.vergleich"
-            (click)="toLookalike(row)"
+          <app-list-row
+            [title]="row.name"
+            [subline]="row.lateinisch"
+            [clickable]="true"
+            [chevron]="true"
+            (chosen)="toLookalike(row)"
           >
-            <app-badge [variant]="row.badge.variant">{{ row.badge.text }}</app-badge>
-          </app-lookalike-row>
+            <app-badge trail [variant]="row.badge.variant">{{ row.badge.text }}</app-badge>
+          </app-list-row>
         }
       </app-card>
     </section>
 
-    <app-note class="species__sources">
+    <p class="note species__sources">
       {{ 'art.weiterfuehrend' | t }}
       @for (link of viewport.links; track link.url; let letzter = $last) {
         <a [href]="link.url" target="_blank" rel="noopener noreferrer">{{ link.titel }}</a
         >{{ letzter ? '.' : ',' }}
       }
       {{ viewport.geprueft }}
-    </app-note>
+    </p>
   </div>
   <app-action-bar
     [primary]="'art.aufKarte' | t"
-    mainIcon="karte"
-    [mainDisabled]="!viewport.kartenSlug"
     [secondary]="vonAndererArt() ? rueckweg() : undefined"
-    (mainClick)="onMap()"
+    (primaryClick)="onMap()"
     (secondaryClick)="zumUrsprung()"
   />
 } @else if (unknown()) {
-  <app-page-header [titel]="'nav.arten' | t" [back]="true" (backClick)="back()" />
+  <app-page-header [title]="'nav.arten' | t" [back]="true" (backClick)="back()" />
   <app-empty-state [text]="'art.nichtGefunden' | t" />
 }

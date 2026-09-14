@@ -6,13 +6,13 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 // erste Buendel, auch die Saisonkurve und die Zeitleiste, die hier niemand
 // braucht. Das waren 81 kB.
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 /**
  * Das Anmelde-Blatt kennt nur eine Raste: Titel, Satz und Fußleiste bestimmen
  * die Höhe. Ein fester Anteil ließe zwischen Text und Knöpfen Leerraum stehen.
  */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['inhalt', 'inhalt', 'inhalt'];
+const DETENTS = ['content', 'content', 'content'] as const;
 
 /**
  * Fragt nach der Anmeldung, wenn etwas gespeichert werden soll. Es erscheint

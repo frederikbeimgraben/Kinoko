@@ -1,12 +1,13 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { RampComponent } from './ramp.component';
-import { FORECAST_RAMP } from './ramp-colors';
+import { FORECAST_RAMP } from './ramp-colours';
 
 describe('RampComponent', () => {
   it('zeigt Beschriftung, beide Enden und jede Stufe', async () => {
     const { container } = await render(RampComponent, {
-      inputs: { label: 'Fundwahrscheinlichkeit je Begehung', von: '0 %', bis: '50 %' },
+      inputs: { label: 'Fundwahrscheinlichkeit je Begehung', from: '0 %', to: '50 %' },
     });
 
     expect(screen.getByText('Fundwahrscheinlichkeit je Begehung')).toBeInTheDocument();
@@ -18,10 +19,10 @@ describe('RampComponent', () => {
 
   it('trägt die Fußnote nur, wenn eine da ist', async () => {
     const { fixture, container } = await render(RampComponent, {
-      inputs: { label: 'Waldanteil', von: '0 %', bis: '100 %' },
+      inputs: { label: 'Waldanteil', from: '0 %', to: '100 %' },
     });
 
-    expect(container.querySelector('app-note')).toBeNull();
+    expect(container.querySelector('.note')).toBeNull();
 
     fixture.componentRef.setInput('note', 'Eine Zelle misst 500 Meter.');
     fixture.detectChanges();
@@ -31,9 +32,18 @@ describe('RampComponent', () => {
 
   it('nennt Hilfsmitteln die Spanne des Verlaufs', async () => {
     await render(RampComponent, {
-      inputs: { label: 'Niederschlag', von: '0 mm', bis: '152 mm', colors: ['#000', '#fff'] },
+      inputs: { label: 'Niederschlag', from: '0 mm', to: '152 mm', colours: ['#000', '#fff'] },
     });
 
     expect(screen.getByRole('img', { name: 'Niederschlag: 0 mm – 152 mm' })).toBeInTheDocument();
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(RampComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { label: 'Rainfall', from: '0 mm', to: '150 mm' },
+    });
+
+    noGermanText(container);
   });
 });

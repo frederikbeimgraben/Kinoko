@@ -1,0 +1,18 @@
+<app-search-field
+  [value]="query()"
+  [placeholder]="'species.search.placeholder' | t"
+  (valueChange)="query.set($event)"
+/>
+<div class="picker__rows" role="group" [attr.aria-label]="label()">
+  @for (entry of rows(); track entry.value) {
+    <app-species-row
+      [species]="entry"
+      [active]="entry.value === selected()"
+      (chosen)="chosen.emit(entry.value)"
+    >
+      <ng-container trail [ngTemplateOutlet]="row()!" [ngTemplateOutletContext]="{ $implicit: entry }" />
+    </app-species-row>
+  } @empty {
+    <p class="picker__empty">{{ 'state.noSpeciesMatch' | t }}</p>
+  }
+</div>

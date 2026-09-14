@@ -4,7 +4,9 @@ import { CardComponent } from '@stupa-makers/ui-kit';
 import type { FacetKey } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent, NoteComponent, PageHeaderComponent, SvgIconComponent } from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { FACET_TEXT, HIDDEN, NOT_YET, SHEET } from './facet-labels';
 import { FacetState } from './facet.state';
 import { SpeciesFilterState } from './filter.state';
@@ -36,14 +38,7 @@ interface SheetCard {
 @Component({
   selector: 'app-species-filter',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionBarComponent,
-    CardComponent,
-    NoteComponent,
-    PageHeaderComponent,
-    SvgIconComponent,
-    TranslatePipe,
-  ],
+  imports: [ActionBarComponent, CardComponent, PageHeaderComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
 })

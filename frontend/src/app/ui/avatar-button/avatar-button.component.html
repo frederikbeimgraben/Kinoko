@@ -1,3 +1,9 @@
-<button class="avatar" type="button" [attr.aria-label]="label()" (click)="pressed.emit()">
-  <span aria-hidden="true">{{ initiale() }}</span>
+<button
+  class="avatar tap"
+  type="button"
+  data-press="scale"
+  [attr.aria-label]="label()"
+  (click)="pressed.emit()"
+>
+  <span aria-hidden="true">{{ initial() }}</span>
 </button>

@@ -77,16 +77,18 @@ describe('ArtComponent', () => {
   it('stellt die Merkmale in der Reihenfolge der Artseite auf', async () => {
     const { container } = await build(STEINPILZ);
 
-    const schluessel = [...container.querySelectorAll('.tz__key')].map((cell) => cell.textContent.trim());
+    // Die Karte je Körperteil trägt die Maße nun in einer eigenen Überschrift,
+    // nicht mehr als Zeile der Merkmalstabelle.
+    const parts = [...container.querySelectorAll('.group__part')].map((cell) => cell.textContent.trim());
+    expect(parts).toEqual(['Hut', 'Sporen']);
+
+    const schluessel = [...container.querySelectorAll('.kv__key')].map((cell) => cell.textContent.trim());
 
     expect(schluessel).toEqual([
       // Erst die Einstufung, dann die Werte, dann die Farben.
       'Speisewert',
       'Schutz',
       'Handel',
-      // Eine Zeile je Koerperteil: die Sporen standen einmal zweimal hier.
-      'Hut',
-      'Sporen',
       // Hut und Stiel, dann die Fruchtschicht mit der Farbe ihres Sporenlagers.
       'Form',
       'Merkmale',
@@ -121,9 +123,7 @@ describe('ArtComponent', () => {
       'Kalilauge (KOH)',
       // Zuletzt die Einordnung: jede Stufe führt auf ihre eigene Seite.
     ]);
-    const partner = [...container.querySelectorAll('.lookalike__name')].map((cell) =>
-      cell.textContent.trim(),
-    );
+    const partner = [...container.querySelectorAll('.row__title')].map((cell) => cell.textContent.trim());
     expect(partner).toEqual(['Gallenröhrling', 'Satansröhrling']);
   });
 
@@ -146,15 +146,17 @@ describe('ArtComponent', () => {
     ]);
   });
 
-  it('zeigt eine Zeile je Körperteil, Länge mal Breite', async () => {
-    await build(STEINPILZ);
+  it('zeigt jede Strecke als eigene Zeile ihres Körperteils', async () => {
+    const { container } = await build(STEINPILZ);
 
-    expect(screen.getByRole('img', { name: 'Hutbreite' })).toBeInTheDocument();
-    // Die Spore trägt ihr eigenes Zeichen, nicht das des Hutes — und nur eines:
-    // Länge und Breite stehen in einer Zelle, wie im Bestimmungsbuch.
-    expect(screen.getAllByRole('img', { name: 'Sporenlänge' })).toHaveLength(1);
+    // Die Sporenkarte trägt Länge und Breite als zwei Zeilen, nicht als eine
+    // mit einem Malzeichen dazwischen.
+    expect(container.querySelectorAll('.measure__extent')).toHaveLength(3);
+    expect(screen.getByText('Länge')).toBeInTheDocument();
+    expect(screen.getAllByText('Breite')).toHaveLength(2);
     expect(screen.getByText('4 – 20')).toBeInTheDocument();
-    expect(screen.getByText('12,4 – 19,2 × 4,5 – 5,5')).toBeInTheDocument();
+    expect(screen.getByText('12,4 – 19,2')).toBeInTheDocument();
+    expect(screen.getByText('4,5 – 5,5')).toBeInTheDocument();
   });
 
   it('nennt den selteneren Wert als Wort, nicht als zweite Zahl', async () => {
@@ -315,19 +317,17 @@ describe('ArtComponent', () => {
     expect(screen.getByText('Fleisch blass braun.')).toBeInTheDocument();
   });
 
-  it('verlinkt jede Verwechslung auf ihr eigenes Profil', async () => {
-    await build(STEINPILZ);
+  it('führt bei jeder Verwechslung auf ihr eigenes Profil', async () => {
+    const { router } = await build(STEINPILZ);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
-    // Jedes Paar zeigt auf ein Profil, seit der Katalog nur noch Verweise hält.
-    // Der Weg ist das Zeichen rechts in der Zeile, nicht mehr der Name.
-    expect(screen.getByRole('link', { name: 'Gallenröhrling ansehen' })).toHaveAttribute(
-      'href',
-      '/arten/gallenroehrling',
-    );
-    expect(screen.getByRole('link', { name: 'Satansröhrling ansehen' })).toHaveAttribute(
-      'href',
-      '/arten/satansroehrling',
-    );
+    // Jede Zeile zeigt auf ein Profil, weil der Katalog nur noch Verweise
+    // hält. Ein Tipp auf die Zeile führt hin, sie ist die ganze Schaltfläche.
+    await userEvent.click(screen.getByRole('button', { name: /Gallenröhrling/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Satansröhrling/ }));
+
+    expect(navigate).toHaveBeenCalledWith(['/arten/gallenroehrling']);
+    expect(navigate).toHaveBeenCalledWith(['/arten/satansroehrling']);
   });
 
   it('warnt bei einer giftigen Art groß und mit Symbol', async () => {
@@ -339,15 +339,17 @@ describe('ArtComponent', () => {
   }, 30_000);
 
   it('sagt einer Art ohne Vorhersage, dass die Daten fehlen, nicht der Pilz', async () => {
-    const { container } = await build(GALLENROEHRLING, 'gallenroehrling');
+    const { container, router } = await build(GALLENROEHRLING, 'gallenroehrling');
 
     // Bis D9 stand hier „Diese Art wird nicht gesammelt“. Das ist eine Aussage
     // über den Pilz, und die steht uns nicht zu. Die Seite sieht aus wie jede
     // andere; nur wo Daten fehlen, sagt sie das.
     expect(screen.getByRole('heading', { name: 'Saison' })).toBeInTheDocument();
     expect(screen.getByText('Zu wenige Funde für eine Saisonkurve')).toBeInTheDocument();
-    const button = screen.getByRole('button', { name: 'Auf der Karte anzeigen' });
-    expect(button).toBeDisabled();
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    await userEvent.click(screen.getByRole('button', { name: 'Auf der Karte anzeigen' }));
+    // Ohne Vorhersage bleibt der Sprung auf die Karte ohne Wirkung.
+    expect(navigate).not.toHaveBeenCalled();
     // Ein grauer Knopf sagt genug. Der Satz darunter wiederholte ihn nur.
     expect(screen.queryByText('Für diese Art gibt es keine Vorhersage')).not.toBeInTheDocument();
     await noViolations(container);
@@ -387,11 +389,13 @@ describe('ArtComponent', () => {
   });
 
   it('zeigt ohne Vorhersage weder Kurve noch Sprung auf die Karte', async () => {
-    const { container } = await build(MORCHEL, 'speisemorchel');
+    const { container, router } = await build(MORCHEL, 'speisemorchel');
 
     expect(screen.getByText('Zu wenige Funde für eine Saisonkurve')).toBeInTheDocument();
     expect(container.querySelector('.spark')).toBeNull();
-    expect(screen.getByRole('button', { name: 'Auf der Karte anzeigen' })).toBeDisabled();
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    await userEvent.click(screen.getByRole('button', { name: 'Auf der Karte anzeigen' }));
+    expect(navigate).not.toHaveBeenCalled();
     await noViolations(container);
   }, 30_000);
 

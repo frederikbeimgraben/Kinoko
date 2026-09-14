@@ -9,24 +9,24 @@
     <input
       class="rangeslider__handle"
       type="range"
-      [attr.aria-label]="text('schieber.untereGrenze')"
+      [attr.aria-label]="'common.rangeMin' | t"
       [min]="min()"
       [max]="max()"
       [step]="step()"
-      [value]="von()"
-      (input)="beiVon($event)"
+      [value]="from()"
+      (input)="onFrom($event)"
     />
   }
   @if (showsTo()) {
     <input
       class="rangeslider__handle"
       type="range"
-      [attr.aria-label]="text('schieber.obereGrenze')"
+      [attr.aria-label]="'common.rangeMax' | t"
       [min]="min()"
       [max]="max()"
       [step]="step()"
-      [value]="bis()"
-      (input)="beiBis($event)"
+      [value]="to()"
+      (input)="onTo($event)"
     />
   }
 </div>

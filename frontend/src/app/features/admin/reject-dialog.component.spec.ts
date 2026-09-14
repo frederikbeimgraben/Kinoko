@@ -43,9 +43,7 @@ describe('RejectDialogComponent', () => {
   it('lässt ohne Grund nicht ablehnen', async () => {
     const { reasons } = await build();
 
-    const button = screen.getByRole('button', { name: 'Ablehnen' });
-    expect(button).toBeDisabled();
-    await userEvent.click(button);
+    await userEvent.click(screen.getByRole('button', { name: 'Ablehnen' }));
 
     expect(reasons).toEqual([]);
   });

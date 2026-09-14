@@ -1,18 +1,18 @@
 :host {
   display: inline-flex;
+  --floating-radius: 14px;
 }
 
 .floating {
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--pilz-floating-size);
-  block-size: var(--pilz-floating-size);
+  inline-size: var(--size-floating);
+  block-size: var(--size-floating);
   color: var(--color-text);
-  cursor: pointer;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
-  border-radius: var(--pilz-floating-radius);
+  border-radius: var(--floating-radius);
   box-shadow: var(--shadow-lg);
 }
 
@@ -23,6 +23,5 @@
 }
 
 .floating:disabled {
-  cursor: default;
   opacity: 0.45;
 }

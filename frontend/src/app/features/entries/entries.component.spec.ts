@@ -93,7 +93,7 @@ describe('EintraegeComponent', () => {
 
     expect(screen.getByRole('heading', { name: 'Einträge' })).toBeInTheDocument();
     for (const chip of ['Funde', 'Marker', 'Zonen', 'Geteilt']) {
-      expect(screen.getByRole('button', { name: chip })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: chip })).toBeInTheDocument();
     }
     const row = screen.getByRole('button', { name: /Steinpilz/ });
     expect(within(row).getByText('6. Sept. · 3 Stück · Frederik')).toBeInTheDocument();
@@ -116,12 +116,12 @@ describe('EintraegeComponent', () => {
   it('wechselt auf Marker und Zonen', async () => {
     const setup = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Marker' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Marker' }));
     setup.refresh();
     expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
     expect(screen.getByText('Marker · privat')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Zonen' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
     setup.refresh();
     expect(screen.getByText('Schönbuch Nord')).toBeInTheDocument();
     expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
@@ -130,7 +130,7 @@ describe('EintraegeComponent', () => {
   it('zeigt unter „geteilt“ auch fremde Funde ohne Blatt', async () => {
     const setup = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Geteilt' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
     setup.refresh();
 
     expect(screen.getByText('Maronenröhrling')).toBeInTheDocument();
@@ -155,7 +155,7 @@ describe('EintraegeComponent', () => {
       screen.getByText('Eigene Einträge stehen im Konto. Zum Lesen ist eine Anmeldung nötig.'),
     ).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Zonen' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
     setup.refresh();
     expect(
       screen.getByText('Eigene Einträge stehen im Konto. Zum Lesen ist eine Anmeldung nötig.'),
@@ -175,7 +175,7 @@ describe('EintraegeComponent', () => {
   it('bietet unter „geteilt“ keine Anmeldung an, dort liest jeder mit', async () => {
     const setup = await build(false, []);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Geteilt' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
     setup.refresh();
 
     expect(screen.queryByRole('button', { name: 'Anmelden' })).not.toBeInTheDocument();

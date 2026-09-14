@@ -13,38 +13,37 @@ import { TIER_WEAKEST } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ColourChangeComponent } from '../../ui/colour-change/colour-change.component';
+import { ColourFieldComponent } from '../../ui/colour-field/colour-field.component';
+import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
+import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { MeasurementGroupComponent } from '../../ui/measurement-group/measurement-group.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import {
-  ActionBarComponent,
-  ColourChangeComponent,
-  ColourFieldComponent,
-  KeyValueRowComponent,
-  EmptyStateComponent,
-  InfoTextComponent,
-  KeyValueTableComponent,
-  LevelPillComponent,
-  LookalikeRowComponent,
-  MeasurementComponent,
-  NoteComponent,
-  PageHeaderComponent,
-  SeasonCurveComponent,
-  SvgIconComponent,
-  TagListComponent,
-  YearBandComponent,
   type MonthMark,
-} from '../../ui';
+  SeasonCurveComponent,
+  type SeasonSeries,
+} from '../../ui/season-curve/season-curve.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { TagListComponent } from '../../ui/tag-list/tag-list.component';
+import { YearBandComponent } from '../../ui/year-band/year-band.component';
 import {
   changeRow,
   colourRow,
   colourRows,
   levelRows,
-  measureRows,
+  measureGroups,
   senseRows,
   timeRow,
   type ChangeRow,
   type ColourRow,
   type LevelRow,
   type Marke,
-  type MeasureRow,
+  type MeasureGroup,
   type SenseRow,
   type TimeRow,
 } from './feature-rows';
@@ -78,12 +77,12 @@ import {
  * Die fünf Monatsmarken unter der Kurve, jede auf der ISO-Woche, in der ihr
  * Monat beginnt. Sie liegen damit auf derselben Skala wie die Kurve selbst.
  */
-const MONTHS: readonly { schluessel: TranslationKey; woche: number }[] = [
-  { schluessel: 'art.monat.jan', woche: 1 },
-  { schluessel: 'art.monat.apr', woche: 14 },
-  { schluessel: 'art.monat.jul', woche: 27 },
-  { schluessel: 'art.monat.okt', woche: 40 },
-  { schluessel: 'art.monat.dez', woche: 49 },
+const MONTHS: readonly { key: TranslationKey; week: number }[] = [
+  { key: 'art.monat.jan', week: 1 },
+  { key: 'art.monat.apr', week: 14 },
+  { key: 'art.monat.jul', week: 27 },
+  { key: 'art.monat.okt', week: 40 },
+  { key: 'art.monat.dez', week: 49 },
 ];
 
 /** Die Skala der Wertigkeit: eine Stufe je Feld, die erreichte ist gefüllt. */
@@ -140,11 +139,10 @@ interface Viewport {
   saison: SeasonCurveData | null;
   hasCurve: boolean;
   months: MonthMark[];
-  legendCurrent: string;
-  legendYears: string;
+  seasonSeries: SeasonSeries[];
   label: string;
   einstufung: LevelRow[];
-  masse: MeasureRow[];
+  masse: MeasureGroup[];
   fruchtschicht: LayerRow[];
   hut: LayerRow[];
   stiel: LayerRow[];
@@ -183,12 +181,10 @@ interface Viewport {
     ColourFieldComponent,
     KeyValueRowComponent,
     EmptyStateComponent,
-    InfoTextComponent,
     KeyValueTableComponent,
     LevelPillComponent,
-    LookalikeRowComponent,
-    MeasurementComponent,
-    NoteComponent,
+    ListRowComponent,
+    MeasurementGroupComponent,
     PageHeaderComponent,
     RouterLink,
     SeasonCurveComponent,
@@ -258,11 +254,12 @@ export class SpeciesComponent {
     this.back();
   }
 
-  /** Merkt, von welcher Art der Sprung kam, damit der Rückweg sie kennt. */
+  /** Merkt, von welcher Art der Sprung kam, damit der Rückweg sie kennt, und springt hin. */
   protected toLookalike(row: ConfusableRow): void {
     const viewport = this.viewport();
     if (!row.route || !viewport) return;
     this.state.setOrigin({ slug: viewport.slug, name: viewport.name });
+    void this.router.navigate([row.route]);
   }
 
   /**
@@ -310,23 +307,16 @@ export class SpeciesComponent {
       // sagte über die Saison nichts.
       hasCurve: saison !== null && saison.hoechstwert > 0,
       months: MONTHS.map((month) => ({
-        text: this.i18n.translate(month.schluessel),
-        woche: month.woche,
+        text: this.i18n.translate(month.key),
+        week: month.week,
       })),
-      legendCurrent: this.i18n.translate('art.kurve.laufend', {
-        jahr: saison?.stand.jahr ?? 0,
-        woche: saison?.stand.woche ?? 0,
-      }),
-      legendYears: this.i18n.translate('art.kurve.jahre', {
-        von: saison?.jahre.von ?? 0,
-        bis: saison?.jahre.bis ?? 0,
-      }),
+      seasonSeries: this.seasonSeries(saison),
       label: this.i18n.translate('art.kurve.beschriftung', {
         name: art.name,
         hoechstwert: Math.round(saison?.hoechstwert ?? 0),
       }),
       einstufung: levelRows(this.i18n, art),
-      masse: measureRows(this.i18n, art.masse),
+      masse: measureGroups(this.i18n, art.masse),
       fruchtschicht: this.layerRows(art),
       hut: this.capRows(art),
       stiel: this.stemRows(art),
@@ -443,6 +433,31 @@ export class SpeciesComponent {
    * zeichnen, ohne zu verschwimmen. Die drei Zeilen nach der Art gibt es nur
    * an Lamellen; Röhren, Stacheln und Leisten tragen sie nicht.
    */
+  /** Die zwei Reihen der Saisonkurve: alle Jahre als Fläche, das laufende als Linie. */
+  private seasonSeries(saison: SeasonCurveData | null): SeasonSeries[] {
+    if (saison === null) return [];
+    return [
+      {
+        shape: 'area',
+        values: saison.alleJahre,
+        visits: saison.begehungenJeWocheAlleJahre,
+        legend: this.i18n.translate('art.kurve.jahre', {
+          von: saison.jahre.von,
+          bis: saison.jahre.bis,
+        }),
+      },
+      {
+        shape: 'line',
+        values: saison.laufendesJahr,
+        visits: saison.begehungenJeWocheLaufendesJahr,
+        legend: this.i18n.translate('art.kurve.laufend', {
+          jahr: saison.stand.jahr,
+          woche: saison.stand.woche,
+        }),
+      },
+    ];
+  }
+
   private layerRows(art: Species): LayerRow[] {
     const layer = art.fruchtschicht;
     if (layer === null) return [];

@@ -1,4 +1,10 @@
-<app-svg-icon [name]="icon()" [size]="19" [strich]="1.6" [label]="label()" />
-<span class="measure__value"
-  >{{ text() }} <em>{{ unit() }}</em></span
->
+<span class="measure__label">
+  <span class="measure__extent">{{ extentKey() | t }}</span>
+  @if (rare(); as note) {
+    <span class="measure__rare">{{ note }}</span>
+  }
+</span>
+<span class="measure__value">
+  <span class="measure__number">{{ text() }}</span>
+  <span class="measure__unit">{{ unit() }}</span>
+</span>

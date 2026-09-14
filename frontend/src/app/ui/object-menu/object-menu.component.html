@@ -1,0 +1,60 @@
+@if (target(); as point) {
+  <button
+    class="objectmenu__scrim tap"
+    type="button"
+    data-press="tint"
+    [attr.aria-label]="'common.close' | t"
+    (click)="closed.emit()"
+  ></button>
+  <div
+    class="objectmenu"
+    role="menu"
+    tabindex="-1"
+    [style.left.px]="point.x"
+    [style.top.px]="point.y"
+    (keydown)="onKeydown($event)"
+  >
+    <button
+      class="objectmenu__item tap"
+      type="button"
+      role="menuitem"
+      data-press="tint"
+      (click)="edit.emit()"
+    >
+      <svg
+        class="objectmenu__icon"
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
+      </svg>
+      <span>{{ 'common.edit' | t }}</span>
+    </button>
+    <button
+      class="objectmenu__item tap"
+      type="button"
+      role="menuitem"
+      data-press="tint"
+      (click)="centre.emit()"
+    >
+      <app-svg-icon class="objectmenu__icon" name="location" [size]="18" />
+      <span>{{ 'map.centre' | t }}</span>
+    </button>
+    <button
+      class="objectmenu__item objectmenu__item--danger tap"
+      type="button"
+      role="menuitem"
+      data-press="tint"
+      (click)="delete.emit()"
+    >
+      <app-svg-icon class="objectmenu__icon" name="trash" [size]="18" />
+      <span>{{ 'common.delete' | t }}</span>
+    </button>
+  </div>
+}

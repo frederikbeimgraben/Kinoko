@@ -1,25 +1,14 @@
 .chips {
-  position: relative;
   display: flex;
-  align-items: center;
-}
-
-.chips__row {
-  display: flex;
-  flex: 1;
+  flex-wrap: wrap;
   gap: var(--space-2);
-  min-inline-size: 0;
-  padding-block-end: 2px;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
 
 .chip {
   display: flex;
-  flex: none;
   align-items: center;
-  block-size: var(--pilz-chip-height);
-  padding-inline: var(--pilz-gutter);
+  block-size: var(--size-control);
+  padding-inline: var(--space-4);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   color: var(--color-text);
@@ -36,62 +25,11 @@
   border-color: var(--color-primary);
 }
 
-// Der Verlauf sagt, dass die Reihe weitergeht. Er liegt über den Chips, aber
-// unter den Knöpfen, und lässt Tipps durch.
-.chips::before,
-.chips::after {
-  position: absolute;
-  inset-block: 0;
-  z-index: 1;
-  inline-size: 40px;
-  pointer-events: none;
-  content: '';
-  opacity: 0;
-  transition: opacity 150ms ease-out;
-}
-
-.chips::before {
-  inset-inline-start: 0;
-  background: linear-gradient(to right, var(--color-bg), transparent);
-}
-
-.chips::after {
-  inset-inline-end: 0;
-  background: linear-gradient(to left, var(--color-bg), transparent);
-}
-
-.chips--back::before,
-.chips--next::after {
-  opacity: 1;
-}
-
-// Am Telefon wischt man. Die Knöpfe stehen erst da, wo es keinen Finger gibt.
-.chips__button {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .chips__button {
-    position: absolute;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    inline-size: 28px;
-    block-size: 28px;
-    color: var(--color-text);
-    cursor: pointer;
-    background: var(--color-surface);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: 50%;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .chips__button--back {
-    inset-inline-start: 0;
-  }
-
-  .chips__button--next {
-    inset-inline-end: 0;
-  }
+// Der gestrichelte Rand zeigt ohne Wort, dass ein Tipp einen Begriff anlegt.
+.chip--add {
+  padding-inline: var(--space-3);
+  color: var(--color-primary);
+  background: none;
+  border-style: dashed;
+  border-color: var(--color-primary);
 }

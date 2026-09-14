@@ -26,7 +26,7 @@ import { MapState } from './map.state';
 
 /** Die Seite hängt am Router; nur so trägt ihre Adresse die Abfragewerte. */
 @Component({
-  selector: 'app-host',
+  selector: 'app-router-stub',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet],
   template: '<router-outlet />',
@@ -198,7 +198,7 @@ describe('KarteComponent', () => {
     const { double, stable } = await map();
     const before = double.padding.length;
 
-    await userEvent.click(screen.getByRole('button', { name: 'Blatt greifen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Blatt ziehen' }));
     await stable();
 
     expect(double.fitted[0].padding.bottom).toBeGreaterThanOrEqual(0);
@@ -344,6 +344,54 @@ describe('KarteComponent', () => {
     await stable();
 
     expect(screen.getByRole('heading', { name: 'Arten' })).toBeInTheDocument();
+  });
+
+  it('lässt sich aus der Artwahl ohne Wahl abbrechen', async () => {
+    const { stable, netz } = await map();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+    await stable();
+    netz.expectOne('/api/arten').flush(KATALOG);
+    await stable();
+    const dialog = screen.getByRole('dialog', { name: 'Art für die Karte' });
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Abbrechen' }));
+    await stable();
+
+    expect(screen.queryByRole('dialog', { name: 'Art für die Karte' })).not.toBeInTheDocument();
+    expect(TestBed.inject(MapState).art()).toBe('boletus_edulis');
+  });
+
+  it('zeigt in der Artwahl nur Arten mit Karte und markiert die aktuelle', async () => {
+    const { stable, netz } = await map();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+    await stable();
+    netz.expectOne('/api/arten').flush(KATALOG);
+    await stable();
+
+    const dialog = screen.getByRole('dialog', { name: 'Art für die Karte' });
+    expect(within(dialog).getByRole('button', { name: /Steinpilz/ })).toHaveAttribute('aria-current', 'true');
+    expect(within(dialog).getByRole('button', { name: /Pfifferling/ })).not.toHaveAttribute('aria-current');
+    // Ohne Kacheln keine Zeile: der Maronenröhrling trägt einen Kartenschlüssel
+    // ohne Kachelordner, die übrigen Arten der Fixture gar keinen.
+    expect(within(dialog).queryByRole('button', { name: /Maronenröhrling/ })).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole('button', { name: /Semmelstoppelpilz/ })).not.toBeInTheDocument();
+  });
+
+  it('sucht in der Artwahl über Namen und lateinischen Namen', async () => {
+    const { stable, netz } = await map();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+    await stable();
+    netz.expectOne('/api/arten').flush(KATALOG);
+    await stable();
+    const dialog = screen.getByRole('dialog', { name: 'Art für die Karte' });
+
+    await userEvent.type(within(dialog).getByRole('textbox', { name: 'Art suchen' }), 'cibarius');
+
+    expect(within(dialog).getByRole('button', { name: /Pfifferling/ })).toBeInTheDocument();
+    expect(within(dialog).queryByRole('button', { name: /Steinpilz/ })).not.toBeInTheDocument();
   });
 
   it('bietet zum Hinzufügen die Ebenen und die Arten an', async () => {
@@ -547,7 +595,7 @@ describe('KarteComponent', () => {
 
     expect(double.styles.at(-1)).toContain('dark');
 
-    const slider = screen.getByRole('slider', { name: 'Deckkraft der Wertebene' });
+    const slider = screen.getByRole('slider', { name: 'Untere Grenze' });
     fireEvent.input(slider, { target: { value: '40' } });
     await stable();
 
@@ -659,7 +707,10 @@ describe('KarteComponent', () => {
     const { stable } = await map('/karte?darstellung=kombination');
     await stable();
 
-    expect(screen.getByRole('button', { name: 'Zum Speichern anmelden' })).toBeDisabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Zum Speichern anmelden' }));
+    await stable();
+
+    expect(screen.queryByRole('dialog', { name: 'Kombination speichern' })).not.toBeInTheDocument();
   });
 
   it('speichert die Kombination unter einem Namen', async () => {

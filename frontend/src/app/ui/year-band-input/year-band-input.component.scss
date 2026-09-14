@@ -1,0 +1,73 @@
+:host {
+  display: block;
+  --year-band-lane: 28px;
+  --year-band-track: 14px;
+  --year-band-handle: 24px;
+}
+
+.yearband {
+  position: relative;
+  block-size: var(--year-band-lane);
+}
+
+.yearband__track,
+.yearband__chosen {
+  position: absolute;
+  inset-block-start: calc((var(--year-band-lane) - var(--year-band-track)) / 2);
+  block-size: var(--year-band-track);
+  border-radius: var(--radius-sm);
+}
+
+.yearband__track {
+  inset-inline: 0;
+  background: var(--color-surface-sunken);
+}
+
+.yearband__chosen {
+  background: var(--color-primary);
+}
+
+// Beide Regler liegen übereinander. Nur die Griffe nehmen Zeiger an.
+.yearband__handle {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  inline-size: 100%;
+  block-size: var(--year-band-lane);
+  margin: 0;
+  pointer-events: none;
+  appearance: none;
+  background: none;
+}
+
+.yearband__handle::-webkit-slider-thumb {
+  inline-size: var(--year-band-handle);
+  block-size: var(--year-band-handle);
+  pointer-events: auto;
+  appearance: none;
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+}
+
+.yearband__handle::-moz-range-thumb {
+  inline-size: var(--year-band-handle);
+  block-size: var(--year-band-handle);
+  pointer-events: auto;
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+}
+
+.yearband__marks {
+  display: flex;
+  margin-block-start: var(--space-1);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.yearband__marks span {
+  flex: 1;
+}

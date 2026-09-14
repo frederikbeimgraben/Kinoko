@@ -1,4 +1,4 @@
-import { FORECAST_RAMP } from '../ui/ramp/ramp-colors';
+import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 import {
   EMPTY_DOT,
   LUT_SIZE,

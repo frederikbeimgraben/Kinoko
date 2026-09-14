@@ -2,7 +2,8 @@ import type { Species, Farbe, Farben, Masse, Spanne } from '../../core/api/model
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { BadgeVariant } from '@stupa-makers/ui-kit';
-import type { Extent, Span } from '../../ui';
+import { type MeasurementRow } from '../../ui/measurement-group/measurement-group.component';
+import { type Extent, type Span } from '../../ui/measurement/measurement.component';
 import {
   CHANGE_SPEED_TEXT,
   EDIBILITY_COLOUR,
@@ -32,46 +33,31 @@ export interface Marke {
   variant: BadgeVariant;
 }
 
-/**
- * Eine Zeile je Körperteil, nicht je Strecke.
- *
- * Innerhalb eines Teils steht Länge oder Höhe zuerst, dann Breite oder Dicke;
- * so schreiben es die Bestimmungsbücher und die Quellseiten. Das Zeichen ist
- * das des Teils. Nennt die Quelle nur eine Strecke, steht diese allein und
- * bekommt das Zeichen der Strecke: ein führendes Malzeichen wäre unlesbar.
- */
-const MEASURE_PARTS: readonly {
+/** Eine Karte je Körperteil, darunter jede Strecke als eigene Zeile. */
+const MEASURE_GROUPS: readonly {
   schluessel: TranslationKey;
-  extent: Extent;
   fields: readonly { field: keyof Masse; extent: Extent }[];
 }[] = [
-  {
-    schluessel: 'art.mass.hut',
-    extent: 'hutbreite',
-    fields: [{ field: 'hutBreiteCm', extent: 'hutbreite' }],
-  },
+  { schluessel: 'art.mass.hut', fields: [{ field: 'hutBreiteCm', extent: 'width' }] },
   {
     schluessel: 'art.mass.fruchtkoerperHoehe',
-    extent: 'hutbreite',
     fields: [
-      { field: 'fruchtkoerperHoeheCm', extent: 'stielhoehe' },
-      { field: 'fruchtkoerperBreiteCm', extent: 'hutbreite' },
+      { field: 'fruchtkoerperHoeheCm', extent: 'height' },
+      { field: 'fruchtkoerperBreiteCm', extent: 'width' },
     ],
   },
   {
     schluessel: 'art.mass.stielLaenge',
-    extent: 'stielhoehe',
     fields: [
-      { field: 'stielLaengeCm', extent: 'stielhoehe' },
-      { field: 'stielDickeCm', extent: 'stieldicke' },
+      { field: 'stielLaengeCm', extent: 'height' },
+      { field: 'stielDickeCm', extent: 'thickness' },
     ],
   },
   {
     schluessel: 'art.mass.sporenLaenge',
-    extent: 'sporenlaenge',
     fields: [
-      { field: 'sporenLaengeUm', extent: 'sporenlaenge' },
-      { field: 'sporenBreiteUm', extent: 'sporenlaenge' },
+      { field: 'sporenLaengeUm', extent: 'length' },
+      { field: 'sporenBreiteUm', extent: 'width' },
     ],
   },
 ];
@@ -93,14 +79,10 @@ export interface LevelRow {
   pill: { text: string; colour: string };
 }
 
-/** Eine Zeile der Maße: Zeichen, eine oder zwei Strecken, Einheit. */
-export interface MeasureRow {
-  schluessel: string;
-  unter: string | null;
-  extent: Extent;
-  spans: Span[];
-  einheit: string;
-  zeichen: string;
+/** Die Karte eines Körperteils: sein Name, darunter seine Strecken. */
+export interface MeasureGroup {
+  part: string;
+  rows: MeasurementRow[];
 }
 
 /** Eine Zeile der Farbtafel: das Wort links, die Fläche rechts. */
@@ -175,48 +157,26 @@ export function levelRows(i18n: I18nService, art: Species): LevelRow[] {
   ];
 }
 
-/**
- * Die Maße, eine Zeile je Körperteil.
- *
- * Die Unterzeile trägt nur noch die Ausnahmen der Quelle. „Höhe“ und „Dicke“
- * standen dort, solange zwei Zeilen gleich hießen; eine Zeile je Teil braucht
- * das nicht mehr.
- */
-export function measureRows(i18n: I18nService, masse: Masse): MeasureRow[] {
-  return MEASURE_PARTS.flatMap((part) => {
-    const found = part.fields.flatMap((entry) => {
+/** Die Maße, eine Karte je Körperteil; die seltene Ausnahme als zweite Spanne. */
+export function measureGroups(i18n: I18nService, masse: Masse): MeasureGroup[] {
+  return MEASURE_GROUPS.flatMap((group) => {
+    const rows = group.fields.flatMap((entry) => {
       const span = masse[entry.field];
-      return span === null ? [] : [{ ...entry, span }];
+      if (span === null) return [];
+      const spans: Span[] = [{ from: span.von, to: span.bis }];
+      const rare = rareSpan(span);
+      if (rare) spans.push(rare);
+      return [{ extent: entry.extent, spans, unit: i18n.translate(UNIT_TEXT[span.einheit]) }];
     });
-    if (found.length === 0) return [];
-    const unit = i18n.translate(UNIT_TEXT[found[0].span.einheit]);
-    // Eine einzelne Strecke traegt ihr eigenes Zeichen, nicht das des Teils:
-    // "Stiel 2 - 6 cm" ohne weitere Angabe waere sonst eine Hoehe.
-    const extent = found.length === 1 ? found[0].extent : part.extent;
-    const rare = found
-      .map((entry) => rareNote(i18n, entry.span, unit))
-      .filter((note): note is string => note !== null);
-    return [
-      {
-        schluessel: i18n.translate(part.schluessel),
-        unter: rare.length > 0 ? rare.join(' · ') : null,
-        extent,
-        spans: found.map((entry) => ({ von: entry.span.von, bis: entry.span.bis })),
-        einheit: unit,
-        zeichen: i18n.translate(`art.mass.zeichen.${extent}`),
-      },
-    ];
+    if (rows.length === 0) return [];
+    return [{ part: i18n.translate(group.schluessel), rows }];
   });
 }
 
-/** Der Ausreißer der Quelle steht als Wort, nicht als zweite Zahl im Wert. */
-function rareNote(i18n: I18nService, span: Spanne, unit: string): string | null {
-  if (span.seltenBis !== null) {
-    return i18n.translate('art.mass.seltenBis', { wert: span.seltenBis, einheit: unit });
-  }
-  if (span.seltenVon !== null) {
-    return i18n.translate('art.mass.seltenVon', { wert: span.seltenVon, einheit: unit });
-  }
+/** Der Ausreißer der Quelle als zweite Spanne, halbseitig offen. */
+function rareSpan(span: Spanne): Span | null {
+  if (span.seltenBis !== null) return { from: null, to: span.seltenBis };
+  if (span.seltenVon !== null) return { from: span.seltenVon, to: null };
   return null;
 }
 

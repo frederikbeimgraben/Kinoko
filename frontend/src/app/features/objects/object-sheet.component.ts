@@ -3,7 +3,7 @@ import type { Find, Marker, Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { NoteComponent, SheetComponent } from '../../ui';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { EntriesState } from '../entries/entries.state';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapState } from '../map/map.state';
@@ -35,7 +35,6 @@ const ZOOM_OBJECT = 14;
     SheetHeightDirective,
     FindSheetComponent,
     MarkerSheetComponent,
-    NoteComponent,
     SheetComponent,
     TranslatePipe,
     ZoneSheetComponent,

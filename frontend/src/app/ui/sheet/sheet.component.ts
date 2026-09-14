@@ -1,87 +1,52 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
 } from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** Die drei Rasten des Blatts, von unten nach oben. */
 export type Detent = 0 | 1 | 2;
 
-/**
- * Eine Raste ist ein Anteil der Wirtshöhe (0 bis 1), eine feste Höhe oder
- * `inhalt`. Die unterste Raste zeigt genau den Kopf; als Anteil würde sie auf
- * einem kurzen Telefon die Zeitleiste abschneiden.
- *
- * `inhalt` lässt den Inhalt die Höhe bestimmen. Blätter, die nur einen Satz
- * und eine Fußleiste tragen (Anmelden, Fundort, Aktionen), stünden mit einem
- * Anteil entweder gequetscht oder mit Leerraum zwischen Text und Knöpfen da.
- */
-export type DetentSize = number | `${number}px` | 'inhalt';
+/** Anteil der Wirtshöhe zwischen 0 und 1, feste Höhe oder `content` für die Inhaltshöhe. */
+type DetentSize = number | `${number}px` | 'content';
 
-/** Griff, Kopfzeile und Zeitleiste, wie sie das Artboard `KarteEingeklappt` zeigt. */
-export const HEAD_HEIGHT = '152px';
+// Die unterste Raste ist --size-sheet-head, 152 Pixel. Die Zug-Physik
+// braucht die Zahl vor dem Zeichnen des Blatts.
+const DEFAULT_DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['152px', 0.4, 0.9];
 
-/** Aus den Artboards `KarteEingeklappt` (Kopf), `Main` (halb) und `Zone` (voll). */
-export const DETENTS_DEFAULT: readonly [DetentSize, DetentSize, DetentSize] = [HEAD_HEIGHT, 0.4, 0.9];
+// Erst ab dieser Bewegung in Punkten zählt ein Zug als Zug, nicht als Tipp.
+const DRAG_THRESHOLD = 24;
 
-/** Erst ab dieser Bewegung in px zählt ein Zug als Zug und nicht als Tipp. */
-export const DRAG_THRESHOLD = 24;
+// Ab dieser Bewegung greift das Blatt den Zeiger ab. Ein Tipp auf eine
+// Woche im Kopf bleibt darunter trotzdem ein Tipp.
+const GRAB_THRESHOLD = 6;
 
-/**
- * Ab dieser Bewegung greift das Blatt den Zeiger ab. Darunter bleibt der
- * Zeiger, wo er ist: ein Tipp auf eine Woche im Kopf soll ein Tipp bleiben.
- */
-export const GRAB_THRESHOLD = 6;
+// Ab dieser waagrechten Bewegung lässt das Blatt die Berührung los.
+// Die Zeitleiste übernimmt sie und scrollt unter dem Finger.
+const AXIS_THRESHOLD = 8;
 
-/**
- * Ab dieser waagrechten Bewegung lässt das Blatt die Berührung los: sie gilt
- * dann der Zeitleiste, die unter dem Finger scrollt.
- */
-export const AXIS_THRESHOLD = 8;
-
-/**
- * Welche Raste eine Zugbewegung trifft: die nächstgelegene zur erreichten Höhe.
- * Unter der Schwelle bleibt die alte Raste, damit ein Wackeln nichts verstellt.
- */
-export function detentForHeight(
-  sizes: readonly [number, number, number],
-  jetzt: Detent,
-  hoehe: number,
-  threshold = DRAG_THRESHOLD,
-): Detent {
-  if (Math.abs(hoehe - sizes[jetzt]) < threshold) return jetzt;
-  let best: Detent = jetzt;
-  for (const detent of [0, 1, 2] as const) {
-    if (Math.abs(sizes[detent] - hoehe) < Math.abs(sizes[best] - hoehe)) best = detent;
-  }
-  return best;
+interface Drag {
+  readonly pointer: number;
+  readonly startY: number;
+  readonly startX: number;
+  readonly startHeight: number;
+  moved: boolean;
 }
 
-/**
- * Rechnet ein Rastenmaß in Punkte um. `inhalt` kennt seine Höhe erst nach dem
- * Zeichnen; der Aufrufer reicht sie als `gemessen` herein.
- */
-export function detentInPx(mass: DetentSize, hostHeight: number, measured = 0): number {
-  if (mass === 'inhalt') return measured;
-  return typeof mass === 'number' ? mass * hostHeight : Number.parseFloat(mass);
-}
+/** Das Blatt über der Karte: drei Rasten, Griff, Kopf-Slot, Zug und Pfeiltasten. */
+// Der Griff und alles mit `head` ziehen das Blatt. Die obere Kante
+// trifft der Daumen leichter als ein schmaler Streifen.
 
-/**
- * Das Blatt über der Karte. Es liegt auf einer der drei Rasten; ein Tipp auf
- * den Griff geht zur nächsten, ein Zug zur nächstgelegenen, die Pfeiltasten
- * eine Stufe auf oder ab. Am Rechner wird daraus eine Spalte ohne Rasten.
- *
- * Gezogen wird am Griff und an allem, was mit `kopf` in den Kopf projiziert
- * wird. Das ist die ganze obere Kante des Blatts und trifft mit dem Daumen
- * besser als ein 24 Punkte hoher Streifen.
- */
+// Die Höhe steht als `--pilz-sheet-inset` am Dokument. Schwebende Knöpfe
+// und die Kartenzuschreibung bleiben so darüber.
 @Component({
   selector: 'app-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,41 +56,38 @@ export function detentInPx(mass: DetentSize, hostHeight: number, measured = 0): 
 })
 export class SheetComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly i18n = inject(I18nService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly label = input.required<string>();
   readonly detent = input<Detent>(1);
-  readonly detents = input<readonly [DetentSize, DetentSize, DetentSize]>(DETENTS_DEFAULT);
+  readonly detents = input<readonly [DetentSize, DetentSize, DetentSize]>(DEFAULT_DETENTS);
   /** Ein Blatt, das die Karte sperrt (Melden, Anmelden), fängt den Fokus. */
   readonly modal = input(false);
-  /** Der Griff-Tipp nennt die Bedienung, solange sie nicht offensichtlich ist. */
-  readonly handleHint = input(false);
-  /** Am Rechner steht das Blatt als volle Spalte neben der Karte. */
-  readonly column = input(false);
 
   readonly detentChange = output<Detent>();
 
   /** Während eines Zugs führt der Finger, nicht die Raste. */
   private readonly dragged = signal<number | null>(null);
-  private drag: {
-    pointer: number;
-    von: number;
-    vonX: number;
-    hoehe: number;
-    moved: boolean;
-  } | null = null;
+  private drag: Drag | null = null;
 
-  protected readonly hoehe = computed(() => {
-    if (this.column()) return '100%';
+  protected readonly dragging = computed(() => this.dragged() !== null);
+
+  protected readonly height = computed(() => {
     const dragged = this.dragged();
     if (dragged !== null) return `${dragged}px`;
-    const mass = this.detents()[this.detent()];
-    if (mass === 'inhalt') return 'auto';
-    return typeof mass === 'number' ? `${mass * 100}%` : mass;
+    const size = this.detents()[this.detent()];
+    if (size === 'content') return 'auto';
+    return typeof size === 'number' ? `${size * 100}%` : size;
   });
 
-  protected handleText(): string {
-    return this.i18n.translate('sheet.griff');
+  constructor() {
+    // Folgt jeder Bewegung. Schwebende Elemente bleiben so über der
+    // aktuellen Blatthöhe, nicht nur über der untersten Raste.
+    effect(() => {
+      this.height();
+      this.applyInset();
+    });
+    this.destroyRef.onDestroy(() => document.documentElement.style.removeProperty('--pilz-sheet-inset'));
   }
 
   protected nextDetent(): void {
@@ -142,14 +104,13 @@ export class SheetComponent {
   }
 
   protected onPointerDown(event: PointerEvent): void {
-    if (this.column()) return;
-    // Noch nicht abgegriffen: bis zur Schwelle gehört der Zeiger dem, worauf
-    // er zeigt. Ein abgegriffener Zeiger schluckt den Klick auf eine Woche.
+    // Der Zeiger gehört vor der Schwelle dem Ziel darunter, nicht dem Blatt.
+    // Ein abgegriffener Zeiger schluckt sonst den Klick auf eine Woche.
     this.drag = {
       pointer: event.pointerId,
-      von: event.clientY,
-      vonX: event.clientX,
-      hoehe: this.sheetHeight(),
+      startY: event.clientY,
+      startX: event.clientX,
+      startHeight: this.sheetHeight(),
       moved: false,
     };
   }
@@ -157,32 +118,33 @@ export class SheetComponent {
   protected onPointerMove(event: PointerEvent): void {
     const drag = this.drag;
     if (drag?.pointer !== event.pointerId) return;
-    const tall = Math.abs(drag.von - event.clientY);
-    const quer = Math.abs(event.clientX - drag.vonX);
+    const vertical = Math.abs(drag.startY - event.clientY);
+    const horizontal = Math.abs(event.clientX - drag.startX);
     if (!drag.moved) {
-      // Die Achse der ersten Bewegung entscheidet: waagrecht gehört die
-      // Berührung der Zeitleiste, senkrecht dem Blatt.
-      if (quer > tall && quer > AXIS_THRESHOLD) {
+      // Die erste Achse entscheidet. Waagrecht gehört die Berührung der
+      // Zeitleiste, senkrecht gehört sie dem Blatt.
+      if (horizontal > vertical && horizontal > AXIS_THRESHOLD) {
         this.drag = null;
         return;
       }
-      if (tall <= GRAB_THRESHOLD) return;
+      if (vertical <= GRAB_THRESHOLD) return;
       drag.moved = true;
       (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
     }
-    this.dragged.set(Math.min(Math.max(drag.hoehe + (drag.von - event.clientY), 0), this.hostHeight()));
+    const next = drag.startHeight + (drag.startY - event.clientY);
+    this.dragged.set(Math.min(Math.max(next, 0), this.hostHeight()));
   }
 
   protected onPointerUp(event: PointerEvent): void {
     const drag = this.drag;
     if (drag?.pointer !== event.pointerId) return;
-    const hoehe = this.dragged() ?? drag.hoehe;
+    const height = this.dragged() ?? drag.startHeight;
     this.dragged.set(null);
     if (drag.moved) {
-      const target = detentForHeight(this.sizesInPx(), this.detent(), hoehe);
+      const target = this.nearestDetent(this.sizesInPx(), this.detent(), height);
       if (target !== this.detent()) this.detentChange.emit(target);
     }
-    // Der Klick folgt gleich nach; `naechsteRaste` fragt darum noch nach `bewegt`.
+    // Der Klick folgt gleich danach. `nextDetent` prüft darum noch `moved`.
     setTimeout(() => (this.drag = null));
   }
 
@@ -203,6 +165,22 @@ export class SheetComponent {
     }
   }
 
+  /** Die nächstgelegene Raste zur Höhe. Unter der Schwelle bleibt die alte. */
+  private nearestDetent(sizes: readonly [number, number, number], current: Detent, height: number): Detent {
+    if (Math.abs(height - sizes[current]) < DRAG_THRESHOLD) return current;
+    let best: Detent = current;
+    for (const candidate of [0, 1, 2] as const) {
+      if (Math.abs(sizes[candidate] - height) < Math.abs(sizes[best] - height)) best = candidate;
+    }
+    return best;
+  }
+
+  /** Rechnet ein Rastenmaß in Punkte um. `content` nimmt die gemessene Höhe. */
+  private sizeInPx(size: DetentSize, hostHeight: number, measured: number): number {
+    if (size === 'content') return measured;
+    return typeof size === 'number' ? size * hostHeight : Number.parseFloat(size);
+  }
+
   private hostHeight(): number {
     return this.host.nativeElement.clientHeight || 0;
   }
@@ -215,12 +193,20 @@ export class SheetComponent {
     const host = this.hostHeight();
     const measured = this.sheetHeight();
     const [a, b, c] = this.detents();
-    return [detentInPx(a, host, measured), detentInPx(b, host, measured), detentInPx(c, host, measured)];
+    return [
+      this.sizeInPx(a, host, measured),
+      this.sizeInPx(b, host, measured),
+      this.sizeInPx(c, host, measured),
+    ];
   }
 
   private focusable(): HTMLElement[] {
     const chosen =
       'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
     return Array.from(this.host.nativeElement.querySelectorAll<HTMLElement>(chosen));
+  }
+
+  private applyInset(): void {
+    document.documentElement.style.setProperty('--pilz-sheet-inset', `${this.sheetHeight()}px`);
   }
 }

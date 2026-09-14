@@ -1,0 +1,19 @@
+<nav class="nav" [class.nav--rail]="variant() === 'rail'" [attr.aria-label]="'nav.label' | t">
+  <div class="nav__tabs">
+    @for (tab of tabs; track tab.path) {
+      <a
+        class="nav__tab tap"
+        data-press="tint"
+        [class.nav__tab--active]="tab.path === active()"
+        [routerLink]="tab.path"
+        [attr.aria-current]="tab.path === active() ? 'page' : null"
+      >
+        <span class="nav__icon"><app-svg-icon [name]="tab.icon" /></span>
+        <span class="nav__label">{{ tab.labelKey | t }}</span>
+      </a>
+    }
+  </div>
+  @if (variant() === 'rail') {
+    <div class="nav__slot"><ng-content /></div>
+  }
+</nav>

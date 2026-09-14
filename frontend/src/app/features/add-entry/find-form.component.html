@@ -1,14 +1,19 @@
 @if (speciesPickerOpen()) {
   <div class="report__content">
     <h2 class="report__title">{{ 'melden.artWaehlen' | t }}</h2>
-    <app-species-picker [selected]="selectedSpecies()?.slug ?? null" (chosen)="selectSpecies($event)" />
+    <app-species-picker
+      [species]="pickerSpecies()"
+      [selected]="selectedSpecies()?.slug ?? null"
+      [label]="'melden.artWaehlen' | t"
+      (chosen)="selectSpecies($event)"
+    />
   </div>
-  <app-action-bar [ghost]="'eintragen.abbrechen' | t" (ghostClick)="speciesPickerOpen.set(false)" />
+  <app-action-bar [primary]="'eintragen.abbrechen' | t" (primaryClick)="speciesPickerOpen.set(false)" />
 } @else {
   <div class="report__content">
     <div class="report__head">
       <h2 class="report__title">{{ titel() }}</h2>
-      <app-note variant="unter">{{ locationLine() }}</app-note>
+      <p class="note note--sub">{{ locationLine() }}</p>
     </div>
     <app-form-field
       [label]="'melden.art' | t"
@@ -58,15 +63,14 @@
       <app-checkbox [ngModel]="fuerTraining()" (ngModelChange)="setTraining($event)">{{
         'melden.training' | t
       }}</app-checkbox>
-      <app-note variant="unter">{{ 'melden.trainingUnter' | t }}</app-note>
+      <p class="note note--sub">{{ 'melden.trainingUnter' | t }}</p>
     </div>
-    <app-note>{{ 'melden.hinweis' | t }}</app-note>
+    <p class="note">{{ 'melden.hinweis' | t }}</p>
   </div>
   <app-action-bar
     [primary]="mainText()"
-    [mainDisabled]="busy()"
-    [ghost]="'eintragen.abbrechen' | t"
-    (mainClick)="submit()"
-    (ghostClick)="cancelled.emit()"
+    [secondary]="'eintragen.abbrechen' | t"
+    (primaryClick)="submit()"
+    (secondaryClick)="cancelled.emit()"
   />
 }

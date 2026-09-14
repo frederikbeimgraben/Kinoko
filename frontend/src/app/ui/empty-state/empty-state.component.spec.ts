@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { EmptyStateComponent } from './empty-state.component';
 
 describe('EmptyStateComponent', () => {
@@ -17,7 +18,7 @@ describe('EmptyStateComponent', () => {
 
   it('nimmt ein eigenes Bild an', async () => {
     const { container } = await render(EmptyStateComponent, {
-      inputs: { text: 'Noch kein Fund.', icon: 'funde' },
+      inputs: { text: 'Noch kein Fund.', icon: 'entries' },
     });
 
     expect(container.querySelector('.empty__image')).not.toBeNull();
@@ -35,9 +36,7 @@ describe('EmptyStateComponent', () => {
     expect(order).toEqual(['empty__image', 'empty__text', 'empty__button']);
   });
 
-  it('trägt die Fläche einer Karte, weil er an der Stelle einer steht', async () => {
-    // Ohne Fläche liest sich der Leerzustand als Leerraum und nicht als der
-    // Platz, an dem der Inhalt stünde.
+  it('trägt die Fläche einer Karte', async () => {
     const { fixture } = await render(EmptyStateComponent, {
       inputs: { text: 'Für diese Art gibt es noch kein Bild.' },
     });
@@ -57,5 +56,14 @@ describe('EmptyStateComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
 
     expect(calls).toBe(1);
+  });
+
+  it('bleibt ohne deutschen Text im leeren Katalog', async () => {
+    const { container } = await render(EmptyStateComponent, {
+      inputs: { text: 'no match', action: 'reset' },
+      providers: [EMPTY_CATALOG],
+    });
+
+    noGermanText(container);
   });
 });

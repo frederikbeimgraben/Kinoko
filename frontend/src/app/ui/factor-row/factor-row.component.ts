@@ -4,11 +4,14 @@ import { CheckboxComponent } from '@stupa-makers/ui-kit';
 
 let nextNumber = 0;
 
-/**
- * Ein Faktor der Kombination: an oder aus, Name mit Bezug und rechts die
- * Bedingung. Die Bedingung ist eine Schaltfläche, weil sie den Faktor-Screen
- * öffnet.
- */
+/** Ein Faktor der Kombination: Name, Bereich und Bedingung. */
+export interface CombinationFactor {
+  readonly name: string;
+  readonly range?: string;
+  readonly condition: string;
+}
+
+/** Zeile eines Faktors: Kästchen links, Name mit Bereich, Bedingung als Knopf. */
 @Component({
   selector: 'app-factor-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,13 +20,11 @@ let nextNumber = 0;
   styleUrl: './factor-row.component.scss',
 })
 export class FactorRowComponent {
-  readonly name = input.required<string>();
-  readonly subline = input<string>();
-  readonly condition = input.required<string>();
+  readonly factor = input.required<CombinationFactor>();
   readonly active = input(false);
 
   readonly activeChange = output<boolean>();
   readonly conditionClick = output();
 
-  protected readonly fieldId = `app-factor-${nextNumber++}`;
+  protected readonly fieldId = `app-factor-row-${nextNumber++}`;
 }

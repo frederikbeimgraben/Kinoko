@@ -1,23 +1,27 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { ColourChangeComponent } from './colour-change.component';
 
 const WHITE = [{ name: 'weiß', hex: '#f4efe2' }];
 const BLUE = [{ name: 'blau', hex: '#3f6ea8' }];
+const YELLOW = [{ name: 'gelb', hex: '#d9a441' }];
 
 describe('ColourChangeComponent', () => {
-  it('stellt von, Pfeil, nach und die Dauer nebeneinander', async () => {
+  it('stellt Auslöser, von, Pfeil, nach und Dauer je Zeile dar', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
-        from: WHITE,
-        to: BLUE,
-        fromLabel: 'Farbe: weiß',
-        toLabel: 'Farbe: blau',
-        duration: 'sofort',
+        triggers: ['Druck'],
+        from: [WHITE],
+        to: [BLUE],
+        fromLabels: ['Farbe: weiß'],
+        toLabels: ['Farbe: blau'],
+        speed: ['sofort'],
         arrowLabel: 'wird zu',
       },
     });
 
+    expect(screen.getByText('Druck')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Farbe: weiß' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'wird zu' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Farbe: blau' })).toBeInTheDocument();
@@ -25,36 +29,36 @@ describe('ColourChangeComponent', () => {
     await noViolations(container);
   });
 
-  it('setzt die Dauer unter die Flächen und an dieselbe rechte Kante', async () => {
-    // Linksbündig hing sie unter der Beschriftung statt unter der Farbe.
+  it('stellt mehrere Auslöser desselben Teils als eigene Zeilen dar', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
-        from: WHITE,
-        to: BLUE,
-        fromLabel: 'Farbe: weiß',
-        toLabel: 'Farbe: blau',
-        duration: 'langsam',
+        triggers: ['KOH 3 %', 'Eisensulfat'],
+        from: [WHITE, WHITE],
+        to: [YELLOW, BLUE],
+        fromLabels: ['Farbe: weiß', 'Farbe: weiß'],
+        toLabels: ['Farbe: gelb', 'Farbe: blau'],
+        speed: ['sofort', '30 s'],
         arrowLabel: 'wird zu',
       },
     });
 
-    const found = container.querySelector('.change__speed');
-    if (found === null) throw new Error('Die Dauer steht nicht im Baum.');
-    const speed = getComputedStyle(found);
-    expect(speed.gridColumn).toBe('1/-1');
-    expect(speed.justifyContent).toBe('flex-end');
+    expect(container.querySelectorAll('.row')).toHaveLength(2);
+    expect(screen.getByText('KOH 3 %')).toBeInTheDocument();
+    expect(screen.getByText('Eisensulfat')).toBeInTheDocument();
+    expect(screen.getByText('30 s')).toBeInTheDocument();
   });
 
   it('lässt den Pfeil weg, wenn die Ausgangsfarbe fehlt', async () => {
     // Kein Profil des Katalogs nennt eine Ausgangsfarbe. Der Pfeil stand
-    // darum immer allein vor einer einzelnen Fläche.
+    // darum immer allein vor der einzigen Fläche.
     await render(ColourChangeComponent, {
       inputs: {
-        from: [],
-        to: BLUE,
-        fromLabel: '',
-        toLabel: 'Farbe: blau',
-        duration: 'langsam',
+        triggers: ['Anschnitt'],
+        from: [[]],
+        to: [BLUE],
+        fromLabels: [''],
+        toLabels: ['Farbe: blau'],
+        speed: ['3 min'],
         arrowLabel: 'wird zu',
       },
     });
@@ -66,16 +70,52 @@ describe('ColourChangeComponent', () => {
   it('lässt den Pfeil weg, wenn die Farbe bleibt', async () => {
     await render(ColourChangeComponent, {
       inputs: {
-        from: WHITE,
-        to: [],
-        fromLabel: 'Farbe: weiß',
-        toLabel: '',
-        duration: 'bleibt',
+        triggers: ['Verletzung'],
+        from: [WHITE],
+        to: [[]],
+        fromLabels: ['Farbe: weiß'],
+        toLabels: [''],
+        speed: ['bleibt'],
         arrowLabel: 'wird zu',
       },
     });
 
     expect(screen.queryByRole('img', { name: 'wird zu' })).not.toBeInTheDocument();
     expect(screen.getByText('bleibt')).toBeInTheDocument();
+  });
+
+  it('nimmt die letzte Zeile ohne unteren Rand', async () => {
+    const { container } = await render(ColourChangeComponent, {
+      inputs: {
+        triggers: ['Druck', 'Anschnitt'],
+        from: [WHITE, WHITE],
+        to: [BLUE, BLUE],
+        fromLabels: ['Farbe: weiß', 'Farbe: weiß'],
+        toLabels: ['Farbe: blau', 'Farbe: blau'],
+        speed: ['sofort', '1 min'],
+        arrowLabel: 'wird zu',
+      },
+    });
+
+    const rows = container.querySelectorAll('.row');
+    expect(rows[0]).not.toHaveClass('row--last');
+    expect(rows[1]).toHaveClass('row--last');
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(ColourChangeComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: {
+        triggers: ['Pressure'],
+        from: [WHITE],
+        to: [BLUE],
+        fromLabels: ['Colour: white'],
+        toLabels: ['Colour: blue'],
+        speed: ['instant'],
+        arrowLabel: 'turns into',
+      },
+    });
+
+    noGermanText(container);
   });
 });

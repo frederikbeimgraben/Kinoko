@@ -2,14 +2,15 @@ import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
-import { DETENTS_DEFAULT, SheetComponent, detentForHeight, detentInPx } from './sheet.component';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { SheetComponent } from './sheet.component';
 
 @Component({
   imports: [SheetComponent],
   template: `
-    <app-sheet label="Steinpilz" [detent]="1" [modal]="true" [handleHint]="true">
-      <button type="button">erste</button>
-      <button type="button">zweite</button>
+    <app-sheet label="Porcini" [detent]="1" [modal]="true">
+      <button type="button">first</button>
+      <button type="button">second</button>
     </app-sheet>
   `,
 })
@@ -18,19 +19,19 @@ class HostComponent {}
 @Component({
   imports: [SheetComponent],
   template: `
-    <app-sheet label="Karte" [detent]="1">
+    <app-sheet label="Map" [detent]="1">
       <div head>
-        <p>Kopfzeile</p>
-        <button type="button">KW 40</button>
+        <p>Header</p>
+        <button type="button">Week 40</button>
       </div>
-      <p>Inhalt</p>
+      <p>Content</p>
     </app-sheet>
   `,
 })
 class HeadHostComponent {}
 
-/** jsdom misst nichts; das Blatt braucht aber eine Höhe, um zu rasten. */
-function miss(host: HTMLElement, hostHeight: number, sheetHeight: number): void {
+/** jsdom misst keine Höhen, das Blatt braucht sie aber, um zu rasten. */
+function fakeSize(host: HTMLElement, hostHeight: number, sheetHeight: number): void {
   Object.defineProperty(host, 'clientHeight', { value: hostHeight, configurable: true });
   const sheet = host.querySelector('.sheet');
   if (sheet) Object.defineProperty(sheet, 'clientHeight', { value: sheetHeight, configurable: true });
@@ -38,47 +39,55 @@ function miss(host: HTMLElement, hostHeight: number, sheetHeight: number): void 
 
 function drag(handle: HTMLElement, sizes: readonly number[]): void {
   const kinds = ['pointerdown', 'pointermove', 'pointerup'];
-  sizes.forEach((clientY, i) => {
-    handle.dispatchEvent(new MouseEvent(kinds[Math.min(i, 2)], { bubbles: true, clientY }));
+  sizes.forEach((clientY, index) => {
+    handle.dispatchEvent(new MouseEvent(kinds[Math.min(index, 2)], { bubbles: true, clientY }));
   });
 }
 
-describe('SheetComponent', () => {
-  it('ist ein Dialog mit Griff und Inhalt', async () => {
-    const { container } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', handleHint: true },
-    });
+/** Der Wirt des Blatts im Testaufbau, mit oder ohne umgebende Hülle. */
+function hostOf(container: Element): HTMLElement {
+  return container.querySelector<HTMLElement>('app-sheet') ?? (container as HTMLElement);
+}
 
-    expect(screen.getByRole('dialog', { name: 'Steinpilz' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Blatt greifen' })).toBeInTheDocument();
-    expect(screen.getByText(/Tippen wechselt die Raste/)).toBeInTheDocument();
+describe('SheetComponent', () => {
+  it('renders with minimal inputs as a dialog with handle and content', async () => {
+    const { container } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
+
+    expect(screen.getByRole('dialog', { name: 'Porcini' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Blatt ziehen' })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('geht beim Tipp auf den Griff zur nächsten Raste und wieder von vorn', async () => {
-    const { fixture } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', detent: 2 },
-    });
+  it('goes to the next detent and back to the first on a handle tap', async () => {
+    const { fixture } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 2 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Blatt greifen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Blatt ziehen' }));
 
     expect(calls).toEqual([0]);
   });
 
-  it('setzt die Höhe der gewählten Raste', async () => {
+  it('sets the block size of the chosen detent', async () => {
     const { container } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', detent: 2, detents: [0.1, 0.5, 0.9] },
+      inputs: { label: 'Porcini', detent: 2, detents: [0.1, 0.5, 0.9] },
     });
 
     expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('90%');
   });
 
-  it('hält den Tabulator im modalen Blatt', async () => {
+  it('lets the content detent size itself', async () => {
+    const { container } = await render(SheetComponent, {
+      inputs: { label: 'Find location', detents: ['content', 'content', 'content'] as const },
+    });
+
+    expect(container.querySelector('.sheet')).toHaveStyle({ 'block-size': 'auto' });
+  });
+
+  it('traps the tab order inside a modal sheet', async () => {
     await render(HostComponent);
-    const first = screen.getByRole('button', { name: 'erste' });
-    const second = screen.getByRole('button', { name: 'zweite' });
+    const first = screen.getByRole('button', { name: 'first' });
+    const second = screen.getByRole('button', { name: 'second' });
 
     second.focus();
     await userEvent.tab();
@@ -90,32 +99,20 @@ describe('SheetComponent', () => {
     expect(document.activeElement).not.toBe(first);
   });
 
-  it('lässt den Tabulator im nicht modalen Blatt laufen', async () => {
-    const { container } = await render(SheetComponent, { inputs: { label: 'Steinpilz' } });
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
-    handle.focus();
+  it('lets the tab order run free in a non-modal sheet', async () => {
+    const { container } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
+    screen.getByRole('button', { name: 'Blatt ziehen' }).focus();
 
     await userEvent.tab();
 
     expect(container.querySelector('[aria-modal]')).toBeNull();
   });
 
-  it('steht am Rechner als Spalte ohne Griff', async () => {
-    const { container } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', column: true },
-    });
-
-    expect(screen.queryByRole('button', { name: 'Blatt greifen' })).not.toBeInTheDocument();
-    expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('100%');
-  });
-
-  it('stellt die Raste mit den Pfeiltasten ein und hält an den Enden', async () => {
-    const { fixture } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', detent: 2 },
-    });
+  it('sets the detent with the arrow keys and stops at both ends', async () => {
+    const { fixture } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 2 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    screen.getByRole('button', { name: 'Blatt greifen' }).focus();
+    screen.getByRole('button', { name: 'Blatt ziehen' }).focus();
 
     await userEvent.keyboard('{ArrowUp}');
     await userEvent.keyboard('{ArrowDown}');
@@ -124,14 +121,12 @@ describe('SheetComponent', () => {
     expect(calls).toEqual([1, 0]);
   });
 
-  it('geht beim Zug am Griff auf die nächstgelegene Raste und lässt den Tipp aus', async () => {
-    const { fixture } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', detent: 1 },
-    });
+  it('goes to the nearest detent on a handle drag and skips the click', async () => {
+    const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
-    miss(fixture.nativeElement as HTMLElement, 800, 320);
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 320);
 
     drag(handle, [500, 100, 100]);
     handle.click();
@@ -139,108 +134,88 @@ describe('SheetComponent', () => {
     expect(calls).toEqual([2]);
   });
 
-  it('lässt ein Wackeln die Raste in Ruhe', async () => {
-    const { fixture } = await render(SheetComponent, {
-      inputs: { label: 'Steinpilz', detent: 1 },
-    });
+  it('leaves the detent alone on a small wobble', async () => {
+    const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
-    miss(fixture.nativeElement as HTMLElement, 800, 320);
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 320);
 
     drag(handle, [500, 495, 494]);
 
     expect(calls).toEqual([]);
   });
-});
 
-describe('Raste Inhalt', () => {
-  it('lässt den Inhalt die Höhe des Blatts bestimmen', async () => {
-    const { container } = await render(SheetComponent, {
-      inputs: { label: 'Fundort festlegen', detents: ['inhalt', 'inhalt', 'inhalt'] as const },
+  it('measures a content detent when a drag lands near it', async () => {
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 1, detents: ['content', 0.4, 0.9] },
     });
+    const calls: number[] = [];
+    fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 120);
 
-    expect(container.querySelector('.sheet')).toHaveStyle({ 'block-size': 'auto' });
-  });
-});
+    drag(handle, [500, 700, 700]);
 
-describe('Rasten', () => {
-  it('rechnet Anteil und feste Höhe in Punkte um', () => {
-    expect(detentInPx(0.4, 800)).toBe(320);
-    expect(detentInPx('152px', 800)).toBe(152);
-    expect(DETENTS_DEFAULT[0]).toBe('152px');
+    expect(calls).toEqual([0]);
   });
 
-  it('nimmt für die Raste „Inhalt“ die gemessene Höhe', () => {
-    expect(detentInPx('inhalt', 800, 240)).toBe(240);
-    expect(detentInPx('inhalt', 800)).toBe(0);
-  });
-
-  it('nimmt die nächstgelegene Raste, erst ab der Schwelle', () => {
-    const sizes: [number, number, number] = [152, 320, 720];
-
-    expect(detentForHeight(sizes, 1, 700)).toBe(2);
-    expect(detentForHeight(sizes, 1, 160)).toBe(0);
-    expect(detentForHeight(sizes, 1, 330)).toBe(1);
-    expect(detentForHeight(sizes, 0, 300)).toBe(1);
-  });
-});
-
-/** Der Wirt des Blatts im Testaufbau. */
-function wirtVon(container: Element): HTMLElement {
-  const host = container.querySelector<HTMLElement>('app-sheet');
-  if (!host) throw new Error('Kein Blatt im Wirt.');
-  return host;
-}
-
-/** Die gerechneten Stile eines Elements, das es geben muss. */
-function styleOf(element: Element | null): CSSStyleDeclaration {
-  if (element === null) throw new Error('Das Element steht nicht im Baum.');
-  return getComputedStyle(element);
-}
-
-describe('SheetComponent, Griff', () => {
-  it('spannt den Griff über die ganze Breite, damit der Balken mittig sitzt', async () => {
-    // Ein <button> ist von sich aus nur so breit wie sein Inhalt. Ohne diese
-    // Breite klebte der Balken am linken Rand, obwohl er zentriert ausgerichtet
-    // ist. jsdom misst nicht, darum steht hier die Angabe statt der Geometrie.
-    const { container } = await render(HostComponent);
-
-    const handle = styleOf(container.querySelector('.sheet__handle'));
-
-    expect(handle.inlineSize).toBe('100%');
-    expect(handle.justifyContent).toBe('center');
-  });
-});
-
-describe('SheetComponent, Ziehfläche', () => {
-  it('zieht auch am Kopf, nicht nur am Griff', async () => {
+  it('drags from the projected head, not only from the handle', async () => {
     const { fixture, container } = await render(HeadHostComponent);
     const sheet = fixture.debugElement.children[0].componentInstance as SheetComponent;
     const calls: number[] = [];
     sheet.detentChange.subscribe((detent) => calls.push(detent));
-    miss(wirtVon(container), 800, 320);
-    const head = screen.getByText('Kopfzeile');
+    fakeSize(hostOf(container), 800, 320);
+    const week = screen.getByText('Header');
 
-    drag(head, [500, 100, 100]);
+    drag(week, [500, 100, 100]);
 
     expect(calls).toEqual([2]);
   });
 
-  it('lässt einen Tipp im Kopf ein Tipp bleiben', async () => {
+  it('leaves a tap in the head a tap', async () => {
     const { fixture, container } = await render(HeadHostComponent);
     const sheet = fixture.debugElement.children[0].componentInstance as SheetComponent;
     const calls: number[] = [];
     sheet.detentChange.subscribe((detent) => calls.push(detent));
-    miss(wirtVon(container), 800, 320);
-    const woche = screen.getByRole('button', { name: 'KW 40' });
+    fakeSize(hostOf(container), 800, 320);
+    const week = screen.getByRole('button', { name: 'Week 40' });
     let tapped = 0;
-    woche.addEventListener('click', () => (tapped += 1));
+    week.addEventListener('click', () => (tapped += 1));
 
-    drag(woche, [500, 497, 497]);
-    woche.click();
+    drag(week, [500, 497, 497]);
+    week.click();
 
     expect(calls).toEqual([]);
     expect(tapped).toBe(1);
+  });
+
+  it('marks the handle as a tap target with a press state', async () => {
+    await render(SheetComponent, { inputs: { label: 'Porcini' } });
+
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+
+    expect(handle).toHaveClass('tap');
+    expect(handle).toHaveAttribute('data-press', 'scale');
+  });
+
+  it('spans the handle across the full width so the bar sits centred', async () => {
+    const { container } = await render(HostComponent);
+
+    const handleElement = container.querySelector('.sheet__handle');
+    if (!handleElement) throw new Error('Griff fehlt im Baum.');
+    const handle = getComputedStyle(handleElement);
+
+    expect(handle.inlineSize).toBe('100%');
+    expect(handle.justifyContent).toBe('center');
+  });
+
+  it('renders without German text against an empty catalogue', async () => {
+    const { container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini' },
+      providers: [EMPTY_CATALOG],
+    });
+
+    noGermanText(container);
   });
 });

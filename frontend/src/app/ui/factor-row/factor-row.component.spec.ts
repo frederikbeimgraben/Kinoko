@@ -1,15 +1,14 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
 import { FactorRowComponent } from './factor-row.component';
 
 describe('FactorRowComponent', () => {
-  it('zeigt Name, Bezug und Bedingung', async () => {
+  it('zeigt Name, Bereich und Bedingung', async () => {
     const { container, fixture } = await render(FactorRowComponent, {
       inputs: {
-        name: 'Niederschlag',
-        subline: 'Summe KW 37 bis 40',
-        condition: '≥ 80 mm',
+        factor: { name: 'Niederschlag', range: 'Summe KW 37 bis 40', condition: '≥ 80 mm' },
         active: true,
       },
     });
@@ -17,13 +16,25 @@ describe('FactorRowComponent', () => {
     await fixture.whenStable();
 
     expect(screen.getByRole('checkbox', { name: /Niederschlag/ })).toBeChecked();
-    expect(screen.getByRole('button', { name: '≥ 80 mm' })).toBeInTheDocument();
+    const condition = screen.getByRole('button', { name: '≥ 80 mm' });
+    expect(condition).toBeInTheDocument();
+    expect(condition).toHaveClass('tap');
+    expect(condition).toHaveAttribute('data-press', 'scale');
     await noViolations(container);
+  });
+
+  it('lässt den Bereich weg, wo der Faktor keinen hat', async () => {
+    const { fixture } = await render(FactorRowComponent, {
+      inputs: { factor: { name: 'Bodenfeuchte', condition: '≥ 40 %' } },
+    });
+    await fixture.whenStable();
+
+    expect(screen.queryByText('Bodenfeuchte')?.nextElementSibling).toBeNull();
   });
 
   it('meldet das Abwählen und den Griff zur Bedingung', async () => {
     const { fixture } = await render(FactorRowComponent, {
-      inputs: { name: 'Boden pH', condition: '≤ 5,5', active: true },
+      inputs: { factor: { name: 'Boden pH', condition: '≤ 5,5' }, active: true },
     });
     await fixture.whenStable();
     const toggled: boolean[] = [];
@@ -36,5 +47,15 @@ describe('FactorRowComponent', () => {
 
     expect(toggled).toEqual([false]);
     expect(condition).toBe(1);
+  });
+
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+    const { container, fixture } = await render(FactorRowComponent, {
+      inputs: { factor: { name: 'Factor', range: 'Range', condition: '1' } },
+      providers: [EMPTY_CATALOG],
+    });
+    await fixture.whenStable();
+
+    noGermanText(container);
   });
 });

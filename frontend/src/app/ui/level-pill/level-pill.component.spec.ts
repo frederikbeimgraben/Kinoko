@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { LevelPillComponent } from './level-pill.component';
 
 describe('LevelPillComponent', () => {
@@ -12,5 +13,26 @@ describe('LevelPillComponent', () => {
     const pill = container.querySelector<HTMLElement>('.level');
     expect(pill?.style.getPropertyValue('--pilz-level-colour')).toBe('#d2685f');
     await noViolations(container);
+  });
+
+  it('trägt die Geometrie der Marke: Radius als Pille', async () => {
+    const { container } = await render(LevelPillComponent, {
+      inputs: { text: 'essbar', colour: '#4f9d6f' },
+    });
+
+    const pill = container.querySelector<HTMLElement>('.level');
+    if (pill === null) throw new Error('Die Marke steht nicht im Baum.');
+    // Das globale Stilblatt mit --radius-pill: 999px fehlt im Test. Geprüft
+    // wird darum die Bindung an das Token, nicht der aufgelöste Wert.
+    expect(getComputedStyle(pill).borderRadius).toBe('var(--radius-pill)');
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(LevelPillComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { text: 'edible', colour: '#4f9d6f' },
+    });
+
+    noGermanText(container);
   });
 });

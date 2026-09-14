@@ -13,7 +13,7 @@
 // Am Rechner trägt die Verwaltung ihre eigenen zwei Spalten: links die Punkte,
 // rechts der gewählte.
 .admin--split {
-  grid-template-columns: var(--pilz-column) minmax(0, 1fr);
+  grid-template-columns: var(--size-column) minmax(0, 1fr);
 }
 
 .admin__list,
@@ -33,7 +33,7 @@
   flex: 1;
   flex-direction: column;
   gap: 20px;
-  padding: var(--pilz-gutter);
+  padding: var(--size-gutter);
   overflow-y: auto;
 }
 

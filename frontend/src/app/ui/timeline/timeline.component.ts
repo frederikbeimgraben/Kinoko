@@ -13,23 +13,18 @@ import { WeekButtonComponent } from './week-button.component';
 
 /** Eine Woche des Manifests. `anteil` ist `mean` geteilt durch den Höchstwert. */
 export interface TimelineWeek {
-  jahr: number;
-  woche: number;
+  year: number;
+  week: number;
   share: number;
   forecast: boolean;
 }
 
 interface ShownWeek extends TimelineWeek {
   yearMark: boolean;
-  schluessel: string;
+  key: string;
 }
 
-/**
- * Die Wochen einer Art nebeneinander. Die Jahresmarke wird abgeleitet, damit
- * der Aufrufer nur die Wochen des Manifests reichen muss. Die Leiste ist ein
- * einziges Tabulatorziel; die Pfeiltasten laufen darin weiter, wie bei einer
- * Werkzeugleiste.
- */
+/** Die Wochen einer Art nebeneinander, ein Tabulatorziel mit Pfeiltasten. */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,29 +36,26 @@ export class TimelineComponent {
   private readonly buttons = viewChildren(WeekButtonComponent);
   private readonly bar = viewChild.required<ElementRef<HTMLElement>>('bar');
 
-  readonly wochen = input.required<readonly TimelineWeek[]>();
-  readonly active = input<{ jahr: number; woche: number } | null>(null);
+  readonly weeks = input.required<readonly TimelineWeek[]>();
+  readonly active = input<{ year: number; week: number } | null>(null);
   readonly label = input.required<string>();
-  /**
-   * Gedämpft und ohne Wahl. Eine feste Ebene gilt für alle Wochen; die Leiste
-   * bleibt sichtbar, damit die Zeit greifbar bleibt, nimmt aber nichts an.
-   */
+  /** Gedämpft und ohne Wahl, für eine feste Ebene ohne Woche. */
   readonly dimmed = input(false);
 
   readonly chosen = output<TimelineWeek>();
 
   protected readonly shown = computed<ShownWeek[]>(() =>
-    this.wochen().map((woche, i, alle) => ({
-      ...woche,
-      yearMark: i > 0 && alle[i - 1].jahr !== woche.jahr,
-      schluessel: `${woche.jahr}-${woche.woche}`,
+    this.weeks().map((week, i, all) => ({
+      ...week,
+      yearMark: i > 0 && all[i - 1].year !== week.year,
+      key: `${week.year}-${week.week}`,
     })),
   );
 
   protected readonly activeIndex = computed(() => {
     const active = this.active();
     if (!active) return 0;
-    const index = this.wochen().findIndex((w) => w.jahr === active.jahr && w.woche === active.woche);
+    const index = this.weeks().findIndex((w) => w.year === active.year && w.week === active.week);
     return index < 0 ? 0 : index;
   });
 
@@ -75,25 +67,22 @@ export class TimelineComponent {
     });
   }
 
-  protected isActive(woche: TimelineWeek): boolean {
+  protected isActive(week: TimelineWeek): boolean {
     const active = this.active();
-    return active !== null && active.jahr === woche.jahr && active.woche === woche.woche;
+    return active !== null && active.year === week.year && active.week === week.week;
   }
 
   protected onKey(event: KeyboardEvent): void {
-    const wochen = this.wochen();
-    if (this.dimmed() || wochen.length === 0) return;
-    const target = this.targetIndex(event.key, wochen.length);
+    const weeks = this.weeks();
+    if (this.dimmed() || weeks.length === 0) return;
+    const target = this.targetIndex(event.key, weeks.length);
     if (target === null) return;
     event.preventDefault();
-    this.chosen.emit(wochen[target]);
+    this.chosen.emit(weeks[target]);
     this.bringIntoView(target, true);
   }
 
-  /**
-   * Schiebt die Woche in die Mitte der Leiste. `scrollTo` auf der Leiste, nicht
-   * `scrollIntoView`: das zöge sonst die ganze Seite mit.
-   */
+  /** Schiebt die Woche in die Mitte. `scrollTo` bewegt nur die Leiste, nicht die Seite. */
   private bringIntoView(index: number, withFocus: boolean): void {
     const button = (this.buttons()[index] as WeekButtonComponent | undefined)?.element();
     const bar = this.bar().nativeElement;
@@ -103,12 +92,12 @@ export class TimelineComponent {
     if (withFocus) button.focus();
   }
 
-  private targetIndex(key: string, anzahl: number): number | null {
-    const jetzt = this.activeIndex();
-    if (key === 'ArrowRight') return Math.min(anzahl - 1, jetzt + 1);
-    if (key === 'ArrowLeft') return Math.max(0, jetzt - 1);
+  private targetIndex(key: string, count: number): number | null {
+    const current = this.activeIndex();
+    if (key === 'ArrowRight') return Math.min(count - 1, current + 1);
+    if (key === 'ArrowLeft') return Math.max(0, current - 1);
     if (key === 'Home') return 0;
-    if (key === 'End') return anzahl - 1;
+    if (key === 'End') return count - 1;
     return null;
   }
 }

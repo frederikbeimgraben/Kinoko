@@ -13,5 +13,5 @@ export class AvatarButtonComponent {
 
   readonly pressed = output();
 
-  protected readonly initiale = computed(() => this.name().trim().charAt(0).toUpperCase());
+  protected readonly initial = computed(() => this.name().trim().charAt(0).toUpperCase());
 }

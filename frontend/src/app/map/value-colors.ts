@@ -1,4 +1,4 @@
-import { FORECAST_RAMP } from '../ui/ramp/ramp-colors';
+import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 
 /** Farbe und Deckkraft je Byte, vier Werte je Eintrag: 256 × RGBA. */
 export const LUT_SIZE = 256 * 4;

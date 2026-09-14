@@ -3,15 +3,13 @@ import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component'
 
 let nextNumber = 0;
 
-/**
- * Ein Feld im Formular: Beschriftung und darunter der Kasten. Zeigt das Feld
- * nur einen Wert an (Art, Datum, Ort), ist der Kasten eine Schaltfläche, die
- * die Auswahl öffnet; sonst wird getippt.
- *
- * Das ui-kit bringt ein eigenes Textfeld mit, aber mit eigener Beschriftung
- * und eigener Höhe. Die Mockups sind abgenommen und geben beides anders vor,
- * darum dieses Feld.
- */
+/** Die Bildschirmtastatur, die zur Art des Feldes passt. */
+type InputMode = 'text' | 'numeric' | 'decimal' | 'search';
+
+/** Die Beschriftung der Eingabetaste auf der Bildschirmtastatur. */
+type EnterKeyHint = 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
+
+/** Ein Feld im Formular. Das Feld des Kits deckt `inputmode` nicht ab. */
 @Component({
   selector: 'app-form-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,26 +22,31 @@ export class FormFieldComponent {
   readonly value = input<string>('');
   readonly placeholder = input<string>('');
   readonly multiline = input(false);
-  /**
-   * Die Art des Feldes. `date` und `number` geben am Telefon die passende
-   * Tastatur und den Datumswähler des Systems, statt beides nachzubauen.
-   */
+  /** Die Art des Feldes. `date` und `number` holen die Tastatur des Systems. */
   readonly kind = input<'text' | 'number' | 'date'>('text');
   /** Ein Feld, das nur zeigt und beim Tippen eine Auswahl öffnet. */
   readonly readOnly = input(false);
   /** Ein Piktogramm vor der Eingabe, wie die Lupe im Suchfeld. */
   readonly icon = input<IconName>();
-  /**
-   * Versteckt die Beschriftung, ohne sie wegzulassen. Das Suchfeld der
-   * Mockups trägt keine sichtbare Beschriftung, ein Screenreader braucht sie.
-   */
+  /** Versteckt die Beschriftung, ohne sie wegzulassen. */
   readonly hideLabel = input(false);
+  /** Überschreibt die aus `kind` hergeleitete Bildschirmtastatur. */
+  readonly inputMode = input<InputMode>();
+  /** Überschreibt die aus `multiline` hergeleitete Eingabetaste. */
+  readonly enterKeyHint = input<EnterKeyHint>();
 
   readonly valueChange = output<string>();
   readonly displayClick = output();
 
   protected readonly fieldId = `app-feld-${nextNumber++}`;
   protected readonly empty = computed(() => this.value().length === 0);
+
+  protected readonly mode = computed<InputMode>(
+    () => this.inputMode() ?? (this.kind() === 'number' ? 'numeric' : 'text'),
+  );
+  protected readonly hint = computed<EnterKeyHint>(
+    () => this.enterKeyHint() ?? (this.multiline() ? 'enter' : 'done'),
+  );
 
   protected onInput(event: Event): void {
     this.valueChange.emit((event.target as HTMLInputElement | HTMLTextAreaElement).value);

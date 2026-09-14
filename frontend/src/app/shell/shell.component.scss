@@ -40,8 +40,8 @@
 // Zeichenfläche neben die Spalte. Darüber liegen Navigation und Reiterinhalt
 // in der linken Spalte.
 .shell--column {
-  grid-template-rows: var(--pilz-nav-height) minmax(0, 1fr);
-  grid-template-columns: var(--pilz-column) minmax(0, 1fr);
+  grid-template-rows: var(--size-nav) minmax(0, 1fr);
+  grid-template-columns: var(--size-column) minmax(0, 1fr);
 }
 
 // Eine eigene Stapelschicht: das Blatt der Karte liegt darin und kommt damit
@@ -84,5 +84,5 @@
 }
 
 .shell--column .shell__avatar {
-  inset-inline-start: calc(var(--pilz-column) + 12px);
+  inset-inline-start: calc(var(--size-column) + 12px);
 }

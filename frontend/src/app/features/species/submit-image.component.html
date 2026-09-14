@@ -1,4 +1,4 @@
-<app-page-header [titel]="titel()" [back]="true" (backClick)="leave()" />
+<app-page-header [title]="titel()" [back]="true" (backClick)="leave()" />
 
 <div class="submit">
   <label class="submit__pick">
@@ -13,7 +13,7 @@
     <input class="sr-only" type="file" accept="image/jpeg,image/webp" (change)="onPick($event)" />
   </label>
 
-  <app-note variant="unter">{{ hint() }}</app-note>
+  <p class="note note--sub">{{ hint() }}</p>
 
   <section class="submit__block">
     <h2 class="submit__section">{{ 'bild.abschnitt.herkunft' | t }}</h2>
@@ -44,7 +44,7 @@
     <section class="submit__block">
       <h2 class="submit__section">{{ 'bild.abschnitt.ort' | t }}</h2>
       @if (placeText(); as shown) {
-        <app-note variant="unter">{{ shown }}</app-note>
+        <p class="note note--sub">{{ shown }}</p>
         <app-button variant="secondary" size="sm" (click)="dropPlace()">
           {{ 'bild.ortEntfernen' | t }}
         </app-button>
@@ -53,7 +53,7 @@
           {{ 'bild.ortUebernehmen' | t }}
         </app-button>
       }
-      <app-note variant="unter">{{ 'bild.ortHinweis' | t }}</app-note>
+      <p class="note note--sub">{{ 'bild.ortHinweis' | t }}</p>
     </section>
   }
 
@@ -74,13 +74,12 @@
     />
   </section>
 
-  <app-note variant="unter">{{ 'bild.pflicht' | t }}</app-note>
+  <p class="note note--sub">{{ 'bild.pflicht' | t }}</p>
 </div>
 
 <app-action-bar
   [primary]="action()"
-  [mainDisabled]="!ready() || busy()"
   [secondary]="'objekt.abbrechen' | t"
-  (mainClick)="save()"
+  (primaryClick)="save()"
   (secondaryClick)="leave()"
 />

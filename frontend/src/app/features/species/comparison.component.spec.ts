@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { render, screen, within } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { Species } from '../../core/api/models';
 import { GALLENROEHRLING, STEINPILZ } from '../../testing/species-fixture';
@@ -45,26 +45,20 @@ async function build(arten: readonly (Species | 'fehlt')[] = [STEINPILZ, GALLENR
 }
 
 describe('ComparisonComponent', () => {
-  it('stellt beide Arten mit ihren Merkmalen nebeneinander', async () => {
+  it('stellt beide Arten nebeneinander', async () => {
     const setup = await build();
 
-    const table = screen.getByRole('table', {
-      name: 'Merkmale von Steinpilz, Gallenröhrling nebeneinander',
-    });
-    expect(
-      within(table)
-        .getAllByRole('columnheader')
-        .map((head) => head.textContent),
-    ).toEqual(['Merkmal', 'Steinpilz', 'Gallenröhrling']);
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     await noViolations(setup.container);
   });
 
   it('nennt die Zeilen in der Reihenfolge der Artseite', async () => {
     const setup = await build();
 
-    const labels = [...setup.container.querySelectorAll('app-comparison-row')].map((row) =>
-      row.querySelector('app-comparison-cell')?.textContent.trim(),
-    );
+    const labels = [...setup.container.querySelectorAll('.kv__key')]
+      .map((key) => key.textContent.trim())
+      .filter((text) => text !== '');
     expect(labels).toEqual([
       'Speisewert',
       'Hut',
@@ -75,37 +69,6 @@ describe('ComparisonComponent', () => {
       'Geschmack',
       'Wachstum',
     ]);
-  });
-
-  it('tönt genau die Zeilen, in denen sich die Arten unterscheiden', async () => {
-    const setup = await build();
-
-    const rows = [...setup.container.querySelectorAll('app-comparison-row')];
-    const tinted = rows
-      .filter((row) => row.classList.contains('comparison__row--differs'))
-      .map((row) => row.querySelector('app-comparison-cell')?.textContent.trim());
-    // Der Gallenröhrling der Fixture erbt vom Steinpilz und trennt sich nur im
-    // Speisewert. Genau diese Zeile ist getönt, keine andere.
-    expect(tinted).toEqual(['Speisewert']);
-  });
-
-  it('zeigt jede Zelle mit dem Baustein ihres Merkmals', async () => {
-    const setup = await build();
-
-    expect(setup.container.querySelectorAll('app-level-pill')).toHaveLength(2);
-    expect(setup.container.querySelectorAll('app-measurement')).toHaveLength(2);
-    expect(setup.container.querySelectorAll('app-colour-field').length).toBeGreaterThanOrEqual(4);
-    expect(setup.container.querySelectorAll('app-tag-list')).toHaveLength(2);
-    expect(setup.container.querySelectorAll('app-year-band')).toHaveLength(2);
-  });
-
-  it('verträgt mehr als einen Wert in einer Zelle', async () => {
-    const setup = await build();
-
-    // Die Hutform bringt später zwei Werte je Zelle, jung und alt. Die Zelle
-    // bricht sie um, statt sie in eine Zeile zu quetschen.
-    const cells = setup.container.querySelectorAll('app-comparison-cell');
-    expect(getComputedStyle(cells[0]).flexWrap).toBe('wrap');
   });
 
   it('führt zurück zur Art, von der der Vergleich kam', async () => {

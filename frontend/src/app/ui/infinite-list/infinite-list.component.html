@@ -1,0 +1,7 @@
+<div class="list">
+  <ng-content />
+  @if (pending()) {
+    <app-skeleton kind="row" [count]="skeletonCount()" />
+  }
+  <div #sentinel class="list__sentinel"></div>
+</div>

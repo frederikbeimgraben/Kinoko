@@ -1,41 +1,27 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import type { Farbe } from '../../core/api/models';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import type { ColourValue } from '../colour-field/colour-field.component';
 import { ColourFieldComponent } from '../colour-field/colour-field.component';
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/**
- * Eine Verfärbung: von, Pfeil, nach — und darunter die Dauer.
- *
- * Der Pfeil erscheint erst, wenn es zwei Farben gibt. Nennt die Quelle keine
- * Ausgangsfarbe, stünde er vor der einzigen Fläche und sähe aus wie ein
- * Zeichen, dem etwas fehlt.
- *
- * Die Dauer stand einmal rechts daneben und schob die Fläche aus der Flucht
- * der Farbzeilen darüber. Sie steht jetzt darunter.
- */
+/** Verfärbungen eines Körperteils als Karte. Jede Zeile nennt Auslöser, Von, Pfeil, Nach und Dauer. */
 @Component({
   selector: 'app-colour-change',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ColourFieldComponent, SvgIconComponent],
   templateUrl: './colour-change.component.html',
   styleUrl: './colour-change.component.scss',
-  host: { '[class.colour-change--small]': 'small()' },
 })
 export class ColourChangeComponent {
-  readonly from = input.required<readonly Farbe[]>();
-  readonly to = input.required<readonly Farbe[]>();
-  readonly fromLabel = input.required<string>();
-  readonly toLabel = input.required<string>();
-  /** „sofort“, „langsam“ oder „bleibt“ — der Text kommt aus dem Katalog. */
-  readonly duration = input.required<string>();
+  readonly triggers = input.required<readonly string[]>();
+  readonly from = input.required<readonly (readonly ColourValue[])[]>();
+  readonly to = input.required<readonly (readonly ColourValue[])[]>();
+  readonly fromLabels = input.required<readonly string[]>();
+  readonly toLabels = input.required<readonly string[]>();
+  readonly speed = input.required<readonly string[]>();
   readonly arrowLabel = input.required<string>();
 
-  /** Kleiner für die Gegenüberstellung, wo zwei Arten nebeneinander stehen. */
-  readonly small = input(false);
-
-  /** Zwei Farben, also ein Weg von der einen zur anderen. */
-  protected readonly changes = computed(() => this.from().length > 0 && this.to().length > 0);
-
-  protected readonly arrowSize = computed(() => (this.small() ? 12 : 14));
-  protected readonly hourglassSize = computed(() => (this.small() ? 12 : 15));
+  /** Zwei Farben in dieser Zeile, also ein Weg von der einen zur anderen. */
+  protected changes(index: number): boolean {
+    return (this.from()[index]?.length ?? 0) > 0 && (this.to()[index]?.length ?? 0) > 0;
+  }
 }

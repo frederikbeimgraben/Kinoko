@@ -8,7 +8,7 @@
       } @else if (zone(); as entry) {
         <app-zone-sheet [zone]="entry" (closed)="close()" />
       } @else if (missing()) {
-        <app-note class="empty-state">{{ 'objekt.nichtGefunden' | t }}</app-note>
+        <p class="note empty-state">{{ 'objekt.nichtGefunden' | t }}</p>
       }
     </app-sheet>
   </div>

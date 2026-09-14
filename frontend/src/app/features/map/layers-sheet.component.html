@@ -14,16 +14,12 @@
         [locked]="true"
         [label]="'hintergrund.spaeterBeschriftung' | t"
       />
-      <app-note variant="unter">{{ 'hintergrund.gesperrt' | t }}</app-note>
+      <p class="note note--sub">{{ 'hintergrund.gesperrt' | t }}</p>
     </section>
 
     <section class="layers-sheet__part">
-      <app-slider
-        [label]="'ebenenKnopf.deckkraft' | t"
-        [value]="percent()"
-        [valueText]="percentText()"
-        (valueChange)="onOpacity($event)"
-      />
+      <h3 class="layers-sheet__title">{{ 'ebenenKnopf.deckkraft' | t }} · {{ percentText() }}</h3>
+      <app-range-slider [from]="percent()" [to]="100" [handles]="'from'" (fromChange)="onOpacity($event)" />
     </section>
 
     @if (showsLayer()) {
@@ -49,5 +45,5 @@
       </div>
     </section>
   </div>
-  <app-action-bar [primary]="'ebenenKnopf.fertig' | t" (mainClick)="closed.emit()" />
+  <app-action-bar [primary]="'ebenenKnopf.fertig' | t" (primaryClick)="closed.emit()" />
 </app-sheet>

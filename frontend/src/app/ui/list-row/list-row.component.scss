@@ -11,17 +11,17 @@
 // Ende bleibt daneben: ein Knopf im Knopf wäre für Hilfsmittel ein Fehler.
 .row {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   inline-size: 100%;
 }
 
 .row__field {
   display: flex;
   flex: 1;
-  align-items: flex-start;
-  gap: 14px;
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: var(--size-row);
   min-inline-size: 0;
-  padding-block: var(--pilz-gutter);
   text-align: start;
 }
 
@@ -33,18 +33,19 @@
   border: 0;
 }
 
+.row__field--selected {
+  background: var(--color-primary-subtle);
+}
+
 .row__lead:empty,
 .row__trail:empty {
   display: none;
 }
 
 .row__lead {
-  // Der Inhalt sitzt auf der ersten Zeile des Titels. Ein fester Abstand von
-  // oben traf sie nur bei einer Schriftgröße.
   display: flex;
   flex: none;
   align-items: center;
-  block-size: 1lh;
   font-size: var(--fs-md);
 }
 
@@ -66,14 +67,8 @@
   color: var(--color-text-muted);
 }
 
-.row__note {
-  font-size: var(--fs-sm);
-  color: var(--color-text);
-}
-
 .row__value {
   flex: none;
-  align-self: center;
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
 }
@@ -83,11 +78,17 @@
   align-self: center;
 }
 
+.row__chevron {
+  flex: none;
+  color: var(--color-text-muted);
+}
+
 .row__action:empty {
   display: none;
 }
 
 .row__action {
+  display: flex;
   flex: none;
-  align-self: center;
+  align-items: center;
 }

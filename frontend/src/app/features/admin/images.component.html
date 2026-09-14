@@ -1,4 +1,4 @@
-<app-page-header [titel]="'verwaltung.bilder' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'verwaltung.bilder' | t" [back]="true" (backClick)="back()" />
 
 <div class="images">
   <app-segmented
@@ -40,10 +40,10 @@
         </li>
       }
     </ul>
-    <app-note>{{ 'bild.eingangHinweis' | t }}</app-note>
+    <p class="note">{{ 'bild.eingangHinweis' | t }}</p>
     @if (more()) {
       <div class="images__more">
-        <app-note variant="unter">{{ shown() }}</app-note>
+        <p class="note note--sub">{{ shown() }}</p>
         <app-button variant="secondary" [disabled]="loading()" (click)="loadMore()">
           {{ 'bild.mehr' | t }}
         </app-button>

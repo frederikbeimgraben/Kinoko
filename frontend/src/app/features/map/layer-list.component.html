@@ -11,14 +11,14 @@
           (click)="chosen.emit(card.layer)"
         >
           <span class="layers__glyph">
-            <app-svg-icon [name]="card.glyph" [size]="20" [strich]="1.6" />
+            <app-svg-icon [name]="card.glyph" [size]="20" [strokeWidth]="1.6" />
           </span>
           <span class="layers__name">{{ card.layer.label }}</span>
           @if (card.layer.unit) {
             <span class="layers__unit">{{ card.layer.unit }}</span>
           }
           @if (card.layer.id === selected()) {
-            <app-svg-icon class="layers__check" name="haken" [size]="18" [strich]="2.4" />
+            <app-svg-icon class="layers__check" name="check" [size]="18" [strokeWidth]="2.4" />
           }
         </button>
       }

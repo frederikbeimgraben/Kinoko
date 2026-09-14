@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { SegmentedComponent, type SegmentOption } from './segmented.component';
 
 const OPTIONEN: SegmentOption[] = [
@@ -47,5 +48,37 @@ describe('SegmentedComponent', () => {
     await userEvent.keyboard('{Enter}');
 
     expect(selected).toEqual(['ebene', 'kombination', 'vorhersage']);
+  });
+
+  it('zeigt ein gesperrtes Segment ohne Wahl anzunehmen', async () => {
+    const { container, fixture } = await render(SegmentedComponent, {
+      inputs: { options: OPTIONEN, value: null, label: 'Darstellung', locked: true },
+    });
+    const selected: string[] = [];
+    fixture.componentInstance.valueChange.subscribe((value) => selected.push(value));
+
+    expect(screen.getByRole('tab', { name: 'Ebene' })).toBeDisabled();
+    expect(container.querySelector('.seg')).toHaveClass('seg--locked');
+    expect(selected).toEqual([]);
+    await noViolations(container);
+  });
+
+  it('trägt den Druckzustand an jeder Wahl', async () => {
+    const { container } = await render(SegmentedComponent, {
+      inputs: { options: OPTIONEN, value: 'ebene', label: 'Darstellung' },
+    });
+
+    const choice = container.querySelector('.seg__choice');
+    expect(choice).toHaveClass('tap');
+    expect(choice).toHaveAttribute('data-press', 'scale');
+  });
+
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+    const { container } = await render(SegmentedComponent, {
+      inputs: { options: [{ value: 'a', label: 'a' }], value: 'a', label: 'group' },
+      providers: [EMPTY_CATALOG],
+    });
+
+    noGermanText(container);
   });
 });

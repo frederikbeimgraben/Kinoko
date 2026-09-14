@@ -3,14 +3,10 @@
  * Prüft Kommentarregeln in `src` und `tools`.
  * Siehe CLAUDE.md: Kommentare sagen Warum, nie Was.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const ALLOW_PATH = join(ROOT, 'tools', 'lint-allow.json');
-const WRITE_ALLOW = process.argv.includes('--write-allow');
 
 const YEAR = /20\d{2}(?:-\d{2}-\d{2})?/;
 const PR_NUMBER = /#\d+|\bPR\s*\d+\b/i;
@@ -36,7 +32,7 @@ function lineAt(source, index) {
   return line;
 }
 
-/** Zerlegt Quelltext in Zeilen- und Blockkommentare, Strings bleiben aussen vor. */
+/** Zerlegt Quelltext in Zeilen- und Blockkommentare. Strings bleiben aussen vor. */
 function scanCode(source) {
   const found = [];
   let i = 0;
@@ -162,53 +158,60 @@ function collectFiles(folder, extensions, found) {
   return found;
 }
 
-function allViolations() {
+/** Sucht Kommentarverstöße unter `root/src/app` und `root/tools`. */
+export function findViolations(root) {
   const files = [
-    ...collectFiles(join(ROOT, 'src', 'app'), ['.ts', '.html', '.scss'], []),
-    ...collectFiles(join(ROOT, 'tools'), ['.mjs'], []),
+    ...collectFiles(join(root, 'src', 'app'), ['.ts', '.html', '.scss'], []),
+    ...collectFiles(join(root, 'tools'), ['.mjs'], []),
   ];
   const found = [];
   for (const file of files) {
     const source = readFileSync(file, 'utf8');
-    const path = relative(ROOT, file);
+    const path = relative(root, file);
     const comments = file.endsWith('.html') ? scanHtml(source) : scanCode(source);
     found.push(...violationsIn(path, comments));
   }
   return found;
 }
 
-/** Der Schlüssel hängt am Text, nicht an der Zeile: eine Verschiebung zählt nicht. */
-function allowKey(v) {
+/** Der Schlüssel hängt am Text, nicht an der Zeile. Eine Verschiebung zählt nicht. */
+export function allowKey(v) {
   const text = `${v.rule} ${v.text}`.replace(/\s+/g, ' ').trim();
   return `${v.path}#${createHash('sha256').update(text).digest('hex').slice(0, 8)}`;
 }
 
-function readAllow() {
+function readAllow(allowPath) {
   try {
-    return JSON.parse(readFileSync(ALLOW_PATH, 'utf8'));
+    return JSON.parse(readFileSync(allowPath, 'utf8'));
   } catch {
     return {};
   }
 }
 
-const violations = allViolations();
-const keys = [...new Set(violations.map(allowKey))].sort();
-
-if (WRITE_ALLOW) {
-  const allow = readAllow();
-  allow.comments = keys;
-  const { writeFileSync } = await import('node:fs');
-  writeFileSync(ALLOW_PATH, JSON.stringify(allow, null, 2) + '\n');
-  console.log(`${keys.length} Ausnahmen für comments geschrieben.`);
-  process.exit(0);
+/** Meldet Verstöße unter `root` ohne die in `allowPath` freigegebenen. */
+export function report(root, allowPath) {
+  const allowed = new Set(readAllow(allowPath).comments ?? []);
+  return findViolations(root).filter((v) => !allowed.has(allowKey(v)));
 }
 
-const allowed = new Set(readAllow().comments ?? []);
-const reported = violations.filter((v) => !allowed.has(allowKey(v)));
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
+  const ALLOW_PATH = join(ROOT, 'tools', 'lint-allow.json');
 
-for (const v of reported) console.log(`${v.path}:${v.line}  ${v.rule}  ${v.reason}`);
-if (reported.length > 0) {
-  console.error(`Neue Kommentarverstöße: ${reported.length}.`);
-  process.exit(1);
+  if (process.argv.includes('--write-allow')) {
+    const keys = [...new Set(findViolations(ROOT).map(allowKey))].sort();
+    const allow = readAllow(ALLOW_PATH);
+    allow.comments = keys;
+    writeFileSync(ALLOW_PATH, JSON.stringify(allow, null, 2) + '\n');
+    console.log(`${keys.length} Ausnahmen für comments geschrieben.`);
+    process.exit(0);
+  }
+
+  const reported = report(ROOT, ALLOW_PATH);
+  for (const v of reported) console.log(`${v.path}:${v.line}  ${v.rule}  ${v.reason}`);
+  if (reported.length > 0) {
+    console.error(`Neue Kommentarverstöße: ${reported.length}.`);
+    process.exit(1);
+  }
+  console.log('Keine neuen Kommentarverstöße.');
 }
-console.log('Keine neuen Kommentarverstöße.');

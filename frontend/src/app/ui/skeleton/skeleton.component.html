@@ -1,0 +1,5 @@
+@if (visible()) {
+  @for (bar of bars(); track bar) {
+    <div class="skeleton__bar" [class]="'skeleton__bar--' + kind()"></div>
+  }
+}

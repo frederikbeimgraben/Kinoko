@@ -13,7 +13,7 @@
   flex: 1;
   flex-direction: column;
   gap: 20px;
-  padding: 20px var(--pilz-gutter);
+  padding: 20px var(--size-gutter);
   overflow-y: auto;
   // Wie die Chip-Reihe: die App füllt das Gerät, ein Balken am Rand gehörte zu
   // einem Fenster. Gescrollt wird mit dem Daumen oder dem Rad.
@@ -44,7 +44,7 @@
   flex: 0 0 auto;
   gap: 6px;
   align-items: center;
-  block-size: var(--pilz-chip-height);
+  block-size: var(--size-icon-button);
   padding: 0 13px;
   font: inherit;
   font-size: var(--fs-sm);

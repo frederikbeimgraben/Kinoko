@@ -1,53 +1,33 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  input,
-  output,
-  viewChild,
-} from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
+import { ChangeDetectionStrategy, Component, ElementRef, input, output, viewChild } from '@angular/core';
+import { LevelPillComponent } from '../level-pill/level-pill.component';
 
-/**
- * Eine Zeile der Artenliste: Name und lateinischer Name links, das Titelbild
- * rechts, die Tags darunter. Die Tags kommen als Inhalt, damit die Zeile die
- * Badge-Varianten nicht kennen muss.
- *
- * Ohne Bild bleibt rechts nichts — kein Platzhalter, keine graue Fläche. Der
- * Text nimmt sich die Breite, die frei wird. Bei einem Bestand ohne Bilder
- * wären 306 graue Kästchen schlimmer als keine.
- *
- * Mit Bild bleibt die Zeile so hoch wie ohne: das Bild steht neben Namen und
- * Tags zusammen, die Tags laufen rechts aus, statt umzubrechen.
- *
- * Die Marke „aktiv“ gehört der Zeile selbst. Ein Badge des Kits stünde auf der
- * aktiven Zeile Fläche auf Fläche in derselben Farbe und wäre unsichtbar.
- */
+/** Eine Art, wie sie die Artenzeile braucht. */
+export interface SpeciesRowSpecies {
+  readonly name: string;
+  readonly latin: string;
+  readonly levelText: string;
+  readonly levelColour: string;
+  readonly image?: string | null;
+}
+
+/** Artenzeile, 62 px hoch: Name, Speisewert als feste Plakette, Bild rechts. */
 @Component({
   selector: 'app-species-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LevelPillComponent],
   templateUrl: './species-row.component.html',
   styleUrl: './species-row.component.scss',
 })
 export class SpeciesRowComponent {
-  private readonly i18n = inject(I18nService);
   private readonly button = viewChild.required<ElementRef<HTMLButtonElement>>('button');
 
-  readonly name = input.required<string>();
-  readonly latin = input.required<string>();
+  readonly species = input.required<SpeciesRowSpecies>();
   readonly active = input(false);
-  /** Der Pfad des Titelbildes, klein. Leer heißt: die Art hat keins. */
-  readonly image = input<string | null>(null);
 
   readonly chosen = output();
 
   /** Setzt den Fokus auf die Zeile. Die Liste wandert damit per Pfeiltaste. */
   focus(): void {
     this.button().nativeElement.focus();
-  }
-
-  protected activeText(): string {
-    return this.i18n.translate('arten.aktiv');
   }
 }

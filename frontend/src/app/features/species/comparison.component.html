@@ -1,71 +1,20 @@
-<app-page-header [titel]="'vergleich.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'vergleich.titel' | t" [back]="true" (backClick)="back()" />
 
 @if (viewport(); as ansicht) {
   <div class="comparison-page">
-    <app-card class="flush">
-      <app-comparison-table [columns]="ansicht.names" [label]="ansicht.label">
+    <app-card class="flush" [attr.aria-label]="ansicht.label">
+      <app-key-value-table>
+        <app-key-value-row key="" [values]="ansicht.names" />
         @for (row of ansicht.rows; track row.key) {
-          <app-comparison-row [label]="row.label" [differs]="row.differs">
-            @for (cell of row.cells; track $index) {
-              <app-comparison-cell>
-                @for (value of cell; track $index) {
-                  @switch (value.kind) {
-                    @case ('stufe') {
-                      @if (value.pill; as pill) {
-                        <app-level-pill [text]="pill.text" [colour]="pill.colour" />
-                      }
-                    }
-                    @case ('mass') {
-                      <app-measurement
-                        [extent]="value.measure.extent"
-                        [spans]="value.measure.spans"
-                        [unit]="value.measure.einheit"
-                        [label]="value.measure.zeichen"
-                      />
-                    }
-                    @case ('farbe') {
-                      <app-colour-field [colours]="value.colour.farben" [label]="value.colour.label" />
-                    }
-                    @case ('wandel') {
-                      <app-colour-change
-                        [from]="value.change.von"
-                        [to]="value.change.nach"
-                        [fromLabel]="value.change.vonLabel"
-                        [toLabel]="value.change.nachLabel"
-                        [duration]="value.change.dauer"
-                        [arrowLabel]="value.change.pfeil"
-                        [small]="true"
-                      />
-                    }
-                    @case ('tags') {
-                      <app-tag-list [tags]="value.sense.tags" [label]="value.sense.label" />
-                    }
-                    @case ('zeit') {
-                      <app-year-band
-                        [fromMonth]="value.time.von"
-                        [toMonth]="value.time.bis"
-                        [peakFromMonth]="value.time.beobachtetVon"
-                        [peakToMonth]="value.time.beobachtetBis"
-                        [months]="value.time.marken"
-                        [label]="value.time.label"
-                      />
-                    }
-                    @case ('text') {
-                      <span>{{ value.text }}</span>
-                    }
-                  }
-                }
-              </app-comparison-cell>
-            }
-          </app-comparison-row>
+          <app-key-value-row [key]="row.label" [values]="row.values" />
         }
-      </app-comparison-table>
+      </app-key-value-table>
     </app-card>
-    <app-note variant="unter">{{ 'vergleich.hinweis' | t }}</app-note>
+    <p class="note note--sub">{{ 'vergleich.hinweis' | t }}</p>
   </div>
 } @else if (unknown()) {
   <app-empty-state
-    icon="arten"
+    icon="species"
     [text]="'vergleich.fehlt' | t"
     [action]="'art.zuDenArten' | t"
     (actionClick)="back()"

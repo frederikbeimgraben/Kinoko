@@ -1,7 +1,10 @@
 <div class="objectsheet">
   <div class="objectsheet__head">
-    <h2 class="objectsheet__title">{{ marker().name }}</h2>
-    <p class="objectsheet__sub">{{ subline() }}</p>
+    <div class="objectsheet__heading">
+      <h2 class="objectsheet__title">{{ marker().name }}</h2>
+      <p class="objectsheet__sub">{{ subline() }}</p>
+    </div>
+    <app-icon-button icon="delete" [label]="'marker.loeschen' | t" (pressed)="deleteAsk.set(true)" />
   </div>
   <app-object-form
     [withoutName]="true"
@@ -13,12 +16,9 @@
 </div>
 <app-action-bar
   [primary]="'eintragen.speichern' | t"
-  [mainDisabled]="busy()"
   [secondary]="'fund.inGoogleMaps' | t"
-  [danger]="'marker.loeschen' | t"
-  (mainClick)="save()"
+  (primaryClick)="save()"
   (secondaryClick)="toGoogleMaps()"
-  (dangerClick)="deleteAsk.set(true)"
 />
 <app-dialog
   [open]="deleteAsk()"
@@ -26,12 +26,13 @@
   [closeLabel]="'objekt.schliessen' | t"
   (closed)="deleteAsk.set(false)"
 >
-  <app-note>{{ 'marker.loeschenText' | t }}</app-note>
+  <p class="note">{{ 'marker.loeschenText' | t }}</p>
   <div dialog-footer class="objectsheet__dialogfooter">
     <app-action-bar
-      [danger]="'objekt.loeschen' | t"
+      [primary]="'objekt.loeschen' | t"
+      [danger]="true"
       [secondary]="'objekt.abbrechen' | t"
-      (dangerClick)="remove()"
+      (primaryClick)="remove()"
       (secondaryClick)="deleteAsk.set(false)"
     />
   </div>

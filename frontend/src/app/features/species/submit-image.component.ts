@@ -19,14 +19,11 @@ import { PermissionsService } from '../../core/access/permissions.service';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { locationText } from '../../core/i18n/places';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import {
-  ActionBarComponent,
-  FormFieldComponent,
-  LICENCE_TEXT,
-  NoteComponent,
-  PageHeaderComponent,
-  SvgIconComponent,
-} from '../../ui';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from './species.state';
 
 /**
@@ -47,7 +44,6 @@ import { SpeciesState } from './species.state';
     ButtonComponent,
     FormFieldComponent,
     FormsModule,
-    NoteComponent,
     PageHeaderComponent,
     SelectComponent,
     SvgIconComponent,
@@ -90,7 +86,10 @@ export class SubmitImageComponent implements OnDestroy {
     this.i18n.translate(this.publishes() ? 'bild.speichern' : 'bild.abschicken'),
   );
   protected readonly licences = computed(() =>
-    LICENCES.map((value) => ({ value, label: this.i18n.translate(LICENCE_TEXT[value]) })),
+    LICENCES.map((value) => ({
+      value,
+      label: value === 'own' ? this.i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[value],
+    })),
   );
   /** Eine Lizenz, die nicht der Person gehört, braucht die Herkunft dazu. */
   protected readonly needsSource = computed(() => this.licence() !== 'own');

@@ -1,416 +1,590 @@
-<ng-template #galerie let-field>
+<ng-template #gallery>
   <div class="gallery">
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.bottomNav' | t }}</p>
-      <app-bottom-nav
-        [eintraege]="navEintraege"
-        active="/karte"
-        [label]="text('nav.beschriftung') + ' · ' + field"
-      />
+    <!-- Gerüst -->
+    <app-card [headingLevel]="2" [heading]="'blocks.pageHeader' | t">
+      <app-page-header [title]="text('beispiel.artenTitel')" [back]="true" />
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.sheetHead' | t }}</p>
-      <app-sheet-head
-        [titel]="text('beispiel.steinpilz')"
-        [titleAsLink]="true"
-        [woche]="text('beispiel.woche')"
+    <app-card [headingLevel]="2" [heading]="'blocks.nav' | t">
+      <div
+        class="gallery__stage gallery__stage--nav"
+        role="region"
+        [attr.aria-label]="text('blocks.nav') + ' 1'"
       >
-        <app-timeline
-          [wochen]="wochen"
-          [active]="activeWeek()"
-          [label]="text('zeitleiste.beschriftung')"
-          (chosen)="activeWeek.set({ jahr: $event.jahr, woche: $event.woche })"
-        />
-      </app-sheet-head>
-      <app-note>{{ 'bausteine.timeline' | t }}</app-note>
+        <app-nav variant="bottom" [active]="navTabs.map" />
+      </div>
+      <div
+        class="gallery__stage gallery__stage--rail"
+        role="region"
+        [attr.aria-label]="text('blocks.nav') + ' 2'"
+      >
+        <app-nav variant="rail" [active]="navTabs.species">
+          <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
+        </app-nav>
+      </div>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.sheet' | t }}</p>
-      <div class="gallery__stage">
+    <app-card [headingLevel]="2" [heading]="'blocks.sheet' | t">
+      <div class="gallery__stage gallery__stage--sheet">
         <app-sheet
-          [label]="text('beispiel.steinpilz')"
+          [label]="text('art.boletus_edulis')"
           [detent]="detent()"
-          [handleHint]="true"
           (detentChange)="detent.set($event)"
         >
+          <app-sheet-head head [title]="text('art.boletus_edulis')" [week]="text('beispiel.woche')">
+            <app-timeline
+              [weeks]="weeks"
+              [active]="activeWeek()"
+              [label]="text('zeitleiste.beschriftung')"
+              (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
+            />
+          </app-sheet-head>
           <app-ramp
-            class="gallery__gap"
             [label]="text('beispiel.rampe')"
-            [von]="text('beispiel.rampeVon')"
-            [bis]="text('beispiel.rampeBis')"
+            [from]="text('beispiel.rampeVon')"
+            [to]="text('beispiel.rampeBis')"
           />
         </app-sheet>
       </div>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.segmented' | t }}</p>
-      <app-segmented
-        [options]="viewModes"
-        [value]="viewMode()"
-        [label]="text('beispiel.darstellung.vorhersage')"
-        (valueChange)="viewMode.set($event)"
-      />
+    <app-card [headingLevel]="2" [heading]="'blocks.sheetHead' | t">
+      <app-sheet-head
+        [title]="text('art.pfifferling')"
+        [titleLink]="true"
+        [week]="text('beispiel.woche')"
+        [hint]="text('zeitleiste.prognose')"
+      >
+        <app-timeline
+          [weeks]="weeks"
+          [active]="activeWeek()"
+          [label]="text('zeitleiste.beschriftung')"
+          [dimmed]="true"
+        />
+      </app-sheet-head>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.chipGroup' | t }}</p>
-      <app-chip-group
-        [chips]="chips"
-        [value]="chip()"
-        [label]="text('beispiel.artenTitel')"
-        (valueChange)="chip.set($event)"
-      />
+    <app-card [headingLevel]="2" [heading]="'blocks.overlayHost' | t">
+      <div class="gallery__stage gallery__stage--overlay">
+        <app-overlay-host [open]="overlayOpen()" (closed)="overlayOpen.set(false)">
+          <p class="gallery__note">{{ overlayText }}</p>
+        </app-overlay-host>
+      </div>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.checkRow' | t }}</p>
+    <app-card [headingLevel]="2" [heading]="'blocks.filterSheet' | t">
+      <div class="gallery__stage gallery__stage--overlay">
+        <app-filter-sheet
+          [open]="filterSheetOpen()"
+          [resetEnabled]="true"
+          [primaryLabel]="text('filter.showSpecies')"
+          (closed)="filterSheetOpen.set(false)"
+        >
+          <app-choice-row [label]="text('species.field.edibility')" [count]="'3'" [checked]="true" />
+          <app-choice-row [label]="text('species.field.habitat')" [count]="'5'" />
+        </app-filter-sheet>
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.objectMenu' | t">
+      <div class="gallery__stage gallery__stage--fixed">
+        <app-object-menu [target]="objectMenuTarget" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.actionBar' | t">
+      <app-action-bar [primary]="text('common.save')" />
+      <app-action-bar [primary]="text('common.save')" [secondary]="text('common.cancel')" />
+      <app-action-bar [primary]="text('common.delete')" [danger]="true" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.iconButton' | t">
+      <div class="gallery__row">
+        <app-icon-button icon="check" variant="primary" [label]="text('common.select')" />
+        <app-icon-button icon="check" variant="secondary" [label]="text('common.select')" />
+        <app-icon-button icon="close" variant="primary" [label]="text('common.cancel')" />
+        <app-icon-button icon="close" variant="secondary" [label]="text('common.cancel')" />
+        <app-icon-button icon="delete" variant="primary" [label]="text('common.delete')" />
+        <app-icon-button icon="delete" variant="secondary" [label]="text('common.delete')" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.splitLayout' | t">
+      <div class="gallery__stage gallery__stage--split">
+        <app-split-layout>
+          <p split-rail class="gallery__note">{{ splitRailLabel }}</p>
+          <app-search-field split-column [value]="searchValue()" [placeholder]="splitRailLabel" />
+          <p class="gallery__note">{{ splitContentText }}</p>
+        </app-split-layout>
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.confirmDialog' | t">
+      <div class="gallery__stage gallery__stage--fixed">
+        <app-confirm-dialog
+          [open]="true"
+          [title]="text('entry.fund.delete')"
+          [meta]="confirmDialogMeta"
+          [danger]="true"
+        />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.reviewQueue' | t">
+      <div class="gallery__stage gallery__stage--review">
+        <app-review-queue [items]="reviewItems">
+          <ng-template let-item>
+            <div class="gallery__reviewcard">{{ item }}</div>
+          </ng-template>
+        </app-review-queue>
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.banner' | t">
+      <app-banner kind="offline" />
+      <app-banner kind="error" />
+    </app-card>
+
+    <!-- Zeilen -->
+    <app-card [headingLevel]="2" [heading]="'blocks.listRow' | t">
+      <app-list-row [title]="text('art.boletus_edulis')" />
+      <app-list-row [title]="text('art.pfifferling')" [subline]="text('beispiel.fund.pfifferlingMeta')" />
+      <app-list-row [title]="text('entry.finds')" [value]="'12'" />
+      <app-list-row [title]="text('species.section.compare')" [chevron]="true" />
+      <app-list-row [title]="text('art.reizker')" [clickable]="true" />
+      <app-list-row [title]="text('art.schopftintling')" [clickable]="true" [selected]="true" />
+      <app-list-row [title]="text('art.nebelkappe')">
+        <span lead class="gallery__dot"></span>
+        <app-badge trail variant="warning">{{ 'entry.badge.transferPending' | t }}</app-badge>
+      </app-list-row>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.speciesRow' | t">
+      @for (row of speciesRows; track row.value) {
+        <app-species-row
+          [species]="row"
+          [active]="row.value === speciesChoice()"
+          (chosen)="speciesChoice.set(row.value)"
+        />
+      }
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.entryRow' | t">
+      <app-entry-row [entry]="entries[0]" [pending]="true" />
+      <app-entry-row [entry]="entries[1]" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.checkRow' | t">
       <app-check-row
-        [titel]="text('recht.species.edit')"
+        [title]="text('recht.species.edit')"
         [subline]="text('recht.species.editUnter')"
         [checked]="checked()"
         (toggled)="checked.set($event)"
       />
-      <app-check-row [titel]="text('recht.text.edit')" [checked]="false" [disabled]="true" />
+      <app-check-row [title]="text('recht.text.edit')" [checked]="false" [locked]="true" />
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.listRow' | t }}</p>
-      <app-list-row [titel]="text('beispiel.pfifferling')" [subline]="text('beispiel.fund.pfifferlingMeta')">
-        <span lead class="gallery__dot"></span>
-        <app-badge trail variant="warning">{{ 'beispiel.badge.ausstehend' | t }}</app-badge>
-      </app-list-row>
-      <app-list-row [titel]="text('beispiel.steinpilz')" [subline]="text('beispiel.fund.steinpilzMeta')">
-        <span lead class="gallery__dot"></span>
-        <app-badge trail variant="success">{{ 'beispiel.badge.gemeldet' | t }}</app-badge>
-      </app-list-row>
+    <app-card [headingLevel]="2" [heading]="'blocks.factorRow' | t">
+      <app-factor-row [factor]="factor" [active]="factorActive()" (activeChange)="factorActive.set($event)" />
+      <app-factor-row [factor]="lockedFactor" />
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.badge' | t }}</p>
-      <div class="gallery__row">
-        <app-badge>{{ 'beispiel.badge.neutral' | t }}</app-badge>
-        <app-badge variant="primary">{{ 'beispiel.badge.primaer' | t }}</app-badge>
-        <app-badge variant="warning">{{ 'beispiel.badge.geschuetzt' | t }}</app-badge>
-        <app-badge variant="info">{{ 'beispiel.badge.prognose' | t }}</app-badge>
-        <app-badge variant="success">{{ 'beispiel.badge.gespeichert' | t }}</app-badge>
-      </div>
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.actionBar' | t }}</p>
-      <app-action-bar
-        [primary]="text('beispiel.aktion.speichern')"
-        [secondary]="text('beispiel.aktion.bearbeiten')"
-        [danger]="text('beispiel.aktion.loeschen')"
-        [ghost]="text('beispiel.aktion.abbrechen')"
-      />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.actionSheet' | t }}</p>
-      <app-action-sheet [titel]="text('beispiel.aktion.eintragen')">
-        <app-action-row
-          icon="funde"
-          [titel]="text('beispiel.aktion.fundMelden')"
-          [subline]="text('beispiel.aktion.fundMeldenUnter')"
+    <app-card [headingLevel]="2" [heading]="'blocks.keyValueTable' | t">
+      <app-key-value-table>
+        <app-key-value-row [key]="text('species.field.cap')" [value]="text('art.hutform.gewoelbt')" />
+        <app-key-value-row
+          [key]="text('species.field.stem')"
+          [values]="[text('art.stielmerkmal.voll'), text('art.stielmerkmal.hohl')]"
         />
-        <app-action-row
-          icon="ort"
-          [titel]="text('beispiel.aktion.markerSetzen')"
-          [subline]="text('beispiel.aktion.markerSetzenUnter')"
-        />
-        <app-action-row
-          icon="zone"
-          [titel]="text('beispiel.aktion.zoneZeichnen')"
-          [subline]="text('beispiel.aktion.zoneZeichnenUnter')"
-        />
-      </app-action-sheet>
+        <app-key-value-row [key]="text('species.field.habitat')" [route]="'.'" [hint]="text('common.open')" />
+      </app-key-value-table>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.floatingButton' | t }}</p>
-      <div class="gallery__row">
-        <app-floating-button icon="ebenen" [label]="text('beispiel.ebenen')" />
-        <app-floating-button icon="ort" [label]="text('beispiel.standort')" />
-        <app-floating-button icon="plus" variant="primaer" [label]="text('beispiel.melden')" />
-      </div>
-      <app-note>{{ 'bausteine.floatingButtonNotiz' | t }}</app-note>
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.pageHeader' | t }}</p>
-      <app-page-header [titel]="text('beispiel.artenTitel')" [back]="true" />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.keyValueTable' | t }}</p>
+    <app-card [headingLevel]="2" [heading]="'blocks.keyValueRow' | t">
       <app-key-value-table>
         <app-key-value-row
-          [schluessel]="text('beispiel.merkmal.hut')"
-          [value]="text('beispiel.merkmal.hutWert')"
-        />
-        <app-key-value-row
-          [schluessel]="text('beispiel.merkmal.roehren')"
-          [value]="text('beispiel.merkmal.roehrenWert')"
-        />
-        <app-key-value-row
-          [schluessel]="text('beispiel.merkmal.stiel')"
-          [value]="text('beispiel.merkmal.stielWert')"
+          [key]="text('species.field.smell')"
+          [value]="text('beispiel.notiz')"
+          [flow]="true"
         />
       </app-key-value-table>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.metricRow' | t }}</p>
-      <app-metric-row
-        [label]="text('beispiel.metrik.vorhersage')"
-        [subline]="text('beispiel.metrik.vorhersageUnter')"
-        [value]="text('beispiel.metrik.vorhersageWert')"
-      />
-      <app-metric-row
-        [label]="text('beispiel.metrik.funde')"
-        [subline]="text('beispiel.metrik.fundeUnter')"
-        [value]="text('beispiel.metrik.fundeWert')"
-      />
+    <app-card [headingLevel]="2" [heading]="'blocks.choiceRow' | t">
+      <app-choice-row [label]="text('filter.gruppe.speisewert')" [count]="'8'" [checked]="true" />
+      <app-choice-row [label]="text('filter.gruppe.schutz')" [count]="'3'" />
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.seasonCurve' | t }}</p>
-      <app-season-curve
-        [alleJahre]="alleJahre"
-        [laufendesJahr]="laufendesJahr"
-        [large]="true"
-        [legendCurrent]="text('beispiel.kurve.laufend')"
-        [legendYears]="text('beispiel.kurve.jahre')"
-        [label]="text('saison.beschriftung')"
-      />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.ramp' | t }}</p>
-      <app-ramp
-        [label]="text('beispiel.rampe')"
-        [von]="text('beispiel.rampeVon')"
-        [bis]="text('beispiel.rampeBis')"
-      />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.factorRow' | t }}</p>
-      <app-factor-row
-        [name]="text('beispiel.faktor.niederschlag')"
-        [subline]="text('beispiel.faktor.niederschlagUnter')"
-        [condition]="text('beispiel.faktor.niederschlagBedingung')"
-        [active]="factorActive()"
-        (activeChange)="factorActive.set($event)"
-      />
-      <app-factor-row
-        [name]="text('beispiel.faktor.buche')"
-        [subline]="text('beispiel.faktor.bucheUnter')"
-        [condition]="text('beispiel.faktor.bucheBedingung')"
-      />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.histogram' | t }}</p>
-      <app-histogram
-        [anteile]="histogramm"
-        [label]="text('beispiel.histogramm')"
-        [von]="von() / 240"
-        [bis]="bis() / 240"
-      />
-      <app-range-slider
-        [min]="0"
-        [max]="240"
-        [von]="von()"
-        [bis]="bis()"
-        (fromChange)="von.set($event)"
-        (toChange)="bis.set($event)"
-      />
-      <div class="gallery__ends">
-        <span>{{ 'beispiel.histogrammVon' | t }}</span>
-        <span>{{ 'beispiel.histogrammMitte' | t }}</span>
-        <span>{{ 'beispiel.histogrammBis' | t }}</span>
-      </div>
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.colorSwatches' | t }}</p>
-      <app-color-swatches
-        [colors]="colors"
-        [value]="farbe()"
-        [label]="text('farben.beschriftung')"
-        (valueChange)="farbe.set($event)"
-      />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.formField' | t }}</p>
+    <!-- Eingabe -->
+    <app-card [headingLevel]="2" [heading]="'blocks.formField' | t">
       <app-form-field
         [label]="text('beispiel.feld.art')"
-        [value]="text('beispiel.steinpilz')"
+        [value]="text('art.boletus_edulis')"
         [readOnly]="true"
       />
       <app-form-field
         class="gallery__gap"
         [label]="text('beispiel.feld.notiz')"
         [placeholder]="text('beispiel.feld.notizPlatzhalter')"
-        [value]="noteValue()"
+        [value]="fieldValue()"
         [multiline]="true"
-        (valueChange)="noteValue.set($event)"
+        (valueChange)="fieldValue.set($event)"
+      />
+      <app-form-field
+        class="gallery__gap"
+        [label]="text('common.search')"
+        [value]="searchValue()"
+        icon="search"
+        (valueChange)="searchValue.set($event)"
       />
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.speciesRow' | t }}</p>
-      <app-species-row
-        [name]="text('beispiel.steinpilz')"
-        [latin]="text('beispiel.steinpilzLatein')"
-        [active]="true"
+    <app-card [headingLevel]="2" [heading]="'blocks.searchField' | t">
+      <app-search-field
+        [value]="searchValue()"
+        [placeholder]="text('species.search.placeholder')"
+        (valueChange)="searchValue.set($event)"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.segmented' | t">
+      <app-segmented [options]="directions" value="from" [label]="text('common.from')" />
+      <app-segmented
+        class="gallery__gap"
+        [options]="viewModes"
+        [value]="viewMode()"
+        [label]="text('map.tab.layer')"
+        (valueChange)="viewMode.set($event)"
+      />
+      <app-segmented
+        class="gallery__gap"
+        [options]="fourWayOptions"
+        value="edit"
+        [label]="text('common.name')"
+      />
+      <app-segmented
+        class="gallery__gap"
+        [options]="lockedOptions"
+        value="liste"
+        [label]="text('map.combination.list')"
+        [locked]="true"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.chipGroup' | t">
+      <app-chip-group
+        [chips]="speciesChips"
+        [value]="chip()"
+        [multiple]="true"
+        [label]="text('beispiel.artenTitel')"
+        (valueChange)="chip.set($event)"
+      />
+      <app-chip-group
+        class="gallery__gap"
+        [chips]="speciesChips"
+        [value]="chip()"
+        [label]="text('beispiel.artenTitel')"
+        [addable]="true"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.filterChip' | t">
+      <div class="gallery__row">
+        @for (label of filterChips; track label) {
+          <app-filter-chip [label]="label" />
+        }
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.rangeSlider' | t">
+      <app-range-slider
+        [min]="0"
+        [max]="240"
+        [from]="from()"
+        [to]="to()"
+        (fromChange)="from.set($event)"
+        (toChange)="to.set($event)"
+      />
+      <app-range-slider
+        class="gallery__gap"
+        [min]="0"
+        [max]="240"
+        [from]="from()"
+        [to]="to()"
+        handles="from"
+        (fromChange)="from.set($event)"
+      />
+      <app-range-slider
+        class="gallery__gap"
+        [min]="0"
+        [max]="240"
+        [from]="from()"
+        [to]="to()"
+        handles="to"
+        (toChange)="to.set($event)"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.colourSwatches' | t">
+      <app-colour-swatches
+        [colours]="colourSwatches"
+        [value]="farbe()"
+        [label]="text('common.colour')"
+        (valueChange)="farbe.set($event)"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.colourPicker' | t">
+      <app-colour-picker
+        [colours]="colourPickerSwatches"
+        [value]="colourTone()"
+        [label]="text('filter.colour.title')"
+        [nearest]="objectColors"
+        (valueChange)="colourTone.set($event)"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.speciesPicker' | t">
+      <app-species-picker
+        [species]="speciesRows"
+        [selected]="speciesChoice()"
+        [label]="text('beispiel.artenTitel')"
+        (chosen)="speciesChoice.set($event)"
       >
-        <app-season-curve
-          curve
-          [alleJahre]="alleJahre"
-          [laufendesJahr]="laufendesJahr"
-          [label]="text('saison.beschriftung')"
-        />
-        <ng-container tags>
-          <app-badge variant="primary">{{ 'beispiel.tag.vorhersage' | t }}</app-badge>
-          <app-badge variant="warning">{{ 'beispiel.tag.geschuetzt' | t }}</app-badge>
-        </ng-container>
-      </app-species-row>
-      <app-species-row [name]="text('beispiel.birkenpilz')" [latin]="text('beispiel.birkenpilzLatein')">
-        <app-season-curve
-          curve
-          [alleJahre]="alleJahre"
-          [laufendesJahr]="laufendesJahr"
-          [label]="text('saison.beschriftung')"
-        />
-        <ng-container tags>
-          <app-badge variant="primary">{{ 'beispiel.tag.vorhersage' | t }}</app-badge>
-        </ng-container>
-      </app-species-row>
+        <ng-template let-entry>
+          <app-season-curve trail [series]="seasonPlain" [label]="entry.name" />
+        </ng-template>
+      </app-species-picker>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.avatarButton' | t }}</p>
+    <app-card [headingLevel]="2" [heading]="'blocks.photoPicker' | t">
+      <app-photo-picker [files]="photoFiles()" (filesChange)="photoFiles.set($event)" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.yearBandInput' | t">
+      <app-year-band-input
+        [from]="yearFrom()"
+        [to]="yearTo()"
+        [label]="text('species.growthPeriod')"
+        (fromChange)="yearFrom.set($event)"
+        (toChange)="yearTo.set($event)"
+      />
+    </app-card>
+
+    <!-- Anzeige -->
+    <app-card [headingLevel]="2" [heading]="'blocks.levelPill' | t">
       <div class="gallery__row">
-        <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
-        <app-crosshair [label]="text('fadenkreuz.beschriftung')" />
-      </div>
-      <app-note>{{ 'bausteine.crosshair' | t }}</app-note>
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.note' | t }}</p>
-      <app-note>{{ 'beispiel.notiz' | t }}</app-note>
-      <app-note variant="unter">{{ 'beispiel.notizUnter' | t }}</app-note>
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.imageCredit' | t }}</p>
-      <app-image-credit photographer="Marie Weber" licence="cc-by-sa-4" />
-      <app-image-credit [photographer]="text('beispiel.steinpilz')" licence="own" />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.svgIcon' | t }}</p>
-      <div class="gallery__row">
-        <app-svg-icon name="karte" />
-        <app-svg-icon name="arten" />
-        <app-svg-icon name="funde" />
-        <app-svg-icon name="mehr" />
-        <app-svg-icon name="plus" />
-        <app-svg-icon name="ort" />
-        <app-svg-icon name="ebenen" />
-        <app-svg-icon name="zurueck" />
-        <app-svg-icon name="zu" />
-        <app-svg-icon name="haken" />
-        <app-svg-icon name="zone" />
-        <app-svg-icon name="suche" />
-        <app-svg-icon name="links" />
-        <app-svg-icon name="abspielen" />
-        <app-svg-icon name="rechts" />
-        <app-svg-icon name="hutbreite" />
-        <app-svg-icon name="stielhoehe" />
-        <app-svg-icon name="stieldicke" />
-        <app-svg-icon name="sporenlaenge" />
-        <app-svg-icon name="wandelt" />
-        <app-svg-icon name="dauer" />
+        <app-level-pill [text]="text('art.essbar.essbar')" colour="var(--color-success)" />
+        <app-level-pill [text]="text('art.essbar.giftig')" colour="var(--color-warning)" />
+        <app-level-pill [text]="text('art.essbar.toedlichGiftig')" colour="var(--color-danger)" />
+        <app-level-pill [text]="text('species.badge.protected')" colour="var(--color-info)" />
       </div>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.measurement' | t }}</p>
+    <app-card [headingLevel]="2" [heading]="'blocks.tagList' | t">
+      <app-tag-list [tags]="treeGenera" [label]="text('filter.group.treePartner')" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.colourField' | t">
       <app-key-value-table>
-        <app-key-value-row [schluessel]="text('art.mass.hut')">
-          <app-measurement
-            extent="hutbreite"
-            [spans]="[{ von: 4, bis: 20 }]"
-            [unit]="text('art.einheit.cm')"
-            [label]="text('art.mass.zeichen.hutbreite')"
+        <app-key-value-row [key]="text('art.farbe.hut')">
+          <app-colour-field [colours]="capColours" mode="single" [label]="text('art.farbe.hut')" />
+        </app-key-value-row>
+        <app-key-value-row [key]="text('art.abschnitt.verfaerbung')">
+          <app-colour-field
+            [colours]="gradientColours"
+            mode="gradient"
+            [label]="text('art.abschnitt.verfaerbung')"
           />
         </app-key-value-row>
-        <app-key-value-row [schluessel]="text('art.mass.sporenLaenge')">
-          <app-measurement
-            extent="sporenlaenge"
-            [spans]="[
-              { von: 12.4, bis: 19.2 },
-              { von: 4.5, bis: 5.5 },
-            ]"
-            [unit]="text('art.einheit.um')"
-            [label]="text('art.mass.zeichen.sporenlaenge')"
+        <app-key-value-row [key]="text('art.farbe.sporenpulver')">
+          <app-colour-field
+            [colours]="multiColours"
+            mode="multiple"
+            [label]="text('art.farbe.sporenpulver')"
           />
         </app-key-value-row>
       </app-key-value-table>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.colourField' | t }}</p>
+    <app-card [headingLevel]="2" [heading]="'blocks.colourChange' | t">
+      <app-colour-change
+        [triggers]="colourChangeTriggers"
+        [from]="colourChangeFrom"
+        [to]="colourChangeTo"
+        [fromLabels]="colourChangeFromLabels"
+        [toLabels]="colourChangeToLabels"
+        [speed]="colourChangeSpeed"
+        [arrowLabel]="text('art.verfaerbung.pfeil')"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.measurement' | t">
       <app-key-value-table>
-        <app-key-value-row [schluessel]="text('art.farbe.hut')" [unter]="text('beispiel.farbe.hut')">
-          <app-colour-field [colours]="CAP_COLOURS" [label]="text('beispiel.farbe.hut')" />
+        <app-key-value-row [key]="text('art.mass.zeichen.hutbreite')">
+          <app-measurement extent="width" [spans]="capWidthSpans" [unit]="text('unit.cm')" />
         </app-key-value-row>
-        <app-key-value-row [schluessel]="text('art.verfaerbung.zeile')">
-          <app-colour-change
-            [from]="FLESH_COLOURS"
-            [to]="BRUISE_COLOURS"
-            [fromLabel]="text('beispiel.farbe.fleisch')"
-            [toLabel]="text('beispiel.farbe.blau')"
-            [duration]="text('art.verfaerbung.schnell')"
-            [arrowLabel]="text('art.verfaerbung.pfeil')"
-          />
+        <app-key-value-row [key]="text('art.mass.zeichen.sporenlaenge')">
+          <app-measurement extent="length" [spans]="sporeLengthSpans" [unit]="text('unit.um')" />
         </app-key-value-row>
       </app-key-value-table>
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.levelPill' | t }}</p>
-      <div class="gallery__row">
-        <app-level-pill [text]="text('art.essbar.essbar')" colour="#4f9d6f" />
-        <app-level-pill [text]="text('art.essbar.giftig')" colour="#d2915f" />
-        <app-level-pill [text]="text('art.essbar.toedlichGiftig')" colour="#d2685f" />
-      </div>
+    <app-card [headingLevel]="2" [heading]="'blocks.measurementGroup' | t">
+      <app-measurement-group [part]="text('species.field.cap')" [measurements]="measurementRows" />
     </app-card>
 
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.tagList' | t }}</p>
-      <app-tag-list [tags]="SMELL_TAGS" [label]="text('art.zeile.geruch')" />
-    </app-card>
-
-    <app-card>
-      <p class="gallery__title">{{ 'bausteine.yearBand' | t }}</p>
+    <app-card [headingLevel]="2" [heading]="'blocks.yearBand' | t">
       <app-year-band
         [fromMonth]="6"
         [toMonth]="11"
         [peakFromMonth]="8"
         [peakToMonth]="10"
-        [months]="YEAR_MARKS"
-        [label]="text('bausteine.yearBand')"
+        [months]="[
+          text('art.monat.jan'),
+          text('art.monat.apr'),
+          text('art.monat.jul'),
+          text('art.monat.okt'),
+        ]"
+        [label]="text('species.growthPeriod')"
       />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.seasonCurve' | t">
+      <app-season-curve [series]="seasonSeries" [months]="monthMarks" [label]="text('saison.beschriftung')" />
+      <app-season-curve
+        class="gallery__gap"
+        [series]="seasonSeries"
+        [large]="true"
+        [months]="monthMarks"
+        [label]="text('saison.beschriftung')"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.histogram' | t">
+      <app-histogram
+        [shares]="histogramm"
+        [label]="text('beispiel.histogramm')"
+        [from]="from() / 240"
+        [to]="to() / 240"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.ramp' | t">
+      <app-ramp
+        [label]="text('beispiel.rampe')"
+        [from]="text('beispiel.rampeVon')"
+        [to]="text('beispiel.rampeBis')"
+        [note]="text('map.legend.findProbability')"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.timeline' | t">
+      <app-timeline
+        [weeks]="weeks"
+        [active]="activeWeek()"
+        [label]="text('zeitleiste.beschriftung')"
+        (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
+      />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.weekButton' | t">
+      <div class="gallery__row">
+        <app-week-button [year]="2025" [week]="38" [share]="0.7" [yearMark]="true" />
+        <app-week-button [year]="2025" [week]="39" [share]="0.88" />
+        <app-week-button [year]="2025" [week]="40" [share]="1" [active]="true" />
+        <app-week-button [year]="2026" [week]="41" [share]="0.4" [forecast]="true" />
+        <app-week-button [year]="2026" [week]="42" [share]="0.2" [forecast]="true" [locked]="true" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.imageTile' | t">
+      <div class="gallery__row">
+        <app-image-tile [image]="sampleImage" [lead]="true" />
+        <app-image-tile [image]="sampleImage" [lead]="false" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.imageCredit' | t">
+      <app-image-credit [photographer]="sampleImage.photographer" [licence]="sampleImage.licence" />
+      <app-image-credit [photographer]="text('art.boletus_edulis')" licence="own" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.imageViewer' | t">
+      <div class="gallery__stage gallery__stage--fixed">
+        <app-image-viewer [image]="sampleImage" [title]="text('art.boletus_edulis')" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.privateImage' | t">
+      <app-private-image [path]="sampleImage.thumbUrl" [alt]="text('art.boletus_edulis')" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.avatarButton' | t">
+      <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.floatingButton' | t">
+      <div class="gallery__row">
+        <app-floating-button icon="layers" variant="default" [label]="text('beispiel.ebenen')" />
+        <app-floating-button icon="plus" variant="primary" [label]="text('beispiel.melden')" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.crosshair' | t">
+      <app-crosshair [label]="text('common.select')" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.svgIcon' | t">
+      <div class="gallery__row">
+        <app-svg-icon name="map" [label]="text('nav.tab.map')" />
+        <app-svg-icon name="species" [label]="text('nav.tab.species')" />
+        <app-svg-icon name="entries" [label]="text('nav.tab.entries')" />
+        <app-svg-icon name="plus" [label]="text('entry.create')" />
+        <app-svg-icon name="location" [label]="text('map.centre')" />
+        <app-svg-icon name="layers" [label]="text('map.layers.title')" />
+        <app-svg-icon name="check" [label]="text('common.select')" />
+        <app-svg-icon name="close" [label]="text('common.close')" />
+        <app-svg-icon name="search" [label]="text('common.search')" />
+        <app-svg-icon name="filter" [label]="text('common.filter')" />
+        <app-svg-icon name="warning" [label]="text('state.loadFailed')" />
+        <app-svg-icon name="empty" [label]="text('state.noSpeciesMatch')" />
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.statRow' | t">
+      <app-stat-row [stats]="stats" />
+    </app-card>
+
+    <!-- Zustände -->
+    <app-card [headingLevel]="2" [heading]="'blocks.emptyState' | t">
+      <app-empty-state [text]="text('state.noSpeciesMatch')" [action]="text('entry.create')" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.errorState' | t">
+      <app-error-state [text]="text('state.loadFailed')" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.infiniteList' | t">
+      <div class="gallery__stage gallery__stage--list">
+        <app-infinite-list [pageSize]="40" [hasMore]="false">
+          @for (name of infiniteRows; track name) {
+            <app-list-row [title]="name" />
+          }
+        </app-infinite-list>
+      </div>
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.skeleton' | t">
+      <app-skeleton kind="row" [count]="2" />
+      <app-skeleton kind="tile" />
+      <app-skeleton kind="card" />
+      <app-skeleton kind="block" />
+    </app-card>
+
+    <app-card [headingLevel]="2" [heading]="'blocks.progress' | t">
+      <app-progress [value]="42" />
+      <app-progress class="gallery__gap" [value]="78" />
     </app-card>
   </div>
 </ng-template>
@@ -418,22 +592,15 @@
 <div class="workshop">
   <header class="workshop__head">
     <h1>{{ 'bausteine.titel' | t }}</h1>
-    <p class="workshop__hint">{{ 'bausteine.hinweis' | t }}</p>
   </header>
   <div class="workshop__fields">
-    <section class="workshop__field" #light>
+    <section class="workshop__field" role="region" [attr.aria-label]="'bausteine.hell' | t" #light>
       <h2 class="workshop__fieldtitle">{{ 'bausteine.hell' | t }}</h2>
-      <ng-container
-        [ngTemplateOutlet]="galerie"
-        [ngTemplateOutletContext]="{ $implicit: text('bausteine.hell') }"
-      />
+      <ng-container [ngTemplateOutlet]="gallery" />
     </section>
-    <section class="workshop__field" #dark>
+    <section class="workshop__field" role="region" [attr.aria-label]="'bausteine.dunkel' | t" #dark>
       <h2 class="workshop__fieldtitle">{{ 'bausteine.dunkel' | t }}</h2>
-      <ng-container
-        [ngTemplateOutlet]="galerie"
-        [ngTemplateOutletContext]="{ $implicit: text('bausteine.dunkel') }"
-      />
+      <ng-container [ngTemplateOutlet]="gallery" />
     </section>
   </div>
 </div>

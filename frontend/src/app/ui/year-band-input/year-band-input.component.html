@@ -1,0 +1,34 @@
+<div class="yearband" role="group" [attr.aria-label]="label()">
+  <span class="yearband__track"></span>
+  <span
+    class="yearband__chosen"
+    [style.inset-inline-start]="fromShare()"
+    [style.inset-inline-end]="'calc(100% - ' + toShare() + ')'"
+  ></span>
+  <input
+    class="yearband__handle"
+    type="range"
+    [attr.aria-label]="'common.rangeMin' | t"
+    [min]="firstMonth"
+    [max]="lastMonth"
+    step="1"
+    [value]="from()"
+    (input)="onFrom($event)"
+  />
+  <input
+    class="yearband__handle"
+    type="range"
+    [attr.aria-label]="'common.rangeMax' | t"
+    [min]="firstMonth"
+    [max]="lastMonth"
+    step="1"
+    [value]="to()"
+    (input)="onTo($event)"
+  />
+</div>
+<div class="yearband__marks" aria-hidden="true">
+  <span>{{ 'art.monat.jan' | t }}</span>
+  <span>{{ 'art.monat.apr' | t }}</span>
+  <span>{{ 'art.monat.jul' | t }}</span>
+  <span>{{ 'art.monat.okt' | t }}</span>
+</div>

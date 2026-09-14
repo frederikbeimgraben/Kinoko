@@ -1,0 +1,45 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  --skeleton-card-height: 120px;
+  --skeleton-block-height: 80px;
+  --skeleton-pulse-duration: 1200ms;
+}
+
+.skeleton__bar {
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-md);
+  animation: skeleton-pulse var(--skeleton-pulse-duration) ease-in-out infinite alternate;
+}
+
+.skeleton__bar--row {
+  inline-size: 100%;
+  block-size: var(--size-row);
+}
+
+.skeleton__bar--tile {
+  inline-size: var(--size-tile);
+  block-size: var(--size-tile);
+}
+
+.skeleton__bar--card {
+  inline-size: 100%;
+  block-size: var(--skeleton-card-height);
+  border-radius: var(--radius-lg);
+}
+
+.skeleton__bar--block {
+  inline-size: 100%;
+  block-size: var(--skeleton-block-height);
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}

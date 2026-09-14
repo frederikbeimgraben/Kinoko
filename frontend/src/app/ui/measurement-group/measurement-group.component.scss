@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.group__part {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  border-block-end: var(--border-width) solid var(--color-border);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+// Ohne eine Zeile darunter bliebe die Trennlinie doppelt: sie läge direkt auf
+// dem unteren Kartenrand.
+.group__part--bare {
+  padding-block-end: var(--space-3);
+  border-block-end: 0;
+}

@@ -1,16 +1,24 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
-import { SeasonCurveComponent, smooth } from './season-curve.component';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { SeasonCurveComponent, smooth, type SeasonSeries } from './season-curve.component';
 
-const ALLE = Array.from({ length: 52 }, (_, i) => i / 51);
+const ALL = Array.from({ length: 52 }, (_, i) => i / 51);
 const CURRENT = Array.from({ length: 20 }, (_, i) => i / 51);
+
+/** Die zwei Reihen der Artseite: alle Jahre als Fläche, das laufende als Linie. */
+const SERIES: SeasonSeries[] = [
+  { shape: 'area', values: ALL },
+  { shape: 'line', values: CURRENT },
+];
+
 /** Die Monatsmarken der Artseite: der Name und die Woche, in der er beginnt. */
 const MONTHS = [
-  { text: 'Jan', woche: 1 },
-  { text: 'Apr', woche: 14 },
-  { text: 'Jul', woche: 27 },
-  { text: 'Okt', woche: 40 },
-  { text: 'Dez', woche: 49 },
+  { text: 'Jan', week: 1 },
+  { text: 'Apr', week: 14 },
+  { text: 'Jul', week: 27 },
+  { text: 'Okt', week: 40 },
+  { text: 'Dez', week: 49 },
 ];
 
 describe('glaette', () => {
@@ -33,7 +41,7 @@ describe('glaette', () => {
 describe('SeasonCurveComponent', () => {
   it('zeichnet die kleine Kurve mit Beschriftung', async () => {
     const { container } = await render(SeasonCurveComponent, {
-      inputs: { alleJahre: ALLE, laufendesJahr: CURRENT, label: 'Saisonkurve' },
+      inputs: { series: SERIES, label: 'Saisonkurve' },
     });
 
     expect(screen.getByRole('img', { name: 'Saisonkurve' })).toHaveAttribute('viewBox', '0 0 88 36');
@@ -41,15 +49,12 @@ describe('SeasonCurveComponent', () => {
   });
 
   it('zeichnet die große Kurve mit Legende', async () => {
+    const series: SeasonSeries[] = [
+      { shape: 'area', values: ALL, legend: '2015 bis 2024' },
+      { shape: 'line', values: CURRENT, legend: '2025 bis KW 39' },
+    ];
     const { container } = await render(SeasonCurveComponent, {
-      inputs: {
-        alleJahre: ALLE,
-        laufendesJahr: CURRENT,
-        label: 'Saisonkurve',
-        large: true,
-        legendCurrent: '2025 bis KW 39',
-        legendYears: '2015 bis 2024',
-      },
+      inputs: { series, label: 'Saisonkurve', large: true },
     });
 
     expect(screen.getByRole('img', { name: 'Saisonkurve' })).toHaveAttribute('viewBox', '0 0 330 72');
@@ -57,9 +62,23 @@ describe('SeasonCurveComponent', () => {
     await noViolations(container);
   });
 
-  it('lässt das laufende Jahr weg, solange es keine Reihe dafür gibt', async () => {
+  it('stellt die Linie in der Legende vor die Fläche', async () => {
+    const series: SeasonSeries[] = [
+      { shape: 'area', values: ALL, legend: 'Fläche' },
+      { shape: 'line', values: CURRENT, legend: 'Linie' },
+    ];
     const { container } = await render(SeasonCurveComponent, {
-      inputs: { alleJahre: ALLE, laufendesJahr: [], label: 'Saisonkurve' },
+      inputs: { series, label: 'Saisonkurve', large: true },
+    });
+
+    const texts = [...container.querySelectorAll('.spark__legend span')].map((row) => row.textContent);
+    expect(texts).toEqual(['Linie', 'Fläche']);
+  });
+
+  it('lässt das laufende Jahr weg, solange es keine Reihe dafür gibt', async () => {
+    const series: SeasonSeries[] = [{ shape: 'area', values: ALL }];
+    const { container } = await render(SeasonCurveComponent, {
+      inputs: { series, label: 'Saisonkurve' },
     });
 
     expect(container.querySelector('.spark__all')).not.toBeNull();
@@ -69,7 +88,7 @@ describe('SeasonCurveComponent', () => {
 
   it('endet das laufende Jahr mit einem Punkt auf der letzten vollen Woche', async () => {
     const { container } = await render(SeasonCurveComponent, {
-      inputs: { alleJahre: ALLE, laufendesJahr: CURRENT, label: 'Saisonkurve', large: true },
+      inputs: { series: SERIES, label: 'Saisonkurve', large: true },
     });
 
     // Der Punkt sitzt auf Woche 20 von 52, also bei 19/51 der Breite. Er steht
@@ -80,42 +99,32 @@ describe('SeasonCurveComponent', () => {
 
   it('schreibt die Monatsmarken unter die Grundlinie', async () => {
     await render(SeasonCurveComponent, {
-      inputs: {
-        alleJahre: ALLE,
-        laufendesJahr: CURRENT,
-        label: 'Saisonkurve',
-        large: true,
-        months: MONTHS,
-      },
+      inputs: { series: SERIES, label: 'Saisonkurve', large: true, months: MONTHS },
     });
 
     expect(screen.getByText('Jan')).toBeInTheDocument();
     expect(screen.getByText('Dez')).toBeInTheDocument();
   });
 
-  it.each([390, 1440])('legt bei %i px die Marke Okt unter Woche 40', async (breite) => {
+  it.each([390, 1440])('legt bei %i px die Marke Okt unter Woche 40', async (width) => {
     const { container } = await render(
-      `<div style="width: ${breite.toString()}px">
-         <app-season-curve
-           [alleJahre]="alle" [laufendesJahr]="current" [months]="months"
-           [large]="true" label="Saisonkurve" />
+      `<div style="width: ${width.toString()}px">
+         <app-season-curve [series]="series" [months]="months" [large]="true" label="Saisonkurve" />
        </div>`,
       {
         imports: [SeasonCurveComponent],
-        componentProperties: { alle: ALLE, current: CURRENT, months: MONTHS },
+        componentProperties: { series: SERIES, months: MONTHS },
       },
     );
 
-    // Die Kurve füllt die Breite (`preserveAspectRatio="none"`), darum ist die
-    // Stelle einer Woche ein Anteil und keine Pixelzahl: sie stimmt bei jeder
-    // Breite. Der Vergleich holt sie aus dem Pfad, den die Kurve wirklich malt.
+    // Die Kurve füllt die Breite, die Stelle einer Woche ist darum ein Anteil.
+    // Der Vergleich holt sie aus dem Pfad, den die Kurve wirklich malt.
     const okt = [...container.querySelectorAll<HTMLElement>('.spark__month')].find(
       (badge) => badge.textContent === 'Okt',
     );
     expect(okt?.style.left).toBe(`${((39 / 51) * 100).toString()}%`);
 
-    // Dieselbe Stelle malt auch die Kurve für Woche 40, bis auf die eine
-    // Nachkommastelle, auf die der Pfad gerundet wird.
+    // Dieselbe Stelle malt auch die Kurve für Woche 40, auf eine Nachkommastelle gerundet.
     const path = container.querySelector('.spark__all')?.getAttribute('d') ?? '';
     const xValues = [...path.matchAll(/L(\d+\.\d)/g)].map((matches) => Number(matches[1]));
     expect((xValues[39] / 330) * 100).toBeCloseTo(Number.parseFloat(okt?.style.left ?? ''), 1);
@@ -126,8 +135,9 @@ describe('SeasonCurveComponent', () => {
     // Eine einzelne starke Woche zwischen leeren: geglättet steigt die Kurve
     // nur auf ein Drittel, die Achse nennt weiter den rohen Höchstwert.
     const peak = Array.from({ length: 52 }, (_, i) => (i === 25 ? 30 : 0));
+    const series: SeasonSeries[] = [{ shape: 'area', values: peak }];
     const { container } = await render(SeasonCurveComponent, {
-      inputs: { alleJahre: peak, laufendesJahr: [], label: 'Saisonkurve', large: true },
+      inputs: { series, label: 'Saisonkurve', large: true },
     });
 
     const path = container.querySelector('.spark__all')?.getAttribute('d') ?? '';
@@ -137,15 +147,12 @@ describe('SeasonCurveComponent', () => {
   });
 
   it('nennt in der Legende die Reihen, nicht das Rechenverfahren', async () => {
+    const series: SeasonSeries[] = [
+      { shape: 'area', values: ALL, legend: 'Mittelwert 2015 bis 2025' },
+      { shape: 'line', values: CURRENT, legend: 'Schätzung dieses Jahr' },
+    ];
     await render(SeasonCurveComponent, {
-      inputs: {
-        alleJahre: ALLE,
-        laufendesJahr: CURRENT,
-        label: 'Saisonkurve',
-        large: true,
-        legendCurrent: 'Schätzung dieses Jahr',
-        legendYears: 'Mittelwert 2015 bis 2025',
-      },
+      inputs: { series, label: 'Saisonkurve', large: true },
     });
 
     // „Geglättet über 3 Wochen“ sagt dem Sammler nichts über die Saison.
@@ -156,7 +163,7 @@ describe('SeasonCurveComponent', () => {
 
   it('zeichnet ohne Begehungszahlen jede Woche gleich kräftig', async () => {
     const { container } = await render(SeasonCurveComponent, {
-      inputs: { alleJahre: ALLE, laufendesJahr: CURRENT, label: 'Saisonkurve' },
+      inputs: { series: SERIES, label: 'Saisonkurve' },
     });
 
     expect(container.querySelector('mask')).toBeNull();
@@ -165,19 +172,31 @@ describe('SeasonCurveComponent', () => {
 
   it('legt dünne Wochen unter eine Maske, sobald die Begehungen bekannt sind', async () => {
     // Vier magere Wochen am Jahresanfang, danach volle Wochen.
-    const begehungen = Array.from({ length: 52 }, (_, i) => (i < 4 ? 5 : 100));
+    const visits = Array.from({ length: 52 }, (_, i) => (i < 4 ? 5 : 100));
+    const series: SeasonSeries[] = [
+      { shape: 'area', values: ALL, visits },
+      { shape: 'line', values: CURRENT },
+    ];
     const { container } = await render(SeasonCurveComponent, {
-      inputs: {
-        alleJahre: ALLE,
-        laufendesJahr: CURRENT,
-        label: 'Saisonkurve',
-        visitsAllYears: begehungen,
-      },
+      inputs: { series, label: 'Saisonkurve' },
     });
 
     expect(container.querySelectorAll('.spark__thin')).toHaveLength(4);
     expect(container.querySelector('.spark__all')?.closest('g')?.getAttribute('mask')).toMatch(
       /^url\(#funke-dicht-\d+\)$/,
     );
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const series: SeasonSeries[] = [
+      { shape: 'area', values: ALL, legend: 'Average' },
+      { shape: 'line', values: CURRENT, legend: 'This year' },
+    ];
+    const { container } = await render(SeasonCurveComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { series, label: 'Season curve' },
+    });
+
+    noGermanText(container);
   });
 });
