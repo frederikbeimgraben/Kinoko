@@ -45,6 +45,15 @@ declare module '*/tools/check-size.mjs' {
   export function report(root: string, allowPath: string): Violation[];
 }
 
+declare module '*/tools/check-boards.mjs' {
+  export interface BoardCoverage {
+    checked: string[];
+    pending: string[];
+    missing: string[];
+  }
+  export function checkBoards(root: string): BoardCoverage;
+}
+
 declare module '*/tools/sync-boards.mjs' {
   export interface BoardFile {
     name: string;

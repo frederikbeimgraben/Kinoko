@@ -229,9 +229,7 @@ jobs:
       - name: Flüsse
         working-directory: frontend
         run: npm run e2e:flows
-      # Die Boards messen die Seiten gegen die Mockups. Sie werden ab U5 grün.
       - name: Boards
-        continue-on-error: true
         working-directory: frontend
         run: npm run e2e:boards
       - if: always()
