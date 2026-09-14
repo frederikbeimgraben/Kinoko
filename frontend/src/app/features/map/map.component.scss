@@ -95,20 +95,6 @@
   inset-inline-end: 24px;
 }
 
-.map__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  padding: 0;
-  cursor: pointer;
-  background: rgb(0 18 10 / 25%);
-  border: 0;
-}
-
-.map__sheet--layers {
-  z-index: 4;
-}
-
 // Melden und Objekt liegen über allem: sie sind der Grund, warum die Karte
 // gerade da ist, und es ist immer nur eines von beiden offen.
 app-add-entry,
@@ -117,13 +103,6 @@ app-object-sheet {
   inset: 0;
   z-index: 5;
   pointer-events: none;
-}
-
-// Die Abdunkelung gehört am Rechner über die Spalte, nicht über die Karte: die
-// bleibt sichtbar, damit man weiß, worüber man gerade entscheidet.
-:host-context(.shell--column) .map__scrim {
-  inset-inline-start: var(--size-rail);
-  inline-size: var(--size-column);
 }
 
 // Das Skelett liegt über der Fläche, solange kein Manifest da ist.
