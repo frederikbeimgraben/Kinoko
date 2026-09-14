@@ -4,7 +4,7 @@
   <div class="comparison-page">
     <app-card class="flush" [attr.aria-label]="ansicht.label">
       <app-key-value-table>
-        <app-key-value-row key="" [values]="ansicht.names" />
+        <app-key-value-row key="" [values]="ansicht.names" [head]="true" />
         @for (row of ansicht.rows; track row.key) {
           <app-key-value-row [key]="row.label" [values]="row.values" />
         }

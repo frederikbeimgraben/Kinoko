@@ -1,4 +1,4 @@
-<span class="kv__label">
+<span class="kv__label" [class.kv__label--head]="head()">
   @if (route(); as target) {
     <a class="kv__key kv__key--link" [routerLink]="target">{{ key() }}</a>
   } @else {
@@ -10,7 +10,9 @@
 </span>
 @if (values(); as columns) {
   @for (column of columns; track $index) {
-    <span class="kv__value" [class.kv__value--flow]="flow()">{{ column }}</span>
+    <span class="kv__value" [class.kv__value--flow]="flow()" [class.kv__value--head]="head()">{{
+      column
+    }}</span>
   }
 } @else {
   <span class="kv__value" [class.kv__value--flow]="flow()">
