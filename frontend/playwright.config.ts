@@ -9,6 +9,7 @@ const BROWSER_PATH = process.env['BROWSER_PATH'];
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1280, height: 820 };
 const WIDE = { width: 1440, height: 900 };
+const BLOCKS = { width: 900, height: 8700 };
 
 export default defineConfig({
   testDir: 'e2e',
@@ -38,6 +39,7 @@ export default defineConfig({
     { name: 'phone', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: PHONE } },
     { name: 'desktop', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: DESKTOP } },
     { name: 'wide', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: WIDE } },
+    { name: 'blocks', testMatch: /boards\/blocks\.spec\.ts$/, use: { viewport: BLOCKS } },
     { name: 'flows', testMatch: /flows\/.*\.spec\.ts$/, use: { viewport: PHONE } },
   ],
   webServer: {
