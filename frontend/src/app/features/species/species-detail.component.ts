@@ -98,5 +98,6 @@ export class SpeciesDetailComponent {
     };
   });
 
-  protected readonly marks = MONTHS.map((month) => this.i18n.translate(month).slice(0, 3));
+  /** Jan, Apr, Jul, Okt als Marken unter dem Jahresband. */
+  protected readonly marks = computed(() => MONTHS.map((month) => this.i18n.translate(month).slice(0, 3)));
 }

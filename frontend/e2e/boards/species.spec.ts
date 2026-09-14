@@ -15,6 +15,7 @@ import {
   DESKTOP_SPECIES,
   FILTER_DESKTOP,
   RESULT_HITS,
+  RESULT_REST,
   RESULT_UNKNOWN,
   TAXON,
 } from '../fixtures/species-boards';
@@ -56,6 +57,7 @@ test('SpeciesSearch', async ({ page }) => {
   await openList(page, bundle(STONE));
   await seen(page, 'Kiefernsteinpilz');
   await page.getByRole('textbox').fill('stein');
+  await page.getByRole('textbox').blur();
   await expectBoard(page, 'SpeciesSearch');
 });
 
@@ -149,7 +151,7 @@ test('FilterResult', async ({ page }) => {
     sizes: { 'cap.width': [4, 12] },
     keepUnknown: [],
   });
-  await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN]));
+  await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN, ...RESULT_REST]));
   await seen(page, 'Perlpilz');
   await expectBoard(page, 'FilterResult');
 });

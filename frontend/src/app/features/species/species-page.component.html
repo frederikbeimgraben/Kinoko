@@ -1,2 +1,8 @@
 <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
-<div class="page"><app-species-detail [slug]="slug()" /></div>
+<div class="page">
+  @if (known()) {
+    <app-species-detail [slug]="slug()" />
+  } @else if (!waiting()) {
+    <app-empty-state [text]="'species.notFound' | t" />
+  }
+</div>

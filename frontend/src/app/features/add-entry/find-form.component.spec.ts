@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { SpeciesState } from '../species/species.state';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
@@ -31,6 +32,11 @@ async function build(start: Find | null = null): Promise<Setup> {
   TestBed.inject(MapState).species.set('steinpilz');
   await vi.waitFor(() => {
     TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+  });
+  const catalogue = TestBed.inject(SpeciesState);
+  // Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf.
+  await vi.waitFor(() => {
+    expect(catalogue.species()).not.toHaveLength(0);
   });
   detectChanges();
   const submissions: FindSubmission[] = [];

@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
+import { SpeciesState } from '../species/species.state';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { imageSubmission } from '../../testing/species-images-fixture';
 import type { ImageSubmission } from '../../core/api/models';
@@ -40,6 +41,11 @@ async function build(entries: ImageSubmission[] = [OPEN], total?: number): Promi
   http
     .expectOne('/api/species-images/submissions?state=submitted&offset=0&limit=25')
     .flush({ eintraege: entries, gesamt: total ?? entries.length, limit: 25, offset: 0 });
+  const catalogue = TestBed.inject(SpeciesState);
+  // Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf.
+  await vi.waitFor(() => {
+    expect(catalogue.species()).not.toHaveLength(0);
+  });
   detectChanges();
   return { container, http, refresh: detectChanges };
 }

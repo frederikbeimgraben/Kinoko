@@ -169,6 +169,16 @@ const DESKTOP_REST: readonly Entry[] = [
   },
 ];
 
+/** Der Rest des Katalogs im Brett `FilterResult`: keine Art trifft. */
+export const RESULT_REST: readonly Entry[] = Array.from({ length: 301 }, (_, at) => ({
+  slug: `art-${String(at)}`,
+  name: `Art ${String(at)}`,
+  latin: `Genus specimen${String(at)}`,
+  edibility: 'inedible',
+  capShapes: ['flat'],
+  capWidth: [5, 10] as const,
+}));
+
 /** Katalog und Wahl des Bretts `FilterDesktop`. */
 export const FILTER_DESKTOP = {
   catalogue: [...DESKTOP_HITS, ...DESKTOP_REST],
