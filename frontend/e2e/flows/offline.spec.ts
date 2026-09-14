@@ -27,8 +27,10 @@ async function wire(page: Page, origin: string): Promise<Wire> {
     sent.push(route.request());
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{"id":"marker-eins"}' });
   });
+  // Ohne Netz scheitert das Schreiben. Lesen bleibt bei dem, was schon da ist,
+  // sonst deckte ein Schwall Toasts die Knöpfe zu.
   await page.route('**/api/**', async (route) => {
-    if (down) {
+    if (down && route.request().method() !== 'GET') {
       await route.abort('internetdisconnected');
       return;
     }
@@ -60,8 +62,10 @@ test('Melden ohne Netz, Senden bei Netz', async ({ page, baseURL }) => {
   await expect(page.locator('app-banner')).toContainText('Keine Verbindung');
 
   await page.getByRole('button', { name: 'Eintragen' }).click();
+  await expect(page.getByRole('dialog', { name: 'Eintragen' })).toBeVisible();
   await page.getByRole('button', { name: 'Marker setzen' }).click();
   await page.getByRole('button', { name: 'Ort übernehmen' }).click();
+  await expect(page.getByRole('dialog', { name: 'Marker' })).toBeVisible();
   await page.getByLabel('Name').fill('Alter Fichtenhang');
   await page.getByRole('button', { name: 'Speichern' }).click();
   await expect(page.getByRole('dialog', { name: 'Marker' })).toBeHidden();
