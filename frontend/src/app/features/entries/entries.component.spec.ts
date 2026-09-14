@@ -16,7 +16,6 @@ import { EntriesComponent } from './entries.component';
 
 const PENDING: SyncTask = {
   id: 'warte-eins',
-  deviceId: 'device',
   kind: 'find',
   operation: 'create',
   target: 'ziel-eins',

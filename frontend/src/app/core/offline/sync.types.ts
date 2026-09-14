@@ -15,10 +15,9 @@ export const SYNC_PATHS: Record<SyncKind, string> = {
   zone: '/zones',
 };
 
-/** Ein Auftrag, der noch beim Server fehlt. Seine Kennung kommt vom Gerät. */
+/** Ein Auftrag, der fehlt. `target` kommt vom Gerät und macht `PUT` idempotent. */
 export interface SyncTask<B = unknown> {
   id: string;
-  deviceId: string;
   kind: SyncKind;
   operation: SyncOperation;
   target: string;

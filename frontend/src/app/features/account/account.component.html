@@ -76,14 +76,6 @@
   }
 
   <section class="account__block">
-    <h2 class="account__section">{{ 'konto.abschnitt.offline' | t }}</h2>
-    <div class="account__list">
-      <app-list-row [title]="'konto.offlineGebiete' | t" [value]="offlineSize()" />
-      <app-list-row [title]="'konto.ausstehend' | t" [value]="pendingCount()" />
-    </div>
-  </section>
-
-  <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.ueber' | t }}</h2>
     <div class="account__list">
       <app-list-row [title]="'konto.methode' | t" />

@@ -37,15 +37,15 @@ async function shell() {
 }
 
 describe('ShellComponent', () => {
-  it('meldet auf der Karte, dass die Verbindung fehlt', async () => {
+  it('meldet auf der Karte, dass kein Netz da ist', async () => {
     const { navigate, sync, detectChanges } = await shell();
     await navigate('/karte');
-    expect(screen.queryByText('Keine Verbindung')).toBeNull();
+    expect(screen.queryByText('Offline')).toBeNull();
 
     sync.online.set(false);
     detectChanges();
 
-    expect(screen.getByText('Keine Verbindung')).toBeInTheDocument();
+    expect(screen.getByText('Offline')).toBeInTheDocument();
   });
 
   it('zeigt die drei Reiter und den Avatar über der Karte', async () => {

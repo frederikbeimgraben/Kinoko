@@ -1,37 +1,61 @@
 import { TestBed } from '@angular/core/testing';
-import { SwUpdate, type VersionEvent } from '@angular/service-worker';
-import { Subject } from 'rxjs';
 import { PwaService } from './pwa.service';
 
 /** Ein Angebot des Browsers, die App zu installieren. */
 function offer(outcome: 'accepted' | 'dismissed'): Event {
-  const event = new Event('beforeinstallprompt');
-  return Object.assign(event, {
+  return Object.assign(new Event('beforeinstallprompt'), {
     prompt: () => Promise.resolve(),
     userChoice: Promise.resolve({ outcome }),
   });
 }
 
-class UpdateStub {
-  readonly versionUpdates = new Subject<VersionEvent>();
-  isEnabled = true;
-  found = true;
+/** Ein Service Worker, der eine wartende Fassung melden kann. */
+class RegistrationDouble extends EventTarget {
+  waiting: ServiceWorker | null = null;
+  installing: ServiceWorker | null = null;
+  updates = 0;
 
-  checkForUpdate(): Promise<boolean> {
-    return Promise.resolve(this.found);
+  update(): Promise<void> {
+    this.updates += 1;
+    return Promise.resolve();
   }
 }
 
-function service(updates: UpdateStub | null = null): PwaService {
-  TestBed.configureTestingModule({
-    providers: updates === null ? [] : [{ provide: SwUpdate, useValue: updates }],
+/** Ein Arbeiter, der seinen Zustand meldet. */
+class WorkerDouble extends EventTarget {
+  state = 'installing';
+
+  install(): void {
+    this.state = 'installed';
+    this.dispatchEvent(new Event('statechange'));
+  }
+}
+
+function stubWorkers(registration: RegistrationDouble | null, controlled = true): void {
+  vi.stubGlobal('navigator', {
+    language: navigator.language,
+    serviceWorker: {
+      register: () =>
+        registration === null ? Promise.reject(new Error('gesperrt')) : Promise.resolve(registration),
+      controller: controlled ? {} : null,
+    },
   });
+}
+
+function service(): PwaService {
+  TestBed.configureTestingModule({});
   const pwa = TestBed.inject(PwaService);
   pwa.init();
   return pwa;
 }
 
 describe('PwaService', () => {
+  beforeEach(() => {
+    // Im Test läuft der Entwicklungsmodus. Er hält die Registrierung zurück,
+    // darum stellt jeder Test sie selbst.
+    vi.stubGlobal('ngDevMode', false);
+  });
+
   it('bietet die Installation an, sobald der Browser fragt', async () => {
     const pwa = service();
     expect(pwa.canInstall()).toBe(false);
@@ -63,32 +87,49 @@ describe('PwaService', () => {
     expect(pwa.canInstall()).toBe(false);
   });
 
-  it('merkt sich eine bereitstehende Fassung, ohne sie zu zeigen', () => {
-    const updates = new UpdateStub();
-    const pwa = service(updates);
+  it('meldet eine wartende Fassung schon bei der Registrierung', async () => {
+    const registration = new RegistrationDouble();
+    registration.waiting = {} as ServiceWorker;
+    stubWorkers(registration);
+
+    const pwa = service();
+    await vi.waitFor(() => {
+      expect(pwa.updateReady()).toBe(true);
+    });
+  });
+
+  it('merkt sich eine neue Fassung, ohne sie zu zeigen', async () => {
+    const registration = new RegistrationDouble();
+    const worker = new WorkerDouble();
+    stubWorkers(registration);
+    const pwa = service();
+    await vi.waitFor(() => {
+      expect(registration.updates).toBe(0);
+    });
     expect(pwa.updateReady()).toBe(false);
 
-    updates.versionUpdates.next({
-      type: 'VERSION_READY',
-      currentVersion: { hash: 'alt' },
-      latestVersion: { hash: 'neu' },
-    });
+    registration.installing = worker as unknown as ServiceWorker;
+    registration.dispatchEvent(new Event('updatefound'));
+    worker.install();
 
     expect(pwa.updateReady()).toBe(true);
   });
 
   it('fragt den Service Worker nach einer neuen Fassung', async () => {
-    expect(await service(new UpdateStub()).check()).toBe(true);
+    const registration = new RegistrationDouble();
+    stubWorkers(registration);
+    const pwa = service();
+    await vi.waitFor(() => {
+      expect(registration.updates).toBe(0);
+    });
+
+    expect(await pwa.check()).toBe(false);
+    expect(registration.updates).toBe(1);
   });
 
-  it('fragt nicht, solange der Service Worker aus ist', async () => {
-    const updates = new UpdateStub();
-    updates.isEnabled = false;
+  it('fragt nicht ohne Registrierung', async () => {
+    stubWorkers(null);
 
-    expect(await service(updates).check()).toBe(false);
-  });
-
-  it('fragt nicht ohne Service Worker', async () => {
     expect(await service().check()).toBe(false);
   });
 });

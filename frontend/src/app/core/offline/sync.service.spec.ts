@@ -31,12 +31,11 @@ describe('SyncService', () => {
     vi.stubGlobal('indexedDB', new IDBFactory());
   });
 
-  it('nimmt einen Auftrag mit Geräte-Kennung an', async () => {
+  it('nimmt einen Auftrag mit einer Kennung vom Gerät an', async () => {
     const { sync } = build();
 
     const task = await sync.enqueue('marker', 'create', MARKER);
 
-    expect(task?.deviceId).toMatch(/[0-9a-f-]{36}/);
     expect(task?.target).toMatch(/[0-9a-f-]{36}/);
     expect(sync.pendingCount()).toBe(1);
     expect(sync.pendingTargets().has(task?.target ?? '')).toBe(true);
@@ -54,7 +53,7 @@ describe('SyncService', () => {
     expect(names).toEqual(['Frueher', 'Spaeter']);
   });
 
-  it('sendet mit PUT auf die Kennung des Geräts und räumt danach weg', async () => {
+  it('schickt das PUT auf die Kennung, die das Gerät vergeben hat', async () => {
     const { sync, http } = build();
     const task = await sync.enqueue('marker', 'create', MARKER);
 
@@ -179,6 +178,22 @@ describe('SyncService', () => {
     await vi.waitFor(() => {
       expect(sync.pendingCount()).toBe(0);
     });
+  });
+
+  it('sendet jeden Auftrag genau einmal, auch bei zwei Aufrufen zugleich', async () => {
+    const { sync, http } = build();
+    await sync.enqueue('marker', 'create', MARKER);
+
+    const first = sync.flush();
+    const second = sync.flush();
+    await vi.waitFor(() => {
+      http.match(() => true)[0].flush({ id: 'marker-eins' });
+    });
+
+    expect(await first).toBe(1);
+    expect(await second).toBe(1);
+    expect(http.match(() => true)).toHaveLength(0);
+    expect(sync.pendingCount()).toBe(0);
   });
 
   it('entfernt einen Auftrag von Hand', async () => {

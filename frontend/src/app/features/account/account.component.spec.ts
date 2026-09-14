@@ -122,14 +122,9 @@ describe('KontoComponent', () => {
     expect(i18n.choice()).toBe('system');
   });
 
-  it('zeigt Offline und Über mit den Werten, die heute feststehen', async () => {
+  it('zeigt Über mit den Werten, die heute feststehen', async () => {
     await build();
 
-    for (const titel of ['Offline-Gebiete', 'Ausstehende Übertragungen']) {
-      expect(screen.getByText(titel)).toBeInTheDocument();
-    }
-    expect(screen.getByText('0 MB')).toBeInTheDocument();
-    expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByText('Methode')).toBeInTheDocument();
     expect(screen.getByText('Quellen und Lizenzen')).toBeInTheDocument();
     expect(screen.getByText('2026-09-09')).toBeInTheDocument();

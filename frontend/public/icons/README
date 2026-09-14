@@ -1,8 +1,8 @@
 Die Quelle jedes Icons ist icon.svg.
 
-Das Motiv ist ein Pilz in Weiss auf dem Gruen --color-primary aus
-src/styles/tokens.scss. Die Gruppe "any" traegt abgerundete Ecken, die Gruppe
-"maskable" fuellt die Flaeche und haelt das Motiv in der sicheren Zone.
+Das Motiv ist ein Pilz in Weiß auf dem Grün --color-primary aus
+src/styles/tokens.scss. Die Gruppe "any" trägt abgerundete Ecken, die Gruppe
+"maskable" füllt die Fläche und hält das Motiv in der sicheren Zone.
 
 So entstehen die PNG-Dateien neu:
 

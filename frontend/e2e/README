@@ -13,10 +13,10 @@ Lighthouse liest CHROME_PATH statt BROWSER_PATH.
 
 - `phone` und `desktop` messen die Boards gegen die Baselines in
   `boards/baseline/`.
-- `flows` prueft die Ablaeufe aus `artefakte/nfr.md`.
+- `flows` prüft die Abläufe aus `artefakte/nfr.md`.
 
-Ein Service Worker faengt Anfragen ab, bevor eine Attrappe greift. Darum
-sperrt `playwright.config.ts` ihn fuer alle Tests. Der Installationstest
+Ein Service Worker fängt Anfragen ab, bevor eine Attrappe greift. Darum
+sperrt `playwright.config.ts` ihn für alle Tests. Der Installationstest
 schaltet ihn mit `test.use({ serviceWorkers: 'allow' })` wieder an.
 
 ## Lighthouse: Kategorie PWA
@@ -25,9 +25,11 @@ Lighthouse 11 ist gepinnt, weil Lighthouse 12 die Kategorie PWA nicht mehr
 hat.
 
 Die Kategorie PWA ist scharf: `lighthouserc.json` bricht unter 0,9 ab, und
-der Job `fe-lighthouse` laeuft ohne `continue-on-error`. Gemessen ergibt die
+der Job `fe-lighthouse` läuft ohne `continue-on-error`. Gemessen ergibt die
 Kategorie 1,0 (Manifest installierbar, Splash, Themenfarbe, Viewport,
 maskierbares Icon).
 
-Die Kategorie Leistung warnt nur. Sie liegt bei 0,9 und damit genau auf der
-Grenze. U12 hebt sie und stellt die Zeile auf `error`.
+Die Kategorie Leistung ist ebenso scharf, ab 0,9 nach `artefakte/nfr.md`.
+Gemessen liegt sie bei 0,86 bis 0,89 und reißt die Grenze. Derselbe Build
+ohne dieses Paket liegt bei 0,89. Das Ziel gehört zu U12; bis dahin meldet
+der Job `fe-lighthouse` die Lücke, statt sie zu verschweigen.

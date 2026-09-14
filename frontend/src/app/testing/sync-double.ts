@@ -29,7 +29,6 @@ export class SyncStub {
     if (!this.accepts) return Promise.resolve(null);
     const task: SyncTask = {
       id: `task-${String(this.list().length + 1)}`,
-      deviceId: 'device',
       kind,
       operation,
       target,

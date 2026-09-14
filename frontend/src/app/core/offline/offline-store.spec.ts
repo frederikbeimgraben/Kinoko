@@ -14,6 +14,15 @@ describe('OfflineStore', () => {
     vi.stubGlobal('indexedDB', new IDBFactory());
   });
 
+  it('schließt die Verbindung und öffnet sie beim nächsten Zugriff neu', async () => {
+    const offline = store();
+    await offline.put('objects', 'eins', { id: 'eins' });
+
+    await offline.close();
+
+    expect(await offline.get('objects', 'eins')).toEqual({ id: 'eins' });
+  });
+
   it('legt jeden Bereich an', async () => {
     await store().put('catalog', 'bundle', { items: [] });
 

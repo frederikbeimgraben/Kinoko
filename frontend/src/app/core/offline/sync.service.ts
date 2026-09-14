@@ -2,7 +2,6 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiClient } from '../api/api-client';
 import { AuthService } from '../auth';
-import { deviceId } from './device';
 import { OfflineStore } from './offline-store';
 import { SYNC_PATHS, type SyncKind, type SyncOperation, type SyncTask } from './sync.types';
 
@@ -58,7 +57,6 @@ export class SyncService {
   ): Promise<SyncTask | null> {
     const task: SyncTask = {
       id: crypto.randomUUID(),
-      deviceId: deviceId(),
       kind,
       operation,
       target,

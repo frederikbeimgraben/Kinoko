@@ -59,7 +59,7 @@ test('Melden ohne Netz, Senden bei Netz', async ({ page, baseURL }) => {
   await expect(page.getByLabel(/Konto von/)).toBeVisible();
 
   await net.cut();
-  await expect(page.locator('app-banner')).toContainText('Keine Verbindung');
+  await expect(page.locator('app-banner')).toContainText('Offline');
 
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await expect(page.getByRole('dialog', { name: 'Eintragen' })).toBeVisible();

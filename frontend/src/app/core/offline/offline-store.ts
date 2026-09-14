@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
 import type { IDBPDatabase } from 'idb';
 
 /** Die Bereiche, die das Gerät vorhält. */
@@ -17,6 +17,17 @@ export const DB_VERSION = 1;
 @Injectable({ providedIn: 'root' })
 export class OfflineStore {
   private db: Promise<IDBPDatabase | null> | null = null;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => void this.close());
+  }
+
+  /** Schließt die Verbindung. Der nächste Zugriff öffnet sie neu. */
+  async close(): Promise<void> {
+    const open = this.db;
+    this.db = null;
+    (await open)?.close();
+  }
 
   async get<T>(area: OfflineArea, key: string): Promise<T | null> {
     const db = await this.open();

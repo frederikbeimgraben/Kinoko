@@ -5,7 +5,7 @@
     }
   }
   @if (offline()) {
-    <app-banner class="shell__banner" kind="error" />
+    <app-banner class="shell__banner" kind="offline" />
   }
   <app-nav class="shell__nav" [active]="active()" [variant]="wide() ? 'rail' : 'bottom'" />
   <main

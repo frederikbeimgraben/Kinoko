@@ -81,14 +81,15 @@ export class SpeciesState {
   async loadBundle(): Promise<void> {
     const known = await this.offline.get<SpeciesBundle>('catalog', BUNDLE_KEY);
     if (known !== null) this._bundle.set(known);
-    const etag = await this.offline.get<string>('catalog', ETAG_KEY);
-    const fresh = await firstValueFrom(
-      this.client.getTagged<SpeciesBundle>(BUNDLE_PATH, known === null ? null : etag),
+    const etag = known === null ? null : await this.offline.get<string>('catalog', ETAG_KEY);
+    const answer = await firstValueFrom(
+      this.client.getTagged<SpeciesBundle>(BUNDLE_PATH, etag, { quiet: true }),
     ).catch(() => null);
-    if (fresh === null) return;
-    this._bundle.set(fresh.body);
-    await this.offline.put('catalog', BUNDLE_KEY, fresh.body);
-    await this.offline.put('catalog', ETAG_KEY, fresh.etag);
+    if (answer === null) return;
+    await this.offline.put('catalog', ETAG_KEY, answer.etag);
+    if (answer.body === null) return;
+    this._bundle.set(answer.body);
+    await this.offline.put('catalog', BUNDLE_KEY, answer.body);
   }
 
   loadCatalogue(): void {
