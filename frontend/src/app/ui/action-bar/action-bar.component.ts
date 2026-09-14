@@ -16,6 +16,8 @@ export class ActionBarComponent {
   readonly secondary = input<string>();
   /** Färbt die Hauptaktion rot statt grün, etwa für „Alles löschen“. */
   readonly danger = input(false);
+  /** Färbt die zweite Aktion rot, etwa für „Faktor entfernen“. */
+  readonly secondaryDanger = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();

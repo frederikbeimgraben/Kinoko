@@ -6,7 +6,15 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { EntriesState } from '../entries/entries.state';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
-import { MapState } from '../map/map.state';
+import { MapState, type ObjectKind } from '../map/map.state';
+import type { TranslationKey } from '../../core/i18n/translations';
+
+/** Der Name des Blatts für Hilfsmittel. */
+const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
+  find: 'fund.blatt',
+  marker: 'marker.blatt',
+  zone: 'zone.blatt',
+};
 import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
 import { ZoneSheetComponent } from './zone-sheet.component';
@@ -52,19 +60,19 @@ export class ObjectSheetComponent {
 
   protected readonly find = computed<Find | null>(() => {
     const offen = this.map.object();
-    if (offen?.art !== 'fund') return null;
+    if (offen?.kind !== 'find') return null;
     return this.eintraege.finds().find((candidate) => candidate.id === offen.id) ?? null;
   });
 
   protected readonly marker = computed<Marker | null>(() => {
     const offen = this.map.object();
-    if (offen?.art !== 'marker') return null;
+    if (offen?.kind !== 'marker') return null;
     return this.eintraege.marker().find((candidate) => candidate.id === offen.id) ?? null;
   });
 
   protected readonly zone = computed<Zone | null>(() => {
     const offen = this.map.object();
-    if (offen?.art !== 'zone') return null;
+    if (offen?.kind !== 'zone') return null;
     return this.eintraege.zones().find((candidate) => candidate.id === offen.id) ?? null;
   });
 
@@ -87,7 +95,7 @@ export class ObjectSheetComponent {
   /** Der Name des Blatts für Hilfsmittel: Fund, Marker oder Zone. */
   protected readonly sheetName = computed(() => {
     const offen = this.map.object();
-    return offen === null ? '' : this.i18n.translate(`${offen.art}.blatt`);
+    return offen === null ? '' : this.i18n.translate(SHEET_NAME[offen.kind]);
   });
 
   /** Offen, aber nichts gefunden: der Eintrag ist fort oder gehört einem anderen Konto. */

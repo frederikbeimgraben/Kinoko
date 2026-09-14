@@ -149,7 +149,7 @@ describe('EintraegeComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
 
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ art: 'fund', id: FIND.id });
+      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'find', id: FIND.id });
     });
   });
 

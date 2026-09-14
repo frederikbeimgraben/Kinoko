@@ -12,7 +12,7 @@ import { BadgeComponent, CardComponent, DialogComponent, ToastService } from '@s
 import type { Find } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ManifestService } from '../../core/tiles/manifest.service';
+import { TileService } from '../../core/tiles/tile.service';
 import { NOW } from '../../core/tiles/now';
 import { currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import { valueAtPoint } from '../../core/tiles/value-at-point';
@@ -56,7 +56,7 @@ export class FindSheetComponent {
   private readonly arten = inject(SpeciesState);
   private readonly eintraege = inject(EntriesState);
   private readonly map = inject(MapState);
-  private readonly manifests = inject(ManifestService);
+  private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
 
   readonly find = input.required<Find>();
@@ -114,7 +114,7 @@ export class FindSheetComponent {
   constructor() {
     this.arten.loadCatalogue();
     effect(() => {
-      void this.fetchValue(this.find(), this.map.woche());
+      void this.fetchValue(this.find(), this.map.week());
     });
   }
 
@@ -148,7 +148,9 @@ export class FindSheetComponent {
     const kartenSlug = this.art()?.kartenSlug ?? null;
     if (kartenSlug === null) return;
     try {
-      const manifest = await this.manifests.get(kartenSlug);
+      await this.tiles.load(kartenSlug);
+      const manifest = this.tiles.manifestOf(kartenSlug);
+      if (manifest === null) return;
       const woche =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
       if (woche === null) return;

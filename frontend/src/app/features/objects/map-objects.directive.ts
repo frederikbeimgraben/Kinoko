@@ -1,10 +1,10 @@
-import { Directive, effect, inject } from '@angular/core';
+import { Directive, effect, inject, output } from '@angular/core';
 import type { Feature, FeatureCollection } from 'geojson';
 import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
 import { LocationService, type OwnLocation } from '../../core/location/location.service';
 import { circleAround } from '../../map/geo-circle';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import type { ObjectLayer } from '../../map/map-adapter';
+import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
 import { EntriesState } from '../entries/entries.state';
 import { colorHex } from '../entries/colors';
 import { MapState, type ObjectKind } from '../map/map.state';
@@ -36,12 +36,56 @@ function collection(features: Feature[]): FeatureCollection {
  * Was liegt, entscheiden die drei Signale des Kartenzustands; der Ebenen-Knopf
  * aus B1 schaltet dieselben Signale.
  */
-@Directive({ selector: '[appMapObjects]' })
+const HOLD = 500;
+
+@Directive({
+  selector: '[appMapObjects]',
+  host: {
+    '(pointerdown)': 'onPointerDown($event)',
+    '(pointerup)': 'onPointerEnd()',
+    '(pointercancel)': 'onPointerEnd()',
+    '(pointermove)': 'onPointerEnd()',
+  },
+})
 export class MapObjectsDirective {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
   private readonly locating = inject(LocationService);
   private readonly map = inject(MapState);
+
+  /** Ein langer Druck auf ein Objekt: der Ort auf dem Bildschirm und das Ziel. */
+  readonly objectHeld = output<{ x: number; y: number }>();
+
+  private timer: ReturnType<typeof setTimeout> | null = null;
+  private held: ObjectHit | null = null;
+
+  /** Das Objekt, auf das zuletzt lange gedrückt wurde. */
+  target(): ObjectHit | null {
+    return this.held;
+  }
+
+  protected onPointerDown(event: PointerEvent): void {
+    const host = event.currentTarget as HTMLElement;
+    const box = host.getBoundingClientRect();
+    const x = event.clientX - box.left;
+    const y = event.clientY - box.top;
+    this.stopHold();
+    this.timer = setTimeout(() => {
+      const hit = this.adapter.objectAt(x, y);
+      if (hit === null) return;
+      this.held = hit;
+      this.objectHeld.emit({ x: event.clientX, y: event.clientY });
+    }, HOLD);
+  }
+
+  protected onPointerEnd(): void {
+    this.stopHold();
+  }
+
+  private stopHold(): void {
+    if (this.timer !== null) clearTimeout(this.timer);
+    this.timer = null;
+  }
 
   constructor() {
     this.adapter.onObjectSelect((layer, id) => {
@@ -122,9 +166,9 @@ export class MapObjectsDirective {
   }
 
   private open(layer: ObjectLayer, id: string): void {
-    const art: ObjectKind | null =
-      layer === 'zonen' ? 'zone' : layer === 'marker' ? 'marker' : layer === 'funde' ? 'fund' : null;
-    if (art === null) return;
-    this.map.object.set({ art, id });
+    const kind: ObjectKind | null =
+      layer === 'zonen' ? 'zone' : layer === 'marker' ? 'marker' : layer === 'funde' ? 'find' : null;
+    if (kind === null) return;
+    this.map.object.set({ kind, id });
   }
 }

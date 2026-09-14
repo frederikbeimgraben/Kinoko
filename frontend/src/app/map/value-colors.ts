@@ -98,7 +98,7 @@ export function colorize(pixel: Uint8ClampedArray, lut: Uint8ClampedArray): void
 }
 
 /** Wie die Kombination gefärbt wird. */
-export type CombinationRule = 'schnitt' | 'abgestuft';
+export type CombinationRule = 'intersection' | 'graded';
 
 /**
  * Die Schnittmenge ist eine Maske, kein Wert: eine Farbe, halb deckend, damit
@@ -151,14 +151,14 @@ export function combine(
   for (let i = 0; i < bytes.length; i++) {
     if (bytes[i] === 0) return EMPTY_DOT;
     const degree = fulfilment(bytes[i], bounds[i]);
-    if (rule === 'schnitt') {
+    if (rule === 'intersection') {
       if (degree < 1) return 0;
     } else {
       if (degree === 0) return 0;
       product *= degree;
     }
   }
-  return rule === 'schnitt' ? 1 : product ** (1 / bytes.length);
+  return rule === 'intersection' ? 1 : product ** (1 / bytes.length);
 }
 
 /**
@@ -168,7 +168,7 @@ export function combine(
  * begraben.
  */
 export function createCombinationLut(colors: readonly string[], rule: CombinationRule): Uint8ClampedArray {
-  if (rule === 'abgestuft') return createLut({ art: 'wahrscheinlichkeit', top: 1 }, colors);
+  if (rule === 'graded') return createLut({ art: 'wahrscheinlichkeit', top: 1 }, colors);
   const lut = new Uint8ClampedArray(LUT_SIZE);
   const [r, g, b] = zuRgb(colors[0]);
   for (let byte = 1; byte < 256; byte++) {

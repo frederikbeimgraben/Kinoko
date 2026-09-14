@@ -3,6 +3,7 @@ import { NOW } from '../../core/tiles/now';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import type { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { MapState } from '../map/map.state';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { ZoneValue } from '../../core/api/models';
@@ -55,6 +56,7 @@ async function build(withMap = false): Promise<Setup> {
     inputs: { zone: ZONE },
     providers: provider(map, drawer),
   });
+  TestBed.inject(MapState).species.set('steinpilz');
   const http = TestBed.inject(HttpTestingController);
   http.match('/api/arten').forEach((request) => {
     request.flush(SPECIES_LIST);

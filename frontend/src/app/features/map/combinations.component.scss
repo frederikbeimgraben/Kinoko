@@ -1,0 +1,23 @@
+:host {
+  display: contents;
+}
+
+.combinations__card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.combinations__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+}

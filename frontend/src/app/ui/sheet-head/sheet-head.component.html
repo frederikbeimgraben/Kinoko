@@ -1,18 +1,15 @@
 <div class="head">
   <div class="head__row">
     <p class="head__title">
-      @if (titleLink()) {
-        <button
-          class="head__species head__species--link tap"
-          type="button"
-          data-press="scale"
-          (click)="titleClick.emit()"
-        >
-          {{ title() }}
-        </button>
-      } @else {
-        <span class="head__species">{{ title() }}</span>
-      }
+      <button
+        class="head__species tap"
+        type="button"
+        data-press="scale"
+        [class.head__species--link]="titleLink()"
+        (click)="titleClick.emit()"
+      >
+        {{ title() }}
+      </button>
       @if (week()) {
         <span class="head__divider" aria-hidden="true">·</span>
         <span class="head__week">{{ week() }}</span>

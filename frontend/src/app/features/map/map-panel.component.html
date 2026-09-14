@@ -1,0 +1,41 @@
+<app-segmented
+  [options]="views()"
+  [value]="state.view()"
+  [label]="'map.view' | t"
+  (valueChange)="setView($event)"
+/>
+
+@switch (state.view()) {
+  @case ('forecast') {
+    <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+  }
+  @case ('layer') {
+    <app-form-field
+      [label]="'map.tab.layer' | t"
+      [value]="view.layer()?.title ?? ''"
+      [readOnly]="true"
+      (displayClick)="layerChosen.emit()"
+    />
+    <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+  }
+  @case ('combination') {
+    <app-segmented
+      class="panel__rule"
+      [options]="rules()"
+      [value]="combination.rule()"
+      [label]="'map.combination.rule' | t"
+      (valueChange)="setRule($event)"
+    />
+    @if (combination.rule() === 'graded') {
+      <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+    }
+    <app-combination
+      [factors]="combination.factors()"
+      [sources]="view.sources()"
+      (activeChange)="combination.toggle($event.factor, $event.active)"
+      (openFactor)="factorOpened.emit($event)"
+      (add)="factorAdded.emit()"
+      (saveRequested)="saveRequested.emit()"
+    />
+  }
+}

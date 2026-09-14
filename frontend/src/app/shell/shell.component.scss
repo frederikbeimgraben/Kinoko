@@ -40,8 +40,8 @@
 // Zeichenfläche neben die Spalte. Darüber liegen Navigation und Reiterinhalt
 // in der linken Spalte.
 .shell--column {
-  grid-template-rows: var(--size-nav) minmax(0, 1fr);
-  grid-template-columns: var(--size-column) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
 }
 
 // Eine eigene Stapelschicht: das Blatt der Karte liegt darin und kommt damit
@@ -49,7 +49,7 @@
 .shell__map {
   position: relative;
   z-index: 0;
-  grid-area: 1 / 1 / 3 / 3;
+  grid-area: 1 / 1 / 2 / 4;
   min-block-size: 0;
 }
 
@@ -62,19 +62,20 @@
 .shell--column .shell__nav {
   z-index: 1;
   grid-area: 1 / 1 / 2 / 2;
+  block-size: 100%;
 }
 
 // Der Reiter steht in der linken Spalte unter der Navigation und deckt das
 // Blatt der Karte zu, das dort auf dem Reiter Karte liegt.
 .shell--column .shell__content {
   z-index: 1;
-  grid-area: 2 / 1 / 3 / 2;
+  grid-area: 1 / 2 / 2 / 3;
   background: var(--color-bg);
 }
 
 // Die Verwaltung bringt ihre eigenen Spalten mit und legt sich über die Karte.
 .shell--column .shell__content--full {
-  grid-area: 2 / 1 / 3 / 3;
+  grid-area: 1 / 2 / 2 / 4;
 }
 
 // Auf dem Reiter Karte liefert die Route nichts: dort steht das Blatt der
@@ -84,14 +85,5 @@
 }
 
 .shell--column .shell__avatar {
-  inset-inline-start: calc(var(--size-column) + 12px);
-}
-
-// Die Leiste liegt über der Karte am oberen Rand, wie im Board MapOffline.
-.shell__banner {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 3;
-  padding-block-start: env(safe-area-inset-top);
+  display: none;
 }

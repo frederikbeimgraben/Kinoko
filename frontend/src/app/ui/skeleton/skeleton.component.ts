@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal, type OnDestroy } from '@angular/core';
 
-export type SkeletonKind = 'row' | 'tile' | 'card' | 'block';
+export type SkeletonKind = 'row' | 'tile' | 'card' | 'block' | 'grid';
 
 const DELAY_MS = 300;
 
@@ -8,7 +8,7 @@ const DELAY_MS = 300;
 @Component({
   selector: 'app-skeleton',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { 'aria-hidden': 'true' },
+  host: { 'aria-hidden': 'true', '[class.skeleton--grid]': "kind() === 'grid'" },
   templateUrl: './skeleton.component.html',
   styleUrl: './skeleton.component.scss',
 })

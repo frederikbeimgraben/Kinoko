@@ -8,7 +8,12 @@
     {{ primary() }}
   </app-button>
   @if (secondary(); as label) {
-    <app-button class="footer__main" variant="secondary" [block]="true" (click)="secondaryClick.emit()">
+    <app-button
+      class="footer__main"
+      [variant]="secondaryDanger() ? 'danger' : 'secondary'"
+      [block]="true"
+      (click)="secondaryClick.emit()"
+    >
       {{ label }}
     </app-button>
   }

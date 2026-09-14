@@ -64,6 +64,8 @@ describe('Ebenen', () => {
     expect(RAIN).toEqual({
       id: 'regen_4w',
       label: 'Niederschlag der letzten 4 Wochen',
+      title: 'Niederschlag der letzten 4 Wochen',
+      note: '',
       unit: 'mm',
       fixed: false,
       low: 0,

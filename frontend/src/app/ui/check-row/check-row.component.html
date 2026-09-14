@@ -12,4 +12,7 @@
       <span class="row__sub">{{ subline() }}</span>
     }
   </span>
+  @if (value(); as text) {
+    <span class="row__value">{{ text }}</span>
+  }
 </app-checkbox>

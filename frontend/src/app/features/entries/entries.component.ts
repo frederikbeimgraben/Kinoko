@@ -44,7 +44,7 @@ interface Row {
   notiz: string;
   badge: Marke | null;
   /** `null` bei einem Eintrag, der noch auf die Übertragung wartet. */
-  object: { art: ObjectKind; id: string } | null;
+  object: { kind: ObjectKind; id: string } | null;
 }
 
 /**
@@ -167,7 +167,7 @@ export class EntriesComponent {
       subline: this.findSubline(this.datum(fund.datum), fund.anzahl, this.state.melder() ?? ''),
       notiz: fund.notiz ?? '',
       badge: this.sharedBadge(fund.sichtbarkeit),
-      object: { art: 'fund', id: fund.id },
+      object: { kind: 'find', id: fund.id },
     };
   }
 
@@ -180,7 +180,7 @@ export class EntriesComponent {
       notiz: fund.notiz ?? '',
       badge: { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' },
       // Ein fremder Fund hat kein Blatt: der Dienst gibt ihn nur als Punkt her.
-      object: fund.eigen ? { art: 'fund', id: fund.id } : null,
+      object: fund.eigen ? { kind: 'find', id: fund.id } : null,
     };
   }
 
@@ -194,7 +194,7 @@ export class EntriesComponent {
       }),
       notiz: marker.notiz ?? '',
       badge: this.sharedBadge(marker.sichtbarkeit),
-      object: { art: 'marker', id: marker.id },
+      object: { kind: 'marker', id: marker.id },
     };
   }
 
@@ -209,7 +209,7 @@ export class EntriesComponent {
       }),
       notiz: zone.notiz ?? '',
       badge: this.sharedBadge(zone.sichtbarkeit),
-      object: { art: 'zone', id: zone.id },
+      object: { kind: 'zone', id: zone.id },
     };
   }
 

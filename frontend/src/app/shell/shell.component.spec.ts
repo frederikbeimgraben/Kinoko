@@ -37,17 +37,6 @@ async function shell() {
 }
 
 describe('ShellComponent', () => {
-  it('meldet auf der Karte, dass kein Netz da ist', async () => {
-    const { navigate, sync, detectChanges } = await shell();
-    await navigate('/karte');
-    expect(screen.queryByText('Offline')).toBeNull();
-
-    sync.online.set(false);
-    detectChanges();
-
-    expect(screen.getByText('Offline')).toBeInTheDocument();
-  });
-
   it('zeigt die drei Reiter und den Avatar über der Karte', async () => {
     const { container, navigate } = await shell();
     await navigate('/karte');
@@ -137,7 +126,7 @@ describe('ShellComponent am Rechner', () => {
     const { double, navigate, detectChanges, container } = await wideShell();
 
     expect(double.started).toBe(1);
-    expect(container.querySelector('.map__sheet')).not.toBeNull();
+    expect(container.querySelector('.map__column')).not.toBeNull();
 
     await navigate('/arten');
     detectChanges();

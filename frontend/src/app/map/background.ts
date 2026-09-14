@@ -10,23 +10,19 @@ export const BACKGROUND: Record<EffectiveTheme, string> = {
   dunkel: 'https://tiles.openfreemap.org/styles/dark',
 };
 
-/**
- * Was der Ebenen-Knopf zur Wahl stellt. Topo und Satellit stehen mit, damit
- * die Wahl vollständig ist; für beide steht noch keine freie Quelle fest.
- */
-export type Background = 'automatisch' | 'hell' | 'dunkel' | 'topo' | 'satellit';
+/** Was der Ebenen-Knopf zur Wahl stellt. Für Topo und Satellit fehlt die Quelle. */
+export type Background = 'map' | 'light' | 'topo' | 'satellite';
 
-export const BACKGROUNDS: readonly Background[] = ['automatisch', 'hell', 'dunkel', 'topo', 'satellit'];
+export const BACKGROUNDS: readonly Background[] = ['map', 'light', 'topo', 'satellite'];
 
 /** Topo und Satellit sind noch nicht wählbar. */
 export function backgroundAvailable(choice: Background): boolean {
-  return choice === 'automatisch' || choice === 'hell' || choice === 'dunkel';
+  return choice === 'map' || choice === 'light';
 }
 
-/** Der Stil zur Wahl. „Automatisch“ folgt dem Theme der App. */
+/** Der Stil zur Wahl. „Karte“ folgt dem Theme der App. */
 export function styleFor(choice: Background, theme: EffectiveTheme): string {
-  if (choice === 'hell' || choice === 'dunkel') return BACKGROUND[choice];
-  return BACKGROUND[theme];
+  return choice === 'light' ? BACKGROUND.hell : BACKGROUND[theme];
 }
 
 /** Deutschland als [Länge, Breite]. Darauf wird die Karte beim Öffnen gepasst. */

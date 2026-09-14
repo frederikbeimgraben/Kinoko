@@ -384,7 +384,7 @@ describe('ArtComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Auf der Karte anzeigen' }));
 
     expect(state.activeSpecies()).toBe('steinpilz');
-    expect(TestBed.inject(MapState).art()).toBe('boletus_edulis');
+    expect(TestBed.inject(MapState).species()).toBe('steinpilz');
     expect(calls).toHaveBeenCalledWith(['/karte']);
   });
 

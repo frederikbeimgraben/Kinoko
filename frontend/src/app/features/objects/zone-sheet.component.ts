@@ -17,7 +17,7 @@ import type { Zone, ZoneValue } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { currentWeek, findWeek } from '../../core/tiles/manifest';
-import { ManifestService } from '../../core/tiles/manifest.service';
+import { TileService } from '../../core/tiles/tile.service';
 import { NOW } from '../../core/tiles/now';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -64,7 +64,7 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly eintraege = inject(EntriesState);
   private readonly i18n = inject(I18nService);
   private readonly map = inject(MapState);
-  private readonly manifests = inject(ManifestService);
+  private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
   private readonly toasts = inject(ToastService);
   private readonly draw = inject(ZONE_DRAWER);
@@ -117,7 +117,7 @@ export class ZoneSheetComponent implements OnDestroy {
   constructor() {
     this.arten.loadCatalogue();
     effect(() => {
-      void this.fetchValue(this.zone().id, this.map.art(), this.map.woche());
+      void this.fetchValue(this.zone().id, this.map.species(), this.map.week());
     });
   }
 
@@ -183,14 +183,14 @@ export class ZoneSheetComponent implements OnDestroy {
    * Fragt den Dienst nach dem Flächenmittel. Der Endpunkt kennt Arten des
    * Katalogs; die Karte kennt nur den Slug ihrer Kacheln, darum der Umweg.
    */
-  private async fetchValue(id: string, kartenSlug: string, weekKey: string | null): Promise<void> {
+  private async fetchValue(id: string, chosen: string, weekKey: string | null): Promise<void> {
     this.value.set(null);
-    const art = (this.arten.catalogue()?.arten ?? []).find(
-      (candidate) => candidate.kartenSlug === kartenSlug,
-    );
+    const art = (this.arten.catalogue()?.arten ?? []).find((candidate) => candidate.slug === chosen);
     if (!art) return;
     try {
-      const manifest = await this.manifests.get(kartenSlug);
+      await this.tiles.load(art.kartenSlug ?? chosen);
+      const manifest = this.tiles.manifestOf(art.kartenSlug ?? chosen);
+      if (manifest === null) return;
       const woche =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
       if (woche === null) return;

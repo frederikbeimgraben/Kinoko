@@ -1,77 +1,43 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ButtonComponent, DialogComponent, InputComponent } from '@stupa-makers/ui-kit';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { Layer } from '../../core/tiles/layers';
-import type { Combination } from '../../core/api/models';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FactorRowComponent } from '../../ui/factor-row/factor-row.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { conditionText, type Faktor } from './factors';
+import { conditionText, type Factor } from './factors';
 
 /** Ein Faktor, wie ihn die Zeile braucht: mit aufgelöster Quelle. */
 interface Row {
-  factor: Faktor;
+  factor: Factor;
   name: string;
   subline: string;
   condition: string;
 }
 
-/**
- * Die Darstellung „Kombination“: die Liste der Faktoren und die Aktionen
- * darunter. Sie hängt an keiner Art. Wer angemeldet ist, findet darüber seine
- * gespeicherten Kombinationen. Die Regel steht bei den Schaltern des Blatts,
- * denn sie gehört zur Darstellung, nicht zu den Faktoren.
- */
+/** Die Darstellung „Kombination“: die Faktoren und die Aktionen darunter. */
 @Component({
   selector: 'app-combination',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionBarComponent,
-    ButtonComponent,
-    DialogComponent,
-    FactorRowComponent,
-    FormsModule,
-    InputComponent,
-    ListRowComponent,
-    SvgIconComponent,
-    TranslatePipe,
-  ],
+  imports: [ActionBarComponent, FactorRowComponent, TranslatePipe],
   templateUrl: './combination.component.html',
   styleUrl: './combination.component.scss',
 })
-export class KombinationComponent {
+export class CombinationComponent {
   private readonly i18n = inject(I18nService);
 
-  readonly factors = input.required<readonly Faktor[]>();
+  readonly factors = input.required<readonly Factor[]>();
   /** Die Quellen der Faktoren, nach Kennung. Was fehlt, wird nicht gezeigt. */
   readonly sources = input.required<ReadonlyMap<string, Layer>>();
-  /** Die Woche, auf die sich die Wochenfaktoren beziehen. */
-  readonly weekText = input<string>();
-  readonly saved = input<readonly Combination[]>([]);
-  readonly signedIn = input(false);
-  /** Die Seite hat die Anmeldung geklärt; jetzt fehlt nur noch der Name. */
-  readonly asksName = input(false);
 
-  readonly activeChange = output<{ factor: Faktor; active: boolean }>();
-  readonly openFactor = output<Faktor>();
+  readonly activeChange = output<{ factor: Factor; active: boolean }>();
+  readonly openFactor = output<string>();
   readonly add = output();
   readonly saveRequested = output();
-  readonly save = output<string>();
-  readonly nameCancelled = output();
-  readonly picked = output<Combination>();
-  readonly remove = output<Combination>();
-
-  protected readonly name = signal('');
-  /** Die Kombination, deren Löschen noch bestätigt werden muss. */
-  protected readonly toDelete = signal<Combination | null>(null);
 
   protected readonly rows = computed<Row[]>(() => {
     const sources = this.sources();
     const locale = this.i18n.locale();
-    const bis = this.i18n.translate('faktor.bis');
+    const to = this.i18n.translate('common.to');
     return this.factors().flatMap((factor) => {
       const layer = sources.get(factor.source);
       if (!layer) return [];
@@ -79,50 +45,17 @@ export class KombinationComponent {
         {
           factor,
           name: layer.label,
-          subline: layer.fixed
-            ? this.i18n.translate('faktor.konstant')
-            : (this.weekText() ?? this.i18n.translate('faktor.konstant')),
-          condition: conditionText(factor, layer, locale, bis),
+          subline: layer.note,
+          condition: conditionText(factor, layer, locale, to),
         },
       ];
     });
   });
 
-  /** Ohne Konto führt der Knopf zuerst zur Anmeldung, und das steht auf ihm. */
-  protected readonly saveText = computed(() =>
-    this.i18n.translate(this.signedIn() ? 'kombination.speichern' : 'kombination.anmeldenZumSpeichern'),
-  );
-
   protected readonly canSave = computed(() => this.factors().length > 0);
 
-  /** `app-action-bar` zeigt keinen deaktivierten Zustand, darum prüft der Griff selbst. */
+  /** `app-action-bar` zeigt keinen gesperrten Zustand, darum prüft der Griff. */
   protected requestSave(): void {
     if (this.canSave()) this.saveRequested.emit();
-  }
-
-  protected bestaetigeNamen(): void {
-    const name = this.name().trim();
-    if (name === '') return;
-    this.name.set('');
-    this.save.emit(name);
-  }
-
-  protected brichNamenAb(): void {
-    this.name.set('');
-    this.nameCancelled.emit();
-  }
-
-  protected confirmDelete(): void {
-    const combination = this.toDelete();
-    this.toDelete.set(null);
-    if (combination) this.remove.emit(combination);
-  }
-
-  protected deleteAsk(combination: Combination): string {
-    return this.i18n.translate('kombination.loeschenFrage', { name: combination.name });
-  }
-
-  protected deleteHint(combination: Combination): string {
-    return this.i18n.translate('kombination.loeschen', { name: combination.name });
   }
 }

@@ -41,7 +41,7 @@ describe('SheetHeadComponent', () => {
     fixture.componentInstance.back.subscribe(() => calls.push('back'));
     fixture.componentInstance.playback.subscribe(() => calls.push('playback'));
     fixture.componentInstance.forward.subscribe(() => calls.push('forward'));
-    const buttons = screen.getAllByRole('button');
+    const buttons = screen.getAllByRole('button').slice(1);
 
     await userEvent.click(buttons[0]);
     await userEvent.click(buttons[1]);
@@ -52,7 +52,7 @@ describe('SheetHeadComponent', () => {
 
   it('shows the pause icon and a pressed state while playing', async () => {
     const { fixture } = await render(SheetHeadComponent, { inputs: { title: 'Porcini', playing: false } });
-    const buttons = screen.getAllByRole('button');
+    const buttons = screen.getAllByRole('button').slice(1);
 
     expect(buttons[1]).toHaveAttribute('aria-pressed', 'false');
 
@@ -62,17 +62,30 @@ describe('SheetHeadComponent', () => {
     expect(buttons[1]).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('leaves out the title link and the arrows when the head has none', async () => {
+  it('leaves out the arrows when the head has none', async () => {
     await render(SheetHeadComponent, { inputs: { title: 'Combination', arrows: false } });
 
     expect(screen.getByText('Combination')).toBeInTheDocument();
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('marks the title as a link only when it opens a choice', async () => {
+    const { fixture } = await render(SheetHeadComponent, {
+      inputs: { title: 'Porcini', titleLink: false },
+    });
+
+    expect(screen.getByRole('button', { name: 'Porcini' })).not.toHaveClass('head__species--link');
+
+    fixture.componentRef.setInput('titleLink', true);
+    fixture.detectChanges();
+
+    expect(screen.getByRole('button', { name: 'Porcini' })).toHaveClass('head__species--link');
   });
 
   it('marks every arrow as a tap target with a press state', async () => {
     await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
 
-    for (const button of screen.getAllByRole('button')) {
+    for (const button of screen.getAllByRole('button').slice(1)) {
       expect(button).toHaveClass('tap');
       expect(button).toHaveAttribute('data-press', 'scale');
     }

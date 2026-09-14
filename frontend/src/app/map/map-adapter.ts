@@ -90,6 +90,13 @@ export interface MapOptions {
  * bleibt.
  */
 export const OBJECT_LAYERS = ['zonen', 'geteilteFunde', 'marker', 'funde', 'location'] as const;
+
+/** Ein Objekt unter dem Finger: seine Ebene, seine Kennung und sein Ort. */
+export interface ObjectHit {
+  layer: ObjectLayer;
+  id: string;
+  point: readonly [number, number];
+}
 export type ObjectLayer = (typeof OBJECT_LAYERS)[number];
 
 /**
@@ -121,6 +128,8 @@ export interface MapAdapter {
   hideObjects(layer: ObjectLayer): void;
   /** Ein Tipp auf ein Objekt. Die Kennung steht in `id` des Features. */
   onObjectSelect(handler: (layer: ObjectLayer, id: string) => void): void;
+  /** Das Objekt unter einem Punkt der Fläche, für das lange Drücken. */
+  objectAt(x: number, y: number): ObjectHit | null;
   /** Die rohe Karte für Terra Draw. `null`, solange sie nicht steht. */
   rawMap(): MapLibreMap | null;
 }
@@ -523,6 +532,23 @@ export class MapLibreAdapter implements MapAdapter {
 
   onObjectSelect(handler: (layer: ObjectLayer, id: string) => void): void {
     this.chosen = handler;
+  }
+
+  objectAt(x: number, y: number): ObjectHit | null {
+    const map = this.map;
+    if (!map) return null;
+    for (const layer of OBJECT_LAYERS) {
+      if (layer === 'location') continue;
+      const ids = layerPaintLayers(layer).filter((id) => map.getLayer(id) !== undefined);
+      if (ids.length === 0) continue;
+      const found = map.queryRenderedFeatures([x, y], { layers: ids });
+      if (found.length === 0) continue;
+      const id = found[0].properties['id'] as string | undefined;
+      if (id === undefined) continue;
+      const centre = map.unproject([x, y]);
+      return { layer, id, point: [centre.lng, centre.lat] };
+    }
+    return null;
   }
 
   rawMap(): MapLibreMap | null {

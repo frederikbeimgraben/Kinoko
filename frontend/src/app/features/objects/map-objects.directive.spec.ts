@@ -100,17 +100,17 @@ describe('KartenObjekteDirective', () => {
 
     setup.map.chosen?.('funde', FIND.id);
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ art: 'fund', id: FIND.id });
+      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'find', id: FIND.id });
     });
 
     setup.map.chosen?.('marker', MARKER.id);
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ art: 'marker', id: MARKER.id });
+      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'marker', id: MARKER.id });
     });
 
     setup.map.chosen?.('zonen', ZONE.id);
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ art: 'zone', id: ZONE.id });
+      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'zone', id: ZONE.id });
     });
   });
 

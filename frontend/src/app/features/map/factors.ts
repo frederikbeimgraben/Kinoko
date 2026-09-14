@@ -1,44 +1,32 @@
 import { formatValue, formatNumber, type Layer } from '../../core/tiles/layers';
 import { EDGE_SHARE, type CombinationBound } from '../../map/value-colors';
-import type { WireFactor } from '../../core/api/models';
+import type { Condition, WireFactor } from '../../core/api/models';
 
-/** Die drei Formen einer Bedingung. Alle drei sind eine Spanne über der Skala. */
-export type Condition = 'unter' | 'ueber' | 'zwischen';
-
-/**
- * Ein Faktor der Kombination: eine Quelle mit einer Bedingung.
- *
- * `von` und `bis` stehen in der Einheit der Quelle. Bei „unter“ zählt nur
- * `bis`, bei „über“ nur `von`; die andere Grenze kommt von der Skala.
- */
-export interface Faktor {
+/** Ein Faktor: eine Quelle mit einer Bedingung in ihrer Einheit. */
+export interface Factor {
   source: string;
   condition: Condition;
-  von: number;
-  bis: number;
+  low: number;
+  high: number;
   active: boolean;
 }
 
-/** Kurzform der Bedingung in der Adresse. */
-const SHORT: Record<Condition, string> = { unter: 'le', ueber: 'ge', zwischen: 'zw' };
+/** Kurzform der Bedingung in der Ablage. */
+const SHORT: Record<Condition, string> = { below: 'le', above: 'ge', between: 'bw' };
 
-const FROM_SHORT: Record<string, Condition> = { le: 'unter', ge: 'ueber', zw: 'zwischen' };
+const FROM_SHORT: Record<string, Condition> = { le: 'below', ge: 'above', bw: 'between' };
 
-const SOURCE_PATTERN = /^[a-z0-9_]{1,40}$/;
+const SOURCE_PATTERN = /^[a-z0-9_-]{1,60}$/;
 
-/**
- * Die Kombination als ein Wert der Adresse:
- * `regen_4w:ge:80,temperatur:zw:8:16,buche:ge:0.3`. Ein abgehakter Faktor
- * trägt ein Ausrufezeichen vorn, damit er beim Teilen nicht verloren geht.
- */
-export function encodeFactors(factors: readonly Faktor[]): string {
+/** Die Kombination als ein Wert. Ein abgehakter Faktor trägt ein `!` vorn. */
+export function encodeFactors(factors: readonly Factor[]): string {
   return factors.map(encodeFactor).join(',');
 }
 
-function encodeFactor(factor: Faktor): string {
+function encodeFactor(factor: Factor): string {
   const head = `${factor.active ? '' : '!'}${factor.source}:${SHORT[factor.condition]}`;
-  if (factor.condition === 'zwischen') return `${head}:${numberText(factor.von)}:${numberText(factor.bis)}`;
-  return `${head}:${numberText(factor.condition === 'unter' ? factor.bis : factor.von)}`;
+  if (factor.condition === 'between') return `${head}:${numberText(factor.low)}:${numberText(factor.high)}`;
+  return `${head}:${numberText(factor.condition === 'below' ? factor.high : factor.low)}`;
 }
 
 /** Ohne Nachkommastellen, wo keine nötig sind: `0.3`, aber `80`. */
@@ -46,15 +34,15 @@ function numberText(value: number): string {
   return String(Math.round(value * 1000) / 1000);
 }
 
-export function readFactors(text: string | null): Faktor[] {
+export function readFactors(text: string | null): Factor[] {
   if (text === null || text === '') return [];
   return text
     .split(',')
     .map(readFactor)
-    .filter((factor): factor is Faktor => factor !== null);
+    .filter((factor): factor is Factor => factor !== null);
 }
 
-function readFactor(text: string): Faktor | null {
+function readFactor(text: string): Factor | null {
   const parts = text.split(':');
   const active = !parts[0].startsWith('!');
   const source = active ? parts[0] : parts[0].slice(1);
@@ -63,33 +51,33 @@ function readFactor(text: string): Faktor | null {
   const first = Number(parts[2]);
   const second = Number(parts[3]);
   if (!Number.isFinite(first)) return null;
-  if (condition === 'zwischen') {
+  if (condition === 'between') {
     if (!Number.isFinite(second)) return null;
-    return { source, condition, von: Math.min(first, second), bis: Math.max(first, second), active };
+    return { source, condition, low: Math.min(first, second), high: Math.max(first, second), active };
   }
   return {
     source,
     condition,
-    von: condition === 'ueber' ? first : 0,
-    bis: condition === 'unter' ? first : 0,
+    low: condition === 'above' ? first : 0,
+    high: condition === 'below' ? first : 0,
     active,
   };
 }
 
 /** Die Bedingung als Spanne über der Skala der Quelle, in ihrer Einheit. */
-export function span(factor: Faktor, layer: Layer): { von: number; bis: number } {
-  if (factor.condition === 'unter') return { von: layer.low, bis: factor.bis };
-  if (factor.condition === 'ueber') return { von: factor.von, bis: layer.high };
-  return { von: factor.von, bis: factor.bis };
+export function span(factor: Factor, layer: Layer): { low: number; high: number } {
+  if (factor.condition === 'below') return { low: layer.low, high: factor.high };
+  if (factor.condition === 'above') return { low: factor.low, high: layer.high };
+  return { low: factor.low, high: factor.high };
 }
 
-/** Die Bedingung in Worten: `≥ 80 mm`, `≤ 15 Grad`, `8 bis 16 Grad`. */
-export function conditionText(factor: Faktor, layer: Layer, locale: string, bis: string): string {
-  if (factor.condition === 'unter') return `≤ ${formatValue(factor.bis, layer, locale)}`;
-  if (factor.condition === 'ueber') return `≥ ${formatValue(factor.von, layer, locale)}`;
-  // Die Einheit steht einmal, am Ende: „8 bis 16 Grad“, nicht zweimal.
-  const links = formatNumber(factor.von, layer, locale);
-  return `${links} ${bis} ${formatValue(factor.bis, layer, locale)}`;
+/** Die Bedingung in Worten, etwa `≥ 80 mm`. */
+export function conditionText(factor: Factor, layer: Layer, locale: string, to: string): string {
+  if (factor.condition === 'below') return `≤ ${formatValue(factor.high, layer, locale)}`;
+  if (factor.condition === 'above') return `≥ ${formatValue(factor.low, layer, locale)}`;
+  // Die Einheit steht einmal, am Ende der Spanne, nicht zweimal.
+  const left = formatNumber(factor.low, layer, locale);
+  return `${left} ${to} ${formatValue(factor.high, layer, locale)}`;
 }
 
 /**
@@ -97,32 +85,29 @@ export function conditionText(factor: Faktor, layer: Layer, locale: string, bis:
  * beginnt darum bei 1.
  */
 export function byteForValue(layer: Layer, value: number): number {
-  const breite = layer.high - layer.low;
-  const relative = breite === 0 ? 0 : (value - layer.low) / breite;
+  const width = layer.high - layer.low;
+  const relative = width === 0 ? 0 : (value - layer.low) / width;
   return Math.min(255, Math.max(1, Math.round(1 + relative * 254)));
 }
 
 /** Die Bedingung, wie der Worker sie braucht: in Bytes, mit Randbreite. */
-export function boundFor(factor: Faktor, layer: Layer): CombinationBound {
+export function boundFor(factor: Factor, layer: Layer): CombinationBound {
   const values = span(factor, layer);
   return {
-    von: byteForValue(layer, values.von),
-    bis: byteForValue(layer, values.bis),
+    von: byteForValue(layer, values.low),
+    bis: byteForValue(layer, values.high),
     edge: Math.round(254 * EDGE_SHARE),
   };
 }
 
 /** Ein Faktor je Quelle: derselbe Wert zweimal zu prüfen hilft niemandem. */
-export function replaceFactor(factors: readonly Faktor[], next: Faktor): Faktor[] {
+export function replaceFactor(factors: readonly Factor[], next: Factor): Factor[] {
   const spot = factors.findIndex((factor) => factor.source === next.source);
   if (spot < 0) return [...factors, next];
   return factors.map((factor, i) => (i === spot ? next : factor));
 }
 
-/**
- * Eine kurze Kennung der Kombination. Sie steht im Ordner der Adresse, damit
- * MapLibre die Kacheln einer alten Kombination nicht weiterbenutzt.
- */
+/** Eine Kennung der Kombination. MapLibre verwirft damit alte Kacheln. */
 export function combinationKey(parts: readonly string[]): string {
   let hash = 5381;
   const text = parts.join('|');
@@ -130,27 +115,24 @@ export function combinationKey(parts: readonly string[]): string {
   return hash.toString(16).padStart(8, '0');
 }
 
-/**
- * Ein Faktor für den Draht. Die Bedingung nennt nur die Grenze, die sie
- * braucht; die andere bleibt leer, weil eine Zahl dort nichts messen würde.
- */
-export function toWire(factor: Faktor): WireFactor {
+/** Ein Faktor für den Draht. Nur die gebrauchte Grenze steht darin. */
+export function toWire(factor: Factor): WireFactor {
   return {
-    quelle: factor.source,
-    bedingung: factor.condition,
-    von: factor.condition === 'unter' ? null : factor.von,
-    bis: factor.condition === 'ueber' ? null : factor.bis,
-    aktiv: factor.active,
+    source: factor.source,
+    condition: factor.condition,
+    low: factor.condition === 'below' ? null : factor.low,
+    high: factor.condition === 'above' ? null : factor.high,
+    active: factor.active,
   };
 }
 
-/** Ein Faktor vom Draht. Die leere Grenze wird zu null, damit sie zählt. */
-export function fromWire(factor: WireFactor): Faktor {
+/** Ein Faktor vom Draht. Eine leere Grenze wird zu null, damit sie zählt. */
+export function fromWire(factor: WireFactor): Factor {
   return {
-    source: factor.quelle,
-    condition: factor.bedingung,
-    von: factor.von ?? 0,
-    bis: factor.bis ?? 0,
-    active: factor.aktiv,
+    source: factor.source,
+    condition: factor.condition,
+    low: factor.low ?? 0,
+    high: factor.high ?? 0,
+    active: factor.active,
   };
 }

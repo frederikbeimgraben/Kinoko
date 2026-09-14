@@ -8,6 +8,7 @@ import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
 import type { Find } from '../../core/api/models';
+import { MapState } from '../map/map.state';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 
 interface Setup {
@@ -27,6 +28,7 @@ async function build(start: Find | null = null): Promise<Setup> {
     },
     providers: [provideHttpClient(), provideHttpClientTesting()],
   });
+  TestBed.inject(MapState).species.set('steinpilz');
   TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
   detectChanges();
   const submissions: FindSubmission[] = [];
@@ -167,6 +169,7 @@ describe('FundFormularComponent', () => {
       },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
+    TestBed.inject(MapState).species.set('steinpilz');
     TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
 
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-06');
@@ -188,6 +191,7 @@ describe('FundFormularComponent', () => {
       },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
+    TestBed.inject(MapState).species.set('steinpilz');
     TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
 
     expect(screen.getByLabelText('Anzahl')).toHaveValue(null);
