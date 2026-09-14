@@ -1,0 +1,17 @@
+// Nur die Liste scrollt, nie die Seite darum herum.
+:host {
+  display: block;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.list {
+  block-size: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.list__sentinel {
+  block-size: 1px;
+}

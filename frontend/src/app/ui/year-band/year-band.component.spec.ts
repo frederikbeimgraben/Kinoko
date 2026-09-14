@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { YearBandComponent, bodies } from './year-band.component';
 
 const MARKS = ['Jan', 'Apr', 'Jul', 'Okt'];
@@ -55,5 +56,14 @@ describe('YearBandComponent', () => {
     expect(start.width).toBeCloseTo(16.7, 1);
     expect(end.left).toBeCloseTo(83.3, 1);
     expect(end.width).toBeCloseTo(16.7, 1);
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(YearBandComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { fromMonth: 6, toMonth: 10, months: MARKS, label: 'Growth June to October' },
+    });
+
+    noGermanText(container);
   });
 });

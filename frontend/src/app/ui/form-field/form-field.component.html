@@ -3,8 +3,9 @@
 }}</label>
 @if (readOnly()) {
   <button
-    class="field field--button"
+    class="field field--button tap"
     type="button"
+    data-press="scale"
     [class.field--empty]="empty()"
     (click)="displayClick.emit()"
   >
@@ -12,14 +13,17 @@
   </button>
 } @else if (multiline()) {
   <textarea
-    class="field field--multiline"
+    class="field field--multiline tap"
+    data-press="scale"
     [id]="fieldId"
     [value]="value()"
     [attr.placeholder]="placeholder() || null"
+    [attr.inputmode]="mode()"
+    [attr.enterkeyhint]="hint()"
     (input)="onInput($event)"
   ></textarea>
 } @else if (icon()) {
-  <span class="field field--icon">
+  <span class="field field--icon tap" data-press="scale">
     <app-svg-icon class="field__icon" [name]="icon()!" [size]="18" />
     <input
       class="field__input"
@@ -27,16 +31,21 @@
       [id]="fieldId"
       [value]="value()"
       [attr.placeholder]="placeholder() || null"
+      [attr.inputmode]="mode()"
+      [attr.enterkeyhint]="hint()"
       (input)="onInput($event)"
     />
   </span>
 } @else {
   <input
-    class="field"
+    class="field tap"
+    data-press="scale"
     [type]="kind()"
     [id]="fieldId"
     [value]="value()"
     [attr.placeholder]="placeholder() || null"
+    [attr.inputmode]="mode()"
+    [attr.enterkeyhint]="hint()"
     (input)="onInput($event)"
   />
 }

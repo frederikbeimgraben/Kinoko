@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { WeekButtonComponent } from './week-button.component';
 
 describe('WeekButtonComponent', () => {
@@ -29,5 +31,43 @@ describe('WeekButtonComponent', () => {
       'aria-pressed',
       'true',
     );
+  });
+
+  it('meldet die Wahl beim Antippen', async () => {
+    const { fixture } = await render(WeekButtonComponent, { inputs: { jahr: 2026, woche: 40 } });
+    let calls = 0;
+    fixture.componentInstance.chosen.subscribe(() => (calls += 1));
+
+    await userEvent.click(screen.getByRole('button', { name: 'KW 40 · 2026' }));
+
+    expect(calls).toBe(1);
+  });
+
+  it('trägt die Trefferfläche und den Druckzustand', async () => {
+    const { container } = await render(WeekButtonComponent, { inputs: { jahr: 2026, woche: 40 } });
+
+    const button = container.querySelector('.week');
+    expect(button).toHaveClass('tap');
+    expect(button).toHaveAttribute('data-press', 'scale');
+  });
+
+  it('bleibt gesperrt ohne Klick auszulösen', async () => {
+    const { fixture } = await render(WeekButtonComponent, {
+      inputs: { jahr: 2026, woche: 40, locked: true },
+    });
+    let calls = 0;
+    fixture.componentInstance.chosen.subscribe(() => (calls += 1));
+
+    expect(screen.getByRole('button', { name: 'KW 40 · 2026' })).toBeDisabled();
+    expect(calls).toBe(0);
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(WeekButtonComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { jahr: 2026, woche: 40 },
+    });
+
+    noGermanText(container);
   });
 });

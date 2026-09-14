@@ -1,29 +1,22 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/**
- * Eine Zeile in einer Liste: vorn ein Zeichen, in der Mitte Titel, Unterzeile
- * und Notiz, rechts ein Wert oder ein Badge. Anklickbare Zeilen werden zu
- * Schaltflächen, damit sie über die Tastatur erreichbar sind.
- *
- * Was mit `hinten` kommt, gehört zur Zeile und liegt im Tippfeld. Was mit
- * `aktion` kommt, ist eine eigene Handlung und liegt daneben: ein Knopf im
- * Knopf wäre für Hilfsmittel ein Fehler.
- */
+/** Zeile mit Titel, Unterzeile, Wert und Chevron, dazu Slots vorn, hinten und als Aktion. */
 @Component({
   selector: 'app-list-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, SvgIconComponent],
   templateUrl: './list-row.component.html',
   styleUrl: './list-row.component.scss',
 })
 export class ListRowComponent {
-  readonly titel = input.required<string>();
+  readonly title = input.required<string>();
   readonly subline = input<string>();
-  readonly notiz = input<string>();
   readonly value = input<string>();
+  readonly chevron = input(false);
   readonly clickable = input(false);
-  /** Eine Zeile, die eine Wahl trägt, meldet sich als gedrückt. */
+  /** Eine gewählte Zeile meldet sich als gedrückt. */
   readonly selected = input(false);
 
   readonly chosen = output();

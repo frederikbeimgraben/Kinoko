@@ -1,64 +1,68 @@
-// Drei feste Spuren und eine zweite Reihe darunter.
-//
-// Die Dauer stand einmal rechts neben der Nach-Flaeche und schob sie aus der
-// Flucht: im Abschnitt Farbe enden alle Flaechen an derselben Kante, hier
-// endete die Zeile mit einem Wort. Sie steht jetzt unter den Flaechen.
-//
-// Die Spuren sind fest, damit zwei Arten in der Gegenueberstellung dieselben
-// Kanten teilen. Fehlt die Ausgangsfarbe, bleiben die ersten beiden Spuren
-// leer und die Nach-Flaeche steht trotzdem rechts, wo die Flaechen darueber
-// enden.
+// Feste Spuren: Von, Pfeil, Nach enden in jeder Zeile an derselben Kante.
 :host {
+  display: block;
+  overflow: hidden;
   --pilz-change-field: 52px;
   --pilz-change-arrow: 14px;
-  --pilz-change-hourglass: 15px;
+  --pilz-change-value: 56px;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-3);
+  align-items: center;
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.row:last-child {
+  border-block-end: 0;
+}
+
+.row__trigger {
+  overflow: hidden;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row__value {
+  display: grid;
+  grid-template-columns:
+    var(--pilz-change-field) var(--pilz-change-arrow) var(--pilz-change-field)
+    minmax(var(--pilz-change-value), auto);
+  column-gap: var(--space-2);
+  align-items: center;
   --pilz-colour-width: var(--pilz-change-field);
   --pilz-colour-height: 26px;
-
-  display: inline-grid;
-  grid-template-columns: var(--pilz-change-field) var(--pilz-change-arrow) var(--pilz-change-field);
-  gap: 4px;
-  align-items: center;
   color: var(--color-text-muted);
 }
 
-// Ohne diese Zuweisung ruecken Pfeil und Nach-Flaeche in die erste Spur, sobald
-// die Ausgangsfarbe fehlt.
-.change__from {
+.row__from {
   grid-column: 1;
 }
 
-.change__arrow {
+.row__arrow {
   grid-column: 2;
+  justify-self: center;
 }
 
-.change__to {
+.row__to {
   grid-column: 3;
 }
 
-// Die Dauer steht unter den Flaechen und endet an derselben Kante wie sie.
-//
-// Linksbuendig haengt sie unter der Beschriftung statt unter der Farbe: die
-// Zelle richtet ihre Werte rechts aus, und die Dauer ist einer davon.
-.change__speed {
+.row__speed {
   display: flex;
-  grid-column: 1 / -1;
+  grid-column: 4;
   gap: 4px;
   align-items: center;
   justify-content: flex-end;
   font-size: var(--fs-xs);
   white-space: nowrap;
-}
-
-// In der Gegenueberstellung stehen zwei Arten nebeneinander. Dort ist alles
-// eine Nummer kleiner, die Bauform bleibt dieselbe.
-:host(.colour-change--small) {
-  --pilz-change-field: 30px;
-  --pilz-change-arrow: 12px;
-  --pilz-change-hourglass: 12px;
-  --pilz-colour-height: 20px;
-}
-
-:host(.colour-change--small) .change__speed {
-  font-size: 11px;
 }

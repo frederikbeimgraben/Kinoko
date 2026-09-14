@@ -1,9 +1,15 @@
 <header class="pageheader">
   @if (back()) {
-    <button class="pageheader__back" type="button" [attr.aria-label]="backText()" (click)="backClick.emit()">
-      <app-svg-icon name="zurueck" [size]="20" />
+    <button
+      class="pageheader__back tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'kopfleiste.zurueck' | t"
+      (click)="backClick.emit()"
+    >
+      <app-svg-icon name="back" [size]="20" />
     </button>
   }
-  <h1 class="pageheader__title">{{ titel() }}</h1>
+  <h1 class="pageheader__title">{{ title() }}</h1>
   <div class="pageheader__actions"><ng-content /></div>
 </header>

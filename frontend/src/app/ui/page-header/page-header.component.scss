@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  block-size: var(--pilz-pageheader-height);
+  block-size: var(--size-header);
   padding-inline: var(--space-5);
   background: var(--color-surface);
   border-block-end: var(--border-width) solid var(--color-border);
@@ -12,19 +12,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--control-height);
-  block-size: var(--control-height);
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
   color: var(--color-primary);
-  cursor: pointer;
   background: none;
   border: 0;
   border-radius: var(--radius-md);
 }
 
 .pageheader__title {
+  overflow: hidden;
   font-size: var(--fs-xl);
   font-weight: var(--fw-semibold);
-  letter-spacing: var(--tracking-tight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .pageheader__actions {
@@ -33,20 +34,4 @@
 
 .pageheader__actions:empty {
   display: none;
-}
-
-// Am Rechner steht die Kopfzeile in einer 400-px-Spalte. Die Maße der Mockups
-// sind für das Telefon gedacht; hier nehmen sie zu viel Höhe.
-@media (min-width: 1024px) {
-  .pageheader {
-    block-size: 56px;
-  }
-
-  .pageheader__title {
-    font-size: 20px;
-  }
-
-  .pageheader__actions app-button {
-    min-block-size: var(--pilz-field-height);
-  }
 }

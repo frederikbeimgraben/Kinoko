@@ -1,16 +1,21 @@
 <div class="head">
   <div class="head__row">
     <p class="head__title">
-      @if (titleAsLink()) {
-        <button class="head__species head__species--link" type="button" (click)="titleClick.emit()">
-          {{ titel() }}
+      @if (titleLink()) {
+        <button
+          class="head__species head__species--link tap"
+          type="button"
+          data-press="scale"
+          (click)="titleClick.emit()"
+        >
+          {{ title() }}
         </button>
       } @else {
-        <span class="head__species">{{ titel() }}</span>
+        <span class="head__species">{{ title() }}</span>
       }
-      @if (woche()) {
+      @if (week()) {
         <span class="head__divider" aria-hidden="true">·</span>
-        <span class="head__week">{{ woche() }}</span>
+        <span class="head__week">{{ week() }}</span>
       }
       @if (hint()) {
         <span class="head__hint">{{ hint() }}</span>
@@ -19,29 +24,32 @@
     @if (arrows()) {
       <div class="head__arrows">
         <button
-          class="head__arrow"
+          class="head__arrow tap"
           type="button"
-          [attr.aria-label]="text('zeitleiste.zurueck')"
+          data-press="scale"
+          [attr.aria-label]="backArrow.key | t"
           (click)="back.emit()"
         >
-          <app-svg-icon name="links" [size]="12" />
+          <app-svg-icon [name]="backArrow.icon" [size]="12" />
         </button>
         <button
-          class="head__arrow"
+          class="head__arrow tap"
           type="button"
-          [attr.aria-label]="text(playing() ? 'zeitleiste.anhalten' : 'zeitleiste.abspielen')"
+          data-press="scale"
+          [attr.aria-label]="(playing() ? 'zeitleiste.anhalten' : 'zeitleiste.abspielen') | t"
           [attr.aria-pressed]="playing()"
           (click)="playback.emit()"
         >
           <app-svg-icon [name]="playing() ? 'pause' : 'abspielen'" [size]="12" />
         </button>
         <button
-          class="head__arrow"
+          class="head__arrow tap"
           type="button"
-          [attr.aria-label]="text('zeitleiste.vor')"
+          data-press="scale"
+          [attr.aria-label]="forwardArrow.key | t"
           (click)="forward.emit()"
         >
-          <app-svg-icon name="rechts" [size]="12" />
+          <app-svg-icon [name]="forwardArrow.icon" [size]="12" />
         </button>
       </div>
     }

@@ -24,12 +24,7 @@ interface ShownWeek extends TimelineWeek {
   schluessel: string;
 }
 
-/**
- * Die Wochen einer Art nebeneinander. Die Jahresmarke wird abgeleitet, damit
- * der Aufrufer nur die Wochen des Manifests reichen muss. Die Leiste ist ein
- * einziges Tabulatorziel; die Pfeiltasten laufen darin weiter, wie bei einer
- * Werkzeugleiste.
- */
+/** Die Wochen einer Art nebeneinander, ein Tabulatorziel mit Pfeiltasten. */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,10 +39,7 @@ export class TimelineComponent {
   readonly wochen = input.required<readonly TimelineWeek[]>();
   readonly active = input<{ jahr: number; woche: number } | null>(null);
   readonly label = input.required<string>();
-  /**
-   * Gedämpft und ohne Wahl. Eine feste Ebene gilt für alle Wochen; die Leiste
-   * bleibt sichtbar, damit die Zeit greifbar bleibt, nimmt aber nichts an.
-   */
+  /** Gedämpft und ohne Wahl, für eine feste Ebene ohne Woche. */
   readonly dimmed = input(false);
 
   readonly chosen = output<TimelineWeek>();
@@ -90,10 +82,7 @@ export class TimelineComponent {
     this.bringIntoView(target, true);
   }
 
-  /**
-   * Schiebt die Woche in die Mitte der Leiste. `scrollTo` auf der Leiste, nicht
-   * `scrollIntoView`: das zöge sonst die ganze Seite mit.
-   */
+  /** Schiebt die Woche in die Mitte. `scrollTo` bewegt nur die Leiste, nicht die Seite. */
   private bringIntoView(index: number, withFocus: boolean): void {
     const button = (this.buttons()[index] as WeekButtonComponent | undefined)?.element();
     const bar = this.bar().nativeElement;

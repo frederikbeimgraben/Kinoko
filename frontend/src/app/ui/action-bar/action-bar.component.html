@@ -1,57 +1,15 @@
 <div class="footer">
-  @if (primary()) {
-    <app-button
-      class="footer__main"
-      variant="primary"
-      [block]="true"
-      [disabled]="mainDisabled()"
-      (click)="mainClick.emit()"
-    >
-      @if (mainIcon()) {
-        <app-svg-icon [name]="mainIcon()!" [size]="16" />
-      }
-      {{ primary() }}
+  <app-button
+    class="footer__main"
+    [variant]="danger() ? 'danger' : 'primary'"
+    [block]="true"
+    (click)="primaryClick.emit()"
+  >
+    {{ primary() }}
+  </app-button>
+  @if (secondary(); as label) {
+    <app-button class="footer__main" variant="secondary" [block]="true" (click)="secondaryClick.emit()">
+      {{ label }}
     </app-button>
-  }
-  @if (subline()) {
-    <app-note class="footer__sub" variant="unter">{{ subline() }}</app-note>
-  }
-  @if (second() && secondary()) {
-    <div class="footer__row">
-      <app-button variant="secondary" [block]="true" (click)="secondClick.emit()">{{ second() }}</app-button>
-      <app-button variant="secondary" [block]="true" (click)="secondaryClick.emit()">{{
-        secondary()
-      }}</app-button>
-    </div>
-  } @else if (danger() && secondary()) {
-    <div class="footer__row">
-      <app-button
-        class="footer__danger"
-        variant="secondary"
-        [block]="true"
-        [disabled]="dangerDisabled()"
-        (click)="dangerClick.emit()"
-        >{{ danger() }}</app-button
-      >
-      <app-button variant="secondary" [block]="true" (click)="secondaryClick.emit()">{{
-        secondary()
-      }}</app-button>
-    </div>
-  } @else if (secondary()) {
-    <app-button class="footer__main" variant="secondary" [block]="true" (click)="secondaryClick.emit()">{{
-      secondary()
-    }}</app-button>
-  } @else if (danger()) {
-    <app-button
-      class="footer__danger"
-      variant="secondary"
-      [block]="true"
-      [disabled]="dangerDisabled()"
-      (click)="dangerClick.emit()"
-      >{{ danger() }}</app-button
-    >
-  }
-  @if (ghost()) {
-    <app-button variant="ghost" [block]="true" (click)="ghostClick.emit()">{{ ghost() }}</app-button>
   }
 </div>

@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+:host(:last-child) {
+  border-block-end: 0;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  inline-size: 100%;
+  padding-block: var(--space-4);
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.row__stack {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+
+.row__title {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.row__meta {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.row__note {
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+.row__pending {
+  flex: none;
+}

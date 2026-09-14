@@ -1,5 +1,5 @@
 .head {
-  padding-inline: var(--pilz-gutter);
+  padding-inline: var(--space-4);
   padding-block-end: var(--space-3);
   border-block-end: var(--border-width) solid var(--color-border);
 }
@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  block-size: var(--pilz-field-height);
+  block-size: var(--size-control);
 }
 
 .head__title {
@@ -34,11 +34,10 @@
   text-decoration: underline;
   text-decoration-color: var(--color-border);
   text-underline-offset: 3px;
-  cursor: pointer;
 }
 
 .head__divider {
-  margin-inline: 6px;
+  margin-inline: var(--space-1);
   font-weight: var(--fw-medium);
   color: var(--color-text-muted);
 }
@@ -48,7 +47,7 @@
 }
 
 .head__hint {
-  margin-inline-start: 6px;
+  margin-inline-start: var(--space-1);
   color: var(--color-danger);
 }
 
@@ -65,10 +64,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: 38px;
-  block-size: var(--control-height);
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
   color: var(--color-text);
-  cursor: pointer;
   background: var(--color-surface);
   border: 0;
   border-inline-start: var(--border-width) solid var(--color-border-strong);
@@ -76,12 +74,4 @@
 
 .head__arrow:first-child {
   border-inline-start: 0;
-}
-
-// Am Rechner ist der Daumen nicht das Maß: dort dürfen die Pfeile flacher
-// stehen, damit der Kopf des Blatts nicht so hoch baut. Die Breite bleibt.
-@media (min-width: 1024px) {
-  .head__arrow {
-    block-size: 32px;
-  }
 }

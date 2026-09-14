@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 /** Eine wählbare Farbe für Zone oder Marker. */
-export interface ColorSwatch {
+export interface ColourSwatch {
   value: string;
   label: string;
 }
@@ -24,13 +24,13 @@ export const OBJECT_COLORS: readonly `#${string}`[] = [
  * Pfeiltasten des Browsers die Wahl bedienen.
  */
 @Component({
-  selector: 'app-color-swatches',
+  selector: 'app-colour-swatches',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './color-swatches.component.html',
-  styleUrl: './color-swatches.component.scss',
+  templateUrl: './colour-swatches.component.html',
+  styleUrl: './colour-swatches.component.scss',
 })
-export class ColorSwatchesComponent {
-  readonly colors = input.required<readonly ColorSwatch[]>();
+export class ColourSwatchesComponent {
+  readonly colors = input.required<readonly ColourSwatch[]>();
   readonly value = input.required<string>();
   readonly label = input.required<string>();
 

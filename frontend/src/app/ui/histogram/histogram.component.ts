@@ -8,11 +8,7 @@ interface Bar {
   inside: boolean;
 }
 
-/**
- * Die Verteilung einer Ebene über Deutschland, 40 Klassen. Klassen innerhalb
- * der gewählten Bedingung stehen in Primärfarbe, die übrigen in Randfarbe.
- * Die Anteile kommen vorgerechnet aus dem Manifest.
- */
+/** Verteilung einer Ebene, 40 Klassen. Innerhalb der Bedingung in Primärfarbe. */
 @Component({
   selector: 'app-histogram',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,7 +18,7 @@ interface Bar {
 export class HistogramComponent {
   readonly anteile = input.required<readonly number[]>();
   readonly label = input.required<string>();
-  /** Untere und obere Grenze der Bedingung, je 0 bis 1. */
+  /** Untere und obere Grenze der Bedingung, Werte zwischen 0 und 1. */
   readonly von = input(0);
   readonly bis = input(1);
 

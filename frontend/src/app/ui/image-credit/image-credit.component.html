@@ -1,1 +1,4 @@
-<span class="credit">{{ text() }}</span>
+<span class="credit"
+  >{{ 'image.field.photo' | t }}: {{ photographer() }} ·
+  {{ isOwn() ? (ownPhotoKey | t) : licenceCode() }}</span
+>

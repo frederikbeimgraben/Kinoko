@@ -9,13 +9,7 @@ import {
 } from '@angular/core';
 import { ApiClient } from '../../core/api/api-client';
 
-/**
- * Ein Bild, das noch nicht öffentlich ist.
- *
- * Bis zur Freigabe hängt eine Bilddatei an den Rechten der Person. Ein nacktes
- * `src` trägt kein Token und bekäme darum ein 404. Das Bild geht deshalb
- * denselben Weg wie jede andere Anfrage und wird als Objekt-URL gezeigt.
- */
+/** Ein Bild ohne öffentlichen Zugriff. Es lädt mit Token als Objekt-URL. */
 @Component({
   selector: 'app-private-image',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,11 +25,7 @@ export class PrivateImageComponent implements OnDestroy {
 
   protected readonly source = signal<string | null>(null);
 
-  /**
-   * Dieselbe Adresse noch einmal, aber als gewöhnliches Feld. Der Effekt darf
-   * das Signal nicht lesen: er hinge sonst an seinem eigenen Ergebnis und
-   * liefe endlos.
-   */
+  /** Die Objekt-URL als einfaches Feld. Der Effekt liest kein Signal. */
   private held: string | null = null;
 
   constructor() {
@@ -47,8 +37,8 @@ export class PrivateImageComponent implements OnDestroy {
           this.held = URL.createObjectURL(data);
           this.source.set(this.held);
         },
-        // Der Toast des ApiClient sagt schon Bescheid. Hier bleibt die Fläche
-        // leer, statt ein kaputtes Bild zu zeigen.
+        // Der ApiClient meldet den Fehler schon per Toast.
+        // Die Fläche bleibt hier leer statt ein kaputtes Bild zu zeigen.
         error: () => {
           this.source.set(null);
         },
@@ -60,7 +50,7 @@ export class PrivateImageComponent implements OnDestroy {
     this.release();
   }
 
-  /** Eine Objekt-URL bleibt sonst im Speicher, bis die Seite neu lädt. */
+  /** Eine offene Objekt-URL bleibt sonst dauerhaft im Speicher. */
   private release(): void {
     if (this.held !== null) URL.revokeObjectURL(this.held);
     this.held = null;

@@ -1,0 +1,23 @@
+<app-dialog
+  [open]="open()"
+  [title]="title()"
+  [closeLabel]="'objekt.schliessen' | t"
+  (closed)="cancelled.emit()"
+>
+  @if (meta(); as meta) {
+    <p class="confirm__meta">{{ meta }}</p>
+  }
+  <div class="confirm__actions">
+    <app-button
+      class="confirm__confirm"
+      [variant]="danger() ? 'danger' : 'primary'"
+      [block]="true"
+      (click)="confirmed.emit()"
+    >
+      {{ confirmLabel() ?? ('objekt.loeschen' | t) }}
+    </app-button>
+    <app-button class="confirm__cancel" variant="secondary" [block]="true" (click)="cancelled.emit()">
+      {{ 'objekt.abbrechen' | t }}
+    </app-button>
+  </div>
+</app-dialog>

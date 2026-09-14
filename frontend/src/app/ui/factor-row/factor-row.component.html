@@ -1,14 +1,17 @@
 <app-checkbox
-  class="factor__switches"
+  class="factor__switches tap"
+  data-press="tint"
   [id]="fieldId"
   [ngModel]="active()"
   (ngModelChange)="activeChange.emit($event)"
 >
   <span class="factor__stack">
-    <span class="factor__name">{{ name() }}</span>
-    @if (subline()) {
-      <span class="factor__sub">{{ subline() }}</span>
+    <span class="factor__name">{{ factor().name }}</span>
+    @if (factor().range) {
+      <span class="factor__sub">{{ factor().range }}</span>
     }
   </span>
 </app-checkbox>
-<button class="factor__condition" type="button" (click)="conditionClick.emit()">{{ condition() }}</button>
+<button class="factor__condition tap" type="button" data-press="scale" (click)="conditionClick.emit()">
+  {{ factor().condition }}
+</button>

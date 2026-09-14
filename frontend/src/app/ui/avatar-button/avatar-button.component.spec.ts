@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { AvatarButtonComponent } from './avatar-button.component';
 
 describe('AvatarButtonComponent', () => {
@@ -25,5 +26,24 @@ describe('AvatarButtonComponent', () => {
     });
 
     expect(container.querySelector('span[aria-hidden]')?.textContent).toBe('');
+  });
+
+  it('trägt Tippfläche und Druckzustand', async () => {
+    const { container } = await render(AvatarButtonComponent, {
+      inputs: { name: 'frederik', label: 'Konto' },
+    });
+
+    const button = container.querySelector('button');
+    expect(button).toHaveClass('tap');
+    expect(button).toHaveAttribute('data-press', 'scale');
+  });
+
+  it('bleibt ohne deutschen Text im leeren Katalog', async () => {
+    const { container } = await render(AvatarButtonComponent, {
+      inputs: { name: 'frederik', label: 'account' },
+      providers: [EMPTY_CATALOG],
+    });
+
+    noGermanText(container);
   });
 });

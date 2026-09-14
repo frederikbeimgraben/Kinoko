@@ -1,16 +1,19 @@
-// Dieselbe Geometrie wie eine Marke des Kits: Polster, Schriftgrad, Gewicht,
-// Zeilenhoehe und Radius stehen dort und stehen hier gleich. Nur die Farbe ist
-// frei, und nur sie traegt die Bedeutung.
+// Geometrie und Schrift wie eine Marke des Kits. Nur die Farbe ist frei.
 :host {
   display: inline-flex;
+  // Die Marke des Kits kennt kein Spatium für 3 px 10 px, darum eigene Masse.
+  --pilz-level-padding-block: 3px;
+  --pilz-level-padding-inline: 10px;
 }
 
 .level {
   display: inline-flex;
   align-items: center;
-  padding: var(--space-1) var(--space-3);
+  padding: var(--pilz-level-padding-block) var(--pilz-level-padding-inline);
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--pilz-level-colour) 14%, transparent);
+  // Fläche und Schrift teilen sich dieselbe Farbe: Text kräftig, Fläche blass
+  // vor der Fläche der App, damit 4,5:1 hält, gleich welche Farbe kommt.
+  background: color-mix(in srgb, var(--pilz-level-colour) 14%, var(--color-surface));
   color: var(--pilz-level-colour);
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);

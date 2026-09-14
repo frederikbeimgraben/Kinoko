@@ -1,24 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Die Kopfleiste einer Listenseite, 64 px, mit Zurück und Titel. */
+/** Der Kopf einer Seite: Titel, ein wahlweiser Zurück-Knopf, ein Aktions-Slot. */
 @Component({
   selector: 'app-page-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent],
+  imports: [SvgIconComponent, TranslatePipe],
   templateUrl: './page-header.component.html',
   styleUrl: './page-header.component.scss',
 })
 export class PageHeaderComponent {
-  private readonly i18n = inject(I18nService);
-
-  readonly titel = input.required<string>();
+  readonly title = input.required<string>();
   readonly back = input(false);
 
   readonly backClick = output();
-
-  protected backText(): string {
-    return this.i18n.translate('kopfleiste.zurueck');
-  }
 }

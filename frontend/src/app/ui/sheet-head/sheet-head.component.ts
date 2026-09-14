@@ -1,33 +1,31 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import type { TranslationKey } from '../../core/i18n/translations';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/**
- * Der Kopf des Blatts: Art, Woche, Pfeilgruppe und darunter die Zeitleiste.
- *
- * Kein `header`: das Blatt ist ein Dialog, und ein `header` darin zählte als
- * zweite Kopfzeile der Seite. Zwei Blätter übereinander hätten dann zwei.
- * Die Zeitleiste wird projiziert, damit der Kopf nichts über die Wochen wissen
- * muss.
- */
+/** Ein Pfeil der Kopfzeile und sein Textschlüssel. */
+interface Arrow {
+  readonly key: TranslationKey;
+  readonly icon: 'left' | 'right';
+}
+
+const BACK: Arrow = { key: 'zeitleiste.zurueck', icon: 'left' };
+const FORWARD: Arrow = { key: 'zeitleiste.vor', icon: 'right' };
+
+/** Der Kopf des Blatts: Titel, Woche, Pfeilgruppe und darunter die Zeitleiste. */
 @Component({
   selector: 'app-sheet-head',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent],
+  imports: [SvgIconComponent, TranslatePipe],
   templateUrl: './sheet-head.component.html',
   styleUrl: './sheet-head.component.scss',
 })
 export class SheetHeadComponent {
-  private readonly i18n = inject(I18nService);
-
-  readonly titel = input.required<string>();
-  /** Die Art führt zur Artenliste, „Kombination“ und „Faktor“ nicht. */
-  readonly titleAsLink = input(false);
-  readonly woche = input<string>();
-  /** Steht rechts neben der Woche, in Gefahrfarbe, etwa „· Prognose“. */
+  readonly title = input.required<string>();
+  readonly titleLink = input(false);
+  readonly week = input<string>();
   readonly hint = input<string>();
   readonly arrows = input(true);
-  /** Läuft die Wiedergabe, wird aus dem Play-Knopf ein Pause-Knopf. */
   readonly playing = input(false);
 
   readonly titleClick = output();
@@ -35,9 +33,6 @@ export class SheetHeadComponent {
   readonly playback = output();
   readonly forward = output();
 
-  protected text(
-    schluessel: 'zeitleiste.zurueck' | 'zeitleiste.abspielen' | 'zeitleiste.anhalten' | 'zeitleiste.vor',
-  ): string {
-    return this.i18n.translate(schluessel);
-  }
+  protected readonly backArrow = BACK;
+  protected readonly forwardArrow = FORWARD;
 }

@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  --progress-height: 4px;
+}
+
+.progress__track {
+  overflow: hidden;
+  inline-size: 100%;
+  block-size: var(--progress-height);
+  background: color-mix(in srgb, var(--color-on-primary) 30%, transparent);
+  border-radius: var(--radius-pill);
+}
+
+.progress__fill {
+  block-size: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-pill);
+  transition: inline-size var(--motion-base) var(--ease-standard);
+}

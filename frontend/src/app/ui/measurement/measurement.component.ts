@@ -1,70 +1,65 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import type { TranslationKey } from '../../core/i18n/translations';
 
-/**
- * Welche Strecke gemessen wurde. Das Zeichen sagt es, nicht der Feldname:
- * es zeigt den Pilzteil selbst mit einer Maßlinie daneben. Ein reiner Pfeil
- * sagte nur, dass gemessen wird, nicht was.
- */
-export type Extent = 'hutbreite' | 'stielhoehe' | 'stieldicke' | 'sporenlaenge';
+/** Welche Strecke die Zeile nennt. Das Wort trägt, kein Zeichen mehr. */
+export type Extent = 'width' | 'height' | 'length' | 'thickness';
 
-const SYMBOL: Record<Extent, IconName> = {
-  hutbreite: 'hutbreite',
-  stielhoehe: 'stielhoehe',
-  stieldicke: 'stieldicke',
-  sporenlaenge: 'sporenlaenge',
+const EXTENT_KEY: Record<Extent, TranslationKey> = {
+  width: 'art.mass.unter.breite',
+  height: 'art.mass.unter.hoehe',
+  length: 'art.mass.unter.laenge',
+  thickness: 'art.mass.unter.dicke',
 };
 
 /** Der Gedankenstrich der Spanne steht mit Leerzeichen, wie im Satz. */
 const DASH = ' – ';
 
-/**
- * Das Malzeichen der Bestimmungsbücher: U+00D7, nicht der Buchstabe x.
- */
-const TIMES = ' \u00d7 ';
-
-/** Eine Strecke: von, bis. Der obere Wert fehlt, wo die Quelle nur einen nennt. */
+/** Eine Spanne. Eine Seite kann fehlen, etwa bei der seltenen Ausnahme. */
 export interface Span {
-  von: number;
-  bis: number | null;
+  readonly from: number | null;
+  readonly to: number | null;
 }
 
-/**
- * Die Maße eines Körperteils: Zeichen, dann Länge mal Breite, dann die Einheit.
- *
- * Eine Zeile je Körperteil, nicht je Strecke. „Sporen Länge“ und „Sporen
- * Breite“ standen einmal als zwei gleichrangige Zeilen neben „Hut“ und ließen
- * drei Merkmale erscheinen, wo zwei sind. So schreiben es auch die
- * Bestimmungsbücher und die Quellseiten: 13 – 18 × 5 – 6 µm.
- *
- * Kein Balken. Eine gemeinsame Skala zwischen einem Hut in Zentimetern und
- * einer Spore in Mikrometern gibt es nicht, und ein Balken täuschte sie vor.
- */
+/** Eine Zeile Maß: das Wort der Strecke, der Wert, darunter die seltene Ausnahme. */
 @Component({
   selector: 'app-measurement',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent],
+  imports: [TranslatePipe],
   templateUrl: './measurement.component.html',
   styleUrl: './measurement.component.scss',
 })
 export class MeasurementComponent {
-  /** Das Zeichen: das des Körperteils, oder das der Strecke, wenn nur eine steht. */
+  private readonly i18n = inject(I18nService);
+
   readonly extent = input.required<Extent>();
-  /** Länge oder Höhe zuerst, dann Breite oder Dicke. */
   readonly spans = input.required<readonly Span[]>();
   readonly unit = input.required<string>();
-  /** Beschreibung des Zeichens für Hilfsmittel. */
-  readonly label = input.required<string>();
 
-  protected readonly icon = computed(() => SYMBOL[this.extent()]);
+  protected readonly extentKey = computed(() => EXTENT_KEY[this.extent()]);
+  protected readonly text = computed(() => range(this.spans().at(0)));
+  protected readonly rare = computed(() => this.rareText());
 
-  protected readonly text = computed(() => this.spans().map(range).join(TIMES));
+  private rareText(): string | null {
+    const span = this.spans().at(1);
+    if (!span) return null;
+    const unit = this.unit();
+    if (span.to !== null)
+      return this.i18n.translate('art.mass.seltenBis', { wert: format(span.to), einheit: unit });
+    if (span.from !== null) {
+      return this.i18n.translate('art.mass.seltenVon', { wert: format(span.from), einheit: unit });
+    }
+    return null;
+  }
 }
 
-/** Eine Strecke als Text. Ohne oberen Wert steht dort nur eine Zahl. */
-function range(span: Span): string {
-  const from = format(span.von);
-  return span.bis === null || span.bis === span.von ? from : `${from}${DASH}${format(span.bis)}`;
+/** Eine Spanne als Text. Fehlt eine Seite oder sind beide gleich, bleibt eine Zahl. */
+function range(span: Span | undefined): string {
+  if (!span) return '';
+  if (span.from === null) return span.to === null ? '' : format(span.to);
+  if (span.to === null || span.to === span.from) return format(span.from);
+  return `${format(span.from)}${DASH}${format(span.to)}`;
 }
 
 /** Deutsche Schreibweise: Komma statt Punkt, keine Nullen hinter dem Komma. */

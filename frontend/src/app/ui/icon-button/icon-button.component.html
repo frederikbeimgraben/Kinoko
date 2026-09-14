@@ -1,0 +1,35 @@
+<button
+  class="icon-button tap"
+  type="button"
+  data-press="scale"
+  [class.icon-button--primary]="variant() === 'primary'"
+  [attr.aria-label]="label()"
+  [disabled]="disabled()"
+  (click)="pressed.emit()"
+>
+  <svg
+    class="icon-button__glyph"
+    viewBox="0 0 24 24"
+    width="22"
+    height="22"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    @switch (icon()) {
+      @case ('check') {
+        <path d="M5 12l5 5 9-10" />
+      }
+      @case ('close') {
+        <path d="M6 6l12 12M18 6L6 18" />
+      }
+      @case ('delete') {
+        <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+        <path d="M10 11v6M14 11v6" />
+      }
+    }
+  </svg>
+</button>

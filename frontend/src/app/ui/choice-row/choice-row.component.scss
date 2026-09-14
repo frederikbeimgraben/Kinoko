@@ -1,0 +1,38 @@
+:host {
+  // 48 px kennt nur diese Zeile: die Filterwerte stehen dichter als eine
+  // gewöhnliche Listenzeile.
+  --choice-row-height: 48px;
+
+  display: block;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+:host(:last-child) {
+  border-block-end: 0;
+}
+
+.row {
+  display: block;
+  min-block-size: var(--choice-row-height);
+}
+
+.row__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: var(--choice-row-height);
+  min-inline-size: 0;
+}
+
+.row__label {
+  flex: 1;
+  min-inline-size: 0;
+  font-size: var(--fs-md);
+}
+
+.row__count {
+  flex: none;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}

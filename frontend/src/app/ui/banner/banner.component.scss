@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-warning);
+  background: var(--color-warning-subtle);
+}
+
+.banner__glyph {
+  flex: 0 0 auto;
+}

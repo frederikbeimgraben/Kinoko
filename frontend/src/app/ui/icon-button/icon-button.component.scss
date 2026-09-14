@@ -1,0 +1,27 @@
+:host {
+  display: inline-flex;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-icon-button);
+  block-size: var(--size-icon-button);
+  color: var(--color-text);
+  cursor: pointer;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+}
+
+.icon-button--primary {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.icon-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}

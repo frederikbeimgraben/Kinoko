@@ -1,35 +1,25 @@
-<div class="chips" [class.chips--back]="zurueckMoeglich()" [class.chips--next]="vorMoeglich()">
-  @if (zurueckMoeglich()) {
+<div class="chips" role="group" [attr.aria-label]="label()">
+  @for (chip of chips(); track chip.value) {
     <button
-      class="chips__button chips__button--back"
+      class="chip tap"
       type="button"
-      [attr.aria-label]="backText()"
-      (click)="schiebe(-1)"
+      data-press="scale"
+      [class.chip--active]="isChosen(chip)"
+      [attr.aria-pressed]="isChosen(chip)"
+      (click)="toggle(chip)"
     >
-      <app-svg-icon name="zurueck" [size]="16" />
+      {{ chip.label }}
     </button>
   }
-  <div #series class="chips__row" role="group" [attr.aria-label]="label()" (scroll)="validate()">
-    @for (chip of chips(); track chip.value) {
-      <button
-        class="chip"
-        type="button"
-        [class.chip--active]="chip.value === value()"
-        [attr.aria-pressed]="chip.value === value()"
-        (click)="valueChange.emit(chip.value)"
-      >
-        {{ chip.label }}
-      </button>
-    }
-  </div>
-  @if (vorMoeglich()) {
+  @if (addable()) {
     <button
-      class="chips__button chips__button--next"
+      class="chip chip--add tap"
       type="button"
-      [attr.aria-label]="vorText()"
-      (click)="schiebe(1)"
+      data-press="scale"
+      [attr.aria-label]="'faktor.hinzufuegen' | t"
+      (click)="added.emit()"
     >
-      <app-svg-icon name="vor" [size]="16" />
+      <app-svg-icon name="plus" [size]="14" />
     </button>
   }
 </div>

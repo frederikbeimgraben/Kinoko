@@ -7,16 +7,13 @@
   border-block-end: 0;
 }
 
-.speciesrow {
-  display: grid;
-  // Die zweite Spalte fällt zusammen, wo kein Bild steht. Die erste hat
-  // `minmax(0, …)`, sonst drückt ein langer Name die Zeile über den Rand
-  // hinaus, statt umzubrechen.
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto auto;
+.row {
+  display: flex;
   align-items: center;
+  gap: var(--space-3);
   inline-size: 100%;
-  padding: 14px var(--pilz-gutter);
+  min-block-size: var(--size-row-tall);
+  padding-inline: var(--size-gutter);
   font: inherit;
   color: inherit;
   text-align: start;
@@ -25,77 +22,45 @@
   border: 0;
 }
 
-.speciesrow--active {
+.row--active {
   background: var(--color-primary-subtle);
 }
 
-// Beide Namen stehen in einem Block, damit sie untereinander bleiben — mit
-// Bild wie ohne. Als zwei Kinder des Rasters setzte die Auto-Platzierung den
-// lateinischen Namen in die freie Zelle rechts, sobald das Bild fehlt, und die
-// Liste haette zwei Zeilenformen nebeneinander.
-.speciesrow__names {
+.row__names {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 2px;
   min-inline-size: 0;
 }
 
-.speciesrow__name {
+.row__name {
   min-inline-size: 0;
   overflow-wrap: anywhere;
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
-  line-height: 1.3;
+  line-height: var(--lh-tight);
 }
 
-// Das Bild steht über beiden Rasterzeilen, neben Namen und Plaketten. So
-// bestimmt es die Zeilenhöhe nicht: eine Zeile mit Bild ist so hoch wie eine
-// ohne. Der Abstand nach links hängt am Bild, damit die Zeile ohne Bild keine
-// leere Lücke rechts hat.
-.speciesrow__image {
-  grid-row: 1 / 3;
-  grid-column: 2;
-  align-self: center;
-  inline-size: 64px;
-  block-size: 64px;
-  margin-inline-start: var(--pilz-gutter);
-  object-fit: cover;
-  border-radius: var(--radius-md);
-}
-
-.speciesrow__latin {
+.row__latin {
   min-inline-size: 0;
   overflow-wrap: anywhere;
   font-size: var(--fs-sm);
   font-style: italic;
-  line-height: 1.3;
+  line-height: var(--lh-tight);
   color: var(--color-text-muted);
 }
 
-// Die Plaketten brechen nicht um und dehnen die Zeile nicht: was nicht
-// hineinpasst, läuft rechts aus. Der Verlauf deckt nur den letzten Rand, eine
-// Plakette, die davor endet, bleibt ganz.
-.speciesrow__tags {
-  display: flex;
-  flex-wrap: nowrap;
-  grid-row: 2;
-  grid-column: 1;
-  gap: var(--space-2);
-  min-inline-size: 0;
-  margin-block-start: 10px;
-  overflow: hidden;
-  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+// Der Speisewert steht als eigenes Feld neben dem Namen.
+// Keine Fläche maskiert ihn bei Platzmangel.
+.row__level {
+  flex: none;
 }
 
-.speciesrow__badge {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  line-height: 1.4;
-  color: var(--color-on-primary);
-  white-space: nowrap;
-  background: var(--color-primary);
-  border-radius: var(--radius-pill);
+.row__image {
+  flex: none;
+  inline-size: var(--size-thumb);
+  block-size: var(--size-thumb);
+  object-fit: cover;
+  border-radius: var(--radius-md);
 }

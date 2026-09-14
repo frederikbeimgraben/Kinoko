@@ -1,76 +1,68 @@
 // Die Zeile ist nur eine Klammer: das Raster steht an der Tabelle. Alles, was
-// nach Zeile aussieht — Polster, Trennlinie, Zebra — traegt darum die Zelle.
+// nach Zeile aussieht — Polster, Trennlinie, Zebra — trägt darum die Zelle.
 :host {
   display: contents;
 }
 
-.tz__label,
-.tz__value {
-  padding-block: 10px;
+.kv__label,
+.kv__value {
+  padding-block: var(--space-3);
   font-size: var(--fs-sm);
-  line-height: 1.45;
+  line-height: var(--lh-relaxed);
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
-.tz__label {
+.kv__label {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-inline-size: 0;
-  padding-inline: var(--pilz-kv-gutter) var(--pilz-kv-gap);
+  padding-inline: var(--key-value-table-gutter) var(--key-value-table-gap);
 }
 
-// Der Wert endet rechts, wie die Flaeche daneben. Ohne das stuende eine
-// Farbflaeche von 96 px linksbuendig in einer Spalte von 212 und liesse ein
-// Drittel der Karte leer.
-.tz__value {
+// Der Wert endet rechts, wie die Fläche daneben — eine Fläche, die linksbündig
+// in einer breiteren Spalte stünde, ließe den Rest der Zeile leer.
+.kv__value {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   min-inline-size: 0;
-  padding-inline-end: var(--pilz-kv-gutter);
+  padding-inline-end: var(--key-value-table-gutter);
   color: var(--color-text);
   text-align: end;
   overflow-wrap: anywhere;
 }
 
-// Fliesstext bleibt links. Ein rechtsbuendiger Absatz franst links aus, und
-// die Merkmalszeile "Hut" ist vier Zeilen lang.
-.tz__value--flow {
+// Fließtext bleibt links: ein rechtsbündiger Absatz franst links aus.
+.kv__value--flow {
   align-items: flex-start;
   text-align: start;
 }
 
-:host(:nth-child(even)) .tz__label,
-:host(:nth-child(even)) .tz__value {
+:host(:nth-child(even)) .kv__label,
+:host(:nth-child(even)) .kv__value {
   background: var(--color-bg);
 }
 
-:host(:last-child) .tz__label,
-:host(:last-child) .tz__value {
+:host(:last-child) .kv__label,
+:host(:last-child) .kv__value {
   border-block-end: 0;
 }
 
-// Das Wort zum Wert steht klein unter dem Schluessel. Rechts steht daneben
-// nichts als der Wert selbst, sonst kaempfen Wort und Flaeche um den Blick.
-.tz__note {
+.kv__hint {
   font-size: var(--fs-xs);
-  font-weight: 400;
+  font-weight: var(--fw-regular);
   color: var(--color-text-muted);
-  line-height: 1.35;
+  line-height: var(--lh-tight);
 }
 
-.tz__key {
+.kv__key {
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
   overflow-wrap: anywhere;
 }
 
-.tz__key--link {
+.kv__key--link {
   color: var(--color-primary);
   text-decoration: none;
-}
-
-.tz__key--link:hover {
-  text-decoration: underline;
 }

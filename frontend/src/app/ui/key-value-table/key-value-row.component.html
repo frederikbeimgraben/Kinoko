@@ -1,16 +1,22 @@
-<span class="tz__label">
-  @if (keyRoute(); as target) {
-    <a class="tz__key tz__key--link" [routerLink]="target">{{ schluessel() }}</a>
+<span class="kv__label">
+  @if (route(); as target) {
+    <a class="kv__key kv__key--link" [routerLink]="target">{{ key() }}</a>
   } @else {
-    <span class="tz__key">{{ schluessel() }}</span>
+    <span class="kv__key">{{ key() }}</span>
   }
-  @if (unter(); as unter) {
-    <span class="tz__note">{{ unter }}</span>
+  @if (hint(); as text) {
+    <span class="kv__hint">{{ text }}</span>
   }
 </span>
-<span class="tz__value" [class.tz__value--flow]="flow()">
-  @if (value()) {
-    {{ value() }}
+@if (values(); as columns) {
+  @for (column of columns; track $index) {
+    <span class="kv__value" [class.kv__value--flow]="flow()">{{ column }}</span>
   }
-  <ng-content />
-</span>
+} @else {
+  <span class="kv__value" [class.kv__value--flow]="flow()">
+    @if (value()) {
+      {{ value() }}
+    }
+    <ng-content />
+  </span>
+}

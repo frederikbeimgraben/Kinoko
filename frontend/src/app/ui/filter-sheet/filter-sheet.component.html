@@ -1,0 +1,28 @@
+<app-overlay-host [open]="open()" (closed)="closed.emit()">
+  <section class="filtersheet" role="dialog" aria-modal="true" [attr.aria-label]="'filter.titel' | t">
+    <div class="filtersheet__handle"><span class="filtersheet__handle-line"></span></div>
+    <header class="filtersheet__head">
+      <h2 class="filtersheet__title">{{ 'filter.titel' | t }}</h2>
+      @if (resetEnabled()) {
+        <button class="filtersheet__reset tap" type="button" data-press="scale" (click)="resetClick.emit()">
+          {{ 'filter.zuruecksetzen' | t }}
+        </button>
+      }
+      <button
+        class="filtersheet__close tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'ebenenKnopf.schliessen' | t"
+        (click)="closed.emit()"
+      >
+        <app-svg-icon name="close" [size]="18" />
+      </button>
+    </header>
+    <div class="filtersheet__content"><ng-content /></div>
+    <footer class="filtersheet__foot">
+      <button class="filtersheet__primary tap" type="button" data-press="scale" (click)="primaryClick.emit()">
+        {{ primaryLabel() }}
+      </button>
+    </footer>
+  </section>
+</app-overlay-host>

@@ -1,12 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/**
- * Die Kategorien eines Merkmals als Reihe.
- *
- * Sie tragen den Filter; der Satz daneben trägt, was in keine Kategorie passt.
- * Anders als eine Chip-Reihe wählt hier nichts aus: die Reihe zeigt nur, was
- * für die Art gilt.
- */
+/** Die Kategorien eines Merkmals als Reihe, ohne Auswahl, ohne Interaktion. */
 @Component({
   selector: 'app-tag-list',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,126 +1,80 @@
-import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
-import { SpeciesRowComponent } from './species-row.component';
+import { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row.component';
 
-@Component({
-  imports: [SpeciesRowComponent],
-  template: `
-    <app-species-row
-      name="Steinpilz"
-      latin="Boletus edulis"
-      [active]="true"
-      [image]="'/api/species-images/bild-eins/thumb'"
-    >
-      <span tags>Vorhersage</span>
-    </app-species-row>
-  `,
-})
-class HostComponent {}
-
-/** Dieselbe Zeile ohne Titelbild. Rechts steht dann nichts. */
-@Component({
-  imports: [SpeciesRowComponent],
-  template: `<app-species-row name="Steinpilz" latin="Boletus edulis" />`,
-})
-class BareHostComponent {}
-
-/**
- * Der längste Name im Katalog in einer schmalen Zeile. Die Namensspalte muss
- * `minmax(0, …)` tragen und das Bild eine feste Breite, sonst drückt der Name
- * die Zeile über den Rand oder das Bild die Spalte auf einen Buchstaben.
- */
-@Component({
-  imports: [SpeciesRowComponent],
-  template: `
-    <div style="inline-size: 240px">
-      <app-species-row
-        name="Schwarzhütiger Steinpilz aus dem Schönbuch"
-        latin="Boletus aereus subsp. reticulatus"
-        [image]="'/api/species-images/bild-eins/thumb'"
-      />
-    </div>
-  `,
-})
-class NarrowHostComponent {}
+const STEINPILZ: SpeciesRowSpecies = {
+  name: 'Steinpilz',
+  latin: 'Boletus edulis',
+  levelText: 'essbar',
+  levelColour: 'var(--color-success)',
+  image: '/api/species-images/bild-eins/thumb',
+};
 
 describe('SpeciesRowComponent', () => {
-  it('zeigt Name, lateinischen Namen, Titelbild und Tags', async () => {
-    const { container } = await render(HostComponent);
+  it('zeigt Name, lateinischen Namen, Speisewert und Titelbild', async () => {
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
 
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Steinpilz' })).toHaveAttribute(
-      'src',
-      '/api/species-images/bild-eins/thumb',
-    );
-    expect(screen.getByText('Vorhersage')).toBeInTheDocument();
-    expect(container.querySelector('.speciesrow--active')).not.toBeNull();
+    expect(screen.getByText('essbar')).toBeInTheDocument();
+    expect(screen.getByRole('img')).toHaveAttribute('src', STEINPILZ.image);
     await noViolations(container);
   });
 
   it('lässt rechts nichts stehen, wo die Art kein Bild hat', async () => {
-    const { container } = await render(BareHostComponent);
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: { ...STEINPILZ, image: null } },
+    });
 
-    expect(container.querySelector('.speciesrow__image')).toBeNull();
-    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(container.querySelector('.row__image')).toBeNull();
   });
 
-  it.each([
-    ['mit Bild', HostComponent],
-    ['ohne Bild', BareHostComponent],
-  ])('hält beide Namen in einem Block, %s', async (_fall, host) => {
-    // Als zwei Kinder des Rasters rutschte der lateinische Name in die freie
-    // Zelle rechts, sobald das Bild fehlt. Die Liste haette dann zwei
-    // Zeilenformen nebeneinander, sobald die ersten Bilder da sind. Der Block
-    // haelt sie zusammen, ohne dass eine Platzierungsregel darueber wacht.
-    const { container } = await render(host);
-    const [names] = container.getElementsByClassName('speciesrow__names');
+  it('bricht den längsten Namen um, statt die Zeile zu sprengen', async () => {
+    const longName = 'Schwarzhütiger Steinpilz aus dem Schönbuch';
+    await render(SpeciesRowComponent, { inputs: { species: { ...STEINPILZ, name: longName } } });
 
-    expect(names.querySelector('.speciesrow__name')?.textContent).toBe('Steinpilz');
-    expect(names.querySelector('.speciesrow__latin')?.textContent).toBe('Boletus edulis');
+    expect(getComputedStyle(screen.getByText(longName)).overflowWrap).toBe('anywhere');
   });
 
-  it('lässt den längsten Namen in einer schmalen Zeile umbrechen, nicht die Spalte zusammenfallen', async () => {
-    const { container } = await render(NarrowHostComponent);
-    const [row] = container.getElementsByClassName('speciesrow');
-    const [name] = container.getElementsByClassName('speciesrow__name');
-
-    // Ohne `minmax(0, …)` an der ersten Spalte wächst die Zeile über die 240
-    // Pixel hinaus; ohne feste Bildbreite schrumpft der Name auf einen Buchstaben.
-    expect(getComputedStyle(row).gridTemplateColumns).toBe('minmax(0, 1fr) auto');
-    expect(getComputedStyle(name).overflowWrap).toBe('anywhere');
-    expect(container.querySelector('.speciesrow__image')).not.toBeNull();
-  });
-
-  it('markiert die aktive Art für Auge und Hilfsmittel', async () => {
-    await render(HostComponent);
+  it('markiert die aktive Art für Hilfsmittel', async () => {
+    await render(SpeciesRowComponent, { inputs: { species: STEINPILZ, active: true } });
 
     const button = screen.getByRole('button', { name: /Steinpilz/ });
     expect(button).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByText('Aktiv')).toBeInTheDocument();
+    expect(button).toHaveClass('row--active');
   });
 
   it('nimmt den Fokus auf Zuruf an, damit Pfeiltasten durch die Liste wandern', async () => {
-    const { fixture } = await render(SpeciesRowComponent, {
-      inputs: { name: 'Birkenpilz', latin: 'Leccinum scabrum' },
-    });
+    const { fixture } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
 
     fixture.componentInstance.focus();
 
-    expect(screen.getByRole('button', { name: /Birkenpilz/ })).toHaveFocus();
+    expect(screen.getByRole('button', { name: /Steinpilz/ })).toHaveFocus();
   });
 
-  it('meldet die gewählte Art', async () => {
-    const { fixture } = await render(SpeciesRowComponent, {
-      inputs: { name: 'Pfifferling', latin: 'Cantharellus cibarius' },
-    });
+  it('meldet die gewählte Art und trägt den Druckzustand', async () => {
+    const { fixture } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
     let calls = 0;
     fixture.componentInstance.chosen.subscribe(() => (calls += 1));
+    const button = screen.getByRole('button', { name: /Steinpilz/ });
 
-    await userEvent.click(screen.getByRole('button', { name: /Pfifferling/ }));
+    await userEvent.click(button);
 
     expect(calls).toBe(1);
+    expect(button).toHaveClass('tap');
+    expect(button).toHaveAttribute('data-press', 'tint');
+  });
+
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: {
+        species: { name: 'Row', latin: 'Rowus latinus', levelText: 'ok', levelColour: 'green' },
+      },
+      providers: [EMPTY_CATALOG],
+    });
+
+    noGermanText(container);
   });
 });

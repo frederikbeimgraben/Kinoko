@@ -1,38 +1,24 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ButtonComponent } from '@stupa-makers/ui-kit';
-import { NoteComponent } from '../note/note.component';
-import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /**
- * Die Aktionsleiste am unteren Rand eines Blatts oder einer Objektseite.
- * Oben die Hauptaktion in voller Breite, darunter zwei gleich breite
- * Nebenaktionen, ganz unten ein Geist-Knopf. Die Knöpfe kommen aus dem
- * ui-kit; hier steht nur die Anordnung.
+ * Der Fuß eines Blatts oder einer Objektseite. Oben die Hauptaktion über
+ * die volle Breite, darunter höchstens eine zweite. Die Knöpfe kommen aus
+ * dem Kit, hier steht nur die Anordnung.
  */
 @Component({
   selector: 'app-action-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, NoteComponent, SvgIconComponent],
+  imports: [ButtonComponent],
   templateUrl: './action-bar.component.html',
   styleUrl: './action-bar.component.scss',
 })
 export class ActionBarComponent {
-  readonly primary = input<string>();
-  readonly mainIcon = input<IconName>();
-  readonly mainDisabled = input(false);
-  /** Steht die Hauptaktion nicht offen, sagt diese Zeile darunter, warum. */
-  readonly subline = input<string>();
+  readonly primary = input.required<string>();
   readonly secondary = input<string>();
-  /** Die linke der beiden Nebenaktionen, wenn keine Gefahr im Spiel ist. */
-  readonly second = input<string>();
-  readonly danger = input<string>();
-  /** Eine Absage ohne Grund geht nicht hinaus; der Knopf sagt es, bevor man drückt. */
-  readonly dangerDisabled = input(false);
-  readonly ghost = input<string>();
+  /** Färbt die Hauptaktion rot statt grün, etwa für „Alles löschen“. */
+  readonly danger = input(false);
 
-  readonly mainClick = output();
+  readonly primaryClick = output();
   readonly secondaryClick = output();
-  readonly secondClick = output();
-  readonly dangerClick = output();
-  readonly ghostClick = output();
 }

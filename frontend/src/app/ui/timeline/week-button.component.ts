@@ -11,11 +11,7 @@ import {
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
-/**
- * Eine Woche in der Zeitleiste. Der Balken zeigt das Mittel der Vorhersage
- * über Deutschland, relativ zum Höchstwert der Art; eine Prognosewoche hat
- * einen gestrichelten Rand.
- */
+/** Eine Woche in der Zeitleiste. Eine Prognosewoche trägt einen gestrichelten Rand. */
 @Component({
   selector: 'app-week-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,7 +25,7 @@ export class WeekButtonComponent {
 
   readonly jahr = input.required<number>();
   readonly woche = input.required<number>();
-  /** Balkenhöhe, 0 bis 1. */
+  /** Balkenhöhe zwischen 0 und 1. */
   readonly share = input(0);
   readonly forecast = input(false);
   readonly active = input(false);

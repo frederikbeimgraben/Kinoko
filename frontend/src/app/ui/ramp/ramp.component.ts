@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { NoteComponent } from '../note/note.component';
 import { FORECAST_RAMP } from './ramp-colors';
 
 /** Legende einer Darstellung: Beschriftung, Farbverlauf, beide Enden. */
 @Component({
   selector: 'app-ramp',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NoteComponent],
   templateUrl: './ramp.component.html',
   styleUrl: './ramp.component.scss',
 })

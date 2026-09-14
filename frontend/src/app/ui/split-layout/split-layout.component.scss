@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  block-size: 100%;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+}
+
+.layout__column,
+.layout__content {
+  min-inline-size: 0;
+  overflow-y: auto;
+}
+
+@media (width >= 1024px) {
+  .layout {
+    flex-direction: row;
+  }
+
+  .layout__rail {
+    flex: 0 0 var(--size-rail);
+  }
+
+  .layout__column {
+    flex: 0 0 var(--size-column);
+    border-inline-end: var(--border-width) solid var(--color-border);
+  }
+
+  .layout__content {
+    flex: 1 1 auto;
+  }
+}

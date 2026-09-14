@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { HistogramComponent } from './histogram.component';
 
 describe('HistogramComponent', () => {
@@ -27,5 +28,14 @@ describe('HistogramComponent', () => {
     });
 
     expect(container.querySelectorAll('.histogram__bar')).toHaveLength(0);
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(HistogramComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { anteile: [1, 2, 3], label: 'Precipitation across Germany' },
+    });
+
+    noGermanText(container);
   });
 });

@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-1);
+}
+
+.stat {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.stat__value {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__label {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}

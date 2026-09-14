@@ -1,0 +1,50 @@
+:host {
+  display: block;
+  --photo-picker-remove: 24px;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.tile {
+  position: relative;
+  inline-size: var(--size-tile);
+  block-size: var(--size-tile);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.tile__image {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.tile__remove {
+  position: absolute;
+  inset-block-start: var(--space-1);
+  inset-inline-end: var(--space-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--photo-picker-remove);
+  block-size: var(--photo-picker-remove);
+  color: var(--color-text-inverse);
+  cursor: pointer;
+  background: color-mix(in srgb, black 55%, transparent);
+  border: 0;
+  border-radius: var(--radius-pill);
+}
+
+.tile--add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background: var(--color-surface-sunken);
+  border: var(--border-width) dashed var(--color-border-strong);
+}

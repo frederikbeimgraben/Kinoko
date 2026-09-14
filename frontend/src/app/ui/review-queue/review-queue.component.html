@@ -1,0 +1,93 @@
+<div class="queue">
+  <p class="queue__counter">{{ 'bild.vonGesamt' | t: { geladen: done(), gesamt: total() } }}</p>
+  @if (current(); as item) {
+    <div class="queue__stack">
+      @if (behind(); as ghost) {
+        <div class="queue__card queue__card--ghost" aria-hidden="true">
+          <ng-container [ngTemplateOutlet]="card()" [ngTemplateOutletContext]="{ $implicit: ghost }" />
+        </div>
+      }
+      <div
+        class="queue__card queue__card--top"
+        role="group"
+        tabindex="0"
+        [class.queue__card--dragging]="dragging()"
+        [style.transform]="tilt()"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointercancel)="onPointerCancel()"
+        (keydown)="onKeydown($event)"
+      >
+        <ng-container [ngTemplateOutlet]="card()" [ngTemplateOutletContext]="{ $implicit: item }" />
+      </div>
+    </div>
+    <div class="queue__actions">
+      <button
+        type="button"
+        class="queue__round queue__round--undo tap"
+        data-press="scale"
+        [disabled]="!canUndo()"
+        [attr.aria-label]="'filter.zuruecksetzen' | t"
+        (click)="undo()"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M9 14 4 9l5-5" />
+          <path d="M4 9h10a6 6 0 0 1 0 12h-3" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="queue__round queue__round--reject tap"
+        data-press="scale"
+        [attr.aria-label]="'bild.ablehnen' | t"
+        (click)="reject()"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="queue__round queue__round--accept tap"
+        data-press="scale"
+        [attr.aria-label]="'bild.freigeben' | t"
+        (click)="accept()"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12l5 5 9-10" />
+        </svg>
+      </button>
+    </div>
+  }
+</div>

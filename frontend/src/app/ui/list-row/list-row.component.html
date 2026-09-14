@@ -1,34 +1,36 @@
 <ng-template #primary>
   <span class="row__lead"><ng-content select="[lead]" /></span>
   <span class="row__stack">
-    <span class="row__title">{{ titel() }}</span>
+    <span class="row__title">{{ title() }}</span>
     @if (subline()) {
       <span class="row__sub">{{ subline() }}</span>
-    }
-    @if (notiz()) {
-      <span class="row__note">{{ notiz() }}</span>
     }
   </span>
   @if (value()) {
     <span class="row__value">{{ value() }}</span>
   }
   <span class="row__trail"><ng-content select="[trail]" /></span>
+  @if (chevron()) {
+    <app-svg-icon class="row__chevron" name="chevron" [size]="18" />
+  }
 </ng-template>
 
 <div class="row">
   @if (clickable()) {
     <button
-      class="row__field row__field--button"
+      class="row__field row__field--button tap"
       type="button"
+      data-press="tint"
+      [class.row__field--selected]="selected()"
       [attr.aria-pressed]="selected() ? true : null"
       (click)="chosen.emit()"
     >
       <ng-container [ngTemplateOutlet]="primary" />
     </button>
   } @else {
-    <div class="row__field">
+    <div class="row__field" [class.row__field--selected]="selected()">
       <ng-container [ngTemplateOutlet]="primary" />
     </div>
   }
-  <span class="row__action"><ng-content select="[aktion]" /></span>
+  <span class="row__action"><ng-content select="[action]" /></span>
 </div>

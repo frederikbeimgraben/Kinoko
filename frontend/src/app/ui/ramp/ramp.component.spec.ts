@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { RampComponent } from './ramp.component';
 import { FORECAST_RAMP } from './ramp-colors';
 
@@ -21,7 +22,7 @@ describe('RampComponent', () => {
       inputs: { label: 'Waldanteil', von: '0 %', bis: '100 %' },
     });
 
-    expect(container.querySelector('app-note')).toBeNull();
+    expect(container.querySelector('.note')).toBeNull();
 
     fixture.componentRef.setInput('note', 'Eine Zelle misst 500 Meter.');
     fixture.detectChanges();
@@ -35,5 +36,14 @@ describe('RampComponent', () => {
     });
 
     expect(screen.getByRole('img', { name: 'Niederschlag: 0 mm – 152 mm' })).toBeInTheDocument();
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(RampComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { label: 'Rainfall', von: '0 mm', bis: '150 mm' },
+    });
+
+    noGermanText(container);
   });
 });

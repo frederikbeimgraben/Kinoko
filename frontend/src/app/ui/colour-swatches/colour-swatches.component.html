@@ -1,9 +1,10 @@
 <div class="colors" role="radiogroup" [attr.aria-label]="label()">
   @for (farbe of colors(); track farbe.value) {
     <button
-      class="colors__field"
+      class="colors__field tap"
       type="button"
       role="radio"
+      data-press="scale"
       [class.colors__field--selected]="farbe.value === value()"
       [attr.aria-checked]="farbe.value === value()"
       [attr.aria-label]="farbe.label"

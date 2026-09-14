@@ -6,10 +6,7 @@ const MONTH_MARKS = [0, 9, 18, 27, 36, 44] as const;
 /** Der Anteil des stärksten Wertes, unter dem eine Woche als dünn gilt. */
 const THIN_BELOW = 0.25;
 
-/**
- * Zentriertes gleitendes Mittel. Am Rand zählen die Nachbarn, die es gibt,
- * sonst zöge eine gedachte Null die erste und die letzte Woche nach unten.
- */
+/** Zentriertes gleitendes Mittel. Am Rand zählen nur die Nachbarn, die es gibt. */
 export function smooth(series: readonly number[], windowSize: number): readonly number[] {
   if (windowSize <= 1) return series;
   const half = Math.floor(windowSize / 2);
@@ -57,26 +54,7 @@ interface Drawing {
   thin: Strip[];
 }
 
-/**
- * Die Saisonkurve einer Art: der Anteil der Begehungen mit Fund je
- * Kalenderwoche. Alle Jahre liegen schwach als Fläche darunter, das laufende
- * Jahr als Linie bis zur letzten vollen Woche. Beide Reihen teilen sich einen
- * Höchstwert, sonst ragte die eine über den Rand.
- *
- * Sind die Begehungen je Woche bekannt, verblassen die Wochen, die auf wenigen
- * Begehungen ruhen. Ohne diese Zahlen sähe eine Woche mit drei Begehungen aus
- * wie eine mit dreihundert.
- *
- * Die Zeichenfläche folgt der Breite des Wirts, damit die Kurve nie schmal in
- * der Mitte steht, während die Marken darunter über die ganze Breite laufen.
- * Was dabei nicht verzerren darf — der Endpunkt — steht neben dem SVG und
- * nicht darin.
- *
- * Gezeichnet wird ein gleitendes Mittel über drei Wochen. Eine Woche mehr oder
- * weniger ist Zufall des Meldeverhaltens, nicht der Saison. Eine Zahl am
- * Höchstwert steht nicht mehr daneben: ein „2 %“ über einer Kurve, die
- * ohnehin bis oben reicht, sagte nichts und störte die Plaketten darüber.
- */
+/** Saisonkurve einer Art: alle Jahre als Fläche, das laufende Jahr als Linie. */
 @Component({
   selector: 'app-season-curve',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -110,8 +88,7 @@ export class SeasonCurveComponent {
     const alle = smooth(this.alleJahre(), windowSize);
     const current = smooth(this.laufendesJahr(), windowSize);
     // Der Höchstwert kommt aus den Rohdaten, nicht aus der geglätteten Reihe.
-    // Sonst stiege die Kurve über die Zahl an der Achse hinaus.
-    // Ein Höchstwert von 0 teilte durch null; darum die kleinste Zahl als Boden.
+    // Die kleinste Zahl als Boden schützt vor einer Teilung durch null.
     const top = Math.max(...this.alleJahre(), ...this.laufendesJahr(), Number.EPSILON);
     const point = (i: number, value: number): [number, number] => [
       (i / 51) * breite,
@@ -134,11 +111,7 @@ export class SeasonCurveComponent {
     };
   }
 
-  /**
-   * Die Monatsmarken auf derselben Skala wie die Kurve: Woche 1 ganz links,
-   * Woche 52 ganz rechts. Als Anteil, damit die Marke bei jeder Breite unter
-   * ihrer Woche steht.
-   */
+  /** Die Monatsmarken auf derselben Skala wie die Kurve, als Anteil der Breite. */
   protected readonly monthMarks = computed<PlacedMark[]>(() =>
     this.months().map((badge) => ({
       text: badge.text,
@@ -146,11 +119,7 @@ export class SeasonCurveComponent {
     })),
   );
 
-  /**
-   * Die Wochen, in denen wenigstens eine der beiden Reihen auf wenigen
-   * Begehungen ruht. Jede Reihe misst sich an ihrer eigenen stärksten Woche,
-   * weil das laufende Jahr naturgemäß weniger Begehungen trägt als zehn Jahre.
-   */
+  /** Wochen, in denen eine Reihe auf wenigen Begehungen ruht, je eigener Skala. */
   private thinWeeks(breite: number): Strip[] {
     const rows = [this.visitsAllYears(), this.visitsCurrentYearSeries()].filter(
       (series) => series.length > 0,

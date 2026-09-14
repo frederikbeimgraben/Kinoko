@@ -3,14 +3,15 @@ import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component'
 
 let nextNumber = 0;
 
+/** Die Bildschirmtastatur, die zur Art des Feldes passt. */
+type InputMode = 'text' | 'numeric' | 'decimal' | 'search';
+
+/** Die Beschriftung der Eingabetaste auf der Bildschirmtastatur. */
+type EnterKeyHint = 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
+
 /**
- * Ein Feld im Formular: Beschriftung und darunter der Kasten. Zeigt das Feld
- * nur einen Wert an (Art, Datum, Ort), ist der Kasten eine Schaltfläche, die
- * die Auswahl öffnet; sonst wird getippt.
- *
- * Das ui-kit bringt ein eigenes Textfeld mit, aber mit eigener Beschriftung
- * und eigener Höhe. Die Mockups sind abgenommen und geben beides anders vor,
- * darum dieses Feld.
+ * Ein Feld im Formular: Beschriftung, dann Kasten. Ein Anzeigefeld öffnet
+ * beim Tippen eine Auswahl. Das Kit-Feld deckt `inputmode` nicht ab.
  */
 @Component({
   selector: 'app-form-field',
@@ -38,12 +39,23 @@ export class FormFieldComponent {
    * Mockups trägt keine sichtbare Beschriftung, ein Screenreader braucht sie.
    */
   readonly hideLabel = input(false);
+  /** Überschreibt die aus `kind` hergeleitete Bildschirmtastatur. */
+  readonly inputMode = input<InputMode>();
+  /** Überschreibt die aus `multiline` hergeleitete Eingabetaste. */
+  readonly enterKeyHint = input<EnterKeyHint>();
 
   readonly valueChange = output<string>();
   readonly displayClick = output();
 
   protected readonly fieldId = `app-feld-${nextNumber++}`;
   protected readonly empty = computed(() => this.value().length === 0);
+
+  protected readonly mode = computed<InputMode>(
+    () => this.inputMode() ?? (this.kind() === 'number' ? 'numeric' : 'text'),
+  );
+  protected readonly hint = computed<EnterKeyHint>(
+    () => this.enterKeyHint() ?? (this.multiline() ? 'enter' : 'done'),
+  );
 
   protected onInput(event: Event): void {
     this.valueChange.emit((event.target as HTMLInputElement | HTMLTextAreaElement).value);

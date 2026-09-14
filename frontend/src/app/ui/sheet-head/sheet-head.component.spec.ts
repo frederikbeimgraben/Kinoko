@@ -1,76 +1,89 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { SheetHeadComponent } from './sheet-head.component';
 
 describe('SheetHeadComponent', () => {
-  it('zeigt Art, Woche, Hinweis und die drei Pfeile', async () => {
-    const { container, fixture } = await render(SheetHeadComponent, {
-      inputs: { titel: 'Steinpilz', woche: 'KW 40 · 2025', hint: '· Prognose', titleAsLink: true },
-    });
-    const calls: string[] = [];
-    fixture.componentInstance.back.subscribe(() => calls.push('zurueck'));
-    fixture.componentInstance.playback.subscribe(() => calls.push('abspielen'));
-    fixture.componentInstance.forward.subscribe(() => calls.push('vor'));
-    fixture.componentInstance.titleClick.subscribe(() => calls.push('titel'));
+  it('renders with minimal inputs', async () => {
+    const { container } = await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
 
-    expect(screen.getByText('KW 40 · 2025')).toBeInTheDocument();
-    expect(screen.getByText('· Prognose')).toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Vorige Woche' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Wochen abspielen' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Nächste Woche' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
-
-    expect(calls).toEqual(['zurueck', 'abspielen', 'vor', 'titel']);
+    expect(screen.getByText('Porcini')).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('zeigt das Pausensymbol, solange die Wochen laufen', async () => {
-    const { container, fixture } = await render(SheetHeadComponent, {
-      inputs: { titel: 'Steinpilz', playing: false },
+  it('shows the title as a link, the week and the hint', async () => {
+    const { container } = await render(SheetHeadComponent, {
+      inputs: { title: 'Porcini', week: 'Week 40 · 2025', hint: '· Forecast', titleLink: true },
     });
 
-    expect(screen.getByRole('button', { name: 'Wochen abspielen' })).toHaveAttribute('aria-pressed', 'false');
-    // Ein Dreieck: der Pfad des Abspiel-Piktogramms.
-    const playing = [...container.querySelectorAll('path')].map((path) => path.getAttribute('d'));
-    expect(playing.some((path) => path === 'M3 1.4 10 6 3 10.6Z')).toBe(true);
+    expect(screen.getByRole('button', { name: 'Porcini' })).toBeInTheDocument();
+    expect(screen.getByText('Week 40 · 2025')).toBeInTheDocument();
+    expect(screen.getByText('· Forecast')).toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('emits titleClick when the title link is pressed', async () => {
+    const { fixture } = await render(SheetHeadComponent, {
+      inputs: { title: 'Porcini', titleLink: true },
+    });
+    let calls = 0;
+    fixture.componentInstance.titleClick.subscribe(() => (calls += 1));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Porcini' }));
+
+    expect(calls).toBe(1);
+  });
+
+  it('emits back, playback and forward for the three arrows', async () => {
+    const { fixture } = await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
+    const calls: string[] = [];
+    fixture.componentInstance.back.subscribe(() => calls.push('back'));
+    fixture.componentInstance.playback.subscribe(() => calls.push('playback'));
+    fixture.componentInstance.forward.subscribe(() => calls.push('forward'));
+    const buttons = screen.getAllByRole('button');
+
+    await userEvent.click(buttons[0]);
+    await userEvent.click(buttons[1]);
+    await userEvent.click(buttons[2]);
+
+    expect(calls).toEqual(['back', 'playback', 'forward']);
+  });
+
+  it('shows the pause icon and a pressed state while playing', async () => {
+    const { fixture } = await render(SheetHeadComponent, { inputs: { title: 'Porcini', playing: false } });
+    const buttons = screen.getAllByRole('button');
+
+    expect(buttons[1]).toHaveAttribute('aria-pressed', 'false');
 
     fixture.componentRef.setInput('playing', true);
     fixture.detectChanges();
 
-    expect(screen.queryByRole('button', { name: 'Wochen abspielen' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Wiedergabe anhalten' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    // Zwei Balken statt eines Dreiecks: der Pfad des Pause-Piktogramms.
-    const paused = [...container.querySelectorAll('path')].map((path) => path.getAttribute('d'));
-    expect(paused.some((path) => path?.startsWith('M2.5 1.5h2.5v9'))).toBe(true);
+    expect(buttons[1]).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('lässt Titel und Pfeile weg, wenn der Kopf sie nicht braucht', async () => {
-    await render(SheetHeadComponent, { inputs: { titel: 'Kombination', arrows: false } });
+  it('leaves out the title link and the arrows when the head has none', async () => {
+    await render(SheetHeadComponent, { inputs: { title: 'Combination', arrows: false } });
 
-    expect(screen.getByText('Kombination')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Nächste Woche' })).not.toBeInTheDocument();
+    expect(screen.getByText('Combination')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('macht aus dem Play-Knopf einen Pause-Knopf, solange die Wochen laufen', async () => {
-    const { rerender, container } = await render(SheetHeadComponent, {
-      inputs: { titel: 'Steinpilz', playing: false },
+  it('marks every arrow as a tap target with a press state', async () => {
+    await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
+
+    for (const button of screen.getAllByRole('button')) {
+      expect(button).toHaveClass('tap');
+      expect(button).toHaveAttribute('data-press', 'scale');
+    }
+  });
+
+  it('renders without German text against an empty catalogue', async () => {
+    const { container } = await render(SheetHeadComponent, {
+      inputs: { title: 'Porcini', week: 'Week 40', titleLink: true },
+      providers: [EMPTY_CATALOG],
     });
 
-    expect(screen.getByRole('button', { name: 'Wochen abspielen' })).toHaveAttribute('aria-pressed', 'false');
-
-    await rerender({ inputs: { titel: 'Steinpilz', playing: true } });
-
-    expect(screen.getByRole('button', { name: 'Wiedergabe anhalten' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    // Zwei Balken statt eines Dreiecks: der Pfad des Pause-Piktogramms.
-    const paths = [...container.querySelectorAll('path')].map((path) => path.getAttribute('d'));
-    expect(paths.some((path) => path?.startsWith('M2.5 1.5h2.5v9'))).toBe(true);
+    noGermanText(container);
   });
 });

@@ -5,24 +5,21 @@ import { COARSE_DIGITS, GRID_KM } from '../../core/location/grid';
 import { locationText } from '../../core/i18n/places';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { LICENCE_TEXT } from '../image-credit/licences';
+import { LICENCE_CODE, OWN_PHOTO_KEY } from '../image-credit/licences';
 import { KeyValueRowComponent } from '../key-value-table/key-value-row.component';
 import { KeyValueTableComponent } from '../key-value-table/key-value-table.component';
+import type { TranslationKey } from '../../core/i18n/translations';
 import type { SpeciesImage } from '../../core/api/models';
 
-/** Eine Zeile der Tabelle unter dem großen Bild. */
+/** Eine Zeile der Tabelle unter dem grossen Bild. */
 interface Detail {
-  label: string;
+  labelKey: TranslationKey;
   text?: string;
-  licence?: string;
+  badgeKey?: TranslationKey;
+  badgeText?: string;
 }
 
-/**
- * Ein Bild groß, darunter Fotograf, Lizenz, Aufnahmetag und Unterschrift.
- *
- * Der Rahmen ist der Dialog des Kits: er bringt Fokusfalle, Escape und die
- * Sperre des Hintergrunds schon mit.
- */
+/** Ein Bild gross, darunter Fotograf, Lizenz, Aufnahmetag und Unterschrift. */
 @Component({
   selector: 'app-image-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,45 +33,33 @@ export class ImageViewerComponent {
   /** Das Bild. Ohne eines bleibt der Dialog zu. */
   readonly image = input.required<SpeciesImage | null>();
   /** Die Überschrift, meist der Name der Art. */
-  readonly titel = input.required<string>();
+  readonly title = input.required<string>();
 
   readonly closed = output();
 
-  protected readonly alt = computed(() => {
-    const image = this.image();
-    if (image === null) return '';
-    return image.caption ?? this.i18n.translate('bild.von', { name: this.titel() });
-  });
+  protected readonly alt = computed(() => this.image()?.caption ?? this.title());
 
   protected readonly details = computed<readonly Detail[]>(() => {
     const image = this.image();
     if (image === null) return [];
+    const licence = image.licence;
     const rows: Detail[] = [
-      { label: this.i18n.translate('bild.foto'), text: image.photographer },
-      {
-        label: this.i18n.translate('bild.lizenz'),
-        licence: this.i18n.translate(LICENCE_TEXT[image.licence]),
-      },
+      { labelKey: 'image.field.photo', text: image.photographer },
+      licence === 'own'
+        ? { labelKey: 'image.field.licence', badgeKey: OWN_PHOTO_KEY }
+        : { labelKey: 'image.field.licence', badgeText: LICENCE_CODE[licence] },
     ];
     if (image.takenOn !== null) {
-      rows.push({
-        label: this.i18n.translate('bild.aufgenommen'),
-        text: longDate(image.takenOn, this.i18n.locale()),
-      });
-    }
-    if (image.caption !== null) {
-      rows.push({ label: this.i18n.translate('bild.unterschrift'), text: image.caption });
+      rows.push({ labelKey: 'image.field.takenOn', text: longDate(image.takenOn, this.i18n.locale()) });
     }
     if (image.source !== null) {
-      rows.push({ label: this.i18n.translate('bild.quelle'), text: image.source });
+      rows.push({ labelKey: 'image.field.sourcePlaceholder', text: image.source });
     }
     if (image.lat !== null && image.lon !== null) {
       const shown = locationText(image.lat, image.lon, this.i18n.locale(), COARSE_DIGITS);
       rows.push({
-        label: this.i18n.translate('bild.ort'),
-        // Die Rundung steht am Ort und nicht im Kleingedruckten: eine Zahl
-        // ohne ihre Genauigkeit liest sich genauer, als sie ist.
-        text: this.i18n.translate('bild.ortGerundet', { lat: shown.lat, lon: shown.lon, km: GRID_KM }),
+        labelKey: 'image.field.place',
+        text: `${shown.lat} · ${shown.lon}, ${GRID_KM} km`,
       });
     }
     return rows;

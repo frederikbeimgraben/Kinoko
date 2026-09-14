@@ -1,8 +1,8 @@
 <app-dialog
   [open]="image() !== null"
-  [title]="titel()"
+  [title]="title()"
   size="lg"
-  [closeLabel]="'bild.schliessen' | t"
+  [closeLabel]="'common.close' | t"
   (closed)="closed.emit()"
 >
   @if (image(); as image) {
@@ -13,11 +13,14 @@
       [width]="image.width"
       [height]="image.height"
     />
+    @if (image.caption; as caption) {
+      <p class="viewer__caption">{{ caption }}</p>
+    }
     <app-key-value-table>
-      @for (row of details(); track row.label) {
-        <app-key-value-row [schluessel]="row.label" [value]="row.text">
-          @if (row.licence; as licence) {
-            <app-badge variant="primary">{{ licence }}</app-badge>
+      @for (row of details(); track row.labelKey) {
+        <app-key-value-row [schluessel]="row.labelKey | t" [value]="row.text">
+          @if (row.badgeKey || row.badgeText) {
+            <app-badge variant="primary">{{ row.badgeKey ? (row.badgeKey | t) : row.badgeText }}</app-badge>
           }
         </app-key-value-row>
       }

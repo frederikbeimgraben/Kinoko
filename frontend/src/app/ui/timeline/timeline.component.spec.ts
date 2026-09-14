@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { TimelineComponent, type TimelineWeek } from './timeline.component';
 
 const WEEKS: TimelineWeek[] = [
@@ -69,5 +70,27 @@ describe('TimelineComponent', () => {
     await userEvent.type(screen.getByRole('group', { name: 'Wochen' }), '{ArrowRight}');
 
     expect(container.querySelectorAll('.week')).toHaveLength(0);
+  });
+
+  it('nimmt in gedämpfter Ebene keine Pfeiltaste an', async () => {
+    const { fixture } = await render(TimelineComponent, {
+      inputs: { wochen: WEEKS, active: { jahr: 2025, woche: 52 }, label: 'Wochen', dimmed: true },
+    });
+    const selected: TimelineWeek[] = [];
+    fixture.componentInstance.chosen.subscribe((woche) => selected.push(woche));
+
+    expect(screen.getByRole('group', { name: 'Wochen' })).toHaveClass('bar--dimmed');
+    await userEvent.type(screen.getByRole('group', { name: 'Wochen' }), '{ArrowRight}');
+
+    expect(selected).toHaveLength(0);
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(TimelineComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: { wochen: WEEKS, label: 'Weeks' },
+    });
+
+    noGermanText(container);
   });
 });

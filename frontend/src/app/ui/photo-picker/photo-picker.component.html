@@ -1,0 +1,23 @@
+<div class="picker">
+  @for (tile of tiles(); track tile.file; let i = $index) {
+    <div class="tile">
+      <img class="tile__image" [src]="tile.preview" alt="" />
+      <button
+        class="tile__remove tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'melden.fotoEntfernen' | t: { nummer: i + 1 }"
+        (click)="remove(tile.file)"
+      >
+        <app-svg-icon name="close" [size]="14" />
+      </button>
+    </div>
+  }
+  @if (canAdd()) {
+    <label class="tile tile--add tap" data-press="scale">
+      <app-svg-icon name="plus" [size]="22" />
+      <span class="sr-only">{{ 'bild.hinzufuegen' | t }}</span>
+      <input class="sr-only" type="file" accept="image/jpeg,image/webp" multiple (change)="onPick($event)" />
+    </label>
+  }
+</div>

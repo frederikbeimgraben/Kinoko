@@ -1,0 +1,34 @@
+:host {
+  display: contents;
+}
+
+.overlay__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-dialog);
+  padding: 0;
+  background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  border: 0;
+  transition: opacity var(--motion-sheet) var(--ease-standard);
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.overlay__panel {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: calc(var(--z-dialog) + 1);
+  transition: transform var(--motion-sheet) var(--ease-standard);
+  transform: translateY(0);
+
+  @starting-style {
+    transform: translateY(100%);
+  }
+}
+
+.overlay__panel:focus-visible {
+  outline: none;
+}

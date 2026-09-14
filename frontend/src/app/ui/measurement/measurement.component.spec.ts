@@ -1,43 +1,34 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
-import { MeasurementComponent } from './measurement.component';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { MeasurementComponent, type Extent } from './measurement.component';
 
 describe('MeasurementComponent', () => {
-  it('nennt Zeichen, Spanne und Einheit', async () => {
+  it('nennt die Strecke als Wort und den Wert mit Einheit', async () => {
     const { container } = await render(MeasurementComponent, {
-      inputs: { extent: 'hutbreite', spans: [{ von: 4, bis: 20 }], unit: 'cm', label: 'Durchmesser' },
+      inputs: { extent: 'width', spans: [{ from: 4, to: 20 }], unit: 'cm' },
     });
 
+    expect(screen.getByText('Breite')).toBeInTheDocument();
     expect(screen.getByText('4 – 20')).toBeInTheDocument();
     expect(screen.getByText('cm')).toBeInTheDocument();
-    // Das Zeichen trägt die Bedeutung, also nennt es sich für Hilfsmittel.
-    expect(screen.getByRole('img', { name: 'Durchmesser' })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('schreibt zwei Strecken als Länge mal Breite', async () => {
-    // Die Schreibweise der Bestimmungsbücher: ein Malzeichen, die Einheit
-    // einmal am Ende. Zwei Zeilen „Sporen Länge“ und „Sporen Breite“ ließen
-    // drei Merkmale erscheinen, wo zwei sind.
-    await render(MeasurementComponent, {
-      inputs: {
-        extent: 'sporenlaenge',
-        spans: [
-          { von: 13, bis: 18 },
-          { von: 5, bis: 6 },
-        ],
-        unit: 'µm',
-        label: 'Sporen',
-      },
-    });
+  it.each<[Extent, string]>([
+    ['width', 'Breite'],
+    ['height', 'Höhe'],
+    ['length', 'Länge'],
+    ['thickness', 'Dicke'],
+  ])('übersetzt %s als %s', async (extent, wort) => {
+    await render(MeasurementComponent, { inputs: { extent, spans: [{ from: 1, to: null }], unit: 'cm' } });
 
-    expect(screen.getByText('13 – 18 × 5 – 6')).toBeInTheDocument();
-    expect(screen.getByText('µm')).toBeInTheDocument();
+    expect(screen.getByText(wort)).toBeInTheDocument();
   });
 
   it('schreibt einen einzelnen Wert ohne Strich', async () => {
     await render(MeasurementComponent, {
-      inputs: { extent: 'stieldicke', spans: [{ von: 0.3, bis: null }], unit: 'mm', label: 'Dicke' },
+      inputs: { extent: 'thickness', spans: [{ from: 0.3, to: null }], unit: 'mm' },
     });
 
     expect(screen.getByText('0,3')).toBeInTheDocument();
@@ -45,7 +36,7 @@ describe('MeasurementComponent', () => {
 
   it('schreibt eine Spanne aus zwei gleichen Werten als einen', async () => {
     await render(MeasurementComponent, {
-      inputs: { extent: 'stielhoehe', spans: [{ von: 5, bis: 5 }], unit: 'cm', label: 'Höhe' },
+      inputs: { extent: 'height', spans: [{ from: 5, to: 5 }], unit: 'cm' },
     });
 
     expect(screen.getByText('5')).toBeInTheDocument();
@@ -53,14 +44,76 @@ describe('MeasurementComponent', () => {
 
   it('setzt Kommas statt Punkte', async () => {
     await render(MeasurementComponent, {
-      inputs: {
-        extent: 'sporenlaenge',
-        spans: [{ von: 12.4, bis: 19.2 }],
-        unit: 'µm',
-        label: 'Höhe',
-      },
+      inputs: { extent: 'length', spans: [{ from: 12.4, to: 19.2 }], unit: 'µm' },
     });
 
     expect(screen.getByText('12,4 – 19,2')).toBeInTheDocument();
+  });
+
+  it('trägt die seltene Ausnahme nach oben als Unterzeile', async () => {
+    // Die übliche Spanne endet bei 20, die Ausnahme reicht seltener an 25 heran.
+    await render(MeasurementComponent, {
+      inputs: {
+        extent: 'width',
+        spans: [
+          { from: 4, to: 20 },
+          { from: null, to: 25 },
+        ],
+        unit: 'cm',
+      },
+    });
+
+    expect(screen.getByText('selten bis 25 cm')).toBeInTheDocument();
+  });
+
+  it('trägt die seltene Ausnahme nach unten als Unterzeile', async () => {
+    await render(MeasurementComponent, {
+      inputs: {
+        extent: 'height',
+        spans: [
+          { from: 5, to: 15 },
+          { from: 2, to: null },
+        ],
+        unit: 'cm',
+      },
+    });
+
+    expect(screen.getByText('selten ab 2 cm')).toBeInTheDocument();
+  });
+
+  it('bleibt ohne seltene Ausnahme ohne Unterzeile', async () => {
+    const { container } = await render(MeasurementComponent, {
+      inputs: { extent: 'width', spans: [{ from: 4, to: 20 }], unit: 'cm' },
+    });
+
+    expect(container.querySelector('.measure__rare')).toBeNull();
+  });
+
+  it('zeigt die Trennlinie zwischen zwei Zeilen, nicht nach der letzten', async () => {
+    const { container } = await render(
+      `<app-measurement [extent]="'width'" [spans]="spans" unit="cm" />
+       <app-measurement [extent]="'height'" [spans]="spans" unit="cm" />`,
+      { imports: [MeasurementComponent], componentProperties: { spans: [{ from: 1, to: 2 }] } },
+    );
+
+    const rows = container.querySelectorAll('app-measurement');
+    expect(getComputedStyle(rows[0]).borderBlockEndWidth).not.toBe('0px');
+    expect(getComputedStyle(rows[1]).borderBlockEndWidth).toBe('0px');
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(MeasurementComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: {
+        extent: 'width',
+        spans: [
+          { from: 4, to: 20 },
+          { from: null, to: 25 },
+        ],
+        unit: 'cm',
+      },
+    });
+
+    noGermanText(container);
   });
 });

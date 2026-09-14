@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { SeasonCurveComponent, smooth } from './season-curve.component';
 
 const ALLE = Array.from({ length: 52 }, (_, i) => i / 51);
@@ -106,16 +107,14 @@ describe('SeasonCurveComponent', () => {
       },
     );
 
-    // Die Kurve füllt die Breite (`preserveAspectRatio="none"`), darum ist die
-    // Stelle einer Woche ein Anteil und keine Pixelzahl: sie stimmt bei jeder
-    // Breite. Der Vergleich holt sie aus dem Pfad, den die Kurve wirklich malt.
+    // Die Kurve füllt die Breite, die Stelle einer Woche ist darum ein Anteil.
+    // Der Vergleich holt sie aus dem Pfad, den die Kurve wirklich malt.
     const okt = [...container.querySelectorAll<HTMLElement>('.spark__month')].find(
       (badge) => badge.textContent === 'Okt',
     );
     expect(okt?.style.left).toBe(`${((39 / 51) * 100).toString()}%`);
 
-    // Dieselbe Stelle malt auch die Kurve für Woche 40, bis auf die eine
-    // Nachkommastelle, auf die der Pfad gerundet wird.
+    // Dieselbe Stelle malt auch die Kurve für Woche 40, auf eine Nachkommastelle gerundet.
     const path = container.querySelector('.spark__all')?.getAttribute('d') ?? '';
     const xValues = [...path.matchAll(/L(\d+\.\d)/g)].map((matches) => Number(matches[1]));
     expect((xValues[39] / 330) * 100).toBeCloseTo(Number.parseFloat(okt?.style.left ?? ''), 1);
@@ -179,5 +178,20 @@ describe('SeasonCurveComponent', () => {
     expect(container.querySelector('.spark__all')?.closest('g')?.getAttribute('mask')).toMatch(
       /^url\(#funke-dicht-\d+\)$/,
     );
+  });
+
+  it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
+    const { container } = await render(SeasonCurveComponent, {
+      providers: [EMPTY_CATALOG],
+      inputs: {
+        alleJahre: ALLE,
+        laufendesJahr: CURRENT,
+        label: 'Season curve',
+        legendCurrent: 'This year',
+        legendYears: 'Average',
+      },
+    });
+
+    noGermanText(container);
   });
 });

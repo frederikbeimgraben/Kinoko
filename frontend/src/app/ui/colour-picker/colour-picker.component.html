@@ -1,0 +1,27 @@
+<div class="picker__grid" role="radiogroup" [attr.aria-label]="label()">
+  @for (colour of colours(); track colour.value) {
+    <button
+      class="swatch tap"
+      type="button"
+      role="radio"
+      data-press="scale"
+      [class.swatch--selected]="colour.value === value()"
+      [attr.aria-checked]="colour.value === value()"
+      [attr.tabindex]="colour.value === value() ? 0 : -1"
+      (click)="valueChange.emit(colour.value)"
+    >
+      <i class="swatch__field" [style.background]="colour.value"></i>
+      <span class="swatch__label">{{ colour.label }}</span>
+    </button>
+  }
+</div>
+@if (hasNearest()) {
+  <div class="picker__nearest">
+    <p class="picker__heading">{{ 'farben.beschriftung' | t }}</p>
+    <div class="picker__tones" [attr.aria-label]="'farben.beschriftung' | t">
+      @for (tone of nearest(); track tone) {
+        <i class="tone" aria-hidden="true" [style.background]="tone"></i>
+      }
+    </div>
+  </div>
+}
