@@ -327,7 +327,7 @@ describe('MapComponent', () => {
     expect(screen.getByRole('dialog', { name: 'Eintragen' })).toBeInTheDocument();
   });
 
-  it('zeigt die Leiste ohne Verbindung und dämpft die Zeitleiste', async () => {
+  it('zeigt die Leiste ohne Verbindung und lässt die Wochen bedienbar', async () => {
     const { stable } = await map();
     const sync = TestBed.inject(SyncService) as unknown as {
       _online: { set: (value: boolean) => void };
@@ -336,7 +336,7 @@ describe('MapComponent', () => {
     await stable();
 
     expect(screen.getByRole('status')).toHaveTextContent('Keine Verbindung');
-    expect(screen.getByRole('group', { name: 'Zeitleiste' })).toHaveClass('bar--dimmed');
+    expect(screen.getByRole('group', { name: 'Zeitleiste' })).not.toHaveClass('bar--dimmed');
   });
 
   it('zeigt beim Laden das Raster der Karte', async () => {

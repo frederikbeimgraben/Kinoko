@@ -70,5 +70,20 @@
   inline-size: var(--size-thumb);
   block-size: var(--size-thumb);
   object-fit: cover;
-  border-radius: var(--radius-md);
+  border-radius: var(--pilz-colour-radius);
+}
+
+// Ohne Bild steht ein Feld in den Tönen der Art. Es zeigt nichts vor, es
+// hält nur den Platz, den ein Bild später einnimmt.
+.row__image--empty {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.row__patch {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(6px);
+  opacity: 0.55;
 }

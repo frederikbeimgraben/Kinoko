@@ -3,7 +3,6 @@
     <div class="map__column">
       <app-map-head
         [playing]="playback.playing()"
-        [locked]="offline()"
         (titleChosen)="openTitle()"
         (weekChosen)="playback.select($event)"
         (stepped)="playback.step($event)"
@@ -83,7 +82,6 @@
           <app-map-head
             head
             [playing]="playback.playing()"
-            [locked]="offline()"
             (titleChosen)="openTitle()"
             (weekChosen)="playback.select($event)"
             (stepped)="playback.step($event)"

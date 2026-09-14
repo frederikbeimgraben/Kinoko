@@ -16,13 +16,11 @@ export class MapHeadComponent {
   protected readonly view = inject(MapView);
 
   readonly playing = input(false);
-  /** Ohne Verbindung bleibt die Leiste stehen, aber sie nimmt keine Wahl an. */
-  readonly locked = input(false);
 
   readonly titleChosen = output();
   readonly weekChosen = output<TimelineWeek>();
   readonly stepped = output<1 | -1>();
   readonly playToggled = output();
 
-  protected readonly dimmed = computed(() => this.view.fixedLayer() || this.locked());
+  protected readonly dimmed = computed(() => this.view.fixedLayer());
 }

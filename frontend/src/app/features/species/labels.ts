@@ -387,6 +387,13 @@ export const EDIBILITY_KEY: Record<Edibility, TranslationKey> = {
   deadly: 'enum.edibility.deadly',
 };
 
+/** Die zwei Töne des Bildplatzhalters je Art, dunkel nach hell. */
+export const SPECIES_TINT: Record<string, readonly [string, string]> = {
+  'boletus-edulis': ['#7a5230', '#c9a877'],
+  'cantharellus-cibarius': ['#d9a441', '#e8c86a'],
+  'imleria-badia': ['#8a4e2b', '#4a3220'],
+};
+
 /** Grün, was in die Pfanne darf; rot, was schadet; grau der Rest. */
 export const EDIBILITY_TONE: Record<Edibility, string> = {
   edible: '#4f9d6f',

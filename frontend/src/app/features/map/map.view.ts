@@ -6,7 +6,7 @@ import { NOW } from '../../core/tiles/now';
 import { barShares, currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
-import { EDIBILITY_KEY, EDIBILITY_TONE } from '../species/labels';
+import { EDIBILITY_KEY, EDIBILITY_TONE, SPECIES_TINT } from '../species/labels';
 import { SpeciesState } from '../species/species.state';
 import { CombinationState } from './combination.state';
 import { DEFAULT_LAYER, MapState } from './map.state';
@@ -96,6 +96,7 @@ export class MapView {
         latin: species.scientificName,
         levelText: this.i18n.translate(EDIBILITY_KEY[species.edibility]),
         levelColour: EDIBILITY_TONE[species.edibility],
+        tint: SPECIES_TINT[species.slug],
       })),
   );
 
