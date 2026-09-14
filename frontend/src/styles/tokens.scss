@@ -116,6 +116,10 @@
   --size-tile: 88px;
   --size-crosshair: 52px;
 
+  // Die Boards zeichnen mit der Vorgabe des Browsers. Das Kit setzt 1.5, die
+  // Boards gewinnen. `--lh-tight` und `--lh-relaxed` bleiben, wie sie sind.
+  --lh-normal: 1.2;
+
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
