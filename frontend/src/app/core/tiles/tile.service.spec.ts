@@ -5,7 +5,12 @@ import { ConfigService } from '../config/config.service';
 import { TileService } from './tile.service';
 
 function reply(data: unknown, ok = true): Response {
-  return { ok, status: ok ? 200 : 404, json: () => Promise.resolve(data) } as Response;
+  return {
+    ok,
+    status: ok ? 200 : 404,
+    headers: new Headers({ 'content-type': 'application/json' }),
+    json: () => Promise.resolve(data),
+  } as Response;
 }
 
 function service(origin = ''): TileService {

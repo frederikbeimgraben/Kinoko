@@ -11,6 +11,10 @@ class CacheDouble {
     return Promise.resolve();
   }
 
+  delete(url: string): Promise<boolean> {
+    return Promise.resolve(this.entries.delete(url));
+  }
+
   keys(): Promise<readonly string[]> {
     return Promise.resolve([...this.entries.keys()]);
   }

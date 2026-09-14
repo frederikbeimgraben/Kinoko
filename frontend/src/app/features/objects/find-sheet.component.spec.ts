@@ -36,8 +36,17 @@ function answerMap(byte: number, manifest: unknown = MANIFEST): void {
   answerValueTile(byte);
   vi.stubGlobal('fetch', (url: string) =>
     url.endsWith('.png')
-      ? Promise.resolve({ ok: true, blob: () => Promise.resolve(new Blob()) })
-      : Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(manifest) }),
+      ? Promise.resolve({
+          ok: true,
+          headers: new Headers({ 'content-type': 'image/png' }),
+          blob: () => Promise.resolve(new Blob()),
+        })
+      : Promise.resolve({
+          ok: true,
+          status: 200,
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: () => Promise.resolve(manifest),
+        }),
   );
 }
 
