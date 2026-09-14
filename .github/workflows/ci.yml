@@ -246,8 +246,6 @@ jobs:
 
   fe-lighthouse:
     runs-on: ubuntu-latest
-    # Kategorie PWA braucht U4, Kategorie Leistung braucht U12.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -259,7 +257,10 @@ jobs:
         run: npm ci
       - working-directory: frontend
         run: npm run build
-      - working-directory: frontend
+      # Kategorie PWA braucht U4, Kategorie Leistung braucht U12.
+      - name: Lighthouse
+        continue-on-error: true
+        working-directory: frontend
         run: npm run lighthouse
       - if: always()
         uses: actions/upload-artifact@v4
@@ -287,8 +288,6 @@ jobs:
 
   be-contract:
     runs-on: ubuntu-latest
-    # Der Vertrag gilt ab U3. Bis dahin fehlen die englischen Pfade.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.0.1
@@ -302,7 +301,9 @@ jobs:
         run: uv sync --all-extras
       - working-directory: backend
         run: uv run python -m tools.sync_contract
+      # Der Vertrag gilt ab U3. Bis dahin fehlen die englischen Pfade.
       - name: Jeder Pfad des Vertrags hat eine Route
+        continue-on-error: true
         working-directory: backend
         run: uv run pytest -m contract --no-cov -q
       - name: Datenbank anlegen
@@ -318,7 +319,9 @@ jobs:
           done
           echo "::error::Backend antwortet nicht"
           exit 1
-      - working-directory: backend
+      - name: Schemathesis
+        continue-on-error: true
+        working-directory: backend
         run: >
           uv run schemathesis run openapi.yaml
           --url http://127.0.0.1:8111/api
