@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-/** Spiegelt die Board-Bilder der Artefakte nach `e2e/boards/baseline`. */
+/** Spiegelt Board-Bilder und Kartenbilder der Artefakte nach `e2e/boards`. */
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const EXCLUDED = new Set(['SpecLevels.png', 'Blocks.png']);
 
-/** Sucht `artefakte/mockups/bilder` von `root` aufwärts. */
-function findSource(root) {
+/** Sucht einen Ordner der Artefakte von `root` aufwärts. */
+function findSource(root, part) {
   let folder = root;
   for (;;) {
-    const hit = join(folder, 'artefakte/mockups/bilder');
+    const hit = join(folder, part);
     if (existsSync(hit)) return hit;
     const up = dirname(folder);
     if (up === folder) return null;
@@ -18,33 +18,46 @@ function findSource(root) {
   }
 }
 
-/** Spiegelt Board-Bilder nach `root/e2e/boards/baseline`. Gibt `null` ohne Quelle zurück. */
-export function sync(root) {
-  const from = findSource(root);
-  if (!from) return null;
-
-  const target = join(root, 'e2e/boards/baseline');
+/** Kopiert jede PNG aus `from` nach `target`, ohne die gleichen noch einmal. */
+function copyImages(from, target, excluded = new Set()) {
   mkdirSync(target, { recursive: true });
   const files = [];
   let fresh = 0;
   let same = 0;
   for (const name of readdirSync(from)) {
     if (!name.endsWith('.png')) continue;
-    if (EXCLUDED.has(name)) {
+    if (excluded.has(name)) {
       files.push({ name, action: 'skip-excluded' });
       continue;
     }
-    const targetPath = join(target, name);
-    if (existsSync(targetPath) && readFileSync(targetPath).equals(readFileSync(join(from, name)))) {
+    const to = join(target, name);
+    if (existsSync(to) && readFileSync(to).equals(readFileSync(join(from, name)))) {
       same += 1;
       files.push({ name, action: 'skip-same' });
       continue;
     }
-    copyFileSync(join(from, name), targetPath);
+    copyFileSync(join(from, name), to);
     fresh += 1;
     files.push({ name, action: 'copy' });
   }
-  return { from, target, fresh, same, files };
+  return { fresh, same, files };
+}
+
+/** Spiegelt Board- und Kartenbilder. Gibt `null` ohne Quelle zurück. */
+export function sync(root) {
+  const from = findSource(root, 'artefakte/mockups/bilder');
+  if (!from) return null;
+
+  const target = join(root, 'e2e/boards/baseline');
+  const boards = copyImages(from, target, EXCLUDED);
+
+  // Die Kartenbilder stehen neben den Quellen der Boards, nicht bei den
+  // Bildern: sie sind Zutat des Tests, kein Board.
+  const fixtureSource = findSource(root, 'artefakte/mockups/code/fixtures');
+  const fixtures = fixtureSource
+    ? copyImages(fixtureSource, join(root, 'e2e/boards/fixtures'))
+    : { fresh: 0, same: 0, files: [] };
+  return { from, target, fixtureSource, ...boards, fixtures };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -55,4 +68,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     process.exit(0);
   }
   console.log(`Boards: ${result.fresh} neu, ${result.same} unverändert, Quelle ${result.from}`);
+  const seen = result.fixtures.fresh + result.fixtures.same;
+  console.log(
+    result.fixtureSource
+      ? `Kartenbilder: ${result.fixtures.fresh} neu, ${result.fixtures.same} unverändert, ${seen} gesamt`
+      : 'artefakte/mockups/code/fixtures fehlt, die eingecheckten Kartenbilder bleiben',
+  );
 }

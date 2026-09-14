@@ -130,6 +130,18 @@ app-object-sheet {
   z-index: 1;
 }
 
+// Ohne Verbindung liegt die Karte grau: was zu sehen ist, ist der letzte
+// Stand, nicht der von jetzt.
+.map__grey {
+  position: absolute;
+  inset: 0 0 var(--pilz-sheet-inset, 0) 0;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--color-text-muted);
+  mix-blend-mode: saturation;
+  opacity: 0.7;
+}
+
 // Die Leiste liegt über der Karte am oberen Rand, wie im Board MapOffline.
 .map__banner {
   position: absolute;

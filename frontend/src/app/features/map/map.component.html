@@ -32,6 +32,7 @@
   }
 
   @if (offline()) {
+    <div class="map__grey" aria-hidden="true"></div>
     <app-banner class="map__banner" kind="error" />
   }
 
@@ -71,7 +72,12 @@
 
     @if (!overlaid() && !wide()) {
       <div class="map__sheet">
-        <app-sheet [label]="'nav.tab.map' | t" [detent]="state.detent()" (detentChange)="setDetent($event)">
+        <app-sheet
+          [label]="'nav.tab.map' | t"
+          [detent]="state.detent()"
+          [detents]="detents"
+          (detentChange)="setDetent($event)"
+        >
           <app-map-head
             head
             [playing]="playback.playing()"

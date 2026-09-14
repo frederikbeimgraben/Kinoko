@@ -67,12 +67,17 @@ declare module '*/tools/sync-boards.mjs' {
     name: string;
     action: 'copy' | 'skip-same' | 'skip-excluded';
   }
-  export interface SyncResult {
-    from: string;
-    target: string;
+  export interface CopyResult {
     fresh: number;
     same: number;
     files: BoardFile[];
+  }
+  export interface SyncResult extends CopyResult {
+    from: string;
+    target: string;
+    /** Wo die Kartenbilder lagen, oder `null`, wenn es keine gibt. */
+    fixtureSource: string | null;
+    fixtures: CopyResult;
   }
   export function sync(root: string): SyncResult | null;
 }

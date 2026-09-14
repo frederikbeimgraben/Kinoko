@@ -38,7 +38,7 @@ import { MapHeadComponent } from './map-head.component';
 import { MapOverlaysComponent, type Overlay } from './map-overlays.component';
 import { MapPanelComponent } from './map-panel.component';
 import { MapPlayback } from './map-playback';
-import { DETENTS, MapSurface } from './map-surface';
+import { DETENTS, DETENT_SIZES, MapSurface } from './map-surface';
 import { MapState } from './map.state';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
@@ -105,11 +105,10 @@ export class MapComponent implements OnDestroy {
   /** Über der Karte liegt immer nur ein Blatt. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
 
-  protected readonly sheetInset = computed(() => {
-    if (this.wide()) return '0px';
-    const size = DETENTS[this.state.detent()];
-    return size <= 1 ? `${size * 100}%` : `${size}px`;
-  });
+  /** Die Rasten, mit denen das Blatt der Karte zeichnet. */
+  protected readonly detents = DETENT_SIZES;
+
+  protected readonly sheetInset = computed(() => (this.wide() ? '0px' : `${DETENTS[this.state.detent()]}px`));
 
   constructor() {
     effect(() => {

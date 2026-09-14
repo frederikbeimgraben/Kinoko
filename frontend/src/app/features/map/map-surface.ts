@@ -16,8 +16,11 @@ import { MapState } from './map.state';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
 
-/** Die Rasten des Blatts: feste Höhe oder Anteil der Kartenhöhe. */
-export const DETENTS = [152, 0.4, 0.9] as const;
+/** Die drei Rasten des Blatts in Punkten, aus den Boards. */
+export const DETENTS = [120, 310, 480] as const;
+
+/** Dieselben Rasten in der Schreibweise, die `app-sheet` erwartet. */
+export const DETENT_SIZES = ['120px', '310px', '480px'] as const;
 
 /** British Racing Green, falls das Theme keine Farbe hergibt. */
 const MEAN_FALLBACK = '#004225';
@@ -157,8 +160,7 @@ export class MapSurface {
   private padding(detent: Detent, wide: boolean, overlaid = 0): Padding {
     if (wide) return { top: 0, bottom: 0, left: 0, right: 0 };
     const height = this.host?.clientHeight ?? 0;
-    const size = DETENTS[detent];
-    const sheet = overlaid > 0 ? overlaid : size <= 1 ? size * height : size;
+    const sheet = overlaid > 0 ? overlaid : Math.min(DETENTS[detent], height);
     return { top: 0, bottom: Math.round(sheet), left: 0, right: 0 };
   }
 }

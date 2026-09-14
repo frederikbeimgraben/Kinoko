@@ -1,7 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
-import { BOARD_FACTORS, COMBINATIONS, SPECIES_BUNDLE, mockMap, type BoardState } from '../fixtures/map';
+import {
+  BOARD_FACTORS,
+  COMBINATIONS,
+  SPECIES_BUNDLE,
+  mockMap,
+  showMapImage,
+  type BoardState,
+} from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
 const BASE = 'http://127.0.0.1:4400';
@@ -21,10 +28,17 @@ const REPLIES = {
   '/api/zonen': { eintraege: [], gesamt: 0 },
 };
 
-async function openMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {
+async function openMap(
+  page: Page,
+  state: BoardState = {},
+  factors = '',
+  image = 'map-stein.png',
+): Promise<void> {
   await mockApi(page, REPLIES);
   await mockMap(page, state, factors);
   await page.goto('/karte');
+  await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
+  if (image !== '') await showMapImage(page, image);
 }
 
 /** Dieselbe Karte, aber mit Konto: Speichern fragt dann nicht erst nach. */
@@ -34,6 +48,7 @@ async function openSignedIn(page: Page, factors = ''): Promise<void> {
   await mockMap(page, { view: 'combination', detent: 2 }, factors);
   await page.goto('/karte');
   await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
+  await showMapImage(page, 'map-schnitt.png');
 }
 
 /** Speichern führt ohne Konto zuerst durch die Anmeldung. */
@@ -67,19 +82,19 @@ test('MapLayersButton', async ({ page }) => {
 
 test('LayerTab', async ({ page }) => {
   guard('LayerTab', 'phone');
-  await openMap(page, { view: 'layer' });
+  await openMap(page, { view: 'layer' }, '', 'map-regen.png');
   await expectBoard(page, 'LayerTab');
 });
 
 test('CombinationTab', async ({ page }) => {
   guard('CombinationTab', 'phone');
-  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS, 'map-schnitt.png');
   await expectBoard(page, 'CombinationTab');
 });
 
 test('Factor', async ({ page }) => {
   guard('Factor', 'phone');
-  await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
+  await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS, 'map-stein.png');
   await page.getByRole('button', { name: '≥ 80 mm' }).click();
   await expectBoard(page, 'Factor');
 });
@@ -93,7 +108,7 @@ test('SpeciesChooser', async ({ page }) => {
 
 test('FactorPicker', async ({ page }) => {
   guard('FactorPicker', 'phone');
-  await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
+  await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS, 'map-stein.png');
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
   await expectBoard(page, 'FactorPicker');
 });
@@ -117,7 +132,6 @@ test('Combinations', async ({ page }) => {
 test('MapOffline', async ({ page }) => {
   guard('MapOffline', 'phone');
   await openMap(page);
-  await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
   await page.evaluate(() => {
     Object.defineProperty(navigator, 'onLine', { configurable: true, value: false });
     window.dispatchEvent(new Event('offline'));
@@ -130,6 +144,7 @@ test('MapSkeleton', async ({ page }) => {
   guard('MapSkeleton', 'phone');
   await mockApi(page, REPLIES);
   await mockMap(page);
+  // Ohne Manifest zeigt die Karte ihr Raster; ein Kartenbild gehört nicht dazu.
   await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {
     await route.fulfill({ status: 404, body: '' });
   });
@@ -139,6 +154,6 @@ test('MapSkeleton', async ({ page }) => {
 
 test('MapDesktop', async ({ page }) => {
   guard('MapDesktop', 'wide');
-  await openMap(page);
+  await openMap(page, {}, '', 'map-desktop-stein.png');
   await expectBoard(page, 'MapDesktop');
 });

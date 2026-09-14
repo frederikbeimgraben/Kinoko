@@ -6,18 +6,27 @@ export const SPECIES = 'boletus-edulis';
 
 const SHARES = [0.18, 0.26, 0.4, 0.48, 0.62, 0.7, 0.88, 1];
 
+/** Die erste Woche der Leiste. Gewählt ist KW 40, sie steht in der Mitte. */
+const FIRST_WEEK = 36;
+
+/** Ab dieser Woche rechnet die Kette, sie misst nicht mehr. */
+const FIRST_FORECAST = 41;
+
 function weeks(): unknown[] {
-  return SHARES.map((share, index) => ({
-    year: 2025,
-    week: 33 + index,
-    forecast: false,
-    tiles: `boletus_edulis_kacheln/2025W${33 + index}`,
-    mean: share,
-    max: share,
-  }));
+  return SHARES.map((share, index) => {
+    const week = FIRST_WEEK + index;
+    return {
+      year: 2025,
+      week,
+      forecast: week >= FIRST_FORECAST,
+      tiles: `boletus_edulis_kacheln/2025W${week}`,
+      mean: share,
+      max: share,
+    };
+  });
 }
 
-/** Das Manifest der Art: acht Wochen, Höchstwert 0,5. */
+/** Das Manifest der Art: acht Wochen um KW 40, Höchstwert 0,5. */
 export const SPECIES_MANIFEST = {
   species: ['Boletus edulis'],
   top: 0.5,
