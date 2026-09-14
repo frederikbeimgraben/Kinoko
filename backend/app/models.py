@@ -21,6 +21,7 @@ from sqlalchemy import (
     Uuid,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.types import TypeDecorator
 
 from app.shared.enums import (
     Area,
@@ -63,6 +64,20 @@ NAME_LENGTH: Final = 120
 HEX_LENGTH: Final = 7
 
 
+class Utc(TypeDecorator[datetime]):
+    """Ein Zeitstempel, der immer mit Zeitzone zurückkommt."""
+
+    impl = DateTime(timezone=True)
+    cache_ok = True
+
+    def process_result_value(self, value: datetime | None, dialect: object) -> datetime | None:
+        """Hängt UTC an einen Wert ohne Zeitzone."""
+        _ = dialect
+        if value is not None and value.tzinfo is None:
+            return value.replace(tzinfo=UTC)
+        return value
+
+
 def new_id() -> uuid.UUID:
     """Erzeugt den Schlüssel einer neuen Zeile."""
     return uuid.uuid4()
@@ -84,7 +99,7 @@ def pk_id() -> Mapped[uuid.UUID]:
 
 def stamp() -> Mapped[datetime]:
     """Ein Zeitstempel, der beim Schreiben mitläuft."""
-    return mapped_column(DateTime(timezone=True), default=now, onupdate=now)
+    return mapped_column(Utc(), default=now, onupdate=now)
 
 
 class User(Base):
@@ -96,7 +111,7 @@ class User(Base):
     sub: Mapped[str] = mapped_column(String(128), unique=True, index=True)
     email: Mapped[str | None] = mapped_column(String(NAME_LENGTH))
     name: Mapped[str | None] = mapped_column(String(NAME_LENGTH))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
 
 
 class Role(Base):
@@ -109,7 +124,7 @@ class Role(Base):
     name: Mapped[str] = mapped_column(String(NAME_LENGTH))
     description: Mapped[str | None] = mapped_column(Text)
     built_in: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
 
 
@@ -150,7 +165,7 @@ class UserRole(Base):
         ForeignKey("role.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    granted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    granted_at: Mapped[datetime] = mapped_column(Utc(), default=now)
 
 
 class Taxon(Base):
@@ -436,12 +451,12 @@ class Find(Base):
     reviewed_by_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("user.id", ondelete="SET NULL"),
     )
-    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reviewed_at: Mapped[datetime | None] = mapped_column(Utc())
     visibility: Mapped[Visibility] = mapped_column(String(20), default=Visibility.PRIVATE)
     note: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(Utc())
 
 
 class Photo(Base):
@@ -471,8 +486,8 @@ class Photo(Base):
     reviewed_by_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("user.id", ondelete="SET NULL"),
     )
-    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    reviewed_at: Mapped[datetime | None] = mapped_column(Utc())
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
 
 
@@ -490,9 +505,9 @@ class Marker(Base):
     colour: Mapped[MarkerColour] = mapped_column(String(20), default=MarkerColour.GREEN)
     visibility: Mapped[Visibility] = mapped_column(String(20), default=Visibility.PRIVATE)
     note: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(Utc())
 
 
 class Zone(Base):
@@ -509,9 +524,9 @@ class Zone(Base):
     colour: Mapped[MarkerColour] = mapped_column(String(20), default=MarkerColour.GREEN)
     visibility: Mapped[Visibility] = mapped_column(String(20), default=Visibility.PRIVATE)
     note: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(Utc())
 
 
 class Combination(Base):
@@ -525,9 +540,9 @@ class Combination(Base):
     name: Mapped[str] = mapped_column(String(NAME_LENGTH))
     rule: Mapped[Rule] = mapped_column(String(20), default=Rule.INTERSECTION)
     factors: Mapped[str] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(Utc())
 
 
 class TextEntry(Base):
@@ -553,9 +568,9 @@ class PipelineRun(Base):
     id: Mapped[uuid.UUID] = pk_id()
     kind: Mapped[RunKind] = mapped_column(String(20))
     state: Mapped[RunState] = mapped_column(String(20), default=RunState.QUEUED)
-    queued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    queued_at: Mapped[datetime] = mapped_column(Utc(), default=now)
+    started_at: Mapped[datetime | None] = mapped_column(Utc())
+    finished_at: Mapped[datetime | None] = mapped_column(Utc())
     log_path: Mapped[str | None] = mapped_column(Text)
     metric_brier: Mapped[float | None] = mapped_column(Float)
     progress_done: Mapped[int] = mapped_column(Integer, default=0)

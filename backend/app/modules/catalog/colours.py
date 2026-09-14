@@ -7,6 +7,7 @@ from typing import Final
 
 CUBE_ROOT: Final = 1.0 / 3.0
 GAMMA_CUT: Final = 0.04045
+WEIGHTS: Final = (1.0, 2.0, 2.0)
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,10 +63,11 @@ def oklab(value: str) -> tuple[float, float, float]:
 
 
 def distance(first: str, second: str) -> float:
-    """Der Abstand zweier Farben im Oklab-Raum."""
+    """Der Abstand zweier Farben im Oklab-Raum, Buntheit doppelt gewichtet."""
     left = oklab(first)
     right = oklab(second)
-    return sum((one - other) ** 2 for one, other in zip(left, right, strict=True)) ** 0.5
+    parts = zip(left, right, WEIGHTS, strict=True)
+    return sum(((one - other) * weight) ** 2 for one, other, weight in parts) ** 0.5
 
 
 def nearest_colour(value: str) -> StandardColour:

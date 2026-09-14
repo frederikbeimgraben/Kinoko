@@ -51,8 +51,9 @@ def point_in_polygon(point: Point, ring: Ring) -> bool:
 def coarse(point: Point, km: float = 1.0) -> Point:
     """Rundet einen Punkt auf ein Raster von ``km`` Kilometern."""
     step_lat = km / 111.32
-    step_lon = step_lat / max(math.cos(math.radians(point[1])), 0.01)
-    return (round(point[0] / step_lon) * step_lon, round(point[1] / step_lat) * step_lat)
+    lat = round(point[1] / step_lat) * step_lat
+    step_lon = step_lat / max(math.cos(math.radians(lat)), 0.01)
+    return (round(point[0] / step_lon) * step_lon, lat)
 
 
 def bounds(ring: Ring) -> tuple[float, float, float, float]:
