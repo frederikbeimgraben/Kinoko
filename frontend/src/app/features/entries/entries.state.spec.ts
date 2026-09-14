@@ -1,62 +1,27 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import type { QueueEntry } from '../../core/offline/queue';
-import { Queue } from '../../core/offline/queue';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
+import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { FIND, SHARED_FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
 import { EntriesState } from './entries.state';
-
-/** Eine Warteschlange ohne IndexedDB: sie merkt sich, was sie bekommen hat. */
-class QueueStub {
-  readonly stored: { art: string; body: unknown; fotos: readonly Blob[] }[] = [];
-  /** Wenn falsch, gibt es keinen Platz auf dem Gerät. */
-  accepts = true;
-  sent = 0;
-  private readonly catalogue = signalList();
-
-  readonly eintraege = this.catalogue.read;
-
-  put(art: string, body: unknown, fotos: readonly Blob[] = []): Promise<unknown> {
-    if (!this.accepts) return Promise.resolve(null);
-    this.stored.push({ art, body, fotos });
-    this.catalogue.set([{ id: `w-${this.stored.length}`, art } as unknown as QueueEntry]);
-    return Promise.resolve({ id: 'w-1' });
-  }
-
-  read(): Promise<readonly QueueEntry[]> {
-    return Promise.resolve(this.catalogue.read());
-  }
-
-  send(): Promise<number> {
-    return Promise.resolve(this.sent);
-  }
-}
-
-function signalList(): {
-  read: () => readonly QueueEntry[];
-  set: (values: readonly QueueEntry[]) => void;
-} {
-  let values: readonly QueueEntry[] = [];
-  return { read: () => values, set: (next) => (values = next) };
-}
 
 interface Setup {
   state: EntriesState;
   http: HttpTestingController;
   auth: AuthStub;
-  queue: QueueStub;
+  queue: SyncStub;
 }
 
 function build(): Setup {
   const auth = new AuthStub();
-  const queue = new QueueStub();
+  const queue = new SyncStub();
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
       ...authStubProviders(auth),
-      { provide: Queue, useValue: queue as unknown as Queue },
+      ...syncStubProviders(queue),
     ],
   });
   return {
@@ -177,7 +142,7 @@ describe('EintraegeZustand', () => {
     auth.reply = false;
 
     expect(await state.saveFind(input())).toBe('wartet');
-    expect(queue.stored[0].art).toBe('fund');
+    expect(queue.stored[0].kind).toBe('find');
     http.expectNone('/api/funde');
   });
 
@@ -221,7 +186,7 @@ describe('EintraegeZustand', () => {
     auth.reply = false;
     expect(await state.saveMarker({ ...MARKER })).toBe('wartet');
     expect(await state.saveZone({ ...ZONE })).toBe('wartet');
-    expect(queue.stored.map((entry) => entry.art)).toEqual(['marker', 'zone']);
+    expect(queue.stored.map((entry) => entry.kind)).toEqual(['marker', 'zone']);
   });
 
   it('stellt Marker und Zone an, wenn das Netz fehlt', async () => {
@@ -292,8 +257,8 @@ describe('EintraegeZustand', () => {
     expect(state.zones()).toEqual([]);
   });
 
-  it('meldet einen Fehlschlag bei jeder Änderung und jedem Löschen', async () => {
-    const { state, http } = build();
+  it('stellt jede Änderung und jedes Löschen an, wenn das Netz fehlt', async () => {
+    const { state, http, queue } = build();
     const broken = (): void => {
       http
         .match(() => true)
@@ -312,7 +277,15 @@ describe('EintraegeZustand', () => {
     ];
     await vi.waitFor(broken);
 
-    expect(await Promise.all(calls)).toEqual([false, false, false, false, false, false]);
+    expect(await Promise.all(calls)).toEqual([true, true, true, true, true, true]);
+    expect(queue.stored.map((task) => task.operation)).toEqual([
+      'update',
+      'update',
+      'update',
+      'delete',
+      'delete',
+      'delete',
+    ]);
   });
 
   it('sendet Wartendes nur mit Konto und lädt danach neu', async () => {

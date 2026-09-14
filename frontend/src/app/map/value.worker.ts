@@ -8,6 +8,7 @@ import {
   type CombinationBound,
   type ValueScale,
 } from './value-colors';
+import { cachedFetch } from '../core/tiles/tile-cache';
 import { TileCache } from './value-cache';
 import type { ColorizeJob, CombinationJob, PrefetchJob, ValueReply, ValueJob } from './value-messages';
 
@@ -45,17 +46,12 @@ function table(schluessel: string, create: () => Uint8ClampedArray): Uint8Clampe
   return lut;
 }
 
-/** Ein Netzfehler ist hier dasselbe wie eine fehlende Kachel: nichts zu zeigen. */
+/** Der TileStore führt. Eine fehlende Kachel ist nichts zu zeigen. */
 async function get(url: string): Promise<ArrayBuffer | null> {
   const known = cache.get(url);
   if (known !== undefined) return known;
-  let content: ArrayBuffer | null = null;
-  try {
-    const reply = await fetch(url);
-    if (reply.ok) content = await reply.arrayBuffer();
-  } catch {
-    content = null;
-  }
+  const reply = await cachedFetch(url);
+  const content = reply === null ? null : await reply.arrayBuffer();
   cache.put(url, content);
   return content;
 }

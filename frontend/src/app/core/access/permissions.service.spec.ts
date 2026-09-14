@@ -1,6 +1,9 @@
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
+import { OfflineStore } from '../offline/offline-store';
 import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
 import { PermissionsService } from './permissions.service';
 
@@ -25,6 +28,22 @@ function build(signedIn = true): Setup {
 }
 
 describe('PermissionsService', () => {
+  it('legt die Rechte auf dem Gerät ab und räumt sie beim Abmelden weg', async () => {
+    vi.stubGlobal('indexedDB', new IDBFactory());
+    const { auth, tick } = build();
+    const offline = TestBed.inject(OfflineStore);
+
+    await vi.waitFor(async () => {
+      expect(await offline.get('permissions', 'mine')).not.toBeNull();
+    });
+
+    auth.user.set(null);
+    tick();
+    await vi.waitFor(async () => {
+      expect(await offline.get('permissions', 'mine')).toBeNull();
+    });
+  });
+
   it('holt die eigenen Rechte, sobald jemand angemeldet ist', () => {
     const { rights, api } = build();
 

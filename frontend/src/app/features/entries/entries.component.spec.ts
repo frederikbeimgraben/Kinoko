@@ -5,8 +5,8 @@ import { MapState } from '../map/map.state';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Queue } from '../../core/offline/queue';
-import type { QueueEntry } from '../../core/offline/queue';
+import { SyncService } from '../../core/offline/sync.service';
+import type { SyncTask } from '../../core/offline/sync.types';
 import { SPECIES_LIST } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
@@ -14,9 +14,13 @@ import { FIND, SHARED_FIND, MARKER, ZONE, page } from '../../testing/entries-fix
 import { AuthService } from '../../core/auth';
 import { EntriesComponent } from './entries.component';
 
-const PENDING: QueueEntry = {
+const PENDING: SyncTask = {
   id: 'warte-eins',
-  art: 'fund',
+  deviceId: 'device',
+  kind: 'find',
+  operation: 'create',
+  target: 'ziel-eins',
+  conflict: false,
   body: {
     artSlug: 'maronenroehrling',
     lat: 48.5,
@@ -26,18 +30,20 @@ const PENDING: QueueEntry = {
     notiz: 'unter Fichten am Hang',
     sichtbarkeit: 'privat',
   },
-  fotos: [],
-  erstelltAm: '2026-09-10T08:00:00+02:00',
+  photos: [],
+  createdAt: '2026-09-10T08:00:00+02:00',
 };
 
 /** Eine Warteschlange mit einem festen Inhalt. */
 class QueueStub {
-  constructor(private readonly content: readonly QueueEntry[]) {}
-  eintraege = (): readonly QueueEntry[] => this.content;
-  read(): Promise<readonly QueueEntry[]> {
+  constructor(private readonly content: readonly SyncTask[]) {}
+  tasks = (): readonly SyncTask[] => this.content;
+  pendingTargets = (): Set<string> => new Set(this.content.map((task) => task.target));
+  pendingCount = (): number => this.content.length;
+  read(): Promise<readonly SyncTask[]> {
     return Promise.resolve(this.content);
   }
-  send(): Promise<number> {
+  flush(): Promise<number> {
     return Promise.resolve(0);
   }
 }
@@ -49,7 +55,7 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(signedIn = true, pending: readonly QueueEntry[] = [PENDING]): Promise<Setup> {
+async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]): Promise<Setup> {
   vi.setSystemTime(new Date(2026, 8, 10, 12));
   const auth = new AuthStub();
   if (!signedIn) auth.user.set(null);
@@ -59,7 +65,7 @@ async function build(signedIn = true, pending: readonly QueueEntry[] = [PENDING]
       provideHttpClientTesting(),
       // Ohne Route ginge jede Navigation ins Leere; der Reiter führt auf die Karte.
       provideRouter([{ path: '**', children: [] }]),
-      { provide: Queue, useValue: new QueueStub(pending) },
+      { provide: SyncService, useValue: new QueueStub(pending) },
       ...authStubProviders(auth),
     ],
   });

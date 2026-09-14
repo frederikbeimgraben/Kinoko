@@ -1,16 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent, CardComponent } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ButtonComponent, CardComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { AuthService, type SignedInUser } from '../../core/auth';
 import { ConfigService } from '../../core/config/config.service';
 import { I18nService, LANGUAGE_CHOICES, type LanguageChoice } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { SyncService } from '../../core/offline/sync.service';
+import { PwaService } from '../../core/pwa/pwa.service';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
+import { TileStore } from '../../core/tiles/tile-store';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { ADMIN_PERMISSIONS } from '../admin/admin.guard';
+import { megabytes } from './sizes';
 
 /** Die drei Wahlmöglichkeiten der Darstellung, in der Reihenfolge des Artboards. */
 const THEMES: readonly ThemeChoice[] = ['hell', 'dunkel', 'system'];
@@ -28,6 +32,7 @@ const THEMES: readonly ThemeChoice[] = ['hell', 'dunkel', 'system'];
   selector: 'app-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    BadgeComponent,
     ButtonComponent,
     CardComponent,
     ListRowComponent,
@@ -45,6 +50,16 @@ export class AccountComponent {
   private readonly router = inject(Router);
   private readonly theme = inject(ThemeService);
   private readonly rights = inject(PermissionsService);
+  private readonly pwa = inject(PwaService);
+  private readonly sync = inject(SyncService);
+  private readonly tiles = inject(TileStore);
+
+  private readonly bytes = signal(0);
+
+  protected readonly canInstall = this.pwa.canInstall;
+  protected readonly updateReady = this.pwa.updateReady;
+  protected readonly offlineSize = computed(() => megabytes(this.bytes()));
+  protected readonly pendingCount = computed(() => String(this.sync.pendingCount()));
 
   protected readonly user = this.auth.user;
   /** Ohne ein Recht der Verwaltung fehlt der Punkt ganz. */
@@ -85,6 +100,21 @@ export class AccountComponent {
   protected readonly themes = computed<SegmentOption[]>(() =>
     THEMES.map((choice) => ({ value: choice, label: this.i18n.translate(`theme.${choice}`) })),
   );
+
+  constructor() {
+    void this.measure();
+  }
+
+  /** Die Summe aller Gebiete auf dem Gerät. */
+  private async measure(): Promise<void> {
+    let total = 0;
+    for (const area of await this.tiles.areas()) total += await this.tiles.bytes(area);
+    this.bytes.set(total);
+  }
+
+  protected install(): void {
+    void this.pwa.install();
+  }
 
   protected back(): void {
     void this.router.navigateByUrl('/karte');

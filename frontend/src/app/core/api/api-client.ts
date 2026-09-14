@@ -21,6 +21,11 @@ export interface Tagged<T> {
   body: T | null;
 }
 
+/** Ein Aufruf im Hintergrund meldet sich nicht: `quiet` lässt den Toast weg. */
+export interface Silent {
+  quiet?: boolean;
+}
+
 /**
  * Der einzige Weg zur eigenen API. Jeder Fehler wird zu einem
  * {@link ProblemDetail}, als Toast gezeigt und weitergereicht, damit der
@@ -40,14 +45,14 @@ export class ApiClient {
   }
 
   /** Holt eine Antwort mit ETag. Zum bekannten Stand bleibt der Körper leer. */
-  getTagged<T>(path: string, etag: string | null): Observable<Tagged<T>> {
+  getTagged<T>(path: string, etag: string | null, options?: Silent): Observable<Tagged<T>> {
     const headers = etag === null ? undefined : new HttpHeaders({ 'If-None-Match': etag });
     return this.http.get<T>(this.url(path), { headers, observe: 'response' }).pipe(
       map((answer) => ({ etag: answer.headers.get('ETag'), body: answer.body })),
       catchError((failure: unknown) =>
         failure instanceof HttpErrorResponse && failure.status === NOT_MODIFIED
           ? of({ etag: failure.headers.get('ETag') ?? etag, body: null })
-          : this.report(failure),
+          : this.report(failure, options),
       ),
     );
   }
@@ -63,7 +68,7 @@ export class ApiClient {
    * Formular stehen. Der Kopf `Content-Type` wird nicht gesetzt: nur der
    * Browser kennt die Grenze zwischen den Teilen.
    */
-  postFile<T>(path: string, field: string, file: File, fields: Query = {}): Observable<T> {
+  postFile<T>(path: string, field: string, file: File, fields: Query = {}, options?: Silent): Observable<T> {
     const body = new FormData();
     body.append(field, file, file.name);
     for (const [name, value] of Object.entries(fields)) {
@@ -71,7 +76,7 @@ export class ApiClient {
     }
     return this.http
       .post<T>(this.url(path), body)
-      .pipe(catchError((failure: unknown) => this.report(failure)));
+      .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
   /**
@@ -84,10 +89,10 @@ export class ApiClient {
       .pipe(catchError((failure: unknown) => this.report(failure)));
   }
 
-  put<T>(path: string, body: unknown): Observable<T> {
+  put<T>(path: string, body: unknown, options?: Silent): Observable<T> {
     return this.http
       .put<T>(this.url(path), body)
-      .pipe(catchError((failure: unknown) => this.report(failure)));
+      .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
   patch<T>(path: string, body: unknown): Observable<T> {
@@ -96,10 +101,10 @@ export class ApiClient {
       .pipe(catchError((failure: unknown) => this.report(failure)));
   }
 
-  delete<T>(path: string, query?: Query): Observable<T> {
+  delete<T>(path: string, query?: Query, options?: Silent): Observable<T> {
     return this.http
       .delete<T>(this.url(path), { params: this.params(query) })
-      .pipe(catchError((failure: unknown) => this.report(failure)));
+      .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
   private url(path: string): string {
@@ -119,9 +124,10 @@ export class ApiClient {
     return params;
   }
 
-  private report(failure: unknown): Observable<never> {
+  private report(failure: unknown, options?: Silent): Observable<never> {
     const problem = this.asProblem(failure);
-    if (problem.code !== SIGN_IN_REQUIRED) this.toasts.error(problem.detail ?? problem.title);
+    const loud = options?.quiet !== true && problem.code !== SIGN_IN_REQUIRED;
+    if (loud) this.toasts.error(problem.detail ?? problem.title);
     return throwError(() => problem);
   }
 

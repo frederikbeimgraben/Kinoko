@@ -24,6 +24,9 @@ export default defineConfig({
     launchOptions: BROWSER_PATH ? { executablePath: BROWSER_PATH } : {},
     trace: 'retain-on-failure',
     colorScheme: 'light',
+    // Ein Service Worker fängt die Anfragen ab, bevor eine Attrappe greift.
+    // Der Installationstest schaltet ihn für sich wieder an.
+    serviceWorkers: 'block',
     locale: 'de-DE',
     timezoneId: 'Europe/Berlin',
   },

@@ -1,5 +1,5 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Injectable, computed, inject, signal, type WritableSignal } from '@angular/core';
+import { firstValueFrom, type Observable } from 'rxjs';
 import { EntriesApi, type Rect } from '../../core/api/entries.api';
 import type {
   Find,
@@ -14,10 +14,19 @@ import type {
   ZoneInput,
 } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
-import { Queue } from '../../core/offline/queue';
+import { SyncService } from '../../core/offline/sync.service';
+import type { SyncKind, SyncOperation, SyncTask } from '../../core/offline/sync.types';
+import { EntriesCache } from './entries.cache';
+import { attachPhotos } from './photos';
 
 /** Was aus einem Speicherversuch geworden ist. */
 export type SaveResult = 'gespeichert' | 'wartet' | 'verworfen';
+
+/** Die Eingabe eines neuen Objekts. */
+export type EntryInput = FindInput | MarkerInput | ZoneInput;
+
+/** Was ein wartender Auftrag an Eingabe trägt. */
+export type EntryBody = EntryInput | FindPatch | MarkerPatch | ZonePatch;
 
 /**
  * Die eigenen Einträge im Speicher.
@@ -32,7 +41,8 @@ export type SaveResult = 'gespeichert' | 'wartet' | 'verworfen';
 export class EntriesState {
   private readonly api = inject(EntriesApi);
   private readonly auth = inject(AuthService);
-  private readonly queue = inject(Queue);
+  private readonly sync = inject(SyncService);
+  private readonly cache = inject(EntriesCache);
 
   private readonly _finds = signal<readonly Find[]>([]);
   private readonly _marker = signal<readonly Marker[]>([]);
@@ -46,7 +56,12 @@ export class EntriesState {
   /** Geteilte Funde im zuletzt gefragten Ausschnitt, auch fremde. */
   readonly shared = this._shared.asReadonly();
   readonly loading = this._loading.asReadonly();
-  readonly pendingEntries = this.queue.eintraege;
+  /** Nur neue Objekte stehen als eigene Zeile. */
+  readonly pendingEntries = computed(
+    () => this.sync.tasks().filter((task) => task.operation === 'create') as readonly SyncTask<EntryInput>[],
+  );
+  /** Die Kennungen der Objekte mit ausstehender Änderung. */
+  readonly pendingTargets = this.sync.pendingTargets;
 
   readonly signedIn = this.auth.signedIn;
   /** Der Name am eigenen Fund kommt aus dem Konto, nie aus einem Feld. */
@@ -54,13 +69,14 @@ export class EntriesState {
 
   /** Holt alles Eigene. Ohne Konto gibt es nichts zu holen. */
   async load(): Promise<void> {
-    await this.queue.read();
+    await this.sync.read();
     if (!this.auth.signedIn()) {
       this._finds.set([]);
       this._marker.set([]);
       this._zones.set([]);
       return;
     }
+    await this.restore();
     this._loading.set(true);
     try {
       const [finds, marker, zones] = await Promise.all([
@@ -71,12 +87,25 @@ export class EntriesState {
       this._finds.set(finds.eintraege);
       this._marker.set(marker.eintraege);
       this._zones.set(zones.eintraege);
+      await this.keep();
     } catch {
-      // Ein Ausfall lässt stehen, was schon da ist. Der Toast des ApiClient
-      // hat die Person bereits informiert.
+      // Ein Ausfall lässt stehen, was schon da ist.
     } finally {
       this._loading.set(false);
     }
+  }
+
+  /** Der letzte Stand vom Gerät, bevor der Server antwortet. */
+  private async restore(): Promise<void> {
+    const known = await this.cache.read();
+    if (known === null) return;
+    this._finds.set(known.finds);
+    this._marker.set(known.marker);
+    this._zones.set(known.zones);
+  }
+
+  private keep(): Promise<void> {
+    return this.cache.write({ finds: this._finds(), marker: this._marker(), zones: this._zones() });
   }
 
   /** Geteilte Funde im Ausschnitt. Diese Route liest auch ohne Konto. */
@@ -90,141 +119,119 @@ export class EntriesState {
   }
 
   async saveFind(input: FindInput, fotos: readonly File[] = []): Promise<SaveResult> {
-    if (!(await this.auth.requestSignIn())) return this.enqueueFind(input, fotos);
+    if (!(await this.auth.requestSignIn())) return this.enqueue('find', input, fotos);
     try {
       const find = await firstValueFrom(this.api.createFind(input));
-      const done = await this.attachPhotos(find, fotos);
-      this._finds.update((alt) => [done, ...alt]);
+      const done = await attachPhotos(this.api, find, fotos);
+      this._finds.update((all) => [done, ...all]);
       return 'gespeichert';
     } catch {
-      return this.enqueueFind(input, fotos);
+      return this.enqueue('find', input, fotos);
     }
   }
 
   async saveMarker(input: MarkerInput): Promise<SaveResult> {
-    if (!(await this.auth.requestSignIn())) return this.enqueueMarker(input);
-    try {
-      const marker = await firstValueFrom(this.api.createMarker(input));
-      this._marker.update((alt) => [marker, ...alt]);
-      return 'gespeichert';
-    } catch {
-      return this.enqueueMarker(input);
-    }
+    return this.save('marker', this._marker, input, () => this.api.createMarker(input));
   }
 
   async saveZone(input: ZoneInput): Promise<SaveResult> {
-    if (!(await this.auth.requestSignIn())) return this.enqueueZone(input);
+    return this.save('zone', this._zones, input, () => this.api.createZone(input));
+  }
+
+  private async save<T>(
+    kind: SyncKind,
+    list: WritableSignal<readonly T[]>,
+    input: EntryBody,
+    send: () => Observable<T>,
+  ): Promise<SaveResult> {
+    if (!(await this.auth.requestSignIn())) return this.enqueue(kind, input);
     try {
-      const zone = await firstValueFrom(this.api.createZone(input));
-      this._zones.update((alt) => [zone, ...alt]);
+      const fresh = await firstValueFrom(send());
+      list.update((all) => [fresh, ...all]);
       return 'gespeichert';
     } catch {
-      return this.enqueueZone(input);
+      return this.enqueue(kind, input);
     }
+  }
+
+  /** Ohne Platz im Gerät ist der Eintrag verworfen, statt still zu gelingen. */
+  private async enqueue(kind: SyncKind, body: EntryBody, fotos: readonly File[] = []): Promise<SaveResult> {
+    return (await this.sync.enqueue(kind, 'create', body, fotos)) === null ? 'verworfen' : 'wartet';
   }
 
   async updateFind(id: string, patch: FindPatch): Promise<boolean> {
-    try {
-      const find = await firstValueFrom(this.api.patchFind(id, patch));
-      this._finds.update((alt) => alt.map((candidate) => (candidate.id === id ? find : candidate)));
-      return true;
-    } catch {
-      return false;
-    }
+    return this.change('find', this._finds, id, patch, () => this.api.patchFind(id, patch));
   }
 
   async updateMarker(id: string, patch: MarkerPatch): Promise<boolean> {
-    try {
-      const marker = await firstValueFrom(this.api.patchMarker(id, patch));
-      this._marker.update((alt) => alt.map((candidate) => (candidate.id === id ? marker : candidate)));
-      return true;
-    } catch {
-      return false;
-    }
+    return this.change('marker', this._marker, id, patch, () => this.api.patchMarker(id, patch));
   }
 
   async updateZone(id: string, patch: ZonePatch): Promise<boolean> {
-    try {
-      const zone = await firstValueFrom(this.api.patchZone(id, patch));
-      this._zones.update((alt) => alt.map((candidate) => (candidate.id === id ? zone : candidate)));
-      return true;
-    } catch {
-      return false;
-    }
+    return this.change('zone', this._zones, id, patch, () => this.api.patchZone(id, patch));
   }
 
   async deleteFind(id: string): Promise<boolean> {
-    try {
-      await firstValueFrom(this.api.deleteFind(id));
-      this._finds.update((alt) => alt.filter((candidate) => candidate.id !== id));
-      return true;
-    } catch {
-      return false;
-    }
+    return this.drop('find', this._finds, id, () => this.api.deleteFind(id));
   }
 
   async deleteMarker(id: string): Promise<boolean> {
-    try {
-      await firstValueFrom(this.api.deleteMarker(id));
-      this._marker.update((alt) => alt.filter((candidate) => candidate.id !== id));
-      return true;
-    } catch {
-      return false;
-    }
+    return this.drop('marker', this._marker, id, () => this.api.deleteMarker(id));
   }
 
   async deleteZone(id: string): Promise<boolean> {
+    return this.drop('zone', this._zones, id, () => this.api.deleteZone(id));
+  }
+
+  /** Ändert lokal zuerst. Ohne Netz geht die Änderung in die Warteschlange. */
+  private async change<T extends { id: string }>(
+    kind: SyncKind,
+    list: WritableSignal<readonly T[]>,
+    id: string,
+    patch: EntryBody,
+    send: () => Observable<T>,
+  ): Promise<boolean> {
     try {
-      await firstValueFrom(this.api.deleteZone(id));
-      this._zones.update((alt) => alt.filter((candidate) => candidate.id !== id));
+      const fresh = await firstValueFrom(send());
+      list.update((all) => all.map((one) => (one.id === id ? fresh : one)));
       return true;
     } catch {
-      return false;
+      list.update((all) => all.map((one) => (one.id === id ? { ...one, ...patch } : one)));
+      return this.queueChange(kind, 'update', id, patch);
+    }
+  }
+
+  private async drop<T extends { id: string }>(
+    kind: SyncKind,
+    list: WritableSignal<readonly T[]>,
+    id: string,
+    send: () => Observable<unknown>,
+  ): Promise<boolean> {
+    try {
+      await firstValueFrom(send());
+      list.update((all) => all.filter((one) => one.id !== id));
+      return true;
+    } catch {
+      list.update((all) => all.filter((one) => one.id !== id));
+      return this.queueChange(kind, 'delete', id, null);
     }
   }
 
   /** Sendet, was wartet, und holt danach die eigenen Einträge neu. */
   async sendPending(): Promise<number> {
     if (!this.auth.signedIn()) return 0;
-    const sent = await this.queue.send();
+    const sent = await this.sync.flush();
     if (sent > 0) await this.load();
     return sent;
   }
 
-  private async enqueueFind(body: FindInput, fotos: readonly File[]): Promise<SaveResult> {
-    return this.queued(await this.queue.put('fund', body, fotos));
-  }
-
-  private async enqueueMarker(body: MarkerInput): Promise<SaveResult> {
-    return this.queued(await this.queue.put('marker', body));
-  }
-
-  private async enqueueZone(body: ZoneInput): Promise<SaveResult> {
-    return this.queued(await this.queue.put('zone', body));
-  }
-
-  /**
-   * Ohne IndexedDB gibt es keinen Platz für die Warteschlange. Dann ist der
-   * Eintrag verloren, und die Oberfläche sagt es, statt Erfolg zu melden.
-   */
-  private queued(entry: unknown): SaveResult {
-    return entry === null ? 'verworfen' : 'wartet';
-  }
-
-  /**
-   * Hängt die Fotos an den frisch angelegten Fund. Ein Foto, das nicht
-   * durchgeht, kostet nicht den Fund: er steht dann eben mit weniger Bildern da.
-   */
-  private async attachPhotos(find: Find, fotos: readonly File[]): Promise<Find> {
-    let done = find;
-    for (const file of fotos) {
-      try {
-        const photo = await firstValueFrom(this.api.addPhoto(find.id, file));
-        done = { ...done, fotos: [...done.fotos, photo] };
-      } catch {
-        break;
-      }
-    }
-    return done;
+  /** Ohne Netz geht die Änderung in die Warteschlange, statt verloren zu gehen. */
+  private async queueChange(
+    kind: SyncKind,
+    operation: SyncOperation,
+    id: string,
+    body: EntryBody | null,
+  ): Promise<boolean> {
+    return (await this.sync.enqueue(kind, operation, body, [], id)) !== null;
   }
 }
