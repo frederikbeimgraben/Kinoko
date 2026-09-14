@@ -49,7 +49,7 @@
       />
     }
     <g [attr.mask]="drawing().thin.length ? 'url(#' + maskId + ')' : null">
-      <path class="spark__all" [attr.d]="drawing().alleJahre" />
+      <path class="spark__all" [attr.d]="drawing().area" />
       @if (drawing().hasCurrent) {
         <path class="spark__current-surface" [attr.d]="drawing().currentArea" />
         <path class="spark__current" [attr.d]="drawing().currentLine" />
@@ -67,15 +67,23 @@
         class="spark__month"
         [class.spark__month--first]="erster"
         [class.spark__month--last]="letzter"
-        [style.left.%]="badge.links"
+        [style.left.%]="badge.left"
         >{{ badge.text }}</span
       >
     }
   </div>
 }
-@if (legendCurrent() || legendYears()) {
+@if (legend().length) {
   <div class="spark__legend">
-    <span><i class="spark__pattern spark__pattern--line"></i>{{ legendCurrent() }}</span>
-    <span><i class="spark__pattern spark__pattern--surface"></i>{{ legendYears() }}</span>
+    @for (row of legend(); track row.legend) {
+      <span
+        ><i
+          class="spark__pattern"
+          [class.spark__pattern--line]="row.shape === 'line'"
+          [class.spark__pattern--surface]="row.shape === 'area'"
+        ></i
+        >{{ row.legend }}</span
+      >
+    }
   </div>
 }

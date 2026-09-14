@@ -308,7 +308,8 @@ export class MapComponent implements OnDestroy {
   protected readonly speciesPickerEntries = computed<readonly MapSpeciesPickerEntry[]>(() =>
     (this.speciesCatalogue()?.arten ?? []).flatMap((art) => {
       const slug = FORECAST_SLUGS.find((known) => known === art.kartenSlug);
-      return slug ? [mapSpeciesPickerEntry(art, slug, this.i18n)] : [];
+      const visits = { allYears: this.begehungen(), currentYear: this.visitsCurrentYear() };
+      return slug ? [mapSpeciesPickerEntry(art, slug, visits, this.i18n)] : [];
     }),
   );
 

@@ -188,14 +188,7 @@
               (chosen)="selectSpecies($event)"
             >
               <ng-template let-entry>
-                <app-season-curve
-                  trail
-                  [alleJahre]="entry.curve"
-                  [laufendesJahr]="entry.current"
-                  [visitsAllYears]="begehungen()"
-                  [visitsCurrentYearSeries]="visitsCurrentYear()"
-                  [label]="entry.curveLabel"
-                />
+                <app-season-curve trail [series]="entry.series" [label]="entry.curveLabel" />
               </ng-template>
             </app-species-picker>
             <app-list-row [title]="'artWahl.katalog' | t" [clickable]="true" (chosen)="toSpecies()" />

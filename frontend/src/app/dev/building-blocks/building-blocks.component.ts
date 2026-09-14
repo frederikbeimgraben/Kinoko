@@ -168,8 +168,14 @@ export class BuildingBlocksComponent {
   private readonly darkPane = viewChild.required<ElementRef<HTMLElement>>('dark');
 
   protected readonly weeks = SAMPLE_WEEKS;
-  protected readonly alleJahre = SAMPLE_ALL_YEARS;
-  protected readonly laufendesJahr = SAMPLE_CURRENT_YEAR;
+  protected readonly seasonSeries = [
+    { shape: 'area' as const, values: SAMPLE_ALL_YEARS, legend: this.text('art.kurve.jahre') },
+    { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR, legend: this.text('art.kurve.laufend') },
+  ];
+  protected readonly seasonPlain = [
+    { shape: 'area' as const, values: SAMPLE_ALL_YEARS },
+    { shape: 'line' as const, values: SAMPLE_CURRENT_YEAR },
+  ];
   protected readonly histogramm = SAMPLE_HISTOGRAM;
   protected readonly objectColors = OBJECT_COLOURS;
   protected readonly sampleImage = SAMPLE_IMAGE;
@@ -313,10 +319,10 @@ export class BuildingBlocksComponent {
   ];
 
   protected readonly monthMarks = [
-    { text: this.text('art.monat.jan'), woche: 1 },
-    { text: this.text('art.monat.apr'), woche: 14 },
-    { text: this.text('art.monat.jul'), woche: 27 },
-    { text: this.text('art.monat.okt'), woche: 40 },
+    { text: this.text('art.monat.jan'), week: 1 },
+    { text: this.text('art.monat.apr'), week: 14 },
+    { text: this.text('art.monat.jul'), week: 27 },
+    { text: this.text('art.monat.okt'), week: 40 },
   ];
 
   protected readonly colourChangeTriggers = [this.text('art.verfaerbung.zeile')];

@@ -24,13 +24,8 @@
       @if (viewport.hasCurve && viewport.saison; as saison) {
         <app-season-curve
           [large]="true"
-          [alleJahre]="saison.alleJahre"
-          [laufendesJahr]="saison.laufendesJahr"
-          [visitsAllYears]="saison.begehungenJeWocheAlleJahre"
-          [visitsCurrentYearSeries]="saison.begehungenJeWocheLaufendesJahr"
+          [series]="viewport.seasonSeries"
           [months]="viewport.months"
-          [legendCurrent]="viewport.legendCurrent"
-          [legendYears]="viewport.legendYears"
           [label]="viewport.label"
         />
       } @else {

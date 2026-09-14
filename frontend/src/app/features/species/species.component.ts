@@ -23,7 +23,11 @@ import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { MeasurementGroupComponent } from '../../ui/measurement-group/measurement-group.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { type MonthMark, SeasonCurveComponent } from '../../ui/season-curve/season-curve.component';
+import {
+  type MonthMark,
+  SeasonCurveComponent,
+  type SeasonSeries,
+} from '../../ui/season-curve/season-curve.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { TagListComponent } from '../../ui/tag-list/tag-list.component';
 import { YearBandComponent } from '../../ui/year-band/year-band.component';
@@ -73,12 +77,12 @@ import {
  * Die fünf Monatsmarken unter der Kurve, jede auf der ISO-Woche, in der ihr
  * Monat beginnt. Sie liegen damit auf derselben Skala wie die Kurve selbst.
  */
-const MONTHS: readonly { schluessel: TranslationKey; woche: number }[] = [
-  { schluessel: 'art.monat.jan', woche: 1 },
-  { schluessel: 'art.monat.apr', woche: 14 },
-  { schluessel: 'art.monat.jul', woche: 27 },
-  { schluessel: 'art.monat.okt', woche: 40 },
-  { schluessel: 'art.monat.dez', woche: 49 },
+const MONTHS: readonly { key: TranslationKey; week: number }[] = [
+  { key: 'art.monat.jan', week: 1 },
+  { key: 'art.monat.apr', week: 14 },
+  { key: 'art.monat.jul', week: 27 },
+  { key: 'art.monat.okt', week: 40 },
+  { key: 'art.monat.dez', week: 49 },
 ];
 
 /** Die Skala der Wertigkeit: eine Stufe je Feld, die erreichte ist gefüllt. */
@@ -135,8 +139,7 @@ interface Viewport {
   saison: SeasonCurveData | null;
   hasCurve: boolean;
   months: MonthMark[];
-  legendCurrent: string;
-  legendYears: string;
+  seasonSeries: SeasonSeries[];
   label: string;
   einstufung: LevelRow[];
   masse: MeasureGroup[];
@@ -304,17 +307,10 @@ export class SpeciesComponent {
       // sagte über die Saison nichts.
       hasCurve: saison !== null && saison.hoechstwert > 0,
       months: MONTHS.map((month) => ({
-        text: this.i18n.translate(month.schluessel),
-        woche: month.woche,
+        text: this.i18n.translate(month.key),
+        week: month.week,
       })),
-      legendCurrent: this.i18n.translate('art.kurve.laufend', {
-        jahr: saison?.stand.jahr ?? 0,
-        woche: saison?.stand.woche ?? 0,
-      }),
-      legendYears: this.i18n.translate('art.kurve.jahre', {
-        von: saison?.jahre.von ?? 0,
-        bis: saison?.jahre.bis ?? 0,
-      }),
+      seasonSeries: this.seasonSeries(saison),
       label: this.i18n.translate('art.kurve.beschriftung', {
         name: art.name,
         hoechstwert: Math.round(saison?.hoechstwert ?? 0),
@@ -437,6 +433,31 @@ export class SpeciesComponent {
    * zeichnen, ohne zu verschwimmen. Die drei Zeilen nach der Art gibt es nur
    * an Lamellen; Röhren, Stacheln und Leisten tragen sie nicht.
    */
+  /** Die zwei Reihen der Saisonkurve: alle Jahre als Fläche, das laufende als Linie. */
+  private seasonSeries(saison: SeasonCurveData | null): SeasonSeries[] {
+    if (saison === null) return [];
+    return [
+      {
+        shape: 'area',
+        values: saison.alleJahre,
+        visits: saison.begehungenJeWocheAlleJahre,
+        legend: this.i18n.translate('art.kurve.jahre', {
+          von: saison.jahre.von,
+          bis: saison.jahre.bis,
+        }),
+      },
+      {
+        shape: 'line',
+        values: saison.laufendesJahr,
+        visits: saison.begehungenJeWocheLaufendesJahr,
+        legend: this.i18n.translate('art.kurve.laufend', {
+          jahr: saison.stand.jahr,
+          woche: saison.stand.woche,
+        }),
+      },
+    ];
+  }
+
   private layerRows(art: Species): LayerRow[] {
     const layer = art.fruchtschicht;
     if (layer === null) return [];

@@ -351,12 +351,9 @@
         [label]="text('beispiel.artenTitel')"
         (chosen)="speciesChoice.set($event)"
       >
-        <app-season-curve
-          season-curve
-          [alleJahre]="alleJahre"
-          [laufendesJahr]="laufendesJahr"
-          [label]="text('saison.beschriftung')"
-        />
+        <ng-template let-entry>
+          <app-season-curve trail [series]="seasonPlain" [label]="entry.name" />
+        </ng-template>
       </app-species-picker>
     </app-card>
 
@@ -454,22 +451,12 @@
     </app-card>
 
     <app-card [headingLevel]="2" [heading]="'blocks.seasonCurve' | t">
-      <app-season-curve
-        [alleJahre]="alleJahre"
-        [laufendesJahr]="laufendesJahr"
-        [months]="monthMarks"
-        [legendCurrent]="text('art.kurve.laufend')"
-        [legendYears]="text('art.kurve.jahre')"
-        [label]="text('saison.beschriftung')"
-      />
+      <app-season-curve [series]="seasonSeries" [months]="monthMarks" [label]="text('saison.beschriftung')" />
       <app-season-curve
         class="gallery__gap"
-        [alleJahre]="alleJahre"
-        [laufendesJahr]="laufendesJahr"
+        [series]="seasonSeries"
         [large]="true"
         [months]="monthMarks"
-        [legendCurrent]="text('art.kurve.laufend')"
-        [legendYears]="text('art.kurve.jahre')"
         [label]="text('saison.beschriftung')"
       />
     </app-card>
