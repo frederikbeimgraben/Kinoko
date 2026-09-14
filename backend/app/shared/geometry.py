@@ -63,6 +63,14 @@ def bounds(ring: Ring) -> tuple[float, float, float, float]:
     return (min(lons), min(lats), max(lons), max(lats))
 
 
+def centroid(ring: Ring) -> Point:
+    """Der Schwerpunkt eines Rings."""
+    return (
+        sum(point[0] for point in ring) / len(ring),
+        sum(point[1] for point in ring) / len(ring),
+    )
+
+
 def parse_bbox(raw: str) -> tuple[float, float, float, float] | None:
     """Liest ``minLon,minLat,maxLon,maxLat``, sonst nichts."""
     parts = raw.split(",")
