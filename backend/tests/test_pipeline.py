@@ -1,11 +1,14 @@
+import asyncio
 import uuid
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 import httpx
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Find, PipelineRun, Species
+from app.core import db
+from app.models import Find, PipelineRun, PipelineRunFind, PipelineRunSpecies, Species
 from app.modules.pipeline.service import PipelineRunService
 from app.shared.enums import Edibility, Group, ReviewState, RunKind, RunState
 from tests.conftest import app_of, make_user, sign_in
@@ -149,6 +152,99 @@ async def test_training_finds_filters_for_accepted_species_finds(session: AsyncS
     assert [row.id for row in found] == [good.id]
 
 
+async def test_training_finds_skips_species_without_forecast(session: AsyncSession) -> None:
+    user = await make_user(session)
+    quiet = species("b", forecast_enabled=False)
+    session.add(quiet)
+    await session.flush()
+    session.add(
+        Find(
+            owner_id=user.id,
+            species_id=quiet.id,
+            lat=1.0,
+            lon=2.0,
+            found_on=date(2026, 6, 1),
+            for_training=True,
+            review_state=ReviewState.ACCEPTED,
+        ),
+    )
+    await session.commit()
+    assert await PipelineRunService(session).training_finds() == []
+
+
+async def test_queue_writes_a_row_for_every_forecast_species(session: AsyncSession) -> None:
+    user = await make_user(session)
+    session.add_all([species("a"), species("b"), species("c", forecast_enabled=False)])
+    await session.commit()
+    run = await PipelineRunService(session).queue(RunKind.TRAINING, user)
+    query = select(PipelineRunSpecies).where(PipelineRunSpecies.run_id == run.id)
+    rows = (await session.execute(query)).scalars().all()
+    assert len(rows) == 2
+    assert {row.state for row in rows} == {RunState.QUEUED}
+
+
+async def test_claim_holds_the_input_finds_and_counts_them(session: AsyncSession) -> None:
+    user = await make_user(session)
+    target = species("a")
+    session.add(target)
+    await session.flush()
+    for day in (1, 2):
+        session.add(
+            Find(
+                owner_id=user.id,
+                species_id=target.id,
+                lat=1.0,
+                lon=2.0,
+                found_on=date(2026, 6, day),
+                for_training=True,
+                review_state=ReviewState.ACCEPTED,
+            ),
+        )
+    await session.commit()
+    service = PipelineRunService(session)
+    run = await service.queue(RunKind.TRAINING, user)
+    claimed = await service.claim()
+    assert claimed is not None
+    linked = await session.execute(
+        select(func.count()).select_from(PipelineRunFind).where(PipelineRunFind.run_id == run.id),
+    )
+    assert linked.scalar_one() == 2
+    entry = await session.get(PipelineRunSpecies, (run.id, target.id))
+    assert entry is not None
+    assert entry.find_count == 2
+
+
+async def test_two_claims_never_take_the_same_run(session: AsyncSession) -> None:
+    user = await make_user(session)
+    service = PipelineRunService(session)
+    await service.queue(RunKind.TRAINING, user)
+    await service.queue(RunKind.RENDER, user)
+    factory = db.session_factory()
+    async with factory() as first, factory() as second:
+        taken = await asyncio.gather(
+            PipelineRunService(first).claim(),
+            PipelineRunService(second).claim(),
+        )
+    ids = [run.id for run in taken if run is not None]
+    assert len(ids) == 2
+    assert len(set(ids)) == 2
+
+
+async def test_progress_counts_only_finished_species(session: AsyncSession) -> None:
+    user = await make_user(session)
+    a, b = species("a"), species("b")
+    session.add_all([a, b])
+    await session.commit()
+    service = PipelineRunService(session)
+    run = await service.queue(RunKind.TRAINING, user)
+    await service.report(run, a.id, "running", 0)
+    assert run.progress_done == 0
+    await service.report(run, a.id, "finished", 9)
+    assert run.progress_done == 1
+    await service.report(run, b.id, "failed", 0)
+    assert run.progress_done == 2
+
+
 async def test_create_pipeline_run_endpoint(api: httpx.AsyncClient, session: AsyncSession) -> None:
     user = await make_user(session)
     sign_in(app_of(api), user, "run.manage")
@@ -175,6 +271,19 @@ async def test_list_and_get_pipeline_run_endpoints(
     detail = await api.get(f"/pipeline-runs/{run_id}")
     assert detail.status_code == 200
     assert detail.json()["species"] == []
+
+
+async def test_a_queued_run_shows_a_state_for_every_forecast_species(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    session.add_all([species("a"), species("b", forecast_enabled=False)])
+    await session.commit()
+    sign_in(app_of(api), user, "run.manage")
+    created = await api.post("/pipeline-runs", json={"kind": "training"})
+    detail = await api.get(f"/pipeline-runs/{created.json()['id']}")
+    assert [row["state"] for row in detail.json()["species"]] == ["queued"]
 
 
 async def test_get_pipeline_run_is_not_found_for_an_unknown_id(
@@ -243,6 +352,24 @@ async def test_report_and_finish_endpoints(api: httpx.AsyncClient, session: Asyn
     await session.refresh(run)
     assert run.state == RunState.FINISHED
     assert run.progress_done == 1
+
+
+async def test_report_with_an_unknown_state_is_rejected(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    target = species("a")
+    session.add(target)
+    await session.commit()
+    run = await PipelineRunService(session).queue(RunKind.TRAINING, user)
+    answer = await api.post(
+        f"/internal/pipeline-runs/{run.id}/species/{target.id}",
+        json={"state": "unsinn", "recordCount": 1},
+        headers={"X-Internal-Token": INTERNAL_TOKEN},
+    )
+    assert answer.status_code == 422
+    assert answer.json()["errors"] == [{"field": "state", "code": "enum"}]
 
 
 async def test_report_species_is_not_found_for_an_unknown_run(api: httpx.AsyncClient) -> None:

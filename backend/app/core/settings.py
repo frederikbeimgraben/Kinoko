@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     admin_group: str = "pilze-admins"
     internal_token: str = "intern"  # noqa: S105
     max_photo_bytes: int = 12 * 1024 * 1024
+    # Der Arbeiter der Kette spricht den Dienst am Port des Rechners an.
+    api: str = "http://127.0.0.1:8111/api"
+    chain: Path = Path("./var/modell")
+    run_logs: Path = Path("./var/runs")
 
     @field_validator("oidc_issuer")
     @classmethod

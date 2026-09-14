@@ -2,32 +2,45 @@
 
 from __future__ import annotations
 
+import uuid
+from collections import Counter
 from pathlib import Path
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, Any, Final, cast
 
-from sqlalchemy import func, select
+from sqlalchemy import CursorResult, func, select, update
 
-from app.models import Find, PipelineRun, PipelineRunSpecies, Species, now
+from app.core.errors import Invalid
+from app.models import PipelineRun, PipelineRunFind, PipelineRunSpecies, Species, now
+from app.modules.objects.find_service import FindService
 from app.modules.pipeline.schemas import (
     PipelineRunDetail,
     PipelineRunSpeciesEntry,
     PipelineRunSummary,
 )
-from app.shared.enums import ReviewState, RunState
+from app.shared.enums import RunState
 from app.shared.paging import wrap
 from app.shared.repository import Repository
 
 if TYPE_CHECKING:
-    import uuid
     from collections.abc import Sequence
 
     from sqlalchemy.ext.asyncio import AsyncSession
 
-    from app.models import User
+    from app.models import Find, User
     from app.shared.enums import RunKind
     from app.shared.paging import Paging
 
 LOG_TAIL_DEFAULT: Final = 200
+DONE: Final = (RunState.FINISHED, RunState.FAILED)
+OPEN: Final = (RunState.QUEUED, RunState.RUNNING)
+
+
+def run_state(value: str) -> RunState:
+    """Liest einen Zustand, sonst Fehler mit Feld und Code."""
+    try:
+        return RunState(value)
+    except ValueError as broken:
+        raise Invalid(errors=[{"field": "state", "code": "enum"}]) from broken
 
 
 def summary_of(run: PipelineRun) -> dict[str, object]:
@@ -41,35 +54,53 @@ class PipelineRunService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
         self.runs = Repository(db, PipelineRun)
+        self.finds = FindService(db)
 
     async def queue(self, kind: RunKind, user: User) -> PipelineRun:
-        """Legt einen Lauf im Zustand ``queued`` an."""
-        total = await self.db.execute(
-            select(func.count()).select_from(Species).where(Species.forecast_enabled.is_(True)),
+        """Legt einen Lauf mit einer Zeile je Art der Vorhersage an."""
+        found = await self.db.execute(
+            select(Species.id).where(Species.forecast_enabled.is_(True)),
         )
+        species_ids = list(found.scalars())
         run = self.runs.add(
-            PipelineRun(kind=kind, triggered_by_id=user.id, progress_total=total.scalar_one()),
+            PipelineRun(kind=kind, triggered_by_id=user.id, progress_total=len(species_ids)),
         )
+        await self.db.flush()
+        for species_id in species_ids:
+            self.db.add(PipelineRunSpecies(run_id=run.id, species_id=species_id))
         await self.db.commit()
         await self.db.refresh(run)
         return run
 
     async def claim(self) -> PipelineRun | None:
         """Nimmt den ältesten wartenden Lauf und startet ihn."""
-        query = (
-            select(PipelineRun)
-            .where(PipelineRun.state == RunState.QUEUED)
-            .order_by(PipelineRun.queued_at)
-            .limit(1)
+        tried: set[uuid.UUID] = set()
+        while True:
+            query = (
+                select(PipelineRun.id)
+                .where(PipelineRun.state == RunState.QUEUED, PipelineRun.id.not_in(tried))
+                .order_by(PipelineRun.queued_at)
+                .limit(1)
+            )
+            found = (await self.db.execute(query)).scalars().first()
+            if found is None:
+                return None
+            tried.add(found)
+            if await self.take(found):
+                run = await self.runs.get_or_404(found)
+                await self.db.refresh(run)
+                await self.training_finds(run)
+                return run
+
+    async def take(self, run_id: uuid.UUID) -> bool:
+        """Setzt einen wartenden Lauf auf ``running``, wenn niemand schneller war."""
+        answer = await self.db.execute(
+            update(PipelineRun)
+            .where(PipelineRun.id == run_id, PipelineRun.state == RunState.QUEUED)
+            .values(state=RunState.RUNNING, started_at=now()),
         )
-        run = (await self.db.execute(query)).scalars().first()
-        if run is None:
-            return None
-        run.state = RunState.RUNNING
-        run.started_at = now()
         await self.db.commit()
-        await self.db.refresh(run)
-        return run
+        return cast("CursorResult[Any]", answer).rowcount == 1
 
     async def finish(self, run: PipelineRun, state: RunState, log_path: str | None) -> None:
         """Schließt einen Lauf ab und setzt sein Protokoll."""
@@ -91,14 +122,14 @@ class PipelineRunService:
         if entry is None:
             entry = PipelineRunSpecies(run_id=run.id, species_id=species_id)
             self.db.add(entry)
-        entry.state = RunState(state)
+        entry.state = run_state(state)
         entry.record_count = record_count
-        total = await self.db.execute(
+        done = await self.db.execute(
             select(func.count())
             .select_from(PipelineRunSpecies)
-            .where(PipelineRunSpecies.run_id == run.id),
+            .where(PipelineRunSpecies.run_id == run.id, PipelineRunSpecies.state.in_(DONE)),
         )
-        run.progress_done = total.scalar_one()
+        run.progress_done = done.scalar_one()
         await self.db.commit()
 
     @staticmethod
@@ -114,20 +145,31 @@ class PipelineRunService:
 
     async def cancel(self, run: PipelineRun) -> None:
         """Bricht einen wartenden oder laufenden Lauf ab."""
-        if run.state not in {RunState.QUEUED, RunState.RUNNING}:
+        if run.state not in OPEN:
             return
         run.state = RunState.FAILED
+        run.finished_at = now()
         await self.db.commit()
 
-    async def training_finds(self) -> Sequence[Find]:
-        """Liest die Funde, die für das Training freigegeben sind."""
-        query = select(Find).where(
-            Find.for_training.is_(True),
-            Find.review_state == ReviewState.ACCEPTED,
-            Find.species_id.is_not(None),
-            Find.deleted_at.is_(None),
-        )
-        return list((await self.db.execute(query)).scalars())
+    async def training_finds(self, run: PipelineRun | None = None) -> Sequence[Find]:
+        """Liest die Funde für das Training und hält sie an einem Lauf fest."""
+        found = await self.finds.training_finds()
+        if run is not None:
+            await self.link(run, found)
+        return found
+
+    async def link(self, run: PipelineRun, finds: Sequence[Find]) -> None:
+        """Schreibt den Eingang eines Laufs und den Zähler je Art."""
+        counted: Counter[uuid.UUID] = Counter()
+        for find in finds:
+            self.db.add(PipelineRunFind(run_id=run.id, find_id=find.id))
+            if find.species_id is not None:
+                counted[find.species_id] += 1
+        for species_id, amount in counted.items():
+            entry = await self.db.get(PipelineRunSpecies, (run.id, species_id))
+            if entry is not None:
+                entry.find_count = amount
+        await self.db.commit()
 
     async def list_runs(self, paging: Paging) -> dict[str, object]:
         """Liest eine Seite Läufe, neueste zuerst."""

@@ -406,6 +406,75 @@ async def test_counts(session: AsyncSession, api: httpx.AsyncClient) -> None:
     assert body["records"] == 0
 
 
+async def test_counts_all_reads_records_finds_and_photos(session: AsyncSession) -> None:
+    from app.models import Find, PipelineRun, PipelineRunSpecies  # noqa: PLC0415
+    from app.modules.catalog.service import SpeciesService  # noqa: PLC0415
+    from app.shared.enums import RunKind, RunState  # noqa: PLC0415
+    from app.shared.paging import Paging  # noqa: PLC0415
+
+    porcini = await make_find_species(session, slug="boletus-edulis")
+    await cf.add_lead_photo(session, porcini)
+    owner = await make_user(session, sub="owner-3")
+    run = PipelineRun(kind=RunKind.TRAINING)
+    session.add(run)
+    await session.flush()
+    session.add_all(
+        [
+            Find(
+                owner_id=owner.id,
+                species_id=porcini.id,
+                lat=0.0,
+                lon=0.0,
+                found_on=date(2025, 1, 1),
+            ),
+            PipelineRunSpecies(
+                run_id=run.id,
+                species_id=porcini.id,
+                state=RunState.FINISHED,
+                record_count=42,
+            ),
+        ]
+    )
+    await session.commit()
+
+    found = await SpeciesService(session).counts_all(Paging(limit=40, offset=0))
+    assert found[porcini.id].records == 42
+    assert found[porcini.id].finds == 1
+    assert found[porcini.id].photos == 1
+
+
+async def test_counts_keep_the_last_finished_run(
+    session: AsyncSession,
+    api: httpx.AsyncClient,
+) -> None:
+    from app.models import PipelineRun, PipelineRunSpecies  # noqa: PLC0415
+    from app.shared.enums import RunKind, RunState  # noqa: PLC0415
+
+    porcini = await make_find_species(session, slug="boletus-edulis")
+    done = PipelineRun(kind=RunKind.TRAINING)
+    waiting = PipelineRun(kind=RunKind.TRAINING)
+    session.add_all([done, waiting])
+    await session.flush()
+    session.add_all(
+        [
+            PipelineRunSpecies(
+                run_id=done.id,
+                species_id=porcini.id,
+                state=RunState.FINISHED,
+                record_count=42,
+            ),
+            PipelineRunSpecies(run_id=waiting.id, species_id=porcini.id, state=RunState.QUEUED),
+        ]
+    )
+    await session.commit()
+
+    user = await make_user(session, sub="editor-3")
+    sign_in(app_of(api), user, "species.edit")
+    response = await api.get(f"/species/{porcini.slug}/counts")
+    sign_out(app_of(api))
+    assert response.json()["records"] == 42
+
+
 async def test_counts_requires_permission(session: AsyncSession, api: httpx.AsyncClient) -> None:
     porcini = await cf.make_species(
         session, slug="boletus-edulis", name="Steinpilz", latin_name="Boletus edulis"

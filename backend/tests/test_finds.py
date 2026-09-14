@@ -263,5 +263,5 @@ async def test_training_finds_filters_correctly(
     )
     sign_in(app_of(api), reviewer, "find.review")
     await api.post(f"/finds/{ready.json()['id']}/review", json={"decision": "accepted"})
-    rows = await find_service.training_finds(session)
+    rows = await find_service.FindService(session).training_finds()
     assert [row.id for row in rows] == [uuid.UUID(ready.json()["id"])]

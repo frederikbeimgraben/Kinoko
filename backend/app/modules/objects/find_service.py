@@ -122,16 +122,15 @@ class FindService:
         return len(found)
 
     async def training_finds(self) -> Sequence[Find]:
-        """Die geprüften, für das Training freigegebenen Funde mit Art."""
-        query = select(Find).where(
-            Find.for_training.is_(True),
-            Find.review_state == ReviewState.ACCEPTED,
-            Find.deleted_at.is_(None),
-            Find.species_id.is_not(None),
+        """Die angenommenen Trainingsfunde der Arten mit Vorhersage."""
+        query = (
+            select(Find)
+            .join(Species, Species.id == Find.species_id)
+            .where(
+                Find.for_training.is_(True),
+                Find.review_state == ReviewState.ACCEPTED,
+                Find.deleted_at.is_(None),
+                Species.forecast_enabled.is_(True),
+            )
         )
         return list((await self.db.execute(query)).scalars())
-
-
-async def training_finds(db: AsyncSession) -> Sequence[Find]:
-    """Die Zeilen fürs Training, für die Kette."""
-    return await FindService(db).training_finds()

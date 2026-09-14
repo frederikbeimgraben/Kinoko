@@ -10,18 +10,23 @@ from sqlalchemy import func, select
 
 from app.core.errors import Conflict
 from app.models import Find, Photo, PipelineRun, PipelineRunSpecies
+from app.models import Species as SpeciesTable
 from app.modules.catalog.children import load_children
 from app.modules.catalog.facets import FacetService
 from app.modules.catalog.loader import build_facets, load_one, summary_of
 from app.modules.catalog.repository import SpeciesRepository
 from app.modules.catalog.schemas import Species, SpeciesCounts, SpeciesWrite
 from app.modules.catalog.taxonomy import subtree_ids
+from app.shared.enums import RunState
 from app.shared.paging import wrap
 
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession
+    from collections.abc import Sequence
 
-    from app.models import Species as SpeciesRow
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from sqlalchemy.orm import InstrumentedAttribute
+    from sqlalchemy.sql.elements import ColumnElement
+
     from app.modules.catalog.facets import Selection
     from app.shared.paging import Paging
 
@@ -87,7 +92,7 @@ class SpeciesService:
         await self.repo.delete(entity)
         await self.repo.commit()
 
-    async def guard_in_use(self, entity: SpeciesRow) -> None:
+    async def guard_in_use(self, entity: SpeciesTable) -> None:
         """Verweigert das Löschen einer Art mit Funden oder Fotos."""
         finds = await self.db.execute(
             select(func.count()).where(Find.species_id == entity.id, Find.deleted_at.is_(None)),
@@ -108,19 +113,46 @@ class SpeciesService:
     async def counts(self, slug: str) -> SpeciesCounts:
         """Liest die Zahlen einer Art zum Pflegen."""
         entity = await self.repo.by_slug(slug)
-        records = await self.db.execute(
-            select(PipelineRunSpecies.record_count)
+        return (await self.counts_for([entity.id]))[entity.id]
+
+    async def counts_all(self, paging: Paging) -> dict[uuid.UUID, SpeciesCounts]:
+        """Liest die Zahlen einer Seite der Artenliste."""
+        found = await self.repo.list(self.repo.query().order_by(SpeciesTable.name), paging)
+        return await self.counts_for([row.id for row in found[: paging.limit]])
+
+    async def counts_for(self, ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, SpeciesCounts]:
+        """Datenbestand, Funde und Bilder je Art."""
+        records = await self.records_of(ids)
+        finds = await self.tally(Find.species_id, ids, Find.deleted_at.is_(None))
+        photos = await self.tally(Photo.species_id, ids)
+        return {
+            key: SpeciesCounts(
+                records=records.get(key, 0),
+                finds=finds.get(key, 0),
+                photos=photos.get(key, 0),
+            )
+            for key in ids
+        }
+
+    async def records_of(self, ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, int]:
+        """Der Datenbestand je Art aus der jüngsten fertigen Zeile."""
+        query = (
+            select(PipelineRunSpecies.species_id, PipelineRunSpecies.record_count)
             .join(PipelineRun, PipelineRun.id == PipelineRunSpecies.run_id)
-            .where(PipelineRunSpecies.species_id == entity.id)
-            .order_by(PipelineRun.queued_at.desc())
-            .limit(1),
+            .where(
+                PipelineRunSpecies.species_id.in_(ids),
+                PipelineRunSpecies.state == RunState.FINISHED,
+            )
+            .order_by(PipelineRun.queued_at)
         )
-        finds = await self.db.execute(
-            select(func.count()).where(Find.species_id == entity.id, Find.deleted_at.is_(None)),
-        )
-        photos = await self.db.execute(select(func.count()).where(Photo.species_id == entity.id))
-        return SpeciesCounts(
-            records=records.scalars().first() or 0,
-            finds=finds.scalar_one(),
-            photos=photos.scalar_one(),
-        )
+        return {row[0]: row[1] for row in await self.db.execute(query)}
+
+    async def tally(
+        self,
+        column: InstrumentedAttribute[uuid.UUID | None],
+        ids: Sequence[uuid.UUID],
+        *where: ColumnElement[bool],
+    ) -> dict[uuid.UUID, int]:
+        """Zählt Zeilen einer Tabelle je Art."""
+        query = select(column, func.count()).where(column.in_(ids), *where).group_by(column)
+        return {row[0]: row[1] for row in await self.db.execute(query)}
