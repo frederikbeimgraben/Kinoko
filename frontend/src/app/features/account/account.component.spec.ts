@@ -104,11 +104,14 @@ describe('KontoComponent', () => {
     const i18n = TestBed.inject(I18nService);
 
     await userEvent.click(screen.getByRole('tab', { name: 'English' }));
+    // Der englische Rückfall kommt als eigener Brocken, darum das Warten.
+    await vi.waitFor(() => {
+      expect(document.documentElement).toHaveAttribute('lang', 'en');
+    });
     refresh();
 
     expect(i18n.choice()).toBe('en');
     expect(localStorage.getItem('pilzkarte.sprache')).toBe('en');
-    expect(document.documentElement).toHaveAttribute('lang', 'en');
     expect(screen.getByRole('tab', { name: 'English' })).toHaveAttribute('aria-selected', 'true');
   });
 

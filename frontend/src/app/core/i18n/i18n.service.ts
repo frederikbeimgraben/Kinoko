@@ -1,10 +1,20 @@
 import { Injectable, InjectionToken, computed, inject, signal } from '@angular/core';
-import { CATALOG, DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale, type TranslationKey } from './translations';
+import {
+  CATALOG_DE,
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  loadCatalog,
+  type Locale,
+  type TranslationKey,
+} from './translations';
+
+/** Die eingebauten Texte je Sprache. Eine fehlende Sprache wird nachgeladen. */
+export type FallbackTexts = Readonly<Partial<Record<Locale, Readonly<Record<string, string>>>>>;
 
 /** Die eingebauten Texte. Ein Test setzt sie leer und sieht nur Schlüssel. */
-export const FALLBACK_TEXTS = new InjectionToken<Record<Locale, Record<string, string>>>('FALLBACK_TEXTS', {
+export const FALLBACK_TEXTS = new InjectionToken<FallbackTexts>('FALLBACK_TEXTS', {
   providedIn: 'root',
-  factory: () => CATALOG,
+  factory: (): FallbackTexts => ({ de: CATALOG_DE }),
 });
 
 const STORAGE_KEY = 'pilzkarte.sprache';
@@ -37,15 +47,14 @@ export const LANGUAGE_CHOICES: readonly LanguageChoice[] = ['de', 'en', 'system'
  */
 @Injectable({ providedIn: 'root' })
 export class I18nService {
-  private readonly _fallback = signal<Record<Locale, Record<string, string>>>(inject(FALLBACK_TEXTS));
+  private readonly _fallback = signal<FallbackTexts>(inject(FALLBACK_TEXTS));
   private readonly _choice = signal<LanguageChoice>(this.read() ?? 'system');
+  private readonly _locale = signal<Locale>(DEFAULT_LOCALE);
   private readonly _texts = signal<LoadedTexts>({});
 
   readonly choice = this._choice.asReadonly();
-  readonly locale = computed<Locale>(() => {
-    const choice = this._choice();
-    return choice === 'system' ? this.browserLanguage() : choice;
-  });
+  /** Die Sprache, deren Rückfall schon da ist. Sie wechselt nach dem Laden. */
+  readonly locale = this._locale.asReadonly();
   readonly locales = SUPPORTED_LOCALES;
 
   /** Das aktive Wörterbuch, damit Vorlagen auf den Wechsel reagieren. */
@@ -55,16 +64,13 @@ export class I18nService {
   }));
 
   constructor() {
-    this.flip();
+    void this.apply(this._choice());
   }
 
   /** Nimmt die Tabelle einer Seite mit eigenen Schlüsseln dazu. */
   addFallback(more: Record<Locale, Record<string, string>>): this {
-    this._fallback.update(
-      (known) =>
-        Object.fromEntries(
-          SUPPORTED_LOCALES.map((locale) => [locale, { ...known[locale], ...more[locale] }]),
-        ) as Record<Locale, Record<string, string>>,
+    this._fallback.update((known) =>
+      Object.fromEntries(SUPPORTED_LOCALES.map((locale) => [locale, { ...known[locale], ...more[locale] }])),
     );
     return this;
   }
@@ -78,6 +84,17 @@ export class I18nService {
     if (!LANGUAGE_CHOICES.includes(choice)) return;
     this._choice.set(choice);
     this.save(choice);
+    void this.apply(choice);
+  }
+
+  /** Die Sprache wechselt erst, wenn ihr Rückfall da ist. */
+  private async apply(choice: LanguageChoice): Promise<void> {
+    const wanted = choice === 'system' ? this.browserLanguage() : choice;
+    if (this._fallback()[wanted] === undefined) {
+      const table = await loadCatalog(wanted);
+      this._fallback.update((known) => ({ ...known, [wanted]: { ...table, ...known[wanted] } }));
+    }
+    this._locale.set(wanted);
     this.flip();
   }
 
@@ -87,7 +104,8 @@ export class I18nService {
 
   /** Übersetzt einen Schlüssel. `{name}` kommt aus `params`, sonst steht er da. */
   translate(key: TranslationKey, params?: Record<string, string | number>): string {
-    const text = this.dictionary()[key] || this._fallback()[DEFAULT_LOCALE][key] || key;
+    const german = this._fallback()[DEFAULT_LOCALE]?.[key] ?? '';
+    const text = this.dictionary()[key] || german || key;
     return params ? this.fill(text, params) : text;
   }
 

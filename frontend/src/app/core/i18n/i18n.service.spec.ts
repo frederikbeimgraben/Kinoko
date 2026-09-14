@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { FALLBACK_TEXTS, I18nService } from './i18n.service';
-import { CATALOG, SUPPORTED_LOCALES, type TranslationKey } from './translations';
+import { CATALOG_DE, SUPPORTED_LOCALES, loadCatalog, type TranslationKey } from './translations';
 
 /** Ein Dienst ohne jeden eingebauten Text. */
 function withoutFallback(): I18nService {
@@ -20,16 +20,24 @@ function service(): I18nService {
   return TestBed.inject(I18nService);
 }
 
+/** Wartet auf den Rückfall der Sprache. Danach springt das Signal um. */
+async function ready(i18n: I18nService, locale: 'de' | 'en'): Promise<void> {
+  await vi.waitFor(() => {
+    expect(i18n.locale()).toBe(locale);
+  });
+}
+
 describe('I18nService', () => {
   it('führt Deutsch als Leitsprache', () => {
     expect(service().translate('nav.karte')).toBe('Karte');
     expect(document.documentElement.lang).toBe('de');
   });
 
-  it('wechselt die Sprache und merkt sie sich', () => {
+  it('wechselt die Sprache und merkt sie sich', async () => {
     const i18n = service();
 
     i18n.setLocale('en');
+    await ready(i18n, 'en');
 
     expect(i18n.locale()).toBe('en');
     expect(i18n.translate('nav.karte')).toBe('Map');
@@ -52,10 +60,24 @@ describe('I18nService', () => {
     expect(i18n.translate('zeitleiste.woche', { woche: 40 })).toBe('KW 40 · {jahr}');
   });
 
-  it('nimmt die saved Sprache beim Start', () => {
+  it('nimmt die saved Sprache beim Start', async () => {
     localStorage.setItem('pilzkarte.sprache', 'en');
 
-    expect(service().locale()).toBe('en');
+    await ready(service(), 'en');
+  });
+
+  it('bleibt bei Deutsch, bis der englische Rückfall geladen ist', async () => {
+    const i18n = service();
+
+    i18n.setLocale('en');
+
+    // Der Brocken kommt erst im nächsten Zug. Solange steht Deutsch da, nicht
+    // der nackte Schlüssel.
+    expect(i18n.locale()).toBe('de');
+    expect(i18n.translate('nav.karte')).toBe('Karte');
+
+    await ready(i18n, 'en');
+    expect(i18n.translate('nav.karte')).toBe('Map');
   });
 
   it('folgt unter „System“ dem Browser und merkt sich die Wahl', () => {
@@ -86,11 +108,11 @@ describe('I18nService', () => {
     expect(i18n.choice()).toBe('de');
   });
 
-  it('fällt ohne saved Wahl auf die Browsersprache', () => {
+  it('fällt ohne saved Wahl auf die Browsersprache', async () => {
     localStorage.clear();
     vi.spyOn(navigator, 'language', 'get').mockReturnValue('en-GB');
 
-    expect(service().locale()).toBe('en');
+    await ready(service(), 'en');
   });
 
   it('fällt bei unbekannter Browsersprache auf Deutsch', () => {
@@ -100,7 +122,7 @@ describe('I18nService', () => {
     expect(service().locale()).toBe('de');
   });
 
-  it('kommt ohne Speicher aus', () => {
+  it('kommt ohne Speicher aus', async () => {
     const read = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('gesperrt');
     });
@@ -110,8 +132,8 @@ describe('I18nService', () => {
 
     const i18n = service();
     i18n.setLocale('en');
+    await ready(i18n, 'en');
 
-    expect(i18n.locale()).toBe('en');
     read.mockRestore();
     write.mockRestore();
   });
@@ -124,13 +146,14 @@ describe('I18nService', () => {
     expect(withoutFallback().translate('nav.karte')).toBe('nav.karte');
   });
 
-  it('kennt jeden Schlüssel in beiden Katalogen', () => {
-    const schluessel = Object.keys(CATALOG.de);
+  it('kennt jeden Schlüssel in beiden Katalogen', async () => {
+    const schluessel = Object.keys(CATALOG_DE);
 
     for (const locale of SUPPORTED_LOCALES) {
-      expect(Object.keys(CATALOG[locale])).toHaveLength(schluessel.length);
+      const table = await loadCatalog(locale);
+      expect(Object.keys(table)).toHaveLength(schluessel.length);
       for (const entry of schluessel) {
-        expect(CATALOG[locale][entry]).not.toBe('');
+        expect(table[entry]).not.toBe('');
       }
     }
   });

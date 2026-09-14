@@ -17,8 +17,11 @@ describe('TranslatePipe', () => {
     expect(screen.getByText('Arten')).toBeInTheDocument();
 
     TestBed.inject(I18nService).setLocale('en');
-    fixture.detectChanges();
 
-    expect(screen.getByText('Species')).toBeInTheDocument();
+    // Der englische Rückfall kommt als eigener Brocken, darum das Warten.
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(screen.getByText('Species')).toBeInTheDocument();
+    });
   });
 });
