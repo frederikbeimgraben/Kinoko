@@ -154,6 +154,18 @@ def test_unknown_genus_is_counted() -> None:
     assert ctx.report.skipped["species_ohne_gattung"] == 1
 
 
+def test_forecast_enabled_follows_karte_field() -> None:
+    ctx = _context(_profile(karte="boletus_edulis"))
+    row, _children, _counts = importer.build_species(ctx)
+    assert row.forecast_enabled is True
+
+
+def test_forecast_enabled_false_without_karte_field() -> None:
+    ctx = _context(_profile())
+    row, _children, _counts = importer.build_species(ctx)
+    assert row.forecast_enabled is False
+
+
 def test_unknown_lookalike_is_skipped_and_counted() -> None:
     profile = _profile(verwechslungen=[{"slug": "unbekannt", "unterschied": "x"}])
     ctx = _context(profile)
