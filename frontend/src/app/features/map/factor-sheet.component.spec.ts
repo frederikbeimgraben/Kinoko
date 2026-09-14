@@ -46,8 +46,8 @@ describe('FaktorBlattComponent', () => {
   it('zeigt bei „über“ nur den unteren Griff', async () => {
     await sheet();
 
-    expect(screen.getByRole('slider', { name: 'von' })).toBeInTheDocument();
-    expect(screen.queryByRole('slider', { name: 'bis' })).not.toBeInTheDocument();
+    expect(screen.getByRole('slider', { name: 'Untere Grenze' })).toBeInTheDocument();
+    expect(screen.queryByRole('slider', { name: 'Obere Grenze' })).not.toBeInTheDocument();
   });
 
   it('wechselt die Form der Bedingung und behält die Spanne', async () => {
@@ -66,8 +66,8 @@ describe('FaktorBlattComponent', () => {
     const applied: Faktor[] = [];
     fixture.componentInstance.apply.subscribe((factor) => applied.push(factor));
 
-    fireEvent.input(screen.getByRole('slider', { name: 'von' }), { target: { value: '90' } });
-    fireEvent.input(screen.getByRole('slider', { name: 'bis' }), { target: { value: '10' } });
+    fireEvent.input(screen.getByRole('slider', { name: 'Untere Grenze' }), { target: { value: '90' } });
+    fireEvent.input(screen.getByRole('slider', { name: 'Obere Grenze' }), { target: { value: '10' } });
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 
     expect(applied[0].von).toBe(60);

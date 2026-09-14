@@ -95,7 +95,7 @@ describe('ReviewQueueComponent', () => {
 
   it('macht die letzte Entscheidung über Rückgängig rückgängig', async () => {
     const { fixture } = await render(HostComponent);
-    const undo = screen.getByRole('button', { name: 'Zurücksetzen' });
+    const undo = screen.getByRole('button', { name: 'Rückgängig' });
     expect(undo).toBeDisabled();
 
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));

@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { ICONS } from './icons';
@@ -28,6 +29,7 @@ describe('SvgIconComponent', () => {
 
   it('zeichnet jeden Eintrag der Tabelle', async () => {
     for (const name of Object.keys(ICONS) as (keyof typeof ICONS)[]) {
+      TestBed.resetTestingModule();
       const { container } = await render(SvgIconComponent, { inputs: { name } });
 
       expect(container.querySelector('svg')?.childElementCount).toBeGreaterThan(0);

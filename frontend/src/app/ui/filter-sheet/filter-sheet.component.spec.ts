@@ -1,8 +1,13 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { FilterSheetComponent } from './filter-sheet.component';
+
+/** Die Knöpfe des Blatts, ohne den Scrim des Overlay-Wirts. */
+function dialogButtons(): HTMLElement[] {
+  return within(screen.getByRole('dialog')).getAllByRole('button');
+}
 
 describe('FilterSheetComponent', () => {
   it('renders nothing while closed', async () => {
@@ -26,7 +31,7 @@ describe('FilterSheetComponent', () => {
   it('leaves out the reset button while nothing is filtered', async () => {
     await render(FilterSheetComponent, { inputs: { open: true, primaryLabel: 'Show 12 species' } });
 
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(dialogButtons()).toHaveLength(2);
   });
 
   it('shows the reset button once a filter is active', async () => {
@@ -34,7 +39,7 @@ describe('FilterSheetComponent', () => {
       inputs: { open: true, primaryLabel: 'Show 12 species', resetEnabled: true },
     });
 
-    expect(screen.getAllByRole('button')).toHaveLength(3);
+    expect(dialogButtons()).toHaveLength(3);
   });
 
   it('emits resetClick, primaryClick and closed for their buttons', async () => {
@@ -45,7 +50,7 @@ describe('FilterSheetComponent', () => {
     fixture.componentInstance.resetClick.subscribe(() => calls.push('reset'));
     fixture.componentInstance.primaryClick.subscribe(() => calls.push('primary'));
     fixture.componentInstance.closed.subscribe(() => calls.push('closed'));
-    const buttons = screen.getAllByRole('button');
+    const buttons = dialogButtons();
 
     await userEvent.click(buttons[0]);
     await userEvent.click(buttons[1]);
@@ -71,7 +76,7 @@ describe('FilterSheetComponent', () => {
       inputs: { open: true, primaryLabel: 'Show 12 species', resetEnabled: true },
     });
 
-    for (const button of screen.getAllByRole('button')) {
+    for (const button of dialogButtons()) {
       expect(button).toHaveClass('tap');
       expect(button).toHaveAttribute('data-press', 'scale');
     }

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
@@ -28,7 +36,8 @@ export class ObjectMenuComponent {
 
   constructor() {
     // Der Fokus folgt dem geöffneten Menü, damit Pfeile und Escape greifen.
-    effect(() => {
+    // Erst nach dem Rendern stehen die Einträge im Baum.
+    afterRenderEffect(() => {
       if (this.target() !== null) this.items()[0]?.focus();
     });
   }

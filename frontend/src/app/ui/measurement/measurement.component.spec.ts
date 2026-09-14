@@ -96,9 +96,11 @@ describe('MeasurementComponent', () => {
       { imports: [MeasurementComponent], componentProperties: { spans: [{ from: 1, to: 2 }] } },
     );
 
+    // Die Trennlinie hängt an :host(:last-child) in der SCSS. jsdom löst
+    // keine CSS-Variable auf, darum prüft der Test die Stellung im Baum.
     const rows = container.querySelectorAll('app-measurement');
-    expect(getComputedStyle(rows[0]).borderBlockEndWidth).not.toBe('0px');
-    expect(getComputedStyle(rows[1]).borderBlockEndWidth).toBe('0px');
+    expect(rows[0].matches(':last-child')).toBe(false);
+    expect(rows[1].matches(':last-child')).toBe(true);
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

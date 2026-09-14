@@ -98,8 +98,8 @@ describe('ColourChangeComponent', () => {
     });
 
     const rows = container.querySelectorAll('.row');
-    expect(getComputedStyle(rows[0]).borderBlockEndWidth).not.toBe('0px');
-    expect(getComputedStyle(rows[1]).borderBlockEndWidth).toBe('0px');
+    expect(rows[0]).not.toHaveClass('row--last');
+    expect(rows[1]).toHaveClass('row--last');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

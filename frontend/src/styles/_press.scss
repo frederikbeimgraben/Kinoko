@@ -15,7 +15,9 @@
 }
 
 [data-press] {
-  transition: transform var(--motion-press) ease-out, background-color var(--motion-press) ease-out;
+  transition:
+    transform var(--motion-press) ease-out,
+    background-color var(--motion-press) ease-out;
 }
 
 [data-press='scale']:active {

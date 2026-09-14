@@ -62,7 +62,7 @@ describe('SpeciesPickerComponent', () => {
 
     await userEvent.type(screen.getByRole('textbox'), 'xyz');
 
-    expect(screen.getByText('Keine Art passt zur Suche.')).toBeInTheDocument();
+    expect(screen.getByText('Keine Art passt zu dieser Auswahl')).toBeInTheDocument();
   });
 
   it('markiert die gewählte Zeile als aktiv', async () => {

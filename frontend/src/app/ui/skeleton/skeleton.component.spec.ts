@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { render } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { SkeletonComponent, type SkeletonKind } from './skeleton.component';
@@ -31,6 +32,7 @@ describe('SkeletonComponent', () => {
   it('kennt jede Art', async () => {
     const kinds: SkeletonKind[] = ['row', 'tile', 'card', 'block'];
     for (const kind of kinds) {
+      TestBed.resetTestingModule();
       const { container, detectChanges } = await render(SkeletonComponent, { inputs: { kind } });
       await vi.advanceTimersByTimeAsync(300);
       detectChanges();

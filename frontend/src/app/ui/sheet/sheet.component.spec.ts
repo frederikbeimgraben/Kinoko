@@ -44,11 +44,9 @@ function drag(handle: HTMLElement, sizes: readonly number[]): void {
   });
 }
 
-/** Der Wirt des Blatts im Testaufbau. */
+/** Der Wirt des Blatts im Testaufbau, mit oder ohne umgebende Hülle. */
 function hostOf(container: Element): HTMLElement {
-  const host = container.querySelector<HTMLElement>('app-sheet');
-  if (!host) throw new Error('Kein Blatt im Baum.');
-  return host;
+  return container.querySelector<HTMLElement>('app-sheet') ?? (container as HTMLElement);
 }
 
 describe('SheetComponent', () => {
@@ -56,7 +54,7 @@ describe('SheetComponent', () => {
     const { container } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
 
     expect(screen.getByRole('dialog', { name: 'Porcini' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Blatt greifen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Blatt ziehen' })).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -65,7 +63,7 @@ describe('SheetComponent', () => {
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Blatt greifen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Blatt ziehen' }));
 
     expect(calls).toEqual([0]);
   });
@@ -103,7 +101,7 @@ describe('SheetComponent', () => {
 
   it('lets the tab order run free in a non-modal sheet', async () => {
     const { container } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
-    screen.getByRole('button', { name: 'Blatt greifen' }).focus();
+    screen.getByRole('button', { name: 'Blatt ziehen' }).focus();
 
     await userEvent.tab();
 
@@ -114,7 +112,7 @@ describe('SheetComponent', () => {
     const { fixture } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 2 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    screen.getByRole('button', { name: 'Blatt greifen' }).focus();
+    screen.getByRole('button', { name: 'Blatt ziehen' }).focus();
 
     await userEvent.keyboard('{ArrowUp}');
     await userEvent.keyboard('{ArrowDown}');
@@ -127,7 +125,7 @@ describe('SheetComponent', () => {
     const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
     fakeSize(hostOf(container), 800, 320);
 
     drag(handle, [500, 100, 100]);
@@ -140,7 +138,7 @@ describe('SheetComponent', () => {
     const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
     fakeSize(hostOf(container), 800, 320);
 
     drag(handle, [500, 495, 494]);
@@ -154,7 +152,7 @@ describe('SheetComponent', () => {
     });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
     fakeSize(hostOf(container), 800, 120);
 
     drag(handle, [500, 700, 700]);
@@ -195,7 +193,7 @@ describe('SheetComponent', () => {
   it('marks the handle as a tap target with a press state', async () => {
     await render(SheetComponent, { inputs: { label: 'Porcini' } });
 
-    const handle = screen.getByRole('button', { name: 'Blatt greifen' });
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
 
     expect(handle).toHaveClass('tap');
     expect(handle).toHaveAttribute('data-press', 'scale');

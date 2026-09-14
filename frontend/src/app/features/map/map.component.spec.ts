@@ -198,7 +198,7 @@ describe('KarteComponent', () => {
     const { double, stable } = await map();
     const before = double.padding.length;
 
-    await userEvent.click(screen.getByRole('button', { name: 'Blatt greifen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Blatt ziehen' }));
     await stable();
 
     expect(double.fitted[0].padding.bottom).toBeGreaterThanOrEqual(0);
@@ -290,7 +290,7 @@ describe('KarteComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: '≥ 80 mm' }));
     await stable();
 
-    fireEvent.input(screen.getByRole('slider', { name: 'von' }), { target: { value: '40' } });
+    fireEvent.input(screen.getByRole('slider', { name: 'Untere Grenze' }), { target: { value: '40' } });
     await stable();
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
@@ -547,7 +547,7 @@ describe('KarteComponent', () => {
 
     expect(double.styles.at(-1)).toContain('dark');
 
-    const slider = screen.getByRole('slider', { name: 'von' });
+    const slider = screen.getByRole('slider', { name: 'Untere Grenze' });
     fireEvent.input(slider, { target: { value: '40' } });
     await stable();
 

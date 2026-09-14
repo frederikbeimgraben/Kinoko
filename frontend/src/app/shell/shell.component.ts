@@ -4,28 +4,16 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { AuthService } from '../core/auth';
 import { ViewportService } from '../core/layout/viewport.service';
-import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { I18nService } from '../core/i18n/i18n.service';
 // Diese Datei laedt beim Start mit. Sie nimmt die Bausteine darum einzeln
 // und nicht ueber `ui/index.ts`: das Sammelmodul zieht jeden Baustein in das
 // erste Buendel, auch die Saisonkurve und die Zeitleiste, die hier niemand
 // braucht. Das waren 81 kB.
 import { AvatarButtonComponent } from '../ui/avatar-button/avatar-button.component';
-import { BottomNavComponent, type NavItem } from '../ui/bottom-nav/bottom-nav.component';
+import { NavComponent } from '../ui/nav/nav.component';
 import { MapComponent } from '../features/map/map.component';
 import { MapState } from '../features/map/map.state';
 import { AddEntryState } from '../features/add-entry/add-entry.state';
-
-/** Die drei Reiter. Das Konto hängt am Avatar über der Karte, nicht an der Leiste. */
-const TABS: readonly {
-  path: string;
-  schluessel: 'nav.karte' | 'nav.arten' | 'nav.eintraege';
-  icon: NavItem['icon'];
-}[] = [
-  { path: '/karte', schluessel: 'nav.karte', icon: 'karte' },
-  { path: '/arten', schluessel: 'nav.arten', icon: 'arten' },
-  { path: '/eintraege', schluessel: 'nav.eintraege', icon: 'funde' },
-];
 
 /**
  * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.
@@ -40,7 +28,7 @@ const TABS: readonly {
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarButtonComponent, BottomNavComponent, MapComponent, RouterOutlet, TranslatePipe],
+  imports: [AvatarButtonComponent, NavComponent, MapComponent, RouterOutlet],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
@@ -89,14 +77,6 @@ export class ShellComponent {
       ? this.i18n.translate('nav.konto')
       : this.i18n.translate('konto.avatarAngemeldet', { name: person.name });
   });
-
-  protected readonly eintraege = computed<NavItem[]>(() =>
-    TABS.map((tab) => ({
-      path: tab.path,
-      label: this.i18n.translate(tab.schluessel),
-      icon: tab.icon,
-    })),
-  );
 
   protected toAccount(): void {
     void this.router.navigate(['/konto']);

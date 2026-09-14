@@ -15,7 +15,7 @@ const emptyService = {
 
 export const EMPTY_CATALOG: Provider = {
   provide: I18nService,
-  useValue: emptyService as unknown as I18nService,
+  useValue: emptyService,
 };
 
 const GERMAN_WORDS =
@@ -25,7 +25,7 @@ const UMLAUT = /[äöüÄÖÜß]/;
 
 /** Wirft, wenn ein deutsches Wort im Baum steht. Texte kommen aus Schlüsseln. */
 export function noGermanText(element: Element): void {
-  const parts = [element.textContent ?? ''];
+  const parts = [element.textContent];
   for (const node of element.querySelectorAll('[aria-label], [title], [placeholder], [alt]')) {
     for (const name of ['aria-label', 'title', 'placeholder', 'alt']) {
       parts.push(node.getAttribute(name) ?? '');

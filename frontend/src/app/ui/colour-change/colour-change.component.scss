@@ -20,7 +20,7 @@
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
-.row:last-child {
+.row--last {
   border-block-end: 0;
 }
 

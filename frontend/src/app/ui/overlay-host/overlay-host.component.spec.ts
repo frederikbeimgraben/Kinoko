@@ -50,9 +50,10 @@ describe('OverlayHostComponent', () => {
   });
 
   it('focuses the panel once it opens', async () => {
-    const { container, rerender } = await render(OverlayHostComponent, { inputs: { open: false } });
+    const { container, fixture } = await render(OverlayHostComponent, { inputs: { open: false } });
 
-    await rerender({ inputs: { open: true } });
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
 
     expect(document.activeElement).toBe(container.querySelector('.overlay__panel'));
   });

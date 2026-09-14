@@ -67,9 +67,10 @@ describe('ObjectMenuComponent', () => {
   });
 
   it('focuses the first action once the menu opens', async () => {
-    const { rerender } = await render(ObjectMenuComponent, { inputs: { target: null } });
+    const { fixture } = await render(ObjectMenuComponent, { inputs: { target: null } });
 
-    await rerender({ inputs: { target: { x: 10, y: 10 } } });
+    fixture.componentRef.setInput('target', { x: 10, y: 10 });
+    fixture.detectChanges();
 
     expect(document.activeElement).toBe(screen.getAllByRole('menuitem')[0]);
   });

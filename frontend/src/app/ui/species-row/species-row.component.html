@@ -13,6 +13,6 @@
   </span>
   <app-level-pill class="row__level" [text]="species().levelText" [colour]="species().levelColour" />
   @if (species().image; as source) {
-    <img class="row__image" [src]="source" alt="" width="44" height="44" />
+    <img class="row__image" [src]="source" [alt]="species().name" width="44" height="44" />
   }
 </button>

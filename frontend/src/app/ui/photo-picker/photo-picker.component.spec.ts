@@ -76,7 +76,8 @@ describe('PhotoPickerComponent', () => {
     const changes: (readonly File[])[] = [];
     fixture.componentInstance.filesChange.subscribe((value) => changes.push(value));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Foto 1 entfernen' }));
+    // Jede Kachel trägt dieselbe Beschriftung. Die erste Kachel gehört zu FILE_A.
+    await userEvent.click(screen.getAllByRole('button', { name: 'Bild entfernen' })[0]);
 
     expect(changes).toEqual([[FILE_B]]);
     expect(revoked).toEqual(['blob:0']);

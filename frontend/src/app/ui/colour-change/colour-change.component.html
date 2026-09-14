@@ -1,5 +1,5 @@
-@for (trigger of triggers(); track $index; let i = $index) {
-  <div class="row">
+@for (trigger of triggers(); track $index; let i = $index; let last = $last) {
+  <div class="row" [class.row--last]="last">
     <span class="row__trigger">{{ trigger }}</span>
     <span class="row__value">
       @if (from()[i]?.length) {

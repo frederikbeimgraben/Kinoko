@@ -21,7 +21,7 @@ describe('ImageTileComponent', () => {
       inputs: { image: speciesImage() },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    flush(TestBed.inject(HttpTestingController), '/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
     detectChanges();
 
     expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('ImageTileComponent', () => {
       inputs: { image: speciesImage(), lead: true },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    flush(TestBed.inject(HttpTestingController), '/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
     detectChanges();
 
     expect(container.querySelector('.tile__badge')).not.toBeNull();
@@ -44,7 +44,7 @@ describe('ImageTileComponent', () => {
       inputs: { image: speciesImage(), lead: false },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    flush(TestBed.inject(HttpTestingController), '/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
     detectChanges();
 
     expect(container.querySelector('.tile__badge')).toBeNull();
@@ -55,7 +55,7 @@ describe('ImageTileComponent', () => {
       inputs: { image: speciesImage({ photographer: 'Marie Weber', licence: 'cc0' }) },
       providers: [provideHttpClient(), provideHttpClientTesting(), EMPTY_CATALOG],
     });
-    flush(TestBed.inject(HttpTestingController), '/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
     detectChanges();
 
     noGermanText(container);

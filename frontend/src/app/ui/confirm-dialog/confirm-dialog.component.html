@@ -1,9 +1,4 @@
-<app-dialog
-  [open]="open()"
-  [title]="title()"
-  [closeLabel]="'common.close' | t"
-  (closed)="cancelled.emit()"
->
+<app-dialog [open]="open()" [title]="title()" [closeLabel]="'common.close' | t" (closed)="cancelled.emit()">
   @if (meta(); as meta) {
     <p class="confirm__meta">{{ meta }}</p>
   }

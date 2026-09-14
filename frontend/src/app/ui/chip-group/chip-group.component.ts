@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
@@ -29,19 +29,27 @@ export class ChipGroupComponent {
   readonly valueChange = output<readonly string[]>();
   readonly added = output();
 
+  /** Eigener Stand der Wahl. Ein neuer Wert von außen setzt ihn zurück. */
+  private readonly chosenValues = linkedSignal<readonly string[], readonly string[]>({
+    source: this.value,
+    computation: (value) => value,
+  });
+
   protected isChosen(chip: Chip): boolean {
-    return this.value().includes(chip.value);
+    return this.chosenValues().includes(chip.value);
   }
 
   protected toggle(chip: Chip): void {
-    const current = this.value();
+    const current = this.chosenValues();
     const chosen = current.includes(chip.value);
-    if (this.multiple()) {
-      this.valueChange.emit(
-        chosen ? current.filter((entry) => entry !== chip.value) : [...current, chip.value],
-      );
-      return;
-    }
-    this.valueChange.emit(chosen ? [] : [chip.value]);
+    const next = this.multiple()
+      ? chosen
+        ? current.filter((entry) => entry !== chip.value)
+        : [...current, chip.value]
+      : chosen
+        ? []
+        : [chip.value];
+    this.chosenValues.set(next);
+    this.valueChange.emit(next);
   }
 }

@@ -9,11 +9,6 @@
   padding: var(--space-5) var(--space-5) 0;
 }
 
-.workshop__hint {
-  margin-block-start: var(--space-2);
-  color: var(--color-text-muted);
-}
-
 .workshop__fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));

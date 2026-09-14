@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 /** Scrim plus Blatt über einem Slot. Schließt über Scrim, Escape oder Aufrufer. */
@@ -18,7 +26,8 @@ export class OverlayHostComponent {
 
   constructor() {
     // Der Fokus folgt dem geöffneten Blatt, damit Escape sofort greift.
-    effect(() => {
+    // Erst nach dem Rendern steht das Panel im Baum.
+    afterRenderEffect(() => {
       if (this.open()) this.panel()?.focus();
     });
   }

@@ -3,10 +3,7 @@ import axe from 'axe-core';
 /** Regeln, die für einen Ausschnitt nicht gelten. Die Seite prüft sie. */
 const PAGE_RULES = ['region', 'page-has-heading-one', 'landmark-one-main'];
 
-/**
- * Prüft einen Ausschnitt der Seite mit axe.
- * `extraOff` schaltet weitere Regeln ab, etwa auf der Werkstattseite.
- */
+/** Prüft einen Ausschnitt mit axe. `extraOff` schaltet weitere Regeln ab. */
 export async function noViolations(element: Element, extraOff: readonly string[] = []): Promise<void> {
   const rules: Record<string, { enabled: boolean }> = {};
   for (const rule of [...PAGE_RULES, ...extraOff]) rules[rule] = { enabled: false };

@@ -7,10 +7,7 @@ export { ChipGroupComponent, type Chip } from './chip-group/chip-group.component
 export { ChoiceRowComponent } from './choice-row/choice-row.component';
 export { ColourChangeComponent } from './colour-change/colour-change.component';
 export { ColourFieldComponent, type ColourMode } from './colour-field/colour-field.component';
-export {
-  ColourPickerComponent,
-  type ColourPickerSwatch,
-} from './colour-picker/colour-picker.component';
+export { ColourPickerComponent, type ColourPickerSwatch } from './colour-picker/colour-picker.component';
 export {
   ColourSwatchesComponent,
   OBJECT_COLORS,
@@ -24,10 +21,7 @@ export { ErrorStateComponent } from './error-state/error-state.component';
 export { FactorRowComponent, type CombinationFactor } from './factor-row/factor-row.component';
 export { FilterChipComponent } from './filter-chip/filter-chip.component';
 export { FilterSheetComponent } from './filter-sheet/filter-sheet.component';
-export {
-  FloatingButtonComponent,
-  type FloatingVariant,
-} from './floating-button/floating-button.component';
+export { FloatingButtonComponent, type FloatingVariant } from './floating-button/floating-button.component';
 export { FormFieldComponent } from './form-field/form-field.component';
 export { HistogramComponent } from './histogram/histogram.component';
 export {
@@ -66,10 +60,7 @@ export { SegmentedComponent, type SegmentOption } from './segmented/segmented.co
 export { SheetComponent, type Detent } from './sheet/sheet.component';
 export { SheetHeadComponent } from './sheet-head/sheet-head.component';
 export { SkeletonComponent, type SkeletonKind } from './skeleton/skeleton.component';
-export {
-  SpeciesPickerComponent,
-  type SpeciesPickerEntry,
-} from './species-picker/species-picker.component';
+export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';
 export { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row/species-row.component';
 export { SplitLayoutComponent } from './split-layout/split-layout.component';
 export { StatRowComponent, type Stat } from './stat-row/stat-row.component';

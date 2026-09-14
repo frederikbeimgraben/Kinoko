@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
@@ -24,6 +25,7 @@ describe('ImageCreditComponent', () => {
   it('kennt jede Lizenz aus der Tabelle', async () => {
     const licences = ['cc0', 'cc-by-4', 'cc-by-sa-4', 'public-domain'] as const;
     for (const licence of licences) {
+      TestBed.resetTestingModule();
       const { container } = await render(ImageCreditComponent, {
         inputs: { photographer: 'Marie Weber', licence },
       });

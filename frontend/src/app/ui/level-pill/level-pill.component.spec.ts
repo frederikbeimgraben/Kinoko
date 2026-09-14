@@ -22,7 +22,9 @@ describe('LevelPillComponent', () => {
 
     const pill = container.querySelector<HTMLElement>('.level');
     if (pill === null) throw new Error('Die Marke steht nicht im Baum.');
-    expect(getComputedStyle(pill).borderRadius).toBe('999px');
+    // Das globale Stilblatt mit --radius-pill: 999px fehlt im Test. Geprüft
+    // wird darum die Bindung an das Token, nicht der aufgelöste Wert.
+    expect(getComputedStyle(pill).borderRadius).toBe('var(--radius-pill)');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
