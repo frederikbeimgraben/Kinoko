@@ -7,7 +7,9 @@
 
 @switch (state.view()) {
   @case ('forecast') {
-    <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+    @if (!view.noSpecies()) {
+      <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+    }
   }
   @case ('layer') {
     <app-form-field

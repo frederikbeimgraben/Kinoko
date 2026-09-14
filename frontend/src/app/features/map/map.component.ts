@@ -112,7 +112,10 @@ export class MapComponent implements OnDestroy {
     effect(() => {
       if (!this.visible()) this.playback.stop();
     });
-    effect(() => void this.tiles.load(this.state.species()));
+    effect(() => {
+      this.state.species.set(this.view.slug());
+      void this.tiles.load(this.view.slug());
+    });
     void this.tiles.loadLayers();
     effect(() => {
       if (this.view.onCombination()) void this.loadSpeciesManifests();

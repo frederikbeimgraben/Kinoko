@@ -55,7 +55,7 @@ interface Harness {
   net: HttpTestingController;
 }
 
-async function map(signedIn = false): Promise<Harness> {
+async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
   answerManifest(RAW_MANIFEST, RAW_LAYERS);
   const { map: double, worker } = mapWithDoubles();
   const auth = new AuthStub();
@@ -71,7 +71,7 @@ async function map(signedIn = false): Promise<Harness> {
     ],
   });
   const catalogue = TestBed.inject(SpeciesState) as unknown as { bundle: () => SpeciesBundle | null };
-  catalogue.bundle = () => ({ items: BUNDLE_ITEMS }) as unknown as SpeciesBundle;
+  catalogue.bundle = () => ({ items }) as unknown as SpeciesBundle;
   const stable = async (): Promise<void> => {
     await fixture.whenStable();
     fixture.detectChanges();
@@ -102,6 +102,16 @@ describe('MapComponent', () => {
       screen.getByRole('img', { name: /Fundwahrscheinlichkeit je Begehung: 0 % – 50 %/ }),
     ).toBeInTheDocument();
     expect(double.options?.minZoom).toBe(4);
+    await noViolations(container);
+  });
+
+  it('bittet um eine Art, solange keine eine Vorhersage hat', async () => {
+    const { container } = await map(false, []);
+
+    expect(screen.getByRole('button', { name: 'Art wählen' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Nächste Woche' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: 'Zeitleiste' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('img', { name: /Fundwahrscheinlichkeit/ })).not.toBeInTheDocument();
     await noViolations(container);
   });
 

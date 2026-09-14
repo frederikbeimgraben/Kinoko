@@ -109,14 +109,25 @@ export class MapView {
       })),
   );
 
-  readonly speciesName = computed(
-    () => this.speciesChoices().find((entry) => entry.value === this.state.species())?.name ?? '',
-  );
+  /** Die gewählte Art, sonst die erste mit Vorhersage. */
+  readonly species = computed<SpeciesPickerEntry | null>(() => {
+    const choices = this.speciesChoices();
+    return choices.find((entry) => entry.value === this.state.species()) ?? choices.at(0) ?? null;
+  });
+
+  /** Die Art, deren Kacheln die Karte lädt. */
+  readonly slug = computed(() => this.species()?.value ?? this.state.species());
+
+  /** Ohne Art mit Vorhersage kennt die Karte weder Woche noch Rampe. */
+  readonly noSpecies = computed(() => this.species() === null);
+
+  readonly speciesName = computed(() => this.species()?.name ?? '');
 
   /** Der Kopf nennt, was die Karte zeigt: die Art, die Ebene oder die Kombination. */
   readonly title = computed(() => {
     if (this.onCombination()) return this.i18n.translate('map.tab.combination');
     if (this.onLayer()) return this.layer()?.label ?? this.i18n.translate('map.tab.layer');
+    if (this.noSpecies()) return this.i18n.translate('map.species.choose');
     return this.speciesName();
   });
 

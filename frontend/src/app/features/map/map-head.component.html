@@ -1,5 +1,6 @@
 <app-sheet-head
   [title]="view.title()"
+  [arrows]="!view.noSpecies()"
   [titleLink]="!view.onCombination()"
   [week]="view.weekText()"
   [playing]="playing()"
@@ -8,11 +9,13 @@
   (playback)="playToggled.emit()"
   (forward)="stepped.emit(1)"
 >
-  <app-timeline
-    [weeks]="view.weeks()"
-    [active]="view.activeWeek()"
-    [dimmed]="dimmed()"
-    [label]="'map.timeline' | t"
-    (chosen)="weekChosen.emit($event)"
-  />
+  @if (!view.noSpecies()) {
+    <app-timeline
+      [weeks]="view.weeks()"
+      [active]="view.activeWeek()"
+      [dimmed]="dimmed()"
+      [label]="'map.timeline' | t"
+      (chosen)="weekChosen.emit($event)"
+    />
+  }
 </app-sheet-head>
