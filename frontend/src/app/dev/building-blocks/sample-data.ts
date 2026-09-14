@@ -4,14 +4,14 @@ import type { Span, TimelineWeek } from '../../ui';
 
 /** Die acht Wochen des Artboards. Die Jahresmarke fällt auf KW 41. */
 export const SAMPLE_WEEKS: readonly TimelineWeek[] = [
+  { year: 2025, week: 36, share: 0.48, forecast: false },
+  { year: 2025, week: 37, share: 0.62, forecast: false },
   { year: 2025, week: 38, share: 0.7, forecast: false },
   { year: 2025, week: 39, share: 0.88, forecast: false },
   { year: 2025, week: 40, share: 1, forecast: false },
   { year: 2026, week: 41, share: 0.76, forecast: true },
-  { year: 2026, week: 42, share: 0.4, forecast: true },
-  { year: 2026, week: 43, share: 0.2, forecast: true },
-  { year: 2026, week: 44, share: 0.08, forecast: true },
-  { year: 2026, week: 45, share: 0.04, forecast: true },
+  { year: 2026, week: 42, share: 0.6, forecast: true },
+  { year: 2026, week: 43, share: 0.45, forecast: true },
 ];
 
 /** Die Saisonkurve als Glocke um die Spitzenwoche. */
