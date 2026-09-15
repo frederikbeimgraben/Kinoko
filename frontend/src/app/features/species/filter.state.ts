@@ -1,4 +1,5 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
 import { EMPTY_SELECTION, GROUP_KEYS, type GroupKey, type Selection } from './facets';
 
 const STORAGE_KEY = 'pilzkarte.speciesfilter';
@@ -17,6 +18,7 @@ function isGroup(value: string): value is GroupKey {
 /** Die Wahl im Filterblatt. In einer Gruppe oder, zwischen Gruppen und. */
 @Injectable({ providedIn: 'root' })
 export class SpeciesFilterState {
+  private readonly stack = inject(OverlayStackService);
   private readonly _selection = signal<Selection>(EMPTY_SELECTION);
   private readonly _open = signal(false);
   private readonly _group = signal<GroupKey | null>(null);
@@ -108,18 +110,37 @@ export class SpeciesFilterState {
     this._selection.set(EMPTY_SELECTION);
   }
 
+  /** Öffnet das Blatt und legt einen Weg zurück über die Adresszeile an. */
   openSheet(): void {
+    if (this._open()) return;
     this._group.set(null);
     this._open.set(true);
+    this.stack.open(() => {
+      this._open.set(false);
+      this._group.set(null);
+    });
   }
 
+  /** Schließt das Blatt ganz, auch aus einer offenen Gruppe heraus. */
   closeSheet(): void {
+    if (!this._open()) return;
     this._open.set(false);
     this._group.set(null);
+    this.stack.closeAll();
   }
 
+  /** Wechselt in eine Gruppe oder, ohne Wert, zur Übersicht zurück. */
   showGroup(key: GroupKey | null): void {
-    this._group.set(key);
+    if (key === this._group()) return;
+    if (key === null) {
+      this._group.set(null);
+      this.stack.back();
+    } else {
+      this._group.set(key);
+      this.stack.open(() => {
+        this._group.set(null);
+      });
+    }
   }
 
   private patch(change: (held: Selection) => Selection): void {

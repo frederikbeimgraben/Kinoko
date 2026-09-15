@@ -57,6 +57,7 @@ const BLOCKS = [
   'app-image-viewer',
   'app-private-image',
   'app-avatar-button',
+  'app-back-head',
   'app-floating-button',
   'app-crosshair',
   'app-svg-icon',

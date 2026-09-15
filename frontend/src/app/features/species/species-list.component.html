@@ -6,12 +6,14 @@
 @if (wide()) {
   <div class="species species--wide">
     <div class="species__column">
-      <app-search-field
-        [value]="query()"
-        [placeholder]="'species.search.placeholder' | t"
-        [loading]="loading()"
-        (valueChange)="query.set($event)"
-      />
+      @if (filter.group() === null) {
+        <app-search-field
+          [value]="query()"
+          [placeholder]="'species.search.placeholder' | t"
+          [loading]="loading()"
+          (valueChange)="query.set($event)"
+        />
+      }
       <app-species-filter-panel />
     </div>
     <div class="species__pane">

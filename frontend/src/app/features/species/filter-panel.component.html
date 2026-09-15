@@ -1,3 +1,6 @@
+@if (wide() && filter.group() !== null) {
+  <app-back-head [title]="title()" (backClick)="back()" />
+}
 @switch (filter.group()) {
   @case (null) {
     @for (card of cards(); track $index) {
@@ -25,4 +28,9 @@
   @default {
     <app-species-filter-group [group]="filter.group()!" />
   }
+}
+@if (wide() && resettable()) {
+  <button class="panel__reset tap" type="button" data-press="scale" (click)="reset()">
+    {{ 'common.reset' | t }}
+  </button>
 }
