@@ -73,7 +73,7 @@ test('ImageAdd', async ({ page }) => {
   await mockSignIn(page);
   await open(page, '/arten/boletus-edulis/bilder/neu', {
     '/api/photos': photoPage(SPECIES_PHOTOS),
-    ...rights(['image.upload']),
+    ...rights(['image.review']),
   });
   await expect(page.getByRole('heading', { name: 'Bild hinzufügen' })).toBeVisible();
   await pick(page, photoFixture(358, 160));

@@ -1,3 +1,5 @@
+@use '../../../styles/card';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -5,7 +7,12 @@
   overflow: hidden;
 }
 
+// Die Felder tragen die Schrift der Zeile, wie das Brett sie zeigt.
 .role {
+  --form-field-size: var(--fs-row-title);
+  --form-field-inline: 14px;
+  --form-field-shift: 0;
+
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -15,16 +22,24 @@
 }
 
 .role__section {
-  margin: 0 0 10px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  @include card.section-title;
 }
 
 .role__confirm {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+}
+
+// Die Rechte stehen ohne Karte auf der Fläche, wie das Brett sie zeigt. Der
+// Strich unter der letzten Zeile schließt den Block ab.
+.role__rights {
+  --check-row-block: 10px;
+
+  margin-block-start: -4px;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
 }

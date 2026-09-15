@@ -10,6 +10,7 @@ import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { AdminState } from './admin.state';
 
@@ -51,6 +52,7 @@ interface Choice {
     BadgeComponent,
     CheckRowComponent,
     ListRowComponent,
+    OverlayHostComponent,
     PageHeaderComponent,
     SearchFieldComponent,
     SheetComponent,

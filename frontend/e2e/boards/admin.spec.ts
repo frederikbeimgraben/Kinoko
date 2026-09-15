@@ -56,12 +56,38 @@ function role(
   };
 }
 
+/** Der Rechtekatalog, wie ihn `/api/permissions` liefert. */
+const CATALOGUE = [
+  { key: 'species.edit', area: 'species' },
+  { key: 'image.submit', area: 'species' },
+  { key: 'image.review', area: 'species' },
+  { key: 'text.edit', area: 'interface' },
+  { key: 'role.manage', area: 'access' },
+  { key: 'role.assign', area: 'access' },
+  { key: 'find.review', area: 'data' },
+  { key: 'run.manage', area: 'data' },
+];
+
+/** Die vier Konten des Bretts `People`. */
+const PEOPLE = {
+  items: [
+    person('frederik', 'Frederik', 'frederik@beimgraben.net', 'admin', 'Admin'),
+    person('jonas', 'Jonas', 'jonas@example.net', 'advisor', 'Pilzberater'),
+    person('testerin', 'Testerin', 'test@example.net', 'user', 'Nutzer'),
+    person('marie', 'Marie', 'marie@example.net', 'translator', 'Übersetzer'),
+  ],
+  nextCursor: null,
+};
+
 /** Die vier Rollen des Bretts `Roles`. */
 const ROLES = {
   items: [
     role('admin', 'Admin', 'Alle Rechte', 1, true),
     role('user', 'Nutzer', 'Hat jeder · lesen, eigene Einträge', 0, true),
-    role('advisor', 'Pilzberater', 'Arten und Bilder pflegen', 3),
+    {
+      ...role('advisor', 'Pilzberater', 'Arten und Bilder pflegen', 3),
+      permissions: ['species.edit', 'image.submit', 'image.review'],
+    },
     role('translator', 'Übersetzer', 'Texte ändern', 2),
   ],
   nextCursor: null,
@@ -102,6 +128,24 @@ const SPECIES_COUNTS = {
   ],
 };
 
+/** Ein Konto, so wie `/api/people` es liefert. */
+function person(
+  slug: string,
+  name: string,
+  email: string,
+  roleSlug: string,
+  roleName: string,
+): Record<string, unknown> {
+  return {
+    id: `person-${slug}`,
+    sub: `sub-${slug}`,
+    email,
+    name,
+    roles: [{ id: `rolle-${roleSlug}`, slug: roleSlug, name: roleName }],
+    createdAt: NOW,
+  };
+}
+
 /** Ein Brett gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
   test.skip(test.info().project.name !== device, `Brett gehört zu ${device}`);
@@ -109,7 +153,7 @@ function guard(board: string, device: 'phone' | 'desktop'): void {
 }
 
 /** Meldet an und öffnet einen Weg der Verwaltung. */
-async function open(page: Page, path: string): Promise<void> {
+async function open(page: Page, path: string, extra: Record<string, unknown> = {}): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
     '/api/config': authConfig(BASE),
@@ -118,6 +162,9 @@ async function open(page: Page, path: string): Promise<void> {
     '/api/roles': ROLES,
     '/api/species/bundle': bundle(SPECIES),
     '/api/admin/species-counts': SPECIES_COUNTS,
+    '/api/people': PEOPLE,
+    '/api/permissions': { items: CATALOGUE },
+    ...extra,
   });
   await flatMap(page);
   await page.goto(path);
@@ -152,4 +199,40 @@ test('AdminSpecies', async ({ page }) => {
   await expect(page.getByText('1 284')).toBeVisible();
   await expect(page.getByText('Tricholoma terreum')).toBeVisible();
   await expectBoard(page, 'AdminSpecies');
+});
+
+test('People', async ({ page }) => {
+  guard('People', 'phone');
+  await open(page, '/verwaltung/personen');
+  await expect(page.getByText('frederik@beimgraben.net')).toBeVisible();
+  await expectBoard(page, 'People');
+});
+
+test('PersonRoles', async ({ page }) => {
+  guard('PersonRoles', 'phone');
+  await open(page, '/verwaltung/personen');
+  await page.getByRole('button', { name: /Jonas/ }).click();
+  await expect(page.getByRole('dialog', { name: 'Jonas' })).toBeVisible();
+  await expectBoard(page, 'PersonRoles');
+});
+
+/** Das Brett `Role` zeigt die Rolle ohne Beschreibung. */
+const PLAIN_ROLE = {
+  items: [{ ...ROLES.items[2], description: null }],
+  nextCursor: null,
+};
+
+test('Role', async ({ page }) => {
+  guard('Role', 'phone');
+  await open(page, '/verwaltung/rollen/rolle-advisor', { '/api/roles': PLAIN_ROLE });
+  await expect(page.getByText('Bilder freigeben')).toBeVisible();
+  await expectBoard(page, 'Role');
+});
+
+test('RoleDelete', async ({ page }) => {
+  guard('RoleDelete', 'phone');
+  await open(page, '/verwaltung/rollen/rolle-advisor', { '/api/roles': PLAIN_ROLE });
+  await page.getByRole('button', { name: 'Rolle löschen' }).click();
+  await expect(page.getByRole('dialog', { name: /Pilzberater/ })).toBeVisible();
+  await expectBoard(page, 'RoleDelete');
 });

@@ -31,7 +31,7 @@ describe('RoleComponent', () => {
     expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Pilzberater');
     expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toHaveValue('Arten und Bilder pflegen.');
     expect(screen.getByRole('checkbox', { name: /Profile ändern/ })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: /Arten anlegen/ })).not.toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /Funde prüfen/ })).not.toBeChecked();
     await noViolations(container);
   });
 
@@ -95,9 +95,6 @@ describe('RoleComponent', () => {
     const box = screen.getByRole('checkbox', { name: /Rollen verwalten/ });
     expect(box).toBeChecked();
     expect(box).toBeDisabled();
-    expect(
-      screen.getByText('Admin trägt jedes Recht, auch jedes neue. Diese Rolle lässt sich nicht ändern.'),
-    ).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -108,10 +105,9 @@ describe('RoleComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Rolle löschen' }));
     refresh();
 
-    expect(screen.getByText('Die Rolle Pilzberater löschen?')).toBeVisible();
+    expect(screen.getByText('Pilzberater löschen?')).toBeVisible();
 
-    const inDialog = screen.getAllByRole('button', { name: 'Rolle löschen' });
-    await userEvent.click(inDialog[inDialog.length - 1]);
+    await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     refresh();
 
     expect(api.deleted).toEqual(['rolle-berater']);

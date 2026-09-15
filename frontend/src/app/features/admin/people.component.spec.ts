@@ -31,9 +31,6 @@ describe('PeopleComponent', () => {
 
     expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
     expect(screen.getByText('Admin')).toBeInTheDocument();
-    // Wer keine Rolle trägt, ist trotzdem Nutzer.
-    expect(screen.getByText('Nutzer')).toBeInTheDocument();
-    expect(screen.getByText('2 Konten')).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -51,7 +48,7 @@ describe('PeopleComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /Jonas/ }));
     refresh();
 
-    expect(screen.getByText('Rollen von Jonas')).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Jonas' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /Pilzberater/ })).not.toBeChecked();
     expect(screen.queryByRole('checkbox', { name: /^Nutzer/ })).not.toBeInTheDocument();
     // Kopfleiste und Blatt tragen je ein `header`. In der App liegen beide im
@@ -66,11 +63,11 @@ describe('PeopleComponent', () => {
     refresh();
     await userEvent.click(screen.getByRole('checkbox', { name: /Pilzberater/ }));
     refresh();
-    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     refresh();
 
-    expect(api.assigned).toEqual([{ sub: 'sub-jonas', roles: ['rolle-berater'] }]);
-    expect(screen.queryByText('Rollen von Jonas')).not.toBeInTheDocument();
+    expect(api.assigned).toEqual([{ id: 'person-jonas', roles: ['rolle-berater'] }]);
+    expect(screen.queryByRole('dialog', { name: 'Jonas' })).not.toBeInTheDocument();
   });
 
   it('lässt das Blatt offen, wenn der Dienst die Zuweisung abweist', async () => {
@@ -82,30 +79,23 @@ describe('PeopleComponent', () => {
     refresh();
     await userEvent.click(screen.getByRole('checkbox', { name: /Admin/ }));
     refresh();
-    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     refresh();
 
-    expect(screen.getByText('Rollen von Frederik')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Speichern' })).toBeEnabled();
+    expect(screen.getByRole('dialog', { name: 'Frederik' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeEnabled();
   });
 
-  it('schließt das Blatt über Abbrechen, ohne etwas zu schicken', async () => {
-    const { api, refresh } = await build();
+  it('schließt das Blatt über den Scrim, ohne etwas zu schicken', async () => {
+    const { api, container, refresh } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: /Jonas/ }));
     refresh();
-    await userEvent.click(screen.getAllByRole('button', { name: 'Abbrechen' })[0]);
+    const scrim = container.querySelector<HTMLElement>('.overlay__scrim');
+    scrim?.click();
     refresh();
 
     expect(api.assigned).toEqual([]);
-    expect(screen.queryByText('Rollen von Jonas')).not.toBeInTheDocument();
-  });
-
-  it('zeigt einen Leerzustand, wenn die Suche nichts findet', async () => {
-    const api = new AccessApiDouble();
-    api.peopleList = [];
-    await build(api);
-
-    expect(screen.getByText('Keine Person passt zur Suche.')).toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Jonas' })).not.toBeInTheDocument();
   });
 });

@@ -27,9 +27,7 @@ export const ME: Me = {
 /** Der Katalog, so wie `/api/permissions` ihn liefert. */
 export const CATALOGUE: PermissionEntry[] = [
   { key: 'species.edit', area: 'species' },
-  { key: 'species.create', area: 'species' },
-  { key: 'species.delete', area: 'species' },
-  { key: 'image.upload', area: 'species' },
+  { key: 'image.submit', area: 'species' },
   { key: 'image.review', area: 'species' },
   { key: 'text.edit', area: 'interface' },
   { key: 'role.manage', area: 'access' },

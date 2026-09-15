@@ -38,22 +38,31 @@ describe('AccessApi', () => {
     const { api, http } = build();
 
     api.people('').subscribe();
-    http.expectOne('/api/people').flush({ eintraege: PEOPLE, gesamt: 2, limit: 50, offset: 0 });
+    http.expectOne('/api/people').flush({ items: PEOPLE, nextCursor: null });
     api.people('jonas').subscribe();
 
     expect(http.expectOne('/api/people?q=jonas').request.method).toBe('GET');
     http.verify();
   });
 
-  it('vergibt Rollen mit PUT und kodiert einen sub, der so nicht in eine Adresse gehört', () => {
+  it('vergibt Rollen mit PUT über die Kennung der Person', () => {
     const { api, http } = build();
 
-    api.setRoles('sub/eins', [ROLES[0].id]).subscribe();
-    const call = http.expectOne('/api/people/sub%2Feins/roles');
+    api.setRoles('person/eins', [ROLES[0].id]).subscribe();
+    const call = http.expectOne('/api/people/person%2Feins/roles');
 
     expect(call.request.method).toBe('PUT');
-    expect(call.request.body).toEqual({ roles: ['rolle-admin'] });
+    expect(call.request.body).toEqual({ roleIds: ['rolle-admin'] });
     call.flush(PEOPLE[0]);
+    http.verify();
+  });
+
+  it('löscht ein Konto über seine Kennung', () => {
+    const { api, http } = build();
+
+    api.deletePerson('person-jonas').subscribe();
+
+    expect(http.expectOne('/api/people/person-jonas').request.method).toBe('DELETE');
     http.verify();
   });
 });

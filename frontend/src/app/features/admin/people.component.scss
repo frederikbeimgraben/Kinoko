@@ -1,6 +1,10 @@
 @use '../../../styles/card';
 
+// Das Blatt der Zuweisung dunkelt die Liste ab, wie das Brett es zeigt.
 :host {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+
+  position: relative;
   display: flex;
   flex-direction: column;
   block-size: 100%;
@@ -42,22 +46,26 @@ app-badge {
 .people__head {
   display: flex;
   flex-direction: column;
-  gap: 2px;
   padding: 0 var(--size-gutter) var(--space-3);
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
 .people__name {
   font-size: var(--fs-lg);
+  line-height: normal;
   font-weight: var(--fw-semibold);
 }
 
 .people__mail {
   font-size: var(--fs-row-meta);
+  line-height: 1.4;
   color: var(--color-text-muted);
 }
 
+// Die Rechtezeile misst zehn Punkte Polster, wie das Brett sie zeigt.
 .people__choices {
+  --check-row-block: 10px;
+
   display: flex;
   flex-direction: column;
   padding: var(--space-2) var(--size-gutter);

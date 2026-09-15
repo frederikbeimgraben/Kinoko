@@ -25,21 +25,30 @@
   </div>
 </div>
 
-@if (editing(); as person) {
-  <app-sheet [label]="person.name ?? ''" [modal]="true" [detents]="DETENTS" (closed)="close()">
-    <div head class="people__head">
-      <b class="people__name">{{ person.name }}</b>
-      <span class="people__mail">{{ person.email }}</span>
-    </div>
-    <div class="people__choices">
-      @for (choice of choices(); track choice.id) {
-        <app-check-row
-          [title]="choice.name"
-          [checked]="choice.checked"
-          (toggled)="toggle(choice.id, $event)"
-        />
-      }
-    </div>
-    <app-action-bar [primary]="'common.apply' | t" [busy]="saving()" (primaryClick)="save()" />
-  </app-sheet>
-}
+<app-overlay-host [open]="editing() !== null" [modal]="true" (closed)="close()">
+  @if (editing(); as person) {
+    <app-sheet
+      [label]="person.name ?? ''"
+      [title]="person.name ?? ''"
+      [note]="person.email ?? ''"
+      [modal]="true"
+      [detents]="DETENTS"
+      (closed)="close()"
+    >
+      <div head class="people__head">
+        <b class="people__name">{{ person.name }}</b>
+        <span class="people__mail">{{ person.email }}</span>
+      </div>
+      <div class="people__choices">
+        @for (choice of choices(); track choice.id) {
+          <app-check-row
+            [title]="choice.name"
+            [checked]="choice.checked"
+            (toggled)="toggle(choice.id, $event)"
+          />
+        }
+      </div>
+      <app-action-bar [primary]="'common.apply' | t" [busy]="saving()" (primaryClick)="save()" />
+    </app-sheet>
+  }
+</app-overlay-host>

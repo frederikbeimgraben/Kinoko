@@ -68,10 +68,10 @@ describe('AdminComponent', () => {
     expect(navigate).toHaveBeenCalledWith('/verwaltung/bilder');
   });
 
-  it('trägt den Block Betrieb mit Funden und Läufen', async () => {
+  it('trägt den Block Daten mit Funden und Läufen', async () => {
     await build(['find.review', 'run.manage']);
 
-    expect(screen.getByText('Betrieb')).toBeInTheDocument();
+    expect(screen.getByText('Daten')).toBeInTheDocument();
     expect(screen.getByText('382 · 14')).toBeInTheDocument();
     expect(screen.getByText('4 · 1')).toBeInTheDocument();
   });
@@ -80,6 +80,6 @@ describe('AdminComponent', () => {
     await build(['text.edit']);
 
     expect(screen.queryByText('Zugang')).not.toBeInTheDocument();
-    expect(screen.queryByText('Betrieb')).not.toBeInTheDocument();
+    expect(screen.queryByText('Daten')).not.toBeInTheDocument();
   });
 });

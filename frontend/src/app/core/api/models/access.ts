@@ -11,49 +11,33 @@ export interface Items<E> {
   items: E[];
 }
 
-/**
- * Rollen, Rechte und Personen, so wie `/api/roles`, `/api/permissions` und
- * `/api/people` sie liefern.
- *
- * Der Rechtekatalog steht im Backend im Code. Hier steht er noch einmal, damit
- * die Oberfläche zu jedem Schlüssel eine Beschriftung findet und die
- * Typprüfung einen Tippfehler fängt. Der Server bleibt die Quelle: er
- * entscheidet, welche Rechte es gibt und wer sie trägt.
- */
-
 /** Das eigene Konto, so wie `/api/me` es liefert. */
 export type Me = components['schemas']['Me'];
 
-export const PERMISSIONS = [
+/** Die Rechte des Vertrags. Der Server bleibt die Quelle, wer sie trägt. */
+export type Permission = components['schemas']['Permission'];
+
+export const PERMISSIONS: readonly Permission[] = [
   'species.edit',
-  'species.create',
-  'species.delete',
-  'image.upload',
+  'image.submit',
   'image.review',
   'text.edit',
   'role.manage',
   'role.assign',
   'find.review',
   'run.manage',
-] as const;
-
-export type Permission = (typeof PERMISSIONS)[number];
+];
 
 /** Die vier Gruppen, unter denen die Rechtematrix ihre Zeilen zeigt. */
-export const PERMISSION_AREAS = ['species', 'interface', 'access', 'data'] as const;
+export type PermissionArea = components['schemas']['Area'];
 
-export type PermissionArea = (typeof PERMISSION_AREAS)[number];
+export const PERMISSION_AREAS: readonly PermissionArea[] = ['species', 'interface', 'access', 'data'];
 
 /** Ein Recht des Katalogs mit seiner Gruppe. */
-export interface PermissionEntry {
-  key: Permission;
-  area: PermissionArea;
-}
+export type PermissionEntry = components['schemas']['PermissionEntry'];
 
 /** Die Antwort von `/api/me/permissions`. */
-export interface MyPermissions {
-  permissions: Permission[];
-}
+export type MyPermissions = components['schemas']['MyPermissions'];
 
 /** Eine Rolle, so kurz wie sie neben einer Person steht. */
 export interface RoleRef {
