@@ -1,13 +1,22 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render } from '@testing-library/angular';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
-import { FIND, SHARED_FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
+import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
+import {
+  FIND,
+  MARKER,
+  SHARED_FIND,
+  SHARED_FIND_ENTRY,
+  ZONE,
+  findPage,
+  page,
+} from '../../testing/entries-fixture';
 import { MapAdapterDouble } from '../../testing/map-doubles';
+import { speciesBundle, speciesEntry, PENNY_BUN } from '../../testing/species-fixture';
 import { EntriesState } from '../entries/entries.state';
 import { MapState } from '../map/map.state';
 import { MapObjectsDirective } from './map-objects.directive';
@@ -29,17 +38,25 @@ interface Setup {
   surface: HTMLElement;
 }
 
+/** Der Ort dieser Art kommt gerundet: die Karte legt dafür eine blasse Fläche. */
+const PROTECTED = speciesEntry({
+  slug: 'maronenroehrling',
+  name: 'Maronenröhrling',
+  scientificName: 'Imleria badia',
+  protection: 'strict',
+});
+
 async function build(): Promise<Setup> {
   const map = new MapAdapterDouble();
   const { detectChanges, fixture, container } = await render(HostComponent, {
     providers: [
-      provideHttpClient(),
-      provideHttpClientTesting(),
+      ...catalogueProviders(speciesBundle([PENNY_BUN, PROTECTED])),
       provideRouter([]),
       { provide: MAP_ADAPTER, useValue: map },
       ...authStubProviders(new AuthStub()),
     ],
   });
+  await catalogueReady();
   const http = TestBed.inject(HttpTestingController);
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
@@ -51,9 +68,7 @@ async function build(): Promise<Setup> {
   await loaded;
   const geteilt = eintraege.loadShared();
   await vi.waitFor(() => {
-    http
-      .expectOne('/api/funde/geteilt?limit=200')
-      .flush(page([SHARED_FIND, { ...FIND, eigen: true, gerundet: false, melder: 'Frederik' }]));
+    http.expectOne('/api/finds?mine=false&limit=50').flush(findPage([SHARED_FIND_ENTRY]));
   });
   await geteilt;
   detectChanges();
@@ -119,7 +134,7 @@ describe('MapObjectsDirective', () => {
     });
   });
 
-  it('zeichnet einen gerundeten fremden Fund und lässt die eigenen weg', async () => {
+  it('zeichnet den Fund einer geschützten Art als gerundet', async () => {
     const setup = await build();
 
     const geteilt = setup.map.layers.get('geteilteFunde');

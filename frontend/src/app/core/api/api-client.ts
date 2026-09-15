@@ -37,6 +37,8 @@ export interface Upload<T> {
 /** Ein Aufruf im Hintergrund meldet sich nicht: `quiet` lässt den Toast weg. */
 export interface Silent {
   quiet?: boolean;
+  /** Antwortcodes, die ohne Toast bleiben. Der Aufrufer trägt sie selbst. */
+  quietStatus?: readonly number[];
 }
 
 /**
@@ -51,10 +53,10 @@ export class ApiClient {
   private readonly toasts = inject(ToastService);
   private readonly i18n = inject(I18nService);
 
-  get<T>(path: string, query?: Query): Observable<T> {
+  get<T>(path: string, query?: Query, options?: Silent): Observable<T> {
     return this.http
       .get<T>(this.url(path), { params: this.params(query) })
-      .pipe(catchError((failure: unknown) => this.report(failure)));
+      .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
   /** Holt eine Antwort mit ETag. Zum bekannten Stand bleibt der Körper leer. */
@@ -153,9 +155,13 @@ export class ApiClient {
 
   private report(failure: unknown, options?: Silent): Observable<never> {
     const problem = this.asProblem(failure);
-    const loud = options?.quiet !== true && problem.code !== SIGN_IN_REQUIRED;
-    if (loud) this.toasts.error(problem.detail ?? problem.title);
+    if (this.loud(problem, options)) this.toasts.error(problem.detail ?? problem.title);
     return throwError(() => problem);
+  }
+
+  private loud(problem: ProblemDetail, options?: Silent): boolean {
+    if (options?.quiet === true || problem.code === SIGN_IN_REQUIRED) return false;
+    return !(options?.quietStatus ?? []).includes(problem.status);
   }
 
   /**

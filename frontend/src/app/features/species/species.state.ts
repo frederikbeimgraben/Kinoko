@@ -51,6 +51,8 @@ export class SpeciesState {
 
   private readonly bySlug = computed(() => new Map(this.species().map((entry) => [entry.slug, entry])));
 
+  private readonly byId = computed(() => new Map(this.species().map((entry) => [entry.id, entry])));
+
   /** Zeigt den Katalog vom Gerät und gleicht ihn danach mit ETag ab. */
   async loadBundle(): Promise<void> {
     if (this.running) return;
@@ -71,6 +73,10 @@ export class SpeciesState {
 
   entryOf(slug: string): SpeciesEntry | null {
     return this.bySlug().get(slug) ?? null;
+  }
+
+  entryById(id: string): SpeciesEntry | null {
+    return this.byId().get(id) ?? null;
   }
 
   nameOf(slug: string): string | null {

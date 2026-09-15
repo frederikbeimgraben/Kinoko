@@ -21,7 +21,7 @@ async function wire(page: Page, origin: string): Promise<Wire> {
     '/api/funde': EMPTY_PAGE,
     '/api/marker': EMPTY_PAGE,
     '/api/zonen': EMPTY_PAGE,
-    '/api/funde/geteilt': EMPTY_PAGE,
+    '/api/finds': { items: [], nextCursor: null },
   });
   await page.route('**/api/markers/**', async (route) => {
     sent.push(route.request());

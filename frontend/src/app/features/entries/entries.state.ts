@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal, type WritableSignal } from '@angular/core';
 import { firstValueFrom, type Observable } from 'rxjs';
-import { EntriesApi, type Rect } from '../../core/api/entries.api';
+import { EntriesApi } from '../../core/api/entries.api';
+import { FindsApi } from '../../core/api/finds.api';
 import type {
   Find,
   FindPatch,
@@ -14,6 +15,7 @@ import type {
   ZoneInput,
 } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
+import type { Viewbox } from '../../map/tile-grid';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncKind, SyncOperation, SyncTask } from '../../core/offline/sync.types';
 import { EntriesCache } from './entries.cache';
@@ -40,6 +42,7 @@ export type EntryBody = EntryInput | FindPatch | MarkerPatch | ZonePatch;
 @Injectable({ providedIn: 'root' })
 export class EntriesState {
   private readonly api = inject(EntriesApi);
+  private readonly findsApi = inject(FindsApi);
   private readonly auth = inject(AuthService);
   private readonly sync = inject(SyncService);
   private readonly cache = inject(EntriesCache);
@@ -109,10 +112,9 @@ export class EntriesState {
   }
 
   /** Geteilte Funde im Ausschnitt. Diese Route liest auch ohne Konto. */
-  async loadShared(rect?: Rect): Promise<void> {
+  async loadShared(view?: Viewbox): Promise<void> {
     try {
-      const page = await firstValueFrom(this.api.sharedFinds(rect));
-      this._shared.set(page.eintraege);
+      this._shared.set(await firstValueFrom(this.findsApi.shared(view)));
     } catch {
       // Ohne Netz bleibt die Karte bei dem, was zuletzt kam.
     }

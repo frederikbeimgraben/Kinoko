@@ -10,7 +10,7 @@ import type { SyncTask } from '../../core/offline/sync.types';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
-import { FIND, SHARED_FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
+import { FIND, MARKER, SHARED_FIND_ENTRY, ZONE, findPage, page } from '../../testing/entries-fixture';
 import { AuthService } from '../../core/auth';
 import { EntriesComponent } from './entries.component';
 
@@ -73,7 +73,7 @@ async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]):
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   await vi.waitFor(() => {
-    http.expectOne('/api/funde/geteilt?limit=200').flush(page([SHARED_FIND]));
+    http.expectOne('/api/finds?mine=false&limit=50').flush(findPage([SHARED_FIND_ENTRY]));
   });
   if (signedIn) {
     await vi.waitFor(() => {
@@ -141,7 +141,7 @@ describe('EintraegeComponent', () => {
     setup.refresh();
 
     expect(screen.getByText('Maronenröhrling')).toBeInTheDocument();
-    expect(screen.getByText('4. Sept. · 5 Stück · Jonas')).toBeInTheDocument();
+    expect(screen.getByText('4. Sept. · 5 Stück')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Maronenröhrling/ })).not.toBeInTheDocument();
   });
 

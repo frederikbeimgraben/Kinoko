@@ -27,22 +27,6 @@ describe('EintraegeApi', () => {
     http.expectOne('/api/zonen?limit=200').flush(page([ZONE]));
   });
 
-  it('schreibt das Rechteck der geteilten Funde als bbox', () => {
-    const { api, http } = build();
-
-    api.sharedFinds({ west: 9, south: 48, ost: 10, nord: 49 }).subscribe();
-
-    http.expectOne('/api/funde/geteilt?bbox=9,48,10,49&limit=200').flush(page([]));
-  });
-
-  it('lässt die bbox weg, wenn kein Ausschnitt gefragt ist', () => {
-    const { api, http } = build();
-
-    api.sharedFinds().subscribe();
-
-    http.expectOne('/api/funde/geteilt?limit=200').flush(page([]));
-  });
-
   it('legt einen Fund an, ändert und löscht ihn', () => {
     const { api, http } = build();
 

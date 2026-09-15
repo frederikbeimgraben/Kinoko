@@ -39,6 +39,7 @@ export type {
 } from './access';
 export { COLORS, VISIBILITIES } from './entries';
 export { LICENCES, PHOTO_STATES, photoPath } from './photos';
+export type { ReviewState, SharedFind } from './finds';
 export type {
   Color,
   FindPhoto,
@@ -46,7 +47,6 @@ export type {
   FindPatch,
   FindInput,
   GeoPolygon,
-  SharedFind,
   Marker,
   MarkerPatch,
   MarkerInput,

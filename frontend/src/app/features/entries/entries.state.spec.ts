@@ -3,7 +3,15 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
-import { FIND, SHARED_FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
+import {
+  FIND,
+  MARKER,
+  SHARED_FIND,
+  SHARED_FIND_ENTRY,
+  ZONE,
+  findPage,
+  page,
+} from '../../testing/entries-fixture';
 import { EntriesState } from './entries.state';
 
 interface Setup {
@@ -90,7 +98,7 @@ describe('EintraegeZustand', () => {
 
     const loaded = state.loadShared({ west: 9, south: 48, ost: 10, nord: 49 });
     await vi.waitFor(() => {
-      http.expectOne('/api/funde/geteilt?bbox=9,48,10,49&limit=200').flush(page([SHARED_FIND]));
+      http.expectOne('/api/finds?mine=false&bbox=9,48,10,49&limit=50').flush(findPage([SHARED_FIND_ENTRY]));
     });
     await loaded;
     expect(state.shared()).toEqual([SHARED_FIND]);
@@ -98,7 +106,7 @@ describe('EintraegeZustand', () => {
     const second = state.loadShared();
     await vi.waitFor(() => {
       http
-        .expectOne('/api/funde/geteilt?limit=200')
+        .expectOne('/api/finds?mine=false&limit=50')
         .flush({ title: 'Weg', status: 500 }, { status: 500, statusText: '' });
     });
     await second;

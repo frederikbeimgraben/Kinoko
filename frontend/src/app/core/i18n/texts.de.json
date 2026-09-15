@@ -339,6 +339,7 @@
   "filter.size.range": "{von} – {bis} cm",
   "filter.valueCount": "{anzahl} Werte",
   "filter.withoutValue": "{anzahl} ohne Angabe zur {gruppe}",
+  "find.sublineShared": "{date} · {count} Stück",
   "image.add.title": "Bild hinzufügen",
   "image.approve": "Freigeben",
   "image.cover": "Titelbild",

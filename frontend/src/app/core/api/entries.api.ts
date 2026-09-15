@@ -6,7 +6,6 @@ import type {
   Find,
   FindPatch,
   FindInput,
-  SharedFind,
   Marker,
   MarkerPatch,
   MarkerInput,
@@ -17,28 +16,13 @@ import type {
   ZoneValue,
 } from './models';
 
-/** Der Ausschnitt, in dem geteilte Funde gesucht werden: west,süd,ost,nord. */
-export interface Rect {
-  west: number;
-  south: number;
-  ost: number;
-  nord: number;
-}
-
 /** Höchstens drei Fotos hängen an einem Fund, so wie es das Backend prüft. */
 export const PHOTOS_PER_FIND = 3;
 
 /** So viele Einträge holt eine Seite. Das Backend lässt bis 200 zu. */
 const PAGE_SIZE = 200;
 
-function bbox(rect: Rect): string {
-  return [rect.west, rect.south, rect.ost, rect.nord].join(',');
-}
-
-/**
- * Funde, Marker, Zonen und ihre Fotos. Bis auf `geteilt` braucht jede Route
- * ein Konto; der Interceptor hängt das Token an.
- */
+/** Die eigenen Funde, Marker, Zonen und ihre Fotos. Jede Route braucht ein Konto. */
 @Injectable({ providedIn: 'root' })
 export class EntriesApi {
   private readonly api = inject(ApiClient);
@@ -57,14 +41,6 @@ export class EntriesApi {
 
   deleteFind(id: string): Observable<null> {
     return this.api.delete<null>(`/funde/${encodeURIComponent(id)}`);
-  }
-
-  /** Auch ohne Konto lesbar. Ohne Rechteck kommt die ganze geteilte Karte. */
-  sharedFinds(rect?: Rect): Observable<Page<SharedFind>> {
-    return this.api.get<Page<SharedFind>>('/funde/geteilt', {
-      bbox: rect ? bbox(rect) : undefined,
-      limit: PAGE_SIZE,
-    });
   }
 
   addPhoto(findId: string, file: File): Observable<FindPhoto> {
