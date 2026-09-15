@@ -41,6 +41,23 @@ const PENDING: SyncTask = {
   createdAt: '2026-09-10T08:00:00+02:00',
 };
 
+/** Ein wartender Marker und eine wartende Zone, beide ohne Notiz. */
+const PENDING_MARKER: SyncTask = {
+  ...PENDING,
+  id: 'warte-zwei',
+  kind: 'marker',
+  target: 'ziel-zwei',
+  body: { name: 'Alter Fichtenhang', lat: 48.5, lon: 9.0, colour: 'red' },
+};
+
+const PENDING_ZONE: SyncTask = {
+  ...PENDING,
+  id: 'warte-drei',
+  kind: 'zone',
+  target: 'ziel-drei',
+  body: { name: 'Schönbuch Nord', polygon: { type: 'Polygon', coordinates: [] } },
+};
+
 /** Eine Warteschlange mit einem festen Inhalt. */
 class QueueStub {
   constructor(private readonly content: readonly SyncTask[]) {}
@@ -90,7 +107,8 @@ async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]):
     http.expectOne('/api/markers?limit=50').flush(page([MARKER_ENTRY]));
     http.expectOne('/api/zones?limit=50').flush(page([ZONE_ENTRY]));
   }
-  const rows = (signedIn ? 1 : 0) + pending.length;
+  // Der Reiter Funde zeigt nur die wartenden Funde, nicht Marker und Zonen.
+  const rows = (signedIn ? 1 : 0) + pending.filter((task) => task.kind === 'find').length;
   await vi.waitFor(() => {
     detectChanges();
     expect(container.querySelectorAll('app-list-row').length).toBeGreaterThanOrEqual(rows);
@@ -126,6 +144,32 @@ describe('EintraegeComponent', () => {
     expect(rows[0]).toHaveTextContent('Heute · 2 Stück · Frederik');
     expect(rows[0]).toHaveTextContent('Übertragung ausstehend');
     expect(rows[0].querySelector('button')).toBeNull();
+  });
+
+  it('stellt einen wartenden Marker und eine wartende Zone in ihre Liste', async () => {
+    const setup = await build(true, [PENDING_MARKER, PENDING_ZONE]);
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Marker' }));
+    setup.refresh();
+    const marker = setup.container.querySelectorAll('app-list-row');
+    expect(marker[0]).toHaveTextContent('Alter Fichtenhang');
+    expect(marker[0]).toHaveTextContent('Übertragung ausstehend');
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
+    setup.refresh();
+    const zone = setup.container.querySelectorAll('app-list-row');
+    expect(zone[0]).toHaveTextContent('Schönbuch Nord');
+  });
+
+  it('lässt den Namen leer, wenn der Katalog die Art nicht kennt', async () => {
+    const unknown: SyncTask = {
+      ...PENDING,
+      id: 'warte-vier',
+      body: { ...(PENDING.body as object), speciesId: null },
+    };
+    const setup = await build(true, [unknown]);
+
+    expect(setup.container.querySelectorAll('app-list-row')[0]).toHaveTextContent('Übertragung ausstehend');
   });
 
   it('wechselt auf Marker und Zonen', async () => {

@@ -151,6 +151,24 @@ describe('EintraegeZustand', () => {
     expect(state.finds()).toEqual([FIND]);
   });
 
+  it('hält die Liste frei von einem Stand, den der Leser abweist', async () => {
+    const { state, http } = build();
+
+    const find = state.saveFind(findWrite(FIND));
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/finds', method: 'POST' }).flush({ ...FIND_ENTRY, deleted: true });
+    });
+    expect(await find).toBe('gespeichert');
+    expect(state.finds()).toEqual([]);
+
+    const marker = state.saveMarker(markerWrite(MARKER));
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/markers', method: 'POST' }).flush({ ...MARKER_ENTRY, deleted: true });
+    });
+    expect(await marker).toBe('gespeichert');
+    expect(state.markers()).toEqual([]);
+  });
+
   it('stellt einen Fund an, wenn niemand sich anmelden will', async () => {
     const { state, auth, queue, http } = build();
     auth.reply = false;

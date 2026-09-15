@@ -39,6 +39,18 @@ describe('FotoGalerieComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt nichts, wenn die Liste der Fotos nicht kommt', async () => {
+    const { detectChanges } = await build();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne(LIST).flush({ title: 'Weg', status: 500 }, { status: 500, statusText: '' });
+
+    await vi.waitFor(() => {
+      detectChanges();
+      expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    });
+    http.verify();
+  });
+
   it('zeigt nichts, wenn der Fund keine Fotos trägt', async () => {
     const { detectChanges } = await build();
     const http = TestBed.inject(HttpTestingController);
