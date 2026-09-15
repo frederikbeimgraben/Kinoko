@@ -14,6 +14,18 @@ export interface CatalogueEntry {
 const BUNDLE_KEY = 'bundle';
 const ETAG_KEY = 'etag';
 
+/** Ob ein Bündel alle Felder der Baseline führt. Der ETag zählt nur die Arten. */
+function complete(bundle: unknown): bundle is SpeciesBundle {
+  if (typeof bundle !== 'object' || bundle === null) return false;
+  const shape = bundle as Record<string, unknown>;
+  return (
+    Array.isArray(shape['items']) &&
+    Array.isArray(shape['standardColours']) &&
+    typeof shape['facets'] === 'object' &&
+    shape['facets'] !== null
+  );
+}
+
 /** Der Artenkatalog vom Gerät. Suche, Filter und Einordnung lesen ihn. */
 @Injectable({ providedIn: 'root' })
 export class SpeciesState {
@@ -88,8 +100,8 @@ export class SpeciesState {
   }
 
   private async fromStore(): Promise<void> {
-    const known = await this.offline.get<SpeciesBundle>('catalog', BUNDLE_KEY);
-    if (known !== null) this._bundle.set(known);
+    const known = await this.offline.get<unknown>('catalog', BUNDLE_KEY);
+    if (complete(known)) this._bundle.set(known);
   }
 
   private async fromServer(): Promise<void> {
