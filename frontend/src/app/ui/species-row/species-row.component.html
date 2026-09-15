@@ -12,7 +12,7 @@
     <span class="row__latin">{{ species().latin }}</span>
   </span>
   @if (!muted()) {
-    <span class="row__marks">
+    <span class="row__marks" [class.row__marks--photo]="!!species().image">
       <app-level-pill
         [text]="species().levelText"
         [colour]="species().levelColour"

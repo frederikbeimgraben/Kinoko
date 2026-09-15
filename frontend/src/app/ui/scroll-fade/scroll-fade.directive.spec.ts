@@ -19,6 +19,23 @@ class HostComponent {
   readonly rows = signal([1]);
 }
 
+/** Die Zeilen stecken in einer Karte, wie im Katalog: kein Kind des Wirts. */
+@Component({
+  imports: [ScrollFadeDirective],
+  template: `
+    <div appScrollFade>
+      <div class="card">
+        @for (row of rows(); track row) {
+          <p class="row"></p>
+        }
+      </div>
+    </div>
+  `,
+})
+class CardHostComponent {
+  readonly rows = signal([1, 2, 3]);
+}
+
 const box = { scrollTop: 0, clientHeight: 0, scrollHeight: 0 };
 
 /** jsdom rechnet kein Layout; die Maße der Liste gibt der Test vor. */
@@ -28,7 +45,7 @@ function stubGeometry(): void {
   }
 }
 
-function fades(view: RenderResult<HostComponent>): { top: Element | null; bottom: Element | null } {
+function fades(view: RenderResult<object>): { top: Element | null; bottom: Element | null } {
   return {
     top: view.container.querySelector('.scroll-fade--top'),
     bottom: view.container.querySelector('.scroll-fade--bottom'),
@@ -39,6 +56,12 @@ async function list(scrollTop: number, clientHeight: number, scrollHeight: numbe
   Object.assign(box, { scrollTop, clientHeight, scrollHeight });
   stubGeometry();
   return render(HostComponent);
+}
+
+async function cardList(scrollTop: number, clientHeight: number, scrollHeight: number) {
+  Object.assign(box, { scrollTop, clientHeight, scrollHeight });
+  stubGeometry();
+  return render(CardHostComponent);
 }
 
 /** Bewegt die Liste und lässt den Wirt auf das Ereignis antworten. */
@@ -112,5 +135,24 @@ describe('ScrollFadeDirective', () => {
     view.detectChanges();
 
     expect(view.container.querySelectorAll('.scroll-fade')).toHaveLength(0);
+  });
+
+  it('blendet unten aus, wenn eine Karte in der Liste überläuft', async () => {
+    const view = await cardList(0, 100, 300);
+
+    const { bottom } = fades(view);
+    expect(bottom).not.toHaveAttribute('hidden');
+  });
+
+  it('blendet unten wieder ein, sobald Zeilen in einer Karte wegfallen und der Rest passt', async () => {
+    const view = await cardList(0, 100, 300);
+    expect(fades(view).bottom).not.toHaveAttribute('hidden');
+
+    box.scrollHeight = 100;
+    view.fixture.componentInstance.rows.set([1]);
+    view.detectChanges();
+    await view.fixture.whenStable();
+
+    expect(fades(view).bottom).toHaveAttribute('hidden');
   });
 });
