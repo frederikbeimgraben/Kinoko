@@ -9,13 +9,13 @@
         [attr.aria-label]="'image.remove' | t"
         (click)="remove(tile.file)"
       >
-        <app-svg-icon name="close" [size]="14" />
+        <app-svg-icon name="close" [size]="11" [strokeWidth]="2.2" />
       </button>
     </div>
   }
   @if (canAdd()) {
     <label class="tile tile--add tap" data-press="scale">
-      <app-svg-icon name="plus" [size]="22" />
+      <app-svg-icon name="plus" [size]="20" />
       <span class="sr-only">{{ 'image.add.title' | t }}</span>
       <input class="sr-only" type="file" accept="image/jpeg,image/webp" multiple (change)="onPick($event)" />
     </label>

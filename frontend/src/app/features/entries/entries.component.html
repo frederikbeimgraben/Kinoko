@@ -1,33 +1,87 @@
-<app-page-header [title]="'eintraege.titel' | t" />
+<app-page-header [title]="'entry.list.title' | t">
+  @if (signedIn()) {
+    <button class="entries__add tap" type="button" data-press="scale" (click)="startEntry()">
+      <app-svg-icon name="plus" [size]="16" [strokeWidth]="2" />
+      {{ 'entry.create' | t }}
+    </button>
+  }
+</app-page-header>
 <div class="entries">
+  @if (offline()) {
+    <app-banner kind="pending" />
+  }
   <app-segmented
-    [options]="chips()"
-    [value]="chip()"
-    [label]="'eintraege.filter' | t"
-    (valueChange)="selectChip($event)"
+    [options]="segments()"
+    [value]="segment()"
+    [label]="'entry.list.title' | t"
+    (valueChange)="selectSegment($event)"
   />
+  @if (segment() === 'finds') {
+    <div class="marks">
+      <button
+        class="marks__button tap"
+        type="button"
+        data-press="scale"
+        [class.marks__button--on]="filtered()"
+        (click)="filterOpen.set(true)"
+      >
+        <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />
+        {{ 'common.filter' | t }}
+      </button>
+    </div>
+  }
   @if (rows().length === 0) {
     <app-empty-state
       icon="entries"
       [text]="emptyText() | t"
-      [action]="needsSignIn() ? ('konto.anmelden' | t) : undefined"
+      [action]="signedIn() ? undefined : ('account.signIn' | t)"
       (actionClick)="signIn()"
     />
-  } @else {
-    <app-card class="flush">
-      @for (row of rows(); track row.schluessel) {
-        <app-list-row
-          [title]="row.titel"
-          [subline]="row.subline"
-          [clickable]="row.object !== null"
-          (chosen)="open(row)"
-        >
-          <span lead class="entries__dot" [style.background]="row.farbe"></span>
-          @if (row.badge; as badge) {
-            <app-badge trail [variant]="badge.variant">{{ badge.text }}</app-badge>
-          }
-        </app-list-row>
+  } @else if (segment() === 'finds') {
+    <div class="entries__list">
+      @for (row of rows(); track row.key) {
+        <app-entry-row [entry]="row.entry" [pending]="row.pending" (chosen)="open(row)" />
       }
-    </app-card>
+    </div>
+  } @else {
+    <div class="entries__list">
+      @for (row of rows(); track row.key) {
+        @if (row.pending) {
+          <app-entry-row [entry]="row.entry" [pending]="true" />
+        } @else {
+          <app-list-row
+            [title]="row.entry.title"
+            [subline]="row.entry.meta"
+            [chevron]="true"
+            [clickable]="row.object !== null"
+            (chosen)="open(row)"
+          >
+            <span lead class="entries__dot" [style.background]="row.colour"></span>
+          </app-list-row>
+        }
+      }
+    </div>
   }
 </div>
+<app-filter-sheet
+  [open]="filterOpen()"
+  [title]="'common.filter' | t"
+  [resetEnabled]="filtered()"
+  [primaryLabel]="'entry.filter.showEntries' | t"
+  (resetClick)="resetFilter()"
+  (primaryClick)="filterOpen.set(false)"
+  (closed)="filterOpen.set(false)"
+>
+  <app-choice-row
+    [label]="'entry.filter.own' | t"
+    [checked]="own()"
+    variant="boxed"
+    (toggled)="own.set($event)"
+  />
+  <app-choice-row
+    [label]="'entry.filter.shared' | t"
+    [checked]="shared()"
+    variant="boxed"
+    (toggled)="shared.set($event)"
+  />
+</app-filter-sheet>

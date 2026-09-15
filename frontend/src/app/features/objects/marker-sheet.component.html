@@ -1,25 +1,31 @@
-<div class="objectsheet">
-  <div class="objectsheet__head">
-    <div class="objectsheet__heading">
-      <h2 class="objectsheet__title">{{ marker().name }}</h2>
-      <p class="objectsheet__sub">{{ subline() }}</p>
-    </div>
-    <app-icon-button icon="delete" [label]="'marker.loeschen' | t" (pressed)="deleteAsk.set(true)" />
-  </div>
+@if (editing()) {
   <app-object-form
-    [withoutName]="true"
+    [heading]="'entry.marker.editTitle' | t"
     [start]="start()"
-    [nameLabel]="'marker.name' | t"
-    [namePlaceholder]="'marker.namePlatzhalter' | t"
+    kind="marker"
+    [editing]="true"
+    [busy]="busy()"
     [nameMissingText]="'marker.nameFehlt' | t"
+    (submitted)="save($event)"
+    (cancelled)="editing.set(false)"
   />
-</div>
-<app-action-bar
-  [primary]="'eintragen.speichern' | t"
-  [secondary]="'fund.inGoogleMaps' | t"
-  (primaryClick)="save()"
-  (secondaryClick)="toGoogleMaps()"
-/>
+} @else {
+  <div class="objectsheet">
+    <div class="objectsheet__head">
+      <div class="objectsheet__heading">
+        <h2 class="objectsheet__title">{{ marker().name }}</h2>
+        <p class="objectsheet__sub">{{ subline() }}</p>
+      </div>
+      <app-icon-button icon="delete" [label]="'marker.loeschen' | t" (pressed)="deleteAsk.set(true)" />
+    </div>
+  </div>
+  <app-action-bar
+    [primary]="'entry.marker.openInMapsApp' | t"
+    [secondary]="'common.edit' | t"
+    (primaryClick)="toGoogleMaps()"
+    (secondaryClick)="editing.set(true)"
+  />
+}
 <app-confirm-dialog
   [open]="deleteAsk()"
   [title]="'marker.loeschenFrage' | t"

@@ -2,9 +2,8 @@
   <app-find-form
     [location]="location()"
     [start]="find()"
-    [withPhotos]="false"
-    [titel]="'fund.bearbeiten' | t"
-    [mainText]="'eintragen.speichern' | t"
+    [heading]="'entry.fund.editTitle' | t"
+    [editing]="true"
     [busy]="busy()"
     (submitted)="save($event)"
     (cancelled)="editing.set(false)"
@@ -16,7 +15,7 @@
         <h2 class="findsheet__title">{{ speciesName() }}</h2>
         <div class="findsheet__headActions">
           @if (geteilt()) {
-            <app-badge variant="success">{{ 'eintraege.badge.geteilt' | t }}</app-badge>
+            <app-badge variant="success">{{ 'entry.badge.shared' | t }}</app-badge>
           }
           <app-icon-button icon="delete" [label]="'fund.loeschen' | t" (pressed)="deleteAsk.set(true)" />
         </div>
@@ -29,20 +28,20 @@
     }
     @if (valueText(); as value) {
       <app-card class="flush">
-        <app-list-row [title]="'fund.vorhersage' | t" [subline]="valueScope()" [value]="value" />
+        <app-list-row [title]="'entry.fund.forecastHere' | t" [subline]="valueScope()" [value]="value" />
       </app-card>
     }
   </div>
   <app-action-bar
-    [primary]="'fund.inGoogleMaps' | t"
-    [secondary]="'fund.bearbeiten' | t"
+    [primary]="'entry.marker.openInMapsApp' | t"
+    [secondary]="'common.edit' | t"
     (primaryClick)="toGoogleMaps()"
     (secondaryClick)="editing.set(true)"
   />
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
-  [title]="'fund.loeschenFrage' | t"
+  [title]="'entry.fund.delete' | t"
   [meta]="'fund.loeschenText' | t"
   [confirmLabel]="'objekt.loeschen' | t"
   (confirmed)="remove()"

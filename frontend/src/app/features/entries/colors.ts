@@ -8,6 +8,11 @@ export function colourHex(colour: MarkerColour): `#${string}` {
   return OBJECT_COLOURS[index === -1 ? 0 : index];
 }
 
+/** Die Farbe eines Objekts in einer Liste. Sie folgt der Darstellung. */
+export function colourToken(colour: MarkerColour): string {
+  return `var(--colour-object-${colour})`;
+}
+
 /** Die Umkehrung: welche Farbe des Vertrags zu diesem Wert gehört. */
 export function colourFromHex(hex: string): MarkerColour {
   const index = OBJECT_COLOURS.findIndex((value) => value === hex);

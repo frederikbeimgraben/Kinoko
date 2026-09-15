@@ -9,6 +9,7 @@
   @include modal-layer.scrim;
 
   position: absolute;
+  pointer-events: auto;
   background: none;
 }
 
@@ -16,10 +17,16 @@
   @include modal-layer.panel;
 
   position: absolute;
+  pointer-events: auto;
   gap: var(--space-3);
   inline-size: 300px;
   max-inline-size: calc(100% - 24px);
   padding: 18px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
+}
+
+.popover__card--rows {
+  gap: 0;
+  padding-block: var(--space-1);
 }

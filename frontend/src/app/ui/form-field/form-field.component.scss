@@ -49,6 +49,13 @@
   color: var(--color-text-muted);
 }
 
+// Der Pfeil steht am Ende der Zeile, der Text füllt den Rest.
+.field__trail {
+  flex: none;
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+}
+
 // Der Tag steht in der Schreibweise der Sprache. Die Eingabe des Systems liegt
 // unsichtbar darüber und öffnet den Kalender.
 .field--date {

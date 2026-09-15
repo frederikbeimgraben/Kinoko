@@ -2,47 +2,47 @@
   display: contents;
 }
 
-// 18 px Abstand und 24 px Titel stehen so im Artboard `MeldenFormular`.
-.report__content {
+.form__body {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   gap: 18px;
   min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-6);
+  padding: var(--space-1) var(--size-gutter) var(--space-5);
   overflow-y: auto;
 }
 
-.report__head {
+.form__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-3);
 }
 
-.report__title {
+.form__title {
   margin: 0;
   font-size: 24px;
   font-weight: var(--fw-semibold);
+  line-height: normal;
   letter-spacing: var(--tracking-tight);
 }
 
-.report__pair {
+.form__note {
+  font-size: var(--fs-sm);
+  line-height: 15px;
+  color: var(--color-text-muted);
+}
+
+.form__pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
+  gap: 10px;
 }
 
-// Der Schalter und sein Satz gehören zusammen; der Satz steht darunter, wie
-// die Unterzeile einer Kennzahl.
-.report__release {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.report__label {
+.form__label {
+  display: block;
   margin: 0 0 var(--space-2);
   font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-weight: var(--fw-medium);
+  line-height: 15px;
 }

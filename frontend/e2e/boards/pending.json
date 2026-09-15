@@ -5,7 +5,6 @@
   "AccountDesktop",
   "AccountGuest",
   "AccountUpdated",
-  "AddActions",
   "AreaPicker",
   "Blocks",
   "Categories",
@@ -30,7 +29,6 @@
   "FactorPicker",
   "FindDelete",
   "FindEdit",
-  "FindForm",
   "FindLocation",
   "FindPhoto",
   "FindQueue",
@@ -41,7 +39,6 @@
   "MapDesktopCombinations",
   "MapDesktopFactorPicker",
   "MarkerEdit",
-  "MarkerForm",
   "MarkerSheet",
   "MyData",
   "MyImages",
@@ -72,6 +69,5 @@
   "Texts",
   "ZoneDraw",
   "ZoneEdit",
-  "ZoneForm",
   "ZoneSheet"
 ]

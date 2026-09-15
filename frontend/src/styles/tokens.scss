@@ -33,6 +33,15 @@
   --color-info: #185468;
   --color-info-subtle: #dfeef3;
 
+  // Die Farbe eines Markers oder einer Zone in einer Liste und auf der Karte.
+  // Die Farbfelder im Formular tragen die festen Werte aus `OBJECT_COLOURS`.
+  --colour-object-green: #004225;
+  --colour-object-brown: #8c6820;
+  --colour-object-blue: #185468;
+  --colour-object-red: #8c1c16;
+  --colour-object-gold: #876010;
+  --colour-object-grey: #3a3f3b;
+
   --shadow-sm: 0 1px 2px rgb(0 38 21 / 6%), 0 1px 3px rgb(0 38 21 / 8%);
   --shadow-md: 0 2px 6px rgb(0 38 21 / 8%), 0 6px 16px rgb(0 38 21 / 8%);
   --shadow-lg: 0 8px 28px rgb(0 38 21 / 14%);
@@ -68,6 +77,13 @@
   --color-warning-subtle: #2a2013;
   --color-info: #7fc4d9;
   --color-info-subtle: #122a30;
+
+  --colour-object-green: #4f9d6f;
+  --colour-object-brown: #c8a25a;
+  --colour-object-blue: #7fc4d9;
+  --colour-object-red: #d2685f;
+  --colour-object-gold: #e3c17f;
+  --colour-object-grey: #95a09a;
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
   --shadow-md: 0 2px 8px rgb(0 0 0 / 50%);

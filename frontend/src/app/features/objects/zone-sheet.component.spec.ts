@@ -128,6 +128,11 @@ describe('ZoneBlattComponent', () => {
     const setup = await build();
     await answerValue(setup);
 
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    expect(screen.getByRole('heading', { name: 'Zone bearbeiten' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Name')).toHaveValue('Schönbuch Nord');
+
     await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     const request = await vi.waitFor(() => setup.http.expectOne(`/api/zones/${ZONE.id}`));

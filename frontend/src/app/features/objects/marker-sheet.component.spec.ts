@@ -34,12 +34,28 @@ async function build(): Promise<Setup> {
   };
 }
 
+/** Wechselt vom Blatt in das Formular des Markers. */
+async function edit(setup: Setup): Promise<void> {
+  await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+  setup.refresh();
+}
+
 describe('MarkerBlattComponent', () => {
-  it('zeigt Name, Unterzeile, Farbe und Notiz', async () => {
+  it('zeigt Name und Unterzeile', async () => {
     const setup = await build();
 
     expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
     expect(screen.getByText('Marker · privat')).toBeInTheDocument();
+    await noViolations(setup.container);
+  });
+
+  it('füllt das Formular aus dem Marker', async () => {
+    const setup = await build();
+
+    await edit(setup);
+
+    expect(screen.getByRole('heading', { name: 'Marker bearbeiten' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Name')).toHaveValue('Alter Fichtenhang');
     expect(screen.getByRole('radio', { name: 'Blau' })).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByLabelText('Notiz')).toHaveValue('Nordhang, ab Mitte September.');
     await noViolations(setup.container);
@@ -47,6 +63,7 @@ describe('MarkerBlattComponent', () => {
 
   it('speichert eine Änderung', async () => {
     const setup = await build();
+    await edit(setup);
 
     await userEvent.click(screen.getByRole('radio', { name: 'Rot' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
@@ -59,12 +76,23 @@ describe('MarkerBlattComponent', () => {
     });
   });
 
-  it('führt den Marker an Google Maps weiter', async () => {
+  it('kehrt aus dem Formular zum Blatt zurück', async () => {
+    const setup = await build();
+    await edit(setup);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    setup.refresh();
+
+    expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
+    setup.http.expectNone(`/api/marker/${MARKER.id}`);
+  });
+
+  it('führt den Marker an die Karten-App weiter', async () => {
     await build();
     const opened = vi.fn();
     vi.stubGlobal('open', opened);
 
-    await userEvent.click(screen.getByRole('button', { name: 'In Google Maps öffnen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'In Karten-App öffnen' }));
 
     expect(opened).toHaveBeenCalledWith(
       expect.stringContaining(`${MARKER.lat.toFixed(6)}%2C${MARKER.lon.toFixed(6)}`),

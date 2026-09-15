@@ -41,7 +41,7 @@
   }
 
   @if (!surfaceOnly() || wide()) {
-    @if (!addEntry.dark() && state.object() === null) {
+    @if ((wide() || !addEntry.onForm()) && state.object() === null) {
       <div class="map__buttons">
         <app-floating-button
           icon="layers"
@@ -59,7 +59,7 @@
         }
       </div>
 
-      @if (!addEntry.running() && !covered()) {
+      @if ((wide() || !addEntry.running() || addEntry.onActions()) && !covered()) {
         <app-floating-button
           class="map__add"
           icon="plus"

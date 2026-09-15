@@ -63,11 +63,11 @@ test('Melden ohne Netz, Senden bei Netz', async ({ page, baseURL }) => {
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await expect(page.getByRole('dialog', { name: 'Eintragen' })).toBeVisible();
   await page.getByRole('button', { name: 'Marker setzen' }).click();
-  await page.getByRole('button', { name: 'Ort übernehmen' }).click();
-  await expect(page.getByRole('dialog', { name: 'Marker' })).toBeVisible();
+  await page.getByRole('button', { name: 'Übernehmen', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Marker setzen' })).toBeVisible();
   await page.getByLabel('Name').fill('Alter Fichtenhang');
   await page.getByRole('button', { name: 'Speichern' }).click();
-  await expect(page.getByRole('dialog', { name: 'Marker' })).toBeHidden();
+  await expect(page.getByRole('dialog', { name: 'Marker setzen' })).toBeHidden();
   expect(net.sent).toHaveLength(0);
 
   await page.getByRole('link', { name: 'Einträge' }).click();

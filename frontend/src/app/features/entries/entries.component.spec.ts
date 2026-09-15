@@ -1,25 +1,21 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MapState } from '../map/map.state';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { AuthService } from '../../core/auth';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncTask } from '../../core/offline/sync.types';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
-import {
-  FIND,
-  FIND_ENTRY,
-  MARKER_ENTRY,
-  SHARED_FIND_ENTRY,
-  ZONE_ENTRY,
-  page,
-} from '../../testing/entries-fixture';
-import { AuthService } from '../../core/auth';
+import { FIND_ENTRY, MARKER_ENTRY, SHARED_FIND_ENTRY, ZONE_ENTRY, page } from '../../testing/entries-fixture';
+import { AddEntryState } from '../add-entry/add-entry.state';
+import { MapState } from '../map/map.state';
 import { EntriesComponent } from './entries.component';
+import { EntriesState } from './entries.state';
 
 const PENDING: SyncTask = {
   id: 'warte-eins',
@@ -41,25 +37,10 @@ const PENDING: SyncTask = {
   createdAt: '2026-09-10T08:00:00+02:00',
 };
 
-/** Ein wartender Marker und eine wartende Zone, beide ohne Notiz. */
-const PENDING_MARKER: SyncTask = {
-  ...PENDING,
-  id: 'warte-zwei',
-  kind: 'marker',
-  target: 'ziel-zwei',
-  body: { name: 'Alter Fichtenhang', lat: 48.5, lon: 9.0, colour: 'red' },
-};
-
-const PENDING_ZONE: SyncTask = {
-  ...PENDING,
-  id: 'warte-drei',
-  kind: 'zone',
-  target: 'ziel-drei',
-  body: { name: 'Schönbuch Nord', polygon: { type: 'Polygon', coordinates: [] } },
-};
-
 /** Eine Warteschlange mit einem festen Inhalt. */
 class QueueStub {
+  readonly online = signal(true);
+
   constructor(private readonly content: readonly SyncTask[]) {}
   tasks = (): readonly SyncTask[] => this.content;
   pendingTargets = (): Set<string> => new Set(this.content.map((task) => task.target));
@@ -72,24 +53,34 @@ class QueueStub {
   }
 }
 
+interface Options {
+  signedIn?: boolean;
+  pending?: readonly SyncTask[];
+  shared?: readonly (typeof SHARED_FIND_ENTRY)[];
+  own?: boolean;
+}
+
 interface Setup {
   container: Element;
   auth: AuthStub;
+  queue: QueueStub;
   router: Router;
   refresh: () => void;
 }
 
-async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]): Promise<Setup> {
+async function build(options: Options = {}): Promise<Setup> {
+  const { signedIn = true, pending = [PENDING], shared = [SHARED_FIND_ENTRY], own = true } = options;
   vi.setSystemTime(new Date(2026, 8, 10, 12));
   const auth = new AuthStub();
   if (!signedIn) auth.user.set(null);
+  const queue = new QueueStub(pending);
   const { container, detectChanges } = await render(EntriesComponent, {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
       // Ohne Route ginge jede Navigation ins Leere; der Reiter führt auf die Karte.
       provideRouter([{ path: '**', children: [] }]),
-      { provide: SyncService, useValue: new QueueStub(pending) },
+      { provide: SyncService, useValue: queue },
       ...authStubProviders(auth),
     ],
   });
@@ -98,22 +89,29 @@ async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]):
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   await vi.waitFor(() => {
-    http.expectOne('/api/finds?mine=false&limit=50').flush(page([SHARED_FIND_ENTRY]));
+    http.expectOne('/api/finds?mine=false&limit=50').flush(page(shared));
   });
   if (signedIn) {
     await vi.waitFor(() => {
-      http.expectOne('/api/finds?mine=true&limit=50').flush(page([FIND_ENTRY]));
+      http.expectOne('/api/finds?mine=true&limit=50').flush(page(own ? [FIND_ENTRY] : []));
     });
-    http.expectOne('/api/markers?limit=50').flush(page([MARKER_ENTRY]));
-    http.expectOne('/api/zones?limit=50').flush(page([ZONE_ENTRY]));
+    http.expectOne('/api/markers?limit=50').flush(page(own ? [MARKER_ENTRY] : []));
+    http.expectOne('/api/zones?limit=50').flush(page(own ? [ZONE_ENTRY] : []));
   }
-  // Der Reiter Funde zeigt nur die wartenden Funde, nicht Marker und Zonen.
-  const rows = (signedIn ? 1 : 0) + pending.filter((task) => task.kind === 'find').length;
+  // Erst wenn der Zustand steht, trägt die Liste ihre Zeilen.
+  const state = TestBed.inject(EntriesState);
   await vi.waitFor(() => {
-    detectChanges();
-    expect(container.querySelectorAll('app-list-row').length).toBeGreaterThanOrEqual(rows);
+    expect(state.shared()).toHaveLength(shared.length);
+    expect(state.finds()).toHaveLength(signedIn && own ? 1 : 0);
   });
-  return { container, auth, router: TestBed.inject(Router), refresh: detectChanges };
+  detectChanges();
+  return { container, auth, queue, router: TestBed.inject(Router), refresh: detectChanges };
+}
+
+/** Wechselt das Segment über der Liste. */
+async function choose(setup: Setup, segment: string): Promise<void> {
+  await userEvent.click(screen.getByRole('tab', { name: segment }));
+  setup.refresh();
 }
 
 describe('EintraegeComponent', () => {
@@ -121,80 +119,53 @@ describe('EintraegeComponent', () => {
     vi.useRealTimers();
   });
 
-  it('zeigt Kopfzeile, Chips und die eigenen Funde', async () => {
+  it('zeigt Kopfzeile, drei Segmente und die eigenen Funde', async () => {
     const setup = await build();
 
     expect(screen.getByRole('heading', { name: 'Einträge' })).toBeInTheDocument();
-    for (const chip of ['Funde', 'Marker', 'Zonen', 'Geteilt']) {
-      expect(screen.getByRole('tab', { name: chip })).toBeInTheDocument();
-    }
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent.trim())).toEqual([
+      'Funde',
+      'Marker',
+      'Zonen',
+    ]);
     const row = screen.getByRole('button', { name: /Steinpilz/ });
     expect(within(row).getByText('6. Sept. · 3 Stück · Frederik')).toBeInTheDocument();
-    expect(within(row).getByText('Geteilt')).toBeInTheDocument();
     await noViolations(setup.container);
   });
 
   it('stellt einen wartenden Fund mit seinem Kennzeichen nach oben', async () => {
     const setup = await build();
 
-    // Ein wartender Eintrag hat noch keine Kennung vom Dienst: er lässt sich
-    // nicht öffnen und ist darum kein Knopf.
-    const rows = setup.container.querySelectorAll('app-list-row');
+    const rows = setup.container.querySelectorAll('app-entry-row');
     expect(rows[0]).toHaveTextContent('Maronenröhrling');
     expect(rows[0]).toHaveTextContent('Heute · 2 Stück · Frederik');
     expect(rows[0]).toHaveTextContent('Übertragung ausstehend');
-    expect(rows[0].querySelector('button')).toBeNull();
+
+    // Ein wartender Eintrag hat noch keine Kennung vom Dienst: er öffnet nichts.
+    await userEvent.click(within(rows[0] as HTMLElement).getByRole('button'));
+
+    expect(TestBed.inject(MapState).object()).toBeNull();
   });
 
-  it('stellt einen wartenden Marker und eine wartende Zone in ihre Liste', async () => {
-    const setup = await build(true, [PENDING_MARKER, PENDING_ZONE]);
+  it('führt fremde Funde in derselben Liste wie die eigenen', async () => {
+    const setup = await build();
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Marker' }));
-    setup.refresh();
-    const marker = setup.container.querySelectorAll('app-list-row');
-    expect(marker[0]).toHaveTextContent('Alter Fichtenhang');
-    expect(marker[0]).toHaveTextContent('Übertragung ausstehend');
+    const rows = [...setup.container.querySelectorAll('app-entry-row')];
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
-    setup.refresh();
-    const zone = setup.container.querySelectorAll('app-list-row');
-    expect(zone[0]).toHaveTextContent('Schönbuch Nord');
-  });
-
-  it('lässt den Namen leer, wenn der Katalog die Art nicht kennt', async () => {
-    const unknown: SyncTask = {
-      ...PENDING,
-      id: 'warte-vier',
-      body: { ...(PENDING.body as object), speciesId: null },
-    };
-    const setup = await build(true, [unknown]);
-
-    expect(setup.container.querySelectorAll('app-list-row')[0]).toHaveTextContent('Übertragung ausstehend');
+    expect(rows.at(-1)).toHaveTextContent('Maronenröhrling');
+    expect(rows.at(-1)).toHaveTextContent('4. Sept. · 5 Stück');
   });
 
   it('wechselt auf Marker und Zonen', async () => {
     const setup = await build();
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Marker' }));
-    setup.refresh();
+    await choose(setup, 'Marker');
     expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
-    expect(screen.getByText('Marker · privat')).toBeInTheDocument();
+    expect(screen.getByText('Nordhang, ab Mitte September. · privat')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
-    setup.refresh();
+    await choose(setup, 'Zonen');
     expect(screen.getByText('Schönbuch Nord')).toBeInTheDocument();
-    expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
-  });
-
-  it('zeigt unter „geteilt“ auch fremde Funde ohne Blatt', async () => {
-    const setup = await build();
-
-    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
-    setup.refresh();
-
-    expect(screen.getByText('Maronenröhrling')).toBeInTheDocument();
-    expect(screen.getByText('4. Sept. · 5 Stück')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Maronenröhrling/ })).not.toBeInTheDocument();
+    expect(screen.getByText('42 ha · privat')).toBeInTheDocument();
   });
 
   it('öffnet einen Eintrag über der Karte', async () => {
@@ -203,40 +174,44 @@ describe('EintraegeComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
 
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'find', id: FIND.id });
+      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'find', id: FIND_ENTRY.id });
     });
   });
 
-  it('bittet ohne Konto um eine Anmeldung', async () => {
-    const setup = await build(false, []);
+  it('führt vom Kopf über die Karte in das Eintragen', async () => {
+    const setup = await build();
 
-    expect(
-      screen.getByText('Eigene Einträge stehen im Konto. Zum Lesen ist eine Anmeldung nötig.'),
-    ).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Eintragen' }));
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
-    setup.refresh();
-    expect(
-      screen.getByText('Eigene Einträge stehen im Konto. Zum Lesen ist eine Anmeldung nötig.'),
-    ).toBeInTheDocument();
+    await vi.waitFor(() => {
+      expect(setup.router.url).toBe('/karte');
+    });
+    expect(TestBed.inject(AddEntryState).step()).toBe('actions');
   });
 
-  it('führt aus dem Leerzustand zur Anmeldung', async () => {
-    await build(false, []);
-    const auth = TestBed.inject(AuthService);
-    const asked = vi.spyOn(auth, 'requestSignIn').mockResolvedValue(true);
+  it('meldet eine fehlende Verbindung über der Liste', async () => {
+    const setup = await build();
+    setup.queue.online.set(false);
+    setup.refresh();
 
+    expect(screen.getByRole('status')).toHaveTextContent('Offline');
+  });
+
+  it('bittet ohne Konto um eine Anmeldung', async () => {
+    const setup = await build({ signedIn: false, pending: [], shared: [] });
+    const asked = vi.spyOn(TestBed.inject(AuthService), 'requestSignIn').mockResolvedValue(true);
+
+    expect(screen.getByText('Ohne Anmeldung keine eigenen Einträge')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
 
     expect(asked).toHaveBeenCalledTimes(1);
+    await noViolations(setup.container);
   });
 
-  it('bietet unter „geteilt“ keine Anmeldung an, dort liest jeder mit', async () => {
-    const setup = await build(false, []);
+  it('sagt mit Konto nur, dass noch nichts dasteht', async () => {
+    await build({ pending: [], shared: [], own: false });
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
-    setup.refresh();
-
+    expect(screen.getByText('Noch keine Einträge')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Anmelden' })).not.toBeInTheDocument();
   });
 });

@@ -1,33 +1,63 @@
-@if (!withoutName()) {
+<div class="form__body" [class.form__body--roomy]="!marker()">
+  @if (!wide()) {
+    <div class="form__head">
+      <h2 class="form__title">{{ heading() }}</h2>
+      @if (coordinates(); as text) {
+        <span class="form__note">{{ text }}</span>
+      }
+    </div>
+  }
   <app-form-field
-    [label]="nameLabel()"
-    [placeholder]="namePlaceholder()"
-    [value]="nameValue()"
+    [label]="'common.name' | t"
+    [placeholder]="'entry.field.namePlaceholder' | t"
+    [value]="name()"
     (valueChange)="setName($event)"
   />
-}
-<div>
-  <p class="object__label">{{ 'farben.beschriftung' | t }}</p>
-  <app-colour-swatches
-    [colours]="colors()"
-    [value]="colorHexValue()"
-    [label]="'farben.beschriftung' | t"
-    (valueChange)="setColor($event)"
-  />
+  <div>
+    <p class="form__label">{{ 'common.colour' | t }}</p>
+    <app-colour-swatches
+      [colours]="swatches()"
+      [value]="colourHex()"
+      [label]="'common.colour' | t"
+      (valueChange)="setColour($event)"
+    />
+  </div>
+  @if (marker()) {
+    <ng-container [ngTemplateOutlet]="note" />
+    <ng-container [ngTemplateOutlet]="visibility" />
+  } @else {
+    <ng-container [ngTemplateOutlet]="visibility" />
+    <ng-container [ngTemplateOutlet]="note" />
+  }
+  <ng-content />
 </div>
-<div>
-  <p class="object__label">{{ 'sichtbarkeit.beschriftung' | t }}</p>
-  <app-segmented
-    [options]="segments()"
-    [value]="visibilityValue()"
-    [label]="'sichtbarkeit.beschriftung' | t"
-    (valueChange)="setVisibility($event)"
-  />
-</div>
-<app-form-field
-  [label]="'melden.notiz' | t"
-  [multiline]="true"
-  [placeholder]="'melden.optional' | t"
-  [value]="noteValue()"
-  (valueChange)="setNote($event)"
+<app-action-bar
+  [primary]="'common.save' | t"
+  [secondary]="secondaryLabel()"
+  [ghost]="!editing() && !wide()"
+  [busy]="busy()"
+  (primaryClick)="submit()"
+  (secondaryClick)="cancelled.emit()"
 />
+
+<ng-template #note>
+  <app-form-field
+    [label]="'entry.field.note' | t"
+    [multiline]="true"
+    [placeholder]="'common.optional' | t"
+    [value]="noteText()"
+    (valueChange)="setNote($event)"
+  />
+</ng-template>
+
+<ng-template #visibility>
+  <div>
+    <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
+    <app-segmented
+      [options]="segments()"
+      [value]="visibilityValue()"
+      [label]="'entry.field.visibility' | t"
+      (valueChange)="setVisibility($event)"
+    />
+  </div>
+</ng-template>

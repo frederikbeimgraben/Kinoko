@@ -22,6 +22,8 @@ export class ActionBarComponent {
   readonly inline = input(false);
   /** Zwei gleichrangige Wege: die erste Aktion trägt kein Gewicht. */
   readonly quiet = input(false);
+  /** Die letzte Aktion steht ohne Rahmen und misst vierundvierzig Punkte. */
+  readonly ghost = input(false);
   /** Die Hauptaktion läuft schon: Spinner statt Text, kein zweiter Auftrag. */
   readonly busy = input(false);
 
@@ -30,6 +32,12 @@ export class ActionBarComponent {
 
   protected readonly primaryVariant = computed<ButtonVariant>(() => {
     if (this.danger()) return 'danger';
+    if (this.ghost() && this.secondary() === undefined) return 'ghost';
     return this.quiet() ? 'secondary' : 'primary';
+  });
+
+  protected readonly secondaryVariant = computed<ButtonVariant>(() => {
+    if (this.secondaryDanger()) return 'danger-outline';
+    return this.ghost() ? 'ghost' : 'secondary';
   });
 }

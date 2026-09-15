@@ -117,28 +117,32 @@ function fixtureImage(name: string): string {
  * Legt das Kartenbild des Boards über die Zeichenfläche. Es füllt sie ganz,
  * unter den Knöpfen und dem Blatt der App.
  */
-export async function showMapImage(page: Page, name: string): Promise<void> {
+export async function showMapImage(page: Page, name: string, fixed?: number): Promise<void> {
   await settled(page);
-  await page.evaluate((source) => {
-    const host = document.querySelector('.map__canvas');
-    if (host === null) return;
-    // Das Bild füllt den freien Streifen über dem obersten Blatt, wie im Board.
-    const frame = host.getBoundingClientRect();
-    // Ein Modal schwebt über der Karte. Nur ein Blatt von unten kürzt sie.
-    const sheets = [...document.querySelectorAll('.sheet:not(.sheet--modal)')].map(
-      (sheet) => sheet.getBoundingClientRect().top,
-    );
-    const top = sheets.length > 0 ? Math.min(...sheets) : frame.bottom;
-    const height = Math.max(0, Math.min(top, frame.bottom) - frame.top);
-    const image = document.createElement('img');
-    image.src = source;
-    image.alt = '';
-    image.setAttribute(
-      'style',
-      `position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;height:${height}px;object-fit:fill;z-index:1`,
-    );
-    host.prepend(image);
-  }, fixtureImage(name));
+  await page.evaluate(
+    ([source, given]) => {
+      const host = document.querySelector('.map__canvas');
+      if (host === null) return;
+      // Das Bild füllt den freien Streifen über dem obersten Blatt, wie im Board.
+      const frame = host.getBoundingClientRect();
+      // Ein Modal schwebt über der Karte. Nur ein Blatt von unten kürzt sie.
+      const sheets = [...document.querySelectorAll('.sheet:not(.sheet--modal)')].map(
+        (sheet) => sheet.getBoundingClientRect().top,
+      );
+      const top = sheets.length > 0 ? Math.min(...sheets) : frame.bottom;
+      // Ein Board, dessen Karte unter dem Blatt weiterläuft, gibt seine Höhe vor.
+      const height = given ?? Math.max(0, Math.min(top, frame.bottom) - frame.top);
+      const image = document.createElement('img');
+      image.src = source;
+      image.alt = '';
+      image.setAttribute(
+        'style',
+        `position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;height:${height}px;object-fit:fill;z-index:1`,
+      );
+      host.prepend(image);
+    },
+    [fixtureImage(name), fixed] as const,
+  );
   await page.waitForFunction(() => {
     const image = document.querySelector<HTMLImageElement>('.map__canvas img');
     return image?.complete === true;

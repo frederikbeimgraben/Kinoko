@@ -102,7 +102,7 @@ describe('FundBlattComponent', () => {
 
     expect(screen.getByRole('heading', { name: 'Steinpilz' })).toBeInTheDocument();
     expect(screen.getByText('6. September 2026 · 3 Stück · Frederik')).toBeInTheDocument();
-    expect(screen.getByText('Geteilt')).toBeInTheDocument();
+    expect(screen.getByText('geteilt')).toBeInTheDocument();
     expect(screen.getByText(FIND.note ?? '')).toBeInTheDocument();
     await noViolations(setup.container);
   });
@@ -141,12 +141,12 @@ describe('FundBlattComponent', () => {
     expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
   });
 
-  it('führt den Fund an Google Maps weiter', async () => {
+  it('führt den Fund an die Karten-App weiter', async () => {
     await build();
     const opened = vi.fn();
     vi.stubGlobal('open', opened);
 
-    await userEvent.click(screen.getByRole('button', { name: /In Google Maps öffnen/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'In Karten-App öffnen' }));
 
     expect(opened).toHaveBeenCalledWith(
       expect.stringContaining(`${FIND.lat.toFixed(6)}%2C${FIND.lon.toFixed(6)}`),
@@ -184,8 +184,8 @@ describe('FundBlattComponent', () => {
 
     await vi.waitFor(() => {
       setup.refresh();
+      expect(screen.getByRole('button', { name: 'Speichern' })).toBeInTheDocument();
     });
-    expect(screen.getByRole('button', { name: 'Speichern' })).toBeInTheDocument();
   });
 
   it('fragt vor dem Löschen und schließt danach', async () => {

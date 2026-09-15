@@ -37,7 +37,16 @@ describe('FormFieldComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
 
     expect(calls).toBe(1);
+    expect(container.querySelector('.field__trail')).toBeNull();
     await noViolations(container);
+  });
+
+  it('setzt einen Pfeil an das Anzeigefeld, hinter dem eine Auswahl steht', async () => {
+    const { container } = await render(FormFieldComponent, {
+      inputs: { label: 'Art', value: 'Steinpilz', readOnly: true, chevron: true },
+    });
+
+    expect(container.querySelector('.field__trail')).not.toBeNull();
   });
 
   it('stellt ein Suchfeld mit Lupe und versteckter Beschriftung', async () => {

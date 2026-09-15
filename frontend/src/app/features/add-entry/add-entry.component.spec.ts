@@ -1,9 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal, type Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MapState } from '../map/map.state';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { ViewportService } from '../../core/layout/viewport.service';
+import { MapState } from '../map/map.state';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -14,6 +16,9 @@ import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { AddEntryComponent } from './add-entry.component';
 import { AddEntryState } from './add-entry.state';
+
+/** Der Rechner: dort hängen die Aktionen als Karte am Plus-Knopf. */
+const WIDE: Provider = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 interface Setup {
   container: Element;
@@ -26,7 +31,7 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(): Promise<Setup> {
+async function build(extra: readonly Provider[] = []): Promise<Setup> {
   const map = new MapAdapterDouble();
   const auth = new AuthStub();
   const queue = new SyncStub();
@@ -37,6 +42,7 @@ async function build(): Promise<Setup> {
       { provide: MAP_ADAPTER, useValue: map },
       ...syncStubProviders(queue),
       ...authStubProviders(auth),
+      ...extra,
     ],
   });
   return {
@@ -52,26 +58,42 @@ async function build(): Promise<Setup> {
 }
 
 /** Das Aktionsblatt öffnen und dort eine Zeile wählen. */
-async function start(setup: Setup, row: RegExp): Promise<void> {
+async function start(setup: Setup, row: string): Promise<void> {
   setup.flow.open();
   setup.refresh();
   await userEvent.click(screen.getByRole('button', { name: row }));
   setup.refresh();
 }
 
-async function answerSpecies(): Promise<void> {
+/** Der Fund geht über das Fadenkreuz ins Formular, das den Katalog holt. */
+async function openFindForm(setup: Setup): Promise<void> {
+  await start(setup, 'Fund melden');
+  await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
+  setup.refresh();
   TestBed.inject(MapState).species.set('steinpilz');
-  const http = TestBed.inject(HttpTestingController);
   await vi.waitFor(() => {
-    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    setup.http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
+  setup.refresh();
+}
+
+/** Setzt drei Eckpunkte, mit denen sich eine Fläche schließen lässt. */
+async function drawRing(setup: Setup): Promise<void> {
+  for (const location of [
+    [9.0, 48.5],
+    [9.02, 48.5],
+    [9.02, 48.52],
+  ] as const) {
+    setup.map.centerPoint = location;
+    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
+  }
 }
 
 describe('EintragenComponent', () => {
   it('zeigt nichts, solange niemand den Plus-Knopf gedrückt hat', async () => {
     const { container } = await build();
 
-    expect(container.querySelector('.addEntry')).toBeNull();
+    expect(container.querySelector('.addentry')).toBeNull();
   });
 
   it('zeigt die drei Aktionen des Plus-Menüs', async () => {
@@ -81,23 +103,31 @@ describe('EintragenComponent', () => {
     setup.refresh();
 
     expect(screen.getByRole('heading', { name: 'Eintragen' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fund melden/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Marker setzen/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Zone zeichnen/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Fund melden' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Marker setzen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Zone zeichnen' })).toBeInTheDocument();
     await noViolations(setup.container);
+  });
+
+  it('hängt die Aktionen am Rechner als Karte an den Plus-Knopf', async () => {
+    const setup = await build([WIDE]);
+
+    setup.flow.open();
+    setup.refresh();
+
+    expect(screen.getByRole('dialog', { name: 'Eintragen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Fund melden' })).toBeInTheDocument();
   });
 
   it('führt vom Fund über das Fadenkreuz ins Formular', async () => {
     const setup = await build();
 
-    await start(setup, /Fund melden/);
+    await start(setup, 'Fund melden');
 
     expect(screen.getByRole('heading', { name: 'Fundort festlegen' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Fundort' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Fundort festlegen' })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
-    setup.refresh();
-    await answerSpecies();
     setup.refresh();
 
     expect(setup.flow.location()).toEqual([9.05, 48.52]);
@@ -106,11 +136,7 @@ describe('EintragenComponent', () => {
 
   it('speichert einen Fund und schließt den Ablauf', async () => {
     const setup = await build();
-    await start(setup, /Fund melden/);
-    await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
-    setup.refresh();
-    await answerSpecies();
-    setup.refresh();
+    await openFindForm(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     await vi.waitFor(() => {
@@ -126,20 +152,20 @@ describe('EintragenComponent', () => {
   it('meldet, wenn die Karte noch keinen Ort hergibt', async () => {
     const setup = await build();
     setup.map.centerPoint = null;
-    await start(setup, /Fund melden/);
+    await start(setup, 'Fund melden');
 
     await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
 
     expect(setup.toasts.failure).toEqual(['Die Karte steht noch nicht.']);
-    expect(setup.flow.step()).toBe('fundOrt');
+    expect(setup.flow.step()).toBe('findLocation');
   });
 
   it('speichert einen Marker mit Name, Farbe und Sichtbarkeit', async () => {
     const setup = await build();
-    await start(setup, /Marker setzen/);
+    await start(setup, 'Marker setzen');
 
-    expect(screen.getByRole('heading', { name: 'Ort festlegen' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Ort übernehmen' }));
+    expect(screen.getByRole('heading', { name: 'Marker setzen' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     setup.refresh();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Alter Fichtenhang');
@@ -155,8 +181,8 @@ describe('EintragenComponent', () => {
 
   it('speichert einen Marker nicht ohne Namen', async () => {
     const setup = await build();
-    await start(setup, /Marker setzen/);
-    await userEvent.click(screen.getByRole('button', { name: 'Ort übernehmen' }));
+    await start(setup, 'Marker setzen');
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
@@ -167,19 +193,14 @@ describe('EintragenComponent', () => {
 
   it('zählt Eckpunkte und Fläche mit, während die Zone entsteht', async () => {
     const setup = await build();
-    await start(setup, /Zone zeichnen/);
+    await start(setup, 'Zone zeichnen');
 
     expect(screen.getByRole('heading', { name: 'Zone zeichnen' })).toBeInTheDocument();
     expect(
       screen.getByText('0 Eckpunkte · 0,0 ha. Fadenkreuz auf den nächsten Eckpunkt setzen.'),
     ).toBeInTheDocument();
 
-    setup.map.centerPoint = [9.0, 48.5];
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
-    setup.map.centerPoint = [9.02, 48.5];
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
-    setup.map.centerPoint = [9.02, 48.52];
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
+    await drawRing(setup);
     setup.refresh();
 
     await vi.waitFor(() => {
@@ -188,19 +209,9 @@ describe('EintragenComponent', () => {
     });
   });
 
-  it('nimmt den letzten Eckpunkt wieder weg', async () => {
-    const setup = await build();
-    await start(setup, /Zone zeichnen/);
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
-
-    await userEvent.click(screen.getByRole('button', { name: 'Letzten Punkt entfernen' }));
-
-    expect(setup.flow.ring()).toEqual([]);
-  });
-
   it('schließt eine Zone erst ab drei Eckpunkten', async () => {
     const setup = await build();
-    await start(setup, /Zone zeichnen/);
+    await start(setup, 'Zone zeichnen');
 
     await userEvent.click(screen.getByRole('button', { name: 'Zone abschließen' }));
 
@@ -209,15 +220,8 @@ describe('EintragenComponent', () => {
 
   it('speichert eine Zone mit ihrer Fläche', async () => {
     const setup = await build();
-    await start(setup, /Zone zeichnen/);
-    for (const location of [
-      [9.0, 48.5],
-      [9.02, 48.5],
-      [9.02, 48.52],
-    ] as const) {
-      setup.map.centerPoint = location;
-      await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
-    }
+    await start(setup, 'Zone zeichnen');
+    await drawRing(setup);
     await userEvent.click(screen.getByRole('button', { name: 'Zone abschließen' }));
     setup.refresh();
 
@@ -237,11 +241,7 @@ describe('EintragenComponent', () => {
   it('stellt einen Fund an, wenn niemand sich anmelden will', async () => {
     const setup = await build();
     setup.auth.reply = false;
-    await start(setup, /Fund melden/);
-    await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
-    setup.refresh();
-    await answerSpecies();
-    setup.refresh();
+    await openFindForm(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
@@ -253,7 +253,7 @@ describe('EintragenComponent', () => {
 
   it('bricht ab und lässt nichts stehen', async () => {
     const setup = await build();
-    await start(setup, /Fund melden/);
+    await start(setup, 'Fund melden');
 
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
 

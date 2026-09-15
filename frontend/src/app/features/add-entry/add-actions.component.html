@@ -1,0 +1,8 @@
+@for (choice of choices; track choice.key) {
+  <button class="addactions__row tap" type="button" data-press="tint" (click)="chosen.emit(choice.key)">
+    <span class="addactions__tile">
+      <app-svg-icon [name]="choice.icon" [size]="22" [strokeWidth]="2" />
+    </span>
+    <span class="addactions__title">{{ choice.label | t }}</span>
+  </button>
+}

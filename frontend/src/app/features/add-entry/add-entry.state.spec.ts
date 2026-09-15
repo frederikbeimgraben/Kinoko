@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
 import { AddEntryState } from './add-entry.state';
 
 function state(): AddEntryState {
@@ -11,7 +12,7 @@ describe('EintragenZustand', () => {
 
     flow.open();
 
-    expect(flow.step()).toBe('aktionen');
+    expect(flow.step()).toBe('actions');
     expect(flow.running()).toBe(true);
     expect(flow.dark()).toBe(true);
     expect(flow.showsCrosshair()).toBe(false);
@@ -25,7 +26,7 @@ describe('EintragenZustand', () => {
     expect(flow.dark()).toBe(false);
     flow.adoptLocation([9.05, 48.52]);
 
-    expect(flow.step()).toBe('fundFormular');
+    expect(flow.step()).toBe('findForm');
     expect(flow.location()).toEqual([9.05, 48.52]);
   });
 
@@ -35,7 +36,7 @@ describe('EintragenZustand', () => {
     flow.startMarker();
     flow.adoptLocation([9.06, 48.53]);
 
-    expect(flow.step()).toBe('markerFormular');
+    expect(flow.step()).toBe('markerForm');
   });
 
   it('sammelt Eckpunkte und nimmt den letzten wieder weg', () => {
@@ -61,7 +62,7 @@ describe('EintragenZustand', () => {
     flow.addCorner([9.1, 48.6]);
 
     expect(flow.closeZone()).toBe(true);
-    expect(flow.step()).toBe('zoneFormular');
+    expect(flow.step()).toBe('zoneForm');
   });
 
   it('übernimmt einen Ring, den Terra Draw verschoben hat', () => {
@@ -83,12 +84,12 @@ describe('EintragenZustand', () => {
     flow.startFind();
     flow.adoptLocation([9, 48]);
     flow.back();
-    expect(flow.step()).toBe('fundOrt');
+    expect(flow.step()).toBe('findLocation');
 
     flow.startMarker();
     flow.adoptLocation([9, 48]);
     flow.back();
-    expect(flow.step()).toBe('markerOrt');
+    expect(flow.step()).toBe('markerLocation');
 
     flow.startZone();
     flow.setRing([
@@ -98,10 +99,23 @@ describe('EintragenZustand', () => {
     ]);
     flow.closeZone();
     flow.back();
-    expect(flow.step()).toBe('zoneZeichnen');
+    expect(flow.step()).toBe('zoneDraw');
 
     flow.back();
     expect(flow.step()).toBeNull();
+  });
+
+  it('legt beim Öffnen einen Weg zurück an und nimmt ihn beim Beenden weg', () => {
+    const stack = TestBed.inject(OverlayStackService);
+    const opened = vi.spyOn(stack, 'open');
+    const back = vi.spyOn(stack, 'back');
+    const flow = state();
+
+    flow.open();
+    expect(opened).toHaveBeenCalledOnce();
+
+    flow.stop();
+    expect(back).toHaveBeenCalledOnce();
   });
 
   it('räumt beim Beenden Ort und Eckpunkte weg', () => {
