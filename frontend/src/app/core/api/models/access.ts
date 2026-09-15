@@ -3,6 +3,9 @@ import type { components } from '../contract';
 /** Die Zähler der Verwaltungsübersicht. */
 export type AdminSummary = components['schemas']['AdminSummary'];
 
+/** Die Zahlen einer Art in der Artenverwaltung. */
+export type SpeciesCountsEntry = components['schemas']['SpeciesCountsEntry'];
+
 /** Eine Antwort, die ihre Einträge unter `items` trägt. */
 export interface Items<E> {
   items: E[];

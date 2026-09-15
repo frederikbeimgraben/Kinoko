@@ -11,6 +11,7 @@ import type {
   Role,
   RoleInput,
   RolePatch,
+  SpeciesCountsEntry,
 } from '../core/api/models';
 import type { ProblemDetail } from '../core/api/problem';
 
@@ -130,6 +131,7 @@ export class AccessApiDouble {
   peopleList: Person[] = PEOPLE;
   catalogueList: PermissionEntry[] = CATALOGUE;
   summaryAnswer: AdminSummary = SUMMARY;
+  speciesCountsAnswer: SpeciesCountsEntry[] = [];
   /** Steht hier ein Problem, weist der nächste Schreibzugriff es zurück. */
   rejectWith: ProblemDetail | null = null;
 
@@ -155,6 +157,10 @@ export class AccessApiDouble {
 
   summary(): Observable<AdminSummary> {
     return of(this.summaryAnswer);
+  }
+
+  speciesCounts(): Observable<SpeciesCountsEntry[]> {
+    return of(this.speciesCountsAnswer);
   }
 
   catalogue(): Observable<PermissionEntry[]> {

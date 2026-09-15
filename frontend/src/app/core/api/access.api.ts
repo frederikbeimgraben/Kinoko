@@ -12,6 +12,7 @@ import type {
   Role,
   RoleInput,
   RolePatch,
+  SpeciesCountsEntry,
 } from './models';
 
 /**
@@ -35,6 +36,11 @@ export class AccessApi {
   /** Die Zähler der Übersicht. Ein Punkt ohne Recht kommt ohne Zahl. */
   summary(): Observable<AdminSummary> {
     return this.api.get<AdminSummary>('/admin/summary');
+  }
+
+  /** Die Zahlen jeder Art. Braucht das Recht `species.edit`. */
+  speciesCounts(): Observable<SpeciesCountsEntry[]> {
+    return this.api.get<Items<SpeciesCountsEntry>>('/admin/species-counts').pipe(map((page) => page.items));
   }
 
   catalogue(): Observable<PermissionEntry[]> {

@@ -129,6 +129,17 @@ class SpeciesService:
         found = await self.repo.list(self.repo.query().order_by(SpeciesTable.name), paging)
         return await self.counts_for([row.id for row in found[: paging.limit]])
 
+    async def counts_entries(self) -> dict[str, Any]:
+        """Die Zahlen jeder Art, für die Artenverwaltung."""
+        ids = list((await self.db.execute(select(SpeciesTable.id))).scalars())
+        tally = await self.counts_for(ids)
+        return {
+            "items": [
+                {"speciesId": key, "records": one.records, "finds": one.finds, "photos": one.photos}
+                for key, one in tally.items()
+            ]
+        }
+
     async def counts_for(self, ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, SpeciesCounts]:
         """Datenbestand, Funde und Bilder je Art."""
         records = await self.records_of(ids)

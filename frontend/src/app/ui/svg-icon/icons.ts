@@ -1,6 +1,7 @@
 /** Die Piktogramme aus `artefakte/bauen.py`, ein Pfadinhalt je Name. */
 export type IconName =
   | 'map'
+  | 'map-off'
   | 'species'
   | 'entries'
   | 'more'
@@ -54,6 +55,7 @@ export const FILLED_ICONS: readonly IconName[] = ['left', 'right', 'play', 'paus
 /** Der Inhalt des `<svg>` je Piktogramm, Strich 2 auf Raster 24 ausser den gefüllten. */
 export const ICONS: Record<IconName, string> = {
   map: '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  'map-off': '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/><path d="M3 21L21 3"/>',
   species: '<path d="M4 11a8 6 0 0 1 16 0H4z"/><path d="M9 11v7a3 3 0 0 0 6 0v-7"/>',
   entries: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
   more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',

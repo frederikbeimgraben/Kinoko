@@ -506,3 +506,16 @@ async def test_summary_needs_at_least_one_right(
     assert (await api.get("/admin/summary")).status_code == 403
     sign_out(app_of(api))
     assert (await api.get("/admin/summary")).status_code == 401
+
+
+async def test_species_counts_need_the_right_to_edit_species(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "person-arten")
+    sign_in(app_of(api), user)
+    assert (await api.get("/admin/species-counts")).status_code == 403
+
+    sign_in(app_of(api), user, "species.edit")
+    answer = await api.get("/admin/species-counts")
+    assert answer.status_code == 200
+    assert answer.json() == {"items": []}

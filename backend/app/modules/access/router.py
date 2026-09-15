@@ -14,6 +14,7 @@ from app.modules.access.permissions import permission_entries
 from app.modules.access.schemas import RoleCreate, RoleUpdate, SetPersonRoles
 from app.modules.access.service import AccessService
 from app.modules.access.summary import SummaryService
+from app.modules.catalog.service import SpeciesService
 from app.shared.paging import Page
 
 router = APIRouter(tags=["access"])
@@ -31,6 +32,12 @@ async def get_admin_summary(db: Db, who: CurrentViewer) -> Any:  # noqa: ANN401
     if not who.rights:
         raise Forbidden
     return await SummaryService(db).counts(who.rights)
+
+
+@router.get("/admin/species-counts", dependencies=[requires("species.edit")])
+async def get_admin_species_counts(db: Db) -> Any:  # noqa: ANN401
+    """Liefert die Zahlen jeder Art für die Artenverwaltung."""
+    return await SpeciesService(db).counts_entries()
 
 
 @router.get("/permissions", dependencies=[requires("role.manage")])

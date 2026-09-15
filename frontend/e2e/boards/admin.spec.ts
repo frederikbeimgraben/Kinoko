@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
+import { bundle, species } from '../fixtures/species';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -66,6 +67,41 @@ const ROLES = {
   nextCursor: null,
 };
 
+/** Die vier Arten des Bretts `AdminSpecies` mit ihren Zahlen. */
+const SPECIES = [
+  { slug: 'boletus-edulis', name: 'Steinpilz', latin: 'Boletus edulis', edibility: 'good', forecast: true },
+  {
+    slug: 'imleria-badia',
+    name: 'Maronenröhrling',
+    latin: 'Imleria badia',
+    edibility: 'good',
+    forecast: true,
+  },
+  {
+    slug: 'tylopilus-felleus',
+    name: 'Gallenröhrling',
+    latin: 'Tylopilus felleus',
+    edibility: 'inedible',
+    forecast: true,
+  },
+  {
+    slug: 'tricholoma-terreum',
+    name: 'Erdritterling',
+    latin: 'Tricholoma terreum',
+    edibility: 'edible',
+    forecast: false,
+  },
+];
+
+const SPECIES_COUNTS = {
+  items: [
+    { speciesId: (species(SPECIES[0], 0) as { id: string }).id, records: 1284, finds: 12, photos: 3 },
+    { speciesId: (species(SPECIES[1], 1) as { id: string }).id, records: 842, finds: 7, photos: 2 },
+    { speciesId: (species(SPECIES[2], 2) as { id: string }).id, records: 214, finds: 3, photos: 1 },
+    { speciesId: (species(SPECIES[3], 3) as { id: string }).id, records: 58, finds: 0, photos: 0 },
+  ],
+};
+
 /** Ein Brett gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
   test.skip(test.info().project.name !== device, `Brett gehört zu ${device}`);
@@ -80,6 +116,8 @@ async function open(page: Page, path: string): Promise<void> {
     '/api/me/permissions': { permissions: EVERY_RIGHT, roles: [] },
     '/api/admin/summary': SUMMARY,
     '/api/roles': ROLES,
+    '/api/species/bundle': bundle(SPECIES),
+    '/api/admin/species-counts': SPECIES_COUNTS,
   });
   await flatMap(page);
   await page.goto(path);
@@ -106,4 +144,12 @@ test('AdminDesktop', async ({ page }) => {
   await expect(page.getByText('4 · 12')).toBeVisible();
   await expect(page.getByText('Texte ändern · 2 Personen')).toBeVisible();
   await expectBoard(page, 'AdminDesktop');
+});
+
+test('AdminSpecies', async ({ page }) => {
+  guard('AdminSpecies', 'phone');
+  await open(page, '/verwaltung/arten');
+  await expect(page.getByText('1 284')).toBeVisible();
+  await expect(page.getByText('Tricholoma terreum')).toBeVisible();
+  await expectBoard(page, 'AdminSpecies');
 });

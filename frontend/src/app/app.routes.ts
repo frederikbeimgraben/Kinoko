@@ -81,6 +81,12 @@ export const routes: Routes = [
         canActivate: [requiresPermission('role.assign')],
         loadComponent: () => import('./features/admin/people.component').then((m) => m.PeopleComponent),
       },
+      {
+        path: 'arten',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/admin-species.component').then((m) => m.AdminSpeciesComponent),
+      },
     ],
   },
   // Die stille Route steht vor der Anmeldung: sonst nähme diese den ersten
