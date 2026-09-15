@@ -141,6 +141,44 @@ async def test_bundle_etag_changes_after_write(
     assert second.headers["ETag"] != tag
 
 
+async def test_bundle_etag_changes_when_a_photo_is_approved(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    porcini = await cf.make_species(
+        session, slug="boletus-edulis", name="Steinpilz", latin_name="Boletus edulis"
+    )
+    first = await api.get("/species/bundle")
+    tag = first.headers["ETag"]
+    photo = await cf.add_lead_photo(session, porcini)
+    second = await api.get("/species/bundle", headers={"If-None-Match": tag})
+    assert second.status_code == 200
+    assert second.headers["ETag"] != tag
+    item = next(row for row in second.json()["items"] if row["slug"] == porcini.slug)
+    assert item["leadPhotoId"] == str(photo.id)
+
+
+async def test_bundle_etag_changes_when_the_lead_photo_changes(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    porcini = await cf.make_species(
+        session, slug="boletus-edulis", name="Steinpilz", latin_name="Boletus edulis"
+    )
+    first_photo = await cf.add_lead_photo(session, porcini)
+    second_photo = await cf.add_lead_photo(session, porcini)
+    first_photo.lead = False
+    await session.commit()
+    first = await api.get("/species/bundle")
+    tag = first.headers["ETag"]
+    second_photo.lead = False
+    first_photo.lead = True
+    await session.commit()
+    second = await api.get("/species/bundle", headers={"If-None-Match": tag})
+    assert second.status_code == 200
+    assert second.headers["ETag"] != tag
+    item = next(row for row in second.json()["items"] if row["slug"] == porcini.slug)
+    assert item["leadPhotoId"] == str(first_photo.id)
+
+
 async def test_bundle_empty_catalogue(api: httpx.AsyncClient) -> None:
     response = await api.get("/species/bundle")
     assert response.status_code == 200
