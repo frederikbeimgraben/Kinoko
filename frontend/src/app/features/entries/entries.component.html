@@ -63,3 +63,25 @@
     </div>
   }
 </div>
+<app-filter-sheet
+  [open]="filterOpen()"
+  [title]="'common.filter' | t"
+  [resetEnabled]="filtered()"
+  [primaryLabel]="'entry.filter.showEntries' | t"
+  (resetClick)="resetFilter()"
+  (primaryClick)="filterOpen.set(false)"
+  (closed)="filterOpen.set(false)"
+>
+  <app-choice-row
+    [label]="'entry.filter.own' | t"
+    [checked]="own()"
+    variant="boxed"
+    (toggled)="own.set($event)"
+  />
+  <app-choice-row
+    [label]="'entry.filter.shared' | t"
+    [checked]="shared()"
+    variant="boxed"
+    (toggled)="shared.set($event)"
+  />
+</app-filter-sheet>

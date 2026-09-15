@@ -8,7 +8,9 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
 import { BannerComponent } from '../../ui/banner/banner.component';
+import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
 import { EntryRowComponent, type EntryRowEntry } from '../../ui/entry-row/entry-row.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -48,7 +50,9 @@ interface Row {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BannerComponent,
+    ChoiceRowComponent,
     EmptyStateComponent,
+    FilterSheetComponent,
     EntryRowComponent,
     ListRowComponent,
     PageHeaderComponent,
@@ -70,6 +74,7 @@ export class EntriesComponent {
 
   protected readonly segment = signal<Segment>('finds');
   protected readonly filterOpen = signal(false);
+  protected readonly own = signal(true);
   protected readonly shared = signal(true);
   protected readonly signedIn = this.state.signedIn;
   private readonly sync = inject(SyncService);
@@ -80,7 +85,7 @@ export class EntriesComponent {
     SEGMENTS.map((entry) => ({ value: entry.value, label: this.i18n.translate(entry.label) })),
   );
 
-  protected readonly filtered = computed(() => !this.shared());
+  protected readonly filtered = computed(() => !this.own() || !this.shared());
 
   protected readonly rows = computed<Row[]>(() => {
     const segment = this.segment();
@@ -93,7 +98,7 @@ export class EntriesComponent {
       return [...pending, ...this.state.markers().map((entry) => this.markerRow(entry))];
     }
     if (segment === 'zones') return [...pending, ...this.state.zones().map((zone) => this.zoneRow(zone))];
-    const own = this.state.finds().map((find) => this.findRow(find));
+    const own = this.own() ? this.state.finds().map((find) => this.findRow(find)) : [];
     const shared = this.shared() ? this.state.shared().map((find) => this.sharedRow(find)) : [];
     return [...pending, ...own, ...shared];
   });
@@ -122,6 +127,11 @@ export class EntriesComponent {
     this.addEntry.open();
   }
 
+  protected resetFilter(): void {
+    this.own.set(true);
+    this.shared.set(true);
+  }
+
   protected selectSegment(value: string): void {
     const segment = SEGMENTS.find((entry) => entry.value === value);
     if (segment) this.segment.set(segment.value);
@@ -145,6 +155,12 @@ export class EntriesComponent {
   private findMeta(date: string, count: number | null, person: string): string {
     if (count === null) return this.i18n.translate('find.sublineNoCount', { date, person });
     return this.i18n.translate('find.subline', { date, count, person });
+  }
+
+  /** Ein geteilter Fund nennt keinen Melder: der Vertrag führt keinen Namen. */
+  private sharedMeta(date: string, count: number | null): string {
+    if (count === null) return date;
+    return this.i18n.translate('find.sublineShared', { date, count });
   }
 
   /** Der Vorname, wie ihn die Unterzeile eines Fundes nennt. */
@@ -172,7 +188,7 @@ export class EntriesComponent {
       colour: '',
       entry: {
         title: this.speciesName(find.speciesId),
-        meta: this.findMeta(this.date(find.foundOn), find.count, ''),
+        meta: this.sharedMeta(this.date(find.foundOn), find.count),
         note: find.note ?? undefined,
       },
       pending: false,
