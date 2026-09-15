@@ -171,13 +171,9 @@ export class EntriesComponent {
     };
   }
 
-  /** „4. Sept. · 5 Stück“: der Vertrag nennt zu einem fremden Fund kein Konto. */
-  private sharedSubline(datum: string, anzahl: number | null): string {
-    if (anzahl === null) return datum;
-    return this.i18n.translate('fund.unterOhneMelder', {
-      datum,
-      anzahl: this.i18n.translate('fund.stueck', { anzahl }),
-    });
+  private sharedSubline(date: string, count: number | null): string {
+    if (count === null) return date;
+    return this.i18n.translate('find.sublineShared', { date, count });
   }
 
   private sharedRow(find: SharedFind): Row {
@@ -188,7 +184,6 @@ export class EntriesComponent {
       subline: this.sharedSubline(this.datum(find.foundOn), find.count),
       notiz: find.note ?? '',
       badge: { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' },
-      // Ein fremder Fund hat kein Blatt: der Dienst gibt ihn nur als Punkt her.
       object: null,
     };
   }

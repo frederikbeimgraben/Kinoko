@@ -520,7 +520,6 @@
   "fund.stueck": "{anzahl} pieces",
   "fund.unter": "{datum} · {anzahl} · {melder}",
   "fund.unterOhneAnzahl": "{datum} · {melder}",
-  "fund.unterOhneMelder": "{datum} · {anzahl}",
   "fund.vorhersage": "Forecast at this location",
   "fund.vorhersageUnter": "{art}, CW {woche} · {jahr}, per visit",
   "hintergrund.automatisch": "System",

@@ -520,7 +520,6 @@
   "fund.stueck": "{anzahl} Stück",
   "fund.unter": "{datum} · {anzahl} · {melder}",
   "fund.unterOhneAnzahl": "{datum} · {melder}",
-  "fund.unterOhneMelder": "{datum} · {anzahl}",
   "fund.vorhersage": "Vorhersage an diesem Ort",
   "fund.vorhersageUnter": "{art}, KW {woche} · {jahr}, je Begehung",
   "hintergrund.automatisch": "System",
