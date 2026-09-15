@@ -6,6 +6,7 @@ export type SpeciesBundle = components['schemas']['SpeciesBundle'];
 export type StandardColour = components['schemas']['StandardColour'];
 export type SpeciesEntry = components['schemas']['Species'];
 export type SpeciesSummary = components['schemas']['SpeciesSummary'];
+export type SpeciesCounts = components['schemas']['SpeciesCounts'];
 export type Edibility = components['schemas']['Edibility'];
 export type Protection = components['schemas']['Protection'];
 export type CapShape = components['schemas']['CapShape'];

@@ -2756,6 +2756,11 @@ components:
         - $ref: "#/components/schemas/SpeciesSummary"
         - type: object
           properties:
+            updatedByName:
+              description: Der Name des Kontos, das zuletzt geändert hat.
+              oneOf:
+                - type: string
+                - type: "null"
             description:
               oneOf:
                 - type: string

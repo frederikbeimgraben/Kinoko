@@ -1,0 +1,37 @@
+:host {
+  display: inline-flex;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  inline-size: 44px;
+  block-size: 26px;
+  padding: 0;
+  cursor: pointer;
+  background: var(--color-surface-sunken);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: 13px;
+}
+
+.switch--on {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.switch__knob {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  display: block;
+  inline-size: 22px;
+  block-size: 22px;
+  background: var(--color-handle);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+  transition: inset-inline-start var(--motion-fast) var(--ease-standard);
+}
+
+.switch--on .switch__knob {
+  inset-inline-start: 20px;
+}

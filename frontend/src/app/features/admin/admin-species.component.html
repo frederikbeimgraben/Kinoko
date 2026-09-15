@@ -26,7 +26,13 @@
     />
     <div class="species__card">
       @for (row of rows(); track row.slug) {
-        <app-list-row kind="catalogue" [title]="row.name" [subline]="row.latin">
+        <app-list-row
+          kind="catalogue"
+          [title]="row.name"
+          [subline]="row.latin"
+          [clickable]="true"
+          (chosen)="open(row.slug)"
+        >
           <span trail class="species__counts">
             @for (count of row.counts; track $index) {
               <span>{{ count }}</span>

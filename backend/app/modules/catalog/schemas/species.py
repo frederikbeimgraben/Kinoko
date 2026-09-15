@@ -58,6 +58,7 @@ class SpeciesSummary(Schema):
 class Species(SpeciesSummary):
     """Das volle Profil einer Art, mit allen Kindzeilen."""
 
+    updated_by_name: str | None = None
     description: str | None = None
     marketable: bool
     frequency: Frequency | None = None

@@ -105,6 +105,10 @@ export class AdminSpeciesComponent {
     this.shown.update((count) => count + PAGE);
   }
 
+  protected open(slug: string): void {
+    void this.router.navigate(['/verwaltung/arten', slug]);
+  }
+
   protected create(): void {
     void this.router.navigate(['/verwaltung/arten', 'neu']);
   }

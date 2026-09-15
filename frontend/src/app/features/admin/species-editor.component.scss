@@ -1,0 +1,69 @@
+@use '../../../styles/card';
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.editor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+// Die Karten dürfen nicht schrumpfen: sonst schneidet ihr Rand den Inhalt ab,
+// sobald die Seite länger ist als das Gerät.
+.editor > * {
+  flex: none;
+}
+
+.editor__section {
+  @include card.section-title;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
+.editor__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
+}
+
+// Die Kennzahlen tragen den Wert über dem Namen, Maße aus dem Brett.
+.editor__stats {
+  --fs-xl: var(--fs-lg);
+  --fs-xs: var(--fs-caption);
+  --space-1: 2px;
+
+  padding-block: 12px;
+}
+
+.editor__source {
+  padding: var(--space-3);
+}
+
+.editor__note {
+  margin: 0;
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+app-add-row {
+  margin-block-start: 10px;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

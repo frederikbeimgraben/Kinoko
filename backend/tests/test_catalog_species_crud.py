@@ -481,3 +481,17 @@ async def test_counts_requires_permission(session: AsyncSession, api: httpx.Asyn
     )
     response = await api.get(f"/species/{porcini.slug}/counts")
     assert response.status_code == 401
+
+
+async def test_profile_names_the_account_that_changed_it(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "person-editor")
+    user.name = "Frederik"
+    species = await cf.make_species(session, slug="boletus-edulis", name="Steinpilz")
+    species.updated_by_id = user.id
+    await session.commit()
+
+    answer = await api.get("/species/boletus-edulis")
+    assert answer.status_code == 200
+    assert answer.json()["updatedByName"] == "Frederik"
