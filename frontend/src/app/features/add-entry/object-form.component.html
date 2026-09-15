@@ -18,7 +18,7 @@
 <div>
   <p class="object__label">{{ 'sichtbarkeit.beschriftung' | t }}</p>
   <app-segmented
-    [options]="segmente()"
+    [options]="segments()"
     [value]="visibilityValue()"
     [label]="'sichtbarkeit.beschriftung' | t"
     (valueChange)="setVisibility($event)"

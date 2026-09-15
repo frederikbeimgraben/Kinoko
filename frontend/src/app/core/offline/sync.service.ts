@@ -1,14 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiClient } from '../api/api-client';
+import { ENTRY_PATHS } from '../api/entry-paths';
+import { PhotosApi } from '../api/photos.api';
 import { AuthService } from '../auth';
 import { OfflineStore } from './offline-store';
-import { SYNC_PATHS, type SyncKind, type SyncOperation, type SyncTask } from './sync.types';
+import { type SyncKind, type SyncOperation, type SyncTask } from './sync.types';
 
 /** Der Server hat das Objekt schon anders. Seine Fassung gilt. */
 const CONFLICT = [409, 412];
-
-const PHOTO_LICENCE = 'own';
 
 /**
  * Die Warteschlange der eigenen Objekte und ihr Abgleich bei Netz.
@@ -16,6 +16,7 @@ const PHOTO_LICENCE = 'own';
 @Injectable({ providedIn: 'root' })
 export class SyncService {
   private readonly api = inject(ApiClient);
+  private readonly photos = inject(PhotosApi);
   private readonly auth = inject(AuthService);
   private readonly store = inject(OfflineStore);
 
@@ -119,7 +120,7 @@ export class SyncService {
   }
 
   private request(task: SyncTask): ReturnType<ApiClient['put']> {
-    const path = `${SYNC_PATHS[task.kind]}/${encodeURIComponent(task.target)}`;
+    const path = `${ENTRY_PATHS[task.kind]}/${encodeURIComponent(task.target)}`;
     if (task.operation === 'delete') return this.api.delete(path, undefined, { quiet: true });
     return this.api.put(path, task.body, { quiet: true });
   }
@@ -152,16 +153,15 @@ export class SyncService {
     const file = new File([blob], `${task.target}.jpg`, { type: blob.type || 'image/jpeg' });
     const fields = task.body as Record<string, string | undefined>;
     try {
-      await firstValueFrom(this.api.postFile(SYNC_PATHS.photo, 'file', file, fields, { quiet: true }));
+      await firstValueFrom(this.api.postFile(ENTRY_PATHS.photo, 'file', file, fields, { quiet: true }));
     } catch {
       return 'stop';
     }
     return 'sent';
   }
 
-  private upload(findId: string, blob: Blob, index: number): ReturnType<ApiClient['postFile']> {
+  private upload(findId: string, blob: Blob, index: number): ReturnType<PhotosApi['ofFind']> {
     const file = new File([blob], `photo-${String(index + 1)}.jpg`, { type: blob.type || 'image/jpeg' });
-    const fields = { findId, photographer: this.auth.user()?.name ?? '', licence: PHOTO_LICENCE };
-    return this.api.postFile('/photos', 'file', file, fields, { quiet: true });
+    return this.photos.ofFind(findId, this.auth.user()?.name ?? '', file, { quiet: true });
   }
 }

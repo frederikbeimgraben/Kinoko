@@ -1,61 +1,103 @@
 import type { components } from '../core/api/contract';
-import type { Find, SharedFind, Marker, Page, Zone } from '../core/api/models';
+import type { Find, SharedFind, Marker, Zone } from '../core/api/models';
 
 type FindEntry = components['schemas']['Find'];
+type MarkerEntry = components['schemas']['Marker'];
+type ZoneEntry = components['schemas']['Zone'];
 
 /** Eine Seite, wie sie jede Liste des Dienstes liefert. */
-export function page<E>(eintraege: E[]): Page<E> {
-  return { eintraege, gesamt: eintraege.length, limit: 200, offset: 0 };
+export function page<E>(items: readonly E[]): { items: E[]; nextCursor: string | null } {
+  return { items: [...items], nextCursor: null };
 }
 
-export const FIND: Find = {
+const STAMP = '2026-09-06T10:00:00+02:00';
+
+export const FIND_ENTRY: FindEntry = {
   id: 'fund-eins',
-  artSlug: 'steinpilz',
+  ownerId: 'konto-eins',
+  speciesId: 'steinpilz',
   lat: 48.5203,
   lon: 9.0511,
-  datum: '2026-09-06',
-  anzahl: 3,
-  notiz: 'Unter Fichten am Weg, drei junge, Kappen noch geschlossen.',
-  sichtbarkeit: 'geteilt',
-  fuerTraining: true,
-  fotos: [{ id: 'foto-eins', breite: 1600, hoehe: 1200, erstelltAm: '2026-09-06T10:00:00+02:00' }],
-  erstelltAm: '2026-09-06T10:00:00+02:00',
-  geaendertAm: '2026-09-06T10:00:00+02:00',
+  foundOn: '2026-09-06',
+  count: 3,
+  forTraining: true,
+  reviewState: 'accepted',
+  visibility: 'shared',
+  note: 'Unter Fichten am Weg, drei junge, Kappen noch geschlossen.',
+  createdAt: STAMP,
+  updatedAt: STAMP,
+  deleted: false,
 };
 
-export const MARKER: Marker = {
+export const FIND: Find = {
+  id: FIND_ENTRY.id,
+  speciesId: 'steinpilz',
+  lat: 48.5203,
+  lon: 9.0511,
+  foundOn: '2026-09-06',
+  count: 3,
+  note: FIND_ENTRY.note ?? null,
+  reviewState: 'accepted',
+  visibility: 'shared',
+  forTraining: true,
+};
+
+export const MARKER_ENTRY: MarkerEntry = {
   id: 'marker-eins',
+  ownerId: 'konto-eins',
   name: 'Alter Fichtenhang',
   lat: 48.53,
   lon: 9.06,
-  farbe: 'blau',
-  notiz: 'Nordhang, ab Mitte September.',
-  sichtbarkeit: 'privat',
-  erstelltAm: '2026-09-01T10:00:00+02:00',
-  geaendertAm: '2026-09-01T10:00:00+02:00',
+  colour: 'blue',
+  note: 'Nordhang, ab Mitte September.',
+  visibility: 'private',
+  createdAt: '2026-09-01T10:00:00+02:00',
+  updatedAt: '2026-09-01T10:00:00+02:00',
+  deleted: false,
+};
+
+export const MARKER: Marker = {
+  id: MARKER_ENTRY.id,
+  name: 'Alter Fichtenhang',
+  lat: 48.53,
+  lon: 9.06,
+  colour: 'blue',
+  note: MARKER_ENTRY.note ?? null,
+  visibility: 'private',
+};
+
+const RING: number[][][] = [
+  [
+    [9.0, 48.5],
+    [9.1, 48.5],
+    [9.1, 48.6],
+    [9.0, 48.6],
+    [9.0, 48.5],
+  ],
+];
+
+export const ZONE_ENTRY: ZoneEntry = {
+  id: 'zone-eins',
+  ownerId: 'konto-eins',
+  name: 'Schönbuch Nord',
+  polygon: { type: 'Polygon', coordinates: RING },
+  areaHa: 42,
+  colour: 'green',
+  note: 'Nordhang, alte Fichten, ab Mitte September.',
+  visibility: 'private',
+  createdAt: '2026-09-01T10:00:00+02:00',
+  updatedAt: '2026-09-01T10:00:00+02:00',
+  deleted: false,
 };
 
 export const ZONE: Zone = {
-  id: 'zone-eins',
+  id: ZONE_ENTRY.id,
   name: 'Schönbuch Nord',
-  polygon: {
-    type: 'Polygon',
-    coordinates: [
-      [
-        [9.0, 48.5],
-        [9.1, 48.5],
-        [9.1, 48.6],
-        [9.0, 48.6],
-        [9.0, 48.5],
-      ],
-    ],
-  },
-  flaecheHa: 42,
-  farbe: 'gruen',
-  notiz: 'Nordhang, alte Fichten, ab Mitte September.',
-  sichtbarkeit: 'privat',
-  erstelltAm: '2026-09-01T10:00:00+02:00',
-  geaendertAm: '2026-09-01T10:00:00+02:00',
+  polygon: { type: 'Polygon', coordinates: RING },
+  areaHa: 42,
+  colour: 'green',
+  note: ZONE_ENTRY.note ?? null,
+  visibility: 'private',
 };
 
 /** Ein geteilter Fund, so wie ihn der Vertrag abgibt. */
@@ -75,11 +117,6 @@ export const SHARED_FIND_ENTRY: FindEntry = {
   updatedAt: '2026-09-04T10:00:00+02:00',
   deleted: false,
 };
-
-/** Eine Seite Funde des Vertrags. */
-export function findPage(items: readonly FindEntry[]): components['schemas']['FindPage'] {
-  return { items: [...items], nextCursor: null };
-}
 
 export const SHARED_FIND: SharedFind = {
   id: 'geteilt-eins',

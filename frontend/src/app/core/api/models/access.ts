@@ -79,3 +79,11 @@ export interface Person {
   roles: RoleRef[];
   createdAt: string;
 }
+
+/** Ein Ausschnitt der Personenliste, mit der Gesamtzahl dahinter. */
+export interface Page<E> {
+  eintraege: E[];
+  gesamt: number;
+  limit: number;
+  offset: number;
+}

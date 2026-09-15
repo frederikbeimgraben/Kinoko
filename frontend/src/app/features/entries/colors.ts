@@ -1,23 +1,17 @@
-import { COLORS, type Color } from '../../core/api/models';
+import { MARKER_COLOURS, type MarkerColour } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import { type ColourSwatch, OBJECT_COLOURS } from '../../ui/colour-swatches/colour-swatches.component';
 
-/**
- * Die sechs Farben des Backends und ihre Werte aus dem Artboard `Zone`.
- *
- * Beide Listen stehen in derselben Reihenfolge; diese Datei ist die einzige
- * Stelle, die das weiß. Nach außen heißt eine Farbe wie im Vertrag (`gruen`),
- * auf der Karte und in der Farbwahl steht ihr Wert.
- */
-export function colorHex(farbe: Color): `#${string}` {
-  const index = COLORS.indexOf(farbe);
+/** Die Farben des Vertrags und die Werte des Artboards `Zone`, gleiche Reihenfolge. */
+export function colourHex(colour: MarkerColour): `#${string}` {
+  const index = MARKER_COLOURS.indexOf(colour);
   return OBJECT_COLOURS[index === -1 ? 0 : index];
 }
 
 /** Die Umkehrung: welche Farbe des Vertrags zu diesem Wert gehört. */
-export function colorFromHex(hex: string): Color {
-  const index = OBJECT_COLOURS.findIndex((farbe) => farbe === hex);
-  return index === -1 ? 'gruen' : COLORS[index];
+export function colourFromHex(hex: string): MarkerColour {
+  const index = OBJECT_COLOURS.findIndex((value) => value === hex);
+  return index === -1 ? 'green' : MARKER_COLOURS[index];
 }
 
 /**
@@ -25,9 +19,9 @@ export function colorFromHex(hex: string): Color {
  * Baustein daraus den Hintergrund des Feldes macht; der Name steht daneben,
  * damit ein Bildschirmleser nicht „#004225“ vorliest.
  */
-export function colorSwatches(i18n: I18nService): ColourSwatch[] {
-  return COLORS.map((farbe) => ({
-    value: colorHex(farbe),
-    label: i18n.translate(`farbe.${farbe}`),
+export function colourSwatches(i18n: I18nService): ColourSwatch[] {
+  return MARKER_COLOURS.map((colour) => ({
+    value: colourHex(colour),
+    label: i18n.translate(`farbe.${colour}`),
   }));
 }

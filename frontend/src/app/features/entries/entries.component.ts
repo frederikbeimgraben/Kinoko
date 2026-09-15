@@ -15,8 +15,8 @@ import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.state';
-import { EntriesState, type EntryInput } from './entries.state';
-import { colorHex } from './colors';
+import { EntriesState, type EntryBody } from './entries.state';
+import { colourHex } from './colors';
 import { hectaresText, isoDatum, shortDate } from './formats';
 
 /** Die vier Chips über der Liste, wie im Artboard `Funde`. */
@@ -100,7 +100,7 @@ export class EntriesComponent {
       .filter((entry) => entry.kind === waiter)
       .map((entry) => this.pendingRow(entry));
     if (chip === 'marker') {
-      return [...pending, ...this.state.marker().map((entry) => this.markerRow(entry))];
+      return [...pending, ...this.state.markers().map((entry) => this.markerRow(entry))];
     }
     if (chip === 'zonen') return [...pending, ...this.state.zones().map((zone) => this.zoneRow(zone))];
     return [...pending, ...this.state.finds().map((fund) => this.findRow(fund))];
@@ -135,11 +135,11 @@ export class EntriesComponent {
     this.map.object.set(row.object);
   }
 
-  private speciesName(slug: string): string {
-    return this.arten.nameOf(slug) ?? slug;
+  private speciesName(id: string | null): string {
+    return id === null ? '' : (this.arten.entryById(id)?.name ?? '');
   }
 
-  private datum(iso: string): string {
+  private dateText(iso: string): string {
     return shortDate(iso, this.i18n.locale(), isoDatum(new Date()), this.i18n.translate('eintraege.heute'));
   }
 
@@ -153,21 +153,21 @@ export class EntriesComponent {
     });
   }
 
-  private sharedBadge(sichtbarkeit: Visibility): Marke | null {
-    return sichtbarkeit === 'geteilt'
+  private sharedBadge(visibility: Visibility): Marke | null {
+    return visibility === 'shared'
       ? { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' }
       : null;
   }
 
-  private findRow(fund: Find): Row {
+  private findRow(find: Find): Row {
     return {
-      schluessel: `fund-${fund.id}`,
+      schluessel: `fund-${find.id}`,
       farbe: OWN_FIND,
-      titel: this.speciesName(fund.artSlug),
-      subline: this.findSubline(this.datum(fund.datum), fund.anzahl, this.state.melder() ?? ''),
-      notiz: fund.notiz ?? '',
-      badge: this.sharedBadge(fund.sichtbarkeit),
-      object: { kind: 'find', id: fund.id },
+      titel: this.speciesName(find.speciesId),
+      subline: this.findSubline(this.dateText(find.foundOn), find.count, this.state.reporter() ?? ''),
+      notiz: find.note ?? '',
+      badge: this.sharedBadge(find.visibility),
+      object: { kind: 'find', id: find.id },
     };
   }
 
@@ -181,7 +181,7 @@ export class EntriesComponent {
       schluessel: `geteilt-${find.id}`,
       farbe: FOREIGN_FIND,
       titel: find.speciesId === null ? '' : (this.arten.entryById(find.speciesId)?.name ?? ''),
-      subline: this.sharedSubline(this.datum(find.foundOn), find.count),
+      subline: this.sharedSubline(this.dateText(find.foundOn), find.count),
       notiz: find.note ?? '',
       badge: { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' },
       object: null,
@@ -191,13 +191,13 @@ export class EntriesComponent {
   private markerRow(marker: Marker): Row {
     return {
       schluessel: `marker-${marker.id}`,
-      farbe: colorHex(marker.farbe),
+      farbe: colourHex(marker.colour),
       titel: marker.name,
       subline: this.i18n.translate('marker.unter', {
-        sichtbarkeit: visibilityText(this.i18n, marker.sichtbarkeit),
+        sichtbarkeit: visibilityText(this.i18n, marker.visibility),
       }),
-      notiz: marker.notiz ?? '',
-      badge: this.sharedBadge(marker.sichtbarkeit),
+      notiz: marker.note ?? '',
+      badge: this.sharedBadge(marker.visibility),
       object: { kind: 'marker', id: marker.id },
     };
   }
@@ -205,31 +205,31 @@ export class EntriesComponent {
   private zoneRow(zone: Zone): Row {
     return {
       schluessel: `zone-${zone.id}`,
-      farbe: colorHex(zone.farbe),
+      farbe: colourHex(zone.colour),
       titel: zone.name,
       subline: this.i18n.translate('zone.unter', {
-        flaeche: hectaresText(zone.flaecheHa, this.i18n.locale()),
-        sichtbarkeit: visibilityText(this.i18n, zone.sichtbarkeit),
+        flaeche: hectaresText(zone.areaHa, this.i18n.locale()),
+        sichtbarkeit: visibilityText(this.i18n, zone.visibility),
       }),
-      notiz: zone.notiz ?? '',
-      badge: this.sharedBadge(zone.sichtbarkeit),
+      notiz: zone.note ?? '',
+      badge: this.sharedBadge(zone.visibility),
       object: { kind: 'zone', id: zone.id },
     };
   }
 
-  private pendingRow(entry: SyncTask<EntryInput>): Row {
+  private pendingRow(entry: SyncTask<EntryBody>): Row {
     const body = entry.body;
-    const titel = 'artSlug' in body ? this.speciesName(body.artSlug) : body.name;
+    const titel = 'foundOn' in body ? this.speciesName(body.speciesId ?? null) : body.name;
     const subline =
-      'datum' in body
-        ? this.findSubline(this.datum(body.datum), body.anzahl ?? null, this.state.melder() ?? '')
+      'foundOn' in body
+        ? this.findSubline(this.dateText(body.foundOn), body.count ?? null, this.state.reporter() ?? '')
         : '';
     return {
       schluessel: `warte-${entry.id}`,
-      farbe: 'farbe' in body ? colorHex(body.farbe) : OWN_FIND,
+      farbe: 'colour' in body && body.colour !== undefined ? colourHex(body.colour) : OWN_FIND,
       titel,
       subline,
-      notiz: body.notiz ?? '',
+      notiz: body.note ?? '',
       badge: { text: this.i18n.translate('eintraege.badge.ausstehend'), variant: 'warning' },
       object: null,
     };

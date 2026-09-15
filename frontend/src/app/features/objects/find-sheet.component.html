@@ -23,9 +23,9 @@
       </div>
       <p class="findsheet__sub">{{ subline() }}</p>
     </div>
-    <app-photo-gallery [findId]="find().id" [fotos]="find().fotos" />
-    @if (find().notiz) {
-      <p class="findsheet__note">{{ find().notiz }}</p>
+    <app-photo-gallery [findId]="find().id" />
+    @if (find().note) {
+      <p class="findsheet__note">{{ find().note }}</p>
     }
     @if (valueText(); as value) {
       <app-card class="flush">

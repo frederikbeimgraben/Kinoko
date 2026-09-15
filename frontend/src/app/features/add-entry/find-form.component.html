@@ -26,15 +26,15 @@
       <app-form-field
         kind="date"
         [label]="'melden.datum' | t"
-        [value]="datum()"
-        [display]="datumText()"
+        [value]="foundOn()"
+        [display]="foundOnText()"
         (valueChange)="setDate($event)"
       />
       <app-form-field
         kind="number"
         [label]="'melden.anzahl' | t"
         [placeholder]="'melden.optional' | t"
-        [value]="anzahl()"
+        [value]="count()"
         (valueChange)="setCount($event)"
       />
     </div>
@@ -42,26 +42,26 @@
       [label]="'melden.notiz' | t"
       [multiline]="true"
       [placeholder]="'melden.optional' | t"
-      [value]="notiz()"
+      [value]="note()"
       (valueChange)="setNote($event)"
     />
     @if (withPhotos()) {
       <div>
         <p class="report__label">{{ 'melden.fotos' | t }}</p>
-        <app-photo-picker [files]="fotos()" (filesChange)="fotos.set($event)" />
+        <app-photo-picker [files]="photos()" (filesChange)="photos.set($event)" />
       </div>
     }
     <div>
       <p class="report__label">{{ 'sichtbarkeit.beschriftung' | t }}</p>
       <app-segmented
-        [options]="segmente()"
-        [value]="sichtbarkeit()"
+        [options]="segments()"
+        [value]="visibility()"
         [label]="'sichtbarkeit.beschriftung' | t"
         (valueChange)="setVisibility($event)"
       />
     </div>
     <div class="report__release">
-      <app-checkbox [ngModel]="fuerTraining()" (ngModelChange)="setTraining($event)">{{
+      <app-checkbox [ngModel]="forTraining()" (ngModelChange)="setTraining($event)">{{
         'melden.training' | t
       }}</app-checkbox>
       <p class="note note--sub">{{ 'melden.trainingUnter' | t }}</p>

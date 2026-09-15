@@ -8,7 +8,7 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
-import { FIND, MARKER, ZONE } from '../../testing/entries-fixture';
+import { FIND_ENTRY, MARKER_ENTRY, ZONE_ENTRY } from '../../testing/entries-fixture';
 import { MapAdapterDouble } from '../../testing/map-doubles';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
@@ -114,7 +114,7 @@ describe('EintragenComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     await vi.waitFor(() => {
-      setup.http.expectOne('/api/funde').flush(FIND);
+      setup.http.expectOne('/api/finds').flush(FIND_ENTRY);
     });
 
     await vi.waitFor(() => {
@@ -145,7 +145,7 @@ describe('EintragenComponent', () => {
     await userEvent.type(screen.getByLabelText('Name'), 'Alter Fichtenhang');
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     await vi.waitFor(() => {
-      setup.http.expectOne('/api/marker').flush(MARKER);
+      setup.http.expectOne('/api/markers').flush(MARKER_ENTRY);
     });
 
     await vi.waitFor(() => {
@@ -162,7 +162,7 @@ describe('EintragenComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.toasts.failure).toEqual(['Gib dem Marker einen Namen.']);
-    setup.http.expectNone('/api/marker');
+    setup.http.expectNone('/api/markers');
   });
 
   it('zählt Eckpunkte und Fläche mit, während die Zone entsteht', async () => {
@@ -223,11 +223,11 @@ describe('EintragenComponent', () => {
 
     await userEvent.type(screen.getByLabelText('Name'), 'Schönbuch Nord');
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
-    const request = await vi.waitFor(() => setup.http.expectOne('/api/zonen'));
+    const request = await vi.waitFor(() => setup.http.expectOne('/api/zones'));
     expect(
       (request.request.body as { polygon: { coordinates: number[][][] } }).polygon.coordinates[0],
     ).toHaveLength(4);
-    request.flush(ZONE);
+    request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
       expect(setup.toasts.success).toEqual(['Die Zone ist gespeichert.']);

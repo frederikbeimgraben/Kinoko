@@ -8,11 +8,13 @@ import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import {
   FIND,
+  FIND_ENTRY,
   MARKER,
+  MARKER_ENTRY,
   SHARED_FIND,
   SHARED_FIND_ENTRY,
   ZONE,
-  findPage,
+  ZONE_ENTRY,
   page,
 } from '../../testing/entries-fixture';
 import { MapAdapterDouble } from '../../testing/map-doubles';
@@ -61,14 +63,14 @@ async function build(): Promise<Setup> {
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
-    http.expectOne('/api/funde?limit=200').flush(page([FIND]));
+    http.expectOne('/api/finds?mine=true&limit=50').flush(page([FIND_ENTRY]));
   });
-  http.expectOne('/api/marker?limit=200').flush(page([MARKER]));
-  http.expectOne('/api/zonen?limit=200').flush(page([ZONE]));
+  http.expectOne('/api/markers?limit=50').flush(page([MARKER_ENTRY]));
+  http.expectOne('/api/zones?limit=50').flush(page([ZONE_ENTRY]));
   await loaded;
   const geteilt = eintraege.loadShared();
   await vi.waitFor(() => {
-    http.expectOne('/api/finds?mine=false&limit=50').flush(findPage([SHARED_FIND_ENTRY]));
+    http.expectOne('/api/finds?mine=false&limit=50').flush(page([SHARED_FIND_ENTRY]));
   });
   await geteilt;
   detectChanges();

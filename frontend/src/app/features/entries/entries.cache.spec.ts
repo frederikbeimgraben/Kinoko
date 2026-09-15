@@ -17,7 +17,7 @@ describe('EntriesCache', () => {
   it('legt die eigenen Objekte ab und gibt sie zurück', async () => {
     const cache = TestBed.inject(EntriesCache);
 
-    await cache.write({ finds: [FIND], marker: [MARKER], zones: [ZONE] });
+    await cache.write({ finds: [FIND], markers: [MARKER], zones: [ZONE] });
 
     expect((await cache.read())?.finds).toEqual([FIND]);
   });

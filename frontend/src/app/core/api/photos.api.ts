@@ -1,9 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { ApiClient, type Query, type Upload } from './api-client';
+import { ApiClient, type Query, type Silent, type Upload } from './api-client';
+import { ENTRY_PATHS } from './entry-paths';
 import type { Licence, Photo, PhotoState } from './models';
 
-const PATH = '/photos';
+const PATH = ENTRY_PATHS.photo;
+
+/** Ein Foto am eigenen Fund gehört der Person, die es aufgenommen hat. */
+const OWN_LICENCE: Licence = 'own';
 
 /** Was der Dienst neben der Datei erwartet. Fotograf und Lizenz sind Pflicht. */
 export interface PhotoInput {
@@ -48,6 +52,17 @@ export class PhotosApi {
   /** Lädt ein Foto hoch und meldet den Anteil. */
   create(input: PhotoInput, file: File): Observable<Upload<Photo>> {
     return this.api.uploadFile<Photo>(PATH, 'file', file, { ...input });
+  }
+
+  /** Ein Foto an einem eigenen Fund. Der Fund trägt das Recht daran. */
+  ofFind(findId: string, photographer: string, file: File, options?: Silent): Observable<Photo> {
+    return this.api.postFile<Photo>(
+      PATH,
+      'file',
+      file,
+      { findId, photographer, licence: OWN_LICENCE },
+      options,
+    );
   }
 
   remove(id: string): Observable<null> {

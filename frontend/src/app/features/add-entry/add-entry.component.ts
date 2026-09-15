@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { ToastService } from '@stupa-makers/ui-kit';
-import type { Color } from '../../core/api/models';
+import type { MarkerColour } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
@@ -19,7 +19,7 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { EntriesState, type SaveResult } from '../entries/entries.state';
-import { colorHex } from '../entries/colors';
+import { colourHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapState } from '../map/map.state';
@@ -82,9 +82,9 @@ export class AddEntryComponent implements OnDestroy {
 
   protected readonly saving = signal(false);
   /** Die Farbe, in der die Zone gerade gezeichnet wird. */
-  protected readonly zoneColor = signal<Color>('gruen');
+  protected readonly zoneColor = signal<MarkerColour>('green');
 
-  protected readonly flaecheHa = computed(() => {
+  protected readonly areaHa = computed(() => {
     const compute = this.desktop();
     const polygon = asPolygon(this.state.ring());
     return compute !== null && polygon !== null ? compute(polygon) : 0;
@@ -93,12 +93,12 @@ export class AddEntryComponent implements OnDestroy {
   protected readonly drawInstructions = computed(() =>
     this.i18n.translate('zone.zeichnenAnleitung', {
       punkte: this.state.ring().length,
-      flaeche: hectaresText(this.flaecheHa(), this.i18n.locale()),
+      flaeche: hectaresText(this.areaHa(), this.i18n.locale()),
     }),
   );
 
   protected readonly areaText = computed(() =>
-    this.i18n.translate('zone.flaeche', { flaeche: hectaresText(this.flaecheHa(), this.i18n.locale()) }),
+    this.i18n.translate('zone.flaeche', { flaeche: hectaresText(this.areaHa(), this.i18n.locale()) }),
   );
 
   constructor() {
@@ -163,7 +163,7 @@ export class AddEntryComponent implements OnDestroy {
   protected async saveFind(submission: FindSubmission): Promise<void> {
     this.saving.set(true);
     try {
-      this.report(await this.eintraege.saveFind(submission.input, submission.fotos), 'melden');
+      this.report(await this.eintraege.saveFind(submission.input, submission.photos), 'melden');
     } finally {
       this.saving.set(false);
     }
@@ -176,12 +176,9 @@ export class AddEntryComponent implements OnDestroy {
     this.saving.set(true);
     try {
       const result = await this.eintraege.saveMarker({
-        name: values.name,
+        ...values,
         lat: location[1],
         lon: location[0],
-        farbe: values.farbe,
-        notiz: values.notiz,
-        sichtbarkeit: values.sichtbarkeit,
       });
       this.report(result, 'marker');
     } finally {
@@ -195,13 +192,7 @@ export class AddEntryComponent implements OnDestroy {
     if (!values || polygon === null) return;
     this.saving.set(true);
     try {
-      const result = await this.eintraege.saveZone({
-        name: values.name,
-        polygon,
-        farbe: values.farbe,
-        notiz: values.notiz,
-        sichtbarkeit: values.sichtbarkeit,
-      });
+      const result = await this.eintraege.saveZone({ ...values, polygon });
       this.report(result, 'zone');
     } finally {
       this.saving.set(false);
@@ -210,7 +201,7 @@ export class AddEntryComponent implements OnDestroy {
 
   /** Die Vorschau auf der Karte folgt der gewählten Farbe. */
   protected onZoneValues(values: ObjectValues): void {
-    this.zoneColor.set(values.farbe);
+    this.zoneColor.set(values.colour);
   }
 
   private report(result: SaveResult, range: 'melden' | 'marker' | 'zone'): void {
@@ -233,7 +224,7 @@ export class AddEntryComponent implements OnDestroy {
     this.desktop.set(await loadAreaCalculator());
     const map = this.adapter.rawMap();
     if (map === null || this.sessionRunning !== null) return;
-    this.sessionRunning = this.draw(map, colorHex(this.zoneColor()));
+    this.sessionRunning = this.draw(map, colourHex(this.zoneColor()));
     this.session = await this.sessionRunning;
     this.session?.showRing(this.state.ring());
   }

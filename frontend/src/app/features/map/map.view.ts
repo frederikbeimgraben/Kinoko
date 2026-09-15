@@ -33,7 +33,7 @@ export class MapView {
 
   /** Die Zahlen neben den Schaltern des Ebenen-Knopfs. */
   readonly entryCounts = computed(() => ({
-    markers: this.entries.marker().length,
+    markers: this.entries.markers().length,
     zones: this.entries.zones().length,
     sharedFinds: this.entries.shared().length,
   }));

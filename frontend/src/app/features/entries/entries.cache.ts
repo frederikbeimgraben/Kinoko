@@ -5,7 +5,7 @@ import { OfflineStore } from '../../core/offline/offline-store';
 /** Die eigenen Objekte, so wie sie zuletzt vom Server kamen. */
 export interface CachedEntries {
   finds: readonly Find[];
-  marker: readonly Marker[];
+  markers: readonly Marker[];
   zones: readonly Zone[];
 }
 

@@ -67,7 +67,7 @@ export class ObjectSheetComponent {
   protected readonly marker = computed<Marker | null>(() => {
     const offen = this.map.object();
     if (offen?.kind !== 'marker') return null;
-    return this.eintraege.marker().find((candidate) => candidate.id === offen.id) ?? null;
+    return this.eintraege.markers().find((candidate) => candidate.id === offen.id) ?? null;
   });
 
   protected readonly zone = computed<Zone | null>(() => {
@@ -88,7 +88,7 @@ export class ObjectSheetComponent {
     const zone = this.zone();
     if (!zone) return null;
     const ring = zone.polygon.coordinates[0];
-    const sum = ring.reduce((links, point) => [links[0] + point[0], links[1] + point[1]], [0, 0]);
+    const sum = ring.reduce((left, point) => [left[0] + point[0], left[1] + point[1]], [0, 0]);
     return [sum[0] / ring.length, sum[1] / ring.length];
   });
 

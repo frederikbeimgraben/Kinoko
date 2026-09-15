@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
-import { MARKER } from '../../testing/entries-fixture';
+import { MARKER, MARKER_ENTRY } from '../../testing/entries-fixture';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { MarkerSheetComponent } from './marker-sheet.component';
 
@@ -50,9 +50,9 @@ describe('MarkerBlattComponent', () => {
 
     await userEvent.click(screen.getByRole('radio', { name: 'Rot' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
-    const request = await vi.waitFor(() => setup.http.expectOne(`/api/marker/${MARKER.id}`));
-    expect((request.request.body as { farbe: string }).farbe).toBe('rot');
-    request.flush(MARKER);
+    const request = await vi.waitFor(() => setup.http.expectOne(`/api/markers/${MARKER.id}`));
+    expect((request.request.body as { colour: string }).colour).toBe('red');
+    request.flush(MARKER_ENTRY);
 
     await vi.waitFor(() => {
       expect(setup.toasts.success).toEqual(['Gespeichert.']);
@@ -80,7 +80,7 @@ describe('MarkerBlattComponent', () => {
     setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     await vi.waitFor(() => {
-      setup.http.expectOne(`/api/marker/${MARKER.id}`).flush(null);
+      setup.http.expectOne(`/api/markers/${MARKER.id}`).flush(null);
     });
 
     await vi.waitFor(() => {

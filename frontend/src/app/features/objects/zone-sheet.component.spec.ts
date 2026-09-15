@@ -10,18 +10,19 @@ import type { ZoneValue } from '../../core/api/models';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
-import { ZONE } from '../../testing/entries-fixture';
+import { ZONE, ZONE_ENTRY } from '../../testing/entries-fixture';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { DrawerDouble, rawMap, drawerProviders } from '../../testing/drawer-double';
 import { ZoneSheetComponent } from './zone-sheet.component';
 
 const VALUE: ZoneValue = {
-  art: 'steinpilz',
-  woche: { jahr: 2025, woche: 40 },
-  flaechenmittel: 18,
-  punkte: 1240,
-  eigeneFunde: 2,
+  speciesId: 'steinpilz',
+  year: 2025,
+  week: 40,
+  areaMean: 18,
+  points: 1240,
+  ownFinds: 2,
 };
 
 function provider(map: MapAdapterDouble, drawer: DrawerDouble): (EnvironmentProviders | Provider)[] {
@@ -84,7 +85,7 @@ async function build(withMap = false): Promise<Setup> {
 /** Der Wert der Zone kommt erst, wenn Manifest und Katalog stehen. */
 async function answerValue(setup: Setup, value: ZoneValue | null = VALUE): Promise<void> {
   const request = await vi.waitFor(() =>
-    setup.http.expectOne(`/api/zonen/${ZONE.id}/wert?art=steinpilz&jahr=2025&woche=40`),
+    setup.http.expectOne(`/api/zones/${ZONE.id}/value?speciesId=steinpilz&year=2025&week=40`),
   );
   if (value === null) request.error(new ProgressEvent('error'));
   else request.flush(value);
@@ -129,9 +130,9 @@ describe('ZoneBlattComponent', () => {
 
     await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
-    const request = await vi.waitFor(() => setup.http.expectOne(`/api/zonen/${ZONE.id}`));
-    expect((request.request.body as { sichtbarkeit: string }).sichtbarkeit).toBe('geteilt');
-    request.flush(ZONE);
+    const request = await vi.waitFor(() => setup.http.expectOne(`/api/zones/${ZONE.id}`));
+    expect((request.request.body as { visibility: string }).visibility).toBe('shared');
+    request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
       expect(setup.toasts.success).toEqual(['Gespeichert.']);
@@ -146,7 +147,7 @@ describe('ZoneBlattComponent', () => {
     setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     await vi.waitFor(() => {
-      setup.http.expectOne(`/api/zonen/${ZONE.id}`).flush(null);
+      setup.http.expectOne(`/api/zones/${ZONE.id}`).flush(null);
     });
 
     await vi.waitFor(() => {
@@ -183,11 +184,11 @@ describe('ZoneBlattComponent', () => {
       [9.2, 48.7],
     ]);
     await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte übernehmen' }));
-    const request = await vi.waitFor(() => setup.http.expectOne(`/api/zonen/${ZONE.id}`));
+    const request = await vi.waitFor(() => setup.http.expectOne(`/api/zones/${ZONE.id}`));
     expect(
       (request.request.body as { polygon: { coordinates: number[][][] } }).polygon.coordinates[0],
     ).toHaveLength(4);
-    request.flush(ZONE);
+    request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
       expect(setup.toasts.success).toEqual(['Gespeichert.']);
@@ -207,7 +208,7 @@ describe('ZoneBlattComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
     setup.refresh();
 
-    setup.http.expectNone(`/api/zonen/${ZONE.id}`);
+    setup.http.expectNone(`/api/zones/${ZONE.id}`);
     expect(setup.drawer.stopped).toBe(1);
   });
 
@@ -223,6 +224,6 @@ describe('ZoneBlattComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte übernehmen' }));
     setup.refresh();
 
-    setup.http.expectNone(`/api/zonen/${ZONE.id}`);
+    setup.http.expectNone(`/api/zones/${ZONE.id}`);
   });
 });

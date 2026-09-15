@@ -21,9 +21,9 @@ describe('ObjektFormularComponent', () => {
 
     expect(fixture.componentInstance.values()).toEqual({
       name: 'Schönbuch Nord',
-      farbe: 'blau',
-      notiz: 'Nordhang',
-      sichtbarkeit: 'geteilt',
+      colour: 'blue',
+      note: 'Nordhang',
+      visibility: 'shared',
     });
     await noViolations(container);
   });
@@ -37,9 +37,9 @@ describe('ObjektFormularComponent', () => {
   it('füllt sich aus einem vorhandenen Objekt und lässt es ändern', async () => {
     const start: ObjectValues = {
       name: 'Schönbuch Nord',
-      farbe: 'rot',
-      notiz: 'Alte Fichten',
-      sichtbarkeit: 'geteilt',
+      colour: 'red',
+      note: 'Alte Fichten',
+      visibility: 'shared',
     };
     const { fixture } = await render(ObjectFormComponent, {
       inputs: { ...LABELS, start },
@@ -50,11 +50,11 @@ describe('ObjektFormularComponent', () => {
 
     await userEvent.click(screen.getByRole('tab', { name: 'Privat' }));
 
-    expect(fixture.componentInstance.values()?.sichtbarkeit).toBe('privat');
+    expect(fixture.componentInstance.values()?.visibility).toBe('private');
   });
 
   it('lässt das Namensfeld weg, wo der Name schon als Überschrift steht', async () => {
-    const start: ObjectValues = { name: 'Zone', farbe: 'gruen', notiz: null, sichtbarkeit: 'privat' };
+    const start: ObjectValues = { name: 'Zone', colour: 'green', note: null, visibility: 'private' };
     const { fixture } = await render(ObjectFormComponent, {
       inputs: { ...LABELS, withoutName: true, start },
     });
@@ -70,7 +70,7 @@ describe('ObjektFormularComponent', () => {
 
     await userEvent.click(screen.getByRole('radio', { name: 'Gold' }));
 
-    expect(reported.at(-1)?.farbe).toBe('gold');
+    expect(reported.at(-1)?.colour).toBe('gold');
     expect(OBJECT_COLOURS).toContain('#876010');
   });
 });

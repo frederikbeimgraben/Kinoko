@@ -6,7 +6,7 @@ import { circleAround } from '../../map/geo-circle';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
 import { EntriesState } from '../entries/entries.state';
-import { colorHex } from '../entries/colors';
+import { colourHex } from '../entries/colors';
 import { SpeciesState } from '../species/species.state';
 import { MapState, type ObjectKind } from '../map/map.state';
 
@@ -98,7 +98,7 @@ export class MapObjectsDirective {
       this.put('zonen', this.map.showZones(), () => this.zones(this.eintraege.zones()));
     });
     effect(() => {
-      this.put('marker', this.map.showMarkers(), () => this.marker(this.eintraege.marker()));
+      this.put('marker', this.map.showMarkers(), () => this.markers(this.eintraege.markers()));
     });
     effect(() => {
       this.put('geteilteFunde', this.map.showSharedFinds(), () => this.shared(this.eintraege.shared()));
@@ -127,19 +127,19 @@ export class MapObjectsDirective {
       zones.map((zone) => ({
         type: 'Feature',
         geometry: zone.polygon,
-        properties: { id: zone.id, farbe: colorHex(zone.farbe) },
+        properties: { id: zone.id, farbe: colourHex(zone.colour) },
       })),
     );
   }
 
-  private marker(marker: readonly Marker[]): FeatureCollection {
+  private markers(markers: readonly Marker[]): FeatureCollection {
     return collection(
-      marker.map((entry) => point(entry.id, entry.lon, entry.lat, { farbe: colorHex(entry.farbe) })),
+      markers.map((entry) => point(entry.id, entry.lon, entry.lat, { farbe: colourHex(entry.colour) })),
     );
   }
 
   private finds(finds: readonly Find[]): FeatureCollection {
-    return collection(finds.map((fund) => point(fund.id, fund.lon, fund.lat, { farbe: OWN_FIND })));
+    return collection(finds.map((find) => point(find.id, find.lon, find.lat, { farbe: OWN_FIND })));
   }
 
   /** Der Dienst gibt nur fremde geteilte Funde her; die eigenen liegen darüber. */

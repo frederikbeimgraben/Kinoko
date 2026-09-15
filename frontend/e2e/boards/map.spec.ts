@@ -27,9 +27,8 @@ function guard(board: string, device: 'phone' | 'wide'): void {
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
-  '/api/funde': { eintraege: [], gesamt: 0 },
-  '/api/marker': MARKERS,
-  '/api/zonen': ZONES,
+  '/api/markers': MARKERS,
+  '/api/zones': ZONES,
   '/api/finds': SHARED_FINDS,
 };
 
