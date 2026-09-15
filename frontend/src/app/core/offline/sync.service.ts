@@ -106,6 +106,7 @@ export class SyncService {
   }
 
   private async send(task: SyncTask): Promise<'sent' | 'kept' | 'stop'> {
+    if (task.kind === 'photo') return this.sendPhoto(task);
     try {
       await firstValueFrom(this.request(task));
     } catch (failure) {
@@ -140,6 +141,20 @@ export class SyncService {
         return 'stop';
       }
       left = left.slice(1);
+    }
+    return 'sent';
+  }
+
+  /** Eine Einreichung geht als Formular hinaus, nicht als `PUT` auf ein Objekt. */
+  private async sendPhoto(task: SyncTask): Promise<'sent' | 'stop'> {
+    const blob = task.photos[0];
+    if (blob === undefined) return 'sent';
+    const file = new File([blob], `${task.target}.jpg`, { type: blob.type || 'image/jpeg' });
+    const fields = task.body as Record<string, string | undefined>;
+    try {
+      await firstValueFrom(this.api.postFile(SYNC_PATHS.photo, 'file', file, fields, { quiet: true }));
+    } catch {
+      return 'stop';
     }
     return 'sent';
   }

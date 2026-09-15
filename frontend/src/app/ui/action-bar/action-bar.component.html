@@ -1,8 +1,10 @@
 <div class="footer" [class.footer--inline]="inline()">
   <app-button
     class="footer__main"
-    [variant]="danger() ? 'danger' : 'primary'"
+    [variant]="primaryVariant()"
     [block]="!inline()"
+    [loading]="busy()"
+    [disabled]="busy()"
     (click)="primaryClick.emit()"
   >
     {{ primary() }}

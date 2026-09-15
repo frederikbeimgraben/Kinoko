@@ -1,0 +1,9 @@
+@use 'section';
+
+@include section.block;
+
+.section__parts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

@@ -2,26 +2,26 @@
   <div class="reject__scrim" aria-hidden="true" (click)="cancel()"></div>
   <div #layer="modalLayer" class="reject__panel" appModalLayer (dismissed)="cancel()">
     <span class="reject__handle" aria-hidden="true"></span>
-    <h2 class="reject__title" [id]="layer.labelId">{{ 'bild.grundFrage' | t }}</h2>
+    <h2 class="reject__title" [id]="layer.labelId">{{ 'image.rejectReasonTitle' | t }}</h2>
     <app-chip-group
       [chips]="chips()"
       [value]="reason() ? [reason()] : []"
-      [label]="'bild.grundVorschlaege' | t"
+      [label]="'image.rejectReasonTitle' | t"
       (valueChange)="pick($event.at(0) ?? '')"
     />
     <app-form-field
-      [label]="'bild.grundFeld' | t"
-      [placeholder]="'bild.grundPlatzhalter' | t"
+      [label]="'image.rejectReasonPlaceholder' | t"
+      [placeholder]="'image.rejectReasonPlaceholder' | t"
       [multiline]="true"
+      [hideLabel]="true"
       [value]="reason()"
       (valueChange)="write($event)"
     />
-    <p class="note note--sub">{{ hint() }}</p>
     <app-button variant="danger" [block]="true" [disabled]="!ready()" (click)="confirm()">
-      {{ 'bild.ablehnen' | t }}
+      {{ 'image.reject' | t }}
     </app-button>
     <app-button variant="secondary" [block]="true" (click)="cancel()">
-      {{ 'objekt.abbrechen' | t }}
+      {{ 'common.back' | t }}
     </app-button>
   </div>
 }

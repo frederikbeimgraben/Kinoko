@@ -39,8 +39,17 @@
   text-align: start;
 }
 
-:host(:nth-child(even)) .kv__label,
-:host(:nth-child(even)) .kv__value {
+// Eine Spalte des Vergleichs beginnt links unter ihrem Namen und steht mittig,
+// damit Marke, Fläche und Balken einer Zeile auf einer Linie liegen.
+.kv__value--column {
+  align-items: flex-start;
+  justify-content: center;
+  padding-inline: var(--key-value-table-gap);
+  text-align: start;
+}
+
+:host(:nth-child(even):not(.kv--columns)) .kv__label,
+:host(:nth-child(even):not(.kv--columns)) .kv__value {
   background: var(--color-bg);
 }
 
@@ -75,8 +84,4 @@
   color: var(--color-text-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-.kv__value--head {
-  align-items: flex-start;
 }

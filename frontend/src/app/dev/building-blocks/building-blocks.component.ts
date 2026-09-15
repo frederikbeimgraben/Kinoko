@@ -100,6 +100,7 @@ import {
   STEM_HEIGHT_SPANS,
   STEM_THICKNESS_SPANS,
 } from './sample-data';
+import { photoPath } from '../../core/api/models';
 
 const THEME_ATTRIBUTE = 'data-theme';
 const DARK = 'dark';
@@ -190,6 +191,7 @@ export class BuildingBlocksComponent {
   protected readonly histogramm = SAMPLE_HISTOGRAM;
   protected readonly objectColors = OBJECT_COLOURS;
   protected readonly sampleImage = SAMPLE_IMAGE;
+  protected readonly sampleImagePath = photoPath(SAMPLE_IMAGE.id, 'thumb');
   protected readonly capColours = CAP_COLOURS;
   protected readonly gradientColours = GRADIENT_COLOURS;
   protected readonly multiColours = MULTI_COLOURS;

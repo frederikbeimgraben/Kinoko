@@ -5,13 +5,7 @@
       <h2 class="viewer__title" [id]="layer.labelId">{{ title() }}</h2>
       <app-icon-button icon="close" [label]="'common.close' | t" (pressed)="closed.emit()" />
     </header>
-    <img
-      class="viewer__image"
-      [src]="image.url"
-      [alt]="alt()"
-      [width]="image.width"
-      [height]="image.height"
-    />
+    <app-private-image class="viewer__image" fit="contain" [path]="path()" [alt]="alt()" />
     @if (image.caption; as caption) {
       <p class="viewer__caption">{{ caption }}</p>
     }

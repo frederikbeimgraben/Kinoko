@@ -1,0 +1,17 @@
+@if (period(); as time) {
+  <h2 class="section__title">{{ 'species.field.time' | t }}</h2>
+  <div class="section__card">
+    <div class="time">
+      <div class="time__head">
+        <span>{{ 'species.section.growth' | t }}</span>
+        <span class="time__range">{{ time.text }}</span>
+      </div>
+      <app-year-band
+        [fromMonth]="time.from"
+        [toMonth]="time.to"
+        [months]="marks()"
+        [label]="'species.growthPeriod' | t"
+      />
+    </div>
+  </div>
+}

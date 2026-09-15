@@ -1,5 +1,7 @@
 <div class="queue">
-  <p class="queue__counter">{{ counter() }}</p>
+  @if (showCounter()) {
+    <p class="queue__counter">{{ counter() }}</p>
+  }
   @if (current(); as item) {
     <div class="queue__stack">
       @if (behind(); as ghost) {

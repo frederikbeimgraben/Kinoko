@@ -3,8 +3,12 @@ import type {
   CapShape,
   Dimension,
   Edibility,
+  GillAttachment,
+  GillEdge,
+  GillSpacing,
   HymeniumType,
   Protection,
+  Speed,
 } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { GroupKey } from './facets';
@@ -66,6 +70,34 @@ export const PART_TEXT: Record<BodyPart, TranslationKey> = {
   spore: 'species.field.spore',
   tubes: 'species.field.tubes',
   pores: 'species.field.pores',
+};
+
+export const SPEED_TEXT: Record<Speed, TranslationKey> = {
+  immediate: 'enum.speed.instant',
+  '30s': 'enum.speed.s30',
+  '1min': 'enum.speed.min1',
+  '3min': 'enum.speed.min3',
+  longer: 'enum.speed.longer',
+  permanent: 'enum.speed.stays',
+};
+
+export const ATTACHMENT_TEXT: Record<GillAttachment, TranslationKey> = {
+  free: 'species.attachment.free',
+  adnate: 'species.attachment.adnate',
+  emarginate: 'species.attachment.notched',
+  decurrent: 'species.attachment.decurrent',
+};
+
+export const SPACING_TEXT: Record<GillSpacing, TranslationKey> = {
+  close: 'enum.gill_spacing.close',
+  normal: 'enum.gill_spacing.normal',
+  distant: 'enum.gill_spacing.distant',
+};
+
+export const EDGE_TEXT: Record<GillEdge, TranslationKey> = {
+  smooth: 'enum.gill_edge.smooth',
+  serrate: 'enum.gill_edge.serrate',
+  ciliate: 'enum.gill_edge.ciliate',
 };
 
 export const DIMENSION_TEXT: Record<Dimension, TranslationKey> = {

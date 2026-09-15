@@ -69,8 +69,9 @@ describe('KeyValueTableComponent', () => {
     const values = container.querySelectorAll('.kv__value');
     expect(values).toHaveLength(4);
     // Beide Spalten einer Zeile tragen dieselbe Fläche, auch wenn ihr Wert
-    // sich unterscheidet: nur der Zebra-Streifen der Tabelle wechselt je Zeile.
+    // sich unterscheidet. Ein Zebra bleibt im Vergleich ganz aus.
     expect(styleOf(values[0]).backgroundColor).toBe(styleOf(values[1]).backgroundColor);
     expect(styleOf(values[2]).backgroundColor).toBe(styleOf(values[3]).backgroundColor);
+    expect(styleOf(values[0]).backgroundColor).toBe(styleOf(values[2]).backgroundColor);
   });
 });

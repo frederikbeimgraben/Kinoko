@@ -1,5 +1,5 @@
 /** Die Objekte, die ohne Netz entstehen dürfen. */
-export type SyncKind = 'find' | 'marker' | 'zone';
+export type SyncKind = 'find' | 'marker' | 'zone' | 'photo';
 
 /** Was mit einem Objekt geschehen soll. */
 export type SyncOperation = 'create' | 'update' | 'delete';
@@ -9,6 +9,7 @@ export const SYNC_PATHS: Record<SyncKind, string> = {
   find: '/finds',
   marker: '/markers',
   zone: '/zones',
+  photo: '/photos',
 };
 
 /** Ein Auftrag, der fehlt. `target` kommt vom Gerät und macht `PUT` idempotent. */

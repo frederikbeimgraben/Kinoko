@@ -1,0 +1,13 @@
+@for (sense of senses(); track sense.titleKey) {
+  <section class="sense">
+    <h2 class="section__title">{{ sense.titleKey | t }}</h2>
+    <div class="section__card sense__card">
+      @if (sense.tags.length > 0) {
+        <app-tag-list [tags]="sense.tags" [label]="label(sense)" />
+      }
+      @if (sense.text; as text) {
+        <p class="sense__text">{{ text }}</p>
+      }
+    </div>
+  </section>
+}

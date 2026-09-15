@@ -10,6 +10,30 @@
   flex: 1;
   flex-direction: column;
   min-block-size: 0;
-  padding: 20px var(--size-gutter);
+  padding: var(--size-gutter);
   overflow-y: auto;
+}
+
+.page__column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-inline-size: 0;
+}
+
+// Am Rechner stehen Bilder und Saison links, die Daten rechts.
+.page--wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.page--wide .page__column {
+  padding: var(--size-gutter);
+  overflow-y: auto;
+}
+
+.page--wide .page__column + .page__column {
+  border-inline-start: var(--border-width) solid var(--color-border);
 }

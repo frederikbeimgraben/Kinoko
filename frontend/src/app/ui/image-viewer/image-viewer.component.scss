@@ -31,10 +31,10 @@
 // Begrenzt, sonst schiebt ein hochkantes Bild die Tabelle aus dem Fenster.
 .viewer__image {
   display: block;
+  flex: 0 0 auto;
   inline-size: 100%;
-  max-block-size: 60vh;
+  block-size: 60vh;
   margin-block-end: var(--space-4);
-  object-fit: contain;
   background: var(--color-surface-sunken);
   border-radius: var(--radius-md);
 }

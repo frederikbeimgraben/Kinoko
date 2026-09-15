@@ -4,8 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
-import { speciesImage } from '../../testing/species-images-fixture';
+import { photo } from '../../testing/photos-fixture';
 import { ImageTileComponent } from './image-tile.component';
+
+const LIST_PATH = '/api/photos/bild-eins/list';
 
 describe('ImageTileComponent', () => {
   beforeEach(() => {
@@ -18,10 +20,10 @@ describe('ImageTileComponent', () => {
 
   it('zeigt Bild und Herkunft', async () => {
     const { container, detectChanges } = await render(ImageTileComponent, {
-      inputs: { image: speciesImage() },
+      inputs: { image: photo() },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), LIST_PATH);
     detectChanges();
 
     expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
@@ -30,10 +32,10 @@ describe('ImageTileComponent', () => {
 
   it('zeigt die Titelbild-Marke nur, wenn das Bild führt', async () => {
     const { container, detectChanges } = await render(ImageTileComponent, {
-      inputs: { image: speciesImage(), lead: true },
+      inputs: { image: photo(), lead: true },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), LIST_PATH);
     detectChanges();
 
     expect(container.querySelector('.tile__badge')).not.toBeNull();
@@ -41,10 +43,10 @@ describe('ImageTileComponent', () => {
 
   it('lässt die Marke ohne Führung weg', async () => {
     const { container, detectChanges } = await render(ImageTileComponent, {
-      inputs: { image: speciesImage(), lead: false },
+      inputs: { image: photo(), lead: false },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), LIST_PATH);
     detectChanges();
 
     expect(container.querySelector('.tile__badge')).toBeNull();
@@ -52,10 +54,10 @@ describe('ImageTileComponent', () => {
 
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {
     const { container, detectChanges } = await render(ImageTileComponent, {
-      inputs: { image: speciesImage({ photographer: 'Marie Weber', licence: 'cc0' }) },
+      inputs: { image: photo({ photographer: 'Marie Weber', licence: 'cc0' }) },
       providers: [provideHttpClient(), provideHttpClientTesting(), EMPTY_CATALOG],
     });
-    flush(TestBed.inject(HttpTestingController), '/api/species-images/bild-eins/thumb');
+    flush(TestBed.inject(HttpTestingController), LIST_PATH);
     detectChanges();
 
     noGermanText(container);

@@ -1,0 +1,8 @@
+<h2 class="section__title">{{ 'species.section.colour' | t }}</h2>
+<div class="section__card">
+  @for (row of rows(); track row.part) {
+    <app-list-row kind="catalogue" [title]="row.part" [subline]="row.names">
+      <app-colour-field trail [colours]="row.colours" [mode]="row.mode" [label]="row.names" />
+    </app-list-row>
+  }
+</div>

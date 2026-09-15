@@ -1,0 +1,13 @@
+@if (rows().length > 0) {
+  <h2 class="section__title">{{ 'species.section.hymenium' | t }}</h2>
+  <div class="section__card">
+    @for (row of rows(); track row.labelKey) {
+      <app-list-row kind="catalogue" [title]="row.labelKey | t" [value]="row.value" />
+    }
+    @if (colours().length > 0) {
+      <app-list-row kind="catalogue" [title]="'common.colour' | t">
+        <app-colour-field trail [colours]="colours()" [mode]="mode()" [label]="colourLabel()" />
+      </app-list-row>
+    }
+  </div>
+}

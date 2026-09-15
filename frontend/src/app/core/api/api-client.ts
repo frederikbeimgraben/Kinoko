@@ -4,6 +4,7 @@ import {
   HttpEventType,
   HttpHeaders,
   HttpParams,
+  type HttpEvent,
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { ToastService } from '@stupa-makers/ui-kit';
@@ -184,13 +185,11 @@ export class ApiClient {
 }
 
 /** Deutet ein Ereignis des Hochladens. Ein Zwischenschritt ohne Anteil fällt weg. */
-function step<T>(event: { type: HttpEventType; [key: string]: unknown }): Upload<T> | null {
+function step<T>(event: HttpEvent<T>): Upload<T> | null {
   if (event.type === HttpEventType.UploadProgress) {
-    const total = event['total'] as number | undefined;
-    const loaded = event['loaded'] as number;
-    if (total === undefined || total === 0) return null;
-    return { percent: Math.round((loaded / total) * 100), body: null };
+    if (event.total === undefined || event.total === 0) return null;
+    return { percent: Math.round((event.loaded / event.total) * 100), body: null };
   }
-  if (event.type === HttpEventType.Response) return { percent: 100, body: event['body'] as T };
+  if (event.type === HttpEventType.Response) return { percent: 100, body: event.body };
   return null;
 }

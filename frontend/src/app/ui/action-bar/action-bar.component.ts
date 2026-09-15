@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ButtonComponent, type ButtonVariant } from '@stupa-makers/ui-kit';
 
 /**
  * Der Fuß trägt oben die Hauptaktion und darunter höchstens eine zweite.
@@ -20,7 +20,16 @@ export class ActionBarComponent {
   readonly secondaryDanger = input(false);
   /** Im Modal stehen die Knöpfe nebeneinander am rechten Rand. */
   readonly inline = input(false);
+  /** Zwei gleichrangige Wege: die erste Aktion trägt kein Gewicht. */
+  readonly quiet = input(false);
+  /** Die Hauptaktion läuft schon: Spinner statt Text, kein zweiter Auftrag. */
+  readonly busy = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();
+
+  protected readonly primaryVariant = computed<ButtonVariant>(() => {
+    if (this.danger()) return 'danger';
+    return this.quiet() ? 'secondary' : 'primary';
+  });
 }

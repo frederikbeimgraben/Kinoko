@@ -9,10 +9,10 @@ import { FormFieldComponent } from '../form-field/form-field.component';
 
 /** Die Vorschläge aus dem Artboard. Ein Tipp schreibt den Satz ins Feld. */
 const SUGGESTIONS: readonly TranslationKey[] = [
-  'bild.grund.unscharf',
-  'bild.grund.nichtErkennbar',
-  'bild.grund.rechteUnklar',
-  'bild.grund.falscheArt',
+  'image.rejectReason.blurry',
+  'image.rejectReason.speciesUnclear',
+  'image.rejectReason.rightsUnclear',
+  'image.rejectReason.wrongSpecies',
 ];
 
 /** Das Blatt nach dem Grund einer Absage. Ohne Grund geht sie nicht hinaus. */
@@ -26,8 +26,6 @@ const SUGGESTIONS: readonly TranslationKey[] = [
 export class RejectDialogComponent {
   private readonly i18n = inject(I18nService);
 
-  /** Wessen Bild abgelehnt wird. Ohne Namen fragt das Blatt niemanden. */
-  readonly person = input.required<string | null>();
   readonly open = input.required<boolean>();
 
   readonly rejected = output<string>();
@@ -41,13 +39,6 @@ export class RejectDialogComponent {
       return { value: label, label };
     }),
   );
-
-  protected readonly hint = computed(() => {
-    const person = this.person();
-    return person === null
-      ? this.i18n.translate('bild.grundHinweis')
-      : this.i18n.translate('bild.grundHinweisPerson', { name: person });
-  });
 
   /** Ein Grund aus Leerzeichen ist kein Grund. */
   protected readonly ready = computed(() => this.reason().trim().length > 0);
