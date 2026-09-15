@@ -20,7 +20,7 @@ from sqlalchemy import (
     Text,
     Uuid,
 )
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import TypeDecorator
 
 from app.shared.enums import (
@@ -483,6 +483,15 @@ class Photo(Base):
     reviewed_at: Mapped[datetime | None] = mapped_column(Utc())
     created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
+
+    # Zwei Schlüssel zeigen auf `user`; ohne die Angabe fände SQLAlchemy den Weg nicht.
+    owner: Mapped[User | None] = relationship(foreign_keys=[owner_id], lazy="selectin")
+
+    @property
+    def owner_name(self) -> str:
+        """Wer das Foto eingereicht hat. Ohne Namen im Konto trägt es der Fotograf."""
+        held = self.owner
+        return held.name if held is not None and held.name else self.photographer
 
 
 class Marker(Base):

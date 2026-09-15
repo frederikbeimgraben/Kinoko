@@ -2,11 +2,16 @@
 
 @include section.block;
 
-.section__card app-colour-field {
-  --pilz-colour-width: 40px;
-  --pilz-colour-height: 40px;
-  --pilz-colour-radius: 10px;
+// Ohne Bild bleibt die Spalte leer: der Name beginnt auf derselben Kante.
+.lookalike__image {
+  display: block;
+  flex: none;
+  inline-size: 44px;
+  block-size: 44px;
+  background: none;
+  border-radius: 9px;
 }
+
 
 .lookalike__ways {
   display: flex;

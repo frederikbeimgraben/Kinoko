@@ -1,0 +1,35 @@
+@use 'section';
+
+@include section.block;
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.photos__tile,
+.photos__add {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-tile);
+  block-size: var(--size-tile);
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+}
+
+.photos__image {
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: 10px;
+}
+
+.photos__add {
+  color: var(--color-text-muted);
+  border: var(--border-width) dashed var(--color-border-strong);
+}

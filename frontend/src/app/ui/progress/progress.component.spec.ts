@@ -25,6 +25,12 @@ describe('ProgressComponent', () => {
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0');
   });
 
+  it('nennt den Anteil über dem Balken', async () => {
+    await render(ProgressComponent, { inputs: { value: 62, showValue: true } });
+
+    expect(screen.getByText('62 %')).toBeInTheDocument();
+  });
+
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {
     const { container } = await render(ProgressComponent, {
       inputs: { value: 40 },

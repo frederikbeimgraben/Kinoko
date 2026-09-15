@@ -130,3 +130,9 @@
   background: var(--color-accent);
   opacity: 0.35;
 }
+
+// Der Höchstwert der Skala steht in der linken oberen Ecke der Fläche.
+.spark__peak {
+  font-size: 9px;
+  fill: var(--color-text-muted);
+}

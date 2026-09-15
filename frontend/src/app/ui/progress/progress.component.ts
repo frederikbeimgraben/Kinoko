@@ -11,6 +11,8 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 })
 export class ProgressComponent {
   readonly value = input.required<number>();
+  /** Der Anteil als Zahl über dem Balken. */
+  readonly showValue = input(false);
 
   protected readonly clamped = computed(() => Math.min(100, Math.max(0, Math.round(this.value()))));
 }

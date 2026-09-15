@@ -2,8 +2,8 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Wo die Zeile steht: frei, in einer Karte des Katalogs oder im Filter. */
-export type ListRowKind = 'default' | 'catalogue' | 'filter';
+/** Wo die Zeile steht: frei, in einer Karte, im Filter oder als Verweis. */
+export type ListRowKind = 'default' | 'catalogue' | 'filter' | 'link';
 
 /** Zeile mit Titel, Unterzeile, Wert und Chevron, dazu Slots vorn, hinten und als Aktion. */
 @Component({

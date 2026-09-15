@@ -1,8 +1,0 @@
-<h2 class="section__title">{{ 'species.section.taxonomy' | t }}</h2>
-<div class="section__card">
-  <app-key-value-table>
-    @for (step of steps(); track step.route) {
-      <app-key-value-row [key]="step.labelKey | t" [value]="step.name" [route]="step.route" />
-    }
-  </app-key-value-table>
-</div>

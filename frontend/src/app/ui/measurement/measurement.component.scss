@@ -2,16 +2,22 @@
 // zwischen zwei Zeilen reicht so an den Kartenrand.
 :host {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  // Die Zahlen aller Strecken beginnen auf derselben Kante.
+  grid-template-columns: minmax(0, 1fr) 126px;
   column-gap: var(--space-3);
   align-items: center;
-  padding-block: var(--space-3);
-  padding-inline: var(--space-4);
+  min-block-size: 52px;
+  padding-inline: 28px 14px;
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
 :host(:last-child) {
   border-block-end: 0;
+}
+
+// Eine Zeile mit der seltenen Spanne trägt zwei Textzeilen und ist höher.
+:host(.measure--rare) {
+  min-block-size: 56px;
 }
 
 .measure__label {
@@ -22,12 +28,14 @@
 }
 
 .measure__extent {
-  font-size: var(--fs-md);
+  font-size: var(--fs-row-title);
+  line-height: normal;
   color: var(--color-text);
 }
 
 .measure__rare {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
   color: var(--color-text-muted);
 }
 
@@ -35,20 +43,20 @@
 // fluchten: 4 – 20 und 12 – 19 fangen sonst an unterschiedlichen Stellen an.
 .measure__value {
   display: flex;
-  flex: none;
-  align-items: baseline;
+  align-items: center;
+  justify-content: flex-start;
   gap: 2px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .measure__number {
-  font-size: var(--fs-md);
-  font-weight: var(--fw-medium);
+  font-size: var(--fs-row-title);
+  line-height: normal;
   color: var(--color-text);
 }
 
 .measure__unit {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-row-meta);
   color: var(--color-text-muted);
 }

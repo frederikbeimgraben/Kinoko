@@ -1,10 +1,11 @@
-import type { Provider } from '@angular/core';
+import { signal, type Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../../testing/i18n';
+import { ViewportService } from '../../../core/layout/viewport.service';
 import { ANY_ROUTE } from '../../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
 import { ComparisonComponent } from './comparison.component';
@@ -45,6 +46,9 @@ const BARE = speciesEntry({ slug: 'kahlkopf', name: 'Kahlkopf', scientificName: 
 const PLAIN = speciesEntry({ slug: 'plain', name: 'Plain', scientificName: 'Plain' });
 
 const BUNDLE = speciesBundle([STONE, GALL, BARE, PLAIN]);
+
+/** Ein Fenster in Spaltenbreite. */
+const WIDE: Provider = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 /** Baut die Seite und legt die Wahl in den Zustand. */
 async function build(slugs: readonly string[], extra: Provider[] = []): Promise<Element> {
@@ -115,6 +119,12 @@ describe('ComparisonComponent', () => {
     expect(screen.queryByText('Hutbreite')).not.toBeInTheDocument();
     expect(screen.queryByText('Stielnetz')).not.toBeInTheDocument();
     expect(screen.queryByText('Zeit')).not.toBeInTheDocument();
+  });
+
+  it('nennt das Paar im Kopf, sobald das Fenster eine Spalte trägt', async () => {
+    await build(['steinpilz', 'gallenroehrling'], [WIDE]);
+
+    expect(screen.getByText('zwei Arten')).toBeInTheDocument();
   });
 
   it('bleibt ohne Wahl ohne Tabelle', async () => {

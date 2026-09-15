@@ -22,3 +22,13 @@ export function longDate(iso: string, locale: string): string {
     asDate(iso),
   );
 }
+
+/** Übersetzt einen Schlüssel mit Platzhaltern. */
+type Translate = (key: string, values?: Record<string, string | number>) => string;
+
+/** „6. Sept.“: Tag und kurzer Monat, das Muster kommt aus dem Katalog. */
+export function shortDate(iso: string, locale: string, translate: Translate): string {
+  const date = asDate(iso);
+  const month = new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
+  return translate('common.dateShort', { tag: date.getDate(), monat: month });
+}

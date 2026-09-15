@@ -10,7 +10,15 @@
     @include card.section-title;
   }
 
+  // Die Zeilen der Artseite stehen 14 px vom Kartenrand, wie die Boards.
   .section__card {
     @include card.card;
+
+    --list-row-inline: 14px;
+    --size-row-tall: 56px;
+    --list-row-sub: var(--fs-row-meta);
+    --list-row-sub-height: 1.4;
+    --list-row-title-height: normal;
+    --space-row-stack: 2px;
   }
 }

@@ -81,6 +81,8 @@ export class SeasonCurveComponent {
   readonly months = input<readonly MonthMark[]>([]);
   /** Breite des gleitenden Mittels in Wochen. 1 zeichnet die Rohwerte. */
   readonly smoothing = input(3);
+  /** Der Höchstwert der Skala als Text, etwa „32 %“. Leer bleibt er weg. */
+  readonly peak = input('');
 
   protected readonly maskId = `funke-dicht-${nextNumber++}`;
   protected readonly drawing = computed<Drawing>(() => this.compute());

@@ -1,13 +1,18 @@
-@for (sense of senses(); track sense.titleKey) {
-  <section class="sense">
-    <h2 class="section__title">{{ sense.titleKey | t }}</h2>
-    <div class="section__card sense__card">
-      @if (sense.tags.length > 0) {
-        <app-tag-list [tags]="sense.tags" [label]="label(sense)" />
-      }
-      @if (sense.text; as text) {
-        <p class="sense__text">{{ text }}</p>
-      }
-    </div>
-  </section>
+@if (senses().length > 0) {
+  <h2 class="section__title">{{ 'species.section.senses' | t }}</h2>
+  <div class="section__parts">
+    @for (sense of senses(); track sense.titleKey) {
+      <div class="section__card">
+        <h3 class="sense__part">{{ sense.titleKey | t }}</h3>
+        <div class="sense__body">
+          @if (sense.tags.length > 0) {
+            <app-tag-list [tags]="sense.tags" [label]="label(sense)" [filled]="true" />
+          }
+          @if (sense.text; as text) {
+            <p class="sense__text">{{ text }}</p>
+          }
+        </div>
+      </div>
+    }
+  </div>
 }

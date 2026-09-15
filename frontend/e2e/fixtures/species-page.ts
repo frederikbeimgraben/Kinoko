@@ -80,6 +80,7 @@ export const STONE_PROFILE: Record<string, unknown> = {
       mode: 'gradient',
       colours: [colour('cremeweiß', '#f2e8d5'), colour('ocker', '#c9a877')],
     },
+    { part: 'spore_print', mode: 'single', colours: [colour('olivbraun', '#7a5c2e')] },
   ],
   colourChanges: [
     {
@@ -98,12 +99,44 @@ export const STONE_PROFILE: Record<string, unknown> = {
       speed: '1min',
       triggers: [term('pressure', 'Druck', 'trigger'), term('cut', 'Anschnitt', 'trigger')],
     },
+    {
+      part: 'flesh',
+      kind: 'reagent',
+      from: colour('weiß', '#f4efe2'),
+      to: colour('gelb', '#d9a441'),
+      speed: 'immediate',
+      triggers: [term('koh', 'KOH 3 %', 'trigger')],
+    },
+    {
+      part: 'flesh',
+      kind: 'reagent',
+      from: colour('weiß', '#f4efe2'),
+      to: colour('oliv', '#7f8f6a'),
+      speed: '30s',
+      triggers: [term('iron', 'Eisensulfat', 'trigger')],
+    },
+    {
+      part: 'stem_base',
+      kind: 'mechanical',
+      from: colour('weiß', '#f4efe2'),
+      to: colour('rot', '#c94f3d'),
+      speed: '3min',
+      triggers: [term('cut', 'Anschnitt', 'trigger')],
+    },
   ],
   capFeatures: [],
   capMargins: [],
   stemFeatures: [],
   traits: [],
-  sources: [],
+  sources: [
+    {
+      scope: 'profile',
+      title: '123pilzsuche.de',
+      url: 'https://123pilzsuche.de',
+      checkedOn: '2026-09-01',
+    },
+    { scope: 'profile', title: 'Wikipedia', url: 'https://de.wikipedia.org', checkedOn: '2026-09-01' },
+  ],
   seasons: [],
   terms: [
     { term: term('mushroomy', 'pilzig', 'smell'), fromExperience: false },
@@ -140,7 +173,81 @@ export const STONE_PROFILE: Record<string, unknown> = {
   ],
 };
 
-/** Das Bündel der Artseite: eine Art mit vollem Profil. */
+/** Die drei Verwechslungen als eigene Arten, jede mit Titelbild. */
+const LOOKALIKE_SPECIES = ['tylopilus-felleus', 'imleria-badia', 'boletus-reticulatus'].map(
+  (slug, at) => ({
+    ...STONE_PROFILE,
+    id: `00000000-0000-4000-8000-00000000000${String(at + 2)}`,
+    slug,
+    name: slug,
+    leadPhotoId: `la-${String(at + 1)}`,
+    lookalikes: [],
+    sources: [],
+  }),
+);
+
+/** Das Bündel der Artseite: die Art mit vollem Profil und ihre Verwechslungen. */
 export function profileBundle(): Record<string, unknown> {
-  return { items: [STONE_PROFILE], standardColours: PALETTE, facets: {} };
+  return { items: [STONE_PROFILE, ...LOOKALIKE_SPECIES], standardColours: PALETTE, facets: {} };
+}
+
+/** Die vier freigegebenen Bilder der Artseite. */
+export function profilePhotos(): Record<string, unknown> {
+  const items = ['eins', 'zwei', 'drei', 'vier'].map((id, at) => ({
+    id,
+    ownerId: '00000000-0000-4000-a000-000000000001',
+    speciesId: STONE_PROFILE['id'],
+    findId: null,
+    width: 1600,
+    height: 1200,
+    photographer: 'Frederik Beimgraben',
+    ownerName: 'Frederik',
+    licence: 'cc_by_sa_4',
+    caption: null,
+    source: null,
+    takenOn: '2026-09-06',
+    lat: null,
+    lon: null,
+    lead: at === 0,
+    state: 'approved',
+    rejectReason: null,
+    reviewedById: null,
+    reviewedAt: null,
+    createdAt: '2026-09-09T08:00:00+02:00',
+    updatedAt: '2026-09-09T08:00:00+02:00',
+  }));
+  return { items, nextCursor: null };
+}
+
+/** Die Glocke der Saison, wie die Werkstatt sie zeichnet. */
+function bell(week: number, peak: number, offset: number, factor: number): number {
+  const position = week - peak - offset;
+  return (
+    factor *
+    (Math.exp(-(position * position) / 26) + 0.25 * Math.exp(-((position + 6) * (position + 6)) / 40))
+  );
+}
+
+/** Das Manifest der Karte: 2024 als Fläche, 2025 als Linie bis KW 39. */
+export function profileManifest(): Record<string, unknown> {
+  const week = (year: number, number_: number, mean: number): Record<string, unknown> => ({
+    year,
+    week: number_,
+    forecast: false,
+    tiles: `${String(year)}-${String(number_).padStart(2, '0')}`,
+    mean,
+    max: mean,
+  });
+  const past = Array.from({ length: 52 }, (_, at) => week(2024, at + 1, bell(at + 1, 40, 0, 1)));
+  const current = Array.from({ length: 39 }, (_, at) => week(2025, at + 1, bell(at + 1, 40, -1.5, 1.1)));
+  return {
+    species: ['Boletus edulis'],
+    top: 0.32,
+    bounds: [
+      [47.2, 5.8],
+      [55.1, 15.1],
+    ],
+    tiles: { zooms: [5, 8], have: {} },
+    weeks: [...past, ...current],
+  };
 }

@@ -876,7 +876,7 @@ export interface components {
         /** @enum {string} */
         Protection: "none" | "personal_use" | "strict";
         /** @enum {string} */
-        BodyPart: "fruitbody" | "cap" | "stem" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
+        BodyPart: "fruitbody" | "cap" | "stem" | "stem_base" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
         /** @enum {string} */
         Dimension: "width" | "height" | "thickness" | "length";
         /** @enum {string} */
@@ -1314,6 +1314,7 @@ export interface components {
             photographer: string;
             licence: components["schemas"]["Licence"];
             caption?: string;
+            source?: string | null;
             /** Format: date */
             takenOn?: string;
         };
@@ -1326,8 +1327,10 @@ export interface components {
             width: number;
             height: number;
             photographer: string;
+            ownerName: string;
             licence: components["schemas"]["Licence"];
             caption?: string | null;
+            source?: string | null;
             takenOn?: string | null;
             lat?: number | null;
             lon?: number | null;

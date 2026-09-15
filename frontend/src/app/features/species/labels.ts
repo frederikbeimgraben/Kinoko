@@ -64,6 +64,7 @@ export const PART_TEXT: Record<BodyPart, TranslationKey> = {
   fruitbody: 'species.field.fruitbody',
   cap: 'species.field.cap',
   stem: 'species.field.stem',
+  stem_base: 'species.field.stemBase',
   gills: 'species.field.gills',
   flesh: 'species.field.flesh',
   spore_print: 'species.field.sporePrint',

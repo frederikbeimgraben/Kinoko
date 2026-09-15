@@ -20,6 +20,16 @@ import { SyncService } from '../core/offline/sync.service';
 const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
 
 /**
+ * Wege ohne Reiterleiste: die Werkstatt und jede Bild- oder Objektseite. Die
+ * Regel steht am Weg, damit keine Seite ihre Hülle selbst umbaut.
+ */
+const WITHOUT_NAV: readonly RegExp[] = [
+  /^\/bausteine(\/|$)/,
+  /^\/arten\/[^/]+/,
+  /^\/verwaltung\/bilder(\/|$)/,
+];
+
+/**
  * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.
  *
  * Am Telefon steht die Leiste unten und der Reiter füllt den Rest. Ab 1024 px
@@ -69,8 +79,11 @@ export class ShellComponent {
    */
   protected readonly fullWidth = computed(() => FULL_WIDTH.includes(this.active()));
 
-  /** Die Werkstatt ist kein Reiter. Eine Leiste darunter gehört nicht zu ihr. */
-  protected readonly bare = computed(() => this.active() === '/bausteine');
+  /** Die Werkstatt und die Bildseiten sind kein Reiter: keine Leiste darunter. */
+  protected readonly bare = computed(() => {
+    const path = this.adresse().split(/[?#]/)[0];
+    return WITHOUT_NAV.some((rule) => rule.test(path));
+  });
 
   /**
    * Solange ein Blatt der Karte offen ist, liegt die Karte über dem Reiter.

@@ -25,11 +25,11 @@
   align-items: center;
   inline-size: 100%;
   block-size: var(--pilz-field-height);
-  padding-inline: var(--pilz-gutter);
+  padding-inline: var(--form-field-inline, var(--pilz-gutter));
   font: inherit;
-  font-size: var(--fs-md);
+  font-size: var(--form-field-size, var(--fs-md));
   line-height: 20px;
-  padding-block-start: 2px;
+  padding-block-start: var(--form-field-shift, 2px);
   color: var(--color-text);
   text-align: start;
   background: var(--color-surface);
@@ -49,13 +49,36 @@
   color: var(--color-text-muted);
 }
 
+// Der Tag steht in der Schreibweise der Sprache. Die Eingabe des Systems liegt
+// unsichtbar darüber und öffnet den Kalender.
+.field--date {
+  position: relative;
+}
+
+.field__shown {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.field__date {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  padding: 0;
+  font: inherit;
+  border: 0;
+  opacity: 0;
+}
+
 .field--empty {
   color: var(--color-text-muted);
 }
 
 .field--multiline {
-  block-size: 80px;
-  padding-block-start: 10px;
+  block-size: var(--form-field-lines, 80px);
+  padding-block-start: var(--form-field-lines-top, 10px);
   resize: none;
 }
 
@@ -75,7 +98,7 @@
   min-inline-size: 0;
   padding: 0;
   font: inherit;
-  font-size: var(--fs-md);
+  font-size: var(--form-field-size, var(--fs-md));
   color: var(--color-text);
   background: none;
   border: 0;

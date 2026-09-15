@@ -46,7 +46,13 @@ async function build(items: Photo[]): Promise<Setup> {
 }
 
 const STACK = [
-  photo({ id: 'eins', speciesId: 'steinpilz', photographer: 'Jonas Weber', caption: 'Junge Exemplare' }),
+  photo({
+    id: 'eins',
+    speciesId: 'steinpilz',
+    photographer: 'Jonas Weber',
+    ownerName: 'Jonas',
+    caption: 'Junge Exemplare',
+  }),
   photo({ id: 'zwei', speciesId: 'maronenroehrling', licence: 'cc_by_4' }),
 ];
 
@@ -57,7 +63,8 @@ describe('ImageQueueComponent', () => {
     expect(screen.getByText('1 von 2')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Junge Exemplare')).toBeInTheDocument();
-    expect(screen.getByText('Jonas Weber · 6. September 2026')).toBeInTheDocument();
+    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(new Date(2026, 8, 6));
+    expect(screen.getByText(`Jonas · 6. ${month}`)).toBeInTheDocument();
     await noViolations(container);
   });
 

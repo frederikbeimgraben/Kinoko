@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+.lead {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.lead__image {
+  display: block;
+  inline-size: 100%;
+  block-size: var(--species-lead-height, 210px);
+  border-radius: var(--radius-lg);
+}

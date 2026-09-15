@@ -47,6 +47,7 @@ async def create_photo(  # noqa: PLR0913, PLR0917
     species_id: Annotated[uuid.UUID | None, Form(alias="speciesId")] = None,
     find_id: Annotated[uuid.UUID | None, Form(alias="findId")] = None,
     caption: Annotated[str | None, Form(max_length=200)] = None,
+    source: Annotated[str | None, Form(max_length=200)] = None,
     taken_on: Annotated[date | None, Form(alias="takenOn")] = None,
 ) -> Any:  # noqa: ANN401
     """Nimmt ein Foto an: an einen Fund, an eine Art, oder für sich."""
@@ -56,6 +57,7 @@ async def create_photo(  # noqa: PLR0913, PLR0917
         photographer=photographer,
         licence=licence,
         caption=caption,
+        source=source,
         taken_on=taken_on,
         species_id=species_id,
         find_id=find_id,
