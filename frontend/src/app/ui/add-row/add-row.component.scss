@@ -4,11 +4,11 @@
 
 .add-row {
   display: flex;
-  gap: var(--space-2);
+  gap: 10px;
   align-items: center;
   inline-size: 100%;
   block-size: 48px;
-  padding-inline: var(--size-gutter);
+  padding-inline: var(--space-row-inline);
   font-size: var(--fs-control);
   color: var(--color-text-muted);
   background: none;

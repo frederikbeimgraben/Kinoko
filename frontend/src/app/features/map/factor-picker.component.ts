@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { layerIcon } from '../../core/tiles/layer-groups';
 import { layerGroups, unitOf, type Layer } from '../../core/tiles/layers';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { SvgIconComponent, type IconName } from '../../ui/svg-icon/svg-icon.component';
+import { layerTitle } from './layer-name';
 
 type GroupTitle = 'map.layer.perWeek' | 'map.layer.fixed' | 'map.factor.species';
 
@@ -43,6 +45,14 @@ export class FactorPickerComponent {
       .filter((group) => group.layers.length > 0)
       .map((group) => ({ title: group.title, layers: group.layers }));
   });
+
+  protected name(layer: Layer): string {
+    return layerTitle(layer, this.i18n);
+  }
+
+  protected icon(layer: Layer): IconName | undefined {
+    return layerIcon(layer.id) ?? undefined;
+  }
 
   protected unit(layer: Layer): string {
     return unitOf(layer);

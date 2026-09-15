@@ -33,3 +33,31 @@
   font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
 }
+
+// Die geltende Bedingung: Beschriftung links, der Wert daneben im Feld.
+.factor__applied {
+  display: grid;
+  margin-block-start: -2px;
+  grid-template-columns: 104px minmax(0, 1fr);
+  column-gap: var(--space-3);
+  align-items: center;
+}
+
+.factor__key {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+}
+
+.factor__box {
+  display: flex;
+  align-items: center;
+  block-size: var(--pilz-field-height);
+  padding-inline: var(--pilz-gutter);
+  font-size: var(--fs-md);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--pilz-swatch-radius);
+}

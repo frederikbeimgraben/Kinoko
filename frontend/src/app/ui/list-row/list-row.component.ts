@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Wo die Zeile steht: frei, in einer Karte des Katalogs oder im Filter. */
 export type ListRowKind = 'default' | 'catalogue' | 'filter';
@@ -21,6 +21,8 @@ export class ListRowComponent {
   readonly accent = input(false);
   /** Polster, Abstand und Titelschrift folgen dem Ort der Zeile. */
   readonly kind = input<ListRowKind>('default');
+  /** Ein Zeichen vor dem Titel, gedämpft: die Gruppe einer Ebene. */
+  readonly icon = input<IconName>();
   readonly chevron = input(false);
   readonly clickable = input(false);
   /** Eine gewählte Zeile meldet sich als gedrückt. */

@@ -22,7 +22,8 @@
       <app-form-field
         [label]="'map.tab.layer' | t"
         [section]="true"
-        [value]="view.layer()?.title ?? ''"
+        [value]="layerName()"
+        [icon]="layerGlyph()"
         [readOnly]="true"
         (displayClick)="layerChosen.emit()"
       />
@@ -42,8 +43,8 @@
       <app-combination
         [factors]="combination.factors()"
         [sources]="view.sources()"
-        (activeChange)="combination.toggle($event.factor, $event.active)"
         (openFactor)="factorOpened.emit($event)"
+        (removed)="combination.remove($event)"
         (add)="factorAdded.emit()"
         (saveRequested)="saveRequested.emit()"
       />

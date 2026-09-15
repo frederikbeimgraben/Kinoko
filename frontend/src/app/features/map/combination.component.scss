@@ -4,7 +4,7 @@
   flex-direction: column;
   min-block-size: 0;
   // Der Fuß gehört an den unteren Rand des Blatts, nicht an die Liste.
-  margin: 0 calc(var(--size-gutter) * -1) calc(var(--space-5) * -1);
+  margin: calc(10px - var(--space-5)) calc(var(--size-gutter) * -1) calc(var(--space-5) * -1);
   overflow: hidden;
 }
 
@@ -15,4 +15,9 @@
   min-block-size: 0;
   overflow-y: auto;
   padding-inline: var(--size-gutter);
+}
+
+// Die Hinzufügen-Zeile steht mit Abstand unter der letzten Faktorzeile.
+app-add-row {
+  margin-block-start: 10px;
 }

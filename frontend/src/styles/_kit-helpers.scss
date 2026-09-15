@@ -166,3 +166,15 @@ app-choice-row .cbx__label {
 app-choice-row app-checkbox label {
   gap: var(--space-3);
 }
+
+// Die rote Aktion im Fuß misst vierundvierzig Punkte. Der Knopf des Kits
+// bringt seine Höhe selbst mit; eine Regel der Seite erreicht ihn.
+app-action-bar .footer__slim .btn {
+  block-size: var(--size-tap);
+}
+
+// Die Knöpfe im Fuß des Modals messen zwanzig Punkte Polster.
+app-action-bar .footer--inline .btn {
+  padding-inline: 20px;
+  font-size: var(--fs-control);
+}

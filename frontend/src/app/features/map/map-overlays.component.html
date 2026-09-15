@@ -10,11 +10,6 @@
           (chosen)="chooseSpecies($event)"
         />
       </div>
-      <div class="overlay-foot">
-        <app-button variant="secondary" [block]="true" (click)="toCatalogue.emit()">{{
-          'map.species.toCatalog' | t
-        }}</app-button>
-      </div>
     }
     @case ('layer') {
       <div class="overlay-body">

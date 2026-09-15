@@ -1,5 +1,5 @@
 @if (withHead()) {
-  <app-sheet-head [title]="layer().label" [note]="layer().note" [arrows]="false" />
+  <app-sheet-head [title]="layer().label" [icon]="glyph()" [week]="layer().note" [arrows]="false" />
 }
 <div class="factor">
   <app-segmented
@@ -36,7 +36,10 @@
     </div>
   </div>
 
-  <app-key-value-row [key]="'map.factor.condition' | t" [value]="condition()" />
+  <div class="factor__applied">
+    <span class="factor__key">{{ 'map.factor.condition' | t }}</span>
+    <output class="factor__box">{{ condition() }}</output>
+  </div>
 </div>
 <app-action-bar
   [primary]="'common.apply' | t"

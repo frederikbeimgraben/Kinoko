@@ -1,6 +1,6 @@
 :host {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   column-gap: var(--space-3);
   align-items: center;
   padding-block: var(--space-3);
@@ -11,9 +11,8 @@
   border-block-end: 0;
 }
 
-.factor__switches {
-  display: block;
-  min-inline-size: 0;
+.factor__icon {
+  color: var(--color-text-muted);
 }
 
 .factor__stack {
@@ -21,10 +20,12 @@
   flex-direction: column;
   gap: 2px;
   min-inline-size: 0;
+  // Zwei Punkte Polster setzen den Namen auf die Linie des Boards.
+  padding-block-start: 2px;
 }
 
 .factor__name {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-row-title);
   font-weight: var(--fw-semibold);
   color: var(--color-text);
 }
@@ -38,6 +39,7 @@
   display: flex;
   align-items: center;
   block-size: var(--size-control);
+  padding-block-start: 2px;
   padding-inline: var(--space-3);
   font-size: var(--fs-sm);
   font-variant-numeric: tabular-nums;

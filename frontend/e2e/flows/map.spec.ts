@@ -51,3 +51,20 @@ test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) =>
   await expect(page.getByText('KW 38 · 2025')).toBeVisible();
   expect(asked.filter((url) => url.endsWith('layers.json'))).toHaveLength(0);
 });
+
+test('Die Liste der Ebenen scrollt im Blatt', async ({ page }) => {
+  await openMap(page);
+  await page.getByRole('tab', { name: 'Ebene' }).click();
+  await page.getByRole('button', { name: 'Niederschlag der letzten 4 Wochen' }).first().click();
+
+  const list = page.getByRole('group', { name: 'Ebene' });
+  await expect(list).toBeVisible();
+  const reach = await list.evaluate((box) => box.scrollHeight - box.clientHeight);
+  expect(reach).toBeGreaterThan(0);
+
+  const top = await list.evaluate((box) => {
+    box.scrollTop = box.scrollHeight;
+    return box.scrollTop;
+  });
+  expect(top).toBeGreaterThan(0);
+});

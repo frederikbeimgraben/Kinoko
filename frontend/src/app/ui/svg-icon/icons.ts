@@ -24,6 +24,9 @@ export type IconName =
   | 'play'
   | 'pause'
   | 'cloud'
+  | 'drop'
+  | 'tree'
+  | 'mountain'
   | 'calendar'
   | 'rainfall'
   | 'thermometer'
@@ -75,12 +78,15 @@ export const ICONS: Record<IconName, string> = {
   right: '<path d="M3.5 1.5 8.5 6l-5 4.5z"/>',
   play: '<path d="M3 1.4 10 6 3 10.6Z"/>',
   pause: '<path d="M2.5 1.5h2.5v9h-2.5zM7 1.5h2.5v9h-2.5z"/>',
-  cloud:
-    '<path d="M7 15.5a4.2 4.2 0 0 1 .5-8.4A5.8 5.8 0 0 1 18.6 8a3.6 3.6 0 0 1-.4 7.5"/><path d="M9 18.5l-.8 2M13 18.5l-.8 2M17 18.5l-.8 2"/>',
+  cloud: '<path d="M7 18h10a4 4 0 0 0 0-8 5.5 5.5 0 0 0-10.6 1.5A3.5 3.5 0 0 0 7 18z"/>',
+  drop: '<path d="M12 3s6 7 6 11.5a6 6 0 0 1-12 0C6 10 12 3 12 3z"/>',
+  tree: '<path d="M12 3l5 7h-3l4 5.5H6L10 10H7z"/><path d="M12 15.5V21"/>',
+  mountain: '<path d="M3 19h18L14 7l-3.5 6L8.5 10z"/>',
   calendar:
     '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><rect x="7" y="13" width="3" height="3" rx="0.6"/>',
   rainfall: '<path d="M3 12h4l3-6 4 12 3-6h4"/>',
-  thermometer: '<path d="M14 14.2V5.5a2 2 0 1 0-4 0v8.7a3.8 3.8 0 1 0 4 0z"/><path d="M12 9v5"/>',
+  thermometer:
+    '<path d="M12 3a2 2 0 0 0-2 2v9.1a4 4 0 1 0 4 0V5a2 2 0 0 0-2-2z"/><circle cx="12" cy="17" r="1.4"/>',
   frost: '<path d="M14 14.2V5.5a2 2 0 1 0-4 0v8.7a3.8 3.8 0 1 0 4 0z"/><path d="M17 4l3 3M20 4l-3 3"/>',
   forest: '<path d="M12 3l4.5 6.5h-2.6L18 15H6l4.1-5.5H7.5z"/><path d="M12 15v5.5"/><path d="M4 20.5h16"/>',
   conifer: '<path d="M12 2.5l3.6 5.4h-2L17 13h-2.2l3 4.5H6.2l3-4.5H7l3.4-5.1h-2z"/><path d="M12 17.5v4"/>',

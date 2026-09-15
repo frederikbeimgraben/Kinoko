@@ -118,6 +118,13 @@ describe('MapComponent', () => {
     await noViolations(container);
   });
 
+  it('nennt die Quelle der Grundkarte am Rand der Karte', async () => {
+    const { container } = await map();
+
+    const source = container.querySelector('.map__source');
+    expect(source?.textContent).toBe('© OpenStreetMap');
+  });
+
   it('trägt keinen erklärenden Satz', async () => {
     const { container } = await map();
 
@@ -175,21 +182,11 @@ describe('MapComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
     await stable();
     const picker = screen.getByRole('group', { name: 'Art wählen' });
+    expect(screen.queryByRole('button', { name: 'Zum Katalog' })).toBeNull();
     await userEvent.click(within(picker).getByRole('button', { name: /Pfifferling/ }));
     await stable();
 
     expect(TestBed.inject(MapState).species()).toBe('cantharellus-cibarius');
-  });
-
-  it('führt aus der Artwahl in den Reiter Arten', async () => {
-    const { stable } = await map();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
-    await stable();
-    await userEvent.click(screen.getByRole('button', { name: 'Zum Katalog' }));
-    await stable();
-
-    expect(screen.getByRole('heading', { name: 'Arten' })).toBeInTheDocument();
   });
 
   it('wählt die Ebene über das Feld im Blatt', async () => {
@@ -419,17 +416,17 @@ describe('MapComponent', () => {
     expect(toasts.failure).toEqual(['Kein Standort']);
   });
 
-  it('hakt einen Faktor ab', async () => {
+  it('entfernt einen Faktor über den Knopf in der Zeile', async () => {
     const { stable } = await map();
     const combination = TestBed.inject(CombinationState);
     TestBed.inject(MapState).view.set('combination');
     combination.apply({ source: 'wald', condition: 'above', low: 0.3, high: 0, active: true });
     await stable();
 
-    await userEvent.click(screen.getByText('Waldanteil'));
+    await userEvent.click(screen.getAllByRole('button', { name: 'Faktor entfernen' })[0]);
     await stable();
 
-    expect(combination.factors()[0].active).toBe(false);
+    expect(combination.factors()).toEqual([]);
   });
 
   it('holt die Manifeste neu, wenn die App zurückkommt', async () => {

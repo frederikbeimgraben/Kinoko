@@ -56,6 +56,11 @@
   background: var(--color-primary-subtle);
 }
 
+.row__icon {
+  flex: none;
+  color: var(--color-text-muted);
+}
+
 .row__lead:empty,
 .row__trail:empty {
   display: none;

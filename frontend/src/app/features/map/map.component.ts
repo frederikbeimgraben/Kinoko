@@ -12,7 +12,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -74,7 +73,6 @@ export class MapComponent implements OnDestroy {
   private readonly tiles = inject(TileService);
   private readonly visible = inject(VisibilityService).visible;
   private readonly viewport = inject(ViewportService);
-  private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly entries = inject(EntriesState);
   private readonly sync = inject(SyncService);
@@ -199,11 +197,6 @@ export class MapComponent implements OnDestroy {
   protected async saveCombination(name: string): Promise<void> {
     this.closeOverlay();
     await this.combination.save(name);
-  }
-
-  protected toCatalogue(): void {
-    this.closeOverlay();
-    void this.router.navigate(['/arten']);
   }
 
   protected openAddEntry(): void {

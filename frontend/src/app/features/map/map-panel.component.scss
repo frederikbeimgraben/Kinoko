@@ -10,7 +10,7 @@
 
 // Die Regel steht dicht unter den Reitern: beide sagen, was die Karte zeigt.
 .panel__rule {
-  margin-block-start: calc(var(--space-5) * -1 + var(--space-4));
+  margin-block-start: calc(10px - var(--space-5));
 }
 
 // Solange kein Manifest da ist, steht hier die Rampe als Platzhalter.
