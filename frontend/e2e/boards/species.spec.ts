@@ -168,10 +168,11 @@ test('FilterResult', async ({ page }) => {
 
 test('Taxonomy', async ({ page }) => {
   guard('Taxonomy', 'phone');
-  await mockApi(page, {
-    '/api/species/bundle': bundle(TAXON.catalogue),
-    '/api/taxa/family/boletaceae': TAXON.page,
-  });
+  await mockApi(
+    page,
+    { '/api/species/bundle': bundle(TAXON.catalogue), '/api/taxa/family/boletaceae': TAXON.page },
+    { photo: ROW_PHOTO },
+  );
   await flatMap(page);
   await page.goto('/taxonomie/family/boletaceae');
   await seen(page, 'Rotfußröhrling');
