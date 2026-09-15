@@ -3,6 +3,7 @@
   <div class="combinations__card">
     @for (row of rows(); track row.combination.id) {
       <app-list-row
+        kind="filter"
         [title]="row.combination.name ?? ''"
         [subline]="row.subline"
         [clickable]="true"
