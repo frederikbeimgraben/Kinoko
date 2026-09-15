@@ -53,7 +53,11 @@ async def test_facets_count_every_axis(session: AsyncSession, api: httpx.AsyncCl
         period_end_month=10,
     )
     await cf.make_species(
-        session, slug="amanita-phalloides", name="Knollenblätterpilz", edibility=Edibility.DEADLY
+        session,
+        slug="amanita-phalloides",
+        name="Knollenblätterpilz",
+        latin_name="Amanita phalloides",
+        edibility=Edibility.DEADLY,
     )
     spruce = await cf.make_term(session, kind=TermKind.TREE, slug="fichte", name="Fichte")
     await cf.add_term(session, porcini, spruce)
@@ -64,7 +68,7 @@ async def test_facets_count_every_axis(session: AsyncSession, api: httpx.AsyncCl
     assert facets["hymenium"] == {"tubes": 1}
     assert facets["period"]["9"] == 1
     assert facets["treePartner"] == {"fichte": 1}
-    assert facets["genusFamily"] == {"Boletus": 1, "Boletaceae": 1}
+    assert facets["genusFamily"] == {"Boletus": 1, "Boletaceae": 1, "Amanita": 1}
     assert facets["unknown"]["hymenium"] == 1
 
 

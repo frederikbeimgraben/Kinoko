@@ -96,9 +96,7 @@ class FacetService:
 
     def _values_of(self, entry: SpeciesFacets) -> dict[str, list[str]]:
         """Die Werte einer Art je Achse, in der Form des Bündels."""
-        months = [
-            str(month) for month in range(1, 13) if month_in_period(entry.period, month)
-        ]
+        months = [str(m) for m in range(1, 13) if month_in_period(entry.period, m)]
         return {
             "edibility": [str(entry.edibility)],
             "hymenium": [str(entry.hymenium)] if entry.hymenium is not None else [],
