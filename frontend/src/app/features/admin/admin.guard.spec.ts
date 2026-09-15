@@ -48,8 +48,12 @@ describe('requiresPermission', () => {
     await expect(decide(null, ['text.edit'])).resolves.toBe(true);
   });
 
+  it('lässt den Prüfstapel der Funde in den Bereich', async () => {
+    await expect(decide(null, ['find.review'])).resolves.toBe(true);
+  });
+
   it('lässt niemanden in den Bereich, dessen Recht dort nichts öffnet', async () => {
-    await expect(decide(null, ['find.review'])).resolves.toBe('/konto');
+    await expect(decide(null, ['image.upload'])).resolves.toBe('/konto');
   });
 
   it('führt ohne Anmeldung zurück auf das Konto', async () => {

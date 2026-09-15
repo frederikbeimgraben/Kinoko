@@ -18,8 +18,7 @@ export interface Items<E> {
  * entscheidet, welche Rechte es gibt und wer sie trägt.
  */
 
-import type { components } from '../contract';
-
+/** Das eigene Konto, so wie `/api/me` es liefert. */
 export type Me = components['schemas']['Me'];
 
 export const PERMISSIONS = [
