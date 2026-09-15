@@ -86,8 +86,11 @@ export const CHOICE_GROUPS: readonly GroupKey[] = [
   'forecast',
 ];
 
-/** Der Wert der Gruppe Vorhersage. Sie kennt nur an oder gar nicht. */
+/** Der wählbare Wert der Gruppe Vorhersage. */
 export const FORECAST_VALUE = 'on';
+
+/** Die Gegenseite der Gruppe Vorhersage. Sie steht nie im Filterblatt. */
+export const FORECAST_ABSENT = 'off';
 
 /** Die Achsen einer Art, einmal gerechnet und danach nur gelesen. */
 export interface Facts {
@@ -144,7 +147,7 @@ export function factsOf(entry: SpeciesEntry, palette: readonly StandardColour[])
     ['capShape', [...new Set(capShapes(entry))]],
     ['period', months(entry)],
     ['protection', [entry.protection]],
-    ['forecast', entry.forecastEnabled ? [FORECAST_VALUE] : []],
+    ['forecast', [entry.forecastEnabled ? FORECAST_VALUE : FORECAST_ABSENT]],
     ['genusFamily', [entry.genusName, entry.familyName ?? ''].filter(Boolean)],
     ['senses', terms.filter((term) => isSense(term.kind)).map((term) => term.slug)],
     ['treePartner', terms.filter((term) => term.kind === 'tree').map((term) => term.slug)],
