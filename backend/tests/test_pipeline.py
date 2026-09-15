@@ -8,7 +8,14 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import db
-from app.models import Find, PipelineRun, PipelineRunFind, PipelineRunSpecies, Species
+from app.models import (
+    Find,
+    PipelineRun,
+    PipelineRunFind,
+    PipelineRunSpecies,
+    PipelineRunStep,
+    Species,
+)
 from app.modules.pipeline.service import PipelineRunService
 from app.shared.enums import Edibility, Group, ReviewState, RunKind, RunState
 from tests.conftest import app_of, make_user, sign_in
@@ -72,6 +79,23 @@ async def test_finish_without_a_log_path_keeps_the_existing_one(session: AsyncSe
     assert run.log_path == "/var/log/run.log"
 
 
+async def test_finish_sets_the_brier_score(session: AsyncSession) -> None:
+    user = await make_user(session)
+    service = PipelineRunService(session)
+    run = await service.queue(RunKind.TRAINING, user)
+    await service.finish(run, RunState.FINISHED, None, metric_brier=0.1234)
+    assert run.metric_brier == 0.1234
+
+
+async def test_finish_without_a_brier_score_keeps_the_existing_one(session: AsyncSession) -> None:
+    user = await make_user(session)
+    service = PipelineRunService(session)
+    run = await service.queue(RunKind.TRAINING, user)
+    await service.finish(run, RunState.FINISHED, None, metric_brier=0.5)
+    await service.finish(run, RunState.FINISHED, None)
+    assert run.metric_brier == 0.5
+
+
 async def test_report_writes_species_state_and_advances_progress(session: AsyncSession) -> None:
     user = await make_user(session)
     a, b = species("a"), species("b")
@@ -103,21 +127,28 @@ async def test_log_with_a_missing_file_is_empty() -> None:
     assert PipelineRunService.log(run) == []
 
 
-async def test_cancel_fails_a_queued_run(session: AsyncSession) -> None:
+async def test_report_step_writes_a_new_step(session: AsyncSession) -> None:
     user = await make_user(session)
     service = PipelineRunService(session)
     run = await service.queue(RunKind.TRAINING, user)
-    await service.cancel(run)
-    assert run.state == RunState.FAILED
+    await service.report_step(run, 0, "run_all.sh", RunState.RUNNING, None)
+    entry = await session.get(PipelineRunStep, (run.id, 0))
+    assert entry is not None
+    assert entry.name == "run_all.sh"
+    assert entry.state == RunState.RUNNING
+    assert entry.duration_s is None
 
 
-async def test_cancel_leaves_a_finished_run_alone(session: AsyncSession) -> None:
+async def test_report_step_updates_an_existing_step(session: AsyncSession) -> None:
     user = await make_user(session)
     service = PipelineRunService(session)
     run = await service.queue(RunKind.TRAINING, user)
-    await service.finish(run, RunState.FINISHED, None)
-    await service.cancel(run)
-    assert run.state == RunState.FINISHED
+    await service.report_step(run, 0, "run_all.sh", RunState.RUNNING, None)
+    await service.report_step(run, 0, "run_all.sh", RunState.FINISHED, 42)
+    entry = await session.get(PipelineRunStep, (run.id, 0))
+    assert entry is not None
+    assert entry.state == RunState.FINISHED
+    assert entry.duration_s == 42
 
 
 async def test_training_finds_filters_for_accepted_species_finds(session: AsyncSession) -> None:
@@ -245,6 +276,47 @@ async def test_progress_counts_only_finished_species(session: AsyncSession) -> N
     assert run.progress_done == 2
 
 
+async def test_detail_carries_progress_steps_and_log_tail(session: AsyncSession) -> None:
+    user = await make_user(session)
+    service = PipelineRunService(session)
+    run = await service.queue(RunKind.TRAINING, user)
+    await service.report_step(run, 0, "run_all.sh", RunState.RUNNING, None)
+    await service.report_step(run, 0, "run_all.sh", RunState.FINISHED, 12)
+    detail = await service.detail(run)
+    assert detail["progressDone"] == 0
+    assert detail["progressTotal"] == 0
+    assert detail["logTail"] == []
+    assert detail["steps"] == [
+        {"position": 0, "name": "run_all.sh", "state": "finished", "durationS": 12},
+    ]
+
+
+async def test_detail_carries_the_previous_brier_score_of_the_same_kind(
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    service = PipelineRunService(session)
+    earlier = await service.queue(RunKind.TRAINING, user)
+    await service.finish(earlier, RunState.FINISHED, None, metric_brier=0.3)
+    other_kind = await service.queue(RunKind.RENDER, user)
+    await service.finish(other_kind, RunState.FINISHED, None, metric_brier=0.9)
+    run = await service.queue(RunKind.TRAINING, user)
+    await service.finish(run, RunState.FINISHED, None, metric_brier=0.2)
+    detail = await service.detail(run)
+    assert detail["metricBrier"] == 0.2
+    assert detail["metricBrierPrevious"] == 0.3
+
+
+async def test_detail_without_a_previous_run_has_no_previous_brier_score(
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    service = PipelineRunService(session)
+    run = await service.queue(RunKind.TRAINING, user)
+    detail = await service.detail(run)
+    assert detail["metricBrierPrevious"] is None
+
+
 async def test_create_pipeline_run_endpoint(api: httpx.AsyncClient, session: AsyncSession) -> None:
     user = await make_user(session)
     sign_in(app_of(api), user, "run.manage")
@@ -270,7 +342,12 @@ async def test_list_and_get_pipeline_run_endpoints(
 
     detail = await api.get(f"/pipeline-runs/{run_id}")
     assert detail.status_code == 200
-    assert detail.json()["species"] == []
+    body = detail.json()
+    assert body["species"] == []
+    assert body["steps"] == []
+    assert body["logTail"] == []
+    assert body["progressDone"] == 0
+    assert body["progressTotal"] == 0
 
 
 async def test_a_queued_run_shows_a_state_for_every_forecast_species(
@@ -345,13 +422,50 @@ async def test_report_and_finish_endpoints(api: httpx.AsyncClient, session: Asyn
 
     finish = await api.post(
         f"/internal/pipeline-runs/{run.id}/finish",
-        json={"state": "finished", "logPath": "/var/log/run.log"},
+        json={"state": "finished", "logPath": "/var/log/run.log", "metricBrier": 0.15},
         headers=headers,
     )
     assert finish.status_code == 204
     await session.refresh(run)
     assert run.state == RunState.FINISHED
     assert run.progress_done == 1
+    assert run.metric_brier == 0.15
+
+
+async def test_report_step_endpoint(api: httpx.AsyncClient, session: AsyncSession) -> None:
+    user = await make_user(session)
+    run = await PipelineRunService(session).queue(RunKind.TRAINING, user)
+    answer = await api.put(
+        f"/internal/pipeline-runs/{run.id}/steps/0",
+        json={"name": "run_all.sh", "state": "running", "durationS": None},
+        headers={"X-Internal-Token": INTERNAL_TOKEN},
+    )
+    assert answer.status_code == 204
+    entry = await session.get(PipelineRunStep, (run.id, 0))
+    assert entry is not None
+    assert entry.state == RunState.RUNNING
+
+
+async def test_report_step_is_not_found_for_an_unknown_run(api: httpx.AsyncClient) -> None:
+    answer = await api.put(
+        f"/internal/pipeline-runs/{uuid.uuid4()}/steps/0",
+        json={"name": "run_all.sh", "state": "running", "durationS": None},
+        headers={"X-Internal-Token": INTERNAL_TOKEN},
+    )
+    assert answer.status_code == 404
+
+
+async def test_report_step_needs_the_internal_token(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    run = await PipelineRunService(session).queue(RunKind.TRAINING, user)
+    answer = await api.put(
+        f"/internal/pipeline-runs/{run.id}/steps/0",
+        json={"name": "run_all.sh", "state": "running", "durationS": None},
+    )
+    assert answer.status_code == 401
 
 
 async def test_report_with_an_unknown_state_is_rejected(

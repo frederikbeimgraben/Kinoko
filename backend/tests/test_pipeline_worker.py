@@ -44,31 +44,61 @@ def settings_for(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, root: Path) ->
 class Fake:
     """Ein Dienst, der die Aufrufe des Arbeiters mitschreibt."""
 
-    def __init__(self, species: list[dict[str, Any]], finds: list[dict[str, Any]]) -> None:
+    def __init__(
+        self,
+        species: list[dict[str, Any]],
+        finds: list[dict[str, Any]],
+        kind: str = "training",
+    ) -> None:
         self.species = species
         self.finds = finds
+        self.kind = kind
         self.reports: list[tuple[str, str, int]] = []
+        self.steps: list[tuple[int, str, str, int | None]] = []
         self.finished: tuple[str, str] | None = None
+        self.finished_metric: float | None = None
         self.claimed = True
+
+    def handle_claim(self) -> httpx.Response:
+        """Antwortet auf einen Anspruch."""
+        if not self.claimed:
+            return httpx.Response(204)
+        return httpx.Response(200, json={"id": RUN_ID, "kind": self.kind})
+
+    def handle_finish(self, request: httpx.Request) -> httpx.Response:
+        """Merkt sich den Abschluss eines Laufs."""
+        body = json.loads(request.content)
+        self.finished = (body["state"], body["logPath"])
+        self.finished_metric = body.get("metricBrier")
+        return httpx.Response(204)
+
+    def handle_step(self, request: httpx.Request, path: str) -> httpx.Response:
+        """Merkt sich die Meldung einer Stufe."""
+        body = json.loads(request.content)
+        position = int(path.rsplit("/", 1)[1])
+        self.steps.append((position, body["name"], body["state"], body["durationS"]))
+        return httpx.Response(204)
+
+    def handle_report(self, request: httpx.Request, path: str) -> httpx.Response:
+        """Merkt sich die Meldung einer Art."""
+        body = json.loads(request.content)
+        self.reports.append((path.rsplit("/", 1)[1], body["state"], body["recordCount"]))
+        return httpx.Response(204)
 
     def handle(self, request: httpx.Request) -> httpx.Response:
         """Antwortet auf jeden Aufruf des Arbeiters."""
         path = request.url.path
         if path.endswith("/claim"):
-            if not self.claimed:
-                return httpx.Response(204)
-            return httpx.Response(200, json={"id": RUN_ID, "kind": "training"})
+            return self.handle_claim()
         if path.endswith("/species"):
             return httpx.Response(200, json={"items": self.species, "nextCursor": None})
         if path.endswith("/training-finds"):
             return httpx.Response(200, json={"items": self.finds})
         if path.endswith("/finish"):
-            body = json.loads(request.content)
-            self.finished = (body["state"], body["logPath"])
-            return httpx.Response(204)
-        body = json.loads(request.content)
-        self.reports.append((path.rsplit("/", 1)[1], body["state"], body["recordCount"]))
-        return httpx.Response(204)
+            return self.handle_finish(request)
+        if "/steps/" in path:
+            return self.handle_step(request, path)
+        return self.handle_report(request, path)
 
 
 REAL_CLIENT = httpx.Client
@@ -99,6 +129,15 @@ def test_records_in_reads_the_last_count() -> None:
 
 def test_records_in_without_a_line_is_zero() -> None:
     assert worker.records_in("nothing here") == 0
+
+
+def test_brier_in_reads_the_calibrated_value() -> None:
+    text = "Brier score   raw 0.30000   calibrated 0.18000"
+    assert worker.brier_in(text) == pytest.approx(0.18)
+
+
+def test_brier_in_without_a_line_is_none() -> None:
+    assert worker.brier_in("nothing here") is None
 
 
 def test_chain_names_maps_every_latin_name(tmp_path: Path) -> None:
@@ -205,6 +244,91 @@ def test_the_log_holds_the_output_of_the_stage(
 
     log = (settings.run_logs / f"{RUN_ID}.log").read_text(encoding="utf-8")
     assert "NUR=boletus_edulis" in log
+
+
+def test_work_reports_one_step_for_a_training_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = chain(tmp_path)
+    settings = settings_for(tmp_path, monkeypatch, root)
+    fake = Fake([{**species_row(PORCINI, "Boletus edulis"), "forecastEnabled": True}], [])
+    api, client = api_of(fake, settings)
+    with client:
+        worker.work(api, settings, {"id": RUN_ID, "kind": "training"})
+
+    assert (0, "run_all.sh", "running", None) in fake.steps
+    finished = [row for row in fake.steps if row[0] == 0 and row[2] == "finished"]
+    assert len(finished) == 1
+    assert isinstance(finished[0][3], int)
+
+
+def test_work_reports_two_steps_for_a_full_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = chain(tmp_path)
+    settings = settings_for(tmp_path, monkeypatch, root)
+    fake = Fake([{**species_row(PORCINI, "Boletus edulis"), "forecastEnabled": True}], [])
+    api, client = api_of(fake, settings)
+    with client:
+        worker.work(api, settings, {"id": RUN_ID, "kind": "full"})
+
+    names = {(position, name) for position, name, _, _ in fake.steps}
+    assert names == {(0, "run_all.sh"), (1, "render_de.sh")}
+
+
+def test_work_fails_the_step_when_a_species_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = chain(tmp_path)
+    settings = settings_for(tmp_path, monkeypatch, root)
+    fake = Fake(
+        [{**species_row(GHOST, "Amanita phalloides"), "forecastEnabled": True}],
+        [],
+    )
+    api, client = api_of(fake, settings)
+    with client:
+        worker.work(api, settings, {"id": RUN_ID, "kind": "training"})
+
+    assert any(row[0] == 0 and row[2] == "failed" for row in fake.steps)
+
+
+def test_finish_carries_the_calibrated_brier_score(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "modell"
+    root.mkdir()
+    script = (
+        "#!/usr/bin/env bash\n"
+        "if [ -n \"${LISTE:-}\" ]; then printf 'boletus_edulis\\tBoletus edulis\\n'; exit 0; fi\n"
+        'echo "visits with weather: 10"\n'
+        'echo "Brier score   raw 0.30000   calibrated 0.18000"\n'
+    )
+    (root / "run_all.sh").write_text(script, encoding="utf-8")
+    settings = settings_for(tmp_path, monkeypatch, root)
+    fake = Fake([{**species_row(PORCINI, "Boletus edulis"), "forecastEnabled": True}], [])
+    api, client = api_of(fake, settings)
+    with client:
+        worker.work(api, settings, {"id": RUN_ID, "kind": "training"})
+
+    assert fake.finished_metric == pytest.approx(0.18)
+
+
+def test_finish_without_a_brier_line_carries_no_metric(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = chain(tmp_path)
+    settings = settings_for(tmp_path, monkeypatch, root)
+    fake = Fake([{**species_row(PORCINI, "Boletus edulis"), "forecastEnabled": True}], [])
+    api, client = api_of(fake, settings)
+    with client:
+        worker.work(api, settings, {"id": RUN_ID, "kind": "training"})
+
+    assert fake.finished_metric is None
 
 
 def test_species_reads_every_page(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

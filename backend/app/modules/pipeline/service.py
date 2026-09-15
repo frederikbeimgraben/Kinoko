@@ -10,11 +10,19 @@ from typing import TYPE_CHECKING, Any, Final, cast
 from sqlalchemy import CursorResult, func, select, update
 
 from app.core.errors import Invalid
-from app.models import PipelineRun, PipelineRunFind, PipelineRunSpecies, Species, now
+from app.models import (
+    PipelineRun,
+    PipelineRunFind,
+    PipelineRunSpecies,
+    PipelineRunStep,
+    Species,
+    now,
+)
 from app.modules.objects.find_service import FindService
 from app.modules.pipeline.schemas import (
     PipelineRunDetail,
     PipelineRunSpeciesEntry,
+    PipelineRunStepEntry,
     PipelineRunSummary,
 )
 from app.shared.enums import RunState
@@ -32,7 +40,6 @@ if TYPE_CHECKING:
 
 LOG_TAIL_DEFAULT: Final = 200
 DONE: Final = (RunState.FINISHED, RunState.FAILED)
-OPEN: Final = (RunState.QUEUED, RunState.RUNNING)
 
 
 def run_state(value: str) -> RunState:
@@ -102,12 +109,20 @@ class PipelineRunService:
         await self.db.commit()
         return cast("CursorResult[Any]", answer).rowcount == 1
 
-    async def finish(self, run: PipelineRun, state: RunState, log_path: str | None) -> None:
-        """Schließt einen Lauf ab und setzt sein Protokoll."""
+    async def finish(
+        self,
+        run: PipelineRun,
+        state: RunState,
+        log_path: str | None,
+        metric_brier: float | None = None,
+    ) -> None:
+        """Schließt einen Lauf ab und setzt Protokoll und Kennzahl."""
         run.state = state
         run.finished_at = now()
         if log_path is not None:
             run.log_path = log_path
+        if metric_brier is not None:
+            run.metric_brier = metric_brier
         await self.db.commit()
 
     async def report(
@@ -143,13 +158,41 @@ class PipelineRunService:
         lines = path.read_text(encoding="utf-8").splitlines()
         return lines[-tail:]
 
-    async def cancel(self, run: PipelineRun) -> None:
-        """Bricht einen wartenden oder laufenden Lauf ab."""
-        if run.state not in OPEN:
-            return
-        run.state = RunState.FAILED
-        run.finished_at = now()
+    async def report_step(
+        self,
+        run: PipelineRun,
+        position: int,
+        name: str,
+        state: RunState,
+        duration_s: int | None,
+    ) -> None:
+        """Schreibt den Stand eines Schritts."""
+        entry = await self.db.get(PipelineRunStep, (run.id, position))
+        if entry is None:
+            entry = PipelineRunStep(run_id=run.id, position=position)
+            self.db.add(entry)
+        entry.name = name
+        entry.state = state
+        entry.duration_s = duration_s
         await self.db.commit()
+
+    async def previous_metric(self, run: PipelineRun) -> float | None:
+        """Liest den Brier-Wert des letzten fertigen Laufs derselben Art."""
+        query = (
+            select(PipelineRun.metric_brier)
+            .where(
+                PipelineRun.kind == run.kind,
+                PipelineRun.id != run.id,
+                PipelineRun.state == RunState.FINISHED,
+                PipelineRun.metric_brier.is_not(None),
+            )
+            .order_by(PipelineRun.finished_at.desc())
+            .limit(1)
+        )
+        if run.finished_at is not None:
+            query = query.where(PipelineRun.finished_at < run.finished_at)
+        found = await self.db.execute(query)
+        return found.scalar_one_or_none()
 
     async def training_finds(self, run: PipelineRun | None = None) -> Sequence[Find]:
         """Liest die Funde für das Training und hält sie an einem Lauf fest."""
@@ -180,12 +223,24 @@ class PipelineRunService:
         return wrap(found, paging, PipelineRunSummary.model_validate)
 
     async def detail(self, run: PipelineRun) -> dict[str, object]:
-        """Baut den Stand eines Laufs mit dem Fortschritt je Art."""
-        query = select(PipelineRunSpecies).where(PipelineRunSpecies.run_id == run.id)
-        species = list((await self.db.execute(query)).scalars())
+        """Baut den Stand eines Laufs mit Fortschritt, Schritten und Protokoll."""
+        species_query = select(PipelineRunSpecies).where(PipelineRunSpecies.run_id == run.id)
+        species = list((await self.db.execute(species_query)).scalars())
+        steps_query = (
+            select(PipelineRunStep)
+            .where(PipelineRunStep.run_id == run.id)
+            .order_by(PipelineRunStep.position)
+        )
+        steps = list((await self.db.execute(steps_query)).scalars())
         summary = PipelineRunSummary.model_validate(run)
         return PipelineRunDetail(
             **summary.model_dump(),
             log_path=run.log_path,
+            metric_brier=run.metric_brier,
+            metric_brier_previous=await self.previous_metric(run),
+            progress_done=run.progress_done,
+            progress_total=run.progress_total,
             species=[PipelineRunSpeciesEntry.model_validate(row) for row in species],
+            steps=[PipelineRunStepEntry.model_validate(row) for row in steps],
+            log_tail=self.log(run),
         ).dumped()
