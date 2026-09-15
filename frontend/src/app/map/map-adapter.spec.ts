@@ -35,7 +35,6 @@ class MapDouble {
     this.styles.push(style);
   }
 
-
   once(kind: string, handler: () => void): void {
     this.onceHandlers.set(kind, handler);
     // Die echte Karte meldet `style.load`, sobald der Stil steht.

@@ -78,9 +78,7 @@ export class FactorSheetComponent {
     })),
   );
 
-  protected readonly glyph = computed<IconName | undefined>(
-    () => layerIcon(this.layer().id) ?? undefined,
-  );
+  protected readonly glyph = computed<IconName | undefined>(() => layerIcon(this.layer().id) ?? undefined);
   protected readonly handles = computed<Handles>(() => HANDLES[this.draft().condition]);
   protected readonly step = computed(() => stepSize(this.layer()));
   protected readonly values = computed(() => span(this.draft(), this.layer()));

@@ -1,11 +1,5 @@
 /** Die Gruppe einer Eingabe-Ebene: sie gibt den Namen und das Zeichen. */
-export type LayerGroup =
-  | 'precipitation'
-  | 'temperature'
-  | 'moisture'
-  | 'forest'
-  | 'terrain'
-  | 'soil';
+export type LayerGroup = 'precipitation' | 'temperature' | 'moisture' | 'forest' | 'terrain' | 'soil';
 
 /** Die Gruppe je Schlüssel der Kette. */
 const GROUPS: Readonly<Record<string, LayerGroup>> = {
