@@ -2,6 +2,11 @@
 
 @include overlay.overlay-body;
 
+// Die Karte der Wahl steht dichter unter dem Titel als die Artenliste.
+.overlay-body {
+  gap: var(--space-3);
+}
+
 :host {
   display: contents;
 }
