@@ -22,7 +22,7 @@ const CHANGES: readonly ColourChange[] = [
     from: { name: 'weiß', hex: '#f4efe2' },
     to: { name: 'blau', hex: '#5b7fb0' },
     speed: '1min',
-    triggers: [term('pressure', 'Druck'), term('cut', 'Anschnitt')],
+    triggers: [term('cut', 'Schnitt')],
   },
 ];
 
@@ -36,12 +36,26 @@ describe('SpeciesColourChangeComponent', () => {
     await noViolations(container);
   });
 
-  it('nennt die Auslöser als Titel und Farben mit Dauer als Unterzeile', async () => {
+  it('nennt die Auslöser als Titel und Farben mit der Dauer als Wort in der Unterzeile', async () => {
     await render(SpeciesColourChangeComponent, { inputs: { changes: CHANGES } });
 
-    expect(screen.getByText('Druck, Anschnitt')).toBeInTheDocument();
+    expect(screen.getByText('Schnitt')).toBeInTheDocument();
     expect(screen.getByText('gelb, dann blau · sofort')).toBeInTheDocument();
-    expect(screen.getByText('weiß, dann blau · 1 min')).toBeInTheDocument();
+    expect(screen.getByText('weiß, dann blau · mittel')).toBeInTheDocument();
+  });
+
+  it.each<[ColourChange['speed'], string]>([
+    ['immediate', 'sofort'],
+    ['30s', 'schnell'],
+    ['1min', 'mittel'],
+    ['3min', 'langsam'],
+    ['longer', 'sehr langsam'],
+  ])('schreibt die Dauer %s als das Wort %s, nicht als Messwert', async (speed, word) => {
+    const change: ColourChange = { ...CHANGES[0], speed };
+
+    await render(SpeciesColourChangeComponent, { inputs: { changes: [change] } });
+
+    expect(screen.getByText(`gelb, dann blau · ${word}`)).toBeInTheDocument();
   });
 
   it('trägt je Zeile eine Fläche mit Von und Nach', async () => {

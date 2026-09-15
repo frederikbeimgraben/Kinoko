@@ -13,9 +13,6 @@
           >
             <app-svg-icon name="compare" [size]="18" />
           </button>
-          @if (row.image; as path) {
-            <app-private-image class="lookalike__photo" [path]="path" [alt]="row.name" />
-          }
           <button
             class="lookalike__way tap"
             type="button"
@@ -25,6 +22,9 @@
           >
             <app-svg-icon name="chevron" [size]="18" />
           </button>
+          @if (row.image; as path) {
+            <app-private-image class="lookalike__photo" [path]="path" [alt]="row.name" />
+          }
         </span>
       </app-list-row>
     }

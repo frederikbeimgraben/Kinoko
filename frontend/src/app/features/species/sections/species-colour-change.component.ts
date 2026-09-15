@@ -4,7 +4,16 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ColourChangeComponent } from '../../../ui/colour-change/colour-change.component';
 import type { ColourValue } from '../../../ui/colour-field/colour-field.component';
 import type { ColourChange } from '../../../core/api/models';
+import type { TranslationKey } from '../../../core/i18n/translations';
 import { PART_TEXT, SPEED_TEXT } from '../labels';
+
+/** Die Dauer als Wort, wo es eines eigens für die Verfärbung gibt. */
+const COLOUR_CHANGE_SPEED_TEXT: Partial<Record<ColourChange['speed'] & string, TranslationKey>> = {
+  '30s': 'species.colourChange.speed.s30',
+  '1min': 'species.colourChange.speed.min1',
+  '3min': 'species.colourChange.speed.min3',
+  longer: 'species.colourChange.speed.longer',
+};
 
 /** Eine Karte Verfärbung: der Teil und seine Zeilen. */
 interface ChangeCard {
@@ -48,7 +57,11 @@ export class SpeciesColourChangeComponent {
       to: rows.map((row) => [row.to]),
       fromLabels: rows.map((row) => row.from?.name ?? ''),
       toLabels: rows.map((row) => row.to.name),
-      speed: rows.map((row) => (row.speed ? this.i18n.translate(SPEED_TEXT[row.speed]) : '')),
+      speed: rows.map((row) => {
+        if (!row.speed) return '';
+        const key = COLOUR_CHANGE_SPEED_TEXT[row.speed] ?? SPEED_TEXT[row.speed];
+        return this.i18n.translate(key);
+      }),
     }));
   });
 }

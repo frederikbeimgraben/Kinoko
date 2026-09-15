@@ -49,7 +49,7 @@ function actionTags(container: Element): string[] {
 }
 
 describe('SpeciesLookalikesComponent', () => {
-  it('setzt den Namen an den Zeilenanfang und das Foto vor den Pfeil', async () => {
+  it('setzt den Namen an den Zeilenanfang und das Foto ans Zeilenende', async () => {
     const { container } = await render(SpeciesLookalikesComponent, {
       providers: WITH_CATALOGUE,
       inputs: { lookalikes: LOOKALIKES },
@@ -57,7 +57,7 @@ describe('SpeciesLookalikesComponent', () => {
 
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     expect(container.querySelector('.row__lead')?.childElementCount).toBe(0);
-    expect(actionTags(container)).toEqual(['button', 'app-private-image', 'button']);
+    expect(actionTags(container)).toEqual(['button', 'button', 'app-private-image']);
     const photo = styleOf(container.querySelector('.lookalike__photo'));
     expect(photo.getPropertyValue('inline-size')).toBe('var(--size-thumb)');
     expect(photo.getPropertyValue('block-size')).toBe('var(--size-thumb)');
