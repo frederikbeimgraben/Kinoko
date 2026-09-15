@@ -1,9 +1,13 @@
 @if (rows().length > 0) {
-  <h2 class="section__title">{{ 'species.compareWith' | t }}</h2>
+  <h2 class="section__title">{{ 'species.section.lookalikes' | t }}</h2>
   <div class="section__card">
     @for (row of rows(); track row.slug) {
       <app-list-row kind="catalogue" [title]="row.name">
-        <app-colour-field lead [colours]="row.colours" mode="gradient" [label]="row.name" />
+        <span lead class="lookalike__image">
+          @if (row.image; as path) {
+            <app-private-image class="lookalike__photo" [path]="path" [alt]="row.name" />
+          }
+        </span>
         <span action class="lookalike__ways">
           <button
             class="lookalike__way lookalike__way--compare tap"

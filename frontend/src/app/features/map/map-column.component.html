@@ -19,6 +19,7 @@
   }
 } @else {
   <app-map-head
+    [column]="true"
     [playing]="playing()"
     (titleChosen)="titleChosen.emit()"
     (weekChosen)="weekChosen.emit($event)"
@@ -27,6 +28,7 @@
   />
   <app-map-panel
     (layerChosen)="layerChosen.emit()"
+    (savedOpened)="savedOpened.emit()"
     (factorOpened)="factorOpened.emit($event)"
     (factorAdded)="factorAdded.emit()"
     (saveRequested)="saveRequested.emit()"

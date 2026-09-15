@@ -1,4 +1,7 @@
 :host {
+  --action-bar-height: var(--size-tap);
+  --action-bar-size: var(--fs-control);
+
   display: flex;
   flex-direction: column;
   block-size: 100%;
@@ -11,6 +14,5 @@
 
   flex: 1;
   min-block-size: 0;
-  padding-block-end: var(--size-gutter);
   overflow-y: auto;
 }

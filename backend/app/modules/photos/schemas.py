@@ -21,8 +21,10 @@ class PhotoOut(Schema):
     width: int
     height: int
     photographer: str
+    owner_name: str
     licence: Licence
     caption: str | None
+    source: str | None
     taken_on: date | None
     lat: float | None
     lon: float | None

@@ -1,32 +1,27 @@
 @if (image()) {
-  <header class="viewer__head">
-    <button
-      class="viewer__back tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'common.back' | t"
-      (click)="back.emit()"
-    >
-      <app-svg-icon name="back" [size]="18" />
-    </button>
-    <h2 class="viewer__title">{{ title() }}</h2>
+  <app-page-header class="viewer__head" [title]="title()" [back]="true" (backClick)="back.emit()">
     @if (count() > 0) {
-      <p class="viewer__count">{{ counter() }}</p>
+      <span class="viewer__count">{{ counter() }}</span>
     }
-  </header>
-  <app-private-image class="viewer__image" [path]="path() ?? ''" [alt]="alt()" />
-  @if (image()?.caption; as caption) {
-    <p class="viewer__caption">{{ caption }}</p>
-  }
-  <div class="viewer__facts">
-    @for (row of details(); track row.labelKey) {
-      <app-list-row kind="catalogue" [title]="row.labelKey | t" [value]="row.text">
-        @if (row.badgeKey || row.badgeText) {
-          <app-badge trail variant="primary">{{
-            row.badgeKey ? (row.badgeKey | t) : row.badgeText
-          }}</app-badge>
+  </app-page-header>
+  <div class="viewer__body">
+    <app-private-image class="viewer__image" [path]="path() ?? ''" [alt]="alt()" />
+    @if (image()?.caption; as caption) {
+      <p class="viewer__caption">{{ caption }}</p>
+    }
+    <section class="viewer__block">
+      <h2 class="viewer__label">{{ 'image.section.image' | t }}</h2>
+      <div class="viewer__facts">
+        @for (row of details(); track row.labelKey) {
+          <app-list-row kind="catalogue" [title]="row.labelKey | t" [value]="row.text">
+            @if (row.badgeKey || row.badgeText) {
+              <app-badge trail variant="primary">{{
+                row.badgeKey ? (row.badgeKey | t) : row.badgeText
+              }}</app-badge>
+            }
+          </app-list-row>
         }
-      </app-list-row>
-    }
+      </div>
+    </section>
   </div>
 }

@@ -9,6 +9,7 @@
 <app-action-bar
   [primary]="'image.setCover' | t"
   [secondary]="'image.remove' | t"
+  [quiet]="true"
   [secondaryDanger]="true"
   (primaryClick)="setCover()"
   (secondaryClick)="remove()"

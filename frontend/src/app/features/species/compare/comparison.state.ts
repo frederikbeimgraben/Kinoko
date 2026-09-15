@@ -2,6 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import type { SpeciesEntry } from '../../../core/api/models';
 import { SpeciesState } from '../species.state';
 
+/** Der Vergleich stellt zwei Arten gegenüber. */
+const PAIR = 2;
+
 /** Die Arten des Vergleichs. Die Wahl steht im Zustand, nie im Weg. */
 @Injectable({ providedIn: 'root' })
 export class ComparisonState {
@@ -20,12 +23,13 @@ export class ComparisonState {
 
   /** Setzt die Wahl neu, etwa beim Sprung von einer Artseite. */
   set(slugs: readonly string[]): void {
-    this.chosen.set([...new Set(slugs)]);
+    this.chosen.set([...new Set(slugs)].slice(0, PAIR));
   }
 
+  /** Eine weitere Art tritt an die Stelle der zweiten. */
   add(slug: string): void {
     if (this.chosen().includes(slug)) return;
-    this.chosen.set([...this.chosen(), slug]);
+    this.chosen.set([...this.chosen().slice(0, PAIR - 1), slug]);
   }
 
   remove(slug: string): void {

@@ -11,6 +11,7 @@ import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
+import { longDate } from '../../core/i18n/dates';
 import { locationText } from '../../core/i18n/places';
 import { isoDatum } from '../entries/formats';
 import { visibilitySegments } from './visibility';
@@ -77,6 +78,8 @@ export class FindFormComponent {
   protected readonly segmente = computed(() => visibilitySegments(this.i18n));
 
   protected readonly datum = computed(() => this.dateChoice() ?? this.start()?.datum ?? isoDatum(new Date()));
+  /** Der Tag in der Schreibweise der Sprache, wie ihn das Board zeigt. */
+  protected readonly datumText = computed(() => longDate(this.datum(), this.i18n.locale()));
   protected readonly anzahl = computed(() => {
     const selected = this.countChoice();
     if (selected !== null) return selected;

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
+import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { presetFilter } from '../fixtures/filter-state';
@@ -37,7 +38,7 @@ function guard(board: string, device: 'phone' | 'desktop'): void {
 
 /** Öffnet den Reiter Arten mit einem Katalog. */
 async function openList(page: Page, items: unknown, extra: Record<string, unknown> = {}): Promise<void> {
-  await mockApi(page, { '/api/species/bundle': items, ...extra });
+  await mockApi(page, { '/api/species/bundle': items, ...extra }, { photo: ROW_PHOTO });
   await flatMap(page);
   await page.goto('/arten');
 }
@@ -84,7 +85,7 @@ test('SpeciesEmpty', async ({ page }) => {
 
 test('SpeciesSkeleton', async ({ page }) => {
   guard('SpeciesSkeleton', 'phone');
-  await mockApi(page);
+  await mockApi(page, {}, { photo: ROW_PHOTO });
   await flatMap(page);
   await page.route('**/api/species/bundle', () => {
     // Der Katalog bleibt aus: das Brett zeigt den Ladezustand.
@@ -96,7 +97,7 @@ test('SpeciesSkeleton', async ({ page }) => {
 
 test('SpeciesError', async ({ page }) => {
   guard('SpeciesError', 'phone');
-  await mockApi(page);
+  await mockApi(page, {}, { photo: ROW_PHOTO });
   await flatMap(page);
   await page.route('**/api/species/bundle', (route) => route.abort());
   await page.goto('/arten');
@@ -168,10 +169,11 @@ test('FilterResult', async ({ page }) => {
 
 test('Taxonomy', async ({ page }) => {
   guard('Taxonomy', 'phone');
-  await mockApi(page, {
-    '/api/species/bundle': bundle(TAXON.catalogue),
-    '/api/taxa/family/boletaceae': TAXON.page,
-  });
+  await mockApi(
+    page,
+    { '/api/species/bundle': bundle(TAXON.catalogue), '/api/taxa/family/boletaceae': TAXON.page },
+    { photo: ROW_PHOTO },
+  );
   await flatMap(page);
   await page.goto('/taxonomie/family/boletaceae');
   await seen(page, 'Rotfußröhrling');

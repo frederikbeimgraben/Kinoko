@@ -15,10 +15,10 @@ import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesState } from '../entries/entries.state';
+import { photoPath } from '../../core/api/models';
 import { SpeciesState } from '../species/species.state';
 import { CombinationState } from './combination.state';
 import { DEFAULT_LAYER, MapState } from './map.state';
-import { SPECIES_TINT } from './species-tint';
 
 /** Die Werte, die Kopf und Inhalt der Karte lesen. Eine Quelle für beide Geräte. */
 @Injectable({ providedIn: 'root' })
@@ -115,7 +115,7 @@ export class MapView {
         levelText: this.i18n.translate(EDIBILITY_TEXT[species.edibility]),
         levelColour: EDIBILITY_TONE[species.edibility].colour,
         levelBackground: EDIBILITY_TONE[species.edibility].background,
-        tint: SPECIES_TINT[species.slug],
+        image: species.leadPhotoId ? photoPath(species.leadPhotoId, 'list') : null,
       })),
   );
 
@@ -133,19 +133,24 @@ export class MapView {
 
   readonly speciesName = computed(() => this.species()?.name ?? '');
 
+  /** Die Spalte am Rechner nennt immer die Art: die Reiter stehen darunter. */
+  readonly speciesTitle = computed(() =>
+    this.noSpecies() ? this.i18n.translate('map.species.choose') : this.speciesName(),
+  );
+
   /** Der Kopf nennt, was die Karte zeigt: die Art, die Ebene oder die Kombination. */
   readonly title = computed(() => {
     if (this.onCombination()) return this.i18n.translate('map.tab.combination');
     if (this.onLayer()) return this.layer()?.label ?? this.i18n.translate('map.tab.layer');
-    if (this.noSpecies()) return this.i18n.translate('map.species.choose');
-    return this.speciesName();
+    return this.speciesTitle();
   });
 
   /** Jede Quelle, die ein Faktor nennen kann: die Ebenen und die Arten. */
   readonly sources = computed<ReadonlyMap<string, Layer>>(() => {
     const all = new Map<string, Layer>();
     for (const entry of this.speciesChoices()) {
-      const layer = this.tiles.speciesLayer(entry.value, entry.name);
+      const name = this.i18n.translate('map.factor.speciesLayer', { name: entry.name });
+      const layer = this.tiles.speciesLayer(entry.value, name);
       if (layer !== null) all.set(entry.value, layer);
     }
     for (const layer of this.tiles.layerList()) all.set(layer.id, layer);

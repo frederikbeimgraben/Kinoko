@@ -66,12 +66,17 @@ function topCard(container: HTMLElement): HTMLElement {
 }
 
 describe('ReviewQueueComponent', () => {
-  it('zeigt die erste Karte und den Zähler im Kopf', async () => {
+  it('zeigt die erste Karte', async () => {
     const { container } = await render(HostComponent);
 
     expect(screen.getByText('Pfifferling')).toBeInTheDocument();
-    expect(screen.getByText('0 von 3')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('zählt nicht selbst: der Zähler steht im Seitenkopf', async () => {
+    const { container } = await render(HostComponent);
+
+    expect(container.querySelector('.queue__counter')).toBeNull();
   });
 
   it('nimmt über den Haken-Knopf an und zählt weiter', async () => {
@@ -80,7 +85,6 @@ describe('ReviewQueueComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
 
     expect(fixture.componentInstance.acceptedCalls).toEqual(['Pfifferling']);
-    expect(screen.getByText('1 von 3')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(container.querySelector('.queue__round--undo')).not.toBeDisabled();
   });
@@ -102,7 +106,6 @@ describe('ReviewQueueComponent', () => {
     await userEvent.click(undo);
 
     expect(fixture.componentInstance.undoneCalls).toEqual(['Pfifferling']);
-    expect(screen.getByText('0 von 3')).toBeInTheDocument();
     expect(screen.getByText('Pfifferling')).toBeInTheDocument();
   });
 
@@ -158,7 +161,6 @@ describe('ReviewQueueComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
 
     expect(fixture.componentInstance.acceptedCalls).toHaveLength(3);
-    expect(screen.getByText('3 von 3')).toBeInTheDocument();
     expect(container.querySelector('.queue__card--top')).toBeNull();
   });
 

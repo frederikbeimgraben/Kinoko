@@ -21,8 +21,7 @@ export class MapOverlayState {
 
   /** Der Titel im Kopf öffnet die Wahl, die zur Darstellung gehört. */
   openTitle(): void {
-    if (this.view.onCombination()) this.set('combinations');
-    else this.set(this.view.onLayer() ? 'layer' : 'species');
+    this.set(this.view.onLayer() ? 'layer' : 'species');
   }
 
   openFactorFor(source: string): void {

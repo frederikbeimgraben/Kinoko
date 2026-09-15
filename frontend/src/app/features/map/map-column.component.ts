@@ -29,6 +29,7 @@ export class MapColumnComponent {
   readonly stepped = output<1 | -1>();
   readonly playToggled = output();
   readonly layerChosen = output();
+  readonly savedOpened = output();
   readonly factorOpened = output<string>();
   readonly factorAdded = output();
   readonly saveRequested = output();

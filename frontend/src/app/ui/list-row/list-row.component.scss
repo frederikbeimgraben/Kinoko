@@ -31,12 +31,24 @@
 // reicht so an den Rand der Karte.
 .row__field--catalogue {
   gap: var(--space-3);
-  padding-inline: var(--size-gutter);
+  padding-inline: var(--list-row-inline, var(--size-gutter));
 }
 
 .row__field--filter {
-  gap: var(--space-3);
+  gap: var(--space-row-gap, var(--space-3));
   padding-inline: var(--space-row-inline);
+}
+
+// Ein langer Name in einer Zeile mit Zeichen bricht mit der Zeilenhöhe
+// der Schrift.
+.row__field--filter:has(.row__icon) .row__title {
+  line-height: normal;
+}
+
+// Eine Zeile, die aus der App hinausführt, trägt ihren Titel als Verweis.
+.row__field--link {
+  gap: var(--space-3);
+  padding-inline: var(--list-row-inline, var(--size-gutter));
 }
 
 // Eine Zeile mit Unterzeile trägt zwei Textzeilen und ist darum höher.
@@ -84,6 +96,7 @@
 .row__title {
   font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
+  line-height: var(--list-row-title-height, inherit);
 }
 
 // Die Zeile misst innen einundfünfzig Punkte; nur eine gerade Summe setzt
@@ -103,14 +116,21 @@
   font-weight: var(--fw-row-filter);
 }
 
+.row__title--link {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+  color: var(--color-primary);
+}
+
 .row__sub {
-  font-size: var(--fs-sm);
+  font-size: var(--list-row-sub, var(--fs-sm));
+  line-height: var(--list-row-sub-height, inherit);
   color: var(--color-text-muted);
 }
 
 .row__value {
   flex: none;
-  font-size: var(--fs-sm);
+  font-size: var(--list-row-value, var(--fs-sm));
   color: var(--color-text-muted);
 }
 

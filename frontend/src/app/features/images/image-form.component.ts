@@ -14,6 +14,7 @@ import { SelectComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { AuthService } from '../../core/auth';
 import { LICENCES, type Licence } from '../../core/api/models';
+import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -22,6 +23,7 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { ProgressComponent } from '../../ui/progress/progress.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from '../species/species.state';
 import { ImagesState } from './images.state';
 
@@ -37,6 +39,7 @@ import { ImagesState } from './images.state';
     PageHeaderComponent,
     ProgressComponent,
     SelectComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './image-form.component.html',
@@ -70,6 +73,12 @@ export class ImageFormComponent implements OnDestroy {
   protected readonly takenOn = signal('');
   protected readonly caption = signal('');
   protected readonly cover = signal(false);
+
+  /** Der Tag in der Schreibweise der Sprache, wie ihn das Board zeigt. */
+  protected readonly takenOnText = computed(() => {
+    const day = this.takenOn();
+    return day === '' ? '' : longDate(day, this.i18n.locale());
+  });
 
   protected readonly percent = this.images.percent;
   protected readonly busy = computed(() => this.percent() !== null);
@@ -105,6 +114,7 @@ export class ImageFormComponent implements OnDestroy {
         photographer: this.photographer().trim(),
         licence: this.licence(),
         caption: this.caption().trim() || undefined,
+        source: this.source().trim() || undefined,
         takenOn: this.takenOn() || undefined,
       },
       file,

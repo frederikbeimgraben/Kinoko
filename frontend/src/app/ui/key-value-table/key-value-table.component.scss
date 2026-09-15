@@ -1,7 +1,7 @@
 // Die Tabelle trägt das Raster, nicht die Zeile: eine eigene Spaltenbreite
 // weicht sonst vom Nachbarn ab. Die Zeilen sind darum `display: contents`.
 :host {
-  --key-value-table-label: 104px;
+  --key-value-table-label: 76px;
   --key-value-table-gutter: var(--space-4);
   --key-value-table-gap: var(--space-3);
 

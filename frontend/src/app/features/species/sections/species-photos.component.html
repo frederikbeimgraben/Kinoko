@@ -1,0 +1,21 @@
+@if (tiles().length > 0 || canAdd()) {
+  <h2 class="section__title">{{ 'species.section.images' | t }}</h2>
+  <div class="photos">
+    @for (tile of tiles(); track tile.id) {
+      <button class="photos__tile tap" type="button" data-press="scale" (click)="open(tile.id)">
+        <app-private-image class="photos__image" [path]="tile.path" [alt]="tile.alt" />
+      </button>
+    }
+    @if (canAdd()) {
+      <button
+        class="photos__add tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'image.add.title' | t"
+        (click)="add()"
+      >
+        <app-svg-icon name="plus" [size]="20" />
+      </button>
+    }
+  </div>
+}

@@ -15,14 +15,7 @@
   overflow-y: auto;
 }
 
-.page__column {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-inline-size: 0;
-}
-
-// Am Rechner stehen Bilder und Saison links, die Daten rechts.
+// Am Rechner stehen Bild, Saison, Bilder und Quellen links, die Daten rechts.
 .page--wide {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -31,10 +24,16 @@
 }
 
 .page--wide .page__column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-inline-size: 0;
   padding: 20px 24px;
   overflow-y: auto;
 }
 
-.page--wide .page__column + .page__column {
-  border-inline-start: var(--border-width) solid var(--color-border);
+.page--wide .page__column:first-child {
+  --species-lead-height: 240px;
+
+  border-inline-end: var(--border-width) solid var(--color-border);
 }

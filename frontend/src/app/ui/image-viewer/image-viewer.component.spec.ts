@@ -43,7 +43,7 @@ describe('ImageViewerComponent', () => {
   it('bleibt ohne Bild leer', async () => {
     const { container } = await build(null);
 
-    expect(container.querySelector('.viewer__head')).toBeNull();
+    expect(container.querySelector('app-page-header')).toBeNull();
   });
 
   it('zeigt das Bild gross mit Fotograf, Lizenz und Aufnahmetag', async () => {
@@ -55,6 +55,12 @@ describe('ImageViewerComponent', () => {
     expect(screen.getByText('6. September 2026')).toBeInTheDocument();
     expect(screen.getByText('Junges Exemplar')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('nennt die Quelle, wenn eine dasteht', async () => {
+    await build(photo({ source: '123pilzsuche.de' }));
+
+    expect(screen.getByText('123pilzsuche.de')).toBeInTheDocument();
   });
 
   it('lässt weg, was das Bild nicht hat', async () => {

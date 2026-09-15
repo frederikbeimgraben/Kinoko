@@ -10,6 +10,7 @@ const RULE_KEY: Record<Rule, TranslationKey> = {
   graded: 'map.combination.graduated',
 };
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RampComponent } from '../../ui/ramp/ramp.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
@@ -28,6 +29,7 @@ import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
     SkeletonComponent,
     CombinationComponent,
     FormFieldComponent,
+    ListRowComponent,
     RampComponent,
     SegmentedComponent,
     TranslatePipe,
@@ -42,6 +44,7 @@ export class MapPanelComponent {
   protected readonly combination = this.view.combination;
 
   readonly layerChosen = output();
+  readonly savedOpened = output();
   readonly factorOpened = output<string>();
   readonly factorAdded = output();
   readonly saveRequested = output();
@@ -49,6 +52,8 @@ export class MapPanelComponent {
   protected readonly views = computed<SegmentOption[]>(() =>
     VIEW_MODES.map((value) => ({ value, label: this.i18n.translate(`map.tab.${value}`) })),
   );
+
+  protected readonly savedCount = computed(() => String(this.combination.saved().length));
 
   protected readonly layerName = computed(() => {
     const layer = this.view.layer();

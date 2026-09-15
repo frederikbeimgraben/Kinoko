@@ -1,0 +1,14 @@
+@if (rows().length > 0) {
+  <h2 class="section__title">{{ 'species.section.sources' | t }}</h2>
+  <div class="section__card">
+    @for (row of rows(); track row.url) {
+      <app-list-row
+        kind="link"
+        [title]="row.title"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="open(row.url)"
+      />
+    }
+  </div>
+}

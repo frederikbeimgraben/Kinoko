@@ -252,7 +252,7 @@ function summary(entry: Entry, at: number): Record<string, unknown> {
     edibility: entry.edibility,
     protection: 'none',
     forecastEnabled: false,
-    leadPhotoId: null,
+    leadPhotoId: `00000000-0000-4000-9000-${String(at).padStart(12, '0')}`,
     updatedAt: '2026-01-01T00:00:00Z',
   };
 }

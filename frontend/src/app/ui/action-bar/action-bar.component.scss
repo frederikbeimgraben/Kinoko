@@ -17,7 +17,10 @@
 }
 
 .footer__main {
-  min-block-size: 48px;
+  --fs-md: var(--action-bar-size, 1rem);
+
+  block-size: var(--action-bar-height, auto);
+  min-block-size: var(--action-bar-height, 48px);
 }
 
 // Im Modal misst die Aktion vierundvierzig Punkte, wie das Board sie zeigt.

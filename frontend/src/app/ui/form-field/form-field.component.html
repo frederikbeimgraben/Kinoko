@@ -29,6 +29,18 @@
     [attr.enterkeyhint]="hint()"
     (input)="onInput($event)"
   ></textarea>
+} @else if (kind() === 'date') {
+  <span class="field field--date tap" data-press="scale" [class.field--empty]="empty()">
+    <span class="field__shown">{{ shown() }}</span>
+    <input
+      class="field__date"
+      type="date"
+      [id]="fieldId"
+      [value]="value()"
+      [attr.enterkeyhint]="hint()"
+      (input)="onInput($event)"
+    />
+  </span>
 } @else if (icon()) {
   <span class="field field--icon tap" data-press="scale">
     <app-svg-icon class="field__icon" [name]="icon()!" [size]="18" />

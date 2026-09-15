@@ -10,4 +10,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class TagListComponent {
   readonly tags = input.required<readonly string[]>();
   readonly label = input.required<string>();
+  /** Marken der Art selbst stehen gefüllt, Marken zur Wahl nur umrandet. */
+  readonly filled = input(false);
 }

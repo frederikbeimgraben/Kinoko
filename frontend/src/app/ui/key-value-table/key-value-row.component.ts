@@ -1,12 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  TemplateRef,
-  computed,
-  contentChild,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, TemplateRef, contentChild, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 /** Zeile der Merkmalstabelle: Schlüssel links, ein oder mehrere Werte rechts. */
@@ -16,7 +9,6 @@ import { RouterLink } from '@angular/router';
   imports: [NgTemplateOutlet, RouterLink],
   templateUrl: './key-value-row.component.html',
   styleUrl: './key-value-row.component.scss',
-  host: { '[class.kv--columns]': 'columns()' },
 })
 export class KeyValueRowComponent {
   readonly key = input.required<string>();
@@ -35,7 +27,4 @@ export class KeyValueRowComponent {
   readonly head = input(false);
 
   protected readonly slot = contentChild(TemplateRef);
-
-  /** Die Spalten tragen schon die Namen der Arten, ein Zebra trennt dort nichts. */
-  protected readonly columns = computed(() => this.cells() !== undefined || this.values() !== undefined);
 }

@@ -11,14 +11,19 @@
   flex-direction: column;
   justify-content: center;
   min-block-size: 0;
-  padding: var(--size-gutter);
+  padding: 20px var(--size-gutter) 24px;
   overflow: hidden;
 }
 
 .queue__counter {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-row-meta);
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
 }
 
 .card {
@@ -34,7 +39,7 @@
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 6px;
   padding: 14px var(--space-4);
 }
 
@@ -51,10 +56,11 @@
 }
 
 .card__meta {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
   color: var(--color-text-muted);
 }
 
 .card__caption {
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
 }
