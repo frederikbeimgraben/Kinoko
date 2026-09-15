@@ -20,11 +20,7 @@ import { SyncService } from '../core/offline/sync.service';
 const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
 
 /** Wege ohne Reiterleiste. Die Regel steht am Weg, nicht in der Seite. */
-const WITHOUT_NAV: readonly RegExp[] = [
-  /^\/bausteine(\/|$)/,
-  /^\/arten\/[^/]+/,
-  /^\/verwaltung\/bilder(\/|$)/,
-];
+const WITHOUT_NAV: readonly RegExp[] = [/^\/bausteine(\/|$)/, /^\/arten\/[^/]+/, /^\/verwaltung(\/|$)/];
 
 /**
  * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.
@@ -76,10 +72,10 @@ export class ShellComponent {
    */
   protected readonly fullWidth = computed(() => FULL_WIDTH.includes(this.active()));
 
-  /** Die Werkstatt und die Bildseiten sind kein Reiter: keine Leiste darunter. */
+  /** Kein Reiter, keine Leiste darunter. Am Rechner bleibt die Schiene. */
   protected readonly bare = computed(() => {
     const path = this.adresse().split(/[?#]/)[0];
-    return WITHOUT_NAV.some((rule) => rule.test(path));
+    return !this.wide() && WITHOUT_NAV.some((rule) => rule.test(path));
   });
 
   /**

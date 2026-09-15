@@ -1,7 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { tap, type Observable } from 'rxjs';
 import { AccessApi } from '../../core/api/access.api';
-import type { PermissionEntry, Person, Role, RoleInput, RolePatch } from '../../core/api/models';
+import type {
+  AdminSummary,
+  PermissionEntry,
+  Person,
+  Role,
+  RoleInput,
+  RolePatch,
+} from '../../core/api/models';
 
 /**
  * Rollen, Rechtekatalog und Konten im Speicher.
@@ -18,12 +25,20 @@ export class AdminState {
   private readonly _catalogue = signal<readonly PermissionEntry[] | null>(null);
   private readonly _people = signal<readonly Person[] | null>(null);
   private readonly _search = signal('');
+  private readonly _summary = signal<AdminSummary | null>(null);
 
   /** `null`, solange die erste Antwort aussteht. */
   readonly roles = this._roles.asReadonly();
   readonly catalogue = this._catalogue.asReadonly();
   readonly people = this._people.asReadonly();
   readonly search = this._search.asReadonly();
+  readonly summary = this._summary.asReadonly();
+
+  loadSummary(): void {
+    this.api.summary().subscribe((counts) => {
+      this._summary.set(counts);
+    });
+  }
 
   loadRoles(): void {
     this.api.roles().subscribe((roles) => {

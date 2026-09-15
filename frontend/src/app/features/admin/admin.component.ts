@@ -1,101 +1,36 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { CardComponent } from '@stupa-makers/ui-kit';
 import { filter, map } from 'rxjs';
 import { PermissionsService } from '../../core/access/permissions.service';
-import type { Permission } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
+import { ADMIN_ENTRIES, ADMIN_SECTIONS, SECTION_TITLE, type AdminEntry } from './admin.entries';
 
-/** Ein Punkt der Verwaltung: das Recht dazu, der Abschnitt und der Weg. */
-interface AdminEntry {
-  titel: TranslationKey;
-  subline: TranslationKey;
-  permission: Permission;
-  section: 'inhalte' | 'zugang';
-  /** Ohne Weg steht der Punkt da, aber sein Arbeitspaket fehlt noch. */
-  path: string | null;
-  paket: string | null;
+/** Ein Block der Übersicht mit seinen Zeilen. */
+interface Block {
+  title: string;
+  rows: readonly Row[];
 }
 
-const ENTRIES: readonly AdminEntry[] = [
-  {
-    titel: 'verwaltung.texte',
-    subline: 'verwaltung.texteUnter',
-    permission: 'text.edit',
-    section: 'inhalte',
-    path: '/verwaltung/texte',
-    paket: null,
-  },
-  {
-    titel: 'verwaltung.bilder',
-    subline: 'verwaltung.bilderUnter',
-    permission: 'image.review',
-    section: 'inhalte',
-    path: '/verwaltung/bilder',
-    paket: null,
-  },
-  {
-    titel: 'verwaltung.arten',
-    subline: 'verwaltung.artenUnter',
-    permission: 'species.edit',
-    section: 'inhalte',
-    path: null,
-    paket: 'J1',
-  },
-  {
-    titel: 'verwaltung.rollen',
-    subline: 'verwaltung.rollenUnter',
-    permission: 'role.manage',
-    section: 'zugang',
-    path: '/verwaltung/rollen',
-    paket: null,
-  },
-  {
-    titel: 'verwaltung.personen',
-    subline: 'verwaltung.personenUnter',
-    permission: 'role.assign',
-    section: 'zugang',
-    path: '/verwaltung/personen',
-    paket: null,
-  },
-];
-
-/** Eine Zeile, fertig für die Vorlage. */
+/** Eine Zeile der Übersicht. */
 interface Row {
-  titel: string;
-  subline: string;
-  notiz: string | undefined;
-  path: string | null;
+  title: string;
+  counts: string;
+  path: string;
+  ready: boolean;
 }
 
-/**
- * Der Bereich Verwaltung unter dem Konto (Artboard `Verwaltung`).
- *
- * Am Telefon ist die Liste die Seite; ein Punkt führt weiter. Am Rechner steht
- * die Liste links und der gewählte Punkt rechts, beide zugleich.
- *
- * Ein Punkt erscheint nur mit dem passenden Recht. Die Prüfung bleibt beim
- * Server: hier wird nur ausgeblendet.
- */
+/** Die Verwaltung: am Telefon die Liste, am Rechner Liste und Punkt zugleich. */
 @Component({
   selector: 'app-admin',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CardComponent,
-    EmptyStateComponent,
-    ListRowComponent,
-    PageHeaderComponent,
-    RouterOutlet,
-    TranslatePipe,
-  ],
+  imports: [ListRowComponent, PageHeaderComponent, RouterOutlet, TranslatePipe],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
 })
@@ -120,23 +55,31 @@ export class AdminComponent {
   protected readonly onEntry = computed(() => this.address().startsWith('/verwaltung/'));
   protected readonly showList = computed(() => this.wide() || !this.onEntry());
 
-  protected readonly content = computed(() => this.rows('inhalte'));
-  protected readonly access = computed(() => this.rows('zugang'));
-  protected readonly empty = computed(() => this.content().length + this.access().length === 0);
+  protected readonly blocks = computed<readonly Block[]>(() =>
+    ADMIN_SECTIONS.map((section) => ({
+      title: this.i18n.translate(SECTION_TITLE[section]),
+      rows: this.rows(section),
+    })).filter((block) => block.rows.length > 0),
+  );
 
   constructor() {
-    // Die Zeile „Rollen“ nennt, wie viele es sind. Beides steht hinter dem Recht,
-    // Rollen zu verwalten.
     effect(() => {
-      if (this.rights.can('role.manage')) {
-        this.state.loadRoles();
-        this.state.loadCatalogue();
-      }
+      if (this.rights.permissions() !== null) this.state.loadSummary();
     });
   }
 
-  protected open(path: string | null): void {
-    if (path !== null) void this.router.navigateByUrl(path);
+  protected chosen(path: string): boolean {
+    return this.address().startsWith(path);
+  }
+
+  /** Ein Punkt führt weiter, sobald sein Weg in der Routentabelle steht. */
+  private ready(path: string): boolean {
+    const children = this.router.config.find((route) => route.path === 'verwaltung')?.children ?? [];
+    return children.some((child) => `/verwaltung/${child.path ?? ''}` === path);
+  }
+
+  protected open(path: string): void {
+    void this.router.navigateByUrl(path);
   }
 
   protected back(): void {
@@ -144,29 +87,20 @@ export class AdminComponent {
   }
 
   private rows(section: AdminEntry['section']): Row[] {
-    return ENTRIES.filter((entry) => entry.section === section && this.rights.can(entry.permission)).map(
-      (entry) => ({
-        titel: this.i18n.translate(entry.titel),
-        subline: this.subline(entry),
-        notiz:
-          entry.paket === null
-            ? undefined
-            : this.i18n.translate('verwaltung.spaeter', { paket: entry.paket }),
-        path: entry.path,
-      }),
-    );
+    return ADMIN_ENTRIES.filter(
+      (entry) => entry.section === section && this.rights.can(entry.permission),
+    ).map((entry) => ({
+      title: this.i18n.translate(entry.title),
+      counts: this.counts(entry),
+      path: entry.path,
+      ready: this.ready(entry.path),
+    }));
   }
 
-  /** Die Zeile „Rollen“ zählt, sobald Liste und Katalog da sind. */
-  private subline(entry: AdminEntry): string {
-    const roles = this.state.roles();
-    const catalogue = this.state.catalogue();
-    if (entry.subline !== 'verwaltung.rollenUnter' || roles === null || catalogue === null) {
-      return this.i18n.translate(entry.subline);
-    }
-    return this.i18n.translate('verwaltung.rollenUnter', {
-      rollen: roles.length,
-      rechte: catalogue.length,
-    });
+  /** Die Zahlen des Punktes. Solange die Antwort aussteht, steht keine da. */
+  private counts(entry: AdminEntry): string {
+    const held = this.state.summary();
+    if (held === null) return '';
+    return joined(entry.counts.map((key) => (held[key] === undefined ? null : grouped(held[key]))));
   }
 }

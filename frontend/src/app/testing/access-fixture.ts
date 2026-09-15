@@ -1,6 +1,7 @@
 import { of, throwError, type Observable } from 'rxjs';
 import { AccessApi } from '../core/api/access.api';
 import type {
+  AdminSummary,
   Me,
   MyPermissions,
   Page,
@@ -44,7 +45,7 @@ export function role(part: Partial<Role> & Pick<Role, 'id' | 'slug' | 'name'>): 
     description: null,
     builtIn: false,
     permissions: [],
-    people: 0,
+    peopleCount: 0,
     createdAt: NOW,
     updatedAt: NOW,
     ...part,
@@ -58,7 +59,7 @@ export const ADMIN_ROLE = role({
   description: 'Trägt jedes Recht, auch jedes neu eingeführte.',
   builtIn: true,
   permissions: EVERY_PERMISSION,
-  people: 1,
+  peopleCount: 1,
 });
 
 export const USER_ROLE = role({
@@ -75,7 +76,7 @@ export const ADVISOR_ROLE = role({
   name: 'Pilzberater',
   description: 'Arten und Bilder pflegen.',
   permissions: ['species.edit', 'image.review'],
-  people: 3,
+  peopleCount: 3,
 });
 
 export const ROLES: Role[] = [ADMIN_ROLE, USER_ROLE, ADVISOR_ROLE];
@@ -93,6 +94,21 @@ export const PEOPLE: Person[] = [
   }),
   person({ sub: 'sub-jonas', name: 'Jonas', email: 'jonas@example.test' }),
 ];
+
+/** Die Zähler der Übersicht, so wie `/api/admin/summary` sie liefert. */
+export const SUMMARY: AdminSummary = {
+  texts: 1284,
+  photos: 312,
+  photosPending: 4,
+  species: 306,
+  roles: 4,
+  permissions: 12,
+  people: 7,
+  finds: 382,
+  findsPending: 14,
+  runs: 4,
+  runsRunning: 1,
+};
 
 /** Ein Fehler des Dienstes, so wie der ApiClient ihn weiterreicht. */
 export function problem(status: number, detail: string): ProblemDetail {
@@ -113,6 +129,7 @@ export class AccessApiDouble {
   roleList: Role[] = ROLES;
   peopleList: Person[] = PEOPLE;
   catalogueList: PermissionEntry[] = CATALOGUE;
+  summaryAnswer: AdminSummary = SUMMARY;
   /** Steht hier ein Problem, weist der nächste Schreibzugriff es zurück. */
   rejectWith: ProblemDetail | null = null;
 
@@ -134,6 +151,10 @@ export class AccessApiDouble {
     this.mineCalls += 1;
     if (this.mineFails) return throwError(() => problem(503, 'Der Dienst antwortet nicht.'));
     return of({ permissions: this.mineAnswer });
+  }
+
+  summary(): Observable<AdminSummary> {
+    return of(this.summaryAnswer);
   }
 
   catalogue(): Observable<PermissionEntry[]> {

@@ -2,7 +2,7 @@ import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
-import { ANY_ROUTE } from '../../testing/routes';
+import { routes } from '../../app.routes';
 import userEvent from '@testing-library/user-event';
 import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -14,18 +14,17 @@ interface Setup {
   container: Element;
   api: AccessApiDouble;
   router: Router;
-  refresh: () => void;
 }
 
 async function build(held: Permission[]): Promise<Setup> {
   const api = new AccessApiDouble();
   api.mineAnswer = held;
   const { container, detectChanges } = await render(AdminComponent, {
-    providers: [provideRouter(ANY_ROUTE), ...authStubProviders(new AuthStub()), accessApiProvider(api)],
+    providers: [provideRouter(routes), ...authStubProviders(new AuthStub()), accessApiProvider(api)],
   });
   TestBed.inject(ApplicationRef).tick();
   detectChanges();
-  return { container, api, router: TestBed.inject(Router), refresh: detectChanges };
+  return { container, api, router: TestBed.inject(Router) };
 }
 
 describe('AdminComponent', () => {
@@ -39,25 +38,16 @@ describe('AdminComponent', () => {
     await noViolations(container);
   });
 
-  it('nennt in der Zeile Rollen, wie viele Rollen und Rechte es gibt', async () => {
-    await build(['role.manage']);
+  it('schreibt die Tausender der Zähler mit Leerzeichen', async () => {
+    await build(['text.edit']);
 
-    expect(screen.getByText('3 Rollen, 10 Rechte')).toBeInTheDocument();
+    expect(screen.getByText('1 284')).toBeInTheDocument();
   });
 
-  it('lässt einen Punkt ohne Arbeitspaket ohne Weg', async () => {
-    await build(['species.edit']);
+  it('setzt zwei Zähler einer Zeile mit einem Punkt zusammen', async () => {
+    await build(['image.review']);
 
-    // Ohne Weg bleibt die Zeile eine Zeile und keine Schaltfläche.
-    expect(screen.queryByRole('button', { name: /Arten/ })).not.toBeInTheDocument();
-  });
-
-  it('führt mit dem Recht zu prüfen in den Eingang der Bilder', async () => {
-    const { router } = await build(['image.review']);
-
-    await userEvent.click(screen.getByRole('button', { name: /Bilder/ }));
-
-    expect(router.url).toBe('/verwaltung/bilder');
+    expect(screen.getByText('312 · 4')).toBeInTheDocument();
   });
 
   it('führt von der Zeile Texte auf die Texte', async () => {
@@ -69,18 +59,27 @@ describe('AdminComponent', () => {
     expect(navigate).toHaveBeenCalledWith('/verwaltung/texte');
   });
 
-  it('führt von der Zeile Rollen auf die Rollenliste', async () => {
-    const { router } = await build(['role.manage']);
+  it('führt mit dem Recht zu prüfen in den Eingang der Bilder', async () => {
+    const { router } = await build(['image.review']);
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
-    await userEvent.click(screen.getByRole('button', { name: /Rollen/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Bilder/ }));
 
-    expect(navigate).toHaveBeenCalledWith('/verwaltung/rollen');
+    expect(navigate).toHaveBeenCalledWith('/verwaltung/bilder');
   });
 
-  it('zeigt einen Leerzustand, wenn kein Recht der Verwaltung da ist', async () => {
-    await build([]);
+  it('trägt den Block Betrieb mit Funden und Läufen', async () => {
+    await build(['find.review', 'run.manage']);
 
-    expect(screen.getByText('Für die Verwaltung fehlt dir jedes Recht.')).toBeInTheDocument();
+    expect(screen.getByText('Betrieb')).toBeInTheDocument();
+    expect(screen.getByText('382 · 14')).toBeInTheDocument();
+    expect(screen.getByText('4 · 1')).toBeInTheDocument();
+  });
+
+  it('lässt einen Block ohne Zeile weg', async () => {
+    await build(['text.edit']);
+
+    expect(screen.queryByText('Zugang')).not.toBeInTheDocument();
+    expect(screen.queryByText('Betrieb')).not.toBeInTheDocument();
   });
 });

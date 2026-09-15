@@ -1,3 +1,5 @@
+@use '../../../styles/card';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -9,14 +11,23 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
   padding: var(--size-gutter);
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.roles__trail {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  color: var(--color-text-muted);
+app-add-row {
+  margin-block-start: 10px;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
+.roles__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
 }

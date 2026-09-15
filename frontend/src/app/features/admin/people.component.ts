@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CardComponent } from '@stupa-makers/ui-kit';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { SEPARATOR } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
@@ -69,7 +70,7 @@ export class PeopleComponent {
       roles:
         person.roles.length === 0
           ? this.i18n.translate('personen.nurNutzer')
-          : person.roles.map((role) => role.name).join(' · '),
+          : person.roles.map((role) => role.name).join(SEPARATOR),
     })),
   );
 

@@ -1,3 +1,13 @@
+import type { components } from '../contract';
+
+/** Die Zähler der Verwaltungsübersicht. */
+export type AdminSummary = components['schemas']['AdminSummary'];
+
+/** Eine Antwort, die ihre Einträge unter `items` trägt. */
+export interface Items<E> {
+  items: E[];
+}
+
 /**
  * Rollen, Rechte und Personen, so wie `/api/roles`, `/api/permissions` und
  * `/api/people` sie liefern.
@@ -8,8 +18,7 @@
  * entscheidet, welche Rechte es gibt und wer sie trägt.
  */
 
-import type { components } from '../contract';
-
+/** Das eigene Konto, so wie `/api/me` es liefert. */
 export type Me = components['schemas']['Me'];
 
 export const PERMISSIONS = [
@@ -55,7 +64,7 @@ export interface Role extends RoleRef {
   /** Admin und Nutzer stehen fest: nicht löschbar, nicht umbenennbar. */
   builtIn: boolean;
   permissions: Permission[];
-  people: number;
+  peopleCount: number;
   createdAt: string;
   updatedAt: string;
 }

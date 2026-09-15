@@ -584,6 +584,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAdminSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/permissions": {
         parameters: {
             query?: never;
@@ -848,9 +864,23 @@ export interface components {
             photos: components["schemas"]["Photo"][];
         };
         /** @enum {string} */
-        Permission: "species.edit" | "image.review" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage";
+        Permission: "species.edit" | "image.review" | "image.submit" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage";
         /** @enum {string} */
         Area: "species" | "interface" | "access" | "data";
+        /** @description Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu. */
+        AdminSummary: {
+            texts?: number;
+            photos?: number;
+            photosPending?: number;
+            species?: number;
+            roles?: number;
+            permissions?: number;
+            people?: number;
+            finds?: number;
+            findsPending?: number;
+            runs?: number;
+            runsRunning?: number;
+        };
         PermissionEntry: {
             key: components["schemas"]["Permission"];
             area: components["schemas"]["Area"];
@@ -2963,6 +2993,28 @@ export interface operations {
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
             422: components["responses"]["Validation"];
+        };
+    };
+    getAdminSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
         };
     };
     listPermissions: {

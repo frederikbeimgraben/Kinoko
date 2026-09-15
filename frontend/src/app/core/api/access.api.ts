@@ -1,7 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { map, type Observable } from 'rxjs';
 import { ApiClient, type Silent } from './api-client';
-import type { Me, MyPermissions, Page, PermissionEntry, Person, Role, RoleInput, RolePatch } from './models';
+import type {
+  AdminSummary,
+  Items,
+  Me,
+  MyPermissions,
+  Page,
+  PermissionEntry,
+  Person,
+  Role,
+  RoleInput,
+  RolePatch,
+} from './models';
 
 /**
  * Die Endpunkte der Rechteverwaltung. Bis auf die eigenen Rechte verlangt jeder
@@ -21,12 +32,17 @@ export class AccessApi {
     return this.api.get<MyPermissions>('/me/permissions');
   }
 
+  /** Die Zähler der Übersicht. Ein Punkt ohne Recht kommt ohne Zahl. */
+  summary(): Observable<AdminSummary> {
+    return this.api.get<AdminSummary>('/admin/summary');
+  }
+
   catalogue(): Observable<PermissionEntry[]> {
-    return this.api.get<PermissionEntry[]>('/permissions');
+    return this.api.get<Items<PermissionEntry>>('/permissions').pipe(map((page) => page.items));
   }
 
   roles(): Observable<Role[]> {
-    return this.api.get<Role[]>('/roles');
+    return this.api.get<Items<Role>>('/roles').pipe(map((page) => page.items));
   }
 
   createRole(role: RoleInput): Observable<Role> {

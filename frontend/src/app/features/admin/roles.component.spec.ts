@@ -19,19 +19,18 @@ async function build(api = new AccessApiDouble()): Promise<{
 }
 
 describe('RolesComponent', () => {
-  it('zeigt jede Rolle mit ihren Rechten und Personen', async () => {
+  it('zeigt jede Rolle mit ihrer Beschreibung und ihren Personen', async () => {
     const { container } = await build();
 
-    expect(screen.getByText('Alle Rechte · 1 Person')).toBeInTheDocument();
-    expect(screen.getByText('Kein Recht · niemand')).toBeInTheDocument();
-    expect(screen.getByText('2 Rechte · 3 Personen')).toBeInTheDocument();
+    expect(screen.getByText('Trägt jedes Recht, auch jedes neu eingeführte. · 1 Person')).toBeInTheDocument();
+    expect(screen.getByText('Hat jede angemeldete Person.')).toBeInTheDocument();
+    expect(screen.getByText('Arten und Bilder pflegen. · 3 Personen')).toBeInTheDocument();
     await noViolations(container);
   });
 
   it('gibt nur den festen Rollen ein Schloss', async () => {
     await build();
 
-    // Admin und Nutzer stehen fest, Pilzberater ist frei.
     expect(screen.getAllByLabelText('Feste Rolle')).toHaveLength(2);
   });
 
@@ -44,20 +43,12 @@ describe('RolesComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/verwaltung/rollen', 'rolle-berater']);
   });
 
-  it('legt über den Knopf unten eine neue Rolle an', async () => {
+  it('legt über die letzte Zeile eine neue Rolle an', async () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigate');
 
     await userEvent.click(screen.getByRole('button', { name: 'Rolle anlegen' }));
 
     expect(navigate).toHaveBeenCalledWith(['/verwaltung/rollen', 'neu']);
-  });
-
-  it('zeigt einen Leerzustand, solange keine Rolle da ist', async () => {
-    const api = new AccessApiDouble();
-    api.roleList = [];
-    await build(api);
-
-    expect(screen.getByText('Noch keine Rolle angelegt.')).toBeInTheDocument();
   });
 });
