@@ -95,10 +95,10 @@ export class MapComponent implements OnDestroy {
   protected readonly offline = computed(() => !this.sync.online());
 
   /** Ein Eintrag braucht eine Karte ohne Blatt darüber. */
-  protected readonly covered = computed(() => this.overlay() !== null);
+  protected readonly covered = computed(() => !this.wide() && this.overlay() !== null);
 
   /** Ein Blatt in voller Höhe lässt nur noch den Ebenen-Knopf stehen. */
-  protected readonly tall = computed(() => this.overlay() !== null && overlayDetent(this.overlay()) === 2);
+  protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
 
   /** Über der Karte liegt immer nur ein Blatt. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);

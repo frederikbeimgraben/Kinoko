@@ -36,3 +36,63 @@
 .overlay__panel:focus-visible {
   outline: none;
 }
+
+// Am Rechner steht das Modal über dem Inhalt rechts der Spalte. Die Spalte
+// bleibt hell, damit man sieht, worüber man entscheidet.
+:host-context(.shell--column) .overlay__scrim {
+  inset-inline-start: calc(var(--size-rail) + var(--size-column));
+  background: rgb(0 12 7 / 25%);
+}
+
+:host-context(.shell--column) .overlay__panel {
+  display: flex;
+  flex-direction: column;
+  inset-block: 50% auto;
+  inset-inline-start: calc(var(--size-rail) + var(--size-column));
+  inline-size: var(--size-modal);
+  block-size: 70%;
+  margin-inline: auto;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transform: translateY(-50%);
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(-50%);
+  }
+}
+
+:host-context(.shell--column) .overlay__panel--compact {
+  inline-size: var(--size-modal-compact);
+  block-size: auto;
+}
+
+.overlay__head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 20px;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.overlay__title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.overlay__close {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: 10px;
+}

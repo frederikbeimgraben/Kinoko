@@ -8,6 +8,14 @@
   border-block-start: var(--border-width) solid var(--color-border);
 }
 
+.footer--inline {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
 .footer__main {
   min-block-size: var(--size-button);
 }

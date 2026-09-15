@@ -18,6 +18,8 @@ export class ActionBarComponent {
   readonly danger = input(false);
   /** Färbt die zweite Aktion rot, etwa für „Faktor entfernen“. */
   readonly secondaryDanger = input(false);
+  /** Im Modal stehen die Knöpfe nebeneinander am rechten Rand. */
+  readonly inline = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();

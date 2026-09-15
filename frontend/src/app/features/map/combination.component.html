@@ -7,12 +7,7 @@
       (conditionClick)="openFactor.emit(row.factor.source)"
     />
   }
+  <app-add-row [label]="'map.factor.one' | t" [action]="'map.factor.add' | t" (pressed)="add.emit()" />
 </div>
 
-<app-action-bar
-  class="combination__footer"
-  [primary]="'common.save' | t"
-  [secondary]="'map.factor.add' | t"
-  (primaryClick)="requestSave()"
-  (secondaryClick)="add.emit()"
-/>
+<app-action-bar class="combination__footer" [primary]="'common.save' | t" (primaryClick)="requestSave()" />

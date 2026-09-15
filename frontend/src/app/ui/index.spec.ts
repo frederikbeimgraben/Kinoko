@@ -23,6 +23,7 @@ const BLOCKS = [
   'app-list-row',
   'app-species-row',
   'app-entry-row',
+  'app-add-row',
   'app-check-row',
   'app-factor-row',
   'app-key-value-table',

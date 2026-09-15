@@ -304,6 +304,7 @@
   "map.factor.frostDays": "Frost days",
   "map.factor.hotDays": "Hot days",
   "map.factor.meanTemperature": "Mean temperature",
+  "map.factor.one": "Factor",
   "map.factor.operator.between": "between",
   "map.factor.operator.over": "over",
   "map.factor.operator.under": "under",
