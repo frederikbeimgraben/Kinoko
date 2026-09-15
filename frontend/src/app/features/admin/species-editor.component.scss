@@ -18,12 +18,6 @@
   scrollbar-width: none;
 }
 
-// Die Karten dürfen nicht schrumpfen: sonst schneidet ihr Rand den Inhalt ab,
-// sobald die Seite länger ist als das Gerät.
-.editor > * {
-  flex: none;
-}
-
 .editor__section {
   @include card.section-title;
 }
