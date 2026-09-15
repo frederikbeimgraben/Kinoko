@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
@@ -23,4 +31,15 @@ export class FilterSheetComponent {
   readonly primaryClick = output();
   readonly backClick = output();
   readonly closed = output();
+
+  private readonly content = viewChild<ElementRef<HTMLElement>>('content');
+
+  constructor() {
+    // Eine neue Gruppe beginnt oben, nicht an der Stelle der Übersicht.
+    afterRenderEffect(() => {
+      this.title();
+      const box = this.content()?.nativeElement;
+      if (box) box.scrollTop = 0;
+    });
+  }
 }
