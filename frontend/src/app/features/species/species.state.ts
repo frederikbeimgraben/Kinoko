@@ -1,10 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { SpeciesApi } from '../../core/api/species.api';
-import { TermsApi, type Term } from '../../core/api/terms.api';
-import type { SpeciesBundle, SpeciesEntry } from '../../core/api/models';
+import type { SpeciesBundle, SpeciesEntry, StandardColour } from '../../core/api/models';
 import { OfflineStore } from '../../core/offline/offline-store';
-import { factsOf, type Facts } from './facets';
+import { factsOf, type Counts, type Facts } from './facets';
 
 /** Eine Art mit ihren gerechneten Filterachsen. */
 export interface CatalogueEntry {
@@ -14,17 +13,14 @@ export interface CatalogueEntry {
 
 const BUNDLE_KEY = 'bundle';
 const ETAG_KEY = 'etag';
-const TERMS_KEY = 'terms';
 
 /** Der Artenkatalog vom Gerät. Suche, Filter und Einordnung lesen ihn. */
 @Injectable({ providedIn: 'root' })
 export class SpeciesState {
   private readonly api = inject(SpeciesApi);
-  private readonly termsApi = inject(TermsApi);
   private readonly offline = inject(OfflineStore);
 
   private readonly _bundle = signal<SpeciesBundle | null>(null);
-  private readonly _terms = signal<readonly Term[]>([]);
   private readonly _failed = signal(false);
   private readonly _activeSpecies = signal<string | null>(null);
   private running = false;
@@ -39,14 +35,16 @@ export class SpeciesState {
   /** Ob der Katalog noch fehlt und auch kein Fehler vorliegt. */
   readonly loading = computed(() => this._bundle() === null && !this._failed());
 
-  private readonly kinds = computed<ReadonlyMap<string, string>>(
-    () => new Map(this._terms().map((term) => [term.id, term.kind])),
-  );
+  /** Die zwölf Standardfarben des Filters, aus dem Bündel. */
+  readonly palette = computed<readonly StandardColour[]>(() => this._bundle()?.standardColours ?? []);
+
+  /** Die gezählten Achsen des Katalogs, aus dem Bündel. */
+  readonly facets = computed<Counts>(() => this._bundle()?.facets ?? {});
 
   /** Jede Art mit ihren Achsen. Suche und Filter lesen diese Liste. */
   readonly entries = computed<readonly CatalogueEntry[]>(() => {
-    const kinds = this.kinds();
-    return this.species().map((species) => ({ species, facts: factsOf(species, kinds) }));
+    const palette = this.palette();
+    return this.species().map((species) => ({ species, facts: factsOf(species, palette) }));
   });
 
   readonly facts = computed<readonly Facts[]>(() => this.entries().map((one) => one.facts));
@@ -86,8 +84,6 @@ export class SpeciesState {
   private async fromStore(): Promise<void> {
     const known = await this.offline.get<SpeciesBundle>('catalog', BUNDLE_KEY);
     if (known !== null) this._bundle.set(known);
-    const terms = await this.offline.get<readonly Term[]>('catalog', TERMS_KEY);
-    if (terms !== null) this._terms.set(terms);
   }
 
   private async fromServer(): Promise<void> {
@@ -102,13 +98,5 @@ export class SpeciesState {
       this._bundle.set(answer.body);
       await this.offline.put('catalog', BUNDLE_KEY, answer.body);
     }
-    void this.loadTerms();
-  }
-
-  private async loadTerms(): Promise<void> {
-    const answer = await firstValueFrom(this.termsApi.all()).catch(() => null);
-    if (answer === null) return;
-    this._terms.set(answer.items);
-    await this.offline.put('catalog', TERMS_KEY, answer.items);
   }
 }

@@ -4,9 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
-import { speciesEntry } from '../../testing/species-fixture';
+import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import type { GroupKey } from './facets';
-import { COLUMN_CARDS } from './filter-groups';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
 import { SpeciesFilterState } from './filter.state';
 
@@ -18,7 +17,7 @@ const STEINPILZ = speciesEntry({
   colours: [{ part: 'cap', mode: 'single', colours: [{ name: 'braun', hex: '#6b4423' }] }],
 });
 
-const BUNDLE = { items: [STEINPILZ] };
+const BUNDLE = speciesBundle([STEINPILZ]);
 
 interface Setup {
   container: Element;
@@ -50,7 +49,7 @@ describe('SpeciesFilterPanelComponent', () => {
   });
 
   it('nimmt eine eigene Folge von Karten an', async () => {
-    const { container } = await build(COLUMN_CARDS);
+    const { container } = await build([['edibility', 'hymenium'], ['colour']]);
 
     expect(container.querySelectorAll('.panel__card')).toHaveLength(2);
     expect(screen.queryByText('Schutz')).not.toBeInTheDocument();

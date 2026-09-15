@@ -1,8 +1,9 @@
 import type { SpeciesEntry } from '../../core/api/models';
-import { speciesEntry } from '../../testing/species-fixture';
+import { PALETTE, speciesEntry } from '../../testing/species-fixture';
 import {
   EMPTY_SELECTION,
   FORECAST_VALUE,
+  colourParts,
   countColours,
   countUnknown,
   countValues,
@@ -10,6 +11,7 @@ import {
   isActive,
   judge,
   sizeKey,
+  type Counts,
   type Facts,
   type GroupKey,
   type Selection,
@@ -18,13 +20,8 @@ import {
 const SMELL_ID = 'term-anis';
 const TREE_ID = 'term-fichte';
 
-const KINDS = new Map([
-  [SMELL_ID, 'smell'],
-  [TREE_ID, 'tree'],
-]);
-
-function term(id: string, slug: string) {
-  return { term: { id, slug, name: slug }, fromExperience: false };
+function term(id: string, slug: string, kind: 'smell' | 'taste' | 'tree' = 'smell') {
+  return { term: { id, slug, name: slug, kind }, fromExperience: false };
 }
 
 const STEINPILZ: SpeciesEntry = speciesEntry({
@@ -41,7 +38,7 @@ const STEINPILZ: SpeciesEntry = speciesEntry({
     { part: 'stem', mode: 'single', colours: [{ name: 'creme', hex: '#e8d9b5' }] },
   ],
   measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 8, high: 20 }] }],
-  terms: [term(SMELL_ID, 'nussig'), term(TREE_ID, 'fichte')],
+  terms: [term(SMELL_ID, 'nussig'), term(TREE_ID, 'fichte', 'tree')],
 });
 
 const WINTER: SpeciesEntry = speciesEntry({
@@ -61,7 +58,7 @@ const BARE: SpeciesEntry = speciesEntry({
 });
 
 function factsFor(entry: SpeciesEntry): Facts {
-  return factsOf(entry, KINDS);
+  return factsOf(entry, PALETTE);
 }
 
 function selection(patch: Partial<Selection>): Selection {
@@ -123,19 +120,19 @@ describe('factsOf', () => {
 
 describe('judge', () => {
   it('nimmt jede Art, solange nichts gewählt ist', () => {
-    expect(judge(factsFor(BARE), EMPTY_SELECTION)).toBe('hit');
+    expect(judge(factsFor(BARE), EMPTY_SELECTION, PALETTE)).toBe('hit');
   });
 
   it('meldet einen Treffer, wenn ein Wert der Gruppe passt', () => {
-    expect(judge(factsFor(STEINPILZ), wanting('hymenium', 'tubes', 'gills'))).toBe('hit');
+    expect(judge(factsFor(STEINPILZ), wanting('hymenium', 'tubes', 'gills'), PALETTE)).toBe('hit');
   });
 
   it('meldet miss, wenn kein Wert der Gruppe passt', () => {
-    expect(judge(factsFor(STEINPILZ), wanting('hymenium', 'gills'))).toBe('miss');
+    expect(judge(factsFor(STEINPILZ), wanting('hymenium', 'gills'), PALETTE)).toBe('miss');
   });
 
   it('meldet unknown, solange die Art zur Gruppe nichts sagt', () => {
-    expect(judge(factsFor(BARE), wanting('hymenium', 'tubes'))).toBe('unknown');
+    expect(judge(factsFor(BARE), wanting('hymenium', 'tubes'), PALETTE)).toBe('unknown');
   });
 
   it('macht mit keepUnknown aus unknown einen Treffer', () => {
@@ -144,7 +141,7 @@ describe('judge', () => {
       keepUnknown: new Set(['hymenium']),
     });
 
-    expect(judge(factsFor(BARE), held)).toBe('hit');
+    expect(judge(factsFor(BARE), held, PALETTE)).toBe('hit');
   });
 
   it('lässt miss vor unknown gehen', () => {
@@ -155,23 +152,23 @@ describe('judge', () => {
       ]),
     });
 
-    expect(judge(factsFor(BARE), held)).toBe('miss');
+    expect(judge(factsFor(BARE), held, PALETTE)).toBe('miss');
   });
 
   it('prüft eine Farbe über die nächste Standardfarbe des Teils', () => {
     const hit = selection({ colours: new Map([['cap', '#6d4626']]) });
     const miss = selection({ colours: new Map([['cap', '#b8322a']]) });
 
-    expect(judge(factsFor(STEINPILZ), hit)).toBe('hit');
-    expect(judge(factsFor(STEINPILZ), miss)).toBe('miss');
+    expect(judge(factsFor(STEINPILZ), hit, PALETTE)).toBe('hit');
+    expect(judge(factsFor(STEINPILZ), miss, PALETTE)).toBe('miss');
   });
 
   it('meldet unknown, solange das Teil keine Farbe trägt', () => {
     const held = selection({ colours: new Map([['gills', '#6b4423']]) });
     const kept = selection({ ...held, keepUnknown: new Set<GroupKey>(['colour']) });
 
-    expect(judge(factsFor(STEINPILZ), held)).toBe('unknown');
-    expect(judge(factsFor(STEINPILZ), kept)).toBe('hit');
+    expect(judge(factsFor(STEINPILZ), held, PALETTE)).toBe('unknown');
+    expect(judge(factsFor(STEINPILZ), kept, PALETTE)).toBe('hit');
   });
 
   it('nimmt ein Maß, sobald sich die Spannen überschneiden', () => {
@@ -179,8 +176,8 @@ describe('judge', () => {
     const hit = selection({ sizes: new Map([[key, [18, 30] as const]]) });
     const miss = selection({ sizes: new Map([[key, [0, 5] as const]]) });
 
-    expect(judge(factsFor(STEINPILZ), hit)).toBe('hit');
-    expect(judge(factsFor(STEINPILZ), miss)).toBe('miss');
+    expect(judge(factsFor(STEINPILZ), hit, PALETTE)).toBe('hit');
+    expect(judge(factsFor(STEINPILZ), miss, PALETTE)).toBe('miss');
   });
 
   it('meldet unknown, solange die Art das Maß nicht führt', () => {
@@ -188,8 +185,8 @@ describe('judge', () => {
     const held = selection({ sizes: new Map([[key, [0, 5] as const]]) });
     const kept = selection({ ...held, keepUnknown: new Set<GroupKey>(['size']) });
 
-    expect(judge(factsFor(BARE), held)).toBe('unknown');
-    expect(judge(factsFor(BARE), kept)).toBe('hit');
+    expect(judge(factsFor(BARE), held, PALETTE)).toBe('unknown');
+    expect(judge(factsFor(BARE), kept, PALETTE)).toBe('hit');
   });
 });
 
@@ -206,25 +203,29 @@ describe('isActive', () => {
   });
 });
 
-describe('die Zählungen über den Katalog', () => {
-  const facts = [STEINPILZ, WINTER, BARE].map(factsFor);
+describe('die Zählungen aus dem Bündel', () => {
+  const counts: Counts = {
+    edibility: { edible: 2, inedible: 1 },
+    'colour.cap': { brown: 1 },
+    unknown: { hymenium: 2 },
+  };
 
-  it('zählt, wie viele Arten einen Wert tragen', () => {
-    expect(countValues(facts, 'edibility')).toEqual(
-      new Map([
-        ['edible', 2],
-        ['inedible', 1],
-      ]),
-    );
+  it('liest, wie viele Arten einen Wert tragen', () => {
+    expect(countValues(counts, 'edibility')).toEqual({ edible: 2, inedible: 1 });
+    expect(countValues(counts, 'capShape')).toEqual({});
   });
 
-  it('zählt die Standardfarben eines Körperteils', () => {
-    expect(countColours(facts, 'cap')).toEqual(new Map([['brown', 1]]));
-    expect(countColours(facts, 'gills')).toEqual(new Map());
+  it('liest die Standardfarben eines Körperteils', () => {
+    expect(countColours(counts, 'cap')).toEqual({ brown: 1 });
+    expect(countColours(counts, 'gills')).toEqual({});
   });
 
-  it('zählt die Arten ohne Angabe zu einer Gruppe', () => {
-    expect(countUnknown(facts, 'hymenium')).toBe(2);
-    expect(countUnknown(facts, 'edibility')).toBe(0);
+  it('liest die Arten ohne Angabe zu einer Gruppe', () => {
+    expect(countUnknown(counts, 'hymenium')).toBe(2);
+    expect(countUnknown(counts, 'edibility')).toBe(0);
+  });
+
+  it('nennt die Teile, für die das Bündel Farben zählt', () => {
+    expect(colourParts(counts)).toEqual(['cap']);
   });
 });

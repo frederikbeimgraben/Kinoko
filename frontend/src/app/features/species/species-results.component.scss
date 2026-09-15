@@ -5,6 +5,15 @@
   min-block-size: 0;
 }
 
+// Der leere Zustand und der Fehler stehen mittig über der Inhaltsfläche.
+.results__middle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .results__list {
   flex: 1;
   min-block-size: 0;
@@ -74,11 +83,4 @@
   flex: 1;
   block-size: 1px;
   background: var(--color-border);
-}
-
-// Das Brett zentriert Leer- und Fehlerzustand über der ganzen Höhe des
-// Geräts, auch über dem Streifen der Navigationsleiste.
-app-empty-state,
-app-error-state {
-  margin-block-end: calc(var(--size-nav) * -1);
 }

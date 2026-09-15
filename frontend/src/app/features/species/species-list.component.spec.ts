@@ -10,7 +10,7 @@ import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { stubIntersectionObserver } from '../../testing/observer-stub';
 import { ANY_ROUTE } from '../../testing/routes';
-import { speciesEntry } from '../../testing/species-fixture';
+import { speciesBundle, speciesEntry } from '../../testing/species-fixture';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesListComponent } from './species-list.component';
 
@@ -30,19 +30,19 @@ const PFIFFERLING = speciesEntry({
   hymeniumType: 'folds',
 });
 
-const SMALL: SpeciesBundle = { items: [STEINPILZ, PFIFFERLING] };
+const SMALL: SpeciesBundle = speciesBundle([STEINPILZ, PFIFFERLING]);
 
 /** Ein Katalog, der über eine Seite hinausreicht. */
 function manySpecies(count: number): SpeciesBundle {
-  return {
-    items: Array.from({ length: count }, (_, at) =>
+  return speciesBundle(
+    Array.from({ length: count }, (_, at) =>
       speciesEntry({
         slug: `art-${String(at)}`,
         name: `Art ${String(at)}`,
         scientificName: `Genus species${String(at)}`,
       }),
     ),
-  };
+  );
 }
 
 interface Setup {
@@ -181,27 +181,25 @@ describe('SpeciesListComponent', () => {
     expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
-  it('stellt am Rechner Liste und Artseite nebeneinander', async () => {
+  it('stellt am Rechner Filterspalte und Liste nebeneinander', async () => {
     const { container, router } = await build(SMALL, true);
     const go = vi.spyOn(router, 'navigate');
 
     expect(container.querySelector('.species--wide')).not.toBeNull();
+    expect(container.querySelector('app-species-filter-panel')).not.toBeNull();
     await userEvent.click(screen.getByText('Pfifferling'));
 
-    expect(go).not.toHaveBeenCalled();
-    await vi.waitFor(() => {
-      expect(screen.getByText('Cantharellus cibarius · Röhrling')).toBeInTheDocument();
-    });
+    expect(go).toHaveBeenCalledWith(['/arten', 'pfifferling']);
   });
 
-  it('tauscht am Rechner die Liste gegen die Filterspalte', async () => {
+  it('nennt am Rechner die Zahl der Treffer, sobald ein Filter steht', async () => {
     const { container, filter } = await build(SMALL, true);
 
+    expect(container.querySelector('.species__summary')).toBeNull();
     filter.toggle('hymenium', 'tubes');
 
     await vi.waitFor(() => {
-      expect(container.querySelector('app-species-filter-panel')).not.toBeNull();
+      expect(container.querySelector('.species__summary')?.textContent).toContain('1');
     });
-    expect(container.querySelector('.species__summary')?.textContent).toContain('1 Arten');
   });
 });

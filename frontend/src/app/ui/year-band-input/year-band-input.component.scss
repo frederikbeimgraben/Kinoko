@@ -1,9 +1,12 @@
 :host {
-  display: block;
-  --year-band-lane: 28px;
-  --year-band-track: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  --year-band-lane: 34px;
+  --year-band-track: 34px;
+  --year-band-handle-drop: 6px;
   --year-band-radius: 6px;
-  --year-band-handle: 24px;
+  --year-band-handle: 18px;
 }
 
 .yearband {
@@ -28,12 +31,13 @@
   background: var(--color-primary);
 }
 
-// Beide Regler liegen übereinander. Nur die Griffe nehmen Zeiger an.
+// Beide Regler liegen übereinander. Nur die Griffe nehmen Zeiger an. Ein Monat
+// belegt ein Zwölftel; der Griff steht auf der Kante seines Monats.
 .yearband__handle {
   position: absolute;
-  inset-inline: 0;
-  inset-block-start: 0;
-  inline-size: 100%;
+  inset-inline-start: calc(var(--year-band-handle) / -2);
+  inset-block-start: var(--year-band-handle-drop);
+  inline-size: calc(100% * 11 / 12 + var(--year-band-handle));
   block-size: var(--year-band-lane);
   margin: 0;
   pointer-events: none;
@@ -41,13 +45,17 @@
   background: none;
 }
 
+.yearband__handle--to {
+  inset-inline-start: calc(100% / 12 - var(--year-band-handle) / 2);
+}
+
 .yearband__handle::-webkit-slider-thumb {
   inline-size: var(--year-band-handle);
   block-size: var(--year-band-handle);
   pointer-events: auto;
   appearance: none;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
+  background: var(--color-primary);
+  border: 3px solid var(--color-surface);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
 }
@@ -56,8 +64,8 @@
   inline-size: var(--year-band-handle);
   block-size: var(--year-band-handle);
   pointer-events: auto;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
+  background: var(--color-primary);
+  border: 3px solid var(--color-surface);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
 }

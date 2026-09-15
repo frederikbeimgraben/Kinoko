@@ -1,8 +1,14 @@
-import type { CatalogueEntry } from './species.state';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
-import { CAP_SHAPES, EDIBILITIES, HYMENIUM_TYPES, PROTECTIONS, type BodyPart } from '../../core/api/models';
-import { FORECAST_VALUE, countValues, type GroupKey } from './facets';
+import {
+  CAP_SHAPES,
+  EDIBILITIES,
+  HYMENIUM_TYPES,
+  PROTECTIONS,
+  type BodyPart,
+  type SpeciesEntry,
+} from '../../core/api/models';
+import { FORECAST_VALUE, colourParts, countValues, type Counts, type GroupKey } from './facets';
 import {
   CAP_SHAPE_TEXT,
   EDIBILITY_TEXT,
@@ -22,14 +28,8 @@ export interface Choice {
 /** Die Karten des Filterblatts, so wie sie im Brett stehen. */
 export const GROUP_CARDS: readonly (readonly GroupKey[])[] = [
   ['edibility', 'hymenium', 'capShape', 'colour', 'size'],
-  ['period', 'senses', 'treePartner', 'genusFamily'],
+  ['senses', 'treePartner', 'genusFamily'],
   ['protection', 'forecast'],
-];
-
-/** Die Karten der Filterspalte am Rechner. */
-export const COLUMN_CARDS: readonly (readonly GroupKey[])[] = [
-  ['edibility', 'hymenium', 'capShape', 'colour'],
-  ['period', 'treePartner'],
 ];
 
 /** Die Gruppen, deren Werte fest im Vertrag stehen. */
@@ -56,38 +56,35 @@ export function valueLabel(
 
 /** Die Werte einer Gruppe mit ihrer Zahl, ohne die unbelegten. */
 export function choicesOf(
-  entries: readonly CatalogueEntry[],
+  counts: Counts,
   key: GroupKey,
   i18n: I18nService,
   names: ReadonlyMap<string, string>,
 ): Choice[] {
-  const counts = countValues(
-    entries.map((one) => one.facts),
-    key,
-  );
+  const held = countValues(counts, key);
   const fixed = FIXED[key];
   if (fixed !== undefined) {
     return fixed
-      .filter((one) => counts.has(one.value))
+      .filter((one) => one.value in held)
       .map((one) => ({
         value: one.value,
         label: i18n.translate(one.text),
-        count: counts.get(one.value) ?? 0,
+        count: held[one.value],
       }));
   }
-  return [...counts]
+  return Object.entries(held)
     .map(([value, count]) => ({ value, label: names.get(value) ?? value, count }))
     .sort((one, other) => one.label.localeCompare(other.label, 'de'));
 }
 
 /** Die Körperteile, für die der Katalog Farben führt. */
-export function colourParts(entries: readonly CatalogueEntry[], wanted: readonly BodyPart[]): BodyPart[] {
-  const held = new Set(entries.flatMap((one) => [...one.facts.colours.keys()]));
+export function partsWithColour(counts: Counts, wanted: readonly BodyPart[]): BodyPart[] {
+  const held = new Set(colourParts(counts));
   return wanted.filter((part) => held.has(part));
 }
 
 /** Alle Katalogtöne eines Körperteils. */
-export function tonesOf(entries: readonly CatalogueEntry[], part: BodyPart): string[] {
+export function tonesOf(entries: readonly { species: SpeciesEntry }[], part: BodyPart): string[] {
   const tones: string[] = [];
   for (const one of entries) {
     for (const group of one.species.colours) {

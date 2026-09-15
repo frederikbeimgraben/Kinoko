@@ -32,11 +32,11 @@ export class SpeciesGroupComponent {
   });
 
   protected readonly choices = computed(() =>
-    choicesOf(this.state.entries(), this.group(), this.i18n, this.names()),
+    choicesOf(this.state.facets(), this.group(), this.i18n, this.names()),
   );
 
   /** Ohne Lücke im Katalog steht die Karte für fehlende Angaben nicht. */
-  protected readonly hasGap = computed(() => countUnknown(this.state.facts(), this.group()) > 0);
+  protected readonly hasGap = computed(() => countUnknown(this.state.facets(), this.group()) > 0);
 
   protected checked(value: string): boolean {
     return this.filter.chosenIn(this.group()).has(value);

@@ -31,7 +31,8 @@ export class SpeciesFilterSheetComponent {
 
   protected readonly primaryLabel = computed(() => {
     const selection = this.filter.selection();
-    const hits = this.state.entries().filter((one) => judge(one.facts, selection) === 'hit').length;
+    const palette = this.state.palette();
+    const hits = this.state.entries().filter((one) => judge(one.facts, selection, palette) === 'hit').length;
     return this.i18n.translate('filter.showCount', { anzahl: String(hits) });
   });
 }

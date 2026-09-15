@@ -49,10 +49,6 @@ async function build(): Promise<Setup> {
   await vi.waitFor(() => {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
-  // Der Katalog wartet auch auf die Begriffe: ohne Antwort endet er nie.
-  await vi.waitFor(() => {
-    http.expectOne('/api/terms').flush({ items: [] });
-  });
   await katalog;
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();

@@ -330,6 +330,7 @@
   "filter.showCount": "Show {anzahl} species",
   "filter.showSpecies": "Show species",
   "filter.size.capWidth": "Cap width",
+  "filter.size.range": "{von} – {bis} cm",
   "filter.valueCount": "{anzahl} values",
   "filter.withoutValue": "{anzahl} without {gruppe}",
   "image.add.title": "Add image",

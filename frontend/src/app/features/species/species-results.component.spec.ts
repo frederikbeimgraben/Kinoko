@@ -3,15 +3,13 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { IntersectionObserverStub, stubIntersectionObserver } from '../../testing/observer-stub';
-import { BAY_BOLETE, HEDGEHOG, PENNY_BUN } from '../../testing/species-fixture';
+import { BAY_BOLETE, HEDGEHOG, PALETTE, PENNY_BUN } from '../../testing/species-fixture';
 import { factsOf } from './facets';
 import { SpeciesResultsComponent } from './species-results.component';
 import type { CatalogueEntry } from './species.state';
 
-const KINDS = new Map<string, string>();
-
 function entry(species: typeof PENNY_BUN): CatalogueEntry {
-  return { species, facts: factsOf(species, KINDS) };
+  return { species, facts: factsOf(species, PALETTE) };
 }
 
 const HITS = [entry(PENNY_BUN), entry(BAY_BOLETE)];

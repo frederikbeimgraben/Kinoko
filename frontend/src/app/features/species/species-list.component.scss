@@ -6,6 +6,7 @@
 }
 
 .species {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -55,77 +56,36 @@
   border-color: var(--color-primary);
 }
 
-.species__extra {
-  flex: none;
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-}
-
 // Am Rechner steht die Steuerspalte links und der Inhalt rechts.
 .species--wide {
   display: grid;
-  grid-template-columns: 440px minmax(0, 1fr);
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: 0;
   padding: 0;
-}
-
-.species--wide:has(.species__column--filter) {
-  grid-template-columns: 320px minmax(0, 1fr);
 }
 
 .species__column {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 14px;
   min-block-size: 0;
   padding: var(--size-gutter);
-  overflow: hidden;
+  overflow-y: auto;
   border-inline-end: var(--border-width) solid var(--color-border);
 }
-
-.species__column--filter {
+// Am Rechner stehen die Karten des Filters enger als im Blatt.
+.species__column app-species-filter-panel {
   gap: 14px;
 }
 
-.species__back {
-  display: flex;
-  flex: none;
-  gap: var(--space-2);
-  align-items: center;
-  padding: 0;
-  font: inherit;
-  font-size: 15px;
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
-  cursor: pointer;
-  background: none;
-  border: 0;
-}
-
-.species__reset {
-  padding: 0;
-  margin-block-start: auto;
-  font: inherit;
-  font-size: var(--fs-sm);
-  color: var(--color-primary);
-  text-align: start;
-  cursor: pointer;
-  background: none;
-  border: 0;
-}
-
 .species__pane {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--size-gutter);
-  min-block-size: 0;
-  padding: 20px 24px;
-  overflow: hidden;
-}
-
-.species__pane--filter {
   gap: var(--space-3);
+  min-block-size: 0;
   padding: var(--size-gutter);
+  overflow: hidden;
 }
 
 .species__summary {

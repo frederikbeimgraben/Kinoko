@@ -3,6 +3,7 @@
 import type { components } from '../contract';
 
 export type SpeciesBundle = components['schemas']['SpeciesBundle'];
+export type StandardColour = components['schemas']['StandardColour'];
 export type SpeciesEntry = components['schemas']['Species'];
 export type SpeciesSummary = components['schemas']['SpeciesSummary'];
 export type Edibility = components['schemas']['Edibility'];
