@@ -1,5 +1,16 @@
 <div class="head">
   <div class="head__row">
+    @if (back()) {
+      <button
+        class="head__back tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'common.back' | t"
+        (click)="backClick.emit()"
+      >
+        <app-svg-icon name="back" [size]="20" />
+      </button>
+    }
     @if (loading()) {
       <app-skeleton kind="line" width="140px" height="18px" />
     } @else {
@@ -17,6 +28,10 @@
           <span class="head__divider" aria-hidden="true">·</span>
           <span class="head__week">{{ week() }}</span>
         }
+        @if (note()) {
+          <span class="head__divider" aria-hidden="true">·</span>
+          <span class="head__note">{{ note() }}</span>
+        }
         @if (hint()) {
           <span class="head__hint">{{ hint() }}</span>
         }
@@ -29,7 +44,7 @@
           type="button"
           data-press="scale"
           [attr.aria-label]="backArrow.key | t"
-          (click)="back.emit()"
+          (click)="stepBack.emit()"
         >
           <app-svg-icon [name]="backArrow.icon" [size]="12" />
         </button>
