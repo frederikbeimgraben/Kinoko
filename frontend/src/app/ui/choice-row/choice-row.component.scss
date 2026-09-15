@@ -9,6 +9,12 @@
   border-block-end: 0;
 }
 
+// Auf der Karte steht jede Zeile für sich, mit eigenem Rand.
+:host(.choice-row--boxed) {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: 10px;
+}
+
 .row {
   display: flex;
   gap: var(--space-3);
