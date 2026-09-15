@@ -1,9 +1,4 @@
-/**
- * Die Fläche einer Karte: Rand, Radius und Grund aus den Tokens.
- *
- * `flex: none` gehört dazu: in einer scrollenden Spalte schrumpft eine Karte
- * sonst, und `overflow: hidden` schneidet ihren Inhalt ab.
- */
+/** Die Fläche einer Karte: Rand, Radius, Grund und feste Höhe. */
 @mixin card {
   flex: none;
   overflow: hidden;
