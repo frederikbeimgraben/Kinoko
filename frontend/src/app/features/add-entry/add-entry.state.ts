@@ -1,4 +1,5 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
 
 /** Ein Ort auf der Karte, als [Länge, Breite] wie im GeoJSON. */
 export type Location = readonly [number, number];
@@ -23,6 +24,8 @@ export const CORNERS_MINIMUM = 3;
  */
 @Injectable({ providedIn: 'root' })
 export class AddEntryState {
+  private readonly stack = inject(OverlayStackService);
+
   private readonly _step = signal<Step | null>(null);
   private readonly _location = signal<Location | null>(null);
   private readonly _ring = signal<readonly Location[]>([]);
@@ -51,8 +54,12 @@ export class AddEntryState {
   });
   readonly ringClosed = computed(() => this._ring().length >= CORNERS_MINIMUM);
 
+  /** Der Ablauf legt einen Weg zurück an: die Geste zurück beendet ihn. */
   open(): void {
     this._step.set('actions');
+    this.stack.open(() => {
+      this.clear();
+    });
   }
 
   startFind(): void {
@@ -107,6 +114,12 @@ export class AddEntryState {
   }
 
   stop(): void {
+    const wasRunning = this._step() !== null;
+    this.clear();
+    if (wasRunning) this.stack.back();
+  }
+
+  private clear(): void {
     this._step.set(null);
     this._location.set(null);
     this._ring.set([]);

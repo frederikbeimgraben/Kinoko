@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
 import { AddEntryState } from './add-entry.state';
 
 function state(): AddEntryState {
@@ -102,6 +103,19 @@ describe('EintragenZustand', () => {
 
     flow.back();
     expect(flow.step()).toBeNull();
+  });
+
+  it('legt beim Öffnen einen Weg zurück an und nimmt ihn beim Beenden weg', () => {
+    const stack = TestBed.inject(OverlayStackService);
+    const opened = vi.spyOn(stack, 'open');
+    const back = vi.spyOn(stack, 'back');
+    const flow = state();
+
+    flow.open();
+    expect(opened).toHaveBeenCalledOnce();
+
+    flow.stop();
+    expect(back).toHaveBeenCalledOnce();
   });
 
   it('räumt beim Beenden Ort und Eckpunkte weg', () => {
