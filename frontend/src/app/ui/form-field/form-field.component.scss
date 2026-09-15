@@ -9,6 +9,16 @@
   font-weight: var(--fw-medium);
 }
 
+.field__label--section {
+  margin-block-end: 10px;
+  line-height: 14px;
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
 .field {
   display: flex;
   align-items: center;

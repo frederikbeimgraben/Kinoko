@@ -24,7 +24,12 @@ export default defineConfig({
   use: {
     baseURL: ADDRESS,
     browserName: 'chromium',
-    launchOptions: BROWSER_PATH ? { executablePath: BROWSER_PATH } : {},
+    // Dieselben Schalter wie `tools/render-boards.mjs`: der Schriftsatz der
+    // Boards und der Tests muss gleich sein.
+    launchOptions: {
+      args: ['--disable-lcd-text', '--font-render-hinting=none'],
+      ...(BROWSER_PATH ? { executablePath: BROWSER_PATH } : {}),
+    },
     trace: 'retain-on-failure',
     colorScheme: 'dark',
     // Ein Service Worker fängt die Anfragen ab, bevor eine Attrappe greift.
@@ -37,11 +42,12 @@ export default defineConfig({
     toHaveScreenshot: { maxDiffPixelRatio: 0.005, animations: 'disabled', caret: 'hide' },
   },
   projects: [
-    { name: 'phone', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: PHONE } },
-    { name: 'desktop', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: DESKTOP } },
-    { name: 'wide', testMatch: /boards\/.*\.spec\.ts$/, use: { viewport: WIDE } },
-    { name: 'blocks', testMatch: /boards\/blocks\.spec\.ts$/, use: { viewport: BLOCKS } },
-    { name: 'flows', testMatch: /flows\/.*\.spec\.ts$/, use: { viewport: PHONE } },
+    // Muster als Glob: ein Zweigname mit „boards“ im Weg zöge sonst jede Datei.
+    { name: 'phone', testMatch: 'boards/*.spec.ts', use: { viewport: PHONE } },
+    { name: 'desktop', testMatch: 'boards/*.spec.ts', use: { viewport: DESKTOP } },
+    { name: 'wide', testMatch: 'boards/*.spec.ts', use: { viewport: WIDE } },
+    { name: 'blocks', testMatch: 'boards/blocks.spec.ts', use: { viewport: BLOCKS } },
+    { name: 'flows', testMatch: 'flows/*.spec.ts', use: { viewport: PHONE } },
   ],
   webServer: {
     command: `node e2e/serve.mjs ${PORT}`,

@@ -14,6 +14,7 @@ import { NavComponent } from '../ui/nav/nav.component';
 import { MapComponent } from '../features/map/map.component';
 import { MapState } from '../features/map/map.state';
 import { AddEntryState } from '../features/add-entry/add-entry.state';
+import { SyncService } from '../core/offline/sync.service';
 
 /**
  * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.
@@ -39,6 +40,7 @@ export class ShellComponent {
   private readonly auth = inject(AuthService);
   private readonly map = inject(MapState);
   private readonly addEntry = inject(AddEntryState);
+  private readonly sync = inject(SyncService);
 
   private readonly adresse = toSignal(
     this.router.events.pipe(
@@ -54,6 +56,9 @@ export class ShellComponent {
   protected readonly active = computed(() => `/${this.adresse().split(/[?#/]/)[1] || 'karte'}`);
 
   protected readonly onTheMap = computed(() => this.active() === '/karte');
+
+  /** Ohne Netz trägt die Leiste den oberen Rand; das Konto tritt zurück. */
+  protected readonly showAvatar = computed(() => this.onTheMap() && this.sync.online());
 
   /**
    * Die Verwaltung trägt am Rechner ihre eigenen zwei Spalten und braucht dafür

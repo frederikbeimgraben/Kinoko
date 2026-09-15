@@ -16,7 +16,7 @@
   >
     <router-outlet />
   </main>
-  @if (onTheMap() && !wide()) {
+  @if (showAvatar() && !wide()) {
     <app-avatar-button
       class="shell__avatar"
       [name]="avatarName()"
