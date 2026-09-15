@@ -40,9 +40,7 @@ const STEINPILZ: SpeciesEntry = speciesEntry({
     { part: 'cap', mode: 'single', colours: [{ name: 'braun', hex: '#6b4423' }] },
     { part: 'stem', mode: 'single', colours: [{ name: 'creme', hex: '#e8d9b5' }] },
   ],
-  measurements: [
-    { part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 8, high: 20 }] },
-  ],
+  measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 8, high: 20 }] }],
   terms: [term(SMELL_ID, 'nussig'), term(TREE_ID, 'fichte')],
 });
 

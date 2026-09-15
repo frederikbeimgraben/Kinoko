@@ -102,7 +102,7 @@ export class SpeciesState {
       this._bundle.set(answer.body);
       await this.offline.put('catalog', BUNDLE_KEY, answer.body);
     }
-    await this.loadTerms();
+    void this.loadTerms();
   }
 
   private async loadTerms(): Promise<void> {

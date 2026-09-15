@@ -73,13 +73,13 @@ describe('SpeciesPickerComponent', () => {
     expect(container.querySelector('.row--active')).not.toBeNull();
   });
 
-  it('stellt je Art eine Zeile ohne Hinten-Slot', async () => {
+  it('stellt je Art eine Zeile mit Platz für die Kurve', async () => {
     const { container } = await render(SpeciesPickerComponent, {
       inputs: { species: SPECIES, label: 'Art für die Karte' },
     });
 
     expect(container.querySelectorAll('app-species-row')).toHaveLength(2);
-    expect(container.querySelector('.row__trail')).toBeNull();
+    expect(container.querySelector('.row__trail')).not.toBeNull();
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

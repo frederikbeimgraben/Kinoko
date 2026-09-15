@@ -1,0 +1,207 @@
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { Router, provideRouter } from '@angular/router';
+import { render, screen, within } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
+import type { SpeciesBundle } from '../../core/api/models';
+import { ViewportService } from '../../core/layout/viewport.service';
+import { noViolations } from '../../testing/axe';
+import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
+import { stubIntersectionObserver } from '../../testing/observer-stub';
+import { ANY_ROUTE } from '../../testing/routes';
+import { speciesEntry } from '../../testing/species-fixture';
+import { SpeciesFilterState } from './filter.state';
+import { SpeciesListComponent } from './species-list.component';
+
+const PAGE = 40;
+
+const STEINPILZ = speciesEntry({
+  slug: 'steinpilz',
+  name: 'Steinpilz',
+  scientificName: 'Boletus edulis',
+  hymeniumType: 'tubes',
+});
+
+const PFIFFERLING = speciesEntry({
+  slug: 'pfifferling',
+  name: 'Pfifferling',
+  scientificName: 'Cantharellus cibarius',
+  hymeniumType: 'folds',
+});
+
+const SMALL: SpeciesBundle = { items: [STEINPILZ, PFIFFERLING] };
+
+/** Ein Katalog, der über eine Seite hinausreicht. */
+function manySpecies(count: number): SpeciesBundle {
+  return {
+    items: Array.from({ length: count }, (_, at) =>
+      speciesEntry({
+        slug: `art-${String(at)}`,
+        name: `Art ${String(at)}`,
+        scientificName: `Genus species${String(at)}`,
+      }),
+    ),
+  };
+}
+
+interface Setup {
+  container: Element;
+  filter: SpeciesFilterState;
+  router: Router;
+}
+
+async function build(bundle: SpeciesBundle = SMALL, wide = false): Promise<Setup> {
+  const { container } = await render(SpeciesListComponent, {
+    providers: [
+      ...catalogueProviders(bundle),
+      provideRouter(ANY_ROUTE),
+      { provide: ViewportService, useValue: { wide: signal(wide) } },
+    ],
+  });
+  await catalogueReady();
+  await vi.waitFor(() => {
+    expect(container.querySelectorAll('app-species-row').length).toBeGreaterThan(0);
+  });
+  return { container, filter: TestBed.inject(SpeciesFilterState), router: TestBed.inject(Router) };
+}
+
+describe('SpeciesListComponent', () => {
+  beforeEach(() => {
+    localStorage.removeItem('pilzkarte.speciesfilter');
+    stubIntersectionObserver();
+  });
+
+  it('stellt die Arten des Bündels mit ihrer Zahl im Kopf', async () => {
+    const { container } = await build();
+
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('Pfifferling')).toBeInTheDocument();
+    expect(container.querySelector('.species__count')?.textContent).toBe('2');
+    await noViolations(container);
+  });
+
+  it('sucht lokal nach deutschem Namen', async () => {
+    await build();
+
+    await userEvent.type(screen.getByRole('textbox'), 'stein');
+
+    await vi.waitFor(() => {
+      expect(screen.queryByText('Pfifferling')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+  });
+
+  it('sucht lokal nach lateinischem Namen', async () => {
+    await build();
+
+    await userEvent.type(screen.getByRole('textbox'), 'canthar');
+
+    await vi.waitFor(() => {
+      expect(screen.queryByText('Steinpilz')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Pfifferling')).toBeInTheDocument();
+  });
+
+  it('zeigt je gewähltem Wert eine Marke und nimmt sie wieder weg', async () => {
+    const { filter } = await build();
+
+    filter.toggle('hymenium', 'tubes');
+    await vi.waitFor(() => {
+      expect(screen.getByText('Röhren')).toBeInTheDocument();
+    });
+
+    const chip = screen.getByText('Röhren').closest('.filterchip');
+    await userEvent.click(within(chip as HTMLElement).getByRole('button'));
+
+    expect(filter.chosenIn('hymenium').size).toBe(0);
+  });
+
+  it('zeigt ohne Treffer den Leerzustand und setzt darüber zurück', async () => {
+    const { filter } = await build();
+
+    filter.toggle('hymenium', 'gills');
+    await vi.waitFor(() => {
+      expect(screen.getByText('Keine Art passt zu dieser Auswahl')).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter zurücksetzen' }));
+
+    expect(filter.chosenCount()).toBe(0);
+  });
+
+  it('öffnet das Filterblatt über den Knopf', async () => {
+    const { filter } = await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+
+    expect(filter.open()).toBe(true);
+  });
+
+  it('zeigt den Fehlerzustand und versucht es erneut', async () => {
+    const { container } = await render(SpeciesListComponent, {
+      providers: [
+        ...catalogueProviders(null),
+        provideRouter(ANY_ROUTE),
+        { provide: ViewportService, useValue: { wide: signal(false) } },
+      ],
+    });
+    const http = TestBed.inject(HttpTestingController);
+    await vi.waitFor(() => {
+      http.expectOne('/api/species/bundle').error(new ProgressEvent('error'));
+    });
+    await vi.waitFor(() => {
+      expect(screen.getByText('Laden fehlgeschlagen')).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Erneut versuchen' }));
+
+    await vi.waitFor(() => {
+      http.expectOne('/api/species/bundle').flush(SMALL);
+    });
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('app-species-row')).toHaveLength(2);
+    });
+  });
+
+  it('zeigt erst eine Seite zu 40 Arten', async () => {
+    const { container } = await build(manySpecies(PAGE + 1));
+
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('app-species-row')).toHaveLength(PAGE);
+    });
+  });
+
+  it('führt von einer Zeile auf die Artseite', async () => {
+    const setup = await build();
+    const go = vi.spyOn(setup.router, 'navigate');
+
+    await userEvent.click(screen.getByText('Steinpilz'));
+
+    expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
+  });
+
+  it('stellt am Rechner Liste und Artseite nebeneinander', async () => {
+    const { container, router } = await build(SMALL, true);
+    const go = vi.spyOn(router, 'navigate');
+
+    expect(container.querySelector('.species--wide')).not.toBeNull();
+    await userEvent.click(screen.getByText('Pfifferling'));
+
+    expect(go).not.toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(screen.getByText('Cantharellus cibarius · Röhrling')).toBeInTheDocument();
+    });
+  });
+
+  it('tauscht am Rechner die Liste gegen die Filterspalte', async () => {
+    const { container, filter } = await build(SMALL, true);
+
+    filter.toggle('hymenium', 'tubes');
+
+    await vi.waitFor(() => {
+      expect(container.querySelector('app-species-filter-panel')).not.toBeNull();
+    });
+    expect(container.querySelector('.species__summary')?.textContent).toContain('1 Arten');
+  });
+});

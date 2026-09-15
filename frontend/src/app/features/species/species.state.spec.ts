@@ -13,7 +13,9 @@ const TERMS_PATH = '/api/terms';
 const SMELL = { id: 'term-anis', kind: 'smell', slug: 'anis', name: 'Anis', position: 1 } as const;
 
 const LOCAL: SpeciesBundle = {
-  items: [speciesEntry({ slug: 'pfifferling', name: 'Pfifferling', scientificName: 'Cantharellus cibarius' })],
+  items: [
+    speciesEntry({ slug: 'pfifferling', name: 'Pfifferling', scientificName: 'Cantharellus cibarius' }),
+  ],
 };
 
 interface Setup {
@@ -77,9 +79,7 @@ describe('SpeciesState', () => {
     void setup.state.loadBundle();
 
     await vi.waitFor(() => {
-      setup.http
-        .expectOne(BUNDLE_PATH)
-        .flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
+      setup.http.expectOne(BUNDLE_PATH).flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
     });
     await vi.waitFor(() => {
       setup.http.expectOne(TERMS_PATH).flush({ items: [] });

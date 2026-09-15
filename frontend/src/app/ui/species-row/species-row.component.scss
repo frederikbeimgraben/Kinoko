@@ -67,6 +67,14 @@
   mask-image: linear-gradient(90deg, #000 calc(100% - 14px), transparent);
 }
 
+.row__trail {
+  flex: none;
+}
+
+.row__trail:empty {
+  display: none;
+}
+
 .row__image {
   flex: none;
   inline-size: var(--size-thumb);
