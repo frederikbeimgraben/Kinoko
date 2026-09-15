@@ -2,7 +2,7 @@ import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
-import { ANY_ROUTE } from '../../testing/routes';
+import { routes } from '../../app.routes';
 import userEvent from '@testing-library/user-event';
 import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -20,7 +20,7 @@ async function build(held: Permission[]): Promise<Setup> {
   const api = new AccessApiDouble();
   api.mineAnswer = held;
   const { container, detectChanges } = await render(AdminComponent, {
-    providers: [provideRouter(ANY_ROUTE), ...authStubProviders(new AuthStub()), accessApiProvider(api)],
+    providers: [provideRouter(routes), ...authStubProviders(new AuthStub()), accessApiProvider(api)],
   });
   TestBed.inject(ApplicationRef).tick();
   detectChanges();
