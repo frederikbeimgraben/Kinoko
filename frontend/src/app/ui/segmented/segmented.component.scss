@@ -10,7 +10,8 @@
 .seg__choice {
   flex: 1;
   padding: 9px var(--space-1);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-control);
+  line-height: 16px;
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
   text-align: center;

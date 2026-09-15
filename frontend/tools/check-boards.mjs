@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const EXCLUDED = new Set(['SpecLevels']);
 const EXPECT_BOARD = /expectBoard\(\s*[^,]+,\s*['"]([^'"]+)['"]/g;
+// Die Karte prüft über eine eigene Hilfsfunktion; `guard` nennt dort das Board.
+const GUARD = /guard\(\s*['"]([^'"]+)['"]/g;
 
 /** Liest die Board-Stems aus den PNG-Dateien in `dir`. */
 function baselineStems(dir) {
@@ -24,6 +26,7 @@ function testedStems(dir) {
     if (!name.endsWith('.spec.ts')) continue;
     const text = readFileSync(join(dir, name), 'utf8');
     for (const match of text.matchAll(EXPECT_BOARD)) stems.add(match[1]);
+    for (const match of text.matchAll(GUARD)) stems.add(match[1]);
   }
   return stems;
 }

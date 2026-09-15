@@ -74,12 +74,7 @@
   }
 </ng-template>
 
-<app-overlay-host
-  [open]="open() !== null"
-  [title]="title()"
-  [compact]="open() === 'save'"
-  (closed)="closed.emit()"
->
+<app-overlay-host [open]="shown()" [title]="title()" [compact]="open() === 'save'" (closed)="closed.emit()">
   @if (wide()) {
     <ng-container [ngTemplateOutlet]="body" />
   } @else {

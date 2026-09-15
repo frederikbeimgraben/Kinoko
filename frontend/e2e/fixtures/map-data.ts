@@ -181,12 +181,14 @@ function species(slug: string, name: string, scientific: string): unknown {
   };
 }
 
-/** Der Katalog vom Gerät: drei Arten mit Vorhersage, wie in den Boards. */
+/** Der Katalog vom Gerät: fünf Arten mit Vorhersage, wie in den Boards. */
 export const SPECIES_BUNDLE = {
   items: [
     species('boletus-edulis', 'Steinpilz', 'Boletus edulis'),
     species('cantharellus-cibarius', 'Pfifferling', 'Cantharellus cibarius'),
     species('imleria-badia', 'Maronenröhrling', 'Imleria badia'),
+    species('hydnum-repandum', 'Semmelstoppelpilz', 'Hydnum repandum'),
+    species('morchella-esculenta', 'Speisemorchel', 'Morchella esculenta'),
   ],
 };
 

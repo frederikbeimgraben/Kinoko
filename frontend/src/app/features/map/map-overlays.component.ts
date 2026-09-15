@@ -80,6 +80,11 @@ export class MapOverlaysComponent {
   /** Der Name einer Kombination braucht wenig Platz, der Rest die ganze Höhe. */
   protected readonly detent = computed(() => overlayDetent(this.open()));
 
+  /** Am Rechner steht der Faktor in der Spalte, nicht im Modal. */
+  protected readonly shown = computed(
+    () => this.open() !== null && !(this.wide() && this.open() === 'factor'),
+  );
+
   protected readonly title = computed(() => {
     const open = this.open();
     const key = open === null ? undefined : TITLE[open];

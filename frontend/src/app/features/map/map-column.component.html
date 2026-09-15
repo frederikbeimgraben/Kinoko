@@ -1,0 +1,27 @@
+@if (factor(); as chosen) {
+  @if (layer(); as source) {
+    <app-page-header [title]="source.label" [back]="true" (backClick)="closed.emit()" />
+    <app-factor-sheet
+      [factor]="chosen"
+      [layer]="source"
+      [histogram]="spread()"
+      [withHead]="false"
+      (apply)="factorApplied.emit($event)"
+      (removed)="factorRemoved.emit($event)"
+    />
+  }
+} @else {
+  <app-map-head
+    [playing]="playing()"
+    (titleChosen)="titleChosen.emit()"
+    (weekChosen)="weekChosen.emit($event)"
+    (stepped)="stepped.emit($event)"
+    (playToggled)="playToggled.emit()"
+  />
+  <app-map-panel
+    (layerChosen)="layerChosen.emit()"
+    (factorOpened)="factorOpened.emit($event)"
+    (factorAdded)="factorAdded.emit()"
+    (saveRequested)="saveRequested.emit()"
+  />
+}

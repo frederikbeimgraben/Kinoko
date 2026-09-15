@@ -1,7 +1,14 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TileService } from '../../core/tiles/tile.service';
-import { findLayer, formatValue, layerWeek, matchingWeek, type Layer } from '../../core/tiles/layers';
+import {
+  findLayer,
+  formatValue,
+  histogramFor,
+  layerWeek,
+  matchingWeek,
+  type Layer,
+} from '../../core/tiles/layers';
 import { NOW } from '../../core/tiles/now';
 import { barShares, currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
@@ -159,6 +166,16 @@ export class MapView {
     if (this.onCombination()) return this.percent(100);
     return this.percent(Math.round((this.manifest()?.top ?? 0) * 100));
   });
+
+  /** Die Quelle eines Faktors, wie die Karte sie kennt. */
+  layerFor(source: string): Layer | null {
+    return this.sources().get(source) ?? null;
+  }
+
+  /** Die Verteilung einer Quelle in der Woche der Karte. */
+  spread(layer: Layer): ReturnType<typeof histogramFor> {
+    return histogramFor(layer, this.weekKey());
+  }
 
   private percent(value: number): string {
     return `${new Intl.NumberFormat(this.i18n.locale()).format(value)} ${this.i18n.translate('unit.percent')}`;

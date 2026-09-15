@@ -1,18 +1,20 @@
 <div class="map" [style.--pilz-sheet-inset]="sheetInset()">
   @if (wide()) {
     <div class="map__column">
-      <app-map-head
+      <app-map-column
+        [factor]="surface.inProgress()"
         [playing]="playback.playing()"
         (titleChosen)="openTitle()"
         (weekChosen)="playback.select($event)"
         (stepped)="playback.step($event)"
         (playToggled)="playback.toggle()"
-      />
-      <app-map-panel
         (layerChosen)="overlay.set('layer')"
         (factorOpened)="openFactorFor($event)"
         (factorAdded)="overlay.set('factors')"
         (saveRequested)="requestSave()"
+        (factorApplied)="applyFactor($event)"
+        (factorRemoved)="removeFactor($event)"
+        (closed)="closeOverlay()"
       />
     </div>
   }
