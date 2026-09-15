@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
 import { AccountService } from '../../core/access/account.service';
 import { PermissionsService } from '../../core/access/permissions.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ImageViewerComponent } from '../../ui/image-viewer/image-viewer.component';
@@ -19,7 +19,7 @@ import { ImagesState } from './images.state';
 export class ImageViewComponent {
   private readonly images = inject(ImagesState);
   private readonly species = inject(SpeciesState);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly rights = inject(PermissionsService);
   private readonly account = inject(AccountService);
 
@@ -49,7 +49,7 @@ export class ImageViewComponent {
   }
 
   protected back(): void {
-    void this.router.navigate(['/arten', this.slug()]);
+    this.history.back(['/arten', this.slug()]);
   }
 
   protected async setCover(): Promise<void> {

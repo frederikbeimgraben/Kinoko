@@ -18,7 +18,7 @@
 // Am Rechner stehen Bild, Saison, Bilder und Quellen links, die Daten rechts.
 .page--wide {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) var(--size-facts);
   gap: 0;
   padding: 0;
 }
@@ -33,7 +33,5 @@
 }
 
 .page--wide .page__column:first-child {
-  --species-lead-height: 240px;
-
   border-inline-end: var(--border-width) solid var(--color-border);
 }

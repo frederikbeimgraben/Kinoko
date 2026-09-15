@@ -18,3 +18,11 @@
 .private__image--contain {
   object-fit: contain;
 }
+
+// Die Höhe kommt aus dem Seitenverhältnis des Bildes. Über `--private-image-cap`
+// setzt die Seite die Obergrenze, darunter passt `contain` das Bild ein.
+.private__image--natural {
+  block-size: auto;
+  max-block-size: var(--private-image-cap, none);
+  object-fit: contain;
+}
