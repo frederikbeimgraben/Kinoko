@@ -1,75 +1,71 @@
-<app-page-header [title]="'texte.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.texts.title' | t" [back]="true" (backClick)="back()" />
 
 <div class="texts">
-  <app-form-field
-    icon="search"
-    [label]="'texte.suche' | t"
-    [hideLabel]="true"
-    [placeholder]="'texte.suche' | t"
+  <app-search-field
     [value]="search()"
+    [placeholder]="'admin.texts.searchPlaceholder' | t"
     (valueChange)="search.set($event)"
   />
-  <app-chip-group
-    [chips]="chips()"
-    [value]="[chip()]"
-    [label]="'texte.filter' | t"
-    (valueChange)="selectChip($event)"
+  <app-segmented
+    [options]="scopes()"
+    [value]="scope()"
+    [label]="'admin.texts.filter' | t"
+    (valueChange)="scope.set($event)"
   />
-  <p class="note texts__count">{{ countText() }}</p>
 
-  @if (rows().length === 0) {
-    <app-empty-state icon="search" [text]="'texte.leer' | t" />
-  } @else {
-    <app-card class="flush">
-      @for (row of rows(); track row.key) {
-        <button class="texts__row" type="button" (click)="open(row)">
-          <span class="texts__head">
-            <span class="texts__key">{{ row.key }}</span>
-            @if (row.changed) {
-              <app-badge variant="primary">{{ 'texte.marke.geaendert' | t }}</app-badge>
-            }
-          </span>
-          <span class="texts__values">
-            @for (locale of locales; track locale) {
-              <span class="texts__value">
-                <span class="texts__language">{{ localeLabel(locale) }}</span>
-                <span class="texts__text">{{ row.values[locale] }}</span>
+  <div class="texts__card">
+    @for (row of rows(); track row.key) {
+      <button class="texts__row" type="button" (click)="open(row)">
+        <span class="texts__head">
+          <span class="texts__key">{{ row.key }}</span>
+          @if (row.changed) {
+            <app-badge variant="primary">{{ 'admin.texts.changed' | t }}</app-badge>
+          }
+        </span>
+        <span class="texts__values">
+          @for (locale of locales; track locale) {
+            <span class="texts__value">
+              <span class="texts__language">{{ localeLabel(locale) }}</span>
+              <span class="texts__text" [class.texts__text--other]="locale !== leadLocale">
+                {{ row.values[locale] }}
               </span>
-            }
-          </span>
-        </button>
-      }
-    </app-card>
-  }
-  <p class="note">{{ 'texte.hinweis' | t }}</p>
+            </span>
+          }
+        </span>
+      </button>
+    }
+  </div>
 </div>
 
-@if (draft(); as open) {
-  <div class="texts__overlay">
-    <div class="texts__scrim"></div>
-    <app-sheet class="texts__sheet" [label]="'texte.blatt' | t" [modal]="true" [detents]="detents">
-      <div class="texts__form">
-        <p class="texts__key texts__key--sheet">{{ open.key }}</p>
-        @for (locale of locales; track locale) {
-          <app-form-field
-            [label]="localeLabel(locale)"
-            [multiline]="true"
-            [value]="open.values[locale]"
-            (valueChange)="edit(locale, $event)"
-          />
-        }
+<app-overlay-host [open]="draft() !== null" [modal]="true" (closed)="close()">
+  @if (draft(); as open) {
+    <app-sheet [label]="open.key" [title]="open.key" [modal]="true" [detents]="detents" (closed)="close()">
+      <div head class="texts__sheet-head">
+        <span class="texts__key">{{ open.key }}</span>
         @if (resettable()) {
-          <app-button variant="secondary" size="sm" [disabled]="busy()" (click)="reset()">
-            {{ 'texte.zuruecksetzen' | t }}
-          </app-button>
+          <app-badge variant="primary">{{ 'admin.texts.changed' | t }}</app-badge>
+        }
+      </div>
+      <div class="texts__form">
+        @for (locale of locales; track locale) {
+          <div class="texts__field">
+            <h2 class="texts__section">{{ localeLabel(locale) }}</h2>
+            <app-form-field
+              [label]="localeLabel(locale)"
+              [hideLabel]="true"
+              [value]="open.values[locale]"
+              (valueChange)="edit(locale, $event)"
+            />
+          </div>
         }
       </div>
       <app-action-bar
-        [primary]="'texte.speichern' | t"
-        [secondary]="'texte.schliessen' | t"
+        [primary]="'common.save' | t"
+        [secondary]="resettable() ? ('admin.texts.reset' | t) : undefined"
+        [busy]="busy()"
         (primaryClick)="save()"
-        (secondaryClick)="close()"
+        (secondaryClick)="reset()"
       />
     </app-sheet>
-  </div>
-}
+  }
+</app-overlay-host>

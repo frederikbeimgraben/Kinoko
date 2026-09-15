@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { TextEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { TextCatalogService, areaOf } from '../../core/i18n/text-catalog.service';
+import { TextCatalogService } from '../../core/i18n/text-catalog.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { SUPPORTED_LOCALES, type Locale } from '../../core/i18n/translations';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { type Chip, ChipGroupComponent } from '../../ui/chip-group/chip-group.component';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
+import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 /** Der Chip ohne Bereich: er zeigt alles. */
@@ -45,12 +46,11 @@ interface Draft {
   imports: [
     ActionBarComponent,
     BadgeComponent,
-    ButtonComponent,
-    CardComponent,
-    ChipGroupComponent,
-    EmptyStateComponent,
     FormFieldComponent,
+    OverlayHostComponent,
     PageHeaderComponent,
+    SearchFieldComponent,
+    SegmentedComponent,
     SheetComponent,
     TranslatePipe,
   ],
@@ -64,33 +64,27 @@ export class TextsComponent {
   private readonly toasts = inject(ToastService);
 
   protected readonly locales = SUPPORTED_LOCALES;
+  /** Die Sprache der Vorgabe steht vorn und in voller Farbe. */
+  protected readonly leadLocale = DEFAULT_LOCALE;
   protected readonly search = signal('');
-  protected readonly chip = signal<string>(ALL);
+  protected readonly scope = signal<string>(ALL);
   protected readonly draft = signal<Draft | null>(null);
   protected readonly busy = signal(false);
   protected readonly detents = DETENTS;
 
-  protected readonly chips = computed<Chip[]>(() => [
-    { value: ALL, label: this.i18n.translate('texte.bereich.alle') },
-    ...this.catalog.areas().map((area) => ({ value: area, label: capitalized(area) })),
-    { value: CHANGED, label: this.i18n.translate('texte.bereich.geaendert') },
+  protected readonly scopes = computed<SegmentOption[]>(() => [
+    { value: ALL, label: this.i18n.translate('admin.texts.all') },
+    { value: CHANGED, label: this.i18n.translate('admin.texts.onlyChanged') },
   ]);
 
   protected readonly rows = computed<readonly TextEntry[]>(() => {
     const query = this.search().trim().toLocaleLowerCase();
-    const chip = this.chip();
+    const onlyChanged = this.scope() === CHANGED;
     return this.catalog
       .entries()
-      .filter((entry) => this.inArea(entry, chip))
+      .filter((entry) => !onlyChanged || entry.changed)
       .filter((entry) => matches(entry, query));
   });
-
-  protected readonly countText = computed(() =>
-    this.i18n.translate('texte.anzahl', {
-      gefiltert: this.rows().length,
-      gesamt: this.catalog.entries().length,
-    }),
-  );
 
   /** Nur ein geänderter Text hat eine Vorgabe, zu der er zurück kann. */
   protected readonly resettable = computed(() => this.entryOf(this.draft()?.key ?? '')?.changed ?? false);
@@ -102,10 +96,6 @@ export class TextsComponent {
 
   protected localeLabel(locale: Locale): string {
     return this.i18n.translate(`sprache.${locale}`);
-  }
-
-  protected selectChip(values: readonly string[]): void {
-    this.chip.set(values[0] ?? ALL);
   }
 
   protected open(entry: TextEntry): void {
@@ -163,17 +153,6 @@ export class TextsComponent {
   private entryOf(key: string): TextEntry | undefined {
     return this.catalog.entries().find((entry) => entry.key === key);
   }
-
-  private inArea(entry: TextEntry, chip: string): boolean {
-    if (chip === ALL) return true;
-    if (chip === CHANGED) return entry.changed;
-    return areaOf(entry.key) === chip;
-  }
-}
-
-/** `karte` wird zu `Karte`: die Bereiche stehen als Beschriftung im Chip. */
-function capitalized(area: string): string {
-  return area.charAt(0).toLocaleUpperCase() + area.slice(1);
 }
 
 function matches(entry: TextEntry, query: string): boolean {

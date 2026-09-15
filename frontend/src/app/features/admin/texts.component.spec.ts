@@ -66,17 +66,17 @@ describe('TextsComponent', () => {
     await build();
     await screen.findByText('karte.legende');
 
-    await userEvent.type(screen.getByLabelText('Schlüssel oder Text suchen'), 'forecast');
+    await userEvent.type(screen.getByLabelText('Text suchen'), 'forecast');
 
     expect(screen.queryByText('karte.legende')).not.toBeInTheDocument();
     expect(screen.getByText('arten.chip.mitVorhersage')).toBeInTheDocument();
   });
 
-  it('filtert nach Bereich', async () => {
+  it('sucht auch nach dem Bereich eines Schlüssels', async () => {
     await build();
     await screen.findByText('karte.legende');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Karte' }));
+    await userEvent.type(screen.getByLabelText('Text suchen'), 'karte.');
 
     expect(screen.getByText('karte.legende')).toBeInTheDocument();
     expect(screen.queryByText('arten.chip.mitVorhersage')).not.toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('TextsComponent', () => {
     await build();
     await screen.findByText('karte.legende');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Geändert' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Geändert' }));
 
     expect(screen.queryByText('karte.legende')).not.toBeInTheDocument();
     expect(screen.getByText('arten.chip.mitVorhersage')).toBeInTheDocument();
@@ -119,12 +119,12 @@ describe('TextsComponent', () => {
 
     await userEvent.click(screen.getByText('karte.legende'));
     await screen.findByRole('button', { name: 'Speichern' });
-    expect(screen.queryByRole('button', { name: 'Auf Vorgabe zurücksetzen' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
+    await userEvent.keyboard('{Escape}');
     await userEvent.click(screen.getByText('arten.chip.mitVorhersage'));
 
-    expect(await screen.findByRole('button', { name: 'Auf Vorgabe zurücksetzen' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Zurücksetzen' })).toBeInTheDocument();
   });
 
   it('holt die Vorgabe in beiden Sprachen zurück', async () => {
@@ -132,7 +132,7 @@ describe('TextsComponent', () => {
     await screen.findByText('karte.legende');
 
     await userEvent.click(screen.getByText('arten.chip.mitVorhersage'));
-    await userEvent.click(await screen.findByRole('button', { name: 'Auf Vorgabe zurücksetzen' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Zurücksetzen' }));
 
     for (const locale of ['de', 'en']) {
       const request = await vi.waitFor(() =>
@@ -147,12 +147,13 @@ describe('TextsComponent', () => {
     });
   });
 
-  it('sagt, wenn nichts zur Suche passt', async () => {
+  it('zeigt keine Zeile, wenn nichts zur Suche passt', async () => {
     await build();
     await screen.findByText('karte.legende');
 
-    await userEvent.type(screen.getByLabelText('Schlüssel oder Text suchen'), 'zzz');
+    await userEvent.type(screen.getByLabelText('Text suchen'), 'zzz');
 
-    expect(screen.getByText('Kein Schlüssel passt zur Suche.')).toBeInTheDocument();
+    expect(screen.queryByText('karte.legende')).not.toBeInTheDocument();
+    expect(screen.queryByText('arten.chip.mitVorhersage')).not.toBeInTheDocument();
   });
 });
