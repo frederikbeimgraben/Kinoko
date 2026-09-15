@@ -12,8 +12,8 @@ from app.core.auth import Db
 from app.models import Species, Taxon
 from app.modules.catalog.children import load_children
 from app.modules.catalog.loader import summary_of
-from app.modules.catalog.taxon_names import taxon_names
 from app.modules.catalog.schemas import TaxonChild, TaxonPage, TaxonStep
+from app.modules.catalog.taxon_names import taxon_names
 from app.shared.enums import TaxonRank
 from app.shared.repository import Repository
 

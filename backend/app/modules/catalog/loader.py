@@ -14,7 +14,6 @@ from app.modules.catalog.children import load_children
 from app.modules.catalog.colour_view import colour_changes, colour_groups, term_ref
 from app.modules.catalog.colours import nearest_colour
 from app.modules.catalog.facets import SpeciesFacets
-from app.modules.catalog.taxon_names import taxon_names
 from app.modules.catalog.schemas import (
     Measurement,
     MeasurementGroup,
@@ -25,6 +24,7 @@ from app.modules.catalog.schemas import (
     SpeciesTermEntry,
     Trait,
 )
+from app.modules.catalog.taxon_names import taxon_names
 from app.shared.enums import BodyPart, TermKind
 
 if TYPE_CHECKING:
@@ -84,7 +84,7 @@ def build_facets(
         genus_name=names[0],
         family_name=names[1],
         senses=frozenset(t.slug for t in held if t.kind in SENSES),
-        trees=frozenset(t.slug for t in held if t.kind is TermKind.TREE),
+        trees=frozenset(t.slug for t in held if t.kind == TermKind.TREE),
     )
 
 

@@ -1706,45 +1706,6 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
-  /internal/pipeline-runs/{id}/steps/{position}:
-    put:
-      operationId: reportPipelineRunStep
-      tags: [internal]
-      security:
-        - internalToken: []
-      parameters:
-        - $ref: "#/components/parameters/Id"
-        - name: position
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                state:
-                  $ref: "#/components/schemas/RunState"
-                durationS:
-                  oneOf:
-                    - type: integer
-                    - type: "null"
-              required: [name, state, durationS]
-      responses:
-        "204":
-          description: No Content
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "422":
-          $ref: "#/components/responses/Validation"
-
   /internal/pipeline-runs/{id}/finish:
     parameters:
       - $ref: "#/components/parameters/Id"

@@ -14,9 +14,9 @@ from app.models import Species as SpeciesTable
 from app.modules.catalog.children import load_children
 from app.modules.catalog.facets import FacetService
 from app.modules.catalog.loader import build_facets, load_one, summary_of
-from app.modules.catalog.taxon_names import taxon_names
 from app.modules.catalog.repository import SpeciesRepository
 from app.modules.catalog.schemas import Species, SpeciesCounts, SpeciesWrite
+from app.modules.catalog.taxon_names import taxon_names
 from app.modules.catalog.taxonomy import subtree_ids
 from app.shared.enums import RunState
 from app.shared.paging import wrap
@@ -69,7 +69,9 @@ class SpeciesService:
         matched = [c for c in candidates if FACETS.match(build_facets(c, child), selection)]
         window = matched[paging.offset : paging.offset + paging.limit + 1]
         names = await taxon_names(self.db)
-        return wrap(window, paging, lambda c: summary_of(c, child.lead_photos.get(c.id), names.of(c)))
+        return wrap(
+            window, paging, lambda c: summary_of(c, child.lead_photos.get(c.id), names.of(c))
+        )
 
     async def profile(self, slug: str) -> Species:
         """Liest das volle Profil einer Art."""

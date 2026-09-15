@@ -89,7 +89,7 @@ async def test_get_species_profile_assembles_all_child_rows(
     body = response.json()
     assert body["names"] == [{"name": "Herrenpilz", "kind": "synonym"}]
     assert body["measurements"][0]["part"] == "cap"
-    assert body["colours"][0]["colours"][0]["nearest"] == "#7a5230"
+    assert body["colours"][0]["colours"][0]["nearest"] == "#6b4423"
     assert body["colourChanges"][0]["triggers"][0]["slug"] == "cut"
     assert {"feature": "umbonate", "phase": "young"} in body["capFeatures"]
     assert {"margin": "inrolled", "phase": "young"} in body["capMargins"]
@@ -182,7 +182,7 @@ async def test_replace_species_writes_every_child_kind(
         session, slug="boletus-aereus", name="Sommersteinpilz", latin_name="Boletus aereus"
     )
     term = await cf.make_term(session, kind=TermKind.SMELL, slug="fruity", name="fruchtig")
-    term_ref = {"id": str(term.id), "slug": term.slug, "name": term.name}
+    term_ref = {"id": str(term.id), "slug": term.slug, "name": term.name, "kind": term.kind}
     colour_changes: list[dict[str, Any]] = [
         {
             "part": "flesh",

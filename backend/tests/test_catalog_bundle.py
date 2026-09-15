@@ -36,7 +36,9 @@ async def test_bundle_has_items_standard_colours_and_facets(
 
 
 async def test_facets_count_every_axis(session: AsyncSession, api: httpx.AsyncClient) -> None:
-    family = await cf.make_taxon(session, rank=TaxonRank.FAMILY, slug="boletaceae", name="Boletaceae")
+    family = await cf.make_taxon(
+        session, rank=TaxonRank.FAMILY, slug="boletaceae", name="Boletaceae"
+    )
     genus = await cf.make_taxon(
         session, rank=TaxonRank.GENUS, slug="boletus", name="Boletus", parent=family
     )
@@ -67,7 +69,9 @@ async def test_facets_count_every_axis(session: AsyncSession, api: httpx.AsyncCl
 
 
 async def test_bundle_names_genus_and_family(session: AsyncSession, api: httpx.AsyncClient) -> None:
-    family = await cf.make_taxon(session, rank=TaxonRank.FAMILY, slug="boletaceae", name="Boletaceae")
+    family = await cf.make_taxon(
+        session, rank=TaxonRank.FAMILY, slug="boletaceae", name="Boletaceae"
+    )
     genus = await cf.make_taxon(
         session, rank=TaxonRank.GENUS, slug="boletus", name="Boletus", parent=family
     )
