@@ -1,0 +1,18 @@
+/** Die Fläche einer Karte: Rand, Radius und Grund aus den Tokens. */
+@mixin card {
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/** Die Überschrift über einer Karte. */
+@mixin section-title {
+  margin: 0 0 10px;
+  font-size: var(--fs-xs);
+  line-height: normal;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}

@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BadgeComponent, ButtonComponent, CardComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
-import type { ImageState, ImageSubmission } from '../../core/api/models';
-import { PagedList } from '../../core/api/paged-list';
-import { SpeciesImagesApi } from '../../core/api/species-images.api';
+import { photoPath, type Photo, type PhotoState } from '../../core/api/models';
+import { PhotosApi } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -13,16 +12,18 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { SpeciesState } from '../species/species.state';
 
-const STATE_BADGE: Record<ImageState, BadgeVariant> = {
+const STATE_BADGE: Record<PhotoState, BadgeVariant> = {
+  private: 'neutral',
   submitted: 'warning',
   approved: 'success',
   rejected: 'danger',
 };
 
-const STATE_TEXT: Record<ImageState, TranslationKey> = {
-  submitted: 'bild.zustand.inPruefung',
-  approved: 'bild.zustand.freigegeben',
-  rejected: 'bild.zustand.abgelehnt',
+const STATE_TEXT: Record<PhotoState, TranslationKey> = {
+  private: 'enum.photo_state.private',
+  submitted: 'enum.photo_state.submitted',
+  approved: 'enum.photo_state.approved',
+  rejected: 'enum.photo_state.rejected',
 };
 
 /** Eine Einreichung, fertig für die Vorlage. */
@@ -37,13 +38,7 @@ interface Row {
   reason: string | null;
 }
 
-/**
- * „Meine Bilder“ unter dem Konto (Artboard `Einreichungen`): je Einreichung
- * ihr Zustand, bei einer Absage der Grund.
- *
- * Bis zur Freigabe sieht das Bild nur, wer es eingereicht hat. Es kommt darum
- * über den angemeldeten Weg und nicht als nacktes `src`.
- */
+/** „Meine Bilder“ unter dem Konto: je Einreichung ihr Zustand und der Grund. */
 @Component({
   selector: 'app-my-images',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,50 +55,67 @@ interface Row {
   styleUrl: './my-images.component.scss',
 })
 export class MyImagesComponent {
-  private readonly api = inject(SpeciesImagesApi);
+  private readonly api = inject(PhotosApi);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly species = inject(SpeciesState);
 
-  private readonly held = new PagedList<ImageSubmission>((offset, limit) => this.api.mine(offset, limit));
+  private readonly photos = signal<readonly Photo[]>([]);
+  private readonly cursor = signal<string | null>(null);
 
-  protected readonly loaded = this.held.loaded;
-  protected readonly more = this.held.more;
-  protected readonly loading = this.held.busy;
-  protected readonly shown = computed(() =>
-    this.i18n.translate('bild.vonGesamt', {
-      geladen: this.held.entries().length,
-      gesamt: this.held.total(),
-    }),
-  );
+  protected readonly loaded = signal(false);
+  protected readonly loading = signal(false);
+  protected readonly more = computed(() => this.cursor() !== null);
+
   protected readonly rows = computed<Row[]>(() =>
-    this.held.entries().map((image) => {
-      const name = this.species.nameOf(image.speciesSlug) ?? image.speciesSlug;
+    this.photos().map((image) => {
+      const name = this.nameOf(image.speciesId ?? null);
       return {
         id: image.id,
         species: name,
-        thumbPath: image.thumbUrl,
-        alt: image.caption ?? this.i18n.translate('bild.von', { name }),
+        thumbPath: photoPath(image.id, 'list'),
+        alt: image.caption ?? name,
         submitted: this.i18n.translate('bild.eingereichtAm', {
-          datum: longDate(image.submittedAt.slice(0, 10), this.i18n.locale()),
+          datum: longDate(image.createdAt.slice(0, 10), this.i18n.locale()),
         }),
         badge: STATE_BADGE[image.state],
         badgeText: this.i18n.translate(STATE_TEXT[image.state]),
-        reason: image.rejectReason,
+        reason: image.rejectReason ?? null,
       };
     }),
   );
 
   constructor() {
     void this.species.loadBundle();
-    this.held.restart();
+    this.fetch();
   }
 
   protected loadMore(): void {
-    this.held.next();
+    this.fetch();
   }
 
   protected back(): void {
     void this.router.navigateByUrl('/konto');
+  }
+
+  private fetch(): void {
+    if (this.loading()) return;
+    this.loading.set(true);
+    this.api.list({ mine: true, cursor: this.cursor() ?? undefined }).subscribe({
+      next: (page) => {
+        this.photos.update((all) => [...all, ...page.items]);
+        this.cursor.set(page.nextCursor);
+        this.loading.set(false);
+        this.loaded.set(true);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.loaded.set(true);
+      },
+    });
+  }
+
+  private nameOf(speciesId: string | null): string {
+    return this.species.species().find((entry) => entry.id === speciesId)?.name ?? '';
   }
 }

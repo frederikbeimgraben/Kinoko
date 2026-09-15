@@ -7,7 +7,7 @@ export const OWN_PHOTO_KEY: TranslationKey = 'image.field.ownPhoto';
 /** CC0, CC BY 4.0, CC BY-SA 4.0 und Public Domain sind Kennungen, keine Prosa. */
 export const LICENCE_CODE: Readonly<Record<Exclude<Licence, 'own'>, string>> = {
   cc0: 'CC0',
-  'cc-by-4': 'CC BY 4.0',
-  'cc-by-sa-4': 'CC BY-SA 4.0',
-  'public-domain': 'Public Domain',
+  cc_by_4: 'CC BY 4.0',
+  cc_by_sa_4: 'CC BY-SA 4.0',
+  public_domain: 'Public Domain',
 };

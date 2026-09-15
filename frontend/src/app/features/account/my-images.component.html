@@ -23,10 +23,8 @@
         </li>
       }
     </ul>
-    <p class="note">{{ 'bild.meineHinweis' | t }}</p>
     @if (more()) {
       <div class="mine__more">
-        <p class="note note--sub">{{ shown() }}</p>
         <app-button variant="secondary" [disabled]="loading()" (click)="loadMore()">
           {{ 'bild.mehr' | t }}
         </app-button>

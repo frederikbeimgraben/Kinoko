@@ -1,0 +1,98 @@
+@use '../../../../styles/card';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.compare__count {
+  font-size: var(--fs-row-meta);
+  color: var(--color-text-muted);
+}
+
+.compare {
+  flex: 1;
+  min-block-size: 0;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+}
+
+.compare__card {
+  @include card.card;
+}
+
+// Die Spalten sind schmal: Beschriftung und Polster folgen dem Brett, damit
+// zwei Werte nebeneinander passen.
+.compare__table {
+  --key-value-table-label: 84px;
+  --key-value-table-gutter: 9px;
+  --key-value-table-gap: 9px;
+}
+
+.compare__measure {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.compare__measure em {
+  font-style: normal;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.compare__swatch {
+  --pilz-colour-width: 64px;
+  --pilz-colour-height: 22px;
+  --pilz-colour-radius: 7px;
+}
+
+.compare__change {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  align-items: center;
+}
+
+.compare__colours {
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+  --pilz-colour-width: 30px;
+  --pilz-colour-height: 18px;
+  --pilz-colour-radius: 5px;
+}
+
+.compare__speed {
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+
+.compare__band {
+  inline-size: 100%;
+}
+
+@media (min-width: 1024px) {
+  .compare {
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .compare__table {
+    --key-value-table-label: 138px;
+    --key-value-table-gutter: var(--space-4);
+    --key-value-table-gap: var(--space-4);
+  }
+
+  .compare__swatch {
+    --pilz-colour-width: 96px;
+    --pilz-colour-height: 26px;
+    --pilz-colour-radius: 9px;
+  }
+
+  .compare__colours {
+    --pilz-colour-width: 40px;
+    --pilz-colour-height: 22px;
+    --pilz-colour-radius: 7px;
+  }
+}

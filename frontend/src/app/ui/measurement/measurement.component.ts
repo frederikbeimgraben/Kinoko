@@ -38,7 +38,7 @@ export class MeasurementComponent {
   readonly unit = input.required<string>();
 
   protected readonly extentKey = computed(() => EXTENT_KEY[this.extent()]);
-  protected readonly text = computed(() => range(this.spans().at(0)));
+  protected readonly text = computed(() => spanText(this.spans().at(0)));
   protected readonly rare = computed(() => this.rareText());
 
   private rareText(): string | null {
@@ -55,7 +55,7 @@ export class MeasurementComponent {
 }
 
 /** Eine Spanne als Text. Fehlt eine Seite oder sind beide gleich, bleibt eine Zahl. */
-function range(span: Span | undefined): string {
+export function spanText(span: Span | undefined): string {
   if (!span) return '';
   if (span.from === null) return span.to === null ? '' : format(span.to);
   if (span.to === null || span.to === span.from) return format(span.from);

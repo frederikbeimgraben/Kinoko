@@ -1,8 +1,39 @@
-<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
-<div class="page">
-  @if (known()) {
-    <app-species-detail [slug]="slug()" />
-  } @else if (!waiting()) {
-    <app-empty-state [text]="'species.notFound' | t" />
+@if (species(); as one) {
+  <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+  <div class="page" [class.page--wide]="wide()">
+    <div class="page__column">
+      <app-species-images [slug]="slug()" />
+    </div>
+    <div class="page__column">
+      <app-species-features [species]="one" />
+      <app-species-size [groups]="one.measurements" />
+      <app-species-colours [groups]="one.colours" />
+      <app-species-colour-change [changes]="one.colourChanges" />
+      <app-species-senses [species]="one" />
+      <app-species-hymenium [species]="one" />
+      <app-species-time [species]="one" />
+      <app-species-lookalikes
+        [lookalikes]="one.lookalikes"
+        (compared)="compare($event)"
+        (opened)="open($event)"
+      />
+      <app-species-taxonomy [species]="one" />
+    </div>
+  </div>
+  @if (one.forecastEnabled) {
+    <app-action-bar [primary]="'species.showOnMap' | t" (primaryClick)="toMap()" />
   }
-</div>
+} @else {
+  <app-page-header [title]="'species.title' | t" [back]="true" (backClick)="back()" />
+  <div class="page">
+    @if (!waiting()) {
+      <app-empty-state
+        icon="species"
+        [text]="'species.notFound' | t"
+        [action]="'species.backToList' | t"
+        [leading]="true"
+        (actionClick)="toList()"
+      />
+    }
+  </div>
+}

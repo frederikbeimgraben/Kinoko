@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { ImageCreditComponent } from '../image-credit/image-credit.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
-import type { SpeciesImage } from '../../core/api/models';
+import { photoPath, type Photo } from '../../core/api/models';
 
 /** Eine Bildkachel mit Titelbild-Marke und Herkunftszeile. */
 @Component({
@@ -13,9 +13,10 @@ import type { SpeciesImage } from '../../core/api/models';
   styleUrl: './image-tile.component.scss',
 })
 export class ImageTileComponent {
-  readonly image = input.required<SpeciesImage>();
+  readonly image = input.required<Photo>();
   /** Zeigt die Marke, wenn dieses Bild das Titelbild der Art ist. */
   readonly lead = input(false);
 
+  protected readonly path = computed(() => photoPath(this.image().id, 'list'));
   protected readonly alt = computed(() => this.image().caption ?? this.image().photographer);
 }

@@ -18,7 +18,7 @@ class HostComponent {}
 @Component({
   imports: [KeyValueTableComponent, KeyValueRowComponent],
   template: `
-    <app-key-value-table>
+    <app-key-value-table [columns]="2">
       <app-key-value-row key="" [values]="['Steinpilz', 'Gallenröhrling']" />
       <app-key-value-row key="Speisewert" [values]="['essbar', 'ungenießbar']" />
     </app-key-value-table>
@@ -68,9 +68,14 @@ describe('KeyValueTableComponent', () => {
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     const values = container.querySelectorAll('.kv__value');
     expect(values).toHaveLength(4);
+    // Ohne die Zahl der Spalten fiele die dritte Zelle in eine neue Zeile.
+    const table = styleOf(container.querySelector('app-key-value-table'));
+    expect(table.getPropertyValue('--key-value-table-columns')).toBe('2');
+    expect(table.gridTemplateColumns).toContain('repeat(var(--key-value-table-columns, 1)');
     // Beide Spalten einer Zeile tragen dieselbe Fläche, auch wenn ihr Wert
-    // sich unterscheidet: nur der Zebra-Streifen der Tabelle wechselt je Zeile.
+    // sich unterscheidet. Ein Zebra bleibt im Vergleich ganz aus.
     expect(styleOf(values[0]).backgroundColor).toBe(styleOf(values[1]).backgroundColor);
     expect(styleOf(values[2]).backgroundColor).toBe(styleOf(values[3]).backgroundColor);
+    expect(styleOf(values[0]).backgroundColor).toBe(styleOf(values[2]).backgroundColor);
   });
 });

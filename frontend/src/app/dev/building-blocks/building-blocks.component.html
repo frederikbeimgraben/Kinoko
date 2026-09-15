@@ -189,7 +189,7 @@
   <section class="block">
     <h2 class="block__head">{{ 'blocks.rejectDialog' | t }}</h2>
     <div class="block__stage block__stage--reject">
-      <app-reject-dialog [open]="true" [person]="text('beispiel.avatar')" />
+      <app-reject-dialog [open]="true" />
     </div>
   </section>
 
@@ -536,7 +536,7 @@
   <section class="block">
     <h2 class="block__head">{{ 'blocks.privateImage' | t }}</h2>
     <div class="block__stage block__stage--photo">
-      <app-private-image [path]="sampleImage.thumbUrl" [alt]="text('art.boletus_edulis')" />
+      <app-private-image [path]="sampleImagePath" [alt]="text('art.boletus_edulis')" />
     </div>
   </section>
 

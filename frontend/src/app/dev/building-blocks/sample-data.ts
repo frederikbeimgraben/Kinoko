@@ -1,5 +1,5 @@
 /** Beispielwerte der Werkstattseite: Zahlen und lateinische Namen ohne eigenen Textschlüssel. */
-import type { Licence, SpeciesImage } from '../../core/api/models';
+import type { Licence, Photo } from '../../core/api/models';
 import type { ColourValue, Span, TimelineWeek } from '../../ui';
 
 /** Die acht Wochen des Artboards. Die Jahresmarke fällt auf KW 41. */
@@ -105,22 +105,27 @@ export const SPORE_LENGTH_SPANS: readonly Span[] = [
 export const STEM_HEIGHT_SPANS: readonly Span[] = [{ from: 5, to: 15 }];
 export const STEM_THICKNESS_SPANS: readonly Span[] = [{ from: 2, to: 6 }];
 
-const LICENCE: Licence = 'cc-by-sa-4';
+const LICENCE: Licence = 'cc_by_sa_4';
 
 /** Ein Bild für Kachel, Herkunftszeile, großen Betrachter und geladenes Bild. */
-export const SAMPLE_IMAGE: SpeciesImage = {
+export const SAMPLE_IMAGE: Photo = {
   id: 'bild-eins',
-  speciesSlug: 'boletus-edulis',
+  ownerId: null,
+  speciesId: 'art-eins',
+  findId: null,
+  width: 1600,
+  height: 1200,
   photographer: 'Marie Weber',
   licence: LICENCE,
-  source: null,
-  takenOn: '2026-09-06',
   caption: null,
+  takenOn: '2026-09-06',
   lat: null,
   lon: null,
   lead: true,
-  width: 1600,
-  height: 1200,
-  url: '/api/species-images/bild-eins/full',
-  thumbUrl: '/api/species-images/bild-eins/thumb',
+  state: 'approved',
+  rejectReason: null,
+  reviewedById: null,
+  reviewedAt: null,
+  createdAt: '2026-09-06T08:00:00+02:00',
+  updatedAt: '2026-09-06T08:00:00+02:00',
 };

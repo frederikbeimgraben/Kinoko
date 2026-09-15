@@ -1,0 +1,78 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="cancel()" />
+
+<div class="form">
+  <label class="form__preview tap" data-press="scale">
+    <input
+      class="form__file"
+      type="file"
+      accept="image/*"
+      [attr.aria-label]="'image.section.image' | t"
+      (change)="onPick($event)"
+    />
+    @if (preview(); as source) {
+      <img class="form__image" [src]="source" [alt]="title()" />
+    }
+    @if (busy()) {
+      <app-progress class="form__progress" [value]="percent() ?? 0" />
+    }
+  </label>
+
+  <section class="form__block">
+    <h2 class="form__title">{{ 'image.field.origin' | t }}</h2>
+    <div class="form__fields">
+      <app-form-field
+        [label]="'image.field.photo' | t"
+        [hideLabel]="true"
+        [value]="photographer()"
+        (valueChange)="photographer.set($event)"
+      />
+      <app-select
+        [ariaLabel]="'image.field.licence' | t"
+        [options]="licences()"
+        [ngModel]="licence()"
+        (ngModelChange)="setLicence($event)"
+      />
+      @if (curates()) {
+        <app-form-field
+          [label]="'image.field.sourcePlaceholder' | t"
+          [placeholder]="'image.field.sourcePlaceholder' | t"
+          [hideLabel]="true"
+          [value]="source()"
+          (valueChange)="source.set($event)"
+        />
+      }
+    </div>
+  </section>
+
+  <section class="form__block">
+    <h2 class="form__title">{{ 'image.field.details' | t }}</h2>
+    <div class="form__fields">
+      <app-form-field
+        kind="date"
+        [label]="'image.field.takenOn' | t"
+        [hideLabel]="true"
+        [value]="takenOn()"
+        (valueChange)="takenOn.set($event)"
+      />
+      <app-form-field
+        [label]="'image.field.captionPlaceholder' | t"
+        [placeholder]="'image.field.captionPlaceholder' | t"
+        [hideLabel]="true"
+        [value]="caption()"
+        (valueChange)="caption.set($event)"
+      />
+    </div>
+  </section>
+
+  @if (curates()) {
+    <app-check-row [title]="'image.setAsCoverToggle' | t" [checked]="cover()" (toggled)="cover.set($event)" />
+  }
+</div>
+
+<app-action-bar
+  [primary]="action()"
+  [secondary]="'common.cancel' | t"
+  [busy]="busy()"
+  (primaryClick)="save()"
+  (secondaryClick)="cancel()"
+/>

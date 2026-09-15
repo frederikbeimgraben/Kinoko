@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+// Das Bild der Seite steht größer als im Stapel.
+.view {
+  --image-viewer-height: 300px;
+
+  flex: 1;
+  min-block-size: 0;
+  padding-block-end: var(--size-gutter);
+  overflow-y: auto;
+}

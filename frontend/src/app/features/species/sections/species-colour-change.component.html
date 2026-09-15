@@ -1,0 +1,14 @@
+@for (card of cards(); track card.part) {
+  <section class="change">
+    <h2 class="section__title">{{ card.part }}</h2>
+    <app-colour-change
+      [triggers]="card.triggers"
+      [from]="card.from"
+      [to]="card.to"
+      [fromLabels]="card.fromLabels"
+      [toLabels]="card.toLabels"
+      [speed]="card.speed"
+      [arrowLabel]="arrowLabel()"
+    />
+  </section>
+}

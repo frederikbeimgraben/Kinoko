@@ -1,3 +1,9 @@
 @if (source(); as source) {
-  <img class="private__image" [src]="source" [alt]="alt()" />
+  <img
+    class="private__image"
+    draggable="false"
+    [class.private__image--contain]="fit() === 'contain'"
+    [src]="source"
+    [alt]="alt()"
+  />
 }

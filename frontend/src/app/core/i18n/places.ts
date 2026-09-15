@@ -25,3 +25,12 @@ export function locationText(
   });
   return { lat: format.format(lat), lon: format.format(lon) };
 }
+
+/** Die Maschenweite, auf der ein grober Ort steht, in Kilometern. */
+export const COARSE_KM = 1;
+
+/** Ein grober Ort mit seiner Maschenweite: „48,51 · 9,06 · 1 km“. */
+export function coarsePlace(lat: number, lon: number, locale: string, digits: number): string {
+  const shown = locationText(lat, lon, locale, digits);
+  return `${shown.lat} \u00b7 ${shown.lon} \u00b7 ${String(COARSE_KM)} km`;
+}

@@ -1,0 +1,15 @@
+<app-image-viewer
+  class="view"
+  [image]="photo()"
+  [title]="title()"
+  [index]="index()"
+  [count]="count()"
+  (back)="back()"
+/>
+<app-action-bar
+  [primary]="'image.setCover' | t"
+  [secondary]="'image.remove' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="setCover()"
+  (secondaryClick)="remove()"
+/>

@@ -1,0 +1,32 @@
+@use 'section';
+
+@include section.block;
+
+.section__card app-colour-field {
+  --pilz-colour-width: 40px;
+  --pilz-colour-height: 40px;
+  --pilz-colour-radius: 10px;
+}
+
+.lookalike__ways {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-inline-end: var(--size-gutter);
+}
+
+.lookalike__way {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.lookalike__way--compare {
+  color: var(--color-primary);
+}

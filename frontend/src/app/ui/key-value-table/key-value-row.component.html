@@ -8,11 +8,17 @@
     <span class="kv__hint">{{ text }}</span>
   }
 </span>
-@if (values(); as columns) {
+@if (cells(); as columns) {
   @for (column of columns; track $index) {
-    <span class="kv__value" [class.kv__value--flow]="flow()" [class.kv__value--head]="head()">{{
-      column
-    }}</span>
+    <span class="kv__value kv__value--column">
+      @if (slot(); as template) {
+        <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{ $implicit: column }" />
+      }
+    </span>
+  }
+} @else if (values(); as columns) {
+  @for (column of columns; track $index) {
+    <span class="kv__value kv__value--column" [class.kv__value--head]="head()">{{ column }}</span>
   }
 } @else {
   <span class="kv__value" [class.kv__value--flow]="flow()">

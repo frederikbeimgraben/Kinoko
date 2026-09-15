@@ -1,0 +1,23 @@
+@use 'section';
+
+@include section.block;
+
+.time {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px 14px;
+}
+
+.time__head {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: var(--fs-md);
+}
+
+.time__range {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}

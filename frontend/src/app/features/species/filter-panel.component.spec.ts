@@ -103,17 +103,17 @@ describe('SpeciesFilterPanelComponent', () => {
 
     filter.showGroup('hymenium');
     await vi.waitFor(() => {
-      expect(container.querySelector('app-species-group')).not.toBeNull();
+      expect(container.querySelector('app-species-filter-group')).not.toBeNull();
     });
 
     filter.showGroup('colour');
     await vi.waitFor(() => {
-      expect(container.querySelector('app-species-colour')).not.toBeNull();
+      expect(container.querySelector('app-species-filter-colour')).not.toBeNull();
     });
 
     filter.showGroup('size');
     await vi.waitFor(() => {
-      expect(container.querySelector('app-species-size')).not.toBeNull();
+      expect(container.querySelector('app-species-filter-size')).not.toBeNull();
     });
   });
 

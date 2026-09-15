@@ -1,0 +1,22 @@
+<h2 class="section__title">{{ 'species.section.classification' | t }}</h2>
+<div class="section__card">
+  <app-list-row kind="catalogue" [title]="'species.field.edibility' | t">
+    <app-level-pill
+      trail
+      [text]="edibility().text"
+      [colour]="edibility().colour"
+      [background]="edibility().background"
+    />
+  </app-list-row>
+  <app-list-row kind="catalogue" [title]="'species.field.protection' | t">
+    <app-level-pill
+      trail
+      [text]="protection().text"
+      [colour]="protection().colour"
+      [background]="protection().background"
+    />
+  </app-list-row>
+  <app-list-row kind="catalogue" [title]="'species.field.trade' | t">
+    <app-level-pill trail [text]="trade().text" [colour]="trade().colour" [background]="trade().background" />
+  </app-list-row>
+</div>

@@ -11,4 +11,10 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  // Ohne das nimmt der Browser einen Wisch über das Bild als Ziehen an.
+  -webkit-user-drag: none;
+}
+
+.private__image--contain {
+  object-fit: contain;
 }

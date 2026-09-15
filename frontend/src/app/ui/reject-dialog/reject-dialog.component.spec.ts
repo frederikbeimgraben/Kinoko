@@ -10,11 +10,11 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(person: string | null = 'Jonas Weber'): Promise<Setup> {
+async function build(): Promise<Setup> {
   const reasons: string[] = [];
   const state = { closes: 0 };
   const { container, fixture, detectChanges } = await render(RejectDialogComponent, {
-    inputs: { open: true, person },
+    inputs: { open: true },
   });
   fixture.componentInstance.rejected.subscribe((reason: string) => reasons.push(reason));
   fixture.componentInstance.closed.subscribe(() => (state.closes += 1));
@@ -34,9 +34,6 @@ describe('RejectDialogComponent', () => {
     const { container } = await build();
 
     expect(screen.getByRole('dialog', { name: 'Warum lehnst du ab?' })).toBeInTheDocument();
-    expect(
-      screen.getByText('Der Grund geht an Jonas Weber. Ohne Grund geht die Absage nicht hinaus.'),
-    ).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -73,18 +70,10 @@ describe('RejectDialogComponent', () => {
 
     await userEvent.type(screen.getByLabelText('Grund'), 'Unscharf');
     setup.refresh();
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
     setup.refresh();
 
     expect(setup.closes).toBe(1);
     expect(screen.getByLabelText('Grund')).toHaveValue('');
-  });
-
-  it('kommt ohne Namen der Person aus', async () => {
-    await build(null);
-
-    expect(
-      screen.getByText('Der Grund geht an die einreichende Person. Ohne Grund geht die Absage nicht hinaus.'),
-    ).toBeInTheDocument();
   });
 });

@@ -1,0 +1,10 @@
+@use 'section';
+
+@include section.block;
+
+// Die Fläche endet rechts auf derselben Kante wie jeder Wert der Seite.
+.section__card app-colour-field {
+  --pilz-colour-width: 96px;
+  --pilz-colour-height: 30px;
+  --pilz-colour-radius: 9px;
+}

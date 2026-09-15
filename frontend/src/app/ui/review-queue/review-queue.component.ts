@@ -33,6 +33,8 @@ export class ReviewQueueComponent<T> {
   private readonly i18n = inject(I18nService);
 
   readonly items = input.required<readonly T[]>();
+  /** Trägt der Seitenkopf den Zähler, steht er nicht ein zweites Mal im Stapel. */
+  readonly showCounter = input(true);
   readonly card = contentChild.required(TemplateRef);
 
   readonly accepted = output<T>();

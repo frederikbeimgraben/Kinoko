@@ -1,0 +1,16 @@
+@use '../../../../styles/card';
+
+/** Ein Abschnitt der Artseite: Überschrift, darunter eine Karte. */
+@mixin block {
+  :host {
+    display: block;
+  }
+
+  .section__title {
+    @include card.section-title;
+  }
+
+  .section__card {
+    @include card.card;
+  }
+}

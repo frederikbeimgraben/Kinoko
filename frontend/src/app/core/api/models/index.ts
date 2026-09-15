@@ -3,7 +3,14 @@ export { CAP_SHAPES, EDIBILITIES, HYMENIUM_TYPES, PROTECTIONS, TAXON_RANKS } fro
 export type {
   BodyPart,
   CapShape,
+  ColourChange,
   ColourGroup,
+  GillAttachment,
+  GillEdge,
+  GillSpacing,
+  Lookalike,
+  Speed,
+  TermRef,
   Dimension,
   Edibility,
   HymeniumType,
@@ -31,10 +38,10 @@ export type {
   RoleRef,
 } from './access';
 export { COLORS, VISIBILITIES } from './entries';
-export { IMAGE_STATES, LICENCES } from './species-images';
+export { LICENCES, PHOTO_STATES, photoPath } from './photos';
 export type {
   Color,
-  Photo,
+  FindPhoto,
   Find,
   FindPatch,
   FindInput,
@@ -58,5 +65,5 @@ export type {
   Rule,
   WireFactor,
 } from './combinations';
-export type { ImageState, ImageSubmission, Licence, SpeciesImage } from './species-images';
+export type { Licence, Photo, PhotoSize, PhotoState } from './photos';
 export type { TextCatalogue, TextEntry } from './texts';

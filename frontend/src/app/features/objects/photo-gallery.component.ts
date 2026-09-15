@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { EntriesApi } from '../../core/api/entries.api';
-import type { Photo } from '../../core/api/models';
+import type { FindPhoto } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 
 /** Ein Bild, das schon geladen ist. */
@@ -38,7 +38,7 @@ export class PhotoGalleryComponent implements OnDestroy {
   private readonly i18n = inject(I18nService);
 
   readonly findId = input.required<string>();
-  readonly fotos = input.required<readonly Photo[]>();
+  readonly fotos = input.required<readonly FindPhoto[]>();
 
   private readonly loaded = signal<ReadonlyMap<string, string>>(new Map());
 
