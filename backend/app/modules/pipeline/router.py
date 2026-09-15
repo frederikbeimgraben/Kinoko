@@ -11,7 +11,13 @@ from app.core.auth import CurrentUser, Db, requires
 from app.core.errors import Unauthorized
 from app.core.settings import get_settings
 from app.models import PipelineRun
-from app.modules.pipeline.schemas import RunCreate, RunFinish, SpeciesReport, TrainingFind
+from app.modules.pipeline.schemas import (
+    RunCreate,
+    RunFinish,
+    SpeciesReport,
+    StepReport,
+    TrainingFind,
+)
 from app.modules.pipeline.service import PipelineRunService, summary_of
 from app.shared.paging import Page
 from app.shared.repository import Repository
@@ -83,6 +89,22 @@ async def report_pipeline_run_species(
     await PipelineRunService(db).report(run, species_id, body.state, body.record_count)
 
 
+@internal_router.put(
+    "/internal/pipeline-runs/{id}/steps/{position}",  # noqa: FAST003
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[InternalOnly],
+)
+async def report_pipeline_run_step(
+    db: Db,
+    run: RunPath,
+    position: Annotated[int, Path()],
+    body: StepReport,
+) -> None:
+    """Meldet den Stand eines Schritts in einem Lauf."""
+    service = PipelineRunService(db)
+    await service.report_step(run, position, body.name, body.state, body.duration_s)
+
+
 @internal_router.post(
     "/internal/pipeline-runs/{id}/finish",  # noqa: FAST003
     status_code=status.HTTP_204_NO_CONTENT,
@@ -90,7 +112,7 @@ async def report_pipeline_run_species(
 )
 async def finish_pipeline_run(db: Db, run: RunPath, body: RunFinish) -> None:
     """Schließt einen Lauf ab."""
-    await PipelineRunService(db).finish(run, body.state, body.log_path)
+    await PipelineRunService(db).finish(run, body.state, body.log_path, body.metric_brier)
 
 
 @internal_router.get("/internal/training-finds", dependencies=[InternalOnly])

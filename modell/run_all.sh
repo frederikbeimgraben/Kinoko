@@ -13,9 +13,11 @@ run () {
   # NUR="a b c" beschraenkt den Lauf auf diese Arten, etwa fuer zwei
   # Instanzen nebeneinander: jede rechnet mit acht Faeden.
   if [ -n "${NUR:-}" ] && ! echo " $NUR " | grep -q " $SLUG "; then return; fi
+  # Der Katalogslug heisst die Ausgabe, der Kettenname bleibt intern.
+  ART=$(python -u src/pilze/species_slug.py "$TAXA" 2>/dev/null) || ART="$SLUG"
   echo "=========== $LABEL ($SLUG) $(date +%H:%M:%S) ==========="
   # Fertige Arten ueberspringen, ausser NEU=1 erzwingt alles.
-  if [ "${NEU:-0}" != "1" ] && [ -f "reports/maps/${SLUG}.json" ] \
+  if [ "${NEU:-0}" != "1" ] && [ -f "reports/maps/${ART}.json" ] \
      && [ -f "models/${SLUG}.pkl" ]; then
     echo "--- $LABEL steht schon, uebersprungen ---"
     return
@@ -29,10 +31,10 @@ run () {
       --name "$SLUG" --species "$TAXA" \
       2>&1 | tee "$LOGS/$SLUG.model.log" | grep -E "^(=====|chosen|calibration ceiling|Brier)"
   [ -f "models/${SLUG}.pkl" ] || { echo "FEHLER: kein Modell fuer $SLUG"; tail -5 "$LOGS/$SLUG.model.log"; return; }
-  python -u src/pilze/region_map.py --model "models/${SLUG}.pkl" --name "$SLUG" \
+  python -u src/pilze/region_map.py --model "models/${SLUG}.pkl" --name "$ART" \
       --region de --weeks 90 --forecast 2 --step 500 --min-forest "${WALD:-0.03}" \
       --tiles --no-image 2>&1 | tee "$LOGS/$SLUG.map.log" | grep -E "^(wrote|  Kacheln)"
-  [ -f "reports/maps/${SLUG}.json" ] || { echo "FEHLER: keine Karte fuer $SLUG"; tail -5 "$LOGS/$SLUG.map.log"; return; }
+  [ -f "reports/maps/${ART}.json" ] || { echo "FEHLER: keine Karte fuer $SLUG"; tail -5 "$LOGS/$SLUG.map.log"; return; }
   python -u src/pilze/build_page.py > /dev/null 2>&1 || true
   echo "--- $LABEL live ---"
 }

@@ -8,8 +8,10 @@ import re
 import shutil
 import subprocess
 import sys
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 from pathlib import Path
+from statistics import mean
 from typing import TYPE_CHECKING, Any, Final
 
 import httpx
@@ -18,7 +20,7 @@ from app.core.settings import Settings, get_settings
 from app.shared.enums import RunKind, RunState
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Sequence
     from typing import TextIO
 
 STAGES: Final[dict[RunKind, tuple[str, ...]]] = {
@@ -29,6 +31,7 @@ STAGES: Final[dict[RunKind, tuple[str, ...]]] = {
 LIST_SCRIPT: Final = "run_all.sh"
 FINDS_FILE: Final = Path("data/raw/app/finds.json")
 RECORDS: Final = re.compile(r"^visits with weather:\s*(\d+)", re.MULTILINE)
+BRIER: Final = re.compile(r"^Brier score\s+raw\s+[\d.]+\s+calibrated\s+([\d.]+)", re.MULTILINE)
 PAGE_SIZE: Final = 40
 TIMEOUT: Final = 60.0
 OK: Final = 200
@@ -43,6 +46,12 @@ def records_in(text: str) -> int:
     """Die Zahl der Datensätze aus der Ausgabe einer Stufe."""
     found = RECORDS.findall(text)
     return int(found[-1]) if found else 0
+
+
+def brier_in(text: str) -> float | None:
+    """Der kalibrierte Brier-Wert aus der Ausgabe einer Stufe."""
+    found = BRIER.findall(text)
+    return float(found[-1]) if found else None
 
 
 def chain_names(root: Path) -> dict[str, str]:
@@ -80,7 +89,11 @@ def stage(root: Path, script: str, name: str, log: TextIO) -> tuple[bool, str]:
     return done.returncode == 0, done.stdout
 
 
-def write_finds(root: Path, finds: Iterable[dict[str, Any]], names: dict[str, str]) -> Path:
+def write_finds(
+    root: Path,
+    finds: list[dict[str, Any]],
+    names: dict[str, str],
+) -> Path:
     """Schreibt die Trainingsfunde in die Datei, die die Kette liest."""
     target = root / FINDS_FILE
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -137,11 +150,33 @@ class Api:
         )
         answer.raise_for_status()
 
-    def finish(self, run_id: str, state: RunState, log_path: str) -> None:
+    def report_step(
+        self,
+        run_id: str,
+        position: int,
+        name: str,
+        state: RunState,
+        duration_s: int | None,
+    ) -> None:
+        """Meldet den Stand einer Stufe."""
+        answer = self.client.put(
+            f"/internal/pipeline-runs/{run_id}/steps/{position}",
+            json={"name": name, "state": state.value, "durationS": duration_s},
+            headers=self.headers,
+        )
+        answer.raise_for_status()
+
+    def finish(
+        self,
+        run_id: str,
+        state: RunState,
+        log_path: str,
+        metric_brier: float | None,
+    ) -> None:
         """Schließt einen Lauf ab."""
         answer = self.client.post(
             f"/internal/pipeline-runs/{run_id}/finish",
-            json={"state": state.value, "logPath": log_path},
+            json={"state": state.value, "logPath": log_path, "metricBrier": metric_brier},
             headers=self.headers,
         )
         answer.raise_for_status()
@@ -149,32 +184,59 @@ class Api:
 
 @dataclass(frozen=True, slots=True)
 class Job:
-    """Was eine Art eines Laufs zum Rechnen braucht."""
+    """Was eine Stufe eines Laufs zum Rechnen braucht."""
 
     api: Api
     root: Path
     run: dict[str, Any]
     names: dict[str, str]
     log: TextIO
+    briers: list[float] = field(default_factory=list)
 
 
-def one_species(job: Job, row: dict[str, Any]) -> bool:
-    """Rechnet eine Art und meldet ihren Stand vorher und nachher."""
+def run_species(job: Job, script: str, row: dict[str, Any]) -> tuple[bool, int]:
+    """Startet eine Stufe für eine Art und meldet ihren Stand."""
     job.api.report(job.run["id"], row["id"], RunState.RUNNING, 0)
     name = job.names.get(row["scientificName"].lower())
     if name is None:
         job.api.report(job.run["id"], row["id"], RunState.FAILED, 0)
-        return False
-    records = 0
-    done = True
-    for script in STAGES[RunKind(job.run["kind"])]:
-        done, text = stage(job.root, script, name, job.log)
-        records = max(records, records_in(text))
-        if not done:
-            break
+        return False, 0
+    done, text = stage(job.root, script, name, job.log)
+    records = records_in(text)
+    brier = brier_in(text)
+    if brier is not None:
+        job.briers.append(brier)
     state = RunState.FINISHED if done else RunState.FAILED
     job.api.report(job.run["id"], row["id"], state, records)
-    return done
+    return done, records
+
+
+def run_stage(
+    job: Job,
+    position: int,
+    script: str,
+    species: list[dict[str, Any]],
+    failed: set[str],
+) -> None:
+    """Startet eine Stufe für jede noch offene Art und meldet Stand und Dauer."""
+    job.api.report_step(job.run["id"], position, script, RunState.RUNNING, None)
+    start = time.monotonic()
+    ok = True
+    for row in species:
+        if row["id"] in failed:
+            continue
+        done, _ = run_species(job, script, row)
+        if not done:
+            ok = False
+            failed.add(row["id"])
+    duration = round(time.monotonic() - start)
+    job.api.report_step(
+        job.run["id"],
+        position,
+        script,
+        RunState.FINISHED if ok else RunState.FAILED,
+        duration,
+    )
 
 
 def work(api: Api, settings: Settings, run: dict[str, Any]) -> int:
@@ -185,10 +247,14 @@ def work(api: Api, settings: Settings, run: dict[str, Any]) -> int:
     write_finds(root, api.training_finds(), {row["id"]: row["scientificName"] for row in species})
     log_path = settings.run_logs / f"{run['id']}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
+    failed: set[str] = set()
     with log_path.open("w", encoding="utf-8") as log:
         job = Job(api=api, root=root, run=run, names=names, log=log)
-        broken = sum(not one_species(job, row) for row in species)
-    api.finish(run["id"], RunState.FAILED if broken else RunState.FINISHED, str(log_path))
+        for position, script in enumerate(STAGES[RunKind(run["kind"])]):
+            run_stage(job, position, script, species, failed)
+    metric_brier = mean(job.briers) if job.briers else None
+    state = RunState.FAILED if failed else RunState.FINISHED
+    api.finish(run["id"], state, str(log_path), metric_brier)
     return 0
 
 

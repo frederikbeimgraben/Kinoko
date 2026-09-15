@@ -30,11 +30,26 @@ class PipelineRunSpeciesEntry(Schema):
     find_count: int
 
 
+class PipelineRunStepEntry(Schema):
+    """Der Stand eines Schritts in einem Lauf."""
+
+    position: int
+    name: str
+    state: RunState
+    duration_s: int | None
+
+
 class PipelineRunDetail(PipelineRunSummary):
-    """Ein Lauf der Kette mit dem Stand je Art."""
+    """Ein Lauf der Kette mit Fortschritt, Schritten und Protokoll."""
 
     log_path: str | None = None
+    metric_brier: float | None = None
+    metric_brier_previous: float | None = None
+    progress_done: int
+    progress_total: int
     species: list[PipelineRunSpeciesEntry]
+    steps: list[PipelineRunStepEntry]
+    log_tail: list[str]
 
 
 class RunCreate(Schema):
@@ -50,11 +65,20 @@ class SpeciesReport(Schema):
     record_count: int
 
 
+class StepReport(Schema):
+    """Die Meldung eines Schritts in einem Lauf."""
+
+    name: str
+    state: RunState
+    duration_s: int | None
+
+
 class RunFinish(Schema):
     """Der Abschluss eines Laufs."""
 
     state: RunState
     log_path: str | None = None
+    metric_brier: float | None = None
 
 
 class TrainingFind(Schema):
