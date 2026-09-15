@@ -83,6 +83,21 @@ describe('SpeciesState', () => {
     });
   });
 
+  it('verwirft ein Bündel vom Gerät ohne Achsen und holt es ohne ETag neu', async () => {
+    const stale = { items: LOCAL.items, standardColours: PALETTE } as unknown as SpeciesBundle;
+    const setup = build({ bundle: stale, etag: 'w/"alt"' });
+    void setup.state.loadBundle();
+
+    const request = await vi.waitFor(() => setup.http.expectOne(BUNDLE_PATH));
+    expect(request.request.headers.has('If-None-Match')).toBe(false);
+    request.flush(SPECIES_BUNDLE, { headers: { ETag: 'w/"alt"' } });
+
+    await vi.waitFor(() => {
+      expect(setup.state.species()).toHaveLength(3);
+    });
+    expect(Object.keys(setup.state.facets()).length).toBeGreaterThan(0);
+  });
+
   it('lässt den Stand stehen, wenn der Dienst 304 meldet', async () => {
     const setup = build({ bundle: LOCAL, etag: 'w/"alt"' });
     void setup.state.loadBundle();

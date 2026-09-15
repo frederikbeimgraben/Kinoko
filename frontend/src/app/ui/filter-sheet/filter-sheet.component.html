@@ -14,20 +14,9 @@
         </button>
       }
       <h2 class="filtersheet__title">{{ title() }}</h2>
-      @if (!back()) {
-        @if (resetEnabled()) {
-          <button class="filtersheet__reset tap" type="button" data-press="scale" (click)="resetClick.emit()">
-            {{ 'common.reset' | t }}
-          </button>
-        }
-        <button
-          class="filtersheet__close tap"
-          type="button"
-          data-press="scale"
-          [attr.aria-label]="'common.close' | t"
-          (click)="closed.emit()"
-        >
-          <app-svg-icon name="close" [size]="18" [strokeWidth]="2.2" />
+      @if (!back() && resetEnabled()) {
+        <button class="filtersheet__reset tap" type="button" data-press="scale" (click)="resetClick.emit()">
+          {{ 'common.reset' | t }}
         </button>
       }
     </header>

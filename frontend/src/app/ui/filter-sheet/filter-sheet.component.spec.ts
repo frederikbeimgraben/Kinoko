@@ -33,33 +33,40 @@ describe('FilterSheetComponent', () => {
   it('lässt Zurücksetzen weg, solange nichts gefiltert ist', async () => {
     await render(FilterSheetComponent, { inputs: OPEN });
 
-    expect(dialogButtons()).toHaveLength(2);
+    expect(dialogButtons()).toHaveLength(1);
   });
 
   it('zeigt Zurücksetzen, sobald ein Filter steht', async () => {
     await render(FilterSheetComponent, { inputs: { ...OPEN, resetEnabled: true } });
 
-    expect(dialogButtons()).toHaveLength(3);
+    expect(dialogButtons()).toHaveLength(2);
   });
 
-  it('meldet Zurücksetzen, Haupthandlung und Schließen je Knopf', async () => {
+  it('lässt der Übersicht kein X im Kopf', async () => {
+    const { container } = await render(FilterSheetComponent, {
+      inputs: { ...OPEN, resetEnabled: true },
+    });
+
+    expect(container.querySelector('.filtersheet__close')).toBeNull();
+    expect(within(screen.getByRole('dialog')).queryByRole('button', { name: 'Schließen' })).toBeNull();
+  });
+
+  it('meldet Zurücksetzen und Haupthandlung je Knopf', async () => {
     const { fixture } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
     });
     const calls: string[] = [];
     fixture.componentInstance.resetClick.subscribe(() => calls.push('reset'));
     fixture.componentInstance.primaryClick.subscribe(() => calls.push('primary'));
-    fixture.componentInstance.closed.subscribe(() => calls.push('closed'));
     const buttons = dialogButtons();
 
     await userEvent.click(buttons[0]);
     await userEvent.click(buttons[1]);
-    await userEvent.click(buttons[2]);
 
-    expect(calls).toEqual(['reset', 'closed', 'primary']);
+    expect(calls).toEqual(['reset', 'primary']);
   });
 
-  it('stellt in einer Gruppe den Weg zurück statt Zurücksetzen und X', async () => {
+  it('stellt in einer Gruppe den Weg zurück statt Zurücksetzen', async () => {
     const { container, fixture } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, title: 'Cap shape', back: true, resetEnabled: true },
     });

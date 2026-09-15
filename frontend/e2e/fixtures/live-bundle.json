@@ -1,0 +1,2319 @@
+{
+  "items": [
+    {
+      "id": "7e986f12-5bce-4680-b9a4-f7789c959de9",
+      "slug": "boletus-edulis",
+      "name": "Steinpilz",
+      "scientificName": "Boletus edulis",
+      "taxonId": "7c85525f-995d-4be8-a856-b8ff8d32a940",
+      "genusName": "Boletus",
+      "familyName": "Boletaceae",
+      "group": "bolete",
+      "edibility": "edible",
+      "protection": "personal_use",
+      "forecastEnabled": true,
+      "leadPhotoId": null,
+      "updatedAt": "2026-09-14T22:29:10.801092Z",
+      "description": null,
+      "marketable": true,
+      "frequency": null,
+      "redList": null,
+      "edibilityNote": "Bei einem Fund ohne oder mit kaum sichtbarem Netz am Stiel und mit gelblichen Röhren entscheidet eine Geschmacksprobe, ob ein bitterer Gallenröhrling vorliegt.",
+      "protectionNote": null,
+      "periodStartMonth": 6,
+      "periodEndMonth": 11,
+      "periodPeakMonth": null,
+      "smellText": "Sehr angenehm, pilzig.",
+      "tasteText": "Mild, angenehm pilzig.",
+      "hymeniumType": "tubes",
+      "gillAttachment": null,
+      "gillSpacing": null,
+      "gillEdge": null,
+      "capShapeYoung": null,
+      "capShapeOld": null,
+      "names": [
+        {
+          "name": "Steinpilze",
+          "kind": "common"
+        },
+        {
+          "name": "Herrenpilz",
+          "kind": "common"
+        },
+        {
+          "name": "Dobberniggl",
+          "kind": "common"
+        },
+        {
+          "name": "Fichtensteinpilz",
+          "kind": "common"
+        },
+        {
+          "name": "Gemeiner Steinpilz",
+          "kind": "common"
+        }
+      ],
+      "measurements": [
+        {
+          "part": "cap",
+          "measurements": [
+            {
+              "dimension": "width",
+              "unit": "cm",
+              "low": 4.0,
+              "high": 20.0,
+              "rareLow": null,
+              "rareHigh": 25.0,
+              "description": null
+            }
+          ]
+        },
+        {
+          "part": "spore",
+          "measurements": [
+            {
+              "dimension": "length",
+              "unit": "um",
+              "low": 12.4,
+              "high": 19.2,
+              "rareLow": null,
+              "rareHigh": null,
+              "description": null
+            },
+            {
+              "dimension": "width",
+              "unit": "um",
+              "low": 4.5,
+              "high": 5.5,
+              "rareLow": null,
+              "rareHigh": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "colours": [
+        {
+          "part": "cap",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "rot",
+              "hex": "#c0392b",
+              "nearest": "#b8322a"
+            }
+          ]
+        },
+        {
+          "part": "spore_print",
+          "mode": "single",
+          "colours": [
+            {
+              "name": "olivbraun",
+              "hex": "#6e6435",
+              "nearest": "#6b4423"
+            }
+          ]
+        },
+        {
+          "part": "stem",
+          "mode": "single",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            }
+          ]
+        },
+        {
+          "part": "tubes",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "olivgrün",
+              "hex": "#6f8438",
+              "nearest": "#7f8a3a"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "grün",
+              "hex": "#4f8a3a",
+              "nearest": "#4f7a3a"
+            }
+          ]
+        }
+      ],
+      "colourChanges": [
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "braun",
+            "hex": "#7a5230",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "7061d09f-6d24-4d48-b1dc-b1d6e6126ee2",
+              "slug": "koh",
+              "name": "Kalilauge (KOH)",
+              "kind": "trigger"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "grün",
+            "hex": "#4f8a3a",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "fb1a3074-433b-416c-8c97-431e454e41ef",
+              "slug": "melzer",
+              "name": "Melzers Reagenz",
+              "kind": "trigger"
+            }
+          ]
+        }
+      ],
+      "capFeatures": [],
+      "capMargins": [
+        {
+          "margin": "inrolled",
+          "phase": "old"
+        },
+        {
+          "margin": "inrolled",
+          "phase": "young"
+        }
+      ],
+      "stemFeatures": [
+        {
+          "feature": "fibrous",
+          "phase": "old"
+        },
+        {
+          "feature": "fibrous",
+          "phase": "young"
+        },
+        {
+          "feature": "netted",
+          "phase": "old"
+        },
+        {
+          "feature": "netted",
+          "phase": "young"
+        }
+      ],
+      "traits": [
+        {
+          "key": "cap",
+          "text": "4 bis 20, selten bis 25 cm breit, wildlederartig braun bis haselnussbraun. Der Rand bleibt lange eingerollt und ist meist weiß."
+        },
+        {
+          "key": "flesh",
+          "text": "Weißlich, nicht verfärbend, unter der Huthaut mit einer kurzen rotbräunlichen Zone, anders als beim weißen Sommersteinpilz. Der Kiefernsteinpilz zeigt dieselbe Zone."
+        },
+        {
+          "key": "habitat",
+          "text": "Symbiosepilz im Mischwald, gern bei Fichte, Tanne und Kiefer, seltener bei Eiche, Hainbuche, Linde, Kastanie, Buche, Birke und anderen Laubbäumen."
+        },
+        {
+          "key": "season",
+          "text": "Frühsommer bis Spätherbst."
+        },
+        {
+          "key": "smell",
+          "text": "Sehr angenehm, pilzig."
+        },
+        {
+          "key": "spore_print",
+          "text": "Olivbraun."
+        },
+        {
+          "key": "stem",
+          "text": "Weißlich, bräunlich überfasert, mit weißem, im Alter bräunlichem Netz."
+        },
+        {
+          "key": "taste",
+          "text": "Mild, angenehm pilzig."
+        },
+        {
+          "key": "tubes",
+          "text": "Weißlich, gelblich, gelbgrün, später olivgrün, vereinzelt auf Druck bläulich bis grünlich. Ganz jung sind sie verschlossen wie Bienenwaben, beim Gallenröhrling ist das nicht so."
+        }
+      ],
+      "sources": [
+        {
+          "scope": "profile",
+          "title": "123pilzsuche.de",
+          "url": "https://www.123pilzsuche.de/daten/details/Steinpilze.htm",
+          "checkedOn": "2026-09-12"
+        },
+        {
+          "scope": "further",
+          "title": "123pilzsuche.de",
+          "url": "https://www.123pilzsuche.de/daten/details/Steinpilze.htm",
+          "checkedOn": "2026-09-12"
+        },
+        {
+          "scope": "further",
+          "title": "Wikipedia",
+          "url": "https://de.wikipedia.org/wiki/Gemeiner_Steinpilz",
+          "checkedOn": "2026-09-12"
+        }
+      ],
+      "seasons": ["autumn", "summer"],
+      "terms": [
+        {
+          "term": {
+            "id": "011c8c5f-ec9c-453d-8566-5552e78e9b98",
+            "slug": "birch",
+            "name": "Birke",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "04dd6440-4d8f-4bad-9f8e-6f390bcee40e",
+            "slug": "angenehm",
+            "name": "angenehm",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "1e11bbcd-fdde-4f98-9d5a-327f4c673c1a",
+            "slug": "fir",
+            "name": "Tanne",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "370e6774-0dd3-432d-ab79-5800657d99d8",
+            "slug": "mild",
+            "name": "mild",
+            "kind": "taste"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "486e8295-34f7-40ed-9e34-bf54bb6f0f0c",
+            "slug": "pine",
+            "name": "Kiefer",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "55649433-b5b2-4881-8c16-45a0f0f74237",
+            "slug": "spruce",
+            "name": "Fichte",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "761a89f8-d34a-45e0-aac6-7a05da1f0b1d",
+            "slug": "pilzig",
+            "name": "pilzig",
+            "kind": "taste"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "9065233f-12bd-4329-97a0-ecae7444b208",
+            "slug": "beech",
+            "name": "Buche",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "931d79a3-1e4f-4557-bfe1-01cd833f1f49",
+            "slug": "chestnut",
+            "name": "Kastanie",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "a23fa291-d77c-4851-817c-e9087f67cdee",
+            "slug": "pilzig",
+            "name": "pilzig",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "bdc32ab8-d7ca-47e1-9bf0-15d703bad902",
+            "slug": "hornbeam",
+            "name": "Hainbuche",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "d4943d41-38c9-47f3-9de3-8ad1122a9388",
+            "slug": "lime",
+            "name": "Linde",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "e1886ca8-6704-4931-9f4b-58cc570b2ce0",
+            "slug": "oak",
+            "name": "Eiche",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        }
+      ],
+      "lookalikes": [
+        {
+          "slug": "butyriboletus-subappendiculatus",
+          "name": "Falscher Anhängselröhrling",
+          "scientificName": "Butyriboletus subappendiculatus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "kastanienbraun",
+              "hex": "#6b3a20",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "orange",
+              "hex": "#e08a2e",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "boletus-pinophilus",
+          "name": "Kiefernsteinpilz",
+          "scientificName": "Boletus pinophilus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "rotbraun",
+              "hex": "#8b4a2b",
+              "nearest": "#a0522d"
+            },
+            {
+              "name": "purpurbraun",
+              "hex": "#5f3346",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "weinrot",
+              "hex": "#7b2436",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "grau",
+              "hex": "#8a8a8a",
+              "nearest": "#8a8f8a"
+            }
+          ],
+          "difference": "Hut rotbraun, weinrot bis purpurbraun, Stiel nuss- bis rotbräunlich."
+        },
+        {
+          "slug": "imleria-badia",
+          "name": "Maronenröhrling",
+          "scientificName": "Imleria badia",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "olivbraun",
+              "hex": "#6e6435",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "hellbraun",
+              "hex": "#a97c50",
+              "nearest": "#d1832f"
+            }
+          ],
+          "difference": "Hut dunkel- bis hellbraun und feucht glatt, Röhren auf Druck blaugrün, Stiel ohne Netz."
+        },
+        {
+          "slug": "boletus-reticulatus",
+          "name": "Sommersteinpilz",
+          "scientificName": "Boletus reticulatus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ],
+          "difference": "Netz zieht sich über den ganzen Stiel, Fleisch unter der Huthaut weiß, Huthaut bei Trockenheit felderig rissig."
+        },
+        {
+          "slug": "tylopilus-felleus",
+          "name": "Gemeiner Gallenröhrling",
+          "scientificName": "Tylopilus felleus",
+          "edibility": "poisonous",
+          "capColours": [
+            {
+              "name": "dunkelbraun",
+              "hex": "#4a3120",
+              "nearest": "#3e2a17"
+            },
+            {
+              "name": "hellbraun",
+              "hex": "#a97c50",
+              "nearest": "#d1832f"
+            }
+          ],
+          "difference": "Röhren jung weiß, später rosa, Stiel mit grobem braunem Netz, Geschmack bitter."
+        },
+        {
+          "slug": "boletus-fulvomaculatus",
+          "name": "Gelbfleckiger Steinpilz",
+          "scientificName": "Boletus fulvomaculatus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ],
+          "difference": "Hut hell ockerbraun bis dottergelb, Röhren satt gelb und nicht blauend, Stiel dünner."
+        }
+      ]
+    },
+    {
+      "id": "ae6dc9a1-192e-408d-9b00-a03be424fafc",
+      "slug": "imleria-badia",
+      "name": "Maronenröhrling",
+      "scientificName": "Imleria badia",
+      "taxonId": "626b02dd-e53d-48b9-9fff-9273a4c8e53f",
+      "genusName": "Imleria",
+      "familyName": "Boletaceae",
+      "group": "bolete",
+      "edibility": "edible",
+      "protection": "none",
+      "forecastEnabled": false,
+      "leadPhotoId": null,
+      "updatedAt": "2026-09-14T22:29:10.801017Z",
+      "description": null,
+      "marketable": true,
+      "frequency": null,
+      "redList": null,
+      "edibilityNote": "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen. Er nimmt Cäsium 137 stärker auf als die meisten Arten; für Kinder und Schwangere sind größere Mengen nicht zu empfehlen.",
+      "protectionNote": null,
+      "periodStartMonth": 6,
+      "periodEndMonth": 11,
+      "periodPeakMonth": null,
+      "smellText": "Angenehm pilzig, schwach säuerlich.",
+      "tasteText": "Nussig, pilzig.",
+      "hymeniumType": "tubes",
+      "gillAttachment": null,
+      "gillSpacing": null,
+      "gillEdge": null,
+      "capShapeYoung": null,
+      "capShapeOld": null,
+      "names": [
+        {
+          "name": "Braunkappen",
+          "kind": "common"
+        },
+        {
+          "name": "Braunkuppen",
+          "kind": "common"
+        },
+        {
+          "name": "Braune",
+          "kind": "common"
+        },
+        {
+          "name": "Bräunling",
+          "kind": "common"
+        },
+        {
+          "name": "Marone",
+          "kind": "common"
+        }
+      ],
+      "measurements": [
+        {
+          "part": "cap",
+          "measurements": [
+            {
+              "dimension": "width",
+              "unit": "cm",
+              "low": 3.0,
+              "high": 15.0,
+              "rareLow": null,
+              "rareHigh": 25.0,
+              "description": null
+            }
+          ]
+        },
+        {
+          "part": "spore",
+          "measurements": [
+            {
+              "dimension": "length",
+              "unit": "um",
+              "low": 10.0,
+              "high": 15.0,
+              "rareLow": null,
+              "rareHigh": null,
+              "description": null
+            },
+            {
+              "dimension": "width",
+              "unit": "um",
+              "low": 4.0,
+              "high": 6.0,
+              "rareLow": null,
+              "rareHigh": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "part": "stem",
+          "measurements": [
+            {
+              "dimension": "length",
+              "unit": "cm",
+              "low": 5.0,
+              "high": 12.0,
+              "rareLow": null,
+              "rareHigh": 15.0,
+              "description": null
+            },
+            {
+              "dimension": "thickness",
+              "unit": "cm",
+              "low": 1.0,
+              "high": 5.0,
+              "rareLow": null,
+              "rareHigh": 6.0,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "colours": [
+        {
+          "part": "cap",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "olivbraun",
+              "hex": "#6e6435",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "hellbraun",
+              "hex": "#a97c50",
+              "nearest": "#d1832f"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "blau",
+              "hex": "#3a5f9e",
+              "nearest": "#7a3b6a"
+            }
+          ]
+        },
+        {
+          "part": "spore_print",
+          "mode": "single",
+          "colours": [
+            {
+              "name": "olivbraun",
+              "hex": "#6e6435",
+              "nearest": "#6b4423"
+            }
+          ]
+        },
+        {
+          "part": "stem",
+          "mode": "single",
+          "colours": [
+            {
+              "name": "gelbbraun",
+              "hex": "#a3813f",
+              "nearest": "#7f8a3a"
+            }
+          ]
+        },
+        {
+          "part": "tubes",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "blaugrün",
+              "hex": "#2f7f7a",
+              "nearest": "#4f7a3a"
+            },
+            {
+              "name": "grüngelb",
+              "hex": "#9fb02f",
+              "nearest": "#7f8a3a"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            }
+          ]
+        }
+      ],
+      "colourChanges": [
+        {
+          "part": "flesh",
+          "kind": "mechanical",
+          "from": null,
+          "to": {
+            "name": "blau",
+            "hex": "#3a5f9e",
+            "nearest": null
+          },
+          "speed": "longer",
+          "triggers": [
+            {
+              "id": "2258c725-878c-448c-b8d6-7f7f4605f54a",
+              "slug": "cut",
+              "name": "Schnitt",
+              "kind": "trigger"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "orange",
+            "hex": "#e08a2e",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "7061d09f-6d24-4d48-b1dc-b1d6e6126ee2",
+              "slug": "koh",
+              "name": "Kalilauge (KOH)",
+              "kind": "trigger"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "blaugrün",
+            "hex": "#2f7f7a",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "6c1e8986-64ad-4afd-86f3-92d67844eda8",
+              "slug": "ammonia",
+              "name": "Ammoniak",
+              "kind": "trigger"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "oliv",
+            "hex": "#6b7a3a",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "f1318724-d8a1-4d4b-a93a-ec3b5cb07700",
+              "slug": "feso4",
+              "name": "Eisensulfat (FeSO4)",
+              "kind": "trigger"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "blau",
+            "hex": "#3a5f9e",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "fb1a3074-433b-416c-8c97-431e454e41ef",
+              "slug": "melzer",
+              "name": "Melzers Reagenz",
+              "kind": "trigger"
+            }
+          ]
+        }
+      ],
+      "capFeatures": [],
+      "capMargins": [],
+      "stemFeatures": [
+        {
+          "feature": "bulb",
+          "phase": "old"
+        },
+        {
+          "feature": "bulb",
+          "phase": "young"
+        },
+        {
+          "feature": "fibrous",
+          "phase": "old"
+        },
+        {
+          "feature": "fibrous",
+          "phase": "young"
+        }
+      ],
+      "traits": [
+        {
+          "key": "cap",
+          "text": "3 bis 15, selten bis 25 cm breit, dunkel- bis hellbraun oder olivbraun, glatt, matt und feinsamtig, feucht schmierig und glänzend."
+        },
+        {
+          "key": "flesh",
+          "text": "Weißlich bis hellgelb, mehr oder weniger stark blauend."
+        },
+        {
+          "key": "habitat",
+          "text": "Symbiosepilz in Misch- und Nadelwäldern, gern auf saurem Boden."
+        },
+        {
+          "key": "season",
+          "text": "Sommer bis Spätherbst."
+        },
+        {
+          "key": "smell",
+          "text": "Angenehm pilzig, schwach säuerlich."
+        },
+        {
+          "key": "spore_print",
+          "text": "Olivbraun."
+        },
+        {
+          "key": "stem",
+          "text": "5 bis 12, selten bis 15 cm lang, 1 bis 5, selten bis 6 cm dick, bräunlich bis gelbbraun, längsfaserig, ohne Netz, zur Basis knollig verdickt und oft gebogen. Die Stielrinde hat eine eingewachsene Maserung."
+        },
+        {
+          "key": "taste",
+          "text": "Nussig, pilzig."
+        },
+        {
+          "key": "tubes",
+          "text": "Gelblich bis grüngelb, auf Druck blaugrün, rundlich und feinporig, ablösbar, am Stiel ausgebuchtet angewachsen, im Alter schwammig."
+        }
+      ],
+      "sources": [
+        {
+          "scope": "profile",
+          "title": "123pilzsuche.de",
+          "url": "https://www.123pilzsuche.de/daten/details/Maronenroehrling.htm",
+          "checkedOn": "2026-09-12"
+        },
+        {
+          "scope": "further",
+          "title": "123pilzsuche.de",
+          "url": "https://www.123pilzsuche.de/daten/details/Maronenroehrling.htm",
+          "checkedOn": "2026-09-12"
+        },
+        {
+          "scope": "further",
+          "title": "Wikipedia",
+          "url": "https://de.wikipedia.org/wiki/Maronen-Röhrling",
+          "checkedOn": "2026-09-12"
+        }
+      ],
+      "seasons": ["autumn", "summer"],
+      "terms": [
+        {
+          "term": {
+            "id": "04dd6440-4d8f-4bad-9f8e-6f390bcee40e",
+            "slug": "angenehm",
+            "name": "angenehm",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "486e8295-34f7-40ed-9e34-bf54bb6f0f0c",
+            "slug": "pine",
+            "name": "Kiefer",
+            "kind": "tree"
+          },
+          "fromExperience": true
+        },
+        {
+          "term": {
+            "id": "55649433-b5b2-4881-8c16-45a0f0f74237",
+            "slug": "spruce",
+            "name": "Fichte",
+            "kind": "tree"
+          },
+          "fromExperience": true
+        },
+        {
+          "term": {
+            "id": "761a89f8-d34a-45e0-aac6-7a05da1f0b1d",
+            "slug": "pilzig",
+            "name": "pilzig",
+            "kind": "taste"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "9065233f-12bd-4329-97a0-ecae7444b208",
+            "slug": "beech",
+            "name": "Buche",
+            "kind": "tree"
+          },
+          "fromExperience": true
+        },
+        {
+          "term": {
+            "id": "a23fa291-d77c-4851-817c-e9087f67cdee",
+            "slug": "pilzig",
+            "name": "pilzig",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "d1219622-723d-4536-944a-cf203a124947",
+            "slug": "nussig",
+            "name": "nussig",
+            "kind": "taste"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "df4085ea-95d0-4999-a8fc-ae5694c8e95e",
+            "slug": "saeuerlich",
+            "name": "saeuerlich",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        }
+      ],
+      "lookalikes": [
+        {
+          "slug": "xerocomellus-porosporus",
+          "name": "Falscher Rotfußröhrling",
+          "scientificName": "Xerocomellus porosporus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "beige",
+              "hex": "#d9c9a3",
+              "nearest": "#e8d9b5"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "rot",
+              "hex": "#c0392b",
+              "nearest": "#b8322a"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "xerocomellus-pruinatus",
+          "name": "Herbstrotfußröhrling",
+          "scientificName": "Xerocomellus pruinatus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "rot",
+              "hex": "#c0392b",
+              "nearest": "#b8322a"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "boletus-pinophilus",
+          "name": "Kiefernsteinpilz",
+          "scientificName": "Boletus pinophilus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "rotbraun",
+              "hex": "#8b4a2b",
+              "nearest": "#a0522d"
+            },
+            {
+              "name": "purpurbraun",
+              "hex": "#5f3346",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "weinrot",
+              "hex": "#7b2436",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "grau",
+              "hex": "#8a8a8a",
+              "nearest": "#8a8f8a"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "tylopilus-felleus",
+          "name": "Gemeiner Gallenröhrling",
+          "scientificName": "Tylopilus felleus",
+          "edibility": "poisonous",
+          "capColours": [
+            {
+              "name": "dunkelbraun",
+              "hex": "#4a3120",
+              "nearest": "#3e2a17"
+            },
+            {
+              "name": "hellbraun",
+              "hex": "#a97c50",
+              "nearest": "#d1832f"
+            }
+          ],
+          "difference": "Röhren jung weiß, später rosa, Stiel mit braunem Netz. Schon ein kleines Stück Fleisch schmeckt sehr bitter."
+        },
+        {
+          "slug": "xerocomellus-chrysenteron",
+          "name": "Rotfußröhrling",
+          "scientificName": "Xerocomellus chrysenteron",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "rot",
+              "hex": "#c0392b",
+              "nearest": "#b8322a"
+            }
+          ],
+          "difference": "Huthaut aufreißend, darunter eine rote Zone, Stiel rötlich punktiert, Fleisch nur stellenweise blauend."
+        },
+        {
+          "slug": "caloboletus-calopus",
+          "name": "Schönfußröhrling",
+          "scientificName": "Caloboletus calopus",
+          "edibility": "poisonous",
+          "capColours": [
+            {
+              "name": "grau",
+              "hex": "#8a8a8a",
+              "nearest": "#8a8f8a"
+            }
+          ],
+          "difference": "Hut lehmgrau und samtig, Stiel zur Basis rot mit Netz, Fleisch sofort blauend, Geruch säuerlich muffig."
+        },
+        {
+          "slug": "boletus-edulis",
+          "name": "Steinpilz",
+          "scientificName": "Boletus edulis",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ],
+          "difference": "Röhren weißlich bis gelbgrün und kaum blauend, Stiel mit weißem Netz."
+        },
+        {
+          "slug": "xerocomus-subtomentosus",
+          "name": "Ziegenlippe",
+          "scientificName": "Xerocomus subtomentosus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "olivbraun",
+              "hex": "#6e6435",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "graubraun",
+              "hex": "#7d6f5e",
+              "nearest": "#8a8f8a"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "oliv",
+              "hex": "#6b7a3a",
+              "nearest": "#7f8a3a"
+            },
+            {
+              "name": "rosa",
+              "hex": "#e8a0b0",
+              "nearest": "#e8d9b5"
+            }
+          ],
+          "difference": "Hut wildlederartig filzig, Röhren jung leuchtend gelb und höchstens leicht blauend, Stiel fast weiß und schlank."
+        },
+        {
+          "slug": "boletus-reticulatus",
+          "name": "Sommersteinpilz",
+          "scientificName": "Boletus reticulatus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ],
+          "difference": null
+        }
+      ]
+    },
+    {
+      "id": "84651b29-abba-47eb-b115-e3123d4752cc",
+      "slug": "amanita-phalloides",
+      "name": "Grüner Knollenblätterpilz",
+      "scientificName": "Amanita phalloides",
+      "taxonId": "96905192-ee1c-4009-8f2d-9a2f9c96134c",
+      "genusName": "Wulstlinge",
+      "familyName": "Amanitaceae",
+      "group": "amanita",
+      "edibility": "deadly",
+      "protection": "none",
+      "forecastEnabled": false,
+      "leadPhotoId": null,
+      "updatedAt": "2026-09-14T22:29:10.800983Z",
+      "description": null,
+      "marketable": false,
+      "frequency": "common",
+      "redList": null,
+      "edibilityNote": "Absolut tödlich, schon 20 Gramm genügen. Das Gift schädigt die Leber. Die wichtigsten Merkmale sind weiße Lamellen, ein häutiger Ring, ein radialfaserig eingewachsener Hut mit wie ein Tortenstück abziehbarer Haut und eine abgerundete Knolle mit häutiger Scheide.",
+      "protectionNote": null,
+      "periodStartMonth": 6,
+      "periodEndMonth": 11,
+      "periodPeakMonth": null,
+      "smellText": "Jung fast geruchlos, nach Kleeheu, süßlich oder hornartig, alt widerlich nach Ammoniak.",
+      "tasteText": "Mild und süßlich. Niemals kosten, es droht eine Leberschädigung.",
+      "hymeniumType": "gills",
+      "gillAttachment": "free",
+      "gillSpacing": "close",
+      "gillEdge": null,
+      "capShapeYoung": "egg",
+      "capShapeOld": "flat",
+      "names": [
+        {
+          "name": "Grüner Mörder",
+          "kind": "common"
+        },
+        {
+          "name": "Giftchampignon",
+          "kind": "common"
+        },
+        {
+          "name": "Amanita phalloides f. citrina",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides f. dunensis",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides var. umbrina",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides var. euphalloides",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides var. larroquei",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides var. pulla",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides var. verna",
+          "kind": "synonym"
+        },
+        {
+          "name": "Amanita phalloides var. striatula",
+          "kind": "synonym"
+        }
+      ],
+      "measurements": [
+        {
+          "part": "cap",
+          "measurements": [
+            {
+              "dimension": "width",
+              "unit": "cm",
+              "low": 3.0,
+              "high": 15.0,
+              "rareLow": null,
+              "rareHigh": 17.0,
+              "description": null
+            }
+          ]
+        },
+        {
+          "part": "spore",
+          "measurements": [
+            {
+              "dimension": "length",
+              "unit": "um",
+              "low": 7.0,
+              "high": 12.0,
+              "rareLow": null,
+              "rareHigh": null,
+              "description": null
+            },
+            {
+              "dimension": "width",
+              "unit": "um",
+              "low": 6.0,
+              "high": 10.0,
+              "rareLow": null,
+              "rareHigh": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "part": "stem",
+          "measurements": [
+            {
+              "dimension": "length",
+              "unit": "cm",
+              "low": 5.0,
+              "high": 12.0,
+              "rareLow": null,
+              "rareHigh": 15.0,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "colours": [
+        {
+          "part": "cap",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "olivbraun",
+              "hex": "#6e6435",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "olivgrün",
+              "hex": "#6f8438",
+              "nearest": "#7f8a3a"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "oliv",
+              "hex": "#6b7a3a",
+              "nearest": "#7f8a3a"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "grün",
+              "hex": "#4f8a3a",
+              "nearest": "#4f7a3a"
+            }
+          ]
+        },
+        {
+          "part": "gills",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "blau",
+              "hex": "#3a5f9e",
+              "nearest": "#7a3b6a"
+            }
+          ]
+        },
+        {
+          "part": "spore_print",
+          "mode": "single",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            }
+          ]
+        },
+        {
+          "part": "stem",
+          "mode": "distinct",
+          "colours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "grün",
+              "hex": "#4f8a3a",
+              "nearest": "#4f7a3a"
+            }
+          ]
+        }
+      ],
+      "colourChanges": [
+        {
+          "part": "flesh",
+          "kind": "mechanical",
+          "from": null,
+          "to": {
+            "name": "blau",
+            "hex": "#3a5f9e",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "2258c725-878c-448c-b8d6-7f7f4605f54a",
+              "slug": "cut",
+              "name": "Schnitt",
+              "kind": "trigger"
+            }
+          ]
+        },
+        {
+          "part": "flesh",
+          "kind": "reagent",
+          "from": null,
+          "to": {
+            "name": "gelb",
+            "hex": "#e8c33a",
+            "nearest": null
+          },
+          "speed": null,
+          "triggers": [
+            {
+              "id": "7061d09f-6d24-4d48-b1dc-b1d6e6126ee2",
+              "slug": "koh",
+              "name": "Kalilauge (KOH)",
+              "kind": "trigger"
+            }
+          ]
+        }
+      ],
+      "capFeatures": [],
+      "capMargins": [],
+      "stemFeatures": [
+        {
+          "feature": "banded",
+          "phase": "old"
+        },
+        {
+          "feature": "banded",
+          "phase": "young"
+        },
+        {
+          "feature": "bulb",
+          "phase": "old"
+        },
+        {
+          "feature": "bulb",
+          "phase": "young"
+        },
+        {
+          "feature": "fibrous",
+          "phase": "old"
+        },
+        {
+          "feature": "fibrous",
+          "phase": "young"
+        },
+        {
+          "feature": "ring",
+          "phase": "old"
+        },
+        {
+          "feature": "ring",
+          "phase": "young"
+        },
+        {
+          "feature": "volva",
+          "phase": "old"
+        },
+        {
+          "feature": "volva",
+          "phase": "young"
+        }
+      ],
+      "traits": [
+        {
+          "key": "cap",
+          "text": "3 bis 15, selten bis 17 cm breit, grünlich, olivgrün, olivbraun, olivgelb, ocker, gelb bis fast weiß. Jung eiförmig-halbkugelig mit weißer Gesamthülle, später aufschirmend. Rand nicht gerieft, Huthaut fein radialfaserig eingewachsen, feucht etwas klebrig und wie ein Tortenstück abziehbar."
+        },
+        {
+          "key": "flesh",
+          "text": "Weiß, unter der Huthaut gelbgrünlich, beim Schneiden unverändert."
+        },
+        {
+          "key": "gills",
+          "text": "Weiß, eng stehend, frei bis fein angewachsen, mit Zahn etwas herablaufend."
+        },
+        {
+          "key": "habitat",
+          "text": "Symbiosepilz meist bei Laubbäumen wie Eiche und Buche, selten bei Nadelbäumen, auch in Parks und Gärten. Häufig."
+        },
+        {
+          "key": "season",
+          "text": "Frühsommer bis Spätherbst."
+        },
+        {
+          "key": "smell",
+          "text": "Jung fast geruchlos, nach Kleeheu, süßlich oder hornartig, alt widerlich nach Ammoniak."
+        },
+        {
+          "key": "spore_print",
+          "text": "Weiß."
+        },
+        {
+          "key": "stem",
+          "text": "5 bis 12, selten bis 15 cm lang und 1 bis 4, selten bis 6 cm dick, weiß bis gelbgrünlich, faserig, oft genattert. Basis zwiebelknollig mit häutiger, eierschaliger Volva. Ring weiß bis gelblich, häutig, hängend, oben leicht gerieft, nicht verschiebbar."
+        },
+        {
+          "key": "taste",
+          "text": "Mild und süßlich. Niemals kosten, es droht eine Leberschädigung."
+        }
+      ],
+      "sources": [
+        {
+          "scope": "profile",
+          "title": "123pilzsuche.de",
+          "url": "https://www.123pilzsuche.de/daten/details/GruenerKnollenblaetterpilz0904.htm",
+          "checkedOn": "2026-09-12"
+        },
+        {
+          "scope": "further",
+          "title": "123pilzsuche.de",
+          "url": "https://www.123pilzsuche.de/daten/details/GruenerKnollenblaetterpilz0904.htm",
+          "checkedOn": "2026-09-12"
+        },
+        {
+          "scope": "further",
+          "title": "Wikipedia",
+          "url": "https://de.wikipedia.org/wiki/Amanita_phalloides_(var._amanita_phalloides_f._citrina,_amanita_phalloides_f._dunensis,_amanita_phalloides_var._umbrina,_amanita_phalloides_var._euphalloides,_amanita_phalloides_var._larroquei,_amanita_phalloides_var._pulla,_amanita_phalloides_var._verna,_amanita_phalloides_var._striatula)",
+          "checkedOn": "2026-09-12"
+        }
+      ],
+      "seasons": ["autumn", "summer"],
+      "terms": [
+        {
+          "term": {
+            "id": "00276699-7730-48af-a4fe-193c9783f808",
+            "slug": "suesslich",
+            "name": "suesslich",
+            "kind": "taste"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "370e6774-0dd3-432d-ab79-5800657d99d8",
+            "slug": "mild",
+            "name": "mild",
+            "kind": "taste"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "9065233f-12bd-4329-97a0-ecae7444b208",
+            "slug": "beech",
+            "name": "Buche",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "ab3b12c6-557f-4757-a04b-2bb6bc7a46a4",
+            "slug": "suesslich",
+            "name": "suesslich",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "b71a2ccb-8662-4fbb-8fc8-18fb548ede10",
+            "slug": "unangenehm",
+            "name": "unangenehm",
+            "kind": "smell"
+          },
+          "fromExperience": false
+        },
+        {
+          "term": {
+            "id": "e1886ca8-6704-4931-9f4b-58cc570b2ce0",
+            "slug": "oak",
+            "name": "Eiche",
+            "kind": "tree"
+          },
+          "fromExperience": false
+        }
+      ],
+      "lookalikes": [
+        {
+          "slug": "russula-aeruginea",
+          "name": "Grasgrüner Täubling",
+          "scientificName": "Russula aeruginea",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "grau",
+              "hex": "#8a8a8a",
+              "nearest": "#8a8f8a"
+            },
+            {
+              "name": "grün",
+              "hex": "#4f8a3a",
+              "nearest": "#4f7a3a"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "russula-cyanoxantha",
+          "name": "Frauentäubling",
+          "scientificName": "Russula cyanoxantha",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "grün",
+              "hex": "#4f8a3a",
+              "nearest": "#4f7a3a"
+            },
+            {
+              "name": "blau",
+              "hex": "#3a5f9e",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "lila",
+              "hex": "#8a5fa8",
+              "nearest": "#7a3b6a"
+            }
+          ],
+          "difference": "Ohne Ring, ohne Knolle und ohne Scheide, Lamellen und Fleisch brüchig."
+        },
+        {
+          "slug": "amanita-virosa",
+          "name": "Kegelhütiger Knollenblätterpilz",
+          "scientificName": "Amanita virosa",
+          "edibility": "deadly",
+          "capColours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "rot",
+              "hex": "#c0392b",
+              "nearest": "#b8322a"
+            }
+          ],
+          "difference": "Hut weiß bis cremefarben und kegelig, Huthaut wird mit KOH gelb."
+        },
+        {
+          "slug": "amanita-phalloides-var-alba",
+          "name": "Weißer Knollenblätterpilz",
+          "scientificName": "Amanita phalloides var. alba",
+          "edibility": "deadly",
+          "capColours": [
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            }
+          ],
+          "difference": "Ganz weiß, Hut ohne Grün- oder Olivton."
+        },
+        {
+          "slug": "russula-virescens",
+          "name": "Grüngefelderter Täubling",
+          "scientificName": "Russula virescens",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "violett",
+              "hex": "#6b4a8a",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "grün",
+              "hex": "#4f8a3a",
+              "nearest": "#4f7a3a"
+            },
+            {
+              "name": "blau",
+              "hex": "#3a5f9e",
+              "nearest": "#7a3b6a"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "amanita-eliae",
+          "name": "Isabellfarbiger Wulstling",
+          "scientificName": "Amanita eliae",
+          "edibility": "poisonous",
+          "capColours": [
+            {
+              "name": "rotbraun",
+              "hex": "#8b4a2b",
+              "nearest": "#a0522d"
+            },
+            {
+              "name": "cremeweiß",
+              "hex": "#f5efdc",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "ocker",
+              "hex": "#c8963c",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "amanita-rubescens",
+          "name": "Perlpilz",
+          "scientificName": "Amanita rubescens",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "rotbraun",
+              "hex": "#8b4a2b",
+              "nearest": "#a0522d"
+            },
+            {
+              "name": "braunrot",
+              "hex": "#7d3324",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "violett",
+              "hex": "#6b4a8a",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            },
+            {
+              "name": "braun",
+              "hex": "#7a5230",
+              "nearest": "#6b4423"
+            },
+            {
+              "name": "grau",
+              "hex": "#8a8a8a",
+              "nearest": "#8a8f8a"
+            }
+          ],
+          "difference": null
+        },
+        {
+          "slug": "cortinarius-caperatus",
+          "name": "Reifpilz",
+          "scientificName": "Cortinarius caperatus",
+          "edibility": "edible",
+          "capColours": [
+            {
+              "name": "graubraun",
+              "hex": "#7d6f5e",
+              "nearest": "#8a8f8a"
+            },
+            {
+              "name": "hellbraun",
+              "hex": "#a97c50",
+              "nearest": "#d1832f"
+            },
+            {
+              "name": "violett",
+              "hex": "#6b4a8a",
+              "nearest": "#7a3b6a"
+            },
+            {
+              "name": "beige",
+              "hex": "#d9c9a3",
+              "nearest": "#e8d9b5"
+            },
+            {
+              "name": "weiß",
+              "hex": "#ffffff",
+              "nearest": "#f3efe6"
+            },
+            {
+              "name": "gelb",
+              "hex": "#e8c33a",
+              "nearest": "#e0b446"
+            }
+          ],
+          "difference": null
+        }
+      ]
+    }
+  ],
+  "standardColours": [
+    {
+      "key": "white",
+      "hex": "#f3efe6"
+    },
+    {
+      "key": "cream",
+      "hex": "#e8d9b5"
+    },
+    {
+      "key": "yellow",
+      "hex": "#e0b446"
+    },
+    {
+      "key": "orange",
+      "hex": "#d1832f"
+    },
+    {
+      "key": "redBrown",
+      "hex": "#a0522d"
+    },
+    {
+      "key": "brown",
+      "hex": "#6b4423"
+    },
+    {
+      "key": "darkBrown",
+      "hex": "#3e2a17"
+    },
+    {
+      "key": "olive",
+      "hex": "#7f8a3a"
+    },
+    {
+      "key": "green",
+      "hex": "#4f7a3a"
+    },
+    {
+      "key": "red",
+      "hex": "#b8322a"
+    },
+    {
+      "key": "violet",
+      "hex": "#7a3b6a"
+    },
+    {
+      "key": "grey",
+      "hex": "#8a8f8a"
+    }
+  ],
+  "facets": {
+    "edibility": {
+      "edible": 180,
+      "poisonous": 54,
+      "inedible": 40,
+      "deadly": 21,
+      "conditionally_edible": 11
+    },
+    "hymenium": {
+      "gills": 176,
+      "tubes": 53,
+      "pores": 22,
+      "spines": 13,
+      "folds": 9
+    },
+    "capShape": {
+      "bell": 2,
+      "flat": 27,
+      "shell": 10,
+      "funnel": 26,
+      "pear": 2,
+      "spherical": 8,
+      "hemispherical": 20,
+      "convex": 15,
+      "egg": 10,
+      "club": 2,
+      "conical": 4,
+      "depressed": 1
+    },
+    "protection": {
+      "none": 270,
+      "personal_use": 36
+    },
+    "period": {
+      "6": 263,
+      "7": 260,
+      "8": 265,
+      "9": 274,
+      "10": 274,
+      "11": 273,
+      "1": 28,
+      "2": 28,
+      "3": 72,
+      "4": 75,
+      "5": 77,
+      "12": 28
+    },
+    "senses": {
+      "mild": 248,
+      "nussig": 16,
+      "pilzig": 98,
+      "angenehm": 125,
+      "saeuerlich": 31,
+      "unauffaellig": 101,
+      "wuerzig": 18,
+      "bitter": 49,
+      "maggiartig": 4,
+      "seifig": 3,
+      "anisartig": 12,
+      "scharf": 18,
+      "rettichartig": 17,
+      "obstartig": 39,
+      "unangenehm": 37,
+      "fruchtig": 19,
+      "muffig": 12,
+      "suesslich": 31,
+      "mehlig": 27,
+      "bittermandel": 9,
+      "erdartig": 8,
+      "fischartig": 8,
+      "honigartig": 4,
+      "spermatisch": 8,
+      "karbolartig": 5,
+      "brennend": 2,
+      "herb": 7,
+      "kratzend": 5,
+      "gurkenartig": 5
+    },
+    "genusFamily": {
+      "Macrolepiota": 4,
+      "Agaricaceae": 29,
+      "Butyriboletus": 4,
+      "Boletaceae": 39,
+      "Chroogomphus": 3,
+      "Schmierlinge": 6,
+      "Pleurotus": 5,
+      "Pleurotaceae": 5,
+      "Korallen": 3,
+      "Gomphaceae": 4,
+      "Knäuelinge": 2,
+      "Gloeophyllaceae": 2,
+      "Bondarzewia": 1,
+      "Bondarzewiaceae": 1,
+      "Schleimrüblinge": 1,
+      "Hallimasche": 6,
+      "Lycoperdon": 5,
+      "Stäublinge": 9,
+      "Raufußröhrlinge": 9,
+      "Täublinge": 16,
+      "Russulaceae": 28,
+      "Apioperdon": 1,
+      "Imperator": 3,
+      "Schüpplinge": 5,
+      "Strophariaceae": 8,
+      "Clitocybe": 6,
+      "Tricholomataceae": 28,
+      "Schleierlinge": 7,
+      "Cortinariaceae": 7,
+      "Hygrophoropsis": 2,
+      "Hygrophoropsidaceae": 2,
+      "Xerocomus": 3,
+      "Jahnoporus": 1,
+      "Dacryobolaceae": 2,
+      "Raslinge": 3,
+      "Lyophyllaceae": 5,
+      "Champignon-Egerlinge": 13,
+      "Glucken": 2,
+      "Sparassidaceae": 2,
+      "Gymnopus": 1,
+      "Omphalotaceae": 2,
+      "Ritterlinge": 11,
+      "Milchlinge": 11,
+      "Schmierröhrlinge": 11,
+      "Suillaceae": 11,
+      "Schlauchpilze": 3,
+      "Morcheln": 8,
+      "Egerlingsschirmlinge": 6,
+      "Suillellus": 4,
+      "Morchella": 4,
+      "Hericium": 3,
+      "Hericiaceae": 3,
+      "Auriporia": 1,
+      "Fomitopsidaceae": 2,
+      "Cantharellus": 4,
+      "Leistlinge": 12,
+      "Feuerschwämme": 1,
+      "Schillerporlinge": 3,
+      "Piptoporus": 1,
+      "Polyporus": 2,
+      "Polyporaceae": 5,
+      "Stoppelpilze": 4,
+      "Erlengrüblinge": 1,
+      "Paxillaceae": 1,
+      "Xerocomellus": 3,
+      "Coprinopsis": 4,
+      "Tintlinge": 5,
+      "Inonotus": 1,
+      "Armillaria": 3,
+      "Neoboletus": 1,
+      "Coprinellus": 1,
+      "Saftlinge": 1,
+      "Hygrophoraceae": 8,
+      "Rötlinge": 5,
+      "Entolomataceae": 6,
+      "Rötelritterling": 6,
+      "Sarcodon": 2,
+      "Bankeraceae": 2,
+      "Flämmlinge": 3,
+      "Hymenogastraceae": 4,
+      "Gomphidius": 3,
+      "Wulstlinge": 13,
+      "Amanitaceae": 13,
+      "Boletus": 5,
+      "Muschelinge": 1,
+      "Sarcomyxaceae": 1,
+      "Rosasporröhrlinge": 1,
+      "Chlorophyllum": 3,
+      "Auricularia": 2,
+      "Auriculariaceae": 3,
+      "Häublinge": 1,
+      "Goldporröhrlinge": 1,
+      "Atractosporocybe": 1,
+      "Dachpilze": 3,
+      "Pluteaceae": 3,
+      "Schnecklinge": 5,
+      "Schwefelköpfe": 2,
+      "Inocybe": 3,
+      "Risspilze": 4,
+      "Albatrellus": 5,
+      "Albatrellaceae": 5,
+      "Nabelinge": 1,
+      "Leccinellum": 1,
+      "Lepiota": 1,
+      "Schwindlinge": 2,
+      "Marasmiaceae": 3,
+      "Tarzetta": 1,
+      "Tarzettaceae": 1,
+      "Grifola": 1,
+      "Grifolaceae": 1,
+      "Schizophyllum": 1,
+      "Schizophyllaceae": 1,
+      "Kohlenleistling": 1,
+      "Pseudocraterellus": 1,
+      "Drüslinge": 1,
+      "Mitrophora": 1,
+      "Fistulina": 1,
+      "Fistulinaceae": 1,
+      "Pycnoporellus": 1,
+      "Pycnoporellaceae": 1,
+      "Kelchbecherlinge": 3,
+      "Sarcoscyphaceae": 3,
+      "Cerioporus": 2,
+      "Calocybe": 2,
+      "Imleria": 1,
+      "Räslinge": 1,
+      "Infundibulicybe": 2,
+      "Laetiporus": 2,
+      "Laetiporaceae": 2,
+      "Stachelseitlinge": 1,
+      "Meruliaceae": 1,
+      "Pleurocybella": 1,
+      "Aleuria": 1,
+      "Pyronemataceae": 1,
+      "Aphroditeola": 1,
+      "Stachelpilze": 1,
+      "Clavariaceae": 1,
+      "Calvatia": 2,
+      "Krempentrichterlinge": 1,
+      "Meripilus": 1,
+      "Meripilaceae": 1,
+      "Weichritterlinge": 1,
+      "Desarmillaria": 1,
+      "Lactifluus": 1,
+      "Samtfußrüblinge": 1,
+      "Rubroboletus": 1,
+      "Coprinus": 1,
+      "Urnula": 1,
+      "Sarcosomataceae": 1,
+      "Schweinsohr": 1,
+      "Caloboletus": 2,
+      "Stachelschirmlinge": 1,
+      "Craterellus": 3,
+      "Kuehneromyces": 1,
+      "Pseudoinonotus": 1,
+      "Geastrum": 1,
+      "Geastraceae": 1,
+      "Hartporlinge": 1,
+      "Basidiobecherlinge": 1,
+      "Cyphellaceae": 1,
+      "Vascellum": 1,
+      "Inosperma": 1,
+      "Hapalopilus": 1,
+      "Phanerochaetaceae": 1,
+      "Lorcheln": 1,
+      "Discinaceae": 1,
+      "Omphalotus": 1
+    },
+    "colour.cap": {
+      "yellow": 116,
+      "cream": 66,
+      "grey": 101,
+      "white": 108,
+      "brown": 138,
+      "orange": 117,
+      "redBrown": 46,
+      "violet": 39,
+      "red": 35,
+      "darkBrown": 54,
+      "olive": 63,
+      "green": 20
+    },
+    "colour.flesh": {
+      "white": 224,
+      "cream": 46,
+      "violet": 51,
+      "yellow": 124,
+      "orange": 41,
+      "grey": 42,
+      "brown": 35,
+      "red": 18,
+      "darkBrown": 25,
+      "green": 11,
+      "olive": 21,
+      "redBrown": 16
+    },
+    "colour.gills": {
+      "white": 114,
+      "cream": 62,
+      "violet": 82,
+      "orange": 29,
+      "yellow": 62,
+      "redBrown": 16,
+      "olive": 9,
+      "brown": 27,
+      "darkBrown": 16,
+      "grey": 38,
+      "red": 6,
+      "green": 8
+    },
+    "colour.spore_print": {
+      "white": 134,
+      "cream": 42,
+      "brown": 75,
+      "violet": 21,
+      "darkBrown": 26,
+      "olive": 24,
+      "grey": 2,
+      "yellow": 32,
+      "redBrown": 15,
+      "orange": 27,
+      "green": 1
+    },
+    "colour.stem": {
+      "white": 186,
+      "yellow": 100,
+      "violet": 22,
+      "orange": 48,
+      "cream": 34,
+      "brown": 66,
+      "redBrown": 22,
+      "darkBrown": 33,
+      "grey": 40,
+      "red": 21,
+      "olive": 26,
+      "green": 9
+    },
+    "treePartner": {
+      "beech": 81,
+      "hazel": 5,
+      "oak": 60,
+      "spruce": 65,
+      "pine": 45,
+      "poplar": 19,
+      "willow": 13,
+      "fir": 21,
+      "ash": 8,
+      "birch": 26,
+      "hornbeam": 8,
+      "chestnut": 13,
+      "larch": 13,
+      "douglas-fir": 3,
+      "elder": 1,
+      "lime": 10,
+      "fruit-tree": 7,
+      "elm": 3,
+      "maple": 1
+    },
+    "colour.tubes": {
+      "yellow": 41,
+      "white": 19,
+      "grey": 12,
+      "violet": 26,
+      "orange": 4,
+      "red": 9,
+      "brown": 8,
+      "olive": 17,
+      "darkBrown": 1,
+      "green": 8,
+      "cream": 4,
+      "redBrown": 3
+    },
+    "colour.pores": {
+      "violet": 10,
+      "white": 13,
+      "yellow": 11,
+      "orange": 3,
+      "redBrown": 4,
+      "cream": 4,
+      "olive": 4,
+      "grey": 1,
+      "brown": 2,
+      "green": 2,
+      "darkBrown": 1
+    },
+    "forecast": {
+      "on": 13
+    },
+    "unknown": {
+      "treePartner": 117,
+      "capShape": 212,
+      "hymenium": 33,
+      "period": 5
+    }
+  }
+}

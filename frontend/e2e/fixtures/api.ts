@@ -5,7 +5,7 @@ const REPLIES: Record<string, unknown> = {
   '/api/config': { oidcIssuer: '', oidcClientId: '', origin: '', version: 'e2e' },
   '/api/texts': { revision: 'e2e', locales: ['de', 'en'], entries: [] },
   '/api/me/permissions': { permissions: [], roles: [] },
-  '/api/species/bundle': { items: [] },
+  '/api/species/bundle': { items: [], standardColours: [], facets: {} },
   '/api/terms': { items: [] },
 };
 

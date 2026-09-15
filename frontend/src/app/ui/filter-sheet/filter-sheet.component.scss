@@ -70,18 +70,6 @@
   border: 0;
 }
 
-.filtersheet__close {
-  display: flex;
-  flex: none;
-  justify-content: flex-end;
-  inline-size: 32px;
-  padding: 0;
-  color: var(--color-text);
-  cursor: pointer;
-  background: none;
-  border: 0;
-}
-
 .filtersheet__content {
   display: flex;
   flex: 1 1 auto;

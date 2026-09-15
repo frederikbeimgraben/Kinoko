@@ -110,6 +110,8 @@ test('SpeciesFilter', async ({ page }) => {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
   await expect(page.getByRole('button', { name: /Arten anzeigen/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Vorhersage/ })).toBeVisible();
+  // Ein Knopf von 18 px bleibt unter der Schwelle des Bildvergleichs.
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'Schließen' })).toHaveCount(0);
   await expectBoard(page, 'SpeciesFilter');
 });
 
