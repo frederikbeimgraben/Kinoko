@@ -4,6 +4,8 @@
   --range-slider-track: 4px;
   --range-slider-handle: 24px;
   --range-slider-border: 2px;
+  --range-slider-thumb: var(--color-surface);
+  --range-slider-ring: var(--color-primary);
 }
 
 .rangeslider {
@@ -47,8 +49,8 @@
   block-size: var(--range-slider-handle);
   pointer-events: auto;
   appearance: none;
-  background: var(--color-surface);
-  border: var(--range-slider-border) solid var(--color-primary);
+  background: var(--range-slider-thumb);
+  border: var(--range-slider-border) solid var(--range-slider-ring);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
 }
@@ -57,8 +59,8 @@
   inline-size: var(--range-slider-handle);
   block-size: var(--range-slider-handle);
   pointer-events: auto;
-  background: var(--color-surface);
-  border: var(--range-slider-border) solid var(--color-primary);
+  background: var(--range-slider-thumb);
+  border: var(--range-slider-border) solid var(--range-slider-ring);
   border-radius: var(--radius-pill);
   box-shadow: var(--shadow-sm);
 }

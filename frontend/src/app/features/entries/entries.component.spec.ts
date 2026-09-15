@@ -7,7 +7,7 @@ import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncTask } from '../../core/offline/sync.types';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND, SHARED_FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
@@ -69,7 +69,9 @@ async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]):
     ],
   });
   const http = TestBed.inject(HttpTestingController);
-  http.expectOne('/api/arten').flush(SPECIES_LIST);
+  await vi.waitFor(() => {
+    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+  });
   await vi.waitFor(() => {
     http.expectOne('/api/funde/geteilt?limit=200').flush(page([SHARED_FIND]));
   });

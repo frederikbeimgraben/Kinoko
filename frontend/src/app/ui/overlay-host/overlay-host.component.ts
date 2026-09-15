@@ -31,6 +31,8 @@ export class OverlayHostComponent {
   readonly title = input('');
   /** Ein Modal für wenige Zeilen: schmaler und nur so hoch wie sein Inhalt. */
   readonly compact = input(false);
+  /** Ein deckendes Blatt liegt über dem ganzen Fenster, auch über der Leiste. */
+  readonly cover = input(false);
 
   protected readonly wide = this.viewport.wide;
 
@@ -40,7 +42,7 @@ export class OverlayHostComponent {
     // Der Fokus folgt dem geöffneten Blatt, damit Escape sofort greift.
     // Erst nach dem Rendern steht das Panel im Baum.
     afterRenderEffect(() => {
-      if (this.open()) this.panel()?.focus();
+      if (this.open()) this.panel()?.focus({ preventScroll: true });
     });
   }
 

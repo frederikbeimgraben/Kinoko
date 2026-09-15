@@ -1,164 +1,199 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { SPECIES_LIST, STEINPILZ } from '../../testing/species-fixture';
-import { speciesImage } from '../../testing/species-images-fixture';
-import 'fake-indexeddb/auto';
-import { IDBFactory } from 'fake-indexeddb';
-import { OfflineStore } from '../../core/offline/offline-store';
+import type { SpeciesBundle } from '../../core/api/models';
+import { OfflineStoreDouble, offlineProvider } from '../../testing/offline-double';
+import { PENNY_BUN, SPECIES_BUNDLE, speciesEntry } from '../../testing/species-fixture';
 import { SpeciesState } from './species.state';
 
-function build(): { state: SpeciesState; http: HttpTestingController } {
-  TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
-  return { state: TestBed.inject(SpeciesState), http: TestBed.inject(HttpTestingController) };
+const NOT_MODIFIED = 304;
+const BUNDLE_PATH = '/api/species/bundle';
+const TERMS_PATH = '/api/terms';
+
+const SMELL = { id: 'term-anis', kind: 'smell', slug: 'anis', name: 'Anis', position: 1 } as const;
+
+const LOCAL: SpeciesBundle = {
+  items: [
+    speciesEntry({ slug: 'pfifferling', name: 'Pfifferling', scientificName: 'Cantharellus cibarius' }),
+  ],
+};
+
+interface Setup {
+  state: SpeciesState;
+  http: HttpTestingController;
+  offline: OfflineStoreDouble;
 }
 
-const BUNDLE = { items: [], standardColours: [], facets: { species: 0, groups: [] } };
-
-describe('ArtenZustand · Katalog vom Gerät', () => {
-  beforeEach(() => {
-    vi.stubGlobal('indexedDB', new IDBFactory());
+function build(stored?: { bundle?: SpeciesBundle; etag?: string }): Setup {
+  const offline = new OfflineStoreDouble();
+  if (stored?.bundle) void offline.put('catalog', 'bundle', stored.bundle);
+  if (stored?.etag) void offline.put('catalog', 'etag', stored.etag);
+  TestBed.configureTestingModule({
+    providers: [provideHttpClient(), provideHttpClientTesting(), offlineProvider(offline)],
   });
+  return {
+    state: TestBed.inject(SpeciesState),
+    http: TestBed.inject(HttpTestingController),
+    offline,
+  };
+}
 
-  it('legt den Katalog mit seinem ETag ab', async () => {
-    const { state, http } = build();
+describe('SpeciesState', () => {
+  it('lädt und legt Bündel, ETag und Begriffe auf dem Gerät ab', async () => {
+    const setup = build();
+    const loaded = setup.state.loadBundle();
 
-    const loaded = state.loadBundle();
     await vi.waitFor(() => {
-      http.expectOne('/api/species/bundle').flush(BUNDLE, { headers: { ETag: 'W/"eins"' } });
+      setup.http.expectOne(BUNDLE_PATH).flush(SPECIES_BUNDLE, { headers: { ETag: 'w/"eins"' } });
+    });
+    await vi.waitFor(() => {
+      setup.http.expectOne(TERMS_PATH).flush({ items: [SMELL] });
     });
     await loaded;
 
-    expect(state.bundle()).toEqual(BUNDLE);
-    expect(await TestBed.inject(OfflineStore).get('catalog', 'etag')).toBe('W/"eins"');
+    expect(setup.state.species()).toHaveLength(3);
+    expect(setup.state.loading()).toBe(false);
+    expect(setup.offline.values.get('catalog/etag')).toBe('w/"eins"');
+    expect(setup.offline.values.get('catalog/bundle')).toEqual(SPECIES_BUNDLE);
+    expect(setup.offline.values.get('catalog/terms')).toEqual([SMELL]);
   });
 
-  it('zeigt den Stand vom Gerät und behält ihn bei 304', async () => {
-    const { state, http } = build();
-    const offline = TestBed.inject(OfflineStore);
-    await offline.put('catalog', 'bundle', BUNDLE);
-    await offline.put('catalog', 'etag', 'W/"eins"');
+  it('zeigt zuerst den lokalen Stand und gleicht ihn danach mit ETag ab', async () => {
+    const setup = build({ bundle: LOCAL, etag: 'w/"alt"' });
+    void setup.state.loadBundle();
 
-    const loaded = state.loadBundle();
     await vi.waitFor(() => {
-      const request = http.expectOne('/api/species/bundle');
-      expect(request.request.headers.get('If-None-Match')).toBe('W/"eins"');
-      request.flush(null, { status: 304, statusText: 'Not Modified' });
+      expect(setup.state.species().map((one) => one.slug)).toEqual(['pfifferling']);
     });
-    await loaded;
+    const request = await vi.waitFor(() => setup.http.expectOne(BUNDLE_PATH));
+    expect(request.request.headers.get('If-None-Match')).toBe('w/"alt"');
+    request.flush(SPECIES_BUNDLE, { headers: { ETag: 'w/"neu"' } });
 
-    expect(state.bundle()).toEqual(BUNDLE);
-  });
-
-  it('bleibt ohne Netz beim Stand des Geräts', async () => {
-    const { state, http } = build();
-    await TestBed.inject(OfflineStore).put('catalog', 'bundle', BUNDLE);
-
-    const loaded = state.loadBundle();
     await vi.waitFor(() => {
-      http.expectOne('/api/species/bundle').error(new ProgressEvent('error'));
+      expect(setup.state.species()).toHaveLength(3);
     });
-    await loaded;
-
-    expect(state.bundle()).toEqual(BUNDLE);
-  });
-});
-
-describe('ArtenZustand', () => {
-  it('holt die Liste einmal und behält sie', () => {
-    const { state, http } = build();
-
-    state.loadCatalogue();
-    state.loadCatalogue();
-    http.expectOne('/api/arten').flush(SPECIES_LIST);
-    state.loadCatalogue();
-
-    expect(state.catalogue()?.arten).toHaveLength(5);
-    http.verify();
   });
 
-  it('lässt eine gescheiterte Liste einen zweiten Versuch zu', () => {
-    const { state, http } = build();
+  it('lässt den Stand stehen, wenn der Dienst 304 meldet', async () => {
+    const setup = build({ bundle: LOCAL, etag: 'w/"alt"' });
+    void setup.state.loadBundle();
 
-    state.loadCatalogue();
-    http.expectOne('/api/arten').flush('', { status: 503, statusText: 'Service Unavailable' });
-    state.loadCatalogue();
-    http.expectOne('/api/arten').flush(SPECIES_LIST);
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
+    });
+    await vi.waitFor(() => {
+      setup.http.expectOne(TERMS_PATH).flush({ items: [] });
+    });
 
-    expect(state.catalogue()).not.toBeNull();
+    expect(setup.state.species().map((one) => one.slug)).toEqual(['pfifferling']);
+    expect(setup.state.failed()).toBe(false);
   });
 
-  it('merkt sich ein Profil je Slug', () => {
-    const { state, http } = build();
+  it('meldet einen Fehler nur ohne lokalen Stand', async () => {
+    const setup = build();
+    void setup.state.loadBundle();
 
-    state.loadProfile('steinpilz');
-    state.loadProfile('steinpilz');
-    http.expectOne('/api/arten/steinpilz').flush(STEINPILZ);
-    state.loadProfile('steinpilz');
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).error(new ProgressEvent('error'));
+    });
 
-    expect(state.profile().get('steinpilz')?.name).toBe('Steinpilz');
-    http.verify();
+    await vi.waitFor(() => {
+      expect(setup.state.failed()).toBe(true);
+    });
+    expect(setup.state.loading()).toBe(false);
   });
 
-  it('merkt einen unbekannten Slug und fragt nicht noch einmal', () => {
-    const { state, http } = build();
+  it('bleibt ohne Fehler, wenn der Dienst zum lokalen Stand schweigt', async () => {
+    const setup = build({ bundle: LOCAL });
+    void setup.state.loadBundle();
 
-    state.loadProfile('gibtsnicht');
-    http
-      .expectOne('/api/arten/gibtsnicht')
-      .flush(
-        { type: 'about:blank', title: 'Nicht gefunden', status: 404 },
-        { status: 404, statusText: 'Not Found' },
-      );
-    state.loadProfile('gibtsnicht');
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).error(new ProgressEvent('error'));
+    });
 
-    expect(state.unknown().has('gibtsnicht')).toBe(true);
-    expect(state.profile().has('gibtsnicht')).toBe(false);
-    http.verify();
+    await vi.waitFor(() => {
+      expect(setup.state.species()).toHaveLength(1);
+    });
+    expect(setup.state.failed()).toBe(false);
   });
 
-  it('führt die aktive Art', () => {
-    const { state } = build();
+  it('versucht es mit reload erneut', async () => {
+    const setup = build();
+    void setup.state.loadBundle();
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).error(new ProgressEvent('error'));
+    });
+    await vi.waitFor(() => {
+      expect(setup.state.failed()).toBe(true);
+    });
 
-    expect(state.activeSpecies()).toBeNull();
-    state.select('steinpilz');
+    setup.state.reload();
 
-    expect(state.activeSpecies()).toBe('steinpilz');
+    expect(setup.state.failed()).toBe(false);
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).flush(SPECIES_BUNDLE);
+    });
+    await vi.waitFor(() => {
+      expect(setup.state.species()).toHaveLength(3);
+    });
   });
 
-  it('holt die Bilder einer Art einmal und behält sie', () => {
-    const { state, http } = build();
+  it('fragt nur einmal, solange ein Lauf offen ist', async () => {
+    const setup = build();
+    void setup.state.loadBundle();
+    void setup.state.loadBundle();
 
-    state.loadImages('steinpilz');
-    state.loadImages('steinpilz');
-    http.expectOne('/api/species-images?species=steinpilz').flush([speciesImage()]);
-    state.loadImages('steinpilz');
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).flush(SPECIES_BUNDLE);
+    });
+    await vi.waitFor(() => {
+      setup.http.expectOne(TERMS_PATH).flush({ items: [] });
+    });
 
-    expect(state.images().get('steinpilz')).toHaveLength(1);
-    http.verify();
+    setup.http.verify();
   });
 
-  it('merkt sich auch eine Art ganz ohne Bild', () => {
-    const { state, http } = build();
+  it('findet eine Art und ihren Namen über den Slug', async () => {
+    const setup = build({ bundle: SPECIES_BUNDLE });
+    void setup.state.loadBundle();
 
-    state.loadImages('parasol');
-    http.expectOne('/api/species-images?species=parasol').flush([]);
-    state.loadImages('parasol');
-
-    expect(state.images().get('parasol')).toEqual([]);
-    http.verify();
+    await vi.waitFor(() => {
+      expect(setup.state.entryOf('steinpilz')).toEqual(PENNY_BUN);
+    });
+    expect(setup.state.nameOf('steinpilz')).toBe('Steinpilz');
+    expect(setup.state.entryOf('nichts')).toBeNull();
+    expect(setup.state.nameOf('nichts')).toBeNull();
   });
 
-  it('lässt einen gescheiterten Bildabruf einen zweiten Versuch zu', () => {
-    const { state, http } = build();
+  it('merkt sich die gewählte Art', () => {
+    const setup = build();
 
-    state.loadImages('steinpilz');
-    http
-      .expectOne('/api/species-images?species=steinpilz')
-      .flush('', { status: 503, statusText: 'Service Unavailable' });
-    state.loadImages('steinpilz');
-    http.expectOne('/api/species-images?species=steinpilz').flush([speciesImage()]);
+    expect(setup.state.activeSpecies()).toBeNull();
+    setup.state.select('steinpilz');
 
-    expect(state.images().get('steinpilz')).toHaveLength(1);
+    expect(setup.state.activeSpecies()).toBe('steinpilz');
+  });
+
+  it('rechnet zu jeder Art ihre Achsen, sobald die Begriffe da sind', async () => {
+    const withTerm = speciesEntry({
+      slug: 'steinpilz',
+      name: 'Steinpilz',
+      scientificName: 'Boletus edulis',
+      terms: [{ term: { id: SMELL.id, slug: SMELL.slug, name: SMELL.name }, fromExperience: false }],
+    });
+    const setup = build();
+    void setup.state.loadBundle();
+
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).flush({ items: [withTerm] });
+    });
+    await vi.waitFor(() => {
+      setup.http.expectOne(TERMS_PATH).flush({ items: [SMELL] });
+    });
+
+    await vi.waitFor(() => {
+      expect(setup.state.facts()[0].values.get('senses')).toEqual(['anis']);
+    });
+    expect(setup.state.entries()).toHaveLength(1);
   });
 });

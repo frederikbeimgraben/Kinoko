@@ -116,7 +116,7 @@ export class ZoneSheetComponent implements OnDestroy {
   });
 
   constructor() {
-    this.arten.loadCatalogue();
+    void this.arten.loadBundle();
     effect(() => {
       void this.fetchValue(this.zone().id, this.map.species(), this.map.week());
     });
@@ -177,20 +177,17 @@ export class ZoneSheetComponent implements OnDestroy {
   }
 
   private speciesName(slug: string): string {
-    return (this.arten.catalogue()?.arten ?? []).find((art) => art.slug === slug)?.name ?? slug;
+    return this.arten.nameOf(slug) ?? slug;
   }
 
-  /**
-   * Fragt den Dienst nach dem Flächenmittel. Der Endpunkt kennt Arten des
-   * Katalogs; die Karte kennt nur den Slug ihrer Kacheln, darum der Umweg.
-   */
+  /** Fragt den Dienst nach dem Flächenmittel der Art in der Woche. */
   private async fetchValue(id: string, chosen: string, weekKey: string | null): Promise<void> {
     this.value.set(null);
-    const art = (this.arten.catalogue()?.arten ?? []).find((candidate) => candidate.slug === chosen);
-    if (!art) return;
+    const art = this.arten.entryOf(chosen);
+    if (!art?.forecastEnabled) return;
     try {
-      await this.tiles.load(art.kartenSlug ?? chosen);
-      const manifest = this.tiles.manifestOf(art.kartenSlug ?? chosen);
+      await this.tiles.load(art.slug);
+      const manifest = this.tiles.manifestOf(art.slug);
       if (manifest === null) return;
       const week =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());

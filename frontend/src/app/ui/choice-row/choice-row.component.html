@@ -1,14 +1,12 @@
-<app-checkbox
-  class="row tap"
-  data-press="tint"
-  [id]="fieldId"
-  [ngModel]="checked()"
-  (ngModelChange)="toggled.emit($event)"
->
-  <span class="row__content">
-    <span class="row__label">{{ label() }}</span>
-    @if (count()) {
-      <span class="row__count">{{ count() }}</span>
+<label class="row tap" data-press="tint">
+  <input class="row__input" type="checkbox" [checked]="checked()" (change)="onChange($event)" />
+  <span class="row__box" aria-hidden="true">
+    @if (checked()) {
+      <app-svg-icon name="check" [size]="15" [strokeWidth]="2.6" />
     }
   </span>
-</app-checkbox>
+  <span class="row__label">{{ label() }}</span>
+  @if (count()) {
+    <span class="row__count">{{ count() }}</span>
+  }
+</label>

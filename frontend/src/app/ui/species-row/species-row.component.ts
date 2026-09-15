@@ -18,6 +18,7 @@ export interface SpeciesRowSpecies {
   readonly latin: string;
   readonly levelText: string;
   readonly levelColour: string;
+  readonly levelBackground?: string;
   readonly image?: string | null;
   /** Zwei Töne für das Feld, solange kein Bild vorliegt. */
   readonly tint?: readonly [string, string];
@@ -36,6 +37,8 @@ export class SpeciesRowComponent {
 
   readonly species = input.required<SpeciesRowSpecies>();
   readonly active = input(false);
+  /** Eine Art ohne Angabe steht ohne Plakette und blass unter den Treffern. */
+  readonly muted = input(false);
 
   readonly chosen = output();
 

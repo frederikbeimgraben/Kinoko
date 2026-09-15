@@ -15,6 +15,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class SearchFieldComponent {
   readonly value = input<string>('');
   readonly placeholder = input<string>('');
+  /** Solange der Katalog lädt, bleibt das Feld eine leere Fläche. */
+  readonly loading = input(false);
 
   readonly valueChange = output<string>();
 

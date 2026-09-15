@@ -1,27 +1,6 @@
-:host {
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
+.group__card {
   overflow: hidden;
-  background: var(--color-bg);
-}
-
-.group {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-// Die Abschnittsüberschrift der Mockups, Klasse `.h2`.
-.group__section {
-  margin: 0 0 10px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
 }

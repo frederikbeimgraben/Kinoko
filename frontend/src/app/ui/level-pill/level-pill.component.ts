@@ -10,4 +10,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class LevelPillComponent {
   readonly text = input.required<string>();
   readonly colour = input.required<string>();
+  /** Die Fläche. Ohne Angabe mischt sie sich aus der Farbe. */
+  readonly background = input<string>();
 }

@@ -13,6 +13,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class PageHeaderComponent {
   readonly title = input.required<string>();
   readonly back = input(false);
+  /** Der flache Kopf der Artenseiten: 56 px, ohne eigene Fläche. */
+  readonly compact = input(false);
 
   readonly backClick = output();
 }

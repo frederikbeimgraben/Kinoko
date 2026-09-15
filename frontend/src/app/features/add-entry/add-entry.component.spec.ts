@@ -5,7 +5,7 @@ import { MapState } from '../map/map.state';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND, MARKER, ZONE } from '../../testing/entries-fixture';
@@ -59,11 +59,11 @@ async function start(setup: Setup, row: RegExp): Promise<void> {
   setup.refresh();
 }
 
-function answerSpecies(): void {
+async function answerSpecies(): Promise<void> {
   TestBed.inject(MapState).species.set('steinpilz');
   const http = TestBed.inject(HttpTestingController);
-  http.match('/api/arten').forEach((request) => {
-    request.flush(SPECIES_LIST);
+  await vi.waitFor(() => {
+    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
 }
 
@@ -97,7 +97,7 @@ describe('EintragenComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
     setup.refresh();
-    answerSpecies();
+    await answerSpecies();
     setup.refresh();
 
     expect(setup.flow.location()).toEqual([9.05, 48.52]);
@@ -109,7 +109,7 @@ describe('EintragenComponent', () => {
     await start(setup, /Fund melden/);
     await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
     setup.refresh();
-    answerSpecies();
+    await answerSpecies();
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
@@ -240,7 +240,7 @@ describe('EintragenComponent', () => {
     await start(setup, /Fund melden/);
     await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
     setup.refresh();
-    answerSpecies();
+    await answerSpecies();
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));

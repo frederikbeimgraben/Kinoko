@@ -46,13 +46,25 @@ function germanWords(container: Element): string[] {
   return words(container).filter((word) => !KEY.test(word) && isGerman(word));
 }
 
+/** Monats- und Wochentagsnamen kommen aus der Datumsform, nicht aus dem Katalog. */
+function localeNames(): Set<string> {
+  const months = new Intl.DateTimeFormat('de', { month: 'long' });
+  const weekdays = new Intl.DateTimeFormat('de', { weekday: 'long' });
+  const found = new Set<string>();
+  for (let at = 0; at < 12; at += 1) found.add(months.format(new Date(Date.UTC(2000, at, 1))));
+  for (let day = 2; day <= 8; day += 1) found.add(weekdays.format(new Date(Date.UTC(2000, 0, day))));
+  return found;
+}
+
+const FROM_LOCALE = localeNames();
+
 /** Ein Text der Vorgabe auf der Fläche. Ein Schlüssel zählt nicht mit. */
 function leakedTexts(container: Element): string[] {
   const shown = words(container)
     .filter((word) => !KEY.test(word))
     .join(' ');
   return [...new Set(Object.values(generated))].filter(
-    (value) => value.length >= LONG_ENOUGH && shown.includes(value),
+    (value) => !FROM_LOCALE.has(value) && value.length >= LONG_ENOUGH && shown.includes(value),
   );
 }
 

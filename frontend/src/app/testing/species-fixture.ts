@@ -1,369 +1,92 @@
-import type { Species, SpeciesCatalogue, SpeciesBrief, SeasonCurveData, TaxonStep } from '../core/api/models';
+import type {
+  SpeciesBundle,
+  SpeciesEntry,
+  SpeciesSummary,
+  TaxonPage,
+  TaxonRank,
+  TaxonStep,
+} from '../core/api/models';
 
-const WEEKS = 52;
+type Seed = Partial<SpeciesEntry> & Pick<SpeciesEntry, 'slug' | 'name' | 'scientificName'>;
 
-/** Der Weg des Steinpilzes von der Klasse bis zur Gattung. */
-export const STEINPILZ_TAXONOMIE: TaxonStep[] = [
-  {
-    rang: 'abteilung',
-    rangfolge: 0,
-    slug: 'basidiomycota',
-    name: 'Basidiomycota',
-    lateinisch: 'Basidiomycota',
-  },
-  {
-    rang: 'klasse',
-    rangfolge: 1,
-    slug: 'agaricomycetes',
-    name: 'Agaricomycetes',
-    lateinisch: 'Agaricomycetes',
-  },
-  { rang: 'ordnung', rangfolge: 2, slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
-  { rang: 'familie', rangfolge: 3, slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
-  { rang: 'gattung', rangfolge: 4, slug: 'boletus', name: 'Boletus', lateinisch: 'Boletus' },
-];
+type SummarySeed = Partial<SpeciesSummary> & Pick<SpeciesSummary, 'slug' | 'name' | 'scientificName'>;
 
-/** Der Schutzstatus, den die meisten Arten tragen. */
-const KEIN_SCHUTZ = {
-  status: 'keiner',
-  quelle: 'Bundesartenschutzverordnung, Anlage 1',
-} as const;
+type PageSeed = Partial<TaxonPage> & Pick<TaxonPage, 'slug' | 'name' | 'rank'>;
 
-/** Eine Glocke über dem Herbst, damit die Kurve etwas zu zeichnen hat. */
-function glocke(peak: number, hoehe: number): number[] {
-  return Array.from({ length: WEEKS }, (_, i) => Math.max(0, hoehe - Math.abs(i - peak) * 2));
-}
-
-const VISITS_ALL_YEARS = Array.from({ length: WEEKS }, (_, i) => (i < 4 ? 5 : 120));
-const VISITS_CURRENT_YEAR = Array.from({ length: 36 }, (_, i) => (i > 33 ? 2 : 40));
-
-function brief(
-  art: Partial<SpeciesBrief> & Pick<SpeciesBrief, 'slug' | 'name' | 'lateinisch'>,
-): SpeciesBrief {
+/** Eine Art mit allen Pflichtfeldern des Vertrags. */
+export function speciesEntry(seed: Seed): SpeciesEntry {
   return {
-    gruppe: 'roehrling',
-    stufe: 'vorhersage',
-    tags: ['vorhersage', 'roehrling', 'sommer', 'herbst', 'fichte'],
-    schutz: KEIN_SCHUTZ,
-    speisewert: 'essbar',
-    kartenSlug: null,
-    sammelbar: true,
-    marktfaehigkeit: { marktfaehig: true, schweiz: null },
-    wertigkeit: 1,
-    haeufigkeit: 'haeufig',
-    gefaehrdung: null,
-    warnung: null,
-    jahreszeiten: ['sommer', 'herbst'],
-    baeume: ['fichte'],
-    baeumeAusErfahrung: null,
-    weitereNamen: [],
-    synonyme: [],
-    vorhersageGeplant: true,
-    begehungenMitFund: 1853,
-    titelbild: null,
-    spitzeWoche: 40,
-    saison: { alleJahre: glocke(39, 32), laufendesJahr: glocke(39, 28).slice(0, 36), hoechstwert: 32 },
-    ...art,
+    id: seed.slug,
+    group: 'bolete',
+    edibility: 'edible',
+    protection: 'none',
+    forecastEnabled: true,
+    updatedAt: '2026-09-06T00:00:00Z',
+    names: [],
+    measurements: [],
+    colours: [],
+    colourChanges: [],
+    capFeatures: [],
+    capMargins: [],
+    stemFeatures: [],
+    traits: [],
+    sources: [],
+    seasons: [],
+    terms: [],
+    lookalikes: [],
+    ...seed,
   };
 }
 
-export const PENNY_BUN_BRIEF = brief({
+export const PENNY_BUN = speciesEntry({
   slug: 'steinpilz',
   name: 'Steinpilz',
-  lateinisch: 'Boletus edulis',
-  schutz: { status: 'besondersGeschuetzt', quelle: 'Bundesartenschutzverordnung, Anlage 1' },
-  kartenSlug: 'boletus_edulis',
-  tags: ['vorhersage', 'roehrling', 'sommer', 'herbst', 'fichte', 'buche'],
+  scientificName: 'Boletus edulis',
 });
 
-export const BAY_BOLETE_BRIEF = brief({
+export const BAY_BOLETE = speciesEntry({
   slug: 'maronenroehrling',
   name: 'Maronenröhrling',
-  lateinisch: 'Imleria badia',
-  kartenSlug: 'imleria_badia',
+  scientificName: 'Imleria badia',
 });
 
-export const HEDGEHOG_BRIEF = brief({
+export const HEDGEHOG = speciesEntry({
   slug: 'semmelstoppelpilz',
   name: 'Semmelstoppelpilz',
-  lateinisch: 'Hydnum repandum',
-  gruppe: 'stoppelpilz',
-  stufe: 'saison',
-  tags: ['saison', 'stoppelpilz', 'sommer', 'herbst', 'buche'],
-  begehungenMitFund: 180,
+  scientificName: 'Hydnum repandum',
+  group: 'hedgehog',
+  forecastEnabled: false,
 });
 
-export const MOREL_BRIEF = brief({
-  slug: 'speisemorchel',
-  name: 'Speisemorchel',
-  lateinisch: 'Morchella esculenta',
-  gruppe: 'morchel',
-  stufe: 'profil',
-  tags: ['profil', 'morchel', 'fruehling', 'esche'],
-  begehungenMitFund: 0,
-  spitzeWoche: null,
-  saison: {
-    alleJahre: Array.from({ length: WEEKS }, () => 0),
-    laufendesJahr: Array.from({ length: 36 }, () => 0),
-    hoechstwert: 0,
-  },
-});
+export const SPECIES_BUNDLE: SpeciesBundle = { items: [PENNY_BUN, BAY_BOLETE, HEDGEHOG] };
 
-export const GALLENROEHRLING_KURZ: SpeciesBrief = {
-  ...BAY_BOLETE_BRIEF,
-  slug: 'gallenroehrling',
-  name: 'Gallenröhrling',
-  lateinisch: 'Tylopilus felleus',
-  stufe: 'profil',
-  tags: ['profil', 'roehrling', 'sommer', 'herbst'],
-  speisewert: 'giftig',
-  // Geschützt: so trägt die Zeile vier Marken und muss kürzen.
-  schutz: { status: 'besondersGeschuetzt', quelle: 'Bundesartenschutzverordnung, Anlage 1' },
-  kartenSlug: null,
-  sammelbar: false,
-  marktfaehigkeit: { marktfaehig: false, schweiz: null },
-  wertigkeit: null,
-  haeufigkeit: null,
-  gefaehrdung: null,
-  warnung: null,
-  jahreszeiten: ['sommer', 'herbst'],
-  baeume: ['fichte'],
-  baeumeAusErfahrung: null,
-  vorhersageGeplant: false,
-  begehungenMitFund: 0,
-  spitzeWoche: null,
-  saison: null,
-};
+/** Eine Art in Kurzform, so wie eine Stufe der Einordnung sie führt. */
+export function speciesSummary(seed: SummarySeed): SpeciesSummary {
+  return {
+    id: seed.slug,
+    group: 'bolete',
+    edibility: 'edible',
+    protection: 'none',
+    forecastEnabled: true,
+    updatedAt: '2026-09-06T00:00:00Z',
+    ...seed,
+  };
+}
 
-export const SPECIES_LIST: SpeciesCatalogue = {
-  stand: { jahr: 2025, woche: 39 },
-  jahre: { von: 2015, bis: 2024 },
-  begehungen: 48_120,
-  begehungenJeWocheAlleJahre: VISITS_ALL_YEARS,
-  begehungenJeWocheLaufendesJahr: VISITS_CURRENT_YEAR,
-  // Der ganze Katalog, sammelbare und uebrige zusammen: seit D9 antwortet
-  // ``GET /api/arten`` ohne Parameter so.
-  arten: [PENNY_BUN_BRIEF, BAY_BOLETE_BRIEF, HEDGEHOG_BRIEF, MOREL_BRIEF, GALLENROEHRLING_KURZ],
-  unbeurteilbar: [],
-  luecken: [],
-};
+/** Eine Stufe der Einordnung mit Weg, Geschwistern, Kindern und Arten. */
+export function taxonPage(seed: PageSeed): TaxonPage {
+  return {
+    id: seed.slug,
+    path: [],
+    siblings: [],
+    children: [],
+    species: [],
+    speciesCount: 0,
+    ...seed,
+  };
+}
 
-const SEASON: SeasonCurveData = {
-  alleJahre: glocke(39, 32),
-  laufendesJahr: glocke(39, 28).slice(0, 39),
-  hoechstwert: 32,
-  jahre: { von: 2015, bis: 2024 },
-  stand: { jahr: 2025, woche: 39 },
-  begehungen: 48_120,
-  begehungenJeWocheAlleJahre: VISITS_ALL_YEARS,
-  begehungenJeWocheLaufendesJahr: Array.from({ length: 39 }, (_, i) => (i > 36 ? 2 : 40)),
-};
-
-/** Die Angaben, die jedes Profil seit D1d trägt. */
-const SOURCE = { url: 'https://www.123pilzsuche.de/daten/details/Steinpilze.htm', geprueftAm: '2026-09-10' };
-
-const LEERE_MASSE = {
-  hutBreiteCm: null,
-  fruchtkoerperBreiteCm: null,
-  fruchtkoerperHoeheCm: null,
-  stielLaengeCm: null,
-  stielDickeCm: null,
-  sporenLaengeUm: null,
-  sporenBreiteUm: null,
-};
-
-export const STEINPILZ: Species = {
-  slug: 'steinpilz',
-  name: 'Steinpilz',
-  lateinisch: 'Boletus edulis',
-  gruppe: 'roehrling',
-  stufe: 'vorhersage',
-  tags: ['vorhersage', 'roehrling', 'sommer', 'herbst', 'fichte', 'buche'],
-  schutz: { status: 'besondersGeschuetzt', quelle: 'Bundesartenschutzverordnung, Anlage 1' },
-  speisewert: 'essbar',
-  kartenSlug: 'boletus_edulis',
-  sammelbar: true,
-  marktfaehigkeit: { marktfaehig: true, schweiz: true },
-  wertigkeit: 1,
-  haeufigkeit: 'haeufig',
-  gefaehrdung: null,
-  weitereNamen: ['Herrenpilz', 'Fichtensteinpilz'],
-  synonyme: ['Boletus bulbosus'],
-  masse: {
-    ...LEERE_MASSE,
-    hutBreiteCm: {
-      von: 4,
-      bis: 20,
-      seltenVon: null,
-      seltenBis: 25,
-      einheit: 'cm',
-      beschreibung: null,
-    },
-    sporenLaengeUm: {
-      von: 12.4,
-      bis: 19.2,
-      seltenVon: null,
-      seltenBis: null,
-      einheit: 'um',
-      beschreibung: null,
-    },
-    sporenBreiteUm: {
-      von: 4.5,
-      bis: 5.5,
-      seltenVon: null,
-      seltenBis: null,
-      einheit: 'um',
-      beschreibung: null,
-    },
-  },
-  farben: {
-    hut: [
-      { name: 'hellbraun', hex: '#e2c79a' },
-      { name: 'dunkelbraun', hex: '#6b4423' },
-    ],
-    sporenlager: [{ name: 'weiß', hex: '#f0ece0' }],
-    stiel: [{ name: 'cremeweiß', hex: '#f2e8d5' }],
-    fleisch: [],
-    sporenpulver: [{ name: 'olivbraun', hex: '#7a5c2e' }],
-    verfaerbung: {
-      von: [{ name: 'weiß', hex: '#f4efe2' }],
-      nach: [{ name: 'blau', hex: '#3f6ea8' }],
-      dauer: 'schnell',
-    },
-  },
-  zeitraum: { vonMonat: 6, bisMonat: 11, spitzeMonat: null },
-  fruchtschicht: { art: 'roehren', ansatz: null, stand: null, schneide: null },
-  hutform: { von: 'halbkugelig', nach: 'gewoelbt' },
-  hutmerkmale: ['hygrophan'],
-  hutrand: { von: ['eingerollt'], nach: null },
-  stielmerkmale: ['genetzt', 'voll'],
-  beobachteterZeitraum: { vonMonat: 8, bisMonat: 10 },
-  geruch: { tags: ['pilzig', 'angenehm'], text: 'Sehr angenehm, pilzig.' },
-  geschmack: { tags: ['mild', 'nussig'], text: 'Mild und nussig.' },
-  quelle: SOURCE,
-  reagenzien: [{ reagenz: 'koh', reaktion: 'Fleisch blass braun.' }],
-  warnung: null,
-  jahreszeiten: ['sommer', 'herbst'],
-  baeume: ['fichte', 'buche'],
-  baeumeAusErfahrung: null,
-  vorhersageGeplant: true,
-  begehungenMitFund: 1853,
-  titelbild: null,
-  spitzeWoche: 40,
-  merkmale: [
-    { schluessel: 'hut', text: '6 bis 25 cm, hell- bis dunkelbraun.' },
-    { schluessel: 'roehren', text: 'Jung weiß, später gelb bis olivgrün.' },
-    { schluessel: 'stiel', text: 'Dick, bauchig, hellbraun.' },
-    { schluessel: 'fleisch', text: 'Weiß, fest, verfärbt nicht.' },
-    { schluessel: 'geruch', text: 'Angenehm pilzig.' },
-    { schluessel: 'geschmack', text: 'Mild, nussig.' },
-    { schluessel: 'sporenpulver', text: 'Olivbraun.' },
-    { schluessel: 'vorkommen', text: 'Nadel- und Laubwald.' },
-    { schluessel: 'zeit', text: 'Juli bis November.' },
-    { schluessel: 'speisewert', text: 'Essbar.' },
-    { schluessel: 'schutz', text: 'Besonders geschützt nach Bundesartenschutzverordnung.' },
-  ],
-  verwechslungen: [
-    {
-      slug: 'gallenroehrling',
-      name: 'Gallenröhrling',
-      lateinisch: 'Tylopilus felleus',
-      unterschied: 'Röhren rosa, sehr bitter.',
-      speisewert: 'ungeniessbar',
-      warnung: null,
-      hutFarben: [{ name: 'hellbraun', hex: '#b07d4a' }],
-    },
-    {
-      slug: 'satansroehrling',
-      name: 'Satansröhrling',
-      lateinisch: 'Rubroboletus satanas',
-      unterschied: null,
-      speisewert: 'giftig',
-      warnung: null,
-      hutFarben: [],
-    },
-  ],
-  links: [
-    { titel: '123pilzsuche.de', url: 'https://www.123pilzsuche.de/daten/details/Steinpilze.htm' },
-    { titel: 'Wikipedia', url: 'https://de.wikipedia.org/wiki/Gemeiner_Steinpilz' },
-  ],
-  saison: SEASON,
-  taxonomie: STEINPILZ_TAXONOMIE,
-};
-
-/** Eine Art der Stufe Profil: kein Manifest, keine Kurve. */
-export const MORCHEL: Species = {
-  ...STEINPILZ,
-  slug: 'speisemorchel',
-  name: 'Speisemorchel',
-  lateinisch: 'Morchella esculenta',
-  // Ohne Einordnung: die Artseite zeigt den Abschnitt dann gar nicht.
-  taxonomie: [],
-  gruppe: 'morchel',
-  stufe: 'profil',
-  tags: ['profil', 'morchel', 'fruehling', 'esche'],
-  schutz: KEIN_SCHUTZ,
-  kartenSlug: null,
-  begehungenMitFund: 12,
-  spitzeWoche: null,
-  saison: {
-    ...SEASON,
-    alleJahre: Array.from({ length: WEEKS }, () => 0),
-    laufendesJahr: Array.from({ length: 39 }, () => 0),
-    hoechstwert: 0,
-  },
-};
-
-/** Ein Profil, das niemand sammelt: es steht im Katalog als Verwechslung. */
-export const GALLENROEHRLING: Species = {
-  ...STEINPILZ,
-  slug: 'gallenroehrling',
-  name: 'Gallenröhrling',
-  lateinisch: 'Tylopilus felleus',
-  taxonomie: [
-    {
-      rang: 'abteilung',
-      rangfolge: 0,
-      slug: 'basidiomycota',
-      name: 'Basidiomycota',
-      lateinisch: 'Basidiomycota',
-    },
-    {
-      rang: 'klasse',
-      rangfolge: 1,
-      slug: 'agaricomycetes',
-      name: 'Agaricomycetes',
-      lateinisch: 'Agaricomycetes',
-    },
-    { rang: 'ordnung', rangfolge: 2, slug: 'boletales', name: 'Röhrlinge', lateinisch: 'Boletales' },
-    { rang: 'familie', rangfolge: 3, slug: 'boletaceae', name: 'Boletaceae', lateinisch: 'Boletaceae' },
-    { rang: 'gattung', rangfolge: 4, slug: 'tylopilus', name: 'Rosasporröhrlinge', lateinisch: 'Tylopilus' },
-  ],
-  stufe: 'profil',
-  tags: ['profil', 'roehrling', 'sommer', 'herbst'],
-  schutz: KEIN_SCHUTZ,
-  speisewert: 'giftig',
-  kartenSlug: null,
-  sammelbar: false,
-  marktfaehigkeit: { marktfaehig: false, schweiz: null },
-  wertigkeit: null,
-  haeufigkeit: null,
-  weitereNamen: [],
-  synonyme: [],
-  reagenzien: [],
-  vorhersageGeplant: false,
-  begehungenMitFund: 0,
-  spitzeWoche: null,
-  verwechslungen: [
-    {
-      slug: 'steinpilz',
-      name: 'Steinpilz',
-      lateinisch: 'Boletus edulis',
-      unterschied: 'Netz hell, Geschmack mild.',
-      speisewert: 'essbar',
-      warnung: null,
-      hutFarben: [{ name: 'braun', hex: '#7a5230' }],
-    },
-  ],
-  saison: null,
-};
+/** Ein Schritt im Weg von oben nach unten. */
+export function taxonStep(rank: TaxonRank, slug: string, name: string): TaxonStep {
+  return { id: slug, rank, slug, name };
+}

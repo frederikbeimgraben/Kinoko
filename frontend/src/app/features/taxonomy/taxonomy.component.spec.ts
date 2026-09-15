@@ -1,109 +1,141 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Location } from '@angular/common';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import type { Taxon } from '../../core/api/models';
-import { BASIDIOMYCOTA, BOLETACEAE, BOLETUS } from '../../testing/taxonomy-fixture';
+import type { TaxonPage } from '../../core/api/models';
 import { noViolations } from '../../testing/axe';
+import { catalogueProviders } from '../../testing/catalogue-double';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { ANY_ROUTE } from '../../testing/routes';
+import { speciesSummary, taxonPage, taxonStep } from '../../testing/species-fixture';
 import { TaxonomyComponent } from './taxonomy.component';
+
+const NOT_FOUND = 404;
+
+const BOLETACEAE: TaxonPage = taxonPage({
+  rank: 'family',
+  slug: 'boletaceae',
+  name: 'Boletaceae',
+  path: [taxonStep('order', 'boletales', 'Boletales')],
+  children: [
+    { ...taxonStep('genus', 'boletus', 'Boletus'), speciesCount: 3 },
+    { ...taxonStep('genus', 'leccinum', 'Leccinum'), speciesCount: 1 },
+  ],
+  species: [speciesSummary({ slug: 'steinpilz', name: 'Steinpilz', scientificName: 'Boletus edulis' })],
+  speciesCount: 4,
+});
 
 interface Setup {
   container: Element;
+  http: HttpTestingController;
   router: Router;
 }
 
-async function build(taxon: Taxon | 'fehlt', rank = 'gattung', slug = 'boletus'): Promise<Setup> {
-  const { container, detectChanges } = await render(TaxonomyComponent, {
+async function build(rank: string, slug: string, page: TaxonPage | null = BOLETACEAE): Promise<Setup> {
+  const { container } = await render(TaxonomyComponent, {
     inputs: { rank, slug },
-    providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    providers: [...catalogueProviders(), provideRouter(ANY_ROUTE)],
   });
   const http = TestBed.inject(HttpTestingController);
-  const request = http.expectOne(`/api/taxonomie/${rank}/${slug}`);
-  if (taxon === 'fehlt') {
-    request.flush(
-      { type: 'about:blank', title: 'Nicht gefunden', status: 404 },
-      { status: 404, statusText: 'Not Found' },
-    );
+  const path = `/api/taxa/${rank}/${slug}`;
+  if (page === null) {
+    await vi.waitFor(() => {
+      http.expectOne(path).flush(null, { status: NOT_FOUND, statusText: 'Not Found' });
+    });
   } else {
-    request.flush(taxon);
+    await vi.waitFor(() => {
+      http.expectOne(path).flush(page);
+    });
+    await vi.waitFor(() => {
+      expect(container.querySelector('.taxonomy__trail')).not.toBeNull();
+    });
   }
-  detectChanges();
-  return { container, router: TestBed.inject(Router) };
+  return { container, http, router: TestBed.inject(Router) };
 }
 
 describe('TaxonomyComponent', () => {
-  it('zeigt den Weg nach oben, die Nachbarn und die Arten einer Gattung', async () => {
-    const { container } = await build(BOLETUS);
+  it('zeigt den Weg von oben und die eigene Stufe am Ende', async () => {
+    const { container } = await build('family', 'boletaceae');
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Boletus' })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Röhrlinge' }).getAttribute('href')).toBe(
-      '/taxonomie/ordnung/boletales',
-    );
-    expect(screen.getByRole('link', { name: 'Boletaceae' }).getAttribute('href')).toBe(
-      '/taxonomie/familie/boletaceae',
-    );
-    expect(screen.getByRole('button', { name: /Imleria/ })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /Steinpilz/ })).toBeTruthy();
+    expect(container.querySelector('.taxonomy__trail')?.textContent).toContain('Ordnung Boletales');
+    expect(container.querySelector('.taxonomy__trail')?.textContent).toContain('Familie Boletaceae');
     await noViolations(container);
-  }, 30_000);
-
-  it('nennt den Rang und die Zahl der Arten darunter', async () => {
-    await build(BOLETUS);
-
-    expect(screen.getByText('Gattung')).toBeTruthy();
-    expect(screen.getByText('Eine Art im Katalog')).toBeTruthy();
   });
 
-  it('zählt die Arten an jeder untergeordneten Stufe', async () => {
-    await build(BOLETACEAE, 'familie', 'boletaceae');
+  it('führt die Gattungen darunter mit ihrer Zahl', async () => {
+    await build('family', 'boletaceae');
 
-    const boletus = screen.getByRole('button', { name: /Boletus/ });
-
-    expect(boletus.textContent).toContain('Eine Art im Katalog');
-    expect(screen.getByText('Keine Art hängt unmittelbar hier, nur an den Stufen darunter.')).toBeTruthy();
+    expect(screen.getByText('Gattungen')).toBeInTheDocument();
+    expect(screen.getByText('Boletus')).toBeInTheDocument();
+    expect(screen.getByText('3 Arten')).toBeInTheDocument();
+    expect(screen.getByText('1 Art')).toBeInTheDocument();
   });
 
-  it('sagt an der Wurzel, dass es darüber nichts gibt', async () => {
-    await build(BASIDIOMYCOTA, 'abteilung', 'basidiomycota');
+  it('führt die Arten dieser Stufe', async () => {
+    await build('family', 'boletaceae');
 
-    expect(screen.getByText('Diese Stufe ist die oberste im Katalog.')).toBeTruthy();
-    expect(screen.getByText('Keine weitere Stufe daneben.')).toBeTruthy();
+    expect(screen.getByText('Arten dieser Familie')).toBeInTheDocument();
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
   });
 
-  it('springt auf eine untergeordnete Stufe', async () => {
-    const { router } = await build(BOLETACEAE, 'familie', 'boletaceae');
-    const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+  it('führt von einer Gattung zur nächsten Stufe', async () => {
+    const setup = await build('family', 'boletaceae');
+    const go = vi.spyOn(setup.router, 'navigateByUrl');
 
-    await userEvent.click(screen.getByRole('button', { name: /Boletus/ }));
+    await userEvent.click(screen.getByRole('button', { name: /^Boletus 3 Arten$/ }));
 
-    expect(navigate).toHaveBeenCalledWith('/taxonomie/gattung/boletus');
+    expect(go).toHaveBeenCalledWith('/taxonomie/genus/boletus');
   });
 
-  it('springt von einer Art auf ihr Profil', async () => {
-    const { router } = await build(BOLETUS);
-    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+  it('führt von einer Zeile zur Artseite', async () => {
+    const setup = await build('family', 'boletaceae');
+    const go = vi.spyOn(setup.router, 'navigate');
 
-    await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
+    await userEvent.click(screen.getByText('Steinpilz'));
 
-    expect(navigate).toHaveBeenCalledWith(['/arten', 'steinpilz']);
+    expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
-  it('meldet eine Stufe, die es nicht gibt', async () => {
-    await build('fehlt');
+  it('geht über den Kopf zurück', async () => {
+    await build('family', 'boletaceae');
+    const back = vi.spyOn(TestBed.inject(Location), 'back');
 
-    expect(screen.getByText('Diese Stufe steht nicht in der Einordnung.')).toBeTruthy();
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(back).toHaveBeenCalled();
   });
 
-  it('fragt einen Rang gar nicht erst, den der Vertrag nicht kennt', async () => {
-    const { detectChanges } = await render(TaxonomyComponent, {
-      inputs: { rank: 'reich', slug: 'fungi' },
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+  it('zeigt den Leerzustand zu einer unbekannten Stufe', async () => {
+    await build('genus', 'nichts', null);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('Art nicht gefunden')).toBeInTheDocument();
     });
-    detectChanges();
+  });
 
-    TestBed.inject(HttpTestingController).verify();
-    expect(screen.getByText('Diese Stufe steht nicht in der Einordnung.')).toBeTruthy();
+  it('zeigt den Leerzustand zu einem unbekannten Rang, ohne zu fragen', async () => {
+    const { container } = await render(TaxonomyComponent, {
+      inputs: { rank: 'reich', slug: 'fungi' },
+      providers: [...catalogueProviders(), provideRouter(ANY_ROUTE)],
+    });
+
+    expect(screen.getByText('Art nicht gefunden')).toBeInTheDocument();
+    TestBed.inject(HttpTestingController).expectNone('/api/taxa/reich/fungi');
+    expect(container.querySelector('.taxonomy__trail')).toBeNull();
+  });
+
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+    const { container } = await render(TaxonomyComponent, {
+      inputs: { rank: 'family', slug: 'boletaceae' },
+      providers: [...catalogueProviders(), provideRouter(ANY_ROUTE), EMPTY_CATALOG],
+    });
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/taxa/family/boletaceae').flush(BOLETACEAE);
+    });
+
+    noGermanText(container);
   });
 });

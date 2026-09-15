@@ -1,258 +1,207 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import type { SpeciesBundle } from '../../core/api/models';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { noViolations } from '../../testing/axe';
-import { SpeciesListComponent } from './species-list.component';
+import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
+import { stubIntersectionObserver } from '../../testing/observer-stub';
+import { ANY_ROUTE } from '../../testing/routes';
+import { speciesEntry } from '../../testing/species-fixture';
 import { SpeciesFilterState } from './filter.state';
-import { SpeciesState } from './species.state';
+import { SpeciesListComponent } from './species-list.component';
+
+const PAGE = 40;
+
+const STEINPILZ = speciesEntry({
+  slug: 'steinpilz',
+  name: 'Steinpilz',
+  scientificName: 'Boletus edulis',
+  hymeniumType: 'tubes',
+});
+
+const PFIFFERLING = speciesEntry({
+  slug: 'pfifferling',
+  name: 'Pfifferling',
+  scientificName: 'Cantharellus cibarius',
+  hymeniumType: 'folds',
+});
+
+const SMALL: SpeciesBundle = { items: [STEINPILZ, PFIFFERLING] };
+
+/** Ein Katalog, der über eine Seite hinausreicht. */
+function manySpecies(count: number): SpeciesBundle {
+  return {
+    items: Array.from({ length: count }, (_, at) =>
+      speciesEntry({
+        slug: `art-${String(at)}`,
+        name: `Art ${String(at)}`,
+        scientificName: `Genus species${String(at)}`,
+      }),
+    ),
+  };
+}
 
 interface Setup {
   container: Element;
+  filter: SpeciesFilterState;
   router: Router;
-  state: SpeciesState;
-  refresh: () => void;
-  nachlade: (path: string, catalogue: typeof SPECIES_LIST) => void;
 }
 
-async function build(): Promise<Setup> {
-  const { container, detectChanges } = await render(SpeciesListComponent, {
-    providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+async function build(bundle: SpeciesBundle = SMALL, wide = false): Promise<Setup> {
+  const { container } = await render(SpeciesListComponent, {
+    providers: [
+      ...catalogueProviders(bundle),
+      provideRouter(ANY_ROUTE),
+      { provide: ViewportService, useValue: { wide: signal(wide) } },
+    ],
   });
-  TestBed.inject(HttpTestingController).expectOne('/api/arten').flush(SPECIES_LIST);
-  detectChanges();
-  const http = TestBed.inject(HttpTestingController);
-  /** Der zweite Topf kommt erst, wenn Chip oder Suche ihn brauchen. */
-  const nachlade = (path: string, catalogue: typeof SPECIES_LIST): void => {
-    http.expectOne(path).flush(catalogue);
-    detectChanges();
-  };
-  return {
-    container,
-    router: TestBed.inject(Router),
-    state: TestBed.inject(SpeciesState),
-    refresh: detectChanges,
-    nachlade,
-  };
+  await catalogueReady();
+  await vi.waitFor(() => {
+    expect(container.querySelectorAll('app-species-row').length).toBeGreaterThan(0);
+  });
+  return { container, filter: TestBed.inject(SpeciesFilterState), router: TestBed.inject(Router) };
 }
 
-/**
- * Die Namen der sichtbaren Zeilen. Nicht jede Zeile trägt eine Kurve: eine Art,
- * die niemand sammelt, hat keine Saison.
- */
-function names(): string[] {
-  return [...document.querySelectorAll('.row__name')].map((cell) => cell.textContent.trim());
-}
+describe('SpeciesListComponent', () => {
+  beforeEach(() => {
+    localStorage.removeItem('pilzkarte.speciesfilter');
+    stubIntersectionObserver();
+  });
 
-describe('ArtenComponent', () => {
-  it('zeigt jede Art mit lateinischem Namen und Speisewert', async () => {
+  it('stellt die Arten des Bündels mit ihrer Zahl im Kopf', async () => {
     const { container } = await build();
 
-    const row = screen.getByRole('button', { name: /Steinpilz/ });
-    expect(within(row).getByText('Boletus edulis')).toBeInTheDocument();
-    expect(within(row).getByText('essbar')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Speisemorchel/ })).toBeInTheDocument();
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('Pfifferling')).toBeInTheDocument();
+    expect(container.querySelector('.species__count')?.textContent).toBe('2');
     await noViolations(container);
   });
 
-  it('zeichnet in der Liste keine Kurve mehr', async () => {
-    const { container } = await build();
-
-    // Seit D10 steht rechts das Titelbild. Auf 86 Pixeln liest die Kurve
-    // ohnehin niemand ab; sie bleibt auf der Artseite.
-    expect(container.querySelectorAll('.spark__all')).toHaveLength(0);
-  });
-
-  it('stellt die Arten nach Stufe und darin nach Namen auf', async () => {
+  it('sucht lokal nach deutschem Namen', async () => {
     await build();
 
-    // Vorhersage vor Saison vor Profil; die 23 Arten mit eigener Karte stehen
-    // damit oben statt zwischen den Profilen verstreut.
-    expect(names()).toEqual([
-      'Maronenröhrling',
-      'Steinpilz',
-      'Semmelstoppelpilz',
-      'Gallenröhrling',
-      'Speisemorchel',
-    ]);
+    await userEvent.type(screen.getByRole('textbox'), 'stein');
+
+    await vi.waitFor(() => {
+      expect(screen.queryByText('Pfifferling')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
   });
 
-  it('lässt die aktive Art an ihrem Platz', async () => {
-    const { state, refresh } = await build();
-
-    state.select('speisemorchel');
-    refresh();
-
-    expect(names().at(-1)).toBe('Speisemorchel');
-  });
-
-  it('sucht in Namen und lateinischen Namen', async () => {
-    const { refresh } = await build();
-    const field = screen.getByLabelText('Art suchen');
-
-    await userEvent.type(field, 'morch');
-    refresh();
-    expect(names()).toEqual(['Speisemorchel']);
-
-    await userEvent.clear(field);
-    await userEvent.type(field, 'Imleria');
-    refresh();
-    expect(names()).toEqual(['Maronenröhrling']);
-  });
-
-  it('nennt, wie viele Arten die Liste gerade zeigt', async () => {
+  it('sucht lokal nach lateinischem Namen', async () => {
     await build();
 
-    expect(screen.getByText('5 Arten')).toBeInTheDocument();
+    await userEvent.type(screen.getByRole('textbox'), 'canthar');
+
+    await vi.waitFor(() => {
+      expect(screen.queryByText('Steinpilz')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Pfifferling')).toBeInTheDocument();
   });
 
-  it('führt zum Filterblatt, statt über der Liste einzustellen', async () => {
-    const { router } = await build();
-    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+  it('zeigt je gewähltem Wert eine Marke und nimmt sie wieder weg', async () => {
+    const { filter } = await build();
+
+    filter.toggle('hymenium', 'tubes');
+    await vi.waitFor(() => {
+      expect(screen.getByText('Röhren')).toBeInTheDocument();
+    });
+
+    const chip = screen.getByText('Röhren').closest('.filterchip');
+    await userEvent.click(within(chip as HTMLElement).getByRole('button'));
+
+    expect(filter.chosenIn('hymenium').size).toBe(0);
+  });
+
+  it('zeigt ohne Treffer den Leerzustand und setzt darüber zurück', async () => {
+    const { filter } = await build();
+
+    filter.toggle('hymenium', 'gills');
+    await vi.waitFor(() => {
+      expect(screen.getByText('Keine Art passt zu dieser Auswahl')).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter zurücksetzen' }));
+
+    expect(filter.chosenCount()).toBe(0);
+  });
+
+  it('öffnet das Filterblatt über den Knopf', async () => {
+    const { filter } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
 
-    expect(navigate).toHaveBeenCalledWith(['/arten/filter']);
+    expect(filter.open()).toBe(true);
   });
 
-  it('zeigt je gesetzter Gruppe eine Marke und nimmt sie auf Druck ab', async () => {
-    const { refresh } = await build();
-    const filter = TestBed.inject(SpeciesFilterState);
+  it('zeigt den Fehlerzustand und versucht es erneut', async () => {
+    const { container } = await render(SpeciesListComponent, {
+      providers: [
+        ...catalogueProviders(null),
+        provideRouter(ANY_ROUTE),
+        { provide: ViewportService, useValue: { wide: signal(false) } },
+      ],
+    });
+    const http = TestBed.inject(HttpTestingController);
+    await vi.waitFor(() => {
+      http.expectOne('/api/species/bundle').error(new ProgressEvent('error'));
+    });
+    await vi.waitFor(() => {
+      expect(screen.getByText('Laden fehlgeschlagen')).toBeInTheDocument();
+    });
 
-    filter.toggle('speisewert', 'essbar');
-    refresh();
-    const mark = screen.getByRole('button', { name: 'Speisewert nicht mehr filtern' });
-    // Die zweite Anfrage geht mit dem Filter heraus.
-    TestBed.inject(HttpTestingController).expectOne('/api/arten?wert=speisewert:essbar').flush(SPECIES_LIST);
-    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Erneut versuchen' }));
 
-    await userEvent.click(mark);
-    refresh();
-
-    expect(filter.any()).toBe(false);
+    await vi.waitFor(() => {
+      http.expectOne('/api/species/bundle').flush(SMALL);
+    });
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('app-species-row')).toHaveLength(2);
+    });
   });
 
-  it('zeigt auch die Arten, die niemand sammelt', async () => {
-    await build();
+  it('zeigt erst eine Seite zu 40 Arten', async () => {
+    const { container } = await build(manySpecies(PAGE + 1));
 
-    // Bis D9 stand der Gallenröhrling draußen und war nur über die Suche zu
-    // finden. Wer einen Pilz gesehen hat und nachschlägt, weiß vorher nicht,
-    // ob er sammelbar ist — das ist ja die Frage.
-    expect(names()).toContain('Gallenröhrling');
-    expect(screen.getByText('5 Arten')).toBeInTheDocument();
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('app-species-row')).toHaveLength(PAGE);
+    });
   });
 
-  it('setzt die Arten ohne Angabe abgesetzt unter die Treffer', async () => {
-    const { refresh } = await build();
-    const filter = TestBed.inject(SpeciesFilterState);
+  it('führt von einer Zeile auf die Artseite', async () => {
+    const setup = await build();
+    const go = vi.spyOn(setup.router, 'navigate');
 
-    filter.toggle('hutform', 'gewoelbt');
-    refresh();
-    TestBed.inject(HttpTestingController)
-      .expectOne('/api/arten?wert=hutform:gewoelbt')
-      .flush({
-        ...SPECIES_LIST,
-        arten: [SPECIES_LIST.arten[0]],
-        unbeurteilbar: [SPECIES_LIST.arten[1], SPECIES_LIST.arten[2]],
-        luecken: [{ schluessel: 'hutform', anzahl: 2 }],
-      });
-    refresh();
+    await userEvent.click(screen.getByText('Steinpilz'));
 
-    // Sie fallen nicht still heraus: die Zahl steht dran, und sie stehen
-    // unter den Treffern statt zwischen ihnen.
-    expect(screen.getByText('Nicht beurteilbar · 2')).toBeInTheDocument();
-    expect(names()).toHaveLength(3);
+    expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
-  it('findet über die Suche auch einen Giftpilz und zeigt seinen Speisewert', async () => {
-    const { refresh } = await build();
+  it('stellt am Rechner Liste und Artseite nebeneinander', async () => {
+    const { container, router } = await build(SMALL, true);
+    const go = vi.spyOn(router, 'navigate');
 
-    await userEvent.type(screen.getByLabelText('Art suchen'), 'Gallen');
-    refresh();
+    expect(container.querySelector('.species--wide')).not.toBeNull();
+    await userEvent.click(screen.getByText('Pfifferling'));
 
-    const row = screen.getByRole('button', { name: /Gallenröhrling/ });
-    expect(within(row).getByText('giftig')).toBeInTheDocument();
+    expect(go).not.toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(screen.getByText('Cantharellus cibarius · Röhrling')).toBeInTheDocument();
+    });
   });
 
-  it('zeigt die Warnung auch an der aktiven Art', async () => {
-    // Die einzige Marke der Zeile ist der Speisewert; sie bleibt an der
-    // aktiven Art dieselbe wie überall sonst.
-    const { state, refresh } = await build();
+  it('tauscht am Rechner die Liste gegen die Filterspalte', async () => {
+    const { container, filter } = await build(SMALL, true);
 
-    const row = (): HTMLElement => screen.getByRole('button', { name: /Gallenröhrling/ });
-    expect(within(row()).getByText('giftig')).toBeInTheDocument();
+    filter.toggle('hymenium', 'tubes');
 
-    state.select('gallenroehrling');
-    refresh();
-
-    expect(within(row()).getByText('giftig')).toBeInTheDocument();
-  });
-
-  it('zeigt einen Leerzustand, wenn nichts passt', async () => {
-    const { refresh } = await build();
-
-    await userEvent.type(screen.getByLabelText('Art suchen'), 'Trüffel');
-    refresh();
-
-    expect(screen.getByText('Keine Art passt zur Suche.')).toBeInTheDocument();
-  });
-
-  it('fragt den Server, statt im Speicher zu filtern', async () => {
-    // Die Regel steht auf dem Server: oder in der Gruppe, und zwischen den
-    // Gruppen, dazu die Unbeurteilbaren. Zweimal gerechnet liefe sie auseinander.
-    const { refresh } = await build();
-    const filter = TestBed.inject(SpeciesFilterState);
-
-    filter.toggle('speisewert', 'essbar');
-    filter.toggle('speisewert', 'giftig');
-    filter.toggleKeepUnknown('hutform');
-    refresh();
-
-    const call = TestBed.inject(HttpTestingController).expectOne(
-      '/api/arten?wert=speisewert:essbar&wert=speisewert:giftig&ohneAngabe=hutform',
-    );
-    call.flush(SPECIES_LIST);
-
-    expect(call.request.method).toBe('GET');
-  });
-
-  it('hebt die aktive Art der Karte hervor', async () => {
-    const { state, refresh } = await build();
-
-    state.select('maronenroehrling');
-    refresh();
-
-    const row = screen.getByRole('button', { name: /Maronenröhrling/ });
-    expect(row).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByRole('button', { name: /Steinpilz/ })).not.toHaveAttribute('aria-current');
-  });
-
-  it('wandert mit den Pfeiltasten und öffnet mit Enter', async () => {
-    const { router } = await build();
-    const calls = vi.spyOn(router, 'navigate').mockResolvedValue(true);
-
-    screen.getByRole('button', { name: /Maronenröhrling/ }).focus();
-    await userEvent.keyboard('{ArrowDown}');
-    expect(screen.getByRole('button', { name: /Steinpilz/ })).toHaveFocus();
-
-    await userEvent.keyboard('{ArrowDown}{ArrowDown}');
-    expect(screen.getByRole('button', { name: /Gallenröhrling/ })).toHaveFocus();
-
-    await userEvent.keyboard('{ArrowUp}{Enter}');
-
-    expect(calls).toHaveBeenCalledWith(['/arten', 'semmelstoppelpilz']);
-  });
-
-  it('lässt andere Tasten in Ruhe', async () => {
-    await build();
-
-    const first = screen.getByRole('button', { name: /Maronenröhrling/ });
-    first.focus();
-    await userEvent.keyboard('{ArrowLeft}');
-
-    expect(first).toHaveFocus();
+    await vi.waitFor(() => {
+      expect(container.querySelector('app-species-filter-panel')).not.toBeNull();
+    });
+    expect(container.querySelector('.species__summary')?.textContent).toContain('1 Arten');
   });
 });

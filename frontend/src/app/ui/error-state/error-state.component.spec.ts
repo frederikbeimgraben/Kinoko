@@ -11,17 +11,23 @@ describe('ErrorStateComponent', () => {
     });
 
     expect(screen.getByText('Laden fehlgeschlagen')).toBeInTheDocument();
-    expect(container.querySelector('.error__image svg')).not.toBeNull();
+    expect(container.querySelector('.error__badge svg')).not.toBeNull();
+    expect(container.querySelector('app-button')).toBeNull();
     expect(screen.getByRole('button', { name: 'Erneut versuchen' })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('nimmt ein eigenes Bild an', async () => {
+  it('nimmt ein eigenes Bild an und setzt es in ein Abzeichen von 56 px', async () => {
     const { container } = await render(ErrorStateComponent, {
       inputs: { text: 'Laden fehlgeschlagen', icon: 'lock' },
     });
 
-    expect(container.querySelector('.error__image')).not.toBeNull();
+    const badge = container.querySelector('.error__badge');
+    if (badge === null) throw new Error('Das Abzeichen steht nicht im Baum.');
+    const style = getComputedStyle(badge);
+    expect(style.getPropertyValue('inline-size')).toBe('56px');
+    expect(style.getPropertyValue('block-size')).toBe('56px');
+    expect(style.borderRadius).toBe('50%');
   });
 
   it('meldet den erneuten Versuch nach draussen', async () => {
@@ -31,9 +37,12 @@ describe('ErrorStateComponent', () => {
     let calls = 0;
     fixture.componentInstance.retry.subscribe(() => (calls += 1));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Erneut versuchen' }));
+    const button = screen.getByRole('button', { name: 'Erneut versuchen' });
+    await userEvent.click(button);
 
     expect(calls).toBe(1);
+    expect(button).toHaveClass('error__button', 'tap');
+    expect(button).toHaveAttribute('data-press', 'scale');
   });
 
   it('löst mit der Leertaste aus', async () => {

@@ -1,6 +1,6 @@
 /** Beispielwerte der Werkstattseite: Zahlen und lateinische Namen ohne eigenen Textschlüssel. */
-import type { Farbe, Licence, SpeciesImage } from '../../core/api/models';
-import type { Span, TimelineWeek } from '../../ui';
+import type { Licence, SpeciesImage } from '../../core/api/models';
+import type { ColourValue, Span, TimelineWeek } from '../../ui';
 
 /** Die acht Wochen des Artboards. Die Jahresmarke fällt auf KW 41. */
 export const SAMPLE_WEEKS: readonly TimelineWeek[] = [
@@ -51,18 +51,18 @@ export const LATIN_NAMES: readonly string[] = [
 export const TREE_GENERA: readonly string[] = ['Fagus', 'Quercus', 'Picea', 'Pinus'];
 
 /** Farbfelder mit lateinischen Kennwörtern statt einem deutschen Farbnamen. */
-export const CAP_COLOURS: readonly Farbe[] = [
+export const CAP_COLOURS: readonly ColourValue[] = [
   { name: 'fulvus', hex: '#c8a25a' },
   { name: 'badius', hex: '#6b4423' },
 ];
-export const FLESH_COLOURS: readonly Farbe[] = [{ name: 'candidus', hex: '#f4efe2' }];
-export const BRUISE_COLOURS: readonly Farbe[] = [{ name: 'caeruleus', hex: '#3f6ea8' }];
-export const GRADIENT_COLOURS: readonly Farbe[] = [
+export const FLESH_COLOURS: readonly ColourValue[] = [{ name: 'candidus', hex: '#f4efe2' }];
+export const BRUISE_COLOURS: readonly ColourValue[] = [{ name: 'caeruleus', hex: '#3f6ea8' }];
+export const GRADIENT_COLOURS: readonly ColourValue[] = [
   { name: 'candidus', hex: '#f4efe2' },
   { name: 'fulvus', hex: '#c8a25a' },
   { name: 'badius', hex: '#6b4423' },
 ];
-export const MULTI_COLOURS: readonly Farbe[] = [
+export const MULTI_COLOURS: readonly ColourValue[] = [
   { name: 'candidus', hex: '#f4efe2' },
   { name: 'olivaceus', hex: '#6f7d3c' },
 ];

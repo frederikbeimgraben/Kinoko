@@ -1,0 +1,77 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-gutter);
+}
+
+.size__title {
+  margin: 0 0 9px;
+  font-size: 11px;
+  line-height: normal;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.size__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 16px 14px;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.size__card--band {
+  gap: 6px;
+}
+
+.size__value {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--fw-semibold);
+  line-height: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.size__unit {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+// Die Spur des Filters steht schmaler und trägt Griffe im Ton der Fläche.
+.size__slider {
+  --range-slider-lane: 6px;
+  --range-slider-track: 6px;
+  --range-slider-handle: 18px;
+  --range-slider-border: 3px;
+  --range-slider-thumb: var(--color-primary);
+  --range-slider-ring: var(--color-bg);
+}
+
+.size__scale {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.size__band {
+  --year-band-lane: 30px;
+  --year-band-track: 30px;
+  --year-band-handle: 18px;
+}
+
+.size__period {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}

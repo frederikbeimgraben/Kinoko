@@ -17,8 +17,8 @@
 </div>
 @if (hasNearest()) {
   <div class="picker__nearest">
-    <p class="picker__heading">{{ 'filter.colour.nextTones' | t }}</p>
-    <div class="picker__tones" role="group" [attr.aria-label]="'filter.colour.nextTones' | t">
+    <p class="picker__heading">{{ nearestLabel() }}</p>
+    <div class="picker__tones" role="group" [attr.aria-label]="nearestLabel()">
       @for (tone of nearest(); track tone) {
         <i class="tone" aria-hidden="true" [style.background]="tone"></i>
       }

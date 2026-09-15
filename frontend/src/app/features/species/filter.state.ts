@@ -1,139 +1,171 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
-import { FACET_KEYS, type FacetKey } from '../../core/api/models';
+import { EMPTY_SELECTION, GROUP_KEYS, type GroupKey, type Selection } from './facets';
 
-const STORAGE_KEY = 'pilzkarte.artenfilter';
+const STORAGE_KEY = 'pilzkarte.speciesfilter';
 
 interface Saved {
-  werte?: Record<string, string[]>;
-  ohneAngabe?: string[];
+  values?: Record<string, string[]>;
+  colours?: Record<string, string>;
+  sizes?: Record<string, [number, number]>;
+  keepUnknown?: string[];
 }
 
-function isKey(value: string): value is FacetKey {
-  return (FACET_KEYS as readonly string[]).includes(value);
+function isGroup(value: string): value is GroupKey {
+  return (GROUP_KEYS as readonly string[]).includes(value);
 }
 
-/**
- * Die gewählten Werte je Gruppe. Innerhalb einer Gruppe gilt oder, zwischen
- * den Gruppen und — dieselbe Verknüpfung, die der Vertrag rechnet.
- *
- * Der Zustand lebt in der App und wird lokal gesichert, nicht in der Adresse.
- * Dieselbe Regel wie beim Kartenzustand: er soll Neuladen und Offline-Betrieb
- * überstehen, und eine Adresse mit achtzehn Parametern liest niemand.
- */
+/** Die Wahl im Filterblatt. In einer Gruppe oder, zwischen Gruppen und. */
 @Injectable({ providedIn: 'root' })
 export class SpeciesFilterState {
-  private readonly _values = signal<ReadonlyMap<FacetKey, ReadonlySet<string>>>(new Map());
-  private readonly _keepUnknown = signal<ReadonlySet<FacetKey>>(new Set());
+  private readonly _selection = signal<Selection>(EMPTY_SELECTION);
+  private readonly _open = signal(false);
+  private readonly _group = signal<GroupKey | null>(null);
 
-  readonly values = this._values.asReadonly();
-  readonly keepUnknown = this._keepUnknown.asReadonly();
+  readonly selection = this._selection.asReadonly();
+  /** Ob das Blatt über der Liste steht. */
+  readonly open = this._open.asReadonly();
+  /** Die Gruppe, die das Blatt gerade zeigt. Leer heißt: die Übersicht. */
+  readonly group = this._group.asReadonly();
 
-  /** Wie viele Gruppen etwas einschränken. Null heißt: die ganze Liste. */
-  readonly activeGroups = computed<number>(
-    () => [...this._values().values()].filter((chosen) => chosen.size > 0).length,
-  );
-
-  readonly any = computed<boolean>(() => this.activeGroups() > 0);
-
-  /** Die Parameter für `GET /api/arten`, so wie der Vertrag sie nimmt. */
-  readonly query = computed<{ wert: string[]; ohneAngabe: string[] }>(() => ({
-    wert: [...this._values()]
-      .flatMap(([key, chosen]) => [...chosen].map((value) => `${key}:${value}`))
-      .sort((one, other) => one.localeCompare(other)),
-    ohneAngabe: [...this._keepUnknown()].sort((one, other) => one.localeCompare(other)),
-  }));
+  readonly chosenCount = computed(() => {
+    const held = this._selection();
+    const values = [...held.values.values()].reduce((sum, set) => sum + set.size, 0);
+    return values + held.colours.size + held.sizes.size;
+  });
 
   constructor() {
     this.load();
     effect(() => {
-      this.save(this._values(), this._keepUnknown());
+      this.save(this._selection());
     });
   }
 
-  chosenIn(key: FacetKey): ReadonlySet<string> {
-    return this._values().get(key) ?? new Set();
+  chosenIn(key: GroupKey): ReadonlySet<string> {
+    return this._selection().values.get(key) ?? new Set();
   }
 
-  countIn(key: FacetKey): number {
-    return this.chosenIn(key).size;
+  colourOf(part: string): string | null {
+    return this._selection().colours.get(part) ?? null;
   }
 
-  keeps(key: FacetKey): boolean {
-    return this._keepUnknown().has(key);
+  sizeOf(key: string): readonly [number, number] | null {
+    return this._selection().sizes.get(key) ?? null;
   }
 
-  toggle(key: FacetKey, value: string): void {
-    this._values.update((old) => {
-      const next = new Map(old);
-      const chosen = new Set(next.get(key) ?? []);
+  keeps(key: GroupKey): boolean {
+    return this._selection().keepUnknown.has(key);
+  }
+
+  toggle(key: GroupKey, value: string): void {
+    this.patch((held) => {
+      const values = new Map(held.values);
+      const chosen = new Set(values.get(key) ?? []);
       if (chosen.has(value)) chosen.delete(value);
       else chosen.add(value);
-      if (chosen.size) next.set(key, chosen);
-      else next.delete(key);
-      return next;
+      if (chosen.size) values.set(key, chosen);
+      else values.delete(key);
+      return { ...held, values };
     });
   }
 
-  /** Nimmt eine ganze Gruppe aus dem Filter. Die Marke über der Liste tut das. */
-  clear(key: FacetKey): void {
-    this._values.update((old) => {
-      const next = new Map(old);
-      next.delete(key);
-      return next;
+  setColour(part: string, hex: string | null): void {
+    this.patch((held) => {
+      const colours = new Map(held.colours);
+      if (hex === null || colours.get(part) === hex) colours.delete(part);
+      else colours.set(part, hex);
+      return { ...held, colours };
     });
-    this._keepUnknown.update((old) => {
-      const next = new Set(old);
-      next.delete(key);
-      return next;
+  }
+
+  setSize(key: string, span: readonly [number, number] | null): void {
+    this.patch((held) => {
+      const sizes = new Map(held.sizes);
+      if (span === null) sizes.delete(key);
+      else sizes.set(key, span);
+      return { ...held, sizes };
     });
+  }
+
+  toggleKeepUnknown(key: GroupKey): void {
+    this.patch((held) => {
+      const keepUnknown = new Set(held.keepUnknown);
+      if (keepUnknown.has(key)) keepUnknown.delete(key);
+      else keepUnknown.add(key);
+      return { ...held, keepUnknown };
+    });
+  }
+
+  /** Nimmt einen einzelnen Wert aus dem Filter. Die Marke über der Liste tut das. */
+  dropValue(key: GroupKey, value: string): void {
+    this.toggle(key, value);
+  }
+
+  dropColour(part: string): void {
+    this.setColour(part, null);
   }
 
   clearAll(): void {
-    this._values.set(new Map());
-    this._keepUnknown.set(new Set());
+    this._selection.set(EMPTY_SELECTION);
   }
 
-  toggleKeepUnknown(key: FacetKey): void {
-    this._keepUnknown.update((old) => {
-      const next = new Set(old);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
+  openSheet(): void {
+    this._group.set(null);
+    this._open.set(true);
   }
 
-  private save(values: ReadonlyMap<FacetKey, ReadonlySet<string>>, keepUnknown: ReadonlySet<FacetKey>): void {
-    const stand: Saved = {
-      werte: Object.fromEntries([...values].map(([key, chosen]) => [key, [...chosen]])),
-      ohneAngabe: [...keepUnknown],
+  closeSheet(): void {
+    this._open.set(false);
+    this._group.set(null);
+  }
+
+  showGroup(key: GroupKey | null): void {
+    this._group.set(key);
+  }
+
+  private patch(change: (held: Selection) => Selection): void {
+    this._selection.update(change);
+  }
+
+  private save(held: Selection): void {
+    const saved: Saved = {
+      values: Object.fromEntries([...held.values].map(([key, set]) => [key, [...set]])),
+      colours: Object.fromEntries(held.colours),
+      sizes: Object.fromEntries([...held.sizes].map(([key, span]) => [key, [span[0], span[1]]])),
+      keepUnknown: [...held.keepUnknown],
     };
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stand));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
     } catch {
-      // Ein gesperrter oder voller Speicher ist kein Fehler; dann gilt der
-      // Filter eben nur für diese Sitzung.
+      // Ein gesperrter Speicher ist kein Fehler; der Filter gilt dann je Sitzung.
     }
   }
 
   /** Ein Wert in falscher Form wird verworfen, nicht übernommen. */
   private load(): void {
-    let stand: Saved;
+    let saved: Saved;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw === null) return;
-      const got: Saved | null = JSON.parse(raw) as Saved | null;
+      const got = JSON.parse(raw) as Saved | null;
       if (typeof got !== 'object' || got === null) return;
-      stand = got;
+      saved = got;
     } catch {
       return;
     }
-    const values = new Map<FacetKey, ReadonlySet<string>>();
-    for (const [key, chosen] of Object.entries(stand.werte ?? {})) {
-      if (isKey(key) && Array.isArray(chosen) && chosen.length) {
-        values.set(key, new Set(chosen.filter((value) => typeof value === 'string')));
-      }
+    const values = new Map<GroupKey, ReadonlySet<string>>();
+    for (const [key, chosen] of Object.entries(saved.values ?? {})) {
+      if (isGroup(key) && Array.isArray(chosen) && chosen.length) values.set(key, new Set(chosen));
     }
-    this._values.set(values);
-    this._keepUnknown.set(new Set((stand.ohneAngabe ?? []).filter(isKey)));
+    const sizes = new Map<string, readonly [number, number]>();
+    for (const [key, span] of Object.entries(saved.sizes ?? {})) {
+      const [low, high] = Array.isArray(span) ? span : [];
+      if (typeof low === 'number' && typeof high === 'number') sizes.set(key, [low, high]);
+    }
+    this._selection.set({
+      values,
+      colours: new Map(Object.entries(saved.colours ?? {})),
+      sizes,
+      keepUnknown: new Set((saved.keepUnknown ?? []).filter(isGroup)),
+    });
   }
 }

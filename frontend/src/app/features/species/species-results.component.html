@@ -1,0 +1,47 @@
+@if (failed()) {
+  <app-error-state [text]="'common.loadFailed' | t" (retry)="retry.emit()" />
+} @else if (loading()) {
+  <div class="results__card">
+    @for (bar of skeletons; track bar) {
+      <div class="results__skeleton">
+        <span class="results__bars">
+          <app-skeleton kind="line" width="62%" height="13px" />
+          <app-skeleton kind="line" width="34%" height="11px" />
+        </span>
+        <span class="results__thumb"></span>
+      </div>
+    }
+  </div>
+} @else if (rows().length === 0) {
+  <app-empty-state
+    icon="search"
+    [text]="'species.filter.noMatch' | t"
+    [action]="'filter.resetAll' | t"
+    (actionClick)="resetFilter.emit()"
+  />
+} @else {
+  <app-infinite-list class="results__list" [hasMore]="hasMore()" (more)="more.emit()">
+    <div class="results__stack">
+      <div class="results__card">
+        @for (row of rows(); track row.slug) {
+          <app-species-row
+            [species]="row.species"
+            [active]="row.slug === active()"
+            (chosen)="chosen.emit(row.slug)"
+          />
+        }
+      </div>
+      @if (gapRows().length > 0) {
+        <div class="results__gap">
+          <span>{{ gapText() }}</span>
+          <i></i>
+        </div>
+        <div class="results__card results__card--muted">
+          @for (row of gapRows(); track row.slug) {
+            <app-species-row [species]="row.species" [muted]="true" (chosen)="chosen.emit(row.slug)" />
+          }
+        </div>
+      }
+    </div>
+  </app-infinite-list>
+}

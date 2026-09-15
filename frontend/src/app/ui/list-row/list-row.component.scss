@@ -1,5 +1,7 @@
 :host {
   display: block;
+  box-sizing: border-box;
+  min-block-size: var(--size-row);
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
@@ -20,14 +22,26 @@
   flex: 1;
   align-items: center;
   gap: var(--space-4);
-  min-block-size: var(--size-row);
+  min-block-size: calc(var(--size-row) - var(--border-width));
   min-inline-size: 0;
   text-align: start;
 }
 
+// Eine Zeile in einer Karte trägt ihr Polster selbst. Der Druckzustand
+// reicht so an den Rand der Karte.
+.row__field--catalogue {
+  gap: var(--space-3);
+  padding-inline: var(--size-gutter);
+}
+
+.row__field--filter {
+  gap: var(--space-3);
+  padding-inline: var(--space-row-inline);
+}
+
 // Eine Zeile mit Unterzeile trägt zwei Textzeilen und ist darum höher.
 .row__field--tall {
-  min-block-size: var(--size-row-tall);
+  min-block-size: calc(var(--size-row-tall) - var(--border-width));
 }
 
 .row__field--button {
@@ -67,6 +81,17 @@
   font-weight: var(--fw-semibold);
 }
 
+// Im Katalog ist der Titel eine Beschriftung, keine Überschrift.
+.row__title--catalogue {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-regular);
+}
+
+.row__title--filter {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-medium);
+}
+
 .row__sub {
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
@@ -76,6 +101,13 @@
   flex: none;
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
+}
+
+.row__value--accent {
+  font-size: var(--fs-row-meta);
+  font-weight: var(--fw-semibold);
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .row__trail {

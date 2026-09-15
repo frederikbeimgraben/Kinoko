@@ -4,47 +4,47 @@ import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { FilterSheetComponent } from './filter-sheet.component';
 
+const OPEN = { open: true, title: 'Filter', primaryLabel: 'Show 12 species' };
+
 /** Die Knöpfe des Blatts, ohne den Scrim des Overlay-Wirts. */
 function dialogButtons(): HTMLElement[] {
   return within(screen.getByRole('dialog')).getAllByRole('button');
 }
 
 describe('FilterSheetComponent', () => {
-  it('renders nothing while closed', async () => {
+  it('zeigt nichts, solange das Blatt zu ist', async () => {
     const { container } = await render(FilterSheetComponent, {
-      inputs: { open: false, primaryLabel: 'Show 12 species' },
+      inputs: { ...OPEN, open: false },
     });
 
     expect(container.querySelector('.filtersheet')).toBeNull();
   });
 
-  it('renders the dialog with the content slot and the primary action', async () => {
-    const { container } = await render(FilterSheetComponent, {
-      inputs: { open: true, primaryLabel: 'Show 12 species' },
-    });
+  it('zeigt den Dialog mit Titel, Inhalt und der Haupthandlung', async () => {
+    const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-label', 'Filter');
+    expect(within(dialog).getByRole('heading', { name: 'Filter' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Show 12 species' })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('leaves out the reset button while nothing is filtered', async () => {
-    await render(FilterSheetComponent, { inputs: { open: true, primaryLabel: 'Show 12 species' } });
+  it('lässt Zurücksetzen weg, solange nichts gefiltert ist', async () => {
+    await render(FilterSheetComponent, { inputs: OPEN });
 
     expect(dialogButtons()).toHaveLength(2);
   });
 
-  it('shows the reset button once a filter is active', async () => {
-    await render(FilterSheetComponent, {
-      inputs: { open: true, primaryLabel: 'Show 12 species', resetEnabled: true },
-    });
+  it('zeigt Zurücksetzen, sobald ein Filter steht', async () => {
+    await render(FilterSheetComponent, { inputs: { ...OPEN, resetEnabled: true } });
 
     expect(dialogButtons()).toHaveLength(3);
   });
 
-  it('emits resetClick, primaryClick and closed for their buttons', async () => {
+  it('meldet Zurücksetzen, Haupthandlung und Schließen je Knopf', async () => {
     const { fixture } = await render(FilterSheetComponent, {
-      inputs: { open: true, primaryLabel: 'Show 12 species', resetEnabled: true },
+      inputs: { ...OPEN, resetEnabled: true },
     });
     const calls: string[] = [];
     fixture.componentInstance.resetClick.subscribe(() => calls.push('reset'));
@@ -59,10 +59,22 @@ describe('FilterSheetComponent', () => {
     expect(calls).toEqual(['reset', 'closed', 'primary']);
   });
 
-  it('emits closed on Escape', async () => {
-    const { fixture } = await render(FilterSheetComponent, {
-      inputs: { open: true, primaryLabel: 'Show 12 species' },
+  it('stellt in einer Gruppe den Weg zurück statt Zurücksetzen und X', async () => {
+    const { container, fixture } = await render(FilterSheetComponent, {
+      inputs: { ...OPEN, title: 'Cap shape', back: true, resetEnabled: true },
     });
+    let calls = 0;
+    fixture.componentInstance.backClick.subscribe(() => (calls += 1));
+
+    expect(container.querySelector('.filtersheet__reset')).toBeNull();
+    expect(container.querySelector('.filtersheet__close')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(calls).toBe(1);
+  });
+
+  it('meldet das Schließen auf Escape', async () => {
+    const { fixture } = await render(FilterSheetComponent, { inputs: OPEN });
     let calls = 0;
     fixture.componentInstance.closed.subscribe(() => (calls += 1));
 
@@ -71,10 +83,8 @@ describe('FilterSheetComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('marks every button as a tap target with a press state', async () => {
-    await render(FilterSheetComponent, {
-      inputs: { open: true, primaryLabel: 'Show 12 species', resetEnabled: true },
-    });
+  it('macht jeden Knopf zum Tippziel mit Druckzustand', async () => {
+    await render(FilterSheetComponent, { inputs: { ...OPEN, resetEnabled: true } });
 
     for (const button of dialogButtons()) {
       expect(button).toHaveClass('tap');
@@ -82,9 +92,9 @@ describe('FilterSheetComponent', () => {
     }
   });
 
-  it('renders without German text against an empty catalogue', async () => {
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(FilterSheetComponent, {
-      inputs: { open: true, primaryLabel: 'Show 12 species', resetEnabled: true },
+      inputs: { ...OPEN, resetEnabled: true },
       providers: [EMPTY_CATALOG],
     });
 

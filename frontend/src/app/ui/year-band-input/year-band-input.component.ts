@@ -23,7 +23,7 @@ export class YearBandInputComponent {
   protected readonly firstMonth = FIRST_MONTH;
   protected readonly lastMonth = LAST_MONTH;
 
-  protected readonly fromShare = computed(() => share(this.from()));
+  protected readonly fromShare = computed(() => share(this.from() - 1));
   protected readonly toShare = computed(() => share(this.to()));
 
   /** Die Griffe dürfen sich nicht überholen, sonst kehrt sich der Zeitraum um. */
@@ -38,7 +38,7 @@ export class YearBandInputComponent {
   }
 }
 
-function share(month: number): string {
-  const span = LAST_MONTH - FIRST_MONTH;
-  return `${((month - FIRST_MONTH) / span) * 100}%`;
+/** Ein Monat belegt ein Zwölftel des Bandes. */
+function share(edge: number): string {
+  return `${(edge / LAST_MONTH) * 100}%`;
 }

@@ -5,15 +5,20 @@
 .picker__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: 10px;
+  padding: 4px 12px 14px;
 }
 
 .swatch {
   display: flex;
   flex-direction: column;
+  gap: 6px;
   align-items: center;
-  gap: var(--space-2);
   padding: 0;
+  font: inherit;
+  font-size: 11px;
+  line-height: normal;
+  color: var(--color-text-muted);
   cursor: pointer;
   background: none;
   border: 0;
@@ -21,33 +26,29 @@
 
 .swatch__field {
   display: block;
-  inline-size: var(--size-thumb);
-  block-size: var(--size-thumb);
-  border-radius: var(--radius-md);
-  box-shadow: inset 0 0 0 var(--border-width) var(--color-border);
+  inline-size: 100%;
+  block-size: 44px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 9%);
 }
 
 .swatch--selected .swatch__field {
   box-shadow: 0 0 0 2px var(--color-primary);
 }
 
-.swatch__label {
-  font-size: var(--fs-xs);
-  color: var(--color-text-muted);
-}
-
-.swatch--selected .swatch__label {
+.swatch--selected {
   font-weight: var(--fw-semibold);
   color: var(--color-text);
 }
 
 .picker__nearest {
-  margin-block-start: var(--space-4);
+  padding: 0 14px 14px;
 }
 
 .picker__heading {
-  margin: 0 0 var(--space-2);
-  font-size: var(--fs-xs);
+  margin: 0 0 9px;
+  font-size: 11px;
+  line-height: normal;
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -63,6 +64,6 @@
   display: block;
   inline-size: var(--size-swatch);
   block-size: var(--size-swatch);
-  border-radius: var(--radius-md);
-  box-shadow: inset 0 0 0 var(--border-width) var(--color-border);
+  border-radius: var(--pilz-colour-radius);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 9%);
 }

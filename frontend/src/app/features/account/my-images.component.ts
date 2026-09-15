@@ -95,7 +95,7 @@ export class MyImagesComponent {
   );
 
   constructor() {
-    this.species.loadCatalogue();
+    void this.species.loadBundle();
     this.held.restart();
   }
 

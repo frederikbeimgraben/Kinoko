@@ -18,10 +18,11 @@ import {
   type WorkerDouble,
 } from '../../testing/map-doubles';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
+import type { SpeciesEntry } from '../../core/api/models';
 import { toastSpy } from '../../testing/toast-spy';
 import { SyncService } from '../../core/offline/sync.service';
 import { TileService } from '../../core/tiles/tile.service';
-import { SpeciesState, type SpeciesBundle } from '../species/species.state';
+import { SpeciesState } from '../species/species.state';
 import { CombinationState } from './combination.state';
 import { MapComponent } from './map.component';
 import { MapState } from './map.state';
@@ -70,8 +71,10 @@ async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
       { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
     ],
   });
-  const catalogue = TestBed.inject(SpeciesState) as unknown as { bundle: () => SpeciesBundle | null };
-  catalogue.bundle = () => ({ items }) as unknown as SpeciesBundle;
+  const catalogue = TestBed.inject(SpeciesState) as unknown as {
+    species: () => readonly SpeciesEntry[];
+  };
+  catalogue.species = () => items as unknown as readonly SpeciesEntry[];
   const stable = async (): Promise<void> => {
     await fixture.whenStable();
     fixture.detectChanges();

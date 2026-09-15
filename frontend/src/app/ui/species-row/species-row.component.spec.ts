@@ -13,15 +13,21 @@ const STEINPILZ: SpeciesRowSpecies = {
   image: '/api/species-images/bild-eins/thumb',
 };
 
+/** Die gerechneten Stile eines Elements, das es geben muss. */
+function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
+  if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
+  return getComputedStyle(element);
+}
+
+/** Zwei Zeilen übereinander: nur so zeigt sich die Trennlinie dazwischen. */
 @Component({
   imports: [SpeciesRowComponent],
   template: `
-    <app-species-row [species]="species">
-      <span trail>Kurve</span>
-    </app-species-row>
+    <app-species-row [species]="species" />
+    <app-species-row [species]="species" />
   `,
 })
-class SlottedHostComponent {
+class StackHostComponent {
   readonly species = STEINPILZ;
 }
 
@@ -58,23 +64,54 @@ describe('SpeciesRowComponent', () => {
     );
   });
 
-  it('bleibt ohne Inhalt für den Hinten-Slot unsichtbar', async () => {
+  it('steht so hoch wie eine hohe Zeile, den Rand eingerechnet', async () => {
+    const { container } = await render(StackHostComponent);
+
+    const rows = container.querySelectorAll('app-species-row');
+    const first = styleOf(rows[0]);
+    expect(first.getPropertyValue('block-size')).toBe('var(--size-row-tall)');
+    expect(first.boxSizing).toBe('border-box');
+    expect(first.getPropertyValue('border-block-end')).toContain('var(--border-width)');
+    expect(styleOf(rows[1]).getPropertyValue('border-block-end')).toBe('0px');
+  });
+
+  it('setzt Name und lateinischen Namen in die Schriftgrade des Bretts', async () => {
     const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
 
-    expect(container.querySelector('.row__trail')).toBeEmptyDOMElement();
+    const name = styleOf(container.querySelector('.row__name'));
+    expect(name.fontSize).toBe('var(--fs-row-title)');
+    expect(name.fontWeight).toBe('var(--fw-medium)');
+    const latin = styleOf(container.querySelector('.row__latin'));
+    expect(latin.fontSize).toBe('var(--fs-row-latin)');
+    expect(latin.fontStyle).toBe('italic');
   });
 
-  it('nimmt den Hinten-Slot vor dem Bild an', async () => {
-    await render(SlottedHostComponent);
-
-    expect(screen.getByText('Kurve')).toBeInTheDocument();
-  });
-
-  it('bricht den längsten Namen um, statt die Zeile zu sprengen', async () => {
+  it('schneidet den längsten Namen mit einer Ellipse ab, statt ihn umzubrechen', async () => {
     const longName = 'Schwarzhütiger Steinpilz aus dem Schönbuch';
     await render(SpeciesRowComponent, { inputs: { species: { ...STEINPILZ, name: longName } } });
 
-    expect(getComputedStyle(screen.getByText(longName)).overflowWrap).toBe('anywhere');
+    const name = styleOf(screen.getByText(longName));
+    expect(name.textOverflow).toBe('ellipsis');
+    expect(name.whiteSpace).toBe('nowrap');
+    expect(name.overflow).toBe('hidden');
+  });
+
+  it('lässt die Plakette bei einer Art ohne Angabe weg', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: STEINPILZ, muted: true },
+    });
+
+    expect(screen.queryByText('essbar')).not.toBeInTheDocument();
+    expect(container.querySelector('.row__marks')).toBeNull();
+  });
+
+  it('reicht die Fläche der Plakette durch', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: { ...STEINPILZ, levelBackground: '#16291f' } },
+    });
+
+    const pill = container.querySelector<HTMLElement>('.level');
+    expect(pill?.style.getPropertyValue('--pilz-level-area')).toBe('#16291f');
   });
 
   it('markiert die aktive Art für Hilfsmittel', async () => {

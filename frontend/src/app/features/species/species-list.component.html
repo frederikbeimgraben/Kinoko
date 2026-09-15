@@ -1,49 +1,99 @@
-<app-page-header [title]="'nav.arten' | t" />
-<div class="species">
-  <app-form-field
-    icon="search"
-    [label]="'arten.suche' | t"
-    [hideLabel]="true"
-    [placeholder]="'arten.suche' | t"
-    [value]="search()"
-    (valueChange)="search.set($event)"
-  />
-  <div class="species__marks">
-    <button class="species__filter" type="button" (click)="openFilter()">
-      {{ 'filter.oeffnen' | t }}
-    </button>
-    @for (mark of marks(); track mark.key) {
-      <button class="species__mark" type="button" [attr.aria-label]="mark.label" (click)="drop(mark.key)">
-        {{ mark.text }}
-        <app-svg-icon name="close" [size]="14" />
-      </button>
-    }
-  </div>
-  <p class="note species__count">{{ countText() }}</p>
-  @if (rows().length === 0) {
-    <app-empty-state icon="search" [text]="'arten.leer' | t" />
-  } @else {
-    <app-card class="flush">
-      @for (row of rows(); track row.slug; let i = $index) {
-        <app-species-row
-          [species]="row.species"
-          [active]="row.active"
-          (chosen)="open(row.slug)"
-          (keydown)="onKey($event, i)"
+<app-page-header [compact]="true" [title]="'nav.tab.species' | t">
+  @if (countText(); as count) {
+    <span class="species__count">{{ count }}</span>
+  }
+</app-page-header>
+@if (wide()) {
+  <div class="species species--wide">
+    <div class="species__column" [class.species__column--filter]="filtered()">
+      <app-search-field
+        [value]="query()"
+        [placeholder]="'species.search.placeholder' | t"
+        [loading]="loading()"
+        (valueChange)="query.set($event)"
+      />
+      @if (filtered()) {
+        @if (filter.group() !== null) {
+          <button class="species__back tap" type="button" data-press="scale" (click)="filter.showGroup(null)">
+            <app-svg-icon name="back" [size]="20" />
+            {{ 'common.back' | t }}
+          </button>
+        }
+        <app-species-filter-panel [groups]="columnCards" />
+        <button class="species__reset tap" type="button" data-press="scale" (click)="reset()">
+          {{ 'common.reset' | t }}
+        </button>
+      } @else {
+        <app-species-results
+          [hits]="hits()"
+          [loading]="loading()"
+          [failed]="failed()"
+          [hasMore]="hasMore()"
+          [active]="chosen()"
+          (chosen)="open($event)"
+          (more)="more()"
+          (retry)="state.reload()"
+          (resetFilter)="reset()"
         />
       }
-    </app-card>
-  }
-  @if (gapText(); as gap) {
-    <div class="species__gap">
-      <span>{{ gap }}</span>
-      <i></i>
     </div>
-    <p class="note note--sub">{{ 'arten.nichtBeurteilbarHinweis' | t }}</p>
-    <app-card class="flush">
-      @for (row of unassessable(); track row.slug) {
-        <app-species-row [species]="row.species" (chosen)="open(row.slug)" />
+    <div class="species__pane" [class.species__pane--filter]="filtered()">
+      @if (filtered()) {
+        <p class="species__summary">{{ summary() }}</p>
+        <app-species-results
+          [hits]="hits()"
+          [loading]="loading()"
+          [failed]="failed()"
+          [hasMore]="hasMore()"
+          (chosen)="open($event)"
+          (more)="more()"
+          (retry)="state.reload()"
+          (resetFilter)="reset()"
+        />
+      } @else {
+        <app-species-detail [slug]="chosen()" />
       }
-    </app-card>
-  }
-</div>
+    </div>
+  </div>
+} @else {
+  <div class="species">
+    <app-search-field
+      [value]="query()"
+      [placeholder]="'species.search.placeholder' | t"
+      [loading]="loading()"
+      (valueChange)="query.set($event)"
+    />
+    @if (showsMarks()) {
+      <div class="species__marks">
+        <button
+          class="species__filter tap"
+          type="button"
+          data-press="scale"
+          [class.species__filter--on]="filtered()"
+          (click)="filter.openSheet()"
+        >
+          <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />
+          {{ 'common.filter' | t }}
+        </button>
+        @for (chip of chips(); track chip.group + chip.value) {
+          <app-filter-chip [label]="chip.label" (removed)="drop(chip)" />
+        }
+        @if (extra() > 0) {
+          <span class="species__extra">+{{ extra() }}</span>
+        }
+      </div>
+    }
+    <app-species-results
+      [hits]="hits()"
+      [unassessable]="unassessable()"
+      [loading]="loading()"
+      [failed]="failed()"
+      [hasMore]="hasMore()"
+      (chosen)="open($event)"
+      (more)="more()"
+      (retry)="state.reload()"
+      (resetFilter)="reset()"
+    />
+  </div>
+  <app-species-filter-sheet />
+}

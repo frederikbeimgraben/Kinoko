@@ -11,7 +11,15 @@
     <span class="row__name">{{ species().name }}</span>
     <span class="row__latin">{{ species().latin }}</span>
   </span>
-  <app-level-pill class="row__level" [text]="species().levelText" [colour]="species().levelColour" />
+  @if (!muted()) {
+    <span class="row__marks">
+      <app-level-pill
+        [text]="species().levelText"
+        [colour]="species().levelColour"
+        [background]="species().levelBackground"
+      />
+    </span>
+  }
   <span class="row__trail"><ng-content select="[trail]" /></span>
   @if (species().image; as source) {
     <img class="row__image" [src]="source" [alt]="species().name" width="44" height="44" />

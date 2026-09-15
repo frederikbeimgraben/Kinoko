@@ -1,43 +1,49 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { SPECIES_LIST, STEINPILZ } from '../../testing/species-fixture';
+import { firstValueFrom } from 'rxjs';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { SpeciesApi } from './species.api';
-import type { Species, SpeciesCatalogue } from './models';
 
-function build(): { api: SpeciesApi; http: HttpTestingController } {
-  TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
-  return { api: TestBed.inject(SpeciesApi), http: TestBed.inject(HttpTestingController) };
-}
+const NOT_MODIFIED = 304;
 
-describe('ArtenApi', () => {
-  it('liest die Liste unter /api/arten', () => {
-    const { api, http } = build();
-    let got: SpeciesCatalogue | null = null;
-
-    api.catalogue().subscribe((catalogue) => (got = catalogue));
-    http.expectOne('/api/arten').flush(SPECIES_LIST);
-
-    expect(got).toEqual(SPECIES_LIST);
-    http.verify();
+describe('SpeciesApi', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
   });
 
-  it('liest ein Profil unter seinem Slug', () => {
-    const { api, http } = build();
-    let got: Species | null = null;
+  it('holt das Bündel ohne ETag und reicht das neue weiter', async () => {
+    const api = TestBed.inject(SpeciesApi);
+    const answer = firstValueFrom(api.bundle(null));
 
-    api.profile('steinpilz').subscribe((art) => (got = art));
-    http.expectOne('/api/arten/steinpilz').flush(STEINPILZ);
+    const request = TestBed.inject(HttpTestingController).expectOne('/api/species/bundle');
+    expect(request.request.method).toBe('GET');
+    expect(request.request.headers.has('If-None-Match')).toBe(false);
+    request.flush(SPECIES_BUNDLE, { headers: { ETag: 'w/"eins"' } });
 
-    expect(got).toEqual(STEINPILZ);
-    http.verify();
+    expect(await answer).toEqual({ etag: 'w/"eins"', body: SPECIES_BUNDLE });
   });
 
-  it('kodiert einen Slug, der in eine URL nicht roh gehört', () => {
-    const { api, http } = build();
+  it('fragt mit bekanntem ETag und lässt den Körper zum bekannten Stand leer', async () => {
+    const api = TestBed.inject(SpeciesApi);
+    const answer = firstValueFrom(api.bundle('w/"eins"'));
 
-    api.profile('rot/braun').subscribe();
+    const request = TestBed.inject(HttpTestingController).expectOne('/api/species/bundle');
+    expect(request.request.headers.get('If-None-Match')).toBe('w/"eins"');
+    request.flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
 
-    expect(http.expectOne('/api/arten/rot%2Fbraun').request.method).toBe('GET');
+    expect(await answer).toEqual({ etag: 'w/"eins"', body: null });
+  });
+
+  it('reicht einen Fehler weiter, statt still einen leeren Stand zu melden', async () => {
+    const api = TestBed.inject(SpeciesApi);
+    const answer = firstValueFrom(api.bundle(null)).catch((problem: unknown) => problem);
+
+    TestBed.inject(HttpTestingController)
+      .expectOne('/api/species/bundle')
+      .error(new ProgressEvent('error'), { status: 0 });
+
+    expect(await answer).not.toBeInstanceOf(HttpErrorResponse);
+    expect(await answer).toHaveProperty('status', 0);
   });
 });

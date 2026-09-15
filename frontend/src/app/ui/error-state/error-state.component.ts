@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
@@ -7,7 +6,7 @@ import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component'
 @Component({
   selector: 'app-error-state',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, SvgIconComponent, TranslatePipe],
+  imports: [SvgIconComponent, TranslatePipe],
   templateUrl: './error-state.component.html',
   styleUrl: './error-state.component.scss',
 })

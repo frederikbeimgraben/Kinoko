@@ -1,77 +1,110 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { FACETS } from '../../testing/facets-fixture';
 import { noViolations } from '../../testing/axe';
-import { SpeciesFilterGroupComponent } from './filter-group.component';
+import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { speciesEntry } from '../../testing/species-fixture';
+import type { GroupKey } from './facets';
+import { SpeciesGroupComponent } from './filter-group.component';
 import { SpeciesFilterState } from './filter.state';
 
-async function build(gruppe = 'hutform'): Promise<{ container: Element; refresh: () => void }> {
-  const { container, detectChanges } = await render(SpeciesFilterGroupComponent, {
-    inputs: { gruppe },
-    providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+const WITH_TUBES = speciesEntry({
+  slug: 'steinpilz',
+  name: 'Steinpilz',
+  scientificName: 'Boletus edulis',
+  hymeniumType: 'tubes',
+});
+
+const WITH_GILLS = speciesEntry({
+  slug: 'wiesenchampignon',
+  name: 'Wiesenchampignon',
+  scientificName: 'Agaricus campestris',
+  hymeniumType: 'gills',
+  edibility: 'edible',
+});
+
+const WITHOUT = speciesEntry({
+  slug: 'bovist',
+  name: 'Flaschenbovist',
+  scientificName: 'Lycoperdon perlatum',
+  edibility: 'inedible',
+});
+
+const BUNDLE = { items: [WITH_TUBES, WITH_GILLS, WITHOUT] };
+
+async function build(group: GroupKey): Promise<{ container: Element; filter: SpeciesFilterState }> {
+  const { container } = await render(SpeciesGroupComponent, {
+    inputs: { group },
+    providers: catalogueProviders(BUNDLE),
   });
-  const http = TestBed.inject(HttpTestingController);
-  if (gruppe !== 'gibtesnicht') http.expectOne('/api/arten/merkmale').flush(FACETS);
-  detectChanges();
-  return { container, refresh: detectChanges };
+  await catalogueReady();
+  return { container, filter: TestBed.inject(SpeciesFilterState) };
 }
 
-describe('SpeciesFilterGroupComponent', () => {
-  it('nennt an jedem Wert seine Zahl', async () => {
-    const { container } = await build();
-
-    expect(screen.getByText('gewölbt')).toBeInTheDocument();
-    expect(screen.getByText('15')).toBeInTheDocument();
-    // Ein Wert, den keine Art trägt, steht mit Null da statt zu fehlen.
-    expect(screen.getByText('0')).toBeInTheDocument();
-    await noViolations(container);
-  }, 30_000);
-
-  it('sagt, wie viele Arten die Lücke kostet, und lässt sie behalten', async () => {
-    const { refresh } = await build();
-    const filter = TestBed.inject(SpeciesFilterState);
-
-    expect(
-      screen.getByText(
-        '212 der 306 Arten tragen zu diesem Merkmal keine Angabe. Sie fallen aus dem Ergebnis, wenn du hier wählst.',
-      ),
-    ).toBeInTheDocument();
-
-    await userEvent.click(screen.getByText('Arten ohne Angabe behalten'));
-    refresh();
-
-    expect(filter.keeps('hutform')).toBe(true);
+describe('SpeciesGroupComponent', () => {
+  beforeEach(() => {
+    localStorage.removeItem('pilzkarte.speciesfilter');
   });
 
-  it('nimmt mehrere Werte einer Gruppe an und wieder zurück', async () => {
-    const { refresh } = await build();
-    const filter = TestBed.inject(SpeciesFilterState);
+  it('führt jeden belegten Wert mit seiner Zahl', async () => {
+    const { container } = await build('hymenium');
 
-    await userEvent.click(screen.getByText('gewölbt'));
-    await userEvent.click(screen.getByText('flach'));
-    refresh();
-    expect(filter.chosenIn('hutform')).toEqual(new Set(['gewoelbt', 'flach']));
-
-    await userEvent.click(screen.getByText('gewölbt'));
-    refresh();
-
-    expect(filter.chosenIn('hutform')).toEqual(new Set(['flach']));
-  });
-
-  it('teilt eine Gruppe in ihre Teile', async () => {
-    await build('fruchtschicht');
-
-    expect(screen.getByRole('heading', { name: 'Form' })).toBeInTheDocument();
+    await vi.waitFor(() => {
+      expect(screen.getByText('Röhren')).toBeInTheDocument();
+    });
     expect(screen.getByText('Lamellen')).toBeInTheDocument();
+    expect(container.querySelectorAll('.row__count')).toHaveLength(2);
+    await noViolations(container);
   });
 
-  it('meldet eine Gruppe, die es nicht gibt', async () => {
-    await build('gibtesnicht');
+  it('lässt einen Wert weg, den keine Art trägt', async () => {
+    await build('hymenium');
 
-    expect(screen.getByText('Kein Filter gesetzt.')).toBeInTheDocument();
+    await vi.waitFor(() => {
+      expect(screen.getByText('Röhren')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Poren')).not.toBeInTheDocument();
+  });
+
+  it('wählt einen Wert über sein Kästchen', async () => {
+    const { filter } = await build('hymenium');
+    await vi.waitFor(() => {
+      expect(screen.getByText('Röhren')).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('checkbox', { name: /Röhren/ }));
+
+    expect([...filter.chosenIn('hymenium')]).toEqual(['tubes']);
+  });
+
+  it('stellt die Karte für fehlende Angaben nur bei einer Lücke', async () => {
+    const { filter } = await build('hymenium');
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('Arten ohne Angabe behalten')).toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByRole('checkbox', { name: /Arten ohne Angabe behalten/ }));
+
+    expect(filter.keeps('hymenium')).toBe(true);
+  });
+
+  it('lässt die Karte weg, solange jede Art eine Angabe trägt', async () => {
+    await build('edibility');
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('essbar')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Arten ohne Angabe behalten')).not.toBeInTheDocument();
+  });
+
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+    const { container } = await render(SpeciesGroupComponent, {
+      inputs: { group: 'hymenium' },
+      providers: [...catalogueProviders(BUNDLE), EMPTY_CATALOG],
+    });
+    await catalogueReady();
+
+    noGermanText(container);
   });
 });

@@ -73,7 +73,7 @@ export class FindSheetComponent {
 
   protected readonly art = computed(() => {
     const slug = this.find().artSlug;
-    return (this.arten.catalogue()?.arten ?? []).find((candidate) => candidate.slug === slug) ?? null;
+    return this.arten.entryOf(slug);
   });
 
   protected readonly speciesName = computed(() => this.art()?.name ?? this.find().artSlug);
@@ -113,7 +113,7 @@ export class FindSheetComponent {
   });
 
   constructor() {
-    this.arten.loadCatalogue();
+    void this.arten.loadBundle();
     effect(() => {
       void this.fetchValue(this.find(), this.map.week());
     });
@@ -146,11 +146,11 @@ export class FindSheetComponent {
   private async fetchValue(find: Find, weekKey: string | null): Promise<void> {
     this.value.set(null);
     this.week.set(null);
-    const kartenSlug = this.art()?.kartenSlug ?? null;
-    if (kartenSlug === null) return;
+    const art = this.art();
+    if (!art?.forecastEnabled) return;
     try {
-      await this.tiles.load(kartenSlug);
-      const manifest = this.tiles.manifestOf(kartenSlug);
+      await this.tiles.load(art.slug);
+      const manifest = this.tiles.manifestOf(art.slug);
       if (manifest === null) return;
       const week =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());

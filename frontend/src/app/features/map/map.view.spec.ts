@@ -5,7 +5,7 @@ import { NOW } from '../../core/tiles/now';
 import { TileService } from '../../core/tiles/tile.service';
 import { SpeciesState } from '../species/species.state';
 import { BUNDLE_ITEMS, RAW_LAYERS, RAW_MANIFEST, answerManifest } from '../../testing/map-doubles';
-import type { SpeciesBundle } from '../species/species.state';
+import type { SpeciesEntry } from '../../core/api/models';
 import { MapState } from './map.state';
 import { MapView } from './map.view';
 
@@ -22,9 +22,9 @@ async function view(): Promise<{ view: MapView; state: MapState; tiles: TileServ
   await tiles.load('boletus-edulis');
   await tiles.loadLayers();
   const catalogue = TestBed.inject(SpeciesState) as unknown as {
-    bundle: () => SpeciesBundle | null;
+    species: () => readonly SpeciesEntry[];
   };
-  catalogue.bundle = () => ({ items: BUNDLE_ITEMS }) as unknown as SpeciesBundle;
+  catalogue.species = () => BUNDLE_ITEMS as unknown as readonly SpeciesEntry[];
   return { view: TestBed.inject(MapView), state: TestBed.inject(MapState), tiles };
 }
 
@@ -92,9 +92,9 @@ describe('MapView', () => {
   it('bittet um eine Art, wenn keine eine Vorhersage hat', async () => {
     const { view: model } = await view();
     const catalogue = TestBed.inject(SpeciesState) as unknown as {
-      bundle: () => SpeciesBundle | null;
+      species: () => readonly SpeciesEntry[];
     };
-    catalogue.bundle = () => ({ items: [] });
+    catalogue.species = () => [];
 
     expect(model.noSpecies()).toBe(true);
     expect(model.title()).toBe('Art wählen');

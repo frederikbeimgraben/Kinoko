@@ -5,7 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
@@ -45,8 +45,15 @@ async function build(): Promise<Setup> {
   });
   const http = TestBed.inject(HttpTestingController);
   // Der Katalog steht vor dem Blatt: sonst käme sein Name erst nach dem Test.
-  TestBed.inject(SpeciesState).loadCatalogue();
-  http.expectOne('/api/arten').flush(SPECIES_LIST);
+  const katalog = TestBed.inject(SpeciesState).loadBundle();
+  await vi.waitFor(() => {
+    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+  });
+  // Der Katalog wartet auch auf die Begriffe: ohne Antwort endet er nie.
+  await vi.waitFor(() => {
+    http.expectOne('/api/terms').flush({ items: [] });
+  });
+  await katalog;
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
   await vi.waitFor(() => {

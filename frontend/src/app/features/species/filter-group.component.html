@@ -1,36 +1,19 @@
-@if (viewport(); as viewport) {
-  <app-page-header [title]="viewport.name" [back]="true" (backClick)="back()" />
-  <div class="group">
-    @for (part of viewport.parts; track part.name) {
-      <section>
-        @if (part.name) {
-          <h2 class="group__section">{{ part.name }}</h2>
-        }
-        <app-card class="flush">
-          @for (row of part.values; track row.value) {
-            <app-choice-row
-              [label]="row.name"
-              [count]="row.count"
-              [checked]="row.chosen"
-              (toggled)="pick(row.value)"
-            />
-          }
-        </app-card>
-      </section>
-    }
-    @if (viewport.gap; as gap) {
-      <p class="info-text">{{ gap }}</p>
-      <app-card class="flush">
-        <app-check-row
-          [title]="'filter.ohneAngabeBehalten' | t"
-          [checked]="viewport.keeps"
-          (toggled)="keepUnknown()"
-        />
-      </app-card>
-    }
+<div class="group__card">
+  @for (choice of choices(); track choice.value) {
+    <app-choice-row
+      [label]="choice.label"
+      [count]="choice.count.toString()"
+      [checked]="checked(choice.value)"
+      (toggled)="filter.toggle(group(), choice.value)"
+    />
+  }
+</div>
+@if (hasGap()) {
+  <div class="group__card">
+    <app-choice-row
+      [label]="'filter.keepUnspecified' | t"
+      [checked]="filter.keeps(group())"
+      (toggled)="filter.toggleKeepUnknown(group())"
+    />
   </div>
-  <app-action-bar [primary]="hits()" (primaryClick)="back()" />
-} @else {
-  <app-page-header [title]="'filter.titel' | t" [back]="true" (backClick)="back()" />
-  <app-empty-state [text]="'filter.leer' | t" />
 }

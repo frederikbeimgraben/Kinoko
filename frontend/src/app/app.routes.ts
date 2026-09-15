@@ -14,29 +14,9 @@ export const routes: Routes = [
       import('./features/species/species-list.component').then((m) => m.SpeciesListComponent),
   },
   {
-    // Ein eigener Brocken: das Blatt öffnet nur, wer filtert.
-    path: 'arten/filter',
-    loadComponent: () => import('./features/species/filter.component').then((m) => m.SpeciesFilterComponent),
-  },
-  {
-    path: 'arten/filter/:gruppe',
-    loadComponent: () =>
-      import('./features/species/filter-group.component').then((m) => m.SpeciesFilterGroupComponent),
-  },
-  {
     path: 'arten/:slug',
-    loadComponent: () => import('./features/species/species.component').then((m) => m.SpeciesComponent),
-  },
-  {
-    // Ein eigener Brocken: die Seite wird selten geöffnet und kostet im ersten
-    // Bündel darum nichts.
-    path: 'arten/:slug/vergleich/:andere',
-    loadComponent: () => import('./features/species/comparison.component').then((m) => m.ComparisonComponent),
-  },
-  {
-    path: 'arten/:slug/bild',
     loadComponent: () =>
-      import('./features/species/submit-image.component').then((m) => m.SubmitImageComponent),
+      import('./features/species/species-page.component').then((m) => m.SpeciesPageComponent),
   },
   {
     // Ein eigener Brocken: die Einordnung wird selten geöffnet und kostet im

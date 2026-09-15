@@ -2,6 +2,7 @@
   <button
     class="overlay__scrim tap"
     [class.overlay__scrim--modal]="modal()"
+    [class.overlay__scrim--cover]="cover()"
     type="button"
     data-press="tint"
     [attr.aria-label]="'common.close' | t"
@@ -10,6 +11,7 @@
   <div
     class="overlay__panel"
     [class.overlay__panel--compact]="compact()"
+    [class.overlay__panel--cover]="cover()"
     tabindex="-1"
     (keydown)="onKeydown($event)"
   >

@@ -5,7 +5,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { SPECIES_LIST } from '../../testing/species-fixture';
+import { SpeciesState } from '../species/species.state';
+import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND } from '../../testing/entries-fixture';
@@ -50,6 +51,14 @@ function answerMap(byte: number, manifest: unknown = MANIFEST): void {
   );
 }
 
+/** Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf. */
+async function catalogueReady(): Promise<void> {
+  const catalogue = TestBed.inject(SpeciesState);
+  await vi.waitFor(() => {
+    expect(catalogue.species()).not.toHaveLength(0);
+  });
+}
+
 interface Setup {
   container: Element;
   closed: number;
@@ -64,9 +73,10 @@ async function build(): Promise<Setup> {
     providers: provider(),
   });
   const http = TestBed.inject(HttpTestingController);
-  http.match('/api/arten').forEach((request) => {
-    request.flush(SPECIES_LIST);
+  await vi.waitFor(() => {
+    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
+  await catalogueReady();
   detectChanges();
   let closed = 0;
   fixture.componentInstance.closed.subscribe(() => (closed += 1));
@@ -124,11 +134,9 @@ describe('FundBlattComponent', () => {
       inputs: { find: { ...FIND, anzahl: null } },
       providers: provider(),
     });
-    TestBed.inject(HttpTestingController)
-      .match('/api/arten')
-      .forEach((request) => {
-        request.flush(SPECIES_LIST);
-      });
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    });
 
     expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
   });
@@ -214,14 +222,12 @@ describe('FundBlattComponent', () => {
 
   it('lässt die Kennzahl weg, wenn die Art keine Vorhersagekarte hat', async () => {
     const { detectChanges } = await render(FindSheetComponent, {
-      inputs: { find: { ...FIND, artSlug: 'speisemorchel' } },
+      inputs: { find: { ...FIND, artSlug: 'semmelstoppelpilz' } },
       providers: provider(),
     });
-    TestBed.inject(HttpTestingController)
-      .match('/api/arten')
-      .forEach((request) => {
-        request.flush(SPECIES_LIST);
-      });
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    });
     detectChanges();
 
     expect(screen.queryByText('Vorhersage an diesem Ort')).not.toBeInTheDocument();
@@ -233,11 +239,9 @@ describe('FundBlattComponent', () => {
       inputs: { find: FIND },
       providers: provider(),
     });
-    TestBed.inject(HttpTestingController)
-      .match('/api/arten')
-      .forEach((request) => {
-        request.flush(SPECIES_LIST);
-      });
+    await vi.waitFor(() => {
+      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    });
     await vi.waitFor(() => {
       detectChanges();
     });
