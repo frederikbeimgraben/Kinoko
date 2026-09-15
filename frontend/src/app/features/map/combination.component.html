@@ -2,9 +2,10 @@
   @for (row of rows(); track row.factor.source) {
     <app-factor-row
       [factor]="{ name: row.name, range: row.subline, condition: row.condition }"
-      [active]="row.factor.active"
-      (activeChange)="activeChange.emit({ factor: row.factor, active: $event })"
+      [icon]="row.icon ?? undefined"
+      [removeLabel]="'map.factor.remove' | t"
       (conditionClick)="openFactor.emit(row.factor.source)"
+      (remove)="removed.emit(row.factor)"
     />
   }
   <app-add-row [label]="'map.factor.one' | t" [action]="'map.factor.add' | t" (pressed)="add.emit()" />

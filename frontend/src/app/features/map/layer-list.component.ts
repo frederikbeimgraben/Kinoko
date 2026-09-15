@@ -1,37 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { layerIcon } from '../../core/tiles/layer-groups';
 import { layerGroups, type Layer } from '../../core/tiles/layers';
 import { SvgIconComponent, type IconName } from '../../ui/svg-icon/svg-icon.component';
+import { layerTitle } from './layer-name';
 
-/** Ein Zeichen je Ebene. Ebenen mit demselben Maß tragen dasselbe Zeichen. */
-const GLYPHS: Record<string, IconName> = {
-  regen: 'cloud',
-  regen_2w: 'cloud',
-  regen_4w: 'calendar',
-  regen_8w: 'calendar',
-  regen_anomalie: 'rainfall',
-  temperatur: 'thermometer',
-  temperatur_min: 'frost',
-  wald: 'forest',
-  fichte: 'conifer',
-  kiefer: 'conifer',
-  nadelholz: 'conifer',
-  buche: 'leaf',
-  eiche: 'leaf',
-  birke: 'leaf',
-  hoehe: 'elevation',
-  hangneigung: 'slope',
-  nordexposition: 'compass',
-  relief: 'relief',
-  gelaendeposition: 'ridge',
-  boden_ph: 'soil-layers',
-  boden_sand: 'grains',
-  boden_kohlenstoff: 'soil-layers',
-};
-
-/** Eine Ebene mit ihrem Zeichen. */
+/** Eine Ebene mit ihrem Namen und ihrem Zeichen. */
 interface LayerCard {
   layer: Layer;
+  name: string;
   glyph: IconName;
 }
 
@@ -49,6 +27,8 @@ interface Group {
   styleUrl: './layer-list.component.scss',
 })
 export class LayerListComponent {
+  private readonly i18n = inject(I18nService);
+
   readonly layers = input.required<readonly Layer[]>();
   readonly selected = input<string | null>(null);
   readonly label = input.required<string>();
@@ -66,6 +46,6 @@ export class LayerListComponent {
 
   /** Eine unbekannte Ebene bekommt das allgemeine Zeichen der Ebenen. */
   private card(layer: Layer): LayerCard {
-    return { layer, glyph: GLYPHS[layer.id] ?? 'layers' };
+    return { layer, name: layerTitle(layer, this.i18n), glyph: layerIcon(layer.id) ?? 'layers' };
   }
 }

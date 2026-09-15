@@ -259,8 +259,8 @@
 
   <section class="block">
     <h2 class="block__head">{{ 'blocks.factorRow' | t }}</h2>
-    <app-factor-row [factor]="factor" [active]="factorActive()" (activeChange)="factorActive.set($event)" />
-    <app-factor-row [factor]="soilFactor" />
+    <app-factor-row [factor]="factor" icon="cloud" [removeLabel]="text('map.factor.remove')" />
+    <app-factor-row [factor]="soilFactor" icon="layers" [removeLabel]="text('map.factor.remove')" />
   </section>
 
   <section class="block">

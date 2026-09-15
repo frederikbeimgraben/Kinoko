@@ -25,6 +25,16 @@
   border: 0;
 }
 
+// Das Zeichen der Ebenengruppe steht vor dem Titel. Der negative Rand hält
+// den Titel auf seiner Linie: sonst hebt das Zeichen die Zeile an.
+.head__icon {
+  flex: none;
+  align-self: center;
+  margin-block-start: -1px;
+  margin-inline-end: 10px;
+  color: var(--color-text-muted);
+}
+
 .head__title {
   min-inline-size: 0;
   margin-inline-end: auto;
@@ -39,6 +49,7 @@
 .head__species {
   padding: 0;
   font: inherit;
+  font-weight: var(--fw-medium);
   color: var(--color-text);
   background: none;
   border: 0;
@@ -84,7 +95,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--size-control);
+  inline-size: 38px;
   block-size: var(--size-control);
   color: var(--color-text);
   background: var(--color-surface);

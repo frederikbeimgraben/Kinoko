@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CheckboxComponent } from '@stupa-makers/ui-kit';
-
-let nextNumber = 0;
+import { IconButtonComponent } from '../icon-button/icon-button.component';
+import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Ein Faktor der Kombination: Name, Bereich und Bedingung. */
 export interface CombinationFactor {
@@ -11,20 +9,21 @@ export interface CombinationFactor {
   readonly condition: string;
 }
 
-/** Zeile eines Faktors: Kästchen links, Name mit Bereich, Bedingung als Knopf. */
+/** Zeile eines Faktors: Zeichen der Gruppe, Name mit Bereich, Bedingung, X. */
 @Component({
   selector: 'app-factor-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CheckboxComponent, FormsModule],
+  imports: [IconButtonComponent, SvgIconComponent],
   templateUrl: './factor-row.component.html',
   styleUrl: './factor-row.component.scss',
 })
 export class FactorRowComponent {
   readonly factor = input.required<CombinationFactor>();
-  readonly active = input(false);
+  /** Das Zeichen der Ebenengruppe vor dem Namen. */
+  readonly icon = input<IconName>();
+  /** Der barrierefreie Name des Knopfs, der den Faktor entfernt. */
+  readonly removeLabel = input.required<string>();
 
-  readonly activeChange = output<boolean>();
   readonly conditionClick = output();
-
-  protected readonly fieldId = `app-factor-row-${nextNumber++}`;
+  readonly remove = output();
 }

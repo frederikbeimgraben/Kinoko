@@ -14,6 +14,21 @@
   inset: 0;
 }
 
+// Der Hinweis auf die Quelle der Grundkarte steht unten links auf der Karte.
+// Das Blatt deckt diesen Rand; `--pilz-sheet-inset` hebt ihn darüber.
+.map__source {
+  position: absolute;
+  inset-block-end: calc(var(--pilz-sheet-inset, 0px) + 8px);
+  inset-inline-start: 8px;
+  z-index: 1;
+  padding: 2px 6px;
+  font-size: var(--fs-source);
+  line-height: normal;
+  color: var(--color-text-muted);
+  background: rgb(255 255 255 / 75%);
+  border-radius: var(--radius-sm);
+}
+
 // Der Wirt des Blatts spannt über die ganze Karte: die Raste ist ein Anteil
 // dieser Höhe, und die oberste Raste deckt die schwebenden Knöpfe zu.
 .map__sheet {
@@ -48,6 +63,10 @@
 :host-context(.shell--column) {
   .map__canvas {
     inset-inline-start: calc(var(--size-rail) + var(--size-column));
+  }
+
+  .map__source {
+    inset-inline-start: calc(var(--size-rail) + var(--size-column) + 8px);
   }
 }
 

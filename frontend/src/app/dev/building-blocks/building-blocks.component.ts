@@ -215,7 +215,6 @@ export class BuildingBlocksComponent {
   protected readonly viewMode = signal('ebene');
   protected readonly chip = signal<readonly string[]>(['steinpilz']);
   protected readonly checked = signal(true);
-  protected readonly factorActive = signal(true);
   protected readonly from = signal(84);
   protected readonly to = signal(240);
   protected readonly farbe = signal<string>(OBJECT_COLOURS[0]);

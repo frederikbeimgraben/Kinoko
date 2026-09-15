@@ -5,53 +5,55 @@ import { noViolations } from '../../testing/axe';
 import { FactorRowComponent } from './factor-row.component';
 
 describe('FactorRowComponent', () => {
-  it('zeigt Name, Bereich und Bedingung', async () => {
+  it('zeigt Zeichen, Name, Bereich und Bedingung', async () => {
     const { container, fixture } = await render(FactorRowComponent, {
       inputs: {
         factor: { name: 'Niederschlag', range: 'Summe KW 37 bis 40', condition: '≥ 80 mm' },
-        active: true,
+        icon: 'cloud',
+        removeLabel: 'Faktor entfernen',
       },
     });
-    // ngModel schreibt den Wert erst in einer Mikroaufgabe in das Feld.
     await fixture.whenStable();
 
-    expect(screen.getByRole('checkbox', { name: /Niederschlag/ })).toBeChecked();
+    expect(screen.getByText('Niederschlag')).toBeInTheDocument();
+    expect(screen.getByText('Summe KW 37 bis 40')).toBeInTheDocument();
+    expect(container.querySelector('.factor__icon')).not.toBeNull();
     const condition = screen.getByRole('button', { name: '≥ 80 mm' });
-    expect(condition).toBeInTheDocument();
     expect(condition).toHaveClass('tap');
     expect(condition).toHaveAttribute('data-press', 'scale');
+    expect(screen.queryByRole('checkbox')).toBeNull();
     await noViolations(container);
   });
 
   it('lässt den Bereich weg, wo der Faktor keinen hat', async () => {
     const { fixture } = await render(FactorRowComponent, {
-      inputs: { factor: { name: 'Bodenfeuchte', condition: '≥ 40 %' } },
+      inputs: { factor: { name: 'Bodenfeuchte', condition: '≥ 40 %' }, removeLabel: 'Entfernen' },
     });
     await fixture.whenStable();
 
     expect(screen.queryByText('Bodenfeuchte')?.nextElementSibling).toBeNull();
   });
 
-  it('meldet das Abwählen und den Griff zur Bedingung', async () => {
+  it('meldet das Entfernen und den Griff zur Bedingung', async () => {
     const { fixture } = await render(FactorRowComponent, {
-      inputs: { factor: { name: 'Boden pH', condition: '≤ 5,5' }, active: true },
+      inputs: { factor: { name: 'Boden pH', condition: '≤ 5,5' }, removeLabel: 'Faktor entfernen' },
     });
     await fixture.whenStable();
-    const toggled: boolean[] = [];
+    let removed = 0;
     let condition = 0;
-    fixture.componentInstance.activeChange.subscribe((value) => toggled.push(value));
+    fixture.componentInstance.remove.subscribe(() => (removed += 1));
     fixture.componentInstance.conditionClick.subscribe(() => (condition += 1));
 
-    await userEvent.click(screen.getByRole('checkbox', { name: /Boden pH/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Faktor entfernen' }));
     await userEvent.click(screen.getByRole('button', { name: '≤ 5,5' }));
 
-    expect(toggled).toEqual([false]);
+    expect(removed).toBe(1);
     expect(condition).toBe(1);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container, fixture } = await render(FactorRowComponent, {
-      inputs: { factor: { name: 'Factor', range: 'Range', condition: '1' } },
+      inputs: { factor: { name: 'Factor', range: 'Range', condition: '1' }, removeLabel: 'Remove' },
       providers: [EMPTY_CATALOG],
     });
     await fixture.whenStable();

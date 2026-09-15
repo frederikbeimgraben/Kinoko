@@ -2,6 +2,7 @@
   @if (layer(); as source) {
     <app-sheet-head
       [title]="source.label"
+      [icon]="glyph()"
       [note]="source.note"
       [arrows]="false"
       [back]="true"

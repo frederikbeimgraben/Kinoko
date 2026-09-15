@@ -12,7 +12,10 @@ const RULE_KEY: Record<Rule, TranslationKey> = {
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { RampComponent } from '../../ui/ramp/ramp.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
+import type { IconName } from '../../ui/svg-icon/svg-icon.component';
+import { layerIcon } from '../../core/tiles/layer-groups';
 import { CombinationComponent } from './combination.component';
+import { layerTitle } from './layer-name';
 import { MapView } from './map.view';
 import { VIEW_MODES } from './map.state';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
@@ -46,6 +49,16 @@ export class MapPanelComponent {
   protected readonly views = computed<SegmentOption[]>(() =>
     VIEW_MODES.map((value) => ({ value, label: this.i18n.translate(`map.tab.${value}`) })),
   );
+
+  protected readonly layerName = computed(() => {
+    const layer = this.view.layer();
+    return layer === null ? '' : layerTitle(layer, this.i18n);
+  });
+
+  protected readonly layerGlyph = computed<IconName | undefined>(() => {
+    const layer = this.view.layer();
+    return layer === null ? undefined : (layerIcon(layer.id) ?? undefined);
+  });
 
   protected readonly rules = computed<SegmentOption[]>(() =>
     (['intersection', 'graded'] as const).map((value) => ({

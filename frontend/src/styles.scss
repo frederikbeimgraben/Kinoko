@@ -19,47 +19,9 @@ body {
   overscroll-behavior: none;
 }
 
-// Der Urheberhinweis von MapLibre steht am unteren Rand der Karte, weg von der
-// Knopfgruppe oben rechts und weg von „Eintragen“ unten rechts. Am Telefon
-// deckt das Blatt diesen Rand; `--pilz-sheet-inset` hebt den Hinweis über
-// dessen jeweilige Raste. Am Rechner steht das Blatt in der linken Spalte und
-// lässt den Rand frei. Das Stilblatt von MapLibre kommt nach diesem, darum
-// zwei Klassen.
-.maplibregl-control-container .maplibregl-ctrl-bottom-left {
-  inset-block-end: var(--pilz-sheet-inset, var(--pilz-sheet-head));
-}
-
-.maplibregl-control-container .maplibregl-ctrl-bottom-left .maplibregl-ctrl {
-  margin: 0 0 9px 9px;
-}
-
 // MapLibre setzt eine eigene Schrift und eine feste Zeilenhöhe.
 .maplibregl-map {
   font-family: inherit;
-}
-
-// Der Hinweis liegt auf der Karte, nicht auf einer Fläche der App: seine
-// Farben kommen vom hellen Grund darunter.
-.maplibregl-ctrl-attrib {
-  max-inline-size: min(72vw, 340px);
-  padding: 2px 6px;
-  font-size: var(--fs-source);
-  line-height: var(--lh-normal);
-  color: var(--color-text-muted);
-  background: rgb(255 255 255 / 75%);
-  border-radius: var(--radius-sm);
-}
-
-.maplibregl-ctrl-attrib a {
-  color: var(--color-text-muted);
-}
-
-.maplibregl-ctrl-attrib-button {
-  background-color: var(--color-surface-sunken);
-}
-
-.maplibregl-ctrl-attrib-inner {
-  white-space: normal;
 }
 
 // Die Boards kennen keinen Ausgleich der Zeilenlängen: eine Überschrift

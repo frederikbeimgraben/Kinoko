@@ -10,14 +10,15 @@ import {
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { layerIcon } from '../../core/tiles/layer-groups';
 import { formatValue, type Histogram, type Layer } from '../../core/tiles/layers';
 import type { Condition } from '../../core/api/models';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { HistogramComponent } from '../../ui/histogram/histogram.component';
-import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
 import { type Handles, RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
+import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import { conditionText, span, type Factor } from './factors';
 
 /** Wie fein der Griff läuft: fein genug zum Zielen, grob genug zum Ablesen. */
@@ -44,7 +45,6 @@ const CONDITION_KEY: Record<Condition, TranslationKey> = {
   imports: [
     ActionBarComponent,
     HistogramComponent,
-    KeyValueRowComponent,
     RangeSliderComponent,
     SegmentedComponent,
     SheetHeadComponent,
@@ -78,6 +78,7 @@ export class FactorSheetComponent {
     })),
   );
 
+  protected readonly glyph = computed<IconName | undefined>(() => layerIcon(this.layer().id) ?? undefined);
   protected readonly handles = computed<Handles>(() => HANDLES[this.draft().condition]);
   protected readonly step = computed(() => stepSize(this.layer()));
   protected readonly values = computed(() => span(this.draft(), this.layer()));

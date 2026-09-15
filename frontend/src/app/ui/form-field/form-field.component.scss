@@ -7,7 +7,7 @@
   margin-block-end: var(--space-2);
   font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
-  line-height: 16px;
+  line-height: 15px;
 }
 
 .field__label--section {
@@ -38,7 +38,15 @@
 }
 
 .field--button {
+  gap: 10px;
   cursor: pointer;
+}
+
+// Das Zeichen sitzt auf der Mittellinie, nicht auf dem Polster des Textes.
+.field__lead {
+  flex: none;
+  margin-block-start: -2px;
+  color: var(--color-text-muted);
 }
 
 .field--empty {

@@ -35,16 +35,10 @@ class MapDouble {
     this.styles.push(style);
   }
 
-  controls: { control: unknown; location: string }[] = [];
-
   once(kind: string, handler: () => void): void {
     this.onceHandlers.set(kind, handler);
     // Die echte Karte meldet `style.load`, sobald der Stil steht.
     if (kind === 'style.load' && !this.styles.length) handler();
-  }
-
-  addControl(control: unknown, location: string): void {
-    this.controls.push({ control, location });
   }
 
   /** Die zweite Form meldet auf eine Schicht an und gibt ein Abo zurück. */
@@ -153,11 +147,6 @@ class MapDouble {
   }
 }
 
-/** Der Urheberhinweis; der Adapter fragt ihn nichts, er setzt ihn nur. */
-class AttributionDouble {
-  constructor(readonly options: unknown) {}
-}
-
 /** Eine Sammlung mit genau einem Punkt, so wie die Karte sie bekommt. */
 function collection(id: string): FeatureCollection {
   return {
@@ -184,7 +173,6 @@ const OPTIONEN: MapOptions = {
     [16, 56],
   ],
   protocol: { name: 'wert', resolve: () => Promise.resolve({ data: new ArrayBuffer(0) }) },
-  attribution: '© OpenStreetMap',
 };
 
 function module(): {
@@ -203,7 +191,6 @@ function module(): {
     module: {
       setWorkerUrl: (path: string) => worker.push(path),
       Map: MapDouble as unknown as MaplibreModule['Map'],
-      AttributionControl: AttributionDouble as unknown as MaplibreModule['AttributionControl'],
       addProtocol: (name: string) => signedIn.push(name),
       removeProtocol: (name: string) => signedOut.push(name),
     },
@@ -235,7 +222,6 @@ describe('MapLibreAdapter', () => {
     expect(map.options['minZoom']).toBe(5);
     expect(map.options['maxBounds']).toEqual(OPTIONEN.maxBounds);
     expect(map.options['attributionControl']).toBe(false);
-    expect(map.controls[0].location).toBe('bottom-left');
   });
 
   it('haengt das Stylesheet der Karte in den Kopf, bevor die Karte entsteht', async () => {
@@ -560,16 +546,5 @@ describe('MapLibreAdapter', () => {
     a.centerOn([9.1, 48.8], 11);
 
     expect(map.moved.at(-1)).toEqual({ center: [9.1, 48.8], zoom: 11, duration: 600 });
-  });
-
-  it('nennt die Quelle der Grundkarte unten links', async () => {
-    const { map } = await adapter();
-
-    const shown = map.controls.at(-1);
-    expect(shown?.location).toBe('bottom-left');
-    expect((shown?.control as AttributionDouble).options).toEqual({
-      compact: false,
-      customAttribution: '© OpenStreetMap',
-    });
   });
 });

@@ -25,16 +25,6 @@
   padding-block-start: var(--size-gutter);
 }
 
-.overlay-foot {
-  padding: var(--space-3) var(--size-gutter) var(--size-gutter);
-}
-
-// Am Rechner führt die Zeile der Art in den Katalog; ein Knopf steht nicht
-// noch einmal darunter.
-:host-context(.shell--column) .overlay-foot {
-  display: none;
-}
-
 app-species-picker,
 app-layer-list {
   display: flex;
@@ -49,4 +39,9 @@ app-layer-list {
 :host-context(.shell--column) app-species-picker,
 :host-context(.shell--column) app-layer-list {
   gap: var(--space-4);
+}
+
+// Im Modal endet der Rumpf ohne Polster; der Fuß setzt den Abstand.
+:host-context(.shell--column) .overlay-body--roomy {
+  padding-block-end: 0;
 }

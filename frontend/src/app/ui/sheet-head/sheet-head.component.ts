@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 /** Ein Pfeil der Kopfzeile und sein Textschlüssel. */
@@ -23,6 +23,8 @@ const FORWARD: Arrow = { key: 'map.week.next', icon: 'right' };
 })
 export class SheetHeadComponent {
   readonly title = input.required<string>();
+  /** Ein Zeichen vor dem Titel, gedämpft: die Gruppe einer Ebene. */
+  readonly icon = input<IconName>();
   readonly titleLink = input(false);
   readonly week = input<string>();
   /** Ein Zusatz in gedämpfter Schrift, etwa der Zeitraum einer Ebene. */

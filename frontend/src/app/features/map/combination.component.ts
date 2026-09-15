@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { layerIcon, type LayerIcon } from '../../core/tiles/layer-groups';
 import type { Layer } from '../../core/tiles/layers';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
@@ -13,6 +14,7 @@ interface Row {
   name: string;
   subline: string;
   condition: string;
+  icon: LayerIcon | null;
 }
 
 /** Die Darstellung „Kombination“: die Faktoren und die Aktionen darunter. */
@@ -30,8 +32,8 @@ export class CombinationComponent {
   /** Die Quellen der Faktoren, nach Kennung. Was fehlt, wird nicht gezeigt. */
   readonly sources = input.required<ReadonlyMap<string, Layer>>();
 
-  readonly activeChange = output<{ factor: Factor; active: boolean }>();
   readonly openFactor = output<string>();
+  readonly removed = output<Factor>();
   readonly add = output();
   readonly saveRequested = output();
 
@@ -48,6 +50,7 @@ export class CombinationComponent {
           name: layer.label,
           subline: layer.note,
           condition: conditionText(factor, layer, locale, to),
+          icon: layerIcon(layer.id),
         },
       ];
     });

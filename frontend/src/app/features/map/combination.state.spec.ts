@@ -45,15 +45,12 @@ describe('CombinationState', () => {
     expect(combination.saved()).toEqual([]);
   });
 
-  it('legt einen Faktor an, schaltet ihn und entfernt ihn', () => {
+  it('legt einen Faktor an und entfernt ihn', () => {
     const combination = state();
 
     const factor = combination.start('niederschlag', 0, 240);
     expect(factor).toEqual({ source: 'niederschlag', condition: 'above', low: 120, high: 0, active: true });
     expect(combination.active()).toHaveLength(1);
-
-    combination.toggle(factor, false);
-    expect(combination.active()).toHaveLength(0);
 
     combination.remove(factor);
     expect(combination.factors()).toEqual([]);

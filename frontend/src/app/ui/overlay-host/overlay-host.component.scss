@@ -70,6 +70,20 @@
   block-size: auto;
 }
 
+// Das schmale Modal trägt nur seinen Titel: kein Schließen, keine Trennlinie.
+.overlay__panel--compact .overlay__head {
+  padding: 20px 20px 4px;
+  border-block-end: 0;
+}
+
+.overlay__panel--compact .overlay__title {
+  font-size: 18px;
+}
+
+.overlay__panel--compact .overlay__close {
+  display: none;
+}
+
 .overlay__head {
   display: flex;
   flex: none;

@@ -11,7 +11,7 @@ import type { Viewbox } from './tile-grid';
 /** Nur der Teil von MapLibre, den der Adapter braucht. */
 export type MaplibreModule = Pick<
   typeof import('maplibre-gl'),
-  'Map' | 'AttributionControl' | 'addProtocol' | 'removeProtocol' | 'setWorkerUrl'
+  'Map' | 'addProtocol' | 'removeProtocol' | 'setWorkerUrl'
 >;
 
 /** Wo der Worker von MapLibre liegt. */
@@ -53,7 +53,6 @@ export interface Protocol {
 
 export interface MapOptions {
   /** Die Quelle der Grundkarte, unten links auf der Karte. */
-  attribution: string;
   style: string;
   centerPoint: readonly [number, number];
   zoom: number;
@@ -262,16 +261,10 @@ export class MapLibreAdapter implements MapAdapter {
       minZoom: options.minZoom,
       maxZoom: options.maxZoom,
       maxBounds: options.maxBounds as [[number, number], [number, number]],
-      // Den Text liefert der Stil von OpenFreeMap selbst; ein zweiter eigener
-      // stünde doppelt da.
+      // Der Hinweis der Karte steht als eigener Baustein auf der Seite: der
+      // Stil bringt sonst seine eigenen Namen mit und schiebt sie ins Bild.
       attributionControl: false,
     });
-    // Der Hinweis steht unten links, weg von den Knöpfen. `styles.scss` hebt
-    // ihn über den Kopf des Blatts.
-    map.addControl(
-      new module.AttributionControl({ compact: false, customAttribution: options.attribution }),
-      'bottom-left',
-    );
     // `style.load` meldet den fertigen Stil. `load` wartet auf jede Kachel
     // und bleibt über einer langsamen Leitung lange aus.
     await new Promise<void>((done) => {

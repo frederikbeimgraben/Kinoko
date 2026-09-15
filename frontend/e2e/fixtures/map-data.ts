@@ -71,14 +71,14 @@ export const LAYERS_MANIFEST = {
       weeks: ['2025W40'],
       histograms: { '2025W40': share(240) },
     },
-    niederschlag: {
+    regen: {
       label: 'Niederschlag',
       note: 'Summe KW 37 bis 40',
       range: 'KW 37 bis 40',
       unit: 'mm',
       low: 0,
       high: 240,
-      tiles: 'layers_kacheln/niederschlag',
+      tiles: 'layers_kacheln/regen',
       zooms: [5, 8],
       weeks: ['2025W40'],
       histograms: { '2025W40': share(240) },
@@ -257,7 +257,7 @@ export const COMBINATIONS = {
       name: 'Herbst Steinpilz',
       rule: 'intersection',
       factors: [
-        { source: 'niederschlag', condition: 'above', low: 80, high: null, active: true },
+        { source: 'regen', condition: 'above', low: 80, high: null, active: true },
         { source: 'temperatur', condition: 'between', low: 8, high: 16, active: true },
         { source: 'buche', condition: 'above', low: 0.3, high: null, active: true },
         { source: 'hangneigung', condition: 'below', low: null, high: 15, active: true },
@@ -269,7 +269,7 @@ export const COMBINATIONS = {
       name: 'Pfifferling Sommer',
       rule: 'graded',
       factors: [
-        { source: 'niederschlag', condition: 'above', low: 60, high: null, active: true },
+        { source: 'regen', condition: 'above', low: 60, high: null, active: true },
         { source: 'temperatur', condition: 'between', low: 12, high: 22, active: true },
         { source: 'bodenfeuchte', condition: 'above', low: 0.4, high: null, active: true },
       ],

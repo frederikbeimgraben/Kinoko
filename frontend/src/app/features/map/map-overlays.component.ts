@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -42,7 +41,6 @@ export function overlayDetent(open: Overlay): Detent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    ButtonComponent,
     CombinationsComponent,
     FactorPickerComponent,
     FactorSheetComponent,
@@ -68,7 +66,6 @@ export class MapOverlaysComponent {
   /** Der Faktor, den das Blatt `Faktor` gerade bearbeitet. */
   readonly factor = input<Factor | null>(null);
   readonly closed = output();
-  readonly toCatalogue = output();
   readonly factorApplied = output<Factor>();
   readonly factorRemoved = output<Factor>();
   readonly sourceChosen = output<Layer>();

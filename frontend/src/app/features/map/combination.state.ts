@@ -39,10 +39,6 @@ export class CombinationState {
     });
   }
 
-  toggle(factor: Factor, active: boolean): void {
-    this.factors.set(replaceFactor(this.factors(), { ...factor, active }));
-  }
-
   apply(factor: Factor): void {
     this.factors.set(replaceFactor(this.factors(), factor));
   }

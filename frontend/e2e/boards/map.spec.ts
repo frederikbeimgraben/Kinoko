@@ -3,7 +3,6 @@ import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
-  COLUMN_FACTORS,
   COMBINATIONS,
   MARKERS,
   SHARED_FINDS,
@@ -54,8 +53,9 @@ async function openSignedIn(page: Page, factors = ''): Promise<void> {
   await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
 }
 
-/** Ein Board zeigt keinen Fokusring; das Feld gibt den Fokus wieder ab. */
+/** Ein Board zeigt weder Fokusring noch Mauszustand. */
 async function blur(page: Page): Promise<void> {
+  await page.mouse.move(0, 0);
   await page.evaluate(() => {
     const active: Element | null = document.activeElement;
     if (active instanceof HTMLElement) active.blur();
@@ -186,21 +186,21 @@ test('MapDesktopLayers', async ({ page }) => {
 
 test('MapDesktopFactorPicker', async ({ page }) => {
   guard('MapDesktopFactorPicker', 'wide');
-  await openMap(page, { view: 'combination' }, COLUMN_FACTORS);
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
   await board(page, 'MapDesktopFactorPicker', 'map-desktop-stein-900.png');
 });
 
 test('MapDesktopCombinations', async ({ page }) => {
   guard('MapDesktopCombinations', 'wide');
-  await openMap(page, { view: 'combination' }, COLUMN_FACTORS);
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Kombination', exact: true }).click();
   await board(page, 'MapDesktopCombinations', 'map-desktop-stein-900.png');
 });
 
 test('MapDesktopCombinationSave', async ({ page }) => {
   guard('MapDesktopCombinationSave', 'wide');
-  await openMap(page, { view: 'combination' }, COLUMN_FACTORS);
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await askForName(page);
   await expect(page.getByRole('heading', { name: 'Kombination speichern' })).toBeVisible();
   await page.getByRole('textbox').fill('Herbst Steinpilz');
@@ -210,7 +210,7 @@ test('MapDesktopCombinationSave', async ({ page }) => {
 
 test('MapDesktopFactor', async ({ page }) => {
   guard('MapDesktopFactor', 'wide');
-  await openMap(page, { view: 'combination' }, COLUMN_FACTORS);
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: '≥ 80 mm' }).click();
   await board(page, 'MapDesktopFactor', 'map-desktop-stein-900.png');
 });

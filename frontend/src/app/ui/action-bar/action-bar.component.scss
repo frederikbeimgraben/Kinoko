@@ -11,13 +11,18 @@
 .footer--inline {
   flex-direction: row-reverse;
   justify-content: flex-start;
-  padding: 0;
+  padding: var(--space-4) 20px 20px;
   background: none;
   border: 0;
 }
 
 .footer__main {
   min-block-size: 48px;
+}
+
+// Im Modal misst die Aktion vierundvierzig Punkte, wie das Board sie zeigt.
+.footer--inline .footer__main {
+  min-block-size: var(--size-tap);
 }
 
 // Die rote Aktion steht schmaler als die grüne, wie die Boards sie zeigen.
