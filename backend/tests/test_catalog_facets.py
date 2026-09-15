@@ -33,17 +33,18 @@ def make(
     )
 
 
-def test_catalogue_collects_populated_values() -> None:
+def test_catalogue_counts_every_value() -> None:
     a = make(edibility=Edibility.EDIBLE, period=(6, 8))
     b = make(edibility=Edibility.POISONOUS, hymenium=None, period=(11, 2))
     out = SERVICE.catalogue([a, b])
-    assert set(out.edibility) == {Edibility.EDIBLE, Edibility.POISONOUS}
-    assert out.hymenium == [HymeniumType.TUBES]
-    assert out.colours["cap"] == ["brown"]
-    assert 7 in out.months
-    assert 12 in out.months
-    assert 1 in out.months
-    assert 3 not in out.months
+    assert out["edibility"] == {"edible": 1, "poisonous": 1}
+    assert out["hymenium"] == {"tubes": 1}
+    assert out["colour.cap"] == {"brown": 2}
+    assert out["period"]["7"] == 1
+    assert out["period"]["12"] == 1
+    assert out["period"]["1"] == 1
+    assert "3" not in out["period"]
+    assert out["unknown"]["hymenium"] == 1
 
 
 def test_match_empty_selection_matches_everything() -> None:

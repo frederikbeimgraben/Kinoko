@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 
+from app.shared.enums import TermKind
 from app.shared.schema import Schema
 
 
@@ -13,6 +14,7 @@ class TermRef(Schema):
     id: uuid.UUID
     slug: str
     name: str
+    kind: TermKind
 
 
 class ColourValue(Schema):

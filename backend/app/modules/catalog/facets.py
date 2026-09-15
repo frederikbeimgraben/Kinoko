@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import uuid
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from app.modules.catalog import colours
-from app.modules.catalog.schemas import FacetsOut
-from app.shared.enums import BodyPart, CapShape, Dimension, Edibility, HymeniumType
+from app.shared.enums import BodyPart, CapShape, Dimension, Edibility, HymeniumType, Protection
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+#: Der einzige Wert der Achse Vorhersage.
+FORECAST_VALUE = "on"
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,6 +30,12 @@ class SpeciesFacets:
     measurements: dict[tuple[BodyPart, Dimension], tuple[float, float]]
     period: tuple[int, int] | None
     term_ids: frozenset[uuid.UUID]
+    protection: Protection = Protection.NONE
+    forecast_enabled: bool = False
+    genus_name: str = ""
+    family_name: str | None = None
+    senses: frozenset[str] = frozenset()
+    trees: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,27 +78,38 @@ def month_in_period(period: tuple[int, int] | None, month: int) -> bool:
 class FacetService:
     """Rechnet Filterachsen und prüft eine Art gegen eine Wahl."""
 
-    def catalogue(self, species: Sequence[SpeciesFacets]) -> FacetsOut:
-        """Baut die belegten Werte je Achse aus dem ganzen Bestand."""
-        colour_axes: dict[BodyPart, set[str]] = {}
+    def catalogue(self, species: Sequence[SpeciesFacets]) -> dict[str, dict[str, int]]:
+        """Zählt je Achse, wie viele Arten einen Wert tragen."""
+        axes: dict[str, Counter[str]] = defaultdict(Counter)
+        unknown: Counter[str] = Counter()
         for entry in species:
+            for axis, values in self._values_of(entry).items():
+                if values:
+                    axes[axis].update(values)
+                elif axis != "forecast":
+                    unknown[axis] += 1
             for part, keys in entry.colours.items():
-                colour_axes.setdefault(part, set()).update(keys)
-        months: set[int] = set()
-        for entry in species:
-            if entry.period is not None:
-                months.update(m for m in range(1, 13) if month_in_period(entry.period, m))
-        terms: set[uuid.UUID] = set()
-        for entry in species:
-            terms.update(entry.term_ids)
-        return FacetsOut(
-            edibility=sorted({entry.edibility for entry in species}),
-            hymenium=sorted({entry.hymenium for entry in species if entry.hymenium is not None}),
-            cap_shape=sorted({shape for entry in species for shape in entry.cap_shapes}),
-            colours={str(part): sorted(keys) for part, keys in colour_axes.items()},
-            months=sorted(months),
-            terms=sorted(terms),
-        )
+                axes[f"colour.{part}"].update(keys)
+        if unknown:
+            axes["unknown"] = unknown
+        return {axis: dict(counts) for axis, counts in axes.items()}
+
+    def _values_of(self, entry: SpeciesFacets) -> dict[str, list[str]]:
+        """Die Werte einer Art je Achse, in der Form des Bündels."""
+        months = [
+            str(month) for month in range(1, 13) if month_in_period(entry.period, month)
+        ]
+        return {
+            "edibility": [str(entry.edibility)],
+            "hymenium": [str(entry.hymenium)] if entry.hymenium is not None else [],
+            "capShape": sorted(str(shape) for shape in entry.cap_shapes),
+            "protection": [str(entry.protection)],
+            "forecast": [FORECAST_VALUE] if entry.forecast_enabled else [],
+            "period": months,
+            "senses": sorted(entry.senses),
+            "treePartner": sorted(entry.trees),
+            "genusFamily": [name for name in (entry.genus_name, entry.family_name) if name],
+        }
 
     def match(self, species: SpeciesFacets, selection: Selection) -> bool:
         """Prüft, ob eine Art zu einer Filterwahl passt."""

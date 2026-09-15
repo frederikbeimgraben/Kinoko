@@ -45,6 +45,8 @@ class SpeciesSummary(Schema):
     name: str
     scientific_name: str
     taxon_id: uuid.UUID | None = None
+    genus_name: str
+    family_name: str | None = None
     group: Group
     edibility: Edibility
     protection: Protection
@@ -142,27 +144,15 @@ class SpeciesPage(Schema):
     next_cursor: str | None = None
 
 
-class FacetsOut(Schema):
-    """Die Achsen des Filters mit ihren belegten Werten."""
-
-    edibility: list[Edibility] = Field(default_factory=list)
-    hymenium: list[HymeniumType] = Field(default_factory=list)
-    cap_shape: list[CapShape] = Field(default_factory=list)
-    colours: dict[str, list[str]] = Field(default_factory=dict)
-    months: list[int] = Field(default_factory=list)
-    terms: list[uuid.UUID] = Field(default_factory=list)
-
-
 class SpeciesBundle(Schema):
     """Der ganze Katalog in einem Zug."""
 
     items: list[Species]
     standard_colours: list[StandardColourEntry]
-    facets: FacetsOut
+    facets: dict[str, dict[str, int]]
 
 
 __all__ = [
-    "FacetsOut",
     "Species",
     "SpeciesBundle",
     "SpeciesCounts",
