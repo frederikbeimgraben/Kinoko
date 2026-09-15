@@ -49,7 +49,7 @@ async function scrollToSection(page: Page, heading: string): Promise<void> {
     );
     if (view === null || !node) return;
     const top = node.getBoundingClientRect().top - view.getBoundingClientRect().top + view.scrollTop;
-    view.scrollTop = Math.max(top - 28, 0);
+    view.scrollTop = Math.max(top - 29, 0);
   }, heading);
 }
 
