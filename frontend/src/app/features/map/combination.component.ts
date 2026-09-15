@@ -3,6 +3,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { Layer } from '../../core/tiles/layers';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { FactorRowComponent } from '../../ui/factor-row/factor-row.component';
 import { conditionText, type Factor } from './factors';
 
@@ -18,7 +19,7 @@ interface Row {
 @Component({
   selector: 'app-combination',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, FactorRowComponent, TranslatePipe],
+  imports: [ActionBarComponent, AddRowComponent, FactorRowComponent, TranslatePipe],
   templateUrl: './combination.component.html',
   styleUrl: './combination.component.scss',
 })

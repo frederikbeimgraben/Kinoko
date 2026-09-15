@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
-const PORT = 4400;
+// Mehrere Zweige messen zur selben Zeit; der Anschluss lässt sich setzen.
+const PORT = Number(process.env['E2E_PORT'] ?? 4400);
 const ADDRESS = `http://127.0.0.1:${PORT}`;
 const CI = Boolean(process.env['CI']);
 const BROWSER_PATH = process.env['BROWSER_PATH'];

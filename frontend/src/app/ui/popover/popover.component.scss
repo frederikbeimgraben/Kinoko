@@ -4,11 +4,12 @@
   display: contents;
 }
 
+// Die Fläche fängt nur den Druck daneben; die Karte darunter bleibt hell.
 .popover__scrim {
   @include modal-layer.scrim;
 
   position: absolute;
-  background: rgb(0 18 10 / 25%);
+  background: none;
 }
 
 .popover__card {

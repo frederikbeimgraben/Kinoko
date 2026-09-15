@@ -7,7 +7,7 @@ export interface PopoverAnchor {
   readonly end: number;
 }
 
-/** Eine Karte unter einem Knopf, über einem Scrim. Ein Slot trägt den Inhalt. */
+/** Eine Karte unter einem Knopf. Ein Druck daneben oder Escape schließt sie. */
 @Component({
   selector: 'app-popover',
   changeDetection: ChangeDetectionStrategy.OnPush,

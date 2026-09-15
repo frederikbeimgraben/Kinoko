@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ButtonComponent } from '@stupa-makers/ui-kit';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import type { TranslationKey } from '../../core/i18n/translations';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { histogramFor, type Layer } from '../../core/tiles/layers';
 import type { Combination } from '../../core/api/models';
 import { LayerListComponent } from './layer-list.component';
@@ -19,6 +23,14 @@ import type { Factor } from './factors';
 /** Welches Blatt gerade über der Karte liegt. */
 export type Overlay = 'species' | 'layer' | 'factors' | 'factor' | 'combinations' | 'save' | null;
 
+/** Der Kopf des Modals am Rechner nennt, worum es geht. */
+const TITLE: Partial<Record<NonNullable<Overlay>, TranslationKey>> = {
+  species: 'map.species.choose',
+  layer: 'map.tab.layer',
+  factors: 'map.factor.choose',
+  combinations: 'map.combination.list',
+};
+
 /** Ein Name braucht wenig Platz, jedes andere Blatt die ganze Höhe. */
 export function overlayDetent(open: Overlay): Detent {
   return open === 'save' ? 1 : 2;
@@ -36,6 +48,7 @@ export function overlayDetent(open: Overlay): Detent {
     FactorSheetComponent,
     FormFieldComponent,
     LayerListComponent,
+    NgTemplateOutlet,
     OverlayHostComponent,
     SheetComponent,
     SpeciesPickerComponent,
@@ -45,6 +58,8 @@ export function overlayDetent(open: Overlay): Detent {
   styleUrl: './map-overlays.component.scss',
 })
 export class MapOverlaysComponent {
+  private readonly i18n = inject(I18nService);
+  protected readonly wide = inject(ViewportService).wide;
   protected readonly view = inject(MapView);
   protected readonly state = this.view.state;
   protected readonly combination = this.view.combination;
@@ -64,6 +79,17 @@ export class MapOverlaysComponent {
 
   /** Der Name einer Kombination braucht wenig Platz, der Rest die ganze Höhe. */
   protected readonly detent = computed(() => overlayDetent(this.open()));
+
+  /** Am Rechner steht der Faktor in der Spalte, nicht im Modal. */
+  protected readonly shown = computed(
+    () => this.open() !== null && !(this.wide() && this.open() === 'factor'),
+  );
+
+  protected readonly title = computed(() => {
+    const open = this.open();
+    const key = open === null ? undefined : TITLE[open];
+    return key === undefined ? '' : this.i18n.translate(key);
+  });
 
   protected readonly name = signal('');
 

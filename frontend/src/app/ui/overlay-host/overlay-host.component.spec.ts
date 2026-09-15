@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { OverlayHostComponent } from './overlay-host.component';
+
+/** Der Rechner: die Hülle meldet die breite Ansicht. */
+const WIDE = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 @Component({
   imports: [OverlayHostComponent],
@@ -65,6 +69,39 @@ describe('OverlayHostComponent', () => {
 
     expect(scrim).toHaveClass('tap');
     expect(scrim).toHaveAttribute('data-press', 'tint');
+  });
+
+  it('trägt am Rechner einen Kopf mit Titel und Schließen', async () => {
+    const { container } = await render(OverlayHostComponent, {
+      inputs: { open: true, title: 'Art wählen' },
+      providers: [WIDE],
+    });
+
+    expect(screen.getByRole('heading', { name: 'Art wählen' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Schließen' })).toHaveLength(2);
+    await noViolations(container);
+  });
+
+  it('schließt am Rechner über den Knopf im Kopf', async () => {
+    const { fixture } = await render(OverlayHostComponent, {
+      inputs: { open: true, title: 'Art wählen' },
+      providers: [WIDE],
+    });
+    let calls = 0;
+    fixture.componentInstance.closed.subscribe(() => (calls += 1));
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Schließen' })[1]);
+
+    expect(calls).toBe(1);
+  });
+
+  it('lässt den Kopf ohne Titel weg', async () => {
+    const { container } = await render(OverlayHostComponent, {
+      inputs: { open: true },
+      providers: [WIDE],
+    });
+
+    expect(container.querySelector('.overlay__head')).toBeNull();
   });
 
   it('renders without German text against an empty catalogue', async () => {

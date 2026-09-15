@@ -1,0 +1,10 @@
+<button
+  class="add-row tap"
+  type="button"
+  data-press="scale"
+  [attr.aria-label]="action()"
+  (click)="pressed.emit()"
+>
+  <app-svg-icon name="plus" [size]="18" />
+  <span>{{ label() }}</span>
+</button>

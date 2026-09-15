@@ -33,4 +33,14 @@
     background: none;
     border: 0;
   }
+
+  // Am Rechner trägt der Kopf des Modals Titel und Schließen.
+  :host-context(.shell--column) .overlay-body__head,
+  :host-context(.shell--column) .overlay-body__title:not(.overlay-body__title--own) {
+    display: none;
+  }
+
+  :host-context(.shell--column) .overlay-body {
+    padding: var(--size-gutter) 20px 20px;
+  }
 }

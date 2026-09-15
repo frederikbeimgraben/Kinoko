@@ -1,74 +1,85 @@
-<app-overlay-host [open]="open() !== null" (closed)="closed.emit()">
-  <app-sheet [label]="'nav.tab.map' | t" [detent]="detent()" [detents]="detents" [modal]="true">
-    @switch (open()) {
-      @case ('species') {
-        <div class="overlay-body">
-          <h2 class="overlay-body__title">{{ 'map.species.choose' | t }}</h2>
-          <app-species-picker
-            [species]="view.speciesChoices()"
-            [selected]="state.species()"
-            [label]="'map.species.choose' | t"
-            (chosen)="chooseSpecies($event)"
-          />
-        </div>
-        <div class="overlay-foot">
-          <app-button variant="secondary" [block]="true" (click)="toCatalogue.emit()">{{
-            'map.species.toCatalog' | t
-          }}</app-button>
-        </div>
-      }
-      @case ('layer') {
-        <div class="overlay-body">
-          <h2 class="overlay-body__title">{{ 'map.tab.layer' | t }}</h2>
-          <app-layer-list
-            [layers]="view.layers()"
-            [selected]="state.layer()"
-            [label]="'map.tab.layer' | t"
-            (chosen)="chooseLayer($event)"
-          />
-        </div>
-      }
-      @case ('factors') {
-        <app-factor-picker
-          [layers]="view.layers()"
-          [species]="speciesLayers()"
-          [assigned]="usedSources()"
-          (chosen)="sourceChosen.emit($event)"
-          (closed)="closed.emit()"
+<ng-template #body>
+  @switch (open()) {
+    @case ('species') {
+      <div class="overlay-body">
+        <h2 class="overlay-body__title">{{ 'map.species.choose' | t }}</h2>
+        <app-species-picker
+          [species]="view.speciesChoices()"
+          [selected]="state.species()"
+          [label]="'map.species.choose' | t"
+          (chosen)="chooseSpecies($event)"
         />
-      }
-      @case ('factor') {
-        @if (factor(); as chosen) {
-          @if (factorLayer(); as layer) {
-            <app-factor-sheet
-              [factor]="chosen"
-              [layer]="layer"
-              [histogram]="histogram()"
-              (apply)="factorApplied.emit($event)"
-              (removed)="factorRemoved.emit($event)"
-            />
-          }
+      </div>
+      <div class="overlay-foot">
+        <app-button variant="secondary" [block]="true" (click)="toCatalogue.emit()">{{
+          'map.species.toCatalog' | t
+        }}</app-button>
+      </div>
+    }
+    @case ('layer') {
+      <div class="overlay-body">
+        <h2 class="overlay-body__title">{{ 'map.tab.layer' | t }}</h2>
+        <app-layer-list
+          [layers]="view.layers()"
+          [selected]="state.layer()"
+          [label]="'map.tab.layer' | t"
+          (chosen)="chooseLayer($event)"
+        />
+      </div>
+    }
+    @case ('factors') {
+      <app-factor-picker
+        [layers]="view.layers()"
+        [species]="speciesLayers()"
+        [assigned]="usedSources()"
+        (chosen)="sourceChosen.emit($event)"
+        (closed)="closed.emit()"
+      />
+    }
+    @case ('factor') {
+      @if (factor(); as chosen) {
+        @if (factorLayer(); as layer) {
+          <app-factor-sheet
+            [factor]="chosen"
+            [layer]="layer"
+            [histogram]="histogram()"
+            (apply)="factorApplied.emit($event)"
+            (removed)="factorRemoved.emit($event)"
+          />
         }
       }
-      @case ('save') {
-        <div class="overlay-body">
-          <h2 class="overlay-body__title">{{ 'map.combination.save' | t }}</h2>
-          <app-form-field [label]="'common.name' | t" [value]="name()" (valueChange)="name.set($event)" />
-        </div>
-        <app-action-bar
-          [primary]="'common.save' | t"
-          [secondary]="'common.cancel' | t"
-          (primaryClick)="confirmName()"
-          (secondaryClick)="cancelName()"
-        />
-      }
-      @case ('combinations') {
-        <app-combinations
-          [saved]="combination.saved()"
-          (picked)="pick($event)"
-          (removed)="combination.delete($event)"
-        />
-      }
     }
-  </app-sheet>
+    @case ('save') {
+      <div class="overlay-body">
+        <h2 class="overlay-body__title overlay-body__title--own">
+          {{ 'map.combination.save' | t }}
+        </h2>
+        <app-form-field [label]="'common.name' | t" [value]="name()" (valueChange)="name.set($event)" />
+      </div>
+      <app-action-bar
+        [primary]="'common.save' | t"
+        [secondary]="'common.cancel' | t"
+        [inline]="wide()"
+        (primaryClick)="confirmName()"
+        (secondaryClick)="cancelName()"
+      />
+    }
+    @case ('combinations') {
+      <app-combinations
+        [saved]="combination.saved()"
+        (picked)="pick($event)"
+        (removed)="combination.delete($event)"
+      />
+    }
+  }
+</ng-template>
+
+<app-overlay-host [open]="shown()" [title]="title()" [compact]="open() === 'save'" (closed)="closed.emit()">
+  @if (wide()) {
+    <ng-container [ngTemplateOutlet]="body" />
+  } @else {
+    <app-sheet [label]="'nav.tab.map' | t" [detent]="detent()" [detents]="detents" [modal]="true">
+      <ng-container [ngTemplateOutlet]="body" />
+    </app-sheet>
+  }
 </app-overlay-host>

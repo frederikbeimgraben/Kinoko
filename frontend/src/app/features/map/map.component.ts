@@ -34,9 +34,10 @@ import { MapObjectsDirective } from '../objects/map-objects.directive';
 import { ObjectSheetComponent } from '../objects/object-sheet.component';
 import { CombinationState } from './combination.state';
 import { LayersSheetComponent } from './layers-sheet.component';
+import { MapColumnComponent } from './map-column.component';
 import { MapHeadComponent } from './map-head.component';
-import { MapOverlaysComponent, overlayDetent, type Overlay } from './map-overlays.component';
 import { MapPanelComponent } from './map-panel.component';
+import { MapOverlaysComponent, overlayDetent, type Overlay } from './map-overlays.component';
 import { MapPlayback } from './map-playback';
 import { DETENTS, DETENT_SIZES, MapSurface } from './map-surface';
 import { MapState } from './map.state';
@@ -52,10 +53,11 @@ import type { Factor } from './factors';
     BannerComponent,
     FloatingButtonComponent,
     LayersSheetComponent,
+    MapColumnComponent,
     MapHeadComponent,
+    MapPanelComponent,
     MapObjectsDirective,
     MapOverlaysComponent,
-    MapPanelComponent,
     ObjectMenuComponent,
     ObjectSheetComponent,
     SheetComponent,
@@ -95,14 +97,12 @@ export class MapComponent implements OnDestroy {
   protected readonly offline = computed(() => !this.sync.online());
 
   /** Ein Eintrag braucht eine Karte ohne Blatt darüber. */
-  protected readonly covered = computed(() => this.overlay() !== null);
+  protected readonly covered = computed(() => !this.wide() && this.overlay() !== null);
 
-  /** Ein Blatt in voller Höhe lässt nur noch den Ebenen-Knopf stehen. */
-  protected readonly tall = computed(() => this.overlay() !== null && overlayDetent(this.overlay()) === 2);
-
+  /** Ein Blatt in voller Höhe lässt nur den Ebenen-Knopf stehen. */
+  protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
   /** Über der Karte liegt immer nur ein Blatt. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
-
   /** Die Rasten, mit denen das Blatt der Karte zeichnet. */
   protected readonly detents = DETENT_SIZES;
 

@@ -57,6 +57,8 @@ export class FactorSheetComponent {
   private readonly i18n = inject(I18nService);
 
   readonly factor = input.required<Factor>();
+  /** In der Spalte trägt die Seite den Kopf; das Blatt lässt ihn dann weg. */
+  readonly withHead = input(true);
   readonly layer = input.required<Layer>();
   readonly histogram = input<Histogram | null>(null);
 

@@ -14,7 +14,7 @@ import {
 } from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
-const BASE = 'http://127.0.0.1:4400';
+const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'wide'): void {
@@ -51,6 +51,14 @@ async function board(page: Page, stem: string, image = 'map-stein-470.png'): Pro
 async function openSignedIn(page: Page, factors = ''): Promise<void> {
   await openMap(page, { view: 'combination', detent: 2 }, factors);
   await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
+}
+
+/** Ein Board zeigt keinen Fokusring; das Feld gibt den Fokus wieder ab. */
+async function blur(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const active: Element | null = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+  });
 }
 
 /** Speichern führt ohne Konto zuerst durch die Anmeldung. */
@@ -121,6 +129,7 @@ test('CombinationSave', async ({ page }) => {
   await askForName(page);
   await expect(page.getByRole('heading', { name: 'Kombination speichern' })).toBeVisible();
   await page.getByRole('textbox').fill('Herbst Steinpilz');
+  await blur(page);
   await board(page, 'CombinationSave', 'map-schnitt-470.png');
 });
 
@@ -158,4 +167,49 @@ test('MapDesktop', async ({ page }) => {
   guard('MapDesktop', 'wide');
   await openMap(page);
   await board(page, 'MapDesktop', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopSpeciesModal', async ({ page }) => {
+  guard('MapDesktopSpeciesModal', 'wide');
+  await openMap(page);
+  await page.getByRole('button', { name: 'Steinpilz' }).click();
+  await board(page, 'MapDesktopSpeciesModal', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopLayers', async ({ page }) => {
+  guard('MapDesktopLayers', 'wide');
+  await openMap(page);
+  await page.getByRole('button', { name: 'Ebenen' }).click();
+  await board(page, 'MapDesktopLayers', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopFactorPicker', async ({ page }) => {
+  guard('MapDesktopFactorPicker', 'wide');
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
+  await board(page, 'MapDesktopFactorPicker', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopCombinations', async ({ page }) => {
+  guard('MapDesktopCombinations', 'wide');
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await page.getByRole('button', { name: 'Kombination', exact: true }).click();
+  await board(page, 'MapDesktopCombinations', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopCombinationSave', async ({ page }) => {
+  guard('MapDesktopCombinationSave', 'wide');
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await askForName(page);
+  await expect(page.getByRole('heading', { name: 'Kombination speichern' })).toBeVisible();
+  await page.getByRole('textbox').fill('Herbst Steinpilz');
+  await blur(page);
+  await board(page, 'MapDesktopCombinationSave', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopFactor', async ({ page }) => {
+  guard('MapDesktopFactor', 'wide');
+  await openMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await page.getByRole('button', { name: '≥ 80 mm' }).click();
+  await board(page, 'MapDesktopFactor', 'map-desktop-stein-900.png');
 });

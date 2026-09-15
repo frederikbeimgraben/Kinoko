@@ -1,8 +1,8 @@
-<div class="footer">
+<div class="footer" [class.footer--inline]="inline()">
   <app-button
     class="footer__main"
     [variant]="danger() ? 'danger' : 'primary'"
-    [block]="true"
+    [block]="!inline()"
     (click)="primaryClick.emit()"
   >
     {{ primary() }}
@@ -11,7 +11,7 @@
     <app-button
       class="footer__main"
       [variant]="secondaryDanger() ? 'danger-outline' : 'secondary'"
-      [block]="true"
+      [block]="!inline()"
       (click)="secondaryClick.emit()"
     >
       {{ label }}

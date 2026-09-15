@@ -1,4 +1,6 @@
-<app-sheet-head [title]="layer().label" [week]="layer().note" [arrows]="false" />
+@if (withHead()) {
+  <app-sheet-head [title]="layer().label" [week]="layer().note" [arrows]="false" />
+}
 <div class="factor">
   <app-segmented
     [options]="conditions()"

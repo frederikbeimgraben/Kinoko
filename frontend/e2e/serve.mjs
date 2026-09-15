@@ -50,5 +50,9 @@ createServer((request, reply) => {
     'content-type': TYPES[extname(target)] ?? 'application/octet-stream',
     'cache-control': 'no-store',
   });
-  createReadStream(target).pipe(reply);
+  const stream = createReadStream(target);
+  // Ein Abbruch des Browsers darf den Server nicht beenden.
+  stream.on('error', () => reply.destroy());
+  reply.on('close', () => stream.destroy());
+  stream.pipe(reply);
 }).listen(PORT, '127.0.0.1', () => console.log(`Build auf http://127.0.0.1:${PORT}`));

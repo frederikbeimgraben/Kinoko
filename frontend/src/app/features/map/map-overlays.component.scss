@@ -10,6 +10,12 @@
   padding: var(--space-3) var(--size-gutter) var(--size-gutter);
 }
 
+// Am Rechner führt die Zeile der Art in den Katalog; ein Knopf steht nicht
+// noch einmal darunter.
+:host-context(.shell--column) .overlay-foot {
+  display: none;
+}
+
 app-species-picker,
 app-layer-list {
   display: flex;
