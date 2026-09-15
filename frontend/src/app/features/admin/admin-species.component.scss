@@ -1,0 +1,100 @@
+@use '../../../styles/card';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.species {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  min-block-size: 0;
+  padding: var(--size-gutter) var(--size-gutter) 0;
+}
+
+// Der Knopf im Seitenkopf: Maße aus dem Brett.
+.species__filter {
+  display: inline-flex;
+  flex: none;
+  gap: 6px;
+  align-items: center;
+  block-size: 32px;
+  padding-inline: 12px;
+  font: inherit;
+  font-size: var(--fs-control);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  cursor: pointer;
+  background: none;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: 10px;
+}
+
+// Die Spaltenköpfe stehen über den Zahlen der Zeile, nicht über der Karte.
+.species__legend {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-block-end: -8px;
+  padding-inline: 15px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+}
+
+.species__legend span {
+  inline-size: 46px;
+  text-align: end;
+}
+
+.species__legend i {
+  inline-size: 14px;
+}
+
+.species__list {
+  flex: 1;
+  min-block-size: 0;
+  margin-inline: calc(var(--size-gutter) * -1);
+  padding-inline: var(--size-gutter);
+}
+
+app-add-row {
+  margin-block-start: 10px;
+}
+
+.species__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
+
+  margin-block-start: 12px;
+}
+
+.species__counts {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.species__counts span {
+  inline-size: 46px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.species__mark {
+  inline-size: 14px;
+  color: var(--color-border-strong);
+}

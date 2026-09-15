@@ -600,6 +600,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/species-counts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAdminSpeciesCounts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/permissions": {
         parameters: {
             query?: never;
@@ -867,6 +883,13 @@ export interface components {
         Permission: "species.edit" | "image.review" | "image.submit" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage";
         /** @enum {string} */
         Area: "species" | "interface" | "access" | "data";
+        SpeciesCountsEntry: {
+            /** Format: uuid */
+            speciesId: string;
+            records: number;
+            finds: number;
+            photos: number;
+        };
         /** @description Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu. */
         AdminSummary: {
             texts?: number;
@@ -3011,6 +3034,30 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getAdminSpeciesCounts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["SpeciesCountsEntry"][];
+                    };
                 };
             };
             401: components["responses"]["Unauthorized"];

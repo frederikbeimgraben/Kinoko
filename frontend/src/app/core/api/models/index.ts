@@ -40,6 +40,7 @@ export type {
   RoleInput,
   RolePatch,
   RoleRef,
+  SpeciesCountsEntry,
 } from './access';
 export { MARKER_COLOURS, VISIBILITIES } from './entries';
 export { LICENCES, PHOTO_STATES, photoPath } from './photos';

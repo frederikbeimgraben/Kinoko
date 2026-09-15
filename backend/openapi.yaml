@@ -1343,6 +1343,29 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
+  /admin/species-counts:
+    get:
+      operationId: getAdminSpeciesCounts
+      tags: [access]
+      x-permission: species.edit
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SpeciesCountsEntry"
+                required: [items]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
   /permissions:
     get:
       operationId: listPermissions
@@ -2014,6 +2037,20 @@ components:
     Area:
       type: string
       enum: [species, interface, access, data]
+
+    SpeciesCountsEntry:
+      type: object
+      properties:
+        speciesId:
+          type: string
+          format: uuid
+        records:
+          type: integer
+        finds:
+          type: integer
+        photos:
+          type: integer
+      required: [speciesId, records, finds, photos]
 
     AdminSummary:
       description: Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu.
