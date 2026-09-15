@@ -20,9 +20,9 @@ describe('PrivateImageComponent', () => {
     });
   });
 
-  async function build(path: string): Promise<Setup> {
+  async function build(path: string, fit?: 'cover' | 'contain' | 'natural'): Promise<Setup> {
     const { container, detectChanges } = await render(PrivateImageComponent, {
-      inputs: { path, alt: 'Aufnahme von Steinpilz' },
+      inputs: { path, alt: 'Aufnahme von Steinpilz', ...(fit ? { fit } : {}) },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     return { container, http: TestBed.inject(HttpTestingController), refresh: detectChanges };
@@ -51,6 +51,20 @@ describe('PrivateImageComponent', () => {
     refresh();
 
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('überlässt die Höhe dem Seitenverhältnis, wenn `fit` auf `natural` steht', async () => {
+    const { container, http, refresh } = await build('/api/photos/bild-eins/full', 'natural');
+
+    http.expectOne('/api/photos/bild-eins/full').flush(new Blob(['x'], { type: 'image/jpeg' }));
+
+    await vi.waitFor(() => {
+      refresh();
+      expect(screen.getByRole('img', { name: 'Aufnahme von Steinpilz' })).toHaveClass(
+        'private__image--natural',
+      );
+    });
     await noViolations(container);
   });
 });

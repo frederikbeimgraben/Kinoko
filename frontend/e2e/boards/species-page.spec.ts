@@ -11,11 +11,11 @@ const ROWS = {
   'la-2/list': 'photo-44x44.png',
   'la-3/list': 'photo-44x44.png',
 };
-const PHOTOS = { full: 'photo-358x210.png', list: 'photo-88x88.png', ...ROWS };
-const PHOTOS_WIDE = { full: 'photo-548x240.png', list: 'photo-88x88.png', ...ROWS };
+const PHOTOS = { full: 'photo-358x269.png', list: 'photo-88x88.png', ...ROWS };
+const PHOTOS_WIDE = { full: 'photo-866x650.png', list: 'photo-88x88.png', ...ROWS };
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
-function guard(board: string, device: 'phone' | 'desktop'): void {
+function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
@@ -137,7 +137,7 @@ test('SpeciesNotFound', async ({ page }) => {
 });
 
 test('SpeciesPageDesktop', async ({ page }) => {
-  guard('SpeciesPageDesktop', 'desktop');
+  guard('SpeciesPageDesktop', 'wide');
   await openProfile(page, PHOTOS_WIDE);
   await expectBoard(page, 'SpeciesPageDesktop');
 });

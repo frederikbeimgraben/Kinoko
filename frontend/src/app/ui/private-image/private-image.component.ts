@@ -22,8 +22,8 @@ export class PrivateImageComponent implements OnDestroy {
   /** Der Pfad aus der Antwort, ohne `/api`. */
   readonly path = input.required<string>();
   readonly alt = input.required<string>();
-  /** Ein Bild in voller Ansicht wird eingepasst, eine Kachel füllt die Fläche. */
-  readonly fit = input<'cover' | 'contain'>('cover');
+  /** `cover` füllt die Fläche, `contain` passt ein, `natural` nimmt die Höhe des Bildes. */
+  readonly fit = input<'cover' | 'contain' | 'natural'>('cover');
 
   protected readonly source = signal<string | null>(null);
 

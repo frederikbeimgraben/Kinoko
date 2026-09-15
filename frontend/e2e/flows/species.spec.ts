@@ -73,11 +73,6 @@ test.describe('Suchfeld am Telefon', () => {
 });
 
 test('Die Einordnung holt die Stufe aus dem Vertrag', async ({ page }) => {
-  const paths: string[] = [];
-  page.on('request', (request) => {
-    const path = new URL(request.url()).pathname;
-    if (path.startsWith('/api/taxa/')) paths.push(path);
-  });
   await mockApi(page, {
     '/api/species/bundle': bundle(TAXON.catalogue),
     '/api/taxa/family/boletaceae': TAXON.page,
@@ -86,8 +81,11 @@ test('Die Einordnung holt die Stufe aus dem Vertrag', async ({ page }) => {
   await page.goto('/taxonomie/family/boletaceae');
   await expect(page.getByText('Rotfußröhrling')).toBeVisible();
 
+  // Die Zusicherung wartet auf die Anfrage. Ihre Stelle in der Reihe der
+  // Anfragen schwankt unter Last.
+  const call = page.waitForRequest('**/api/taxa/genus/boletus');
   await page.getByRole('button', { name: 'Boletus 3 Arten' }).click();
 
   await expect(page).toHaveURL(/\/taxonomie\/genus\/boletus$/);
-  expect(paths).toContain('/api/taxa/genus/boletus');
+  await call;
 });
