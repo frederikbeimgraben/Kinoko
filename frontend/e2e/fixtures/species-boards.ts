@@ -4,6 +4,9 @@ import { bundle } from './species';
 
 type Entry = Parameters<typeof bundle>[0][number];
 
+/** Der Baumpartner, den das Brett `FilterResult` als Marke zeigt. */
+const SPRUCE = { slug: 'picea-abies', name: 'Fichte', kind: 'tree' };
+
 /** Die Treffer des Bretts `FilterResult`. */
 export const RESULT_HITS: readonly Entry[] = [
   {
@@ -14,6 +17,7 @@ export const RESULT_HITS: readonly Entry[] = [
     cap: ['#e2c79a', '#6b4423'],
     capShapes: ['convex'],
     capWidth: [5, 10],
+    terms: [SPRUCE],
   },
   {
     slug: 'imleria-badia',
@@ -23,6 +27,7 @@ export const RESULT_HITS: readonly Entry[] = [
     cap: ['#8a4e2b', '#4a3220'],
     capShapes: ['convex'],
     capWidth: [5, 10],
+    terms: [SPRUCE],
   },
   {
     slug: 'amanita-rubescens',
@@ -32,6 +37,7 @@ export const RESULT_HITS: readonly Entry[] = [
     cap: ['#c9a877', '#8a4e2b'],
     capShapes: ['convex'],
     capWidth: [5, 10],
+    terms: [SPRUCE],
   },
 ];
 
@@ -110,11 +116,11 @@ const DESKTOP_HITS: readonly Entry[] = [
     months: [8, 10],
   },
   {
-    slug: 'amanita-phalloides',
-    name: 'Grüner Knollenblätterpilz',
-    latin: 'Amanita phalloides',
-    edibility: 'deadly',
-    cap: ['#cfd08a', '#8a9a4a'],
+    slug: 'imleria-badia',
+    name: 'Maronenröhrling',
+    latin: 'Imleria badia',
+    edibility: 'edible',
+    cap: ['#8a4e2b', '#4a3220'],
     hymenium: 'gills',
     months: [8, 10],
   },
@@ -128,16 +134,17 @@ const DESKTOP_HITS: readonly Entry[] = [
     months: [8, 10],
   },
   {
-    slug: 'amanita-pantherina',
-    name: 'Pantherpilz',
-    latin: 'Amanita pantherina',
-    edibility: 'poisonous',
-    cap: ['#8a6a3a', '#4a3220'],
+    slug: 'cantharellus-cibarius',
+    name: 'Pfifferling',
+    latin: 'Cantharellus cibarius',
+    edibility: 'edible',
+    cap: ['#d9a441', '#e8c86a'],
     hymenium: 'gills',
     months: [8, 10],
   },
 ];
 
+// Der Rest trägt eine andere Fruchtschicht und scheidet darum aus.
 const DESKTOP_REST: readonly Entry[] = [
   {
     slug: 'boletus-edulis',
@@ -145,20 +152,8 @@ const DESKTOP_REST: readonly Entry[] = [
     latin: 'Boletus edulis',
     edibility: 'edible',
     cap: ['#7a5230', '#c9a877'],
-  },
-  {
-    slug: 'imleria-badia',
-    name: 'Maronenröhrling',
-    latin: 'Imleria badia',
-    edibility: 'edible',
-    cap: ['#8a4e2b', '#4a3220'],
-  },
-  {
-    slug: 'cantharellus-cibarius',
-    name: 'Pfifferling',
-    latin: 'Cantharellus cibarius',
-    edibility: 'edible',
-    cap: ['#d9a441', '#e8c86a'],
+    hymenium: 'tubes',
+    months: [8, 10],
   },
   {
     slug: 'hydnum-repandum',
@@ -166,6 +161,8 @@ const DESKTOP_REST: readonly Entry[] = [
     latin: 'Hydnum repandum',
     edibility: 'edible',
     cap: ['#e2c79a', '#c9a877'],
+    hymenium: 'spines',
+    months: [8, 10],
   },
 ];
 
@@ -183,7 +180,7 @@ export const RESULT_REST: readonly Entry[] = Array.from({ length: 301 }, (_, at)
 export const FILTER_DESKTOP = {
   catalogue: [...DESKTOP_HITS, ...DESKTOP_REST],
   choice: {
-    values: { hymenium: ['gills'], period: ['9'] },
+    values: { edibility: ['edible'], hymenium: ['gills'], period: ['9'] },
     colours: { gills: '#f3efe6', flesh: '#f3efe6', spore_print: '#3e2a17' },
     sizes: {},
     keepUnknown: ['colour'],

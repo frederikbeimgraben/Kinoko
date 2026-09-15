@@ -1,6 +1,6 @@
 /** Ein Katalog mit 306 Arten, dessen Zahlen den Brettern des Filters folgen. */
 
-import { species } from './species';
+import { bundle } from './species';
 
 const TOTAL = 306;
 const EDIBILITY: readonly (readonly [string, number])[] = [
@@ -34,7 +34,7 @@ const BROWN_CAPS = 41;
 const CORE = 31;
 const FORECAST = 15;
 const STRICT = 23;
-const MEASURED = 63;
+const MEASURED = CORE;
 
 function pool(counts: readonly (readonly [string, number])[]): string[] {
   return counts.flatMap(([value, count]) => Array.from({ length: count }, () => value));
@@ -57,49 +57,33 @@ function capOf(at: number): readonly string[] {
 
 /** Die 306 Arten des Katalogs, als Bündel des Vertrags. */
 export function largeBundle(): Record<string, unknown> {
-  const items = Array.from({ length: TOTAL }, (_, at) =>
-    species(
-      {
-        slug: `art-${String(at)}`,
-        name: `Art ${String(at)}`,
-        latin: `Genus specimen${String(at)}`,
-        edibility: EDIBILITIES[at],
-        cap: capOf(at),
-        stem: at < CORE ? ['#e8d9b5'] : [],
-        sporePrint: at < CORE ? ['#3e2a17'] : [],
-        gills: at >= 100 && at < 120 ? ['#f3efe6'] : [],
-        flesh: at >= 120 && at < 140 ? ['#f3efe6'] : [],
-        hymenium: at < CORE ? 'gills' : null,
-        capShapes: shapesOf(at),
-        months: at < MEASURED ? [8, 10] : undefined,
-        capWidth: at < MEASURED ? [5, 10] : undefined,
-        protection: at < STRICT ? 'strict' : 'none',
-        forecast: at < FORECAST,
-      },
-      at,
-    ),
+  return bundle(
+    Array.from({ length: TOTAL }, (_, at) => ({
+      slug: `art-${String(at)}`,
+      name: `Art ${String(at)}`,
+      latin: `Genus specimen${String(at)}`,
+      edibility: EDIBILITIES[at],
+      cap: capOf(at),
+      stem: at < CORE ? ['#e8d9b5'] : [],
+      sporePrint: at < CORE ? ['#3e2a17'] : [],
+      gills: at >= 100 && at < 120 ? ['#f3efe6'] : [],
+      flesh: at >= 120 && at < 140 ? ['#f3efe6'] : [],
+      hymenium: at < CORE ? 'gills' : null,
+      capShapes: shapesOf(at),
+      months: at < MEASURED ? [8, 10] : undefined,
+      capWidth: at < MEASURED ? [5, 10] : undefined,
+      protection: at < STRICT ? 'strict' : 'none',
+      forecast: at < FORECAST,
+    })),
   );
-  return { items };
 }
 
-/** Die Wahl hinter den Brettern `SpeciesFilter` und `FilterEdibility`. */
+/** Die Wahl hinter den Brettern des Filters. */
 export const CORE_CHOICE = {
   values: { edibility: ['edible'], hymenium: ['gills'], period: ['9'] },
   colours: { cap: '#6b4423', stem: '#e8d9b5', spore_print: '#3e2a17' },
   sizes: {},
   keepUnknown: [],
-};
-
-/** Die Wahl hinter dem Brett `FilterCapShape`. */
-export const FORECAST_CHOICE = {
-  ...CORE_CHOICE,
-  values: { ...CORE_CHOICE.values, forecast: ['on'] },
-};
-
-/** Die Wahl hinter dem Brett `FilterColour`. */
-export const STRICT_CHOICE = {
-  ...CORE_CHOICE,
-  values: { ...CORE_CHOICE.values, protection: ['strict'] },
 };
 
 /** Die Wahl hinter dem Brett `FilterSize`. */
