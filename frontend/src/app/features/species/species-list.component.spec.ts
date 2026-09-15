@@ -11,6 +11,7 @@ import { catalogueProviders, catalogueReady } from '../../testing/catalogue-doub
 import { stubIntersectionObserver } from '../../testing/observer-stub';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../testing/species-fixture';
+import { FORECAST_VALUE } from './facets';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesListComponent } from './species-list.component';
 
@@ -30,7 +31,25 @@ const PFIFFERLING = speciesEntry({
   hymeniumType: 'folds',
 });
 
+const SEMMELSTOPPELPILZ = speciesEntry({
+  slug: 'semmelstoppelpilz',
+  name: 'Semmelstoppelpilz',
+  scientificName: 'Hydnum repandum',
+  forecastEnabled: false,
+});
+
+const MARONE = speciesEntry({
+  slug: 'maronenroehrling',
+  name: 'Maronenröhrling',
+  scientificName: 'Imleria badia',
+  colours: [{ part: 'cap', mode: 'single', colours: [{ name: 'braun', hex: '#6b4423' }] }],
+});
+
 const SMALL: SpeciesBundle = speciesBundle([STEINPILZ, PFIFFERLING]);
+
+const FORECAST_MIX: SpeciesBundle = speciesBundle([STEINPILZ, SEMMELSTOPPELPILZ]);
+
+const COLOUR_MIX: SpeciesBundle = speciesBundle([MARONE, STEINPILZ]);
 
 /** Ein Katalog, der über eine Seite hinausreicht. */
 function manySpecies(count: number): SpeciesBundle {
@@ -190,6 +209,30 @@ describe('SpeciesListComponent', () => {
     await userEvent.click(screen.getByText('Pfifferling'));
 
     expect(go).toHaveBeenCalledWith(['/arten', 'pfifferling']);
+  });
+
+  it('lässt die Arten ohne Vorhersage ausscheiden, ohne zweiten Block', async () => {
+    const { container, filter } = await build(FORECAST_MIX, true);
+
+    filter.toggle('forecast', FORECAST_VALUE);
+
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('app-species-row')).toHaveLength(1);
+    });
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(container.querySelector('.results__card--muted')).toBeNull();
+    expect(screen.queryByText(/Nicht beurteilbar/)).not.toBeInTheDocument();
+  });
+
+  it('hält den zweiten Block, solange eine Art die Farbe nicht führt', async () => {
+    const { container, filter } = await build(COLOUR_MIX, true);
+
+    filter.setColour('cap', '#6b4423');
+
+    await vi.waitFor(() => {
+      expect(container.querySelector('.results__card--muted')).not.toBeNull();
+    });
+    expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
   });
 
   it('nennt am Rechner die Zahl der Treffer, sobald ein Filter steht', async () => {

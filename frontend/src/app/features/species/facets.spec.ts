@@ -2,6 +2,7 @@ import type { SpeciesEntry } from '../../core/api/models';
 import { PALETTE, speciesEntry } from '../../testing/species-fixture';
 import {
   EMPTY_SELECTION,
+  FORECAST_ABSENT,
   FORECAST_VALUE,
   colourParts,
   countColours,
@@ -110,7 +111,7 @@ describe('factsOf', () => {
     expect(facts.values.get('edibility')).toEqual(['edible']);
     expect(facts.values.get('protection')).toEqual(['none']);
     expect(facts.values.get('forecast')).toEqual([FORECAST_VALUE]);
-    expect(factsFor(BARE).values.get('forecast')).toEqual([]);
+    expect(factsFor(BARE).values.get('forecast')).toEqual([FORECAST_ABSENT]);
   });
 
   it('legt jedes Maß unter Teil und Strecke ab', () => {
@@ -133,6 +134,11 @@ describe('judge', () => {
 
   it('meldet unknown, solange die Art zur Gruppe nichts sagt', () => {
     expect(judge(factsFor(BARE), wanting('hymenium', 'tubes'), PALETTE)).toBe('unknown');
+  });
+
+  it('scheidet eine Art ohne Vorhersage aus, statt sie offen zu lassen', () => {
+    expect(judge(factsFor(STEINPILZ), wanting('forecast', FORECAST_VALUE), PALETTE)).toBe('hit');
+    expect(judge(factsFor(BARE), wanting('forecast', FORECAST_VALUE), PALETTE)).toBe('miss');
   });
 
   it('macht mit keepUnknown aus unknown einen Treffer', () => {
