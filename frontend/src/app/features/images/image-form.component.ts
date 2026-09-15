@@ -9,9 +9,9 @@ import {
   type OnDestroy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { SelectComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { AuthService } from '../../core/auth';
 import { LICENCES, type Licence } from '../../core/api/models';
 import { longDate } from '../../core/i18n/dates';
@@ -51,7 +51,7 @@ export class ImageFormComponent implements OnDestroy {
   private readonly rights = inject(PermissionsService);
   private readonly auth = inject(AuthService);
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
 
   readonly slug = input.required<string>();
 
@@ -124,7 +124,7 @@ export class ImageFormComponent implements OnDestroy {
   }
 
   protected cancel(): void {
-    void this.router.navigate(['/arten', this.slug()]);
+    this.history.back(['/arten', this.slug()]);
   }
 
   /** Eine offene Objekt-URL bliebe sonst im Speicher. */
