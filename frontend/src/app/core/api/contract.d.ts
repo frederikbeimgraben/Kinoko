@@ -1130,6 +1130,8 @@ export interface components {
             }[];
         };
         Species: components["schemas"]["SpeciesSummary"] & {
+            /** @description Der Name des Kontos, das zuletzt geändert hat. */
+            updatedByName?: string | null;
             description?: string | null;
             marketable?: boolean;
             frequency?: components["schemas"]["Frequency"] | null;

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import select
 
-from app.models import Term
+from app.models import Term, User
 from app.modules.catalog import lookalikes, part_features
 from app.modules.catalog.children import load_children
 from app.modules.catalog.colour_view import colour_changes, colour_groups, term_ref
@@ -191,7 +191,17 @@ async def load_one(db: AsyncSession, species: SpeciesRow) -> Species:
     terms = await term_lookup(db)
     names = await taxon_names(db)
     targets = await lookalikes.load_targets(db, species.id, child.lookalikes.get(species.id, []))
-    return assemble(species, child, terms, targets, names.of(species))
+    shown = assemble(species, child, terms, targets, names.of(species))
+    shown.updated_by_name = await editor_name(db, species.updated_by_id)
+    return shown
+
+
+async def editor_name(db: AsyncSession, user_id: uuid.UUID | None) -> str | None:
+    """Der Name des Kontos, das zuletzt geändert hat."""
+    if user_id is None:
+        return None
+    query = select(User.name).where(User.id == user_id)
+    return (await db.execute(query)).scalar_one_or_none()
 
 
 async def load_many_with_facets(

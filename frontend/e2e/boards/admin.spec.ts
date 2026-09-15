@@ -3,6 +3,7 @@ import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, species } from '../fixtures/species';
+import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -288,4 +289,14 @@ test('TextEdit', async ({ page }) => {
   await page.getByRole('button', { name: /art\.zuWenigFunde/ }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expectBoard(page, 'TextEdit');
+});
+
+test('SpeciesEdit', async ({ page }) => {
+  guard('SpeciesEdit', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByText('Röhren rosa, Netz grob, bitter')).toBeVisible();
+  await expectBoard(page, 'SpeciesEdit');
 });

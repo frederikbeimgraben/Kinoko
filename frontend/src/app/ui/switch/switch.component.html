@@ -1,0 +1,12 @@
+<button
+  class="switch tap"
+  type="button"
+  role="switch"
+  data-press="scale"
+  [class.switch--on]="checked()"
+  [attr.aria-checked]="checked()"
+  [attr.aria-label]="label()"
+  (click)="toggle()"
+>
+  <span class="switch__knob"></span>
+</button>

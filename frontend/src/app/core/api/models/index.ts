@@ -17,6 +17,7 @@ export type {
   MeasurementGroup,
   Protection,
   SpeciesBundle,
+  SpeciesCounts,
   SpeciesEntry,
   SpeciesSummary,
   StandardColour,

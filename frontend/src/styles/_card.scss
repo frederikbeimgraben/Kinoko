@@ -1,5 +1,6 @@
-/** Die Fläche einer Karte: Rand, Radius und Grund aus den Tokens. */
+/** Die Fläche einer Karte: Rand, Radius, Grund und feste Höhe. */
 @mixin card {
+  flex: none;
   overflow: hidden;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);

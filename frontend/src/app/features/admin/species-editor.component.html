@@ -1,0 +1,56 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="editor">
+  @if (stats().length > 0) {
+    <div class="editor__card editor__stats">
+      <app-stat-row [stats]="stats()" />
+    </div>
+  }
+
+  <div class="editor__card">
+    <app-list-row kind="catalogue" [title]="'admin.species.forecast' | t">
+      <app-switch
+        trail
+        [checked]="forecast()"
+        [label]="'admin.species.forecast' | t"
+        (checkedChange)="setForecast($event)"
+      />
+    </app-list-row>
+  </div>
+
+  @for (block of blocks(); track block.title) {
+    <section>
+      <h2 class="editor__section">{{ block.title }}</h2>
+      <div class="editor__card">
+        @for (row of block.rows; track row.key) {
+          <app-list-row kind="catalogue" [title]="row.title" [subline]="row.value" [chevron]="true" />
+        }
+      </div>
+      @if (block.add; as label) {
+        <app-add-row [label]="label" [action]="'admin.species.addLookalike' | t" />
+      }
+    </section>
+  }
+
+  @if (sourceText(); as source) {
+    <div class="editor__card editor__source">
+      <p class="editor__note">{{ source }}</p>
+    </div>
+  }
+</div>
+
+<app-action-bar
+  [primary]="'common.save' | t"
+  [secondary]="'admin.species.delete' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="back()"
+  (secondaryClick)="removing.set(true)"
+/>
+
+<app-confirm-dialog
+  [open]="removing()"
+  [title]="deleteQuestion()"
+  [confirmLabel]="'common.delete' | t"
+  (confirmed)="remove()"
+  (cancelled)="removing.set(false)"
+/>
