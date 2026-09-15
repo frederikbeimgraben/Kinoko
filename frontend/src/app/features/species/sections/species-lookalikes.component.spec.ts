@@ -16,13 +16,14 @@ const LOOKALIKES: readonly Lookalike[] = [
 ];
 
 describe('SpeciesLookalikesComponent', () => {
-  it('zeigt je Verwechslung eine Zeile mit Farbe und Namen', async () => {
+  it('zeigt je Verwechslung eine Zeile mit Namen und leerer Bildspalte', async () => {
     const { container } = await render(SpeciesLookalikesComponent, {
       inputs: { lookalikes: LOOKALIKES },
     });
 
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
-    expect(container.querySelector('app-colour-field')).not.toBeNull();
+    expect(container.querySelector('.lookalike__image')).not.toBeNull();
+    expect(container.querySelector('app-private-image')).toBeNull();
     await noViolations(container);
   });
 

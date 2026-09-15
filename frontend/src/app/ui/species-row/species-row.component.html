@@ -22,19 +22,8 @@
   }
   <span class="row__trail"><ng-content select="[trail]" /></span>
   @if (species().image; as source) {
-    <img class="row__image" [src]="source" [alt]="species().name" width="44" height="44" />
+    <app-private-image class="row__image" [path]="source" [alt]="species().name" />
   } @else {
-    <span class="row__image row__image--empty" aria-hidden="true" [style.background]="gradient()">
-      @for (patch of patches(); track patch.left) {
-        <i
-          class="row__patch"
-          [style.background]="patch.background"
-          [style.left]="patch.left"
-          [style.top]="patch.top"
-          [style.width]="patch.width"
-          [style.height]="patch.height"
-        ></i>
-      }
-    </span>
+    <span class="row__image" aria-hidden="true"></span>
   }
 </button>

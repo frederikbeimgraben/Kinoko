@@ -1,0 +1,5 @@
+@if (path(); as path) {
+  <button class="lead tap" type="button" data-press="scale" (click)="open()">
+    <app-private-image class="lead__image" [path]="path" [alt]="alt()" />
+  </button>
+}

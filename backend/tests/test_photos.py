@@ -102,6 +102,29 @@ async def test_create_private_photo_without_context(
     assert body["lat"] is None
 
 
+async def test_create_keeps_source_and_names_the_uploader(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session)
+    sign_in(app_of(api), user)
+    response = await upload(api, source="123pilzsuche.de")
+    assert response.status_code == 201
+    body = response.json()
+    assert body["source"] == "123pilzsuche.de"
+    assert body["ownerName"] == user.name
+
+
+async def test_photo_without_owner_name_falls_back_to_photographer(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session)
+    user.name = None
+    await session.commit()
+    sign_in(app_of(api), user)
+    response = await upload(api)
+    assert response.json()["ownerName"] == "Frederik"
+
+
 async def test_create_requires_signed_in_account(api: httpx.AsyncClient) -> None:
     response = await upload(api)
     assert response.status_code == 401

@@ -11,9 +11,11 @@
     />
     @if (preview(); as source) {
       <img class="form__image" [src]="source" [alt]="title()" />
+    } @else {
+      <app-svg-icon class="form__plus" name="plus" [size]="26" />
     }
     @if (busy()) {
-      <app-progress class="form__progress" [value]="percent() ?? 0" />
+      <app-progress class="form__progress" [value]="percent() ?? 0" [showValue]="true" />
     }
   </label>
 
@@ -52,6 +54,7 @@
         [label]="'image.field.takenOn' | t"
         [hideLabel]="true"
         [value]="takenOn()"
+        [display]="takenOnText()"
         (valueChange)="takenOn.set($event)"
       />
       <app-form-field

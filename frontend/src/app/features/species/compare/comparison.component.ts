@@ -18,7 +18,6 @@ import {
   capWidthOf,
   hymeniumPartOf,
   levelOf,
-  monthMarks,
   periodOf,
   pressureOf,
   stemNetOf,
@@ -61,9 +60,7 @@ export class ComparisonComponent {
   protected readonly species = this.comparison.species;
   protected readonly names = computed(() => this.species().map((one) => one.name));
 
-  protected readonly count = computed(() =>
-    this.i18n.translate('species.taxonomy.speciesCount', { anzahl: this.species().length }),
-  );
+  protected readonly paired = computed(() => this.species().length > 1);
 
   protected readonly levels = computed(() => this.species().map((one) => levelOf(one, this.i18n)));
   protected readonly widths = computed(() => this.species().map((one) => capWidthOf(one, this.i18n)));
@@ -94,9 +91,6 @@ export class ComparisonComponent {
   protected readonly pressures = computed(() =>
     this.species().map((one) => pressureOf(one, this.hymenium(), this.i18n)),
   );
-
-  /** Die Marken des Jahres brauchen Breite; am Telefon trägt die Zelle keine. */
-  protected readonly marks = computed(() => (this.wide() ? monthMarks(this.i18n) : []));
 
   protected readonly arrowLabel = computed(() => this.i18n.translate('common.to'));
   protected readonly bandLabel = computed(() => this.i18n.translate('species.growthPeriod'));

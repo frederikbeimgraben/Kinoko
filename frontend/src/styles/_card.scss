@@ -9,7 +9,7 @@
 /** Die Überschrift über einer Karte. */
 @mixin section-title {
   margin: 0 0 10px;
-  font-size: var(--fs-xs);
+  font-size: var(--fs-caption);
   line-height: normal;
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);

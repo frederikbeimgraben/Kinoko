@@ -31,6 +31,6 @@ describe('SpeciesSensesComponent', () => {
       inputs: { species: speciesEntry({ ...STONE, tasteText: null, terms: [] }) },
     });
 
-    expect(container.querySelectorAll('.sense')).toHaveLength(1);
+    expect(container.querySelectorAll('.sense__part')).toHaveLength(1);
   });
 });

@@ -1,6 +1,6 @@
 <app-page-header [title]="'species.section.compare' | t" [back]="true" (backClick)="back()">
-  @if (wide() && species().length > 0) {
-    <span class="compare__count">{{ count() }}</span>
+  @if (wide() && paired()) {
+    <span class="compare__count">{{ 'species.compare.count' | t }}</span>
   }
 </app-page-header>
 <div class="compare">
@@ -28,12 +28,7 @@
           <app-key-value-row [key]="row.key" [cells]="row.cells">
             <ng-template let-swatch>
               @if (swatch) {
-                <app-colour-field
-                  class="compare__swatch"
-                  [colours]="swatch.colours"
-                  [mode]="swatch.mode"
-                  [label]="swatch.label"
-                />
+                <app-colour-field [colours]="swatch.colours" [mode]="swatch.mode" [label]="swatch.label" />
               }
             </ng-template>
           </app-key-value-row>
@@ -46,14 +41,21 @@
                   <span class="compare__colours">
                     @if (test.from) {
                       <app-colour-field
+                        class="compare__from"
                         [colours]="test.from.colours"
                         [mode]="test.from.mode"
                         [label]="test.from.label"
                       />
                     }
                     @if (test.to) {
-                      <app-svg-icon name="forward" [size]="14" [label]="arrowLabel()" />
+                      <app-svg-icon
+                        class="compare__arrow"
+                        name="forward"
+                        [size]="12"
+                        [label]="arrowLabel()"
+                      />
                       <app-colour-field
+                        class="compare__to"
                         [colours]="test.to.colours"
                         [mode]="test.to.mode"
                         [label]="test.to.label"
@@ -70,7 +72,7 @@
           <app-key-value-row [key]="'species.compare.stemNet' | t" [cells]="stemNets()">
             <ng-template let-text>
               @if (text) {
-                <span>{{ text }}</span>
+                <span class="compare__text">{{ text }}</span>
               }
             </ng-template>
           </app-key-value-row>
@@ -79,7 +81,7 @@
           <app-key-value-row [key]="'species.field.taste' | t" [cells]="flavours()">
             <ng-template let-tags>
               @if (tags) {
-                <app-tag-list [tags]="tags" [label]="flavourLabel()" />
+                <app-tag-list class="compare__tags" [tags]="tags" [label]="flavourLabel()" />
               }
             </ng-template>
           </app-key-value-row>
@@ -92,7 +94,6 @@
                   class="compare__band"
                   [fromMonth]="time.from"
                   [toMonth]="time.to"
-                  [months]="marks()"
                   [label]="bandLabel()"
                 />
               }

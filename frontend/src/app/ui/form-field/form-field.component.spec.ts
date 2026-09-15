@@ -74,6 +74,20 @@ describe('FormFieldComponent', () => {
     expect(container.querySelector('input')).toHaveAttribute('type', 'number');
   });
 
+  it('zeigt am Datumsfeld den Tag der Sprache über der Eingabe', async () => {
+    const { container } = await render(FormFieldComponent, {
+      inputs: {
+        label: 'Aufgenommen',
+        kind: 'date' as const,
+        value: '2026-09-06',
+        display: '6. September 2026',
+      },
+    });
+
+    expect(screen.getByText('6. September 2026')).toBeInTheDocument();
+    expect(container.querySelector('input')).toHaveValue('2026-09-06');
+  });
+
   it('trägt Bildschirmtastatur und Eingabetaste je Art des Feldes', async () => {
     const { container } = await render(FormFieldComponent, {
       inputs: { label: 'Anzahl', kind: 'number' as const },

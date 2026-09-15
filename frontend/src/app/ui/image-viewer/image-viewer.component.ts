@@ -7,8 +7,8 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../image-credit/licences';
 import { ListRowComponent } from '../list-row/list-row.component';
+import { PageHeaderComponent } from '../page-header/page-header.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { photoPath, type Photo } from '../../core/api/models';
 
@@ -24,7 +24,7 @@ interface Detail {
 @Component({
   selector: 'app-image-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, ListRowComponent, PrivateImageComponent, SvgIconComponent, TranslatePipe],
+  imports: [BadgeComponent, ListRowComponent, PageHeaderComponent, PrivateImageComponent, TranslatePipe],
   templateUrl: './image-viewer.component.html',
   styleUrl: './image-viewer.component.scss',
 })
@@ -62,6 +62,10 @@ export class ImageViewerComponent {
         ? { labelKey: 'image.field.licence', badgeKey: OWN_PHOTO_KEY }
         : { labelKey: 'image.field.licence', badgeText: LICENCE_CODE[licence] },
     ];
+    const source = image.source ?? null;
+    if (source !== null) {
+      rows.push({ labelKey: 'image.field.sourcePlaceholder', text: source });
+    }
     const takenOn = image.takenOn ?? null;
     if (takenOn !== null) {
       rows.push({ labelKey: 'image.field.takenOn', text: longDate(takenOn, this.i18n.locale()) });

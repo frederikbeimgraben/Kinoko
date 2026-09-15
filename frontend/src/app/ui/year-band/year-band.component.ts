@@ -20,7 +20,8 @@ export class YearBandComponent {
   readonly toMonth = input.required<number>();
   readonly peakFromMonth = input<number | null>(null);
   readonly peakToMonth = input<number | null>(null);
-  readonly months = input.required<readonly string[]>();
+  /** Die Marken unter der Bahn. Ohne Marken bleibt die Reihe aus. */
+  readonly months = input<readonly string[]>([]);
   readonly label = input.required<string>();
 
   protected readonly stated = computed(() => bodies(this.fromMonth(), this.toMonth()));

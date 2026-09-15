@@ -10,7 +10,7 @@ const STEINPILZ: SpeciesRowSpecies = {
   latin: 'Boletus edulis',
   levelText: 'essbar',
   levelColour: 'var(--color-success)',
-  image: '/api/species-images/bild-eins/thumb',
+  image: '/photos/bild-eins/list',
 };
 
 /** Die gerechneten Stile eines Elements, das es geben muss. */
@@ -38,30 +38,18 @@ describe('SpeciesRowComponent', () => {
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
     expect(screen.getByText('essbar')).toBeInTheDocument();
-    expect(screen.getByRole('img')).toHaveAttribute('src', STEINPILZ.image);
+    expect(container.querySelector('app-private-image')).not.toBeNull();
     await noViolations(container);
   });
 
-  it('hält den Platz des Bildes mit den Tönen der Art frei', async () => {
-    const { container } = await render(SpeciesRowComponent, {
-      inputs: { species: { ...STEINPILZ, image: null, tint: ['#7a5230', '#c9a877'] } },
-    });
-
-    const field = container.querySelector<HTMLElement>('.row__image--empty');
-    expect(field).not.toBeNull();
-    expect(field?.style.background).toContain('linear-gradient(140deg');
-    expect(container.querySelectorAll('.row__patch')).toHaveLength(2);
-    expect(container.querySelector('img')).toBeNull();
-  });
-
-  it('nimmt ohne eigene Töne den Standardverlauf', async () => {
+  it('lässt die Spalte ohne Titelbild leer', async () => {
     const { container } = await render(SpeciesRowComponent, {
       inputs: { species: { ...STEINPILZ, image: null } },
     });
 
-    expect(container.querySelector<HTMLElement>('.row__image--empty')?.style.background).toContain(
-      'rgb(74, 90, 58)',
-    );
+    expect(container.querySelector('app-private-image')).toBeNull();
+    expect(container.querySelector('.row__image')).not.toBeNull();
+    expect(container.querySelector('img')).toBeNull();
   });
 
   it('steht so hoch wie eine hohe Zeile, den Rand eingerechnet', async () => {

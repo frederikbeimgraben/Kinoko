@@ -7,8 +7,12 @@
   overflow: hidden;
 }
 
+// Ein eigener Block. Sonst folgt die Zahl der Schrift des Kopfes und sitzt
+// zu tief.
 .compare__count {
+  display: block;
   font-size: var(--fs-row-meta);
+  line-height: 1.4;
   color: var(--color-text-muted);
 }
 
@@ -21,14 +25,29 @@
 
 .compare__card {
   @include card.card;
+
+  overflow: hidden;
 }
 
-// Die Spalten sind schmal: Beschriftung und Polster folgen dem Brett, damit
-// zwei Werte nebeneinander passen.
+// Die Spalten sind schmal: Beschriftung, Polster und Schrift folgen dem Brett,
+// damit zwei Werte nebeneinander passen.
 .compare__table {
-  --key-value-table-label: 84px;
+  --key-value-table-label: 58px;
   --key-value-table-gutter: 9px;
   --key-value-table-gap: 9px;
+  --key-value-table-pad: 10px;
+  --key-value-table-line: normal;
+  --key-value-table-text: var(--fs-xs);
+  --key-value-table-head: 11px;
+  --key-value-table-weight: var(--fw-regular);
+  --key-value-table-last: var(--border-width);
+  --key-value-table-nowrap: nowrap;
+  --key-value-table-anchor: center;
+}
+
+.compare__measure,
+.compare__text {
+  font-size: var(--fs-row-meta);
 }
 
 .compare__measure {
@@ -38,38 +57,62 @@
 
 .compare__measure em {
   font-style: normal;
-  font-size: var(--fs-xs);
   color: var(--color-text-muted);
 }
 
-.compare__swatch {
-  --pilz-colour-width: 64px;
-  --pilz-colour-height: 22px;
-  --pilz-colour-radius: 7px;
-}
-
+// Von, Pfeil und Nach stehen in festen Spuren. Eine Probe ohne Nachher lässt
+// ihre zwei Spuren leer, damit beide Arten auf einer Linie liegen.
 .compare__change {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-1) var(--space-2);
   align-items: center;
 }
 
 .compare__colours {
-  display: flex;
-  gap: var(--space-1);
+  --pilz-colour-width: 40px;
+  --pilz-colour-height: 22px;
+  --pilz-colour-radius: 7px;
+
+  display: grid;
+  grid-template-columns: 40px 12px 40px;
+  gap: 4px;
   align-items: center;
-  --pilz-colour-width: 30px;
-  --pilz-colour-height: 18px;
-  --pilz-colour-radius: 5px;
 }
 
-.compare__speed {
-  font-size: var(--fs-xs);
+.compare__from {
+  grid-column: 1;
+}
+
+.compare__arrow {
+  grid-column: 2;
+  justify-self: center;
   color: var(--color-text-muted);
 }
 
+.compare__to {
+  grid-column: 3;
+}
+
+.compare__speed {
+  display: block;
+  margin-block-start: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.compare__tags {
+  --pilz-tag-height: 18px;
+  --pilz-tag-inset: 8px;
+  --pilz-tag-size: 11px;
+  --pilz-tag-gap: 4px;
+  --pilz-tag-drop: 4px;
+  --pilz-tag-border: var(--color-border-strong);
+}
+
 .compare__band {
+  --pilz-year-height: 10px;
+
   inline-size: 100%;
 }
 
@@ -82,17 +125,7 @@
     --key-value-table-label: 138px;
     --key-value-table-gutter: var(--space-4);
     --key-value-table-gap: var(--space-4);
-  }
-
-  .compare__swatch {
-    --pilz-colour-width: 96px;
-    --pilz-colour-height: 26px;
-    --pilz-colour-radius: 9px;
-  }
-
-  .compare__colours {
-    --pilz-colour-width: 40px;
-    --pilz-colour-height: 22px;
-    --pilz-colour-radius: 7px;
+    --key-value-table-pad: 14px;
+    --key-value-table-text: var(--fs-sm);
   }
 }

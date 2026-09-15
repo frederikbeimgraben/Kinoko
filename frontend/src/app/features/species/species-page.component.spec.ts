@@ -54,13 +54,15 @@ describe('SpeciesPageComponent', () => {
     expect(container.querySelector('app-species-size')).not.toBeNull();
     expect(container.querySelector('app-species-colours')).not.toBeNull();
     expect(container.querySelector('app-species-time')).not.toBeNull();
-    expect(container.querySelector('app-species-taxonomy')).not.toBeNull();
+    expect(container.querySelector('app-species-photos')).not.toBeNull();
     await noViolations(container);
   });
 
-  it('bietet den Weg zur Karte nur mit Vorhersage', async () => {
-    await build();
-    expect(screen.getByRole('button', { name: 'Auf der Karte anzeigen' })).toBeInTheDocument();
+  it('stellt die Abschnitte in der Folge der Boards', async () => {
+    const container = await build();
+
+    const order = [...container.querySelectorAll('.page > *')].map((one) => one.tagName.toLowerCase());
+    expect(order.slice(0, 3)).toEqual(['app-species-lead', 'app-species-features', 'app-species-size']);
   });
 
   it('zeigt den Leerzustand zu einem unbekannten Slug', async () => {

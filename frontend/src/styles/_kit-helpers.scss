@@ -178,3 +178,10 @@ app-action-bar .footer--inline .btn {
   padding-inline: 20px;
   font-size: var(--fs-control);
 }
+
+// Der laufende Auftrag im Fuß steht gedimmt, wie im Board. Das Kit entfärbt
+// zusätzlich; über einer grünen Fläche liest sich das wie ein Fehler.
+app-action-bar .btn:disabled {
+  filter: none;
+  opacity: 0.55;
+}

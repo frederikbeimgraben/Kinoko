@@ -1,27 +1,53 @@
 @if (species(); as one) {
   <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
-  <div class="page" [class.page--wide]="wide()">
-    <div class="page__column">
-      <app-species-images [slug]="slug()" />
+
+  <ng-template #media>
+    <app-species-lead [slug]="slug()" />
+  </ng-template>
+  <ng-template #season>
+    <app-species-season [slug]="slug()" />
+  </ng-template>
+  <ng-template #photos>
+    <app-species-photos [slug]="slug()" />
+  </ng-template>
+  <ng-template #sources>
+    <app-species-sources [species]="one" />
+  </ng-template>
+  <ng-template #facts>
+    <app-species-features [species]="one" />
+    <app-species-size [groups]="one.measurements" />
+    <app-species-colours [groups]="one.colours" />
+    <app-species-colour-change [changes]="one.colourChanges" />
+    <app-species-time [species]="one" />
+    <app-species-senses [species]="one" />
+    <app-species-hymenium [species]="one" />
+    <app-species-lookalikes
+      [lookalikes]="one.lookalikes"
+      (compared)="compare($event)"
+      (opened)="open($event)"
+    />
+  </ng-template>
+
+  @if (wide()) {
+    <div class="page page--wide">
+      <div class="page__column">
+        <ng-container [ngTemplateOutlet]="media" />
+        <ng-container [ngTemplateOutlet]="season" />
+        <ng-container [ngTemplateOutlet]="photos" />
+        <ng-container [ngTemplateOutlet]="sources" />
+      </div>
+      <div class="page__column">
+        <ng-container [ngTemplateOutlet]="facts" />
+      </div>
     </div>
-    <div class="page__column">
-      <app-species-features [species]="one" />
-      <app-species-size [groups]="one.measurements" />
-      <app-species-colours [groups]="one.colours" />
-      <app-species-colour-change [changes]="one.colourChanges" />
-      <app-species-senses [species]="one" />
-      <app-species-hymenium [species]="one" />
-      <app-species-time [species]="one" />
-      <app-species-lookalikes
-        [lookalikes]="one.lookalikes"
-        (compared)="compare($event)"
-        (opened)="open($event)"
-      />
-      <app-species-taxonomy [species]="one" />
+  } @else {
+    <div class="page">
+      <ng-container [ngTemplateOutlet]="media" />
+      <ng-container [ngTemplateOutlet]="facts" />
+      <ng-container [ngTemplateOutlet]="photos" />
+      <ng-container [ngTemplateOutlet]="sources" />
+      <ng-container [ngTemplateOutlet]="season" />
     </div>
-  </div>
-  @if (one.forecastEnabled) {
-    <app-action-bar [primary]="'species.showOnMap' | t" (primaryClick)="toMap()" />
   }
 } @else {
   <app-page-header [title]="'species.title' | t" [back]="true" (backClick)="back()" />
@@ -31,7 +57,6 @@
         icon="species"
         [text]="'species.notFound' | t"
         [action]="'species.backToList' | t"
-        [leading]="true"
         (actionClick)="toList()"
       />
     }

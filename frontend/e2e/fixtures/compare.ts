@@ -1,4 +1,4 @@
-/** Die Attrappen der Bretter `Compare` und `CompareDesktop`. */
+/** Die Attrappe der Bretter `Compare` und `CompareDesktop`. */
 
 import { PALETTE } from './species';
 
@@ -195,13 +195,10 @@ function bundleOf(entries: readonly Shape[]): Record<string, unknown> {
   };
 }
 
-/** Das Brett `Compare`: zwei Arten, beide mit einem Merkmal am Stiel. */
+/** Beide Bretter: zwei Arten im Vergleich, beide mit einem Merkmal am Stiel. */
 export const COMPARE = bundleOf([
   { ...STONE, stem: 'weiß, fein' },
   { ...GALL, stem: 'dunkelbraun, grob' },
   BAY,
   SUMMER,
 ]);
-
-/** Das Brett `CompareDesktop`: drei Arten, keine mit einem Merkmal am Stiel. */
-export const COMPARE_DESKTOP = bundleOf([STONE, GALL, BAY, SUMMER]);

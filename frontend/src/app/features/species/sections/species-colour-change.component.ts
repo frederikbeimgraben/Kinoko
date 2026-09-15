@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ColourChangeComponent } from '../../../ui/colour-change/colour-change.component';
 import type { ColourValue } from '../../../ui/colour-field/colour-field.component';
 import type { ColourChange } from '../../../core/api/models';
@@ -22,7 +23,7 @@ const SEPARATOR = ', ';
 @Component({
   selector: 'app-species-colour-change',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ColourChangeComponent],
+  imports: [ColourChangeComponent, TranslatePipe],
   templateUrl: './species-colour-change.component.html',
   styleUrl: './species-colour-change.component.scss',
 })

@@ -15,8 +15,6 @@ export class EmptyStateComponent {
   readonly icon = input<IconName>('empty');
   /** Die Beschriftung des Knopfs. Ohne sie bleibt der Leerzustand ein Satz. */
   readonly action = input<string>();
-  /** Die Handlung führt die Seite: der Knopf trägt dann die Markenfarbe. */
-  readonly leading = input(false);
 
   readonly actionClick = output();
 }

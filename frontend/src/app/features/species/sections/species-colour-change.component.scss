@@ -2,8 +2,26 @@
 
 @include section.block;
 
-:host {
+.section__parts {
   display: flex;
   flex-direction: column;
-  gap: var(--size-gutter);
+  gap: 10px;
+}
+
+// Die Karte trägt den Rahmen, die Verfärbung darin nur ihre Zeilen.
+.section__card app-colour-change {
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+
+.change__part {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  block-size: 44px;
+  padding-inline: var(--size-gutter);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  border-block-end: var(--border-width) solid var(--color-border);
 }

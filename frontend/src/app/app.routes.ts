@@ -77,12 +77,6 @@ export const routes: Routes = [
           import('./features/images/image-queue.component').then((m) => m.ImageQueueComponent),
       },
       {
-        path: 'bilder/:id',
-        canActivate: [requiresPermission('image.review')],
-        loadComponent: () =>
-          import('./features/images/image-review-item.component').then((m) => m.ImageReviewItemComponent),
-      },
-      {
         path: 'personen',
         canActivate: [requiresPermission('role.assign')],
         loadComponent: () => import('./features/admin/people.component').then((m) => m.PeopleComponent),

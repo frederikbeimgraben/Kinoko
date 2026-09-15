@@ -2,7 +2,7 @@
 :host {
   display: block;
   overflow: hidden;
-  --pilz-change-field: 52px;
+  --pilz-change-field: 40px;
   --pilz-change-arrow: 14px;
   --pilz-change-value: 56px;
   background: var(--color-surface);
@@ -15,8 +15,8 @@
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: var(--space-3);
   align-items: center;
-  padding-block: var(--space-3);
-  padding-inline: var(--space-4);
+  min-block-size: 56px;
+  padding-inline: 14px;
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
@@ -26,7 +26,8 @@
 
 .row__trigger {
   overflow: hidden;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-row-title);
+  line-height: normal;
   color: var(--color-text);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -40,7 +41,7 @@
   column-gap: var(--space-2);
   align-items: center;
   --pilz-colour-width: var(--pilz-change-field);
-  --pilz-colour-height: 26px;
+  --pilz-colour-height: 22px;
   color: var(--color-text-muted);
 }
 
@@ -62,7 +63,7 @@
   grid-column: 4;
   gap: 4px;
   align-items: center;
-  justify-content: flex-end;
-  font-size: var(--fs-xs);
+  justify-content: flex-start;
+  font-size: var(--fs-row-meta);
   white-space: nowrap;
 }

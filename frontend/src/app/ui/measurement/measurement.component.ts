@@ -29,6 +29,7 @@ export interface Span {
   imports: [TranslatePipe],
   templateUrl: './measurement.component.html',
   styleUrl: './measurement.component.scss',
+  host: { '[class.measure--rare]': 'rare() !== null' },
 })
 export class MeasurementComponent {
   private readonly i18n = inject(I18nService);

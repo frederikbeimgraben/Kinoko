@@ -1,15 +1,21 @@
-<app-checkbox
-  class="row tap"
-  data-press="tint"
-  [id]="fieldId"
-  [ngModel]="checked()"
-  [disabled]="locked()"
-  (ngModelChange)="toggled.emit($event)"
->
+<label class="row tap" data-press="tint" [attr.for]="fieldId">
+  <input
+    class="row__input"
+    type="checkbox"
+    [id]="fieldId"
+    [checked]="checked()"
+    [disabled]="locked()"
+    (change)="onToggle($event)"
+  />
+  <span class="row__box" [class.row__box--on]="checked()" aria-hidden="true">
+    @if (checked()) {
+      <app-svg-icon name="check" [size]="14" [strokeWidth]="2.4" />
+    }
+  </span>
   <span class="row__stack">
     <span class="row__title">{{ title() }}</span>
     @if (subline()) {
       <span class="row__sub">{{ subline() }}</span>
     }
   </span>
-</app-checkbox>
+</label>
