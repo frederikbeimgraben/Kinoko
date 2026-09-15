@@ -35,8 +35,12 @@ const COMBINATION_KEY = 'pilzkarte.combination.v1';
 /** Die Faktoren aus den Boards der Kombination, als Wert des Speichers. */
 export const BOARD_FACTORS = 'regen:ge:80';
 
+/** Heute, für jedes Board: KW 40 der Fixtures gilt als laufende Woche. */
+const BOARD_NOW = '2025-10-02T12:00:00Z';
+
 /** Legt Zustand, Manifeste und Kacheln auf die Seite. Kacheln bleiben leer. */
 export async function mockMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {
+  await page.clock.setFixedTime(new Date(BOARD_NOW));
   await page.addInitScript(
     ([key, combinationKey, value, combination]) => {
       localStorage.setItem(key, value);
@@ -47,7 +51,6 @@ export async function mockMap(page: Page, state: BoardState = {}, factors = ''):
       COMBINATION_KEY,
       JSON.stringify({
         species: state.species ?? 'boletus-edulis',
-        week: '2025-40',
         view: state.view ?? 'forecast',
         layer: state.layer ?? 'regen_4w',
         opacity: 0.8,
