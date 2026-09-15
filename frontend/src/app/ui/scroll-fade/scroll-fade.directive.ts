@@ -47,10 +47,10 @@ export class ScrollFadeDirective {
     });
 
     const size = new ResizeObserver(this.measure);
-    // Zeilen kommen und gehen, ohne dass der Wirt seine Größe ändert.
+    // Zeilen stecken in einer Karte, einem Kind des Wirts, nicht im Wirt selbst.
     const rows = new MutationObserver(this.measure);
     size.observe(this.host);
-    rows.observe(this.host, { childList: true });
+    rows.observe(this.host, { childList: true, subtree: true });
     this.host.addEventListener('scroll', this.measure, { passive: true });
     this.measure();
 

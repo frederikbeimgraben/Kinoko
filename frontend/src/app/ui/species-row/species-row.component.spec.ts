@@ -52,6 +52,24 @@ describe('SpeciesRowComponent', () => {
     expect(container.querySelector('img')).toBeNull();
   });
 
+  it('reserviert ohne Titelbild keinen Platz vor der Plakette', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: { ...STEINPILZ, image: null } },
+    });
+
+    const marks = styleOf(container.querySelector('.row__marks'));
+    expect(marks.getPropertyValue('padding-inline-end')).toBe('');
+    expect(marks.getPropertyValue('mask-image')).toBe('');
+  });
+
+  it('reserviert mit Titelbild Platz vor der Plakette', async () => {
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
+
+    const marks = styleOf(container.querySelector('.row__marks'));
+    expect(marks.getPropertyValue('padding-inline-end')).toBe('var(--space-row-inline)');
+    expect(marks.getPropertyValue('mask-image')).not.toBe('none');
+  });
+
   it('lässt ohne Titelbild kein Element für die Bildspalte im Baum', async () => {
     const { container } = await render(SpeciesRowComponent, {
       inputs: { species: { ...STEINPILZ, image: null } },
