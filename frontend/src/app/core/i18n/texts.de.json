@@ -55,6 +55,7 @@
   "admin.characteristic.unspecified": "nichts eingetragen",
   "admin.finds.title": "Funde",
   "admin.images.title": "Bilder",
+  "admin.people.noName": "ohne Namen",
   "admin.people.searchPlaceholder": "Person suchen",
   "admin.people.title": "Personen",
   "admin.role.approveImages": "Bilder freigeben",

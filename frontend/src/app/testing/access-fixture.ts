@@ -4,7 +4,6 @@ import type {
   AdminSummary,
   Me,
   MyPermissions,
-  Page,
   Permission,
   PermissionEntry,
   Person,
@@ -82,18 +81,19 @@ export const ADVISOR_ROLE = role({
 
 export const ROLES: Role[] = [ADMIN_ROLE, USER_ROLE, ADVISOR_ROLE];
 
-export function person(part: Partial<Person> & Pick<Person, 'sub'>): Person {
+export function person(part: Partial<Person> & Pick<Person, 'id' | 'sub'>): Person {
   return { email: null, name: null, roles: [], createdAt: NOW, ...part };
 }
 
 export const PEOPLE: Person[] = [
   person({
+    id: 'person-frederik',
     sub: 'sub-frederik',
     name: 'Frederik',
     email: 'frederik@beimgraben.net',
     roles: [{ id: ADMIN_ROLE.id, slug: ADMIN_ROLE.slug, name: ADMIN_ROLE.name }],
   }),
-  person({ sub: 'sub-jonas', name: 'Jonas', email: 'jonas@example.test' }),
+  person({ id: 'person-jonas', sub: 'sub-jonas', name: 'Jonas', email: 'jonas@example.test' }),
 ];
 
 /** Die Zähler der Übersicht, so wie `/api/admin/summary` sie liefert. */
@@ -139,7 +139,8 @@ export class AccessApiDouble {
   readonly created: RoleInput[] = [];
   readonly patched: { id: string; patch: RolePatch }[] = [];
   readonly deleted: string[] = [];
-  readonly assigned: { sub: string; roles: string[] }[] = [];
+  readonly assigned: { id: string; roles: string[] }[] = [];
+  readonly removed: string[] = [];
   meCalls = 0;
   mineCalls = 0;
 
@@ -186,25 +187,32 @@ export class AccessApiDouble {
     return this.answer(null);
   }
 
-  people(search: string): Observable<Page<Person>> {
+  people(search: string): Observable<Person[]> {
     this.searches.push(search);
-    const hit = this.peopleList.filter((one) =>
-      search === '' ? true : (one.name ?? '').toLowerCase().includes(search.toLowerCase()),
+    return of(
+      this.peopleList.filter((one) =>
+        search === '' ? true : (one.name ?? '').toLowerCase().includes(search.toLowerCase()),
+      ),
     );
-    return of({ eintraege: hit, gesamt: hit.length, limit: 50, offset: 0 });
   }
 
-  setRoles(sub: string, roles: string[]): Observable<Person> {
-    this.assigned.push({ sub, roles });
+  setRoles(id: string, roles: string[]): Observable<Person> {
+    this.assigned.push({ id, roles });
     const known = this.roleList.filter((one) => roles.includes(one.id));
-    const before = this.peopleList.find((one) => one.sub === sub);
+    const before = this.peopleList.find((one) => one.id === id);
     return this.answer(
       person({
         ...before,
-        sub,
+        id,
+        sub: before?.sub ?? id,
         roles: known.map((one) => ({ id: one.id, slug: one.slug, name: one.name })),
       }),
     );
+  }
+
+  deletePerson(id: string): Observable<null> {
+    this.removed.push(id);
+    return this.answer(null);
   }
 
   private answer<T>(value: T): Observable<T> {

@@ -1,3 +1,5 @@
+@use '../../../styles/card';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -12,10 +14,55 @@
   gap: 20px;
   padding: var(--size-gutter);
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.people__actions {
+.people__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
+}
+
+.people__roles {
   display: flex;
-  gap: 10px;
-  justify-content: flex-end;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
+}
+
+.people__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--size-gutter) var(--space-3);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.people__name {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.people__mail {
+  font-size: var(--fs-row-meta);
+  color: var(--color-text-muted);
+}
+
+.people__choices {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--size-gutter);
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
 }

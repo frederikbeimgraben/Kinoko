@@ -6,7 +6,6 @@ import type {
   Items,
   Me,
   MyPermissions,
-  Page,
   PermissionEntry,
   Person,
   Role,
@@ -63,12 +62,16 @@ export class AccessApi {
     return this.api.delete<null>(`/roles/${encodeURIComponent(id)}`);
   }
 
-  people(search: string): Observable<Page<Person>> {
-    return this.api.get<Page<Person>>('/people', { q: search || undefined });
+  people(search: string): Observable<Person[]> {
+    return this.api.get<Items<Person>>('/people', { q: search || undefined }).pipe(map((page) => page.items));
   }
 
   /** Setzt die Rollen einer Person neu. Die Liste ersetzt, sie ergänzt nicht. */
-  setRoles(sub: string, roles: string[]): Observable<Person> {
-    return this.api.put<Person>(`/people/${encodeURIComponent(sub)}/roles`, { roles });
+  setRoles(id: string, roleIds: string[]): Observable<Person> {
+    return this.api.put<Person>(`/people/${encodeURIComponent(id)}/roles`, { roleIds });
+  }
+
+  deletePerson(id: string): Observable<null> {
+    return this.api.delete<null>(`/people/${encodeURIComponent(id)}`);
   }
 }

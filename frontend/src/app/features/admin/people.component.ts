@@ -1,24 +1,38 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { CardComponent } from '@stupa-makers/ui-kit';
+import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { SEPARATOR } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import type { TranslationKey } from '../../core/i18n/translations';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
-import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
-import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
+import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { AdminState } from './admin.state';
+
+/** Das Blatt der Zuweisung ist so hoch wie sein Inhalt. */
+const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
+
+/** Die feste Rolle, die jede angemeldete Person trägt. Sie wird nicht vergeben. */
+const EVERY_ONE = 'user';
+
+/** Eine Rolle neben einer Person. */
+interface Mark {
+  id: string;
+  name: string;
+  /** Die Rolle Admin trägt die Primärfarbe, jede andere den Grundton. */
+  lead: boolean;
+}
 
 /** Eine Zeile der Personenliste. */
 interface Row {
-  sub: string;
+  id: string;
   name: string;
   email: string;
-  roles: string;
+  roles: readonly Mark[];
 }
 
 /** Eine Rolle im Blatt der Zuweisung. */
@@ -28,24 +42,18 @@ interface Choice {
   checked: boolean;
 }
 
-/**
- * Die Personenliste (Artboard `Personen`): Suche, Konten und ihre Rollen.
- *
- * Eine Zeile öffnet die Zuweisung. Sie zeigt jede vergebbare Rolle mit einem
- * Haken, wie die Rechtematrix einer Rolle: dieselbe Zeile, dasselbe Bild. Die
- * feste Rolle Nutzer steht nicht darin, sie hat jede angemeldete Person.
- */
+/** Die Personenliste: Suche, Konten und ihre Rollen. Eine Zeile weist zu. */
 @Component({
   selector: 'app-people',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CardComponent,
+    ActionBarComponent,
+    BadgeComponent,
     CheckRowComponent,
-    ConfirmDialogComponent,
-    EmptyStateComponent,
-    FormFieldComponent,
     ListRowComponent,
     PageHeaderComponent,
+    SearchFieldComponent,
+    SheetComponent,
     TranslatePipe,
   ],
   templateUrl: './people.component.html',
@@ -56,49 +64,41 @@ export class PeopleComponent {
   private readonly router = inject(Router);
   private readonly state = inject(AdminState);
 
+  protected readonly DETENTS = DETENTS;
   protected readonly search = signal('');
   protected readonly editing = signal<Person | null>(null);
   protected readonly chosen = signal<ReadonlySet<string>>(new Set());
   protected readonly saving = signal(false);
 
-  protected readonly loaded = computed(() => this.state.people() !== null);
   protected readonly rows = computed<Row[]>(() =>
     (this.state.people() ?? []).map((person) => ({
-      sub: person.sub,
-      name: person.name ?? this.i18n.translate('personen.namenlos'),
+      id: person.id,
+      name: person.name ?? this.i18n.translate('admin.people.noName'),
       email: person.email ?? '',
-      roles:
-        person.roles.length === 0
-          ? this.i18n.translate('personen.nurNutzer')
-          : person.roles.map((role) => role.name).join(SEPARATOR),
+      roles: person.roles.map((role) => ({
+        id: role.id,
+        name: this.i18n.translate(role.name as TranslationKey),
+        lead: role.slug === 'admin',
+      })),
     })),
   );
 
-  protected readonly count = computed(() =>
-    this.i18n.translate('personen.anzahl', { anzahl: this.rows().length }),
-  );
-
-  /** Nur freie Rollen: die feste Rolle Nutzer wird nicht vergeben. */
+  /** Nur freie Rollen: die feste Rolle jeder Person wird nicht vergeben. */
   private readonly assignable = computed<readonly Role[]>(() =>
-    (this.state.roles() ?? []).filter((role) => role.slug !== 'user'),
+    (this.state.roles() ?? []).filter((role) => role.slug !== EVERY_ONE),
   );
 
   protected readonly choices = computed<Choice[]>(() =>
     this.assignable().map((role) => ({
       id: role.id,
-      name: role.name,
+      name: this.i18n.translate(role.name as TranslationKey),
       checked: this.chosen().has(role.id),
     })),
   );
 
-  protected readonly dialogTitle = computed(() =>
-    this.i18n.translate('personen.rollenTitel', { name: this.editing()?.name ?? '' }),
-  );
-
   constructor() {
     this.state.loadPeople('');
-    // Ohne die Rollen bliebe das Blatt der Zuweisung leer. Wer Rollen vergeben
-    // darf, darf sie auch lesen.
+    // Ohne die Rollen bliebe das Blatt der Zuweisung leer.
     this.state.loadRoles();
   }
 
@@ -107,8 +107,8 @@ export class PeopleComponent {
     this.state.loadPeople(text.trim());
   }
 
-  protected edit(sub: string): void {
-    const person = this.state.people()?.find((one) => one.sub === sub) ?? null;
+  protected edit(id: string): void {
+    const person = this.state.people()?.find((one) => one.id === id) ?? null;
     this.editing.set(person);
     this.chosen.set(new Set(person?.roles.map((role) => role.id) ?? []));
   }
@@ -126,7 +126,7 @@ export class PeopleComponent {
     const person = this.editing();
     if (person === null || this.saving()) return;
     this.saving.set(true);
-    this.state.setRoles(person.sub, [...this.chosen()]).subscribe({
+    this.state.setRoles(person.id, [...this.chosen()]).subscribe({
       next: () => {
         this.saving.set(false);
         this.editing.set(null);

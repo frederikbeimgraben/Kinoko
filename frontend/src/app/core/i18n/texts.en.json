@@ -55,6 +55,7 @@
   "admin.characteristic.unspecified": "nothing entered",
   "admin.finds.title": "Finds",
   "admin.images.title": "Images",
+  "admin.people.noName": "unnamed",
   "admin.people.searchPlaceholder": "Search person",
   "admin.people.title": "People",
   "admin.role.approveImages": "Approve images",

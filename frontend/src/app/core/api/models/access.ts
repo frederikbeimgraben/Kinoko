@@ -87,14 +87,7 @@ export interface RolePatch {
 }
 
 /** Ein Konto, das den Dienst schon einmal benutzt hat. */
-export interface Person {
-  sub: string;
-  email: string | null;
-  name: string | null;
-  /** Nur die ausdrücklich vergebenen Rollen. Nutzer steht in keiner Zuweisung. */
-  roles: RoleRef[];
-  createdAt: string;
-}
+export type Person = components['schemas']['Person'];
 
 /** Ein Ausschnitt der Personenliste, mit der Gesamtzahl dahinter. */
 export interface Page<E> {
