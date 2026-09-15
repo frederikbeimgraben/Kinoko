@@ -1,6 +1,6 @@
 @if (factor(); as chosen) {
   @if (layer(); as source) {
-    <app-page-header [title]="source.label" [back]="true" (backClick)="closed.emit()" />
+    <app-page-header [title]="source.label" [back]="true" [compact]="true" (backClick)="closed.emit()" />
     <app-factor-sheet
       [factor]="chosen"
       [layer]="source"

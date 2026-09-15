@@ -19,3 +19,8 @@
 .footer__main {
   min-block-size: 48px;
 }
+
+// Die rote Aktion steht schmaler als die grüne, wie die Boards sie zeigen.
+.footer__slim {
+  min-block-size: var(--size-tap);
+}
