@@ -8,7 +8,18 @@
   padding: var(--size-gutter) var(--size-gutter) var(--space-5);
 }
 
-// Die Regel steht dicht unter den Reitern: beide sagen, was die Karte zeigt.
+// Die gespeicherten Kombinationen stehen als Karte unter den Reitern.
+.panel__saved {
+  --fw-row-filter: var(--fw-regular);
+  --space-row-gap: var(--space-row-inline);
+
+  margin-block-start: calc(10px - var(--space-5));
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+// Die Regel steht dicht unter der Karte: beide sagen, was die Karte zeigt.
 .panel__rule {
   margin-block-start: calc(10px - var(--space-5));
 }

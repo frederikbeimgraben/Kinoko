@@ -30,6 +30,16 @@
       <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
     }
     @case ('combination') {
+      <div class="panel__saved">
+        <app-list-row
+          kind="filter"
+          [title]="'map.combination.saved' | t"
+          [value]="savedCount()"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="savedOpened.emit()"
+        />
+      </div>
       <app-segmented
         class="panel__rule"
         [options]="rules()"

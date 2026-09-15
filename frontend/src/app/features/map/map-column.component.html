@@ -28,6 +28,7 @@
   />
   <app-map-panel
     (layerChosen)="layerChosen.emit()"
+    (savedOpened)="savedOpened.emit()"
     (factorOpened)="factorOpened.emit($event)"
     (factorAdded)="factorAdded.emit()"
     (saveRequested)="saveRequested.emit()"
