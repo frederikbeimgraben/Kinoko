@@ -67,7 +67,7 @@
 .species__column {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-card-stack);
   min-block-size: 0;
   padding: var(--size-gutter);
   overflow-y: auto;
@@ -75,7 +75,7 @@
 }
 // Am Rechner stehen die Karten des Filters enger als im Blatt.
 .species__column app-species-filter-panel {
-  gap: 14px;
+  gap: var(--space-card-stack);
 }
 
 .species__pane {

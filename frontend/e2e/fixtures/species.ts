@@ -1,5 +1,7 @@
 /** Die Attrappen des Artenkatalogs für Boards und Flüsse. */
 
+import { nearestColour } from '../../src/app/features/species/facets';
+
 type Hex = string;
 
 interface Shape {
@@ -205,41 +207,9 @@ export const STONE: readonly Shape[] = [
   },
 ];
 
-const GAMMA_CUT = 0.04045;
-const WEIGHTS: readonly [number, number, number] = [1, 2, 2];
-
-function oklab(value: string): [number, number, number] {
-  const raw = value.replace('#', '');
-  const [red, green, blue] = [0, 2, 4]
-    .map((at) => parseInt(raw.slice(at, at + 2), 16) / 255)
-    .map((one) => (one <= GAMMA_CUT ? one / 12.92 : ((one + 0.055) / 1.055) ** 2.4));
-  const long = 0.4122214708 * red + 0.5363325363 * green + 0.0514459929 * blue;
-  const medium = 0.2119034982 * red + 0.6806995451 * green + 0.1073969566 * blue;
-  const short = 0.0883024619 * red + 0.2817188376 * green + 0.6299787005 * blue;
-  const [one, two, three] = [long, medium, short].map((part) => part ** (1 / 3));
-  return [
-    0.2104542553 * one + 0.793617785 * two - 0.0040720468 * three,
-    1.9779984951 * one - 2.428592205 * two + 0.4505937099 * three,
-    0.0259040371 * one + 0.7827717662 * two - 0.808675766 * three,
-  ];
-}
-
 /** Die nächste Standardfarbe, wie der Dienst sie rechnet. */
-export function nearestKey(hex: string): string {
-  const target = oklab(hex);
-  let best = PALETTE[0];
-  let shortest = Number.POSITIVE_INFINITY;
-  for (const colour of PALETTE) {
-    const other = oklab(colour.hex);
-    const span = Math.sqrt(
-      target.reduce((sum, part, at) => sum + ((part - other[at]) * WEIGHTS[at]) ** 2, 0),
-    );
-    if (span < shortest) {
-      shortest = span;
-      best = colour;
-    }
-  }
-  return best.key;
+function nearestKey(hex: string): string {
+  return nearestColour(hex, PALETTE)?.key ?? PALETTE[0].key;
 }
 
 function monthsOf(entry: Shape): string[] {

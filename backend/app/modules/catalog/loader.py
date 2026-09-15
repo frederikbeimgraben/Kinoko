@@ -47,6 +47,11 @@ async def term_lookup(db: AsyncSession) -> dict[uuid.UUID, Term]:
     return {row.id: row for row in rows}
 
 
+def names_of(species: SpeciesRow, names: tuple[str, str | None]) -> tuple[str, str | None]:
+    """Gattung und Familie einer Art, mit dem lateinischen Namen als Rückfall."""
+    return names[0] or species.latin_name.split(" ")[0], names[1]
+
+
 def build_facets(
     species: SpeciesRow,
     child: ChildRows,
@@ -70,6 +75,7 @@ def build_facets(
         s for s in (species.cap_shape_young, species.cap_shape_old) if s is not None
     )
     held = [terms[i] for i in term_ids if terms and i in terms]
+    named = names_of(species, names)
     return SpeciesFacets(
         species_id=species.id,
         edibility=species.edibility,
@@ -81,8 +87,8 @@ def build_facets(
         term_ids=term_ids,
         protection=species.protection,
         forecast_enabled=species.forecast_enabled,
-        genus_name=names[0],
-        family_name=names[1],
+        genus_name=named[0],
+        family_name=named[1],
         senses=frozenset(t.slug for t in held if t.kind in SENSES),
         trees=frozenset(t.slug for t in held if t.kind == TermKind.TREE),
     )
@@ -94,14 +100,15 @@ def summary_of(
     names: tuple[str, str | None] = ("", None),
 ) -> SpeciesSummary:
     """Baut die Kurzform einer Art."""
+    named = names_of(species, names)
     return SpeciesSummary(
         id=species.id,
         slug=species.slug,
         name=species.name,
         scientific_name=species.latin_name,
         taxon_id=species.taxon_id,
-        genus_name=names[0] or species.latin_name.split(" ")[0],
-        family_name=names[1],
+        genus_name=named[0],
+        family_name=named[1],
         group=species.group_key,
         edibility=species.edibility,
         protection=species.protection,
