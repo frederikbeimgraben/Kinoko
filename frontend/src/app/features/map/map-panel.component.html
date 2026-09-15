@@ -2,43 +2,51 @@
   [options]="views()"
   [value]="state.view()"
   [label]="'map.view' | t"
+  [loading]="view.loading()"
   (valueChange)="setView($event)"
 />
 
-@switch (state.view()) {
-  @case ('forecast') {
-    @if (!view.noSpecies()) {
+@if (view.loading()) {
+  <div class="panel__wait">
+    <app-skeleton kind="line" width="60%" height="12px" />
+    <div class="panel__bar"></div>
+  </div>
+} @else {
+  @switch (state.view()) {
+    @case ('forecast') {
+      @if (!view.noSpecies()) {
+        <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+      }
+    }
+    @case ('layer') {
+      <app-form-field
+        [label]="'map.tab.layer' | t"
+        [section]="true"
+        [value]="view.layer()?.title ?? ''"
+        [readOnly]="true"
+        (displayClick)="layerChosen.emit()"
+      />
       <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
     }
-  }
-  @case ('layer') {
-    <app-form-field
-      [label]="'map.tab.layer' | t"
-      [section]="true"
-      [value]="view.layer()?.title ?? ''"
-      [readOnly]="true"
-      (displayClick)="layerChosen.emit()"
-    />
-    <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
-  }
-  @case ('combination') {
-    <app-segmented
-      class="panel__rule"
-      [options]="rules()"
-      [value]="combination.rule()"
-      [label]="'map.combination.rule' | t"
-      (valueChange)="setRule($event)"
-    />
-    @if (combination.rule() === 'graded') {
-      <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+    @case ('combination') {
+      <app-segmented
+        class="panel__rule"
+        [options]="rules()"
+        [value]="combination.rule()"
+        [label]="'map.combination.rule' | t"
+        (valueChange)="setRule($event)"
+      />
+      @if (combination.rule() === 'graded') {
+        <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+      }
+      <app-combination
+        [factors]="combination.factors()"
+        [sources]="view.sources()"
+        (activeChange)="combination.toggle($event.factor, $event.active)"
+        (openFactor)="factorOpened.emit($event)"
+        (add)="factorAdded.emit()"
+        (saveRequested)="saveRequested.emit()"
+      />
     }
-    <app-combination
-      [factors]="combination.factors()"
-      [sources]="view.sources()"
-      (activeChange)="combination.toggle($event.factor, $event.active)"
-      (openFactor)="factorOpened.emit($event)"
-      (add)="factorAdded.emit()"
-      (saveRequested)="saveRequested.emit()"
-    />
   }
 }

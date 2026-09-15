@@ -41,6 +41,11 @@ export class TimelineComponent {
   readonly label = input.required<string>();
   /** Gedämpft und ohne Wahl, für eine feste Ebene ohne Woche. */
   readonly dimmed = input(false);
+  /** Ohne Manifest steht die Leiste als Reihe von Platzhaltern. */
+  readonly loading = input(false);
+
+  /** Acht Tasten, so viele wie das Manifest im Regelfall trägt. */
+  protected readonly placeholders = [0, 1, 2, 3, 4, 5, 6, 7];
 
   readonly chosen = output<TimelineWeek>();
 

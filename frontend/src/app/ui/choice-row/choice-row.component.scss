@@ -15,6 +15,11 @@
   border-radius: 10px;
 }
 
+// Im Kasten sitzt das Wort eine halbe Stelle höher als in der Liste.
+:host(.choice-row--boxed) .row__label {
+  line-height: 17px;
+}
+
 .row {
   display: flex;
   gap: var(--space-3);
