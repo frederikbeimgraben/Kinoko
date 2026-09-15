@@ -39,6 +39,16 @@
   padding-inline: var(--space-row-inline);
 }
 
+// Eine Zeile mit Zeichen setzt vierzehn Punkte zwischen ihre Teile. Ein
+// langer Name bricht darin mit der Zeilenhöhe der Schrift.
+.row__field--filter:has(.row__icon) {
+  gap: var(--space-row-inline);
+}
+
+.row__field--filter:has(.row__icon) .row__title {
+  line-height: normal;
+}
+
 // Eine Zeile mit Unterzeile trägt zwei Textzeilen und ist darum höher.
 .row__field--tall {
   min-block-size: calc(var(--size-row-tall) - var(--border-width));

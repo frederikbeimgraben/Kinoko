@@ -13,17 +13,15 @@
   </div>
   <div class="picker__card" role="group" [attr.aria-label]="'map.factor.choose' | t">
     @for (group of groups(); track group.title) {
-      @for (layer of group.layers; track layer.id) {
+      @for (row of group.rows; track row.layer.id) {
         <app-list-row
           kind="filter"
-          [title]="name(layer)"
-          [icon]="icon(layer)"
-          [subline]="subline(layer)"
-          [value]="unit(layer)"
+          [title]="row.name"
+          [icon]="row.icon"
+          [value]="row.unit"
           [chevron]="true"
-          [clickable]="!assigned().has(layer.id)"
-          [class.picker__row--off]="assigned().has(layer.id)"
-          (chosen)="chosen.emit(layer)"
+          [clickable]="true"
+          (chosen)="chosen.emit(row.layer)"
         />
       }
     }

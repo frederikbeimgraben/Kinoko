@@ -16,6 +16,8 @@ export class MapHeadComponent {
   protected readonly view = inject(MapView);
 
   readonly playing = input(false);
+  /** In der Spalte am Rechner steht die Art im Kopf, nicht der Reiter. */
+  readonly column = input(false);
 
   readonly titleChosen = output();
   readonly weekChosen = output<TimelineWeek>();
@@ -23,4 +25,6 @@ export class MapHeadComponent {
   readonly playToggled = output();
 
   protected readonly dimmed = computed(() => this.view.fixedLayer());
+  protected readonly title = computed(() => (this.column() ? this.view.speciesTitle() : this.view.title()));
+  protected readonly link = computed(() => this.column() || !this.view.onCombination());
 }

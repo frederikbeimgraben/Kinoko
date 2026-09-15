@@ -19,6 +19,7 @@
   }
 } @else {
   <app-map-head
+    [column]="true"
     [playing]="playing()"
     (titleChosen)="titleChosen.emit()"
     (weekChosen)="weekChosen.emit($event)"

@@ -9,12 +9,20 @@ import { layerTitle } from './layer-name';
 
 type GroupTitle = 'map.layer.perWeek' | 'map.layer.fixed' | 'map.factor.species';
 
-interface Group {
-  title: GroupTitle;
-  layers: readonly Layer[];
+/** Eine Quelle in der Wahl: Name, Zeichen und Einheit. */
+interface Row {
+  layer: Layer;
+  name: string;
+  icon: IconName;
+  unit: string;
 }
 
-/** Die Quelle eines neuen Faktors: Ebenen und Arten. Belegtes ist gesperrt. */
+interface Group {
+  title: GroupTitle;
+  rows: readonly Row[];
+}
+
+/** Die Quelle eines neuen Faktors: Ebenen und Arten. Belegtes fehlt. */
 @Component({
   selector: 'app-factor-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +35,7 @@ export class FactorPickerComponent {
 
   readonly layers = input.required<readonly Layer[]>();
   readonly species = input<readonly Layer[]>([]);
-  /** Die Quellen, die schon einen Faktor haben. */
+  /** Die Quellen, die schon einen Faktor haben. Sie stehen nicht zur Wahl. */
   readonly assigned = input<ReadonlySet<string>>(new Set());
 
   readonly chosen = output<Layer>();
@@ -42,23 +50,19 @@ export class FactorPickerComponent {
         { title: 'map.factor.species', layers: this.species() },
       ] as const
     )
-      .filter((group) => group.layers.length > 0)
-      .map((group) => ({ title: group.title, layers: group.layers }));
+      .map((group) => ({ title: group.title, rows: this.rows(group.layers) }))
+      .filter((group) => group.rows.length > 0);
   });
 
-  protected name(layer: Layer): string {
-    return layerTitle(layer, this.i18n);
-  }
-
-  protected icon(layer: Layer): IconName | undefined {
-    return layerIcon(layer.id) ?? undefined;
-  }
-
-  protected unit(layer: Layer): string {
-    return unitOf(layer);
-  }
-
-  protected subline(layer: Layer): string | undefined {
-    return this.assigned().has(layer.id) ? this.i18n.translate('map.factor.assigned') : undefined;
+  private rows(layers: readonly Layer[]): Row[] {
+    return layers
+      .filter((layer) => !this.assigned().has(layer.id))
+      .map((layer) => ({
+        layer,
+        name: layerTitle(layer, this.i18n),
+        // Eine Art trägt das Zeichen der Arten, eine Ebene das ihrer Gruppe.
+        icon: layerIcon(layer.id) ?? 'species',
+        unit: unitOf(layer),
+      }));
   }
 }
