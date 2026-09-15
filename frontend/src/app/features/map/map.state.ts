@@ -13,7 +13,6 @@ export const DEFAULT_SPECIES = 'boletus-edulis';
 /** Ohne Wahl steht der Niederschlag der letzten vier Wochen vorn. */
 export const DEFAULT_LAYER = 'regen_4w';
 
-const WEEK_PATTERN = /^\d{4}-\d{2}$/;
 const SLUG_PATTERN = /^[a-z0-9-]{1,60}$/;
 const LAYER_PATTERN = /^[a-z0-9_]{1,40}$/;
 
@@ -23,10 +22,9 @@ export const STORAGE_KEY = 'pilzkarte.map.v1';
 /** So lange wird gewartet, bevor eine Änderung im Speicher landet. */
 export const SAVE_DELAY = 400;
 
-/** Der Zustand, wie er im Speicher liegt. Jedes Feld darf fehlen. */
+/** Der Zustand, wie er im Speicher liegt. Jedes Feld darf fehlen. Die Woche gehört nicht dazu. */
 interface Saved {
   species?: unknown;
-  week?: unknown;
   view?: unknown;
   layer?: unknown;
   opacity?: unknown;
@@ -105,7 +103,6 @@ export class MapState {
   private asSaved(): Saved {
     return {
       species: this.species(),
-      week: this.week(),
       view: this.view(),
       layer: this.layer(),
       opacity: this.opacity(),
@@ -134,7 +131,6 @@ export class MapState {
     if (typeof state.species === 'string' && SLUG_PATTERN.test(state.species)) {
       this.species.set(state.species);
     }
-    if (typeof state.week === 'string' && WEEK_PATTERN.test(state.week)) this.week.set(state.week);
     if (isView(state.view)) this.view.set(state.view);
     if (typeof state.layer === 'string' && LAYER_PATTERN.test(state.layer)) this.layer.set(state.layer);
     if (typeof state.opacity === 'number' && Number.isFinite(state.opacity)) {

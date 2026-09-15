@@ -48,10 +48,7 @@ export async function cached(url: string, kind: TileKind): Promise<Response | nu
   return null;
 }
 
-/** Holt eine Kachel. Der Speicher führt, das Netz ist der Rückfall. */
-export async function cachedFetch(url: string, kind: TileKind): Promise<Response | null> {
-  const known = await cached(url, kind);
-  if (known) return known;
+async function fromNetwork(url: string, kind: TileKind): Promise<Response | null> {
   let reply: Response;
   try {
     reply = await fetch(url);
@@ -61,4 +58,10 @@ export async function cachedFetch(url: string, kind: TileKind): Promise<Response
   if (!reply.ok || !fits(reply, kind)) return null;
   if (storage()) await keep(url, reply.clone());
   return reply;
+}
+
+/** Kachel: Speicher zuerst, Netz als Rückfall. Manifest: Netz zuerst, Speicher als Rückfall. */
+export async function cachedFetch(url: string, kind: TileKind): Promise<Response | null> {
+  if (kind === 'json') return (await fromNetwork(url, kind)) ?? cached(url, kind);
+  return (await cached(url, kind)) ?? fromNetwork(url, kind);
 }

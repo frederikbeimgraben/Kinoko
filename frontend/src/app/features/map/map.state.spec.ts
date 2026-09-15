@@ -24,7 +24,7 @@ describe('MapState', () => {
     expect(state.background()).toBe('map');
   });
 
-  it('sichert den Stand nach der Drosselung', async () => {
+  it('sichert den Stand nach der Drosselung, ohne die Woche', async () => {
     vi.useFakeTimers();
     const state = TestBed.inject(MapState);
     state.species.set('cantharellus-cibarius');
@@ -36,10 +36,19 @@ describe('MapState', () => {
     await vi.advanceTimersByTimeAsync(SAVE_DELAY);
 
     expect(stored()['species']).toBe('cantharellus-cibarius');
-    expect(stored()['week']).toBe('2025-40');
+    expect(stored()['week']).toBeUndefined();
     expect(stored()['view']).toBe('layer');
     expect(stored()['detent']).toBe(0);
     vi.useRealTimers();
+  });
+
+  it('stellt eine gespeicherte Woche beim Start nicht wieder her', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ species: 'imleria-badia', week: '2025-40' }));
+
+    const state = TestBed.inject(MapState);
+
+    expect(state.species()).toBe('imleria-badia');
+    expect(state.week()).toBeNull();
   });
 
   it('liest einen gesicherten Stand und verwirft Unsinn', () => {
