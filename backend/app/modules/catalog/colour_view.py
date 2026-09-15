@@ -22,7 +22,7 @@ def colour_value(row: SpeciesColour) -> ColourValue:
 
 def term_ref(term: Term) -> TermRef:
     """Baut den Verweis auf einen Begriff."""
-    return TermRef(id=term.id, slug=term.slug, name=term.name)
+    return TermRef(id=term.id, slug=term.slug, name=term.name, kind=term.kind)
 
 
 def colour_groups(species_id: uuid.UUID, child: ChildRows) -> list[ColourGroup]:

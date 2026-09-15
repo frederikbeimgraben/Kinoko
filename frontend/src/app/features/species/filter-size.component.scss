@@ -43,16 +43,6 @@
   color: var(--color-text-muted);
 }
 
-// Die Spur des Filters steht schmaler und trägt Griffe im Ton der Fläche.
-.size__slider {
-  --range-slider-lane: 6px;
-  --range-slider-track: 6px;
-  --range-slider-handle: 18px;
-  --range-slider-border: 3px;
-  --range-slider-thumb: var(--color-primary);
-  --range-slider-ring: var(--color-bg);
-}
-
 .size__scale {
   display: flex;
   justify-content: space-between;
@@ -61,12 +51,6 @@
   line-height: 1.4;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
-}
-
-.size__band {
-  --year-band-lane: 30px;
-  --year-band-track: 30px;
-  --year-band-handle: 18px;
 }
 
 .size__period {

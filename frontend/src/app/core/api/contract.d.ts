@@ -928,11 +928,16 @@ export interface components {
             name: string;
             hex: components["schemas"]["HexColour"];
         };
+        StandardColour: {
+            key: string;
+            hex: components["schemas"]["HexColour"];
+        };
         TermRef: {
             /** Format: uuid */
             id: string;
             slug: string;
             name: string;
+            kind: components["schemas"]["TermKind"];
         };
         ColourGroup: {
             part: components["schemas"]["BodyPart"];
@@ -1005,6 +1010,8 @@ export interface components {
             name: string;
             scientificName: string;
             taxonId?: string | null;
+            genusName: string;
+            familyName?: string | null;
             group: components["schemas"]["Group"];
             edibility: components["schemas"]["Edibility"];
             protection: components["schemas"]["Protection"];
@@ -1095,6 +1102,12 @@ export interface components {
         };
         SpeciesBundle: {
             items: components["schemas"]["Species"][];
+            standardColours: components["schemas"]["StandardColour"][];
+            facets: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
         };
         TaxonStep: {
             /** Format: uuid */
@@ -1401,9 +1414,21 @@ export interface components {
             finishedAt?: string | null;
             triggeredById?: string | null;
         };
+        PipelineRunStep: {
+            position: number;
+            name: string;
+            state: components["schemas"]["RunState"];
+            durationS: number | null;
+        };
         PipelineRunDetail: components["schemas"]["PipelineRunSummary"] & {
             logPath?: string | null;
+            metricBrier?: number | null;
+            metricBrierPrevious?: number | null;
+            progressDone: number;
+            progressTotal: number;
             species: components["schemas"]["PipelineRunSpeciesEntry"][];
+            steps: components["schemas"]["PipelineRunStep"][];
+            logTail: string[];
         };
         PipelineRunPage: {
             items: components["schemas"]["PipelineRunSummary"][];
@@ -3368,6 +3393,7 @@ export interface operations {
                 "application/json": {
                     state: components["schemas"]["RunState"];
                     logPath?: string;
+                    metricBrier?: number | null;
                 };
             };
         };

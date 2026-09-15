@@ -13,6 +13,7 @@ from app.models import Species, Taxon
 from app.modules.catalog.children import load_children
 from app.modules.catalog.loader import summary_of
 from app.modules.catalog.schemas import TaxonChild, TaxonPage, TaxonStep
+from app.modules.catalog.taxon_names import taxon_names
 from app.shared.enums import TaxonRank
 from app.shared.repository import Repository
 
@@ -68,7 +69,8 @@ class TaxonomyService:
             ).scalars(),
         )
         child = await load_children(self.db, [s.id for s in species_rows])
-        species = [summary_of(s, child.lead_photos.get(s.id)) for s in species_rows]
+        names = await taxon_names(self.db)
+        species = [summary_of(s, child.lead_photos.get(s.id), names.of(s)) for s in species_rows]
         return TaxonPage(
             id=taxon.id,
             slug=taxon.slug,

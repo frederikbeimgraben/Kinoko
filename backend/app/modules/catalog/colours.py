@@ -18,19 +18,20 @@ class StandardColour:
     hex: str
 
 
+#: Die zwölf Farben des Bretts `FilterColour`, in seiner Reihenfolge.
 STANDARD: Final[tuple[StandardColour, ...]] = (
-    StandardColour("white", "#ffffff"),
-    StandardColour("cream", "#f2e6c2"),
-    StandardColour("yellow", "#e8c33a"),
-    StandardColour("orange", "#e08a2e"),
-    StandardColour("red", "#c0392b"),
-    StandardColour("pink", "#e79bb0"),
-    StandardColour("violet", "#7a4a94"),
-    StandardColour("blue", "#3a6ea8"),
-    StandardColour("green", "#4f8a3a"),
-    StandardColour("brown", "#7a5230"),
-    StandardColour("grey", "#8a8a8a"),
-    StandardColour("black", "#2a2a2a"),
+    StandardColour("white", "#f3efe6"),
+    StandardColour("cream", "#e8d9b5"),
+    StandardColour("yellow", "#e0b446"),
+    StandardColour("orange", "#d1832f"),
+    StandardColour("redBrown", "#a0522d"),
+    StandardColour("brown", "#6b4423"),
+    StandardColour("darkBrown", "#3e2a17"),
+    StandardColour("olive", "#7f8a3a"),
+    StandardColour("green", "#4f7a3a"),
+    StandardColour("red", "#b8322a"),
+    StandardColour("violet", "#7a3b6a"),
+    StandardColour("grey", "#8a8f8a"),
 )
 
 KEYS: Final = frozenset(colour.key for colour in STANDARD)

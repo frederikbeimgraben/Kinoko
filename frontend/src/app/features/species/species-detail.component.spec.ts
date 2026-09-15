@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
-import { speciesEntry } from '../../testing/species-fixture';
+import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import { SpeciesDetailComponent } from './species-detail.component';
 
 const STEINPILZ = speciesEntry({
@@ -21,7 +21,7 @@ const BARE = speciesEntry({
   protection: 'strict',
 });
 
-const BUNDLE = { items: [STEINPILZ, BARE] };
+const BUNDLE = speciesBundle([STEINPILZ, BARE]);
 
 async function build(slug: string | null): Promise<{ container: Element }> {
   const { container } = await render(SpeciesDetailComponent, {

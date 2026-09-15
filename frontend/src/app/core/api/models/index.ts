@@ -12,6 +12,7 @@ export type {
   SpeciesBundle,
   SpeciesEntry,
   SpeciesSummary,
+  StandardColour,
   TaxonChild,
   TaxonPage,
   TaxonRank,

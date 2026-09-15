@@ -3,12 +3,11 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { ColourPickerComponent } from '../../ui/colour-picker/colour-picker.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import type { BodyPart } from '../../core/api/models';
-import { countColours } from './facets';
-import { colourParts, tonesOf } from './filter-groups';
+import { countColours, nearestColour, nearestTones } from './facets';
+import { partsWithColour, tonesOf } from './filter-groups';
 import { SpeciesFilterState } from './filter.state';
 import { COLOUR_PARTS, COLOUR_TEXT, PART_TEXT } from './labels';
 import { SpeciesState } from './species.state';
-import { STANDARD_COLOURS, nearestColour, nearestTones } from './standard-colours';
 
 const TONES = 6;
 
@@ -27,13 +26,15 @@ export class SpeciesColourComponent {
 
   private readonly opened = signal<BodyPart | null>(null);
 
-  protected readonly swatches = STANDARD_COLOURS.map((colour) => ({
-    value: colour.hex,
-    label: this.i18n.translate(COLOUR_TEXT[colour.key]),
-  }));
+  protected readonly swatches = computed(() =>
+    this.state.palette().map((colour) => ({
+      value: colour.hex,
+      label: this.i18n.translate(COLOUR_TEXT[colour.key]),
+    })),
+  );
 
   protected readonly parts = computed(() =>
-    colourParts(this.state.entries(), COLOUR_PARTS).map((part) => ({
+    partsWithColour(this.state.facets(), COLOUR_PARTS).map((part) => ({
       part,
       label: this.i18n.translate(PART_TEXT[part]),
       chosen: this.filter.colourOf(part),
@@ -44,7 +45,7 @@ export class SpeciesColourComponent {
 
   /** Ohne eigene Wahl steht der erste Teil offen, wie im Brett. */
   protected readonly open = computed<BodyPart | null>(
-    () => this.opened() ?? colourParts(this.state.entries(), COLOUR_PARTS).at(0) ?? null,
+    () => this.opened() ?? partsWithColour(this.state.facets(), COLOUR_PARTS).at(0) ?? null,
   );
 
   protected readonly tones = computed(() => {
@@ -73,13 +74,13 @@ export class SpeciesColourComponent {
     const part = this.open();
     const hex = part === null ? null : this.filter.colourOf(part);
     if (part === null || hex === null) return 0;
-    const key = nearestColour(hex).key;
-    return countColours(this.state.facts(), part).get(key) ?? 0;
+    const key = nearestColour(hex, this.state.palette())?.key ?? '';
+    return countColours(this.state.facets(), part)[key] ?? 0;
   }
 
   private nameOf(part: BodyPart): string {
     const hex = this.filter.colourOf(part);
-    const colour = STANDARD_COLOURS.find((one) => one.hex === hex);
+    const colour = this.state.palette().find((one) => one.hex === hex);
     return colour === undefined ? '' : this.i18n.translate(COLOUR_TEXT[colour.key]);
   }
 }

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
-import { speciesEntry } from '../../testing/species-fixture';
+import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import { SpeciesColourComponent } from './filter-colour.component';
 import { SpeciesFilterState } from './filter.state';
 
@@ -26,7 +26,7 @@ const STEINPILZ = speciesEntry({
   ],
 });
 
-const BUNDLE = { items: [STEINPILZ] };
+const BUNDLE = speciesBundle([STEINPILZ]);
 
 interface Setup {
   container: Element;

@@ -4,13 +4,7 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { presetFilter } from '../fixtures/filter-state';
 import { bundle, SEVEN, STONE } from '../fixtures/species';
-import {
-  CORE_CHOICE,
-  FORECAST_CHOICE,
-  SIZE_CHOICE,
-  STRICT_CHOICE,
-  largeBundle,
-} from '../fixtures/species-catalogue';
+import { CORE_CHOICE, SIZE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
 import {
   DESKTOP_SPECIES,
   FILTER_DESKTOP,
@@ -20,6 +14,18 @@ import {
   TAXON,
 } from '../fixtures/species-boards';
 import { expectBoard, skipPending } from './board';
+
+const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
+
+/** Was die angemeldete App nebenher holt. Ohne Antwort meldet sie einen Fehler. */
+const EMPTY_PAGE = { eintraege: [], gesamt: 0 };
+const SIGNED_IN: Record<string, unknown> = {
+  '/api/combinations': { eintraege: [], gesamt: 0 },
+  '/api/funde': EMPTY_PAGE,
+  '/api/funde/geteilt': EMPTY_PAGE,
+  '/api/marker': EMPTY_PAGE,
+  '/api/zonen': EMPTY_PAGE,
+};
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
@@ -117,7 +123,7 @@ test('FilterEdibility', async ({ page }) => {
 
 test('FilterCapShape', async ({ page }) => {
   guard('FilterCapShape', 'phone');
-  await presetFilter(page, FORECAST_CHOICE);
+  await presetFilter(page, CORE_CHOICE);
   await openList(page, largeBundle());
   await openGroup(page, 'Hutform');
   await expect(page.getByRole('checkbox', { name: /halbkugelig/ })).toBeVisible();
@@ -126,7 +132,7 @@ test('FilterCapShape', async ({ page }) => {
 
 test('FilterColour', async ({ page }) => {
   guard('FilterColour', 'phone');
-  await presetFilter(page, STRICT_CHOICE);
+  await presetFilter(page, CORE_CHOICE);
   await openList(page, largeBundle());
   await openGroup(page, 'Farbe');
   await expect(page.getByRole('radio', { name: 'Dunkelbraun', exact: true })).toBeVisible();
@@ -138,7 +144,7 @@ test('FilterSize', async ({ page }) => {
   guard('FilterSize', 'phone');
   await presetFilter(page, SIZE_CHOICE);
   await openList(page, largeBundle());
-  await openGroup(page, 'Maße');
+  await openGroup(page, 'Maße und Zeit');
   await expect(page.getByRole('group', { name: 'Wachstumszeit' })).toBeVisible();
   await expectBoard(page, 'FilterSize');
 });
@@ -146,9 +152,9 @@ test('FilterSize', async ({ page }) => {
 test('FilterResult', async ({ page }) => {
   guard('FilterResult', 'phone');
   await presetFilter(page, {
-    values: { edibility: ['edible'], capShape: ['convex'] },
+    values: { edibility: ['edible'], capShape: ['convex'], treePartner: ['picea-abies'] },
     colours: {},
-    sizes: { 'cap.width': [4, 12] },
+    sizes: {},
     keepUnknown: [],
   });
   await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN, ...RESULT_REST]));
@@ -172,7 +178,8 @@ test('SpeciesDesktop', async ({ page }) => {
   guard('SpeciesDesktop', 'desktop');
   await mockSignIn(page);
   await openList(page, bundle(DESKTOP_SPECIES), {
-    '/api/config': authConfig('http://127.0.0.1:4400'),
+    '/api/config': authConfig(BASE),
+    ...SIGNED_IN,
   });
   await seen(page, 'Perlpilz');
   await expectBoard(page, 'SpeciesDesktop');
@@ -183,7 +190,8 @@ test('FilterDesktop', async ({ page }) => {
   await presetFilter(page, FILTER_DESKTOP.choice);
   await mockSignIn(page);
   await openList(page, bundle(FILTER_DESKTOP.catalogue), {
-    '/api/config': authConfig('http://127.0.0.1:4400'),
+    '/api/config': authConfig(BASE),
+    ...SIGNED_IN,
   });
   await seen(page, 'Wiesenchampignon');
   await expectBoard(page, 'FilterDesktop');

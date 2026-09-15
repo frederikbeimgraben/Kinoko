@@ -24,7 +24,8 @@ from app.modules.catalog.schemas import (
     SpeciesTermEntry,
     Trait,
 )
-from app.shared.enums import BodyPart
+from app.modules.catalog.taxon_names import taxon_names
+from app.shared.enums import BodyPart, TermKind
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -36,13 +37,22 @@ if TYPE_CHECKING:
     from app.modules.catalog.children import ChildRows
 
 
+#: Geruch und Geschmack stehen im Filter zusammen.
+SENSES = (TermKind.SMELL, TermKind.TASTE)
+
+
 async def term_lookup(db: AsyncSession) -> dict[uuid.UUID, Term]:
     """Lädt alle Begriffe nach Schlüssel."""
     rows = (await db.execute(select(Term))).scalars()
     return {row.id: row for row in rows}
 
 
-def build_facets(species: SpeciesRow, child: ChildRows) -> SpeciesFacets:
+def build_facets(
+    species: SpeciesRow,
+    child: ChildRows,
+    terms: dict[uuid.UUID, Term] | None = None,
+    names: tuple[str, str | None] = ("", None),
+) -> SpeciesFacets:
     """Baut die Filterachsen einer Art aus ihren Kindzeilen."""
     colour_map: dict[BodyPart, frozenset[str]] = {}
     part_colours = child.colours.get(species.id, [])
@@ -59,6 +69,7 @@ def build_facets(species: SpeciesRow, child: ChildRows) -> SpeciesFacets:
     cap_shapes = frozenset(
         s for s in (species.cap_shape_young, species.cap_shape_old) if s is not None
     )
+    held = [terms[i] for i in term_ids if terms and i in terms]
     return SpeciesFacets(
         species_id=species.id,
         edibility=species.edibility,
@@ -68,10 +79,20 @@ def build_facets(species: SpeciesRow, child: ChildRows) -> SpeciesFacets:
         measurements=measurements,
         period=period,
         term_ids=term_ids,
+        protection=species.protection,
+        forecast_enabled=species.forecast_enabled,
+        genus_name=names[0],
+        family_name=names[1],
+        senses=frozenset(t.slug for t in held if t.kind in SENSES),
+        trees=frozenset(t.slug for t in held if t.kind == TermKind.TREE),
     )
 
 
-def summary_of(species: SpeciesRow, lead_photo_id: uuid.UUID | None) -> SpeciesSummary:
+def summary_of(
+    species: SpeciesRow,
+    lead_photo_id: uuid.UUID | None,
+    names: tuple[str, str | None] = ("", None),
+) -> SpeciesSummary:
     """Baut die Kurzform einer Art."""
     return SpeciesSummary(
         id=species.id,
@@ -79,6 +100,8 @@ def summary_of(species: SpeciesRow, lead_photo_id: uuid.UUID | None) -> SpeciesS
         name=species.name,
         scientific_name=species.latin_name,
         taxon_id=species.taxon_id,
+        genus_name=names[0] or species.latin_name.split(" ")[0],
+        family_name=names[1],
         group=species.group_key,
         edibility=species.edibility,
         protection=species.protection,
@@ -110,11 +133,12 @@ def assemble(
     child: ChildRows,
     terms: dict[uuid.UUID, Term],
     targets: dict[uuid.UUID, lookalikes.LookalikeTarget],
+    names: tuple[str, str | None] = ("", None),
 ) -> Species:
     """Baut das volle Profil einer Art aus ihren Kindzeilen."""
     caps, margins, stems = part_features.split(child.part_features.get(species.id, []))
     return Species(
-        **summary_of(species, child.lead_photos.get(species.id)).model_dump(),
+        **summary_of(species, child.lead_photos.get(species.id), names).model_dump(),
         description=species.description,
         marketable=species.marketable,
         frequency=species.frequency,
@@ -158,8 +182,9 @@ async def load_one(db: AsyncSession, species: SpeciesRow) -> Species:
     """Lädt das volle Profil einer einzelnen Art."""
     child = await load_children(db, [species.id])
     terms = await term_lookup(db)
+    names = await taxon_names(db)
     targets = await lookalikes.load_targets(db, species.id, child.lookalikes.get(species.id, []))
-    return assemble(species, child, terms, targets)
+    return assemble(species, child, terms, targets, names.of(species))
 
 
 async def load_many_with_facets(
@@ -170,7 +195,8 @@ async def load_many_with_facets(
     ids = [s.id for s in species_rows]
     child = await load_children(db, ids)
     terms = await term_lookup(db)
+    names = await taxon_names(db)
     targets = lookalikes.targets_of(species_rows, child)
-    assembled = [assemble(species, child, terms, targets) for species in species_rows]
-    matchables = [build_facets(species, child) for species in species_rows]
+    assembled = [assemble(s, child, terms, targets, names.of(s)) for s in species_rows]
+    matchables = [build_facets(s, child, terms, names.of(s)) for s in species_rows]
     return assembled, matchables

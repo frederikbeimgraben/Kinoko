@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
-import { speciesEntry } from '../../testing/species-fixture';
+import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import { SpeciesSizeComponent } from './filter-size.component';
 import { SpeciesFilterState } from './filter.state';
 
@@ -14,7 +14,7 @@ const STEINPILZ = speciesEntry({
   measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 8, high: 20 }] }],
 });
 
-const BUNDLE = { items: [STEINPILZ] };
+const BUNDLE = speciesBundle([STEINPILZ]);
 
 interface Setup {
   container: Element;

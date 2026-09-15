@@ -17,7 +17,7 @@
     </button>
     @if (part.open) {
       <app-colour-picker
-        [colours]="swatches"
+        [colours]="swatches()"
         [value]="part.chosen"
         [label]="part.label"
         [nearest]="tones()"

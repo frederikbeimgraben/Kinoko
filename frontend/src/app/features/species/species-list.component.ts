@@ -10,11 +10,9 @@ import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { countUnknown, isActive, judge, type GroupKey } from './facets';
 import { chipsOf, type FilterChip } from './chips';
 import { GROUP_TEXT } from './labels';
-import { COLUMN_CARDS } from './filter-groups';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
 import { SpeciesFilterSheetComponent } from './filter-sheet.component';
 import { SpeciesFilterState } from './filter.state';
-import { SpeciesDetailComponent } from './species-detail.component';
 import { SpeciesResultsComponent } from './species-results.component';
 import { SpeciesState, type CatalogueEntry } from './species.state';
 import { search } from './rows';
@@ -29,7 +27,6 @@ const PAGE = 40;
     FilterChipComponent,
     PageHeaderComponent,
     SearchFieldComponent,
-    SpeciesDetailComponent,
     SpeciesFilterPanelComponent,
     SpeciesFilterSheetComponent,
     SpeciesResultsComponent,
@@ -48,7 +45,6 @@ export class SpeciesListComponent {
 
   protected readonly query = signal('');
   protected readonly shown = signal(PAGE);
-  private readonly picked = signal<string | null>(null);
 
   protected readonly wide = this.viewport.wide;
   protected readonly loading = this.state.loading;
@@ -56,10 +52,11 @@ export class SpeciesListComponent {
 
   private readonly judged = computed(() => {
     const selection = this.filter.selection();
+    const palette = this.state.palette();
     const hits: CatalogueEntry[] = [];
     const unknown: CatalogueEntry[] = [];
     for (const one of search(this.state.entries(), this.query())) {
-      const verdict = judge(one.facts, selection);
+      const verdict = judge(one.facts, selection, palette);
       if (verdict === 'hit') hits.push(one);
       else if (verdict === 'unknown') unknown.push(one);
     }
@@ -70,21 +67,17 @@ export class SpeciesListComponent {
   protected readonly unassessable = computed(() => this.judged().unknown);
   protected readonly hasMore = computed(() => this.judged().hits.length > this.shown());
 
-  /** Die Zahl im Kopf nennt, wie viele Arten der Katalog führt. */
+  /** Die Zahl im Kopf ist die Zahl der Treffer, wie im Fuß des Blatts. */
   protected readonly countText = computed(() =>
-    this.loading() || this.failed() ? '' : String(this.state.species().length),
+    this.loading() || this.failed() ? '' : String(this.judged().hits.length),
   );
 
   protected readonly filtered = computed(() => isActive(this.filter.selection()));
 
   /** Die Marken über der Liste; was keine Marke trägt, zählt daneben. */
   protected readonly chips = computed<readonly FilterChip[]>(() =>
-    chipsOf(this.filter.selection(), this.state.entries(), this.i18n),
+    chipsOf(this.filter.selection(), this.state.entries(), this.state.palette(), this.i18n),
   );
-
-  protected readonly extra = computed(() => this.filter.selection().sizes.size);
-
-  protected readonly columnCards = COLUMN_CARDS;
 
   /** Die Zeile über der Trefferliste am Rechner: Zahl und die größte Lücke. */
   protected readonly summary = computed(() => {
@@ -105,8 +98,6 @@ export class SpeciesListComponent {
     () => !this.loading() && !this.failed() && this.query().trim() === '',
   );
 
-  protected readonly chosen = computed(() => this.picked() ?? this.hits().at(0)?.species.slug ?? null);
-
   constructor() {
     void this.state.loadBundle();
     effect(() => {
@@ -117,10 +108,6 @@ export class SpeciesListComponent {
   }
 
   protected open(slug: string): void {
-    if (this.wide()) {
-      this.picked.set(slug);
-      return;
-    }
     void this.router.navigate(['/arten', slug]);
   }
 
@@ -133,10 +120,10 @@ export class SpeciesListComponent {
   }
 
   private largestGap(): { key: GroupKey; count: number } | null {
-    const facts = this.state.facts();
+    const counts = this.state.facets();
     let widest: { key: GroupKey; count: number } | null = null;
     for (const key of this.filter.selection().values.keys()) {
-      const count = countUnknown(facts, key);
+      const count = countUnknown(counts, key);
       if (count > 0 && (widest === null || count > widest.count)) widest = { key, count };
     }
     return widest;

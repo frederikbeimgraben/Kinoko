@@ -1,5 +1,61 @@
-import type { BodyPart, SpeciesEntry } from '../../core/api/models';
-import { nearestColour } from './standard-colours';
+import type { BodyPart, SpeciesEntry, StandardColour } from '../../core/api/models';
+
+const GAMMA_CUT = 0.04045;
+const CUBE_ROOT = 1 / 3;
+const WEIGHTS: readonly [number, number, number] = [1, 2, 2];
+
+function channels(value: string): [number, number, number] {
+  const raw = value.replace('#', '');
+  return [0, 2, 4].map((at) => parseInt(raw.slice(at, at + 2), 16) / 255) as [number, number, number];
+}
+
+function linear(value: number): number {
+  return value <= GAMMA_CUT ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+}
+
+/** Rechnet eine Farbe in den Oklab-Raum. */
+export function oklab(value: string): [number, number, number] {
+  const [red, green, blue] = channels(value).map(linear);
+  const long = 0.4122214708 * red + 0.5363325363 * green + 0.0514459929 * blue;
+  const medium = 0.2119034982 * red + 0.6806995451 * green + 0.1073969566 * blue;
+  const short = 0.0883024619 * red + 0.2817188376 * green + 0.6299787005 * blue;
+  const [one, two, three] = [long, medium, short].map((part) => part ** CUBE_ROOT);
+  return [
+    0.2104542553 * one + 0.793617785 * two - 0.0040720468 * three,
+    1.9779984951 * one - 2.428592205 * two + 0.4505937099 * three,
+    0.0259040371 * one + 0.7827717662 * two - 0.808675766 * three,
+  ];
+}
+
+/** Der Abstand zweier Farben im Oklab-Raum, Buntheit doppelt gewichtet. */
+export function distance(first: string, second: string): number {
+  const left = oklab(first);
+  const right = oklab(second);
+  return Math.sqrt(left.reduce((sum, part, at) => sum + ((part - right[at]) * WEIGHTS[at]) ** 2, 0));
+}
+
+/** Die nächste Standardfarbe des Bündels zu einer Katalogfarbe. */
+export function nearestColour(value: string, palette: readonly StandardColour[]): StandardColour | null {
+  let best: StandardColour | null = null;
+  let shortest = Number.POSITIVE_INFINITY;
+  for (const colour of palette) {
+    const span = distance(value, colour.hex);
+    if (span < shortest) {
+      shortest = span;
+      best = colour;
+    }
+  }
+  return best;
+}
+
+/** Die nächsten Katalogtöne zu einer Standardfarbe, in Katalogfolge. */
+export function nearestTones(tones: readonly string[], target: string, count: number): string[] {
+  const held = [...new Set(tones)];
+  const closest = new Set(
+    [...held].sort((one, other) => distance(one, target) - distance(other, target)).slice(0, count),
+  );
+  return held.filter((tone) => closest.has(tone));
+}
 
 /** Die Gruppen des Filterblatts, in der Reihenfolge der Karten. */
 export const GROUP_KEYS = [
@@ -79,8 +135,8 @@ function capShapes(entry: SpeciesEntry): string[] {
   return [entry.capShapeYoung, entry.capShapeOld].filter((shape) => Boolean(shape)) as string[];
 }
 
-/** Rechnet die Achsen einer Art. `kinds` ordnet einen Begriff seiner Art zu. */
-export function factsOf(entry: SpeciesEntry, kinds: ReadonlyMap<string, string>): Facts {
+/** Rechnet die Achsen einer Art gegen die Palette des Bündels. */
+export function factsOf(entry: SpeciesEntry, palette: readonly StandardColour[]): Facts {
   const terms = entry.terms.map((held) => held.term);
   const values = new Map<GroupKey, readonly string[]>([
     ['edibility', [entry.edibility]],
@@ -89,13 +145,16 @@ export function factsOf(entry: SpeciesEntry, kinds: ReadonlyMap<string, string>)
     ['period', months(entry)],
     ['protection', [entry.protection]],
     ['forecast', entry.forecastEnabled ? [FORECAST_VALUE] : []],
-    ['genusFamily', [entry.scientificName.split(' ')[0]]],
-    ['senses', terms.filter((term) => isSense(kinds.get(term.id))).map((term) => term.slug)],
-    ['treePartner', terms.filter((term) => kinds.get(term.id) === 'tree').map((term) => term.slug)],
+    ['genusFamily', [entry.genusName, entry.familyName ?? ''].filter(Boolean)],
+    ['senses', terms.filter((term) => isSense(term.kind)).map((term) => term.slug)],
+    ['treePartner', terms.filter((term) => term.kind === 'tree').map((term) => term.slug)],
   ]);
   const colours = new Map<string, readonly string[]>();
   for (const group of entry.colours) {
-    colours.set(group.part, [...new Set(group.colours.map((one) => nearestColour(one.hex).key))]);
+    const keys = group.colours
+      .map((one) => nearestColour(one.hex, palette)?.key)
+      .filter((key): key is string => key !== undefined);
+    colours.set(group.part, [...new Set(keys)]);
   }
   const sizes = new Map<string, readonly [number, number]>();
   for (const group of entry.measurements) {
@@ -106,7 +165,7 @@ export function factsOf(entry: SpeciesEntry, kinds: ReadonlyMap<string, string>)
   return { values, colours, sizes };
 }
 
-function isSense(kind: string | undefined): boolean {
+function isSense(kind: string): boolean {
   return kind === 'smell' || kind === 'taste';
 }
 
@@ -122,7 +181,7 @@ function judgeGroup(held: readonly string[], wanted: ReadonlySet<string>): Verdi
 }
 
 /** Prüft eine Art gegen die Wahl. */
-export function judge(facts: Facts, selection: Selection): Verdict {
+export function judge(facts: Facts, selection: Selection, palette: readonly StandardColour[]): Verdict {
   let unknown = false;
   for (const [key, wanted] of selection.values) {
     const verdict = judgeGroup(facts.values.get(key) ?? [], wanted);
@@ -132,7 +191,7 @@ export function judge(facts: Facts, selection: Selection): Verdict {
   for (const [part, hex] of selection.colours) {
     const held = facts.colours.get(part) ?? [];
     if (held.length === 0) unknown = unknown || !selection.keepUnknown.has('colour');
-    else if (!held.includes(nearestColour(hex).key)) return 'miss';
+    else if (!held.includes(nearestColour(hex, palette)?.key ?? '')) return 'miss';
   }
   for (const [key, wanted] of selection.sizes) {
     const held = facts.sizes.get(key);
@@ -148,29 +207,27 @@ export function isActive(selection: Selection): boolean {
   return chosen || selection.colours.size > 0 || selection.sizes.size > 0;
 }
 
+/** Die gezählten Achsen des Bündels. */
+export type Counts = Readonly<Record<string, Readonly<Record<string, number>>>>;
+
 /** Wie viele Arten einen Wert tragen, über den ganzen Katalog. */
-export function countValues(facts: readonly Facts[], key: GroupKey): Map<string, number> {
-  const counts = new Map<string, number>();
-  for (const one of facts) {
-    for (const value of one.values.get(key) ?? []) {
-      counts.set(value, (counts.get(value) ?? 0) + 1);
-    }
-  }
-  return counts;
+export function countValues(counts: Counts, key: string): Readonly<Record<string, number>> {
+  return counts[key] ?? {};
 }
 
 /** Wie viele Arten für einen Körperteil eine Standardfarbe tragen. */
-export function countColours(facts: readonly Facts[], part: BodyPart): Map<string, number> {
-  const counts = new Map<string, number>();
-  for (const one of facts) {
-    for (const key of one.colours.get(part) ?? []) {
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-  }
-  return counts;
+export function countColours(counts: Counts, part: BodyPart): Readonly<Record<string, number>> {
+  return counts[`colour.${part}`] ?? {};
 }
 
 /** Wie viele Arten zu einer Gruppe keine Angabe tragen. */
-export function countUnknown(facts: readonly Facts[], key: GroupKey): number {
-  return facts.filter((one) => (one.values.get(key) ?? []).length === 0).length;
+export function countUnknown(counts: Counts, key: GroupKey): number {
+  return countValues(counts, 'unknown')[key] ?? 0;
+}
+
+/** Die Körperteile, für die das Bündel Farben zählt. */
+export function colourParts(counts: Counts): string[] {
+  return Object.keys(counts)
+    .filter((axis) => axis.startsWith('colour.'))
+    .map((axis) => axis.slice('colour.'.length));
 }

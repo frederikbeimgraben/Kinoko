@@ -19,7 +19,6 @@ from app.modules.catalog.schemas.parts import (
     Trait,
 )
 from app.modules.catalog.schemas.species import (
-    FacetsOut,
     Species,
     SpeciesBundle,
     SpeciesCounts,
@@ -36,7 +35,6 @@ __all__ = [
     "ColourChange",
     "ColourGroup",
     "ColourValue",
-    "FacetsOut",
     "Lookalike",
     "LookalikeWrite",
     "Measurement",

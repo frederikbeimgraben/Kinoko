@@ -4,7 +4,7 @@
   --range-slider-track: 4px;
   --range-slider-handle: 24px;
   --range-slider-border: 2px;
-  --range-slider-thumb: var(--color-surface);
+  --range-slider-thumb: var(--color-handle);
   --range-slider-ring: var(--color-primary);
 }
 
@@ -30,13 +30,13 @@
   background: var(--color-primary);
 }
 
-// Beide Regler liegen übereinander. Nur die Griffe nehmen Zeiger an, sonst
-// finge der obere Regler jeden Klick ab.
+// Nur die Griffe nehmen Zeiger an. Der Regler ragt um einen halben Griff über
+// die Spur: so steht die Mitte des Griffs auf dem Wert.
 .rangeslider__handle {
   position: absolute;
-  inset-inline: 0;
+  inset-inline: calc(var(--range-slider-handle) / -2);
   inset-block-start: 0;
-  inline-size: 100%;
+  inline-size: calc(100% + var(--range-slider-handle));
   block-size: var(--range-slider-lane);
   margin: 0;
   pointer-events: none;

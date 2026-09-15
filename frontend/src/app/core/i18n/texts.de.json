@@ -330,6 +330,7 @@
   "filter.showCount": "{anzahl} Arten anzeigen",
   "filter.showSpecies": "Arten anzeigen",
   "filter.size.capWidth": "Hutbreite",
+  "filter.size.range": "{von} – {bis} cm",
   "filter.valueCount": "{anzahl} Werte",
   "filter.withoutValue": "{anzahl} ohne Angabe zur {gruppe}",
   "image.add.title": "Bild hinzufügen",

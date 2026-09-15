@@ -3,20 +3,22 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import type { SpeciesBundle } from '../../core/api/models';
 import { OfflineStoreDouble, offlineProvider } from '../../testing/offline-double';
-import { PENNY_BUN, SPECIES_BUNDLE, speciesEntry } from '../../testing/species-fixture';
+import {
+  PALETTE,
+  PENNY_BUN,
+  SPECIES_BUNDLE,
+  speciesBundle,
+  speciesEntry,
+} from '../../testing/species-fixture';
 import { SpeciesState } from './species.state';
 
 const NOT_MODIFIED = 304;
 const BUNDLE_PATH = '/api/species/bundle';
-const TERMS_PATH = '/api/terms';
+const SMELL = { id: 'term-anis', kind: 'smell', slug: 'anis', name: 'Anis' } as const;
 
-const SMELL = { id: 'term-anis', kind: 'smell', slug: 'anis', name: 'Anis', position: 1 } as const;
-
-const LOCAL: SpeciesBundle = {
-  items: [
-    speciesEntry({ slug: 'pfifferling', name: 'Pfifferling', scientificName: 'Cantharellus cibarius' }),
-  ],
-};
+const LOCAL: SpeciesBundle = speciesBundle([
+  speciesEntry({ slug: 'pfifferling', name: 'Pfifferling', scientificName: 'Cantharellus cibarius' }),
+]);
 
 interface Setup {
   state: SpeciesState;
@@ -39,15 +41,12 @@ function build(stored?: { bundle?: SpeciesBundle; etag?: string }): Setup {
 }
 
 describe('SpeciesState', () => {
-  it('lädt und legt Bündel, ETag und Begriffe auf dem Gerät ab', async () => {
+  it('lädt und legt Bündel und ETag auf dem Gerät ab', async () => {
     const setup = build();
     const loaded = setup.state.loadBundle();
 
     await vi.waitFor(() => {
       setup.http.expectOne(BUNDLE_PATH).flush(SPECIES_BUNDLE, { headers: { ETag: 'w/"eins"' } });
-    });
-    await vi.waitFor(() => {
-      setup.http.expectOne(TERMS_PATH).flush({ items: [SMELL] });
     });
     await loaded;
 
@@ -55,7 +54,17 @@ describe('SpeciesState', () => {
     expect(setup.state.loading()).toBe(false);
     expect(setup.offline.values.get('catalog/etag')).toBe('w/"eins"');
     expect(setup.offline.values.get('catalog/bundle')).toEqual(SPECIES_BUNDLE);
-    expect(setup.offline.values.get('catalog/terms')).toEqual([SMELL]);
+    setup.http.verify();
+  });
+
+  it('nennt Palette und Achsen aus dem Bündel', async () => {
+    const setup = build({ bundle: speciesBundle([PENNY_BUN], { edibility: { edible: 7 } }) });
+    void setup.state.loadBundle();
+
+    await vi.waitFor(() => {
+      expect(setup.state.palette()).toEqual(PALETTE);
+    });
+    expect(setup.state.facets()['edibility']).toEqual({ edible: 7 });
   });
 
   it('zeigt zuerst den lokalen Stand und gleicht ihn danach mit ETag ab', async () => {
@@ -81,10 +90,6 @@ describe('SpeciesState', () => {
     await vi.waitFor(() => {
       setup.http.expectOne(BUNDLE_PATH).flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
     });
-    await vi.waitFor(() => {
-      setup.http.expectOne(TERMS_PATH).flush({ items: [] });
-    });
-
     expect(setup.state.species().map((one) => one.slug)).toEqual(['pfifferling']);
     expect(setup.state.failed()).toBe(false);
   });
@@ -146,9 +151,6 @@ describe('SpeciesState', () => {
     await vi.waitFor(() => {
       setup.http.expectOne(BUNDLE_PATH).flush(SPECIES_BUNDLE);
     });
-    await vi.waitFor(() => {
-      setup.http.expectOne(TERMS_PATH).flush({ items: [] });
-    });
 
     setup.http.verify();
   });
@@ -174,21 +176,18 @@ describe('SpeciesState', () => {
     expect(setup.state.activeSpecies()).toBe('steinpilz');
   });
 
-  it('rechnet zu jeder Art ihre Achsen, sobald die Begriffe da sind', async () => {
+  it('rechnet zu jeder Art ihre Achsen aus dem Bündel', async () => {
     const withTerm = speciesEntry({
       slug: 'steinpilz',
       name: 'Steinpilz',
       scientificName: 'Boletus edulis',
-      terms: [{ term: { id: SMELL.id, slug: SMELL.slug, name: SMELL.name }, fromExperience: false }],
+      terms: [{ term: SMELL, fromExperience: false }],
     });
     const setup = build();
     void setup.state.loadBundle();
 
     await vi.waitFor(() => {
-      setup.http.expectOne(BUNDLE_PATH).flush({ items: [withTerm] });
-    });
-    await vi.waitFor(() => {
-      setup.http.expectOne(TERMS_PATH).flush({ items: [SMELL] });
+      setup.http.expectOne(BUNDLE_PATH).flush(speciesBundle([withTerm]));
     });
 
     await vi.waitFor(() => {

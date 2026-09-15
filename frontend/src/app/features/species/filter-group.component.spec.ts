@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
-import { speciesEntry } from '../../testing/species-fixture';
+import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import type { GroupKey } from './facets';
 import { SpeciesGroupComponent } from './filter-group.component';
 import { SpeciesFilterState } from './filter.state';
@@ -31,7 +31,7 @@ const WITHOUT = speciesEntry({
   edibility: 'inedible',
 });
 
-const BUNDLE = { items: [WITH_TUBES, WITH_GILLS, WITHOUT] };
+const BUNDLE = speciesBundle([WITH_TUBES, WITH_GILLS, WITHOUT]);
 
 async function build(group: GroupKey): Promise<{ container: Element; filter: SpeciesFilterState }> {
   const { container } = await render(SpeciesGroupComponent, {

@@ -36,13 +36,3 @@
 .pageheader__actions:empty {
   display: none;
 }
-
-.pageheader--compact {
-  block-size: var(--size-header-flat);
-  padding-inline: var(--size-gutter);
-  background: var(--color-bg);
-}
-
-.pageheader--compact .pageheader__title {
-  font-size: var(--fs-header-flat);
-}

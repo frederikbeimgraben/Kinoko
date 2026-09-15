@@ -4,12 +4,23 @@ import type { I18nService } from '../../core/i18n/i18n.service';
 import type { SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from './labels';
 
+const HEX = /^#[0-9a-fA-F]{6}$/;
+const SHADE = 0.78;
+
+/** Ein dunkleres Ende, damit auch eine einzige Hutfarbe einen Verlauf gibt. */
+function shade(hex: string): string {
+  const parts = [1, 3, 5].map((at) => Math.round(parseInt(hex.slice(at, at + 2), 16) * SHADE));
+  return `#${parts.map((one) => one.toString(16).padStart(2, '0')).join('')}`;
+}
+
 /** Die Töne des Platzhalters kommen aus den Hutfarben der Art. */
 function tint(entry: SpeciesEntry): readonly [string, string] | undefined {
   const cap = entry.colours.find((group) => group.part === 'cap');
-  const hexes = cap?.colours.map((one) => one.hex) ?? [];
+  const hexes = (cap?.colours ?? []).map((one) => one.hex).filter((hex) => HEX.test(hex));
   if (hexes.length === 0) return undefined;
-  return [hexes[0], hexes[hexes.length - 1]];
+  const first = hexes[0];
+  const last = hexes[hexes.length - 1];
+  return [first, last === first ? shade(first) : last];
 }
 
 /** Wandelt eine Art in eine Zeile. Sie trägt genau eine Plakette. */
