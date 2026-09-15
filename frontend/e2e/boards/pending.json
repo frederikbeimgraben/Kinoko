@@ -60,6 +60,8 @@
   "ImageUploading",
   "ImageView",
   "LayerTab",
+  "Map",
+  "MapCollapsed",
   "MapDesktopCombinationSave",
   "MapDesktopCombinations",
   "MapDesktopFactor",
