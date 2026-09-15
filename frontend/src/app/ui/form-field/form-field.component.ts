@@ -32,6 +32,8 @@ export class FormFieldComponent {
   readonly hideLabel = input(false);
   /** Die Beschriftung als Abschnittszeile über dem Feld, nicht als Feldname. */
   readonly section = input(false);
+  /** Der gezeigte Text, wenn er nicht der Wert ist, etwa ein Tag als Datum. */
+  readonly display = input<string>('');
   /** Überschreibt die aus `kind` hergeleitete Bildschirmtastatur. */
   readonly inputMode = input<InputMode>();
   /** Überschreibt die aus `multiline` hergeleitete Eingabetaste. */
@@ -42,6 +44,10 @@ export class FormFieldComponent {
 
   protected readonly fieldId = `app-feld-${nextNumber++}`;
   protected readonly empty = computed(() => this.value().length === 0);
+  protected readonly shown = computed(() => {
+    if (this.empty()) return this.placeholder();
+    return this.display() || this.value();
+  });
 
   protected readonly mode = computed<InputMode>(
     () => this.inputMode() ?? (this.kind() === 'number' ? 'numeric' : 'text'),

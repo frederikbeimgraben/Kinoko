@@ -1,7 +1,4 @@
 <div class="queue">
-  @if (showCounter()) {
-    <p class="queue__counter">{{ counter() }}</p>
-  }
   @if (current(); as item) {
     <div class="queue__stack">
       @if (behind(); as ghost) {
@@ -90,6 +87,7 @@
           <path d="M5 12l5 5 9-10" />
         </svg>
       </button>
+      <span class="queue__balance" aria-hidden="true"></span>
     </div>
   }
 </div>

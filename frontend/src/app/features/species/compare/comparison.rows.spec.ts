@@ -5,7 +5,6 @@ import {
   capWidthOf,
   hymeniumPartOf,
   levelOf,
-  monthMarks,
   periodOf,
   pressureOf,
   stemNetOf,
@@ -134,9 +133,5 @@ describe('comparison rows', () => {
   it('liest die Wachstumszeit als Spanne', () => {
     expect(periodOf(STONE)).toEqual({ from: 5, to: 11 });
     expect(periodOf(GALL)).toBeNull();
-  });
-
-  it('kürzt die vier Marken des Jahres', () => {
-    expect(monthMarks(i18n())).toEqual(['Jan', 'Apr', 'Jul', 'Okt']);
   });
 });

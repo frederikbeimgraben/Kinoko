@@ -48,6 +48,9 @@
         [attr.y2]="drawing().height"
       />
     }
+    @if (peak()) {
+      <text class="spark__peak" x="2" y="10">{{ peak() }}</text>
+    }
     <g [attr.mask]="drawing().thin.length ? 'url(#' + maskId + ')' : null">
       <path class="spark__all" [attr.d]="drawing().area" />
       @if (drawing().hasCurrent) {

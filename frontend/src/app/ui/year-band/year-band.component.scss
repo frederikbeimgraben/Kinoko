@@ -1,12 +1,14 @@
 :host {
+  --pilz-year-height: 14px;
+
   display: block;
 }
 
 .year {
   position: relative;
-  block-size: 14px;
+  block-size: var(--pilz-year-height);
   border-radius: 6px;
-  background: var(--color-bg-subtle, var(--color-bg));
+  background: var(--color-surface-sunken);
   overflow: hidden;
 }
 

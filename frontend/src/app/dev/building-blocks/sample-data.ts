@@ -116,6 +116,7 @@ export const SAMPLE_IMAGE: Photo = {
   width: 1600,
   height: 1200,
   photographer: 'Marie Weber',
+  ownerName: 'Marie',
   licence: LICENCE,
   caption: null,
   takenOn: '2026-09-06',

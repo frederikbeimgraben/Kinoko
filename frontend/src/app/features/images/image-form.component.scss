@@ -1,4 +1,9 @@
+@use '../../../styles/card';
+
 :host {
+  --action-bar-height: var(--size-tap);
+  --action-bar-size: var(--fs-control);
+
   display: flex;
   flex-direction: column;
   block-size: 100%;
@@ -6,13 +11,25 @@
 }
 
 .form {
+  --form-field-inline: var(--space-row-inline);
+  --form-field-size: var(--fs-control);
+  --form-field-shift: 0;
+  --check-row-block: 0;
+
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: 20px;
   min-block-size: 0;
   padding: var(--size-gutter);
   overflow-y: auto;
+}
+
+// Die Auswahl des Kits misst über diese Token.
+app-select {
+  --control-height: var(--pilz-field-height);
+  --space-4: var(--space-row-inline);
+  --fs-md: var(--fs-control);
 }
 
 // Die Kachel ist zugleich Vorschau und Auslöser der Dateiwahl.
@@ -28,6 +45,10 @@
 
 .form__preview:has(.form__progress) {
   block-size: 200px;
+}
+
+.form__preview:has(.form__plus) {
+  border: var(--border-width) dashed var(--color-border-strong);
 }
 
 .form__file {
@@ -46,18 +67,21 @@
 
 .form__progress {
   position: absolute;
-  inset-inline: var(--space-3);
+  inset-inline: 10px;
   inset-block-end: var(--space-2);
 }
 
 .form__title {
-  margin: 0 0 10px;
-  font-size: 11px;
-  line-height: normal;
-  font-weight: var(--fw-semibold);
+  @include card.section-title;
+}
+
+.form__plus {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
 }
 
 .form__fields {

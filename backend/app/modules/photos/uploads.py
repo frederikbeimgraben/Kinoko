@@ -30,6 +30,7 @@ class Arrival:
     photographer: str
     licence: Licence
     caption: str | None
+    source: str | None
     taken_on: date | None
     species_id: uuid.UUID | None
     find_id: uuid.UUID | None
@@ -89,6 +90,7 @@ async def attach(
         photographer=arrival.photographer,
         licence=arrival.licence,
         caption=arrival.caption,
+        source=arrival.source,
         taken_on=arrival.taken_on,
         lat=lat,
         lon=lon,
@@ -128,6 +130,7 @@ async def submit(db: AsyncSession, root: Path, user: User, arrival: Arrival) -> 
         photographer=arrival.photographer,
         licence=arrival.licence,
         caption=arrival.caption,
+        source=arrival.source,
         taken_on=arrival.taken_on,
         lat=None,
         lon=None,

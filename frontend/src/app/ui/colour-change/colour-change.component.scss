@@ -2,9 +2,9 @@
 :host {
   display: block;
   overflow: hidden;
-  --pilz-change-field: 52px;
-  --pilz-change-arrow: 14px;
-  --pilz-change-value: 56px;
+  --pilz-change-field: 40px;
+  --pilz-change-arrow: 16px;
+  --pilz-change-value: 204px;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -15,8 +15,8 @@
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: var(--space-3);
   align-items: center;
-  padding-block: var(--space-3);
-  padding-inline: var(--space-4);
+  min-block-size: 56px;
+  padding-inline: 14px;
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
@@ -26,7 +26,8 @@
 
 .row__trigger {
   overflow: hidden;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-row-title);
+  line-height: normal;
   color: var(--color-text);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -36,11 +37,13 @@
   display: grid;
   grid-template-columns:
     var(--pilz-change-field) var(--pilz-change-arrow) var(--pilz-change-field)
-    minmax(var(--pilz-change-value), auto);
-  column-gap: var(--space-2);
+    minmax(0, 1fr);
+  column-gap: 6px;
   align-items: center;
+  inline-size: var(--pilz-change-value);
   --pilz-colour-width: var(--pilz-change-field);
-  --pilz-colour-height: 26px;
+  --pilz-colour-height: 22px;
+  --pilz-colour-radius: 7px;
   color: var(--color-text-muted);
 }
 
@@ -62,7 +65,7 @@
   grid-column: 4;
   gap: 4px;
   align-items: center;
-  justify-content: flex-end;
-  font-size: var(--fs-xs);
+  justify-content: flex-start;
+  font-size: var(--fs-row-meta);
   white-space: nowrap;
 }

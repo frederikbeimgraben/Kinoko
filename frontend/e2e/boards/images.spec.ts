@@ -3,11 +3,13 @@ import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle } from '../fixtures/species';
+import { join } from 'node:path';
 import {
   CHANTERELLE_SPECIES,
   QUEUE_PHOTOS,
   SPECIES_PHOTOS,
   STONE_SPECIES,
+  photoFixture,
   photoPage,
 } from '../fixtures/photos';
 import { expectBoard, skipPending } from './board';
@@ -26,41 +28,40 @@ function rights(permissions: readonly string[]): Record<string, unknown> {
 }
 
 /** Öffnet einen Weg mit Artenkatalog und Fotos. */
-async function open(page: Page, path: string, extra: Record<string, unknown> = {}): Promise<void> {
-  await mockApi(page, {
-    '/api/config': authConfig(BASE),
-    '/api/species/bundle': bundle([STONE_SPECIES, CHANTERELLE_SPECIES]),
-    ...extra,
-  });
+async function open(
+  page: Page,
+  path: string,
+  extra: Record<string, unknown> = {},
+  photo?: string,
+): Promise<void> {
+  await mockApi(
+    page,
+    {
+      '/api/config': authConfig(BASE),
+      '/api/species/bundle': bundle([STONE_SPECIES, CHANTERELLE_SPECIES]),
+      ...extra,
+    },
+    photo === undefined ? {} : { photo },
+  );
   await flatMap(page);
   await page.goto(path);
 }
 
-/** Wählt eine Datei im Formular und wartet auf die Vorschau. */
-async function pick(page: Page): Promise<void> {
-  await page.locator('.form__file').setInputFiles({
-    name: 'pilz.png',
-    mimeType: 'image/png',
-    buffer: Buffer.from(
-      'iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAAH0lEQVR42mN4dHzWyRVZXdl22S7KDHAWUJQBzgKKAgBr/xJqbTqUmgAAAABJRU5ErkJggg==',
-      'base64',
-    ),
-  });
+/** Wählt die Fotoattrappe des Bretts im Formular und wartet auf die Vorschau. */
+async function pick(page: Page, photo: string): Promise<void> {
+  const file = join(test.info().config.rootDir, 'boards/fixtures', photo);
+  await page.locator('.form__file').setInputFiles(file);
   await expect(page.locator('.form__image')).toBeVisible();
 }
 
-test('SpeciesImages', async ({ page }) => {
-  guard('SpeciesImages', 'phone');
-  await open(page, '/arten/boletus-edulis', { '/api/photos': photoPage(SPECIES_PHOTOS) });
-  await expect(page.getByText('Foto: Frederik Beimgraben · CC BY-SA 4.0')).toBeVisible();
-  await expectBoard(page, 'SpeciesImages');
-});
-
 test('ImageView', async ({ page }) => {
   guard('ImageView', 'phone');
-  await open(page, '/arten/boletus-edulis/bilder/bild-zwei', {
-    '/api/photos': photoPage(SPECIES_PHOTOS),
-  });
+  await open(
+    page,
+    '/arten/boletus-edulis/bilder/bild-zwei',
+    { '/api/photos': photoPage(SPECIES_PHOTOS) },
+    photoFixture(358, 300),
+  );
   await expect(page.getByText('2 von 4')).toBeVisible();
   await expect(page.getByText('CC BY-SA 4.0')).toBeVisible();
   await expectBoard(page, 'ImageView');
@@ -74,10 +75,11 @@ test('ImageAdd', async ({ page }) => {
     ...rights(['image.upload']),
   });
   await expect(page.getByRole('heading', { name: 'Bild hinzufügen' })).toBeVisible();
-  await pick(page);
+  await pick(page, photoFixture(358, 160));
+  await page.getByLabel('Foto').fill('Frederik Beimgraben');
   await page.getByLabel('Lizenz').selectOption('cc_by_sa_4');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
-  await page.locator('app-check-row app-checkbox').click();
+  await page.getByRole('checkbox', { name: 'Als Titelbild der Art' }).check();
   await expectBoard(page, 'ImageAdd');
 });
 
@@ -89,7 +91,8 @@ test('ImageSubmit', async ({ page }) => {
     ...rights([]),
   });
   await expect(page.getByRole('heading', { name: 'Bild einreichen' })).toBeVisible();
-  await pick(page);
+  await pick(page, photoFixture(358, 160));
+  await page.getByLabel('Foto').fill('Frederik Beimgraben');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   await expectBoard(page, 'ImageSubmit');
 });
@@ -101,7 +104,8 @@ test('ImageUploading', async ({ page }) => {
     '/api/photos': photoPage(SPECIES_PHOTOS),
     ...rights([]),
   });
-  await pick(page);
+  await pick(page, photoFixture(358, 200));
+  await page.getByLabel('Foto').fill('Frederik Beimgraben');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   // Die Antwort bleibt aus: das Board zeigt den laufenden Anteil.
   await page.route('**/api/photos', async (route) => {
@@ -116,32 +120,26 @@ test('ImageUploading', async ({ page }) => {
 test('ImageQueue', async ({ page }) => {
   guard('ImageQueue', 'phone');
   await mockSignIn(page);
-  await open(page, '/verwaltung/bilder', {
-    '/api/photos': photoPage(QUEUE_PHOTOS),
-    ...rights(['image.review']),
-  });
+  await open(
+    page,
+    '/verwaltung/bilder',
+    { '/api/photos': photoPage(QUEUE_PHOTOS), ...rights(['image.review']) },
+    photoFixture(358, 330),
+  );
   await expect(page.getByText('Junge Exemplare im Moos')).toBeVisible();
   await expectBoard(page, 'ImageQueue');
-});
-
-test('ImageReviewItem', async ({ page }) => {
-  guard('ImageReviewItem', 'phone');
-  await mockSignIn(page);
-  await open(page, '/verwaltung/bilder/einreichung-eins', {
-    '/api/photos': photoPage(QUEUE_PHOTOS),
-    ...rights(['image.review']),
-  });
-  await expect(page.getByText('Pfifferling')).toBeVisible();
-  await expectBoard(page, 'ImageReviewItem');
 });
 
 test('ImageReject', async ({ page }) => {
   guard('ImageReject', 'phone');
   await mockSignIn(page);
-  await open(page, '/verwaltung/bilder/einreichung-eins', {
-    '/api/photos': photoPage(QUEUE_PHOTOS),
-    ...rights(['image.review']),
-  });
+  await open(
+    page,
+    '/verwaltung/bilder',
+    { '/api/photos': photoPage(QUEUE_PHOTOS), ...rights(['image.review']) },
+    photoFixture(358, 330),
+  );
+  await expect(page.getByText('Junge Exemplare im Moos')).toBeVisible();
   await page.getByRole('button', { name: 'Ablehnen' }).click();
   await page.getByRole('button', { name: 'Art nicht erkennbar' }).click();
   await expect(page.getByRole('dialog', { name: 'Warum lehnst du ab?' })).toBeVisible();

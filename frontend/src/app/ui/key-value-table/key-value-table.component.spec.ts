@@ -53,7 +53,7 @@ describe('KeyValueTableComponent', () => {
     const { container } = await render(HostComponent);
 
     const table = styleOf(container.querySelector('app-key-value-table'));
-    expect(table.getPropertyValue('--key-value-table-label')).toBe('104px');
+    expect(table.getPropertyValue('--key-value-table-label')).toBe('76px');
     expect(table.gridTemplateColumns).toContain('minmax(0, 1fr)');
     expect(styleOf(container.querySelector('app-key-value-row')).display).toBe('contents');
     // Kein Rasterabstand: eine Lücke zwischen den Zellen schnitte Zebra und

@@ -1,20 +1,21 @@
-// Die Zeile ist nur eine Klammer: das Raster steht an der Tabelle. Alles, was
-// nach Zeile aussieht — Polster, Trennlinie, Zebra — trägt darum die Zelle.
+// Die Zeile ist nur eine Klammer: das Raster steht an der Tabelle. Polster und
+// Trennlinie trägt darum die Zelle.
 :host {
   display: contents;
 }
 
 .kv__label,
 .kv__value {
-  padding-block: var(--space-3);
-  font-size: var(--fs-sm);
-  line-height: var(--lh-relaxed);
+  padding-block: var(--key-value-table-pad, var(--space-3));
+  font-size: var(--key-value-table-text, var(--fs-sm));
+  line-height: var(--key-value-table-line, var(--lh-relaxed));
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
 .kv__label {
   display: flex;
   flex-direction: column;
+  justify-content: var(--key-value-table-anchor, flex-start);
   gap: 2px;
   min-inline-size: 0;
   padding-inline: var(--key-value-table-gutter) var(--key-value-table-gap);
@@ -48,14 +49,11 @@
   text-align: start;
 }
 
-:host(:nth-child(even):not(.kv--columns)) .kv__label,
-:host(:nth-child(even):not(.kv--columns)) .kv__value {
-  background: var(--color-bg);
-}
-
+// Die letzte Zeile endet an der Kante der Karte. Eine Tabelle mit eigener
+// Abschlusslinie setzt `--key-value-table-last`.
 :host(:last-child) .kv__label,
 :host(:last-child) .kv__value {
-  border-block-end: 0;
+  border-block-end-width: var(--key-value-table-last, 0);
 }
 
 .kv__hint {
@@ -65,9 +63,12 @@
   line-height: var(--lh-tight);
 }
 
+// Ein langer Schlüssel bricht um. Eine enge Tabelle lässt ihn mit
+// `--key-value-table-nowrap` überstehen, damit die Zeile flach bleibt.
 .kv__key {
-  font-weight: var(--fw-semibold);
+  font-weight: var(--key-value-table-weight, var(--fw-semibold));
   color: var(--color-text-muted);
+  white-space: var(--key-value-table-nowrap, normal);
   overflow-wrap: anywhere;
 }
 
@@ -79,7 +80,7 @@
 // Die Kopfzeile eines Vergleichs nennt die Spalten, sie trägt keinen Wert.
 .kv__label--head,
 .kv__value--head {
-  font-size: var(--fs-xs);
+  font-size: var(--key-value-table-head, var(--fs-xs));
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
   letter-spacing: 0.06em;

@@ -9,9 +9,14 @@ const GALL = speciesEntry({
   name: 'Gallenröhrling',
   scientificName: 'Tylopilus felleus',
 });
+const BAY = speciesEntry({
+  slug: 'maronenroehrling',
+  name: 'Maronenröhrling',
+  scientificName: 'Imleria badia',
+});
 
 async function state(): Promise<ComparisonState> {
-  TestBed.configureTestingModule({ providers: catalogueProviders(speciesBundle([STONE, GALL])) });
+  TestBed.configureTestingModule({ providers: catalogueProviders(speciesBundle([STONE, GALL, BAY])) });
   await catalogueReady();
   return TestBed.inject(ComparisonState);
 }
@@ -51,6 +56,23 @@ describe('ComparisonState', () => {
     const held = await state();
 
     held.set(['steinpilz', 'steinpilz', 'gallenroehrling']);
+
+    expect(held.slugs()).toEqual(['steinpilz', 'gallenroehrling']);
+  });
+
+  it('tauscht die zweite Art gegen die dritte', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'gallenroehrling']);
+    held.add('maronenroehrling');
+
+    expect(held.slugs()).toEqual(['steinpilz', 'maronenroehrling']);
+  });
+
+  it('nimmt aus einer längeren Wahl nur zwei Arten', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'gallenroehrling', 'maronenroehrling']);
 
     expect(held.slugs()).toEqual(['steinpilz', 'gallenroehrling']);
   });

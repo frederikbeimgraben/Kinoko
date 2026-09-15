@@ -2,10 +2,24 @@
 
 @include section.block;
 
-.section__card app-colour-field {
-  --pilz-colour-width: 40px;
-  --pilz-colour-height: 40px;
-  --pilz-colour-radius: 10px;
+// Eine Verwechslung trägt ein Bild und steht darum höher als eine Datenzeile.
+.section__card {
+  --size-row: 60px;
+}
+
+// Ohne Bild bleibt die Spalte leer: der Name beginnt auf derselben Kante.
+.lookalike__image {
+  display: block;
+  flex: none;
+  inline-size: 44px;
+  block-size: 44px;
+}
+
+.lookalike__photo {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: 9px;
 }
 
 .lookalike__ways {

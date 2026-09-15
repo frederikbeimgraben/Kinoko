@@ -1,14 +1,19 @@
-@for (card of cards(); track card.part) {
-  <section class="change">
-    <h2 class="section__title">{{ card.part }}</h2>
-    <app-colour-change
-      [triggers]="card.triggers"
-      [from]="card.from"
-      [to]="card.to"
-      [fromLabels]="card.fromLabels"
-      [toLabels]="card.toLabels"
-      [speed]="card.speed"
-      [arrowLabel]="arrowLabel()"
-    />
-  </section>
+@if (cards().length > 0) {
+  <h2 class="section__title">{{ 'species.section.colourChange' | t }}</h2>
+  <div class="section__parts">
+    @for (card of cards(); track card.part) {
+      <div class="section__card">
+        <h3 class="change__part">{{ card.part }}</h3>
+        <app-colour-change
+          [triggers]="card.triggers"
+          [from]="card.from"
+          [to]="card.to"
+          [fromLabels]="card.fromLabels"
+          [toLabels]="card.toLabels"
+          [speed]="card.speed"
+          [arrowLabel]="arrowLabel()"
+        />
+      </div>
+    }
+  </div>
 }

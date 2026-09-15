@@ -22,8 +22,11 @@ const ROUTES = [
   { path: 'bausteine', component: PageComponent },
   { path: 'karte', component: PageComponent },
   { path: 'arten', component: PageComponent },
+  { path: 'arten/:slug', component: PageComponent },
+  { path: 'arten/:slug/bilder/:id', component: PageComponent },
   { path: 'eintraege', component: PageComponent },
   { path: 'konto', component: PageComponent },
+  { path: 'verwaltung/bilder', component: PageComponent },
   { path: '', pathMatch: 'full' as const, redirectTo: 'karte' },
 ];
 
@@ -44,6 +47,38 @@ describe('ShellComponent', () => {
     await navigate('/bausteine');
 
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
+  });
+
+  it('lässt die Leiste auf einer Bildseite weg', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/arten/boletus-edulis/bilder/eins');
+
+    expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
+  });
+
+  it('lässt die Leiste im Prüfstapel weg', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/verwaltung/bilder');
+
+    expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
+  });
+
+  it('lässt die Leiste auf der Artseite weg', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/arten/boletus-edulis');
+
+    expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
+  });
+
+  it('behält die Leiste auf dem Reiter Arten', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/arten');
+
+    expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
   });
 
   it('zeigt die drei Reiter und den Avatar über der Karte', async () => {

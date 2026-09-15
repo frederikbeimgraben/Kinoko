@@ -1,50 +1,26 @@
+@use '../../../styles/card';
+
 // Die Bildansicht ist eine Seite, kein Dialog: Kopf, Bild, Angaben.
 :host {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-}
-
-.viewer__head {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  block-size: 56px;
-  padding-inline: var(--size-gutter);
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-.viewer__back {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 32px;
-  block-size: 32px;
-  padding: 0;
-  color: var(--color-primary);
-  cursor: pointer;
-  background: none;
-  border: 0;
-  border-radius: var(--radius-md);
-}
-
-.viewer__title {
-  margin: 0;
-  font-size: var(--fs-sheet-title);
-  font-weight: var(--fw-semibold);
-  line-height: normal;
 }
 
 .viewer__count {
-  margin: 0 0 0 auto;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: var(--fs-row-meta);
   color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.viewer__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
 }
 
 .viewer__image {
   display: block;
-  margin-inline: var(--size-gutter);
   inline-size: 100%;
   block-size: var(--image-viewer-height, 200px);
   background: var(--color-surface-sunken);
@@ -52,15 +28,23 @@
 }
 
 .viewer__caption {
-  margin: 0 var(--size-gutter);
+  margin: 0;
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
 }
 
+.viewer__label {
+  @include card.section-title;
+}
+
+app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
+}
+
 .viewer__facts {
-  margin-inline: var(--size-gutter);
-  overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
+  --list-row-inline: var(--space-row-inline);
+  --list-row-value: var(--fs-row-meta);
+
+  @include card.card;
 }

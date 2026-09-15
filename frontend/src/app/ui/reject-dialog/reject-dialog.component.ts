@@ -31,7 +31,10 @@ export class RejectDialogComponent {
   readonly rejected = output<string>();
   readonly closed = output();
 
-  protected readonly reason = signal('');
+  /** Der gewählte Vorschlag. Das Feld daneben bleibt frei. */
+  protected readonly chosen = signal('');
+  /** Der geschriebene Grund. Er geht vor dem Vorschlag hinaus. */
+  protected readonly written = signal('');
 
   protected readonly chips = computed(() =>
     SUGGESTIONS.map((key) => {
@@ -41,24 +44,31 @@ export class RejectDialogComponent {
   );
 
   /** Ein Grund aus Leerzeichen ist kein Grund. */
-  protected readonly ready = computed(() => this.reason().trim().length > 0);
+  protected readonly ready = computed(() => this.reason().length > 0);
+
+  private readonly reason = computed(() => this.written().trim() || this.chosen());
 
   protected pick(label: string): void {
-    this.reason.set(label);
+    this.chosen.set(label);
   }
 
   protected write(text: string): void {
-    this.reason.set(text);
+    this.written.set(text);
   }
 
   protected confirm(): void {
     if (!this.ready()) return;
-    this.rejected.emit(this.reason().trim());
-    this.reason.set('');
+    this.rejected.emit(this.reason());
+    this.clear();
   }
 
   protected cancel(): void {
-    this.reason.set('');
+    this.clear();
     this.closed.emit();
+  }
+
+  private clear(): void {
+    this.chosen.set('');
+    this.written.set('');
   }
 }

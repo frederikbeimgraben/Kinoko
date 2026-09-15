@@ -117,6 +117,20 @@ describe('ImageFormComponent', () => {
     request.flush(photo({ state: 'submitted' }));
   });
 
+  it('sendet die Quelle, die beim Anlegen dasteht', async () => {
+    const { container, http, refresh } = await build(true);
+
+    await pick(container);
+    refresh();
+    await userEvent.type(screen.getByRole('textbox', { name: 'Quelle' }), '123pilzsuche.de');
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    const request = await vi.waitFor(() => http.expectOne('/api/photos'));
+    const body = request.request.body as FormData;
+
+    expect(body.get('source')).toBe('123pilzsuche.de');
+    request.flush(photo({ state: 'approved' }));
+  });
+
   it('geht beim Abbrechen zurück zur Art', async () => {
     const { router } = await build(true);
 

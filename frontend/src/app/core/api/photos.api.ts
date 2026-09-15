@@ -12,6 +12,7 @@ export interface PhotoInput {
   photographer: string;
   licence: Licence;
   caption?: string;
+  source?: string;
   takenOn?: string;
 }
 

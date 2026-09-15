@@ -4,7 +4,9 @@ interface Shape {
   id: string;
   speciesId: string;
   photographer: string;
+  ownerName?: string;
   licence: string;
+  source?: string | null;
   caption?: string | null;
   takenOn?: string | null;
   lat?: number | null;
@@ -24,8 +26,10 @@ export function photo(entry: Shape): Record<string, unknown> {
     width: 1600,
     height: 1200,
     photographer: entry.photographer,
+    ownerName: entry.ownerName ?? entry.photographer.split(' ')[0],
     licence: entry.licence,
     caption: entry.caption ?? null,
+    source: entry.source ?? null,
     takenOn: entry.takenOn ?? '2026-09-06',
     lat: entry.lat ?? null,
     lon: entry.lon ?? null,
@@ -37,6 +41,14 @@ export function photo(entry: Shape): Record<string, unknown> {
     createdAt: entry.createdAt ?? '2026-09-09T08:00:00+02:00',
     updatedAt: '2026-09-09T08:00:00+02:00',
   };
+}
+
+/** Das Foto in einer Artenzeile: 44 x 44 px. */
+export const ROW_PHOTO = { list: 'photo-44x44.png' };
+
+/** Der Name der Fotoattrappe eines Bretts: `photo-<breite>x<höhe>.png`. */
+export function photoFixture(width: number, height: number): string {
+  return `photo-${String(width)}x${String(height)}.png`;
 }
 
 /** Eine Seite Fotos ohne Zeiger. */

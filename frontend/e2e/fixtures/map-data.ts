@@ -140,6 +140,7 @@ function species(slug: string, name: string, scientific: string): unknown {
     edibility: 'edible',
     protection: 'none',
     forecastEnabled: true,
+    leadPhotoId: `00000000-0000-4000-9000-${slug.length.toString().padStart(12, '0')}`,
     updatedAt: '2025-10-01T00:00:00Z',
     names: [],
     measurements: [],

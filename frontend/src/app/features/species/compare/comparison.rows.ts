@@ -2,7 +2,7 @@ import type { BodyPart, ColourGroup, SpeciesEntry } from '../../../core/api/mode
 import type { I18nService } from '../../../core/i18n/i18n.service';
 import type { ColourMode, ColourValue } from '../../../ui/colour-field/colour-field.component';
 import { spanText } from '../../../ui/measurement/measurement.component';
-import { EDIBILITY_TEXT, EDIBILITY_TONE, MONTH_TEXT, SPEED_TEXT } from '../labels';
+import { EDIBILITY_TEXT, EDIBILITY_TONE, SPEED_TEXT } from '../labels';
 
 /** Die Teile mit einer Fruchtschicht, in der Folge des Bretts. */
 export const HYMENIUM_PARTS: readonly BodyPart[] = ['tubes', 'gills', 'pores'];
@@ -14,8 +14,6 @@ const MODE: Record<ColourGroup['mode'], ColourMode> = {
   distinct: 'multiple',
 };
 
-const MARKS = [MONTH_TEXT[0], MONTH_TEXT[3], MONTH_TEXT[6], MONTH_TEXT[9]];
-const SHORT = 3;
 const SEPARATOR = ', ';
 
 /** Die Dauern, die eine Uhr nennt. */
@@ -116,11 +114,6 @@ export function periodOf(entry: SpeciesEntry): Period | null {
   const from = entry.periodStartMonth ?? null;
   const to = entry.periodEndMonth ?? null;
   return from === null || to === null ? null : { from, to };
-}
-
-/** Jan, Apr, Jul, Okt als Marken unter dem Jahresband. */
-export function monthMarks(i18n: I18nService): string[] {
-  return MARKS.map((month) => i18n.translate(month).slice(0, SHORT));
 }
 
 /** Nur eine gemessene Dauer nennt ein Nachher: „nach sofort“ sagt niemand. */

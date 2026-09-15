@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
+import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
@@ -35,7 +36,7 @@ const REPLIES = {
 async function openMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {
   await page.context().grantPermissions(['geolocation']);
   await mockSignIn(page);
-  await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) });
+  await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
   await mockMap(page, state, factors);
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
@@ -154,7 +155,7 @@ test('MapOffline', async ({ page }) => {
 
 test('MapSkeleton', async ({ page }) => {
   guard('MapSkeleton', 'phone');
-  await mockApi(page, REPLIES);
+  await mockApi(page, REPLIES, { photo: ROW_PHOTO });
   await mockMap(page);
   // Ohne Manifest zeigt die Karte ihr Raster; ein Kartenbild gehört nicht dazu.
   await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {

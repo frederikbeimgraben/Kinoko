@@ -1,3 +1,6 @@
+@if (showValue()) {
+  <span class="progress__value">{{ clamped() }} {{ 'unit.percent' | t }}</span>
+}
 <div
   class="progress__track"
   role="progressbar"

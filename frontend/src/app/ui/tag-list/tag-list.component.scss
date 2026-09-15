@@ -1,7 +1,17 @@
+// Maße der Marke. Eine enge Liste setzt sie neu.
+:host {
+  --pilz-tag-height: 30px;
+  --pilz-tag-inset: 12px;
+  --pilz-tag-size: var(--fs-sm);
+  --pilz-tag-gap: 7px;
+  --pilz-tag-drop: 0;
+  --pilz-tag-border: var(--color-border);
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: var(--pilz-tag-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -10,10 +20,18 @@
 .tags__tag {
   display: inline-flex;
   align-items: center;
-  block-size: 30px;
-  padding: 0 12px;
-  border: var(--border-width) solid var(--color-border);
+  block-size: var(--pilz-tag-height);
+  margin-block-end: var(--pilz-tag-drop);
+  padding: 0 var(--pilz-tag-inset);
+  border: var(--border-width) solid var(--pilz-tag-border);
   border-radius: 999px;
-  font-size: var(--fs-sm);
+  font-size: var(--pilz-tag-size);
   color: var(--color-text);
+}
+
+.tags__tag--filled {
+  font-weight: var(--fw-semibold);
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }

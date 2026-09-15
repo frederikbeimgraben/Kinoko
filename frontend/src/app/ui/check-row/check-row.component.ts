@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CheckboxComponent } from '@stupa-makers/ui-kit';
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 let nextNumber = 0;
 
-/** Zeile mit dem Kästchen des Kits: Haken links, Titel und Unterzeile rechts. */
+/** Zeile mit Kästchen: Haken links, Titel und Unterzeile rechts. */
 @Component({
   selector: 'app-check-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CheckboxComponent, FormsModule],
+  imports: [SvgIconComponent],
   templateUrl: './check-row.component.html',
   styleUrl: './check-row.component.scss',
 })
@@ -22,4 +21,8 @@ export class CheckRowComponent {
   readonly toggled = output<boolean>();
 
   protected readonly fieldId = `app-check-row-${nextNumber++}`;
+
+  protected onToggle(event: Event): void {
+    this.toggled.emit((event.target as HTMLInputElement).checked);
+  }
 }
