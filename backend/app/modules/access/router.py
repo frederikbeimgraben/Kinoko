@@ -7,11 +7,13 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Path, Query, status
 
-from app.core.auth import Db, requires
+from app.core.auth import CurrentViewer, Db, requires
+from app.core.errors import Forbidden, Unauthorized
 from app.modules.access.account import router as account_router
 from app.modules.access.permissions import permission_entries
 from app.modules.access.schemas import RoleCreate, RoleUpdate, SetPersonRoles
 from app.modules.access.service import AccessService
+from app.modules.access.summary import SummaryService
 from app.shared.paging import Page
 
 router = APIRouter(tags=["access"])
@@ -19,6 +21,16 @@ router.include_router(account_router)
 
 RoleId = Annotated[uuid.UUID, Path(alias="id")]
 PersonId = Annotated[uuid.UUID, Path(alias="id")]
+
+
+@router.get("/admin/summary")
+async def get_admin_summary(db: Db, who: CurrentViewer) -> Any:  # noqa: ANN401
+    """Liefert die Zähler der Übersicht, je Punkt hinter seinem Recht."""
+    if not who.sub:
+        raise Unauthorized
+    if not who.rights:
+        raise Forbidden
+    return await SummaryService(db).counts(who.rights)
 
 
 @router.get("/permissions", dependencies=[requires("role.manage")])

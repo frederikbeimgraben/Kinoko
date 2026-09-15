@@ -8,9 +8,30 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import Conflict
-from app.models import Combination, Find, Marker, Photo, Role, RolePermission, User, UserRole, Zone
+from app.models import (
+    Combination,
+    Find,
+    Marker,
+    Photo,
+    PipelineRun,
+    Role,
+    RolePermission,
+    User,
+    UserRole,
+    Zone,
+)
+from app.modules.access.permissions import PERMISSIONS
 from app.modules.access.service import AccessService
-from app.shared.enums import Licence, MarkerColour, ReviewState, Rule, Visibility
+from app.shared.enums import (
+    Licence,
+    MarkerColour,
+    PhotoState,
+    ReviewState,
+    Rule,
+    RunKind,
+    RunState,
+    Visibility,
+)
 from tests.conftest import app_of, make_user, sign_in, sign_out
 
 
@@ -417,3 +438,71 @@ async def test_guard_last_admin_is_a_no_op_without_an_admin_role(
     await session.commit()
     someone = await make_user(session, "someone")
     await AccessService(session).guard_last_admin(someone, [])
+
+
+async def test_summary_counts_only_what_the_viewer_may_see(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "person-summary")
+    session.add(Photo(owner_id=user.id, width=10, height=10, photographer="F", licence=Licence.OWN))
+    session.add(
+        Photo(
+            owner_id=user.id,
+            width=10,
+            height=10,
+            photographer="F",
+            licence=Licence.OWN,
+            state=PhotoState.SUBMITTED,
+        )
+    )
+    await session.commit()
+
+    sign_in(app_of(api), user, "image.review")
+    answer = await api.get("/admin/summary")
+    assert answer.status_code == 200
+    assert answer.json() == {"photos": 2, "photosPending": 1}
+
+
+async def test_summary_counts_roles_and_people(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "person-counts")
+    sign_in(app_of(api), user, "role.manage", "role.assign")
+    body = (await api.get("/admin/summary")).json()
+    assert body["people"] == 1
+    assert body["roles"] == len((await session.execute(select(Role))).scalars().all())
+    assert body["permissions"] == len(PERMISSIONS)
+
+
+async def test_summary_counts_finds_and_runs(api: httpx.AsyncClient, session: AsyncSession) -> None:
+    user = await make_user(session, "person-runs")
+    session.add(Find(owner_id=user.id, lat=1.0, lon=1.0, found_on=date(2026, 9, 1)))
+    session.add(
+        Find(
+            owner_id=user.id,
+            lat=1.0,
+            lon=1.0,
+            found_on=date(2026, 9, 2),
+            review_state=ReviewState.ACCEPTED,
+        )
+    )
+    session.add(PipelineRun(kind=RunKind.TRAINING, state=RunState.RUNNING))
+    session.add(PipelineRun(kind=RunKind.RENDER, state=RunState.FINISHED))
+    await session.commit()
+
+    sign_in(app_of(api), user, "find.review", "run.manage")
+    body = (await api.get("/admin/summary")).json()
+    assert body["finds"] == 2
+    assert body["findsPending"] == 1
+    assert body["runs"] == 2
+    assert body["runsRunning"] == 1
+
+
+async def test_summary_needs_at_least_one_right(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "person-plain")
+    sign_in(app_of(api), user)
+    assert (await api.get("/admin/summary")).status_code == 403
+    sign_out(app_of(api))
+    assert (await api.get("/admin/summary")).status_code == 401

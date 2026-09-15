@@ -1,26 +1,21 @@
-<app-page-header [title]="'rollen.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.roles.title' | t" [back]="true" (backClick)="back()" />
 
 <div class="roles">
-  @if (loaded() && rows().length === 0) {
-    <app-empty-state [text]="'rollen.leer' | t" />
-  } @else {
-    <app-card>
-      @for (row of rows(); track row.id) {
-        <app-list-row
-          [title]="row.name"
-          [subline]="row.subline"
-          [clickable]="true"
-          [chevron]="true"
-          (chosen)="open(row.id)"
-        >
-          @if (row.locked) {
-            <app-svg-icon trail name="lock" [size]="16" [label]="lockLabel()" />
-          }
-        </app-list-row>
-      }
-    </app-card>
-    <p class="note">{{ 'rollen.hinweis' | t }}</p>
-  }
+  <div class="roles__card">
+    @for (row of rows(); track row.id) {
+      <app-list-row
+        kind="catalogue"
+        [title]="row.name"
+        [subline]="row.subline"
+        [clickable]="true"
+        [chevron]="true"
+        (chosen)="open(row.id)"
+      >
+        @if (row.locked) {
+          <app-svg-icon trail name="lock" [size]="16" [label]="lockLabel()" />
+        }
+      </app-list-row>
+    }
+  </div>
+  <app-add-row [label]="'admin.roles.add' | t" [action]="'admin.role.create' | t" (pressed)="create()" />
 </div>
-
-<app-action-bar [primary]="'rollen.anlegen' | t" (primaryClick)="create()" />

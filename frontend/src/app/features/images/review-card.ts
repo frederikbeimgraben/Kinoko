@@ -1,12 +1,11 @@
 import { photoPath, type Photo } from '../../core/api/models';
 import { shortDate } from '../../core/i18n/dates';
+import { SEPARATOR } from '../../core/i18n/numbers';
 import { locationText } from '../../core/i18n/places';
 import { COARSE_DIGITS } from '../../core/location/grid';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
-
-const SEPARATOR = ' · ';
 
 /** Eine Karte im Prüfstapel. */
 export interface ReviewCard {

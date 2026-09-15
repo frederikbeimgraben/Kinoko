@@ -1,44 +1,25 @@
 <div class="admin" [class.admin--split]="wide()">
   @if (showList()) {
     <div class="admin__list">
-      <app-page-header [title]="'verwaltung.titel' | t" [back]="true" (backClick)="back()" />
+      <app-page-header [title]="'admin.title' | t" [back]="!wide()" (backClick)="back()" />
       <div class="admin__body">
-        @if (empty()) {
-          <app-empty-state icon="lock" [text]="'verwaltung.leer' | t" />
-        } @else {
-          @if (content().length > 0) {
-            <section class="admin__block">
-              <h2 class="admin__section">{{ 'verwaltung.abschnitt.inhalte' | t }}</h2>
-              <app-card>
-                @for (row of content(); track row.titel) {
-                  <app-list-row
-                    [title]="row.titel"
-                    [subline]="row.subline"
-                    [clickable]="row.path !== null"
-                    [chevron]="row.path !== null"
-                    (chosen)="open(row.path)"
-                  />
-                }
-              </app-card>
-            </section>
-          }
-          @if (access().length > 0) {
-            <section class="admin__block">
-              <h2 class="admin__section">{{ 'verwaltung.abschnitt.zugang' | t }}</h2>
-              <app-card>
-                @for (row of access(); track row.titel) {
-                  <app-list-row
-                    [title]="row.titel"
-                    [subline]="row.subline"
-                    [clickable]="true"
-                    [chevron]="true"
-                    (chosen)="open(row.path)"
-                  />
-                }
-              </app-card>
-            </section>
-          }
-          <p class="note">{{ 'verwaltung.hinweis' | t }}</p>
+        @for (block of blocks(); track block.title) {
+          <section>
+            <h2 class="admin__section">{{ block.title }}</h2>
+            <div class="admin__card">
+              @for (row of block.rows; track row.path) {
+                <app-list-row
+                  kind="catalogue"
+                  [title]="row.title"
+                  [subline]="row.counts"
+                  [clickable]="row.ready"
+                  [chevron]="true"
+                  [selected]="wide() && chosen(row.path)"
+                  (chosen)="open(row.path)"
+                />
+              }
+            </div>
+          </section>
         }
       </div>
     </div>

@@ -1073,6 +1073,7 @@ paths:
     post:
       operationId: createPhoto
       tags: [photos]
+      x-permission: image.submit
       requestBody:
         required: true
         content:
@@ -1325,6 +1326,22 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "422":
           $ref: "#/components/responses/Validation"
+
+  /admin/summary:
+    get:
+      operationId: getAdminSummary
+      tags: [access]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSummary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
 
   /permissions:
     get:
@@ -1987,6 +2004,7 @@ components:
       enum:
         - species.edit
         - image.review
+        - image.submit
         - find.review
         - role.manage
         - role.assign
@@ -1996,6 +2014,33 @@ components:
     Area:
       type: string
       enum: [species, interface, access, data]
+
+    AdminSummary:
+      description: Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu.
+      type: object
+      properties:
+        texts:
+          type: integer
+        photos:
+          type: integer
+        photosPending:
+          type: integer
+        species:
+          type: integer
+        roles:
+          type: integer
+        permissions:
+          type: integer
+        people:
+          type: integer
+        finds:
+          type: integer
+        findsPending:
+          type: integer
+        runs:
+          type: integer
+        runsRunning:
+          type: integer
 
     PermissionEntry:
       type: object

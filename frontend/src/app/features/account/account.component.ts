@@ -11,7 +11,7 @@ import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { ADMIN_PERMISSIONS } from '../admin/admin.guard';
+import { ADMIN_PERMISSIONS } from '../admin/admin.entries';
 
 /** Die drei Wahlmöglichkeiten der Darstellung, in der Reihenfolge des Artboards. */
 const THEMES: readonly ThemeChoice[] = ['hell', 'dunkel', 'system'];

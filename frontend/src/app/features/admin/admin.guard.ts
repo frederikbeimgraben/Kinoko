@@ -4,18 +4,7 @@ import { Router, type CanActivateFn, type UrlTree } from '@angular/router';
 import { filter, map, take, type Observable } from 'rxjs';
 import { PermissionsService } from '../../core/access/permissions.service';
 import type { Permission } from '../../core/api/models';
-
-/**
- * Die Rechte, die überhaupt einen Punkt der Verwaltung freischalten. Wer keins
- * davon trägt, sieht den Bereich nicht.
- */
-export const ADMIN_PERMISSIONS: readonly Permission[] = [
-  'text.edit',
-  'image.review',
-  'species.edit',
-  'role.manage',
-  'role.assign',
-];
+import { ADMIN_PERMISSIONS } from './admin.entries';
 
 /**
  * Lässt eine Route der Verwaltung nur mit dem passenden Recht zu; ohne führt

@@ -1,3 +1,5 @@
+@use '../../../styles/card';
+
 :host {
   display: block;
   block-size: 100%;
@@ -35,13 +37,21 @@
   gap: 20px;
   padding: var(--size-gutter);
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .admin__section {
-  margin: 0 0 10px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+  @include card.section-title;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
+.admin__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
 }
