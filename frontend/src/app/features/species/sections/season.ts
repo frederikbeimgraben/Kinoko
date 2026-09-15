@@ -6,7 +6,7 @@ const WEEKS = 52;
 export interface SeasonData {
   /** Mittelwerte je Kalenderwoche über die älteren Jahre. */
   past: readonly number[];
-  /** Mittelwerte je Kalenderwoche des jüngsten Jahres, bis zur letzten Woche. */
+  /** Mittelwerte je Kalenderwoche des jüngsten Jahres. */
   current: readonly number[];
   /** Das jüngste Jahr und seine letzte Woche. */
   year: number;

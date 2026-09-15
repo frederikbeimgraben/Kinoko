@@ -2,6 +2,11 @@
   display: block;
 }
 
+// Ohne Titelbild darf der Platz nicht als Abstand stehen bleiben.
+:host(:empty) {
+  display: none;
+}
+
 .lead {
   display: block;
   inline-size: 100%;

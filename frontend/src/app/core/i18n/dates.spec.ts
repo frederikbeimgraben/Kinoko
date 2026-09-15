@@ -6,10 +6,7 @@ const PATTERN = { 'common.dateShort': '{tag}. {monat}' };
 
 function translate(key: string, values: Record<string, string | number> = {}): string {
   const text = PATTERN[key as keyof typeof PATTERN];
-  return Object.entries(values).reduce(
-    (out, [name, value]) => out.replace(`{${name}}`, String(value)),
-    text,
-  );
+  return Object.entries(values).reduce((out, [name, value]) => out.replace(`{${name}}`, String(value)), text);
 }
 
 describe('asDate', () => {

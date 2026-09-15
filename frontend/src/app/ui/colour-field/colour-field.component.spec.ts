@@ -58,7 +58,7 @@ describe('ColourFieldComponent', () => {
       'gradient',
     );
 
-    expect(fill).toBe('linear-gradient(104deg, #cfb98a, #3a2a1a)');
+    expect(fill).toBe('linear-gradient(135deg, #cfb98a, #3a2a1a)');
   });
 
   it('bleibt ohne Farbe durchsichtig', () => {

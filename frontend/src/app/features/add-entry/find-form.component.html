@@ -27,6 +27,7 @@
         kind="date"
         [label]="'melden.datum' | t"
         [value]="datum()"
+        [display]="datumText()"
         (valueChange)="setDate($event)"
       />
       <app-form-field

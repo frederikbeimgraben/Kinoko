@@ -19,10 +19,7 @@ import { SyncService } from '../core/offline/sync.service';
 /** Reiter, die am Rechner ihre eigenen Spalten mitbringen. */
 const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
 
-/**
- * Wege ohne Reiterleiste: die Werkstatt und jede Bild- oder Objektseite. Die
- * Regel steht am Weg, damit keine Seite ihre Hülle selbst umbaut.
- */
+/** Wege ohne Reiterleiste. Die Regel steht am Weg, nicht in der Seite. */
 const WITHOUT_NAV: readonly RegExp[] = [
   /^\/bausteine(\/|$)/,
   /^\/arten\/[^/]+/,
