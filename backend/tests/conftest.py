@@ -10,7 +10,7 @@ import httpx
 import pytest
 from fastapi import FastAPI
 
-from app.core import auth, db
+from app.core import auth, db, jwks
 from app.core.auth import Viewer
 from app.core.settings import get_settings
 from app.main import build_app
@@ -39,6 +39,9 @@ def environment(monkeypatch: pytest.MonkeyPatch, tmp_path: Any) -> Iterator[None
     get_settings.cache_clear()
     db.engine.cache_clear()
     db.session_factory.cache_clear()
+    monkeypatch.setattr(jwks, "_cache", jwks.JwksCache())
+    monkeypatch.setattr(jwks, "_discovery_cache", jwks.DiscoveryCache())
+    monkeypatch.setattr(jwks, "_groups_cache", jwks.GroupsCache())
     yield
     get_settings.cache_clear()
     db.engine.cache_clear()

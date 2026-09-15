@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Annotated, Any, Final, cast
+from typing import Annotated, Any, Final
 
 import jwt
 from fastapi import Depends, Header
@@ -14,13 +14,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import session
 from app.core.errors import Forbidden, Unauthorized
-from app.core.jwks import cache
+from app.core.jwks import cache, groups_of
 from app.core.settings import get_settings
 from app.models import Permission, Role, RolePermission, User, UserRole
 from app.modules.access.service import AccessService
 
 BEARER: Final = "Bearer "
-GROUP_CLAIM: Final = "groups"
 
 Db = Annotated[AsyncSession, Depends(session)]
 
@@ -89,11 +88,11 @@ async def person_of(db: AsyncSession, sub: str) -> User | None:
 
 
 async def rights_of(
-    db: AsyncSession, user: User | None, claims: Mapping[str, Any]
+    db: AsyncSession, user: User | None, claims: Mapping[str, Any], token: str
 ) -> frozenset[str]:
     """Liest die Rechte des Kontos, die Admin-Gruppe gibt alle."""
-    groups: object = claims.get(GROUP_CLAIM)
-    if isinstance(groups, list) and get_settings().admin_group in cast("list[object]", groups):
+    groups = await groups_of(token, claims) or []
+    if get_settings().admin_group in groups:
         keys = await db.execute(select(Permission.key))
         return frozenset(keys.scalars())
     if user is None:
@@ -119,7 +118,7 @@ async def viewer(
     if not str(claims.get("sub", "")):
         raise Unauthorized
     user = await person_of(db, str(claims["sub"]))
-    return Viewer(user, await rights_of(db, user, claims), claims)
+    return Viewer(user, await rights_of(db, user, claims, token), claims)
 
 
 async def optional_user(who: Annotated[Viewer, Depends(viewer)]) -> User | None:
