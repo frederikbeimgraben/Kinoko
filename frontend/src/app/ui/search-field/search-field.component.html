@@ -1,4 +1,4 @@
-<span class="search tap" data-press="scale">
+<label class="search" [attr.for]="loading() ? null : fieldId">
   @if (!loading()) {
     <app-svg-icon class="search__icon" name="search" [size]="18" [strokeWidth]="1.8" />
     <input
@@ -6,6 +6,7 @@
       type="text"
       inputmode="search"
       enterkeyhint="search"
+      [id]="fieldId"
       [attr.aria-label]="placeholder() || null"
       [value]="value()"
       [attr.placeholder]="placeholder() || null"
@@ -23,4 +24,4 @@
       </button>
     }
   }
-</span>
+</label>

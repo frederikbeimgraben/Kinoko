@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import type { Layer } from '../../core/tiles/layers';
-import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { FactorSheetComponent } from './factor-sheet.component';
 import { MapHeadComponent } from './map-head.component';
@@ -12,7 +12,7 @@ import type { Factor } from './factors';
 @Component({
   selector: 'app-map-column',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FactorSheetComponent, MapHeadComponent, MapPanelComponent, PageHeaderComponent],
+  imports: [FactorSheetComponent, MapHeadComponent, MapPanelComponent, SheetHeadComponent],
   templateUrl: './map-column.component.html',
   styleUrl: './map-column.component.scss',
 })

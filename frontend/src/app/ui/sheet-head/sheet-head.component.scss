@@ -11,8 +11,23 @@
   block-size: var(--size-tap);
 }
 
+// Der Pfeil führt aus einer Ansicht zurück; er steht vor dem Titel.
+.head__back {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: var(--size-tap);
+  margin-inline-end: 10px;
+  color: var(--color-primary);
+  background: none;
+  border: 0;
+}
+
 .head__title {
   min-inline-size: 0;
+  margin-inline-end: auto;
   overflow: hidden;
   font-size: var(--fs-control);
   font-weight: var(--fw-semibold);
@@ -44,6 +59,11 @@
 
 .head__week {
   color: var(--color-text);
+}
+
+.head__note {
+  font-weight: var(--fw-medium);
+  color: var(--color-text-muted);
 }
 
 .head__hint {

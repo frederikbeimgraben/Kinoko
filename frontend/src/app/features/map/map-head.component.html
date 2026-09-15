@@ -6,7 +6,7 @@
   [week]="view.weekText()"
   [playing]="playing()"
   (titleClick)="titleChosen.emit()"
-  (back)="stepped.emit(-1)"
+  (stepBack)="stepped.emit(-1)"
   (playback)="playToggled.emit()"
   (forward)="stepped.emit(1)"
 >

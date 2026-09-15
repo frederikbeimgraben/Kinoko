@@ -8,19 +8,6 @@
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
-// In der Spalte der Karte misst der Kopf vierundvierzig Punkte und trägt
-// zwölf darunter, wie der Kopf eines Blatts.
-.pageheader--compact {
-  box-sizing: content-box;
-  block-size: var(--size-tap);
-  padding-block-end: var(--space-3);
-  padding-inline: var(--size-gutter);
-}
-
-.pageheader--compact .pageheader__title {
-  font-size: var(--fs-control);
-}
-
 .pageheader__back {
   display: flex;
   align-items: center;

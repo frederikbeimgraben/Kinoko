@@ -42,14 +42,25 @@ describe('SearchFieldComponent', () => {
     expect(inputs).toEqual(['']);
   });
 
-  it('trägt Bildschirmtastatur für die Suche und den Druckzustand', async () => {
+  it('trägt Bildschirmtastatur für die Suche', async () => {
     const { container } = await render(SearchFieldComponent, {});
 
     const input = container.querySelector('input');
     expect(input).toHaveAttribute('inputmode', 'search');
     expect(input).toHaveAttribute('enterkeyhint', 'search');
-    expect(container.querySelector('.search')).toHaveClass('tap');
-    expect(container.querySelector('.search')).toHaveAttribute('data-press', 'scale');
+    expect(container.querySelector('.search')).not.toHaveAttribute('data-press');
+  });
+
+  it('fokussiert das Feld bei Tipp auf das Label statt auf das Eingabefeld', async () => {
+    const { container } = await render(SearchFieldComponent, {
+      inputs: { placeholder: 'Art suchen' },
+    });
+
+    const icon = container.querySelector('.search__icon');
+    if (!icon) throw new Error('Lupe fehlt im Baum.');
+    await userEvent.click(icon);
+
+    expect(container.querySelector('input')).toHaveFocus();
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
