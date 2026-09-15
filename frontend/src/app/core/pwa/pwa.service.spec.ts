@@ -1,5 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { NavigationEnd, Router } from '@angular/router';
+import { SwUpdate, type VersionEvent, type VersionReadyEvent } from '@angular/service-worker';
+import { Subject } from 'rxjs';
 import { PwaService } from './pwa.service';
+
+const VERSION_READY: VersionReadyEvent = {
+  type: 'VERSION_READY',
+  currentVersion: { hash: 'a' },
+  latestVersion: { hash: 'b' },
+};
 
 /** Ein Angebot des Browsers, die App zu installieren. */
 function offer(outcome: 'accepted' | 'dismissed'): Event {
@@ -9,55 +18,51 @@ function offer(outcome: 'accepted' | 'dismissed'): Event {
   });
 }
 
-/** Ein Service Worker, der eine wartende Fassung melden kann. */
-class RegistrationDouble extends EventTarget {
-  waiting: ServiceWorker | null = null;
-  installing: ServiceWorker | null = null;
-  updates = 0;
-
-  update(): Promise<void> {
-    this.updates += 1;
-    return Promise.resolve();
-  }
+/** `SwUpdate` mit steuerbarem Strom für `versionUpdates`. */
+class SwUpdateDouble {
+  isEnabled = true;
+  readonly versionUpdates = new Subject<VersionEvent>();
+  readonly checkForUpdate = vi.fn().mockResolvedValue(false);
+  readonly activateUpdate = vi.fn().mockResolvedValue(true);
 }
 
-/** Ein Arbeiter, der seinen Zustand meldet. */
-class WorkerDouble extends EventTarget {
-  state = 'installing';
-
-  install(): void {
-    this.state = 'installed';
-    this.dispatchEvent(new Event('statechange'));
-  }
+/** `Router` mit steuerbarem Strom für `events`. */
+class RouterDouble {
+  readonly events = new Subject<unknown>();
 }
 
-function stubWorkers(registration: RegistrationDouble | null, controlled = true): void {
-  vi.stubGlobal('navigator', {
-    language: navigator.language,
-    serviceWorker: {
-      register: () =>
-        registration === null ? Promise.reject(new Error('gesperrt')) : Promise.resolve(registration),
-      controller: controlled ? {} : null,
-    },
+function setVisibility(state: DocumentVisibilityState): void {
+  Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => state });
+  document.dispatchEvent(new Event('visibilitychange'));
+}
+
+function service(swUpdate: SwUpdateDouble, router = new RouterDouble()): PwaService {
+  TestBed.configureTestingModule({
+    providers: [
+      { provide: SwUpdate, useValue: swUpdate },
+      { provide: Router, useValue: router },
+    ],
   });
-}
-
-function service(): PwaService {
-  TestBed.configureTestingModule({});
   const pwa = TestBed.inject(PwaService);
   pwa.init();
   return pwa;
 }
 
 describe('PwaService', () => {
+  const reload = vi.fn();
+
   beforeEach(() => {
-    // Im Test läuft der Entwicklungsmodus. Er hält die Registrierung zurück,
-    // darum stellt jeder Test sie selbst.
-    vi.stubGlobal('ngDevMode', false);
+    reload.mockClear();
+    vi.stubGlobal('location', { reload });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    setVisibility('visible');
   });
 
   it('bietet die Installation an, sobald der Browser fragt', async () => {
-    const pwa = service();
+    const pwa = service(new SwUpdateDouble());
     expect(pwa.canInstall()).toBe(false);
 
     dispatchEvent(offer('accepted'));
@@ -68,18 +73,18 @@ describe('PwaService', () => {
   });
 
   it('meldet eine abgelehnte Installation', async () => {
-    const pwa = service();
+    const pwa = service(new SwUpdateDouble());
     dispatchEvent(offer('dismissed'));
 
     expect(await pwa.install()).toBe(false);
   });
 
   it('installiert nicht ohne Angebot', async () => {
-    expect(await service().install()).toBe(false);
+    expect(await service(new SwUpdateDouble()).install()).toBe(false);
   });
 
   it('vergisst das Angebot nach der Installation', () => {
-    const pwa = service();
+    const pwa = service(new SwUpdateDouble());
     dispatchEvent(offer('accepted'));
 
     dispatchEvent(new Event('appinstalled'));
@@ -87,49 +92,98 @@ describe('PwaService', () => {
     expect(pwa.canInstall()).toBe(false);
   });
 
-  it('meldet eine wartende Fassung schon bei der Registrierung', async () => {
-    const registration = new RegistrationDouble();
-    registration.waiting = {} as ServiceWorker;
-    stubWorkers(registration);
+  describe('Aktualisierung', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
 
-    const pwa = service();
-    await vi.waitFor(() => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('aktiviert eine Fassung sofort, wenn sie innerhalb von 10 s bereitsteht', async () => {
+      const swUpdate = new SwUpdateDouble();
+      const pwa = service(swUpdate);
+
+      swUpdate.versionUpdates.next(VERSION_READY);
+      await vi.waitFor(() => {
+        expect(swUpdate.activateUpdate).toHaveBeenCalledOnce();
+      });
+
       expect(pwa.updateReady()).toBe(true);
-    });
-  });
-
-  it('merkt sich eine neue Fassung, ohne sie zu zeigen', async () => {
-    const registration = new RegistrationDouble();
-    const worker = new WorkerDouble();
-    stubWorkers(registration);
-    const pwa = service();
-    await vi.waitFor(() => {
-      expect(registration.updates).toBe(0);
-    });
-    expect(pwa.updateReady()).toBe(false);
-
-    registration.installing = worker as unknown as ServiceWorker;
-    registration.dispatchEvent(new Event('updatefound'));
-    worker.install();
-
-    expect(pwa.updateReady()).toBe(true);
-  });
-
-  it('fragt den Service Worker nach einer neuen Fassung', async () => {
-    const registration = new RegistrationDouble();
-    stubWorkers(registration);
-    const pwa = service();
-    await vi.waitFor(() => {
-      expect(registration.updates).toBe(0);
+      expect(reload).toHaveBeenCalledOnce();
     });
 
-    expect(await pwa.check()).toBe(false);
-    expect(registration.updates).toBe(1);
-  });
+    it('aktiviert nicht sofort, wenn die Fassung nach 10 s bereitsteht', async () => {
+      const swUpdate = new SwUpdateDouble();
+      const pwa = service(swUpdate);
 
-  it('fragt nicht ohne Registrierung', async () => {
-    stubWorkers(null);
+      await vi.advanceTimersByTimeAsync(10_001);
+      swUpdate.versionUpdates.next(VERSION_READY);
 
-    expect(await service().check()).toBe(false);
+      expect(pwa.updateReady()).toBe(true);
+      expect(swUpdate.activateUpdate).not.toHaveBeenCalled();
+      expect(reload).not.toHaveBeenCalled();
+    });
+
+    it('aktiviert eine späte Fassung beim nächsten Wechsel auf sichtbar', async () => {
+      const swUpdate = new SwUpdateDouble();
+      service(swUpdate);
+      await vi.advanceTimersByTimeAsync(10_001);
+      swUpdate.versionUpdates.next(VERSION_READY);
+
+      setVisibility('visible');
+
+      await vi.waitFor(() => {
+        expect(swUpdate.activateUpdate).toHaveBeenCalledOnce();
+      });
+      expect(reload).toHaveBeenCalledOnce();
+    });
+
+    it('aktiviert eine späte Fassung beim nächsten Routenwechsel', async () => {
+      const swUpdate = new SwUpdateDouble();
+      const router = new RouterDouble();
+      service(swUpdate, router);
+      await vi.advanceTimersByTimeAsync(10_001);
+      swUpdate.versionUpdates.next(VERSION_READY);
+
+      router.events.next(new NavigationEnd(1, '/a', '/a'));
+
+      await vi.waitFor(() => {
+        expect(swUpdate.activateUpdate).toHaveBeenCalledOnce();
+      });
+      expect(reload).toHaveBeenCalledOnce();
+    });
+
+    it('fragt bei jedem Wechsel auf sichtbar nach einer neuen Fassung', () => {
+      const swUpdate = new SwUpdateDouble();
+      service(swUpdate);
+
+      setVisibility('hidden');
+      setVisibility('visible');
+
+      expect(swUpdate.checkForUpdate).toHaveBeenCalledOnce();
+    });
+
+    it('fragt nicht nach einer Fassung beim Wechsel in den Hintergrund', () => {
+      const swUpdate = new SwUpdateDouble();
+      service(swUpdate);
+
+      setVisibility('hidden');
+
+      expect(swUpdate.checkForUpdate).not.toHaveBeenCalled();
+    });
+
+    it('rührt nichts an, wenn der Service Worker nicht aktiv ist', () => {
+      const swUpdate = new SwUpdateDouble();
+      swUpdate.isEnabled = false;
+      const pwa = service(swUpdate);
+
+      setVisibility('hidden');
+      setVisibility('visible');
+
+      expect(swUpdate.checkForUpdate).not.toHaveBeenCalled();
+      expect(pwa.updateReady()).toBe(false);
+    });
   });
 });

@@ -3,9 +3,11 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   inject,
+  isDevMode,
   type ApplicationConfig,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { UI_KIT_INTL, uiKitIntlFromLang } from '@stupa-makers/ui-kit';
 import { authInterceptor } from './core/auth';
 import { I18nService } from './core/i18n/i18n.service';
@@ -19,6 +21,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
     // Die Texte des Kits folgen der Sprache der App, statt eine eigene zu führen.
     { provide: UI_KIT_INTL, useFactory: () => uiKitIntlFromLang(inject(I18nService).locale) },
     // Der Katalog liegt auf dem Gerät, nicht nur im Arbeitsspeicher.
