@@ -33,8 +33,8 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 2px;
-  min-inline-size: 128px;
+  gap: var(--space-row-names);
+  min-inline-size: var(--size-row-names);
 }
 
 .row__name {
@@ -95,6 +95,6 @@
 .row__patch {
   position: absolute;
   border-radius: 50%;
-  filter: blur(6px);
-  opacity: 0.55;
+  filter: blur(var(--pilz-patch-blur));
+  opacity: var(--pilz-patch-opacity);
 }

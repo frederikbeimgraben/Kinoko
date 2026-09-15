@@ -13,7 +13,7 @@ from app.models import Find, Photo, PipelineRun, PipelineRunSpecies
 from app.models import Species as SpeciesTable
 from app.modules.catalog.children import load_children
 from app.modules.catalog.facets import FacetService
-from app.modules.catalog.loader import build_facets, load_one, summary_of
+from app.modules.catalog.loader import build_facets, load_one, summary_of, term_lookup
 from app.modules.catalog.repository import SpeciesRepository
 from app.modules.catalog.schemas import Species, SpeciesCounts, SpeciesWrite
 from app.modules.catalog.taxon_names import taxon_names
@@ -66,9 +66,14 @@ class SpeciesService:
             term_ids=selection.terms,
         )
         child = await load_children(self.db, [c.id for c in candidates])
-        matched = [c for c in candidates if FACETS.match(build_facets(c, child), selection)]
-        window = matched[paging.offset : paging.offset + paging.limit + 1]
+        terms = await term_lookup(self.db)
         names = await taxon_names(self.db)
+        matched = [
+            c
+            for c in candidates
+            if FACETS.match(build_facets(c, child, terms, names.of(c)), selection)
+        ]
+        window = matched[paging.offset : paging.offset + paging.limit + 1]
         return wrap(
             window, paging, lambda c: summary_of(c, child.lead_photos.get(c.id), names.of(c))
         )
