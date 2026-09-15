@@ -11,7 +11,9 @@
   display: flex;
   flex: none;
   align-items: center;
+  box-sizing: content-box;
   block-size: var(--size-tap);
+  padding-block-end: var(--space-3);
   padding-inline: var(--size-gutter);
   font-size: var(--fs-control);
   font-weight: var(--fw-semibold);

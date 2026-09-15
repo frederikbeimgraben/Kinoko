@@ -1,7 +1,7 @@
 .footer {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 10px;
   margin-block-start: auto;
   padding: var(--space-3) var(--size-gutter) var(--size-gutter);
   background: var(--color-surface);
@@ -17,5 +17,5 @@
 }
 
 .footer__main {
-  min-block-size: var(--size-button);
+  min-block-size: 48px;
 }
