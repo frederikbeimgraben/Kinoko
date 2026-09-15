@@ -49,6 +49,20 @@ describe('ActionBarComponent', () => {
     expect(container.querySelector('.btn--danger')).toBeNull();
   });
 
+  it('stellt die letzte Aktion ohne Rahmen auf', async () => {
+    const { container, rerender } = await render(ActionBarComponent, {
+      inputs: { primary: 'Abbrechen', ghost: true },
+    });
+
+    expect(container.querySelector('.btn--ghost')).not.toBeNull();
+    expect(container.querySelector('.footer__slim')).not.toBeNull();
+
+    await rerender({ inputs: { primary: 'Speichern', secondary: 'Abbrechen', ghost: true } });
+
+    expect(container.querySelector('.btn--primary')).not.toBeNull();
+    expect(container.querySelectorAll('.btn--ghost')).toHaveLength(1);
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(ActionBarComponent, {
       inputs: { primary: 'Save', secondary: 'Cancel' },

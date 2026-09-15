@@ -4,13 +4,17 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { PopoverComponent, type PopoverAnchor } from './popover.component';
 
-const ANCHOR: PopoverAnchor = { top: 68, end: 12 };
+/** Unter einem Knopf in der Kopfzeile. */
+const BELOW: PopoverAnchor = { top: 68, end: 12 };
+/** Über dem Plus-Knopf am unteren Rand. */
+const ABOVE: PopoverAnchor = { bottom: 92, end: 24 };
 
 @Component({
   imports: [PopoverComponent],
   template: `<app-popover
     [open]="open()"
-    [anchor]="anchor"
+    [anchor]="anchor()"
+    [rows]="rows()"
     label="Auf der Karte"
     (closed)="closes = closes + 1"
   >
@@ -19,8 +23,9 @@ const ANCHOR: PopoverAnchor = { top: 68, end: 12 };
 })
 class HostComponent {
   readonly open = signal(true);
+  readonly anchor = signal<PopoverAnchor>(BELOW);
+  readonly rows = signal(false);
   closes = 0;
-  readonly anchor = ANCHOR;
 }
 
 describe('PopoverComponent', () => {
@@ -31,6 +36,22 @@ describe('PopoverComponent', () => {
     expect(card).toHaveStyle({ insetBlockStart: '68px', insetInlineEnd: '12px' });
     expect(screen.getByText('Inhalt')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('hängt die Karte über einen Knopf am unteren Rand', async () => {
+    const { fixture, detectChanges } = await render(HostComponent);
+    fixture.componentInstance.anchor.set(ABOVE);
+    detectChanges();
+
+    expect(screen.getByRole('dialog')).toHaveStyle({ insetBlockEnd: '92px', insetInlineEnd: '24px' });
+  });
+
+  it('lässt Zeilen die Karte füllen', async () => {
+    const { fixture, detectChanges } = await render(HostComponent);
+    fixture.componentInstance.rows.set(true);
+    detectChanges();
+
+    expect(screen.getByRole('dialog')).toHaveClass('popover__card--rows');
   });
 
   it('bleibt zu, solange niemand sie öffnet', async () => {

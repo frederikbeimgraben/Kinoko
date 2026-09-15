@@ -1,11 +1,47 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  display: contents;
 }
 
-.object__label {
+.form__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 18px;
+  min-block-size: 0;
+  padding: var(--space-1) var(--size-gutter) var(--space-5);
+  overflow-y: auto;
+}
+
+// Die Zone setzt ihre Felder weiter auseinander als der Marker.
+.form__body--roomy {
+  gap: var(--space-5);
+}
+
+.form__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.form__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: var(--fw-semibold);
+  line-height: normal;
+  letter-spacing: var(--tracking-tight);
+}
+
+.form__note {
+  font-size: var(--fs-sm);
+  line-height: 15px;
+  color: var(--color-text-muted);
+}
+
+.form__label {
+  display: block;
   margin: 0 0 var(--space-2);
   font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-weight: var(--fw-medium);
+  line-height: 15px;
 }

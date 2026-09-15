@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { asDate, longDate, shortDate } from './dates';
+import { asDate, longDate, numericDate, shortDate } from './dates';
 
-/** Der Katalog der Tests: nur das Muster des kurzen Tages steht darin. */
-const PATTERN = { 'common.dateShort': '{tag}. {monat}' };
+/** Der Katalog der Tests: die Muster der beiden kurzen Formen. */
+const PATTERN = {
+  'common.dateShort': '{tag}. {monat}',
+  'common.dateNumeric': '{tag}. {monat}. {jahr}',
+};
 
 function translate(key: string, values: Record<string, string | number> = {}): string {
   const text = PATTERN[key as keyof typeof PATTERN];
@@ -19,6 +22,12 @@ describe('asDate', () => {
 describe('longDate', () => {
   it('schreibt den Tag mit vollem Monat und Jahr', () => {
     expect(longDate('2026-09-06', 'de')).toBe('6. September 2026');
+  });
+});
+
+describe('numericDate', () => {
+  it('schreibt Tag, Monat und Jahr in Ziffern', () => {
+    expect(numericDate('2026-09-06', translate)).toBe('6. 9. 2026');
   });
 });
 

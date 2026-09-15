@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { ToastService } from '@stupa-makers/ui-kit';
 import type { Marker } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -20,10 +11,7 @@ import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form
 import { openGoogleMaps } from './map-links';
 import { visibilityText } from '../add-entry/visibility';
 
-/**
- * Das Objekt-Blatt eines Markers: Name, Farbe, Sichtbarkeit, Notiz. Es folgt
- * dem Artboard `Zone`, nur ohne Fläche und ohne Kennzahlen.
- */
+/** Das Objekt-Blatt eines Markers und sein Formular (Board `MarkerEdit`). */
 @Component({
   selector: 'app-marker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,13 +30,12 @@ export class MarkerSheetComponent {
   private readonly toasts = inject(ToastService);
   private readonly eintraege = inject(EntriesState);
 
-  private readonly form = viewChild(ObjectFormComponent);
-
   readonly marker = input.required<Marker>();
 
   readonly closed = output();
 
   protected readonly deleteAsk = signal(false);
+  protected readonly editing = signal(false);
   protected readonly busy = signal(false);
 
   protected readonly location = computed<readonly [number, number]>(() => [
@@ -76,13 +63,12 @@ export class MarkerSheetComponent {
     };
   });
 
-  protected async save(): Promise<void> {
-    const values = this.form()?.values();
-    if (!values) return;
+  protected async save(values: ObjectValues): Promise<void> {
     this.busy.set(true);
     try {
       if (await this.eintraege.updateMarker(this.marker(), values)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+        this.editing.set(false);
       }
     } finally {
       this.busy.set(false);

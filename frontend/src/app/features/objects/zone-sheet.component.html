@@ -1,45 +1,57 @@
-<div class="objectsheet">
-  <div class="objectsheet__head">
-    <div class="objectsheet__heading">
-      <h2 class="objectsheet__title">{{ zone().name }}</h2>
-      <p class="objectsheet__sub">{{ subline() }}</p>
+@if (editing()) {
+  <app-object-form
+    [heading]="'entry.zone.editTitle' | t"
+    kind="zone"
+    [start]="start()"
+    [editing]="true"
+    [busy]="busy()"
+    [nameMissingText]="'zone.nameFehlt' | t"
+    (submitted)="save($event)"
+    (cancelled)="editing.set(false)"
+  >
+    <app-button variant="secondary" [block]="true" (click)="editCorners()">
+      {{ 'entry.zone.changeOutline' | t }}
+    </app-button>
+  </app-object-form>
+} @else {
+  <div class="objectsheet">
+    <div class="objectsheet__head">
+      <div class="objectsheet__heading">
+        <h2 class="objectsheet__title">{{ zone().name }}</h2>
+        <p class="objectsheet__sub">{{ subline() }}</p>
+      </div>
+      <app-icon-button icon="delete" [label]="'zone.loeschen' | t" (pressed)="deleteAsk.set(true)" />
     </div>
-    <app-icon-button icon="delete" [label]="'zone.loeschen' | t" (pressed)="deleteAsk.set(true)" />
-  </div>
-  @if (editingCorners()) {
-    <p class="note">{{ 'zone.eckpunkteHinweis' | t }}</p>
-  } @else {
-    @if (forecastRow(); as row) {
+    @if (editingCorners()) {
+      <p class="note">{{ 'zone.eckpunkteHinweis' | t }}</p>
+    } @else if (forecastRow(); as row) {
       <app-card class="flush">
-        <app-list-row [title]="row.label" [subline]="'zone.vorhersageUnter' | t" [value]="row.value" />
-        <app-list-row [title]="'zone.funde' | t" [subline]="'zone.fundeUnter' | t" [value]="row.finds" />
+        <app-list-row [title]="row.label" [subline]="'entry.zone.areaMeanCaption' | t" [value]="row.value" />
+        <app-list-row
+          [title]="'entry.zone.ownFindsInZone' | t"
+          [subline]="'entry.zone.allSpeciesAllYears' | t"
+          [value]="row.finds"
+        />
       </app-card>
     } @else {
       <p class="note">{{ 'zone.wertFehlt' | t }}</p>
     }
-    <app-object-form
-      [withoutName]="true"
-      [start]="start()"
-      [nameLabel]="'zone.name' | t"
-      [namePlaceholder]="'zone.namePlatzhalter' | t"
-      [nameMissingText]="'zone.nameFehlt' | t"
+  </div>
+  @if (editingCorners()) {
+    <app-action-bar
+      [primary]="'zone.eckpunkteFertig' | t"
+      [secondary]="'common.cancel' | t"
+      (primaryClick)="applyCorners()"
+      (secondaryClick)="cancelCorners()"
+    />
+  } @else {
+    <app-action-bar
+      [primary]="'common.edit' | t"
+      [secondary]="'entry.zone.editVertices' | t"
+      (primaryClick)="editing.set(true)"
+      (secondaryClick)="editCorners()"
     />
   }
-</div>
-@if (editingCorners()) {
-  <app-action-bar
-    [primary]="'zone.eckpunkteFertig' | t"
-    [secondary]="'objekt.abbrechen' | t"
-    (primaryClick)="applyCorners()"
-    (secondaryClick)="cancelCorners()"
-  />
-} @else {
-  <app-action-bar
-    [primary]="'eintragen.speichern' | t"
-    [secondary]="'zone.eckpunkteBearbeiten' | t"
-    (primaryClick)="save()"
-    (secondaryClick)="editCorners()"
-  />
 }
 <app-confirm-dialog
   [open]="deleteAsk()"

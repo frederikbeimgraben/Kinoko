@@ -8,9 +8,8 @@ import {
   input,
   output,
   signal,
-  viewChild,
 } from '@angular/core';
-import { CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import { firstValueFrom } from 'rxjs';
 import { EntriesApi } from '../../core/api/entries.api';
 import type { Zone, ZoneValue } from '../../core/api/models';
@@ -48,6 +47,7 @@ import type { Location } from '../add-entry/add-entry.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
+    ButtonComponent,
     CardComponent,
     ConfirmDialogComponent,
     IconButtonComponent,
@@ -70,14 +70,13 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly toasts = inject(ToastService);
   private readonly draw = inject(ZONE_DRAWER);
 
-  private readonly form = viewChild(ObjectFormComponent);
-
   readonly zone = input.required<Zone>();
 
   readonly closed = output();
 
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
+  protected readonly editing = signal(false);
   protected readonly editingCorners = signal(false);
   private readonly value = signal<ZoneValue | null>(null);
   private readonly newCorners = signal<readonly Location[] | null>(null);
@@ -126,13 +125,12 @@ export class ZoneSheetComponent implements OnDestroy {
     this.stopSession();
   }
 
-  protected async save(): Promise<void> {
-    const values = this.form()?.values();
-    if (!values) return;
+  protected async save(values: ObjectValues): Promise<void> {
     this.busy.set(true);
     try {
       if (await this.eintraege.updateZone(this.zone(), values)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+        this.editing.set(false);
       }
     } finally {
       this.busy.set(false);
@@ -143,6 +141,7 @@ export class ZoneSheetComponent implements OnDestroy {
   protected async editCorners(): Promise<void> {
     const map = this.adapter.rawMap();
     if (map === null) return;
+    this.editing.set(false);
     this.editingCorners.set(true);
     this.session = await this.draw(map, colourHex(this.zone().colour));
     const ring = this.zone()

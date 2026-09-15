@@ -3,14 +3,24 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import type { Find } from '../../core/api/models';
 import { SpeciesState } from '../species/species.state';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
-import type { Find } from '../../core/api/models';
 import { MapState } from '../map/map.state';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
+
+/** Der Ort, auf dem das Formular ohne vorhandenen Fund steht. */
+const LOCATION: readonly [number, number] = [9.0511, 48.5203];
+
+interface Extra {
+  start?: Find;
+  withPhotos?: boolean;
+  editing?: boolean;
+  busy?: boolean;
+}
 
 interface Setup {
   container: Element;
@@ -19,24 +29,27 @@ interface Setup {
   toasts: ToastSpy;
 }
 
-async function build(start: Find | null = null): Promise<Setup> {
+async function build(
+  extra: Extra = {},
+  bundle: { items: readonly unknown[] } = SPECIES_BUNDLE,
+): Promise<Setup> {
+  const start = extra.start;
   const { container, detectChanges, fixture } = await render(FindFormComponent, {
     inputs: {
-      location: [9.0511, 48.5203] as readonly [number, number],
-      titel: 'Fund melden',
-      mainText: 'Speichern',
-      start,
+      location: start === undefined ? LOCATION : ([start.lon, start.lat] as readonly [number, number]),
+      heading: 'Fund melden',
+      ...extra,
     },
     providers: [provideHttpClient(), provideHttpClientTesting()],
   });
   TestBed.inject(MapState).species.set('steinpilz');
   await vi.waitFor(() => {
-    TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
+    TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(bundle);
   });
-  const catalogue = TestBed.inject(SpeciesState);
   // Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf.
+  const catalogue = TestBed.inject(SpeciesState);
   await vi.waitFor(() => {
-    expect(catalogue.species()).not.toHaveLength(0);
+    expect(catalogue.species()).toHaveLength(bundle.items.length);
   });
   detectChanges();
   const submissions: FindSubmission[] = [];
@@ -62,16 +75,15 @@ describe('FundFormularComponent', () => {
     vi.useRealTimers();
   });
 
-  it('zeigt Ort, Vorgabe-Art und das heutige Datum', async () => {
-    const { container } = await build();
+  it('zeigt Überschrift, Ort, Vorgabe-Art und das heutige Datum', async () => {
+    const setup = await build();
 
+    expect(screen.getByRole('heading', { name: 'Fund melden' })).toBeInTheDocument();
     expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Steinpilz' })).toBeInTheDocument();
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-10');
-    expect(
-      screen.getByText('Ohne Verbindung wird der Fund lokal gespeichert und später übertragen.'),
-    ).toBeInTheDocument();
-    await noViolations(container);
+    expect(screen.getByText('10. 9. 2026')).toBeInTheDocument();
+    await noViolations(setup.container);
   });
 
   it('gibt Art, Datum, Anzahl, Notiz und Sichtbarkeit ab', async () => {
@@ -144,20 +156,6 @@ describe('FundFormularComponent', () => {
     expect(setup.toasts.failure).toEqual(['Die Anzahl ist eine ganze Zahl ab 1.']);
   });
 
-  it('gibt einen Fund erst auf Wunsch für das Training frei', async () => {
-    const setup = await build();
-
-    expect(
-      screen.getByText(
-        'Der genaue Fundort fließt in das Modell der nächsten Vorhersage ein. Unabhängig von der Sichtbarkeit.',
-      ),
-    ).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Für das Training freigeben' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
-
-    expect(setup.submissions[0].input.forTraining).toBe(true);
-  });
-
   it('meldet den Abbruch', async () => {
     const setup = await build();
 
@@ -166,69 +164,37 @@ describe('FundFormularComponent', () => {
     expect(setup.cancels).toBe(1);
   });
 
-  it('füllt sich aus einem vorhandenen Fund und lässt die Fotos weg', async () => {
-    await render(FindFormComponent, {
-      inputs: {
-        location: [FIND.lon, FIND.lat] as readonly [number, number],
-        titel: 'Bearbeiten',
-        mainText: 'Speichern',
-        start: FIND,
-        withPhotos: false,
-      },
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-    });
-    TestBed.inject(MapState).species.set('steinpilz');
-    await vi.waitFor(() => {
-      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
-    });
+  it('sperrt das Speichern, solange es läuft', async () => {
+    const setup = await build({ busy: true });
+
+    expect(setup.container.querySelector('.btn--primary')).toBeDisabled();
+  });
+
+  it('füllt sich aus einem vorhandenen Fund, lässt die Fotos weg und behält die Freigabe', async () => {
+    const setup = await build({ start: FIND, withPhotos: false, editing: true });
 
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-06');
     expect(screen.getByLabelText('Anzahl')).toHaveValue(3);
     expect(screen.queryByText('Fotos')).not.toBeInTheDocument();
-    // `ngModel` schreibt den Anfangswert erst nach dem ersten Durchlauf.
-    await vi.waitFor(() =>
-      expect(screen.getByRole('checkbox', { name: 'Für das Training freigeben' })).toBeChecked(),
-    );
+    expect(setup.container.querySelector('.field__trail')).not.toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(setup.submissions[0].input.forTraining).toBe(true);
   });
 
   it('lässt die Anzahl leer, wenn der Fund keine trägt', async () => {
-    await render(FindFormComponent, {
-      inputs: {
-        location: [FIND.lon, FIND.lat] as readonly [number, number],
-        titel: 'Bearbeiten',
-        mainText: 'Speichern',
-        start: { ...FIND, count: null },
-      },
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-    });
-    TestBed.inject(MapState).species.set('steinpilz');
-    await vi.waitFor(() => {
-      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
-    });
+    await build({ start: { ...FIND, count: null } });
 
     expect(screen.getByLabelText('Anzahl')).toHaveValue(null);
   });
 
   it('meldet, wenn der Katalog keine Art zur Karte kennt', async () => {
-    const { detectChanges, fixture } = await render(FindFormComponent, {
-      inputs: {
-        location: [9, 48] as readonly [number, number],
-        titel: 'Fund melden',
-        mainText: 'Speichern',
-      },
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-    });
-    await vi.waitFor(() => {
-      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush({ items: [] });
-    });
-    detectChanges();
-    const submissions: FindSubmission[] = [];
-    fixture.componentInstance.submitted.subscribe((submission) => submissions.push(submission));
-    const toasts = toastSpy();
+    const setup = await build({}, { items: [] });
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(submissions).toHaveLength(0);
-    expect(toasts.failure).toEqual(['Wähle eine Art.']);
+    expect(setup.submissions).toHaveLength(0);
+    expect(setup.toasts.failure).toEqual(['Wähle eine Art.']);
   });
 });

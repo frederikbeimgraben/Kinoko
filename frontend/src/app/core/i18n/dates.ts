@@ -26,6 +26,16 @@ export function longDate(iso: string, locale: string): string {
 /** Übersetzt einen Schlüssel mit Platzhaltern. */
 type Translate = (key: string, values?: Record<string, string | number>) => string;
 
+/** Der Tag in Ziffern, so wie ein Formular ihn schreibt. */
+export function numericDate(iso: string, translate: Translate): string {
+  const date = asDate(iso);
+  return translate('common.dateNumeric', {
+    tag: date.getDate(),
+    monat: date.getMonth() + 1,
+    jahr: date.getFullYear(),
+  });
+}
+
 /** „6. Sept.“: Tag und kurzer Monat, das Muster kommt aus dem Katalog. */
 export function shortDate(iso: string, locale: string, translate: Translate): string {
   const date = asDate(iso);

@@ -1,22 +1,28 @@
 // Der Ablauf liegt über der Karte, füllt sie aber nicht ab: solange das
 // Fadenkreuz steht, muss die Karte unter dem Finger bleiben.
-.addEntry {
+.addentry {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-// Die Deckkraft steht so in den Artboards `KarteAktionen` (0,45) und
-// `MeldenFormular` (0,55); ein Wert für beide reicht.
-.addentry__scrim {
-  position: absolute;
-  inset: 0;
-  background: rgb(0 18 10 / 50%);
-  pointer-events: auto;
+.addentry__overlay {
+  // Die Deckkraft steht so im Board `AddActions`.
+  --pilz-scrim: rgb(0 18 10 / 45%);
+}
+
+// Die Formulare decken die Leiste ab und dunkeln stärker ab, wie die Boards
+// `FindForm`, `MarkerForm` und `ZoneForm` es zeigen.
+.addentry__overlay--form {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+  --pilz-overlay-top: 150px;
+}
+
+.addentry__overlay--form.addentry__overlay--object {
+  --pilz-overlay-top: 220px;
 }
 
 // Das Fadenkreuz sitzt in der Mitte des freien Streifens, also über dem Blatt.
-// Dieselbe Mitte meint die Karte, wenn sie ihr Polster kennt.
 .addentry__crosshair {
   position: absolute;
   inset-block-start: 0;
@@ -25,57 +31,23 @@
   place-items: center;
 }
 
-.addentry__sheet {
-  position: absolute;
-  inset: 0;
-}
-
 .addentry__brief {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--size-gutter) var(--space-4);
+  gap: var(--space-2);
+  padding: var(--space-1) var(--size-gutter) var(--space-2);
 }
 
-.addentry__content {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: 18px;
-  min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-6);
-  overflow-y: auto;
-}
-
-.addentry__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-// 17 px im kurzen Blatt, 24 px im Formular: beide Maße stehen so in den
-// Artboards `MeldenOrt` und `MeldenFormular`.
 .addentry__title {
   margin: 0;
   font-size: 17px;
   font-weight: var(--fw-semibold);
 }
 
-.addentry__content .addentry__title {
-  font-size: 24px;
-  letter-spacing: var(--tracking-tight);
-}
-
-// Eine dritte Aktion neben der Fußleiste, ohne eigenen Baustein dafür.
-.addentry__link {
-  align-self: flex-start;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
+.addentry__note {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
 }
 
 // Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.

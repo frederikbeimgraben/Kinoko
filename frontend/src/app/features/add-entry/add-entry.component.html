@@ -1,184 +1,122 @@
-@if (state.running()) {
-  <div class="addEntry">
-    @if (state.dark()) {
-      <div class="addentry__scrim"></div>
+<ng-template #body>
+  @switch (state.step()) {
+    @case ('actions') {
+      <div class="addentry__brief">
+        <h2 class="addentry__title">{{ 'entry.create' | t }}</h2>
+        <app-add-actions (chosen)="start($event)" />
+      </div>
+      <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="cancel()" />
     }
+    @case ('findLocation') {
+      <div class="addentry__brief">
+        <h2 class="addentry__title">{{ 'entry.setLocation.title' | t }}</h2>
+      </div>
+      <app-action-bar
+        [primary]="'entry.confirmLocation' | t"
+        [secondary]="'common.cancel' | t"
+        [ghost]="true"
+        (primaryClick)="adoptLocation()"
+        (secondaryClick)="cancel()"
+      />
+    }
+    @case ('markerLocation') {
+      <div class="addentry__brief">
+        <h2 class="addentry__title">{{ 'entry.setMarker.title' | t }}</h2>
+      </div>
+      <app-action-bar
+        [primary]="'common.apply' | t"
+        [secondary]="'common.cancel' | t"
+        [ghost]="true"
+        (primaryClick)="adoptLocation()"
+        (secondaryClick)="cancel()"
+      />
+    }
+    @case ('zoneDraw') {
+      <div class="addentry__brief">
+        <h2 class="addentry__title">{{ 'entry.drawZone.title' | t }}</h2>
+        <p class="addentry__note">{{ drawStatus() }}</p>
+      </div>
+      <app-action-bar
+        [primary]="'entry.zone.setVertex' | t"
+        [secondary]="'entry.zone.finish' | t"
+        (primaryClick)="addCorner()"
+        (secondaryClick)="closeZone()"
+      />
+    }
+    @case ('findForm') {
+      <app-find-form
+        [location]="state.location()!"
+        [heading]="'entry.reportFind.title' | t"
+        [busy]="saving()"
+        (submitted)="saveFind($event)"
+        (cancelled)="cancel()"
+      />
+    }
+    @case ('markerForm') {
+      <app-object-form
+        [heading]="'entry.setMarker.title' | t"
+        [location]="state.location()"
+        kind="marker"
+        [nameMissingText]="'marker.nameFehlt' | t"
+        [busy]="saving()"
+        (submitted)="saveMarker($event)"
+        (cancelled)="cancel()"
+        (valuesChange)="onZoneValues($event)"
+      />
+    }
+    @case ('zoneForm') {
+      <app-object-form
+        [heading]="'entry.zone.saveTitle' | t"
+        kind="zone"
+        [nameMissingText]="'zone.nameFehlt' | t"
+        [busy]="saving()"
+        (submitted)="saveZone($event)"
+        (cancelled)="cancel()"
+        (valuesChange)="onZoneValues($event)"
+      />
+    }
+  }
+</ng-template>
+
+@if (state.running()) {
+  <div class="addentry">
     @if (state.showsCrosshair()) {
       <div class="addentry__crosshair" [style.inset-block-end.px]="overlayHeight()">
-        <app-crosshair [label]="'fadenkreuz.beschriftung' | t" />
+        <app-crosshair [label]="'entry.setLocation.title' | t" />
       </div>
     }
-    @switch (state.step()) {
-      @case ('aktionen') {
+    @if (asPopover()) {
+      <app-popover
+        [open]="true"
+        [anchor]="anchor"
+        [rows]="true"
+        [label]="'entry.create' | t"
+        (closed)="cancel()"
+      >
+        <app-add-actions (chosen)="start($event)" />
+      </app-popover>
+    } @else {
+      <app-overlay-host
+        class="addentry__overlay"
+        [class.addentry__overlay--form]="state.onForm()"
+        [class.addentry__overlay--object]="state.step() !== 'findForm'"
+        [open]="true"
+        [modal]="state.dark()"
+        [cover]="state.onForm()"
+        (closed)="cancel()"
+      >
         <app-sheet
           appSheetHeight
-          class="addentry__sheet"
-          [label]="'eintragen.blatt' | t"
-          [detents]="detentsContent"
+          [label]="title()"
+          [title]="title()"
+          [note]="coordinates()"
+          [detents]="detents()"
           [modal]="true"
+          (closed)="cancel()"
         >
-          <div class="addentry__content">
-            <h2 class="addentry__title">{{ 'eintragen.titel' | t }}</h2>
-            <app-list-row
-              [clickable]="true"
-              [title]="'eintragen.fund' | t"
-              [subline]="'eintragen.fundUnter' | t"
-              (chosen)="startFind()"
-            >
-              <app-svg-icon lead name="entries" [size]="20" />
-            </app-list-row>
-            <app-list-row
-              [clickable]="true"
-              [title]="'eintragen.marker' | t"
-              [subline]="'eintragen.markerUnter' | t"
-              (chosen)="startMarker()"
-            >
-              <app-svg-icon lead name="location" [size]="20" />
-            </app-list-row>
-            <app-list-row
-              [clickable]="true"
-              [title]="'eintragen.zone' | t"
-              [subline]="'eintragen.zoneUnter' | t"
-              (chosen)="startZone()"
-            >
-              <app-svg-icon lead name="zone" [size]="20" />
-            </app-list-row>
-          </div>
-          <app-action-bar [primary]="'eintragen.abbrechen' | t" (primaryClick)="cancel()" />
+          <ng-container [ngTemplateOutlet]="body" />
         </app-sheet>
-      }
-      @case ('fundOrt') {
-        <app-sheet
-          appSheetHeight
-          class="addentry__sheet"
-          [label]="'melden.ortTitel' | t"
-          [detents]="detentsContent"
-        >
-          <div class="addentry__brief">
-            <h2 class="addentry__title">{{ 'melden.ortTitel' | t }}</h2>
-            <p class="note note--sub">{{ 'melden.ortAnleitung' | t }}</p>
-          </div>
-          <app-action-bar
-            [primary]="'melden.ortUebernehmen' | t"
-            [secondary]="'eintragen.abbrechen' | t"
-            (primaryClick)="adoptLocation()"
-            (secondaryClick)="cancel()"
-          />
-        </app-sheet>
-      }
-      @case ('markerOrt') {
-        <app-sheet
-          appSheetHeight
-          class="addentry__sheet"
-          [label]="'marker.ortTitel' | t"
-          [detents]="detentsContent"
-        >
-          <div class="addentry__brief">
-            <h2 class="addentry__title">{{ 'marker.ortTitel' | t }}</h2>
-            <p class="note note--sub">{{ 'marker.ortAnleitung' | t }}</p>
-          </div>
-          <app-action-bar
-            [primary]="'marker.ortUebernehmen' | t"
-            [secondary]="'eintragen.abbrechen' | t"
-            (primaryClick)="adoptLocation()"
-            (secondaryClick)="cancel()"
-          />
-        </app-sheet>
-      }
-      @case ('zoneZeichnen') {
-        <app-sheet
-          appSheetHeight
-          class="addentry__sheet"
-          [label]="'zone.zeichnenTitel' | t"
-          [detents]="detentsContent"
-        >
-          <div class="addentry__brief">
-            <h2 class="addentry__title">{{ 'zone.zeichnenTitel' | t }}</h2>
-            <p class="note note--sub">{{ drawInstructions() }}</p>
-            <button type="button" class="addentry__link tap" data-press="tint" (click)="removeCorner()">
-              {{ 'zone.letztenEntfernen' | t }}
-            </button>
-          </div>
-          <app-action-bar
-            [primary]="'zone.eckpunktSetzen' | t"
-            [secondary]="'zone.abschliessen' | t"
-            (primaryClick)="addCorner()"
-            (secondaryClick)="closeZone()"
-          />
-        </app-sheet>
-      }
-      @case ('fundFormular') {
-        <app-sheet
-          appSheetHeight
-          class="addentry__sheet"
-          [label]="'melden.blatt' | t"
-          [detents]="detentsForm"
-          [modal]="true"
-        >
-          <app-find-form
-            [location]="state.location()!"
-            [titel]="'melden.titel' | t"
-            [mainText]="'eintragen.speichern' | t"
-            [busy]="saving()"
-            (submitted)="saveFind($event)"
-            (cancelled)="cancel()"
-          />
-        </app-sheet>
-      }
-      @case ('markerFormular') {
-        <app-sheet
-          appSheetHeight
-          class="addentry__sheet"
-          [label]="'marker.blatt' | t"
-          [detents]="detentsForm"
-          [modal]="true"
-        >
-          <div class="addentry__content">
-            <h2 class="addentry__title">{{ 'marker.titel' | t }}</h2>
-            <app-object-form
-              [nameLabel]="'marker.name' | t"
-              [namePlaceholder]="'marker.namePlatzhalter' | t"
-              [nameMissingText]="'marker.nameFehlt' | t"
-            />
-            <p class="note">{{ 'melden.hinweis' | t }}</p>
-          </div>
-          <app-action-bar
-            [primary]="'eintragen.speichern' | t"
-            [secondary]="'eintragen.abbrechen' | t"
-            (primaryClick)="saveMarker()"
-            (secondaryClick)="cancel()"
-          />
-        </app-sheet>
-      }
-      @case ('zoneFormular') {
-        <app-sheet
-          appSheetHeight
-          class="addentry__sheet"
-          [label]="'zone.blatt' | t"
-          [detents]="detentsForm"
-          [modal]="true"
-        >
-          <div class="addentry__content">
-            <div class="addentry__head">
-              <h2 class="addentry__title">{{ 'zone.titel' | t }}</h2>
-              <p class="note note--sub">{{ areaText() }}</p>
-            </div>
-            <app-object-form
-              [nameLabel]="'zone.name' | t"
-              [namePlaceholder]="'zone.namePlatzhalter' | t"
-              [nameMissingText]="'zone.nameFehlt' | t"
-              (valuesChange)="onZoneValues($event)"
-            />
-            <p class="note">{{ 'melden.hinweis' | t }}</p>
-          </div>
-          <app-action-bar
-            [primary]="'eintragen.speichern' | t"
-            [secondary]="'eintragen.abbrechen' | t"
-            (primaryClick)="saveZone()"
-            (secondaryClick)="cancel()"
-          />
-        </app-sheet>
-      }
+      </app-overlay-host>
     }
   </div>
 }

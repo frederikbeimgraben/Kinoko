@@ -1,76 +1,76 @@
-@if (speciesPickerOpen()) {
-  <div class="report__content">
-    <h2 class="report__title">{{ 'melden.artWaehlen' | t }}</h2>
+@if (pickerOpen()) {
+  <div class="form__body">
+    @if (!wide()) {
+      <h2 class="form__title">{{ 'map.species.choose' | t }}</h2>
+    }
     <app-species-picker
       [species]="pickerSpecies()"
       [selected]="selectedSpecies()?.slug ?? null"
-      [label]="'melden.artWaehlen' | t"
+      [label]="'map.species.choose' | t"
       (chosen)="selectSpecies($event)"
     />
   </div>
-  <app-action-bar [primary]="'eintragen.abbrechen' | t" (primaryClick)="speciesPickerOpen.set(false)" />
+  <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="pickerOpen.set(false)" />
 } @else {
-  <div class="report__content">
-    <div class="report__head">
-      <h2 class="report__title">{{ titel() }}</h2>
-      <p class="note note--sub">{{ locationLine() }}</p>
-    </div>
+  <div class="form__body">
+    @if (!wide()) {
+      <div class="form__head">
+        <h2 class="form__title">{{ heading() }}</h2>
+        <span class="form__note">{{ coordinates() }}</span>
+      </div>
+    }
     <app-form-field
-      [label]="'melden.art' | t"
+      [label]="'species.fieldLabel' | t"
       [value]="speciesName()"
-      [placeholder]="'melden.artWaehlen' | t"
+      [placeholder]="'map.species.choose' | t"
       [readOnly]="true"
-      (displayClick)="speciesPickerOpen.set(true)"
+      [chevron]="editing()"
+      (displayClick)="pickerOpen.set(true)"
     />
-    <div class="report__pair">
+    <div class="form__pair">
       <app-form-field
         kind="date"
-        [label]="'melden.datum' | t"
-        [value]="foundOn()"
-        [display]="foundOnText()"
-        (valueChange)="setDate($event)"
+        [label]="'entry.field.date' | t"
+        [value]="date()"
+        [display]="dateText()"
+        (valueChange)="dateChoice.set($event)"
       />
       <app-form-field
         kind="number"
-        [label]="'melden.anzahl' | t"
-        [placeholder]="'melden.optional' | t"
+        [label]="'entry.field.count' | t"
+        [placeholder]="'common.optional' | t"
         [value]="count()"
-        (valueChange)="setCount($event)"
+        (valueChange)="countChoice.set($event)"
       />
     </div>
     <app-form-field
-      [label]="'melden.notiz' | t"
+      [label]="'entry.field.note' | t"
       [multiline]="true"
-      [placeholder]="'melden.optional' | t"
+      [placeholder]="'common.optional' | t"
       [value]="note()"
-      (valueChange)="setNote($event)"
+      (valueChange)="noteChoice.set($event)"
     />
     @if (withPhotos()) {
       <div>
-        <p class="report__label">{{ 'melden.fotos' | t }}</p>
+        <p class="form__label">{{ 'entry.field.photos' | t }}</p>
         <app-photo-picker [files]="photos()" (filesChange)="photos.set($event)" />
       </div>
     }
     <div>
-      <p class="report__label">{{ 'sichtbarkeit.beschriftung' | t }}</p>
+      <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
       <app-segmented
         [options]="segments()"
         [value]="visibility()"
-        [label]="'sichtbarkeit.beschriftung' | t"
+        [label]="'entry.field.visibility' | t"
         (valueChange)="setVisibility($event)"
       />
     </div>
-    <div class="report__release">
-      <app-checkbox [ngModel]="forTraining()" (ngModelChange)="setTraining($event)">{{
-        'melden.training' | t
-      }}</app-checkbox>
-      <p class="note note--sub">{{ 'melden.trainingUnter' | t }}</p>
-    </div>
-    <p class="note">{{ 'melden.hinweis' | t }}</p>
   </div>
   <app-action-bar
-    [primary]="mainText()"
-    [secondary]="'eintragen.abbrechen' | t"
+    [primary]="'common.save' | t"
+    [secondary]="secondaryLabel()"
+    [ghost]="!editing() && !wide()"
+    [busy]="busy()"
     (primaryClick)="submit()"
     (secondaryClick)="cancelled.emit()"
   />

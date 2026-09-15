@@ -42,12 +42,12 @@
       (valueChange)="query.set($event)"
     />
     @if (showsMarks()) {
-      <div class="species__marks">
+      <div class="marks">
         <button
-          class="species__filter tap"
+          class="marks__button tap"
           type="button"
           data-press="scale"
-          [class.species__filter--on]="filtered()"
+          [class.marks__button--on]="filtered()"
           (click)="filter.openSheet()"
         >
           <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />

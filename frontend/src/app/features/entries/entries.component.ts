@@ -1,132 +1,130 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, CardComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
-import type { Find, SharedFind, Marker, Visibility, Zone } from '../../core/api/models';
+import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { SyncService } from '../../core/offline/sync.service';
 import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
+import { BannerComponent } from '../../ui/banner/banner.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { EntryRowComponent, type EntryRowEntry } from '../../ui/entry-row/entry-row.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
+import { AddEntryState } from '../add-entry/add-entry.state';
 import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.state';
 import { EntriesState, type EntryBody } from './entries.state';
 import { colourHex } from './colors';
 import { hectaresText, isoDatum, shortDate } from './formats';
 
-/** Die vier Chips über der Liste, wie im Artboard `Funde`. */
-type ChipValue = 'funde' | 'marker' | 'zonen' | 'geteilt';
+/** Die drei Segmente über der Liste (Boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
+type Segment = 'finds' | 'markers' | 'zones';
 
-const CHIPS: readonly { value: ChipValue; label: TranslationKey; waiter: SyncKind }[] = [
-  { value: 'funde', label: 'eintraege.chip.funde', waiter: 'find' },
-  { value: 'marker', label: 'eintraege.chip.marker', waiter: 'marker' },
-  { value: 'zonen', label: 'eintraege.chip.zonen', waiter: 'zone' },
-  { value: 'geteilt', label: 'eintraege.chip.geteilt', waiter: 'find' },
+const SEGMENTS: readonly { value: Segment; label: TranslationKey; waiter: SyncKind }[] = [
+  { value: 'finds', label: 'entry.finds', waiter: 'find' },
+  { value: 'markers', label: 'entry.markers', waiter: 'marker' },
+  { value: 'zones', label: 'entry.zones', waiter: 'zone' },
 ];
-
-/** Ein Kennzeichen rechts an der Zeile. */
-interface Marke {
-  text: string;
-  variant: BadgeVariant;
-}
 
 /** Eine Zeile der Liste, fertig für die Vorlage. */
 interface Row {
-  schluessel: string;
-  farbe: string;
-  titel: string;
-  subline: string;
-  notiz: string;
-  badge: Marke | null;
+  key: string;
+  colour: string;
+  entry: EntryRowEntry;
+  pending: boolean;
   /** `null` bei einem Eintrag, der noch auf die Übertragung wartet. */
   object: { kind: ObjectKind; id: string } | null;
 }
 
-/**
- * Die Farben der Punkte vor einer Zeile, aus `docs/mockups/bauen.py`: ein
- * eigener Fund trägt `accent4`, ein fremder geteilter das gedämpfte `info`.
- */
-const OWN_FIND = '#c8a25a';
-const FOREIGN_FIND = '#185468';
-
-/**
- * Der Reiter Einträge (Artboard `Funde`): Chips, Liste, und ein Tipp öffnet
- * das Objekt über der Karte.
- *
- * Was noch auf die Übertragung wartet, steht mit seinem Kennzeichen oben in
- * der Liste. Öffnen lässt es sich nicht: es hat noch keine Kennung vom Dienst.
- */
+/** Der Reiter Einträge: Segment, Filter, Liste; ein Tipp öffnet das Objekt. */
 @Component({
   selector: 'app-entries',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
-    CardComponent,
+    BannerComponent,
     EmptyStateComponent,
+    EntryRowComponent,
     ListRowComponent,
     PageHeaderComponent,
     SegmentedComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './entries.component.html',
   styleUrl: './entries.component.scss',
 })
 export class EntriesComponent {
-  private readonly arten = inject(SpeciesState);
+  private readonly species = inject(SpeciesState);
   private readonly auth = inject(AuthService);
   private readonly map = inject(MapState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(EntriesState);
+  private readonly addEntry = inject(AddEntryState);
 
-  protected readonly chip = signal<ChipValue>('funde');
+  protected readonly segment = signal<Segment>('finds');
+  protected readonly filterOpen = signal(false);
+  protected readonly shared = signal(true);
   protected readonly signedIn = this.state.signedIn;
+  private readonly sync = inject(SyncService);
 
-  protected readonly chips = computed<SegmentOption[]>(() =>
-    CHIPS.map((chip) => ({ value: chip.value, label: this.i18n.translate(chip.label) })),
+  protected readonly offline = computed(() => !this.sync.online());
+
+  protected readonly segments = computed<SegmentOption[]>(() =>
+    SEGMENTS.map((entry) => ({ value: entry.value, label: this.i18n.translate(entry.label) })),
   );
 
+  protected readonly filtered = computed(() => !this.shared());
+
   protected readonly rows = computed<Row[]>(() => {
-    const chip = this.chip();
-    if (chip === 'geteilt') return this.state.shared().map((fund) => this.sharedRow(fund));
-    const waiter = CHIPS.find((candidate) => candidate.value === chip)?.waiter ?? 'find';
+    const segment = this.segment();
+    const waiter = SEGMENTS.find((entry) => entry.value === segment)?.waiter ?? 'find';
     const pending = this.state
       .pendingEntries()
       .filter((entry) => entry.kind === waiter)
       .map((entry) => this.pendingRow(entry));
-    if (chip === 'marker') {
+    if (segment === 'markers') {
       return [...pending, ...this.state.markers().map((entry) => this.markerRow(entry))];
     }
-    if (chip === 'zonen') return [...pending, ...this.state.zones().map((zone) => this.zoneRow(zone))];
-    return [...pending, ...this.state.finds().map((fund) => this.findRow(fund))];
+    if (segment === 'zones') return [...pending, ...this.state.zones().map((zone) => this.zoneRow(zone))];
+    const own = this.state.finds().map((find) => this.findRow(find));
+    const shared = this.shared() ? this.state.shared().map((find) => this.sharedRow(find)) : [];
+    return [...pending, ...own, ...shared];
   });
 
-  protected readonly emptyText = computed<TranslationKey>(() => {
-    if (this.needsSignIn()) return 'eintraege.anmelden';
-    return this.chip() === 'geteilt' ? 'eintraege.leerGeteilt' : 'eintraege.leer';
-  });
+  protected readonly emptyText = computed<TranslationKey>(() =>
+    this.signedIn() ? 'state.noEntries' : 'state.noOwnEntriesGuest',
+  );
 
-  /** Geteilte Funde stehen jedem offen; die eigenen liegen hinter dem Konto. */
-  protected readonly needsSignIn = computed(() => !this.signedIn() && this.chip() !== 'geteilt');
+  constructor() {
+    void this.species.loadBundle();
+    void this.state.loadShared();
+    // Die Anmeldung kommt manchmal erst nach dem ersten Bild der Seite.
+    effect(() => {
+      this.signedIn();
+      void this.state.load();
+    });
+  }
 
   protected signIn(): void {
     void this.auth.requestSignIn();
   }
 
-  constructor() {
-    void this.arten.loadBundle();
-    void this.state.load();
-    void this.state.loadShared();
+  /** Der Weg zum Eintragen führt über die Karte: dort steht das Fadenkreuz. */
+  protected async startEntry(): Promise<void> {
+    await this.router.navigate(['/karte']);
+    this.addEntry.open();
   }
 
-  protected selectChip(value: string): void {
-    const chip = CHIPS.find((candidate) => candidate.value === value);
-    if (chip) this.chip.set(chip.value);
+  protected selectSegment(value: string): void {
+    const segment = SEGMENTS.find((entry) => entry.value === value);
+    if (segment) this.segment.set(segment.value);
   }
 
   protected async open(row: Row): Promise<void> {
@@ -135,102 +133,95 @@ export class EntriesComponent {
     this.map.object.set(row.object);
   }
 
-  private speciesName(id: string | null): string {
-    return id === null ? '' : (this.arten.entryById(id)?.name ?? '');
+  private speciesName(id: string | null | undefined): string {
+    return id === undefined || id === null ? '' : (this.species.entryById(id)?.name ?? '');
   }
 
-  private dateText(iso: string): string {
-    return shortDate(iso, this.i18n.locale(), isoDatum(new Date()), this.i18n.translate('eintraege.heute'));
+  private date(iso: string): string {
+    return shortDate(iso, this.i18n.locale(), isoDatum(new Date()), this.i18n.translate('common.today'));
   }
 
-  /** „6. Sept. · 3 Stück · Frederik“, so wie im Artboard `Funde`. */
-  private findSubline(datum: string, anzahl: number | null, melder: string): string {
-    if (anzahl === null) return this.i18n.translate('fund.unterOhneAnzahl', { datum, melder });
-    return this.i18n.translate('fund.unter', {
-      datum,
-      anzahl: this.i18n.translate('fund.stueck', { anzahl }),
-      melder,
-    });
+  /** „6. Sept · 3 Stück · Frederik“, so wie das Board `Entries` es schreibt. */
+  private findMeta(date: string, count: number | null, person: string): string {
+    if (count === null) return this.i18n.translate('find.sublineNoCount', { date, person });
+    return this.i18n.translate('find.subline', { date, count, person });
   }
 
-  private sharedBadge(visibility: Visibility): Marke | null {
-    return visibility === 'shared'
-      ? { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' }
-      : null;
+  /** Der Vorname, wie ihn die Unterzeile eines Fundes nennt. */
+  private firstName(): string {
+    return (this.state.reporter() ?? '').split(' ')[0] ?? '';
   }
 
   private findRow(find: Find): Row {
     return {
-      schluessel: `fund-${find.id}`,
-      farbe: OWN_FIND,
-      titel: this.speciesName(find.speciesId),
-      subline: this.findSubline(this.dateText(find.foundOn), find.count, this.state.reporter() ?? ''),
-      notiz: find.note ?? '',
-      badge: this.sharedBadge(find.visibility),
+      key: `find-${find.id}`,
+      colour: '',
+      entry: {
+        title: this.speciesName(find.speciesId),
+        meta: this.findMeta(this.date(find.foundOn), find.count, this.firstName()),
+        note: find.note ?? undefined,
+      },
+      pending: false,
       object: { kind: 'find', id: find.id },
     };
   }
 
-  private sharedSubline(date: string, count: number | null): string {
-    if (count === null) return date;
-    return this.i18n.translate('find.sublineShared', { date, count });
-  }
-
   private sharedRow(find: SharedFind): Row {
     return {
-      schluessel: `geteilt-${find.id}`,
-      farbe: FOREIGN_FIND,
-      titel: find.speciesId === null ? '' : (this.arten.entryById(find.speciesId)?.name ?? ''),
-      subline: this.sharedSubline(this.dateText(find.foundOn), find.count),
-      notiz: find.note ?? '',
-      badge: { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' },
+      key: `shared-${find.id}`,
+      colour: '',
+      entry: {
+        title: this.speciesName(find.speciesId),
+        meta: this.findMeta(this.date(find.foundOn), find.count, ''),
+        note: find.note ?? undefined,
+      },
+      pending: false,
       object: null,
     };
   }
 
   private markerRow(marker: Marker): Row {
     return {
-      schluessel: `marker-${marker.id}`,
-      farbe: colourHex(marker.colour),
-      titel: marker.name,
-      subline: this.i18n.translate('marker.unter', {
-        sichtbarkeit: visibilityText(this.i18n, marker.visibility),
-      }),
-      notiz: marker.note ?? '',
-      badge: this.sharedBadge(marker.visibility),
+      key: `marker-${marker.id}`,
+      colour: colourHex(marker.colour),
+      entry: {
+        title: marker.name,
+        meta: this.i18n.translate('entry.marker.subline', {
+          note: marker.note ?? '',
+          visibility: visibilityText(this.i18n, marker.visibility),
+        }),
+      },
+      pending: false,
       object: { kind: 'marker', id: marker.id },
     };
   }
 
   private zoneRow(zone: Zone): Row {
     return {
-      schluessel: `zone-${zone.id}`,
-      farbe: colourHex(zone.colour),
-      titel: zone.name,
-      subline: this.i18n.translate('zone.unter', {
-        flaeche: hectaresText(zone.areaHa, this.i18n.locale()),
-        sichtbarkeit: visibilityText(this.i18n, zone.visibility),
-      }),
-      notiz: zone.note ?? '',
-      badge: this.sharedBadge(zone.visibility),
+      key: `zone-${zone.id}`,
+      colour: colourHex(zone.colour),
+      entry: {
+        title: zone.name,
+        meta: this.i18n.translate('entry.zone.subline', {
+          area: hectaresText(zone.areaHa, this.i18n.locale()),
+          visibility: visibilityText(this.i18n, zone.visibility),
+        }),
+      },
+      pending: false,
       object: { kind: 'zone', id: zone.id },
     };
   }
 
   private pendingRow(entry: SyncTask<EntryBody>): Row {
     const body = entry.body;
-    const titel = 'foundOn' in body ? this.speciesName(body.speciesId ?? null) : body.name;
-    const subline =
-      'foundOn' in body
-        ? this.findSubline(this.dateText(body.foundOn), body.count ?? null, this.state.reporter() ?? '')
-        : '';
+    const find = 'foundOn' in body;
+    const title = find ? this.speciesName(body.speciesId) : body.name;
+    const meta = find ? this.findMeta(this.date(body.foundOn), body.count ?? null, this.firstName()) : '';
     return {
-      schluessel: `warte-${entry.id}`,
-      farbe: 'colour' in body && body.colour !== undefined ? colourHex(body.colour) : OWN_FIND,
-      titel,
-      subline,
-      notiz: body.note ?? '',
-      badge: { text: this.i18n.translate('eintraege.badge.ausstehend'), variant: 'warning' },
+      key: `waiting-${entry.id}`,
+      colour: 'colour' in body && body.colour !== undefined ? colourHex(body.colour) : '',
+      entry: { title, meta, note: body.note ?? undefined },
+      pending: true,
       object: null,
     };
   }

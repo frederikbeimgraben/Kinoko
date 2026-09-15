@@ -26,6 +26,8 @@ export class FormFieldComponent {
   readonly kind = input<'text' | 'number' | 'date'>('text');
   /** Ein Feld, das nur zeigt und beim Tippen eine Auswahl öffnet. */
   readonly readOnly = input(false);
+  /** Ein Pfeil am Ende des Feldes: dahinter steht eine eigene Auswahl. */
+  readonly chevron = input(false);
   /** Ein Piktogramm vor der Eingabe, wie die Lupe im Suchfeld. */
   readonly icon = input<IconName>();
   /** Versteckt die Beschriftung, ohne sie wegzulassen. */

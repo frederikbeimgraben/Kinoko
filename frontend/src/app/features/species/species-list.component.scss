@@ -1,3 +1,7 @@
+@use '../../../styles/filter-marks' as marks;
+
+@include marks.filter-marks;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -22,40 +26,6 @@
 }
 
 // Die aktiven Filter laufen an den Rand und blenden dort aus.
-.species__marks {
-  display: flex;
-  flex: none;
-  gap: 7px;
-  align-items: center;
-  padding-inline: var(--size-gutter);
-  margin-inline: calc(var(--size-gutter) * -1);
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
-}
-
-.species__filter {
-  display: inline-flex;
-  flex: none;
-  gap: 7px;
-  align-items: center;
-  block-size: 32px;
-  padding-inline: 13px;
-  font: inherit;
-  font-size: 13px;
-  font-weight: var(--fw-semibold);
-  color: var(--color-text);
-  cursor: pointer;
-  background: none;
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-}
-
-.species__filter--on {
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
 // Am Rechner steht die Steuerspalte links und der Inhalt rechts.
 .species--wide {
   display: grid;
