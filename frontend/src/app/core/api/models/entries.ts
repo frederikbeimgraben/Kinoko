@@ -21,7 +21,7 @@ export interface Page<E> {
 }
 
 /** Ein abgelegtes Foto. Die Datei holt der Client über die eigene Route. */
-export interface Photo {
+export interface FindPhoto {
   id: string;
   breite: number;
   hoehe: number;
@@ -44,7 +44,7 @@ export interface Find {
    * heißt für andere gerundet, für das Training zählt nur der genaue Punkt.
    */
   fuerTraining: boolean;
-  fotos: Photo[];
+  fotos: FindPhoto[];
   erstelltAm: string;
   geaendertAm: string;
 }

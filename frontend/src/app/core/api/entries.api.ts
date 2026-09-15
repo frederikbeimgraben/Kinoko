@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { ApiClient } from './api-client';
 import type {
-  Photo,
+  FindPhoto,
   Find,
   FindPatch,
   FindInput,
@@ -67,8 +67,8 @@ export class EntriesApi {
     });
   }
 
-  addPhoto(findId: string, file: File): Observable<Photo> {
-    return this.api.postFile<Photo>(`/funde/${encodeURIComponent(findId)}/fotos`, 'datei', file);
+  addPhoto(findId: string, file: File): Observable<FindPhoto> {
+    return this.api.postFile<FindPhoto>(`/funde/${encodeURIComponent(findId)}/fotos`, 'datei', file);
   }
 
   loadPhoto(findId: string, photoId: string): Observable<Blob> {

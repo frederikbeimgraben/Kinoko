@@ -15,7 +15,7 @@ const IMAGE = Buffer.from(
   'base64',
 );
 
-const IMAGE_PATH = '/api/species-images/';
+const IMAGE_PATH = '/api/photos/';
 
 /** Legt die Vertrags-Attrappe auf die Seite. Ein Weg ohne Eintrag bleibt leer. */
 export async function mockApi(page: Page, extra: Record<string, unknown> = {}): Promise<void> {

@@ -1,7 +1,13 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEventType,
+  HttpHeaders,
+  HttpParams,
+} from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { ToastService } from '@stupa-makers/ui-kit';
-import { catchError, map, of, throwError, type Observable } from 'rxjs';
+import { catchError, filter, map, of, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
 import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
@@ -18,6 +24,12 @@ export type Query = Record<string, string | number | boolean | readonly string[]
 /** Eine Antwort mit ETag. Zum bekannten Stand bleibt `body` leer. */
 export interface Tagged<T> {
   etag: string | null;
+  body: T | null;
+}
+
+/** Ein Schritt beim Hochladen: der Anteil, am Ende die Antwort. */
+export interface Upload<T> {
+  percent: number;
   body: T | null;
 }
 
@@ -77,6 +89,25 @@ export class ApiClient {
     return this.http
       .post<T>(this.url(path), body)
       .pipe(catchError((failure: unknown) => this.report(failure, options)));
+  }
+
+  /**
+   * Lädt eine Datei und meldet den Anteil. Der letzte Schritt trägt die
+   * Antwort des Dienstes.
+   */
+  uploadFile<T>(path: string, field: string, file: File, fields: Query = {}): Observable<Upload<T>> {
+    const body = new FormData();
+    body.append(field, file, file.name);
+    for (const [name, value] of Object.entries(fields)) {
+      if (value !== undefined) body.append(name, String(value));
+    }
+    return this.http
+      .post<T>(this.url(path), body, { reportProgress: true, observe: 'events' })
+      .pipe(
+        map((event) => step<T>(event)),
+        filter((state): state is Upload<T> => state !== null),
+        catchError((failure: unknown) => this.report(failure)),
+      );
   }
 
   /**
@@ -150,4 +181,16 @@ export class ApiClient {
     }
     return { type: 'about:blank', title: this.i18n.translate('error.internal'), status: 0 };
   }
+}
+
+/** Deutet ein Ereignis des Hochladens. Ein Zwischenschritt ohne Anteil fällt weg. */
+function step<T>(event: { type: HttpEventType; [key: string]: unknown }): Upload<T> | null {
+  if (event.type === HttpEventType.UploadProgress) {
+    const total = event['total'] as number | undefined;
+    const loaded = event['loaded'] as number;
+    if (total === undefined || total === 0) return null;
+    return { percent: Math.round((loaded / total) * 100), body: null };
+  }
+  if (event.type === HttpEventType.Response) return { percent: 100, body: event['body'] as T };
+  return null;
 }
