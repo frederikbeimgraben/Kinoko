@@ -12,3 +12,11 @@
 .panel__rule {
   margin-block-start: calc(var(--space-5) * -1 + var(--space-4));
 }
+
+// Solange kein Manifest da ist, steht hier die Rampe als Platzhalter.
+.panel__bar {
+  block-size: 12px;
+  margin-block-start: 10px;
+  background: var(--color-surface-sunken);
+  border-radius: 6px;
+}

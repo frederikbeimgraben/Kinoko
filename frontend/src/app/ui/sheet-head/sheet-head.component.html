@@ -1,23 +1,27 @@
 <div class="head">
   <div class="head__row">
-    <p class="head__title">
-      <button
-        class="head__species tap"
-        type="button"
-        data-press="scale"
-        [class.head__species--link]="titleLink()"
-        (click)="titleClick.emit()"
-      >
-        {{ title() }}
-      </button>
-      @if (week()) {
-        <span class="head__divider" aria-hidden="true">·</span>
-        <span class="head__week">{{ week() }}</span>
-      }
-      @if (hint()) {
-        <span class="head__hint">{{ hint() }}</span>
-      }
-    </p>
+    @if (loading()) {
+      <app-skeleton kind="line" width="140px" height="18px" />
+    } @else {
+      <p class="head__title">
+        <button
+          class="head__species tap"
+          type="button"
+          data-press="scale"
+          [class.head__species--link]="titleLink()"
+          (click)="titleClick.emit()"
+        >
+          {{ title() }}
+        </button>
+        @if (week()) {
+          <span class="head__divider" aria-hidden="true">·</span>
+          <span class="head__week">{{ week() }}</span>
+        }
+        @if (hint()) {
+          <span class="head__hint">{{ hint() }}</span>
+        }
+      </p>
+    }
     @if (arrows()) {
       <div class="head__arrows">
         <button

@@ -6,10 +6,10 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-5);
     min-block-size: 0;
     overflow: hidden;
-    padding: var(--space-1) var(--size-gutter) var(--size-gutter);
+    padding: var(--space-1) var(--size-gutter) var(--space-5);
   }
 
   .overlay-body__head {

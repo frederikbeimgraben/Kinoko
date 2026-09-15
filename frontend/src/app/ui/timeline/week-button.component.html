@@ -11,10 +11,14 @@
   [disabled]="locked()"
   (click)="chosen.emit()"
 >
-  @if (yearMark()) {
-    <span class="week__year" aria-hidden="true">{{ year() }}</span>
+  @if (loading()) {
+    <app-skeleton kind="line" width="32px" height="10px" />
+  } @else {
+    @if (yearMark()) {
+      <span class="week__year" aria-hidden="true">{{ year() }}</span>
+    }
+    <span class="week__kw" aria-hidden="true">{{ 'unit.week' | t }}</span>
+    <span class="week__number" aria-hidden="true">{{ week() }}</span>
+    <span class="week__track" aria-hidden="true"><i class="week__bar" [style.inline-size]="bars()"></i></span>
   }
-  <span class="week__kw" aria-hidden="true">{{ 'unit.week' | t }}</span>
-  <span class="week__number" aria-hidden="true">{{ week() }}</span>
-  <span class="week__track" aria-hidden="true"><i class="week__bar" [style.inline-size]="bars()"></i></span>
 </button>

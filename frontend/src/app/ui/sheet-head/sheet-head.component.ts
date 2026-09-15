@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import type { TranslationKey } from '../../core/i18n/translations';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 /** Ein Pfeil der Kopfzeile und sein Textschlüssel. */
 interface Arrow {
@@ -16,7 +17,7 @@ const FORWARD: Arrow = { key: 'map.week.next', icon: 'right' };
 @Component({
   selector: 'app-sheet-head',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [SkeletonComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './sheet-head.component.html',
   styleUrl: './sheet-head.component.scss',
 })
@@ -27,6 +28,8 @@ export class SheetHeadComponent {
   readonly hint = input<string>();
   readonly arrows = input(true);
   readonly playing = input(false);
+  /** Ohne Daten steht statt des Titels ein Platzhalter. */
+  readonly loading = input(false);
 
   readonly titleClick = output();
   readonly back = output();

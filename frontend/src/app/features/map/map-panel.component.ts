@@ -15,12 +15,20 @@ import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segme
 import { CombinationComponent } from './combination.component';
 import { MapView } from './map.view';
 import { VIEW_MODES } from './map.state';
+import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 
 /** Der Inhalt unter dem Kopf: Reiter, Legende, Ebene oder Kombination. */
 @Component({
   selector: 'app-map-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CombinationComponent, FormFieldComponent, RampComponent, SegmentedComponent, TranslatePipe],
+  imports: [
+    SkeletonComponent,
+    CombinationComponent,
+    FormFieldComponent,
+    RampComponent,
+    SegmentedComponent,
+    TranslatePipe,
+  ],
   templateUrl: './map-panel.component.html',
   styleUrl: './map-panel.component.scss',
 })

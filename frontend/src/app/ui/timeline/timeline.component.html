@@ -6,6 +6,11 @@
   [attr.aria-label]="label()"
   (keydown)="onKey($event)"
 >
+  @if (loading()) {
+    @for (slot of placeholders; track slot) {
+      <app-week-button [year]="0" [week]="0" [loading]="true" [inTabOrder]="false" />
+    }
+  }
   @for (week of shown(); track week.key; let i = $index) {
     <app-week-button
       [year]="week.year"

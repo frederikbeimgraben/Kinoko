@@ -12,7 +12,11 @@
       (click)="valueChange.emit(option.value)"
       (keydown)="onKey($event, i)"
     >
-      {{ option.label }}
+      @if (loading()) {
+        <app-skeleton kind="line" width="70%" height="12px" />
+      } @else {
+        {{ option.label }}
+      }
     </button>
   }
 </div>

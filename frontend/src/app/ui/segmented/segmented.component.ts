@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 /** Eine Wahl im Segmented. */
 export interface SegmentOption {
@@ -12,6 +13,7 @@ export interface SegmentOption {
 @Component({
   selector: 'app-segmented',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SkeletonComponent],
   templateUrl: './segmented.component.html',
   styleUrl: './segmented.component.scss',
 })
@@ -21,6 +23,8 @@ export class SegmentedComponent {
   readonly label = input.required<string>();
   /** Ein gesperrtes Segment ist nur zu sehen, nicht zu bedienen. */
   readonly locked = input(false);
+  /** Ohne Daten tragen die Reiter Platzhalter statt ihrer Wörter. */
+  readonly loading = input(false);
 
   readonly valueChange = output<string>();
 
