@@ -1,4 +1,4 @@
-/** Zwölf Standardfarben und ihr Abstand, wie `FacetService.nearest_colour`. */
+/** Zwölf Standardfarben aus dem Brett. U5b nimmt sie aus dem Bündel. */
 
 export interface StandardColour {
   readonly key: string;
@@ -47,7 +47,8 @@ export function oklab(value: string): [number, number, number] {
   ];
 }
 
-/** Der Abstand zweier Farben im Oklab-Raum, Buntheit doppelt gewichtet. */
+/** Der Abstand zweier Farben im Oklab-Raum, Buntheit doppelt gewichtet.
+ *  Die Rechnung spiegelt `FacetService.nearest_colour` im Dienst. */
 export function distance(first: string, second: string): number {
   const left = oklab(first);
   const right = oklab(second);

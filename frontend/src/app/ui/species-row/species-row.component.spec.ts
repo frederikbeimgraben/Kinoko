@@ -79,10 +79,10 @@ describe('SpeciesRowComponent', () => {
     const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
 
     const name = styleOf(container.querySelector('.row__name'));
-    expect(name.fontSize).toBe('15px');
+    expect(name.fontSize).toBe('var(--fs-row-title)');
     expect(name.fontWeight).toBe('var(--fw-medium)');
     const latin = styleOf(container.querySelector('.row__latin'));
-    expect(latin.fontSize).toBe('12.5px');
+    expect(latin.fontSize).toBe('var(--fs-row-latin)');
     expect(latin.fontStyle).toBe('italic');
   });
 

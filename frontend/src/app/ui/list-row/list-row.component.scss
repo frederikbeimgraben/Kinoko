@@ -21,11 +21,22 @@
   display: flex;
   flex: 1;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   min-block-size: calc(var(--size-row) - var(--border-width));
   min-inline-size: 0;
-  padding-inline: var(--pilz-row-inline, 14px);
   text-align: start;
+}
+
+// Eine Zeile in einer Karte trägt ihr Polster selbst. Der Druckzustand
+// reicht so an den Rand der Karte.
+.row__field--catalogue {
+  gap: var(--space-3);
+  padding-inline: var(--size-gutter);
+}
+
+.row__field--filter {
+  gap: var(--space-3);
+  padding-inline: var(--space-row-inline);
 }
 
 // Eine Zeile mit Unterzeile trägt zwei Textzeilen und ist darum höher.
@@ -66,8 +77,19 @@
 }
 
 .row__title {
-  font-size: 15px;
-  font-weight: var(--pilz-row-title-weight, var(--fw-regular));
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+// Im Katalog ist der Titel eine Beschriftung, keine Überschrift.
+.row__title--catalogue {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-regular);
+}
+
+.row__title--filter {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-medium);
 }
 
 .row__sub {
@@ -82,7 +104,7 @@
 }
 
 .row__value--accent {
-  font-size: 13px;
+  font-size: var(--fs-row-meta);
   font-weight: var(--fw-semibold);
   color: var(--color-primary);
   font-variant-numeric: tabular-nums;

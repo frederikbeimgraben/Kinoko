@@ -19,6 +19,7 @@
             <app-list-row
               [title]="child.name"
               [value]="child.count"
+              kind="catalogue"
               [clickable]="true"
               (chosen)="toStep(child.route)"
             />

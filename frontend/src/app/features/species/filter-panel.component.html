@@ -7,6 +7,7 @@
             [title]="row.label"
             [value]="row.value"
             [accent]="true"
+            kind="filter"
             [chevron]="true"
             [clickable]="true"
             (chosen)="filter.showGroup(row.key)"

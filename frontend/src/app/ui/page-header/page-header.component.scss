@@ -3,7 +3,7 @@
   align-items: center;
   gap: var(--space-3);
   block-size: var(--size-header);
-  padding-inline: 20px;
+  padding-inline: var(--space-header-inline);
   background: var(--color-surface);
   border-block-end: var(--border-width) solid var(--color-border);
 }
@@ -38,11 +38,11 @@
 }
 
 .pageheader--compact {
-  block-size: 56px;
+  block-size: var(--size-header-flat);
   padding-inline: var(--size-gutter);
   background: var(--color-bg);
 }
 
 .pageheader--compact .pageheader__title {
-  font-size: 19px;
+  font-size: var(--fs-header-flat);
 }

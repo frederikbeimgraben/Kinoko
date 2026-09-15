@@ -15,7 +15,7 @@
   gap: var(--space-3);
   inline-size: 100%;
   block-size: 100%;
-  padding-inline: 14px;
+  padding-inline: var(--space-row-inline);
   font: inherit;
   color: inherit;
   text-align: start;
@@ -38,7 +38,7 @@
 
 .row__name {
   overflow: hidden;
-  font-size: 15px;
+  font-size: var(--fs-row-title);
   font-weight: var(--fw-medium);
   line-height: normal;
   white-space: nowrap;
@@ -47,7 +47,7 @@
 
 .row__latin {
   overflow: hidden;
-  font-size: 12.5px;
+  font-size: var(--fs-row-latin);
   font-style: italic;
   line-height: normal;
   color: var(--color-text-muted);
@@ -61,10 +61,10 @@
   flex: 0 1 auto;
   gap: var(--space-2);
   min-inline-size: 0;
-  padding-inline-end: 14px;
+  padding-inline-end: var(--space-row-inline);
   overflow: hidden;
   white-space: nowrap;
-  mask-image: linear-gradient(90deg, #000 calc(100% - 14px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - var(--space-row-inline)), transparent);
 }
 
 .row__trail {
