@@ -3,12 +3,16 @@
 # laedt: ein Bild wiegt 1,4 MB, ein Kachelblick 90 bis 300 kB.
 set -u
 cd "$(dirname "$0")"
+# Der Katalog geht einmal je Lauf raus, nicht je Art.
+PILZE_KATALOG=$(python -u src/pilze/species_slug.py --fetch) || exit 1
+export PILZE_KATALOG
 karte () {
   SLUG=$1; TAXA=$2; LABEL=$3; WALD=${4:-0.03}
   # NUR="a b c" beschraenkt den Lauf auf diese Arten.
   if [ -n "${NUR:-}" ] && ! echo " $NUR " | grep -q " $SLUG "; then return; fi
   # Der Katalogslug heisst die Ausgabe, der Kettenname bleibt intern.
-  ART=$(python -u src/pilze/species_slug.py "$TAXA" 2>/dev/null) || ART="$SLUG"
+  ART=$(python -u src/pilze/species_slug.py --match "$TAXA") \
+    || { echo "übersprungen: $TAXA ohne Katalogtreffer"; return; }
   if [ "${NEU:-0}" != "1" ] && [ -d "reports/maps/${ART}_kacheln" ]; then
     echo "--- $LABEL steht schon, uebersprungen ---"; return
   fi

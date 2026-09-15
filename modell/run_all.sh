@@ -6,6 +6,11 @@
 set -u
 cd "$(dirname "$0")"
 LOGS=${LOGS:-reports/rebuild}; mkdir -p "$LOGS"
+# Der Katalog geht einmal je Lauf raus, nicht je Art.
+if [ -z "${LISTE:-}" ]; then
+  PILZE_KATALOG=$(python -u src/pilze/species_slug.py --fetch) || exit 1
+  export PILZE_KATALOG
+fi
 run () {
   SLUG=$1; TAXA=$2; LABEL=$3; WALD=${4:-0.03}
   # LISTE=1 druckt nur Slug und Taxa, damit der Arbeiter die Arten kennt.
@@ -14,7 +19,8 @@ run () {
   # Instanzen nebeneinander: jede rechnet mit acht Faeden.
   if [ -n "${NUR:-}" ] && ! echo " $NUR " | grep -q " $SLUG "; then return; fi
   # Der Katalogslug heisst die Ausgabe, der Kettenname bleibt intern.
-  ART=$(python -u src/pilze/species_slug.py "$TAXA" 2>/dev/null) || ART="$SLUG"
+  ART=$(python -u src/pilze/species_slug.py --match "$TAXA") \
+    || { echo "übersprungen: $TAXA ohne Katalogtreffer"; return; }
   echo "=========== $LABEL ($SLUG) $(date +%H:%M:%S) ==========="
   # Fertige Arten ueberspringen, ausser NEU=1 erzwingt alles.
   if [ "${NEU:-0}" != "1" ] && [ -f "reports/maps/${ART}.json" ] \
