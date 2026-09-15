@@ -1,0 +1,117 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { ActivatedRoute, provideRouter, convertToParamMap } from '@angular/router';
+import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
+import { of } from 'rxjs';
+import { noViolations } from '../../testing/axe';
+import { ANY_ROUTE } from '../../testing/routes';
+import { SpeciesEditorComponent } from './species-editor.component';
+import { SpeciesEditorState } from './species-editor.state';
+
+const NOW = '2026-09-10T10:00:00+02:00';
+
+const PROFILE = {
+  id: 'art-eins',
+  slug: 'boletus-edulis',
+  name: 'Steinpilz',
+  scientificName: 'Boletus edulis',
+  genusName: 'Boletus',
+  group: 'bolete',
+  edibility: 'edible',
+  protection: 'none',
+  forecastEnabled: true,
+  updatedAt: NOW,
+  updatedByName: 'Frederik',
+  description: 'Brauner Hut',
+  edibilityNote: 'Geschmacksprobe',
+  marketable: false,
+  names: [],
+  measurements: [
+    {
+      part: 'cap',
+      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: null }],
+    },
+  ],
+  colours: [{ part: 'cap', mode: 'single', colours: [{ name: 'braun', hex: '#5a3d22' }] }],
+  colourChanges: [],
+  capFeatures: [],
+  capMargins: [],
+  stemFeatures: [],
+  traits: [],
+  sources: [{ scope: 'profile', title: '123pilzsuche.de', url: 'https://x', checkedOn: '2026-09-10' }],
+  seasons: [],
+  terms: [],
+  lookalikes: [],
+};
+
+function routeFor(slug: string): { provide: typeof ActivatedRoute; useValue: unknown } {
+  const params = convertToParamMap({ slug });
+  return { provide: ActivatedRoute, useValue: { paramMap: of(params), snapshot: { paramMap: params } } };
+}
+
+async function build(profile: Record<string, unknown> = PROFILE): Promise<{
+  container: Element;
+  http: HttpTestingController;
+}> {
+  TestBed.resetTestingModule();
+  const { container } = await render(SpeciesEditorComponent, {
+    providers: [
+      provideRouter(ANY_ROUTE),
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      routeFor('boletus-edulis'),
+    ],
+  });
+  const http = TestBed.inject(HttpTestingController);
+  http.expectOne('/api/species/boletus-edulis').flush(profile);
+  http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1284, finds: 12, photos: 3 });
+  return { container, http };
+}
+
+describe('SpeciesEditorComponent', () => {
+  beforeEach(() => {
+    TestBed.inject(SpeciesEditorState).load('');
+  });
+
+  it('nennt Kopf, Zahlen, Merkmale und Quelle', async () => {
+    const { container } = await build();
+
+    expect(await screen.findByRole('heading', { name: 'Steinpilz bearbeiten' })).toBeInTheDocument();
+    expect(screen.getByText('1 284')).toBeInTheDocument();
+    expect(screen.getByText('4 bis 20 cm, braun')).toBeInTheDocument();
+    expect(screen.getByText(/123pilzsuche\.de/)).toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('schaltet die Vorhersage über den Schalter', async () => {
+    const { http } = await build();
+    await screen.findByRole('switch', { name: 'Vorhersage' });
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Vorhersage' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis/forecast');
+    expect(call.request.method).toBe('PUT');
+    expect(call.request.body).toEqual({ enabled: false });
+    call.flush({ ...PROFILE, forecastEnabled: false });
+  });
+
+  it('lässt die Quelle weg, wenn die Art keine trägt', async () => {
+    await build({ ...PROFILE, sources: [] });
+
+    expect(await screen.findByRole('heading', { name: 'Steinpilz bearbeiten' })).toBeInTheDocument();
+    expect(screen.queryByText(/123pilzsuche\.de/)).not.toBeInTheDocument();
+  });
+
+  it('fragt vor dem Löschen nach und löscht dann', async () => {
+    const { http } = await build();
+    await screen.findByRole('button', { name: 'Art löschen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Art löschen' }));
+    expect(screen.getByText('Steinpilz löschen?')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
+
+    expect(http.expectOne('/api/species/boletus-edulis').request.method).toBe('DELETE');
+  });
+});
