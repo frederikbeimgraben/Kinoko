@@ -286,7 +286,7 @@ describe('MapComponent', () => {
     TestBed.inject(MapState).view.set('combination');
     await stable();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Kombination' }));
+    await userEvent.click(screen.getByRole('button', { name: /Gespeicherte Kombinationen/ }));
     await stable();
     await userEvent.click(screen.getByRole('button', { name: /^Buchenwald im Herbst/ }));
     await stable();

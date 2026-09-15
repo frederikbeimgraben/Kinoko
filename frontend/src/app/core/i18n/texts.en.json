@@ -420,6 +420,7 @@
   "map.combination.list": "Combinations",
   "map.combination.rule": "Rule",
   "map.combination.save": "Save combination",
+  "map.combination.saved": "Saved combinations",
   "map.combination.summary": "{rule} · {count} factors",
   "map.factor.add": "Add factor",
   "map.factor.assigned": "already in use",

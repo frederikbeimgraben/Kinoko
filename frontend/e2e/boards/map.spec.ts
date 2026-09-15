@@ -137,7 +137,7 @@ test('CombinationSave', async ({ page }) => {
 test('Combinations', async ({ page }) => {
   guard('Combinations', 'phone');
   await openSignedIn(page, BOARD_FACTORS);
-  await page.getByRole('button', { name: 'Kombination', exact: true }).click();
+  await page.getByRole('button', { name: /Gespeicherte Kombinationen/ }).click();
   await board(page, 'Combinations', 'map-schnitt-300.png');
 });
 
@@ -194,8 +194,7 @@ test('MapDesktopFactorPicker', async ({ page }) => {
 test('MapDesktopCombinations', async ({ page }) => {
   guard('MapDesktopCombinations', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
-  // Die Spalte nennt im Kopf die Art; der Griff dort öffnet die Kombinationen.
-  await page.getByRole('button', { name: 'Steinpilz', exact: true }).click();
+  await page.getByRole('button', { name: /Gespeicherte Kombinationen/ }).click();
   await board(page, 'MapDesktopCombinations', 'map-desktop-stein-900.png');
 });
 

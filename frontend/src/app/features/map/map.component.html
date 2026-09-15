@@ -9,6 +9,7 @@
         (stepped)="playback.step($event)"
         (playToggled)="playback.toggle()"
         (layerChosen)="overlay.set('layer')"
+        (savedOpened)="overlay.set('combinations')"
         (factorOpened)="openFactorFor($event)"
         (factorAdded)="overlay.set('factors')"
         (saveRequested)="requestSave()"
@@ -93,6 +94,7 @@
           />
           <app-map-panel
             (layerChosen)="overlay.set('layer')"
+            (savedOpened)="overlay.set('combinations')"
             (factorOpened)="openFactorFor($event)"
             (factorAdded)="overlay.set('factors')"
             (saveRequested)="requestSave()"

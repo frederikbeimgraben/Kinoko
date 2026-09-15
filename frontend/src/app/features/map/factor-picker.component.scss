@@ -11,9 +11,11 @@
   display: contents;
 }
 
-// Die Zeile der Wahl trägt den Namen in normaler Stärke, nicht wie im Filter.
+// Die Zeile der Wahl trägt den Namen in normaler Stärke, nicht wie im
+// Filter, und vierzehn Punkte zwischen ihren Teilen.
 .picker__card app-list-row {
   --fw-row-filter: var(--fw-regular);
+  --space-row-gap: var(--space-row-inline);
 }
 
 // Die Karte trägt oben die Linie der ersten Zeile: sonst stünde jede Zeile

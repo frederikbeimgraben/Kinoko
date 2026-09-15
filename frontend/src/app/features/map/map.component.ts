@@ -159,8 +159,7 @@ export class MapComponent implements OnDestroy {
 
   /** Der Titel im Kopf öffnet die Wahl, die zur Darstellung gehört. */
   protected openTitle(): void {
-    if (this.view.onCombination()) this.overlay.set('combinations');
-    else this.overlay.set(this.view.onLayer() ? 'layer' : 'species');
+    this.overlay.set(this.view.onLayer() ? 'layer' : 'species');
   }
 
   protected openFactorFor(source: string): void {
