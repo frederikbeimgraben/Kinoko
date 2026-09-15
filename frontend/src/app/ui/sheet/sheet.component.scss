@@ -107,6 +107,10 @@
   }
 }
 
+.sheet--modal.sheet--fit {
+  block-size: auto;
+}
+
 .sheet--modal.sheet--compact {
   inline-size: var(--size-modal-compact);
   block-size: auto;
