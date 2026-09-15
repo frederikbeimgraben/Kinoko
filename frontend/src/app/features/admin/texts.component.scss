@@ -1,4 +1,10 @@
+@use '../../../styles/card';
+
+// Das Blatt der Textänderung dunkelt die Liste ab, wie das Brett es zeigt.
 :host {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+
+  position: relative;
   display: flex;
   flex-direction: column;
   block-size: 100%;
@@ -9,13 +15,14 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 20px;
   padding: var(--size-gutter);
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.texts__count {
-  margin: 0;
+.texts__card {
+  @include card.card;
 }
 
 // Die Zeile trägt zwei Ebenen: oben der Schlüssel, darunter beide Sprachen
@@ -23,9 +30,9 @@
 .texts__row {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 10px;
   inline-size: 100%;
-  padding: var(--space-3) var(--space-3);
+  padding: 14px;
   background: none;
   border: 0;
   border-block-end: var(--border-width) solid var(--color-border);
@@ -50,31 +57,29 @@
   overflow: hidden;
   font-family: ui-monospace, monospace;
   font-size: var(--fs-xs);
+  line-height: normal;
   color: var(--color-text-muted);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.texts__key--sheet {
-  margin: 0;
-}
-
 .texts__values {
   display: flex;
-  gap: var(--space-3);
+  gap: 14px;
 }
 
 .texts__value {
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   min-inline-size: 0;
 }
 
 .texts__language {
-  font-size: var(--fs-xs);
-  color: var(--color-text-muted);
+  font-size: var(--fs-source);
+  line-height: normal;
+  color: var(--color-border-strong);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -84,32 +89,43 @@
   line-height: 1.4;
 }
 
-.texts__overlay {
-  position: fixed;
-  z-index: var(--z-dialog);
-  inset: 0;
+// Die zweite Sprache tritt zurück: die Vorgabe steht vorn.
+.texts__text--other {
+  color: var(--color-text-muted);
 }
 
-.texts__scrim {
-  position: absolute;
-  inset: 0;
-  background: rgb(0 18 10 / 55%);
+// Der Schlüssel im Blatt steht einen Punkt größer als in der Liste.
+.texts__sheet-head {
+  --fs-xs: var(--fs-row-meta);
+
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 0 var(--size-gutter) 14px;
 }
 
-.texts__sheet {
-  position: absolute;
-  inset: 0;
+.texts__section {
+  @include card.section-title;
 }
 
+// Die Felder tragen Schrift und Polster der Zeile, wie das Brett sie zeigt.
 .texts__form {
+  --form-field-size: var(--fs-row-title);
+  --form-field-inline: 14px;
+  --form-field-shift: 0;
+
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-1) var(--size-gutter) var(--space-4);
+  gap: 14px;
+  padding-inline: var(--size-gutter);
   overflow-y: auto;
 }
 
-// Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.
-:host-context(.shell--column) .texts__scrim {
-  display: none;
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}
+
+app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
 }

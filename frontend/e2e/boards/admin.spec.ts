@@ -56,6 +56,18 @@ function role(
   };
 }
 
+/** Die vier Schlüssel des Bretts `Texts`. */
+const TEXTS = {
+  revision: 'e2e',
+  locales: ['de', 'en'],
+  entries: [
+    text('karte.legende', 'Fundwahrscheinlichkeit je Begehung', 'Probability of a find per visit'),
+    text('arten.chip.mitVorhersage', 'Mit Vorhersage', 'With forecast', true),
+    text('eintraege.leer', 'Eigene Einträge stehen im Konto.', 'Your entries live in your account.'),
+    text('melden.freigabe', 'Für das Training freigeben', 'Share for training'),
+  ],
+};
+
 /** Der Rechtekatalog, wie ihn `/api/permissions` liefert. */
 const CATALOGUE = [
   { key: 'species.edit', area: 'species' },
@@ -128,6 +140,11 @@ const SPECIES_COUNTS = {
   ],
 };
 
+/** Ein Schlüssel der Oberfläche, so wie `/api/texts` ihn liefert. */
+function text(key: string, de: string, en: string, changed = false): Record<string, unknown> {
+  return { key, values: { de, en }, changed, updatedAt: NOW };
+}
+
 /** Ein Konto, so wie `/api/people` es liefert. */
 function person(
   slug: string,
@@ -164,6 +181,7 @@ async function open(page: Page, path: string, extra: Record<string, unknown> = {
     '/api/admin/species-counts': SPECIES_COUNTS,
     '/api/people': PEOPLE,
     '/api/permissions': { items: CATALOGUE },
+    '/api/texts': TEXTS,
     ...extra,
   });
   await flatMap(page);
@@ -244,4 +262,30 @@ test('PersonDelete', async ({ page }) => {
   await page.getByRole('button', { name: 'Person löschen' }).click();
   await expect(page.getByText('Testerin löschen?')).toBeVisible();
   await expectBoard(page, 'PersonDelete');
+});
+
+test('Texts', async ({ page }) => {
+  guard('Texts', 'phone');
+  await open(page, '/verwaltung/texte');
+  await expect(page.getByText('karte.legende')).toBeVisible();
+  await expectBoard(page, 'Texts');
+});
+
+/** Die drei Schlüssel des Bretts `TextEdit`. */
+const EDIT_TEXTS = {
+  revision: 'e2e',
+  locales: ['de', 'en'],
+  entries: [
+    text('art.zuWenigFunde', 'Zu wenig Funde für eine Vorhersage', 'Not enough finds for a forecast', true),
+    text('karte.legende', 'Fundwahrscheinlichkeit je Begehung', 'Probability of a find per visit'),
+    text('melden.freigabe', 'Für das Training freigeben', 'Share for training'),
+  ],
+};
+
+test('TextEdit', async ({ page }) => {
+  guard('TextEdit', 'phone');
+  await open(page, '/verwaltung/texte', { '/api/texts': EDIT_TEXTS });
+  await page.getByRole('button', { name: /art\.zuWenigFunde/ }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expectBoard(page, 'TextEdit');
 });
