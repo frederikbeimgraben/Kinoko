@@ -15,6 +15,7 @@
     @for (group of groups(); track group.title) {
       @for (layer of group.layers; track layer.id) {
         <app-list-row
+          kind="filter"
           [title]="layer.label"
           [subline]="subline(layer)"
           [value]="unit(layer)"

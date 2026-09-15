@@ -81,6 +81,12 @@
   font-weight: var(--fw-semibold);
 }
 
+// Die Zeile misst innen einundfünfzig Punkte; nur eine gerade Summe setzt
+// den Text auf dieselbe Linie wie das Board.
+.row__title--default {
+  padding-block-start: 2px;
+}
+
 // Im Katalog ist der Titel eine Beschriftung, keine Überschrift.
 .row__title--catalogue {
   font-size: var(--fs-row-title);
