@@ -20,7 +20,7 @@ describe('SpeciesColoursComponent', () => {
     const { container } = await render(SpeciesColoursComponent, { inputs: { groups: GROUPS } });
 
     expect(screen.getByText('Hut')).toBeInTheDocument();
-    expect(screen.getByText('hellbraun, dunkelbraun')).toBeInTheDocument();
+    expect(screen.getByText('hellbraun bis dunkelbraun')).toBeInTheDocument();
     expect(container.querySelectorAll('app-colour-field')).toHaveLength(2);
     await noViolations(container);
   });

@@ -9,6 +9,9 @@ export interface ColourValue {
 /** Wo die harten Kanten liegen, wenn ein Körper mehrere Farben trägt. */
 const ANGLE = 104;
 
+/** Ein weicher Verlauf läuft flacher als eine harte Kante. */
+const SOFT_ANGLE = 135;
+
 /** Eine Farbe, ein Verlauf über mehrere Stopps, oder mehrere mit harter Kante. */
 export type ColourMode = 'single' | 'gradient' | 'multiple';
 
@@ -33,7 +36,7 @@ export function paint(colours: readonly ColourValue[], mode: ColourMode = 'multi
   if (colours.length === 0) return 'transparent';
   if (colours.length === 1 || mode === 'single') return colours[0].hex;
   if (mode === 'gradient')
-    return `linear-gradient(${ANGLE}deg, ${colours.map((colour) => colour.hex).join(', ')})`;
+    return `linear-gradient(${SOFT_ANGLE}deg, ${colours.map((colour) => colour.hex).join(', ')})`;
   const share = 100 / colours.length;
   const stops = colours.map((colour, index) => `${colour.hex} ${index * share}% ${(index + 1) * share}%`);
   return `linear-gradient(${ANGLE}deg,${stops.join(',')})`;

@@ -71,7 +71,6 @@ export class SpeciesPageComponent {
     void this.router.navigateByUrl('/arten');
   }
 
-
   protected open(slug: string): void {
     void this.router.navigate(['/arten', slug]);
   }

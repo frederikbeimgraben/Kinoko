@@ -43,9 +43,16 @@ export class SpeciesColoursComponent {
   protected readonly rows = computed<ColourRow[]>(() =>
     this.groups().map((group) => ({
       part: this.i18n.translate(PART_TEXT[group.part]),
-      names: group.colours.map((colour) => colour.name).join(SEPARATOR),
+      names: this.names(group),
       colours: group.colours,
       mode: MODE[group.mode],
     })),
   );
+
+  /** Ein Verlauf läuft von der einen Farbe zur anderen, mehrere stehen nebeneinander. */
+  private names(group: ColourGroup): string {
+    const words = group.colours.map((colour) => colour.name);
+    if (group.mode !== 'gradient') return words.join(SEPARATOR);
+    return words.join(` ${this.i18n.translate('common.to')} `);
+  }
 }

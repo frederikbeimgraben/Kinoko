@@ -6,6 +6,11 @@
     display: block;
   }
 
+  // Ein Abschnitt ohne Daten darf keinen Abstand kosten.
+  :host(:empty) {
+    display: none;
+  }
+
   .section__title {
     @include card.section-title;
   }

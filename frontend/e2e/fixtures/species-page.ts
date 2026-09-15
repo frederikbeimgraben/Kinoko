@@ -174,17 +174,37 @@ export const STONE_PROFILE: Record<string, unknown> = {
 };
 
 /** Die drei Verwechslungen als eigene Arten, jede mit Titelbild. */
-const LOOKALIKE_SPECIES = ['tylopilus-felleus', 'imleria-badia', 'boletus-reticulatus'].map(
-  (slug, at) => ({
-    ...STONE_PROFILE,
-    id: `00000000-0000-4000-8000-00000000000${String(at + 2)}`,
-    slug,
-    name: slug,
-    leadPhotoId: `la-${String(at + 1)}`,
-    lookalikes: [],
-    sources: [],
-  }),
-);
+const LOOKALIKE_SPECIES = ['tylopilus-felleus', 'imleria-badia', 'boletus-reticulatus'].map((slug, at) => ({
+  ...STONE_PROFILE,
+  id: `00000000-0000-4000-8000-00000000000${String(at + 2)}`,
+  slug,
+  name: slug,
+  leadPhotoId: `la-${String(at + 1)}`,
+  lookalikes: [],
+  sources: [],
+}));
+
+/** Eine Art, die nur ihre Verwechslungen trägt: der Einstieg in den Vergleich. */
+const LOOKALIKES_ONLY: Record<string, unknown> = {
+  ...STONE_PROFILE,
+  measurements: [],
+  colours: [],
+  colourChanges: [],
+  terms: [],
+  smellText: null,
+  tasteText: null,
+  hymeniumType: null,
+  periodStartMonth: null,
+  periodEndMonth: null,
+  sources: [],
+  forecastEnabled: false,
+  leadPhotoId: null,
+};
+
+/** Das Bündel des Bretts `CompareEntry`: nur Verwechslungen, kein anderes Merkmal. */
+export function lookalikesBundle(): Record<string, unknown> {
+  return { items: [LOOKALIKES_ONLY, ...LOOKALIKE_SPECIES], standardColours: PALETTE, facets: {} };
+}
 
 /** Das Bündel der Artseite: die Art mit vollem Profil und ihre Verwechslungen. */
 export function profileBundle(): Record<string, unknown> {

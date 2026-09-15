@@ -3,8 +3,8 @@
   display: block;
   overflow: hidden;
   --pilz-change-field: 40px;
-  --pilz-change-arrow: 14px;
-  --pilz-change-value: 56px;
+  --pilz-change-arrow: 16px;
+  --pilz-change-value: 204px;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -37,11 +37,13 @@
   display: grid;
   grid-template-columns:
     var(--pilz-change-field) var(--pilz-change-arrow) var(--pilz-change-field)
-    minmax(var(--pilz-change-value), auto);
-  column-gap: var(--space-2);
+    minmax(0, 1fr);
+  column-gap: 6px;
   align-items: center;
+  inline-size: var(--pilz-change-value);
   --pilz-colour-width: var(--pilz-change-field);
   --pilz-colour-height: 22px;
+  --pilz-colour-radius: 7px;
   color: var(--color-text-muted);
 }
 

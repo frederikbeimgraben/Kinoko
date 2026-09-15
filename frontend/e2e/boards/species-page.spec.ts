@@ -2,11 +2,20 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, SEVEN } from '../fixtures/species';
-import { profileBundle, profileManifest, profilePhotos } from '../fixtures/species-page';
+import {
+  lookalikesBundle,
+  profileBundle,
+  profileManifest,
+  profilePhotos,
+} from '../fixtures/species-page';
 import { expectBoard, skipPending } from './board';
 
 /** Die Fotos der Artseite: das Titelbild gross, die Kacheln in Listengrösse. */
-const ROWS = { 'la-1/list': 'photo-44x44.png', 'la-2/list': 'photo-44x44.png', 'la-3/list': 'photo-44x44.png' };
+const ROWS = {
+  'la-1/list': 'photo-44x44.png',
+  'la-2/list': 'photo-44x44.png',
+  'la-3/list': 'photo-44x44.png',
+};
 const PHOTOS = { full: 'photo-358x210.png', list: 'photo-88x88.png', ...ROWS };
 const PHOTOS_WIDE = { full: 'photo-548x240.png', list: 'photo-88x88.png', ...ROWS };
 
@@ -116,8 +125,14 @@ test('SpeciesHymenium', async ({ page }) => {
 
 test('CompareEntry', async ({ page }) => {
   guard('CompareEntry', 'phone');
-  await openProfile(page);
-  await scrollTo(page, 'SpeciesHymenium');
+  await mockApi(
+    page,
+    { '/api/species/bundle': lookalikesBundle(), '/api/photos': { items: [], nextCursor: null } },
+    { photo: ROWS },
+  );
+  await flatMap(page);
+  await page.goto('/arten/boletus-edulis');
+  await expect(page.getByText('Gallenröhrling')).toBeVisible();
   await expectBoard(page, 'CompareEntry');
 });
 
