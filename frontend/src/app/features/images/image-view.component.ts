@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
+import { AccountService } from '../../core/access/account.service';
+import { PermissionsService } from '../../core/access/permissions.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ImageViewerComponent } from '../../ui/image-viewer/image-viewer.component';
@@ -18,6 +20,8 @@ export class ImageViewComponent {
   private readonly images = inject(ImagesState);
   private readonly species = inject(SpeciesState);
   private readonly router = inject(Router);
+  private readonly rights = inject(PermissionsService);
+  private readonly account = inject(AccountService);
 
   readonly slug = input.required<string>();
   readonly id = input.required<string>();
@@ -26,6 +30,13 @@ export class ImageViewComponent {
   protected readonly photo = computed(() => this.images.photoOf(this.id()));
   protected readonly index = computed(() => this.images.positionOf(this.id()));
   protected readonly count = computed(() => this.images.photos().length);
+
+  /** Das Titelbild setzt nur, wer Bilder prüft. */
+  protected readonly canSetLead = computed(() => this.rights.can('image.review'));
+  /** Entfernen darf, wer prüft oder das Bild eingereicht hat. */
+  protected readonly canRemove = computed(
+    () => this.canSetLead() || this.account.owns(this.photo()?.ownerId ?? null),
+  );
 
   constructor() {
     void this.species.loadBundle();

@@ -1229,6 +1229,7 @@ paths:
       - $ref: "#/components/parameters/Id"
     put:
       operationId: setLeadPhoto
+      x-permission: image.review
       tags: [photos]
       responses:
         "200":

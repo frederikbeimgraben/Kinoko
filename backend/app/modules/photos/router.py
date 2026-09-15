@@ -132,7 +132,7 @@ async def reject_photo(
     return service.out(photo)
 
 
-@router.put("/photos/{id}/lead")
+@router.put("/photos/{id}/lead", dependencies=[requires("image.review")])
 async def set_lead_photo(
     db: Db,
     user: CurrentUser,
