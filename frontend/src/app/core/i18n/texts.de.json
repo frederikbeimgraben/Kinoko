@@ -55,6 +55,8 @@
   "admin.characteristic.unspecified": "nichts eingetragen",
   "admin.finds.title": "Funde",
   "admin.images.title": "Bilder",
+  "admin.people.delete": "Person löschen",
+  "admin.people.deleteConfirm": "löschen?",
   "admin.people.noName": "ohne Namen",
   "admin.people.searchPlaceholder": "Person suchen",
   "admin.people.title": "Personen",

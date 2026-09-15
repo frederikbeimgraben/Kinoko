@@ -7,6 +7,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
@@ -51,6 +52,7 @@ interface Choice {
     ActionBarComponent,
     BadgeComponent,
     CheckRowComponent,
+    ConfirmDialogComponent,
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
@@ -71,6 +73,7 @@ export class PeopleComponent {
   protected readonly editing = signal<Person | null>(null);
   protected readonly chosen = signal<ReadonlySet<string>>(new Set());
   protected readonly saving = signal(false);
+  protected readonly removing = signal<Person | null>(null);
 
   protected readonly rows = computed<Row[]>(() =>
     (this.state.people() ?? []).map((person) => ({
@@ -139,6 +142,21 @@ export class PeopleComponent {
         this.saving.set(false);
       },
     });
+  }
+
+  protected readonly deleteQuestion = computed(
+    () => `${this.removing()?.name ?? ''} ${this.i18n.translate('admin.people.deleteConfirm')}`,
+  );
+
+  protected askDelete(): void {
+    this.removing.set(this.editing());
+    this.editing.set(null);
+  }
+
+  protected remove(): void {
+    const person = this.removing();
+    this.removing.set(null);
+    if (person !== null) this.state.deletePerson(person.id).subscribe();
   }
 
   protected close(): void {

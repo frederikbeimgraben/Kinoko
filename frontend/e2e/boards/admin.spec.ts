@@ -236,3 +236,12 @@ test('RoleDelete', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: /Pilzberater/ })).toBeVisible();
   await expectBoard(page, 'RoleDelete');
 });
+
+test('PersonDelete', async ({ page }) => {
+  guard('PersonDelete', 'phone');
+  await open(page, '/verwaltung/personen');
+  await page.getByRole('button', { name: /Testerin/ }).click();
+  await page.getByRole('button', { name: 'Person löschen' }).click();
+  await expect(page.getByText('Testerin löschen?')).toBeVisible();
+  await expectBoard(page, 'PersonDelete');
+});
