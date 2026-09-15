@@ -27,7 +27,7 @@ import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from '../species/species.state';
 import { ImagesState } from './images.state';
 
-/** Ein Bild anlegen oder einreichen. Das Recht `image.upload` trennt beides. */
+/** Ein Bild anlegen oder einreichen. Das Recht `image.review` trennt beides. */
 @Component({
   selector: 'app-image-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,7 +56,7 @@ export class ImageFormComponent implements OnDestroy {
   readonly slug = input.required<string>();
 
   /** Wer hochladen darf, legt das Bild an. Alle anderen reichen es ein. */
-  protected readonly curates = computed(() => this.rights.can('image.upload'));
+  protected readonly curates = computed(() => this.rights.can('image.review'));
   protected readonly title = computed(() =>
     this.i18n.translate(this.curates() ? 'image.add.title' : 'image.submit.title'),
   );

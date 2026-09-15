@@ -53,7 +53,7 @@ describe('requiresPermission', () => {
   });
 
   it('lässt niemanden in den Bereich, dessen Recht dort nichts öffnet', async () => {
-    await expect(decide(null, ['image.upload'])).resolves.toBe('/konto');
+    await expect(decide(null, ['image.submit'])).resolves.toBe('/konto');
   });
 
   it('führt ohne Anmeldung zurück auf das Konto', async () => {

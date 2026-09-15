@@ -7,6 +7,7 @@
     @if (!locked()) {
       <app-form-field
         [label]="'rolle.name' | t"
+        [hideLabel]="true"
         [value]="name()"
         [placeholder]="'rolle.namePlatzhalter' | t"
         (valueChange)="name.set($event)"
@@ -14,6 +15,7 @@
       @if (creating()) {
         <app-form-field
           [label]="'rolle.slug' | t"
+          [hideLabel]="true"
           [value]="slug()"
           [placeholder]="'rolle.slugPlatzhalter' | t"
           (valueChange)="slug.set($event)"
@@ -21,34 +23,27 @@
       }
       <app-form-field
         [label]="'rolle.beschreibung' | t"
+        [hideLabel]="true"
         [value]="description()"
-        [placeholder]="'rolle.beschreibungPlatzhalter' | t"
-        [multiline]="true"
+        [placeholder]="'admin.role.namePlaceholder' | t"
         (valueChange)="description.set($event)"
       />
-    } @else {
-      <p class="note">{{ 'rolle.festHinweis' | t }}</p>
     }
 
     @for (group of areas(); track group.area) {
       <section class="role__block">
         <h2 class="role__section">{{ group.titel }}</h2>
-        <app-card>
+        <div class="role__rights">
           @for (right of group.rights; track right.key) {
             <app-check-row
               [title]="right.titel"
-              [subline]="right.subline"
               [checked]="right.checked"
               [locked]="locked()"
               (toggled)="toggle(right.key, $event)"
             />
           }
-        </app-card>
+        </div>
       </section>
-    }
-
-    @if (!locked()) {
-      <p class="note">{{ 'rolle.rechteHinweis' | t }}</p>
     }
   }
 </div>
@@ -56,7 +51,8 @@
 @if (!locked() && !missing()) {
   <app-action-bar
     [primary]="'rolle.speichern' | t"
-    [secondary]="creating() ? undefined : ('rolle.loeschen' | t)"
+    [secondary]="creating() ? undefined : ('admin.role.delete' | t)"
+    [secondaryDanger]="true"
     (primaryClick)="save()"
     (secondaryClick)="confirming.set(true)"
   />
@@ -65,8 +61,7 @@
 <app-confirm-dialog
   [open]="confirming()"
   [title]="deleteQuestion()"
-  [meta]="'rolle.loeschenText' | t"
-  [confirmLabel]="'rolle.loeschen' | t"
+  [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"
   (cancelled)="confirming.set(false)"
 />

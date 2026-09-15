@@ -56,9 +56,9 @@ export class AdminState {
   /** Sucht in Name und E-Mail. Ein leerer Text liefert alle Konten. */
   loadPeople(search: string): void {
     this._search.set(search);
-    this.api.people(search).subscribe((page) => {
+    this.api.people(search).subscribe((people) => {
       // Eine ältere, langsamere Antwort darf die jüngere Suche nicht ersetzen.
-      if (this._search() === search) this._people.set(page.eintraege);
+      if (this._search() === search) this._people.set(people);
     });
   }
 
@@ -87,11 +87,21 @@ export class AdminState {
   }
 
   /** Setzt die Rollen einer Person neu und schreibt die Antwort in die Liste. */
-  setRoles(sub: string, roles: readonly string[]): Observable<Person> {
-    return this.api.setRoles(sub, [...roles]).pipe(
+  setRoles(id: string, roles: readonly string[]): Observable<Person> {
+    return this.api.setRoles(id, [...roles]).pipe(
       tap((person) => {
-        this._people.update((all) => all?.map((one) => (one.sub === person.sub ? person : one)) ?? null);
+        this._people.update((all) => all?.map((one) => (one.id === person.id ? person : one)) ?? null);
         // Die Zahl der Personen je Rolle steht in der Rollenliste.
+        if (this._roles() !== null) this.loadRoles();
+      }),
+    );
+  }
+
+  /** Löscht ein Konto und nimmt es aus der Liste. */
+  deletePerson(id: string): Observable<null> {
+    return this.api.deletePerson(id).pipe(
+      tap(() => {
+        this._people.update((all) => all?.filter((one) => one.id !== id) ?? null);
         if (this._roles() !== null) this.loadRoles();
       }),
     );

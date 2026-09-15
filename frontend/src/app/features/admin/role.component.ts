@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CardComponent } from '@stupa-makers/ui-kit';
 import { map } from 'rxjs';
 import type { Permission, PermissionArea, Role } from '../../core/api/models';
 import { PERMISSION_AREAS } from '../../core/api/models';
@@ -13,7 +12,7 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
-import { AREA_TEXT, PERMISSION_NOTE, PERMISSION_TEXT } from './labels';
+import { AREA_TEXT, PERMISSION_TEXT } from './labels';
 
 /** Der Weg, unter dem eine neue Rolle angelegt wird. */
 export const NEW_ROLE = 'neu';
@@ -22,7 +21,6 @@ export const NEW_ROLE = 'neu';
 interface Right {
   key: Permission;
   titel: string;
-  subline: string | undefined;
   checked: boolean;
 }
 
@@ -46,7 +44,6 @@ interface Area {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    CardComponent,
     CheckRowComponent,
     ConfirmDialogComponent,
     FormFieldComponent,
@@ -102,7 +99,6 @@ export class RoleComponent {
         .map((entry) => ({
           key: entry.key,
           titel: this.i18n.translate(PERMISSION_TEXT[entry.key]),
-          subline: this.note(entry.key),
           checked: this.locked()
             ? this.role()?.permissions.includes(entry.key) === true
             : held.has(entry.key),
@@ -110,8 +106,8 @@ export class RoleComponent {
     })).filter((group) => group.rights.length > 0);
   });
 
-  protected readonly deleteQuestion = computed(() =>
-    this.i18n.translate('rolle.loeschenFrage', { name: this.role()?.name ?? '' }),
+  protected readonly deleteQuestion = computed(
+    () => `${this.role()?.name ?? ''} ${this.i18n.translate('admin.role.deleteConfirm')}`,
   );
 
   constructor() {
@@ -176,10 +172,5 @@ export class RoleComponent {
 
   private leave(): void {
     void this.router.navigateByUrl('/verwaltung/rollen');
-  }
-
-  private note(permission: Permission): string | undefined {
-    const key = PERMISSION_NOTE[permission];
-    return key === undefined ? undefined : this.i18n.translate(key);
   }
 }

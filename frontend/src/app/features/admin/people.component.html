@@ -1,47 +1,54 @@
-<app-page-header [title]="'personen.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.people.title' | t" [back]="true" (backClick)="back()" />
 
 <div class="people">
-  <app-form-field
-    icon="search"
-    [label]="'personen.suche' | t"
-    [hideLabel]="true"
+  <app-search-field
     [value]="search()"
-    [placeholder]="'personen.suche' | t"
+    [placeholder]="'admin.people.searchPlaceholder' | t"
     (valueChange)="onSearch($event)"
   />
-
-  @if (loaded() && rows().length === 0) {
-    <app-empty-state [text]="'personen.leer' | t" />
-  } @else {
-    <app-card>
-      @for (row of rows(); track row.sub) {
-        <app-list-row
-          [title]="row.name"
-          [subline]="row.email"
-          [value]="row.roles"
-          [clickable]="true"
-          (chosen)="edit(row.sub)"
-        />
-      }
-    </app-card>
-    <p class="note note--sub">{{ count() }}</p>
-    <p class="note">{{ 'personen.hinweis' | t }}</p>
-  }
+  <div class="people__card">
+    @for (row of rows(); track row.id) {
+      <app-list-row
+        kind="catalogue"
+        [title]="row.name"
+        [subline]="row.email"
+        [clickable]="true"
+        (chosen)="edit(row.id)"
+      >
+        <span trail class="people__roles">
+          @for (role of row.roles; track role.id) {
+            <app-badge [variant]="role.lead ? 'primary' : 'neutral'">{{ role.name }}</app-badge>
+          }
+        </span>
+      </app-list-row>
+    }
+  </div>
 </div>
 
-<app-confirm-dialog
-  [open]="editing() !== null"
-  [title]="dialogTitle()"
-  [danger]="false"
-  [confirmLabel]="'personen.speichern' | t"
-  [confirmDisabled]="saving()"
-  (confirmed)="save()"
-  (cancelled)="close()"
->
-  <app-card>
-    @for (choice of choices(); track choice.id) {
-      <app-check-row [title]="choice.name" [checked]="choice.checked" (toggled)="toggle(choice.id, $event)" />
-    }
-  </app-card>
-  <p class="note">{{ 'personen.rollenHinweis' | t }}</p>
-</app-confirm-dialog>
+<app-overlay-host [open]="editing() !== null" [modal]="true" (closed)="close()">
+  @if (editing(); as person) {
+    <app-sheet
+      [label]="person.name ?? ''"
+      [title]="person.name ?? ''"
+      [note]="person.email ?? ''"
+      [modal]="true"
+      [detents]="DETENTS"
+      (closed)="close()"
+    >
+      <div head class="people__head">
+        <b class="people__name">{{ person.name }}</b>
+        <span class="people__mail">{{ person.email }}</span>
+      </div>
+      <div class="people__choices">
+        @for (choice of choices(); track choice.id) {
+          <app-check-row
+            [title]="choice.name"
+            [checked]="choice.checked"
+            (toggled)="toggle(choice.id, $event)"
+          />
+        }
+      </div>
+      <app-action-bar [primary]="'common.apply' | t" [busy]="saving()" (primaryClick)="save()" />
+    </app-sheet>
+  }
+</app-overlay-host>
