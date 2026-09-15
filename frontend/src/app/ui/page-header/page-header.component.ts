@@ -13,6 +13,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class PageHeaderComponent {
   readonly title = input.required<string>();
   readonly back = input(false);
+  /** In der Spalte der Karte trägt der Kopf die Maße eines Blatts. */
+  readonly compact = input(false);
 
   readonly backClick = output();
 }

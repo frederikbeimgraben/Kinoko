@@ -12,6 +12,7 @@
   @if (secondary(); as label) {
     <app-button
       class="footer__main"
+      [class.footer__slim]="secondaryDanger()"
       [variant]="secondaryDanger() ? 'danger-outline' : 'secondary'"
       [block]="!inline()"
       (click)="secondaryClick.emit()"
