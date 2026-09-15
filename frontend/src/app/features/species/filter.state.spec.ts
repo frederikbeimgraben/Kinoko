@@ -109,6 +109,52 @@ describe('SpeciesFilterState', () => {
     expect(state.group()).toBeNull();
   });
 
+  it('legt für das Blatt und für eine Gruppe je einen Verlaufseintrag an', () => {
+    const state = build();
+    const pushState = vi.spyOn(history, 'pushState');
+
+    state.openSheet();
+    expect(pushState).toHaveBeenCalledTimes(1);
+
+    state.showGroup('capShape');
+    expect(pushState).toHaveBeenCalledTimes(2);
+  });
+
+  it('geht beim Verlassen einer Gruppe einen Schritt in der Adresszeile zurück', () => {
+    const state = build();
+    const back = vi.spyOn(history, 'back');
+    state.openSheet();
+    state.showGroup('capShape');
+
+    state.showGroup(null);
+
+    expect(back).toHaveBeenCalledTimes(1);
+    expect(state.open()).toBe(true);
+    expect(state.group()).toBeNull();
+  });
+
+  it('räumt beim Schließen des Blatts jede Ebene aus dem Verlauf', () => {
+    const state = build();
+    const go = vi.spyOn(history, 'go');
+    state.openSheet();
+    state.showGroup('capShape');
+
+    state.closeSheet();
+
+    expect(go).toHaveBeenCalledWith(-2);
+  });
+
+  it('schließt die Gruppe, wenn die Browser-Geste zurück den Eintrag der Gruppe trifft', () => {
+    const state = build();
+    state.openSheet();
+    state.showGroup('capShape');
+
+    window.dispatchEvent(new PopStateEvent('popstate'));
+
+    expect(state.open()).toBe(true);
+    expect(state.group()).toBeNull();
+  });
+
   it('sichert die Wahl im Speicher', () => {
     const state = build();
 

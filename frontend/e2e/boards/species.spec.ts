@@ -8,6 +8,7 @@ import { CORE_CHOICE, SIZE_CHOICE, largeBundle } from '../fixtures/species-catal
 import {
   DESKTOP_SPECIES,
   FILTER_DESKTOP,
+  FILTER_DESKTOP_GROUP,
   RESULT_HITS,
   RESULT_REST,
   RESULT_UNKNOWN,
@@ -198,4 +199,18 @@ test('FilterDesktop', async ({ page }) => {
   });
   await seen(page, 'Wiesenchampignon');
   await expectBoard(page, 'FilterDesktop');
+});
+
+test('FilterDesktopGroup', async ({ page }) => {
+  guard('FilterDesktopGroup', 'desktop');
+  await presetFilter(page, FILTER_DESKTOP_GROUP.choice);
+  await mockSignIn(page);
+  await openList(page, bundle(FILTER_DESKTOP_GROUP.catalogue), {
+    '/api/config': authConfig(BASE),
+    ...SIGNED_IN,
+  });
+  await seen(page, 'Wiesenchampignon');
+  await page.getByRole('button', { name: 'Speisewert' }).first().click();
+  await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
+  await expectBoard(page, 'FilterDesktopGroup');
 });

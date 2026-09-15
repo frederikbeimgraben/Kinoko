@@ -1,0 +1,12 @@
+<header class="backhead">
+  <button
+    class="backhead__back tap"
+    type="button"
+    data-press="scale"
+    [attr.aria-label]="'common.back' | t"
+    (click)="backClick.emit()"
+  >
+    <app-svg-icon name="back" [size]="20" />
+  </button>
+  <h2 class="backhead__title">{{ title() }}</h2>
+</header>

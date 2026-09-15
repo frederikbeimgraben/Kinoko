@@ -10,6 +10,7 @@ import type {
   Protection,
   Speed,
 } from '../../core/api/models';
+import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { GroupKey } from './facets';
 
@@ -120,6 +121,11 @@ export const GROUP_TEXT: Record<GroupKey, TranslationKey> = {
   protection: 'species.field.protection',
   forecast: 'filter.group.forecast',
 };
+
+/** Der Titel einer Filtergruppe, im Blattkopf am Telefon und in der Spalte am Rechner. */
+export function groupTitle(group: GroupKey, i18n: I18nService): string {
+  return i18n.translate(GROUP_TEXT[group]);
+}
 
 /** Die Körperteile mit eigener Farbwahl, in der Reihenfolge des Bretts. */
 export const COLOUR_PARTS: readonly BodyPart[] = ['cap', 'stem', 'gills', 'flesh', 'spore_print'];

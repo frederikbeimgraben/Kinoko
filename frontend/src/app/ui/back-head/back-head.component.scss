@@ -1,0 +1,27 @@
+.backhead {
+  display: flex;
+  flex: none;
+  gap: 10px;
+  align-items: center;
+}
+
+.backhead__back {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 0;
+  color: var(--color-primary);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-md);
+}
+
+.backhead__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: var(--fw-semibold);
+}

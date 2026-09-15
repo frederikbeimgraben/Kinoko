@@ -4,17 +4,17 @@
       <app-map-column
         [factor]="surface.inProgress()"
         [playing]="playback.playing()"
-        (titleChosen)="openTitle()"
+        (titleChosen)="overlayNav.openTitle()"
         (weekChosen)="playback.select($event)"
         (stepped)="playback.step($event)"
         (playToggled)="playback.toggle()"
-        (layerChosen)="overlay.set('layer')"
-        (factorOpened)="openFactorFor($event)"
-        (factorAdded)="overlay.set('factors')"
-        (saveRequested)="requestSave()"
-        (factorApplied)="applyFactor($event)"
-        (factorRemoved)="removeFactor($event)"
-        (closed)="closeOverlay()"
+        (layerChosen)="overlayNav.set('layer')"
+        (factorOpened)="overlayNav.openFactorFor($event)"
+        (factorAdded)="overlayNav.set('factors')"
+        (saveRequested)="overlayNav.requestSave()"
+        (factorApplied)="overlayNav.applyFactor($event)"
+        (factorRemoved)="overlayNav.removeFactor($event)"
+        (closed)="overlayNav.close()"
       />
     </div>
   }
@@ -86,16 +86,16 @@
           <app-map-head
             head
             [playing]="playback.playing()"
-            (titleChosen)="openTitle()"
+            (titleChosen)="overlayNav.openTitle()"
             (weekChosen)="playback.select($event)"
             (stepped)="playback.step($event)"
             (playToggled)="playback.toggle()"
           />
           <app-map-panel
-            (layerChosen)="overlay.set('layer')"
-            (factorOpened)="openFactorFor($event)"
-            (factorAdded)="overlay.set('factors')"
-            (saveRequested)="requestSave()"
+            (layerChosen)="overlayNav.set('layer')"
+            (factorOpened)="overlayNav.openFactorFor($event)"
+            (factorAdded)="overlayNav.set('factors')"
+            (saveRequested)="overlayNav.requestSave()"
           />
         </app-sheet>
       </div>
@@ -104,10 +104,10 @@
     <app-map-overlays
       [open]="overlay()"
       [factor]="surface.inProgress()"
-      (closed)="closeOverlay()"
-      (factorApplied)="applyFactor($event)"
-      (factorRemoved)="removeFactor($event)"
-      (sourceChosen)="chooseSource($event)"
+      (closed)="overlayNav.close()"
+      (factorApplied)="overlayNav.applyFactor($event)"
+      (factorRemoved)="overlayNav.removeFactor($event)"
+      (sourceChosen)="overlayNav.chooseSource($event)"
       (saved)="saveCombination($event)"
     />
   }

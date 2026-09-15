@@ -44,6 +44,12 @@ Element.prototype.releasePointerCapture = () => undefined;
 // werden gesetzt, damit auch ein gesperrter Speicher nichts verschiebt.
 Object.defineProperty(navigator, 'language', { configurable: true, get: () => 'de-DE' });
 
+// jsdom kennt echte Navigation. Ohne Stummel wüchse der Verlauf über alle
+// Testdateien hinweg und bremste `history.back`/`go` bis zum Zeitüberschreiten.
+history.pushState = () => undefined;
+history.back = () => undefined;
+history.go = () => undefined;
+
 beforeEach(() => {
   localStorage.setItem('pilzkarte.sprache', 'de');
   // Ohne diesen Schnitt behielte ein Dienst aus dem vorigen Test seinen Zustand.

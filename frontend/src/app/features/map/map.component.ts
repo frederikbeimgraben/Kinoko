@@ -12,13 +12,11 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { AuthService } from '../../core/auth';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { LocationService } from '../../core/location/location.service';
 import { SyncService } from '../../core/offline/sync.service';
 import { TileService } from '../../core/tiles/tile.service';
-import type { Layer } from '../../core/tiles/layers';
 import { VisibilityService } from '../../core/visibility/visibility.service';
 import { MAP_PROVIDERS } from '../../map/map.tokens';
 import { BannerComponent } from '../../ui/banner/banner.component';
@@ -35,13 +33,13 @@ import { CombinationState } from './combination.state';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { MapColumnComponent } from './map-column.component';
 import { MapHeadComponent } from './map-head.component';
+import { MapOverlayState } from './map-overlay.state';
 import { MapPanelComponent } from './map-panel.component';
-import { MapOverlaysComponent, overlayDetent, type Overlay } from './map-overlays.component';
+import { MapOverlaysComponent, overlayDetent } from './map-overlays.component';
 import { MapPlayback } from './map-playback';
 import { DETENTS, DETENT_SIZES, MapSurface } from './map-surface';
 import { MapState } from './map.state';
 import { MapView } from './map.view';
-import type { Factor } from './factors';
 
 /** Der Reiter Karte: Hintergrund, Wertkacheln und das Blatt darüber. */
 @Component({
@@ -63,7 +61,7 @@ import type { Factor } from './factors';
     SkeletonComponent,
     TranslatePipe,
   ],
-  providers: [...MAP_PROVIDERS, MapSurface],
+  providers: [...MAP_PROVIDERS, MapSurface, MapOverlayState],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
@@ -73,11 +71,11 @@ export class MapComponent implements OnDestroy {
   private readonly tiles = inject(TileService);
   private readonly visible = inject(VisibilityService).visible;
   private readonly viewport = inject(ViewportService);
-  private readonly auth = inject(AuthService);
   private readonly entries = inject(EntriesState);
   private readonly sync = inject(SyncService);
   protected readonly surface = inject(MapSurface);
   protected readonly locating = inject(LocationService);
+  protected readonly overlayNav = inject(MapOverlayState);
 
   /** Nur die Zeichenfläche, ohne Blatt und Knöpfe, für die anderen Reiter. */
   readonly surfaceOnly = input(false);
@@ -89,7 +87,7 @@ export class MapComponent implements OnDestroy {
   protected readonly wide = this.viewport.wide;
 
   protected readonly playback = inject(MapPlayback);
-  protected readonly overlay = signal<Overlay>(null);
+  protected readonly overlay = this.overlayNav.overlay;
   protected readonly menuAt = signal<ObjectMenuTarget | null>(null);
 
   protected readonly offline = computed(() => !this.sync.online());
@@ -157,51 +155,14 @@ export class MapComponent implements OnDestroy {
     this.state.detent.set(detent);
   }
 
-  /** Der Titel im Kopf öffnet die Wahl, die zur Darstellung gehört. */
-  protected openTitle(): void {
-    if (this.view.onCombination()) this.overlay.set('combinations');
-    else this.overlay.set(this.view.onLayer() ? 'layer' : 'species');
-  }
-
-  protected openFactorFor(source: string): void {
-    const factor = this.combination.factors().find((entry) => entry.source === source) ?? null;
-    this.surface.inProgress.set(factor);
-    this.overlay.set('factor');
-  }
-
-  protected chooseSource(layer: Layer): void {
-    this.surface.inProgress.set(this.combination.start(layer.id, layer.low, layer.high));
-    this.overlay.set('factor');
-  }
-
-  protected applyFactor(factor: Factor): void {
-    this.combination.apply(factor);
-    this.closeOverlay();
-  }
-
-  protected removeFactor(factor: Factor): void {
-    this.combination.remove(factor);
-    this.closeOverlay();
-  }
-
-  protected closeOverlay(): void {
-    this.overlay.set(null);
-    this.surface.inProgress.set(null);
-  }
-
-  /** Ohne Konto führt der Knopf zuerst zur Anmeldung. */
-  protected async requestSave(): Promise<void> {
-    if (await this.auth.requestSignIn()) this.overlay.set('save');
-  }
-
   protected async saveCombination(name: string): Promise<void> {
-    this.closeOverlay();
+    this.overlayNav.close();
     await this.combination.save(name);
   }
 
   protected openAddEntry(): void {
     this.state.layersSheetOpen.set(false);
-    this.closeOverlay();
+    this.overlayNav.close();
     this.addEntry.open();
   }
 

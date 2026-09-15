@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
-import { GROUP_TEXT } from './labels';
+import { groupTitle } from './labels';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesState } from './species.state';
@@ -24,9 +24,7 @@ export class SpeciesFilterSheetComponent {
 
   protected readonly title = computed(() => {
     const group = this.filter.group();
-    if (group === null) return this.i18n.translate('common.filter');
-    if (group === 'size') return this.i18n.translate('filter.group.sizeTime');
-    return this.i18n.translate(GROUP_TEXT[group]);
+    return group === null ? this.i18n.translate('common.filter') : groupTitle(group, this.i18n);
   });
 
   protected readonly primaryLabel = computed(() => {

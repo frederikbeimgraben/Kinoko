@@ -1,8 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { ViewportService } from '../../core/layout/viewport.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { BackHeadComponent } from '../../ui/back-head/back-head.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { GROUP_CARDS, valueLabel } from './filter-groups';
-import { GROUP_TEXT, MONTH_TEXT } from './labels';
+import { GROUP_TEXT, MONTH_TEXT, groupTitle } from './labels';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesGroupComponent } from './filter-group.component';
 import { SpeciesColourComponent } from './filter-colour.component';
@@ -21,7 +24,14 @@ interface GroupRow {
 @Component({
   selector: 'app-species-filter-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, SpeciesColourComponent, SpeciesGroupComponent, SpeciesSizeComponent],
+  imports: [
+    BackHeadComponent,
+    ListRowComponent,
+    SpeciesColourComponent,
+    SpeciesGroupComponent,
+    SpeciesSizeComponent,
+    TranslatePipe,
+  ],
   templateUrl: './filter-panel.component.html',
   styleUrl: './filter-panel.component.scss',
 })
@@ -29,12 +39,29 @@ export class SpeciesFilterPanelComponent {
   private readonly state = inject(SpeciesState);
   private readonly i18n = inject(I18nService);
   protected readonly filter = inject(SpeciesFilterState);
+  /** Am Rechner steht der Kopf der Gruppe in der Spalte statt im Blatt. */
+  protected readonly wide = inject(ViewportService).wide;
 
   readonly groups = input<readonly (readonly GroupKey[])[]>(GROUP_CARDS);
 
   protected readonly cards = computed<GroupRow[][]>(() =>
     this.groups().map((card) => card.map((key) => this.rowOf(key))),
   );
+
+  protected readonly resettable = computed(() => this.filter.chosenCount() > 0);
+
+  protected readonly title = computed(() => {
+    const group = this.filter.group();
+    return group === null ? '' : groupTitle(group, this.i18n);
+  });
+
+  protected back(): void {
+    this.filter.showGroup(null);
+  }
+
+  protected reset(): void {
+    this.filter.clearAll();
+  }
 
   private termNames(): ReadonlyMap<string, string> {
     const names = new Map<string, string>();
