@@ -15,7 +15,7 @@ const LAST_MONTH = 12;
 
 /** Hutbreite als Spanne und die Wachstumszeit als Band im Jahr. */
 @Component({
-  selector: 'app-species-size',
+  selector: 'app-species-filter-size',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RangeSliderComponent, TranslatePipe, YearBandInputComponent],
   templateUrl: './filter-size.component.html',

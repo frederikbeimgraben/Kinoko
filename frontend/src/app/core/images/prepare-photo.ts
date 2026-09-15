@@ -24,12 +24,7 @@ export function jpegName(name: string): string {
   return `${stem || 'foto'}.jpg`;
 }
 
-/**
- * Zeichnet das Foto neu und gibt es ohne Metadaten zurück.
- *
- * Das neu gezeichnete Bild trägt weder EXIF noch GPS. Kann das Gerät nicht
- * zeichnen, bricht der Aufruf ab: das Original verlässt das Gerät nie.
- */
+/** Zeichnet das Foto neu. Das neue Bild trägt weder EXIF noch GPS. */
 export async function withoutMetadata(file: File, max = MAX_EDGE): Promise<File> {
   const source = await createImageBitmap(file);
   const size = targetSize(source.width, source.height, max);

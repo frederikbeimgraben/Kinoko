@@ -5,7 +5,6 @@ import {
   MeasurementGroupComponent,
   type MeasurementRow,
 } from '../../../ui/measurement-group/measurement-group.component';
-import type { Extent } from '../../../ui/measurement/measurement.component';
 import type { MeasurementGroup } from '../../../core/api/models';
 import { PART_TEXT } from '../labels';
 
@@ -32,7 +31,7 @@ export class SpeciesSizeComponent {
     this.groups().map((group) => ({
       part: this.i18n.translate(PART_TEXT[group.part]),
       rows: group.measurements.map((one) => ({
-        extent: one.dimension as Extent,
+        extent: one.dimension,
         spans: rare(one),
         unit: this.i18n.translate(`enum.unit.${one.unit}` as 'enum.unit.cm'),
       })),

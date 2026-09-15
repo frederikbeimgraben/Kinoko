@@ -17,12 +17,12 @@
     }
   }
   @case ('colour') {
-    <app-species-colour />
+    <app-species-filter-colour />
   }
   @case ('size') {
-    <app-species-size />
+    <app-species-filter-size />
   }
   @default {
-    <app-species-group [group]="filter.group()!" />
+    <app-species-filter-group [group]="filter.group()!" />
   }
 }

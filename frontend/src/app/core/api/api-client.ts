@@ -92,10 +92,7 @@ export class ApiClient {
       .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
-  /**
-   * Lädt eine Datei und meldet den Anteil. Der letzte Schritt trägt die
-   * Antwort des Dienstes.
-   */
+  /** Lädt eine Datei und meldet den Anteil. Der letzte Schritt trägt die Antwort. */
   uploadFile<T>(path: string, field: string, file: File, fields: Query = {}): Observable<Upload<T>> {
     const body = new FormData();
     body.append(field, file, file.name);

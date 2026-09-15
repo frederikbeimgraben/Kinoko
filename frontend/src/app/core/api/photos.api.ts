@@ -49,8 +49,8 @@ export class PhotosApi {
     return this.api.uploadFile<Photo>(PATH, 'file', file, { ...input });
   }
 
-  remove(id: string): Observable<void> {
-    return this.api.delete<void>(`${PATH}/${encodeURIComponent(id)}`);
+  remove(id: string): Observable<null> {
+    return this.api.delete<null>(`${PATH}/${encodeURIComponent(id)}`);
   }
 
   approve(id: string): Observable<Photo> {

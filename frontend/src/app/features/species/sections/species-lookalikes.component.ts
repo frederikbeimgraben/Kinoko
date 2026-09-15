@@ -30,6 +30,6 @@ export class SpeciesLookalikesComponent {
   readonly opened = output<string>();
 
   protected readonly rows = computed<LookalikeRow[]>(() =>
-    this.lookalikes().map((one) => ({ slug: one.slug, name: one.name, colours: one.capColours ?? [] })),
+    this.lookalikes().map((one) => ({ slug: one.slug, name: one.name, colours: one.capColours })),
   );
 }

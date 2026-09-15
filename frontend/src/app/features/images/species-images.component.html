@@ -1,0 +1,21 @@
+<div class="gallery">
+  @if (lead(); as lead) {
+    <button class="gallery__lead tap" type="button" data-press="scale" (click)="open(lead.id)">
+      <app-private-image class="gallery__image" [path]="leadPath()!" [alt]="alt()" />
+    </button>
+  }
+  <div class="gallery__strip">
+    @for (thumb of thumbs(); track thumb.id) {
+      <button class="gallery__thumb tap" type="button" data-press="scale" (click)="open(thumb.id)">
+        <app-private-image class="gallery__image" [path]="thumb.path" [alt]="thumb.alt" />
+      </button>
+    }
+    <button class="gallery__add tap" type="button" data-press="scale" (click)="add()">
+      <app-svg-icon name="plus" [size]="16" />
+      <span class="gallery__addlabel">{{ 'image.add.title' | t }}</span>
+    </button>
+  </div>
+  @if (lead(); as lead) {
+    <app-image-credit [photographer]="lead.photographer" [licence]="lead.licence" />
+  }
+</div>

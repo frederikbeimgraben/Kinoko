@@ -226,6 +226,7 @@ const VERTRAG = new Set([
   'sichtbarkeit',
   'flaecheHa',
   'fuerTraining',
+  'tasteText',
   'erstelltAm',
   'geaendertAm',
   'gerundet',

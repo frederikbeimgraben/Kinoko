@@ -1,0 +1,35 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()">
+  <span class="view__counter">{{ counter() }}</span>
+</app-page-header>
+
+<div class="view">
+  <app-private-image class="view__image" [path]="path()" [alt]="alt()" />
+  @if (photo(); as photo) {
+    <section class="view__block">
+      <h2 class="view__title">{{ 'image.section.image' | t }}</h2>
+      <div class="view__card">
+        <app-key-value-table>
+          <app-key-value-row [key]="'image.field.photo' | t" [value]="photo.photographer" />
+          <app-key-value-row [key]="'image.field.licence' | t">
+            <app-badge variant="primary">{{ licenceCode() ?? (ownPhotoKey | t) }}</app-badge>
+          </app-key-value-row>
+          @if (takenOn(); as day) {
+            <app-key-value-row [key]="'image.field.takenOn' | t" [value]="day" />
+          }
+          @if (place(); as where) {
+            <app-key-value-row [key]="'image.field.place' | t" [value]="where" />
+          }
+        </app-key-value-table>
+      </div>
+    </section>
+  }
+</div>
+
+<app-action-bar
+  [primary]="'image.setCover' | t"
+  [secondary]="'image.remove' | t"
+  [quiet]="true"
+  [secondaryDanger]="true"
+  (primaryClick)="setCover()"
+  (secondaryClick)="remove()"
+/>

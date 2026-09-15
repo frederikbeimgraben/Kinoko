@@ -1,0 +1,44 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-block-size: 0;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+}
+
+.view__counter {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.view__image {
+  flex: 0 0 auto;
+  block-size: 300px;
+  border-radius: var(--radius-lg);
+}
+
+.view__title {
+  margin: 0 0 10px;
+  font-size: 11px;
+  line-height: normal;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.view__card {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}

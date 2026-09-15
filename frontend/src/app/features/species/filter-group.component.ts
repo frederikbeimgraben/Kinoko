@@ -10,7 +10,7 @@ import type { GroupKey } from './facets';
 
 /** Die Werte einer Filtergruppe, jeder mit der Zahl der Arten. */
 @Component({
-  selector: 'app-species-group',
+  selector: 'app-species-filter-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ChoiceRowComponent, TranslatePipe],
   templateUrl: './filter-group.component.html',

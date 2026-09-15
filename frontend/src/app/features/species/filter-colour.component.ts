@@ -13,7 +13,7 @@ const TONES = 6;
 
 /** Die Farbwahl je Körperteil. Ein Teil steht offen, die anderen zusammen. */
 @Component({
-  selector: 'app-species-colour',
+  selector: 'app-species-filter-colour',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ColourPickerComponent, SvgIconComponent],
   templateUrl: './filter-colour.component.html',
