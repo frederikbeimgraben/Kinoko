@@ -32,6 +32,7 @@ const BLOCKS = [
   'app-form-field',
   'app-search-field',
   'app-segmented',
+  'app-switch',
   'app-chip-group',
   'app-filter-chip',
   'app-range-slider',

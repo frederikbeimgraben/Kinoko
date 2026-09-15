@@ -67,6 +67,7 @@ export { ScrollFadeDirective } from './scroll-fade/scroll-fade.directive';
 export { SearchFieldComponent } from './search-field/search-field.component';
 export { SeasonCurveComponent, type MonthMark } from './season-curve/season-curve.component';
 export { SegmentedComponent, type SegmentOption } from './segmented/segmented.component';
+export { SwitchComponent } from './switch/switch.component';
 export { SheetComponent, type Detent, type DetentSize } from './sheet/sheet.component';
 export { SheetHeadComponent } from './sheet-head/sheet-head.component';
 export { SkeletonComponent, type SkeletonKind } from './skeleton/skeleton.component';
