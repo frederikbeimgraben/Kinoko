@@ -21,7 +21,13 @@ app-layer-list {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
   min-block-size: 0;
   overflow: hidden;
+}
+
+// Im Modal am Rechner steht die Liste dichter unter dem Suchfeld.
+:host-context(.shell--column) app-species-picker,
+:host-context(.shell--column) app-layer-list {
+  gap: var(--space-4);
 }

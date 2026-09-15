@@ -15,9 +15,10 @@
   border-radius: 10px;
 }
 
-// Im Kasten sitzt das Wort eine halbe Stelle höher als in der Liste.
-:host(.choice-row--boxed) .row__label {
-  line-height: 17px;
+// Im Kasten misst das Kästchen zwanzig Punkte, wie das Board der Karte.
+:host(.choice-row--boxed) .row__box {
+  inline-size: 20px;
+  block-size: 20px;
 }
 
 .row {
