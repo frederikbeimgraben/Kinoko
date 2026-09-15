@@ -6,7 +6,8 @@ from typing import Any
 
 from fastapi import APIRouter, status
 
-from app.core.auth import CurrentUser, Db
+from app.core.auth import CurrentUser, CurrentViewer, Db
+from app.core.errors import Unauthorized
 from app.modules.access.schemas import Me
 from app.modules.access.service import AccessService
 
@@ -20,10 +21,11 @@ def get_me(user: CurrentUser) -> Any:  # noqa: ANN401
 
 
 @router.get("/me/permissions")
-async def get_my_permissions(db: Db, user: CurrentUser) -> Any:  # noqa: ANN401
+def get_my_permissions(who: CurrentViewer) -> Any:  # noqa: ANN401
     """Liefert die Rechte des angemeldeten Kontos."""
-    permissions = await AccessService(db).permissions_of(user)
-    return {"permissions": sorted(permissions)}
+    if not who.sub:
+        raise Unauthorized
+    return {"permissions": sorted(who.rights)}
 
 
 @router.get("/me/export")

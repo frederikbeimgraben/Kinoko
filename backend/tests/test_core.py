@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import auth, errors, jwks
 from app.core.settings import get_settings
 from app.models import Role, RolePermission, UserRole
+from app.modules.access.permissions import PERMISSIONS
 from app.modules.access.service import AccessService
 from tests.conftest import CLIENT_ID, ISSUER, app_of, make_user, sign_in, sign_out
 
@@ -221,6 +222,39 @@ async def test_admin_group_grants_every_right(session: AsyncSession, seeded: Non
     rights = await auth.rights_of(session, user, {"groups": [get_settings().admin_group]}, "token")
     assert "role.manage" in rights
     assert "species.edit" in rights
+
+
+async def test_my_permissions_endpoint_grants_every_right_to_the_admin_group(
+    api: httpx.AsyncClient,
+    issuer: FakeIssuer,
+) -> None:
+    issuer.groups = [get_settings().admin_group]
+    answer = await api.get(
+        "/me/permissions",
+        headers={"Authorization": f"Bearer {issuer.token(sub='admin-6')}"},
+    )
+    assert answer.status_code == 200
+    assert answer.json() == {"permissions": sorted(PERMISSIONS)}
+
+
+async def test_my_permissions_endpoint_keeps_only_role_rights_without_the_group(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+    issuer: FakeIssuer,
+) -> None:
+    user = await make_user(session, "person-6")
+    role = Role(id=uuid.uuid4(), slug="lokal-2", name="Lokal 2")
+    session.add(role)
+    await session.flush()
+    session.add(RolePermission(role_id=role.id, permission_key="text.edit"))
+    session.add(UserRole(user_id=user.id, role_id=role.id))
+    await session.commit()
+    answer = await api.get(
+        "/me/permissions",
+        headers={"Authorization": f"Bearer {issuer.token(sub='person-6')}"},
+    )
+    assert answer.status_code == 200
+    assert answer.json() == {"permissions": ["text.edit"]}
 
 
 async def test_rights_come_from_the_roles(
