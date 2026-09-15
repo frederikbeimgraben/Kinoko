@@ -2,12 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, SEVEN } from '../fixtures/species';
-import {
-  lookalikesBundle,
-  profileBundle,
-  profileManifest,
-  profilePhotos,
-} from '../fixtures/species-page';
+import { lookalikesBundle, profileBundle, profileManifest, profilePhotos } from '../fixtures/species-page';
 import { expectBoard, skipPending } from './board';
 
 /** Die Fotos der Artseite: das Titelbild gross, die Kacheln in Listengrösse. */
