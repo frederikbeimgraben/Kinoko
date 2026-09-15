@@ -35,10 +35,10 @@ describe('SheetHeadComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('emits back, playback and forward for the three arrows', async () => {
+  it('emits stepBack, playback and forward for the three arrows', async () => {
     const { fixture } = await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
     const calls: string[] = [];
-    fixture.componentInstance.back.subscribe(() => calls.push('back'));
+    fixture.componentInstance.stepBack.subscribe(() => calls.push('back'));
     fixture.componentInstance.playback.subscribe(() => calls.push('playback'));
     fixture.componentInstance.forward.subscribe(() => calls.push('forward'));
     const buttons = screen.getAllByRole('button').slice(1);
@@ -89,6 +89,20 @@ describe('SheetHeadComponent', () => {
       expect(button).toHaveClass('tap');
       expect(button).toHaveAttribute('data-press', 'scale');
     }
+  });
+
+  it('trägt einen Zurück-Pfeil und meldet seinen Druck', async () => {
+    const { container, fixture } = await render(SheetHeadComponent, {
+      inputs: { title: 'Niederschlag', note: 'Summe KW 37 bis 40', arrows: false, back: true },
+    });
+    let calls = 0;
+    fixture.componentInstance.backClick.subscribe(() => (calls += 1));
+
+    expect(screen.getByText('Summe KW 37 bis 40')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(calls).toBe(1);
+    await noViolations(container);
   });
 
   it('renders without German text against an empty catalogue', async () => {

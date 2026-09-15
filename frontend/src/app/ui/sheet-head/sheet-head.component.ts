@@ -25,14 +25,19 @@ export class SheetHeadComponent {
   readonly title = input.required<string>();
   readonly titleLink = input(false);
   readonly week = input<string>();
+  /** Ein Zusatz in gedämpfter Schrift, etwa der Zeitraum einer Ebene. */
+  readonly note = input<string>();
   readonly hint = input<string>();
   readonly arrows = input(true);
+  /** Ein Zurück-Pfeil vor dem Titel, wenn der Kopf aus einer Ansicht führt. */
+  readonly back = input(false);
   readonly playing = input(false);
   /** Ohne Daten steht statt des Titels ein Platzhalter. */
   readonly loading = input(false);
 
   readonly titleClick = output();
-  readonly back = output();
+  readonly backClick = output();
+  readonly stepBack = output();
   readonly playback = output();
   readonly forward = output();
 
