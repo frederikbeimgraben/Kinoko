@@ -72,12 +72,12 @@ export class FindSheetComponent {
   private readonly value = signal<number | null>(null);
 
   protected readonly art = computed(() => {
-    const slug = this.find().artSlug;
-    return this.arten.entryOf(slug);
+    const id = this.find().speciesId;
+    return id === null ? null : this.arten.entryById(id);
   });
 
-  protected readonly speciesName = computed(() => this.art()?.name ?? this.find().artSlug);
-  protected readonly geteilt = computed(() => this.find().sichtbarkeit === 'geteilt');
+  protected readonly speciesName = computed(() => this.art()?.name ?? '');
+  protected readonly geteilt = computed(() => this.find().visibility === 'shared');
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
 
   protected toGoogleMaps(): void {
@@ -86,12 +86,12 @@ export class FindSheetComponent {
 
   protected readonly subline = computed(() => {
     const find = this.find();
-    const datum = longDate(find.datum, this.i18n.locale());
-    const melder = this.eintraege.melder() ?? '';
-    if (find.anzahl === null) return this.i18n.translate('fund.unterOhneAnzahl', { datum, melder });
+    const datum = longDate(find.foundOn, this.i18n.locale());
+    const melder = this.eintraege.reporter() ?? '';
+    if (find.count === null) return this.i18n.translate('fund.unterOhneAnzahl', { datum, melder });
     return this.i18n.translate('fund.unter', {
       datum,
-      anzahl: this.i18n.translate('fund.stueck', { anzahl: find.anzahl }),
+      anzahl: this.i18n.translate('fund.stueck', { anzahl: find.count }),
       melder,
     });
   });
@@ -122,7 +122,7 @@ export class FindSheetComponent {
   protected async save(submission: FindSubmission): Promise<void> {
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateFind(this.find().id, submission.input)) {
+      if (await this.eintraege.updateFind(this.find(), submission.input)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
         this.editing.set(false);
       }

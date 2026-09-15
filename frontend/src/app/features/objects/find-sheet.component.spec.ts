@@ -103,7 +103,7 @@ describe('FundBlattComponent', () => {
     expect(screen.getByRole('heading', { name: 'Steinpilz' })).toBeInTheDocument();
     expect(screen.getByText('6. September 2026 · 3 Stück · Frederik')).toBeInTheDocument();
     expect(screen.getByText('Geteilt')).toBeInTheDocument();
-    expect(screen.getByText(FIND.notiz ?? '')).toBeInTheDocument();
+    expect(screen.getByText(FIND.note ?? '')).toBeInTheDocument();
     await noViolations(setup.container);
   });
 
@@ -131,7 +131,7 @@ describe('FundBlattComponent', () => {
 
   it('zeigt den Fund ohne Anzahl in der kurzen Zeile', async () => {
     await render(FindSheetComponent, {
-      inputs: { find: { ...FIND, anzahl: null } },
+      inputs: { find: { ...FIND, count: null } },
       providers: provider(),
     });
     await vi.waitFor(() => {
@@ -162,7 +162,7 @@ describe('FundBlattComponent', () => {
     setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     await vi.waitFor(() => {
-      setup.http.expectOne(`/api/funde/${FIND.id}`).flush(FIND);
+      setup.http.expectOne(`/api/finds/${FIND.id}`).flush(FIND);
     });
 
     await vi.waitFor(() => {
@@ -179,7 +179,7 @@ describe('FundBlattComponent', () => {
     setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     await vi.waitFor(() => {
-      setup.http.expectOne(`/api/funde/${FIND.id}`).error(new ProgressEvent('error'));
+      setup.http.expectOne(`/api/finds/${FIND.id}`).error(new ProgressEvent('error'));
     });
 
     await vi.waitFor(() => {
@@ -199,7 +199,7 @@ describe('FundBlattComponent', () => {
 
     await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
     await vi.waitFor(() => {
-      setup.http.expectOne(`/api/funde/${FIND.id}`).flush(null);
+      setup.http.expectOne(`/api/finds/${FIND.id}`).flush(null);
     });
 
     await vi.waitFor(() => {
@@ -216,13 +216,13 @@ describe('FundBlattComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
     setup.refresh();
 
-    setup.http.expectNone(`/api/funde/${FIND.id}`);
+    setup.http.expectNone(`/api/finds/${FIND.id}`);
     expect(setup.closed).toBe(0);
   });
 
   it('lässt die Kennzahl weg, wenn die Art keine Vorhersagekarte hat', async () => {
     const { detectChanges } = await render(FindSheetComponent, {
-      inputs: { find: { ...FIND, artSlug: 'semmelstoppelpilz' } },
+      inputs: { find: { ...FIND, speciesId: 'semmelstoppelpilz' } },
       providers: provider(),
     });
     await vi.waitFor(() => {

@@ -12,8 +12,3 @@ export function tilePath(weekFolder: string, z: number, x: number, y: number): s
 
 /** Manifest der Eingabe-Ebenen. */
 export const LAYERS_MANIFEST = '/layers.json';
-
-/** Trainingsfunde einer Art. */
-export function findsPath(slug: string): string {
-  return `/funde/${slug}.json`;
-}

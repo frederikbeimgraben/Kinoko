@@ -10,7 +10,14 @@ import type { SyncTask } from '../../core/offline/sync.types';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
-import { FIND, MARKER, SHARED_FIND_ENTRY, ZONE, findPage, page } from '../../testing/entries-fixture';
+import {
+  FIND,
+  FIND_ENTRY,
+  MARKER_ENTRY,
+  SHARED_FIND_ENTRY,
+  ZONE_ENTRY,
+  page,
+} from '../../testing/entries-fixture';
 import { AuthService } from '../../core/auth';
 import { EntriesComponent } from './entries.component';
 
@@ -21,16 +28,34 @@ const PENDING: SyncTask = {
   target: 'ziel-eins',
   conflict: false,
   body: {
-    artSlug: 'maronenroehrling',
+    speciesId: 'maronenroehrling',
     lat: 48.5,
     lon: 9.0,
-    datum: '2026-09-10',
-    anzahl: 2,
-    notiz: 'unter Fichten am Hang',
-    sichtbarkeit: 'privat',
+    foundOn: '2026-09-10',
+    count: 2,
+    note: 'unter Fichten am Hang',
+    visibility: 'private',
+    forTraining: false,
   },
   photos: [],
   createdAt: '2026-09-10T08:00:00+02:00',
+};
+
+/** Ein wartender Marker und eine wartende Zone, beide ohne Notiz. */
+const PENDING_MARKER: SyncTask = {
+  ...PENDING,
+  id: 'warte-zwei',
+  kind: 'marker',
+  target: 'ziel-zwei',
+  body: { name: 'Alter Fichtenhang', lat: 48.5, lon: 9.0, colour: 'red' },
+};
+
+const PENDING_ZONE: SyncTask = {
+  ...PENDING,
+  id: 'warte-drei',
+  kind: 'zone',
+  target: 'ziel-drei',
+  body: { name: 'Schönbuch Nord', polygon: { type: 'Polygon', coordinates: [] } },
 };
 
 /** Eine Warteschlange mit einem festen Inhalt. */
@@ -73,16 +98,17 @@ async function build(signedIn = true, pending: readonly SyncTask[] = [PENDING]):
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   await vi.waitFor(() => {
-    http.expectOne('/api/finds?mine=false&limit=50').flush(findPage([SHARED_FIND_ENTRY]));
+    http.expectOne('/api/finds?mine=false&limit=50').flush(page([SHARED_FIND_ENTRY]));
   });
   if (signedIn) {
     await vi.waitFor(() => {
-      http.expectOne('/api/funde?limit=200').flush(page([FIND]));
+      http.expectOne('/api/finds?mine=true&limit=50').flush(page([FIND_ENTRY]));
     });
-    http.expectOne('/api/marker?limit=200').flush(page([MARKER]));
-    http.expectOne('/api/zonen?limit=200').flush(page([ZONE]));
+    http.expectOne('/api/markers?limit=50').flush(page([MARKER_ENTRY]));
+    http.expectOne('/api/zones?limit=50').flush(page([ZONE_ENTRY]));
   }
-  const rows = (signedIn ? 1 : 0) + pending.length;
+  // Der Reiter Funde zeigt nur die wartenden Funde, nicht Marker und Zonen.
+  const rows = (signedIn ? 1 : 0) + pending.filter((task) => task.kind === 'find').length;
   await vi.waitFor(() => {
     detectChanges();
     expect(container.querySelectorAll('app-list-row').length).toBeGreaterThanOrEqual(rows);
@@ -118,6 +144,32 @@ describe('EintraegeComponent', () => {
     expect(rows[0]).toHaveTextContent('Heute · 2 Stück · Frederik');
     expect(rows[0]).toHaveTextContent('Übertragung ausstehend');
     expect(rows[0].querySelector('button')).toBeNull();
+  });
+
+  it('stellt einen wartenden Marker und eine wartende Zone in ihre Liste', async () => {
+    const setup = await build(true, [PENDING_MARKER, PENDING_ZONE]);
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Marker' }));
+    setup.refresh();
+    const marker = setup.container.querySelectorAll('app-list-row');
+    expect(marker[0]).toHaveTextContent('Alter Fichtenhang');
+    expect(marker[0]).toHaveTextContent('Übertragung ausstehend');
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Zonen' }));
+    setup.refresh();
+    const zone = setup.container.querySelectorAll('app-list-row');
+    expect(zone[0]).toHaveTextContent('Schönbuch Nord');
+  });
+
+  it('lässt den Namen leer, wenn der Katalog die Art nicht kennt', async () => {
+    const unknown: SyncTask = {
+      ...PENDING,
+      id: 'warte-vier',
+      body: { ...(PENDING.body as object), speciesId: null },
+    };
+    const setup = await build(true, [unknown]);
+
+    expect(setup.container.querySelectorAll('app-list-row')[0]).toHaveTextContent('Übertragung ausstehend');
   });
 
   it('wechselt auf Marker und Zonen', async () => {

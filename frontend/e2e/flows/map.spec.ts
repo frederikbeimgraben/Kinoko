@@ -5,10 +5,9 @@ import { COMBINATIONS, SPECIES_BUNDLE, mockMap } from '../fixtures/map';
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
-  '/api/funde': { eintraege: [], gesamt: 0 },
   '/api/finds': { items: [], nextCursor: null },
-  '/api/marker': { eintraege: [], gesamt: 0 },
-  '/api/zonen': { eintraege: [], gesamt: 0 },
+  '/api/markers': { items: [], nextCursor: null },
+  '/api/zones': { items: [], nextCursor: null },
 };
 
 async function openMap(page: Page): Promise<void> {

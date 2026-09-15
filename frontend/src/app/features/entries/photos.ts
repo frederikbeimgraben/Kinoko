@@ -1,17 +1,18 @@
 import { firstValueFrom } from 'rxjs';
-import type { EntriesApi } from '../../core/api/entries.api';
-import type { Find } from '../../core/api/models';
+import type { PhotosApi } from '../../core/api/photos.api';
 
 /** Ein Foto, das nicht durchgeht, kostet nicht den Fund. */
-export async function attachPhotos(api: EntriesApi, find: Find, fotos: readonly File[]): Promise<Find> {
-  let done = find;
-  for (const file of fotos) {
+export async function attachPhotos(
+  api: PhotosApi,
+  findId: string,
+  photographer: string,
+  files: readonly File[],
+): Promise<void> {
+  for (const file of files) {
     try {
-      const photo = await firstValueFrom(api.addPhoto(find.id, file));
-      done = { ...done, fotos: [...done.fotos, photo] };
+      await firstValueFrom(api.ofFind(findId, photographer, file));
     } catch {
       break;
     }
   }
-  return done;
 }

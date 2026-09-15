@@ -83,14 +83,14 @@ describe('FundFormularComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.submissions[0].input).toEqual({
-      artSlug: 'steinpilz',
+      speciesId: 'steinpilz',
       lat: 48.5203,
       lon: 9.0511,
-      datum: '2026-09-10',
-      anzahl: 3,
-      notiz: 'Unter Fichten',
-      sichtbarkeit: 'geteilt',
-      fuerTraining: false,
+      foundOn: '2026-09-10',
+      count: 3,
+      note: 'Unter Fichten',
+      visibility: 'shared',
+      forTraining: false,
     });
   });
 
@@ -99,8 +99,8 @@ describe('FundFormularComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(setup.submissions[0].input.anzahl).toBeNull();
-    expect(setup.submissions[0].input.notiz).toBeNull();
+    expect(setup.submissions[0].input.count).toBeNull();
+    expect(setup.submissions[0].input.note).toBeNull();
   });
 
   it('wechselt die Art über die Auswahl aus dem Katalog', async () => {
@@ -110,7 +110,7 @@ describe('FundFormularComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /Semmelstoppelpilz/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(setup.submissions[0].input.artSlug).toBe('semmelstoppelpilz');
+    expect(setup.submissions[0].input.speciesId).toBe('semmelstoppelpilz');
   });
 
   it('bricht die Artauswahl ab, ohne die Art zu wechseln', async () => {
@@ -120,7 +120,7 @@ describe('FundFormularComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(setup.submissions[0].input.artSlug).toBe('steinpilz');
+    expect(setup.submissions[0].input.speciesId).toBe('steinpilz');
   });
 
   it('weist ein Datum in der Zukunft zurück', async () => {
@@ -155,7 +155,7 @@ describe('FundFormularComponent', () => {
     await userEvent.click(screen.getByRole('checkbox', { name: 'Für das Training freigeben' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(setup.submissions[0].input.fuerTraining).toBe(true);
+    expect(setup.submissions[0].input.forTraining).toBe(true);
   });
 
   it('meldet den Abbruch', async () => {
@@ -197,7 +197,7 @@ describe('FundFormularComponent', () => {
         location: [FIND.lon, FIND.lat] as readonly [number, number],
         titel: 'Bearbeiten',
         mainText: 'Speichern',
-        start: { ...FIND, anzahl: null },
+        start: { ...FIND, count: null },
       },
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });

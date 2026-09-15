@@ -26,7 +26,7 @@ import { IconButtonComponent } from '../../ui/icon-button/icon-button.component'
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
-import { colorHex } from '../entries/colors';
+import { colourHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
@@ -85,14 +85,14 @@ export class ZoneSheetComponent implements OnDestroy {
 
   protected readonly subline = computed(() =>
     this.i18n.translate('zone.unter', {
-      flaeche: hectaresText(this.zone().flaecheHa, this.i18n.locale()),
-      sichtbarkeit: visibilityText(this.i18n, this.zone().sichtbarkeit),
+      flaeche: hectaresText(this.zone().areaHa, this.i18n.locale()),
+      sichtbarkeit: visibilityText(this.i18n, this.zone().visibility),
     }),
   );
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();
-    return { name: zone.name, farbe: zone.farbe, notiz: zone.notiz, sichtbarkeit: zone.sichtbarkeit };
+    return { name: zone.name, colour: zone.colour, note: zone.note, visibility: zone.visibility };
   });
 
   protected readonly forecastRow = computed(() => {
@@ -100,11 +100,11 @@ export class ZoneSheetComponent implements OnDestroy {
     if (value === null) return null;
     return {
       label: this.i18n.translate('zone.vorhersage', {
-        art: this.speciesName(value.art),
-        woche: value.woche.woche,
+        art: this.speciesName(value.speciesId),
+        woche: value.week,
       }),
-      value: this.i18n.translate('karte.prozent', { wert: Math.round(value.flaechenmittel) }),
-      finds: String(value.eigeneFunde),
+      value: this.i18n.translate('karte.prozent', { wert: Math.round(value.areaMean) }),
+      finds: String(value.ownFinds),
     };
   });
 
@@ -131,7 +131,7 @@ export class ZoneSheetComponent implements OnDestroy {
     if (!values) return;
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateZone(this.zone().id, values)) {
+      if (await this.eintraege.updateZone(this.zone(), values)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
       }
     } finally {
@@ -144,10 +144,10 @@ export class ZoneSheetComponent implements OnDestroy {
     const map = this.adapter.rawMap();
     if (map === null) return;
     this.editingCorners.set(true);
-    this.session = await this.draw(map, colorHex(this.zone().farbe));
+    this.session = await this.draw(map, colourHex(this.zone().colour));
     const ring = this.zone()
       .polygon.coordinates[0].slice(0, -1)
-      .map((point) => point as Location);
+      .map((point) => [point[0], point[1]] as Location);
     this.session.showRing(ring);
     this.session.edit((next) => {
       this.newCorners.set(next);
@@ -159,7 +159,7 @@ export class ZoneSheetComponent implements OnDestroy {
     const polygon = corners === null ? null : asPolygon(corners);
     this.stopSession();
     if (polygon === null) return;
-    if (await this.eintraege.updateZone(this.zone().id, { polygon })) {
+    if (await this.eintraege.updateZone(this.zone(), { polygon })) {
       this.toasts.success(this.i18n.translate('objekt.gespeichert'));
     }
   }
@@ -176,8 +176,8 @@ export class ZoneSheetComponent implements OnDestroy {
     }
   }
 
-  private speciesName(slug: string): string {
-    return this.arten.nameOf(slug) ?? slug;
+  private speciesName(id: string): string {
+    return this.arten.entryById(id)?.name ?? '';
   }
 
   /** Fragt den Dienst nach dem Flächenmittel der Art in der Woche. */
@@ -192,7 +192,7 @@ export class ZoneSheetComponent implements OnDestroy {
       const week =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
       if (week === null) return;
-      this.value.set(await firstValueFrom(this.api.zoneValue(id, art.slug, week.year, week.week)));
+      this.value.set(await firstValueFrom(this.api.zoneValue(id, art.id, week.year, week.week)));
     } catch {
       // Ohne Karte für diese Art und Woche bleibt die Zeile weg.
     }

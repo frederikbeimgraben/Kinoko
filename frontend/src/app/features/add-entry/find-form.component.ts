@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckboxComponent, ToastService } from '@stupa-makers/ui-kit';
-import type { SpeciesEntry, Find, FindInput, Visibility } from '../../core/api/models';
+import type { SpeciesEntry, Find, FindWrite, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -20,8 +20,8 @@ import type { Location } from './add-entry.state';
 
 /** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */
 export interface FindSubmission {
-  input: FindInput;
-  fotos: readonly File[];
+  input: FindWrite;
+  photos: readonly File[];
 }
 
 /**
@@ -65,43 +65,47 @@ export class FindFormComponent {
   readonly submitted = output<FindSubmission>();
   readonly cancelled = output();
 
-  private readonly artSlug = signal<string | null>(null);
+  private readonly speciesSlug = signal<string | null>(null);
   private readonly dateChoice = signal<string | null>(null);
   private readonly countChoice = signal<string | null>(null);
   private readonly noteChoice = signal<string | null>(null);
   private readonly visibilityChoice = signal<Visibility | null>(null);
   private readonly trainingChoice = signal<boolean | null>(null);
 
-  protected readonly fotos = signal<readonly File[]>([]);
+  protected readonly photos = signal<readonly File[]>([]);
   protected readonly speciesPickerOpen = signal(false);
 
-  protected readonly segmente = computed(() => visibilitySegments(this.i18n));
+  protected readonly segments = computed(() => visibilitySegments(this.i18n));
 
-  protected readonly datum = computed(() => this.dateChoice() ?? this.start()?.datum ?? isoDatum(new Date()));
+  protected readonly foundOn = computed(
+    () => this.dateChoice() ?? this.start()?.foundOn ?? isoDatum(new Date()),
+  );
   /** Der Tag in der Schreibweise der Sprache, wie ihn das Board zeigt. */
-  protected readonly datumText = computed(() => longDate(this.datum(), this.i18n.locale()));
-  protected readonly anzahl = computed(() => {
+  protected readonly foundOnText = computed(() => longDate(this.foundOn(), this.i18n.locale()));
+  protected readonly count = computed(() => {
     const selected = this.countChoice();
     if (selected !== null) return selected;
-    const anzahl = this.start()?.anzahl;
-    return anzahl === null || anzahl === undefined ? '' : String(anzahl);
+    const count = this.start()?.count;
+    return count === null || count === undefined ? '' : String(count);
   });
-  protected readonly notiz = computed(() => this.noteChoice() ?? this.start()?.notiz ?? '');
-  protected readonly sichtbarkeit = computed(
-    () => this.visibilityChoice() ?? this.start()?.sichtbarkeit ?? 'privat',
+  protected readonly note = computed(() => this.noteChoice() ?? this.start()?.note ?? '');
+  protected readonly visibility = computed(
+    () => this.visibilityChoice() ?? this.start()?.visibility ?? 'private',
   );
   // Die Freigabe ist eine bewusste Entscheidung, keine Vorgabe: aus.
-  protected readonly fuerTraining = computed(
-    () => this.trainingChoice() ?? this.start()?.fuerTraining ?? false,
+  protected readonly forTraining = computed(
+    () => this.trainingChoice() ?? this.start()?.forTraining ?? false,
   );
 
   /** Die Vorgabe ist die Art der Karte. */
   protected readonly selectedSpecies = computed<SpeciesEntry | null>(() => {
     const alle = this.arten.species();
-    const selected = this.artSlug() ?? this.start()?.artSlug ?? null;
-    if (selected !== null) return alle.find((art) => art.slug === selected) ?? null;
-    const chosen = this.map.species();
-    return alle.find((art) => art.slug === chosen) ?? null;
+    const chosen = this.speciesSlug();
+    if (chosen !== null) return alle.find((art) => art.slug === chosen) ?? null;
+    const started = this.start()?.speciesId ?? null;
+    if (started !== null) return alle.find((art) => art.id === started) ?? null;
+    const shown = this.map.species();
+    return alle.find((art) => art.slug === shown) ?? null;
   });
 
   protected readonly speciesName = computed(() => this.selectedSpecies()?.name ?? '');
@@ -121,7 +125,7 @@ export class FindFormComponent {
   }
 
   protected selectSpecies(slug: string): void {
-    this.artSlug.set(slug);
+    this.speciesSlug.set(slug);
     this.speciesPickerOpen.set(false);
   }
 
@@ -138,7 +142,7 @@ export class FindFormComponent {
   }
 
   protected setVisibility(value: string): void {
-    this.visibilityChoice.set(value === 'geteilt' ? 'geteilt' : 'privat');
+    this.visibilityChoice.set(value === 'shared' ? 'shared' : 'private');
   }
 
   protected setTraining(value: boolean): void {
@@ -147,40 +151,40 @@ export class FindFormComponent {
 
   protected submit(): void {
     const input = this.validate();
-    if (input !== null) this.submitted.emit({ input, fotos: this.fotos() });
+    if (input !== null) this.submitted.emit({ input, photos: this.photos() });
   }
 
   /**
    * Prüft, was der Vertrag verlangt: eine Art aus dem Katalog, ein Datum, das
    * nicht in der Zukunft liegt, und eine Anzahl ab eins, falls eine dasteht.
    */
-  private validate(): FindInput | null {
+  private validate(): FindWrite | null {
     const art = this.selectedSpecies();
     if (art === null) {
       this.toasts.error(this.i18n.translate('melden.artFehlt'));
       return null;
     }
-    if (this.datum() > isoDatum(new Date())) {
+    if (this.foundOn() > isoDatum(new Date())) {
       this.toasts.error(this.i18n.translate('melden.datumZukunft'));
       return null;
     }
-    const raw = this.anzahl().trim();
-    const anzahl = raw === '' ? null : Number(raw);
-    if (anzahl !== null && (!Number.isInteger(anzahl) || anzahl < 1)) {
+    const raw = this.count().trim();
+    const count = raw === '' ? null : Number(raw);
+    if (count !== null && (!Number.isInteger(count) || count < 1)) {
       this.toasts.error(this.i18n.translate('melden.anzahlUngueltig'));
       return null;
     }
     const [lon, lat] = this.location();
-    const notiz = this.notiz().trim();
+    const note = this.note().trim();
     return {
-      artSlug: art.slug,
+      speciesId: art.id,
       lat,
       lon,
-      datum: this.datum(),
-      anzahl,
-      notiz: notiz === '' ? null : notiz,
-      sichtbarkeit: this.sichtbarkeit(),
-      fuerTraining: this.fuerTraining(),
+      foundOn: this.foundOn(),
+      count,
+      note: note === '' ? null : note,
+      visibility: this.visibility(),
+      forTraining: this.forTraining(),
     };
   }
 }

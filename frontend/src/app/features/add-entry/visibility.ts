@@ -8,6 +8,6 @@ export function visibilitySegments(i18n: I18nService): SegmentOption[] {
 }
 
 /** Der Name einer Sichtbarkeit in der Unterzeile eines Objekts, klein. */
-export function visibilityText(i18n: I18nService, sichtbarkeit: Visibility): string {
-  return i18n.translate(`sichtbarkeit.${sichtbarkeit}`).toLocaleLowerCase(i18n.locale());
+export function visibilityText(i18n: I18nService, visibility: Visibility): string {
+  return i18n.translate(`sichtbarkeit.${visibility}`).toLocaleLowerCase(i18n.locale());
 }

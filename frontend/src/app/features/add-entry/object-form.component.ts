@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { ToastService } from '@stupa-makers/ui-kit';
-import type { Color, Visibility } from '../../core/api/models';
+import type { MarkerColour, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ColourSwatchesComponent } from '../../ui/colour-swatches/colour-swatches.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { colorSwatches, colorFromHex, colorHex } from '../entries/colors';
+import { colourSwatches, colourFromHex, colourHex } from '../entries/colors';
 import { visibilitySegments } from './visibility';
 
 /** Was ein Marker und eine Zone gemeinsam haben. */
 export interface ObjectValues {
   name: string;
-  farbe: Color;
-  notiz: string | null;
-  sichtbarkeit: Visibility;
+  colour: MarkerColour;
+  note: string | null;
+  visibility: Visibility;
 }
 
 /**
@@ -46,22 +46,22 @@ export class ObjectFormComponent {
   readonly valuesChange = output<ObjectValues>();
 
   protected readonly name = signal<string | null>(null);
-  protected readonly farbe = signal<Color | null>(null);
-  protected readonly notiz = signal<string | null>(null);
-  protected readonly sichtbarkeit = signal<Visibility | null>(null);
+  protected readonly colour = signal<MarkerColour | null>(null);
+  protected readonly note = signal<string | null>(null);
+  protected readonly visibility = signal<Visibility | null>(null);
 
-  protected readonly colors = computed(() => colorSwatches(this.i18n));
-  protected readonly segmente = computed(() => visibilitySegments(this.i18n));
+  protected readonly colors = computed(() => colourSwatches(this.i18n));
+  protected readonly segments = computed(() => visibilitySegments(this.i18n));
 
   // Solange niemand ein Feld angefasst hat, führt der Startwert. So bleibt das
   // Formular für ein vorhandenes Objekt gefüllt, ohne es beim Öffnen zu kopieren.
   protected readonly nameValue = computed(() => this.name() ?? this.start()?.name ?? '');
-  protected readonly colorValue = computed(() => this.farbe() ?? this.start()?.farbe ?? 'gruen');
-  protected readonly noteValue = computed(() => this.notiz() ?? this.start()?.notiz ?? '');
+  protected readonly colorValue = computed(() => this.colour() ?? this.start()?.colour ?? 'green');
+  protected readonly noteValue = computed(() => this.note() ?? this.start()?.note ?? '');
   protected readonly visibilityValue = computed(
-    () => this.sichtbarkeit() ?? this.start()?.sichtbarkeit ?? 'privat',
+    () => this.visibility() ?? this.start()?.visibility ?? 'private',
   );
-  protected readonly colorHexValue = computed(() => colorHex(this.colorValue()));
+  protected readonly colorHexValue = computed(() => colourHex(this.colorValue()));
 
   /** Liefert die Werte oder `null`, wenn der Name fehlt. */
   values(): ObjectValues | null {
@@ -70,22 +70,22 @@ export class ObjectFormComponent {
       this.toasts.error(this.nameMissingText());
       return null;
     }
-    const notiz = this.noteValue().trim();
+    const note = this.noteValue().trim();
     return {
       name,
-      farbe: this.colorValue(),
-      notiz: notiz === '' ? null : notiz,
-      sichtbarkeit: this.visibilityValue(),
+      colour: this.colorValue(),
+      note: note === '' ? null : note,
+      visibility: this.visibilityValue(),
     };
   }
 
   protected setColor(hex: string): void {
-    this.farbe.set(colorFromHex(hex));
+    this.colour.set(colourFromHex(hex));
     this.report();
   }
 
   protected setVisibility(value: string): void {
-    this.sichtbarkeit.set(value === 'geteilt' ? 'geteilt' : 'privat');
+    this.visibility.set(value === 'shared' ? 'shared' : 'private');
     this.report();
   }
 
@@ -95,7 +95,7 @@ export class ObjectFormComponent {
   }
 
   protected setNote(value: string): void {
-    this.notiz.set(value);
+    this.note.set(value);
     this.report();
   }
 
@@ -103,9 +103,9 @@ export class ObjectFormComponent {
   private report(): void {
     this.valuesChange.emit({
       name: this.nameValue().trim(),
-      farbe: this.colorValue(),
-      notiz: this.noteValue().trim() || null,
-      sichtbarkeit: this.visibilityValue(),
+      colour: this.colorValue(),
+      note: this.noteValue().trim() || null,
+      visibility: this.visibilityValue(),
     });
   }
 }

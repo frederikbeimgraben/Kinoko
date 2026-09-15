@@ -8,7 +8,15 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
-import { FIND, MARKER, ZONE, page } from '../../testing/entries-fixture';
+import {
+  FIND,
+  FIND_ENTRY,
+  MARKER,
+  MARKER_ENTRY,
+  ZONE,
+  ZONE_ENTRY,
+  page,
+} from '../../testing/entries-fixture';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
@@ -53,10 +61,10 @@ async function build(): Promise<Setup> {
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
-    http.expectOne('/api/funde?limit=200').flush(page([FIND]));
+    http.expectOne('/api/finds?mine=true&limit=50').flush(page([FIND_ENTRY]));
   });
-  http.expectOne('/api/marker?limit=200').flush(page([MARKER]));
-  http.expectOne('/api/zonen?limit=200').flush(page([ZONE]));
+  http.expectOne('/api/markers?limit=50').flush(page([MARKER_ENTRY]));
+  http.expectOne('/api/zones?limit=50').flush(page([ZONE_ENTRY]));
   await loaded;
   detectChanges();
   return {
@@ -147,7 +155,7 @@ describe('ObjektBlattComponent', () => {
     setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     await vi.waitFor(() => {
-      setup.http.expectOne(`/api/marker/${MARKER.id}`).flush(null);
+      setup.http.expectOne(`/api/markers/${MARKER.id}`).flush(null);
     });
 
     await vi.waitFor(() => {

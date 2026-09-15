@@ -4,21 +4,33 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { FIND } from '../../testing/entries-fixture';
+import { photo } from '../../testing/photos-fixture';
 import { PhotoGalleryComponent } from './photo-gallery.component';
+
+const LIST = `/api/photos?findId=${FIND.id}`;
+const SHOT = photo({ id: 'bild-eins', findId: FIND.id, speciesId: null });
+
+function build(): ReturnType<typeof render<PhotoGalleryComponent>> {
+  return render(PhotoGalleryComponent, {
+    inputs: { findId: FIND.id },
+    providers: [provideHttpClient(), provideHttpClientTesting()],
+  });
+}
 
 describe('FotoGalerieComponent', () => {
   beforeEach(() => {
     vi.stubGlobal('URL', { ...URL, createObjectURL: () => 'blob:foto', revokeObjectURL: () => undefined });
   });
 
-  it('holt jedes Foto über die eigene Route und zeigt es', async () => {
-    const { container, detectChanges } = await render(PhotoGalleryComponent, {
-      inputs: { findId: FIND.id, fotos: FIND.fotos },
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+  it('holt die Fotos des Fundes und zeigt sie', async () => {
+    const { container, detectChanges } = await build();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne(LIST).flush({ items: [SHOT], nextCursor: null });
+    await vi.waitFor(() => {
+      detectChanges();
+      http.expectOne(`/api/photos/${SHOT.id}/list`).flush(new Blob(['bild']));
     });
-    TestBed.inject(HttpTestingController)
-      .expectOne(`/api/funde/${FIND.id}/fotos/foto-eins`)
-      .flush(new Blob(['bild']));
+
     await vi.waitFor(() => {
       detectChanges();
       expect(screen.getByRole('img', { name: 'Foto 1' })).toBeInTheDocument();
@@ -27,27 +39,27 @@ describe('FotoGalerieComponent', () => {
     await noViolations(container);
   });
 
-  it('zeigt nichts, wenn ein Foto nicht kommt', async () => {
-    const { detectChanges } = await render(PhotoGalleryComponent, {
-      inputs: { findId: FIND.id, fotos: FIND.fotos },
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-    });
-    TestBed.inject(HttpTestingController)
-      .expectOne(`/api/funde/${FIND.id}/fotos/foto-eins`)
-      .error(new ProgressEvent('error'));
+  it('zeigt nichts, wenn die Liste der Fotos nicht kommt', async () => {
+    const { detectChanges } = await build();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne(LIST).flush({ title: 'Weg', status: 500 }, { status: 500, statusText: '' });
+
     await vi.waitFor(() => {
       detectChanges();
+      expect(screen.queryByRole('img')).not.toBeInTheDocument();
     });
-
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    http.verify();
   });
 
-  it('holt gar nichts, wenn ein Fund keine Fotos trägt', async () => {
-    await render(PhotoGalleryComponent, {
-      inputs: { findId: FIND.id, fotos: [] },
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-    });
+  it('zeigt nichts, wenn der Fund keine Fotos trägt', async () => {
+    const { detectChanges } = await build();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne(LIST).flush({ items: [], nextCursor: null });
 
-    TestBed.inject(HttpTestingController).verify();
+    await vi.waitFor(() => {
+      detectChanges();
+      expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    });
+    http.verify();
   });
 });

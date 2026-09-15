@@ -20,14 +20,12 @@ import { expectBoard, skipPending } from './board';
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
 /** Was die angemeldete App nebenher holt. Ohne Antwort meldet sie einen Fehler. */
-const EMPTY_PAGE = { eintraege: [], gesamt: 0 };
 const EMPTY_FINDS = { items: [], nextCursor: null };
 const SIGNED_IN: Record<string, unknown> = {
   '/api/combinations': { eintraege: [], gesamt: 0 },
-  '/api/funde': EMPTY_PAGE,
   '/api/finds': EMPTY_FINDS,
-  '/api/marker': EMPTY_PAGE,
-  '/api/zonen': EMPTY_PAGE,
+  '/api/markers': EMPTY_FINDS,
+  '/api/zones': EMPTY_FINDS,
 };
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */

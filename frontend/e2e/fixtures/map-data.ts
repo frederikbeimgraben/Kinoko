@@ -160,19 +160,19 @@ export const SPECIES_BUNDLE = {
   ],
 };
 
-function entries(count: number, kind: string): { eintraege: unknown[]; gesamt: number } {
-  const eintraege = Array.from({ length: count }, (_, i) => ({
-    id: `${kind}-${i}`,
+function markers(count: number): { items: unknown[]; nextCursor: null } {
+  const items = Array.from({ length: count }, (_, i) => ({
+    id: `marker-${i}`,
     lon: 9 + i * 0.05,
     lat: 48.5 + i * 0.05,
-    name: `${kind} ${i}`,
-    farbe: 'gruen',
-    sichtbarkeit: 'privat',
-    angelegtAm: '2025-10-01T00:00:00Z',
-    eigen: false,
-    gerundet: false,
+    name: `marker ${i}`,
+    colour: 'green',
+    visibility: 'private',
+    note: null,
+    updatedAt: '2025-10-01T00:00:00Z',
+    deleted: false,
   }));
-  return { eintraege, gesamt: count };
+  return { items, nextCursor: null };
 }
 
 /** Geteilte Funde des Vertrags, geblättert wie `/finds`. */
@@ -195,12 +195,15 @@ function finds(count: number): { items: unknown[]; nextCursor: null } {
 
 /** Die Zahlen aus dem Board `KarteEbenen`: 12 geteilte Funde, 5 Marker, 2 Zonen. */
 export const SHARED_FINDS = finds(12);
-export const MARKERS = entries(5, 'marker');
+export const MARKERS = markers(5);
 export const ZONES = {
-  eintraege: Array.from({ length: 2 }, (_, i) => ({
+  items: Array.from({ length: 2 }, (_, i) => ({
     id: `zone-${i}`,
     name: `Zone ${i}`,
-    farbe: 'gruen',
+    colour: 'green',
+    visibility: 'private',
+    note: null,
+    areaHa: 42,
     polygon: {
       type: 'Polygon',
       coordinates: [
@@ -212,9 +215,10 @@ export const ZONES = {
         ],
       ],
     },
-    angelegtAm: '2025-10-01T00:00:00Z',
+    updatedAt: '2025-10-01T00:00:00Z',
+    deleted: false,
   })),
-  gesamt: 2,
+  nextCursor: null,
 };
 
 /** Die gespeicherten Kombinationen aus dem Board `Combinations`. */

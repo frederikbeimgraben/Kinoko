@@ -31,30 +31,26 @@ export type {
   Permission,
   PermissionArea,
   PermissionEntry,
+  Page,
   Person,
   Role,
   RoleInput,
   RolePatch,
   RoleRef,
 } from './access';
-export { COLORS, VISIBILITIES } from './entries';
+export { MARKER_COLOURS, VISIBILITIES } from './entries';
 export { LICENCES, PHOTO_STATES, photoPath } from './photos';
 export type { ReviewState, SharedFind } from './finds';
 export type {
-  Color,
-  FindPhoto,
   Find,
-  FindPatch,
-  FindInput,
+  FindWrite,
   GeoPolygon,
   Marker,
-  MarkerPatch,
-  MarkerInput,
-  Page,
+  MarkerColour,
+  MarkerWrite,
   Visibility,
   Zone,
-  ZonePatch,
-  ZoneInput,
+  ZoneWrite,
   ZoneValue,
 } from './entries';
 export type {

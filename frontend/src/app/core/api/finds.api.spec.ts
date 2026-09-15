@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { SHARED_FIND, SHARED_FIND_ENTRY, findPage } from '../../testing/entries-fixture';
+import { SHARED_FIND, SHARED_FIND_ENTRY, page } from '../../testing/entries-fixture';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FindsApi } from './finds.api';
 
@@ -30,7 +30,7 @@ describe('FindsApi', () => {
 
     const request = http.expectOne('/api/finds?mine=false&bbox=9,48,10,49&limit=50');
     expect(request.request.method).toBe('GET');
-    request.flush(findPage([]));
+    request.flush(page([]));
   });
 
   it('lässt die bbox weg, wenn kein Ausschnitt gefragt ist', () => {
@@ -38,7 +38,7 @@ describe('FindsApi', () => {
 
     api.shared().subscribe();
 
-    http.expectOne(SHARED_URL).flush(findPage([]));
+    http.expectOne(SHARED_URL).flush(page([]));
   });
 
   it('bildet Art, Ort und Prüfstand des Vertrags ab', () => {
@@ -46,7 +46,7 @@ describe('FindsApi', () => {
     let seen: readonly unknown[] = [];
 
     api.shared().subscribe((finds) => (seen = finds));
-    http.expectOne(SHARED_URL).flush(findPage([SHARED_FIND_ENTRY]));
+    http.expectOne(SHARED_URL).flush(page([SHARED_FIND_ENTRY]));
 
     expect(seen).toEqual([SHARED_FIND]);
   });
@@ -58,7 +58,7 @@ describe('FindsApi', () => {
     api.shared().subscribe((finds) => (seen = finds));
     http
       .expectOne(SHARED_URL)
-      .flush(findPage([{ id: 'ohne-ort', updatedAt: '2026-09-04T10:00:00+02:00', deleted: false }]));
+      .flush(page([{ id: 'ohne-ort', updatedAt: '2026-09-04T10:00:00+02:00', deleted: false }]));
 
     expect(seen).toEqual([]);
   });

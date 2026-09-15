@@ -5,12 +5,12 @@ import { visibilitySegments, visibilityText } from './visibility';
 describe('Sichtbarkeit', () => {
   it('baut die zwei Segmente aus den Mockups', () => {
     expect(visibilitySegments(TestBed.inject(I18nService))).toEqual([
-      { value: 'privat', label: 'Privat' },
-      { value: 'geteilt', label: 'Geteilt' },
+      { value: 'private', label: 'Privat' },
+      { value: 'shared', label: 'Geteilt' },
     ]);
   });
 
   it('schreibt die Sichtbarkeit in der Unterzeile klein', () => {
-    expect(visibilityText(TestBed.inject(I18nService), 'privat')).toBe('privat');
+    expect(visibilityText(TestBed.inject(I18nService), 'private')).toBe('privat');
   });
 });

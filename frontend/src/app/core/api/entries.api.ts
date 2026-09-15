@@ -1,90 +1,94 @@
 import { Injectable, inject } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { map, type Observable } from 'rxjs';
 import { ApiClient } from './api-client';
-import type {
-  FindPhoto,
-  Find,
-  FindPatch,
-  FindInput,
-  Marker,
-  MarkerPatch,
-  MarkerInput,
-  Page,
-  Zone,
-  ZonePatch,
-  ZoneInput,
-  ZoneValue,
-} from './models';
+import type { components } from './contract';
+import { ENTRY_PATHS } from './entry-paths';
+import { marker as readMarker, ownFind, zone as readZone } from './entry-reader';
+import type { Find, FindWrite, Marker, MarkerWrite, Zone, ZoneValue, ZoneWrite } from './models';
 
-/** Höchstens drei Fotos hängen an einem Fund, so wie es das Backend prüft. */
-export const PHOTOS_PER_FIND = 3;
+type FindEntry = components['schemas']['Find'];
+type MarkerEntry = components['schemas']['Marker'];
+type ZoneEntry = components['schemas']['Zone'];
+type FindPage = components['schemas']['FindPage'];
+type MarkerPage = components['schemas']['MarkerPage'];
+type ZonePage = components['schemas']['ZonePage'];
 
-/** So viele Einträge holt eine Seite. Das Backend lässt bis 200 zu. */
-const PAGE_SIZE = 200;
+/** So viele Einträge holt eine Seite. Der Vertrag erlaubt höchstens 50. */
+const PAGE_SIZE = 50;
 
-/** Die eigenen Funde, Marker, Zonen und ihre Fotos. Jede Route braucht ein Konto. */
+function id(value: string): string {
+  return encodeURIComponent(value);
+}
+
+/** Die eigenen Funde, Marker und Zonen. Jede Route braucht ein Konto. */
 @Injectable({ providedIn: 'root' })
 export class EntriesApi {
   private readonly api = inject(ApiClient);
 
-  finds(): Observable<Page<Find>> {
-    return this.api.get<Page<Find>>('/funde', { limit: PAGE_SIZE });
+  finds(): Observable<readonly Find[]> {
+    return this.api
+      .get<FindPage>(ENTRY_PATHS.find, { mine: true, limit: PAGE_SIZE })
+      .pipe(map((answer) => read(answer.items, ownFind)));
   }
 
-  createFind(input: FindInput): Observable<Find> {
-    return this.api.post<Find>('/funde', input);
+  createFind(body: FindWrite): Observable<Find | null> {
+    return this.api.post<FindEntry>(ENTRY_PATHS.find, body).pipe(map(ownFind));
   }
 
-  patchFind(id: string, patch: FindPatch): Observable<Find> {
-    return this.api.patch<Find>(`/funde/${encodeURIComponent(id)}`, patch);
+  putFind(target: string, body: FindWrite): Observable<Find | null> {
+    return this.api.put<FindEntry>(`${ENTRY_PATHS.find}/${id(target)}`, body).pipe(map(ownFind));
   }
 
-  deleteFind(id: string): Observable<null> {
-    return this.api.delete<null>(`/funde/${encodeURIComponent(id)}`);
+  deleteFind(target: string): Observable<null> {
+    return this.api.delete<null>(`${ENTRY_PATHS.find}/${id(target)}`);
   }
 
-  addPhoto(findId: string, file: File): Observable<FindPhoto> {
-    return this.api.postFile<FindPhoto>(`/funde/${encodeURIComponent(findId)}/fotos`, 'datei', file);
+  markers(): Observable<readonly Marker[]> {
+    return this.api
+      .get<MarkerPage>(ENTRY_PATHS.marker, { limit: PAGE_SIZE })
+      .pipe(map((answer) => read(answer.items, readMarker)));
   }
 
-  loadPhoto(findId: string, photoId: string): Observable<Blob> {
-    return this.api.getBlob(`/funde/${encodeURIComponent(findId)}/fotos/${encodeURIComponent(photoId)}`);
+  createMarker(body: MarkerWrite): Observable<Marker | null> {
+    return this.api.post<MarkerEntry>(ENTRY_PATHS.marker, body).pipe(map(readMarker));
   }
 
-  marker(): Observable<Page<Marker>> {
-    return this.api.get<Page<Marker>>('/marker', { limit: PAGE_SIZE });
+  putMarker(target: string, body: MarkerWrite): Observable<Marker | null> {
+    return this.api.put<MarkerEntry>(`${ENTRY_PATHS.marker}/${id(target)}`, body).pipe(map(readMarker));
   }
 
-  createMarker(input: MarkerInput): Observable<Marker> {
-    return this.api.post<Marker>('/marker', input);
+  deleteMarker(target: string): Observable<null> {
+    return this.api.delete<null>(`${ENTRY_PATHS.marker}/${id(target)}`);
   }
 
-  patchMarker(id: string, patch: MarkerPatch): Observable<Marker> {
-    return this.api.patch<Marker>(`/marker/${encodeURIComponent(id)}`, patch);
+  zones(): Observable<readonly Zone[]> {
+    return this.api
+      .get<ZonePage>(ENTRY_PATHS.zone, { limit: PAGE_SIZE })
+      .pipe(map((answer) => read(answer.items, readZone)));
   }
 
-  deleteMarker(id: string): Observable<null> {
-    return this.api.delete<null>(`/marker/${encodeURIComponent(id)}`);
+  createZone(body: ZoneWrite): Observable<Zone | null> {
+    return this.api.post<ZoneEntry>(ENTRY_PATHS.zone, body).pipe(map(readZone));
   }
 
-  zones(): Observable<Page<Zone>> {
-    return this.api.get<Page<Zone>>('/zonen', { limit: PAGE_SIZE });
+  putZone(target: string, body: ZoneWrite): Observable<Zone | null> {
+    return this.api.put<ZoneEntry>(`${ENTRY_PATHS.zone}/${id(target)}`, body).pipe(map(readZone));
   }
 
-  createZone(input: ZoneInput): Observable<Zone> {
-    return this.api.post<Zone>('/zonen', input);
-  }
-
-  patchZone(id: string, patch: ZonePatch): Observable<Zone> {
-    return this.api.patch<Zone>(`/zonen/${encodeURIComponent(id)}`, patch);
-  }
-
-  deleteZone(id: string): Observable<null> {
-    return this.api.delete<null>(`/zonen/${encodeURIComponent(id)}`);
+  deleteZone(target: string): Observable<null> {
+    return this.api.delete<null>(`${ENTRY_PATHS.zone}/${id(target)}`);
   }
 
   /** Das Flächenmittel der Vorhersage in der Zone, für genau Art und Woche. */
-  zoneValue(id: string, art: string, jahr: number, woche: number): Observable<ZoneValue> {
-    return this.api.get<ZoneValue>(`/zonen/${encodeURIComponent(id)}/wert`, { art, jahr, woche });
+  zoneValue(target: string, speciesId: string, year: number, week: number): Observable<ZoneValue> {
+    return this.api.get<ZoneValue>(`${ENTRY_PATHS.zone}/${id(target)}/value`, {
+      speciesId,
+      year,
+      week,
+    });
   }
+}
+
+function read<E, T>(items: readonly E[], of: (entry: E) => T | null): readonly T[] {
+  return items.flatMap((entry) => of(entry) ?? []);
 }

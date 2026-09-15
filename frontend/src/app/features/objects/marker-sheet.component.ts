@@ -62,7 +62,7 @@ export class MarkerSheetComponent {
 
   protected readonly subline = computed(() =>
     this.i18n.translate('marker.unter', {
-      sichtbarkeit: visibilityText(this.i18n, this.marker().sichtbarkeit),
+      sichtbarkeit: visibilityText(this.i18n, this.marker().visibility),
     }),
   );
 
@@ -70,9 +70,9 @@ export class MarkerSheetComponent {
     const marker = this.marker();
     return {
       name: marker.name,
-      farbe: marker.farbe,
-      notiz: marker.notiz,
-      sichtbarkeit: marker.sichtbarkeit,
+      colour: marker.colour,
+      note: marker.note,
+      visibility: marker.visibility,
     };
   });
 
@@ -81,7 +81,7 @@ export class MarkerSheetComponent {
     if (!values) return;
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateMarker(this.marker().id, values)) {
+      if (await this.eintraege.updateMarker(this.marker(), values)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
       }
     } finally {

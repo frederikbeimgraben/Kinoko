@@ -3,7 +3,7 @@ import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 
 /** Der Server kennt noch nichts Eigenes. */
-const EMPTY_PAGE = { eintraege: [], gesamt: 0 };
+const EMPTY_PAGE = { items: [], nextCursor: null };
 
 /** Die Schalter des Netzes und die Anfragen, die der Abgleich sendet. */
 interface Wire {
@@ -18,10 +18,9 @@ async function wire(page: Page, origin: string): Promise<Wire> {
   await mockSignIn(page);
   await mockApi(page, {
     '/api/config': authConfig(origin),
-    '/api/funde': EMPTY_PAGE,
-    '/api/marker': EMPTY_PAGE,
-    '/api/zonen': EMPTY_PAGE,
-    '/api/finds': { items: [], nextCursor: null },
+    '/api/finds': EMPTY_PAGE,
+    '/api/markers': EMPTY_PAGE,
+    '/api/zones': EMPTY_PAGE,
   });
   await page.route('**/api/markers/**', async (route) => {
     sent.push(route.request());

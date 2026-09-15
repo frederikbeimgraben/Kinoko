@@ -5,14 +5,17 @@ import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import {
   FIND,
+  FIND_ENTRY,
   MARKER,
+  MARKER_ENTRY,
   SHARED_FIND,
   SHARED_FIND_ENTRY,
   ZONE,
-  findPage,
+  ZONE_ENTRY,
   page,
 } from '../../testing/entries-fixture';
 import { EntriesState } from './entries.state';
+import { findWrite, markerWrite, zoneWrite } from './writes';
 
 interface Setup {
   state: EntriesState;
@@ -20,6 +23,10 @@ interface Setup {
   auth: AuthStub;
   queue: SyncStub;
 }
+
+const FINDS = '/api/finds?mine=true&limit=50';
+const MARKERS = '/api/markers?limit=50';
+const ZONES = '/api/zones?limit=50';
 
 function build(): Setup {
   const auth = new AuthStub();
@@ -40,22 +47,27 @@ function build(): Setup {
   };
 }
 
+/** Lädt die drei Listen, so wie eine Seite es beim Öffnen tut. */
+async function load(setup: Setup): Promise<void> {
+  const loaded = setup.state.load();
+  await vi.waitFor(() => {
+    setup.http.expectOne(FINDS).flush(page([FIND_ENTRY]));
+  });
+  setup.http.expectOne(MARKERS).flush(page([MARKER_ENTRY]));
+  setup.http.expectOne(ZONES).flush(page([ZONE_ENTRY]));
+  await loaded;
+}
+
 describe('EintraegeZustand', () => {
   it('holt Funde, Marker und Zonen des Kontos', async () => {
-    const { state, http } = build();
+    const setup = build();
 
-    const loaded = state.load();
-    await vi.waitFor(() => {
-      http.expectOne('/api/funde?limit=200').flush(page([FIND]));
-    });
-    http.expectOne('/api/marker?limit=200').flush(page([MARKER]));
-    http.expectOne('/api/zonen?limit=200').flush(page([ZONE]));
-    await loaded;
+    await load(setup);
 
-    expect(state.finds()).toEqual([FIND]);
-    expect(state.marker()).toEqual([MARKER]);
-    expect(state.zones()).toEqual([ZONE]);
-    expect(state.melder()).toBe('Frederik');
+    expect(setup.state.finds()).toEqual([FIND]);
+    expect(setup.state.markers()).toEqual([MARKER]);
+    expect(setup.state.zones()).toEqual([ZONE]);
+    expect(setup.state.reporter()).toBe('Frederik');
   });
 
   it('holt ohne Konto nichts und leert, was noch dastand', async () => {
@@ -64,33 +76,25 @@ describe('EintraegeZustand', () => {
 
     await state.load();
 
-    http.expectNone('/api/funde?limit=200');
+    http.expectNone(FINDS);
     expect(state.finds()).toEqual([]);
-    expect(state.melder()).toBeNull();
+    expect(state.reporter()).toBeNull();
   });
 
   it('lässt bei einem Ausfall stehen, was schon da war', async () => {
-    const { state, http } = build();
-    const first = state.load();
-    await vi.waitFor(() => {
-      http.expectOne('/api/funde?limit=200').flush(page([FIND]));
-    });
-    http.expectOne('/api/marker?limit=200').flush(page([]));
-    http.expectOne('/api/zonen?limit=200').flush(page([]));
-    await first;
+    const setup = build();
+    await load(setup);
 
-    const second = state.load();
+    const second = setup.state.load();
     await vi.waitFor(() => {
-      http
-        .expectOne('/api/funde?limit=200')
-        .flush({ title: 'Weg', status: 500 }, { status: 500, statusText: '' });
+      setup.http.expectOne(FINDS).flush({ title: 'Weg', status: 500 }, { status: 500, statusText: '' });
     });
-    http.expectOne('/api/marker?limit=200').flush(page([]));
-    http.expectOne('/api/zonen?limit=200').flush(page([]));
+    setup.http.expectOne(MARKERS).flush(page([]));
+    setup.http.expectOne(ZONES).flush(page([]));
     await second;
 
-    expect(state.finds()).toEqual([FIND]);
-    expect(state.loading()).toBe(false);
+    expect(setup.state.finds()).toEqual([FIND]);
+    expect(setup.state.loading()).toBe(false);
   });
 
   it('holt geteilte Funde im Ausschnitt und hält sie bei einem Ausfall', async () => {
@@ -98,7 +102,7 @@ describe('EintraegeZustand', () => {
 
     const loaded = state.loadShared({ west: 9, south: 48, ost: 10, nord: 49 });
     await vi.waitFor(() => {
-      http.expectOne('/api/finds?mine=false&bbox=9,48,10,49&limit=50').flush(findPage([SHARED_FIND_ENTRY]));
+      http.expectOne('/api/finds?mine=false&bbox=9,48,10,49&limit=50').flush(page([SHARED_FIND_ENTRY]));
     });
     await loaded;
     expect(state.shared()).toEqual([SHARED_FIND]);
@@ -113,53 +117,73 @@ describe('EintraegeZustand', () => {
     expect(state.shared()).toEqual([SHARED_FIND]);
   });
 
-  it('speichert einen Fund mit seinen Fotos', async () => {
+  it('speichert einen Fund und lädt seine Fotos über /photos hoch', async () => {
     const { state, http } = build();
 
-    const result = state.saveFind(input(), [new File(['b'], 'p.jpg')]);
+    const result = state.saveFind(findWrite(FIND), [new File(['b'], 'p.jpg')]);
     await vi.waitFor(() => {
-      http.expectOne('/api/funde').flush(FIND);
+      http.expectOne({ url: '/api/finds', method: 'POST' }).flush(FIND_ENTRY);
     });
     await vi.waitFor(() => {
-      http.expectOne(`/api/funde/${FIND.id}/fotos`).flush(FIND.fotos[0]);
+      const upload = http.expectOne({ url: '/api/photos', method: 'POST' });
+      expect((upload.request.body as FormData).get('findId')).toBe(FIND.id);
+      upload.flush({ id: 'bild-eins' });
     });
 
     expect(await result).toBe('gespeichert');
-    expect(state.finds()[0].fotos).toHaveLength(2);
+    expect(state.finds()).toEqual([FIND]);
   });
 
   it('lässt den Fund stehen, wenn ein Foto nicht durchgeht', async () => {
     const { state, http } = build();
 
-    const result = state.saveFind(input(), [new File(['b'], 'p.jpg')]);
+    const result = state.saveFind(findWrite(FIND), [new File(['b'], 'p.jpg')]);
     await vi.waitFor(() => {
-      http.expectOne('/api/funde').flush({ ...FIND, fotos: [] });
+      http.expectOne({ url: '/api/finds', method: 'POST' }).flush(FIND_ENTRY);
     });
     await vi.waitFor(() => {
       http
-        .expectOne(`/api/funde/${FIND.id}/fotos`)
+        .expectOne({ url: '/api/photos', method: 'POST' })
         .flush({ title: 'Zu groß', status: 413 }, { status: 413, statusText: '' });
     });
 
     expect(await result).toBe('gespeichert');
-    expect(state.finds()[0].fotos).toHaveLength(0);
+    expect(state.finds()).toEqual([FIND]);
+  });
+
+  it('hält die Liste frei von einem Stand, den der Leser abweist', async () => {
+    const { state, http } = build();
+
+    const find = state.saveFind(findWrite(FIND));
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/finds', method: 'POST' }).flush({ ...FIND_ENTRY, deleted: true });
+    });
+    expect(await find).toBe('gespeichert');
+    expect(state.finds()).toEqual([]);
+
+    const marker = state.saveMarker(markerWrite(MARKER));
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/markers', method: 'POST' }).flush({ ...MARKER_ENTRY, deleted: true });
+    });
+    expect(await marker).toBe('gespeichert');
+    expect(state.markers()).toEqual([]);
   });
 
   it('stellt einen Fund an, wenn niemand sich anmelden will', async () => {
     const { state, auth, queue, http } = build();
     auth.reply = false;
 
-    expect(await state.saveFind(input())).toBe('wartet');
+    expect(await state.saveFind(findWrite(FIND))).toBe('wartet');
     expect(queue.stored[0].kind).toBe('find');
-    http.expectNone('/api/funde');
+    http.expectNone('/api/finds');
   });
 
   it('stellt einen Fund an, wenn das Netz fehlt', async () => {
     const { state, queue, http } = build();
 
-    const result = state.saveFind(input());
+    const result = state.saveFind(findWrite(FIND));
     await vi.waitFor(() => {
-      http.expectOne('/api/funde').error(new ProgressEvent('error'));
+      http.expectOne({ url: '/api/finds', method: 'POST' }).error(new ProgressEvent('error'));
     });
 
     expect(await result).toBe('wartet');
@@ -171,102 +195,109 @@ describe('EintraegeZustand', () => {
     auth.reply = false;
     queue.accepts = false;
 
-    expect(await state.saveFind(input())).toBe('verworfen');
+    expect(await state.saveFind(findWrite(FIND))).toBe('verworfen');
   });
 
   it('speichert und stellt Marker und Zonen genauso an', async () => {
     const { state, auth, http, queue } = build();
 
-    const marker = state.saveMarker({ ...MARKER });
+    const marker = state.saveMarker(markerWrite(MARKER));
     await vi.waitFor(() => {
-      http.expectOne('/api/marker').flush(MARKER);
+      http.expectOne({ url: '/api/markers', method: 'POST' }).flush(MARKER_ENTRY);
     });
     expect(await marker).toBe('gespeichert');
-    expect(state.marker()).toEqual([MARKER]);
+    expect(state.markers()).toEqual([MARKER]);
 
-    const zone = state.saveZone({ ...ZONE });
+    const zone = state.saveZone(zoneWrite(ZONE));
     await vi.waitFor(() => {
-      http.expectOne('/api/zonen').flush(ZONE);
+      http.expectOne({ url: '/api/zones', method: 'POST' }).flush(ZONE_ENTRY);
     });
     expect(await zone).toBe('gespeichert');
     expect(state.zones()).toEqual([ZONE]);
 
     auth.reply = false;
-    expect(await state.saveMarker({ ...MARKER })).toBe('wartet');
-    expect(await state.saveZone({ ...ZONE })).toBe('wartet');
+    expect(await state.saveMarker(markerWrite(MARKER))).toBe('wartet');
+    expect(await state.saveZone(zoneWrite(ZONE))).toBe('wartet');
     expect(queue.stored.map((entry) => entry.kind)).toEqual(['marker', 'zone']);
   });
 
   it('stellt Marker und Zone an, wenn das Netz fehlt', async () => {
     const { state, http, queue } = build();
 
-    const marker = state.saveMarker({ ...MARKER });
+    const marker = state.saveMarker(markerWrite(MARKER));
     await vi.waitFor(() => {
-      http.expectOne('/api/marker').error(new ProgressEvent('error'));
+      http.expectOne({ url: '/api/markers', method: 'POST' }).error(new ProgressEvent('error'));
     });
     expect(await marker).toBe('wartet');
 
-    const zone = state.saveZone({ ...ZONE });
+    const zone = state.saveZone(zoneWrite(ZONE));
     await vi.waitFor(() => {
-      http.expectOne('/api/zonen').error(new ProgressEvent('error'));
+      http.expectOne({ url: '/api/zones', method: 'POST' }).error(new ProgressEvent('error'));
     });
     expect(await zone).toBe('wartet');
     expect(queue.stored).toHaveLength(2);
   });
 
-  it('ändert und löscht jedes Objekt und meldet den Fehlschlag', async () => {
-    const { state, http } = build();
-    const loaded = state.load();
-    await vi.waitFor(() => {
-      http.expectOne('/api/funde?limit=200').flush(page([FIND]));
-    });
-    http.expectOne('/api/marker?limit=200').flush(page([MARKER]));
-    http.expectOne('/api/zonen?limit=200').flush(page([ZONE]));
-    await loaded;
+  it('ersetzt jedes Objekt mit PUT und schickt den ganzen Körper', async () => {
+    const setup = build();
+    await load(setup);
+    const { state, http } = setup;
 
-    const find = state.updateFind(FIND.id, { anzahl: 4 });
+    const find = state.updateFind(FIND, { count: 4 });
     await vi.waitFor(() => {
-      http.expectOne(`/api/funde/${FIND.id}`).flush({ ...FIND, anzahl: 4 });
+      const request = http.expectOne({ url: `/api/finds/${FIND.id}`, method: 'PUT' });
+      expect(request.request.body).toEqual({ ...findWrite(FIND), count: 4 });
+      request.flush({ ...FIND_ENTRY, count: 4 });
     });
     expect(await find).toBe(true);
-    expect(state.finds()[0].anzahl).toBe(4);
+    expect(state.finds()[0].count).toBe(4);
 
-    const marker = state.updateMarker(MARKER.id, { name: 'Neu' });
+    const marker = state.updateMarker(MARKER, { name: 'Neu' });
     await vi.waitFor(() => {
-      http.expectOne(`/api/marker/${MARKER.id}`).flush({ ...MARKER, name: 'Neu' });
+      http
+        .expectOne({ url: `/api/markers/${MARKER.id}`, method: 'PUT' })
+        .flush({ ...MARKER_ENTRY, name: 'Neu' });
     });
     expect(await marker).toBe(true);
-    expect(state.marker()[0].name).toBe('Neu');
+    expect(state.markers()[0].name).toBe('Neu');
 
-    const zone = state.updateZone(ZONE.id, { name: 'Neu' });
+    const zone = state.updateZone(ZONE, { name: 'Neu' });
     await vi.waitFor(() => {
-      http.expectOne(`/api/zonen/${ZONE.id}`).flush({ ...ZONE, name: 'Neu' });
+      http.expectOne({ url: `/api/zones/${ZONE.id}`, method: 'PUT' }).flush({ ...ZONE_ENTRY, name: 'Neu' });
     });
     expect(await zone).toBe(true);
+  });
+
+  it('löscht jedes Objekt über seinen Weg', async () => {
+    const setup = build();
+    await load(setup);
+    const { state, http } = setup;
 
     const away = state.deleteFind(FIND.id);
     await vi.waitFor(() => {
-      http.expectOne(`/api/funde/${FIND.id}`).flush(null);
+      http.expectOne({ url: `/api/finds/${FIND.id}`, method: 'DELETE' }).flush(null);
     });
     expect(await away).toBe(true);
     expect(state.finds()).toEqual([]);
 
     const markerGone = state.deleteMarker(MARKER.id);
     await vi.waitFor(() => {
-      http.expectOne(`/api/marker/${MARKER.id}`).flush(null);
+      http.expectOne({ url: `/api/markers/${MARKER.id}`, method: 'DELETE' }).flush(null);
     });
     expect(await markerGone).toBe(true);
 
     const zoneGone = state.deleteZone(ZONE.id);
     await vi.waitFor(() => {
-      http.expectOne(`/api/zonen/${ZONE.id}`).flush(null);
+      http.expectOne({ url: `/api/zones/${ZONE.id}`, method: 'DELETE' }).flush(null);
     });
     expect(await zoneGone).toBe(true);
     expect(state.zones()).toEqual([]);
   });
 
   it('stellt jede Änderung und jedes Löschen an, wenn das Netz fehlt', async () => {
-    const { state, http, queue } = build();
+    const setup = build();
+    await load(setup);
+    const { state, http, queue } = setup;
     const broken = (): void => {
       http
         .match(() => true)
@@ -276,12 +307,12 @@ describe('EintraegeZustand', () => {
     };
 
     const calls = [
-      state.updateFind('x', {}),
-      state.updateMarker('x', {}),
-      state.updateZone('x', {}),
-      state.deleteFind('x'),
-      state.deleteMarker('x'),
-      state.deleteZone('x'),
+      state.updateFind(FIND, {}),
+      state.updateMarker(MARKER, {}),
+      state.updateZone(ZONE, {}),
+      state.deleteFind(FIND.id),
+      state.deleteMarker(MARKER.id),
+      state.deleteZone(ZONE.id),
     ];
     await vi.waitFor(broken);
 
@@ -294,6 +325,7 @@ describe('EintraegeZustand', () => {
       'delete',
       'delete',
     ]);
+    expect(queue.stored[0].body).toEqual(findWrite(FIND));
   });
 
   it('sendet Wartendes nur mit Konto und lädt danach neu', async () => {
@@ -305,23 +337,11 @@ describe('EintraegeZustand', () => {
     queue.sent = 2;
     const sent = state.sendPending();
     await vi.waitFor(() => {
-      http.expectOne('/api/funde?limit=200').flush(page([]));
+      http.expectOne(FINDS).flush(page([]));
     });
-    http.expectOne('/api/marker?limit=200').flush(page([]));
-    http.expectOne('/api/zonen?limit=200').flush(page([]));
+    http.expectOne(MARKERS).flush(page([]));
+    http.expectOne(ZONES).flush(page([]));
 
     expect(await sent).toBe(2);
   });
 });
-
-function input(): Parameters<EntriesState['saveFind']>[0] {
-  return {
-    artSlug: 'steinpilz',
-    lat: 48.52,
-    lon: 9.05,
-    datum: '2026-09-06',
-    anzahl: 3,
-    notiz: null,
-    sichtbarkeit: 'privat',
-  };
-}
