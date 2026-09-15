@@ -2,7 +2,10 @@
 
 @include overlay.overlay-body;
 
+// Der Titel einer Zeile steht hier kräftiger als im Filterblatt.
 :host {
+  --fw-row-filter: var(--fw-semibold);
+
   display: contents;
 }
 
