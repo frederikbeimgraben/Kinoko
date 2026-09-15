@@ -12,7 +12,7 @@ const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 const MAP_HEIGHT = 844;
 
 /** Der Tag und der Ort, die in den Boards stehen. */
-const TODAY = new Date('2026-09-09T09:00:00+02:00');
+const FOUND_ON = '2026-09-09';
 const PLACE = { latitude: 48.5203, longitude: 9.0511 };
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
@@ -30,7 +30,6 @@ const REPLIES = {
 };
 
 async function openMap(page: Page): Promise<void> {
-  await page.clock.setFixedTime(TODAY);
   await page.context().grantPermissions(['geolocation']);
   await page.context().setGeolocation(PLACE);
   await mockSignIn(page);
@@ -69,6 +68,11 @@ test('AddActions', async ({ page }) => {
   await board(page, 'AddActions');
 });
 
+/** Setzt den Tag, den die Fund-Boards zeigen. */
+async function setDate(page: Page): Promise<void> {
+  await page.locator('input[type="date"]').fill(FOUND_ON);
+}
+
 /** Legt das Foto ab, das die Boards in der ersten Kachel zeigen. */
 async function addPhoto(page: Page): Promise<void> {
   const file = join(test.info().config.rootDir, 'boards/fixtures/tile-1-72x72.png');
@@ -80,6 +84,7 @@ test('FindForm', async ({ page }) => {
   guard('FindForm', 'phone');
   await openForm(page, 'Fund melden', 'Fundort übernehmen');
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
+  await setDate(page);
   await addPhoto(page);
   await board(page, 'FindForm');
 });
@@ -114,6 +119,7 @@ test('MapDesktopAdd', async ({ page }) => {
 test('MapDesktopFindForm', async ({ page }) => {
   guard('MapDesktopFindForm', 'wide');
   await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await setDate(page);
   await addPhoto(page);
   await board(page, 'MapDesktopFindForm', 'map-desktop-stein-900.png');
 });
