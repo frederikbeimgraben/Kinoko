@@ -7,11 +7,7 @@ export const QUALITY = 0.85;
 const TYPE = 'image/jpeg';
 
 /** Die Zielgröße: die längste Kante bleibt unter der Grenze, das Verhältnis bleibt. */
-export function targetSize(
-  width: number,
-  height: number,
-  max = MAX_EDGE,
-): { width: number; height: number } {
+export function targetSize(width: number, height: number, max = MAX_EDGE): { width: number; height: number } {
   const longest = Math.max(width, height);
   if (longest <= max || longest === 0) return { width, height };
   const factor = max / longest;

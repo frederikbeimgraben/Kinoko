@@ -162,10 +162,12 @@ export class AuthService {
   }
 
   private async renew(): Promise<string | null> {
-    const manager = await this.getManager();
-    if (manager === null) return null;
+    // Der Stand gilt vom ersten Tick an als offen: ein tiefer Link in die
+    // Verwaltung entschiede sonst, bevor die Sitzung zurück ist.
     this._busy.set(true);
     try {
+      const manager = await this.getManager();
+      if (manager === null) return null;
       const user = await manager.signinSilent();
       this.adopt(user);
       return this._token();

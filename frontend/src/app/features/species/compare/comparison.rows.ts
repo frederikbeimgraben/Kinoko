@@ -18,6 +18,9 @@ const MARKS = [MONTH_TEXT[0], MONTH_TEXT[3], MONTH_TEXT[6], MONTH_TEXT[9]];
 const SHORT = 3;
 const SEPARATOR = ', ';
 
+/** Die Dauern, die eine Uhr nennt. */
+const TIMED: readonly string[] = ['30s', '1min', '3min'];
+
 /** Die Plakette einer Spalte. */
 export interface Level {
   text: string;
@@ -104,7 +107,7 @@ export function stemNetOf(entry: SpeciesEntry): string | null {
   return entry.traits.find((one) => one.key === 'stem')?.text ?? null;
 }
 
-export function tastesOf(entry: SpeciesEntry): readonly string[] | null {
+export function flavoursOf(entry: SpeciesEntry): readonly string[] | null {
   const tags = entry.terms.filter((one) => one.term.kind === 'taste').map((one) => one.term.name);
   return tags.length === 0 ? null : tags;
 }
@@ -120,11 +123,12 @@ export function monthMarks(i18n: I18nService): string[] {
   return MARKS.map((month) => i18n.translate(month).slice(0, SHORT));
 }
 
-/** Eine dauerhafte Verfärbung nennt kein Nachher, sie bleibt. */
+/** Nur eine gemessene Dauer nennt ein Nachher: „nach sofort“ sagt niemand. */
 function speedOf(speed: SpeciesEntry['colourChanges'][number]['speed'], i18n: I18nService): string {
   if (!speed) return '';
-  if (speed === 'permanent') return i18n.translate(SPEED_TEXT[speed]);
-  return i18n.translate('species.colourChange.after', { dauer: i18n.translate(SPEED_TEXT[speed]) });
+  const word = i18n.translate(SPEED_TEXT[speed]);
+  if (!TIMED.includes(speed)) return word;
+  return i18n.translate('species.colourChange.after', { dauer: word });
 }
 
 function colourSwatch(colour: ColourValue): Swatch {

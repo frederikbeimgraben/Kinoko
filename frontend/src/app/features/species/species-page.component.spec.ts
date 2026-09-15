@@ -18,9 +18,7 @@ const STONE = speciesEntry({
   periodStartMonth: 6,
   periodEndMonth: 10,
   hymeniumType: 'tubes',
-  measurements: [
-    { part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] },
-  ],
+  measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] }],
   colours: [{ part: 'cap', mode: 'gradient', colours: [{ name: 'braun', hex: '#6b4423' }] }],
   lookalikes: [
     {

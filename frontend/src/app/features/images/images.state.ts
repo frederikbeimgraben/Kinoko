@@ -29,7 +29,7 @@ export class ImagesState {
 
   readonly lead = computed<Photo | null>(() => {
     const all = this._photos();
-    return all.find((one) => one.lead) ?? all[0] ?? null;
+    return all.find((one) => one.lead) ?? all.at(0) ?? null;
   });
 
   /** Holt eine Sicht neu. Eine zweite Abfrage ersetzt die erste. */
@@ -58,10 +58,7 @@ export class ImagesState {
     return this._photos().findIndex((one) => one.id === id) + 1;
   }
 
-  /**
-   * Bereitet das Foto auf, sendet es und meldet den Anteil. Ohne Netz geht es
-   * in die Warteschlange und später hinaus.
-   */
+  /** Bereitet das Foto auf und sendet es. Ohne Netz wartet es in der Schlange. */
   async submit(input: PhotoInput, file: File): Promise<Photo | null> {
     const prepared = await withoutMetadata(file);
     if (!this.sync.online()) {
@@ -72,7 +69,11 @@ export class ImagesState {
     this._percent.set(0);
     try {
       const done = await lastValueFrom(
-        this.api.create(input, prepared).pipe(tap((step) => this._percent.set(step.percent))),
+        this.api.create(input, prepared).pipe(
+          tap((step) => {
+            this._percent.set(step.percent);
+          }),
+        ),
       );
       return done.body;
     } catch {

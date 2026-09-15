@@ -10,7 +10,7 @@ import {
   pressureOf,
   stemNetOf,
   swatchOf,
-  tastesOf,
+  flavoursOf,
 } from './comparison.rows';
 
 const WHITE = { name: 'weiß', hex: '#f0ece0' };
@@ -94,6 +94,17 @@ describe('comparison rows', () => {
     expect(test?.speed).toBe('nach 1 min');
   });
 
+  it('nennt eine sofortige Verfärbung ohne ein Nachher', () => {
+    const quick = speciesEntry({
+      slug: 'maronenroehrling',
+      name: 'Maronenröhrling',
+      scientificName: 'Imleria badia',
+      colourChanges: [{ part: 'tubes', kind: 'mechanical', to: PINK, speed: 'immediate', triggers: [] }],
+    });
+
+    expect(pressureOf(quick, null, i18n())?.speed).toBe('sofort');
+  });
+
   it('nennt eine dauerhafte Verfärbung ohne ein Nachher', () => {
     const lasting = speciesEntry({
       slug: 'rotfuss',
@@ -116,8 +127,8 @@ describe('comparison rows', () => {
   });
 
   it('nimmt nur die Begriffe des Geschmacks', () => {
-    expect(tastesOf(STONE)).toEqual(['mild']);
-    expect(tastesOf(GALL)).toBeNull();
+    expect(flavoursOf(STONE)).toEqual(['mild']);
+    expect(flavoursOf(GALL)).toBeNull();
   });
 
   it('liest die Wachstumszeit als Spanne', () => {

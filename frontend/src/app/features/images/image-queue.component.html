@@ -28,8 +28,4 @@
   </app-review-queue>
 </div>
 
-<app-reject-dialog
-  [open]="rejecting() !== null"
-  (rejected)="reject($event)"
-  (closed)="rejecting.set(null)"
-/>
+<app-reject-dialog [open]="rejecting() !== null" (rejected)="reject($event)" (closed)="rejecting.set(null)" />

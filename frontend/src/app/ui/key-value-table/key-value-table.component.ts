@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /** Der Rahmen einer Merkmalstabelle. Die Zeilen kommen als Inhalt. */
 @Component({
@@ -6,5 +6,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './key-value-table.component.html',
   styleUrl: './key-value-table.component.scss',
+  host: { '[style.--key-value-table-columns]': 'columns()' },
 })
-export class KeyValueTableComponent {}
+export class KeyValueTableComponent {
+  /** Wie viele Wertspalten die Zeilen tragen. Der Vergleich nennt eine je Art. */
+  readonly columns = input(1);
+}

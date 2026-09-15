@@ -147,8 +147,8 @@ export class SyncService {
 
   /** Eine Einreichung geht als Formular hinaus, nicht als `PUT` auf ein Objekt. */
   private async sendPhoto(task: SyncTask): Promise<'sent' | 'stop'> {
-    const blob = task.photos[0];
-    if (blob === undefined) return 'sent';
+    const [blob] = task.photos;
+    if (task.photos.length === 0) return 'sent';
     const file = new File([blob], `${task.target}.jpg`, { type: blob.type || 'image/jpeg' });
     const fields = task.body as Record<string, string | undefined>;
     try {

@@ -9,6 +9,9 @@ const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
 /** Was die angemeldete App nebenher holt. Ohne Antwort meldet sie einen Fehler. */
 const EMPTY_PAGE = { eintraege: [], gesamt: 0 };
+/** Die Bilder der Artseite. Ohne Antwort meldet die Seite einen Fehler. */
+const NO_PHOTOS = { '/api/photos': { items: [], nextCursor: null } };
+
 const SIGNED_IN: Record<string, unknown> = {
   '/api/combinations': EMPTY_PAGE,
   '/api/funde': EMPTY_PAGE,
@@ -25,7 +28,7 @@ function guard(board: string, device: 'phone' | 'desktop'): void {
 
 /** Öffnet die Artseite des Steinpilzes mit dem Katalog des Bretts. */
 async function openSpecies(page: Page, items: unknown, extra: Record<string, unknown> = {}): Promise<void> {
-  await mockApi(page, { '/api/species/bundle': items, ...extra });
+  await mockApi(page, { '/api/species/bundle': items, ...NO_PHOTOS, ...extra });
   await flatMap(page);
   await page.goto('/arten/boletus-edulis');
   await expect(page.getByText('Verwechslung mit')).toBeVisible();

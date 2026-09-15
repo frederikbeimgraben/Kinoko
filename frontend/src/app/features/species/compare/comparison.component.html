@@ -6,22 +6,20 @@
 <div class="compare">
   @if (species().length > 0) {
     <div class="compare__card">
-      <app-key-value-table class="compare__table">
+      <app-key-value-table class="compare__table" [columns]="species().length">
         <app-key-value-row key="" [values]="names()" [head]="true" />
         <app-key-value-row [key]="'species.field.edibility' | t" [cells]="levels()">
           <ng-template let-level>
-            <app-level-pill
-              [text]="level.text"
-              [colour]="level.colour"
-              [background]="level.background"
-            />
+            <app-level-pill [text]="level.text" [colour]="level.colour" [background]="level.background" />
           </ng-template>
         </app-key-value-row>
         @if (filled(widths())) {
           <app-key-value-row [key]="'species.compare.capWidth' | t" [cells]="widths()">
             <ng-template let-size>
               @if (size) {
-                <span class="compare__measure">{{ size.value }} <em>{{ size.unit }}</em></span>
+                <span class="compare__measure"
+                  >{{ size.value }} <em>{{ size.unit }}</em></span
+                >
               }
             </ng-template>
           </app-key-value-row>
@@ -77,11 +75,11 @@
             </ng-template>
           </app-key-value-row>
         }
-        @if (filled(tastes())) {
-          <app-key-value-row [key]="'species.field.taste' | t" [cells]="tastes()">
+        @if (filled(flavours())) {
+          <app-key-value-row [key]="'species.field.taste' | t" [cells]="flavours()">
             <ng-template let-tags>
               @if (tags) {
-                <app-tag-list [tags]="tags" [label]="tasteLabel()" />
+                <app-tag-list [tags]="tags" [label]="flavourLabel()" />
               }
             </ng-template>
           </app-key-value-row>

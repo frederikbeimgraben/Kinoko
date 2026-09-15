@@ -19,10 +19,7 @@ describe('SpeciesTaxonomyComponent', () => {
       inputs: { species: STONE },
     });
 
-    expect(screen.getByRole('link', { name: 'Gattung' })).toHaveAttribute(
-      'href',
-      '/taxonomie/genus/boletus',
-    );
+    expect(screen.getByRole('link', { name: 'Gattung' })).toHaveAttribute('href', '/taxonomie/genus/boletus');
     expect(screen.getByRole('link', { name: 'Familie' })).toHaveAttribute(
       'href',
       '/taxonomie/family/boletaceae',

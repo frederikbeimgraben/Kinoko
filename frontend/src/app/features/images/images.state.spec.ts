@@ -42,7 +42,7 @@ function stubPrepare(): void {
 }
 
 describe('ImagesState', () => {
-  it('holt die freigegebenen Bilder einer Art', async () => {
+  it('holt die freigegebenen Bilder einer Art', () => {
     const { state, http } = build();
 
     state.load({ speciesId: 'art-eins', state: 'approved' });

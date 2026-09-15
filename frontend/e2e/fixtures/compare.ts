@@ -22,7 +22,7 @@ interface Shape {
   tubes: readonly Tone[];
   capWidth: readonly [number, number];
   months: readonly [number, number];
-  tastes: readonly string[];
+  flavours: readonly string[];
   change?: Change;
   stem?: string;
   lookalikes?: readonly Shape[];
@@ -118,7 +118,7 @@ export function species(entry: Shape, at: number): Record<string, unknown> {
     traits: entry.stem === undefined ? [] : [{ key: 'stem', text: entry.stem }],
     sources: [],
     seasons: [],
-    terms: entry.tastes.map((taste, index) => term(taste, at * 10 + index)),
+    terms: entry.flavours.map((taste, index) => term(taste, at * 10 + index)),
     lookalikes: (entry.lookalikes ?? []).map((one) => lookalike(one)),
   };
 }
@@ -135,7 +135,7 @@ const GALL: Shape = {
   tubes: [PINK],
   capWidth: [4, 12],
   months: [5, 11],
-  tastes: ['bitter'],
+  flavours: ['bitter'],
   change: { from: PINK, to: DARK_PINK, speed: '1min' },
 };
 
@@ -151,7 +151,7 @@ const BAY: Shape = {
   tubes: [OLIVE],
   capWidth: [3, 10],
   months: [6, 11],
-  tastes: ['mild'],
+  flavours: ['mild'],
   change: { from: OLIVE, to: BLUE, speed: 'immediate' },
 };
 
@@ -167,7 +167,7 @@ const SUMMER: Shape = {
   tubes: [WHITE],
   capWidth: [5, 20],
   months: [5, 10],
-  tastes: ['mild'],
+  flavours: ['mild'],
 };
 
 const STONE: Shape = {
@@ -182,7 +182,7 @@ const STONE: Shape = {
   tubes: [WHITE, OLIVE],
   capWidth: [4, 20],
   months: [5, 11],
-  tastes: ['mild', 'nussig'],
+  flavours: ['mild', 'nussig'],
   lookalikes: [GALL, BAY, SUMMER],
 };
 

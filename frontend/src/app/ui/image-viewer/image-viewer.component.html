@@ -1,22 +1,32 @@
-@if (image(); as image) {
-  <div class="viewer__scrim" aria-hidden="true" (click)="closed.emit()"></div>
-  <div #layer="modalLayer" class="viewer__panel" appModalLayer (dismissed)="closed.emit()">
-    <header class="viewer__head">
-      <h2 class="viewer__title" [id]="layer.labelId">{{ title() }}</h2>
-      <app-icon-button icon="close" [label]="'common.close' | t" (pressed)="closed.emit()" />
-    </header>
-    <app-private-image class="viewer__image" fit="contain" [path]="path()" [alt]="alt()" />
-    @if (image.caption; as caption) {
-      <p class="viewer__caption">{{ caption }}</p>
+@if (image()) {
+  <header class="viewer__head">
+    <button
+      class="viewer__back tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'common.back' | t"
+      (click)="back.emit()"
+    >
+      <app-svg-icon name="back" [size]="18" />
+    </button>
+    <h2 class="viewer__title">{{ title() }}</h2>
+    @if (count() > 0) {
+      <p class="viewer__count">{{ counter() }}</p>
     }
-    <app-key-value-table>
-      @for (row of details(); track row.labelKey) {
-        <app-key-value-row [key]="row.labelKey | t" [value]="row.text">
-          @if (row.badgeKey || row.badgeText) {
-            <app-badge variant="primary">{{ row.badgeKey ? (row.badgeKey | t) : row.badgeText }}</app-badge>
-          }
-        </app-key-value-row>
-      }
-    </app-key-value-table>
+  </header>
+  <app-private-image class="viewer__image" [path]="path() ?? ''" [alt]="alt()" />
+  @if (image()?.caption; as caption) {
+    <p class="viewer__caption">{{ caption }}</p>
+  }
+  <div class="viewer__facts">
+    @for (row of details(); track row.labelKey) {
+      <app-list-row kind="catalogue" [title]="row.labelKey | t" [value]="row.text">
+        @if (row.badgeKey || row.badgeText) {
+          <app-badge trail variant="primary">{{
+            row.badgeKey ? (row.badgeKey | t) : row.badgeText
+          }}</app-badge>
+        }
+      </app-list-row>
+    }
   </div>
 }

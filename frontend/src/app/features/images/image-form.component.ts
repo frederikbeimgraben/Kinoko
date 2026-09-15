@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal, type OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  signal,
+  type OnDestroy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SelectComponent } from '@stupa-makers/ui-kit';
@@ -54,7 +63,8 @@ export class ImageFormComponent implements OnDestroy {
 
   protected readonly file = signal<File | null>(null);
   protected readonly preview = signal<string | null>(null);
-  protected readonly photographer = signal(this.auth.user()?.name ?? '');
+  /** Der Name folgt der Anmeldung. Wer ein fremdes Foto einreicht, schreibt um. */
+  protected readonly photographer = linkedSignal<string>(() => this.auth.user()?.name ?? '');
   protected readonly licence = signal<Licence>('own');
   protected readonly source = signal('');
   protected readonly takenOn = signal('');

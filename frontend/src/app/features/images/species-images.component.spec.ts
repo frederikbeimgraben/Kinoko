@@ -35,9 +35,7 @@ async function build(items: Photo[]): Promise<Setup> {
   });
   detectChanges();
   await vi.waitFor(() => {
-    http
-      .expectOne('/api/photos?speciesId=steinpilz&state=approved')
-      .flush({ items, nextCursor: null });
+    http.expectOne('/api/photos?speciesId=steinpilz&state=approved').flush({ items, nextCursor: null });
   });
   detectChanges();
   for (const request of http.match((call) => call.url.startsWith('/api/photos/'))) {
@@ -45,6 +43,13 @@ async function build(items: Photo[]): Promise<Setup> {
   }
   detectChanges();
   return { container, router: TestBed.inject(Router), refresh: detectChanges };
+}
+
+/** Sucht ein Element und wirft, wenn es fehlt. */
+function pickOne(root: Element, selector: string): HTMLElement {
+  const found = root.querySelector<HTMLElement>(selector);
+  if (found === null) throw new Error(selector);
+  return found;
 }
 
 describe('SpeciesImagesComponent', () => {
@@ -62,7 +67,7 @@ describe('SpeciesImagesComponent', () => {
 
   it('führt von der Kachel zum Bild', async () => {
     const { container, router } = await build([photo({ id: 'eins' }), photo({ id: 'zwei' })]);
-    const thumb = container.querySelector('.gallery__thumb') as HTMLElement;
+    const thumb = pickOne(container, '.gallery__thumb');
 
     await userEvent.click(thumb);
 
@@ -72,7 +77,7 @@ describe('SpeciesImagesComponent', () => {
   it('führt von der gestrichelten Kachel zum Formular', async () => {
     const { container, router } = await build([]);
 
-    await userEvent.click(container.querySelector('.gallery__add') as HTMLElement);
+    await userEvent.click(pickOne(container, '.gallery__add'));
 
     expect(router.url).toBe('/arten/steinpilz/bilder/neu');
   });

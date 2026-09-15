@@ -46,9 +46,7 @@ export const STONE_PROFILE: Record<string, unknown> = {
   measurements: [
     {
       part: 'cap',
-      measurements: [
-        { dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: 25 },
-      ],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: 25 }],
     },
     {
       part: 'stem',
@@ -59,15 +57,11 @@ export const STONE_PROFILE: Record<string, unknown> = {
     },
     {
       part: 'pores',
-      measurements: [
-        { dimension: 'width', unit: 'mm', low: 0.3, high: 0.3, rareLow: null, rareHigh: null },
-      ],
+      measurements: [{ dimension: 'width', unit: 'mm', low: 0.3, high: 0.3, rareLow: null, rareHigh: null }],
     },
     {
       part: 'spore',
-      measurements: [
-        { dimension: 'length', unit: 'um', low: 15, high: 19, rareLow: null, rareHigh: null },
-      ],
+      measurements: [{ dimension: 'length', unit: 'um', low: 15, high: 19, rareLow: null, rareHigh: null }],
     },
   ],
   colours: [

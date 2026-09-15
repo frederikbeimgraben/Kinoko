@@ -23,7 +23,7 @@ import {
   pressureOf,
   stemNetOf,
   swatchOf,
-  tastesOf,
+  flavoursOf,
   type Swatch,
 } from './comparison.rows';
 
@@ -69,7 +69,7 @@ export class ComparisonComponent {
   protected readonly widths = computed(() => this.species().map((one) => capWidthOf(one, this.i18n)));
   private readonly capColours = computed(() => this.species().map((one) => swatchOf(one, 'cap')));
   protected readonly stemNets = computed(() => this.species().map((one) => stemNetOf(one)));
-  protected readonly tastes = computed(() => this.species().map((one) => tastesOf(one)));
+  protected readonly flavours = computed(() => this.species().map((one) => flavoursOf(one)));
   protected readonly periods = computed(() => this.species().map((one) => periodOf(one)));
 
   private readonly hymenium = computed(() => hymeniumPartOf(this.species()));
@@ -100,7 +100,7 @@ export class ComparisonComponent {
 
   protected readonly arrowLabel = computed(() => this.i18n.translate('common.to'));
   protected readonly bandLabel = computed(() => this.i18n.translate('species.growthPeriod'));
-  protected readonly tasteLabel = computed(() => this.i18n.translate('species.field.taste'));
+  protected readonly flavourLabel = computed(() => this.i18n.translate('species.field.taste'));
 
   constructor() {
     void this.catalogue.loadBundle();

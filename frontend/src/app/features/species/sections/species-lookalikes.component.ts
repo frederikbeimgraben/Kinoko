@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import {
-  ColourFieldComponent,
-  type ColourValue,
-} from '../../../ui/colour-field/colour-field.component';
+import { ColourFieldComponent, type ColourValue } from '../../../ui/colour-field/colour-field.component';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
 import type { Lookalike } from '../../../core/api/models';

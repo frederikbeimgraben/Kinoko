@@ -1,40 +1,66 @@
-@use '../modal-layer/modal-layer';
-
-.viewer__scrim {
-  @include modal-layer.scrim;
-}
-
-.viewer__panel {
-  @include modal-layer.panel;
-
-  inset-block: var(--space-5);
-  inset-inline: var(--space-5);
-  overflow-y: auto;
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
+// Die Bildansicht ist eine Seite, kein Dialog: Kopf, Bild, Angaben.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .viewer__head {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-3);
   align-items: center;
-  justify-content: space-between;
-  margin-block-end: var(--space-4);
+  block-size: 56px;
+  padding-inline: var(--size-gutter);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.viewer__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--color-primary);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-md);
 }
 
 .viewer__title {
   margin: 0;
-  font-size: var(--fs-lg);
+  font-size: var(--fs-sheet-title);
   font-weight: var(--fw-semibold);
+  line-height: normal;
 }
 
-// Begrenzt, sonst schiebt ein hochkantes Bild die Tabelle aus dem Fenster.
+.viewer__count {
+  margin: 0 0 0 auto;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
 .viewer__image {
   display: block;
-  flex: 0 0 auto;
+  margin-inline: var(--size-gutter);
   inline-size: 100%;
-  block-size: 60vh;
-  margin-block-end: var(--space-4);
+  block-size: var(--image-viewer-height, 200px);
   background: var(--color-surface-sunken);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+}
+
+.viewer__caption {
+  margin: 0 var(--size-gutter);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.viewer__facts {
+  margin-inline: var(--size-gutter);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
 }

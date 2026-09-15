@@ -99,13 +99,11 @@ export class ApiClient {
     for (const [name, value] of Object.entries(fields)) {
       if (value !== undefined) body.append(name, String(value));
     }
-    return this.http
-      .post<T>(this.url(path), body, { reportProgress: true, observe: 'events' })
-      .pipe(
-        map((event) => step<T>(event)),
-        filter((state): state is Upload<T> => state !== null),
-        catchError((failure: unknown) => this.report(failure)),
-      );
+    return this.http.post<T>(this.url(path), body, { reportProgress: true, observe: 'events' }).pipe(
+      map((event) => step<T>(event)),
+      filter((state): state is Upload<T> => state !== null),
+      catchError((failure: unknown) => this.report(failure)),
+    );
   }
 
   /**

@@ -13,9 +13,9 @@ import { ImageViewerComponent } from './image-viewer.component';
 
 const FULL_PATH = '/api/photos/bild-eins/full';
 
-/** Der Dialog des Kits beschriftet seinen eigenen Schließen-Knopf. */
-function closeLabel(): string {
-  return TestBed.inject(I18nService).translate('common.close');
+/** Der Zurück-Knopf im Kopf der Seite trägt nur seinen Namen. */
+function backLabel(): string {
+  return TestBed.inject(I18nService).translate('common.back');
 }
 
 async function build(
@@ -40,10 +40,10 @@ describe('ImageViewerComponent', () => {
     vi.stubGlobal('URL', { ...URL, createObjectURL: () => 'blob:eins', revokeObjectURL: () => undefined });
   });
 
-  it('bleibt ohne Bild zu', async () => {
-    await build(null);
+  it('bleibt ohne Bild leer', async () => {
+    const { container } = await build(null);
 
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(container.querySelector('.viewer__head')).toBeNull();
   });
 
   it('zeigt das Bild gross mit Fotograf, Lizenz und Aufnahmetag', async () => {
@@ -69,30 +69,29 @@ describe('ImageViewerComponent', () => {
     expect(screen.getByRole('img', { name: 'Steinpilz' })).toBeInTheDocument();
   });
 
-  it('meldet das Schliessen nach draussen', async () => {
+  it('meldet den Weg zurück nach draussen', async () => {
     const { fixture } = await build(photo());
     let calls = 0;
-    fixture.componentInstance.closed.subscribe(() => (calls += 1));
+    fixture.componentInstance.back.subscribe(() => (calls += 1));
 
-    await userEvent.click(screen.getByRole('button', { name: closeLabel() }));
+    await userEvent.click(screen.getByRole('button', { name: backLabel() }));
 
     expect(calls).toBe(1);
   });
 
-  it('schliesst mit Escape', async () => {
-    const { fixture } = await build(photo());
-    let calls = 0;
-    fixture.componentInstance.closed.subscribe(() => (calls += 1));
+  it('zeigt den Zähler, sobald eine Anzahl dasteht', async () => {
+    await render(ImageViewerComponent, {
+      inputs: { image: photo(), title: 'Steinpilz', index: 2, count: 4 },
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
 
-    await userEvent.keyboard('{Escape}');
-
-    expect(calls).toBe(1);
+    expect(screen.getByText('2 von 4')).toBeInTheDocument();
   });
 
   it('nennt am Ort, dass er gerundet ist', async () => {
     await build(photo({ lat: 48.51, lon: 9.06 }));
 
-    expect(screen.getByText('48,51 · 9,06, 5 km')).toBeInTheDocument();
+    expect(screen.getByText('48,51 · 9,06 · 1 km')).toBeInTheDocument();
   });
 
   it('lässt den Ort weg, wenn das Bild keinen trägt', async () => {

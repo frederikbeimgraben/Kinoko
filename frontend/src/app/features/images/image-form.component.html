@@ -2,12 +2,18 @@
 
 <div class="form">
   <label class="form__preview tap" data-press="scale">
-    <input class="form__file" type="file" accept="image/*" (change)="onPick($event)" />
+    <input
+      class="form__file"
+      type="file"
+      accept="image/*"
+      [attr.aria-label]="'image.section.image' | t"
+      (change)="onPick($event)"
+    />
     @if (preview(); as source) {
       <img class="form__image" [src]="source" [alt]="title()" />
     }
-    @if (percent(); as value) {
-      <app-progress class="form__progress" [value]="value" />
+    @if (busy()) {
+      <app-progress class="form__progress" [value]="percent() ?? 0" />
     }
   </label>
 
@@ -59,11 +65,7 @@
   </section>
 
   @if (curates()) {
-    <app-check-row
-      [title]="'image.setAsCoverToggle' | t"
-      [checked]="cover()"
-      (toggled)="cover.set($event)"
-    />
+    <app-check-row [title]="'image.setAsCoverToggle' | t" [checked]="cover()" (toggled)="cover.set($event)" />
   }
 </div>
 

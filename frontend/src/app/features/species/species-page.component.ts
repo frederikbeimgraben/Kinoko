@@ -16,6 +16,7 @@ import { SpeciesSensesComponent } from './sections/species-senses.component';
 import { SpeciesSizeComponent } from './sections/species-size.component';
 import { SpeciesTaxonomyComponent } from './sections/species-taxonomy.component';
 import { SpeciesTimeComponent } from './sections/species-time.component';
+import { ComparisonState } from './compare/comparison.state';
 import { SpeciesState } from './species.state';
 
 /** Die Artseite: Kopf, die Abschnitte des Katalogs und der Weg zur Karte. */
@@ -46,6 +47,7 @@ export class SpeciesPageComponent {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly viewport = inject(ViewportService);
+  private readonly comparison = inject(ComparisonState);
 
   readonly slug = input.required<string>();
 
@@ -76,6 +78,8 @@ export class SpeciesPageComponent {
   }
 
   protected compare(slug: string): void {
-    void this.router.navigate(['/arten', this.slug(), 'vergleich', slug]);
+    this.comparison.add(this.slug());
+    this.comparison.add(slug);
+    void this.router.navigateByUrl('/arten/vergleich');
   }
 }

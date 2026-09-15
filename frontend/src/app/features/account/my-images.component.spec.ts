@@ -8,6 +8,7 @@ import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { photo } from '../../testing/photos-fixture';
+import { SpeciesState } from '../species/species.state';
 import type { Photo } from '../../core/api/models';
 import { MyImagesComponent } from './my-images.component';
 
@@ -35,6 +36,9 @@ async function build(items: Photo[], nextCursor: string | null = null): Promise<
   for (const request of http.match((call) => call.url.endsWith('/list'))) {
     request.flush(new Blob(['x'], { type: 'image/jpeg' }));
   }
+  await vi.waitFor(() => {
+    expect(TestBed.inject(SpeciesState).species().length).toBeGreaterThan(0);
+  });
   detectChanges();
   return { container, http, refresh: detectChanges };
 }

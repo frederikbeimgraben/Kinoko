@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';

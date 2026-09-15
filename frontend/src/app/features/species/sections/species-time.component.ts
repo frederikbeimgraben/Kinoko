@@ -38,7 +38,5 @@ export class SpeciesTimeComponent {
     };
   });
 
-  protected readonly marks = computed(() =>
-    MARKS.map((month) => this.i18n.translate(month).slice(0, SHORT)),
-  );
+  protected readonly marks = computed(() => MARKS.map((month) => this.i18n.translate(month).slice(0, SHORT)));
 }

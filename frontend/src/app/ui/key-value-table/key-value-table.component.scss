@@ -6,10 +6,9 @@
   --key-value-table-gap: var(--space-3);
 
   display: grid;
+  // Jede Spalte des Vergleichs ist gleich breit. Ohne die Zahl fiele die
+  // dritte Zelle in eine neue Zeile, statt neben die zweite zu treten.
   grid-template-columns:
     calc(var(--key-value-table-gutter) + var(--key-value-table-label) + var(--key-value-table-gap))
-    minmax(0, 1fr);
-  // Zusätzliche Spalten aus einer Vergleichszeile bekommen dieselbe Breite
-  // wie die erste Wertspalte, ohne dass die Tabelle die Zahl kennen muss.
-  grid-auto-columns: minmax(0, 1fr);
+    repeat(var(--key-value-table-columns, 1), minmax(0, 1fr));
 }
