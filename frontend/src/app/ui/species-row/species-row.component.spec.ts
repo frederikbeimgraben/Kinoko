@@ -42,14 +42,31 @@ describe('SpeciesRowComponent', () => {
     await noViolations(container);
   });
 
-  it('lässt die Spalte ohne Titelbild leer', async () => {
+  it('reserviert ohne Titelbild keinen Platz rechts', async () => {
     const { container } = await render(SpeciesRowComponent, {
       inputs: { species: { ...STEINPILZ, image: null } },
     });
 
     expect(container.querySelector('app-private-image')).toBeNull();
-    expect(container.querySelector('.row__image')).not.toBeNull();
+    expect(container.querySelector('.row__image')).toBeNull();
     expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('lässt ohne Titelbild kein Element für die Bildspalte im Baum', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: { ...STEINPILZ, image: null } },
+    });
+
+    const children = Array.from(container.querySelectorAll('.row > *'));
+    expect(children.some((child) => child.classList.contains('row__image'))).toBe(false);
+  });
+
+  it('hält das Titelbild bei einer Art mit Foto 44 × 44', async () => {
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
+
+    const image = styleOf(container.querySelector('.row__image'));
+    expect(image.getPropertyValue('inline-size')).toBe('var(--size-thumb)');
+    expect(image.getPropertyValue('block-size')).toBe('var(--size-thumb)');
   });
 
   it('steht so hoch wie eine hohe Zeile, den Rand eingerechnet', async () => {

@@ -23,7 +23,5 @@
   <span class="row__trail"><ng-content select="[trail]" /></span>
   @if (species().image; as source) {
     <app-private-image class="row__image" [path]="source" [alt]="species().name" />
-  } @else {
-    <span class="row__image" aria-hidden="true"></span>
   }
 </button>

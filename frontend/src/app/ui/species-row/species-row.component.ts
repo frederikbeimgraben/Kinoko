@@ -9,7 +9,7 @@ export interface SpeciesRowSpecies {
   readonly levelText: string;
   readonly levelColour: string;
   readonly levelBackground?: string;
-  /** Der Weg zum Titelbild. Ohne Bild bleibt die Spalte leer. */
+  /** Der Weg zum Titelbild. Ohne Bild entfällt die Bildspalte. */
   readonly image?: string | null;
 }
 

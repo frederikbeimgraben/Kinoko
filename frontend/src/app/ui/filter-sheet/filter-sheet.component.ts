@@ -9,13 +9,14 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
+import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Blatt für Filterinhalte: Übersicht mit Zurücksetzen, Gruppe mit Weg zurück. */
 @Component({
   selector: 'app-filter-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OverlayHostComponent, SvgIconComponent, TranslatePipe],
+  imports: [OverlayHostComponent, ScrollFadeDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './filter-sheet.component.html',
   styleUrl: './filter-sheet.component.scss',
 })

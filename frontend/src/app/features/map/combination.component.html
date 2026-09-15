@@ -1,4 +1,4 @@
-<div class="combination__factors" role="group" [attr.aria-label]="'map.tab.combination' | t">
+<div class="combination__factors" appScrollFade role="group" [attr.aria-label]="'map.tab.combination' | t">
   @for (row of rows(); track row.factor.source) {
     <app-factor-row
       [factor]="{ name: row.name, range: row.subline, condition: row.condition }"

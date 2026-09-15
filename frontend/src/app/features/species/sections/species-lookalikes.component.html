@@ -3,11 +3,6 @@
   <div class="section__card">
     @for (row of rows(); track row.slug) {
       <app-list-row kind="catalogue" [title]="row.name">
-        <span lead class="lookalike__image">
-          @if (row.image; as path) {
-            <app-private-image class="lookalike__photo" [path]="path" [alt]="row.name" />
-          }
-        </span>
         <span action class="lookalike__ways">
           <button
             class="lookalike__way lookalike__way--compare tap"
@@ -27,6 +22,9 @@
           >
             <app-svg-icon name="chevron" [size]="18" />
           </button>
+          @if (row.image; as path) {
+            <app-private-image class="lookalike__photo" [path]="path" [alt]="row.name" />
+          }
         </span>
       </app-list-row>
     }

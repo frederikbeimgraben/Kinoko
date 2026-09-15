@@ -14,16 +14,6 @@ const ROWS = {
 const PHOTOS = { full: 'photo-358x210.png', list: 'photo-88x88.png', ...ROWS };
 const PHOTOS_WIDE = { full: 'photo-548x240.png', list: 'photo-88x88.png', ...ROWS };
 
-/** Wie weit ein Abschnitts-Board die Seite gerollt zeigt, in Pixeln. */
-const SCROLL: Record<string, number> = {
-  SpeciesSize: 412,
-  SpeciesColours: 932,
-  SpeciesColourChange: 1207,
-  SpeciesSeason: 1692,
-  SpeciesSenses: 1828,
-  SpeciesHymenium: 2123,
-};
-
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
@@ -50,12 +40,17 @@ async function openProfile(page: Page, photos = PHOTOS): Promise<void> {
   await expect(page.locator('app-species-season app-season-curve')).toBeVisible();
 }
 
-/** Rollt die Seite auf die Höhe, die das Board zeichnet. */
-async function scrollTo(page: Page, board: string): Promise<void> {
-  await page.evaluate((top) => {
+/** Rollt die Seite, bis die Überschrift des Abschnitts fast am oberen Rand steht. */
+async function scrollToSection(page: Page, heading: string): Promise<void> {
+  await page.evaluate((title) => {
     const view = document.querySelector('.page');
-    if (view !== null) view.scrollTop = top;
-  }, SCROLL[board]);
+    const node = Array.from(view?.querySelectorAll('h2') ?? []).find(
+      (one) => one.textContent.trim() === title,
+    );
+    if (view === null || !node) return;
+    const top = node.getBoundingClientRect().top - view.getBoundingClientRect().top + view.scrollTop;
+    view.scrollTop = Math.max(top - 29, 0);
+  }, heading);
 }
 
 test('SpeciesPage', async ({ page }) => {
@@ -79,42 +74,42 @@ test('SpeciesImages', async ({ page }) => {
 test('SpeciesSize', async ({ page }) => {
   guard('SpeciesSize', 'phone');
   await openProfile(page);
-  await scrollTo(page, 'SpeciesSize');
+  await scrollToSection(page, 'Maße');
   await expectBoard(page, 'SpeciesSize');
 });
 
 test('SpeciesColours', async ({ page }) => {
   guard('SpeciesColours', 'phone');
   await openProfile(page);
-  await scrollTo(page, 'SpeciesColours');
+  await scrollToSection(page, 'Farben');
   await expectBoard(page, 'SpeciesColours');
 });
 
 test('SpeciesColourChange', async ({ page }) => {
   guard('SpeciesColourChange', 'phone');
   await openProfile(page);
-  await scrollTo(page, 'SpeciesColourChange');
+  await scrollToSection(page, 'Verfärbung');
   await expectBoard(page, 'SpeciesColourChange');
 });
 
 test('SpeciesSeason', async ({ page }) => {
   guard('SpeciesSeason', 'phone');
   await openProfile(page);
-  await scrollTo(page, 'SpeciesSeason');
+  await scrollToSection(page, 'Zeitraum');
   await expectBoard(page, 'SpeciesSeason');
 });
 
 test('SpeciesSenses', async ({ page }) => {
   guard('SpeciesSenses', 'phone');
   await openProfile(page);
-  await scrollTo(page, 'SpeciesSenses');
+  await scrollToSection(page, 'Geruch und Geschmack');
   await expectBoard(page, 'SpeciesSenses');
 });
 
 test('SpeciesHymenium', async ({ page }) => {
   guard('SpeciesHymenium', 'phone');
   await openProfile(page);
-  await scrollTo(page, 'SpeciesHymenium');
+  await scrollToSection(page, 'Fruchtschicht');
   await expectBoard(page, 'SpeciesHymenium');
 });
 
@@ -128,6 +123,7 @@ test('CompareEntry', async ({ page }) => {
   await flatMap(page);
   await page.goto('/arten/boletus-edulis');
   await expect(page.getByText('Gallenröhrling')).toBeVisible();
+  await scrollToSection(page, 'Verwechslungen');
   await expectBoard(page, 'CompareEntry');
 });
 

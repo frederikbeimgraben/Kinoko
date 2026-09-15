@@ -94,6 +94,12 @@ describe('InfiniteListComponent', () => {
     vi.useRealTimers();
   });
 
+  it('blendet die Ränder der Liste aus', async () => {
+    const { container } = await render(InfiniteListComponent, { inputs: { pageSize: 40 } });
+
+    expect(container.querySelectorAll('.list > .scroll-fade')).toHaveLength(2);
+  });
+
   it('bleibt ohne Befund', async () => {
     const { container } = await render(InfiniteListComponent, { inputs: { pageSize: 40 } });
 

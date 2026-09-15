@@ -1,71 +1,7 @@
-// Feste Spuren: Von, Pfeil, Nach enden in jeder Zeile an derselben Kante.
 :host {
   display: block;
   overflow: hidden;
-  --pilz-change-field: 40px;
-  --pilz-change-arrow: 16px;
-  --pilz-change-value: 204px;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
-}
-
-.row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: var(--space-3);
-  align-items: center;
-  min-block-size: 56px;
-  padding-inline: 14px;
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-.row--last {
-  border-block-end: 0;
-}
-
-.row__trigger {
-  overflow: hidden;
-  font-size: var(--fs-row-title);
-  line-height: normal;
-  color: var(--color-text);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.row__value {
-  display: grid;
-  grid-template-columns:
-    var(--pilz-change-field) var(--pilz-change-arrow) var(--pilz-change-field)
-    minmax(0, 1fr);
-  column-gap: 6px;
-  align-items: center;
-  inline-size: var(--pilz-change-value);
-  --pilz-colour-width: var(--pilz-change-field);
-  --pilz-colour-height: 22px;
-  --pilz-colour-radius: 7px;
-  color: var(--color-text-muted);
-}
-
-.row__from {
-  grid-column: 1;
-}
-
-.row__arrow {
-  grid-column: 2;
-  justify-self: center;
-}
-
-.row__to {
-  grid-column: 3;
-}
-
-.row__speed {
-  display: flex;
-  grid-column: 4;
-  gap: 4px;
-  align-items: center;
-  justify-content: flex-start;
-  font-size: var(--fs-row-meta);
-  white-space: nowrap;
 }
