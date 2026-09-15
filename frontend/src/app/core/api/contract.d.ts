@@ -1485,6 +1485,12 @@ export interface components {
             startedAt?: string | null;
             finishedAt?: string | null;
             triggeredById?: string | null;
+            /** @description Der Name der einzigen Art eines Trainings, sonst null. */
+            speciesName?: string | null;
+            speciesCount: number;
+            recordCount: number;
+            progressDone: number;
+            progressTotal: number;
         };
         PipelineRunStep: {
             position: number;

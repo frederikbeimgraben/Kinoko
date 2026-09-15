@@ -19,6 +19,11 @@ class PipelineRunSummary(Schema):
     started_at: Timestamp | None = None
     finished_at: Timestamp | None = None
     triggered_by_id: uuid.UUID | None = None
+    species_name: str | None = None
+    species_count: int = 0
+    record_count: int = 0
+    progress_done: int = 0
+    progress_total: int = 0
 
 
 class PipelineRunSpeciesEntry(Schema):
@@ -45,8 +50,6 @@ class PipelineRunDetail(PipelineRunSummary):
     log_path: str | None = None
     metric_brier: float | None = None
     metric_brier_previous: float | None = None
-    progress_done: int
-    progress_total: int
     species: list[PipelineRunSpeciesEntry]
     steps: list[PipelineRunStepEntry]
     log_tail: list[str]

@@ -3700,7 +3700,28 @@ components:
             - type: string
               format: uuid
             - type: "null"
-      required: [id, kind, state, queuedAt]
+        speciesName:
+          description: Der Name der einzigen Art eines Trainings, sonst null.
+          oneOf:
+            - type: string
+            - type: "null"
+        speciesCount:
+          type: integer
+        recordCount:
+          type: integer
+        progressDone:
+          type: integer
+        progressTotal:
+          type: integer
+      required:
+        - id
+        - kind
+        - state
+        - queuedAt
+        - speciesCount
+        - recordCount
+        - progressDone
+        - progressTotal
 
     PipelineRunStep:
       type: object

@@ -518,3 +518,30 @@ async def test_training_finds_endpoint(api: httpx.AsyncClient, session: AsyncSes
     )
     assert answer.status_code == 200
     assert [row["id"] for row in answer.json()["items"]] == [str(find.id)]
+
+
+async def test_run_list_names_the_single_species_of_a_training(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "person-laeufe")
+    stone = species("steinpilz")
+    stone.name = "Steinpilz"
+    session.add(stone)
+    run = PipelineRun(kind=RunKind.TRAINING, state=RunState.FINISHED, progress_total=12)
+    session.add(run)
+    await session.flush()
+    session.add(
+        PipelineRunSpecies(
+            run_id=run.id, species_id=stone.id, state=RunState.FINISHED, record_count=1284
+        )
+    )
+    await session.commit()
+
+    sign_in(app_of(api), user, "run.manage")
+    answer = await api.get("/pipeline-runs")
+    assert answer.status_code == 200
+    shown = answer.json()["items"][0]
+    assert shown["speciesName"] == "Steinpilz"
+    assert shown["speciesCount"] == 1
+    assert shown["recordCount"] == 1284
+    assert shown["progressTotal"] == 12
