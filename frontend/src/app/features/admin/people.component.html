@@ -48,7 +48,22 @@
           />
         }
       </div>
-      <app-action-bar [primary]="'common.apply' | t" [busy]="saving()" (primaryClick)="save()" />
+      <app-action-bar
+        [primary]="'common.apply' | t"
+        [secondary]="'admin.people.delete' | t"
+        [secondaryDanger]="true"
+        [busy]="saving()"
+        (primaryClick)="save()"
+        (secondaryClick)="askDelete()"
+      />
     </app-sheet>
   }
 </app-overlay-host>
+
+<app-confirm-dialog
+  [open]="removing() !== null"
+  [title]="deleteQuestion()"
+  [confirmLabel]="'common.delete' | t"
+  (confirmed)="remove()"
+  (cancelled)="removing.set(null)"
+/>

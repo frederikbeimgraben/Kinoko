@@ -25,6 +25,8 @@ from app.modules.pipeline.schemas import (
     PipelineRunStepEntry,
     PipelineRunSummary,
 )
+from app.modules.pipeline.summary import summary_of as summary_with
+from app.modules.pipeline.summary import tally_of
 from app.shared.enums import RunState
 from app.shared.paging import wrap
 from app.shared.repository import Repository
@@ -51,7 +53,7 @@ def run_state(value: str) -> RunState:
 
 
 def summary_of(run: PipelineRun) -> dict[str, object]:
-    """Baut die kurze Ansicht eines Laufs."""
+    """Baut die kurze Ansicht eines frischen Laufs, noch ohne Zahlen."""
     return PipelineRunSummary.model_validate(run).dumped()
 
 
@@ -220,7 +222,8 @@ class PipelineRunService:
             self.runs.query().order_by(PipelineRun.queued_at.desc()),
             paging,
         )
-        return wrap(found, paging, PipelineRunSummary.model_validate)
+        tally = await tally_of(self.db, [run.id for run in found])
+        return wrap(found, paging, lambda run: summary_with(run, tally))
 
     async def detail(self, run: PipelineRun) -> dict[str, object]:
         """Baut den Stand eines Laufs mit Fortschritt, Schritten und Protokoll."""
@@ -232,14 +235,12 @@ class PipelineRunService:
             .order_by(PipelineRunStep.position)
         )
         steps = list((await self.db.execute(steps_query)).scalars())
-        summary = PipelineRunSummary.model_validate(run)
+        summary = summary_with(run, await tally_of(self.db, [run.id]))
         return PipelineRunDetail(
             **summary.model_dump(),
             log_path=run.log_path,
             metric_brier=run.metric_brier,
             metric_brier_previous=await self.previous_metric(run),
-            progress_done=run.progress_done,
-            progress_total=run.progress_total,
             species=[PipelineRunSpeciesEntry.model_validate(row) for row in species],
             steps=[PipelineRunStepEntry.model_validate(row) for row in steps],
             log_tail=self.log(run),
