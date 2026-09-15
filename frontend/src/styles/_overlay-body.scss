@@ -37,7 +37,7 @@
 
   // Am Rechner trägt der Kopf des Modals Titel und Schließen.
   :host-context(.shell--column) .overlay-body__head,
-  :host-context(.shell--column) .overlay-body__title:not(.overlay-body__title--own) {
+  :host-context(.shell--column) .overlay-body__title {
     display: none;
   }
 

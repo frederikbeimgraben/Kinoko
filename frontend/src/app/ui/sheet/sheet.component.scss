@@ -63,3 +63,110 @@
   min-block-size: 0;
   overflow: hidden;
 }
+
+.sheet:focus-visible {
+  outline: none;
+}
+
+// Am Rechner steht jedes Blatt als zentriertes Modal über dem Inhalt rechts
+// der Spalte. Die Spalte bleibt hell: man sieht, worüber man entscheidet.
+.sheet__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-dialog);
+  padding: 0;
+  pointer-events: auto;
+  background: rgb(0 12 7 / 25%);
+  border: 0;
+  transition: opacity var(--motion-sheet) var(--ease-standard);
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+// Ein schwebender Kasten mit `inset-block: 0 0` nimmt die ganze Höhe. Das
+// schmale Modal steht darum an seiner Mitte.
+.sheet--modal {
+  position: fixed;
+  inset-block: 50% auto;
+  inset-inline: 0;
+  z-index: calc(var(--z-dialog) + 1);
+  inline-size: var(--size-modal);
+  block-size: 70%;
+  max-block-size: 80%;
+  margin-inline: auto;
+  overflow: hidden;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: opacity var(--motion-sheet) var(--ease-standard);
+  translate: 0 -50%;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.sheet--modal.sheet--compact {
+  inline-size: var(--size-modal-compact);
+  block-size: auto;
+}
+
+:host-context(.shell--column) .sheet__scrim,
+:host-context(.shell--column) .sheet--modal {
+  inset-inline-start: calc(var(--size-rail) + var(--size-column));
+}
+
+.sheet--modal .sheet__drag {
+  display: none;
+}
+
+.sheet__head {
+  display: flex;
+  flex: none;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-4) 20px;
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.sheet__title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.sheet__note {
+  flex: none;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+.sheet__close {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: 10px;
+}
+
+// Das schmale Modal trägt nur seinen Titel: kein Schließen, keine Trennlinie.
+.sheet--compact .sheet__head {
+  padding: 20px 20px 4px;
+  border-block-end: 0;
+}
+
+.sheet--compact .sheet__title {
+  font-size: 18px;
+}
+
+.sheet--compact .sheet__close {
+  display: none;
+}

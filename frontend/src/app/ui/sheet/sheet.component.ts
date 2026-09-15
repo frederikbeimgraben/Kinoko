@@ -11,6 +11,8 @@ import {
   signal,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Die drei Rasten des Blatts, von unten nach oben. */
 export type Detent = 0 | 1 | 2;
@@ -41,7 +43,7 @@ interface Drag {
   moved: boolean;
 }
 
-/** Das Blatt über der Karte: drei Rasten, Griff, Kopf-Slot, Zug und Pfeiltasten. */
+/** Blatt über der Karte am Telefon, zentriertes Modal am Rechner. */
 // Der Griff und alles mit `head` ziehen das Blatt. Die obere Kante
 // trifft der Daumen leichter als ein schmaler Streifen.
 
@@ -50,7 +52,7 @@ interface Drag {
 @Component({
   selector: 'app-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [SvgIconComponent, TranslatePipe],
   templateUrl: './sheet.component.html',
   styleUrl: './sheet.component.scss',
 })
@@ -63,8 +65,18 @@ export class SheetComponent {
   readonly detents = input<readonly [DetentSize, DetentSize, DetentSize]>(DEFAULT_DETENTS);
   /** Ein Blatt, das die Karte sperrt (Melden, Anmelden), fängt den Fokus. */
   readonly modal = input(false);
+  /** Der Kopf des Modals am Rechner. Ohne Titel trägt der Inhalt ihn selbst. */
+  readonly title = input('');
+  /** Der gedämpfte Zusatz neben dem Titel, etwa die Koordinaten. */
+  readonly note = input('');
+  /** Ein Modal für wenige Zeilen: schmaler und nur so hoch wie sein Inhalt. */
+  readonly compact = input(false);
 
   readonly detentChange = output<Detent>();
+  readonly closed = output();
+
+  /** Der Wechsel zwischen Blatt und Modal liegt hier, nie in der Instanz. */
+  protected readonly asModal = inject(ViewportService).wide;
 
   /** Während eines Zugs führt der Finger, nicht die Raste. */
   private readonly dragged = signal<number | null>(null);
@@ -72,7 +84,8 @@ export class SheetComponent {
 
   protected readonly dragging = computed(() => this.dragged() !== null);
 
-  protected readonly height = computed(() => {
+  protected readonly height = computed<string | null>(() => {
+    if (this.asModal()) return null;
     const dragged = this.dragged();
     if (dragged !== null) return `${dragged}px`;
     const size = this.detents()[this.detent()];
@@ -91,7 +104,7 @@ export class SheetComponent {
   }
 
   protected nextDetent(): void {
-    if (this.drag?.moved) return;
+    if (this.asModal() || this.drag?.moved) return;
     this.detentChange.emit(((this.detent() + 1) % 3) as Detent);
   }
 
@@ -104,6 +117,7 @@ export class SheetComponent {
   }
 
   protected onPointerDown(event: PointerEvent): void {
+    if (this.asModal()) return;
     // Der Zeiger gehört vor der Schwelle dem Ziel darunter, nicht dem Blatt.
     // Ein abgegriffener Zeiger schluckt sonst den Klick auf eine Woche.
     this.drag = {
@@ -148,8 +162,14 @@ export class SheetComponent {
     setTimeout(() => (this.drag = null));
   }
 
-  /** Im modalen Blatt bleibt der Tabulator im Blatt. */
+  /** Escape schließt das Modal. Im modalen Blatt bleibt der Tabulator darin. */
   protected onKey(event: KeyboardEvent): void {
+    if (this.asModal() && event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.closed.emit();
+      return;
+    }
     if (!this.modal() || event.key !== 'Tab') return;
     const targets = this.focusable();
     if (targets.length === 0) return;
@@ -207,6 +227,7 @@ export class SheetComponent {
   }
 
   private applyInset(): void {
-    document.documentElement.style.setProperty('--pilz-sheet-inset', `${this.sheetHeight()}px`);
+    const height = this.asModal() ? 0 : this.sheetHeight();
+    document.documentElement.style.setProperty('--pilz-sheet-inset', `${height}px`);
   }
 }

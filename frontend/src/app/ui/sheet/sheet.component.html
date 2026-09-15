@@ -1,12 +1,41 @@
+@if (asModal() && modal()) {
+  <button
+    class="sheet__scrim tap"
+    type="button"
+    data-press="tint"
+    [attr.aria-label]="'common.close' | t"
+    (click)="closed.emit()"
+  ></button>
+}
 <section
   class="sheet"
   role="dialog"
+  tabindex="-1"
   [class.sheet--dragging]="dragging()"
+  [class.sheet--modal]="asModal()"
+  [class.sheet--compact]="compact()"
   [attr.aria-label]="label()"
-  [attr.aria-modal]="modal() ? 'true' : null"
+  [attr.aria-modal]="modal() || asModal() ? 'true' : null"
   [style.block-size]="height()"
   (keydown)="onKey($event)"
 >
+  @if (asModal() && title() !== '') {
+    <header class="sheet__head">
+      <h2 class="sheet__title">{{ title() }}</h2>
+      @if (note() !== '') {
+        <span class="sheet__note">{{ note() }}</span>
+      }
+      <button
+        class="sheet__close tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'common.close' | t"
+        (click)="closed.emit()"
+      >
+        <app-svg-icon name="close" [size]="16" />
+      </button>
+    </header>
+  }
   <div
     class="sheet__drag"
     (pointerdown)="onPointerDown($event)"

@@ -41,3 +41,8 @@
   font-size: 15px;
   line-height: 1.55;
 }
+
+// Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.
+:host-context(.shell--column) .signin__scrim {
+  display: none;
+}

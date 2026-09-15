@@ -10,25 +10,10 @@
   ></button>
   <div
     class="overlay__panel"
-    [class.overlay__panel--compact]="compact()"
     [class.overlay__panel--cover]="cover()"
     tabindex="-1"
     (keydown)="onKeydown($event)"
   >
-    @if (wide() && title() !== '') {
-      <div class="overlay__head">
-        <h2 class="overlay__title">{{ title() }}</h2>
-        <button
-          class="overlay__close tap"
-          type="button"
-          data-press="scale"
-          [attr.aria-label]="'common.close' | t"
-          (click)="closed.emit()"
-        >
-          <app-svg-icon name="close" [size]="16" />
-        </button>
-      </div>
-    }
     <ng-content />
   </div>
 }

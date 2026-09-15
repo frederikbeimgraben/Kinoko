@@ -6,7 +6,12 @@
   display: contents;
 }
 
-// Der Name steht unter einer Kopfzeile, wie das Board sie zeigt.
+// Der Name steht unter einer Kopfzeile, wie das Board sie zeigt. Am Rechner
+// trägt der Kopf des Modals den Titel.
+:host-context(.shell--column) .overlay-head {
+  display: none;
+}
+
 .overlay-head {
   display: flex;
   flex: none;
