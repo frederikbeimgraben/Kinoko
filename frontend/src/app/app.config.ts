@@ -23,7 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000',
+      registrationStrategy: 'registerImmediately',
     }),
     // Die Texte des Kits folgen der Sprache der App, statt eine eigene zu führen.
     { provide: UI_KIT_INTL, useFactory: () => uiKitIntlFromLang(inject(I18nService).locale) },
