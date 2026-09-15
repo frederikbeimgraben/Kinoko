@@ -440,6 +440,7 @@
   "map.factor.soilMoisture": "Soil moisture",
   "map.factor.soilPh": "Soil pH",
   "map.factor.species": "Species",
+  "map.factor.speciesLayer": "{name} forecast",
   "map.forecastBelow": "Forecast below",
   "map.label": "Map of Germany",
   "map.layer.fixed": "constant over time",

@@ -133,19 +133,24 @@ export class MapView {
 
   readonly speciesName = computed(() => this.species()?.name ?? '');
 
+  /** Die Spalte am Rechner nennt immer die Art: die Reiter stehen darunter. */
+  readonly speciesTitle = computed(() =>
+    this.noSpecies() ? this.i18n.translate('map.species.choose') : this.speciesName(),
+  );
+
   /** Der Kopf nennt, was die Karte zeigt: die Art, die Ebene oder die Kombination. */
   readonly title = computed(() => {
     if (this.onCombination()) return this.i18n.translate('map.tab.combination');
     if (this.onLayer()) return this.layer()?.label ?? this.i18n.translate('map.tab.layer');
-    if (this.noSpecies()) return this.i18n.translate('map.species.choose');
-    return this.speciesName();
+    return this.speciesTitle();
   });
 
   /** Jede Quelle, die ein Faktor nennen kann: die Ebenen und die Arten. */
   readonly sources = computed<ReadonlyMap<string, Layer>>(() => {
     const all = new Map<string, Layer>();
     for (const entry of this.speciesChoices()) {
-      const layer = this.tiles.speciesLayer(entry.value, entry.name);
+      const name = this.i18n.translate('map.factor.speciesLayer', { name: entry.name });
+      const layer = this.tiles.speciesLayer(entry.value, name);
       if (layer !== null) all.set(entry.value, layer);
     }
     for (const layer of this.tiles.layerList()) all.set(layer.id, layer);

@@ -104,11 +104,11 @@ export class MapOverlaysComponent {
     () => new Set(this.combination.factors().map((factor) => factor.source)),
   );
 
-  protected readonly speciesLayers = computed<readonly Layer[]>(() =>
-    [...this.view.sources().values()].filter((layer) =>
-      this.view.speciesChoices().some((entry) => entry.value === layer.id),
-    ),
-  );
+  /** Als Faktor steht die Vorhersage der Art bereit, die die Karte zeigt. */
+  protected readonly speciesLayers = computed<readonly Layer[]>(() => {
+    const layer = this.view.sources().get(this.view.slug());
+    return layer ? [layer] : [];
+  });
 
   protected chooseSpecies(slug: string): void {
     this.state.species.set(slug);

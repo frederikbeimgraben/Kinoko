@@ -119,7 +119,7 @@ test('SpeciesChooser', async ({ page }) => {
 
 test('FactorPicker', async ({ page }) => {
   guard('FactorPicker', 'phone');
-  await openMap(page, { view: 'combination', detent: 2 });
+  await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
   await board(page, 'FactorPicker', 'map-regen-300.png');
 });
@@ -194,7 +194,8 @@ test('MapDesktopFactorPicker', async ({ page }) => {
 test('MapDesktopCombinations', async ({ page }) => {
   guard('MapDesktopCombinations', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
-  await page.getByRole('button', { name: 'Kombination', exact: true }).click();
+  // Die Spalte nennt im Kopf die Art; der Griff dort öffnet die Kombinationen.
+  await page.getByRole('button', { name: 'Steinpilz', exact: true }).click();
   await board(page, 'MapDesktopCombinations', 'map-desktop-stein-900.png');
 });
 

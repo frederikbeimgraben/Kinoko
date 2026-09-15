@@ -1,8 +1,8 @@
 <app-sheet-head
-  [title]="view.title()"
+  [title]="title()"
   [arrows]="!view.noSpecies()"
   [loading]="view.loading()"
-  [titleLink]="!view.onCombination()"
+  [titleLink]="link()"
   [week]="view.weekText()"
   [playing]="playing()"
   (titleClick)="titleChosen.emit()"

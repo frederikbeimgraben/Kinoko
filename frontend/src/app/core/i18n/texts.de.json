@@ -440,6 +440,7 @@
   "map.factor.soilMoisture": "Bodenfeuchte",
   "map.factor.soilPh": "Boden pH",
   "map.factor.species": "Arten",
+  "map.factor.speciesLayer": "{name}-Vorhersage",
   "map.forecastBelow": "Vorhersage darunter",
   "map.label": "Karte von Deutschland",
   "map.layer.fixed": "zeitlich konstant",
