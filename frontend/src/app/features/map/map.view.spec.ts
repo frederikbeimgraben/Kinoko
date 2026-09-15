@@ -92,9 +92,9 @@ describe('MapView', () => {
   it('bittet um eine Art, wenn keine eine Vorhersage hat', async () => {
     const { view: model } = await view();
     const catalogue = TestBed.inject(SpeciesState) as unknown as {
-      bundle: () => SpeciesBundle | null;
+      species: () => readonly SpeciesEntry[];
     };
-    catalogue.bundle = () => ({ items: [] });
+    catalogue.species = () => [];
 
     expect(model.noSpecies()).toBe(true);
     expect(model.title()).toBe('Art wählen');
