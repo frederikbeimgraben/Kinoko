@@ -9,13 +9,14 @@ const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
 /** Was die angemeldete App nebenher holt. Ohne Antwort meldet sie einen Fehler. */
 const EMPTY_PAGE = { eintraege: [], gesamt: 0 };
+const EMPTY_FINDS = { items: [], nextCursor: null };
 /** Die Bilder der Artseite. Ohne Antwort meldet die Seite einen Fehler. */
 const NO_PHOTOS = { '/api/photos': { items: [], nextCursor: null } };
 
 const SIGNED_IN: Record<string, unknown> = {
   '/api/combinations': EMPTY_PAGE,
   '/api/funde': EMPTY_PAGE,
-  '/api/funde/geteilt': EMPTY_PAGE,
+  '/api/finds': EMPTY_FINDS,
   '/api/marker': EMPTY_PAGE,
   '/api/zonen': EMPTY_PAGE,
 };

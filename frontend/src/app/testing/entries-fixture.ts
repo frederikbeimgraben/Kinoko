@@ -1,4 +1,7 @@
+import type { components } from '../core/api/contract';
 import type { Find, SharedFind, Marker, Page, Zone } from '../core/api/models';
+
+type FindEntry = components['schemas']['Find'];
 
 /** Eine Seite, wie sie jede Liste des Dienstes liefert. */
 export function page<E>(eintraege: E[]): Page<E> {
@@ -55,16 +58,36 @@ export const ZONE: Zone = {
   geaendertAm: '2026-09-01T10:00:00+02:00',
 };
 
-export const SHARED_FIND: SharedFind = {
+/** Ein geteilter Fund, so wie ihn der Vertrag abgibt. */
+export const SHARED_FIND_ENTRY: FindEntry = {
   id: 'geteilt-eins',
-  artSlug: 'maronenroehrling',
+  ownerId: 'konto-zwei',
+  speciesId: 'maronenroehrling',
   lat: 48.6,
   lon: 9.2,
-  gerundet: true,
-  datum: '2026-09-04',
-  anzahl: 5,
-  notiz: 'Wiese am Waldrand, viele junge',
-  melder: 'Jonas',
-  eigen: false,
-  fotos: 0,
+  foundOn: '2026-09-04',
+  count: 5,
+  forTraining: false,
+  reviewState: 'accepted',
+  visibility: 'shared',
+  note: 'Wiese am Waldrand, viele junge',
+  createdAt: '2026-09-04T10:00:00+02:00',
+  updatedAt: '2026-09-04T10:00:00+02:00',
+  deleted: false,
+};
+
+/** Eine Seite Funde des Vertrags. */
+export function findPage(items: readonly FindEntry[]): components['schemas']['FindPage'] {
+  return { items: [...items], nextCursor: null };
+}
+
+export const SHARED_FIND: SharedFind = {
+  id: 'geteilt-eins',
+  speciesId: 'maronenroehrling',
+  lat: 48.6,
+  lon: 9.2,
+  foundOn: '2026-09-04',
+  count: 5,
+  note: 'Wiese am Waldrand, viele junge',
+  reviewState: 'accepted',
 };

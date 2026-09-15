@@ -6,7 +6,7 @@ const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
   '/api/funde': { eintraege: [], gesamt: 0 },
-  '/api/funde/geteilt': { eintraege: [], gesamt: 0 },
+  '/api/finds': { items: [], nextCursor: null },
   '/api/marker': { eintraege: [], gesamt: 0 },
   '/api/zonen': { eintraege: [], gesamt: 0 },
 };

@@ -207,8 +207,26 @@ function entries(count: number, kind: string): { eintraege: unknown[]; gesamt: n
   return { eintraege, gesamt: count };
 }
 
+/** Geteilte Funde des Vertrags, geblättert wie `/finds`. */
+function finds(count: number): { items: unknown[]; nextCursor: null } {
+  const items = Array.from({ length: count }, (_, i) => ({
+    id: `find-${i}`,
+    lon: 9 + i * 0.05,
+    lat: 48.5 + i * 0.05,
+    speciesId: 'boletus-edulis',
+    foundOn: '2025-10-01',
+    count: null,
+    reviewState: 'accepted',
+    visibility: 'shared',
+    note: null,
+    updatedAt: '2025-10-01T00:00:00Z',
+    deleted: false,
+  }));
+  return { items, nextCursor: null };
+}
+
 /** Die Zahlen aus dem Board `KarteEbenen`: 12 geteilte Funde, 5 Marker, 2 Zonen. */
-export const SHARED_FINDS = entries(12, 'fund');
+export const SHARED_FINDS = finds(12);
 export const MARKERS = entries(5, 'marker');
 export const ZONES = {
   eintraege: Array.from({ length: 2 }, (_, i) => ({

@@ -171,16 +171,25 @@ export class EntriesComponent {
     };
   }
 
-  private sharedRow(fund: SharedFind): Row {
+  /** „4. Sept. · 5 Stück“: der Vertrag nennt zu einem fremden Fund kein Konto. */
+  private sharedSubline(datum: string, anzahl: number | null): string {
+    if (anzahl === null) return datum;
+    return this.i18n.translate('fund.unterOhneMelder', {
+      datum,
+      anzahl: this.i18n.translate('fund.stueck', { anzahl }),
+    });
+  }
+
+  private sharedRow(find: SharedFind): Row {
     return {
-      schluessel: `geteilt-${fund.id}`,
-      farbe: fund.eigen ? OWN_FIND : FOREIGN_FIND,
-      titel: this.speciesName(fund.artSlug),
-      subline: this.findSubline(this.datum(fund.datum), fund.anzahl, fund.melder ?? ''),
-      notiz: fund.notiz ?? '',
+      schluessel: `geteilt-${find.id}`,
+      farbe: FOREIGN_FIND,
+      titel: find.speciesId === null ? '' : (this.arten.entryById(find.speciesId)?.name ?? ''),
+      subline: this.sharedSubline(this.datum(find.foundOn), find.count),
+      notiz: find.note ?? '',
       badge: { text: this.i18n.translate('eintraege.badge.geteilt'), variant: 'success' },
       // Ein fremder Fund hat kein Blatt: der Dienst gibt ihn nur als Punkt her.
-      object: fund.eigen ? { kind: 'find', id: fund.id } : null,
+      object: null,
     };
   }
 

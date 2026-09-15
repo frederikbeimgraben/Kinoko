@@ -30,7 +30,7 @@ const REPLIES = {
   '/api/funde': { eintraege: [], gesamt: 0 },
   '/api/marker': MARKERS,
   '/api/zonen': ZONES,
-  '/api/funde/geteilt': SHARED_FINDS,
+  '/api/finds': SHARED_FINDS,
 };
 
 async function openMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {

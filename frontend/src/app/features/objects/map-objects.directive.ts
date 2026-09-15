@@ -7,6 +7,7 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
 import { EntriesState } from '../entries/entries.state';
 import { colorHex } from '../entries/colors';
+import { SpeciesState } from '../species/species.state';
 import { MapState, type ObjectKind } from '../map/map.state';
 
 /**
@@ -51,6 +52,7 @@ export class MapObjectsDirective {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
   private readonly locating = inject(LocationService);
+  private readonly species = inject(SpeciesState);
   private readonly map = inject(MapState);
 
   /** Ein langer Druck auf ein Objekt: der Ort auf dem Bildschirm und das Ziel. */
@@ -140,16 +142,19 @@ export class MapObjectsDirective {
     return collection(finds.map((fund) => point(fund.id, fund.lon, fund.lat, { farbe: OWN_FIND })));
   }
 
-  /**
-   * Nur fremde geteilte Funde: die eigenen liegen schon exakt auf der Ebene
-   * darüber und stünden sonst zweimal da, einmal davon gerundet.
-   */
+  /** Der Dienst gibt nur fremde geteilte Funde her; die eigenen liegen darüber. */
   private shared(finds: readonly SharedFind[]): FeatureCollection {
     return collection(
-      finds
-        .filter((fund) => !fund.eigen)
-        .map((fund) => point(fund.id, fund.lon, fund.lat, { farbe: FOREIGN_FIND, gerundet: fund.gerundet })),
+      finds.map((find) =>
+        point(find.id, find.lon, find.lat, { farbe: FOREIGN_FIND, gerundet: this.coarse(find) }),
+      ),
     );
+  }
+
+  /** Der Ort einer geschützten Art kommt gerundet und liegt als blasse Fläche. */
+  private coarse(find: SharedFind): boolean {
+    if (find.speciesId === null) return false;
+    return (this.species.entryById(find.speciesId)?.protection ?? 'none') !== 'none';
   }
 
   /** Punkt und Genauigkeitskreis. Ohne Ortung bleibt die Ebene leer. */

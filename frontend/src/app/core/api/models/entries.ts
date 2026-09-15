@@ -65,24 +65,6 @@ export interface FindInput {
 /** Was sich an einem Fund ändern lässt. Weggelassene Felder bleiben. */
 export type FindPatch = Partial<FindInput>;
 
-/**
- * Ein geteilter Fund, so wie ihn ein fremdes Konto sieht. `gerundet` sagt, ob
- * der Ort auf ein 5-km-Raster gelegt wurde; das gilt für geschützte Arten.
- */
-export interface SharedFind {
-  id: string;
-  artSlug: string;
-  lat: number;
-  lon: number;
-  gerundet: boolean;
-  datum: string;
-  anzahl: number | null;
-  notiz: string | null;
-  melder: string | null;
-  eigen: boolean;
-  fotos: number;
-}
-
 /** Ein eigener Marker: ein Punkt mit Name, Farbe und Notiz. */
 export interface Marker {
   id: string;
