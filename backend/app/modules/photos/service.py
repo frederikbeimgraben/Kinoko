@@ -50,12 +50,16 @@ async def visible_or_404(repo: PhotoRepository, photo_id: uuid.UUID, viewer: Vie
 async def approve(
     db: AsyncSession, repo: PhotoRepository, photo_id: uuid.UUID, reviewer: User
 ) -> Photo:
-    """Gibt ein Foto frei."""
+    """Gibt ein Foto frei. Ohne Titelbild der Art wird es das Titelbild."""
     photo = await repo.get_or_404(photo_id)
     photo.state = PhotoState.APPROVED
     photo.reviewed_by_id = reviewer.id
     photo.reviewed_at = now()
     photo.reject_reason = None
+    if photo.species_id is not None and not photo.lead:
+        existing_lead = await repo.one(Photo.species_id == photo.species_id, Photo.lead.is_(True))
+        if existing_lead is None:
+            photo.lead = True
     await db.commit()
     await db.refresh(photo)
     return photo
