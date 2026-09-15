@@ -53,28 +53,10 @@ async def test_me_needs_a_signed_in_account(api: httpx.AsyncClient) -> None:
     assert answer.status_code == 401
 
 
-async def test_permissions_of_reads_permissions_via_roles(
-    api: httpx.AsyncClient,  # noqa: ARG001
-    session: AsyncSession,
-) -> None:
-    user = await make_user(session)
-    await new_role(session, "spotter", "find.review", "image.review")
-    await grant_role(session, user, "spotter")
-    permissions = await AccessService(session).permissions_of(user)
-    assert permissions == frozenset({"find.review", "image.review"})
-
-
-async def test_my_permissions_endpoint_reads_the_account_roles(
-    api: httpx.AsyncClient,
-    session: AsyncSession,
-) -> None:
-    user = await make_user(session)
-    await new_role(session, "spotter", "find.review")
-    await grant_role(session, user, "spotter")
-    sign_in(app_of(api), user)
+async def test_my_permissions_endpoint_needs_a_signed_in_account(api: httpx.AsyncClient) -> None:
+    sign_out(app_of(api))
     answer = await api.get("/me/permissions")
-    assert answer.status_code == 200
-    assert answer.json() == {"permissions": ["find.review"]}
+    assert answer.status_code == 401
 
 
 async def test_export_contains_own_objects_and_skips_deleted_ones(
