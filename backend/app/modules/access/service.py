@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Final
 from sqlalchemy import delete, select
 
 from app.core.errors import Conflict, Invalid, NotFound
-from app.models import Combination, Find, Marker, Photo, Role, RolePermission, User, UserRole, Zone
+from app.models import Combination, Find, Marker, Photo, Role, User, UserRole, Zone
 from app.modules.access import export
 from app.modules.access.permissions import PERMISSIONS
 from app.modules.access.repository import PersonRepository, RoleRepository
@@ -51,15 +51,6 @@ class AccessService:
         await self.db.commit()
         await self.db.refresh(found)
         return found
-
-    async def permissions_of(self, user: User) -> frozenset[str]:
-        """Liest die Rechte eines Kontos aus seinen Rollen."""
-        found = await self.db.execute(
-            select(RolePermission.permission_key)
-            .join(UserRole, UserRole.role_id == RolePermission.role_id)
-            .where(UserRole.user_id == user.id),
-        )
-        return frozenset(found.scalars())
 
     def _validate_permissions(self, keys: Sequence[str]) -> None:
         if any(key not in PERMISSIONS for key in keys):
