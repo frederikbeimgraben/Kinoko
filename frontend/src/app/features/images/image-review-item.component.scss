@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-block-size: 0;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+}
+
+// Das Blatt fragt nach dem Grund; die Seite dahinter tritt zurück.
+.item--dimmed {
+  opacity: 0.35;
+}
+
+.item__counter {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.item__image {
+  flex: 0 0 auto;
+  block-size: 260px;
+  border-radius: var(--radius-lg);
+}
+
+.item__card {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}

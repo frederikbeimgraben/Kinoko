@@ -2,6 +2,9 @@
   <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
   <div class="page" [class.page--wide]="wide()">
     <div class="page__column">
+      <app-species-images [slug]="slug()" />
+    </div>
+    <div class="page__column">
       <app-species-features [species]="one" />
       <app-species-size [groups]="one.measurements" />
       <app-species-colours [groups]="one.colours" />
@@ -28,6 +31,7 @@
         icon="species"
         [text]="'species.notFound' | t"
         [action]="'species.backToList' | t"
+        [leading]="true"
         (actionClick)="toList()"
       />
     }

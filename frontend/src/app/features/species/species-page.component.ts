@@ -6,6 +6,7 @@ import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component'
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
+import { SpeciesImagesComponent } from '../images/species-images.component';
 import { SpeciesColourChangeComponent } from './sections/species-colour-change.component';
 import { SpeciesColoursComponent } from './sections/species-colours.component';
 import { SpeciesFeaturesComponent } from './sections/species-features.component';
@@ -29,6 +30,7 @@ import { SpeciesState } from './species.state';
     SpeciesColoursComponent,
     SpeciesFeaturesComponent,
     SpeciesHymeniumComponent,
+    SpeciesImagesComponent,
     SpeciesLookalikesComponent,
     SpeciesSensesComponent,
     SpeciesSizeComponent,

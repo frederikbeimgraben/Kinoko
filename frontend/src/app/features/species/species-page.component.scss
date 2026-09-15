@@ -9,6 +9,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  gap: 20px;
   min-block-size: 0;
   padding: var(--size-gutter);
   overflow-y: auto;
@@ -30,7 +31,7 @@
 }
 
 .page--wide .page__column {
-  padding: var(--size-gutter);
+  padding: 20px 24px;
   overflow-y: auto;
 }
 

@@ -7,7 +7,7 @@ import { ImageCreditComponent } from './image-credit.component';
 describe('ImageCreditComponent', () => {
   it('nennt Fotograf und Lizenz in einer Zeile', async () => {
     const { container } = await render(ImageCreditComponent, {
-      inputs: { photographer: 'Marie Weber', licence: 'cc-by-sa-4' },
+      inputs: { photographer: 'Marie Weber', licence: 'cc_by_sa_4' },
     });
 
     expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe('ImageCreditComponent', () => {
   });
 
   it('kennt jede Lizenz aus der Tabelle', async () => {
-    const licences = ['cc0', 'cc-by-4', 'cc-by-sa-4', 'public-domain'] as const;
+    const licences = ['cc0', 'cc_by_4', 'cc_by_sa_4', 'public_domain'] as const;
     for (const licence of licences) {
       TestBed.resetTestingModule();
       const { container } = await render(ImageCreditComponent, {

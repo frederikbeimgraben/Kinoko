@@ -19,6 +19,16 @@ export const routes: Routes = [
       import('./features/species/species-page.component').then((m) => m.SpeciesPageComponent),
   },
   {
+    path: 'arten/:slug/bilder/neu',
+    loadComponent: () =>
+      import('./features/images/image-form.component').then((m) => m.ImageFormComponent),
+  },
+  {
+    path: 'arten/:slug/bilder/:id',
+    loadComponent: () =>
+      import('./features/images/image-view.component').then((m) => m.ImageViewComponent),
+  },
+  {
     // Ein eigener Brocken: die Einordnung wird selten geöffnet und kostet im
     // ersten Bündel darum nichts.
     path: 'taxonomie/:rank/:slug',
@@ -59,7 +69,14 @@ export const routes: Routes = [
       {
         path: 'bilder',
         canActivate: [requiresPermission('image.review')],
-        loadComponent: () => import('./features/admin/images.component').then((m) => m.AdminImagesComponent),
+        loadComponent: () =>
+          import('./features/images/image-queue.component').then((m) => m.ImageQueueComponent),
+      },
+      {
+        path: 'bilder/:id',
+        canActivate: [requiresPermission('image.review')],
+        loadComponent: () =>
+          import('./features/images/image-review-item.component').then((m) => m.ImageReviewItemComponent),
       },
       {
         path: 'personen',

@@ -1,0 +1,35 @@
+<app-page-header [title]="'image.queue.title' | t" [back]="true" (backClick)="back()">
+  <span class="queue__counter">{{ counter() }}</span>
+</app-page-header>
+
+<div class="queue">
+  <app-review-queue
+    [items]="cards()"
+    [showCounter]="false"
+    (accepted)="accept($event)"
+    (rejected)="ask($event)"
+    (undone)="undo()"
+  >
+    <ng-template let-card>
+      <article class="card">
+        <app-private-image class="card__image" [path]="card.path" [alt]="card.alt" />
+        <div class="card__body">
+          <div class="card__head">
+            <span class="card__species">{{ card.species }}</span>
+            <app-badge variant="primary">{{ card.licence }}</app-badge>
+          </div>
+          <span class="card__meta">{{ card.meta }}</span>
+          @if (card.caption) {
+            <span class="card__caption">{{ card.caption }}</span>
+          }
+        </div>
+      </article>
+    </ng-template>
+  </app-review-queue>
+</div>
+
+<app-reject-dialog
+  [open]="rejecting() !== null"
+  (rejected)="reject($event)"
+  (closed)="rejecting.set(null)"
+/>

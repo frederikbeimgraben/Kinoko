@@ -1,0 +1,27 @@
+<app-page-header [title]="'image.submission.title' | t" [back]="true" (backClick)="back()">
+  <span class="item__counter">{{ counter() }}</span>
+</app-page-header>
+
+<div class="item" [class.item--dimmed]="asking()">
+  <app-private-image class="item__image" [path]="path()" [alt]="alt()" />
+  <div class="item__card">
+    <app-key-value-table>
+      <app-key-value-row [key]="'species.fieldLabel' | t" [value]="speciesName()" />
+      <app-key-value-row [key]="'image.field.submitted' | t" [value]="submitted()" />
+      <app-key-value-row [key]="'image.field.photo' | t" [value]="photo()?.photographer" />
+      <app-key-value-row [key]="'image.field.licence' | t">
+        <app-badge variant="primary">{{ licence() }}</app-badge>
+      </app-key-value-row>
+    </app-key-value-table>
+  </div>
+</div>
+
+<app-action-bar
+  [primary]="'image.approve' | t"
+  [secondary]="'image.reject' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="approve()"
+  (secondaryClick)="asking.set(true)"
+/>
+
+<app-reject-dialog [open]="asking()" (rejected)="reject($event)" (closed)="asking.set(false)" />

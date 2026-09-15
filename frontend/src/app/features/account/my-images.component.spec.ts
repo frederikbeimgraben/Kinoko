@@ -7,14 +7,17 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
-import { imageSubmission } from '../../testing/species-images-fixture';
-import type { ImageSubmission } from '../../core/api/models';
+import { photo } from '../../testing/photos-fixture';
+import type { Photo } from '../../core/api/models';
 import { MyImagesComponent } from './my-images.component';
 
-async function build(
-  entries: ImageSubmission[],
-  total?: number,
-): Promise<{ container: Element; http: HttpTestingController; refresh: () => void }> {
+interface Setup {
+  container: Element;
+  http: HttpTestingController;
+  refresh: () => void;
+}
+
+async function build(items: Photo[], nextCursor: string | null = null): Promise<Setup> {
   vi.stubGlobal('URL', {
     ...URL,
     createObjectURL: () => 'blob:eins',
@@ -27,11 +30,9 @@ async function build(
   await vi.waitFor(() => {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
-  http
-    .expectOne('/api/species-images/mine?offset=0&limit=25')
-    .flush({ eintraege: entries, gesamt: total ?? entries.length, limit: 25, offset: 0 });
+  http.expectOne('/api/photos?mine=true').flush({ items, nextCursor });
   detectChanges();
-  for (const request of http.match((request) => request.url.endsWith('/thumb'))) {
+  for (const request of http.match((call) => call.url.endsWith('/list'))) {
     request.flush(new Blob(['x'], { type: 'image/jpeg' }));
   }
   detectChanges();
@@ -41,19 +42,19 @@ async function build(
 describe('MyImagesComponent', () => {
   it('zeigt je Einreichung den Zustand', async () => {
     const { container } = await build([
-      imageSubmission({ id: 'bild-eins', speciesSlug: 'steinpilz', state: 'approved' }),
-      imageSubmission({ id: 'bild-zwei', speciesSlug: 'pfifferling', state: 'submitted' }),
+      photo({ id: 'bild-eins', speciesId: 'steinpilz', state: 'approved' }),
+      photo({ id: 'bild-zwei', speciesId: 'maronenroehrling', state: 'submitted' }),
     ]);
 
     expect(screen.getByText('Freigegeben')).toBeInTheDocument();
-    expect(screen.getByText('In Prüfung')).toBeInTheDocument();
-    expect(screen.getAllByText('Eingereicht am 9. September 2026')).toHaveLength(2);
+    expect(screen.getByText('Eingereicht')).toBeInTheDocument();
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     await noViolations(container);
   });
 
   it('nennt bei einer Absage den Grund', async () => {
     await build([
-      imageSubmission({
+      photo({
         id: 'bild-drei',
         state: 'rejected',
         rejectReason: 'Unscharf, die Röhren sind nicht zu erkennen.',
@@ -70,21 +71,17 @@ describe('MyImagesComponent', () => {
     expect(screen.getByText('Du hast noch kein Bild eingereicht.')).toBeInTheDocument();
   });
 
-  it('holt die nächste Seite ans Ende und zählt mit', async () => {
-    const first = ['eins', 'zwei'].map((id) => imageSubmission({ id, state: 'approved' }));
-    const { http, refresh } = await build(first, 3);
+  it('holt die nächste Seite über den Zeiger', async () => {
+    const first = ['eins', 'zwei'].map((id) => photo({ id, state: 'approved' }));
+    const { http, refresh } = await build(first, 'zeiger-eins');
 
-    expect(screen.getByText('2 von 3')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Mehr laden' }));
-    // Der Versatz folgt dem, was schon geladen ist, nicht der Seitenzahl.
-    http.expectOne('/api/species-images/mine?offset=2&limit=25').flush({
-      eintraege: [imageSubmission({ id: 'drei', state: 'rejected', rejectReason: 'Unscharf.' })],
-      gesamt: 3,
-      limit: 25,
-      offset: 2,
+    http.expectOne('/api/photos?mine=true&cursor=zeiger-eins').flush({
+      items: [photo({ id: 'drei', state: 'rejected', rejectReason: 'Unscharf.' })],
+      nextCursor: null,
     });
     refresh();
-    for (const request of http.match((call) => call.url.endsWith('/thumb'))) {
+    for (const request of http.match((call) => call.url.endsWith('/list'))) {
       request.flush(new Blob(['x'], { type: 'image/jpeg' }));
     }
     refresh();

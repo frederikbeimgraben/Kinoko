@@ -1,5 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+  type TestRequest,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { photo } from '../../testing/photos-fixture';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
@@ -65,11 +69,11 @@ describe('ImagesState', () => {
     const file = new File(['x'], 'pilz.png', { type: 'image/png' });
 
     const running = state.submit({ photographer: 'Marie', licence: 'own' }, file);
+    let request: TestRequest | null = null;
     await vi.waitFor(() => {
-      http.expectOne('/api/photos');
+      request = http.expectOne('/api/photos');
     });
-    const request = http.expectOne('/api/photos');
-    request.flush(photo({ state: 'submitted' }));
+    (request as unknown as TestRequest).flush(photo({ state: 'submitted' }));
     const done = await running;
 
     expect(done?.state).toBe('submitted');

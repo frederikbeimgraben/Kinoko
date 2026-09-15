@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import type { Provider } from '@angular/core';
 import { render, screen, type RenderResult } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -20,7 +21,7 @@ function closeLabel(): string {
 async function build(
   image: Photo | null,
   title = 'Steinpilz',
-  extra: unknown[] = [],
+  extra: Provider[] = [],
 ): Promise<RenderResult<ImageViewerComponent>> {
   const result = await render(ImageViewerComponent, {
     inputs: { image, title },

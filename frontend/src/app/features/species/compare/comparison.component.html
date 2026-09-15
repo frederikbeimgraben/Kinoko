@@ -1,0 +1,107 @@
+<app-page-header [title]="'species.section.compare' | t" [back]="true" (backClick)="back()">
+  @if (wide() && species().length > 0) {
+    <span class="compare__count">{{ count() }}</span>
+  }
+</app-page-header>
+<div class="compare">
+  @if (species().length > 0) {
+    <div class="compare__card">
+      <app-key-value-table class="compare__table">
+        <app-key-value-row key="" [values]="names()" [head]="true" />
+        <app-key-value-row [key]="'species.field.edibility' | t" [cells]="levels()">
+          <ng-template let-level>
+            <app-level-pill
+              [text]="level.text"
+              [colour]="level.colour"
+              [background]="level.background"
+            />
+          </ng-template>
+        </app-key-value-row>
+        @if (filled(widths())) {
+          <app-key-value-row [key]="'species.compare.capWidth' | t" [cells]="widths()">
+            <ng-template let-size>
+              @if (size) {
+                <span class="compare__measure">{{ size.value }} <em>{{ size.unit }}</em></span>
+              }
+            </ng-template>
+          </app-key-value-row>
+        }
+        @for (row of colourRows(); track row.key) {
+          <app-key-value-row [key]="row.key" [cells]="row.cells">
+            <ng-template let-swatch>
+              @if (swatch) {
+                <app-colour-field
+                  class="compare__swatch"
+                  [colours]="swatch.colours"
+                  [mode]="swatch.mode"
+                  [label]="swatch.label"
+                />
+              }
+            </ng-template>
+          </app-key-value-row>
+        }
+        @if (filled(pressures())) {
+          <app-key-value-row [key]="'species.compare.pressure' | t" [cells]="pressures()">
+            <ng-template let-test>
+              @if (test) {
+                <span class="compare__change">
+                  <span class="compare__colours">
+                    @if (test.from) {
+                      <app-colour-field
+                        [colours]="test.from.colours"
+                        [mode]="test.from.mode"
+                        [label]="test.from.label"
+                      />
+                    }
+                    @if (test.to) {
+                      <app-svg-icon name="forward" [size]="14" [label]="arrowLabel()" />
+                      <app-colour-field
+                        [colours]="test.to.colours"
+                        [mode]="test.to.mode"
+                        [label]="test.to.label"
+                      />
+                    }
+                  </span>
+                  <span class="compare__speed">{{ test.speed }}</span>
+                </span>
+              }
+            </ng-template>
+          </app-key-value-row>
+        }
+        @if (filled(stemNets())) {
+          <app-key-value-row [key]="'species.compare.stemNet' | t" [cells]="stemNets()">
+            <ng-template let-text>
+              @if (text) {
+                <span>{{ text }}</span>
+              }
+            </ng-template>
+          </app-key-value-row>
+        }
+        @if (filled(tastes())) {
+          <app-key-value-row [key]="'species.field.taste' | t" [cells]="tastes()">
+            <ng-template let-tags>
+              @if (tags) {
+                <app-tag-list [tags]="tags" [label]="tasteLabel()" />
+              }
+            </ng-template>
+          </app-key-value-row>
+        }
+        @if (filled(periods())) {
+          <app-key-value-row [key]="'species.field.time' | t" [cells]="periods()">
+            <ng-template let-time>
+              @if (time) {
+                <app-year-band
+                  class="compare__band"
+                  [fromMonth]="time.from"
+                  [toMonth]="time.to"
+                  [months]="marks()"
+                  [label]="bandLabel()"
+                />
+              }
+            </ng-template>
+          </app-key-value-row>
+        }
+      </app-key-value-table>
+    </div>
+  }
+</div>
