@@ -84,6 +84,7 @@
   display: none;
 }
 
+// Am Rechner steht das Konto über der Karte, rechts der Spalte.
 .shell--column .shell__avatar {
-  display: none;
+  inset-inline-start: calc(var(--size-rail) + var(--size-column) + 12px);
 }

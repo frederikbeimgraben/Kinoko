@@ -36,6 +36,9 @@ const COMBINATION_KEY = 'pilzkarte.combination.v1';
 export const BOARD_FACTORS =
   'niederschlag:ge:80,temperatur:bw:8:16,buche:ge:0.3,hangneigung:le:15,!boden_ph:le:5.5';
 
+/** Die Spalte am Rechner trägt in den Boards einen Faktor. */
+export const COLUMN_FACTORS = 'niederschlag:ge:80';
+
 /** Legt Zustand, Manifeste und Kacheln auf die Seite. Kacheln bleiben leer. */
 export async function mockMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {
   await page.addInitScript(
