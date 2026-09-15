@@ -27,6 +27,7 @@ export type {
 } from './catalogue';
 export { PERMISSIONS, PERMISSION_AREAS } from './access';
 export type {
+  Me,
   MyPermissions,
   Permission,
   PermissionArea,

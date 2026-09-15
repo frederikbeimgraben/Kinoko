@@ -363,7 +363,7 @@ async def test_set_lead_requires_approved_state(
 ) -> None:
     user = await make_user(session)
     species = await make_species(session)
-    sign_in(app_of(api), user)
+    sign_in(app_of(api), user, "image.review")
     created = (await upload(api, speciesId=str(species.id))).json()
     response = await api.put(f"/photos/{created['id']}/lead")
     assert response.status_code == 409
@@ -379,6 +379,19 @@ async def test_set_lead_forbidden_for_non_owner(
     created = (await upload(api, speciesId=str(species.id))).json()
     await api.post(f"/photos/{created['id']}/approval")
     sign_in(app_of(api), stranger)
+    response = await api.put(f"/photos/{created['id']}/lead")
+    assert response.status_code == 403
+
+
+async def test_set_lead_forbidden_for_owner_without_review_right(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session)
+    species = await make_species(session)
+    sign_in(app_of(api), owner, "image.review")
+    created = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{created['id']}/approval")
+    sign_in(app_of(api), owner)
     response = await api.put(f"/photos/{created['id']}/lead")
     assert response.status_code == 403
 
@@ -588,7 +601,7 @@ async def test_set_lead_unknown_photo_is_not_found(
     api: httpx.AsyncClient, session: AsyncSession
 ) -> None:
     user = await make_user(session)
-    sign_in(app_of(api), user)
+    sign_in(app_of(api), user, "image.review")
     response = await api.put(f"/photos/{uuid.uuid4()}/lead")
     assert response.status_code == 404
 

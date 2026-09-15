@@ -1,6 +1,7 @@
 import { of, throwError, type Observable } from 'rxjs';
 import { AccessApi } from '../core/api/access.api';
 import type {
+  Me,
   MyPermissions,
   Page,
   Permission,
@@ -13,6 +14,14 @@ import type {
 import type { ProblemDetail } from '../core/api/problem';
 
 const NOW = '2026-09-12T10:00:00+02:00';
+
+/** Das eigene Konto, so wie `/api/me` es liefert. */
+export const ME: Me = {
+  id: 'konto-eins',
+  sub: 'sub-eins',
+  email: 'frederik@beimgraben.net',
+  name: 'Frederik',
+};
 
 /** Der Katalog, so wie `/api/permissions` ihn liefert. */
 export const CATALOGUE: PermissionEntry[] = [
@@ -95,6 +104,9 @@ export function problem(status: number, detail: string): ProblemDetail {
  * und liest hinterher nach, was gefragt wurde.
  */
 export class AccessApiDouble {
+  meAnswer: Me = ME;
+  /** Wahr, wenn der Abruf des eigenen Kontos scheitern soll. */
+  meFails = false;
   mineAnswer: Permission[] = EVERY_PERMISSION;
   /** Wahr, wenn der Abruf der eigenen Rechte scheitern soll. */
   mineFails = false;
@@ -109,7 +121,14 @@ export class AccessApiDouble {
   readonly patched: { id: string; patch: RolePatch }[] = [];
   readonly deleted: string[] = [];
   readonly assigned: { sub: string; roles: string[] }[] = [];
+  meCalls = 0;
   mineCalls = 0;
+
+  me(): Observable<Me> {
+    this.meCalls += 1;
+    if (this.meFails) return throwError(() => problem(503, 'Der Dienst antwortet nicht.'));
+    return of(this.meAnswer);
+  }
 
   mine(): Observable<MyPermissions> {
     this.mineCalls += 1;

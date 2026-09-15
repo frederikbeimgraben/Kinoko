@@ -4,6 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { AccountService } from '../../core/access/account.service';
+import { PermissionsService } from '../../core/access/permissions.service';
 import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -18,7 +20,13 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(items: Photo[], id = 'zwei'): Promise<Setup> {
+/** Wer als Prüfer gilt, sieht beide Aktionen. Wer besitzt, nur das Entfernen. */
+interface Access {
+  reviewer?: boolean;
+  owner?: boolean;
+}
+
+async function build(items: Photo[], id = 'zwei', access: Access = {}): Promise<Setup> {
   vi.stubGlobal('URL', {
     ...URL,
     createObjectURL: () => 'blob:eins',
@@ -26,7 +34,19 @@ async function build(items: Photo[], id = 'zwei'): Promise<Setup> {
   });
   const { container, detectChanges } = await render(ImageViewComponent, {
     inputs: { slug: 'steinpilz', id },
-    providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(ANY_ROUTE)],
+    providers: [
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      provideRouter(ANY_ROUTE),
+      {
+        provide: PermissionsService,
+        useValue: { can: (permission: string) => access.reviewer === true && permission === 'image.review' },
+      },
+      {
+        provide: AccountService,
+        useValue: { owns: (ownerId: string | null) => access.owner === true && ownerId !== null },
+      },
+    ],
   });
   const http = TestBed.inject(HttpTestingController);
   await vi.waitFor(() => {
@@ -67,8 +87,29 @@ describe('ImageViewComponent', () => {
     expect(screen.queryByText('Ort')).not.toBeInTheDocument();
   });
 
+  it('zeigt als Gast keine Aktionen', async () => {
+    await build(TWO);
+
+    expect(screen.queryByRole('button', { name: 'Als Titelbild setzen' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Bild entfernen' })).not.toBeInTheDocument();
+  });
+
+  it('zeigt als Besitzer nur Entfernen', async () => {
+    await build(TWO, 'zwei', { owner: true });
+
+    expect(screen.queryByRole('button', { name: 'Als Titelbild setzen' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bild entfernen' })).toBeInTheDocument();
+  });
+
+  it('zeigt als Prüfer beide Aktionen', async () => {
+    await build(TWO, 'zwei', { reviewer: true });
+
+    expect(screen.getByRole('button', { name: 'Als Titelbild setzen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bild entfernen' })).toBeInTheDocument();
+  });
+
   it('setzt das Titelbild', async () => {
-    const { http, refresh } = await build(TWO);
+    const { http, refresh } = await build(TWO, 'zwei', { reviewer: true });
 
     await userEvent.click(screen.getByRole('button', { name: 'Als Titelbild setzen' }));
     http.expectOne('/api/photos/zwei/lead').flush(photo({ id: 'zwei', lead: true }));
@@ -78,7 +119,7 @@ describe('ImageViewComponent', () => {
   });
 
   it('entfernt das Bild und geht zurück zur Art', async () => {
-    const { http, router, refresh } = await build(TWO);
+    const { http, router, refresh } = await build(TWO, 'zwei', { reviewer: true });
 
     await userEvent.click(screen.getByRole('button', { name: 'Bild entfernen' }));
     http.expectOne('/api/photos/zwei').flush(null);

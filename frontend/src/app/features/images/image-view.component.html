@@ -6,11 +6,15 @@
   [count]="count()"
   (back)="back()"
 />
-<app-action-bar
-  [primary]="'image.setCover' | t"
-  [secondary]="'image.remove' | t"
-  [quiet]="true"
-  [secondaryDanger]="true"
-  (primaryClick)="setCover()"
-  (secondaryClick)="remove()"
-/>
+@if (canSetLead()) {
+  <app-action-bar
+    [primary]="'image.setCover' | t"
+    [secondary]="'image.remove' | t"
+    [quiet]="true"
+    [secondaryDanger]="true"
+    (primaryClick)="setCover()"
+    (secondaryClick)="remove()"
+  />
+} @else if (canRemove()) {
+  <app-action-bar [primary]="'image.remove' | t" [danger]="true" (primaryClick)="remove()" />
+}

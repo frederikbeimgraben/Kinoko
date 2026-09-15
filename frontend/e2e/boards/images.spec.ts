@@ -56,10 +56,11 @@ async function pick(page: Page, photo: string): Promise<void> {
 
 test('ImageView', async ({ page }) => {
   guard('ImageView', 'phone');
+  await mockSignIn(page);
   await open(
     page,
     '/arten/boletus-edulis/bilder/bild-zwei',
-    { '/api/photos': photoPage(SPECIES_PHOTOS) },
+    { '/api/photos': photoPage(SPECIES_PHOTOS), ...rights(['image.review']) },
     photoFixture(358, 300),
   );
   await expect(page.getByText('2 von 4')).toBeVisible();

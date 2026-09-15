@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { ApiClient } from './api-client';
-import type { MyPermissions, Page, PermissionEntry, Person, Role, RoleInput, RolePatch } from './models';
+import { ApiClient, type Silent } from './api-client';
+import type { Me, MyPermissions, Page, PermissionEntry, Person, Role, RoleInput, RolePatch } from './models';
 
 /**
  * Die Endpunkte der Rechteverwaltung. Bis auf die eigenen Rechte verlangt jeder
@@ -10,6 +10,11 @@ import type { MyPermissions, Page, PermissionEntry, Person, Role, RoleInput, Rol
 @Injectable({ providedIn: 'root' })
 export class AccessApi {
   private readonly api = inject(ApiClient);
+
+  /** Das eigene Konto. Braucht nur eine Anmeldung. */
+  me(options?: Silent): Observable<Me> {
+    return this.api.get<Me>('/me', undefined, options);
+  }
 
   /** Die eigenen Rechte. Braucht nur eine Anmeldung. */
   mine(): Observable<MyPermissions> {

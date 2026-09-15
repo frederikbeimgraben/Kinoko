@@ -8,6 +8,10 @@
  * entscheidet, welche Rechte es gibt und wer sie trägt.
  */
 
+import type { components } from '../contract';
+
+export type Me = components['schemas']['Me'];
+
 export const PERMISSIONS = [
   'species.edit',
   'species.create',
