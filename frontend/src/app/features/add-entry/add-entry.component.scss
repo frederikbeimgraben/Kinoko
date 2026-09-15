@@ -77,3 +77,8 @@
   font-weight: var(--fw-semibold);
   color: var(--color-primary);
 }
+
+// Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.
+:host-context(.shell--column) .addentry__scrim {
+  display: none;
+}

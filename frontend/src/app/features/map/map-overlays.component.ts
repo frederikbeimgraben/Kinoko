@@ -28,6 +28,7 @@ const TITLE: Partial<Record<NonNullable<Overlay>, TranslationKey>> = {
   layer: 'map.tab.layer',
   factors: 'map.factor.choose',
   combinations: 'map.combination.list',
+  save: 'map.combination.save',
 };
 
 /** Ein Name braucht wenig Platz, jedes andere Blatt die ganze Höhe. */

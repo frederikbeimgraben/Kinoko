@@ -71,37 +71,12 @@ describe('OverlayHostComponent', () => {
     expect(scrim).toHaveAttribute('data-press', 'tint');
   });
 
-  it('trägt am Rechner einen Kopf mit Titel und Schließen', async () => {
-    const { container } = await render(OverlayHostComponent, {
-      inputs: { open: true, title: 'Art wählen' },
-      providers: [WIDE],
-    });
-
-    expect(screen.getByRole('heading', { name: 'Art wählen' })).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: 'Schließen' })).toHaveLength(2);
-    await noViolations(container);
-  });
-
-  it('schließt am Rechner über den Knopf im Kopf', async () => {
-    const { fixture } = await render(OverlayHostComponent, {
-      inputs: { open: true, title: 'Art wählen' },
-      providers: [WIDE],
-    });
-    let calls = 0;
-    fixture.componentInstance.closed.subscribe(() => (calls += 1));
-
-    await userEvent.click(screen.getAllByRole('button', { name: 'Schließen' })[1]);
-
-    expect(calls).toBe(1);
-  });
-
-  it('lässt den Kopf ohne Titel weg', async () => {
-    const { container } = await render(OverlayHostComponent, {
-      inputs: { open: true },
-      providers: [WIDE],
-    });
+  it('lässt Kopf und Modal dem Blatt', async () => {
+    const { container } = await render(HostComponent, { providers: [WIDE] });
 
     expect(container.querySelector('.overlay__head')).toBeNull();
+    expect(container.querySelector('.overlay__close')).toBeNull();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
   });
 
   it('renders without German text against an empty catalogue', async () => {

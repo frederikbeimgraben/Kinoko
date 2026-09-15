@@ -108,3 +108,8 @@
   padding: var(--space-1) var(--size-gutter) var(--space-4);
   overflow-y: auto;
 }
+
+// Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.
+:host-context(.shell--column) .texts__scrim {
+  display: none;
+}

@@ -37,79 +37,15 @@
   outline: none;
 }
 
-// Am Rechner steht das Modal über dem Inhalt rechts der Spalte. Die Spalte
-// bleibt hell, damit man sieht, worüber man entscheidet.
+// Am Rechner trägt `app-sheet` Scrim und Modal. Ein eigener Rahmen hier
+// spannte sonst einen Bezugsrahmen auf, in dem das Modal klebte.
 :host-context(.shell--column) .overlay__scrim {
-  inset-inline-start: calc(var(--size-rail) + var(--size-column));
-  background: rgb(0 12 7 / 25%);
-}
-
-:host-context(.shell--column) .overlay__panel {
-  display: flex;
-  flex-direction: column;
-  inset-block: 50% auto;
-  inset-inline-start: calc(var(--size-rail) + var(--size-column));
-  inline-size: var(--size-modal);
-  block-size: 70%;
-  margin-inline: auto;
-  overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-50%);
-
-  @starting-style {
-    opacity: 0;
-    transform: translateY(-50%);
-  }
-}
-
-:host-context(.shell--column) .overlay__panel--compact {
-  inline-size: var(--size-modal-compact);
-  block-size: auto;
-}
-
-// Das schmale Modal trägt nur seinen Titel: kein Schließen, keine Trennlinie.
-.overlay__panel--compact .overlay__head {
-  padding: 20px 20px 4px;
-  border-block-end: 0;
-}
-
-.overlay__panel--compact .overlay__title {
-  font-size: 18px;
-}
-
-.overlay__panel--compact .overlay__close {
   display: none;
 }
 
-.overlay__head {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) 20px;
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-.overlay__title {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
-}
-
-.overlay__close {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  inline-size: 32px;
-  block-size: 32px;
-  padding: 0;
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: 10px;
+:host-context(.shell--column) .overlay__panel {
+  transition: none;
+  transform: none;
 }
 
 // Ein deckendes Blatt hängt am Fenster, nicht am Reiter: es liegt auch über

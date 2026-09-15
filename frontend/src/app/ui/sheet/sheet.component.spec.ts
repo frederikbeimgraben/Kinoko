@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { SheetComponent } from './sheet.component';
+
+/** Der Rechner: die Hülle meldet die breite Ansicht. */
+const WIDE = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 @Component({
   imports: [SheetComponent],
@@ -208,6 +212,104 @@ describe('SheetComponent', () => {
 
     expect(handle.inlineSize).toBe('100%');
     expect(handle.justifyContent).toBe('center');
+  });
+
+  describe('am Rechner', () => {
+    it('trägt den Kopf mit Titel, Zusatz und Schließen', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Fund melden', title: 'Fund melden', note: '48,5203 · 9,0511' },
+        providers: [WIDE],
+      });
+
+      expect(container.querySelector('.sheet--modal')).not.toBeNull();
+      expect(screen.getByRole('heading', { name: 'Fund melden' })).toBeInTheDocument();
+      expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
+      await noViolations(container);
+    });
+
+    it('lässt den Kopf ohne Titel weg', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+
+      expect(container.querySelector('.sheet__head')).toBeNull();
+    });
+
+    it('lässt die Rasten weg', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', detent: 2, detents: [0.1, 0.5, 0.9] },
+        providers: [WIDE],
+      });
+
+      expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('');
+    });
+
+    it('meldet das Schließen über den Knopf im Kopf', async () => {
+      const { container, fixture } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', title: 'Porcini' },
+        providers: [WIDE],
+      });
+      let calls = 0;
+      fixture.componentInstance.closed.subscribe(() => (calls += 1));
+
+      const close = container.querySelector<HTMLElement>('.sheet__close');
+      if (close === null) throw new Error('Schließen fehlt im Kopf.');
+      await userEvent.click(close);
+
+      expect(calls).toBe(1);
+    });
+
+    it('meldet das Schließen über den Scrim', async () => {
+      const { container, fixture } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', modal: true },
+        providers: [WIDE],
+      });
+      let calls = 0;
+      fixture.componentInstance.closed.subscribe(() => (calls += 1));
+
+      const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
+      scrim?.click();
+
+      expect(calls).toBe(1);
+      expect(scrim).toHaveClass('tap');
+    });
+
+    it('meldet das Schließen auf Escape und lässt die Taste nicht weiter', async () => {
+      const { container, fixture } = await render(SheetComponent, {
+        inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+      let calls = 0;
+      let outside = 0;
+      fixture.componentInstance.closed.subscribe(() => (calls += 1));
+      container.addEventListener('keydown', () => (outside += 1));
+
+      container.querySelector<HTMLElement>('.sheet')?.focus();
+      await userEvent.keyboard('{Escape}');
+
+      expect(calls).toBe(1);
+      expect(outside).toBe(0);
+    });
+
+    it('dunkelt nur ab, was das Blatt sperrt', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+
+      expect(container.querySelector('.sheet__scrim')).toBeNull();
+    });
+
+    it('lässt am Telefon Scrim und Kopf weg', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', title: 'Porcini', modal: true },
+      });
+
+      expect(container.querySelector('.sheet__scrim')).toBeNull();
+      expect(container.querySelector('.sheet__head')).toBeNull();
+      expect(container.querySelector('.sheet--modal')).toBeNull();
+    });
   });
 
   it('renders without German text against an empty catalogue', async () => {

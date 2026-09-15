@@ -45,15 +45,8 @@
       }
     }
     @case ('save') {
-      @if (!wide()) {
-        <h2 class="overlay-head">{{ 'map.combination.save' | t }}</h2>
-      }
+      <h2 class="overlay-head">{{ 'map.combination.save' | t }}</h2>
       <div class="overlay-body overlay-body--roomy">
-        @if (wide()) {
-          <h2 class="overlay-body__title overlay-body__title--own">
-            {{ 'map.combination.save' | t }}
-          </h2>
-        }
         <app-form-field [label]="'common.name' | t" [value]="name()" (valueChange)="name.set($event)" />
       </div>
       <app-action-bar
@@ -74,12 +67,16 @@
   }
 </ng-template>
 
-<app-overlay-host [open]="shown()" [title]="title()" [compact]="open() === 'save'" (closed)="closed.emit()">
-  @if (wide()) {
+<app-overlay-host [open]="shown()" (closed)="closed.emit()">
+  <app-sheet
+    [label]="'nav.tab.map' | t"
+    [title]="title()"
+    [compact]="open() === 'save'"
+    [detent]="detent()"
+    [detents]="detents"
+    [modal]="true"
+    (closed)="closed.emit()"
+  >
     <ng-container [ngTemplateOutlet]="body" />
-  } @else {
-    <app-sheet [label]="'nav.tab.map' | t" [detent]="detent()" [detents]="detents" [modal]="true">
-      <ng-container [ngTemplateOutlet]="body" />
-    </app-sheet>
-  }
+  </app-sheet>
 </app-overlay-host>

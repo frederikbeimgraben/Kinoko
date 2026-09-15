@@ -121,7 +121,10 @@ export async function showMapImage(page: Page, name: string): Promise<void> {
     if (host === null) return;
     // Das Bild füllt den freien Streifen über dem obersten Blatt, wie im Board.
     const frame = host.getBoundingClientRect();
-    const sheets = [...document.querySelectorAll('.sheet')].map((sheet) => sheet.getBoundingClientRect().top);
+    // Ein Modal schwebt über der Karte. Nur ein Blatt von unten kürzt sie.
+    const sheets = [...document.querySelectorAll('.sheet:not(.sheet--modal)')].map(
+      (sheet) => sheet.getBoundingClientRect().top,
+    );
     const top = sheets.length > 0 ? Math.min(...sheets) : frame.bottom;
     const height = Math.max(0, Math.min(top, frame.bottom) - frame.top);
     const image = document.createElement('img');

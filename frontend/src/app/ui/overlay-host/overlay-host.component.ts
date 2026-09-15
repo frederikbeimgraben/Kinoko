@@ -8,33 +8,23 @@ import {
   output,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ViewportService } from '../../core/layout/viewport.service';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Ein Slot: am Telefon ein Blatt von unten, am Rechner ein Modal. */
+/** Ein Slot über `app-sheet`: offen oder zu, Scrim am Telefon, Escape. */
 @Component({
   selector: 'app-overlay-host',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [TranslatePipe],
   templateUrl: './overlay-host.component.html',
   styleUrl: './overlay-host.component.scss',
 })
 export class OverlayHostComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  private readonly viewport = inject(ViewportService);
-
   readonly open = input.required<boolean>();
   /** Ein modales Blatt dunkelt ab; ein Blatt über der Karte lässt sie sehen. */
   readonly modal = input(false);
-  /** Der Kopf des Modals am Rechner. Ohne Titel trägt der Inhalt ihn selbst. */
-  readonly title = input('');
-  /** Ein Modal für wenige Zeilen: schmaler und nur so hoch wie sein Inhalt. */
-  readonly compact = input(false);
   /** Ein deckendes Blatt liegt über dem ganzen Fenster, auch über der Leiste. */
   readonly cover = input(false);
-
-  protected readonly wide = this.viewport.wide;
 
   readonly closed = output();
 
