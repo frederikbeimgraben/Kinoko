@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
+let nextNumber = 0;
+
 /**
  * Ein Suchfeld mit Lupe und Löschen. Das Löschen erscheint bei Inhalt.
  */
@@ -20,6 +22,7 @@ export class SearchFieldComponent {
 
   readonly valueChange = output<string>();
 
+  protected readonly fieldId = `app-suchfeld-${nextNumber++}`;
   protected readonly empty = computed(() => this.value().length === 0);
 
   protected onInput(event: Event): void {

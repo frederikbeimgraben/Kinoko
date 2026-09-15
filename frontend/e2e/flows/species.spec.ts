@@ -56,6 +56,22 @@ test('Die zweite Seite lädt beim Scrollen', async ({ page }) => {
   await expect(page.getByRole('button', { name: /Art 44 / })).toBeVisible();
 });
 
+test.describe('Suchfeld am Telefon', () => {
+  test.use({ hasTouch: true });
+
+  test('Tipp auf das Suchfeld fokussiert es und filtert nach Eingabe', async ({ page }) => {
+    await openList(page, SEARCHABLE);
+    await expect(page.getByText('Perlpilz')).toBeVisible();
+
+    await page.locator('.search').tap();
+    await expect(page.getByRole('textbox')).toBeFocused();
+
+    await page.keyboard.type('stein');
+    await expect(page.getByText('Steinpilz')).toBeVisible();
+    await expect(page.getByText('Perlpilz')).toHaveCount(0);
+  });
+});
+
 test('Die Einordnung holt die Stufe aus dem Vertrag', async ({ page }) => {
   const paths: string[] = [];
   page.on('request', (request) => {
