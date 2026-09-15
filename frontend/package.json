@@ -20,6 +20,7 @@
     "check:size": "node tools/check-size.mjs",
     "check:selectors": "node tools/check-selectors.mjs",
     "check:german": "node tools/check-german.mjs",
+    "boards:render": "node tools/render-boards.mjs",
     "boards:sync": "node tools/sync-boards.mjs",
     "texts:sync": "node tools/sync-texts.mjs",
     "api:generate": "openapi-typescript ../backend/openapi.yaml -o src/app/core/api/contract.d.ts",

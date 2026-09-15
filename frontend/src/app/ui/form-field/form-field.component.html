@@ -1,6 +1,10 @@
-<label class="field__label" [class.sr-only]="hideLabel()" [attr.for]="readOnly() ? null : fieldId">{{
-  label()
-}}</label>
+<label
+  class="field__label"
+  [class.field__label--section]="section()"
+  [class.sr-only]="hideLabel()"
+  [attr.for]="readOnly() ? null : fieldId"
+  >{{ label() }}</label
+>
 @if (readOnly()) {
   <button
     class="field field--button tap"

@@ -30,6 +30,8 @@ export class FormFieldComponent {
   readonly icon = input<IconName>();
   /** Versteckt die Beschriftung, ohne sie wegzulassen. */
   readonly hideLabel = input(false);
+  /** Die Beschriftung als Abschnittszeile über dem Feld, nicht als Feldname. */
+  readonly section = input(false);
   /** Überschreibt die aus `kind` hergeleitete Bildschirmtastatur. */
   readonly inputMode = input<InputMode>();
   /** Überschreibt die aus `multiline` hergeleitete Eingabetaste. */
