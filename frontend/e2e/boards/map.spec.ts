@@ -119,7 +119,7 @@ test('SpeciesChooser', async ({ page }) => {
 
 test('FactorPicker', async ({ page }) => {
   guard('FactorPicker', 'phone');
-  await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
+  await openMap(page, { view: 'combination', detent: 2 });
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
   await board(page, 'FactorPicker', 'map-regen-300.png');
 });

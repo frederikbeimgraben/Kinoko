@@ -13,7 +13,6 @@
   </div>
   <div class="picker__card" role="group" [attr.aria-label]="'map.factor.choose' | t">
     @for (group of groups(); track group.title) {
-      <h3 class="picker__group">{{ group.title | t }}</h3>
       @for (layer of group.layers; track layer.id) {
         <app-list-row
           [title]="layer.label"
