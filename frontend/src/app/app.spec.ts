@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { render, screen } from '@testing-library/angular';
 import { App } from './app';
 import { routes } from './app.routes';
@@ -12,7 +13,12 @@ async function app() {
   // Die Hülle hängt über den Avatar am Konto und damit an der API; im Test
   // antwortet dort niemand.
   return render(App, {
-    providers: [provideRouter(routes), provideHttpClient(), provideHttpClientTesting()],
+    providers: [
+      provideRouter(routes),
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      provideServiceWorker('ngsw-worker.js', { enabled: false }),
+    ],
   });
 }
 

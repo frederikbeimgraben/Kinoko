@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../core/auth';
@@ -23,7 +24,11 @@ interface Setup {
 async function build(signedIn = false, configuration: AppConfig | null = CONFIG): Promise<Setup> {
   const manager = new ManagerDouble();
   const { container, detectChanges } = await render(AccountComponent, {
-    providers: [provideRouter([]), ...authProvider(manager, configuration)],
+    providers: [
+      provideRouter([]),
+      provideServiceWorker('ngsw-worker.js', { enabled: false }),
+      ...authProvider(manager, configuration),
+    ],
   });
   const auth = TestBed.inject(AuthService);
   if (signedIn) {
