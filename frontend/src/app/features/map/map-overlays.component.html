@@ -50,10 +50,15 @@
       }
     }
     @case ('save') {
-      <div class="overlay-body">
-        <h2 class="overlay-body__title overlay-body__title--own">
-          {{ 'map.combination.save' | t }}
-        </h2>
+      @if (!wide()) {
+        <h2 class="overlay-head">{{ 'map.combination.save' | t }}</h2>
+      }
+      <div class="overlay-body overlay-body--roomy">
+        @if (wide()) {
+          <h2 class="overlay-body__title overlay-body__title--own">
+            {{ 'map.combination.save' | t }}
+          </h2>
+        }
         <app-form-field [label]="'common.name' | t" [value]="name()" (valueChange)="name.set($event)" />
       </div>
       <app-action-bar

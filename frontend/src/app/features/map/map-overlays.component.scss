@@ -6,6 +6,23 @@
   display: contents;
 }
 
+// Der Name steht unter einer Kopfzeile, wie das Board sie zeigt.
+.overlay-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  block-size: var(--size-tap);
+  padding-inline: var(--size-gutter);
+  font-size: var(--fs-control);
+  font-weight: var(--fw-semibold);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+// Unter der Kopfzeile steht der Name mit vollem Abstand.
+.overlay-body--roomy {
+  padding-block-start: var(--size-gutter);
+}
+
 .overlay-foot {
   padding: var(--space-3) var(--size-gutter) var(--size-gutter);
 }
