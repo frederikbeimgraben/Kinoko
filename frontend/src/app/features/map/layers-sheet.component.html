@@ -13,18 +13,21 @@
     <h3 class="layers__title">{{ 'map.layers.title' | t }}</h3>
     <div class="layers__switches">
       <app-choice-row
+        variant="boxed"
         [label]="'map.layers.sharedFinds' | t"
         [count]="count(sharedFindCount())"
         [checked]="showSharedFinds()"
         (toggled)="showSharedFindsChange.emit($event)"
       />
       <app-choice-row
+        variant="boxed"
         [label]="'map.layers.myMarkers' | t"
         [count]="count(markerCount())"
         [checked]="showMarkers()"
         (toggled)="showMarkersChange.emit($event)"
       />
       <app-choice-row
+        variant="boxed"
         [label]="'entry.zones' | t"
         [count]="count(zoneCount())"
         [checked]="showZones()"

@@ -18,6 +18,7 @@ import { EntriesState } from '../entries/entries.state';
 import { SpeciesState } from '../species/species.state';
 import { CombinationState } from './combination.state';
 import { DEFAULT_LAYER, MapState } from './map.state';
+import { SPECIES_TINT } from './species-tint';
 
 /** Die Werte, die Kopf und Inhalt der Karte lesen. Eine Quelle für beide Geräte. */
 @Injectable({ providedIn: 'root' })
@@ -114,6 +115,7 @@ export class MapView {
         levelText: this.i18n.translate(EDIBILITY_TEXT[species.edibility]),
         levelColour: EDIBILITY_TONE[species.edibility].colour,
         levelBackground: EDIBILITY_TONE[species.edibility].background,
+        tint: SPECIES_TINT[species.slug],
       })),
   );
 
