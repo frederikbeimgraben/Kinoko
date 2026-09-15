@@ -9,6 +9,7 @@ import {
   viewChild,
   type OnDestroy,
 } from '@angular/core';
+import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 export type PageSize = 40 | 50;
@@ -17,7 +18,7 @@ export type PageSize = 40 | 50;
 @Component({
   selector: 'app-infinite-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SkeletonComponent],
+  imports: [ScrollFadeDirective, SkeletonComponent],
   templateUrl: './infinite-list.component.html',
   styleUrl: './infinite-list.component.scss',
 })

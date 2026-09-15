@@ -36,12 +36,19 @@ describe('SpeciesColourChangeComponent', () => {
     await noViolations(container);
   });
 
-  it('nennt die Auslöser als Wörter und die Dauer', async () => {
+  it('nennt die Auslöser als Titel und Farben mit Dauer als Unterzeile', async () => {
     await render(SpeciesColourChangeComponent, { inputs: { changes: CHANGES } });
 
     expect(screen.getByText('Druck, Anschnitt')).toBeInTheDocument();
-    expect(screen.getByText('sofort')).toBeInTheDocument();
-    expect(screen.getByText('1 min')).toBeInTheDocument();
+    expect(screen.getByText('gelb, dann blau · sofort')).toBeInTheDocument();
+    expect(screen.getByText('weiß, dann blau · 1 min')).toBeInTheDocument();
+  });
+
+  it('trägt je Zeile eine Fläche mit Von und Nach', async () => {
+    const { container } = await render(SpeciesColourChangeComponent, { inputs: { changes: CHANGES } });
+
+    expect(container.querySelectorAll('.field')).toHaveLength(2);
+    expect(screen.getByRole('img', { name: 'gelb bis blau' })).toBeInTheDocument();
   });
 
   it('zeigt ohne Verfärbung keine Karte', async () => {

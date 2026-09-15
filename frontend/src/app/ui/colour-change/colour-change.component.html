@@ -1,17 +1,5 @@
-@for (trigger of triggers(); track $index; let i = $index; let last = $last) {
-  <div class="row" [class.row--last]="last">
-    <span class="row__trigger">{{ trigger }}</span>
-    <span class="row__value">
-      @if (from()[i]?.length) {
-        <app-colour-field class="row__from" [colours]="from()[i]" mode="single" [label]="fromLabels()[i]" />
-      }
-      @if (changes(i)) {
-        <app-svg-icon class="row__arrow" name="forward" [size]="14" [label]="arrowLabel()" />
-      }
-      @if (to()[i]?.length) {
-        <app-colour-field class="row__to" [colours]="to()[i]" mode="single" [label]="toLabels()[i]" />
-      }
-      <span class="row__speed">{{ speed()[i] }}</span>
-    </span>
-  </div>
+@for (row of rows(); track $index) {
+  <app-list-row kind="catalogue" [title]="row.trigger" [subline]="row.subline">
+    <app-colour-field trail [colours]="row.colours" [label]="row.label" />
+  </app-list-row>
 }

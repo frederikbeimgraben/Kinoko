@@ -6,6 +6,7 @@ import type { Layer } from '../../core/tiles/layers';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { FactorRowComponent } from '../../ui/factor-row/factor-row.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { conditionText, type Factor } from './factors';
 
 /** Ein Faktor, wie ihn die Zeile braucht: mit aufgelöster Quelle. */
@@ -21,7 +22,7 @@ interface Row {
 @Component({
   selector: 'app-combination',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, AddRowComponent, FactorRowComponent, TranslatePipe],
+  imports: [ActionBarComponent, AddRowComponent, FactorRowComponent, ScrollFadeDirective, TranslatePipe],
   templateUrl: './combination.component.html',
   styleUrl: './combination.component.scss',
 })

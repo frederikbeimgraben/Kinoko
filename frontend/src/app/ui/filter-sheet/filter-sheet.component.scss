@@ -71,6 +71,8 @@
 }
 
 .filtersheet__content {
+  --scroll-fade-gap: var(--size-gutter);
+
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;

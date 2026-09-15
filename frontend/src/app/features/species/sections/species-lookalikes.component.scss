@@ -7,18 +7,11 @@
   --size-row: 60px;
 }
 
-// Ohne Bild bleibt die Spalte leer: der Name beginnt auf derselben Kante.
-.lookalike__image {
-  display: block;
-  flex: none;
-  inline-size: 44px;
-  block-size: 44px;
-}
-
 .lookalike__photo {
   display: block;
-  inline-size: 100%;
-  block-size: 100%;
+  flex: none;
+  inline-size: var(--size-thumb);
+  block-size: var(--size-thumb);
   border-radius: 9px;
 }
 

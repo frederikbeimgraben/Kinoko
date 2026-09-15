@@ -4,6 +4,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { layerIcon } from '../../core/tiles/layer-groups';
 import { layerGroups, unitOf, type Layer } from '../../core/tiles/layers';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SvgIconComponent, type IconName } from '../../ui/svg-icon/svg-icon.component';
 import { layerTitle } from './layer-name';
 
@@ -26,7 +27,7 @@ interface Group {
 @Component({
   selector: 'app-factor-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, SvgIconComponent, TranslatePipe],
+  imports: [ListRowComponent, ScrollFadeDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './factor-picker.component.html',
   styleUrl: './factor-picker.component.scss',
 })

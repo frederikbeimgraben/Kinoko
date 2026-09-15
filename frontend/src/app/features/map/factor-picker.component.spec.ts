@@ -23,4 +23,10 @@ describe('FactorPickerComponent', () => {
 
     expect(screen.queryByText('Waldanteil')).toBeNull();
   });
+
+  it('blendet die Ränder der Karte aus', async () => {
+    const { container } = await render(FactorPickerComponent, { inputs: { layers: LAYERS } });
+
+    expect(container.querySelectorAll('.picker__card > .scroll-fade')).toHaveLength(2);
+  });
 });

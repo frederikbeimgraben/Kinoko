@@ -7,26 +7,66 @@ const WHITE = [{ name: 'weiß', hex: '#f4efe2' }];
 const BLUE = [{ name: 'blau', hex: '#3f6ea8' }];
 const YELLOW = [{ name: 'gelb', hex: '#d9a441' }];
 
+/** Die gerechneten Stile eines Elements, das es geben muss. */
+function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
+  if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
+  return getComputedStyle(element);
+}
+
 describe('ColourChangeComponent', () => {
-  it('stellt Auslöser, von, Pfeil, nach und Dauer je Zeile dar', async () => {
+  it('nennt den Auslöser als Titel und den Weg der Farbe als Unterzeile', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Druck'],
         from: [WHITE],
         to: [BLUE],
-        fromLabels: ['Farbe: weiß'],
-        toLabels: ['Farbe: blau'],
+        fromLabels: ['weiß'],
+        toLabels: ['blau'],
         speed: ['sofort'],
-        arrowLabel: 'wird zu',
+        arrowLabel: 'zu',
       },
     });
 
     expect(screen.getByText('Druck')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Farbe: weiß' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'wird zu' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Farbe: blau' })).toBeInTheDocument();
-    expect(screen.getByText('sofort')).toBeInTheDocument();
+    expect(screen.getByText('weiß, dann blau · sofort')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('trägt Von und Nach als eine Fläche in Listengröße', async () => {
+    const { container } = await render(ColourChangeComponent, {
+      inputs: {
+        triggers: ['Druck'],
+        from: [WHITE],
+        to: [BLUE],
+        fromLabels: ['weiß'],
+        toLabels: ['blau'],
+        speed: ['sofort'],
+        arrowLabel: 'zu',
+      },
+    });
+
+    const fields = container.querySelectorAll('.field');
+    expect(fields).toHaveLength(1);
+    expect(screen.getByRole('img', { name: 'weiß zu blau' })).toBeInTheDocument();
+    const field = styleOf(fields[0]);
+    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 96px)');
+    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 30px)');
+  });
+
+  it('setzt kein Zeichen zwischen die Farben', async () => {
+    const { container } = await render(ColourChangeComponent, {
+      inputs: {
+        triggers: ['Druck'],
+        from: [WHITE],
+        to: [BLUE],
+        fromLabels: ['weiß'],
+        toLabels: ['blau'],
+        speed: ['sofort'],
+        arrowLabel: 'zu',
+      },
+    });
+
+    expect(container.querySelector('app-svg-icon')).toBeNull();
   });
 
   it('stellt mehrere Auslöser desselben Teils als eigene Zeilen dar', async () => {
@@ -35,53 +75,52 @@ describe('ColourChangeComponent', () => {
         triggers: ['KOH 3 %', 'Eisensulfat'],
         from: [WHITE, WHITE],
         to: [YELLOW, BLUE],
-        fromLabels: ['Farbe: weiß', 'Farbe: weiß'],
-        toLabels: ['Farbe: gelb', 'Farbe: blau'],
+        fromLabels: ['weiß', 'weiß'],
+        toLabels: ['gelb', 'blau'],
         speed: ['sofort', '30 s'],
-        arrowLabel: 'wird zu',
+        arrowLabel: 'zu',
       },
     });
 
-    expect(container.querySelectorAll('.row')).toHaveLength(2);
+    expect(container.querySelectorAll('app-list-row')).toHaveLength(2);
     expect(screen.getByText('KOH 3 %')).toBeInTheDocument();
-    expect(screen.getByText('Eisensulfat')).toBeInTheDocument();
-    expect(screen.getByText('30 s')).toBeInTheDocument();
+    expect(screen.getByText('weiß, dann gelb · sofort')).toBeInTheDocument();
+    expect(screen.getByText('weiß, dann blau · 30 s')).toBeInTheDocument();
   });
 
-  it('lässt den Pfeil weg, wenn die Ausgangsfarbe fehlt', async () => {
-    // Kein Profil des Katalogs nennt eine Ausgangsfarbe. Der Pfeil stand
-    // darum immer allein vor der einzigen Fläche.
-    await render(ColourChangeComponent, {
+  it('nennt nur die neue Farbe, wenn die Ausgangsfarbe fehlt', async () => {
+    const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Anschnitt'],
         from: [[]],
         to: [BLUE],
         fromLabels: [''],
-        toLabels: ['Farbe: blau'],
+        toLabels: ['blau'],
         speed: ['3 min'],
-        arrowLabel: 'wird zu',
+        arrowLabel: 'zu',
       },
     });
 
-    expect(screen.queryByRole('img', { name: 'wird zu' })).not.toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Farbe: blau' })).toBeInTheDocument();
+    expect(screen.getByText('blau · 3 min')).toBeInTheDocument();
+    expect(container.querySelectorAll('.field')).toHaveLength(1);
+    expect(screen.getByRole('img', { name: 'blau' })).toBeInTheDocument();
   });
 
-  it('lässt den Pfeil weg, wenn die Farbe bleibt', async () => {
-    await render(ColourChangeComponent, {
+  it('nennt nur die alte Farbe, wenn die Farbe bleibt', async () => {
+    const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Verletzung'],
         from: [WHITE],
         to: [[]],
-        fromLabels: ['Farbe: weiß'],
+        fromLabels: ['weiß'],
         toLabels: [''],
         speed: ['bleibt'],
-        arrowLabel: 'wird zu',
+        arrowLabel: 'zu',
       },
     });
 
-    expect(screen.queryByRole('img', { name: 'wird zu' })).not.toBeInTheDocument();
-    expect(screen.getByText('bleibt')).toBeInTheDocument();
+    expect(screen.getByText('weiß · bleibt')).toBeInTheDocument();
+    expect(container.querySelectorAll('.field')).toHaveLength(1);
   });
 
   it('nimmt die letzte Zeile ohne unteren Rand', async () => {
@@ -90,16 +129,16 @@ describe('ColourChangeComponent', () => {
         triggers: ['Druck', 'Anschnitt'],
         from: [WHITE, WHITE],
         to: [BLUE, BLUE],
-        fromLabels: ['Farbe: weiß', 'Farbe: weiß'],
-        toLabels: ['Farbe: blau', 'Farbe: blau'],
+        fromLabels: ['weiß', 'weiß'],
+        toLabels: ['blau', 'blau'],
         speed: ['sofort', '1 min'],
-        arrowLabel: 'wird zu',
+        arrowLabel: 'zu',
       },
     });
 
-    const rows = container.querySelectorAll('.row');
-    expect(rows[0]).not.toHaveClass('row--last');
-    expect(rows[1]).toHaveClass('row--last');
+    const rows = container.querySelectorAll('app-list-row');
+    expect(styleOf(rows[0]).getPropertyValue('border-block-end')).toContain('var(--border-width)');
+    expect(styleOf(rows[1]).getPropertyValue('border-block-end')).toBe('0px');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
@@ -109,10 +148,10 @@ describe('ColourChangeComponent', () => {
         triggers: ['Pressure'],
         from: [WHITE],
         to: [BLUE],
-        fromLabels: ['Colour: white'],
-        toLabels: ['Colour: blue'],
+        fromLabels: ['white'],
+        toLabels: ['blue'],
         speed: ['instant'],
-        arrowLabel: 'turns into',
+        arrowLabel: 'to',
       },
     });
 

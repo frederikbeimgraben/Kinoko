@@ -82,6 +82,14 @@ describe('SpeciesPickerComponent', () => {
     expect(container.querySelector('.row__trail')).not.toBeNull();
   });
 
+  it('blendet die Ränder der Zeilen aus', async () => {
+    const { container } = await render(SpeciesPickerComponent, {
+      inputs: { species: SPECIES, label: 'Art für die Karte' },
+    });
+
+    expect(container.querySelectorAll('.picker__rows > .scroll-fade')).toHaveLength(2);
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const species: SpeciesPickerEntry[] = [
       { value: 'a', name: 'a', latin: 'a', levelText: 'edible', levelColour: '#004225' },

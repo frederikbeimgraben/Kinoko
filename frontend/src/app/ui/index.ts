@@ -63,6 +63,7 @@ export { RampComponent } from './ramp/ramp.component';
 export { FORECAST_RAMP } from './ramp/ramp-colours';
 export { RangeSliderComponent, type Handles } from './range-slider/range-slider.component';
 export { ReviewQueueComponent } from './review-queue/review-queue.component';
+export { ScrollFadeDirective } from './scroll-fade/scroll-fade.directive';
 export { SearchFieldComponent } from './search-field/search-field.component';
 export { SeasonCurveComponent, type MonthMark } from './season-curve/season-curve.component';
 export { SegmentedComponent, type SegmentOption } from './segmented/segmented.component';

@@ -3,7 +3,7 @@
   [placeholder]="'species.search.placeholder' | t"
   (valueChange)="query.set($event)"
 />
-<div class="picker__rows" role="group" [attr.aria-label]="label()">
+<div class="picker__rows" appScrollFade role="group" [attr.aria-label]="label()">
   @for (entry of rows(); track entry.value) {
     <app-species-row
       [species]="entry"

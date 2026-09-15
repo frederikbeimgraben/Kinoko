@@ -3,6 +3,12 @@ import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { MeasurementComponent, type Extent } from './measurement.component';
 
+/** Die gerechneten Stile eines Elements, das es geben muss. */
+function styleOf(element: Element | null): CSSStyleDeclaration {
+  if (element === null) throw new Error('Das Element steht nicht im Baum.');
+  return getComputedStyle(element);
+}
+
 describe('MeasurementComponent', () => {
   it('nennt die Strecke als Wort und den Wert mit Einheit', async () => {
     const { container } = await render(MeasurementComponent, {
@@ -87,6 +93,15 @@ describe('MeasurementComponent', () => {
     });
 
     expect(container.querySelector('.measure__rare')).toBeNull();
+  });
+
+  it('richtet Zahl und Einheit rechtsbündig am Kartenrand aus', async () => {
+    const { container } = await render(MeasurementComponent, {
+      inputs: { extent: 'width', spans: [{ from: 4, to: 20 }], unit: 'cm' },
+    });
+
+    const value = styleOf(container.querySelector('.measure__value'));
+    expect(value.justifyContent).toBe('flex-end');
   });
 
   it('zeigt die Trennlinie zwischen zwei Zeilen, nicht nach der letzten', async () => {

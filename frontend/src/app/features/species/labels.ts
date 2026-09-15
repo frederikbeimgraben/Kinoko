@@ -14,13 +14,13 @@ import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { GroupKey } from './facets';
 
-/** Plakettenfarbe und Fläche je Speisewert. */
+/** Plakettenfarbe und Fläche je Speisewert, aus Thema-Tokens. */
 export const EDIBILITY_TONE: Record<Edibility, { colour: string; background: string }> = {
-  edible: { colour: '#4f9d6f', background: '#16291f' },
-  conditionally_edible: { colour: '#9db44f', background: '#20291a' },
-  inedible: { colour: '#95a09a', background: '#1d2420' },
-  poisonous: { colour: '#d2915f', background: '#2a2119' },
-  deadly: { colour: '#d2685f', background: '#2a1a19' },
+  edible: { colour: 'var(--color-primary)', background: 'var(--color-primary-subtle)' },
+  conditionally_edible: { colour: 'var(--color-warning)', background: 'var(--color-warning-subtle)' },
+  inedible: { colour: 'var(--color-text-muted)', background: 'var(--color-surface-sunken)' },
+  poisonous: { colour: 'var(--color-danger)', background: 'var(--color-danger-subtle)' },
+  deadly: { colour: 'var(--color-danger)', background: 'var(--color-danger-subtle)' },
 };
 
 export const EDIBILITY_TEXT: Record<Edibility, TranslationKey> = {

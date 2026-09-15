@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
 import { SearchFieldComponent } from '../search-field/search-field.component';
 import { SpeciesRowComponent, type SpeciesRowSpecies } from '../species-row/species-row.component';
 
@@ -22,7 +23,7 @@ export interface SpeciesPickerEntry extends SpeciesRowSpecies {
 @Component({
   selector: 'app-species-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, SearchFieldComponent, SpeciesRowComponent, TranslatePipe],
+  imports: [NgTemplateOutlet, ScrollFadeDirective, SearchFieldComponent, SpeciesRowComponent, TranslatePipe],
   templateUrl: './species-picker.component.html',
   styleUrl: './species-picker.component.scss',
 })

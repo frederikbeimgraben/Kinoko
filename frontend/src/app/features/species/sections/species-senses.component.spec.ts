@@ -7,6 +7,12 @@ function term(slug: string, name: string, kind: 'smell' | 'taste') {
   return { term: { id: slug, slug, name, kind }, fromExperience: false };
 }
 
+/** Die gerechneten Stile eines Elements, das es geben muss. */
+function styleOf(element: Element | null): CSSStyleDeclaration {
+  if (element === null) throw new Error('Das Element steht nicht im Baum.');
+  return getComputedStyle(element);
+}
+
 const STONE = speciesEntry({
   slug: 'boletus-edulis',
   name: 'Steinpilz',
@@ -17,6 +23,14 @@ const STONE = speciesEntry({
 });
 
 describe('SpeciesSensesComponent', () => {
+  it('polstert den Textblock oben und unten gleich', async () => {
+    const { container } = await render(SpeciesSensesComponent, { inputs: { species: STONE } });
+
+    const body = styleOf(container.querySelector('.sense__body'));
+    expect(body.paddingTop).not.toBe('');
+    expect(body.paddingTop).toBe(body.paddingBottom);
+  });
+
   it('zeigt Marken und Satz für Geruch und Geschmack', async () => {
     const { container } = await render(SpeciesSensesComponent, { inputs: { species: STONE } });
 
