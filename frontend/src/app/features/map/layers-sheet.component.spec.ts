@@ -26,7 +26,7 @@ describe('LayersSheetComponent', () => {
     expect(screen.getByText('12')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByRole('slider', { name: 'Untere Grenze' })).toHaveValue('80');
+    expect(screen.getByRole('slider', { name: 'Obere Grenze' })).toHaveValue('80');
     await noViolations(container);
   });
 
@@ -46,7 +46,7 @@ describe('LayersSheetComponent', () => {
     const values: number[] = [];
     fixture.componentInstance.opacityChange.subscribe((value) => values.push(value));
 
-    fireEvent.input(screen.getByRole('slider', { name: 'Untere Grenze' }), { target: { value: '40' } });
+    fireEvent.input(screen.getByRole('slider', { name: 'Obere Grenze' }), { target: { value: '40' } });
 
     expect(values).toEqual([0.4]);
   });

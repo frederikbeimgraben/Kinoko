@@ -160,3 +160,9 @@ app-choice-row .cbx__label {
   display: flex;
   inline-size: 100%;
 }
+
+// Die Schalterzeile trägt zwölf Punkte zwischen Haken und Wort, wie im Board.
+// Die Regel steht global: der Haken kommt aus dem Kit.
+app-choice-row app-checkbox label {
+  gap: var(--space-3);
+}
