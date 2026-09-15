@@ -35,6 +35,8 @@ class FakeIssuer:
         self.key = a_key()
         self.kid = kid
         self.calls: list[str] = []
+        self.groups: list[str] = []
+        self.userinfo_status = HTTPStatus.OK
 
     def token(self, **claims: object) -> str:
         """Stellt ein Token aus."""
@@ -50,10 +52,22 @@ class FakeIssuer:
         return jwt.encode(payload, self.key, algorithm="RS256", headers={"kid": self.kid})
 
     def answer(self, request: httpx.Request) -> httpx.Response:
-        """Beantwortet Discovery und JWKS."""
+        """Beantwortet Discovery, JWKS und Userinfo."""
         self.calls.append(str(request.url))
-        if str(request.url).endswith(".well-known/openid-configuration"):
-            return httpx.Response(200, json={"issuer": ISSUER, "jwks_uri": f"{ISSUER}jwks/"})
+        url = str(request.url)
+        if url.endswith(".well-known/openid-configuration"):
+            return httpx.Response(
+                200,
+                json={
+                    "issuer": ISSUER,
+                    "jwks_uri": f"{ISSUER}jwks/",
+                    "userinfo_endpoint": f"{ISSUER}userinfo/",
+                },
+            )
+        if url.endswith("userinfo/"):
+            if self.userinfo_status != HTTPStatus.OK:
+                return httpx.Response(self.userinfo_status)
+            return httpx.Response(200, json={"groups": self.groups})
         return httpx.Response(200, json={"keys": [a_jwk(self.key, self.kid), {"kty": "oct"}]})
 
 
@@ -67,7 +81,6 @@ def issuer(monkeypatch: pytest.MonkeyPatch) -> FakeIssuer:
             transport=httpx.MockTransport(fake.answer),
         ),
     )
-    monkeypatch.setattr(jwks, "_cache", jwks.JwksCache())
     return fake
 
 
@@ -158,14 +171,63 @@ async def test_jwks_url_falls_back() -> None:
         assert await jwks.jwks_url(client) == get_settings().jwks_url
 
 
+async def test_groups_from_claims_skip_userinfo(issuer: FakeIssuer) -> None:
+    claims = {"groups": [get_settings().admin_group]}
+    assert await jwks.groups_of("token", claims) == [get_settings().admin_group]
+    assert not issuer.calls
+
+
+async def test_groups_from_userinfo_grant_admin_rights(
+    session: AsyncSession,
+    seeded: None,  # noqa: ARG001
+    issuer: FakeIssuer,
+) -> None:
+    issuer.groups = [get_settings().admin_group]
+    user = await make_user(session, "person-3")
+    rights = await auth.rights_of(session, user, {}, "access-token")
+    assert "role.manage" in rights
+    assert any(call.endswith("userinfo/") for call in issuer.calls)
+
+
+async def test_groups_cache_prevents_a_second_userinfo_call(
+    session: AsyncSession,
+    seeded: None,  # noqa: ARG001
+    issuer: FakeIssuer,
+) -> None:
+    issuer.groups = [get_settings().admin_group]
+    user = await make_user(session, "person-4")
+    claims = {"jti": "tok-1", "exp": 4102444800}
+    first = await auth.rights_of(session, user, claims, "access-token")
+    before = sum(1 for call in issuer.calls if call.endswith("userinfo/"))
+    second = await auth.rights_of(session, user, claims, "access-token")
+    after = sum(1 for call in issuer.calls if call.endswith("userinfo/"))
+    assert first == second
+    assert after == before
+
+
+async def test_userinfo_failure_grants_no_rights(
+    session: AsyncSession,
+    seeded: None,  # noqa: ARG001
+    issuer: FakeIssuer,
+) -> None:
+    issuer.groups = [get_settings().admin_group]
+    issuer.userinfo_status = HTTPStatus.INTERNAL_SERVER_ERROR
+    user = await make_user(session, "person-5")
+    assert await auth.rights_of(session, user, {}, "access-token") == frozenset()
+
+
 async def test_admin_group_grants_every_right(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
     user = await make_user(session, "admin-1")
-    rights = await auth.rights_of(session, user, {"groups": [get_settings().admin_group]})
+    rights = await auth.rights_of(session, user, {"groups": [get_settings().admin_group]}, "token")
     assert "role.manage" in rights
     assert "species.edit" in rights
 
 
-async def test_rights_come_from_the_roles(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
+async def test_rights_come_from_the_roles(
+    session: AsyncSession,
+    seeded: None,  # noqa: ARG001
+    issuer: FakeIssuer,  # noqa: ARG001
+) -> None:
     user = await make_user(session, "person-2")
     role = Role(id=uuid.uuid4(), slug="lokal", name="Lokal")
     session.add(role)
@@ -173,7 +235,7 @@ async def test_rights_come_from_the_roles(session: AsyncSession, seeded: None) -
     session.add(RolePermission(role_id=role.id, permission_key="text.edit"))
     session.add(UserRole(user_id=user.id, role_id=role.id))
     await session.commit()
-    assert await auth.rights_of(session, user, {}) == {"text.edit"}
+    assert await auth.rights_of(session, user, {}, "token") == {"text.edit"}
 
 
 def test_viewer_knows_its_rights() -> None:
@@ -204,9 +266,13 @@ async def test_ensure_person_creates_and_updates(session: AsyncSession, schema: 
     assert same.id == first.id
 
 
-async def test_viewer_does_not_write(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
+async def test_viewer_does_not_write(
+    session: AsyncSession,
+    schema: None,  # noqa: ARG001
+    issuer: FakeIssuer,  # noqa: ARG001
+) -> None:
     assert await auth.person_of(session, "gibt-es-nicht") is None
-    assert await auth.rights_of(session, None, {}) == frozenset()
+    assert await auth.rights_of(session, None, {}, "token") == frozenset()
 
 
 def test_requires_builds_a_dependency() -> None:
