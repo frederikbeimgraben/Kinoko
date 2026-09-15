@@ -19,7 +19,12 @@
   scrollbar-width: none;
 }
 
+// Die Zeile eines Markers oder einer Zone steht enger als die Vorgabe des
+// Bausteins, so wie die Boards `EntriesMarkers` und `EntriesZones` sie zeigen.
 .entries__list {
+  --space-row-gap: var(--space-3);
+  --space-row-stack: 2px;
+
   display: flex;
   flex-direction: column;
 }

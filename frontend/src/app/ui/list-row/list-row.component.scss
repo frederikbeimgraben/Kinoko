@@ -21,7 +21,7 @@
   display: flex;
   flex: 1;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-row-gap, var(--space-4));
   min-block-size: calc(var(--size-row) - var(--border-width));
   min-inline-size: 0;
   text-align: start;

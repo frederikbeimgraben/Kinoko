@@ -32,7 +32,7 @@ const MARKERS = {
       name: 'Parkplatz Nord',
       lat: 48.6,
       lon: 9.1,
-      colour: 'gold',
+      colour: 'brown',
       note: 'Odenwald',
       visibility: 'shared',
       updatedAt: '2026-09-02T08:00:00Z',

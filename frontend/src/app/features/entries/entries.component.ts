@@ -22,7 +22,7 @@ import { AddEntryState } from '../add-entry/add-entry.state';
 import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.state';
 import { EntriesState, type EntryBody } from './entries.state';
-import { colourHex } from './colors';
+import { colourToken } from './colors';
 import { hectaresText, isoDatum, shortDate } from './formats';
 
 /** Die drei Segmente über der Liste (Boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
@@ -199,7 +199,7 @@ export class EntriesComponent {
   private markerRow(marker: Marker): Row {
     return {
       key: `marker-${marker.id}`,
-      colour: colourHex(marker.colour),
+      colour: colourToken(marker.colour),
       entry: {
         title: marker.name,
         meta: this.i18n.translate('entry.marker.subline', {
@@ -215,7 +215,7 @@ export class EntriesComponent {
   private zoneRow(zone: Zone): Row {
     return {
       key: `zone-${zone.id}`,
-      colour: colourHex(zone.colour),
+      colour: colourToken(zone.colour),
       entry: {
         title: zone.name,
         meta: this.i18n.translate('entry.zone.subline', {
@@ -235,7 +235,7 @@ export class EntriesComponent {
     const meta = find ? this.findMeta(this.date(body.foundOn), body.count ?? null, this.firstName()) : '';
     return {
       key: `waiting-${entry.id}`,
-      colour: 'colour' in body && body.colour !== undefined ? colourHex(body.colour) : '',
+      colour: 'colour' in body && body.colour !== undefined ? colourToken(body.colour) : '',
       entry: { title, meta, note: body.note ?? undefined },
       pending: true,
       object: null,
