@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import io
 import uuid
-from datetime import date
+from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING
 
 import pytest
@@ -396,6 +396,77 @@ async def test_set_lead_forbidden_for_owner_without_review_right(
     assert response.status_code == 403
 
 
+async def _bundle_lead_photo_id(api: httpx.AsyncClient, species: Species) -> str | None:
+    response = await api.get("/species/bundle")
+    item = next(row for row in response.json()["items"] if row["slug"] == species.slug)
+    return item["leadPhotoId"]
+
+
+async def test_approval_becomes_lead_photo_without_explicit_call(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session)
+    species = await make_species(session)
+    sign_in(app_of(api), owner, "image.review")
+    created = (await upload(api, speciesId=str(species.id))).json()
+    approved = await api.post(f"/photos/{created['id']}/approval")
+    assert approved.json()["lead"] is True
+    assert await _bundle_lead_photo_id(api, species) == created["id"]
+
+
+async def test_approval_keeps_the_first_lead_photo(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session)
+    species = await make_species(session)
+    sign_in(app_of(api), owner, "image.review")
+    first = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{first['id']}/approval")
+    second = (await upload(api, speciesId=str(species.id))).json()
+    approved_second = await api.post(f"/photos/{second['id']}/approval")
+    assert approved_second.json()["lead"] is False
+    assert await _bundle_lead_photo_id(api, species) == first["id"]
+
+
+async def test_explicit_lead_wins_over_first_approved_photo(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session)
+    species = await make_species(session)
+    sign_in(app_of(api), owner, "image.review")
+    first = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{first['id']}/approval")
+    second = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{second['id']}/approval")
+    await api.put(f"/photos/{second['id']}/lead")
+    assert await _bundle_lead_photo_id(api, species) == second["id"]
+
+
+async def test_rejected_photo_never_becomes_lead_photo(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session)
+    species = await make_species(session)
+    sign_in(app_of(api), owner, "image.review")
+    created = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{created['id']}/rejection", json={"reason": "unscharf"})
+    assert await _bundle_lead_photo_id(api, species) is None
+
+
+async def test_deleting_lead_photo_falls_back_to_remaining_approved_photo(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session)
+    species = await make_species(session)
+    sign_in(app_of(api), owner, "image.review")
+    first = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{first['id']}/approval")
+    second = (await upload(api, speciesId=str(species.id))).json()
+    await api.post(f"/photos/{second['id']}/approval")
+    await api.delete(f"/photos/{first['id']}")
+    assert await _bundle_lead_photo_id(api, species) == second["id"]
+
+
 async def test_list_without_sign_in_shows_only_approved_species_photos(
     api: httpx.AsyncClient,
     session: AsyncSession,
@@ -576,6 +647,59 @@ async def test_repository_leads_maps_species_to_lead_photo(session: AsyncSession
     leads = await repo.leads([species.id])
     assert leads[species.id] == photo.id
     assert await repo.leads([]) == {}
+
+
+async def test_repository_leads_falls_back_to_oldest_approved_photo(
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    species = await make_species(session)
+    older = Photo(
+        owner_id=user.id,
+        species_id=species.id,
+        width=1,
+        height=1,
+        photographer="x",
+        licence=Licence.OWN,
+        state=PhotoState.APPROVED,
+        created_at=datetime(2026, 1, 1, tzinfo=UTC),
+    )
+    newer = Photo(
+        owner_id=user.id,
+        species_id=species.id,
+        width=1,
+        height=1,
+        photographer="x",
+        licence=Licence.OWN,
+        state=PhotoState.APPROVED,
+        created_at=datetime(2026, 2, 1, tzinfo=UTC),
+    )
+    session.add_all([older, newer])
+    await session.commit()
+    repo = PhotoRepository(session)
+    leads = await repo.leads([species.id])
+    assert leads[species.id] == older.id
+
+
+async def test_repository_leads_ignores_rejected_photo_with_stale_lead_flag(
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session)
+    species = await make_species(session)
+    rejected = Photo(
+        owner_id=user.id,
+        species_id=species.id,
+        width=1,
+        height=1,
+        photographer="x",
+        licence=Licence.OWN,
+        state=PhotoState.REJECTED,
+        lead=True,
+    )
+    session.add(rejected)
+    await session.commit()
+    repo = PhotoRepository(session)
+    assert await repo.leads([species.id]) == {}
 
 
 async def test_repository_submissions_returns_state_page(session: AsyncSession) -> None:

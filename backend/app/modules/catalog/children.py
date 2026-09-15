@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 from sqlalchemy import select
 
 from app.models import (
-    Photo,
     SpeciesColour,
     SpeciesColourChange,
     SpeciesColourChangeTrigger,
@@ -24,6 +23,7 @@ from app.models import (
     SpeciesTerm,
     SpeciesTrait,
 )
+from app.modules.photos.repository import PhotoRepository
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -108,7 +108,7 @@ async def load_children(db: AsyncSession, ids: Sequence[uuid.UUID]) -> ChildRows
     found.seasons = _grouped(await _rows(db, SpeciesSeason, ids), "species_id")
     found.terms = _grouped(await _rows(db, SpeciesTerm, ids), "species_id")
     found.lookalikes = await _lookalikes(db, ids)
-    found.lead_photos = await _lead_photos(db, ids)
+    found.lead_photos = await PhotoRepository(db).leads(ids)
     return found
 
 
@@ -128,12 +128,3 @@ async def _lookalikes(
         if row.species_b_id in wanted:
             found[row.species_b_id].append(row)
     return found
-
-
-async def _lead_photos(db: AsyncSession, ids: Sequence[uuid.UUID]) -> dict[uuid.UUID, uuid.UUID]:
-    """Liest die Leitfotos der gegebenen Arten."""
-    query = select(Photo.species_id, Photo.id).where(
-        Photo.species_id.in_(ids), Photo.lead.is_(True)
-    )
-    rows = (await db.execute(query)).all()
-    return {species_id: photo_id for species_id, photo_id in rows if species_id is not None}
