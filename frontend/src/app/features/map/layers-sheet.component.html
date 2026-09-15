@@ -42,6 +42,12 @@
 
   <section class="layers__part">
     <h3 class="layers__title">{{ 'map.opacity' | t }}</h3>
-    <app-range-slider [from]="percent()" [to]="100" [handles]="'from'" (fromChange)="onOpacity($event)" />
+    <app-range-slider
+      [from]="0"
+      [to]="percent()"
+      [handles]="'to'"
+      [variant]="'dot'"
+      (toChange)="onOpacity($event)"
+    />
   </section>
 </app-popover>

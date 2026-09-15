@@ -55,6 +55,13 @@
   box-shadow: var(--shadow-sm);
 }
 
+// Ein Anteil trägt einen vollen Punkt, eine Spanne einen hellen Ring.
+.rangeslider--dot {
+  --range-slider-handle: 18px;
+  --range-slider-thumb: var(--color-primary);
+  --range-slider-ring: var(--color-primary);
+}
+
 .rangeslider__handle::-moz-range-thumb {
   inline-size: var(--range-slider-handle);
   block-size: var(--range-slider-handle);

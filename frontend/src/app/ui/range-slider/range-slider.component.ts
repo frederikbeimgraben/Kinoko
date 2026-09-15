@@ -4,6 +4,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 /** Welche Griffe die Spur trägt. Eine feste Grenze steht am Ende der Skala. */
 export type Handles = 'both' | 'from' | 'to';
 
+/** Der Griff: heller Ring über einer Spanne, voller Punkt über einem Anteil. */
+export type SliderVariant = 'ring' | 'dot';
+
 /**
  * Ein oder zwei Griffe über einer Spur. Jeder Griff ist ein Regler des Browsers.
  */
@@ -21,6 +24,7 @@ export class RangeSliderComponent {
   readonly from = input.required<number>();
   readonly to = input.required<number>();
   readonly handles = input<Handles>('both');
+  readonly variant = input<SliderVariant>('ring');
 
   readonly fromChange = output<number>();
   readonly toChange = output<number>();

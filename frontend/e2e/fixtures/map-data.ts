@@ -46,9 +46,9 @@ const CURVE = [
   0.018189, 0.016772, 0.015118, 0.013228, 0.01126, 0.009291, 0.007402, 0.005748, 0.004331,
 ];
 
-function share(count: number): { klassen: number[]; anteile: number[] } {
-  const klassen = Array.from({ length: 41 }, (_, i) => (i * count) / 40);
-  return { klassen, anteile: CURVE };
+function share(count: number): { classes: number[]; shares: number[] } {
+  const classes = Array.from({ length: 41 }, (_, i) => (i * count) / 40);
+  return { classes, shares: CURVE };
 }
 
 /** Die Eingabe-Ebenen, mit denselben Namen wie in den Boards. */
@@ -69,7 +69,7 @@ export const LAYERS_MANIFEST = {
       tiles: 'layers_kacheln/regen_4w',
       zooms: [5, 8],
       weeks: ['2025W40'],
-      histogramme: { '2025W40': share(240) },
+      histograms: { '2025W40': share(240) },
     },
     niederschlag: {
       label: 'Niederschlag',
@@ -81,7 +81,7 @@ export const LAYERS_MANIFEST = {
       tiles: 'layers_kacheln/niederschlag',
       zooms: [5, 8],
       weeks: ['2025W40'],
-      histogramme: { '2025W40': share(240) },
+      histograms: { '2025W40': share(240) },
     },
     temperatur: {
       label: 'Mitteltemperatur',
@@ -92,7 +92,7 @@ export const LAYERS_MANIFEST = {
       tiles: 'layers_kacheln/temperatur',
       zooms: [5, 8],
       weeks: ['2025W40'],
-      histogramme: { '2025W40': share(30) },
+      histograms: { '2025W40': share(30) },
     },
     bodenfeuchte: {
       label: 'Bodenfeuchte',
@@ -103,7 +103,7 @@ export const LAYERS_MANIFEST = {
       tiles: 'layers_kacheln/bodenfeuchte',
       zooms: [5, 8],
       weeks: ['2025W40'],
-      histogramme: { '2025W40': share(1) },
+      histograms: { '2025W40': share(1) },
     },
     frosttage: {
       label: 'Frosttage',
@@ -114,7 +114,7 @@ export const LAYERS_MANIFEST = {
       tiles: 'layers_kacheln/frosttage',
       zooms: [5, 8],
       weeks: ['2025W40'],
-      histogramme: { '2025W40': share(7) },
+      histograms: { '2025W40': share(7) },
     },
     hitzetage: {
       label: 'Hitzetage',
@@ -125,7 +125,7 @@ export const LAYERS_MANIFEST = {
       tiles: 'layers_kacheln/hitzetage',
       zooms: [5, 8],
       weeks: ['2025W40'],
-      histogramme: { '2025W40': share(7) },
+      histograms: { '2025W40': share(7) },
     },
     buche: {
       label: 'Buche',
@@ -136,7 +136,7 @@ export const LAYERS_MANIFEST = {
       high: 1,
       tiles: 'layers_kacheln/buche',
       zooms: [5, 8],
-      histogramm: share(1),
+      histogram: share(1),
     },
     hangneigung: {
       label: 'Hangneigung',
@@ -147,7 +147,7 @@ export const LAYERS_MANIFEST = {
       high: 45,
       tiles: 'layers_kacheln/hangneigung',
       zooms: [5, 8],
-      histogramm: share(45),
+      histogram: share(45),
     },
     boden_ph: {
       label: 'Boden pH',
@@ -158,7 +158,7 @@ export const LAYERS_MANIFEST = {
       high: 8,
       tiles: 'layers_kacheln/boden_ph',
       zooms: [5, 8],
-      histogramm: share(8),
+      histogram: share(8),
     },
   },
 };
