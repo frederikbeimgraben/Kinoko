@@ -18,6 +18,7 @@ import {
   TEXTS,
 } from '../fixtures/admin';
 import { TAXON } from '../fixtures/species-boards';
+import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 const EMPTY_BUNDLE = { items: [], standardColours: [], facets: {} };
@@ -293,6 +294,21 @@ test.describe('Seitenhöhe am Telefon', () => {
 
   test('Verwaltung, Texte leer', async ({ page }) => {
     await admin(page, '/verwaltung/texte', { '/api/texts': EMPTY_TEXTS });
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Art anlegen', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/neu');
+    await expect(page.getByRole('heading', { name: 'Art anlegen' })).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Art bearbeiten', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis', {
+      '/api/species/boletus-edulis': STONE_EDIT,
+      '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+    });
+    await expect(page.getByText('Röhren rosa, Netz grob, bitter')).toBeVisible();
     await assertFillsViewport(page);
   });
 });

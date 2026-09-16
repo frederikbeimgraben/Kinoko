@@ -113,6 +113,8 @@
   --form-field-size: var(--fs-row-title);
   --form-field-inline: 14px;
   --form-field-shift: 0;
+  --form-field-lines: 96px;
+  --form-field-lines-top: 8px;
 
   display: flex;
   flex-direction: column;

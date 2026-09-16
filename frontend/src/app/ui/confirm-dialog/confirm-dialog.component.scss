@@ -24,8 +24,9 @@
 
 .confirm__meta {
   margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-size: var(--fs-row-title);
+  line-height: 1.4;
+  font-weight: var(--fw-semibold);
   text-align: center;
 }
 

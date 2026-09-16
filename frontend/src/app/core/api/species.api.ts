@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { ApiClient, type Tagged } from './api-client';
-import type { SpeciesBundle, SpeciesCounts, SpeciesEntry } from './models/catalogue';
+import type { SpeciesBundle, SpeciesCounts, SpeciesEntry, SpeciesWrite } from './models/catalogue';
 
 const BUNDLE_PATH = '/species/bundle';
 const SPECIES_PATH = '/species';
@@ -24,6 +24,11 @@ export class SpeciesApi {
   /** Datenbestand, Funde und Bilder einer Art. Braucht `species.edit`. */
   counts(slug: string): Observable<SpeciesCounts> {
     return this.api.get<SpeciesCounts>(`${SPECIES_PATH}/${encodeURIComponent(slug)}/counts`);
+  }
+
+  /** Legt eine Art an. Die Antwort trägt den Slug für den Editor. */
+  create(body: SpeciesWrite): Observable<SpeciesEntry> {
+    return this.api.post<SpeciesEntry>(SPECIES_PATH, body);
   }
 
   /** Schaltet die Vorhersage einer Art an oder aus. */
