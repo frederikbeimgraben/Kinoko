@@ -9,7 +9,7 @@ from typing import Annotated, Any, Final
 
 import jwt
 from fastapi import Depends, Header
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import session
@@ -17,6 +17,7 @@ from app.core.errors import Forbidden, Unauthorized
 from app.core.jwks import cache, groups_of
 from app.core.settings import get_settings
 from app.models import Permission, Role, RolePermission, User, UserRole
+from app.modules.access.permissions import BASE_ROLE
 from app.modules.access.service import AccessService
 
 BEARER: Final = "Bearer "
@@ -90,18 +91,18 @@ async def person_of(db: AsyncSession, sub: str) -> User | None:
 async def rights_of(
     db: AsyncSession, user: User | None, claims: Mapping[str, Any], token: str
 ) -> frozenset[str]:
-    """Liest die Rechte des Kontos, die Admin-Gruppe gibt alle."""
+    """Liest die Rechte des Kontos. Admin-Gruppe und Rolle `user` gelten immer."""
     groups = await groups_of(token, claims) or []
     if get_settings().admin_group in groups:
         keys = await db.execute(select(Permission.key))
         return frozenset(keys.scalars())
     if user is None:
         return frozenset()
+    assigned = select(UserRole.role_id).where(UserRole.user_id == user.id)
     query = (
         select(RolePermission.permission_key)
         .join(Role, Role.id == RolePermission.role_id)
-        .join(UserRole, UserRole.role_id == Role.id)
-        .where(UserRole.user_id == user.id)
+        .where(or_(Role.id.in_(assigned), Role.slug == BASE_ROLE))
     )
     return frozenset((await db.execute(query)).scalars())
 

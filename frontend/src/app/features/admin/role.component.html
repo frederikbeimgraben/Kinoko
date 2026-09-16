@@ -2,33 +2,32 @@
 
 <div class="role">
   @if (missing()) {
-    <p class="note">{{ 'rolle.nichtGefunden' | t }}</p>
+    <p class="note">{{ 'admin.role.notFound' | t }}</p>
   } @else {
-    @if (!locked()) {
+    <app-form-field
+      [label]="'common.name' | t"
+      [hideLabel]="true"
+      [value]="displayName()"
+      [placeholder]="'admin.role.namePlaceholder' | t"
+      [readOnly]="locked()"
+      (valueChange)="name.set($event)"
+    />
+    @if (creating()) {
       <app-form-field
-        [label]="'rolle.name' | t"
+        [label]="'admin.role.slug' | t"
         [hideLabel]="true"
-        [value]="name()"
-        [placeholder]="'rolle.namePlatzhalter' | t"
-        (valueChange)="name.set($event)"
-      />
-      @if (creating()) {
-        <app-form-field
-          [label]="'rolle.slug' | t"
-          [hideLabel]="true"
-          [value]="slug()"
-          [placeholder]="'rolle.slugPlatzhalter' | t"
-          (valueChange)="slug.set($event)"
-        />
-      }
-      <app-form-field
-        [label]="'rolle.beschreibung' | t"
-        [hideLabel]="true"
-        [value]="description()"
-        [placeholder]="'admin.role.namePlaceholder' | t"
-        (valueChange)="description.set($event)"
+        [value]="slug()"
+        [placeholder]="'admin.role.slugPlaceholder' | t"
+        (valueChange)="slug.set($event)"
       />
     }
+    <app-form-field
+      [label]="'admin.role.description' | t"
+      [hideLabel]="true"
+      [value]="description()"
+      [placeholder]="'admin.role.description' | t"
+      (valueChange)="description.set($event)"
+    />
 
     @for (group of areas(); track group.area) {
       <section class="role__block">
@@ -48,10 +47,10 @@
   }
 </div>
 
-@if (!locked() && !missing()) {
+@if (!missing()) {
   <app-action-bar
-    [primary]="'rolle.speichern' | t"
-    [secondary]="creating() ? undefined : ('admin.role.delete' | t)"
+    [primary]="'common.save' | t"
+    [secondary]="locked() || creating() ? undefined : ('admin.role.delete' | t)"
     [secondaryDanger]="true"
     (primaryClick)="save()"
     (secondaryClick)="confirming.set(true)"

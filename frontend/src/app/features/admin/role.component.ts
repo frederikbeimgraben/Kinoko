@@ -13,6 +13,7 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { AdminState } from './admin.state';
 import { AREA_TEXT, PERMISSION_TEXT } from './labels';
+import { roleName } from './role-name';
 
 /** Der Weg, unter dem eine neue Rolle angelegt wird. */
 export const NEW_ROLE = 'neu';
@@ -31,14 +32,7 @@ interface Area {
   rights: Right[];
 }
 
-/**
- * Eine Rolle anlegen oder ändern (Artboard `Rolle`): Name, Beschreibung und
- * die Rechtematrix nach Bereich.
- *
- * Die feste Rolle Admin und die feste Rolle Nutzer stehen hier zum Lesen. Admin
- * trägt jedes Recht, auch jedes neu eingeführte; das lässt sich nicht anhaken
- * und nicht abwählen, sonst wäre es beim nächsten neuen Recht schon veraltet.
- */
+/** Eine Rolle anlegen oder ändern. Feste Rolle: Name fest, kein Löschen. */
 @Component({
   selector: 'app-role',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,8 +76,15 @@ export class RoleComponent {
   protected readonly saving = signal(false);
 
   /** Der Kopf trägt den Namen der Rolle, eine neue trägt „Neue Rolle“. */
-  protected readonly title = computed(
-    () => this.role()?.name ?? this.i18n.translate(this.creating() ? 'rolle.neu' : 'rollen.titel'),
+  protected readonly title = computed(() => {
+    const current = this.role();
+    if (current) return roleName(this.i18n, current.name);
+    return this.i18n.translate(this.creating() ? 'admin.role.new' : 'admin.roles.title');
+  });
+
+  /** Das Namensfeld einer festen Rolle zeigt den übersetzten Namen, nicht den Schlüssel. */
+  protected readonly displayName = computed(() =>
+    this.locked() ? roleName(this.i18n, this.name()) : this.name(),
   );
 
   protected readonly ready = computed(() => this.name().trim().length > 0 && this.slug().trim().length > 0);
@@ -106,9 +107,11 @@ export class RoleComponent {
     })).filter((group) => group.rights.length > 0);
   });
 
-  protected readonly deleteQuestion = computed(
-    () => `${this.role()?.name ?? ''} ${this.i18n.translate('admin.role.deleteConfirm')}`,
-  );
+  protected readonly deleteQuestion = computed(() => {
+    const current = this.role();
+    const name = current ? roleName(this.i18n, current.name) : '';
+    return `${name} ${this.i18n.translate('admin.role.deleteConfirm')}`;
+  });
 
   constructor() {
     this.state.loadRoles();

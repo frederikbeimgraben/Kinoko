@@ -37,7 +37,11 @@ async def list_photos(  # noqa: PLR0913, PLR0917
     return await service.list_photos(db, repo, viewer, paging, state, species_id, find_id, mine)
 
 
-@router.post("/photos", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/photos",
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[requires("image.submit")],
+)
 async def create_photo(  # noqa: PLR0913, PLR0917
     db: Db,
     user: CurrentUser,
