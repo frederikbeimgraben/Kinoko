@@ -1,0 +1,6 @@
+/** Die Marke des Titelbildes, oben links auf der Kachel. */
+@mixin lead-badge {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+}

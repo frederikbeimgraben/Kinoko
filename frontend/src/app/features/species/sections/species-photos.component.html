@@ -4,6 +4,14 @@
     @for (tile of tiles(); track tile.id) {
       <button class="photos__tile tap" type="button" data-press="scale" (click)="open(tile.id)">
         <app-private-image class="photos__image" [path]="tile.path" [alt]="tile.alt" />
+        @if (tile.lead) {
+          <app-level-pill
+            class="photos__badge"
+            [text]="'image.cover' | t"
+            colour="var(--color-primary)"
+            background="var(--color-primary-subtle)"
+          />
+        }
       </button>
     }
     @if (canAdd()) {

@@ -81,7 +81,7 @@
 
 .spark__months {
   position: relative;
-  block-size: 19px;
+  block-size: 16px;
   margin-block-start: 6px;
   font-size: 13px;
   color: var(--color-text-muted);
@@ -95,13 +95,9 @@
   transform: translateX(-50%);
 }
 
-// Die äußeren Marken rücken nach innen, sonst stünden sie halb außerhalb.
+// Die erste Marke rückt nach innen, sonst stünde sie halb außerhalb.
 .spark__month--first {
   transform: none;
-}
-
-.spark__month--last {
-  transform: translateX(-100%);
 }
 
 // Die Jahreszahl des laufenden Jahres bricht nicht um; die längere Erklärung

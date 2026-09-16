@@ -18,6 +18,7 @@ import { SpeciesLeadComponent } from './sections/species-lead.component';
 import { SpeciesPhotosComponent } from './sections/species-photos.component';
 import { SpeciesSeasonComponent } from './sections/species-season.component';
 import { SpeciesSourcesComponent } from './sections/species-sources.component';
+import { SpeciesTaxonomyComponent } from './sections/species-taxonomy.component';
 import { SpeciesTimeComponent } from './sections/species-time.component';
 import { ComparisonState } from './compare/comparison.state';
 import { SpeciesState } from './species.state';
@@ -42,6 +43,7 @@ import { SpeciesState } from './species.state';
     SpeciesSensesComponent,
     SpeciesSizeComponent,
     SpeciesSourcesComponent,
+    SpeciesTaxonomyComponent,
     SpeciesTimeComponent,
     TranslatePipe,
   ],

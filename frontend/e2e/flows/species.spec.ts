@@ -89,3 +89,15 @@ test('Die Einordnung holt die Stufe aus dem Vertrag', async ({ page }) => {
   await expect(page).toHaveURL(/\/taxonomie\/genus\/boletus$/);
   await call;
 });
+
+test('Die Artseite führt über die Einordnung zur Gattung', async ({ page }) => {
+  await mockApi(page, {
+    '/api/species/bundle': bundle(TAXON.catalogue),
+    '/api/taxa/genus/boletus': { ...TAXON.page, slug: 'boletus', name: 'Boletus', rank: 'genus' },
+  });
+  await page.goto('/arten/boletus-edulis');
+
+  await page.getByRole('button', { name: /Einordnung/ }).click();
+
+  await expect(page).toHaveURL(/\/taxonomie\/genus\/boletus$/);
+});
