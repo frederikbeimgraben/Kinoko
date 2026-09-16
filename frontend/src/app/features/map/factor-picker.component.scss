@@ -22,14 +22,18 @@
 // darunter einen Punkt zu hoch.
 .picker__card {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   flex-direction: column;
   min-block-size: 0;
   padding-block-start: var(--border-width);
   overflow-y: auto;
   background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  border-block-start: var(--border-width) solid var(--color-border);
+  border-inline: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
+  // Die untere Grenze liegt als Schatten innen, sonst wüchse die Karte über
+  // ihre Zeilen hinaus.
+  box-shadow: inset 0 calc(-1 * var(--border-width)) 0 0 var(--color-border);
 }
 
 .picker__group {
