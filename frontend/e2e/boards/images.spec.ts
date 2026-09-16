@@ -22,6 +22,24 @@ function guard(board: string, device: 'phone' | 'desktop'): void {
   skipPending(board);
 }
 
+/** Die Verwaltung holt beim Öffnen ihre Zähler. Ohne Antwort meldet sie einen Fehler. */
+const SUMMARY = {
+  texts: 0,
+  photos: 0,
+  photosPending: 0,
+  species: 0,
+  roles: 0,
+  permissions: 0,
+  people: 0,
+  finds: 0,
+  findsPending: 0,
+  runs: 0,
+  runsRunning: 0,
+};
+
+/** Dieselben Fotos, das zweite als Titelbild. */
+const LEAD_SECOND = SPECIES_PHOTOS.map((one, at) => ({ ...one, lead: at === 1 }));
+
 /** Die Rechte, die der Dienst der angemeldeten Person gibt. */
 function rights(permissions: readonly string[]): Record<string, unknown> {
   return { '/api/me/permissions': { permissions, roles: [] } };
@@ -56,16 +74,29 @@ async function pick(page: Page, photo: string): Promise<void> {
 
 test('ImageView', async ({ page }) => {
   guard('ImageView', 'phone');
-  await mockSignIn(page);
   await open(
     page,
     '/arten/boletus-edulis/bilder/bild-zwei',
-    { '/api/photos': photoPage(SPECIES_PHOTOS), ...rights(['image.review']) },
+    { '/api/photos': photoPage(SPECIES_PHOTOS) },
     photoFixture(358, 300),
   );
   await expect(page.getByText('2 von 4')).toBeVisible();
   await expect(page.getByText('CC BY-SA 4.0')).toBeVisible();
   await expectBoard(page, 'ImageView');
+});
+
+test('ImageViewAdmin', async ({ page }) => {
+  guard('ImageViewAdmin', 'phone');
+  await mockSignIn(page);
+  await open(
+    page,
+    '/arten/boletus-edulis/bilder/bild-zwei',
+    { '/api/photos': photoPage(LEAD_SECOND), ...rights(['image.review']) },
+    photoFixture(358, 300),
+  );
+  await expect(page.getByText('2 von 4')).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Titelbild' })).toBeChecked();
+  await expectBoard(page, 'ImageViewAdmin');
 });
 
 test('ImageAdd', async ({ page }) => {
@@ -124,7 +155,7 @@ test('ImageQueue', async ({ page }) => {
   await open(
     page,
     '/verwaltung/bilder',
-    { '/api/photos': photoPage(QUEUE_PHOTOS), ...rights(['image.review']) },
+    { '/api/photos': photoPage(QUEUE_PHOTOS), '/api/admin/summary': SUMMARY, ...rights(['image.review']) },
     photoFixture(358, 330),
   );
   await expect(page.getByText('Junge Exemplare im Moos')).toBeVisible();
@@ -137,7 +168,7 @@ test('ImageReject', async ({ page }) => {
   await open(
     page,
     '/verwaltung/bilder',
-    { '/api/photos': photoPage(QUEUE_PHOTOS), ...rights(['image.review']) },
+    { '/api/photos': photoPage(QUEUE_PHOTOS), '/api/admin/summary': SUMMARY, ...rights(['image.review']) },
     photoFixture(358, 330),
   );
   await expect(page.getByText('Junge Exemplare im Moos')).toBeVisible();

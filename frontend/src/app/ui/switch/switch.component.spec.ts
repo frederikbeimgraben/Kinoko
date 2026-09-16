@@ -43,4 +43,17 @@ describe('SwitchComponent', () => {
 
     expect(seen).toEqual([false]);
   });
+
+  it('meldet keinen Wechsel, solange er gesperrt ist', async () => {
+    const { fixture } = await render(SwitchComponent, {
+      inputs: { checked: true, label: 'Titelbild', disabled: true },
+    });
+    const seen: boolean[] = [];
+    fixture.componentInstance.checkedChange.subscribe((value: boolean) => seen.push(value));
+
+    await userEvent.click(screen.getByRole('switch'));
+
+    expect(seen).toEqual([]);
+    expect(screen.getByRole('switch')).toHaveAttribute('aria-disabled', 'true');
+  });
 });

@@ -56,6 +56,16 @@
   min-block-size: calc(var(--size-row-tall) - var(--border-width));
 }
 
+// Die letzte Zeile trägt keinen Rand. Ihr Feld nimmt dessen Höhe auf, damit
+// jede Zeile der Karte gleich hoch misst.
+:host(:last-child) .row__field {
+  min-block-size: var(--size-row);
+}
+
+:host(:last-child) .row__field--tall {
+  min-block-size: var(--size-row-tall);
+}
+
 .row__field--button {
   font: inherit;
   color: inherit;

@@ -2,6 +2,7 @@
   <app-button
     class="footer__main"
     [class.footer__slim]="ghost() && secondary() === undefined"
+    [class.footer__danger]="quietDanger()"
     [variant]="primaryVariant()"
     [block]="!inline()"
     [loading]="busy()"

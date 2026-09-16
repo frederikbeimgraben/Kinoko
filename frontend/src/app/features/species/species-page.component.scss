@@ -35,3 +35,8 @@
 .page--wide .page__column:first-child {
   border-inline-end: var(--border-width) solid var(--color-border);
 }
+
+// Die Datenspalte setzt ihre Abschnitte enger, wie das Brett sie zeichnet.
+.page--wide .page__column:last-child {
+  gap: var(--space-4);
+}

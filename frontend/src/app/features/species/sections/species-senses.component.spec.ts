@@ -23,12 +23,12 @@ const STONE = speciesEntry({
 });
 
 describe('SpeciesSensesComponent', () => {
-  it('polstert den Textblock oben und unten gleich', async () => {
+  it('polstert den Textblock unten und seitlich, oben nicht', async () => {
     const { container } = await render(SpeciesSensesComponent, { inputs: { species: STONE } });
 
     const body = styleOf(container.querySelector('.sense__body'));
-    expect(body.paddingTop).not.toBe('');
-    expect(body.paddingTop).toBe(body.paddingBottom);
+    expect(body.paddingTop).toBe('0px');
+    expect(body.paddingBottom).toBe('14px');
   });
 
   it('zeigt Marken und Satz für Geruch und Geschmack', async () => {

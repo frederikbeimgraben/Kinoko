@@ -20,7 +20,7 @@ interface Setup {
   refresh: () => void;
 }
 
-/** Wer als Prüfer gilt, sieht beide Aktionen. Wer besitzt, nur das Entfernen. */
+/** Wer prüft, sieht die Titelbild-Zeile. Wer besitzt, nur das Entfernen. */
 interface Access {
   reviewer?: boolean;
   owner?: boolean;
@@ -90,32 +90,44 @@ describe('ImageViewComponent', () => {
   it('zeigt als Gast keine Aktionen', async () => {
     await build(TWO);
 
-    expect(screen.queryByRole('button', { name: 'Als Titelbild setzen' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('switch', { name: 'Titelbild' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Bild entfernen' })).not.toBeInTheDocument();
   });
 
   it('zeigt als Besitzer nur Entfernen', async () => {
     await build(TWO, 'zwei', { owner: true });
 
-    expect(screen.queryByRole('button', { name: 'Als Titelbild setzen' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('switch', { name: 'Titelbild' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Bild entfernen' })).toBeInTheDocument();
   });
 
-  it('zeigt als Prüfer beide Aktionen', async () => {
+  it('zeigt als Prüfer die Titelbild-Zeile und das Entfernen', async () => {
     await build(TWO, 'zwei', { reviewer: true });
 
-    expect(screen.getByRole('button', { name: 'Als Titelbild setzen' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Titelbild' })).not.toBeChecked();
     expect(screen.getByRole('button', { name: 'Bild entfernen' })).toBeInTheDocument();
   });
 
-  it('setzt das Titelbild', async () => {
+  it('setzt das Titelbild und sperrt den Schalter', async () => {
     const { http, refresh } = await build(TWO, 'zwei', { reviewer: true });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Als Titelbild setzen' }));
+    await userEvent.click(screen.getByRole('switch', { name: 'Titelbild' }));
     http.expectOne('/api/photos/zwei/lead').flush(photo({ id: 'zwei', lead: true }));
-    refresh();
 
-    expect(screen.getByText('2 von 2')).toBeInTheDocument();
+    await vi.waitFor(() => {
+      refresh();
+      const toggle = screen.getByRole('switch', { name: 'Titelbild' });
+      expect(toggle).toBeChecked();
+      expect(toggle).toHaveAttribute('aria-disabled', 'true');
+    });
+  });
+
+  it('sperrt den Schalter am Titelbild von Anfang an', async () => {
+    await build(TWO, 'eins', { reviewer: true });
+
+    const toggle = screen.getByRole('switch', { name: 'Titelbild' });
+    expect(toggle).toBeChecked();
+    expect(toggle).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('entfernt das Bild und geht zurück zur Art', async () => {

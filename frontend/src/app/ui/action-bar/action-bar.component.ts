@@ -31,10 +31,13 @@ export class ActionBarComponent {
   readonly secondaryClick = output();
 
   protected readonly primaryVariant = computed<ButtonVariant>(() => {
-    if (this.danger()) return 'danger';
     if (this.ghost() && this.secondary() === undefined) return 'ghost';
+    if (this.danger()) return 'danger';
     return this.quiet() ? 'secondary' : 'primary';
   });
+
+  /** Ein Geist-Knopf trägt die Gefahrfarbe als Schrift, nicht als Fläche. */
+  protected readonly quietDanger = computed(() => this.ghost() && this.danger());
 
   protected readonly secondaryVariant = computed<ButtonVariant>(() => {
     if (this.secondaryDanger()) return 'danger-outline';

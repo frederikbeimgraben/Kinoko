@@ -5,6 +5,8 @@ import { HistoryService } from '../../core/navigation/history.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ImageViewerComponent } from '../../ui/image-viewer/image-viewer.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { SwitchComponent } from '../../ui/switch/switch.component';
 import { SpeciesState } from '../species/species.state';
 import { ImagesState } from './images.state';
 
@@ -12,7 +14,7 @@ import { ImagesState } from './images.state';
 @Component({
   selector: 'app-image-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, ImageViewerComponent, TranslatePipe],
+  imports: [ActionBarComponent, ImageViewerComponent, ListRowComponent, SwitchComponent, TranslatePipe],
   templateUrl: './image-view.component.html',
   styleUrl: './image-view.component.scss',
 })
@@ -33,6 +35,7 @@ export class ImageViewComponent {
 
   /** Das Titelbild setzt nur, wer Bilder prüft. */
   protected readonly canSetLead = computed(() => this.rights.can('image.review'));
+  protected readonly isLead = computed(() => this.images.lead()?.id === this.id());
   /** Entfernen darf, wer prüft oder das Bild eingereicht hat. */
   protected readonly canRemove = computed(
     () => this.canSetLead() || this.account.owns(this.photo()?.ownerId ?? null),
@@ -53,6 +56,7 @@ export class ImageViewComponent {
   }
 
   protected async setCover(): Promise<void> {
+    if (this.isLead()) return;
     await this.images.setLead(this.id());
   }
 
