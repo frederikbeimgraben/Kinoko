@@ -46,13 +46,13 @@ async function openProfile(page: Page, photos = PHOTOS, rights: string[] = []): 
 
 /** Die Rollhöhe je Abschnitts-Brett, aus dem Bild des Bretts gemessen. */
 const SECTION_TOP: Record<string, number> = {
-  SpeciesSize: 471,
-  SpeciesColours: 991,
-  SpeciesColourChange: 1266,
-  SpeciesSeason: 1718,
-  SpeciesSenses: 1854,
-  SpeciesHymenium: 2149,
-  CompareEntry: 2304,
+  SpeciesSize: 543,
+  SpeciesColours: 1063,
+  SpeciesColourChange: 1338,
+  SpeciesSeason: 1790,
+  SpeciesSenses: 1926,
+  SpeciesHymenium: 2221,
+  CompareEntry: 2376,
 };
 
 /** Rollt die Seite auf die Höhe, die das Brett zeigt. */

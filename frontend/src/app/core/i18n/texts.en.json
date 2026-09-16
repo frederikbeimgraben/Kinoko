@@ -622,6 +622,7 @@
   "species.taxonomy.family": "Family",
   "species.taxonomy.genera": "Genera",
   "species.taxonomy.genus": "Genus",
+  "species.taxonomy.line": "{genus} · {family}",
   "species.taxonomy.oneSpecies": "1 species",
   "species.taxonomy.order": "Order",
   "species.taxonomy.speciesCount": "{anzahl} species",

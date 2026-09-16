@@ -1,3 +1,5 @@
+@use '../../../styles/tile';
+
 :host {
   display: inline-flex;
 }
@@ -18,18 +20,7 @@
 }
 
 .tile__badge {
-  position: absolute;
-  inset-block-start: var(--space-1);
-  inset-inline-start: var(--space-1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--size-checkbox);
-  block-size: var(--size-checkbox);
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  border-radius: 50%;
-  box-shadow: var(--shadow-sm);
+  @include tile.lead-badge;
 }
 
 .tile__credit {

@@ -62,7 +62,12 @@ describe('SpeciesPageComponent', () => {
     const container = await build();
 
     const order = [...container.querySelectorAll('.page > *')].map((one) => one.tagName.toLowerCase());
-    expect(order.slice(0, 3)).toEqual(['app-species-lead', 'app-species-features', 'app-species-size']);
+    expect(order.slice(0, 4)).toEqual([
+      'app-species-lead',
+      'app-species-features',
+      'app-species-taxonomy',
+      'app-species-size',
+    ]);
   });
 
   it('zeigt den Leerzustand zu einem unbekannten Slug', async () => {

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { photoPath, type Photo } from '../../../core/api/models';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LevelPillComponent } from '../../../ui/level-pill/level-pill.component';
 import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
 import { ImagesState } from '../../images/images.state';
@@ -13,13 +14,14 @@ interface Tile {
   id: string;
   path: string;
   alt: string;
+  lead: boolean;
 }
 
 /** Die freigegebenen Bilder einer Art als Raster. */
 @Component({
   selector: 'app-species-photos',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PrivateImageComponent, SvgIconComponent, TranslatePipe],
+  imports: [LevelPillComponent, PrivateImageComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './species-photos.component.html',
   styleUrl: './species-photos.component.scss',
 })
@@ -34,13 +36,15 @@ export class SpeciesPhotosComponent {
   /** Ohne Konto geht keine Einreichung hinaus: die Kachel bleibt dann weg. */
   protected readonly canAdd = this.auth.signedIn;
 
-  protected readonly tiles = computed<readonly Tile[]>(() =>
-    this.images.photos().map((one) => ({
+  protected readonly tiles = computed<readonly Tile[]>(() => {
+    const lead = this.images.lead()?.id;
+    return this.images.photos().map((one) => ({
       id: one.id,
       path: photoPath(one.id, 'list'),
       alt: this.altOf(one),
-    })),
-  );
+      lead: one.id === lead,
+    }));
+  });
 
   protected open(id: string): void {
     void this.router.navigate(['/arten', this.slug(), 'bilder', id]);
