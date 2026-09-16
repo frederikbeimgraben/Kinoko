@@ -22,7 +22,7 @@ const IMAGE_PATH = '/api/photos/';
 /** Womit die Attrappe eine Fotoanfrage beantwortet. */
 export interface ApiOptions {
   /**
-   * Eine Datei unter `e2e/boards/fixtures`, etwa `photo-358x210.png`. Eine
+   * Eine Datei unter `e2e/boards/fixtures`, etwa `photo-358x269.png`. Eine
    * Tabelle wählt je Größe (`list`) oder je Bild und Größe (`eins/list`).
    */
   photo?: string | Record<string, string | undefined>;

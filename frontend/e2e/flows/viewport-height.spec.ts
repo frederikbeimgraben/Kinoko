@@ -81,7 +81,7 @@ test.describe('Seitenhöhe am Telefon', () => {
     await mockApi(
       page,
       { '/api/species/bundle': profileBundle(), '/api/photos': profilePhotos() },
-      { photo: { full: 'photo-358x210.png', list: 'photo-88x88.png' } },
+      { photo: { full: 'photo-358x269.png', list: 'photo-88x88.png' } },
     );
     await flatMap(page);
     await page.route('**/boletus-edulis.json', async (route) => {
