@@ -85,9 +85,7 @@ describe('runs.rows', () => {
 
   it('nennt im laufenden Lauf Woche und Laufzeit', () => {
     const run = { ...RUN, state: 'running' as const, finishedAt: null };
-    expect(activeSubline(run, text, '2026-09-13T19:26:00+02:00')).toBe(
-      'Woche 3 von 12 · seit 22 Minuten',
-    );
+    expect(activeSubline(run, text, '2026-09-13T19:26:00+02:00')).toBe('Woche 3 von 12 · seit 22 Minuten');
     expect(activeSubline({ ...run, startedAt: null }, text, '2026-09-13T19:26:00+02:00')).toBe(
       'Woche 3 von 12',
     );
@@ -128,8 +126,11 @@ describe('runs.rows', () => {
     expect(brierValue({ ...detail, metricBrier: null }, text, 'de')).toBe('');
   });
 
-  it('schreibt Tag und Uhrzeit des Beginns', () => {
-    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(new Date(RUN.startedAt ?? ''));
-    expect(startedValue(RUN, text, 'de')).toBe(`13. ${month}, 19:04`);
+  it('schreibt Tag und Uhrzeit des Beginns in der Zeitzone des Geräts', () => {
+    const started = new Date(RUN.startedAt ?? '');
+    const day = new Intl.DateTimeFormat('de', { day: 'numeric' }).format(started);
+    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(started);
+    const time = new Intl.DateTimeFormat('de', { hour: '2-digit', minute: '2-digit' }).format(started);
+    expect(startedValue(RUN, text, 'de')).toBe(`${day}. ${month}, ${time}`);
   });
 });

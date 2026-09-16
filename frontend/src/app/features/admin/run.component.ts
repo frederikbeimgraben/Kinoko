@@ -69,7 +69,11 @@ export class RunComponent {
     const run = this.run();
     if (run === null) return [];
     return [
-      { key: 'started', title: this.text('admin.run.startedAt'), value: startedValue(run, this.text, this.i18n.locale()) },
+      {
+        key: 'started',
+        title: this.text('admin.run.startedAt'),
+        value: startedValue(run, this.text, this.i18n.locale()),
+      },
       { key: 'duration', title: this.text('admin.run.duration'), value: this.duration() },
       { key: 'visits', title: this.text('admin.run.visits'), value: visitsValue(run, this.text) },
     ].filter((fact) => fact.value !== '');

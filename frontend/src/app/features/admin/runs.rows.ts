@@ -1,6 +1,12 @@
 import { grouped, joined } from '../../core/i18n/numbers';
 import type { TranslationKey } from '../../core/i18n/translations';
-import type { PipelineRun, PipelineRunDetail, PipelineRunStep, RunKind, RunState } from '../../core/api/models';
+import type {
+  PipelineRun,
+  PipelineRunDetail,
+  PipelineRunStep,
+  RunKind,
+  RunState,
+} from '../../core/api/models';
 
 /** Übersetzt einen Schlüssel mit Platzhaltern. */
 export type Translate = (key: TranslationKey, values?: Record<string, string | number>) => string;
