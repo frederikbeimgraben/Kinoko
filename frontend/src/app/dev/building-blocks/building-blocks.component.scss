@@ -181,6 +181,7 @@
 .block__rows app-list-row {
   --size-row-tall: var(--size-row);
   --list-row-inline: var(--space-row-inline);
+  --space-row-stack: 2px;
 }
 
 // Im Vergleich sind die Zellen kleiner als auf einer Artseite.
@@ -367,6 +368,10 @@
 
 // Die Bühne ist der Bildschirm: `contain` bindet `position: fixed` an sie,
 // der Abstand eines Dialogs zum Bildschirmrand liegt ausserhalb der Karte.
+.block__stage app-review-queue {
+  --review-queue-gap: var(--space-4);
+}
+
 .block__stage {
   position: relative;
   overflow: hidden;
