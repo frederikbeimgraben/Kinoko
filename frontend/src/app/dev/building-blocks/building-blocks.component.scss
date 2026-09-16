@@ -252,6 +252,13 @@
   gap: 8px;
 }
 
+.block__stats {
+  --stat-gap: 2px;
+  --stat-label-size: var(--fs-sm);
+  --stat-value-size: 20px;
+  --stat-value-weight: var(--fw-bold);
+}
+
 .block__chiprow {
   padding-block-end: 2px;
 }

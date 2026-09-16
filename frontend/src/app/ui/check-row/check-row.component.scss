@@ -13,9 +13,10 @@
   padding-inline: var(--check-row-inline, 14px);
 }
 
-// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
+// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett. Eine
+// einzelne Zeile ohne Nachbarn setzt ihn über die Variable auf null.
 :host(:not(:first-child)) .row {
-  border-block-start: var(--border-width) solid var(--color-border);
+  border-block-start: var(--check-row-divider, var(--border-width)) solid var(--color-border);
 }
 
 .row--locked {

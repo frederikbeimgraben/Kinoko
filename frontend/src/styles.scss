@@ -49,40 +49,46 @@ app-building-blocks .block--nolabel app-input label {
 
 // Der Knopf misst 44 px, der große 48. Das Kit rechnet die Höhe aus Polster
 // und Zeilenhöhe und schreibt sie im eigenen Stilblatt fest.
-.btn--md,
-.btn--lg {
+app-building-blocks .btn--md,
+app-building-blocks .btn--lg {
   padding-block: 0 !important;
 }
 
-.btn--md {
+app-building-blocks .btn--md {
   block-size: var(--size-tap) !important;
   font-size: 15px !important;
 }
 
-.btn--lg {
+app-building-blocks .btn--lg {
   block-size: var(--size-floating) !important;
   font-size: 15px !important;
 }
 
 // Die Schrift im Knopf steht auf der Linie des Boards, wenn die Zeile
 // nur so hoch ist wie die Schrift.
-.btn__label {
+app-building-blocks .btn__label {
   line-height: normal !important;
 }
 
 // Die Schrift auf dem roten Knopf bleibt weiß, in jedem Thema.
-.btn--danger {
+app-building-blocks .btn--danger {
   color: var(--color-on-media) !important;
 }
 
 // Im mehrzeiligen Feld steht die erste Zeile auf der Linie des Boards.
-.field--multiline {
+app-building-blocks .field--multiline {
   line-height: normal !important;
 }
 
 // Der Knopf im Fuß füllt seine Zeile: die Höhe steht am Fuß, nicht am Knopf.
-.footer__main .btn {
+app-building-blocks .footer__main .btn {
   block-size: 100% !important;
+}
+
+// Das Brett schreibt ohne feste Zeilenhöhe. Die Werkstatt misst darum in der
+// Zeilenhöhe der Schrift.
+app-building-blocks {
+  line-height: normal;
 }
 
 // Auf der Werkstattseite steht die Meldung in ihrer Karte, nicht über allem.
@@ -91,33 +97,32 @@ app-building-blocks app-toast {
 }
 
 // Eingabe und Auswahl messen 44 px.
-.field__control,
-.sel__control {
+app-building-blocks .field__control,
+app-building-blocks .sel__control {
   block-size: var(--size-tap) !important;
 }
 
 // Die Meldung misst 36 px.
-.toast {
+app-building-blocks .toast {
   padding-block: 10px !important;
   font-size: 13px !important;
 }
 
-.toasts {
+app-building-blocks .toasts {
   gap: var(--space-2) !important;
 }
 
 // Das Board polstert die Marke mit 3 / 10 px, das Kit mit 4 / 12 px.
-.badge {
+app-building-blocks .badge {
   padding: 3px 10px !important;
 }
 
 // Das Board zeichnet den Kasten mit 20 px und den Fehlertext mit 14 px.
-.cbx__input {
+app-building-blocks .cbx__input {
   inline-size: var(--size-checkbox) !important;
   block-size: var(--size-checkbox) !important;
 }
-
-p.text-xs.text-danger {
+app-building-blocks p.text-xs.text-danger {
   font-size: 14px;
 }
 
@@ -147,7 +152,7 @@ app-building-blocks .block__pagehead .btn {
 }
 
 // Das Board stellt den Haken 12 px vor seinen Text und schreibt ihn 15 px.
-.cbx__input + .cbx__label {
+app-building-blocks .cbx__input + .cbx__label {
   margin-inline-start: 4px;
   font-size: 15px;
 }
