@@ -53,6 +53,7 @@
             <app-form-field
               [label]="localeLabel(locale)"
               [hideLabel]="true"
+              [multiline]="true"
               [value]="open.values[locale]"
               (valueChange)="edit(locale, $event)"
             />

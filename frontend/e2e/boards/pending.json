@@ -49,6 +49,8 @@
   "Runs",
   "SignInProgress",
   "SignInSheet",
+  "SpeciesPageAdmin",
+  "SpeciesPageDesktopAdmin",
   "ZoneDraw",
   "ZoneEdit",
   "ZoneSheet"
