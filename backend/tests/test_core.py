@@ -206,7 +206,7 @@ async def test_groups_cache_prevents_a_second_userinfo_call(
     assert after == before
 
 
-async def test_userinfo_failure_grants_no_rights(
+async def test_userinfo_failure_grants_only_the_base_role_rights(
     session: AsyncSession,
     seeded: None,  # noqa: ARG001
     issuer: FakeIssuer,
@@ -214,7 +214,7 @@ async def test_userinfo_failure_grants_no_rights(
     issuer.groups = [get_settings().admin_group]
     issuer.userinfo_status = HTTPStatus.INTERNAL_SERVER_ERROR
     user = await make_user(session, "person-5")
-    assert await auth.rights_of(session, user, {}, "access-token") == frozenset()
+    assert await auth.rights_of(session, user, {}, "access-token") == {"image.submit"}
 
 
 async def test_admin_group_grants_every_right(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
@@ -254,7 +254,7 @@ async def test_my_permissions_endpoint_keeps_only_role_rights_without_the_group(
         headers={"Authorization": f"Bearer {issuer.token(sub='person-6')}"},
     )
     assert answer.status_code == 200
-    assert answer.json() == {"permissions": ["text.edit"]}
+    assert answer.json() == {"permissions": ["image.submit", "text.edit"]}
 
 
 async def test_rights_come_from_the_roles(
@@ -269,7 +269,16 @@ async def test_rights_come_from_the_roles(
     session.add(RolePermission(role_id=role.id, permission_key="text.edit"))
     session.add(UserRole(user_id=user.id, role_id=role.id))
     await session.commit()
-    assert await auth.rights_of(session, user, {}, "token") == {"text.edit"}
+    assert await auth.rights_of(session, user, {}, "token") == {"text.edit", "image.submit"}
+
+
+async def test_every_signed_in_account_holds_the_base_role_rights(
+    session: AsyncSession,
+    seeded: None,  # noqa: ARG001
+    issuer: FakeIssuer,  # noqa: ARG001
+) -> None:
+    user = await make_user(session, "person-7")
+    assert await auth.rights_of(session, user, {}, "token") == {"image.submit"}
 
 
 def test_viewer_knows_its_rights() -> None:

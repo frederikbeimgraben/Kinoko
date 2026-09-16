@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/angular';
 import { ANY_ROUTE } from '../../testing/routes';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
-import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
+import { AccessApiDouble, accessApiProvider, role } from '../../testing/access-fixture';
 import { noViolations } from '../../testing/axe';
 import { RoleComponent } from './role.component';
 
@@ -87,15 +87,36 @@ describe('RoleComponent', () => {
     expect(api.created).toEqual([]);
   });
 
-  it('gibt einer festen Rolle keine Felder, keine Haken und kein Löschen', async () => {
+  it('sperrt bei einer festen Rolle den Namen, erlaubt Beschreibung und Speichern, ohne Löschen', async () => {
     const { container } = await build('rolle-admin');
 
     expect(screen.queryByRole('textbox', { name: 'Name' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Admin' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Speichern' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Rolle löschen' })).not.toBeInTheDocument();
     const box = screen.getByRole('checkbox', { name: /Rollen verwalten/ });
     expect(box).toBeChecked();
     expect(box).toBeDisabled();
     await noViolations(container);
+  });
+
+  it('übersetzt den Namen einer eingebauten Rolle im Kopf und im Namensfeld', async () => {
+    const api = new AccessApiDouble();
+    api.roleList = [
+      role({
+        id: 'rolle-pruefer',
+        slug: 'reviewer',
+        name: 'account.role.reviewer',
+        builtIn: true,
+        permissions: ['image.review', 'find.review'],
+      }),
+    ];
+
+    await build('rolle-pruefer', api);
+
+    expect(screen.getByRole('heading', { name: 'Prüfer' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Prüfer' })).toBeInTheDocument();
   });
 
   it('fragt vor dem Löschen nach und löscht dann', async () => {
@@ -128,7 +149,7 @@ describe('RoleComponent', () => {
   it('sagt es, wenn es die Rolle nicht gibt', async () => {
     await build('gibt-es-nicht');
 
-    expect(screen.getByText('Diese Rolle gibt es nicht.')).toBeInTheDocument();
+    expect(screen.getByText('Rolle nicht gefunden')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Speichern' })).not.toBeInTheDocument();
   });
 

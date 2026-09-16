@@ -4,7 +4,6 @@ import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
@@ -14,6 +13,7 @@ import { SearchFieldComponent } from '../../ui/search-field/search-field.compone
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { AdminState } from './admin.state';
+import { roleName } from './role-name';
 
 /** Das Blatt der Zuweisung ist so hoch wie sein Inhalt. */
 const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
@@ -82,7 +82,7 @@ export class PeopleComponent {
       email: person.email ?? '',
       roles: person.roles.map((role) => ({
         id: role.id,
-        name: this.i18n.translate(role.name as TranslationKey),
+        name: roleName(this.i18n, role.name),
         lead: role.slug === 'admin',
       })),
     })),
@@ -96,7 +96,7 @@ export class PeopleComponent {
   protected readonly choices = computed<Choice[]>(() =>
     this.assignable().map((role) => ({
       id: role.id,
-      name: this.i18n.translate(role.name as TranslationKey),
+      name: roleName(this.i18n, role.name),
       checked: this.chosen().has(role.id),
     })),
   );

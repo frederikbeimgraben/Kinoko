@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { TranslationKey } from '../../core/i18n/translations';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { AdminState } from './admin.state';
+import { roleName } from './role-name';
 
 /** Eine Zeile der Rollenliste. */
 interface Row {
@@ -35,7 +35,7 @@ export class RolesComponent {
   protected readonly rows = computed<Row[]>(() =>
     (this.state.roles() ?? []).map((role) => ({
       id: role.id,
-      name: this.i18n.translate(role.name as TranslationKey),
+      name: roleName(this.i18n, role.name),
       subline: joined([role.description, this.people(role.peopleCount)]),
       locked: role.builtIn,
     })),

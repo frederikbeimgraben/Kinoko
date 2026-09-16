@@ -155,6 +155,39 @@ async def test_list_permissions_needs_role_manage(
     assert "role.manage" in keys
 
 
+async def test_list_permissions_reports_areas_by_contract(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session)
+    sign_in(app_of(api), user, "role.manage")
+    answer = await api.get("/permissions")
+    areas = {row["key"]: row["area"] for row in answer.json()["items"]}
+    assert areas == {
+        "species.edit": "species",
+        "image.submit": "species",
+        "image.review": "species",
+        "text.edit": "interface",
+        "role.manage": "access",
+        "role.assign": "access",
+        "find.review": "data",
+        "run.manage": "data",
+    }
+
+
+async def test_seed_grants_image_submit_to_the_user_role(
+    api: httpx.AsyncClient,  # noqa: ARG001
+    session: AsyncSession,
+) -> None:
+    role = (await session.execute(select(Role).where(Role.slug == "user"))).scalar_one()
+    held = {
+        row.permission_key
+        for row in (
+            await session.execute(select(RolePermission).where(RolePermission.role_id == role.id))
+        ).scalars()
+    }
+    assert held == {"image.submit"}
+
+
 async def test_list_permissions_is_forbidden_without_the_right(
     api: httpx.AsyncClient,
     session: AsyncSession,
