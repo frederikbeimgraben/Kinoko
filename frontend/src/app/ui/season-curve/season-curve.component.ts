@@ -77,6 +77,8 @@ export class SeasonCurveComponent {
   readonly smoothing = input(3);
   /** Der Höchstwert der Skala als Text, etwa „32 %“. Leer bleibt er weg. */
   readonly peak = input('');
+  /** Hält das Seitenverhältnis der Zeichnung, statt sie zu strecken. */
+  readonly keepRatio = input(false);
 
   protected readonly maskId = `funke-dicht-${nextNumber++}`;
   protected readonly drawing = computed<Drawing>(() => this.compute());

@@ -2,7 +2,7 @@
   <svg
     class="spark"
     [attr.viewBox]="'0 0 ' + drawing().width + ' ' + drawing().height"
-    preserveAspectRatio="none"
+    [attr.preserveAspectRatio]="keepRatio() ? 'xMidYMid meet' : 'none'"
     role="img"
     [attr.aria-label]="label()"
   >
