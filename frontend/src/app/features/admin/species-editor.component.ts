@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { shortDate } from '../../core/i18n/dates';
-import { grouped } from '../../core/i18n/numbers';
+import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -121,6 +121,17 @@ export class SpeciesEditorComponent {
   protected readonly deleteQuestion = computed(
     () => `${this.species()?.name ?? ''} ${this.i18n.translate('admin.species.deleteConfirmSuffix')}`,
   );
+
+  /** Was der Löschung im Weg steht: Funde und eine gerechnete Karte. */
+  protected readonly deleteMeta = computed(() => {
+    const finds = this.state.counts()?.finds ?? 0;
+    return joined([
+      finds === 0 ? null : this.i18n.translate('admin.species.deleteFinds', { zahl: grouped(finds) }),
+      this.forecast() ? this.i18n.translate('admin.species.deleteMap') : null,
+    ]);
+  });
+
+  protected readonly deleteBlocked = computed(() => (this.state.counts()?.finds ?? 0) > 0);
 
   constructor() {
     effect(() => {

@@ -185,3 +185,12 @@ app-action-bar .btn:disabled {
   filter: none;
   opacity: 0.55;
 }
+
+// Die gesperrte Bestätigung steht als versenkte Fläche, wie im Board. Das
+// Kit dimmt und entfärbt stattdessen die rote Fläche.
+app-confirm-dialog .confirm__actions .btn:disabled {
+  color: var(--color-border-strong);
+  background: var(--color-surface-sunken);
+  filter: none;
+  opacity: 1;
+}

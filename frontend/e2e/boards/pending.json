@@ -49,9 +49,6 @@
   "Runs",
   "SignInProgress",
   "SignInSheet",
-  "SpeciesCreate",
-  "SpeciesDelete",
-  "SpeciesEdit",
   "ZoneDraw",
   "ZoneEdit",
   "ZoneSheet"

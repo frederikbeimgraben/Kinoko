@@ -21,10 +21,14 @@ function guard(board: string, device: 'phone' | 'wide'): void {
 }
 
 /** Öffnet die Artseite mit dem vollen Profil, den Bildern und der Karte. */
-async function openProfile(page: Page, photos = PHOTOS): Promise<void> {
+async function openProfile(page: Page, photos = PHOTOS, rights: string[] = []): Promise<void> {
   await mockApi(
     page,
-    { '/api/species/bundle': profileBundle(), '/api/photos': profilePhotos() },
+    {
+      '/api/species/bundle': profileBundle(),
+      '/api/photos': profilePhotos(),
+      '/api/me/permissions': { permissions: rights, roles: [] },
+    },
     { photo: photos },
   );
   await flatMap(page);
@@ -139,4 +143,16 @@ test('SpeciesPageDesktop', async ({ page }) => {
   guard('SpeciesPageDesktop', 'wide');
   await openProfile(page, PHOTOS_WIDE);
   await expectBoard(page, 'SpeciesPageDesktop');
+});
+
+test('SpeciesPageAdmin', async ({ page }) => {
+  guard('SpeciesPageAdmin', 'phone');
+  await openProfile(page, PHOTOS, ['species.edit']);
+  await expectBoard(page, 'SpeciesPageAdmin');
+});
+
+test('SpeciesPageDesktopAdmin', async ({ page }) => {
+  guard('SpeciesPageDesktopAdmin', 'wide');
+  await openProfile(page, PHOTOS_WIDE, ['species.edit']);
+  await expectBoard(page, 'SpeciesPageDesktopAdmin');
 });

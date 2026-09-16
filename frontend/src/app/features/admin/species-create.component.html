@@ -1,0 +1,96 @@
+<app-page-header [title]="'admin.species.create' | t" [back]="true" (backClick)="back()" />
+
+<div class="create">
+  <section>
+    <h2 class="create__section">{{ 'admin.species.section.name' | t }}</h2>
+    <div class="create__fields">
+      <app-form-field
+        [label]="'admin.species.field.name' | t"
+        [hideLabel]="true"
+        [value]="draft().name"
+        (valueChange)="set('name', $event)"
+      />
+      <app-form-field
+        [label]="'admin.species.field.scientificName' | t"
+        [hideLabel]="true"
+        [value]="draft().scientificName"
+        (valueChange)="set('scientificName', $event)"
+      />
+      <app-form-field
+        [label]="'admin.species.altNamesPlaceholder' | t"
+        [placeholder]="'admin.species.altNamesPlaceholder' | t"
+        [hideLabel]="true"
+        [value]="draft().otherNames"
+        (valueChange)="set('otherNames', $event)"
+      />
+    </div>
+  </section>
+
+  <section>
+    <h2 class="create__section">{{ 'admin.species.section.classification' | t }}</h2>
+    <div class="create__fields">
+      <app-form-field
+        [label]="'admin.species.field.group' | t"
+        [hideLabel]="true"
+        [readOnly]="true"
+        [value]="groupName()"
+        (displayClick)="picking.set('group')"
+      />
+      <app-form-field
+        [label]="'admin.species.field.edibility' | t"
+        [hideLabel]="true"
+        [readOnly]="true"
+        [value]="edibilityName()"
+        (displayClick)="picking.set('edibility')"
+      />
+      <app-check-row
+        class="create__check"
+        [title]="'admin.species.field.protectedByLaw' | t"
+        [checked]="draft().protected"
+        (toggled)="set('protected', $event)"
+      />
+    </div>
+  </section>
+
+  <section>
+    <h2 class="create__section">{{ 'admin.species.section.source' | t }}</h2>
+    <app-form-field
+      [label]="'admin.species.field.source' | t"
+      [hideLabel]="true"
+      [value]="draft().source"
+      (valueChange)="set('source', $event)"
+    />
+  </section>
+</div>
+
+<app-action-bar
+  [primary]="'admin.species.createAndCheckTraits' | t"
+  [secondary]="'common.cancel' | t"
+  [busy]="saving()"
+  (primaryClick)="create()"
+  (secondaryClick)="back()"
+/>
+
+<app-overlay-host [open]="picking() !== null" [modal]="true" (closed)="picking.set(null)">
+  @if (picking() !== null) {
+    <app-sheet
+      [label]="pickerTitle()"
+      [title]="pickerTitle()"
+      [modal]="true"
+      [detents]="DETENTS"
+      (closed)="picking.set(null)"
+    >
+      <div class="create__choices">
+        @for (choice of choices(); track choice.key) {
+          <app-list-row
+            kind="catalogue"
+            [title]="choice.name"
+            [clickable]="true"
+            [selected]="choice.key === chosen()"
+            (chosen)="choose(choice.key)"
+          />
+        }
+      </div>
+    </app-sheet>
+  }
+</app-overlay-host>

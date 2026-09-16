@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { Location, NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { PermissionsService } from '../../core/access/permissions.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SpeciesColourChangeComponent } from './sections/species-colour-change.component';
@@ -26,6 +28,7 @@ import { SpeciesState } from './species.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     EmptyStateComponent,
+    IconButtonComponent,
     NgTemplateOutlet,
     PageHeaderComponent,
     SpeciesColourChangeComponent,
@@ -49,6 +52,7 @@ export class SpeciesPageComponent {
   private readonly state = inject(SpeciesState);
   private readonly location = inject(Location);
   private readonly router = inject(Router);
+  private readonly rights = inject(PermissionsService);
   private readonly viewport = inject(ViewportService);
   private readonly comparison = inject(ComparisonState);
 
@@ -58,9 +62,15 @@ export class SpeciesPageComponent {
   protected readonly species = computed(() => this.state.entryOf(this.slug()));
   protected readonly waiting = computed(() => this.state.loading());
   protected readonly title = computed(() => this.species()?.name ?? '');
+  /** Wer Profile ändern darf, kommt aus dem Kopf in den Bearbeiten-Modus. */
+  protected readonly mayEdit = computed(() => this.rights.can('species.edit'));
 
   constructor() {
     void this.state.loadBundle();
+  }
+
+  protected edit(): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug()]);
   }
 
   protected back(): void {

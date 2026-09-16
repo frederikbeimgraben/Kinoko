@@ -51,7 +51,10 @@ function routeFor(slug: string): { provide: typeof ActivatedRoute; useValue: unk
   return { provide: ActivatedRoute, useValue: { paramMap: of(params), snapshot: { paramMap: params } } };
 }
 
-async function build(profile: Record<string, unknown> = PROFILE): Promise<{
+async function build(
+  profile: Record<string, unknown> = PROFILE,
+  counts = { records: 1284, finds: 12, photos: 3 },
+): Promise<{
   container: Element;
   http: HttpTestingController;
 }> {
@@ -66,7 +69,7 @@ async function build(profile: Record<string, unknown> = PROFILE): Promise<{
   });
   const http = TestBed.inject(HttpTestingController);
   http.expectOne('/api/species/boletus-edulis').flush(profile);
-  http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1284, finds: 12, photos: 3 });
+  http.expectOne('/api/species/boletus-edulis/counts').flush(counts);
   return { container, http };
 }
 
@@ -105,13 +108,24 @@ describe('SpeciesEditorComponent', () => {
   });
 
   it('fragt vor dem Löschen nach und löscht dann', async () => {
-    const { http } = await build();
+    const { http } = await build(PROFILE, { records: 12, finds: 0, photos: 1 });
     await screen.findByRole('button', { name: 'Art löschen' });
 
     await userEvent.click(screen.getByRole('button', { name: 'Art löschen' }));
     expect(screen.getByText('Steinpilz löschen?')).toBeInTheDocument();
+    expect(screen.getByText('Karte vorhanden')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
 
     expect(http.expectOne('/api/species/boletus-edulis').request.method).toBe('DELETE');
+  });
+
+  it('sperrt das Löschen, solange die Art Funde trägt', async () => {
+    await build();
+    await screen.findByRole('button', { name: 'Art löschen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Art löschen' }));
+
+    expect(screen.getByText('12 Funde · Karte vorhanden')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Löschen' })).toBeDisabled();
   });
 });

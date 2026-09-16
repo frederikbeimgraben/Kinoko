@@ -30,6 +30,7 @@
   --size-row-tall: var(--size-row);
   --list-row-sub: var(--fs-row-meta);
   --list-row-title-height: normal;
+  --list-row-sub-height: 1.4;
   --space-row-stack: 2px;
 }
 
@@ -39,8 +40,10 @@
   --fs-xs: var(--fs-caption);
   --fw-semibold: var(--fw-bold);
   --space-1: 2px;
+  --stat-label-height: 1.4;
 
   padding-block: 14px;
+  line-height: normal;
 }
 
 .editor__stats app-stat-row {

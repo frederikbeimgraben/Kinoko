@@ -50,7 +50,9 @@
 <app-confirm-dialog
   [open]="removing()"
   [title]="deleteQuestion()"
+  [meta]="deleteMeta()"
   [confirmLabel]="'common.delete' | t"
+  [confirmDisabled]="deleteBlocked()"
   (confirmed)="remove()"
   (cancelled)="removing.set(false)"
 />
