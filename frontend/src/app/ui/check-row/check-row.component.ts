@@ -17,6 +17,8 @@ export class CheckRowComponent {
   readonly checked = input(false);
   /** Eine feste Rolle trägt jedes Recht und lässt es sich nicht abwählen. */
   readonly locked = input(false);
+  /** Die Anzahl am Ende der Zeile. */
+  readonly count = input<number>();
 
   readonly toggled = output<boolean>();
 

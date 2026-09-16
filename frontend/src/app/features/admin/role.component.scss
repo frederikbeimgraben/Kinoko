@@ -35,6 +35,8 @@
 // Strich unter der letzten Zeile schließt den Block ab.
 .role__rights {
   --check-row-block: 10px;
+  --check-row-height: 0;
+  --check-row-inline: 0;
 
   margin-block-start: -4px;
   border-block-end: var(--border-width) solid var(--color-border);

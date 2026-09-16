@@ -350,6 +350,7 @@
       <app-check-row
         [title]="text('entry.filter.own')"
         [checked]="checked()"
+        [count]="12"
         (toggled)="checked.set($event)"
       />
       <app-check-row [title]="text('entry.filter.shared')" [checked]="false" [locked]="true" />
@@ -485,12 +486,14 @@
 
   <section class="block" data-block="app-search-field">
     <h2 class="block__head">{{ 'blocks.searchField' | t }}</h2>
-    <app-search-field value="" [placeholder]="text('species.search.placeholder')" />
-    <app-search-field
-      [value]="searchValue()"
-      [placeholder]="text('species.search.placeholder')"
-      (valueChange)="searchValue.set($event)"
-    />
+    <div class="block__fields">
+      <app-search-field value="" [placeholder]="text('species.search.placeholder')" />
+      <app-search-field
+        [value]="searchValue()"
+        [placeholder]="text('species.search.placeholder')"
+        (valueChange)="searchValue.set($event)"
+      />
+    </div>
   </section>
 
   <section class="block" data-block="app-segmented">
@@ -505,13 +508,15 @@
 
   <section class="block" data-block="app-chip-group">
     <h2 class="block__head">{{ 'blocks.chipGroup' | t }}</h2>
-    <app-chip-group
-      [chips]="speciesChips"
-      [value]="chip()"
-      [label]="text('beispiel.artenTitel')"
-      [addable]="true"
-      (valueChange)="chip.set($event)"
-    />
+    <div class="block__chiprow">
+      <app-chip-group
+        [chips]="speciesChips"
+        [value]="chip()"
+        [label]="text('beispiel.artenTitel')"
+        [addable]="true"
+        (valueChange)="chip.set($event)"
+      />
+    </div>
   </section>
 
   <section class="block" data-block="app-filter-chip">
