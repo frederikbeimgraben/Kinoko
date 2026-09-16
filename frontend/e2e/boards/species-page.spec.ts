@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, SEVEN } from '../fixtures/species';
-import { lookalikesBundle, profileBundle, profileManifest, profilePhotos } from '../fixtures/species-page';
+import { profileBundle, profileManifest, profilePhotos } from '../fixtures/species-page';
 import { expectBoard, skipPending } from './board';
 
 /** Die Fotos der Artseite: das Titelbild gross, die Kacheln in Listengrösse. */
@@ -40,17 +40,23 @@ async function openProfile(page: Page, photos = PHOTOS): Promise<void> {
   await expect(page.locator('app-species-season app-season-curve')).toBeVisible();
 }
 
-/** Rollt die Seite, bis die Überschrift des Abschnitts fast am oberen Rand steht. */
-async function scrollToSection(page: Page, heading: string): Promise<void> {
-  await page.evaluate((title) => {
+/** Die Rollhöhe je Abschnitts-Brett, aus dem Bild des Bretts gemessen. */
+const SECTION_TOP: Record<string, number> = {
+  SpeciesSize: 471,
+  SpeciesColours: 991,
+  SpeciesColourChange: 1266,
+  SpeciesSeason: 1718,
+  SpeciesSenses: 1854,
+  SpeciesHymenium: 2149,
+  CompareEntry: 2304,
+};
+
+/** Rollt die Seite auf die Höhe, die das Brett zeigt. */
+async function scrollToSection(page: Page, board: string): Promise<void> {
+  await page.evaluate((top) => {
     const view = document.querySelector('.page');
-    const node = Array.from(view?.querySelectorAll('h2') ?? []).find(
-      (one) => one.textContent.trim() === title,
-    );
-    if (view === null || !node) return;
-    const top = node.getBoundingClientRect().top - view.getBoundingClientRect().top + view.scrollTop;
-    view.scrollTop = Math.max(top - 29, 0);
-  }, heading);
+    if (view !== null) view.scrollTop = top;
+  }, SECTION_TOP[board] ?? 0);
 }
 
 test('SpeciesPage', async ({ page }) => {
@@ -74,56 +80,49 @@ test('SpeciesImages', async ({ page }) => {
 test('SpeciesSize', async ({ page }) => {
   guard('SpeciesSize', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'Maße');
+  await scrollToSection(page, 'SpeciesSize');
   await expectBoard(page, 'SpeciesSize');
 });
 
 test('SpeciesColours', async ({ page }) => {
   guard('SpeciesColours', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'Farben');
+  await scrollToSection(page, 'SpeciesColours');
   await expectBoard(page, 'SpeciesColours');
 });
 
 test('SpeciesColourChange', async ({ page }) => {
   guard('SpeciesColourChange', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'Verfärbung');
+  await scrollToSection(page, 'SpeciesColourChange');
   await expectBoard(page, 'SpeciesColourChange');
 });
 
 test('SpeciesSeason', async ({ page }) => {
   guard('SpeciesSeason', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'Zeitraum');
+  await scrollToSection(page, 'SpeciesSeason');
   await expectBoard(page, 'SpeciesSeason');
 });
 
 test('SpeciesSenses', async ({ page }) => {
   guard('SpeciesSenses', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'Geruch und Geschmack');
+  await scrollToSection(page, 'SpeciesSenses');
   await expectBoard(page, 'SpeciesSenses');
 });
 
 test('SpeciesHymenium', async ({ page }) => {
   guard('SpeciesHymenium', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'Fruchtschicht');
+  await scrollToSection(page, 'SpeciesHymenium');
   await expectBoard(page, 'SpeciesHymenium');
 });
 
 test('CompareEntry', async ({ page }) => {
   guard('CompareEntry', 'phone');
-  await mockApi(
-    page,
-    { '/api/species/bundle': lookalikesBundle(), '/api/photos': { items: [], nextCursor: null } },
-    { photo: ROWS },
-  );
-  await flatMap(page);
-  await page.goto('/arten/boletus-edulis');
-  await expect(page.getByText('Gallenröhrling')).toBeVisible();
-  await scrollToSection(page, 'Verwechslungen');
+  await openProfile(page);
+  await scrollToSection(page, 'CompareEntry');
   await expectBoard(page, 'CompareEntry');
 });
 

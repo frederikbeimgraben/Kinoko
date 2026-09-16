@@ -13,17 +13,18 @@
   align-items: center;
   margin: 0;
   block-size: 44px;
-  padding-inline: var(--size-gutter);
-  font-size: var(--fs-md);
+  padding-inline: var(--list-row-inline);
+  font-size: var(--fs-row-title);
   font-weight: var(--fw-semibold);
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
+// Die Überschrift trägt ihr Polster selbst, der Körper nur unten und seitlich.
 .sense__body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 14px;
+  padding: 0 14px 14px;
 }
 
 .sense__text {

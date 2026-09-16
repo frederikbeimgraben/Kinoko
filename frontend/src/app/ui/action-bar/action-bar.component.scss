@@ -32,3 +32,9 @@
 .footer__slim {
   min-block-size: var(--size-tap);
 }
+
+// Der Kit-Knopf malt die Geist-Schrift aus `--color-primary`. Hier trägt er
+// die Gefahrfarbe.
+.footer__danger {
+  --color-primary: var(--color-danger);
+}

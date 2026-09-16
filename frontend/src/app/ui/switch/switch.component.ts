@@ -11,10 +11,13 @@ export class SwitchComponent {
   readonly checked = input.required<boolean>();
   /** Der barrierefreie Name. Er nennt, was der Schalter schaltet. */
   readonly label = input.required<string>();
+  /** Ein Zustand ohne Rückweg sperrt den Schalter, sobald er an ist. */
+  readonly disabled = input(false);
 
   readonly checkedChange = output<boolean>();
 
   protected toggle(): void {
+    if (this.disabled()) return;
     this.checkedChange.emit(!this.checked());
   }
 }

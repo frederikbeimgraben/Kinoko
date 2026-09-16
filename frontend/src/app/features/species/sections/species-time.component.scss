@@ -2,11 +2,13 @@
 
 @include section.block;
 
+// Der Inhalt der Karte trägt seine Trennlinie unten, wie das Brett sie zeichnet.
 .time {
   display: flex;
   flex-direction: column;
   gap: 9px;
   padding: 12px 14px;
+  border-block-end: var(--border-width) solid var(--color-border);
 }
 
 .time__head {
@@ -14,10 +16,12 @@
   gap: var(--space-3);
   align-items: baseline;
   justify-content: space-between;
-  font-size: var(--fs-md);
+  font-size: var(--fs-row-title);
+  line-height: normal;
 }
 
 .time__range {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
   color: var(--color-text-muted);
 }
