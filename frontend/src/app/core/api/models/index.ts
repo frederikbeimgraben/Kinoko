@@ -45,6 +45,15 @@ export type {
   RoleRef,
   SpeciesCountsEntry,
 } from './access';
+export { RUN_KINDS } from './runs';
+export type {
+  PipelineRun,
+  PipelineRunDetail,
+  PipelineRunSpecies,
+  PipelineRunStep,
+  RunKind,
+  RunState,
+} from './runs';
 export { MARKER_COLOURS, VISIBILITIES } from './entries';
 export { LICENCES, PHOTO_STATES, photoPath } from './photos';
 export type { ReviewState, SharedFind } from './finds';

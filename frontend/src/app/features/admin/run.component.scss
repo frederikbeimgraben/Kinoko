@@ -1,0 +1,54 @@
+@use '../../../styles/card';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.run {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.run__section {
+  @include card.section-title;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
+.run__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --list-row-value: var(--fs-row-meta);
+  --space-row-stack: 2px;
+}
+
+.run__check {
+  color: var(--color-primary);
+}
+
+.run__log {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
+}

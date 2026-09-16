@@ -1,0 +1,42 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="run">
+  <div class="run__card">
+    @for (fact of facts(); track fact.key) {
+      <app-list-row kind="catalogue" [title]="fact.title" [value]="fact.value" />
+    }
+    @if (result(); as result) {
+      <app-list-row kind="catalogue" [title]="resultTitle()">
+        <app-badge trail variant="primary">{{ result }}</app-badge>
+      </app-list-row>
+    }
+  </div>
+
+  @if (steps().length > 0) {
+    <section>
+      <h2 class="run__section">{{ 'admin.run.section.steps' | t }}</h2>
+      <div class="run__card">
+        @for (step of steps(); track step.key) {
+          <app-list-row kind="catalogue" [title]="step.title" [subline]="step.subline">
+            @if (step.done) {
+              <app-svg-icon trail class="run__check" name="check" [size]="18" [strokeWidth]="2" />
+            } @else {
+              <app-badge trail variant="primary">{{ step.state }}</app-badge>
+            }
+          </app-list-row>
+        }
+      </div>
+    </section>
+  }
+
+  @if (log().length > 0) {
+    <section>
+      <h2 class="run__section">{{ 'admin.run.section.output' | t }}</h2>
+      <div class="run__card run__log">
+        @for (line of log(); track $index) {
+          <span class="run__line">{{ line }}</span>
+        }
+      </div>
+    </section>
+  }
+</div>

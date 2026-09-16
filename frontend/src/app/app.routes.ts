@@ -88,6 +88,16 @@ export const routes: Routes = [
           import('./features/admin/admin-species.component').then((m) => m.AdminSpeciesComponent),
       },
       {
+        path: 'laeufe',
+        canActivate: [requiresPermission('run.manage')],
+        loadComponent: () => import('./features/admin/runs.component').then((m) => m.RunsComponent),
+      },
+      {
+        path: 'laeufe/:id',
+        canActivate: [requiresPermission('run.manage')],
+        loadComponent: () => import('./features/admin/run.component').then((m) => m.RunComponent),
+      },
+      {
         path: 'arten/neu',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>

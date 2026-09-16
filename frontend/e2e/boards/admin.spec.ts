@@ -10,6 +10,7 @@ import {
   text,
 } from '../fixtures/admin';
 import { mockApi } from '../fixtures/api';
+import { NOW, RUNS, RUN_DETAIL } from '../fixtures/runs';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, species } from '../fixtures/species';
@@ -189,4 +190,30 @@ test('SpeciesCreate', async ({ page }) => {
     (document.activeElement as HTMLElement | null)?.blur();
   });
   await expectBoard(page, 'SpeciesCreate');
+});
+
+test('Runs', async ({ page }) => {
+  guard('Runs', 'phone');
+  await page.clock.setFixedTime(new Date(NOW));
+  await open(page, '/verwaltung/laeufe', { '/api/pipeline-runs': RUNS });
+  await expect(page.getByText('Woche 3 von 12 · seit 22 Minuten')).toBeVisible();
+  await expectBoard(page, 'Runs');
+});
+
+test('RunStart', async ({ page }) => {
+  guard('RunStart', 'phone');
+  await page.clock.setFixedTime(new Date(NOW));
+  await open(page, '/verwaltung/laeufe', { '/api/pipeline-runs': RUNS });
+  await page.getByRole('button', { name: 'Lauf anstoßen' }).click();
+  await expect(page.getByRole('tab', { name: 'Rendern' })).toBeVisible();
+  await expectBoard(page, 'RunStart');
+});
+
+test('Run', async ({ page }) => {
+  guard('Run', 'phone');
+  await open(page, '/verwaltung/laeufe/lauf-training', {
+    '/api/pipeline-runs/lauf-training': RUN_DETAIL,
+  });
+  await expect(page.getByText('Brier 0,061 · besser')).toBeVisible();
+  await expectBoard(page, 'Run');
 });
