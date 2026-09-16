@@ -14,12 +14,9 @@
   min-block-size: 0;
   overflow-y: auto;
   background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
-  // Der Rahmen liegt als Schatten innen, sonst wüchse die Karte über ihre
-  // fünf Zeilen hinaus.
-  box-shadow:
-    inset 0 0 0 var(--border-width) var(--color-border),
-    var(--shadow-lg);
+  box-shadow: var(--shadow-lg);
 }
 
 .picker__empty {
