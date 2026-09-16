@@ -141,18 +141,12 @@ describe('FundBlattComponent', () => {
     expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
   });
 
-  it('führt den Fund an die Karten-App weiter', async () => {
-    await build();
-    const opened = vi.fn();
-    vi.stubGlobal('open', opened);
+  it('gibt die Karte frei, wenn der Fund dort gezeigt werden soll', async () => {
+    const setup = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'In Karten-App öffnen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Auf der Karte anzeigen' }));
 
-    expect(opened).toHaveBeenCalledWith(
-      expect.stringContaining(`${FIND.lat.toFixed(6)}%2C${FIND.lon.toFixed(6)}`),
-      '_blank',
-      'noopener',
-    );
+    expect(setup.closed).toBe(1);
   });
 
   it('speichert eine Änderung und kehrt zur Ansicht zurück', async () => {
@@ -193,9 +187,7 @@ describe('FundBlattComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     setup.refresh();
-    expect(
-      screen.getByText('Der Fund und seine Fotos werden entfernt. Das lässt sich nicht rückgängig machen.'),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Fund löschen?' })).toBeInTheDocument();
 
     await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
     await vi.waitFor(() => {

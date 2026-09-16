@@ -1,15 +1,22 @@
-@if (map.object() !== null) {
-  <div class="object">
-    <app-sheet appSheetHeight class="object__sheet" [label]="sheetName()" [detents]="detents">
-      @if (find(); as entry) {
-        <app-find-sheet [find]="entry" (closed)="close()" />
-      } @else if (marker(); as entry) {
-        <app-marker-sheet [marker]="entry" (closed)="close()" />
-      } @else if (zone(); as entry) {
-        <app-zone-sheet [zone]="entry" (closed)="close()" />
-      } @else if (missing()) {
-        <p class="note empty-state">{{ 'objekt.nichtGefunden' | t }}</p>
-      }
-    </app-sheet>
-  </div>
-}
+<app-overlay-host class="object" [open]="map.object() !== null" [cover]="true" (closed)="close()">
+  <app-sheet appSheetHeight [label]="sheetName()" [detents]="detents()" (closed)="close()">
+    @if (find(); as entry) {
+      <app-find-sheet [find]="entry" (closed)="close()" />
+    } @else if (marker(); as entry) {
+      <app-marker-sheet [marker]="entry" (closed)="close()" />
+    } @else if (zone(); as entry) {
+      <app-zone-sheet [zone]="entry" (closed)="close()" />
+    } @else if (missing()) {
+      <p class="note empty-state">{{ 'objekt.nichtGefunden' | t }}</p>
+    }
+  </app-sheet>
+  <button
+    class="object__close tap"
+    type="button"
+    data-press="scale"
+    [attr.aria-label]="'common.close' | t"
+    (click)="close()"
+  >
+    <app-svg-icon name="close" [size]="18" [strokeWidth]="2" />
+  </button>
+</app-overlay-host>

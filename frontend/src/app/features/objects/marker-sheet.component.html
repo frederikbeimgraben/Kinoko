@@ -12,25 +12,36 @@
 } @else {
   <div class="objectsheet">
     <div class="objectsheet__head">
-      <div class="objectsheet__heading">
-        <h2 class="objectsheet__title">{{ marker().name }}</h2>
-        <p class="objectsheet__sub">{{ subline() }}</p>
-      </div>
-      <app-icon-button icon="delete" [label]="'marker.loeschen' | t" (pressed)="deleteAsk.set(true)" />
+      <span class="objectsheet__dot" [style.background]="colour()"></span>
+      <h2 class="objectsheet__title">{{ marker().name }}</h2>
     </div>
+    @if (marker().note; as note) {
+      <p class="objectsheet__note">{{ note }}</p>
+    }
+    <app-card class="flush">
+      <app-list-row
+        kind="catalogue"
+        [title]="'entry.marker.openInMapsApp' | t"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="toGoogleMaps()"
+      />
+    </app-card>
   </div>
   <app-action-bar
-    [primary]="'entry.marker.openInMapsApp' | t"
-    [secondary]="'common.edit' | t"
-    (primaryClick)="toGoogleMaps()"
-    (secondaryClick)="editing.set(true)"
+    [primary]="'common.edit' | t"
+    [secondary]="'common.delete' | t"
+    [quiet]="true"
+    [secondaryDanger]="true"
+    [split]="true"
+    (primaryClick)="editing.set(true)"
+    (secondaryClick)="deleteAsk.set(true)"
   />
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
-  [title]="'marker.loeschenFrage' | t"
-  [meta]="'marker.loeschenText' | t"
-  [confirmLabel]="'objekt.loeschen' | t"
+  [title]="'entry.marker.deleteTitle' | t"
+  [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"
   (cancelled)="deleteAsk.set(false)"
 />

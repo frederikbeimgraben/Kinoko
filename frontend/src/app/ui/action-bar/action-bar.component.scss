@@ -38,3 +38,21 @@
 .footer__danger {
   --color-primary: var(--color-danger);
 }
+
+// Ohne eigene Reihe bleibt das Paar Teil der Spalte des Fusses.
+.footer__pair {
+  display: contents;
+}
+
+.footer__pair--split {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: var(--space-3);
+}
+
+.footer__pair--split .footer__main {
+  --fs-md: var(--fs-control);
+
+  flex: 1 1 0;
+  block-size: var(--size-tap);
+}

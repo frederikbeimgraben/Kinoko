@@ -1,24 +1,25 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { ToastService } from '@stupa-makers/ui-kit';
+import { CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { Marker } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { EntriesState } from '../entries/entries.state';
+import { colourHex } from '../entries/colors';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { openGoogleMaps } from './map-links';
-import { visibilityText } from '../add-entry/visibility';
 
-/** Das Objekt-Blatt eines Markers und sein Formular (Board `MarkerEdit`). */
+/** Das Objekt-Blatt eines Markers und sein Formular (Boards `MarkerSheet`, `MarkerEdit`). */
 @Component({
   selector: 'app-marker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
+    CardComponent,
     ConfirmDialogComponent,
-    IconButtonComponent,
+    ListRowComponent,
     ObjectFormComponent,
     TranslatePipe,
   ],
@@ -47,11 +48,7 @@ export class MarkerSheetComponent {
     openGoogleMaps(this.location());
   }
 
-  protected readonly subline = computed(() =>
-    this.i18n.translate('marker.unter', {
-      sichtbarkeit: visibilityText(this.i18n, this.marker().visibility),
-    }),
-  );
+  protected readonly colour = computed(() => colourHex(this.marker().colour));
 
   protected readonly start = computed<ObjectValues>(() => {
     const marker = this.marker();

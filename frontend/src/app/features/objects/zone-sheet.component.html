@@ -16,15 +16,13 @@
 } @else {
   <div class="objectsheet">
     <div class="objectsheet__head">
-      <div class="objectsheet__heading">
-        <h2 class="objectsheet__title">{{ zone().name }}</h2>
-        <p class="objectsheet__sub">{{ subline() }}</p>
-      </div>
-      <app-icon-button icon="delete" [label]="'zone.loeschen' | t" (pressed)="deleteAsk.set(true)" />
+      <span class="objectsheet__dot" [style.background]="colour()"></span>
+      <h2 class="objectsheet__title">{{ zone().name }}</h2>
     </div>
-    @if (editingCorners()) {
-      <p class="note">{{ 'zone.eckpunkteHinweis' | t }}</p>
-    } @else if (forecastRow(); as row) {
+    @if (zone().note; as note) {
+      <p class="objectsheet__note">{{ note }}</p>
+    }
+    @if (forecastRow(); as row) {
       <app-card class="flush">
         <app-list-row [title]="row.label" [subline]="'entry.zone.areaMeanCaption' | t" [value]="row.value" />
         <app-list-row
@@ -33,8 +31,6 @@
           [value]="row.finds"
         />
       </app-card>
-    } @else {
-      <p class="note">{{ 'zone.wertFehlt' | t }}</p>
     }
   </div>
   @if (editingCorners()) {
@@ -47,17 +43,19 @@
   } @else {
     <app-action-bar
       [primary]="'common.edit' | t"
-      [secondary]="'entry.zone.editVertices' | t"
+      [secondary]="'common.delete' | t"
+      [quiet]="true"
+      [secondaryDanger]="true"
+      [split]="true"
       (primaryClick)="editing.set(true)"
-      (secondaryClick)="editCorners()"
+      (secondaryClick)="deleteAsk.set(true)"
     />
   }
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
-  [title]="'zone.loeschenFrage' | t"
-  [meta]="'zone.loeschenText' | t"
-  [confirmLabel]="'objekt.loeschen' | t"
+  [title]="'entry.zone.deleteTitle' | t"
+  [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"
   (cancelled)="deleteAsk.set(false)"
 />

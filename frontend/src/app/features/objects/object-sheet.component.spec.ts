@@ -81,7 +81,7 @@ describe('ObjektBlattComponent', () => {
   it('zeigt nichts, solange kein Objekt in der Adresse steht', async () => {
     const setup = await build();
 
-    expect(setup.container.querySelector('.object')).toBeNull();
+    expect(setup.container.querySelector('app-sheet')).toBeNull();
   });
 
   it('öffnet den Fund aus der Adresse', async () => {
@@ -151,9 +151,9 @@ describe('ObjektBlattComponent', () => {
     setup.state.object.set({ kind: 'marker', id: MARKER.id });
     setup.refresh();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Marker löschen' }));
-    setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
+    setup.refresh();
+    await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/markers/${MARKER.id}`).flush(null);
     });

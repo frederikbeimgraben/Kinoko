@@ -21,27 +21,17 @@ import { NOW } from '../../core/tiles/now';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
-import { hectaresText } from '../entries/formats';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
-import { visibilityText } from '../add-entry/visibility';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
 import { MapState } from '../map/map.state';
 import type { Location } from '../add-entry/add-entry.state';
 
-/**
- * Das Objekt-Blatt einer Zone (Artboard `Zone`).
- *
- * Die zwei Kennzahlen kommen vom Dienst: das Flächenmittel der Vorhersage für
- * genau die Art und Woche der Karte, und die eigenen Funde in der Fläche über
- * alle Arten und Jahre. „Eckpunkte bearbeiten“ gibt die Ecken an Terra Draw,
- * wo sie sich mit dem Finger ziehen lassen.
- */
+/** Das Objekt-Blatt einer Zone; „Umriss ändern“ gibt die Ecken an Terra Draw. */
 @Component({
   selector: 'app-zone-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +40,6 @@ import type { Location } from '../add-entry/add-entry.state';
     ButtonComponent,
     CardComponent,
     ConfirmDialogComponent,
-    IconButtonComponent,
     ListRowComponent,
     ObjectFormComponent,
     TranslatePipe,
@@ -82,12 +71,7 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly newCorners = signal<readonly Location[] | null>(null);
   private session: DrawSession | null = null;
 
-  protected readonly subline = computed(() =>
-    this.i18n.translate('zone.unter', {
-      flaeche: hectaresText(this.zone().areaHa, this.i18n.locale()),
-      sichtbarkeit: visibilityText(this.i18n, this.zone().visibility),
-    }),
-  );
+  protected readonly colour = computed(() => colourHex(this.zone().colour));
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();

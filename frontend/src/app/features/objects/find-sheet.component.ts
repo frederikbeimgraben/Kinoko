@@ -8,7 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { BadgeComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { Find } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -18,34 +18,29 @@ import { currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manif
 import { valueAtPoint } from '../../core/tiles/value-at-point';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { longDate } from '../../core/i18n/dates';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
 import { MapState } from '../map/map.state';
-import { openGoogleMaps } from './map-links';
 import { PhotoGalleryComponent } from './photo-gallery.component';
 
-/**
- * Das Objekt-Blatt eines Fundes (Artboard `Fund`).
- *
- * Die Kennzahl darunter nennt Art, Woche und Ort: sie kommt aus derselben
- * Wertkachel, die die Karte färbt, an genau dem Punkt des Fundes.
- */
+/** Das Objekt-Blatt eines Fundes; die Kennzahl kommt aus der Wertkachel der Karte. */
 @Component({
   selector: 'app-find-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
     BadgeComponent,
-    ConfirmDialogComponent,
+    ButtonComponent,
     CardComponent,
-    PhotoGalleryComponent,
+    ConfirmDialogComponent,
     FindFormComponent,
-    IconButtonComponent,
     ListRowComponent,
+    PhotoGalleryComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './find-sheet.component.html',
@@ -62,7 +57,6 @@ export class FindSheetComponent {
 
   readonly find = input.required<Find>();
 
-  /** „Auf der Karte anzeigen“: der Ort, zu dem die Karte fahren soll. */
   readonly closed = output();
 
   protected readonly editing = signal(false);
@@ -80,20 +74,17 @@ export class FindSheetComponent {
   protected readonly geteilt = computed(() => this.find().visibility === 'shared');
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
 
-  protected toGoogleMaps(): void {
-    openGoogleMaps(this.location());
+  /** Der Fund rückt in die Mitte der Karte; das Blatt macht ihn frei. */
+  protected showOnMap(): void {
+    this.closed.emit();
   }
 
   protected readonly subline = computed(() => {
     const find = this.find();
-    const datum = longDate(find.foundOn, this.i18n.locale());
-    const melder = this.eintraege.reporter() ?? '';
-    if (find.count === null) return this.i18n.translate('fund.unterOhneAnzahl', { datum, melder });
-    return this.i18n.translate('fund.unter', {
-      datum,
-      anzahl: this.i18n.translate('fund.stueck', { anzahl: find.count }),
-      melder,
-    });
+    const date = longDate(find.foundOn, this.i18n.locale());
+    const person = this.eintraege.reporter() ?? '';
+    if (find.count === null) return this.i18n.translate('find.sublineNoCount', { date, person });
+    return this.i18n.translate('find.subline', { date, count: find.count, person });
   });
 
   /** „Steinpilz, KW 40 · 2025, je Begehung“ — jede Zahl nennt ihren Bezug. */

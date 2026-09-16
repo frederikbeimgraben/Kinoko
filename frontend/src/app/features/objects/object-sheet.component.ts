@@ -2,12 +2,18 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@a
 import type { Find, Marker, Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import type { TranslationKey } from '../../core/i18n/translations';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
+import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { EntriesState } from '../entries/entries.state';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapState, type ObjectKind } from '../map/map.state';
-import type { TranslationKey } from '../../core/i18n/translations';
+import { FindSheetComponent } from './find-sheet.component';
+import { MarkerSheetComponent } from './marker-sheet.component';
+import { ObjectSheetState } from './object-sheet.state';
+import { ZoneSheetComponent } from './zone-sheet.component';
 
 /** Der Name des Blatts für Hilfsmittel. */
 const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
@@ -15,12 +21,16 @@ const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
   marker: 'marker.blatt',
   zone: 'zone.blatt',
 };
-import { FindSheetComponent } from './find-sheet.component';
-import { MarkerSheetComponent } from './marker-sheet.component';
-import { ZoneSheetComponent } from './zone-sheet.component';
 
-/** Das Objekt steht auf 250 von 844 px, so wie im Artboard `Fund`. */
-const DETENTS: readonly [number, number, number] = [0.7, 0.7, 0.7];
+/** Die Höhe je Art steht so in den Boards `MarkerSheet`, `FindSheet` und `ZoneSheet`. */
+const HEIGHT: Record<ObjectKind, DetentSize> = {
+  find: '594px',
+  marker: '444px',
+  zone: 'content',
+};
+
+/** Ein Objekt ohne Datensatz trägt nur seinen Hinweis. */
+const HEIGHT_MISSING: DetentSize = 'content';
 
 /**
  * So nah holt ein geöffnetes Objekt die Karte heran. Nah genug, um den Weg
@@ -28,22 +38,17 @@ const DETENTS: readonly [number, number, number] = [0.7, 0.7, 0.7];
  */
 const ZOOM_OBJECT = 14;
 
-/**
- * Das Blatt über der Karte, das ein Objekt zeigt (Artboards `Fund` und
- * `Zone`).
- *
- * Welches Objekt offen ist, steht in der Adresse: `?objekt=fund:<id>`. So
- * führt ein Tipp in der Liste auf dieselbe Ansicht wie ein Tipp auf der Karte,
- * und ein Zurück im Browser schließt das Blatt.
- */
+/** Das Blatt über der Karte, das einen Fund, einen Marker oder eine Zone zeigt. */
 @Component({
   selector: 'app-object-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SheetHeightDirective,
     FindSheetComponent,
     MarkerSheetComponent,
+    OverlayHostComponent,
     SheetComponent,
+    SheetHeightDirective,
+    SvgIconComponent,
     TranslatePipe,
     ZoneSheetComponent,
   ],
@@ -54,9 +59,9 @@ export class ObjectSheetComponent {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
   private readonly i18n = inject(I18nService);
+  private readonly sheet = inject(ObjectSheetState);
 
   protected readonly map = inject(MapState);
-  protected readonly detents = DETENTS;
 
   protected readonly find = computed<Find | null>(() => {
     const offen = this.map.object();
@@ -103,6 +108,12 @@ export class ObjectSheetComponent {
     () => this.map.object() !== null && !this.find() && !this.marker() && !this.zone(),
   );
 
+  protected readonly detents = computed<readonly [DetentSize, DetentSize, DetentSize]>(() => {
+    const offen = this.map.object();
+    const size = offen === null || this.missing() ? HEIGHT_MISSING : HEIGHT[offen.kind];
+    return [size, size, size];
+  });
+
   constructor() {
     // Ein Tipp auf einen Marker soll ihn zeigen, nicht nur sein Blatt öffnen.
     // Der Weg über den Zustand fasst beide Wege zusammen: den Tipp auf der
@@ -114,6 +125,6 @@ export class ObjectSheetComponent {
   }
 
   protected close(): void {
-    this.map.object.set(null);
+    this.sheet.close();
   }
 }

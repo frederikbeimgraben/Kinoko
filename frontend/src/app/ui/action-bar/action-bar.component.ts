@@ -26,6 +26,8 @@ export class ActionBarComponent {
   readonly ghost = input(false);
   /** Die Hauptaktion läuft schon: Spinner statt Text, kein zweiter Auftrag. */
   readonly busy = input(false);
+  /** Beide Aktionen stehen nebeneinander und teilen sich die Breite. */
+  readonly split = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();
