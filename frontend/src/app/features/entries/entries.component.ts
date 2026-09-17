@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -7,7 +8,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
-import { BannerComponent } from '../../ui/banner/banner.component';
 import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
@@ -49,7 +49,7 @@ interface Row {
   selector: 'app-entries',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BannerComponent,
+    BadgeComponent,
     ChoiceRowComponent,
     EmptyStateComponent,
     FilterSheetComponent,

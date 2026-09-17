@@ -2,6 +2,7 @@
 export type IconName =
   | 'map'
   | 'map-off'
+  | 'wifi-off'
   | 'species'
   | 'entries'
   | 'more'
@@ -57,6 +58,8 @@ export const FILLED_ICONS: readonly IconName[] = ['left', 'right', 'play', 'paus
 export const ICONS: Record<IconName, string> = {
   map: '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
   'map-off': '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/><path d="M3 21L21 3"/>',
+  'wifi-off':
+    '<path d="M3 3l18 18"/><path d="M5 9a15 15 0 0 1 6.5-3.4M19 9a15 15 0 0 0-3.2-2.2"/><path d="M8.5 12.6a9 9 0 0 1 4-1.7M15.5 12.6a9 9 0 0 0-1.7-1.1"/><path d="M12 16.2a4 4 0 0 1 1.8.8"/><circle cx="12" cy="19.5" r="1"/>',
   species: '<path d="M4 11a8 6 0 0 1 16 0H4z"/><path d="M9 11v7a3 3 0 0 0 6 0v-7"/>',
   entries: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
   more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',

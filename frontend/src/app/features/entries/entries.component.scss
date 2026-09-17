@@ -33,6 +33,12 @@
   border-radius: 50%;
 }
 
+.entries__offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .entries__add {
   display: inline-flex;
   gap: var(--space-2);

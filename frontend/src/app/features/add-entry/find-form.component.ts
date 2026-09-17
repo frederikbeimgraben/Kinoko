@@ -77,9 +77,9 @@ export class FindFormComponent {
 
   protected readonly segments = computed(() => visibilitySegments(this.i18n));
 
-  /** Am Rechner schließt das Zeichen im Kopf; ein zweiter Knopf steht nicht im Fuß. */
+  /** Am Rechner und beim Speichern steht nur die Hauptaktion im Fuß. */
   protected readonly secondaryLabel = computed(() =>
-    this.wide() ? undefined : this.i18n.translate('common.cancel'),
+    this.wide() || this.busy() ? undefined : this.i18n.translate('common.cancel'),
   );
 
   protected readonly date = computed(
