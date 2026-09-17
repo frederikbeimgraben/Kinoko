@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
-import { SPECIES_BUNDLE } from '../fixtures/map';
+import { SPECIES_BUNDLE, mockMap } from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -117,4 +117,93 @@ test('EntriesZones', async ({ page }) => {
   await page.getByRole('tab', { name: 'Zonen' }).click();
   await expect(page.getByText('Schönbuch Nord')).toBeVisible();
   await expectBoard(page, 'EntriesZones');
+});
+
+/** Der Fund, den der Dienst schon kennt. Er steht unter den wartenden. */
+const SENT_FIND = {
+  items: [
+    {
+      id: 'find-eins',
+      lat: 48.52,
+      lon: 9.05,
+      speciesId: '00000000-0000-4000-8000-000000000014',
+      foundOn: '2025-09-06',
+      count: 3,
+      reviewState: 'accepted',
+      visibility: 'private',
+      note: 'unter Fichten',
+      updatedAt: '2025-09-06T08:00:00Z',
+      deleted: false,
+    },
+  ],
+  nextCursor: null,
+};
+
+/** Meldet einen Fund über das Fadenkreuz. Ohne Netz wartet er im Gerät. */
+async function reportFind(page: Page, species: string | null, count: string, note?: string): Promise<void> {
+  await page.getByRole('button', { name: 'Eintragen' }).click();
+  await page.getByRole('button', { name: 'Fund melden' }).click();
+  await page.getByRole('button', { name: 'Fundort übernehmen' }).click();
+  const form = page.getByRole('dialog', { name: 'Fund melden' });
+  await expect(form.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
+  if (species !== null) {
+    await form.getByRole('button', { name: 'Steinpilz', exact: true }).click();
+    await form.getByRole('button', { name: new RegExp(species) }).click();
+  }
+  await form.getByRole('spinbutton', { name: 'Anzahl' }).fill(count);
+  if (note !== undefined) await form.getByRole('textbox', { name: 'Notiz' }).fill(note);
+  await form.getByRole('button', { name: 'Speichern' }).click();
+  await expect(page.getByRole('heading', { name: 'Fund melden' })).toHaveCount(0);
+}
+
+test('EntriesOffline', async ({ page }) => {
+  guard('EntriesOffline', 'phone');
+  let down = false;
+  await mockSignIn(page);
+  await mockApi(
+    page,
+    {
+      ...REPLIES,
+      '/api/markers': { items: [], nextCursor: null },
+      '/api/zones': { items: [], nextCursor: null },
+      '/api/finds': SENT_FIND,
+      '/api/config': authConfig(BASE),
+    },
+    { photo: ROW_PHOTO },
+  );
+  // Geteilte Funde holt die Liste getrennt. Das Brett zeigt nur eigene.
+  await page.route(
+    (url) => url.pathname === '/api/finds' && url.searchParams.get('mine') === 'false',
+    async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: '{"items":[],"nextCursor":null}',
+      });
+    },
+  );
+  // Ohne Netz scheitert nur das Schreiben. Lesen bleibt bei dem, was da ist.
+  await page.route('**/api/**', async (route) => {
+    if (down && route.request().method() !== 'GET') {
+      await route.abort('internetdisconnected');
+      return;
+    }
+    await route.fallback();
+  });
+  await mockMap(page, { detent: 1 });
+  await page.goto('/karte');
+  await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
+  down = true;
+  await page.evaluate(() => {
+    dispatchEvent(new Event('offline'));
+  });
+
+  await reportFind(page, 'Pfifferling', '2', 'unter Fichten am Hang');
+  await reportFind(page, null, '1');
+
+  await page.getByRole('link', { name: 'Einträge' }).click();
+  await expect(page.getByText('Übertragung ausstehend').first()).toBeVisible();
+  // Die Meldungen der Toasts gehen von selbst; das Brett zeigt sie nicht.
+  await expect(page.locator('.toast')).toHaveCount(0, { timeout: 20_000 });
+  await expectBoard(page, 'EntriesOffline');
 });
