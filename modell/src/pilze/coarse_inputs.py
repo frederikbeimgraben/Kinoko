@@ -84,14 +84,21 @@ class CoarseSampler:
         ny, nx = self.shape
         r = np.clip(row, 0.0, ny - 1.0)
         c = np.clip(col, 0.0, nx - 1.0)
-        r0, c0 = np.floor(r).astype("int64"), np.floor(c).astype("int64")
+        r0, c0 = np.floor(r).astype("int32"), np.floor(c).astype("int32")
         r1, c1 = np.minimum(r0 + 1, ny - 1), np.minimum(c0 + 1, nx - 1)
         dr, dc = (r - r0).astype("float32"), (c - c0).astype("float32")
-        corners = np.stack([r0 * nx + c0, r0 * nx + c1,
-                            r1 * nx + c0, r1 * nx + c1]).astype("int32")
-        share = np.stack([(1 - dr) * (1 - dc), (1 - dr) * dc,
-                          dr * (1 - dc), dr * dc])
-        return corners, np.where(inside, share, 0.0).astype("float32")
+        corners = np.empty((4, len(r)), dtype="int32")
+        corners[0] = r0 * nx + c0
+        corners[1] = r0 * nx + c1
+        corners[2] = r1 * nx + c0
+        corners[3] = r1 * nx + c1
+        share = np.empty((4, len(r)), dtype="float32")
+        share[0] = (1 - dr) * (1 - dc)
+        share[1] = (1 - dr) * dc
+        share[2] = dr * (1 - dc)
+        share[3] = dr * dc
+        share *= inside.astype("float32")
+        return corners, share
 
     @classmethod
     def from_keys(cls, keys: Sequence[str], x: np.ndarray, y: np.ndarray,
@@ -111,7 +118,9 @@ class CoarseSampler:
         block = values[:, None] if flat else values
         if len(block) != len(self.ix):
             raise ValueError("values and cells must have the same length")
-        out = np.empty((self.n_points, block.shape[1]), dtype="float32")
+        # Spaltenweise angelegt: der Schreibzugriff hier und der Lesezugriff
+        # des Modells laufen beide ueber ganze Spalten.
+        out = np.empty((self.n_points, block.shape[1]), dtype="float32", order="F")
         for j in range(block.shape[1]):
             out[:, j] = self._column(block[:, j])
         return out[:, 0] if flat else out

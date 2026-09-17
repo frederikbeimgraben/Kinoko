@@ -424,6 +424,7 @@ def main() -> None:
             grid["y"].to_numpy(), COARSE_INPUTS[quelle])
         grid[f"prior_rate_{key}"] = leser.sample(
             tabelle["rate"].to_numpy(dtype="float32"))
+        del leser
     grid = grid.drop(columns=["block"])
     if args.forecast <= 0:
         observed_last = None
