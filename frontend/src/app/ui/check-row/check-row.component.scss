@@ -1,18 +1,26 @@
 :host {
   display: block;
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-:host(:last-child) {
-  border-block-end: 0;
 }
 
 .row {
   position: relative;
   display: flex;
+  box-sizing: border-box;
   gap: var(--space-3);
   align-items: center;
-  padding-block: var(--check-row-block, var(--space-3));
+  min-block-size: var(--check-row-height, 48px);
+  padding-block: var(--check-row-block, 0);
+  padding-inline: var(--check-row-inline, 14px);
+}
+
+// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett. Eine
+// einzelne Zeile ohne Nachbarn setzt ihn über die Variable auf null.
+:host(:not(:first-child)) .row {
+  border-block-start: var(--check-row-divider, var(--border-width)) solid var(--color-border);
+}
+
+.row--locked {
+  opacity: 0.5;
 }
 
 .row__input {
@@ -23,6 +31,11 @@
   block-size: 100%;
   margin: 0;
   opacity: 0;
+}
+
+.row__lock {
+  flex: none;
+  color: var(--color-text-muted);
 }
 
 .row__box {
@@ -53,9 +66,17 @@
 
 .row__stack {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 2px;
   min-inline-size: 0;
+}
+
+.row__count {
+  margin-inline-start: auto;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
 }
 
 .row__title {

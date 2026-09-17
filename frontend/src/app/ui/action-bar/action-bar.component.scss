@@ -9,7 +9,7 @@
 }
 
 .footer--inline {
-  flex-direction: row-reverse;
+  flex-direction: var(--action-bar-flow, row-reverse);
   justify-content: flex-start;
   padding: var(--space-4) 20px 20px;
   background: none;
@@ -19,18 +19,17 @@
 .footer__main {
   --fs-md: var(--action-bar-size, 1rem);
 
-  block-size: var(--action-bar-height, auto);
-  min-block-size: var(--action-bar-height, 48px);
+  block-size: var(--action-bar-height, 48px);
 }
 
 // Im Modal misst die Aktion vierundvierzig Punkte, wie das Board sie zeigt.
 .footer--inline .footer__main {
-  min-block-size: var(--size-tap);
+  block-size: var(--size-tap);
 }
 
 // Die rote Aktion steht schmaler als die grüne, wie die Boards sie zeigen.
 .footer__slim {
-  min-block-size: var(--size-tap);
+  block-size: var(--size-tap);
 }
 
 // Der Kit-Knopf malt die Geist-Schrift aus `--color-primary`. Hier trägt er
@@ -46,7 +45,7 @@
 
 .footer__pair--split {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: var(--action-bar-flow, row-reverse);
   gap: var(--space-3);
 }
 

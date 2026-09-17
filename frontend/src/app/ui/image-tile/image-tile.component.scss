@@ -8,15 +8,15 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 6px;
   margin: 0;
-  inline-size: var(--size-tile);
+  inline-size: var(--image-tile-width, var(--size-tile));
 }
 
 .tile__image {
   display: block;
-  inline-size: var(--size-tile);
-  block-size: var(--size-tile);
+  inline-size: var(--image-tile-width, var(--size-tile));
+  block-size: var(--image-tile-height, var(--size-tile));
 }
 
 .tile__badge {
@@ -24,5 +24,8 @@
 }
 
 .tile__credit {
+  --image-credit-size: 13px;
+  --image-credit-line: 1.4;
+
   margin: 0;
 }
