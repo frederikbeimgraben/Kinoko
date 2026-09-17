@@ -23,6 +23,8 @@ interface Block {
   rows: readonly EditorRow[];
   /** Ein Abschnitt, der wächst, trägt unten eine Zeile zum Anlegen. */
   add: string | null;
+  /** Die Merkmalszeilen führen auf ihr Teil; die anderen noch nirgends. */
+  opens: boolean;
 }
 
 /** Die Art im Bearbeiten-Modus: Zahlen, Vorhersage, Abschnitte, Quelle. */
@@ -80,8 +82,10 @@ export class SpeciesEditorComponent {
         title: text('admin.species.section.features'),
         rows: featureRows(one, text, to),
         add: null,
+        opens: true,
       },
       {
+        opens: false,
         title: text('admin.species.section.texts'),
         rows: [
           {
@@ -101,6 +105,7 @@ export class SpeciesEditorComponent {
         title: text('admin.species.section.lookalikes'),
         rows: lookalikeRows(one),
         add: text('admin.species.lookalike'),
+        opens: false,
       },
     ].filter((block) => block.rows.length > 0 || block.add !== null);
   });
@@ -138,6 +143,11 @@ export class SpeciesEditorComponent {
       const slug = this.slug();
       if (slug !== '') this.state.load(slug);
     });
+  }
+
+  /** Eine Merkmalszeile trägt ihr Teil als Schlüssel und führt darauf. */
+  protected openPart(part: string): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug(), 'teil', part]);
   }
 
   protected setForecast(enabled: boolean): void {

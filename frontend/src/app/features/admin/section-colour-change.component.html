@@ -1,0 +1,72 @@
+<app-page-header [title]="'species.section.colourChange' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <app-form-field
+    class="section__part"
+    [label]="'admin.characteristic.part' | t"
+    [section]="true"
+    [readOnly]="true"
+    [chevron]="true"
+    [value]="partName()"
+  />
+
+  <section>
+    <h2 class="section__title">{{ 'admin.category.trigger' | t }}</h2>
+    <app-segmented
+      class="section__segment"
+      [options]="kinds()"
+      [value]="kind()"
+      [label]="'admin.category.trigger' | t"
+      (valueChange)="chooseKind($event)"
+    />
+    <app-chip-group
+      class="section__chips"
+      [chips]="triggerChips()"
+      [value]="triggers()"
+      [multiple]="true"
+      [addable]="true"
+      [label]="'admin.category.trigger' | t"
+      (valueChange)="triggers.set($event)"
+    />
+  </section>
+
+  <div class="section__span">
+    <div class="section__field">
+      <h2 class="section__title">{{ 'common.from' | t }}</h2>
+      <div class="section__box">
+        <app-colour-field
+          class="section__chip"
+          [colours]="from()"
+          mode="single"
+          [label]="'common.from' | t"
+        />
+        <span class="section__hex">{{ fromHex() }}</span>
+      </div>
+    </div>
+    <div class="section__field">
+      <h2 class="section__title">{{ 'admin.colourChange.to' | t }}</h2>
+      <div class="section__box">
+        <app-colour-field
+          class="section__chip"
+          [colours]="to()"
+          mode="single"
+          [label]="'admin.colourChange.to' | t"
+        />
+        <span class="section__hex">{{ toHex() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="section__title">{{ 'admin.colourChange.speed' | t }}</h2>
+    <app-chip-group
+      class="section__chips"
+      [chips]="speedChips()"
+      [value]="speedValue()"
+      [label]="'admin.colourChange.speed' | t"
+      (valueChange)="chooseSpeed($event)"
+    />
+  </section>
+</div>
+
+<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

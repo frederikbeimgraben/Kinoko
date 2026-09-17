@@ -23,6 +23,8 @@ export class ColourPickerComponent {
   readonly nearest = input<readonly string[]>([]);
   /** Die Überschrift über den Katalogtönen. */
   readonly nearestLabel = input<string>('');
+  /** Ohne Namen steht nur die Fläche. Der Name bleibt für Hilfsmittel. */
+  readonly labels = input(true);
 
   readonly valueChange = output<string>();
 

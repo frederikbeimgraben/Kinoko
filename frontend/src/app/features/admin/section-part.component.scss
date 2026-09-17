@@ -1,0 +1,37 @@
+@use '../../../styles/card';
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+}
+
+.section__title {
+  @include card.section-title;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand; Fläche und Pfeil acht auseinander.
+.section__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --list-row-value: var(--fs-row-meta);
+  --list-row-title-height: normal;
+  --space-3: 8px;
+}
+
+// Eine Zeile mit Fläche misst sechsundfünfzig Punkte, wie die Bretter sie zeigen.
+.section__card--tall {
+  --size-row: 56px;
+}
+
+app-add-row {
+  margin-block-start: 10px;
+}

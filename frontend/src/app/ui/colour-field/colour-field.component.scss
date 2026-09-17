@@ -8,5 +8,5 @@
   inline-size: var(--pilz-colour-width, 96px);
   block-size: var(--pilz-colour-height, 30px);
   border-radius: var(--pilz-colour-radius, 9px);
-  box-shadow: inset 0 0 0 1px rgb(127 127 127 / 22%);
+  box-shadow: var(--pilz-colour-shadow, inset 0 0 0 1px rgb(127 127 127 / 22%));
 }
