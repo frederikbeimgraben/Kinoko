@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Put a coarse input raster on the fine grid of the map.
 
-The weather comes on 5 km cells and the visit prior on 5 km cells and 25 km
-blocks. The map works on 500 m cells. A lookup by cell key gives every fine
-cell of a block the same value, so the picture shows the block and not the
-place.
+The weather comes on 5 km cells. The map works on 500 m cells. A lookup by
+cell key gives every fine cell of a block the same value, so the picture
+shows the block and not the place.
 
 `CoarseSampler` filters the coarse field with a Gaussian kernel and reads it
 at the fine cell centers with bilinear interpolation. The filter counts the
@@ -14,8 +13,8 @@ missing too, so the filter does not mirror land into the sea. A point outside
 the coarse raster stays missing.
 
 `COARSE_INPUTS` names every source that passes through here, with the cell
-size of its raster. A sharp input, such as the forest share, the height or a
-count of visits, is not in the list and keeps its own value.
+size of its raster. A source that is not in the list keeps its own value: the
+forest share, the tree shares, the height, the soil and the visit prior.
 """
 
 from __future__ import annotations
@@ -26,14 +25,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 # source -> cell size of its raster, in meters
-COARSE_INPUTS: dict[str, int] = {
-    "weather": 5_000,
-    "prior_cell": 5_000,
-    "prior_block": 25_000,
-}
-# Columns of a coarse source that keep their own value. A count of visits is
-# not a field: the model reads zero as "nobody looked here".
-SHARP_COLUMNS: frozenset[str] = frozenset({"prior_n_cell", "prior_n_block"})
+COARSE_INPUTS: dict[str, int] = {"weather": 5_000}
 # The kernel width, in cells of the source. Half a cell.
 SIGMA_CELLS = 0.5
 MIN_WEIGHT = 0.3

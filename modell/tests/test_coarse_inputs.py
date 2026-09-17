@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from coarse_inputs import (COARSE_INPUTS, MIN_WEIGHT, SHARP_COLUMNS,
-                           CoarseSampler, split_keys)
+from coarse_inputs import (COARSE_INPUTS, MIN_WEIGHT, CoarseSampler,
+                           split_keys)
 
 COARSE_M, FINE_M = 5_000, 500
 SIDE = 12
@@ -126,16 +126,11 @@ def test_many_columns_match_one_column():
         assert np.allclose(many[:, j], einzeln.sample(block[:, j]), equal_nan=True)
 
 
-def test_a_count_of_visits_stays_sharp():
-    assert SHARP_COLUMNS == {"prior_n_cell", "prior_n_block"}
-    assert "prior_rate_cell" not in SHARP_COLUMNS
-    assert "prior_rate_block" not in SHARP_COLUMNS
-
-
 def test_only_the_named_sources_are_coarse():
-    assert set(COARSE_INPUTS) == {"weather", "prior_cell", "prior_block"}
+    # Jeder andere Eingang bleibt scharf: Waldanteil, Baumarten, Hoehe, Boden
+    # und der Besuchs-Prior stehen nicht in der Liste.
+    assert set(COARSE_INPUTS) == {"weather"}
     assert COARSE_INPUTS["weather"] == 5_000
-    assert COARSE_INPUTS["prior_block"] == 25_000
 
 
 def test_the_keys_of_the_chain_split_into_indices():

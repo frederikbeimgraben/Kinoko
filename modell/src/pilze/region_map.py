@@ -7,11 +7,10 @@ and the page lays the images over the map. One image per week also makes a
 week slider cheap: the page swaps a picture instead of restyling 65,000
 shapes.
 
-A coarse input goes through `coarse_inputs.py` before the model reads it. The
-weather of the 5 km cells and the rate of the visit prior become a smooth
-field on the 500 m grid, so the map shows the place and not the cell. The
-field of a week gets a second, short filter before it is drawn, because the
-tree map and the soil carry their own grid.
+The weather goes through `coarse_inputs.py` before the model reads it. The
+5 km cells become a smooth field on the 500 m grid, so the map shows the
+place and not the cell. The field of a week gets a second, short filter
+before it is drawn, because the tree map and the soil carry their own grid.
 
 The tree map arrives in tiles from the Thuenen service and is counted into the
 output grid at 10 m, so the picture keeps real forest structure.
@@ -41,7 +40,7 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
-from coarse_inputs import COARSE_INPUTS, SHARP_COLUMNS, CoarseSampler
+from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogramm, schreibe
 from tiles import schreibe_kacheln
 from tree_species import CLASSES, CONIFERS
@@ -407,25 +406,15 @@ def main() -> None:
     del occ
     rss("Aktivitaetsfelder gerechnet")
     # Der Vorjahres-Prior: Trefferrate der Art unter allen Trainingsbesuchen
-    # derselben 5-km-Zelle und desselben 25-km-Blocks. Eine Zelle ohne Besuch
-    # bekommt n = 0, wie im Training.
+    # derselben 5-km-Zelle und desselben 25-km-Blocks. Eine Zelle ohne
+    # Besuch bekommt n = 0 und keine Rate, genau wie im Training.
     grid["block"] = ((grid["x"] // BLOCK_M).astype(int).astype(str) + "_"
                      + (grid["y"] // BLOCK_M).astype(int).astype(str))
-    for key, quelle in (("cell", "prior_cell"), ("block", "prior_block")):
-        tabelle = bundle["prior"][key].copy()
-        tabelle[key] = tabelle[key].astype(str)
-        leser = CoarseSampler.from_keys(
-            tabelle[key].to_numpy(), grid["x"].to_numpy(),
-            grid["y"].to_numpy(), COARSE_INPUTS[quelle])
-        # Die Trefferrate ist ein Feld und geht auf das Kartenraster. Die Zahl
-        # der Besuche steht in SHARP_COLUMNS und bleibt scharf.
-        for spalte, ziel in (("rate", f"prior_rate_{key}"), ("n", f"prior_n_{key}")):
-            if ziel in SHARP_COLUMNS:
-                grid[ziel] = (tabelle.set_index(key)[spalte]
-                              .reindex(grid[key].to_numpy()).fillna(0).to_numpy())
-            else:
-                grid[ziel] = leser.sample(tabelle[spalte].to_numpy(dtype="float32"))
-        del leser
+    for key in ("cell", "block"):
+        tabelle = bundle["prior"][key].rename(
+            columns={"rate": f"prior_rate_{key}", "n": f"prior_n_{key}"})
+        grid = grid.merge(tabelle, on=key, how="left")
+        grid[f"prior_n_{key}"] = grid[f"prior_n_{key}"].fillna(0)
     grid = grid.drop(columns=["block"])
     if args.forecast <= 0:
         observed_last = None

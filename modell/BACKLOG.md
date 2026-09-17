@@ -539,12 +539,20 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
 - [x] 2026-09-15 Unscharfe Eingänge des Modells (z. B. Wetter) vor der
       Verarbeitung mit einem Gauß-Filter glätten und in höherer Auflösung
       einspeisen, damit die Karte keine Kästen zeigt. Ergebnis:
-      `coarse_inputs.py` legt jeden groben Eingang vor dem Modell auf das
-      Kartenraster von 500 m. Sigma ist eine halbe Quellzelle, danach liest
-      die bilineare Ablesung den Wert. Rand und Lücke laufen über das Gewicht
-      der bekannten Zellen. Geglättet werden das Wetter (5 km) und die
-      Trefferrate des Besuchs-Priors (5 km und 25 km). Die Zahl der Besuche
-      und jeder feine Eingang bleiben scharf. Anteil der Nachbarsprünge auf
-      den 5-km-Linien, Wetter über Deutschland, Woche 2026-W36: 100,0 % vor
-      der Änderung und unter 1 % danach, bei unverändertem Flächenmittel.
-      In der Kette steht kein LSTM. Das Modell ist LightGBM auf Besuchen.
+      `coarse_inputs.py` legt das Wetter vor dem Modell auf das Kartenraster
+      von 500 m. Sigma ist eine halbe Quellzelle, danach liest die bilineare
+      Ablesung den Wert. Rand und Lücke laufen über das Gewicht der bekannten
+      Zellen. Anteil der Nachbarsprünge auf den 5-km-Linien, Wetter über
+      Deutschland, Woche 2026-W36: 100,0 % vor der Änderung und unter 1 %
+      danach, bei unverändertem Flächenmittel. Jeder andere Eingang bleibt
+      scharf. In der Kette steht kein LSTM. Das Modell ist LightGBM auf
+      Besuchen.
+- [ ] Besuchs-Prior glätten. `prior_rate_cell` liegt auf 5 km und
+      `prior_rate_block` auf 25 km, und beide gehören zu den zehn stärksten
+      Spalten. Beide tragen also weiter ein Gitter in die Karte. Der Weg über
+      `coarse_inputs.py` reicht dafür nicht: Rate und Zahl der Besuche müssen
+      zusammen wandern, weil das Modell n = 0 mit einer fehlenden Rate gelernt
+      hat. Richtig wäre, beide Zähler zu glätten (eine Zelle ohne Eintrag hat
+      wirklich null Besuche) und die Rate danach aus den geglätteten Zählern
+      zu teilen. Das verschiebt eine starke Spalte und braucht eine
+      Entscheidung.
