@@ -2,11 +2,11 @@
   display: block;
   box-sizing: border-box;
   min-block-size: var(--size-row);
-  border-block-end: var(--border-width) solid var(--color-border);
 }
 
-:host(:last-child) {
-  border-block-end: 0;
+// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
+:host(:not(:first-child)) {
+  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 // Die Zeile ist der Rahmen, das Feld darin der tippbare Teil. Eine Aktion am
@@ -25,7 +25,7 @@
   align-items: center;
   gap: var(--list-row-gap, var(--space-4));
   padding: 0;
-  min-block-size: calc(var(--size-row) - var(--border-width));
+  min-block-size: var(--size-row);
   min-inline-size: 0;
   text-align: start;
 }
@@ -37,15 +37,14 @@
   padding-inline: var(--list-row-inline, var(--size-gutter));
 }
 
+// Ein Zeichen vor dem Titel steht weiter ab als ein Punkt.
+.row__field--catalogue:has(.row__icon) {
+  gap: 14px;
+}
+
 .row__field--filter {
   gap: var(--space-row-gap, var(--space-3));
   padding-inline: var(--space-row-inline);
-}
-
-// Ein langer Name in einer Zeile mit Zeichen bricht mit der Zeilenhöhe
-// der Schrift.
-.row__field--filter:has(.row__icon) .row__title {
-  line-height: normal;
 }
 
 // Eine Zeile, die aus der App hinausführt, trägt ihren Titel als Verweis.
@@ -56,17 +55,16 @@
 
 // Eine Zeile mit Unterzeile trägt zwei Textzeilen und ist darum höher.
 .row__field--tall {
-  min-block-size: calc(var(--size-row-tall) - var(--border-width));
-}
-
-// Die letzte Zeile trägt keinen Rand. Ihr Feld nimmt dessen Höhe auf, damit
-// jede Zeile der Karte gleich hoch misst.
-:host(:last-child) .row__field {
-  min-block-size: var(--size-row);
-}
-
-:host(:last-child) .row__field--tall {
   min-block-size: var(--size-row-tall);
+}
+
+// Der Strich liegt in der Höhe der Zeile. Ihr Feld gibt ihm den Platz.
+:host(:not(:first-child)) .row__field {
+  min-block-size: calc(var(--size-row) - var(--border-width));
+}
+
+:host(:not(:first-child)) .row__field--tall {
+  min-block-size: calc(var(--size-row-tall) - var(--border-width));
 }
 
 .row__field--button {
@@ -127,6 +125,8 @@
 .row__title--filter {
   font-size: var(--fs-row-title);
   font-weight: var(--fw-row-filter);
+  // Das Brett setzt den Titel auf die Linie der Zeile, nicht auf seine eigene.
+  line-height: 1;
 }
 
 .row__title--link {

@@ -3,11 +3,11 @@
   box-sizing: border-box;
   flex: none;
   block-size: var(--size-row-tall);
-  border-block-end: var(--border-width) solid var(--color-border);
 }
 
-:host(:last-child) {
-  border-block-end: 0;
+// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
+:host(:not(:first-child)) {
+  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 .row {

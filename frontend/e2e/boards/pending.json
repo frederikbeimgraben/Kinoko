@@ -27,10 +27,5 @@
   "SignInProgress",
   "SignInSheet",
   "ZoneDraw",
-  "blocks/app-colour-change",
-  "blocks/app-factor-row",
-  "blocks/app-filter-sheet",
-  "blocks/app-list-row",
-  "blocks/app-review-queue",
-  "blocks/app-species-row"
+  "blocks/app-filter-sheet"
 ]
