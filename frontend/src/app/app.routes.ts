@@ -116,6 +116,26 @@ export const routes: Routes = [
           import('./features/admin/section-size.component').then((m) => m.SectionSizeComponent),
       },
       {
+        path: 'arten/:slug/teil/:part',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-part.component').then((m) => m.SectionPartComponent),
+      },
+      {
+        path: 'arten/:slug/farbe/:part',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-colour.component').then((m) => m.SectionColourComponent),
+      },
+      {
+        path: 'arten/:slug/verfaerbung/:index',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-colour-change.component').then(
+            (m) => m.SectionColourChangeComponent,
+          ),
+      },
+      {
         path: 'arten/:slug/zeitraum',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>

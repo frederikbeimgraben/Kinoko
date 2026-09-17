@@ -4,9 +4,9 @@
 
 .picker__grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  padding: 4px 12px 14px;
+  grid-template-columns: repeat(var(--picker-columns, 4), minmax(0, 1fr));
+  gap: var(--picker-gap, 10px);
+  padding: var(--picker-inset, 4px 12px 14px);
 }
 
 .swatch {
@@ -27,8 +27,8 @@
 .swatch__field {
   display: block;
   inline-size: 100%;
-  block-size: 44px;
-  border-radius: 10px;
+  block-size: var(--picker-height, 44px);
+  border-radius: var(--picker-radius, 10px);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 9%);
 }
 

@@ -1,0 +1,67 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.part.section.sizes' | t }}</h2>
+    <div class="section__card">
+      @for (row of sizes(); track row.dimension) {
+        <app-list-row
+          kind="catalogue"
+          [title]="row.title | t"
+          [value]="row.value"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openSize()"
+        />
+      }
+    </div>
+    <app-add-row [label]="'admin.part.size' | t" [action]="'admin.part.addSize' | t" (pressed)="openSize()" />
+  </section>
+
+  <section>
+    <h2 class="section__title">{{ 'admin.part.section.colours' | t }}</h2>
+    <div class="section__card section__card--tall">
+      @for (row of colours(); track row.key) {
+        <app-list-row
+          kind="catalogue"
+          [title]="row.title"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openColour()"
+        >
+          <app-colour-field
+            trail
+            class="section__strip"
+            [colours]="row.colours"
+            [mode]="row.gradient ? 'gradient' : 'multiple'"
+            [label]="row.title"
+          />
+        </app-list-row>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section__title">{{ 'species.section.colourChange' | t }}</h2>
+    <div class="section__card section__card--tall">
+      @for (row of changes(); track row.key) {
+        <app-list-row
+          kind="catalogue"
+          [title]="row.title"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openChange(row.at)"
+        >
+          <app-colour-field
+            trail
+            class="section__strip"
+            [colours]="row.colours"
+            mode="multiple"
+            [label]="row.title"
+          />
+        </app-list-row>
+      }
+    </div>
+    <app-add-row [label]="'species.section.colourChange' | t" [action]="'admin.part.addChange' | t" />
+  </section>
+</div>

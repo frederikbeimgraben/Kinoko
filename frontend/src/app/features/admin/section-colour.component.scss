@@ -1,0 +1,126 @@
+@use '../../../styles/card';
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+  @include section.fields;
+}
+
+.section__title {
+  @include card.section-title;
+}
+
+.section__card {
+  @include card.card;
+}
+
+// Der Verlauf steht oben, darunter je Farbe eine Zeile und der Zugang.
+.section__stops {
+  --list-row-inline: 14px;
+  --list-row-title-height: normal;
+  --space-row-gap: 12px;
+
+  padding: 12px 14px 6px;
+}
+
+.section__strip {
+  --pilz-colour-width: 100%;
+  --pilz-colour-height: 30px;
+}
+
+.section__lead {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.section__swatch {
+  --pilz-colour-width: 28px;
+  --pilz-colour-height: 28px;
+  --pilz-colour-radius: 8px;
+}
+
+// Der Zugang misst vierundvierzig Punkte, wie das Brett ihn zeigt.
+.section__add {
+  --size-row: 44px;
+}
+
+// Die offene Farbe trägt einen Ring statt der Innenlinie.
+.section__swatch--open {
+  --pilz-colour-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.section__hex {
+  inline-size: 84px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.section__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 40px;
+  block-size: 40px;
+  margin-inline-end: -12px;
+  padding: 0;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+// Die Palette steht in sechs Spalten, wie das Brett sie zeigt.
+.section__palette {
+  --picker-columns: 6;
+  --picker-gap: 8px;
+  --picker-inset: 12px;
+  --picker-height: 34px;
+  --picker-radius: 8px;
+}
+
+.section__span {
+  display: flex;
+  gap: 10px;
+}
+
+.section__field {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+// Der Farbcode steht wie ein Feld, trägt aber eine Fläche statt einer Eingabe.
+.section__box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  block-size: var(--pilz-field-height);
+  padding-inline: 14px;
+  font-size: var(--fs-row-title);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--pilz-swatch-radius);
+}
+
+.section__chip {
+  --pilz-colour-width: 22px;
+  --pilz-colour-height: 22px;
+  --pilz-colour-radius: 6px;
+}
+
+.section__hex--wide {
+  inline-size: auto;
+  color: var(--color-text);
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

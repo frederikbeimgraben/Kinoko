@@ -15,7 +15,7 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, species } from '../fixtures/species';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
-import { STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
+import { PALETTE, PART_SECTIONS, STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -258,4 +258,36 @@ test('EditSenses', async ({ page }) => {
   });
   await expect(page.getByRole('button', { name: 'rettichartig' })).toBeVisible();
   await expectBoard(page, 'EditSenses');
+});
+
+test('EditColour', async ({ page }) => {
+  guard('EditColour', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/farbe/cap', {
+    '/api/species/boletus-edulis': STONE_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+    '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
+  });
+  await expect(page.getByText('#7A3B6A').first()).toBeVisible();
+  await expectBoard(page, 'EditColour');
+});
+
+test('EditColourChange', async ({ page }) => {
+  guard('EditColourChange', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/verfaerbung/0', {
+    '/api/species/boletus-edulis': STONE_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+    '/api/terms': TERMS,
+  });
+  await expect(page.getByRole('button', { name: 'Verletzung' })).toBeVisible();
+  await expectBoard(page, 'EditColourChange');
+});
+
+test('EditPart', async ({ page }) => {
+  guard('EditPart', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/teil/cap', {
+    '/api/species/boletus-edulis': PART_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByText('Breite')).toBeVisible();
+  await expectBoard(page, 'EditPart');
 });

@@ -11,7 +11,7 @@
       (click)="valueChange.emit(colour.value)"
     >
       <i class="swatch__field" [style.background]="colour.value"></i>
-      <span class="swatch__label">{{ colour.label }}</span>
+      <span class="swatch__label" [class.sr-only]="!labels()">{{ colour.label }}</span>
     </button>
   }
 </div>

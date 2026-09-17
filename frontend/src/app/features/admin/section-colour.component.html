@@ -1,0 +1,94 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.colour.section.mode' | t }}</h2>
+    <app-segmented
+      [options]="choices()"
+      [value]="mode()"
+      [label]="'admin.colour.section.mode' | t"
+      (valueChange)="chooseMode($event)"
+    />
+  </section>
+
+  <section>
+    <h2 class="section__title">{{ modeName() }}</h2>
+    <div class="section__card section__stops">
+      <app-colour-field
+        class="section__strip"
+        [colours]="colours()"
+        [mode]="stripMode()"
+        [label]="modeName()"
+      />
+      @for (stop of stops(); track stop.at) {
+        <app-list-row kind="catalogue" [title]="stop.name" [clickable]="true" (chosen)="openStop(stop.at)">
+          <span lead class="section__lead">
+            <app-colour-field
+              class="section__swatch"
+              [class.section__swatch--open]="stop.at === open()"
+              [colours]="[{ hex: stop.hex, name: stop.name }]"
+              mode="single"
+              [label]="stop.name"
+            />
+            <span class="section__hex">{{ stop.hex }}</span>
+          </span>
+          <button
+            action
+            class="section__remove tap"
+            type="button"
+            data-press="scale"
+            [attr.aria-label]="'admin.colour.remove' | t"
+            (click)="removeStop(stop.at)"
+          >
+            <app-svg-icon name="close" [size]="16" [strokeWidth]="2" />
+          </button>
+        </app-list-row>
+      }
+      <app-list-row
+        class="section__add"
+        kind="link"
+        [title]="'admin.colour.addStop' | t"
+        [clickable]="true"
+        (chosen)="addStop()"
+      />
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section__title">{{ openTitle() }}</h2>
+    <div class="section__card">
+      <app-colour-picker
+        class="section__palette"
+        [colours]="swatches()"
+        [value]="chosen()"
+        [labels]="false"
+        [label]="openTitle()"
+        (valueChange)="chooseHex($event)"
+      />
+    </div>
+  </section>
+
+  <div class="section__span">
+    <div class="section__field">
+      <h2 class="section__title">{{ 'admin.colour.code' | t }}</h2>
+      <div class="section__box">
+        <app-colour-field
+          class="section__chip"
+          [colours]="chosenAsList()"
+          mode="single"
+          [label]="chosenName()"
+        />
+        <span class="section__hex section__hex--wide">{{ chosenHex() }}</span>
+      </div>
+    </div>
+    <app-form-field
+      class="section__field"
+      [label]="'admin.species.field.name' | t"
+      [section]="true"
+      [value]="chosenName()"
+      (valueChange)="setName($event)"
+    />
+  </div>
+</div>
+
+<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

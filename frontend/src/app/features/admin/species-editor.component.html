@@ -23,7 +23,14 @@
       <h2 class="editor__section">{{ block.title }}</h2>
       <div class="editor__card">
         @for (row of block.rows; track row.key) {
-          <app-list-row kind="catalogue" [title]="row.title" [subline]="row.value" [chevron]="true" />
+          <app-list-row
+            kind="catalogue"
+            [title]="row.title"
+            [subline]="row.value"
+            [chevron]="true"
+            [clickable]="block.opens"
+            (chosen)="openPart(row.key)"
+          />
         }
       </div>
       @if (block.add; as label) {

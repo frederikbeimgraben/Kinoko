@@ -19,7 +19,7 @@ import {
 } from '../fixtures/admin';
 import { TAXON } from '../fixtures/species-boards';
 import { RUNS, RUN_DETAIL } from '../fixtures/runs';
-import { STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
+import { PALETTE, PART_SECTIONS, STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -302,6 +302,35 @@ test.describe('Seitenhöhe am Telefon', () => {
   test('Verwaltung, Art anlegen', async ({ page }) => {
     await admin(page, '/verwaltung/arten/neu');
     await expect(page.getByRole('heading', { name: 'Art anlegen' })).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Teil einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/teil/cap', {
+      '/api/species/boletus-edulis': PART_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+    });
+    await expect(page.getByText('Breite')).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Farbe einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/farbe/cap', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+      '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
+    });
+    await expect(page.getByText('#7A3B6A').first()).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Verfärbung einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/verfaerbung/0', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+      '/api/terms': TERMS,
+    });
+    await expect(page.getByRole('button', { name: 'Verletzung' })).toBeVisible();
     await assertFillsViewport(page);
   });
 
