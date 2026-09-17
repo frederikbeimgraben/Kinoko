@@ -112,13 +112,18 @@ def test_a_point_outside_the_raster_stays_empty():
 
 
 def test_many_columns_match_one_column():
+    # Die dritte Spalte hat eine Luecke, die anderen nicht. Beide Wege muessen
+    # dasselbe geben, egal in welcher Reihenfolge der Leser sie sieht.
     fine, _ = sampler()
     rng = np.random.default_rng(11)
     block = rng.normal(0.0, 1.0, (SIDE * SIDE, 3)).astype("float32")
+    block[: SIDE * 4, 2] = np.nan
     many = fine.sample(block)
     assert many.shape == (fine.n_points, 3)
-    for j in range(3):
-        assert np.allclose(many[:, j], fine.sample(block[:, j]), equal_nan=True)
+    assert np.isnan(many[:, 2]).any() and not np.isnan(many[:, 0]).any()
+    for j in (2, 1, 0):
+        einzeln = CoarseSampler(*coarse_grid(), *fine_points()[:2], COARSE_M)
+        assert np.allclose(many[:, j], einzeln.sample(block[:, j]), equal_nan=True)
 
 
 def test_a_count_of_visits_stays_sharp():

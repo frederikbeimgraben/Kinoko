@@ -73,6 +73,7 @@ class CoarseSampler:
         inside = ((row >= -0.5) & (row <= ny - 0.5)
                   & (col >= -0.5) & (col <= nx - 0.5))
         self._corners, self._weights = self._plan(row, col, inside)
+        self._full: np.ndarray | None = None
 
     def _plan(self, row: np.ndarray, col: np.ndarray, inside: np.ndarray):
         """Flat indices and weights of the four cells around every point."""
@@ -124,15 +125,25 @@ class CoarseSampler:
         flat = field.ravel()
         return sum(flat[self._corners[k]] * self._weights[k] for k in range(4))
 
+    def _mask(self, column: np.ndarray) -> np.ndarray:
+        mask = np.zeros(self.shape, dtype="float32")
+        mask[self.iy, self.ix] = np.isfinite(column)
+        return mask
+
     def _column(self, column: np.ndarray) -> np.ndarray:
-        field = np.full(self.shape, np.nan, dtype="float32")
-        field[self.iy, self.ix] = column
-        known = np.isfinite(field)
-        total = gaussian_filter(np.where(known, field, 0.0), self.sigma,
-                                mode="constant", cval=0.0)
-        weight = gaussian_filter(known.astype("float32"), self.sigma,
-                                 mode="constant", cval=0.0)
-        at_weight = self._read(weight)
+        field = np.zeros(self.shape, dtype="float32")
+        field[self.iy, self.ix] = np.where(np.isfinite(column), column, 0.0)
+        total = gaussian_filter(field, self.sigma, mode="constant", cval=0.0)
+        # Eine Spalte ohne Luecke teilt ihr Gewicht mit jeder anderen ohne
+        # Luecke, und das ist der Regelfall einer Wetterwoche.
+        if np.isfinite(column).all():
+            if self._full is None:
+                self._full = self._read(gaussian_filter(
+                    self._mask(column), self.sigma, mode="constant", cval=0.0))
+            at_weight = self._full
+        else:
+            at_weight = self._read(gaussian_filter(
+                self._mask(column), self.sigma, mode="constant", cval=0.0))
         return np.where(at_weight > self.min_weight,
                         self._read(total) / np.maximum(at_weight, 1e-6),
                         np.nan).astype("float32")
