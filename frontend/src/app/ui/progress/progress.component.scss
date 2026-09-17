@@ -18,7 +18,7 @@
   overflow: hidden;
   inline-size: 100%;
   block-size: var(--progress-height);
-  background: color-mix(in srgb, var(--color-handle) 35%, transparent);
+  background: var(--progress-track, color-mix(in srgb, var(--color-handle) 35%, transparent));
   border-radius: var(--radius-pill);
 }
 

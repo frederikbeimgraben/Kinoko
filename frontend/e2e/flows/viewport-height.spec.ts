@@ -18,6 +18,7 @@ import {
   TEXTS,
 } from '../fixtures/admin';
 import { TAXON } from '../fixtures/species-boards';
+import { RUNS, RUN_DETAIL } from '../fixtures/runs';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -300,6 +301,20 @@ test.describe('Seitenhöhe am Telefon', () => {
   test('Verwaltung, Art anlegen', async ({ page }) => {
     await admin(page, '/verwaltung/arten/neu');
     await expect(page.getByRole('heading', { name: 'Art anlegen' })).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Läufe', async ({ page }) => {
+    await admin(page, '/verwaltung/laeufe', { '/api/pipeline-runs': RUNS });
+    await expect(page.getByText('Training Steinpilz')).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Lauf', async ({ page }) => {
+    await admin(page, '/verwaltung/laeufe/lauf-training', {
+      '/api/pipeline-runs/lauf-training': RUN_DETAIL,
+    });
+    await expect(page.getByText('Karten rendern')).toBeVisible();
     await assertFillsViewport(page);
   });
 

@@ -1,0 +1,51 @@
+<app-page-header [title]="'admin.runs.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="runs">
+  @if (active(); as run) {
+    <button class="runs__card runs__active" type="button" (click)="open(run.id)">
+      <span class="runs__head">
+        <i class="runs__dot runs__dot--running"></i>
+        <span class="runs__name">{{ run.title }}</span>
+        <app-badge variant="primary">{{ run.state }}</app-badge>
+      </span>
+      <span class="runs__sub">{{ run.subline }}</span>
+      <app-progress [value]="run.percent" />
+    </button>
+  }
+
+  <section>
+    <h2 class="runs__section">{{ 'admin.runs.section.recent' | t }}</h2>
+    <div class="runs__card">
+      @for (row of rows(); track row.id) {
+        <app-list-row
+          kind="catalogue"
+          [title]="row.title"
+          [subline]="row.subline"
+          [value]="row.duration"
+          [clickable]="true"
+          (chosen)="open(row.id)"
+        >
+          <i lead class="runs__dot" [class.runs__dot--failed]="row.failed"></i>
+        </app-list-row>
+      }
+    </div>
+  </section>
+</div>
+
+<app-action-bar [primary]="'admin.runs.start' | t" (primaryClick)="starting.set(true)" />
+
+<app-confirm-dialog
+  [open]="starting()"
+  [title]="'admin.runs.startConfirm' | t"
+  [danger]="false"
+  [confirmLabel]="'admin.runs.startAction' | t"
+  (confirmed)="start()"
+  (cancelled)="starting.set(false)"
+>
+  <app-segmented
+    [options]="choices()"
+    [value]="kind()"
+    [label]="'admin.runs.startConfirm' | t"
+    (valueChange)="chooseKind($event)"
+  />
+</app-confirm-dialog>

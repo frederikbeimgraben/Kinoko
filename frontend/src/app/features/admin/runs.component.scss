@@ -1,0 +1,98 @@
+@use '../../../styles/card';
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.runs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.runs__section {
+  @include card.section-title;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand und messen 56, wie die Bretter.
+.runs__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row: 56px;
+  --size-row-tall: 56px;
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
+}
+
+.runs__active {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  inline-size: 100%;
+  padding: 14px;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.runs__head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.runs__name {
+  flex: 1;
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+}
+
+.runs__sub {
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+// Der Punkt nennt den Zustand: grün fertig, rot fehlgeschlagen, orange läuft.
+.runs__dot {
+  flex: none;
+  inline-size: 8px;
+  block-size: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+}
+
+.runs__dot--failed {
+  background: var(--color-danger);
+}
+
+.runs__dot--running {
+  background: var(--color-accent);
+}
+
+.runs__active app-progress {
+  --progress-height: 6px;
+  --progress-track: var(--color-surface-sunken);
+
+  margin-block-start: 2px;
+}
+
+app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}
