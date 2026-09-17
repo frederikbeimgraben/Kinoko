@@ -542,9 +542,12 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
       die bilineare Ablesung den Wert. Rand und Lücke laufen über das Gewicht
       der bekannten Zellen. Anteil der Nachbarsprünge auf den 5-km-Linien,
       Wetter über Deutschland, Woche 2026-W36: 100,0 % vor der Änderung und
-      unter 1 % danach, bei unverändertem Flächenmittel. Jeder andere Eingang
-      bleibt scharf. In der Kette steht kein LSTM. Das Modell ist LightGBM
-      auf Besuchen.
+      unter 1 % danach, bei unverändertem Flächenmittel. In der gerenderten
+      Vorhersage (Baden-Württemberg, dieselbe Woche, ohne Glättung nach dem
+      Modell) fällt er von 8,8 % auf 3,1 % in x und von 8,8 % auf 3,7 % in y.
+      Der Rest ist der Besuchs-Prior, siehe den nächsten Punkt. Jeder andere
+      Eingang bleibt scharf. In der Kette steht kein LSTM. Das Modell ist
+      LightGBM auf Besuchen.
 - [ ] Besuchs-Prior glätten. `prior_rate_cell` liegt auf 5 km und
       `prior_rate_block` auf 25 km, und beide gehören zu den zehn stärksten
       Spalten. Beide tragen also weiter ein Gitter in die Karte. Der Weg über
