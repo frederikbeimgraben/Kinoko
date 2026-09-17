@@ -41,7 +41,7 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
-from coarse_inputs import COARSE_INPUTS, CoarseSampler
+from coarse_inputs import COARSE_INPUTS, SHARP_COLUMNS, CoarseSampler
 from manifest import histogramm, schreibe
 from tiles import schreibe_kacheln
 from tree_species import CLASSES, CONIFERS
@@ -414,16 +414,17 @@ def main() -> None:
     for key, quelle in (("cell", "prior_cell"), ("block", "prior_block")):
         tabelle = bundle["prior"][key].copy()
         tabelle[key] = tabelle[key].astype(str)
-        # Die Trefferrate ist ein Feld und geht auf das Kartenraster. Die Zahl
-        # der Besuche bleibt scharf: n = 0 heisst "niemand war da".
-        zaehler = tabelle.set_index(key)["n"]
-        grid[f"prior_n_{key}"] = (zaehler.reindex(grid[key].to_numpy())
-                                  .fillna(0).to_numpy())
         leser = CoarseSampler.from_keys(
             tabelle[key].to_numpy(), grid["x"].to_numpy(),
             grid["y"].to_numpy(), COARSE_INPUTS[quelle])
-        grid[f"prior_rate_{key}"] = leser.sample(
-            tabelle["rate"].to_numpy(dtype="float32"))
+        # Die Trefferrate ist ein Feld und geht auf das Kartenraster. Die Zahl
+        # der Besuche steht in SHARP_COLUMNS und bleibt scharf.
+        for spalte, ziel in (("rate", f"prior_rate_{key}"), ("n", f"prior_n_{key}")):
+            if ziel in SHARP_COLUMNS:
+                grid[ziel] = (tabelle.set_index(key)[spalte]
+                              .reindex(grid[key].to_numpy()).fillna(0).to_numpy())
+            else:
+                grid[ziel] = leser.sample(tabelle[spalte].to_numpy(dtype="float32"))
         del leser
     grid = grid.drop(columns=["block"])
     if args.forecast <= 0:

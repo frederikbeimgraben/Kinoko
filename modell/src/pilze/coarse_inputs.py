@@ -20,7 +20,7 @@ count of visits, is not in the list and keeps its own value.
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Sequence
 
 import numpy as np
 from scipy.ndimage import gaussian_filter
@@ -37,11 +37,6 @@ SHARP_COLUMNS: frozenset[str] = frozenset({"prior_n_cell", "prior_n_block"})
 # The kernel width, in cells of the source. Half a cell.
 SIGMA_CELLS = 0.5
 MIN_WEIGHT = 0.3
-
-
-def smoothed_columns(columns: Iterable[str]) -> list[str]:
-    """The columns of a coarse source that the sampler smooths."""
-    return [c for c in columns if c not in SHARP_COLUMNS]
 
 
 def split_keys(keys: Sequence[str]) -> tuple[np.ndarray, np.ndarray]:

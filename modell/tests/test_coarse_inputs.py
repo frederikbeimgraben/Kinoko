@@ -9,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from coarse_inputs import (COARSE_INPUTS, MIN_WEIGHT, SHARP_COLUMNS,
-                           CoarseSampler, smoothed_columns, split_keys)
+                           CoarseSampler, split_keys)
 
 COARSE_M, FINE_M = 5_000, 500
 SIDE = 12
@@ -123,8 +123,8 @@ def test_many_columns_match_one_column():
 
 def test_a_count_of_visits_stays_sharp():
     assert SHARP_COLUMNS == {"prior_n_cell", "prior_n_block"}
-    columns = ["prior_rate_cell", "prior_n_cell", "prior_rate_block", "prior_n_block"]
-    assert smoothed_columns(columns) == ["prior_rate_cell", "prior_rate_block"]
+    assert "prior_rate_cell" not in SHARP_COLUMNS
+    assert "prior_rate_block" not in SHARP_COLUMNS
 
 
 def test_only_the_named_sources_are_coarse():
