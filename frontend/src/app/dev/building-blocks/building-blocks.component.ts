@@ -434,7 +434,7 @@ export class BuildingBlocksComponent {
     { text: this.text('art.monat.apr'), week: 14 },
     { text: this.text('art.monat.jul'), week: 27 },
     { text: this.text('art.monat.okt'), week: 40 },
-    { text: this.text('art.monat.dez'), week: 52 },
+    { text: this.text('art.monat.dez'), week: 49 },
   ];
 
   protected readonly months = [
