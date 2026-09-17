@@ -141,9 +141,13 @@ layers describe the weather and follow the week slider. Every layer names its
 unit and the two ends of its scale, so the Faktor screen can put a value on a
 handle.
 
-The weather sits on 5 km cells, so weekly tiles stop at zoom 7. All of it
-comes from the DWD grids the chain already holds: HYRAS for rain, temperature
-and humidity, and the DWD soil moisture per tree species.
+The weather sits on 5 km cells. `coarse_inputs.py` filters it with a Gaussian
+kernel of half a cell and reads it at the 500 m cell centers, so neither the
+layer nor the prediction carries the 5 km cell. A sharp input keeps its own
+value: the forest share, the tree shares, the height, the soil and the visit
+prior are not in `COARSE_INPUTS`. Weekly tiles stop at zoom 7. All of the
+weather comes from the DWD grids the chain already holds: HYRAS for rain,
+temperature and humidity, and the DWD soil moisture per tree species.
 
 | layer | what it says | unit |
 |---|---|---|

@@ -7,11 +7,10 @@ and the page lays the images over the map. One image per week also makes a
 week slider cheap: the page swaps a picture instead of restyling 65,000
 shapes.
 
-The field is smoothed before it is drawn. The inputs are blocky by nature —
-the tree map is summed over 1 km, the weather sits on 5 km — but the edge of a
-wood does not follow a grid line. The smoothing is honest about that. It does
-not add information; it stops the picture from claiming a sharpness that the
-data does not have.
+The weather goes through `coarse_inputs.py` before the model reads it. The
+5 km cells become a smooth field on the 500 m grid, so the map shows the
+place and not the cell. The field of a week gets a second, short filter
+before it is drawn, because the tree map and the soil carry their own grid.
 
 The tree map arrives in tiles from the Thuenen service and is counted into the
 output grid at 10 m, so the picture keeps real forest structure.
@@ -41,6 +40,7 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
+from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogramm, schreibe
 from tiles import schreibe_kacheln
 from tree_species import CLASSES, CONIFERS
@@ -49,7 +49,10 @@ from visit_model import BLOCK_M, ActivityFields
 MODEL_CRS, SOURCE_CRS = "EPSG:3035", "EPSG:32632"
 WCS = "https://atlas.thuenen.de/geoserver/ows"
 COVERAGE = "geonode__Dominant_Species_Class"
-TRAIN_CELL, PIXEL, TILE = 5000, 10, 50_000
+# Die Zelle, auf der das Modell trainiert wurde, ist die Zelle des
+# Wetterrasters.
+TRAIN_CELL = COARSE_INPUTS["weather"]
+PIXEL, TILE = 10, 50_000
 # Der Ausschnitt in Grad. Voreinstellung ist Deutschland; --region setzt ihn
 # auf ein anderes Gebiet, etwa fuer einen schnellen Probelauf.
 REGIONEN = {
@@ -476,6 +479,8 @@ def main() -> None:
               f"{sum(q[0] == 'wetter' for q in quellen)} Wetter")
     grid_x, grid_y = grid["x"].to_numpy(), grid["y"].to_numpy()
     del grid
+    wetter_leser = CoarseSampler.from_keys(zellen.to_numpy(dtype=str), grid_x,
+                                           grid_y, COARSE_INPUTS["weather"])
     rss("Feste Modellspalten als Matrix")
 
     # Der Hoechstwert der Kacheln ist der Kalibrierdeckel, nicht das
@@ -541,8 +546,6 @@ def main() -> None:
 
     manifest = []
     n = len(grid_x)
-    # Eine Zeile NaN am Ende, auf die der Zellcode -1 zeigt.
-    zellcode_ext = np.where(zellcode < 0, len(zellen), zellcode)
     for _, row in weeks.iterrows():
         year, week = int(row["iso_year"]), int(row["iso_week"])
         # Eine beobachtete Woche rechnet das Modell fuer Horizont 0, eine
@@ -555,9 +558,9 @@ def main() -> None:
         spalten, matrix, quellen = plan[horizont]
 
         wk = weather[(weather["iso_year"] == year) & (weather["iso_week"] == week)]
-        block = np.full((len(zellen) + 1, len(wetter_namen)), np.nan, dtype="float32")
+        block = np.full((len(zellen), len(wetter_namen)), np.nan, dtype="float32")
         block[zellen.get_indexer(wk["cell"].to_numpy())] = wk[wetter_namen].to_numpy(dtype="float32")
-        wetter_woche = block[zellcode_ext]
+        wetter_woche = wetter_leser.sample(block)
         del block
         # Der Donnerstag steht fuer die Woche: das Training liest die
         # Aktivitaet bis zum Vortag des Besuchs, und der mittlere Besuch

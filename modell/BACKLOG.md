@@ -536,3 +536,24 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
 - [ ] Does the target-group background hold for a species that people seek
       more than the background species? Somebody who hunts Steinpilze walks
       past other mushrooms without reporting them.
+- [x] 2026-09-15 Unscharfe Eingänge des LSTM (z. B. Wetter) vor der Verarbeitung mit einem Gauß-Filter glätten und in höherer Auflösung einspeisen, damit die Karte keine Kästen zeigt.
+      Ergebnis: `coarse_inputs.py` legt das Wetter vor dem Modell auf das
+      Kartenraster von 500 m. Sigma ist eine halbe Quellzelle, danach liest
+      die bilineare Ablesung den Wert. Rand und Lücke laufen über das Gewicht
+      der bekannten Zellen. Anteil der Nachbarsprünge auf den 5-km-Linien,
+      Wetter über Deutschland, Woche 2026-W36: 100,0 % vor der Änderung und
+      unter 1 % danach, bei unverändertem Flächenmittel. In der gerenderten
+      Vorhersage (Baden-Württemberg, dieselbe Woche, ohne Glättung nach dem
+      Modell) fällt er von 8,8 % auf 3,1 % in x und von 8,8 % auf 3,7 % in y.
+      Der Rest ist der Besuchs-Prior, siehe den nächsten Punkt. Jeder andere
+      Eingang bleibt scharf. In der Kette steht kein LSTM. Das Modell ist
+      LightGBM auf Besuchen.
+- [ ] Besuchs-Prior glätten. `prior_rate_cell` liegt auf 5 km und
+      `prior_rate_block` auf 25 km, und beide gehören zu den zehn stärksten
+      Spalten. Beide tragen also weiter ein Gitter in die Karte. Der Weg über
+      `coarse_inputs.py` reicht dafür nicht: Rate und Zahl der Besuche müssen
+      zusammen wandern, weil das Modell n = 0 mit einer fehlenden Rate gelernt
+      hat. Richtig wäre, beide Zähler zu glätten (eine Zelle ohne Eintrag hat
+      wirklich null Besuche) und die Rate danach aus den geglätteten Zählern
+      zu teilen. Das verschiebt eine starke Spalte und braucht eine
+      Entscheidung.
