@@ -25,6 +25,5 @@
   "ObjectMenu",
   "OfflineAreas",
   "SignInProgress",
-  "SignInSheet",
-  "blocks/app-filter-sheet"
+  "SignInSheet"
 ]

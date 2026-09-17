@@ -70,11 +70,13 @@
   flex: 1;
   min-inline-size: 0;
   font-size: 15px;
+  line-height: 1.2;
 }
 
 .row__count {
   flex: none;
   font-size: 13px;
+  line-height: 1.4;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
