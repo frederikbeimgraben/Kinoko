@@ -57,13 +57,16 @@
   margin: 0;
   font-size: 19px;
   font-weight: var(--fw-semibold);
+  line-height: normal;
+  letter-spacing: normal;
 }
 
 .filtersheet__reset {
   padding: 0;
   margin-inline-start: auto;
   font: inherit;
-  font-size: var(--fs-sm);
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--color-primary);
   cursor: pointer;
   background: none;

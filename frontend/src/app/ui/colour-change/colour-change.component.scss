@@ -1,4 +1,9 @@
 :host {
+  --list-row-inline: var(--space-row-inline);
+  --size-row-tall: 56px;
+  --list-row-sub: 13px;
+  --list-row-sub-height: 1.4;
+
   display: block;
   overflow: hidden;
   background: var(--color-surface);

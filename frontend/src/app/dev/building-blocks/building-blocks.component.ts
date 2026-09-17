@@ -329,6 +329,18 @@ export class BuildingBlocksComponent {
     },
   ];
 
+  // Auf dem Brett steht die zweite Zeile der Karte ohne Foto.
+  protected readonly speciesChoiceRows = [
+    this.speciesRows[0],
+    {
+      value: LATIN_NAMES[4],
+      name: this.text('beispiel.maronenroehrling'),
+      latin: LATIN_NAMES[4],
+      levelText: this.text('enum.edibility.edible'),
+      levelColour: 'var(--color-success)',
+    },
+  ];
+
   protected readonly pickerRows = [
     this.speciesRows[0],
     {
@@ -453,8 +465,8 @@ export class BuildingBlocksComponent {
   protected readonly colourChangeTriggers = [this.text('admin.characteristic.trigger.pressure')];
   protected readonly colourChangeFrom = [FLESH_COLOURS];
   protected readonly colourChangeTo = [BRUISE_COLOURS];
-  protected readonly colourChangeFromLabels = [this.text('art.farbe.fleisch')];
-  protected readonly colourChangeToLabels = [this.text('art.abschnitt.farbe')];
+  protected readonly colourChangeFromLabels = [this.text('beispiel.farbe.gelb')];
+  protected readonly colourChangeToLabels = [this.text('beispiel.farbe.blau')];
   protected readonly colourChangeSpeed = [this.text('art.verfaerbung.schnell')];
 
   protected readonly splitRailLabel = this.text('nav.tab.species');
