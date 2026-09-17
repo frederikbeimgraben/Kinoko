@@ -58,7 +58,7 @@ class CoarseSampler:
         self.shape = (ny, nx)
         self.iy = cell_y - self.y0
         self.ix = cell_x - self.x0
-        # A cell covers [i, i + 1) in cell units, so its center reads index i.
+        # A cell covers [i, i + 1) in cell units. Its center reads index i.
         row = np.asarray(y, dtype="float64") / self.cell_m - self.y0 - 0.5
         col = np.asarray(x, dtype="float64") / self.cell_m - self.x0 - 0.5
         self.n_points = len(row)
@@ -106,8 +106,6 @@ class CoarseSampler:
         block = values[:, None] if flat else values
         if len(block) != len(self.ix):
             raise ValueError("values and cells must have the same length")
-        # Spaltenweise angelegt: der Schreibzugriff hier und der Lesezugriff
-        # des Modells laufen beide ueber ganze Spalten.
         out = np.empty((self.n_points, block.shape[1]), dtype="float32", order="F")
         for j in range(block.shape[1]):
             out[:, j] = self._column(block[:, j])
@@ -128,8 +126,7 @@ class CoarseSampler:
     def _column(self, column: np.ndarray) -> np.ndarray:
         known = np.isfinite(column)
         total = self._read(self._blur(self._spread(np.where(known, column, 0.0))))
-        # Eine Spalte ohne Luecke teilt ihr Gewicht mit jeder anderen ohne
-        # Luecke, und das ist der Regelfall einer Wetterwoche.
+        # Every column with no gap shares one weight field.
         if known.all():
             if self._full is None:
                 self._full = self._read(self._blur(self._spread(known)))
