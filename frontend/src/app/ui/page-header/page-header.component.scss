@@ -29,6 +29,10 @@
   text-overflow: ellipsis;
 }
 
+.pageheader__marks:empty {
+  display: none;
+}
+
 .pageheader__actions {
   margin-inline-start: auto;
 }

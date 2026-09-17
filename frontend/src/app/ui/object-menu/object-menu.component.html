@@ -21,19 +21,20 @@
       data-press="tint"
       (click)="edit.emit()"
     >
-      <svg
-        class="objectmenu__icon"
-        viewBox="0 0 24 24"
-        width="18"
-        height="18"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
-      </svg>
+      <span class="objectmenu__icon">
+        <svg
+          viewBox="0 0 24 24"
+          width="17"
+          height="17"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
+        </svg>
+      </span>
       <span>{{ 'common.edit' | t }}</span>
     </button>
     <button
@@ -43,7 +44,7 @@
       data-press="tint"
       (click)="centre.emit()"
     >
-      <app-svg-icon class="objectmenu__icon" name="location" [size]="18" />
+      <span class="objectmenu__icon"><app-svg-icon name="location" [size]="17" /></span>
       <span>{{ 'map.centre' | t }}</span>
     </button>
     <button
@@ -53,7 +54,7 @@
       data-press="tint"
       (click)="delete.emit()"
     >
-      <app-svg-icon class="objectmenu__icon" name="trash" [size]="18" />
+      <span class="objectmenu__icon"><app-svg-icon name="trash" [size]="17" /></span>
       <span>{{ 'common.delete' | t }}</span>
     </button>
   </div>

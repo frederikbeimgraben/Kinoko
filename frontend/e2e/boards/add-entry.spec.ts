@@ -95,6 +95,40 @@ test('FindForm', async ({ page }) => {
   await board(page, 'FindForm');
 });
 
+test('FindSaving', async ({ page }) => {
+  guard('FindSaving', 'phone');
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
+  await setDate(page);
+  await addPhoto(page);
+  // Das Datum des Bretts liegt nach der festen Uhr; sie rückt vor, damit
+  // die Prüfung beim Speichern durchgeht.
+  await page.clock.setFixedTime(new Date(`${FOUND_ON}T12:00:00Z`));
+  // Hält die Antwort an, bis das Bild des beschäftigten Zustands steht.
+  await page.route('**/api/finds', async (route) => {
+    if (route.request().method() !== 'POST') {
+      await route.fallback();
+      return;
+    }
+    await held;
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(SHARED_FINDS.items[0]),
+    });
+  });
+  await page.getByRole('button', { name: 'Speichern' }).click();
+  // Der Auftrag läuft: der Knopf verliert seine Beschriftung an den Spinner.
+  await expect(page.locator('.btn--primary[aria-busy="true"]')).toBeVisible();
+  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
+  await expectBoard(page, 'FindSaving', { idle: false });
+  release();
+});
+
 test('MarkerForm', async ({ page }) => {
   guard('MarkerForm', 'phone');
   await openForm(page, 'Marker setzen', 'Übernehmen');

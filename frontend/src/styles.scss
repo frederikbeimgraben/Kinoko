@@ -71,6 +71,17 @@ app-building-blocks .btn__label {
   line-height: normal !important;
 }
 
+// Das Objektmenü holt den Fokus zum Öffnen. Das Board zeigt keinen Ring.
+app-building-blocks .objectmenu__item:focus-visible {
+  outline: none;
+}
+
+// Die Karte streckt sich auf die Zeile des Nachbarn. Beide Füße teilen sich
+// den Rest, wie im Board.
+app-building-blocks [data-block='app-action-bar'] app-action-bar {
+  margin-block-start: auto;
+}
+
 // Die Schrift auf dem roten Knopf bleibt weiß, in jedem Thema.
 app-building-blocks .btn--danger {
   color: var(--color-on-media) !important;

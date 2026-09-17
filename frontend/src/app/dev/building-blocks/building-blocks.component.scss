@@ -415,7 +415,19 @@
 }
 
 .block__stage--fixed {
-  block-size: 128px;
+  block-size: 210px;
+}
+
+.block__marker {
+  position: absolute;
+  inset-block-start: 40px;
+  inset-inline-start: 30px;
+  inline-size: 16px;
+  block-size: 16px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--color-info);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 35%);
 }
 
 .block__stage--popover {

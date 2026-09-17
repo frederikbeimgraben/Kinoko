@@ -93,6 +93,28 @@ describe('ObjectMenuComponent', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
+  it('dims the screen behind the menu by a quarter', async () => {
+    const { container } = await render(ObjectMenuComponent, {
+      inputs: { target: { x: 0, y: 0 } },
+    });
+
+    const scrim = container.querySelector<HTMLElement>('.objectmenu__scrim');
+    expect(scrim).toHaveStyle({ background: 'rgb(0 0 0 / 25%)' });
+  });
+
+  it('draws every icon at seventeen pixels', async () => {
+    const { container } = await render(ObjectMenuComponent, {
+      inputs: { target: { x: 0, y: 0 } },
+    });
+
+    const icons = container.querySelectorAll<SVGSVGElement>('[role="menuitem"] svg');
+    expect(icons).toHaveLength(3);
+    for (const icon of icons) {
+      expect(icon.getAttribute('width')).toBe('17');
+      expect(icon.getAttribute('height')).toBe('17');
+    }
+  });
+
   it('marks every action as a tap target with a press state', async () => {
     await render(ObjectMenuComponent, { inputs: { target: { x: 0, y: 0 } } });
 

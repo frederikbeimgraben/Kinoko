@@ -1,8 +1,15 @@
+import { Component } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { PageHeaderComponent } from './page-header.component';
+
+@Component({
+  imports: [PageHeaderComponent],
+  template: `<app-page-header title="Einträge"><span marks>Offline</span></app-page-header>`,
+})
+class MarkedHostComponent {}
 
 describe('PageHeaderComponent', () => {
   it('renders with minimal inputs', async () => {
@@ -41,6 +48,12 @@ describe('PageHeaderComponent', () => {
 
     expect(back).toHaveClass('tap');
     expect(back).toHaveAttribute('data-press', 'scale');
+  });
+
+  it('projects a mark next to the title', async () => {
+    const { container } = await render(MarkedHostComponent);
+
+    expect(container.querySelector('.pageheader__marks')).toContainHTML('Offline');
   });
 
   it('renders without German text against an empty catalogue', async () => {

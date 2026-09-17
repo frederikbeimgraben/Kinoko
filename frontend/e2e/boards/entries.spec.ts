@@ -199,6 +199,9 @@ test('EntriesOffline', async ({ page }) => {
   });
 
   await reportFind(page, 'Pfifferling', '2', 'unter Fichten am Hang');
+  // Die feste Uhr rückt vor: die Warteschlange ordnet sonst gleich alte Einträge zufällig.
+  const now = await page.evaluate(() => Date.now());
+  await page.clock.setFixedTime(new Date(now + 1000));
   await reportFind(page, null, '1');
 
   await page.getByRole('link', { name: 'Einträge' }).click();

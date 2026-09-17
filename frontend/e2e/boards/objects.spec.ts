@@ -176,13 +176,15 @@ interface MapHandle {
 }
 
 /** Die Ecke, an der das Brett `ObjectMenu` das Menü zeigt. */
-const MENU_SPOT: readonly [number, number] = [174, 150];
+const MENU_SPOT: readonly [number, number] = [160, 296];
 
 test('ObjectMenu', async ({ page }) => {
   guard('ObjectMenu', 'phone');
+  await page.context().grantPermissions(['geolocation']);
+  await page.context().setGeolocation({ latitude: 48.5203, longitude: 9.0511 });
   await mockSignIn(page);
   await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) });
-  await mockMap(page, { detent: 1 });
+  await mockMap(page, { detent: 0 });
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
   await page.waitForFunction(() => 'pilzMap' in window);
@@ -199,7 +201,8 @@ test('ObjectMenu', async ({ page }) => {
   await page.waitForTimeout(800);
   await page.mouse.up();
   await expect(page.getByRole('menu')).toBeVisible();
-  await board(page, 'ObjectMenu');
+  await showMapImage(page, 'map-stein-631.png', 631);
+  await expectBoard(page, 'ObjectMenu');
 });
 
 /** Wechselt vom Blatt in das Formular des Objekts. */

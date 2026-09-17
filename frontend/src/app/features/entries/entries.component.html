@@ -1,4 +1,10 @@
 <app-page-header [title]="'entry.list.title' | t">
+  @if (offline()) {
+    <app-badge marks variant="warning" role="status" class="entries__offline">
+      <app-svg-icon name="wifi-off" [size]="12" />
+      {{ 'state.offlinePending' | t }}
+    </app-badge>
+  }
   @if (signedIn()) {
     <button class="entries__add tap" type="button" data-press="scale" (click)="startEntry()">
       <app-svg-icon name="plus" [size]="16" [strokeWidth]="2" />
@@ -7,9 +13,6 @@
   }
 </app-page-header>
 <div class="entries">
-  @if (offline()) {
-    <app-banner kind="pending" />
-  }
   <app-segmented
     [options]="segments()"
     [value]="segment()"

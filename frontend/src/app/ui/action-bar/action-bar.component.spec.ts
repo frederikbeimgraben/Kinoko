@@ -72,6 +72,15 @@ describe('ActionBarComponent', () => {
     expect(container.querySelectorAll('.btn--ghost')).toHaveLength(1);
   });
 
+  it('lässt den zweiten Weg weg, solange die Hauptaktion läuft', async () => {
+    const { container } = await render(ActionBarComponent, {
+      inputs: { primary: 'Speichern', secondary: 'Abbrechen', busy: true },
+    });
+
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
+    expect(container.querySelectorAll('.btn')).toHaveLength(1);
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(ActionBarComponent, {
       inputs: { primary: 'Save', secondary: 'Cancel' },

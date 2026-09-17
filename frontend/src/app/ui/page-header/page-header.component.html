@@ -11,5 +11,6 @@
     </button>
   }
   <h1 class="pageheader__title">{{ title() }}</h1>
+  <div class="pageheader__marks"><ng-content select="[marks]" /></div>
   <div class="pageheader__actions"><ng-content /></div>
 </header>

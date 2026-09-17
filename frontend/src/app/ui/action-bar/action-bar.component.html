@@ -18,7 +18,7 @@
     >
       {{ primary() }}
     </app-button>
-    @if (secondary(); as label) {
+    @if (visibleSecondary(); as label) {
       <app-button
         class="footer__main"
         [class.footer__slim]="secondaryDanger() || ghost()"

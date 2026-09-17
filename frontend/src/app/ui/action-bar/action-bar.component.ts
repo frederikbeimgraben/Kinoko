@@ -41,6 +41,9 @@ export class ActionBarComponent {
   /** Ein Geist-Knopf trägt die Gefahrfarbe als Schrift, nicht als Fläche. */
   protected readonly quietDanger = computed(() => this.ghost() && this.danger());
 
+  /** Ein laufender Auftrag lässt keinen zweiten Weg zu; der Fuß trägt nur ihn. */
+  protected readonly visibleSecondary = computed(() => (this.busy() ? undefined : this.secondary()));
+
   protected readonly secondaryVariant = computed<ButtonVariant>(() => {
     if (this.secondaryDanger()) return 'danger-outline';
     return this.ghost() ? 'ghost' : 'secondary';

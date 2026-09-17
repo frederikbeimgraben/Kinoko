@@ -259,7 +259,7 @@ export class BuildingBlocksComponent {
   protected readonly overlayOpen = signal(true);
   protected readonly filterSheetOpen = signal(true);
 
-  protected readonly objectMenuTarget: ObjectMenuTarget = { x: 0, y: 0 };
+  protected readonly objectMenuTarget: ObjectMenuTarget = { x: 70, y: 34 };
   protected readonly popoverAnchor: PopoverAnchor = { top: 0, end: 0 };
 
   /** Das Board zeichnet die unterste Raste des Blatts 120 px hoch. */

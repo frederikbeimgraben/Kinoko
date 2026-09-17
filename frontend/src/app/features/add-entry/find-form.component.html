@@ -19,78 +19,80 @@
         <span class="form__note">{{ coordinates() }}</span>
       </div>
     }
-    <app-form-field
-      [label]="'species.fieldLabel' | t"
-      [value]="speciesName()"
-      [placeholder]="'map.species.choose' | t"
-      [readOnly]="true"
-      [chevron]="editing()"
-      (displayClick)="pickerOpen.set(true)"
-    />
-    <div class="form__pair">
+    <div class="form__fields" [class.form__fields--busy]="busy()">
       <app-form-field
-        kind="date"
-        [label]="'entry.field.date' | t"
-        [value]="date()"
-        [display]="dateText()"
-        (valueChange)="dateChoice.set($event)"
+        [label]="'species.fieldLabel' | t"
+        [value]="speciesName()"
+        [placeholder]="'map.species.choose' | t"
+        [readOnly]="true"
+        [chevron]="editing()"
+        (displayClick)="pickerOpen.set(true)"
       />
+      <div class="form__pair">
+        <app-form-field
+          kind="date"
+          [label]="'entry.field.date' | t"
+          [value]="date()"
+          [display]="dateText()"
+          (valueChange)="dateChoice.set($event)"
+        />
+        <app-form-field
+          kind="number"
+          [label]="'entry.field.count' | t"
+          [placeholder]="'common.optional' | t"
+          [value]="count()"
+          (valueChange)="countChoice.set($event)"
+        />
+      </div>
       <app-form-field
-        kind="number"
-        [label]="'entry.field.count' | t"
+        [label]="'entry.field.note' | t"
+        [multiline]="true"
         [placeholder]="'common.optional' | t"
-        [value]="count()"
-        (valueChange)="countChoice.set($event)"
+        [value]="note()"
+        (valueChange)="noteChoice.set($event)"
       />
+      @if (withPhotos()) {
+        <div>
+          <p class="form__label">{{ 'entry.field.photos' | t }}</p>
+          <app-photo-picker
+            [files]="photos()"
+            [held]="held()"
+            (filesChange)="photos.set($event)"
+            (heldRemoved)="removeHeld($event)"
+          />
+        </div>
+      }
+      @if (editing()) {
+        <div class="form__inline">
+          <p class="form__label form__label--inline">{{ 'entry.field.visibility' | t }}</p>
+          <app-segmented
+            class="form__segment"
+            [options]="segments()"
+            [value]="visibility()"
+            [label]="'entry.field.visibility' | t"
+            (valueChange)="setVisibility($event)"
+          />
+        </div>
+        <div class="form__inline form__inline--switch">
+          <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
+          <app-switch
+            [checked]="training()"
+            [label]="'entry.forTraining' | t"
+            (checkedChange)="trainingChoice.set($event)"
+          />
+        </div>
+      } @else {
+        <div>
+          <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
+          <app-segmented
+            [options]="segments()"
+            [value]="visibility()"
+            [label]="'entry.field.visibility' | t"
+            (valueChange)="setVisibility($event)"
+          />
+        </div>
+      }
     </div>
-    <app-form-field
-      [label]="'entry.field.note' | t"
-      [multiline]="true"
-      [placeholder]="'common.optional' | t"
-      [value]="note()"
-      (valueChange)="noteChoice.set($event)"
-    />
-    @if (withPhotos()) {
-      <div>
-        <p class="form__label">{{ 'entry.field.photos' | t }}</p>
-        <app-photo-picker
-          [files]="photos()"
-          [held]="held()"
-          (filesChange)="photos.set($event)"
-          (heldRemoved)="removeHeld($event)"
-        />
-      </div>
-    }
-    @if (editing()) {
-      <div class="form__inline">
-        <p class="form__label form__label--inline">{{ 'entry.field.visibility' | t }}</p>
-        <app-segmented
-          class="form__segment"
-          [options]="segments()"
-          [value]="visibility()"
-          [label]="'entry.field.visibility' | t"
-          (valueChange)="setVisibility($event)"
-        />
-      </div>
-      <div class="form__inline form__inline--switch">
-        <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
-        <app-switch
-          [checked]="training()"
-          [label]="'entry.forTraining' | t"
-          (checkedChange)="trainingChoice.set($event)"
-        />
-      </div>
-    } @else {
-      <div>
-        <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
-        <app-segmented
-          [options]="segments()"
-          [value]="visibility()"
-          [label]="'entry.field.visibility' | t"
-          (valueChange)="setVisibility($event)"
-        />
-      </div>
-    }
   </div>
   <app-action-bar
     [primary]="'common.save' | t"

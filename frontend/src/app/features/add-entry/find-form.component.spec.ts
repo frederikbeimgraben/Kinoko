@@ -170,6 +170,19 @@ describe('FundFormularComponent', () => {
     expect(setup.container.querySelector('.btn--primary')).toBeDisabled();
   });
 
+  it('dimmt und sperrt die Felder, solange das Speichern läuft', async () => {
+    const setup = await build({ busy: true });
+
+    expect(setup.container.querySelector('.form__fields')).toHaveClass('form__fields--busy');
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
+  });
+
+  it('lässt die Felder frei, solange nichts läuft', async () => {
+    const setup = await build();
+
+    expect(setup.container.querySelector('.form__fields')).not.toHaveClass('form__fields--busy');
+  });
+
   it('füllt sich aus einem vorhandenen Fund, lässt die Fotos weg und behält die Freigabe', async () => {
     const setup = await build({ start: FIND, withPhotos: false, editing: true });
 
