@@ -117,25 +117,25 @@ class CoarseSampler:
         flat = field.ravel()
         return sum(flat[self._corners[k]] * self._weights[k] for k in range(4))
 
-    def _mask(self, column: np.ndarray) -> np.ndarray:
-        mask = np.zeros(self.shape, dtype="float32")
-        mask[self.iy, self.ix] = np.isfinite(column)
-        return mask
+    def _spread(self, values: np.ndarray) -> np.ndarray:
+        field = np.zeros(self.shape, dtype="float32")
+        field[self.iy, self.ix] = values
+        return field
+
+    def _blur(self, field: np.ndarray) -> np.ndarray:
+        return gaussian_filter(field, self.sigma, mode="constant", cval=0.0)
 
     def _column(self, column: np.ndarray) -> np.ndarray:
-        field = np.zeros(self.shape, dtype="float32")
-        field[self.iy, self.ix] = np.where(np.isfinite(column), column, 0.0)
-        total = gaussian_filter(field, self.sigma, mode="constant", cval=0.0)
+        known = np.isfinite(column)
+        total = self._read(self._blur(self._spread(np.where(known, column, 0.0))))
         # Eine Spalte ohne Luecke teilt ihr Gewicht mit jeder anderen ohne
         # Luecke, und das ist der Regelfall einer Wetterwoche.
-        if np.isfinite(column).all():
+        if known.all():
             if self._full is None:
-                self._full = self._read(gaussian_filter(
-                    self._mask(column), self.sigma, mode="constant", cval=0.0))
-            at_weight = self._full
+                self._full = self._read(self._blur(self._spread(known)))
+            weight = self._full
         else:
-            at_weight = self._read(gaussian_filter(
-                self._mask(column), self.sigma, mode="constant", cval=0.0))
-        return np.where(at_weight > self.min_weight,
-                        self._read(total) / np.maximum(at_weight, 1e-6),
+            weight = self._read(self._blur(self._spread(known)))
+        return np.where(weight > self.min_weight,
+                        total / np.maximum(weight, 1e-6),
                         np.nan).astype("float32")
