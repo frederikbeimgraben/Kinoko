@@ -7,7 +7,8 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
-import { PhotoPickerComponent } from '../../ui/photo-picker/photo-picker.component';
+import { PhotoPickerComponent, type HeldPhoto } from '../../ui/photo-picker/photo-picker.component';
+import { SwitchComponent } from '../../ui/switch/switch.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
@@ -35,6 +36,7 @@ export interface FindSubmission {
     FormFieldComponent,
     PhotoPickerComponent,
     SegmentedComponent,
+    SwitchComponent,
     TranslatePipe,
   ],
   templateUrl: './find-form.component.html',
@@ -50,6 +52,8 @@ export class FindFormComponent {
   /** Ein vorhandener Fund, wenn das Formular ihn ändert statt anzulegen. */
   readonly start = input<Find | null>(null);
   readonly withPhotos = input(true);
+  /** Die Fotos, die der Dienst zu diesem Fund schon hat. */
+  readonly held = input<readonly HeldPhoto[]>([]);
   readonly heading = input.required<string>();
   /** Ein vorhandener Fund zeigt den Pfeil an der Art und einen Rahmen am Weg zurück. */
   readonly editing = input(false);
@@ -57,6 +61,7 @@ export class FindFormComponent {
 
   readonly submitted = output<FindSubmission>();
   readonly cancelled = output();
+  readonly heldRemoved = output<string>();
 
   protected readonly wide = inject(ViewportService).wide;
 
@@ -67,6 +72,7 @@ export class FindFormComponent {
   protected readonly countChoice = signal<string | null>(null);
   protected readonly noteChoice = signal<string | null>(null);
   protected readonly photos = signal<readonly File[]>([]);
+  protected readonly trainingChoice = signal<boolean | null>(null);
   protected readonly pickerOpen = signal(false);
 
   protected readonly segments = computed(() => visibilitySegments(this.i18n));
@@ -89,6 +95,11 @@ export class FindFormComponent {
     return count === null || count === undefined ? '' : String(count);
   });
   protected readonly note = computed(() => this.noteChoice() ?? this.start()?.note ?? '');
+  protected readonly training = computed(() => this.trainingChoice() ?? this.start()?.forTraining ?? false);
+
+  protected removeHeld(id: string): void {
+    this.heldRemoved.emit(id);
+  }
   protected readonly visibility = computed(
     () => this.visibilityChoice() ?? this.start()?.visibility ?? 'private',
   );
@@ -158,7 +169,7 @@ export class FindFormComponent {
       count,
       note: note === '' ? null : note,
       visibility: this.visibility(),
-      forTraining: this.start()?.forTraining ?? false,
+      forTraining: this.training(),
     };
   }
 }

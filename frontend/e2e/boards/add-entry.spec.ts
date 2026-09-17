@@ -134,21 +134,27 @@ async function pan(page: Page, dx: number, dy: number): Promise<void> {
   await page.waitForTimeout(400);
 }
 
-/** Vier Züge zwischen den Ecken: ohne sie fielen alle auf einen Punkt. */
-const ZONE_PANS: readonly (readonly [number, number])[] = [
-  [-130, 50],
-  [-50, -90],
-  [105, 82],
-  [0, 24],
+/** Die vier Ecken des Bretts `ZoneDraw`, in Punkten des Fensters. */
+const ZONE_CORNERS: readonly (readonly [number, number])[] = [
+  [120, 382],
+  [250, 332],
+  [300, 422],
+  [195, 340],
 ];
 
 test('ZoneDraw', async ({ page }) => {
   guard('ZoneDraw', 'phone');
   await openActions(page, true);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  for (const [dx, dy] of ZONE_PANS) {
+  const cross = await page.locator('app-crosshair').boundingBox();
+  const middle = [(cross?.x ?? 0) + (cross?.width ?? 0) / 2, (cross?.y ?? 0) + (cross?.height ?? 0) / 2];
+  // Jede Ecke entsteht unter dem Fadenkreuz. Der Zug danach schiebt sie an
+  // ihren Platz und bringt die nächste unter das Kreuz.
+  const offsets = ZONE_CORNERS.map(([x, y]) => [x - middle[0], y - middle[1]]);
+  for (let corner = 0; corner < offsets.length; corner += 1) {
     await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-    await pan(page, dx, dy);
+    const next = offsets[corner + 1] ?? [0, 0];
+    await pan(page, offsets[corner][0] - next[0], offsets[corner][1] - next[1]);
   }
   await boardUnder(page, 'ZoneDraw');
 });

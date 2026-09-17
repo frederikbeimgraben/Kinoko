@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, type OnDestroy } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { PrivateImageComponent } from '../private-image/private-image.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 const MAX_PHOTOS = 3;
@@ -10,18 +11,27 @@ interface Tile {
   readonly preview: string;
 }
 
+/** Ein Foto, das der Dienst schon hat: seine Kennung und sein Weg. */
+export interface HeldPhoto {
+  readonly id: string;
+  readonly path: string;
+}
+
 /** Bildkacheln mit Vorschau und eine Kachel zum Hinzufügen. Höchstens drei. */
 @Component({
   selector: 'app-photo-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [PrivateImageComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './photo-picker.component.html',
   styleUrl: './photo-picker.component.scss',
 })
 export class PhotoPickerComponent implements OnDestroy {
   readonly files = input<readonly File[]>([]);
+  /** Fotos, die der Dienst schon hat. Sie stehen vor den neuen Dateien. */
+  readonly held = input<readonly HeldPhoto[]>([]);
 
   readonly filesChange = output<readonly File[]>();
+  readonly heldRemoved = output<string>();
 
   private readonly previews = new Map<File, string>();
 
@@ -40,14 +50,14 @@ export class PhotoPickerComponent implements OnDestroy {
     });
   });
 
-  protected readonly canAdd = computed(() => this.files().length < MAX_PHOTOS);
+  protected readonly canAdd = computed(() => this.files().length + this.held().length < MAX_PHOTOS);
 
   protected onPick(event: Event): void {
     const field = event.target as HTMLInputElement;
     const picked = Array.from(field.files ?? []);
     field.value = '';
     if (picked.length === 0) return;
-    const room = MAX_PHOTOS - this.files().length;
+    const room = MAX_PHOTOS - this.files().length - this.held().length;
     this.filesChange.emit([...this.files(), ...picked.slice(0, room)]);
   }
 

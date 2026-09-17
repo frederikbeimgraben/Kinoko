@@ -33,6 +33,35 @@
   color: var(--color-text-muted);
 }
 
+// Das Formular eines vorhandenen Fundes trägt ein Feld mehr und steht enger.
+.form__body--dense {
+  gap: 13px;
+  padding-block: 2px var(--space-3);
+}
+
+.form__inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.form__inline--switch {
+  block-size: 36px;
+}
+
+.form__label--inline {
+  margin: 0;
+}
+
+.form__segment {
+  inline-size: 160px;
+}
+
+.form__switchLabel {
+  font-size: var(--fs-control);
+}
+
 .form__pair {
   display: grid;
   grid-template-columns: 1fr 1fr;

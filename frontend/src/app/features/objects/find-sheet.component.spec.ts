@@ -182,6 +182,31 @@ describe('FundBlattComponent', () => {
     });
   });
 
+  /** Beantwortet jede offene Abfrage der Fotoliste. Galerie und Formular fragen. */
+  async function answerPhotos(setup: Setup, ids: readonly string[]): Promise<void> {
+    await vi.waitFor(() => {
+      const open = setup.http.match((request) => request.url === '/api/photos' && request.method === 'GET');
+      expect(open.length).toBeGreaterThan(0);
+      for (const request of open) {
+        request.flush({ items: ids.map((id) => ({ id })), nextCursor: null });
+      }
+    });
+  }
+
+  it('nimmt ein vorhandenes Foto weg und holt die Liste neu', async () => {
+    const setup = await build();
+    await answerPhotos(setup, ['foto-eins']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Bild entfernen' }));
+
+    await vi.waitFor(() => {
+      setup.http.expectOne('/api/photos/foto-eins').flush(null);
+    });
+    await answerPhotos(setup, []);
+  });
+
   it('fragt vor dem Löschen und schließt danach', async () => {
     const setup = await build();
 

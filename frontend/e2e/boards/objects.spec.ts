@@ -39,13 +39,14 @@ const FINDS = {
   items: [
     {
       id: 'find-eins',
-      lat: 48.52,
-      lon: 9.05,
+      lat: 48.5203,
+      lon: 9.0511,
       speciesId: '00000000-0000-4000-8000-000000000014',
       foundOn: '2026-09-06',
       count: 3,
       reviewState: 'accepted',
       visibility: 'shared',
+      forTraining: true,
       note: 'Unter Fichten am Weg, drei junge, Kappen noch geschlossen.',
       updatedAt: '2026-09-06T08:00:00Z',
       deleted: false,
