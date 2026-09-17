@@ -1,18 +1,23 @@
 :host {
   display: block;
   box-sizing: border-box;
-  block-size: 48px;
-  border-block-end: var(--border-width) solid var(--color-border);
+  block-size: 44px;
 }
 
-:host(:last-child) {
-  border-block-end: 0;
+// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
+:host(:not(:first-child)) {
+  border-block-start: var(--border-width) solid var(--color-border);
 }
 
-// Auf der Karte steht jede Zeile für sich, mit eigenem Rand.
+// Auf der Karte steht jede Zeile für sich, mit eigenem Rand und Einzug.
 :host(.choice-row--boxed) {
+  block-size: 48px;
   border: var(--border-width) solid var(--color-border);
   border-radius: 10px;
+}
+
+:host(.choice-row--boxed) .row {
+  padding-inline: 14px;
 }
 
 .row {
@@ -20,7 +25,7 @@
   gap: var(--space-3);
   align-items: center;
   block-size: 100%;
-  padding-inline: 14px;
+  padding-inline: 0;
   cursor: pointer;
 }
 

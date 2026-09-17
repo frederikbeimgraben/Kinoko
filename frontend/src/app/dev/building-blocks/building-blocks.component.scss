@@ -49,13 +49,6 @@
   border-radius: var(--radius-lg);
 }
 
-// Im Board stehen Kurve, Monate und Legende als drei Kinder der Karte und
-// tragen deren Abstand von 10 px.
-.block__curve {
-  --season-curve-months-gap: 16px;
-  --season-curve-legend-gap: 18px;
-}
-
 // Im Board endet auch die letzte Zeile mit einer Linie.
 .block__factors app-factor-row:last-child,
 .block__list app-entry-row:last-child {
@@ -252,11 +245,6 @@
   gap: 8px;
 }
 
-.block__stats {
-  --stat-label-size: var(--fs-sm);
-  --stat-value-size: 20px;
-}
-
 .block__chiprow {
   padding-block-end: 2px;
 }
@@ -324,6 +312,7 @@
 .block__reviewcard {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-xl);
@@ -346,6 +335,7 @@
 .block__reviewimage {
   display: block;
   block-size: 120px;
+  border-radius: 0;
 }
 
 .block__reviewtext {
@@ -369,12 +359,6 @@
   font-size: 13px;
   line-height: 1.4;
   color: var(--color-text-muted);
-}
-
-// Die Bühne ist der Bildschirm: `contain` bindet `position: fixed` an sie,
-// der Abstand eines Dialogs zum Bildschirmrand liegt ausserhalb der Karte.
-.block__stage app-review-queue {
-  --review-queue-gap: var(--space-4);
 }
 
 .block__stage {

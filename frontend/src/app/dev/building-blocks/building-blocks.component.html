@@ -268,7 +268,7 @@
       <span class="block__reviewcount">{{ text('beispiel.pruefung.zaehler') }}</span>
     </div>
     <div class="block__stage">
-      <app-review-queue [items]="reviewItems">
+      <app-review-queue [balance]="true" [items]="reviewItems">
         <ng-template let-item>
           <div class="block__reviewcard">
             <app-private-image class="block__reviewimage" [path]="samplePhoto" [alt]="item.latin" />
@@ -348,12 +348,11 @@
     <h2 class="block__head">{{ 'blocks.checkRow' | t }}</h2>
     <div class="block__card">
       <app-check-row
-        [title]="text('entry.filter.own')"
+        [title]="text('admin.role.approveImages')"
         [checked]="checked()"
-        [count]="12"
         (toggled)="checked.set($event)"
       />
-      <app-check-row [title]="text('entry.filter.shared')" [checked]="false" [locked]="true" />
+      <app-check-row [title]="text('enum.edibility.edible')" [checked]="false" [count]="77" />
     </div>
   </section>
 
@@ -778,7 +777,7 @@
 
   <section class="block" data-block="app-stat-row">
     <h2 class="block__head">{{ 'blocks.statRow' | t }}</h2>
-    <app-stat-row class="block__stats" [stats]="stats" />
+    <app-stat-row [stats]="stats" />
   </section>
 
   <section class="block block__plain" data-block="app-empty-state">

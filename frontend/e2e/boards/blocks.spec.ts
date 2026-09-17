@@ -14,7 +14,7 @@ const PHOTOS: Readonly<Record<string, PlaceholderSpec>> = {
   'bild-eins': { width: 380, height: 120, angle: 140, stops: STOPS, bubbles: true },
   'bild-zwei': { width: 380, height: 300, angle: 140, stops: STOPS, bubbles: true },
   'bild-drei': { width: 380, height: 100, angle: 140, stops: STOPS, bubbles: true },
-  'bild-vier': { width: 376, height: 120, angle: 135, stops: ['#8a6b3e', '#c9a36a'] },
+  'bild-vier': { width: 378, height: 120, angle: 135, stops: ['#8a6b3e', '#c9a36a'] },
   'art-stein': THUMB,
   'art-stein-hell': THUMB,
   'art-marone': THUMB,

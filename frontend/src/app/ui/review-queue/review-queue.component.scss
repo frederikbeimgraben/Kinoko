@@ -7,7 +7,7 @@
 .queue {
   display: flex;
   flex-direction: column;
-  gap: var(--review-queue-gap, var(--space-5));
+  gap: 24px;
 }
 
 .queue__stack {
