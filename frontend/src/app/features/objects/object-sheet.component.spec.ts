@@ -116,6 +116,10 @@ describe('ObjektBlattComponent', () => {
     setup.state.object.set({ kind: 'find', id: FIND.id });
     setup.refresh();
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('594px');
+
+    setup.state.object.set({ kind: 'zone', id: ZONE.id });
+    setup.refresh();
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('444px');
   });
 
   it('stellt das Formular höher und dunkelt die Karte für den Fund ab', async () => {

@@ -26,7 +26,7 @@ const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
 const HEIGHT: Record<ObjectKind, DetentSize> = {
   find: '594px',
   marker: '444px',
-  zone: 'content',
+  zone: '444px',
 };
 
 /** Die Höhe des Formulars aus den Boards `MarkerEdit`, `FindEdit` und `ZoneEdit`. */

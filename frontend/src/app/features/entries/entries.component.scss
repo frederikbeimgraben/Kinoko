@@ -48,3 +48,14 @@
   border: 0;
   border-radius: 10px;
 }
+
+// Die Zeile eines Markers und einer Zone misst siebenundsechzig Punkte, wie
+// die Bretter `EntriesMarkers` und `EntriesZones` sie zeigen.
+.entries__list app-list-row {
+  --size-row-tall: 67px;
+  --list-row-gap: var(--space-3);
+  --list-row-title-top: 0;
+  --list-row-title-height: normal;
+  --list-row-sub-height: normal;
+  --space-row-stack: 2px;
+}

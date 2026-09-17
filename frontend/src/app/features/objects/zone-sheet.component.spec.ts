@@ -3,27 +3,15 @@ import { NOW } from '../../core/tiles/now';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import type { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MapState } from '../map/map.state';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import type { ZoneValue } from '../../core/api/models';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { ZONE, ZONE_ENTRY } from '../../testing/entries-fixture';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { DrawerDouble, rawMap, drawerProviders } from '../../testing/drawer-double';
 import { ZoneSheetComponent } from './zone-sheet.component';
-
-const VALUE: ZoneValue = {
-  speciesId: 'steinpilz',
-  year: 2025,
-  week: 40,
-  areaMean: 18,
-  points: 1240,
-  ownFinds: 2,
-};
 
 function provider(map: MapAdapterDouble, drawer: DrawerDouble): (EnvironmentProviders | Provider)[] {
   return [
@@ -62,11 +50,7 @@ async function build(withMap = false): Promise<Setup> {
     inputs: { zone: ZONE },
     providers: provider(map, drawer),
   });
-  TestBed.inject(MapState).species.set('steinpilz');
   const http = TestBed.inject(HttpTestingController);
-  await vi.waitFor(() => {
-    http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
-  });
   detectChanges();
   let closed = 0;
   fixture.componentInstance.closed.subscribe(() => (closed += 1));
@@ -82,19 +66,6 @@ async function build(withMap = false): Promise<Setup> {
   };
 }
 
-/** Der Wert der Zone kommt erst, wenn Manifest und Katalog stehen. */
-async function answerValue(setup: Setup, value: ZoneValue | null = VALUE): Promise<void> {
-  const request = await vi.waitFor(() =>
-    setup.http.expectOne(`/api/zones/${ZONE.id}/value?speciesId=steinpilz&year=2025&week=40`),
-  );
-  if (value === null) request.error(new ProgressEvent('error'));
-  else request.flush(value);
-  await vi.waitFor(() => {
-    setup.refresh();
-    expect(setup.container.querySelectorAll('app-list-row')).toHaveLength(value === null ? 0 : 2);
-  });
-}
-
 /** Geht über das Formular zum Ziehen der Ecken. */
 async function startCorners(setup: Setup): Promise<void> {
   await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
@@ -104,36 +75,37 @@ async function startCorners(setup: Setup): Promise<void> {
 }
 
 describe('ZoneBlattComponent', () => {
-  it('zeigt den Namen der Zone', async () => {
+  it('zeigt Namen, Fläche und Sichtbarkeit', async () => {
     const setup = await build();
-    await answerValue(setup);
 
     expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
+    expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
     await noViolations(setup.container);
   });
 
-  it('nennt Flächenmittel und eigene Funde mit ihrem Bezug', async () => {
-    const setup = await build();
-    await answerValue(setup);
+  it('lässt die Notiz weg, wenn die Zone keine trägt', async () => {
+    const map = new MapAdapterDouble();
+    const drawer = new DrawerDouble();
+    const { container } = await render(ZoneSheetComponent, {
+      inputs: { zone: { ...ZONE, note: null } },
+      providers: provider(map, drawer),
+    });
 
-    expect(screen.getByText('Vorhersage Steinpilz, KW 40')).toBeInTheDocument();
-    expect(screen.getByText('Flächenmittel, je Begehung')).toBeInTheDocument();
-    expect(screen.getByText('18 %')).toBeInTheDocument();
-    expect(screen.getByText('Eigene Funde in der Zone')).toBeInTheDocument();
-    expect(screen.getByText('alle Arten, alle Jahre')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(container.querySelector('.objectsheet__note')).toBeNull();
   });
 
-  it('lässt die Kennzahlen weg, wenn es für Art und Woche keine Karte gibt', async () => {
-    const setup = await build();
-    await answerValue(setup, null);
+  it('führt die Zone an die Karten-App weiter', async () => {
+    await build();
+    const opened = vi.fn();
+    vi.stubGlobal('open', opened);
 
-    expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'In Karten-App öffnen' }));
+
+    expect(opened).toHaveBeenCalledWith(expect.stringContaining('%2C'), '_blank', 'noopener');
   });
 
   it('speichert Farbe, Sichtbarkeit und Notiz', async () => {
     const setup = await build();
-    await answerValue(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
     setup.refresh();
@@ -153,7 +125,6 @@ describe('ZoneBlattComponent', () => {
 
   it('löscht nach der Rückfrage und schließt', async () => {
     const setup = await build();
-    await answerValue(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     setup.refresh();
@@ -169,7 +140,6 @@ describe('ZoneBlattComponent', () => {
 
   it('bleibt stehen, wenn die Karte für Terra Draw fehlt', async () => {
     const setup = await build();
-    await answerValue(setup);
 
     await startCorners(setup);
 
@@ -179,7 +149,6 @@ describe('ZoneBlattComponent', () => {
 
   it('gibt die Eckpunkte an Terra Draw und speichert, was gezogen wurde', async () => {
     const setup = await build(true);
-    await answerValue(setup);
 
     await startCorners(setup);
     await vi.waitFor(() => {
@@ -209,7 +178,6 @@ describe('ZoneBlattComponent', () => {
 
   it('bricht das Bearbeiten der Eckpunkte ab, ohne zu speichern', async () => {
     const setup = await build(true);
-    await answerValue(setup);
 
     await startCorners(setup);
     await vi.waitFor(() => {
@@ -225,7 +193,6 @@ describe('ZoneBlattComponent', () => {
 
   it('speichert keine Eckpunkte, wenn niemand etwas gezogen hat', async () => {
     const setup = await build(true);
-    await answerValue(setup);
 
     await startCorners(setup);
     await vi.waitFor(() => {

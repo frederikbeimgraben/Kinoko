@@ -181,6 +181,12 @@ test('MarkerEdit', async ({ page }) => {
   await board(page, 'MarkerEdit');
 });
 
+test('ZoneSheet', async ({ page }) => {
+  guard('ZoneSheet', 'phone');
+  await openObject(page, 'Zonen', 'Schönbuch Nord');
+  await board(page, 'ZoneSheet');
+});
+
 test('ZoneEdit', async ({ page }) => {
   guard('ZoneEdit', 'phone');
   await openObject(page, 'Zonen', 'Schönbuch Nord');

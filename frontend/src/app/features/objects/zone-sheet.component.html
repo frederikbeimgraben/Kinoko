@@ -15,23 +15,25 @@
   </app-object-form>
 } @else {
   <div class="objectsheet">
-    <div class="objectsheet__head">
-      <span class="objectsheet__dot" [style.background]="colour()"></span>
-      <h2 class="objectsheet__title">{{ zone().name }}</h2>
+    <div>
+      <div class="objectsheet__head">
+        <span class="objectsheet__dot" [style.background]="colour()"></span>
+        <h2 class="objectsheet__title">{{ zone().name }}</h2>
+      </div>
+      <p class="objectsheet__sub">{{ subline() }}</p>
     </div>
     @if (zone().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }
-    @if (forecastRow(); as row) {
-      <app-card class="flush">
-        <app-list-row [title]="row.label" [subline]="'entry.zone.areaMeanCaption' | t" [value]="row.value" />
-        <app-list-row
-          [title]="'entry.zone.ownFindsInZone' | t"
-          [subline]="'entry.zone.allSpeciesAllYears' | t"
-          [value]="row.finds"
-        />
-      </app-card>
-    }
+    <app-card class="flush">
+      <app-list-row
+        kind="catalogue"
+        [title]="'entry.marker.openInMapsApp' | t"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="toGoogleMaps()"
+      />
+    </app-card>
   </div>
   @if (editingCorners()) {
     <app-action-bar
