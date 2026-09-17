@@ -32,6 +32,13 @@
     letter-spacing: var(--tracking-tight);
   }
 
+  .objectsheet__sub {
+    margin: var(--space-1) 0 0;
+    font-size: var(--fs-sm);
+    line-height: normal;
+    color: var(--color-text-muted);
+  }
+
   // Ohne diese Zeile gleicht der Browser die letzte Zeile aus und bricht
   // anders als das Board.
   .objectsheet__note {

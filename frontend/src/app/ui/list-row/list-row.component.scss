@@ -17,11 +17,14 @@
   inline-size: 100%;
 }
 
+// Ein Knopf bringt das Polster des Browsers mit. Ohne diese Zeile steht eine
+// tippbare Zeile sechs Punkte weiter innen als eine feste.
 .row__field {
   display: flex;
   flex: 1;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--list-row-gap, var(--space-4));
+  padding: 0;
   min-block-size: calc(var(--size-row) - var(--border-width));
   min-inline-size: 0;
   text-align: start;
@@ -112,7 +115,7 @@
 // Die Zeile misst innen einundfünfzig Punkte; nur eine gerade Summe setzt
 // den Text auf dieselbe Linie wie das Board.
 .row__title--default {
-  padding-block-start: 2px;
+  padding-block-start: var(--list-row-title-top, 2px);
 }
 
 // Im Katalog ist der Titel eine Beschriftung, keine Überschrift.
