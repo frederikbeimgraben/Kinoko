@@ -6,7 +6,10 @@ const ADDRESS = `http://127.0.0.1:${PORT}`;
 const CI = Boolean(process.env['CI']);
 const BROWSER_PATH = process.env['BROWSER_PATH'];
 
-/** Ein Board ist ein Bild je Gerät. Ein Fluss läuft nur am Telefon. */
+/**
+ * Ein Board ist ein Bild je Gerät. Ein Fluss läuft am Telefon, außer er
+ * prüft ein Zeigegerät (`e2e/flows/desktop/`).
+ */
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1280, height: 820 };
 const WIDE = { width: 1440, height: 900 };
@@ -44,7 +47,11 @@ export default defineConfig({
   projects: [
     // Muster als Glob: ein Zweigname mit „boards“ im Weg zöge sonst jede Datei.
     { name: 'phone', testMatch: 'boards/*.spec.ts', use: { viewport: PHONE } },
-    { name: 'desktop', testMatch: 'boards/*.spec.ts', use: { viewport: DESKTOP } },
+    {
+      name: 'desktop',
+      testMatch: ['boards/*.spec.ts', 'flows/desktop/*.spec.ts'],
+      use: { viewport: DESKTOP },
+    },
     { name: 'wide', testMatch: 'boards/*.spec.ts', use: { viewport: WIDE } },
     // Das Baustein-Board vergleicht 67 Karten in einem Test.
     {

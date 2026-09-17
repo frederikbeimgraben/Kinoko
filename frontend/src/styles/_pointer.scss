@@ -1,0 +1,48 @@
+@media (hover: hover) {
+  button,
+  a[href],
+  label[data-press],
+  [role='button'],
+  [role='tab'],
+  [role='option'],
+  [role='menuitem'],
+  [role='switch'],
+  [role='radio'],
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='range'],
+  input[type='file'],
+  input[type='color'],
+  select,
+  summary {
+    cursor: pointer;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    cursor: pointer;
+  }
+
+  input[type='range']::-moz-range-thumb {
+    cursor: pointer;
+  }
+
+  input:not(
+    [type='checkbox'],
+    [type='radio'],
+    [type='range'],
+    [type='file'],
+    [type='color'],
+    [type='submit'],
+    [type='reset'],
+    [type='image'],
+    [type='button']
+  ),
+  textarea {
+    cursor: text;
+  }
+
+  :disabled,
+  [aria-disabled='true'] {
+    cursor: default !important;
+  }
+}

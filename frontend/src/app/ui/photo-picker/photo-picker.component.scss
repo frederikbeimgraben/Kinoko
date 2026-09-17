@@ -34,7 +34,6 @@
   inline-size: var(--photo-picker-remove);
   block-size: var(--photo-picker-remove);
   color: var(--color-text);
-  cursor: pointer;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-pill);
@@ -45,7 +44,6 @@
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
-  cursor: pointer;
   background: none;
   border: var(--border-width) dashed var(--color-border-strong);
 }
