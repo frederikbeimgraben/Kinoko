@@ -89,8 +89,10 @@ export interface MapAdapter {
   extent(): { zoom: number; extent: Viewbox } | null;
   onMove(handler: () => void): void;
   destroy(): void;
-  /** Der Ort unter dem Fadenkreuz: die Mitte des freien Streifens. */
+  /** Der Ort in der Mitte der Karte. */
   center(): readonly [number, number] | null;
+  /** Der Ort unter einem Punkt des Fensters, etwa unter dem Fadenkreuz. */
+  pointAt(x: number, y: number): readonly [number, number] | null;
   /** Fährt zu einem Ort. */
   flyTo(centerPoint: readonly [number, number], zoom?: number): void;
   /** Legt die eigenen Objekte einer Ebene auf die Karte. */
@@ -103,6 +105,21 @@ export interface MapAdapter {
   objectAt(x: number, y: number): ObjectHit | null;
   /** Die rohe Karte für Terra Draw. */
   rawMap(): MapLibreMap | null;
+}
+
+/** Der Haken, über den ein Test die Karte genau setzt. */
+export interface MapHandle {
+  /** Der Ort unter einem Punkt des Fensters. */
+  aimAt(x: number, y: number): [number, number];
+  /** Schiebt die Karte so weit, dass der Ort unter dem Punkt liegt. */
+  showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
+}
+
+/** So oft nähert sich die Karte dem Punkt an. Ein Schritt bleibt ungenau. */
+const AIM_STEPS = 4;
+
+interface MapWindow extends Window {
+  pilzMap?: MapHandle;
 }
 
 /** Nach dieser Zeit wird die neue Woche auch ohne alle Kacheln sichtbar. */
@@ -274,6 +291,26 @@ export class MapLibreAdapter implements MapAdapter {
     });
     this.map = map;
     this.styleReady = true;
+    // Ein Haken für den Board-Test: er schiebt die Karte um genaue Punkte.
+    // Ein Zug mit der Maus trifft sie nicht.
+    const frame = host.ownerDocument.defaultView as MapWindow | null;
+    if (frame !== null) {
+      frame.pilzMap = {
+        aimAt: (x: number, y: number) => {
+          const box = map.getContainer().getBoundingClientRect();
+          const point = map.unproject([x - box.left, y - box.top]);
+          return [point.lng, point.lat];
+        },
+        showAt: (lon: number, lat: number, x: number, y: number, zoom?: number) => {
+          const box = map.getContainer().getBoundingClientRect();
+          map.jumpTo({ center: [lon, lat], zoom: zoom ?? map.getZoom() });
+          for (let step = 0; step < AIM_STEPS; step += 1) {
+            const shown = map.project([lon, lat]);
+            map.panBy([shown.x - (x - box.left), shown.y - (y - box.top)], { duration: 0 });
+          }
+        },
+      };
+    }
   }
 
   setStyle(style: string): void {
@@ -458,10 +495,17 @@ export class MapLibreAdapter implements MapAdapter {
   center(): readonly [number, number] | null {
     const map = this.map;
     if (!map) return null;
-    // `getCenter` rechnet das Polster schon ein: die Mitte ist die Mitte des
-    // freien Streifens, also genau der Ort unter dem Fadenkreuz.
     const center = map.getCenter();
     return [center.lng, center.lat];
+  }
+
+  /** Rechnet einen Punkt des Fensters in einen Ort um. */
+  pointAt(x: number, y: number): readonly [number, number] | null {
+    const map = this.map;
+    if (!map) return null;
+    const box = map.getContainer().getBoundingClientRect();
+    const point = map.unproject([x - box.left, y - box.top]);
+    return [point.lng, point.lat];
   }
 
   flyTo(centerPoint: readonly [number, number], zoom?: number): void {

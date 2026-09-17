@@ -124,43 +124,87 @@ test('FindLocation', async ({ page }) => {
   await board(page, 'FindLocation');
 });
 
-/** Die Karte um einen Punktbetrag ziehen, damit die Ecken auseinander liegen. */
-async function pan(page: Page, dx: number, dy: number): Promise<void> {
-  const from = { x: 195, y: 200 };
-  await page.mouse.move(from.x, from.y);
-  await page.mouse.down();
-  await page.mouse.move(from.x + dx, from.y + dy, { steps: 8 });
-  // Ohne Ruhe vor dem Loslassen schwingt die Karte nach und trägt den Zug
-  // weiter, als er ging.
-  await page.waitForTimeout(250);
-  await page.mouse.move(from.x + dx, from.y + dy);
-  await page.mouse.up();
-  await page.waitForTimeout(400);
+/** Der Haken der App, über den der Test die Karte genau setzt. */
+interface MapHandle {
+  aimAt(x: number, y: number): [number, number];
+  showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
 }
+
+/** Der Ort, der gerade unter einem Punkt des Fensters liegt. */
+async function aimAt(page: Page, spot: readonly [number, number]): Promise<[number, number]> {
+  return page.evaluate(([x, y]) => (window as unknown as { pilzMap: MapHandle }).pilzMap.aimAt(x, y), spot);
+}
+
+/** Schiebt die Karte, bis der Ort unter dem Punkt des Fensters liegt. */
+async function showAt(
+  page: Page,
+  place: readonly [number, number],
+  spot: readonly [number, number],
+  zoom?: number,
+): Promise<void> {
+  await page.evaluate(
+    ([lon, lat, x, y, level]) => {
+      (window as unknown as { pilzMap: MapHandle }).pilzMap.showAt(lon, lat, x, y, level);
+    },
+    [place[0], place[1], spot[0], spot[1], zoom] as const,
+  );
+  await page.waitForTimeout(150);
+}
+
+/** Der Maßstab, auf dem die Karte im Brett `ZoneDraw` steht. */
+const ZONE_ZOOM = 14;
 
 /** Die vier Ecken des Bretts `ZoneDraw`, in Punkten des Fensters. */
 const ZONE_CORNERS: readonly (readonly [number, number])[] = [
-  [120, 382],
-  [250, 332],
-  [300, 422],
-  [195, 340],
+  [120, 363],
+  [250, 313],
+  [300, 403],
+  [195, 321],
 ];
+
+/** Die Karte des Bretts trägt keine eigenen Objekte und keinen Standort. */
+async function openEmptyMap(page: Page): Promise<void> {
+  await page.context().grantPermissions(['geolocation']);
+  await page.context().setGeolocation(PLACE);
+  await mockSignIn(page);
+  const empty = { items: [], nextCursor: null };
+  await mockApi(page, {
+    ...REPLIES,
+    '/api/markers': empty,
+    '/api/zones': empty,
+    '/api/finds': empty,
+    '/api/config': authConfig(BASE),
+  });
+  await mockMap(page, { detent: 1, clear: true });
+  await page.goto('/karte');
+  await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
+  await page.getByRole('button', { name: 'Eintragen' }).click();
+  await expect(page.getByRole('button', { name: 'Zone zeichnen' })).toBeVisible();
+}
 
 test('ZoneDraw', async ({ page }) => {
   guard('ZoneDraw', 'phone');
-  await openActions(page, true);
+  await openEmptyMap(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  // Eine Ecke entsteht in der Mitte der Karte, nicht in der Mitte des Bildes.
-  const canvas = await page.locator('.map__canvas').boundingBox();
-  const middle = [(canvas?.x ?? 0) + (canvas?.width ?? 0) / 2, (canvas?.y ?? 0) + (canvas?.height ?? 0) / 2];
-  // Jede Ecke entsteht unter dem Fadenkreuz. Der Zug danach schiebt sie an
-  // ihren Platz und bringt die nächste unter das Kreuz.
-  const offsets = ZONE_CORNERS.map(([x, y]) => [x - middle[0], y - middle[1]]);
-  for (let corner = 0; corner < offsets.length; corner += 1) {
+  // Das Blatt ändert das Polster der Karte; sie rückt danach noch nach.
+  await page.waitForTimeout(600);
+  const cross = await page.locator('app-crosshair').boundingBox();
+  const middle: [number, number] = [
+    (cross?.x ?? 0) + (cross?.width ?? 0) / 2,
+    (cross?.y ?? 0) + (cross?.height ?? 0) / 2,
+  ];
+  // Erst die Orte merken, die im Bild des Bretts unter den Ecken liegen. Dann
+  // jeden davon unter das Fadenkreuz holen und die Ecke setzen.
+  // Der Maßstab des Bretts: die Fläche des Rings misst darin zweiundvierzig Hektar.
+  await showAt(page, await aimAt(page, middle), middle, ZONE_ZOOM);
+  const places: [number, number][] = [];
+  for (const spot of ZONE_CORNERS) places.push(await aimAt(page, spot));
+  for (const place of places) {
+    await showAt(page, place, middle);
     await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-    const next = offsets[corner + 1] ?? [0, 0];
-    await pan(page, offsets[corner][0] - next[0], offsets[corner][1] - next[1]);
   }
+  // Zum Schluss steht die Karte wieder so, wie das Brett sie zeigt.
+  await showAt(page, places[0], ZONE_CORNERS[0]);
   await boardUnder(page, 'ZoneDraw');
 });
 

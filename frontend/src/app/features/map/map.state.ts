@@ -79,6 +79,9 @@ export class MapState {
   /** Die Höhe des Blatts über der Karte, in Punkten. Die Karte polstert darauf. */
   readonly overlayHeight = signal(0);
 
+  /** Zählt jeden Schwenk. Wer den Ort unter dem Fadenkreuz braucht, liest ihn. */
+  readonly moved = signal(0);
+
   private writer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
