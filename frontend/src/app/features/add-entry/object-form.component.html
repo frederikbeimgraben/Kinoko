@@ -32,6 +32,7 @@
   <ng-content />
 </div>
 <app-action-bar
+  [class.form__actions]="editing()"
   [primary]="'common.save' | t"
   [secondary]="secondaryLabel()"
   [ghost]="!editing() && !wide()"

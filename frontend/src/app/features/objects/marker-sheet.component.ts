@@ -7,6 +7,7 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { EntriesState } from '../entries/entries.state';
+import { ObjectSheetState } from './object-sheet.state';
 import { colourHex } from '../entries/colors';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { openGoogleMaps } from './map-links';
@@ -30,13 +31,14 @@ export class MarkerSheetComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly eintraege = inject(EntriesState);
+  private readonly sheet = inject(ObjectSheetState);
 
   readonly marker = input.required<Marker>();
 
   readonly closed = output();
 
   protected readonly deleteAsk = signal(false);
-  protected readonly editing = signal(false);
+  protected readonly editing = this.sheet.editing;
   protected readonly busy = signal(false);
 
   protected readonly location = computed<readonly [number, number]>(() => [

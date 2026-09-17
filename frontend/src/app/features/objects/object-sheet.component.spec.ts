@@ -106,6 +106,31 @@ describe('ObjektBlattComponent', () => {
     expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
   });
 
+  it('nimmt die Höhe des Bretts, die zur Art des Objekts gehört', async () => {
+    const setup = await build();
+
+    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.refresh();
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('444px');
+
+    setup.state.object.set({ kind: 'find', id: FIND.id });
+    setup.refresh();
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('594px');
+  });
+
+  it('stellt das Formular höher und dunkelt die Karte für den Fund ab', async () => {
+    const setup = await build();
+    setup.state.object.set({ kind: 'find', id: FIND.id });
+    setup.refresh();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('694px');
+    expect(setup.container.querySelector('.overlay__scrim--modal')).not.toBeNull();
+    expect(setup.container.querySelector('.object__close')).toBeNull();
+  });
+
   it('sagt es, wenn den Eintrag niemand mehr kennt', async () => {
     const setup = await build();
 

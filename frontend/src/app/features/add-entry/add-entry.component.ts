@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ToastService } from '@stupa-makers/ui-kit';
+import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
 import type { MarkerColour } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -58,6 +58,7 @@ const TITLE: Record<string, TranslationKey> = {
   imports: [
     ActionBarComponent,
     AddActionsComponent,
+    ButtonComponent,
     CrosshairComponent,
     FindFormComponent,
     NgTemplateOutlet,
@@ -114,9 +115,9 @@ export class AddEntryComponent implements OnDestroy {
   });
 
   protected readonly drawStatus = computed(() =>
-    this.i18n.translate('zone.zeichnenAnleitung', {
-      punkte: this.state.ring().length,
-      flaeche: hectaresText(this.hectares(), this.i18n.locale()),
+    this.i18n.translate('entry.zone.drawStatus', {
+      points: this.state.ring().length,
+      area: hectaresText(this.hectares(), this.i18n.locale()),
     }),
   );
 

@@ -257,6 +257,7 @@
   "entry.zone.changeOutline": "Umriss ändern",
   "entry.zone.delete": "Zone löschen",
   "entry.zone.deleteTitle": "Zone löschen?",
+  "entry.zone.drawStatus": "{points} Eckpunkte · {area} ha",
   "entry.zone.editTitle": "Zone bearbeiten",
   "entry.zone.editVertices": "Eckpunkte bearbeiten",
   "entry.zone.finish": "Zone abschließen",

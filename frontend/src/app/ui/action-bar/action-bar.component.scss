@@ -17,7 +17,7 @@
 }
 
 .footer__main {
-  --fs-md: var(--action-bar-size, 1rem);
+  --fs-md: var(--action-bar-size, var(--fs-control));
 
   block-size: var(--action-bar-height, 48px);
 }

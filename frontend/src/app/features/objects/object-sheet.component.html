@@ -1,4 +1,11 @@
-<app-overlay-host class="object" [open]="map.object() !== null" [cover]="true" (closed)="close()">
+<app-overlay-host
+  class="object"
+  [class.object--dark]="dark()"
+  [open]="map.object() !== null"
+  [modal]="dark()"
+  [cover]="true"
+  (closed)="close()"
+>
   <app-sheet appSheetHeight [label]="sheetName()" [detents]="detents()" (closed)="close()">
     @if (find(); as entry) {
       <app-find-sheet [find]="entry" (closed)="close()" />
@@ -10,13 +17,15 @@
       <p class="note empty-state">{{ 'objekt.nichtGefunden' | t }}</p>
     }
   </app-sheet>
-  <button
-    class="object__close tap"
-    type="button"
-    data-press="scale"
-    [attr.aria-label]="'common.close' | t"
-    (click)="close()"
-  >
-    <app-svg-icon name="close" [size]="18" [strokeWidth]="2" />
-  </button>
+  @if (!editing()) {
+    <button
+      class="object__close tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'common.close' | t"
+      (click)="close()"
+    >
+      <app-svg-icon name="close" [size]="18" [strokeWidth]="2" />
+    </button>
+  }
 </app-overlay-host>

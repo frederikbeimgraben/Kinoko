@@ -32,6 +32,15 @@ describe('ActionBarComponent', () => {
     expect(calls).toEqual(['haupt', 'zweite']);
   });
 
+  it('stellt beide Aktionen nebeneinander', async () => {
+    const { container } = await render(ActionBarComponent, {
+      inputs: { primary: 'Bearbeiten', secondary: 'Löschen', split: true, secondaryDanger: true },
+    });
+
+    expect(container.querySelector('.footer__pair--split')).not.toBeNull();
+    expect(container.querySelectorAll('.footer__slim')).toHaveLength(2);
+  });
+
   it('färbt die Hauptaktion rot', async () => {
     const { container } = await render(ActionBarComponent, {
       inputs: { primary: 'Alles löschen', danger: true },

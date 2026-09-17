@@ -9,7 +9,7 @@
     (submitted)="save($event)"
     (cancelled)="editing.set(false)"
   >
-    <app-button variant="secondary" [block]="true" (click)="editCorners()">
+    <app-button class="zonesheet__outline" variant="secondary" [block]="true" (click)="editCorners()">
       {{ 'entry.zone.changeOutline' | t }}
     </app-button>
   </app-object-form>

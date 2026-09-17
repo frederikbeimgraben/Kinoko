@@ -196,9 +196,7 @@ describe('EintragenComponent', () => {
     await start(setup, 'Zone zeichnen');
 
     expect(screen.getByRole('heading', { name: 'Zone zeichnen' })).toBeInTheDocument();
-    expect(
-      screen.getByText('0 Eckpunkte · 0,0 ha. Fadenkreuz auf den nächsten Eckpunkt setzen.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('0 Eckpunkte · 0,0 ha')).toBeInTheDocument();
 
     await drawRing(setup);
     setup.refresh();
@@ -206,6 +204,20 @@ describe('EintragenComponent', () => {
     await vi.waitFor(() => {
       setup.refresh();
       expect(screen.getByText(/^3 Eckpunkte · \d/)).toBeInTheDocument();
+    });
+  });
+
+  it('nimmt den letzten Eckpunkt wieder weg', async () => {
+    const setup = await build();
+    await start(setup, 'Zone zeichnen');
+    await drawRing(setup);
+    setup.refresh();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Letzten Punkt entfernen' }));
+
+    await vi.waitFor(() => {
+      setup.refresh();
+      expect(screen.getByText(/^2 Eckpunkte · /)).toBeInTheDocument();
     });
   });
 

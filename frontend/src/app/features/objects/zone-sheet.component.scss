@@ -5,3 +5,10 @@
 }
 
 @include object-sheet.object-sheet;
+
+// Der Knopf misst vierundvierzig Punkte, wie das Brett `ZoneEdit` ihn zeigt.
+.zonesheet__outline {
+  --fs-md: var(--fs-control);
+
+  block-size: var(--size-tap);
+}
