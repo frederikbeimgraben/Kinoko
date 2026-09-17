@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import type { Map as MapLibreMap } from 'maplibre-gl';
+import { clearRing, paintRing } from './ring-painter';
 import type { Location } from './add-entry.state';
 
 /** Ein Ring, wie ihn Terra Draw nach dem Ziehen zurückgibt. */
@@ -107,19 +108,25 @@ export async function startDrawing(
 
   let id: string | number | null = null;
 
+  let held: readonly Location[] = [];
+
   return {
+    // Beim Zeichnen malen eigene Ebenen: Terra Draw kennt weder Strichmuster
+    // noch Eckpunkte.
     showRing: (ring) => {
+      held = ring;
       draw.clear();
       id = null;
-      const form = geometryFor(ring);
+      paintRing(map, ring, farbe);
+    },
+    edit: (handler) => {
+      clearRing(map);
+      const form = geometryFor(held);
       if (form === null) return;
       id = draw.getFeatureId();
       draw.addFeatures([
         { id: id, type: 'Feature', geometry: form.geometry, properties: { mode: form.mode } },
       ]);
-    },
-    edit: (handler) => {
-      if (id === null) return;
       draw.selectFeature(id);
       draw.on('change', () => {
         const feature = id === null ? undefined : draw.getSnapshotFeature(id);
@@ -131,6 +138,7 @@ export async function startDrawing(
       });
     },
     stop: () => {
+      clearRing(map);
       draw.clear();
       draw.stop();
     },

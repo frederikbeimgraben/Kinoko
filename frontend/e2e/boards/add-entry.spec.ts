@@ -130,6 +130,10 @@ async function pan(page: Page, dx: number, dy: number): Promise<void> {
   await page.mouse.move(from.x, from.y);
   await page.mouse.down();
   await page.mouse.move(from.x + dx, from.y + dy, { steps: 8 });
+  // Ohne Ruhe vor dem Loslassen schwingt die Karte nach und trägt den Zug
+  // weiter, als er ging.
+  await page.waitForTimeout(250);
+  await page.mouse.move(from.x + dx, from.y + dy);
   await page.mouse.up();
   await page.waitForTimeout(400);
 }
@@ -146,8 +150,9 @@ test('ZoneDraw', async ({ page }) => {
   guard('ZoneDraw', 'phone');
   await openActions(page, true);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  const cross = await page.locator('app-crosshair').boundingBox();
-  const middle = [(cross?.x ?? 0) + (cross?.width ?? 0) / 2, (cross?.y ?? 0) + (cross?.height ?? 0) / 2];
+  // Eine Ecke entsteht in der Mitte der Karte, nicht in der Mitte des Bildes.
+  const canvas = await page.locator('.map__canvas').boundingBox();
+  const middle = [(canvas?.x ?? 0) + (canvas?.width ?? 0) / 2, (canvas?.y ?? 0) + (canvas?.height ?? 0) / 2];
   // Jede Ecke entsteht unter dem Fadenkreuz. Der Zug danach schiebt sie an
   // ihren Platz und bringt die nächste unter das Kreuz.
   const offsets = ZONE_CORNERS.map(([x, y]) => [x - middle[0], y - middle[1]]);
