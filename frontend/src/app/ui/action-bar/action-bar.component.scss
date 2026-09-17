@@ -9,7 +9,7 @@
 }
 
 .footer--inline {
-  flex-direction: var(--action-bar-flow, row-reverse);
+  flex-direction: row-reverse;
   justify-content: flex-start;
   padding: var(--space-4) 20px 20px;
   background: none;
@@ -45,8 +45,13 @@
 
 .footer__pair--split {
   display: flex;
-  flex-direction: var(--action-bar-flow, row-reverse);
+  flex-direction: row-reverse;
   gap: var(--space-3);
+}
+
+// Die Gefahr steht links. Trägt sie schon die erste Aktion, bleibt die Reihe.
+.footer__pair--danger {
+  flex-direction: row;
 }
 
 .footer__pair--split .footer__main {

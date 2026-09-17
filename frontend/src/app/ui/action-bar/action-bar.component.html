@@ -1,6 +1,10 @@
 <div class="footer" [class.footer--inline]="inline()">
   <ng-content />
-  <div class="footer__pair" [class.footer__pair--split]="split()">
+  <div
+    class="footer__pair"
+    [class.footer__pair--split]="split()"
+    [class.footer__pair--danger]="split() && danger()"
+  >
     <app-button
       class="footer__main"
       [class.footer__slim]="split() || (ghost() && secondary() === undefined)"

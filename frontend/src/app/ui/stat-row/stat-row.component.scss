@@ -9,13 +9,13 @@
   flex: 1 1 0;
   flex-direction: column;
   align-items: center;
-  gap: var(--stat-gap, var(--space-1));
+  gap: 2px;
   min-inline-size: 56px;
 }
 
 .stat__value {
   font-size: var(--stat-value-size, var(--fs-xl));
-  font-weight: var(--stat-value-weight, var(--fw-semibold));
+  font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
 }
 

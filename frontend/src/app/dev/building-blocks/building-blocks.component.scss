@@ -53,7 +53,6 @@
 // tragen deren Abstand von 10 px.
 .block__curve {
   --season-curve-months-gap: 16px;
-  --season-curve-months-height: 16px;
   --season-curve-legend-gap: 18px;
 }
 
@@ -253,16 +252,9 @@
   gap: 8px;
 }
 
-// Auf dem Brett steht die Gefahr links, der Rückweg rechts.
-.block__split {
-  --action-bar-flow: row;
-}
-
 .block__stats {
-  --stat-gap: 2px;
   --stat-label-size: var(--fs-sm);
   --stat-value-size: 20px;
-  --stat-value-weight: var(--fw-bold);
 }
 
 .block__chiprow {

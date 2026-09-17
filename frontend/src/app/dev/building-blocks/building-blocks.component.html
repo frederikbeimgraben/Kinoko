@@ -183,12 +183,10 @@
     <h2 class="block__head">{{ 'blocks.actionBar' | t }}</h2>
     <app-action-bar [primary]="text('common.save')" [secondary]="text('common.cancel')" />
     <app-action-bar
-      class="block__split"
       [primary]="text('common.delete')"
       [secondary]="text('common.cancel')"
       [danger]="true"
       [split]="true"
-      [row]="true"
     />
   </section>
 
@@ -682,7 +680,6 @@
       [series]="seasonSeries"
       [months]="monthMarks"
       [large]="true"
-      [keepRatio]="true"
       [peak]="text('beispiel.saison.gipfel')"
       [label]="text('saison.beschriftung')"
     />

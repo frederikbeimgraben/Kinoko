@@ -82,7 +82,7 @@
 
 .spark__months {
   position: relative;
-  block-size: var(--season-curve-months-height, 16px);
+  block-size: 16px;
   margin-block-start: var(--season-curve-months-gap, 6px);
   font-size: 13px;
   line-height: normal;
