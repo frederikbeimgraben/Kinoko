@@ -2,6 +2,7 @@
 @use 'styles/tokens';
 @use 'styles/kit-helpers';
 @use 'styles/press';
+@use 'styles/pointer';
 @use 'styles/stopgap';
 
 // Die App füllt das Gerät und scrollt nur innerhalb ihrer Flächen. Ein
