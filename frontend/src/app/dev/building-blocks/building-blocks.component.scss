@@ -253,6 +253,11 @@
   gap: 8px;
 }
 
+// Auf dem Brett steht die Gefahr links, der Rückweg rechts.
+.block__split {
+  --action-bar-flow: row;
+}
+
 .block__stats {
   --stat-gap: 2px;
   --stat-label-size: var(--fs-sm);
