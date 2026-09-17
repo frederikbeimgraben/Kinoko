@@ -23,7 +23,11 @@ export type GillAttachment = components['schemas']['GillAttachment'];
 export type GillSpacing = components['schemas']['GillSpacing'];
 export type GillEdge = components['schemas']['GillEdge'];
 export type TermRef = components['schemas']['TermRef'];
+export type Term = components['schemas']['Term'];
+export type TermKind = components['schemas']['TermKind'];
 export type MeasurementGroup = components['schemas']['MeasurementGroup'];
+export type Measurement = components['schemas']['Measurement'];
+export type Unit = components['schemas']['Unit'];
 export type TaxonPage = components['schemas']['TaxonPage'];
 export type TaxonStep = components['schemas']['TaxonStep'];
 export type TaxonChild = components['schemas']['TaxonChild'];
@@ -38,6 +42,10 @@ export const EDIBILITIES: readonly Edibility[] = [
 ];
 
 export const PROTECTIONS: readonly Protection[] = ['none', 'personal_use', 'strict'];
+
+export const DIMENSIONS: readonly Dimension[] = ['width', 'height', 'thickness', 'length'];
+
+export const UNITS: readonly Unit[] = ['cm', 'mm', 'um'];
 
 export const HYMENIUM_TYPES: readonly HymeniumType[] = ['gills', 'tubes', 'pores', 'spines', 'folds'];
 

@@ -109,6 +109,30 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/species-editor.component').then((m) => m.SpeciesEditorComponent),
       },
+      {
+        path: 'arten/:slug/mass/:part',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-size.component').then((m) => m.SectionSizeComponent),
+      },
+      {
+        path: 'arten/:slug/zeitraum',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-season.component').then((m) => m.SectionSeasonComponent),
+      },
+      {
+        path: 'arten/:slug/fruchtschicht',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-hymenium.component').then((m) => m.SectionHymeniumComponent),
+      },
+      {
+        path: 'arten/:slug/sinne/:sense',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-senses.component').then((m) => m.SectionSensesComponent),
+      },
     ],
   },
   // Die stille Route steht vor der Anmeldung: sonst nähme diese den ersten

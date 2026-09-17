@@ -1,0 +1,54 @@
+@use '../../../styles/card';
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+}
+
+.section__title {
+  @include card.section-title;
+}
+
+// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
+.section__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --list-row-value: var(--fs-row-meta);
+  --list-row-title-height: normal;
+}
+
+.section__colour {
+  --pilz-colour-width: 96px;
+  --pilz-colour-height: 26px;
+  --pilz-colour-radius: 7px;
+}
+
+// Die Wahl misst fünfzig Punkte je Zeile, der gewählte Wert steht hell.
+.section__choices {
+  --size-row: 50px;
+}
+
+.section__choice {
+  color: var(--color-text-muted);
+}
+
+.section__choice--on {
+  color: var(--color-text);
+}
+
+.section__check {
+  color: var(--color-primary);
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

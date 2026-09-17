@@ -1,0 +1,39 @@
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+  @include section.fields;
+}
+
+.section__title {
+  margin: 0 0 10px;
+  font-size: var(--fs-caption);
+  line-height: normal;
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+// Die Spanne und ihre Einheit stehen in einer Zeile, jede Spalte gleich breit.
+.section__span {
+  display: flex;
+  gap: 10px;
+}
+
+.section__field {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

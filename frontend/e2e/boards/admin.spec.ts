@@ -15,6 +15,7 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { bundle, species } from '../fixtures/species';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
+import { STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -216,4 +217,45 @@ test('Run', async ({ page }) => {
   });
   await expect(page.getByText('Brier 0,061 · besser')).toBeVisible();
   await expectBoard(page, 'Run');
+});
+
+test('EditSize', async ({ page }) => {
+  guard('EditSize', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/mass/cap', {
+    '/api/species/boletus-edulis': STONE_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByRole('heading', { name: 'Hutbreite' })).toBeVisible();
+  await expectBoard(page, 'EditSize');
+});
+
+test('EditSeason', async ({ page }) => {
+  guard('EditSeason', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/zeitraum', {
+    '/api/species/boletus-edulis': STONE_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByText('Oktober')).toBeVisible();
+  await expectBoard(page, 'EditSeason');
+});
+
+test('EditHymenium', async ({ page }) => {
+  guard('EditHymenium', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/fruchtschicht', {
+    '/api/species/boletus-edulis': STONE_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByText('ausgebuchtet')).toBeVisible();
+  await expectBoard(page, 'EditHymenium');
+});
+
+test('EditSenses', async ({ page }) => {
+  guard('EditSenses', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/sinne/geruch', {
+    '/api/species/boletus-edulis': STONE_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+    '/api/terms': TERMS,
+  });
+  await expect(page.getByRole('button', { name: 'rettichartig' })).toBeVisible();
+  await expectBoard(page, 'EditSenses');
 });

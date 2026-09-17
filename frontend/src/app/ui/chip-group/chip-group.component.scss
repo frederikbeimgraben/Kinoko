@@ -10,7 +10,7 @@
   block-size: var(--chip-height, var(--size-chip));
   padding-inline: var(--chip-inline, var(--space-4));
   font-size: var(--chip-size, var(--fs-sm));
-  font-weight: var(--fw-semibold);
+  font-weight: var(--chip-weight, var(--fw-semibold));
   color: var(--color-text);
   white-space: nowrap;
   cursor: pointer;
@@ -20,6 +20,7 @@
 }
 
 .chip--active {
+  font-weight: var(--fw-semibold);
   color: var(--color-on-primary);
   background: var(--color-primary);
   border-color: var(--color-primary);
