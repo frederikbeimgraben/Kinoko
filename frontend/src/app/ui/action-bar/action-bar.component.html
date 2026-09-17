@@ -8,7 +8,7 @@
     <app-button
       class="footer__main"
       [class.footer__lead]="split()"
-      [class.footer__slim]="split() || (ghost() && secondary() === undefined)"
+      [class.footer__slim]="split() || (ghost() && secondary() === undefined && !busy())"
       [class.footer__danger]="quietDanger()"
       [variant]="primaryVariant()"
       [block]="!inline()"
@@ -18,7 +18,7 @@
     >
       {{ primary() }}
     </app-button>
-    @if (visibleSecondary(); as label) {
+    @if (secondary(); as label) {
       <app-button
         class="footer__main"
         [class.footer__slim]="secondaryDanger() || ghost()"

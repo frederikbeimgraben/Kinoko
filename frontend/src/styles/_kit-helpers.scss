@@ -183,6 +183,11 @@ app-action-bar .footer--inline .btn {
 // zusätzlich; über einer grünen Fläche liest sich das wie ein Fehler.
 app-action-bar .btn:disabled {
   filter: none;
+  opacity: 0.55;
+}
+
+// Das Speichern im Fund-Formular steht heller gedimmt, wie im Board.
+app-find-form app-action-bar .btn:disabled {
   opacity: 0.6;
 }
 

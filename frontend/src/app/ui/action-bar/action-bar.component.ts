@@ -32,17 +32,15 @@ export class ActionBarComponent {
   readonly primaryClick = output();
   readonly secondaryClick = output();
 
+  /** Ein laufender Auftrag behält seine Fläche; nur der zweite Weg fehlt. */
   protected readonly primaryVariant = computed<ButtonVariant>(() => {
-    if (this.ghost() && this.secondary() === undefined) return 'ghost';
+    if (this.ghost() && this.secondary() === undefined && !this.busy()) return 'ghost';
     if (this.danger()) return this.split() ? 'danger-outline' : 'danger';
     return this.quiet() ? 'secondary' : 'primary';
   });
 
   /** Ein Geist-Knopf trägt die Gefahrfarbe als Schrift, nicht als Fläche. */
   protected readonly quietDanger = computed(() => this.ghost() && this.danger());
-
-  /** Ein laufender Auftrag lässt keinen zweiten Weg zu; der Fuß trägt nur ihn. */
-  protected readonly visibleSecondary = computed(() => (this.busy() ? undefined : this.secondary()));
 
   protected readonly secondaryVariant = computed<ButtonVariant>(() => {
     if (this.secondaryDanger()) return 'danger-outline';
