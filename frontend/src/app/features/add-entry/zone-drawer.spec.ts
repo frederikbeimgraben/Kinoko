@@ -84,8 +84,44 @@ const loader = (): Promise<TerraModule> =>
     adapter: { TerraDrawMapLibreGLAdapter: ModeDouble },
   } as unknown as TerraModule);
 
+/** Eine Karte, die mitschreibt, welche Ebenen und Daten sie bekommen hat. */
+class MapDouble {
+  readonly layers: string[] = [];
+  data: { features: { geometry: { type: string } }[] } | null = null;
+  private has = false;
+
+  getSource(): unknown {
+    return this.has ? { setData: (next: unknown) => (this.data = next as never) } : undefined;
+  }
+
+  addSource(_id: string, source: { data: unknown }): void {
+    this.has = true;
+    this.data = source.data as never;
+  }
+
+  addLayer(layer: { id: string }): void {
+    this.layers.push(layer.id);
+  }
+
+  getLayer(id: string): unknown {
+    return this.layers.includes(id) ? {} : undefined;
+  }
+
+  removeLayer(id: string): void {
+    this.layers.splice(this.layers.indexOf(id), 1);
+  }
+
+  removeSource(): void {
+    this.has = false;
+  }
+
+  once(): void {
+    // Der Stil steht in der Attrappe sofort.
+  }
+}
+
 function map(): MapLibreMap {
-  return {} as MapLibreMap;
+  return new MapDouble() as unknown as MapLibreMap;
 }
 
 describe('geometrieFuer', () => {
@@ -107,21 +143,37 @@ describe('starteZeichnen', () => {
     expect(DrawDouble.last?.modi).toEqual(['select']);
   });
 
-  it('legt den Ring als Feature auf die Karte und räumt den alten weg', async () => {
-    const session = await startDrawing(map(), '#004225', loader);
+  it('malt den Ring als eigene Ebenen mit einem Punkt je Ecke', async () => {
+    const surface = new MapDouble();
+    const session = await startDrawing(surface as unknown as MapLibreMap, '#004225', loader);
 
     session.showRing(RING);
 
-    expect(DrawDouble.last?.features[0].geometry.type).toBe('Polygon');
-    expect(DrawDouble.last?.cleared).toBe(1);
+    expect(surface.layers).toEqual(['pilz-ring-fill', 'pilz-ring-line', 'pilz-ring-corners']);
+    const kinds = surface.data?.features.map((feature) => feature.geometry.type);
+    expect(kinds).toEqual(['Polygon', 'Point', 'Point', 'Point']);
+    expect(DrawDouble.last?.features).toHaveLength(0);
   });
 
-  it('legt nichts auf, solange kein Eckpunkt steht', async () => {
-    const session = await startDrawing(map(), '#004225', loader);
+  it('malt nur Punkte, solange die Fläche noch fehlt', async () => {
+    const surface = new MapDouble();
+    const session = await startDrawing(surface as unknown as MapLibreMap, '#004225', loader);
 
-    session.showRing([]);
+    session.showRing(RING.slice(0, 2));
 
-    expect(DrawDouble.last?.features).toHaveLength(0);
+    const kinds = surface.data?.features.map((feature) => feature.geometry.type);
+    expect(kinds).toEqual(['Point', 'Point']);
+  });
+
+  it('nimmt die Ebenen weg, sobald die Eckpunkte gezogen werden', async () => {
+    const surface = new MapDouble();
+    const session = await startDrawing(surface as unknown as MapLibreMap, '#004225', loader);
+    session.showRing(RING);
+
+    session.edit(() => undefined);
+
+    expect(surface.layers).toEqual([]);
+    expect(DrawDouble.last?.features[0].geometry.type).toBe('Polygon');
   });
 
   it('meldet den verschobenen Ring ohne den doppelten Endpunkt', async () => {
