@@ -1,4 +1,18 @@
 <div class="picker">
+  @for (photo of held(); track photo.id) {
+    <div class="tile">
+      <app-private-image class="tile__image" [path]="photo.path" alt="" />
+      <button
+        class="tile__remove tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'image.remove' | t"
+        (click)="heldRemoved.emit(photo.id)"
+      >
+        <app-svg-icon name="close" [size]="11" [strokeWidth]="2.2" />
+      </button>
+    </div>
+  }
   @for (tile of tiles(); track tile.file; let i = $index) {
     <div class="tile">
       <img class="tile__image" [src]="tile.preview" alt="" />

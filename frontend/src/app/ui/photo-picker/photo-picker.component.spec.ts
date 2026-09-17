@@ -31,6 +31,20 @@ describe('PhotoPickerComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt vorhandene Fotos und meldet, welches weg soll', async () => {
+    stubUrls();
+    const { container, fixture } = await render(PhotoPickerComponent, {
+      inputs: { held: [{ id: 'foto-eins', path: '/api/photos/foto-eins/list' }] },
+    });
+    const removed: string[] = [];
+    fixture.componentInstance.heldRemoved.subscribe((id) => removed.push(id));
+
+    expect(container.querySelectorAll('app-private-image')).toHaveLength(1);
+    await userEvent.click(screen.getByRole('button', { name: 'Bild entfernen' }));
+
+    expect(removed).toEqual(['foto-eins']);
+  });
+
   it('hängt neu gewählte Dateien an', async () => {
     stubUrls();
     const { fixture } = await render(PhotoPickerComponent, {

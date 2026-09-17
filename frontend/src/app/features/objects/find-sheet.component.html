@@ -5,8 +5,10 @@
     [heading]="'entry.fund.editTitle' | t"
     [editing]="true"
     [busy]="busy()"
+    [held]="held()"
     (submitted)="save($event)"
     (cancelled)="editing.set(false)"
+    (heldRemoved)="removePhoto($event)"
   />
 } @else {
   <div class="objectsheet">

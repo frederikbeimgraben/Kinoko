@@ -8,7 +8,10 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { BadgeComponent, ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { PhotosApi } from '../../core/api/photos.api';
+import { photoPath } from '../../core/api/models';
 import type { Find } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -55,6 +58,7 @@ export class FindSheetComponent {
   private readonly sheet = inject(ObjectSheetState);
   private readonly map = inject(MapState);
   private readonly tiles = inject(TileService);
+  private readonly photos = inject(PhotosApi);
   private readonly now = inject(NOW);
 
   readonly find = input.required<Find>();
@@ -65,6 +69,8 @@ export class FindSheetComponent {
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
   private readonly week = signal<ManifestWeek | null>(null);
+  /** Die Fotos, die der Dienst zu dem Fund kennt; das Formular zeigt sie. */
+  protected readonly held = signal<readonly { id: string; path: string }[]>([]);
   private readonly value = signal<number | null>(null);
 
   protected readonly art = computed(() => {
@@ -110,6 +116,30 @@ export class FindSheetComponent {
     effect(() => {
       void this.fetchValue(this.find(), this.map.week());
     });
+    effect(() => {
+      void this.loadPhotos(this.find().id);
+    });
+  }
+
+  /** Nimmt ein vorhandenes Foto weg und holt die Liste neu. */
+  protected async removePhoto(id: string): Promise<void> {
+    try {
+      await firstValueFrom(this.photos.remove(id));
+    } catch {
+      this.toasts.error(this.i18n.translate('melden.verworfen'));
+      return;
+    }
+    await this.loadPhotos(this.find().id);
+  }
+
+  private async loadPhotos(findId: string): Promise<void> {
+    try {
+      const page = await firstValueFrom(this.photos.list({ findId }));
+      this.held.set(page.items.map((photo) => ({ id: photo.id, path: photoPath(photo.id, 'list') })));
+    } catch {
+      // Ohne Liste zeigt das Formular nur die neuen Dateien.
+      this.held.set([]);
+    }
   }
 
   protected async save(submission: FindSubmission): Promise<void> {

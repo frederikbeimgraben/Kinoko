@@ -183,6 +183,15 @@ describe('FundFormularComponent', () => {
     expect(setup.submissions[0].input.forTraining).toBe(true);
   });
 
+  it('schaltet die Freigabe für das Training um', async () => {
+    const setup = await build({ start: FIND, withPhotos: false, editing: true });
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Für Training freigeben' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(setup.submissions[0].input.forTraining).toBe(false);
+  });
+
   it('lässt die Anzahl leer, wenn der Fund keine trägt', async () => {
     await build({ start: { ...FIND, count: null } });
 

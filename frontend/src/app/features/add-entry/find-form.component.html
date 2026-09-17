@@ -12,7 +12,7 @@
   </div>
   <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="pickerOpen.set(false)" />
 } @else {
-  <div class="form__body">
+  <div class="form__body" [class.form__body--dense]="editing()">
     @if (!wide()) {
       <div class="form__head">
         <h2 class="form__title">{{ heading() }}</h2>
@@ -53,18 +53,44 @@
     @if (withPhotos()) {
       <div>
         <p class="form__label">{{ 'entry.field.photos' | t }}</p>
-        <app-photo-picker [files]="photos()" (filesChange)="photos.set($event)" />
+        <app-photo-picker
+          [files]="photos()"
+          [held]="held()"
+          (filesChange)="photos.set($event)"
+          (heldRemoved)="removeHeld($event)"
+        />
       </div>
     }
-    <div>
-      <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
-      <app-segmented
-        [options]="segments()"
-        [value]="visibility()"
-        [label]="'entry.field.visibility' | t"
-        (valueChange)="setVisibility($event)"
-      />
-    </div>
+    @if (editing()) {
+      <div class="form__inline">
+        <p class="form__label form__label--inline">{{ 'entry.field.visibility' | t }}</p>
+        <app-segmented
+          class="form__segment"
+          [options]="segments()"
+          [value]="visibility()"
+          [label]="'entry.field.visibility' | t"
+          (valueChange)="setVisibility($event)"
+        />
+      </div>
+      <div class="form__inline form__inline--switch">
+        <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
+        <app-switch
+          [checked]="training()"
+          [label]="'entry.forTraining' | t"
+          (checkedChange)="trainingChoice.set($event)"
+        />
+      </div>
+    } @else {
+      <div>
+        <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
+        <app-segmented
+          [options]="segments()"
+          [value]="visibility()"
+          [label]="'entry.field.visibility' | t"
+          (valueChange)="setVisibility($event)"
+        />
+      </div>
+    }
   </div>
   <app-action-bar
     [primary]="'common.save' | t"
