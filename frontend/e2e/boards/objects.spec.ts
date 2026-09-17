@@ -169,6 +169,39 @@ test('FindDelete', async ({ page }) => {
   await board(page, 'FindDelete');
 });
 
+/** Der Haken der App, über den der Test die Karte genau setzt. */
+interface MapHandle {
+  aimAt(x: number, y: number): [number, number];
+  showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
+}
+
+/** Die Ecke, an der das Brett `ObjectMenu` das Menü zeigt. */
+const MENU_SPOT: readonly [number, number] = [174, 150];
+
+test('ObjectMenu', async ({ page }) => {
+  guard('ObjectMenu', 'phone');
+  await mockSignIn(page);
+  await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) });
+  await mockMap(page, { detent: 1 });
+  await page.goto('/karte');
+  await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
+  await page.waitForFunction(() => 'pilzMap' in window);
+  // Der Marker liegt unter dem Punkt, an dem das Menü aufgeht.
+  await page.evaluate(
+    ([lon, lat, x, y]) => {
+      (window as unknown as { pilzMap: MapHandle }).pilzMap.showAt(lon, lat, x, y, 14);
+    },
+    [9.05, 48.52, MENU_SPOT[0], MENU_SPOT[1]] as const,
+  );
+  await page.waitForTimeout(400);
+  await page.mouse.move(MENU_SPOT[0], MENU_SPOT[1]);
+  await page.mouse.down();
+  await page.waitForTimeout(800);
+  await page.mouse.up();
+  await expect(page.getByRole('menu')).toBeVisible();
+  await board(page, 'ObjectMenu');
+});
+
 /** Wechselt vom Blatt in das Formular des Objekts. */
 async function edit(page: Page, heading: string): Promise<void> {
   await page.getByRole('button', { name: 'Bearbeiten' }).click();
