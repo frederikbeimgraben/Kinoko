@@ -27,6 +27,8 @@ export interface BoardState {
   detent?: 0 | 1 | 2;
   layer?: string;
   species?: string;
+  /** Ein Stil ohne Grundfläche: das Kartenbild liegt dann unter der Zeichnung. */
+  clear?: boolean;
 }
 
 const STORAGE_KEY = 'pilzkarte.map.v1';
@@ -76,7 +78,7 @@ export async function mockMap(page: Page, state: BoardState = {}, factors = ''):
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(FLAT_STYLE),
+      body: JSON.stringify(state.clear ? { ...FLAT_STYLE, layers: [] } : FLAT_STYLE),
     });
   });
   await page.route('**/*.png', async (route) => {
@@ -117,10 +119,10 @@ function fixtureImage(name: string): string {
  * Legt das Kartenbild des Boards über die Zeichenfläche. Es füllt sie ganz,
  * unter den Knöpfen und dem Blatt der App.
  */
-export async function showMapImage(page: Page, name: string, fixed?: number): Promise<void> {
+export async function showMapImage(page: Page, name: string, fixed?: number, under = false): Promise<void> {
   await settled(page);
   await page.evaluate(
-    ([source, given]) => {
+    ([source, given, below]) => {
       const host = document.querySelector('.map__canvas');
       if (host === null) return;
       // Das Bild füllt den freien Streifen über dem obersten Blatt, wie im Board.
@@ -135,13 +137,14 @@ export async function showMapImage(page: Page, name: string, fixed?: number): Pr
       const image = document.createElement('img');
       image.src = source;
       image.alt = '';
+      // Unter der Zeichenfläche bleibt sichtbar, was die Karte selbst malt.
       image.setAttribute(
         'style',
-        `position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;height:${height}px;object-fit:fill;z-index:1`,
+        `position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;height:${height}px;object-fit:fill;z-index:${below ? 0 : 1}`,
       );
       host.prepend(image);
     },
-    [fixtureImage(name), fixed] as const,
+    [fixtureImage(name), fixed, under] as const,
   );
   await page.waitForFunction(() => {
     const image = document.querySelector<HTMLImageElement>('.map__canvas img');

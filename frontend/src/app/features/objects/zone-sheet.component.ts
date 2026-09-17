@@ -24,6 +24,7 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
+import { ObjectSheetState } from './object-sheet.state';
 import { colourHex } from '../entries/colors';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
@@ -52,6 +53,7 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly api = inject(EntriesApi);
   private readonly arten = inject(SpeciesState);
   private readonly eintraege = inject(EntriesState);
+  private readonly sheet = inject(ObjectSheetState);
   private readonly i18n = inject(I18nService);
   private readonly map = inject(MapState);
   private readonly tiles = inject(TileService);
@@ -65,7 +67,7 @@ export class ZoneSheetComponent implements OnDestroy {
 
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
-  protected readonly editing = signal(false);
+  protected readonly editing = this.sheet.editing;
   protected readonly editingCorners = signal(false);
   private readonly value = signal<ZoneValue | null>(null);
   private readonly newCorners = signal<readonly Location[] | null>(null);

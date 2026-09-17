@@ -29,6 +29,13 @@ const HEIGHT: Record<ObjectKind, DetentSize> = {
   zone: 'content',
 };
 
+/** Die Höhe des Formulars aus den Boards `MarkerEdit`, `FindEdit` und `ZoneEdit`. */
+const HEIGHT_EDIT: Record<ObjectKind, DetentSize> = {
+  find: '694px',
+  marker: '624px',
+  zone: '734px',
+};
+
 /** Ein Objekt ohne Datensatz trägt nur seinen Hinweis. */
 const HEIGHT_MISSING: DetentSize = 'content';
 
@@ -108,9 +115,15 @@ export class ObjectSheetComponent {
     () => this.map.object() !== null && !this.find() && !this.marker() && !this.zone(),
   );
 
+  protected readonly editing = this.sheet.editing;
+
+  /** Das Formular des Fundes dunkelt die Karte ab, wie das Brett `FindEdit`. */
+  protected readonly dark = computed(() => this.editing() && this.map.object()?.kind === 'find');
+
   protected readonly detents = computed<readonly [DetentSize, DetentSize, DetentSize]>(() => {
     const offen = this.map.object();
-    const size = offen === null || this.missing() ? HEIGHT_MISSING : HEIGHT[offen.kind];
+    if (offen === null || this.missing()) return [HEIGHT_MISSING, HEIGHT_MISSING, HEIGHT_MISSING];
+    const size = this.editing() ? HEIGHT_EDIT[offen.kind] : HEIGHT[offen.kind];
     return [size, size, size];
   });
 

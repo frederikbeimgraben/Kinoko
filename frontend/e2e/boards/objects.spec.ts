@@ -63,13 +63,49 @@ const PHOTOS = {
   nextCursor: null,
 };
 
+/** Die Zone aus dem Board `ZoneEdit`. */
+const ZONES = {
+  items: [
+    {
+      id: 'zone-eins',
+      name: 'Schönbuch Nord',
+      colour: 'green',
+      polygon: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [9, 48.5],
+            [9.1, 48.5],
+            [9.1, 48.6],
+            [9, 48.5],
+          ],
+        ],
+      },
+      areaHa: 42,
+      note: 'Nordhang, alte Fichten, ab Mitte September.',
+      visibility: 'private',
+      updatedAt: '2026-09-01T08:00:00Z',
+      deleted: false,
+    },
+  ],
+  nextCursor: null,
+};
+
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': [],
   '/api/markers': MARKERS,
-  '/api/zones': { items: [], nextCursor: null },
+  '/api/zones': ZONES,
   '/api/finds': FINDS,
   '/api/photos': PHOTOS,
+  '/api/zones/zone-eins/value': {
+    speciesId: '00000000-0000-4000-8000-000000000014',
+    year: 2025,
+    week: 40,
+    areaMean: 18,
+    points: 1240,
+    ownFinds: 2,
+  },
 };
 
 /** Das Manifest der Art mit genau der Kachel, die den Fund trägt. */
@@ -130,4 +166,31 @@ test('FindDelete', async ({ page }) => {
   await page.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByRole('heading', { name: 'Fund löschen?' })).toBeVisible();
   await board(page, 'FindDelete');
+});
+
+/** Wechselt vom Blatt in das Formular des Objekts. */
+async function edit(page: Page, heading: string): Promise<void> {
+  await page.getByRole('button', { name: 'Bearbeiten' }).click();
+  await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+}
+
+test('MarkerEdit', async ({ page }) => {
+  guard('MarkerEdit', 'phone');
+  await openObject(page, 'Marker', 'Alter Fichtenbestand');
+  await edit(page, 'Marker bearbeiten');
+  await board(page, 'MarkerEdit');
+});
+
+test('ZoneEdit', async ({ page }) => {
+  guard('ZoneEdit', 'phone');
+  await openObject(page, 'Zonen', 'Schönbuch Nord');
+  await edit(page, 'Zone bearbeiten');
+  await board(page, 'ZoneEdit');
+});
+
+test('FindEdit', async ({ page }) => {
+  guard('FindEdit', 'phone');
+  await openObject(page, 'Funde', 'Steinpilz');
+  await edit(page, 'Fund bearbeiten');
+  await board(page, 'FindEdit');
 });

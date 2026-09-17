@@ -14,11 +14,11 @@
   inset: 0;
 }
 
-// Der Hinweis auf die Quelle der Grundkarte steht unten links auf der Karte.
-// Das Blatt deckt diesen Rand; `--pilz-sheet-inset` hebt ihn darüber.
+// Der Hinweis auf die Quelle der Grundkarte steht unten links am Kartenrand,
+// auch unter einem Blatt. So zeigen ihn die Bretter.
 .map__source {
   position: absolute;
-  inset-block-end: calc(var(--pilz-sheet-inset, 0px) + 8px);
+  inset-block-end: 8px;
   inset-inline-start: 8px;
   z-index: 1;
   padding: 2px 6px;

@@ -257,6 +257,7 @@
   "entry.zone.changeOutline": "Change outline",
   "entry.zone.delete": "Delete zone",
   "entry.zone.deleteTitle": "Delete zone?",
+  "entry.zone.drawStatus": "{points} corners · {area} ha",
   "entry.zone.editTitle": "Edit zone",
   "entry.zone.editVertices": "Edit vertices",
   "entry.zone.finish": "Finish zone",

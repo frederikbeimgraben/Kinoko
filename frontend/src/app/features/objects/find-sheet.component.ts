@@ -22,6 +22,7 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
+import { ObjectSheetState } from './object-sheet.state';
 import { longDate } from '../../core/i18n/dates';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
 import { MapState } from '../map/map.state';
@@ -51,6 +52,7 @@ export class FindSheetComponent {
   private readonly toasts = inject(ToastService);
   private readonly arten = inject(SpeciesState);
   private readonly eintraege = inject(EntriesState);
+  private readonly sheet = inject(ObjectSheetState);
   private readonly map = inject(MapState);
   private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
@@ -59,7 +61,7 @@ export class FindSheetComponent {
 
   readonly closed = output();
 
-  protected readonly editing = signal(false);
+  protected readonly editing = this.sheet.editing;
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
   private readonly week = signal<ManifestWeek | null>(null);

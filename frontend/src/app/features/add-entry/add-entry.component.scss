@@ -22,9 +22,10 @@
   --pilz-overlay-top: 220px;
 }
 
-// Das Fadenkreuz sitzt in der Mitte des freien Streifens, also über dem Blatt.
+// Das Fadenkreuz sitzt in der Mitte des freien Streifens über dem Blatt. Die
+// Leiste liegt über der Karte, darum zählt das ganze Fenster.
 .addentry__crosshair {
-  position: absolute;
+  position: fixed;
   inset-block-start: 0;
   inset-inline: 0;
   display: grid;
@@ -36,6 +37,13 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-1) var(--size-gutter) var(--space-2);
+}
+
+// Ein Schritt über der Karte trägt nur seinen Namen, wie die Bretter
+// `FindLocation` und `ZoneDraw` ihn zeigen.
+.addentry__brief--step {
+  gap: var(--space-1);
+  padding-block-end: var(--size-gutter);
 }
 
 .addentry__title {

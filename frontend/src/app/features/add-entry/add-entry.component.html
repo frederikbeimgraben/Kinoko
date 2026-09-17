@@ -8,7 +8,7 @@
       <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="cancel()" />
     }
     @case ('findLocation') {
-      <div class="addentry__brief">
+      <div class="addentry__brief addentry__brief--step">
         <h2 class="addentry__title">{{ 'entry.setLocation.title' | t }}</h2>
       </div>
       <app-action-bar
@@ -20,7 +20,7 @@
       />
     }
     @case ('markerLocation') {
-      <div class="addentry__brief">
+      <div class="addentry__brief addentry__brief--step">
         <h2 class="addentry__title">{{ 'entry.setMarker.title' | t }}</h2>
       </div>
       <app-action-bar
@@ -32,16 +32,22 @@
       />
     }
     @case ('zoneDraw') {
-      <div class="addentry__brief">
+      <div class="addentry__brief addentry__brief--step">
         <h2 class="addentry__title">{{ 'entry.drawZone.title' | t }}</h2>
         <p class="addentry__note">{{ drawStatus() }}</p>
       </div>
       <app-action-bar
-        [primary]="'entry.zone.setVertex' | t"
-        [secondary]="'entry.zone.finish' | t"
-        (primaryClick)="addCorner()"
-        (secondaryClick)="closeZone()"
-      />
+        [primary]="'entry.zone.finish' | t"
+        [secondary]="'entry.zone.removeLastVertex' | t"
+        [quiet]="true"
+        [split]="true"
+        (primaryClick)="closeZone()"
+        (secondaryClick)="state.removeLastCorner()"
+      >
+        <app-button variant="primary" [block]="true" (click)="addCorner()">
+          {{ 'entry.zone.setVertex' | t }}
+        </app-button>
+      </app-action-bar>
     }
     @case ('findForm') {
       <app-find-form

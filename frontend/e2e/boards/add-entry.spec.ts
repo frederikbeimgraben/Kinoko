@@ -29,12 +29,12 @@ const REPLIES = {
   '/api/finds': SHARED_FINDS,
 };
 
-async function openMap(page: Page): Promise<void> {
+async function openMap(page: Page, clear = false): Promise<void> {
   await page.context().grantPermissions(['geolocation']);
   await page.context().setGeolocation(PLACE);
   await mockSignIn(page);
   await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
-  await mockMap(page, { detent: 1 });
+  await mockMap(page, { detent: 1, clear });
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
   // Die Boards nennen den Ort unter dem Fadenkreuz; die Karte steht dort.
@@ -43,8 +43,8 @@ async function openMap(page: Page): Promise<void> {
 }
 
 /** Öffnet das Blatt hinter dem Plus-Knopf. */
-async function openActions(page: Page): Promise<void> {
-  await openMap(page);
+async function openActions(page: Page, clear = false): Promise<void> {
+  await openMap(page, clear);
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await expect(page.getByRole('button', { name: 'Fund melden' })).toBeVisible();
 }
@@ -59,6 +59,12 @@ async function openForm(page: Page, action: string, confirm: string): Promise<vo
 /** Legt das Kartenbild auf und vergleicht dann mit dem Board. */
 async function board(page: Page, stem: string, image = 'map-stein-844.png'): Promise<void> {
   await showMapImage(page, image, image === 'map-desktop-stein-900.png' ? undefined : MAP_HEIGHT);
+  await expectBoard(page, stem);
+}
+
+/** Wie `board`, aber das Kartenbild liegt unter der Zeichnung der Karte. */
+async function boardUnder(page: Page, stem: string): Promise<void> {
+  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT, true);
   await expectBoard(page, stem);
 }
 
@@ -108,6 +114,43 @@ test('ZoneForm', async ({ page }) => {
   await page.getByRole('button', { name: 'Zone abschließen' }).click();
   await expect(page.getByRole('heading', { name: 'Zone speichern' })).toBeVisible();
   await board(page, 'ZoneForm');
+});
+
+test('FindLocation', async ({ page }) => {
+  guard('FindLocation', 'phone');
+  await openActions(page);
+  await page.getByRole('button', { name: 'Fund melden' }).click();
+  await expect(page.getByRole('heading', { name: 'Fundort festlegen' })).toBeVisible();
+  await board(page, 'FindLocation');
+});
+
+/** Die Karte um einen Punktbetrag ziehen, damit die Ecken auseinander liegen. */
+async function pan(page: Page, dx: number, dy: number): Promise<void> {
+  const from = { x: 195, y: 200 };
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(from.x + dx, from.y + dy, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+}
+
+/** Vier Züge zwischen den Ecken: ohne sie fielen alle auf einen Punkt. */
+const ZONE_PANS: readonly (readonly [number, number])[] = [
+  [-130, 50],
+  [-50, -90],
+  [105, 82],
+  [0, 24],
+];
+
+test('ZoneDraw', async ({ page }) => {
+  guard('ZoneDraw', 'phone');
+  await openActions(page, true);
+  await page.getByRole('button', { name: 'Zone zeichnen' }).click();
+  for (const [dx, dy] of ZONE_PANS) {
+    await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
+    await pan(page, dx, dy);
+  }
+  await boardUnder(page, 'ZoneDraw');
 });
 
 test('MapDesktopAdd', async ({ page }) => {

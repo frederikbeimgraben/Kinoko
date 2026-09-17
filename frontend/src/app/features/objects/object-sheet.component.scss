@@ -22,3 +22,8 @@
   border: 0;
   border-radius: var(--radius-md);
 }
+
+// Das Formular des Fundes dunkelt die Karte so ab, wie das Brett es zeigt.
+.object--dark {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+}
