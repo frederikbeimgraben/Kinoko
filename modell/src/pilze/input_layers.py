@@ -13,8 +13,9 @@ would look like a wet one.
 
 Every layer uses the same grid, the same projection and the same tiling as the
 prediction, so they line up pixel for pixel. Each carries its own range, since
-a pH and a slope share no scale. The weather sits on 5 km cells, so its tiles
-stop at zoom 7; the page scales them up from there.
+a pH and a slope share no scale. The weather sits on 5 km cells and reaches
+the 500 m grid through `coarse_inputs.py`, the same step the prediction uses.
+Its tiles stop at zoom 7; the page scales them up from there.
 
 Usage:
     nix develop .#geo --command python src/pilze/input_layers.py --tiles --no-image
@@ -37,6 +38,7 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
+from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogramm, schreibe
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
@@ -278,11 +280,14 @@ def main() -> None:
         wetter, wochen = wochenwetter(args.weather, set(grid["cell"]), args.weeks)
         print(f"\n{len(wochen)} Wochen Wetter, {wochen[0][0]}-W{wochen[0][1]:02d} bis "
               f"{wochen[-1][0]}-W{wochen[-1][1]:02d}")
-        # Die Zuordnung Modellzelle auf Wetterzelle ist fuer jede Ebene und
-        # jede Woche dieselbe. Einmal als Positionen gerechnet, ist das Holen
-        # der Werte danach ein numpy-Griff statt eines Index-Abgleichs ueber
+        # Der Weg von der Wetterzelle auf das Kartenraster ist fuer jede Ebene
+        # und jede Woche derselbe. Einmal geplant, ist das Holen der Werte
+        # danach ein numpy-Griff statt eines Index-Abgleichs ueber
         # 2,3 Millionen Zeichenketten.
         zellen = pd.Categorical(grid["cell"].to_numpy())
+        leser = CoarseSampler.from_keys(
+            np.asarray(zellen.categories, dtype=str), grid["x"].to_numpy(),
+            grid["y"].to_numpy(), COARSE_INPUTS["weather"])
         for name, (column, label, unit) in WEEKLY.items():
             if name in FIXED_RANGE:
                 low, high = FIXED_RANGE[name]
@@ -317,7 +322,7 @@ def main() -> None:
             for name in namen:
                 column = WEEKLY[name][0]
                 eintrag = layers[name]
-                values = spalten[column].to_numpy(dtype="float32")[zellen.codes]
+                values = leser.sample(spalten[column].to_numpy(dtype="float32"))
                 feld = to_field(values)
                 verteilung = histogramm(feld, eintrag["low"], eintrag["high"])
                 if verteilung is not None:

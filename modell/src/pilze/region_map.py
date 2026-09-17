@@ -7,11 +7,11 @@ and the page lays the images over the map. One image per week also makes a
 week slider cheap: the page swaps a picture instead of restyling 65,000
 shapes.
 
-The field is smoothed before it is drawn. The inputs are blocky by nature —
-the tree map is summed over 1 km, the weather sits on 5 km — but the edge of a
-wood does not follow a grid line. The smoothing is honest about that. It does
-not add information; it stops the picture from claiming a sharpness that the
-data does not have.
+A coarse input goes through `coarse_inputs.py` before the model reads it. The
+weather of the 5 km cells and the rate of the visit prior become a smooth
+field on the 500 m grid, so the map shows the place and not the cell. The
+field of a week gets a second, short filter before it is drawn, because the
+tree map and the soil carry their own grid.
 
 The tree map arrives in tiles from the Thuenen service and is counted into the
 output grid at 10 m, so the picture keeps real forest structure.
@@ -41,6 +41,7 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
+from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogramm, schreibe
 from tiles import schreibe_kacheln
 from tree_species import CLASSES, CONIFERS
@@ -406,15 +407,23 @@ def main() -> None:
     del occ
     rss("Aktivitaetsfelder gerechnet")
     # Der Vorjahres-Prior: Trefferrate der Art unter allen Trainingsbesuchen
-    # derselben 5-km-Zelle und desselben 25-km-Blocks. Eine Zelle ohne
-    # Besuch bekommt n = 0 und keine Rate, genau wie im Training.
+    # derselben 5-km-Zelle und desselben 25-km-Blocks. Eine Zelle ohne Besuch
+    # bekommt n = 0, wie im Training.
     grid["block"] = ((grid["x"] // BLOCK_M).astype(int).astype(str) + "_"
                      + (grid["y"] // BLOCK_M).astype(int).astype(str))
-    for key in ("cell", "block"):
-        tabelle = bundle["prior"][key].rename(
-            columns={"rate": f"prior_rate_{key}", "n": f"prior_n_{key}"})
-        grid = grid.merge(tabelle, on=key, how="left")
-        grid[f"prior_n_{key}"] = grid[f"prior_n_{key}"].fillna(0)
+    for key, quelle in (("cell", "prior_cell"), ("block", "prior_block")):
+        tabelle = bundle["prior"][key].copy()
+        tabelle[key] = tabelle[key].astype(str)
+        # Die Trefferrate ist ein Feld und geht auf das Kartenraster. Die Zahl
+        # der Besuche bleibt scharf: n = 0 heisst "niemand war da".
+        zaehler = tabelle.set_index(key)["n"]
+        grid[f"prior_n_{key}"] = (zaehler.reindex(grid[key].to_numpy())
+                                  .fillna(0).to_numpy())
+        leser = CoarseSampler.from_keys(
+            tabelle[key].to_numpy(), grid["x"].to_numpy(),
+            grid["y"].to_numpy(), COARSE_INPUTS[quelle])
+        grid[f"prior_rate_{key}"] = leser.sample(
+            tabelle["rate"].to_numpy(dtype="float32"))
     grid = grid.drop(columns=["block"])
     if args.forecast <= 0:
         observed_last = None
@@ -476,6 +485,8 @@ def main() -> None:
               f"{sum(q[0] == 'wetter' for q in quellen)} Wetter")
     grid_x, grid_y = grid["x"].to_numpy(), grid["y"].to_numpy()
     del grid
+    wetter_leser = CoarseSampler.from_keys(zellen.to_numpy(dtype=str), grid_x,
+                                           grid_y, COARSE_INPUTS["weather"])
     rss("Feste Modellspalten als Matrix")
 
     # Der Hoechstwert der Kacheln ist der Kalibrierdeckel, nicht das
@@ -541,8 +552,6 @@ def main() -> None:
 
     manifest = []
     n = len(grid_x)
-    # Eine Zeile NaN am Ende, auf die der Zellcode -1 zeigt.
-    zellcode_ext = np.where(zellcode < 0, len(zellen), zellcode)
     for _, row in weeks.iterrows():
         year, week = int(row["iso_year"]), int(row["iso_week"])
         # Eine beobachtete Woche rechnet das Modell fuer Horizont 0, eine
@@ -555,9 +564,9 @@ def main() -> None:
         spalten, matrix, quellen = plan[horizont]
 
         wk = weather[(weather["iso_year"] == year) & (weather["iso_week"] == week)]
-        block = np.full((len(zellen) + 1, len(wetter_namen)), np.nan, dtype="float32")
+        block = np.full((len(zellen), len(wetter_namen)), np.nan, dtype="float32")
         block[zellen.get_indexer(wk["cell"].to_numpy())] = wk[wetter_namen].to_numpy(dtype="float32")
-        wetter_woche = block[zellcode_ext]
+        wetter_woche = wetter_leser.sample(block)
         del block
         # Der Donnerstag steht fuer die Woche: das Training liest die
         # Aktivitaet bis zum Vortag des Besuchs, und der mittlere Besuch

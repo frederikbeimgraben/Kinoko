@@ -57,9 +57,9 @@
           ])
         );
 
-        # The tests touch manifest.py, arten_zaehlen.py and species_slug.py
-        # only. The full shell made the CI job wait three minutes for
-        # lightgbm, scipy and matplotlib, which no test loads.
+        # The tests touch manifest.py, arten_zaehlen.py, species_slug.py and
+        # coarse_inputs.py only. The full shell made the CI job wait three
+        # minutes for lightgbm and matplotlib, which no test loads.
         pythonTest = pkgs.python312.withPackages (
           ps: with ps; [
             numpy
@@ -67,6 +67,7 @@
             pyarrow
             pillow
             httpx
+            scipy
             pytest
           ]
         );

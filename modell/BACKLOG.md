@@ -536,3 +536,15 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
 - [ ] Does the target-group background hold for a species that people seek
       more than the background species? Somebody who hunts Steinpilze walks
       past other mushrooms without reporting them.
+- [x] 2026-09-15 Unscharfe Eingänge des Modells (z. B. Wetter) vor der
+      Verarbeitung mit einem Gauß-Filter glätten und in höherer Auflösung
+      einspeisen, damit die Karte keine Kästen zeigt. Ergebnis:
+      `coarse_inputs.py` legt jeden groben Eingang vor dem Modell auf das
+      Kartenraster von 500 m. Sigma ist eine halbe Quellzelle, danach liest
+      die bilineare Ablesung den Wert. Rand und Lücke laufen über das Gewicht
+      der bekannten Zellen. Geglättet werden das Wetter (5 km) und die
+      Trefferrate des Besuchs-Priors (5 km und 25 km). Die Zahl der Besuche
+      und jeder feine Eingang bleiben scharf. Anteil der Nachbarsprünge auf
+      den 5-km-Linien, Wetter über Deutschland, Woche 2026-W36: 100,0 % vor
+      der Änderung und unter 1 % danach, bei unverändertem Flächenmittel.
+      In der Kette steht kein LSTM. Das Modell ist LightGBM auf Besuchen.
