@@ -321,7 +321,7 @@
   <section class="block" data-block="app-species-row">
     <h2 class="block__head">{{ 'blocks.speciesRow' | t }}</h2>
     <div class="block__card">
-      @for (row of speciesRows; track row.value) {
+      @for (row of speciesChoiceRows; track row.value) {
         <app-species-row
           [species]="row"
           [active]="row.value === speciesChoice()"

@@ -309,13 +309,10 @@
   text-shadow: 0 1px 2px rgb(0 0 0 / 40%);
 }
 
+// Die Karte des Stapels trägt der Baustein. Der Inhalt stapelt nur.
 .block__reviewcard {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-xl);
 }
 
 // Der Zähler steht im Kopf der Seite, nicht über dem Stapel.
@@ -342,7 +339,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 13px 15px;
+  padding: 14px 16px;
 }
 
 .block__reviewtitle {
@@ -412,6 +409,11 @@
   --filter-sheet-handle: var(--size-handle-height);
 
   block-size: 330px;
+}
+
+// Die Gruppenzeile im Filter steht höher als eine gewöhnliche Listenzeile.
+.block__stage--filter .block__card {
+  --size-row: 60px;
 }
 
 .block__stage--fixed {
