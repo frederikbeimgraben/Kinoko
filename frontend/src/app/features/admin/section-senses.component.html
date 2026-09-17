@@ -1,0 +1,31 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.senses.section.categories' | t }}</h2>
+    <div class="section__card section__chips">
+      <app-chip-group
+        [chips]="chips()"
+        [value]="chosen()"
+        [multiple]="true"
+        [addable]="true"
+        [label]="'admin.senses.section.categories' | t"
+        (valueChange)="chosen.set($event)"
+      />
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section__title">{{ 'admin.senses.section.text' | t }}</h2>
+    <app-form-field
+      class="section__note"
+      [label]="'admin.senses.section.text' | t"
+      [hideLabel]="true"
+      [multiline]="true"
+      [value]="note()"
+      (valueChange)="note.set($event)"
+    />
+  </section>
+</div>
+
+<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

@@ -1,0 +1,52 @@
+<app-page-header [title]="'species.section.hymenium' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.species.section.features' | t }}</h2>
+    <div class="section__card">
+      @for (row of rows(); track row.field) {
+        <app-list-row
+          kind="catalogue"
+          [title]="row.title | t"
+          [value]="row.value"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openField(row.field)"
+        />
+      }
+      @if (colours(); as group) {
+        <app-list-row kind="catalogue" [title]="'common.colour' | t">
+          <app-colour-field
+            trail
+            class="section__colour"
+            [colours]="group.colours"
+            [mode]="mode()"
+            [label]="'common.colour' | t"
+          />
+        </app-list-row>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section__title">{{ openTitle() }}</h2>
+    <div class="section__card section__choices">
+      @for (choice of choices(); track choice.value) {
+        <app-list-row
+          kind="catalogue"
+          class="section__choice"
+          [class.section__choice--on]="choice.chosen"
+          [title]="choice.label"
+          [clickable]="true"
+          (chosen)="choose(choice.value)"
+        >
+          @if (choice.chosen) {
+            <app-svg-icon trail class="section__check" name="check" [size]="19" [strokeWidth]="2.4" />
+          }
+        </app-list-row>
+      }
+    </div>
+  </section>
+</div>
+
+<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

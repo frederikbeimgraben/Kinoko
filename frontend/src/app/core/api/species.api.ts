@@ -31,6 +31,11 @@ export class SpeciesApi {
     return this.api.post<SpeciesEntry>(SPECIES_PATH, body);
   }
 
+  /** Schreibt eine Art im Ganzen. Der Vertrag kennt kein Teilschreiben. */
+  replace(slug: string, body: SpeciesWrite): Observable<SpeciesEntry> {
+    return this.api.put<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}`, body);
+  }
+
   /** Schaltet die Vorhersage einer Art an oder aus. */
   setForecast(slug: string, enabled: boolean): Observable<SpeciesEntry> {
     return this.api.put<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}/forecast`, {

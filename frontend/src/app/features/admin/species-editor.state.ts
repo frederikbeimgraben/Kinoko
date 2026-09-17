@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { SpeciesApi } from '../../core/api/species.api';
-import type { SpeciesCounts, SpeciesEntry } from '../../core/api/models';
+import type { SpeciesCounts, SpeciesEntry, SpeciesWrite } from '../../core/api/models';
+import { toWrite } from './species-write';
 
 /** Profil und Zahlen einer Art im Bearbeiten-Modus. */
 @Injectable({ providedIn: 'root' })
@@ -26,6 +27,16 @@ export class SpeciesEditorState {
     });
     this.api.counts(slug).subscribe((counts) => {
       if (this._slug() === slug) this._counts.set(counts);
+    });
+  }
+
+  /** Schreibt die geänderten Felder. Die Antwort trägt den neuen Stand. */
+  save(change: Partial<SpeciesWrite>): void {
+    const species = this._species();
+    const slug = this._slug();
+    if (species === null || slug === '') return;
+    this.api.replace(slug, { ...toWrite(species), ...change }).subscribe((entry) => {
+      this._species.set(entry);
     });
   }
 

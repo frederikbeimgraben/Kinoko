@@ -1,0 +1,37 @@
+<app-page-header [title]="'admin.season.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.season.section.band' | t }}</h2>
+    <div class="section__card">
+      <app-year-band-input
+        [from]="from()"
+        [to]="to()"
+        [label]="'admin.season.title' | t"
+        (fromChange)="from.set($event)"
+        (toChange)="to.set($event)"
+      />
+    </div>
+  </section>
+
+  <div class="section__span">
+    <app-form-field
+      class="section__field"
+      [label]="'common.from' | t"
+      [section]="true"
+      [readOnly]="true"
+      [chevron]="true"
+      [value]="fromName()"
+    />
+    <app-form-field
+      class="section__field"
+      [label]="'common.to' | t"
+      [section]="true"
+      [readOnly]="true"
+      [chevron]="true"
+      [value]="toName()"
+    />
+  </div>
+</div>
+
+<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

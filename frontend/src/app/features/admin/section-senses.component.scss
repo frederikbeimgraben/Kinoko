@@ -1,0 +1,48 @@
+@use '../../../styles/card';
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+}
+
+.section__title {
+  @include card.section-title;
+}
+
+.section__card {
+  @include card.card;
+}
+
+// Die Marken messen dreißig Punkte, wie die Bretter sie zeigen.
+.section__chips {
+  --chip-height: 30px;
+  --chip-inline: 12px;
+  --chip-size: var(--fs-row-meta);
+  --chip-weight: var(--fw-regular);
+  --space-2: 7px;
+
+  padding: 12px 14px;
+}
+
+// Der Satz steht auf einer Karte, nicht in einem Feld mit starkem Rand.
+.section__note {
+  --color-border-strong: var(--color-border);
+  --form-field-size: var(--fs-row-title);
+  --form-field-inline: 14px;
+  --form-field-lines: 110px;
+  --form-field-lines-top: 12px;
+
+  display: block;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

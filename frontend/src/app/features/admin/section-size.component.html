@@ -1,0 +1,51 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.size.section.dimension' | t }}</h2>
+    <app-segmented
+      [options]="choices()"
+      [value]="dimension()"
+      [label]="'admin.size.section.dimension' | t"
+      (valueChange)="chooseDimension($event)"
+    />
+  </section>
+
+  <div class="section__span">
+    <app-form-field
+      class="section__field"
+      [label]="'common.from' | t"
+      [section]="true"
+      [kind]="'number'"
+      [value]="low()"
+      (valueChange)="low.set($event)"
+    />
+    <app-form-field
+      class="section__field"
+      [label]="'common.to' | t"
+      [section]="true"
+      [kind]="'number'"
+      [value]="high()"
+      (valueChange)="high.set($event)"
+    />
+    <app-form-field
+      class="section__field"
+      [label]="'admin.size.unit' | t"
+      [section]="true"
+      [readOnly]="true"
+      [chevron]="true"
+      [value]="unit()"
+    />
+  </div>
+
+  <app-form-field
+    [label]="'admin.size.rare' | t"
+    [section]="true"
+    [kind]="'number'"
+    [placeholder]="'common.none' | t"
+    [value]="rare()"
+    (valueChange)="rare.set($event)"
+  />
+</div>
+
+<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

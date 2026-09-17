@@ -1,0 +1,39 @@
+/** Die Hülle eines Abschnitts: Kopf, rollender Körper, Fuß mit einer Aktion. */
+@mixin shell {
+  --size-header: 56px;
+  --space-header-inline: 16px;
+  --size-control: 32px;
+  --fs-xl: 20px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+/** Der Körper zwischen Kopf und Fuß. */
+@mixin body {
+  display: flex;
+  line-height: normal;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+/** Die Felder tragen Schrift und Polster der Bretter. */
+@mixin fields {
+  --form-field-size: var(--fs-row-title);
+  --form-field-inline: 14px;
+  --form-field-shift: 0;
+  --form-field-trail-push: 0;
+  --form-field-label-height: normal;
+}
+
+/** Der Kopf steht auf dem Grund der Seite, nicht auf einer eigenen Fläche. */
+@mixin flat-header {
+  --color-surface: transparent;
+}

@@ -1,5 +1,13 @@
 /** Die Modelle der API an einer Stelle, damit Seiten nur einen Pfad kennen. */
-export { CAP_SHAPES, EDIBILITIES, HYMENIUM_TYPES, PROTECTIONS, TAXON_RANKS } from './catalogue';
+export {
+  CAP_SHAPES,
+  DIMENSIONS,
+  EDIBILITIES,
+  HYMENIUM_TYPES,
+  PROTECTIONS,
+  TAXON_RANKS,
+  UNITS,
+} from './catalogue';
 export type {
   BodyPart,
   CapShape,
@@ -10,11 +18,14 @@ export type {
   GillSpacing,
   Lookalike,
   Speed,
+  Term,
+  TermKind,
   TermRef,
   Dimension,
   Edibility,
   Group,
   HymeniumType,
+  Measurement,
   MeasurementGroup,
   Protection,
   SpeciesBundle,
@@ -27,6 +38,7 @@ export type {
   TaxonPage,
   TaxonRank,
   TaxonStep,
+  Unit,
 } from './catalogue';
 export { PERMISSIONS, PERMISSION_AREAS } from './access';
 export type {

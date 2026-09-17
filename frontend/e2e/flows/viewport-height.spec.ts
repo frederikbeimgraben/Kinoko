@@ -19,6 +19,7 @@ import {
 } from '../fixtures/admin';
 import { TAXON } from '../fixtures/species-boards';
 import { RUNS, RUN_DETAIL } from '../fixtures/runs';
+import { STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -315,6 +316,43 @@ test.describe('Seitenhöhe am Telefon', () => {
       '/api/pipeline-runs/lauf-training': RUN_DETAIL,
     });
     await expect(page.getByText('Karten rendern')).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Maß einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/mass/cap', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+    });
+    await expect(page.getByRole('heading', { name: 'Hutbreite' })).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Zeitraum einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/zeitraum', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+    });
+    await expect(page.getByText('Oktober')).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Fruchtschicht einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/fruchtschicht', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+    });
+    await expect(page.getByText('herablaufend')).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Geruch einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/sinne/geruch', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+      '/api/terms': TERMS,
+    });
+    await expect(page.getByRole('button', { name: 'mehlig' })).toBeVisible();
     await assertFillsViewport(page);
   });
 

@@ -12,7 +12,7 @@
 
 .field__label--section {
   margin-block-end: 10px;
-  line-height: 14px;
+  line-height: var(--form-field-label-height, 14px);
   font-size: var(--fs-caption);
   font-weight: var(--fw-semibold);
   color: var(--color-text-muted);
@@ -49,10 +49,11 @@
   color: var(--color-text-muted);
 }
 
-// Der Pfeil steht am Ende der Zeile, der Text füllt den Rest.
+// Der Pfeil steht am Ende der Zeile, der Text füllt den Rest. Ein schmales
+// Feld setzt `--form-field-trail-push` auf null: dort folgt er dem Wort.
 .field__trail {
   flex: none;
-  margin-inline-start: auto;
+  margin-inline-start: var(--form-field-trail-push, auto);
   color: var(--color-text-muted);
 }
 

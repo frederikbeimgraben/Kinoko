@@ -1,0 +1,40 @@
+@use '../../../styles/card';
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+  @include section.fields;
+}
+
+.section__title {
+  @include card.section-title;
+}
+
+.section__card {
+  @include card.card;
+
+  padding: 16px 14px;
+}
+
+// Zwei Monate nebeneinander, beide Spalten gleich breit.
+.section__span {
+  display: flex;
+  gap: 10px;
+}
+
+.section__field {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

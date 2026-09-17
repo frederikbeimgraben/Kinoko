@@ -1,0 +1,42 @@
+import type { SpeciesEntry, SpeciesWrite } from '../../core/api/models';
+
+/** Formt die Antwort auf den Körper. Felder nur der Antwort fallen weg. */
+export function toWrite(species: SpeciesEntry): SpeciesWrite {
+  return {
+    name: species.name,
+    scientificName: species.scientificName,
+    taxonId: species.taxonId ?? null,
+    group: species.group,
+    edibility: species.edibility,
+    marketable: species.marketable ?? false,
+    frequency: species.frequency ?? null,
+    redList: species.redList ?? null,
+    description: species.description ?? null,
+    edibilityNote: species.edibilityNote ?? null,
+    protection: species.protection,
+    protectionNote: species.protectionNote ?? null,
+    periodStartMonth: species.periodStartMonth ?? null,
+    periodEndMonth: species.periodEndMonth ?? null,
+    periodPeakMonth: species.periodPeakMonth ?? null,
+    smellText: species.smellText ?? null,
+    tasteText: species.tasteText ?? null,
+    hymeniumType: species.hymeniumType ?? null,
+    gillAttachment: species.gillAttachment ?? null,
+    gillSpacing: species.gillSpacing ?? null,
+    gillEdge: species.gillEdge ?? null,
+    capShapeYoung: species.capShapeYoung ?? null,
+    capShapeOld: species.capShapeOld ?? null,
+    names: species.names,
+    measurements: species.measurements,
+    colours: species.colours,
+    colourChanges: species.colourChanges,
+    capFeatures: species.capFeatures,
+    capMargins: species.capMargins,
+    stemFeatures: species.stemFeatures,
+    traits: species.traits,
+    sources: species.sources,
+    seasons: species.seasons,
+    terms: species.terms,
+    lookalikes: species.lookalikes.map((one) => ({ slug: one.slug, difference: one.difference ?? '' })),
+  };
+}
