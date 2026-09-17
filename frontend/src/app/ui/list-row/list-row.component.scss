@@ -124,8 +124,7 @@
 .row__title--filter {
   font-size: var(--fs-row-title);
   font-weight: var(--fw-row-filter);
-  // Das Brett setzt den Titel auf die Linie der Zeile, nicht auf seine eigene.
-  line-height: 1;
+  line-height: normal;
 }
 
 .row__title--link {

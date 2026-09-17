@@ -5,6 +5,12 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
 import { ListRowComponent } from './list-row.component';
 
+/** Die gerechneten Stile eines Elements, das es geben muss. */
+function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
+  if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
+  return getComputedStyle(element);
+}
+
 @Component({
   imports: [ListRowComponent],
   template: `
@@ -39,6 +45,14 @@ describe('ListRowComponent', () => {
     expect(screen.getByText('essbar')).toBeInTheDocument();
     expect(screen.getByText('77')).toBeInTheDocument();
     expect(container.querySelector('.row__chevron')).not.toBeNull();
+  });
+
+  it('setzt den Gruppentitel des Filters auf die Zeilenhöhe des Boards', async () => {
+    const { container } = await render(ListRowComponent, {
+      inputs: { title: 'Speisewert', kind: 'filter' },
+    });
+
+    expect(styleOf(container.querySelector('.row__title--filter')).lineHeight).toBe('normal');
   });
 
   it('wird zur Schaltfläche, wenn die Zeile anklickbar ist', async () => {
