@@ -37,7 +37,6 @@
 // Die geltende Bedingung: Beschriftung links, der Wert daneben im Feld.
 .factor__applied {
   display: grid;
-  margin-block-start: -2px;
   grid-template-columns: 104px minmax(0, 1fr);
   column-gap: var(--space-3);
   align-items: center;

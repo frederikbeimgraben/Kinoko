@@ -36,19 +36,10 @@
 
 // Die Kennzahlen tragen den Wert über dem Namen, Maße aus dem Brett.
 .editor__stats {
-  --fs-xl: var(--fs-lg);
-  --fs-xs: var(--fs-caption);
-  --fw-semibold: var(--fw-bold);
-  --space-1: 2px;
   --stat-label-height: 1.4;
 
   padding-block: 14px;
   line-height: normal;
-}
-
-.editor__stats app-stat-row {
-  gap: 4px;
-  padding: 0;
 }
 
 .editor__source {

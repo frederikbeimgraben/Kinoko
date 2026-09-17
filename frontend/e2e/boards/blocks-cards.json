@@ -240,7 +240,7 @@
     "x": 24,
     "y": 4239,
     "w": 414,
-    "h": 166
+    "h": 158
   },
   {
     "selector": "app-check-row",
@@ -249,14 +249,14 @@
     "x": 462,
     "y": 4239,
     "w": 414,
-    "h": 166
+    "h": 158
   },
   {
     "selector": "app-factor-row",
     "stem": "app-factor-row",
     "order": 28,
     "x": 24,
-    "y": 4429,
+    "y": 4421,
     "w": 414,
     "h": 436
   },
@@ -265,7 +265,7 @@
     "stem": "app-key-value-table-app-key-value-row",
     "order": 29,
     "x": 462,
-    "y": 4429,
+    "y": 4421,
     "w": 414,
     "h": 436
   },
@@ -274,7 +274,7 @@
     "stem": "app-choice-row",
     "order": 30,
     "x": 24,
-    "y": 4888,
+    "y": 4880,
     "w": 414,
     "h": 326
   },
@@ -283,7 +283,7 @@
     "stem": "app-form-field",
     "order": 31,
     "x": 462,
-    "y": 4888,
+    "y": 4880,
     "w": 414,
     "h": 326
   },
@@ -292,7 +292,7 @@
     "stem": "app-search-field",
     "order": 32,
     "x": 24,
-    "y": 5237,
+    "y": 5229,
     "w": 414,
     "h": 161
   },
@@ -301,7 +301,7 @@
     "stem": "app-segmented",
     "order": 33,
     "x": 462,
-    "y": 5237,
+    "y": 5229,
     "w": 414,
     "h": 161
   },
@@ -310,7 +310,7 @@
     "stem": "app-chip-group",
     "order": 34,
     "x": 24,
-    "y": 5421,
+    "y": 5413,
     "w": 414,
     "h": 111
   },
@@ -319,7 +319,7 @@
     "stem": "app-filter-chip",
     "order": 35,
     "x": 462,
-    "y": 5421,
+    "y": 5413,
     "w": 414,
     "h": 111
   },
@@ -328,7 +328,7 @@
     "stem": "app-range-slider",
     "order": 36,
     "x": 24,
-    "y": 5555,
+    "y": 5547,
     "w": 414,
     "h": 105
   },
@@ -337,7 +337,7 @@
     "stem": "app-colour-swatches",
     "order": 37,
     "x": 462,
-    "y": 5555,
+    "y": 5547,
     "w": 414,
     "h": 105
   },
@@ -346,7 +346,7 @@
     "stem": "app-colour-picker",
     "order": 38,
     "x": 24,
-    "y": 5683,
+    "y": 5675,
     "w": 414,
     "h": 418
   },
@@ -355,7 +355,7 @@
     "stem": "app-species-picker",
     "order": 39,
     "x": 462,
-    "y": 5683,
+    "y": 5675,
     "w": 414,
     "h": 418
   },
@@ -364,7 +364,7 @@
     "stem": "app-photo-picker",
     "order": 40,
     "x": 24,
-    "y": 6124,
+    "y": 6116,
     "w": 414,
     "h": 155
   },
@@ -373,7 +373,7 @@
     "stem": "app-year-band-input",
     "order": 41,
     "x": 462,
-    "y": 6124,
+    "y": 6116,
     "w": 414,
     "h": 155
   },
@@ -382,7 +382,7 @@
     "stem": "app-level-pill",
     "order": 42,
     "x": 24,
-    "y": 6302,
+    "y": 6294,
     "w": 414,
     "h": 157
   },
@@ -391,7 +391,7 @@
     "stem": "app-tag-list",
     "order": 43,
     "x": 462,
-    "y": 6302,
+    "y": 6294,
     "w": 414,
     "h": 157
   },
@@ -400,7 +400,7 @@
     "stem": "app-colour-field",
     "order": 44,
     "x": 24,
-    "y": 6482,
+    "y": 6474,
     "w": 414,
     "h": 239
   },
@@ -409,7 +409,7 @@
     "stem": "app-colour-change",
     "order": 45,
     "x": 462,
-    "y": 6482,
+    "y": 6474,
     "w": 414,
     "h": 239
   },
@@ -418,7 +418,7 @@
     "stem": "app-measurement",
     "order": 46,
     "x": 24,
-    "y": 6744,
+    "y": 6736,
     "w": 414,
     "h": 327
   },
@@ -427,7 +427,7 @@
     "stem": "app-measurement-group",
     "order": 47,
     "x": 462,
-    "y": 6744,
+    "y": 6736,
     "w": 414,
     "h": 327
   },
@@ -436,25 +436,25 @@
     "stem": "app-year-band",
     "order": 48,
     "x": 24,
-    "y": 7094,
+    "y": 7086,
     "w": 414,
-    "h": 205
+    "h": 188
   },
   {
     "selector": "app-season-curve",
     "stem": "app-season-curve",
     "order": 49,
     "x": 462,
-    "y": 7094,
+    "y": 7086,
     "w": 414,
-    "h": 205
+    "h": 188
   },
   {
     "selector": "app-histogram",
     "stem": "app-histogram",
     "order": 50,
     "x": 24,
-    "y": 7322,
+    "y": 7297,
     "w": 414,
     "h": 146
   },
@@ -463,7 +463,7 @@
     "stem": "app-ramp",
     "order": 51,
     "x": 462,
-    "y": 7322,
+    "y": 7297,
     "w": 414,
     "h": 146
   },
@@ -472,7 +472,7 @@
     "stem": "app-timeline-app-week-button",
     "order": 52,
     "x": 24,
-    "y": 7491,
+    "y": 7466,
     "w": 414,
     "h": 213
   },
@@ -481,7 +481,7 @@
     "stem": "app-image-tile",
     "order": 53,
     "x": 462,
-    "y": 7491,
+    "y": 7466,
     "w": 414,
     "h": 213
   },
@@ -490,7 +490,7 @@
     "stem": "app-image-credit",
     "order": 54,
     "x": 24,
-    "y": 7727,
+    "y": 7702,
     "w": 414,
     "h": 717
   },
@@ -499,7 +499,7 @@
     "stem": "app-image-viewer",
     "order": 55,
     "x": 462,
-    "y": 7727,
+    "y": 7702,
     "w": 414,
     "h": 717
   },
@@ -508,7 +508,7 @@
     "stem": "app-private-image",
     "order": 56,
     "x": 24,
-    "y": 8467,
+    "y": 8442,
     "w": 414,
     "h": 169
   },
@@ -517,7 +517,7 @@
     "stem": "app-avatar-button",
     "order": 57,
     "x": 462,
-    "y": 8467,
+    "y": 8442,
     "w": 414,
     "h": 169
   },
@@ -526,7 +526,7 @@
     "stem": "app-floating-button",
     "order": 58,
     "x": 24,
-    "y": 8659,
+    "y": 8634,
     "w": 414,
     "h": 169
   },
@@ -535,7 +535,7 @@
     "stem": "app-crosshair",
     "order": 59,
     "x": 462,
-    "y": 8659,
+    "y": 8634,
     "w": 414,
     "h": 169
   },
@@ -544,25 +544,25 @@
     "stem": "app-svg-icon",
     "order": 60,
     "x": 24,
-    "y": 8851,
+    "y": 8826,
     "w": 414,
-    "h": 112
+    "h": 103
   },
   {
     "selector": "app-stat-row",
     "stem": "app-stat-row",
     "order": 61,
     "x": 462,
-    "y": 8851,
+    "y": 8826,
     "w": 414,
-    "h": 112
+    "h": 103
   },
   {
     "selector": "app-empty-state",
     "stem": "app-empty-state",
     "order": 62,
     "x": 24,
-    "y": 8986,
+    "y": 8952,
     "w": 414,
     "h": 280
   },
@@ -571,7 +571,7 @@
     "stem": "app-error-state",
     "order": 63,
     "x": 462,
-    "y": 8986,
+    "y": 8952,
     "w": 414,
     "h": 280
   },
@@ -580,7 +580,7 @@
     "stem": "app-infinite-list",
     "order": 64,
     "x": 24,
-    "y": 9289,
+    "y": 9255,
     "w": 414,
     "h": 257
   },
@@ -589,7 +589,7 @@
     "stem": "app-skeleton",
     "order": 65,
     "x": 462,
-    "y": 9289,
+    "y": 9255,
     "w": 414,
     "h": 257
   },
@@ -598,7 +598,7 @@
     "stem": "app-progress",
     "order": 66,
     "x": 24,
-    "y": 9569,
+    "y": 9535,
     "w": 414,
     "h": 119
   },
@@ -607,7 +607,7 @@
     "stem": "app-button-busy",
     "order": 67,
     "x": 462,
-    "y": 9569,
+    "y": 9535,
     "w": 414,
     "h": 119
   }

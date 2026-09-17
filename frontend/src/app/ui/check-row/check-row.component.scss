@@ -8,15 +8,12 @@
   box-sizing: border-box;
   gap: var(--space-3);
   align-items: center;
-  min-block-size: var(--check-row-height, 48px);
-  padding-block: var(--check-row-block, 0);
-  padding-inline: var(--check-row-inline, 14px);
+  min-block-size: var(--size-tap);
 }
 
-// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett. Eine
-// einzelne Zeile ohne Nachbarn setzt ihn über die Variable auf null.
+// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
 :host(:not(:first-child)) .row {
-  border-block-start: var(--check-row-divider, var(--border-width)) solid var(--color-border);
+  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 .row--locked {
@@ -43,10 +40,11 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  inline-size: var(--size-checkbox);
-  block-size: var(--size-checkbox);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: 5px;
+  box-sizing: border-box;
+  inline-size: 21px;
+  block-size: 21px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 6px;
 }
 
 .row__box--on {

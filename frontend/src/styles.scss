@@ -85,12 +85,6 @@ app-building-blocks .footer__main .btn {
   block-size: 100% !important;
 }
 
-// Das Brett schreibt ohne feste Zeilenhöhe. Die Werkstatt misst darum in der
-// Zeilenhöhe der Schrift.
-app-building-blocks {
-  line-height: normal;
-}
-
 // Auf der Werkstattseite steht die Meldung in ihrer Karte, nicht über allem.
 app-building-blocks app-toast {
   --toast-flow: static;

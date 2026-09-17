@@ -128,7 +128,7 @@ describe('SeasonCurveComponent', () => {
     const path = container.querySelector('.spark__all')?.getAttribute('d') ?? '';
     const xValues = [...path.matchAll(/L(\d+\.\d)/g)].map((matches) => Number(matches[1]));
     expect((xValues[39] / 330) * 100).toBeCloseTo(Number.parseFloat(okt?.style.left ?? ''), 1);
-    expect(container.querySelector('.spark')).toHaveAttribute('preserveAspectRatio', 'none');
+    expect(container.querySelector('.spark')).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
   });
 
   it('zeichnet geglättet, behält aber den Höchstwert der Rohdaten', async () => {

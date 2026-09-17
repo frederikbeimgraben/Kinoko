@@ -32,14 +32,6 @@
   gap: 10px;
 }
 
-// Die Prüfzeile steht hier ohne Karte und misst darum wie das Brett.
-.create__check {
-  --check-row-block: var(--space-3);
-  --check-row-height: 0;
-  --check-row-inline: 0;
-  --check-row-divider: 0;
-}
-
 .create__choices {
   display: flex;
   flex: 1 1 auto;

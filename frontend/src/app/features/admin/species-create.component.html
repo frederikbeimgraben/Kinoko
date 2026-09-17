@@ -43,12 +43,13 @@
         [value]="edibilityName()"
         (displayClick)="picking.set('edibility')"
       />
-      <app-check-row
-        class="create__check"
-        [title]="'admin.species.field.protectedByLaw' | t"
-        [checked]="draft().protected"
-        (toggled)="set('protected', $event)"
-      />
+      <div class="create__check">
+        <app-check-row
+          [title]="'admin.species.field.protectedByLaw' | t"
+          [checked]="draft().protected"
+          (toggled)="set('protected', $event)"
+        />
+      </div>
     </div>
   </section>
 
