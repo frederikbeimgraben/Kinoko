@@ -190,6 +190,7 @@ export class MapComponent implements OnDestroy {
 
   /** Ein Schwenk holt die geteilten Funde des neuen Ausschnitts. */
   private onMove(): void {
+    this.state.moved.update((count) => count + 1);
     this.surface.paint();
     const view = this.surface.extent();
     if (view !== null) void this.entries.loadShared(view.extent);

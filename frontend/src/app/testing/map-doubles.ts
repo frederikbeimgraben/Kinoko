@@ -99,6 +99,16 @@ export class MapAdapterDouble implements MapAdapter {
     return this.centerPoint;
   }
 
+  /** Der Punkt, der zuletzt aus einem Bildpunkt gefragt wurde. */
+  asked: { x: number; y: number } | null = null;
+  /** Was `pointAt` zurückgibt. Ohne Wert antwortet es wie die Mitte. */
+  pointPoint: readonly [number, number] | null = null;
+
+  pointAt(x: number, y: number): readonly [number, number] | null {
+    this.asked = { x, y };
+    return this.pointPoint ?? this.centerPoint;
+  }
+
   flyTo(target: readonly [number, number], zoom?: number): void {
     this.flights.push({ target, zoom });
   }

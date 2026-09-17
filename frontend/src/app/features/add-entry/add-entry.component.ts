@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   OnDestroy,
+  afterRenderEffect,
   computed,
   effect,
   inject,
@@ -74,6 +76,7 @@ const TITLE: Record<string, TranslationKey> = {
 })
 export class AddEntryComponent implements OnDestroy {
   private readonly adapter = inject(MAP_ADAPTER);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly entries = inject(EntriesState);
@@ -108,6 +111,11 @@ export class AddEntryComponent implements OnDestroy {
     this.state.onForm() ? coordinatesText(this.state.location(), this.i18n) : '',
   );
 
+  /** Der Ort unter dem Fadenkreuz, live beim Schieben der Karte. */
+  private readonly aim = signal<Location | null>(null);
+
+  protected readonly aimText = computed(() => coordinatesText(this.aim(), this.i18n));
+
   protected readonly hectares = computed(() => {
     const compute = this.area();
     const polygon = asPolygon(this.state.ring());
@@ -122,6 +130,14 @@ export class AddEntryComponent implements OnDestroy {
   );
 
   constructor() {
+    // Das Kreuz steht erst nach dem Zeichnen im Baum, und sein Ort ändert
+    // sich mit jedem Schwenk.
+    afterRenderEffect(() => {
+      this.map.moved();
+      this.state.step();
+      this.aim.set(this.pointUnderCrosshair());
+    });
+
     // Terra Draw und Turf kommen erst, wenn eine Zone entsteht. Beide liegen in
     // eigenen Paketen und fehlen dem Erstpaket.
     effect(() => {
@@ -217,10 +233,19 @@ export class AddEntryComponent implements OnDestroy {
     this.state.stop();
   }
 
+  /** Der Ort unter dem Fadenkreuz, nicht der in der Mitte der Karte. */
   private center(): Location | null {
-    const location = this.adapter.center();
+    const location = this.pointUnderCrosshair() ?? this.aim() ?? this.adapter.center();
     if (location === null) this.toasts.error(this.i18n.translate('entry.locationMissing'));
     return location;
+  }
+
+  private pointUnderCrosshair(): Location | null {
+    const cross = this.host.nativeElement.querySelector('app-crosshair');
+    if (cross === null) return null;
+    const box = cross.getBoundingClientRect();
+    const point = this.adapter.pointAt(box.left + box.width / 2, box.top + box.height / 2);
+    return point === null ? null : [point[0], point[1]];
   }
 
   /** Holt Turf und Terra Draw und legt den Ring auf die Karte. */

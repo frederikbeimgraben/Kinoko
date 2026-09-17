@@ -4,6 +4,7 @@ import {
   STYLE_PATH,
   WORKER_PATH,
   ensureStyles,
+  type MapHandle,
   type MapOptions,
   type MaplibreModule,
 } from './map-adapter';
@@ -134,6 +135,29 @@ class MapDouble {
     return { lng: 9.05, lat: 48.52 };
   }
 
+  readonly panned: [number, number][] = [];
+  jumped: unknown = null;
+
+  getContainer(): { getBoundingClientRect(): { left: number; top: number } } {
+    return { getBoundingClientRect: () => ({ left: 10, top: 20 }) };
+  }
+
+  unproject(point: [number, number]): { lng: number; lat: number } {
+    return { lng: point[0] / 100, lat: point[1] / 100 };
+  }
+
+  project(point: [number, number]): { x: number; y: number } {
+    return { x: point[0] * 100, y: point[1] * 100 };
+  }
+
+  jumpTo(options: unknown): void {
+    this.jumped = options;
+  }
+
+  panBy(point: [number, number]): void {
+    this.panned.push(point);
+  }
+
   getBounds(): Record<string, () => number> {
     return { getWest: () => 9, getSouth: () => 50, getEast: () => 11, getNorth: () => 52 };
   }
@@ -213,6 +237,23 @@ async function adapter(): Promise<{
 }
 
 describe('MapLibreAdapter', () => {
+  it('rechnet einen Punkt des Fensters in einen Ort um', async () => {
+    const { adapter: a } = await adapter();
+
+    expect(a.pointAt(110, 220)).toEqual([1, 2]);
+  });
+
+  it('legt einen Haken hin, mit dem ein Test die Karte genau setzt', async () => {
+    const { map } = await adapter();
+    const hook = (window as unknown as { pilzMap?: MapHandle }).pilzMap;
+
+    expect(hook?.aimAt(110, 220)).toEqual([1, 2]);
+    hook?.showAt(1, 2, 110, 220, 14);
+
+    expect(map.jumped).toEqual({ center: [1, 2], zoom: 14 });
+    expect(map.panned[0]).toEqual([0, 0]);
+  });
+
   it('nennt den Worker-Pfad und meldet das Protokoll an, bevor die Karte entsteht', async () => {
     const { map, signedIn, worker } = await adapter();
 

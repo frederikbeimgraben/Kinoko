@@ -134,6 +134,18 @@ describe('EintragenComponent', () => {
     expect(screen.getByRole('heading', { name: 'Fund melden' })).toBeInTheDocument();
   });
 
+  it('nimmt den Ort unter dem Fadenkreuz, nicht die Mitte der Karte', async () => {
+    const setup = await build();
+    setup.map.pointPoint = [9.11, 48.61];
+    await start(setup, 'Fund melden');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
+    setup.refresh();
+
+    expect(setup.flow.location()).toEqual([9.11, 48.61]);
+    expect(setup.map.asked).not.toBeNull();
+  });
+
   it('speichert einen Fund und schließt den Ablauf', async () => {
     const setup = await build();
     await openFindForm(setup);

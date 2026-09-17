@@ -22,14 +22,13 @@
   --pilz-overlay-top: 220px;
 }
 
-// Das Fadenkreuz sitzt in der Mitte des freien Streifens über dem Blatt. Die
-// Leiste liegt über der Karte, darum zählt das ganze Fenster.
+// Das Fadenkreuz steht auf jedem Karten-Brett an derselben Stelle: in der
+// Mitte der Breite, auf achtunddreißig Prozent der Höhe.
 .addentry__crosshair {
   position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
-  display: grid;
-  place-items: center;
+  inset-block-start: 38%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
 }
 
 .addentry__brief {
@@ -61,4 +60,11 @@
 // Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.
 :host-context(.shell--column) .addentry__scrim {
   display: none;
+}
+
+// Die Hauptaktion über der Reihe misst achtundvierzig Punkte, wie im Brett.
+.addentry__main {
+  --fs-md: var(--fs-control);
+
+  block-size: 48px;
 }
