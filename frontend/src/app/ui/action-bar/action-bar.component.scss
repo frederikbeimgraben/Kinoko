@@ -45,18 +45,25 @@
 
 .footer__pair--split {
   display: flex;
-  flex-direction: row-reverse;
   gap: var(--space-3);
 }
 
-// Die Gefahr steht links. Trägt sie schon die erste Aktion, bleibt die Reihe.
-.footer__pair--danger {
-  flex-direction: row;
-}
-
+// Beide Aktionen teilen sich die Breite. Ein längeres Wort nimmt sich mehr,
+// so wie eine Spalte `1fr` im Brett.
 .footer__pair--split .footer__main {
   --fs-md: var(--fs-control);
+  --space-5: 20px;
 
   flex: 1 1 0;
   block-size: var(--size-tap);
+}
+
+// Die Hauptaktion steht rechts, die zweite links.
+.footer__pair--split .footer__lead {
+  order: 2;
+}
+
+// Die Gefahr steht links, auch wenn sie die erste Aktion ist.
+.footer__pair--danger .footer__lead {
+  order: 0;
 }

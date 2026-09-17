@@ -7,6 +7,7 @@
   >
     <app-button
       class="footer__main"
+      [class.footer__lead]="split()"
       [class.footer__slim]="split() || (ghost() && secondary() === undefined)"
       [class.footer__danger]="quietDanger()"
       [variant]="primaryVariant()"
