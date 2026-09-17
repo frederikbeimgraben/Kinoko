@@ -186,11 +186,6 @@ app-action-bar .btn:disabled {
   opacity: 0.55;
 }
 
-// Das Speichern im Fund-Formular steht heller gedimmt, wie im Board.
-app-find-form app-action-bar .btn:disabled {
-  opacity: 0.6;
-}
-
 // Die gesperrte Bestätigung steht als versenkte Fläche, wie im Board. Das
 // Kit dimmt und entfärbt stattdessen die rote Fläche.
 app-confirm-dialog .confirm__actions .btn:disabled {
