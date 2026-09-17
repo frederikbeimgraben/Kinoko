@@ -123,7 +123,7 @@ describe('ColourChangeComponent', () => {
     expect(container.querySelectorAll('.field')).toHaveLength(1);
   });
 
-  it('nimmt die letzte Zeile ohne unteren Rand', async () => {
+  it('trennt zwei Zeilen mit dem Strich der zweiten', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Druck', 'Anschnitt'],
@@ -137,8 +137,8 @@ describe('ColourChangeComponent', () => {
     });
 
     const rows = container.querySelectorAll('app-list-row');
-    expect(styleOf(rows[0]).getPropertyValue('border-block-end')).toContain('var(--border-width)');
-    expect(styleOf(rows[1]).getPropertyValue('border-block-end')).toBe('0px');
+    expect(styleOf(rows[0]).getPropertyValue('border-block-start')).toBe('');
+    expect(styleOf(rows[1]).getPropertyValue('border-block-start')).toContain('var(--border-width)');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

@@ -94,8 +94,8 @@ describe('SpeciesRowComponent', () => {
     const first = styleOf(rows[0]);
     expect(first.getPropertyValue('block-size')).toBe('var(--size-row-tall)');
     expect(first.boxSizing).toBe('border-box');
-    expect(first.getPropertyValue('border-block-end')).toContain('var(--border-width)');
-    expect(styleOf(rows[1]).getPropertyValue('border-block-end')).toBe('0px');
+    expect(first.getPropertyValue('border-block-start')).toBe('');
+    expect(styleOf(rows[1]).getPropertyValue('border-block-start')).toContain('var(--border-width)');
   });
 
   it('setzt Name und lateinischen Namen in die Schriftgrade des Bretts', async () => {
