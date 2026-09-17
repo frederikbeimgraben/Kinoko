@@ -49,7 +49,10 @@ from visit_model import BLOCK_M, ActivityFields
 MODEL_CRS, SOURCE_CRS = "EPSG:3035", "EPSG:32632"
 WCS = "https://atlas.thuenen.de/geoserver/ows"
 COVERAGE = "geonode__Dominant_Species_Class"
-TRAIN_CELL, PIXEL, TILE = 5000, 10, 50_000
+# Die Zelle, auf der das Modell trainiert wurde, ist die Zelle des
+# Wetterrasters.
+TRAIN_CELL = COARSE_INPUTS["weather"]
+PIXEL, TILE = 10, 50_000
 # Der Ausschnitt in Grad. Voreinstellung ist Deutschland; --region setzt ihn
 # auf ein anderes Gebiet, etwa fuer einen schnellen Probelauf.
 REGIONEN = {
