@@ -17,7 +17,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesState } from '../species/species.state';
-import { MapState } from '../map/map.state';
+import { ObjectSheetState } from '../objects/object-sheet.state';
 import { AddEntryState } from '../add-entry/add-entry.state';
 import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.state';
@@ -66,7 +66,7 @@ interface Row {
 export class EntriesComponent {
   private readonly species = inject(SpeciesState);
   private readonly auth = inject(AuthService);
-  private readonly map = inject(MapState);
+  private readonly sheet = inject(ObjectSheetState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(EntriesState);
@@ -140,7 +140,7 @@ export class EntriesComponent {
   protected async open(row: Row): Promise<void> {
     if (row.object === null) return;
     await this.router.navigate(['/karte']);
-    this.map.object.set(row.object);
+    this.sheet.show(row.object.kind, row.object.id);
   }
 
   private speciesName(id: string | null | undefined): string {

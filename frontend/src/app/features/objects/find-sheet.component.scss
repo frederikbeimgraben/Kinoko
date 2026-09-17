@@ -1,15 +1,15 @@
+@use 'object-sheet';
+
 :host {
   display: contents;
 }
 
-.findsheet {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-6);
-  overflow-y: auto;
+@include object-sheet.object-sheet;
+
+// Die Plakette misst im Board drei auf zehn Punkte.
+.findsheet__head app-badge {
+  --space-1: 3px;
+  --space-3: 10px;
 }
 
 .findsheet__head {
@@ -19,24 +19,19 @@
   gap: var(--space-3);
 }
 
-.findsheet__headActions {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-// 24 px Titel und 15 px Fließtext stehen so im Artboard `Fund`.
+// 24 px Titel und 15 px Fließtext stehen so im Board `FindSheet`.
 .findsheet__title {
   margin: 0;
   font-size: 24px;
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-bold);
+  line-height: normal;
   letter-spacing: var(--tracking-tight);
 }
 
 .findsheet__sub {
   margin: var(--space-1) 0 0;
   font-size: var(--fs-sm);
+  line-height: normal;
   color: var(--color-text-muted);
 }
 
@@ -44,8 +39,22 @@
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
+  text-wrap: wrap;
 }
 
-.findsheet__dialogfooter {
-  inline-size: 100%;
+.findsheet__main {
+  --fs-md: var(--fs-control);
+
+  block-size: 48px;
+}
+
+// Die Kennzahl des Boards: Name fett, Bezug gedämpft, Wert zwanzig Punkte.
+.findsheet__value {
+  --size-row-tall: 58px;
+  --list-row-title-weight: var(--fw-semibold);
+  --list-row-value: 20px;
+  --list-row-value-weight: var(--fw-bold);
+  --list-row-value-colour: var(--color-text);
+  --list-row-sub: var(--fs-sm);
+  --space-row-stack: 2px;
 }

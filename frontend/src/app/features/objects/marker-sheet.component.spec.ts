@@ -41,11 +41,11 @@ async function edit(setup: Setup): Promise<void> {
 }
 
 describe('MarkerBlattComponent', () => {
-  it('zeigt Name und Unterzeile', async () => {
+  it('zeigt Name und Notiz', async () => {
     const setup = await build();
 
     expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
-    expect(screen.getByText('Marker · privat')).toBeInTheDocument();
+    expect(screen.getByText('Nordhang, ab Mitte September.')).toBeInTheDocument();
     await noViolations(setup.container);
   });
 
@@ -104,9 +104,9 @@ describe('MarkerBlattComponent', () => {
   it('löscht nach der Rückfrage und schließt', async () => {
     const setup = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Marker löschen' }));
-    setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
+    setup.refresh();
+    await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/markers/${MARKER.id}`).flush(null);
     });

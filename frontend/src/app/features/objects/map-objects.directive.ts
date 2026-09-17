@@ -9,6 +9,7 @@ import { EntriesState } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
 import { SpeciesState } from '../species/species.state';
 import { MapState, type ObjectKind } from '../map/map.state';
+import { ObjectSheetState } from './object-sheet.state';
 
 /**
  * Die Farben der Punkte aus `docs/mockups/bauen.py`: ein eigener Fund trägt
@@ -54,6 +55,7 @@ export class MapObjectsDirective {
   private readonly locating = inject(LocationService);
   private readonly species = inject(SpeciesState);
   private readonly map = inject(MapState);
+  private readonly sheet = inject(ObjectSheetState);
 
   /** Ein langer Druck auf ein Objekt: der Ort auf dem Bildschirm und das Ziel. */
   readonly objectHeld = output<{ x: number; y: number }>();
@@ -174,6 +176,6 @@ export class MapObjectsDirective {
     const kind: ObjectKind | null =
       layer === 'zonen' ? 'zone' : layer === 'marker' ? 'marker' : layer === 'funde' ? 'find' : null;
     if (kind === null) return;
-    this.map.object.set({ kind, id });
+    this.sheet.show(kind, id);
   }
 }

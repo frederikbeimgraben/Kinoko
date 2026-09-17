@@ -1,10 +1,24 @@
-.object {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+:host {
+  display: contents;
 }
 
-.object__sheet {
+// Das X liegt im Griffstreifen des Blatts, wie die Boards es zeigen. Der Wirt
+// über der Karte lässt Tipps durch; das X muss sie annehmen.
+.object__close {
   position: absolute;
-  inset: 0;
+  pointer-events: auto;
+  inset-block-start: 14px;
+  inset-inline-end: 14px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-md);
 }

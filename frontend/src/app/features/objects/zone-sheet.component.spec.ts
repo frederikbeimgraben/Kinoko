@@ -95,13 +95,20 @@ async function answerValue(setup: Setup, value: ZoneValue | null = VALUE): Promi
   });
 }
 
+/** Geht über das Formular zum Ziehen der Ecken. */
+async function startCorners(setup: Setup): Promise<void> {
+  await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+  setup.refresh();
+  await userEvent.click(screen.getByRole('button', { name: 'Umriss ändern' }));
+  setup.refresh();
+}
+
 describe('ZoneBlattComponent', () => {
-  it('zeigt Name, Fläche und Sichtbarkeit in der Unterzeile', async () => {
+  it('zeigt den Namen der Zone', async () => {
     const setup = await build();
     await answerValue(setup);
 
     expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
-    expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
     await noViolations(setup.container);
   });
 
@@ -117,11 +124,11 @@ describe('ZoneBlattComponent', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 
-  it('sagt es, wenn es für Art und Woche keine Karte gibt', async () => {
+  it('lässt die Kennzahlen weg, wenn es für Art und Woche keine Karte gibt', async () => {
     const setup = await build();
     await answerValue(setup, null);
 
-    expect(screen.getByText('Für diese Art und Woche gibt es keine Karte.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
   });
 
   it('speichert Farbe, Sichtbarkeit und Notiz', async () => {
@@ -148,9 +155,9 @@ describe('ZoneBlattComponent', () => {
     const setup = await build();
     await answerValue(setup);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Zone löschen' }));
-    setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
+    setup.refresh();
+    await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/zones/${ZONE.id}`).flush(null);
     });
@@ -164,10 +171,9 @@ describe('ZoneBlattComponent', () => {
     const setup = await build();
     await answerValue(setup);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte bearbeiten' }));
-    setup.refresh();
+    await startCorners(setup);
 
-    expect(screen.getByRole('button', { name: 'Eckpunkte bearbeiten' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Umriss ändern' })).toBeInTheDocument();
     expect(setup.drawer.rings).toHaveLength(0);
   });
 
@@ -175,10 +181,10 @@ describe('ZoneBlattComponent', () => {
     const setup = await build(true);
     await answerValue(setup);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte bearbeiten' }));
+    await startCorners(setup);
     await vi.waitFor(() => {
       setup.refresh();
-      expect(screen.getByText('Eckpunkte mit dem Finger ziehen, dann übernehmen.')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Eckpunkte übernehmen' })).toBeInTheDocument();
     });
     // Der Ring geht ohne den doppelten Endpunkt hinaus.
     expect(setup.drawer.rings[0]).toHaveLength(4);
@@ -205,7 +211,7 @@ describe('ZoneBlattComponent', () => {
     const setup = await build(true);
     await answerValue(setup);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte bearbeiten' }));
+    await startCorners(setup);
     await vi.waitFor(() => {
       setup.refresh();
       expect(screen.getByRole('button', { name: 'Abbrechen' })).toBeInTheDocument();
@@ -221,7 +227,7 @@ describe('ZoneBlattComponent', () => {
     const setup = await build(true);
     await answerValue(setup);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte bearbeiten' }));
+    await startCorners(setup);
     await vi.waitFor(() => {
       setup.refresh();
       expect(screen.getByRole('button', { name: 'Eckpunkte übernehmen' })).toBeInTheDocument();

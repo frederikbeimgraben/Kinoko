@@ -118,7 +118,7 @@
 // Im Katalog ist der Titel eine Beschriftung, keine Überschrift.
 .row__title--catalogue {
   font-size: var(--fs-row-title);
-  font-weight: var(--fw-regular);
+  font-weight: var(--list-row-title-weight, var(--fw-regular));
 }
 
 .row__title--filter {
@@ -141,7 +141,8 @@
 .row__value {
   flex: none;
   font-size: var(--list-row-value, var(--fs-sm));
-  color: var(--color-text-muted);
+  font-weight: var(--list-row-value-weight, inherit);
+  color: var(--list-row-value-colour, var(--color-text-muted));
 }
 
 .row__value--accent {

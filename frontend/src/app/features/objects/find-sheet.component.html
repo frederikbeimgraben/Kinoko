@@ -9,41 +9,51 @@
     (cancelled)="editing.set(false)"
   />
 } @else {
-  <div class="findsheet">
+  <div class="objectsheet">
     <div>
       <div class="findsheet__head">
         <h2 class="findsheet__title">{{ speciesName() }}</h2>
-        <div class="findsheet__headActions">
-          @if (geteilt()) {
-            <app-badge variant="success">{{ 'entry.badge.shared' | t }}</app-badge>
-          }
-          <app-icon-button icon="delete" [label]="'fund.loeschen' | t" (pressed)="deleteAsk.set(true)" />
-        </div>
+        @if (geteilt()) {
+          <app-badge variant="success">{{ 'entry.badge.shared' | t }}</app-badge>
+        }
       </div>
       <p class="findsheet__sub">{{ subline() }}</p>
     </div>
     <app-photo-gallery [findId]="find().id" />
-    @if (find().note) {
-      <p class="findsheet__note">{{ find().note }}</p>
+    @if (find().note; as note) {
+      <p class="findsheet__note">{{ note }}</p>
     }
     @if (valueText(); as value) {
       <app-card class="flush">
-        <app-list-row [title]="'entry.fund.forecastHere' | t" [subline]="valueScope()" [value]="value" />
+        <app-list-row
+          class="findsheet__value"
+          kind="catalogue"
+          [title]="'entry.fund.forecastHere' | t"
+          [subline]="valueScope()"
+          [value]="value"
+        />
       </app-card>
     }
   </div>
   <app-action-bar
-    [primary]="'entry.marker.openInMapsApp' | t"
-    [secondary]="'common.edit' | t"
-    (primaryClick)="toGoogleMaps()"
-    (secondaryClick)="editing.set(true)"
-  />
+    [primary]="'common.edit' | t"
+    [secondary]="'common.delete' | t"
+    [quiet]="true"
+    [secondaryDanger]="true"
+    [split]="true"
+    (primaryClick)="editing.set(true)"
+    (secondaryClick)="deleteAsk.set(true)"
+  >
+    <app-button class="findsheet__main" variant="primary" [block]="true" (click)="showOnMap()">
+      <app-svg-icon name="map" [size]="16" />
+      {{ 'entry.showOnMap' | t }}
+    </app-button>
+  </app-action-bar>
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
   [title]="'entry.fund.delete' | t"
-  [meta]="'fund.loeschenText' | t"
-  [confirmLabel]="'objekt.loeschen' | t"
+  [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"
   (cancelled)="deleteAsk.set(false)"
 />
