@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from manifest import histogramm, schreibe, werte_aus_kacheln
+from manifest import histogram, schreibe, werte_aus_kacheln
 
 
 def fuelle_woche(eintrag: dict, ordner: Path, kacheln: list[str], zoom: str,
@@ -29,7 +29,7 @@ def fuelle_woche(eintrag: dict, ordner: Path, kacheln: list[str], zoom: str,
     A number that already stands stays. It came from the field itself and is
     exact; the tiles would only overwrite it with a coarser one.
     """
-    if not force and "mean" in eintrag and "histogramm" in eintrag:
+    if not force and "mean" in eintrag and "histogram" in eintrag:
         return False
     werte = werte_aus_kacheln(ordner, kacheln, zoom, low, high)
     if werte is None:
@@ -37,8 +37,8 @@ def fuelle_woche(eintrag: dict, ordner: Path, kacheln: list[str], zoom: str,
     if force or "mean" not in eintrag:
         eintrag["mean"] = round(float(werte.mean()), 4)
         eintrag["max"] = round(float(werte.max()), 4)
-    if force or "histogramm" not in eintrag:
-        eintrag["histogramm"] = histogramm(werte, low, high)
+    if force or "histogram" not in eintrag:
+        eintrag["histogram"] = histogram(werte, low, high)
     return True
 
 
@@ -70,22 +70,22 @@ def fuelle_ebenen(meta: dict, karten: Path, force: bool) -> int:
         low, high = float(ebene["low"]), float(ebene["high"])
         wurzel = karten / ebene["tiles"]
         if ebene.get("static"):
-            if not force and "histogramm" in ebene:
+            if not force and "histogram" in ebene:
                 continue
             werte = werte_aus_kacheln(wurzel, kacheln, zoom, low, high)
             if werte is not None:
-                ebene["histogramm"] = histogramm(werte, low, high)
+                ebene["histogram"] = histogram(werte, low, high)
                 neu += 1
             continue
-        verteilungen = {} if force else dict(ebene.get("histogramme", {}))
+        verteilungen = {} if force else dict(ebene.get("histograms", {}))
         for schluessel in ebene.get("weeks", []):
             if schluessel in verteilungen:
                 continue
             werte = werte_aus_kacheln(wurzel / schluessel, kacheln, zoom, low, high)
             if werte is not None:
-                verteilungen[schluessel] = histogramm(werte, low, high)
+                verteilungen[schluessel] = histogram(werte, low, high)
                 neu += 1
-        ebene["histogramme"] = verteilungen
+        ebene["histograms"] = verteilungen
     return neu
 
 

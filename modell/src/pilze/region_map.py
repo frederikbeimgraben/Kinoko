@@ -41,7 +41,7 @@ from pyproj import Transformer
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
-from manifest import histogramm, schreibe
+from manifest import histogram, schreibe
 from tiles import schreibe_kacheln
 from tree_species import CLASSES, CONIFERS
 from visit_model import BLOCK_M, ActivityFields
@@ -529,9 +529,9 @@ def main() -> None:
         # Das Histogramm laeuft ueber 0 bis top, also ueber die Skala der
         # Kacheln. Aus dem Feld gerechnet, nicht aus den Kacheln gelesen: das
         # Raster ist flaechentreu, jeder Punkt steht fuer dieselbe Flaeche.
-        verteilung = histogramm(field, 0.0, top)
+        verteilung = histogram(field, 0.0, top)
         if verteilung is not None:
-            eintrag["histogramm"] = verteilung
+            eintrag["histogram"] = verteilung
         if not args.no_image:
             eintrag["file"] = f"{args.name}_weeks/{year}W{week:02d}.png"
         if args.tiles:

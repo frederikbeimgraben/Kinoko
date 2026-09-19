@@ -23,7 +23,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from manifest import histogramm, schreibe, werte_aus_kacheln
+from manifest import histogram, schreibe, werte_aus_kacheln
 from pyramid import (ZOOM_BASE, block_box, block_grid, class_shares, coarsen,
                      finest_zoom, full_weight, have_up_to, to_byte, write_tile)
 from region_map import REGIONEN
@@ -137,9 +137,9 @@ def update_manifest(path: Path, roots: dict[str, Path], filled: dict[str, list],
             root, eintrag["have"].get(str(ZOOM_BASE + 2), []),
             str(ZOOM_BASE + 2), LOW, HIGH)
         if werte is not None:
-            verteilung = histogramm(werte, LOW, HIGH)
+            verteilung = histogram(werte, LOW, HIGH)
             if verteilung is not None:
-                eintrag["histogramm"] = verteilung
+                eintrag["histogram"] = verteilung
         meta["layers"][name] = eintrag
     schreibe(path, meta)
 

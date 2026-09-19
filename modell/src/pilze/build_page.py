@@ -168,7 +168,7 @@ def main() -> None:
             continue
         meta["title"] = TITLES.get(meta["name"], meta["name"])
         for woche in meta["weeks"]:
-            woche.pop("histogramm", None)
+            woche.pop("histogram", None)
         data[meta["name"]] = meta
         print(f"  {meta['name']}: {len(meta['weeks'])} weeks, max p {meta['top']:.3f}")
     if not data:
@@ -187,8 +187,8 @@ def main() -> None:
     # Faktor-Screen der App, nicht diese Seite; drin wuerden sie index.html
     # verdreifachen und bei jedem Besuch mitgeladen.
     for ebene in inputs.get("layers", {}).values():
-        ebene.pop("histogramm", None)
-        ebene.pop("histogramme", None)
+        ebene.pop("histogram", None)
+        ebene.pop("histograms", None)
     print(f"  Eingabe-Ebenen: {len(inputs['layers'])}")
 
     # Die Seite startet mit dem Steinpilz, nicht mit der alphabetisch ersten

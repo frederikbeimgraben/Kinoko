@@ -39,7 +39,7 @@ from pyproj import Transformer
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
-from manifest import histogramm, schreibe
+from manifest import histogram, schreibe
 from pyramid import belegung
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
@@ -248,9 +248,9 @@ def main() -> None:
                        "low": unten, "high": oben}
             # Ueber die Skala der Ebene, in ihrer Einheit. Die Griffe im
             # Faktor-Screen zeigen damit auf Meter oder pH, nicht auf 0 bis 1.
-            verteilung = histogramm(feld * k, unten, oben)
+            verteilung = histogram(feld * k, unten, oben)
             if verteilung is not None:
-                eintrag["histogramm"] = verteilung
+                eintrag["histogram"] = verteilung
             if not args.no_image:
                 write_images(source, [folder / f"{name}.png"], work)
                 eintrag["file"] = f"layers/{name}.png"
@@ -294,7 +294,7 @@ def main() -> None:
             # dieser Liste auf. Eine Zuordnung daneben laesst beides heil.
             layers[name] = {"label": label, "unit": unit, "static": False,
                             "low": low, "high": high, "weeks": [],
-                            "histogramme": {}}
+                            "histograms": {}}
             print(f"  {name:20s} {low:8.1f} bis {high:8.1f} {unit}", flush=True)
 
         # Je Woche ein Quellbild mit einem Band je Ebene, statt je Ebene und
@@ -313,9 +313,9 @@ def main() -> None:
                 eintrag = layers[name]
                 values = leser.sample(spalten[column].to_numpy(dtype="float32"))
                 feld = to_field(values)
-                verteilung = histogramm(feld, eintrag["low"], eintrag["high"])
+                verteilung = histogram(feld, eintrag["low"], eintrag["high"])
                 if verteilung is not None:
-                    eintrag["histogramme"][schluessel] = verteilung
+                    eintrag["histograms"][schluessel] = verteilung
                 eintrag["weeks"].append(schluessel)
                 felder.append((feld, eintrag["low"], eintrag["high"]))
             source = write_fields(felder, work, bounds, args.step)
