@@ -7,9 +7,6 @@
       [detents]="DETENTS"
       (closed)="close()"
     >
-      <div head class="picker__head">
-        <b class="picker__title">{{ 'admin.species.addPart' | t }}</b>
-      </div>
       <div class="picker__list">
         <div class="picker__card">
           @for (choice of choices(); track choice.part) {
@@ -21,13 +18,7 @@
           }
         </div>
       </div>
-      <app-action-bar
-        [primary]="'common.add' | t"
-        [secondary]="'common.cancel' | t"
-        [ghost]="true"
-        (primaryClick)="add()"
-        (secondaryClick)="close()"
-      />
+      <app-action-bar [primary]="'common.add' | t" (primaryClick)="add()" />
     </app-sheet>
   }
 </app-overlay-host>

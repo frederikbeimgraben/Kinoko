@@ -7,11 +7,6 @@
       [detents]="detents"
       (closed)="later()"
     >
-      <div class="signin__content">
-        @if (!wide()) {
-          <h2 class="signin__title">{{ 'anmelden.titel' | t }}</h2>
-        }
-      </div>
       <app-action-bar
         #footer
         foot

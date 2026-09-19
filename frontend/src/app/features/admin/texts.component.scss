@@ -93,14 +93,13 @@
   color: var(--color-text-muted);
 }
 
-// Der Schlüssel im Blatt steht einen Punkt größer als in der Liste.
-.texts__sheet-head {
-  --fs-xs: var(--fs-row-meta);
+// Das Merkmal steht rechts vom Schlüssel, wie das Brett es zeigt.
+.texts__mark {
+  display: contents;
+}
 
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 0 var(--size-gutter) 14px;
+.texts__mark app-badge {
+  order: 1;
 }
 
 .texts__section {

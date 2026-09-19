@@ -25,7 +25,6 @@ interface Extra {
 interface Setup {
   container: Element;
   submissions: FindSubmission[];
-  cancels: number;
   toasts: ToastSpy;
 }
 
@@ -37,7 +36,6 @@ async function build(
   const { container, detectChanges, fixture } = await render(FindFormComponent, {
     inputs: {
       location: start === undefined ? LOCATION : ([start.lon, start.lat] as readonly [number, number]),
-      heading: 'Fund melden',
       ...extra,
     },
     providers: [provideHttpClient(), provideHttpClientTesting()],
@@ -53,17 +51,15 @@ async function build(
   });
   detectChanges();
   const submissions: FindSubmission[] = [];
-  let cancels = 0;
   fixture.componentInstance.submitted.subscribe((submission) => submissions.push(submission));
-  fixture.componentInstance.cancelled.subscribe(() => (cancels += 1));
-  return {
-    container,
-    submissions,
-    toasts: toastSpy(),
-    get cancels() {
-      return cancels;
-    },
-  };
+  return { container, submissions, toasts: toastSpy() };
+}
+
+/** Das X im Kopf des Blatts der Artwahl. */
+function sheetClose(container: Element): HTMLElement {
+  const close = container.querySelector<HTMLElement>('.sheet__close');
+  if (close === null) throw new Error('Das Blatt trägt kein X.');
+  return close;
 }
 
 describe('FundFormularComponent', () => {
@@ -75,11 +71,9 @@ describe('FundFormularComponent', () => {
     vi.useRealTimers();
   });
 
-  it('zeigt Überschrift, Ort, Vorgabe-Art und das heutige Datum', async () => {
+  it('zeigt die Vorgabe-Art und das heutige Datum', async () => {
     const setup = await build();
 
-    expect(screen.getByRole('heading', { name: 'Fund melden' })).toBeInTheDocument();
-    expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Steinpilz' })).toBeInTheDocument();
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-10');
     expect(screen.getByText('10. 9. 2026')).toBeInTheDocument();
@@ -126,11 +120,20 @@ describe('FundFormularComponent', () => {
     expect(setup.submissions[0].input.speciesId).toBe('semmelstoppelpilz');
   });
 
-  it('bricht die Artauswahl ab, ohne die Art zu wechseln', async () => {
+  it('stellt die Artauswahl als eigenes Blatt mit Titel', async () => {
+    await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
+
+    expect(screen.getByRole('heading', { name: 'Art wählen' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
+  });
+
+  it('schließt die Artauswahl über das X, ohne die Art zu wechseln', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    await userEvent.click(sheetClose(setup.container));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.submissions[0].input.speciesId).toBe('steinpilz');
@@ -157,12 +160,12 @@ describe('FundFormularComponent', () => {
     expect(setup.toasts.failure).toEqual(['Die Anzahl ist eine ganze Zahl ab 1.']);
   });
 
-  it('meldet den Abbruch', async () => {
+  it('trägt weder eigenen Kopf noch Abbrechen-Knopf', async () => {
     const setup = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
-
-    expect(setup.cancels).toBe(1);
+    expect(setup.container.querySelector('.form__head')).toBeNull();
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
   });
 
   it('sperrt das Speichern, solange es läuft', async () => {

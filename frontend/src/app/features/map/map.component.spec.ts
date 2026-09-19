@@ -318,6 +318,32 @@ describe('MapComponent', () => {
     expect(asked).toHaveBeenCalled();
   });
 
+  it('trägt den Titel im Kopf des Blatts und schließt das Speichern über das X', async () => {
+    const { stable, container } = await map(true);
+    TestBed.inject(MapState).view.set('combination');
+    TestBed.inject(CombinationState).apply({
+      source: 'wald',
+      condition: 'above',
+      low: 0.3,
+      high: 0,
+      active: true,
+    });
+    await stable();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await stable();
+
+    expect(screen.getAllByRole('heading', { name: 'Kombination speichern' })).toHaveLength(1);
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
+
+    const close = container.querySelector<HTMLElement>('.sheet__close');
+    if (close === null) throw new Error('Das Blatt trägt kein X.');
+    await userEvent.click(close);
+    await stable();
+
+    expect(screen.queryByRole('heading', { name: 'Kombination speichern' })).not.toBeInTheDocument();
+  });
+
   it('zeigt die gespeicherten Kombinationen und lädt eine', async () => {
     const { stable } = await map(true);
     const combination = TestBed.inject(CombinationState);

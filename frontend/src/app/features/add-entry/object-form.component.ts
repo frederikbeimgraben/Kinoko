@@ -4,14 +4,11 @@ import { ToastService } from '@stupa-makers/ui-kit';
 import type { MarkerColour, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ColourSwatchesComponent } from '../../ui/colour-swatches/colour-swatches.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { colourSwatches, colourFromHex, colourHex } from '../entries/colors';
-import { coordinatesText } from './coordinates';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
-import type { Location } from './add-entry.state';
 
 /** Was ein Marker und eine Zone gemeinsam haben. */
 export interface ObjectValues {
@@ -41,8 +38,6 @@ export class ObjectFormComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
 
-  readonly heading = input.required<string>();
-  readonly location = input<Location | null>(null);
   readonly start = input<ObjectValues | null>(null);
   /** Marker und Zone ordnen ihre Felder verschieden (Boards `MarkerForm`, `ZoneForm`). */
   readonly kind = input<'marker' | 'zone'>('marker');
@@ -53,10 +48,7 @@ export class ObjectFormComponent {
   readonly nameMissingText = input.required<string>();
 
   readonly submitted = output<ObjectValues>();
-  readonly cancelled = output();
   readonly valuesChange = output<ObjectValues>();
-
-  protected readonly wide = inject(ViewportService).wide;
 
   protected readonly marker = computed(() => this.kind() === 'marker');
 
@@ -67,11 +59,6 @@ export class ObjectFormComponent {
   private readonly groupChoice = signal<string | null | undefined>(undefined);
 
   protected readonly swatches = computed(() => colourSwatches(this.i18n));
-  protected readonly coordinates = computed(() => coordinatesText(this.location(), this.i18n));
-
-  protected readonly secondaryLabel = computed(() =>
-    this.wide() ? undefined : this.i18n.translate('common.cancel'),
-  );
 
   // Solange niemand ein Feld angefasst hat, führt der Startwert.
   protected readonly name = computed(() => this.nameChoice() ?? this.start()?.name ?? '');

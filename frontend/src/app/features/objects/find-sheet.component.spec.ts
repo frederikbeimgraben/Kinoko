@@ -97,13 +97,12 @@ describe('FundBlattComponent', () => {
     answerMap(108);
   });
 
-  it('zeigt Art, Datum, Anzahl, Melder und das Kennzeichen geteilt', async () => {
+  it('zeigt die Notiz; Art, Zeile und Kennzeichen trägt der Kopf des Blatts', async () => {
     const setup = await build();
 
-    expect(screen.getByRole('heading', { name: 'Steinpilz' })).toBeInTheDocument();
-    expect(screen.getByText('6. September 2026 · 3 Stück · Frederik')).toBeInTheDocument();
-    expect(screen.getByText('geteilt')).toBeInTheDocument();
     expect(screen.getByText(FIND.note ?? '')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Steinpilz' })).not.toBeInTheDocument();
+    expect(screen.queryByText('geteilt')).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 
@@ -127,18 +126,6 @@ describe('FundBlattComponent', () => {
     });
 
     expect(screen.queryByText('Vorhersage an diesem Ort')).not.toBeInTheDocument();
-  });
-
-  it('zeigt den Fund ohne Anzahl in der kurzen Zeile', async () => {
-    await render(FindSheetComponent, {
-      inputs: { find: { ...FIND, count: null } },
-      providers: provider(),
-    });
-    await vi.waitFor(() => {
-      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
-    });
-
-    expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
   });
 
   it('gibt die Karte frei, wenn der Fund dort gezeigt werden soll', async () => {

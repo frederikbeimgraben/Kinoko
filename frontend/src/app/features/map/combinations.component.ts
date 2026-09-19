@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { Combination, Rule } from '../../core/api/models';
 
@@ -22,7 +21,7 @@ interface Row {
 @Component({
   selector: 'app-combinations',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, SvgIconComponent, TranslatePipe],
+  imports: [ListRowComponent, SvgIconComponent],
   templateUrl: './combinations.component.html',
   styleUrl: './combinations.component.scss',
 })

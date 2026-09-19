@@ -36,10 +36,6 @@
       [detents]="DETENTS"
       (closed)="close()"
     >
-      <div head class="people__head">
-        <b class="people__name">{{ person.name }}</b>
-        <span class="people__mail">{{ person.email }}</span>
-      </div>
       <div class="people__choices">
         @for (choice of choices(); track choice.id) {
           <app-check-row

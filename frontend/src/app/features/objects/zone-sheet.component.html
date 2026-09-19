@@ -1,13 +1,11 @@
 @if (editing()) {
   <app-object-form
-    [heading]="'entry.zone.editTitle' | t"
     kind="zone"
     [start]="start()"
     [editing]="true"
     [busy]="busy()"
     [nameMissingText]="'zone.nameFehlt' | t"
     (submitted)="save($event)"
-    (cancelled)="editing.set(false)"
   >
     <app-button class="zonesheet__outline" variant="secondary" [block]="true" (click)="editCorners()">
       {{ 'entry.zone.changeOutline' | t }}
@@ -15,13 +13,6 @@
   </app-object-form>
 } @else {
   <div class="objectsheet">
-    <div>
-      <div class="objectsheet__head">
-        <span class="objectsheet__dot" [style.background]="colour()"></span>
-        <h2 class="objectsheet__title">{{ zone().name }}</h2>
-      </div>
-      <p class="objectsheet__sub">{{ subline() }}</p>
-    </div>
     @if (zone().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }

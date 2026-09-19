@@ -1,12 +1,4 @@
 <div class="form__body" [class.form__body--roomy]="!marker()">
-  @if (!wide()) {
-    <div class="form__head">
-      <h2 class="form__title">{{ heading() }}</h2>
-      @if (coordinates(); as text) {
-        <span class="form__note">{{ text }}</span>
-      }
-    </div>
-  }
   <app-form-field
     [label]="'common.name' | t"
     [placeholder]="'entry.field.namePlaceholder' | t"
@@ -34,11 +26,8 @@
 <app-action-bar
   [class.form__actions]="editing()"
   [primary]="'common.save' | t"
-  [secondary]="secondaryLabel()"
-  [ghost]="!editing() && !wide()"
   [busy]="busy()"
   (primaryClick)="submit()"
-  (secondaryClick)="cancelled.emit()"
 />
 
 <ng-template #note>

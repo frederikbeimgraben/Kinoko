@@ -21,7 +21,7 @@ import type { Factor } from './factors';
 /** Welches Blatt gerade über der Karte liegt. */
 export type Overlay = 'species' | 'layer' | 'factors' | 'factor' | 'combinations' | 'save' | null;
 
-/** Der Kopf des Modals am Rechner nennt, worum es geht. */
+/** Der Kopf des Blatts nennt, worum es geht. Der Faktor trägt seinen eigenen Kopf. */
 const TITLE: Partial<Record<NonNullable<Overlay>, TranslationKey>> = {
   species: 'map.species.choose',
   layer: 'map.tab.layer',
@@ -119,7 +119,8 @@ export class MapOverlaysComponent {
     this.saved.emit(name);
   }
 
-  protected cancelName(): void {
+  /** Das X und die Abdunkelung schließen das Blatt und verwerfen den Namen. */
+  protected dismiss(): void {
     this.name.set('');
     this.closed.emit();
   }

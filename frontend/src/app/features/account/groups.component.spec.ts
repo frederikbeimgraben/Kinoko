@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { GroupsApiDouble, groupsApiProvider } from '../../testing/groups-fixture';
@@ -73,7 +73,8 @@ describe('GroupsComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /^Beitreten$/ }));
     expect(api.joined).toEqual([]);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    const sheet = screen.getByRole('dialog');
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));
     expect(screen.queryByRole('button', { name: /^Beitreten$/ })).not.toBeInTheDocument();
   });
 

@@ -325,10 +325,11 @@ describe('SheetComponent', () => {
         providers: [WIDE],
       });
 
-      const head = container.querySelector('.sheet__head');
+      const head = container.querySelector<HTMLElement>('.sheet__head');
       if (head === null) throw new Error('Kopf fehlt.');
+      const style = getComputedStyle(head);
 
-      expect(getComputedStyle(head).padding).toContain('var(--space-modal-head-end)');
+      expect(style.padding).toBe('4px var(--space-modal-head-end) 14px var(--space-modal-head)');
       expect(container.querySelector('.sheet__close')).not.toBeNull();
     });
 
@@ -465,15 +466,66 @@ describe('SheetComponent', () => {
       expect(container.querySelector('.sheet__scrim')).toBeNull();
     });
 
-    it('lässt am Telefon Scrim und Kopf weg', async () => {
+    it('lässt am Telefon Scrim und Modal weg, trägt aber Kopf und X', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini', title: 'Porcini', modal: true },
       });
 
       expect(container.querySelector('.sheet__scrim')).toBeNull();
-      expect(container.querySelector('.sheet__head')).toBeNull();
       expect(container.querySelector('.sheet--modal')).toBeNull();
+      expect(screen.getByRole('heading', { name: 'Porcini' })).toBeInTheDocument();
+      expect(container.querySelector('.sheet__close')).not.toBeNull();
     });
+  });
+
+  it('lässt das X mit closable=false weg, auch mit Titel', async () => {
+    const { container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', title: 'Porcini', closable: false },
+    });
+
+    expect(container.querySelector('.sheet__close')).toBeNull();
+    expect(screen.getByRole('heading', { name: 'Porcini' })).toBeInTheDocument();
+  });
+
+  it('meldet das Schließen über das X am Telefon', async () => {
+    const { container, fixture } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', title: 'Porcini' },
+    });
+    let calls = 0;
+    fixture.componentInstance.closed.subscribe(() => (calls += 1));
+
+    const close = container.querySelector<HTMLElement>('.sheet__close');
+    if (close === null) throw new Error('X fehlt.');
+    await userEvent.click(close);
+
+    expect(calls).toBe(1);
+  });
+
+  it('zieht die Linie unter dem Kopf nur mit headDivider', async () => {
+    const { container } = await render(SheetComponent, {
+      inputs: { label: 'Filter', title: 'Filter', headDivider: true },
+    });
+
+    expect(container.querySelector('.sheet__head')).toHaveClass('sheet__head--divider');
+  });
+
+  it('projiziert ein Element vor den Titel und eine Aktion in die Unterzeile', async () => {
+    @Component({
+      imports: [SheetComponent],
+      template: `
+        <app-sheet label="Fund" [title]="'Fund'">
+          <span titleLead>dot</span>
+          <button headAction type="button">reset</button>
+        </app-sheet>
+      `,
+    })
+    class LeadHostComponent {}
+
+    const { container } = await render(LeadHostComponent);
+
+    const head = container.querySelector('.sheet__head');
+    expect(head?.textContent).toContain('dot');
+    expect(screen.getByRole('button', { name: 'reset' })).toBeInTheDocument();
   });
 
   it('renders without German text against an empty catalogue', async () => {

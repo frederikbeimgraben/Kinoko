@@ -77,6 +77,10 @@ export class SheetComponent {
   readonly title = input('');
   /** Der gedämpfte Zusatz neben dem Titel, etwa die Koordinaten. */
   readonly note = input('');
+  /** Das X am Kopf. Nur das Karten-Hauptblatt trägt keins, es hat einen eigenen Kopf. */
+  readonly closable = input(true);
+  /** Eine Linie unter dem Kopf, etwa vor einer Filterliste. */
+  readonly headDivider = input(false);
   /** Ein Modal für wenige Zeilen: schmaler und nur so hoch wie sein Inhalt. */
   readonly compact = input(false);
   /** Ein Blatt, das sich schließen lässt, geht auch mit einem Zug nach unten zu. */

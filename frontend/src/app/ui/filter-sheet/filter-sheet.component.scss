@@ -4,15 +4,7 @@
   --pilz-overlay-top: var(--size-header);
   --size-handle-height: 22px;
   --sheet-shadow: 0 -8px 28px rgb(0 0 0 / 35%);
-}
-
-.filtersheet__head {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  block-size: 48px;
-  padding-inline: var(--size-gutter);
-  border-block-end: var(--border-width) solid var(--color-border);
+  --sheet-title-size: 19px;
 }
 
 .filtersheet__back {
@@ -26,17 +18,9 @@
   border: 0;
 }
 
-.filtersheet__title {
-  margin: 0;
-  font-size: 19px;
-  font-weight: var(--fw-semibold);
-  line-height: normal;
-  letter-spacing: normal;
-}
-
 .filtersheet__reset {
+  align-self: flex-start;
   padding: 0;
-  margin-inline-start: auto;
   font: inherit;
   font-size: 13px;
   line-height: 1.4;

@@ -4,16 +4,16 @@ import type { SpeciesEntry, Find, FindWrite, Visibility } from '../../core/api/m
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
-import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PhotoPickerComponent, type HeldPhoto } from '../../ui/photo-picker/photo-picker.component';
+import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { numericDate } from '../../core/i18n/dates';
-import { coordinatesText } from './coordinates';
 import { isoDatum } from '../entries/formats';
 import { speciesPickerEntry } from '../species/species-picker-entry';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
@@ -25,6 +25,9 @@ export interface FindSubmission {
   photos: readonly File[];
 }
 
+/** Die Artwahl steht über dem Formular und füllt fast die ganze Höhe. */
+const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.9, 0.9, 0.9];
+
 /** Das Formular eines Fundes (Boards `FindForm` und `MapDesktopFindForm`). */
 @Component({
   selector: 'app-find-form',
@@ -33,7 +36,9 @@ export interface FindSubmission {
     ActionBarComponent,
     SpeciesPickerComponent,
     FormFieldComponent,
+    OverlayHostComponent,
     PhotoPickerComponent,
+    SheetComponent,
     SwitchComponent,
     VisibilityChoiceComponent,
     TranslatePipe,
@@ -53,16 +58,14 @@ export class FindFormComponent {
   readonly withPhotos = input(true);
   /** Die Fotos, die der Dienst zu diesem Fund schon hat. */
   readonly held = input<readonly HeldPhoto[]>([]);
-  readonly heading = input.required<string>();
   /** Ein vorhandener Fund zeigt den Pfeil an der Art und einen Rahmen am Weg zurück. */
   readonly editing = input(false);
   readonly busy = input(false);
 
   readonly submitted = output<FindSubmission>();
-  readonly cancelled = output();
   readonly heldRemoved = output<string>();
 
-  protected readonly wide = inject(ViewportService).wide;
+  protected readonly DETENTS = DETENTS;
 
   private readonly slugChoice = signal<string | null>(null);
   protected readonly visibilityChoice = signal<Visibility | null>(null);
@@ -74,11 +77,6 @@ export class FindFormComponent {
   protected readonly photos = signal<readonly File[]>([]);
   protected readonly trainingChoice = signal<boolean | null>(null);
   protected readonly pickerOpen = signal(false);
-
-  /** Am Rechner und beim Speichern steht nur die Hauptaktion im Fuß. */
-  protected readonly secondaryLabel = computed(() =>
-    this.wide() || this.busy() ? undefined : this.i18n.translate('common.cancel'),
-  );
 
   protected readonly date = computed(
     () => this.dateChoice() ?? this.start()?.foundOn ?? isoDatum(new Date()),
@@ -121,8 +119,6 @@ export class FindFormComponent {
   protected readonly pickerSpecies = computed(() =>
     this.species.species().map((entry) => speciesPickerEntry(entry, this.i18n)),
   );
-
-  protected readonly coordinates = computed(() => coordinatesText(this.location(), this.i18n));
 
   constructor() {
     void this.species.loadBundle();

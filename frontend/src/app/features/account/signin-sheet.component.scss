@@ -1,22 +1,6 @@
 :host {
   --pilz-scrim: rgb(0 18 10 / 55%);
-}
-
-.signin__content {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-5);
-  overflow: hidden;
-}
-
-// 24 px steht so im Artboard `Anmelden`. Zwischen den Stufen des Kits liegt
-// nichts, was die Größe trifft.
-.signin__title {
-  margin: 0;
-  font-size: 24px;
-  font-weight: var(--fw-semibold);
-  letter-spacing: var(--tracking-tight);
+  --sheet-title-size: 24px;
+  --sheet-title-weight: 700;
+  --sheet-title-tracking: -0.01em;
 }

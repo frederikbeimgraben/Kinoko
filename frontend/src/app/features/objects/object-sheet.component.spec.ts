@@ -32,7 +32,7 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(): Promise<Setup> {
+async function build(findEntry = FIND_ENTRY): Promise<Setup> {
   vi.stubGlobal('fetch', () =>
     Promise.resolve({
       ok: true,
@@ -61,7 +61,7 @@ async function build(): Promise<Setup> {
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
-    http.expectOne('/api/finds?mine=true&limit=50').flush(page([FIND_ENTRY]));
+    http.expectOne('/api/finds?mine=true&limit=50').flush(page([findEntry]));
   });
   http.expectOne('/api/markers?limit=50').flush(page([MARKER_ENTRY]));
   http.expectOne('/api/zones?limit=50').flush(page([ZONE_ENTRY]));
@@ -77,6 +77,13 @@ async function build(): Promise<Setup> {
   };
 }
 
+/** Das X im Kopf des Blatts, nicht das der Abdunkelung darunter. */
+function sheetClose(container: Element): HTMLElement {
+  const close = container.querySelector<HTMLElement>('.sheet__close');
+  if (close === null) throw new Error('Das Blatt trägt kein X.');
+  return close;
+}
+
 describe('ObjektBlattComponent', () => {
   it('zeigt nichts, solange kein Objekt in der Adresse steht', async () => {
     const setup = await build();
@@ -84,14 +91,25 @@ describe('ObjektBlattComponent', () => {
     expect(setup.container.querySelector('app-sheet')).toBeNull();
   });
 
-  it('öffnet den Fund aus der Adresse', async () => {
+  it('öffnet den Fund aus der Adresse und trägt Art, Zeile und Kennzeichen im Kopf', async () => {
     const setup = await build();
 
     setup.state.object.set({ kind: 'find', id: FIND.id });
     setup.refresh();
 
     expect(screen.getByRole('heading', { name: 'Steinpilz' })).toBeInTheDocument();
+    expect(screen.getByText('6. September 2026 · 3 Stück · Frederik')).toBeInTheDocument();
+    expect(screen.getByText('geteilt')).toBeInTheDocument();
     await noViolations(setup.container);
+  });
+
+  it('lässt die Anzahl in der Zeile weg, wenn der Fund keine trägt', async () => {
+    const setup = await build({ ...FIND_ENTRY, count: null });
+
+    setup.state.object.set({ kind: 'find', id: FIND.id });
+    setup.refresh();
+
+    expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
   });
 
   it('öffnet Marker und Zone aus derselben Adresse', async () => {
@@ -100,10 +118,12 @@ describe('ObjektBlattComponent', () => {
     setup.state.object.set({ kind: 'marker', id: MARKER.id });
     setup.refresh();
     expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
+    expect(setup.container.querySelector('.object__dot')).not.toBeNull();
 
     setup.state.object.set({ kind: 'zone', id: ZONE.id });
     setup.refresh();
     expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
+    expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
   });
 
   it('nimmt die Höhe des Bretts, die zur Art des Objekts gehört', async () => {
@@ -132,7 +152,37 @@ describe('ObjektBlattComponent', () => {
 
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('694px');
     expect(setup.container.querySelector('.overlay__scrim--modal')).not.toBeNull();
-    expect(setup.container.querySelector('.object__close')).toBeNull();
+  });
+
+  it('trägt im Formular den Titel des Formulars und den Ort im Kopf', async () => {
+    const setup = await build();
+    setup.state.object.set({ kind: 'find', id: FIND.id });
+    setup.refresh();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+
+    expect(screen.getByRole('heading', { name: 'Fund bearbeiten' })).toBeInTheDocument();
+    expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
+    expect(setup.container.querySelector('.object__dot')).toBeNull();
+  });
+
+  it('führt das X aus dem Formular zurück zum Objekt und dann erst hinaus', async () => {
+    const setup = await build();
+    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+
+    await userEvent.click(sheetClose(setup.container));
+    setup.refresh();
+
+    expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
+
+    await userEvent.click(sheetClose(setup.container));
+    setup.refresh();
+
+    expect(setup.state.object()).toBeNull();
   });
 
   it('sagt es, wenn den Eintrag niemand mehr kennt', async () => {

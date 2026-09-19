@@ -41,11 +41,11 @@ async function edit(setup: Setup): Promise<void> {
 }
 
 describe('MarkerBlattComponent', () => {
-  it('zeigt Name und Notiz', async () => {
+  it('zeigt die Notiz; Name und Punkt trägt der Kopf des Blatts', async () => {
     const setup = await build();
 
-    expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
     expect(screen.getByText('Nordhang, ab Mitte September.')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Alter Fichtenhang' })).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 
@@ -54,7 +54,6 @@ describe('MarkerBlattComponent', () => {
 
     await edit(setup);
 
-    expect(screen.getByRole('heading', { name: 'Marker bearbeiten' })).toBeInTheDocument();
     expect(screen.getByLabelText('Name')).toHaveValue('Alter Fichtenhang');
     expect(screen.getByRole('radio', { name: 'Blau' })).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByLabelText('Notiz')).toHaveValue('Nordhang, ab Mitte September.');
@@ -76,14 +75,11 @@ describe('MarkerBlattComponent', () => {
     });
   });
 
-  it('kehrt aus dem Formular zum Blatt zurück', async () => {
+  it('trägt im Formular keinen Abbrechen-Knopf: das X des Blatts bricht ab', async () => {
     const setup = await build();
     await edit(setup);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
-    setup.refresh();
-
-    expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
     setup.http.expectNone(`/api/marker/${MARKER.id}`);
   });
 

@@ -53,13 +53,14 @@ describe('OptionSheetComponent', () => {
     );
   });
 
-  it('meldet das Schließen über den Knopf im Kopf', async () => {
+  it('meldet das Schließen über das X des Blatts', async () => {
     const { container, fixture } = await render(OptionSheetComponent, {
       inputs: { open: true, title: 'Faktor wählen', options: OPTIONS },
     });
     let closes = 0;
     fixture.componentInstance.closed.subscribe(() => (closes += 1));
-    const close = container.querySelector<HTMLElement>('.overlay-body__close');
+    expect(container.querySelector('.overlay-body__close')).toBeNull();
+    const close = container.querySelector<HTMLElement>('.sheet__close');
     if (close === null) throw new Error('Der Knopf zum Schließen steht nicht im Baum.');
 
     await userEvent.click(close);

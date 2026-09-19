@@ -50,7 +50,7 @@ async function openMarker(page: Page): Promise<void> {
 test('Das X schließt das Objektblatt, ohne zu löschen', async ({ page }) => {
   await openMarker(page);
 
-  await page.locator('.object__close').click();
+  await page.locator('.sheet__close').click();
 
   await expect(page.getByRole('heading', { name: 'Alter Fichtenbestand' })).toHaveCount(0);
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
@@ -71,7 +71,7 @@ test('Der Fuß führt in das Formular und wieder zurück', async ({ page }) => {
   await page.getByRole('button', { name: 'Bearbeiten' }).click();
   await expect(page.getByRole('heading', { name: 'Marker bearbeiten' })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Abbrechen' }).click();
+  await page.locator('.sheet__close').last().click();
   await expect(page.getByRole('heading', { name: 'Alter Fichtenbestand' })).toBeVisible();
 });
 

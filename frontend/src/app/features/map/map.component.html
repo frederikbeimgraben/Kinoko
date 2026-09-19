@@ -65,6 +65,7 @@
       <div class="map__sheet">
         <app-sheet
           [label]="'nav.tab.map' | t"
+          [closable]="false"
           [detent]="state.detent()"
           [detents]="detents"
           (detentChange)="setDetent($event)"
