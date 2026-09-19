@@ -34,6 +34,12 @@ describe('PeopleComponent', () => {
     await noViolations(container);
   });
 
+  it('trägt den Namen einer Person in der Primärfarbe', async () => {
+    await build();
+
+    expect(screen.getByText('Frederik').closest('.row__title--accent')).not.toBeNull();
+  });
+
   it('fragt den Dienst nach dem, was jemand eintippt', async () => {
     const { api } = await build();
 

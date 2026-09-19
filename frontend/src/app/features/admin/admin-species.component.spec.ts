@@ -57,6 +57,12 @@ describe('AdminSpeciesComponent', () => {
     await noViolations(container);
   });
 
+  it('trägt den Namen einer Art in der Primärfarbe', async () => {
+    await build();
+
+    expect(screen.getByText('Steinpilz').closest('.row__title--accent')).not.toBeNull();
+  });
+
   it('kennzeichnet eine Art ohne Vorhersage', async () => {
     await build();
 
