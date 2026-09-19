@@ -19,6 +19,28 @@ export const FALLBACK_TEXTS = new InjectionToken<FallbackTexts>('FALLBACK_TEXTS'
 
 const STORAGE_KEY = 'pilzkarte.sprache';
 
+/** Fester Anfang der Meldung, damit ein Test sie erkennt. */
+export const MISSING_KEY_PREFIX = 'i18n: fehlender Schlüssel';
+
+/** Diese Präfixe kommen vom Server oder aus einer Aufzählung, eine Lücke darin ist kein Fehler. */
+const DYNAMIC_KEY_PREFIXES: readonly string[] = [
+  'account.mapApp.',
+  'enum.',
+  'farbe.',
+  'layer.',
+  'map.tab.',
+  'marker.',
+  'melden.',
+  'sichtbarkeit.',
+  'sprache.',
+  'theme.',
+  'zone.',
+];
+
+function isDynamicKey(key: string): boolean {
+  return DYNAMIC_KEY_PREFIXES.some((prefix) => key.startsWith(prefix));
+}
+
 /** Deutsch, Englisch oder das, was der Browser sagt. */
 export type LanguageChoice = Locale | 'system';
 
@@ -104,9 +126,20 @@ export class I18nService {
 
   /** Übersetzt einen Schlüssel. `{name}` kommt aus `params`, sonst steht er da. */
   translate(key: TranslationKey, params?: Record<string, string | number>): string {
-    const german = this._fallback()[DEFAULT_LOCALE]?.[key] ?? '';
-    const text = this.dictionary()[key] || german || key;
+    const known = this.lookup(key);
+    if (known === null && !isDynamicKey(key)) console.error(`${MISSING_KEY_PREFIX} „${key}“`);
+    const text = known ?? key;
     return params ? this.fill(text, params) : text;
+  }
+
+  /** Übersetzt einen freien Namen, der auch kein Schlüssel sein darf: keine Meldung, wenn er fehlt. */
+  translateOptional(name: string): string {
+    return this.lookup(name) ?? name;
+  }
+
+  private lookup(key: string): string | null {
+    const german = this._fallback()[DEFAULT_LOCALE]?.[key] ?? '';
+    return this.dictionary()[key] || german || null;
   }
 
   private fill(text: string, params: Record<string, string | number>): string {

@@ -142,6 +142,37 @@ describe('I18nService', () => {
     expect(service().translate('gibt.es.nicht' as TranslationKey)).toBe('gibt.es.nicht');
   });
 
+  it('meldet einen fehlenden Schlüssel laut', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    service().translate('gibt.es.nicht' as TranslationKey);
+
+    expect(error).toHaveBeenCalledWith(expect.stringContaining('i18n: fehlender Schlüssel'));
+    error.mockRestore();
+  });
+
+  it('bleibt stumm, wenn der Schlüssel aus dem Server oder einer Aufzählung kommt', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    service().translate('layer.gibt_es_nicht' as TranslationKey);
+
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
+  });
+
+  it('lässt einen freien Namen ohne Katalogeintrag stumm stehen', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    expect(service().translateOptional('Pilzberater')).toBe('Pilzberater');
+
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
+  });
+
+  it('übersetzt einen freien Namen, der doch ein Schlüssel ist', () => {
+    expect(service().translateOptional('nav.karte')).toBe('Karte');
+  });
+
   it('zeigt ohne Rückfalltabelle jeden Schlüssel als Schlüssel', () => {
     expect(withoutFallback().translate('nav.karte')).toBe('nav.karte');
   });
