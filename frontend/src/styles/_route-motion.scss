@@ -1,6 +1,6 @@
 // `route-content` ist der einzige Name, der an der Übergangsanimation
-// teilnimmt. Leiste, Kopfzeile und Karte tragen eigene Namen und bleiben
-// ohne eigene Animation stehen.
+// teilnimmt. Leiste und Kopfzeile tragen eigene Namen. Die Karte trägt keinen:
+// ein Name legte eine Stapelebene um ihre Blätter.
 
 @keyframes route-tab-forward-old {
   from {
@@ -116,4 +116,9 @@ html[data-motion='pop'] {
   &::view-transition-new(route-content) {
     animation: route-pop-new var(--motion-page) var(--ease-standard) both;
   }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
 }
