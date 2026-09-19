@@ -9,6 +9,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MapAppService, type MapApp } from '../../core/maps/map-app.service';
 import { PwaService } from '../../core/pwa/pwa.service';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
+import { APP_VERSION } from '../../core/version.generated';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
@@ -83,9 +84,7 @@ export class AccountComponent {
     return person.name.trim().charAt(0).toUpperCase();
   }
 
-  protected readonly version = computed(
-    () => this.config.configuration()?.version ?? this.i18n.translate('konto.unbekannt'),
-  );
+  protected readonly version = APP_VERSION;
 
   protected readonly themes = computed<SegmentOption[]>(() =>
     THEMES.map((choice) => ({ value: choice, label: this.i18n.translate(`theme.${choice}`) })),
@@ -112,6 +111,14 @@ export class AccountComponent {
 
   protected toMyImages(): void {
     void this.router.navigateByUrl('/konto/bilder');
+  }
+
+  protected toMethod(): void {
+    void this.router.navigateByUrl('/konto/methode');
+  }
+
+  protected toLicences(): void {
+    void this.router.navigateByUrl('/konto/lizenzen');
   }
 
   protected toGroups(): void {
