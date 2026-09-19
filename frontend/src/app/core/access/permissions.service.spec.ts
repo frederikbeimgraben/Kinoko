@@ -83,6 +83,7 @@ describe('PermissionsService', () => {
   it('wartet, solange die Sitzung offen ist', () => {
     const { rights, auth, tick } = build(false);
     auth.checked.set(false);
+    auth.settled.set(false);
     tick();
 
     expect(rights.settled()).toBe(false);

@@ -22,6 +22,15 @@ Nichts wird von Hand geklickt.
 `/anmeldung/still` ist die stille Erneuerung im iframe. Es gibt kein
 Client-Secret.
 
+## Wie lange die Sitzung hält
+
+Die App hält kein Token über einen Neustart. Nach jedem Neuladen holt sie die
+Sitzung still zurück, mit `prompt=none` gegen Authentik. Das gelingt nur,
+solange die Sitzung bei Authentik selbst steht. Deren Dauer steht nicht im
+Blueprint des Clients, sondern an der Stufe `default-authentication-login` des
+Anmeldeflusses. Der Vorgabewert `seconds=0` endet mit dem Browser. Am Telefon
+heißt das: die App ist nach jedem Neustart abgemeldet.
+
 ## Ergebnis
 
 | Was | Wert |

@@ -13,8 +13,9 @@ export class SessionState {
 
   readonly status = computed<SessionStatus>(() => {
     if (this.auth.signedIn()) return 'signedIn';
-    if (this.auth.checked()) return 'guest';
-    return this.store.memory() === null ? 'unknown' : 'signedIn';
+    if (this.auth.settled()) return 'guest';
+    if (this.store.memory() !== null) return 'signedIn';
+    return this.auth.checked() ? 'guest' : 'unknown';
   });
 
   /** Der Name für den Kreis: aus der Sitzung oder aus dem Gerät. */
@@ -27,7 +28,7 @@ export class SessionState {
     effect(() => {
       const person = this.auth.user();
       if (person !== null) this.store.keep({ name: person.name });
-      else if (this.auth.checked()) this.store.forget();
+      else if (this.auth.settled()) this.store.forget();
     });
   }
 }

@@ -22,6 +22,10 @@ from app.modules.access.service import AccessService
 
 BEARER: Final = "Bearer "
 
+# Die Uhren von Issuer und Server laufen nicht gleich. Ohne Spielraum wird ein
+# frisches Token an der Grenze abgelehnt, und die App meldet ab.
+CLOCK_TOLERANCE: Final = 60.0
+
 Db = Annotated[AsyncSession, Depends(session)]
 
 
@@ -78,6 +82,7 @@ async def claims_of(token: str) -> dict[str, Any]:
             algorithms=["RS256", "ES256"],
             audience=settings.oidc_client_id,
             issuer=settings.oidc_issuer,
+            leeway=CLOCK_TOLERANCE,
         )
     except jwt.PyJWTError as broken:
         raise Unauthorized from broken

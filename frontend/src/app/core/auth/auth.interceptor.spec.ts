@@ -101,10 +101,10 @@ describe('authInterceptor', () => {
     expect(got).toEqual({ sub: 'sub-eins' });
   });
 
-  it('öffnet das Anmelde-Blatt, wenn die Erneuerung scheitert', async () => {
+  it('öffnet das Anmelde-Blatt, wenn das SSO die Sitzung verneint', async () => {
     const setup = build();
     await signedIn(setup);
-    setup.manager.still = new Error('keine Sitzung');
+    setup.manager.still = Object.assign(new Error('login_required'), { error: 'login_required' });
     let problem: ProblemDetail | null = null;
 
     setup.http.get('/api/funde').subscribe({ error: (failure: ProblemDetail) => (problem = failure) });
@@ -113,6 +113,20 @@ describe('authInterceptor', () => {
 
     expect(problem).toMatchObject({ status: 401, code: SIGN_IN_REQUIRED });
     expect(setup.auth.sheetOpen()).toBe(true);
+    setup.control.verify();
+  });
+
+  it('fragt nicht nach, wenn nur der Netzweg der Erneuerung scheitert', async () => {
+    const setup = build();
+    await signedIn(setup);
+    setup.manager.still = new Error('kein Netz');
+
+    setup.http.get('/api/funde').subscribe({ error: () => undefined });
+    setup.control.expectOne('/api/funde').flush(null, { status: 401, statusText: 'Unauthorized' });
+    await pass();
+
+    expect(setup.auth.sheetOpen()).toBe(false);
+    expect(setup.auth.signedIn()).toBe(true);
     setup.control.verify();
   });
 

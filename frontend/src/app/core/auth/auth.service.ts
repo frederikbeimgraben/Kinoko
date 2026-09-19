@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import type { User, UserManager } from 'oidc-client-ts';
 import { ConfigService } from '../config/config.service';
 import { USER_MANAGER_FACTORY } from './oidc';
+import { ViewRetry, finalAnswer } from './renewal';
+import { rememberSignOut, signedOutHere } from './signed-out';
 
 /** Die angemeldete Person, so wie sie im ID-Token steht. */
 export interface SignedInUser {
@@ -19,9 +21,6 @@ export const SILENT_PATH = '/anmeldung/still';
 
 /** Ohne `offline_access` gäbe es kein Refresh-Token und keine stille Erneuerung. */
 const SCOPE = 'openid email profile offline_access';
-
-/** Ein Abmelden gilt für den Tab, sonst holte die stille Erneuerung die Sitzung zurück. */
-const SIGNED_OUT_KEY = 'pilzkarte.abgemeldet';
 
 /** Was im OIDC-`state` über den Umweg zum SSO mitreist. */
 interface SignInState {
@@ -46,18 +45,22 @@ export class AuthService {
   private renewal: Promise<string | null> | null = null;
   /** Wer auf die Antwort des Anmelde-Blatts wartet. */
   private pendingEntries: ((signedIn: boolean) => void)[] = [];
+  private readonly retry = new ViewRetry();
 
   private readonly _user = signal<SignedInUser | null>(null);
   private readonly _token = signal<string | null>(null);
   private readonly _busy = signal(false);
   private readonly _sheetOpen = signal(false);
   private readonly _checked = signal(false);
+  private readonly _settled = signal(false);
 
   readonly user = this._user.asReadonly();
   /** Wahr, solange eine Anmeldung oder eine Erneuerung läuft. */
   readonly busy = this._busy.asReadonly();
   /** Wahr, sobald die Sitzungsprüfung einmal geantwortet hat. */
   readonly checked = this._checked.asReadonly();
+  /** Wahr, sobald das SSO selbst geantwortet hat. Ein Netzfehler zählt nicht. */
+  readonly settled = this._settled.asReadonly();
   /** Das Anmelde-Blatt liegt über der Karte. */
   readonly sheetOpen = this._sheetOpen.asReadonly();
   readonly signedIn = computed(() => this._user() !== null);
@@ -75,8 +78,8 @@ export class AuthService {
     // Auf der Rückkehr vom SSO führt die Route selbst; eine zweite stille
     // Anfrage daneben verbrauchte denselben Zustand ein zweites Mal.
     if (location.pathname.startsWith(SIGN_IN_PATH)) return;
-    if (this.signedOut()) {
-      this._checked.set(true);
+    if (signedOutHere()) {
+      this.settle();
       return;
     }
     try {
@@ -93,7 +96,7 @@ export class AuthService {
   async signIn(back = this.router.url): Promise<void> {
     const manager = await this.getManager();
     if (manager === null) return;
-    this.rememberSignOut(false);
+    rememberSignOut(false);
     this._busy.set(true);
     const state: SignInState = { back };
     try {
@@ -120,7 +123,7 @@ export class AuthService {
       return this.targetFrom(user.state);
     } finally {
       this._busy.set(false);
-      this._checked.set(true);
+      this.settle();
     }
   }
 
@@ -146,8 +149,8 @@ export class AuthService {
   async signOut(): Promise<void> {
     const manager = await this.getManager();
     await manager?.removeUser();
-    this.rememberSignOut(true);
-    this._checked.set(true);
+    rememberSignOut(true);
+    this.settle();
     this.adopt(null);
   }
 
@@ -174,17 +177,39 @@ export class AuthService {
     this._busy.set(true);
     try {
       const manager = await this.getManager();
-      if (manager === null) return null;
+      if (manager === null) {
+        this.settle();
+        return null;
+      }
       const user = await manager.signinSilent();
+      this.settle();
       this.adopt(user);
       return this._token();
-    } catch {
-      // Keine Sitzung mehr beim SSO. Das ist der Normalfall beim Start.
-      this.adopt(null);
+    } catch (failure) {
+      if (finalAnswer(failure)) {
+        this.settle();
+        this.adopt(null);
+        return null;
+      }
+      // Ein Netzweg, der scheitert, sagt nichts über die Sitzung. Der Stand
+      // bleibt, und der nächste Sichtbarkeitswechsel fragt noch einmal.
+      this.retryWhenVisible();
       return null;
     } finally {
       this._busy.set(false);
     }
+  }
+
+  /** Merkt: das SSO hat geantwortet. */
+  private settle(): void {
+    this._checked.set(true);
+    this._settled.set(true);
+  }
+
+  /** Legt einen zweiten Versuch auf den Moment, in dem die App wieder sichtbar wird. */
+  private retryWhenVisible(): void {
+    this._checked.set(true);
+    this.retry.schedule(() => void this.silentRenew());
   }
 
   private getManager(): Promise<UserManager | null> {
@@ -219,6 +244,14 @@ export class AuthService {
     manager.events.addUserUnloaded(() => {
       this.adopt(null);
     });
+    // Die Bibliothek erneuert von selbst. Scheitert sie, bleibt die Sitzung
+    // stehen; der nächste Sichtbarkeitswechsel fragt noch einmal.
+    manager.events.addSilentRenewError(() => {
+      this.retryWhenVisible();
+    });
+    manager.events.addAccessTokenExpired(() => {
+      void this.silentRenew();
+    });
     return manager;
   }
 
@@ -249,27 +282,13 @@ export class AuthService {
   private targetFrom(state: unknown): string {
     if (typeof state === 'object' && state !== null && 'back' in state) {
       const back = (state as SignInState).back;
-      // Nur eigene Wege: eine fremde URL im Zustand führte die App aus der App.
-      if (typeof back === 'string' && back.startsWith('/') && !back.startsWith('//')) return back;
+      // Nur eigene Wege: eine fremde URL führte die App aus der App. Die
+      // Callback-Route bliebe mit ihrer Fehlermeldung stehen.
+      if (typeof back !== 'string' || !back.startsWith('/') || back.startsWith('//')) return '/';
+      if (back === SIGN_IN_PATH || back.startsWith(`${SIGN_IN_PATH}/`) || back.startsWith(`${SIGN_IN_PATH}?`))
+        return '/';
+      return back;
     }
     return '/';
-  }
-
-  private signedOut(): boolean {
-    try {
-      return sessionStorage.getItem(SIGNED_OUT_KEY) === 'ja';
-    } catch {
-      // Gesperrter Speicher heißt: der Tab weiß nichts von einem Abmelden.
-      return false;
-    }
-  }
-
-  private rememberSignOut(signedOut: boolean): void {
-    try {
-      if (signedOut) sessionStorage.setItem(SIGNED_OUT_KEY, 'ja');
-      else sessionStorage.removeItem(SIGNED_OUT_KEY);
-    } catch {
-      // Ohne Speicher gilt das Abmelden nur bis zum nächsten Reload.
-    }
   }
 }
