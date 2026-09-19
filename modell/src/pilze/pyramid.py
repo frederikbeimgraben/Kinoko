@@ -191,7 +191,7 @@ def render_field(quelle: Path, targets: list[Path], tops: list[float],
     saetze: list[tuple[list[tuple[int, int, int]], int]] = []
     with rasterio.open(gewarpt) as src:
         for band, (target, top) in enumerate(zip(targets, tops), start=1):
-            weights = arbeit / "gewicht" / target.name
+            weights = arbeit / "gewicht"
             shutil.rmtree(weights, ignore_errors=True)
             gefuellt = cut_field(to_byte(src.read(band) / max(top, 1e-6)),
                                  target, weights, zoom, tx0, ty0)
