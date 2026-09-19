@@ -130,6 +130,25 @@ export const LAYERS_MANIFEST = {
   },
 };
 
+/** `LAYERS_MANIFEST` mit der festen Ebene Fichte, nur für ihre eigenen Boards. */
+export const FICHTE_LAYERS_MANIFEST = {
+  bounds: LAYERS_MANIFEST.bounds,
+  layers: {
+    ...LAYERS_MANIFEST.layers,
+    fichte: {
+      label: 'Fichte',
+      note: 'Thünen-Institut, CC BY 4.0',
+      unit: '',
+      static: true,
+      low: 0,
+      high: 1,
+      tiles: 'layers_kacheln/fichte',
+      zooms: [5, 14],
+      histogram: share(1),
+    },
+  },
+};
+
 function species(slug: string, name: string, scientific: string): unknown {
   return {
     id: `00000000-0000-4000-8000-${slug.length.toString().padStart(12, '0')}`,

@@ -4,6 +4,7 @@ import { test, type Page } from '@playwright/test';
 import {
   SPECIES_BUNDLE,
   LAYERS_MANIFEST,
+  FICHTE_LAYERS_MANIFEST,
   SPECIES_MANIFEST,
   COMBINATIONS,
   SHARED_FINDS,
@@ -41,7 +42,12 @@ export const BOARD_FACTORS = 'regen:ge:80';
 const BOARD_NOW = '2025-10-02T12:00:00Z';
 
 /** Legt Zustand, Manifeste und Kacheln auf die Seite. Kacheln bleiben leer. */
-export async function mockMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {
+export async function mockMap(
+  page: Page,
+  state: BoardState = {},
+  factors = '',
+  layersManifest: unknown = LAYERS_MANIFEST,
+): Promise<void> {
   await page.clock.setFixedTime(new Date(BOARD_NOW));
   await page.addInitScript(
     ([key, combinationKey, value, combination]) => {
@@ -71,7 +77,7 @@ export async function mockMap(page: Page, state: BoardState = {}, factors = ''):
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(layers ? LAYERS_MANIFEST : SPECIES_MANIFEST),
+      body: JSON.stringify(layers ? layersManifest : SPECIES_MANIFEST),
     });
   });
   await page.route('https://tiles.openfreemap.org/**', async (route) => {
@@ -152,4 +158,13 @@ export async function showMapImage(page: Page, name: string, fixed?: number, und
   });
 }
 
-export { SPECIES_BUNDLE, LAYERS_MANIFEST, SPECIES_MANIFEST, COMBINATIONS, SHARED_FINDS, MARKERS, ZONES };
+export {
+  SPECIES_BUNDLE,
+  LAYERS_MANIFEST,
+  FICHTE_LAYERS_MANIFEST,
+  SPECIES_MANIFEST,
+  COMBINATIONS,
+  SHARED_FINDS,
+  MARKERS,
+  ZONES,
+};

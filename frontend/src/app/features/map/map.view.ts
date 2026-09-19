@@ -5,6 +5,7 @@ import {
   findLayer,
   formatValue,
   histogramFor,
+  joinNotes,
   layerWeek,
   matchingWeek,
   type Layer,
@@ -103,6 +104,21 @@ export class MapView {
 
   /** Eine feste Ebene kennt keine Woche; die Leiste tritt dann zurück. */
   readonly fixedLayer = computed(() => this.onLayer() && this.layer()?.fixed === true);
+
+  /** Der Vermerk der Marke: die feste Ebene mit Quellenpflicht, oder die Kombination daraus. */
+  readonly creditNote = computed<string | null>(() => {
+    if (this.onCombination()) {
+      return joinNotes(
+        this.combination.factors().map((factor) => this.creditOf(this.layerFor(factor.source))),
+      );
+    }
+    return this.creditOf(this.layer()) || null;
+  });
+
+  /** Nur eine feste Ebene trägt Quellenpflicht; eine Wochenebene nie. */
+  private creditOf(layer: Layer | null): string {
+    return layer !== null && layer.fixed && layer.note !== '' ? layer.note : '';
+  }
 
   /** Nur Arten mit Vorhersage bietet die Karte zur Wahl. */
   readonly speciesChoices = computed<readonly SpeciesPickerEntry[]>(() =>

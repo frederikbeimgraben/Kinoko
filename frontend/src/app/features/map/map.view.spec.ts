@@ -6,13 +6,53 @@ import { TileService } from '../../core/tiles/tile.service';
 import { SpeciesState } from '../species/species.state';
 import { BUNDLE_ITEMS, RAW_LAYERS, RAW_MANIFEST, answerManifest } from '../../testing/map-doubles';
 import type { SpeciesEntry } from '../../core/api/models';
+import { CombinationState } from './combination.state';
 import { MapState } from './map.state';
 import { MapView } from './map.view';
 
+/** `RAW_LAYERS` mit drei festen Ebenen, die Quellenpflicht tragen, nur für diese Tests. */
+const CREDIT_LAYERS = {
+  bounds: RAW_LAYERS.bounds,
+  layers: {
+    ...RAW_LAYERS.layers,
+    fichte: {
+      label: 'Fichte',
+      unit: '',
+      static: true,
+      low: 0,
+      high: 1,
+      tiles: 'layers_kacheln/fichte',
+      zooms: [5, 14],
+      note: 'Thünen-Institut, CC BY 4.0',
+    },
+    buche: {
+      label: 'Buche',
+      unit: '',
+      static: true,
+      low: 0,
+      high: 1,
+      tiles: 'layers_kacheln/buche',
+      zooms: [5, 14],
+      note: 'Thünen-Institut, CC BY 4.0',
+    },
+    relief: {
+      label: 'Relief',
+      unit: 'm',
+      static: true,
+      low: 0,
+      high: 50,
+      tiles: 'layers_kacheln/relief',
+      zooms: [5, 8],
+      note: 'Landesvermessung, DGM 25',
+    },
+  },
+};
+
 async function view(
   manifest: unknown = RAW_MANIFEST,
-): Promise<{ view: MapView; state: MapState; tiles: TileService }> {
-  answerManifest(manifest, RAW_LAYERS);
+  layers: unknown = RAW_LAYERS,
+): Promise<{ view: MapView; state: MapState; combination: CombinationState; tiles: TileService }> {
+  answerManifest(manifest, layers);
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
@@ -27,7 +67,12 @@ async function view(
     species: () => readonly SpeciesEntry[];
   };
   catalogue.species = () => BUNDLE_ITEMS as unknown as readonly SpeciesEntry[];
-  return { view: TestBed.inject(MapView), state: TestBed.inject(MapState), tiles };
+  return {
+    view: TestBed.inject(MapView),
+    state: TestBed.inject(MapState),
+    combination: TestBed.inject(CombinationState),
+    tiles,
+  };
 }
 
 describe('MapView', () => {
@@ -123,5 +168,40 @@ describe('MapView', () => {
 
     expect(model.fixedLayer()).toBe(true);
     expect(model.layerWeek()).toBeNull();
+  });
+
+  it('nennt keinen Vermerk ohne Quellenpflicht', async () => {
+    const { view: model } = await view();
+
+    expect(model.creditNote()).toBeNull();
+  });
+
+  it('nennt den Vermerk einer festen Ebene mit Quellenpflicht, auch in der Vorhersage', async () => {
+    const { view: model, state } = await view(RAW_MANIFEST, CREDIT_LAYERS);
+    state.layer.set('fichte');
+
+    expect(model.creditNote()).toBe('Thünen-Institut, CC BY 4.0');
+  });
+
+  it('verbindet die Vermerke einer Kombination', async () => {
+    const { view: model, state, combination } = await view(RAW_MANIFEST, CREDIT_LAYERS);
+    state.view.set('combination');
+    combination.factors.set([
+      { source: 'fichte', condition: 'above', low: 0.3, high: 0, active: true },
+      { source: 'relief', condition: 'above', low: 10, high: 0, active: true },
+    ]);
+
+    expect(model.creditNote()).toBe('Thünen-Institut, CC BY 4.0 · Landesvermessung, DGM 25');
+  });
+
+  it('lässt doppelte Vermerke einer Kombination einmal stehen', async () => {
+    const { view: model, state, combination } = await view(RAW_MANIFEST, CREDIT_LAYERS);
+    state.view.set('combination');
+    combination.factors.set([
+      { source: 'fichte', condition: 'above', low: 0.3, high: 0, active: true },
+      { source: 'buche', condition: 'above', low: 0.3, high: 0, active: true },
+    ]);
+
+    expect(model.creditNote()).toBe('Thünen-Institut, CC BY 4.0');
   });
 });
