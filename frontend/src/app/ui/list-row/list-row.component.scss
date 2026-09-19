@@ -109,10 +109,15 @@
   min-inline-size: 0;
 }
 
+// Der Titel bleibt einzeilig; ein längerer Text endet mit Auslassung, wie
+// die Unterzeile. Die Faktorwahl bricht ihn stattdessen um.
 .row__title {
+  overflow: hidden;
   font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
   line-height: var(--list-row-title-height, inherit);
+  white-space: var(--list-row-title-wrap, nowrap);
+  text-overflow: ellipsis;
 }
 
 // Die Zeile misst innen einundfünfzig Punkte; nur eine gerade Summe setzt

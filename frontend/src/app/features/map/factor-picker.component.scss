@@ -11,11 +11,12 @@
   display: contents;
 }
 
-// Die Zeile der Wahl trägt den Namen in normaler Stärke, nicht wie im
-// Filter, und vierzehn Punkte zwischen ihren Teilen.
+// Die Zeile der Wahl trägt den Namen in normaler Stärke, nicht wie im Filter.
+// Ein langer Faktorname bricht um, statt mit Auslassung abzuschneiden.
 .picker__card app-list-row {
   --fw-row-filter: var(--fw-regular);
   --space-row-gap: var(--space-row-inline);
+  --list-row-title-wrap: normal;
 }
 
 // Die Karte trägt oben die Linie der ersten Zeile: sonst stünde jede Zeile

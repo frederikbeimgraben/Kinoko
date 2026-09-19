@@ -129,4 +129,18 @@ describe('EintragenZustand', () => {
     expect(flow.ring()).toEqual([]);
     expect(flow.location()).toBeNull();
   });
+
+  it('räumt beim Verlassen des Reiters weg, ohne die Geschichte zu bewegen', () => {
+    const stack = TestBed.inject(OverlayStackService);
+    const back = vi.spyOn(stack, 'back');
+    const flow = state();
+    flow.open();
+    flow.startFind();
+
+    flow.abandon();
+
+    expect(flow.step()).toBeNull();
+    expect(flow.running()).toBe(false);
+    expect(back).not.toHaveBeenCalled();
+  });
 });

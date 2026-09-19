@@ -29,13 +29,14 @@ interface Setup {
   http: HttpTestingController;
   toasts: ToastSpy;
   refresh: () => void;
+  destroy: () => void;
 }
 
 async function build(extra: readonly Provider[] = []): Promise<Setup> {
   const map = new MapAdapterDouble();
   const auth = new AuthStub();
   const queue = new SyncStub();
-  const { container, detectChanges } = await render(AddEntryComponent, {
+  const { container, detectChanges, fixture } = await render(AddEntryComponent, {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
@@ -54,6 +55,9 @@ async function build(extra: readonly Provider[] = []): Promise<Setup> {
     http: TestBed.inject(HttpTestingController),
     toasts: toastSpy(),
     refresh: detectChanges,
+    destroy: () => {
+      fixture.destroy();
+    },
   };
 }
 
@@ -397,5 +401,15 @@ describe('EintragenComponent', () => {
 
       expect(setup.flow.running()).toBe(true);
     });
+  });
+
+  it('räumt den Ablauf weg, wenn der Reiter Karte schließt, ohne die Geschichte zu bewegen', async () => {
+    const setup = await build();
+    await start(setup, 'Fund melden');
+
+    setup.destroy();
+
+    expect(setup.flow.running()).toBe(false);
+    expect(setup.flow.location()).toBeNull();
   });
 });

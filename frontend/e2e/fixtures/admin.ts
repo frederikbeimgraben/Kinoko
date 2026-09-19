@@ -136,9 +136,9 @@ export const ADMIN_SPECIES: readonly {
     forecast: true,
   },
   {
-    slug: 'tylopilus-felleus',
-    name: 'Gallenröhrling',
-    latin: 'Tylopilus felleus',
+    slug: 'neolentinus-cyathiformis',
+    name: 'Becherförmiger Sägeblättling',
+    latin: 'Neolentinus cyathiformis',
     edibility: 'inedible',
     forecast: true,
   },
