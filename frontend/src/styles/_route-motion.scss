@@ -1,0 +1,124 @@
+// `route-content` ist der einzige Name, der an der Übergangsanimation
+// teilnimmt. Leiste und Kopfzeile tragen eigene Namen. Die Karte trägt keinen:
+// ein Name legte eine Stapelebene um ihre Blätter.
+
+@keyframes route-tab-forward-old {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes route-tab-forward-new {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes route-tab-back-old {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes route-tab-back-new {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes route-push-old {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-30%);
+  }
+}
+
+@keyframes route-push-new {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes route-pop-old {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(30%);
+  }
+}
+
+@keyframes route-pop-new {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+html[data-motion='tab-forward'] {
+  &::view-transition-old(route-content) {
+    animation: route-tab-forward-old var(--motion-base) var(--ease-standard) both;
+  }
+  &::view-transition-new(route-content) {
+    animation: route-tab-forward-new var(--motion-base) var(--ease-standard) both;
+  }
+}
+
+html[data-motion='tab-back'] {
+  &::view-transition-old(route-content) {
+    animation: route-tab-back-old var(--motion-base) var(--ease-standard) both;
+  }
+  &::view-transition-new(route-content) {
+    animation: route-tab-back-new var(--motion-base) var(--ease-standard) both;
+  }
+}
+
+html[data-motion='push'] {
+  &::view-transition-old(route-content) {
+    animation: route-push-old var(--motion-page) var(--ease-standard) both;
+  }
+  &::view-transition-new(route-content) {
+    animation: route-push-new var(--motion-page) var(--ease-standard) both;
+  }
+}
+
+html[data-motion='pop'] {
+  &::view-transition-old(route-content) {
+    animation: route-pop-old var(--motion-page) var(--ease-standard) both;
+  }
+  &::view-transition-new(route-content) {
+    animation: route-pop-new var(--motion-page) var(--ease-standard) both;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}

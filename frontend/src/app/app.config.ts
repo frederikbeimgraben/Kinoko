@@ -6,20 +6,25 @@ import {
   isDevMode,
   type ApplicationConfig,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { UI_KIT_INTL, uiKitIntlFromLang } from '@stupa-makers/ui-kit';
 import { authInterceptor } from './core/auth';
 import { I18nService } from './core/i18n/i18n.service';
 import { TEXT_CACHE } from './core/i18n/text-cache';
 import { OfflineTextCache } from './core/offline/offline-text-cache';
+import { applyRouteMotion } from './core/navigation/route-motion';
 import { routes } from './app.routes';
 import { startApp } from './app.start';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withViewTransitions({ skipInitialTransition: true, onViewTransitionCreated: applyRouteMotion }),
+    ),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),

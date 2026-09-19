@@ -49,6 +49,29 @@ test('Reiterwechsel lädt keinen neuen Kartenstil', async ({ page }) => {
   expect(styleRequests).toHaveLength(loaded);
 });
 
+test('Reiterwechsel setzt die Übergangsart und lädt keinen neuen Kartenstil', async ({ page }) => {
+  const styleRequests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('tiles.openfreemap.org')) styleRequests.push(request.url());
+  });
+  await openMap(page);
+  await page.waitForLoadState('networkidle');
+  const loaded = styleRequests.length;
+
+  await page.getByRole('navigation').locator('a[href="/arten"]').click();
+  await expect(page).toHaveURL(/\/arten$/);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset['motion']))
+    .toBe('tab-forward');
+
+  await page.getByRole('navigation').locator('a[href="/karte"]').click();
+  await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset['motion'])).toBe('tab-back');
+
+  await page.waitForLoadState('networkidle');
+  expect(styleRequests).toHaveLength(loaded);
+});
+
 test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) => {
   await openMap(page);
   await expect(page.getByRole('button', { name: /KW 40/ })).toHaveAttribute('aria-pressed', 'true');

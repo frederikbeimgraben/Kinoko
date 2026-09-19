@@ -17,16 +17,20 @@
   background: var(--color-bg);
 }
 
+// Nur der Reiterinhalt nimmt an der View Transition teil. Leiste, Kopfzeile
+// und Karte bekommen eigene Namen, damit sie beim Wechsel stehen bleiben.
 .shell__content {
   position: relative;
   grid-row: 1;
   min-inline-size: 0;
   min-block-size: 0;
+  view-transition-name: route-content;
 }
 
 .shell__nav {
   grid-row: 2;
   min-inline-size: 0;
+  view-transition-name: shell-nav;
 }
 
 .shell__avatar {
@@ -42,6 +46,7 @@
   inset-inline: 0;
   z-index: 6;
   margin-block-start: env(safe-area-inset-top, 0px);
+  view-transition-name: shell-banner;
 }
 
 // Am Rechner liegt die Karte über der ganzen Fläche und schiebt ihre eigene
