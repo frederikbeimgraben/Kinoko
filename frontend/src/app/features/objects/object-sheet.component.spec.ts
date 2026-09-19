@@ -8,6 +8,7 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
+import { ME } from '../../testing/access-fixture';
 import {
   FIND,
   FIND_ENTRY,
@@ -58,6 +59,10 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   await katalog;
+  // Das Konto löst sich mit dem Katalog auf; `konto-eins` besitzt den Fund der Vorlage.
+  await vi.waitFor(() => {
+    http.expectOne('/api/me').flush(ME);
+  });
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
@@ -110,6 +115,38 @@ describe('ObjektBlattComponent', () => {
     setup.refresh();
 
     expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
+  });
+
+  it('nennt den Melder eines geteilten Fundes, wenn eine Gruppe ihn auflöst', async () => {
+    const setup = await build({ ...FIND_ENTRY, ownerId: 'konto-zwei' });
+
+    setup.state.object.set({ kind: 'find', id: FIND.id });
+    setup.refresh();
+
+    await vi.waitFor(() => {
+      setup.http.expectOne('/api/people/names?ids=konto-zwei').flush([{ id: 'konto-zwei', name: 'Jonas' }]);
+    });
+
+    await vi.waitFor(() => {
+      setup.refresh();
+      expect(screen.getByText('6. September 2026 · 3 Stück · Jonas')).toBeInTheDocument();
+    });
+  });
+
+  it('lässt den Melder weg, wenn keine Gruppe ihn auflöst', async () => {
+    const setup = await build({ ...FIND_ENTRY, ownerId: 'konto-zwei' });
+
+    setup.state.object.set({ kind: 'find', id: FIND.id });
+    setup.refresh();
+
+    await vi.waitFor(() => {
+      setup.http.expectOne('/api/people/names?ids=konto-zwei').flush([]);
+    });
+
+    await vi.waitFor(() => {
+      setup.refresh();
+      expect(screen.getByText('6. September 2026 · 3 Stück')).toBeInTheDocument();
+    });
   });
 
   it('öffnet Marker und Zone aus derselben Adresse', async () => {

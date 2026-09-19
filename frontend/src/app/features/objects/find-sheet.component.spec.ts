@@ -114,34 +114,6 @@ describe('FundBlattComponent', () => {
     await noViolations(setup.container);
   });
 
-  it('nennt den Melder eines geteilten Fundes, wenn eine Gruppe ihn auflöst', async () => {
-    const foreign = { ...FIND, ownerId: 'konto-zwei' };
-    const setup = await build({ find: foreign, owns: false });
-
-    await vi.waitFor(() => {
-      setup.http.expectOne('/api/people/names?ids=konto-zwei').flush([{ id: 'konto-zwei', name: 'Jonas' }]);
-    });
-
-    await vi.waitFor(() => {
-      setup.refresh();
-      expect(screen.getByText('6. September 2026 · 3 Stück · Jonas')).toBeInTheDocument();
-    });
-  });
-
-  it('lässt den Melder weg, wenn keine Gruppe ihn auflöst', async () => {
-    const foreign = { ...FIND, ownerId: 'konto-zwei' };
-    const setup = await build({ find: foreign, owns: false });
-
-    await vi.waitFor(() => {
-      setup.http.expectOne('/api/people/names?ids=konto-zwei').flush([]);
-    });
-
-    await vi.waitFor(() => {
-      setup.refresh();
-      expect(screen.getByText('6. September 2026 · 3 Stück')).toBeInTheDocument();
-    });
-  });
-
   it('nennt die Vorhersage an diesem Ort mit Art, Woche und Bezug', async () => {
     const setup = await build();
 
