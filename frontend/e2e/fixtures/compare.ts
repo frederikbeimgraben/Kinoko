@@ -90,8 +90,6 @@ export function species(entry: Shape, at: number): Record<string, unknown> {
             unit: 'cm',
             low: entry.capWidth[0],
             high: entry.capWidth[1],
-            rareLow: null,
-            rareHigh: null,
           },
         ],
       },
@@ -197,8 +195,8 @@ function bundleOf(entries: readonly Shape[]): Record<string, unknown> {
 
 /** Beide Bretter: zwei Arten im Vergleich, beide mit einem Merkmal am Stiel. */
 export const COMPARE = bundleOf([
-  { ...STONE, stem: 'weiß, fein' },
-  { ...GALL, stem: 'dunkelbraun, grob' },
+  { ...STONE, stem: 'weiß, feines Netz' },
+  { ...GALL, stem: 'dunkelbraun, grobes Netz' },
   BAY,
   SUMMER,
 ]);

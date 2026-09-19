@@ -7,3 +7,14 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.section__note {
+  margin: 6px 0 0;
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.section__note--comment {
+  margin-block-start: 2px;
+}

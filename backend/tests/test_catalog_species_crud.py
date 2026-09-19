@@ -205,6 +205,7 @@ async def test_replace_species_writes_every_child_kind(
                 "measurements": [{"dimension": "width", "unit": "cm", "low": 4.0, "high": 20.0}],
             },
         ],
+        partNotes=[{"part": "cap", "description": "Halbkugelig", "comment": "Selten bis 30 cm"}],
         colours=[
             {
                 "part": "cap",
@@ -239,6 +240,9 @@ async def test_replace_species_writes_every_child_kind(
     assert response.status_code == 200
     body = response.json()
     assert body["measurements"][0]["measurements"][0]["low"] == 4.0
+    assert body["partNotes"] == [
+        {"part": "cap", "description": "Halbkugelig", "comment": "Selten bis 30 cm"}
+    ]
     assert len(body["colours"][0]["colours"]) == 2
     assert body["colourChanges"][0]["from"]["hex"] == "#ffffff"
     assert body["colourChanges"][1]["from"] is None

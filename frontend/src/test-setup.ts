@@ -21,6 +21,7 @@ Object.defineProperty(window, 'matchMedia', {
 // jeder Baustein, der etwas in den Blick holt oder eine Geste fängt.
 Element.prototype.scrollIntoView = () => undefined;
 Element.prototype.scrollTo = () => undefined;
+Element.prototype.scrollBy = () => undefined;
 
 // jsdom rechnet kein Layout und kennt darum keinen ResizeObserver. Ohne
 // Ersatz bräche jede Oberfläche, die ihre eigene Höhe misst.

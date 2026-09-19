@@ -1,13 +1,21 @@
+:host {
+  display: block;
+}
+
+.wrap {
+  position: relative;
+  // Die Leiste läuft an den Rand des Blatts, der Inhalt daneben nicht.
+  margin-inline: calc(var(--pilz-gutter) * -1);
+}
+
 .bar {
   display: flex;
   // Waagrecht scrollt die Leiste, senkrecht zieht das Blatt darunter.
   touch-action: pan-x;
   gap: 6px;
   padding-block: 10px 2px;
-  overflow-x: auto;
-  // Die Leiste läuft an den Rand des Blatts, der Inhalt daneben nicht.
-  margin-inline: calc(var(--pilz-gutter) * -1);
   padding-inline: var(--pilz-gutter);
+  overflow-x: auto;
   scrollbar-width: none;
 }
 
@@ -15,4 +23,37 @@
 // greifbar bleibt, tritt aber zurück.
 .bar--dimmed {
   opacity: 0.45;
+}
+
+// Der Pfeilknopf steht nur am Rechner, über den Kacheln, wo weitere Wochen
+// verdeckt sind.
+.arrow {
+  display: none;
+  position: absolute;
+  inset-block-start: calc(10px + var(--size-week-height) / 2);
+  z-index: 1;
+  align-items: center;
+  justify-content: center;
+  inline-size: 28px;
+  block-size: 28px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-50%);
+}
+
+@media (hover: hover) {
+  .arrow {
+    display: flex;
+  }
+}
+
+.arrow--start {
+  inset-inline-start: 6px;
+}
+
+.arrow--end {
+  inset-inline-end: 6px;
 }

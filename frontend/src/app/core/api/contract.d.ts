@@ -1026,8 +1026,11 @@ export interface components {
             unit: components["schemas"]["Unit"];
             low: number;
             high: number;
-            rareLow?: number | null;
-            rareHigh?: number | null;
+        };
+        PartNote: {
+            part: components["schemas"]["BodyPart"];
+            description: string;
+            comment: string;
         };
         MeasurementGroup: {
             part: components["schemas"]["BodyPart"];
@@ -1115,6 +1118,7 @@ export interface components {
             capShapeOld?: components["schemas"]["CapShape"] | null;
             names?: components["schemas"]["SpeciesNameEntry"][];
             measurements?: components["schemas"]["MeasurementGroup"][];
+            partNotes?: components["schemas"]["PartNote"][];
             colours?: components["schemas"]["ColourGroup"][];
             colourChanges?: components["schemas"]["ColourChange"][];
             capFeatures?: components["schemas"]["CapFeatureEntry"][];
@@ -1151,6 +1155,7 @@ export interface components {
             capShapeOld?: components["schemas"]["CapShape"] | null;
             names: components["schemas"]["SpeciesNameEntry"][];
             measurements: components["schemas"]["MeasurementGroup"][];
+            partNotes?: components["schemas"]["PartNote"][];
             colours: components["schemas"]["ColourGroup"][];
             colourChanges: components["schemas"]["ColourChange"][];
             capFeatures: components["schemas"]["CapFeatureEntry"][];

@@ -43,13 +43,13 @@ const SPECIES = {
     {
       part: 'cap',
       measurements: [
-        { dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: null },
-        { dimension: 'height', unit: 'cm', low: 3, high: 8, rareLow: null, rareHigh: null },
+        { dimension: 'width', unit: 'cm', low: 4, high: 20 },
+        { dimension: 'height', unit: 'cm', low: 3, high: 8 },
       ],
     },
     {
       part: 'stem',
-      measurements: [{ dimension: 'width', unit: 'cm', low: 2, high: 6, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 2, high: 6 }],
     },
   ],
   colours: [CAP_COLOUR, TUBE_COLOUR, TUBE_LATER],
@@ -149,7 +149,12 @@ describe('species-lists', () => {
     expect(withColourGroup(null, 'cap', 0, group)).toEqual([group]);
     expect(withoutColourGroup(null, 'cap', 0)).toEqual([]);
     expect(withoutMeasurement(null, 'cap', 'width')).toEqual([]);
-    expect(withoutPart(null, 'cap')).toEqual({ measurements: [], colours: [], colourChanges: [] });
+    expect(withoutPart(null, 'cap')).toEqual({
+      measurements: [],
+      colours: [],
+      colourChanges: [],
+      partNotes: [],
+    });
   });
 
   it('bietet nur die Teile, die weder Art noch Wahl führen', () => {

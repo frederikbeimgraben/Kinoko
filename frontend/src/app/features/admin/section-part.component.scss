@@ -11,6 +11,7 @@ app-page-header {
 
 .section {
   @include section.body;
+  @include section.fields;
 }
 
 .section__title {
@@ -34,6 +35,20 @@ app-page-header {
 
 app-add-row {
   margin-block-start: 10px;
+}
+
+// Zwei Notizfelder stehen enger beieinander als die Abschnitte darüber.
+.section__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+app-form-field {
+  --form-field-lines: 96px;
+  --form-field-lines-height: 16px;
+  --form-field-lines-top: 11px;
+  --form-field-label-height: 12px;
 }
 
 app-action-bar {

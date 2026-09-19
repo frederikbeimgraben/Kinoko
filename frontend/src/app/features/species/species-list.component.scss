@@ -19,12 +19,6 @@
   padding: 14px var(--size-gutter);
 }
 
-.species__count {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
 // Die aktiven Filter laufen an den Rand und blenden dort aus.
 // Am Rechner steht die Steuerspalte links und der Inhalt rechts.
 .species--wide {
@@ -64,4 +58,9 @@
   font-size: 13px;
   line-height: 1.4;
   color: var(--color-text-muted);
+}
+
+// Am Telefon zieht die Zeile vier Punkte aus dem Abstand der Fläche.
+.species:not(.species--wide) > .species__summary {
+  margin-block-start: -4px;
 }

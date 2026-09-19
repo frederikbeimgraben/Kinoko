@@ -1,27 +1,51 @@
-<div
-  #bar
-  class="bar"
-  role="group"
-  [class.bar--dimmed]="dimmed()"
-  [attr.aria-label]="label()"
-  (keydown)="onKey($event)"
->
-  @if (loading()) {
-    @for (slot of placeholders; track slot) {
-      <app-week-button [year]="0" [week]="0" [loading]="true" [inTabOrder]="false" />
+<div class="wrap">
+  <div
+    #bar
+    class="bar"
+    role="group"
+    [class.bar--dimmed]="dimmed()"
+    [attr.aria-label]="label()"
+    (keydown)="onKey($event)"
+  >
+    @if (loading()) {
+      @for (slot of placeholders; track slot) {
+        <app-week-button [year]="0" [week]="0" [loading]="true" [inTabOrder]="false" />
+      }
     }
+    @for (week of shown(); track week.key; let i = $index) {
+      <app-week-button
+        [year]="week.year"
+        [week]="week.week"
+        [share]="week.share"
+        [forecast]="week.forecast"
+        [yearMark]="week.yearMark"
+        [active]="isActive(week)"
+        [locked]="dimmed()"
+        [inTabOrder]="i === activeIndex()"
+        (chosen)="chosen.emit(week)"
+      />
+    }
+  </div>
+  @if (canScrollBack()) {
+    <button
+      class="arrow arrow--start tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'map.timeline.scrollEarlier' | t"
+      (click)="scrollByPage(-1)"
+    >
+      <app-svg-icon name="back" [size]="14" />
+    </button>
   }
-  @for (week of shown(); track week.key; let i = $index) {
-    <app-week-button
-      [year]="week.year"
-      [week]="week.week"
-      [share]="week.share"
-      [forecast]="week.forecast"
-      [yearMark]="week.yearMark"
-      [active]="isActive(week)"
-      [locked]="dimmed()"
-      [inTabOrder]="i === activeIndex()"
-      (chosen)="chosen.emit(week)"
-    />
+  @if (canScrollForward()) {
+    <button
+      class="arrow arrow--end tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'map.timeline.scrollLater' | t"
+      (click)="scrollByPage(1)"
+    >
+      <app-svg-icon name="forward" [size]="14" />
+    </button>
   }
 </div>

@@ -18,6 +18,7 @@ from app.models import (
     SpeciesMeasurement,
     SpeciesName,
     SpeciesPartFeature,
+    SpeciesPartNote,
     SpeciesSeason,
     SpeciesSource,
     SpeciesTerm,
@@ -64,6 +65,7 @@ class ChildRows:
         self.colour_changes: dict[uuid.UUID, list[SpeciesColourChange]] = {}
         self.triggers: dict[tuple[uuid.UUID, int], list[SpeciesColourChangeTrigger]] = {}
         self.part_features: dict[uuid.UUID, list[SpeciesPartFeature]] = {}
+        self.part_notes: dict[uuid.UUID, list[SpeciesPartNote]] = {}
         self.traits: dict[uuid.UUID, list[SpeciesTrait]] = {}
         self.sources: dict[uuid.UUID, list[SpeciesSource]] = {}
         self.seasons: dict[uuid.UUID, list[SpeciesSeason]] = {}
@@ -101,6 +103,9 @@ async def load_children(db: AsyncSession, ids: Sequence[uuid.UUID]) -> ChildRows
         for key, group in groupby(trigger_rows, key=lambda row: (row.species_id, row.position))
     }
     found.part_features = _grouped(await _rows(db, SpeciesPartFeature, ids), "species_id")
+    found.part_notes = _grouped(
+        await _rows(db, SpeciesPartNote, ids, SpeciesPartNote.part), "species_id"
+    )
     found.traits = _grouped(await _rows(db, SpeciesTrait, ids), "species_id")
     found.sources = _grouped(
         await _rows(db, SpeciesSource, ids, SpeciesSource.position), "species_id"

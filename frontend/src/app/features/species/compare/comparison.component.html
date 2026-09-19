@@ -38,7 +38,7 @@
             <ng-template let-test>
               @if (test) {
                 <span class="compare__change">
-                  <span class="compare__colours">
+                  <span class="compare__colours" [class.compare__colours--split]="test.to">
                     @if (test.from) {
                       <app-colour-field
                         class="compare__from"
@@ -68,8 +68,8 @@
             </ng-template>
           </app-key-value-row>
         }
-        @if (filled(stemNets())) {
-          <app-key-value-row [key]="'species.compare.stemNet' | t" [cells]="stemNets()">
+        @if (filled(stems())) {
+          <app-key-value-row [key]="'species.compare.stem' | t" [cells]="stems()">
             <ng-template let-text>
               @if (text) {
                 <span class="compare__text">{{ text }}</span>

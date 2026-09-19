@@ -58,11 +58,13 @@ describe('SpeciesColourChangeComponent', () => {
     expect(screen.getByText(`gelb, dann blau · ${word}`)).toBeInTheDocument();
   });
 
-  it('trägt je Zeile eine Fläche mit Von und Nach', async () => {
+  it('trägt je Zeile Von und Nach als eigene Fläche, mit dem Pfeil dazwischen', async () => {
     const { container } = await render(SpeciesColourChangeComponent, { inputs: { changes: CHANGES } });
 
-    expect(container.querySelectorAll('.field')).toHaveLength(2);
-    expect(screen.getByRole('img', { name: 'gelb bis blau' })).toBeInTheDocument();
+    expect(container.querySelectorAll('.field')).toHaveLength(4);
+    expect(screen.getByRole('img', { name: 'gelb' })).toBeInTheDocument();
+    expect(screen.getAllByRole('img', { name: 'blau' })).toHaveLength(2);
+    expect(screen.getAllByRole('img', { name: 'bis' })).toHaveLength(2);
   });
 
   it('zeigt ohne Verfärbung keine Karte', async () => {

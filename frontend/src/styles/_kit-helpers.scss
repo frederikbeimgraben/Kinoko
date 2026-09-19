@@ -133,6 +133,13 @@ app-card.flush {
   --space-5: 0;
 }
 
+// Eine Karte in Blatt, Modal oder Popover trägt keinen Schatten: die Fläche
+// darum hat schon einen. `app-sheet` ist auch das Modal am Rechner.
+app-sheet app-card .card,
+app-popover app-card .card {
+  box-shadow: none;
+}
+
 // Leerzustand einer Liste oder Tabelle im Kit.
 .empty-state {
   padding: var(--space-5);

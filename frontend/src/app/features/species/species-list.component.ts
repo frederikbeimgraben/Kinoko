@@ -67,11 +67,6 @@ export class SpeciesListComponent {
   protected readonly unassessable = computed(() => this.judged().unknown);
   protected readonly hasMore = computed(() => this.judged().hits.length > this.shown());
 
-  /** Die Zahl im Kopf ist die Zahl der Treffer, wie im Fuß des Blatts. */
-  protected readonly countText = computed(() =>
-    this.loading() || this.failed() ? '' : String(this.judged().hits.length),
-  );
-
   protected readonly filtered = computed(() => isActive(this.filter.selection()));
 
   /** Die Marken über der Liste; was keine Marke trägt, zählt daneben. */
@@ -79,8 +74,9 @@ export class SpeciesListComponent {
     chipsOf(this.filter.selection(), this.state.entries(), this.state.palette(), this.i18n),
   );
 
-  /** Die Zeile über der Trefferliste am Rechner: Zahl und die größte Lücke. */
+  /** Die Zeile über der Trefferliste: Zahl und, wenn gefiltert, die größte Lücke. */
   protected readonly summary = computed(() => {
+    if (this.loading() || this.failed()) return '';
     const count = this.i18n.translate('filter.countSpecies', {
       anzahl: String(this.judged().hits.length),
     });

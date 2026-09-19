@@ -73,6 +73,23 @@
       (pressed)="addChange()"
     />
   </section>
+
+  <div class="section__notes">
+    <app-form-field
+      [label]="'admin.part.description' | t"
+      [section]="true"
+      [multiline]="true"
+      [value]="description()"
+      (valueChange)="description.set($event)"
+    />
+    <app-form-field
+      [label]="'admin.part.comment' | t"
+      [section]="true"
+      [multiline]="true"
+      [value]="comment()"
+      (valueChange)="comment.set($event)"
+    />
+  </div>
 </div>
 
 <app-action-bar

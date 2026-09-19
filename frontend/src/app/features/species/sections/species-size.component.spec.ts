@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../../testing/axe';
-import type { MeasurementGroup } from '../../../core/api/models';
+import type { MeasurementGroup, PartNote } from '../../../core/api/models';
 import { SpeciesSizeComponent } from './species-size.component';
 
 const GROUPS: readonly MeasurementGroup[] = [
-  { part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareHigh: 25 }] },
+  { part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] },
   {
     part: 'stem',
     measurements: [
@@ -25,10 +25,15 @@ describe('SpeciesSizeComponent', () => {
     await noViolations(container);
   });
 
-  it('stellt die seltene Spanne hinter die übliche', async () => {
-    await render(SpeciesSizeComponent, { inputs: { groups: [GROUPS[0]] } });
+  it('stellt Beschreibung und Kommentar unter das Teil', async () => {
+    const notes: readonly PartNote[] = [
+      { part: 'cap', description: 'Halbkugelig', comment: 'Selten bis 30 cm' },
+    ];
 
-    expect(screen.getByText('selten bis 25 cm')).toBeInTheDocument();
+    await render(SpeciesSizeComponent, { inputs: { groups: [GROUPS[0]], notes } });
+
+    expect(screen.getByText('Halbkugelig')).toBeInTheDocument();
+    expect(screen.getByText('Selten bis 30 cm')).toBeInTheDocument();
   });
 
   it('zeigt ohne Maß keine Karte', async () => {

@@ -1,8 +1,4 @@
-<app-page-header [title]="'nav.tab.species' | t">
-  @if (countText(); as count) {
-    <span class="species__count">{{ count }}</span>
-  }
-</app-page-header>
+<app-page-header [title]="'nav.tab.species' | t" />
 @if (wide()) {
   <div class="species species--wide">
     <div class="species__column">
@@ -17,8 +13,8 @@
       <app-species-filter-panel />
     </div>
     <div class="species__pane">
-      @if (filtered()) {
-        <p class="species__summary">{{ summary() }}</p>
+      @if (summary(); as text) {
+        <p class="species__summary">{{ text }}</p>
       }
       <app-species-results
         [hits]="hits()"
@@ -57,6 +53,9 @@
           <app-filter-chip [label]="chip.label" (removed)="drop(chip)" />
         }
       </div>
+    }
+    @if (summary(); as text) {
+      <p class="species__summary">{{ text }}</p>
     }
     <app-species-results
       [hits]="hits()"

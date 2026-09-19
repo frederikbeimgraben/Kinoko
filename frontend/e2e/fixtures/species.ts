@@ -59,7 +59,7 @@ function sizes(entry: Shape): unknown[] {
 }
 
 function measure(dimension: string, span: readonly [number, number]): unknown {
-  return { dimension, unit: 'cm', low: span[0], high: span[1], rareLow: null, rareHigh: null };
+  return { dimension, unit: 'cm', low: span[0], high: span[1] };
 }
 
 /** Baut eine Art in der Form des Vertrags. */

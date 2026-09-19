@@ -7,7 +7,7 @@ import {
   levelOf,
   periodOf,
   pressureOf,
-  stemNetOf,
+  stemOf,
   swatchOf,
   flavoursOf,
 } from './comparison.rows';
@@ -120,9 +120,9 @@ describe('comparison rows', () => {
     expect(pressureOf(STONE, 'gills', i18n())).toBeNull();
   });
 
-  it('liest das Stielnetz aus dem Merkmal des Stiels', () => {
-    expect(stemNetOf(STONE)).toBe('weiß, fein');
-    expect(stemNetOf(GALL)).toBeNull();
+  it('liest den Stiel aus seinem Merkmal', () => {
+    expect(stemOf(STONE)).toBe('weiß, fein');
+    expect(stemOf(GALL)).toBeNull();
   });
 
   it('nimmt nur die Begriffe des Geschmacks', () => {

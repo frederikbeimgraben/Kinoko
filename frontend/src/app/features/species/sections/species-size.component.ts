@@ -5,13 +5,15 @@ import {
   MeasurementGroupComponent,
   type MeasurementRow,
 } from '../../../ui/measurement-group/measurement-group.component';
-import type { MeasurementGroup } from '../../../core/api/models';
+import type { MeasurementGroup, PartNote } from '../../../core/api/models';
 import { PART_TEXT } from '../labels';
 
-/** Eine Karte je Körperteil mit seinen Strecken. */
+/** Eine Karte je Körperteil mit seinen Strecken und seiner Notiz. */
 interface PartCard {
   part: string;
   rows: MeasurementRow[];
+  description: string;
+  comment: string;
 }
 
 /** Die Maße einer Art, je Körperteil eine Karte. */
@@ -26,24 +28,21 @@ export class SpeciesSizeComponent {
   private readonly i18n = inject(I18nService);
 
   readonly groups = input.required<readonly MeasurementGroup[]>();
+  readonly notes = input<readonly PartNote[]>([]);
 
   protected readonly cards = computed<PartCard[]>(() =>
-    this.groups().map((group) => ({
-      part: this.i18n.translate(PART_TEXT[group.part]),
-      rows: group.measurements.map((one) => ({
-        extent: one.dimension,
-        spans: rare(one),
-        unit: this.i18n.translate(`enum.unit.${one.unit}` as 'enum.unit.cm'),
-      })),
-    })),
+    this.groups().map((group) => {
+      const note = this.notes().find((one) => one.part === group.part);
+      return {
+        part: this.i18n.translate(PART_TEXT[group.part]),
+        description: note?.description ?? '',
+        comment: note?.comment ?? '',
+        rows: group.measurements.map((one) => ({
+          extent: one.dimension,
+          spans: [{ from: one.low, to: one.high }],
+          unit: this.i18n.translate(`enum.unit.${one.unit}` as 'enum.unit.cm'),
+        })),
+      };
+    }),
   );
-}
-
-/** Die übliche Spanne, dahinter die seltene, wenn eine steht. */
-function rare(one: MeasurementGroup['measurements'][number]): MeasurementRow['spans'] {
-  const spans: { from: number | null; to: number | null }[] = [{ from: one.low, to: one.high }];
-  const low = one.rareLow ?? null;
-  const high = one.rareHigh ?? null;
-  if (low !== null || high !== null) spans.push({ from: low, to: high });
-  return spans;
 }

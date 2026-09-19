@@ -31,8 +31,6 @@ def measurement_rows(ctx: BuildContext) -> list[SpeciesMeasurement]:
                 dimension=dimension,
                 low=span["von"],
                 high=span["bis"],
-                rare_low=span.get("seltenVon"),
-                rare_high=span.get("seltenBis"),
                 unit=vocab.lookup(vocab.UNIT, span["einheit"], field="einheit", source=ctx.stem),
             ),
         )

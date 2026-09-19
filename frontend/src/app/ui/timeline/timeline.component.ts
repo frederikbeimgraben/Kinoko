@@ -1,14 +1,20 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   computed,
   effect,
+  inject,
   input,
   output,
+  signal,
   viewChild,
   viewChildren,
 } from '@angular/core';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 import { WeekButtonComponent } from './week-button.component';
 
 /** Eine Woche des Manifests. `anteil` ist `mean` geteilt durch den Höchstwert. */
@@ -24,15 +30,25 @@ interface ShownWeek extends TimelineWeek {
   key: string;
 }
 
+/** Wie weit die Leiste steht und wie viel Inhalt auf jeder Seite verdeckt ist. */
+interface ScrollState {
+  left: number;
+  width: number;
+  scrollWidth: number;
+}
+
+const REST: ScrollState = { left: 0, width: 0, scrollWidth: 0 };
+
 /** Die Wochen einer Art nebeneinander, ein Tabulatorziel mit Pfeiltasten. */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [WeekButtonComponent],
+  imports: [WeekButtonComponent, SvgIconComponent, TranslatePipe],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })
-export class TimelineComponent {
+export class TimelineComponent implements AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly buttons = viewChildren(WeekButtonComponent);
   private readonly bar = viewChild.required<ElementRef<HTMLElement>>('bar');
 
@@ -64,11 +80,40 @@ export class TimelineComponent {
     return index < 0 ? 0 : index;
   });
 
+  private readonly scroll = signal<ScrollState>(REST);
+
+  /** Weitere Wochen stehen links verdeckt: der Rechner zeigt einen Pfeil. */
+  protected readonly canScrollBack = computed(() => this.scroll().left > 1);
+
+  /** Weitere Wochen stehen rechts verdeckt: der Rechner zeigt einen Pfeil. */
+  protected readonly canScrollForward = computed(() => {
+    const state = this.scroll();
+    return state.left + state.width < state.scrollWidth - 1;
+  });
+
   constructor() {
     // Die gewählte Woche muss sichtbar sein, auch wenn sie über einen Deep Link
     // oder die Pfeile im Kopf gesetzt wurde und weit außerhalb liegt.
     effect(() => {
       this.bringIntoView(this.activeIndex(), false);
+    });
+  }
+
+  ngAfterViewInit(): void {
+    const bar = this.bar().nativeElement;
+    // Neue oder entfernte Wochen und eine andere Blattbreite ändern, was die
+    // Leiste verdeckt.
+    const size = new ResizeObserver(this.measure);
+    const rows = new MutationObserver(this.measure);
+    size.observe(bar);
+    rows.observe(bar, { childList: true, subtree: true });
+    bar.addEventListener('scroll', this.measure, { passive: true });
+    this.measure();
+
+    this.destroyRef.onDestroy(() => {
+      size.disconnect();
+      rows.disconnect();
+      bar.removeEventListener('scroll', this.measure);
     });
   }
 
@@ -86,6 +131,21 @@ export class TimelineComponent {
     this.chosen.emit(weeks[target]);
     this.bringIntoView(target, true);
   }
+
+  /** Ein Pfeilknopf schiebt die Leiste um eine Sichtbreite minus eine Kachel. */
+  protected scrollByPage(direction: 1 | -1): void {
+    const bar = this.bar().nativeElement;
+    const tile = (this.buttons()[0] as WeekButtonComponent | undefined)?.element();
+    const width = tile ? tile.offsetWidth : 0;
+    const step = Math.max(bar.clientWidth - width, width);
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    bar.scrollBy({ left: direction * step, behavior: reduced ? 'auto' : 'smooth' });
+  }
+
+  private readonly measure = (): void => {
+    const bar = this.bar().nativeElement;
+    this.scroll.set({ left: bar.scrollLeft, width: bar.clientWidth, scrollWidth: bar.scrollWidth });
+  };
 
   /** Schiebt die Woche in die Mitte. `scrollTo` bewegt nur die Leiste, nicht die Seite. */
   private bringIntoView(index: number, withFocus: boolean): void {

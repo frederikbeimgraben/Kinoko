@@ -6,8 +6,6 @@ const CAP = {
   unit: 'cm' as const,
   low: 4,
   high: 20,
-  rareLow: null,
-  rareHigh: null,
 };
 
 const SPECIES = {

@@ -247,9 +247,21 @@ class SpeciesMeasurement(Base):
     dimension: Mapped[Dimension] = mapped_column(String(20), primary_key=True)
     low: Mapped[float] = mapped_column(Float)
     high: Mapped[float] = mapped_column(Float)
-    rare_low: Mapped[float | None] = mapped_column(Float)
-    rare_high: Mapped[float | None] = mapped_column(Float)
     unit: Mapped[Unit] = mapped_column(String(10))
+
+
+class SpeciesPartNote(Base):
+    """Beschreibung und Kommentar zu einem Körperteil."""
+
+    __tablename__ = "species_part_note"
+
+    species_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("species.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    part: Mapped[BodyPart] = mapped_column(String(20), primary_key=True)
+    description: Mapped[str] = mapped_column(Text, default="")
+    comment: Mapped[str] = mapped_column(Text, default="")
 
 
 class SpeciesColourRange(Base):

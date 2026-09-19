@@ -16,16 +16,12 @@
   border-radius: 10px;
 }
 
-:host(.choice-row--boxed) .row {
-  padding-inline: 14px;
-}
-
 .row {
   display: flex;
   gap: var(--space-3);
   align-items: center;
   block-size: 100%;
-  padding-inline: 0;
+  padding-inline: 14px;
 }
 
 .row__input {

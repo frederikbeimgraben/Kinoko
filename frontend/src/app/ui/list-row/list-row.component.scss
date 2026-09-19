@@ -95,6 +95,12 @@
   font-size: var(--fs-md);
 }
 
+// Die Objektzeile mit Farbpunkt (Marker, Zone) trägt ihn mit eigenem Polster:
+// das Pfeil-Symbol am Ende bringt schon sechs Punkte Innenrand mit.
+.row__field--default:has(.row__lead:not(:empty)) {
+  padding-inline: 8px 2px;
+}
+
 .row__stack {
   display: flex;
   flex: 1;

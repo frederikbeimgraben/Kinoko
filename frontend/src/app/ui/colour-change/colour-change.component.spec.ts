@@ -14,7 +14,7 @@ function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
 }
 
 describe('ColourChangeComponent', () => {
-  it('nennt den Auslöser als Titel und den Weg der Farbe als Unterzeile', async () => {
+  it('nennt den Auslöser als Titel und den Weg der Farbe unter dem Feld', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Druck'],
@@ -32,7 +32,7 @@ describe('ColourChangeComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt Von und Nach als eine Fläche in Listengröße', async () => {
+  it('trägt Von und Nach als eigene Felder in Teilbreite, mit dem Pfeil dazwischen', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Druck'],
@@ -46,14 +46,13 @@ describe('ColourChangeComponent', () => {
     });
 
     const fields = container.querySelectorAll('.field');
-    expect(fields).toHaveLength(1);
-    expect(screen.getByRole('img', { name: 'weiß zu blau' })).toBeInTheDocument();
-    const field = styleOf(fields[0]);
-    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 96px)');
-    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 30px)');
+    expect(fields).toHaveLength(2);
+    expect(screen.getByRole('img', { name: 'weiß' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'blau' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'zu' })).toBeInTheDocument();
   });
 
-  it('setzt kein Zeichen zwischen die Farben', async () => {
+  it('setzt den Weg der Farbe als eigene Zeile unter das Feld', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Druck'],
@@ -66,7 +65,12 @@ describe('ColourChangeComponent', () => {
       },
     });
 
-    expect(container.querySelector('app-svg-icon')).toBeNull();
+    const value = container.querySelector('.change__value');
+    if (value === null) throw new Error('kein Feld');
+    const caption = value.querySelector('.change__caption');
+    expect(caption?.textContent).toBe('weiß, dann blau · sofort');
+    // Die Zeile steht unter dem Feld: sie ist sein letztes Kind.
+    expect(value.lastElementChild).toBe(caption);
   });
 
   it('stellt mehrere Auslöser desselben Teils als eigene Zeilen dar', async () => {
@@ -88,7 +92,7 @@ describe('ColourChangeComponent', () => {
     expect(screen.getByText('weiß, dann blau · 30 s')).toBeInTheDocument();
   });
 
-  it('nennt nur die neue Farbe, wenn die Ausgangsfarbe fehlt', async () => {
+  it('nennt nur die neue Farbe als ein Feld, wenn die Ausgangsfarbe fehlt', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Anschnitt'],
@@ -103,10 +107,11 @@ describe('ColourChangeComponent', () => {
 
     expect(screen.getByText('blau · 3 min')).toBeInTheDocument();
     expect(container.querySelectorAll('.field')).toHaveLength(1);
+    expect(container.querySelector('app-svg-icon')).toBeNull();
     expect(screen.getByRole('img', { name: 'blau' })).toBeInTheDocument();
   });
 
-  it('nennt nur die alte Farbe, wenn die Farbe bleibt', async () => {
+  it('nennt nur die alte Farbe als ein Feld, wenn die Farbe bleibt', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Verletzung'],
@@ -119,8 +124,27 @@ describe('ColourChangeComponent', () => {
       },
     });
 
-    expect(screen.getByText('weiß · bleibt')).toBeInTheDocument();
+    expect(screen.getByText('bleibt')).toBeInTheDocument();
     expect(container.querySelectorAll('.field')).toHaveLength(1);
+    expect(container.querySelector('app-svg-icon')).toBeNull();
+  });
+
+  it('trägt das ganze Feld in Listengröße, wenn nur eine Farbe steht', async () => {
+    const { container } = await render(ColourChangeComponent, {
+      inputs: {
+        triggers: ['Verletzung'],
+        from: [WHITE],
+        to: [[]],
+        fromLabels: ['weiß'],
+        toLabels: [''],
+        speed: ['bleibt'],
+        arrowLabel: 'zu',
+      },
+    });
+
+    const field = styleOf(container.querySelector('.field'));
+    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 96px)');
+    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 30px)');
   });
 
   it('trennt zwei Zeilen mit dem Strich der zweiten', async () => {

@@ -82,7 +82,7 @@ describe('ComparisonComponent', () => {
     expect(screen.getByText('ungenießbar')).toBeInTheDocument();
   });
 
-  it('zeigt Hutbreite, Stielnetz und Geschmack aus dem Katalog', async () => {
+  it('zeigt Hutbreite, Stiel und Geschmack aus dem Katalog', async () => {
     const container = await build(['steinpilz', 'gallenroehrling']);
 
     expect(screen.getByText('Hutbreite')).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('ComparisonComponent', () => {
 
     expect(screen.getByText('Kahlkopf')).toBeInTheDocument();
     expect(screen.queryByText('Hutbreite')).not.toBeInTheDocument();
-    expect(screen.queryByText('Stielnetz')).not.toBeInTheDocument();
+    expect(screen.queryByText('Stiel')).not.toBeInTheDocument();
     expect(screen.queryByText('Zeit')).not.toBeInTheDocument();
   });
 

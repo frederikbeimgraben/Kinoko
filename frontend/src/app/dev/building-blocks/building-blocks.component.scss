@@ -177,6 +177,36 @@
   --space-row-stack: 2px;
 }
 
+// Wie section.block: die Notiz unter der Maße-Karte, Kommentar enger.
+.block__note {
+  margin: 6px 0 0;
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.block__note--comment {
+  margin-block-start: 2px;
+}
+
+// Die Karte trägt den Rahmen, die Verfärbung darin nur ihre Zeilen.
+.block__changepart {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  block-size: 44px;
+  padding-inline: var(--space-row-inline);
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.block__changecard app-colour-change {
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+
 // Im Vergleich sind die Zellen kleiner als auf einer Artseite.
 .block__compare .block__swatch {
   --pilz-colour-width: 64px;
@@ -184,29 +214,39 @@
   --pilz-colour-radius: 7px;
 }
 
-// Die Druckprobe zeigt zwei Töne mit Pfeil und darunter, wann sie kommt.
+// Die Druckprobe zeigt zwei Töne mit Pfeil, darunter, wann sie kommt.
 .block__press {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .block__presscolours {
+  --press-swatch: calc((64px - 12px - 8px) / 2);
+
   display: grid;
-  grid-template-columns: 30px 12px 30px;
+  grid-template-columns: 64px;
   gap: 4px;
   align-items: center;
   color: var(--color-text-muted);
 }
 
+.block__presscolours--split {
+  grid-template-columns: var(--press-swatch) 12px var(--press-swatch);
+}
+
 .block__presscolour {
-  --pilz-colour-width: 30px;
-  --pilz-colour-height: 18px;
-  --pilz-colour-radius: 5px;
+  --pilz-colour-width: 64px;
+  --pilz-colour-height: 22px;
+  --pilz-colour-radius: 7px;
+}
+
+.block__presscolours--split .block__presscolour {
+  --pilz-colour-width: var(--press-swatch);
 }
 
 .block__pressnote {
-  margin-block-start: 4px;
   font-size: 11px;
   line-height: 1.4;
   color: var(--color-text-muted);

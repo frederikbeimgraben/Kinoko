@@ -101,6 +101,13 @@ export const STONE_SECTIONS: Record<string, unknown> = {
 /** Die Art des Bretts `EditPart`: ein Maß, eine Farbe, eine Verfärbung. */
 export const PART_SECTIONS: Record<string, unknown> = {
   ...STONE_SECTIONS,
+  partNotes: [
+    {
+      part: 'cap',
+      description: 'Halbkugelig, später polsterförmig, Huthaut feucht schmierig',
+      comment: 'Selten bis 30 cm',
+    },
+  ],
   colours: [
     {
       part: 'cap',

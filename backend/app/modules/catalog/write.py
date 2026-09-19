@@ -18,6 +18,7 @@ from app.models import (
     SpeciesMeasurement,
     SpeciesName,
     SpeciesPartFeature,
+    SpeciesPartNote,
     SpeciesSeason,
     SpeciesSource,
     SpeciesTerm,
@@ -35,6 +36,7 @@ if TYPE_CHECKING:
 CLEARED: tuple[type, ...] = (
     SpeciesName,
     SpeciesMeasurement,
+    SpeciesPartNote,
     SpeciesColourRange,
     SpeciesColourChange,
     SpeciesPartFeature,
@@ -62,11 +64,18 @@ async def replace_children(db: AsyncSession, species_id: uuid.UUID, body: Specie
                     dimension=measurement.dimension,
                     low=measurement.low,
                     high=measurement.high,
-                    rare_low=measurement.rare_low,
-                    rare_high=measurement.rare_high,
                     unit=measurement.unit,
                 ),
             )
+    for note in body.part_notes:
+        db.add(
+            SpeciesPartNote(
+                species_id=species_id,
+                part=note.part,
+                description=note.description,
+                comment=note.comment,
+            ),
+        )
     for entry in body.traits:
         db.add(SpeciesTrait(species_id=species_id, key=entry.key, body=entry.text))
     for position, entry in enumerate(body.sources):

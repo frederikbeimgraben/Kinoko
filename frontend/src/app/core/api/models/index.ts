@@ -30,6 +30,7 @@ export type {
   HymeniumType,
   Measurement,
   MeasurementGroup,
+  PartNote,
   Protection,
   SpeciesBundle,
   SpeciesCounts,

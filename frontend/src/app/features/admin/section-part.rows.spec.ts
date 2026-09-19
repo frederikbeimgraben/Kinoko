@@ -6,7 +6,7 @@ const SPECIES = {
   measurements: [
     {
       part: 'cap',
-      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }],
     },
   ],
   colours: [

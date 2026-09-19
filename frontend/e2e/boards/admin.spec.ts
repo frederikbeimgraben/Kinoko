@@ -319,6 +319,19 @@ test('EditColourChange', async ({ page }) => {
   await expectBoard(page, 'EditColourChange');
 });
 
+test('EditPartScrolled', async ({ page }) => {
+  guard('EditPartScrolled', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/teil/cap', {
+    '/api/species/boletus-edulis': PART_SECTIONS,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByLabel('Kommentar')).toHaveValue('Selten bis 30 cm');
+  await page.locator('.section').evaluate((one) => {
+    one.scrollTo(0, 59);
+  });
+  await expectBoard(page, 'EditPartScrolled');
+});
+
 test('EditLookalike', async ({ page }) => {
   guard('EditLookalike', 'phone');
   await open(page, '/verwaltung/arten/boletus-edulis/verwechslung/0', {

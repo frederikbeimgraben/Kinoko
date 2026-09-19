@@ -60,23 +60,33 @@
   color: var(--color-text-muted);
 }
 
-// Von, Pfeil und Nach stehen in festen Spuren. Eine Probe ohne Nachher lässt
-// ihre zwei Spuren leer, damit beide Arten auf einer Linie liegen.
+// Eine Probe ohne Nachher lässt ihre Spur leer, damit beide Arten auf einer
+// Linie liegen.
 .compare__change {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+// Bleibt die Farbe, steht ihr Feld allein und genau in Feldbreite.
+.compare__colours {
+  display: flex;
   align-items: center;
 }
 
-.compare__colours {
-  --pilz-colour-width: 40px;
-  --pilz-colour-height: 22px;
-  --pilz-colour-radius: 7px;
+// Zwei Farben mit Pfeil tragen zusammen genau eine Farbfeldbreite.
+.compare__colours--split {
+  --compare-swatch: calc((var(--pilz-colour-width, 96px) - 12px - 8px) / 2);
 
   display: grid;
-  grid-template-columns: 40px 12px 40px;
+  grid-template-columns: var(--compare-swatch) 12px var(--compare-swatch);
   gap: 4px;
-  align-items: center;
+}
+
+.compare__colours--split .compare__from,
+.compare__colours--split .compare__to {
+  --pilz-colour-width: var(--compare-swatch);
 }
 
 .compare__from {
@@ -95,7 +105,6 @@
 
 .compare__speed {
   display: block;
-  margin-block-start: 4px;
   font-size: 11px;
   line-height: 1.4;
   color: var(--color-text-muted);

@@ -41,7 +41,6 @@ export class SectionSizeComponent {
 
   protected readonly low = signal('');
   protected readonly high = signal('');
-  protected readonly rare = signal('');
 
   protected readonly title = computed(() =>
     this.i18n.translate(SIZE_TITLE[this.dimension()], {
@@ -64,7 +63,6 @@ export class SectionSizeComponent {
       const one = this.chosen();
       this.low.set(one === null ? '' : String(one.low));
       this.high.set(one === null ? '' : String(one.high));
-      this.rare.set(one?.rareHigh === null || one?.rareHigh === undefined ? '' : String(one.rareHigh));
     });
   }
 
@@ -80,8 +78,6 @@ export class SectionSizeComponent {
       unit: this.unit(),
       low: Number(this.low()),
       high: Number(this.high()),
-      rareLow: this.chosen()?.rareLow ?? null,
-      rareHigh: this.rare() === '' ? null : Number(this.rare()),
     });
     this.state.save({ measurements: groups });
     this.back();

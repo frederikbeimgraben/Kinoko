@@ -87,6 +87,7 @@
   align-items: flex-start;
   block-size: var(--form-field-lines, 80px);
   padding-block-start: var(--form-field-lines-top, 10px);
+  line-height: var(--form-field-lines-height, 20px);
   resize: none;
 }
 

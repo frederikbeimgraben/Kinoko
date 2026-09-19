@@ -258,7 +258,7 @@
     "x": 24,
     "y": 4427,
     "w": 414,
-    "h": 436
+    "h": 472
   },
   {
     "selector": "app-key-value-table, app-key-value-row",
@@ -267,14 +267,14 @@
     "x": 462,
     "y": 4427,
     "w": 414,
-    "h": 436
+    "h": 472
   },
   {
     "selector": "app-choice-row",
     "stem": "app-choice-row",
     "order": 30,
     "x": 24,
-    "y": 4886,
+    "y": 4922,
     "w": 414,
     "h": 326
   },
@@ -283,7 +283,7 @@
     "stem": "app-form-field",
     "order": 31,
     "x": 462,
-    "y": 4886,
+    "y": 4922,
     "w": 414,
     "h": 326
   },
@@ -292,7 +292,7 @@
     "stem": "app-search-field",
     "order": 32,
     "x": 24,
-    "y": 5235,
+    "y": 5271,
     "w": 414,
     "h": 161
   },
@@ -301,7 +301,7 @@
     "stem": "app-segmented",
     "order": 33,
     "x": 462,
-    "y": 5235,
+    "y": 5271,
     "w": 414,
     "h": 161
   },
@@ -310,7 +310,7 @@
     "stem": "app-chip-group",
     "order": 34,
     "x": 24,
-    "y": 5419,
+    "y": 5455,
     "w": 414,
     "h": 111
   },
@@ -319,7 +319,7 @@
     "stem": "app-filter-chip",
     "order": 35,
     "x": 462,
-    "y": 5419,
+    "y": 5455,
     "w": 414,
     "h": 111
   },
@@ -328,7 +328,7 @@
     "stem": "app-range-slider",
     "order": 36,
     "x": 24,
-    "y": 5553,
+    "y": 5589,
     "w": 414,
     "h": 105
   },
@@ -337,7 +337,7 @@
     "stem": "app-colour-swatches",
     "order": 37,
     "x": 462,
-    "y": 5553,
+    "y": 5589,
     "w": 414,
     "h": 105
   },
@@ -346,7 +346,7 @@
     "stem": "app-colour-picker",
     "order": 38,
     "x": 24,
-    "y": 5681,
+    "y": 5717,
     "w": 414,
     "h": 418
   },
@@ -355,7 +355,7 @@
     "stem": "app-species-picker",
     "order": 39,
     "x": 462,
-    "y": 5681,
+    "y": 5717,
     "w": 414,
     "h": 418
   },
@@ -364,7 +364,7 @@
     "stem": "app-photo-picker",
     "order": 40,
     "x": 24,
-    "y": 6122,
+    "y": 6158,
     "w": 414,
     "h": 155
   },
@@ -373,7 +373,7 @@
     "stem": "app-year-band-input",
     "order": 41,
     "x": 462,
-    "y": 6122,
+    "y": 6158,
     "w": 414,
     "h": 155
   },
@@ -382,7 +382,7 @@
     "stem": "app-level-pill",
     "order": 42,
     "x": 24,
-    "y": 6300,
+    "y": 6336,
     "w": 414,
     "h": 157
   },
@@ -391,7 +391,7 @@
     "stem": "app-tag-list",
     "order": 43,
     "x": 462,
-    "y": 6300,
+    "y": 6336,
     "w": 414,
     "h": 157
   },
@@ -400,43 +400,43 @@
     "stem": "app-colour-field",
     "order": 44,
     "x": 24,
-    "y": 6480,
+    "y": 6516,
     "w": 414,
-    "h": 239
+    "h": 273
   },
   {
     "selector": "app-colour-change",
     "stem": "app-colour-change",
     "order": 45,
     "x": 462,
-    "y": 6480,
+    "y": 6516,
     "w": 414,
-    "h": 239
+    "h": 273
   },
   {
     "selector": "app-measurement",
     "stem": "app-measurement",
     "order": 46,
     "x": 24,
-    "y": 6742,
+    "y": 6812,
     "w": 414,
-    "h": 327
+    "h": 385
   },
   {
     "selector": "app-measurement-group",
     "stem": "app-measurement-group",
     "order": 47,
     "x": 462,
-    "y": 6742,
+    "y": 6812,
     "w": 414,
-    "h": 327
+    "h": 385
   },
   {
     "selector": "app-year-band",
     "stem": "app-year-band",
     "order": 48,
     "x": 24,
-    "y": 7092,
+    "y": 7220,
     "w": 414,
     "h": 188
   },
@@ -445,7 +445,7 @@
     "stem": "app-season-curve",
     "order": 49,
     "x": 462,
-    "y": 7092,
+    "y": 7220,
     "w": 414,
     "h": 188
   },
@@ -454,7 +454,7 @@
     "stem": "app-histogram",
     "order": 50,
     "x": 24,
-    "y": 7303,
+    "y": 7431,
     "w": 414,
     "h": 146
   },
@@ -463,7 +463,7 @@
     "stem": "app-ramp",
     "order": 51,
     "x": 462,
-    "y": 7303,
+    "y": 7431,
     "w": 414,
     "h": 146
   },
@@ -472,25 +472,25 @@
     "stem": "app-timeline-app-week-button",
     "order": 52,
     "x": 24,
-    "y": 7472,
+    "y": 7600,
     "w": 414,
-    "h": 213
+    "h": 214
   },
   {
     "selector": "app-image-tile",
     "stem": "app-image-tile",
     "order": 53,
     "x": 462,
-    "y": 7472,
+    "y": 7600,
     "w": 414,
-    "h": 213
+    "h": 214
   },
   {
     "selector": "app-image-credit",
     "stem": "app-image-credit",
     "order": 54,
     "x": 24,
-    "y": 7708,
+    "y": 7837,
     "w": 414,
     "h": 717
   },
@@ -499,7 +499,7 @@
     "stem": "app-image-viewer",
     "order": 55,
     "x": 462,
-    "y": 7708,
+    "y": 7837,
     "w": 414,
     "h": 717
   },
@@ -508,7 +508,7 @@
     "stem": "app-private-image",
     "order": 56,
     "x": 24,
-    "y": 8448,
+    "y": 8577,
     "w": 414,
     "h": 169
   },
@@ -517,7 +517,7 @@
     "stem": "app-avatar-button",
     "order": 57,
     "x": 462,
-    "y": 8448,
+    "y": 8577,
     "w": 414,
     "h": 169
   },
@@ -526,7 +526,7 @@
     "stem": "app-floating-button",
     "order": 58,
     "x": 24,
-    "y": 8640,
+    "y": 8769,
     "w": 414,
     "h": 169
   },
@@ -535,7 +535,7 @@
     "stem": "app-crosshair",
     "order": 59,
     "x": 462,
-    "y": 8640,
+    "y": 8769,
     "w": 414,
     "h": 169
   },
@@ -544,7 +544,7 @@
     "stem": "app-svg-icon",
     "order": 60,
     "x": 24,
-    "y": 8832,
+    "y": 8961,
     "w": 414,
     "h": 103
   },
@@ -553,7 +553,7 @@
     "stem": "app-stat-row",
     "order": 61,
     "x": 462,
-    "y": 8832,
+    "y": 8961,
     "w": 414,
     "h": 103
   },
@@ -562,7 +562,7 @@
     "stem": "app-empty-state",
     "order": 62,
     "x": 24,
-    "y": 8958,
+    "y": 9087,
     "w": 414,
     "h": 280
   },
@@ -571,7 +571,7 @@
     "stem": "app-error-state",
     "order": 63,
     "x": 462,
-    "y": 8958,
+    "y": 9087,
     "w": 414,
     "h": 280
   },
@@ -580,7 +580,7 @@
     "stem": "app-infinite-list",
     "order": 64,
     "x": 24,
-    "y": 9261,
+    "y": 9390,
     "w": 414,
     "h": 257
   },
@@ -589,7 +589,7 @@
     "stem": "app-skeleton",
     "order": 65,
     "x": 462,
-    "y": 9261,
+    "y": 9390,
     "w": 414,
     "h": 257
   },
@@ -598,7 +598,7 @@
     "stem": "app-progress",
     "order": 66,
     "x": 24,
-    "y": 9541,
+    "y": 9670,
     "w": 414,
     "h": 119
   },
@@ -607,7 +607,7 @@
     "stem": "app-button-busy",
     "order": 67,
     "x": 462,
-    "y": 9541,
+    "y": 9670,
     "w": 414,
     "h": 119
   }

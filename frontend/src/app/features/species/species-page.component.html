@@ -26,7 +26,7 @@
   <ng-template #facts>
     <app-species-features [species]="one" />
     <app-species-taxonomy [species]="one" />
-    <app-species-size [groups]="one.measurements" />
+    <app-species-size [groups]="one.measurements" [notes]="one.partNotes ?? []" />
     <app-species-colours [groups]="one.colours" />
     <app-species-colour-change [changes]="one.colourChanges" />
     <app-species-time [species]="one" />

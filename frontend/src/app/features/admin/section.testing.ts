@@ -22,7 +22,7 @@ export const SECTION_SPECIES: Record<string, unknown> = {
   measurements: [
     {
       part: 'cap',
-      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }],
     },
   ],
   colours: [{ part: 'gills', mode: 'single', colours: [{ name: 'rosa', hex: '#e8c8cf' }] }],

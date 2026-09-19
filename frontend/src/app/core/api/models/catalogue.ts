@@ -29,6 +29,7 @@ export type TermRef = components['schemas']['TermRef'];
 export type Term = components['schemas']['Term'];
 export type TermKind = components['schemas']['TermKind'];
 export type MeasurementGroup = components['schemas']['MeasurementGroup'];
+export type PartNote = components['schemas']['PartNote'];
 export type SourceEntry = components['schemas']['SourceEntry'];
 export type SourceScope = components['schemas']['SourceScope'];
 export type Measurement = components['schemas']['Measurement'];

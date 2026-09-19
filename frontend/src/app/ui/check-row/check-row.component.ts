@@ -19,6 +19,8 @@ export class CheckRowComponent {
   readonly locked = input(false);
   /** Die Anzahl am Ende der Zeile. */
   readonly count = input<number>();
+  /** Ohne Karte um die Zeile bleibt ihr Inhalt am Rand der Fläche. */
+  readonly flush = input(false);
 
   readonly toggled = output<boolean>();
 
