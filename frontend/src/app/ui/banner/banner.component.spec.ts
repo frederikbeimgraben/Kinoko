@@ -44,7 +44,7 @@ describe('BannerComponent', () => {
 
   it('trägt eine Aktion und meldet ihren Klick', async () => {
     const { container, fixture } = await render(BannerComponent, {
-      inputs: { kind: 'update', action: 'app.update.reload' },
+      inputs: { kind: 'update', actionIcon: 'refresh', actionLabel: 'app.update.reload' },
     });
     let calls = 0;
     fixture.componentInstance.actionClick.subscribe(() => (calls += 1));

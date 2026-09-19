@@ -58,11 +58,6 @@ export class ShellComponent {
 
   protected readonly updateReady = this.pwa.updateReady;
 
-  /** Höhe der sichtbaren oberen Leiste: schiebt schwebende Elemente und Seitenkopf. */
-  protected readonly topBarHeight = computed(() =>
-    this.updateReady() ? 'calc(var(--size-tap) + env(safe-area-inset-top, 0px))' : '0px',
-  );
-
   private readonly adresse = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -78,8 +73,15 @@ export class ShellComponent {
 
   protected readonly onTheMap = computed(() => this.active() === '/karte');
 
-  /** Ohne Netz trägt die Leiste den oberen Rand; das Konto tritt zurück. */
-  protected readonly showAvatar = computed(() => this.onTheMap() && this.sync.online());
+  protected readonly showAvatar = this.onTheMap;
+
+  /** Ob die Karte ihre eigene Zustandsleiste zeigt: kein Netz auf dem Reiter Karte. */
+  private readonly mapOffline = computed(() => this.onTheMap() && !this.sync.online());
+
+  /** Höhe der sichtbaren oberen Leiste: schiebt schwebende Elemente und Seitenkopf. */
+  protected readonly topBarHeight = computed(() =>
+    this.updateReady() || this.mapOffline() ? 'calc(38px + env(safe-area-inset-top, 0px))' : '0px',
+  );
 
   /**
    * Die Verwaltung trägt am Rechner ihre eigenen zwei Spalten und braucht dafür

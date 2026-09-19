@@ -112,7 +112,7 @@ describe('ShellComponent', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Neue Version');
     expect(screen.getByRole('button', { name: 'Neu laden' })).toBeInTheDocument();
     expect(container.querySelector('.shell')).toHaveStyle({
-      '--top-bar-height': 'calc(var(--size-tap) + env(safe-area-inset-top, 0px))',
+      '--top-bar-height': 'calc(38px + env(safe-area-inset-top, 0px))',
     });
   });
 
@@ -120,6 +120,27 @@ describe('ShellComponent', () => {
     await shell(false);
 
     expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('schiebt den Avatar auch für die eigene Zustandsleiste der Karte herab', async () => {
+    const { container, navigate, sync, detectChanges } = await shell();
+    await navigate('/karte');
+    sync.online.set(false);
+    detectChanges();
+
+    expect(container.querySelector('.shell')).toHaveStyle({
+      '--top-bar-height': 'calc(38px + env(safe-area-inset-top, 0px))',
+    });
+    expect(screen.getByRole('button', { name: 'Konto' })).toBeInTheDocument();
+  });
+
+  it('lässt die Karte ohne Netz auf einem anderen Reiter ohne Versatz', async () => {
+    const { container, navigate, sync, detectChanges } = await shell();
+    await navigate('/arten');
+    sync.online.set(false);
+    detectChanges();
+
+    expect(container.querySelector('.shell')).toHaveStyle({ '--top-bar-height': '0px' });
   });
 
   it('markiert den Reiter auch bei einer Adresse mit Abfrage', async () => {
