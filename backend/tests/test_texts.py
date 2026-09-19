@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import httpx
 import pytest
@@ -23,23 +24,13 @@ async def test_seed_writes_every_key_of_the_file(session: AsyncSession, schema: 
 
     rows = (await session.execute(select(TextEntry))).scalars()
     assert {(row.key, row.locale) for row in rows} == wanted()
-    assert added == len(wanted())
+    assert added.added == len(wanted())
 
 
 async def test_sync_writes_only_missing_keys(session: AsyncSession, schema: None) -> None:  # noqa: ARG001
     first = await TextSeed().sync(session)
-    assert first > 0
-    assert await TextSeed().sync(session) == 0
-
-
-async def test_sync_keeps_a_changed_text(session: AsyncSession, seeded: None) -> None:  # noqa: ARG001
-    row = (await session.execute(select(TextEntry).limit(1))).scalar_one()
-    row.value = "Von Hand"
-    row.updated_by_id = None
-    await session.commit()
-    await TextSeed().sync(session)
-    await session.refresh(row)
-    assert row.value == "Von Hand"
+    assert first.added > 0
+    assert (await TextSeed().sync(session)).touched == 0
 
 
 async def test_catalogue_holds_the_whole_file(api: httpx.AsyncClient) -> None:
@@ -118,3 +109,92 @@ async def test_change_of_unknown_key_raises(session: AsyncSession, seeded: None)
 async def test_titles_reach_the_errors(api: httpx.AsyncClient) -> None:
     answer = await api.get("/nirgendwo")
     assert answer.json()["title"] == "Nicht gefunden"
+
+
+def with_source(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, data: dict[str, dict[str, str]]
+) -> None:
+    """Legt eine eigene Vorgabe unter den Seed."""
+    file = tmp_path / "texte.json"
+    file.write_text(json.dumps(data), encoding="utf-8")
+    monkeypatch.setattr(TextSeed, "SOURCE", file)
+
+
+async def test_sync_follows_a_changed_default(
+    session: AsyncSession,
+    schema: None,  # noqa: ARG001
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    with_source(monkeypatch, tmp_path, {"de": {"admin.size": "Maße"}})
+    await TextSeed().sync(session)
+    before = TextService(session).revision(await TextService(session).entries())
+
+    with_source(monkeypatch, tmp_path, {"de": {"admin.size": "Abmessungen"}})
+    report = await TextSeed().sync(session)
+
+    row = (await session.execute(select(TextEntry))).scalar_one()
+    assert row.value == "Abmessungen"
+    assert row.updated_by_id is None
+    assert (report.added, report.updated, report.removed) == (0, 1, 0)
+    assert TextService(session).revision(await TextService(session).entries()) != before
+
+
+async def test_sync_leaves_a_text_changed_by_hand(
+    session: AsyncSession,
+    schema: None,  # noqa: ARG001
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    with_source(monkeypatch, tmp_path, {"de": {"admin.size": "Maße"}})
+    await TextSeed().sync(session)
+    user = await make_user(session, "redaktion")
+    row = (await session.execute(select(TextEntry))).scalar_one()
+    row.value = "Von Hand"
+    row.updated_by_id = user.id
+    await session.commit()
+
+    with_source(monkeypatch, tmp_path, {"de": {"admin.size": "Abmessungen"}})
+    report = await TextSeed().sync(session)
+
+    await session.refresh(row)
+    assert row.value == "Von Hand"
+    assert report.updated == 0
+
+
+async def test_sync_removes_an_orphan_that_nobody_changed(
+    session: AsyncSession,
+    schema: None,  # noqa: ARG001
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    with_source(monkeypatch, tmp_path, {"de": {"admin.size": "Maße", "admin.gone": "Weg"}})
+    await TextSeed().sync(session)
+
+    with_source(monkeypatch, tmp_path, {"de": {"admin.size": "Maße"}})
+    report = await TextSeed().sync(session)
+
+    rows = (await session.execute(select(TextEntry))).scalars()
+    assert {row.key for row in rows} == {"admin.size"}
+    assert (report.added, report.updated, report.removed) == (0, 0, 1)
+
+
+async def test_sync_keeps_an_orphan_changed_by_hand(
+    session: AsyncSession,
+    schema: None,  # noqa: ARG001
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    with_source(monkeypatch, tmp_path, {"de": {"admin.gone": "Weg"}})
+    await TextSeed().sync(session)
+    user = await make_user(session, "redaktion")
+    row = (await session.execute(select(TextEntry))).scalar_one()
+    row.updated_by_id = user.id
+    await session.commit()
+
+    with_source(monkeypatch, tmp_path, {"de": {}})
+    report = await TextSeed().sync(session)
+
+    rows = (await session.execute(select(TextEntry))).scalars()
+    assert {row.key for row in rows} == {"admin.gone"}
+    assert report.removed == 0
