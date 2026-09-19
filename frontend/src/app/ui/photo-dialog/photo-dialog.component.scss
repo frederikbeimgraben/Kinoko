@@ -1,0 +1,52 @@
+@use '../../../styles/tap-icon';
+@use '../modal-layer/modal-layer';
+
+// Der Grund trägt hier das Foto selbst: es gibt keine Fläche aus Papier.
+.photo__scrim {
+  @include modal-layer.scrim;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.photo__image {
+  inline-size: 100%;
+  block-size: 100%;
+  background: none;
+}
+
+.photo__close {
+  @include tap-icon.frameless;
+
+  position: absolute;
+  z-index: 1;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+  color: var(--color-on-media);
+}
+
+.photo__step {
+  @include tap-icon.frameless;
+
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 50%;
+  color: var(--color-on-media);
+  background: rgb(0 0 0 / 45%);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.photo__step--back {
+  inset-inline-start: var(--space-3);
+}
+
+.photo__step--next {
+  inset-inline-end: var(--space-3);
+}

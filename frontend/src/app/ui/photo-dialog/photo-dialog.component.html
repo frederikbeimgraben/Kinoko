@@ -1,0 +1,49 @@
+@if (path(); as path) {
+  <div
+    class="photo__scrim"
+    tabindex="-1"
+    appModalLayer
+    [attr.aria-label]="label()"
+    (dismissed)="closed.emit()"
+    (keydown)="onKeydown($event)"
+    (click)="onGround($event)"
+  >
+    <button
+      class="photo__close tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'common.close' | t"
+      (click)="closed.emit()"
+    >
+      <app-svg-icon name="close" [size]="22" [strokeWidth]="2" />
+    </button>
+    <app-private-image
+      class="photo__image"
+      fit="contain"
+      [path]="path"
+      [alt]="label()"
+      (pointerdown)="onPointerDown($event)"
+      (pointerup)="onPointerUp($event)"
+    />
+    @if (many()) {
+      <button
+        class="photo__step photo__step--back tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'image.previous' | t"
+        (click)="step(-1)"
+      >
+        <app-svg-icon name="left" [size]="12" />
+      </button>
+      <button
+        class="photo__step photo__step--next tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'image.next' | t"
+        (click)="step(1)"
+      >
+        <app-svg-icon name="right" [size]="12" />
+      </button>
+    }
+  </div>
+}

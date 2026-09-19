@@ -562,6 +562,8 @@
   "image.field.takenOn": "Taken on",
   "image.manage.title": "Images",
   "image.myImages.title": "My images",
+  "image.next": "Next image",
+  "image.previous": "Previous image",
   "image.queue.title": "Review images",
   "image.reject": "Reject",
   "image.rejectReason.blurry": "Blurry",

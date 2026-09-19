@@ -21,6 +21,7 @@ const BLOCKS = [
   'app-split-layout',
   'app-popover',
   'app-confirm-dialog',
+  'app-photo-dialog',
   'app-reject-dialog',
   'app-review-queue',
   'app-banner',

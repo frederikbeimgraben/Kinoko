@@ -562,6 +562,8 @@
   "image.field.takenOn": "Aufgenommen",
   "image.manage.title": "Bilder",
   "image.myImages.title": "Meine Bilder",
+  "image.next": "Nächstes Bild",
+  "image.previous": "Voriges Bild",
   "image.queue.title": "Bilder prüfen",
   "image.reject": "Ablehnen",
   "image.rejectReason.blurry": "Unscharf",
