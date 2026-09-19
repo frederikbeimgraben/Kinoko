@@ -201,6 +201,7 @@ test.describe('Seitenhöhe am Telefon', () => {
       '/api/config': authConfig(BASE),
       '/api/photos': photoPage(SPECIES_PHOTOS),
     });
+    await expect(page.getByRole('heading', { name: 'Meine Bilder' })).toBeVisible();
     await assertFillsViewport(page);
   });
 
