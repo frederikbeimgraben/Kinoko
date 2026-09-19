@@ -74,6 +74,9 @@ export interface RolePatch {
 /** Ein Konto, das den Dienst schon einmal benutzt hat. */
 export type Person = components['schemas']['Person'];
 
+/** Der Name einer Person, auflösbar bei gemeinsamer Gruppe. */
+export type PersonName = components['schemas']['PersonName'];
+
 /** Ein Ausschnitt der Personenliste, mit der Gesamtzahl dahinter. */
 export interface Page<E> {
   eintraege: E[];

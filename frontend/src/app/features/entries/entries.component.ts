@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
+import { PersonNamesService } from '../../core/access/person-names.service';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -24,6 +25,7 @@ import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.state';
 import { EntriesState, type EntryBody } from './entries.state';
 import { colourToken } from './colors';
+import { findSubline } from './find-subline';
 import { hectaresText, isoDatum, shortDate } from './formats';
 
 /** Die drei Segmente über der Liste (Boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
@@ -67,6 +69,7 @@ interface Row {
 export class EntriesComponent {
   private readonly species = inject(SpeciesState);
   private readonly auth = inject(AuthService);
+  private readonly names = inject(PersonNamesService);
   private readonly sheet = inject(ObjectSheetState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
@@ -156,21 +159,13 @@ export class EntriesComponent {
     return shortDate(iso, this.i18n, isoDatum(new Date()));
   }
 
-  /** „6. Sept · 3 Stück · Frederik“, so wie das Board `Entries` es schreibt. */
-  private findMeta(date: string, count: number | null, person: string): string {
-    if (count === null) return this.i18n.translate('find.sublineNoCount', { date, person });
-    return this.i18n.translate('find.subline', { date, count, person });
-  }
-
-  /** Ein geteilter Fund nennt keinen Melder: der Vertrag führt keinen Namen. */
-  private sharedMeta(date: string, count: number | null): string {
-    if (count === null) return date;
-    return this.i18n.translate('find.sublineShared', { date, count });
-  }
-
   /** Der Vorname, wie ihn die Unterzeile eines Fundes nennt. */
-  private firstName(): string {
-    return (this.state.reporter() ?? '').split(' ')[0] ?? '';
+  private firstName(full: string | null): string {
+    return (full ?? '').split(' ')[0] ?? '';
+  }
+
+  private subline(date: string, count: number | null, person: string | null): string {
+    return findSubline(this.i18n, date, count, person);
   }
 
   private findRow(find: Find): Row {
@@ -179,7 +174,7 @@ export class EntriesComponent {
       colour: '',
       entry: {
         title: this.speciesName(find.speciesId),
-        meta: this.findMeta(this.date(find.foundOn), find.count, this.firstName()),
+        meta: this.subline(this.date(find.foundOn), find.count, this.firstName(this.state.reporter())),
         note: find.note ?? undefined,
       },
       pending: false,
@@ -188,12 +183,14 @@ export class EntriesComponent {
   }
 
   private sharedRow(find: SharedFind): Row {
+    const person = this.names.nameOf(find.ownerId);
+    const name = person === null ? null : this.firstName(person);
     return {
       key: `shared-${find.id}`,
       colour: '',
       entry: {
         title: this.speciesName(find.speciesId),
-        meta: this.sharedMeta(this.date(find.foundOn), find.count),
+        meta: this.subline(this.date(find.foundOn), find.count, name),
         note: find.note ?? undefined,
       },
       pending: false,
@@ -237,7 +234,9 @@ export class EntriesComponent {
     const body = entry.body;
     const find = 'foundOn' in body;
     const title = find ? this.speciesName(body.speciesId) : body.name;
-    const meta = find ? this.findMeta(this.date(body.foundOn), body.count ?? null, this.firstName()) : '';
+    const meta = find
+      ? this.subline(this.date(body.foundOn), body.count ?? null, this.firstName(this.state.reporter()))
+      : '';
     return {
       key: `waiting-${entry.id}`,
       colour: 'colour' in body && body.colour !== undefined ? colourToken(body.colour) : '',

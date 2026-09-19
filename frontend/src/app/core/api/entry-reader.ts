@@ -9,11 +9,12 @@ type ZoneEntry = components['schemas']['Zone'];
 
 /** Ein geteilter Fund. Der Ort einer geschützten Art kommt gerundet. */
 export function sharedFind(entry: FindEntry): SharedFind | null {
-  const { lat, lon, foundOn, reviewState } = entry;
+  const { lat, lon, foundOn, reviewState, ownerId } = entry;
   if (lat === undefined || lon === undefined || foundOn === undefined) return null;
-  if (reviewState === undefined || entry.deleted) return null;
+  if (reviewState === undefined || ownerId === undefined || entry.deleted) return null;
   return {
     id: entry.id,
+    ownerId,
     speciesId: entry.speciesId ?? null,
     lat,
     lon,

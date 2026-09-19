@@ -377,6 +377,74 @@ async def test_get_person_returns_the_person_with_roles(
     assert [row["slug"] for row in body["roles"]] == ["reviewer"]
 
 
+async def test_person_names_resolve_for_a_shared_group(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    anna = await make_user(session, "anna")
+    bert = await make_user(session, "bert")
+    sign_in(app_of(api), anna)
+    code = (await api.post("/groups", json={"name": "Familie"})).json()["inviteCode"]
+    sign_in(app_of(api), bert)
+    await api.post("/groups/join", json={"inviteCode": code})
+    answer = await api.get("/people/names", params={"ids": str(anna.id)})
+    assert answer.status_code == 200
+    assert answer.json() == [{"id": str(anna.id), "name": "anna"}]
+
+
+async def test_person_names_omit_a_person_without_a_shared_group(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session, "anna")
+    other = await make_user(session, "bert")
+    sign_in(app_of(api), user)
+    answer = await api.get("/people/names", params={"ids": str(other.id)})
+    assert answer.status_code == 200
+    assert answer.json() == []
+
+
+async def test_person_names_resolve_for_the_own_id(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session, "anna")
+    sign_in(app_of(api), user)
+    answer = await api.get("/people/names", params={"ids": str(user.id)})
+    assert answer.status_code == 200
+    assert answer.json() == [{"id": str(user.id), "name": "anna"}]
+
+
+async def test_person_names_needs_a_signed_in_account(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session, "anna")
+    answer = await api.get("/people/names", params={"ids": str(user.id)})
+    assert answer.status_code == 401
+
+
+async def test_person_names_rejects_more_than_fifty_ids(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session, "anna")
+    sign_in(app_of(api), user)
+    ids = ",".join(str(uuid.uuid4()) for _ in range(51))
+    answer = await api.get("/people/names", params={"ids": ids})
+    assert answer.status_code == 422
+
+
+async def test_person_names_rejects_a_broken_id(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    user = await make_user(session, "anna")
+    sign_in(app_of(api), user)
+    answer = await api.get("/people/names", params={"ids": "not-a-uuid"})
+    assert answer.status_code == 422
+
+
 async def test_delete_person_removes_a_non_admin_account(
     api: httpx.AsyncClient,
     session: AsyncSession,

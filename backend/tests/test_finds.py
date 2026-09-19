@@ -129,6 +129,32 @@ async def test_shared_finds_exclude_the_viewers_own(
     assert listed.json()["items"] == []
 
 
+async def test_shared_finds_expose_the_owner_id(
+    api: httpx.AsyncClient,
+    session: AsyncSession,
+) -> None:
+    anna = await make_user(session, "anna")
+    bert = await make_user(session, "bert")
+    sign_in(app_of(api), anna)
+    group = await a_group(api)
+    code = (await api.get(f"/groups/{group}")).json()["inviteCode"]
+    await api.post(
+        "/finds",
+        json={
+            "lat": 1.0,
+            "lon": 1.0,
+            "foundOn": "2026-09-01",
+            "visibility": "shared",
+            "groupId": group,
+        },
+    )
+    sign_in(app_of(api), bert)
+    await api.post("/groups/join", json={"inviteCode": code})
+    listed = await api.get("/finds", params={"mine": "false"})
+    item = listed.json()["items"][0]
+    assert item["ownerId"] == str(anna.id)
+
+
 async def test_shared_finds_coarsen_a_protected_species(
     api: httpx.AsyncClient,
     session: AsyncSession,

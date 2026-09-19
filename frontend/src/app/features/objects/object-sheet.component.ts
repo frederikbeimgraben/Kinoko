@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Find, Marker, Zone } from '../../core/api/models';
+import { AccountService } from '../../core/access/account.service';
+import { PersonNamesService } from '../../core/access/person-names.service';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -20,6 +22,7 @@ import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
 import { ObjectSheetState } from './object-sheet.state';
 import { ZoneSheetComponent } from './zone-sheet.component';
+import { findSubline } from '../entries/find-subline';
 
 /** Der Name des Blatts für Hilfsmittel. */
 const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
@@ -77,7 +80,9 @@ const ZOOM_OBJECT = 14;
 })
 export class ObjectSheetComponent {
   private readonly adapter = inject(MAP_ADAPTER);
+  private readonly account = inject(AccountService);
   private readonly eintraege = inject(EntriesState);
+  private readonly names = inject(PersonNamesService);
   private readonly i18n = inject(I18nService);
   private readonly sheet = inject(ObjectSheetState);
   private readonly species = inject(SpeciesState);
@@ -197,9 +202,13 @@ export class ObjectSheetComponent {
 
   private findSubline(find: Find): string {
     const date = longDate(find.foundOn, this.i18n.locale());
-    const person = this.eintraege.reporter() ?? '';
-    if (find.count === null) return this.i18n.translate('find.sublineNoCount', { date, person });
-    return this.i18n.translate('find.subline', { date, count: find.count, person });
+    return findSubline(this.i18n, date, find.count, this.reporterName(find));
+  }
+
+  /** Der eigene Name kommt aus dem Konto, ein fremder nur bei gemeinsamer Gruppe. */
+  private reporterName(find: Find): string | null {
+    if (this.account.owns(find.ownerId)) return this.eintraege.reporter() ?? '';
+    return this.names.nameOf(find.ownerId);
   }
 
   private zoneSubline(zone: Zone): string {

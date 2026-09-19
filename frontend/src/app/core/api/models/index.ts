@@ -57,6 +57,7 @@ export type {
   PermissionEntry,
   Page,
   Person,
+  PersonName,
   Role,
   RoleInput,
   RolePatch,

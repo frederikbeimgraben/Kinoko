@@ -65,4 +65,13 @@ describe('AccessApi', () => {
     expect(http.expectOne('/api/people/person-jonas').request.method).toBe('DELETE');
     http.verify();
   });
+
+  it('fragt die Namen mehrerer Kennungen mit einem Aufruf ab', () => {
+    const { api, http } = build();
+
+    api.personNames(['anna', 'bert']).subscribe();
+
+    expect(http.expectOne('/api/people/names?ids=anna,bert').request.method).toBe('GET');
+    http.verify();
+  });
 });

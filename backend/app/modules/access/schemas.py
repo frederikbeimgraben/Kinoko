@@ -76,6 +76,13 @@ class RoleUpdate(Schema):
     permissions: list[str] | None = None
 
 
+class PersonName(Schema):
+    """Der Name einer Person, für Melder mit gemeinsamer Gruppe."""
+
+    id: uuid.UUID
+    name: str
+
+
 class Person(Schema):
     """Ein Konto mit seinen Rollen."""
 

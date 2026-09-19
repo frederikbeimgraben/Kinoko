@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { SpeciesState } from '../species/species.state';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
+import { AccountService } from '../../core/access/account.service';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND } from '../../testing/entries-fixture';
@@ -15,11 +16,12 @@ import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FindSheetComponent } from './find-sheet.component';
 
 /** Karte, Konto und Katalog stehen für jeden Test dieses Blatts gleich. */
-function provider(): (EnvironmentProviders | Provider)[] {
+function provider(owns = true): (EnvironmentProviders | Provider)[] {
   return [
     provideHttpClient(),
     provideHttpClientTesting(),
     ...authStubProviders(new AuthStub()),
+    { provide: AccountService, useValue: { owns: () => owns } },
     // Ein festes Heute: die Karte steht auf der laufenden Kalenderwoche, und
     // die Fixtures kennen nur die Wochen von 2025.
     { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
@@ -67,10 +69,16 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(): Promise<Setup> {
+interface BuildOptions {
+  find?: typeof FIND;
+  owns?: boolean;
+}
+
+async function build(options: BuildOptions = {}): Promise<Setup> {
+  const { find = FIND, owns = true } = options;
   const { container, detectChanges, fixture } = await render(FindSheetComponent, {
-    inputs: { find: FIND },
-    providers: provider(),
+    inputs: { find },
+    providers: provider(owns),
   });
   const http = TestBed.inject(HttpTestingController);
   await vi.waitFor(() => {

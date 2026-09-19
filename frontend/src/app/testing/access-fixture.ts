@@ -7,6 +7,7 @@ import type {
   Permission,
   PermissionEntry,
   Person,
+  PersonName,
   Role,
   RoleInput,
   RolePatch,
@@ -130,6 +131,9 @@ export class AccessApiDouble {
   catalogueList: PermissionEntry[] = CATALOGUE;
   summaryAnswer: AdminSummary = SUMMARY;
   speciesCountsAnswer: SpeciesCountsEntry[] = [];
+  personNamesAnswer: PersonName[] = [];
+  /** Wahr, wenn der Abruf der Personennamen scheitern soll. */
+  personNamesFails = false;
   /** Steht hier ein Problem, weist der nächste Schreibzugriff es zurück. */
   rejectWith: ProblemDetail | null = null;
 
@@ -139,6 +143,7 @@ export class AccessApiDouble {
   readonly deleted: string[] = [];
   readonly assigned: { id: string; roles: string[] }[] = [];
   readonly removed: string[] = [];
+  readonly personNamesCalls: string[][] = [];
   meCalls = 0;
   mineCalls = 0;
 
@@ -211,6 +216,12 @@ export class AccessApiDouble {
   deletePerson(id: string): Observable<null> {
     this.removed.push(id);
     return this.answer(null);
+  }
+
+  personNames(ids: readonly string[]): Observable<PersonName[]> {
+    this.personNamesCalls.push([...ids]);
+    if (this.personNamesFails) return throwError(() => problem(503, 'Der Dienst antwortet nicht.'));
+    return of(this.personNamesAnswer.filter((entry) => ids.includes(entry.id)));
   }
 
   private answer<T>(value: T): Observable<T> {
