@@ -564,6 +564,28 @@ describe('MapLibreAdapter', () => {
     expect(map.placedBefore.get('wert-layer-b')).toBeUndefined();
   });
 
+  it('legt jeden Wert unter die Objekte und den Standort', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.showObjects('funde', collection('fund-eins'));
+    a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+    a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
+
+    expect(map.placedBefore.get('wert-layer-b')).toBe('objekte-funde-punkt');
+    expect(map.placedBefore.get('wert-forecast-b')).toBe('wert-layer-b');
+  });
+
+  it('hält die Reihenfolge der Objekte, egal wann sie kommen', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.showObjects('location', collection('ich'));
+    a.showObjects('zonen', collection('zone-eins'));
+
+    expect(map.placedBefore.get('objekte-zonen-flaeche')).toBe('objekte-location-kreis');
+    expect(map.placedBefore.get('objekte-zonen-linie')).toBe('objekte-location-kreis');
+    expect(map.placedBefore.get('objekte-location-kreis')).toBeUndefined();
+  });
+
   it('räumt eine Rolle ab, wenn sie nichts mehr zeigt', async () => {
     const { adapter: a, map } = await adapter();
     a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
