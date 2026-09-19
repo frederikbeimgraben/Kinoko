@@ -16,6 +16,8 @@ export class AuthStub {
   readonly busy = signal(false);
   /** Wahr, sobald die Sitzungsprüfung einmal geantwortet hat. */
   readonly checked = signal(true);
+  /** Wahr, sobald das SSO selbst geantwortet hat. */
+  readonly settled = signal(true);
   /** Die Antwort auf `anmeldungAnfordern`. */
   reply = true;
   asked = 0;

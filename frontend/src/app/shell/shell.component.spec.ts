@@ -19,6 +19,7 @@ import { ShellComponent } from './shell.component';
 class PageComponent {}
 
 const ROUTES = [
+  { path: 'anmeldung', component: PageComponent },
   { path: 'bausteine', component: PageComponent },
   { path: 'karte', component: PageComponent },
   { path: 'arten', component: PageComponent },
@@ -71,6 +72,16 @@ describe('ShellComponent', () => {
     await navigate('/arten/boletus-edulis');
 
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
+  });
+
+  it('behält die Leiste auf der Rückkehr vom SSO und danach', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/anmeldung?code=eins&state=zwei');
+    expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
+
+    await navigate('/konto');
+    expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
   });
 
   it('behält die Leiste auf dem Reiter Arten', async () => {
