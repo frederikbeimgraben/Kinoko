@@ -52,7 +52,7 @@ const SECTION_TOP: Record<string, number> = {
   SpeciesSeason: 1928,
   SpeciesSenses: 2064,
   SpeciesHymenium: 2359,
-  CompareEntry: 2514,
+  CompareEntry: 2505,
 };
 
 /** Rollt die Seite auf die Höhe, die das Brett zeigt. */

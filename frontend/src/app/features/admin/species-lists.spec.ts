@@ -149,7 +149,12 @@ describe('species-lists', () => {
     expect(withColourGroup(null, 'cap', 0, group)).toEqual([group]);
     expect(withoutColourGroup(null, 'cap', 0)).toEqual([]);
     expect(withoutMeasurement(null, 'cap', 'width')).toEqual([]);
-    expect(withoutPart(null, 'cap')).toEqual({ measurements: [], colours: [], colourChanges: [] });
+    expect(withoutPart(null, 'cap')).toEqual({
+      measurements: [],
+      colours: [],
+      colourChanges: [],
+      partNotes: [],
+    });
   });
 
   it('bietet nur die Teile, die weder Art noch Wahl führen', () => {
