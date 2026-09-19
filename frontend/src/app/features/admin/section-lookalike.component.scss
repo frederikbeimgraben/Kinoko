@@ -11,13 +11,14 @@ app-page-header {
 
 .section {
   @include section.body;
+  @include section.fields;
 }
 
 .section__title {
   @include card.section-title;
 }
 
-// Die Zeilen stehen 14 px vom Kartenrand; Fläche und Pfeil acht auseinander.
+// Die Zeile steht 14 px vom Kartenrand; Wert und Pfeil acht auseinander.
 .section__card {
   @include card.card;
 
@@ -27,13 +28,11 @@ app-page-header {
   --space-3: 8px;
 }
 
-// Eine Zeile mit Fläche misst sechsundfünfzig Punkte, wie die Bretter sie zeigen.
-.section__card--tall {
-  --size-row: 56px;
-}
-
-app-add-row {
-  margin-block-start: 10px;
+app-species-picker {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
 }
 
 app-action-bar {

@@ -18,7 +18,8 @@ import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { PART_TEXT } from '../species/labels';
 import { CatalogueState } from './catalogue.state';
 import { SpeciesEditorState } from './species-editor.state';
-import { COLOUR_MODES, fieldMode, groupOf, trimmed, withColour, withGroup } from './section-colour.rows';
+import { COLOUR_MODES, fieldMode, trimmed, withColour } from './section-colour.rows';
+import { colourGroupAt, withColourGroup, withoutColourGroup } from './species-lists';
 
 const MODE_TEXT = {
   single: 'enum.colour_mode.single',
@@ -62,6 +63,7 @@ export class SectionColourComponent {
 
   protected readonly slug = computed(() => this.params().get('slug') ?? '');
   protected readonly part = computed(() => (this.params().get('part') ?? 'cap') as BodyPart);
+  protected readonly at = computed(() => Number(this.params().get('index') ?? '0'));
 
   protected readonly mode = signal<ColourMode>('single');
   protected readonly colours = signal<ColourValue[]>([]);
@@ -105,7 +107,7 @@ export class SectionColourComponent {
     });
     this.catalogue.load();
     effect(() => {
-      const group = groupOf(this.state.species(), this.part());
+      const group = colourGroupAt(this.state.species(), this.part(), this.at());
       this.mode.set(group === null ? 'single' : group.mode);
       this.colours.set(group === null ? [] : [...group.colours]);
       this.open.set(0);
@@ -145,7 +147,14 @@ export class SectionColourComponent {
     const species = this.state.species();
     if (species === null) return;
     const group = { part: this.part(), mode: this.mode(), colours: this.colours() };
-    this.state.save({ colours: withGroup(species, group) });
+    this.state.save({ colours: withColourGroup(species, this.part(), this.at(), group) });
+    this.back();
+  }
+
+  protected remove(): void {
+    const species = this.state.species();
+    if (species === null) return;
+    this.state.save({ colours: withoutColourGroup(species, this.part(), this.at()) });
     this.back();
   }
 

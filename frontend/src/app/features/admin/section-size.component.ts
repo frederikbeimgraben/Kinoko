@@ -13,6 +13,7 @@ import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segme
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
 import { SpeciesEditorState } from './species-editor.state';
 import { SIZE_TITLE, measurementOf, withMeasurement } from './section-size.rows';
+import { withoutMeasurement } from './species-lists';
 
 /** Ein Maß eines Teils: Strecke, Spanne, Einheit und der seltene Rand. */
 @Component({
@@ -83,6 +84,13 @@ export class SectionSizeComponent {
       rareHigh: this.rare() === '' ? null : Number(this.rare()),
     });
     this.state.save({ measurements: groups });
+    this.back();
+  }
+
+  protected remove(): void {
+    const species = this.state.species();
+    if (species === null) return;
+    this.state.save({ measurements: withoutMeasurement(species, this.part(), this.dimension()) });
     this.back();
   }
 

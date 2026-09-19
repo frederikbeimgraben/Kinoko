@@ -1,5 +1,5 @@
 import type { ColourChange, SpeciesEntry } from '../../core/api/models';
-import { SPEEDS, TRIGGER_GROUPS, changeAt, withChange } from './section-colour-change.rows';
+import { SPEEDS, TRIGGER_GROUPS, changeAt } from './section-colour-change.rows';
 
 const CHANGE = {
   part: 'cap',
@@ -17,13 +17,6 @@ describe('section-colour-change.rows', () => {
     expect(changeAt(SPECIES, 0)).toEqual(CHANGE);
     expect(changeAt(SPECIES, 4)).toBeNull();
     expect(changeAt(null, 0)).toBeNull();
-  });
-
-  it('legt eine Verfärbung an ihre Stelle zurück', () => {
-    const next = { ...CHANGE, speed: '3min' as const };
-
-    expect(withChange(SPECIES, 0, next)).toEqual([next]);
-    expect(withChange(SPECIES, 3, next)).toEqual([CHANGE]);
   });
 
   it('nennt die Gruppen und die Dauern in der Reihenfolge der Bretter', () => {

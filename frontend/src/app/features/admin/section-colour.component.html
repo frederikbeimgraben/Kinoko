@@ -91,4 +91,10 @@
   </div>
 </div>
 
-<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />
+<app-action-bar
+  [primary]="'common.apply' | t"
+  [secondary]="'admin.colour.remove' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="apply()"
+  (secondaryClick)="remove()"
+/>
