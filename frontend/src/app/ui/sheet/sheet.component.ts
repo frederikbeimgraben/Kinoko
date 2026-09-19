@@ -123,8 +123,9 @@ export class SheetComponent {
 
   protected onPointerDown(event: PointerEvent): void {
     if (this.asModal()) return;
-    // Der Zeiger gehört vor der Schwelle dem Ziel darunter, nicht dem Blatt.
-    // Ein abgegriffener Zeiger schluckt sonst den Klick auf eine Woche.
+    // Das Blatt greift den Zeiger sofort ab. Eine Maus verlässt den Streifen
+    // schon im ersten Schritt, und ohne Abgriff bliebe das Blatt stehen.
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
     this.drag = {
       pointer: event.pointerId,
       startY: event.clientY,
@@ -143,12 +144,12 @@ export class SheetComponent {
       // Die erste Achse entscheidet. Waagrecht gehört die Berührung der
       // Zeitleiste, senkrecht gehört sie dem Blatt.
       if (horizontal > vertical && horizontal > AXIS_THRESHOLD) {
+        (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
         this.drag = null;
         return;
       }
       if (vertical <= GRAB_THRESHOLD) return;
       drag.moved = true;
-      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
     }
     const next = drag.startHeight + (drag.startY - event.clientY);
     this.dragged.set(Math.min(Math.max(next, 0), this.hostHeight()));

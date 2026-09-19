@@ -6,7 +6,13 @@
   [cover]="true"
   (closed)="close()"
 >
-  <app-sheet appSheetHeight [label]="sheetName()" [detents]="detents()" (closed)="close()">
+  <app-sheet
+    appSheetHeight
+    [label]="sheetName()"
+    [detents]="detents()"
+    [dismissible]="true"
+    (closed)="close()"
+  >
     @if (find(); as entry) {
       <app-find-sheet [find]="entry" (closed)="close()" />
     } @else if (marker(); as entry) {

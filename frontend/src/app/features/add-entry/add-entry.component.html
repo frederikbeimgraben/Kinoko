@@ -120,6 +120,7 @@
           [note]="coordinates()"
           [detents]="detents()"
           [modal]="true"
+          [dismissible]="true"
           (closed)="cancel()"
         >
           <ng-container [ngTemplateOutlet]="body" />

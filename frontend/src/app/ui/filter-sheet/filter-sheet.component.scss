@@ -2,38 +2,12 @@
   // Die Abdunkelung des Filterblatts steht dunkler als über der Karte.
   --pilz-scrim: rgb(0 0 0 / 50%);
   --pilz-overlay-top: var(--size-header);
-}
-
-.filtersheet {
-  display: flex;
-  block-size: 100%;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--color-surface);
-  border-start-start-radius: var(--radius-xl);
-  border-start-end-radius: var(--radius-xl);
-  box-shadow: 0 -8px 28px rgb(0 0 0 / 35%);
-}
-
-.filtersheet__handle {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  block-size: var(--filter-sheet-handle, 22px);
-}
-
-.filtersheet__handle-line {
-  display: block;
-  inline-size: var(--size-handle-width);
-  block-size: 4px;
-  background: var(--color-border);
-  border-radius: 2px;
+  --size-handle-height: 22px;
+  --sheet-shadow: 0 -8px 28px rgb(0 0 0 / 35%);
 }
 
 .filtersheet__head {
   display: flex;
-  flex: none;
   gap: var(--space-3);
   align-items: center;
   block-size: 48px;

@@ -6,9 +6,11 @@ import { FilterSheetComponent } from './filter-sheet.component';
 
 const OPEN = { open: true, title: 'Filter', primaryLabel: 'Show 12 species' };
 
-/** Die Knöpfe des Blatts, ohne den Scrim des Overlay-Wirts. */
+/** Die Knöpfe des Blatts, ohne Griff und ohne den Scrim des Overlay-Wirts. */
 function dialogButtons(): HTMLElement[] {
-  return within(screen.getByRole('dialog')).getAllByRole('button');
+  return within(screen.getByRole('dialog'))
+    .getAllByRole('button')
+    .filter((button) => !button.classList.contains('sheet__handle'));
 }
 
 describe('FilterSheetComponent', () => {
@@ -18,6 +20,37 @@ describe('FilterSheetComponent', () => {
     });
 
     expect(container.querySelector('.filtersheet')).toBeNull();
+  });
+
+  it('baut auf dem Blatt-Baustein auf und bringt keinen eigenen Rahmen mit', async () => {
+    const { container } = await render(FilterSheetComponent, { inputs: OPEN });
+
+    expect(container.querySelector('app-sheet.filtersheet')).not.toBeNull();
+    expect(container.querySelectorAll('[role="dialog"]')).toHaveLength(1);
+    expect(container.querySelectorAll('.sheet__handle')).toHaveLength(1);
+    expect(container.querySelector('.filtersheet__handle')).toBeNull();
+  });
+
+  it('erbt den Griff des Blatts und schließt mit einem Zug nach unten', async () => {
+    const { container, fixture } = await render(FilterSheetComponent, { inputs: OPEN });
+    let calls = 0;
+    fixture.componentInstance.closed.subscribe(() => (calls += 1));
+    const host = container.querySelector<HTMLElement>('app-sheet');
+    const sheet = container.querySelector('.sheet');
+    if (host === null || sheet === null) throw new Error('Blatt fehlt.');
+    Object.defineProperty(host, 'clientHeight', { value: 800, configurable: true });
+    Object.defineProperty(sheet, 'clientHeight', { value: 800, configurable: true });
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+
+    for (const [kind, clientY] of [
+      ['pointerdown', 100],
+      ['pointermove', 900],
+      ['pointerup', 900],
+    ] as const) {
+      handle.dispatchEvent(new MouseEvent(kind, { bubbles: true, clientY }));
+    }
+
+    expect(calls).toBe(1);
   });
 
   it('zeigt den Dialog mit Titel, Inhalt und der Haupthandlung', async () => {
