@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 
@@ -7,7 +6,7 @@ import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 @Component({
   selector: 'app-group-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormFieldComponent, FormSheetComponent, TranslatePipe],
+  imports: [FormFieldComponent, FormSheetComponent],
   templateUrl: './group-sheet.component.html',
   styleUrl: './group-sheet.component.scss',
 })

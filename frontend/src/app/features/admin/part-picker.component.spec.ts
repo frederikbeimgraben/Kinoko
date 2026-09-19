@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { BodyPart, SpeciesEntry } from '../../core/api/models';
 import { noViolations } from '../../testing/axe';
@@ -46,7 +46,8 @@ describe('PartPickerComponent', () => {
     fixture.componentInstance.closed.subscribe(() => (closes += 1));
 
     await userEvent.click(await screen.findByRole('checkbox', { name: 'Fleisch' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    const sheet = screen.getByRole('dialog');
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));
 
     expect(closes).toBe(1);
     expect(screen.queryByRole('checkbox', { name: 'Stiel' })).not.toBeInTheDocument();

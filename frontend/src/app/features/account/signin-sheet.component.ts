@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, viewChild } from '@angular/core';
 import { AuthService } from '../../core/auth';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ViewportService } from '../../core/layout/viewport.service';
 // Diese Datei laedt beim Start mit. Sie nimmt die Bausteine darum einzeln
 // und nicht ueber `ui/index.ts`: das Sammelmodul zieht jeden Baustein in das
 // erste Buendel, auch die Saisonkurve und die Zeitleiste, die hier niemand
@@ -31,7 +30,6 @@ export class SignInSheetComponent {
   // die Komponente, nicht ihr Element.
   private readonly footer = viewChild('footer', { read: ElementRef });
 
-  protected readonly wide = inject(ViewportService).wide;
   protected readonly pending = this.auth.sheetOpen;
   protected readonly detents = DETENTS;
 

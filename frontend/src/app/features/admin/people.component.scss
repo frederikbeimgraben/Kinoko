@@ -43,29 +43,12 @@ app-badge {
   --space-3: 10px;
 }
 
-.people__head {
-  display: flex;
-  flex-direction: column;
-  padding: 0 var(--size-gutter) var(--space-3);
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-.people__name {
-  font-size: var(--fs-lg);
-  line-height: normal;
-  font-weight: var(--fw-semibold);
-}
-
-.people__mail {
-  font-size: var(--fs-row-meta);
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
+// Der Strich trennt den Kopf von den Rollen, wie das Brett es zeigt.
 .people__choices {
   display: flex;
   flex-direction: column;
   padding: var(--space-2) var(--size-gutter);
+  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 app-action-bar {

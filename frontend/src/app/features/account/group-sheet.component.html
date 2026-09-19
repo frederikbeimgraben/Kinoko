@@ -1,10 +1,8 @@
 <app-form-sheet
   [title]="title()"
   [submit]="submit()"
-  [secondary]="'common.cancel' | t"
   [busy]="busy()"
   (submitted)="submitted.emit(text())"
-  (secondaryPressed)="cancelled.emit()"
   (cancelled)="cancelled.emit()"
 >
   <app-form-field

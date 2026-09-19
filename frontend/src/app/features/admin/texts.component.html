@@ -40,12 +40,11 @@
 <app-overlay-host [open]="draft() !== null" [modal]="true" (closed)="close()">
   @if (draft(); as open) {
     <app-sheet [label]="open.key" [title]="open.key" [modal]="true" [detents]="detents" (closed)="close()">
-      <div head class="texts__sheet-head">
-        <span class="texts__key">{{ open.key }}</span>
+      <span titleLead class="texts__mark">
         @if (resettable()) {
           <app-badge variant="primary">{{ 'admin.texts.changed' | t }}</app-badge>
         }
-      </div>
+      </span>
       <div class="texts__form">
         @for (locale of locales; track locale) {
           <div class="texts__field">
