@@ -71,7 +71,7 @@ test('Der Fuß führt in das Formular und wieder zurück', async ({ page }) => {
   await page.getByRole('button', { name: 'Bearbeiten' }).click();
   await expect(page.getByRole('heading', { name: 'Marker bearbeiten' })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Abbrechen' }).click();
+  await page.locator('.sheet__close').last().click();
   await expect(page.getByRole('heading', { name: 'Alter Fichtenbestand' })).toBeVisible();
 });
 
