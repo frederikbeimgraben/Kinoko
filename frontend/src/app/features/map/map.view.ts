@@ -105,9 +105,6 @@ export class MapView {
   /** Eine feste Ebene kennt keine Woche; die Leiste tritt dann zurück. */
   readonly fixedLayer = computed(() => this.onLayer() && this.layer()?.fixed === true);
 
-  /** Eine feste Ebene ohne Quellenpflicht tritt zurück; mit Vermerk bleibt sie klar. */
-  readonly fixedUncredited = computed(() => this.fixedLayer() && (this.layer()?.note ?? '') === '');
-
   /** Der Vermerk der Marke: die feste Ebene mit Quellenpflicht, oder die Kombination daraus. */
   readonly creditNote = computed<string | null>(() => {
     if (this.onCombination()) {
