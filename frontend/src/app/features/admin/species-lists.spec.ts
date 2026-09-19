@@ -138,7 +138,7 @@ describe('species-lists', () => {
   });
 
   it('gibt für eine Art, die noch fehlt, leere Listen', () => {
-    const group = { ...CAP_COLOUR } as unknown as ColourGroup;
+    const group = { ...CAP_COLOUR };
 
     expect(changes(null)).toEqual([]);
     expect(withChange(null, 0, CAP_CHANGE)).toEqual([CAP_CHANGE]);
