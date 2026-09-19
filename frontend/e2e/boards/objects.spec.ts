@@ -198,10 +198,9 @@ test('ObjectMenu', async ({ page }) => {
   await page.waitForTimeout(400);
   await page.mouse.move(MENU_SPOT[0], MENU_SPOT[1]);
   await page.mouse.down();
-  // Der lange Druck lebt bis zum Menü, nicht bis zu einer festen Zeit: eine
-  // stark ausgelastete Maschine darf den Timer der App spät auslösen.
-  await expect(page.getByRole('menu')).toBeVisible({ timeout: 10_000 });
+  await page.waitForTimeout(800);
   await page.mouse.up();
+  await expect(page.getByRole('menu')).toBeVisible();
   await showMapImage(page, 'map-stein-631.png', 631);
   await expectBoard(page, 'ObjectMenu');
 });
