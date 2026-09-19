@@ -136,17 +136,17 @@ For a local test the script also serves the map directory:
 ## The input layers
 
 `input_layers.py` renders what the model was told, next to what it concluded.
-Nine static layers describe the place and are drawn once. Fifteen weekly
-layers describe the weather and follow the week slider. Every layer names its
-unit and the two ends of its scale, so the Faktor screen can put a value on a
-handle. The six tree species layers come from `tree_tiles.py` instead, and
-`input_layers.py` leaves them in the manifest.
+Two static layers describe the place and are drawn once. Fifteen weekly layers
+describe the weather and follow the week slider. Every layer names its unit
+and the two ends of its scale, so the Faktor screen can put a value on a
+handle. The thirteen layers with a finer source come from `fine_layers.py`,
+and `input_layers.py` leaves them in the manifest.
 
 The weather sits on 5 km cells. `coarse_inputs.py` filters it with a Gaussian
 kernel of half a cell and reads it at the 500 m cell centers, so neither the
 layer nor the prediction carries the 5 km cell. A sharp input keeps its own
 value: the forest share, the tree shares, the height, the soil and the visit
-prior are not in `COARSE_INPUTS`. Weekly tiles stop at zoom 7. All of the
+prior are not in `COARSE_INPUTS`. All of the
 weather comes from the DWD grids the chain already holds: HYRAS for rain,
 temperature and humidity, and the DWD soil moisture per tree species.
 
@@ -176,34 +176,48 @@ take their scale from their definition instead: a week has seven days, and the
 days since the last rain stop at 60. A summer-only run would otherwise show no
 frost day and therefore no scale at all.
 
-## The tree species layers
+## The layers with a fine source
 
-`tree_tiles.py` renders `fichte`, `buche`, `eiche`, `birke`, `kiefer` and
-`nadelholz` from the Thuenen map of dominant tree species at 10 m. It runs
-once, not every week. `pyramid.py` holds the rule that every layer follows:
-the step of the source names the finest zoom, and each coarser level is the
-weighted mean of the four tiles above it. A point carries the forest area
+`fine_layers.py` renders every layer whose source is finer than the map grid.
+It runs once, not every week. `pyramid.py` holds the rule that every layer
+follows: the step of the source names the finest zoom, and each coarser level
+is the weighted mean of the four tiles above it. A point carries the area
 behind it as its weight, so the area mean is the same on every level.
 
-A value is the share of the class in the forest area of that point. Ground
-without forest carries no data. At zoom 14 a point is 0 or 100 percent.
+| layer | source | step | zoom |
+|---|---|---|---|
+| `wald` | Thuenen dominant tree species | 10 m | 5 to 14 |
+| `fichte`, `buche`, `eiche`, `birke`, `kiefer`, `nadelholz` | the same map | 10 m | 5 to 14 |
+| `hoehe`, `hangneigung`, `nordexposition` | Copernicus DEM GLO-90 | 90 m | 5 to 12 |
+| `boden_ph`, `boden_sand`, `boden_kohlenstoff` | SoilGrids | 250 m | 5 to 10 |
 
-Run the step in the geo shell. It asks the service block by block, waits
-between blocks, and writes a state file, so a new run continues where the
-last one stopped:
+A tree species is the share of the class in the forest area of that point.
+Ground without forest carries no value. The forest share is the share of the
+ground, so it is 0 outside the forest. Outside Germany it carries no value:
+the step cuts the outline of Germany out of the OpenStreetMap extract and
+burns it onto the grid of each block.
 
-    nix develop .#geo --command python src/pilze/tree_tiles.py
+Run the step in the geo shell. It asks the tree species service block by
+block, waits between blocks, and writes a state file, so a new run continues
+where the last one stopped:
 
-Useful arguments: `--bbox west,south,east,north` for a trial over a small
-area, `--block-tiles` for the size of a block, `--pause` for the wait, and
-`--restart` to drop the state file. The tiles land beside the other layers in
-`reports/maps/layers_kacheln/<name>`, and `deploy_daten.sh` carries them.
+    nix develop .#geo --command python src/pilze/fine_layers.py
+
+Useful arguments: `--only` for a list of layers, `--bbox west,south,east,north`
+for a trial over a small area, `--block-tiles` for the size of a block,
+`--pause` for the wait, and `--restart` to drop the state file. The tiles land
+beside the other layers in `reports/maps/layers_kacheln/<name>`, and
+`deploy_daten.sh` carries them.
 
 The manifest of such a layer names two more levels. `haveZoom` is the last
 level whose tiles the manifest lists one by one. Above it the app asks the
 coarser tile over the same place, because a full list of the zoom 14 tiles
 would be larger than the manifest. `offlineZoomTo` is the finest level that an
 offline area takes.
+
+`input_layers.py` and `region_map.py` render the layers that live on the map
+grid. `--step` names their zoom span through the same `finest_zoom`, so a step
+of 500 m gives zoom 5 to 9. `--zoom-cap` limits it.
 
 ## The manifests
 
