@@ -8,6 +8,9 @@ const STORAGE_KEY = 'pilzkarte.theme';
 /** Das ui-kit erwartet `data-theme="light|dark"` auf `<html>`. */
 const AS_ATTRIBUTE: Record<EffectiveTheme, string> = { hell: 'light', dunkel: 'dark' };
 
+/** `--color-surface` je Theme: Kopf und Reiterleiste grenzen an die Systemleisten. */
+const SYSTEM_BAR: Record<EffectiveTheme, string> = { hell: '#ffffff', dunkel: '#161c18' };
+
 /**
  * Hell, dunkel oder System. Die Wahl wird gespeichert und beim Start wieder
  * angewendet. Unter „System“ folgt die App dem Betriebssystem live.
@@ -45,7 +48,26 @@ export class ThemeService {
   };
 
   private flip(): void {
-    document.documentElement.setAttribute('data-theme', AS_ATTRIBUTE[this.effective()]);
+    const theme = this.effective();
+    document.documentElement.setAttribute('data-theme', AS_ATTRIBUTE[theme]);
+    this.paintSystemBars(theme);
+  }
+
+  private paintSystemBars(theme: EffectiveTheme): void {
+    document.head.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.remove();
+    });
+    this.meta('theme-color').setAttribute('content', SYSTEM_BAR[theme]);
+    this.meta('color-scheme').setAttribute('content', AS_ATTRIBUTE[theme]);
+  }
+
+  private meta(name: string): HTMLMetaElement {
+    const found = document.head.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
+    if (found !== null) return found;
+    const created = document.createElement('meta');
+    created.name = name;
+    document.head.append(created);
+    return created;
   }
 
   private read(): ThemeChoice {

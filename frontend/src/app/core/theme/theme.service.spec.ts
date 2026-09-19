@@ -97,4 +97,18 @@ describe('ThemeService', () => {
     read.mockRestore();
     write.mockRestore();
   });
+
+  it('färbt die Systemleisten im sichtbaren Theme', () => {
+    const theme = service();
+    theme.init();
+    theme.setChoice('dunkel');
+    const metas = document.head.querySelectorAll('meta[name="theme-color"]');
+    expect(metas.length).toBe(1);
+    expect(metas[0].getAttribute('content')).toBe('#161c18');
+    expect(metas[0].hasAttribute('media')).toBe(false);
+    expect(document.head.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('dark');
+    theme.setChoice('hell');
+    expect(document.head.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe('#ffffff');
+    expect(document.head.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('light');
+  });
 });
