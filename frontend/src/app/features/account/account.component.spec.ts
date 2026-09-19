@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { MapAppService } from '../../core/maps/map-app.service';
 import { ThemeService } from '../../core/theme/theme.service';
+import { APP_VERSION } from '../../core/version.generated';
 import { CONFIG, ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
 import { noViolations } from '../../testing/axe';
 import { PwaService } from '../../core/pwa/pwa.service';
@@ -149,7 +150,7 @@ describe('KontoComponent', () => {
 
     expect(screen.getByText('Methode')).toBeInTheDocument();
     expect(screen.getByText('Quellen und Lizenzen')).toBeInTheDocument();
-    expect(screen.getByText('dev')).toBeInTheDocument();
+    expect(screen.getByText(APP_VERSION)).toBeInTheDocument();
   });
 
   it('bleibt lesbar, wenn das Backend keine Konfiguration geliefert hat', async () => {
