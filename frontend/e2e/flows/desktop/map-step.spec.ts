@@ -130,12 +130,14 @@ test('Ein Klick setzt den Fundort, ein zweiter verschiebt ihn', async ({ page })
   const bar = page.getByRole('dialog', { name: 'Fundort festlegen' });
   await expect(bar).toBeVisible();
 
+  const note = bar.locator('.addentry__note');
   await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
-  const first = await bar.locator('.addentry__note').textContent();
-  await page.mouse.click(CORNERS[2][0], CORNERS[2][1]);
-  const second = await bar.locator('.addentry__note').textContent();
+  await expect(note).not.toBeEmpty();
+  const first = (await note.textContent()) ?? '';
 
-  expect(first).not.toBe(second);
+  await page.mouse.click(CORNERS[2][0], CORNERS[2][1]);
+
+  await expect(note).not.toHaveText(first);
 
   await page.getByRole('button', { name: 'Fundort übernehmen' }).click();
 
