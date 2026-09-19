@@ -55,9 +55,20 @@ export const STONE_EDIT: Record<string, unknown> = {
   capFeatures: [],
   capMargins: [],
   stemFeatures: [],
-  traits: [],
+  traits: [{ key: 'tubes', text: 'bei Druck blauend, Poren fein und rund' }],
   sources: [
-    { scope: 'profile', title: '123pilzsuche.de', url: 'https://123pilzsuche.de', checkedOn: '2026-09-10' },
+    {
+      scope: 'profile',
+      title: '123pilzsuche.de',
+      url: '123pilzsuche.de/daten/details/Steinpilz.htm',
+      checkedOn: '2026-09-10',
+    },
+    {
+      scope: 'further',
+      title: 'Wikipedia',
+      url: 'de.wikipedia.org/wiki/Gemeiner_Steinpilz',
+      checkedOn: '2026-09-10',
+    },
   ],
   seasons: [],
   terms: [],
@@ -76,7 +87,7 @@ export const STONE_EDIT: Record<string, unknown> = {
       scientificName: 'Imleria badia',
       edibility: 'edible',
       capColours: [],
-      difference: 'Röhren blauen, Stiel ohne Netz',
+      difference: 'Lamellen im Alter mit blaugrünem Hauch, wächst in Gewächshäusern, auf Kompost',
     },
   ],
 };

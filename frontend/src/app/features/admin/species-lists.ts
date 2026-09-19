@@ -4,6 +4,7 @@ import type {
   ColourGroup,
   Dimension,
   MeasurementGroup,
+  SourceEntry,
   SpeciesEntry,
   SpeciesWrite,
 } from '../../core/api/models';
@@ -93,6 +94,43 @@ export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartL
     colours: (species?.colours ?? []).filter((one) => one.part !== part),
     colourChanges: changes(species).filter((one) => one.part !== part),
   };
+}
+
+/** Die Teile einer Art, in der Reihenfolge des Körpers. */
+export const PART_ORDER: readonly BodyPart[] = [
+  'fruitbody',
+  'cap',
+  'stem',
+  'stem_base',
+  'gills',
+  'tubes',
+  'pores',
+  'flesh',
+  'spore_print',
+  'spore',
+];
+
+/** Die Teile, die weder die Art noch die offene Wahl schon führt. */
+export function freeParts(species: SpeciesEntry | null, extra: readonly BodyPart[]): BodyPart[] {
+  const held = new Set<BodyPart>([
+    ...(species?.measurements ?? []).map((one) => one.part),
+    ...(species?.colours ?? []).map((one) => one.part),
+    ...changes(species).map((one) => one.part),
+    ...extra,
+  ]);
+  return PART_ORDER.filter((part) => !held.has(part));
+}
+
+/** Legt eine Quelle an ihre Stelle. Eine neue Stelle hängt an. */
+export function withSource(species: SpeciesEntry | null, at: number, one: SourceEntry): SourceEntry[] {
+  const held = [...(species?.sources ?? [])];
+  if (at >= held.length) return [...held, one];
+  return held.map((entry, index) => (index === at ? one : entry));
+}
+
+/** Nimmt eine Quelle an ihrer Stelle heraus. */
+export function withoutSource(species: SpeciesEntry | null, at: number): SourceEntry[] {
+  return (species?.sources ?? []).filter((_, index) => index !== at);
 }
 
 /** Die Verwechslungen, wie der Vertrag sie schreibt. */

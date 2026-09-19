@@ -1,6 +1,8 @@
 @use '../../../styles/card';
 
 :host {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+
   position: relative;
   display: flex;
   flex-direction: column;
@@ -12,7 +14,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   padding: var(--size-gutter);
   overflow-y: auto;
   scrollbar-width: none;
@@ -27,7 +29,6 @@
   @include card.card;
 
   --list-row-inline: 14px;
-  --size-row-tall: var(--size-row);
   --list-row-sub: var(--fs-row-meta);
   --list-row-title-height: normal;
   --list-row-sub-height: 1.4;
@@ -59,4 +60,26 @@ app-add-row {
 
 app-action-bar {
   --action-bar-height: var(--size-tap);
+}
+
+.editor__head {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--size-gutter) 14px;
+}
+
+.editor__title {
+  font-size: var(--fs-lg);
+  line-height: normal;
+  font-weight: var(--fw-semibold);
+}
+
+.editor__choices {
+  padding-inline: var(--size-gutter);
+}
+
+app-check-row {
+  --space-3: 12px;
+
+  padding-inline: 14px;
 }

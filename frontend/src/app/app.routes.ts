@@ -142,6 +142,12 @@ export const routes: Routes = [
           import('./features/admin/section-lookalike.component').then((m) => m.SectionLookalikeComponent),
       },
       {
+        path: 'arten/:slug/quelle/:index',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-source.component').then((m) => m.SectionSourceComponent),
+      },
+      {
         path: 'arten/:slug/zeitraum',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>
