@@ -1,3 +1,5 @@
+import { shortDay } from '../../core/i18n/dates';
+import type { I18nService } from '../../core/i18n/i18n.service';
 import { grouped, joined } from '../../core/i18n/numbers';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type {
@@ -116,11 +118,12 @@ export function brierValue(detail: PipelineRunDetail, text: Translate, locale: s
 }
 
 /** Der Tag und die Uhrzeit, zu der ein Lauf begonnen hat. */
-export function startedValue(run: PipelineRun, text: Translate, locale: string): string {
-  const started = run.startedAt ?? run.queuedAt;
-  const date = new Date(started);
-  const month = new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
-  const day = text('common.dateShort', { tag: date.getDate(), monat: month });
-  const time = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(date);
-  return text('common.dateTime', { tag: day, zeit: time });
+export function startedValue(run: PipelineRun, i18n: I18nService): string {
+  const date = new Date(run.startedAt ?? run.queuedAt);
+  const day = shortDay(date, i18n);
+  const time = new Intl.DateTimeFormat(i18n.locale(), {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+  return i18n.translate('common.dateTime', { tag: day, zeit: time });
 }

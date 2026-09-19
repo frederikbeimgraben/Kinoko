@@ -148,7 +148,7 @@ export class EntriesComponent {
   }
 
   private date(iso: string): string {
-    return shortDate(iso, this.i18n.locale(), isoDatum(new Date()), this.i18n.translate('common.today'));
+    return shortDate(iso, this.i18n, isoDatum(new Date()));
   }
 
   /** „6. Sept · 3 Stück · Frederik“, so wie das Board `Entries` es schreibt. */

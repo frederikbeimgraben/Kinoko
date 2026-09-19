@@ -5,7 +5,6 @@ import { locationText } from '../../core/i18n/places';
 import { COARSE_DIGITS } from '../../core/location/grid';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
 import type { I18nService } from '../../core/i18n/i18n.service';
-import type { TranslationKey } from '../../core/i18n/translations';
 
 /** Eine Karte im Prüfstapel. */
 export interface ReviewCard {
@@ -27,7 +26,7 @@ export function licenceText(photo: Photo, i18n: I18nService): string {
 export function metaText(photo: Photo, i18n: I18nService): string {
   const parts = [photo.ownerName];
   const day = photo.takenOn ?? photo.createdAt.slice(0, 10);
-  parts.push(shortDate(day, i18n.locale(), (key, values) => i18n.translate(key as TranslationKey, values)));
+  parts.push(shortDate(day, i18n));
   if (photo.lat != null && photo.lon != null) {
     const shown = locationText(photo.lat, photo.lon, i18n.locale(), COARSE_DIGITS);
     parts.push(`${shown.lat}${SEPARATOR}${shown.lon}`);

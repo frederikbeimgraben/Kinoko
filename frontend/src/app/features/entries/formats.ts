@@ -7,7 +7,8 @@
  * Kern, weil ihn auch die Bilder schreiben.
  */
 
-import { asDate } from '../../core/i18n/dates';
+import { shortDate as catalogueDay } from '../../core/i18n/dates';
+import type { I18nService } from '../../core/i18n/i18n.service';
 
 /** Ein ISO-Datum ohne Zeit, wie es der Vertrag für `datum` verlangt. */
 export function isoDatum(instant: Date): string {
@@ -17,9 +18,9 @@ export function isoDatum(instant: Date): string {
 }
 
 /** „6. Sept.“ in der Liste, für heute „Heute“. */
-export function shortDate(iso: string, locale: string, heute: string, todayText: string): string {
-  if (iso === heute) return todayText;
-  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' }).format(asDate(iso));
+export function shortDate(iso: string, i18n: I18nService, heute: string): string {
+  if (iso === heute) return i18n.translate('common.today');
+  return catalogueDay(iso, i18n);
 }
 
 /** Eine Fläche in Hektar, ohne Nachkommastellen ab einem Hektar. */
