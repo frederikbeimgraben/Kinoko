@@ -4,7 +4,9 @@
     type="button"
     data-press="tint"
     [attr.aria-label]="'common.close' | t"
-    (click)="closed.emit()"
+    (pointerdown)="onScrimDown($event)"
+    (pointerup)="onScrimUp($event)"
+    (click)="onScrimClick()"
   ></button>
 }
 <section
@@ -13,14 +15,15 @@
   tabindex="-1"
   [class.sheet--dragging]="dragging()"
   [class.sheet--modal]="asModal()"
+  [class.sheet--step]="asStep()"
   [class.sheet--bare]="asModal() && title() === ''"
   [class.sheet--compact]="compact()"
   [attr.aria-label]="label()"
-  [attr.aria-modal]="modal() || asModal() ? 'true' : null"
+  [attr.aria-modal]="(modal() || asModal()) && !asStep() ? 'true' : null"
   [style.block-size]="height()"
   (keydown)="onKey($event)"
 >
-  @if (asModal()) {
+  @if (asModal() || asStep()) {
     <button
       class="sheet__close tap"
       type="button"
@@ -30,7 +33,7 @@
     >
       <app-svg-icon name="close" [size]="18" [strokeWidth]="2" />
     </button>
-    @if (title() !== '') {
+    @if (asModal() && title() !== '') {
       <header class="sheet__head">
         <h2 class="sheet__title">{{ title() }}</h2>
         @if (note() !== '') {

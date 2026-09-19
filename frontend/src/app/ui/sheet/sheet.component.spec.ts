@@ -371,6 +371,53 @@ describe('SheetComponent', () => {
       expect(scrim).toHaveClass('tap');
     });
 
+    it('lässt einen Zug über die Abdunkelung das Blatt nicht schließen', async () => {
+      const { container, fixture } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', modal: true },
+        providers: [WIDE],
+      });
+      let calls = 0;
+      fixture.componentInstance.closed.subscribe(() => (calls += 1));
+
+      const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
+      if (scrim === null) throw new Error('Scrim fehlt.');
+      scrim.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 100, clientY: 100 }));
+      scrim.dispatchEvent(new MouseEvent('pointerup', { bubbles: true, clientX: 260, clientY: 180 }));
+      scrim.click();
+
+      expect(calls).toBe(0);
+    });
+
+    it('nimmt einen Druck ohne Bewegung auf der Abdunkelung als Klick', async () => {
+      const { container, fixture } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', modal: true },
+        providers: [WIDE],
+      });
+      let calls = 0;
+      fixture.componentInstance.closed.subscribe(() => (calls += 1));
+
+      const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
+      if (scrim === null) throw new Error('Scrim fehlt.');
+      scrim.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 100, clientY: 100 }));
+      scrim.dispatchEvent(new MouseEvent('pointerup', { bubbles: true, clientX: 102, clientY: 101 }));
+      scrim.click();
+
+      expect(calls).toBe(1);
+    });
+
+    it('dockt einen Schritt an, statt die Fläche darunter zu sperren', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Zone zeichnen', modal: true, kind: 'step' as const },
+        providers: [WIDE],
+      });
+
+      expect(container.querySelector('.sheet--modal')).toBeNull();
+      expect(container.querySelector('.sheet__scrim')).toBeNull();
+      expect(container.querySelector('.sheet--step')).not.toBeNull();
+      expect(container.querySelector('.sheet__close')).not.toBeNull();
+      expect(container.querySelector('[aria-modal]')).toBeNull();
+    });
+
     it('dunkelt die ganze Seite ab, auch die Spalte und die Leiste', async () => {
       const { container } = await render(ColumnHostComponent, { providers: [WIDE] });
 

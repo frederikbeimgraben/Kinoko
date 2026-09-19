@@ -1,8 +1,7 @@
 {
   "anmelden.blatt": "Sign in",
   "anmelden.knopf": "Sign in with beimgraben.net",
-  "anmelden.spaeter": "Sign in later, keep the entry on this device",
-  "anmelden.text": "Finds, markers and zones are stored in your account at beimgraben.net. The map also works without signing in.",
+  "anmelden.spaeter": "Later",
   "anmelden.titel": "Sign in to save",
   "anmeldung.fehler": "The sign-in failed. Please try again.",
   "anmeldung.laeuft": "Signing in …",

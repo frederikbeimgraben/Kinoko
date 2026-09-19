@@ -1,5 +1,5 @@
 <div class="map" [style.--pilz-sheet-inset]="sheetInset()">
-  @if (wide()) {
+  @if (wide() && !surfaceOnly()) {
     <div class="map__column">
       <app-map-column
         [factor]="surface.inProgress()"
@@ -59,7 +59,7 @@
         }
       </div>
 
-      @if ((wide() || !addEntry.running() || addEntry.onActions()) && !covered()) {
+      @if (showsAdd()) {
         <app-floating-button
           class="map__add"
           icon="plus"

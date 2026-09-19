@@ -97,6 +97,12 @@ export class MapComponent implements OnDestroy {
 
   /** Ein Blatt in voller Höhe lässt nur den Ebenen-Knopf stehen. */
   protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
+  /** Der Plus-Knopf tritt ab, solange ein Schritt auf der Karte den Ort sucht. */
+  protected readonly showsAdd = computed(() => {
+    if (this.covered() || this.addEntry.showsCrosshair()) return false;
+    return this.wide() || !this.addEntry.running() || this.addEntry.onActions();
+  });
+
   /** Über der Karte liegt immer nur ein Blatt. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
   /** Die Rasten, mit denen das Blatt der Karte zeichnet. */

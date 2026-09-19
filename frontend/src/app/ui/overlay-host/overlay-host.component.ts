@@ -32,7 +32,11 @@ export class OverlayHostComponent {
     // Der Fokus folgt dem geöffneten Blatt, damit Escape sofort greift.
     // Erst nach dem Rendern steht das Panel im Baum.
     afterRenderEffect(() => {
-      if (this.open()) this.panel()?.focus({ preventScroll: true });
+      if (!this.open()) return;
+      // Der Inhalt darf den Fokus selbst setzen. Nur ein Blatt ohne eigenes
+      // Ziel holt ihn auf das Panel.
+      if (this.host.nativeElement.contains(document.activeElement)) return;
+      this.panel()?.focus({ preventScroll: true });
     });
   }
 

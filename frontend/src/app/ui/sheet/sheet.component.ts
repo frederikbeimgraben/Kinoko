@@ -20,6 +20,12 @@ export type Detent = 0 | 1 | 2;
 /** Anteil der Wirtshöhe zwischen 0 und 1, feste Höhe oder `content` für die Inhaltshöhe. */
 export type DetentSize = number | `${number}px` | 'content';
 
+/**
+ * Die Art des Blatts. Ein `step` gehört zu einem Schritt auf der Karte: am
+ * Rechner dockt es an, statt die Karte hinter einem Modal zu sperren.
+ */
+export type SheetKind = 'sheet' | 'step';
+
 // Die unterste Raste ist --size-sheet-head, 152 Pixel. Die Zug-Physik
 // braucht die Zahl vor dem Zeichnen des Blatts.
 const DEFAULT_DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['152px', 0.4, 0.9];
@@ -37,6 +43,10 @@ const AXIS_THRESHOLD = 8;
 
 // Unter diesem Anteil der untersten Raste schließt ein Zug nach unten.
 const DISMISS_SHARE = 0.5;
+
+// Bis zu dieser Bewegung in Punkten bleibt ein Druck auf die Abdunkelung ein
+// Klick. Darüber ist es ein Zug auf der Fläche darunter.
+const SCRIM_SLOP = 6;
 
 interface Drag {
   readonly pointer: number;
@@ -76,21 +86,29 @@ export class SheetComponent {
   readonly compact = input(false);
   /** Ein Blatt, das sich schließen lässt, geht auch mit einem Zug nach unten zu. */
   readonly dismissible = input(false);
+  /** Ein Schritt auf der Karte dockt am Rechner an, statt die Karte zu sperren. */
+  readonly kind = input<SheetKind>('sheet');
 
   readonly detentChange = output<Detent>();
   readonly closed = output();
 
+  private readonly wide = inject(ViewportService).wide;
+
   /** Der Wechsel zwischen Blatt und Modal liegt hier, nie in der Instanz. */
-  protected readonly asModal = inject(ViewportService).wide;
+  protected readonly asModal = computed(() => this.wide() && this.kind() === 'sheet');
+  /** Am Rechner dockt ein Schritt an: kein Modal, keine Abdunkelung. */
+  protected readonly asStep = computed(() => this.wide() && this.kind() === 'step');
 
   /** Während eines Zugs führt der Finger, nicht die Raste. */
   private readonly dragged = signal<number | null>(null);
   private drag: Drag | null = null;
+  private scrim: { pointer: number; x: number; y: number } | null = null;
+  private scrimTap = true;
 
   protected readonly dragging = computed(() => this.dragged() !== null);
 
   protected readonly height = computed<string | null>(() => {
-    if (this.asModal()) return null;
+    if (this.wide()) return null;
     const dragged = this.dragged();
     if (dragged !== null) return `${dragged}px`;
     const size = this.detents()[this.detent()];
@@ -109,7 +127,7 @@ export class SheetComponent {
   }
 
   protected nextDetent(): void {
-    if (this.asModal() || this.drag?.moved) return;
+    if (this.wide() || this.drag?.moved) return;
     this.detentChange.emit(((this.detent() + 1) % 3) as Detent);
   }
 
@@ -122,7 +140,7 @@ export class SheetComponent {
   }
 
   protected onPointerDown(event: PointerEvent): void {
-    if (this.asModal()) return;
+    if (this.wide()) return;
     // Das Blatt greift den Zeiger sofort ab. Eine Maus verlässt den Streifen
     // schon im ersten Schritt, und ohne Abgriff bliebe das Blatt stehen.
     (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
@@ -174,15 +192,35 @@ export class SheetComponent {
     setTimeout(() => (this.drag = null));
   }
 
+  /** Ein Druck auf die Abdunkelung zählt nur ohne Bewegung als Klick. */
+  protected onScrimDown(event: PointerEvent): void {
+    this.scrim = { pointer: event.pointerId, x: event.clientX, y: event.clientY };
+    this.scrimTap = false;
+  }
+
+  protected onScrimUp(event: PointerEvent): void {
+    const start = this.scrim;
+    this.scrim = null;
+    if (start?.pointer !== event.pointerId) return;
+    const moved = Math.abs(event.clientX - start.x) + Math.abs(event.clientY - start.y);
+    this.scrimTap = moved <= SCRIM_SLOP;
+  }
+
+  protected onScrimClick(): void {
+    const tap = this.scrimTap;
+    this.scrimTap = true;
+    if (tap) this.closed.emit();
+  }
+
   /** Escape schließt das Modal. Im modalen Blatt bleibt der Tabulator darin. */
   protected onKey(event: KeyboardEvent): void {
-    if (this.asModal() && event.key === 'Escape') {
+    if ((this.asModal() || this.asStep()) && event.key === 'Escape') {
       event.preventDefault();
       event.stopPropagation();
       this.closed.emit();
       return;
     }
-    if (!(this.modal() || this.asModal()) || event.key !== 'Tab') return;
+    if (this.asStep() || !(this.modal() || this.asModal()) || event.key !== 'Tab') return;
     const targets = this.focusable();
     if (targets.length === 0) return;
     const first = targets[0];
@@ -239,7 +277,7 @@ export class SheetComponent {
   }
 
   private applyInset(): void {
-    const height = this.asModal() ? 0 : this.sheetHeight();
+    const height = this.wide() ? 0 : this.sheetHeight();
     document.documentElement.style.setProperty('--pilz-sheet-inset', `${height}px`);
   }
 }
