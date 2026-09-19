@@ -62,8 +62,8 @@ def test_eine_prognosewoche_nimmt_ihren_abstand():
 
 
 def test_eine_luecke_nimmt_den_naechst_strengeren_horizont():
-    # Ein Modell fuer zwei Wochen liest keine Spalte, die der Woche eins
-    # voraus fehlt.
+    # A model for two weeks reads no column that the week one week ahead
+    # lacks.
     assert horizon_for(1001, 1000, (0, 2)) == 2
 
 
@@ -78,8 +78,8 @@ def test_ohne_ist_woche_gilt_horizont_null():
 
 
 def test_die_zahl_der_prognosewochen_kommt_aus_dem_datum():
-    # Montag der KW 38, letzte volle Ist-Woche KW 36: zwei Wochen Rueckstand
-    # plus zwei Wochen Vorlauf.
+    # Week 38, with weather up to week 36. Two weeks behind plus two weeks
+    # of lead.
     assert forecast_weeks(date(2026, 9, 19), (2026, 36)) == 4
     assert forecast_weeks(date(2026, 9, 19), (2026, 37)) == 3
     assert forecast_weeks(date(2026, 9, 19), (2026, 38)) == 2

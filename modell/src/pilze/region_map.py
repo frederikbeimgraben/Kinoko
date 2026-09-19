@@ -272,8 +272,7 @@ def main() -> None:
         raise SystemExit(f"{args.model} ist ein altes Bundle ohne Horizonte — "
                          "erst final_model.py neu laufen lassen")
     horizonte = sorted(int(h) for h in bundle["horizons"])
-    # Die Spaltenliste fuer das Zuschneiden der Tabellen ist die Vereinigung
-    # aller Horizonte. Gerechnet wird je Woche mit dem passenden Modell.
+    # The tables keep the union of the columns of every horizon.
     features = sorted({f for h in bundle["horizons"].values() for f in h["features"]})
     species_names = bundle.get("species", ["Boletus edulis"])
     print(f"{args.name}: {species_names}, Horizonte {sorted(bundle['horizons'])}, "
@@ -468,8 +467,8 @@ def main() -> None:
     wetter_pos = {c: i for i, c in enumerate(wetter_namen)}
     konstanten = {"n_species": float(args.reference_species),
                   "n_records": float(args.reference_records)}
-    # Nur ein Horizont, den eine Woche wirklich braucht, bekommt einen Plan.
-    # Jeder Plan haelt eine eigene float32-Matrix ueber alle Zellen.
+    # A plan holds one float32 matrix over every cell. Only a horizon that a
+    # week uses gets one.
     kennungen = week_number(weeks)
     gebraucht = sorted({horizon_for(int(k), observed_last, horizonte)
                         for k in kennungen})
