@@ -5,8 +5,8 @@ from __future__ import annotations
 from datetime import date
 
 import pytest
-from horizons import (HORIZONS, activity_names, forecast_weeks, horizon_for,
-                      knowable, shared_horizon)
+from horizons import (HORIZONS, activity_names, bundle_horizons,
+                      forecast_weeks, horizon_for, knowable, shared_horizon)
 
 
 def test_die_kette_traegt_die_horizonte_null_bis_vier():
@@ -106,3 +106,19 @@ def test_der_gemeinsame_horizont_ist_der_kleinste_groesste():
 
 def test_der_gemeinsame_horizont_kennt_keine_luecke():
     assert shared_horizon([{0, 2}, {0, 1, 2, 3}]) == 2
+
+
+def test_die_horizonte_kommen_aus_der_feature_liste(tmp_path):
+    import json
+
+    (tmp_path / "boletus_edulis.features.json").write_text(
+        json.dumps({"h0": ["pr_lag0"], "h2": ["pr_lag2"]}))
+    (tmp_path / "parasol.features.json").write_text(
+        json.dumps({"h0": ["pr_lag0"], "h2": ["pr_lag2"], "h4": ["pr_lag4"]}))
+    assert bundle_horizons(tmp_path) == [{0, 2}, {0, 2, 4}]
+    assert shared_horizon(bundle_horizons(tmp_path)) == 2
+
+
+def test_ein_leerer_ordner_traegt_keine_prognose(tmp_path):
+    assert bundle_horizons(tmp_path) == []
+    assert shared_horizon(bundle_horizons(tmp_path)) == 0

@@ -42,7 +42,8 @@ from pyproj import Transformer
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
-from horizons import forecast_weeks, horizon_for, shared_horizon
+from horizons import (bundle_horizons, forecast_weeks, horizon_for,
+                      shared_horizon)
 from manifest import histogram, schreibe
 from pyramid import (ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom,
                      render_field)
@@ -234,6 +235,9 @@ def render(field: np.ndarray, target: Path, top: float,
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", type=Path, default=Path("models/boletus_edulis.pkl"))
+    parser.add_argument("--models-dir", type=Path, default=None,
+                        help="Ordner aller Modelle; deckelt die Prognose auf "
+                             "den Horizont, den jede Art traegt")
     parser.add_argument("--name", default="boletus_edulis")
     parser.add_argument("--step", type=int, default=500)
     parser.add_argument("--weeks", type=int, default=20)
@@ -351,7 +355,8 @@ def main() -> None:
         args.forecast = forecast_weeks(
             date.today(),
             (int(letzte_ist["iso_year"]), int(letzte_ist["iso_week"])),
-            cap=shared_horizon([set(horizonte)]))
+            cap=shared_horizon(bundle_horizons(
+                args.models_dir or args.model.parent)) or max(horizonte))
         print(f"forecast {args.forecast} weeks, from "
               f"{int(letzte_ist['iso_year'])}-W{int(letzte_ist['iso_week']):02d} "
               f"and horizons {horizonte}")

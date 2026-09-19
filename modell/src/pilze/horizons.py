@@ -90,33 +90,15 @@ def _week_distance(start: tuple[int, int], end: tuple[int, int]) -> int:
 
 
 def bundle_horizons(folder: Path) -> list[set[int]]:
-    """The horizons of every model bundle in a folder."""
-    import pickle
+    """The horizons of every model in a folder.
+
+    The list comes from ``<name>.features.json``, which final_model.py writes
+    beside the bundle. Reading it needs no pickle and no LightGBM.
+    """
+    import json
 
     saetze = []
-    for datei in sorted(folder.glob("*.pkl")):
-        with datei.open("rb") as handle:
-            bundle = pickle.load(handle)
-        saetze.append({int(h) for h in bundle.get("horizons", {})})
+    for datei in sorted(folder.glob("*.features.json")):
+        namen = json.loads(datei.read_text())
+        saetze.append({int(key[1:]) for key in namen if key.startswith("h")})
     return saetze
-
-
-def main() -> None:
-    import argparse
-
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--models", type=Path, default=Path("models"))
-    parser.add_argument("--today", type=date.fromisoformat, default=date.today())
-    parser.add_argument("--observed", help="letzte volle Ist-Woche als JJJJ-WW")
-    args = parser.parse_args()
-
-    observed = None
-    if args.observed:
-        jahr, woche = args.observed.split("-")
-        observed = (int(jahr), int(woche))
-    cap = shared_horizon(bundle_horizons(args.models))
-    print(forecast_weeks(args.today, observed, cap=cap))
-
-
-if __name__ == "__main__":
-    main()
