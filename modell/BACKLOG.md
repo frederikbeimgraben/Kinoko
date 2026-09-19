@@ -572,3 +572,16 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
       der Zelle. Auf 90 m gerechnet trügen sie z12 wie Höhe und Hangneigung.
 - [ ] Die Bodenebenen zeigen nur die oberste Schicht (0 bis 5 cm). Die
       Kette hält drei Tiefen je Größe.
+- [ ] Prognosewochen mit Normalwerten fuellen statt leer lassen. Heute traegt
+      eine Prognosewoche kein Wetter, und allein die Merkmalszensur des
+      Horizonts haelt das Modell ehrlich. `region_map.normalwerte()` rechnet
+      schon Mittel je Zelle und ISO-Woche fuer `tas`, `pr_sum4` und
+      `pr_sum8`. Damit liessen sich die fehlenden Spalten fuellen. Ob das
+      besser ist, entscheidet ein Brier-Vergleich je Horizont gegen den
+      heutigen Stand.
+- [ ] Wochenebenen fuer Prognosewochen. `layers.json` endet an der letzten
+      Ist-Woche, die Artenkarten reichen weiter. Wer den Regler auf eine
+      Prognosewoche stellt, sieht Werte, aber keine Wetterebene. Ohne Wetter
+      der Zukunft gibt es dort nichts zu zeigen. Entweder die Zeitleiste
+      sperrt die Ebene fuer diese Wochen, oder die Kette rendert sie aus
+      Normalwerten, zusammen mit dem Punkt darueber.

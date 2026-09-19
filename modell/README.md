@@ -219,6 +219,65 @@ offline area takes.
 grid. `--step` names their zoom span through the same `finest_zoom`, so a step
 of 500 m gives zoom 5 to 9. `--zoom-cap` limits it.
 
+## The forecast horizons
+
+A horizon is the distance in weeks between the last week with weather and the
+week that the model answers for. `horizons.py` holds the rule. Horizon 0
+serves a week that already happened. A larger horizon hides every column that
+reaches into the unknown: a weather lag below the horizon, every rolling
+window, every anomaly and every temperature drop.
+
+| horizon | weather columns |
+|---|---|
+| 0 | 35 |
+| 1 | 18 |
+| 2 | 15 |
+| 3 | 12 |
+| 4 | 9 |
+
+`HORIZONS` in `horizons.py` names the horizons that the chain builds: 0 to 4.
+Above 4 only two lags stay, so the chain stops there.
+
+`region_map.py` picks the horizon of each week from its distance to the last
+week with weather. It takes the smallest horizon that is at least that
+distance, so the model reads no column that the week lacks. Without such a
+horizon the run stops and names the missing one.
+
+`--forecast` needs no number any more. The run reads the last week of the
+weather table, adds two weeks of lead, and stops at the largest horizon that
+every model in `--models-dir` carries. `--forecast` still overrides it.
+
+A forecast week carries no weather. The lags of the weeks that already
+happened reach into it, and the horizon hides the rest. The weekly input
+layers therefore hold no forecast week.
+
+## Training the horizon models
+
+A bundle holds one model per horizon. Adding a horizon needs a new visit
+table, because `final_model.py` stops when the activity columns of a horizon
+are missing. Run this in the default shell:
+
+    cd modell
+    NEU=1 ./run_all.sh
+
+`run_all.sh` walks the eleven species and, per species, runs `visit_model.py`
+with `--save-prepared` and then `final_model.py`. Logs land in
+`reports/rebuild/<slug>.*.log`.
+
+| step | per species | eleven species |
+|---|---|---|
+| `visit_model.py`, needed for a new horizon | 23 to 29 min | about 5 h |
+| `final_model.py`, five horizons | about 30 min | about 4 h |
+| sum | | **about 9 h** |
+
+Two shells in parallel halve that to about 4.5 h. Each bundle grows by about
+1.2 MB per horizon, so the eleven models grow from 28 MB to about 55 MB.
+
+Memory: `region_map.py` holds one float32 matrix over 2.3 million cells per
+horizon that a week uses. A run over Germany therefore stays near the value
+of a run with two horizons, because a week list of 90 weeks uses horizon 0
+and the two to four forecast horizons, not all five.
+
 ## The manifests
 
 Every rendered map writes a manifest next to its tiles: `<slug>.json` per

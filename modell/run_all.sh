@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# One series per species. final_model.py builds two models in one run: the
-# horizon 0 model for the weeks that happened and the horizon 2 model for the
-# two forecast weeks. region_map.py picks the right one per week.
+# One series per species. final_model.py builds one model per horizon in one
+# run. region_map.py picks the horizon of each week from its distance to the
+# last week with weather.
 # Logs go to reports/rebuild/<slug>.*.log, so a failed step can be read.
 set -u
 cd "$(dirname "$0")"
@@ -38,7 +38,7 @@ run () {
       2>&1 | tee "$LOGS/$SLUG.model.log" | grep -E "^(=====|chosen|calibration ceiling|Brier)"
   [ -f "models/${SLUG}.pkl" ] || { echo "FEHLER: kein Modell fuer $SLUG"; tail -5 "$LOGS/$SLUG.model.log"; return; }
   python -u src/pilze/region_map.py --model "models/${SLUG}.pkl" --name "$ART" \
-      --region de --weeks 90 --forecast 2 --step 500 --min-forest "${WALD:-0.03}" \
+      --region de --weeks 90 --step 500 --min-forest "${WALD:-0.03}" \
       --tiles --no-image 2>&1 | tee "$LOGS/$SLUG.map.log" | grep -E "^(wrote|  Kacheln)"
   [ -f "reports/maps/${ART}.json" ] || { echo "FEHLER: keine Karte fuer $SLUG"; tail -5 "$LOGS/$SLUG.map.log"; return; }
   python -u src/pilze/build_page.py > /dev/null 2>&1 || true

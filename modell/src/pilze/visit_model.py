@@ -49,6 +49,7 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
 from build_occurrences import APP, GBIF, visit_gate
+from horizons import HORIZONS, WINDOWS, activity_names
 
 PARAMS = dict(objective="binary", learning_rate=0.05, num_leaves=31,
               min_data_in_leaf=40, feature_fraction=0.8, bagging_fraction=0.8,
@@ -57,17 +58,7 @@ ROUNDS = 300
 
 DETECTION = ["n_records", "n_species"]
 SEASON = ["iso_week", "week_sin", "week_cos"]
-WINDOWS = (7, 14, 21)
 BLOCK_M = 25_000
-# The horizons the final model is built for, in weeks. Zero serves the weeks
-# that already happened, two serves the forecast.
-HORIZONS = (0, 2)
-
-
-def activity_names(horizon: int = 0) -> list[str]:
-    """Column names of the activity features for one horizon."""
-    suffix = f"_h{horizon}" if horizon else ""
-    return [f"activity_rate_{w}d{suffix}" for w in WINDOWS]
 
 
 def build_visits(occ: pd.DataFrame, species: str, min_species: int) -> pd.DataFrame:
