@@ -113,9 +113,9 @@ describe('ListRowComponent', () => {
     expect(container.querySelector('.row__title--accent')).not.toBeNull();
   });
 
-  it('lässt den Wert die Primärfarbe tragen, wenn er einen Wert nennt', async () => {
+  it('lässt den Wert die Primärfarbe tragen, wenn die Zeile einen Chevron trägt', async () => {
     const { container } = await render(ListRowComponent, {
-      inputs: { title: 'Steinpilz', value: '3', accent: true },
+      inputs: { title: 'Speisewert', value: 'essbar', accent: true, chevron: true },
     });
 
     expect(container.querySelector('.row__title--accent')).toBeNull();

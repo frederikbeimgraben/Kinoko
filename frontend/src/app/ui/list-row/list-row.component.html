@@ -7,7 +7,7 @@
     <span
       class="row__title"
       [class]="'row__title--' + kind()"
-      [class.row__title--accent]="accent() && !value()"
+      [class.row__title--accent]="accent() && !chevron()"
       >{{ title() }}</span
     >
     @if (subline()) {

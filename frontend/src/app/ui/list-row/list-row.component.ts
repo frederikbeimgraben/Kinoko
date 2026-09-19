@@ -17,7 +17,7 @@ export class ListRowComponent {
   readonly title = input.required<string>();
   readonly subline = input<string>();
   readonly value = input<string>();
-  /** Primärfarbe für Titel oder Wert; ohne Wert trägt der Titel sie als Linkzeichen. */
+  /** Primärfarbe für Titel oder Wert; ohne Chevron trägt der Titel sie als Linkzeichen. */
   readonly accent = input(false);
   /** Polster, Abstand und Titelschrift folgen dem Ort der Zeile. */
   readonly kind = input<ListRowKind>('default');
