@@ -22,6 +22,21 @@ import numpy as np
 # Half the width of the web mercator world, in metres.
 RAND = 20037508.342789244
 KACHEL = 256
+STUFEN = 254.0
+
+
+def to_byte(share: np.ndarray) -> np.ndarray:
+    """Code a field of 0 to 1 as bytes. A value that is not finite gets 0."""
+    field = np.asarray(share, dtype="float32")
+    code = np.rint(np.clip(field, 0.0, 1.0) * STUFEN) + 1.0
+    return np.where(np.isfinite(field), code, 0.0).astype("uint8")
+
+
+def from_byte(code: np.ndarray) -> np.ndarray:
+    """Read bytes back as a field of 0 to 1. Byte 0 becomes not a number."""
+    codes = np.asarray(code)
+    return np.where(codes > 0, (codes.astype("float32") - 1.0) / STUFEN,
+                    np.nan).astype("float32")
 
 
 def kachelraster(west: float, south: float, east: float, north: float,
@@ -99,11 +114,7 @@ def write_tile_sets(quelle: Path, targets: list[Path], tops: list[float],
 
         with rasterio.open(gewarpt) as src:
             for band, (target, top) in enumerate(zip(targets, tops), start=1):
-                feld = src.read(band)
-                gueltig = np.isfinite(feld)
-                stufe = np.where(gueltig,
-                                 np.clip(feld / max(top, 1e-6), 0, 1) * 254 + 1, 0)
-                stufe = stufe.astype(np.uint8)
+                stufe = to_byte(src.read(band) / max(top, 1e-6))
 
                 for j in range(ty1 - ty0 + 1):
                     for i in range(tx1 - tx0 + 1):

@@ -2,9 +2,8 @@
 
 A source raster carries a zoom span. ``finest_zoom`` reads that span from the
 step of the source. The finest level comes from the source, and each coarser
-level is the mean of the four tiles above it. The coding stays the same on
-every level: one byte per point, byte 0 for no data, bytes 1 to 255 linear
-over the scale of the layer. A tile without data is not written.
+level is the mean of the four tiles above it. The coding of ``tiles.py`` holds
+on every level, and a tile without data is not written.
 """
 
 from __future__ import annotations
@@ -15,7 +14,7 @@ from pathlib import Path
 
 import numpy as np
 
-from tiles import KACHEL, RAND, kachelbox, kachelraster
+from tiles import KACHEL, RAND, from_byte, kachelbox, kachelraster, to_byte
 
 # Zoom 5 zeigt Deutschland, Zoom 14 ist die letzte Stufe der Grundkarte.
 ZOOM_BASE = 5
@@ -23,7 +22,6 @@ ZOOM_CAP = 14
 # Der Punkt einer Kachel auf Zoom 0, in Metern am Aequator.
 RESOLUTION_ZERO = 2 * RAND / KACHEL
 CENTRE_LATITUDE = 51.2
-STUFEN = 254.0
 
 
 def finest_zoom(resolution_m: float, cap: int = ZOOM_CAP, base: int = ZOOM_BASE) -> int:
@@ -31,20 +29,6 @@ def finest_zoom(resolution_m: float, cap: int = ZOOM_CAP, base: int = ZOOM_BASE)
     ground = RESOLUTION_ZERO * math.cos(math.radians(CENTRE_LATITUDE))
     zoom = math.ceil(math.log2(ground / resolution_m)) + 1
     return max(base, min(cap, zoom))
-
-
-def to_byte(share: np.ndarray) -> np.ndarray:
-    """Code a field of 0 to 1 as bytes. A value that is not finite gets 0."""
-    field = np.asarray(share, dtype="float32")
-    code = np.rint(np.clip(field, 0.0, 1.0) * STUFEN) + 1.0
-    return np.where(np.isfinite(field), code, 0.0).astype("uint8")
-
-
-def from_byte(code: np.ndarray) -> np.ndarray:
-    """Read bytes back as a field of 0 to 1. Byte 0 becomes not a number."""
-    codes = np.asarray(code)
-    return np.where(codes > 0, (codes.astype("float32") - 1.0) / STUFEN,
-                    np.nan).astype("float32")
 
 
 def full_weight(codes: np.ndarray) -> np.ndarray:
