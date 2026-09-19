@@ -54,6 +54,14 @@
   (secondaryClick)="removing.set(true)"
 />
 
+<app-part-picker
+  [open]="picking()"
+  [species]="species()"
+  [held]="extraParts()"
+  (chosen)="addParts($event)"
+  (closed)="picking.set(false)"
+/>
+
 <app-confirm-dialog
   [open]="removing()"
   [title]="deleteQuestion()"

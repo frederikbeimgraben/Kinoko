@@ -36,6 +36,8 @@ export type {
   SpeciesEntry,
   SpeciesSummary,
   SpeciesWrite,
+  SourceEntry,
+  SourceScope,
   StandardColour,
   TaxonChild,
   TaxonPage,

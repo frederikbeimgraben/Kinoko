@@ -188,7 +188,6 @@
   "admin.species.section.sources": "Quellen",
   "admin.species.section.texts": "Texte",
   "admin.species.sourceLine": "geändert von {wer} {geaendert}",
-  "admin.species.sourceRowSubtitle": "{url} · geprüft {geprueft}",
   "admin.species.tab.noFinds": "Ohne Funde",
   "admin.species.tab.withForecast": "Vorhersage",
   "admin.species.title": "Arten",

@@ -110,11 +110,34 @@ describe('SpeciesEditorComponent', () => {
     call.flush({ ...PROFILE, forecastEnabled: false });
   });
 
-  it('lässt die Quelle weg, wenn die Art keine trägt', async () => {
-    await build({ ...PROFILE, sources: [] });
+  it('führt die Quellen und legt eine weitere an', async () => {
+    await build();
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('button', { name: /123pilzsuche\.de/ });
 
-    expect(await screen.findByRole('heading', { name: 'Steinpilz bearbeiten' })).toBeInTheDocument();
-    expect(screen.queryByText(/geändert von/)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /123pilzsuche\.de/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Quelle hinzufügen' }));
+
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/quelle/0',
+      '/verwaltung/arten/boletus-edulis/quelle/1',
+    ]);
+  });
+
+  it('nimmt ein Teil in die Merkmale auf', async () => {
+    await build();
+    await screen.findByRole('button', { name: 'Teil hinzufügen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Teil hinzufügen' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Stiel' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
+
+    expect(screen.getByText('Stiel')).toBeInTheDocument();
   });
 
   it('fragt vor dem Löschen nach und löscht dann', async () => {

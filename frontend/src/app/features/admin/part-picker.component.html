@@ -1,0 +1,33 @@
+<app-overlay-host [open]="open()" [modal]="true" (closed)="close()">
+  @if (open()) {
+    <app-sheet
+      [label]="'admin.species.addPart' | t"
+      [title]="'admin.species.addPart' | t"
+      [modal]="true"
+      [detents]="DETENTS"
+      (closed)="close()"
+    >
+      <div head class="picker__head">
+        <b class="picker__title">{{ 'admin.species.addPart' | t }}</b>
+      </div>
+      <div class="picker__list">
+        <div class="picker__card">
+          @for (choice of choices(); track choice.part) {
+            <app-check-row
+              [title]="choice.name"
+              [checked]="choice.checked"
+              (toggled)="toggle(choice.part, $event)"
+            />
+          }
+        </div>
+      </div>
+      <app-action-bar
+        [primary]="'common.add' | t"
+        [secondary]="'common.cancel' | t"
+        [ghost]="true"
+        (primaryClick)="add()"
+        (secondaryClick)="close()"
+      />
+    </app-sheet>
+  }
+</app-overlay-host>

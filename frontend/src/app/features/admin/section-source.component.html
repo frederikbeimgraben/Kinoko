@@ -1,0 +1,44 @@
+<app-page-header [title]="'admin.source.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <section>
+    <h2 class="section__title">{{ 'admin.source.section.scope' | t }}</h2>
+    <app-segmented
+      [options]="scopes()"
+      [value]="scope()"
+      [label]="'admin.source.section.scope' | t"
+      (valueChange)="chooseScope($event)"
+    />
+  </section>
+
+  <app-form-field
+    [label]="'admin.source.field.title' | t"
+    [section]="true"
+    [value]="title()"
+    (valueChange)="title.set($event)"
+  />
+
+  <app-form-field
+    [label]="'admin.source.field.url' | t"
+    [section]="true"
+    [value]="url()"
+    (valueChange)="url.set($event)"
+  />
+
+  <app-form-field
+    [label]="'admin.source.field.checkedOn' | t"
+    [section]="true"
+    [kind]="'date'"
+    [value]="checkedOn()"
+    [display]="checkedDay()"
+    (valueChange)="checkedOn.set($event)"
+  />
+</div>
+
+<app-action-bar
+  [primary]="'common.apply' | t"
+  [secondary]="'admin.source.remove' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="apply()"
+  (secondaryClick)="remove()"
+/>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import type { BodyPart } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { shortDate } from '../../core/i18n/dates';
 import { grouped, joined } from '../../core/i18n/numbers';
@@ -14,12 +15,13 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
+import { PartPickerComponent } from './part-picker.component';
 import { SpeciesEditorState } from './species-editor.state';
-import { featureRows, lookalikeRows, type EditorRow } from './species-editor.rows';
+import { featureRows, lookalikeRows, sourceRows, type EditorRow } from './species-editor.rows';
 import { lookalikeWrites } from './species-lists';
 
-/** Wohin ein Abschnitt führt: auf ein Teil, auf einen Text, auf eine Verwechslung. */
-type BlockKind = 'part' | 'text' | 'lookalike';
+/** Wohin ein Abschnitt führt: auf ein Teil, einen Text, eine Verwechslung, eine Quelle. */
+type BlockKind = 'part' | 'text' | 'lookalike' | 'source';
 
 /** Ein Abschnitt des Editors mit seinen Zeilen. */
 interface Block {
@@ -41,6 +43,7 @@ interface Block {
     ActionBarComponent,
     AddRowComponent,
     ConfirmDialogComponent,
+    PartPickerComponent,
     ListRowComponent,
     PageHeaderComponent,
     StatRowComponent,
@@ -63,6 +66,8 @@ export class SpeciesEditorComponent {
   protected readonly species = this.state.species;
   protected readonly forecast = this.state.forecast;
   protected readonly removing = signal(false);
+  protected readonly picking = signal(false);
+  protected readonly extraParts = this.state.extraParts;
 
   protected readonly title = computed(() =>
     [this.species()?.name, this.i18n.translate('admin.species.editTitle')].filter(Boolean).join(' '),
@@ -87,9 +92,9 @@ export class SpeciesEditorComponent {
       {
         kind: 'part',
         title: text('admin.species.section.features'),
-        rows: featureRows(one, text, to),
-        add: null,
-        addAction: null,
+        rows: featureRows(one, this.state.extraParts(), text, to),
+        add: text('admin.characteristic.part'),
+        addAction: text('admin.species.addPart'),
         opens: true,
       },
       {
@@ -119,18 +124,23 @@ export class SpeciesEditorComponent {
         addAction: text('admin.species.addLookalike'),
         opens: true,
       },
+      {
+        kind: 'source',
+        title: text('admin.species.section.sources'),
+        rows: sourceRows(one),
+        add: text('admin.source.title'),
+        addAction: text('admin.species.addSource'),
+        opens: true,
+      },
     ];
     return blocks.filter((block) => block.rows.length > 0 || block.add !== null);
   });
 
-  /** Woher die Merkmale stammen und wann jemand sie zuletzt angefasst hat. */
+  /** Wer die Art zuletzt angefasst hat und wann. */
   protected readonly sourceText = computed(() => {
     const one = this.species();
-    const source = one?.sources[0];
-    if (one === null || source === undefined) return '';
+    if (one === null) return '';
     return this.i18n.translate('admin.species.sourceLine', {
-      quelle: source.title,
-      geprueft: this.day(source.checkedOn),
       wer: one.updatedByName ?? '',
       geaendert: this.day(one.updatedAt.slice(0, 10)),
     });
@@ -161,16 +171,25 @@ export class SpeciesEditorComponent {
   /** Eine Zeile führt auf die Unterseite ihres Abschnitts. */
   protected openRow(kind: BlockKind, at: number, key: string): void {
     if (kind === 'part') void this.router.navigate(['/verwaltung/arten', this.slug(), 'teil', key]);
-    if (kind === 'lookalike') this.openLookalike(at);
+    if (kind === 'lookalike') this.open('verwechslung', at);
+    if (kind === 'source') this.open('quelle', at);
   }
 
   /** Die Zeile am Ende eines Abschnitts legt einen weiteren Eintrag an. */
   protected addRow(kind: BlockKind): void {
-    if (kind === 'lookalike') this.openLookalike(lookalikeWrites(this.species()).length);
+    if (kind === 'part') this.picking.set(true);
+    if (kind === 'lookalike') this.open('verwechslung', lookalikeWrites(this.species()).length);
+    if (kind === 'source') this.open('quelle', this.species()?.sources.length ?? 0);
   }
 
-  private openLookalike(at: number): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug(), 'verwechslung', at]);
+  /** Nimmt die gewählten Teile in die Art auf und schließt das Blatt. */
+  protected addParts(parts: readonly BodyPart[]): void {
+    this.state.addParts(parts);
+    this.picking.set(false);
+  }
+
+  private open(step: string, at: number): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug(), step, at]);
   }
 
   protected setForecast(enabled: boolean): void {

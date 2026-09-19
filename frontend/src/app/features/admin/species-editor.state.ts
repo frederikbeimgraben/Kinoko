@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { SpeciesApi } from '../../core/api/species.api';
-import type { SpeciesCounts, SpeciesEntry, SpeciesWrite } from '../../core/api/models';
+import type { BodyPart, SpeciesCounts, SpeciesEntry, SpeciesWrite } from '../../core/api/models';
 import { toWrite } from './species-write';
 
 /** Profil und Zahlen einer Art im Bearbeiten-Modus. */
@@ -11,9 +11,13 @@ export class SpeciesEditorState {
   private readonly _slug = signal('');
   private readonly _species = signal<SpeciesEntry | null>(null);
   private readonly _counts = signal<SpeciesCounts | null>(null);
+  private readonly _extraParts = signal<readonly BodyPart[]>([]);
 
   readonly species = this._species.asReadonly();
   readonly counts = this._counts.asReadonly();
+
+  /** Teile, die jemand gewählt hat und die noch keinen Wert tragen. */
+  readonly extraParts = this._extraParts.asReadonly();
   readonly forecast = computed(() => this._species()?.forecastEnabled ?? false);
 
   /** Lädt Profil und Zahlen einer Art. Ein zweiter Aufruf zur selben Art ruht. */
@@ -22,12 +26,18 @@ export class SpeciesEditorState {
     this._slug.set(slug);
     this._species.set(null);
     this._counts.set(null);
+    this._extraParts.set([]);
     this.api.profile(slug).subscribe((entry) => {
       if (this._slug() === slug) this._species.set(entry);
     });
     this.api.counts(slug).subscribe((counts) => {
       if (this._slug() === slug) this._counts.set(counts);
     });
+  }
+
+  /** Merkt Teile ohne Wert, damit der Editor eine Zeile dafür zeigt. */
+  addParts(parts: readonly BodyPart[]): void {
+    this._extraParts.update((held) => [...held, ...parts.filter((one) => !held.includes(one))]);
   }
 
   /** Schreibt die geänderten Felder. Die Antwort trägt den neuen Stand. */

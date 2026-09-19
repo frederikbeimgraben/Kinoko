@@ -1,6 +1,7 @@
 import type { ColourChange, ColourGroup, SpeciesEntry } from '../../core/api/models';
 import {
   changes,
+  freeParts,
   colourGroupAt,
   colourGroups,
   lookalikeWrites,
@@ -12,6 +13,8 @@ import {
   withoutLookalike,
   withoutMeasurement,
   withoutPart,
+  withoutSource,
+  withSource,
 } from './species-lists';
 
 const CAP_COLOUR = {
@@ -147,6 +150,29 @@ describe('species-lists', () => {
     expect(withoutColourGroup(null, 'cap', 0)).toEqual([]);
     expect(withoutMeasurement(null, 'cap', 'width')).toEqual([]);
     expect(withoutPart(null, 'cap')).toEqual({ measurements: [], colours: [], colourChanges: [] });
+  });
+
+  it('bietet nur die Teile, die weder Art noch Wahl führen', () => {
+    expect(freeParts(SPECIES, ['gills'])).toEqual([
+      'fruitbody',
+      'stem_base',
+      'pores',
+      'flesh',
+      'spore_print',
+      'spore',
+    ]);
+  });
+
+  it('legt eine Quelle an ihre Stelle und hängt eine neue an', () => {
+    const one = {
+      scope: 'further' as const,
+      title: 'Wikipedia',
+      url: 'de.wikipedia.org',
+      checkedOn: '2026-09-10',
+    };
+
+    expect(withSource(null, 0, one)).toEqual([one]);
+    expect(withoutSource(null, 0)).toEqual([]);
   });
 
   it('nimmt eine Verwechslung an ihrer Stelle heraus', () => {

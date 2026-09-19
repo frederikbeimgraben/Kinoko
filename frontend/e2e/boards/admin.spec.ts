@@ -167,6 +167,27 @@ test('SpeciesEdit', async ({ page }) => {
   await expectBoard(page, 'SpeciesEdit');
 });
 
+test('PartPicker', async ({ page }) => {
+  guard('PartPicker', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await page.getByRole('button', { name: 'Teil hinzufügen' }).click();
+  await expect(page.getByRole('dialog', { name: 'Teil hinzufügen' })).toBeVisible();
+  await expectBoard(page, 'PartPicker');
+});
+
+test('EditSource', async ({ page }) => {
+  guard('EditSource', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/quelle/0', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByLabel('Titel')).toHaveValue('123pilzsuche.de');
+  await expectBoard(page, 'EditSource');
+});
+
 test('SpeciesDelete', async ({ page }) => {
   guard('SpeciesDelete', 'phone');
   await open(page, '/verwaltung/arten/boletus-edulis', {

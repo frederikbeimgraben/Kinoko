@@ -188,7 +188,6 @@
   "admin.species.section.sources": "Sources",
   "admin.species.section.texts": "Texts",
   "admin.species.sourceLine": "Changed by {wer} {geaendert}",
-  "admin.species.sourceRowSubtitle": "{url} · checked {geprueft}",
   "admin.species.tab.noFinds": "Without finds",
   "admin.species.tab.withForecast": "With forecast",
   "admin.species.title": "Species",
