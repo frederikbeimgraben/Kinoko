@@ -71,3 +71,17 @@ export async function mockSignIn(page: Page, delayMs = 0): Promise<void> {
     }),
   );
 }
+
+/** Ein SSO ohne Sitzung: die stille Erneuerung endet mit `login_required`. */
+export async function mockSignedOut(page: Page): Promise<void> {
+  await page.route(`${ISSUER}/.well-known/openid-configuration`, (route) =>
+    route.fulfill({ contentType: 'application/json', body: JSON.stringify(METADATA) }),
+  );
+  await page.route(`${ISSUER}/authorize*`, async (route) => {
+    const asked = new URL(route.request().url());
+    const back = new URL(asked.searchParams.get('redirect_uri') ?? '');
+    back.searchParams.set('error', 'login_required');
+    back.searchParams.set('state', asked.searchParams.get('state') ?? '');
+    await route.fulfill({ status: 302, headers: { location: back.toString() } });
+  });
+}

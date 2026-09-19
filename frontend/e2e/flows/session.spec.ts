@@ -1,6 +1,7 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
-import { authConfig, mockSignIn } from '../fixtures/auth';
+import { authConfig, mockSignIn, mockSignedOut } from '../fixtures/auth';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
@@ -8,6 +9,18 @@ const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 const SLOW_MS = 3000;
 
 const MEMORY_KEY = 'pilzkarte.session.v1';
+
+const MEMORY = JSON.stringify({ name: 'Frederik', permissions: [] });
+
+async function rememberSession(page: Page): Promise<void> {
+  await page.addInitScript(
+    ([key, value]) => {
+      // Nur das Fenster, nicht der iframe der stillen Erneuerung.
+      if (window.top === window) window.localStorage.setItem(key, value);
+    },
+    [MEMORY_KEY, MEMORY],
+  );
+}
 
 async function openMap(page: Page, delayMs = 0): Promise<void> {
   await mockSignIn(page, delayMs);
@@ -35,12 +48,7 @@ test('zeigt die Initiale, sobald die Prüfung antwortet', async ({ page }) => {
 });
 
 test('zeigt den Stand aus dem Gerät sofort', async ({ page }) => {
-  await page.addInitScript(
-    ([key, value]) => {
-      window.localStorage.setItem(key, value);
-    },
-    [MEMORY_KEY, JSON.stringify({ name: 'Frederik', permissions: [] })],
-  );
+  await rememberSession(page);
 
   await openMap(page, SLOW_MS);
 
@@ -50,12 +58,8 @@ test('zeigt den Stand aus dem Gerät sofort', async ({ page }) => {
 });
 
 test('räumt den Stand weg, wenn die Prüfung ihn nicht bestätigt', async ({ page }) => {
-  await page.addInitScript(
-    ([key, value]) => {
-      window.localStorage.setItem(key, value);
-    },
-    [MEMORY_KEY, JSON.stringify({ name: 'Frederik', permissions: [] })],
-  );
+  await rememberSession(page);
+  await mockSignedOut(page);
   await mockApi(page, { '/api/config': authConfig(BASE) });
   await page.goto('/karte');
 

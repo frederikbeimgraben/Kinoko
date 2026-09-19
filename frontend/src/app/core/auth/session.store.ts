@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, untracked } from '@angular/core';
 import type { Permission } from '../api/models';
 
 /** Der letzte bekannte Stand der Sitzung. Kein Geheimnis liegt darin. */
@@ -37,8 +37,11 @@ export class SessionStore {
 
   readonly memory = this.held.asReadonly();
 
+  // Der Aufrufer schreibt aus einem Effekt heraus. Ein verfolgter Lesezugriff
+  // machte daraus eine Schleife.
   keep(part: Partial<SessionMemory>): void {
-    const next: SessionMemory = { name: '', permissions: [], ...this.held(), ...part };
+    const known = untracked(this.held);
+    const next: SessionMemory = { name: '', permissions: [], ...known, ...part };
     if (next.name === '') return;
     this.held.set(next);
     try {
