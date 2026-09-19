@@ -4,6 +4,7 @@
 @use 'styles/press';
 @use 'styles/pointer';
 @use 'styles/stopgap';
+@use 'styles/route-motion';
 
 // Die App füllt das Gerät und scrollt nur innerhalb ihrer Flächen. Ein
 // Seitenscroll würde das Blatt und die Navigation vom Rand lösen.

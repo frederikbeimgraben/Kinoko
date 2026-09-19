@@ -40,6 +40,9 @@ export default defineConfig({
     serviceWorkers: 'block',
     locale: 'de-DE',
     timezoneId: 'Europe/Berlin',
+    // Boards fotografieren einen ruhigen Zustand: Übergänge bleiben aus,
+    // sonst entstünde das Bild mitten in der Animation.
+    reducedMotion: 'reduce',
   },
   expect: {
     toHaveScreenshot: { maxDiffPixelRatio: 0.005, animations: 'disabled', caret: 'hide' },
@@ -60,7 +63,12 @@ export default defineConfig({
       timeout: 600_000,
       use: { viewport: BLOCKS },
     },
-    { name: 'flows', testMatch: 'flows/*.spec.ts', use: { viewport: PHONE } },
+    {
+      name: 'flows',
+      testMatch: 'flows/*.spec.ts',
+      // Flüsse prüfen Übergänge selbst: reduzierte Bewegung nur, wo der Fluss es verlangt.
+      use: { viewport: PHONE, reducedMotion: 'no-preference' },
+    },
   ],
   webServer: {
     command: `node e2e/serve.mjs ${PORT}`,
