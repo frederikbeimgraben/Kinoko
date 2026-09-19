@@ -52,10 +52,7 @@
   grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
 }
 
-// Ohne eigene Ebene hier bliebe ein deckendes Blatt (`position: fixed`) der
-// Karte in dieser Zelle gefangen: die Leiste hat keine eigene Ebene und
-// läge dann immer über dem ganzen Zweig, auch über einem Blatt mit hohem
-// z-index darin.
+// Ohne eigene Ebene hier fängt sich ein deckendes Blatt der Karte in dieser Zelle.
 .shell__map {
   position: relative;
   grid-row: 1;
@@ -75,10 +72,9 @@
   z-index: 2;
 }
 
-// Kein `display: none`, sonst verliert MapLibre seine Größe.
+// `resize()` in `MapComponent` holt die Größe nach, sobald sie wieder zeigt.
 .shell__map--hidden {
-  visibility: hidden;
-  pointer-events: none;
+  display: none;
 }
 
 .shell--column .shell__nav {

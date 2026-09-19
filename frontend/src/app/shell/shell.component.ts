@@ -57,6 +57,15 @@ export class ShellComponent {
     { initialValue: this.router.url },
   );
 
+  /** Wahr, sobald die erste echte Navigation eingetroffen ist. */
+  private readonly navigated = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => true),
+    ),
+    { initialValue: false },
+  );
+
   protected readonly wide = this.viewport.wide;
 
   /** Der erste Abschnitt der Adresse, ohne Abfrage: `/karte?art=…` → `/karte`. */
@@ -115,7 +124,7 @@ export class ShellComponent {
 
   constructor() {
     effect(() => {
-      if (this.wide() || this.onTheMap()) this._mapWanted.set(true);
+      if (this.navigated() && (this.wide() || this.onTheMap())) this._mapWanted.set(true);
     });
   }
 
