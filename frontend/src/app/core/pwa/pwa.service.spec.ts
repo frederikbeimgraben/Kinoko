@@ -172,5 +172,16 @@ describe('PwaService', () => {
       expect(swUpdate.checkForUpdate).not.toHaveBeenCalled();
       expect(pwa.updateReady()).toBe(false);
     });
+
+    it('läuft ohne `provideServiceWorker` ohne Fehler', async () => {
+      TestBed.configureTestingModule({});
+      const pwa = TestBed.inject(PwaService);
+
+      expect(() => {
+        pwa.init();
+      }).not.toThrow();
+      await expect(pwa.activate()).resolves.toBeUndefined();
+      expect(pwa.updateReady()).toBe(false);
+    });
   });
 });

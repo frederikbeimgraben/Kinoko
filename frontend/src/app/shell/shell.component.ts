@@ -11,7 +11,7 @@ import { I18nService } from '../core/i18n/i18n.service';
 // braucht. Das waren 81 kB.
 import { AvatarButtonComponent } from '../ui/avatar-button/avatar-button.component';
 import { NavComponent } from '../ui/nav/nav.component';
-import { UpdateBarComponent } from '../ui/update-bar/update-bar.component';
+import { BannerComponent } from '../ui/banner/banner.component';
 import { MapComponent } from '../features/map/map.component';
 import { MapState } from '../features/map/map.state';
 import { AddEntryState } from '../features/add-entry/add-entry.state';
@@ -42,7 +42,7 @@ const WITHOUT_NAV: readonly RegExp[] = [
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarButtonComponent, NavComponent, UpdateBarComponent, MapComponent, RouterOutlet],
+  imports: [AvatarButtonComponent, NavComponent, BannerComponent, MapComponent, RouterOutlet],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
@@ -56,9 +56,11 @@ export class ShellComponent {
   private readonly sync = inject(SyncService);
   private readonly pwa = inject(PwaService);
 
-  /** Höhe der Aktualisierungsleiste: schiebt schwebende Elemente und Seitenkopf. */
-  protected readonly updateBarHeight = computed(() =>
-    this.pwa.updateReady() ? 'calc(var(--size-tap) + env(safe-area-inset-top, 0px))' : '0px',
+  protected readonly updateReady = this.pwa.updateReady;
+
+  /** Höhe der sichtbaren oberen Leiste: schiebt schwebende Elemente und Seitenkopf. */
+  protected readonly topBarHeight = computed(() =>
+    this.updateReady() ? 'calc(var(--size-tap) + env(safe-area-inset-top, 0px))' : '0px',
   );
 
   private readonly adresse = toSignal(
@@ -113,5 +115,9 @@ export class ShellComponent {
 
   protected toAccount(): void {
     void this.router.navigate(['/konto']);
+  }
+
+  protected reload(): void {
+    void this.pwa.activate();
   }
 }

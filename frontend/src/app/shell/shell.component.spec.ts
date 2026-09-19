@@ -112,7 +112,7 @@ describe('ShellComponent', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Neue Version');
     expect(screen.getByRole('button', { name: 'Neu laden' })).toBeInTheDocument();
     expect(container.querySelector('.shell')).toHaveStyle({
-      '--update-bar-height': 'calc(var(--size-tap) + env(safe-area-inset-top, 0px))',
+      '--top-bar-height': 'calc(var(--size-tap) + env(safe-area-inset-top, 0px))',
     });
   });
 

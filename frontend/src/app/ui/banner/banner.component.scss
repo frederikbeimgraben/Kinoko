@@ -17,3 +17,24 @@
 .banner__glyph {
   flex: 0 0 auto;
 }
+
+.banner--update {
+  block-size: var(--size-tap);
+  padding-block: 0;
+  padding-inline: var(--size-gutter) var(--space-2);
+  color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.banner__text {
+  flex: 1;
+}
+
+.banner__action {
+  --space-2: 0;
+  --space-3: 14px;
+  --fs-sm: var(--fs-row-meta);
+  --radius-md: 8px;
+
+  block-size: 32px;
+}

@@ -15,7 +15,8 @@ const BOOT_WINDOW_MS = 10_000;
  */
 @Injectable({ providedIn: 'root' })
 export class PwaService {
-  private readonly swUpdate = inject(SwUpdate);
+  /** Ohne `provideServiceWorker` bleibt der Dienst tatenlos statt zu reißen. */
+  private readonly swUpdate = inject(SwUpdate, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _canInstall = signal(false);
@@ -54,7 +55,8 @@ export class PwaService {
 
   /** Beim Start aktiviert eine Fassung sich still. Im Betrieb wartet sie auf die Person. */
   private watchUpdates(): void {
-    if (!this.swUpdate.isEnabled) return;
+    const swUpdate = this.swUpdate;
+    if (!swUpdate?.isEnabled) return;
 
     this.withinBootWindow = true;
     const bootTimer = setTimeout(() => {
@@ -64,7 +66,7 @@ export class PwaService {
       clearTimeout(bootTimer);
     });
 
-    const versionSub = this.swUpdate.versionUpdates
+    const versionSub = swUpdate.versionUpdates
       .pipe(filter((event): event is VersionReadyEvent => event.type === 'VERSION_READY'))
       .subscribe(() => {
         this._updateReady.set(true);
@@ -76,7 +78,7 @@ export class PwaService {
 
     const onVisible = (): void => {
       if (document.visibilityState !== 'visible') return;
-      void this.swUpdate.checkForUpdate();
+      void swUpdate.checkForUpdate();
     };
     document.addEventListener('visibilitychange', onVisible);
     this.destroyRef.onDestroy(() => {
@@ -86,6 +88,7 @@ export class PwaService {
 
   /** Aktiviert die wartende Fassung und lädt neu: beim Start still, sonst auf Knopfdruck. */
   async activate(): Promise<void> {
+    if (this.swUpdate === null) return;
     await this.swUpdate.activateUpdate();
     location.reload();
   }
