@@ -13,6 +13,7 @@ from app.core.settings import VERSION, get_settings
 from app.modules import system
 from app.modules.access import router as access_router
 from app.modules.access import seed as access_seed
+from app.modules.catalog import bundle as catalog_bundle
 from app.modules.catalog import router as catalog_router
 from app.modules.catalog import seed as catalog_seed
 from app.modules.objects import router as objects_router
@@ -31,6 +32,7 @@ async def lifespan(_: FastAPI) -> AsyncGenerator[None]:
         await access_seed.sync(db)
         await TextSeed().sync(db)
         await TextService(db).load_titles()
+        await catalog_bundle.warm(db)
     yield
     await engine().dispose()
 

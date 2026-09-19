@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING
 
+from app.modules.catalog.bundle import CACHE
 from app.shared.enums import BodyPart, ColourMode, Edibility, HymeniumType, TaxonRank, TermKind
 from tests import catalog_factory as cf
 
@@ -183,3 +185,42 @@ async def test_bundle_empty_catalogue(api: httpx.AsyncClient) -> None:
     response = await api.get("/species/bundle")
     assert response.status_code == 200
     assert response.json()["items"] == []
+
+
+async def test_bundle_is_built_once_for_one_etag(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    await cf.make_species(session, slug="boletus-edulis", name="Steinpilz")
+    await api.get("/species/bundle")
+    builds = CACHE.builds
+
+    await api.get("/species/bundle")
+
+    assert CACHE.builds == builds
+
+
+async def test_two_requests_at_the_same_time_build_once(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    await cf.make_species(session, slug="boletus-edulis", name="Steinpilz")
+    CACHE.forget()
+
+    first, second = await asyncio.gather(api.get("/species/bundle"), api.get("/species/bundle"))
+
+    assert first.status_code == 200
+    assert second.content == first.content
+    assert CACHE.builds == 1
+
+
+async def test_bundle_is_fresh_after_a_change(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    porcini = await cf.make_species(session, slug="boletus-edulis", name="Steinpilz")
+    first = await api.get("/species/bundle")
+
+    porcini.name = "Herrenpilz"
+    await session.commit()
+    second = await api.get("/species/bundle")
+
+    assert second.headers["ETag"] != first.headers["ETag"]
+    assert second.json()["items"][0]["name"] == "Herrenpilz"
