@@ -37,7 +37,7 @@ describe('App', () => {
     for (const [path, titel] of [
       ['/arten', 'Arten'],
       ['/eintraege', 'Einträge'],
-      ['/konto', 'Konto'],
+      ['/konto', 'Einstellungen'],
     ]) {
       await navigate(path);
       // Die Kopfleiste der Seite ist die einzige H1; „Konto“ steht auf dem

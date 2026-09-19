@@ -1,3 +1,5 @@
+@use '../../../styles/tap-icon';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -69,10 +71,13 @@
   font-weight: var(--fw-semibold);
 }
 
-.account__sub {
+.account__email,
+.account__issuer {
+  overflow: hidden;
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .account__list {
@@ -80,11 +85,10 @@
   flex-direction: column;
 }
 
-// Die zweite Wahl im selben Abschnitt braucht eine eigene Zeile, sonst stünden
-// zwei Schalter ohne Beschriftung untereinander.
-.account__subsection {
-  margin: var(--space-4) 0 var(--space-2);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
+// Randlos, Tippfläche 44 px, rechter Rand wie im Artboard `Account`.
+.account__signout {
+  @include tap-icon.frameless;
+
+  margin-inline-end: -8px;
   color: var(--color-text);
 }

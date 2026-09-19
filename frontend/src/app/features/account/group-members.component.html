@@ -2,7 +2,7 @@
   <app-list-row kind="catalogue" [title]="'group.inviteCode' | t">
     <span trail class="members__trail">
       <span class="members__code">{{ group().inviteCode }}</span>
-      <app-icon-button icon="share" [label]="'group.share' | t" (pressed)="share()" />
+      <app-icon-button icon="share" variant="ghost" [label]="'group.share' | t" (pressed)="share()" />
     </span>
   </app-list-row>
 </div>

@@ -12,6 +12,7 @@ import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { ADMIN_PERMISSIONS } from '../admin/admin.entries';
 
 /** Die drei Wahlmöglichkeiten der Darstellung, in der Reihenfolge des Artboards. */
@@ -39,6 +40,7 @@ const MAP_APPS: readonly MapApp[] = ['osm', 'google'];
     ListRowComponent,
     PageHeaderComponent,
     SegmentedComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './account.component.html',
@@ -79,14 +81,6 @@ export class AccountComponent {
 
   protected initiale(person: SignedInUser): string {
     return person.name.trim().charAt(0).toUpperCase();
-  }
-
-  /** „frederik@beimgraben.net · sso.beimgraben.net“, wie im Artboard. */
-  protected accountSubline(person: SignedInUser): string {
-    return this.i18n.translate('konto.nutzerUnter', {
-      email: person.email,
-      aussteller: this.aussteller(),
-    });
   }
 
   protected readonly version = computed(
@@ -146,7 +140,7 @@ export class AccountComponent {
   }
 
   /** Der Wirt des Issuers sagt kürzer als die volle URL, wo das Konto liegt. */
-  private aussteller(): string {
+  protected aussteller(): string {
     const issuer = this.config.configuration()?.oidcIssuer ?? '';
     try {
       return new URL(issuer).host;

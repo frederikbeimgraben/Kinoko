@@ -1,4 +1,4 @@
-<app-page-header [title]="'konto.titel' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'account.title' | t" [close]="true" (closeClick)="back()" />
 
 <div class="account">
   <section class="account__block">
@@ -9,11 +9,18 @@
           <span class="account__circle" aria-hidden="true">{{ initiale(person) }}</span>
           <span class="account__stack">
             <span class="account__name">{{ person.name }}</span>
-            <span class="account__sub">{{ accountSubline(person) }}</span>
+            <span class="account__email">{{ person.email }}</span>
+            <span class="account__issuer">{{ aussteller() }}</span>
           </span>
-          <app-button variant="secondary" size="sm" (click)="signOut()">
-            {{ 'konto.abmelden' | t }}
-          </app-button>
+          <button
+            class="account__signout tap"
+            type="button"
+            data-press="scale"
+            [attr.aria-label]="'account.signOut' | t"
+            (click)="signOut()"
+          >
+            <app-svg-icon name="sign-out" [size]="20" />
+          </button>
         } @else {
           <span class="account__stack">
             <span class="account__name">{{ 'konto.nichtAngemeldet' | t }}</span>
@@ -35,7 +42,10 @@
       [label]="'theme.beschriftung' | t"
       (valueChange)="selectTheme($event)"
     />
-    <h3 class="account__subsection">{{ 'sprache.beschriftung' | t }}</h3>
+  </section>
+
+  <section class="account__block">
+    <h2 class="account__section">{{ 'sprache.beschriftung' | t }}</h2>
     <app-segmented
       [options]="languages()"
       [value]="languageChoice()"

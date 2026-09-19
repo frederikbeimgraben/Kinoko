@@ -185,14 +185,14 @@ test.describe('Seitenhöhe am Telefon', () => {
 
   test('Konto, abgemeldet', async ({ page }) => {
     await open(page, '/konto');
-    await expect(page.getByRole('heading', { name: 'Konto', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Einstellungen', level: 1 })).toBeVisible();
     await assertFillsViewport(page);
   });
 
   test('Konto, angemeldet', async ({ page }) => {
     await mockSignIn(page);
     await open(page, '/konto', { '/api/config': authConfig(BASE) });
-    await expect(page.getByRole('heading', { name: 'Konto', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Einstellungen', level: 1 })).toBeVisible();
     await assertFillsViewport(page);
   });
 

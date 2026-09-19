@@ -82,7 +82,8 @@ describe('KontoComponent', () => {
     const { container, manager, auth, refresh } = await build(true);
 
     expect(screen.getByText('Frederik')).toBeInTheDocument();
-    expect(screen.getByText('frederik@beimgraben.net · sso.beimgraben.net')).toBeInTheDocument();
+    expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
+    expect(screen.getByText('sso.beimgraben.net')).toBeInTheDocument();
     await noViolations(container);
 
     await userEvent.click(screen.getByRole('button', { name: 'Abmelden' }));
@@ -161,14 +162,15 @@ describe('KontoComponent', () => {
   it('zeigt einen Issuer ohne URL-Form so, wie er kommt', async () => {
     await build(true, { ...CONFIG, oidcIssuer: 'sso.beimgraben.net' });
 
-    expect(screen.getByText('frederik@beimgraben.net · sso.beimgraben.net')).toBeInTheDocument();
+    expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
+    expect(screen.getAllByText('sso.beimgraben.net')).toHaveLength(1);
   });
 
-  it('führt über Zurück auf die Karte', async () => {
+  it('führt über Schließen auf die Karte', async () => {
     const { router } = await build();
     const change = vi.spyOn(router, 'navigateByUrl');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
 
     expect(change).toHaveBeenCalledWith('/karte');
   });
