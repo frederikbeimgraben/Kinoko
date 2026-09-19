@@ -43,6 +43,10 @@ RESOLUTION = 10
 SOURCE_CRS = "EPSG:32632"
 MERCATOR = "EPSG:3857"
 STATE = "_baumarten_stand.json"
+# Die Quelle steht unter CC BY 4.0 und verlangt eine Namensnennung. Das
+# Manifest traegt sie mit der Ebene.
+NOTE = ("10-m-Raster, Thünen-Institut, Dominant Tree Species for Germany "
+        "(2017/2018), CC BY 4.0")
 # Der Anteil gilt an der Waldflaeche und laeuft von 0 bis 1.
 LOW, HIGH = 0.0, 1.0
 
@@ -126,7 +130,7 @@ def update_manifest(path: Path, roots: dict[str, Path], filled: dict[str, list],
         tiles = [(int(z), int(x), int(y))
                  for z, x, y in (key.split("/") for key in filled[name])]
         eintrag = meta["layers"].get(name, {})
-        eintrag.update(label=LABELS[name], unit="", static=True,
+        eintrag.update(label=LABELS[name], note=NOTE, unit="", static=True,
                        low=LOW, high=HIGH,
                        tiles=f"layers_kacheln/{name}",
                        zooms=[ZOOM_BASE, zoom],
