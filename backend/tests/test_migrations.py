@@ -101,7 +101,7 @@ def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
         connection.exec_driver_sql(
             "CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL)"
         )
-        connection.exec_driver_sql("INSERT INTO alembic_version VALUES ('baseline')")
+        connection.exec_driver_sql("INSERT INTO alembic_version VALUES ('baseline_2')")
     Base.metadata.create_all(made)
     made.dispose()
 
