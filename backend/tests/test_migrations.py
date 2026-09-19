@@ -90,7 +90,7 @@ def test_upgrade_resets_a_foreign_revision(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline_2"
+    assert version == "baseline_3"
 
 
 def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
@@ -114,7 +114,7 @@ def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline_2"
+    assert version == "baseline_3"
 
 
 def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
@@ -133,4 +133,4 @@ def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline_2"
+    assert version == "baseline_3"
