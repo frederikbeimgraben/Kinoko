@@ -32,7 +32,7 @@
 
 // Nur die Griffe nehmen Zeiger an. Der Regler ragt um einen halben Griff über
 // die Spur: so steht die Mitte des Griffs auf dem Wert.
-.rangeslider__handle {
+.rangeslider__thumb {
   position: absolute;
   inset-inline: calc(var(--range-slider-handle) / -2);
   inset-block-start: 0;
@@ -44,7 +44,7 @@
   background: none;
 }
 
-.rangeslider__handle::-webkit-slider-thumb {
+.rangeslider__thumb::-webkit-slider-thumb {
   inline-size: var(--range-slider-handle);
   block-size: var(--range-slider-handle);
   pointer-events: auto;
@@ -62,7 +62,7 @@
   --range-slider-ring: var(--color-primary);
 }
 
-.rangeslider__handle::-moz-range-thumb {
+.rangeslider__thumb::-moz-range-thumb {
   inline-size: var(--range-slider-handle);
   block-size: var(--range-slider-handle);
   pointer-events: auto;

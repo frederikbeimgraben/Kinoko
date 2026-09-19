@@ -22,6 +22,11 @@
   border-radius: var(--radius-md);
 }
 
+// Am Rechner trägt das Modal das X. Ein zweites läge genau darauf.
+:host-context(.shell--column) .object__close {
+  display: none;
+}
+
 // Das Formular des Fundes dunkelt die Karte so ab, wie das Brett es zeigt.
 .object--dark {
   --pilz-scrim: rgb(0 18 10 / 55%);

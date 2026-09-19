@@ -75,6 +75,7 @@
     [detent]="detent()"
     [detents]="detents"
     [modal]="true"
+    [dismissible]="true"
     (closed)="closed.emit()"
   >
     <ng-container [ngTemplateOutlet]="body" />

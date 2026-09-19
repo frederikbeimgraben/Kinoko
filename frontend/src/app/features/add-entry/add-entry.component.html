@@ -16,6 +16,7 @@
         [primary]="'entry.confirmLocation' | t"
         [secondary]="'common.cancel' | t"
         [ghost]="true"
+        [inline]="wide()"
         (primaryClick)="adoptLocation()"
         (secondaryClick)="cancel()"
       />
@@ -29,6 +30,7 @@
         [primary]="'common.apply' | t"
         [secondary]="'common.cancel' | t"
         [ghost]="true"
+        [inline]="wide()"
         (primaryClick)="adoptLocation()"
         (secondaryClick)="cancel()"
       />
@@ -42,7 +44,8 @@
         [primary]="'entry.zone.finish' | t"
         [secondary]="'entry.zone.removeLastVertex' | t"
         [quiet]="true"
-        [split]="true"
+        [split]="!wide()"
+        [inline]="wide()"
         (primaryClick)="closeZone()"
         (secondaryClick)="state.removeLastCorner()"
       >
@@ -120,6 +123,8 @@
           [note]="coordinates()"
           [detents]="detents()"
           [modal]="true"
+          [dismissible]="true"
+          [kind]="state.showsCrosshair() ? 'step' : 'sheet'"
           (closed)="cancel()"
         >
           <ng-container [ngTemplateOutlet]="body" />

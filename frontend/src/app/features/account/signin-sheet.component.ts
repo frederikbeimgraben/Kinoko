@@ -1,18 +1,17 @@
 import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, viewChild } from '@angular/core';
 import { AuthService } from '../../core/auth';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 // Diese Datei laedt beim Start mit. Sie nimmt die Bausteine darum einzeln
 // und nicht ueber `ui/index.ts`: das Sammelmodul zieht jeden Baustein in das
 // erste Buendel, auch die Saisonkurve und die Zeitleiste, die hier niemand
 // braucht. Das waren 81 kB.
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 
-/**
- * Das Anmelde-Blatt kennt nur eine Raste: Titel, Satz und Fußleiste bestimmen
- * die Höhe. Ein fester Anteil ließe zwischen Text und Knöpfen Leerraum stehen.
- */
-const DETENTS = ['content', 'content', 'content'] as const;
+/** Die Höhe steht so im Board `SignInSheet`. */
+const DETENTS = ['404px', '404px', '404px'] as const;
 
 /**
  * Fragt nach der Anmeldung, wenn etwas gespeichert werden soll. Es erscheint
@@ -22,7 +21,7 @@ const DETENTS = ['content', 'content', 'content'] as const;
 @Component({
   selector: 'app-signin-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, SheetComponent, TranslatePipe],
+  imports: [ActionBarComponent, OverlayHostComponent, SheetComponent, TranslatePipe],
   templateUrl: './signin-sheet.component.html',
   styleUrl: './signin-sheet.component.scss',
 })
@@ -32,6 +31,7 @@ export class SignInSheetComponent {
   // die Komponente, nicht ihr Element.
   private readonly footer = viewChild('footer', { read: ElementRef });
 
+  protected readonly wide = inject(ViewportService).wide;
   protected readonly pending = this.auth.sheetOpen;
   protected readonly detents = DETENTS;
 

@@ -1,20 +1,5 @@
-// Der Schleier liegt über der ganzen App: Er sperrt die Karte, solange die
-// Frage offen ist. Der Wert stammt aus dem Artboard `Anmelden`.
-.signIn {
-  position: fixed;
-  z-index: var(--z-dialog);
-  inset: 0;
-}
-
-.signin__scrim {
-  position: absolute;
-  inset: 0;
-  background: rgb(0 18 10 / 55%);
-}
-
-.signin__sheet {
-  position: absolute;
-  inset: 0;
+:host {
+  --pilz-scrim: rgb(0 18 10 / 55%);
 }
 
 .signin__content {
@@ -23,26 +8,15 @@
   flex-direction: column;
   gap: var(--space-4);
   min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-6);
+  padding: var(--space-1) var(--size-gutter) var(--space-5);
   overflow: hidden;
 }
 
-// 24 px und 15 px stehen so im Artboard `Anmelden`. Zwischen den Stufen des
-// Kits liegt nichts, was sie trifft.
+// 24 px steht so im Artboard `Anmelden`. Zwischen den Stufen des Kits liegt
+// nichts, was die Größe trifft.
 .signin__title {
   margin: 0;
   font-size: 24px;
   font-weight: var(--fw-semibold);
   letter-spacing: var(--tracking-tight);
-}
-
-.signin__text {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.55;
-}
-
-// Am Rechner dunkelt das Modal selbst ab, und nur rechts der Spalte.
-:host-context(.shell--column) .signin__scrim {
-  display: none;
 }

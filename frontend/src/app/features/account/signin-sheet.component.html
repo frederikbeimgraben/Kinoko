@@ -1,18 +1,26 @@
 @if (pending()) {
-  <div class="signIn">
-    <div class="signin__scrim"></div>
-    <app-sheet class="signin__sheet" [label]="'anmelden.blatt' | t" [modal]="true" [detents]="detents">
+  <app-overlay-host class="signin" [open]="true" [modal]="true" [cover]="true" (closed)="later()">
+    <app-sheet
+      [label]="'anmelden.blatt' | t"
+      [title]="'anmelden.titel' | t"
+      [modal]="true"
+      [detents]="detents"
+      (closed)="later()"
+    >
       <div class="signin__content">
-        <h2 class="signin__title">{{ 'anmelden.titel' | t }}</h2>
-        <p class="signin__text">{{ 'anmelden.text' | t }}</p>
+        @if (!wide()) {
+          <h2 class="signin__title">{{ 'anmelden.titel' | t }}</h2>
+        }
       </div>
       <app-action-bar
         #footer
+        foot
         [primary]="'anmelden.knopf' | t"
         [secondary]="'anmelden.spaeter' | t"
+        [ghost]="true"
         (primaryClick)="signIn()"
         (secondaryClick)="later()"
       />
     </app-sheet>
-  </div>
+  </app-overlay-host>
 }

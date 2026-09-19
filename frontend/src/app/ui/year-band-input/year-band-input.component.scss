@@ -33,7 +33,7 @@
 
 // Beide Regler liegen übereinander. Nur die Griffe nehmen Zeiger an. Ein Monat
 // belegt ein Zwölftel; der Griff steht auf der Kante seines Monats.
-.yearband__handle {
+.yearband__thumb {
   position: absolute;
   inset-inline-start: calc(var(--year-band-handle) / -2);
   inset-block-start: var(--year-band-handle-drop);
@@ -45,11 +45,11 @@
   background: none;
 }
 
-.yearband__handle--to {
+.yearband__thumb--to {
   inset-inline-start: calc(100% / 12 - var(--year-band-handle) / 2);
 }
 
-.yearband__handle::-webkit-slider-thumb {
+.yearband__thumb::-webkit-slider-thumb {
   inline-size: var(--year-band-handle);
   block-size: var(--year-band-handle);
   pointer-events: auto;
@@ -60,7 +60,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.yearband__handle::-moz-range-thumb {
+.yearband__thumb::-moz-range-thumb {
   inline-size: var(--year-band-handle);
   block-size: var(--year-band-handle);
   pointer-events: auto;

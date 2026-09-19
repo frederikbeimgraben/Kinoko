@@ -7,7 +7,7 @@
   ></span>
   @if (showsFrom()) {
     <input
-      class="rangeslider__handle"
+      class="rangeslider__thumb"
       type="range"
       [attr.aria-label]="'common.rangeMin' | t"
       [min]="min()"
@@ -19,7 +19,7 @@
   }
   @if (showsTo()) {
     <input
-      class="rangeslider__handle"
+      class="rangeslider__thumb"
       type="range"
       [attr.aria-label]="'common.rangeMax' | t"
       [min]="min()"

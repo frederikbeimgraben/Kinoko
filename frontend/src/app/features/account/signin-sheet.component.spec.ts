@@ -37,11 +37,8 @@ describe('AnmeldeBlattComponent', () => {
 
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
     expect(screen.getByRole('heading', { name: 'Zum Speichern anmelden' })).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Funde, Marker und Zonen werden in deinem Konto bei beimgraben.net gespeichert. Die Karte ist auch ohne Anmeldung nutzbar.',
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Später' })).toBeInTheDocument();
+    expect(container.querySelector('.signin__text')).toBeNull();
     await noViolations(container);
 
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' }));
@@ -60,7 +57,7 @@ describe('AnmeldeBlattComponent', () => {
 
     const ask = auth.requestSignIn();
     refresh();
-    await userEvent.click(screen.getByRole('button', { name: 'Später anmelden, Eintrag lokal behalten' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Später' }));
 
     expect(await ask).toBe(false);
     refresh();

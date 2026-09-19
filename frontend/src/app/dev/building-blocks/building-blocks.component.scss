@@ -66,14 +66,14 @@
   margin-inline: calc(-1 * var(--space-4));
 }
 
-.block__handle {
+.block__thumb {
   display: flex;
   align-items: center;
   justify-content: center;
   block-size: var(--size-handle-height);
 }
 
-.block__handle i {
+.block__thumb i {
   inline-size: var(--size-handle-width);
   block-size: 4px;
   background: var(--color-border);
