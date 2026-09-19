@@ -73,6 +73,7 @@ export { SwitchComponent } from './switch/switch.component';
 export { SheetComponent, type Detent, type DetentSize } from './sheet/sheet.component';
 export { SheetHeadComponent } from './sheet-head/sheet-head.component';
 export { SkeletonComponent, type SkeletonKind } from './skeleton/skeleton.component';
+export { StepBarComponent, type StepAction } from './step-bar/step-bar.component';
 export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';
 export { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row/species-row.component';
 export { SplitLayoutComponent } from './split-layout/split-layout.component';
