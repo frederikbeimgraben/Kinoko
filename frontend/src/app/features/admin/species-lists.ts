@@ -30,13 +30,13 @@ export function colourGroupAt(species: SpeciesEntry | null, part: BodyPart, at: 
 
 /** Legt eine Farbgruppe an ihre Stelle im Teil. Eine neue Stelle hängt an. */
 export function withColourGroup(
-  species: SpeciesEntry,
+  species: SpeciesEntry | null,
   part: BodyPart,
   at: number,
   group: ColourGroup,
 ): ColourGroup[] {
   let seen = -1;
-  const out = species.colours.map((one) => {
+  const out = (species?.colours ?? []).map((one) => {
     if (one.part !== part) return one;
     seen += 1;
     return seen === at ? group : one;
@@ -45,9 +45,13 @@ export function withColourGroup(
 }
 
 /** Nimmt eine Farbgruppe aus ihrem Teil. */
-export function withoutColourGroup(species: SpeciesEntry, part: BodyPart, at: number): ColourGroup[] {
+export function withoutColourGroup(
+  species: SpeciesEntry | null,
+  part: BodyPart,
+  at: number,
+): ColourGroup[] {
   let seen = -1;
-  return species.colours.filter((one) => {
+  return (species?.colours ?? []).filter((one) => {
     if (one.part !== part) return true;
     seen += 1;
     return seen !== at;
@@ -56,11 +60,11 @@ export function withoutColourGroup(species: SpeciesEntry, part: BodyPart, at: nu
 
 /** Nimmt ein Maß aus seinem Teil. Ein Teil ohne Maß fällt weg. */
 export function withoutMeasurement(
-  species: SpeciesEntry,
+  species: SpeciesEntry | null,
   part: BodyPart,
   dimension: Dimension,
 ): MeasurementGroup[] {
-  return species.measurements
+  return (species?.measurements ?? [])
     .map((group) =>
       group.part === part
         ? { ...group, measurements: group.measurements.filter((one) => one.dimension !== dimension) }
@@ -70,22 +74,32 @@ export function withoutMeasurement(
 }
 
 /** Legt eine Verfärbung an ihre Stelle. Eine neue Stelle hängt an. */
-export function withChange(species: SpeciesEntry, at: number, change: ColourChange): ColourChange[] {
-  if (at >= species.colourChanges.length) return [...species.colourChanges, change];
-  return species.colourChanges.map((one, index) => (index === at ? change : one));
+export function withChange(
+  species: SpeciesEntry | null,
+  at: number,
+  change: ColourChange,
+): ColourChange[] {
+  const held = changes(species);
+  if (at >= held.length) return [...held, change];
+  return held.map((one, index) => (index === at ? change : one));
+}
+
+/** Die Verfärbungen einer Art. */
+export function changes(species: SpeciesEntry | null): readonly ColourChange[] {
+  return species?.colourChanges ?? [];
 }
 
 /** Nimmt eine Verfärbung an ihrer Stelle heraus. */
-export function withoutChange(species: SpeciesEntry, at: number): ColourChange[] {
-  return species.colourChanges.filter((_, index) => index !== at);
+export function withoutChange(species: SpeciesEntry | null, at: number): ColourChange[] {
+  return changes(species).filter((_, index) => index !== at);
 }
 
 /** Nimmt ein Teil mit seinen Maßen, Farben und Verfärbungen heraus. */
-export function withoutPart(species: SpeciesEntry, part: BodyPart): PartLists {
+export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartLists {
   return {
-    measurements: species.measurements.filter((one) => one.part !== part),
-    colours: species.colours.filter((one) => one.part !== part),
-    colourChanges: species.colourChanges.filter((one) => one.part !== part),
+    measurements: (species?.measurements ?? []).filter((one) => one.part !== part),
+    colours: (species?.colours ?? []).filter((one) => one.part !== part),
+    colourChanges: changes(species).filter((one) => one.part !== part),
   };
 }
 

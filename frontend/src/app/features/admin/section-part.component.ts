@@ -12,7 +12,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
 import { SpeciesEditorState } from './species-editor.state';
 import { changeRows, colourRows, sizeRows, type ColourRow, type SizeRow } from './section-part.rows';
-import { withoutPart } from './species-lists';
+import { changes, withoutPart } from './species-lists';
 
 /** Ein Teil einer Art: seine Maße, seine Farben und seine Verfärbungen. */
 @Component({
@@ -76,7 +76,7 @@ export class SectionPartComponent {
   }
 
   protected addChange(): void {
-    this.openChange(this.state.species()?.colourChanges.length ?? 0);
+    this.openChange(changes(this.state.species()).length);
   }
 
   protected apply(): void {
@@ -84,9 +84,7 @@ export class SectionPartComponent {
   }
 
   protected remove(): void {
-    const species = this.state.species();
-    if (species === null) return;
-    this.state.save(withoutPart(species, this.part()));
+    this.state.save(withoutPart(this.state.species(), this.part()));
     this.back();
   }
 

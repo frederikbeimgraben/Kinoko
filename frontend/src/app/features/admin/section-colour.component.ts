@@ -144,17 +144,13 @@ export class SectionColourComponent {
   }
 
   protected apply(): void {
-    const species = this.state.species();
-    if (species === null) return;
     const group = { part: this.part(), mode: this.mode(), colours: this.colours() };
-    this.state.save({ colours: withColourGroup(species, this.part(), this.at(), group) });
+    this.state.save({ colours: withColourGroup(this.state.species(), this.part(), this.at(), group) });
     this.back();
   }
 
   protected remove(): void {
-    const species = this.state.species();
-    if (species === null) return;
-    this.state.save({ colours: withoutColourGroup(species, this.part(), this.at()) });
+    this.state.save({ colours: withoutColourGroup(this.state.species(), this.part(), this.at()) });
     this.back();
   }
 

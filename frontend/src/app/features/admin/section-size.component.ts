@@ -88,9 +88,8 @@ export class SectionSizeComponent {
   }
 
   protected remove(): void {
-    const species = this.state.species();
-    if (species === null) return;
-    this.state.save({ measurements: withoutMeasurement(species, this.part(), this.dimension()) });
+    const measurements = withoutMeasurement(this.state.species(), this.part(), this.dimension());
+    this.state.save({ measurements });
     this.back();
   }
 

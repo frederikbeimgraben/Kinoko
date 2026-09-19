@@ -1,5 +1,6 @@
 import type { ColourChange, ColourGroup, SpeciesEntry } from '../../core/api/models';
 import {
+  changes,
   colourGroupAt,
   colourGroups,
   lookalikeWrites,
@@ -134,6 +135,18 @@ describe('species-lists', () => {
     const one = { slug: 'boletus-radicans', difference: '' };
 
     expect(withLookalike(null, 0, one)).toEqual([one]);
+  });
+
+  it('gibt für eine Art, die noch fehlt, leere Listen', () => {
+    const group = { ...CAP_COLOUR } as unknown as ColourGroup;
+
+    expect(changes(null)).toEqual([]);
+    expect(withChange(null, 0, CAP_CHANGE)).toEqual([CAP_CHANGE]);
+    expect(withoutChange(null, 0)).toEqual([]);
+    expect(withColourGroup(null, 'cap', 0, group)).toEqual([group]);
+    expect(withoutColourGroup(null, 'cap', 0)).toEqual([]);
+    expect(withoutMeasurement(null, 'cap', 'width')).toEqual([]);
+    expect(withoutPart(null, 'cap')).toEqual({ measurements: [], colours: [], colourChanges: [] });
   });
 
   it('nimmt eine Verwechslung an ihrer Stelle heraus', () => {

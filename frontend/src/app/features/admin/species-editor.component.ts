@@ -16,6 +16,7 @@ import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.componen
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { SpeciesEditorState } from './species-editor.state';
 import { featureRows, lookalikeRows, type EditorRow } from './species-editor.rows';
+import { lookalikeWrites } from './species-lists';
 
 /** Wohin ein Abschnitt führt: auf ein Teil, auf einen Text, auf eine Verwechslung. */
 type BlockKind = 'part' | 'text' | 'lookalike';
@@ -165,7 +166,7 @@ export class SpeciesEditorComponent {
 
   /** Die Zeile am Ende eines Abschnitts legt einen weiteren Eintrag an. */
   protected addRow(kind: BlockKind): void {
-    if (kind === 'lookalike') this.openLookalike(this.species()?.lookalikes.length ?? 0);
+    if (kind === 'lookalike') this.openLookalike(lookalikeWrites(this.species()).length);
   }
 
   private openLookalike(at: number): void {

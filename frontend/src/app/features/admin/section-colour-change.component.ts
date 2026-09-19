@@ -123,9 +123,7 @@ export class SectionColourChangeComponent {
   }
 
   protected remove(): void {
-    const species = this.state.species();
-    if (species === null) return;
-    this.state.save({ colourChanges: withoutChange(species, this.at()) });
+    this.state.save({ colourChanges: withoutChange(this.state.species(), this.at()) });
     this.back();
   }
 

@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
@@ -55,6 +55,27 @@ describe('SectionPartComponent', () => {
     expect(await screen.findByRole('heading', { name: 'Lamellen' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Farbe hinzufügen' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Verfärbung hinzufügen' })).toBeInTheDocument();
+  });
+
+  it('führt von jeder Zeile und jeder Anlegezeile auf ihre Unterseite', async () => {
+    await build('gills');
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('heading', { name: 'Lamellen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe Farbe' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe hinzufügen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Verfärbung hinzufügen' }));
+
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/farbe/gills/0',
+      '/verwaltung/arten/boletus-edulis/farbe/gills/1',
+      '/verwaltung/arten/boletus-edulis/verfaerbung/gills/0',
+    ]);
   });
 
   it('nimmt das Teil mit seinen Werten heraus', async () => {
