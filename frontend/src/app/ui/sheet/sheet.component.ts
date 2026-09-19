@@ -20,9 +20,6 @@ export type Detent = 0 | 1 | 2;
 /** Anteil der Wirtshöhe zwischen 0 und 1, feste Höhe oder `content` für die Inhaltshöhe. */
 export type DetentSize = number | `${number}px` | 'content';
 
-/** Die Art des Blatts. Ein `step` lässt am Rechner die Karte frei. */
-export type SheetKind = 'sheet' | 'step';
-
 // Die unterste Raste ist --size-sheet-head, 152 Pixel. Die Zug-Physik
 // braucht die Zahl vor dem Zeichnen des Blatts.
 const DEFAULT_DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['152px', 0.4, 0.9];
@@ -84,8 +81,6 @@ export class SheetComponent {
   readonly compact = input(false);
   /** Ein Blatt, das sich schließen lässt, geht auch mit einem Zug nach unten zu. */
   readonly dismissible = input(false);
-  /** Ein Schritt auf der Karte dockt am Rechner an, statt die Karte zu sperren. */
-  readonly kind = input<SheetKind>('sheet');
 
   readonly detentChange = output<Detent>();
   readonly closed = output();
@@ -93,9 +88,7 @@ export class SheetComponent {
   private readonly wide = inject(ViewportService).wide;
 
   /** Der Wechsel zwischen Blatt und Modal liegt hier, nie in der Instanz. */
-  protected readonly asModal = computed(() => this.wide() && this.kind() === 'sheet');
-  /** Am Rechner dockt ein Schritt an: kein Modal, keine Abdunkelung. */
-  protected readonly asStep = computed(() => this.wide() && this.kind() === 'step');
+  protected readonly asModal = this.wide;
 
   /** Während eines Zugs führt der Finger, nicht die Raste. */
   private readonly dragged = signal<number | null>(null);
@@ -218,13 +211,13 @@ export class SheetComponent {
 
   /** Escape schließt das Modal. Im modalen Blatt bleibt der Tabulator darin. */
   protected onKey(event: KeyboardEvent): void {
-    if ((this.asModal() || this.asStep()) && event.key === 'Escape') {
+    if (this.asModal() && event.key === 'Escape') {
       event.preventDefault();
       event.stopPropagation();
       this.closed.emit();
       return;
     }
-    if (this.asStep() || !(this.modal() || this.asModal()) || event.key !== 'Tab') return;
+    if (!(this.modal() || this.asModal()) || event.key !== 'Tab') return;
     const targets = this.focusable();
     if (targets.length === 0) return;
     const first = targets[0];

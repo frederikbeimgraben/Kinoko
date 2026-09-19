@@ -126,6 +126,12 @@ export interface MapAdapter {
   onPointerMove(handler: (point: readonly [number, number]) => void): () => void;
   /** Rechnet einen Ort in einen Punkt der Fläche um. */
   project(point: readonly [number, number]): { x: number; y: number } | null;
+  /** Ein Druck auf die Karte, mit Maus oder Finger. */
+  onPointerDown(handler: (point: readonly [number, number]) => void): () => void;
+  /** Das Loslassen, mit Maus oder Finger. */
+  onPointerUp(handler: () => void): () => void;
+  /** Schaltet das Schieben der Karte aus, solange ein Zug einem Punkt gehört. */
+  setDragPan(enabled: boolean): void;
 }
 
 /** Der Haken, über den ein Test die Karte genau setzt. */
@@ -600,26 +606,46 @@ export class MapLibreAdapter implements MapAdapter {
   }
 
   onMapClick(handler: (point: readonly [number, number]) => void): () => void {
-    const map = this.map;
-    if (!map) return () => undefined;
-    const listener = (event: MapMouseEvent): void => {
+    return this.onEvents(['click'], (event) => {
       handler([event.lngLat.lng, event.lngLat.lat]);
-    };
-    map.on('click', listener);
-    return () => {
-      map.off('click', listener);
-    };
+    });
   }
 
   onPointerMove(handler: (point: readonly [number, number]) => void): () => void {
+    return this.onEvents(['mousemove', 'touchmove'], (event) => {
+      handler([event.lngLat.lng, event.lngLat.lat]);
+    });
+  }
+
+  onPointerDown(handler: (point: readonly [number, number]) => void): () => void {
+    return this.onEvents(['mousedown', 'touchstart'], (event) => {
+      handler([event.lngLat.lng, event.lngLat.lat]);
+    });
+  }
+
+  onPointerUp(handler: () => void): () => void {
+    return this.onEvents(['mouseup', 'touchend'], () => {
+      handler();
+    });
+  }
+
+  setDragPan(enabled: boolean): void {
+    const map = this.map;
+    if (!map) return;
+    if (enabled) map.dragPan.enable();
+    else map.dragPan.disable();
+  }
+
+  /** Meldet einen Zuhörer auf mehrere Ereignisse an und gibt sie zusammen frei. */
+  private onEvents(kinds: readonly string[], run: (event: MapMouseEvent) => void): () => void {
     const map = this.map;
     if (!map) return () => undefined;
-    const listener = (event: MapMouseEvent): void => {
-      handler([event.lngLat.lng, event.lngLat.lat]);
+    const listener = (event: unknown): void => {
+      run(event as MapMouseEvent);
     };
-    map.on('mousemove', listener);
+    for (const kind of kinds) map.on(kind as 'mousedown', listener);
     return () => {
-      map.off('mousemove', listener);
+      for (const kind of kinds) map.off(kind as 'mousedown', listener);
     };
   }
 

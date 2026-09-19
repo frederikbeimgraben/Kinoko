@@ -242,6 +242,7 @@
   "entry.badge.shared": "shared",
   "entry.badge.transferPending": "Transfer pending",
   "entry.confirmLocation": "Confirm find location",
+  "entry.confirmMarker": "Confirm marker location",
   "entry.coordinates": "{lat} · {lon}",
   "entry.create": "Add entry",
   "entry.drawZone.title": "Draw zone",

@@ -34,6 +34,7 @@ import { coordinatesText } from './coordinates';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 import { asPolygon, loadAreaCalculator, type AreaCalculator } from './area';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
+import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
 import { StepInput } from './step-input';
 import { paintRing, clearRing } from './step-painter';
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
@@ -41,6 +42,16 @@ import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 /** Ein kurzes Blatt folgt seinem Inhalt, ein Formular füllt seinen Wirt. */
 const DETENTS_CONTENT: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 const DETENTS_FORM: readonly [DetentSize, DetentSize, DetentSize] = [1, 1, 1];
+
+/** Die Knöpfe eines Schritts. Telefon und Rechner nehmen sie aus dieser Quelle. */
+interface StepButtons {
+  readonly primary: StepAction;
+  readonly cancel: StepAction;
+  /** Die zweite Aktion des Schritts, etwa die letzte Ecke zurück. */
+  readonly secondary?: StepAction;
+  /** Nur am Telefon: das Fadenkreuz setzt den Punkt über diesen Knopf. */
+  readonly extra?: StepAction;
+}
 
 /** Der gesetzte Ort steht am Rechner blau, wie die Bretter ihn malen. */
 const MARK_COLOUR = 'blue' as const;
@@ -74,6 +85,7 @@ const TITLE: Record<string, TranslationKey> = {
     OverlayHostComponent,
     PopoverComponent,
     SheetComponent,
+    StepBarComponent,
     SheetHeightDirective,
     TranslatePipe,
   ],
@@ -106,6 +118,69 @@ export class AddEntryComponent implements OnDestroy {
 
   /** Die Aktionen hängen am Rechner am Knopf, jeder andere Schritt im Modal. */
   protected readonly asPopover = computed(() => this.wide() && this.state.onActions());
+
+  /** Ein Schritt auf der Karte trägt am Rechner die Leiste, nicht das Blatt. */
+  protected readonly asStepBar = computed(() => this.wide() && this.state.showsCrosshair());
+
+  /** Die Knöpfe des Schritts, einmal beschrieben. */
+  protected readonly buttons = computed<StepButtons>(() => {
+    const cancel: StepAction = {
+      label: this.i18n.translate('common.cancel'),
+      variant: 'ghost',
+      run: () => {
+        this.cancel();
+      },
+    };
+    if (this.state.step() === 'zoneDraw') {
+      return {
+        cancel,
+        primary: {
+          label: this.i18n.translate('entry.zone.finish'),
+          variant: 'primary',
+          run: () => {
+            this.closeZone();
+          },
+        },
+        secondary: {
+          label: this.i18n.translate('entry.zone.removeLastVertex'),
+          variant: 'secondary',
+          run: () => {
+            this.state.removeLastCorner();
+          },
+        },
+        extra: {
+          label: this.i18n.translate('entry.zone.setVertex'),
+          variant: 'primary',
+          run: () => {
+            this.addCorner();
+          },
+        },
+      };
+    }
+    const marker = this.state.step() === 'markerLocation';
+    return {
+      cancel,
+      primary: {
+        label: this.i18n.translate(marker ? 'common.apply' : 'entry.confirmLocation'),
+        wideLabel: marker ? this.i18n.translate('entry.confirmMarker') : undefined,
+        variant: 'primary',
+        run: () => {
+          this.adoptLocation();
+        },
+      },
+    };
+  });
+
+  /** Die Leiste zeigt Abbrechen links, dann die zweite Aktion, dann die Hauptaktion. */
+  protected readonly barActions = computed<readonly StepAction[]>(() => {
+    const buttons = this.buttons();
+    return [buttons.cancel, ...(buttons.secondary ? [buttons.secondary] : []), buttons.primary];
+  });
+
+  /** Der Zusatz unter dem Titel: die Ecken der Zone oder der Ort. */
+  protected readonly stepNote = computed(() =>
+    this.state.step() === 'zoneDraw' ? this.drawStatus() : this.aimText(),
+  );
 
   protected readonly detents = computed(() => (this.state.onForm() ? DETENTS_FORM : DETENTS_CONTENT));
 
@@ -156,9 +231,12 @@ export class AddEntryComponent implements OnDestroy {
         this.input.stop();
         return;
       }
-      this.input.watch((point) => {
-        this.onPick(point);
-      });
+      this.input.watch(
+        (point) => {
+          this.onPick(point);
+        },
+        () => (this.state.step() === 'zoneDraw' ? null : this.state.location()),
+      );
     });
 
     // Der gesetzte Ort und die Vorschau am Zeiger liegen auf der Karte.

@@ -242,6 +242,7 @@
   "entry.badge.shared": "geteilt",
   "entry.badge.transferPending": "Übertragung ausstehend",
   "entry.confirmLocation": "Fundort übernehmen",
+  "entry.confirmMarker": "Marker übernehmen",
   "entry.coordinates": "{lat} · {lon}",
   "entry.create": "Eintragen",
   "entry.drawZone.title": "Zone zeichnen",

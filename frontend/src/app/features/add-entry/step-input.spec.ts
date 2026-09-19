@@ -69,4 +69,52 @@ describe('StepInput', () => {
     expect(map.clicked).toBeNull();
     expect(map.cursors.at(-1)).toBe('');
   });
+
+  it('zieht die Marke und sperrt dabei das Schieben der Karte', () => {
+    const { input, map } = build(true);
+    const picked: (readonly [number, number])[] = [];
+    input.watch(
+      (point) => picked.push(point),
+      () => [9.05, 48.52],
+    );
+
+    map.down?.([9.05, 48.52]);
+    map.moved?.([9.06, 48.53]);
+
+    expect(map.dragPan).toBe(false);
+    expect(picked).toEqual([[9.06, 48.53]]);
+
+    map.up?.();
+
+    expect(map.dragPan).toBe(true);
+  });
+
+  it('lässt einen Zug neben der Marke der Karte', () => {
+    const { input, map } = build(true);
+    const picked: (readonly [number, number])[] = [];
+    input.watch(
+      (point) => picked.push(point),
+      () => [9.05, 48.52],
+    );
+    map.screen = null;
+
+    map.down?.([9.5, 48.9]);
+    map.moved?.([9.6, 48.95]);
+
+    expect(map.dragPan).toBe(true);
+    expect(picked).toEqual([]);
+  });
+
+  it('gibt das Schieben auch beim Halt zurück', () => {
+    const { input, map } = build(true);
+    input.watch(
+      () => undefined,
+      () => [9.05, 48.52],
+    );
+    map.down?.([9.05, 48.52]);
+
+    input.stop();
+
+    expect(map.dragPan).toBe(true);
+  });
 });

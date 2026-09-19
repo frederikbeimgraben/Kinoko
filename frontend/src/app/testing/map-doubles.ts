@@ -184,6 +184,26 @@ export class MapAdapterDouble implements MapAdapter {
     return this.screen;
   }
 
+  /** Was die Seite auf Druck und Loslassen hin tut. */
+  down: ((point: readonly [number, number]) => void) | null = null;
+  up: (() => void) | null = null;
+  /** Ob die Karte gerade schieben darf. */
+  dragPan = true;
+
+  onPointerDown(handler: (point: readonly [number, number]) => void): () => void {
+    this.down = handler;
+    return () => (this.down = null);
+  }
+
+  onPointerUp(handler: () => void): () => void {
+    this.up = handler;
+    return () => (this.up = null);
+  }
+
+  setDragPan(enabled: boolean): void {
+    this.dragPan = enabled;
+  }
+
   /** Dreht die Karte, wie eine Geste es täte. */
   turnTo(bearing: number, pitch = 0): void {
     this.turn = { bearing, pitch };
