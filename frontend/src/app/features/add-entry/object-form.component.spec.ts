@@ -45,9 +45,8 @@ async function build(extra: Extra = {}): Promise<Setup> {
 
 /** Die Beschriftungen der Felder in der Reihenfolge des Formulars. */
 function labels(container: Element): string[] {
-  return [...container.querySelectorAll('.field__label, .form__label')].map((node) =>
-    node.textContent.trim(),
-  );
+  const chosen = '.field__label, .form__label, .choice__label';
+  return [...container.querySelectorAll(chosen)].map((node) => node.textContent.trim());
 }
 
 describe('ObjektFormularComponent', () => {
@@ -64,7 +63,13 @@ describe('ObjektFormularComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.saved).toEqual([
-      { name: 'Schönbuch Nord', colour: 'blue', note: 'Nordhang', visibility: 'shared' },
+      {
+        name: 'Schönbuch Nord',
+        colour: 'blue',
+        note: 'Nordhang',
+        visibility: 'shared',
+        groupId: null,
+      },
     ]);
     await noViolations(setup.container);
   });
