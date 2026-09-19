@@ -120,6 +120,12 @@ export function currentWeek(manifest: SpeciesManifest, today = new Date()): Mani
   return current ?? manifest.weeks[manifest.weeks.length - 1];
 }
 
+/** Ob eine Woche nach der laufenden liegt. Nur das trägt in der Anzeige Vorhersage-Stil. */
+export function isFuture(week: { year: number; week: number }, today: Date): boolean {
+  const now = isoWeek(today);
+  return week.year > now.year || (week.year === now.year && week.week > now.week);
+}
+
 /** Sucht eine Woche über ihren Schlüssel. */
 export function findWeek(manifest: SpeciesManifest, key: string): ManifestWeek | null {
   return manifest.weeks.find((week) => weekKey(week) === key) ?? null;
