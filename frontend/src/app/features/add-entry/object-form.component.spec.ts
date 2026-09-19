@@ -5,11 +5,10 @@ import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { OBJECT_COLOURS } from '../../ui/colour-swatches/colour-swatches.component';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
 
-const FIXED = { heading: 'Zone speichern', nameMissingText: 'Gib der Zone einen Namen.' };
+const FIXED = { nameMissingText: 'Gib der Zone einen Namen.' };
 
 interface Extra {
   start?: ObjectValues;
-  location?: readonly [number, number];
   kind?: 'marker' | 'zone';
   editing?: boolean;
 }
@@ -18,7 +17,6 @@ interface Setup {
   container: Element;
   saved: ObjectValues[];
   reported: ObjectValues[];
-  cancels: number;
   toasts: ToastSpy;
 }
 
@@ -28,19 +26,9 @@ async function build(extra: Extra = {}): Promise<Setup> {
   });
   const saved: ObjectValues[] = [];
   const reported: ObjectValues[] = [];
-  let cancels = 0;
   fixture.componentInstance.submitted.subscribe((values) => saved.push(values));
   fixture.componentInstance.valuesChange.subscribe((values) => reported.push(values));
-  fixture.componentInstance.cancelled.subscribe(() => (cancels += 1));
-  return {
-    container,
-    saved,
-    reported,
-    toasts: toastSpy(),
-    get cancels() {
-      return cancels;
-    },
-  };
+  return { container, saved, reported, toasts: toastSpy() };
 }
 
 /** Die Beschriftungen der Felder in der Reihenfolge des Formulars. */
@@ -50,11 +38,8 @@ function labels(container: Element): string[] {
 }
 
 describe('ObjektFormularComponent', () => {
-  it('trägt Überschrift und Ort und gibt Name, Farbe, Sichtbarkeit und Notiz ab', async () => {
-    const setup = await build({ location: [9.0511, 48.5203] });
-
-    expect(screen.getByRole('heading', { name: 'Zone speichern' })).toBeInTheDocument();
-    expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
+  it('gibt Name, Farbe, Sichtbarkeit und Notiz ab', async () => {
+    const setup = await build();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Schönbuch Nord');
     await userEvent.click(screen.getByRole('radio', { name: 'Blau' }));
@@ -123,11 +108,16 @@ describe('ObjektFormularComponent', () => {
     expect(OBJECT_COLOURS).toContain('#876010');
   });
 
-  it('meldet den Abbruch', async () => {
+  it('trägt keinen eigenen Kopf: das Blatt stellt Titel und Ort', async () => {
     const setup = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    expect(setup.container.querySelector('.form__head')).toBeNull();
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+  });
 
-    expect(setup.cancels).toBe(1);
+  it('trägt keinen Abbrechen-Knopf: das X des Blatts bricht ab', async () => {
+    await build();
+
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
   });
 });

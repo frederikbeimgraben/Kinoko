@@ -50,7 +50,7 @@ async function openMarker(page: Page): Promise<void> {
 test('Das X schließt das Objektblatt, ohne zu löschen', async ({ page }) => {
   await openMarker(page);
 
-  await page.locator('.object__close').click();
+  await page.locator('.sheet__close').click();
 
   await expect(page.getByRole('heading', { name: 'Alter Fichtenbestand' })).toHaveCount(0);
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();

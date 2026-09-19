@@ -2,29 +2,22 @@
   display: contents;
 }
 
-// Das X liegt im Griffstreifen des Blatts, wie die Boards es zeigen. Der Wirt
-// über der Karte lässt Tipps durch; das X muss sie annehmen.
-.object__close {
-  position: absolute;
-  pointer-events: auto;
-  inset-block-start: 14px;
-  inset-inline-end: 14px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 32px;
-  block-size: 32px;
-  padding: 0;
-  color: var(--color-text-muted);
-  background: none;
-  border: 0;
-  border-radius: var(--radius-md);
+// Der Punkt vor dem Namen misst im Brett vierzehn Punkte.
+.object__dot {
+  flex: none;
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: var(--radius-pill);
 }
 
-// Am Rechner trägt das Modal das X. Ein zweites läge genau darauf.
-:host-context(.shell--column) .object__close {
-  display: none;
+// Die Plakette steht hinter dem Namen, nicht davor. Sie misst im Brett drei
+// auf zehn Punkte.
+.object__badge {
+  --space-1: 3px;
+  --space-3: 10px;
+
+  flex: none;
+  order: 1;
 }
 
 // Das Formular des Fundes dunkelt die Karte so ab, wie das Brett es zeigt.

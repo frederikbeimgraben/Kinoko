@@ -19,10 +19,8 @@ import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.componen
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { colourHex } from '../entries/colors';
-import { hectaresText } from '../entries/formats';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
-import { visibilityText } from '../add-entry/visibility';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
 import type { Location } from '../add-entry/add-entry.state';
 
@@ -60,15 +58,6 @@ export class ZoneSheetComponent implements OnDestroy {
   protected readonly editingCorners = signal(false);
   private readonly newCorners = signal<readonly Location[] | null>(null);
   private session: DrawSession | null = null;
-
-  protected readonly colour = computed(() => colourHex(this.zone().colour));
-
-  protected readonly subline = computed(() =>
-    this.i18n.translate('zone.unter', {
-      flaeche: hectaresText(this.zone().areaHa, this.i18n.locale()),
-      sichtbarkeit: visibilityText(this.i18n, this.zone().visibility),
-    }),
-  );
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();

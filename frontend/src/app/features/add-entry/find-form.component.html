@@ -1,92 +1,85 @@
-@if (pickerOpen()) {
-  <div class="form__body">
-    @if (!wide()) {
-      <h2 class="form__title">{{ 'map.species.choose' | t }}</h2>
-    }
-    <app-species-picker
-      [species]="pickerSpecies()"
-      [selected]="selectedSpecies()?.slug ?? null"
-      [label]="'map.species.choose' | t"
-      (chosen)="selectSpecies($event)"
+<div class="form__body" [class.form__body--dense]="editing()">
+  <div class="form__fields" [class.form__fields--busy]="busy()">
+    <app-form-field
+      [label]="'species.fieldLabel' | t"
+      [value]="speciesName()"
+      [placeholder]="'map.species.choose' | t"
+      [readOnly]="true"
+      [chevron]="editing()"
+      (displayClick)="pickerOpen.set(true)"
     />
-  </div>
-  <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="pickerOpen.set(false)" />
-} @else {
-  <div class="form__body" [class.form__body--dense]="editing()">
-    @if (!wide()) {
-      <div class="form__head">
-        <h2 class="form__title">{{ heading() }}</h2>
-        <span class="form__note">{{ coordinates() }}</span>
+    <div class="form__pair">
+      <app-form-field
+        kind="date"
+        [label]="'entry.field.date' | t"
+        [value]="date()"
+        [display]="dateText()"
+        (valueChange)="dateChoice.set($event)"
+      />
+      <app-form-field
+        kind="number"
+        [label]="'entry.field.count' | t"
+        [placeholder]="'common.optional' | t"
+        [value]="count()"
+        (valueChange)="countChoice.set($event)"
+      />
+    </div>
+    <app-form-field
+      [label]="'entry.field.note' | t"
+      [multiline]="true"
+      [placeholder]="'common.optional' | t"
+      [value]="note()"
+      (valueChange)="noteChoice.set($event)"
+    />
+    @if (withPhotos()) {
+      <div>
+        <p class="form__label">{{ 'entry.field.photos' | t }}</p>
+        <app-photo-picker
+          [files]="photos()"
+          [held]="held()"
+          (filesChange)="photos.set($event)"
+          (heldRemoved)="removeHeld($event)"
+        />
       </div>
     }
-    <div class="form__fields" [class.form__fields--busy]="busy()">
-      <app-form-field
-        [label]="'species.fieldLabel' | t"
-        [value]="speciesName()"
-        [placeholder]="'map.species.choose' | t"
-        [readOnly]="true"
-        [chevron]="editing()"
-        (displayClick)="pickerOpen.set(true)"
-      />
-      <div class="form__pair">
-        <app-form-field
-          kind="date"
-          [label]="'entry.field.date' | t"
-          [value]="date()"
-          [display]="dateText()"
-          (valueChange)="dateChoice.set($event)"
-        />
-        <app-form-field
-          kind="number"
-          [label]="'entry.field.count' | t"
-          [placeholder]="'common.optional' | t"
-          [value]="count()"
-          (valueChange)="countChoice.set($event)"
+    <app-visibility-choice
+      [visibility]="visibility()"
+      [groupId]="groupId()"
+      [inline]="editing()"
+      (visibilityChange)="visibilityChoice.set($event)"
+      (groupChange)="groupChoice.set($event)"
+    />
+    @if (editing()) {
+      <div class="form__inline form__inline--switch">
+        <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
+        <app-switch
+          [checked]="training()"
+          [label]="'entry.forTraining' | t"
+          (checkedChange)="trainingChoice.set($event)"
         />
       </div>
-      <app-form-field
-        [label]="'entry.field.note' | t"
-        [multiline]="true"
-        [placeholder]="'common.optional' | t"
-        [value]="note()"
-        (valueChange)="noteChoice.set($event)"
-      />
-      @if (withPhotos()) {
-        <div>
-          <p class="form__label">{{ 'entry.field.photos' | t }}</p>
-          <app-photo-picker
-            [files]="photos()"
-            [held]="held()"
-            (filesChange)="photos.set($event)"
-            (heldRemoved)="removeHeld($event)"
-          />
-        </div>
-      }
-      <app-visibility-choice
-        [visibility]="visibility()"
-        [groupId]="groupId()"
-        [inline]="editing()"
-        (visibilityChange)="visibilityChoice.set($event)"
-        (groupChange)="groupChoice.set($event)"
-      />
-      @if (editing()) {
-        <div class="form__inline form__inline--switch">
-          <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
-          <app-switch
-            [checked]="training()"
-            [label]="'entry.forTraining' | t"
-            (checkedChange)="trainingChoice.set($event)"
-          />
-        </div>
-      }
-    </div>
+    }
   </div>
-  <app-action-bar
-    [primary]="'common.save' | t"
-    [secondary]="secondaryLabel()"
-    [ghost]="!editing() && !wide()"
-    [busy]="busy()"
-    (primaryClick)="submit()"
-    (secondaryClick)="cancelled.emit()"
-  />
-}
+</div>
+<app-action-bar [primary]="'common.save' | t" [busy]="busy()" (primaryClick)="submit()" />
+
+<app-overlay-host [open]="pickerOpen()" [modal]="true" (closed)="pickerOpen.set(false)">
+  @if (pickerOpen()) {
+    <app-sheet
+      [label]="'map.species.choose' | t"
+      [title]="'map.species.choose' | t"
+      [modal]="true"
+      [detents]="DETENTS"
+      (closed)="pickerOpen.set(false)"
+    >
+      <div class="overlay-body">
+        <app-species-picker
+          [species]="pickerSpecies()"
+          [selected]="selectedSpecies()?.slug ?? null"
+          [label]="'map.species.choose' | t"
+          (chosen)="selectSpecies($event)"
+        />
+      </div>
+    </app-sheet>
+  }
+</app-overlay-host>

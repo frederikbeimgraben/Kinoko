@@ -2,25 +2,14 @@
   <app-find-form
     [location]="location()"
     [start]="find()"
-    [heading]="'entry.fund.editTitle' | t"
     [editing]="true"
     [busy]="busy()"
     [held]="held()"
     (submitted)="save($event)"
-    (cancelled)="editing.set(false)"
     (heldRemoved)="removePhoto($event)"
   />
 } @else {
   <div class="objectsheet">
-    <div>
-      <div class="findsheet__head">
-        <h2 class="findsheet__title">{{ speciesName() }}</h2>
-        @if (geteilt()) {
-          <app-badge variant="success">{{ 'entry.badge.shared' | t }}</app-badge>
-        }
-      </div>
-      <p class="findsheet__sub">{{ subline() }}</p>
-    </div>
     <app-photo-gallery [findId]="find().id" />
     @if (find().note; as note) {
       <p class="findsheet__note">{{ note }}</p>

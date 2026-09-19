@@ -8,7 +8,6 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
-import { colourHex } from '../entries/colors';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 
 /** Das Objekt-Blatt eines Markers und sein Formular (Boards `MarkerSheet`, `MarkerEdit`). */
@@ -44,8 +43,6 @@ export class MarkerSheetComponent {
     this.marker().lon,
     this.marker().lat,
   ]);
-
-  protected readonly colour = computed(() => colourHex(this.marker().colour));
 
   protected readonly start = computed<ObjectValues>(() => {
     const marker = this.marker();

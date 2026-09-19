@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { BadgeComponent, ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find } from '../../core/api/models';
@@ -26,7 +26,6 @@ import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
-import { longDate } from '../../core/i18n/dates';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
 import { MapState } from '../map/map.state';
 import { PhotoGalleryComponent } from './photo-gallery.component';
@@ -37,7 +36,6 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    BadgeComponent,
     ButtonComponent,
     CardComponent,
     ConfirmDialogComponent,
@@ -79,21 +77,12 @@ export class FindSheetComponent {
   });
 
   protected readonly speciesName = computed(() => this.art()?.name ?? '');
-  protected readonly geteilt = computed(() => this.find().visibility === 'shared');
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
 
   /** Der Fund rückt in die Mitte der Karte; das Blatt macht ihn frei. */
   protected showOnMap(): void {
     this.closed.emit();
   }
-
-  protected readonly subline = computed(() => {
-    const find = this.find();
-    const date = longDate(find.foundOn, this.i18n.locale());
-    const person = this.eintraege.reporter() ?? '';
-    if (find.count === null) return this.i18n.translate('find.sublineNoCount', { date, person });
-    return this.i18n.translate('find.subline', { date, count: find.count, person });
-  });
 
   /** „Steinpilz, KW 40 · 2025, je Begehung“ — jede Zahl nennt ihren Bezug. */
   protected readonly valueScope = computed(() => {

@@ -18,7 +18,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
@@ -65,7 +64,6 @@ const TITLE: Record<string, TranslationKey> = {
   selector: 'app-add-entry',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ActionBarComponent,
     AddActionsComponent,
     CrosshairComponent,
     FindFormComponent,
@@ -173,6 +171,17 @@ export class AddEntryComponent implements OnDestroy {
     const step = this.state.step();
     return step === null ? '' : this.i18n.translate(TITLE[step]);
   });
+
+  /** Die Titelgröße je Schritt, wie die Bretter `AddActions`, `FindForm`, `MarkerForm` und `ZoneForm` sie zeigen. */
+  protected readonly titleSize = computed(() => {
+    const step = this.state.step();
+    if (step === 'findForm') return 24;
+    if (step === 'markerForm' || step === 'zoneForm') return 22;
+    return 17;
+  });
+
+  /** Nur der Formtitel ist fett mit engerer Laufweite, der Aktionstitel bleibt halbfett. */
+  protected readonly titleBold = computed(() => this.state.onForm());
 
   protected readonly coordinates = computed(() =>
     this.state.onForm() ? coordinatesText(this.state.location(), this.i18n) : '',

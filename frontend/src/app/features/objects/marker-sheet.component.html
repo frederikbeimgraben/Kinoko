@@ -1,20 +1,14 @@
 @if (editing()) {
   <app-object-form
-    [heading]="'entry.marker.editTitle' | t"
     [start]="start()"
     kind="marker"
     [editing]="true"
     [busy]="busy()"
     [nameMissingText]="'marker.nameFehlt' | t"
     (submitted)="save($event)"
-    (cancelled)="editing.set(false)"
   />
 } @else {
   <div class="objectsheet">
-    <div class="objectsheet__head">
-      <span class="objectsheet__dot" [style.background]="colour()"></span>
-      <h2 class="objectsheet__title">{{ marker().name }}</h2>
-    </div>
     @if (marker().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }
