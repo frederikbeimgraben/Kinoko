@@ -6,6 +6,8 @@
  * ergäbe zwei Schreibweisen.
  */
 
+import { decimal } from './numbers';
+
 /** Vier Nachkommastellen sind rund elf Meter; genauer trifft kein Daumen. */
 const LOCATION_DIGITS = 4;
 
@@ -19,11 +21,8 @@ export function locationText(
   locale: string,
   digits: number = LOCATION_DIGITS,
 ): { lat: string; lon: string } {
-  const format = new Intl.NumberFormat(locale, {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  });
-  return { lat: format.format(lat), lon: format.format(lon) };
+  const options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
+  return { lat: decimal(lat, locale, options), lon: decimal(lon, locale, options) };
 }
 
 /** Die Maschenweite, auf der ein grober Ort steht, in Kilometern. */

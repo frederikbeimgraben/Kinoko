@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import type { ColourGroup, GillAttachment, GillEdge, GillSpacing, HymeniumType } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ColourFieldComponent, type ColourMode } from '../../ui/colour-field/colour-field.component';
@@ -44,13 +44,10 @@ interface Choice {
 })
 export class SectionHymeniumComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorState);
 
-  private readonly params = toSignal(this.route.paramMap, { initialValue: this.route.snapshot.paramMap });
-
-  protected readonly slug = computed(() => this.params().get('slug') ?? '');
+  protected readonly slug = injectRouteParam('slug');
   protected readonly open = signal<HymeniumField>('attachment');
   private readonly draft = signal<Partial<Record<HymeniumField, string>>>({});
 

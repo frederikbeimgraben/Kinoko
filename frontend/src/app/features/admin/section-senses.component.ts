@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import type { TermRef } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ChipGroupComponent, type Chip } from '../../ui/chip-group/chip-group.component';
@@ -24,17 +24,13 @@ type Sense = 'smell' | 'taste';
 })
 export class SectionSensesComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorState);
   private readonly terms = inject(TermsState);
 
-  private readonly params = toSignal(this.route.paramMap, { initialValue: this.route.snapshot.paramMap });
-
-  protected readonly slug = computed(() => this.params().get('slug') ?? '');
-  protected readonly sense = computed<Sense>(() =>
-    this.params().get('sense') === 'geschmack' ? 'taste' : 'smell',
-  );
+  protected readonly slug = injectRouteParam('slug');
+  private readonly senseParam = injectRouteParam('sense');
+  protected readonly sense = computed<Sense>(() => (this.senseParam() === 'geschmack' ? 'taste' : 'smell'));
 
   protected readonly chosen = signal<readonly string[]>([]);
   protected readonly note = signal('');

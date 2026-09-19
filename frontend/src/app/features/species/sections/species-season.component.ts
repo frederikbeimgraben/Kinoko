@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { shortMonth } from '../../../core/i18n/dates';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { TileService } from '../../../core/tiles/tile.service';
 import {
@@ -7,19 +8,17 @@ import {
   type MonthMark,
   type SeasonSeries,
 } from '../../../ui/season-curve/season-curve.component';
-import { MONTH_TEXT } from '../labels';
 import { seasonData } from './season';
 
-/** Die Wochen, in denen ein Monatsname unter der Kurve steht. */
+/** Die Wochen, in denen ein Monatsname unter der Kurve steht. `at`: Monat 1–12. */
 const MARKS: readonly { at: number; week: number }[] = [
-  { at: 0, week: 1 },
-  { at: 3, week: 14 },
-  { at: 6, week: 27 },
-  { at: 9, week: 40 },
-  { at: 11, week: 49 },
+  { at: 1, week: 1 },
+  { at: 4, week: 14 },
+  { at: 7, week: 27 },
+  { at: 10, week: 40 },
+  { at: 12, week: 49 },
 ];
 
-const SHORT = 3;
 const PERCENT = 100;
 
 /** Die Saison einer Art aus dem Manifest der Karte. Ohne Karte bleibt sie weg. */
@@ -62,7 +61,7 @@ export class SpeciesSeasonComponent {
 
   protected readonly months = computed<readonly MonthMark[]>(() =>
     MARKS.map((mark) => ({
-      text: this.i18n.translate(MONTH_TEXT[mark.at]).slice(0, SHORT),
+      text: shortMonth(mark.at, this.i18n),
       week: mark.week,
     })),
   );

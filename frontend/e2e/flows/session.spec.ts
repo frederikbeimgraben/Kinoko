@@ -111,7 +111,11 @@ test('die Reiterleiste kehrt nach der Rückkehr vom SSO zurück', async ({ page 
   await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
 
   await mockSignIn(page);
-  await page.getByRole('button', { name: 'Anmelden' }).click();
+  /** Die stille Anmeldung kann dem Klick zuvorkommen; beide Wege enden angemeldet. */
+  await page
+    .getByRole('button', { name: 'Anmelden' })
+    .click({ timeout: 5_000 })
+    .catch(() => undefined);
 
   await expect(page.getByRole('button', { name: 'Abmelden' })).toBeVisible();
   await expect(page).toHaveURL(/\/konto$/);

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import type { SourceScope } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { shortDate } from '../../core/i18n/dates';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -31,14 +31,12 @@ const SCOPE_TEXT: Readonly<Record<SourceScope, TranslationKey>> = {
 })
 export class SectionSourceComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorState);
 
-  private readonly params = toSignal(this.route.paramMap, { initialValue: this.route.snapshot.paramMap });
-
-  protected readonly slug = computed(() => this.params().get('slug') ?? '');
-  protected readonly at = computed(() => Number(this.params().get('index') ?? '0'));
+  protected readonly slug = injectRouteParam('slug');
+  private readonly index = injectRouteParam('index', '0');
+  protected readonly at = computed(() => Number(this.index()));
 
   protected readonly scope = signal<SourceScope>('profile');
   protected readonly title = signal('');
