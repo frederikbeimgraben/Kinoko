@@ -1,23 +1,11 @@
-<app-page-header [title]="'admin.species.title' | t" [back]="true" (backClick)="back()">
-  <button class="species__filter tap" type="button" data-press="tint" (click)="filter.openSheet()">
-    <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />
-    {{ 'common.filter' | t }}
-  </button>
-</app-page-header>
+<app-page-header [title]="'admin.species.title' | t" [back]="true" (backClick)="back()" />
 
 <div class="species">
-  <app-search-field
+  <app-species-search-filter-bar
     [value]="query()"
-    [loading]="loading()"
     [placeholder]="'admin.species.searchPlaceholder' | t"
     (valueChange)="find($event)"
   />
-  <div class="species__legend">
-    @for (column of columns; track column) {
-      <span>{{ columnTitle(column) }}</span>
-    }
-    <i></i>
-  </div>
   <app-infinite-list class="species__list" [hasMore]="hasMore()" (more)="more()">
     <app-add-row
       [label]="'admin.species.add' | t"
@@ -34,22 +22,16 @@
           [clickable]="true"
           (chosen)="open(row.slug)"
         >
-          <span trail class="species__counts">
-            @for (count of row.counts; track $index) {
-              <span>{{ count }}</span>
-            }
-            @if (row.forecast) {
-              <i class="species__mark"></i>
-            } @else {
-              <app-svg-icon
-                class="species__mark"
-                name="map-off"
-                [size]="14"
-                [strokeWidth]="1.5"
-                [label]="noForecast()"
-              />
-            }
-          </span>
+          @if (!row.forecast) {
+            <app-svg-icon
+              trail
+              class="species__mark"
+              name="map-off"
+              [size]="14"
+              [strokeWidth]="1.5"
+              [label]="noForecast()"
+            />
+          }
         </app-list-row>
       }
     </div>

@@ -24,14 +24,3 @@
 .choice__segment {
   inline-size: 160px;
 }
-
-.choice__list {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-block-size: 0;
-  max-block-size: 60dvh;
-  padding-inline: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
-}

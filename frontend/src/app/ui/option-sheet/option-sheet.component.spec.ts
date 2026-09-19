@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { OptionSheetComponent, type OptionSheetOption } from './option-sheet.component';
@@ -66,5 +66,62 @@ describe('OptionSheetComponent', () => {
     await userEvent.click(close);
 
     expect(closes).toBe(1);
+  });
+
+  it('bietet bei Mehrfachwahl Prüfzeilen statt Pfeilzeilen', async () => {
+    const { container } = await render(OptionSheetComponent, {
+      inputs: {
+        open: true,
+        title: 'Teile wählen',
+        options: OPTIONS,
+        multiple: true,
+        confirmLabel: 'Hinzufügen',
+      },
+    });
+
+    expect(screen.getByRole('checkbox', { name: 'Mitteltemperatur der Woche' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Mitteltemperatur der Woche/ })).not.toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('meldet bei Mehrfachwahl die gewählte Menge über den Fuß und leert sie danach', async () => {
+    const { fixture } = await render(OptionSheetComponent, {
+      inputs: {
+        open: true,
+        title: 'Teile wählen',
+        options: OPTIONS,
+        multiple: true,
+        confirmLabel: 'Hinzufügen',
+      },
+    });
+    const picks: (readonly string[])[] = [];
+    fixture.componentInstance.confirmed.subscribe((ids) => picks.push(ids));
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Niederschlag der letzten 4 Wochen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
+
+    expect(picks).toEqual([['rain']]);
+    expect(screen.getByRole('checkbox', { name: 'Niederschlag der letzten 4 Wochen' })).not.toBeChecked();
+  });
+
+  it('leert bei Mehrfachwahl die Wahl beim Schließen', async () => {
+    const { fixture } = await render(OptionSheetComponent, {
+      inputs: {
+        open: true,
+        title: 'Teile wählen',
+        options: OPTIONS,
+        multiple: true,
+        confirmLabel: 'Hinzufügen',
+      },
+    });
+    let closes = 0;
+    fixture.componentInstance.closed.subscribe(() => (closes += 1));
+
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Niederschlag der letzten 4 Wochen' }));
+    const sheet = screen.getByRole('dialog');
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));
+
+    expect(closes).toBe(1);
+    expect(screen.getByRole('checkbox', { name: 'Niederschlag der letzten 4 Wochen' })).not.toBeChecked();
   });
 });

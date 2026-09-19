@@ -1,0 +1,23 @@
+<app-search-field
+  [value]="value()"
+  [loading]="state.loading()"
+  [placeholder]="placeholder()"
+  (valueChange)="valueChange.emit($event)"
+/>
+@if (showsMarks()) {
+  <div class="marks">
+    <button
+      class="marks__button tap"
+      type="button"
+      data-press="scale"
+      [class.marks__button--on]="filtered()"
+      (click)="filter.openSheet()"
+    >
+      <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />
+      {{ 'common.filter' | t }}
+    </button>
+    @for (chip of chips(); track chip.group + chip.value) {
+      <app-filter-chip [label]="chip.label" (removed)="drop(chip)" />
+    }
+  </div>
+}

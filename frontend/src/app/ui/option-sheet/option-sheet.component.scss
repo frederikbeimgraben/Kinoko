@@ -38,3 +38,11 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
 }
+
+.option-sheet__card app-check-row {
+  --space-3: 12px;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

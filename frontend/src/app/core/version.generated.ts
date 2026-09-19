@@ -1,2 +1,1 @@
-/** Platzhalter. `npm run build` überschreibt diese Datei mit `tools/stamp-version.mjs`. */
-export const APP_VERSION = 'dev';
+export const APP_VERSION = 'v0.1.0-14-g72d6ae28';

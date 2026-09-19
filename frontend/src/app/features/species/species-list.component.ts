@@ -3,17 +3,15 @@ import { Router } from '@angular/router';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { countUnknown, isActive, judge, type GroupKey } from './facets';
-import { chipsOf, type FilterChip } from './chips';
+import { countUnknown, judge, type GroupKey } from './facets';
 import { GROUP_TEXT } from './labels';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
 import { SpeciesFilterSheetComponent } from './filter-sheet.component';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesResultsComponent } from './species-results.component';
+import { SpeciesSearchFilterBarComponent } from './search-filter-bar.component';
 import { SpeciesState, type CatalogueEntry } from './species.state';
 import { search } from './rows';
 
@@ -24,13 +22,12 @@ const PAGE = 40;
   selector: 'app-species-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FilterChipComponent,
     PageHeaderComponent,
     SearchFieldComponent,
     SpeciesFilterPanelComponent,
     SpeciesFilterSheetComponent,
     SpeciesResultsComponent,
-    SvgIconComponent,
+    SpeciesSearchFilterBarComponent,
     TranslatePipe,
   ],
   templateUrl: './species-list.component.html',
@@ -67,13 +64,6 @@ export class SpeciesListComponent {
   protected readonly unassessable = computed(() => this.judged().unknown);
   protected readonly hasMore = computed(() => this.judged().hits.length > this.shown());
 
-  protected readonly filtered = computed(() => isActive(this.filter.selection()));
-
-  /** Die Marken über der Liste; was keine Marke trägt, zählt daneben. */
-  protected readonly chips = computed<readonly FilterChip[]>(() =>
-    chipsOf(this.filter.selection(), this.state.entries(), this.state.palette(), this.i18n),
-  );
-
   /** Die Zeile über der Trefferliste: Zahl und, wenn gefiltert, die größte Lücke. */
   protected readonly summary = computed(() => {
     if (this.loading() || this.failed()) return '';
@@ -88,11 +78,6 @@ export class SpeciesListComponent {
     });
     return `${count} \u00b7 ${text}`;
   });
-
-  /** Die Marken stehen nur über der ungesuchten Liste, wie im Brett. */
-  protected readonly showsMarks = computed(
-    () => !this.loading() && !this.failed() && this.query().trim() === '',
-  );
 
   constructor() {
     void this.state.loadBundle();
@@ -123,10 +108,5 @@ export class SpeciesListComponent {
       if (count > 0 && (widest === null || count > widest.count)) widest = { key, count };
     }
     return widest;
-  }
-
-  protected drop(chip: FilterChip): void {
-    if (chip.part === null) this.filter.dropValue(chip.group, chip.value);
-    else this.filter.dropColour(chip.part);
   }
 }

@@ -1,21 +1,3 @@
-@use '../../../styles/card';
-
 :host {
   --pilz-scrim: rgb(0 18 10 / 55%);
-}
-
-.picker__list {
-  padding-inline: var(--size-gutter);
-}
-
-.picker__card {
-  @include card.card;
-}
-
-app-check-row {
-  --space-3: 12px;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
 }

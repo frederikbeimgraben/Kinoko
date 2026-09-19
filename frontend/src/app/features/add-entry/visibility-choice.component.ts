@@ -13,10 +13,9 @@ import type { Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
+import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { type DetentSize } from '../../ui/sheet/sheet.component';
 import { visibilitySegments } from './visibility';
 
 /** Das Blatt der Gruppenwahl ist so hoch wie sein Inhalt. */
@@ -26,14 +25,7 @@ const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.5, 0.5, 0.9];
 @Component({
   selector: 'app-visibility-choice',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormFieldComponent,
-    ListRowComponent,
-    OverlayHostComponent,
-    SegmentedComponent,
-    SheetComponent,
-    TranslatePipe,
-  ],
+  imports: [FormFieldComponent, OptionSheetComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './visibility-choice.component.html',
   styleUrl: './visibility-choice.component.scss',
 })
@@ -56,6 +48,10 @@ export class VisibilityChoiceComponent {
 
   protected readonly groupName = computed(
     () => this.groups().find((one) => one.id === this.groupId())?.name ?? '',
+  );
+
+  protected readonly groupOptions = computed<readonly OptionSheetOption[]>(() =>
+    this.groups().map((row) => ({ id: row.id, title: row.name })),
   );
 
   constructor() {
