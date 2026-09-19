@@ -45,6 +45,7 @@
           <app-check-row
             [title]="choice.name"
             [checked]="choice.checked"
+            [flush]="true"
             (toggled)="toggle(choice.id, $event)"
           />
         }
