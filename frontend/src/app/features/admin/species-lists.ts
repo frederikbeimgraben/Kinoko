@@ -45,11 +45,7 @@ export function withColourGroup(
 }
 
 /** Nimmt eine Farbgruppe aus ihrem Teil. */
-export function withoutColourGroup(
-  species: SpeciesEntry | null,
-  part: BodyPart,
-  at: number,
-): ColourGroup[] {
+export function withoutColourGroup(species: SpeciesEntry | null, part: BodyPart, at: number): ColourGroup[] {
   let seen = -1;
   return (species?.colours ?? []).filter((one) => {
     if (one.part !== part) return true;
@@ -74,11 +70,7 @@ export function withoutMeasurement(
 }
 
 /** Legt eine Verfärbung an ihre Stelle. Eine neue Stelle hängt an. */
-export function withChange(
-  species: SpeciesEntry | null,
-  at: number,
-  change: ColourChange,
-): ColourChange[] {
+export function withChange(species: SpeciesEntry | null, at: number, change: ColourChange): ColourChange[] {
   const held = changes(species);
   if (at >= held.length) return [...held, change];
   return held.map((one, index) => (index === at ? change : one));
