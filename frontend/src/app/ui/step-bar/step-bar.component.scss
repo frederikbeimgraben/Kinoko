@@ -1,72 +1,56 @@
-// Die Leiste schwebt über der Kartenfläche, nicht über der ganzen Seite.
-// Maße aus dem Board `MapDesktopZoneDraw`.
+// Die Leiste schwebt über der Kartenfläche. Am Telefon steht sie über der
+// Reiterleiste, am Rechner am unteren Rand der Karte.
 :host {
   position: fixed;
-  inset-block-end: 16px;
-  inset-inline: calc(var(--size-rail) + var(--size-column)) 0;
+  inset-block-end: calc(var(--size-nav) + var(--size-gutter));
+  inset-inline: 0;
   z-index: calc(var(--z-dialog) + 1);
   display: flex;
   justify-content: center;
   pointer-events: none;
 }
 
+:host-context(.shell--column) {
+  inset-block-end: var(--size-gutter);
+  inset-inline-start: calc(var(--size-rail) + var(--size-column));
+}
+
 .stepbar {
   display: flex;
-  gap: var(--space-5);
+  gap: 14px;
   align-items: center;
-  max-inline-size: 720px;
   block-size: var(--size-step-bar);
-  padding-inline: var(--space-header-inline);
+  padding-inline: 14px;
   pointer-events: auto;
   white-space: nowrap;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-lg);
 }
 
-.stepbar__text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stepbar__title {
-  font-size: var(--fs-row-title);
-  font-weight: var(--fw-semibold);
-}
-
 .stepbar__note {
-  font-size: var(--fs-row-meta);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
 }
 
 .stepbar__actions {
   display: flex;
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .stepbar__action {
-  display: inline-flex;
-  gap: var(--space-2);
+  display: flex;
   align-items: center;
   justify-content: center;
-  block-size: 40px;
-  padding-inline: var(--space-header-inline);
-  font: inherit;
-  font-size: var(--fs-control);
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
-  white-space: nowrap;
-  background: none;
-  border: var(--border-width) solid transparent;
-  border-radius: 10px;
-}
-
-.stepbar__action--secondary {
+  inline-size: var(--size-icon-button);
+  block-size: var(--size-icon-button);
+  padding: 0;
   color: var(--color-text);
   background: var(--color-surface);
-  border-color: var(--color-border-strong);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: 12px;
 }
 
 .stepbar__action--primary {

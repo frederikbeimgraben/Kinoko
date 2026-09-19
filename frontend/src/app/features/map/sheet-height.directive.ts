@@ -1,7 +1,7 @@
 import { Directive, ElementRef, OnDestroy, inject } from '@angular/core';
 import { MapState } from './map.state';
 
-/** Meldet die gemessene Höhe eines Blatts über der Karte an den Zustand. */
+/** Meldet, wie viel ein Blatt oder eine Leiste unten von der Karte verdeckt. */
 @Directive({ selector: '[appSheetHeight]' })
 export class SheetHeightDirective implements OnDestroy {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -21,8 +21,10 @@ export class SheetHeightDirective implements OnDestroy {
     this.state.overlayHeight.set(0);
   }
 
+  /** Der Streifen misst den Weg vom oberen Rand des Elements zum Fensterfuß. */
   private report(): void {
-    const sheet = this.host.nativeElement.querySelector('.sheet');
-    this.state.overlayHeight.set(sheet?.clientHeight ?? 0);
+    const element = this.host.nativeElement.querySelector('.sheet') ?? this.host.nativeElement;
+    const box = element.getBoundingClientRect();
+    this.state.overlayHeight.set(Math.max(0, Math.round(window.innerHeight - box.top)));
   }
 }

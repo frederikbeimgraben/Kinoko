@@ -86,9 +86,8 @@ test('Zone zeichnen bleibt am Rechner eine Leiste über der freien Karte', async
 
   await expect(bar).toBeVisible();
 
-  await expect(page.getByRole('button', { name: 'Eckpunkt setzen' })).toHaveCount(0);
   for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
-  await page.getByRole('button', { name: 'Zone abschließen' }).click();
+  await page.getByRole('button', { name: 'Abschließen' }).click();
 
   await expect(page.getByRole('dialog', { name: 'Zone speichern' })).toBeVisible();
 });

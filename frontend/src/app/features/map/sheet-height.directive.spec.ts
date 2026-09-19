@@ -41,22 +41,22 @@ function observer(): { report: () => void } {
   return handle;
 }
 
-/** jsdom rechnet kein Layout; ein Blatt ist hier so hoch, wie der Test sagt. */
-function stubSheetHeight(hoehe: number): void {
-  const real = Object.getOwnPropertyDescriptor(Element.prototype, 'clientHeight');
-  Object.defineProperty(Element.prototype, 'clientHeight', {
+/** jsdom rechnet kein Layout; jedes Element beginnt dort, wo der Test es sagt. */
+function stubTop(sheetTop: number, hostTop: number): void {
+  const real = Object.getOwnPropertyDescriptor(Element.prototype, 'getBoundingClientRect');
+  Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
     configurable: true,
-    get(this: Element) {
-      return this.classList.contains('sheet') ? hoehe : 0;
+    value(this: Element) {
+      return { top: this.classList.contains('sheet') ? sheetTop : hostTop } as DOMRect;
     },
   });
-  if (real) afterEach(() => Object.defineProperty(Element.prototype, 'clientHeight', real));
+  if (real) afterEach(() => Object.defineProperty(Element.prototype, 'getBoundingClientRect', real));
 }
 
-describe('BlattHoeheDirective', () => {
-  it('meldet die Höhe des Blatts an den Kartenzustand', async () => {
+describe('SheetHeightDirective', () => {
+  it('meldet den Streifen unter dem Blatt an den Kartenzustand', async () => {
     const handle = observer();
-    stubSheetHeight(240);
+    stubTop(window.innerHeight - 240, 0);
     await render(HostComponent);
 
     handle.report();
@@ -64,16 +64,16 @@ describe('BlattHoeheDirective', () => {
     expect(TestBed.inject(MapState).overlayHeight()).toBe(240);
   });
 
-  it('meldet null, solange im Wirt kein Blatt steht', async () => {
+  it('misst die Leiste selbst, solange im Wirt kein Blatt steht', async () => {
     const handle = observer();
-    stubSheetHeight(240);
+    stubTop(0, window.innerHeight - 144);
     const { fixture, detectChanges } = await render(HostComponent);
     fixture.componentInstance.withSheet.set(false);
     detectChanges();
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(0);
+    expect(TestBed.inject(MapState).overlayHeight()).toBe(144);
   });
 
   it('stellt die Überlagerung zurück, sobald das Blatt geht', async () => {

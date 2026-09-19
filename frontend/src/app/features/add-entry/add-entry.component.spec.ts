@@ -139,7 +139,7 @@ describe('EintragenComponent', () => {
 
     await start(setup, 'Fund melden');
 
-    expect(screen.getByRole('heading', { name: 'Fundort festlegen' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Fundort festlegen' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Fundort festlegen' })).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
@@ -191,8 +191,8 @@ describe('EintragenComponent', () => {
     const setup = await build();
     await start(setup, 'Marker setzen');
 
-    expect(screen.getByRole('heading', { name: 'Marker setzen' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    expect(screen.getByRole('group', { name: 'Marker setzen' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Marker übernehmen' }));
     setup.refresh();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Alter Fichtenhang');
@@ -209,7 +209,7 @@ describe('EintragenComponent', () => {
   it('speichert einen Marker nicht ohne Namen', async () => {
     const setup = await build();
     await start(setup, 'Marker setzen');
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Marker übernehmen' }));
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
@@ -222,7 +222,7 @@ describe('EintragenComponent', () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
 
-    expect(screen.getByRole('heading', { name: 'Zone zeichnen' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Zone zeichnen' })).toBeInTheDocument();
     expect(screen.getByText('0 Eckpunkte · 0,0 ha')).toBeInTheDocument();
 
     await drawRing(setup);
@@ -240,7 +240,7 @@ describe('EintragenComponent', () => {
     await drawRing(setup);
     setup.refresh();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Letzten Punkt entfernen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Punkt entfernen' }));
 
     await vi.waitFor(() => {
       setup.refresh();
@@ -252,7 +252,7 @@ describe('EintragenComponent', () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Zone abschließen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Abschließen' }));
 
     expect(setup.toasts.failure).toEqual(['Eine Zone braucht mindestens drei Eckpunkte.']);
   });
@@ -261,7 +261,7 @@ describe('EintragenComponent', () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
     await drawRing(setup);
-    await userEvent.click(screen.getByRole('button', { name: 'Zone abschließen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Abschließen' }));
     setup.refresh();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Schönbuch Nord');
@@ -299,6 +299,29 @@ describe('EintragenComponent', () => {
     expect(setup.flow.step()).toBeNull();
   });
 
+  it('verlässt das Zeichnen einer Zone auch ohne Eckpunkt', async () => {
+    const setup = await build();
+    await start(setup, 'Zone zeichnen');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+
+    expect(setup.flow.step()).toBeNull();
+    expect(setup.flow.ring()).toEqual([]);
+  });
+
+  it('verlässt das Zeichnen einer Zone mit halb gesetzten Ecken', async () => {
+    const setup = await build();
+    await start(setup, 'Zone zeichnen');
+    setup.map.centerPoint = [9.0, 48.5];
+    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
+    setup.refresh();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+
+    expect(setup.flow.step()).toBeNull();
+    expect(setup.flow.ring()).toEqual([]);
+  });
+
   describe('am Rechner', () => {
     it('setzt den Fundort mit einem Klick auf die Karte und verschiebt ihn', async () => {
       const setup = await build([WIDE]);
@@ -323,7 +346,6 @@ describe('EintragenComponent', () => {
       clickMap(setup, [9.1, 48.6]);
 
       expect(setup.flow.ring()).toHaveLength(3);
-      expect(screen.queryByRole('button', { name: 'Eckpunkt setzen' })).not.toBeInTheDocument();
     });
 
     it('schließt die Zone mit einem Klick auf die erste Ecke', async () => {
