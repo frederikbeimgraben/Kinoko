@@ -21,7 +21,7 @@ class ObserverStub {
 }
 
 /** Die Karten des Boards, in seiner Reihenfolge. */
-const CARDS = 68;
+const CARDS = 69;
 
 describe('BuildingBlocksComponent', () => {
   const providers = [provideRouter([]), provideHttpClient(), provideHttpClientTesting()];

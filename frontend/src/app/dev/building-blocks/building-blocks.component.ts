@@ -51,6 +51,8 @@ import {
   MeasurementGroupComponent,
   NavComponent,
   ObjectMenuComponent,
+  OptionSheetComponent,
+  type OptionSheetOption,
   OverlayHostComponent,
   PageHeaderComponent,
   PhotoPickerComponent,
@@ -172,6 +174,7 @@ interface CompareColour {
     MeasurementGroupComponent,
     NavComponent,
     ObjectMenuComponent,
+    OptionSheetComponent,
     OverlayHostComponent,
     PageHeaderComponent,
     PhotoPickerComponent,
@@ -258,9 +261,15 @@ export class BuildingBlocksComponent {
   protected readonly photoFiles = signal<readonly File[]>([this.sampleFile(0), this.sampleFile(1)]);
   protected readonly overlayOpen = signal(true);
   protected readonly filterSheetOpen = signal(true);
+  protected readonly optionSheetOpen = signal(true);
 
   protected readonly objectMenuTarget: ObjectMenuTarget = { x: 70, y: 34 };
   protected readonly popoverAnchor: PopoverAnchor = { top: 0, end: 0 };
+
+  protected readonly optionSheetOptions: readonly OptionSheetOption[] = [
+    { id: 'rain', title: this.text('beispiel.faktor.niederschlag'), icon: 'cloud', value: 'mm' },
+    { id: 'soil', title: this.text('map.factor.soilPh'), icon: 'thermometer', value: '%' },
+  ];
 
   /** Das Board zeichnet die unterste Raste des Blatts 120 px hoch. */
   protected readonly sheetDetents: readonly [DetentSize, DetentSize, DetentSize] = ['320px', 0.4, 0.9];
