@@ -177,6 +177,24 @@
   --space-row-stack: 2px;
 }
 
+// Die Karte trägt den Rahmen, die Verfärbung darin nur ihre Zeilen.
+.block__changepart {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  block-size: 44px;
+  padding-inline: var(--space-row-inline);
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.block__changecard app-colour-change {
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+
 // Im Vergleich sind die Zellen kleiner als auf einer Artseite.
 .block__compare .block__swatch {
   --pilz-colour-width: 64px;

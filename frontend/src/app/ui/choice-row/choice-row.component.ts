@@ -22,8 +22,8 @@ export class ChoiceRowComponent {
   readonly toggled = output<boolean>();
 
   /** Im Kasten steht der Haken kleiner und feiner als in der Liste. */
-  protected readonly tick = computed(() => (this.variant() === 'boxed' ? 12 : 15));
-  protected readonly stroke = computed(() => (this.variant() === 'boxed' ? 2.5 : 2.6));
+  protected readonly tick = computed(() => (this.variant() === 'boxed' ? 12 : 14));
+  protected readonly stroke = computed(() => (this.variant() === 'boxed' ? 2.5 : 2.4));
 
   protected onChange(event: Event): void {
     this.toggled.emit((event.target as HTMLInputElement).checked);

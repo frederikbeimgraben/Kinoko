@@ -126,9 +126,6 @@
         (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
       />
     </app-sheet-head>
-    <div class="block__timelineWide">
-      <app-timeline [weeks]="weeksFlat" [active]="activeWeek()" [label]="text('zeitleiste.beschriftung')" />
-    </div>
   </section>
 
   <section class="block" data-block="app-overlay-host">
@@ -635,15 +632,18 @@
 
   <section class="block" data-block="app-colour-change">
     <h2 class="block__head">{{ 'blocks.colourChange' | t }}</h2>
-    <app-colour-change
-      [triggers]="colourChangeTriggers"
-      [from]="colourChangeFrom"
-      [to]="colourChangeTo"
-      [fromLabels]="colourChangeFromLabels"
-      [toLabels]="colourChangeToLabels"
-      [speed]="colourChangeSpeed"
-      [arrowLabel]="text('art.verfaerbung.pfeil')"
-    />
+    <div class="block__card block__changecard">
+      <h3 class="block__changepart">{{ text('species.field.tubes') }}</h3>
+      <app-colour-change
+        [triggers]="colourChangeTriggers"
+        [from]="colourChangeFrom"
+        [to]="colourChangeTo"
+        [fromLabels]="colourChangeFromLabels"
+        [toLabels]="colourChangeToLabels"
+        [speed]="colourChangeSpeed"
+        [arrowLabel]="text('art.verfaerbung.pfeil')"
+      />
+    </div>
   </section>
 
   <section class="block" data-block="app-measurement">
