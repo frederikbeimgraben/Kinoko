@@ -5,3 +5,6 @@ vendor
 package-lock.json
 e2e/boards/baseline
 src/app/core/api/contract.d.ts
+
+# Die Probe steht Zeile für Zeile so da, wie die Kette sie schreibt.
+src/app/core/tiles/chain-manifests.sample.json

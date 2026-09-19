@@ -2,10 +2,7 @@ import sample from './chain-manifests.sample.json';
 import { readLayers, shareMet } from './layers';
 import { readManifest } from './manifest';
 
-/**
- * Die Probe stammt aus `modell/src/pilze/manifest.py`. Sie hält die Schlüssel
- * der Kette an denen fest, die der Leser erwartet.
- */
+/** Die Probe stammt aus `modell/src/pilze/manifest.py`. */
 const LAYERS = readLayers(sample.layers);
 const SPECIES = readManifest(sample.species, 'boletus-edulis');
 
