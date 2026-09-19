@@ -85,6 +85,18 @@ export const routes: Routes = [
           import('./features/images/image-queue.component').then((m) => m.ImageQueueComponent),
       },
       {
+        path: 'gruppen',
+        canActivate: [requiresPermission('group.manage')],
+        loadComponent: () =>
+          import('./features/admin/admin-groups.component').then((m) => m.AdminGroupsComponent),
+      },
+      {
+        path: 'gruppen/:id',
+        canActivate: [requiresPermission('group.manage')],
+        loadComponent: () =>
+          import('./features/admin/admin-group.component').then((m) => m.AdminGroupComponent),
+      },
+      {
         path: 'personen',
         canActivate: [requiresPermission('role.assign')],
         loadComponent: () => import('./features/admin/people.component').then((m) => m.PeopleComponent),

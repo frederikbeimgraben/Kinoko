@@ -21,6 +21,7 @@ export const MARKER_COLOURS: readonly MarkerColour[] = ['green', 'brown', 'blue'
 /** Ein eigener Fund, mit genauem Ort. */
 export interface Find extends SharedFind {
   visibility: Visibility;
+  groupId: string | null;
   forTraining: boolean;
 }
 
@@ -33,6 +34,7 @@ export interface Marker {
   colour: MarkerColour;
   note: string | null;
   visibility: Visibility;
+  groupId: string | null;
 }
 
 /** Eine eigene Zone. Die Fläche rechnet der Dienst, nie das Gerät. */
@@ -44,4 +46,5 @@ export interface Zone {
   colour: MarkerColour;
   note: string | null;
   visibility: Visibility;
+  groupId: string | null;
 }

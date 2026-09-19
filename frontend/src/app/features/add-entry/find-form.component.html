@@ -62,33 +62,20 @@
           />
         </div>
       }
+      <app-visibility-choice
+        [visibility]="visibility()"
+        [groupId]="groupId()"
+        [inline]="editing()"
+        (visibilityChange)="visibilityChoice.set($event)"
+        (groupChange)="groupChoice.set($event)"
+      />
       @if (editing()) {
-        <div class="form__inline">
-          <p class="form__label form__label--inline">{{ 'entry.field.visibility' | t }}</p>
-          <app-segmented
-            class="form__segment"
-            [options]="segments()"
-            [value]="visibility()"
-            [label]="'entry.field.visibility' | t"
-            (valueChange)="setVisibility($event)"
-          />
-        </div>
         <div class="form__inline form__inline--switch">
           <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
           <app-switch
             [checked]="training()"
             [label]="'entry.forTraining' | t"
             (checkedChange)="trainingChoice.set($event)"
-          />
-        </div>
-      } @else {
-        <div>
-          <p class="form__label">{{ 'entry.field.visibility' | t }}</p>
-          <app-segmented
-            [options]="segments()"
-            [value]="visibility()"
-            [label]="'entry.field.visibility' | t"
-            (valueChange)="setVisibility($event)"
           />
         </div>
       }

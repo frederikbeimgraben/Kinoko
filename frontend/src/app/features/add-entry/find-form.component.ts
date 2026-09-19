@@ -9,15 +9,14 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PhotoPickerComponent, type HeldPhoto } from '../../ui/photo-picker/photo-picker.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
-import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';
 import { numericDate } from '../../core/i18n/dates';
 import { coordinatesText } from './coordinates';
 import { isoDatum } from '../entries/formats';
-import { visibilitySegments } from './visibility';
 import { speciesPickerEntry } from '../species/species-picker-entry';
+import { VisibilityChoiceComponent } from './visibility-choice.component';
 import type { Location } from './add-entry.state';
 
 /** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */
@@ -35,8 +34,8 @@ export interface FindSubmission {
     SpeciesPickerComponent,
     FormFieldComponent,
     PhotoPickerComponent,
-    SegmentedComponent,
     SwitchComponent,
+    VisibilityChoiceComponent,
     TranslatePipe,
   ],
   templateUrl: './find-form.component.html',
@@ -66,7 +65,8 @@ export class FindFormComponent {
   protected readonly wide = inject(ViewportService).wide;
 
   private readonly slugChoice = signal<string | null>(null);
-  private readonly visibilityChoice = signal<Visibility | null>(null);
+  protected readonly visibilityChoice = signal<Visibility | null>(null);
+  protected readonly groupChoice = signal<string | null | undefined>(undefined);
 
   protected readonly dateChoice = signal<string | null>(null);
   protected readonly countChoice = signal<string | null>(null);
@@ -74,8 +74,6 @@ export class FindFormComponent {
   protected readonly photos = signal<readonly File[]>([]);
   protected readonly trainingChoice = signal<boolean | null>(null);
   protected readonly pickerOpen = signal(false);
-
-  protected readonly segments = computed(() => visibilitySegments(this.i18n));
 
   /** Am Rechner und beim Speichern steht nur die Hauptaktion im Fuß. */
   protected readonly secondaryLabel = computed(() =>
@@ -104,6 +102,11 @@ export class FindFormComponent {
     () => this.visibilityChoice() ?? this.start()?.visibility ?? 'private',
   );
 
+  protected readonly groupId = computed(() => {
+    const chosen = this.groupChoice();
+    return chosen === undefined ? (this.start()?.groupId ?? null) : chosen;
+  });
+
   /** Die Vorgabe ist die Art der Karte. */
   protected readonly selectedSpecies = computed<SpeciesEntry | null>(() => {
     const chosen = this.slugChoice();
@@ -128,10 +131,6 @@ export class FindFormComponent {
   protected selectSpecies(slug: string): void {
     this.slugChoice.set(slug);
     this.pickerOpen.set(false);
-  }
-
-  protected setVisibility(value: string): void {
-    this.visibilityChoice.set(value === 'shared' ? 'shared' : 'private');
   }
 
   protected submit(): void {
@@ -169,6 +168,7 @@ export class FindFormComponent {
       count,
       note: note === '' ? null : note,
       visibility: this.visibility(),
+      groupId: this.groupId(),
       forTraining: this.training(),
     };
   }

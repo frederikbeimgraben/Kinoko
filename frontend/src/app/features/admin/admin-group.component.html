@@ -1,0 +1,37 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="adminGroup">
+  @if (group(); as one) {
+    <app-form-field
+      [label]="'common.name' | t"
+      [hideLabel]="true"
+      [value]="name()"
+      [placeholder]="'common.name' | t"
+      (valueChange)="nameChoice.set($event)"
+    />
+    <app-group-members [group]="one" [removable]="true" (removed)="removeMember($event)" />
+  } @else {
+    <p class="note">{{ 'group.notFound' | t }}</p>
+  }
+</div>
+
+@if (group()) {
+  <app-action-bar
+    [primary]="'common.save' | t"
+    [secondary]="'group.delete' | t"
+    [secondaryDanger]="true"
+    [split]="true"
+    [leadFirst]="true"
+    [busy]="saving()"
+    (primaryClick)="save()"
+    (secondaryClick)="asking.set(true)"
+  />
+}
+
+<app-confirm-dialog
+  [open]="asking()"
+  [title]="question()"
+  [confirmLabel]="'common.delete' | t"
+  (confirmed)="remove()"
+  (cancelled)="asking.set(false)"
+/>

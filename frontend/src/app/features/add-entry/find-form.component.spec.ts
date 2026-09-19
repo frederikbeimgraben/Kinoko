@@ -102,6 +102,7 @@ describe('FundFormularComponent', () => {
       count: 3,
       note: 'Unter Fichten',
       visibility: 'shared',
+      groupId: null,
       forTraining: false,
     });
   });

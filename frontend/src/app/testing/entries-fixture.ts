@@ -39,6 +39,7 @@ export const FIND: Find = {
   note: FIND_ENTRY.note ?? null,
   reviewState: 'accepted',
   visibility: 'shared',
+  groupId: null,
   forTraining: true,
 };
 
@@ -64,6 +65,7 @@ export const MARKER: Marker = {
   colour: 'blue',
   note: MARKER_ENTRY.note ?? null,
   visibility: 'private',
+  groupId: null,
 };
 
 const RING: number[][][] = [
@@ -98,6 +100,7 @@ export const ZONE: Zone = {
   colour: 'green',
   note: ZONE_ENTRY.note ?? null,
   visibility: 'private',
+  groupId: null,
 };
 
 /** Ein geteilter Fund, so wie ihn der Vertrag abgibt. */

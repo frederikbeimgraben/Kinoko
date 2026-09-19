@@ -3,7 +3,7 @@
   <div
     class="footer__pair"
     [class.footer__pair--split]="split()"
-    [class.footer__pair--danger]="split() && danger()"
+    [class.footer__pair--danger]="split() && (danger() || leadFirst())"
   >
     <app-button
       class="footer__main"

@@ -2,34 +2,7 @@
 
 <div class="group">
   @if (group(); as one) {
-    <div class="group__card">
-      <app-list-row kind="catalogue" [title]="'group.inviteCode' | t">
-        <span trail class="group__trail">
-          <span class="group__code">{{ one.inviteCode }}</span>
-          <app-icon-button icon="share" [label]="'group.share' | t" (pressed)="shareCode(one.inviteCode)" />
-        </span>
-      </app-list-row>
-    </div>
-
-    <section>
-      <h2 class="group__section">{{ 'group.members' | t }}</h2>
-      <div class="group__card">
-        @for (row of members(); track row.userId) {
-          <app-list-row kind="catalogue" [title]="row.name" [subline]="row.since">
-            @if (row.owner) {
-              <app-badge trail variant="success">{{ 'group.owner' | t }}</app-badge>
-            } @else if (mine()) {
-              <app-icon-button
-                trail
-                icon="close"
-                [label]="'group.removeMember' | t"
-                (pressed)="removeMember(row.userId)"
-              />
-            }
-          </app-list-row>
-        }
-      </div>
-    </section>
+    <app-group-members [group]="one" [removable]="mine()" (removed)="removeMember($event)" />
   } @else {
     <p class="note">{{ 'group.notFound' | t }}</p>
   }

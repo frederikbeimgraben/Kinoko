@@ -1,0 +1,51 @@
+<div [class.choice__inline]="inline()">
+  <p class="choice__label" [class.choice__label--inline]="inline()">
+    {{ 'entry.field.visibility' | t }}
+  </p>
+  <app-segmented
+    [class.choice__segment]="inline()"
+    [options]="segments()"
+    [value]="visibility()"
+    [label]="'entry.field.visibility' | t"
+    (valueChange)="chooseVisibility($event)"
+  />
+</div>
+
+@if (visibility() === 'shared') {
+  <div>
+    <p class="choice__label">{{ 'entry.field.group' | t }}</p>
+    <app-form-field
+      [label]="'entry.field.group' | t"
+      [hideLabel]="true"
+      [value]="groupName()"
+      [placeholder]="'group.title' | t"
+      [readOnly]="true"
+      [chevron]="true"
+      (displayClick)="picking.set(true)"
+    />
+  </div>
+}
+
+<app-overlay-host [open]="picking()" [modal]="true" (closed)="picking.set(false)">
+  @if (picking()) {
+    <app-sheet
+      [label]="'entry.field.group' | t"
+      [title]="'entry.field.group' | t"
+      [modal]="true"
+      [detents]="DETENTS"
+      (closed)="picking.set(false)"
+    >
+      <div class="choice__list">
+        @for (row of groups(); track row.id) {
+          <app-list-row
+            kind="catalogue"
+            [title]="row.name"
+            [clickable]="true"
+            [selected]="row.id === groupId()"
+            (chosen)="chooseGroup(row.id)"
+          />
+        }
+      </div>
+    </app-sheet>
+  }
+</app-overlay-host>

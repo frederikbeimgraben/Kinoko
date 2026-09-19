@@ -72,7 +72,13 @@ export class ZoneSheetComponent implements OnDestroy {
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();
-    return { name: zone.name, colour: zone.colour, note: zone.note, visibility: zone.visibility };
+    return {
+      name: zone.name,
+      colour: zone.colour,
+      note: zone.note,
+      visibility: zone.visibility,
+      groupId: zone.groupId,
+    };
   });
 
   /** Der Mittelpunkt der Fläche: der Punkt, den eine Navigation ansteuert. */

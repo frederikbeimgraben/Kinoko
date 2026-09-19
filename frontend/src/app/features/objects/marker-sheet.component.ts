@@ -54,6 +54,7 @@ export class MarkerSheetComponent {
       colour: marker.colour,
       note: marker.note,
       visibility: marker.visibility,
+      groupId: marker.groupId,
     };
   });
 

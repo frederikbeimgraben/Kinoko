@@ -8,10 +8,9 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ColourSwatchesComponent } from '../../ui/colour-swatches/colour-swatches.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
-import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { colourSwatches, colourFromHex, colourHex } from '../entries/colors';
 import { coordinatesText } from './coordinates';
-import { visibilitySegments } from './visibility';
+import { VisibilityChoiceComponent } from './visibility-choice.component';
 import type { Location } from './add-entry.state';
 
 /** Was ein Marker und eine Zone gemeinsam haben. */
@@ -20,6 +19,7 @@ export interface ObjectValues {
   colour: MarkerColour;
   note: string | null;
   visibility: Visibility;
+  groupId: string | null;
 }
 
 /** Name, Farbe, Notiz und Sichtbarkeit: die Felder von Marker und Zone. */
@@ -31,8 +31,8 @@ export interface ObjectValues {
     ColourSwatchesComponent,
     FormFieldComponent,
     NgTemplateOutlet,
-    SegmentedComponent,
     TranslatePipe,
+    VisibilityChoiceComponent,
   ],
   templateUrl: './object-form.component.html',
   styleUrl: './object-form.component.scss',
@@ -64,9 +64,9 @@ export class ObjectFormComponent {
   private readonly colourChoice = signal<MarkerColour | null>(null);
   private readonly noteChoice = signal<string | null>(null);
   private readonly visibilityChoice = signal<Visibility | null>(null);
+  private readonly groupChoice = signal<string | null | undefined>(undefined);
 
   protected readonly swatches = computed(() => colourSwatches(this.i18n));
-  protected readonly segments = computed(() => visibilitySegments(this.i18n));
   protected readonly coordinates = computed(() => coordinatesText(this.location(), this.i18n));
 
   protected readonly secondaryLabel = computed(() =>
@@ -80,6 +80,11 @@ export class ObjectFormComponent {
   protected readonly visibilityValue = computed(
     () => this.visibilityChoice() ?? this.start()?.visibility ?? 'private',
   );
+
+  protected readonly groupValue = computed(() => {
+    const chosen = this.groupChoice();
+    return chosen === undefined ? (this.start()?.groupId ?? null) : chosen;
+  });
   protected readonly colourHex = computed(() => colourHex(this.colour()));
 
   protected setColour(hex: string): void {
@@ -87,8 +92,13 @@ export class ObjectFormComponent {
     this.report();
   }
 
-  protected setVisibility(value: string): void {
-    this.visibilityChoice.set(value === 'shared' ? 'shared' : 'private');
+  protected setVisibility(value: Visibility): void {
+    this.visibilityChoice.set(value);
+    this.report();
+  }
+
+  protected setGroup(value: string | null): void {
+    this.groupChoice.set(value);
     this.report();
   }
 
@@ -120,6 +130,7 @@ export class ObjectFormComponent {
       colour: this.colour(),
       note: note === '' ? null : note,
       visibility: this.visibilityValue(),
+      groupId: this.groupValue(),
     };
   }
 
@@ -130,6 +141,7 @@ export class ObjectFormComponent {
       colour: this.colour(),
       note: this.noteText().trim() || null,
       visibility: this.visibilityValue(),
+      groupId: this.groupValue(),
     });
   }
 }

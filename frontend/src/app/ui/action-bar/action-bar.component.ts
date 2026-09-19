@@ -28,6 +28,8 @@ export class ActionBarComponent {
   readonly busy = input(false);
   /** Beide Aktionen stehen nebeneinander und teilen sich die Breite. */
   readonly split = input(false);
+  /** Die Hauptaktion steht links statt rechts, wie manches Brett sie zeigt. */
+  readonly leadFirst = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();
