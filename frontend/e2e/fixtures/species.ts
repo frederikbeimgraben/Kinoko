@@ -182,6 +182,48 @@ export const SEVEN: readonly Shape[] = [
   },
 ];
 
+/** Die fünf weiteren Arten, die `SEVEN` auf die zwölf des Bretts `SpeciesScrolled` bringen. */
+export const FIVE_MORE: readonly Shape[] = [
+  {
+    slug: 'amanita-rubescens',
+    name: 'Perlpilz',
+    latin: 'Amanita rubescens',
+    edibility: 'edible',
+    cap: ['#c9a877', '#8a4e2b'],
+  },
+  {
+    slug: 'agaricus-campestris',
+    name: 'Wiesenchampignon',
+    latin: 'Agaricus campestris',
+    edibility: 'edible',
+    cap: ['#f2e8d5', '#c9a877'],
+  },
+  {
+    slug: 'armillaria-mellea',
+    name: 'Hallimasch',
+    latin: 'Armillaria mellea',
+    edibility: 'edible',
+    cap: ['#c9a877', '#8a6a3a'],
+  },
+  {
+    slug: 'coprinus-comatus',
+    name: 'Schopftintling',
+    latin: 'Coprinus comatus',
+    edibility: 'edible',
+    cap: ['#e8e0d0', '#c9c0b0'],
+  },
+  {
+    slug: 'tylopilus-felleus',
+    name: 'Gallenröhrling',
+    latin: 'Tylopilus felleus',
+    edibility: 'edible',
+    cap: ['#c9a877', '#8a6a4a'],
+  },
+];
+
+/** Die zwölf Arten des Bretts `SpeciesScrolled`, in seiner Reihenfolge. */
+export const TWELVE: readonly Shape[] = [...SEVEN, ...FIVE_MORE];
+
 /** Die drei Treffer des Bretts `SpeciesSearch`. */
 export const STONE: readonly Shape[] = [
   {

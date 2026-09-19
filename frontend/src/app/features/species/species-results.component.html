@@ -1,3 +1,13 @@
+<ng-template #hitRows>
+  @for (row of rows(); track row.slug) {
+    <app-species-row
+      [species]="row.species"
+      [active]="row.slug === active()"
+      (chosen)="chosen.emit(row.slug)"
+    />
+  }
+</ng-template>
+
 @if (failed()) {
   <div class="results__middle">
     <app-error-state [text]="'common.loadFailed' | t" (retry)="retry.emit()" />
@@ -23,29 +33,25 @@
       (actionClick)="resetFilter.emit()"
     />
   </div>
+} @else if (gapRows().length === 0) {
+  <app-infinite-list class="results__list" [framed]="true" [hasMore]="hasMore()" (more)="more.emit()">
+    <ng-container [ngTemplateOutlet]="hitRows" />
+  </app-infinite-list>
 } @else {
   <app-infinite-list class="results__list" [hasMore]="hasMore()" (more)="more.emit()">
     <div class="results__stack">
       <div class="results__card">
-        @for (row of rows(); track row.slug) {
-          <app-species-row
-            [species]="row.species"
-            [active]="row.slug === active()"
-            (chosen)="chosen.emit(row.slug)"
-          />
+        <ng-container [ngTemplateOutlet]="hitRows" />
+      </div>
+      <div class="results__gap">
+        <span>{{ gapText() }}</span>
+        <i></i>
+      </div>
+      <div class="results__card results__card--muted">
+        @for (row of gapRows(); track row.slug) {
+          <app-species-row [species]="row.species" [muted]="true" (chosen)="chosen.emit(row.slug)" />
         }
       </div>
-      @if (gapRows().length > 0) {
-        <div class="results__gap">
-          <span>{{ gapText() }}</span>
-          <i></i>
-        </div>
-        <div class="results__card results__card--muted">
-          @for (row of gapRows(); track row.slug) {
-            <app-species-row [species]="row.species" [muted]="true" (chosen)="chosen.emit(row.slug)" />
-          }
-        </div>
-      }
     </div>
   </app-infinite-list>
 }
