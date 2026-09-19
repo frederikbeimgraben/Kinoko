@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 from sqlalchemy import Select, select
 
 from app.models import Find, Species, now
+from app.modules.access.group_service import GroupService
 from app.modules.objects.repository import FindRepository
 from app.modules.objects.schemas import FindSchema
 from app.modules.objects.service import ObjectService
@@ -69,8 +70,13 @@ class FindService:
         return protection != Protection.NONE
 
     async def shared(self, viewer: Viewer, paging: Paging, query: FindQuery) -> dict[str, Any]:
-        """Die geteilten Funde anderer, bei Schutz auf ein Kilometer gerundet."""
-        stmt = select(Find).where(Find.visibility == Visibility.SHARED, Find.deleted_at.is_(None))
+        """Die Funde der eigenen Gruppen, bei Schutz auf ein Kilometer gerundet."""
+        held = await GroupService(self.db).my_ids(viewer.user)
+        stmt = select(Find).where(
+            Find.visibility == Visibility.SHARED,
+            Find.group_id.in_(held),
+            Find.deleted_at.is_(None),
+        )
         if viewer.user is not None:
             stmt = stmt.where(Find.owner_id != viewer.user.id)
         if query.since is not None:

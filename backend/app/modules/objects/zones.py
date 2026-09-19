@@ -17,6 +17,7 @@ from app.modules.objects import tiles
 from app.modules.objects.repository import ZoneRepository
 from app.modules.objects.schemas import GeoPolygon, ZoneSchema, ZoneValueSchema, ZoneWrite
 from app.modules.objects.service import ObjectService
+from app.modules.objects.visibility import group_of
 from app.shared.geometry import area_ha, point_in_polygon
 from app.shared.paging import Page
 
@@ -33,13 +34,14 @@ def _service(db: Db) -> ObjectService[Zone]:
     return ObjectService(ZoneRepository(db))
 
 
-def _values(body: ZoneWrite) -> dict[str, Any]:
+async def _values(db: Db, user: User, body: ZoneWrite) -> dict[str, Any]:
     return {
         "name": body.name,
         "polygon": body.polygon.model_dump_json(),
         "area_ha": area_ha(body.polygon.outer_ring()),
         "colour": body.colour,
         "visibility": body.visibility,
+        "group_id": await group_of(db, user, body.visibility, body.group_id),
         "note": body.note,
     }
 
@@ -61,7 +63,7 @@ async def list_zones(
 @router.post("/zones", status_code=status.HTTP_201_CREATED)
 async def create_zone(db: Db, user: CurrentUser, body: ZoneWrite) -> Any:  # noqa: ANN401
     """Legt eine Zone an."""
-    entity = Zone(owner_id=user.id, **_values(body))
+    entity = Zone(owner_id=user.id, **(await _values(db, user, body)))
     created = await _service(db).create(entity)
     return ZoneSchema.of(created).dumped()
 
@@ -82,7 +84,7 @@ async def put_zone(
     response: Response,
 ) -> Any:  # noqa: ANN401
     """Legt die Zone mit dieser Kennung an, oder ersetzt sie."""
-    values = _values(body)
+    values = await _values(db, user, body)
     entity, created = await _service(db).update(
         user,
         zone_id,

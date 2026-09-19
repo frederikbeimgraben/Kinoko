@@ -39,6 +39,7 @@ class FindWrite(Schema):
     count: int | None = None
     for_training: bool = False
     visibility: Visibility = Visibility.PRIVATE
+    group_id: uuid.UUID | None = None
     note: str | None = None
 
 
@@ -57,6 +58,7 @@ class FindSchema(Schema):
     reviewed_by_id: uuid.UUID | None
     reviewed_at: Timestamp | None
     visibility: Visibility
+    group_id: uuid.UUID | None
     note: str | None
     created_at: Timestamp
     updated_at: Timestamp
@@ -81,6 +83,7 @@ class FindSchema(Schema):
             reviewed_by_id=row.reviewed_by_id,
             reviewed_at=row.reviewed_at,
             visibility=row.visibility,
+            group_id=row.group_id,
             note=row.note,
             created_at=row.created_at,
             updated_at=row.updated_at,
@@ -102,6 +105,7 @@ class MarkerWrite(Schema):
     lon: float
     colour: MarkerColour = MarkerColour.GREEN
     visibility: Visibility = Visibility.PRIVATE
+    group_id: uuid.UUID | None = None
     note: str | None = None
 
 
@@ -115,6 +119,7 @@ class MarkerSchema(Schema):
     lon: float
     colour: MarkerColour
     visibility: Visibility
+    group_id: uuid.UUID | None
     note: str | None
     created_at: Timestamp
     updated_at: Timestamp
@@ -131,6 +136,7 @@ class MarkerSchema(Schema):
             lon=row.lon,
             colour=row.colour,
             visibility=row.visibility,
+            group_id=row.group_id,
             note=row.note,
             created_at=row.created_at,
             updated_at=row.updated_at,
@@ -145,6 +151,7 @@ class ZoneWrite(Schema):
     polygon: GeoPolygon
     colour: MarkerColour = MarkerColour.GREEN
     visibility: Visibility = Visibility.PRIVATE
+    group_id: uuid.UUID | None = None
     note: str | None = None
 
 
@@ -158,6 +165,7 @@ class ZoneSchema(Schema):
     area_ha: float
     colour: MarkerColour
     visibility: Visibility
+    group_id: uuid.UUID | None
     note: str | None
     created_at: Timestamp
     updated_at: Timestamp
@@ -174,6 +182,7 @@ class ZoneSchema(Schema):
             area_ha=row.area_ha,
             colour=row.colour,
             visibility=row.visibility,
+            group_id=row.group_id,
             note=row.note,
             created_at=row.created_at,
             updated_at=row.updated_at,

@@ -100,6 +100,109 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listGroups"];
+        put?: never;
+        post: operations["createGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/groups/join": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["joinGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/groups/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        get: operations["getGroup"];
+        put: operations["updateGroup"];
+        post?: never;
+        delete: operations["deleteGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/groups/{id}/members/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+                userId: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["removeGroupMember"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/glossary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listGlossary"];
+        put?: never;
+        post: operations["createGlossaryEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/glossary/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateGlossaryEntry"];
+        post?: never;
+        delete: operations["deleteGlossaryEntry"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/species/bundle": {
         parameters: {
             query?: never;
@@ -880,7 +983,7 @@ export interface components {
             photos: components["schemas"]["Photo"][];
         };
         /** @enum {string} */
-        Permission: "species.edit" | "image.review" | "image.submit" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage";
+        Permission: "species.edit" | "image.review" | "image.submit" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage" | "group.manage";
         /** @enum {string} */
         Area: "species" | "interface" | "access" | "data";
         SpeciesCountsEntry: {
@@ -1240,6 +1343,8 @@ export interface components {
             reviewedById?: string | null;
             reviewedAt?: string | null;
             visibility?: components["schemas"]["Visibility"];
+            /** Format: uuid */
+            groupId?: string | null;
             note?: string | null;
             /** Format: date-time */
             createdAt?: string;
@@ -1258,6 +1363,8 @@ export interface components {
             /** @default false */
             forTraining: boolean;
             visibility?: components["schemas"]["Visibility"];
+            /** Format: uuid */
+            groupId?: string | null;
             note?: string | null;
         };
         FindPage: {
@@ -1274,6 +1381,8 @@ export interface components {
             lon?: number;
             colour?: components["schemas"]["MarkerColour"];
             visibility?: components["schemas"]["Visibility"];
+            /** Format: uuid */
+            groupId?: string | null;
             note?: string | null;
             /** Format: date-time */
             createdAt?: string;
@@ -1288,6 +1397,8 @@ export interface components {
             lon: number;
             colour?: components["schemas"]["MarkerColour"];
             visibility?: components["schemas"]["Visibility"];
+            /** Format: uuid */
+            groupId?: string | null;
             note?: string | null;
         };
         MarkerPage: {
@@ -1304,6 +1415,8 @@ export interface components {
             areaHa?: number;
             colour?: components["schemas"]["MarkerColour"];
             visibility?: components["schemas"]["Visibility"];
+            /** Format: uuid */
+            groupId?: string | null;
             note?: string | null;
             /** Format: date-time */
             createdAt?: string;
@@ -1317,6 +1430,8 @@ export interface components {
             polygon: components["schemas"]["GeoPolygon"];
             colour?: components["schemas"]["MarkerColour"];
             visibility?: components["schemas"]["Visibility"];
+            /** Format: uuid */
+            groupId?: string | null;
             note?: string | null;
         };
         ZonePage: {
@@ -1460,6 +1575,43 @@ export interface components {
         RolePage: {
             items: components["schemas"]["Role"][];
             nextCursor: string | null;
+        };
+        FriendGroup: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** Format: uuid */
+            ownerId: string;
+            inviteCode: string;
+            members: components["schemas"]["FriendGroupMember"][];
+            /** Format: date-time */
+            createdAt: string;
+        };
+        FriendGroupWrite: {
+            name: string;
+        };
+        FriendGroupMember: {
+            /** Format: uuid */
+            userId: string;
+            name: string;
+            /** Format: date-time */
+            joinedAt: string;
+        };
+        FriendGroupJoin: {
+            inviteCode: string;
+        };
+        GlossaryEntry: {
+            /** Format: uuid */
+            id: string;
+            term: string;
+            definition: string;
+            updatedByName?: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        GlossaryEntryWrite: {
+            term: string;
+            definition: string;
         };
         Person: {
             /** Format: uuid */
@@ -1703,6 +1855,293 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["Unauthorized"];
+        };
+    };
+    listGroups: {
+        parameters: {
+            query?: {
+                all?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["FriendGroup"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    createGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FriendGroupWrite"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FriendGroup"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    joinGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FriendGroupJoin"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FriendGroup"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    getGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FriendGroup"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    updateGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FriendGroupWrite"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FriendGroup"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    deleteGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    removeGroupMember: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    listGlossary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["GlossaryEntry"][];
+                    };
+                };
+            };
+        };
+    };
+    createGlossaryEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GlossaryEntryWrite"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlossaryEntry"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    updateGlossaryEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GlossaryEntryWrite"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlossaryEntry"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    deleteGlossaryEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
         };
     };
     getSpeciesBundle: {

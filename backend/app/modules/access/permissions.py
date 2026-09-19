@@ -17,6 +17,7 @@ PERMISSIONS: Final[dict[str, Area]] = {
     "role.assign": Area.ACCESS,
     "find.review": Area.DATA,
     "run.manage": Area.DATA,
+    "group.manage": Area.ACCESS,
 }
 
 BUILT_IN: Final[dict[str, tuple[str, tuple[str, ...]]]] = {
