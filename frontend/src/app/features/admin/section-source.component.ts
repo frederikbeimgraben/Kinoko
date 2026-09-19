@@ -25,13 +25,7 @@ const SCOPE_TEXT: Readonly<Record<SourceScope, TranslationKey>> = {
 @Component({
   selector: 'app-section-source',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionBarComponent,
-    FormFieldComponent,
-    PageHeaderComponent,
-    SegmentedComponent,
-    TranslatePipe,
-  ],
+  imports: [ActionBarComponent, FormFieldComponent, PageHeaderComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './section-source.component.html',
   styleUrl: './section-source.component.scss',
 })

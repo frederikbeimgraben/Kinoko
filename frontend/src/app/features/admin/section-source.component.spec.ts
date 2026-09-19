@@ -31,12 +31,7 @@ function routeFor(index: string): { provide: typeof ActivatedRoute; useValue: un
 async function build(index = '0'): Promise<{ container: Element; http: HttpTestingController }> {
   TestBed.resetTestingModule();
   const { container } = await render(SectionSourceComponent, {
-    providers: [
-      provideRouter(ANY_ROUTE),
-      provideHttpClient(),
-      provideHttpClientTesting(),
-      routeFor(index),
-    ],
+    providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor(index)],
   });
   const http = TestBed.inject(HttpTestingController);
   http.expectOne('/api/species/boletus-edulis').flush(WITH_SOURCE);

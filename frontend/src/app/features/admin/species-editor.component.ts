@@ -15,24 +15,13 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
-import { CheckRowComponent } from '../../ui/check-row/check-row.component';
-import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { PartPickerComponent } from './part-picker.component';
 import { SpeciesEditorState } from './species-editor.state';
 import { featureRows, lookalikeRows, sourceRows, type EditorRow } from './species-editor.rows';
-import { freeParts, lookalikeWrites } from './species-lists';
-import { PART_TEXT } from '../species/labels';
-
+import { lookalikeWrites } from './species-lists';
 
 /** Wohin ein Abschnitt führt: auf ein Teil, einen Text, eine Verwechslung, eine Quelle. */
 type BlockKind = 'part' | 'text' | 'lookalike' | 'source';
-
-/** Ein Teil, das die Art noch nicht führt. */
-interface PartChoice {
-  part: BodyPart;
-  name: string;
-  checked: boolean;
-}
 
 /** Ein Abschnitt des Editors mit seinen Zeilen. */
 interface Block {
@@ -53,10 +42,8 @@ interface Block {
   imports: [
     ActionBarComponent,
     AddRowComponent,
-    CheckRowComponent,
     ConfirmDialogComponent,
-    OverlayHostComponent,
-    SheetComponent,
+    PartPickerComponent,
     ListRowComponent,
     PageHeaderComponent,
     StatRowComponent,
@@ -67,12 +54,6 @@ interface Block {
   styleUrl: './species-editor.component.scss',
 })
 export class SpeciesEditorComponent {
-  protected readonly DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [
-    'content',
-    'content',
-    'content',
-  ];
-
   private readonly i18n = inject(I18nService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -86,15 +67,7 @@ export class SpeciesEditorComponent {
   protected readonly forecast = this.state.forecast;
   protected readonly removing = signal(false);
   protected readonly picking = signal(false);
-  protected readonly chosenParts = signal<ReadonlySet<BodyPart>>(new Set());
-
-  protected readonly partChoices = computed<PartChoice[]>(() =>
-    freeParts(this.species(), this.state.extraParts()).map((part) => ({
-      part,
-      name: this.i18n.translate(PART_TEXT[part]),
-      checked: this.chosenParts().has(part),
-    })),
-  );
+  protected readonly extraParts = this.state.extraParts;
 
   protected readonly title = computed(() =>
     [this.species()?.name, this.i18n.translate('admin.species.editTitle')].filter(Boolean).join(' '),
@@ -210,23 +183,9 @@ export class SpeciesEditorComponent {
   }
 
   /** Nimmt die gewählten Teile in die Art auf und schließt das Blatt. */
-  protected addParts(): void {
-    this.state.addParts([...this.chosenParts()]);
-    this.closePicker();
-  }
-
-  protected closePicker(): void {
+  protected addParts(parts: readonly BodyPart[]): void {
+    this.state.addParts(parts);
     this.picking.set(false);
-    this.chosenParts.set(new Set());
-  }
-
-  protected togglePart(part: BodyPart, on: boolean): void {
-    this.chosenParts.update((held) => {
-      const next = new Set(held);
-      if (on) next.add(part);
-      else next.delete(part);
-      return next;
-    });
   }
 
   private open(step: string, at: number): void {

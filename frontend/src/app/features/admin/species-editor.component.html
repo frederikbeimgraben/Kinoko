@@ -54,39 +54,13 @@
   (secondaryClick)="removing.set(true)"
 />
 
-<app-overlay-host [open]="picking()" [modal]="true" (closed)="closePicker()">
-  @if (picking()) {
-    <app-sheet
-      [label]="'admin.species.addPart' | t"
-      [title]="'admin.species.addPart' | t"
-      [modal]="true"
-      [detents]="DETENTS"
-      (closed)="closePicker()"
-    >
-      <div head class="editor__head">
-        <b class="editor__title">{{ 'admin.species.addPart' | t }}</b>
-      </div>
-      <div class="editor__choices">
-        <div class="editor__card">
-          @for (choice of partChoices(); track choice.part) {
-            <app-check-row
-              [title]="choice.name"
-              [checked]="choice.checked"
-              (toggled)="togglePart(choice.part, $event)"
-            />
-          }
-        </div>
-      </div>
-      <app-action-bar
-        [primary]="'common.add' | t"
-        [secondary]="'common.cancel' | t"
-        [ghost]="true"
-        (primaryClick)="addParts()"
-        (secondaryClick)="closePicker()"
-      />
-    </app-sheet>
-  }
-</app-overlay-host>
+<app-part-picker
+  [open]="picking()"
+  [species]="species()"
+  [held]="extraParts()"
+  (chosen)="addParts($event)"
+  (closed)="picking.set(false)"
+/>
 
 <app-confirm-dialog
   [open]="removing()"
