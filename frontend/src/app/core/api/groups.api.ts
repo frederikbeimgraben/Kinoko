@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { map, type Observable } from 'rxjs';
-import { ApiClient } from './api-client';
+import { ApiClient, type Silent } from './api-client';
 import type { FriendGroup, Items } from './models';
 
 /** Die Endpunkte der Freundesgruppen. Jeder verlangt eine Anmeldung. */
@@ -9,9 +9,9 @@ export class GroupsApi {
   private readonly api = inject(ApiClient);
 
   /** Die eigenen Gruppen. `all` verlangt das Recht `group.manage`. */
-  list(all = false): Observable<FriendGroup[]> {
+  list(all = false, options?: Silent): Observable<FriendGroup[]> {
     return this.api
-      .get<Items<FriendGroup>>('/groups', { all: all || undefined })
+      .get<Items<FriendGroup>>('/groups', { all: all || undefined }, options)
       .pipe(map((page) => page.items));
   }
 

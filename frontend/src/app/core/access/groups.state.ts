@@ -21,9 +21,15 @@ export class GroupsState {
     return needle === '' ? all : all.filter((one) => one.name.toLocaleLowerCase().includes(needle));
   });
 
-  load(all = false): void {
-    this.api.list(all).subscribe((groups) => {
-      this._groups.set(groups);
+  /** Ein stiller Aufruf meldet einen Fehler nicht als Toast. */
+  load(all = false, quiet = false): void {
+    this.api.list(all, { quiet }).subscribe({
+      next: (groups) => {
+        this._groups.set(groups);
+      },
+      error: () => {
+        this._groups.set([]);
+      },
     });
   }
 

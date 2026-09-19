@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
+import { GROUPS } from '../fixtures/groups';
 import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap, showMapImage } from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
@@ -28,6 +29,7 @@ const REPLIES = {
   '/api/markers': MARKERS,
   '/api/zones': ZONES,
   '/api/finds': SHARED_FINDS,
+  '/api/groups': { items: GROUPS },
 };
 
 async function openMap(page: Page, clear = false): Promise<void> {
@@ -100,6 +102,23 @@ test('FindForm', async ({ page }) => {
   await setDate(page);
   await addPhoto(page);
   await board(page, 'FindForm');
+});
+
+test('FindFormShared', async ({ page }) => {
+  guard('FindFormShared', 'phone');
+  await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
+  await setDate(page);
+  await addPhoto(page);
+  await page.getByRole('tab', { name: 'Geteilt' }).click();
+  await page.getByRole('button', { name: 'Gruppe' }).click();
+  await page.getByRole('button', { name: 'Pilzgruppe Karlsruhe' }).click();
+  await expect(page.getByText('Pilzgruppe Karlsruhe')).toBeVisible();
+  // Das Brett zeigt das Blatt von oben; die Wahl hatte es nach unten gerollt.
+  await page.locator('.form__body').evaluate((body) => {
+    body.scrollTo(0, 0);
+  });
+  await board(page, 'FindFormShared');
 });
 
 test('FindSaving', async ({ page }) => {

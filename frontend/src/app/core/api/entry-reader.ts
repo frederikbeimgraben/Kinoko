@@ -28,19 +28,27 @@ export function sharedFind(entry: FindEntry): SharedFind | null {
 export function ownFind(entry: FindEntry): Find | null {
   const shared = sharedFind(entry);
   if (shared === null || entry.visibility === undefined) return null;
-  return { ...shared, visibility: entry.visibility, forTraining: entry.forTraining ?? false };
+  return {
+    ...shared,
+    visibility: entry.visibility,
+    groupId: entry.groupId ?? null,
+    forTraining: entry.forTraining ?? false,
+  };
 }
 
 export function marker(entry: MarkerEntry): Marker | null {
   const { name, lat, lon, colour, visibility } = entry;
   if (name === undefined || lat === undefined || lon === undefined) return null;
   if (colour === undefined || visibility === undefined || entry.deleted) return null;
-  return { id: entry.id, name, lat, lon, colour, note: entry.note ?? null, visibility };
+  const note = entry.note ?? null;
+  return { id: entry.id, name, lat, lon, colour, note, visibility, groupId: entry.groupId ?? null };
 }
 
 export function zone(entry: ZoneEntry): Zone | null {
   const { name, polygon, areaHa, colour, visibility } = entry;
   if (name === undefined || polygon === undefined || areaHa === undefined) return null;
   if (colour === undefined || visibility === undefined || entry.deleted) return null;
-  return { id: entry.id, name, polygon, areaHa, colour, note: entry.note ?? null, visibility };
+  const note = entry.note ?? null;
+  const groupId = entry.groupId ?? null;
+  return { id: entry.id, name, polygon, areaHa, colour, note, visibility, groupId };
 }

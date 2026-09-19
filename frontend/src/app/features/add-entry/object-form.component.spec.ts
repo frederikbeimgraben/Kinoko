@@ -84,6 +84,7 @@ describe('ObjektFormularComponent', () => {
       colour: 'red',
       note: 'Alte Fichten',
       visibility: 'shared',
+      groupId: null,
     };
     const setup = await build({ start, editing: true });
 
