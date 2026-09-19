@@ -120,6 +120,12 @@ async def delete_find(db: Db, user: CurrentUser, find_id: uuid.UUID) -> None:
     await _objects(db).delete(user, find_id)
 
 
+@router.get("/finds/reviews/open", dependencies=[requires("find.review")])
+async def list_open_finds(db: Db, paging: Page) -> Any:  # noqa: ANN401
+    """Die offenen Funde, geblättert."""
+    return await FindService(db).open_for_review(paging)
+
+
 @router.post("/finds/{find_id}/review", dependencies=[requires("find.review")])
 async def review_find(db: Db, user: CurrentUser, find_id: uuid.UUID, body: ReviewBody) -> Any:  # noqa: ANN401
     """Prüft einen Fund, gleich wem er gehört."""

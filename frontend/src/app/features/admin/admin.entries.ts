@@ -44,6 +44,13 @@ export const ADMIN_ENTRIES: readonly AdminEntry[] = [
     counts: ['species'],
   },
   {
+    title: 'admin.categories.title',
+    permission: 'species.edit',
+    section: 'content',
+    path: '/verwaltung/kategorien',
+    counts: [],
+  },
+  {
     title: 'glossary.title',
     permission: 'text.edit',
     section: 'content',

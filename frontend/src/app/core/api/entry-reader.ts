@@ -1,7 +1,7 @@
 /** Liest Fund, Marker und Zone. Ein Grabstein oder ein Teilstand fällt weg. */
 
 import type { components } from './contract';
-import type { Find, Marker, SharedFind, Zone } from './models';
+import type { Find, Marker, OpenFind, SharedFind, Zone } from './models';
 
 type FindEntry = components['schemas']['Find'];
 type MarkerEntry = components['schemas']['Marker'];
@@ -23,6 +23,13 @@ export function sharedFind(entry: FindEntry): SharedFind | null {
     note: entry.note ?? null,
     reviewState,
   };
+}
+
+/** Ein offener Fund der Prüfung: ein geteilter, dazu sein Konto. */
+export function openFind(entry: FindEntry): OpenFind | null {
+  const shared = sharedFind(entry);
+  if (shared === null || entry.ownerId === undefined) return null;
+  return { ...shared, ownerId: entry.ownerId };
 }
 
 /** Ein eigener Fund: ein geteilter, dazu Sichtbarkeit und Freigabe. */

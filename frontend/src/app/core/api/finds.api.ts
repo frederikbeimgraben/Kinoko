@@ -4,8 +4,12 @@ import type { Viewbox } from '../../map/tile-grid';
 import { ApiClient } from './api-client';
 import type { components } from './contract';
 import { ENTRY_PATHS } from './entry-paths';
-import { sharedFind } from './entry-reader';
-import type { SharedFind } from './models';
+import { openFind, sharedFind } from './entry-reader';
+import type { OpenFind, SharedFind } from './models';
+
+type ReviewDecision = components['schemas']['ReviewDecision'];
+
+const REVIEWS = `${ENTRY_PATHS.find}/reviews`;
 
 type FindPage = components['schemas']['FindPage'];
 
@@ -33,5 +37,20 @@ export class FindsApi {
         { quietStatus: [NOT_FOUND] },
       )
       .pipe(map((answer) => answer.items.flatMap((entry) => sharedFind(entry) ?? [])));
+  }
+
+  /** Die offenen Funde aller Konten. Braucht das Recht `find.review`. */
+  open(): Observable<readonly OpenFind[]> {
+    return this.api
+      .get<FindPage>(`${REVIEWS}/open`, { limit: PAGE_SIZE })
+      .pipe(map((answer) => answer.items.flatMap((entry) => openFind(entry) ?? [])));
+  }
+
+  review(id: string, decision: ReviewDecision): Observable<null> {
+    return this.api.post<null>(`${ENTRY_PATHS.find}/${encodeURIComponent(id)}/review`, { decision });
+  }
+
+  acceptAll(): Observable<null> {
+    return this.api.post<null>(`${REVIEWS}/accept-all`);
   }
 }

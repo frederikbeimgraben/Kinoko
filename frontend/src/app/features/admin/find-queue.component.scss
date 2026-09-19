@@ -1,0 +1,54 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.queue {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-block-size: 0;
+  padding: 20px var(--size-gutter) 24px;
+  overflow: hidden;
+}
+
+.queue__counter {
+  font-size: var(--fs-row-meta);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card__image {
+  block-size: 240px;
+  border-radius: 0;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px var(--space-4);
+}
+
+.card__species {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+}
+
+.card__meta {
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+.card__caption {
+  font-size: var(--fs-sm);
+}

@@ -124,6 +124,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/people.component').then((m) => m.PeopleComponent),
       },
       {
+        path: 'funde',
+        canActivate: [requiresPermission('find.review')],
+        loadComponent: () =>
+          import('./features/admin/find-queue.component').then((m) => m.FindQueueComponent),
+      },
+      {
+        path: 'kategorien',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/categories.component').then((m) => m.CategoriesComponent),
+      },
+      {
         path: 'arten',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>

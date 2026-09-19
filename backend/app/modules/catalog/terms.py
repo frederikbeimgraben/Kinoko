@@ -98,6 +98,32 @@ class TermService:
         await self.db.delete(entity)
         await self.repo.commit()
 
+    async def remove(self, term_id: uuid.UUID) -> None:
+        """Löscht einen Begriff und jede seiner Verwendungen."""
+        entity = await self.repo.get_or_404(term_id)
+        await self._delete_terms(entity.id)
+        await self._delete_triggers(entity.id)
+        await self.db.delete(entity)
+        await self.repo.commit()
+
+    async def _delete_terms(self, term_id: uuid.UUID) -> None:
+        rows = (
+            await self.db.execute(select(SpeciesTerm).where(SpeciesTerm.term_id == term_id))
+        ).scalars()
+        for row in rows:
+            await self.db.delete(row)
+
+    async def _delete_triggers(self, term_id: uuid.UUID) -> None:
+        rows = (
+            await self.db.execute(
+                select(SpeciesColourChangeTrigger).where(
+                    SpeciesColourChangeTrigger.term_id == term_id
+                )
+            )
+        ).scalars()
+        for row in rows:
+            await self.db.delete(row)
+
     async def _move_terms(self, term_id: uuid.UUID, into_id: uuid.UUID) -> None:
         holders = set(
             (
@@ -153,6 +179,16 @@ async def create_term(db: Db, body: TermCreate) -> Term:
 async def update_term(db: Db, term_id: uuid.UUID, body: TermUpdate) -> Term:
     """Ändert einen Begriff."""
     return await TermService(db).rename(term_id, body)
+
+
+@router.delete(
+    "/terms/{term_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[requires("species.edit")],
+)
+async def delete_term(db: Db, term_id: uuid.UUID) -> None:
+    """Löscht einen Begriff."""
+    await TermService(db).remove(term_id)
 
 
 @router.post(

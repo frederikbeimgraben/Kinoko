@@ -1,0 +1,45 @@
+<app-page-header [title]="'find.queue.title' | t" [back]="true" (backClick)="back()">
+  <span class="queue__counter">{{ counter() }}</span>
+  @if (cards().length > 0) {
+    <app-icon-button icon="check" [label]="'find.queue.acceptAll' | t" (pressed)="asking.set(true)" />
+  }
+</app-page-header>
+
+<div class="queue">
+  @if (cards().length === 0) {
+    <app-empty-state [text]="'find.queue.empty' | t" />
+  } @else {
+    <app-review-queue
+      [balance]="true"
+      [items]="cards()"
+      (accepted)="accept($event)"
+      (rejected)="reject($event)"
+      (undone)="undo()"
+    >
+      <ng-template let-card>
+        <article class="card">
+          @for (photo of card.photos; track photo) {
+            <app-private-image class="card__image" [path]="photo" [alt]="card.species" />
+          }
+          <div class="card__body">
+            <span class="card__species">{{ card.species }}</span>
+            <span class="card__meta">{{ card.meta }}</span>
+            <span class="card__meta">{{ card.place }}</span>
+            @if (card.note) {
+              <span class="card__caption">{{ card.note }}</span>
+            }
+          </div>
+        </article>
+      </ng-template>
+    </app-review-queue>
+  }
+</div>
+
+<app-confirm-dialog
+  [open]="asking()"
+  [title]="'find.queue.acceptAllConfirm' | t"
+  [danger]="false"
+  [confirmLabel]="'find.queue.acceptAll' | t"
+  (confirmed)="acceptAll()"
+  (cancelled)="asking.set(false)"
+/>
