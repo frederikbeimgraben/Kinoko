@@ -1,0 +1,39 @@
+@use '../../../styles/card';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.adminGlossary {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.adminGlossary__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
+
+  margin-block-start: 12px;
+}
+
+.adminGlossary__label {
+  display: block;
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  line-height: 15px;
+}

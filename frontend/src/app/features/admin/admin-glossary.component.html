@@ -1,0 +1,57 @@
+<app-page-header [title]="'glossary.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="adminGlossary">
+  <app-search-field
+    [value]="search()"
+    [placeholder]="'glossary.search' | t"
+    (valueChange)="onSearch($event)"
+  />
+  <div>
+    <app-add-row [label]="'glossary.add' | t" [action]="'glossary.create' | t" (pressed)="add()" />
+    <div class="adminGlossary__card">
+      @for (entry of entries(); track entry.id) {
+        <app-list-row
+          kind="catalogue"
+          [title]="entry.term"
+          [subline]="entry.definition"
+          [clickable]="true"
+          [chevron]="true"
+          (chosen)="edit(entry.id)"
+        />
+      }
+    </div>
+  </div>
+</div>
+
+@if (editing()) {
+  <app-form-sheet
+    [title]="sheetTitle()"
+    [submit]="'common.save' | t"
+    [secondary]="'common.delete' | t"
+    [secondaryDanger]="true"
+    [busy]="saving()"
+    (submitted)="save()"
+    (secondaryPressed)="remove()"
+    (cancelled)="close()"
+  >
+    <div>
+      <p class="adminGlossary__label">{{ 'glossary.term' | t }}</p>
+      <app-form-field
+        [label]="'glossary.term' | t"
+        [hideLabel]="true"
+        [value]="term()"
+        (valueChange)="term.set($event)"
+      />
+    </div>
+    <div>
+      <p class="adminGlossary__label">{{ 'glossary.definition' | t }}</p>
+      <app-form-field
+        [label]="'glossary.definition' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [value]="definition()"
+        (valueChange)="definition.set($event)"
+      />
+    </div>
+  </app-form-sheet>
+}

@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
+import { GLOSSARY } from '../fixtures/glossary';
 import { GROUPS, ME, OTHER_ME } from '../fixtures/groups';
 import { expect, test } from '../fixtures/test';
 import { expectBoard, skipPending } from './board';
@@ -20,6 +21,7 @@ async function open(page: Page, path: string, me: unknown = ME): Promise<void> {
     '/api/config': authConfig(BASE),
     '/api/me': me,
     '/api/groups': { items: GROUPS },
+    '/api/glossary': { items: GLOSSARY },
   });
   await page.goto(path);
 }
@@ -52,6 +54,13 @@ test('Group', async ({ page }) => {
   await open(page, `/konto/gruppen/${GROUPS[0].id}`);
   await expect(page.getByText('PILZ-7F3K')).toBeVisible();
   await expectBoard(page, 'Group');
+});
+
+test('Glossary', async ({ page }) => {
+  guard('Glossary', 'phone');
+  await open(page, '/konto/glossar');
+  await expect(page.getByText('Mykorrhiza')).toBeVisible();
+  await expectBoard(page, 'Glossary');
 });
 
 test('GroupMember', async ({ page }) => {

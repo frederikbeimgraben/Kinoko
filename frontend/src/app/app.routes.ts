@@ -55,6 +55,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/account/group.component').then((m) => m.GroupComponent),
   },
   {
+    path: 'konto/glossar',
+    loadComponent: () => import('./features/account/glossary.component').then((m) => m.GlossaryComponent),
+  },
+  {
     path: 'konto/bilder',
     loadComponent: () => import('./features/account/my-images.component').then((m) => m.MyImagesComponent),
   },
@@ -83,6 +87,12 @@ export const routes: Routes = [
         canActivate: [requiresPermission('image.review')],
         loadComponent: () =>
           import('./features/images/image-queue.component').then((m) => m.ImageQueueComponent),
+      },
+      {
+        path: 'glossar',
+        canActivate: [requiresPermission('text.edit')],
+        loadComponent: () =>
+          import('./features/admin/admin-glossary.component').then((m) => m.AdminGlossaryComponent),
       },
       {
         path: 'gruppen',
