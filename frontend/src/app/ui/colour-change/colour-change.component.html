@@ -1,5 +1,5 @@
 @for (row of rows(); track $index) {
-  <app-list-row kind="catalogue" [title]="row.trigger" [class.row--split]="row.split">
+  <app-list-row kind="catalogue" [title]="row.trigger">
     <span trail class="change__value">
       @if (row.split) {
         <span class="change__swatches">

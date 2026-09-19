@@ -1,18 +1,12 @@
 :host {
   --list-row-inline: var(--space-row-inline);
-  --size-row: 56px;
+  --size-row: 72px;
 
   display: block;
   overflow: hidden;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
-}
-
-// Zwei Farben mit Pfeil brauchen die zweite Zeile für den Pfeil, eine Farbe
-// bleibt in Listengröße.
-app-list-row.row--split {
-  --size-row: 72px;
 }
 
 // Der Weg der Farbe steht in Feldbreite: der Text bricht wie im Feld.
