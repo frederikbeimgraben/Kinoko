@@ -35,9 +35,10 @@
   }
   @if (rows().length === 0) {
     <app-empty-state
-      icon="entries"
+      [icon]="signedIn() ? 'entries' : 'account'"
       [text]="emptyText() | t"
       [action]="signedIn() ? undefined : ('account.signIn' | t)"
+      [primaryAction]="!signedIn()"
       (actionClick)="signIn()"
     />
   } @else if (segment() === 'finds') {
