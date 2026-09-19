@@ -11,6 +11,7 @@ app-page-header {
 
 .section {
   @include section.body;
+  @include section.fields;
 }
 
 .section__title {
