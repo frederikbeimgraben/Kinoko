@@ -52,19 +52,29 @@
   grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
 }
 
-// Eine eigene Stapelschicht: das Blatt der Karte liegt darin und kommt damit
-// nicht über den Reiterinhalt in derselben Spalte.
+// Ohne eigene Ebene hier fängt sich ein deckendes Blatt der Karte in dieser Zelle.
 .shell__map {
   position: relative;
+  grid-row: 1;
+  min-block-size: 0;
+}
+
+// Am Rechner liegt die Karte hinter der Spalte und spannt über die ganze
+// Breite der Hülle. Eine eigene Ebene ordnet sie unter Leiste und Reiter ein.
+.shell--column .shell__map {
   z-index: 0;
   grid-area: 1 / 1 / 2 / 4;
-  min-block-size: 0;
 }
 
 // Ein offenes Blatt der Karte deckt den Reiter zu, statt hinter ihm zu
 // verschwinden.
 .shell__map--lead {
   z-index: 2;
+}
+
+// `resize()` in `MapComponent` holt die Größe nach, sobald sie wieder zeigt.
+.shell__map--hidden {
+  display: none;
 }
 
 .shell--column .shell__nav {

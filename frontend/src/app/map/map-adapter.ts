@@ -96,6 +96,8 @@ export interface MapAdapter {
   extent(): { zoom: number; extent: Viewbox } | null;
   onMove(handler: () => void): void;
   destroy(): void;
+  /** Misst die Zeichenfläche neu, nach einer Zeit ohne Layout-Änderung unsichtbar. */
+  resize(): void;
   /** Der Ort in der Mitte der Karte. */
   center(): readonly [number, number] | null;
   /** Der Ort unter einem Punkt des Fensters, etwa unter dem Fadenkreuz. */
@@ -476,6 +478,10 @@ export class MapLibreAdapter implements MapAdapter {
     for (const role of ROLES) this.states.set(role, newRoleState());
     this.objects.clear();
     for (const layer of this.abos.keys()) this.unsubscribeAll(layer);
+  }
+
+  resize(): void {
+    this.map?.resize();
   }
 
   private state(role: Role): RoleState {

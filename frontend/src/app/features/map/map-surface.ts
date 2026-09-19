@@ -95,6 +95,11 @@ export class MapSurface {
     if (this._ready()) this.adapter.setPadding(this.padding(detent, wide, overlaid));
   }
 
+  /** Misst die Zeichenfläche neu, nach einer Zeit unsichtbar in der Hülle. */
+  resize(): void {
+    if (this._ready()) this.adapter.resize();
+  }
+
   /** Der Ausschnitt, den die Karte gerade zeigt. */
   extent(): { zoom: number; extent: Viewbox } | null {
     return this.adapter.extent();

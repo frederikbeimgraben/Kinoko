@@ -94,7 +94,9 @@ export class MapComponent implements OnDestroy {
   protected readonly playback = inject(MapPlayback);
   protected readonly overlay = this.overlayNav.overlay;
   protected readonly menuAt = signal<ObjectMenuTarget | null>(null);
-
+  /** Am Telefon, außerhalb des Reiters Karte, steht die Fläche unsichtbar in der Hülle. */
+  protected readonly hidden = computed(() => !this.wide() && this.surfaceOnly());
+  private wasHidden = false;
   protected readonly offline = computed(() => !this.sync.online());
 
   /** Ein Eintrag braucht eine Karte ohne Blatt darüber. */
@@ -147,7 +149,10 @@ export class MapComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      if (!this.visible()) this.playback.stop();
+      const hidden = this.hidden();
+      if (!this.visible() || hidden) this.playback.stop();
+      if (!hidden && this.wasHidden) this.surface.resize();
+      this.wasHidden = hidden;
     });
     effect(() => {
       this.state.species.set(this.view.slug());

@@ -42,6 +42,8 @@ export class MapAdapterDouble implements MapAdapter {
   flights: { target: readonly [number, number]; zoom?: number }[] = [];
   layers = new Map<ObjectLayer, FeatureCollection>();
   chosen: ((layer: ObjectLayer, id: string) => void) | null = null;
+  /** Wie oft die Fläche nach einer Zeit unsichtbar neu vermessen wurde. */
+  resized = 0;
 
   warmUp(): void {
     this.warmed += 1;
@@ -94,6 +96,10 @@ export class MapAdapterDouble implements MapAdapter {
 
   destroy(): void {
     this.destroyed = true;
+  }
+
+  resize(): void {
+    this.resized += 1;
   }
 
   center(): readonly [number, number] | null {

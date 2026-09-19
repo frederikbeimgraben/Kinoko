@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -29,16 +29,7 @@ const WITHOUT_NAV: readonly RegExp[] = [
   /^\/konto(\/|$)/,
 ];
 
-/**
- * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.
- *
- * Am Telefon steht die Leiste unten und der Reiter füllt den Rest. Ab 1024 px
- * trägt die linke Spalte Navigation und Reiterinhalt, rechts läuft die Karte.
- * Sie hängt hier und nicht am Reiter Karte, damit sie beim Wechsel auf Arten
- * oder Einträge stehen bleibt, statt neu zu laden. Auf den anderen Reitern
- * zeigt sie nur ihre Fläche; das Blatt gehört dem Reiter Karte. Ihre Knöpfe
- * bleiben dort trotzdem stehen: sie gehören der Karte, und die steht dauerhaft.
- */
+/** Die Hülle um jeden Reiter. Die Karte hängt hier und bleibt beim Reiterwechsel im Speicher. */
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,12 +57,28 @@ export class ShellComponent {
     { initialValue: this.router.url },
   );
 
+  /** Wahr, sobald die erste echte Navigation eingetroffen ist. */
+  private readonly navigated = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => true),
+    ),
+    { initialValue: false },
+  );
+
   protected readonly wide = this.viewport.wide;
 
   /** Der erste Abschnitt der Adresse, ohne Abfrage: `/karte?art=…` → `/karte`. */
   protected readonly active = computed(() => `/${this.adresse().split(/[?#/]/)[1] || 'karte'}`);
 
   protected readonly onTheMap = computed(() => this.active() === '/karte');
+
+  private readonly _mapWanted = signal(false);
+  /** Wird beim ersten Besuch der Karte oder ab der Spaltenbreite wahr und bleibt es. */
+  protected readonly mapWanted = this._mapWanted.asReadonly();
+
+  /** Am Telefon, außerhalb des Reiters Karte, bleibt sie unsichtbar und untätig. */
+  protected readonly mapHidden = computed(() => !this.wide() && !this.onTheMap());
 
   protected readonly showAvatar = this.onTheMap;
 
@@ -114,6 +121,12 @@ export class ShellComponent {
       ? this.i18n.translate('nav.konto')
       : this.i18n.translate('konto.avatarAngemeldet', { name });
   });
+
+  constructor() {
+    effect(() => {
+      if (this.navigated() && (this.wide() || this.onTheMap())) this._mapWanted.set(true);
+    });
+  }
 
   protected toAccount(): void {
     void this.router.navigate(['/konto']);

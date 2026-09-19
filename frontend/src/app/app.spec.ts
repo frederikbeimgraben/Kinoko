@@ -2,10 +2,17 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
+import { DeferBlockState, type ComponentFixture } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { App } from './app';
 import { routes } from './app.routes';
 import { mapWithDoubles, answerManifest } from './testing/map-doubles';
+
+/** Löst den `@defer`-Block der Karte in der Hülle aus. */
+async function renderMap(fixture: ComponentFixture<unknown>): Promise<void> {
+  const blocks = await fixture.getDeferBlocks();
+  for (const block of blocks) await block.render(DeferBlockState.Complete);
+}
 
 async function app() {
   answerManifest();
@@ -26,6 +33,7 @@ describe('App', () => {
   it('zeigt beim Start die Karte in der Hülle', async () => {
     const { fixture } = await app();
     await fixture.whenStable();
+    await renderMap(fixture);
 
     expect(await screen.findByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
@@ -47,9 +55,10 @@ describe('App', () => {
   });
 
   it('führt einen unbekannten Pfad auf die Karte', async () => {
-    const { navigate } = await app();
+    const { navigate, fixture } = await app();
 
     await navigate('/gibtesnicht');
+    await renderMap(fixture);
 
     expect(await screen.findByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
   });

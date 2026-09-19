@@ -1,14 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ViewportService } from '../../core/layout/viewport.service';
-import { MapComponent } from './map.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-/** Der Reiter Karte als Route. Am Rechner steht die Karte in der Hülle. */
+/** Der Reiter Karte als Route. Die Karte selbst hängt in der Hülle. */
 @Component({
   selector: 'app-map-route',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MapComponent],
   templateUrl: './map-route.component.html',
 })
-export class MapRouteComponent {
-  protected readonly wide = inject(ViewportService).wide;
-}
+export class MapRouteComponent {}

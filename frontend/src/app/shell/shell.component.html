@@ -8,9 +8,14 @@
       (actionClick)="reload()"
     />
   }
-  @if (wide()) {
-    @defer (when wide()) {
-      <app-map class="shell__map" [class.shell__map--lead]="mapInFront()" [surfaceOnly]="!onTheMap()" />
+  @if (mapWanted()) {
+    @defer (when mapWanted()) {
+      <app-map
+        class="shell__map"
+        [class.shell__map--lead]="mapInFront()"
+        [class.shell__map--hidden]="mapHidden()"
+        [surfaceOnly]="!onTheMap()"
+      />
     }
   }
   @if (!bare()) {
@@ -20,7 +25,7 @@
   }
   <main
     class="shell__content"
-    [class.shell__content--off]="wide() && onTheMap()"
+    [class.shell__content--off]="onTheMap()"
     [class.shell__content--full]="wide() && fullWidth()"
   >
     <router-outlet />
