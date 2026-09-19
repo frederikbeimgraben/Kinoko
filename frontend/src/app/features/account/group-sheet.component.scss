@@ -1,0 +1,19 @@
+:host {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+}
+
+.groupSheet__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-block-size: 0;
+  padding: var(--space-1) var(--size-gutter) var(--space-4);
+  overflow: hidden;
+}
+
+.groupSheet__title {
+  margin: 0;
+  font-size: var(--fs-sheet-title);
+  font-weight: var(--fw-semibold);
+}

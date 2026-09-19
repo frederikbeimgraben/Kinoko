@@ -1,3 +1,5 @@
+from typing import Any
+
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,12 +17,13 @@ ZONE = {
 }
 
 
-async def a_group(api: httpx.AsyncClient, name: str = "Familie") -> dict[str, object]:
+async def a_group(api: httpx.AsyncClient, name: str = "Familie") -> dict[str, Any]:
     """Legt eine Gruppe an und liefert ihren Körper."""
-    return (await api.post("/groups", json={"name": name})).json()
+    body: dict[str, Any] = (await api.post("/groups", json={"name": name})).json()
+    return body
 
 
-async def join(api: httpx.AsyncClient, user: User, group: dict[str, object]) -> None:
+async def join(api: httpx.AsyncClient, user: User, group: dict[str, Any]) -> None:
     """Nimmt ein Konto in eine Gruppe auf."""
     sign_in(app_of(api), user)
     await api.post("/groups/join", json={"inviteCode": group["inviteCode"]})

@@ -96,6 +96,7 @@
   "admin.role.description": "Beschreibung",
   "admin.role.editSpeciesProfiles": "Profile ändern",
   "admin.role.editTexts": "Texte ändern",
+  "admin.role.manageGroups": "Gruppen verwalten",
   "admin.role.manageRoles": "Rollen verwalten",
   "admin.role.manageRuns": "Läufe verwalten",
   "admin.role.namePlaceholder": "Wie die Rolle heißt",

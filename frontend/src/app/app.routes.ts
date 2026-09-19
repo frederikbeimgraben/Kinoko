@@ -47,6 +47,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/account/account.component').then((m) => m.AccountComponent),
   },
   {
+    path: 'konto/gruppen',
+    loadComponent: () => import('./features/account/groups.component').then((m) => m.GroupsComponent),
+  },
+  {
+    path: 'konto/gruppen/:id',
+    loadComponent: () => import('./features/account/group.component').then((m) => m.GroupComponent),
+  },
+  {
     path: 'konto/bilder',
     loadComponent: () => import('./features/account/my-images.component').then((m) => m.MyImagesComponent),
   },

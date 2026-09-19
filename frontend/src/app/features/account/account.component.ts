@@ -120,6 +120,10 @@ export class AccountComponent {
     void this.router.navigateByUrl('/konto/bilder');
   }
 
+  protected toGroups(): void {
+    void this.router.navigateByUrl('/konto/gruppen');
+  }
+
   protected toAdministration(): void {
     void this.router.navigateByUrl('/verwaltung');
   }

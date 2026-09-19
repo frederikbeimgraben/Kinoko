@@ -32,9 +32,7 @@ async def test_create_read_and_delete(api: httpx.AsyncClient, session: AsyncSess
     assert (await api.get("/glossary")).json()["items"] == []
 
 
-async def test_update_changes_the_definition(
-    api: httpx.AsyncClient, session: AsyncSession
-) -> None:
+async def test_update_changes_the_definition(api: httpx.AsyncClient, session: AsyncSession) -> None:
     anna = await make_user(session, "anna")
     sign_in(app_of(api), anna, "text.edit")
     made = (await api.post("/glossary", json=ENTRY)).json()

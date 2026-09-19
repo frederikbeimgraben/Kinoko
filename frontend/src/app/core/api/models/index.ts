@@ -95,5 +95,6 @@ export type {
   Rule,
   WireFactor,
 } from './combinations';
+export type { FriendGroup, FriendGroupMember, FriendGroupWrite } from './groups';
 export type { Licence, Photo, PhotoSize, PhotoState } from './photos';
 export type { TextCatalogue, TextEntry } from './texts';

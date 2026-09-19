@@ -1,3 +1,5 @@
+from typing import Any
+
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -5,11 +7,12 @@ from app.modules.access.group_service import CODE_PREFIX
 from tests.conftest import app_of, make_user, sign_in
 
 
-async def a_group(api: httpx.AsyncClient, name: str = "Familie") -> dict[str, object]:
+async def a_group(api: httpx.AsyncClient, name: str = "Familie") -> dict[str, Any]:
     """Legt eine Gruppe an und liefert ihren Körper."""
     made = await api.post("/groups", json={"name": name})
     assert made.status_code == 201
-    return made.json()
+    body: dict[str, Any] = made.json()
+    return body
 
 
 async def test_create_puts_the_owner_in_the_group(

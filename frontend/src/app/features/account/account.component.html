@@ -59,6 +59,7 @@
       <h2 class="account__section">{{ 'konto.abschnitt.beitraege' | t }}</h2>
       <div class="account__list">
         <app-list-row [title]="'bild.meine' | t" [clickable]="true" (chosen)="toMyImages()" />
+        <app-list-row [title]="'group.title' | t" [clickable]="true" (chosen)="toGroups()" />
       </div>
     </section>
   }

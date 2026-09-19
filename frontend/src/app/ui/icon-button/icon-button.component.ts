@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 /** Die drei Handlungen, die eine Zeile als Knopf statt als Text trägt. */
-export type IconButtonIcon = 'check' | 'close' | 'delete' | 'pencil';
+export type IconButtonIcon = 'check' | 'close' | 'delete' | 'pencil' | 'share';
 
 /** Primär füllt sich, sekundär bleibt umrandet, geisterhaft trägt nichts. */
 export type IconButtonVariant = 'primary' | 'secondary' | 'ghost';
@@ -12,6 +12,7 @@ const GLYPHS: Readonly<Record<IconButtonIcon, { size: number; stroke: number }>>
   close: { size: 18, stroke: 2.2 },
   delete: { size: 18, stroke: 1.8 },
   pencil: { size: 20, stroke: 1.8 },
+  share: { size: 18, stroke: 1.8 },
 };
 
 /** Ein quadratischer Knopf mit Icon. Er steht, wo ein Textknopf zu breit wäre. */
