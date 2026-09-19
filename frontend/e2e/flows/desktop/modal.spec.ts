@@ -10,6 +10,8 @@ const MODAL_WIDTH = 480;
 /** Das X steht 14 px vom Rand. Der Rahmen des Modals misst einen Punkt mehr. */
 const CLOSE_INSET = 15;
 const RAIL = 88;
+/** Der erste Marker der Attrappe. */
+const MARKER = 'marker 0';
 const COLUMN = 400;
 
 const REPLIES = {
@@ -64,7 +66,7 @@ test('Einträge-Filter steht am Rechner als zentriertes Modal', async ({ page })
 test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
   await openApp(page, '/eintraege');
   await page.getByRole('tab', { name: 'Marker' }).click();
-  const entry = page.getByRole('button').filter({ hasText: MARKERS.items[0].name }).first();
+  const entry = page.getByRole('button').filter({ hasText: MARKER }).first();
   await expect(entry).toBeVisible();
   await entry.click();
 
@@ -86,7 +88,7 @@ test('Anmelden steht am Rechner als zentriertes Modal', async ({ page }) => {
 test('Der Plus-Knopf lässt den Reiter Einträge stehen', async ({ page }) => {
   await openApp(page, '/eintraege');
   await page.getByRole('tab', { name: 'Marker' }).click();
-  const list = page.getByRole('button').filter({ hasText: MARKERS.items[0].name }).first();
+  const list = page.getByRole('button').filter({ hasText: MARKER }).first();
   await expect(list).toBeVisible();
 
   await page.locator('.map__add').click();
