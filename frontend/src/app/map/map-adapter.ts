@@ -490,10 +490,23 @@ export class MapLibreAdapter implements MapAdapter {
   /** Vor welcher Ebene die neue liegt. */
   private ueber(role: Role): string | undefined {
     const map = this.map;
-    if (role !== 'forecast' || !map) return undefined;
-    for (const space of [0, 1] as const) {
-      const name = layerName('layer', space);
-      if (map.getLayer(name)) return name;
+    if (!map) return undefined;
+    if (role === 'forecast') {
+      for (const space of [0, 1] as const) {
+        const name = layerName('layer', space);
+        if (map.getLayer(name)) return name;
+      }
+    }
+    return this.firstObjectLayer(0);
+  }
+
+  /** Die unterste Objektschicht ab `from` in `OBJECT_LAYERS`, die schon liegt. */
+  private firstObjectLayer(from: number): string | undefined {
+    const map = this.map;
+    if (!map) return undefined;
+    for (const layer of OBJECT_LAYERS.slice(from)) {
+      const found = layerPaintLayers(layer).find((id) => map.getLayer(id) !== undefined);
+      if (found !== undefined) return found;
     }
     return undefined;
   }
@@ -672,8 +685,9 @@ export class MapLibreAdapter implements MapAdapter {
     this.unsubscribeAll(layer);
     map.addSource(source, { type: 'geojson', data: data });
     const abos: Subscription[] = [];
+    const above = this.firstObjectLayer(OBJECT_LAYERS.indexOf(layer) + 1);
     for (const paintLayer of paintLayersFor(layer)) {
-      map.addLayer(paintLayer);
+      map.addLayer(paintLayer, above);
       abos.push(
         map.on('click', paintLayer.id, (event) => {
           const id = event.features?.[0]?.properties?.['id'] as string | undefined;

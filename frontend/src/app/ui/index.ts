@@ -3,7 +3,7 @@ export { ActionBarComponent } from './action-bar/action-bar.component';
 export { AddRowComponent } from './add-row/add-row.component';
 export { AvatarButtonComponent } from './avatar-button/avatar-button.component';
 export { BackHeadComponent } from './back-head/back-head.component';
-export { BannerComponent, type BannerIcon, type BannerKind } from './banner/banner.component';
+export { BannerComponent, type BannerKind } from './banner/banner.component';
 export { CheckRowComponent } from './check-row/check-row.component';
 export { ChipGroupComponent, type Chip } from './chip-group/chip-group.component';
 export { ChoiceRowComponent } from './choice-row/choice-row.component';
@@ -57,6 +57,7 @@ export {
 } from './measurement-group/measurement-group.component';
 export { NavComponent, type NavVariant } from './nav/nav.component';
 export { ObjectMenuComponent, type ObjectMenuTarget } from './object-menu/object-menu.component';
+export { OptionSheetComponent, type OptionSheetOption } from './option-sheet/option-sheet.component';
 export { OverlayHostComponent } from './overlay-host/overlay-host.component';
 export { PageHeaderComponent } from './page-header/page-header.component';
 export { PhotoPickerComponent } from './photo-picker/photo-picker.component';

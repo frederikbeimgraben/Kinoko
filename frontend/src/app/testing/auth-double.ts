@@ -62,6 +62,8 @@ export class ManagerDouble {
 
   private readonly loaded: ((user: User) => void)[] = [];
   private readonly unloaded: (() => void)[] = [];
+  private readonly renewErrors: (() => void)[] = [];
+  private readonly expired: (() => void)[] = [];
 
   readonly events = {
     addUserLoaded: (callback: (user: User) => void): (() => void) => {
@@ -70,6 +72,14 @@ export class ManagerDouble {
     },
     addUserUnloaded: (callback: () => void): (() => void) => {
       this.unloaded.push(callback);
+      return () => undefined;
+    },
+    addSilentRenewError: (callback: () => void): (() => void) => {
+      this.renewErrors.push(callback);
+      return () => undefined;
+    },
+    addAccessTokenExpired: (callback: () => void): (() => void) => {
+      this.expired.push(callback);
       return () => undefined;
     },
   };
@@ -103,6 +113,16 @@ export class ManagerDouble {
 
   emitUnloaded(): void {
     for (const callback of this.unloaded) callback();
+  }
+
+  /** Das Ereignis, das der echte Manager nach einer gescheiterten Erneuerung auslöst. */
+  emitRenewError(): void {
+    for (const callback of this.renewErrors) callback();
+  }
+
+  /** Das Ereignis, das der echte Manager beim Ablauf des Tokens auslöst. */
+  emitExpired(): void {
+    for (const callback of this.expired) callback();
   }
 
   asManager(): UserManager {

@@ -28,6 +28,14 @@
   color: var(--color-text);
 }
 
+// Größe wie `.knopf` im Board `EntriesGuest`, nicht die Vorgabe des Kits.
+.empty__cta {
+  --fs-md: var(--fs-control);
+  --space-5: 20px;
+
+  block-size: var(--size-tap);
+}
+
 .empty__button {
   display: inline-flex;
   gap: var(--space-2);

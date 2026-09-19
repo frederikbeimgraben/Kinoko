@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
-import { authConfig, mockSignIn, mockSignedOut } from '../fixtures/auth';
+import { ISSUER, authConfig, mockSignIn, mockSignedOut } from '../fixtures/auth';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
@@ -65,4 +65,58 @@ test('räumt den Stand weg, wenn die Prüfung ihn nicht bestätigt', async ({ pa
 
   await expect(page.getByRole('button', { name: 'Konto' })).toHaveText('G');
   expect(await page.evaluate((key) => window.localStorage.getItem(key), MEMORY_KEY)).toBeNull();
+});
+
+test('behält die Sitzung, wenn die Prüfung am Netz scheitert', async ({ page }) => {
+  await rememberSession(page);
+  await mockSignIn(page);
+  await mockApi(page, { '/api/config': authConfig(BASE) });
+  // Das SSO ist nicht erreichbar. Das sagt nichts darüber, ob die Sitzung steht.
+  await page.route(`${ISSUER}/.well-known/openid-configuration`, (route) => route.abort());
+  await page.goto('/karte');
+
+  const avatar = page.getByRole('button', { name: 'Konto von Frederik' });
+  await expect(avatar).toHaveText('F');
+  expect(await page.evaluate((key) => window.localStorage.getItem(key), MEMORY_KEY)).not.toBeNull();
+});
+
+test('holt die Sitzung beim nächsten Sichtbarkeitswechsel zurück', async ({ page }) => {
+  await rememberSession(page);
+  await mockSignIn(page);
+  await mockApi(page, { '/api/config': authConfig(BASE) });
+  let reachable = false;
+  await page.route(`${ISSUER}/.well-known/openid-configuration`, async (route) => {
+    if (!reachable) {
+      await route.abort();
+      return;
+    }
+    await route.fallback();
+  });
+  await page.goto('/karte');
+  await expect(page.getByRole('button', { name: 'Konto von Frederik' })).toHaveText('F');
+
+  reachable = true;
+  await page.evaluate(() => {
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+
+  await expect(page.getByRole('navigation', { name: 'Hauptbereiche' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Konto von Frederik' })).toHaveText('F');
+});
+
+test('die Reiterleiste kehrt nach der Rückkehr vom SSO zurück', async ({ page }) => {
+  await mockSignedOut(page);
+  await mockApi(page, { '/api/config': authConfig(BASE) });
+  await page.goto('/konto');
+  await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
+
+  await mockSignIn(page);
+  await page.getByRole('button', { name: 'Anmelden' }).click();
+
+  await expect(page.getByRole('button', { name: 'Abmelden' })).toBeVisible();
+  await expect(page).toHaveURL(/\/konto$/);
+  await expect(page.getByRole('navigation', { name: 'Hauptbereiche' })).toBeHidden();
+
+  await page.goto('/karte');
+  await expect(page.getByRole('navigation', { name: 'Hauptbereiche' })).toBeVisible();
 });

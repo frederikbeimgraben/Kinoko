@@ -8,6 +8,11 @@ interface Setup {
   manager: ManagerDouble;
 }
 
+/** Ein Fehler, wie ihn `oidc-client-ts` aus einer Antwort des SSO baut. */
+function errorResponse(code: string): Error {
+  return Object.assign(new Error(code), { error: code });
+}
+
 /** Ein frischer Dienst je Aufruf: mehrere Fälle in einem Test brauchen ihn. */
 function build(configured = true): Setup {
   TestBed.resetTestingModule();
@@ -88,6 +93,13 @@ describe('AuthService', () => {
     expect(auth.busy()).toBe(false);
   });
 
+  it('führt nach dem Callback nie auf die Callback-Route zurück', async () => {
+    const { auth, manager } = build();
+    manager.returnValue = oidcUser({ state: { back: '/anmeldung' } });
+
+    expect(await auth.completeSignIn()).toBe('/');
+  });
+
   it('führt nach dem Callback nur auf eigene Wege', async () => {
     for (const state of [
       { back: '//fremde.example/weg' },
@@ -122,15 +134,64 @@ describe('AuthService', () => {
     expect(manager.silentAttempts).toBe(1);
   });
 
-  it('meldet ab, wenn die stille Erneuerung scheitert', async () => {
+  it('meldet ab, wenn das SSO die Sitzung endgültig verneint', async () => {
     const { auth, manager } = build();
     manager.returnValue = oidcUser();
     await auth.completeSignIn();
-    manager.still = new Error('keine Sitzung');
+    manager.still = errorResponse('login_required');
 
     expect(await auth.silentRenew()).toBeNull();
     expect(auth.signedIn()).toBe(false);
+    expect(auth.settled()).toBe(true);
     expect(auth.busy()).toBe(false);
+  });
+
+  it('behält die Sitzung, wenn die stille Erneuerung am Netz scheitert', async () => {
+    const { auth, manager } = build();
+    manager.returnValue = oidcUser();
+    await auth.completeSignIn();
+    manager.still = new Error('kein Netz');
+
+    await auth.silentRenew();
+
+    expect(auth.signedIn()).toBe(true);
+    expect(auth.token()).toBe('token-eins');
+    expect(auth.busy()).toBe(false);
+  });
+
+  it('versucht es beim nächsten Sichtbarkeitswechsel wieder', async () => {
+    const { auth, manager } = build();
+    manager.returnValue = oidcUser();
+    await auth.completeSignIn();
+    manager.still = new Error('kein Netz');
+    await auth.silentRenew();
+
+    manager.still = oidcUser({ token: 'token-frisch' });
+    document.dispatchEvent(new Event('visibilitychange'));
+    await new Promise((done) => setTimeout(done, 0));
+
+    expect(manager.silentAttempts).toBe(2);
+    expect(auth.token()).toBe('token-frisch');
+  });
+
+  it('behält den Stand, wenn die Prüfung beim Start am Netz scheitert', async () => {
+    const { auth, manager } = build();
+    manager.still = new Error('kein Netz');
+
+    await auth.restoreSession();
+
+    expect(auth.checked()).toBe(true);
+    expect(auth.settled()).toBe(false);
+  });
+
+  it('verneint den Stand, wenn das SSO beim Start keine Sitzung kennt', async () => {
+    const { auth, manager } = build();
+    manager.still = errorResponse('login_required');
+
+    await auth.restoreSession();
+
+    expect(auth.checked()).toBe(true);
+    expect(auth.settled()).toBe(true);
   });
 
   it('nimmt ein abgelaufenes Token nicht an', async () => {

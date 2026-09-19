@@ -13,6 +13,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class PageHeaderComponent {
   readonly title = input.required<string>();
   readonly back = input(false);
+  readonly close = input(false);
 
   readonly backClick = output();
+  readonly closeClick = output();
 }

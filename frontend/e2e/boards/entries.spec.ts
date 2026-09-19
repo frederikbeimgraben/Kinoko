@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
-import { authConfig, mockSignIn } from '../fixtures/auth';
+import { authConfig, mockSignedOut, mockSignIn } from '../fixtures/auth';
 import { SPECIES_BUNDLE, mockMap } from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
@@ -99,6 +99,7 @@ const REPLIES = {
 
 async function openEntries(page: Page, signedIn = true): Promise<void> {
   if (signedIn) await mockSignIn(page);
+  else await mockSignedOut(page);
   await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
   await page.goto('/eintraege');
   await expect(page.getByRole('heading', { name: 'Einträge' })).toBeVisible();
@@ -118,6 +119,13 @@ test('EntriesZones', async ({ page }) => {
   await page.getByRole('tab', { name: 'Zonen' }).click();
   await expect(page.getByText('Schönbuch Nord')).toBeVisible();
   await expectBoard(page, 'EntriesZones');
+});
+
+test('EntriesGuest', async ({ page }) => {
+  guard('EntriesGuest', 'phone');
+  await openEntries(page, false);
+  await expect(page.getByText('Ohne Anmeldung keine eigenen Einträge')).toBeVisible();
+  await expectBoard(page, 'EntriesGuest');
 });
 
 /** Der Fund, den der Dienst schon kennt. Er steht unter den wartenden. */

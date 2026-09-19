@@ -1,3 +1,4 @@
+import time
 import uuid
 from http import HTTPStatus
 
@@ -140,6 +141,21 @@ async def test_broken_token_is_unauthorized(api: httpx.AsyncClient, issuer: Fake
         headers={"kid": KID},
     )
     assert (await guarded(api, fremd)).status_code == 401
+
+
+async def test_a_small_clock_difference_is_tolerated(
+    api: httpx.AsyncClient, issuer: FakeIssuer
+) -> None:
+    just_expired = int(time.time()) - 5
+    answer = await guarded(api, issuer.token(exp=just_expired))
+    assert answer.status_code == 403
+
+
+async def test_a_long_expired_token_is_unauthorized(
+    api: httpx.AsyncClient, issuer: FakeIssuer
+) -> None:
+    long_gone = int(time.time()) - 600
+    assert (await guarded(api, issuer.token(exp=long_gone))).status_code == 401
 
 
 async def test_token_without_kid_is_unauthorized(

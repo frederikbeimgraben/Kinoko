@@ -1,7 +1,11 @@
 <span class="empty__badge"><app-svg-icon [name]="icon()" [size]="18" [strokeWidth]="1.8" /></span>
 <p class="empty__text">{{ text() }}</p>
 @if (action(); as label) {
-  <button class="empty__button tap" type="button" data-press="scale" (click)="actionClick.emit()">
-    {{ label }}
-  </button>
+  @if (primaryAction()) {
+    <app-button class="empty__cta" variant="primary" (click)="actionClick.emit()">{{ label }}</app-button>
+  } @else {
+    <button class="empty__button tap" type="button" data-press="scale" (click)="actionClick.emit()">
+      {{ label }}
+    </button>
+  }
 }

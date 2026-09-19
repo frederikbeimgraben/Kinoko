@@ -16,6 +16,7 @@ function build(): Setup {
   const auth = new AuthStub();
   auth.user.set(null);
   auth.checked.set(false);
+  auth.settled.set(false);
   TestBed.configureTestingModule({ providers: authStubProviders(auth) });
   const session = TestBed.inject(SessionState);
   const tick = (): void => {
@@ -41,6 +42,7 @@ describe('SessionState', () => {
     const { session, auth, tick } = build();
 
     auth.checked.set(true);
+    auth.settled.set(true);
     tick();
 
     expect(session.status()).toBe('guest');
@@ -64,6 +66,7 @@ describe('SessionState', () => {
 
     auth.user.set({ sub: 'sub-eins', name: 'Frederik', email: 'f@example.org' });
     auth.checked.set(true);
+    auth.settled.set(true);
     tick();
 
     expect(session.status()).toBe('signedIn');
@@ -75,6 +78,7 @@ describe('SessionState', () => {
     const { session, store, auth, tick } = build();
 
     auth.checked.set(true);
+    auth.settled.set(true);
     tick();
 
     expect(session.status()).toBe('guest');
@@ -87,6 +91,7 @@ describe('SessionState', () => {
 
     auth.user.set({ sub: 'sub-eins', name: 'Frederik', email: 'f@example.org' });
     auth.checked.set(true);
+    auth.settled.set(true);
     tick();
 
     expect(store.memory()).toEqual({ name: 'Frederik', permissions: [] });
@@ -96,6 +101,7 @@ describe('SessionState', () => {
     const { store, auth, tick } = build();
     auth.user.set({ sub: 'sub-eins', name: 'Frederik', email: 'f@example.org' });
     auth.checked.set(true);
+    auth.settled.set(true);
     tick();
 
     auth.user.set(null);

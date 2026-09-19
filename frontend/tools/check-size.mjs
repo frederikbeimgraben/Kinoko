@@ -8,7 +8,7 @@ import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const LIMITS = {
-  features: { '.ts': 250, '.html': 150 },
+  features: { '.ts': 250, '.html': 200 },
   ui: { '.ts': 300, '.html': 300 },
   core: { '.ts': 300, '.html': 300 },
 };

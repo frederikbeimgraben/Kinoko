@@ -22,7 +22,7 @@
 
 // Ohne Fläche und ohne Rand: der Knopf im Seitenkopf.
 .icon-button--ghost {
-  color: var(--color-text-muted);
+  color: var(--icon-button-ghost-color, var(--color-text-muted));
   background: none;
   border: 0;
 }

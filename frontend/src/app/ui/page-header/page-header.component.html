@@ -13,4 +13,15 @@
   <h1 class="pageheader__title">{{ title() }}</h1>
   <div class="pageheader__marks"><ng-content select="[marks]" /></div>
   <div class="pageheader__actions"><ng-content /></div>
+  @if (close()) {
+    <button
+      class="pageheader__close tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'common.close' | t"
+      (click)="closeClick.emit()"
+    >
+      <app-svg-icon name="close" [size]="22" [strokeWidth]="2.2" />
+    </button>
+  }
 </header>

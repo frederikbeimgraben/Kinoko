@@ -1,4 +1,5 @@
 <app-floating-button
+  class="map__layers"
   icon="layers"
   [label]="'map.layers.button' | t"
   [variant]="layersOpen() ? 'primary' : 'default'"
@@ -6,14 +7,25 @@
 />
 @if (showsLocation()) {
   <app-floating-button
+    class="map__location"
     icon="location"
     [label]="'map.location' | t"
     [disabled]="!locationAllowed()"
     (pressed)="located.emit()"
   />
 }
+@if (showAdd()) {
+  <app-floating-button
+    class="map__add"
+    icon="plus"
+    variant="primary"
+    [label]="'entry.create' | t"
+    (pressed)="add.emit()"
+  />
+}
 @if (turned()) {
   <app-floating-button
+    class="map__compass"
     icon="compass"
     [label]="'map.compass' | t"
     [rotation]="needle()"

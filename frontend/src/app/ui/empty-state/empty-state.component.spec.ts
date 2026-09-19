@@ -65,6 +65,24 @@ describe('EmptyStateComponent', () => {
     expect(button).toHaveAttribute('data-press', 'scale');
   });
 
+  it('führt mit dem gefüllten Knopf des Kits, wenn die Handlung das Hauptziel ist', async () => {
+    const { container, fixture } = await render(EmptyStateComponent, {
+      inputs: {
+        text: 'Ohne Anmeldung keine eigenen Einträge',
+        action: 'Anmelden',
+        primaryAction: true,
+      },
+    });
+    let calls = 0;
+    fixture.componentInstance.actionClick.subscribe(() => (calls += 1));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
+
+    expect(calls).toBe(1);
+    expect(container.querySelector('app-button')).not.toBeNull();
+    expect(container.querySelector('.empty__button')).toBeNull();
+  });
+
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {
     const { container } = await render(EmptyStateComponent, {
       inputs: { text: 'no match', action: 'reset' },

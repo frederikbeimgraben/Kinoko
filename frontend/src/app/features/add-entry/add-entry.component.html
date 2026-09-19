@@ -7,52 +7,6 @@
       </div>
       <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="cancel()" />
     }
-    @case ('findLocation') {
-      <div class="addentry__brief addentry__brief--step">
-        <h2 class="addentry__title">{{ 'entry.setLocation.title' | t }}</h2>
-        <p class="addentry__note">{{ aimText() }}</p>
-      </div>
-      <app-action-bar
-        [primary]="buttons().primary.label"
-        [secondary]="buttons().cancel.label"
-        [ghost]="true"
-        (primaryClick)="buttons().primary.run()"
-        (secondaryClick)="buttons().cancel.run()"
-      />
-    }
-    @case ('markerLocation') {
-      <div class="addentry__brief addentry__brief--step">
-        <h2 class="addentry__title">{{ 'entry.setMarker.title' | t }}</h2>
-        <p class="addentry__note">{{ aimText() }}</p>
-      </div>
-      <app-action-bar
-        [primary]="buttons().primary.label"
-        [secondary]="buttons().cancel.label"
-        [ghost]="true"
-        (primaryClick)="buttons().primary.run()"
-        (secondaryClick)="buttons().cancel.run()"
-      />
-    }
-    @case ('zoneDraw') {
-      <div class="addentry__brief addentry__brief--step">
-        <h2 class="addentry__title">{{ 'entry.drawZone.title' | t }}</h2>
-        <p class="addentry__note">{{ drawStatus() }}</p>
-      </div>
-      <app-action-bar
-        [primary]="buttons().primary.label"
-        [secondary]="buttons().secondary?.label"
-        [quiet]="true"
-        [split]="true"
-        (primaryClick)="buttons().primary.run()"
-        (secondaryClick)="buttons().secondary?.run()"
-      >
-        @if (buttons().extra; as extra) {
-          <app-button class="addentry__main" variant="primary" [block]="true" (click)="extra.run()">
-            {{ extra.label }}
-          </app-button>
-        }
-      </app-action-bar>
-    }
     @case ('findForm') {
       <app-find-form
         [location]="state.location()!"
@@ -96,7 +50,13 @@
       </div>
     }
     @if (asStepBar()) {
-      <app-step-bar [title]="title()" [note]="stepNote()" [actions]="barActions()" (chosen)="$event.run()" />
+      <app-step-bar
+        appSheetHeight
+        [label]="title()"
+        [note]="stepNote()"
+        [actions]="barActions()"
+        (chosen)="$event.run()"
+      />
     } @else if (asPopover()) {
       <app-popover
         [open]="true"
