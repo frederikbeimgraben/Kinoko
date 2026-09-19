@@ -27,6 +27,8 @@ export type GillSpacing = components['schemas']['GillSpacing'];
 export type GillEdge = components['schemas']['GillEdge'];
 export type TermRef = components['schemas']['TermRef'];
 export type Term = components['schemas']['Term'];
+export type TermCreate = components['schemas']['TermCreate'];
+export type TermUpdate = components['schemas']['TermUpdate'];
 export type TermKind = components['schemas']['TermKind'];
 export type MeasurementGroup = components['schemas']['MeasurementGroup'];
 export type PartNote = components['schemas']['PartNote'];
@@ -72,3 +74,5 @@ export const CAP_SHAPES: readonly CapShape[] = [
 ];
 
 export const TAXON_RANKS: readonly TaxonRank[] = ['division', 'class', 'order', 'family', 'genus'];
+
+export const TERM_KINDS: readonly TermKind[] = ['smell', 'taste', 'tree', 'trigger'];

@@ -817,7 +817,18 @@
     "unit.percent": "%",
     "unit.second": "s",
     "unit.um": "µm",
-    "unit.week": "KW"
+    "unit.week": "KW",
+    "admin.categories.title": "Kategorien",
+    "admin.categories.add": "Kategorie",
+    "admin.categories.search": "Kategorie suchen",
+    "admin.categories.merge": "Zusammenführen",
+    "admin.categories.mergeTarget": "Ziel",
+    "admin.categories.mergeConfirm": "{name} zusammenführen?",
+    "admin.categories.deleteConfirm": "{name} löschen?",
+    "find.queue.title": "Funde prüfen",
+    "find.queue.acceptAll": "Alle annehmen",
+    "find.queue.acceptAllConfirm": "Alle offenen Funde annehmen?",
+    "find.queue.empty": "Nichts zu prüfen"
   },
   "en": {
     "account.deleteAllConfirmTitle": "Delete everything",
@@ -1637,6 +1648,17 @@
     "unit.percent": "%",
     "unit.second": "s",
     "unit.um": "µm",
-    "unit.week": "wk"
+    "unit.week": "wk",
+    "admin.categories.title": "Categories",
+    "admin.categories.add": "Category",
+    "admin.categories.search": "Search category",
+    "admin.categories.merge": "Merge",
+    "admin.categories.mergeTarget": "Target",
+    "admin.categories.mergeConfirm": "Merge {name}?",
+    "admin.categories.deleteConfirm": "Delete {name}?",
+    "find.queue.title": "Review finds",
+    "find.queue.acceptAll": "Accept all",
+    "find.queue.acceptAllConfirm": "Accept every open find?",
+    "find.queue.empty": "Nothing to review"
   }
 }

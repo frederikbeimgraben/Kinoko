@@ -1,0 +1,76 @@
+<app-page-header [title]="'admin.categories.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="categories">
+  <app-segmented
+    [options]="kinds()"
+    [value]="kind()"
+    [label]="'admin.category.section' | t"
+    (valueChange)="onKind($event)"
+  />
+  <app-search-field
+    [value]="search()"
+    [placeholder]="'admin.categories.search' | t"
+    (valueChange)="onSearch($event)"
+  />
+  <div>
+    <app-add-row
+      [label]="'admin.categories.add' | t"
+      [action]="'admin.category.create' | t"
+      (pressed)="add()"
+    />
+    <div class="categories__card">
+      @for (category of categories(); track category.id) {
+        <app-list-row
+          kind="catalogue"
+          [title]="category.name"
+          [subline]="category.slug"
+          [clickable]="true"
+          [chevron]="true"
+          (chosen)="edit(category.id)"
+        />
+      }
+    </div>
+  </div>
+</div>
+
+@if (editing() && asking() === null) {
+  <app-form-sheet
+    [title]="sheetTitle()"
+    [submit]="'common.save' | t"
+    [secondary]="'common.delete' | t"
+    [secondaryDanger]="true"
+    [busy]="saving()"
+    (submitted)="save()"
+    (secondaryPressed)="askDelete()"
+    (cancelled)="close()"
+  >
+    <app-form-field [label]="'common.name' | t" [value]="name()" (valueChange)="name.set($event)" />
+    @if (editing() !== 'neu') {
+      <div class="categories__card">
+        <app-list-row
+          kind="catalogue"
+          [title]="'admin.categories.merge' | t"
+          [clickable]="true"
+          [chevron]="true"
+          (chosen)="pick()"
+        />
+      </div>
+    }
+  </app-form-sheet>
+}
+
+<app-option-sheet
+  [open]="picking()"
+  [title]="'admin.categories.mergeTarget' | t"
+  [options]="targets()"
+  (chosen)="onTarget($event)"
+  (closed)="picking.set(false)"
+/>
+
+<app-confirm-dialog
+  [open]="asking() !== null"
+  [title]="askTitle()"
+  [confirmLabel]="asking() === 'merge' ? ('admin.categories.merge' | t) : undefined"
+  (confirmed)="confirm()"
+  (cancelled)="cancel()"
+/>

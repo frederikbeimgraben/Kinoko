@@ -190,6 +190,43 @@ async def test_merge_term_moves_species_and_trigger_usage(
     assert {item["slug"] for item in gone.json()["items"]} == {"mouldy"}
 
 
+async def test_delete_term_removes_it_and_its_usage(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    term = await cf.make_term(session, kind=TermKind.SMELL, slug="fruity", name="fruchtig")
+    porcini = await cf.make_species(
+        session, slug="boletus-edulis", name="Steinpilz", latin_name="Boletus edulis"
+    )
+    await cf.add_term(session, porcini, term)
+
+    user = await make_user(session)
+    sign_in(app_of(api), user, "species.edit")
+    response = await api.delete(f"/terms/{term.id}")
+    sign_out(app_of(api))
+    assert response.status_code == 204
+
+    remaining = await api.get("/terms", params={"kind": "smell"})
+    assert remaining.json()["items"] == []
+    porcini_profile = await api.get(f"/species/{porcini.slug}")
+    assert porcini_profile.json()["terms"] == []
+
+
+async def test_delete_term_requires_permission(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    term = await cf.make_term(session, kind=TermKind.SMELL, slug="fruity", name="fruchtig")
+    response = await api.delete(f"/terms/{term.id}")
+    assert response.status_code == 401
+
+
+async def test_delete_term_404(session: AsyncSession, api: httpx.AsyncClient) -> None:
+    user = await make_user(session)
+    sign_in(app_of(api), user, "species.edit")
+    response = await api.delete("/terms/00000000-0000-0000-0000-000000000000")
+    sign_out(app_of(api))
+    assert response.status_code == 404
+
+
 async def test_merge_term_404(session: AsyncSession, api: httpx.AsyncClient) -> None:
     term = await cf.make_term(session, kind=TermKind.SMELL, slug="fruity", name="fruchtig")
     user = await make_user(session)

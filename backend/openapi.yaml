@@ -723,6 +723,22 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
+    delete:
+      operationId: deleteTerm
+      tags: [terms]
+      x-permission: species.edit
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
   /terms/{id}/merge:
     parameters:
       - $ref: "#/components/parameters/Id"
@@ -899,6 +915,28 @@ paths:
                 $ref: "#/components/schemas/Find"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /finds/reviews/open:
+    get:
+      operationId: listOpenFinds
+      tags: [finds]
+      x-permission: find.review
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindPage"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":

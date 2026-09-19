@@ -6,6 +6,7 @@ export {
   HYMENIUM_TYPES,
   PROTECTIONS,
   TAXON_RANKS,
+  TERM_KINDS,
   UNITS,
 } from './catalogue';
 export type {
@@ -21,7 +22,9 @@ export type {
   Lookalike,
   Speed,
   Term,
+  TermCreate,
   TermKind,
+  TermUpdate,
   TermRef,
   TriggerGroup,
   Dimension,
@@ -76,7 +79,7 @@ export type {
 } from './runs';
 export { MARKER_COLOURS, VISIBILITIES } from './entries';
 export { LICENCES, PHOTO_STATES, photoPath } from './photos';
-export type { ReviewState, SharedFind } from './finds';
+export type { OpenFind, ReviewState, SharedFind } from './finds';
 export type {
   Find,
   FindWrite,

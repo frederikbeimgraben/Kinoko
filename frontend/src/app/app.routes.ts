@@ -124,6 +124,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/people.component').then((m) => m.PeopleComponent),
       },
       {
+        path: 'kategorien',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/categories.component').then((m) => m.CategoriesComponent),
+      },
+      {
         path: 'arten',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>
