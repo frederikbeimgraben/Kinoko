@@ -34,7 +34,7 @@ const WITH_CHANGE = {
 };
 
 function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
-  const map = convertToParamMap({ slug: 'boletus-edulis', index: '0' });
+  const map = convertToParamMap({ slug: 'boletus-edulis', part: 'flesh', index: '0' });
   return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
 }
 
@@ -78,5 +78,16 @@ describe('SectionColourChangeComponent', () => {
     const body = call.request.body as { colourChanges: { speed: string; triggers: { id: string }[] }[] };
     expect(body.colourChanges[0].speed).toBe('3min');
     expect(body.colourChanges[0].triggers.map((one) => one.id)).toEqual(['a-1', 'a-2']);
+  });
+
+  it('nimmt die Verfärbung heraus', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Verfärbung' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Verfärbung entfernen' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.method).toBe('PUT');
+    expect((call.request.body as { colourChanges: unknown[] }).colourChanges).toEqual([]);
   });
 });

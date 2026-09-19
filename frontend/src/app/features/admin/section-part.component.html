@@ -27,7 +27,7 @@
           [title]="row.title"
           [chevron]="true"
           [clickable]="true"
-          (chosen)="openColour()"
+          (chosen)="openColour(row.at)"
         >
           <app-colour-field
             trail
@@ -39,6 +39,11 @@
         </app-list-row>
       }
     </div>
+    <app-add-row
+      [label]="'common.colour' | t"
+      [action]="'admin.part.addColour' | t"
+      (pressed)="addColour()"
+    />
   </section>
 
   <section>
@@ -62,6 +67,18 @@
         </app-list-row>
       }
     </div>
-    <app-add-row [label]="'species.section.colourChange' | t" [action]="'admin.part.addChange' | t" />
+    <app-add-row
+      [label]="'species.section.colourChange' | t"
+      [action]="'admin.part.addChange' | t"
+      (pressed)="addChange()"
+    />
   </section>
 </div>
+
+<app-action-bar
+  [primary]="'common.apply' | t"
+  [secondary]="'admin.part.remove' | t"
+  [secondaryDanger]="true"
+  (primaryClick)="apply()"
+  (secondaryClick)="remove()"
+/>

@@ -16,14 +16,20 @@ import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.componen
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { SpeciesEditorState } from './species-editor.state';
 import { featureRows, lookalikeRows, type EditorRow } from './species-editor.rows';
+import { lookalikeWrites } from './species-lists';
+
+/** Wohin ein Abschnitt führt: auf ein Teil, auf einen Text, auf eine Verwechslung. */
+type BlockKind = 'part' | 'text' | 'lookalike';
 
 /** Ein Abschnitt des Editors mit seinen Zeilen. */
 interface Block {
+  kind: BlockKind;
   title: string;
   rows: readonly EditorRow[];
   /** Ein Abschnitt, der wächst, trägt unten eine Zeile zum Anlegen. */
   add: string | null;
-  /** Die Merkmalszeilen führen auf ihr Teil; die anderen noch nirgends. */
+  addAction: string | null;
+  /** Eine Zeile, die auf eine Unterseite führt, ist ein Knopf. */
   opens: boolean;
 }
 
@@ -77,15 +83,19 @@ export class SpeciesEditorComponent {
     if (one === null) return [];
     const text = (key: TranslationKey): string => this.i18n.translate(key);
     const to = this.i18n.translate('common.to');
-    return [
+    const blocks: Block[] = [
       {
+        kind: 'part',
         title: text('admin.species.section.features'),
         rows: featureRows(one, text, to),
         add: null,
+        addAction: null,
         opens: true,
       },
       {
+        kind: 'text',
         opens: false,
+        addAction: null,
         title: text('admin.species.section.texts'),
         rows: [
           {
@@ -102,12 +112,15 @@ export class SpeciesEditorComponent {
         add: null,
       },
       {
+        kind: 'lookalike',
         title: text('admin.species.section.lookalikes'),
         rows: lookalikeRows(one),
         add: text('admin.species.lookalike'),
-        opens: false,
+        addAction: text('admin.species.addLookalike'),
+        opens: true,
       },
-    ].filter((block) => block.rows.length > 0 || block.add !== null);
+    ];
+    return blocks.filter((block) => block.rows.length > 0 || block.add !== null);
   });
 
   /** Woher die Merkmale stammen und wann jemand sie zuletzt angefasst hat. */
@@ -145,9 +158,19 @@ export class SpeciesEditorComponent {
     });
   }
 
-  /** Eine Merkmalszeile trägt ihr Teil als Schlüssel und führt darauf. */
-  protected openPart(part: string): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug(), 'teil', part]);
+  /** Eine Zeile führt auf die Unterseite ihres Abschnitts. */
+  protected openRow(kind: BlockKind, at: number, key: string): void {
+    if (kind === 'part') void this.router.navigate(['/verwaltung/arten', this.slug(), 'teil', key]);
+    if (kind === 'lookalike') this.openLookalike(at);
+  }
+
+  /** Die Zeile am Ende eines Abschnitts legt einen weiteren Eintrag an. */
+  protected addRow(kind: BlockKind): void {
+    if (kind === 'lookalike') this.openLookalike(lookalikeWrites(this.species()).length);
+  }
+
+  private openLookalike(at: number): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug(), 'verwechslung', at]);
   }
 
   protected setForecast(enabled: boolean): void {

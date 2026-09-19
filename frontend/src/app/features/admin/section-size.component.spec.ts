@@ -69,4 +69,15 @@ describe('SectionSizeComponent', () => {
     const body = call.request.body as { measurements: { measurements: { high: number }[] }[] };
     expect(body.measurements[0].measurements[0].high).toBe(25);
   });
+
+  it('nimmt das Maß heraus und lässt ein Teil ohne Maß weg', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Hutbreite' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Maß entfernen' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.method).toBe('PUT');
+    expect((call.request.body as { measurements: unknown[] }).measurements).toEqual([]);
+  });
 });

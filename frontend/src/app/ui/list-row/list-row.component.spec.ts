@@ -47,6 +47,17 @@ describe('ListRowComponent', () => {
     expect(container.querySelector('.row__chevron')).not.toBeNull();
   });
 
+  it('hält die Unterzeile in einer Zeile und kürzt sie mit Auslassung', async () => {
+    const { container } = await render(ListRowComponent, {
+      inputs: { title: 'Wikipedia', subline: 'de.wikipedia.org/wiki/Gemeiner_Steinpilz' },
+    });
+
+    const style = styleOf(container.querySelector('.row__sub'));
+    expect(style.whiteSpace).toBe('nowrap');
+    expect(style.textOverflow).toBe('ellipsis');
+    expect(style.overflow).toBe('hidden');
+  });
+
   it('setzt den Gruppentitel des Filters auf die Zeilenhöhe des Boards', async () => {
     const { container } = await render(ListRowComponent, {
       inputs: { title: 'Speisewert', kind: 'filter' },

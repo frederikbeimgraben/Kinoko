@@ -262,7 +262,7 @@ test('EditSenses', async ({ page }) => {
 
 test('EditColour', async ({ page }) => {
   guard('EditColour', 'phone');
-  await open(page, '/verwaltung/arten/boletus-edulis/farbe/cap', {
+  await open(page, '/verwaltung/arten/boletus-edulis/farbe/cap/0', {
     '/api/species/boletus-edulis': STONE_SECTIONS,
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
     '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
@@ -273,13 +273,23 @@ test('EditColour', async ({ page }) => {
 
 test('EditColourChange', async ({ page }) => {
   guard('EditColourChange', 'phone');
-  await open(page, '/verwaltung/arten/boletus-edulis/verfaerbung/0', {
+  await open(page, '/verwaltung/arten/boletus-edulis/verfaerbung/cap/0', {
     '/api/species/boletus-edulis': STONE_SECTIONS,
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
     '/api/terms': TERMS,
   });
   await expect(page.getByRole('button', { name: 'Verletzung' })).toBeVisible();
   await expectBoard(page, 'EditColourChange');
+});
+
+test('EditLookalike', async ({ page }) => {
+  guard('EditLookalike', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/verwechslung/0', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByLabel('Unterscheidung')).toHaveValue('Röhren rosa, Netz grob, bitter');
+  await expectBoard(page, 'EditLookalike');
 });
 
 test('EditPart', async ({ page }) => {

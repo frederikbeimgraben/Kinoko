@@ -127,12 +127,12 @@ export const ADMIN_SPECIES: readonly {
   edibility: string;
   forecast: boolean;
 }[] = [
-  { slug: 'boletus-edulis', name: 'Steinpilz', latin: 'Boletus edulis', edibility: 'good', forecast: true },
+  { slug: 'boletus-edulis', name: 'Steinpilz', latin: 'Boletus edulis', edibility: 'edible', forecast: true },
   {
     slug: 'imleria-badia',
     name: 'Maronenröhrling',
     latin: 'Imleria badia',
-    edibility: 'good',
+    edibility: 'edible',
     forecast: true,
   },
   {

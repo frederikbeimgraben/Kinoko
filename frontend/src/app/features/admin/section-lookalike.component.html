@@ -1,0 +1,44 @@
+<app-page-header [title]="'admin.lookalike.title' | t" [back]="true" (backClick)="back()" />
+
+@if (picking()) {
+  <div class="section">
+    <app-species-picker
+      [species]="choices()"
+      [selected]="other()"
+      [label]="'admin.lookalike.species' | t"
+      (chosen)="choose($event)"
+    />
+  </div>
+  <app-action-bar [primary]="'common.cancel' | t" [ghost]="true" (primaryClick)="picking.set(false)" />
+} @else {
+  <div class="section">
+    <section>
+      <h2 class="section__title">{{ 'admin.lookalike.species' | t }}</h2>
+      <div class="section__card">
+        <app-list-row
+          kind="catalogue"
+          [title]="'admin.lookalike.species' | t"
+          [value]="otherName()"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="picking.set(true)"
+        />
+      </div>
+    </section>
+
+    <app-form-field
+      [label]="'admin.lookalike.distinction' | t"
+      [section]="true"
+      [value]="difference()"
+      (valueChange)="difference.set($event)"
+    />
+  </div>
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    [secondary]="'admin.lookalike.remove' | t"
+    [secondaryDanger]="true"
+    (primaryClick)="apply()"
+    (secondaryClick)="remove()"
+  />
+}

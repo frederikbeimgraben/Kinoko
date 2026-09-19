@@ -122,18 +122,24 @@ export const routes: Routes = [
           import('./features/admin/section-part.component').then((m) => m.SectionPartComponent),
       },
       {
-        path: 'arten/:slug/farbe/:part',
+        path: 'arten/:slug/farbe/:part/:index',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>
           import('./features/admin/section-colour.component').then((m) => m.SectionColourComponent),
       },
       {
-        path: 'arten/:slug/verfaerbung/:index',
+        path: 'arten/:slug/verfaerbung/:part/:index',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>
           import('./features/admin/section-colour-change.component').then(
             (m) => m.SectionColourChangeComponent,
           ),
+      },
+      {
+        path: 'arten/:slug/verwechslung/:index',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-lookalike.component').then((m) => m.SectionLookalikeComponent),
       },
       {
         path: 'arten/:slug/zeitraum',

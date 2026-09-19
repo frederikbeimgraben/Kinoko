@@ -13,13 +13,8 @@ import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segme
 import { PART_TEXT, SPEED_TEXT } from '../species/labels';
 import { TermsState } from './terms.state';
 import { SpeciesEditorState } from './species-editor.state';
-import {
-  SPEEDS,
-  TRIGGER_GROUPS,
-  TRIGGER_GROUP_TEXT,
-  changeAt,
-  withChange,
-} from './section-colour-change.rows';
+import { SPEEDS, TRIGGER_GROUPS, TRIGGER_GROUP_TEXT, changeAt } from './section-colour-change.rows';
+import { withChange, withoutChange } from './species-lists';
 
 /** Eine Verfärbung eines Teils: Auslöser, zwei Farben und die Dauer. */
 @Component({
@@ -124,6 +119,11 @@ export class SectionColourChangeComponent {
       triggers: this.triggers().map((id) => this.termById(id, change.triggers)),
     };
     this.state.save({ colourChanges: withChange(species, this.at(), next) });
+    this.back();
+  }
+
+  protected remove(): void {
+    this.state.save({ colourChanges: withoutChange(this.state.species(), this.at()) });
     this.back();
   }
 

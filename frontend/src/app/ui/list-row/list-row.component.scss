@@ -133,10 +133,14 @@
   color: var(--color-primary);
 }
 
+// Die Unterzeile bleibt einzeilig; ein längerer Text endet mit Auslassung.
 .row__sub {
+  overflow: hidden;
   font-size: var(--list-row-sub, var(--fs-sm));
   line-height: var(--list-row-sub-height, inherit);
   color: var(--color-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row__value {
