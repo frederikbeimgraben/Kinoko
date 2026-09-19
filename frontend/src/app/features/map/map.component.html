@@ -42,30 +42,17 @@
 
   @if (!surfaceOnly() || wide()) {
     @if (showsButtons()) {
-      <div class="map__buttons">
-        <app-floating-button
-          icon="layers"
-          [label]="'map.layers.button' | t"
-          [variant]="state.layersSheetOpen() ? 'primary' : 'default'"
-          (pressed)="state.layersSheetOpen.set(!state.layersSheetOpen())"
-        />
-        @if (!tall()) {
-          <app-floating-button
-            icon="location"
-            [label]="'map.location' | t"
-            [disabled]="!locating.allowed()"
-            (pressed)="surface.locate()"
-          />
-        }
-        @if (turned()) {
-          <app-floating-button
-            icon="compass"
-            [label]="'map.compass' | t"
-            [rotation]="needle()"
-            (pressed)="surface.resetNorth()"
-          />
-        }
-      </div>
+      <app-map-buttons
+        class="map__buttons"
+        [layersOpen]="state.layersSheetOpen()"
+        [showsLocation]="!tall()"
+        [locationAllowed]="locating.allowed()"
+        [turned]="turned()"
+        [needle]="needle()"
+        (layersToggled)="state.layersSheetOpen.set(!state.layersSheetOpen())"
+        (located)="surface.locate()"
+        (northed)="surface.resetNorth()"
+      />
 
       @if (showsAdd()) {
         <app-floating-button

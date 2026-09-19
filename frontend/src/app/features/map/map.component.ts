@@ -32,6 +32,7 @@ import { MapObjectsDirective } from '../objects/map-objects.directive';
 import { ObjectSheetComponent } from '../objects/object-sheet.component';
 import { CombinationState } from './combination.state';
 import { LayersSheetComponent } from './layers-sheet.component';
+import { MapButtonsComponent } from './map-buttons.component';
 import { MapColumnComponent } from './map-column.component';
 import { MapHeadComponent } from './map-head.component';
 import { MapOverlayState } from './map-overlay.state';
@@ -51,6 +52,7 @@ import { MapView } from './map.view';
     BannerComponent,
     FloatingButtonComponent,
     LayersSheetComponent,
+    MapButtonsComponent,
     MapAttributionComponent,
     MapColumnComponent,
     MapHeadComponent,
