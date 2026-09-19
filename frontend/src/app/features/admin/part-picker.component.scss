@@ -1,0 +1,35 @@
+@use '../../../styles/card';
+
+:host {
+  --pilz-scrim: rgb(0 18 10 / 55%);
+}
+
+.picker__head {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--size-gutter) 14px;
+}
+
+.picker__title {
+  font-size: var(--fs-lg);
+  line-height: normal;
+  font-weight: var(--fw-semibold);
+}
+
+.picker__list {
+  padding-inline: var(--size-gutter);
+}
+
+.picker__card {
+  @include card.card;
+}
+
+app-check-row {
+  --space-3: 12px;
+
+  padding-inline: 14px;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

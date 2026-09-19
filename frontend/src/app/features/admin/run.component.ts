@@ -72,7 +72,7 @@ export class RunComponent {
       {
         key: 'started',
         title: this.text('admin.run.startedAt'),
-        value: startedValue(run, this.text, this.i18n.locale()),
+        value: startedValue(run, this.i18n),
       },
       { key: 'duration', title: this.text('admin.run.duration'), value: this.duration() },
       { key: 'visits', title: this.text('admin.run.visits'), value: visitsValue(run, this.text) },

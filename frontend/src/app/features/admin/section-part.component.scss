@@ -35,3 +35,7 @@ app-page-header {
 app-add-row {
   margin-block-start: 10px;
 }
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

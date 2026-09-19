@@ -15,8 +15,3 @@ export const SPEEDS: readonly Speed[] = ['permanent', 'immediate', '30s', '1min'
 export function changeAt(species: SpeciesEntry | null, at: number): ColourChange | null {
   return species?.colourChanges[at] ?? null;
 }
-
-/** Legt eine Verfärbung an ihre Stelle in der Liste. */
-export function withChange(species: SpeciesEntry, at: number, change: ColourChange): ColourChange[] {
-  return species.colourChanges.map((one, index) => (index === at ? change : one));
-}

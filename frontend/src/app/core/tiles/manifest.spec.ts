@@ -1,4 +1,13 @@
-import { currentWeek, isoWeek, barShares, findWeek, tileKey, readManifest, weekKey } from './manifest';
+import {
+  currentWeek,
+  isFuture,
+  isoWeek,
+  barShares,
+  findWeek,
+  tileKey,
+  readManifest,
+  weekKey,
+} from './manifest';
 
 const RAW = {
   name: 'boletus_edulis',
@@ -102,6 +111,27 @@ describe('Manifest', () => {
   it('schreibt Wochen- und Kachelschlüssel in fester Form', () => {
     expect(weekKey({ year: 2025, week: 7 })).toBe('2025-07');
     expect(tileKey(7, 66, 42)).toBe('7/66/42');
+  });
+});
+
+describe('isFuture', () => {
+  const today = new Date('2026-09-16T12:00:00Z');
+
+  it('nennt die laufende und jede frühere Woche nicht Vorhersage, auch mit dem Kettenkennzeichen', () => {
+    expect(isoWeek(today)).toEqual({ year: 2026, week: 38 });
+    expect(isFuture({ year: 2026, week: 37 }, today)).toBe(false);
+    expect(isFuture({ year: 2026, week: 38 }, today)).toBe(false);
+  });
+
+  it('nennt jede Woche nach der laufenden Vorhersage', () => {
+    expect(isFuture({ year: 2026, week: 39 }, today)).toBe(true);
+  });
+
+  it('trägt den Jahreswechsel richtig', () => {
+    const silvester = new Date('2025-12-30T12:00:00Z');
+    expect(isoWeek(silvester)).toEqual({ year: 2026, week: 1 });
+    expect(isFuture({ year: 2025, week: 52 }, silvester)).toBe(false);
+    expect(isFuture({ year: 2026, week: 2 }, silvester)).toBe(true);
   });
 });
 

@@ -17,7 +17,7 @@ import { numericDate } from '../../core/i18n/dates';
 import { coordinatesText } from './coordinates';
 import { isoDatum } from '../entries/formats';
 import { visibilitySegments } from './visibility';
-import { speciesPickerEntry } from './species-picker-entry';
+import { speciesPickerEntry } from '../species/species-picker-entry';
 import type { Location } from './add-entry.state';
 
 /** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */

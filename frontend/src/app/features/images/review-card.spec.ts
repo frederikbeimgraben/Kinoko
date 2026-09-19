@@ -17,9 +17,7 @@ describe('review-card', () => {
   });
 
   it('setzt die einreichende Person und den kurzen Tag in eine Zeile', () => {
-    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(new Date(2026, 8, 6));
-
-    expect(metaText(photo(), i18n())).toBe(`Marie · 6. ${month}`);
+    expect(metaText(photo(), i18n())).toBe('Marie · 6. Sept.');
   });
 
   it('hängt den gerundeten Ort an', () => {

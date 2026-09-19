@@ -557,15 +557,31 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
       wirklich null Besuche) und die Rate danach aus den geglätteten Zählern
       zu teilen. Das verschiebt eine starke Spalte und braucht eine
       Entscheidung.
-- [ ] Die restlichen Ebenen auf `pyramid.py` umstellen. Höhe und Hangneigung
-      liegen auf 90 m und tragen damit z12, der Boden auf 250 m und damit z10,
-      das Wetter nach der Glättung auf 500 m und damit z9. Heute rendert
-      `input_layers.py` alle festen Ebenen auf z5 bis z8 und die Wochenebenen
-      auf z5 bis z7, beide als feste Spanne. Die Spanne muss aus der
-      Auflösung der Quelle kommen, und `--tile-zooms` und `--weekly-zooms`
-      entfallen. Für Höhe und Hangneigung ist zu prüfen, ob das rohe DEM mit
-      90 m gehalten wird oder neu geholt werden muss.
-- [ ] `wald` aus dem 10-m-Raster rendern. Das braucht eine Maske für
-      Deutschland: im Thünen-Raster heißt Klasse 0 auch Ausland und Wasser,
-      und ohne Maske stünde dort ein Waldanteil von null statt keiner Wert.
-      Das Gewichtsraster von `tree_tiles.py` trägt den Waldanteil bereits.
+- [x] 2026-09-19 Die restlichen Ebenen auf `pyramid.py` umstellen und `wald`
+      aus dem 10-m-Raster mit einer Deutschland-Maske rendern.
+      Ergebnis: `fine_layers.py` löst `tree_tiles.py` ab und rendert jede
+      Ebene mit einer Quelle feiner als das Kartenraster: Baumarten und
+      Waldanteil aus dem Thünen-Raster (10 m, z14), Höhe, Hangneigung und
+      Nordexposition aus dem 90-m-DEM (z12), drei Bodenwerte aus SoilGrids
+      (250 m, z10). Der Umriss Deutschlands kommt aus dem OSM-Extrakt und
+      begrenzt den Waldanteil. `render_field` warpt ein Feld einmal auf die
+      feinste Stufe und mittelt die gröberen daraus; `--tile-zooms` und
+      `--weekly-zooms` sind weg, `--zoom-cap` deckelt.
+- [ ] `relief` und `gelaendeposition` liegen auf dem Kartenraster, ihre
+      Quelle ist aber das 90-m-DEM. `static_features.py` rechnet beide auf
+      der Zelle. Auf 90 m gerechnet trügen sie z12 wie Höhe und Hangneigung.
+- [ ] Die Bodenebenen zeigen nur die oberste Schicht (0 bis 5 cm). Die
+      Kette hält drei Tiefen je Größe.
+- [ ] Prognosewochen mit Normalwerten fuellen statt leer lassen. Heute traegt
+      eine Prognosewoche kein Wetter, und allein die Merkmalszensur des
+      Horizonts haelt das Modell ehrlich. `region_map.normalwerte()` rechnet
+      schon Mittel je Zelle und ISO-Woche fuer `tas`, `pr_sum4` und
+      `pr_sum8`. Damit liessen sich die fehlenden Spalten fuellen. Ob das
+      besser ist, entscheidet ein Brier-Vergleich je Horizont gegen den
+      heutigen Stand.
+- [ ] Wochenebenen fuer Prognosewochen. `layers.json` endet an der letzten
+      Ist-Woche, die Artenkarten reichen weiter. Wer den Regler auf eine
+      Prognosewoche stellt, sieht Werte, aber keine Wetterebene. Ohne Wetter
+      der Zukunft gibt es dort nichts zu zeigen. Entweder die Zeitleiste
+      sperrt die Ebene fuer diese Wochen, oder die Kette rendert sie aus
+      Normalwerten, zusammen mit dem Punkt darueber.

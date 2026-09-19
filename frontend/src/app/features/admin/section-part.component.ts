@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import type { BodyPart, Measurement } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ColourFieldComponent } from '../../ui/colour-field/colour-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -11,12 +12,20 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
 import { SpeciesEditorState } from './species-editor.state';
 import { changeRows, colourRows, sizeRows, type ColourRow, type SizeRow } from './section-part.rows';
+import { changes, withoutPart } from './species-lists';
 
 /** Ein Teil einer Art: seine Maße, seine Farben und seine Verfärbungen. */
 @Component({
   selector: 'app-section-part',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AddRowComponent, ColourFieldComponent, ListRowComponent, PageHeaderComponent, TranslatePipe],
+  imports: [
+    ActionBarComponent,
+    AddRowComponent,
+    ColourFieldComponent,
+    ListRowComponent,
+    PageHeaderComponent,
+    TranslatePipe,
+  ],
   templateUrl: './section-part.component.html',
   styleUrl: './section-part.component.scss',
 })
@@ -54,12 +63,29 @@ export class SectionPartComponent {
     void this.router.navigate(['/verwaltung/arten', this.slug(), 'mass', this.part()]);
   }
 
-  protected openColour(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug(), 'farbe', this.part()]);
+  protected openColour(at: number): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug(), 'farbe', this.part(), at]);
+  }
+
+  protected addColour(): void {
+    this.openColour(this.colours().length);
   }
 
   protected openChange(at: number): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug(), 'verfaerbung', at]);
+    void this.router.navigate(['/verwaltung/arten', this.slug(), 'verfaerbung', this.part(), at]);
+  }
+
+  protected addChange(): void {
+    this.openChange(changes(this.state.species()).length);
+  }
+
+  protected apply(): void {
+    this.back();
+  }
+
+  protected remove(): void {
+    this.state.save(withoutPart(this.state.species(), this.part()));
+    this.back();
   }
 
   protected back(): void {

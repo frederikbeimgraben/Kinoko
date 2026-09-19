@@ -315,7 +315,7 @@ test.describe('Seitenhöhe am Telefon', () => {
   });
 
   test('Verwaltung, Farbe einer Art', async ({ page }) => {
-    await admin(page, '/verwaltung/arten/boletus-edulis/farbe/cap', {
+    await admin(page, '/verwaltung/arten/boletus-edulis/farbe/cap/0', {
       '/api/species/boletus-edulis': STONE_SECTIONS,
       '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
       '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
@@ -325,12 +325,21 @@ test.describe('Seitenhöhe am Telefon', () => {
   });
 
   test('Verwaltung, Verfärbung einer Art', async ({ page }) => {
-    await admin(page, '/verwaltung/arten/boletus-edulis/verfaerbung/0', {
+    await admin(page, '/verwaltung/arten/boletus-edulis/verfaerbung/cap/0', {
       '/api/species/boletus-edulis': STONE_SECTIONS,
       '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
       '/api/terms': TERMS,
     });
     await expect(page.getByRole('button', { name: 'Verletzung' })).toBeVisible();
+    await assertFillsViewport(page);
+  });
+
+  test('Verwaltung, Verwechslung einer Art', async ({ page }) => {
+    await admin(page, '/verwaltung/arten/boletus-edulis/verwechslung/0', {
+      '/api/species/boletus-edulis': STONE_SECTIONS,
+      '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
+    });
+    await expect(page.getByRole('heading', { name: 'Verwechslung' })).toBeVisible();
     await assertFillsViewport(page);
   });
 

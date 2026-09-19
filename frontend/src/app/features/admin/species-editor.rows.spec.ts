@@ -1,5 +1,5 @@
 import type { SpeciesEntry } from '../../core/api/models';
-import { featureRows, lookalikeRows } from './species-editor.rows';
+import { featureRows, lookalikeRows, sourceRows } from './species-editor.rows';
 
 const TEXT = (key: string): string => (key === 'species.field.cap' ? 'Hut' : 'Röhren');
 
@@ -8,6 +8,8 @@ function entry(part: Partial<SpeciesEntry>): SpeciesEntry {
     measurements: [],
     colours: [],
     lookalikes: [],
+    sources: [],
+    traits: [],
     ...part,
   } as unknown as SpeciesEntry;
 }
@@ -35,6 +37,7 @@ describe('featureRows', () => {
           },
         ],
       }),
+      [],
       TEXT,
       'bis',
     );
@@ -57,6 +60,7 @@ describe('featureRows', () => {
           },
         ],
       }),
+      [],
       TEXT,
       'bis',
     );
@@ -65,7 +69,49 @@ describe('featureRows', () => {
   });
 
   it('lässt ein Teil ohne Farben und ohne Maß weg', () => {
-    expect(featureRows(entry({}), TEXT, 'bis')).toEqual([]);
+    expect(featureRows(entry({}), [], TEXT, 'bis')).toEqual([]);
+  });
+
+  it('nennt ein gewähltes Teil ohne Wert', () => {
+    expect(featureRows(entry({}), ['stem'], () => 'Stiel', 'bis')).toEqual([
+      { key: 'stem', title: 'Stiel', value: '' },
+    ]);
+  });
+
+  it('hängt den Text eines Teils hinter Maß und Farbe', () => {
+    const rows = featureRows(
+      entry({ traits: [{ key: 'tubes', text: 'Poren fein und rund' }] }),
+      ['tubes'],
+      TEXT,
+      'bis',
+    );
+
+    expect(rows).toEqual([{ key: 'tubes', title: 'Röhren', value: 'Poren fein und rund' }]);
+  });
+});
+
+describe('sourceRows', () => {
+  it('nennt den Titel und die Adresse', () => {
+    const rows = sourceRows(
+      entry({
+        sources: [
+          {
+            scope: 'profile',
+            title: '123pilzsuche.de',
+            url: '123pilzsuche.de/daten/details/Steinpilz.htm',
+            checkedOn: '2026-09-10',
+          },
+        ],
+      }),
+    );
+
+    expect(rows).toEqual([
+      {
+        key: 'quelle-0',
+        title: '123pilzsuche.de',
+        value: '123pilzsuche.de/daten/details/Steinpilz.htm',
+      },
+    ]);
   });
 });
 

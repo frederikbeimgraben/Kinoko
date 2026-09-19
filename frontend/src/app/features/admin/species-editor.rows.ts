@@ -34,23 +34,35 @@ function colourText(species: SpeciesEntry, to: string): Map<BodyPart, string> {
 /** Die Merkmalszeilen: je Teil das Maß und die Farben, wie das Brett sie zeigt. */
 export function featureRows(
   species: SpeciesEntry,
+  extra: readonly BodyPart[],
   text: (key: TranslationKey) => string,
   to: string,
 ): EditorRow[] {
   const colours = colourText(species, to);
-  const parts = [
+  const held = [
     ...species.measurements.map((group) => group.part),
     ...[...colours.keys()].filter((part) => !species.measurements.some((one) => one.part === part)),
   ];
+  const parts = [...held, ...extra.filter((part) => !held.includes(part))];
   return parts.map((part) => {
     const group = species.measurements.find((one) => one.part === part);
     const sizes = (group?.measurements ?? []).map((one) => span(one.low, one.high, one.unit, to));
+    const trait = species.traits.find((one) => one.key === part);
     return {
       key: part,
       title: text(PART_TEXT[part]),
-      value: [...sizes, colours.get(part)].filter(Boolean).join(', '),
+      value: [...sizes, colours.get(part), trait?.text].filter(Boolean).join(', '),
     };
   });
+}
+
+/** Die Quellen: Titel und die Adresse ohne Schema. */
+export function sourceRows(species: SpeciesEntry): EditorRow[] {
+  return species.sources.map((one, at) => ({
+    key: `quelle-${String(at)}`,
+    title: one.title,
+    value: one.url,
+  }));
 }
 
 /** Die Verwechslungen: Name und der Unterschied in einem Satz. */

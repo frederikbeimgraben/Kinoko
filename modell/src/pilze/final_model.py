@@ -59,7 +59,8 @@ from sklearn.metrics import average_precision_score, brier_score_loss, roc_auc_s
 from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, str(Path(__file__).parent))
-from visit_model import BLOCK_M, HORIZONS, PARAMS, ROUNDS, activity_names
+from horizons import HORIZONS, activity_names, knowable
+from visit_model import BLOCK_M, PARAMS, ROUNDS
 
 GRID = [
     ("standard", PARAMS, ROUNDS),
@@ -79,23 +80,6 @@ PRIOR = ["prior_rate_cell", "prior_n_cell", "prior_rate_block", "prior_n_block"]
 def block_key(frame: pd.DataFrame) -> pd.Series:
     return ((frame["x"] // BLOCK_M).astype(int).astype(str) + "_"
             + (frame["y"] // BLOCK_M).astype(int).astype(str))
-
-
-def knowable(name: str, horizon: int) -> bool:
-    """Is a weather column known when the target week is `horizon` weeks away?
-
-    Weather at lag k is known only when k >= horizon. A rolling window, an
-    anomaly or a temperature drop ends at the target week and reaches into
-    the unknown.
-    """
-    if horizon == 0:
-        return True
-    lag = re.search(r"_lag(\d+)$", name)
-    if lag:
-        return int(lag.group(1)) >= horizon
-    if re.search(r"_(sum|mean)\d+$", name) or name.endswith(("_anom", "_ratio")):
-        return False
-    return not name.startswith("tas_drop")
 
 
 def feature_list(blocks: dict, frame: pd.DataFrame, horizon: int) -> list[str]:

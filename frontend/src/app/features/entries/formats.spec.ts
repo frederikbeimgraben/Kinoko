@@ -1,3 +1,4 @@
+import { catalogueOf } from '../../testing/i18n';
 import { asDate, longDate } from '../../core/i18n/dates';
 import { locationText } from '../../core/i18n/places';
 import { hectaresText, isoDatum, shortDate } from './formats';
@@ -25,8 +26,14 @@ describe('Formate', () => {
   });
 
   it('schreibt heute als „Heute“ und sonst kurz', () => {
-    expect(shortDate('2026-09-10', 'de', '2026-09-10', 'Heute')).toBe('Heute');
-    expect(shortDate('2026-09-06', 'de', '2026-09-10', 'Heute')).toContain('6.');
+    const catalogue = catalogueOf({
+      'common.today': 'Heute',
+      'common.dateShort': '{tag}. {monat}',
+      'enum.monthShort.9': 'Sept.',
+    });
+
+    expect(shortDate('2026-09-10', catalogue, '2026-09-10')).toBe('Heute');
+    expect(shortDate('2026-09-06', catalogue, '2026-09-10')).toBe('6. Sept.');
   });
 
   it('schreibt den Ort mit vier Stellen', () => {

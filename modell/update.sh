@@ -56,7 +56,7 @@ for M in models/*.pkl; do
   # wuerde ihn dort ausblenden, wo er waechst.
   WALD=0.03; [ "$SLUG" = "schopftintling" ] && WALD=0.0
   python -u src/pilze/region_map.py --model "$M" --name "$SLUG" \
-      --region de --weeks "$WOCHEN" --forecast 2 --step 500 \
+      --region de --weeks "$WOCHEN" --step 500 \
       --min-forest "$WALD" --tiles --no-image 2>&1 | tail -1
 done
 # Die Wetterebenen laufen mit dem Wochenregler mit, also dieselben Wochen.

@@ -22,19 +22,19 @@
     <section>
       <h2 class="editor__section">{{ block.title }}</h2>
       <div class="editor__card">
-        @for (row of block.rows; track row.key) {
+        @for (row of block.rows; track row.key; let at = $index) {
           <app-list-row
             kind="catalogue"
             [title]="row.title"
             [subline]="row.value"
             [chevron]="true"
             [clickable]="block.opens"
-            (chosen)="openPart(row.key)"
+            (chosen)="openRow(block.kind, at, row.key)"
           />
         }
       </div>
       @if (block.add; as label) {
-        <app-add-row [label]="label" [action]="'admin.species.addLookalike' | t" />
+        <app-add-row [label]="label" [action]="block.addAction ?? label" (pressed)="addRow(block.kind)" />
       }
     </section>
   }
@@ -52,6 +52,14 @@
   [secondaryDanger]="true"
   (primaryClick)="back()"
   (secondaryClick)="removing.set(true)"
+/>
+
+<app-part-picker
+  [open]="picking()"
+  [species]="species()"
+  [held]="extraParts()"
+  (chosen)="addParts($event)"
+  (closed)="picking.set(false)"
 />
 
 <app-confirm-dialog

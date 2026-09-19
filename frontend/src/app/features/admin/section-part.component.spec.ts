@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -15,7 +16,7 @@ function routeFor(part: string): { provide: typeof ActivatedRoute; useValue: unk
   return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
 }
 
-async function build(part = 'cap'): Promise<Element> {
+async function build(part = 'cap'): Promise<{ container: Element; http: HttpTestingController }> {
   TestBed.resetTestingModule();
   const { container } = await render(SectionPartComponent, {
     providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor(part)],
@@ -23,7 +24,7 @@ async function build(part = 'cap'): Promise<Element> {
   const http = TestBed.inject(HttpTestingController);
   http.expectOne('/api/species/boletus-edulis').flush(SECTION_SPECIES);
   http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
-  return container;
+  return { container, http };
 }
 
 describe('SectionPartComponent', () => {
@@ -32,7 +33,7 @@ describe('SectionPartComponent', () => {
   });
 
   it('nennt das Teil im Kopf und je Wert eine Zeile', async () => {
-    const container = await build();
+    const { container } = await build();
 
     expect(await screen.findByRole('heading', { name: 'Hut' })).toBeInTheDocument();
     expect(screen.getByText('Breite')).toBeInTheDocument();
@@ -46,5 +47,45 @@ describe('SectionPartComponent', () => {
     expect(await screen.findByRole('heading', { name: 'Sporen' })).toBeInTheDocument();
     expect(screen.queryByText('Breite')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Maß hinzufügen' })).toBeInTheDocument();
+  });
+
+  it('führt jede wachsende Liste mit einer Zeile zum Anlegen', async () => {
+    await build('gills');
+
+    expect(await screen.findByRole('heading', { name: 'Lamellen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Farbe hinzufügen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Verfärbung hinzufügen' })).toBeInTheDocument();
+  });
+
+  it('führt von jeder Zeile und jeder Anlegezeile auf ihre Unterseite', async () => {
+    await build('gills');
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('heading', { name: 'Lamellen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe Farbe' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe hinzufügen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Verfärbung hinzufügen' }));
+
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/farbe/gills/0',
+      '/verwaltung/arten/boletus-edulis/farbe/gills/1',
+      '/verwaltung/arten/boletus-edulis/verfaerbung/gills/0',
+    ]);
+  });
+
+  it('nimmt das Teil mit seinen Werten heraus', async () => {
+    const { http } = await build('gills');
+    await screen.findByRole('heading', { name: 'Lamellen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Teil entfernen' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.method).toBe('PUT');
+    expect((call.request.body as { colours: unknown[] }).colours).toEqual([]);
   });
 });

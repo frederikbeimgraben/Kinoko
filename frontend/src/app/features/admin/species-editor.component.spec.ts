@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, convertToParamMap } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -43,7 +44,16 @@ const PROFILE = {
   sources: [{ scope: 'profile', title: '123pilzsuche.de', url: 'https://x', checkedOn: '2026-09-10' }],
   seasons: [],
   terms: [],
-  lookalikes: [],
+  lookalikes: [
+    {
+      slug: 'tylopilus-felleus',
+      name: 'Gallenröhrling',
+      scientificName: 'Tylopilus felleus',
+      edibility: 'inedible',
+      capColours: [],
+      difference: 'bitter',
+    },
+  ],
 };
 
 function routeFor(slug: string): { provide: typeof ActivatedRoute; useValue: unknown } {
@@ -84,7 +94,7 @@ describe('SpeciesEditorComponent', () => {
     expect(await screen.findByRole('heading', { name: 'Steinpilz bearbeiten' })).toBeInTheDocument();
     expect(screen.getByText('1 284')).toBeInTheDocument();
     expect(screen.getByText('4 bis 20 cm, braun')).toBeInTheDocument();
-    expect(screen.getByText(/123pilzsuche\.de/)).toBeInTheDocument();
+    expect(screen.getByText(/geändert von Frederik/)).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -100,11 +110,34 @@ describe('SpeciesEditorComponent', () => {
     call.flush({ ...PROFILE, forecastEnabled: false });
   });
 
-  it('lässt die Quelle weg, wenn die Art keine trägt', async () => {
-    await build({ ...PROFILE, sources: [] });
+  it('führt die Quellen und legt eine weitere an', async () => {
+    await build();
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('button', { name: /123pilzsuche\.de/ });
 
-    expect(await screen.findByRole('heading', { name: 'Steinpilz bearbeiten' })).toBeInTheDocument();
-    expect(screen.queryByText(/123pilzsuche\.de/)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /123pilzsuche\.de/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Quelle hinzufügen' }));
+
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/quelle/0',
+      '/verwaltung/arten/boletus-edulis/quelle/1',
+    ]);
+  });
+
+  it('nimmt ein Teil in die Merkmale auf', async () => {
+    await build();
+    await screen.findByRole('button', { name: 'Teil hinzufügen' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Teil hinzufügen' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Stiel' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
+
+    expect(screen.getByText('Stiel')).toBeInTheDocument();
   });
 
   it('fragt vor dem Löschen nach und löscht dann', async () => {
@@ -127,5 +160,40 @@ describe('SpeciesEditorComponent', () => {
 
     expect(screen.getByText('12 Funde · Karte vorhanden')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Löschen' })).toBeDisabled();
+  });
+
+  it('führt von einer Verwechslung auf ihre Unterseite', async () => {
+    await build();
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('button', { name: /Gallenröhrling/ });
+
+    await userEvent.click(screen.getByRole('button', { name: /Gallenröhrling/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Verwechslung hinzufügen' }));
+
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/verwechslung/0',
+      '/verwaltung/arten/boletus-edulis/verwechslung/1',
+    ]);
+  });
+
+  it('führt von einem Text nirgends hin und von einem Merkmal auf sein Teil', async () => {
+    await build();
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('button', { name: /Hut/ });
+
+    await userEvent.click(screen.getByRole('button', { name: /Hut/ }));
+    await userEvent.click(screen.getByText('Kurzbeschreibung'));
+
+    expect(paths).toEqual(['/verwaltung/arten/boletus-edulis/teil/cap']);
   });
 });

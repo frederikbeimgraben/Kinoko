@@ -12,7 +12,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   padding: var(--size-gutter);
   overflow-y: auto;
   scrollbar-width: none;
@@ -27,7 +27,6 @@
   @include card.card;
 
   --list-row-inline: 14px;
-  --size-row-tall: var(--size-row);
   --list-row-sub: var(--fs-row-meta);
   --list-row-title-height: normal;
   --list-row-sub-height: 1.4;

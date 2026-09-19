@@ -30,6 +30,9 @@ const SPECIES_COUNTS = {
   ],
 };
 
+/** Die Rollhöhe des Bretts `SpeciesEditScrolled`, aus seinem Bild gemessen. */
+const EDITOR_SCROLL = 417;
+
 /** Ein Brett gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
   test.skip(test.info().project.name !== device, `Brett gehört zu ${device}`);
@@ -167,6 +170,40 @@ test('SpeciesEdit', async ({ page }) => {
   await expectBoard(page, 'SpeciesEdit');
 });
 
+test('SpeciesEditScrolled', async ({ page }) => {
+  guard('SpeciesEditScrolled', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByText('de.wikipedia.org/wiki/Gemeiner_Steinpilz')).toBeVisible();
+  await page.locator('.editor').evaluate((one, top) => {
+    one.scrollTo(0, top);
+  }, EDITOR_SCROLL);
+  await expectBoard(page, 'SpeciesEditScrolled');
+});
+
+test('PartPicker', async ({ page }) => {
+  guard('PartPicker', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await page.getByRole('button', { name: 'Teil hinzufügen' }).click();
+  await expect(page.getByRole('dialog', { name: 'Teil hinzufügen' })).toBeVisible();
+  await expectBoard(page, 'PartPicker');
+});
+
+test('EditSource', async ({ page }) => {
+  guard('EditSource', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/quelle/0', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByLabel('Titel')).toHaveValue('123pilzsuche.de');
+  await expectBoard(page, 'EditSource');
+});
+
 test('SpeciesDelete', async ({ page }) => {
   guard('SpeciesDelete', 'phone');
   await open(page, '/verwaltung/arten/boletus-edulis', {
@@ -262,7 +299,7 @@ test('EditSenses', async ({ page }) => {
 
 test('EditColour', async ({ page }) => {
   guard('EditColour', 'phone');
-  await open(page, '/verwaltung/arten/boletus-edulis/farbe/cap', {
+  await open(page, '/verwaltung/arten/boletus-edulis/farbe/cap/0', {
     '/api/species/boletus-edulis': STONE_SECTIONS,
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
     '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
@@ -273,13 +310,23 @@ test('EditColour', async ({ page }) => {
 
 test('EditColourChange', async ({ page }) => {
   guard('EditColourChange', 'phone');
-  await open(page, '/verwaltung/arten/boletus-edulis/verfaerbung/0', {
+  await open(page, '/verwaltung/arten/boletus-edulis/verfaerbung/cap/0', {
     '/api/species/boletus-edulis': STONE_SECTIONS,
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
     '/api/terms': TERMS,
   });
   await expect(page.getByRole('button', { name: 'Verletzung' })).toBeVisible();
   await expectBoard(page, 'EditColourChange');
+});
+
+test('EditLookalike', async ({ page }) => {
+  guard('EditLookalike', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis/verwechslung/0', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByLabel('Unterscheidung')).toHaveValue('Röhren rosa, Netz grob, bitter');
+  await expectBoard(page, 'EditLookalike');
 });
 
 test('EditPart', async ({ page }) => {

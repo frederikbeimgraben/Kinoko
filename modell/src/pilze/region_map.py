@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import pickle
+from datetime import date
 import subprocess
 import sys
 import time
@@ -41,8 +42,12 @@ from pyproj import Transformer
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
-from manifest import histogramm, schreibe
-from tiles import schreibe_kacheln
+from horizons import (bundle_horizons, forecast_weeks, horizon_for,
+                      shared_horizon)
+from manifest import histogram, schreibe
+from pyramid import (ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom,
+                     render_field)
+
 from tree_species import CLASSES, CONIFERS
 from visit_model import BLOCK_M, ActivityFields
 
@@ -230,11 +235,15 @@ def render(field: np.ndarray, target: Path, top: float,
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", type=Path, default=Path("models/boletus_edulis.pkl"))
+    parser.add_argument("--models-dir", type=Path, default=None,
+                        help="Ordner aller Modelle; deckelt die Prognose auf "
+                             "den Horizont, den jede Art traegt")
     parser.add_argument("--name", default="boletus_edulis")
     parser.add_argument("--step", type=int, default=500)
     parser.add_argument("--weeks", type=int, default=20)
-    parser.add_argument("--forecast", type=int, default=0,
-                        help="how many weeks past the record to predict")
+    parser.add_argument("--forecast", type=int, default=None,
+                        help="Wochen ueber den Datenstand hinaus; ohne Angabe "
+                             "aus dem Datum und den Horizonten des Bundles")
     parser.add_argument("--smooth", type=float, default=1.2,
                         help="gaussian sigma, in cells")
     parser.add_argument("--min-forest", type=float, default=0.03)
@@ -251,8 +260,8 @@ def main() -> None:
     parser.add_argument("--region", default="de", choices=sorted(REGIONEN))
     parser.add_argument("--tiles", action="store_true",
                         help="Wertkacheln statt eines Vollbildes schreiben")
-    parser.add_argument("--tile-zooms", default="5-8",
-                        help="Zoomstufen der Kachelpyramide, etwa 5-8")
+    parser.add_argument("--zoom-cap", type=int, default=ZOOM_CAP,
+                        help="feinste Zoomstufe, die ein Lauf schreiben darf")
     parser.add_argument("--no-image", action="store_true",
                         help="kein Vollbild schreiben, nur Kacheln")
     args = parser.parse_args()
@@ -262,10 +271,8 @@ def main() -> None:
     if "horizons" not in bundle:
         raise SystemExit(f"{args.model} ist ein altes Bundle ohne Horizonte — "
                          "erst final_model.py neu laufen lassen")
-    if args.forecast > 0 and 2 not in bundle["horizons"]:
-        raise SystemExit(f"{args.model} hat kein Modell fuer Horizont 2")
-    # Die Spaltenliste fuer das Zuschneiden der Tabellen ist die Vereinigung
-    # beider Horizonte. Gerechnet wird je Woche mit dem passenden Modell.
+    horizonte = sorted(int(h) for h in bundle["horizons"])
+    # The tables keep the union of the columns of every horizon.
     features = sorted({f for h in bundle["horizons"].values() for f in h["features"]})
     species_names = bundle.get("species", ["Boletus edulis"])
     print(f"{args.name}: {species_names}, Horizonte {sorted(bundle['horizons'])}, "
@@ -342,6 +349,16 @@ def main() -> None:
     rss("Wetter gelesen")
     weather = weather[weather["cell"].isin(set(grid["cell"]))].copy()
     weather["week_id"] = week_number(weather)
+    letzte_ist = weather.sort_values("week_id").iloc[-1]
+    if args.forecast is None:
+        args.forecast = forecast_weeks(
+            date.today(),
+            (int(letzte_ist["iso_year"]), int(letzte_ist["iso_week"])),
+            cap=shared_horizon(bundle_horizons(
+                args.models_dir or args.model.parent)) or max(horizonte))
+        print(f"forecast {args.forecast} weeks, from "
+              f"{int(letzte_ist['iso_year'])}-W{int(letzte_ist['iso_week']):02d} "
+              f"and horizons {horizonte}")
     if args.forecast > 0:
         # Add empty rows for the coming weeks. add_lags shifts within each
         # cell, so those rows pick up the weather of the weeks that already
@@ -450,8 +467,14 @@ def main() -> None:
     wetter_pos = {c: i for i, c in enumerate(wetter_namen)}
     konstanten = {"n_species": float(args.reference_species),
                   "n_records": float(args.reference_records)}
+    # A plan holds one float32 matrix over every cell. Only a horizon that a
+    # week uses gets one.
+    kennungen = week_number(weeks)
+    gebraucht = sorted({horizon_for(int(k), observed_last, horizonte)
+                        for k in kennungen})
     plan = {}
-    for horizont, modell in bundle["horizons"].items():
+    for horizont in gebraucht:
+        modell = bundle["horizons"][horizont]
         # Die Spaltenreihenfolge kommt vom Modell selbst, nicht aus der
         # Feature-Liste: LightGBM liest nach Position, und ein vertauschter
         # Prior am Ende der Liste liess die Karte bei einem Drittel der
@@ -476,7 +499,7 @@ def main() -> None:
                 quellen.append(("leer", None))
         plan[horizont] = (spalten, matrix, quellen)
         print(f"  Horizont {horizont}: {len(spalten)} Spalten, davon {len(fest)} fest, "
-              f"{sum(q[0] == 'wetter' for q in quellen)} Wetter")
+              f"{sum(q[0] == 'wetter' for q in quellen)} Wetter", flush=True)
     grid_x, grid_y = grid["x"].to_numpy(), grid["y"].to_numpy()
     del grid
     wetter_leser = CoarseSampler.from_keys(zellen.to_numpy(dtype=str), grid_x,
@@ -490,7 +513,8 @@ def main() -> None:
     # bestehenden Kacheln, der Massstab ist derselbe.
     top = float(max(h["ceiling"] for h in bundle["horizons"].values()))
     images = args.out / f"{args.name}_weeks"; images.mkdir(parents=True, exist_ok=True)
-    z0, z1 = (int(v) for v in args.tile_zooms.split("-"))
+    # The prediction sits on the map grid. Its step names the finest level.
+    z0, z1 = ZOOM_BASE, finest_zoom(args.step, cap=args.zoom_cap)
     kachelwurzel = args.out / f"{args.name}_kacheln"
     # Die Kacheln brauchen den Ausschnitt in Grad. Er ist fuer jede Woche
     # derselbe, also einmal aus den vier Ecken des Modellrasters.
@@ -529,15 +553,15 @@ def main() -> None:
         # Das Histogramm laeuft ueber 0 bis top, also ueber die Skala der
         # Kacheln. Aus dem Feld gerechnet, nicht aus den Kacheln gelesen: das
         # Raster ist flaechentreu, jeder Punkt steht fuer dieselbe Flaeche.
-        verteilung = histogramm(field, 0.0, top)
+        verteilung = histogram(field, 0.0, top)
         if verteilung is not None:
-            eintrag["histogramm"] = verteilung
+            eintrag["histogram"] = verteilung
         if not args.no_image:
             eintrag["file"] = f"{args.name}_weeks/{year}W{week:02d}.png"
         if args.tiles:
             ordner = kachelwurzel / f"{year}W{week:02d}"
-            gefuellt, gross = schreibe_kacheln(source, ordner, top,
-                                               range(z0, z1 + 1), work, wgs_box)
+            gefuellt, gross = render_field(source, [ordner], [top], z1,
+                                           work, wgs_box)[0]
             vorhanden.update(gefuellt)
             kachelzahl += len(gefuellt); kachelbytes += gross
             eintrag["tiles"] = f"{args.name}_kacheln/{year}W{week:02d}"
@@ -548,12 +572,10 @@ def main() -> None:
     n = len(grid_x)
     for _, row in weeks.iterrows():
         year, week = int(row["iso_year"]), int(row["iso_week"])
-        # Eine beobachtete Woche rechnet das Modell fuer Horizont 0, eine
-        # Prognosewoche das fuer Horizont 2. Das zweite kennt weder das
-        # Wetter der Zielwoche noch die Funde der letzten zwei Wochen.
-        ahead = observed_last is not None and week_number(pd.DataFrame(
-            {"iso_year": [year], "iso_week": [week]})).iloc[0] > observed_last
-        horizont = 2 if ahead else 0
+        kennung = int(week_number(pd.DataFrame(
+            {"iso_year": [year], "iso_week": [week]})).iloc[0])
+        horizont = horizon_for(kennung, observed_last, horizonte)
+        ahead = horizont > 0
         modell = bundle["horizons"][horizont]
         spalten, matrix, quellen = plan[horizont]
 
@@ -622,10 +644,7 @@ def main() -> None:
         # Die Maske ist in jeder Woche dieselbe, also ist es auch die Menge
         # der belegten Kacheln. Einmal je Art gespeichert erspart der Seite
         # jede Anfrage nach einer leeren Kachel.
-        belegt: dict[str, list[str]] = {}
-        for z, x, y in sorted(vorhanden):
-            belegt.setdefault(str(z), []).append(f"{x}/{y}")
-        meta["tiles"] = {"zooms": [z0, z1], "have": belegt}
+        meta["tiles"] = {"zooms": [z0, z1], "have": belegung(vorhanden)}
         print(f"  Kacheln gesamt: {kachelzahl}, {kachelbytes/1e6:.1f} MB")
     schreibe(args.out / f"{args.name}.json", meta)
     print(f"\nwrote {len(manifest)} weeks and {args.out}/{args.name}.json  (top {top:.3f})")

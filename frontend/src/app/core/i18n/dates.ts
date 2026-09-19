@@ -7,6 +7,8 @@
  * bauen zu lassen ergäbe drei Schreibweisen.
  */
 
+import type { I18nService } from './i18n.service';
+
 /**
  * Liest ein ISO-Datum als lokalen Tag. `new Date('2026-09-06')` läge in UTC
  * und verschöbe den Tag östlich der Datumsgrenze.
@@ -36,9 +38,13 @@ export function numericDate(iso: string, translate: Translate): string {
   });
 }
 
-/** „6. Sept.“: Tag und kurzer Monat, das Muster kommt aus dem Katalog. */
-export function shortDate(iso: string, locale: string, translate: Translate): string {
-  const date = asDate(iso);
-  const month = new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
-  return translate('common.dateShort', { tag: date.getDate(), monat: month });
+/** „6. Sept.“: Tag und kurzer Monat, beides aus dem Katalog. */
+export function shortDate(iso: string, i18n: I18nService): string {
+  return shortDay(asDate(iso), i18n);
+}
+
+/** Derselbe Tag aus einem Zeitpunkt, den ein Dienst als Zeitstempel liefert. */
+export function shortDay(date: Date, i18n: I18nService): string {
+  const month = i18n.translate(`enum.monthShort.${date.getMonth() + 1}` as 'enum.monthShort.1');
+  return i18n.translate('common.dateShort', { tag: date.getDate(), monat: month });
 }

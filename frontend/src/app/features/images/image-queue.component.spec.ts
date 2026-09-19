@@ -63,8 +63,7 @@ describe('ImageQueueComponent', () => {
     expect(screen.getByText('1 von 2')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Junge Exemplare')).toBeInTheDocument();
-    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(new Date(2026, 8, 6));
-    expect(screen.getByText(`Jonas · 6. ${month}`)).toBeInTheDocument();
+    expect(screen.getByText('Jonas · 6. Sept.')).toBeInTheDocument();
     await noViolations(container);
   });
 

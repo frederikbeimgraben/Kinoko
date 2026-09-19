@@ -49,9 +49,10 @@ const CREDIT_LAYERS = {
 };
 
 async function view(
+  manifest: unknown = RAW_MANIFEST,
   layers: unknown = RAW_LAYERS,
 ): Promise<{ view: MapView; state: MapState; combination: CombinationState; tiles: TileService }> {
-  answerManifest(RAW_MANIFEST, layers);
+  answerManifest(manifest, layers);
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
@@ -147,6 +148,19 @@ describe('MapView', () => {
     expect(model.speciesName()).toBe('');
   });
 
+  it('richtet Vorhersage in der Zeitleiste nach heute, nicht nach dem Kettenkennzeichen', async () => {
+    const { view: model } = await view({
+      ...RAW_MANIFEST,
+      weeks: [
+        { year: 2025, week: 39, forecast: true, tiles: 'x/2025W39', mean: 0.05, max: 0.3 },
+        { year: 2025, week: 40, forecast: true, tiles: 'x/2025W40', mean: 0.1, max: 0.5 },
+        { year: 2025, week: 41, forecast: true, tiles: 'x/2025W41', mean: 0.08, max: 0.4 },
+      ],
+    });
+
+    expect(model.weeks().map((week) => week.forecast)).toEqual([false, false, true]);
+  });
+
   it('meldet eine feste Ebene ohne Woche', async () => {
     const { view: model, state } = await view();
     state.view.set('layer');
@@ -163,14 +177,14 @@ describe('MapView', () => {
   });
 
   it('nennt den Vermerk einer festen Ebene mit Quellenpflicht, auch in der Vorhersage', async () => {
-    const { view: model, state } = await view(CREDIT_LAYERS);
+    const { view: model, state } = await view(RAW_MANIFEST, CREDIT_LAYERS);
     state.layer.set('fichte');
 
     expect(model.creditNote()).toBe('Thünen-Institut, CC BY 4.0');
   });
 
   it('verbindet die Vermerke einer Kombination', async () => {
-    const { view: model, state, combination } = await view(CREDIT_LAYERS);
+    const { view: model, state, combination } = await view(RAW_MANIFEST, CREDIT_LAYERS);
     state.view.set('combination');
     combination.factors.set([
       { source: 'fichte', condition: 'above', low: 0.3, high: 0, active: true },
@@ -181,7 +195,7 @@ describe('MapView', () => {
   });
 
   it('lässt doppelte Vermerke einer Kombination einmal stehen', async () => {
-    const { view: model, state, combination } = await view(CREDIT_LAYERS);
+    const { view: model, state, combination } = await view(RAW_MANIFEST, CREDIT_LAYERS);
     state.view.set('combination');
     combination.factors.set([
       { source: 'fichte', condition: 'above', low: 0.3, high: 0, active: true },

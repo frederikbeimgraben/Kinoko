@@ -136,17 +136,17 @@ For a local test the script also serves the map directory:
 ## The input layers
 
 `input_layers.py` renders what the model was told, next to what it concluded.
-Nine static layers describe the place and are drawn once. Fifteen weekly
-layers describe the weather and follow the week slider. Every layer names its
-unit and the two ends of its scale, so the Faktor screen can put a value on a
-handle. The six tree species layers come from `tree_tiles.py` instead, and
-`input_layers.py` leaves them in the manifest.
+Two static layers describe the place and are drawn once. Fifteen weekly layers
+describe the weather and follow the week slider. Every layer names its unit
+and the two ends of its scale, so the Faktor screen can put a value on a
+handle. The thirteen layers with a finer source come from `fine_layers.py`,
+and `input_layers.py` leaves them in the manifest.
 
 The weather sits on 5 km cells. `coarse_inputs.py` filters it with a Gaussian
 kernel of half a cell and reads it at the 500 m cell centers, so neither the
 layer nor the prediction carries the 5 km cell. A sharp input keeps its own
 value: the forest share, the tree shares, the height, the soil and the visit
-prior are not in `COARSE_INPUTS`. Weekly tiles stop at zoom 7. All of the
+prior are not in `COARSE_INPUTS`. All of the
 weather comes from the DWD grids the chain already holds: HYRAS for rain,
 temperature and humidity, and the DWD soil moisture per tree species.
 
@@ -176,34 +176,107 @@ take their scale from their definition instead: a week has seven days, and the
 days since the last rain stop at 60. A summer-only run would otherwise show no
 frost day and therefore no scale at all.
 
-## The tree species layers
+## The layers with a fine source
 
-`tree_tiles.py` renders `fichte`, `buche`, `eiche`, `birke`, `kiefer` and
-`nadelholz` from the Thuenen map of dominant tree species at 10 m. It runs
-once, not every week. `pyramid.py` holds the rule that every layer follows:
-the step of the source names the finest zoom, and each coarser level is the
-weighted mean of the four tiles above it. A point carries the forest area
+`fine_layers.py` renders every layer whose source is finer than the map grid.
+It runs once, not every week. `pyramid.py` holds the rule that every layer
+follows: the step of the source names the finest zoom, and each coarser level
+is the weighted mean of the four tiles above it. A point carries the area
 behind it as its weight, so the area mean is the same on every level.
 
-A value is the share of the class in the forest area of that point. Ground
-without forest carries no data. At zoom 14 a point is 0 or 100 percent.
+| layer | source | step | zoom |
+|---|---|---|---|
+| `wald` | Thuenen dominant tree species | 10 m | 5 to 14 |
+| `fichte`, `buche`, `eiche`, `birke`, `kiefer`, `nadelholz` | the same map | 10 m | 5 to 14 |
+| `hoehe`, `hangneigung`, `nordexposition` | Copernicus DEM GLO-90 | 90 m | 5 to 12 |
+| `boden_ph`, `boden_sand`, `boden_kohlenstoff` | SoilGrids | 250 m | 5 to 10 |
 
-Run the step in the geo shell. It asks the service block by block, waits
-between blocks, and writes a state file, so a new run continues where the
-last one stopped:
+A tree species is the share of the class in the forest area of that point.
+Ground without forest carries no value. The forest share is the share of the
+ground, so it is 0 outside the forest. Outside Germany it carries no value:
+the step cuts the outline of Germany out of the OpenStreetMap extract and
+burns it onto the grid of each block.
 
-    nix develop .#geo --command python src/pilze/tree_tiles.py
+Run the step in the geo shell. It asks the tree species service block by
+block, waits between blocks, and writes a state file, so a new run continues
+where the last one stopped:
 
-Useful arguments: `--bbox west,south,east,north` for a trial over a small
-area, `--block-tiles` for the size of a block, `--pause` for the wait, and
-`--restart` to drop the state file. The tiles land beside the other layers in
-`reports/maps/layers_kacheln/<name>`, and `deploy_daten.sh` carries them.
+    nix develop .#geo --command python src/pilze/fine_layers.py
+
+Useful arguments: `--only` for a list of layers, `--bbox west,south,east,north`
+for a trial over a small area, `--block-tiles` for the size of a block,
+`--pause` for the wait, and `--restart` to drop the state file. The tiles land
+beside the other layers in `reports/maps/layers_kacheln/<name>`, and
+`deploy_daten.sh` carries them.
 
 The manifest of such a layer names two more levels. `haveZoom` is the last
 level whose tiles the manifest lists one by one. Above it the app asks the
 coarser tile over the same place, because a full list of the zoom 14 tiles
 would be larger than the manifest. `offlineZoomTo` is the finest level that an
 offline area takes.
+
+`input_layers.py` and `region_map.py` render the layers that live on the map
+grid. `--step` names their zoom span through the same `finest_zoom`, so a step
+of 500 m gives zoom 5 to 9. `--zoom-cap` limits it.
+
+## The forecast horizons
+
+A horizon is the distance in weeks between the last week with weather and the
+week that the model answers for. `horizons.py` holds the rule. Horizon 0
+serves a week that already happened. A larger horizon hides every column that
+reaches into the unknown: a weather lag below the horizon, every rolling
+window, every anomaly and every temperature drop.
+
+| horizon | weather columns |
+|---|---|
+| 0 | 35 |
+| 1 | 18 |
+| 2 | 15 |
+| 3 | 12 |
+| 4 | 9 |
+
+`HORIZONS` in `horizons.py` names the horizons that the chain builds: 0 to 4.
+Above 4 only two lags stay, so the chain stops there.
+
+`region_map.py` picks the horizon of each week from its distance to the last
+week with weather. It takes the smallest horizon that is at least that
+distance, so the model reads no column that the week lacks. Without such a
+horizon the run stops and names the missing one.
+
+`--forecast` needs no number any more. The run reads the last week of the
+weather table, adds two weeks of lead, and stops at the largest horizon that
+every model in `--models-dir` carries. `--forecast` still overrides it.
+
+A forecast week carries no weather. The lags of the weeks that already
+happened reach into it, and the horizon hides the rest. The weekly input
+layers therefore hold no forecast week.
+
+## Training the horizon models
+
+A bundle holds one model per horizon. Adding a horizon needs a new visit
+table, because `final_model.py` stops when the activity columns of a horizon
+are missing. Run this in the default shell:
+
+    cd modell
+    NEU=1 ./run_all.sh
+
+`run_all.sh` walks the eleven species and, per species, runs `visit_model.py`
+with `--save-prepared` and then `final_model.py`. Logs land in
+`reports/rebuild/<slug>.*.log`.
+
+| step | per species | eleven species |
+|---|---|---|
+| `visit_model.py`, needed for a new horizon | 23 to 29 min | about 5 h |
+| `final_model.py`, five horizons | about 30 min | about 4 h |
+| sum | | **about 9 h** |
+
+Two shells in parallel halve that to about 4.5 h. Each bundle grows by about
+1.2 MB per horizon, so the eleven models grow from 28 MB to about 55 MB.
+
+Memory: `region_map.py` holds one float32 matrix over 2.3 million cells per
+horizon that a week uses. A run over Germany therefore stays near the value
+of a run with two horizons, because a week list of 90 weeks uses horizon 0
+and the two to four forecast horizons, not all five.
 
 ## The manifests
 
@@ -213,22 +286,22 @@ carries a histogram of its values over Germany. The Faktor screen of the app
 shows that distribution with two handles; the browser cannot count 2.3 million
 cells per week, and a value tile only holds a byte per point.
 
-    "histogramm": {"klassen": [41 edges], "anteile": [40 shares]}
+    "histogram": {"classes": [41 edges], "shares": [40 shares]}
 
 - Forty classes over the scale the entry already declares: `low` to `high` in
   the unit of the layer, `0` to `top` for a prediction. A handle therefore
   points at metres, at a pH or at a probability.
-- `klassen` holds 41 edges, not 40 lower edges. The upper edge of the last
+- `classes` holds 41 edges, not 40 lower edges. The upper edge of the last
   class is a number the screen prints. It must not depend on a subtraction in
   the browser.
-- `anteile` sums to 1. Every point covers the same 500 m by 500 m in an
+- `shares` sums to 1. Every point covers the same 500 m by 500 m in an
   equal-area projection, so a share is a share of the area. A point without
   data does not count. A value outside the scale falls into the outer class,
   which is where the value tile puts it too.
-- A weekly layer keeps its histograms in `histogramme`, a map from the week
+- A weekly layer keeps its histograms in `histograms`, a map from the week
   key to the histogram, beside `weeks`. `weeks` stays a list of week keys:
   `update.sh` deletes every tile folder that is no longer in it.
-- A prediction keeps its histogram in the week entry, `weeks[i].histogramm`.
+- A prediction keeps its histogram in the week entry, `weeks[i].histogram`.
 
 `region_map.py` and `input_layers.py` count while they still hold the field.
 `week_stats.py --maps reports/maps` fills a manifest that was rendered before,

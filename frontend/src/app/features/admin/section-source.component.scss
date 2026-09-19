@@ -1,0 +1,23 @@
+@use '../../../styles/card';
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+  @include section.fields;
+}
+
+.section__title {
+  @include card.section-title;
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
+}

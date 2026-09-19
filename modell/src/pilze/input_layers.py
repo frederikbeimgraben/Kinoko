@@ -38,29 +38,24 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
-from coarse_inputs import COARSE_INPUTS, CoarseSampler
-from manifest import histogramm, schreibe
-from pyramid import belegung
+from coarse_inputs import COARSE_INPUTS, SIGMA_CELLS, CoarseSampler
+from manifest import histogram, schreibe
+from pyramid import (ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom,
+                     render_field)
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
-from tiles import schreibe_kacheln, write_tile_sets
 
-# name -> (source, column, label, unit)
-# The tree species layers come from `tree_tiles.py`.
+# name -> (source, column, label, unit, resolution in metres)
+# The layers with a source finer than the map grid come from
+# `fine_layers.py`. This run keeps them.
 STATIC = {
-    "wald":      ("trees", "forest_fraction_500m", "Waldanteil", ""),
-    "hoehe":     ("site", "dem_mean", "Höhe", "m"),
-    "hangneigung": ("site", "slope_mean", "Hangneigung", "Grad"),
-    "nordexposition": ("site", "northness", "Nordexposition", ""),
-    "relief":    ("site", "dem_relief", "Höhenunterschied in der Zelle", "m"),
-    "gelaendeposition": ("site", "tpi_25km", "Geländeposition, Mulde bis Rücken", "m"),
-    "boden_ph":  ("site", "soil_phh2o_0_5cm", "Boden-pH", ""),
-    "boden_sand": ("site", "soil_sand_0_5cm", "Sandanteil", "%"),
-    "boden_kohlenstoff": ("site", "soil_soc_0_5cm", "organischer Kohlenstoff", "g/kg"),
+    "relief":    ("site", "dem_relief", "Höhenunterschied in der Zelle", "m", 500),
+    "gelaendeposition": ("site", "tpi_25km", "Geländeposition, Mulde bis Rücken",
+                         "m", 25_000),
 }
-# SoilGrids speichert ganze Zahlen: pH mal 10, Sand in g/kg, Kohlenstoff in
-# dg/kg. Fuer die Anzeige durch 10 teilen, sonst steht dort pH 49.
-SKALA = {"boden_ph": 0.1, "boden_sand": 0.1, "boden_kohlenstoff": 0.1}
+# The weather sits on 5 km cells and reaches the map grid through a Gaussian
+# filter. Sigma is the width over which the field is smooth.
+WEEKLY_RESOLUTION = int(COARSE_INPUTS["weather"] * SIGMA_CELLS)
 # name -> (column, label, unit). The columns come from the weekly table and
 # the rolling windows below. The order is the order in the page's chooser.
 WEEKLY = {
@@ -172,9 +167,8 @@ def main() -> None:
                         default=Path("data/interim/weather_weekly.parquet"))
     parser.add_argument("--tiles", action="store_true",
                         help="Wertkacheln statt eines Vollbildes schreiben")
-    parser.add_argument("--tile-zooms", default="5-8")
-    parser.add_argument("--weekly-zooms", default="5-7",
-                        help="das Wetter liegt auf 5 km, mehr als z7 zeigt nichts Neues")
+    parser.add_argument("--zoom-cap", type=int, default=ZOOM_CAP,
+                        help="feinste Zoomstufe, die ein Lauf schreiben darf")
     parser.add_argument("--no-image", action="store_true")
     parser.add_argument("--only-weekly", action="store_true",
                         help="nur die Wochenebenen neu, die festen bleiben")
@@ -232,40 +226,45 @@ def main() -> None:
     # Every static layer of the old manifest stays.
     layers = {k: v for k, v in alt.get("layers", {}).items() if v.get("static")}
 
+    def spanne(resolution: int) -> tuple[int, int]:
+        """The zoom span of a source with this resolution."""
+        return ZOOM_BASE, finest_zoom(max(resolution, args.step), cap=args.zoom_cap)
+
     if not args.only_weekly:
-        z0, z1 = (int(v) for v in args.tile_zooms.split("-"))
-        for name, (_, column, label, unit) in STATIC.items():
+        for name, (_, column, label, unit, resolution) in STATIC.items():
             if column not in grid.columns:
                 print(f"  {name}: {column} fehlt, uebersprungen")
                 continue
+            z0, z1 = spanne(resolution)
             values = grid[column].to_numpy(dtype="float32")
             low, high = np.nanpercentile(values, [2, 98])
             feld = to_field(values)
             source = write_fields([(feld, low, high)], work, bounds, args.step)
-            k = SKALA.get(name, 1.0)
-            unten, oben = round(float(low) * k, 3), round(float(high) * k, 3)
+            unten, oben = round(float(low), 3), round(float(high), 3)
             eintrag = {"label": label, "unit": unit, "static": True,
                        "low": unten, "high": oben}
             # Ueber die Skala der Ebene, in ihrer Einheit. Die Griffe im
             # Faktor-Screen zeigen damit auf Meter oder pH, nicht auf 0 bis 1.
-            verteilung = histogramm(feld * k, unten, oben)
+            verteilung = histogram(feld, unten, oben)
             if verteilung is not None:
-                eintrag["histogramm"] = verteilung
+                eintrag["histogram"] = verteilung
             if not args.no_image:
                 write_images(source, [folder / f"{name}.png"], work)
                 eintrag["file"] = f"layers/{name}.png"
             if args.tiles:
-                gefuellt, _ = schreibe_kacheln(source, args.out / "layers_kacheln" / name,
-                                               1.0, range(z0, z1 + 1), work, wgs_box)
+                gefuellt, _ = render_field(
+                    source, [args.out / "layers_kacheln" / name], [1.0], z1,
+                    work, wgs_box)[0]
                 eintrag.update(tiles=f"layers_kacheln/{name}", zooms=[z0, z1],
                                have=belegung(gefuellt))
             layers[name] = eintrag
-            print(f"  {name:20s} {low*k:8.2f} bis {high*k:8.2f} {unit}", flush=True)
+            print(f"  {name:20s} {low:8.2f} bis {high:8.2f} {unit}  z{z0}-{z1}",
+                  flush=True)
     else:
         print(f"  {len(layers)} feste Ebenen aus dem alten Manifest uebernommen")
 
     if not args.no_weekly:
-        z0, z1 = (int(v) for v in args.weekly_zooms.split("-"))
+        z0, z1 = spanne(WEEKLY_RESOLUTION)
         wetter, wochen = wochenwetter(args.weather, set(grid["cell"]), args.weeks)
         print(f"\n{len(wochen)} Wochen Wetter, {wochen[0][0]}-W{wochen[0][1]:02d} bis "
               f"{wochen[-1][0]}-W{wochen[-1][1]:02d}")
@@ -294,7 +293,7 @@ def main() -> None:
             # dieser Liste auf. Eine Zuordnung daneben laesst beides heil.
             layers[name] = {"label": label, "unit": unit, "static": False,
                             "low": low, "high": high, "weeks": [],
-                            "histogramme": {}}
+                            "histograms": {}}
             print(f"  {name:20s} {low:8.1f} bis {high:8.1f} {unit}", flush=True)
 
         # Je Woche ein Quellbild mit einem Band je Ebene, statt je Ebene und
@@ -313,9 +312,9 @@ def main() -> None:
                 eintrag = layers[name]
                 values = leser.sample(spalten[column].to_numpy(dtype="float32"))
                 feld = to_field(values)
-                verteilung = histogramm(feld, eintrag["low"], eintrag["high"])
+                verteilung = histogram(feld, eintrag["low"], eintrag["high"])
                 if verteilung is not None:
-                    eintrag["histogramme"][schluessel] = verteilung
+                    eintrag["histograms"][schluessel] = verteilung
                 eintrag["weeks"].append(schluessel)
                 felder.append((feld, eintrag["low"], eintrag["high"]))
             source = write_fields(felder, work, bounds, args.step)
@@ -323,9 +322,9 @@ def main() -> None:
                 write_images(source, [folder / f"{n}_{schluessel}.png" for n in namen],
                                 work)
             if args.tiles:
-                saetze = write_tile_sets(
+                saetze = render_field(
                     source, [args.out / "layers_kacheln" / n / schluessel for n in namen],
-                    [1.0] * len(namen), range(z0, z1 + 1), work, wgs_box)
+                    [1.0] * len(namen), z1, work, wgs_box)
                 if year == wochen[0][0] and week == wochen[0][1]:
                     for name, (gefuellt, _) in zip(namen, saetze):
                         layers[name]["have"] = belegung(gefuellt)
