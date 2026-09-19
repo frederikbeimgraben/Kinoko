@@ -10,7 +10,7 @@ import {
   type Layer,
 } from '../../core/tiles/layers';
 import { NOW } from '../../core/tiles/now';
-import { barShares, currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
+import { barShares, currentWeek, findWeek, isFuture, type ManifestWeek } from '../../core/tiles/manifest';
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
@@ -65,11 +65,12 @@ export class MapView {
     const manifest = this.manifest();
     if (manifest === null) return [];
     const shares = barShares(manifest);
+    const today = this.now();
     return manifest.weeks.map((week, i) => ({
       year: week.year,
       week: week.week,
       share: shares[i],
-      forecast: week.forecast,
+      forecast: isFuture(week, today),
     }));
   });
 

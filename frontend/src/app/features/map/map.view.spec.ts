@@ -9,8 +9,10 @@ import type { SpeciesEntry } from '../../core/api/models';
 import { MapState } from './map.state';
 import { MapView } from './map.view';
 
-async function view(): Promise<{ view: MapView; state: MapState; tiles: TileService }> {
-  answerManifest(RAW_MANIFEST, RAW_LAYERS);
+async function view(
+  manifest: unknown = RAW_MANIFEST,
+): Promise<{ view: MapView; state: MapState; tiles: TileService }> {
+  answerManifest(manifest, RAW_LAYERS);
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
@@ -99,6 +101,19 @@ describe('MapView', () => {
     expect(model.noSpecies()).toBe(true);
     expect(model.title()).toBe('Art wählen');
     expect(model.speciesName()).toBe('');
+  });
+
+  it('richtet Vorhersage in der Zeitleiste nach heute, nicht nach dem Kettenkennzeichen', async () => {
+    const { view: model } = await view({
+      ...RAW_MANIFEST,
+      weeks: [
+        { year: 2025, week: 39, forecast: true, tiles: 'x/2025W39', mean: 0.05, max: 0.3 },
+        { year: 2025, week: 40, forecast: true, tiles: 'x/2025W40', mean: 0.1, max: 0.5 },
+        { year: 2025, week: 41, forecast: true, tiles: 'x/2025W41', mean: 0.08, max: 0.4 },
+      ],
+    });
+
+    expect(model.weeks().map((week) => week.forecast)).toEqual([false, false, true]);
   });
 
   it('meldet eine feste Ebene ohne Woche', async () => {
