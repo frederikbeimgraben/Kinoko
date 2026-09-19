@@ -268,6 +268,7 @@ export class AddEntryComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.input.stop();
     this.stopSession();
+    this.state.abandon();
   }
 
   protected start(action: AddAction): void {

@@ -124,6 +124,11 @@ export class AddEntryState {
     if (wasRunning) this.stack.back();
   }
 
+  /** Räumt weg, ohne die Geschichte zu bewegen: der Reiter ist schon weg. */
+  abandon(): void {
+    this.clear();
+  }
+
   private clear(): void {
     this._step.set(null);
     this._location.set(null);
