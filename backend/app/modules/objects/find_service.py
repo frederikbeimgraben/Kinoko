@@ -100,6 +100,16 @@ class FindService:
         out: Callable[[Find], FindSchema] = FindSchema.of
         return await page(self.db, filtered(stmt, query.species_id, query.box), paging, out)
 
+    async def open_for_review(self, paging: Paging) -> dict[str, Any]:
+        """Die offenen Funde aller Konten, der älteste zuerst."""
+        query = (
+            self.repo.query()
+            .where(Find.review_state == ReviewState.OPEN, Find.deleted_at.is_(None))
+            .order_by(Find.created_at)
+        )
+        out: Callable[[Find], FindSchema] = FindSchema.of
+        return await page(self.db, query, paging, out)
+
     def apply_review(self, find: Find, reviewer: User, decision: ReviewDecision) -> Find:
         """Setzt Zustand, Prüfer und Zeitpunkt an einem Fund."""
         find.review_state = ReviewState(decision.value)

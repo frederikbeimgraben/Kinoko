@@ -286,6 +286,33 @@ async def test_review_of_missing_find_is_not_found(
     assert answer.status_code == 404
 
 
+async def test_open_finds_requires_the_right(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "anna")
+    sign_in(app_of(api), user)
+    assert (await api.get("/finds/reviews/open")).status_code == 403
+
+
+async def test_open_finds_lists_every_account(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    anna = await make_user(session, "anna")
+    bert = await make_user(session, "bert")
+    reviewer = await make_user(session, "reviewer")
+    sign_in(app_of(api), anna)
+    await api.post("/finds", json={"lat": 1.0, "lon": 1.0, "foundOn": "2026-09-01"})
+    sign_in(app_of(api), bert)
+    done = await api.post("/finds", json={"lat": 2.0, "lon": 2.0, "foundOn": "2026-09-01"})
+    sign_in(app_of(api), reviewer, "find.review")
+    await api.post(f"/finds/{done.json()['id']}/review", json={"decision": "accepted"})
+    listed = await api.get("/finds/reviews/open")
+    assert listed.status_code == 200
+    items = listed.json()["items"]
+    assert [item["lat"] for item in items] == [1.0]
+    assert items[0]["ownerId"] == str(anna.id)
+
+
 async def test_accept_all_open_finds(api: httpx.AsyncClient, session: AsyncSession) -> None:
     owner = await make_user(session, "anna")
     reviewer = await make_user(session, "reviewer")

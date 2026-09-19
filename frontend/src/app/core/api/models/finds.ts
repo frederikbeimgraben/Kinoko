@@ -17,3 +17,8 @@ export interface SharedFind {
   note: string | null;
   reviewState: ReviewState;
 }
+
+/** Ein offener Fund der Prüfung. Er nennt das Konto, dem er gehört. */
+export interface OpenFind extends SharedFind {
+  ownerId: string;
+}
