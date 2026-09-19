@@ -191,6 +191,17 @@ describe('KontoComponent', () => {
     expect(screen.getAllByText('sso.beimgraben.net')).toHaveLength(1);
   });
 
+  it('behält den Knoten unter Über beim Wechsel von unknown zu signedIn', async () => {
+    const { manager, auth, refresh } = await build();
+    const before = screen.getByText('Methode');
+
+    manager.still = oidcUser();
+    await auth.silentRenew();
+    refresh();
+
+    expect(screen.getByText('Methode')).toBe(before);
+  });
+
   it('führt über Schließen auf die Karte', async () => {
     const { router } = await build();
     const change = vi.spyOn(router, 'navigateByUrl');
