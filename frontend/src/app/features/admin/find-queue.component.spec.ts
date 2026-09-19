@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
 import { noViolations } from '../../testing/axe';
 import {
   FindPhotosApiDouble,
@@ -25,7 +26,10 @@ function speciesStub(): unknown {
   return { loadBundle: () => Promise.resolve(), species: signal([STONE]) };
 }
 
-async function build(api = new FindsApiDouble()): Promise<{
+async function build(
+  api = new FindsApiDouble(),
+  access = new AccessApiDouble(),
+): Promise<{
   container: Element;
   api: FindsApiDouble;
   router: Router;
@@ -37,6 +41,7 @@ async function build(api = new FindsApiDouble()): Promise<{
       provideRouter(ANY_ROUTE),
       findsApiProvider(api),
       findPhotosApiProvider(photos),
+      accessApiProvider(access),
       { provide: SpeciesState, useValue: speciesStub() },
     ],
   });
@@ -44,12 +49,13 @@ async function build(api = new FindsApiDouble()): Promise<{
 }
 
 describe('FindQueueComponent', () => {
-  it('zeigt Art, Zeile und Ort der obersten Karte', async () => {
+  it('zeigt Art, Zeile und Ort der obersten Karte, ohne Kennung des Melders', async () => {
     const { container } = await build();
 
     expect(screen.getByText('1 von 2')).toBeInTheDocument();
     expect(screen.getAllByText('Steinpilz').length).toBeGreaterThan(0);
-    expect(screen.getByText('6. Sept. · 3 Stück · person-eins')).toBeInTheDocument();
+    expect(screen.getByText('6. Sept. · 3 Stück')).toBeInTheDocument();
+    expect(screen.queryByText(/person-eins/)).not.toBeInTheDocument();
     expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
     expect(screen.getByText('Am Wegrand')).toBeInTheDocument();
     await noViolations(container);
@@ -58,7 +64,16 @@ describe('FindQueueComponent', () => {
   it('lässt eine Karte ohne Anzahl die Anzahl weg', async () => {
     await build();
 
-    expect(screen.getByText('6. Sept. · person-eins')).toBeInTheDocument();
+    expect(screen.getByText('6. Sept.')).toBeInTheDocument();
+  });
+
+  it('nennt den Melder, wenn eine gemeinsame Gruppe ihn auflöst', async () => {
+    const access = new AccessApiDouble();
+    access.personNamesAnswer = [{ id: 'person-eins', name: 'Melderin Eins' }];
+
+    await build(new FindsApiDouble(), access);
+
+    expect(await screen.findByText('6. Sept. · 3 Stück · Melderin Eins')).toBeInTheDocument();
   });
 
   it('nimmt mit dem Haken an und zählt weiter', async () => {

@@ -8,6 +8,7 @@ import {
   untracked,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { PersonNamesService } from '../../core/access/person-names.service';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { OpenFind } from '../../core/api/models';
@@ -40,6 +41,7 @@ import { FindQueueState } from './find-queue.state';
 export class FindQueueComponent {
   private readonly finds = inject(FindQueueState);
   private readonly species = inject(SpeciesState);
+  private readonly names = inject(PersonNamesService);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
@@ -53,7 +55,13 @@ export class FindQueueComponent {
   protected readonly cards = computed<readonly FindCard[]>(() => {
     const photos = this.finds.photos();
     return this.held().map((one) =>
-      findCard(one, this.nameOf(one.speciesId), photos[one.id] ?? [], this.i18n),
+      findCard(
+        one,
+        this.speciesName(one.speciesId),
+        photos[one.id] ?? [],
+        this.i18n,
+        this.names.nameOf(one.ownerId),
+      ),
     );
   });
 
@@ -106,7 +114,7 @@ export class FindQueueComponent {
     void this.router.navigate(['/verwaltung']);
   }
 
-  private nameOf(speciesId: string | null): string {
+  private speciesName(speciesId: string | null): string {
     return this.species.species().find((entry) => entry.id === speciesId)?.name ?? '';
   }
 }
