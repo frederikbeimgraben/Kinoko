@@ -1,4 +1,5 @@
 import type { PipelineRun, PipelineRunDetail } from '../../core/api/models';
+import { catalogueOf } from '../../testing/i18n';
 import {
   activeSubline,
   brierValue,
@@ -129,8 +130,13 @@ describe('runs.rows', () => {
   it('schreibt Tag und Uhrzeit des Beginns in der Zeitzone des Geräts', () => {
     const started = new Date(RUN.startedAt ?? '');
     const day = new Intl.DateTimeFormat('de', { day: 'numeric' }).format(started);
-    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(started);
     const time = new Intl.DateTimeFormat('de', { hour: '2-digit', minute: '2-digit' }).format(started);
-    expect(startedValue(RUN, text, 'de')).toBe(`${day}. ${month}, ${time}`);
+    const catalogue = catalogueOf({
+      'common.dateShort': '{tag}. {monat}',
+      'common.dateTime': '{tag}, {zeit}',
+      [`enum.monthShort.${started.getMonth() + 1}`]: 'Sept.',
+    });
+
+    expect(startedValue(RUN, catalogue)).toBe(`${day}. Sept., ${time}`);
   });
 });

@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { asDate, longDate, numericDate, shortDate } from './dates';
+import { catalogueOf } from '../../testing/i18n';
+import { asDate, longDate, numericDate, shortDate, shortDay } from './dates';
 
 /** Der Katalog der Tests: die Muster der beiden kurzen Formen. */
 const PATTERN = {
   'common.dateShort': '{tag}. {monat}',
   'common.dateNumeric': '{tag}. {monat}. {jahr}',
+  'enum.monthShort.9': 'Sept.',
 };
+
+const CATALOGUE = catalogueOf(PATTERN);
 
 function translate(key: string, values: Record<string, string | number> = {}): string {
   const text = PATTERN[key as keyof typeof PATTERN];
@@ -32,18 +36,11 @@ describe('numericDate', () => {
 });
 
 describe('shortDate', () => {
-  it('schreibt den Tag mit kurzem Monat und ohne Jahr', () => {
-    // Die Schreibweise des Monats kommt aus der Zeitzone der Laufzeit; der
-    // Test prüft das Muster, nicht den Katalog des Browsers.
-    const month = new Intl.DateTimeFormat('de', { month: 'short' }).format(new Date(2026, 8, 6));
-
-    expect(shortDate('2026-09-06', 'de', translate)).toBe(`6. ${month}`);
-    expect(month).not.toContain('2026');
+  it('nimmt Tag und kurzen Monat aus dem Katalog', () => {
+    expect(shortDate('2026-09-06', CATALOGUE)).toBe('6. Sept.');
   });
 
-  it('nimmt das Muster aus dem Katalog', () => {
-    const english = (_key: string, values: Record<string, string | number> = {}): string =>
-      `${String(values['monat'])} ${String(values['tag'])}`;
-    expect(shortDate('2026-09-06', 'en', english)).toBe('Sep 6');
+  it('schreibt denselben Tag aus einem Zeitpunkt', () => {
+    expect(shortDay(new Date(2026, 8, 6), CATALOGUE)).toBe('6. Sept.');
   });
 });

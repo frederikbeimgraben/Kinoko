@@ -13,6 +13,18 @@ const emptyService = {
   translate: (key: string) => key,
 };
 
+/** Ein Katalog aus einer Tabelle: die Tests setzen nur die Muster, die sie prüfen. */
+export function catalogueOf(table: Record<string, string>): I18nService {
+  return {
+    ...emptyService,
+    translate: (key: string, values: Record<string, string | number> = {}) =>
+      Object.entries(values).reduce(
+        (out, [name, value]) => out.replace(`{${name}}`, String(value)),
+        table[key] ?? key,
+      ),
+  } as unknown as I18nService;
+}
+
 export const EMPTY_CATALOG: Provider = {
   provide: I18nService,
   useValue: emptyService,

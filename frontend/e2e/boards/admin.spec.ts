@@ -30,6 +30,9 @@ const SPECIES_COUNTS = {
   ],
 };
 
+/** Die Rollhöhe des Bretts `SpeciesEditScrolled`, aus seinem Bild gemessen. */
+const EDITOR_SCROLL = 417;
+
 /** Ein Brett gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
   test.skip(test.info().project.name !== device, `Brett gehört zu ${device}`);
@@ -165,6 +168,19 @@ test('SpeciesEdit', async ({ page }) => {
   });
   await expect(page.getByText('Röhren rosa, Netz grob, bitter')).toBeVisible();
   await expectBoard(page, 'SpeciesEdit');
+});
+
+test('SpeciesEditScrolled', async ({ page }) => {
+  guard('SpeciesEditScrolled', 'phone');
+  await open(page, '/verwaltung/arten/boletus-edulis', {
+    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
+  });
+  await expect(page.getByText('de.wikipedia.org/wiki/Gemeiner_Steinpilz')).toBeVisible();
+  await page.locator('.editor').evaluate((one, top) => {
+    one.scrollTo(0, top);
+  }, EDITOR_SCROLL);
+  await expectBoard(page, 'SpeciesEditScrolled');
 });
 
 test('PartPicker', async ({ page }) => {

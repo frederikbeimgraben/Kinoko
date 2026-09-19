@@ -53,10 +53,7 @@ export class SectionSourceComponent {
 
   protected readonly checkedDay = computed(() => {
     const day = this.checkedOn();
-    if (day === '') return '';
-    return shortDate(day, this.i18n.locale(), (key, values) =>
-      this.i18n.translate(key as TranslationKey, values),
-    );
+    return day === '' ? '' : shortDate(day, this.i18n);
   });
 
   constructor() {

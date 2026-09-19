@@ -207,8 +207,6 @@ export class SpeciesEditorComponent {
   }
 
   private day(value: string): string {
-    return shortDate(value, this.i18n.locale(), (key, values) =>
-      this.i18n.translate(key as TranslationKey, values),
-    );
+    return shortDate(value, this.i18n);
   }
 }
