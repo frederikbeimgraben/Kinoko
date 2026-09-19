@@ -46,8 +46,7 @@ from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
 from tiles import schreibe_kacheln, write_tile_sets
 
 # name -> (source, column, label, unit)
-# Die Baumarten-Ebenen kommen aus `tree_tiles.py`, dem einmaligen Lauf ueber
-# das 10-m-Raster. Dieser Lauf laesst sie stehen.
+# The tree species layers come from `tree_tiles.py`.
 STATIC = {
     "wald":      ("trees", "forest_fraction_500m", "Waldanteil", ""),
     "hoehe":     ("site", "dem_mean", "Höhe", "m"),
@@ -230,8 +229,7 @@ def main() -> None:
 
     manifest_path = args.out / "layers.json"
     alt = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    # Jede feste Ebene aus dem alten Manifest bleibt stehen. Dieser Lauf
-    # ueberschreibt nur die Ebenen, die er selbst rendert.
+    # Every static layer of the old manifest stays.
     layers = {k: v for k, v in alt.get("layers", {}).items() if v.get("static")}
 
     if not args.only_weekly:

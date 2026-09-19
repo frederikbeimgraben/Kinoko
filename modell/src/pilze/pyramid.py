@@ -1,9 +1,8 @@
 """One tile pyramid for every layer.
 
-A source raster carries a zoom span. ``finest_zoom`` reads that span from the
-step of the source. The finest level comes from the source, and each coarser
-level is the mean of the four tiles above it. The coding of ``tiles.py`` holds
-on every level, and a tile without data is not written.
+``finest_zoom`` reads the zoom span from the step of the source. The finest
+level comes from the source. Each coarser level is the mean of the four tiles
+above it. The coding of ``tiles.py`` holds on every level.
 """
 
 from __future__ import annotations
@@ -16,10 +15,10 @@ import numpy as np
 
 from tiles import KACHEL, RAND, from_byte, kachelbox, kachelraster, to_byte
 
-# Zoom 5 zeigt Deutschland, Zoom 14 ist die letzte Stufe der Grundkarte.
+# Zoom 5 shows Germany. Zoom 14 is the last level of the base map.
 ZOOM_BASE = 5
 ZOOM_CAP = 14
-# Der Punkt einer Kachel auf Zoom 0, in Metern am Aequator.
+# Metres per point at zoom 0, on the equator.
 RESOLUTION_ZERO = 2 * RAND / KACHEL
 CENTRE_LATITUDE = 51.2
 
@@ -32,7 +31,7 @@ def finest_zoom(resolution_m: float, cap: int = ZOOM_CAP, base: int = ZOOM_BASE)
 
 
 def full_weight(codes: np.ndarray) -> np.ndarray:
-    """The weight of the finest level: the whole point, or nothing."""
+    """The weight of the finest level. A point is full, or it has no data."""
     return np.where(codes > 0, 255, 0).astype("uint8")
 
 
@@ -40,9 +39,8 @@ def halve(codes: np.ndarray, weights: np.ndarray
           ) -> tuple[np.ndarray, np.ndarray]:
     """Average each block of two by two points into one point.
 
-    A point carries the area behind it as its weight. Without that weight a
-    point over one tree of forest would count as much as a point over a whole
-    forest, and the mean would move from level to level.
+    ``weights`` holds the area behind each point. The result is the mean value
+    and the mean weight.
     """
     rows, cols = codes.shape
     shape = (rows // 2, 2, cols // 2, 2)
@@ -74,7 +72,7 @@ def tile_file(root: Path, zoom: int, x: int, y: int) -> Path:
 
 
 def write_tile(root: Path, zoom: int, x: int, y: int, code: np.ndarray) -> bool:
-    """Write one tile. A tile without data is left out and returns False."""
+    """Write one tile. A tile without data returns False and writes nothing."""
     from PIL import Image
 
     if not code.any():
@@ -126,8 +124,8 @@ def coarsen(root: Path, weights: Path, finest: int, base: int = ZOOM_BASE
             ) -> list[tuple[int, int, int]]:
     """Build every level from ``finest - 1`` down to ``base``.
 
-    ``weights`` holds the weight tree beside the value tree. The caller writes
-    its finest level with ``full_weight`` and can drop the tree afterwards.
+    ``weights`` is the weight tree beside the value tree. The caller writes its
+    finest level with ``full_weight``.
     """
     written: list[tuple[int, int, int]] = []
     for zoom in range(finest, base, -1):
@@ -153,8 +151,7 @@ def have_up_to(filled: Iterable[tuple[int, int, int]], cap: int
                ) -> dict[str, list[str]]:
     """The ``have`` list up to one zoom level.
 
-    A fine level holds too many names for a manifest that the app reads at
-    every start. Above the cap the app asks the coarser tile instead.
+    Above the cap the app asks the coarser tile over the same place.
     """
     return belegung(tile for tile in filled if tile[0] <= cap)
 

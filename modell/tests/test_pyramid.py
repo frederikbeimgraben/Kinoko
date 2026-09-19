@@ -77,8 +77,7 @@ def test_vier_kinder_ohne_daten_geben_keine_daten():
 
 
 def test_gewicht_traegt_das_mittel_ueber_die_stufen():
-    # Ein Kind mit einem einzigen gueltigen Punkt darf nicht so schwer wiegen
-    # wie ein Kind, das ganz gefuellt ist.
+    # A child with one valid point weighs less than a full child.
     werte = np.array([[1.0, 1.0, 0.0, np.nan],
                       [1.0, 1.0, np.nan, np.nan],
                       [np.nan, np.nan, np.nan, np.nan],
@@ -146,7 +145,7 @@ def test_coarsen_baut_die_stufen_darunter(tmp_path):
     assert sorted(geschrieben) == [(10, 2, 2), (11, 4, 5)]
     eltern = from_byte(read_tile(root, 11, 4, 5))
     assert eltern[0, 0] == pytest.approx(1.0)
-    # Das vierte Kind fehlt. Sein Viertel der Elternkachel bleibt ohne Daten.
+    # The fourth child is absent. Its quarter of the parent has no data.
     assert np.isnan(eltern[255, 255])
 
 

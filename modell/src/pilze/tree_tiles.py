@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Render the tree species layers from the 10 m source, once.
 
-The weekly run keeps these layers as they are. This step reads the map of
-dominant tree species block by block, turns each class group into a share of
-the forest area, and writes the tile pyramid that ``pyramid.py`` defines. A
-block that is complete goes into the state file, so a new run continues where
-the last one stopped.
+The weekly run keeps these layers as they are. The step reads the map of
+dominant tree species block by block. It turns each class group into a share
+of the forest area. It writes the tile pyramid that ``pyramid.py`` defines. A
+complete block goes into the state file, and a new run continues after it.
 
 Run this in the geo shell:
     nix develop .#geo --command python src/pilze/tree_tiles.py
@@ -31,8 +30,7 @@ from region_map import REGIONEN
 from tiles import KACHEL
 from tree_species import COVERAGE, USER_AGENT, WCS, fetch
 
-# Die Klassen der Thuenen-Karte je Ebene. Nadelholz fasst die fuenf
-# Nadelbaum-Klassen zusammen.
+# The classes of the Thuenen map per layer.
 GROUPS: dict[str, tuple[int, ...]] = {
     "fichte": (8,), "buche": (3,), "eiche": (5,), "birke": (2,),
     "kiefer": (9,), "nadelholz": (4, 8, 9, 10, 14),
@@ -43,11 +41,10 @@ RESOLUTION = 10
 SOURCE_CRS = "EPSG:32632"
 MERCATOR = "EPSG:3857"
 STATE = "_baumarten_stand.json"
-# Die Quelle steht unter CC BY 4.0 und verlangt eine Namensnennung. Das
-# Manifest traegt sie mit der Ebene.
+# The credit that CC BY 4.0 asks for.
 NOTE = ("10-m-Raster, Thünen-Institut, Dominant Tree Species for Germany "
         "(2017/2018), CC BY 4.0")
-# Der Anteil gilt an der Waldflaeche und laeuft von 0 bis 1.
+# A value is the share of the forest area, from 0 to 1.
 LOW, HIGH = 0.0, 1.0
 
 
@@ -152,7 +149,7 @@ def main() -> None:
     parser.add_argument("--out", type=Path, default=Path("reports/maps"))
     parser.add_argument("--work", type=Path, default=Path("reports/maps/_work_trees"))
     parser.add_argument("--region", default="de")
-    parser.add_argument("--bbox", help="west,sued,ost,nord in Grad statt --region")
+    parser.add_argument("--bbox", help="west,south,east,north in degrees instead of --region")
     parser.add_argument("--zoom-cap", type=int, default=finest_zoom(RESOLUTION))
     parser.add_argument("--block-tiles", type=int, default=16)
     parser.add_argument("--have-zoom", type=int, default=10)
@@ -172,7 +169,6 @@ def main() -> None:
     if args.restart:
         state_path.unlink(missing_ok=True)
     if not state_path.exists():
-        # Eine Kachel eines alten Laufs bliebe sonst neben den neuen liegen.
         for folder in (*roots.values(), *weights.values()):
             shutil.rmtree(folder, ignore_errors=True)
     state = read_state(state_path)
