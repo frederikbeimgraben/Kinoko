@@ -386,7 +386,6 @@
 .block__stage app-sheet,
 .block__stage app-overlay-host,
 .block__stage app-filter-sheet,
-.block__stage app-option-sheet,
 .block__stage app-split-layout {
   position: absolute;
   inset: 0;
@@ -399,7 +398,6 @@
 // Eine Bühne mit Grund: der Baustein liegt darauf wie auf dem Bildschirm.
 .block__stage--sheet,
 .block__stage--overlay,
-.block__stage--option-sheet,
 .block__stage--split,
 .block__stage--fixed,
 .block__stage--popover {

@@ -831,17 +831,4 @@
     <h2 class="block__head">{{ 'blocks.buttonBusy' | t }}</h2>
     <app-button variant="primary" size="lg" [loading]="true" [ariaLabel]="text('common.loading')" />
   </section>
-
-  <section class="block">
-    <h2 class="block__head">{{ 'blocks.optionSheet' | t }}</h2>
-    <div class="block__stage block__stage--option-sheet" [style.--stage-h.px]="420">
-      <app-option-sheet
-        [open]="optionSheetOpen()"
-        [title]="text('map.factor.choose')"
-        [options]="optionSheetOptions"
-        [dims]="false"
-        (closed)="optionSheetOpen.set(false)"
-      />
-    </div>
-  </section>
 </div>
