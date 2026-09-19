@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { AuthService } from '../core/auth';
+import { SessionState } from '../core/auth';
 import { ViewportService } from '../core/layout/viewport.service';
 import { I18nService } from '../core/i18n/i18n.service';
 // Diese Datei laedt beim Start mit. Sie nimmt die Bausteine darum einzeln
@@ -43,7 +43,7 @@ export class ShellComponent {
   private readonly router = inject(Router);
   private readonly i18n = inject(I18nService);
   private readonly viewport = inject(ViewportService);
-  private readonly auth = inject(AuthService);
+  private readonly session = inject(SessionState);
   private readonly map = inject(MapState);
   private readonly addEntry = inject(AddEntryState);
   private readonly sync = inject(SyncService);
@@ -85,14 +85,17 @@ export class ShellComponent {
    */
   protected readonly mapInFront = computed(() => this.map.layersSheetOpen() || this.addEntry.running());
 
-  /** Angemeldet trägt der Kreis den ersten Buchstaben des Namens, sonst „G“. */
-  protected readonly avatarName = computed(() => this.auth.user()?.name ?? this.i18n.translate('konto.gast'));
+  /** Buchstabe des Namens, als Gast „G“, bei offener Sitzung `null`. */
+  protected readonly avatarName = computed(() => {
+    if (this.session.status() === 'unknown') return null;
+    return this.session.name() ?? this.i18n.translate('konto.gast');
+  });
 
   protected readonly avatarLabel = computed(() => {
-    const person = this.auth.user();
-    return person === null
+    const name = this.session.status() === 'signedIn' ? this.session.name() : null;
+    return name === null
       ? this.i18n.translate('nav.konto')
-      : this.i18n.translate('konto.avatarAngemeldet', { name: person.name });
+      : this.i18n.translate('konto.avatarAngemeldet', { name });
   });
 
   protected toAccount(): void {

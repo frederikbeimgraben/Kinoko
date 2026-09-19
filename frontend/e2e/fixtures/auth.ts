@@ -44,11 +44,12 @@ const METADATA = {
  * Legt ein SSO auf die Seite. Die stille Erneuerung läuft danach durch, und
  * die App ist angemeldet.
  */
-export async function mockSignIn(page: Page): Promise<void> {
+export async function mockSignIn(page: Page, delayMs = 0): Promise<void> {
   let nonce = '';
-  await page.route(`${ISSUER}/.well-known/openid-configuration`, (route) =>
-    route.fulfill({ contentType: 'application/json', body: JSON.stringify(METADATA) }),
-  );
+  await page.route(`${ISSUER}/.well-known/openid-configuration`, async (route) => {
+    if (delayMs > 0) await new Promise((done) => setTimeout(done, delayMs));
+    await route.fulfill({ contentType: 'application/json', body: JSON.stringify(METADATA) });
+  });
   await page.route(`${ISSUER}/authorize*`, async (route) => {
     const asked = new URL(route.request().url());
     nonce = asked.searchParams.get('nonce') ?? '';

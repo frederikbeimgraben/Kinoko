@@ -19,24 +19,55 @@ class TextCatalogDouble {
   }
 }
 
-function start(catalog: TextCatalogDouble, restoreSession = () => Promise.resolve()): Promise<void> {
+interface Calls {
+  config: number;
+  session: number;
+}
+
+function start(catalog: TextCatalogDouble, restoreSession = () => Promise.resolve()): Calls {
   TestBed.resetTestingModule();
+  const calls: Calls = { config: 0, session: 0 };
   TestBed.configureTestingModule({
     providers: [
       { provide: ThemeService, useValue: { init: () => undefined } },
-      { provide: AuthService, useValue: { restoreSession } },
-      { provide: ConfigService, useValue: { load: () => Promise.resolve() } },
+      {
+        provide: AuthService,
+        useValue: {
+          restoreSession: () => {
+            calls.session += 1;
+            return restoreSession();
+          },
+        },
+      },
+      {
+        provide: ConfigService,
+        useValue: {
+          load: () => {
+            calls.config += 1;
+            return new Promise<void>(() => undefined);
+          },
+        },
+      },
       { provide: TextCatalogService, useValue: catalog },
     ],
   });
-  return TestBed.runInInjectionContext(startApp);
+  TestBed.runInInjectionContext(startApp);
+  return calls;
 }
 
 describe('startApp', () => {
+  it('kehrt zurück, ohne auf Konfiguration oder Sitzung zu warten', () => {
+    const calls = start(new TextCatalogDouble());
+
+    expect(calls.config).toBe(1);
+    expect(calls.session).toBe(1);
+  });
+
   it('löst auf, ohne auf die Textablage zu warten', async () => {
     const catalog = new TextCatalogDouble();
 
-    await start(catalog);
+    start(catalog);
+    await Promise.resolve();
 
     expect(catalog.loaded).toBe(false);
   });
@@ -45,19 +76,21 @@ describe('startApp', () => {
     const catalog = new TextCatalogDouble();
     catalog.restore = () => Promise.resolve();
 
-    await start(catalog);
-    await Promise.resolve();
+    start(catalog);
 
-    expect(catalog.loaded).toBe(true);
+    await vi.waitFor(() => {
+      expect(catalog.loaded).toBe(true);
+    });
   });
 
   it('übergeht eine Ablage, die einen Fehler wirft', async () => {
     const catalog = new TextCatalogDouble();
     catalog.restore = () => Promise.reject(new Error('gesperrt'));
 
-    await start(catalog);
-    await Promise.resolve();
+    start(catalog);
 
-    expect(catalog.loaded).toBe(true);
+    await vi.waitFor(() => {
+      expect(catalog.loaded).toBe(true);
+    });
   });
 });

@@ -14,4 +14,10 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: 50%;
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.avatar__pending {
+  inline-size: 100%;
+  block-size: 100%;
 }

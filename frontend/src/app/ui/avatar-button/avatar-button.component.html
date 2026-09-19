@@ -5,5 +5,9 @@
   [attr.aria-label]="label()"
   (click)="pressed.emit()"
 >
-  <span aria-hidden="true">{{ initial() }}</span>
+  @if (name() === null) {
+    <app-skeleton class="avatar__pending" kind="tile" width="100%" height="100%" />
+  } @else {
+    <span aria-hidden="true">{{ initial() }}</span>
+  }
 </button>
