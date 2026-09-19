@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
 import { bundle } from '../fixtures/species';
 

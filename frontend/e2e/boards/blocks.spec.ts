@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
 import { placeholder, type PlaceholderSpec } from '../fixtures/placeholder';
 import { boardCards, expectCard, skipPending } from './board';

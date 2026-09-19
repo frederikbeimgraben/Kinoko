@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../fixtures/test';
 
 /** Dieser Fluss prüft den Service Worker selbst und lässt ihn darum laufen. */
 test.use({ serviceWorkers: 'allow' });

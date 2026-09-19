@@ -63,4 +63,9 @@ module.exports = tseslint.config(
     languageOptions: { parserOptions: { projectService: false } },
     ...tseslint.configs.disableTypeChecked,
   },
+  {
+    // Der einzige Ort, der einen fehlenden Textschlüssel laut meldet.
+    files: ['src/app/core/i18n/i18n.service.ts'],
+    rules: { 'no-console': ['error', { allow: ['error'] }] },
+  },
 );

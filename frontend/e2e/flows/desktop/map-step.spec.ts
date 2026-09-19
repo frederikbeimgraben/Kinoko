@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '../../fixtures/test';
+import { type Page } from '@playwright/test';
 import { mockApi } from '../../fixtures/api';
 import { authConfig, mockSignIn } from '../../fixtures/auth';
 import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fixtures/map';

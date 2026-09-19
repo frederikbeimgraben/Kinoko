@@ -1,4 +1,5 @@
-import { expect, test, type Page, type Request } from '@playwright/test';
+import { expect, test } from '../fixtures/test';
+import { type Page, type Request } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 
