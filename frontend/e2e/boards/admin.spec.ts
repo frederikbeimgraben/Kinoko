@@ -14,6 +14,7 @@ import { mockApi } from '../fixtures/api';
 import { NOW, RUNS, RUN_DETAIL } from '../fixtures/runs';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
+import { GROUPS } from '../fixtures/groups';
 import { bundle, species } from '../fixtures/species';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
 import { PALETTE, PART_SECTIONS, STONE_SECTIONS, TERMS } from '../fixtures/species-sections';
@@ -53,6 +54,7 @@ async function open(page: Page, path: string, extra: Record<string, unknown> = {
     '/api/people': PEOPLE,
     '/api/permissions': { items: CATALOGUE },
     '/api/texts': TEXTS,
+    '/api/groups': { items: GROUPS },
     ...extra,
   });
   await flatMap(page);
@@ -88,6 +90,28 @@ test('AdminSpecies', async ({ page }) => {
   await expect(page.getByText('1 284')).toBeVisible();
   await expect(page.getByText('Tricholoma terreum')).toBeVisible();
   await expectBoard(page, 'AdminSpecies');
+});
+
+test('AdminGroups', async ({ page }) => {
+  guard('AdminGroups', 'phone');
+  await open(page, '/verwaltung/gruppen');
+  await expect(page.getByText('Eigentümer Frederik · 3 Mitglieder')).toBeVisible();
+  await expectBoard(page, 'AdminGroups');
+});
+
+test('AdminGroup', async ({ page }) => {
+  guard('AdminGroup', 'phone');
+  await open(page, `/verwaltung/gruppen/${GROUPS[0].id}`);
+  await expect(page.getByText('PILZ-7F3K')).toBeVisible();
+  await expectBoard(page, 'AdminGroup');
+});
+
+test('AdminGroupDelete', async ({ page }) => {
+  guard('AdminGroupDelete', 'phone');
+  await open(page, `/verwaltung/gruppen/${GROUPS[0].id}`);
+  await page.getByRole('button', { name: 'Gruppe löschen' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expectBoard(page, 'AdminGroupDelete');
 });
 
 test('People', async ({ page }) => {

@@ -63,7 +63,8 @@
   order: 2;
 }
 
-// Die Gefahr steht links, auch wenn sie die erste Aktion ist.
+// Die Gefahr steht links, auch wenn sie die erste Aktion ist. Mit `leadFirst`
+// steht die Hauptaktion links, wie das Brett der Gruppe sie zeigt.
 .footer__pair--danger .footer__lead {
   order: 0;
 }

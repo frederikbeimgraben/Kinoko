@@ -1,0 +1,21 @@
+<app-page-header [title]="'admin.groups.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="adminGroups">
+  <app-search-field
+    [value]="search()"
+    [placeholder]="'admin.groups.search' | t"
+    (valueChange)="onSearch($event)"
+  />
+  <div class="adminGroups__card">
+    @for (row of rows(); track row.id) {
+      <app-list-row
+        kind="catalogue"
+        [title]="row.name"
+        [subline]="row.subline"
+        [clickable]="true"
+        [chevron]="true"
+        (chosen)="open(row.id)"
+      />
+    }
+  </div>
+</div>

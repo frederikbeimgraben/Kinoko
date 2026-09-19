@@ -11,6 +11,7 @@ export const EVERY_RIGHT = [
   'role.assign',
   'find.review',
   'run.manage',
+  'group.manage',
 ];
 
 /** Die Zähler des Bretts `Admin`. */

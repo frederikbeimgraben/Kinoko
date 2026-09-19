@@ -5,7 +5,11 @@
   overflow: hidden;
 }
 
-.group {
+.adminGroup {
+  --form-field-inline: 14px;
+  --form-field-size: var(--fs-row-title);
+  --form-field-shift: 0;
+
   display: flex;
   flex: 1;
   flex-direction: column;

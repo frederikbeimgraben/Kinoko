@@ -1,0 +1,28 @@
+<div class="members__card">
+  <app-list-row kind="catalogue" [title]="'group.inviteCode' | t">
+    <span trail class="members__trail">
+      <span class="members__code">{{ group().inviteCode }}</span>
+      <app-icon-button icon="share" [label]="'group.share' | t" (pressed)="share()" />
+    </span>
+  </app-list-row>
+</div>
+
+<section>
+  <h2 class="members__section">{{ 'group.members' | t }}</h2>
+  <div class="members__card">
+    @for (row of rows(); track row.userId) {
+      <app-list-row kind="catalogue" [title]="row.name" [subline]="row.since">
+        @if (row.owner) {
+          <app-badge trail variant="success">{{ 'group.owner' | t }}</app-badge>
+        } @else if (removable()) {
+          <app-icon-button
+            trail
+            icon="close"
+            [label]="'group.removeMember' | t"
+            (pressed)="removed.emit(row.userId)"
+          />
+        }
+      </app-list-row>
+    }
+  </div>
+</section>
