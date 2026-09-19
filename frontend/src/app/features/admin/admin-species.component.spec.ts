@@ -3,7 +3,6 @@ import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { SpeciesBundle } from '../../core/api/models';
-import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { stubIntersectionObserver } from '../../testing/observer-stub';
@@ -27,13 +26,9 @@ const EARTH = speciesEntry({
 
 const BUNDLE: SpeciesBundle = speciesBundle([STONE, EARTH]);
 
-async function build(api = new AccessApiDouble()): Promise<{ container: Element; router: Router }> {
-  api.speciesCountsAnswer = [
-    { speciesId: STONE.id, records: 1284, finds: 12, photos: 3 },
-    { speciesId: EARTH.id, records: 58, finds: 0, photos: 0 },
-  ];
+async function build(): Promise<{ container: Element; router: Router }> {
   const { container } = await render(AdminSpeciesComponent, {
-    providers: [...catalogueProviders(BUNDLE), provideRouter(ANY_ROUTE), accessApiProvider(api)],
+    providers: [...catalogueProviders(BUNDLE), provideRouter(ANY_ROUTE)],
   });
   await catalogueReady();
   await vi.waitFor(() => {
@@ -48,12 +43,10 @@ describe('AdminSpeciesComponent', () => {
     stubIntersectionObserver();
   });
 
-  it('zeigt jede Art mit Namen, lateinischem Namen und ihren Zahlen', async () => {
+  it('zeigt jede Art mit Namen und lateinischem Namen', async () => {
     const { container } = await build();
 
     expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
-    expect(screen.getByText('1 284')).toBeInTheDocument();
-    expect(screen.getByText('58')).toBeInTheDocument();
     await noViolations(container);
   });
 

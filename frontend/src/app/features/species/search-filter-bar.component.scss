@@ -1,0 +1,9 @@
+@use '../../../styles/filter-marks' as marks;
+
+@include marks.filter-marks;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-gutter);
+}
