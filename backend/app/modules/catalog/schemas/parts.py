@@ -52,9 +52,6 @@ class Measurement(Schema):
     unit: Unit
     low: float
     high: float
-    rare_low: float | None = None
-    rare_high: float | None = None
-    description: str | None = None
 
 
 class MeasurementGroup(Schema):
@@ -62,6 +59,14 @@ class MeasurementGroup(Schema):
 
     part: BodyPart
     measurements: list[Measurement]
+
+
+class PartNote(Schema):
+    """Beschreibung und Kommentar zu einem Körperteil."""
+
+    part: BodyPart
+    description: str = ""
+    comment: str = ""
 
 
 class CapFeatureEntry(Schema):

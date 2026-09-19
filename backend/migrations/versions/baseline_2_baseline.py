@@ -295,8 +295,6 @@ def upgrade() -> None:
         sa.Column("dimension", sa.String(length=20), nullable=False),
         sa.Column("low", sa.Float(), nullable=False),
         sa.Column("high", sa.Float(), nullable=False),
-        sa.Column("rare_low", sa.Float(), nullable=True),
-        sa.Column("rare_high", sa.Float(), nullable=True),
         sa.Column("unit", sa.String(length=10), nullable=False),
         sa.ForeignKeyConstraint(["species_id"], ["species.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("species_id", "part", "dimension"),
@@ -309,6 +307,15 @@ def upgrade() -> None:
         sa.Column("kind", sa.String(length=20), nullable=False),
         sa.ForeignKeyConstraint(["species_id"], ["species.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("species_id", "position"),
+    )
+    op.create_table(
+        "species_part_note",
+        sa.Column("species_id", sa.Uuid(), nullable=False),
+        sa.Column("part", sa.String(length=20), nullable=False),
+        sa.Column("description", sa.Text(), nullable=False),
+        sa.Column("comment", sa.Text(), nullable=False),
+        sa.ForeignKeyConstraint(["species_id"], ["species.id"], ondelete="CASCADE"),
+        sa.PrimaryKeyConstraint("species_id", "part"),
     )
     op.create_table(
         "species_part_feature",
@@ -436,6 +443,7 @@ def downgrade() -> None:
     op.drop_table("species_source")
     op.drop_table("species_season")
     op.drop_table("species_part_feature")
+    op.drop_table("species_part_note")
     op.drop_table("species_name")
     op.drop_table("species_measurement")
     op.drop_table("species_lookalike")

@@ -28,6 +28,11 @@ app-page-header {
   --space-3: 8px;
 }
 
+app-form-field {
+  --form-field-lines: 96px;
+  --form-field-lines-height: normal;
+}
+
 app-species-picker {
   display: flex;
   flex: 1;

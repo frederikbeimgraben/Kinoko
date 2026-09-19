@@ -32,7 +32,7 @@ const PROFILE = {
   measurements: [
     {
       part: 'cap',
-      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }],
     },
   ],
   colours: [{ part: 'cap', mode: 'single', colours: [{ name: 'braun', hex: '#5a3d22' }] }],

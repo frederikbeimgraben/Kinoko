@@ -15,6 +15,7 @@ from app.modules.catalog.schemas.parts import (
     Lookalike,
     LookalikeWrite,
     MeasurementGroup,
+    PartNote,
     SourceEntry,
     SpeciesNameEntry,
     SpeciesTermEntry,
@@ -78,6 +79,7 @@ class Species(SpeciesSummary):
     cap_shape_old: CapShape | None = None
     names: list[SpeciesNameEntry] = Field(default_factory=list)
     measurements: list[MeasurementGroup] = Field(default_factory=list)
+    part_notes: list[PartNote] = Field(default_factory=list)
     colours: list[ColourGroup] = Field(default_factory=list)
     colour_changes: list[ColourChange] = Field(default_factory=list)
     cap_features: list[CapFeatureEntry] = Field(default_factory=list)
@@ -118,6 +120,7 @@ class SpeciesWrite(Schema):
     cap_shape_old: CapShape | None = None
     names: list[SpeciesNameEntry] = Field(default_factory=list)
     measurements: list[MeasurementGroup] = Field(default_factory=list)
+    part_notes: list[PartNote] = Field(default_factory=list)
     colours: list[ColourGroup] = Field(default_factory=list)
     colour_changes: list[ColourChange] = Field(default_factory=list)
     cap_features: list[CapFeatureEntry] = Field(default_factory=list)

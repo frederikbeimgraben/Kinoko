@@ -29,6 +29,7 @@
     <app-form-field
       [label]="'admin.lookalike.distinction' | t"
       [section]="true"
+      [multiline]="true"
       [value]="difference()"
       (valueChange)="difference.set($event)"
     />

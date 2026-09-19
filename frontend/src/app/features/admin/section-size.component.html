@@ -37,15 +37,6 @@
       [value]="unit()"
     />
   </div>
-
-  <app-form-field
-    [label]="'admin.size.rare' | t"
-    [section]="true"
-    [kind]="'number'"
-    [placeholder]="'common.none' | t"
-    [value]="rare()"
-    (valueChange)="rare.set($event)"
-  />
 </div>
 
 <app-action-bar

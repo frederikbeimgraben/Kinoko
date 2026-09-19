@@ -43,13 +43,13 @@ const SPECIES = {
     {
       part: 'cap',
       measurements: [
-        { dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: null },
-        { dimension: 'height', unit: 'cm', low: 3, high: 8, rareLow: null, rareHigh: null },
+        { dimension: 'width', unit: 'cm', low: 4, high: 20 },
+        { dimension: 'height', unit: 'cm', low: 3, high: 8 },
       ],
     },
     {
       part: 'stem',
-      measurements: [{ dimension: 'width', unit: 'cm', low: 2, high: 6, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 2, high: 6 }],
     },
   ],
   colours: [CAP_COLOUR, TUBE_COLOUR, TUBE_LATER],

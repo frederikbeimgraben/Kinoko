@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import type { BodyPart, Measurement } from '../../core/api/models';
@@ -7,12 +7,13 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ColourFieldComponent } from '../../ui/colour-field/colour-field.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
 import { SpeciesEditorState } from './species-editor.state';
 import { changeRows, colourRows, sizeRows, type ColourRow, type SizeRow } from './section-part.rows';
-import { changes, withoutPart } from './species-lists';
+import { changes, withPartNote, withoutPart } from './species-lists';
 
 /** Ein Teil einer Art: seine Maße, seine Farben und seine Verfärbungen. */
 @Component({
@@ -22,6 +23,7 @@ import { changes, withoutPart } from './species-lists';
     ActionBarComponent,
     AddRowComponent,
     ColourFieldComponent,
+    FormFieldComponent,
     ListRowComponent,
     PageHeaderComponent,
     TranslatePipe,
@@ -52,10 +54,22 @@ export class SectionPartComponent {
 
   protected readonly changes = computed<ColourRow[]>(() => changeRows(this.state.species(), this.part()));
 
+  protected readonly description = signal('');
+  protected readonly comment = signal('');
+
+  private readonly note = computed(
+    () => this.state.species()?.partNotes?.find((one) => one.part === this.part()) ?? null,
+  );
+
   constructor() {
     effect(() => {
       const slug = this.slug();
       if (slug !== '') this.state.load(slug);
+    });
+    effect(() => {
+      const note = this.note();
+      this.description.set(note?.description ?? '');
+      this.comment.set(note?.comment ?? '');
     });
   }
 
@@ -80,6 +94,13 @@ export class SectionPartComponent {
   }
 
   protected apply(): void {
+    this.state.save({
+      partNotes: withPartNote(this.state.species(), {
+        part: this.part(),
+        description: this.description(),
+        comment: this.comment(),
+      }),
+    });
     this.back();
   }
 

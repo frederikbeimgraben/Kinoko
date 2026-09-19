@@ -2444,15 +2444,18 @@ components:
           type: number
         high:
           type: number
-        rareLow:
-          oneOf:
-            - type: number
-            - type: "null"
-        rareHigh:
-          oneOf:
-            - type: number
-            - type: "null"
       required: [dimension, unit, low, high]
+
+    PartNote:
+      type: object
+      properties:
+        part:
+          $ref: "#/components/schemas/BodyPart"
+        description:
+          type: string
+        comment:
+          type: string
+      required: [part, description, comment]
 
     MeasurementGroup:
       type: object
@@ -2703,6 +2706,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MeasurementGroup"
+        partNotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PartNote"
         colours:
           type: array
           items:
@@ -2835,6 +2842,10 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/MeasurementGroup"
+            partNotes:
+              type: array
+              items:
+                $ref: "#/components/schemas/PartNote"
             colours:
               type: array
               items:

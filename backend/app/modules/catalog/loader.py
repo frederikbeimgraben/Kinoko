@@ -17,6 +17,7 @@ from app.modules.catalog.facets import SpeciesFacets
 from app.modules.catalog.schemas import (
     Measurement,
     MeasurementGroup,
+    PartNote,
     SourceEntry,
     Species,
     SpeciesNameEntry,
@@ -128,8 +129,6 @@ def _measurement_groups(rows: Sequence[SpeciesMeasurement]) -> list[MeasurementG
                 unit=row.unit,
                 low=row.low,
                 high=row.high,
-                rare_low=row.rare_low,
-                rare_high=row.rare_high,
             ),
         )
     return [MeasurementGroup(part=part, measurements=ms) for part, ms in by_part.items()]
@@ -165,6 +164,10 @@ def assemble(
         cap_shape_old=species.cap_shape_old,
         names=[SpeciesNameEntry(name=n.name, kind=n.kind) for n in child.names.get(species.id, [])],
         measurements=_measurement_groups(child.measurements.get(species.id, [])),
+        part_notes=[
+            PartNote(part=n.part, description=n.description, comment=n.comment)
+            for n in child.part_notes.get(species.id, [])
+        ],
         colours=colour_groups(species.id, child),
         colour_changes=colour_changes(species.id, child, terms),
         cap_features=caps,

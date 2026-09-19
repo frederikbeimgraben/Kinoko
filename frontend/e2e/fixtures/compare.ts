@@ -90,8 +90,6 @@ export function species(entry: Shape, at: number): Record<string, unknown> {
             unit: 'cm',
             low: entry.capWidth[0],
             high: entry.capWidth[1],
-            rareLow: null,
-            rareHigh: null,
           },
         ],
       },

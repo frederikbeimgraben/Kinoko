@@ -46,22 +46,29 @@ export const STONE_PROFILE: Record<string, unknown> = {
   measurements: [
     {
       part: 'cap',
-      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20, rareLow: null, rareHigh: 25 }],
+      measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }],
     },
     {
       part: 'stem',
       measurements: [
-        { dimension: 'height', unit: 'cm', low: 5, high: 15, rareLow: null, rareHigh: null },
-        { dimension: 'thickness', unit: 'cm', low: 2, high: 6, rareLow: null, rareHigh: null },
+        { dimension: 'height', unit: 'cm', low: 5, high: 15 },
+        { dimension: 'thickness', unit: 'cm', low: 2, high: 6 },
       ],
     },
     {
       part: 'pores',
-      measurements: [{ dimension: 'width', unit: 'mm', low: 0.3, high: 0.3, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'width', unit: 'mm', low: 0.3, high: 0.3 }],
     },
     {
       part: 'spore',
-      measurements: [{ dimension: 'length', unit: 'um', low: 15, high: 19, rareLow: null, rareHigh: null }],
+      measurements: [{ dimension: 'length', unit: 'um', low: 15, high: 19 }],
+    },
+  ],
+  partNotes: [
+    {
+      part: 'cap',
+      description: 'Halbkugelig, später polsterförmig, Huthaut feucht schmierig',
+      comment: 'Selten bis 30 cm',
     },
   ],
   colours: [

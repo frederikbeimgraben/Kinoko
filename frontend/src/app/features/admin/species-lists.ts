@@ -4,6 +4,7 @@ import type {
   ColourGroup,
   Dimension,
   MeasurementGroup,
+  PartNote,
   SourceEntry,
   SpeciesEntry,
   SpeciesWrite,
@@ -17,6 +18,7 @@ export interface PartLists {
   measurements: MeasurementGroup[];
   colours: ColourGroup[];
   colourChanges: ColourChange[];
+  partNotes: PartNote[];
 }
 
 /** Die Farbgruppen eines Teils. */
@@ -87,12 +89,20 @@ export function withoutChange(species: SpeciesEntry | null, at: number): ColourC
   return changes(species).filter((_, index) => index !== at);
 }
 
+/** Legt die Notiz eines Teils an ihre Stelle. Eine leere Notiz fällt weg. */
+export function withPartNote(species: SpeciesEntry | null, note: PartNote): PartNote[] {
+  const held = (species?.partNotes ?? []).filter((one) => one.part !== note.part);
+  if (note.description === '' && note.comment === '') return held;
+  return [...held, note];
+}
+
 /** Nimmt ein Teil mit seinen Maßen, Farben und Verfärbungen heraus. */
 export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartLists {
   return {
     measurements: (species?.measurements ?? []).filter((one) => one.part !== part),
     colours: (species?.colours ?? []).filter((one) => one.part !== part),
     colourChanges: changes(species).filter((one) => one.part !== part),
+    partNotes: (species?.partNotes ?? []).filter((one) => one.part !== part),
   };
 }
 

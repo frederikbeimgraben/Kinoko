@@ -1,6 +1,14 @@
 <h2 class="section__title">{{ 'species.section.sizes' | t }}</h2>
 <div class="section__parts">
   @for (card of cards(); track card.part) {
-    <app-measurement-group [part]="card.part" [measurements]="card.rows" />
+    <div class="section__part">
+      <app-measurement-group [part]="card.part" [measurements]="card.rows" />
+      @if (card.description) {
+        <p class="section__note">{{ card.description }}</p>
+      }
+      @if (card.comment) {
+        <p class="section__note section__note--comment">{{ card.comment }}</p>
+      }
+    </div>
   }
 </div>
