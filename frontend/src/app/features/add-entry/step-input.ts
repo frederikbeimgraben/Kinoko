@@ -18,21 +18,24 @@ export class StepInput {
   private readonly _aim = signal<Location | null>(null);
   private release: (() => void)[] = [];
   private pick: ((point: Location) => void) | null = null;
+  private dragging = false;
 
   /** Der Ort, den der nächste Punkt bekäme. */
   readonly aim = this._aim.asReadonly();
 
   readonly mode = computed<StepInputMode>(() => (this.viewport.wide() ? 'pointer' : 'crosshair'));
 
-  /** Nimmt den Zeiger auf. Der Ruf kommt bei jedem Klick auf die Karte. */
-  watch(pick: (point: Location) => void): void {
+  /** Nimmt den Zeiger auf: `pick` ruft jeder Klick und jeder Zug an `target`. */
+  watch(pick: (point: Location) => void, target: () => Location | null = () => null): void {
     this.stop();
     this.pick = pick;
     if (this.mode() !== 'pointer') return;
     this.adapter.setCursor('crosshair');
     this.release.push(
       this.adapter.onPointerMove((point) => {
-        this._aim.set([point[0], point[1]]);
+        const at: Location = [point[0], point[1]];
+        this._aim.set(at);
+        if (this.dragging) this.pick?.(at);
       }),
     );
     this.release.push(
@@ -42,6 +45,27 @@ export class StepInput {
         this.pick?.(set);
       }),
     );
+    this.release.push(
+      this.adapter.onPointerDown((point) => {
+        const mark = target();
+        if (mark === null || !this.hits(mark, [point[0], point[1]])) return;
+        // Der Zug gehört der Marke. Ohne diese Sperre schöbe er die Karte.
+        this.dragging = true;
+        this.adapter.setDragPan(false);
+      }),
+    );
+    this.release.push(
+      this.adapter.onPointerUp(() => {
+        this.dropMark();
+      }),
+    );
+  }
+
+  /** Lässt die Marke los und gibt der Karte das Schieben zurück. */
+  private dropMark(): void {
+    if (!this.dragging) return;
+    this.dragging = false;
+    this.adapter.setDragPan(true);
   }
 
   /** Am Telefon führt das Fadenkreuz. Der Wirt meldet seinen Ort. */
@@ -58,6 +82,7 @@ export class StepInput {
   }
 
   stop(): void {
+    this.dropMark();
     for (const off of this.release) off();
     this.release = [];
     this.pick = null;

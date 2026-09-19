@@ -68,6 +68,12 @@ async function boardUnder(page: Page, stem: string): Promise<void> {
   await expectBoard(page, stem);
 }
 
+/** Dasselbe am Rechner: Marke und Ring der App liegen über dem Kartenbild. */
+async function boardUnderWide(page: Page, stem: string): Promise<void> {
+  await showMapImage(page, 'map-desktop-stein-900.png', undefined, true);
+  await expectBoard(page, stem);
+}
+
 test('AddActions', async ({ page }) => {
   guard('AddActions', 'phone');
   await openActions(page);
@@ -240,6 +246,61 @@ test('ZoneDraw', async ({ page }) => {
   // Zum Schluss steht die Karte wieder so, wie das Brett sie zeigt.
   await showAt(page, places[0], ZONE_CORNERS[0]);
   await boardUnder(page, 'ZoneDraw');
+});
+
+/** Der Maßstab des Rechner-Bretts: sein Ring misst ebenfalls 42 Hektar. */
+const ZONE_ZOOM_WIDE = 16.14;
+
+/** Der linke Rand der Kartenfläche am Rechner: Schiene plus Spalte. */
+const MAP_LEFT = 488;
+
+/** Die Ecken und der Zeiger des Bretts `MapDesktopZoneDraw`, im Fenster. */
+const WIDE_CORNERS: readonly (readonly [number, number])[] = [
+  [MAP_LEFT + 450, 550],
+  [MAP_LEFT + 450, 400],
+  [MAP_LEFT + 650, 380],
+  [MAP_LEFT + 680, 560],
+];
+const WIDE_POINTER: readonly [number, number] = [MAP_LEFT + 560, 650];
+
+/** Der gesetzte Ort der Bretter `MapDesktopFindLocation` und `MapDesktopMarkerLocation`. */
+const WIDE_MARK: readonly [number, number] = [MAP_LEFT + 488, 428];
+
+/** Öffnet einen Schritt am Rechner. */
+async function openStep(page: Page, action: string): Promise<void> {
+  await openEmptyMap(page);
+  await page.getByRole('button', { name: action }).click();
+}
+
+/** Setzt den Ort des Bretts unter den Zeiger und klickt ihn. */
+async function markAt(page: Page): Promise<void> {
+  await showAt(page, [PLACE.longitude, PLACE.latitude], WIDE_MARK, ZONE_ZOOM);
+  await page.mouse.click(WIDE_MARK[0], WIDE_MARK[1]);
+  await expect(page.getByText('48,5203 · 9,0511')).toBeVisible();
+}
+
+test('MapDesktopFindLocation', async ({ page }) => {
+  guard('MapDesktopFindLocation', 'wide');
+  await openStep(page, 'Fund melden');
+  await markAt(page);
+  await boardUnderWide(page, 'MapDesktopFindLocation');
+});
+
+test('MapDesktopMarkerLocation', async ({ page }) => {
+  guard('MapDesktopMarkerLocation', 'wide');
+  await openStep(page, 'Marker setzen');
+  await markAt(page);
+  await boardUnderWide(page, 'MapDesktopMarkerLocation');
+});
+
+test('MapDesktopZoneDraw', async ({ page }) => {
+  guard('MapDesktopZoneDraw', 'wide');
+  await openStep(page, 'Zone zeichnen');
+  await showAt(page, await aimAt(page, WIDE_CORNERS[0]), WIDE_CORNERS[0], ZONE_ZOOM_WIDE);
+  for (const corner of WIDE_CORNERS) await page.mouse.click(corner[0], corner[1]);
+  await page.mouse.move(WIDE_POINTER[0], WIDE_POINTER[1]);
+  await expect(page.getByText(/4 Eckpunkte/)).toBeVisible();
+  await boardUnderWide(page, 'MapDesktopZoneDraw');
 });
 
 test('MapDesktopAdd', async ({ page }) => {

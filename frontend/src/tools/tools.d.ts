@@ -102,6 +102,16 @@ declare module '*/tools/sync-boards.mjs' {
   export function cardStem(selector: string): string;
 }
 
+declare module '*/tools/render-fixtures.mjs' {
+  export interface Fixture {
+    stem: string;
+    file: string;
+    size: { width: number; height: number } | null;
+  }
+  export function sizeOf(source: string): { width: number; height: number } | null;
+  export function fixtures(dir: string): Fixture[];
+}
+
 declare module '*/tools/png.mjs' {
   export interface Raster {
     width: number;

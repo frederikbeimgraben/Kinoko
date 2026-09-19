@@ -405,19 +405,6 @@ describe('SheetComponent', () => {
       expect(calls).toBe(1);
     });
 
-    it('dockt einen Schritt an, statt die Fläche darunter zu sperren', async () => {
-      const { container } = await render(SheetComponent, {
-        inputs: { label: 'Zone zeichnen', modal: true, kind: 'step' as const },
-        providers: [WIDE],
-      });
-
-      expect(container.querySelector('.sheet--modal')).toBeNull();
-      expect(container.querySelector('.sheet__scrim')).toBeNull();
-      expect(container.querySelector('.sheet--step')).not.toBeNull();
-      expect(container.querySelector('.sheet__close')).not.toBeNull();
-      expect(container.querySelector('[aria-modal]')).toBeNull();
-    });
-
     it('dunkelt die ganze Seite ab, auch die Spalte und die Leiste', async () => {
       const { container } = await render(ColumnHostComponent, { providers: [WIDE] });
 

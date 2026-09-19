@@ -16,6 +16,18 @@ const CORNERS: readonly (readonly [number, number])[] = [
   [720, 520],
 ];
 
+/** Der Ort unter einem Punkt des Fensters. */
+async function placeAt(page: Page, spot: readonly [number, number]): Promise<[number, number]> {
+  return page.evaluate(
+    ([x, y]) =>
+      (window as unknown as { pilzMap: { aimAt: (a: number, b: number) => [number, number] } }).pilzMap.aimAt(
+        x,
+        y,
+      ),
+    spot,
+  );
+}
+
 /** Der Zeiger über der Karte, wie ihn der Schritt setzt. */
 async function cursorOfMap(page: Page): Promise<string> {
   return page.evaluate(() => {
@@ -56,11 +68,10 @@ test('Zone zeichnen bleibt am Rechner eine Leiste über der freien Karte', async
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
 
-  const bar = page.getByRole('dialog', { name: 'Zone zeichnen' });
+  const bar = page.getByRole('group', { name: 'Zone zeichnen' });
   await expect(bar).toBeVisible();
-  await expect(bar).toHaveClass(/sheet--step/);
   await expect(page.locator('.sheet__scrim')).toHaveCount(0);
-  await expect(page.locator('.sheet__handle')).toBeHidden();
+  await expect(page.locator('app-sheet')).toHaveCount(0);
 
   const viewport = page.viewportSize();
   if (viewport === null) throw new Error('Kein Fenster.');
@@ -85,7 +96,7 @@ test('Der Zeiger setzt die Ecken, die Rücktaste nimmt sie weg', async ({ page }
   await openMap(page);
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  const bar = page.getByRole('dialog', { name: 'Zone zeichnen' });
+  const bar = page.getByRole('group', { name: 'Zone zeichnen' });
   await expect(bar).toBeVisible();
   expect(await cursorOfMap(page)).toBe('crosshair');
   await expect(page.locator('app-crosshair')).toHaveCount(0);
@@ -103,7 +114,7 @@ test('Ein Klick auf die erste Ecke schließt die Zone', async ({ page }) => {
   await openMap(page);
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  await expect(page.getByRole('dialog', { name: 'Zone zeichnen' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Zone zeichnen' })).toBeVisible();
   for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
 
   await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
@@ -115,7 +126,7 @@ test('Esc bricht den Schritt ab', async ({ page }) => {
   await openMap(page);
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  const bar = page.getByRole('dialog', { name: 'Zone zeichnen' });
+  const bar = page.getByRole('group', { name: 'Zone zeichnen' });
   await expect(bar).toBeVisible();
 
   await page.keyboard.press('Escape');
@@ -127,10 +138,10 @@ test('Ein Klick setzt den Fundort, ein zweiter verschiebt ihn', async ({ page })
   await openMap(page);
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Fund melden' }).click();
-  const bar = page.getByRole('dialog', { name: 'Fundort festlegen' });
+  const bar = page.getByRole('group', { name: 'Fundort festlegen' });
   await expect(bar).toBeVisible();
 
-  const note = bar.locator('.addentry__note');
+  const note = bar.locator('.stepbar__note');
   await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
   await expect(note).not.toBeEmpty();
   const first = (await note.textContent()) ?? '';
@@ -142,4 +153,27 @@ test('Ein Klick setzt den Fundort, ein zweiter verschiebt ihn', async ({ page })
   await page.getByRole('button', { name: 'Fundort übernehmen' }).click();
 
   await expect(page.getByRole('dialog', { name: 'Fund melden' })).toBeVisible();
+});
+
+test('Die Marke lässt sich mit der Maus verschieben', async ({ page }) => {
+  await openMap(page);
+  await page.locator('.map__add').click();
+  await page.getByRole('button', { name: 'Fund melden' }).click();
+  const bar = page.getByRole('group', { name: 'Fundort festlegen' });
+  await expect(bar).toBeVisible();
+  const note = bar.locator('.stepbar__note');
+  await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
+  await expect(note).not.toBeEmpty();
+  const first = (await note.textContent()) ?? '';
+  const before = await placeAt(page, CORNERS[1]);
+
+  // Ein Zug an der Marke schiebt sie, nicht die Karte.
+  await page.mouse.move(CORNERS[0][0], CORNERS[0][1]);
+  await page.mouse.down();
+  await page.mouse.move(CORNERS[0][0] + 120, CORNERS[0][1] + 80, { steps: 10 });
+  await page.mouse.up();
+
+  await expect(note).not.toHaveText(first);
+  // Die Karte bleibt stehen: der Zug gehört der Marke.
+  expect(await placeAt(page, CORNERS[1])).toEqual(before);
 });

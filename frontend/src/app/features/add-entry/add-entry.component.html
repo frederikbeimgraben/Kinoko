@@ -13,12 +13,11 @@
         <p class="addentry__note">{{ aimText() }}</p>
       </div>
       <app-action-bar
-        [primary]="'entry.confirmLocation' | t"
-        [secondary]="'common.cancel' | t"
+        [primary]="buttons().primary.label"
+        [secondary]="buttons().cancel.label"
         [ghost]="true"
-        [inline]="wide()"
-        (primaryClick)="adoptLocation()"
-        (secondaryClick)="cancel()"
+        (primaryClick)="buttons().primary.run()"
+        (secondaryClick)="buttons().cancel.run()"
       />
     }
     @case ('markerLocation') {
@@ -27,12 +26,11 @@
         <p class="addentry__note">{{ aimText() }}</p>
       </div>
       <app-action-bar
-        [primary]="'common.apply' | t"
-        [secondary]="'common.cancel' | t"
+        [primary]="buttons().primary.label"
+        [secondary]="buttons().cancel.label"
         [ghost]="true"
-        [inline]="wide()"
-        (primaryClick)="adoptLocation()"
-        (secondaryClick)="cancel()"
+        (primaryClick)="buttons().primary.run()"
+        (secondaryClick)="buttons().cancel.run()"
       />
     }
     @case ('zoneDraw') {
@@ -41,17 +39,16 @@
         <p class="addentry__note">{{ drawStatus() }}</p>
       </div>
       <app-action-bar
-        [primary]="'entry.zone.finish' | t"
-        [secondary]="'entry.zone.removeLastVertex' | t"
+        [primary]="buttons().primary.label"
+        [secondary]="buttons().secondary?.label"
         [quiet]="true"
-        [split]="!wide()"
-        [inline]="wide()"
-        (primaryClick)="closeZone()"
-        (secondaryClick)="state.removeLastCorner()"
+        [split]="true"
+        (primaryClick)="buttons().primary.run()"
+        (secondaryClick)="buttons().secondary?.run()"
       >
-        @if (!wide()) {
-          <app-button class="addentry__main" variant="primary" [block]="true" (click)="addCorner()">
-            {{ 'entry.zone.setVertex' | t }}
+        @if (buttons().extra; as extra) {
+          <app-button class="addentry__main" variant="primary" [block]="true" (click)="extra.run()">
+            {{ extra.label }}
           </app-button>
         }
       </app-action-bar>
@@ -98,7 +95,9 @@
         <app-crosshair [label]="'entry.setLocation.title' | t" />
       </div>
     }
-    @if (asPopover()) {
+    @if (asStepBar()) {
+      <app-step-bar [title]="title()" [note]="stepNote()" [actions]="barActions()" (chosen)="$event.run()" />
+    } @else if (asPopover()) {
       <app-popover
         [open]="true"
         [anchor]="anchor"
@@ -126,7 +125,6 @@
           [detents]="detents()"
           [modal]="true"
           [dismissible]="true"
-          [kind]="state.showsCrosshair() ? 'step' : 'sheet'"
           (closed)="cancel()"
         >
           <ng-container [ngTemplateOutlet]="body" />

@@ -1,0 +1,20 @@
+<div class="stepbar" role="group" [attr.aria-label]="title()">
+  <div class="stepbar__text">
+    <b class="stepbar__title">{{ title() }}</b>
+    <span class="stepbar__note">{{ note() }}</span>
+  </div>
+  <div class="stepbar__actions">
+    @for (action of actions(); track action.label) {
+      <button
+        class="stepbar__action tap"
+        type="button"
+        data-press="scale"
+        [class.stepbar__action--primary]="action.variant === 'primary'"
+        [class.stepbar__action--secondary]="action.variant === 'secondary'"
+        (click)="chosen.emit(action)"
+      >
+        {{ action.wideLabel ?? action.label }}
+      </button>
+    }
+  </div>
+</div>

@@ -118,50 +118,12 @@
 }
 
 // Das Modal hat keinen Griff. Der Kopf des Inhalts bleibt und weicht dem X.
-.sheet--modal .sheet__handle,
-.sheet--step .sheet__handle {
+.sheet--modal .sheet__handle {
   display: none;
 }
 
-.sheet--modal .sheet__drag,
-.sheet--step .sheet__drag {
+.sheet--modal .sheet__drag {
   padding-inline-end: calc(var(--size-modal-close-inset) + var(--size-modal-close));
-}
-
-// Ein Schritt schwebt am Rechner als Leiste über der Karte, mittig über der
-// Kartenfläche. Die Karte bleibt frei: der Ort kommt von dort.
-.sheet--step {
-  --action-bar-pad: 0;
-  --action-bar-height: 40px;
-
-  position: fixed;
-  inset-block: auto 16px;
-  inset-inline: calc(var(--size-rail) + var(--size-column)) 0;
-  z-index: calc(var(--z-dialog) + 1);
-  display: flex;
-  inline-size: fit-content;
-  max-inline-size: 720px;
-  block-size: var(--size-step-bar);
-  padding-inline: var(--space-header-inline);
-  margin-inline: auto;
-  overflow: hidden;
-  white-space: nowrap;
-  border: var(--border-width) solid var(--color-border);
-  border-radius: 14px;
-  box-shadow: var(--shadow-md);
-}
-
-.sheet--step .sheet__close {
-  display: none;
-}
-
-// Titel und Aktionen stehen in der Leiste nebeneinander.
-.sheet--step .sheet__content {
-  flex-direction: row;
-  gap: var(--space-5);
-  align-items: center;
-  justify-content: space-between;
-  overflow: visible;
 }
 
 // Ohne eigenen Kopf trägt der Inhalt seinen Titel. Er beginnt dort, wo der
