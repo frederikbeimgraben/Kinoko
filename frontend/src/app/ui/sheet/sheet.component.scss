@@ -18,7 +18,7 @@
   background: var(--color-surface);
   border-start-start-radius: var(--radius-xl);
   border-start-end-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--sheet-shadow, var(--shadow-lg));
   transition: block-size var(--motion-sheet) var(--ease-standard);
 }
 
@@ -115,8 +115,19 @@
   inset-inline-start: calc(var(--size-rail) + var(--size-column));
 }
 
-.sheet--modal .sheet__drag {
+// Das Modal hat keinen Griff. Der Kopf des Inhalts bleibt und weicht dem X.
+.sheet--modal .sheet__handle {
   display: none;
+}
+
+.sheet--modal .sheet__drag {
+  padding-inline-end: calc(var(--size-modal-close-inset) + var(--size-modal-close));
+}
+
+// Ohne eigenen Kopf trägt der Inhalt seinen Titel. Er beginnt dort, wo der
+// Kopf beginnt.
+.sheet--bare .sheet__content {
+  padding-block-start: var(--space-modal-head);
 }
 
 .sheet__head {
@@ -124,7 +135,8 @@
   flex: none;
   gap: var(--space-3);
   align-items: center;
-  padding: var(--space-4) 20px;
+  padding: var(--space-modal-head) var(--space-modal-head-end) var(--space-modal-head)
+    var(--space-header-inline);
   border-block-end: var(--border-width) solid var(--color-border);
 }
 
@@ -141,30 +153,21 @@
   color: var(--color-text-muted);
 }
 
+// Das X steht in jedem Modal an derselben Stelle, auch über einem Inhalt mit
+// eigenem Titel.
 .sheet__close {
+  position: absolute;
+  inset-block-start: var(--size-modal-close-inset);
+  inset-inline-end: var(--size-modal-close-inset);
+  z-index: 1;
   display: flex;
-  flex: none;
   align-items: center;
   justify-content: center;
-  inline-size: 32px;
-  block-size: 32px;
+  inline-size: var(--size-modal-close);
+  block-size: var(--size-modal-close);
   padding: 0;
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: 10px;
-}
-
-// Das schmale Modal trägt nur seinen Titel: kein Schließen, keine Trennlinie.
-.sheet--compact .sheet__head {
-  padding: 20px 20px 4px;
-  border-block-end: 0;
-}
-
-.sheet--compact .sheet__title {
-  font-size: 18px;
-}
-
-.sheet--compact .sheet__close {
-  display: none;
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-md);
 }

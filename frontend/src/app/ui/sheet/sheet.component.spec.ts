@@ -149,6 +149,37 @@ describe('SheetComponent', () => {
     expect(calls).toEqual([2]);
   });
 
+  it('schließt ein Blatt mit Zug nach unten unter die halbe Raste', async () => {
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 1, dismissible: true, detents: [0.5, 0.5, 0.5] },
+    });
+    let closes = 0;
+    const detents: number[] = [];
+    fixture.componentInstance.closed.subscribe(() => (closes += 1));
+    fixture.componentInstance.detentChange.subscribe((detent) => detents.push(detent));
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 400);
+
+    drag(handle, [400, 800, 800]);
+
+    expect(closes).toBe(1);
+    expect(detents).toEqual([]);
+  });
+
+  it('lässt ein Blatt ohne Schließen am Zug nach unten rasten', async () => {
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 1, detents: [0.5, 0.5, 0.5] },
+    });
+    let closes = 0;
+    fixture.componentInstance.closed.subscribe(() => (closes += 1));
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 400);
+
+    drag(handle, [400, 800, 800]);
+
+    expect(closes).toBe(0);
+  });
+
   it('leaves the detent alone on a small wobble', async () => {
     const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
     const calls: number[] = [];
@@ -245,6 +276,60 @@ describe('SheetComponent', () => {
       });
 
       expect(container.querySelector('.sheet__head')).toBeNull();
+    });
+
+    it('trägt das X auch über einem Inhalt mit eigenem Titel', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+
+      const close = container.querySelector<HTMLElement>('.sheet__close');
+      if (close === null) throw new Error('Schließen fehlt.');
+
+      expect(close).toHaveAccessibleName('Schließen');
+      expect(getComputedStyle(close).position).toBe('absolute');
+      expect(getComputedStyle(close).insetBlockStart).toBe('var(--size-modal-close-inset)');
+      expect(getComputedStyle(close).insetInlineEnd).toBe('var(--size-modal-close-inset)');
+      expect(getComputedStyle(close).inlineSize).toBe('var(--size-modal-close)');
+      expect(getComputedStyle(close).blockSize).toBe('var(--size-modal-close)');
+    });
+
+    it('lässt den Griff weg', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+
+      const handle = container.querySelector('.sheet__handle');
+      if (handle === null) throw new Error('Griff fehlt im Baum.');
+
+      expect(getComputedStyle(handle).display).toBe('none');
+    });
+
+    it('setzt über einem eigenen Titel denselben Abstand wie über dem Kopf', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+
+      const content = container.querySelector('.sheet__content');
+      if (content === null) throw new Error('Inhalt fehlt.');
+
+      expect(getComputedStyle(content).paddingBlockStart).toBe('var(--space-modal-head)');
+    });
+
+    it('trägt im schmalen Modal denselben Kopf und dasselbe X', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', title: 'Porcini', compact: true },
+        providers: [WIDE],
+      });
+
+      const head = container.querySelector('.sheet__head');
+      if (head === null) throw new Error('Kopf fehlt.');
+
+      expect(getComputedStyle(head).padding).toContain('var(--space-modal-head-end)');
+      expect(container.querySelector('.sheet__close')).not.toBeNull();
     });
 
     it('lässt die Rasten weg', async () => {

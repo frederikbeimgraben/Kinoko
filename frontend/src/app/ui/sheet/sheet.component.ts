@@ -35,6 +35,9 @@ const GRAB_THRESHOLD = 6;
 // Die Zeitleiste übernimmt sie und scrollt unter dem Finger.
 const AXIS_THRESHOLD = 8;
 
+// Unter diesem Anteil der untersten Raste schließt ein Zug nach unten.
+const DISMISS_SHARE = 0.5;
+
 interface Drag {
   readonly pointer: number;
   readonly startY: number;
@@ -71,6 +74,8 @@ export class SheetComponent {
   readonly note = input('');
   /** Ein Modal für wenige Zeilen: schmaler und nur so hoch wie sein Inhalt. */
   readonly compact = input(false);
+  /** Ein Blatt, das sich schließen lässt, geht auch mit einem Zug nach unten zu. */
+  readonly dismissible = input(false);
 
   readonly detentChange = output<Detent>();
   readonly closed = output();
@@ -155,7 +160,13 @@ export class SheetComponent {
     const height = this.dragged() ?? drag.startHeight;
     this.dragged.set(null);
     if (drag.moved) {
-      const target = this.nearestDetent(this.sizesInPx(), this.detent(), height);
+      const sizes = this.sizesInPx();
+      if (this.dismissible() && height < sizes[0] * DISMISS_SHARE) {
+        this.closed.emit();
+        setTimeout(() => (this.drag = null));
+        return;
+      }
+      const target = this.nearestDetent(sizes, this.detent(), height);
       if (target !== this.detent()) this.detentChange.emit(target);
     }
     // Der Klick folgt gleich danach. `nextDetent` prüft darum noch `moved`.
@@ -170,7 +181,7 @@ export class SheetComponent {
       this.closed.emit();
       return;
     }
-    if (!this.modal() || event.key !== 'Tab') return;
+    if (!(this.modal() || this.asModal()) || event.key !== 'Tab') return;
     const targets = this.focusable();
     if (targets.length === 0) return;
     const first = targets[0];

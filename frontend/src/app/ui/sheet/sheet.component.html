@@ -13,28 +13,31 @@
   tabindex="-1"
   [class.sheet--dragging]="dragging()"
   [class.sheet--modal]="asModal()"
+  [class.sheet--bare]="asModal() && title() === ''"
   [class.sheet--compact]="compact()"
   [attr.aria-label]="label()"
   [attr.aria-modal]="modal() || asModal() ? 'true' : null"
   [style.block-size]="height()"
   (keydown)="onKey($event)"
 >
-  @if (asModal() && title() !== '') {
-    <header class="sheet__head">
-      <h2 class="sheet__title">{{ title() }}</h2>
-      @if (note() !== '') {
-        <span class="sheet__note">{{ note() }}</span>
-      }
-      <button
-        class="sheet__close tap"
-        type="button"
-        data-press="scale"
-        [attr.aria-label]="'common.close' | t"
-        (click)="closed.emit()"
-      >
-        <app-svg-icon name="close" [size]="16" />
-      </button>
-    </header>
+  @if (asModal()) {
+    <button
+      class="sheet__close tap"
+      type="button"
+      data-press="scale"
+      [attr.aria-label]="'common.close' | t"
+      (click)="closed.emit()"
+    >
+      <app-svg-icon name="close" [size]="18" [strokeWidth]="2" />
+    </button>
+    @if (title() !== '') {
+      <header class="sheet__head">
+        <h2 class="sheet__title">{{ title() }}</h2>
+        @if (note() !== '') {
+          <span class="sheet__note">{{ note() }}</span>
+        }
+      </header>
+    }
   }
   <div
     class="sheet__drag"
@@ -58,4 +61,5 @@
   <div class="sheet__content">
     <ng-content />
   </div>
+  <ng-content select="[foot]" />
 </section>
