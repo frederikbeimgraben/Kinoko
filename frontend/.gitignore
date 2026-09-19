@@ -46,3 +46,4 @@ Thumbs.db
 /e2e/bericht
 /.lighthouseci
 /lighthouse-bericht
+/src/app/core/version.generated.ts

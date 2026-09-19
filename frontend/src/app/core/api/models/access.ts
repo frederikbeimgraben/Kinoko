@@ -3,6 +3,9 @@ import type { components } from '../contract';
 /** Die Zähler der Verwaltungsübersicht. */
 export type AdminSummary = components['schemas']['AdminSummary'];
 
+/** Das eigene Konto mit allen eigenen Funden, Objekten und Fotos. */
+export type AccountExport = components['schemas']['AccountExport'];
+
 /** Die Zahlen einer Art in der Artenverwaltung. */
 export type SpeciesCountsEntry = components['schemas']['SpeciesCountsEntry'];
 

@@ -74,4 +74,22 @@ describe('AccessApi', () => {
     expect(http.expectOne('/api/people/names?ids=anna,bert').request.method).toBe('GET');
     http.verify();
   });
+
+  it('holt den eigenen Datenexport', () => {
+    const { api, http } = build();
+
+    api.exportData().subscribe();
+
+    expect(http.expectOne('/api/me/export').request.method).toBe('GET');
+    http.verify();
+  });
+
+  it('löscht die eigenen Daten', () => {
+    const { api, http } = build();
+
+    api.deleteData().subscribe();
+
+    expect(http.expectOne('/api/me/data').request.method).toBe('DELETE');
+    http.verify();
+  });
 });

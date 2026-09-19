@@ -48,6 +48,7 @@ export type {
 } from './catalogue';
 export { PERMISSIONS, PERMISSION_AREAS } from './access';
 export type {
+  AccountExport,
   AdminSummary,
   Items,
   Me,

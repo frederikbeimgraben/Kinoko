@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { map, type Observable } from 'rxjs';
 import { ApiClient, type Silent } from './api-client';
 import type {
+  AccountExport,
   AdminSummary,
   Items,
   Me,
@@ -31,6 +32,16 @@ export class AccessApi {
   /** Die eigenen Rechte. Braucht nur eine Anmeldung. */
   mine(): Observable<MyPermissions> {
     return this.api.get<MyPermissions>('/me/permissions');
+  }
+
+  /** Das eigene Konto mit allen eigenen Funden, Objekten und Fotos. */
+  exportData(): Observable<AccountExport> {
+    return this.api.get<AccountExport>('/me/export');
+  }
+
+  /** Löscht alle eigenen Daten. Das Konto selbst bleibt bestehen. */
+  deleteData(): Observable<null> {
+    return this.api.delete<null>('/me/data');
   }
 
   /** Die Zähler der Übersicht. Ein Punkt ohne Recht kommt ohne Zahl. */

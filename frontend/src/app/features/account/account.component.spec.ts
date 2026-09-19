@@ -149,14 +149,39 @@ describe('KontoComponent', () => {
 
     expect(screen.getByText('Methode')).toBeInTheDocument();
     expect(screen.getByText('Quellen und Lizenzen')).toBeInTheDocument();
-    expect(screen.getByText('2026-09-09')).toBeInTheDocument();
+    expect(screen.getByText('dev')).toBeInTheDocument();
   });
 
   it('bleibt lesbar, wenn das Backend keine Konfiguration geliefert hat', async () => {
     await build(false, null);
 
-    expect(screen.getByText('unbekannt')).toBeInTheDocument();
     expect(screen.getByText('Nicht angemeldet')).toBeInTheDocument();
+  });
+
+  it('führt zur Methode und zu Quellen und Lizenzen', async () => {
+    const { router } = await build();
+    const change = vi.spyOn(router, 'navigateByUrl');
+
+    await userEvent.click(screen.getByText('Methode'));
+    await userEvent.click(screen.getByText('Quellen und Lizenzen'));
+
+    expect(change).toHaveBeenCalledWith('/konto/methode');
+    expect(change).toHaveBeenCalledWith('/konto/lizenzen');
+  });
+
+  it('zeigt Meine Daten nur angemeldet und führt dorthin', async () => {
+    const { router } = await build(true);
+    const change = vi.spyOn(router, 'navigateByUrl');
+
+    await userEvent.click(screen.getByText('Meine Daten'));
+
+    expect(change).toHaveBeenCalledWith('/konto/daten');
+  });
+
+  it('zeigt Meine Daten nicht ohne Anmeldung', async () => {
+    await build();
+
+    expect(screen.queryByText('Meine Daten')).toBeNull();
   });
 
   it('zeigt einen Issuer ohne URL-Form so, wie er kommt', async () => {

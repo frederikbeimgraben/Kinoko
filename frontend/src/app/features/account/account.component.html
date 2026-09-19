@@ -69,6 +69,7 @@
       <h2 class="account__section">{{ 'konto.abschnitt.beitraege' | t }}</h2>
       <div class="account__list">
         <app-list-row [title]="'bild.meine' | t" [clickable]="true" (chosen)="toMyImages()" />
+        <app-list-row [title]="'account.myData' | t" [clickable]="true" (chosen)="toMyData()" />
         <app-list-row [title]="'group.title' | t" [clickable]="true" (chosen)="toGroups()" />
         <app-list-row [title]="'glossary.title' | t" [clickable]="true" (chosen)="toGlossary()" />
       </div>
@@ -100,9 +101,9 @@
   <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.ueber' | t }}</h2>
     <div class="account__list">
-      <app-list-row [title]="'konto.methode' | t" />
-      <app-list-row [title]="'konto.quellen' | t" />
-      <app-list-row [title]="'konto.version' | t" [value]="version()">
+      <app-list-row [title]="'account.method' | t" [clickable]="true" (chosen)="toMethod()" />
+      <app-list-row [title]="'account.sourcesAndLicences' | t" [clickable]="true" (chosen)="toLicences()" />
+      <app-list-row [title]="'konto.version' | t" [value]="version">
         @if (updateReady()) {
           <app-badge trail variant="success">{{ 'konto.aktualisierungBereit' | t }}</app-badge>
         }

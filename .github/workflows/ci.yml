@@ -165,6 +165,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - id: ordner
         name: Frontend vorhanden
         run: .github/scripts/ordner.sh frontend/package.json frontend A1
