@@ -72,7 +72,7 @@ test('nimmt nach der Bestätigung jeden offenen Fund an', async ({ page }) => {
   });
 
   await page.getByRole('button', { name: 'Alle annehmen' }).click();
-  await page.getByRole('button', { name: 'Alle annehmen', exact: true }).last().click();
+  await page.locator('.confirm__panel').getByRole('button', { name: 'Alle annehmen' }).click();
 
   await expect.poll(() => calls).toEqual(['POST']);
   await expect(page.getByText('Nichts zu prüfen')).toBeVisible();
