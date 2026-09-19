@@ -6,14 +6,19 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 14px;
   min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-4);
+  padding: 0 var(--size-gutter);
   overflow: hidden;
 }
 
 .groupSheet__title {
   margin: 0;
-  font-size: var(--fs-sheet-title);
+  font-size: 18px;
   font-weight: var(--fw-semibold);
+  line-height: var(--lh-normal);
+}
+
+app-action-bar {
+  --action-bar-height: var(--size-tap);
 }

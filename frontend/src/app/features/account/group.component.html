@@ -4,13 +4,10 @@
   @if (group(); as one) {
     <div class="group__card">
       <app-list-row kind="catalogue" [title]="'group.inviteCode' | t">
-        <span trail class="group__code">{{ one.inviteCode }}</span>
-        <app-icon-button
-          trail
-          icon="share"
-          [label]="'group.share' | t"
-          (pressed)="shareCode(one.inviteCode)"
-        />
+        <span trail class="group__trail">
+          <span class="group__code">{{ one.inviteCode }}</span>
+          <app-icon-button icon="share" [label]="'group.share' | t" (pressed)="shareCode(one.inviteCode)" />
+        </span>
       </app-list-row>
     </div>
 

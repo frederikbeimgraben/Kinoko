@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { AccountService } from '../../core/access/account.service';
 import { GroupsState } from '../../core/access/groups.state';
-import { shortDate } from '../../core/i18n/dates';
+import { shortDay } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -57,7 +57,7 @@ export class GroupComponent {
       userId: member.userId,
       name: member.name,
       since: this.i18n.translate('group.since', {
-        date: shortDate(member.joinedAt, this.i18n),
+        date: shortDay(new Date(member.joinedAt), this.i18n),
       }),
       owner: member.userId === group.ownerId,
     }));

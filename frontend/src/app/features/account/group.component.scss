@@ -32,6 +32,11 @@
   --space-row-stack: 2px;
 }
 
+.group__trail {
+  display: flex;
+  align-items: center;
+}
+
 // Der Code steht in einer Schrift mit fester Breite, wie im Brett.
 .group__code {
   margin-inline-end: 4px;
