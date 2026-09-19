@@ -91,12 +91,12 @@ describe('SpeciesListComponent', () => {
     stubIntersectionObserver();
   });
 
-  it('stellt die Arten des Bündels mit ihrer Zahl im Kopf', async () => {
+  it('stellt die Arten des Bündels mit ihrer Zahl über der Liste', async () => {
     const { container } = await build();
 
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Pfifferling')).toBeInTheDocument();
-    expect(container.querySelector('.species__count')?.textContent).toBe('2');
+    expect(screen.getByText('2 Arten')).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -235,10 +235,10 @@ describe('SpeciesListComponent', () => {
     expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
   });
 
-  it('nennt am Rechner die Zahl der Treffer, sobald ein Filter steht', async () => {
+  it('nennt am Rechner die Zahl der Treffer, mit der Lücke sobald ein Filter steht', async () => {
     const { container, filter } = await build(SMALL, true);
 
-    expect(container.querySelector('.species__summary')).toBeNull();
+    expect(container.querySelector('.species__summary')?.textContent).toBe('2 Arten');
     filter.toggle('hymenium', 'tubes');
 
     await vi.waitFor(() => {
