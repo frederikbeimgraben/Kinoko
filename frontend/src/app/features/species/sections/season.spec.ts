@@ -17,6 +17,8 @@ function manifest(weeks: SpeciesManifest['weeks']): SpeciesManifest {
     ],
     zoomFrom: 5,
     zoomTo: 8,
+    haveZoom: 8,
+    offlineZoomTo: 8,
     existing: new Set(),
     weeks,
   };

@@ -1,5 +1,5 @@
 import { tilePath } from '../core/tiles/tile-paths';
-import { tileKey } from '../core/tiles/manifest';
+import { covers, type Coverage } from '../core/tiles/coverage';
 import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 import type { CombinationBound, CombinationRule, ValueScale } from './value-colors';
 import type { ValueReply, ValueJob } from './value-messages';
@@ -18,18 +18,16 @@ export interface ColorizeWorker {
  * Eine angemeldete Quelle: was ihre Bytes bedeuten, in welchen Farben sie
  * liegen und welche Kacheln es überhaupt gibt.
  */
-export interface ValueSource {
+export interface ValueSource extends Coverage {
   id: string;
   scale: ValueScale;
   colors: readonly string[];
-  existing: ReadonlySet<string>;
 }
 
 /** Ein Faktor der Kombination: sein Kachelordner und seine Bedingung. */
-export interface CombinationSourcePart {
+export interface CombinationSourcePart extends Coverage {
   folder: string;
   bound: CombinationBound;
-  existing: ReadonlySet<string>;
 }
 
 /**
@@ -76,8 +74,8 @@ export function parseValueUrl(url: string): ValueUrl | null {
 }
 
 /** Die Quelle einer Vorhersage-Art. */
-export function speciesSource(slug: string, top: number, existing: ReadonlySet<string>): ValueSource {
-  return { id: slug, scale: { kind: 'probability', top }, colors: FORECAST_RAMP, existing };
+export function speciesSource(slug: string, top: number, coverage: Coverage): ValueSource {
+  return { id: slug, scale: { kind: 'probability', top }, colors: FORECAST_RAMP, ...coverage };
 }
 
 /**
@@ -121,7 +119,7 @@ export class ValueProtocol {
     const combination = this.combinations.get(adresse.source);
     if (combination) return { data: (await this.askCombination(combination, adresse)) ?? EMPTY };
     const source = this.sources.get(adresse.source);
-    if (!source?.existing.has(tileKey(adresse.z, adresse.x, adresse.y))) {
+    if (!source || !covers(source, adresse.z, adresse.x, adresse.y)) {
       return { data: EMPTY };
     }
     const shot = await this.ask(tilePath(adresse.folder, adresse.z, adresse.x, adresse.y), source);
@@ -138,7 +136,7 @@ export class ValueProtocol {
     const urls: string[] = [];
     for (const path of folder) {
       for (const [z, x, y] of tiles) {
-        if (source.existing.has(tileKey(z, x, y))) urls.push(tilePath(path, z, x, y));
+        if (covers(source, z, x, y)) urls.push(tilePath(path, z, x, y));
       }
     }
     if (urls.length > 0) this.send({ kind: 'vorladen', urls });
@@ -154,8 +152,8 @@ export class ValueProtocol {
    * nichts zu schneiden, und die Kachel bleibt leer.
    */
   private askCombination(source: CombinationSource, adresse: ValueUrl): Promise<ImageBitmap | null> {
-    const schluessel = tileKey(adresse.z, adresse.x, adresse.y);
-    if (source.parts.length === 0 || !source.parts.every((part) => part.existing.has(schluessel))) {
+    const { z, x, y } = adresse;
+    if (source.parts.length === 0 || !source.parts.every((part) => covers(part, z, x, y))) {
       return Promise.resolve(null);
     }
     const parts = source.parts.map((part) => ({

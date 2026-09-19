@@ -40,19 +40,16 @@ sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogramm, schreibe
+from pyramid import belegung
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
 from tiles import schreibe_kacheln, write_tile_sets
 
 # name -> (source, column, label, unit)
+# Die Baumarten-Ebenen kommen aus `tree_tiles.py`, dem einmaligen Lauf ueber
+# das 10-m-Raster. Dieser Lauf laesst sie stehen.
 STATIC = {
     "wald":      ("trees", "forest_fraction_500m", "Waldanteil", ""),
-    "fichte":    ("trees", "tree_spruce_1km", "Fichte im Umkreis 1 km", ""),
-    "buche":     ("trees", "tree_beech_1km", "Buche im Umkreis 1 km", ""),
-    "eiche":     ("trees", "tree_oak_1km", "Eiche im Umkreis 1 km", ""),
-    "birke":     ("trees", "tree_birch_1km", "Birke im Umkreis 1 km", ""),
-    "kiefer":    ("trees", "tree_pine_1km", "Kiefer im Umkreis 1 km", ""),
-    "nadelholz": ("trees", "tree_conifer_1km", "Nadelholz im Umkreis 1 km", ""),
     "hoehe":     ("site", "dem_mean", "Höhe", "m"),
     "hangneigung": ("site", "slope_mean", "Hangneigung", "Grad"),
     "nordexposition": ("site", "northness", "Nordexposition", ""),
@@ -127,13 +124,6 @@ def write_images(source: Path, targets: list[Path], work: Path) -> None:
     with rasterio.open(merc) as src:
         for band, target in enumerate(targets, start=1):
             render(src.read(band), target, 1.0, vary_alpha=False)
-
-
-def belegung(gefuellt) -> dict[str, list[str]]:
-    belegt: dict[str, list[str]] = {}
-    for z, x, y in sorted(gefuellt):
-        belegt.setdefault(str(z), []).append(f"{x}/{y}")
-    return belegt
 
 
 def wochenwetter(path: Path, cells: set[str], weeks: int) -> tuple[pd.DataFrame, list]:
@@ -240,8 +230,9 @@ def main() -> None:
 
     manifest_path = args.out / "layers.json"
     alt = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    layers = {} if not args.only_weekly else {
-        k: v for k, v in alt.get("layers", {}).items() if v.get("static")}
+    # Jede feste Ebene aus dem alten Manifest bleibt stehen. Dieser Lauf
+    # ueberschreibt nur die Ebenen, die er selbst rendert.
+    layers = {k: v for k, v in alt.get("layers", {}).items() if v.get("static")}
 
     if not args.only_weekly:
         z0, z1 = (int(v) for v in args.tile_zooms.split("-"))

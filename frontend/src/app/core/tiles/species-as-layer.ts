@@ -29,6 +29,8 @@ export function layerFromSpecies(manifest: SpeciesManifest, label: string, note 
     tilePath: tileRoot(manifest),
     zoomFrom: manifest.zoomFrom,
     zoomTo: manifest.zoomTo,
+    haveZoom: manifest.haveZoom,
+    offlineZoomTo: manifest.offlineZoomTo,
     existing: manifest.existing,
     weeks: manifest.weeks.map((week) => layerWeek(week.year, week.week)),
     histogram: null,

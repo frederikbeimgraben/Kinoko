@@ -1,6 +1,9 @@
 /** Das Manifest einer Vorhersage-Art, wie es `modell/src/pilze/region_map.py` neben die … */
 
 import { readHistogram, type Histogram } from './layers';
+import { tileKey } from './tile-paths';
+
+export { tileKey };
 
 /** Eine Woche der Art. */
 export interface ManifestWeek {
@@ -27,6 +30,10 @@ export interface SpeciesManifest {
   bounds: readonly [readonly [number, number], readonly [number, number]];
   zoomFrom: number;
   zoomTo: number;
+  /** Die gröbste Stufe, deren Kacheln `existing` einzeln nennt. */
+  haveZoom: number;
+  /** Die feinste Stufe, die ein Offline-Gebiet mitnimmt. */
+  offlineZoomTo: number;
   /** Alle Kacheln mit Daten, als `z/x/y`. */
   existing: ReadonlySet<string>;
   weeks: readonly ManifestWeek[];
@@ -35,11 +42,6 @@ export interface SpeciesManifest {
 /** Die Form einer Woche als Text: Jahr, Strich, Wochennummer. */
 export function weekKey(week: { year: number; week: number }): string {
   return `${week.year}-${String(week.week).padStart(2, '0')}`;
-}
-
-/** Der Schlüssel einer Kachel im Verzeichnis `existing`. */
-export function tileKey(z: number, x: number, y: number): string {
-  return `${z}/${x}/${y}`;
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -94,6 +96,8 @@ export function readManifest(raw: unknown, slug: string): SpeciesManifest {
     bounds: [corner(bounds[0]), corner(bounds[1])],
     zoomFrom: number(zooms[0], 5),
     zoomTo: number(zooms[1], 8),
+    haveZoom: number(tiles['haveZoom'], number(zooms[1], 8)),
+    offlineZoomTo: number(tiles['offlineZoomTo'], number(zooms[1], 8)),
     existing: readExisting(tiles['have']),
     weeks: weeks.map(readWeek).filter((week): week is ManifestWeek => week !== null),
   };

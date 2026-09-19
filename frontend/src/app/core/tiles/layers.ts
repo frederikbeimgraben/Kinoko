@@ -28,6 +28,10 @@ export interface Layer {
   tilePath: string;
   zoomFrom: number;
   zoomTo: number;
+  /** Die gröbste Stufe, deren Kacheln `existing` einzeln nennt. */
+  haveZoom: number;
+  /** Die feinste Stufe, die ein Offline-Gebiet mitnimmt. */
+  offlineZoomTo: number;
   existing: ReadonlySet<string>;
   /** Wochenschlüssel der Form `JJJJWWW`, aufsteigend. */
   weeks: readonly string[];
@@ -109,6 +113,8 @@ function readLayer(id: string, raw: unknown): Layer | null {
     tilePath: raw['tiles'],
     zoomFrom: number(zooms[0], 5),
     zoomTo: number(zooms[1], 8),
+    haveZoom: number(raw['haveZoom'], number(zooms[1], 8)),
+    offlineZoomTo: number(raw['offlineZoomTo'], number(zooms[1], 8)),
     existing: readExisting(raw['have']),
     weeks: weeks.filter((week): week is string => typeof week === 'string'),
     histogram: readHistogram(raw['histogram']),
