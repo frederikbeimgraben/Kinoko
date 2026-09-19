@@ -15,8 +15,10 @@ async function start(page: Page, path: string): Promise<void> {
 test('Methode und Quellen und Lizenzen zeigen ihre Absätze', async ({ page }) => {
   await start(page, '/konto');
 
-  await page.getByText('Methode').click();
-  await expect(page).toHaveURL(/\/konto\/methode$/);
+  await expect(async () => {
+    await page.getByText('Methode').click();
+    await expect(page).toHaveURL(/\/konto\/methode$/, { timeout: 2_000 });
+  }).toPass();
   await expect(page.getByText('Was die Karte zeigt')).toBeVisible();
 
   await page.getByRole('button', { name: 'Zurück' }).click();

@@ -70,7 +70,13 @@ describe('OptionSheetComponent', () => {
 
   it('bietet bei Mehrfachwahl Prüfzeilen statt Pfeilzeilen', async () => {
     const { container } = await render(OptionSheetComponent, {
-      inputs: { open: true, title: 'Teile wählen', options: OPTIONS, multiple: true, confirmLabel: 'Hinzufügen' },
+      inputs: {
+        open: true,
+        title: 'Teile wählen',
+        options: OPTIONS,
+        multiple: true,
+        confirmLabel: 'Hinzufügen',
+      },
     });
 
     expect(screen.getByRole('checkbox', { name: 'Mitteltemperatur der Woche' })).toBeInTheDocument();
@@ -80,7 +86,13 @@ describe('OptionSheetComponent', () => {
 
   it('meldet bei Mehrfachwahl die gewählte Menge über den Fuß und leert sie danach', async () => {
     const { fixture } = await render(OptionSheetComponent, {
-      inputs: { open: true, title: 'Teile wählen', options: OPTIONS, multiple: true, confirmLabel: 'Hinzufügen' },
+      inputs: {
+        open: true,
+        title: 'Teile wählen',
+        options: OPTIONS,
+        multiple: true,
+        confirmLabel: 'Hinzufügen',
+      },
     });
     const picks: (readonly string[])[] = [];
     fixture.componentInstance.confirmed.subscribe((ids) => picks.push(ids));
@@ -94,7 +106,13 @@ describe('OptionSheetComponent', () => {
 
   it('leert bei Mehrfachwahl die Wahl beim Schließen', async () => {
     const { fixture } = await render(OptionSheetComponent, {
-      inputs: { open: true, title: 'Teile wählen', options: OPTIONS, multiple: true, confirmLabel: 'Hinzufügen' },
+      inputs: {
+        open: true,
+        title: 'Teile wählen',
+        options: OPTIONS,
+        multiple: true,
+        confirmLabel: 'Hinzufügen',
+      },
     });
     let closes = 0;
     fixture.componentInstance.closed.subscribe(() => (closes += 1));
