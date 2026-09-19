@@ -111,6 +111,7 @@ test('die Reiterleiste kehrt nach der Rückkehr vom SSO zurück', async ({ page 
   await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
 
   await mockSignIn(page);
+  await page.waitForLoadState('networkidle');
   await page.getByRole('button', { name: 'Anmelden' }).click();
 
   await expect(page.getByRole('button', { name: 'Abmelden' })).toBeVisible();
