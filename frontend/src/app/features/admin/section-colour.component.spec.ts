@@ -18,7 +18,7 @@ const PALETTE = [
 ];
 
 function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
-  const map = convertToParamMap({ slug: 'boletus-edulis', part: 'gills' });
+  const map = convertToParamMap({ slug: 'boletus-edulis', part: 'gills', index: '0' });
   return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
 }
 
@@ -68,6 +68,17 @@ describe('SectionColourComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: '+ Farbe' }));
     await userEvent.click(screen.getByRole('tab', { name: 'eine Farbe' }));
 
-    expect(screen.getAllByRole('button', { name: 'Farbe entfernen' })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Entfernen' })).toHaveLength(1);
+  });
+
+  it('nimmt die Farbgruppe des Teils heraus', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Lamellenfarbe' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe entfernen' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.method).toBe('PUT');
+    expect((call.request.body as { colours: unknown[] }).colours).toEqual([]);
   });
 });

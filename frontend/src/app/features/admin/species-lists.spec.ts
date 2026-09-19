@@ -68,12 +68,7 @@ describe('species-lists', () => {
     const next = { ...TUBE_LATER, mode: 'distinct' } as unknown as ColourGroup;
 
     expect(withColourGroup(SPECIES, 'tubes', 1, next)).toEqual([CAP_COLOUR, TUBE_COLOUR, next]);
-    expect(withColourGroup(SPECIES, 'tubes', 2, next)).toEqual([
-      CAP_COLOUR,
-      TUBE_COLOUR,
-      TUBE_LATER,
-      next,
-    ]);
+    expect(withColourGroup(SPECIES, 'tubes', 2, next)).toEqual([CAP_COLOUR, TUBE_COLOUR, TUBE_LATER, next]);
   });
 
   it('nimmt eine Farbgruppe heraus und lässt die anderen Teile stehen', () => {
