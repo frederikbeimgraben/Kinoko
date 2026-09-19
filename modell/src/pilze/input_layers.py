@@ -46,21 +46,12 @@ from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
 from tiles import schreibe_kacheln, write_tile_sets
 
 # name -> (source, column, label, unit)
-# The tree species layers come from `tree_tiles.py`.
+# The layers with a source finer than the map grid come from
+# `fine_layers.py`. This run keeps them.
 STATIC = {
-    "wald":      ("trees", "forest_fraction_500m", "Waldanteil", ""),
-    "hoehe":     ("site", "dem_mean", "Höhe", "m"),
-    "hangneigung": ("site", "slope_mean", "Hangneigung", "Grad"),
-    "nordexposition": ("site", "northness", "Nordexposition", ""),
     "relief":    ("site", "dem_relief", "Höhenunterschied in der Zelle", "m"),
     "gelaendeposition": ("site", "tpi_25km", "Geländeposition, Mulde bis Rücken", "m"),
-    "boden_ph":  ("site", "soil_phh2o_0_5cm", "Boden-pH", ""),
-    "boden_sand": ("site", "soil_sand_0_5cm", "Sandanteil", "%"),
-    "boden_kohlenstoff": ("site", "soil_soc_0_5cm", "organischer Kohlenstoff", "g/kg"),
 }
-# SoilGrids speichert ganze Zahlen: pH mal 10, Sand in g/kg, Kohlenstoff in
-# dg/kg. Fuer die Anzeige durch 10 teilen, sonst steht dort pH 49.
-SKALA = {"boden_ph": 0.1, "boden_sand": 0.1, "boden_kohlenstoff": 0.1}
 # name -> (column, label, unit). The columns come from the weekly table and
 # the rolling windows below. The order is the order in the page's chooser.
 WEEKLY = {
@@ -245,13 +236,12 @@ def main() -> None:
             low, high = np.nanpercentile(values, [2, 98])
             feld = to_field(values)
             source = write_fields([(feld, low, high)], work, bounds, args.step)
-            k = SKALA.get(name, 1.0)
-            unten, oben = round(float(low) * k, 3), round(float(high) * k, 3)
+            unten, oben = round(float(low), 3), round(float(high), 3)
             eintrag = {"label": label, "unit": unit, "static": True,
                        "low": unten, "high": oben}
             # Ueber die Skala der Ebene, in ihrer Einheit. Die Griffe im
             # Faktor-Screen zeigen damit auf Meter oder pH, nicht auf 0 bis 1.
-            verteilung = histogram(feld * k, unten, oben)
+            verteilung = histogram(feld, unten, oben)
             if verteilung is not None:
                 eintrag["histogram"] = verteilung
             if not args.no_image:
@@ -263,7 +253,7 @@ def main() -> None:
                 eintrag.update(tiles=f"layers_kacheln/{name}", zooms=[z0, z1],
                                have=belegung(gefuellt))
             layers[name] = eintrag
-            print(f"  {name:20s} {low*k:8.2f} bis {high*k:8.2f} {unit}", flush=True)
+            print(f"  {name:20s} {low:8.2f} bis {high:8.2f} {unit}", flush=True)
     else:
         print(f"  {len(layers)} feste Ebenen aus dem alten Manifest uebernommen")
 
