@@ -157,4 +157,20 @@ describe('SpeciesEditorComponent', () => {
       '/verwaltung/arten/boletus-edulis/verwechslung/1',
     ]);
   });
+
+  it('führt von einem Text nirgends hin und von einem Merkmal auf sein Teil', async () => {
+    await build();
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('button', { name: /Hut/ });
+
+    await userEvent.click(screen.getByRole('button', { name: /Hut/ }));
+    await userEvent.click(screen.getByText('Kurzbeschreibung'));
+
+    expect(paths).toEqual(['/verwaltung/arten/boletus-edulis/teil/cap']);
+  });
 });

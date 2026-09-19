@@ -115,6 +115,27 @@ describe('species-lists', () => {
     expect(withLookalike(SPECIES, 2, one)).toHaveLength(3);
   });
 
+  it('hängt eine Farbgruppe an ein Teil ohne Farbe an', () => {
+    const stem = { ...CAP_COLOUR, part: 'stem' } as unknown as ColourGroup;
+
+    expect(withColourGroup(SPECIES, 'stem', 0, stem)).toHaveLength(4);
+    expect(colourGroups(null, 'cap')).toEqual([]);
+  });
+
+  it('lässt die Maße unberührt, wenn das Teil keines trägt', () => {
+    expect(withoutMeasurement(SPECIES, 'gills', 'width')).toHaveLength(2);
+  });
+
+  it('nimmt eine Farbgruppe nur aus ihrem Teil', () => {
+    expect(withoutColourGroup(SPECIES, 'stem', 0)).toHaveLength(3);
+  });
+
+  it('hängt eine Verwechslung an eine Art ohne Verwechslung an', () => {
+    const one = { slug: 'boletus-radicans', difference: '' };
+
+    expect(withLookalike(null, 0, one)).toEqual([one]);
+  });
+
   it('nimmt eine Verwechslung an ihrer Stelle heraus', () => {
     expect(withoutLookalike(SPECIES, 0).map((one) => one.slug)).toEqual(['imleria-badia']);
   });

@@ -122,6 +122,16 @@ describe('SectionLookalikeComponent', () => {
     ).toEqual(['tylopilus-felleus', 'tylopilus-felleus']);
   });
 
+  it('kehrt aus der Artwahl ohne Wahl zurück', async () => {
+    await build(WITH_LOOKALIKE, '1');
+    await screen.findByRole('heading', { name: 'Verwechslung' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Art' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+
+    expect(screen.getByRole('button', { name: 'Art' })).toBeInTheDocument();
+  });
+
   it('schreibt nichts, solange keine Art gewählt ist', async () => {
     const { http } = await build(WITH_LOOKALIKE, '1');
     await screen.findByRole('heading', { name: 'Verwechslung' });
