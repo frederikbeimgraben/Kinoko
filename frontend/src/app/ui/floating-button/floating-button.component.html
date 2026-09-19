@@ -7,5 +7,5 @@
   [disabled]="disabled()"
   (click)="pressed.emit()"
 >
-  <app-svg-icon [name]="icon()" [size]="24" />
+  <app-svg-icon class="floating__icon" [name]="icon()" [size]="24" [style.rotate.deg]="rotation()" />
 </button>

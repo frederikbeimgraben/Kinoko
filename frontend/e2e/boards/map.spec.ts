@@ -18,6 +18,9 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
+/** Die Drehung der Boards `MapRotated` und `MapDesktopRotated`. */
+const BOARD_BEARING = 30;
+
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
@@ -82,6 +85,32 @@ test('Map', async ({ page }) => {
   guard('Map', 'phone');
   await openMap(page);
   await board(page, 'Map');
+});
+
+/** Dreht die Karte über den Testhaken, wie eine Geste es täte. */
+async function turnMap(page: Page, bearing: number): Promise<void> {
+  await page.waitForFunction(() => 'pilzMap' in window);
+  await page.evaluate((angle) => {
+    (window as unknown as { pilzMap: { rotate: (b: number, p: number) => void } }).pilzMap.rotate(angle, 0);
+  }, bearing);
+}
+
+test('MapRotated', async ({ page }) => {
+  guard('MapRotated', 'phone');
+  await openMap(page, { detent: 0 });
+  await turnMap(page, -BOARD_BEARING);
+  await expect(page.getByRole('button', { name: 'Nach Norden drehen' })).toBeVisible();
+  await showMapImage(page, 'map-stein-631-gedreht.png');
+  await expectBoard(page, 'MapRotated');
+});
+
+test('MapDesktopRotated', async ({ page }) => {
+  guard('MapDesktopRotated', 'wide');
+  await openMap(page);
+  await turnMap(page, -BOARD_BEARING);
+  await expect(page.getByRole('button', { name: 'Nach Norden drehen' })).toBeVisible();
+  await showMapImage(page, 'map-desktop-stein-900-gedreht.png');
+  await expectBoard(page, 'MapDesktopRotated');
 });
 
 test('MapCollapsed', async ({ page }) => {

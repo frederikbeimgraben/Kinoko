@@ -12,6 +12,7 @@ import type {
   ObjectLayer,
   Padding,
   Role,
+  Rotation,
 } from '../map/map-adapter';
 import type { ValueReply, ValueJob } from '../map/value-messages';
 import type { ColorizeWorker } from '../map/value-protocol';
@@ -137,6 +138,56 @@ export class MapAdapterDouble implements MapAdapter {
 
   rawMap(): MapLibreMap | null {
     return this.raw;
+  }
+
+  /** Drehung und Neigung, die ein Test setzt. */
+  turn: Rotation = { bearing: 0, pitch: 0 };
+  /** Was die Seite auf eine Drehung hin tut. */
+  rotated: (() => void) | null = null;
+  /** Wie oft die Karte nach Norden gedreht wurde. */
+  norths: boolean[] = [];
+  cursors: string[] = [];
+  clicked: ((point: readonly [number, number]) => void) | null = null;
+  moved: ((point: readonly [number, number]) => void) | null = null;
+  /** Wohin `project` einen Ort legt. */
+  screen: { x: number; y: number } | null = { x: 100, y: 100 };
+
+  rotation(): Rotation {
+    return this.turn;
+  }
+
+  onRotate(handler: () => void): void {
+    this.rotated = handler;
+  }
+
+  resetNorth(smooth: boolean): void {
+    this.norths.push(smooth);
+    this.turn = { bearing: 0, pitch: 0 };
+    this.rotated?.();
+  }
+
+  setCursor(cursor: string): void {
+    this.cursors.push(cursor);
+  }
+
+  onMapClick(handler: (point: readonly [number, number]) => void): () => void {
+    this.clicked = handler;
+    return () => (this.clicked = null);
+  }
+
+  onPointerMove(handler: (point: readonly [number, number]) => void): () => void {
+    this.moved = handler;
+    return () => (this.moved = null);
+  }
+
+  project(): { x: number; y: number } | null {
+    return this.screen;
+  }
+
+  /** Dreht die Karte, wie eine Geste es täte. */
+  turnTo(bearing: number, pitch = 0): void {
+    this.turn = { bearing, pitch };
+    this.rotated?.();
   }
 }
 

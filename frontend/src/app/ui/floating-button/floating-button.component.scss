@@ -16,6 +16,11 @@
   box-shadow: var(--shadow-lg);
 }
 
+// Die Nadel dreht mit der Karte, der Knopf steht still.
+.floating__icon {
+  display: flex;
+}
+
 .floating--primary {
   color: var(--color-on-primary);
   background: var(--color-primary);

@@ -32,6 +32,7 @@ import { MapObjectsDirective } from '../objects/map-objects.directive';
 import { ObjectSheetComponent } from '../objects/object-sheet.component';
 import { CombinationState } from './combination.state';
 import { LayersSheetComponent } from './layers-sheet.component';
+import { MapButtonsComponent } from './map-buttons.component';
 import { MapColumnComponent } from './map-column.component';
 import { MapHeadComponent } from './map-head.component';
 import { MapOverlayState } from './map-overlay.state';
@@ -51,6 +52,7 @@ import { MapView } from './map.view';
     BannerComponent,
     FloatingButtonComponent,
     LayersSheetComponent,
+    MapButtonsComponent,
     MapAttributionComponent,
     MapColumnComponent,
     MapHeadComponent,
@@ -99,6 +101,15 @@ export class MapComponent implements OnDestroy {
 
   /** Ein Blatt in voller Höhe lässt nur den Ebenen-Knopf stehen. */
   protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
+  /** Der Kompass steht nur über einer gedrehten oder geneigten Karte. */
+  protected readonly turned = computed(() => {
+    const turn = this.surface.rotation();
+    return turn.bearing !== 0 || turn.pitch !== 0;
+  });
+
+  /** Norden liegt bei minus `bearing`: MapLibre dreht gegen die Blickrichtung. */
+  protected readonly needle = computed(() => -this.surface.rotation().bearing);
+
   /** Am Rechner stehen die Knöpfe der Karte auch unter einem Modal. */
   protected readonly showsButtons = computed(
     () => this.wide() || (!this.addEntry.onForm() && this.state.object() === null),

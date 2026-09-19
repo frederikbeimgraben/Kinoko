@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   afterRenderEffect,
   computed,
@@ -28,16 +29,21 @@ import { hectaresText } from '../entries/formats';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapState } from '../map/map.state';
 import { AddActionsComponent, type AddAction } from './add-actions.component';
-import { AddEntryState, type Location } from './add-entry.state';
+import { AddEntryState, CORNERS_MINIMUM, type Location } from './add-entry.state';
 import { coordinatesText } from './coordinates';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 import { asPolygon, loadAreaCalculator, type AreaCalculator } from './area';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
+import { StepInput } from './step-input';
+import { paintRing, clearRing } from './step-painter';
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 
 /** Ein kurzes Blatt folgt seinem Inhalt, ein Formular füllt seinen Wirt. */
 const DETENTS_CONTENT: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 const DETENTS_FORM: readonly [DetentSize, DetentSize, DetentSize] = [1, 1, 1];
+
+/** Der gesetzte Ort steht am Rechner blau, wie die Bretter ihn malen. */
+const MARK_COLOUR = 'blue' as const;
 
 /** Die Karte des Eintragens hängt am Plus-Knopf unten rechts. */
 const POPOVER_ANCHOR: PopoverAnchor = { bottom: 92, end: 24 };
@@ -71,6 +77,7 @@ const TITLE: Record<string, TranslationKey> = {
     SheetHeightDirective,
     TranslatePipe,
   ],
+  providers: [StepInput],
   templateUrl: './add-entry.component.html',
   styleUrl: './add-entry.component.scss',
 })
@@ -111,10 +118,14 @@ export class AddEntryComponent implements OnDestroy {
     this.state.onForm() ? coordinatesText(this.state.location(), this.i18n) : '',
   );
 
-  /** Der Ort unter dem Fadenkreuz, live beim Schieben der Karte. */
-  private readonly aim = signal<Location | null>(null);
+  private readonly input = inject(StepInput);
 
-  protected readonly aimText = computed(() => coordinatesText(this.aim(), this.i18n));
+  /** Der Ort, den der nächste Punkt bekäme: Fadenkreuz oder Zeiger. */
+  private readonly aim = this.input.aim;
+
+  protected readonly aimText = computed(() =>
+    coordinatesText(this.state.location() ?? this.aim(), this.i18n),
+  );
 
   protected readonly hectares = computed(() => {
     const compute = this.area();
@@ -135,7 +146,28 @@ export class AddEntryComponent implements OnDestroy {
     afterRenderEffect(() => {
       this.map.moved();
       this.state.step();
-      this.aim.set(this.pointUnderCrosshair());
+      this.input.aimAt(this.pointUnderCrosshair());
+    });
+
+    // Der Zeiger setzt am Rechner die Punkte. Er hört nur, solange ein
+    // Schritt den Ort sucht.
+    effect(() => {
+      if (!this.state.showsCrosshair()) {
+        this.input.stop();
+        return;
+      }
+      this.input.watch((point) => {
+        this.onPick(point);
+      });
+    });
+
+    // Der gesetzte Ort und die Vorschau am Zeiger liegen auf der Karte.
+    effect(() => {
+      const map = this.adapter.rawMap();
+      const step = this.state.step();
+      if (map === null) return;
+      if (step !== 'findLocation' && step !== 'markerLocation') return;
+      paintRing(map, [], colourHex(MARK_COLOUR), { mark: this.state.location() });
     });
 
     // Terra Draw und Turf kommen erst, wenn eine Zone entsteht. Beide liegen in
@@ -151,11 +183,12 @@ export class AddEntryComponent implements OnDestroy {
 
     effect(() => {
       const ring = this.state.ring();
-      this.session?.showRing(ring);
+      this.session?.showRing(ring, { pointer: this.pointerAim() });
     });
   }
 
   ngOnDestroy(): void {
+    this.input.stop();
     this.stopSession();
   }
 
@@ -169,11 +202,51 @@ export class AddEntryComponent implements OnDestroy {
     this.state.stop();
   }
 
-  /** Übernimmt den Ort unter dem Fadenkreuz. */
+  /** Der Ort unter dem Zeiger, nur am Rechner: er hängt an der Vorschau-Kante. */
+  private pointerAim(): Location | null {
+    return this.input.mode() === 'pointer' ? this.aim() : null;
+  }
+
+  /** Ein Klick auf die Karte setzt eine Ecke oder den Ort. */
+  private onPick(point: Location): void {
+    if (this.state.step() !== 'zoneDraw') {
+      this.state.setPoint(point);
+      return;
+    }
+    const ring = this.state.ring();
+    if (ring.length >= CORNERS_MINIMUM && this.input.hits(ring[0], point)) {
+      this.closeZone();
+      return;
+    }
+    this.state.addCorner(point);
+  }
+
+  /** Übernimmt den Ort unter dem Fadenkreuz oder unter dem Zeiger. */
   protected adoptLocation(): void {
-    const location = this.center();
+    const location = this.state.location() ?? this.center();
     if (location === null) return;
     this.state.adoptLocation(location);
+  }
+
+  /** Am Rechner: Eingabe schließt, Rücktaste nimmt die letzte Ecke, Esc bricht ab. */
+  @HostListener('document:keydown', ['$event'])
+  protected onKey(event: KeyboardEvent): void {
+    if (!this.state.showsCrosshair() || this.input.mode() !== 'pointer') return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cancel();
+      return;
+    }
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.state.step() === 'zoneDraw') this.closeZone();
+      else this.adoptLocation();
+      return;
+    }
+    if (event.key === 'Backspace' && this.state.step() === 'zoneDraw') {
+      event.preventDefault();
+      this.state.removeLastCorner();
+    }
   }
 
   protected addCorner(): void {
@@ -259,6 +332,8 @@ export class AddEntryComponent implements OnDestroy {
   }
 
   private stopSession(): void {
+    const map = this.adapter.rawMap();
+    if (map !== null) clearRing(map);
     this.session?.stop();
     this.session = null;
     this.sessionRunning = null;

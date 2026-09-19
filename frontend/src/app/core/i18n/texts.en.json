@@ -554,6 +554,7 @@
   "map.combination.save": "Save combination",
   "map.combination.saved": "Saved combinations",
   "map.combination.summary": "{rule} · {count} factors",
+  "map.compass": "Turn to north",
   "map.factor.add": "Add factor",
   "map.factor.assigned": "already in use",
   "map.factor.choose": "Choose factor",
