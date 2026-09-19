@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { shortMonth } from '../../../core/i18n/dates';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { YearBandComponent } from '../../../ui/year-band/year-band.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 import { MONTH_TEXT } from '../labels';
 
-/** Die vier Marken unter dem Jahresband. */
-const MARKS = [MONTH_TEXT[0], MONTH_TEXT[3], MONTH_TEXT[6], MONTH_TEXT[9]];
-
-const SHORT = 3;
+/** Die vier Marken unter dem Jahresband. Zählt von 1 bis 12. */
+const MARKS: readonly number[] = [1, 4, 7, 10];
 
 /** Die Wachstumszeit einer Art als Jahresband. */
 @Component({
@@ -38,5 +37,5 @@ export class SpeciesTimeComponent {
     };
   });
 
-  protected readonly marks = computed(() => MARKS.map((month) => this.i18n.translate(month).slice(0, SHORT)));
+  protected readonly marks = computed(() => MARKS.map((month) => shortMonth(month, this.i18n)));
 }

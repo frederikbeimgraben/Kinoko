@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { catalogueOf } from '../../testing/i18n';
-import { asDate, longDate, numericDate, shortDate, shortDay } from './dates';
+import { asDate, longDate, numericDate, shortDate, shortDay, shortMonth } from './dates';
 
 /** Der Katalog der Tests: die Muster der beiden kurzen Formen. */
 const PATTERN = {
@@ -42,5 +42,11 @@ describe('shortDate', () => {
 
   it('schreibt denselben Tag aus einem Zeitpunkt', () => {
     expect(shortDay(new Date(2026, 8, 6), CATALOGUE)).toBe('6. Sept.');
+  });
+});
+
+describe('shortMonth', () => {
+  it('nimmt den kurzen Monatsnamen aus dem Katalog, nicht aus dem langen Namen gekürzt', () => {
+    expect(shortMonth(9, CATALOGUE)).toBe('Sept.');
   });
 });

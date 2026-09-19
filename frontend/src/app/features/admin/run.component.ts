@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { Router } from '@angular/router';
 import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -47,13 +46,10 @@ interface Step {
 })
 export class RunComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(RunState);
 
-  private readonly id = toSignal(this.route.paramMap.pipe(map((one) => one.get('id') ?? '')), {
-    initialValue: this.route.snapshot.paramMap.get('id') ?? '',
-  });
+  private readonly id = injectRouteParam('id');
 
   private readonly text = (key: TranslationKey, values?: Record<string, string | number>): string =>
     this.i18n.translate(key, values);

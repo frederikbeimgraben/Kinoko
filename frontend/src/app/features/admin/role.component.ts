@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { Router } from '@angular/router';
 import type { Permission, PermissionArea, Role } from '../../core/api/models';
 import { PERMISSION_AREAS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
@@ -49,13 +48,10 @@ interface Area {
 })
 export class RoleComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(AdminState);
 
-  private readonly id = toSignal(this.route.paramMap.pipe(map((params) => params.get('id') ?? NEW_ROLE)), {
-    initialValue: this.route.snapshot.paramMap.get('id') ?? NEW_ROLE,
-  });
+  private readonly id = injectRouteParam('id', NEW_ROLE);
 
   protected readonly creating = computed(() => this.id() === NEW_ROLE);
   protected readonly role = computed<Role | null>(

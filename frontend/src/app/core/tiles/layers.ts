@@ -1,5 +1,7 @@
 /** Das Manifest der Eingabe-Ebenen, wie es `modell/src/pilze/input_layers.py` neben die … */
 
+import { decimal } from '../i18n/numbers';
+
 /** Die Verteilung einer Quelle über Deutschland, vorgerechnet von der Kette … */
 export interface Histogram {
   classes: readonly number[];
@@ -180,11 +182,9 @@ export function asPercent(layer: Layer): boolean {
 /** Ein Wert der Ebene ohne Einheit, in der Sprache der Oberfläche. */
 export function formatNumber(value: number, layer: Layer, locale: string): string {
   if (asPercent(layer)) {
-    return new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(value * 100);
+    return decimal(value * 100, locale, { maximumFractionDigits: 0 });
   }
-  return new Intl.NumberFormat(locale, {
-    maximumFractionDigits: Math.abs(value) >= 100 ? 0 : 1,
-  }).format(value);
+  return decimal(value, locale, { maximumFractionDigits: Math.abs(value) >= 100 ? 0 : 1 });
 }
 
 /** Die Einheit, in der die Ebene misst. */

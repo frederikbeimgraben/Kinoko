@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { Router } from '@angular/router';
 import type { BodyPart } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { shortDate } from '../../core/i18n/dates';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -55,13 +54,10 @@ interface Block {
 })
 export class SpeciesEditorComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorState);
 
-  private readonly slug = toSignal(this.route.paramMap.pipe(map((one) => one.get('slug') ?? '')), {
-    initialValue: this.route.snapshot.paramMap.get('slug') ?? '',
-  });
+  private readonly slug = injectRouteParam('slug');
 
   protected readonly species = this.state.species;
   protected readonly forecast = this.state.forecast;

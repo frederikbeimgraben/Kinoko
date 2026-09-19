@@ -64,7 +64,7 @@ export function capWidthOf(entry: SpeciesEntry, i18n: I18nService): Measure | nu
   const width = group?.measurements.find((one) => one.dimension === 'width');
   if (!width) return null;
   return {
-    value: spanText({ from: width.low, to: width.high }),
+    value: spanText({ from: width.low, to: width.high }, i18n.locale()),
     unit: i18n.translate(`enum.unit.${width.unit}` as 'enum.unit.cm'),
   };
 }

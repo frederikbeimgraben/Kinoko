@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import type { BodyPart, Dimension, Measurement, MeasurementGroup, Unit } from '../../core/api/models';
 import { DIMENSIONS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -25,14 +25,12 @@ import { withoutMeasurement } from './species-lists';
 })
 export class SectionSizeComponent {
   private readonly i18n = inject(I18nService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorState);
 
-  private readonly params = toSignal(this.route.paramMap, { initialValue: this.route.snapshot.paramMap });
-
-  protected readonly slug = computed(() => this.params().get('slug') ?? '');
-  protected readonly part = computed(() => (this.params().get('part') ?? 'cap') as BodyPart);
+  protected readonly slug = injectRouteParam('slug');
+  private readonly partParam = injectRouteParam('part', 'cap');
+  protected readonly part = computed(() => this.partParam() as BodyPart);
   protected readonly dimension = signal<Dimension>('width');
 
   private readonly chosen = computed<Measurement | null>(() =>

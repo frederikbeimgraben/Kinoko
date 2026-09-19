@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { decimal } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 
@@ -39,31 +40,32 @@ export class MeasurementComponent {
   readonly unit = input.required<string>();
 
   protected readonly extentKey = computed(() => EXTENT_KEY[this.extent()]);
-  protected readonly text = computed(() => spanText(this.spans().at(0)));
+  protected readonly text = computed(() => spanText(this.spans().at(0), this.i18n.locale()));
   protected readonly rare = computed(() => this.rareText());
 
   private rareText(): string | null {
     const span = this.spans().at(1);
     if (!span) return null;
     const unit = this.unit();
+    const locale = this.i18n.locale();
     if (span.to !== null)
-      return this.i18n.translate('art.mass.seltenBis', { wert: format(span.to), einheit: unit });
+      return this.i18n.translate('art.mass.seltenBis', { wert: format(span.to, locale), einheit: unit });
     if (span.from !== null) {
-      return this.i18n.translate('art.mass.seltenVon', { wert: format(span.from), einheit: unit });
+      return this.i18n.translate('art.mass.seltenVon', { wert: format(span.from, locale), einheit: unit });
     }
     return null;
   }
 }
 
 /** Eine Spanne als Text. Fehlt eine Seite oder sind beide gleich, bleibt eine Zahl. */
-export function spanText(span: Span | undefined): string {
+export function spanText(span: Span | undefined, locale: string): string {
   if (!span) return '';
-  if (span.from === null) return span.to === null ? '' : format(span.to);
-  if (span.to === null || span.to === span.from) return format(span.from);
-  return `${format(span.from)}${DASH}${format(span.to)}`;
+  if (span.from === null) return span.to === null ? '' : format(span.to, locale);
+  if (span.to === null || span.to === span.from) return format(span.from, locale);
+  return `${format(span.from, locale)}${DASH}${format(span.to, locale)}`;
 }
 
-/** Deutsche Schreibweise: Komma statt Punkt, keine Nullen hinter dem Komma. */
-function format(value: number): string {
-  return value.toLocaleString('de-DE', { maximumFractionDigits: 1 });
+/** Die Zahl in der Sprache der Oberfläche, keine Nullen hinter dem Komma. */
+function format(value: number, locale: string): string {
+  return decimal(value, locale, { maximumFractionDigits: 1 });
 }

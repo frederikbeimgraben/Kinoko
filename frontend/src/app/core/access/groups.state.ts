@@ -1,44 +1,26 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { tap, type Observable } from 'rxjs';
 import { GroupsApi } from '../api/groups.api';
 import type { FriendGroup } from '../api/models';
+import { SearchableListState } from './searchable-list.state';
 
-/** Die Gruppen im Speicher. Konto und Verwaltung lesen dieselbe Liste. */
+/** The groups in memory. The account and the administration read the same list. */
 @Injectable({ providedIn: 'root' })
-export class GroupsState {
+export class GroupsState extends SearchableListState<FriendGroup> {
   private readonly api = inject(GroupsApi);
 
-  private readonly _groups = signal<readonly FriendGroup[] | null>(null);
-  private readonly _search = signal('');
+  readonly groups = this.items;
 
-  /** `null`, solange die erste Antwort aussteht. */
-  readonly groups = this._groups.asReadonly();
-  readonly search = this._search.asReadonly();
-
-  readonly found = computed(() => {
-    const needle = this._search().trim().toLocaleLowerCase();
-    const all = this._groups() ?? [];
-    return needle === '' ? all : all.filter((one) => one.name.toLocaleLowerCase().includes(needle));
-  });
-
-  /** Ein stiller Aufruf meldet einen Fehler nicht als Toast. */
+  /** A quiet call does not report an error as a toast. */
   load(all = false, quiet = false): void {
     this.api.list(all, { quiet }).subscribe({
       next: (groups) => {
-        this._groups.set(groups);
+        this.setItems(groups);
       },
       error: () => {
-        this._groups.set([]);
+        this.setItems([]);
       },
     });
-  }
-
-  setSearch(value: string): void {
-    this._search.set(value);
-  }
-
-  one(id: string): FriendGroup | null {
-    return this._groups()?.find((group) => group.id === id) ?? null;
   }
 
   create(name: string): Observable<FriendGroup> {
@@ -84,15 +66,11 @@ export class GroupsState {
     );
   }
 
-  /** Nimmt eine Gruppe auf, oder ersetzt sie. Die Liste bleibt nach Name sortiert. */
-  private put(group: FriendGroup): void {
-    this._groups.update((all) => {
-      const rest = (all ?? []).filter((one) => one.id !== group.id);
-      return [...rest, group].sort((a, b) => a.name.localeCompare(b.name));
-    });
+  protected matches(item: FriendGroup, needle: string): boolean {
+    return item.name.toLocaleLowerCase().includes(needle);
   }
 
-  private drop(id: string): void {
-    this._groups.update((all) => all?.filter((one) => one.id !== id) ?? null);
+  protected sortKey(item: FriendGroup): string {
+    return item.name;
   }
 }

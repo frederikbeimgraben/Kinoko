@@ -45,6 +45,13 @@ export function shortDate(iso: string, i18n: I18nService): string {
 
 /** Derselbe Tag aus einem Zeitpunkt, den ein Dienst als Zeitstempel liefert. */
 export function shortDay(date: Date, i18n: I18nService): string {
-  const month = i18n.translate(`enum.monthShort.${date.getMonth() + 1}` as 'enum.monthShort.1');
-  return i18n.translate('common.dateShort', { tag: date.getDate(), monat: month });
+  return i18n.translate('common.dateShort', {
+    tag: date.getDate(),
+    monat: shortMonth(date.getMonth() + 1, i18n),
+  });
+}
+
+/** Der kurze Monatsname aus dem Katalog. `month` zählt von 1 bis 12. */
+export function shortMonth(month: number, i18n: I18nService): string {
+  return i18n.translate(`enum.monthShort.${month}` as 'enum.monthShort.1');
 }
