@@ -41,7 +41,7 @@
   }
 
   @if (!surfaceOnly() || wide()) {
-    @if ((wide() || !addEntry.onForm()) && state.object() === null) {
+    @if (showsButtons()) {
       <div class="map__buttons">
         <app-floating-button
           icon="layers"

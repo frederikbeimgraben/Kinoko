@@ -224,6 +224,14 @@ test('ZoneSheet', async ({ page }) => {
   await board(page, 'ZoneSheet');
 });
 
+test('MapDesktopZoneSheet', async ({ page }) => {
+  guard('MapDesktopZoneSheet', 'wide');
+  await page.context().grantPermissions(['geolocation']);
+  await openObject(page, 'Zonen', 'Schönbuch Nord');
+  await showMapImage(page, 'map-desktop-stein-900.png');
+  await expectBoard(page, 'MapDesktopZoneSheet');
+});
+
 test('ZoneEdit', async ({ page }) => {
   guard('ZoneEdit', 'phone');
   await openObject(page, 'Zonen', 'Schönbuch Nord');

@@ -51,6 +51,7 @@ interface Drag {
   readonly startX: number;
   readonly startHeight: number;
   moved: boolean;
+  captured: boolean;
 }
 
 /** Blatt über der Karte am Telefon, zentriertes Modal am Rechner. */
@@ -138,15 +139,17 @@ export class SheetComponent {
 
   protected onPointerDown(event: PointerEvent): void {
     if (this.wide()) return;
-    // Das Blatt greift den Zeiger sofort ab. Eine Maus verlässt den Streifen
-    // schon im ersten Schritt, und ohne Abgriff bliebe das Blatt stehen.
-    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    // Am Griff greift das Blatt den Zeiger sofort ab: eine Maus verlässt den
+    // Streifen schon im ersten Schritt. Im Kopf bleibt er beim Ziel darunter.
+    const onHandle = (event.target as HTMLElement).closest('.sheet__handle') !== null;
+    if (onHandle) (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
     this.drag = {
       pointer: event.pointerId,
       startY: event.clientY,
       startX: event.clientX,
       startHeight: this.sheetHeight(),
       moved: false,
+      captured: onHandle,
     };
   }
 
@@ -159,12 +162,16 @@ export class SheetComponent {
       // Die erste Achse entscheidet. Waagrecht gehört die Berührung der
       // Zeitleiste, senkrecht gehört sie dem Blatt.
       if (horizontal > vertical && horizontal > AXIS_THRESHOLD) {
-        (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+        if (drag.captured) (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
         this.drag = null;
         return;
       }
       if (vertical <= GRAB_THRESHOLD) return;
       drag.moved = true;
+      if (!drag.captured) {
+        (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+        drag.captured = true;
+      }
     }
     const next = drag.startHeight + (drag.startY - event.clientY);
     this.dragged.set(Math.min(Math.max(next, 0), this.hostHeight()));

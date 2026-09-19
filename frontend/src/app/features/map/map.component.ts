@@ -97,6 +97,11 @@ export class MapComponent implements OnDestroy {
 
   /** Ein Blatt in voller Höhe lässt nur den Ebenen-Knopf stehen. */
   protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
+  /** Am Rechner stehen die Knöpfe der Karte auch unter einem Modal. */
+  protected readonly showsButtons = computed(
+    () => this.wide() || (!this.addEntry.onForm() && this.state.object() === null),
+  );
+
   /** Der Plus-Knopf tritt ab, solange ein Schritt auf der Karte den Ort sucht. */
   protected readonly showsAdd = computed(() => {
     if (this.covered() || this.addEntry.showsCrosshair()) return false;
