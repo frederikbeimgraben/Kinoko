@@ -22,7 +22,7 @@ const STONE = speciesEntry({
 });
 
 function speciesStub(): unknown {
-  return { loadBundle: async () => undefined, species: signal([STONE]) };
+  return { loadBundle: () => Promise.resolve(), species: signal([STONE]) };
 }
 
 async function build(api = new FindsApiDouble()): Promise<{
@@ -93,7 +93,8 @@ describe('FindQueueComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Alle annehmen' }));
     expect(api.accepted).toBe(0);
 
-    await userEvent.click(screen.getAllByRole('button', { name: 'Alle annehmen' }).at(-1) as HTMLElement);
+    const buttons = screen.getAllByRole('button', { name: 'Alle annehmen' });
+    await userEvent.click(buttons[buttons.length - 1]);
 
     expect(api.accepted).toBe(1);
     expect(screen.getByText('Nichts zu prüfen')).toBeInTheDocument();

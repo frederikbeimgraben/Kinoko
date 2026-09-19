@@ -32,7 +32,7 @@ describe('FindQueueState', () => {
     state.loadPhotos('fund-eins');
 
     expect(photos.asked).toEqual(['fund-eins']);
-    expect(state.photos()['fund-eins']?.map((one) => one.id)).toEqual(['bild-fund']);
+    expect(state.photos()['fund-eins'].map((one) => one.id)).toEqual(['bild-fund']);
   });
 
   it('nimmt einen entschiedenen Fund aus der Liste', () => {

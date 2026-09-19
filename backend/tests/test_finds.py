@@ -286,9 +286,7 @@ async def test_review_of_missing_find_is_not_found(
     assert answer.status_code == 404
 
 
-async def test_open_finds_requires_the_right(
-    api: httpx.AsyncClient, session: AsyncSession
-) -> None:
+async def test_open_finds_requires_the_right(api: httpx.AsyncClient, session: AsyncSession) -> None:
     user = await make_user(session, "anna")
     sign_in(app_of(api), user)
     assert (await api.get("/finds/reviews/open")).status_code == 403

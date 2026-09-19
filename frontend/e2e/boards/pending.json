@@ -5,6 +5,8 @@
   "AccountDesktop",
   "AccountGuest",
   "AccountUpdated",
+  "Admin",
+  "AdminDesktop",
   "AreaPicker",
   "Categories",
   "CategoryMerge",
