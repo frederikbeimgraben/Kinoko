@@ -400,7 +400,7 @@
         <app-key-value-row [key]="text('beispiel.vergleich.druckprobe')" [cells]="pressCells">
           <ng-template let-cell>
             <span class="block__press">
-              <span class="block__presscolours">
+              <span class="block__presscolours" [class.block__presscolours--split]="cell.to.length > 0">
                 <app-colour-field
                   class="block__presscolour"
                   [colours]="cell.from"
@@ -653,7 +653,11 @@
 
   <section class="block" data-block="app-measurement-group">
     <h2 class="block__head">{{ 'blocks.measurementGroup' | t }}</h2>
-    <app-measurement-group [part]="text('species.field.cap')" [measurements]="capMeasurements" />
+    <div class="block__part">
+      <app-measurement-group [part]="text('species.field.cap')" [measurements]="capMeasurements" />
+      <p class="block__note">{{ text('beispiel.masse.hutBeschreibung') }}</p>
+      <p class="block__note block__note--comment">{{ text('beispiel.masse.hutKommentar') }}</p>
+    </div>
     <app-measurement-group [part]="text('species.field.stem')" [measurements]="stemMeasurements" />
   </section>
 
