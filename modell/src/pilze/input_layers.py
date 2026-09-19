@@ -38,20 +38,24 @@ from pyproj import Transformer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
-from coarse_inputs import COARSE_INPUTS, CoarseSampler
+from coarse_inputs import COARSE_INPUTS, SIGMA_CELLS, CoarseSampler
 from manifest import histogram, schreibe
 from pyramid import (ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom,
                      render_field)
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
 
-# name -> (source, column, label, unit)
+# name -> (source, column, label, unit, resolution in metres)
 # The layers with a source finer than the map grid come from
 # `fine_layers.py`. This run keeps them.
 STATIC = {
-    "relief":    ("site", "dem_relief", "Höhenunterschied in der Zelle", "m"),
-    "gelaendeposition": ("site", "tpi_25km", "Geländeposition, Mulde bis Rücken", "m"),
+    "relief":    ("site", "dem_relief", "Höhenunterschied in der Zelle", "m", 500),
+    "gelaendeposition": ("site", "tpi_25km", "Geländeposition, Mulde bis Rücken",
+                         "m", 25_000),
 }
+# The weather sits on 5 km cells and reaches the map grid through a Gaussian
+# filter. Sigma is the width over which the field is smooth.
+WEEKLY_RESOLUTION = int(COARSE_INPUTS["weather"] * SIGMA_CELLS)
 # name -> (column, label, unit). The columns come from the weekly table and
 # the rolling windows below. The order is the order in the page's chooser.
 WEEKLY = {
@@ -222,16 +226,16 @@ def main() -> None:
     # Every static layer of the old manifest stays.
     layers = {k: v for k, v in alt.get("layers", {}).items() if v.get("static")}
 
-    # Jede Ebene dieses Laufs liegt auf dem Kartenraster. Die Schrittweite
-    # nennt damit die feinste Stufe.
-    z0, z1 = ZOOM_BASE, finest_zoom(args.step, cap=args.zoom_cap)
-    print(f"  Zoom {z0} bis {z1} aus {args.step} m")
+    def spanne(resolution: int) -> tuple[int, int]:
+        """The zoom span of a source with this resolution."""
+        return ZOOM_BASE, finest_zoom(max(resolution, args.step), cap=args.zoom_cap)
 
     if not args.only_weekly:
-        for name, (_, column, label, unit) in STATIC.items():
+        for name, (_, column, label, unit, resolution) in STATIC.items():
             if column not in grid.columns:
                 print(f"  {name}: {column} fehlt, uebersprungen")
                 continue
+            z0, z1 = spanne(resolution)
             values = grid[column].to_numpy(dtype="float32")
             low, high = np.nanpercentile(values, [2, 98])
             feld = to_field(values)
@@ -254,11 +258,13 @@ def main() -> None:
                 eintrag.update(tiles=f"layers_kacheln/{name}", zooms=[z0, z1],
                                have=belegung(gefuellt))
             layers[name] = eintrag
-            print(f"  {name:20s} {low:8.2f} bis {high:8.2f} {unit}", flush=True)
+            print(f"  {name:20s} {low:8.2f} bis {high:8.2f} {unit}  z{z0}-{z1}",
+                  flush=True)
     else:
         print(f"  {len(layers)} feste Ebenen aus dem alten Manifest uebernommen")
 
     if not args.no_weekly:
+        z0, z1 = spanne(WEEKLY_RESOLUTION)
         wetter, wochen = wochenwetter(args.weather, set(grid["cell"]), args.weeks)
         print(f"\n{len(wochen)} Wochen Wetter, {wochen[0][0]}-W{wochen[0][1]:02d} bis "
               f"{wochen[-1][0]}-W{wochen[-1][1]:02d}")

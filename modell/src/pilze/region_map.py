@@ -492,8 +492,7 @@ def main() -> None:
     # bestehenden Kacheln, der Massstab ist derselbe.
     top = float(max(h["ceiling"] for h in bundle["horizons"].values()))
     images = args.out / f"{args.name}_weeks"; images.mkdir(parents=True, exist_ok=True)
-    # Die Vorhersage liegt auf dem Kartenraster. Die Schrittweite nennt
-    # damit die feinste Stufe.
+    # The prediction sits on the map grid. Its step names the finest level.
     z0, z1 = ZOOM_BASE, finest_zoom(args.step, cap=args.zoom_cap)
     kachelwurzel = args.out / f"{args.name}_kacheln"
     # Die Kacheln brauchen den Ausschnitt in Grad. Er ist fuer jede Woche

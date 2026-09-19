@@ -314,8 +314,8 @@ def build_outline(pbf: Path, target: Path) -> Path:
     subprocess.run(["osmium", "tags-filter", str(pbf), "r/admin_level=2",
                     "-o", str(level2), "--overwrite"],
                    check=True, capture_output=True)
-    # gdal_rasterize projiziert nicht. Der Umriss liegt daher im CRS der
-    # Quelle.
+    # gdal_rasterize does not reproject. The outline holds the CRS of the
+    # source.
     subprocess.run(["ogr2ogr", "-f", "GeoJSON", "-t_srs", SOURCE_CRS,
                     str(target), str(level2), "multipolygons",
                     "-where", "admin_level = '2'", "-select", "name"],
