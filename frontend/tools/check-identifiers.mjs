@@ -145,7 +145,6 @@ const STAEMME = [
   'stift',
   'streifen',
   'tabelle',
-  'taste',
   'teiler',
   'tippe',
   'umleitung',
