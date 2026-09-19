@@ -21,10 +21,11 @@ export class SheetHeightDirective implements OnDestroy {
     this.state.overlayHeight.set(0);
   }
 
-  /** Der Streifen misst den Weg vom oberen Rand des Elements zum Fensterfuß. */
+  /** Der Streifen misst den Weg vom oberen Rand des Elements zum Fensterfuß. Ohne Fläche verdeckt es nichts. */
   private report(): void {
     const element = this.host.nativeElement.querySelector('.sheet') ?? this.host.nativeElement;
     const box = element.getBoundingClientRect();
-    this.state.overlayHeight.set(Math.max(0, Math.round(window.innerHeight - box.top)));
+    const shown = box.width > 0 && box.height > 0;
+    this.state.overlayHeight.set(shown ? Math.max(0, Math.round(window.innerHeight - box.top)) : 0);
   }
 }

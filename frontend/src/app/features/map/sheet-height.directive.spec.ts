@@ -42,12 +42,16 @@ function observer(): { report: () => void } {
 }
 
 /** jsdom rechnet kein Layout; jedes Element beginnt dort, wo der Test es sagt. */
-function stubTop(sheetTop: number, hostTop: number): void {
+function stubTop(sheetTop: number, hostTop: number, size = 100): void {
   const real = Object.getOwnPropertyDescriptor(Element.prototype, 'getBoundingClientRect');
   Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
     configurable: true,
     value(this: Element) {
-      return { top: this.classList.contains('sheet') ? sheetTop : hostTop } as DOMRect;
+      return {
+        top: this.classList.contains('sheet') ? sheetTop : hostTop,
+        width: size,
+        height: size,
+      } as DOMRect;
     },
   });
   if (real) afterEach(() => Object.defineProperty(Element.prototype, 'getBoundingClientRect', real));
@@ -74,6 +78,16 @@ describe('SheetHeightDirective', () => {
     handle.report();
 
     expect(TestBed.inject(MapState).overlayHeight()).toBe(144);
+  });
+
+  it('meldet nichts, solange das Blatt keine Fläche hat', async () => {
+    const handle = observer();
+    stubTop(0, 0, 0);
+    await render(HostComponent);
+
+    handle.report();
+
+    expect(TestBed.inject(MapState).overlayHeight()).toBe(0);
   });
 
   it('stellt die Überlagerung zurück, sobald das Blatt geht', async () => {
