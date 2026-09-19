@@ -111,7 +111,9 @@
   inline-size: var(--size-modal-compact);
 }
 
-:host-context(.shell--column) .sheet--modal {
+// Das Modal steht über der Fläche rechts der Spalte, auch wenn sein Blatt
+// außerhalb der Hülle hängt.
+.sheet--modal {
   inset-inline-start: calc(var(--size-rail) + var(--size-column));
 }
 
