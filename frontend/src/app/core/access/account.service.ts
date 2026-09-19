@@ -10,6 +10,9 @@ export class AccountService {
 
   private readonly held = signal<string | null>(null);
 
+  /** Die Kennung des eigenen Kontos, `null` ohne Anmeldung. */
+  readonly userId = this.held.asReadonly();
+
   constructor() {
     effect(() => {
       if (this.auth.signedIn()) this.load();

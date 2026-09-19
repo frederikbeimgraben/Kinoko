@@ -1,6 +1,8 @@
 """Die Baseline und das Modell sagen dasselbe."""
 
+import hashlib
 import os
+import re
 from pathlib import Path
 
 from alembic import command
@@ -15,6 +17,33 @@ from app.core.settings import get_settings
 from app.models import Base
 
 ROOT = Path(__file__).resolve().parents[1]
+VERSIONS = ROOT / "migrations" / "versions"
+REVISION_LINE = re.compile(r'^revision: str = "(?P<id>[^"]+)"$', re.MULTILINE)
+
+# Der Abdruck je Revision. Eine geänderte Baseline braucht eine neue Kennung
+# und einen neuen Dateinamen. Ohne neue Kennung behält eine Datenbank ihre
+# alten Tabellen, weil ``env.py`` nur eine unbekannte Kennung verwirft.
+FINGERPRINTS = {
+    "baseline_4": "5d02d04b54ad8c1babfb1cb69c51aa4fd2bbc93dd0215a7c83d4c3c50e92316b",
+}
+
+
+def revision_of(file: Path) -> str:
+    """Die Kennung einer Wanderung."""
+    found = REVISION_LINE.search(file.read_text(encoding="utf-8"))
+    assert found is not None, file.name
+    return found.group("id")
+
+
+def fingerprint(file: Path) -> str:
+    """Der Abdruck einer Wanderung, ohne ihre Zeile ``revision``."""
+    body = REVISION_LINE.sub("", file.read_text(encoding="utf-8"))
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+
+def test_every_revision_keeps_its_content() -> None:
+    found = {revision_of(file): fingerprint(file) for file in VERSIONS.glob("*.py")}
+    assert found == FINGERPRINTS
 
 
 def alembic_config() -> Config:
@@ -90,7 +119,7 @@ def test_upgrade_resets_a_foreign_revision(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline_3"
+    assert version == "baseline_4"
 
 
 def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
@@ -101,7 +130,7 @@ def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
         connection.exec_driver_sql(
             "CREATE TABLE alembic_version (version_num VARCHAR(32) NOT NULL)"
         )
-        connection.exec_driver_sql("INSERT INTO alembic_version VALUES ('baseline')")
+        connection.exec_driver_sql("INSERT INTO alembic_version VALUES ('baseline_3')")
     Base.metadata.create_all(made)
     made.dispose()
 
@@ -114,7 +143,7 @@ def test_upgrade_resets_the_old_baseline_revision(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline_3"
+    assert version == "baseline_4"
 
 
 def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
@@ -133,4 +162,4 @@ def test_upgrade_resets_tables_without_a_version(tmp_path: Path) -> None:
     with made.connect() as connection:
         version = connection.exec_driver_sql("SELECT version_num FROM alembic_version").scalar_one()
     made.dispose()
-    assert version == "baseline_3"
+    assert version == "baseline_4"

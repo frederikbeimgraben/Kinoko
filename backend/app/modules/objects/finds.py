@@ -10,11 +10,12 @@ from fastapi import APIRouter, Depends, Query, Response, status
 
 from app.core.auth import CurrentUser, CurrentViewer, Db, requires
 from app.core.errors import Invalid, Unauthorized
-from app.models import Find
+from app.models import Find, User
 from app.modules.objects.find_service import FindQuery, FindService
 from app.modules.objects.repository import FindRepository
 from app.modules.objects.schemas import FindSchema, FindWrite, ReviewBody
 from app.modules.objects.service import ObjectService
+from app.modules.objects.visibility import group_of
 from app.shared.geometry import parse_bbox
 from app.shared.paging import Page
 
@@ -48,7 +49,7 @@ def _objects(db: Db) -> ObjectService[Find]:
     return ObjectService(FindRepository(db))
 
 
-def _values(body: FindWrite) -> dict[str, Any]:
+async def _values(db: Db, user: User, body: FindWrite) -> dict[str, Any]:
     return {
         "species_id": body.species_id,
         "lat": body.lat,
@@ -57,6 +58,7 @@ def _values(body: FindWrite) -> dict[str, Any]:
         "count": body.count,
         "for_training": body.for_training,
         "visibility": body.visibility,
+        "group_id": await group_of(db, user, body.visibility, body.group_id),
         "note": body.note,
     }
 
@@ -80,7 +82,7 @@ async def list_finds(
 @router.post("/finds", status_code=status.HTTP_201_CREATED)
 async def create_find(db: Db, user: CurrentUser, body: FindWrite) -> Any:  # noqa: ANN401
     """Legt einen Fund an."""
-    entity = Find(owner_id=user.id, **_values(body))
+    entity = Find(owner_id=user.id, **(await _values(db, user, body)))
     created = await _objects(db).create(entity)
     return FindSchema.of(created).dumped()
 
@@ -101,7 +103,7 @@ async def put_find(
     response: Response,
 ) -> Any:  # noqa: ANN401
     """Legt den Fund mit dieser Kennung an, oder ersetzt ihn."""
-    values = _values(body)
+    values = await _values(db, user, body)
     entity, created = await _objects(db).update(
         user,
         find_id,

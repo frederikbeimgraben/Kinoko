@@ -7,10 +7,12 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Header, Query, Response, status
 
 from app.core.auth import CurrentUser, Db, requires
+from app.modules.texts.glossary import router as glossary_router
 from app.modules.texts.schemas import TextWrite
 from app.modules.texts.service import TextService
 
 router = APIRouter(tags=["texts"])
+router.include_router(glossary_router)
 
 
 @router.get("/texts")

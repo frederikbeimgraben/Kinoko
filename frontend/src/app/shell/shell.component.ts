@@ -20,7 +20,12 @@ import { SyncService } from '../core/offline/sync.service';
 const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
 
 /** Wege ohne Reiterleiste. Die Regel steht am Weg, nicht in der Seite. */
-const WITHOUT_NAV: readonly RegExp[] = [/^\/bausteine(\/|$)/, /^\/arten\/[^/]+/, /^\/verwaltung(\/|$)/];
+const WITHOUT_NAV: readonly RegExp[] = [
+  /^\/bausteine(\/|$)/,
+  /^\/arten\/[^/]+/,
+  /^\/verwaltung(\/|$)/,
+  /^\/konto\/[^/]+/,
+];
 
 /**
  * Die Hülle um jeden Reiter: Navigation, Inhalt und der Avatar über der Karte.

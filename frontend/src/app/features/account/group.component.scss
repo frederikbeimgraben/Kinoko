@@ -1,0 +1,46 @@
+@use '../../../styles/card';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.group {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.group__section {
+  @include card.section-title;
+}
+
+.group__card {
+  @include card.card;
+
+  --list-row-inline: 14px;
+  --size-row-tall: var(--size-row);
+  --list-row-sub: var(--fs-row-meta);
+  --list-row-sub-height: 1.4;
+  --list-row-title-height: normal;
+  --space-row-stack: 2px;
+}
+
+.group__trail {
+  display: flex;
+  align-items: center;
+}
+
+// Der Code steht in einer Schrift mit fester Breite, wie im Brett.
+.group__code {
+  margin-inline-end: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+}

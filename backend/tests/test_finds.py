@@ -41,20 +41,32 @@ async def test_list_mine_returns_only_own_finds(
     assert listed.json()["items"][0]["lat"] == 2.0
 
 
-async def test_shared_finds_are_visible_without_login(
+async def a_group(api: httpx.AsyncClient, name: str = "Familie") -> str:
+    """Legt eine Gruppe an und liefert ihre Kennung."""
+    return str((await api.post("/groups", json={"name": name})).json()["id"])
+
+
+async def test_shared_finds_stay_hidden_without_login(
     api: httpx.AsyncClient,
     session: AsyncSession,
 ) -> None:
     anna = await make_user(session, "anna")
     sign_in(app_of(api), anna)
+    group = await a_group(api)
     await api.post(
         "/finds",
-        json={"lat": 1.0, "lon": 1.0, "foundOn": "2026-09-01", "visibility": "shared"},
+        json={
+            "lat": 1.0,
+            "lon": 1.0,
+            "foundOn": "2026-09-01",
+            "visibility": "shared",
+            "groupId": group,
+        },
     )
     sign_out(app_of(api))
     listed = await api.get("/finds", params={"mine": "false"})
     assert listed.status_code == 200
-    assert len(listed.json()["items"]) == 1
+    assert listed.json()["items"] == []
 
 
 async def test_shared_finds_exclude_private_ones(
@@ -69,12 +81,22 @@ async def test_shared_finds_exclude_private_ones(
 
 async def test_shared_finds_respect_since(api: httpx.AsyncClient, session: AsyncSession) -> None:
     anna = await make_user(session, "anna")
+    bert = await make_user(session, "bert")
     sign_in(app_of(api), anna)
+    group = await a_group(api)
+    code = (await api.get(f"/groups/{group}")).json()["inviteCode"]
     await api.post(
         "/finds",
-        json={"lat": 1.0, "lon": 1.0, "foundOn": "2026-09-01", "visibility": "shared"},
+        json={
+            "lat": 1.0,
+            "lon": 1.0,
+            "foundOn": "2026-09-01",
+            "visibility": "shared",
+            "groupId": group,
+        },
     )
-    sign_out(app_of(api))
+    sign_in(app_of(api), bert)
+    await api.post("/groups/join", json={"inviteCode": code})
     listed = await api.get(
         "/finds",
         params={"mine": "false", "since": "1970-01-01T00:00:00Z"},
@@ -92,9 +114,16 @@ async def test_shared_finds_exclude_the_viewers_own(
 ) -> None:
     anna = await make_user(session, "anna")
     sign_in(app_of(api), anna)
+    group = await a_group(api)
     await api.post(
         "/finds",
-        json={"lat": 1.0, "lon": 1.0, "foundOn": "2026-09-01", "visibility": "shared"},
+        json={
+            "lat": 1.0,
+            "lon": 1.0,
+            "foundOn": "2026-09-01",
+            "visibility": "shared",
+            "groupId": group,
+        },
     )
     listed = await api.get("/finds", params={"mine": "false"})
     assert listed.json()["items"] == []
@@ -108,6 +137,8 @@ async def test_shared_finds_coarsen_a_protected_species(
     bert = await make_user(session, "bert")
     species = await make_species(session, protection=Protection.STRICT)
     sign_in(app_of(api), anna)
+    group = await a_group(api)
+    code = (await api.get(f"/groups/{group}")).json()["inviteCode"]
     await api.post(
         "/finds",
         json={
@@ -116,9 +147,11 @@ async def test_shared_finds_coarsen_a_protected_species(
             "lon": 8.123456,
             "foundOn": "2026-09-01",
             "visibility": "shared",
+            "groupId": group,
         },
     )
     sign_in(app_of(api), bert)
+    await api.post("/groups/join", json={"inviteCode": code})
     listed = await api.get("/finds", params={"mine": "false"})
     item = listed.json()["items"][0]
     assert item["lat"] != 50.123456

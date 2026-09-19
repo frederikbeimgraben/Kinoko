@@ -171,6 +171,7 @@ async def test_list_permissions_reports_areas_by_contract(
         "role.assign": "access",
         "find.review": "data",
         "run.manage": "data",
+        "group.manage": "access",
     }
 
 

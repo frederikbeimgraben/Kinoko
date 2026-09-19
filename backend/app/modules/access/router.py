@@ -10,6 +10,7 @@ from fastapi import APIRouter, Path, Query, status
 from app.core.auth import CurrentViewer, Db, requires
 from app.core.errors import Forbidden, Unauthorized
 from app.modules.access.account import router as account_router
+from app.modules.access.groups import router as groups_router
 from app.modules.access.permissions import permission_entries
 from app.modules.access.schemas import RoleCreate, RoleUpdate, SetPersonRoles
 from app.modules.access.service import AccessService
@@ -19,6 +20,7 @@ from app.shared.paging import Page
 
 router = APIRouter(tags=["access"])
 router.include_router(account_router)
+router.include_router(groups_router)
 
 RoleId = Annotated[uuid.UUID, Path(alias="id")]
 PersonId = Annotated[uuid.UUID, Path(alias="id")]

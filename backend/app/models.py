@@ -62,6 +62,8 @@ from app.shared.enums import (
 SLUG_LENGTH: Final = 80
 NAME_LENGTH: Final = 120
 HEX_LENGTH: Final = 7
+GROUP_NAME_LENGTH: Final = 60
+INVITE_CODE_LENGTH: Final = 16
 
 
 class Utc(TypeDecorator[datetime]):
@@ -166,6 +168,56 @@ class UserRole(Base):
         primary_key=True,
     )
     granted_at: Mapped[datetime] = mapped_column(Utc(), default=now)
+
+
+class FriendGroup(Base):
+    """Eine Gruppe von Freunden. Ein Eintrag geht an höchstens eine."""
+
+    __tablename__ = "group"
+
+    id: Mapped[uuid.UUID] = pk_id()
+    name: Mapped[str] = mapped_column(String(GROUP_NAME_LENGTH))
+    owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
+    invite_code: Mapped[str] = mapped_column(String(INVITE_CODE_LENGTH), unique=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
+
+
+class GroupMember(Base):
+    """Ein Konto in einer Gruppe."""
+
+    __tablename__ = "group_member"
+
+    group_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("group.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    joined_at: Mapped[datetime] = mapped_column(Utc(), default=now)
+
+
+class GlossaryEntry(Base):
+    """Ein Begriff des Glossars."""
+
+    __tablename__ = "glossary_entry"
+
+    id: Mapped[uuid.UUID] = pk_id()
+    term: Mapped[str] = mapped_column(String(NAME_LENGTH), unique=True)
+    definition: Mapped[str] = mapped_column(Text)
+    updated_at: Mapped[datetime] = stamp()
+    updated_by_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("user.id", ondelete="SET NULL"),
+    )
+
+    updated_by: Mapped[User | None] = relationship(lazy="selectin")
+
+    @property
+    def updated_by_name(self) -> str | None:
+        """Der Name des letzten Bearbeiters."""
+        held = self.updated_by
+        return held.name if held is not None else None
 
 
 class Taxon(Base):
@@ -459,6 +511,7 @@ class Find(Base):
     )
     reviewed_at: Mapped[datetime | None] = mapped_column(Utc())
     visibility: Mapped[Visibility] = mapped_column(String(20), default=Visibility.PRIVATE)
+    group_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("group.id", ondelete="SET NULL"))
     note: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
@@ -519,6 +572,7 @@ class Marker(Base):
     lon: Mapped[float] = mapped_column(Float)
     colour: Mapped[MarkerColour] = mapped_column(String(20), default=MarkerColour.GREEN)
     visibility: Mapped[Visibility] = mapped_column(String(20), default=Visibility.PRIVATE)
+    group_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("group.id", ondelete="SET NULL"))
     note: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()
@@ -538,6 +592,7 @@ class Zone(Base):
     area_ha: Mapped[float] = mapped_column(Float, default=0.0)
     colour: Mapped[MarkerColour] = mapped_column(String(20), default=MarkerColour.GREEN)
     visibility: Mapped[Visibility] = mapped_column(String(20), default=Visibility.PRIVATE)
+    group_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("group.id", ondelete="SET NULL"))
     note: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(Utc(), default=now)
     updated_at: Mapped[datetime] = stamp()

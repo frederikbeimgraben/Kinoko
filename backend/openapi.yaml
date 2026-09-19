@@ -101,6 +101,241 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
+  /groups:
+    get:
+      operationId: listGroups
+      tags: [groups]
+      parameters:
+        - name: all
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FriendGroup"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+    post:
+      operationId: createGroup
+      tags: [groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendGroupWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendGroup"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /groups/join:
+    post:
+      operationId: joinGroup
+      tags: [groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendGroupJoin"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendGroup"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /groups/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getGroup
+      tags: [groups]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendGroup"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+    put:
+      operationId: updateGroup
+      tags: [groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendGroupWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendGroup"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteGroup
+      tags: [groups]
+      responses:
+        "204":
+          description: No Content
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /groups/{id}/members/{userId}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      operationId: removeGroupMember
+      tags: [groups]
+      responses:
+        "204":
+          description: No Content
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+  /glossary:
+    get:
+      operationId: listGlossary
+      tags: [glossary]
+      security: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GlossaryEntry"
+    post:
+      operationId: createGlossaryEntry
+      tags: [glossary]
+      x-permission: text.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GlossaryEntryWrite"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlossaryEntry"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /glossary/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    put:
+      operationId: updateGlossaryEntry
+      tags: [glossary]
+      x-permission: text.edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GlossaryEntryWrite"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GlossaryEntry"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: deleteGlossaryEntry
+      tags: [glossary]
+      x-permission: text.edit
+      responses:
+        "204":
+          description: No Content
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
   /species/bundle:
     get:
       operationId: getSpeciesBundle
@@ -2033,6 +2268,7 @@ components:
         - role.assign
         - text.edit
         - run.manage
+        - group.manage
 
     Area:
       type: string
@@ -3085,6 +3321,10 @@ components:
             - type: "null"
         visibility:
           $ref: "#/components/schemas/Visibility"
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
         note:
           oneOf:
             - type: string
@@ -3124,6 +3364,10 @@ components:
           default: false
         visibility:
           $ref: "#/components/schemas/Visibility"
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
         note:
           oneOf:
             - type: string
@@ -3162,6 +3406,10 @@ components:
           $ref: "#/components/schemas/MarkerColour"
         visibility:
           $ref: "#/components/schemas/Visibility"
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
         note:
           oneOf:
             - type: string
@@ -3190,6 +3438,10 @@ components:
           $ref: "#/components/schemas/MarkerColour"
         visibility:
           $ref: "#/components/schemas/Visibility"
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
         note:
           oneOf:
             - type: string
@@ -3228,6 +3480,10 @@ components:
           $ref: "#/components/schemas/MarkerColour"
         visibility:
           $ref: "#/components/schemas/Visibility"
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
         note:
           oneOf:
             - type: string
@@ -3254,6 +3510,10 @@ components:
           $ref: "#/components/schemas/MarkerColour"
         visibility:
           $ref: "#/components/schemas/Visibility"
+        groupId:
+          type: string
+          format: uuid
+          nullable: true
         note:
           oneOf:
             - type: string
@@ -3636,6 +3896,82 @@ components:
             - type: "null"
       required: [items, nextCursor]
 
+    FriendGroup:
+      type: object
+      required: [id, name, ownerId, inviteCode, members, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        ownerId:
+          type: string
+          format: uuid
+        inviteCode:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/FriendGroupMember"
+        createdAt:
+          type: string
+          format: date-time
+    FriendGroupWrite:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+    FriendGroupMember:
+      type: object
+      required: [userId, name, joinedAt]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        joinedAt:
+          type: string
+          format: date-time
+    FriendGroupJoin:
+      type: object
+      required: [inviteCode]
+      properties:
+        inviteCode:
+          type: string
+    GlossaryEntry:
+      type: object
+      required: [id, term, definition, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        term:
+          type: string
+        definition:
+          type: string
+        updatedByName:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+    GlossaryEntryWrite:
+      type: object
+      required: [term, definition]
+      properties:
+        term:
+          type: string
+          minLength: 1
+          maxLength: 80
+        definition:
+          type: string
+          minLength: 1
+          maxLength: 600
     Person:
       type: object
       properties:

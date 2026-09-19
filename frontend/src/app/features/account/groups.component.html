@@ -1,0 +1,54 @@
+<app-page-header [title]="'group.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="groups">
+  <div>
+    <div class="groups__card">
+      @for (row of rows(); track row.id) {
+        <app-list-row
+          kind="catalogue"
+          [title]="row.name"
+          [subline]="row.members"
+          [clickable]="true"
+          [chevron]="true"
+          (chosen)="open(row.id)"
+        />
+      }
+    </div>
+    <app-add-row [label]="'group.add' | t" [action]="'group.create' | t" (pressed)="creating.set(true)" />
+  </div>
+
+  <div class="groups__card">
+    <app-list-row
+      kind="catalogue"
+      [title]="'group.join' | t"
+      [clickable]="true"
+      [chevron]="true"
+      (chosen)="joining.set(true)"
+    />
+  </div>
+</div>
+
+@if (creating()) {
+  <app-group-sheet
+    [title]="'group.create' | t"
+    [label]="'common.name' | t"
+    [placeholder]="'common.name' | t"
+    [submit]="'group.createSubmit' | t"
+    [busy]="busy()"
+    (submitted)="create($event)"
+    (cancelled)="creating.set(false)"
+  />
+}
+
+@if (joining()) {
+  <app-group-sheet
+    [title]="'group.joinTitle' | t"
+    [label]="'group.code' | t"
+    [placeholder]="'group.codePlaceholder' | t"
+    [submit]="'group.joinSubmit' | t"
+    [section]="true"
+    [busy]="busy()"
+    (submitted)="join($event)"
+    (cancelled)="joining.set(false)"
+  />
+}

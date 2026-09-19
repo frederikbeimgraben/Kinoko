@@ -26,6 +26,7 @@ export const PERMISSIONS: readonly Permission[] = [
   'role.assign',
   'find.review',
   'run.manage',
+  'group.manage',
 ];
 
 /** Die vier Gruppen, unter denen die Rechtematrix ihre Zeilen zeigt. */
