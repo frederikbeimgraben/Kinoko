@@ -26,26 +26,13 @@
   </div>
 }
 
-<app-overlay-host [open]="picking()" [modal]="true" (closed)="picking.set(false)">
-  @if (picking()) {
-    <app-sheet
-      [label]="'entry.field.group' | t"
-      [title]="'entry.field.group' | t"
-      [modal]="true"
-      [detents]="DETENTS"
-      (closed)="picking.set(false)"
-    >
-      <div class="choice__list">
-        @for (row of groups(); track row.id) {
-          <app-list-row
-            kind="catalogue"
-            [title]="row.name"
-            [clickable]="true"
-            [selected]="row.id === groupId()"
-            (chosen)="chooseGroup(row.id)"
-          />
-        }
-      </div>
-    </app-sheet>
-  }
-</app-overlay-host>
+<app-option-sheet
+  [open]="picking()"
+  [title]="'entry.field.group' | t"
+  [options]="groupOptions()"
+  [selected]="groupId()"
+  [detents]="DETENTS"
+  [detent]="1"
+  (chosen)="chooseGroup($event)"
+  (closed)="picking.set(false)"
+/>
