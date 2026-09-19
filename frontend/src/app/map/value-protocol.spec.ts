@@ -16,7 +16,7 @@ const MANIFEST = readManifest(
 function protocol(): { value: ValueProtocol; worker: WorkerDouble } {
   const worker = new WorkerDouble();
   const value = new ValueProtocol(() => worker);
-  value.report(speciesSource(MANIFEST.slug, MANIFEST.top, MANIFEST.existing));
+  value.report(speciesSource(MANIFEST.slug, MANIFEST.top, MANIFEST));
   return { value, worker };
 }
 
@@ -122,8 +122,13 @@ describe('wert://', () => {
       rule: 'intersection',
       colors: ['#004225'],
       parts: [
-        { folder: 'layers_kacheln/regen_4w/2025W40', bound, existing: MANIFEST.existing },
-        { folder: 'layers_kacheln/wald', bound, existing: MANIFEST.existing },
+        {
+          folder: 'layers_kacheln/regen_4w/2025W40',
+          bound,
+          existing: MANIFEST.existing,
+          haveZoom: MANIFEST.haveZoom,
+        },
+        { folder: 'layers_kacheln/wald', bound, existing: MANIFEST.existing, haveZoom: MANIFEST.haveZoom },
       ],
     });
     const shot = { width: 256 } as unknown as ImageBitmap;
@@ -149,8 +154,8 @@ describe('wert://', () => {
       rule: 'graded',
       colors: ['#0d0827'],
       parts: [
-        { folder: 'a', bound, existing: MANIFEST.existing },
-        { folder: 'b', bound, existing: new Set<string>() },
+        { folder: 'a', bound, existing: MANIFEST.existing, haveZoom: MANIFEST.haveZoom },
+        { folder: 'b', bound, existing: new Set<string>(), haveZoom: 14 },
       ],
     });
 

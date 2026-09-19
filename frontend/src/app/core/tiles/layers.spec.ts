@@ -47,6 +47,18 @@ const RAW = {
       have: { '8': ['132/82'] },
       histogram: { classes: [0, 0.5, 1], shares: [0.7, 0.3] },
     },
+    fichte: {
+      label: 'Fichte',
+      unit: '',
+      static: true,
+      low: 0,
+      high: 1,
+      tiles: 'layers_kacheln/fichte',
+      zooms: [5, 14],
+      haveZoom: 10,
+      offlineZoomTo: 12,
+      have: { '10': ['548/350'] },
+    },
     broken: { label: 'Ohne Kacheln' },
   },
 };
@@ -74,6 +86,8 @@ describe('Ebenen', () => {
       tilePath: 'layers_kacheln/regen_4w',
       zoomFrom: 5,
       zoomTo: 7,
+      haveZoom: 7,
+      offlineZoomTo: 7,
       existing: new Set(['7/66/42']),
       weeks: ['2025W39', '2025W40'],
       histogram: null,
@@ -85,7 +99,7 @@ describe('Ebenen', () => {
   });
 
   it('lässt eine Ebene ohne Kachelordner weg', () => {
-    expect(MANIFEST.layers.map((layer) => layer.id)).toEqual(['regen_4w', 'wald']);
+    expect(MANIFEST.layers.map((layer) => layer.id)).toEqual(['regen_4w', 'wald', 'fichte']);
   });
 
   it('macht aus einem leeren Manifest eine leere Liste', () => {
@@ -96,7 +110,7 @@ describe('Ebenen', () => {
     const { perWeek, fixed } = layerGroups(MANIFEST.layers);
 
     expect(perWeek.map((layer) => layer.id)).toEqual(['regen_4w']);
-    expect(fixed.map((layer) => layer.id)).toEqual(['wald']);
+    expect(fixed.map((layer) => layer.id)).toEqual(['wald', 'fichte']);
   });
 
   it('schreibt den Wochenschlüssel wie das Rendering', () => {
@@ -174,5 +188,20 @@ describe('Ebenen', () => {
     expect(unitOf(RAIN)).toBe('mm');
     expect(unitOf(FOREST)).toBe('%');
     expect(formatNumber(0.72, FOREST, 'de')).toBe('72');
+  });
+});
+
+describe('Ebenen mit Kappe', () => {
+  const SPRUCE = MANIFEST.layers[2];
+
+  it('liest die Kappe der Kachelliste und die Stufe fürs Gebiet', () => {
+    expect(SPRUCE.zoomTo).toBe(14);
+    expect(SPRUCE.haveZoom).toBe(10);
+    expect(SPRUCE.offlineZoomTo).toBe(12);
+  });
+
+  it('nimmt ohne Kappe die feinste Stufe', () => {
+    expect(FOREST.haveZoom).toBe(8);
+    expect(FOREST.offlineZoomTo).toBe(8);
   });
 });

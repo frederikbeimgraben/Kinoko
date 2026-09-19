@@ -39,7 +39,7 @@ export class MapPainter {
 
   /** Meldet die Skala einer Art an den Färbe-Worker. */
   report(manifest: SpeciesManifest): void {
-    this.protocol.report(speciesSource(manifest.slug, manifest.top, manifest.existing));
+    this.protocol.report(speciesSource(manifest.slug, manifest.top, manifest));
   }
 
   /** Die groben Stufen der Woche, noch bevor MapLibre steht. */
@@ -74,6 +74,7 @@ export class MapPainter {
       scale: { kind: 'range', low: layer.low, high: layer.high },
       colors: FORECAST_RAMP,
       existing: layer.existing,
+      haveZoom: layer.haveZoom,
     });
     const folder = layerFolders(layer, week);
     this.adapter.showValue(
@@ -100,7 +101,12 @@ export class MapPainter {
       if (!factor.active || !layer) continue;
       const folder = layerFolders(layer, week);
       if (folder === null) continue;
-      parts.push({ folder, bound: boundFor(factor, layer), existing: layer.existing });
+      parts.push({
+        folder,
+        bound: boundFor(factor, layer),
+        existing: layer.existing,
+        haveZoom: layer.haveZoom,
+      });
       zoomFrom = Math.max(zoomFrom, layer.zoomFrom);
       zoomTo = Math.min(zoomTo, layer.zoomTo);
     }

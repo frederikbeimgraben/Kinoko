@@ -30,6 +30,8 @@ describe('Manifest', () => {
     ]);
     expect(manifest.zoomFrom).toBe(5);
     expect(manifest.zoomTo).toBe(8);
+    expect(manifest.haveZoom).toBe(8);
+    expect(manifest.offlineZoomTo).toBe(8);
     expect(manifest.existing.has('5/16/10')).toBe(true);
     expect(manifest.existing.has('7/66/43')).toBe(false);
     expect(manifest.weeks).toHaveLength(3);
@@ -100,5 +102,17 @@ describe('Manifest', () => {
   it('schreibt Wochen- und Kachelschlüssel in fester Form', () => {
     expect(weekKey({ year: 2025, week: 7 })).toBe('2025-07');
     expect(tileKey(7, 66, 42)).toBe('7/66/42');
+  });
+});
+
+describe('Manifest mit Kappe', () => {
+  it('liest die Kappe der Kachelliste und die Stufe fürs Gebiet', () => {
+    const manifest = readManifest(
+      { ...RAW, tiles: { zooms: [5, 14], haveZoom: 10, offlineZoomTo: 12, have: {} } },
+      'boletus_edulis',
+    );
+    expect(manifest.zoomTo).toBe(14);
+    expect(manifest.haveZoom).toBe(10);
+    expect(manifest.offlineZoomTo).toBe(12);
   });
 });

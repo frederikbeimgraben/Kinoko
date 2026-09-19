@@ -557,3 +557,15 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
       wirklich null Besuche) und die Rate danach aus den geglätteten Zählern
       zu teilen. Das verschiebt eine starke Spalte und braucht eine
       Entscheidung.
+- [ ] Die restlichen Ebenen auf `pyramid.py` umstellen. Höhe und Hangneigung
+      liegen auf 90 m und tragen damit z12, der Boden auf 250 m und damit z10,
+      das Wetter nach der Glättung auf 500 m und damit z9. Heute rendert
+      `input_layers.py` alle festen Ebenen auf z5 bis z8 und die Wochenebenen
+      auf z5 bis z7, beide als feste Spanne. Die Spanne muss aus der
+      Auflösung der Quelle kommen, und `--tile-zooms` und `--weekly-zooms`
+      entfallen. Für Höhe und Hangneigung ist zu prüfen, ob das rohe DEM mit
+      90 m gehalten wird oder neu geholt werden muss.
+- [ ] `wald` aus dem 10-m-Raster rendern. Das braucht eine Maske für
+      Deutschland: im Thünen-Raster heißt Klasse 0 auch Ausland und Wasser,
+      und ohne Maske stünde dort ein Waldanteil von null statt keiner Wert.
+      Das Gewichtsraster von `tree_tiles.py` trägt den Waldanteil bereits.

@@ -141,6 +141,30 @@ Tree cover density and dominant leaf type at 10 m. Better than OpenStreetMap
 for forest composition, but the download needs a free Copernicus Land account.
 Get one if the OpenStreetMap layer proves too coarse.
 
+### Thünen dominant tree species — in use
+
+Dominant tree species for Germany 2017/2018 at 10 m, in 11 classes. The grid
+covers the German forest area in EPSG:32632, 64076 by 86147 pixels. Value 0
+marks no data. The class codes are 2 birch, 3 beech, 4 Douglas fir, 5 oak,
+6 alder, 8 spruce, 9 pine, 10 larch, 14 fir, 16 other deciduous with a high
+life expectancy, 17 other deciduous with a low life expectancy.
+
+Access: open, no account. Web coverage service at
+https://atlas.thuenen.de/geoserver/ows, coverage `geonode__Dominant_Species_Class`.
+
+License: Creative Commons Attribution 4.0 International (CC BY 4.0),
+https://creativecommons.org/licenses/by/4.0/. The license permits public
+tiles and derived products for any purpose. It requires credit, a link to
+the license, and a note about the changes that we make. The app shows the
+credit in the license list.
+
+Credit line:
+
+    Blickensdörfer L, Oehmichen K, Pflugmacher D, Kleinschmit B, Hostert P
+    (2022) Dominant Tree Species for Germany (2017/2018) [Datensatz].
+    Johann Heinrich von Thünen-Institut (ed) Thünen-Atlas OGC Web Services:
+    https://atlas.thuenen.de/geoserver/ows
+
 ## Citation
 
 The European extract used from 2026-09-06 onward has a DOI. Cite it as:

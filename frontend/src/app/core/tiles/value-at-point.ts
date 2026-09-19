@@ -1,5 +1,6 @@
 import { tilePath } from './tile-paths';
-import { tileKey, type SpeciesManifest } from './manifest';
+import { covers } from './coverage';
+import type { SpeciesManifest } from './manifest';
 
 /** Eine Wertkachel ist 256 Punkte breit, so wie das Rendering sie schreibt. */
 const TILE_PIXELS = 256;
@@ -57,7 +58,7 @@ export async function valueAtPoint(
 ): Promise<number | null> {
   for (let zoom = manifest.zoomTo; zoom >= manifest.zoomFrom; zoom--) {
     const location = tileLocation(lon, lat, zoom);
-    if (!manifest.existing.has(tileKey(location.z, location.x, location.y))) continue;
+    if (!covers(manifest, location.z, location.x, location.y)) continue;
     const byte = await readByte(tilePath(weekFolder, location.z, location.x, location.y), location);
     if (byte !== null) return valueFromByte(byte, manifest.top);
   }

@@ -136,10 +136,11 @@ For a local test the script also serves the map directory:
 ## The input layers
 
 `input_layers.py` renders what the model was told, next to what it concluded.
-Fifteen static layers describe the place and are drawn once. Fifteen weekly
+Nine static layers describe the place and are drawn once. Fifteen weekly
 layers describe the weather and follow the week slider. Every layer names its
 unit and the two ends of its scale, so the Faktor screen can put a value on a
-handle.
+handle. The six tree species layers come from `tree_tiles.py` instead, and
+`input_layers.py` leaves them in the manifest.
 
 The weather sits on 5 km cells. `coarse_inputs.py` filters it with a Gaussian
 kernel of half a cell and reads it at the 500 m cell centers, so neither the
@@ -174,6 +175,35 @@ week that is rendered, so one colour ramp fits the whole year. Three layers
 take their scale from their definition instead: a week has seven days, and the
 days since the last rain stop at 60. A summer-only run would otherwise show no
 frost day and therefore no scale at all.
+
+## The tree species layers
+
+`tree_tiles.py` renders `fichte`, `buche`, `eiche`, `birke`, `kiefer` and
+`nadelholz` from the Thuenen map of dominant tree species at 10 m. It runs
+once, not every week. `pyramid.py` holds the rule that every layer follows:
+the step of the source names the finest zoom, and each coarser level is the
+weighted mean of the four tiles above it. A point carries the forest area
+behind it as its weight, so the area mean is the same on every level.
+
+A value is the share of the class in the forest area of that point. Ground
+without forest carries no data. At zoom 14 a point is 0 or 100 percent.
+
+Run the step in the geo shell. It asks the service block by block, waits
+between blocks, and writes a state file, so a new run continues where the
+last one stopped:
+
+    nix develop .#geo --command python src/pilze/tree_tiles.py
+
+Useful arguments: `--bbox west,south,east,north` for a trial over a small
+area, `--block-tiles` for the size of a block, `--pause` for the wait, and
+`--restart` to drop the state file. The tiles land beside the other layers in
+`reports/maps/layers_kacheln/<name>`, and `deploy_daten.sh` carries them.
+
+The manifest of such a layer names two more levels. `haveZoom` is the last
+level whose tiles the manifest lists one by one. Above it the app asks the
+coarser tile over the same place, because a full list of the zoom 14 tiles
+would be larger than the manifest. `offlineZoomTo` is the finest level that an
+offline area takes.
 
 ## The manifests
 
