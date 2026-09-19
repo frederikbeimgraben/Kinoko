@@ -101,7 +101,7 @@ export function pressureOf(entry: SpeciesEntry, part: BodyPart | null, i18n: I18
   };
 }
 
-export function stemNetOf(entry: SpeciesEntry): string | null {
+export function stemOf(entry: SpeciesEntry): string | null {
   return entry.traits.find((one) => one.key === 'stem')?.text ?? null;
 }
 

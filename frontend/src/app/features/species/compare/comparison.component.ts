@@ -20,7 +20,7 @@ import {
   levelOf,
   periodOf,
   pressureOf,
-  stemNetOf,
+  stemOf,
   swatchOf,
   flavoursOf,
   type Swatch,
@@ -65,7 +65,7 @@ export class ComparisonComponent {
   protected readonly levels = computed(() => this.species().map((one) => levelOf(one, this.i18n)));
   protected readonly widths = computed(() => this.species().map((one) => capWidthOf(one, this.i18n)));
   private readonly capColours = computed(() => this.species().map((one) => swatchOf(one, 'cap')));
-  protected readonly stemNets = computed(() => this.species().map((one) => stemNetOf(one)));
+  protected readonly stems = computed(() => this.species().map((one) => stemOf(one)));
   protected readonly flavours = computed(() => this.species().map((one) => flavoursOf(one)));
   protected readonly periods = computed(() => this.species().map((one) => periodOf(one)));
 
