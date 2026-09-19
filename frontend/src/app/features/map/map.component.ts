@@ -21,6 +21,7 @@ import { VisibilityService } from '../../core/visibility/visibility.service';
 import { MAP_PROVIDERS } from '../../map/map.tokens';
 import { BannerComponent } from '../../ui/banner/banner.component';
 import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
+import { MapAttributionComponent } from '../../ui/map-attribution/map-attribution.component';
 import { ObjectMenuComponent, type ObjectMenuTarget } from '../../ui/object-menu/object-menu.component';
 import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
@@ -50,6 +51,7 @@ import { MapView } from './map.view';
     BannerComponent,
     FloatingButtonComponent,
     LayersSheetComponent,
+    MapAttributionComponent,
     MapColumnComponent,
     MapHeadComponent,
     MapPanelComponent,
@@ -103,6 +105,11 @@ export class MapComponent implements OnDestroy {
   protected readonly detents = DETENT_SIZES;
 
   protected readonly sheetInset = computed(() => (this.wide() ? '0px' : `${DETENTS[this.state.detent()]}px`));
+
+  /** Nur das Blatt der Karte selbst hält die Marke frei, kein anderes Blatt darüber. */
+  protected readonly attributionAbove = computed(() =>
+    this.overlaid() || this.covered() || this.wide() ? null : this.sheetInset(),
+  );
 
   constructor() {
     effect(() => {

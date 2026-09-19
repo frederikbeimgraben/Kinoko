@@ -12,6 +12,7 @@ import {
   formatValue,
   readLayers,
   matchingWeek,
+  joinNotes,
 } from './layers';
 
 const RAW = {
@@ -203,5 +204,28 @@ describe('Ebenen mit Kappe', () => {
   it('nimmt ohne Kappe die feinste Stufe', () => {
     expect(FOREST.haveZoom).toBe(8);
     expect(FOREST.offlineZoomTo).toBe(8);
+  });
+});
+
+describe('Vermerke verbinden', () => {
+  it('ohne Vermerk bleibt null', () => {
+    expect(joinNotes([])).toBeNull();
+    expect(joinNotes([''])).toBeNull();
+  });
+
+  it('ein Vermerk bleibt für sich', () => {
+    expect(joinNotes(['Thünen-Institut, CC BY 4.0'])).toBe('Thünen-Institut, CC BY 4.0');
+  });
+
+  it('mehrere Vermerke verbinden sich mit „ · "', () => {
+    expect(joinNotes(['Thünen-Institut, CC BY 4.0', 'Landesvermessung, DGM 25'])).toBe(
+      'Thünen-Institut, CC BY 4.0 · Landesvermessung, DGM 25',
+    );
+  });
+
+  it('doppelte Vermerke bleiben einmal stehen', () => {
+    expect(joinNotes(['Thünen-Institut, CC BY 4.0', 'Thünen-Institut, CC BY 4.0'])).toBe(
+      'Thünen-Institut, CC BY 4.0',
+    );
   });
 });

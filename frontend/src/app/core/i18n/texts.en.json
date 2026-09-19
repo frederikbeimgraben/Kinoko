@@ -505,6 +505,7 @@
   "layer.temperatur_max": "Maximum temperature this week",
   "layer.temperatur_min": "Minimum temperature this week",
   "layer.wald": "Forest share",
+  "map.attribution.layer": "{osm} · {note}",
   "map.attribution.osm": "© OpenStreetMap",
   "map.basemap.light": "Light",
   "map.basemap.map": "Map",

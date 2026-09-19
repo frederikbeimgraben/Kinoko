@@ -24,7 +24,7 @@ export class MapHeadComponent {
   readonly stepped = output<1 | -1>();
   readonly playToggled = output();
 
-  protected readonly dimmed = computed(() => this.view.fixedLayer());
+  protected readonly dimmed = computed(() => this.view.fixedUncredited());
   protected readonly title = computed(() => (this.column() ? this.view.speciesTitle() : this.view.title()));
   protected readonly link = computed(() => this.column() || !this.view.onCombination());
 }

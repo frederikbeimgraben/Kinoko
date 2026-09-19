@@ -29,7 +29,7 @@
     (objectHeld)="onObjectHeld($event)"
   ></div>
 
-  <span class="map__source">{{ 'map.attribution.osm' | t }}</span>
+  <app-map-attribution [note]="view.creditNote()" [above]="attributionAbove()" />
 
   @if (view.loading()) {
     <app-skeleton class="map__skeleton" kind="grid" [count]="48" />

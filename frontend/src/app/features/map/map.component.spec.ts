@@ -121,7 +121,7 @@ describe('MapComponent', () => {
   it('nennt die Quelle der Grundkarte am Rand der Karte', async () => {
     const { container } = await map();
 
-    const source = container.querySelector('.map__source');
+    const source = container.querySelector('app-map-attribution');
     expect(source?.textContent).toBe('© OpenStreetMap');
   });
 

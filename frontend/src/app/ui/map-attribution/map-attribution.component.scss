@@ -1,0 +1,25 @@
+:host {
+  position: absolute;
+  inset-inline-start: 8px;
+  z-index: 1;
+  display: block;
+  max-inline-size: calc(100% - 16px);
+}
+
+.attribution {
+  display: block;
+  padding: 2px 6px;
+  overflow: hidden;
+  font-size: var(--fs-source);
+  line-height: normal;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: rgb(255 255 255 / 75%);
+  border-radius: var(--radius-sm);
+}
+
+// Am Rechner steht die Spalte vor der Karte, die Marke rückt dahinter.
+:host-context(.shell--column) {
+  inset-inline-start: calc(var(--size-rail) + var(--size-column) + 8px);
+}

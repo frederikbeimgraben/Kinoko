@@ -5,6 +5,7 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
   COMBINATIONS,
+  FICHTE_LAYERS_MANIFEST,
   MARKERS,
   SHARED_FINDS,
   SPECIES_BUNDLE,
@@ -32,11 +33,16 @@ const REPLIES = {
   '/api/finds': SHARED_FINDS,
 };
 
-async function openMap(page: Page, state: BoardState = {}, factors = ''): Promise<void> {
+async function openMap(
+  page: Page,
+  state: BoardState = {},
+  factors = '',
+  layersManifest?: unknown,
+): Promise<void> {
   await page.context().grantPermissions(['geolocation']);
   await mockSignIn(page);
   await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
-  await mockMap(page, state, factors);
+  await mockMap(page, state, factors, layersManifest);
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
 }
@@ -95,6 +101,12 @@ test('LayerTab', async ({ page }) => {
   guard('LayerTab', 'phone');
   await openMap(page, { view: 'layer' });
   await board(page, 'LayerTab', 'map-regen-470.png');
+});
+
+test('LayerTabCredit', async ({ page }) => {
+  guard('LayerTabCredit', 'phone');
+  await openMap(page, { view: 'layer', layer: 'fichte' }, '', FICHTE_LAYERS_MANIFEST);
+  await board(page, 'LayerTabCredit');
 });
 
 test('CombinationTab', async ({ page }) => {
@@ -182,6 +194,13 @@ test('MapDesktopLayers', async ({ page }) => {
   await openMap(page);
   await page.getByRole('button', { name: 'Ebenen' }).click();
   await board(page, 'MapDesktopLayers', 'map-desktop-stein-900.png');
+});
+
+test('MapDesktopLayersCredit', async ({ page }) => {
+  guard('MapDesktopLayersCredit', 'wide');
+  await openMap(page, { layer: 'fichte' }, '', FICHTE_LAYERS_MANIFEST);
+  await page.getByRole('button', { name: 'Ebenen' }).click();
+  await board(page, 'MapDesktopLayersCredit', 'map-desktop-stein-900.png');
 });
 
 test('MapDesktopFactorPicker', async ({ page }) => {

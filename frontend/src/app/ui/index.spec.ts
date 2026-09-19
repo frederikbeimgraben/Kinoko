@@ -62,6 +62,7 @@ const BLOCKS = [
   'app-back-head',
   'app-floating-button',
   'app-crosshair',
+  'app-map-attribution',
   'app-svg-icon',
   'app-stat-row',
   'app-empty-state',

@@ -206,6 +206,12 @@ export function histogramFor(layer: Layer, week: string | null): Histogram | nul
   return selected === null ? null : (layer.histograms.get(selected) ?? null);
 }
 
+/** Vermerke ohne Doppelte, mit „ · " verbunden; ohne Vermerk `null`. */
+export function joinNotes(notes: readonly string[]): string | null {
+  const unique = [...new Set(notes.filter((note) => note !== ''))];
+  return unique.length > 0 ? unique.join(' · ') : null;
+}
+
 /** Der Anteil der Fläche, dessen Wert in der Spanne liegt. */
 export function shareMet(histogram: Histogram, von: number, bis: number): number {
   let sum = 0;
