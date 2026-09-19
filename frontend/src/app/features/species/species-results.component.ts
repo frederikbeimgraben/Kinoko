@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -19,6 +20,7 @@ const SKELETON_ROWS = 5;
     EmptyStateComponent,
     ErrorStateComponent,
     InfiniteListComponent,
+    NgTemplateOutlet,
     SkeletonComponent,
     SpeciesRowComponent,
     TranslatePipe,

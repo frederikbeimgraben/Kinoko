@@ -4,7 +4,7 @@ import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { presetFilter } from '../fixtures/filter-state';
-import { bundle, SEVEN, STONE } from '../fixtures/species';
+import { bundle, SEVEN, STONE, TWELVE } from '../fixtures/species';
 import { CORE_CHOICE, SIZE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
 import {
   DESKTOP_SPECIES,
@@ -59,12 +59,12 @@ test('Species', async ({ page }) => {
   await expectBoard(page, 'Species');
 });
 
-const SPECIES_SCROLL = 48;
+const SPECIES_SCROLL = 31;
 
 test('SpeciesScrolled', async ({ page }) => {
   guard('SpeciesScrolled', 'phone');
-  await openList(page, bundle([...SEVEN, ...RESULT_REST]));
-  await seen(page, 'Steinpilz');
+  await openList(page, bundle(TWELVE));
+  await seen(page, 'Gallenröhrling');
   await page.locator('.results__list .list').evaluate((one, top) => {
     one.scrollTo(0, top);
   }, SPECIES_SCROLL);
@@ -201,16 +201,16 @@ test('SpeciesDesktop', async ({ page }) => {
   await expectBoard(page, 'SpeciesDesktop');
 });
 
-const SPECIES_DESKTOP_SCROLL = 56;
+const SPECIES_DESKTOP_SCROLL = 31;
 
 test('SpeciesDesktopScrolled', async ({ page }) => {
   guard('SpeciesDesktopScrolled', 'desktop');
   await mockSignIn(page);
-  await openList(page, bundle([...DESKTOP_SPECIES, ...RESULT_REST]), {
+  await openList(page, bundle(TWELVE), {
     '/api/config': authConfig(BASE),
     ...SIGNED_IN,
   });
-  await seen(page, 'Perlpilz');
+  await seen(page, 'Gallenröhrling');
   await page.locator('.results__list .list').evaluate((one, top) => {
     one.scrollTo(0, top);
   }, SPECIES_DESKTOP_SCROLL);
