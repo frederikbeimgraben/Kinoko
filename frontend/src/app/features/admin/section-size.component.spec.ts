@@ -74,7 +74,7 @@ describe('SectionSizeComponent', () => {
     const { http } = await build();
     await screen.findByRole('heading', { name: 'Hutbreite' });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Maß entfernen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Abmessung entfernen' }));
 
     const call = http.expectOne('/api/species/boletus-edulis');
     expect(call.request.method).toBe('PUT');

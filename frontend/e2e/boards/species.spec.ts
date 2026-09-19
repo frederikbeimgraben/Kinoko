@@ -160,7 +160,7 @@ test('FilterSize', async ({ page }) => {
   guard('FilterSize', 'phone');
   await presetFilter(page, SIZE_CHOICE);
   await openList(page, largeBundle());
-  await openGroup(page, 'Maße und Zeit');
+  await openGroup(page, 'Abmessungen und Zeit');
   await expect(page.getByRole('group', { name: 'Wachstumszeit' })).toBeVisible();
   await expectBoard(page, 'FilterSize');
 });
