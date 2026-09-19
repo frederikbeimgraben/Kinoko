@@ -21,6 +21,7 @@ const RULES = [
       'ui/modal-layer',
       'ui/popover',
       'ui/confirm-dialog',
+      'ui/photo-dialog',
       'ui/object-menu',
       'ui/reject-dialog',
     ],

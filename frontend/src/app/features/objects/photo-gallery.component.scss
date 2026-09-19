@@ -4,9 +4,17 @@
   gap: var(--space-2);
 }
 
-.gallery__image {
+.gallery__tile {
   flex: 1 1 0;
   min-inline-size: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.gallery__image {
+  display: block;
+  inline-size: 100%;
   block-size: 120px;
   border-radius: var(--radius-lg);
 }
