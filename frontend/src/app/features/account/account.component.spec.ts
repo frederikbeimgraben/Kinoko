@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { MapAppService } from '../../core/maps/map-app.service';
 import { ThemeService } from '../../core/theme/theme.service';
 import { CONFIG, ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
 import { noViolations } from '../../testing/axe';
@@ -128,6 +129,18 @@ describe('KontoComponent', () => {
     refresh();
 
     expect(i18n.choice()).toBe('system');
+  });
+
+  it('schaltet die Karten-App um und merkt sie sich', async () => {
+    const { refresh } = await build();
+    const mapApp = TestBed.inject(MapAppService);
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Google Maps' }));
+    refresh();
+
+    expect(mapApp.choice()).toBe('google');
+    expect(localStorage.getItem('pilzkarte.kartenApp')).toBe('google');
+    expect(screen.getByRole('tab', { name: 'Google Maps' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('zeigt Über mit den Werten, die heute feststehen', async () => {

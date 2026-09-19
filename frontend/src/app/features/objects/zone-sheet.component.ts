@@ -15,7 +15,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { colourHex } from '../entries/colors';
@@ -23,7 +23,6 @@ import { hectaresText } from '../entries/formats';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { visibilityText } from '../add-entry/visibility';
-import { openGoogleMaps } from './map-links';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
 import type { Location } from '../add-entry/add-entry.state';
 
@@ -36,7 +35,7 @@ import type { Location } from '../add-entry/add-entry.state';
     ButtonComponent,
     CardComponent,
     ConfirmDialogComponent,
-    ListRowComponent,
+    MapAppLinkComponent,
     ObjectFormComponent,
     TranslatePipe,
   ],
@@ -70,10 +69,6 @@ export class ZoneSheetComponent implements OnDestroy {
       sichtbarkeit: visibilityText(this.i18n, this.zone().visibility),
     }),
   );
-
-  protected toGoogleMaps(): void {
-    openGoogleMaps(this.center());
-  }
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();

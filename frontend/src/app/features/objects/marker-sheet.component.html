@@ -19,13 +19,7 @@
       <p class="objectsheet__note">{{ note }}</p>
     }
     <app-card class="flush">
-      <app-list-row
-        kind="catalogue"
-        [title]="'entry.marker.openInMapsApp' | t"
-        [chevron]="true"
-        [clickable]="true"
-        (chosen)="toGoogleMaps()"
-      />
+      <app-map-app-link [target]="location()" />
     </app-card>
   </div>
   <app-action-bar

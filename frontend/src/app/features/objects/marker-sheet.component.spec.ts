@@ -89,16 +89,12 @@ describe('MarkerBlattComponent', () => {
 
   it('führt den Marker an die Karten-App weiter', async () => {
     await build();
-    const opened = vi.fn();
-    vi.stubGlobal('open', opened);
+    const fakeLocation = { href: '' } as unknown as Location;
+    vi.spyOn(window, 'location', 'get').mockReturnValue(fakeLocation);
 
     await userEvent.click(screen.getByRole('button', { name: 'In Karten-App öffnen' }));
 
-    expect(opened).toHaveBeenCalledWith(
-      expect.stringContaining(`${MARKER.lat.toFixed(6)}%2C${MARKER.lon.toFixed(6)}`),
-      '_blank',
-      'noopener',
-    );
+    expect(fakeLocation.href).toBe(`geo:${MARKER.lat.toFixed(6)},${MARKER.lon.toFixed(6)}`);
   });
 
   it('löscht nach der Rückfrage und schließt', async () => {
