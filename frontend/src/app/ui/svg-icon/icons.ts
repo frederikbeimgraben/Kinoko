@@ -5,6 +5,7 @@ export type IconName =
   | 'wifi-off'
   | 'species'
   | 'entries'
+  | 'account'
   | 'more'
   | 'plus'
   | 'location'
@@ -62,6 +63,7 @@ export const ICONS: Record<IconName, string> = {
     '<path d="M3 3l18 18"/><path d="M5 9a15 15 0 0 1 6.5-3.4M19 9a15 15 0 0 0-3.2-2.2"/><path d="M8.5 12.6a9 9 0 0 1 4-1.7M15.5 12.6a9 9 0 0 0-1.7-1.1"/><path d="M12 16.2a4 4 0 0 1 1.8.8"/><circle cx="12" cy="19.5" r="1"/>',
   species: '<path d="M4 11a8 6 0 0 1 16 0H4z"/><path d="M9 11v7a3 3 0 0 0 6 0v-7"/>',
   entries: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  account: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/>',
   more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   location:
