@@ -28,6 +28,8 @@ export class InfiniteListComponent implements OnDestroy {
   readonly hasMore = input(true);
   /** Ob gerade eine Seite lädt. Verhindert doppelte Anfragen. */
   readonly pending = input(false);
+  /** Kartenrahmen: Rand und Radius stehen fest, nur die Zeilen scrollen darin. */
+  readonly framed = input(false);
 
   readonly more = output();
 
