@@ -637,6 +637,42 @@ async def test_visible_public_approved_species_photo() -> None:
     assert service.visible(photo, anonymous) is True
 
 
+async def test_visible_find_photo_for_find_reviewer(session: AsyncSession) -> None:
+    owner = await make_user(session, sub="owner")
+    reviewer = await make_user(session, sub="reviewer")
+    find = await make_find(session, owner)
+    photo = Photo(
+        id=uuid.uuid4(),
+        owner_id=owner.id,
+        find_id=find.id,
+        state=PhotoState.PRIVATE,
+        width=1,
+        height=1,
+        photographer="x",
+        licence=Licence.OWN,
+    )
+    viewer = Viewer(reviewer, frozenset({"find.review"}))
+    assert service.visible(photo, viewer) is True
+
+
+async def test_invisible_find_photo_without_find_review(session: AsyncSession) -> None:
+    owner = await make_user(session, sub="owner")
+    stranger = await make_user(session, sub="stranger")
+    find = await make_find(session, owner)
+    photo = Photo(
+        id=uuid.uuid4(),
+        owner_id=owner.id,
+        find_id=find.id,
+        state=PhotoState.PRIVATE,
+        width=1,
+        height=1,
+        photographer="x",
+        licence=Licence.OWN,
+    )
+    viewer = Viewer(stranger, frozenset())
+    assert service.visible(photo, viewer) is False
+
+
 async def test_repository_leads_maps_species_to_lead_photo(session: AsyncSession) -> None:
     user = await make_user(session)
     species = await make_species(session)
@@ -792,3 +828,31 @@ async def test_list_filters_by_species_and_find(
     find_ids = {item["id"] for item in by_find.json()["items"]}
     assert find_ids == {at_find["id"]}
     assert at_species_b["id"] not in find_ids
+
+
+async def test_list_by_find_visible_with_find_review_only(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    owner = await make_user(session, sub="owner")
+    reviewer = await make_user(session, sub="reviewer")
+    find = await make_find(session, owner)
+    sign_in(app_of(api), owner, "image.submit")
+    at_find = (await upload(api, findId=str(find.id))).json()
+    private = (await upload(api)).json()
+    sign_in(app_of(api), reviewer, "find.review")
+    response = await api.get("/photos", params={"findId": str(find.id)})
+    assert response.status_code == 200
+    ids = {item["id"] for item in response.json()["items"]}
+    assert ids == {at_find["id"]}
+    assert private["id"] not in ids
+
+
+async def test_get_photo_by_find_review_only(api: httpx.AsyncClient, session: AsyncSession) -> None:
+    owner = await make_user(session, sub="owner")
+    reviewer = await make_user(session, sub="reviewer")
+    find = await make_find(session, owner)
+    sign_in(app_of(api), owner, "image.submit")
+    at_find = (await upload(api, findId=str(find.id))).json()
+    sign_in(app_of(api), reviewer, "find.review")
+    response = await api.get(f"/photos/{at_find['id']}")
+    assert response.status_code == 200

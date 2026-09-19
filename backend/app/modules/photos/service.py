@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from app.shared.paging import Paging
 
 RIGHT = "image.review"
+FIND_RIGHT = "find.review"
 
 
 def out(photo: Photo) -> PhotoOut:
@@ -35,6 +36,8 @@ def out(photo: Photo) -> PhotoOut:
 def visible(photo: Photo, viewer: Viewer) -> bool:
     """Sagt, ob ein Foto für den Aufrufer sichtbar ist."""
     if photo.state == PhotoState.APPROVED and photo.species_id is not None:
+        return True
+    if photo.find_id is not None and viewer.may(FIND_RIGHT):
         return True
     return viewer.owns(photo.owner_id) or viewer.may(RIGHT)
 
@@ -141,7 +144,9 @@ async def list_photos(  # noqa: PLR0913, PLR0917
         if viewer.user is None:
             raise Unauthorized
         query = query.where(Photo.owner_id == viewer.user.id)
-    elif not viewer.may(RIGHT):
+    elif viewer.may(RIGHT) or (find_id is not None and viewer.may(FIND_RIGHT)):
+        pass
+    else:
         public = and_(Photo.state == PhotoState.APPROVED, Photo.species_id.is_not(None))
         if viewer.user is not None:
             query = query.where(or_(public, Photo.owner_id == viewer.user.id))
