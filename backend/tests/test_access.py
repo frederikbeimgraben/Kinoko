@@ -532,6 +532,37 @@ async def test_summary_counts_finds_and_runs(api: httpx.AsyncClient, session: As
     assert body["runsRunning"] == 1
 
 
+async def test_summary_counts_groups_and_the_glossary(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    anna = await make_user(session, "anna")
+    bert = await make_user(session, "bert")
+    sign_in(app_of(api), anna)
+    first = (await api.post("/groups", json={"name": "Familie"})).json()
+    await api.post("/groups", json={"name": "Karlsruhe"})
+    sign_in(app_of(api), bert)
+    await api.post("/groups/join", json={"inviteCode": first["inviteCode"]})
+    sign_in(app_of(api), anna, "text.edit")
+    await api.post("/glossary", json={"term": "Hymenium", "definition": "Die Fruchtschicht."})
+
+    sign_in(app_of(api), anna, "group.manage", "text.edit")
+    body = (await api.get("/admin/summary")).json()
+    assert body["groups"] == 2
+    assert body["groupMembers"] == 3
+    assert body["glossary"] == 1
+
+
+async def test_summary_hides_the_group_counts_without_the_right(
+    api: httpx.AsyncClient, session: AsyncSession
+) -> None:
+    user = await make_user(session, "anna")
+    sign_in(app_of(api), user, "role.assign")
+    body = (await api.get("/admin/summary")).json()
+    assert "groups" not in body
+    assert "groupMembers" not in body
+    assert "glossary" not in body
+
+
 async def test_summary_needs_at_least_one_right(
     api: httpx.AsyncClient, session: AsyncSession
 ) -> None:
