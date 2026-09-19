@@ -42,6 +42,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogram, schreibe
+from pyramid import ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom
 from tiles import schreibe_kacheln
 from tree_species import CLASSES, CONIFERS
 from visit_model import BLOCK_M, ActivityFields
@@ -251,8 +252,8 @@ def main() -> None:
     parser.add_argument("--region", default="de", choices=sorted(REGIONEN))
     parser.add_argument("--tiles", action="store_true",
                         help="Wertkacheln statt eines Vollbildes schreiben")
-    parser.add_argument("--tile-zooms", default="5-8",
-                        help="Zoomstufen der Kachelpyramide, etwa 5-8")
+    parser.add_argument("--zoom-cap", type=int, default=ZOOM_CAP,
+                        help="feinste Zoomstufe, die ein Lauf schreiben darf")
     parser.add_argument("--no-image", action="store_true",
                         help="kein Vollbild schreiben, nur Kacheln")
     args = parser.parse_args()
@@ -490,7 +491,9 @@ def main() -> None:
     # bestehenden Kacheln, der Massstab ist derselbe.
     top = float(max(h["ceiling"] for h in bundle["horizons"].values()))
     images = args.out / f"{args.name}_weeks"; images.mkdir(parents=True, exist_ok=True)
-    z0, z1 = (int(v) for v in args.tile_zooms.split("-"))
+    # Die Vorhersage liegt auf dem Kartenraster. Die Schrittweite nennt
+    # damit die feinste Stufe.
+    z0, z1 = ZOOM_BASE, finest_zoom(args.step, cap=args.zoom_cap)
     kachelwurzel = args.out / f"{args.name}_kacheln"
     # Die Kacheln brauchen den Ausschnitt in Grad. Er ist fuer jede Woche
     # derselbe, also einmal aus den vier Ecken des Modellrasters.
@@ -622,10 +625,7 @@ def main() -> None:
         # Die Maske ist in jeder Woche dieselbe, also ist es auch die Menge
         # der belegten Kacheln. Einmal je Art gespeichert erspart der Seite
         # jede Anfrage nach einer leeren Kachel.
-        belegt: dict[str, list[str]] = {}
-        for z, x, y in sorted(vorhanden):
-            belegt.setdefault(str(z), []).append(f"{x}/{y}")
-        meta["tiles"] = {"zooms": [z0, z1], "have": belegt}
+        meta["tiles"] = {"zooms": [z0, z1], "have": belegung(vorhanden)}
         print(f"  Kacheln gesamt: {kachelzahl}, {kachelbytes/1e6:.1f} MB")
     schreibe(args.out / f"{args.name}.json", meta)
     print(f"\nwrote {len(manifest)} weeks and {args.out}/{args.name}.json  (top {top:.3f})")

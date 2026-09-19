@@ -40,7 +40,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogram, schreibe
-from pyramid import belegung
+from pyramid import ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
 from tiles import schreibe_kacheln, write_tile_sets
@@ -172,9 +172,8 @@ def main() -> None:
                         default=Path("data/interim/weather_weekly.parquet"))
     parser.add_argument("--tiles", action="store_true",
                         help="Wertkacheln statt eines Vollbildes schreiben")
-    parser.add_argument("--tile-zooms", default="5-8")
-    parser.add_argument("--weekly-zooms", default="5-7",
-                        help="das Wetter liegt auf 5 km, mehr als z7 zeigt nichts Neues")
+    parser.add_argument("--zoom-cap", type=int, default=ZOOM_CAP,
+                        help="feinste Zoomstufe, die ein Lauf schreiben darf")
     parser.add_argument("--no-image", action="store_true")
     parser.add_argument("--only-weekly", action="store_true",
                         help="nur die Wochenebenen neu, die festen bleiben")
@@ -232,8 +231,12 @@ def main() -> None:
     # Every static layer of the old manifest stays.
     layers = {k: v for k, v in alt.get("layers", {}).items() if v.get("static")}
 
+    # Jede Ebene dieses Laufs liegt auf dem Kartenraster. Die Schrittweite
+    # nennt damit die feinste Stufe.
+    z0, z1 = ZOOM_BASE, finest_zoom(args.step, cap=args.zoom_cap)
+    print(f"  Zoom {z0} bis {z1} aus {args.step} m")
+
     if not args.only_weekly:
-        z0, z1 = (int(v) for v in args.tile_zooms.split("-"))
         for name, (_, column, label, unit) in STATIC.items():
             if column not in grid.columns:
                 print(f"  {name}: {column} fehlt, uebersprungen")
@@ -265,7 +268,6 @@ def main() -> None:
         print(f"  {len(layers)} feste Ebenen aus dem alten Manifest uebernommen")
 
     if not args.no_weekly:
-        z0, z1 = (int(v) for v in args.weekly_zooms.split("-"))
         wetter, wochen = wochenwetter(args.weather, set(grid["cell"]), args.weeks)
         print(f"\n{len(wochen)} Wochen Wetter, {wochen[0][0]}-W{wochen[0][1]:02d} bis "
               f"{wochen[-1][0]}-W{wochen[-1][1]:02d}")
