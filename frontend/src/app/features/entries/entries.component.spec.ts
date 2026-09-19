@@ -6,6 +6,7 @@ import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../core/auth';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncTask } from '../../core/offline/sync.types';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
@@ -58,6 +59,7 @@ interface Options {
   pending?: readonly SyncTask[];
   shared?: readonly (typeof SHARED_FIND_ENTRY)[];
   own?: boolean;
+  wide?: boolean;
 }
 
 interface Setup {
@@ -69,7 +71,13 @@ interface Setup {
 }
 
 async function build(options: Options = {}): Promise<Setup> {
-  const { signedIn = true, pending = [PENDING], shared = [SHARED_FIND_ENTRY], own = true } = options;
+  const {
+    signedIn = true,
+    pending = [PENDING],
+    shared = [SHARED_FIND_ENTRY],
+    own = true,
+    wide = false,
+  } = options;
   vi.setSystemTime(new Date(2026, 8, 10, 12));
   const auth = new AuthStub();
   if (!signedIn) auth.user.set(null);
@@ -81,6 +89,7 @@ async function build(options: Options = {}): Promise<Setup> {
       // Ohne Route ginge jede Navigation ins Leere; der Reiter führt auf die Karte.
       provideRouter([{ path: '**', children: [] }]),
       { provide: SyncService, useValue: queue },
+      { provide: ViewportService, useValue: { wide: signal(wide) } },
       ...authStubProviders(auth),
     ],
   });
@@ -187,6 +196,12 @@ describe('EintraegeComponent', () => {
       expect(setup.router.url).toBe('/karte');
     });
     expect(TestBed.inject(AddEntryState).step()).toBe('actions');
+  });
+
+  it('lässt den Knopf Eintragen am Rechner weg', async () => {
+    await build({ wide: true });
+
+    expect(screen.queryByRole('button', { name: 'Eintragen' })).not.toBeInTheDocument();
   });
 
   it('meldet eine fehlende Verbindung über der Liste', async () => {

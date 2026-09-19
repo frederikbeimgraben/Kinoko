@@ -6,6 +6,7 @@ import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { SyncService } from '../../core/offline/sync.service';
 import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
 import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
@@ -71,6 +72,10 @@ export class EntriesComponent {
   private readonly router = inject(Router);
   private readonly state = inject(EntriesState);
   private readonly addEntry = inject(AddEntryState);
+  private readonly viewport = inject(ViewportService);
+
+  /** Am Rechner übernimmt der schwebende Plus-Knopf auf der Karte das Eintragen. */
+  protected readonly wide = this.viewport.wide;
 
   protected readonly segment = signal<Segment>('finds');
   protected readonly filterOpen = signal(false);
