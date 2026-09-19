@@ -39,7 +39,7 @@ def build_app() -> FastAPI:
     """Baut die App: Router, Fehlerbehandlung, CORS."""
     settings = get_settings()
     built = FastAPI(
-        title="Primordium",
+        title="Kinoko",
         version=VERSION,
         lifespan=lifespan,
         dependencies=[Depends(reject_unknown_method), Depends(reject_unknown_query)],

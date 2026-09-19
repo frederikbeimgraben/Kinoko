@@ -1,4 +1,4 @@
-# Primordium — App-Repo
+# Kinoko — App-Repo
 
 Die Regeln stehen nicht hier.
 

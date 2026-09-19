@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Primordium API
+  title: Kinoko API
   version: 1.0.0
 servers:
   - url: /api
