@@ -6,7 +6,7 @@ import { YearBandComponent } from '../../../ui/year-band/year-band.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 import { MONTH_TEXT } from '../labels';
 
-/** Die vier Marken unter dem Jahresband. Zählt von 1 bis 12. */
+/** Die vier Marken unter dem Jahresband. Monate 1–12. */
 const MARKS: readonly number[] = [1, 4, 7, 10];
 
 /** Die Wachstumszeit einer Art als Jahresband. */

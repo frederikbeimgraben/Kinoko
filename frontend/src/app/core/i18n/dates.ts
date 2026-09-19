@@ -51,7 +51,7 @@ export function shortDay(date: Date, i18n: I18nService): string {
   });
 }
 
-/** Der kurze Monatsname aus dem Katalog. `month` zählt von 1 bis 12. */
+/** Der kurze Monatsname aus dem Katalog. `month`: 1–12. */
 export function shortMonth(month: number, i18n: I18nService): string {
   return i18n.translate(`enum.monthShort.${month}` as 'enum.monthShort.1');
 }

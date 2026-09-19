@@ -10,7 +10,7 @@ import {
 } from '../../../ui/season-curve/season-curve.component';
 import { seasonData } from './season';
 
-/** Die Wochen, in denen ein Monatsname unter der Kurve steht. `at` zählt von 1 bis 12. */
+/** Die Wochen, in denen ein Monatsname unter der Kurve steht. `at`: Monat 1–12. */
 const MARKS: readonly { at: number; week: number }[] = [
   { at: 1, week: 1 },
   { at: 4, week: 14 },
