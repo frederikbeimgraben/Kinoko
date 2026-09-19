@@ -1,5 +1,19 @@
 @for (row of rows(); track $index) {
-  <app-list-row kind="catalogue" [title]="row.trigger" [subline]="row.subline">
-    <app-colour-field trail [colours]="row.colours" [label]="row.label" />
+  <app-list-row kind="catalogue" [title]="row.trigger" [class.row--split]="row.split">
+    <span trail class="change__value">
+      @if (row.split) {
+        <span class="change__swatches">
+          <app-colour-field class="change__swatch" [colours]="row.from" [label]="row.fromLabel" />
+          <app-svg-icon class="change__arrow" name="chevron" [size]="12" [label]="arrowLabel()" />
+          <app-colour-field class="change__swatch" [colours]="row.to" [label]="row.toLabel" />
+        </span>
+      } @else {
+        <app-colour-field
+          [colours]="row.to.length ? row.to : row.from"
+          [label]="row.toLabel || row.fromLabel"
+        />
+      }
+      <span class="change__caption">{{ row.caption }}</span>
+    </span>
   </app-list-row>
 }

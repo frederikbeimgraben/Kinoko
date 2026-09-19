@@ -462,12 +462,21 @@ export class BuildingBlocksComponent {
     this.text('beispiel.tag.herbst'),
   ];
 
-  protected readonly colourChangeTriggers = [this.text('admin.characteristic.trigger.pressure')];
-  protected readonly colourChangeFrom = [FLESH_COLOURS];
-  protected readonly colourChangeTo = [BRUISE_COLOURS];
-  protected readonly colourChangeFromLabels = [this.text('beispiel.farbe.gelb')];
-  protected readonly colourChangeToLabels = [this.text('beispiel.farbe.blau')];
-  protected readonly colourChangeSpeed = [this.text('art.verfaerbung.schnell')];
+  protected readonly colourChangeTriggers = [
+    this.text('admin.characteristic.trigger.pressure'),
+    this.text('beispiel.verfaerbung.trocknen'),
+  ];
+  protected readonly colourChangeFrom = [FLESH_COLOURS, [MULTI_COLOURS[0]]];
+  protected readonly colourChangeTo = [BRUISE_COLOURS, []];
+  protected readonly colourChangeFromLabels = [
+    this.text('beispiel.farbe.gelb'),
+    this.text('beispiel.farbe.fleisch'),
+  ];
+  protected readonly colourChangeToLabels = [this.text('beispiel.farbe.blau'), ''];
+  protected readonly colourChangeSpeed = [
+    this.text('art.verfaerbung.schnell'),
+    this.text('enum.speed.stays'),
+  ];
 
   protected readonly splitRailLabel = this.text('nav.tab.species');
   protected readonly splitContentText = this.text('species.notFound');

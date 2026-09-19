@@ -38,6 +38,7 @@
               [title]="right.titel"
               [checked]="right.checked"
               [locked]="locked()"
+              [flush]="true"
               (toggled)="toggle(right.key, $event)"
             />
           }

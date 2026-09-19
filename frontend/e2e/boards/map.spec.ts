@@ -233,3 +233,12 @@ test('MapDesktopFactor', async ({ page }) => {
   await page.getByRole('button', { name: '≥ 80 mm' }).click();
   await board(page, 'MapDesktopFactor', 'map-desktop-stein-900.png');
 });
+
+test('MapDesktopTimelineEnd', async ({ page }) => {
+  guard('MapDesktopTimelineEnd', 'wide');
+  await openMap(page);
+  await page.getByRole('button', { name: 'KW 43 · 2025 · Prognose' }).click();
+  await page.waitForTimeout(400);
+  await blur(page);
+  await board(page, 'MapDesktopTimelineEnd', 'map-desktop-stein-900.png');
+});

@@ -1,4 +1,10 @@
-<label class="row tap" data-press="tint" [class.row--locked]="locked()" [attr.for]="fieldId">
+<label
+  class="row tap"
+  data-press="tint"
+  [class.row--locked]="locked()"
+  [class.row--flush]="flush()"
+  [attr.for]="fieldId"
+>
   <input
     class="row__input"
     type="checkbox"

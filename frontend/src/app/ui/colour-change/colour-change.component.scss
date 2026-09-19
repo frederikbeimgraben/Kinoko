@@ -1,12 +1,49 @@
 :host {
   --list-row-inline: var(--space-row-inline);
-  --size-row-tall: 56px;
-  --list-row-sub: 13px;
-  --list-row-sub-height: 1.4;
+  --size-row: 56px;
 
   display: block;
   overflow: hidden;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-lg);
+}
+
+// Zwei Farben mit Pfeil brauchen die zweite Zeile für den Pfeil, eine Farbe
+// bleibt in Listengröße.
+app-list-row.row--split {
+  --size-row: 72px;
+}
+
+// Der Weg der Farbe steht in Feldbreite: der Text bricht wie im Feld.
+.change__value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  inline-size: var(--pilz-colour-width, 96px);
+  gap: 4px;
+}
+
+// Zwei Farben mit Pfeil zusammen tragen genau eine Farbfeldbreite.
+.change__swatches {
+  --change-swatch: calc((var(--pilz-colour-width, 96px) - 12px - 8px) / 2);
+
+  display: grid;
+  grid-template-columns: var(--change-swatch) 12px var(--change-swatch);
+  align-items: center;
+  gap: 4px;
+}
+
+.change__swatch {
+  --pilz-colour-width: var(--change-swatch);
+}
+
+.change__arrow {
+  justify-self: center;
+  color: var(--color-text-muted);
+}
+
+.change__caption {
+  font-size: 11px;
+  color: var(--color-text-muted);
 }

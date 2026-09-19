@@ -597,6 +597,8 @@
   "map.tab.forecast": "Vorhersage",
   "map.tab.layer": "Ebene",
   "map.timeline": "Zeitleiste",
+  "map.timeline.scrollEarlier": "Frühere Wochen zeigen",
+  "map.timeline.scrollLater": "Spätere Wochen zeigen",
   "map.view": "Darstellung",
   "map.week.forecast": "Prognose",
   "map.week.next": "Nächste Woche",

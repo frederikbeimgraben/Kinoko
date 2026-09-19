@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { fireEvent, render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
@@ -102,6 +102,78 @@ describe('TimelineComponent', () => {
     await userEvent.keyboard('{ArrowRight}');
 
     expect(scrollTo).toHaveBeenCalledWith({ left: 120 - (200 - 48) / 2, behavior: 'smooth' });
+  });
+
+  it('zeigt am Rechner keinen Pfeil ohne verdeckte Wochen', async () => {
+    const { container } = await render(TimelineComponent, {
+      inputs: { weeks: WEEKS, active: { year: 2025, week: 52 }, label: 'Wochen' },
+    });
+
+    expect(container.querySelector('.arrow--start')).toBeNull();
+    expect(container.querySelector('.arrow--end')).toBeNull();
+  });
+
+  it('zeigt die Pfeile nach verdeckten Wochen und schiebt beim Klick', async () => {
+    vi.spyOn(Element.prototype, 'scrollLeft', 'get').mockReturnValue(40);
+    vi.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(200);
+    vi.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(400);
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(48);
+    const { container, fixture } = await render(TimelineComponent, {
+      inputs: { weeks: WEEKS, active: { year: 2025, week: 52 }, label: 'Wochen' },
+    });
+    const bar = container.querySelector<HTMLElement>('.bar');
+    if (bar === null) throw new Error('keine Leiste');
+    const scrollBy = vi.fn();
+    Object.defineProperty(bar, 'scrollBy', { value: scrollBy, configurable: true });
+    bar.dispatchEvent(new Event('scroll'));
+    fixture.detectChanges();
+
+    const back = container.querySelector<HTMLElement>('.arrow--start');
+    const forward = container.querySelector<HTMLElement>('.arrow--end');
+    if (back === null || forward === null) throw new Error('keine Pfeile');
+    expect(back).toHaveAttribute('aria-label', 'Frühere Wochen zeigen');
+    expect(forward).toHaveAttribute('aria-label', 'Spätere Wochen zeigen');
+
+    fireEvent.click(back);
+    expect(scrollBy).toHaveBeenCalledWith({ left: -152, behavior: 'smooth' });
+
+    fireEvent.click(forward);
+    expect(scrollBy).toHaveBeenCalledWith({ left: 152, behavior: 'smooth' });
+  });
+
+  it('schiebt ohne Bewegung, wenn der Rechner weniger Bewegung wünscht', async () => {
+    vi.spyOn(window, 'matchMedia').mockImplementation(
+      (query) =>
+        ({
+          matches: query.includes('reduce'),
+          media: query,
+          onchange: null,
+          addEventListener: () => undefined,
+          removeEventListener: () => undefined,
+          addListener: () => undefined,
+          removeListener: () => undefined,
+          dispatchEvent: () => false,
+        }) as MediaQueryList,
+    );
+    vi.spyOn(Element.prototype, 'scrollLeft', 'get').mockReturnValue(40);
+    vi.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(200);
+    vi.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(400);
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(48);
+    const { container, fixture } = await render(TimelineComponent, {
+      inputs: { weeks: WEEKS, active: { year: 2025, week: 52 }, label: 'Wochen' },
+    });
+    const bar = container.querySelector<HTMLElement>('.bar');
+    if (bar === null) throw new Error('keine Leiste');
+    const scrollBy = vi.fn();
+    Object.defineProperty(bar, 'scrollBy', { value: scrollBy, configurable: true });
+    bar.dispatchEvent(new Event('scroll'));
+    fixture.detectChanges();
+
+    const forward = container.querySelector<HTMLElement>('.arrow--end');
+    if (forward === null) throw new Error('kein Pfeil');
+    fireEvent.click(forward);
+
+    expect(scrollBy).toHaveBeenCalledWith({ left: 152, behavior: 'auto' });
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

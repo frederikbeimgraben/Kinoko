@@ -38,7 +38,7 @@
             <ng-template let-test>
               @if (test) {
                 <span class="compare__change">
-                  <span class="compare__colours">
+                  <span class="compare__colours" [class.compare__colours--split]="test.to">
                     @if (test.from) {
                       <app-colour-field
                         class="compare__from"

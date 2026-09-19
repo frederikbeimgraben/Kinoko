@@ -9,6 +9,7 @@
   gap: var(--space-3);
   align-items: center;
   min-block-size: var(--size-tap);
+  padding-inline: 14px;
 }
 
 // Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
@@ -18,6 +19,11 @@
 
 .row--locked {
   opacity: 0.5;
+}
+
+// Ohne Karte um die Zeile bleibt ihr Inhalt am Rand der Fläche.
+.row--flush {
+  padding-inline: 0;
 }
 
 .row__input {

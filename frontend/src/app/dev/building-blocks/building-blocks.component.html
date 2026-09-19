@@ -126,6 +126,9 @@
         (chosen)="activeWeek.set({ year: $event.year, week: $event.week })"
       />
     </app-sheet-head>
+    <div class="block__timelineWide">
+      <app-timeline [weeks]="weeksFlat" [active]="activeWeek()" [label]="text('zeitleiste.beschriftung')" />
+    </div>
   </section>
 
   <section class="block" data-block="app-overlay-host">

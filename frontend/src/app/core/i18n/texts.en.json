@@ -597,6 +597,8 @@
   "map.tab.forecast": "Forecast",
   "map.tab.layer": "Layer",
   "map.timeline": "Timeline",
+  "map.timeline.scrollEarlier": "Show earlier weeks",
+  "map.timeline.scrollLater": "Show later weeks",
   "map.view": "View",
   "map.week.forecast": "Forecast",
   "map.week.next": "Next week",
