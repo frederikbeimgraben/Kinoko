@@ -61,8 +61,7 @@
   border-inline-end: var(--border-width) solid var(--color-border);
 }
 
-// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards. Eine
-// bereitstehende Fassung schiebt sie um die Höhe der Aktualisierungsleiste.
+// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards.
 .map__buttons {
   position: absolute;
   inset-block-start: calc(var(--update-bar-height, 0px) + 12px);
@@ -136,7 +135,6 @@ app-object-sheet {
 }
 
 // Am Rechner steht die Spalte links: Kopf oben, Inhalt darunter, keine Rasten.
-// Eine bereitstehende Fassung schiebt den Kopf um die Höhe der Leiste herab.
 .map__column {
   display: flex;
   flex-direction: column;

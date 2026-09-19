@@ -187,7 +187,11 @@ test('MapUpdate', async ({ page }) => {
   guard('MapUpdate', 'phone');
   await openMap(page);
   await page.evaluate(() => {
-    (window as unknown as { pilzUpdate: { ready: () => void } }).pilzUpdate.ready();
+    navigator.serviceWorker.dispatchEvent(
+      new MessageEvent('message', {
+        data: { type: 'VERSION_READY', currentVersion: { hash: 'a' }, latestVersion: { hash: 'b' } },
+      }),
+    );
   });
   await expect(page.getByRole('status')).toContainText('Neue Version');
   await board(page, 'MapUpdate');

@@ -8,10 +8,6 @@ export interface InstallPrompt extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-interface UpdateWindow extends Window {
-  pilzUpdate?: { ready: () => void };
-}
-
 const BOOT_WINDOW_MS = 10_000;
 
 /**
@@ -44,13 +40,6 @@ export class PwaService {
       this._canInstall.set(false);
     });
     this.watchUpdates();
-    // Ein Haken für den Board-Test: er meldet eine Fassung ohne echten
-    // Service Worker, den der Testlauf sonst blockt.
-    (window as UpdateWindow).pilzUpdate = {
-      ready: () => {
-        this._updateReady.set(true);
-      },
-    };
   }
 
   /** Fragt den Browser. Danach ist das Angebot verbraucht. */

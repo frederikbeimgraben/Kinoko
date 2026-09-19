@@ -83,14 +83,6 @@ describe('PwaService', () => {
     expect(pwa.canInstall()).toBe(false);
   });
 
-  it('meldet eine Fassung über den Haken des Board-Tests', () => {
-    const pwa = service(new SwUpdateDouble());
-
-    (window as unknown as { pilzUpdate: { ready: () => void } }).pilzUpdate.ready();
-
-    expect(pwa.updateReady()).toBe(true);
-  });
-
   describe('Aktualisierung', () => {
     beforeEach(() => {
       vi.useFakeTimers();
