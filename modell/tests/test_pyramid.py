@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
+from tiles import KACHEL as KACHEL_TEST
 from pyramid import (
     ZOOM_BASE,
     ZOOM_CAP,
@@ -195,3 +196,23 @@ def test_blockrand_ist_der_rand_ganzer_kacheln():
 def test_have_endet_an_der_kappe():
     gefuellt = [(9, 1, 1), (10, 2, 2), (11, 4, 4), (14, 30, 30)]
     assert have_up_to(gefuellt, 10) == {"9": ["1/1"], "10": ["2/2"]}
+
+
+def test_kacheln_eines_blocks_fuellen_das_gitter(tmp_path):
+    from pyramid import cut_field
+
+    code = to_byte(np.full((2 * KACHEL_TEST, 3 * KACHEL_TEST), 0.5, dtype="float32"))
+    root, gewicht = tmp_path / "wert", tmp_path / "gewicht"
+    gefuellt = cut_field(code, root, gewicht, 9, 10, 20)
+    assert sorted(gefuellt) == sorted(
+        (9, x, y) for y in (20, 21) for x in (10, 11, 12))
+    assert read_tile(gewicht, 9, 12, 21) is not None
+
+
+def test_ein_leerer_streifen_wird_ausgelassen(tmp_path):
+    from pyramid import cut_field
+
+    werte = np.full((KACHEL_TEST, 2 * KACHEL_TEST), 0.5, dtype="float32")
+    werte[:, KACHEL_TEST:] = np.nan
+    root, gewicht = tmp_path / "wert", tmp_path / "gewicht"
+    assert sorted(cut_field(to_byte(werte), root, gewicht, 9, 4, 4)) == [(9, 4, 4)]

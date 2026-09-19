@@ -10,7 +10,7 @@ of the layer, and the share of the valid area in each class.
 A class is an interval over the scale that the layer already declares in the
 manifest (``low`` to ``high``, in the unit of the layer; ``0`` to ``top`` for
 a prediction). The handles therefore point at values in that unit without any
-further arithmetic. ``klassen`` holds 41 edges, not 40 lower edges: the upper
+further arithmetic. ``classes`` holds 41 edges, not 40 lower edges: the upper
 edge of the last class is a number the screen has to print, and deriving it
 from the step invites a rounding error at the one place the user reads.
 
@@ -26,7 +26,7 @@ from pathlib import Path
 
 import numpy as np
 
-KLASSEN = 40
+CLASSES = 40
 
 # Eine Zahlenliste, die json.dumps mit Einrueckung ueber eine Zeile je Zahl
 # verteilt. Anfuehrungszeichen und Klammern fehlen im Zeichenvorrat, also
@@ -34,8 +34,8 @@ KLASSEN = 40
 _ZAHLENLISTE = re.compile(r"\[[\s\d.,eE+-]*\]")
 
 
-def histogramm(werte: np.ndarray, low: float, high: float,
-               klassen: int = KLASSEN) -> dict[str, list[float]] | None:
+def histogram(werte: np.ndarray, low: float, high: float,
+               classes: int = CLASSES) -> dict[str, list[float]] | None:
     """Count values into equal classes over ``low`` to ``high``.
 
     Returns the class edges and the share of the valid values in each class,
@@ -46,13 +46,13 @@ def histogramm(werte: np.ndarray, low: float, high: float,
         raise ValueError(f"Skala ohne Breite: {low} bis {high}")
     gueltig = np.asarray(werte, dtype="float64").ravel()
     gueltig = gueltig[np.isfinite(gueltig)]
-    kanten = np.linspace(low, high, klassen + 1)
+    kanten = np.linspace(low, high, classes + 1)
     if gueltig.size == 0:
         return None
     zahl, _ = np.histogram(np.clip(gueltig, low, high), bins=kanten)
-    anteile = zahl / gueltig.size
-    return {"klassen": [round(float(k), 6) for k in kanten],
-            "anteile": [round(float(a), 6) for a in anteile]}
+    shares = zahl / gueltig.size
+    return {"classes": [round(float(k), 6) for k in kanten],
+            "shares": [round(float(a), 6) for a in shares]}
 
 
 def werte_aus_kacheln(ordner: Path, kacheln: list[str], zoom: str,

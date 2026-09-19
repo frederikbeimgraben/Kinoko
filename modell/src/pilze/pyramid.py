@@ -8,6 +8,7 @@ above it. The coding of ``tiles.py`` holds on every level.
 from __future__ import annotations
 
 import math
+import shutil
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 
@@ -137,6 +138,70 @@ def coarsen(root: Path, weights: Path, finest: int, base: int = ZOOM_BASE
             if write_tile(root, zoom - 1, px, py, code):
                 written.append((zoom - 1, px, py))
     return written
+
+
+def cut_field(code: np.ndarray, root: Path, weights: Path, zoom: int,
+              tx0: int, ty0: int) -> list[tuple[int, int, int]]:
+    """Cut one coded field into tiles, starting at tile ``tx0``, ``ty0``."""
+    written: list[tuple[int, int, int]] = []
+    rows, cols = code.shape
+    for j in range(rows // KACHEL):
+        for i in range(cols // KACHEL):
+            kachel = code[j * KACHEL:(j + 1) * KACHEL, i * KACHEL:(i + 1) * KACHEL]
+            x, y = tx0 + i, ty0 + j
+            if write_tile(root, zoom, x, y, kachel):
+                write_tile(weights, zoom, x, y, full_weight(kachel))
+                written.append((zoom, x, y))
+    return written
+
+
+def render_field(quelle: Path, targets: list[Path], tops: list[float],
+                 zoom: int, arbeit: Path,
+                 wgs_box: tuple[float, float, float, float],
+                 base: int = ZOOM_BASE
+                 ) -> list[tuple[list[tuple[int, int, int]], int]]:
+    """Cut every band of a source into its own pyramid.
+
+    ``quelle`` is a GeoTIFF in any CRS with one band per pyramid. ``wgs_box``
+    is its extent as (west, south, east, north) in degrees. One gdalwarp hits
+    the finest level, and the levels below it come from the mean of the four
+    tiles above. The result names, per band, the tiles that carry data.
+    """
+    import rasterio
+    import subprocess
+
+    west, south = to_mercator(wgs_box[0], wgs_box[1])
+    east, north = to_mercator(wgs_box[2], wgs_box[3])
+    tx0, ty0, tx1, ty1 = kachelraster(west, south, east, north, zoom)
+    box = kachelbox(tx0, ty0, tx1, ty1, zoom)
+    breite, hoehe = (tx1 - tx0 + 1) * KACHEL, (ty1 - ty0 + 1) * KACHEL
+    gewarpt = arbeit / f"z{zoom}.tif"
+    # gdalwarp trifft das Kachelraster genau, wenn Ausschnitt und Punktzahl
+    # vorgegeben sind. Selbst skaliert saesse es daneben.
+    subprocess.run(
+        ["gdalwarp", "-q", "-overwrite", "-t_srs", "EPSG:3857",
+         "-te", *[f"{v:.6f}" for v in box], "-ts", str(breite), str(hoehe),
+         "-r", "average", "-dstnodata", "nan",
+         # Jedes Band traegt seine eigene Maske: der Regen der letzten acht
+         # Wochen fehlt am Anfang der Reihe, wo der der Woche schon dasteht.
+         "-wo", "UNIFIED_SRC_NODATA=NO",
+         str(quelle), str(gewarpt)],
+        check=True, capture_output=True)
+
+    saetze: list[tuple[list[tuple[int, int, int]], int]] = []
+    with rasterio.open(gewarpt) as src:
+        for band, (target, top) in enumerate(zip(targets, tops), start=1):
+            weights = arbeit / "gewicht"
+            shutil.rmtree(weights, ignore_errors=True)
+            gefuellt = cut_field(to_byte(src.read(band) / max(top, 1e-6)),
+                                 target, weights, zoom, tx0, ty0)
+            gefuellt += coarsen(target, weights, zoom, base)
+            shutil.rmtree(weights, ignore_errors=True)
+            bytes_ = sum(tile_file(target, z, x, y).stat().st_size
+                         for z, x, y in gefuellt)
+            saetze.append((gefuellt, bytes_))
+    gewarpt.unlink(missing_ok=True)
+    return saetze
 
 
 def belegung(filled: Iterable[tuple[int, int, int]]) -> dict[str, list[str]]:
