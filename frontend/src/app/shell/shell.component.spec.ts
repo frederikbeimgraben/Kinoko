@@ -265,3 +265,68 @@ describe('ShellComponent am Rechner', () => {
     expect(container.querySelector('.map__buttons')).not.toBeNull();
   });
 });
+
+/** Am Telefon steht die Karte in der Hülle wie am Rechner; die Route liefert dort nichts. */
+const PHONE_ROUTES = [
+  { path: 'karte', component: MapRouteComponent },
+  { path: 'arten', component: PageComponent },
+  { path: '', pathMatch: 'full' as const, redirectTo: 'karte' },
+];
+
+async function phoneShell(): Promise<{
+  double: MapAdapterDouble;
+  navigate: (path: string) => Promise<boolean>;
+  detectChanges: () => void;
+  container: Element;
+  stable: () => Promise<void>;
+}> {
+  answerManifest();
+  const { map: double } = mapWithDoubles();
+  const { navigate, detectChanges, container, fixture } = await render(ShellComponent, {
+    deferBlockBehavior: DeferBlockBehavior.Playthrough,
+    providers: [
+      provideRouter(PHONE_ROUTES),
+      provideServiceWorker('ngsw-worker.js', { enabled: false }),
+      ...authProvider(new ManagerDouble()),
+      { provide: ViewportService, useValue: { wide: signal(false) } },
+    ],
+  });
+  const stable = async (): Promise<void> => {
+    await fixture.whenStable();
+    detectChanges();
+  };
+  return { double, navigate, detectChanges, container, stable };
+}
+
+describe('ShellComponent am Telefon', () => {
+  it('hält die Karte über den Wechsel Karte, Arten, Karte im Speicher', async () => {
+    const { navigate, detectChanges, container, stable } = await phoneShell();
+
+    await navigate('/karte');
+    await stable();
+    const map = container.querySelector('app-map');
+    expect(map).not.toBeNull();
+    expect(screen.getByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
+
+    await navigate('/arten');
+    detectChanges();
+    // Dasselbe Element heißt: kein Neuladen der Kacheln, keine zweite Karte.
+    expect(container.querySelector('app-map')).toBe(map);
+    expect(screen.queryByRole('region', { name: 'Karte von Deutschland' })).not.toBeInTheDocument();
+    expect(map).toHaveAttribute('inert');
+
+    await navigate('/karte');
+    detectChanges();
+    expect(container.querySelector('app-map')).toBe(map);
+    expect(screen.getByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
+  });
+
+  it('lädt die Karte nicht, wenn Arten der erste Reiter ist', async () => {
+    const { double, navigate } = await phoneShell();
+
+    await navigate('/arten');
+
+    expect(double.started).toBe(0);
+    expect(screen.queryByRole('region', { name: 'Karte von Deutschland' })).not.toBeInTheDocument();
+  });
+});

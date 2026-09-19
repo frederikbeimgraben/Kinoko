@@ -52,19 +52,30 @@
   grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
 }
 
-// Eine eigene Stapelschicht: das Blatt der Karte liegt darin und kommt damit
-// nicht über den Reiterinhalt in derselben Spalte.
+// Eine eigene Stapelschicht, die sich die Zelle mit dem Reiterinhalt teilt.
 .shell__map {
   position: relative;
   z-index: 0;
-  grid-area: 1 / 1 / 2 / 4;
+  grid-row: 1;
   min-block-size: 0;
+}
+
+// Am Rechner liegt die Karte hinter der Spalte und spannt über die ganze
+// Breite der Hülle.
+.shell--column .shell__map {
+  grid-area: 1 / 1 / 2 / 4;
 }
 
 // Ein offenes Blatt der Karte deckt den Reiter zu, statt hinter ihm zu
 // verschwinden.
 .shell__map--lead {
   z-index: 2;
+}
+
+// Kein `display: none`, sonst verliert MapLibre seine Größe.
+.shell__map--hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .shell--column .shell__nav {
