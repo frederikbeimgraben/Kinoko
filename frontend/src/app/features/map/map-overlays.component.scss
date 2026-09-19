@@ -6,26 +6,7 @@
   display: contents;
 }
 
-// Der Name steht unter einer Kopfzeile, wie das Board sie zeigt. Am Rechner
-// trägt der Kopf des Modals den Titel.
-:host-context(.shell--column) .overlay-head {
-  display: none;
-}
-
-.overlay-head {
-  display: flex;
-  flex: none;
-  align-items: center;
-  box-sizing: content-box;
-  block-size: var(--size-tap);
-  padding-block-end: var(--space-3);
-  padding-inline: var(--size-gutter);
-  font-size: var(--fs-control);
-  font-weight: var(--fw-semibold);
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-// Unter der Kopfzeile steht der Name mit vollem Abstand.
+// Unter dem Kopf steht der Name mit vollem Abstand.
 .overlay-body--roomy {
   padding-block-start: var(--size-gutter);
 }
