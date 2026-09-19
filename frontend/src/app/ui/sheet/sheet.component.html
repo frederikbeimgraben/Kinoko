@@ -22,7 +22,7 @@
   [style.block-size]="height()"
   (keydown)="onKey($event)"
 >
-  @if (asModal()) {
+  @if (closable()) {
     <button
       class="sheet__close tap"
       type="button"
@@ -30,16 +30,8 @@
       [attr.aria-label]="'common.close' | t"
       (click)="closed.emit()"
     >
-      <app-svg-icon name="close" [size]="18" [strokeWidth]="2" />
+      <app-svg-icon name="close" [size]="22" [strokeWidth]="2" />
     </button>
-    @if (asModal() && title() !== '') {
-      <header class="sheet__head">
-        <h2 class="sheet__title">{{ title() }}</h2>
-        @if (note() !== '') {
-          <span class="sheet__note">{{ note() }}</span>
-        }
-      </header>
-    }
   }
   <div
     class="sheet__drag"
@@ -58,6 +50,18 @@
     >
       <span class="sheet__handle-line"></span>
     </button>
+    @if (title() !== '') {
+      <header class="sheet__head">
+        <div class="sheet__head-title">
+          <ng-content select="[titleLead]" />
+          <h2 class="sheet__title">{{ title() }}</h2>
+        </div>
+        @if (note() !== '') {
+          <span class="sheet__note">{{ note() }}</span>
+        }
+        <ng-content select="[headAction]" />
+      </header>
+    }
     <ng-content select="[head]" />
   </div>
   <div class="sheet__content">
