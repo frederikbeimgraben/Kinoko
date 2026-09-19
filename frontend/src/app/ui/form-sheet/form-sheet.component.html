@@ -7,9 +7,6 @@
     (closed)="cancelled.emit()"
   >
     <div class="formSheet__content">
-      @if (!wide()) {
-        <h2 class="formSheet__title">{{ title() }}</h2>
-      }
       <ng-content />
     </div>
     <app-action-bar

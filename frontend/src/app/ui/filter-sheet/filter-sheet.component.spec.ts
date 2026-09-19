@@ -58,30 +58,39 @@ describe('FilterSheetComponent', () => {
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-label', 'Filter');
-    expect(within(dialog).getByRole('heading', { name: 'Filter' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('heading', { name: 'Filter' }).closest('.sheet__head')).not.toBeNull();
     expect(screen.getByRole('button', { name: 'Show 12 species' })).toBeInTheDocument();
     await noViolations(container);
   });
 
   it('lässt Zurücksetzen weg, solange nichts gefiltert ist', async () => {
-    await render(FilterSheetComponent, { inputs: OPEN });
+    const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
-    expect(dialogButtons()).toHaveLength(1);
+    expect(container.querySelector('.filtersheet__reset')).toBeNull();
   });
 
-  it('zeigt Zurücksetzen, sobald ein Filter steht', async () => {
-    await render(FilterSheetComponent, { inputs: { ...OPEN, resetEnabled: true } });
-
-    expect(dialogButtons()).toHaveLength(2);
-  });
-
-  it('lässt der Übersicht kein X im Kopf', async () => {
+  it('stellt Zurücksetzen in die Zeile unter dem Titel', async () => {
     const { container } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
     });
 
+    const reset = container.querySelector('.filtersheet__reset');
+    expect(reset).toHaveTextContent('Zurücksetzen');
+    expect(reset?.closest('.sheet__head')).not.toBeNull();
+    expect(reset?.closest('.sheet__head-title')).toBeNull();
+  });
+
+  it('nimmt das X des Blatts und bringt kein eigenes mit', async () => {
+    const { container, fixture } = await render(FilterSheetComponent, {
+      inputs: { ...OPEN, resetEnabled: true },
+    });
+    let calls = 0;
+    fixture.componentInstance.closed.subscribe(() => (calls += 1));
     expect(container.querySelector('.filtersheet__close')).toBeNull();
-    expect(within(screen.getByRole('dialog')).queryByRole('button', { name: 'Schließen' })).toBeNull();
+
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Schließen' }));
+
+    expect(calls).toBe(1);
   });
 
   it('meldet Zurücksetzen und Haupthandlung je Knopf', async () => {
@@ -91,15 +100,14 @@ describe('FilterSheetComponent', () => {
     const calls: string[] = [];
     fixture.componentInstance.resetClick.subscribe(() => calls.push('reset'));
     fixture.componentInstance.primaryClick.subscribe(() => calls.push('primary'));
-    const buttons = dialogButtons();
 
-    await userEvent.click(buttons[0]);
-    await userEvent.click(buttons[1]);
+    await userEvent.click(screen.getByRole('button', { name: 'Zurücksetzen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Show 12 species' }));
 
     expect(calls).toEqual(['reset', 'primary']);
   });
 
-  it('stellt in einer Gruppe den Weg zurück statt Zurücksetzen', async () => {
+  it('stellt in einer Gruppe den Weg zurück vor den Titel', async () => {
     const { container, fixture } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, title: 'Cap shape', back: true, resetEnabled: true },
     });
@@ -107,7 +115,7 @@ describe('FilterSheetComponent', () => {
     fixture.componentInstance.backClick.subscribe(() => (calls += 1));
 
     expect(container.querySelector('.filtersheet__reset')).toBeNull();
-    expect(container.querySelector('.filtersheet__close')).toBeNull();
+    expect(container.querySelector('.filtersheet__back')?.closest('.sheet__head-title')).not.toBeNull();
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 
     expect(calls).toBe(1);

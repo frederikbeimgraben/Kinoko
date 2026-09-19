@@ -2,30 +2,36 @@
   <app-sheet
     class="filtersheet"
     [label]="title()"
+    [title]="title()"
+    [headDivider]="true"
     [modal]="true"
     [dismissible]="true"
     [detents]="detents"
     (closed)="closed.emit()"
   >
-    <header head class="filtersheet__head">
-      @if (back()) {
-        <button
-          class="filtersheet__back tap"
-          type="button"
-          data-press="scale"
-          [attr.aria-label]="'common.back' | t"
-          (click)="backClick.emit()"
-        >
-          <app-svg-icon name="back" [size]="20" />
-        </button>
-      }
-      <h2 class="filtersheet__title">{{ title() }}</h2>
-      @if (!back() && resetEnabled()) {
-        <button class="filtersheet__reset tap" type="button" data-press="scale" (click)="resetClick.emit()">
-          {{ 'common.reset' | t }}
-        </button>
-      }
-    </header>
+    @if (back()) {
+      <button
+        titleLead
+        class="filtersheet__back tap"
+        type="button"
+        data-press="scale"
+        [attr.aria-label]="'common.back' | t"
+        (click)="backClick.emit()"
+      >
+        <app-svg-icon name="back" [size]="20" />
+      </button>
+    }
+    @if (!back() && resetEnabled()) {
+      <button
+        headAction
+        class="filtersheet__reset tap"
+        type="button"
+        data-press="scale"
+        (click)="resetClick.emit()"
+      >
+        {{ 'common.reset' | t }}
+      </button>
+    }
     <div #content class="filtersheet__content" appScrollFade><ng-content /></div>
     @if (primaryLabel(); as label) {
       <footer foot class="filtersheet__foot">

@@ -9,18 +9,6 @@
       (closed)="closed.emit()"
     >
       <div class="overlay-body">
-        <div class="overlay-body__head">
-          <h2 class="overlay-body__title">{{ title() }}</h2>
-          <button
-            class="overlay-body__close tap"
-            type="button"
-            data-press="scale"
-            [attr.aria-label]="'common.close' | t"
-            (click)="closed.emit()"
-          >
-            <app-svg-icon name="close" [size]="18" />
-          </button>
-        </div>
         <div class="option-sheet__scroll" appScrollFade role="group" [attr.aria-label]="title()">
           <div class="option-sheet__card">
             @for (option of options(); track option.id) {

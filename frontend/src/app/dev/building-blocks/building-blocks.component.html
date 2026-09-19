@@ -101,8 +101,14 @@
   <section class="block" data-block="app-sheet">
     <h2 class="block__head">{{ 'blocks.sheet' | t }}</h2>
     <div class="block__stage block__stage--sheet" [style.--stage-h.px]="320">
-      <app-sheet [label]="text('map.combination.save')" [detent]="0" [detents]="sheetDetents">
-        <app-sheet-head head [title]="text('map.combination.save')" [arrows]="false" />
+      <app-sheet
+        [label]="text('map.combination.save')"
+        [title]="text('map.combination.save')"
+        [closable]="false"
+        [headDivider]="true"
+        [detent]="0"
+        [detents]="sheetDetents"
+      >
         <div class="block__sheetbody">
           <app-form-field
             [label]="text('common.name')"
@@ -110,7 +116,7 @@
             [readOnly]="true"
           />
         </div>
-        <app-action-bar [primary]="text('common.save')" [secondary]="text('common.cancel')" />
+        <app-action-bar [primary]="text('common.save')" />
       </app-sheet>
     </div>
   </section>

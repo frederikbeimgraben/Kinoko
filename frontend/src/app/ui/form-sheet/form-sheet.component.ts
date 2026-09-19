@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
-import { ViewportService } from '../../core/layout/viewport.service';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../sheet/sheet.component';
@@ -18,7 +17,7 @@ const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'cont
 export class FormSheetComponent {
   readonly title = input.required<string>();
   readonly submit = input.required<string>();
-  readonly secondary = input.required<string>();
+  readonly secondary = input('');
   /** Die zweite Aktion trägt die Gefahrfarbe, etwa beim Löschen. */
   readonly secondaryDanger = input(false);
   readonly busy = input(false);
@@ -28,5 +27,4 @@ export class FormSheetComponent {
   readonly cancelled = output();
 
   protected readonly DETENTS = DETENTS;
-  protected readonly wide = inject(ViewportService).wide;
 }

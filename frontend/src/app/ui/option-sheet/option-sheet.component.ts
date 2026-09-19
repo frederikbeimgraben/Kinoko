@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ListRowComponent } from '../list-row/list-row.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
@@ -17,18 +16,11 @@ export interface OptionSheetOption {
 /** Ohne Vorgabe fasst das Blatt nur seinen Inhalt. */
 const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 
-/** Blatt zur Einfachwahl: Kopf mit Titel und Schließen, darunter eine Karte aus Zeilen. */
+/** Blatt zur Einfachwahl: unter dem Titel des Blatts eine Karte aus Zeilen. */
 @Component({
   selector: 'app-option-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ListRowComponent,
-    OverlayHostComponent,
-    ScrollFadeDirective,
-    SheetComponent,
-    SvgIconComponent,
-    TranslatePipe,
-  ],
+  imports: [ListRowComponent, OverlayHostComponent, ScrollFadeDirective, SheetComponent, SvgIconComponent],
   templateUrl: './option-sheet.component.html',
   styleUrl: './option-sheet.component.scss',
 })
