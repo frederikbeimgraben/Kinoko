@@ -785,6 +785,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/people/names": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Names of the persons behind the given ids. The answer holds a person only if the caller and this person share one group or more, or if the id is the id of the caller. Other ids have no entry. */
+        get: operations["resolvePersonNames"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/people/{id}": {
         parameters: {
             query?: never;
@@ -1615,6 +1632,11 @@ export interface components {
         GlossaryEntryWrite: {
             term: string;
             definition: string;
+        };
+        PersonName: {
+            /** Format: uuid */
+            id: string;
+            name: string;
         };
         Person: {
             /** Format: uuid */
@@ -3709,6 +3731,31 @@ export interface operations {
             };
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    resolvePersonNames: {
+        parameters: {
+            query: {
+                /** @description Comma-separated person ids, 50 at most. */
+                ids: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonName"][];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
             422: components["responses"]["Validation"];
         };
     };

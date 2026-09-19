@@ -5,6 +5,7 @@ describe('EintragLeser', () => {
   it('liest einen geteilten Fund des Vertrags', () => {
     expect(sharedFind(FIND_ENTRY)).toEqual({
       id: FIND.id,
+      ownerId: FIND.ownerId,
       speciesId: FIND.speciesId,
       lat: FIND.lat,
       lon: FIND.lon,
@@ -21,10 +22,11 @@ describe('EintragLeser', () => {
     expect(sharedFind(lean)).toMatchObject({ speciesId: null, count: null, note: null });
   });
 
-  it('lässt einen Fund ohne Ort, Datum oder Prüfstand weg', () => {
+  it('lässt einen Fund ohne Ort, Datum, Besitzer oder Prüfstand weg', () => {
     expect(sharedFind({ ...FIND_ENTRY, lat: undefined })).toBeNull();
     expect(sharedFind({ ...FIND_ENTRY, lon: undefined })).toBeNull();
     expect(sharedFind({ ...FIND_ENTRY, foundOn: undefined })).toBeNull();
+    expect(sharedFind({ ...FIND_ENTRY, ownerId: undefined })).toBeNull();
     expect(sharedFind({ ...FIND_ENTRY, reviewState: undefined })).toBeNull();
     expect(sharedFind({ ...FIND_ENTRY, deleted: true })).toBeNull();
   });

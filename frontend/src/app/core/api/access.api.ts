@@ -8,6 +8,7 @@ import type {
   MyPermissions,
   PermissionEntry,
   Person,
+  PersonName,
   Role,
   RoleInput,
   RolePatch,
@@ -64,6 +65,11 @@ export class AccessApi {
 
   people(search: string): Observable<Person[]> {
     return this.api.get<Items<Person>>('/people', { q: search || undefined }).pipe(map((page) => page.items));
+  }
+
+  /** Die Namen zu Kennungen, mit denen das eigene Konto eine Gruppe teilt. */
+  personNames(ids: readonly string[]): Observable<PersonName[]> {
+    return this.api.get<PersonName[]>('/people/names', { ids: ids.join(',') });
   }
 
   /** Setzt die Rollen einer Person neu. Die Liste ersetzt, sie ergänzt nicht. */

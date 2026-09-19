@@ -7,12 +7,13 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Path, Query, status
 
-from app.core.auth import CurrentViewer, Db, requires
-from app.core.errors import Forbidden, Unauthorized
+from app.core.auth import CurrentUser, CurrentViewer, Db, requires
+from app.core.errors import Forbidden, Invalid, Unauthorized
 from app.modules.access.account import router as account_router
+from app.modules.access.group_service import GroupService
 from app.modules.access.groups import router as groups_router
 from app.modules.access.permissions import permission_entries
-from app.modules.access.schemas import RoleCreate, RoleUpdate, SetPersonRoles
+from app.modules.access.schemas import PersonName, RoleCreate, RoleUpdate, SetPersonRoles
 from app.modules.access.service import AccessService
 from app.modules.access.summary import SummaryService
 from app.modules.catalog.service import SpeciesService
@@ -23,6 +24,7 @@ router.include_router(account_router)
 router.include_router(groups_router)
 
 RoleId = Annotated[uuid.UUID, Path(alias="id")]
+MAX_NAME_IDS = 50
 PersonId = Annotated[uuid.UUID, Path(alias="id")]
 
 
@@ -96,6 +98,33 @@ async def list_people(
 ) -> Any:  # noqa: ANN401
     """Liefert eine Seite Personen."""
     return await AccessService(db).list_people(q, paging)
+
+
+def _parse_ids(raw: str) -> list[uuid.UUID]:
+    parts = [part.strip() for part in raw.split(",") if part.strip()]
+    if not parts or len(parts) > MAX_NAME_IDS:
+        raise Invalid(errors=[{"field": "ids", "code": "ids"}])
+    try:
+        return [uuid.UUID(part) for part in parts]
+    except ValueError as broken:
+        raise Invalid(errors=[{"field": "ids", "code": "ids"}]) from broken
+
+
+@router.get("/people/names")
+async def resolve_person_names(
+    db: Db,
+    user: CurrentUser,
+    ids: Annotated[str, Query()],
+) -> Any:  # noqa: ANN401
+    """Liefert die Namen zu Kennungen, mit denen das Konto eine Gruppe teilt."""
+    requested = _parse_ids(ids)
+    visible = await GroupService(db).shared_with(user, requested)
+    names = await GroupService(db).names(visible)
+    return [
+        PersonName(id=person_id, name=names[person_id]).dumped()
+        for person_id in requested
+        if person_id in names
+    ]
 
 
 @router.get("/people/{id}", dependencies=[requires("role.assign")])  # noqa: FAST003

@@ -1767,6 +1767,35 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
+  /people/names:
+    get:
+      operationId: resolvePersonNames
+      tags: [people]
+      description: >-
+        Names of the persons behind the given ids. The answer holds a person
+        only if the caller and this person share one group or more, or if the
+        id is the id of the caller. Other ids have no entry.
+      parameters:
+        - name: ids
+          in: query
+          required: true
+          description: Comma-separated person ids, 50 at most.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonName"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/Validation"
+
   /people/{id}:
     parameters:
       - $ref: "#/components/parameters/Id"
@@ -3978,6 +4007,16 @@ components:
           type: string
           minLength: 1
           maxLength: 600
+    PersonName:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
     Person:
       type: object
       properties:

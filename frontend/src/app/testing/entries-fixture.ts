@@ -31,6 +31,7 @@ export const FIND_ENTRY: FindEntry = {
 
 export const FIND: Find = {
   id: FIND_ENTRY.id,
+  ownerId: 'konto-eins',
   speciesId: 'steinpilz',
   lat: 48.5203,
   lon: 9.0511,
@@ -123,6 +124,7 @@ export const SHARED_FIND_ENTRY: FindEntry = {
 
 export const SHARED_FIND: SharedFind = {
   id: 'geteilt-eins',
+  ownerId: 'konto-zwei',
   speciesId: 'maronenroehrling',
   lat: 48.6,
   lon: 9.2,

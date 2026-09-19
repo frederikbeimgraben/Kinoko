@@ -76,6 +76,20 @@ class GroupService:
         found = (await self.db.execute(query)).scalars()
         return {row.id: row.name or row.email or row.sub for row in found}
 
+    async def shared_with(self, user: User, user_ids: Iterable[uuid.UUID]) -> set[uuid.UUID]:
+        """Die Kennungen aus ``user_ids``, die eine Gruppe mit dem Konto teilen, plus es selbst."""
+        id_list = list(user_ids)
+        held = await self.my_ids(user)
+        found: set[uuid.UUID] = set()
+        if held:
+            query = select(GroupMember.user_id).where(
+                GroupMember.group_id.in_(held),
+                GroupMember.user_id.in_(id_list),
+            )
+            found = set((await self.db.execute(query)).scalars())
+        found.add(user.id)
+        return found & set(id_list)
+
     async def create(self, user: User, name: str) -> FriendGroup:
         """Legt eine Gruppe an und nimmt den Eigentümer auf."""
         made = FriendGroup(name=name, owner_id=user.id, invite_code=await self.free_code())

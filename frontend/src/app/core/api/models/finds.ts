@@ -7,6 +7,7 @@ export type ReviewState = components['schemas']['ReviewState'];
 /** Ein geteilter Fund. Der Ort einer geschützten Art kommt gerundet. */
 export interface SharedFind {
   id: string;
+  ownerId: string;
   speciesId: string | null;
   lat: number;
   lon: number;
