@@ -22,6 +22,7 @@
       <app-button
         class="footer__main"
         [class.footer__slim]="secondaryDanger() || ghost()"
+        [class.footer__danger]="quietSecondaryDanger()"
         [variant]="secondaryVariant()"
         [block]="!inline()"
         (click)="secondaryClick.emit()"

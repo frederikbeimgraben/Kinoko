@@ -1,0 +1,46 @@
+@use '../../../styles/card';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+.glossary {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  padding: var(--size-gutter);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.glossary__card {
+  @include card.card;
+
+  overflow: hidden;
+}
+
+.glossary__entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+
+  & + & {
+    border-block-start: var(--border-width) solid var(--color-border);
+  }
+}
+
+.glossary__term {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+}
+
+.glossary__definition {
+  font-size: var(--fs-row-meta);
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}

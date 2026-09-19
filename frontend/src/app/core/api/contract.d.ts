@@ -1006,6 +1006,9 @@ export interface components {
             findsPending?: number;
             runs?: number;
             runsRunning?: number;
+            groups?: number;
+            groupMembers?: number;
+            glossary?: number;
         };
         PermissionEntry: {
             key: components["schemas"]["Permission"];

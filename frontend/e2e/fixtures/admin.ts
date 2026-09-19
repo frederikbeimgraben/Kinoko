@@ -27,6 +27,9 @@ export const SUMMARY = {
   findsPending: 14,
   runs: 4,
   runsRunning: 1,
+  groups: 2,
+  groupMembers: 7,
+  glossary: 24,
 };
 
 /** Eine leere Zählung der Verwaltung, für den Leerzustand. */

@@ -14,6 +14,7 @@ const BLOCKS = [
   'app-filter-sheet',
   'app-object-menu',
   'app-action-bar',
+  'app-form-sheet',
   'app-step-bar',
   'app-icon-button',
   'app-split-layout',

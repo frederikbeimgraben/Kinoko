@@ -14,6 +14,7 @@ import { mockApi } from '../fixtures/api';
 import { NOW, RUNS, RUN_DETAIL } from '../fixtures/runs';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
+import { GLOSSARY } from '../fixtures/glossary';
 import { GROUPS } from '../fixtures/groups';
 import { bundle, species } from '../fixtures/species';
 import { STONE_EDIT, STONE_EDIT_COUNTS } from '../fixtures/species-editor';
@@ -55,6 +56,7 @@ async function open(page: Page, path: string, extra: Record<string, unknown> = {
     '/api/permissions': { items: CATALOGUE },
     '/api/texts': TEXTS,
     '/api/groups': { items: GROUPS },
+    '/api/glossary': { items: GLOSSARY },
     ...extra,
   });
   await flatMap(page);

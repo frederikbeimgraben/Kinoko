@@ -1,32 +1,18 @@
-<app-overlay-host class="groupSheet" [open]="true" [modal]="true" [cover]="true" (closed)="cancelled.emit()">
-  <app-sheet
-    [label]="title()"
-    [title]="title()"
-    [modal]="true"
-    [detents]="DETENTS"
-    (closed)="cancelled.emit()"
-  >
-    <div class="groupSheet__content">
-      @if (!wide()) {
-        <h2 class="groupSheet__title">{{ title() }}</h2>
-      }
-      <app-form-field
-        [label]="label()"
-        [hideLabel]="!section()"
-        [section]="section()"
-        [placeholder]="placeholder()"
-        [value]="text()"
-        (valueChange)="text.set($event)"
-      />
-    </div>
-    <app-action-bar
-      foot
-      [primary]="submit()"
-      [secondary]="'common.cancel' | t"
-      [ghost]="true"
-      [busy]="busy()"
-      (primaryClick)="submitted.emit(text())"
-      (secondaryClick)="cancelled.emit()"
-    />
-  </app-sheet>
-</app-overlay-host>
+<app-form-sheet
+  [title]="title()"
+  [submit]="submit()"
+  [secondary]="'common.cancel' | t"
+  [busy]="busy()"
+  (submitted)="submitted.emit(text())"
+  (secondaryPressed)="cancelled.emit()"
+  (cancelled)="cancelled.emit()"
+>
+  <app-form-field
+    [label]="label()"
+    [hideLabel]="!section()"
+    [section]="section()"
+    [placeholder]="placeholder()"
+    [value]="text()"
+    (valueChange)="text.set($event)"
+  />
+</app-form-sheet>

@@ -1,0 +1,17 @@
+<app-page-header [title]="'glossary.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="glossary">
+  <app-search-field
+    [value]="search()"
+    [placeholder]="'glossary.search' | t"
+    (valueChange)="onSearch($event)"
+  />
+  <div class="glossary__card">
+    @for (entry of entries(); track entry.id) {
+      <div class="glossary__entry">
+        <span class="glossary__term">{{ entry.term }}</span>
+        <span class="glossary__definition">{{ entry.definition }}</span>
+      </div>
+    }
+  </div>
+</div>

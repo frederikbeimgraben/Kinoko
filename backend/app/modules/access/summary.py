@@ -6,7 +6,19 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import Select, func, select
 
-from app.models import Find, Permission, Photo, PipelineRun, Role, Species, TextEntry, User
+from app.models import (
+    Find,
+    FriendGroup,
+    GlossaryEntry,
+    GroupMember,
+    Permission,
+    Photo,
+    PipelineRun,
+    Role,
+    Species,
+    TextEntry,
+    User,
+)
 from app.shared.enums import PhotoState, ReviewState, RunState
 
 if TYPE_CHECKING:
@@ -27,6 +39,7 @@ class SummaryService:
         out: dict[str, int] = {}
         if "text.edit" in held:
             out["texts"] = await self.one(select(func.count(func.distinct(TextEntry.key))))
+            out["glossary"] = await self.one(select(func.count()).select_from(GlossaryEntry))
         if "image.review" in held:
             out["photos"] = await self.one(select(func.count()).select_from(Photo))
             out["photosPending"] = await self.one(
@@ -39,6 +52,9 @@ class SummaryService:
             out["permissions"] = await self.one(select(func.count()).select_from(Permission))
         if "role.assign" in held:
             out["people"] = await self.one(select(func.count()).select_from(User))
+        if "group.manage" in held:
+            out["groups"] = await self.one(select(func.count()).select_from(FriendGroup))
+            out["groupMembers"] = await self.one(select(func.count()).select_from(GroupMember))
         if "find.review" in held:
             alive = Find.deleted_at.is_(None)
             out["finds"] = await self.one(select(func.count()).select_from(Find).where(alive))

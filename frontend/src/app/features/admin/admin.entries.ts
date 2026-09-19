@@ -44,6 +44,13 @@ export const ADMIN_ENTRIES: readonly AdminEntry[] = [
     counts: ['species'],
   },
   {
+    title: 'glossary.title',
+    permission: 'text.edit',
+    section: 'content',
+    path: '/verwaltung/glossar',
+    counts: ['glossary'],
+  },
+  {
     title: 'admin.roles.title',
     permission: 'role.manage',
     section: 'access',
@@ -56,6 +63,13 @@ export const ADMIN_ENTRIES: readonly AdminEntry[] = [
     section: 'access',
     path: '/verwaltung/personen',
     counts: ['people'],
+  },
+  {
+    title: 'group.title',
+    permission: 'group.manage',
+    section: 'access',
+    path: '/verwaltung/gruppen',
+    counts: ['groups', 'groupMembers'],
   },
   {
     title: 'admin.finds.title',

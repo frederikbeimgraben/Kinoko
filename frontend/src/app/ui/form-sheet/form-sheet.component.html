@@ -1,0 +1,26 @@
+<app-overlay-host class="formSheet" [open]="true" [modal]="true" [cover]="true" (closed)="cancelled.emit()">
+  <app-sheet
+    [label]="title()"
+    [title]="title()"
+    [modal]="true"
+    [detents]="DETENTS"
+    (closed)="cancelled.emit()"
+  >
+    <div class="formSheet__content">
+      @if (!wide()) {
+        <h2 class="formSheet__title">{{ title() }}</h2>
+      }
+      <ng-content />
+    </div>
+    <app-action-bar
+      foot
+      [primary]="submit()"
+      [secondary]="secondary()"
+      [ghost]="true"
+      [secondaryDanger]="secondaryDanger()"
+      [busy]="busy()"
+      (primaryClick)="submitted.emit()"
+      (secondaryClick)="secondaryPressed.emit()"
+    />
+  </app-sheet>
+</app-overlay-host>

@@ -2314,6 +2314,12 @@ components:
           type: integer
         runsRunning:
           type: integer
+        groups:
+          type: integer
+        groupMembers:
+          type: integer
+        glossary:
+          type: integer
 
     PermissionEntry:
       type: object

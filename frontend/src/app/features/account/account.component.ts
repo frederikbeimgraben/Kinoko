@@ -124,6 +124,10 @@ export class AccountComponent {
     void this.router.navigateByUrl('/konto/gruppen');
   }
 
+  protected toGlossary(): void {
+    void this.router.navigateByUrl('/konto/glossar');
+  }
+
   protected toAdministration(): void {
     void this.router.navigateByUrl('/verwaltung');
   }

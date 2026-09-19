@@ -2,6 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
+import { GROUPS } from '../fixtures/groups';
 import { SPECIES_BUNDLE, SPECIES_MANIFEST, mockMap, showMapImage } from '../fixtures/map';
 import { mockValueTile } from '../fixtures/tiles';
 import { expectBoard, skipPending } from './board';
@@ -47,6 +48,7 @@ const FINDS = {
       count: 3,
       reviewState: 'accepted',
       visibility: 'shared',
+      groupId: GROUPS[0].id,
       forTraining: true,
       note: 'Unter Fichten am Weg, drei junge, Kappen noch geschlossen.',
       updatedAt: '2026-09-06T08:00:00Z',
@@ -108,6 +110,7 @@ const REPLIES = {
     points: 1240,
     ownFinds: 2,
   },
+  '/api/groups': { items: GROUPS },
 };
 
 /** Das Manifest der Art mit genau der Kachel, die den Fund trägt. */

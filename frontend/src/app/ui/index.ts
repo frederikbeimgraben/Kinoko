@@ -32,6 +32,7 @@ export { FilterChipComponent } from './filter-chip/filter-chip.component';
 export { FilterSheetComponent } from './filter-sheet/filter-sheet.component';
 export { FloatingButtonComponent, type FloatingVariant } from './floating-button/floating-button.component';
 export { FormFieldComponent } from './form-field/form-field.component';
+export { FormSheetComponent } from './form-sheet/form-sheet.component';
 export { HistogramComponent } from './histogram/histogram.component';
 export {
   IconButtonComponent,
