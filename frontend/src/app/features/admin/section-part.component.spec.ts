@@ -46,7 +46,7 @@ describe('SectionPartComponent', () => {
 
     expect(await screen.findByRole('heading', { name: 'Sporen' })).toBeInTheDocument();
     expect(screen.queryByText('Breite')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Maß hinzufügen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Abmessung hinzufügen' })).toBeInTheDocument();
   });
 
   it('führt jede wachsende Liste mit einer Zeile zum Anlegen', async () => {
