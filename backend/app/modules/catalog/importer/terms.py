@@ -59,9 +59,11 @@ def build_terms(profiles: dict[str, dict[str, Any]]) -> TermRegistry:
         )
 
     for position, word in enumerate(sorted(smell)):
-        add(TermKind.SMELL, vocab.slugify(word), word, None, position)
+        name = vocab.lookup(vocab.SMELL_NAME, word, field="geruch", source="geruch.tags")
+        add(TermKind.SMELL, vocab.slugify(word), name, None, position)
     for position, word in enumerate(sorted(taste)):
-        add(TermKind.TASTE, vocab.slugify(word), word, None, position)
+        name = vocab.lookup(vocab.TASTE_NAME, word, field="geschmack", source="geschmack.tags")
+        add(TermKind.TASTE, vocab.slugify(word), name, None, position)
     for position, word in enumerate(sorted(trees)):
         slug, name = tree_entry(word)
         add(TermKind.TREE, slug, name, None, position)
