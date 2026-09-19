@@ -38,30 +38,10 @@
   padding: var(--space-1) var(--size-gutter) var(--space-2);
 }
 
-// Ein Schritt über der Karte trägt nur seinen Namen, wie die Bretter
-// `FindLocation` und `ZoneDraw` ihn zeigen.
-.addentry__brief--step {
-  gap: var(--space-1);
-  padding-block-end: var(--size-gutter);
-}
-
 .addentry__title {
   margin: 0;
   font-size: 17px;
   font-weight: var(--fw-semibold);
   line-height: normal;
   letter-spacing: normal;
-}
-
-.addentry__note {
-  margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-}
-
-// Die Hauptaktion über der Reihe misst achtundvierzig Punkte, wie im Brett.
-.addentry__main {
-  --fs-md: var(--fs-control);
-
-  block-size: 48px;
 }

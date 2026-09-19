@@ -21,7 +21,6 @@ import type { Layer } from '../../core/tiles/layers';
 import { VisibilityService } from '../../core/visibility/visibility.service';
 import { MAP_PROVIDERS } from '../../map/map.tokens';
 import { BannerComponent } from '../../ui/banner/banner.component';
-import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
 import { MapAttributionComponent } from '../../ui/map-attribution/map-attribution.component';
 import { ObjectMenuComponent, type ObjectMenuTarget } from '../../ui/object-menu/object-menu.component';
 import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
@@ -53,7 +52,6 @@ import { MapView } from './map.view';
     AddEntryComponent,
     BannerComponent,
     FactorPickerComponent,
-    FloatingButtonComponent,
     LayersSheetComponent,
     MapButtonsComponent,
     MapAttributionComponent,

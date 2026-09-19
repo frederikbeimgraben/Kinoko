@@ -157,7 +157,7 @@ test('FindSaving', async ({ page }) => {
 
 test('MarkerForm', async ({ page }) => {
   guard('MarkerForm', 'phone');
-  await openForm(page, 'Marker setzen', 'Übernehmen');
+  await openForm(page, 'Marker setzen', 'Marker übernehmen');
   await expect(page.getByRole('heading', { name: 'Marker setzen' })).toBeVisible();
   // Das Board zeigt die dritte Farbe gewählt.
   await page.getByRole('radio').nth(2).click();
@@ -171,17 +171,9 @@ test('ZoneForm', async ({ page }) => {
   for (let corner = 0; corner < 3; corner += 1) {
     await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
   }
-  await page.getByRole('button', { name: 'Zone abschließen' }).click();
+  await page.getByRole('button', { name: 'Abschließen' }).click();
   await expect(page.getByRole('heading', { name: 'Zone speichern' })).toBeVisible();
   await board(page, 'ZoneForm');
-});
-
-test('FindLocation', async ({ page }) => {
-  guard('FindLocation', 'phone');
-  await openActions(page);
-  await page.getByRole('button', { name: 'Fund melden' }).click();
-  await expect(page.getByRole('heading', { name: 'Fundort festlegen' })).toBeVisible();
-  await board(page, 'FindLocation');
 });
 
 /** Der Haken der App, über den der Test die Karte genau setzt. */
@@ -211,8 +203,8 @@ async function showAt(
   await page.waitForTimeout(150);
 }
 
-/** Der Maßstab, auf dem die Karte im Brett `ZoneDraw` steht. */
-const ZONE_ZOOM = 14;
+/** Der Maßstab des Bretts `ZoneDraw`: sein Ring misst darauf 42 Hektar. */
+const ZONE_ZOOM = 11.6635;
 
 /** Die vier Ecken des Bretts `ZoneDraw`, in Punkten des Fensters. */
 const ZONE_CORNERS: readonly (readonly [number, number])[] = [
@@ -242,20 +234,34 @@ async function openEmptyMap(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Zone zeichnen' })).toBeVisible();
 }
 
+/** Die Mitte des Fadenkreuzes im Fenster. */
+async function crosshairAt(page: Page): Promise<[number, number]> {
+  const cross = await page.locator('app-crosshair').boundingBox();
+  return [(cross?.x ?? 0) + (cross?.width ?? 0) / 2, (cross?.y ?? 0) + (cross?.height ?? 0) / 2];
+}
+
+test('FindLocation', async ({ page }) => {
+  guard('FindLocation', 'phone');
+  await openActions(page);
+  await page.getByRole('button', { name: 'Fund melden' }).click();
+  await expect(page.getByRole('group', { name: 'Fundort festlegen' })).toBeVisible();
+  // Die Leiste ändert das Polster der Karte; der Ort des Bretts gehört danach
+  // wieder unter das Fadenkreuz.
+  await page.waitForTimeout(600);
+  await showAt(page, [PLACE.longitude, PLACE.latitude], await crosshairAt(page), ZONE_ZOOM);
+  await expect(page.getByText('48,5203 · 9,0511')).toBeVisible();
+  await board(page, 'FindLocation');
+});
+
 test('ZoneDraw', async ({ page }) => {
   guard('ZoneDraw', 'phone');
   await openEmptyMap(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  // Das Blatt ändert das Polster der Karte; sie rückt danach noch nach.
+  // Die Leiste ändert das Polster der Karte; sie rückt danach noch nach.
   await page.waitForTimeout(600);
-  const cross = await page.locator('app-crosshair').boundingBox();
-  const middle: [number, number] = [
-    (cross?.x ?? 0) + (cross?.width ?? 0) / 2,
-    (cross?.y ?? 0) + (cross?.height ?? 0) / 2,
-  ];
+  const middle = await crosshairAt(page);
   // Erst die Orte merken, die im Bild des Bretts unter den Ecken liegen. Dann
   // jeden davon unter das Fadenkreuz holen und die Ecke setzen.
-  // Der Maßstab des Bretts: die Fläche des Rings misst darin zweiundvierzig Hektar.
   await showAt(page, await aimAt(page, middle), middle, ZONE_ZOOM);
   const places: [number, number][] = [];
   for (const spot of ZONE_CORNERS) places.push(await aimAt(page, spot));

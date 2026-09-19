@@ -1,8 +1,7 @@
-<div class="stepbar" role="group" [attr.aria-label]="title()">
-  <div class="stepbar__text">
-    <b class="stepbar__title">{{ title() }}</b>
+<div class="stepbar" role="group" [attr.aria-label]="label()">
+  @if (note()) {
     <span class="stepbar__note">{{ note() }}</span>
-  </div>
+  }
   <div class="stepbar__actions">
     @for (action of actions(); track action.label) {
       <button
@@ -10,10 +9,10 @@
         type="button"
         data-press="scale"
         [class.stepbar__action--primary]="action.variant === 'primary'"
-        [class.stepbar__action--secondary]="action.variant === 'secondary'"
+        [attr.aria-label]="action.label"
         (click)="chosen.emit(action)"
       >
-        {{ action.wideLabel ?? action.label }}
+        <app-svg-icon [name]="action.icon" [size]="16" />
       </button>
     }
   </div>

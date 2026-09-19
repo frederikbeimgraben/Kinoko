@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '@stupa-makers/ui-kit';
 import type { MarkerColour } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -43,16 +43,6 @@ import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 const DETENTS_CONTENT: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 const DETENTS_FORM: readonly [DetentSize, DetentSize, DetentSize] = [1, 1, 1];
 
-/** Die Knöpfe eines Schritts. Telefon und Rechner nehmen sie aus dieser Quelle. */
-interface StepButtons {
-  readonly primary: StepAction;
-  readonly cancel: StepAction;
-  /** Die zweite Aktion des Schritts, etwa die letzte Ecke zurück. */
-  readonly secondary?: StepAction;
-  /** Nur am Telefon: das Fadenkreuz setzt den Punkt über diesen Knopf. */
-  readonly extra?: StepAction;
-}
-
 /** Der gesetzte Ort steht am Rechner blau, wie die Bretter ihn malen. */
 const MARK_COLOUR = 'blue' as const;
 
@@ -77,7 +67,6 @@ const TITLE: Record<string, TranslationKey> = {
   imports: [
     ActionBarComponent,
     AddActionsComponent,
-    ButtonComponent,
     CrosshairComponent,
     FindFormComponent,
     NgTemplateOutlet,
@@ -104,8 +93,6 @@ export class AddEntryComponent implements OnDestroy {
 
   protected readonly state = inject(AddEntryState);
   protected readonly wide = inject(ViewportService).wide;
-  /** Der untere Rand des freien Streifens: dort steht das Fadenkreuz. */
-  protected readonly overlayHeight = this.map.overlayHeight;
   protected readonly anchor = POPOVER_ANCHOR;
 
   private readonly area = signal<AreaCalculator | null>(null);
@@ -119,65 +106,63 @@ export class AddEntryComponent implements OnDestroy {
   /** Die Aktionen hängen am Rechner am Knopf, jeder andere Schritt im Modal. */
   protected readonly asPopover = computed(() => this.wide() && this.state.onActions());
 
-  /** Ein Schritt auf der Karte trägt am Rechner die Leiste, nicht das Blatt. */
-  protected readonly asStepBar = computed(() => this.wide() && this.state.showsCrosshair());
+  /** Ein Schritt auf der Karte trägt die Leiste, kein Blatt. */
+  protected readonly asStepBar = this.state.showsCrosshair;
 
-  /** Die Knöpfe des Schritts, einmal beschrieben. */
-  protected readonly buttons = computed<StepButtons>(() => {
+  /** Die Knöpfe des Schritts, einmal beschrieben. Das X bricht ihn ab. */
+  protected readonly barActions = computed<readonly StepAction[]>(() => {
     const cancel: StepAction = {
       label: this.i18n.translate('common.cancel'),
-      variant: 'ghost',
+      icon: 'close',
+      variant: 'secondary',
       run: () => {
         this.cancel();
       },
     };
-    if (this.state.step() === 'zoneDraw') {
-      return {
+    if (this.state.step() !== 'zoneDraw') {
+      const marker = this.state.step() === 'markerLocation';
+      return [
+        {
+          label: this.i18n.translate(marker ? 'entry.confirmMarker' : 'entry.confirmLocation'),
+          icon: 'check',
+          variant: 'primary',
+          run: () => {
+            this.adoptLocation();
+          },
+        },
         cancel,
-        primary: {
-          label: this.i18n.translate('entry.zone.finish'),
-          variant: 'primary',
-          run: () => {
-            this.closeZone();
-          },
-        },
-        secondary: {
-          label: this.i18n.translate('entry.zone.removeLastVertex'),
-          variant: 'secondary',
-          run: () => {
-            this.state.removeLastCorner();
-          },
-        },
-        extra: {
-          label: this.i18n.translate('entry.zone.setVertex'),
-          variant: 'primary',
-          run: () => {
-            this.addCorner();
-          },
-        },
-      };
+      ];
     }
-    const marker = this.state.step() === 'markerLocation';
-    return {
-      cancel,
-      primary: {
-        label: this.i18n.translate(marker ? 'common.apply' : 'entry.confirmLocation'),
-        wideLabel: marker ? this.i18n.translate('entry.confirmMarker') : undefined,
+    return [
+      {
+        label: this.i18n.translate('entry.zone.setVertex'),
+        icon: 'plus',
         variant: 'primary',
         run: () => {
-          this.adoptLocation();
+          this.addCorner();
         },
       },
-    };
+      {
+        label: this.i18n.translate('entry.zone.removeLastVertex'),
+        icon: 'back',
+        variant: 'secondary',
+        run: () => {
+          this.state.removeLastCorner();
+        },
+      },
+      {
+        label: this.i18n.translate('entry.zone.finish'),
+        icon: 'check',
+        variant: 'secondary',
+        run: () => {
+          this.closeZone();
+        },
+      },
+      cancel,
+    ];
   });
 
-  /** Die Leiste zeigt Abbrechen links, dann die zweite Aktion, dann die Hauptaktion. */
-  protected readonly barActions = computed<readonly StepAction[]>(() => {
-    const buttons = this.buttons();
-    return [buttons.cancel, ...(buttons.secondary ? [buttons.secondary] : []), buttons.primary];
-  });
-
-  /** Der Zusatz unter dem Titel: die Ecken der Zone oder der Ort. */
+  /** Die Marke der Leiste: die Ecken der Zone oder der Ort. */
   protected readonly stepNote = computed(() =>
     this.state.step() === 'zoneDraw' ? this.drawStatus() : this.aimText(),
   );
