@@ -2,17 +2,17 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import type { IDBPDatabase } from 'idb';
 
 /** Die Bereiche, die das Gerät vorhält. */
-export const OFFLINE_AREAS = ['catalog', 'texts', 'permissions', 'objects', 'queue'] as const;
+export const OFFLINE_AREAS = ['catalog', 'texts', 'objects', 'queue'] as const;
 
 export type OfflineArea = (typeof OFFLINE_AREAS)[number];
 
 const DB_NAME = 'primordium';
 
 /** Eine neue Zahl legt den Speicher neu an. Es gibt keinen Migrationspfad. */
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 /**
- * Der Speicher auf dem Gerät: Katalog, Texte, Rechte und eigene Objekte.
+ * Der Speicher auf dem Gerät: Katalog, Texte und eigene Objekte.
  */
 @Injectable({ providedIn: 'root' })
 export class OfflineStore {

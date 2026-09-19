@@ -40,7 +40,7 @@ describe('OfflineStore', () => {
   });
 
   it('meldet einen unbekannten Schlüssel als null', async () => {
-    expect(await store().get('permissions', 'mine')).toBeNull();
+    expect(await store().get('texts', 'mine')).toBeNull();
   });
 
   it('listet einen Bereich', async () => {

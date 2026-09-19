@@ -51,10 +51,13 @@ export class AuthService {
   private readonly _token = signal<string | null>(null);
   private readonly _busy = signal(false);
   private readonly _sheetOpen = signal(false);
+  private readonly _checked = signal(false);
 
   readonly user = this._user.asReadonly();
   /** Wahr, solange eine Anmeldung oder eine Erneuerung läuft. */
   readonly busy = this._busy.asReadonly();
+  /** Wahr, sobald die Sitzungsprüfung einmal geantwortet hat. */
+  readonly checked = this._checked.asReadonly();
   /** Das Anmelde-Blatt liegt über der Karte. */
   readonly sheetOpen = this._sheetOpen.asReadonly();
   readonly signedIn = computed(() => this._user() !== null);
@@ -69,10 +72,18 @@ export class AuthService {
    * Hintergrund; ein Fehler heißt nur: niemand ist angemeldet.
    */
   async restoreSession(): Promise<void> {
-    // Auf den Callback-Routen führt die Route selbst; eine zweite stille
+    // Auf der Rückkehr vom SSO führt die Route selbst; eine zweite stille
     // Anfrage daneben verbrauchte denselben Zustand ein zweites Mal.
-    if (location.pathname.startsWith(SIGN_IN_PATH) || this.signedOut()) return;
-    await this.silentRenew();
+    if (location.pathname.startsWith(SIGN_IN_PATH)) return;
+    if (this.signedOut()) {
+      this._checked.set(true);
+      return;
+    }
+    try {
+      await this.silentRenew();
+    } finally {
+      this._checked.set(true);
+    }
   }
 
   /**
@@ -109,13 +120,8 @@ export class AuthService {
       return this.targetFrom(user.state);
     } finally {
       this._busy.set(false);
+      this._checked.set(true);
     }
-  }
-
-  /** Der iframe der stillen Erneuerung meldet sich hier beim Fenster zurück. */
-  async handleSilentCallback(): Promise<void> {
-    const manager = await this.getManager();
-    await manager?.signinSilentCallback();
   }
 
   /**
@@ -141,6 +147,7 @@ export class AuthService {
     const manager = await this.getManager();
     await manager?.removeUser();
     this.rememberSignOut(true);
+    this._checked.set(true);
     this.adopt(null);
   }
 
@@ -190,6 +197,7 @@ export class AuthService {
    * ist kein Fehler: die Karte läuft auch dann.
    */
   private async create(): Promise<UserManager | null> {
+    await this.config.load();
     const config = this.config.configuration();
     if (config === null || config.oidcIssuer === '') return null;
     const manager = await this.factory({

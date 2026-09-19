@@ -1,9 +1,7 @@
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import 'fake-indexeddb/auto';
-import { IDBFactory } from 'fake-indexeddb';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
-import { OfflineStore } from '../offline/offline-store';
+import { SessionStore } from '../auth';
 import { AccessApiDouble, accessApiProvider } from '../../testing/access-fixture';
 import { PermissionsService } from './permissions.service';
 
@@ -11,10 +9,12 @@ interface Setup {
   rights: PermissionsService;
   auth: AuthStub;
   api: AccessApiDouble;
+  store: SessionStore;
   tick: () => void;
 }
 
 function build(signedIn = true): Setup {
+  TestBed.resetTestingModule();
   const auth = new AuthStub();
   if (!signedIn) auth.user.set(null);
   const api = new AccessApiDouble();
@@ -24,24 +24,41 @@ function build(signedIn = true): Setup {
     TestBed.inject(ApplicationRef).tick();
   };
   tick();
-  return { rights, auth, api, tick };
+  return { rights, auth, api, store: TestBed.inject(SessionStore), tick };
 }
 
 describe('PermissionsService', () => {
-  it('legt die Rechte auf dem Gerät ab und räumt sie beim Abmelden weg', async () => {
-    vi.stubGlobal('indexedDB', new IDBFactory());
-    const { auth, tick } = build();
-    const offline = TestBed.inject(OfflineStore);
+  afterEach(() => {
+    localStorage.clear();
+  });
 
-    await vi.waitFor(async () => {
-      expect(await offline.get('permissions', 'mine')).not.toBeNull();
-    });
+  it('legt die Rechte auf dem Gerät ab und räumt sie beim Abmelden weg', () => {
+    const { auth, store, tick } = build();
+
+    expect(store.memory()?.permissions).toContain('role.manage');
 
     auth.user.set(null);
     tick();
-    await vi.waitFor(async () => {
-      expect(await offline.get('permissions', 'mine')).toBeNull();
-    });
+
+    expect(store.memory()).toBeNull();
+  });
+
+  it('trägt den Stand aus dem Gerät, bevor der Server antwortet', () => {
+    localStorage.setItem(
+      'pilzkarte.session.v1',
+      JSON.stringify({ name: 'Frederik', permissions: ['text.edit'] }),
+    );
+    TestBed.resetTestingModule();
+    const auth = new AuthStub();
+    auth.user.set(null);
+    auth.checked.set(false);
+    const api = new AccessApiDouble();
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth), accessApiProvider(api)] });
+    const rights = TestBed.inject(PermissionsService);
+
+    expect(rights.can('text.edit')).toBe(true);
+    expect(rights.settled()).toBe(true);
+    expect(api.mineCalls).toBe(0);
   });
 
   it('holt die eigenen Rechte, sobald jemand angemeldet ist', () => {
@@ -63,9 +80,9 @@ describe('PermissionsService', () => {
     expect(rights.settled()).toBe(true);
   });
 
-  it('wartet, solange die stille Anmeldung läuft', () => {
+  it('wartet, solange die Sitzung offen ist', () => {
     const { rights, auth, tick } = build(false);
-    auth.busy.set(true);
+    auth.checked.set(false);
     tick();
 
     expect(rights.settled()).toBe(false);
@@ -81,6 +98,7 @@ describe('PermissionsService', () => {
   });
 
   it('trägt nach einem Ausfall kein Recht, statt einen Knopf zu zeigen', () => {
+    TestBed.resetTestingModule();
     const auth = new AuthStub();
     const api = new AccessApiDouble();
     api.mineFails = true;

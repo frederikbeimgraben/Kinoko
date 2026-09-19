@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
 import { SignInCallbackComponent } from './signin-callback.component';
-import { SilentSignInComponent } from './silent-signin.component';
 
 interface Setup {
   router: Router;
@@ -43,18 +42,5 @@ describe('AnmeldungComponent', () => {
     ).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Karte' }));
     expect(change).toHaveBeenCalledWith('/karte');
-  });
-});
-
-describe('StilleAnmeldungComponent', () => {
-  it('meldet das Ergebnis an das Fenster darüber und zeigt nichts', async () => {
-    const manager = new ManagerDouble();
-    const { container, fixture } = await render(SilentSignInComponent, {
-      providers: [provideRouter([]), ...authProvider(manager)],
-    });
-    await fixture.whenStable();
-
-    expect(manager.silentCallbacks).toBe(1);
-    expect(container).toBeEmptyDOMElement();
   });
 });

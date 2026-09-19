@@ -175,13 +175,6 @@ export const routes: Routes = [
       },
     ],
   },
-  // Die stille Route steht vor der Anmeldung: sonst nähme diese den ersten
-  // Abschnitt und der Rest des Weges fände keine Route mehr.
-  {
-    path: 'anmeldung/still',
-    loadComponent: () =>
-      import('./features/account/silent-signin.component').then((m) => m.SilentSignInComponent),
-  },
   {
     path: 'anmeldung',
     loadComponent: () =>

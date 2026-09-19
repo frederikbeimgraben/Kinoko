@@ -20,6 +20,17 @@ describe('AvatarButtonComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt bei offener Sitzung ein Skelett statt einer Initiale', async () => {
+    const { container } = await render(AvatarButtonComponent, {
+      inputs: { name: null, label: 'Konto' },
+    });
+
+    expect(container.querySelector('app-skeleton')).toBeInTheDocument();
+    expect(container.querySelector('span[aria-hidden]')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Konto' })).toHaveTextContent('');
+    await noViolations(container);
+  });
+
   it('bleibt ohne Namen leer', async () => {
     const { container } = await render(AvatarButtonComponent, {
       inputs: { name: '   ', label: 'Konto' },

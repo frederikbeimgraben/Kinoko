@@ -45,7 +45,6 @@ describe('AuthService', () => {
     const { auth, manager } = build(false);
 
     await auth.signIn('/karte');
-    await auth.handleSilentCallback();
     await auth.signOut();
 
     expect(await auth.silentRenew()).toBeNull();
@@ -111,14 +110,6 @@ describe('AuthService', () => {
 
     await expect(auth.completeSignIn()).rejects.toThrow('Code schon eingelöst');
     expect(auth.busy()).toBe(false);
-  });
-
-  it('meldet den stillen Callback an das Fenster darüber', async () => {
-    const { auth, manager } = build();
-
-    await auth.handleSilentCallback();
-
-    expect(manager.silentCallbacks).toBe(1);
   });
 
   it('teilt sich einen stillen Versuch, statt je Anfrage einen zu öffnen', async () => {

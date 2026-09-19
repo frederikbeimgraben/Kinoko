@@ -58,7 +58,6 @@ export class ManagerDouble {
   /** Der Zustand jeder Umleitung, in der Reihenfolge der Aufrufe. */
   readonly redirects: unknown[] = [];
   removed = 0;
-  silentCallbacks = 0;
   silentAttempts = 0;
 
   private readonly loaded: ((user: User) => void)[] = [];
@@ -90,11 +89,6 @@ export class ManagerDouble {
   signinSilent(): Promise<User | null> {
     this.silentAttempts += 1;
     return this.still instanceof Error ? Promise.reject(this.still) : Promise.resolve(this.still);
-  }
-
-  signinSilentCallback(): Promise<void> {
-    this.silentCallbacks += 1;
-    return Promise.resolve();
   }
 
   removeUser(): Promise<void> {

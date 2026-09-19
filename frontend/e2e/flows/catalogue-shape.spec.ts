@@ -2,6 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import LIVE_BUNDLE from '../fixtures/live-bundle.json' with { type: 'json' };
+import { DB_VERSION, OFFLINE_AREAS } from '../../src/app/core/offline/offline-store';
 
 /** Der ETag, den ein älterer Stand auf dem Gerät mitbringt. */
 const STALE_ETAG = 'W/"a1b2c3d4e5f60718"';
@@ -12,16 +13,13 @@ const STALE_BUNDLE = {
   standardColours: LIVE_BUNDLE.standardColours,
 };
 
-/** Die Bereiche des Speichers auf dem Gerät, wie `OfflineStore` sie anlegt. */
-const AREAS = ['catalog', 'texts', 'permissions', 'objects', 'queue'];
-
 /**
  * Legt einen Katalog auf dem Gerät ab, bevor die App startet.
  */
 async function seedStore(page: Page, bundle: unknown, etag: string): Promise<void> {
   await page.addInitScript(
-    ([areas, stored, tag]) => {
-      const open = indexedDB.open('primordium', 1);
+    ([areas, stored, tag, version]) => {
+      const open = indexedDB.open('primordium', version);
       open.onupgradeneeded = () => {
         for (const area of areas) open.result.createObjectStore(area);
       };
@@ -31,7 +29,7 @@ async function seedStore(page: Page, bundle: unknown, etag: string): Promise<voi
         deal.objectStore('catalog').put(tag, 'etag');
       };
     },
-    [AREAS, bundle, etag] as const,
+    [OFFLINE_AREAS, bundle, etag, DB_VERSION] as const,
   );
 }
 

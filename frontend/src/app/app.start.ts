@@ -5,8 +5,8 @@ import { TextCatalogService } from './core/i18n/text-catalog.service';
 import { ThemeService } from './core/theme/theme.service';
 import { bootOffline } from './app.boot';
 
-/** Der Start der App. Jedes `inject` steht vor dem ersten `await`. */
-export async function startApp(): Promise<void> {
+/** Der Start der App. Hülle, Karte, Katalog und Sitzung laufen nebeneinander. */
+export function startApp(): void {
   inject(ThemeService).init();
   const auth = inject(AuthService);
   const texts = inject(TextCatalogService);
@@ -19,13 +19,12 @@ export async function startApp(): Promise<void> {
     },
     { injector },
   );
-  // Der abgelegte Katalog hält den ersten Frame nicht auf. Sein Signal
-  // schreibt die Oberfläche um, sobald die Ablage antwortet.
-  const stored = texts.restore().catch(() => undefined);
-  // Ohne Issuer und Client ID gibt es keine Anmeldung. Die Sitzung kommt
-  // danach im Hintergrund: oidc-client-ts hält den ersten Frame sonst auf.
-  await config.load();
+  void config.load();
+  // Die Sitzung wartet in `AuthService` selbst auf die Konfiguration.
   void auth.restoreSession();
   // Der Server erst nach der Ablage: sein ETag steht dort.
-  void stored.then(() => texts.load());
+  void texts
+    .restore()
+    .catch(() => undefined)
+    .then(() => texts.load());
 }

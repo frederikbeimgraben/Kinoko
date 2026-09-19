@@ -14,6 +14,8 @@ export class AuthStub {
   readonly signedIn = computed(() => this.user() !== null);
   /** Wahr, solange eine stille Anmeldung läuft. */
   readonly busy = signal(false);
+  /** Wahr, sobald die Sitzungsprüfung einmal geantwortet hat. */
+  readonly checked = signal(true);
   /** Die Antwort auf `anmeldungAnfordern`. */
   reply = true;
   asked = 0;
