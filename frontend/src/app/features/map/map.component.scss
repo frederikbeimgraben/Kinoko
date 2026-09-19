@@ -80,6 +80,11 @@
   z-index: 3;
 }
 
+// Mit dem Kompass steht „Eintragen“ eine Stelle tiefer, wie im Board.
+.map__add--low {
+  inset-block-start: calc(3 * (var(--size-floating) + 12px) + 12px);
+}
+
 // Am Rechner beginnt die Gruppe vier Punkte tiefer, der Rand bleibt.
 :host-context(.shell--column) .map__buttons {
   inset-block-start: 16px;

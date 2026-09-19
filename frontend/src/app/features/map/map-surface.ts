@@ -6,7 +6,7 @@ import { ThemeService } from '../../core/theme/theme.service';
 import { TileService } from '../../core/tiles/tile.service';
 import { layerWeek } from '../../core/tiles/layers';
 import { GERMANY, MAX_BOUNDS, ZOOM_MAX, ZOOM_MIN, styleFor } from '../../map/background';
-import type { Padding } from '../../map/map-adapter';
+import type { Padding, Rotation } from '../../map/map-adapter';
 import type { Viewbox } from '../../map/tile-grid';
 import { MAP_ADAPTER, VALUE_WORKER } from '../../map/map.tokens';
 import { ValueProtocol } from '../../map/value-protocol';
@@ -51,6 +51,10 @@ export class MapSurface {
   /** Der Faktor in Arbeit liegt oben, damit man sieht, was man einstellt. */
   readonly inProgress = signal<Factor | null>(null);
 
+  private readonly _rotation = signal<Rotation>({ bearing: 0, pitch: 0 });
+  /** Drehung und Neigung der Karte, für den Kompass. */
+  readonly rotation = this._rotation.asReadonly();
+
   async start(host: HTMLElement, wide: boolean, onMove: () => void): Promise<void> {
     this.host = host;
     await this.adapter.start(host, {
@@ -64,11 +68,21 @@ export class MapSurface {
     });
     this.adapter.fitBounds(GERMANY, this.padding(this.state.detent(), wide, this.state.overlayHeight()));
     this.adapter.onMove(onMove);
+    this.adapter.onRotate(() => {
+      this._rotation.set(this.adapter.rotation());
+    });
+    this._rotation.set(this.adapter.rotation());
     this._ready.set(true);
   }
 
   setStyle(): void {
     if (this._ready()) this.adapter.setStyle(styleFor(this.state.background(), this.theme.effective()));
+  }
+
+  /** Dreht die Karte zurück nach Norden und stellt sie flach. */
+  resetNorth(): void {
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.adapter.resetNorth(!still);
   }
 
   setOpacity(value: number, onLayer: boolean): void {

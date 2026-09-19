@@ -3,6 +3,7 @@ import type {
   GeoJSONSource,
   LayerSpecification,
   Map as MapLibreMap,
+  MapMouseEvent,
   MapSourceDataEvent,
   Subscription,
 } from 'maplibre-gl';
@@ -65,6 +66,12 @@ export interface MapOptions {
 /** Die eigenen Ebenen über der Vorhersage, von unten nach oben. */
 export const OBJECT_LAYERS = ['zonen', 'geteilteFunde', 'marker', 'funde', 'location'] as const;
 
+/** Drehung und Neigung der Karte in Grad. */
+export interface Rotation {
+  bearing: number;
+  pitch: number;
+}
+
 /** Ein Objekt unter dem Finger: seine Ebene, seine Kennung und sein Ort. */
 export interface ObjectHit {
   layer: ObjectLayer;
@@ -105,6 +112,20 @@ export interface MapAdapter {
   objectAt(x: number, y: number): ObjectHit | null;
   /** Die rohe Karte für Terra Draw. */
   rawMap(): MapLibreMap | null;
+  /** Drehung und Neigung der Karte. */
+  rotation(): Rotation;
+  /** Jede Drehung und jede Neigung der Karte. */
+  onRotate(handler: () => void): void;
+  /** Dreht nach Norden und stellt die Karte flach. */
+  resetNorth(smooth: boolean): void;
+  /** Ein Zeiger über der Karte, etwa `crosshair` beim Setzen eines Punktes. */
+  setCursor(cursor: string): void;
+  /** Ein Klick auf die Karte, der kein Objekt trifft. */
+  onMapClick(handler: (point: readonly [number, number]) => void): () => void;
+  /** Der Zeiger über der Karte, auch ohne Taste. */
+  onPointerMove(handler: (point: readonly [number, number]) => void): () => void;
+  /** Rechnet einen Ort in einen Punkt der Fläche um. */
+  project(point: readonly [number, number]): { x: number; y: number } | null;
 }
 
 /** Der Haken, über den ein Test die Karte genau setzt. */
@@ -113,6 +134,8 @@ export interface MapHandle {
   aimAt(x: number, y: number): [number, number];
   /** Schiebt die Karte so weit, dass der Ort unter dem Punkt liegt. */
   showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
+  /** Dreht und neigt die Karte, ohne Geste. */
+  rotate(bearing: number, pitch: number): void;
 }
 
 /** So oft nähert sich die Karte dem Punkt an. Ein Schritt bleibt ungenau. */
@@ -124,6 +147,9 @@ interface MapWindow extends Window {
 
 /** Nach dieser Zeit wird die neue Woche auch ohne alle Kacheln sichtbar. */
 const SWAP_DEADLINE = 1500;
+
+/** So lange dreht die Karte zurück nach Norden. */
+const ROTATE_DURATION = 400;
 
 /** Der Zustand einer Rolle: welche Quelle liegt, welche wartet. */
 interface RoleState {
@@ -300,6 +326,9 @@ export class MapLibreAdapter implements MapAdapter {
           const box = map.getContainer().getBoundingClientRect();
           const point = map.unproject([x - box.left, y - box.top]);
           return [point.lng, point.lat];
+        },
+        rotate: (bearing: number, pitch: number) => {
+          map.jumpTo({ bearing, pitch });
         },
         showAt: (lon: number, lat: number, x: number, y: number, zoom?: number) => {
           const box = map.getContainer().getBoundingClientRect();
@@ -547,6 +576,58 @@ export class MapLibreAdapter implements MapAdapter {
 
   rawMap(): MapLibreMap | null {
     return this.map;
+  }
+
+  rotation(): Rotation {
+    const map = this.map;
+    if (!map) return { bearing: 0, pitch: 0 };
+    return { bearing: map.getBearing(), pitch: map.getPitch() };
+  }
+
+  onRotate(handler: () => void): void {
+    this.map?.on('rotate', handler);
+    this.map?.on('pitch', handler);
+  }
+
+  resetNorth(smooth: boolean): void {
+    this.map?.easeTo({ bearing: 0, pitch: 0, duration: smooth ? ROTATE_DURATION : 0 });
+  }
+
+  setCursor(cursor: string): void {
+    const map = this.map;
+    if (!map) return;
+    map.getCanvas().style.cursor = cursor;
+  }
+
+  onMapClick(handler: (point: readonly [number, number]) => void): () => void {
+    const map = this.map;
+    if (!map) return () => undefined;
+    const listener = (event: MapMouseEvent): void => {
+      handler([event.lngLat.lng, event.lngLat.lat]);
+    };
+    map.on('click', listener);
+    return () => {
+      map.off('click', listener);
+    };
+  }
+
+  onPointerMove(handler: (point: readonly [number, number]) => void): () => void {
+    const map = this.map;
+    if (!map) return () => undefined;
+    const listener = (event: MapMouseEvent): void => {
+      handler([event.lngLat.lng, event.lngLat.lat]);
+    };
+    map.on('mousemove', listener);
+    return () => {
+      map.off('mousemove', listener);
+    };
+  }
+
+  project(point: readonly [number, number]): { x: number; y: number } | null {
+    const map = this.map;
+    if (!map) return null;
+    const shown = map.project([point[0], point[1]]);
+    return { x: shown.x, y: shown.y };
   }
 
   /** Schreibt die Daten in die Quelle der Ebene und legt Quelle und Schichten an, falls der Stil … */

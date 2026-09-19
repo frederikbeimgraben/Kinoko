@@ -551,6 +551,7 @@
   "map.combination.save": "Kombination speichern",
   "map.combination.saved": "Gespeicherte Kombinationen",
   "map.combination.summary": "{rule} · {count} Faktoren",
+  "map.compass": "Nach Norden drehen",
   "map.factor.add": "Faktor hinzufügen",
   "map.factor.assigned": "schon dabei",
   "map.factor.choose": "Faktor wählen",

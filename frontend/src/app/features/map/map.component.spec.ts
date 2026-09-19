@@ -95,6 +95,45 @@ describe('MapComponent', () => {
     localStorage.clear();
   });
 
+  it('lässt den Kompass weg, solange die Karte nach Norden steht', async () => {
+    await map();
+
+    expect(screen.queryByRole('button', { name: 'Nach Norden drehen' })).not.toBeInTheDocument();
+  });
+
+  it('zeigt den Kompass mit der Nadel der Drehung, sobald die Karte gedreht ist', async () => {
+    const { double, stable, container } = await map();
+
+    double.turnTo(-30);
+    await stable();
+
+    const compass = screen.getByRole('button', { name: 'Nach Norden drehen' });
+    expect(compass).toBeInTheDocument();
+    expect(container.querySelector('.map__add')).toHaveClass('map__add--low');
+    expect(compass.querySelector('app-svg-icon')).toHaveStyle({ rotate: '30deg' });
+  });
+
+  it('zeigt den Kompass auch über einer nur geneigten Karte', async () => {
+    const { double, stable } = await map();
+
+    double.turnTo(0, 40);
+    await stable();
+
+    expect(screen.getByRole('button', { name: 'Nach Norden drehen' })).toBeInTheDocument();
+  });
+
+  it('dreht die Karte auf einen Tipp zurück nach Norden', async () => {
+    const { double, stable } = await map();
+    double.turnTo(-30);
+    await stable();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Nach Norden drehen' }));
+    await stable();
+
+    expect(double.norths).toHaveLength(1);
+    expect(screen.queryByRole('button', { name: 'Nach Norden drehen' })).not.toBeInTheDocument();
+  });
+
   it('zeigt Karte, Kopf, Zeitleiste und Legende', async () => {
     const { double, container } = await map();
 

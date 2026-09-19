@@ -18,6 +18,8 @@ export class FloatingButtonComponent {
   readonly variant = input<FloatingVariant>('default');
   /** Ein Knopf ohne Wirkung bleibt sichtbar, aber gesperrt. */
   readonly disabled = input(false);
+  /** Dreht nur das Zeichen, nicht den Knopf: die Nadel des Kompasses. */
+  readonly rotation = input(0);
 
   readonly pressed = output();
 }

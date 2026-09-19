@@ -57,11 +57,20 @@
             (pressed)="surface.locate()"
           />
         }
+        @if (turned()) {
+          <app-floating-button
+            icon="compass"
+            [label]="'map.compass' | t"
+            [rotation]="needle()"
+            (pressed)="surface.resetNorth()"
+          />
+        }
       </div>
 
       @if (showsAdd()) {
         <app-floating-button
           class="map__add"
+          [class.map__add--low]="turned()"
           icon="plus"
           variant="primary"
           [label]="'entry.create' | t"

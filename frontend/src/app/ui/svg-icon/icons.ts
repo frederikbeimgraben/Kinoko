@@ -99,7 +99,8 @@ export const ICONS: Record<IconName, string> = {
   leaf: '<path d="M12 21c0-6 1.5-9.5 6-12.5C20 11 19 17 13.5 18.6"/><path d="M12 21c0-4-1-7-5-9"/>',
   elevation: '<path d="M3 19h18"/><path d="M4.5 19l5.5-9 3 4.5 2.5-3.5L20 19"/><path d="M8 10.5h4"/>',
   slope: '<path d="M3.5 19.5h17"/><path d="M4.5 19.5L15 6.5l5.5 13"/><path d="M9 19.5v-3.5h3.5"/>',
-  compass: '<path d="M12 2.5l2.2 6.3H21l-5.4 4 2 6.4L12 15.2 6.4 19.2l2-6.4-5.4-4h6.8z"/>',
+  compass:
+    '<path d="M12 2L15 12L9 12Z" fill="var(--color-danger)" stroke="none"/><path d="M12 22L15 12L9 12Z" fill="var(--color-text-muted)" stroke="none"/>',
   relief: '<path d="M3 16c2.5-4 4-4 6.5 0M7 20c3-6 6.5-6 10 0M11 12c1.6-2.6 3.2-2.6 4.8 0"/>',
   ridge: '<path d="M4 18h16"/><path d="M5 18c2-7 5-10 7-10s5 3 7 10"/><circle cx="12" cy="8" r="1.8"/>',
   club: '<path d="M8 3v6.5L4.6 17A3 3 0 0 0 7.3 21h9.4a3 3 0 0 0 2.7-4L16 9.5V3"/><path d="M7 3h10"/><path d="M6.2 14.5h11.6"/>',
