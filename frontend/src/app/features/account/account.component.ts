@@ -113,6 +113,10 @@ export class AccountComponent {
     void this.router.navigateByUrl('/konto/bilder');
   }
 
+  protected toMyData(): void {
+    void this.router.navigateByUrl('/konto/daten');
+  }
+
   protected toMethod(): void {
     void this.router.navigateByUrl('/konto/methode');
   }

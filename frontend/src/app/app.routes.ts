@@ -63,6 +63,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/account/my-images.component').then((m) => m.MyImagesComponent),
   },
   {
+    path: 'konto/daten',
+    loadComponent: () => import('./features/account/my-data.component').then((m) => m.MyDataComponent),
+  },
+  {
+    path: 'konto/methode',
+    loadComponent: () => import('./features/account/method.component').then((m) => m.MethodComponent),
+  },
+  {
+    path: 'konto/lizenzen',
+    loadComponent: () => import('./features/account/licences.component').then((m) => m.LicencesComponent),
+  },
+  {
     path: 'verwaltung',
     canActivate: [requiresPermission(null)],
     loadComponent: () => import('./features/admin/admin.component').then((m) => m.AdminComponent),

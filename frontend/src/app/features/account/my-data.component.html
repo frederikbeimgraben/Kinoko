@@ -1,0 +1,26 @@
+<app-page-header [title]="'account.myData' | t" [back]="true" (backClick)="back()" />
+
+<div class="data">
+  <app-card>
+    <app-key-value-table>
+      <app-key-value-row [key]="'entry.finds' | t" [value]="finds().toString()" />
+      <app-key-value-row [key]="'entry.markers' | t" [value]="markers().toString()" />
+      <app-key-value-row [key]="'entry.zones' | t" [value]="zones().toString()" />
+      <app-key-value-row [key]="'entry.images' | t" [value]="photos().toString()" />
+      <app-key-value-row [key]="'map.combination.list' | t" [value]="combinations().toString()" />
+    </app-key-value-table>
+  </app-card>
+
+  <app-button variant="secondary" (click)="export()">{{ 'account.exportJson' | t }}</app-button>
+  <app-button variant="danger" (click)="asking.set(true)">{{ 'account.deleteAllData' | t }}</app-button>
+</div>
+
+<app-confirm-dialog
+  [open]="asking()"
+  [title]="'account.deleteAllConfirmTitle' | t"
+  [meta]="meta()"
+  [danger]="true"
+  [confirmDisabled]="deleting()"
+  (confirmed)="confirmDelete()"
+  (cancelled)="asking.set(false)"
+/>
