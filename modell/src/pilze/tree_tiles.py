@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 import time
@@ -166,6 +167,10 @@ def main() -> None:
     state_path = args.work / STATE
     if args.restart:
         state_path.unlink(missing_ok=True)
+    if not state_path.exists():
+        # Eine Kachel eines alten Laufs bliebe sonst neben den neuen liegen.
+        for folder in (*roots.values(), *weights.values()):
+            shutil.rmtree(folder, ignore_errors=True)
     state = read_state(state_path)
     done = set(state["blocks"])
     bloecke = block_grid(box, zoom, args.block_tiles)

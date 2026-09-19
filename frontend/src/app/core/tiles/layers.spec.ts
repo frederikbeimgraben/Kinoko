@@ -99,7 +99,7 @@ describe('Ebenen', () => {
   });
 
   it('lässt eine Ebene ohne Kachelordner weg', () => {
-    expect(MANIFEST.layers.map((layer) => layer.id)).toEqual(['regen_4w', 'wald']);
+    expect(MANIFEST.layers.map((layer) => layer.id)).toEqual(['regen_4w', 'wald', 'fichte']);
   });
 
   it('macht aus einem leeren Manifest eine leere Liste', () => {
@@ -110,7 +110,7 @@ describe('Ebenen', () => {
     const { perWeek, fixed } = layerGroups(MANIFEST.layers);
 
     expect(perWeek.map((layer) => layer.id)).toEqual(['regen_4w']);
-    expect(fixed.map((layer) => layer.id)).toEqual(['wald']);
+    expect(fixed.map((layer) => layer.id)).toEqual(['wald', 'fichte']);
   });
 
   it('schreibt den Wochenschlüssel wie das Rendering', () => {
