@@ -24,8 +24,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from manifest import histogramm, schreibe, werte_aus_kacheln
-from pyramid import (ZOOM_BASE, belegung, block_box, block_grid, class_shares,
-                     coarsen, finest_zoom, have_up_to, to_byte, write_tile)
+from pyramid import (ZOOM_BASE, block_box, block_grid, class_shares, coarsen,
+                     finest_zoom, full_weight, have_up_to, to_byte, write_tile)
 from region_map import REGIONEN
 from tiles import KACHEL
 from tree_species import COVERAGE, USER_AGENT, WCS, fetch
@@ -87,8 +87,8 @@ def warp_block(source: Path, target: Path,
         check=True, capture_output=True)
 
 
-def cut_block(warped: Path, roots: dict[str, Path], zoom: int,
-              bx: int, by: int, block_tiles: int) -> dict[str, list[str]]:
+def cut_block(warped: Path, roots: dict[str, Path], weights: dict[str, Path],
+              zoom: int, bx: int, by: int, block_tiles: int) -> dict[str, list[str]]:
     """Cut the bands of one block into tiles and write them."""
     import rasterio
 
@@ -102,6 +102,7 @@ def cut_block(warped: Path, roots: dict[str, Path], zoom: int,
                                   i * KACHEL:(i + 1) * KACHEL]
                     x, y = bx * block_tiles + i, by * block_tiles + j
                     if write_tile(roots[name], zoom, x, y, kachel):
+                        write_tile(weights[name], zoom, x, y, full_weight(kachel))
                         written[name].append(f"{zoom}/{x}/{y}")
     return written
 
@@ -160,6 +161,7 @@ def main() -> None:
            else REGIONEN[args.region])
     args.work.mkdir(parents=True, exist_ok=True)
     roots = {name: args.out / "layers_kacheln" / name for name in GROUPS}
+    weights = {name: args.work / "gewicht" / name for name in GROUPS}
 
     state_path = args.work / STATE
     if args.restart:
@@ -183,7 +185,7 @@ def main() -> None:
         got = fetch(utm_box(merc, RESOLUTION * 20), raw) and write_shares(raw, bands)
         if got:
             warp_block(bands, warped, merc, side)
-            for name, keys in cut_block(warped, roots, zoom, bx, by,
+            for name, keys in cut_block(warped, roots, weights, zoom, bx, by,
                                         args.block_tiles).items():
                 state["tiles"][name].extend(keys)
         for datei in (raw, bands, warped):
@@ -198,7 +200,7 @@ def main() -> None:
 
     filled = {name: list(keys) for name, keys in state["tiles"].items()}
     for name, root in roots.items():
-        for z, x, y in coarsen(root, zoom, ZOOM_BASE):
+        for z, x, y in coarsen(root, weights[name], zoom, ZOOM_BASE):
             filled[name].append(f"{z}/{x}/{y}")
         print(f"  {name}: {len(filled[name])} tiles", flush=True)
     update_manifest(args.out / "layers.json", roots, filled, zoom,

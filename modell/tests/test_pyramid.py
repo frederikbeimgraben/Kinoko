@@ -15,6 +15,7 @@ from pyramid import (
     coarsen,
     finest_zoom,
     from_byte,
+    full_weight,
     halve,
     have_up_to,
     read_tile,
@@ -55,27 +56,44 @@ def test_byte_null_heisst_ohne_daten():
 
 def test_mittel_ueber_vier_kinder():
     fein = to_byte(np.array([[0.0, 1.0], [1.0, 1.0]], dtype="float32"))
-    grob = halve(fein)
+    grob, gewicht = halve(fein, full_weight(fein))
     assert grob.shape == (1, 1)
     assert from_byte(grob)[0, 0] == pytest.approx(0.75, abs=1.0 / 254)
+    assert from_byte(gewicht)[0, 0] == pytest.approx(1.0)
 
 
 def test_kind_ohne_daten_zaehlt_nicht_mit():
     fein = to_byte(np.array([[np.nan, 1.0], [np.nan, 0.0]], dtype="float32"))
-    grob = halve(fein)
+    grob, gewicht = halve(fein, full_weight(fein))
     assert from_byte(grob)[0, 0] == pytest.approx(0.5, abs=1.0 / 254)
+    assert from_byte(gewicht)[0, 0] == pytest.approx(0.5, abs=1.0 / 254)
 
 
 def test_vier_kinder_ohne_daten_geben_keine_daten():
     fein = np.zeros((2, 2), dtype="uint8")
-    assert halve(fein)[0, 0] == 0
+    grob, gewicht = halve(fein, full_weight(fein))
+    assert grob[0, 0] == 0
+    assert gewicht[0, 0] == 0
+
+
+def test_gewicht_traegt_das_mittel_ueber_die_stufen():
+    # Ein Kind mit einem einzigen gueltigen Punkt darf nicht so schwer wiegen
+    # wie ein Kind, das ganz gefuellt ist.
+    werte = np.array([[1.0, 1.0, 0.0, np.nan],
+                      [1.0, 1.0, np.nan, np.nan],
+                      [np.nan, np.nan, np.nan, np.nan],
+                      [np.nan, np.nan, np.nan, np.nan]], dtype="float32")
+    fein = to_byte(werte)
+    z1, g1 = halve(fein, full_weight(fein))
+    z2, _ = halve(z1, g1)
+    assert from_byte(z2)[0, 0] == pytest.approx(4.0 / 5.0, abs=2.0 / 254)
 
 
 def test_naht_haelt_das_flaechenmittel():
     rng = np.random.default_rng(7)
     fein = to_byte(rng.random((512, 512)).astype("float32"))
-    z13 = halve(fein)
-    z12 = halve(z13)
+    z13, g13 = halve(fein, full_weight(fein))
+    z12, _ = halve(z13, g13)
     mittel = [float(np.nanmean(from_byte(stufe))) for stufe in (fein, z13, z12)]
     assert mittel[1] == pytest.approx(mittel[0], abs=2.0 / 254)
     assert mittel[2] == pytest.approx(mittel[0], abs=2.0 / 254)
@@ -86,9 +104,13 @@ def test_naht_haelt_das_mittel_mit_luecken():
     werte = rng.random((512, 512)).astype("float32")
     werte[rng.random(werte.shape) < 0.6] = np.nan
     fein = to_byte(werte)
-    grob = halve(fein)
-    assert float(np.nanmean(from_byte(grob))) == pytest.approx(
-        float(np.nanmean(from_byte(fein))), abs=0.02)
+    code, gewicht = fein, full_weight(fein)
+    ziel = float(np.nanmean(from_byte(fein)))
+    for _ in range(4):
+        code, gewicht = halve(code, gewicht)
+        gewichtet = from_byte(code) * from_byte(gewicht)
+        mittel = float(np.nansum(gewichtet) / np.nansum(from_byte(gewicht)))
+        assert mittel == pytest.approx(ziel, abs=0.01)
 
 
 def test_klassenanteil_aus_einem_rasterblock():
@@ -115,20 +137,26 @@ def test_leere_kachel_wird_nicht_geschrieben(tmp_path):
 
 
 def test_coarsen_baut_die_stufen_darunter(tmp_path):
+    root, gewicht = tmp_path / "wert", tmp_path / "gewicht"
+    voll = to_byte(np.full((256, 256), 1.0, dtype="float32"))
     for x, y in ((8, 10), (9, 10), (8, 11)):
-        write_tile(tmp_path, 12, x, y, to_byte(np.full((256, 256), 1.0, dtype="float32")))
-    geschrieben = coarsen(tmp_path, 12, 10)
+        write_tile(root, 12, x, y, voll)
+        write_tile(gewicht, 12, x, y, full_weight(voll))
+    geschrieben = coarsen(root, gewicht, 12, 10)
     assert sorted(geschrieben) == [(10, 2, 2), (11, 4, 5)]
-    eltern = from_byte(read_tile(tmp_path, 11, 4, 5))
+    eltern = from_byte(read_tile(root, 11, 4, 5))
     assert eltern[0, 0] == pytest.approx(1.0)
     # Das vierte Kind fehlt. Sein Viertel der Elternkachel bleibt ohne Daten.
     assert np.isnan(eltern[255, 255])
 
 
 def test_coarsen_laesst_leere_gebiete_aus(tmp_path):
-    write_tile(tmp_path, 12, 100, 100, to_byte(np.full((256, 256), 0.5, dtype="float32")))
-    write_tile(tmp_path, 12, 400, 400, to_byte(np.full((256, 256), 0.5, dtype="float32")))
-    geschrieben = coarsen(tmp_path, 12, 11)
+    root, gewicht = tmp_path / "wert", tmp_path / "gewicht"
+    halb = to_byte(np.full((256, 256), 0.5, dtype="float32"))
+    for x, y in ((100, 100), (400, 400)):
+        write_tile(root, 12, x, y, halb)
+        write_tile(gewicht, 12, x, y, full_weight(halb))
+    geschrieben = coarsen(root, gewicht, 12, 11)
     assert sorted(geschrieben) == [(11, 50, 50), (11, 200, 200)]
 
 

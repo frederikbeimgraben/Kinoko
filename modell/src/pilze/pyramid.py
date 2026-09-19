@@ -47,17 +47,28 @@ def from_byte(code: np.ndarray) -> np.ndarray:
                     np.nan).astype("float32")
 
 
-def halve(codes: np.ndarray) -> np.ndarray:
-    """Average each block of two by two points into one point."""
-    valid = codes > 0
-    value = np.where(valid, (codes.astype("float32") - 1.0) / STUFEN, 0.0)
+def full_weight(codes: np.ndarray) -> np.ndarray:
+    """The weight of the finest level: the whole point, or nothing."""
+    return np.where(codes > 0, 255, 0).astype("uint8")
+
+
+def halve(codes: np.ndarray, weights: np.ndarray
+          ) -> tuple[np.ndarray, np.ndarray]:
+    """Average each block of two by two points into one point.
+
+    A point carries the area behind it as its weight. Without that weight a
+    point over one tree of forest would count as much as a point over a whole
+    forest, and the mean would move from level to level.
+    """
     rows, cols = codes.shape
     shape = (rows // 2, 2, cols // 2, 2)
-    total = value.reshape(shape).sum(axis=(1, 3))
-    count = valid.reshape(shape).sum(axis=(1, 3))
-    mean = np.divide(total, count, out=np.full(total.shape, np.nan, dtype="float32"),
-                     where=count > 0)
-    return to_byte(mean)
+    value = np.nan_to_num(from_byte(codes), nan=0.0)
+    weight = np.nan_to_num(from_byte(weights), nan=0.0)
+    total = (value * weight).reshape(shape).sum(axis=(1, 3))
+    mass = weight.reshape(shape).sum(axis=(1, 3))
+    mean = np.divide(total, mass, out=np.full(total.shape, np.nan, dtype="float32"),
+                     where=mass > 0)
+    return to_byte(mean), to_byte(np.where(mass > 0, mass / 4.0, np.nan))
 
 
 def class_shares(block: np.ndarray, groups: Mapping[str, Iterable[int]]
@@ -115,22 +126,33 @@ def tiles_at(root: Path, zoom: int) -> list[tuple[int, int]]:
     return found
 
 
-def coarsen(root: Path, finest: int, base: int = ZOOM_BASE
+def _canvas(root: Path, zoom: int, px: int, py: int) -> np.ndarray:
+    """The four tiles above one tile, side by side. A gap stays byte 0."""
+    canvas = np.zeros((2 * KACHEL, 2 * KACHEL), dtype="uint8")
+    for dy in (0, 1):
+        for dx in (0, 1):
+            kind = read_tile(root, zoom, 2 * px + dx, 2 * py + dy)
+            if kind is not None:
+                canvas[dy * KACHEL:(dy + 1) * KACHEL,
+                       dx * KACHEL:(dx + 1) * KACHEL] = kind
+    return canvas
+
+
+def coarsen(root: Path, weights: Path, finest: int, base: int = ZOOM_BASE
             ) -> list[tuple[int, int, int]]:
-    """Build every level from ``finest - 1`` down to ``base``."""
+    """Build every level from ``finest - 1`` down to ``base``.
+
+    ``weights`` holds the weight tree beside the value tree. The caller writes
+    its finest level with ``full_weight`` and can drop the tree afterwards.
+    """
     written: list[tuple[int, int, int]] = []
     for zoom in range(finest, base, -1):
         parents = {(x // 2, y // 2) for x, y in tiles_at(root, zoom)}
         for px, py in sorted(parents):
-            canvas = np.zeros((2 * KACHEL, 2 * KACHEL), dtype="uint8")
-            for dy in (0, 1):
-                for dx in (0, 1):
-                    kind = read_tile(root, zoom, 2 * px + dx, 2 * py + dy)
-                    if kind is None:
-                        continue
-                    canvas[dy * KACHEL:(dy + 1) * KACHEL,
-                           dx * KACHEL:(dx + 1) * KACHEL] = kind
-            if write_tile(root, zoom - 1, px, py, halve(canvas)):
+            code, mass = halve(_canvas(root, zoom, px, py),
+                               _canvas(weights, zoom, px, py))
+            write_tile(weights, zoom - 1, px, py, mass)
+            if write_tile(root, zoom - 1, px, py, code):
                 written.append((zoom - 1, px, py))
     return written
 
