@@ -61,10 +61,11 @@
   border-inline-end: var(--border-width) solid var(--color-border);
 }
 
-// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards.
+// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards. Eine
+// bereitstehende Fassung schiebt sie um die Höhe der Aktualisierungsleiste.
 .map__buttons {
   position: absolute;
-  inset-block-start: 12px;
+  inset-block-start: calc(var(--update-bar-height, 0px) + 12px);
   inset-inline-end: 12px;
   z-index: 3;
 }
@@ -72,19 +73,19 @@
 // „Eintragen“ steht am Telefon als dritter Knopf unter den beiden anderen.
 .map__add {
   position: absolute;
-  inset-block-start: calc(2 * (var(--size-floating) + 12px) + 12px);
+  inset-block-start: calc(var(--update-bar-height, 0px) + 2 * (var(--size-floating) + 12px) + 12px);
   inset-inline-end: 12px;
   z-index: 3;
 }
 
 // Mit dem Kompass steht „Eintragen“ eine Stelle tiefer, wie im Board.
 .map__add--low {
-  inset-block-start: calc(3 * (var(--size-floating) + 12px) + 12px);
+  inset-block-start: calc(var(--update-bar-height, 0px) + 3 * (var(--size-floating) + 12px) + 12px);
 }
 
 // Am Rechner beginnt die Gruppe vier Punkte tiefer, der Rand bleibt.
 :host-context(.shell--column) .map__buttons {
-  inset-block-start: 16px;
+  inset-block-start: calc(var(--update-bar-height, 0px) + 16px);
 }
 
 // Am Rechner steht „Eintragen“ unten rechts über der Karte, größer als die
@@ -135,11 +136,12 @@ app-object-sheet {
 }
 
 // Am Rechner steht die Spalte links: Kopf oben, Inhalt darunter, keine Rasten.
+// Eine bereitstehende Fassung schiebt den Kopf um die Höhe der Leiste herab.
 .map__column {
   display: flex;
   flex-direction: column;
   block-size: 100%;
   overflow: hidden;
   background: var(--color-surface);
-  padding-block-start: var(--space-3);
+  padding-block-start: calc(var(--update-bar-height, 0px) + var(--space-3));
 }

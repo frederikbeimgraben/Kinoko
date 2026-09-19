@@ -1,4 +1,5 @@
-<div class="shell" [class.shell--column]="wide()">
+<div class="shell" [class.shell--column]="wide()" [style.--update-bar-height]="updateBarHeight()">
+  <app-update-bar />
   @if (wide()) {
     @defer (when wide()) {
       <app-map class="shell__map" [class.shell__map--lead]="mapInFront()" [surfaceOnly]="!onTheMap()" />

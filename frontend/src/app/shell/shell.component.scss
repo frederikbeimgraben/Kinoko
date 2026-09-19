@@ -31,7 +31,7 @@
 
 .shell__avatar {
   position: absolute;
-  inset-block-start: 12px;
+  inset-block-start: calc(var(--update-bar-height, 0px) + 12px);
   inset-inline-start: 12px;
   z-index: 2;
 }

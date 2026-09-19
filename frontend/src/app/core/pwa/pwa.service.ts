@@ -1,5 +1,4 @@
 import { DestroyRef, Injectable, inject, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
 import { SwUpdate, type VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 
@@ -7,6 +6,10 @@ import { filter } from 'rxjs';
 export interface InstallPrompt extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+interface UpdateWindow extends Window {
+  pilzUpdate?: { ready: () => void };
 }
 
 const BOOT_WINDOW_MS = 10_000;
@@ -17,19 +20,17 @@ const BOOT_WINDOW_MS = 10_000;
 @Injectable({ providedIn: 'root' })
 export class PwaService {
   private readonly swUpdate = inject(SwUpdate);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _canInstall = signal(false);
   private readonly _updateReady = signal(false);
   private prompt: InstallPrompt | null = null;
   private withinBootWindow = false;
-  private pendingActivation = false;
 
   /** Ob der Browser die Installation anbietet. Firefox am Rechner tut es nicht. */
   readonly canInstall = this._canInstall.asReadonly();
 
-  /** Ob eine Fassung bereitsteht. Der Wert dient dem Konto, nicht der Aktivierung. */
+  /** Ob eine Fassung bereitsteht: zeigt die Leiste und den Wert im Konto. */
   readonly updateReady = this._updateReady.asReadonly();
 
   init(): void {
@@ -43,6 +44,13 @@ export class PwaService {
       this._canInstall.set(false);
     });
     this.watchUpdates();
+    // Ein Haken für den Board-Test: er meldet eine Fassung ohne echten
+    // Service Worker, den der Testlauf sonst blockt.
+    (window as UpdateWindow).pilzUpdate = {
+      ready: () => {
+        this._updateReady.set(true);
+      },
+    };
   }
 
   /** Fragt den Browser. Danach ist das Angebot verbraucht. */
@@ -55,7 +63,7 @@ export class PwaService {
     return (await offer.userChoice).outcome === 'accepted';
   }
 
-  /** Aktualisierung läuft still, ohne Hinweis und ohne Eingabe. */
+  /** Beim Start aktiviert eine Fassung sich still. Im Betrieb wartet sie auf die Person. */
   private watchUpdates(): void {
     if (!this.swUpdate.isEnabled) return;
 
@@ -72,7 +80,6 @@ export class PwaService {
       .subscribe(() => {
         this._updateReady.set(true);
         if (this.withinBootWindow) void this.activate();
-        else this.pendingActivation = true;
       });
     this.destroyRef.onDestroy(() => {
       versionSub.unsubscribe();
@@ -81,26 +88,15 @@ export class PwaService {
     const onVisible = (): void => {
       if (document.visibilityState !== 'visible') return;
       void this.swUpdate.checkForUpdate();
-      if (this.pendingActivation) void this.activate();
     };
     document.addEventListener('visibilitychange', onVisible);
     this.destroyRef.onDestroy(() => {
       document.removeEventListener('visibilitychange', onVisible);
     });
-
-    const routerSub = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        if (this.pendingActivation) void this.activate();
-      });
-    this.destroyRef.onDestroy(() => {
-      routerSub.unsubscribe();
-    });
   }
 
-  /** Aktiviert die wartende Fassung und lädt neu. */
-  private async activate(): Promise<void> {
-    this.pendingActivation = false;
+  /** Aktiviert die wartende Fassung und lädt neu: beim Start still, sonst auf Knopfdruck. */
+  async activate(): Promise<void> {
     await this.swUpdate.activateUpdate();
     location.reload();
   }

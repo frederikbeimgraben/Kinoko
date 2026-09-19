@@ -1,0 +1,8 @@
+@if (ready()) {
+  <div class="update-bar" role="status">
+    <span class="update-bar__text">{{ 'app.update.ready' | t }}</span>
+    <app-button class="update-bar__button" variant="primary" size="sm" (click)="reload()">
+      {{ 'app.update.reload' | t }}
+    </app-button>
+  </div>
+}
