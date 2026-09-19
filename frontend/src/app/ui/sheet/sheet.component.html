@@ -51,7 +51,7 @@
       <span class="sheet__handle-line"></span>
     </button>
     @if (title() !== '') {
-      <header class="sheet__head">
+      <header class="sheet__head" [class.sheet__head--divider]="headDivider()">
         <div class="sheet__head-title">
           <ng-content select="[titleLead]" />
           <h2 class="sheet__title">{{ title() }}</h2>

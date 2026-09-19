@@ -142,18 +142,26 @@
   padding: 4px var(--space-modal-head-end) 14px var(--space-modal-head);
 }
 
+.sheet__head--divider {
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
 .sheet__head-title {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 8px);
+  gap: var(--sheet-title-gap, 8px);
 }
 
+// A caller sets --sheet-title-* on `app-sheet` to match its board title,
+// e.g. the 22px bold title of an object sheet against the 18px default.
 .sheet__title {
-  flex: 1;
+  flex: 0 1 auto;
+  min-inline-size: 0;
   margin: 0;
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
+  font-size: var(--sheet-title-size, var(--fs-lg));
+  font-weight: var(--sheet-title-weight, var(--fw-semibold));
   line-height: var(--lh-normal);
+  letter-spacing: var(--sheet-title-tracking, normal);
 }
 
 .sheet__note {

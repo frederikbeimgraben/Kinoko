@@ -501,6 +501,14 @@ describe('SheetComponent', () => {
     expect(calls).toBe(1);
   });
 
+  it('zieht die Linie unter dem Kopf nur mit headDivider', async () => {
+    const { container } = await render(SheetComponent, {
+      inputs: { label: 'Filter', title: 'Filter', headDivider: true },
+    });
+
+    expect(container.querySelector('.sheet__head')).toHaveClass('sheet__head--divider');
+  });
+
   it('projiziert ein Element vor den Titel und eine Aktion in die Unterzeile', async () => {
     @Component({
       imports: [SheetComponent],
