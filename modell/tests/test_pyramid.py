@@ -9,13 +9,17 @@ from PIL import Image
 from pyramid import (
     ZOOM_BASE,
     ZOOM_CAP,
+    block_box,
+    block_grid,
     class_shares,
     coarsen,
     finest_zoom,
     from_byte,
     halve,
+    have_up_to,
     read_tile,
     to_byte,
+    to_mercator,
     write_tile,
 )
 
@@ -133,3 +137,34 @@ def test_geschriebene_kachel_ist_ein_graubild(tmp_path):
     with Image.open(tmp_path / "14" / "0" / "0.png") as bild:
         assert bild.mode == "L"
         assert bild.size == (256, 256)
+
+
+def test_mercator_trifft_den_nullpunkt_und_die_ecke():
+    assert to_mercator(0.0, 0.0) == pytest.approx((0.0, 0.0), abs=1e-6)
+    x, y = to_mercator(180.0, 85.051129)
+    assert x == pytest.approx(20037508.34, abs=1.0)
+    assert y == pytest.approx(20037508.34, abs=1.0)
+
+
+def test_bloecke_decken_den_ausschnitt_mit_ganzen_kacheln():
+    kasten = (9.0, 48.5, 9.2, 48.7)
+    bloecke = block_grid(kasten, 14, 16)
+    assert len(bloecke) >= 1
+    west, south = to_mercator(kasten[0], kasten[1])
+    east, north = to_mercator(kasten[2], kasten[3])
+    raender = [block_box(bx, by, 14, 16) for bx, by in bloecke]
+    assert min(r[0] for r in raender) <= west
+    assert min(r[1] for r in raender) <= south
+    assert max(r[2] for r in raender) >= east
+    assert max(r[3] for r in raender) >= north
+
+
+def test_blockrand_ist_der_rand_ganzer_kacheln():
+    from tiles import kachelbox
+
+    assert block_box(3, 7, 14, 16) == kachelbox(48, 112, 63, 127, 14)
+
+
+def test_have_endet_an_der_kappe():
+    gefuellt = [(9, 1, 1), (10, 2, 2), (11, 4, 4), (14, 30, 30)]
+    assert have_up_to(gefuellt, 10) == {"9": ["1/1"], "10": ["2/2"]}

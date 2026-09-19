@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from tiles import KACHEL, RAND
+from tiles import KACHEL, RAND, kachelbox, kachelraster
 
 # Zoom 5 zeigt Deutschland, Zoom 14 ist die letzte Stufe der Grundkarte.
 ZOOM_BASE = 5
@@ -141,3 +141,38 @@ def belegung(filled: Iterable[tuple[int, int, int]]) -> dict[str, list[str]]:
     for z, x, y in sorted(filled):
         belegt.setdefault(str(z), []).append(f"{x}/{y}")
     return belegt
+
+
+def have_up_to(filled: Iterable[tuple[int, int, int]], cap: int
+               ) -> dict[str, list[str]]:
+    """The ``have`` list up to one zoom level.
+
+    A fine level holds too many names for a manifest that the app reads at
+    every start. Above the cap the app asks the coarser tile instead.
+    """
+    return belegung(tile for tile in filled if tile[0] <= cap)
+
+
+def to_mercator(lon: float, lat: float) -> tuple[float, float]:
+    """A point in degrees as EPSG:3857 metres."""
+    x = RAND * lon / 180.0
+    y = RAND * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2)) / math.pi
+    return x, y
+
+
+def block_grid(wgs_box: tuple[float, float, float, float], zoom: int,
+               block_tiles: int) -> list[tuple[int, int]]:
+    """The blocks of whole tiles that cover a box given in degrees."""
+    west, south = to_mercator(wgs_box[0], wgs_box[1])
+    east, north = to_mercator(wgs_box[2], wgs_box[3])
+    tx0, ty0, tx1, ty1 = kachelraster(west, south, east, north, zoom)
+    return [(bx, by)
+            for bx in range(tx0 // block_tiles, tx1 // block_tiles + 1)
+            for by in range(ty0 // block_tiles, ty1 // block_tiles + 1)]
+
+
+def block_box(bx: int, by: int, zoom: int, block_tiles: int
+              ) -> tuple[float, float, float, float]:
+    """The EPSG:3857 extent of one block."""
+    return kachelbox(bx * block_tiles, by * block_tiles,
+                     (bx + 1) * block_tiles - 1, (by + 1) * block_tiles - 1, zoom)
