@@ -85,3 +85,8 @@ export async function mockSignedOut(page: Page): Promise<void> {
     await route.fulfill({ status: 302, headers: { location: back.toString() } });
   });
 }
+
+/** Ein SSO, das nicht antwortet. Die Sitzung bleibt offen: Zustand `unknown`. */
+export async function mockSignInPending(page: Page): Promise<void> {
+  await page.route(`${ISSUER}/.well-known/openid-configuration`, () => undefined);
+}

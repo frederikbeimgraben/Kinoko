@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
-import { authConfig, mockSignIn } from '../fixtures/auth';
+import { authConfig, mockSignIn, mockSignInPending } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
   COMBINATIONS,
@@ -196,14 +196,16 @@ test('MapOffline', async ({ page }) => {
 
 test('MapSkeleton', async ({ page }) => {
   guard('MapSkeleton', 'phone');
-  await mockApi(page, REPLIES, { photo: ROW_PHOTO });
+  // Ohne Antwort des SSO bleibt die Sitzung offen und der Avatar ein Skelett.
+  await mockSignInPending(page);
+  await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
   await mockMap(page);
   // Ohne Manifest zeigt die Karte ihr Raster; ein Kartenbild gehört nicht dazu.
   await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {
     await route.fulfill({ status: 404, body: '' });
   });
   await page.goto('/karte');
-  await board(page, 'MapSkeleton', '');
+  await expectBoard(page, 'MapSkeleton', { idle: false });
 });
 
 test('MapDesktop', async ({ page }) => {

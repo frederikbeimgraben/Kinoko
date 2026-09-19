@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cache
 from typing import Final
 
 CUBE_ROOT: Final = 1.0 / 3.0
@@ -49,6 +50,7 @@ def linear(value: float) -> float:
     return value / 12.92 if value <= GAMMA_CUT else ((value + 0.055) / 1.055) ** 2.4
 
 
+@cache
 def oklab(value: str) -> tuple[float, float, float]:
     """Rechnet eine Farbe in den Oklab-Raum."""
     red, green, blue = (linear(part) for part in channels(value))
@@ -71,6 +73,7 @@ def distance(first: str, second: str) -> float:
     return sum(((one - other) * weight) ** 2 for one, other, weight in parts) ** 0.5
 
 
+@cache
 def nearest_colour(value: str) -> StandardColour:
     """Die nächste Standardfarbe zu einer Katalogfarbe."""
     return min(STANDARD, key=lambda colour: distance(value, colour.hex))

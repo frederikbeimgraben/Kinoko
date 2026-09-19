@@ -16,6 +16,7 @@ from app.core.settings import get_settings
 from app.main import build_app
 from app.models import Base, User
 from app.modules.access import seed as access_seed
+from app.modules.catalog.bundle import CACHE
 from app.modules.texts.seed import TextSeed
 from app.modules.texts.service import TextService
 
@@ -42,10 +43,12 @@ def environment(monkeypatch: pytest.MonkeyPatch, tmp_path: Any) -> Iterator[None
     monkeypatch.setattr(jwks, "_cache", jwks.JwksCache())
     monkeypatch.setattr(jwks, "_discovery_cache", jwks.DiscoveryCache())
     monkeypatch.setattr(jwks, "_groups_cache", jwks.GroupsCache())
+    CACHE.forget()
     yield
     get_settings.cache_clear()
     db.engine.cache_clear()
     db.session_factory.cache_clear()
+    CACHE.forget()
 
 
 @pytest.fixture
