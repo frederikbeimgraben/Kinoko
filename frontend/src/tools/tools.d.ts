@@ -25,6 +25,16 @@ declare module '*/tools/check-german.mjs' {
   export function allowKey(violation: Violation): string;
 }
 
+declare module '*/tools/check-frames.mjs' {
+  export interface Violation {
+    path: string;
+    line: number;
+    rule: string;
+    text: string;
+  }
+  export function findViolations(root: string): Violation[];
+}
+
 declare module '*/tools/check-selectors.mjs' {
   export interface Violation {
     path: string;

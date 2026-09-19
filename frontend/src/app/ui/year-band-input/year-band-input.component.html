@@ -6,7 +6,7 @@
     [style.inset-inline-end]="'calc(100% - ' + toShare() + ')'"
   ></span>
   <input
-    class="yearband__handle"
+    class="yearband__thumb"
     type="range"
     [attr.aria-label]="'common.rangeMin' | t"
     [min]="firstMonth"
@@ -16,7 +16,7 @@
     (input)="onFrom($event)"
   />
   <input
-    class="yearband__handle yearband__handle--to"
+    class="yearband__thumb yearband__thumb--to"
     type="range"
     [attr.aria-label]="'common.rangeMax' | t"
     [min]="firstMonth"

@@ -20,10 +20,7 @@ export type Detent = 0 | 1 | 2;
 /** Anteil der Wirtshöhe zwischen 0 und 1, feste Höhe oder `content` für die Inhaltshöhe. */
 export type DetentSize = number | `${number}px` | 'content';
 
-/**
- * Die Art des Blatts. Ein `step` gehört zu einem Schritt auf der Karte: am
- * Rechner dockt es an, statt die Karte hinter einem Modal zu sperren.
- */
+/** Die Art des Blatts. Ein `step` lässt am Rechner die Karte frei. */
 export type SheetKind = 'sheet' | 'step';
 
 // Die unterste Raste ist --size-sheet-head, 152 Pixel. Die Zug-Physik
@@ -44,7 +41,7 @@ const AXIS_THRESHOLD = 8;
 // Unter diesem Anteil der untersten Raste schließt ein Zug nach unten.
 const DISMISS_SHARE = 0.5;
 
-// Bis zu dieser Bewegung in Punkten bleibt ein Druck auf die Abdunkelung ein
+// Unter dieser Bewegung in Punkten zählt ein Druck auf die Abdunkelung als
 // Klick. Darüber ist es ein Zug auf der Fläche darunter.
 const SCRIM_SLOP = 6;
 
