@@ -76,7 +76,14 @@ describe('OverlayHostComponent', () => {
 
     expect(container.querySelector('.overlay__head')).toBeNull();
     expect(container.querySelector('.overlay__close')).toBeNull();
-    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
+  });
+
+  it('lässt den Aufstieg am Rechner weg, gleich wo der Wirt im Baum steht', async () => {
+    const { container } = await render(HostComponent, { providers: [WIDE] });
+
+    const panel = container.querySelector('.overlay__panel');
+    expect(panel).toHaveClass('overlay__panel--wide');
   });
 
   it('renders without German text against an empty catalogue', async () => {
