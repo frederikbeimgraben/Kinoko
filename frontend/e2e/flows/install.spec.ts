@@ -27,8 +27,8 @@ test('Installation: Manifest, Icons und Service Worker', async ({ page, baseURL 
   const reply = await page.request.get(new URL('manifest.webmanifest', baseURL).toString());
   expect(reply.status()).toBe(200);
   const manifest = (await reply.json()) as Manifest;
-  expect(manifest.name).toBe('Primordium');
-  expect(manifest.short_name).toBe('Primordium');
+  expect(manifest.name).toBe('Kinoko');
+  expect(manifest.short_name).toBe('Kinoko');
   expect(manifest.id).toBe('/');
   expect(manifest.start_url).toBe('/karte');
   expect(manifest.scope).toBe('/');
