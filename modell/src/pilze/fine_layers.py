@@ -29,7 +29,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent))
 from manifest import histogram, schreibe, werte_aus_kacheln
 from pyramid import (ZOOM_BASE, ZOOM_CAP, block_box, block_grid, coarsen,
-                     finest_zoom, full_weight, have_up_to, to_byte, write_tile)
+                     cut_field, finest_zoom, have_up_to, to_byte)
 from tiles import KACHEL
 
 SOURCE_CRS = "EPSG:32632"
@@ -202,18 +202,13 @@ def cut_block(warped: Path, names: list[str], roots: dict[str, Path],
     """Cut the bands of one block into tiles and write them."""
     import rasterio
 
-    written: dict[str, list[str]] = {name: [] for name in names}
+    written: dict[str, list[str]] = {}
     with rasterio.open(warped) as src:
         for band, name in enumerate(names, start=1):
-            code = to_byte(src.read(band))
-            for j in range(block_tiles):
-                for i in range(block_tiles):
-                    kachel = code[j * KACHEL:(j + 1) * KACHEL,
-                                  i * KACHEL:(i + 1) * KACHEL]
-                    x, y = bx * block_tiles + i, by * block_tiles + j
-                    if write_tile(roots[name], zoom, x, y, kachel):
-                        write_tile(weights[name], zoom, x, y, full_weight(kachel))
-                        written[name].append(f"{zoom}/{x}/{y}")
+            gefuellt = cut_field(to_byte(src.read(band)), roots[name],
+                                 weights[name], zoom,
+                                 bx * block_tiles, by * block_tiles)
+            written[name] = [f"{z}/{x}/{y}" for z, x, y in gefuellt]
     return written
 
 
@@ -319,9 +314,11 @@ def build_outline(pbf: Path, target: Path) -> Path:
     subprocess.run(["osmium", "tags-filter", str(pbf), "r/admin_level=2",
                     "-o", str(level2), "--overwrite"],
                    check=True, capture_output=True)
-    subprocess.run(["ogr2ogr", "-f", "GeoJSON", str(target), str(level2),
-                    "multipolygons", "-where", "admin_level = '2'",
-                    "-select", "name"],
+    # gdal_rasterize projiziert nicht. Der Umriss liegt daher im CRS der
+    # Quelle.
+    subprocess.run(["ogr2ogr", "-f", "GeoJSON", "-t_srs", SOURCE_CRS,
+                    str(target), str(level2), "multipolygons",
+                    "-where", "admin_level = '2'", "-select", "name"],
                    check=True, capture_output=True)
     level2.unlink(missing_ok=True)
     return target

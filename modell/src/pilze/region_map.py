@@ -42,8 +42,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import add_anomalies, add_lags, week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogram, schreibe
-from pyramid import ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom
-from tiles import schreibe_kacheln
+from pyramid import (ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom,
+                     render_field)
+
 from tree_species import CLASSES, CONIFERS
 from visit_model import BLOCK_M, ActivityFields
 
@@ -539,8 +540,8 @@ def main() -> None:
             eintrag["file"] = f"{args.name}_weeks/{year}W{week:02d}.png"
         if args.tiles:
             ordner = kachelwurzel / f"{year}W{week:02d}"
-            gefuellt, gross = schreibe_kacheln(source, ordner, top,
-                                               range(z0, z1 + 1), work, wgs_box)
+            gefuellt, gross = render_field(source, [ordner], [top], z1,
+                                           work, wgs_box)[0]
             vorhanden.update(gefuellt)
             kachelzahl += len(gefuellt); kachelbytes += gross
             eintrag["tiles"] = f"{args.name}_kacheln/{year}W{week:02d}"

@@ -40,10 +40,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 from build_dataset import week_number
 from coarse_inputs import COARSE_INPUTS, CoarseSampler
 from manifest import histogram, schreibe
-from pyramid import ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom
+from pyramid import (ZOOM_BASE, ZOOM_CAP, belegung, finest_zoom,
+                     render_field)
 from region_map import (COLORS, MODEL_CRS, REGION, TRAIN_CELL,
                         raster_ausrichten, render)
-from tiles import schreibe_kacheln, write_tile_sets
 
 # name -> (source, column, label, unit)
 # The layers with a source finer than the map grid come from
@@ -248,8 +248,9 @@ def main() -> None:
                 write_images(source, [folder / f"{name}.png"], work)
                 eintrag["file"] = f"layers/{name}.png"
             if args.tiles:
-                gefuellt, _ = schreibe_kacheln(source, args.out / "layers_kacheln" / name,
-                                               1.0, range(z0, z1 + 1), work, wgs_box)
+                gefuellt, _ = render_field(
+                    source, [args.out / "layers_kacheln" / name], [1.0], z1,
+                    work, wgs_box)[0]
                 eintrag.update(tiles=f"layers_kacheln/{name}", zooms=[z0, z1],
                                have=belegung(gefuellt))
             layers[name] = eintrag
@@ -315,9 +316,9 @@ def main() -> None:
                 write_images(source, [folder / f"{n}_{schluessel}.png" for n in namen],
                                 work)
             if args.tiles:
-                saetze = write_tile_sets(
+                saetze = render_field(
                     source, [args.out / "layers_kacheln" / n / schluessel for n in namen],
-                    [1.0] * len(namen), range(z0, z1 + 1), work, wgs_box)
+                    [1.0] * len(namen), z1, work, wgs_box)
                 if year == wochen[0][0] and week == wochen[0][1]:
                     for name, (gefuellt, _) in zip(namen, saetze):
                         layers[name]["have"] = belegung(gefuellt)
