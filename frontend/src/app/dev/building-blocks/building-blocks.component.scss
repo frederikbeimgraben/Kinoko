@@ -13,18 +13,23 @@
   padding: 24px;
 }
 
+.block,
+.block__card {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
 .block {
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-content: start;
   padding: 16px;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
 
+.block__grouphead,
 .block__head {
   margin: 0 0 10px;
   font-size: 12px;
@@ -33,7 +38,10 @@
   line-height: normal;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  // Das Kit gleicht Ueberschriften aus, das Board bricht nach der Breite.
+}
+
+// Das Kit gleicht Ueberschriften aus, das Board bricht nach der Breite.
+.block__head {
   text-wrap: wrap;
 }
 
@@ -44,9 +52,6 @@
   --list-row-inline: var(--space-row-inline);
 
   overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
 }
 
 // Im Board endet auch die letzte Zeile mit einer Linie.
@@ -96,7 +101,8 @@
   --skeleton-block-height: 60px;
 }
 
-.block__skeletonrow {
+.block__skeletonrow,
+.block__switchitem {
   display: flex;
   gap: 10px;
   align-items: center;
@@ -128,17 +134,6 @@
   --ramp-ends-gap: 16px;
 }
 
-// Im Board trägt jede Gruppe des Aufklappers eine kleine Überschrift.
-.block__grouphead {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: var(--fw-semibold);
-  line-height: normal;
-  color: var(--color-text-muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 // Im Aufklapper liegt der Regler flach: der Griff ragt über seine Spur.
 .block__group app-range-slider {
   --range-slider-lane: 4px;
@@ -151,12 +146,6 @@
 .block__switchrow {
   display: flex;
   gap: 24px;
-}
-
-.block__switchitem {
-  display: flex;
-  gap: 10px;
-  align-items: center;
 }
 
 .block__switchlabel {
@@ -178,11 +167,15 @@
 }
 
 // Wie section.block: die Notiz unter der Maße-Karte, Kommentar enger.
+.block__muted,
 .block__note {
-  margin: 6px 0 0;
   font-size: var(--fs-row-meta);
   line-height: 1.4;
   color: var(--color-text-muted);
+}
+
+.block__note {
+  margin: 6px 0 0;
 }
 
 .block__note--comment {
@@ -207,13 +200,6 @@
   border-radius: 0;
 }
 
-// Im Vergleich sind die Zellen kleiner als auf einer Artseite.
-.block__compare .block__swatch {
-  --pilz-colour-width: 64px;
-  --pilz-colour-height: 22px;
-  --pilz-colour-radius: 7px;
-}
-
 // Die Druckprobe zeigt zwei Töne mit Pfeil, darunter, wann sie kommt.
 .block__press {
   display: flex;
@@ -236,6 +222,7 @@
   grid-template-columns: var(--press-swatch) 12px var(--press-swatch);
 }
 
+.block__compare .block__swatch,
 .block__presscolour {
   --pilz-colour-width: 64px;
   --pilz-colour-height: 22px;
@@ -274,7 +261,8 @@
   --pilz-colour-radius: 6px;
 }
 
-.block__list {
+.block__list,
+.block__reviewcard {
   display: flex;
   flex-direction: column;
 }
@@ -323,12 +311,6 @@
   font-size: 15px;
 }
 
-.block__muted {
-  font-size: var(--fs-row-meta);
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
 // Das Board legt den Balken auf einen Block und setzt den Wert darüber.
 .block__meter {
   display: flex;
@@ -349,12 +331,6 @@
   text-shadow: 0 1px 2px rgb(0 0 0 / 40%);
 }
 
-// Die Karte des Stapels trägt der Baustein. Der Inhalt stapelt nur.
-.block__reviewcard {
-  display: flex;
-  flex-direction: column;
-}
-
 // Der Zähler steht im Kopf der Seite, nicht über dem Stapel.
 .block__reviewhead {
   display: flex;
@@ -362,10 +338,14 @@
   justify-content: space-between;
 }
 
-.block__reviewcount {
+.block__reviewcount,
+.block__reviewmeta {
   font-size: 13px;
   line-height: 1.4;
   color: var(--color-text-muted);
+}
+
+.block__reviewcount {
   font-variant-numeric: tabular-nums;
 }
 
@@ -392,17 +372,13 @@
   font-weight: var(--fw-semibold);
 }
 
-.block__reviewmeta {
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
 .block__stage {
   position: relative;
   overflow: hidden;
   contain: layout;
   border-radius: var(--radius-lg);
+  // Jede Bühne bringt ihre Höhe als eigene Eigenschaft mit, eine Regel für alle.
+  block-size: var(--stage-h);
 }
 
 .block__stage app-popover,
@@ -413,15 +389,6 @@
 .block__stage app-split-layout {
   position: absolute;
   inset: 0;
-}
-
-.block__stage--nav {
-  block-size: var(--size-nav);
-}
-
-.block__stage--split,
-.block__stage--rail {
-  block-size: 280px;
 }
 
 .block__stage--rail {
@@ -437,25 +404,9 @@
   background: var(--color-surface-sunken);
 }
 
-.block__stage--sheet {
-  block-size: 320px;
-}
-
-.block__stage--overlay {
-  block-size: 150px;
-}
-
-.block__stage--filter {
-  block-size: 330px;
-}
-
 // Die Gruppenzeile im Filter steht höher als eine gewöhnliche Listenzeile.
 .block__stage--filter .block__card {
   --size-row: 60px;
-}
-
-.block__stage--fixed {
-  block-size: 210px;
 }
 
 .block__marker {
@@ -470,27 +421,9 @@
   box-shadow: 0 1px 4px rgb(0 0 0 / 35%);
 }
 
-.block__stage--popover {
-  block-size: 380px;
-}
-
-.block__stage--reject {
-  block-size: 374px;
-}
-
-.block__stage--confirm {
-  block-size: 190px;
-}
-
 // Im Baustein-Board stehen Suchfeld und Liste 10 px auseinander.
 .block__stage--picker {
   --species-picker-gap: 10px;
-
-  block-size: 178px;
-}
-
-.block__stage--photo {
-  block-size: 100px;
 }
 
 // Das Board zeigt zwei Zeilen und eine Attrappe, der Baustein reiht drei.
@@ -503,5 +436,4 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  block-size: 100px;
 }

@@ -88,10 +88,10 @@
 
   <section class="block" data-block="app-nav">
     <h2 class="block__head">{{ 'blocks.nav' | t }}</h2>
-    <div class="block__stage block__stage--nav">
+    <div class="block__stage block__stage--nav" [style.--stage-h]="'var(--size-nav)'">
       <app-nav variant="bottom" [active]="navTabs.map" />
     </div>
-    <div class="block__stage block__stage--rail">
+    <div class="block__stage block__stage--rail" [style.--stage-h.px]="280">
       <app-nav variant="rail" [active]="navTabs.species">
         <app-avatar-button [name]="text('beispiel.avatar')" [label]="text('nav.konto')" />
       </app-nav>
@@ -100,7 +100,7 @@
 
   <section class="block" data-block="app-sheet">
     <h2 class="block__head">{{ 'blocks.sheet' | t }}</h2>
-    <div class="block__stage block__stage--sheet">
+    <div class="block__stage block__stage--sheet" [style.--stage-h.px]="320">
       <app-sheet [label]="text('map.combination.save')" [detent]="0" [detents]="sheetDetents">
         <app-sheet-head head [title]="text('map.combination.save')" [arrows]="false" />
         <div class="block__sheetbody">
@@ -130,7 +130,7 @@
 
   <section class="block" data-block="app-overlay-host">
     <h2 class="block__head">{{ 'blocks.overlayHost' | t }}</h2>
-    <div class="block__stage block__stage--overlay">
+    <div class="block__stage block__stage--overlay" [style.--stage-h.px]="150">
       <app-overlay-host [open]="overlayOpen()" [modal]="true" (closed)="overlayOpen.set(false)">
         <app-sheet [label]="text('beispiel.marker.loeschen')" [detent]="0" [detents]="overlayDetents">
           <app-sheet-head head [title]="text('beispiel.marker.loeschen')" [arrows]="false" />
@@ -141,7 +141,7 @@
 
   <section class="block" data-block="app-filter-sheet">
     <h2 class="block__head">{{ 'blocks.filterSheet' | t }}</h2>
-    <div class="block__stage block__stage--filter">
+    <div class="block__stage block__stage--filter" [style.--stage-h.px]="330">
       <app-filter-sheet
         [open]="filterSheetOpen()"
         [title]="text('common.filter')"
@@ -174,7 +174,7 @@
 
   <section class="block" data-block="app-object-menu">
     <h2 class="block__head">{{ 'blocks.objectMenu' | t }}</h2>
-    <div class="block__stage block__stage--fixed">
+    <div class="block__stage block__stage--fixed" [style.--stage-h.px]="210">
       <span class="block__marker"></span>
       <app-object-menu [target]="objectMenuTarget" />
     </div>
@@ -202,7 +202,7 @@
 
   <section class="block" data-block="app-split-layout">
     <h2 class="block__head">{{ 'blocks.splitLayout' | t }}</h2>
-    <div class="block__stage block__stage--split">
+    <div class="block__stage block__stage--split" [style.--stage-h.px]="280">
       <app-split-layout>
         <app-nav split-rail variant="rail" [active]="navTabs.map" />
         <app-search-field
@@ -216,7 +216,7 @@
 
   <section class="block" data-block="app-popover">
     <h2 class="block__head">{{ 'blocks.popover' | t }}</h2>
-    <div class="block__stage block__stage--popover">
+    <div class="block__stage block__stage--popover" [style.--stage-h.px]="380">
       <app-popover [open]="true" [anchor]="popoverAnchor" [label]="text('map.layers.button')">
         <div class="block__group">
           <p class="block__grouphead">{{ 'map.basemap.title' | t }}</p>
@@ -250,14 +250,14 @@
 
   <section class="block" data-block="app-confirm-dialog">
     <h2 class="block__head">{{ 'blocks.confirmDialog' | t }}</h2>
-    <div class="block__stage block__stage--confirm">
+    <div class="block__stage block__stage--confirm" [style.--stage-h.px]="190">
       <app-confirm-dialog [open]="true" [title]="text('entry.fund.delete')" [danger]="true" />
     </div>
   </section>
 
   <section class="block" data-block="app-reject-dialog">
     <h2 class="block__head">{{ 'blocks.rejectDialog' | t }}</h2>
-    <div class="block__stage block__stage--reject">
+    <div class="block__stage block__stage--reject" [style.--stage-h.px]="374">
       <app-reject-dialog [open]="true" [suggestion]="text('image.rejectReason.speciesUnclear')" />
     </div>
   </section>
@@ -567,7 +567,7 @@
 
   <section class="block" data-block="app-species-picker">
     <h2 class="block__head">{{ 'blocks.speciesPicker' | t }}</h2>
-    <div class="block__stage block__stage--picker">
+    <div class="block__stage block__stage--picker" [style.--stage-h.px]="178">
       <app-species-picker
         [species]="pickerRows"
         [selected]="speciesChoice()"
@@ -744,7 +744,7 @@
 
   <section class="block" data-block="app-private-image">
     <h2 class="block__head">{{ 'blocks.privateImage' | t }}</h2>
-    <div class="block__stage block__stage--photo">
+    <div class="block__stage block__stage--photo" [style.--stage-h.px]="100">
       <app-private-image [path]="samplePrivate" [alt]="text('art.boletus_edulis')" [locked]="true" />
     </div>
   </section>
@@ -767,7 +767,7 @@
 
   <section class="block" data-block="app-crosshair">
     <h2 class="block__head">{{ 'blocks.crosshair' | t }}</h2>
-    <div class="block__stage block__stage--crosshair">
+    <div class="block__stage block__stage--crosshair" [style.--stage-h.px]="100">
       <app-crosshair [label]="text('common.select')" />
     </div>
   </section>
