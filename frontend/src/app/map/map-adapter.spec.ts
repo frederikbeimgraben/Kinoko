@@ -68,6 +68,11 @@ class MapDouble {
     if (index >= 0) this.handler.splice(index, 1);
   }
 
+  /** Stellt ein Ereignis mit eigener Nutzlast nach. */
+  fire(kind: string, payload: unknown): void {
+    for (const entry of [...this.handler]) if (entry.kind === kind) entry.handler(payload);
+  }
+
   settle(kind: string, source = 'wert-forecast-a'): void {
     const payload = { sourceId: source, sourceDataType: 'content', isSourceLoaded: this.sourceReady };
     for (const entry of [...this.handler]) if (entry.kind === kind) entry.handler(payload);
@@ -164,6 +169,22 @@ class MapDouble {
 
   getZoom(): number {
     return 7;
+  }
+
+  bearing = 0;
+  pitch = 0;
+  readonly canvas = { style: { cursor: '' } };
+
+  getBearing(): number {
+    return this.bearing;
+  }
+
+  getPitch(): number {
+    return this.pitch;
+  }
+
+  getCanvas(): { style: { cursor: string } } {
+    return this.canvas;
   }
 
   remove(): void {
@@ -587,5 +608,94 @@ describe('MapLibreAdapter', () => {
     a.centerOn([9.1, 48.8], 11);
 
     expect(map.moved.at(-1)).toEqual({ center: [9.1, 48.8], zoom: 11, duration: 600 });
+  });
+
+  it('meldet Drehung und Neigung der Karte', async () => {
+    const { adapter: a, map } = await adapter();
+    map.bearing = -30;
+    map.pitch = 40;
+
+    expect(a.rotation()).toEqual({ bearing: -30, pitch: 40 });
+  });
+
+  it('meldet jede Drehung und jede Neigung', async () => {
+    const { adapter: a, map } = await adapter();
+    let calls = 0;
+
+    a.onRotate(() => (calls += 1));
+    map.settle('rotate');
+    map.settle('pitch');
+
+    expect(calls).toBe(2);
+  });
+
+  it('dreht nach Norden, sanft oder sofort', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.resetNorth(true);
+    a.resetNorth(false);
+
+    expect(map.moved.at(-2)).toEqual({ bearing: 0, pitch: 0, duration: 400 });
+    expect(map.moved.at(-1)).toEqual({ bearing: 0, pitch: 0, duration: 0 });
+  });
+
+  it('dreht die Karte über den Testhaken', async () => {
+    const { map } = await adapter();
+    const hook = (window as unknown as { pilzMap?: MapHandle }).pilzMap;
+
+    hook?.rotate(-30, 20);
+
+    expect(map.jumped).toEqual({ bearing: -30, pitch: 20 });
+  });
+
+  it('setzt den Zeiger über der Karte', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.setCursor('crosshair');
+
+    expect(map.canvas.style.cursor).toBe('crosshair');
+  });
+
+  it('meldet einen Klick auf die Karte und lässt wieder los', async () => {
+    const { adapter: a, map } = await adapter();
+    const points: (readonly [number, number])[] = [];
+
+    const off = a.onMapClick((point) => points.push(point));
+    map.fire('click', { lngLat: { lng: 9.1, lat: 48.6 } });
+    off();
+    map.fire('click', { lngLat: { lng: 9.2, lat: 48.7 } });
+
+    expect(points).toHaveLength(1);
+  });
+
+  it('meldet den Zeiger über der Karte und lässt wieder los', async () => {
+    const { adapter: a, map } = await adapter();
+    const points: (readonly [number, number])[] = [];
+
+    const off = a.onPointerMove((point) => points.push(point));
+    map.fire('mousemove', { lngLat: { lng: 9.1, lat: 48.6 } });
+    off();
+    map.fire('mousemove', { lngLat: { lng: 9.2, lat: 48.7 } });
+
+    expect(points).toHaveLength(1);
+  });
+
+  it('rechnet einen Ort in einen Punkt der Fläche um', async () => {
+    const { adapter: a } = await adapter();
+
+    expect(a.project([1, 2])).toEqual({ x: 100, y: 200 });
+  });
+
+  it('bleibt ohne Karte still', () => {
+    const a = new MapLibreAdapter(() => Promise.resolve(module().module));
+
+    a.setCursor('crosshair');
+    a.resetNorth(true);
+    a.onRotate(() => undefined);
+    a.onMapClick(() => undefined)();
+    a.onPointerMove(() => undefined)();
+
+    expect(a.rotation()).toEqual({ bearing: 0, pitch: 0 });
+    expect(a.project([1, 2])).toBeNull();
   });
 });

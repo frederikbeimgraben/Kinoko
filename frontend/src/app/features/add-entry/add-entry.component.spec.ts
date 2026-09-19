@@ -57,6 +57,17 @@ async function build(extra: readonly Provider[] = []): Promise<Setup> {
   };
 }
 
+/** Ein Klick auf die Karte, wie der Adapter ihn meldet. */
+function clickMap(setup: Setup, point: readonly [number, number]): void {
+  setup.map.clicked?.(point);
+  setup.refresh();
+}
+
+/** Eine Taste, wie der Schritt sie am Rechner hört. */
+function press(key: string): void {
+  document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+}
+
 /** Das Aktionsblatt öffnen und dort eine Zeile wählen. */
 async function start(setup: Setup, row: string): Promise<void> {
   setup.flow.open();
@@ -282,5 +293,109 @@ describe('EintragenComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
 
     expect(setup.flow.step()).toBeNull();
+  });
+
+  describe('am Rechner', () => {
+    it('setzt den Fundort mit einem Klick auf die Karte und verschiebt ihn', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Fund melden');
+
+      clickMap(setup, [9.05, 48.52]);
+      expect(setup.flow.location()).toEqual([9.05, 48.52]);
+
+      clickMap(setup, [9.06, 48.53]);
+
+      expect(setup.flow.location()).toEqual([9.06, 48.53]);
+      expect(setup.flow.step()).toBe('findLocation');
+      expect(setup.map.cursors).toContain('crosshair');
+    });
+
+    it('setzt jede Ecke der Zone mit einem Klick', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Zone zeichnen');
+
+      clickMap(setup, [9.0, 48.5]);
+      clickMap(setup, [9.1, 48.5]);
+      clickMap(setup, [9.1, 48.6]);
+
+      expect(setup.flow.ring()).toHaveLength(3);
+      expect(screen.queryByRole('button', { name: 'Eckpunkt setzen' })).not.toBeInTheDocument();
+    });
+
+    it('schließt die Zone mit einem Klick auf die erste Ecke', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Zone zeichnen');
+      for (const point of [
+        [9.0, 48.5],
+        [9.1, 48.5],
+        [9.1, 48.6],
+      ] as const) {
+        clickMap(setup, point);
+      }
+
+      clickMap(setup, [9.0, 48.5]);
+
+      expect(setup.flow.step()).toBe('zoneForm');
+    });
+
+    it('nimmt mit der Rücktaste die letzte Ecke weg', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Zone zeichnen');
+      clickMap(setup, [9.0, 48.5]);
+      clickMap(setup, [9.1, 48.5]);
+
+      press('Backspace');
+      setup.refresh();
+
+      expect(setup.flow.ring()).toHaveLength(1);
+    });
+
+    it('schließt die Zone mit der Eingabetaste', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Zone zeichnen');
+      for (const point of [
+        [9.0, 48.5],
+        [9.1, 48.5],
+        [9.1, 48.6],
+      ] as const) {
+        clickMap(setup, point);
+      }
+
+      press('Enter');
+      setup.refresh();
+
+      expect(setup.flow.step()).toBe('zoneForm');
+    });
+
+    it('übernimmt den Ort mit der Eingabetaste', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Marker setzen');
+      clickMap(setup, [9.05, 48.52]);
+
+      press('Enter');
+      setup.refresh();
+
+      expect(setup.flow.step()).toBe('markerForm');
+    });
+
+    it('bricht den Schritt mit Esc ab', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Zone zeichnen');
+
+      press('Escape');
+      setup.refresh();
+
+      expect(setup.flow.running()).toBe(false);
+    });
+
+    it('lässt die Tasten am Telefon liegen', async () => {
+      const setup = await build();
+      await start(setup, 'Zone zeichnen');
+
+      press('Escape');
+      setup.refresh();
+
+      expect(setup.flow.running()).toBe(true);
+    });
   });
 });
