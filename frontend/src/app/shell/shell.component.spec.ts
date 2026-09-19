@@ -313,7 +313,7 @@ describe('ShellComponent am Telefon', () => {
     // Dasselbe Element heißt: kein Neuladen der Kacheln, keine zweite Karte.
     expect(container.querySelector('app-map')).toBe(map);
     expect(screen.queryByRole('region', { name: 'Karte von Deutschland' })).not.toBeInTheDocument();
-    expect(map).toHaveAttribute('inert');
+    expect(map).toHaveClass('shell__map--hidden');
 
     await navigate('/karte');
     detectChanges();
