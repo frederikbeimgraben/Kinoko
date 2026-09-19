@@ -1,4 +1,5 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test } from '../../fixtures/test';
+import { type Locator } from '@playwright/test';
 import { mockApi } from '../../fixtures/api';
 
 async function cursorOf(target: Locator): Promise<string> {
