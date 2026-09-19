@@ -1,0 +1,11 @@
+/** Ein randloser Tippknopf für ein einzelnes Piktogramm. */
+@mixin frameless($size: var(--size-tap)) {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  inline-size: $size;
+  block-size: $size;
+  background: none;
+  border: 0;
+}

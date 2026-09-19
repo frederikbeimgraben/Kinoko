@@ -104,7 +104,7 @@ test('holt die Sitzung beim nächsten Sichtbarkeitswechsel zurück', async ({ pa
   await expect(page.getByRole('button', { name: 'Konto von Frederik' })).toHaveText('F');
 });
 
-test('die Reiterleiste steht nach der Rückkehr vom SSO', async ({ page }) => {
+test('die Reiterleiste kehrt nach der Rückkehr vom SSO zurück', async ({ page }) => {
   await mockSignedOut(page);
   await mockApi(page, { '/api/config': authConfig(BASE) });
   await page.goto('/konto');
@@ -115,5 +115,8 @@ test('die Reiterleiste steht nach der Rückkehr vom SSO', async ({ page }) => {
 
   await expect(page.getByRole('button', { name: 'Abmelden' })).toBeVisible();
   await expect(page).toHaveURL(/\/konto$/);
+  await expect(page.getByRole('navigation', { name: 'Hauptbereiche' })).toBeHidden();
+
+  await page.goto('/karte');
   await expect(page.getByRole('navigation', { name: 'Hauptbereiche' })).toBeVisible();
 });

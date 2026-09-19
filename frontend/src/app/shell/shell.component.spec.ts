@@ -91,8 +91,16 @@ describe('ShellComponent', () => {
     await navigate('/anmeldung?code=eins&state=zwei');
     expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
 
-    await navigate('/konto');
+    await navigate('/karte');
     expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
+  });
+
+  it('lässt die Leiste auf der Wurzel der Einstellungen weg', async () => {
+    const { navigate } = await shell();
+
+    await navigate('/konto');
+
+    expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
   });
 
   it('behält die Leiste auf dem Reiter Arten', async () => {

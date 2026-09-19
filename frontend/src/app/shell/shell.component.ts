@@ -26,7 +26,7 @@ const WITHOUT_NAV: readonly RegExp[] = [
   /^\/bausteine(\/|$)/,
   /^\/arten\/[^/]+/,
   /^\/verwaltung(\/|$)/,
-  /^\/konto\/[^/]+/,
+  /^\/konto(\/|$)/,
 ];
 
 /**

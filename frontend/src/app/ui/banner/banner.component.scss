@@ -1,3 +1,5 @@
+@use '../../../styles/tap-icon';
+
 :host {
   display: block;
 }
@@ -31,13 +33,7 @@
 
 // Tippfläche 44 px, sichtbar bleibt nur das Piktogramm.
 .banner__action {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--size-tap);
-  block-size: var(--size-tap);
+  @include tap-icon.frameless;
+
   color: var(--color-primary);
-  background: none;
-  border: 0;
 }

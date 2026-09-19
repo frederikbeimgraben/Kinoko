@@ -40,3 +40,15 @@
 .pageheader__actions:empty {
   display: none;
 }
+
+.pageheader__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
+  margin-inline-start: auto;
+  color: var(--color-primary);
+  background: none;
+  border: 0;
+}

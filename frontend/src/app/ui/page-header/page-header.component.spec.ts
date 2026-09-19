@@ -50,6 +50,27 @@ describe('PageHeaderComponent', () => {
     expect(back).toHaveAttribute('data-press', 'scale');
   });
 
+  it('shows the close button when the page has one', async () => {
+    const { container } = await render(PageHeaderComponent, {
+      inputs: { title: 'Settings', close: true },
+    });
+
+    expect(screen.getByRole('button', { name: 'Schließen' })).toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('emits closeClick when the close button is pressed', async () => {
+    const { fixture } = await render(PageHeaderComponent, {
+      inputs: { title: 'Settings', close: true },
+    });
+    let calls = 0;
+    fixture.componentInstance.closeClick.subscribe(() => (calls += 1));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
+
+    expect(calls).toBe(1);
+  });
+
   it('projects a mark next to the title', async () => {
     const { container } = await render(MarkedHostComponent);
 
