@@ -42,11 +42,11 @@
 
 // Am Rechner trägt `app-sheet` Scrim und Modal. Ein eigener Rahmen hier
 // spannte sonst einen Bezugsrahmen auf, in dem das Modal klebte.
-:host-context(.shell--column) .overlay__scrim {
+.overlay__scrim--wide {
   display: none;
 }
 
-:host-context(.shell--column) .overlay__panel {
+.overlay__panel--wide {
   animation: none;
 }
 

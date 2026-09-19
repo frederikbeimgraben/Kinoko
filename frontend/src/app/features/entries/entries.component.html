@@ -5,7 +5,7 @@
       {{ 'state.offlinePending' | t }}
     </app-badge>
   }
-  @if (signedIn()) {
+  @if (signedIn() && !wide()) {
     <button class="entries__add tap" type="button" data-press="scale" (click)="startEntry()">
       <app-svg-icon name="plus" [size]="16" [strokeWidth]="2" />
       {{ 'entry.create' | t }}

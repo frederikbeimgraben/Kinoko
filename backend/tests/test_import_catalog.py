@@ -132,6 +132,32 @@ def test_unknown_tree_is_reported() -> None:
         importer.build_terms(profiles)
 
 
+def test_unknown_smell_is_reported() -> None:
+    profiles = {"x": _profile(geruch={"tags": ["nichtvorhandenergeruch"]})}
+    with pytest.raises(vocab.UnknownVocabulary):
+        importer.build_terms(profiles)
+
+
+def test_unknown_taste_is_reported() -> None:
+    profiles = {"x": _profile(geschmack={"tags": ["nichtvorhandenergeschmack"]})}
+    with pytest.raises(vocab.UnknownVocabulary):
+        importer.build_terms(profiles)
+
+
+def test_smell_and_taste_terms_get_real_names_with_umlauts() -> None:
+    profiles = {
+        "x": _profile(
+            geruch={"tags": ["unauffaellig", "wuerzig"]},
+            geschmack={"tags": ["suesslich"]},
+        )
+    }
+    registry = importer.build_terms(profiles)
+    names = {(row.kind, row.slug): row.name for row in registry.rows}
+    assert names[(TermKind.SMELL, "unauffaellig")] == "Unauffällig"
+    assert names[(TermKind.SMELL, "wuerzig")] == "Würzig"
+    assert names[(TermKind.TASTE, "suesslich")] == "Süßlich"
+
+
 def test_slugify_handles_umlauts_and_spaces() -> None:
     assert vocab.slugify("Boletus edulis") == "boletus-edulis"
     assert vocab.slugify("Kastanienbraune Wurzeltrüffel") == "kastanienbraune-wurzeltrueffel"

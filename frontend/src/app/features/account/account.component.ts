@@ -6,6 +6,7 @@ import { AuthService, type SignedInUser } from '../../core/auth';
 import { ConfigService } from '../../core/config/config.service';
 import { I18nService, LANGUAGE_CHOICES, type LanguageChoice } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { MapAppService, type MapApp } from '../../core/maps/map-app.service';
 import { PwaService } from '../../core/pwa/pwa.service';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -15,6 +16,9 @@ import { ADMIN_PERMISSIONS } from '../admin/admin.entries';
 
 /** Die drei Wahlmöglichkeiten der Darstellung, in der Reihenfolge des Artboards. */
 const THEMES: readonly ThemeChoice[] = ['hell', 'dunkel', 'system'];
+
+/** OpenStreetMap vor Google Maps, wie das Artboard sie zeigt. */
+const MAP_APPS: readonly MapApp[] = ['osm', 'google'];
 
 /**
  * Der Konto-Screen (Artboard `Mehr`): wer angemeldet ist, Darstellung, Offline
@@ -46,6 +50,7 @@ export class AccountComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly theme = inject(ThemeService);
+  private readonly mapApp = inject(MapAppService);
   private readonly rights = inject(PermissionsService);
   private readonly pwa = inject(PwaService);
 
@@ -91,6 +96,17 @@ export class AccountComponent {
   protected readonly themes = computed<SegmentOption[]>(() =>
     THEMES.map((choice) => ({ value: choice, label: this.i18n.translate(`theme.${choice}`) })),
   );
+
+  protected readonly mapAppChoice = this.mapApp.choice;
+
+  protected readonly mapApps = computed<SegmentOption[]>(() =>
+    MAP_APPS.map((choice) => ({ value: choice, label: this.i18n.translate(`account.mapApp.${choice}`) })),
+  );
+
+  protected selectMapApp(value: string): void {
+    const choice = MAP_APPS.find((candidate) => candidate === value);
+    if (choice) this.mapApp.setChoice(choice);
+  }
 
   protected install(): void {
     void this.pwa.install();

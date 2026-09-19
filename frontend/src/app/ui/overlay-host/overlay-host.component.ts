@@ -8,6 +8,7 @@ import {
   output,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 
 /** Ein Slot über `app-sheet`: offen oder zu, Scrim am Telefon, Escape. */
 @Component({
@@ -19,6 +20,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 })
 export class OverlayHostComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Das Fenster entscheidet, nicht die Lage im Baum: ein Host außerhalb der Hülle trifft sonst nie auf `.shell--column`. */
+  protected readonly wide = inject(ViewportService).wide;
 
   readonly open = input.required<boolean>();
   /** Ein modales Blatt dunkelt ab; ein Blatt über der Karte lässt sie sehen. */

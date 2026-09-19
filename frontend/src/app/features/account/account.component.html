@@ -44,6 +44,16 @@
     />
   </section>
 
+  <section class="account__block">
+    <h2 class="account__section">{{ 'account.mapApp' | t }}</h2>
+    <app-segmented
+      [options]="mapApps()"
+      [value]="mapAppChoice()"
+      [label]="'account.mapApp' | t"
+      (valueChange)="selectMapApp($event)"
+    />
+  </section>
+
   @if (signedIn()) {
     <section class="account__block">
       <h2 class="account__section">{{ 'konto.abschnitt.beitraege' | t }}</h2>

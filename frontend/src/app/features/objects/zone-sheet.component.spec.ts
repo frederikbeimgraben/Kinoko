@@ -96,12 +96,12 @@ describe('ZoneBlattComponent', () => {
 
   it('führt die Zone an die Karten-App weiter', async () => {
     await build();
-    const opened = vi.fn();
-    vi.stubGlobal('open', opened);
+    const fakeLocation = { href: '' } as unknown as Location;
+    vi.spyOn(window, 'location', 'get').mockReturnValue(fakeLocation);
 
     await userEvent.click(screen.getByRole('button', { name: 'In Karten-App öffnen' }));
 
-    expect(opened).toHaveBeenCalledWith(expect.stringContaining('%2C'), '_blank', 'noopener');
+    expect(fakeLocation.href).toMatch(/^geo:/);
   });
 
   it('speichert Farbe, Sichtbarkeit und Notiz', async () => {

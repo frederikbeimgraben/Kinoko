@@ -23,5 +23,7 @@
   "MyImages",
   "OfflineAreas",
   "SignInProgress",
-  "SignInSheet"
+  "SignInSheet",
+  "SpeciesDesktopScrolled",
+  "SpeciesScrolled"
 ]

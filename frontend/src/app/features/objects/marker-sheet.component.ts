@@ -5,12 +5,11 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { colourHex } from '../entries/colors';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
-import { openGoogleMaps } from './map-links';
 
 /** Das Objekt-Blatt eines Markers und sein Formular (Boards `MarkerSheet`, `MarkerEdit`). */
 @Component({
@@ -20,7 +19,7 @@ import { openGoogleMaps } from './map-links';
     ActionBarComponent,
     CardComponent,
     ConfirmDialogComponent,
-    ListRowComponent,
+    MapAppLinkComponent,
     ObjectFormComponent,
     TranslatePipe,
   ],
@@ -45,10 +44,6 @@ export class MarkerSheetComponent {
     this.marker().lon,
     this.marker().lat,
   ]);
-
-  protected toGoogleMaps(): void {
-    openGoogleMaps(this.location());
-  }
 
   protected readonly colour = computed(() => colourHex(this.marker().colour));
 

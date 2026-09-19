@@ -209,6 +209,46 @@ TRAIT_KEY: dict[str, str] = {
     "schutz": "protection",
 }
 
+SMELL_NAME: dict[str, str] = {
+    "angenehm": "Angenehm",
+    "anisartig": "Anisartig",
+    "bittermandel": "Bittermandel",
+    "erdartig": "Erdartig",
+    "fischartig": "Fischartig",
+    "fruchtig": "Fruchtig",
+    "gurkenartig": "Gurkenartig",
+    "honigartig": "Honigartig",
+    "karbolartig": "Karbolartig",
+    "maggiartig": "Maggiartig",
+    "mehlig": "Mehlig",
+    "muffig": "Muffig",
+    "obstartig": "Obstartig",
+    "pilzig": "Pilzig",
+    "rettichartig": "Rettichartig",
+    "saeuerlich": "Säuerlich",
+    "seifig": "Seifig",
+    "spermatisch": "Spermatisch",
+    "suesslich": "Süßlich",
+    "unangenehm": "Unangenehm",
+    "unauffaellig": "Unauffällig",
+    "wuerzig": "Würzig",
+}
+
+TASTE_NAME: dict[str, str] = {
+    "bitter": "Bitter",
+    "brennend": "Brennend",
+    "herb": "Herb",
+    "kratzend": "Kratzend",
+    "mehlig": "Mehlig",
+    "mild": "Mild",
+    "nussig": "Nussig",
+    "pilzig": "Pilzig",
+    "saeuerlich": "Säuerlich",
+    "scharf": "Scharf",
+    "suesslich": "Süßlich",
+    "unangenehm": "Unangenehm",
+}
+
 REAGENT_SLUG: dict[str, str] = {
     "koh": "koh",
     "naoh": "naoh",

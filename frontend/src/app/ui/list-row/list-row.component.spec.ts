@@ -105,6 +105,23 @@ describe('ListRowComponent', () => {
     expect(screen.getByRole('button', { name: 'edit' })).toBeInTheDocument();
   });
 
+  it('trägt den Titel in der Primärfarbe, wenn eine Zeile ohne Chevron führt', async () => {
+    const { container } = await render(ListRowComponent, {
+      inputs: { title: 'Steinpilz', accent: true, clickable: true },
+    });
+
+    expect(container.querySelector('.row__title--accent')).not.toBeNull();
+  });
+
+  it('lässt den Wert die Primärfarbe tragen, wenn die Zeile einen Chevron trägt', async () => {
+    const { container } = await render(ListRowComponent, {
+      inputs: { title: 'Speisewert', value: 'essbar', accent: true, chevron: true },
+    });
+
+    expect(container.querySelector('.row__title--accent')).toBeNull();
+    expect(container.querySelector('.row__value--accent')).not.toBeNull();
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(ListRowComponent, {
       inputs: { title: 'Row', subline: 'Sub', value: '1' },

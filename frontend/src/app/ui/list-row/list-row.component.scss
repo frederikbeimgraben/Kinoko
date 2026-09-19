@@ -133,6 +133,10 @@
   color: var(--color-primary);
 }
 
+.row__title--accent {
+  color: var(--color-primary);
+}
+
 // Die Unterzeile bleibt einzeilig; ein längerer Text endet mit Auslassung.
 .row__sub {
   overflow: hidden;

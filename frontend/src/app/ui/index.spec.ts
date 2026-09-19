@@ -30,6 +30,7 @@ const BLOCKS = [
   'app-key-value-table',
   'app-key-value-row',
   'app-choice-row',
+  'app-map-app-link',
   'app-form-field',
   'app-search-field',
   'app-segmented',

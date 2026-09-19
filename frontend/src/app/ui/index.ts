@@ -47,6 +47,7 @@ export { KeyValueRowComponent } from './key-value-table/key-value-row.component'
 export { KeyValueTableComponent } from './key-value-table/key-value-table.component';
 export { LevelPillComponent } from './level-pill/level-pill.component';
 export { ListRowComponent } from './list-row/list-row.component';
+export { MapAppLinkComponent } from './map-app-link/map-app-link.component';
 export { MapAttributionComponent } from './map-attribution/map-attribution.component';
 export { MeasurementComponent, type Extent, type Span } from './measurement/measurement.component';
 export {

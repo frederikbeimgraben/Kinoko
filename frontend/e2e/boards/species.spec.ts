@@ -59,6 +59,18 @@ test('Species', async ({ page }) => {
   await expectBoard(page, 'Species');
 });
 
+const SPECIES_SCROLL = 48;
+
+test('SpeciesScrolled', async ({ page }) => {
+  guard('SpeciesScrolled', 'phone');
+  await openList(page, bundle([...SEVEN, ...RESULT_REST]));
+  await seen(page, 'Steinpilz');
+  await page.locator('.results__list .list').evaluate((one, top) => {
+    one.scrollTo(0, top);
+  }, SPECIES_SCROLL);
+  await expectBoard(page, 'SpeciesScrolled');
+});
+
 test('SpeciesSearch', async ({ page }) => {
   guard('SpeciesSearch', 'phone');
   await openList(page, bundle(STONE));
@@ -187,6 +199,22 @@ test('SpeciesDesktop', async ({ page }) => {
   });
   await seen(page, 'Perlpilz');
   await expectBoard(page, 'SpeciesDesktop');
+});
+
+const SPECIES_DESKTOP_SCROLL = 56;
+
+test('SpeciesDesktopScrolled', async ({ page }) => {
+  guard('SpeciesDesktopScrolled', 'desktop');
+  await mockSignIn(page);
+  await openList(page, bundle([...DESKTOP_SPECIES, ...RESULT_REST]), {
+    '/api/config': authConfig(BASE),
+    ...SIGNED_IN,
+  });
+  await seen(page, 'Perlpilz');
+  await page.locator('.results__list .list').evaluate((one, top) => {
+    one.scrollTo(0, top);
+  }, SPECIES_DESKTOP_SCROLL);
+  await expectBoard(page, 'SpeciesDesktopScrolled');
 });
 
 test('FilterDesktop', async ({ page }) => {

@@ -100,6 +100,20 @@ describe('InfiniteListComponent', () => {
     expect(container.querySelectorAll('.list > .scroll-fade')).toHaveLength(2);
   });
 
+  it('bleibt ohne Rahmen, solange framed fehlt', async () => {
+    const { container } = await render(InfiniteListComponent, { inputs: { pageSize: 40 } });
+
+    expect(container.querySelector('.list--framed')).toBeNull();
+  });
+
+  it('trägt den Kartenrahmen, wenn framed gesetzt ist', async () => {
+    const { container } = await render(InfiniteListComponent, {
+      inputs: { pageSize: 40, framed: true },
+    });
+
+    expect(container.querySelector('.list--framed')).not.toBeNull();
+  });
+
   it('bleibt ohne Befund', async () => {
     const { container } = await render(InfiniteListComponent, { inputs: { pageSize: 40 } });
 
