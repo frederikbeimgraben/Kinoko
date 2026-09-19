@@ -52,17 +52,20 @@
   grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
 }
 
-// Eine eigene Stapelschicht, die sich die Zelle mit dem Reiterinhalt teilt.
+// Ohne eigene Ebene hier bliebe ein deckendes Blatt (`position: fixed`) der
+// Karte in dieser Zelle gefangen: die Leiste hat keine eigene Ebene und
+// läge dann immer über dem ganzen Zweig, auch über einem Blatt mit hohem
+// z-index darin.
 .shell__map {
   position: relative;
-  z-index: 0;
   grid-row: 1;
   min-block-size: 0;
 }
 
 // Am Rechner liegt die Karte hinter der Spalte und spannt über die ganze
-// Breite der Hülle.
+// Breite der Hülle. Eine eigene Ebene ordnet sie unter Leiste und Reiter ein.
 .shell--column .shell__map {
+  z-index: 0;
   grid-area: 1 / 1 / 2 / 4;
 }
 
