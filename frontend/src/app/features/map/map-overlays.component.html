@@ -53,6 +53,7 @@
   <app-sheet
     [label]="'nav.tab.map' | t"
     [title]="title()"
+    [style.--sheet-title-size.px]="open() === 'save' ? null : 20"
     [compact]="open() === 'save'"
     [detent]="detent()"
     [detents]="detents"
