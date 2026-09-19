@@ -8,6 +8,22 @@ const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 const RAIL = 88;
 const COLUMN = 400;
 
+/** Vier Punkte über der Kartenfläche, im Uhrzeigersinn. */
+const CORNERS: readonly (readonly [number, number])[] = [
+  [700, 300],
+  [900, 280],
+  [950, 500],
+  [720, 520],
+];
+
+/** Der Zeiger über der Karte, wie ihn der Schritt setzt. */
+async function cursorOfMap(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    const canvas = document.querySelector('.map__canvas canvas');
+    return canvas === null ? '' : getComputedStyle(canvas).cursor;
+  });
+}
+
 async function openMap(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -58,10 +74,70 @@ test('Zone zeichnen bleibt am Rechner eine Leiste über der freien Karte', async
 
   await expect(bar).toBeVisible();
 
-  for (let corner = 0; corner < 3; corner += 1) {
-    await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-  }
+  await expect(page.getByRole('button', { name: 'Eckpunkt setzen' })).toHaveCount(0);
+  for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
   await page.getByRole('button', { name: 'Zone abschließen' }).click();
 
   await expect(page.getByRole('dialog', { name: 'Zone speichern' })).toBeVisible();
+});
+
+test('Der Zeiger setzt die Ecken, die Rücktaste nimmt sie weg', async ({ page }) => {
+  await openMap(page);
+  await page.locator('.map__add').click();
+  await page.getByRole('button', { name: 'Zone zeichnen' }).click();
+  const bar = page.getByRole('dialog', { name: 'Zone zeichnen' });
+  await expect(bar).toBeVisible();
+  expect(await cursorOfMap(page)).toBe('crosshair');
+  await expect(page.locator('app-crosshair')).toHaveCount(0);
+
+  for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
+
+  await expect(bar.getByText(/4 Eckpunkte/)).toBeVisible();
+
+  await page.keyboard.press('Backspace');
+
+  await expect(bar.getByText(/3 Eckpunkte/)).toBeVisible();
+});
+
+test('Ein Klick auf die erste Ecke schließt die Zone', async ({ page }) => {
+  await openMap(page);
+  await page.locator('.map__add').click();
+  await page.getByRole('button', { name: 'Zone zeichnen' }).click();
+  await expect(page.getByRole('dialog', { name: 'Zone zeichnen' })).toBeVisible();
+  for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
+
+  await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
+
+  await expect(page.getByRole('dialog', { name: 'Zone speichern' })).toBeVisible();
+});
+
+test('Esc bricht den Schritt ab', async ({ page }) => {
+  await openMap(page);
+  await page.locator('.map__add').click();
+  await page.getByRole('button', { name: 'Zone zeichnen' }).click();
+  const bar = page.getByRole('dialog', { name: 'Zone zeichnen' });
+  await expect(bar).toBeVisible();
+
+  await page.keyboard.press('Escape');
+
+  await expect(bar).toHaveCount(0);
+});
+
+test('Ein Klick setzt den Fundort, ein zweiter verschiebt ihn', async ({ page }) => {
+  await openMap(page);
+  await page.locator('.map__add').click();
+  await page.getByRole('button', { name: 'Fund melden' }).click();
+  const bar = page.getByRole('dialog', { name: 'Fundort festlegen' });
+  await expect(bar).toBeVisible();
+
+  await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
+  const first = await bar.locator('.addentry__note').textContent();
+  await page.mouse.click(CORNERS[2][0], CORNERS[2][1]);
+  const second = await bar.locator('.addentry__note').textContent();
+
+  expect(first).not.toBe(second);
+
+  await page.getByRole('button', { name: 'Fundort übernehmen' }).click();
+
+  await expect(page.getByRole('dialog', { name: 'Fund melden' })).toBeVisible();
 });

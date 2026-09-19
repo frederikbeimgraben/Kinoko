@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import { clearRing, paintRing } from './ring-painter';
+import { clearRing, paintRing, type StepView } from './step-painter';
 import type { Location } from './add-entry.state';
 
 /** Ein Ring, wie ihn Terra Draw nach dem Ziehen zurückgibt. */
@@ -12,7 +12,7 @@ export type RingListener = (ring: Location[]) => void;
  */
 export interface DrawSession {
   /** Legt den Ring neu auf die Karte. Ein leerer Ring löscht ihn. */
-  showRing(ring: readonly Location[]): void;
+  showRing(ring: readonly Location[], view?: StepView): void;
   /** Schaltet auf Auswahl: die Eckpunkte lassen sich ziehen. */
   edit(handler: RingListener): void;
   stop(): void;
@@ -113,11 +113,11 @@ export async function startDrawing(
   return {
     // Beim Zeichnen malen eigene Ebenen: Terra Draw kennt weder Strichmuster
     // noch Eckpunkte.
-    showRing: (ring) => {
+    showRing: (ring, view) => {
       held = ring;
       draw.clear();
       id = null;
-      paintRing(map, ring, farbe);
+      paintRing(map, ring, farbe, view);
     },
     edit: (handler) => {
       clearRing(map);

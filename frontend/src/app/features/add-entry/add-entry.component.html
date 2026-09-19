@@ -49,9 +49,11 @@
         (primaryClick)="closeZone()"
         (secondaryClick)="state.removeLastCorner()"
       >
-        <app-button class="addentry__main" variant="primary" [block]="true" (click)="addCorner()">
-          {{ 'entry.zone.setVertex' | t }}
-        </app-button>
+        @if (!wide()) {
+          <app-button class="addentry__main" variant="primary" [block]="true" (click)="addCorner()">
+            {{ 'entry.zone.setVertex' | t }}
+          </app-button>
+        }
       </app-action-bar>
     }
     @case ('findForm') {
@@ -91,7 +93,7 @@
 
 @if (state.running()) {
   <div class="addentry">
-    @if (state.showsCrosshair()) {
+    @if (state.showsCrosshair() && !wide()) {
       <div class="addentry__crosshair">
         <app-crosshair [label]="'entry.setLocation.title' | t" />
       </div>

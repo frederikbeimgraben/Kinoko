@@ -77,7 +77,12 @@ export class AddEntryState {
     this._step.set('zoneDraw');
   }
 
-  /** Übernimmt den Ort unter dem Fadenkreuz und geht ins Formular. */
+  /** Setzt den Ort, ohne den Schritt zu verlassen. Der Punkt steht auf der Karte. */
+  setPoint(location: Location): void {
+    this._location.set(location);
+  }
+
+  /** Übernimmt den Ort und geht ins Formular. */
   adoptLocation(location: Location): void {
     this._location.set(location);
     this._step.update((step) => (step === 'markerLocation' ? 'markerForm' : 'findForm'));

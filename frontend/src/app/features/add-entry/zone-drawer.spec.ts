@@ -87,7 +87,9 @@ const loader = (): Promise<TerraModule> =>
 /** Eine Karte, die mitschreibt, welche Ebenen und Daten sie bekommen hat. */
 class MapDouble {
   readonly layers: string[] = [];
-  data: { features: { geometry: { type: string } }[] } | null = null;
+  data: {
+    features: { geometry: { type: string }; properties?: Record<string, unknown> }[];
+  } | null = null;
   private has = false;
 
   getSource(): unknown {
@@ -149,10 +151,38 @@ describe('starteZeichnen', () => {
 
     session.showRing(RING);
 
-    expect(surface.layers).toEqual(['pilz-ring-fill', 'pilz-ring-line', 'pilz-ring-corners']);
+    expect(surface.layers).toEqual([
+      'pilz-ring-fill',
+      'pilz-ring-line',
+      'pilz-ring-preview',
+      'pilz-ring-corners',
+      'pilz-ring-mark',
+    ]);
     const kinds = surface.data?.features.map((feature) => feature.geometry.type);
     expect(kinds).toEqual(['Polygon', 'Point', 'Point', 'Point']);
     expect(DrawDouble.last?.features).toHaveLength(0);
+  });
+
+  it('hängt den Ring am Rechner an den Zeiger', async () => {
+    const surface = new MapDouble();
+    const session = await startDrawing(surface as unknown as MapLibreMap, '#004225', loader);
+
+    session.showRing(RING, { pointer: [9.1, 48.6] });
+
+    const kinds = surface.data?.features.map((feature) => feature.geometry.type);
+    expect(kinds).toEqual(['Polygon', 'Point', 'Point', 'Point', 'LineString', 'LineString', 'LineString']);
+    const closing = surface.data?.features.at(-1)?.properties?.['closing'];
+    expect(closing).toBe(true);
+  });
+
+  it('malt den gesetzten Ort als Marke', async () => {
+    const surface = new MapDouble();
+    const session = await startDrawing(surface as unknown as MapLibreMap, '#004225', loader);
+
+    session.showRing([], { mark: [9.05, 48.52] });
+
+    const marks = surface.data?.features.filter((feature) => feature.properties?.['mark'] === true);
+    expect(marks).toHaveLength(1);
   });
 
   it('malt nur Punkte, solange die Fläche noch fehlt', async () => {
