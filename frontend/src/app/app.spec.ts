@@ -63,13 +63,5 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
   });
 
-  it('kennt die Werkstattseite', async () => {
-    const { navigate } = await app();
-
-    await navigate('/bausteine');
-
-    expect(
-      await screen.findByRole('heading', { name: 'app-button · 44 / 48 px · radius 10 · rand 1' }),
-    ).toBeInTheDocument();
-  }, 60_000);
+  // Die Werkstattseite hängt an `dev.routes.e2e.ts`; diese Hülle lädt `dev.routes.ts`, eine leere Liste.
 });

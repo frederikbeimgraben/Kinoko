@@ -12,9 +12,9 @@
     @if (marker().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }
-    <app-card class="flush">
+    <app-row-group>
       <app-map-app-link [target]="location()" />
-    </app-card>
+    </app-row-group>
   </div>
   <app-action-bar
     [primary]="'common.edit' | t"

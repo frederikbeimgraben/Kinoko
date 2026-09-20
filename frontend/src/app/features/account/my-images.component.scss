@@ -29,6 +29,9 @@
   display: flex;
   gap: var(--space-3);
   align-items: flex-start;
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 20px;
 }
 
 // Maße aus `docs/mockups/bauen.py`, Artboard `Einreichungen`: 84 × 64.

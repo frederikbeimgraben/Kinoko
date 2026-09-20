@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
 import { AccessApi } from '../../core/api/access.api';
 import type { AccountExport } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -22,7 +22,6 @@ function today(): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ButtonComponent,
-    CardComponent,
     ConfirmDialogComponent,
     KeyValueRowComponent,
     KeyValueTableComponent,

@@ -126,20 +126,6 @@
   margin-inline-start: 2px;
 }
 
-// Karten, deren Inhalt von Rand zu Rand geht: Listen und Tabellen. Der
-// Innenabstand steckt in der Karte des Kits fest als `.p-5`; ihn hier auf null
-// zu stellen ist der einzige Weg, der die Karte nicht nachbaut.
-app-card.flush {
-  --space-5: 0;
-}
-
-// Eine Karte in Blatt, Modal oder Popover trägt keinen Schatten: die Fläche
-// darum hat schon einen. `app-sheet` ist auch das Modal am Rechner.
-app-sheet app-card .card,
-app-popover app-card .card {
-  box-shadow: none;
-}
-
 // Leerzustand einer Liste oder Tabelle im Kit.
 .empty-state {
   padding: var(--space-5);

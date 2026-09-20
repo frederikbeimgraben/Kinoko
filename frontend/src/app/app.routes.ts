@@ -1,5 +1,6 @@
 import type { Routes } from '@angular/router';
 import { requiresPermission } from './features/admin/admin.guard';
+import { DEV_ROUTES } from './dev/dev.routes';
 
 /** Die vier Reiter. Wo das Arbeitspaket aussteht, steht ein Platzhalter. */
 export const routes: Routes = [
@@ -226,10 +227,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/account/signin-callback.component').then((m) => m.SignInCallbackComponent),
   },
-  {
-    path: 'bausteine',
-    loadComponent: () =>
-      import('./dev/building-blocks/building-blocks.component').then((m) => m.BuildingBlocksComponent),
-  },
+  ...DEV_ROUTES,
   { path: '**', redirectTo: 'karte' },
 ];

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 /** Eine Wahl im Segmented. */
@@ -13,7 +14,7 @@ export interface SegmentOption {
 @Component({
   selector: 'app-segmented',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SkeletonComponent],
+  imports: [RippleDirective, SkeletonComponent],
   templateUrl: './segmented.component.html',
   styleUrl: './segmented.component.scss',
 })

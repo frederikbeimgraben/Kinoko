@@ -1,0 +1,8 @@
+// Die kleine Beschriftung über einem Feld oder einem Abschnitt, aus `kit.css` `.lbl`.
+.lbl {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}

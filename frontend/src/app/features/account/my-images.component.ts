@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, ButtonComponent, CardComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ButtonComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
 import { photoPath, type Photo, type PhotoState } from '../../core/api/models';
 import { PhotosApi } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
@@ -10,6 +10,7 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SpeciesState } from '../species/species.state';
 
 const STATE_BADGE: Record<PhotoState, BadgeVariant> = {
@@ -45,10 +46,10 @@ interface Row {
   imports: [
     BadgeComponent,
     ButtonComponent,
-    CardComponent,
     EmptyStateComponent,
     PageHeaderComponent,
     PrivateImageComponent,
+    RowGroupComponent,
     TranslatePipe,
   ],
   templateUrl: './my-images.component.html',

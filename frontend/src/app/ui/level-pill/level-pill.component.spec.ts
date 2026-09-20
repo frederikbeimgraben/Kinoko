@@ -15,16 +15,16 @@ describe('LevelPillComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt die Geometrie der Marke: Radius als Pille', async () => {
+  it('trägt die Geometrie der Marke aus der Gestaltung', async () => {
     const { container } = await render(LevelPillComponent, {
       inputs: { text: 'essbar', colour: '#4f9d6f' },
     });
 
     const pill = container.querySelector<HTMLElement>('.level');
     if (pill === null) throw new Error('Die Marke steht nicht im Baum.');
-    // Das globale Stilblatt mit --radius-pill: 999px fehlt im Test. Geprüft
+    // Das globale Stilblatt mit --radius-md: 8px fehlt im Test. Geprüft
     // wird darum die Bindung an das Token, nicht der aufgelöste Wert.
-    expect(getComputedStyle(pill).borderRadius).toBe('var(--radius-pill)');
+    expect(getComputedStyle(pill).borderRadius).toBe('var(--radius-md)');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
@@ -34,5 +34,24 @@ describe('LevelPillComponent', () => {
     });
 
     noGermanText(container);
+  });
+
+  it('nimmt die Tonfarbe der Stufe, wenn eine Art angegeben ist', async () => {
+    const { container } = await render(LevelPillComponent, {
+      inputs: { text: 'essbar', kind: 'ok' },
+    });
+
+    expect(container.querySelector('.level')).toHaveClass('level--ok');
+  });
+
+  it('trägt keine Stufe ohne die Angabe', async () => {
+    const { container } = await render(LevelPillComponent, {
+      inputs: { text: 'essbar', colour: '#4f9d6f' },
+    });
+
+    const pill = container.querySelector('.level');
+    expect(pill).not.toHaveClass('level--ok');
+    expect(pill).not.toHaveClass('level--warn');
+    expect(pill).not.toHaveClass('level--bad');
   });
 });

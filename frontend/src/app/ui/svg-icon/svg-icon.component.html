@@ -6,6 +6,7 @@
   [attr.aria-label]="label() ?? null"
   [attr.aria-hidden]="hidden()"
   [class.filled]="filled()"
+  [class.dim]="tone() === 'dim'"
   [style.stroke-width.px]="strokeWidth()"
   [innerHTML]="markup()"
 ></svg>

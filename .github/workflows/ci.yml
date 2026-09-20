@@ -228,7 +228,7 @@ jobs:
       - working-directory: frontend
         run: npx playwright install --with-deps chromium
       - working-directory: frontend
-        run: npm run build
+        run: npm run build:e2e
       - name: Flüsse
         working-directory: frontend
         run: npm run e2e:flows

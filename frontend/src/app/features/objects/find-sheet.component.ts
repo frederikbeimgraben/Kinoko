@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ButtonComponent, CardComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find } from '../../core/api/models';
@@ -22,6 +22,7 @@ import { valueAtPoint } from '../../core/tiles/value-at-point';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
@@ -37,11 +38,11 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
   imports: [
     ActionBarComponent,
     ButtonComponent,
-    CardComponent,
     ConfirmDialogComponent,
     FindFormComponent,
     ListRowComponent,
     PhotoGalleryComponent,
+    RowGroupComponent,
     SvgIconComponent,
     TranslatePipe,
   ],

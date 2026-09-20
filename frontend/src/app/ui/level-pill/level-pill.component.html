@@ -1,3 +1,9 @@
-<span class="level" [style.--pilz-level-colour]="colour()" [style.--pilz-level-area]="background()">{{
-  text()
-}}</span>
+<span
+  class="level"
+  [class.level--ok]="kind() === 'ok'"
+  [class.level--warn]="kind() === 'warn'"
+  [class.level--bad]="kind() === 'bad'"
+  [style.--pilz-level-colour]="colour()"
+  [style.--pilz-level-area]="background()"
+  >{{ text() }}</span
+>

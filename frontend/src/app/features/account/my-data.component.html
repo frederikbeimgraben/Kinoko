@@ -1,7 +1,7 @@
 <app-page-header [title]="'account.myData' | t" [back]="true" (backClick)="back()" />
 
 <div class="data">
-  <app-card>
+  <div class="data__table">
     <app-key-value-table>
       <app-key-value-row [key]="'entry.finds' | t" [value]="finds().toString()" />
       <app-key-value-row [key]="'entry.markers' | t" [value]="markers().toString()" />
@@ -9,7 +9,7 @@
       <app-key-value-row [key]="'entry.images' | t" [value]="photos().toString()" />
       <app-key-value-row [key]="'map.combination.list' | t" [value]="combinations().toString()" />
     </app-key-value-table>
-  </app-card>
+  </div>
 
   <app-button variant="secondary" (click)="export()">{{ 'account.exportJson' | t }}</app-button>
   <app-button variant="danger" (click)="asking.set(true)">{{ 'account.deleteAllData' | t }}</app-button>

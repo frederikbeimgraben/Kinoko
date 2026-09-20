@@ -1,3 +1,5 @@
+@use '../../../styles/card';
+
 :host {
   display: flex;
   flex-direction: column;
@@ -13,4 +15,8 @@
   padding: var(--space-5) var(--size-gutter);
   overflow-y: auto;
   scrollbar-width: none;
+}
+
+.data__table {
+  @include card.card;
 }

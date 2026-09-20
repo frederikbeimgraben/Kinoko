@@ -16,9 +16,9 @@
     @if (zone().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }
-    <app-card class="flush">
+    <app-row-group>
       <app-map-app-link [target]="center()" />
-    </app-card>
+    </app-row-group>
   </div>
   @if (editingCorners()) {
     <app-action-bar

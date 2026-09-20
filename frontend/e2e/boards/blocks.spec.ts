@@ -29,7 +29,7 @@ test('Blocks', async ({ page }) => {
     const spec = PHOTOS[parts.at(-2) ?? ''] ?? PHOTOS['bild-eins'];
     await route.fulfill({ status: 200, contentType: 'image/png', body: placeholder(spec) });
   });
-  await page.goto('/bausteine');
+  await page.goto('/dev/blocks');
   await page.waitForLoadState('networkidle');
 
   const order = await page

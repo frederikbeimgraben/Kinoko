@@ -7,7 +7,7 @@
     <ul class="mine__list">
       @for (row of rows(); track row.id) {
         <li>
-          <app-card>
+          <app-row-group>
             <div class="mine__row">
               <app-private-image class="mine__thumb" [path]="row.thumbPath" [alt]="row.alt" />
               <div class="mine__text">
@@ -19,7 +19,7 @@
               </div>
               <app-badge [variant]="row.badge">{{ row.badgeText }}</app-badge>
             </div>
-          </app-card>
+          </app-row-group>
         </li>
       }
     </ul>

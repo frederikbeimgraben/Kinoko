@@ -43,4 +43,18 @@ describe('SvgIconComponent', () => {
 
     expect(container.querySelector('svg')).toHaveStyle({ strokeWidth: '1.6px' });
   });
+
+  it('färbt sich schwächer im gedämpften Ton', async () => {
+    const { container } = await render(SvgIconComponent, {
+      inputs: { name: 'mushroom', tone: 'dim' },
+    });
+
+    expect(container.querySelector('svg')).toHaveClass('dim');
+  });
+
+  it('trägt keinen gedämpften Ton ohne die Angabe', async () => {
+    const { container } = await render(SvgIconComponent, { inputs: { name: 'mushroom' } });
+
+    expect(container.querySelector('svg')).not.toHaveClass('dim');
+  });
 });

@@ -79,29 +79,6 @@ declare module '*/tools/sync-texts.mjs' {
   export function catalogue(): Record<string, Record<string, string>>;
 }
 
-declare module '*/tools/sync-boards.mjs' {
-  export interface BoardFile {
-    name: string;
-    action: 'copy' | 'skip-same' | 'skip-excluded';
-  }
-  export interface CopyResult {
-    fresh: number;
-    same: number;
-    files: BoardFile[];
-  }
-  export interface SyncResult extends CopyResult {
-    from: string;
-    target: string;
-    /** Wo die Kartenbilder lagen, oder `null`, wenn es keine gibt. */
-    fixtureSource: string | null;
-    fixtures: CopyResult;
-    /** Was aus `Blocks.png` geschnitten wurde, oder `null` ohne Manifest. */
-    cards: { fresh: number; same: number; stale: number } | null;
-  }
-  export function sync(root: string): SyncResult | null;
-  export function cardStem(selector: string): string;
-}
-
 declare module '*/tools/sync-baselines.mjs' {
   export function designDir(root: string, override?: string): string;
   export interface SyncResult {
@@ -110,16 +87,6 @@ declare module '*/tools/sync-baselines.mjs' {
   }
   export function sync(root: string, dir: string): SyncResult;
   export function check(root: string): string[];
-}
-
-declare module '*/tools/render-fixtures.mjs' {
-  export interface Fixture {
-    stem: string;
-    file: string;
-    size: { width: number; height: number } | null;
-  }
-  export function sizeOf(source: string): { width: number; height: number } | null;
-  export function fixtures(dir: string): Fixture[];
 }
 
 declare module '*/tools/png.mjs' {

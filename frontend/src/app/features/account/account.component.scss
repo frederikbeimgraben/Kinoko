@@ -35,14 +35,13 @@
 // Die Konto-Karte sitzt enger als eine Karte des Kits: 12 px hoch, 14 px
 // seitlich. Der Innenabstand steckt dort als `var(--space-5)`; ihn zu setzen
 // ist derselbe Weg wie `randlos` in den Hilfsklassen.
-.account__map {
-  --space-5: 12px 14px;
-}
-
 .account__row {
   display: flex;
   gap: var(--space-3);
   align-items: center;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: 20px;
 }
 
 .account__circle {

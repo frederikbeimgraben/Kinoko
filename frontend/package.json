@@ -9,6 +9,8 @@
     "postinstall": "node tools/stamp-version.mjs",
     "prebuild": "node tools/stamp-version.mjs",
     "build": "ng build",
+    "prebuild:e2e": "node tools/stamp-version.mjs",
+    "build:e2e": "ng build --configuration e2e",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --no-watch --coverage",
@@ -23,17 +25,14 @@
     "check:size": "node tools/check-size.mjs",
     "check:selectors": "node tools/check-selectors.mjs",
     "check:german": "node tools/check-german.mjs",
-    "boards:render": "node tools/render-boards.mjs",
     "boards:sync": "node tools/sync-baselines.mjs",
     "boards:check": "node tools/sync-baselines.mjs --check",
-    "boards:fixtures": "node tools/render-fixtures.mjs",
     "texts:sync": "node tools/sync-texts.mjs",
     "api:generate": "openapi-typescript ../backend/openapi.yaml -o src/app/core/api/contract.d.ts",
     "e2e": "playwright test",
     "e2e:boards": "node tools/check-boards.mjs && playwright test --project=phone --project=wide --project=blocks",
     "e2e:flows": "playwright test --project=flows",
-    "lighthouse": "lhci autorun",
-    "boards:cards": "node tools/measure-blocks-cards.mjs"
+    "lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@angular/common": "^22.1.0",

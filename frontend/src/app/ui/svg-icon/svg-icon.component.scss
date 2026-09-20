@@ -15,3 +15,7 @@ svg.filled {
   fill: currentColor;
   stroke: none;
 }
+
+svg.dim {
+  color: var(--label);
+}

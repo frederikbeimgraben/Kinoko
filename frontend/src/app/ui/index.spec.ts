@@ -73,7 +73,9 @@ const BLOCKS = [
   'app-empty-state',
   'app-error-state',
   'app-infinite-list',
+  'app-row-group',
   'app-skeleton',
+  'app-section',
   'app-progress',
   'app-toast',
 ] as const;

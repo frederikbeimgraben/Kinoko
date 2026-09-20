@@ -1,23 +1,34 @@
-// Geometrie und Schrift wie eine Marke des Kits. Nur die Farbe ist frei.
+// Geometrie und Schrift aus `kit.css` `.badge`. Eine Art trägt die Tonfarbe,
+// sonst gilt die freie Farbe der Fläche.
 :host {
   display: inline-flex;
-  // Die Marke des Kits kennt kein Spatium für 3 px 10 px, darum eigene Masse.
-  --pilz-level-padding-block: 3px;
-  --pilz-level-padding-inline: 10px;
 }
 
 .level {
   display: inline-flex;
   flex: 1 1 auto;
   align-items: center;
-  padding: var(--pilz-level-padding-block) var(--pilz-level-padding-inline);
-  border-radius: var(--radius-pill);
-  // Fläche und Schrift teilen sich dieselbe Farbe: Text kräftig, Fläche blass
-  // vor der Fläche der App, damit 4,5:1 hält, gleich welche Farbe kommt.
-  background: var(--pilz-level-area, color-mix(in srgb, var(--pilz-level-colour) 14%, var(--color-surface)));
+  height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-md);
+  background: var(--pilz-level-area, color-mix(in srgb, var(--pilz-level-colour) 14%, var(--surface)));
   color: var(--pilz-level-colour);
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
-  line-height: 1.4;
   white-space: nowrap;
+}
+
+.level--ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.level--warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.level--bad {
+  background: var(--bad-bg);
+  color: var(--bad);
 }
