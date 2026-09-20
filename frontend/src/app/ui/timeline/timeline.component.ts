@@ -14,7 +14,7 @@ import {
   viewChildren,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { WeekButtonComponent } from './week-button.component';
 
 /** Eine Woche des Manifests. `anteil` ist `mean` geteilt durch den Höchstwert. */
@@ -43,7 +43,7 @@ const REST: ScrollState = { left: 0, width: 0, scrollWidth: 0 };
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [WeekButtonComponent, SvgIconComponent, TranslatePipe],
+  imports: [WeekButtonComponent, IconButtonComponent, TranslatePipe],
   templateUrl: './timeline.component.html',
   styleUrl: './timeline.component.scss',
 })

@@ -5,22 +5,32 @@
   gap: var(--size-gutter);
 }
 
+.fcount {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline-start: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fcount__reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  color: var(--text-var);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+}
+
 // Die Gruppenzeile im Filter steht höher als eine gewöhnliche Listenzeile.
 .panel__card {
   --size-row: 60px;
 
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  background: var(--surface);
+  border: var(--border-width) solid var(--outline);
   border-radius: var(--radius-lg);
-}
-
-.panel__reset {
-  align-self: flex-start;
-  padding: 0;
-  margin-block-start: auto;
-  font: inherit;
-  font-size: 13px;
-  color: var(--color-primary);
-  background: none;
-  border: 0;
 }

@@ -1,17 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { BackHeadComponent } from '../../ui/back-head/back-head.component';
+import { ChipGroupComponent, type Chip } from '../../ui/chip-group/chip-group.component';
+import { FoldSectionComponent } from '../../ui/fold-section/fold-section.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { GROUP_CARDS, valueLabel } from './filter-groups';
-import { GROUP_TEXT, MONTH_TEXT, groupTitle } from './labels';
+import { RippleDirective } from '../../ui/ripple/ripple.directive';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { choicesOf, GROUP_CARDS, groupSummary, termNamesOf } from './filter-groups';
+import { GROUP_TEXT, groupTitle } from './labels';
 import { SpeciesFilterState } from './filter.state';
-import { SpeciesGroupComponent } from './filter-group.component';
 import { SpeciesColourComponent } from './filter-colour.component';
+import { SpeciesGroupComponent } from './filter-group.component';
 import { SpeciesSizeComponent } from './filter-size.component';
 import { SpeciesState } from './species.state';
-import type { GroupKey } from './facets';
+import { judge, type GroupKey } from './facets';
 
 /** Eine Zeile der Übersicht: Gruppenname und die gewählten Werte. */
 interface GroupRow {
@@ -20,16 +24,28 @@ interface GroupRow {
   value: string;
 }
 
-/** Der Inhalt des Filters: die Übersicht oder eine Gruppe daraus. */
+/** Die vier Gruppen, die flach als Zeichen im Blatt stehen. `labelOf` trägt die Beschriftung. */
+const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
+  { key: 'edibility', labelOf: 'edibility' },
+  { key: 'capShape', labelOf: 'capShape' },
+  { key: 'hymenium', labelOf: 'hymenium' },
+  { key: 'period', labelOf: 'size' },
+];
+
+/** Der Inhalt des Filters: die Übersicht oder eine der übrigen Gruppen daraus. */
 @Component({
   selector: 'app-species-filter-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BackHeadComponent,
+    ChipGroupComponent,
+    FoldSectionComponent,
     ListRowComponent,
+    RippleDirective,
     SpeciesColourComponent,
     SpeciesGroupComponent,
     SpeciesSizeComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './filter-panel.component.html',
@@ -42,13 +58,21 @@ export class SpeciesFilterPanelComponent {
   /** Am Rechner steht der Kopf der Gruppe in der Spalte statt im Blatt. */
   protected readonly wide = inject(ViewportService).wide;
 
-  readonly groups = input<readonly (readonly GroupKey[])[]>(GROUP_CARDS);
+  protected readonly flatGroups = FLAT_GROUPS;
 
   protected readonly cards = computed<GroupRow[][]>(() =>
-    this.groups().map((card) => card.map((key) => this.rowOf(key))),
+    GROUP_CARDS.map((card) => card.map((key) => this.rowOf(key))),
   );
 
   protected readonly resettable = computed(() => this.filter.chosenCount() > 0);
+
+  /** Die Zahl der Arten, welche die aktuelle Wahl trifft, für den Kopf am Rechner. */
+  protected readonly count = computed(() => {
+    const selection = this.filter.selection();
+    const palette = this.state.palette();
+    const hits = this.state.entries().filter((one) => judge(one.facts, selection, palette) === 'hit').length;
+    return this.i18n.translate('filter.countSpecies', { anzahl: String(hits) });
+  });
 
   protected readonly title = computed(() => {
     const group = this.filter.group();
@@ -63,43 +87,39 @@ export class SpeciesFilterPanelComponent {
     this.filter.clearAll();
   }
 
+  /** Die Wahlmöglichkeiten einer flach angezeigten Gruppe, als Zeichen. */
+  protected chipsOf(key: GroupKey): readonly Chip[] {
+    return choicesOf(this.state.facets(), key, this.i18n, this.termNames()).map((choice) => ({
+      value: choice.value,
+      label: choice.label,
+    }));
+  }
+
+  protected chosenIn(key: GroupKey): readonly string[] {
+    return [...this.filter.chosenIn(key)];
+  }
+
+  protected flatLabel(key: GroupKey): string {
+    return this.i18n.translate(GROUP_TEXT[key]);
+  }
+
+  /** `ChipGroup` meldet die volle Wahl. Genau ein Wert weicht ab: der getippte. */
+  protected chipsChanged(key: GroupKey, next: readonly string[]): void {
+    const current = this.filter.chosenIn(key);
+    const changed =
+      next.find((value) => !current.has(value)) ?? [...current].find((value) => !next.includes(value));
+    if (changed !== undefined) this.filter.toggle(key, changed);
+  }
+
   private termNames(): ReadonlyMap<string, string> {
-    const names = new Map<string, string>();
-    for (const one of this.state.entries()) {
-      for (const held of one.species.terms) names.set(held.term.slug, held.term.name);
-    }
-    return names;
+    return termNamesOf(this.state.entries());
   }
 
   private rowOf(key: GroupKey): GroupRow {
-    return { key, label: this.i18n.translate(GROUP_TEXT[key]), value: this.valueOf(key) };
-  }
-
-  /** Was eine Gruppe in ihrer Zeile zeigt: ein Wert, sonst ihre Zahl. */
-  private valueOf(key: GroupKey): string {
-    if (key === 'colour') return this.colourValue();
-    if (key === 'size') return this.periodValue();
-    const chosen = this.filter.chosenIn(key);
-    if (chosen.size === 0) return '';
-    if (chosen.size > 1) return this.i18n.translate('filter.valueCount', { anzahl: String(chosen.size) });
-    return valueLabel(key, [...chosen][0], this.i18n, this.termNames());
-  }
-
-  /** Die Gruppe Maße und Zeit nennt den Zeitraum, den sie führt. */
-  private periodValue(): string {
-    const months = [...this.filter.chosenIn('period')].map(Number).sort((one, other) => one - other);
-    if (months.length === 0) return '';
-    if (months.length === 1) return this.i18n.translate(MONTH_TEXT[months[0] - 1]);
-    return this.i18n.translate('species.period.range', {
-      von: this.i18n.translate(MONTH_TEXT[months[0] - 1]),
-      bis: this.i18n.translate(MONTH_TEXT[months[months.length - 1] - 1]),
-    });
-  }
-
-  private colourValue(): string {
-    const count = this.filter.selection().colours.size;
-    if (count === 0) return '';
-    const key = count === 1 ? 'filter.colour.onePart' : 'filter.colour.parts';
-    return this.i18n.translate(key, { anzahl: String(count) });
+    return {
+      key,
+      label: this.i18n.translate(GROUP_TEXT[key]),
+      value: groupSummary(key, this.filter.selection(), this.i18n, this.termNames()),
+    };
   }
 }

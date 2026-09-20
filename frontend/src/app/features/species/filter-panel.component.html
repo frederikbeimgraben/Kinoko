@@ -1,8 +1,39 @@
 @if (wide() && filter.group() !== null) {
   <app-back-head [title]="title()" (backClick)="back()" />
 }
+@if (wide() && filter.group() === null) {
+  <div class="fcount">
+    <span>{{ count() }}</span>
+    @if (resettable()) {
+      <button
+        class="fcount__reset tap"
+        type="button"
+        appRipple
+        [attr.aria-label]="'common.reset' | t"
+        (click)="reset()"
+      >
+        <app-svg-icon name="undo" [size]="20" />
+      </button>
+    }
+  </div>
+}
 @switch (filter.group()) {
   @case (null) {
+    @for (group of flatGroups; track group.key) {
+      <app-fold-section [label]="flatLabel(group.labelOf)">
+        <app-chip-group
+          [chips]="chipsOf(group.key)"
+          [value]="chosenIn(group.key)"
+          [multiple]="true"
+          [small]="true"
+          [label]="flatLabel(group.labelOf)"
+          (valueChange)="chipsChanged(group.key, $event)"
+        />
+      </app-fold-section>
+      @if (group.key === 'capShape') {
+        <app-species-filter-colour />
+      }
+    }
     @for (card of cards(); track $index) {
       <div class="panel__card">
         @for (row of card; track row.key) {
@@ -19,18 +50,10 @@
       </div>
     }
   }
-  @case ('colour') {
-    <app-species-filter-colour />
-  }
   @case ('size') {
     <app-species-filter-size />
   }
   @default {
     <app-species-filter-group [group]="filter.group()!" />
   }
-}
-@if (wide() && resettable()) {
-  <button class="panel__reset tap" type="button" data-press="scale" (click)="reset()">
-    {{ 'common.reset' | t }}
-  </button>
 }

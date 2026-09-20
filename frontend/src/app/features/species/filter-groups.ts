@@ -8,7 +8,14 @@ import {
   type BodyPart,
   type SpeciesEntry,
 } from '../../core/api/models';
-import { FORECAST_VALUE, colourParts, countValues, type Counts, type GroupKey } from './facets';
+import {
+  FORECAST_VALUE,
+  colourParts,
+  countValues,
+  type Counts,
+  type GroupKey,
+  type Selection,
+} from './facets';
 import {
   CAP_SHAPE_TEXT,
   EDIBILITY_TEXT,
@@ -25,9 +32,10 @@ export interface Choice {
   readonly count: number;
 }
 
-/** Die Karten des Filterblatts, so wie sie im Brett stehen. */
+/** Die übrigen Karten des Filterblatts. Speisewert, Hutform, Farbe, Fruchtschicht und Zeit
+ * stehen flach im Blatt, per `FilterColumn.dc.html`; das Brett führt dort keine eigene
+ * Zeile für die Maße mehr. `app-species-filter-size` bleibt vorerst ohne eigenen Weg. */
 export const GROUP_CARDS: readonly (readonly GroupKey[])[] = [
-  ['edibility', 'hymenium', 'capShape', 'colour', 'size'],
   ['senses', 'treePartner', 'genusFamily'],
   ['protection', 'forecast'],
 ];
@@ -77,6 +85,15 @@ export function choicesOf(
     .sort((one, other) => one.label.localeCompare(other.label, 'de'));
 }
 
+/** Der Name jedes Begriffs im Katalog, über seinen Slug. */
+export function termNamesOf(entries: readonly { species: SpeciesEntry }[]): ReadonlyMap<string, string> {
+  const names = new Map<string, string>();
+  for (const one of entries) {
+    for (const held of one.species.terms) names.set(held.term.slug, held.term.name);
+  }
+  return names;
+}
+
 /** Die Körperteile, für die der Katalog Farben führt. */
 export function partsWithColour(counts: Counts, wanted: readonly BodyPart[]): BodyPart[] {
   const held = new Set(colourParts(counts));
@@ -92,4 +109,35 @@ export function tonesOf(entries: readonly { species: SpeciesEntry }[], part: Bod
     }
   }
   return tones;
+}
+
+/** Der Monatsbereich der gewählten Zeit, ein einzelner Monat oder leer. */
+function periodSummary(selection: Selection, i18n: I18nService): string {
+  const months = [...(selection.values.get('period') ?? [])].map(Number).sort((one, other) => one - other);
+  if (months.length === 0) return '';
+  if (months.length === 1) return i18n.translate(MONTH_TEXT[months[0] - 1]);
+  return i18n.translate('species.period.range', {
+    von: i18n.translate(MONTH_TEXT[months[0] - 1]),
+    bis: i18n.translate(MONTH_TEXT[months[months.length - 1] - 1]),
+  });
+}
+
+/** Der Wert, den eine Gruppe in ihrer Zeile oder ihrem Chip zeigt. */
+export function groupSummary(
+  key: GroupKey,
+  selection: Selection,
+  i18n: I18nService,
+  names: ReadonlyMap<string, string>,
+): string {
+  if (key === 'colour') {
+    const count = selection.colours.size;
+    if (count === 0) return '';
+    const textKey = count === 1 ? 'filter.colour.onePart' : 'filter.colour.parts';
+    return i18n.translate(textKey, { anzahl: String(count) });
+  }
+  if (key === 'size' || key === 'period') return periodSummary(selection, i18n);
+  const chosen = selection.values.get(key) ?? new Set<string>();
+  if (chosen.size === 0) return '';
+  if (chosen.size > 1) return i18n.translate('filter.valueCount', { anzahl: String(chosen.size) });
+  return valueLabel(key, [...chosen][0], i18n, names);
 }

@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { ColourPickerComponent } from '../../ui/colour-picker/colour-picker.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { ExpandRowComponent } from '../../ui/expand-row/expand-row.component';
+import { FoldSectionComponent } from '../../ui/fold-section/fold-section.component';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { BodyPart } from '../../core/api/models';
 import { countColours, nearestColour, nearestTones } from './facets';
 import { partsWithColour, tonesOf } from './filter-groups';
@@ -11,11 +13,11 @@ import { SpeciesState } from './species.state';
 
 const TONES = 6;
 
-/** Die Farbwahl je Körperteil. Ein Teil steht offen, die anderen zusammen. */
+/** Die Farbwahl je Körperteil, als Ziehharmonika im Abschnitt Farbe. */
 @Component({
   selector: 'app-species-filter-colour',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ColourPickerComponent, SvgIconComponent],
+  imports: [ColourPickerComponent, ExpandRowComponent, FoldSectionComponent, TranslatePipe],
   templateUrl: './filter-colour.component.html',
   styleUrl: './filter-colour.component.scss',
 })

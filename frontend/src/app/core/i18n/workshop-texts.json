@@ -24,7 +24,8 @@
     "beispiel.essbar": "essbar",
     "beispiel.ungeniessbar": "ungenießbar",
     "beispiel.giftig": "giftig",
-    "beispiel.toedlich": "tödlich giftig"
+    "beispiel.toedlich": "tödlich giftig",
+    "beispiel.summeKw": "Summe KW 35 bis 38"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -51,6 +52,7 @@
     "beispiel.essbar": "edible",
     "beispiel.ungeniessbar": "not edible",
     "beispiel.giftig": "poisonous",
-    "beispiel.toedlich": "deadly poisonous"
+    "beispiel.toedlich": "deadly poisonous",
+    "beispiel.summeKw": "Sum weeks 35 to 38"
   }
 }

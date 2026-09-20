@@ -55,7 +55,10 @@ export type IconName =
   | 'sign-out'
   | 'upload'
   | 'mushroom'
-  | 'flag';
+  | 'flag'
+  | 'eat'
+  | 'palette'
+  | 'ruler';
 
 /** Die drei gefüllten Pfeile und die Wiedergabe sitzen auf einem 12er-Raster. */
 export const FILLED_ICONS: readonly IconName[] = ['left', 'right', 'play', 'pause'];
@@ -131,4 +134,8 @@ export const ICONS: Record<IconName, string> = {
     '<path d="M7 17.5h10a4 4 0 0 0 0-8 5.5 5.5 0 0 0-10.6 1.5A3.5 3.5 0 0 0 7 17.5z"/><path d="M12 9.5v7M9 12l3-3 3 3"/>',
   mushroom: '<path d="M4 11a8 8 0 0 1 16 0zM10 11v6a2 2 0 0 0 4 0v-6"/>',
   flag: '<path d="M6 3v18"/><path d="M6 4h11l-3 4 3 4H6z"/>',
+  eat: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/>',
+  palette:
+    '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M7.7 10a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0 -1.6 0M11.2 7.5a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0 -1.6 0M14.7 10a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0 -1.6 0"/>',
+  ruler: '<path d="M3 17 17 3l4 4L7 21zM7 13l2 2M10 10l2 2M13 7l2 2"/>',
 };

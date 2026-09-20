@@ -28,6 +28,13 @@ describe('SpeciesResultsComponent', () => {
     await noViolations(container);
   });
 
+  it('stellt vor jedem neuen Anfangsbuchstaben eine Kopfzeile', async () => {
+    const { container } = await render(SpeciesResultsComponent, { inputs: { hits: HITS } });
+
+    const heads = [...container.querySelectorAll('.lbl')].map((el) => el.textContent);
+    expect(heads).toEqual(['S', 'M']);
+  });
+
   it('meldet die gewählte Art nach draußen', async () => {
     const { fixture } = await render(SpeciesResultsComponent, { inputs: { hits: HITS } });
     const chosen: string[] = [];

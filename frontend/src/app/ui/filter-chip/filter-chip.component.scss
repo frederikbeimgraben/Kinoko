@@ -35,6 +35,13 @@
   font-size: 13px;
 }
 
+.chip--icononly {
+  gap: 0;
+  inline-size: 44px;
+  padding: 0;
+  justify-content: center;
+}
+
 .chip__dot {
   display: block;
   flex: none;

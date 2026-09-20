@@ -1,5 +1,8 @@
 <ng-template #hitRows>
   @for (row of rows(); track row.slug) {
+    @if (row.head) {
+      <div class="lbl">{{ row.letter }}</div>
+    }
     <app-species-row
       [species]="row.species"
       [active]="row.slug === active()"

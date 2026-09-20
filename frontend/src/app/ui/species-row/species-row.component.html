@@ -2,26 +2,31 @@
   #button
   class="row tap"
   type="button"
+  appRipple
   data-press="tint"
   [class.row--active]="active()"
   [attr.aria-current]="active() ? 'true' : null"
   (click)="chosen.emit()"
 >
+  <app-private-image
+    class="row__thumb"
+    [path]="species().image ?? ''"
+    [alt]="species().name"
+    [colour]="species().colour ?? '#7a5230'"
+  />
   <span class="row__names">
     <span class="row__name">{{ species().name }}</span>
     <span class="row__latin">{{ species().latin }}</span>
   </span>
   @if (!muted()) {
-    <span class="row__marks" [class.row__marks--photo]="!!species().image">
-      <app-level-pill
-        [text]="species().levelText"
-        [colour]="species().levelColour"
-        [background]="species().levelBackground"
-      />
-    </span>
+    <app-level-pill
+      class="row__badge"
+      [text]="species().levelText"
+      [colour]="species().levelColour"
+      [background]="species().levelBackground"
+      [kind]="species().levelKind ?? ''"
+    />
   }
   <span class="row__trail"><ng-content select="[trail]" /></span>
-  @if (species().image; as source) {
-    <app-private-image class="row__image" [path]="source" [alt]="species().name" />
-  }
+  <app-svg-icon class="row__chevron" name="chevron" [size]="24" tone="dim" />
 </button>

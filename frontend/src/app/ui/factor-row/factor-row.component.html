@@ -1,5 +1,7 @@
 @if (icon(); as glyph) {
-  <app-svg-icon class="factor__icon" [name]="glyph" [size]="22" [strokeWidth]="1.8" />
+  <span class="factor__icon">
+    <app-svg-icon [name]="glyph" [size]="24" [strokeWidth]="1.8" />
+  </span>
 }
 <span class="factor__stack">
   <span class="factor__name">{{ factor().name }}</span>
@@ -7,7 +9,13 @@
     <span class="factor__sub">{{ factor().range }}</span>
   }
 </span>
-<button class="factor__condition tap" type="button" data-press="scale" (click)="conditionClick.emit()">
+<button
+  class="factor__condition tap"
+  type="button"
+  appRipple
+  data-press="scale"
+  (click)="conditionClick.emit()"
+>
   {{ factor().condition }}
 </button>
-<app-icon-button icon="close" [label]="removeLabel()" (pressed)="remove.emit()" />
+<app-icon-button icon="close" kind="plain" [label]="removeLabel()" (pressed)="remove.emit()" />

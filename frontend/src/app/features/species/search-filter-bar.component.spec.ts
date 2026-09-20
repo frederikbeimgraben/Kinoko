@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { noViolations } from '../../testing/axe';
+import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { SpeciesSearchFilterBarComponent } from './search-filter-bar.component';
 import { SpeciesFilterState } from './filter.state';
 
@@ -34,33 +35,60 @@ describe('SpeciesSearchFilterBarComponent', () => {
     expect(changes).toEqual(['a']);
   });
 
-  it('zeigt den Filter-Knopf ohne Suchtext', async () => {
-    await build('');
+  it('zeigt ein Zeichen je Filtergruppe, das Brett zuerst', async () => {
+    const { container } = await build('');
+
+    const chips = [...container.querySelectorAll('.chiprow > *')];
+    expect(chips).toHaveLength(5);
     expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Speisewert' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hutform' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Farbe' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Abmessungen und Zeit' })).toBeInTheDocument();
+    await noViolations(container);
   });
 
-  it('verbirgt den Filter-Knopf während der Suche', async () => {
+  it('verbirgt die Zeichen während der Suche', async () => {
     await build('steinpilz');
     expect(screen.queryByRole('button', { name: 'Filter' })).not.toBeInTheDocument();
   });
 
-  it('öffnet das Filterblatt über den Filter-Knopf', async () => {
-    const { container, filter } = await build();
+  it('öffnet das Filterblatt über ein Zeichen und meldet die Gruppe', async () => {
+    const { fixture } = await render(SpeciesSearchFilterBarComponent, {
+      inputs: { value: '' },
+      providers: [...catalogueProviders()],
+    });
+    await catalogueReady();
+    const filter = TestBed.inject(SpeciesFilterState);
+    const opened: string[] = [];
+    fixture.componentInstance.groupOpened.subscribe((key) => opened.push(key));
     expect(filter.open()).toBe(false);
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
 
     expect(filter.open()).toBe(true);
-    await noViolations(container);
+    expect(opened).toEqual(['all']);
   });
 
-  it('trägt eine gewählte Marke und nimmt sie beim Entfernen zurück', async () => {
+  it('zeigt die Gruppe mit Wahl mit ihrem Wert, an', async () => {
     const { filter } = await build();
     filter.toggle('edibility', 'edible');
 
-    const chip = await screen.findByRole('button', { name: 'Entfernen' });
-    await userEvent.click(chip);
+    expect(await screen.findByRole('button', { name: 'Speisewert · essbar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Speisewert · essbar' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Hutform' })).toHaveAttribute('aria-pressed', 'false');
+  });
 
-    expect(filter.chosenIn('edibility').has('edible')).toBe(false);
+  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+    const { container } = await render(SpeciesSearchFilterBarComponent, {
+      inputs: { value: '' },
+      providers: [...catalogueProviders(), EMPTY_CATALOG],
+    });
+    await catalogueReady();
+
+    noGermanText(container);
   });
 });
