@@ -2,11 +2,13 @@
   "de": {
     "beispiel.steinpilz": "Steinpilz",
     "beispiel.lauf": "[12:04] Lauf gestartet\n[12:06] 306 Arten, 52 Wochen\n[12:19] fertig",
-    "beispiel.farbspanne": "cremeweiß bis ocker"
+    "beispiel.farbspanne": "cremeweiß bis ocker",
+    "beispiel.stiel": "Stiel"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
     "beispiel.lauf": "[12:04] run started\n[12:06] 306 species, 52 weeks\n[12:19] done",
-    "beispiel.farbspanne": "creamy white to ochre"
+    "beispiel.farbspanne": "creamy white to ochre",
+    "beispiel.stiel": "Stem"
   }
 }

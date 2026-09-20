@@ -51,14 +51,30 @@ describe('ColourPickerComponent', () => {
     expect(container.querySelectorAll('.tone')).toHaveLength(2);
   });
 
-  it('trägt den Druckzustand an jeder Farbe', async () => {
+  it('setzt einen Kreis am Berührungspunkt statt der Verkleinerung', async () => {
     const { container } = await render(ColourPickerComponent, {
       inputs: { colours: COLOURS, value: '#6b4423', label: 'Hut' },
     });
 
-    const swatch = container.querySelector('.swatch');
+    const swatch = container.querySelector<HTMLElement>('.swatch');
+    if (swatch === null) throw new Error('keine Farbe');
     expect(swatch).toHaveClass('tap');
-    expect(swatch).toHaveAttribute('data-press', 'scale');
+    expect(swatch).not.toHaveAttribute('data-press');
+
+    vi.spyOn(swatch, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 28,
+      height: 28,
+      right: 28,
+      bottom: 28,
+      toJSON: () => undefined,
+    });
+    swatch.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 14, clientY: 14 }));
+
+    expect(swatch.querySelector('.ripple')).not.toBeNull();
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

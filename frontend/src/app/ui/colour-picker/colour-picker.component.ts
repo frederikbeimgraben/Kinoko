@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { RippleDirective } from '../ripple/ripple.directive';
 
 /** Eine der zwölf Standardfarben. */
 export interface ColourPickerSwatch {
@@ -12,6 +13,7 @@ export interface ColourPickerSwatch {
 @Component({
   selector: 'app-colour-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RippleDirective],
   templateUrl: './colour-picker.component.html',
   styleUrl: './colour-picker.component.scss',
 })

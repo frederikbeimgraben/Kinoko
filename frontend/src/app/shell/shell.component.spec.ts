@@ -128,8 +128,7 @@ describe('ShellComponent', () => {
     const { container, navigate } = await shell(true);
     await navigate('/karte');
 
-    expect(screen.getByRole('status')).toHaveTextContent('Neue Version');
-    expect(screen.getByRole('button', { name: 'Neu laden' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Neu laden' })).toHaveTextContent('Neue Version');
     expect(container.querySelector('.shell')).toHaveStyle({
       '--top-bar-height': 'calc(38px + env(safe-area-inset-top, 0px))',
     });

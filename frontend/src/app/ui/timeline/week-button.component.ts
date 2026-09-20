@@ -10,13 +10,14 @@ import {
 } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 /** Eine Woche in der Zeitleiste. Eine Prognosewoche trägt einen gestrichelten Rand. */
 @Component({
   selector: 'app-week-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SkeletonComponent, TranslatePipe],
+  imports: [RippleDirective, SkeletonComponent, TranslatePipe],
   templateUrl: './week-button.component.html',
   styleUrl: './week-button.component.scss',
 })

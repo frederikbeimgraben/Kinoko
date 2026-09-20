@@ -24,7 +24,7 @@ export class HistogramComponent {
   /** Die Höhe der Fläche. Die Werkstatt zeigt sie höher als die Karte. */
   readonly height = input(28);
 
-  protected readonly width = 326;
+  protected readonly width = 358;
 
   protected readonly bars = computed<Bar[]>(() => {
     const shares = this.shares();

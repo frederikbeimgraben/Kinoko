@@ -33,6 +33,7 @@ export { FactorRowComponent, type CombinationFactor } from './factor-row/factor-
 export { FilterChipComponent } from './filter-chip/filter-chip.component';
 export { FilterSheetComponent } from './filter-sheet/filter-sheet.component';
 export { FloatingButtonComponent } from './floating-button/floating-button.component';
+export { FoldSectionComponent } from './fold-section/fold-section.component';
 export { FormFieldComponent } from './form-field/form-field.component';
 export { FormSheetComponent } from './form-sheet/form-sheet.component';
 export { HistogramComponent } from './histogram/histogram.component';

@@ -43,12 +43,27 @@ describe('WeekButtonComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('trägt die Trefferfläche und den Druckzustand', async () => {
+  it('setzt einen Kreis am Berührungspunkt statt der Verkleinerung', async () => {
     const { container } = await render(WeekButtonComponent, { inputs: { year: 2026, week: 40 } });
 
-    const button = container.querySelector('.week');
-    expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'scale');
+    const button = container.querySelector<HTMLElement>('.week');
+    if (button === null) throw new Error('keine Taste');
+    expect(button).not.toHaveAttribute('data-press');
+
+    vi.spyOn(button, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 48,
+      height: 64,
+      right: 48,
+      bottom: 64,
+      toJSON: () => undefined,
+    });
+    button.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 20 }));
+
+    expect(button.querySelector('.ripple')).not.toBeNull();
   });
 
   it('bleibt gesperrt ohne Klick auszulösen', async () => {

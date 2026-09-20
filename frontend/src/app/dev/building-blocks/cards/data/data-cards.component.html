@@ -1,0 +1,48 @@
+<app-block-card block="Banner" [width]="390" [height]="56">
+  <app-banner kind="pending" icon="cloud" />
+</app-block-card>
+
+<app-block-card block="ColourRow" [width]="358" [height]="56">
+  <div class="row-demo">
+    <span class="row-demo__txt">
+      <b>{{ 'beispiel.stiel' | t }}</b>
+      <span>{{ 'beispiel.farbspanne' | t }}</span>
+    </span>
+    <app-colour-field
+      style="--pilz-colour-width: 88px; --pilz-colour-height: 28px; --pilz-colour-radius: 14px"
+      [colours]="colourRowSwatch"
+      mode="gradient"
+      [label]="'beispiel.farbspanne' | t"
+    />
+  </div>
+</app-block-card>
+
+<app-block-card block="FoldSection" [width]="358" [height]="120">
+  <app-fold-section [label]="'filter.colour.title' | t" />
+</app-block-card>
+
+<app-block-card block="Histogram" [width]="358" [height]="72">
+  <app-histogram [shares]="histogramShares" label="Verteilung" [from]="0.35" [to]="1" [height]="72" />
+</app-block-card>
+
+<app-block-card block="SeasonCurve" [width]="358" [height]="100">
+  <app-season-curve
+    [series]="seasonSeries"
+    [months]="seasonMonths"
+    [large]="true"
+    [smoothing]="1"
+    label="Saisonkurve"
+  />
+</app-block-card>
+
+<app-block-card block="Thumb" [width]="44" [height]="44">
+  <app-private-image [alt]="'beispiel.steinpilz' | t" />
+</app-block-card>
+
+<app-block-card block="ToneGrid" [width]="334" [height]="66">
+  <app-colour-picker [colours]="toneGridSwatches" value="#7a4a2a" label="Farbton" [labels]="false" />
+</app-block-card>
+
+<app-block-card block="WeekCell" [width]="48" [height]="64">
+  <app-week-button [year]="2026" [week]="38" [active]="true" [share]="0.85" />
+</app-block-card>

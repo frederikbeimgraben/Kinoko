@@ -7,6 +7,14 @@
     [src]="source"
     [alt]="alt()"
   />
+} @else if (!path()) {
+  <span
+    class="private__fallback"
+    [class.private__fallback--dark]="ink() === 'dark'"
+    [style.background]="colour()"
+  >
+    <app-svg-icon [name]="icon()" [size]="24" [strokeWidth]="1.8" />
+  </span>
 }
 @if (locked()) {
   <span class="private__lock" aria-hidden="true">

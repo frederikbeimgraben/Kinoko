@@ -410,7 +410,7 @@ describe('MapComponent', () => {
     sync._online.set(false);
     await stable();
 
-    expect(screen.getByRole('status')).toHaveTextContent('Keine Verbindung');
+    expect(screen.getByRole('button', { name: 'Keine Verbindung' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Zeitleiste' })).not.toHaveClass('bar--dimmed');
   });
 

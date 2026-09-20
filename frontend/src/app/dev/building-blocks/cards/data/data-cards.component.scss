@@ -1,0 +1,31 @@
+// Die Farbzeile, per `kit.css` `.row` und `.txt`.
+.row-demo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 56px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+.row-demo__txt {
+  display: flex;
+  flex: 1;
+  min-inline-size: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.row-demo__txt b {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.row-demo__txt span {
+  font-size: 14px;
+  color: var(--text-var);
+}

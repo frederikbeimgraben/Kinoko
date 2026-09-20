@@ -8,7 +8,7 @@ import {
   type OnDestroy,
 } from '@angular/core';
 import { ApiClient } from '../../core/api/api-client';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Ein Bild ohne öffentlichen Zugriff. Es lädt mit Token als Objekt-URL. */
 @Component({
@@ -21,13 +21,18 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export class PrivateImageComponent implements OnDestroy {
   private readonly api = inject(ApiClient);
 
-  /** Der Pfad aus der Antwort, ohne `/api`. */
-  readonly path = input.required<string>();
+  /** Der Pfad aus der Antwort, ohne `/api`. Ohne Weg zeigt das Feld das Ersatzsymbol. */
+  readonly path = input<string>('');
   readonly alt = input.required<string>();
   /** `cover` füllt die Fläche, `contain` passt ein, `natural` nimmt die Höhe des Bildes. */
   readonly fit = input<'cover' | 'contain' | 'natural'>('cover');
   /** Zeigt das Schloss, wenn nur der Besitzer das Bild sehen darf. */
   readonly locked = input(false);
+  /** Grundfarbe des Ersatzsymbols, ohne Weg oder solange die Datei fehlt. */
+  readonly colour = input('#7a5230');
+  readonly icon = input<IconName>('mushroom');
+  /** Tinte des Ersatzsymbols: hell auf dunkler Farbe, dunkel auf heller. */
+  readonly ink = input<'light' | 'dark'>('light');
 
   protected readonly source = signal<string | null>(null);
 
@@ -38,6 +43,7 @@ export class PrivateImageComponent implements OnDestroy {
     effect(() => {
       const path = this.path();
       this.release();
+      if (!path) return;
       this.api.getBlob(path.replace(/^\/api/, '')).subscribe({
         next: (data) => {
           this.held = URL.createObjectURL(data);
