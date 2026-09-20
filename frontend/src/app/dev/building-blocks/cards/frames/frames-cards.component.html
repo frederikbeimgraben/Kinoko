@@ -1,0 +1,59 @@
+<app-block-card block="TopBar" [width]="390" [height]="72">
+  <app-page-header [title]="'entry.list.title' | t">
+    <app-icon-button icon="filter" kind="plain" [label]="'common.filter' | t" />
+    <app-icon-button icon="more" kind="plain" [label]="'common.more' | t" />
+  </app-page-header>
+</app-block-card>
+
+<app-block-card block="DetailBar" [width]="390" [height]="72">
+  <app-page-header [title]="'beispiel.steinpilz' | t" [back]="true">
+    <app-filter-chip [label]="'species.compare' | t" icon="compare" />
+    <app-icon-button icon="more" kind="plain" [label]="'common.more' | t" />
+  </app-page-header>
+</app-block-card>
+
+<app-block-card block="SearchBar" [width]="390" [height]="72">
+  <app-page-header>
+    <app-search-field headline [placeholder]="'species.search.placeholder' | t" />
+    <app-icon-button icon="sort" kind="plain" [label]="'beispiel.sortieren' | t" />
+    <app-icon-button icon="more" kind="plain" [label]="'common.more' | t" />
+  </app-page-header>
+</app-block-card>
+
+<app-block-card block="Nav" [width]="390" [height]="80">
+  <app-nav active="/karte" />
+</app-block-card>
+
+<app-block-card block="NavTab" [width]="124" [height]="68">
+  <app-nav-tab icon="map" [label]="'nav.tab.map' | t" path="/karte" [active]="true" />
+</app-block-card>
+
+<app-block-card block="Rail" [width]="96" [height]="900">
+  <app-nav class="frames__fill" active="/karte" variant="rail">
+    <app-avatar-button name="Frederik" [label]="'nav.konto' | t" />
+  </app-nav>
+</app-block-card>
+
+<app-block-card block="Surface" [width]="340" [height]="200">
+  <app-surface class="frames__fill" />
+</app-block-card>
+
+<app-block-card block="Pane" [width]="420" [height]="900">
+  <app-split-layout class="frames__fill" kind="pane" pane="panel" />
+</app-block-card>
+
+<app-block-card block="Column" [width]="300" [height]="200">
+  <app-split-layout class="frames__fill" kind="column" />
+</app-block-card>
+
+<app-block-card block="Columns" [width]="640" [height]="200">
+  <app-split-layout class="frames__fill" kind="columns" />
+</app-block-card>
+
+<app-block-card block="Split" [width]="640" [height]="200">
+  <app-split-layout class="frames__fill" kind="split" />
+</app-block-card>
+
+<app-block-card block="Scroll" [width]="390" [height]="400">
+  <div class="frames__scroll" appScrollFade></div>
+</app-block-card>

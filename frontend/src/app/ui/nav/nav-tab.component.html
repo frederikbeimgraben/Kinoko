@@ -1,0 +1,11 @@
+<a
+  class="navtab"
+  appRipple
+  [class.navtab--rail]="rail()"
+  [class.navtab--active]="active()"
+  [routerLink]="path()"
+  [attr.aria-current]="active() ? 'page' : null"
+>
+  <span class="navtab__pill"><app-svg-icon [name]="icon()" [size]="24" [strokeWidth]="1.8" /></span>
+  <span class="navtab__label">{{ label() }}</span>
+</a>

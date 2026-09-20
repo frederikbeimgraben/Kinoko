@@ -22,6 +22,6 @@ describe('CombinationComponent', () => {
       inputs: { factors: FACTORS, sources: SOURCES },
     });
 
-    expect(container.querySelectorAll('.combination__factors > .scroll-fade')).toHaveLength(2);
+    expect(container.querySelectorAll('.combination__factors.scroll')).toHaveLength(1);
   });
 });

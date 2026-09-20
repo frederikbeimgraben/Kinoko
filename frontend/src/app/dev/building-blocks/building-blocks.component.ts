@@ -4,6 +4,7 @@ import { WORKSHOP_TEXTS } from '../../core/i18n/workshop-texts';
 import { ControlsCardsComponent } from './cards/controls/controls-cards.component';
 import { DataCardsComponent } from './cards/data/data-cards.component';
 import { DisplayCardsComponent } from './cards/display/display-cards.component';
+import { FramesCardsComponent } from './cards/frames/frames-cards.component';
 import { MapCardsComponent } from './cards/map/map-cards.component';
 import { PrimitivesCardsComponent } from './cards/primitives/primitives-cards.component';
 import { RowsCardsComponent } from './cards/rows/rows-cards.component';
@@ -19,6 +20,7 @@ const DARK = 'dark';
     ControlsCardsComponent,
     DataCardsComponent,
     DisplayCardsComponent,
+    FramesCardsComponent,
     MapCardsComponent,
     PrimitivesCardsComponent,
     RowsCardsComponent,

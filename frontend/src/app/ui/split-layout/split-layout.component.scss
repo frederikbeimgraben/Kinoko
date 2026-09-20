@@ -1,35 +1,88 @@
 :host {
   display: block;
-  block-size: 100%;
+  min-inline-size: 0;
 }
 
-.layout {
+.layout__in {
+  min-inline-size: 0;
+}
+
+// Eine Spalte des Rechners trägt ihre Fläche außen und ihren Inhalt innen.
+:host(.layout--pane) {
+  display: flex;
+  flex: 1 1 0;
+  min-block-size: 0;
+}
+
+:host(.layout--column) {
+  flex: 1 1 0;
+}
+
+// Eine feste Breite hält die Spalte gegen jeden Rest.
+:host(.layout--fixed) {
+  flex: 0 0 auto;
+}
+
+:host(.layout--panel),
+:host(.layout--map) {
+  padding: 16px 16px 16px 0;
+}
+
+:host(.layout--middle),
+:host(.layout--mid) {
+  background: var(--surface-mid);
+}
+
+:host(.layout--detail) {
+  background: var(--bg);
+}
+
+:host(.layout--pane) .layout__in {
+  display: flex;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+:host(.layout--panel) .layout__in {
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--sheet);
+  border-radius: 28px;
+}
+
+:host(.layout--map) .layout__in {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+}
+
+:host(.layout--middle) .layout__in,
+:host(.layout--detail) .layout__in {
+  position: relative;
+  flex-direction: column;
+}
+
+:host(.layout--column) .layout__in {
   display: flex;
   flex-direction: column;
-  block-size: 100%;
+  gap: 24px;
 }
 
-.layout__column,
-.layout__content {
-  min-inline-size: 0;
-  overflow-y: auto;
+:host(.layout--columns) .layout__in {
+  display: grid;
+  gap: 24px;
+  align-items: start;
 }
 
-@media (width >= 1024px) {
-  .layout {
-    flex-direction: row;
-  }
+:host(.layout--split) {
+  display: flex;
+  flex: 1;
+  min-block-size: 0;
+}
 
-  .layout__rail {
-    flex: 0 0 var(--size-rail);
-  }
-
-  .layout__column {
-    flex: 0 0 var(--size-column);
-    border-inline-end: var(--border-width) solid var(--color-border);
-  }
-
-  .layout__content {
-    flex: 1 1 auto;
-  }
+:host(.layout--split) .layout__in {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-block-size: 0;
 }
