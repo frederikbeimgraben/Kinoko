@@ -1,6 +1,6 @@
-<p class="ramp__label">{{ label() }}</p>
+<span class="ramp__label">{{ label() }}</span>
 <div class="ramp" role="img" [attr.aria-label]="label() + ': ' + from() + ' – ' + to()">
-  @for (colour of colours(); track colour) {
+  @for (colour of resolvedColours(); track colour) {
     <i class="ramp__step" [style.background]="colour"></i>
   }
 </div>

@@ -1,10 +1,10 @@
 <div class="colours" role="radiogroup" [attr.aria-label]="label()">
   @for (swatch of colours(); track swatch.value) {
     <button
-      class="colours__field tap"
+      class="colours__field colours__field--{{ size() }} tap"
       type="button"
       role="radio"
-      data-press="scale"
+      appRipple
       [class.colours__field--selected]="swatch.value === value()"
       [attr.aria-checked]="swatch.value === value()"
       [attr.aria-label]="swatch.label"

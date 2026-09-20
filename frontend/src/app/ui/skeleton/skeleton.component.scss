@@ -8,26 +8,16 @@
 }
 
 .skeleton__bar {
-  background: linear-gradient(
-    90deg,
-    var(--color-surface-sunken),
-    var(--color-border),
-    var(--color-surface-sunken)
-  );
+  background: var(--surface);
   border-radius: var(--radius-md);
   animation: skeleton-pulse var(--skeleton-pulse-duration) ease-in-out infinite alternate;
 }
 
-// Der Strich steht für eine Textzeile: er läuft im Verlauf, nicht flach.
+// Der Strich steht für eine Textzeile.
 .skeleton__bar--line {
   inline-size: var(--skeleton-line-width, 100%);
   block-size: var(--skeleton-line-height, 14px);
-  background: linear-gradient(
-    90deg,
-    var(--color-surface-sunken),
-    var(--color-border),
-    var(--color-surface-sunken)
-  );
+  background: var(--surface);
   border-radius: 6px;
   animation: none;
 }
@@ -73,7 +63,49 @@
 }
 
 .skeleton__bar--grid:nth-child(2n) {
-  background: var(--color-border);
+  background: var(--outline);
+}
+
+// Art `rows`, per `kit.css` `.skrow`: ein Kreis, daneben zwei Striche.
+.skeleton__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+}
+
+.skeleton__row-icon {
+  flex: 0 0 auto;
+  inline-size: 44px;
+  block-size: 44px;
+  background: var(--surface);
+  border-radius: 14px;
+}
+
+.skeleton__row-lines {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton__row-line {
+  block-size: 12px;
+  background: var(--surface);
+  border-radius: 6px;
+}
+
+// Art `tiles`, per `kit.css` `.sktiles`.
+.skeleton__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.skeleton__tile {
+  block-size: 96px;
+  background: var(--surface);
+  border-radius: 20px;
 }
 
 @keyframes skeleton-pulse {

@@ -15,4 +15,5 @@ export interface Stat {
 })
 export class StatRowComponent {
   readonly stats = input.required<readonly Stat[]>();
+  readonly cols = input(3);
 }

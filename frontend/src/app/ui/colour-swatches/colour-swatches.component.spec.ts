@@ -32,14 +32,38 @@ describe('ColourSwatchesComponent', () => {
     expect(selected).toEqual([OBJECT_COLOURS[1]]);
   });
 
-  it('trägt den Druckzustand an jedem Feld', async () => {
+  it('setzt einen Kreis am Berührungspunkt statt der Verkleinerung', async () => {
     const { container } = await render(ColourSwatchesComponent, {
       inputs: { colours: COLORS, value: OBJECT_COLOURS[0], label: 'Farbe' },
     });
 
-    const field = container.querySelector('.colours__field');
+    const field = container.querySelector<HTMLElement>('.colours__field');
+    if (field === null) throw new Error('kein Feld');
     expect(field).toHaveClass('tap');
-    expect(field).toHaveAttribute('data-press', 'scale');
+    expect(field).not.toHaveAttribute('data-press');
+
+    vi.spyOn(field, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 28,
+      height: 28,
+      right: 28,
+      bottom: 28,
+      toJSON: () => undefined,
+    });
+    field.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 14, clientY: 14 }));
+
+    expect(field.querySelector('.ripple')).not.toBeNull();
+  });
+
+  it('trägt die Größe als Kreisdurchmesser', async () => {
+    const { container } = await render(ColourSwatchesComponent, {
+      inputs: { colours: COLORS, value: OBJECT_COLOURS[0], label: 'Farbe', size: 'l' },
+    });
+
+    expect(container.querySelector('.colours__field')).toHaveClass('colours__field--l');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

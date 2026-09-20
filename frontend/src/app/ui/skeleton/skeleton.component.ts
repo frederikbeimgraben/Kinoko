@@ -1,6 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal, type OnDestroy } from '@angular/core';
 
-export type SkeletonKind = 'row' | 'tile' | 'card' | 'block' | 'grid' | 'line';
+export type SkeletonKind = 'row' | 'tile' | 'card' | 'block' | 'grid' | 'line' | 'rows' | 'tiles';
+
+/** One `rows` entry: a leading circle, then two lines of a set width. */
+export interface SkeletonRow {
+  readonly lineA: string;
+  readonly lineB: string;
+}
 
 const DELAY_MS = 300;
 
@@ -22,6 +28,12 @@ export class SkeletonComponent implements OnDestroy {
   protected readonly visible = signal(false);
   protected readonly bars = computed(() =>
     Array.from({ length: Math.max(1, this.count()) }, (_, index) => index),
+  );
+  protected readonly rows = computed<readonly SkeletonRow[]>(() =>
+    this.bars().map((index) => ({
+      lineA: `${45 + ((index * 17) % 35)}%`,
+      lineB: `${30 + ((index * 11) % 25)}%`,
+    })),
   );
 
   private readonly timer = setTimeout(() => {

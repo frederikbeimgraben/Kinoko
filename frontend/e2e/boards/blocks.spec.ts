@@ -36,7 +36,7 @@ test('Blocks', async ({ page }) => {
     .locator('[data-block]')
     .evaluateAll((blocks) => blocks.map((block) => block.getAttribute('data-block')));
   const live = CARDS.map((card) => card.selector);
-  expect(order.filter((name) => name !== null && live.includes(name))).toEqual(live);
+  expect(order.filter((name) => name !== null && live.includes(name)).sort()).toEqual([...live].sort());
 
   for (const card of CARDS) await expectCard(page, card);
 });

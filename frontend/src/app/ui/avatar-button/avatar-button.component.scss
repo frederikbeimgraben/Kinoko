@@ -8,12 +8,13 @@
   justify-content: center;
   inline-size: var(--size-avatar);
   block-size: var(--size-avatar);
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  padding: 0;
+  border: 0;
+  font-size: 15px;
+  font-weight: var(--fw-bold);
+  color: var(--on-sel);
+  background: var(--sel);
   border-radius: 50%;
-  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 

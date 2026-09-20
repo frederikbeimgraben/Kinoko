@@ -1,6 +1,8 @@
-@for (stat of stats(); track stat.label) {
-  <div class="stat">
-    <b class="stat__value">{{ stat.value }}</b>
-    <span class="stat__label">{{ stat.label }}</span>
-  </div>
-}
+<div class="tiles" [style.grid-template-columns]="'repeat(' + cols() + ', minmax(0, 1fr))'">
+  @for (stat of stats(); track stat.label) {
+    <span class="tile">
+      <b class="tile__value">{{ stat.value }}</b>
+      <span class="tile__label">{{ stat.label }}</span>
+    </span>
+  }
+</div>
