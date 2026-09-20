@@ -8,11 +8,12 @@
   display: inline-flex;
   flex: 1 1 auto;
   align-items: center;
+  gap: 5px;
   height: 24px;
   padding: 0 10px;
   border-radius: var(--radius-md);
-  background: var(--pilz-level-area, color-mix(in srgb, var(--pilz-level-colour) 14%, var(--surface)));
-  color: var(--pilz-level-colour);
+  background: var(--pilz-level-area, var(--tonal));
+  color: var(--pilz-level-colour, var(--text-var));
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   white-space: nowrap;

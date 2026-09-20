@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ToastService } from '@stupa-makers/ui-kit';
 import type { MarkerColour, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ColourSwatchesComponent } from '../../ui/colour-swatches/colour-swatches.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { colourSwatches, colourFromHex, colourHex } from '../entries/colors';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
 

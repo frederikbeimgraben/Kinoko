@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastService } from '@stupa-makers/ui-kit';
 import { AccessApi } from '../../core/api/access.api';
 import type { AccountExport } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -11,6 +10,7 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
 import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { ToastService } from '../../ui/toast/toast.service';
 
 /** Heutiges Datum, so wie der Dateiname des Exports es braucht: `JJJJ-MM-TT`. */
 function today(): string {

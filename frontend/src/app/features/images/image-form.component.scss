@@ -24,13 +24,6 @@
   overflow-y: auto;
 }
 
-// Die Auswahl des Kits misst über diese Token.
-app-select {
-  --control-height: var(--pilz-field-height);
-  --space-4: var(--space-row-inline);
-  --fs-md: var(--fs-control);
-}
-
 // Die Kachel ist zugleich Vorschau und Auslöser der Dateiwahl.
 .form__preview {
   position: relative;

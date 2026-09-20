@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ToastService, type ToastVariant } from '@stupa-makers/ui-kit';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
+import { ToastService, type ToastVariant } from './toast.service';
 
 const GLYPHS: Readonly<Record<ToastVariant, { name: IconName; stroke: number }>> = {
   success: { name: 'check', stroke: 2.4 },

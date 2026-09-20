@@ -131,6 +131,21 @@ describe('ImageFormComponent', () => {
     request.flush(photo({ state: 'approved' }));
   });
 
+  it('wählt eine Lizenz über das Blatt', async () => {
+    const { container, http, refresh } = await build(false);
+
+    await pick(container);
+    refresh();
+    await userEvent.click(screen.getByText('Eigenes Foto'));
+    await userEvent.click(await screen.findByText('CC0'));
+    await userEvent.click(screen.getByRole('button', { name: 'Zur Prüfung einreichen' }));
+    const request = await vi.waitFor(() => http.expectOne('/api/photos'));
+    const body = request.request.body as FormData;
+
+    expect(body.get('licence')).toBe('cc0');
+    request.flush(photo({ state: 'submitted' }));
+  });
+
   it('geht beim Abbrechen zurück zur Art', async () => {
     const { router } = await build(true);
 

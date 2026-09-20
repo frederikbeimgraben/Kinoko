@@ -42,7 +42,6 @@
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@angular/service-worker": "22.1.5",
-    "@stupa-makers/ui-kit": "file:vendor/stupa-makers-ui-kit-0.1.2.tgz",
     "@turf/area": "^7.4.0",
     "idb": "^8.0.3",
     "maplibre-gl": "^6.9.0",
@@ -76,11 +75,6 @@
     "vitest": "^4.0.8"
   },
   "overrides": {
-    "@stupa-makers/ui-kit": {
-      "@angular/common": "$@angular/common",
-      "@angular/core": "$@angular/core",
-      "@angular/forms": "$@angular/forms"
-    },
     "openapi-typescript": {
       "typescript": "$typescript"
     }

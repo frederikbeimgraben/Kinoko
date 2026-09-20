@@ -6,7 +6,7 @@
       <span class="runs__head">
         <i class="runs__dot runs__dot--running"></i>
         <span class="runs__name">{{ run.title }}</span>
-        <app-badge variant="primary">{{ run.state }}</app-badge>
+        <app-level-pill [text]="run.state" />
       </span>
       <span class="runs__sub">{{ run.subline }}</span>
       <app-progress [value]="run.percent" />

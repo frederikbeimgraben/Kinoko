@@ -17,7 +17,7 @@
                   <span class="mine__reason">{{ reason }}</span>
                 }
               </div>
-              <app-badge [variant]="row.badge">{{ row.badgeText }}</app-badge>
+              <app-level-pill [text]="row.badgeText" [kind]="row.badge" />
             </div>
           </app-row-group>
         </li>

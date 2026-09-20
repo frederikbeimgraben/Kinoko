@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
 import { PersonNamesService } from '../../core/access/person-names.service';
@@ -14,6 +13,7 @@ import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
 import { EntryRowComponent, type EntryRowEntry } from '../../ui/entry-row/entry-row.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
@@ -52,11 +52,11 @@ interface Row {
   selector: 'app-entries',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
     ChoiceRowComponent,
     EmptyStateComponent,
     FilterSheetComponent,
     EntryRowComponent,
+    LevelPillComponent,
     ListRowComponent,
     PageHeaderComponent,
     SegmentedComponent,

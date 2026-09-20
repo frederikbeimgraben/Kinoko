@@ -1,8 +1,5 @@
-// Die Vorlagen des ui-kits benutzen ein paar Tailwind-Klassen (`p-5`,
-// `text-lg`, `gap-2` …). Das Kit liefert dafür ein Tailwind-Preset, aber
-// keine fertigen Regeln. Die Pilzkarte hat kein Tailwind; ohne diese wenigen
-// Klassen bliebe zum Beispiel der Card-Inhalt ohne Innenabstand.
-// Werte 1:1 aus `@stupa-makers/ui-kit/tailwind-preset.js`.
+// Utility-Klassen (`p-5`, `text-lg`, `gap-2` …) im Stil von Tailwind, ohne
+// Tailwind in der App. Werte aus dem Vendor-Kit, das diese Klassen nutzte.
 .p-0 {
   padding: 0;
 }
