@@ -22,7 +22,7 @@
     />
   </div>
 } @else if (loading()) {
-  <div class="results__card">
+  <div class="results__group">
     @for (bar of skeletons; track bar) {
       <div class="results__skeleton">
         <span class="results__bars">
@@ -43,20 +43,20 @@
     />
   </div>
 } @else if (gapRows().length === 0) {
-  <app-infinite-list class="results__list" [framed]="true" [hasMore]="hasMore()" (more)="more.emit()">
+  <app-infinite-list class="results__list" [hasMore]="hasMore()" (more)="more.emit()">
     <ng-container [ngTemplateOutlet]="hitRows" />
   </app-infinite-list>
 } @else {
   <app-infinite-list class="results__list" [hasMore]="hasMore()" (more)="more.emit()">
     <div class="results__stack">
-      <div class="results__card">
+      <div class="results__group">
         <ng-container [ngTemplateOutlet]="hitRows" />
       </div>
       <div class="results__gap">
         <span>{{ gapText() }}</span>
         <i></i>
       </div>
-      <div class="results__card results__card--muted">
+      <div class="results__group results__group--muted">
         @for (row of gapRows(); track row.slug) {
           <app-species-row [species]="row.species" [muted]="true" (chosen)="chosen.emit(row.slug)" />
         }

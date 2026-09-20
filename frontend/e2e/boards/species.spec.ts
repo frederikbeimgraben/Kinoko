@@ -6,7 +6,7 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { presetFilter } from '../fixtures/filter-state';
 import { bundle, SEVEN, STONE, TWELVE } from '../fixtures/species';
-import { CORE_CHOICE, SIZE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
+import { CORE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
 import {
   DESKTOP_SPECIES,
   FILTER_DESKTOP,
@@ -86,7 +86,6 @@ test('SpeciesEmpty', async ({ page }) => {
   await presetFilter(page, {
     values: { edibility: ['edible'], capShape: ['convex'] },
     colours: { cap: '#6b4423' },
-    sizes: {},
     keepUnknown: [],
   });
   await openList(page, bundle(STONE));
@@ -156,21 +155,11 @@ test('FilterColour', async ({ page }) => {
   await expectBoard(page, 'SpeciesFilterColour');
 });
 
-test('FilterSize', async ({ page }) => {
-  guard('FilterSize', 'phone');
-  await presetFilter(page, SIZE_CHOICE);
-  await openList(page, largeBundle());
-  await openGroup(page, 'Abmessungen und Zeit');
-  await expect(page.getByRole('group', { name: 'Wachstumszeit' })).toBeVisible();
-  await expectBoard(page, 'SpeciesFilter');
-});
-
 test('FilterResult', async ({ page }) => {
   guard('FilterResult', 'phone');
   await presetFilter(page, {
     values: { edibility: ['edible'], capShape: ['convex'], treePartner: ['picea-abies'] },
     colours: {},
-    sizes: {},
     keepUnknown: [],
   });
   await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN, ...RESULT_REST]));

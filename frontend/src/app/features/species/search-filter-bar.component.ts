@@ -18,11 +18,10 @@ const GROUPS: readonly { key: ChipKey; icon: IconName }[] = [
   { key: 'edibility', icon: 'eat' },
   { key: 'capShape', icon: 'mushroom' },
   { key: 'colour', icon: 'palette' },
-  { key: 'size', icon: 'ruler' },
 ];
 
 /** Die Gruppen, die sich als Wert auf ihrem Zeichen zeigen, in Vorrang. */
-const VALUE_GROUPS: readonly GroupKey[] = ['edibility', 'capShape', 'colour', 'size'];
+const VALUE_GROUPS: readonly GroupKey[] = ['edibility', 'capShape', 'colour'];
 
 /** Suchfeld und die Filtergruppen als Zeichen, per `kit.css` `.chiprow`. */
 @Component({

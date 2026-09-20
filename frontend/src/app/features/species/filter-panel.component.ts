@@ -13,7 +13,6 @@ import { GROUP_TEXT, groupTitle } from './labels';
 import { SpeciesFilterState } from './filter.state';
 import { SpeciesColourComponent } from './filter-colour.component';
 import { SpeciesGroupComponent } from './filter-group.component';
-import { SpeciesSizeComponent } from './filter-size.component';
 import { SpeciesState } from './species.state';
 import { judge, type GroupKey } from './facets';
 
@@ -29,7 +28,7 @@ const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
   { key: 'edibility', labelOf: 'edibility' },
   { key: 'capShape', labelOf: 'capShape' },
   { key: 'hymenium', labelOf: 'hymenium' },
-  { key: 'period', labelOf: 'size' },
+  { key: 'period', labelOf: 'period' },
 ];
 
 /** Der Inhalt des Filters: die Übersicht oder eine der übrigen Gruppen daraus. */
@@ -44,7 +43,6 @@ const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
     RippleDirective,
     SpeciesColourComponent,
     SpeciesGroupComponent,
-    SpeciesSizeComponent,
     SvgIconComponent,
     TranslatePipe,
   ],

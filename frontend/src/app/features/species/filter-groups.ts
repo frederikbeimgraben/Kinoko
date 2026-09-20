@@ -33,8 +33,7 @@ export interface Choice {
 }
 
 /** Die übrigen Karten des Filterblatts. Speisewert, Hutform, Farbe, Fruchtschicht und Zeit
- * stehen flach im Blatt, per `FilterColumn.dc.html`; das Brett führt dort keine eigene
- * Zeile für die Maße mehr. `app-species-filter-size` bleibt vorerst ohne eigenen Weg. */
+ * stehen flach im Blatt, per `FilterColumn.dc.html`. */
 export const GROUP_CARDS: readonly (readonly GroupKey[])[] = [
   ['senses', 'treePartner', 'genusFamily'],
   ['protection', 'forecast'],
@@ -135,7 +134,7 @@ export function groupSummary(
     const textKey = count === 1 ? 'filter.colour.onePart' : 'filter.colour.parts';
     return i18n.translate(textKey, { anzahl: String(count) });
   }
-  if (key === 'size' || key === 'period') return periodSummary(selection, i18n);
+  if (key === 'period') return periodSummary(selection, i18n);
   const chosen = selection.values.get(key) ?? new Set<string>();
   if (chosen.size === 0) return '';
   if (chosen.size > 1) return i18n.translate('filter.valueCount', { anzahl: String(chosen.size) });

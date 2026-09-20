@@ -85,27 +85,13 @@ describe('SpeciesResultsComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('trägt den Kartenrahmen, solange keine Art unbeurteilt bleibt', async () => {
-    const { container } = await render(SpeciesResultsComponent, { inputs: { hits: HITS } });
-
-    expect(container.querySelector('.list--framed')).not.toBeNull();
-  });
-
-  it('lässt den Kartenrahmen weg, sobald eine Art unbeurteilt bleibt', async () => {
-    const { container } = await render(SpeciesResultsComponent, {
-      inputs: { hits: HITS, unassessable: [entry(HEDGEHOG)] },
-    });
-
-    expect(container.querySelector('.list--framed')).toBeNull();
-  });
-
   it('stellt die Arten ohne Angabe blass unter die Treffer', async () => {
     const { container } = await render(SpeciesResultsComponent, {
       inputs: { hits: HITS, unassessable: [entry(HEDGEHOG)] },
     });
 
     expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
-    expect(container.querySelector('.results__card--muted')).not.toBeNull();
+    expect(container.querySelector('.results__group--muted')).not.toBeNull();
     expect(screen.getAllByText('essbar')).toHaveLength(2);
   });
 

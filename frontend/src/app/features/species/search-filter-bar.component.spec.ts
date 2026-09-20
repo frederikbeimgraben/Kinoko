@@ -39,12 +39,11 @@ describe('SpeciesSearchFilterBarComponent', () => {
     const { container } = await build('');
 
     const chips = [...container.querySelectorAll('.chiprow > *')];
-    expect(chips).toHaveLength(5);
+    expect(chips).toHaveLength(4);
     expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Speisewert' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hutform' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Farbe' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Abmessungen und Zeit' })).toBeInTheDocument();
     await noViolations(container);
   });
 

@@ -25,7 +25,14 @@
     "beispiel.ungeniessbar": "ungenießbar",
     "beispiel.giftig": "giftig",
     "beispiel.toedlich": "tödlich giftig",
-    "beispiel.summeKw": "Summe KW 35 bis 38"
+    "beispiel.summeKw": "Summe KW 35 bis 38",
+    "beispiel.gallenroehrling": "Gallenröhrling",
+    "beispiel.knollenblaetterpilz": "Grüner Knollenblätterpilz",
+    "beispiel.maronenroehrling": "Maronenröhrling",
+    "beispiel.pantherpilz": "Pantherpilz",
+    "beispiel.perlpilz": "Perlpilz",
+    "beispiel.semmelstoppelpilz": "Semmelstoppelpilz",
+    "beispiel.wiesenchampignon": "Wiesenchampignon"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -53,6 +60,13 @@
     "beispiel.ungeniessbar": "not edible",
     "beispiel.giftig": "poisonous",
     "beispiel.toedlich": "deadly poisonous",
-    "beispiel.summeKw": "Sum weeks 35 to 38"
+    "beispiel.summeKw": "Sum weeks 35 to 38",
+    "beispiel.gallenroehrling": "Bitter bolete",
+    "beispiel.knollenblaetterpilz": "Death cap",
+    "beispiel.maronenroehrling": "Bay bolete",
+    "beispiel.pantherpilz": "Panther cap",
+    "beispiel.perlpilz": "Blusher",
+    "beispiel.semmelstoppelpilz": "Wood hedgehog",
+    "beispiel.wiesenchampignon": "Field mushroom"
   }
 }

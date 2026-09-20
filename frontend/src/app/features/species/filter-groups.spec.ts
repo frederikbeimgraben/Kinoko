@@ -38,10 +38,10 @@ describe('groupSummary', () => {
     expect(groupSummary('colour', selection, I18N, NAMES)).toBe('filter.colour.onePart');
   });
 
-  it('nennt den einen Monat der Zeit, unter dem Schlüssel Größe und Zeit', () => {
+  it('nennt den einen Monat der Zeit', () => {
     const selection: Selection = { ...EMPTY_SELECTION, values: new Map([['period', new Set(['9'])]]) };
 
-    expect(groupSummary('size', selection, I18N, NAMES)).toBe('enum.month.9');
+    expect(groupSummary('period', selection, I18N, NAMES)).toBe('enum.month.9');
   });
 
   it('nennt den Zeitraum vom ersten bis zum letzten gewählten Monat', () => {

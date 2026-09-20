@@ -26,13 +26,7 @@
   padding-block-end: var(--size-gutter);
 }
 
-.results__card {
-  background: var(--surface);
-  border: var(--border-width) solid var(--outline);
-  border-radius: var(--radius-lg);
-}
-
-.results__card--muted {
+.results__group--muted {
   opacity: 0.62;
 }
 

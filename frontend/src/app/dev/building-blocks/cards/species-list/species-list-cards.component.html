@@ -3,19 +3,27 @@
 </app-block-card>
 
 <app-block-card block="SpeciesList" [width]="390" [height]="640">
-  <app-species-results [hits]="hits" />
+  <div style="display: flex; block-size: 100%">
+    <app-species-results [hits]="hits" />
+  </div>
 </app-block-card>
 
 <app-block-card block="ColourFilter" [width]="358" [height]="330">
-  <app-species-filter-colour />
+  <div style="block-size: 100%; overflow: hidden">
+    <app-species-filter-colour />
+  </div>
 </app-block-card>
 
 <app-block-card block="FilterColumn" [width]="272" [height]="820">
-  <app-species-filter-panel />
+  <div style="block-size: 100%; overflow: hidden">
+    <app-species-filter-panel />
+  </div>
 </app-block-card>
 
 <app-block-card block="FilterSheet" [width]="390" [height]="640">
-  <app-species-filter-sheet />
+  <div style="display: flex; block-size: 100%; overflow: hidden">
+    <app-species-filter-sheet />
+  </div>
 </app-block-card>
 
 <app-block-card block="FactorRow" [width]="358" [height]="64">

@@ -42,7 +42,7 @@ describe('SpeciesFilterPanelComponent', () => {
     expect(screen.getByRole('button', { name: 'Speisewert' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hutform' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Fruchtschicht' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Abmessungen und Zeit' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Zeitraum' })).toBeInTheDocument();
     expect(container.querySelector('app-species-filter-colour')).not.toBeNull();
     await noViolations(container);
   });
@@ -76,11 +76,6 @@ describe('SpeciesFilterPanelComponent', () => {
     filter.showGroup('senses');
     await vi.waitFor(() => {
       expect(container.querySelector('app-species-filter-group')).not.toBeNull();
-    });
-
-    filter.showGroup('size');
-    await vi.waitFor(() => {
-      expect(container.querySelector('app-species-filter-size')).not.toBeNull();
     });
   });
 

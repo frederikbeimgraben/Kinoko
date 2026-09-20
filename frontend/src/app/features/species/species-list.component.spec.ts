@@ -219,7 +219,7 @@ describe('SpeciesListComponent', () => {
       expect(container.querySelectorAll('app-species-row')).toHaveLength(1);
     });
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
-    expect(container.querySelector('.results__card--muted')).toBeNull();
+    expect(container.querySelector('.results__group--muted')).toBeNull();
     expect(screen.queryByText(/Nicht beurteilbar/)).not.toBeInTheDocument();
   });
 
@@ -229,7 +229,7 @@ describe('SpeciesListComponent', () => {
     filter.setColour('cap', '#6b4423');
 
     await vi.waitFor(() => {
-      expect(container.querySelector('.results__card--muted')).not.toBeNull();
+      expect(container.querySelector('.results__group--muted')).not.toBeNull();
     });
     expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
   });

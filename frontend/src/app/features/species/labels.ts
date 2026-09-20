@@ -124,7 +124,6 @@ export const GROUP_TEXT: Record<GroupKey, TranslationKey> = {
   hymenium: 'species.section.hymenium',
   capShape: 'filter.group.hutform',
   colour: 'filter.colour.title',
-  size: 'filter.group.sizeTime',
   period: 'filter.group.period',
   senses: 'filter.group.senses',
   treePartner: 'filter.group.treePartner',

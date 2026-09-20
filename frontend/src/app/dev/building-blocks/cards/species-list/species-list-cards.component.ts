@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import type { WorkshopKey } from '../../../../core/i18n/workshop-texts';
 import { photoPath, type SpeciesEntry } from '../../../../core/api/models';
 import { FactorRowComponent, type CombinationFactor } from '../../../../ui/factor-row/factor-row.component';
 import {
@@ -45,6 +46,89 @@ function entry(
   };
 }
 
+/** Die Hutfarbe einer Art, in der Form des Vertrags. */
+function capColour(hex: string): SpeciesEntry['colours'] {
+  return [{ part: 'cap', mode: 'single', colours: [{ name: hex, hex }] }];
+}
+
+/** Neun der zehn Arten des Bretts `SpeciesList.dc.html`, in seiner Reihenfolge. */
+const LIST_SPECIES: readonly {
+  slug: string;
+  name: WorkshopKey;
+  latin: string;
+  edibility: SpeciesEntry['edibility'];
+  hex: string;
+  photo?: string;
+}[] = [
+  {
+    slug: 'tylopilus-felleus',
+    name: 'beispiel.gallenroehrling',
+    latin: 'Tylopilus felleus',
+    edibility: 'inedible',
+    hex: '#8a6a4a',
+  },
+  {
+    slug: 'amanita-phalloides',
+    name: 'beispiel.knollenblaetterpilz',
+    latin: 'Amanita phalloides',
+    edibility: 'deadly',
+    hex: '#5d6b2f',
+    photo: 'art-stein-hell',
+  },
+  {
+    slug: 'imleria-badia',
+    name: 'beispiel.maronenroehrling',
+    latin: 'Imleria badia',
+    edibility: 'edible',
+    hex: '#5a3220',
+    photo: 'art-marone',
+  },
+  {
+    slug: 'amanita-pantherina',
+    name: 'beispiel.pantherpilz',
+    latin: 'Amanita pantherina',
+    edibility: 'poisonous',
+    hex: '#6b5236',
+  },
+  {
+    slug: 'amanita-rubescens',
+    name: 'beispiel.perlpilz',
+    latin: 'Amanita rubescens',
+    edibility: 'edible',
+    hex: '#b97f72',
+  },
+  {
+    slug: 'cantharellus-cibarius',
+    name: 'beispiel.pfifferling',
+    latin: 'Cantharellus cibarius',
+    edibility: 'edible',
+    hex: '#b9832a',
+    photo: 'art-pfifferling',
+  },
+  {
+    slug: 'hydnum-repandum',
+    name: 'beispiel.semmelstoppelpilz',
+    latin: 'Hydnum repandum',
+    edibility: 'edible',
+    hex: '#a9825a',
+  },
+  {
+    slug: 'boletus-edulis',
+    name: 'beispiel.steinpilz',
+    latin: 'Boletus edulis',
+    edibility: 'edible',
+    hex: '#7a5230',
+    photo: 'art-stein',
+  },
+  {
+    slug: 'agaricus-campestris',
+    name: 'beispiel.wiesenchampignon',
+    latin: 'Agaricus campestris',
+    edibility: 'edible',
+    hex: '#e6e0cf',
+  },
+];
+
 const WEEKS: readonly [number, number, boolean][] = [
   [35, 35, false],
   [36, 55, false],
@@ -86,20 +170,16 @@ export class SpeciesListCardsComponent {
     image: photoPath('art-stein', 'list'),
   };
 
-  protected readonly hits: readonly CatalogueEntry[] = [
+  protected readonly hits: readonly CatalogueEntry[] = LIST_SPECIES.map((one) =>
     entry({
-      slug: 'steinpilz',
-      name: this.i18n.translate('beispiel.steinpilz'),
-      scientificName: 'Boletus edulis',
-      leadPhotoId: 'art-stein',
+      slug: one.slug,
+      name: this.i18n.translate(one.name),
+      scientificName: one.latin,
+      edibility: one.edibility,
+      colours: capColour(one.hex),
+      ...(one.photo === undefined ? {} : { leadPhotoId: one.photo }),
     }),
-    entry({
-      slug: 'pfifferling',
-      name: this.i18n.translate('beispiel.pfifferling'),
-      scientificName: 'Cantharellus cibarius',
-      leadPhotoId: 'art-pfifferling',
-    }),
-  ].map((species) => ({ species, facts: factsOf(species, []) }));
+  ).map((species) => ({ species, facts: factsOf(species, []) }));
 
   protected readonly weeks: readonly TimelineWeek[] = WEEKS.map(([week, fill, forecast]) => ({
     year: 2026,
