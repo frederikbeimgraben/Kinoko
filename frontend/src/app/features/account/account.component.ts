@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, ButtonComponent } from '@stupa-makers/ui-kit';
+import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { AuthService, type SignedInUser } from '../../core/auth';
 import { ConfigService } from '../../core/config/config.service';
@@ -10,6 +10,7 @@ import { MapAppService, type MapApp } from '../../core/maps/map-app.service';
 import { PwaService } from '../../core/pwa/pwa.service';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { APP_VERSION } from '../../core/version.generated';
+import { ButtonComponent } from '../../ui/button/button.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';

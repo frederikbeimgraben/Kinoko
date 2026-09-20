@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '@stupa-makers/ui-kit';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find } from '../../core/api/models';
@@ -20,6 +20,7 @@ import { NOW } from '../../core/tiles/now';
 import { currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
 import { valueAtPoint } from '../../core/tiles/value-at-point';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';

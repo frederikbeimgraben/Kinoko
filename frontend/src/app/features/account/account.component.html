@@ -26,9 +26,9 @@
             <span class="account__name">{{ 'konto.nichtAngemeldet' | t }}</span>
             <span class="account__sub">{{ 'konto.nichtAngemeldetUnter' | t }}</span>
           </span>
-          <app-button variant="secondary" size="sm" (click)="signIn()">
+          <app-push-button kind="tonal" (click)="signIn()">
             {{ 'konto.anmelden' | t }}
-          </app-button>
+          </app-push-button>
         }
       </div>
     </app-row-group>

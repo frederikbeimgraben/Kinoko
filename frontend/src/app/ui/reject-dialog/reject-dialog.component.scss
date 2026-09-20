@@ -42,10 +42,9 @@
   border-radius: 2px;
 }
 
-app-button {
-  --fs-md: var(--fs-control);
-
-  block-size: var(--size-tap);
+app-push-button {
+  --btn-font-size: var(--fs-control);
+  --btn-height: var(--size-tap);
 }
 
 .reject__title {

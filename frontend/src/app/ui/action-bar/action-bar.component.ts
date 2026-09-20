@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { ButtonComponent, type ButtonVariant } from '@stupa-makers/ui-kit';
+import { ButtonComponent, type ButtonKind } from '../button/button.component';
 
 /**
  * Der Fuß trägt oben die Hauptaktion und darunter höchstens eine zweite.
@@ -35,18 +35,18 @@ export class ActionBarComponent {
   readonly secondaryClick = output();
 
   /** Ein laufender Auftrag behält seine Fläche; nur der zweite Weg fehlt. */
-  protected readonly primaryVariant = computed<ButtonVariant>(() => {
-    if (this.ghost() && this.secondary() === undefined && !this.busy()) return 'ghost';
-    if (this.danger()) return this.split() ? 'danger-outline' : 'danger';
-    return this.quiet() ? 'secondary' : 'primary';
+  protected readonly primaryVariant = computed<ButtonKind>(() => {
+    if (this.ghost() && this.secondary() === undefined && !this.busy()) return 'text';
+    if (this.danger()) return this.split() ? 'textdanger' : 'danger';
+    return this.quiet() ? 'tonal' : 'primary';
   });
 
   /** Ein Geist-Knopf trägt die Gefahrfarbe als Schrift, nicht als Fläche. */
   protected readonly quietDanger = computed(() => this.ghost() && this.danger());
 
-  protected readonly secondaryVariant = computed<ButtonVariant>(() => {
-    if (this.ghost()) return 'ghost';
-    return this.secondaryDanger() ? 'danger-outline' : 'secondary';
+  protected readonly secondaryVariant = computed<ButtonKind>(() => {
+    if (this.ghost()) return 'text';
+    return this.secondaryDanger() ? 'textdanger' : 'tonal';
   });
 
   /** Ein Geist-Knopf trägt die Gefahrfarbe als Schrift, nicht als Fläche. */

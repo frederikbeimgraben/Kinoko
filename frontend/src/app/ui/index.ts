@@ -4,6 +4,7 @@ export { AddRowComponent } from './add-row/add-row.component';
 export { AvatarButtonComponent } from './avatar-button/avatar-button.component';
 export { BackHeadComponent } from './back-head/back-head.component';
 export { BannerComponent, type BannerKind } from './banner/banner.component';
+export { ButtonComponent, type ButtonKind } from './button/button.component';
 export { CheckRowComponent } from './check-row/check-row.component';
 export { ChipGroupComponent, type Chip } from './chip-group/chip-group.component';
 export { ChoiceRowComponent } from './choice-row/choice-row.component';
@@ -31,14 +32,14 @@ export { ErrorStateComponent } from './error-state/error-state.component';
 export { FactorRowComponent, type CombinationFactor } from './factor-row/factor-row.component';
 export { FilterChipComponent } from './filter-chip/filter-chip.component';
 export { FilterSheetComponent } from './filter-sheet/filter-sheet.component';
-export { FloatingButtonComponent, type FloatingVariant } from './floating-button/floating-button.component';
+export { FloatingButtonComponent } from './floating-button/floating-button.component';
 export { FormFieldComponent } from './form-field/form-field.component';
 export { FormSheetComponent } from './form-sheet/form-sheet.component';
 export { HistogramComponent } from './histogram/histogram.component';
 export {
   IconButtonComponent,
   type IconButtonIcon,
-  type IconButtonVariant,
+  type IconButtonKind,
 } from './icon-button/icon-button.component';
 export { ImageCreditComponent } from './image-credit/image-credit.component';
 export { LICENCE_CODE, OWN_PHOTO_KEY } from './image-credit/licences';

@@ -1,18 +1,21 @@
-:host {
-  display: block;
-}
-
-.add-row {
+.switchrow {
   display: flex;
   align-items: center;
   gap: 12px;
   inline-size: 100%;
   min-block-size: 56px;
   padding: 8px 16px;
-  font-size: 16px;
-  color: var(--primary);
-  text-align: start;
+  color: var(--text);
   background: var(--surface);
-  border: 0;
   border-radius: 4px;
+}
+
+.switchrow__txt {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.switchrow__txt b {
+  font-size: 16px;
+  font-weight: 400;
 }

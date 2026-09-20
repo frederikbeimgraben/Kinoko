@@ -5,32 +5,35 @@
 .switch {
   position: relative;
   flex: none;
-  inline-size: 44px;
-  block-size: 26px;
-  padding: 0;
-  background: var(--color-surface-sunken);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  inline-size: 52px;
+  block-size: 32px;
+  padding: 0 6px;
+  background: var(--surface-high);
+  border: 2px solid var(--outline-strong);
+  border-radius: 16px;
+  transition: padding var(--motion-fast) var(--ease-standard);
 }
 
 .switch--on {
-  background: var(--color-primary);
-  border: 0;
+  justify-content: flex-end;
+  padding: 0 2px;
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
 .switch__knob {
-  position: absolute;
-  inset-block-start: 2px;
-  inset-inline-start: 2px;
   display: block;
-  inline-size: 22px;
-  block-size: 22px;
-  background: var(--color-handle);
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
-  transition: inset-inline-start var(--motion-fast) var(--ease-standard);
+  inline-size: 16px;
+  block-size: 16px;
+  background: var(--outline-strong);
+  border-radius: 8px;
 }
 
 .switch--on .switch__knob {
-  inset-inline-start: 20px;
+  inline-size: 24px;
+  block-size: 24px;
+  background: var(--on-primary);
+  border-radius: 12px;
 }

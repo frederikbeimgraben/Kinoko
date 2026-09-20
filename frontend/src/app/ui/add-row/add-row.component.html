@@ -1,10 +1,4 @@
-<button
-  class="add-row tap"
-  type="button"
-  data-press="scale"
-  [attr.aria-label]="action()"
-  (click)="pressed.emit()"
->
-  <app-svg-icon name="plus" [size]="16" />
+<button class="add-row" type="button" appRipple [attr.aria-label]="action()" (click)="pressed.emit()">
+  <app-svg-icon name="plus" [size]="24" />
   <span>{{ label() }}</span>
 </button>

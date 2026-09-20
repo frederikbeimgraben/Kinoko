@@ -5,30 +5,30 @@
     [class.footer__pair--split]="split()"
     [class.footer__pair--danger]="split() && (danger() || leadFirst())"
   >
-    <app-button
+    <app-push-button
       class="footer__main"
       [class.footer__lead]="split()"
       [class.footer__slim]="split() || (ghost() && secondary() === undefined && !busy())"
       [class.footer__danger]="quietDanger()"
-      [variant]="primaryVariant()"
-      [block]="!inline()"
-      [loading]="busy()"
+      [kind]="primaryVariant()"
+      [wide]="!inline()"
+      [busy]="busy()"
       [disabled]="busy()"
       (click)="primaryClick.emit()"
     >
       {{ primary() }}
-    </app-button>
+    </app-push-button>
     @if (secondary(); as label) {
-      <app-button
+      <app-push-button
         class="footer__main"
         [class.footer__slim]="secondaryDanger() || ghost()"
         [class.footer__danger]="quietSecondaryDanger()"
-        [variant]="secondaryVariant()"
-        [block]="!inline()"
+        [kind]="secondaryVariant()"
+        [wide]="!inline()"
         (click)="secondaryClick.emit()"
       >
         {{ label }}
-      </app-button>
+      </app-push-button>
     }
   </div>
 </div>

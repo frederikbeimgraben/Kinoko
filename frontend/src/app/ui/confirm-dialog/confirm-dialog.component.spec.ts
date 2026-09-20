@@ -14,7 +14,7 @@ describe('ConfirmDialogComponent', () => {
     fixture.componentInstance.cancelled.subscribe(() => calls.push('abgebrochen'));
 
     expect(screen.getByRole('dialog', { name: 'Fund löschen?' })).toBeInTheDocument();
-    expect(container.querySelector('.btn--danger')).not.toBeNull();
+    expect(container.querySelector('.btn.danger')).not.toBeNull();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
@@ -37,8 +37,8 @@ describe('ConfirmDialogComponent', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Starten' })).toBeInTheDocument();
-    expect(container.querySelector('.btn--primary')).not.toBeNull();
-    expect(container.querySelector('.btn--danger')).toBeNull();
+    expect(container.querySelector('.btn.primary')).not.toBeNull();
+    expect(container.querySelector('.btn.danger')).toBeNull();
   });
 
   it('meldet Abbrechen über Escape', async () => {

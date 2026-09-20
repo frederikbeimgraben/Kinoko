@@ -17,11 +17,11 @@
       [value]="written()"
       (valueChange)="write($event)"
     />
-    <app-button variant="danger" [block]="true" [disabled]="!ready()" (click)="confirm()">
+    <app-push-button kind="danger" [wide]="true" [disabled]="!ready()" (click)="confirm()">
       {{ 'image.reject' | t }}
-    </app-button>
-    <app-button variant="secondary" [block]="true" (click)="cancel()">
+    </app-push-button>
+    <app-push-button kind="tonal" [wide]="true" (click)="cancel()">
       {{ 'common.back' | t }}
-    </app-button>
+    </app-push-button>
   </div>
 }

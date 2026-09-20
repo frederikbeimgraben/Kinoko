@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-/** Ein Zustand an oder aus: die Pille aus den Brettern. */
+/** Ein Zustand an oder aus, per `kit.css` `.sw-t`. */
 @Component({
   selector: 'app-switch',
   changeDetection: ChangeDetectionStrategy.OnPush,

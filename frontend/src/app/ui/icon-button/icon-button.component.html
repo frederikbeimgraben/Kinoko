@@ -1,46 +1,67 @@
 <button
-  class="icon-button tap"
+  class="icon-button"
   type="button"
-  data-press="scale"
-  [class.icon-button--primary]="variant() === 'primary'"
-  [class.icon-button--ghost]="variant() === 'ghost'"
-  [class.icon-button--delete]="icon() === 'delete' && variant() !== 'primary'"
+  appRipple
+  [class.icon-button--tonal]="kind() === 'tonal'"
+  [class.icon-button--plain]="kind() === 'plain'"
+  [class.icon-button--fab]="kind() === 'fab'"
+  [class.icon-button--fabl]="kind() === 'fabl'"
+  [class.icon-button--accept]="kind() === 'accept'"
+  [class.icon-button--reject]="kind() === 'reject'"
+  [class.icon-button--over]="kind() === 'over'"
   [attr.aria-label]="label()"
   [disabled]="disabled()"
   (click)="pressed.emit()"
 >
-  <svg
-    class="icon-button__glyph"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    [attr.width]="glyph().size"
-    [attr.height]="glyph().size"
-    [attr.stroke-width]="glyph().stroke"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-hidden="true"
-  >
-    @switch (icon()) {
-      @case ('check') {
-        <path d="M5 12l5 5 9-10" />
+  @if (filled()) {
+    <svg
+      class="icon-button__glyph"
+      viewBox="0 0 12 12"
+      fill="currentColor"
+      [attr.width]="iconSize()"
+      [attr.height]="iconSize()"
+      aria-hidden="true"
+    >
+      @if (icon() === 'prev') {
+        <path d="M8.5 1.5 3.5 6l5 4.5z" />
+      } @else {
+        <path d="M3.5 1.5 8.5 6l-5 4.5z" />
       }
-      @case ('close') {
-        <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  } @else {
+    <svg
+      class="icon-button__glyph"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      [attr.width]="iconSize()"
+      [attr.height]="iconSize()"
+      [attr.stroke-width]="glyph().stroke"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      @switch (icon()) {
+        @case ('check') {
+          <path d="M5 12l5 5 9-10" />
+        }
+        @case ('close') {
+          <path d="M6 6l12 12M18 6L6 18" />
+        }
+        @case ('delete') {
+          <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+          <path d="M10 11v6M14 11v6" />
+        }
+        @case ('pencil') {
+          <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
+        }
+        @case ('share') {
+          <circle cx="6" cy="12" r="2.5" />
+          <circle cx="17" cy="6" r="2.5" />
+          <circle cx="17" cy="18" r="2.5" />
+          <path d="M8.3 10.8L14.8 7.2M8.3 13.2l6.5 3.6" />
+        }
       }
-      @case ('delete') {
-        <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
-        <path d="M10 11v6M14 11v6" />
-      }
-      @case ('pencil') {
-        <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
-      }
-      @case ('share') {
-        <circle cx="6" cy="12" r="2.5" />
-        <circle cx="17" cy="6" r="2.5" />
-        <circle cx="17" cy="18" r="2.5" />
-        <path d="M8.3 10.8L14.8 7.2M8.3 13.2l6.5 3.6" />
-      }
-    }
-  </svg>
+    </svg>
+  }
 </button>

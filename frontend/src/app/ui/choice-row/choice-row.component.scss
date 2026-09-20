@@ -1,27 +1,27 @@
 :host {
   display: block;
-  box-sizing: border-box;
-  block-size: 44px;
-}
-
-// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
-:host(:not(:first-child)) {
-  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 // Auf der Karte steht jede Zeile für sich, mit eigenem Rand und Einzug.
 :host(.choice-row--boxed) {
-  block-size: 48px;
-  border: var(--border-width) solid var(--color-border);
+  border: 1px solid var(--outline);
   border-radius: 10px;
 }
 
 .row {
   display: flex;
-  gap: var(--space-3);
   align-items: center;
-  block-size: 100%;
-  padding-inline: 14px;
+  gap: 12px;
+  min-block-size: 56px;
+  padding: 8px 16px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+:host(.choice-row--boxed) .row {
+  background: none;
 }
 
 .row__input {
@@ -32,47 +32,49 @@
   clip-path: inset(50%);
 }
 
-.row__box {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  inline-size: 21px;
-  block-size: 21px;
-  color: var(--color-on-primary);
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: 6px;
-}
-
-// Auf der Karte misst das Kästchen zwanzig Punkte und trägt einen dünnen Rand.
-:host(.choice-row--boxed) .row__box {
-  inline-size: 20px;
-  block-size: 20px;
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: 4px;
-}
-
-.row__input:checked + .row__box {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.row__input:focus-visible + .row__box {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
 .row__label {
   flex: 1;
   min-inline-size: 0;
-  font-size: 15px;
+  font-weight: 400;
   line-height: 1.2;
 }
 
 .row__count {
   flex: none;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: var(--label);
   font-variant-numeric: tabular-nums;
+}
+
+.row__box {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 20px;
+  block-size: 20px;
+  border: 2px solid var(--outline-strong);
+  border-radius: 10px;
+}
+
+.row__box i {
+  display: none;
+}
+
+.row__box--on {
+  border-color: var(--primary);
+}
+
+.row__box--on i {
+  display: block;
+  inline-size: 10px;
+  block-size: 10px;
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+.row__input:focus-visible + .row__label {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

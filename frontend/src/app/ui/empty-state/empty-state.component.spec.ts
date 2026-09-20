@@ -60,7 +60,7 @@ describe('EmptyStateComponent', () => {
     await userEvent.click(button);
 
     expect(calls).toBe(1);
-    expect(container.querySelector('app-button')).toBeNull();
+    expect(container.querySelector('app-push-button')).toBeNull();
     expect(button).toHaveClass('empty__button', 'tap');
     expect(button).toHaveAttribute('data-press', 'scale');
   });
@@ -79,7 +79,7 @@ describe('EmptyStateComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
 
     expect(calls).toBe(1);
-    expect(container.querySelector('app-button')).not.toBeNull();
+    expect(container.querySelector('app-push-button')).not.toBeNull();
     expect(container.querySelector('.empty__button')).toBeNull();
   });
 

@@ -1,7 +1,7 @@
 <div class="signin" role="status">
   @if (failure()) {
     <p class="signin__text">{{ 'anmeldung.fehler' | t }}</p>
-    <app-button variant="secondary" (click)="toMap()">{{ 'nav.karte' | t }}</app-button>
+    <app-push-button kind="tonal" (click)="toMap()">{{ 'nav.karte' | t }}</app-push-button>
   } @else {
     <p class="signin__text">{{ 'anmeldung.laeuft' | t }}</p>
   }

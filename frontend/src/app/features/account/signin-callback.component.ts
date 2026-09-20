@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { AuthService } from '../../core/auth';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ButtonComponent } from '../../ui/button/button.component';
 
 /**
  * Die Rückkehr vom SSO. Der Code wird gegen die Token getauscht, danach führt

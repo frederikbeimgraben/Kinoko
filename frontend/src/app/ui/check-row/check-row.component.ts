@@ -3,7 +3,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 let nextNumber = 0;
 
-/** Zeile mit Kästchen: Haken links, Titel und Unterzeile rechts. */
+/** Zeile mit Haken-Kästchen, per `kit.css` `.box-c`. */
 @Component({
   selector: 'app-check-row',
   changeDetection: ChangeDetectionStrategy.OnPush,

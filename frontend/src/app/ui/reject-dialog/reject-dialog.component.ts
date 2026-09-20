@@ -8,10 +8,10 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ButtonComponent } from '../button/button.component';
 import { ChipGroupComponent } from '../chip-group/chip-group.component';
 import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 import { FormFieldComponent } from '../form-field/form-field.component';

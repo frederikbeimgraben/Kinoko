@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '@stupa-makers/ui-kit';
 import { AccessApi } from '../../core/api/access.api';
 import type { AccountExport } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { OfflineStore } from '../../core/offline/offline-store';
+import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
 import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';

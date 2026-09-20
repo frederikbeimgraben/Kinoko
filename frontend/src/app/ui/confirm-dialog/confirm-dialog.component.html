@@ -7,17 +7,17 @@
     }
     <ng-content />
     <div class="confirm__actions">
-      <app-button
-        [variant]="danger() ? 'danger' : 'primary'"
-        [block]="true"
+      <app-push-button
+        [kind]="danger() ? 'danger' : 'primary'"
+        [wide]="true"
         [disabled]="confirmDisabled()"
         (click)="confirmed.emit()"
       >
         {{ confirmLabel() ?? ('common.delete' | t) }}
-      </app-button>
-      <app-button variant="secondary" [block]="true" (click)="cancelled.emit()">
+      </app-push-button>
+      <app-push-button kind="tonal" [wide]="true" (click)="cancelled.emit()">
         {{ 'common.cancel' | t }}
-      </app-button>
+      </app-push-button>
     </div>
   </div>
 }

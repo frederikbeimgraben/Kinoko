@@ -1,0 +1,82 @@
+:host {
+  display: inline-flex;
+}
+
+.btn {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  block-size: var(--btn-height, 56px);
+  padding: 0 24px;
+  font-size: var(--btn-font-size, 15px);
+  font-weight: 600;
+  white-space: nowrap;
+  border: 0;
+  border-radius: 28px;
+}
+
+.primary {
+  color: var(--on-primary);
+  background: var(--primary);
+}
+
+.tonal {
+  color: var(--on-sel);
+  background: var(--sel);
+}
+
+.outline {
+  color: var(--primary);
+  background: none;
+  border: 1px solid var(--outline-strong);
+}
+
+.text {
+  block-size: var(--btn-height, 48px);
+  padding: 0 16px;
+  color: var(--primary);
+  background: none;
+}
+
+.danger {
+  color: var(--bad);
+  background: var(--bad-bg);
+}
+
+.textdanger {
+  block-size: var(--btn-height, 48px);
+  padding: 0 16px;
+  color: var(--bad);
+  background: none;
+}
+
+.wide {
+  inline-size: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.busy {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.spin {
+  display: block;
+  inline-size: 22px;
+  block-size: 22px;
+  border: 3px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

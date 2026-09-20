@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ButtonComponent } from '../button/button.component';
 import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 
 /** Eine Bestätigung: Frage, Zahl als Kontext, zwei Knöpfe. */

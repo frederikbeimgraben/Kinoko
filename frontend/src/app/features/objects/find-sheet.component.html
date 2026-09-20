@@ -35,10 +35,10 @@
     (primaryClick)="editing.set(true)"
     (secondaryClick)="deleteAsk.set(true)"
   >
-    <app-button class="findsheet__main" variant="primary" [block]="true" (click)="showOnMap()">
+    <app-push-button class="findsheet__main" kind="primary" [wide]="true" (click)="showOnMap()">
       <app-svg-icon name="map" [size]="16" />
       {{ 'entry.showOnMap' | t }}
-    </app-button>
+    </app-push-button>
   </app-action-bar>
 }
 <app-confirm-dialog
