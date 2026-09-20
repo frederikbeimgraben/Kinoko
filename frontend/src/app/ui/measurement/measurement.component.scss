@@ -1,5 +1,3 @@
-// Der Rahmen liegt am Wirt, das Polster an den Zellen: die Trennlinie
-// zwischen zwei Zeilen reicht so an den Kartenrand.
 :host {
   display: grid;
   // Die Zahlen aller Strecken beginnen auf derselben Kante.
@@ -8,11 +6,12 @@
   align-items: center;
   min-block-size: 52px;
   padding-inline: 28px 14px;
+  background: var(--surface);
+  border-radius: 4px;
 }
 
-// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
-:host(:not(:first-child)) {
-  border-block-start: var(--border-width) solid var(--color-border);
+:host(:last-child) {
+  border-radius: 4px 4px 20px 20px;
 }
 
 // Eine Zeile mit der seltenen Spanne trägt zwei Textzeilen und ist höher.
@@ -30,13 +29,13 @@
 .measure__extent {
   font-size: var(--fs-row-title);
   line-height: normal;
-  color: var(--color-text);
+  color: var(--text);
 }
 
 .measure__rare {
   font-size: var(--fs-row-meta);
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 // Die Zahl steht in Ziffern gleicher Breite, damit Werte untereinander
@@ -53,10 +52,10 @@
 .measure__number {
   font-size: var(--fs-row-title);
   line-height: normal;
-  color: var(--color-text);
+  color: var(--text);
 }
 
 .measure__unit {
   font-size: var(--fs-row-meta);
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }

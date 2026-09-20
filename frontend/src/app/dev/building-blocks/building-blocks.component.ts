@@ -7,6 +7,7 @@ import { DisplayCardsComponent } from './cards/display/display-cards.component';
 import { MapCardsComponent } from './cards/map/map-cards.component';
 import { PrimitivesCardsComponent } from './cards/primitives/primitives-cards.component';
 import { RowsCardsComponent } from './cards/rows/rows-cards.component';
+import { SpeciesPageCardsComponent } from './cards/species-page/species-page-cards.component';
 
 const THEME_ATTRIBUTE = 'data-theme';
 const DARK = 'dark';
@@ -22,6 +23,7 @@ const DARK = 'dark';
     MapCardsComponent,
     PrimitivesCardsComponent,
     RowsCardsComponent,
+    SpeciesPageCardsComponent,
   ],
   templateUrl: './building-blocks.component.html',
   styleUrl: './building-blocks.component.scss',
