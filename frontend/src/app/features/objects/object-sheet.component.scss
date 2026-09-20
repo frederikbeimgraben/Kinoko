@@ -21,3 +21,11 @@
 .object--dark {
   --pilz-scrim: rgb(0 18 10 / 55%);
 }
+
+.object__missing {
+  text-align: center;
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--outline);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
