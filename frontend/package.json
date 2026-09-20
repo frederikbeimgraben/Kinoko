@@ -9,6 +9,8 @@
     "postinstall": "node tools/stamp-version.mjs",
     "prebuild": "node tools/stamp-version.mjs",
     "build": "ng build",
+    "prebuild:e2e": "node tools/stamp-version.mjs",
+    "build:e2e": "ng build --configuration e2e",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ci": "ng test --no-watch --coverage",

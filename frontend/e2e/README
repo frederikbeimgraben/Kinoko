@@ -12,7 +12,8 @@ Lighthouse liest CHROME_PATH statt BROWSER_PATH.
 ## Projekte
 
 - `phone` und `wide` messen die Boards gegen die Baselines in
-  `boards/baseline/`. `blocks` misst die Bausteinkarten.
+  `boards/baseline/`. `blocks` misst die Bausteinkarten auf `/dev/blocks`,
+  einem Weg nur im Bau mit `npm run build:e2e`.
 - `desktop` prüft nur `flows/desktop/`.
 - `flows` prüft die Abläufe aus `artefakte/nfr.md`.
 
