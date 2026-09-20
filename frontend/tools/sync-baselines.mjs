@@ -18,6 +18,7 @@ const DEFAULT_DESIGN_DIR = '../../artefakte/mockups/design/uebergabe';
 const BASELINE_DIR = 'e2e/boards/baseline';
 const BLOCKS_DIR = `${BASELINE_DIR}/blocks`;
 const SOURCE_FILE = `${BASELINE_DIR}/SOURCE.json`;
+const NOT_BUILT_FILE = 'e2e/boards/not-built.json';
 
 /** Resolves the design package directory: argument, env var, then the default path. */
 export function designDir(root, override) {
@@ -39,10 +40,17 @@ function boardTargets(dir) {
   }));
 }
 
-function componentTargets(dir) {
+/** Design components that no board uses. The app does not build them. */
+function notBuilt(root) {
+  const file = join(root, NOT_BUILT_FILE);
+  return new Set(existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : []);
+}
+
+function componentTargets(root, dir) {
   const catalogue = JSON.parse(readFileSync(join(dir, 'components.json'), 'utf8'));
+  const skipped = notBuilt(root);
   return catalogue.components
-    .filter((component) => component.kind === 'component')
+    .filter((component) => component.kind === 'component' && !skipped.has(component.component))
     .map((component) => ({
       name: `blocks/${component.component}`,
       source: join(dir, 'bilder', `${component.component}.png`),
@@ -66,7 +74,7 @@ function prune(dir, keep) {
 
 /** Copies every board and component baseline and writes `SOURCE.json`. */
 export function sync(root, dir) {
-  const targets = [...boardTargets(dir), ...componentTargets(dir)];
+  const targets = [...boardTargets(dir), ...componentTargets(root, dir)];
 
   mkdirSync(join(root, BASELINE_DIR), { recursive: true });
   mkdirSync(join(root, BLOCKS_DIR), { recursive: true });
