@@ -26,7 +26,6 @@ export class RippleDirective {
     const position = getComputedStyle(this.host).position;
     if (position === 'static' || position === '') {
       this.renderer.setStyle(this.host, 'position', 'relative');
-      this.renderer.setStyle(this.host, 'overflow', 'hidden');
     }
 
     const box = this.host.getBoundingClientRect();
@@ -37,9 +36,12 @@ export class RippleDirective {
     this.renderer.setStyle(dot, 'height', `${size}px`);
     this.renderer.setStyle(dot, 'left', `${event.clientX - box.left - size / 2}px`);
     this.renderer.setStyle(dot, 'top', `${event.clientY - box.top - size / 2}px`);
+    const frame = this.renderer.createElement('span') as HTMLElement;
+    this.renderer.addClass(frame, 'ripple-frame');
+    this.renderer.appendChild(frame, dot);
     dot.addEventListener('animationend', () => {
-      this.renderer.removeChild(this.host, dot);
+      this.renderer.removeChild(this.host, frame);
     });
-    this.renderer.appendChild(this.host, dot);
+    this.renderer.appendChild(this.host, frame);
   }
 }
