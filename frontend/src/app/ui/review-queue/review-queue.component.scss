@@ -1,6 +1,4 @@
 :host {
-  --review-queue-action-size: 64px;
-
   display: block;
 }
 
@@ -10,16 +8,26 @@
   gap: 24px;
 }
 
+.queue--fill {
+  block-size: 100%;
+}
+
 .queue__stack {
   position: relative;
 }
 
+.queue__stack--fill {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+// Kein eigener Rahmen: nur Fläche und Rundung, wie `kit.css` `.qcard`.
 .queue__card {
   overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  background: var(--surface);
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
 }
 
 .queue__card--ghost {
@@ -38,15 +46,20 @@
   transition: transform var(--motion-base) var(--ease-standard);
 }
 
+.queue__card--fill {
+  block-size: 100%;
+}
+
 .queue__card--top.queue__card--dragging {
   transition: none;
 }
 
+// Abstand und Größe der drei Knöpfe, wie `kit.css` `.qacts`.
 .queue__actions {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 22px;
+  gap: 28px;
 }
 
 // Der leere Platz wiegt den Zurück-Knopf der Seite auf: Ablehnen und
@@ -59,30 +72,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
+  border: 0;
 }
 
+// Rückgängig: klein und gedämpft, wie `kit.css` `.tb`.
 .queue__round--undo {
   inline-size: var(--size-tap);
   block-size: var(--size-tap);
+  color: var(--on-sel);
+  background: var(--tonal);
+  border-radius: var(--radius-pill);
+}
+
+// Ablehnen und Annehmen: groß und angehoben, wie `kit.css` `.rbig`.
+.queue__round--reject,
+.queue__round--accept {
+  inline-size: 72px;
+  block-size: 72px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
 }
 
 .queue__round--reject {
-  inline-size: var(--review-queue-action-size);
-  block-size: var(--review-queue-action-size);
-  color: var(--color-danger);
-  border-color: var(--color-danger);
+  color: var(--bad);
+  background: var(--bad-bg);
 }
 
 .queue__round--accept {
-  inline-size: var(--review-queue-action-size);
-  block-size: var(--review-queue-action-size);
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  border-color: var(--color-primary);
+  color: var(--on-primary);
+  background: var(--primary);
 }
 
 .queue__round:disabled {

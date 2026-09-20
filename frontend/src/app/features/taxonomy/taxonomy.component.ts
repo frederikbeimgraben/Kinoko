@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TAXON_RANKS, type SpeciesSummary, type TaxonRank } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SpeciesRowComponent, type SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
@@ -26,7 +26,7 @@ interface ChildRow {
 @Component({
   selector: 'app-taxonomy',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EmptyStateComponent, ListRowComponent, PageHeaderComponent, SpeciesRowComponent, TranslatePipe],
+  imports: [ListRowComponent, PageHeaderComponent, SpeciesRowComponent, StateViewComponent, TranslatePipe],
   templateUrl: './taxonomy.component.html',
   styleUrl: './taxonomy.component.scss',
 })

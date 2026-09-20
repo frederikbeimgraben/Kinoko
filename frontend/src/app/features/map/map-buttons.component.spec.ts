@@ -61,4 +61,10 @@ describe('MapButtonsComponent', () => {
 
     expect(northed).toBe(1);
   });
+
+  it('schiebt die Knöpfe unter eine schwebende Leiste', async () => {
+    const { container } = await render(MapButtonsComponent, { inputs: { bannerOffset: 60 } });
+
+    expect(container.style.getPropertyValue('--map-buttons-banner-offset')).toBe('60px');
+  });
 });

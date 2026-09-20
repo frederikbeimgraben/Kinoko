@@ -1,0 +1,32 @@
+:host {
+  display: contents;
+}
+
+.pin-wrap {
+  display: flex;
+  inline-size: 100%;
+  block-size: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.controls-wrap {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+// `app-step-bar` schwebt sonst frei über der Seite: in der Karte steht sie
+// statt dessen an ihrem Platz, mit demselben Rand wie `StepBar.dc.html`.
+.stepbar-demo {
+  position: static !important;
+  inset: auto !important;
+  padding-inline: 16px;
+  box-sizing: border-box;
+}
+
+.queue-demo,
+.state-demo {
+  display: block;
+  block-size: 100%;
+}

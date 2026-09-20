@@ -142,7 +142,7 @@ export class AddEntryComponent implements OnDestroy {
       },
       {
         label: this.i18n.translate('entry.zone.removeLastVertex'),
-        icon: 'back',
+        icon: 'undo',
         variant: 'secondary',
         run: () => {
           this.state.removeLastCorner();

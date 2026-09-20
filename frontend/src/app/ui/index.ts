@@ -53,6 +53,7 @@ export { LevelPillComponent, type BadgeKind } from './level-pill/level-pill.comp
 export { ListRowComponent } from './list-row/list-row.component';
 export { MapAppLinkComponent } from './map-app-link/map-app-link.component';
 export { MapAttributionComponent } from './map-attribution/map-attribution.component';
+export { MapPinComponent } from './map-pin/map-pin.component';
 export { MeasurementComponent, type Extent, type Span } from './measurement/measurement.component';
 export {
   MeasurementGroupComponent,
@@ -61,6 +62,7 @@ export {
 export { MonoComponent } from './mono/mono.component';
 export { NavComponent, type NavVariant } from './nav/nav.component';
 export { ObjectMenuComponent, type ObjectMenuTarget } from './object-menu/object-menu.component';
+export { ObjectTitleComponent } from './object-title/object-title.component';
 export { OptionSheetComponent, type OptionSheetOption } from './option-sheet/option-sheet.component';
 export { OverlayHostComponent } from './overlay-host/overlay-host.component';
 export { PageHeaderComponent } from './page-header/page-header.component';
@@ -82,6 +84,7 @@ export { SwitchComponent } from './switch/switch.component';
 export { SheetComponent, type Detent, type DetentSize } from './sheet/sheet.component';
 export { SheetHeadComponent } from './sheet-head/sheet-head.component';
 export { SkeletonComponent, type SkeletonKind } from './skeleton/skeleton.component';
+export { StateViewComponent, type StateViewKind } from './state-view/state-view.component';
 export { StepBarComponent, type StepAction } from './step-bar/step-bar.component';
 export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';
 export { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row/species-row.component';
@@ -94,3 +97,4 @@ export { TimelineComponent, type TimelineWeek } from './timeline/timeline.compon
 export { WeekButtonComponent } from './timeline/week-button.component';
 export { YearBandComponent } from './year-band/year-band.component';
 export { YearBandInputComponent } from './year-band-input/year-band-input.component';
+export { ZoneShapeComponent } from './zone-shape/zone-shape.component';

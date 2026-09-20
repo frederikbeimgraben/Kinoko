@@ -254,9 +254,7 @@
   "blocks/Legend",
   "blocks/LookalikeRow",
   "blocks/LookalikeSection",
-  "blocks/MapControls",
   "blocks/MapPanel",
-  "blocks/MapPin",
   "blocks/MapView",
   "blocks/MarkerFormBody",
   "blocks/MarkerViewBody",
@@ -272,7 +270,6 @@
   "blocks/PopItem",
   "blocks/Popover",
   "blocks/Progress",
-  "blocks/QueueCard",
   "blocks/RadioRow",
   "blocks/Rail",
   "blocks/RatingSection",
@@ -292,7 +289,6 @@
   "blocks/SpeciesRow",
   "blocks/SpeciesSections",
   "blocks/Split",
-  "blocks/StateView",
   "blocks/StepBar",
   "blocks/Stepper",
   "blocks/Surface",
@@ -302,6 +298,5 @@
   "blocks/WeekCell",
   "blocks/WeekStrip",
   "blocks/ZoneFormBody",
-  "blocks/ZoneShape",
   "blocks/ZoneViewBody"
 ]

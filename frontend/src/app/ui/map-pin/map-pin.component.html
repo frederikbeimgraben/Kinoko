@@ -1,0 +1,14 @@
+<i
+  class="pin"
+  [class.pin--on]="on()"
+  [style.width.px]="diameter"
+  [style.height.px]="diameter"
+  [style.border-width.px]="borderWidth"
+  [style.border-color]="borderColour"
+  [style.background]="colour()"
+  [style.box-shadow]="
+    on()
+      ? '0 0 0 ' + ringInner + 'px ' + ringInnerColour + ', 0 0 0 ' + ringOuter + 'px ' + ringOuterColour
+      : null
+  "
+></i>

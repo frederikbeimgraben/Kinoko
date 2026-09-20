@@ -1,6 +1,6 @@
-<div class="queue">
+<div class="queue" [class.queue--fill]="fill()">
   @if (current(); as item) {
-    <div class="queue__stack">
+    <div class="queue__stack" [class.queue__stack--fill]="fill()">
       @if (behind(); as ghost) {
         <div class="queue__card queue__card--ghost" aria-hidden="true">
           <ng-container [ngTemplateOutlet]="card()" [ngTemplateOutletContext]="{ $implicit: ghost }" />
@@ -8,6 +8,7 @@
       }
       <div
         class="queue__card queue__card--top"
+        [class.queue__card--fill]="fill()"
         role="group"
         tabindex="0"
         [class.queue__card--dragging]="dragging()"
@@ -21,75 +22,80 @@
         <ng-container [ngTemplateOutlet]="card()" [ngTemplateOutletContext]="{ $implicit: item }" />
       </div>
     </div>
-    <div class="queue__actions">
-      <button
-        type="button"
-        class="queue__round queue__round--undo tap"
-        data-press="scale"
-        [disabled]="!canUndo()"
-        [attr.aria-label]="'common.undo' | t"
-        (click)="undo()"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="20"
-          height="20"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+    @if (showActions()) {
+      <div class="queue__actions">
+        <button
+          type="button"
+          class="queue__round queue__round--undo tap"
+          appRipple
+          data-press="scale"
+          [disabled]="!canUndo()"
+          [attr.aria-label]="'common.undo' | t"
+          (click)="undo()"
         >
-          <path d="M9 14 4 9l5-5" />
-          <path d="M4 9h10a6 6 0 0 1 0 12h-3" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        class="queue__round queue__round--reject tap"
-        data-press="scale"
-        [attr.aria-label]="'image.reject' | t"
-        (click)="reject()"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="26"
-          height="26"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 14 4 9l5-5" />
+            <path d="M4 9h10a6 6 0 0 1 0 12h-3" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="queue__round queue__round--reject tap"
+          appRipple
+          data-press="scale"
+          [attr.aria-label]="'image.reject' | t"
+          (click)="reject()"
         >
-          <path d="M6 6l12 12M18 6L6 18" />
-        </svg>
-      </button>
-      <button
-        type="button"
-        class="queue__round queue__round--accept tap"
-        data-press="scale"
-        [attr.aria-label]="'image.approve' | t"
-        (click)="accept()"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="30"
-          height="30"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.4"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+          <svg
+            viewBox="0 0 24 24"
+            width="26"
+            height="26"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="queue__round queue__round--accept tap"
+          appRipple
+          data-press="scale"
+          [attr.aria-label]="'image.approve' | t"
+          (click)="accept()"
         >
-          <path d="M5 12l5 5 9-10" />
-        </svg>
-      </button>
-      @if (balance()) {
-        <span class="queue__balance" aria-hidden="true"></span>
-      }
-    </div>
+          <svg
+            viewBox="0 0 24 24"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12l5 5 9-10" />
+          </svg>
+        </button>
+        @if (balance()) {
+          <span class="queue__balance" aria-hidden="true"></span>
+        }
+      </div>
+    }
   }
 </div>

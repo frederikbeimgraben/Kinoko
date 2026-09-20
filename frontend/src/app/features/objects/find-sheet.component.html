@@ -10,6 +10,12 @@
   />
 } @else {
   <div class="objectsheet">
+    <div class="findsheet__head">
+      <app-object-title [title]="speciesName()" [sub]="sub()" [photo]="thumbPhoto()" />
+      @if (shared()) {
+        <app-level-pill class="findsheet__badge" [text]="'entry.badge.shared' | t" kind="ok" />
+      }
+    </div>
     <app-photo-gallery [findId]="find().id" />
     @if (find().note; as note) {
       <p class="findsheet__note">{{ note }}</p>

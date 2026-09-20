@@ -7,7 +7,7 @@
 
 <div class="queue">
   @if (cards().length === 0) {
-    <app-empty-state [text]="'find.queue.empty' | t" />
+    <app-state-view icon="check" [title]="'find.queue.empty' | t" />
   } @else {
     <app-review-queue
       [balance]="true"

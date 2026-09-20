@@ -8,6 +8,8 @@ import type {
   Subscription,
 } from 'maplibre-gl';
 import type { Viewbox } from './tile-grid';
+import { MAP_PIN_BORDER_COLOUR, MAP_PIN_BORDER_WIDTH, MAP_PIN_RADIUS } from '../ui/map-pin/map-pin.constants';
+import { ZONE_FILL_OPACITY, ZONE_STROKE_WIDTH } from '../ui/zone-shape/zone-shape.constants';
 
 /** Nur der Teil von MapLibre, den der Adapter braucht. */
 export type MaplibreModule = Pick<
@@ -179,7 +181,7 @@ function layerName(role: Role, space: 0 | 1): string {
 
 /** Ein gerundeter Fund liegt irgendwo in dieser Masche, nicht auf dem Punkt. */
 const ROUNDED_RADIUS = 18;
-const POINT_RADIUS = 7;
+const POINT_RADIUS = MAP_PIN_RADIUS;
 
 /** Der eigene Standort trägt nie eine der sechs Objektfarben, sondern Blau. */
 const LOCATION_COLOR = '#1a73e8';
@@ -204,13 +206,13 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
         id: 'objekte-zonen-flaeche',
         type: 'fill',
         source: source,
-        paint: { 'fill-color': ['get', 'farbe'], 'fill-opacity': 0.18 },
+        paint: { 'fill-color': ['get', 'farbe'], 'fill-opacity': ZONE_FILL_OPACITY },
       },
       {
         id: 'objekte-zonen-linie',
         type: 'line',
         source: source,
-        paint: { 'line-color': ['get', 'farbe'], 'line-width': 2 },
+        paint: { 'line-color': ['get', 'farbe'], 'line-width': ZONE_STROKE_WIDTH },
       },
     ];
   }
@@ -249,8 +251,8 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
           'circle-radius': ['case', ['get', 'gerundet'], ROUNDED_RADIUS, POINT_RADIUS],
           'circle-color': ['get', 'farbe'],
           'circle-opacity': ['case', ['get', 'gerundet'], 0.25, 0.85],
-          'circle-stroke-width': ['case', ['get', 'gerundet'], 0, 2],
-          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': ['case', ['get', 'gerundet'], 0, MAP_PIN_BORDER_WIDTH],
+          'circle-stroke-color': MAP_PIN_BORDER_COLOUR,
         },
       },
     ];
@@ -263,8 +265,8 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
       paint: {
         'circle-radius': POINT_RADIUS,
         'circle-color': ['get', 'farbe'],
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': MAP_PIN_BORDER_WIDTH,
+        'circle-stroke-color': MAP_PIN_BORDER_COLOUR,
       },
     },
   ];

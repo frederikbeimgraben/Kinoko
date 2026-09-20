@@ -12,21 +12,11 @@
     [label]="sheetName()"
     [title]="headTitle()"
     [note]="headNote()"
-    [style.--sheet-title-size.px]="map.object()?.kind === 'find' ? 24 : 22"
-    [style.--sheet-title-weight]="700"
-    [style.--sheet-title-tracking]="'-0.01em'"
-    [style.--sheet-title-gap.px]="dotColour() ? 10 : null"
     [detents]="detents()"
     [modal]="true"
     [dismissible]="true"
     (closed)="dismiss()"
   >
-    @if (dotColour(); as colour) {
-      <span titleLead class="object__dot" [style.background]="colour"></span>
-    }
-    @if (shared()) {
-      <app-level-pill titleLead class="object__badge" [text]="'entry.badge.shared' | t" kind="ok" />
-    }
     @if (find(); as entry) {
       <app-find-sheet [find]="entry" (closed)="close()" />
     } @else if (marker(); as entry) {

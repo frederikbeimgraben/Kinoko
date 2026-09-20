@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.state {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+  color: var(--text-var);
+}
+
+.state__blob {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 96px;
+  block-size: 96px;
+  color: var(--label);
+  background: var(--surface);
+  border-radius: 32px;
+}
+
+.state--error .state__blob {
+  color: var(--bad);
+  background: var(--bad-bg);
+}
+
+.state__title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+}

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Location, NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -28,7 +28,6 @@ import { SpeciesState } from './species.state';
   selector: 'app-species-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    EmptyStateComponent,
     IconButtonComponent,
     NgTemplateOutlet,
     PageHeaderComponent,
@@ -45,6 +44,7 @@ import { SpeciesState } from './species.state';
     SpeciesSourcesComponent,
     SpeciesTaxonomyComponent,
     SpeciesTimeComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './species-page.component.html',

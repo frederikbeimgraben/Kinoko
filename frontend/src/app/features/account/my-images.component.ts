@@ -7,11 +7,11 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { type BadgeKind, LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SpeciesState } from '../species/species.state';
 
 const STATE_BADGE: Record<PhotoState, BadgeKind> = {
@@ -46,11 +46,11 @@ interface Row {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ButtonComponent,
-    EmptyStateComponent,
     LevelPillComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     RowGroupComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './my-images.component.html',
