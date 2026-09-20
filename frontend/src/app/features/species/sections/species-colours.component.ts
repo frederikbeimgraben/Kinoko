@@ -7,6 +7,8 @@ import {
   type ColourValue,
 } from '../../../ui/colour-field/colour-field.component';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../../ui/section/section.component';
 import type { ColourGroup } from '../../../core/api/models';
 import { PART_TEXT } from '../labels';
 
@@ -31,7 +33,7 @@ const SEPARATOR = ', ';
 @Component({
   selector: 'app-species-colours',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ColourFieldComponent, ListRowComponent, TranslatePipe],
+  imports: [ColourFieldComponent, ListRowComponent, RowGroupComponent, SectionComponent, TranslatePipe],
   templateUrl: './species-colours.component.html',
   styleUrl: './species-colours.component.scss',
 })

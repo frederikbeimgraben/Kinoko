@@ -5,10 +5,10 @@ import { coarsePlace } from '../../core/i18n/places';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../image-credit/licences';
+import { HeroComponent, type HeroPhoto } from '../hero/hero.component';
 import { LevelPillComponent } from '../level-pill/level-pill.component';
 import { ListRowComponent } from '../list-row/list-row.component';
 import { PageHeaderComponent } from '../page-header/page-header.component';
-import { PrivateImageComponent } from '../private-image/private-image.component';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { photoPath, type Photo } from '../../core/api/models';
 
@@ -24,7 +24,7 @@ interface Detail {
 @Component({
   selector: 'app-image-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LevelPillComponent, ListRowComponent, PageHeaderComponent, PrivateImageComponent, TranslatePipe],
+  imports: [HeroComponent, LevelPillComponent, ListRowComponent, PageHeaderComponent, TranslatePipe],
   templateUrl: './image-viewer.component.html',
   styleUrl: './image-viewer.component.scss',
 })
@@ -43,14 +43,11 @@ export class ImageViewerComponent {
 
   protected readonly alt = computed(() => this.image()?.caption ?? this.title());
 
-  protected readonly path = computed(() => {
+  protected readonly heroPhoto = computed<HeroPhoto | null>(() => {
     const image = this.image();
-    return image === null ? null : photoPath(image.id, 'full');
+    if (image === null) return null;
+    return { path: photoPath(image.id, 'full'), photographer: image.photographer, licence: image.licence };
   });
-
-  protected readonly counter = computed(() =>
-    this.i18n.translate('common.counter', { done: this.index(), total: this.count() }),
-  );
 
   protected readonly details = computed<readonly Detail[]>(() => {
     const image = this.image();

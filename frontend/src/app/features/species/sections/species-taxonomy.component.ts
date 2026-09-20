@@ -4,13 +4,14 @@ import type { SpeciesEntry } from '../../../core/api/models';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { taxonSlug } from './taxonomy';
 
 /** Die Einordnung einer Art: Gattung und Familie, der Weg zur Stufe. */
 @Component({
   selector: 'app-species-taxonomy',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, TranslatePipe],
+  imports: [ListRowComponent, RowGroupComponent, TranslatePipe],
   templateUrl: './species-taxonomy.component.html',
   styleUrl: './species-taxonomy.component.scss',
 })

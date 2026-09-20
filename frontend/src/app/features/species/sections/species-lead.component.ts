@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { photoPath } from '../../../core/api/models';
-import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
+import { HeroComponent, type HeroPhoto } from '../../../ui/hero/hero.component';
 import { ImagesState } from '../../images/images.state';
 import { SpeciesState } from '../species.state';
 
@@ -9,7 +9,7 @@ import { SpeciesState } from '../species.state';
 @Component({
   selector: 'app-species-lead',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PrivateImageComponent],
+  imports: [HeroComponent],
   templateUrl: './species-lead.component.html',
   styleUrl: './species-lead.component.scss',
 })
@@ -22,9 +22,10 @@ export class SpeciesLeadComponent {
 
   protected readonly lead = this.images.lead;
 
-  protected readonly path = computed(() => {
+  protected readonly photo = computed<HeroPhoto | null>(() => {
     const held = this.lead();
-    return held === null ? null : photoPath(held.id, 'full');
+    if (held === null) return null;
+    return { path: photoPath(held.id, 'full'), photographer: held.photographer, licence: held.licence };
   });
 
   protected readonly alt = computed(

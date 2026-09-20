@@ -1,0 +1,36 @@
+<app-block-card block="Hero" [width]="358" [height]="300">
+  <app-hero [photo]="heroPhoto" [alt]="'beispiel.steinpilz' | t" [height]="260" [index]="1" [count]="4" />
+</app-block-card>
+
+<app-block-card block="RatingSection" [width]="358" [height]="210">
+  <app-species-features [species]="ratingSpecies" />
+</app-block-card>
+
+<app-block-card block="TaxonRow" [width]="358" [height]="60">
+  <app-species-taxonomy [species]="taxonSpecies" />
+</app-block-card>
+
+<app-block-card block="SizeSection" [width]="358" [height]="340">
+  <app-section [label]="'species.section.sizes' | t">
+    <div class="size-groups">
+      <app-measurement-group [part]="'species.field.cap' | t" [measurements]="capMeasures" />
+      <app-measurement-group [part]="'species.field.spore' | t" [measurements]="sporeMeasures" />
+    </div>
+  </app-section>
+</app-block-card>
+
+<app-block-card block="ColourSection" [width]="358" [height]="270">
+  <app-species-colours [groups]="colourGroups" />
+</app-block-card>
+
+<app-block-card block="LookalikeRow" [width]="358" [height]="60">
+  <app-species-lookalikes [lookalikes]="[lookalikes[0]]" />
+</app-block-card>
+
+<app-block-card block="LookalikeSection" [width]="358" [height]="230">
+  <app-species-lookalikes [lookalikes]="lookalikes" />
+</app-block-card>
+
+<app-block-card block="PhotoStrip" [width]="358" [height]="96">
+  <app-photo-strip mode="edit" [photos]="stripPhotos" />
+</app-block-card>

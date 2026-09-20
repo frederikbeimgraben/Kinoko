@@ -40,13 +40,13 @@ describe('MeasurementGroupComponent', () => {
     expect(container.querySelectorAll('app-measurement')).toHaveLength(1);
   });
 
-  it('bleibt ohne Strecke ohne doppelte Trennlinie unter der Überschrift', async () => {
+  it('bleibt ohne Strecke bei der Überschrift allein', async () => {
     const { container } = await render(MeasurementGroupComponent, {
       inputs: { part: 'Sporen', measurements: [] },
     });
 
     expect(container.querySelectorAll('app-measurement')).toHaveLength(0);
-    expect(container.querySelector('.group__part')).toHaveClass('group__part--bare');
+    expect(container.querySelector('.group__head')).toHaveTextContent('Sporen');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

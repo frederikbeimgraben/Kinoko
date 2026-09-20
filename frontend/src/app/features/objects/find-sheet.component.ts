@@ -11,7 +11,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
-import type { Find } from '../../core/api/models';
+import type { Find, Photo } from '../../core/api/models';
 import { AccountService } from '../../core/access/account.service';
 import { PersonNamesService } from '../../core/access/person-names.service';
 import { longDate } from '../../core/i18n/dates';
@@ -27,6 +27,8 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
+import { PhotoDialogComponent } from '../../ui/photo-dialog/photo-dialog.component';
+import { PhotoStripComponent, type StripPhoto } from '../../ui/photo-strip/photo-strip.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { ToastService } from '../../ui/toast/toast.service';
@@ -36,7 +38,6 @@ import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
 import { MapState } from '../map/map.state';
-import { PhotoGalleryComponent } from './photo-gallery.component';
 
 /** Das Objekt-Blatt eines Fundes; die Kennzahl kommt aus der Wertkachel der Karte. */
 @Component({
@@ -50,7 +51,8 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
     LevelPillComponent,
     ListRowComponent,
     ObjectTitleComponent,
-    PhotoGalleryComponent,
+    PhotoDialogComponent,
+    PhotoStripComponent,
     RowGroupComponent,
     SvgIconComponent,
     TranslatePipe,
@@ -79,9 +81,14 @@ export class FindSheetComponent {
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
   private readonly week = signal<ManifestWeek | null>(null);
-  /** Die Fotos, die der Dienst zu dem Fund kennt; das Formular zeigt sie. */
-  protected readonly held = signal<readonly { id: string; path: string }[]>([]);
+  /** Die Fotos, die der Dienst zu dem Fund kennt; Leiste und Formular zeigen sie. */
+  protected readonly held = signal<readonly Photo[]>([]);
+  protected readonly viewing = signal<number | null>(null);
   private readonly value = signal<number | null>(null);
+
+  protected readonly strip = computed<readonly StripPhoto[]>(() =>
+    this.held().map((one) => ({ id: one.id, path: photoPath(one.id, 'list'), lead: one.lead })),
+  );
 
   protected readonly art = computed(() => {
     const id = this.find().speciesId;
@@ -97,7 +104,7 @@ export class FindSheetComponent {
     return findSubline(this.i18n, date, this.find().count, this.reporterName());
   });
 
-  protected readonly thumbPhoto = computed(() => this.held()[0]?.path ?? '');
+  protected readonly thumbPhoto = computed(() => this.strip()[0]?.path ?? '');
 
   /** Die Plakette neben dem Namen, solange der Fund geteilt ist. */
   protected readonly shared = computed(() => this.find().visibility === 'shared');
@@ -154,11 +161,19 @@ export class FindSheetComponent {
   private async loadPhotos(findId: string): Promise<void> {
     try {
       const page = await firstValueFrom(this.photos.list({ findId }));
-      this.held.set(page.items.map((photo) => ({ id: photo.id, path: photoPath(photo.id, 'list') })));
+      this.held.set(page.items);
     } catch {
       // Ohne Liste zeigt das Formular nur die neuen Dateien.
       this.held.set([]);
     }
+  }
+
+  protected openPhoto(index: number): void {
+    this.viewing.set(index);
+  }
+
+  protected closeGallery(): void {
+    this.viewing.set(null);
   }
 
   protected async save(submission: FindSubmission): Promise<void> {
