@@ -11,7 +11,6 @@ import {
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ToastService } from '@stupa-makers/ui-kit';
 import type { MarkerColour } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -22,6 +21,7 @@ import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { EntriesState, type SaveResult } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';

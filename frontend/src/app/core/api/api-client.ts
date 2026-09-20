@@ -7,9 +7,9 @@ import {
   type HttpEvent,
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { ToastService } from '@stupa-makers/ui-kit';
 import { catchError, filter, map, of, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
+import { ToastService } from '../../ui/toast/toast.service';
 import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
 

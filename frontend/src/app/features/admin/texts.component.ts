@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastService } from '@stupa-makers/ui-kit';
 import type { TextEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TextCatalogService } from '../../core/i18n/text-catalog.service';
@@ -14,6 +13,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { ToastService } from '../../ui/toast/toast.service';
 
 /** Der Chip ohne Bereich: er zeigt alles. */
 const ALL = 'alle';

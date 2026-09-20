@@ -1,5 +1,4 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { ToastService } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { LocationService } from '../../core/location/location.service';
 import { ThemeService } from '../../core/theme/theme.service';
@@ -11,6 +10,7 @@ import type { Viewbox } from '../../map/tile-grid';
 import { MAP_ADAPTER, VALUE_WORKER } from '../../map/map.tokens';
 import { ValueProtocol } from '../../map/value-protocol';
 import type { Detent } from '../../ui/sheet/sheet.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { CombinationState } from './combination.state';
 import { MapPainter } from './map-painter';
 import { MapState } from './map.state';
