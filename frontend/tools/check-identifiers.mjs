@@ -1,14 +1,5 @@
 #!/usr/bin/env node
-/**
- * Sucht deutsche Stämme in den Bezeichnern von `src/app`.
- *
- * Bezeichner sind englisch. Deutsch steht nur in dem, was eine
- * Person liest: Oberflächentexte über i18n, Kommentare und Docstrings. Das
- * Skript trennt beides und meldet nur, was im Code steht.
- *
- * Ausgenommen bleiben die Feldnamen des Vertrags zum Backend, die Werte der
- * Aufzählungen und die i18n-Schlüssel: die nimmt sich R3 vor.
- */
+/** Sucht deutsche Bezeichner in TypeScript. Deutsch steht nur in Texten für Personen. */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 

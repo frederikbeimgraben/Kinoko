@@ -1,15 +1,5 @@
 #!/usr/bin/env node
-/**
- * Sucht festen Text in den Vorlagen unter `src/app`.
- *
- * Kein Text steht fest im Code. Jede Zeichenkette, die eine
- * Person liest, ist ein Schlüssel und kommt über `| t` aus dem Katalog; der
- * Katalog steht in der Datenbank und lässt sich in der Verwaltung ändern.
- *
- * Das Skript lässt nur stehen, was eine Person wirklich sieht: Marken,
- * Ausdrücke in `{{ }}`, Bindungen und die Blöcke von Angular fallen weg. Was
- * danach noch Buchstaben trägt, ist ein fester Text.
- */
+/** Sucht festen Text in den Vorlagen unter `src/app`. Jeder sichtbare Text ist ein Schlüssel. */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
