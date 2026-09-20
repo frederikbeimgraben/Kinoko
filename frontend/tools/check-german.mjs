@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Sucht deutschen Text ausserhalb von i18n.
- * Text für Personen kommt über `| t`, nicht fest im Code (CLAUDE.md).
+ * Text für Personen kommt über `| t`, nicht fest im Code.
  */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';

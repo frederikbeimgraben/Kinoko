@@ -450,7 +450,7 @@ ist jedes Mal derselbe: zu wenige Besuche fuer ein eigenes Modell.
    https://github.com/frederikbeimgraben/pilzkarte neben Frontend und
    Backend der App. Experimente und Einmal-Skripte (Auflösungs-Sweep,
    Masken, Nachbarn, `first_model`, `spatial_model`, `transfer`, `heatmap`,
-   `webmap`) liegen in `~/Workspace/~Archived/Pilze-experimente`; ihre
+   `webmap`) liegen in einem Archiv außerhalb dieses Repos; ihre
    Ergebnisse stehen unter "Entscheidungen, gemessen". Die Kette liefert
    Kacheln, Manifeste, `funde/` und `layers.json`. Offen hier:
    - [x] C2 Histogramme je Ebene und Woche ins Manifest (`input_layers.py`,

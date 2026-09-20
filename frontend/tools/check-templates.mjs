@@ -2,7 +2,7 @@
 /**
  * Sucht festen Text in den Vorlagen unter `src/app`.
  *
- * Kein Text steht fest im Code (`CLAUDE.md`). Jede Zeichenkette, die eine
+ * Kein Text steht fest im Code. Jede Zeichenkette, die eine
  * Person liest, ist ein Schlüssel und kommt über `| t` aus dem Katalog; der
  * Katalog steht in der Datenbank und lässt sich in der Verwaltung ändern.
  *

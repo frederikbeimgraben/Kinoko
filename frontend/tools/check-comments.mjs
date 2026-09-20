@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Prüft Kommentarregeln in `src` und `tools`.
- * Siehe CLAUDE.md: Kommentare sagen Warum, nie Was.
+ * Kommentare sagen Warum, nie Was.
  */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';

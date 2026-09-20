@@ -2,7 +2,7 @@
 /**
  * Sucht deutsche Stämme in den Bezeichnern von `src/app`.
  *
- * Bezeichner sind englisch (`CLAUDE.md`). Deutsch steht nur in dem, was eine
+ * Bezeichner sind englisch. Deutsch steht nur in dem, was eine
  * Person liest: Oberflächentexte über i18n, Kommentare und Docstrings. Das
  * Skript trennt beides und meldet nur, was im Code steht.
  *
