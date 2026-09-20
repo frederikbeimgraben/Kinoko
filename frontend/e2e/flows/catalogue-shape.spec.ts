@@ -52,10 +52,9 @@ async function serveBundle(page: Page, etag: string): Promise<void> {
   });
 }
 
-/** Öffnet das Filterblatt und darin eine Gruppe. */
-async function openGroup(page: Page, group: string): Promise<void> {
+/** Öffnet das Filterblatt. Jede Gruppe steht darin schon offen. */
+async function openFilter(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await page.getByRole('dialog').getByRole('button', { name: group }).first().click();
 }
 
 test('Die Gruppen des Filters füllen sich aus der Antwort des Dienstes', async ({ page }) => {
@@ -63,9 +62,9 @@ test('Die Gruppen des Filters füllen sich aus der Antwort des Dienstes', async 
   await page.goto('/arten');
   await expect(page.getByText('Steinpilz', { exact: true })).toBeVisible();
 
-  await openGroup(page, 'Speisewert');
+  await openFilter(page);
 
-  await expect(page.getByRole('checkbox', { name: /essbar/ }).first()).toBeVisible();
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'essbar', exact: true })).toBeVisible();
 });
 
 test('Ein Stand ohne Achsen weicht dem frischen Katalog', async ({ page }) => {
@@ -75,7 +74,9 @@ test('Ein Stand ohne Achsen weicht dem frischen Katalog', async ({ page }) => {
   await page.goto('/arten');
   await expect(page.getByText('Steinpilz', { exact: true })).toBeVisible();
 
-  await openGroup(page, 'Hutform');
+  await openFilter(page);
 
-  await expect(page.getByRole('checkbox', { name: /halbkugelig/ })).toBeVisible();
+  await expect(
+    page.getByRole('dialog').getByRole('button', { name: 'halbkugelig', exact: true }),
+  ).toBeVisible();
 });

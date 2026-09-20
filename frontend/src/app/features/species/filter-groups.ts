@@ -32,13 +32,6 @@ export interface Choice {
   readonly count: number;
 }
 
-/** Die übrigen Karten des Filterblatts. Speisewert, Hutform, Farbe, Fruchtschicht und Zeit
- * stehen flach im Blatt, per `FilterColumn.dc.html`. */
-export const GROUP_CARDS: readonly (readonly GroupKey[])[] = [
-  ['senses', 'treePartner', 'genusFamily'],
-  ['protection', 'forecast'],
-];
-
 /** Die Gruppen, deren Werte fest im Vertrag stehen. */
 const FIXED: Partial<Record<GroupKey, readonly { value: string; text: TranslationKey }[]>> = {
   edibility: EDIBILITIES.map((value) => ({ value, text: EDIBILITY_TEXT[value] })),

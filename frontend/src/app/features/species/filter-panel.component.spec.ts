@@ -36,7 +36,7 @@ describe('SpeciesFilterPanelComponent', () => {
     localStorage.removeItem('pilzkarte.speciesfilter');
   });
 
-  it('zeigt die flachen Gruppen des Bretts, den Farbabschnitt eingerechnet', async () => {
+  it('zeigt die fünf Gruppen des Bretts flach in einer Spalte', async () => {
     const { container } = await build();
 
     expect(screen.getByRole('button', { name: 'Speisewert' })).toBeInTheDocument();
@@ -47,36 +47,12 @@ describe('SpeciesFilterPanelComponent', () => {
     await noViolations(container);
   });
 
-  it('führt die übrigen Gruppen als Karten aus Zeilen', async () => {
-    const { container } = await build();
-
-    expect(container.querySelectorAll('.panel__card')).toHaveLength(2);
-    expect(screen.getByText('Schutz')).toBeInTheDocument();
-  });
-
-  it('wählt einen Wert einer flachen Gruppe über ihr Zeichen', async () => {
+  it('wählt einen Wert einer Gruppe über ihr Zeichen', async () => {
     const { filter } = await build();
 
     await userEvent.click(await screen.findByRole('button', { name: 'essbar' }));
 
     expect([...filter.chosenIn('edibility')]).toEqual(['edible']);
-  });
-
-  it('öffnet eine übrige Gruppe aus ihrer Zeile', async () => {
-    const { filter } = await build();
-
-    await userEvent.click(screen.getByRole('button', { name: /Geruch/ }));
-
-    expect(filter.group()).toBe('senses');
-  });
-
-  it('zeigt statt der Übersicht die gewählte Gruppe', async () => {
-    const { container, filter } = await build();
-
-    filter.showGroup('senses');
-    await vi.waitFor(() => {
-      expect(container.querySelector('app-species-filter-group')).not.toBeNull();
-    });
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

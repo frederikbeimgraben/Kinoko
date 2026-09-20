@@ -1,7 +1,4 @@
-@if (wide() && filter.group() !== null) {
-  <app-back-head [title]="title()" (backClick)="back()" />
-}
-@if (wide() && filter.group() === null) {
+@if (wide()) {
   <div class="fcount">
     <span>{{ count() }}</span>
     @if (resettable()) {
@@ -17,40 +14,18 @@
     }
   </div>
 }
-@switch (filter.group()) {
-  @case (null) {
-    @for (group of flatGroups; track group.key) {
-      <app-fold-section [label]="flatLabel(group.labelOf)">
-        <app-chip-group
-          [chips]="chipsOf(group.key)"
-          [value]="chosenIn(group.key)"
-          [multiple]="true"
-          [small]="true"
-          [label]="flatLabel(group.labelOf)"
-          (valueChange)="chipsChanged(group.key, $event)"
-        />
-      </app-fold-section>
-      @if (group.key === 'capShape') {
-        <app-species-filter-colour />
-      }
-    }
-    @for (card of cards(); track $index) {
-      <div class="panel__card">
-        @for (row of card; track row.key) {
-          <app-list-row
-            [title]="row.label"
-            [value]="row.value"
-            [accent]="true"
-            kind="filter"
-            [chevron]="true"
-            [clickable]="true"
-            (chosen)="filter.showGroup(row.key)"
-          />
-        }
-      </div>
-    }
-  }
-  @default {
-    <app-species-filter-group [group]="filter.group()!" />
+@for (group of flatGroups; track group.key) {
+  <app-fold-section [label]="flatLabel(group.labelOf)">
+    <app-chip-group
+      [chips]="chipsOf(group.key)"
+      [value]="chosenIn(group.key)"
+      [multiple]="true"
+      [small]="true"
+      [label]="flatLabel(group.labelOf)"
+      (valueChange)="chipsChanged(group.key, $event)"
+    />
+  </app-fold-section>
+  @if (group.key === 'capShape') {
+    <app-species-filter-colour />
   }
 }
