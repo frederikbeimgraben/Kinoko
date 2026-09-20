@@ -53,6 +53,7 @@ const BLOCKS = [
   'app-colour-change',
   'app-measurement',
   'app-measurement-group',
+  'app-mono',
   'app-year-band',
   'app-season-curve',
   'app-histogram',

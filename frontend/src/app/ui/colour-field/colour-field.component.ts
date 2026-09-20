@@ -7,7 +7,7 @@ export interface ColourValue {
 }
 
 /** Wo die harten Kanten liegen, wenn ein Körper mehrere Farben trägt. */
-const ANGLE = 104;
+const ANGLE = 105;
 
 /** Ein weicher Verlauf läuft flacher als eine harte Kante. */
 const SOFT_ANGLE = 135;

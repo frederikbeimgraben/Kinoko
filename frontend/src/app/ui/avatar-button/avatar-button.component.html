@@ -1,10 +1,4 @@
-<button
-  class="avatar tap"
-  type="button"
-  data-press="scale"
-  [attr.aria-label]="label()"
-  (click)="pressed.emit()"
->
+<button class="avatar tap" type="button" appRipple [attr.aria-label]="label()" (click)="pressed.emit()">
   @if (name() === null) {
     <app-skeleton class="avatar__pending" kind="tile" width="100%" height="100%" />
   } @else {

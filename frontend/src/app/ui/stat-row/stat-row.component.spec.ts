@@ -24,7 +24,17 @@ describe('StatRowComponent', () => {
   it('bleibt ohne Kennzahlen leer', async () => {
     const { container } = await render(StatRowComponent, { inputs: { stats: [] } });
 
-    expect(container.querySelectorAll('.stat').length).toBe(0);
+    expect(container.querySelectorAll('.tile').length).toBe(0);
+  });
+
+  it('trägt die Spaltenzahl als Rastermaß', async () => {
+    const { container } = await render(StatRowComponent, {
+      inputs: { stats: [{ value: 1, label: 'a' }], cols: 2 },
+    });
+
+    expect(container.querySelector('.tiles')).toHaveStyle({
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    });
   });
 
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {

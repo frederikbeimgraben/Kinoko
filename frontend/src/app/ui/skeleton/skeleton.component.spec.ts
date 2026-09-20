@@ -41,6 +41,29 @@ describe('SkeletonComponent', () => {
     }
   });
 
+  it('zeigt die Art rows als Zeilen mit Kreis und zwei Strichen', async () => {
+    const { container, detectChanges } = await render(SkeletonComponent, {
+      inputs: { kind: 'rows', count: 3 },
+    });
+    await vi.advanceTimersByTimeAsync(300);
+    detectChanges();
+
+    expect(container.querySelectorAll('.skeleton__row')).toHaveLength(3);
+    expect(container.querySelectorAll('.skeleton__row-icon')).toHaveLength(3);
+    expect(container.querySelectorAll('.skeleton__row-line')).toHaveLength(6);
+  });
+
+  it('zeigt die Art tiles als Raster', async () => {
+    const { container, detectChanges } = await render(SkeletonComponent, {
+      inputs: { kind: 'tiles', count: 6 },
+    });
+    await vi.advanceTimersByTimeAsync(300);
+    detectChanges();
+
+    expect(container.querySelector('.skeleton__tiles')).toBeInTheDocument();
+    expect(container.querySelectorAll('.skeleton__tile')).toHaveLength(6);
+  });
+
   it('bleibt vor Hilfsmitteln verborgen', async () => {
     const { container, fixture } = await render(SkeletonComponent, { inputs: { kind: 'row' } });
 

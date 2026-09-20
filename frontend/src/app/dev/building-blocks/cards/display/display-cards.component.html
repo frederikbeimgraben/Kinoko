@@ -1,0 +1,36 @@
+<app-block-card block="Avatar" [width]="40" [height]="40">
+  <app-avatar-button name="Frederik" [label]="'nav.konto' | t" />
+</app-block-card>
+
+<app-block-card block="Crosshair" [width]="40" [height]="40">
+  <app-crosshair [label]="'entry.setLocation.title' | t" />
+</app-block-card>
+
+<app-block-card block="Legend" [width]="358" [height]="64">
+  <app-ramp [label]="'map.legend.findProbability' | t" from="0 %" to="50 %" />
+</app-block-card>
+
+<app-block-card block="Mono" [width]="358" [height]="120">
+  <app-mono [text]="monoText" />
+</app-block-card>
+
+<app-block-card block="Skeleton" [width]="390" [height]="320">
+  <app-skeleton kind="rows" [count]="5" />
+</app-block-card>
+
+<app-block-card block="StatTiles" [width]="358" [height]="140">
+  <app-stat-row [stats]="stats" [cols]="3" />
+</app-block-card>
+
+<app-block-card block="Swatch" [width]="88" [height]="40">
+  <app-colour-field
+    style="--pilz-colour-width: 88px; --pilz-colour-height: 28px; --pilz-colour-radius: 14px"
+    [colours]="swatchColours"
+    mode="gradient"
+    [label]="swatchLabel"
+  />
+</app-block-card>
+
+<app-block-card block="ToneDot" [width]="40" [height]="40">
+  <app-colour-swatches [colours]="toneSwatches" value="#000000" [label]="'enum.colour.brown' | t" size="m" />
+</app-block-card>

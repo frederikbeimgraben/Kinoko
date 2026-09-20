@@ -36,7 +36,7 @@ describe('ColourFieldComponent', () => {
       { name: 'gelb', hex: '#e8c33a' },
     ]);
 
-    expect(fill).toBe('linear-gradient(104deg,#ffffff 0% 50%,#e8c33a 50% 100%)');
+    expect(fill).toBe('linear-gradient(105deg,#ffffff 0% 50%,#e8c33a 50% 100%)');
   });
 
   it('teilt drei Farben in drei gleiche Streifen', () => {

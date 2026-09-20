@@ -1,13 +1,20 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
 .ramp__label {
-  margin-block-end: var(--ramp-label-gap, 10px);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
+  margin: 0;
+  font-weight: var(--fw-regular);
   line-height: normal;
 }
 
 .ramp {
   display: flex;
-  block-size: var(--space-3);
+  block-size: 12px;
   overflow: hidden;
   border-radius: 6px;
 }
@@ -19,9 +26,8 @@
 .ramp__ends {
   display: flex;
   justify-content: space-between;
-  margin-block-start: var(--ramp-ends-gap, 6px);
-  font-size: 13px;
+  font-size: 12px;
   line-height: normal;
   font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }

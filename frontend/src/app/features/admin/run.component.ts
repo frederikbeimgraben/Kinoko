@@ -6,6 +6,7 @@ import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { MonoComponent } from '../../ui/mono/mono.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { RunState } from './run.state';
@@ -40,7 +41,14 @@ interface Step {
 @Component({
   selector: 'app-run',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, ListRowComponent, PageHeaderComponent, SvgIconComponent, TranslatePipe],
+  imports: [
+    BadgeComponent,
+    ListRowComponent,
+    MonoComponent,
+    PageHeaderComponent,
+    SvgIconComponent,
+    TranslatePipe,
+  ],
   templateUrl: './run.component.html',
   styleUrl: './run.component.scss',
 })
@@ -95,6 +103,7 @@ export class RunComponent {
   });
 
   protected readonly log = computed(() => this.run()?.logTail ?? []);
+  protected readonly logText = computed(() => this.log().join('\n'));
 
   constructor() {
     effect(() => {
