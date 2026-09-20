@@ -55,6 +55,19 @@ export async function expectCard(page: Page, card: BoardCard): Promise<void> {
   await expect.soft(block, card.selector).toHaveScreenshot(['blocks', `${card.stem}.png`]);
 }
 
+/** The neutral photo placeholder of `artefakte/mockups/design/lokal/uebergabe.mjs`. */
+const PHOTO_PLACEHOLDER =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">' +
+  '<rect width="800" height="600" fill="#3a4a3f"/>' +
+  '<path d="M0 430l210-170 150 120 130-90 310 250v60H0z" fill="#2c3a31"/></svg>';
+
+/** Routes `/api/photos/{id}/{size}` to the placeholder. Call before `page.goto`. */
+export async function neutralisePhotos(page: Page): Promise<void> {
+  await page.route('**/api/photos/**', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'image/svg+xml', body: PHOTO_PLACEHOLDER });
+  });
+}
+
 /** Ein Board, dessen Seite noch lädt, wartet nicht auf Ruhe im Netz. */
 export interface BoardOptions {
   idle?: boolean;

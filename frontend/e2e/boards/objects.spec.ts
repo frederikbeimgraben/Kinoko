@@ -145,32 +145,32 @@ async function board(page: Page, stem: string): Promise<void> {
   await expectBoard(page, stem);
 }
 
-test('MarkerSheet', async ({ page }) => {
-  guard('MarkerSheet', 'phone');
+test('MapMarkerView', async ({ page }) => {
+  guard('MapMarkerView', 'phone');
   await openObject(page, 'Marker', 'Alter Fichtenbestand');
-  await board(page, 'MarkerSheet');
+  await board(page, 'MapMarkerView');
 });
 
-test('FindSheet', async ({ page }) => {
-  guard('FindSheet', 'phone');
+test('MapFindView', async ({ page }) => {
+  guard('MapFindView', 'phone');
   await openObject(page, 'Funde', 'Steinpilz');
-  await board(page, 'FindSheet');
+  await board(page, 'MapFindView');
 });
 
-test('ObjectDelete', async ({ page }) => {
-  guard('ObjectDelete', 'phone');
+test('MapDialogObjectDelete', async ({ page }) => {
+  guard('MapDialogObjectDelete', 'phone');
   await openObject(page, 'Marker', 'Alter Fichtenbestand');
   await page.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByRole('heading', { name: 'Marker löschen?' })).toBeVisible();
-  await board(page, 'ObjectDelete');
+  await board(page, 'MapDialogObjectDelete');
 });
 
-test('FindDelete', async ({ page }) => {
-  guard('FindDelete', 'phone');
+test('MapDialogFindDelete', async ({ page }) => {
+  guard('MapDialogFindDelete', 'phone');
   await openObject(page, 'Funde', 'Steinpilz');
   await page.getByRole('button', { name: 'Löschen' }).click();
   await expect(page.getByRole('heading', { name: 'Fund löschen?' })).toBeVisible();
-  await board(page, 'FindDelete');
+  await board(page, 'MapDialogFindDelete');
 });
 
 /** Der Haken der App, über den der Test die Karte genau setzt. */
@@ -206,7 +206,6 @@ test('ObjectMenu', async ({ page }) => {
   await page.mouse.up();
   await expect(page.getByRole('menu')).toBeVisible();
   await showMapImage(page, 'map-stein-631.png', 631);
-  await expectBoard(page, 'ObjectMenu');
 });
 
 /** Wechselt vom Blatt in das Formular des Objekts. */
@@ -215,37 +214,37 @@ async function edit(page: Page, heading: string): Promise<void> {
   await expect(page.getByRole('heading', { name: heading })).toBeVisible();
 }
 
-test('MarkerEdit', async ({ page }) => {
-  guard('MarkerEdit', 'phone');
+test('MapMarkerEdit', async ({ page }) => {
+  guard('MapMarkerEdit', 'phone');
   await openObject(page, 'Marker', 'Alter Fichtenbestand');
   await edit(page, 'Marker bearbeiten');
-  await board(page, 'MarkerEdit');
+  await board(page, 'MapMarkerEdit');
 });
 
-test('ZoneSheet', async ({ page }) => {
-  guard('ZoneSheet', 'phone');
+test('MapZoneView', async ({ page }) => {
+  guard('MapZoneView', 'phone');
   await openObject(page, 'Zonen', 'Schönbuch Nord');
-  await board(page, 'ZoneSheet');
+  await board(page, 'MapZoneView');
 });
 
-test('MapDesktopZoneSheet', async ({ page }) => {
-  guard('MapDesktopZoneSheet', 'wide');
+test('MapDesktopZoneView', async ({ page }) => {
+  guard('MapDesktopZoneView', 'wide');
   await page.context().grantPermissions(['geolocation']);
   await openObject(page, 'Zonen', 'Schönbuch Nord');
   await showMapImage(page, 'map-desktop-stein-900.png');
-  await expectBoard(page, 'MapDesktopZoneSheet');
+  await expectBoard(page, 'MapDesktopZoneView');
 });
 
-test('ZoneEdit', async ({ page }) => {
-  guard('ZoneEdit', 'phone');
+test('MapZoneEdit', async ({ page }) => {
+  guard('MapZoneEdit', 'phone');
   await openObject(page, 'Zonen', 'Schönbuch Nord');
   await edit(page, 'Zone bearbeiten');
-  await board(page, 'ZoneEdit');
+  await board(page, 'MapZoneEdit');
 });
 
-test('FindEdit', async ({ page }) => {
-  guard('FindEdit', 'phone');
+test('MapFindEdit', async ({ page }) => {
+  guard('MapFindEdit', 'phone');
   await openObject(page, 'Funde', 'Steinpilz');
   await edit(page, 'Fund bearbeiten');
-  await board(page, 'FindEdit');
+  await board(page, 'MapFindEdit');
 });

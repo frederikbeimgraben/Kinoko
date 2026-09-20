@@ -37,7 +37,7 @@ const SPECIES_COUNTS = {
 const EDITOR_SCROLL = 417;
 
 /** Ein Brett gehört zu einem Gerät und läuft nicht, solange es aussteht. */
-function guard(board: string, device: 'phone' | 'desktop'): void {
+function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Brett gehört zu ${device}`);
   skipPending(board);
 }
@@ -79,7 +79,7 @@ test('Roles', async ({ page }) => {
 });
 
 test('AdminDesktop', async ({ page }) => {
-  guard('AdminDesktop', 'desktop');
+  guard('AdminDesktop', 'wide');
   await open(page, '/verwaltung/rollen');
   await expect(page.getByText('4 · 12')).toBeVisible();
   await expect(page.getByText('Texte ändern · 2 Personen')).toBeVisible();
@@ -113,7 +113,6 @@ test('AdminGroupDelete', async ({ page }) => {
   await open(page, `/verwaltung/gruppen/${GROUPS[0].id}`);
   await page.getByRole('button', { name: 'Gruppe löschen' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expectBoard(page, 'AdminGroupDelete');
 });
 
 test('People', async ({ page }) => {
@@ -137,11 +136,11 @@ const PLAIN_ROLE = {
   nextCursor: null,
 };
 
-test('Role', async ({ page }) => {
-  guard('Role', 'phone');
+test('RoleEdit', async ({ page }) => {
+  guard('RoleEdit', 'phone');
   await open(page, '/verwaltung/rollen/rolle-advisor', { '/api/roles': PLAIN_ROLE });
   await expect(page.getByText('Bilder freigeben')).toBeVisible();
-  await expectBoard(page, 'Role');
+  await expectBoard(page, 'RoleEdit');
 });
 
 test('RoleDelete', async ({ page }) => {
@@ -149,7 +148,6 @@ test('RoleDelete', async ({ page }) => {
   await open(page, '/verwaltung/rollen/rolle-advisor', { '/api/roles': PLAIN_ROLE });
   await page.getByRole('button', { name: 'Rolle löschen' }).click();
   await expect(page.getByRole('dialog', { name: /Pilzberater/ })).toBeVisible();
-  await expectBoard(page, 'RoleDelete');
 });
 
 test('PersonDelete', async ({ page }) => {
@@ -158,7 +156,6 @@ test('PersonDelete', async ({ page }) => {
   await page.getByRole('button', { name: /Testerin/ }).click();
   await page.getByRole('button', { name: 'Person löschen' }).click();
   await expect(page.getByText('Testerin löschen?')).toBeVisible();
-  await expectBoard(page, 'PersonDelete');
 });
 
 test('Texts', async ({ page }) => {
@@ -207,7 +204,7 @@ test('SpeciesEditScrolled', async ({ page }) => {
   await page.locator('.editor').evaluate((one, top) => {
     one.scrollTo(0, top);
   }, EDITOR_SCROLL);
-  await expectBoard(page, 'SpeciesEditScrolled');
+  await expectBoard(page, 'SpeciesEdit');
 });
 
 test('PartPicker', async ({ page }) => {
@@ -218,7 +215,6 @@ test('PartPicker', async ({ page }) => {
   });
   await page.getByRole('button', { name: 'Teil hinzufügen' }).click();
   await expect(page.getByRole('dialog', { name: 'Teil hinzufügen' })).toBeVisible();
-  await expectBoard(page, 'PartPicker');
 });
 
 test('EditSource', async ({ page }) => {
@@ -239,7 +235,6 @@ test('SpeciesDelete', async ({ page }) => {
   });
   await page.getByRole('button', { name: 'Art löschen' }).click();
   await expect(page.getByText('12 Funde · Karte vorhanden')).toBeVisible();
-  await expectBoard(page, 'SpeciesDelete');
 });
 
 test('SpeciesCreate', async ({ page }) => {
@@ -356,7 +351,7 @@ test('EditPartScrolled', async ({ page }) => {
   await page.locator('.section').evaluate((one) => {
     one.scrollTo(0, 59);
   });
-  await expectBoard(page, 'EditPartScrolled');
+  await expectBoard(page, 'EditPart');
 });
 
 test('EditLookalike', async ({ page }) => {

@@ -22,7 +22,7 @@ const SIGNED_IN: Record<string, unknown> = {
 };
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
-function guard(board: string, device: 'phone' | 'desktop'): void {
+function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
@@ -52,7 +52,7 @@ test('Compare', async ({ page }) => {
 });
 
 test('CompareDesktop', async ({ page }) => {
-  guard('CompareDesktop', 'desktop');
+  guard('CompareDesktop', 'wide');
   await mockSignIn(page);
   await openSpecies(page, COMPARE, { '/api/config': authConfig(BASE), ...SIGNED_IN });
   await compareWith(page, 'Gallenröhrling');

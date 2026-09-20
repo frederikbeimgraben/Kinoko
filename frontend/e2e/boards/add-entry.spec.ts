@@ -77,10 +77,10 @@ async function boardUnderWide(page: Page, stem: string): Promise<void> {
   await expectBoard(page, stem);
 }
 
-test('AddActions', async ({ page }) => {
-  guard('AddActions', 'phone');
+test('MapAdd', async ({ page }) => {
+  guard('MapAdd', 'phone');
   await openActions(page);
-  await board(page, 'AddActions');
+  await board(page, 'MapAdd');
 });
 
 /** Setzt den Tag, den die Fund-Boards zeigen. */
@@ -95,17 +95,17 @@ async function addPhoto(page: Page): Promise<void> {
   await expect(page.locator('app-photo-picker img')).toBeVisible();
 }
 
-test('FindForm', async ({ page }) => {
-  guard('FindForm', 'phone');
+test('MapFindForm', async ({ page }) => {
+  guard('MapFindForm', 'phone');
   await openForm(page, 'Fund melden', 'Fundort übernehmen');
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
   await addPhoto(page);
-  await board(page, 'FindForm');
+  await board(page, 'MapFindForm');
 });
 
-test('FindFormShared', async ({ page }) => {
-  guard('FindFormShared', 'phone');
+test('MapFindFormShared', async ({ page }) => {
+  guard('MapFindFormShared', 'phone');
   await openForm(page, 'Fund melden', 'Fundort übernehmen');
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
@@ -118,11 +118,11 @@ test('FindFormShared', async ({ page }) => {
   await page.locator('.form__body').evaluate((body) => {
     body.scrollTo(0, 0);
   });
-  await board(page, 'FindFormShared');
+  await board(page, 'MapFindFormShared');
 });
 
-test('FindSaving', async ({ page }) => {
-  guard('FindSaving', 'phone');
+test('MapFindSaving', async ({ page }) => {
+  guard('MapFindSaving', 'phone');
   let release!: () => void;
   const held = new Promise<void>((resolve) => {
     release = resolve;
@@ -151,21 +151,21 @@ test('FindSaving', async ({ page }) => {
   // Der Auftrag läuft: der Knopf verliert seine Beschriftung an den Spinner.
   await expect(page.locator('.btn--primary[aria-busy="true"]')).toBeVisible();
   await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
-  await expectBoard(page, 'FindSaving', { idle: false });
+  await expectBoard(page, 'MapFindSaving', { idle: false });
   release();
 });
 
-test('MarkerForm', async ({ page }) => {
-  guard('MarkerForm', 'phone');
+test('MapMarkerForm', async ({ page }) => {
+  guard('MapMarkerForm', 'phone');
   await openForm(page, 'Marker setzen', 'Marker übernehmen');
   await expect(page.getByRole('heading', { name: 'Marker setzen' })).toBeVisible();
   // Das Board zeigt die dritte Farbe gewählt.
   await page.getByRole('radio').nth(2).click();
-  await board(page, 'MarkerForm');
+  await board(page, 'MapMarkerForm');
 });
 
-test('ZoneForm', async ({ page }) => {
-  guard('ZoneForm', 'phone');
+test('MapZoneForm', async ({ page }) => {
+  guard('MapZoneForm', 'phone');
   await openActions(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
   for (let corner = 0; corner < 3; corner += 1) {
@@ -173,7 +173,7 @@ test('ZoneForm', async ({ page }) => {
   }
   await page.getByRole('button', { name: 'Abschließen' }).click();
   await expect(page.getByRole('heading', { name: 'Zone speichern' })).toBeVisible();
-  await board(page, 'ZoneForm');
+  await board(page, 'MapZoneForm');
 });
 
 /** Der Haken der App, über den der Test die Karte genau setzt. */

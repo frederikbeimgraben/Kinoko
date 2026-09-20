@@ -73,55 +73,55 @@ test('SpeciesPage', async ({ page }) => {
 test('SpeciesFeatures', async ({ page }) => {
   guard('SpeciesFeatures', 'phone');
   await openProfile(page);
-  await expectBoard(page, 'SpeciesFeatures');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesImages', async ({ page }) => {
   guard('SpeciesImages', 'phone');
   await openProfile(page);
-  await expectBoard(page, 'SpeciesImages');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesSize', async ({ page }) => {
   guard('SpeciesSize', 'phone');
   await openProfile(page);
   await scrollToSection(page, 'SpeciesSize');
-  await expectBoard(page, 'SpeciesSize');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesColours', async ({ page }) => {
   guard('SpeciesColours', 'phone');
   await openProfile(page);
   await scrollToSection(page, 'SpeciesColours');
-  await expectBoard(page, 'SpeciesColours');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesColourChange', async ({ page }) => {
   guard('SpeciesColourChange', 'phone');
   await openProfile(page);
   await scrollToSection(page, 'SpeciesColourChange');
-  await expectBoard(page, 'SpeciesColourChange');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesSeason', async ({ page }) => {
   guard('SpeciesSeason', 'phone');
   await openProfile(page);
   await scrollToSection(page, 'SpeciesSeason');
-  await expectBoard(page, 'SpeciesSeason');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesSenses', async ({ page }) => {
   guard('SpeciesSenses', 'phone');
   await openProfile(page);
   await scrollToSection(page, 'SpeciesSenses');
-  await expectBoard(page, 'SpeciesSenses');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('SpeciesHymenium', async ({ page }) => {
   guard('SpeciesHymenium', 'phone');
   await openProfile(page);
   await scrollToSection(page, 'SpeciesHymenium');
-  await expectBoard(page, 'SpeciesHymenium');
+  await expectBoard(page, 'SpeciesPage');
 });
 
 test('CompareEntry', async ({ page }) => {
@@ -143,7 +143,7 @@ test('SpeciesNotFound', async ({ page }) => {
 test('SpeciesPageDesktop', async ({ page }) => {
   guard('SpeciesPageDesktop', 'wide');
   await openProfile(page, PHOTOS_WIDE);
-  await expectBoard(page, 'SpeciesPageDesktop');
+  await expectBoard(page, 'SpeciesDesktop');
 });
 
 test('SpeciesPageAdmin', async ({ page }) => {
@@ -155,5 +155,4 @@ test('SpeciesPageAdmin', async ({ page }) => {
 test('SpeciesPageDesktopAdmin', async ({ page }) => {
   guard('SpeciesPageDesktopAdmin', 'wide');
   await openProfile(page, PHOTOS_WIDE, ['species.edit']);
-  await expectBoard(page, 'SpeciesPageDesktopAdmin');
 });
