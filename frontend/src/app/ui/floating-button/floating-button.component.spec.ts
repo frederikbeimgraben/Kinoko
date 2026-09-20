@@ -5,25 +5,28 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { FloatingButtonComponent } from './floating-button.component';
 
 describe('FloatingButtonComponent', () => {
-  it('trägt seine Beschriftung und meldet den Klick', async () => {
+  it('trägt seine Beschriftung sichtbar und meldet den Klick', async () => {
     const { container, fixture } = await render(FloatingButtonComponent, {
-      inputs: { icon: 'layers', label: 'Ebenen' },
+      inputs: { icon: 'plus', label: 'Eintragen' },
     });
     let calls = 0;
     fixture.componentInstance.pressed.subscribe(() => (calls += 1));
 
-    await userEvent.click(screen.getByRole('button', { name: 'Ebenen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Eintragen' }));
 
+    expect(screen.getByText('Eintragen')).toBeInTheDocument();
     expect(calls).toBe(1);
     await noViolations(container);
   });
 
-  it('kennt eine primäre Variante', async () => {
+  it('zeigt nur das Icon, ohne sichtbares Wort', async () => {
     const { container } = await render(FloatingButtonComponent, {
-      inputs: { icon: 'plus', label: 'Melden', variant: 'primary' },
+      inputs: { icon: 'layers', label: 'Ebenen', iconOnly: true },
     });
 
-    expect(container.querySelector('.floating--primary')).not.toBeNull();
+    expect(container.querySelector('.floating--icon-only')).not.toBeNull();
+    expect(screen.queryByText('Ebenen')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ebenen' })).toBeInTheDocument();
   });
 
   it('sperrt sich, ohne zu verschwinden', async () => {
@@ -39,19 +42,17 @@ describe('FloatingButtonComponent', () => {
     expect(calls).toBe(0);
   });
 
-  it('trägt Tippfläche und Druckzustand', async () => {
+  it('dreht nur das Icon, für die Nadel des Kompasses', async () => {
     const { container } = await render(FloatingButtonComponent, {
-      inputs: { icon: 'plus', label: 'Melden' },
+      inputs: { icon: 'compass', label: 'Norden', iconOnly: true, rotation: 45 },
     });
 
-    const button = container.querySelector('button');
-    expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'scale');
+    expect(container.querySelector('.floating__icon')).toHaveStyle({ rotate: '45deg' });
   });
 
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {
     const { container } = await render(FloatingButtonComponent, {
-      inputs: { icon: 'layers', label: 'layers' },
+      inputs: { icon: 'plus', label: 'add' },
       providers: [EMPTY_CATALOG],
     });
 

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Die letzte Zeile einer Liste: sie legt einen weiteren Eintrag an. */
 @Component({
   selector: 'app-add-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent],
+  imports: [RippleDirective, SvgIconComponent],
   templateUrl: './add-row.component.html',
   styleUrl: './add-row.component.scss',
 })

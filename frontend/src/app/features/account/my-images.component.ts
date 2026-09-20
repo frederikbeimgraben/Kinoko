@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, ButtonComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
+import { BadgeComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
 import { photoPath, type Photo, type PhotoState } from '../../core/api/models';
 import { PhotosApi } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ButtonComponent } from '../../ui/button/button.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';

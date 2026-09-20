@@ -149,7 +149,7 @@ test('MapFindSaving', async ({ page }) => {
   });
   await page.getByRole('button', { name: 'Speichern' }).click();
   // Der Auftrag läuft: der Knopf verliert seine Beschriftung an den Spinner.
-  await expect(page.locator('.btn--primary[aria-busy="true"]')).toBeVisible();
+  await expect(page.locator('.btn.primary[aria-busy="true"]')).toBeVisible();
   await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
   await expectBoard(page, 'MapFindSaving', { idle: false });
   release();

@@ -6,30 +6,70 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--size-icon-button);
-  block-size: var(--size-icon-button);
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
-}
-
-.icon-button--primary {
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-// Ohne Fläche und ohne Rand: der Knopf im Seitenkopf.
-.icon-button--ghost {
-  color: var(--icon-button-ghost-color, var(--color-text-muted));
-  background: none;
   border: 0;
+  padding: 0;
 }
 
-// Löschen ist der einzige Weg ohne Rückkehr: das Zeichen steht rot.
-.icon-button--delete {
-  color: var(--color-danger);
+.icon-button--tonal {
+  inline-size: 44px;
+  block-size: 44px;
+  color: var(--on-sel);
+  background: var(--tonal);
+  border-radius: 22px;
+}
+
+.icon-button--plain {
+  inline-size: 48px;
+  block-size: 48px;
+  color: var(--text-var);
+  background: none;
+  border-radius: 24px;
+}
+
+.icon-button--fab {
+  inline-size: 48px;
+  block-size: 48px;
+  color: var(--on-sel);
+  background: var(--tonal);
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
+}
+
+.icon-button--fabl {
+  inline-size: 56px;
+  block-size: 56px;
+  color: var(--on-sel);
+  background: var(--tonal);
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
+}
+
+.icon-button--accept {
+  inline-size: 72px;
+  block-size: 72px;
+  color: var(--on-primary);
+  background: var(--primary);
+  border-radius: 36px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
+}
+
+.icon-button--reject {
+  inline-size: 72px;
+  block-size: 72px;
+  color: var(--bad);
+  background: var(--bad-bg);
+  border-radius: 36px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
+}
+
+// Über der Kachel: die Fläche bleibt dunkel, gleich welches Thema läuft.
+.icon-button--over {
+  inline-size: 44px;
+  block-size: 44px;
+  color: #e1e3de;
+  background: rgb(17 20 17 / 62%);
+  border-radius: 22px;
+  backdrop-filter: blur(6px);
 }
 
 .icon-button:disabled {

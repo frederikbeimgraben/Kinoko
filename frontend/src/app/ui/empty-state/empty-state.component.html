@@ -2,7 +2,9 @@
 <p class="empty__text">{{ text() }}</p>
 @if (action(); as label) {
   @if (primaryAction()) {
-    <app-button class="empty__cta" variant="primary" (click)="actionClick.emit()">{{ label }}</app-button>
+    <app-push-button class="empty__cta" kind="primary" (click)="actionClick.emit()">{{
+      label
+    }}</app-push-button>
   } @else {
     <button class="empty__button tap" type="button" data-press="scale" (click)="actionClick.emit()">
       {{ label }}

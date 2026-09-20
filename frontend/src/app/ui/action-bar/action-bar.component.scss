@@ -17,25 +17,24 @@
 }
 
 .footer__main {
-  --fs-md: var(--action-bar-size, var(--fs-control));
-
-  block-size: var(--action-bar-height, 48px);
+  --btn-font-size: var(--action-bar-size, var(--fs-control));
+  --btn-height: var(--action-bar-height, 48px);
 }
 
 // Im Modal misst die Aktion vierundvierzig Punkte, wie das Board sie zeigt.
 .footer--inline .footer__main {
-  block-size: var(--action-bar-height, var(--size-tap));
+  --btn-height: var(--action-bar-height, var(--size-tap));
 }
 
 // Die rote Aktion steht schmaler als die grüne, wie die Boards sie zeigen.
 .footer__slim {
-  block-size: var(--action-bar-height, var(--size-tap));
+  --btn-height: var(--action-bar-height, var(--size-tap));
 }
 
-// Der Kit-Knopf malt die Geist-Schrift aus `--color-primary`. Hier trägt er
-// die Gefahrfarbe.
+// Der Textknopf malt seine Schrift aus `--primary`. Hier trägt er die
+// Gefahrfarbe.
 .footer__danger {
-  --color-primary: var(--color-danger);
+  --primary: var(--bad);
 }
 
 // Ohne eigene Reihe bleibt das Paar Teil der Spalte des Fusses.
@@ -51,11 +50,11 @@
 // Beide Aktionen teilen sich die Breite. Ein längeres Wort nimmt sich mehr,
 // so wie eine Spalte `1fr` im Brett.
 .footer__pair--split .footer__main {
-  --fs-md: var(--fs-control);
+  --btn-font-size: var(--fs-control);
   --space-5: 20px;
+  --btn-height: var(--size-tap);
 
   flex: 1 1 0;
-  block-size: var(--size-tap);
 }
 
 // Die Hauptaktion steht rechts, die zweite links.

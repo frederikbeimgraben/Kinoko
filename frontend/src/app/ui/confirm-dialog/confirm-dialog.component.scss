@@ -40,7 +40,6 @@
 }
 
 // Die Knöpfe messen vierundvierzig Punkte, wie die Bretter sie zeigen.
-.confirm__actions app-button {
-  block-size: var(--size-tap);
-  min-block-size: var(--size-tap);
+.confirm__actions app-push-button {
+  --btn-height: var(--size-tap);
 }

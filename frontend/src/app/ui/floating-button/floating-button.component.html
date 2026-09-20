@@ -1,11 +1,14 @@
 <button
-  class="floating tap"
+  class="floating"
   type="button"
-  data-press="scale"
-  [class.floating--primary]="variant() === 'primary'"
+  appRipple
+  [class.floating--icon-only]="iconOnly()"
   [attr.aria-label]="label()"
   [disabled]="disabled()"
   (click)="pressed.emit()"
 >
   <app-svg-icon class="floating__icon" [name]="icon()" [size]="24" [style.rotate.deg]="rotation()" />
+  @if (!iconOnly()) {
+    <span>{{ label() }}</span>
+  }
 </button>

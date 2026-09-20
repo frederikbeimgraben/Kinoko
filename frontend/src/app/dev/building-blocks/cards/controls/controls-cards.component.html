@@ -1,0 +1,32 @@
+<app-block-card block="RadioRow" [width]="358" [height]="56">
+  <app-choice-row [label]="'entry.filter.own' | t" [checked]="true" />
+</app-block-card>
+
+<app-block-card block="SwitchRow" [width]="358" [height]="56">
+  <div class="switchrow">
+    <span class="switchrow__txt"
+      ><b>{{ 'admin.species.forecast' | t }}</b></span
+    >
+    <app-switch [checked]="true" [label]="'admin.species.forecast' | t" />
+  </div>
+</app-block-card>
+
+<app-block-card block="AddRow" [width]="358" [height]="56">
+  <app-add-row [label]="'admin.part.addColour' | t" [action]="'admin.part.addColour' | t" />
+</app-block-card>
+
+<app-block-card block="Button" [width]="200" [height]="56">
+  <app-push-button kind="primary">{{ 'common.save' | t }}</app-push-button>
+</app-block-card>
+
+<app-block-card block="CheckRow" [width]="358" [height]="56">
+  <app-check-row [title]="'enum.edibility.edible' | t" [checked]="true" [count]="77" />
+</app-block-card>
+
+<app-block-card block="Fab" [width]="160" [height]="56">
+  <app-floating-button icon="plus" [label]="'entry.create' | t" />
+</app-block-card>
+
+<app-block-card block="RoundButton" [width]="44" [height]="44">
+  <app-icon-button icon="prev" [label]="'map.week.previous' | t" />
+</app-block-card>

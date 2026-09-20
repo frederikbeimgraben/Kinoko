@@ -1,0 +1,23 @@
+<button
+  class="btn"
+  appRipple
+  [type]="type()"
+  [class.primary]="kind() === 'primary'"
+  [class.tonal]="kind() === 'tonal'"
+  [class.outline]="kind() === 'outline'"
+  [class.text]="kind() === 'text'"
+  [class.danger]="kind() === 'danger'"
+  [class.textdanger]="kind() === 'textdanger'"
+  [class.wide]="wide()"
+  [class.busy]="busy()"
+  [attr.aria-busy]="busy()"
+  [disabled]="disabled() || busy()"
+>
+  @if (icon(); as name) {
+    <app-svg-icon [name]="name" [size]="24" />
+  }
+  @if (busy()) {
+    <i class="spin" aria-hidden="true"></i>
+  }
+  <span [hidden]="busy()"><ng-content /></span>
+</button>

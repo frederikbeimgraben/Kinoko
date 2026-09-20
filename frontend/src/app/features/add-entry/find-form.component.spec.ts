@@ -171,7 +171,7 @@ describe('FundFormularComponent', () => {
   it('sperrt das Speichern, solange es läuft', async () => {
     const setup = await build({ busy: true });
 
-    expect(setup.container.querySelector('.btn--primary')).toBeDisabled();
+    expect(setup.container.querySelector('.btn.primary')).toBeDisabled();
   });
 
   it('dimmt und sperrt die Felder, solange das Speichern läuft', async () => {

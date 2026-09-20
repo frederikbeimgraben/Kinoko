@@ -13,15 +13,6 @@
     [disabled]="locked()"
     (change)="onToggle($event)"
   />
-  @if (locked()) {
-    <app-svg-icon class="row__lock" name="lock" [size]="16" [strokeWidth]="1.8" />
-  } @else {
-    <span class="row__box" [class.row__box--on]="checked()" aria-hidden="true">
-      @if (checked()) {
-        <app-svg-icon name="check" [size]="14" [strokeWidth]="2.4" />
-      }
-    </span>
-  }
   <span class="row__stack">
     <span class="row__title">{{ title() }}</span>
     @if (subline()) {
@@ -30,5 +21,14 @@
   </span>
   @if (count() !== undefined) {
     <span class="row__count">{{ count() }}</span>
+  }
+  @if (locked()) {
+    <app-svg-icon class="row__lock" name="lock" [size]="16" [strokeWidth]="1.8" />
+  } @else {
+    <span class="row__box" [class.row__box--on]="checked()" aria-hidden="true">
+      @if (checked()) {
+        <app-svg-icon name="check" [size]="16" [strokeWidth]="2.5" />
+      }
+    </span>
   }
 </label>

@@ -7,9 +7,9 @@
     [nameMissingText]="'zone.nameFehlt' | t"
     (submitted)="save($event)"
   >
-    <app-button class="zonesheet__outline" variant="secondary" [block]="true" (click)="editCorners()">
+    <app-push-button class="zonesheet__outline" kind="tonal" [wide]="true" (click)="editCorners()">
       {{ 'entry.zone.changeOutline' | t }}
-    </app-button>
+    </app-push-button>
   </app-object-form>
 } @else {
   <div class="objectsheet">

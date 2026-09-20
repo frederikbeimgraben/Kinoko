@@ -30,10 +30,9 @@
 
 // Größe wie `.knopf` im Board `EntriesGuest`, nicht die Vorgabe des Kits.
 .empty__cta {
-  --fs-md: var(--fs-control);
+  --btn-font-size: var(--fs-control);
   --space-5: 20px;
-
-  block-size: var(--size-tap);
+  --btn-height: var(--size-tap);
 }
 
 .empty__button {

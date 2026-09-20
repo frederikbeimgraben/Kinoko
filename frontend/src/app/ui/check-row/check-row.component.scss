@@ -5,16 +5,14 @@
 .row {
   position: relative;
   display: flex;
-  box-sizing: border-box;
-  gap: var(--space-3);
   align-items: center;
-  min-block-size: var(--size-tap);
-  padding-inline: 14px;
-}
-
-// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
-:host(:not(:first-child)) .row {
-  border-block-start: var(--border-width) solid var(--color-border);
+  gap: 12px;
+  min-block-size: 56px;
+  padding: 8px 16px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 4px;
 }
 
 .row--locked {
@@ -24,6 +22,7 @@
 // Ohne Karte um die Zeile bleibt ihr Inhalt am Rand der Fläche.
 .row--flush {
   padding-inline: 0;
+  background: none;
 }
 
 .row__input {
@@ -38,34 +37,7 @@
 
 .row__lock {
   flex: none;
-  color: var(--color-text-muted);
-}
-
-.row__box {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  inline-size: 21px;
-  block-size: 21px;
-  border: 1.5px solid var(--color-border-strong);
-  border-radius: 6px;
-}
-
-.row__box--on {
-  color: var(--color-text-inverse);
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.row__input:focus-visible + .row__box {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 2px;
-}
-
-.row__input:disabled + .row__box {
-  opacity: 0.6;
+  color: var(--label);
 }
 
 .row__stack {
@@ -76,19 +48,42 @@
   min-inline-size: 0;
 }
 
-.row__count {
-  margin-inline-start: auto;
-  font-size: var(--fs-sm);
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-}
-
 .row__title {
-  font-size: var(--fs-row-title);
-  line-height: var(--lh-tight);
+  font-weight: 400;
+  line-height: 1.2;
 }
 
 .row__sub {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-var);
+}
+
+.row__count {
+  flex: none;
+  font-size: 14px;
+  color: var(--label);
+  font-variant-numeric: tabular-nums;
+}
+
+.row__box {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 20px;
+  block-size: 20px;
+  color: var(--on-primary);
+  border: 2px solid var(--outline-strong);
+  border-radius: 4px;
+}
+
+.row__box--on {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.row__input:focus-visible ~ .row__stack {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

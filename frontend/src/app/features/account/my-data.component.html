@@ -11,8 +11,10 @@
     </app-key-value-table>
   </div>
 
-  <app-button variant="secondary" (click)="export()">{{ 'account.exportJson' | t }}</app-button>
-  <app-button variant="danger" (click)="asking.set(true)">{{ 'account.deleteAllData' | t }}</app-button>
+  <app-push-button kind="tonal" (click)="export()">{{ 'account.exportJson' | t }}</app-push-button>
+  <app-push-button kind="danger" (click)="asking.set(true)">{{
+    'account.deleteAllData' | t
+  }}</app-push-button>
 </div>
 
 <app-confirm-dialog

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent } from '@stupa-makers/ui-kit';
+import { ButtonComponent } from '../button/button.component';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Leerzustand einer Liste: Bild, Satz, dann eine mögliche Handlung. */

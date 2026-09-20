@@ -25,9 +25,9 @@
     </ul>
     @if (more()) {
       <div class="mine__more">
-        <app-button variant="secondary" [disabled]="loading()" (click)="loadMore()">
+        <app-push-button kind="tonal" [disabled]="loading()" (click)="loadMore()">
           {{ 'bild.mehr' | t }}
-        </app-button>
+        </app-push-button>
       </div>
     }
   }

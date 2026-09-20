@@ -16,8 +16,7 @@ describe('IconButtonComponent', () => {
     await userEvent.click(button);
 
     expect(calls).toBe(1);
-    expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'scale');
+    expect(button).toHaveClass('icon-button--tonal');
     await noViolations(container);
   });
 
@@ -37,12 +36,33 @@ describe('IconButtonComponent', () => {
     expect(container.querySelector('path[d^="M4 7h16"]')).not.toBeNull();
   });
 
-  it('kennt eine primäre Variante', async () => {
+  it('zeigt den gefüllten Pfeil für die Wochennavigation', async () => {
     const { container } = await render(IconButtonComponent, {
-      inputs: { icon: 'check', label: 'Annehmen', variant: 'primary' },
+      inputs: { icon: 'prev', label: 'Vorige Woche' },
     });
 
-    expect(container.querySelector('.icon-button--primary')).not.toBeNull();
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('viewBox', '0 0 12 12');
+    expect(svg).toHaveAttribute('fill', 'currentColor');
+  });
+
+  it.each(['tonal', 'plain', 'fab', 'fabl', 'accept', 'reject', 'over'] as const)(
+    'kennt den Auftritt %s',
+    async (kind) => {
+      const { container } = await render(IconButtonComponent, {
+        inputs: { icon: 'check', label: 'Annehmen', kind },
+      });
+
+      expect(container.querySelector(`.icon-button--${kind}`)).not.toBeNull();
+    },
+  );
+
+  it('vergrößert das Icon bei accept und reject', async () => {
+    const { container } = await render(IconButtonComponent, {
+      inputs: { icon: 'check', label: 'Annehmen', kind: 'accept' },
+    });
+
+    expect(container.querySelector('svg')).toHaveAttribute('width', '32');
   });
 
   it('sperrt sich und nimmt keinen Klick an', async () => {

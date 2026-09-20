@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 /** Die Zeile steht in einer Liste oder als Kasten mit eigenem Rand. */
 export type ChoiceRowVariant = 'list' | 'boxed';
 
-/** Wert im Filter: Kästchen, Name und die Zahl der treffenden Arten. */
+/** Zeile mit Kreis-Kästchen, per `kit.css` `.box-r`. */
 @Component({
   selector: 'app-choice-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent],
   templateUrl: './choice-row.component.html',
   styleUrl: './choice-row.component.scss',
   host: { '[class.choice-row--boxed]': "variant() === 'boxed'" },
@@ -20,10 +18,6 @@ export class ChoiceRowComponent {
   readonly variant = input<ChoiceRowVariant>('list');
 
   readonly toggled = output<boolean>();
-
-  /** Im Kasten steht der Haken kleiner und feiner als in der Liste. */
-  protected readonly tick = computed(() => (this.variant() === 'boxed' ? 12 : 14));
-  protected readonly stroke = computed(() => (this.variant() === 'boxed' ? 2.5 : 2.4));
 
   protected onChange(event: Event): void {
     this.toggled.emit((event.target as HTMLInputElement).checked);

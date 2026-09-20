@@ -8,12 +8,13 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { ButtonComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '@stupa-makers/ui-kit';
 import type { Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';

@@ -24,6 +24,9 @@ const RULES = [
       'ui/photo-dialog',
       'ui/object-menu',
       'ui/reject-dialog',
+      // `ui/icon-button` blurs its `over` kind for legibility on a map or a
+      // photo. `backdrop-filter` here is not a dialog scrim.
+      'ui/icon-button',
     ],
   },
   {

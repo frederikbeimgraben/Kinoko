@@ -46,16 +46,16 @@ describe('ActionBarComponent', () => {
       inputs: { primary: 'Alles löschen', danger: true },
     });
 
-    expect(container.querySelector('.btn--danger')).not.toBeNull();
+    expect(container.querySelector('.btn.danger')).not.toBeNull();
   });
 
-  it('zeichnet die zweite Löschaktion als Umriss', async () => {
+  it('zeichnet die zweite Löschaktion als Textknopf', async () => {
     const { container } = await render(ActionBarComponent, {
       inputs: { primary: 'Übernehmen', secondary: 'Faktor entfernen', secondaryDanger: true },
     });
 
-    expect(container.querySelector('.btn--danger-outline')).not.toBeNull();
-    expect(container.querySelector('.btn--danger')).toBeNull();
+    expect(container.querySelector('.btn.textdanger')).not.toBeNull();
+    expect(container.querySelector('.btn.danger')).toBeNull();
   });
 
   it('stellt die letzte Aktion ohne Rahmen auf', async () => {
@@ -63,13 +63,13 @@ describe('ActionBarComponent', () => {
       inputs: { primary: 'Abbrechen', ghost: true },
     });
 
-    expect(container.querySelector('.btn--ghost')).not.toBeNull();
+    expect(container.querySelector('.btn.text')).not.toBeNull();
     expect(container.querySelector('.footer__slim')).not.toBeNull();
 
     await rerender({ inputs: { primary: 'Speichern', secondary: 'Abbrechen', ghost: true } });
 
-    expect(container.querySelector('.btn--primary')).not.toBeNull();
-    expect(container.querySelectorAll('.btn--ghost')).toHaveLength(1);
+    expect(container.querySelector('.btn.primary')).not.toBeNull();
+    expect(container.querySelectorAll('.btn.text')).toHaveLength(1);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
