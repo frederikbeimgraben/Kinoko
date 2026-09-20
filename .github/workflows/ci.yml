@@ -239,7 +239,7 @@ jobs:
         working-directory: frontend
         run: npm run e2e:boards
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-diffs
           path: |
@@ -266,7 +266,7 @@ jobs:
         working-directory: frontend
         run: npm run lighthouse
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse
           path: frontend/lighthouse-bericht
@@ -330,7 +330,7 @@ jobs:
           --report junit
           --report-dir schemathesis-report
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: schemathesis
           path: backend/schemathesis-report
