@@ -214,7 +214,7 @@ test('EntriesOffline', async ({ page }) => {
   await reportFind(page, null, '1');
 
   await page.getByRole('link', { name: 'Einträge' }).click();
-  await expect(page.getByText('Übertragung ausstehend').first()).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Übertragung ausstehend' }).first()).toBeVisible();
   // Die Meldungen der Toasts gehen von selbst; das Brett zeigt sie nicht.
   await expect(page.locator('.toast')).toHaveCount(0, { timeout: 20_000 });
   await expectBoard(page, 'EntriesOffline');
