@@ -4,6 +4,9 @@ import { FILLED_ICONS, ICONS, type IconName } from './icons';
 
 export type { IconName };
 
+/** A dim icon reads var(--label), otherwise it inherits its color. */
+export type IconTone = '' | 'dim';
+
 /** Ein Piktogramm aus der festen Tabelle. Ohne Beschriftung bleibt es Schmuck. */
 @Component({
   selector: 'app-svg-icon',
@@ -18,6 +21,7 @@ export class SvgIconComponent {
   readonly label = input<string>();
   readonly size = input<number>(22);
   readonly strokeWidth = input<number>(2);
+  readonly tone = input<IconTone>('');
 
   protected readonly filled = computed(() => FILLED_ICONS.includes(this.name()));
   protected readonly viewBox = computed(() => (this.filled() ? '0 0 12 12' : '0 0 24 24'));

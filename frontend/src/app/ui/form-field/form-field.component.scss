@@ -5,9 +5,12 @@
 .field__label {
   display: block;
   margin-block-end: var(--space-2);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  line-height: 15px;
+  padding-left: 4px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
 }
 
 .field__label--section {
@@ -23,18 +26,16 @@
 .field {
   display: flex;
   align-items: center;
+  gap: 12px;
   inline-size: 100%;
-  block-size: var(--pilz-field-height);
-  padding-inline: var(--form-field-inline, var(--pilz-gutter));
+  block-size: 56px;
+  padding-inline: var(--form-field-inline, 16px);
   font: inherit;
-  font-size: var(--form-field-size, var(--fs-md));
-  line-height: 20px;
-  padding-block-start: var(--form-field-shift, 2px);
-  color: var(--color-text);
+  font-size: var(--form-field-size, 16px);
+  color: var(--text);
   text-align: start;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--pilz-swatch-radius);
+  background: var(--surface);
+  border-radius: 16px;
 }
 
 .field--button {
@@ -45,7 +46,7 @@
 .field__lead {
   flex: none;
   margin-block-start: -2px;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 // Der Pfeil steht am Ende der Zeile, der Text füllt den Rest. Ein schmales
@@ -53,7 +54,7 @@
 .field__trail {
   flex: none;
   margin-inline-start: var(--form-field-trail-push, auto);
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 // Der Tag steht in der Schreibweise der Sprache. Die Eingabe des Systems liegt
@@ -80,13 +81,13 @@
 }
 
 .field--empty {
-  color: var(--color-text-muted);
+  color: var(--label);
 }
 
 .field--multiline {
   align-items: flex-start;
-  block-size: var(--form-field-lines, 80px);
-  padding-block-start: var(--form-field-lines-top, 10px);
+  block-size: var(--form-field-lines, 112px);
+  padding-block-start: var(--form-field-lines-top, 14px);
   line-height: var(--form-field-lines-height, 20px);
   resize: none;
 }
@@ -97,7 +98,7 @@
 
 .field__icon {
   flex: none;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 // Der Rahmen gehört dem Kasten, nicht der Eingabe darin. Sonst stünden zwei
@@ -107,19 +108,19 @@
   min-inline-size: 0;
   padding: 0;
   font: inherit;
-  font-size: var(--form-field-size, var(--fs-md));
-  color: var(--color-text);
+  font-size: var(--form-field-size, 16px);
+  color: var(--text);
   background: none;
   border: 0;
   outline: none;
 }
 
 .field--icon:focus-within {
-  outline: 2px solid var(--color-focus-ring);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
 .field::placeholder,
 .field__input::placeholder {
-  color: var(--color-text-muted);
+  color: var(--label);
 }

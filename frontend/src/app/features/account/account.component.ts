@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, ButtonComponent, CardComponent } from '@stupa-makers/ui-kit';
+import { BadgeComponent, ButtonComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { AuthService, type SignedInUser } from '../../core/auth';
 import { ConfigService } from '../../core/config/config.service';
@@ -12,6 +12,7 @@ import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { APP_VERSION } from '../../core/version.generated';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { ADMIN_PERMISSIONS } from '../admin/admin.entries';
@@ -37,9 +38,9 @@ const MAP_APPS: readonly MapApp[] = ['osm', 'google'];
   imports: [
     BadgeComponent,
     ButtonComponent,
-    CardComponent,
     ListRowComponent,
     PageHeaderComponent,
+    RowGroupComponent,
     SegmentedComponent,
     SvgIconComponent,
     TranslatePipe,

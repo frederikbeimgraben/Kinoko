@@ -1,0 +1,27 @@
+<app-block-card block="Badge" [width]="120" [height]="24">
+  <app-level-pill [text]="'enum.edibility.edible' | t" kind="ok" />
+</app-block-card>
+
+<app-block-card block="Field" [width]="358" [height]="84">
+  <app-form-field
+    [label]="'species.fieldLabel' | t"
+    [value]="'beispiel.steinpilz' | t"
+    [placeholder]="'common.optional' | t"
+  />
+</app-block-card>
+
+<app-block-card block="Group" [width]="358" [height]="120">
+  <app-row-group />
+</app-block-card>
+
+<app-block-card block="Icon" [width]="24" [height]="24">
+  <app-svg-icon name="mushroom" [size]="24" [strokeWidth]="1.8" />
+</app-block-card>
+
+<app-block-card block="Section" [width]="358" [height]="160">
+  <app-section [label]="'species.section.classification' | t" />
+</app-block-card>
+
+<app-block-card block="Segment" [width]="358" [height]="48">
+  <app-segmented [options]="segmentOptions" value="forecast" [label]="'map.view' | t" />
+</app-block-card>

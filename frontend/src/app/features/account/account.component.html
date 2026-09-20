@@ -3,7 +3,7 @@
 <div class="account">
   <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.konto' | t }}</h2>
-    <app-card class="account__map">
+    <app-row-group>
       <div class="account__row">
         @if (user(); as person) {
           <span class="account__circle" aria-hidden="true">{{ initiale(person) }}</span>
@@ -31,7 +31,7 @@
           </app-button>
         }
       </div>
-    </app-card>
+    </app-row-group>
   </section>
 
   <section class="account__block">

@@ -63,14 +63,29 @@ describe('SegmentedComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt den Druckzustand an jeder Wahl', async () => {
+  it('setzt einen Kreis am Berührungspunkt statt der Verkleinerung', async () => {
     const { container } = await render(SegmentedComponent, {
       inputs: { options: OPTIONEN, value: 'layer', label: 'Darstellung' },
     });
 
-    const choice = container.querySelector('.seg__choice');
-    expect(choice).toHaveClass('tap');
-    expect(choice).toHaveAttribute('data-press', 'scale');
+    const choice = container.querySelector<HTMLElement>('.seg__choice');
+    if (choice === null) throw new Error('keine Wahl');
+    expect(choice).not.toHaveAttribute('data-press');
+
+    vi.spyOn(choice, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 40,
+      height: 40,
+      right: 40,
+      bottom: 40,
+      toJSON: () => undefined,
+    });
+    choice.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 20 }));
+
+    expect(choice.querySelector('.ripple')).not.toBeNull();
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

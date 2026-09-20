@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.sec {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text);
+}
+
+.sec > .lbl {
+  padding-left: 4px;
+}

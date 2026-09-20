@@ -116,6 +116,16 @@ describe('FormFieldComponent', () => {
     expect(field).toHaveAttribute('data-press', 'scale');
   });
 
+  it('trägt die Beschriftung aus der Gestaltung', async () => {
+    const { container } = await render(FormFieldComponent, {
+      inputs: { label: 'Art', value: 'Steinpilz' },
+    });
+
+    const label = container.querySelector('.field__label');
+    if (label === null) throw new Error('keine Beschriftung');
+    expect(getComputedStyle(label).color).toBe('var(--label)');
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(FormFieldComponent, {
       inputs: { label: 'name', placeholder: 'value', icon: 'search', hideLabel: true },

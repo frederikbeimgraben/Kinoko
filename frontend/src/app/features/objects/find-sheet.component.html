@@ -15,7 +15,7 @@
       <p class="findsheet__note">{{ note }}</p>
     }
     @if (valueText(); as value) {
-      <app-card class="flush">
+      <app-row-group>
         <app-list-row
           class="findsheet__value"
           kind="catalogue"
@@ -23,7 +23,7 @@
           [subline]="valueScope()"
           [value]="value"
         />
-      </app-card>
+      </app-row-group>
     }
   </div>
   <app-action-bar
