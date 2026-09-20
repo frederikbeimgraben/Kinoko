@@ -8,6 +8,7 @@ const PFIFFERLING: EntryRowEntry = {
   title: 'Pfifferling',
   meta: 'Heute · 2 Stück · Frederik',
   note: 'unter Fichten am Hang',
+  colour: '#b9832a',
 };
 
 describe('EntryRowComponent', () => {
@@ -27,22 +28,39 @@ describe('EntryRowComponent', () => {
     expect(screen.getByText('unter Fichten am Hang')).toBeInTheDocument();
   });
 
-  it('zeigt den Zustand ausstehend als Plakette ohne Farbpunkt', async () => {
+  it('zeigt eine Vorschau mit der Grundfarbe des Eintrags', async () => {
+    const { container } = await render(EntryRowComponent, { inputs: { entry: PFIFFERLING } });
+
+    const thumb = container.querySelector('app-private-image');
+    expect(thumb).not.toBeNull();
+  });
+
+  it('zeigt einen Upload-Pfeil statt des Pfeilkopfs, solange die Übertragung aussteht', async () => {
     const { container } = await render(EntryRowComponent, {
       inputs: { entry: PFIFFERLING, pending: true },
     });
 
-    expect(screen.getByText('Übertragung ausstehend')).toBeInTheDocument();
-    expect(container.querySelector('[style*="border-radius: 50%"]')).toBeNull();
+    expect(container.querySelector('.item__pending')).not.toBeNull();
+    expect(container.querySelector('.item__chevron')).toBeNull();
+    expect(container.querySelector('[role="img"]')).toHaveAttribute('aria-label', 'Übertragung ausstehend');
   });
 
-  it('lässt die Plakette weg, solange nichts aussteht', async () => {
-    await render(EntryRowComponent, { inputs: { entry: PFIFFERLING } });
+  it('zeigt den Pfeilkopf, solange nichts aussteht', async () => {
+    const { container } = await render(EntryRowComponent, { inputs: { entry: PFIFFERLING } });
 
-    expect(screen.queryByText('Übertragung ausstehend')).not.toBeInTheDocument();
+    expect(container.querySelector('.item__chevron')).not.toBeNull();
+    expect(container.querySelector('.item__pending')).toBeNull();
   });
 
-  it('meldet die gewählte Zeile und trägt den Druckzustand', async () => {
+  it('trägt den gewählten Zustand', async () => {
+    const { container } = await render(EntryRowComponent, {
+      inputs: { entry: PFIFFERLING, selected: true },
+    });
+
+    expect(container.querySelector('.item--selected')).not.toBeNull();
+  });
+
+  it('meldet die gewählte Zeile', async () => {
     const { fixture } = await render(EntryRowComponent, { inputs: { entry: PFIFFERLING } });
     let calls = 0;
     fixture.componentInstance.chosen.subscribe(() => (calls += 1));
@@ -54,7 +72,6 @@ describe('EntryRowComponent', () => {
 
     expect(calls).toBe(2);
     expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'tint');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

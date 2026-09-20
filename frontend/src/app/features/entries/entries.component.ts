@@ -12,6 +12,7 @@ import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
 import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
+import { EntryListComponent } from '../../ui/entry-list/entry-list.component';
 import { EntryRowComponent, type EntryRowEntry } from '../../ui/entry-row/entry-row.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -26,7 +27,7 @@ import type { ObjectKind } from '../map/map.state';
 import { EntriesState, type EntryBody } from './entries.state';
 import { colourToken } from './colors';
 import { findSubline } from './find-subline';
-import { hectaresText, isoDatum, shortDate } from './formats';
+import { firstName, hectaresText, isoDatum, shortDate } from './formats';
 
 /** Die drei Segmente über der Liste (Boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
 type Segment = 'finds' | 'markers' | 'zones';
@@ -55,6 +56,7 @@ interface Row {
     ChoiceRowComponent,
     EmptyStateComponent,
     FilterSheetComponent,
+    EntryListComponent,
     EntryRowComponent,
     LevelPillComponent,
     ListRowComponent,
@@ -159,11 +161,6 @@ export class EntriesComponent {
     return shortDate(iso, this.i18n, isoDatum(new Date()));
   }
 
-  /** Der Vorname, wie ihn die Unterzeile eines Fundes nennt. */
-  private firstName(full: string | null): string {
-    return (full ?? '').split(' ')[0] ?? '';
-  }
-
   private subline(date: string, count: number | null, person: string | null): string {
     return findSubline(this.i18n, date, count, person);
   }
@@ -174,7 +171,7 @@ export class EntriesComponent {
       colour: '',
       entry: {
         title: this.speciesName(find.speciesId),
-        meta: this.subline(this.date(find.foundOn), find.count, this.firstName(this.state.reporter())),
+        meta: this.subline(this.date(find.foundOn), find.count, firstName(this.state.reporter())),
         note: find.note ?? undefined,
       },
       pending: false,
@@ -184,7 +181,7 @@ export class EntriesComponent {
 
   private sharedRow(find: SharedFind): Row {
     const person = this.names.nameOf(find.ownerId);
-    const name = person === null ? null : this.firstName(person);
+    const name = person === null ? null : firstName(person);
     return {
       key: `shared-${find.id}`,
       colour: '',
@@ -235,7 +232,7 @@ export class EntriesComponent {
     const find = 'foundOn' in body;
     const title = find ? this.speciesName(body.speciesId) : body.name;
     const meta = find
-      ? this.subline(this.date(body.foundOn), body.count ?? null, this.firstName(this.state.reporter()))
+      ? this.subline(this.date(body.foundOn), body.count ?? null, firstName(this.state.reporter()))
       : '';
     return {
       key: `waiting-${entry.id}`,

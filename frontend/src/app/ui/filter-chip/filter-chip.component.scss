@@ -3,26 +3,57 @@
   flex: none;
 }
 
-.filterchip {
+.chip {
   display: inline-flex;
   flex: none;
-  gap: 7px;
   align-items: center;
-  block-size: 32px;
-  padding-inline: 12px 8px;
-  font-size: 13px;
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
+  gap: 8px;
+  block-size: 36px;
+  padding: 0 14px 0 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: var(--fw-medium);
+  color: var(--text);
   white-space: nowrap;
-  background: var(--color-primary-subtle);
-  border: var(--border-width) solid color-mix(in srgb, var(--color-primary) 27%, transparent);
+  background: none;
+  border: var(--border-width) solid var(--outline);
   border-radius: var(--radius-pill);
 }
 
-.filterchip__remove {
+.chip--plain {
+  padding-inline: 14px;
+}
+
+.chip--on {
+  color: var(--on-sel);
+  background: var(--sel);
+  border-color: var(--sel);
+}
+
+.chip--small {
+  block-size: 32px;
+  font-size: 13px;
+}
+
+.chip__dot {
+  display: block;
+  flex: none;
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: 7px;
+}
+
+.chip__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip__remove {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
+  margin-inline-end: -4px;
   padding: 0;
   color: inherit;
   background: none;

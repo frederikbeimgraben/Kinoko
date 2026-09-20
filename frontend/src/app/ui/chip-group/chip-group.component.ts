@@ -1,35 +1,39 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { FilterChipComponent } from '../filter-chip/filter-chip.component';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Ein Wert im Chip-Feld. */
+/** A value in the chip field. */
 export interface Chip {
   value: string;
   label: string;
 }
 
 /**
- * Mehrfachwahl in Formularen und Dialogen. Die Reihe bricht um.
+ * Multi-select or single choice in forms and dialogs, per `kit.css` `.chips`.
  */
 @Component({
   selector: 'app-chip-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [FilterChipComponent, RippleDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './chip-group.component.html',
   styleUrl: './chip-group.component.scss',
 })
 export class ChipGroupComponent {
   readonly chips = input.required<readonly Chip[]>();
   readonly value = input<readonly string[]>([]);
-  /** Mehr als ein Wert zugleich. Sonst ersetzt eine neue Wahl die vorige. */
+  /** More than one value at once. Otherwise a new choice replaces the last. */
   readonly multiple = input(false);
   readonly label = input.required<string>();
   readonly addable = input(false);
+  /** The 32 px chip, per `kit.css` `.chip.sm`, as `ChipSet` uses it. */
+  readonly small = input(false);
 
   readonly valueChange = output<readonly string[]>();
   readonly added = output();
 
-  /** Eigener Stand der Wahl. Ein neuer Wert von außen setzt ihn zurück. */
+  /** Own state of the choice. A new value from outside resets it. */
   private readonly chosenValues = linkedSignal<readonly string[], readonly string[]>({
     source: this.value,
     computation: (value) => value,

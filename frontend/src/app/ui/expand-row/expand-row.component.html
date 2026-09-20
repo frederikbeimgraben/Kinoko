@@ -1,0 +1,26 @@
+<div class="xp">
+  <button
+    type="button"
+    class="xp__head"
+    [class.xp__head--tall]="tall()"
+    [class.xp__head--open]="open()"
+    appRipple
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="contentId"
+    (click)="toggle()"
+  >
+    <span>{{ label() }}</span>
+    @if (value(); as text) {
+      <span class="xp__value">{{ text }}</span>
+      @if (dot(); as colour) {
+        <i class="dot" [style.background]="colour" [attr.aria-label]="text"></i>
+      }
+    }
+    <app-svg-icon name="chevron" [size]="18" [style.rotate]="open() ? '-90deg' : '90deg'" />
+  </button>
+  @if (open()) {
+    <div [id]="contentId" class="xp__body">
+      <ng-content />
+    </div>
+  }
+</div>

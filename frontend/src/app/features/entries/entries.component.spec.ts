@@ -148,7 +148,7 @@ describe('EintraegeComponent', () => {
     const rows = setup.container.querySelectorAll('app-entry-row');
     expect(rows[0]).toHaveTextContent('Maronenröhrling');
     expect(rows[0]).toHaveTextContent('Heute · 2 Stück · Frederik');
-    expect(rows[0]).toHaveTextContent('Übertragung ausstehend');
+    expect(rows[0].querySelector('[role="img"]')).toHaveAttribute('aria-label', 'Übertragung ausstehend');
 
     // Ein wartender Eintrag hat noch keine Kennung vom Dienst: er öffnet nichts.
     await userEvent.click(within(rows[0] as HTMLElement).getByRole('button'));

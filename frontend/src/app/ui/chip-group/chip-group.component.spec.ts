@@ -69,14 +69,13 @@ describe('ChipGroupComponent', () => {
     expect(container.querySelector('.chip--add')).toBeNull();
   });
 
-  it('trägt den Druckzustand an jedem Chip', async () => {
+  it('trägt die Tippfläche an jedem Chip', async () => {
     const { container } = await render(ChipGroupComponent, {
       inputs: { chips: CHIPS, value: [], label: 'Baumpartner' },
     });
 
     const chip = container.querySelector('.chip');
     expect(chip).toHaveClass('tap');
-    expect(chip).toHaveAttribute('data-press', 'scale');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

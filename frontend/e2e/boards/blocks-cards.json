@@ -402,12 +402,6 @@
     "h": 360
   },
   {
-    "selector": "Stepper",
-    "stem": "Stepper",
-    "w": 358,
-    "h": 56
-  },
-  {
     "selector": "ChipSet",
     "stem": "ChipSet",
     "w": 272,

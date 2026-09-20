@@ -1,9 +1,23 @@
-@use '../../../styles/filter-marks' as marks;
-
-@include marks.filter-marks;
-
 :host {
   display: flex;
   flex-direction: column;
   gap: var(--size-gutter);
+}
+
+// Der Filterknopf und die aktiven Marken laufen in einer Reihe, die am
+// rechten Rand ausblendet. Per `kit.css` `.chiprow.fade-r`.
+.chiprow {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  padding-inline: var(--size-gutter);
+  margin-inline: calc(var(--size-gutter) * -1);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+}
+
+.chiprow::-webkit-scrollbar {
+  display: none;
 }

@@ -16,7 +16,7 @@ test.describe('Zeiger-Cursor am Rechner', () => {
       page.locator('[data-block="app-choice-row"] .row').first(),
       page.locator('[data-block="app-segmented"] .seg__choice').first(),
       page.locator('[data-block="app-chip-group"] .chip').first(),
-      page.locator('[data-block="app-filter-chip"] .filterchip__remove').first(),
+      page.locator('[data-block="app-filter-chip"] .chip__remove').first(),
       page.locator('[data-block="app-switch"] .switch').first(),
       page.locator('[data-block="app-photo-picker"] .tile--add'),
     ];

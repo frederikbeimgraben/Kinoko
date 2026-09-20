@@ -1,35 +1,18 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: 8px;
 }
 
-.chip {
+// The dashed border shows without a word that a tap adds a term.
+.chip--add {
   display: flex;
   align-items: center;
-  block-size: var(--chip-height, var(--size-chip));
-  padding-inline: var(--chip-inline, var(--space-4));
-  font-size: var(--chip-size, var(--fs-sm));
-  font-weight: var(--chip-weight, var(--fw-semibold));
-  color: var(--color-text);
-  white-space: nowrap;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-}
-
-.chip--active {
-  font-weight: var(--fw-semibold);
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-// Der gestrichelte Rand zeigt ohne Wort, dass ein Tipp einen Begriff anlegt.
-.chip--add {
+  justify-content: center;
+  block-size: 36px;
   padding-inline: var(--space-3);
-  color: var(--color-primary);
+  color: var(--primary);
   background: none;
-  border-style: dashed;
-  border-color: var(--color-primary);
+  border: var(--border-width) dashed var(--primary);
+  border-radius: var(--radius-pill);
 }

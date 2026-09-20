@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  inline-size: 100%;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+}
+
+.lbl {
+  padding: 14px 12px 6px;
+  font-size: 12px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}

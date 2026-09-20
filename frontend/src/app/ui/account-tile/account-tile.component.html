@@ -1,0 +1,9 @@
+<div class="acct">
+  <span class="acct__circle" aria-hidden="true">{{ letter() }}</span>
+  <span class="acct__stack">
+    <span class="acct__name">{{ user() }}</span>
+    <span class="acct__mail">{{ mail() }}</span>
+    <span class="acct__server">{{ server() }}</span>
+  </span>
+  <app-icon-button icon="sign-out" kind="plain" [label]="'account.signOut' | t" (pressed)="signOut.emit()" />
+</div>

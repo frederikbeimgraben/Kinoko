@@ -19,12 +19,14 @@ function fixture(): { root: string; design: string } {
       components: [
         { component: 'Badge', kind: 'component', width: 40, height: 20 },
         { component: 'Sheet', kind: 'standalone', width: 390, height: 600 },
+        { component: 'Stepper', kind: 'component', width: 120, height: 48 },
       ],
     }),
   );
   writeFileSync(join(design, 'bilder', 'Map.png'), 'map-image');
   writeFileSync(join(design, 'bilder', 'Badge.png'), 'badge-image');
   writeFileSync(join(design, 'bilder', 'Sheet.png'), 'sheet-image');
+  writeFileSync(join(design, 'bilder', 'Stepper.png'), 'stepper-image');
   return { root, design };
 }
 
@@ -61,6 +63,21 @@ describe('sync-baselines', () => {
       expect(readFileSync(join(root, 'e2e/boards/baseline/blocks/Badge.png'), 'utf8')).toBe('badge-image');
       expect(existsSync(join(root, 'e2e/boards/baseline/blocks/Sheet.png'))).toBe(false);
       expect(existsSync(join(root, 'e2e/boards/baseline/Sheet.png'))).toBe(false);
+    } finally {
+      cleanup(root);
+    }
+  });
+
+  it('skips a component that `not-built.json` names', () => {
+    const { root, design } = fixture();
+    try {
+      mkdirSync(join(root, 'e2e/boards'), { recursive: true });
+      writeFileSync(join(root, 'e2e/boards/not-built.json'), JSON.stringify(['Stepper']));
+
+      const result = sync(root, design);
+
+      expect(result.missing).toEqual([]);
+      expect(existsSync(join(root, 'e2e/boards/baseline/blocks/Stepper.png'))).toBe(false);
     } finally {
       cleanup(root);
     }

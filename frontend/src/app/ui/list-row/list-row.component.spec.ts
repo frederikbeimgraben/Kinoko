@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
+import { RowGroupComponent } from '../row-group/row-group.component';
 import { ListRowComponent } from './list-row.component';
 
 /** Die gerechneten Stile eines Elements, das es geben muss. */
@@ -28,6 +29,17 @@ function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
   `,
 })
 class SlottedHostComponent {}
+
+@Component({
+  imports: [ListRowComponent, RowGroupComponent],
+  template: `
+    <app-row-group>
+      <app-list-row title="Pfifferling" />
+      <app-list-row title="Steinpilz" />
+    </app-row-group>
+  `,
+})
+class GroupedHostComponent {}
 
 describe('ListRowComponent', () => {
   it('rendert mit dem Titel allein', async () => {
@@ -80,7 +92,6 @@ describe('ListRowComponent', () => {
 
     expect(calls).toBe(2);
     expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'tint');
   });
 
   it('bleibt ohne Schaltfläche, solange die Zeile nichts öffnet', async () => {
@@ -120,6 +131,23 @@ describe('ListRowComponent', () => {
 
     expect(container.querySelector('.row__title--accent')).toBeNull();
     expect(container.querySelector('.row__value--accent')).not.toBeNull();
+  });
+
+  it('trägt für sich den kleinen Radius des Kits', async () => {
+    const { container } = await render(ListRowComponent, { inputs: { title: 'Speisewert' } });
+
+    expect(styleOf(container.querySelector('.row')).borderRadius).toBe('4px');
+  });
+
+  it('trägt in einer Gruppe die Radien des Kits, aussen 20, innen 4', async () => {
+    const { container } = await render(GroupedHostComponent);
+
+    const rows = container.querySelectorAll('app-list-row');
+    const firstRow = styleOf(rows[0].querySelector('.row'));
+    const lastRow = styleOf(rows[1].querySelector('.row'));
+
+    expect(firstRow.borderRadius).toBe('20px 20px 4px 4px');
+    expect(lastRow.borderRadius).toBe('4px 4px 20px 20px');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

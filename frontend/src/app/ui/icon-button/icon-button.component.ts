@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { RippleDirective } from '../ripple/ripple.directive';
 
 /** Die Piktogramme, die eine Zeile als Knopf statt als Text trägt. */
-export type IconButtonIcon = 'check' | 'close' | 'delete' | 'pencil' | 'share' | 'prev' | 'next' | 'undo';
+export type IconButtonIcon =
+  'check' | 'close' | 'delete' | 'pencil' | 'share' | 'sign-out' | 'prev' | 'next' | 'undo';
 
 /** Die sieben Auftritte aus `kit.css`, je RoundButton `kind`. */
 export type IconButtonKind = 'tonal' | 'plain' | 'fab' | 'fabl' | 'accept' | 'reject' | 'over';
@@ -19,6 +20,7 @@ const GLYPHS: Readonly<Record<IconButtonIcon, { size: number; stroke: number }>>
   delete: { size: 18, stroke: 1.8 },
   pencil: { size: 20, stroke: 1.8 },
   share: { size: 18, stroke: 1.8 },
+  'sign-out': { size: 20, stroke: 1.8 },
   prev: { size: 12, stroke: 0 },
   next: { size: 12, stroke: 0 },
   undo: { size: 20, stroke: 2 },

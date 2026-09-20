@@ -1,16 +1,23 @@
-<button class="row tap" type="button" data-press="tint" (click)="chosen.emit()">
-  <span class="row__stack">
-    <span class="row__title">{{ entry().title }}</span>
-    <span class="row__meta">{{ entry().meta }}</span>
+<button class="item tap" type="button" appRipple [class.item--selected]="selected()" (click)="chosen.emit()">
+  <app-private-image
+    [colour]="entry().colour ?? '#7a5230'"
+    [path]="entry().photo ?? ''"
+    [icon]="entry().icon ?? 'mushroom'"
+    ink="dark"
+    [alt]="entry().title"
+  />
+  <span class="item__stack">
+    <span class="item__title">{{ entry().title }}</span>
+    <span class="item__meta">{{ entry().meta }}</span>
     @if (entry().note) {
-      <span class="row__note">{{ entry().note }}</span>
+      <span class="item__note">{{ entry().note }}</span>
     }
   </span>
   @if (pending()) {
-    <app-level-pill
-      class="row__pending"
-      [text]="'entry.badge.transferPending' | t"
-      colour="var(--color-warning)"
-    />
+    <span class="item__pending" role="img" [attr.aria-label]="'entry.badge.transferPending' | t">
+      <app-svg-icon name="upload" [size]="24" [strokeWidth]="1.8" />
+    </span>
+  } @else {
+    <app-svg-icon class="item__chevron" name="chevron" [size]="24" />
   }
 </button>
