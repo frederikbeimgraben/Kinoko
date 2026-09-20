@@ -16,7 +16,7 @@
         <div class="card__body">
           <div class="card__head">
             <span class="card__species">{{ card.species }}</span>
-            <app-badge variant="primary">{{ card.licence }}</app-badge>
+            <app-level-pill [text]="card.licence" />
           </div>
           <span class="card__meta">{{ card.meta }}</span>
           @if (card.caption) {

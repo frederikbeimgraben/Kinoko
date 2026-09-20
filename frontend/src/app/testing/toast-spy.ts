@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '../ui/toast/toast.service';
 
 /** Was die Oberfläche gemeldet hat, ohne dass ein Toast im Bild stehen muss. */
 export interface ToastSpy {

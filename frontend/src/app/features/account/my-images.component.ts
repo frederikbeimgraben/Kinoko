@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, type BadgeVariant } from '@stupa-makers/ui-kit';
 import { photoPath, type Photo, type PhotoState } from '../../core/api/models';
 import { PhotosApi } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
@@ -9,16 +8,17 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { type BadgeKind, LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SpeciesState } from '../species/species.state';
 
-const STATE_BADGE: Record<PhotoState, BadgeVariant> = {
-  private: 'neutral',
-  submitted: 'warning',
-  approved: 'success',
-  rejected: 'danger',
+const STATE_BADGE: Record<PhotoState, BadgeKind> = {
+  private: '',
+  submitted: 'warn',
+  approved: 'ok',
+  rejected: 'bad',
 };
 
 const STATE_TEXT: Record<PhotoState, TranslationKey> = {
@@ -35,7 +35,7 @@ interface Row {
   thumbPath: string;
   alt: string;
   submitted: string;
-  badge: BadgeVariant;
+  badge: BadgeKind;
   badgeText: string;
   reason: string | null;
 }
@@ -45,9 +45,9 @@ interface Row {
   selector: 'app-my-images',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
     ButtonComponent,
     EmptyStateComponent,
+    LevelPillComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     RowGroupComponent,

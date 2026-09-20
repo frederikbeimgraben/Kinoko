@@ -28,11 +28,13 @@
         [value]="photographer()"
         (valueChange)="photographer.set($event)"
       />
-      <app-select
-        [ariaLabel]="'image.field.licence' | t"
-        [options]="licences()"
-        [ngModel]="licence()"
-        (ngModelChange)="setLicence($event)"
+      <app-form-field
+        [label]="'image.field.licence' | t"
+        [hideLabel]="true"
+        [value]="licenceLabel(licence())"
+        [readOnly]="true"
+        [chevron]="true"
+        (displayClick)="picking.set(true)"
       />
       @if (curates()) {
         <app-form-field
@@ -78,4 +80,13 @@
   [busy]="busy()"
   (primaryClick)="save()"
   (secondaryClick)="cancel()"
+/>
+
+<app-option-sheet
+  [open]="picking()"
+  [title]="'image.field.licence' | t"
+  [options]="licences()"
+  [selected]="licence()"
+  (chosen)="setLicence($event)"
+  (closed)="picking.set(false)"
 />

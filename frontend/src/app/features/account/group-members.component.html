@@ -13,7 +13,7 @@
     @for (row of rows(); track row.userId) {
       <app-list-row kind="catalogue" [title]="row.name" [subline]="row.since">
         @if (row.owner) {
-          <app-badge trail variant="success">{{ 'group.owner' | t }}</app-badge>
+          <app-level-pill trail [text]="'group.owner' | t" kind="ok" />
         } @else if (removable()) {
           <app-icon-button
             trail

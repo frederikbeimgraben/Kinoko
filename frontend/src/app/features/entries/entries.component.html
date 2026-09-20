@@ -1,9 +1,13 @@
 <app-page-header [title]="'entry.list.title' | t">
   @if (offline()) {
-    <app-badge marks variant="warning" role="status" class="entries__offline">
-      <app-svg-icon name="wifi-off" [size]="12" />
-      {{ 'state.offlinePending' | t }}
-    </app-badge>
+    <app-level-pill
+      marks
+      role="status"
+      class="entries__offline"
+      kind="warn"
+      icon="wifi-off"
+      [text]="'state.offlinePending' | t"
+    />
   }
   @if (signedIn() && !wide()) {
     <button class="entries__add tap" type="button" data-press="scale" (click)="startEntry()">

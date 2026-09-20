@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { ToastService } from '@stupa-makers/ui-kit';
 import type { SpeciesEntry, Find, FindWrite, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -10,6 +9,7 @@ import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.compone
 import { PhotoPickerComponent, type HeldPhoto } from '../../ui/photo-picker/photo-picker.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
 import { MapState } from '../map/map.state';

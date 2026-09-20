@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { type BadgeKind, LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { MonoComponent } from '../../ui/mono/mono.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -35,6 +35,7 @@ interface Step {
   subline: string;
   done: boolean;
   state: string;
+  kind: BadgeKind;
 }
 
 /** Ein Lauf: seine Zahlen, seine Schritte und seine Ausgabe. */
@@ -42,7 +43,7 @@ interface Step {
   selector: 'app-run',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
+    LevelPillComponent,
     ListRowComponent,
     MonoComponent,
     PageHeaderComponent,
@@ -99,6 +100,7 @@ export class RunComponent {
       subline: stepSubline(step, run, this.text),
       done: step.state === 'finished',
       state: this.text(RUN_STATE_TEXT[step.state]),
+      kind: step.state === 'failed' ? 'bad' : '',
     }));
   });
 

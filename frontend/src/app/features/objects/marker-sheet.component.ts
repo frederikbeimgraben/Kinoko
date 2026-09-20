@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { ToastService } from '@stupa-makers/ui-kit';
 import type { Marker } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -7,6 +6,7 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';

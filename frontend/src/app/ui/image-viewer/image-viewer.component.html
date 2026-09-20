@@ -15,9 +15,7 @@
         @for (row of details(); track row.labelKey) {
           <app-list-row kind="catalogue" [title]="row.labelKey | t" [value]="row.text">
             @if (row.badgeKey || row.badgeText) {
-              <app-badge trail variant="primary">{{
-                row.badgeKey ? (row.badgeKey | t) : row.badgeText
-              }}</app-badge>
+              <app-level-pill trail [text]="row.badgeKey ? (row.badgeKey | t) : (row.badgeText ?? '')" />
             }
           </app-list-row>
         }

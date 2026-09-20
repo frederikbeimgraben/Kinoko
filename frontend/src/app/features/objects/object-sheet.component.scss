@@ -13,9 +13,6 @@
 // Die Plakette steht hinter dem Namen, nicht davor. Sie misst im Brett drei
 // auf zehn Punkte.
 .object__badge {
-  --space-1: 3px;
-  --space-3: 10px;
-
   flex: none;
   order: 1;
 }
@@ -23,4 +20,12 @@
 // Das Formular des Fundes dunkelt die Karte so ab, wie das Brett es zeigt.
 .object--dark {
   --pilz-scrim: rgb(0 18 10 / 55%);
+}
+
+.object__missing {
+  text-align: center;
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--outline);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
 }

@@ -8,8 +8,6 @@ import {
   signal,
   type OnDestroy,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectComponent } from '@stupa-makers/ui-kit';
 import { PermissionsService } from '../../core/access/permissions.service';
 import { HistoryService } from '../../core/navigation/history.service';
 import { AuthService } from '../../core/auth';
@@ -21,6 +19,7 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
+import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { ProgressComponent } from '../../ui/progress/progress.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
@@ -35,10 +34,9 @@ import { ImagesState } from './images.state';
     ActionBarComponent,
     CheckRowComponent,
     FormFieldComponent,
-    FormsModule,
+    OptionSheetComponent,
     PageHeaderComponent,
     ProgressComponent,
-    SelectComponent,
     SvgIconComponent,
     TranslatePipe,
   ],
@@ -69,6 +67,7 @@ export class ImageFormComponent implements OnDestroy {
   /** Der Name folgt der Anmeldung. Wer ein fremdes Foto einreicht, schreibt um. */
   protected readonly photographer = linkedSignal<string>(() => this.auth.user()?.name ?? '');
   protected readonly licence = signal<Licence>('own');
+  protected readonly picking = signal(false);
   protected readonly source = signal('');
   protected readonly takenOn = signal('');
   protected readonly caption = signal('');
@@ -84,12 +83,12 @@ export class ImageFormComponent implements OnDestroy {
   protected readonly busy = computed(() => this.percent() !== null);
   protected readonly ready = computed(() => this.file() !== null && this.photographer().trim().length > 0);
 
-  protected readonly licences = computed(() =>
-    LICENCES.map((value) => ({
-      value,
-      label: value === 'own' ? this.i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[value],
-    })),
+  protected readonly licences = computed<OptionSheetOption[]>(() =>
+    LICENCES.map((value) => ({ id: value, title: this.licenceLabel(value) })),
   );
+
+  protected readonly licenceLabel = (value: Licence): string =>
+    value === 'own' ? this.i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[value];
 
   protected onPick(event: Event): void {
     const field = event.target as HTMLInputElement;
@@ -103,6 +102,7 @@ export class ImageFormComponent implements OnDestroy {
 
   protected setLicence(value: string): void {
     this.licence.set(value as Licence);
+    this.picking.set(false);
   }
 
   protected async save(): Promise<void> {

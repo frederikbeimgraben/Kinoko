@@ -5,5 +5,9 @@
   [class.level--bad]="kind() === 'bad'"
   [style.--pilz-level-colour]="colour()"
   [style.--pilz-level-area]="background()"
-  >{{ text() }}</span
+>
+  @if (icon(); as name) {
+    <app-svg-icon [name]="name" [size]="12" />
+  }
+  {{ text() }}</span
 >

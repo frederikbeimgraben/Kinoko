@@ -9,7 +9,6 @@ import {
   signal,
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ToastService } from '@stupa-makers/ui-kit';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find } from '../../core/api/models';
@@ -25,6 +24,7 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';

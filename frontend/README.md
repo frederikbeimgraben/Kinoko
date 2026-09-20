@@ -1,7 +1,8 @@
 # Pilzkarte, Frontend
 
 Angular 22, standalone, zoneless, Signals, strenges TypeScript. Die Oberfläche
-folgt den Mockups in `docs/mockups/` und dem Design-System des ui-kits.
+folgt den Mockups in `docs/mockups/` und dem eigenen Design-System unter
+`artefakte/mockups/design/`.
 
 ## Befehle
 
@@ -24,28 +25,12 @@ src/app/shell/    Navigation und Avatar um die Reiter
 src/app/ui/       die gemeinsamen Bausteine
 src/app/features/ die Reiter
 src/app/dev/      /bausteine, nur in der Entwicklung
-src/styles/       Maße der Pilzkarte und Hilfsklassen für das Kit
+src/styles/       Maße der Pilzkarte, Grundreset und Hilfsklassen
 ```
 
 Ein Baustein steht genau einmal in `src/app/ui/`. Seiten setzen zusammen; sie
 setzen keine Höhe, keinen Radius und keine Farbe eines Bausteins. Ein Maß, das
 in zwei Bausteinen vorkommt, wird ein Token in `src/styles/_tokens.scss`.
-
-## ui-kit
-
-Das Kit liegt nicht auf npm. `vendor/stupa-makers-ui-kit-0.1.0.tgz` ist der
-Bau des lokalen Klons:
-
-```
-cd <ui-kit> && npm ci && npm run build && cd dist && npm pack
-cp stupa-makers-ui-kit-*.tgz <repo>/frontend/vendor/
-```
-
-Das Kit nennt Angular 20 als Peer. `overrides` in `package.json` hebt die drei
-Angular-Pakete auf die Version der App. Die Vorlagen des Kits benutzen
-Tailwind-Klassen; `src/styles/_kit-hilfsklassen.scss` liefert genau die
-benutzten Klassen aus den Token-Werten des Kits nach, damit die App ohne
-Tailwind auskommt.
 
 ## Proxy
 

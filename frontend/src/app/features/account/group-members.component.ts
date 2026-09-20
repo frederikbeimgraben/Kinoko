@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { FriendGroup } from '../../core/api/models';
 import { shortDay } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 
 /** Eine Zeile der Mitgliederliste. */
@@ -19,7 +19,7 @@ interface Row {
 @Component({
   selector: 'app-group-members',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, IconButtonComponent, ListRowComponent, TranslatePipe],
+  imports: [IconButtonComponent, LevelPillComponent, ListRowComponent, TranslatePipe],
   templateUrl: './group-members.component.html',
   styleUrl: './group-members.component.scss',
 })

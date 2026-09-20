@@ -19,7 +19,7 @@
         <span class="texts__head">
           <span class="texts__key">{{ row.key }}</span>
           @if (row.changed) {
-            <app-badge variant="primary">{{ 'admin.texts.changed' | t }}</app-badge>
+            <app-level-pill [text]="'admin.texts.changed' | t" />
           }
         </span>
         <span class="texts__values">
@@ -42,7 +42,7 @@
     <app-sheet [label]="open.key" [title]="open.key" [modal]="true" [detents]="detents" (closed)="close()">
       <span titleLead class="texts__mark">
         @if (resettable()) {
-          <app-badge variant="primary">{{ 'admin.texts.changed' | t }}</app-badge>
+          <app-level-pill [text]="'admin.texts.changed' | t" />
         }
       </span>
       <div class="texts__form">

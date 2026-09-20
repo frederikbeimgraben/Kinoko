@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Find, Marker, Zone } from '../../core/api/models';
 import { AccountService } from '../../core/access/account.service';
 import { PersonNamesService } from '../../core/access/person-names.service';
@@ -8,6 +7,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { MAP_ADAPTER } from '../../map/map.tokens';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { coordinatesText } from '../add-entry/coordinates';
@@ -66,8 +66,8 @@ const ZOOM_OBJECT = 14;
   selector: 'app-object-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
     FindSheetComponent,
+    LevelPillComponent,
     MarkerSheetComponent,
     OverlayHostComponent,
     SheetComponent,

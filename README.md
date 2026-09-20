@@ -10,7 +10,7 @@ Live: https://pilze.beimgraben.net/
 
 | Ordner | Inhalt |
 | --- | --- |
-| `frontend/` | Angular 22, `@stupa-makers/ui-kit`, MapLibre GL, Terra Draw, PWA |
+| `frontend/` | Angular 22, MapLibre GL, Terra Draw, PWA |
 | `backend/` | Python 3.13, FastAPI, SQLAlchemy async, Alembic, SQLite, OIDC gegen Authentik |
 | `modell/` | Vorhersagekette: GBIF und DWD laden, LightGBM je Art, Kacheln rendern |
 | `docs/` | Betrieb und SSO |

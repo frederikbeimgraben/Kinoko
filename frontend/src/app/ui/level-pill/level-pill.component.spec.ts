@@ -54,4 +54,27 @@ describe('LevelPillComponent', () => {
     expect(pill).not.toHaveClass('level--warn');
     expect(pill).not.toHaveClass('level--bad');
   });
+
+  it('nimmt die Tonfarbe ohne eigene Farbe und ohne Stufe', async () => {
+    const { container } = await render(LevelPillComponent, { inputs: { text: 'aktualisiert' } });
+
+    const pill = container.querySelector<HTMLElement>('.level');
+    expect(pill?.style.getPropertyValue('--pilz-level-colour')).toBe('');
+    expect(pill?.style.getPropertyValue('--pilz-level-area')).toBe('');
+  });
+
+  it('trägt ein Zeichen vor dem Wort, wenn eines angegeben ist', async () => {
+    const { container } = await render(LevelPillComponent, {
+      inputs: { text: 'ohne Netz', kind: 'warn', icon: 'wifi-off' },
+    });
+
+    expect(container.querySelector('app-svg-icon')).not.toBeNull();
+    expect(screen.getByText('ohne Netz')).toBeInTheDocument();
+  });
+
+  it('trägt kein Zeichen ohne die Angabe', async () => {
+    const { container } = await render(LevelPillComponent, { inputs: { text: 'essbar' } });
+
+    expect(container.querySelector('app-svg-icon')).toBeNull();
+  });
 });

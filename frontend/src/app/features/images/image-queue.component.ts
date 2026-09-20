@@ -8,9 +8,9 @@ import {
   untracked,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RejectDialogComponent } from '../../ui/reject-dialog/reject-dialog.component';
@@ -25,7 +25,7 @@ import { reviewCard, type ReviewCard } from './review-card';
   selector: 'app-image-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BadgeComponent,
+    LevelPillComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     RejectDialogComponent,
