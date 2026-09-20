@@ -102,6 +102,16 @@ declare module '*/tools/sync-boards.mjs' {
   export function cardStem(selector: string): string;
 }
 
+declare module '*/tools/sync-baselines.mjs' {
+  export function designDir(root: string, override?: string): string;
+  export interface SyncResult {
+    count: number;
+    missing: string[];
+  }
+  export function sync(root: string, dir: string): SyncResult;
+  export function check(root: string): string[];
+}
+
 declare module '*/tools/render-fixtures.mjs' {
   export interface Fixture {
     stem: string;

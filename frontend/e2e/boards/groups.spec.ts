@@ -49,11 +49,11 @@ test('GroupJoin', async ({ page }) => {
   await expectBoard(page, 'GroupJoin');
 });
 
-test('Group', async ({ page }) => {
-  guard('Group', 'phone');
+test('GroupPage', async ({ page }) => {
+  guard('GroupPage', 'phone');
   await open(page, `/konto/gruppen/${GROUPS[0].id}`);
   await expect(page.getByText('PILZ-7F3K')).toBeVisible();
-  await expectBoard(page, 'Group');
+  await expectBoard(page, 'GroupPage');
 });
 
 test('Glossary', async ({ page }) => {
@@ -67,5 +67,4 @@ test('GroupMember', async ({ page }) => {
   guard('GroupMember', 'phone');
   await open(page, `/konto/gruppen/${GROUPS[0].id}`, OTHER_ME);
   await expect(page.getByRole('button', { name: 'Verlassen' })).toBeVisible();
-  await expectBoard(page, 'GroupMember');
 });

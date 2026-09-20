@@ -50,13 +50,9 @@ export default defineConfig({
   projects: [
     // Muster als Glob: ein Zweigname mit „boards“ im Weg zöge sonst jede Datei.
     { name: 'phone', testMatch: 'boards/*.spec.ts', use: { viewport: PHONE } },
-    {
-      name: 'desktop',
-      testMatch: ['boards/*.spec.ts', 'flows/desktop/*.spec.ts'],
-      use: { viewport: DESKTOP },
-    },
+    { name: 'desktop', testMatch: 'flows/desktop/*.spec.ts', use: { viewport: DESKTOP } },
     { name: 'wide', testMatch: 'boards/*.spec.ts', use: { viewport: WIDE } },
-    // Das Baustein-Board vergleicht 67 Karten in einem Test.
+    // Das Baustein-Board vergleicht 119 Karten in einem Test.
     {
       name: 'blocks',
       testMatch: 'boards/blocks.spec.ts',

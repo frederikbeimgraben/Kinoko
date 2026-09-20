@@ -1,614 +1,716 @@
 [
   {
-    "selector": "app-button",
-    "stem": "app-button",
-    "order": 0,
-    "x": 24,
-    "y": 24,
-    "w": 414,
-    "h": 239
-  },
-  {
-    "selector": "app-input",
-    "stem": "app-input",
-    "order": 1,
-    "x": 462,
-    "y": 24,
-    "w": 414,
-    "h": 239
-  },
-  {
-    "selector": "app-select",
-    "stem": "app-select",
-    "order": 2,
-    "x": 24,
-    "y": 287,
-    "w": 414,
-    "h": 118
-  },
-  {
-    "selector": "app-checkbox",
-    "stem": "app-checkbox",
-    "order": 3,
-    "x": 462,
-    "y": 287,
-    "w": 414,
-    "h": 118
-  },
-  {
-    "selector": "app-switch",
-    "stem": "app-switch",
-    "order": 4,
-    "x": 24,
-    "y": 429,
-    "w": 414,
-    "h": 122
-  },
-  {
-    "selector": "app-card",
-    "stem": "app-card",
-    "order": 5,
-    "x": 462,
-    "y": 429,
-    "w": 414,
-    "h": 122
-  },
-  {
-    "selector": "app-badge",
-    "stem": "app-badge",
-    "order": 6,
-    "x": 24,
-    "y": 575,
-    "w": 414,
-    "h": 148
-  },
-  {
-    "selector": "app-toast",
-    "stem": "app-toast",
-    "order": 7,
-    "x": 462,
-    "y": 575,
-    "w": 414,
-    "h": 148
-  },
-  {
-    "selector": "app-page-header",
-    "stem": "app-page-header",
-    "order": 8,
-    "x": 24,
-    "y": 747,
-    "w": 414,
-    "h": 434
-  },
-  {
-    "selector": "app-nav",
-    "stem": "app-nav",
-    "order": 9,
-    "x": 462,
-    "y": 747,
-    "w": 414,
-    "h": 434
-  },
-  {
-    "selector": "app-sheet",
-    "stem": "app-sheet",
-    "order": 10,
-    "x": 24,
-    "y": 1205,
-    "w": 414,
-    "h": 388
-  },
-  {
-    "selector": "app-sheet-head",
-    "stem": "app-sheet-head",
-    "order": 11,
-    "x": 462,
-    "y": 1205,
-    "w": 414,
-    "h": 388
-  },
-  {
-    "selector": "app-overlay-host",
-    "stem": "app-overlay-host",
-    "order": 12,
-    "x": 24,
-    "y": 1617,
-    "w": 414,
-    "h": 412
-  },
-  {
-    "selector": "app-filter-sheet",
-    "stem": "app-filter-sheet",
-    "order": 13,
-    "x": 462,
-    "y": 1617,
-    "w": 414,
-    "h": 412
-  },
-  {
-    "selector": "app-object-menu",
-    "stem": "app-object-menu",
-    "order": 14,
-    "x": 24,
-    "y": 2053,
-    "w": 414,
-    "h": 292
-  },
-  {
-    "selector": "app-action-bar",
-    "stem": "app-action-bar",
-    "order": 15,
-    "x": 462,
-    "y": 2053,
-    "w": 414,
-    "h": 292
-  },
-  {
-    "selector": "app-icon-button",
-    "stem": "app-icon-button",
-    "order": 16,
-    "x": 24,
-    "y": 2369,
-    "w": 414,
-    "h": 348
-  },
-  {
-    "selector": "app-split-layout",
-    "stem": "app-split-layout",
-    "order": 17,
-    "x": 462,
-    "y": 2369,
-    "w": 414,
-    "h": 348
-  },
-  {
-    "selector": "app-popover",
-    "stem": "app-popover",
-    "order": 18,
-    "x": 24,
-    "y": 2741,
-    "w": 414,
-    "h": 448
-  },
-  {
-    "selector": "app-confirm-dialog",
-    "stem": "app-confirm-dialog",
-    "order": 19,
-    "x": 462,
-    "y": 2741,
-    "w": 414,
-    "h": 448
-  },
-  {
-    "selector": "app-reject-dialog",
-    "stem": "app-reject-dialog",
-    "order": 20,
-    "x": 24,
-    "y": 3213,
-    "w": 414,
-    "h": 442
-  },
-  {
-    "selector": "app-review-queue",
-    "stem": "app-review-queue",
-    "order": 21,
-    "x": 462,
-    "y": 3213,
-    "w": 414,
-    "h": 442
-  },
-  {
-    "selector": "app-banner",
-    "stem": "app-banner",
-    "order": 22,
-    "x": 24,
-    "y": 3679,
-    "w": 414,
-    "h": 278
-  },
-  {
-    "selector": "app-list-row",
-    "stem": "app-list-row",
-    "order": 23,
-    "x": 462,
-    "y": 3679,
-    "w": 414,
-    "h": 278
-  },
-  {
-    "selector": "app-species-row",
-    "stem": "app-species-row",
-    "order": 24,
-    "x": 24,
-    "y": 3981,
-    "w": 414,
-    "h": 240
-  },
-  {
-    "selector": "app-entry-row",
-    "stem": "app-entry-row",
-    "order": 25,
-    "x": 462,
-    "y": 3981,
-    "w": 414,
-    "h": 240
-  },
-  {
-    "selector": "app-add-row",
-    "stem": "app-add-row",
-    "order": 26,
-    "x": 24,
-    "y": 4245,
-    "w": 414,
-    "h": 158
-  },
-  {
-    "selector": "app-check-row",
-    "stem": "app-check-row",
-    "order": 27,
-    "x": 462,
-    "y": 4245,
-    "w": 414,
-    "h": 158
-  },
-  {
-    "selector": "app-factor-row",
-    "stem": "app-factor-row",
-    "order": 28,
-    "x": 24,
-    "y": 4427,
-    "w": 414,
-    "h": 472
-  },
-  {
-    "selector": "app-key-value-table, app-key-value-row",
-    "stem": "app-key-value-table-app-key-value-row",
-    "order": 29,
-    "x": 462,
-    "y": 4427,
-    "w": 414,
-    "h": 472
-  },
-  {
-    "selector": "app-choice-row",
-    "stem": "app-choice-row",
-    "order": 30,
-    "x": 24,
-    "y": 4922,
-    "w": 414,
-    "h": 326
-  },
-  {
-    "selector": "app-form-field",
-    "stem": "app-form-field",
-    "order": 31,
-    "x": 462,
-    "y": 4922,
-    "w": 414,
-    "h": 326
-  },
-  {
-    "selector": "app-search-field",
-    "stem": "app-search-field",
-    "order": 32,
-    "x": 24,
-    "y": 5271,
-    "w": 414,
-    "h": 161
-  },
-  {
-    "selector": "app-segmented",
-    "stem": "app-segmented",
-    "order": 33,
-    "x": 462,
-    "y": 5271,
-    "w": 414,
-    "h": 161
-  },
-  {
-    "selector": "app-chip-group",
-    "stem": "app-chip-group",
-    "order": 34,
-    "x": 24,
-    "y": 5455,
-    "w": 414,
-    "h": 111
-  },
-  {
-    "selector": "app-filter-chip",
-    "stem": "app-filter-chip",
-    "order": 35,
-    "x": 462,
-    "y": 5455,
-    "w": 414,
-    "h": 111
-  },
-  {
-    "selector": "app-range-slider",
-    "stem": "app-range-slider",
-    "order": 36,
-    "x": 24,
-    "y": 5589,
-    "w": 414,
-    "h": 105
-  },
-  {
-    "selector": "app-colour-swatches",
-    "stem": "app-colour-swatches",
-    "order": 37,
-    "x": 462,
-    "y": 5589,
-    "w": 414,
-    "h": 105
-  },
-  {
-    "selector": "app-colour-picker",
-    "stem": "app-colour-picker",
-    "order": 38,
-    "x": 24,
-    "y": 5717,
-    "w": 414,
-    "h": 418
-  },
-  {
-    "selector": "app-species-picker",
-    "stem": "app-species-picker",
-    "order": 39,
-    "x": 462,
-    "y": 5717,
-    "w": 414,
-    "h": 418
-  },
-  {
-    "selector": "app-photo-picker",
-    "stem": "app-photo-picker",
-    "order": 40,
-    "x": 24,
-    "y": 6158,
-    "w": 414,
-    "h": 155
-  },
-  {
-    "selector": "app-year-band-input",
-    "stem": "app-year-band-input",
-    "order": 41,
-    "x": 462,
-    "y": 6158,
-    "w": 414,
-    "h": 155
-  },
-  {
-    "selector": "app-level-pill",
-    "stem": "app-level-pill",
-    "order": 42,
-    "x": 24,
-    "y": 6336,
-    "w": 414,
-    "h": 157
-  },
-  {
-    "selector": "app-tag-list",
-    "stem": "app-tag-list",
-    "order": 43,
-    "x": 462,
-    "y": 6336,
-    "w": 414,
-    "h": 157
-  },
-  {
-    "selector": "app-colour-field",
-    "stem": "app-colour-field",
-    "order": 44,
-    "x": 24,
-    "y": 6516,
-    "w": 414,
-    "h": 273
-  },
-  {
-    "selector": "app-colour-change",
-    "stem": "app-colour-change",
-    "order": 45,
-    "x": 462,
-    "y": 6516,
-    "w": 414,
-    "h": 273
-  },
-  {
-    "selector": "app-measurement",
-    "stem": "app-measurement",
-    "order": 46,
-    "x": 24,
-    "y": 6812,
-    "w": 414,
-    "h": 385
-  },
-  {
-    "selector": "app-measurement-group",
-    "stem": "app-measurement-group",
-    "order": 47,
-    "x": 462,
-    "y": 6812,
-    "w": 414,
-    "h": 385
-  },
-  {
-    "selector": "app-year-band",
-    "stem": "app-year-band",
-    "order": 48,
-    "x": 24,
-    "y": 7220,
-    "w": 414,
-    "h": 188
-  },
-  {
-    "selector": "app-season-curve",
-    "stem": "app-season-curve",
-    "order": 49,
-    "x": 462,
-    "y": 7220,
-    "w": 414,
-    "h": 188
-  },
-  {
-    "selector": "app-histogram",
-    "stem": "app-histogram",
-    "order": 50,
-    "x": 24,
-    "y": 7431,
-    "w": 414,
-    "h": 146
-  },
-  {
-    "selector": "app-ramp",
-    "stem": "app-ramp",
-    "order": 51,
-    "x": 462,
-    "y": 7431,
-    "w": 414,
-    "h": 146
-  },
-  {
-    "selector": "app-timeline, app-week-button",
-    "stem": "app-timeline-app-week-button",
-    "order": 52,
-    "x": 24,
-    "y": 7600,
-    "w": 414,
-    "h": 214
-  },
-  {
-    "selector": "app-image-tile",
-    "stem": "app-image-tile",
-    "order": 53,
-    "x": 462,
-    "y": 7600,
-    "w": 414,
-    "h": 214
-  },
-  {
-    "selector": "app-image-credit",
-    "stem": "app-image-credit",
-    "order": 54,
-    "x": 24,
-    "y": 7837,
-    "w": 414,
-    "h": 717
-  },
-  {
-    "selector": "app-image-viewer",
-    "stem": "app-image-viewer",
-    "order": 55,
-    "x": 462,
-    "y": 7837,
-    "w": 414,
-    "h": 717
-  },
-  {
-    "selector": "app-private-image",
-    "stem": "app-private-image",
-    "order": 56,
-    "x": 24,
-    "y": 8577,
-    "w": 414,
-    "h": 169
-  },
-  {
-    "selector": "app-avatar-button",
-    "stem": "app-avatar-button",
-    "order": 57,
-    "x": 462,
-    "y": 8577,
-    "w": 414,
-    "h": 169
-  },
-  {
-    "selector": "app-floating-button",
-    "stem": "app-floating-button",
-    "order": 58,
-    "x": 24,
-    "y": 8769,
-    "w": 414,
-    "h": 169
-  },
-  {
-    "selector": "app-crosshair",
-    "stem": "app-crosshair",
-    "order": 59,
-    "x": 462,
-    "y": 8769,
-    "w": 414,
-    "h": 169
-  },
-  {
-    "selector": "app-svg-icon",
-    "stem": "app-svg-icon",
-    "order": 60,
-    "x": 24,
-    "y": 8961,
-    "w": 414,
-    "h": 103
-  },
-  {
-    "selector": "app-stat-row",
-    "stem": "app-stat-row",
-    "order": 61,
-    "x": 462,
-    "y": 8961,
-    "w": 414,
-    "h": 103
-  },
-  {
-    "selector": "app-empty-state",
-    "stem": "app-empty-state",
-    "order": 62,
-    "x": 24,
-    "y": 9087,
-    "w": 414,
-    "h": 280
-  },
-  {
-    "selector": "app-error-state",
-    "stem": "app-error-state",
-    "order": 63,
-    "x": 462,
-    "y": 9087,
-    "w": 414,
-    "h": 280
-  },
-  {
-    "selector": "app-infinite-list",
-    "stem": "app-infinite-list",
-    "order": 64,
-    "x": 24,
-    "y": 9390,
-    "w": 414,
-    "h": 257
-  },
-  {
-    "selector": "app-skeleton",
-    "stem": "app-skeleton",
-    "order": 65,
-    "x": 462,
-    "y": 9390,
-    "w": 414,
-    "h": 257
-  },
-  {
-    "selector": "app-progress",
-    "stem": "app-progress",
-    "order": 66,
-    "x": 24,
-    "y": 9670,
-    "w": 414,
-    "h": 119
-  },
-  {
-    "selector": "app-button busy",
-    "stem": "app-button-busy",
-    "order": 67,
-    "x": 462,
-    "y": 9670,
-    "w": 414,
-    "h": 119
+    "selector": "Avatar",
+    "stem": "Avatar",
+    "w": 40,
+    "h": 40
+  },
+  {
+    "selector": "Badge",
+    "stem": "Badge",
+    "w": 120,
+    "h": 24
+  },
+  {
+    "selector": "Column",
+    "stem": "Column",
+    "w": 300,
+    "h": 200
+  },
+  {
+    "selector": "Columns",
+    "stem": "Columns",
+    "w": 640,
+    "h": 200
+  },
+  {
+    "selector": "Crosshair",
+    "stem": "Crosshair",
+    "w": 40,
+    "h": 40
+  },
+  {
+    "selector": "Field",
+    "stem": "Field",
+    "w": 358,
+    "h": 84
+  },
+  {
+    "selector": "Grip",
+    "stem": "Grip",
+    "w": 390,
+    "h": 24
+  },
+  {
+    "selector": "Group",
+    "stem": "Group",
+    "w": 358,
+    "h": 120
+  },
+  {
+    "selector": "Histogram",
+    "stem": "Histogram",
+    "w": 358,
+    "h": 72
+  },
+  {
+    "selector": "Icon",
+    "stem": "Icon",
+    "w": 24,
+    "h": 24
+  },
+  {
+    "selector": "Legend",
+    "stem": "Legend",
+    "w": 358,
+    "h": 64
+  },
+  {
+    "selector": "MapPin",
+    "stem": "MapPin",
+    "w": 40,
+    "h": 40
+  },
+  {
+    "selector": "MapView",
+    "stem": "MapView",
+    "w": 390,
+    "h": 480
+  },
+  {
+    "selector": "Mono",
+    "stem": "Mono",
+    "w": 358,
+    "h": 120
+  },
+  {
+    "selector": "Pane",
+    "stem": "Pane",
+    "w": 420,
+    "h": 900
+  },
+  {
+    "selector": "Popover",
+    "stem": "Popover",
+    "w": 264,
+    "h": 200
+  },
+  {
+    "selector": "Progress",
+    "stem": "Progress",
+    "w": 358,
+    "h": 8
+  },
+  {
+    "selector": "QueueCard",
+    "stem": "QueueCard",
+    "w": 358,
+    "h": 300
+  },
+  {
+    "selector": "RadioRow",
+    "stem": "RadioRow",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "Scroll",
+    "stem": "Scroll",
+    "w": 390,
+    "h": 400
+  },
+  {
+    "selector": "SeasonCurve",
+    "stem": "SeasonCurve",
+    "w": 358,
+    "h": 100
+  },
+  {
+    "selector": "Section",
+    "stem": "Section",
+    "w": 358,
+    "h": 160
+  },
+  {
+    "selector": "Segment",
+    "stem": "Segment",
+    "w": 358,
+    "h": 48
+  },
+  {
+    "selector": "SheetBody",
+    "stem": "SheetBody",
+    "w": 390,
+    "h": 120
+  },
+  {
+    "selector": "SheetFoot",
+    "stem": "SheetFoot",
+    "w": 390,
+    "h": 72
+  },
+  {
+    "selector": "Skeleton",
+    "stem": "Skeleton",
+    "w": 390,
+    "h": 320
+  },
+  {
+    "selector": "Slider",
+    "stem": "Slider",
+    "w": 358,
+    "h": 28
+  },
+  {
+    "selector": "Split",
+    "stem": "Split",
+    "w": 640,
+    "h": 200
+  },
+  {
+    "selector": "StatTiles",
+    "stem": "StatTiles",
+    "w": 358,
+    "h": 140
+  },
+  {
+    "selector": "Surface",
+    "stem": "Surface",
+    "w": 340,
+    "h": 200
+  },
+  {
+    "selector": "Swatch",
+    "stem": "Swatch",
+    "w": 88,
+    "h": 40
+  },
+  {
+    "selector": "SwitchRow",
+    "stem": "SwitchRow",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "ToneDot",
+    "stem": "ToneDot",
+    "w": 40,
+    "h": 40
+  },
+  {
+    "selector": "WeekCell",
+    "stem": "WeekCell",
+    "w": 48,
+    "h": 64
+  },
+  {
+    "selector": "ZoneShape",
+    "stem": "ZoneShape",
+    "w": 390,
+    "h": 400
+  },
+  {
+    "selector": "AddRow",
+    "stem": "AddRow",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "Banner",
+    "stem": "Banner",
+    "w": 390,
+    "h": 56
+  },
+  {
+    "selector": "Button",
+    "stem": "Button",
+    "w": 200,
+    "h": 56
+  },
+  {
+    "selector": "CheckRow",
+    "stem": "CheckRow",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "Chip",
+    "stem": "Chip",
+    "w": 160,
+    "h": 36
+  },
+  {
+    "selector": "ColourRow",
+    "stem": "ColourRow",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "CombinationSaveBody",
+    "stem": "CombinationSaveBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "Fab",
+    "stem": "Fab",
+    "w": 160,
+    "h": 56
+  },
+  {
+    "selector": "FoldSection",
+    "stem": "FoldSection",
+    "w": 358,
+    "h": 120
+  },
+  {
+    "selector": "GlossaryEditBody",
+    "stem": "GlossaryEditBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "GroupCreateBody",
+    "stem": "GroupCreateBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "GroupJoinBody",
+    "stem": "GroupJoinBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "NavTab",
+    "stem": "NavTab",
+    "w": 124,
+    "h": 68
+  },
+  {
+    "selector": "PopItem",
+    "stem": "PopItem",
+    "w": 240,
+    "h": 48
+  },
+  {
+    "selector": "RoundButton",
+    "stem": "RoundButton",
+    "w": 44,
+    "h": 44
+  },
+  {
+    "selector": "Thumb",
+    "stem": "Thumb",
+    "w": 44,
+    "h": 44
+  },
+  {
+    "selector": "ToneGrid",
+    "stem": "ToneGrid",
+    "w": 334,
+    "h": 66
+  },
+  {
+    "selector": "AccountTile",
+    "stem": "AccountTile",
+    "w": 358,
+    "h": 72
+  },
+  {
+    "selector": "ChipRow",
+    "stem": "ChipRow",
+    "w": 390,
+    "h": 44
+  },
+  {
+    "selector": "CombinationsBody",
+    "stem": "CombinationsBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "Dialog",
+    "stem": "Dialog",
+    "w": 328,
+    "h": 190
+  },
+  {
+    "selector": "EntryRow",
+    "stem": "EntryRow",
+    "w": 374,
+    "h": 84
+  },
+  {
+    "selector": "ExpandRow",
+    "stem": "ExpandRow",
+    "w": 358,
+    "h": 120
+  },
+  {
+    "selector": "GroupPickBody",
+    "stem": "GroupPickBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "Hero",
+    "stem": "Hero",
+    "w": 358,
+    "h": 300
+  },
+  {
+    "selector": "LayerPickBody",
+    "stem": "LayerPickBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "Nav",
+    "stem": "Nav",
+    "w": 390,
+    "h": 80
+  },
+  {
+    "selector": "ObjectTitle",
+    "stem": "ObjectTitle",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "PhotoStrip",
+    "stem": "PhotoStrip",
+    "w": 358,
+    "h": 96
+  },
+  {
+    "selector": "SearchBar",
+    "stem": "SearchBar",
+    "w": 390,
+    "h": 72
+  },
+  {
+    "selector": "SheetHead",
+    "stem": "SheetHead",
+    "w": 390,
+    "h": 56
+  },
+  {
+    "selector": "StateView",
+    "stem": "StateView",
+    "w": 390,
+    "h": 360
+  },
+  {
+    "selector": "Stepper",
+    "stem": "Stepper",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "ChipSet",
+    "stem": "ChipSet",
+    "w": 272,
+    "h": 120
+  },
+  {
+    "selector": "DetailBar",
+    "stem": "DetailBar",
+    "w": 390,
+    "h": 72
+  },
+  {
+    "selector": "EntryList",
+    "stem": "EntryList",
+    "w": 390,
+    "h": 520
+  },
+  {
+    "selector": "FactorRow",
+    "stem": "FactorRow",
+    "w": 358,
+    "h": 64
+  },
+  {
+    "selector": "ImageRejectBody",
+    "stem": "ImageRejectBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "LookalikeRow",
+    "stem": "LookalikeRow",
+    "w": 358,
+    "h": 60
+  },
+  {
+    "selector": "MapControls",
+    "stem": "MapControls",
+    "w": 390,
+    "h": 200
+  },
+  {
+    "selector": "Phone",
+    "stem": "Phone",
+    "w": 390,
+    "h": 844
+  },
+  {
+    "selector": "Rail",
+    "stem": "Rail",
+    "w": 96,
+    "h": 900
+  },
+  {
+    "selector": "SpeciesRow",
+    "stem": "SpeciesRow",
+    "w": 374,
+    "h": 72
+  },
+  {
+    "selector": "StepBar",
+    "stem": "StepBar",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "TopBar",
+    "stem": "TopBar",
+    "w": 390,
+    "h": 72
+  },
+  {
+    "selector": "WeekStrip",
+    "stem": "WeekStrip",
+    "w": 358,
+    "h": 64
+  },
+  {
+    "selector": "ColourSection",
+    "stem": "ColourSection",
+    "w": 358,
+    "h": 270
+  },
+  {
+    "selector": "CompareTable",
+    "stem": "CompareTable",
+    "w": 358,
+    "h": 1360
+  },
+  {
+    "selector": "DataExportBody",
+    "stem": "DataExportBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "DataExportGpxBody",
+    "stem": "DataExportGpxBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "Desk",
+    "stem": "Desk",
+    "w": 1440,
+    "h": 900
+  },
+  {
+    "selector": "Modal",
+    "stem": "Modal",
+    "w": 560,
+    "h": 480
+  },
+  {
+    "selector": "Row",
+    "stem": "Row",
+    "w": 358,
+    "h": 56
+  },
+  {
+    "selector": "SpeciesList",
+    "stem": "SpeciesList",
+    "w": 390,
+    "h": 640
+  },
+  {
+    "selector": "PersonRolesBody",
+    "stem": "PersonRolesBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "Sheet",
+    "stem": "Sheet",
+    "w": 390,
+    "h": 480
+  },
+  {
+    "selector": "SpeciesPickBody",
+    "stem": "SpeciesPickBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "AddActionsBody",
+    "stem": "AddActionsBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "ColourFilter",
+    "stem": "ColourFilter",
+    "w": 358,
+    "h": 330
+  },
+  {
+    "selector": "EntriesFilterBody",
+    "stem": "EntriesFilterBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FactorPickBody",
+    "stem": "FactorPickBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "LayersBody",
+    "stem": "LayersBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "LookalikeSection",
+    "stem": "LookalikeSection",
+    "w": 358,
+    "h": 230
+  },
+  {
+    "selector": "MapPanel",
+    "stem": "MapPanel",
+    "w": 390,
+    "h": 220
+  },
+  {
+    "selector": "PartPickBody",
+    "stem": "PartPickBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "TaxonRow",
+    "stem": "TaxonRow",
+    "w": 358,
+    "h": 60
+  },
+  {
+    "selector": "RatingSection",
+    "stem": "RatingSection",
+    "w": 358,
+    "h": 210
+  },
+  {
+    "selector": "SizeSection",
+    "stem": "SizeSection",
+    "w": 358,
+    "h": 340
+  },
+  {
+    "selector": "TextEditBody",
+    "stem": "TextEditBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "CompareEntryBody",
+    "stem": "CompareEntryBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "MarkerViewBody",
+    "stem": "MarkerViewBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "ZoneViewBody",
+    "stem": "ZoneViewBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FindViewBody",
+    "stem": "FindViewBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "ImageSubmitBody",
+    "stem": "ImageSubmitBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "MarkerFormBody",
+    "stem": "MarkerFormBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "ZoneFormBody",
+    "stem": "ZoneFormBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FilterColumn",
+    "stem": "FilterColumn",
+    "w": 272,
+    "h": 820
+  },
+  {
+    "selector": "FindFormBody",
+    "stem": "FindFormBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FindFormSharedBody",
+    "stem": "FindFormSharedBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "ImageUploadBody",
+    "stem": "ImageUploadBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FactorBody",
+    "stem": "FactorBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FindEditBody",
+    "stem": "FindEditBody",
+    "w": 358,
+    "h": 400
+  },
+  {
+    "selector": "FilterSheet",
+    "stem": "FilterSheet",
+    "w": 390,
+    "h": 640
+  },
+  {
+    "selector": "SpeciesSections",
+    "stem": "SpeciesSections",
+    "w": 358,
+    "h": 1160
   }
 ]
