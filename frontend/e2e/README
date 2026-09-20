@@ -11,9 +11,23 @@ Lighthouse liest CHROME_PATH statt BROWSER_PATH.
 
 ## Projekte
 
-- `phone` und `desktop` messen die Boards gegen die Baselines in
-  `boards/baseline/`.
+- `phone` und `wide` messen die Boards gegen die Baselines in
+  `boards/baseline/`. `blocks` misst die Bausteinkarten.
+- `desktop` prüft nur `flows/desktop/`.
 - `flows` prüft die Abläufe aus `artefakte/nfr.md`.
+
+## Board baselines
+
+The source of every board and component baseline is
+`artefakte/mockups/design/uebergabe/`. Run `npm run boards:sync` to copy
+the current images into `boards/baseline/`. The command also writes
+`boards/baseline/SOURCE.json`, the sha256 of each copied file.
+
+Run `npm run boards:check` before a commit. It compares every baseline
+against `SOURCE.json` and fails if a file differs or is not listed. This
+check guards the rule that no baseline may come from the app itself.
+
+Do not edit a file under `boards/baseline/` by hand.
 
 Ein Service Worker fängt Anfragen ab, bevor eine Attrappe greift. Darum
 sperrt `playwright.config.ts` ihn für alle Tests. Der Installationstest
