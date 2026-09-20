@@ -2,14 +2,15 @@
   <div class="popover__scrim" aria-hidden="true" (click)="closed.emit()"></div>
   <div
     class="popover__card"
-    appModalLayer
-    [class.popover__card--rows]="rows()"
-    [attr.aria-label]="label()"
+    [appModalLayer]="label()"
     [style.inset-block-start.px]="anchor().top"
     [style.inset-block-end.px]="anchor().bottom"
     [style.inset-inline-end.px]="anchor().end"
     (dismissed)="closed.emit()"
   >
+    @if (heading() !== '') {
+      <p class="popover__heading">{{ heading() }}</p>
+    }
     <ng-content />
   </div>
 }

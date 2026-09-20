@@ -14,13 +14,38 @@ describe('ConfirmDialogComponent', () => {
     fixture.componentInstance.cancelled.subscribe(() => calls.push('abgebrochen'));
 
     expect(screen.getByRole('dialog', { name: 'Fund löschen?' })).toBeInTheDocument();
-    expect(container.querySelector('.btn.danger')).not.toBeNull();
+    expect(container.querySelector('.btn.textdanger')).not.toBeNull();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
 
     expect(calls).toEqual(['bestaetigt', 'abgebrochen']);
     await noViolations(container);
+  });
+
+  it('stellt Abbrechen vor die Bestätigung', async () => {
+    const { container } = await render(ConfirmDialogComponent, {
+      inputs: { open: true, title: 'Fund löschen?' },
+    });
+
+    const labels = [...container.querySelectorAll('.confirm__actions button')].map((button) =>
+      button.textContent.trim(),
+    );
+    expect(labels).toEqual(['Abbrechen', 'Löschen']);
+  });
+
+  it('stellt die Knöpfe gestapelt, wenn der Stapel verlangt ist', async () => {
+    const { container } = await render(ConfirmDialogComponent, {
+      inputs: { open: true, title: '', stack: true, danger: false, confirmLabel: 'Anmelden' },
+    });
+
+    expect(container.querySelector('.confirm__actions--stack')).not.toBeNull();
+    const labels = [...container.querySelectorAll('.confirm__actions button')].map((button) =>
+      button.textContent.trim(),
+    );
+    expect(labels).toEqual(['Anmelden', 'Abbrechen']);
+    expect(container.querySelector('.btn.primary')).not.toBeNull();
+    expect(container.querySelector('h2')).toBeNull();
   });
 
   it('zeigt die Zahl als Kontext unter der Frage', async () => {
@@ -37,8 +62,8 @@ describe('ConfirmDialogComponent', () => {
     });
 
     expect(screen.getByRole('button', { name: 'Starten' })).toBeInTheDocument();
-    expect(container.querySelector('.btn.primary')).not.toBeNull();
-    expect(container.querySelector('.btn.danger')).toBeNull();
+    expect(container.querySelector('.btn.text')).not.toBeNull();
+    expect(container.querySelector('.btn.textdanger')).toBeNull();
   });
 
   it('meldet Abbrechen über Escape', async () => {

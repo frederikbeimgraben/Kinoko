@@ -11,12 +11,11 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { AdminState } from './admin.state';
 import { roleName } from './role-name';
 
 /** Das Blatt der Zuweisung ist so hoch wie sein Inhalt. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 
 /** Die feste Rolle, die jede angemeldete Person trägt. Sie wird nicht vergeben. */
 const EVERY_ONE = 'user';
@@ -66,7 +65,6 @@ export class PeopleComponent {
   private readonly router = inject(Router);
   private readonly state = inject(AdminState);
 
-  protected readonly DETENTS = DETENTS;
   protected readonly search = signal('');
   protected readonly editing = signal<Person | null>(null);
   protected readonly chosen = signal<ReadonlySet<string>>(new Set());

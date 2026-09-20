@@ -6,7 +6,7 @@
 
 // Die Fläche fängt nur den Druck daneben; die Karte darunter bleibt hell.
 .popover__scrim {
-  @include modal-layer.scrim;
+  @include modal-layer.scrim(var(--z-sheet));
 
   position: absolute;
   pointer-events: auto;
@@ -14,19 +14,26 @@
 }
 
 .popover__card {
-  @include modal-layer.panel;
+  @include modal-layer.panel(var(--z-sheet));
 
   position: absolute;
-  pointer-events: auto;
-  gap: var(--space-3);
-  inline-size: 300px;
+  gap: var(--popover-gap, 2px);
+  min-inline-size: 240px;
+  inline-size: var(--popover-width, max-content);
   max-inline-size: calc(100% - 24px);
-  padding: 18px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  padding: var(--space-3);
+  pointer-events: auto;
+  background: var(--surface-high);
+  border: 0;
+  border-radius: var(--radius-popover, 24px);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 50%);
 }
 
-.popover__card--rows {
-  gap: 0;
-  padding-block: var(--space-1);
+.popover__heading {
+  padding: 4px 12px 8px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-var);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }

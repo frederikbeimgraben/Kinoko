@@ -2,8 +2,7 @@
   <div
     class="photo__scrim"
     tabindex="-1"
-    appModalLayer
-    [attr.aria-label]="label()"
+    [appModalLayer]="label()"
     (dismissed)="closed.emit()"
     (keydown)="onKeydown($event)"
     (click)="onGround($event)"

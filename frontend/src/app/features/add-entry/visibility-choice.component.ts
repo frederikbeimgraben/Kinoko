@@ -15,11 +15,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { type DetentSize } from '../../ui/sheet/sheet.component';
 import { visibilitySegments } from './visibility';
 
 /** Das Blatt der Gruppenwahl ist so hoch wie sein Inhalt. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.5, 0.5, 0.9];
 
 /** Privat oder an eine Gruppe: Schalter und Gruppenwahl von Fund, Marker und Zone. */
 @Component({
@@ -41,7 +39,6 @@ export class VisibilityChoiceComponent {
   private readonly i18n = inject(I18nService);
   private readonly state = inject(GroupsState);
 
-  protected readonly DETENTS = DETENTS;
   protected readonly picking = signal(false);
   protected readonly segments = computed(() => visibilitySegments(this.i18n));
   protected readonly groups = computed(() => this.state.groups() ?? []);

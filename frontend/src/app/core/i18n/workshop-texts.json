@@ -24,7 +24,10 @@
     "beispiel.essbar": "essbar",
     "beispiel.ungeniessbar": "ungenießbar",
     "beispiel.giftig": "giftig",
-    "beispiel.toedlich": "tödlich giftig"
+    "beispiel.toedlich": "tödlich giftig",
+    "beispiel.fundLoeschen": "Fund löschen?",
+    "beispiel.fundKurz": "Pfifferling · 6. September",
+    "beispiel.hintergrund": "Hintergrund"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -51,6 +54,9 @@
     "beispiel.essbar": "edible",
     "beispiel.ungeniessbar": "not edible",
     "beispiel.giftig": "poisonous",
-    "beispiel.toedlich": "deadly poisonous"
+    "beispiel.toedlich": "deadly poisonous",
+    "beispiel.fundLoeschen": "Delete find?",
+    "beispiel.fundKurz": "Chanterelle · 6 September",
+    "beispiel.hintergrund": "Background"
   }
 }

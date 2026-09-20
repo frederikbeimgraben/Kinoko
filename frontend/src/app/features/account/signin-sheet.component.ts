@@ -10,7 +10,6 @@ import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.compone
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 /** Die Höhe steht so im Board `SignInSheet`. */
-const DETENTS = ['404px', '404px', '404px'] as const;
 
 /**
  * Fragt nach der Anmeldung, wenn etwas gespeichert werden soll. Es erscheint
@@ -31,7 +30,6 @@ export class SignInSheetComponent {
   private readonly footer = viewChild('footer', { read: ElementRef });
 
   protected readonly pending = this.auth.sheetOpen;
-  protected readonly detents = DETENTS;
 
   constructor() {
     effect(() => {

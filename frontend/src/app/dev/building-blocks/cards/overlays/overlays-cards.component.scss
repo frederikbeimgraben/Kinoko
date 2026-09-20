@@ -1,0 +1,10 @@
+// Scrim und Karte hängen an ihrer Zelle, nicht am Fenster der Seite.
+.overlays__stage {
+  --modal-layer-position: absolute;
+  --modal-layer-scrim: transparent;
+  --dialog-place: 0 auto auto;
+
+  position: relative;
+  block-size: 100%;
+  overflow: hidden;
+}

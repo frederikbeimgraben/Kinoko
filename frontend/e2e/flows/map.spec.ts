@@ -3,6 +3,9 @@ import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { COMBINATIONS, SPECIES_BUNDLE, mockMap } from '../fixtures/map';
 
+/** Die Höchsthöhe eines Blatts aus `project/Sheet.dc.html`. */
+const SHEET_MAX = 640;
+
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
@@ -93,19 +96,17 @@ test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) =>
   expect(asked.filter((url) => url.endsWith('layers.json'))).toHaveLength(0);
 });
 
-test('Die Liste der Ebenen scrollt im Blatt', async ({ page }) => {
+test('Das Ebenen-Blatt folgt seiner Liste bis zur Höchsthöhe', async ({ page }) => {
   await openMap(page);
   await page.getByRole('tab', { name: 'Ebene' }).click();
   await page.getByRole('button', { name: 'Niederschlag der letzten 4 Wochen' }).first().click();
 
   const list = page.getByRole('group', { name: 'Ebene' });
   await expect(list).toBeVisible();
-  const reach = await list.evaluate((box) => box.scrollHeight - box.clientHeight);
-  expect(reach).toBeGreaterThan(0);
+  await expect(page.getByRole('button', { name: /Hitzetage der Woche/ })).toBeVisible();
 
-  const top = await list.evaluate((box) => {
-    box.scrollTop = box.scrollHeight;
-    return box.scrollTop;
-  });
-  expect(top).toBeGreaterThan(0);
+  const sheet = page.getByRole('dialog', { name: 'Karte' });
+  const box = await sheet.boundingBox();
+  if (box === null) throw new Error('Blatt ohne Fläche.');
+  expect(box.height).toBeLessThanOrEqual(SHEET_MAX);
 });

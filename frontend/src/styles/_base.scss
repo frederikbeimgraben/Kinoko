@@ -25,7 +25,9 @@
 
   --border-width: 1px;
 
-  --z-dialog: 1300;
+  // Blatt und Modal, darüber der Dialog, darüber die Meldung.
+  --z-sheet: 1300;
+  --z-dialog: 1320;
   --z-toast: 1400;
 }
 

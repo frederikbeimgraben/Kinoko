@@ -1,14 +1,15 @@
-// Gemeinsame Flächen einer Schicht über der Seite.
-@mixin scrim {
-  position: fixed;
+// Gemeinsame Flächen einer Schicht über der Seite. Eine Werkstattkarte setzt
+// `--modal-layer-position`, damit die Schicht an ihrer Zelle hängt.
+@mixin scrim($layer: var(--z-dialog)) {
+  position: var(--modal-layer-position, fixed);
   inset: 0;
-  z-index: var(--z-dialog);
-  background: rgb(0 0 0 / 55%);
+  z-index: $layer;
+  background: var(--modal-layer-scrim, rgb(0 0 0 / 55%));
 }
 
-@mixin panel {
-  position: fixed;
-  z-index: calc(var(--z-dialog) + 1);
+@mixin panel($layer: var(--z-dialog)) {
+  position: var(--modal-layer-position, fixed);
+  z-index: calc(#{$layer} + 1);
   display: flex;
   flex-direction: column;
   background: var(--color-surface);

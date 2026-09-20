@@ -265,8 +265,6 @@
   "blocks/PersonRolesBody",
   "blocks/Phone",
   "blocks/PhotoStrip",
-  "blocks/PopItem",
-  "blocks/Popover",
   "blocks/Progress",
   "blocks/RadioRow",
   "blocks/Rail",

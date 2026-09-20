@@ -167,29 +167,28 @@ describe('ObjektBlattComponent', () => {
     expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
   });
 
-  it('nimmt die Höhe des Bretts, die zur Art des Objekts gehört', async () => {
+  it('nimmt die Höhe seines Inhalts, für jede Art des Objekts', async () => {
     const setup = await build();
 
     setup.state.object.set({ kind: 'marker', id: MARKER.id });
     setup.refresh();
-    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('444px');
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
 
     await openFind(setup);
-    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('594px');
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
 
     setup.state.object.set({ kind: 'zone', id: ZONE.id });
     setup.refresh();
-    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('444px');
+    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
   });
 
-  it('stellt das Formular höher und dunkelt die Karte für den Fund ab', async () => {
+  it('dunkelt die Karte für das Formular des Fundes ab', async () => {
     const setup = await build();
     await openFind(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
     setup.refresh();
 
-    expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('694px');
     expect(setup.container.querySelector('.overlay__scrim--modal')).not.toBeNull();
   });
 
