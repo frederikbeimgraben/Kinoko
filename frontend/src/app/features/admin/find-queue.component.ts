@@ -12,11 +12,11 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { OpenFind } from '../../core/api/models';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SpeciesState } from '../species/species.state';
 import { findCard, type FindCard } from './find-card';
 import { FindQueueState } from './find-queue.state';
@@ -27,11 +27,11 @@ import { FindQueueState } from './find-queue.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ConfirmDialogComponent,
-    EmptyStateComponent,
     IconButtonComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     ReviewQueueComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './find-queue.component.html',

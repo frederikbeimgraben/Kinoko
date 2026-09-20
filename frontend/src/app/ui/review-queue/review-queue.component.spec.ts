@@ -53,6 +53,20 @@ class AsciiHostComponent {
   readonly items = ['first', 'second'];
 }
 
+@Component({
+  imports: [ReviewQueueComponent],
+  template: `
+    <app-review-queue [items]="items" [showActions]="false">
+      <ng-template let-item>
+        <p>{{ item }}</p>
+      </ng-template>
+    </app-review-queue>
+  `,
+})
+class NoActionsHostComponent {
+  readonly items = ['Pfifferling'];
+}
+
 function swipe(card: Element, from: number, to: number): void {
   card.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: from }));
   card.dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: to }));
@@ -171,6 +185,13 @@ describe('ReviewQueueComponent', () => {
       expect(round).toHaveClass('tap');
       expect(round).toHaveAttribute('data-press', 'scale');
     }
+  });
+
+  it('lässt die drei runden Knöpfe weg, wenn showActions aus ist', async () => {
+    const { container } = await render(NoActionsHostComponent);
+
+    expect(container.querySelector('.queue__actions')).toBeNull();
+    expect(container.querySelector('.queue__card')).not.toBeNull();
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

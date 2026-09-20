@@ -12,6 +12,9 @@ import { firstValueFrom } from 'rxjs';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find } from '../../core/api/models';
+import { AccountService } from '../../core/access/account.service';
+import { PersonNamesService } from '../../core/access/person-names.service';
+import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { TileService } from '../../core/tiles/tile.service';
@@ -21,10 +24,13 @@ import { valueAtPoint } from '../../core/tiles/value-at-point';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { findSubline } from '../entries/find-subline';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
@@ -41,7 +47,9 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
     ButtonComponent,
     ConfirmDialogComponent,
     FindFormComponent,
+    LevelPillComponent,
     ListRowComponent,
+    ObjectTitleComponent,
     PhotoGalleryComponent,
     RowGroupComponent,
     SvgIconComponent,
@@ -51,6 +59,8 @@ import { PhotoGalleryComponent } from './photo-gallery.component';
   styleUrl: './find-sheet.component.scss',
 })
 export class FindSheetComponent {
+  private readonly account = inject(AccountService);
+  private readonly names = inject(PersonNamesService);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly arten = inject(SpeciesState);
@@ -80,6 +90,24 @@ export class FindSheetComponent {
 
   protected readonly speciesName = computed(() => this.art()?.name ?? '');
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
+
+  /** Die gedämpfte Zeile unter dem Namen: Datum, Anzahl, Melder. */
+  protected readonly sub = computed(() => {
+    const date = longDate(this.find().foundOn, this.i18n.locale());
+    return findSubline(this.i18n, date, this.find().count, this.reporterName());
+  });
+
+  protected readonly thumbPhoto = computed(() => this.held()[0]?.path ?? '');
+
+  /** Die Plakette neben dem Namen, solange der Fund geteilt ist. */
+  protected readonly shared = computed(() => this.find().visibility === 'shared');
+
+  /** Der eigene Name kommt aus dem Konto, ein fremder nur bei gemeinsamer Gruppe. */
+  private reporterName(): string | null {
+    const find = this.find();
+    if (this.account.owns(find.ownerId)) return this.eintraege.reporter() ?? '';
+    return this.names.nameOf(find.ownerId);
+  }
 
   /** Der Fund rückt in die Mitte der Karte; das Blatt macht ihn frei. */
   protected showOnMap(): void {

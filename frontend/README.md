@@ -1,4 +1,4 @@
-# Pilzkarte, Frontend
+# Kinoko, Frontend
 
 Angular 22, standalone, zoneless, Signals, strenges TypeScript. Die Oberfläche
 folgt den Mockups in `docs/mockups/` und dem eigenen Design-System unter
@@ -25,7 +25,7 @@ src/app/shell/    Navigation und Avatar um die Reiter
 src/app/ui/       die gemeinsamen Bausteine
 src/app/features/ die Reiter
 src/app/dev/      /bausteine, nur in der Entwicklung
-src/styles/       Maße der Pilzkarte, Grundreset und Hilfsklassen
+src/styles/       Maße der App, Grundreset und Hilfsklassen
 ```
 
 Ein Baustein steht genau einmal in `src/app/ui/`. Seiten setzen zusammen; sie

@@ -5,13 +5,16 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
+import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { visibilityText } from '../add-entry/visibility';
+import { colourHex } from '../entries/colors';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 
-/** Das Objekt-Blatt eines Markers und sein Formular (Boards `MarkerSheet`, `MarkerEdit`). */
+/** Das Objekt-Blatt eines Markers und sein Formular (Boards `SheetMarkerView`, `MarkerEdit`). */
 @Component({
   selector: 'app-marker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +23,7 @@ import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form
     ConfirmDialogComponent,
     MapAppLinkComponent,
     ObjectFormComponent,
+    ObjectTitleComponent,
     RowGroupComponent,
     TranslatePipe,
   ],
@@ -44,6 +48,15 @@ export class MarkerSheetComponent {
     this.marker().lon,
     this.marker().lat,
   ]);
+
+  protected readonly colour = computed(() => colourHex(this.marker().colour));
+
+  /** Die gedämpfte Zeile unter dem Namen, per `MarkerViewBody.dc.html`. */
+  protected readonly sub = computed(() =>
+    this.i18n.translate('marker.unter', {
+      sichtbarkeit: visibilityText(this.i18n, this.marker().visibility),
+    }),
+  );
 
   protected readonly start = computed<ObjectValues>(() => {
     const marker = this.marker();

@@ -16,9 +16,12 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
+import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { visibilityText } from '../add-entry/visibility';
 import { EntriesState } from '../entries/entries.state';
+import { hectaresText } from '../entries/formats';
 import { ObjectSheetState } from './object-sheet.state';
 import { colourHex } from '../entries/colors';
 import { asPolygon } from '../add-entry/area';
@@ -36,6 +39,7 @@ import type { Location } from '../add-entry/add-entry.state';
     ConfirmDialogComponent,
     MapAppLinkComponent,
     ObjectFormComponent,
+    ObjectTitleComponent,
     RowGroupComponent,
     TranslatePipe,
   ],
@@ -78,6 +82,16 @@ export class ZoneSheetComponent implements OnDestroy {
     const sum = ring.reduce((links, point) => [links[0] + point[0], links[1] + point[1]], [0, 0]);
     return [sum[0] / ring.length, sum[1] / ring.length];
   });
+
+  protected readonly colour = computed(() => colourHex(this.zone().colour));
+
+  /** Die gedämpfte Zeile unter dem Namen, per `ZoneViewBody.dc.html`. */
+  protected readonly sub = computed(() =>
+    this.i18n.translate('zone.unter', {
+      flaeche: hectaresText(this.zone().areaHa, this.i18n.locale()),
+      sichtbarkeit: visibilityText(this.i18n, this.zone().visibility),
+    }),
+  );
 
   ngOnDestroy(): void {
     this.stopSession();

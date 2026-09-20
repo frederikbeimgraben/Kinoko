@@ -2,11 +2,10 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
-import { ErrorStateComponent } from '../../ui/error-state/error-state.component';
 import { InfiniteListComponent } from '../../ui/infinite-list/infinite-list.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 import { SpeciesRowComponent } from '../../ui/species-row/species-row.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { speciesRow } from './rows';
 import type { CatalogueEntry } from './species.state';
 
@@ -17,12 +16,11 @@ const SKELETON_ROWS = 5;
   selector: 'app-species-results',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    EmptyStateComponent,
-    ErrorStateComponent,
     InfiniteListComponent,
     NgTemplateOutlet,
     SkeletonComponent,
     SpeciesRowComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './species-results.component.html',

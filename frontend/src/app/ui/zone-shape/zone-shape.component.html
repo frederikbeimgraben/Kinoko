@@ -1,0 +1,17 @@
+<svg class="zone" viewBox="0 0 390 400" preserveAspectRatio="none" aria-hidden="true">
+  <polygon
+    [attr.points]="points"
+    [attr.fill]="colour()"
+    [style.fill-opacity]="fillOpacity"
+    [attr.stroke]="colour()"
+    [attr.stroke-width]="strokeWidth"
+    [attr.stroke-dasharray]="dash()"
+  />
+  @if (drawing()) {
+    <g fill="#fff" [attr.stroke]="colour()" [attr.stroke-width]="strokeWidth">
+      @for (corner of corners; track corner) {
+        <circle [attr.cx]="corner[0]" [attr.cy]="corner[1]" [attr.r]="cornerRadius" />
+      }
+    </g>
+  }
+</svg>

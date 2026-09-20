@@ -1,7 +1,7 @@
 <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 <div class="taxonomy">
   @if (unknown()) {
-    <app-empty-state [text]="'species.notFound' | t" />
+    <app-state-view [title]="'species.notFound' | t" />
   } @else if (page()) {
     <p class="taxonomy__trail">
       @for (step of trail(); track step; let last = $last) {

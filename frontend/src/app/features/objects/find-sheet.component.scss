@@ -6,6 +6,16 @@
 
 @include object-sheet.object-sheet;
 
+.findsheet__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.findsheet__badge {
+  flex: none;
+}
+
 // 15 px Fließtext steht so im Board `FindSheet`.
 .findsheet__note {
   margin: 0;

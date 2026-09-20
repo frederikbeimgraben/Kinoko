@@ -77,12 +77,14 @@ Server wird nichts installiert.
 rsync über Schlüssel mit erzwungenem `rrsync -wo`. Der Zielnutzer hat keine
 Shell.
 
-| Skript | Schlüssel | Ziel | Was |
-| --- | --- | --- | --- |
-| `deploy/frontend.sh` | `~/.ssh/pilze_deploy` | `/var/www/pilze` | Angular-Build. Filter `P /*/` und `P /*.json` schützen Kacheln, Manifeste und Ebenen vor `--delete` |
-| `deploy/backend.sh` | `~/.ssh/pilze_daten` | `/var/lib/pilze-render/app/backend` | Backend. Schreibt `deploy.stamp` in einem zweiten Aufruf |
-| `modell/deploy_daten.sh` | `~/.ssh/pilze_daten` | `/var/lib/pilze-render` | Kette, Modelle, Daten |
-| `tools/pmtiles/hochladen.sh` | `~/.ssh/pilze_deploy` | `/var/www/pilze/karte` | PMTiles-Archiv. Ohne `--delete`, nur bei einer neuen Fassung |
+| Skript | Ziel | Was |
+| --- | --- | --- |
+| `deploy/frontend.sh` | `/var/www/pilze` | Angular-Build. Filter `P /*/` und `P /*.json` schützen Kacheln, Manifeste und Ebenen vor `--delete` |
+| `deploy/backend.sh` | `/var/lib/pilze-render/app/backend` | Backend. Schreibt `deploy.stamp` in einem zweiten Aufruf |
+| `modell/deploy_daten.sh` | `/var/lib/pilze-render` | Kette, Modelle, Daten |
+| `tools/pmtiles/hochladen.sh` | `/var/www/pilze/karte` | PMTiles-Archiv. Ohne `--delete`, nur bei einer neuen Fassung |
+
+Jedes Skript liest den Schlüssel aus der Variablen `SCHLUESSEL` und das Ziel aus `ZIEL`.
 
 Reihenfolge bei einer Änderung an beiden Seiten: erst `deploy/backend.sh`,
 dann `deploy/frontend.sh`. Die Migration läuft beim Neustart des Dienstes.

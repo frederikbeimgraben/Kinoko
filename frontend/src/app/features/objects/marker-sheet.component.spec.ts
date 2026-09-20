@@ -41,11 +41,12 @@ async function edit(setup: Setup): Promise<void> {
 }
 
 describe('MarkerBlattComponent', () => {
-  it('zeigt die Notiz; Name und Punkt trägt der Kopf des Blatts', async () => {
+  it('zeigt Name, Sichtbarkeit und Notiz im Rumpf', async () => {
     const setup = await build();
 
+    expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
+    expect(screen.getByText('Marker · privat')).toBeInTheDocument();
     expect(screen.getByText('Nordhang, ab Mitte September.')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Alter Fichtenhang' })).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 

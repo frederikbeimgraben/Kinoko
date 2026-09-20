@@ -105,12 +105,13 @@ describe('FundBlattComponent', () => {
     answerMap(108);
   });
 
-  it('zeigt die Notiz; Art, Zeile und Kennzeichen trägt der Kopf des Blatts', async () => {
+  it('zeigt Art, Zeile, Kennzeichen und Notiz im Rumpf', async () => {
     const setup = await build();
 
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('6. September 2026 · 3 Stück · Frederik')).toBeInTheDocument();
+    expect(screen.getByText('geteilt')).toBeInTheDocument();
     expect(screen.getByText(FIND.note ?? '')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Steinpilz' })).not.toBeInTheDocument();
-    expect(screen.queryByText('geteilt')).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 

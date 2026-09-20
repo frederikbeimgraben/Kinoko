@@ -2,7 +2,7 @@
 
 <div class="mine">
   @if (loaded() && rows().length === 0) {
-    <app-empty-state [text]="'bild.meineLeer' | t" />
+    <app-state-view icon="empty" [title]="'bild.meineLeer' | t" />
   } @else {
     <ul class="mine__list">
       @for (row of rows(); track row.id) {

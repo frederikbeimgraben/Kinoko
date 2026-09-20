@@ -5,7 +5,7 @@ import { StepBarComponent, type StepAction } from './step-bar.component';
 
 const ACTIONS: readonly StepAction[] = [
   { label: 'Eckpunkt setzen', icon: 'plus', variant: 'primary', run: () => undefined },
-  { label: 'Punkt entfernen', icon: 'back', variant: 'secondary', run: () => undefined },
+  { label: 'Punkt entfernen', icon: 'undo', variant: 'secondary', run: () => undefined },
   { label: 'Abschließen', icon: 'check', variant: 'secondary', run: () => undefined },
   { label: 'Abbrechen', icon: 'close', variant: 'secondary', run: () => undefined },
 ];
@@ -22,11 +22,23 @@ describe('StepBarComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt nur Zeichen, keinen Text im Knopf', async () => {
+  it('stellt die runden Knöpfe vor dem beschrifteten Fab, unabhängig von der Reihenfolge der Eingabe', async () => {
+    const { container } = await render(StepBarComponent, {
+      inputs: { label: 'Zone zeichnen', actions: ACTIONS },
+    });
+
+    const order = [...container.querySelectorAll('app-icon-button, app-floating-button')].map((el) =>
+      el.tagName.toLowerCase(),
+    );
+    expect(order).toEqual(['app-icon-button', 'app-icon-button', 'app-icon-button', 'app-floating-button']);
+  });
+
+  it('trägt nur ein Zeichen an den runden Knöpfen, ein Wort am Fab', async () => {
     await render(StepBarComponent, { inputs: { label: 'Zone zeichnen', actions: ACTIONS } });
 
-    for (const button of screen.getAllByRole('button')) expect(button).toHaveTextContent('');
-    expect(screen.getByRole('button', { name: 'Abschließen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Punkt entfernen' })).toHaveTextContent('');
+    expect(screen.getByRole('button', { name: 'Abbrechen' })).toHaveTextContent('');
+    expect(screen.getByRole('button', { name: 'Eckpunkt setzen' })).toHaveTextContent('Eckpunkt setzen');
   });
 
   it('meldet die gewählte Aktion', async () => {
@@ -39,14 +51,6 @@ describe('StepBarComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
 
     expect(chosen).toEqual(['Abbrechen']);
-  });
-
-  it('trägt die Rolle jeder Aktion', async () => {
-    const { container } = await render(StepBarComponent, {
-      inputs: { label: 'Zone zeichnen', actions: ACTIONS },
-    });
-
-    expect(container.querySelectorAll('.stepbar__action--primary')).toHaveLength(1);
   });
 
   it('lässt die Marke aus, solange keine da ist', async () => {
