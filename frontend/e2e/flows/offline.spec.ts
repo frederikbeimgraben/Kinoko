@@ -74,7 +74,7 @@ test('Melden ohne Netz, Senden bei Netz', async ({ page, baseURL }) => {
   await page.getByRole('link', { name: 'Einträge' }).click();
   await expect(page).toHaveURL(/eintraege/);
   await page.getByRole('tab', { name: 'Marker', exact: true }).click();
-  await expect(page.getByText('Übertragung ausstehend')).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Übertragung ausstehend' })).toBeVisible();
 
   await net.join();
 
