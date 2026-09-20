@@ -1,3 +1,11 @@
+.ripple-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
 .ripple {
   position: absolute;
   border-radius: 50%;

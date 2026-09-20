@@ -1,41 +1,10 @@
 :host {
   display: inline-flex;
-  --crosshair-line: 2px;
-  --crosshair-inset: 14px;
 }
 
 .crosshair {
-  position: relative;
   display: block;
-  inline-size: var(--size-crosshair);
-  block-size: var(--size-crosshair);
-}
-
-.crosshair::before,
-.crosshair::after {
-  position: absolute;
-  content: '';
-  background: var(--color-primary);
-}
-
-.crosshair::before {
-  inset-block: 0;
-  inset-inline-start: 50%;
-  inline-size: var(--crosshair-line);
-  transform: translateX(-50%);
-}
-
-.crosshair::after {
-  inset-inline: 0;
-  inset-block-start: 50%;
-  block-size: var(--crosshair-line);
-  transform: translateY(-50%);
-}
-
-.crosshair__ring {
-  position: absolute;
-  inset: var(--crosshair-inset);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  border: var(--crosshair-line) solid var(--color-primary);
-  border-radius: 50%;
+  inline-size: 40px;
+  block-size: 40px;
+  color: var(--on-primary);
 }

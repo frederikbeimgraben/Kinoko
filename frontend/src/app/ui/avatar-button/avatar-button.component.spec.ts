@@ -39,14 +39,30 @@ describe('AvatarButtonComponent', () => {
     expect(container.querySelector('span[aria-hidden]')?.textContent).toBe('');
   });
 
-  it('trägt Tippfläche und Druckzustand', async () => {
+  it('setzt einen Kreis am Berührungspunkt statt der Verkleinerung', async () => {
     const { container } = await render(AvatarButtonComponent, {
       inputs: { name: 'frederik', label: 'Konto' },
     });
 
-    const button = container.querySelector('button');
+    const button = container.querySelector<HTMLElement>('button');
+    if (button === null) throw new Error('kein Knopf');
     expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'scale');
+    expect(button).not.toHaveAttribute('data-press');
+
+    vi.spyOn(button, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 40,
+      height: 40,
+      right: 40,
+      bottom: 40,
+      toJSON: () => undefined,
+    });
+    button.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 20 }));
+
+    expect(button.querySelector('.ripple')).not.toBeNull();
   });
 
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {

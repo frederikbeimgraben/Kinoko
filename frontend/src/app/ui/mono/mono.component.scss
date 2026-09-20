@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.mono {
+  margin: 0;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-radius: 20px;
+  font:
+    12px/1.6 ui-monospace,
+    'SF Mono',
+    Menlo,
+    monospace;
+  color: var(--text-var);
+  white-space: pre-wrap;
+}

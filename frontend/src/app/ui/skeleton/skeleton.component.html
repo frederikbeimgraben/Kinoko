@@ -1,10 +1,28 @@
 @if (visible()) {
-  @for (bar of bars(); track bar) {
-    <div
-      class="skeleton__bar"
-      [class]="'skeleton__bar--' + kind()"
-      [style.inline-size]="width()"
-      [style.block-size]="height()"
-    ></div>
+  @if (kind() === 'rows') {
+    @for (row of rows(); track $index) {
+      <div class="skeleton__row">
+        <span class="skeleton__row-icon"></span>
+        <span class="skeleton__row-lines">
+          <span class="skeleton__row-line" [style.inline-size]="row.lineA"></span>
+          <span class="skeleton__row-line" [style.inline-size]="row.lineB"></span>
+        </span>
+      </div>
+    }
+  } @else if (kind() === 'tiles') {
+    <div class="skeleton__tiles">
+      @for (bar of bars(); track bar) {
+        <span class="skeleton__tile"></span>
+      }
+    </div>
+  } @else {
+    @for (bar of bars(); track bar) {
+      <div
+        class="skeleton__bar"
+        [class]="'skeleton__bar--' + kind()"
+        [style.inline-size]="width()"
+        [style.block-size]="height()"
+      ></div>
+    }
   }
 }

@@ -57,6 +57,7 @@ export {
   MeasurementGroupComponent,
   type MeasurementRow,
 } from './measurement-group/measurement-group.component';
+export { MonoComponent } from './mono/mono.component';
 export { NavComponent, type NavVariant } from './nav/nav.component';
 export { ObjectMenuComponent, type ObjectMenuTarget } from './object-menu/object-menu.component';
 export { OptionSheetComponent, type OptionSheetOption } from './option-sheet/option-sheet.component';
@@ -65,8 +66,8 @@ export { PageHeaderComponent } from './page-header/page-header.component';
 export { PhotoPickerComponent } from './photo-picker/photo-picker.component';
 export { PrivateImageComponent } from './private-image/private-image.component';
 export { ProgressComponent } from './progress/progress.component';
-export { RampComponent } from './ramp/ramp.component';
-export { FORECAST_RAMP } from './ramp/ramp-colours';
+export { RampComponent, type RampKind } from './ramp/ramp.component';
+export { FORECAST_RAMP, RAIN_RAMP } from './ramp/ramp-colours';
 export { RangeSliderComponent, type Handles } from './range-slider/range-slider.component';
 export { ReviewQueueComponent } from './review-queue/review-queue.component';
 export { RippleDirective } from './ripple/ripple.directive';

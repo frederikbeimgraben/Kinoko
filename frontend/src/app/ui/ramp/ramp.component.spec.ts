@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { RampComponent } from './ramp.component';
-import { FORECAST_RAMP } from './ramp-colours';
+import { FORECAST_RAMP, RAIN_RAMP } from './ramp-colours';
 
 describe('RampComponent', () => {
   it('zeigt Beschriftung, beide Enden und jede Stufe', async () => {
@@ -28,6 +28,14 @@ describe('RampComponent', () => {
     fixture.detectChanges();
 
     expect(screen.getByText('Eine Zelle misst 500 Meter.')).toBeInTheDocument();
+  });
+
+  it('wechselt zur Regen-Rampe', async () => {
+    const { container } = await render(RampComponent, {
+      inputs: { label: 'Niederschlag', from: '0 mm', to: '150 mm', kind: 'rain' },
+    });
+
+    expect(container.querySelectorAll('.ramp__step')).toHaveLength(RAIN_RAMP.length);
   });
 
   it('nennt Hilfsmitteln die Spanne des Verlaufs', async () => {

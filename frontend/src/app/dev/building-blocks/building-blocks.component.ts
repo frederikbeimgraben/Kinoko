@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { I18nService } from '../../core/i18n/i18n.service';
 import { WORKSHOP_TEXTS } from '../../core/i18n/workshop-texts';
 import { ControlsCardsComponent } from './cards/controls/controls-cards.component';
+import { DisplayCardsComponent } from './cards/display/display-cards.component';
 import { PrimitivesCardsComponent } from './cards/primitives/primitives-cards.component';
 
 const THEME_ATTRIBUTE = 'data-theme';
@@ -11,7 +12,7 @@ const DARK = 'dark';
 @Component({
   selector: 'app-building-blocks',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ControlsCardsComponent, PrimitivesCardsComponent],
+  imports: [ControlsCardsComponent, DisplayCardsComponent, PrimitivesCardsComponent],
   templateUrl: './building-blocks.component.html',
   styleUrl: './building-blocks.component.scss',
 })

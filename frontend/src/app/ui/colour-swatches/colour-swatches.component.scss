@@ -4,13 +4,29 @@
 }
 
 .colours__field {
-  inline-size: var(--pilz-swatch-size);
-  block-size: var(--pilz-swatch-size);
-  border: 0;
-  border-radius: var(--pilz-swatch-radius);
+  position: relative;
+  flex: 0 0 auto;
+  display: block;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 50%;
+}
+
+.colours__field--s {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.colours__field--m {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+.colours__field--l {
+  inline-size: 44px;
+  block-size: 44px;
 }
 
 .colours__field--selected {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 3px;
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

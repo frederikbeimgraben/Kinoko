@@ -38,16 +38,6 @@
   color: var(--color-primary);
 }
 
-.run__log {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  font-family: ui-monospace, monospace;
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--color-text-muted);
-}
-
 app-badge {
   --space-1: 3px;
   --space-3: 10px;

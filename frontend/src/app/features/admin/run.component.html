@@ -32,11 +32,7 @@
   @if (log().length > 0) {
     <section>
       <h2 class="run__section">{{ 'admin.run.section.output' | t }}</h2>
-      <div class="run__card run__log">
-        @for (line of log(); track $index) {
-          <span class="run__line">{{ line }}</span>
-        }
-      </div>
+      <app-mono [text]="logText()" />
     </section>
   }
 </div>

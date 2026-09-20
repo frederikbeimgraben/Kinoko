@@ -71,7 +71,19 @@ describe('RippleDirective', () => {
     press(host);
 
     expect(host.style.position).toBe('relative');
-    expect(host.style.overflow).toBe('hidden');
+    expect(host.style.overflow).toBe('');
+  });
+
+  it('setzt den Kreis in einen Rahmen, der ihn auf den Wirt beschneidet', async () => {
+    stubMotion(false);
+    const { container } = await render(PositionedHostComponent);
+    const host = container.querySelector<HTMLElement>('button');
+    if (host === null) throw new Error('kein Wirt');
+
+    press(host);
+
+    const frame = host.querySelector<HTMLElement>('.ripple-frame');
+    expect(frame?.querySelector('.ripple')).toBeInTheDocument();
   });
 
   it('lässt einen schon platzierten Wirt unberührt', async () => {
@@ -97,7 +109,7 @@ describe('RippleDirective', () => {
 
     dot.dispatchEvent(new Event('animationend'));
 
-    expect(host.querySelector('.ripple')).not.toBeInTheDocument();
+    expect(host.querySelector('.ripple-frame')).not.toBeInTheDocument();
   });
 
   it('setzt keinen Kreis, wenn der Rechner weniger Bewegung wünscht', async () => {
