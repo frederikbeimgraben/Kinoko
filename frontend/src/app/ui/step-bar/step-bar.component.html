@@ -2,18 +2,15 @@
   @if (note()) {
     <span class="stepbar__note">{{ note() }}</span>
   }
-  <div class="stepbar__actions">
-    @for (action of actions(); track action.label) {
-      <button
-        class="stepbar__action tap"
-        type="button"
-        data-press="scale"
-        [class.stepbar__action--primary]="action.variant === 'primary'"
-        [attr.aria-label]="action.label"
-        (click)="chosen.emit(action)"
-      >
-        <app-svg-icon [name]="action.icon" [size]="16" />
-      </button>
-    }
-  </div>
+  @for (action of secondary(); track action.label) {
+    <app-icon-button
+      kind="fabl"
+      [icon]="roundIcon(action.icon)"
+      [label]="action.label"
+      (pressed)="chosen.emit(action)"
+    />
+  }
+  @for (action of primary(); track action.label) {
+    <app-floating-button [icon]="action.icon" [label]="action.label" (pressed)="chosen.emit(action)" />
+  }
 </div>

@@ -4,6 +4,7 @@ import { WORKSHOP_TEXTS } from '../../core/i18n/workshop-texts';
 import { ControlsCardsComponent } from './cards/controls/controls-cards.component';
 import { DataCardsComponent } from './cards/data/data-cards.component';
 import { DisplayCardsComponent } from './cards/display/display-cards.component';
+import { MapCardsComponent } from './cards/map/map-cards.component';
 import { PrimitivesCardsComponent } from './cards/primitives/primitives-cards.component';
 
 const THEME_ATTRIBUTE = 'data-theme';
@@ -13,7 +14,13 @@ const DARK = 'dark';
 @Component({
   selector: 'app-building-blocks',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ControlsCardsComponent, DataCardsComponent, DisplayCardsComponent, PrimitivesCardsComponent],
+  imports: [
+    ControlsCardsComponent,
+    DataCardsComponent,
+    DisplayCardsComponent,
+    MapCardsComponent,
+    PrimitivesCardsComponent,
+  ],
   templateUrl: './building-blocks.component.html',
   styleUrl: './building-blocks.component.scss',
 })

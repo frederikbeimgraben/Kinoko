@@ -53,7 +53,8 @@ export type IconName =
   | 'hourglass'
   | 'refresh'
   | 'sign-out'
-  | 'mushroom';
+  | 'mushroom'
+  | 'flag';
 
 /** Die drei gefüllten Pfeile und die Wiedergabe sitzen auf einem 12er-Raster. */
 export const FILLED_ICONS: readonly IconName[] = ['left', 'right', 'play', 'pause'];
@@ -126,4 +127,5 @@ export const ICONS: Record<IconName, string> = {
   'sign-out':
     '<path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/><path d="M15 8l4 4-4 4"/><path d="M19 12H9"/>',
   mushroom: '<path d="M4 11a8 8 0 0 1 16 0zM10 11v6a2 2 0 0 0 4 0v-6"/>',
+  flag: '<path d="M6 3v18"/><path d="M6 4h11l-3 4 3 4H6z"/>',
 };

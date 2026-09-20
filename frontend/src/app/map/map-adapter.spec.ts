@@ -460,7 +460,7 @@ describe('MapLibreAdapter', () => {
     const paintLayer = map.layers.get('objekte-geteilteFunde-punkt') as {
       paint: Record<string, unknown>;
     };
-    expect(paintLayer.paint['circle-radius']).toEqual(['case', ['get', 'gerundet'], 18, 7]);
+    expect(paintLayer.paint['circle-radius']).toEqual(['case', ['get', 'gerundet'], 18, 10]);
   });
 
   it('schreibt neue Daten in eine Quelle, die schon steht', async () => {

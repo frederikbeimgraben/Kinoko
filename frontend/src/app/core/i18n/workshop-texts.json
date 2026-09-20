@@ -3,12 +3,18 @@
     "beispiel.steinpilz": "Steinpilz",
     "beispiel.lauf": "[12:04] Lauf gestartet\n[12:06] 306 Arten, 52 Wochen\n[12:19] fertig",
     "beispiel.farbspanne": "cremeweiß bis ocker",
-    "beispiel.stiel": "Stiel"
+    "beispiel.stiel": "Stiel",
+    "beispiel.fertig": "Fertig",
+    "beispiel.fundUnter": "6. September 2026 · 3 Stück · Frederik",
+    "beispiel.keineTreffer": "Keine Treffer"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
     "beispiel.lauf": "[12:04] run started\n[12:06] 306 species, 52 weeks\n[12:19] done",
     "beispiel.farbspanne": "creamy white to ochre",
-    "beispiel.stiel": "Stem"
+    "beispiel.stiel": "Stem",
+    "beispiel.fertig": "Done",
+    "beispiel.fundUnter": "6 September 2026 · 3 pieces · Frederik",
+    "beispiel.keineTreffer": "No hits"
   }
 }

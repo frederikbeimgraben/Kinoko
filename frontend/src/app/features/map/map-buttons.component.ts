@@ -7,6 +7,7 @@ import { FloatingButtonComponent } from '../../ui/floating-button/floating-butto
   selector: 'app-map-buttons',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FloatingButtonComponent, TranslatePipe],
+  host: { '[style.--map-buttons-banner-offset.px]': 'bannerOffset()' },
   templateUrl: './map-buttons.component.html',
   styleUrl: './map-buttons.component.scss',
 })
@@ -17,6 +18,8 @@ export class MapButtonsComponent {
   readonly showAdd = input(false);
   readonly turned = input(false);
   readonly needle = input(0);
+  /** Zusätzlicher Abstand von oben, wenn eine Leiste über der Karte liegt. */
+  readonly bannerOffset = input(0);
 
   readonly layersToggled = output();
   readonly located = output();

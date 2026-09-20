@@ -1,0 +1,7 @@
+<div class="state" [class.state--error]="kind() === 'error'">
+  <span class="state__blob"><app-svg-icon [name]="icon()" [size]="48" [strokeWidth]="1.4" /></span>
+  <b class="state__title">{{ title() }}</b>
+  @if (action(); as label) {
+    <app-push-button kind="tonal" (click)="actionClick.emit()">{{ label }}</app-push-button>
+  }
+</div>

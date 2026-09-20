@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { RippleDirective } from '../ripple/ripple.directive';
 
 /** Ab dieser waagrechten Bewegung gilt ein Zug als Entscheidung, nicht als Zittern. */
 const SWIPE_THRESHOLD = 120;
@@ -23,7 +24,7 @@ const TILT_DIVISOR = 18;
 @Component({
   selector: 'app-review-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, TranslatePipe],
+  imports: [NgTemplateOutlet, RippleDirective, TranslatePipe],
   templateUrl: './review-queue.component.html',
   styleUrl: './review-queue.component.scss',
 })
@@ -31,6 +32,10 @@ export class ReviewQueueComponent<T> {
   readonly items = input.required<readonly T[]>();
   /** Gleicht den Zurück-Knopf der Seite aus, damit die Knöpfe mittig stehen. */
   readonly balance = input(false);
+  /** Die Karte füllt ihren Wirt, statt der eigenen Höhe zu folgen. */
+  readonly fill = input(false);
+  /** Ohne die drei runden Knöpfe, für eine leere Karte auf sich allein gestellt. */
+  readonly showActions = input(true);
   readonly card = contentChild.required(TemplateRef);
 
   readonly accepted = output<T>();

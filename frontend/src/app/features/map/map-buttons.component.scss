@@ -1,19 +1,24 @@
 :host {
   display: block;
+
+  --map-buttons-banner-offset: 0px;
+  --map-buttons-add-height: 56px;
 }
 
-// Die schwebenden Knöpfe sitzen oben rechts, Maße aus den Boards.
+// Die schwebenden Knöpfe sitzen oben rechts, Rand 16 px per `MapControls.dc.html`.
 .map__layers {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + 12px);
-  inset-inline-end: 12px;
+  inset-block-start: calc(var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + 16px);
+  inset-inline-end: 16px;
   z-index: 3;
 }
 
 .map__location {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + (var(--size-floating) + 12px) + 12px);
-  inset-inline-end: 12px;
+  inset-block-start: calc(
+    var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + (var(--size-floating) + 12px) + 16px
+  );
+  inset-inline-end: 16px;
   z-index: 3;
 }
 
@@ -21,31 +26,41 @@
 // unabhängig vom Kompass: er bleibt an seiner Stelle, auch gedreht.
 .map__add {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + 2 * (var(--size-floating) + 12px) + 12px);
-  inset-inline-end: 12px;
+  inset-block-start: calc(
+    var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + 2 * (var(--size-floating) + 12px) + 16px
+  );
+  inset-inline-end: 16px;
   z-index: 3;
 }
 
-// Der Kompass steht am Telefon als vierter Knopf unter „Eintragen“.
+// Der Kompass steht am Telefon als vierter Knopf unter „Eintragen“, dessen
+// eigene Höhe (56 px) von den drei runden Knöpfen (48 px) abweicht.
 .map__compass {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + 3 * (var(--size-floating) + 12px) + 12px);
-  inset-inline-end: 12px;
+  inset-block-start: calc(
+    var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + 2 * (var(--size-floating) + 12px) +
+      (var(--map-buttons-add-height) + 12px) + 16px
+  );
+  inset-inline-end: 16px;
   z-index: 3;
 }
 
 // Am Rechner beginnt die Gruppe vier Punkte tiefer, der Rand bleibt.
 :host-context(.shell--column) .map__layers {
-  inset-block-start: calc(var(--top-bar-height, 0px) + 16px);
+  inset-block-start: calc(var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + 16px);
 }
 
 :host-context(.shell--column) .map__location {
-  inset-block-start: calc(var(--top-bar-height, 0px) + (var(--size-floating) + 12px) + 16px);
+  inset-block-start: calc(
+    var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + (var(--size-floating) + 12px) + 16px
+  );
 }
 
 // Am Rechner steht der Kompass als dritter Knopf der Gruppe, wie Ebenen und Ort.
 :host-context(.shell--column) .map__compass {
-  inset-block-start: calc(var(--top-bar-height, 0px) + 2 * (var(--size-floating) + 12px) + 16px);
+  inset-block-start: calc(
+    var(--top-bar-height, 0px) + var(--map-buttons-banner-offset) + 2 * (var(--size-floating) + 12px) + 16px
+  );
 }
 
 // Am Rechner steht „Eintragen“ unten rechts über der Karte, größer als die

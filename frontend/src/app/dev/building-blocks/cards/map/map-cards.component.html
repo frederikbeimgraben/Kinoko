@@ -1,0 +1,38 @@
+<app-block-card block="MapPin" [width]="40" [height]="40">
+  <div class="pin-wrap">
+    <app-map-pin colour="#7a5230" />
+  </div>
+</app-block-card>
+
+<app-block-card block="ZoneShape" [width]="390" [height]="400">
+  <app-zone-shape />
+</app-block-card>
+
+<app-block-card block="MapControls" [width]="390" [height]="200">
+  <div class="controls-wrap">
+    <app-map-buttons [showsLocation]="true" [locationAllowed]="true" />
+  </div>
+</app-block-card>
+
+<app-block-card block="StepBar" [width]="358" [height]="56">
+  <app-step-bar class="stepbar-demo" [label]="'beispiel.fertig' | t" [actions]="stepBarActions" />
+</app-block-card>
+
+<app-block-card block="ObjectTitle" [width]="358" [height]="56">
+  <app-object-title
+    [title]="'beispiel.steinpilz' | t"
+    [sub]="'beispiel.fundUnter' | t"
+    colour="#7a5230"
+    icon="mushroom"
+  />
+</app-block-card>
+
+<app-block-card block="QueueCard" [width]="358" [height]="300">
+  <app-review-queue class="queue-demo" [items]="queueItems" [fill]="true" [showActions]="false">
+    <ng-template let-item></ng-template>
+  </app-review-queue>
+</app-block-card>
+
+<app-block-card block="StateView" [width]="390" [height]="360">
+  <app-state-view class="state-demo" [title]="'beispiel.keineTreffer' | t" icon="search" />
+</app-block-card>

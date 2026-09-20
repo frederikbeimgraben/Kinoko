@@ -75,12 +75,12 @@ async function startCorners(setup: Setup): Promise<void> {
 }
 
 describe('ZoneBlattComponent', () => {
-  it('zeigt die Notiz; Name, Punkt und Fläche trägt der Kopf des Blatts', async () => {
+  it('zeigt Name, Fläche, Sichtbarkeit und Notiz im Rumpf', async () => {
     const setup = await build();
 
+    expect(screen.getByText('Schönbuch Nord')).toBeInTheDocument();
+    expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
     expect(screen.getByText('Nordhang, alte Fichten, ab Mitte September.')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Schönbuch Nord' })).not.toBeInTheDocument();
-    expect(screen.queryByText('Zone · 42 ha · privat')).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 

@@ -59,10 +59,6 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   await katalog;
-  // Das Konto löst sich mit dem Katalog auf; `konto-eins` besitzt den Fund der Vorlage.
-  await vi.waitFor(() => {
-    http.expectOne('/api/me').flush(ME);
-  });
   const eintraege = TestBed.inject(EntriesState);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
@@ -89,6 +85,16 @@ function sheetClose(container: Element): HTMLElement {
   return close;
 }
 
+/** Öffnet den Fund der Vorlage; das Blatt des Fundes löst dabei das Konto auf. */
+async function openFind(setup: Setup, id = FIND.id): Promise<void> {
+  setup.state.object.set({ kind: 'find', id });
+  setup.refresh();
+  await vi.waitFor(() => {
+    setup.http.expectOne('/api/me').flush(ME);
+  });
+  setup.refresh();
+}
+
 describe('ObjektBlattComponent', () => {
   it('zeigt nichts, solange kein Objekt in der Adresse steht', async () => {
     const setup = await build();
@@ -96,13 +102,13 @@ describe('ObjektBlattComponent', () => {
     expect(setup.container.querySelector('app-sheet')).toBeNull();
   });
 
-  it('öffnet den Fund aus der Adresse und trägt Art, Zeile und Kennzeichen im Kopf', async () => {
+  it('öffnet den Fund aus der Adresse und trägt Art, Zeile und Kennzeichen im Rumpf', async () => {
     const setup = await build();
 
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
 
-    expect(screen.getByRole('heading', { name: 'Steinpilz' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Fund' })).toBeInTheDocument();
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('6. September 2026 · 3 Stück · Frederik')).toBeInTheDocument();
     expect(screen.getByText('geteilt')).toBeInTheDocument();
     await noViolations(setup.container);
@@ -111,8 +117,7 @@ describe('ObjektBlattComponent', () => {
   it('lässt die Anzahl in der Zeile weg, wenn der Fund keine trägt', async () => {
     const setup = await build({ ...FIND_ENTRY, count: null });
 
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
 
     expect(screen.getByText('6. September 2026 · Frederik')).toBeInTheDocument();
   });
@@ -120,8 +125,7 @@ describe('ObjektBlattComponent', () => {
   it('nennt den Melder eines geteilten Fundes, wenn eine Gruppe ihn auflöst', async () => {
     const setup = await build({ ...FIND_ENTRY, ownerId: 'konto-zwei' });
 
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
 
     await vi.waitFor(() => {
       setup.http.expectOne('/api/people/names?ids=konto-zwei').flush([{ id: 'konto-zwei', name: 'Jonas' }]);
@@ -136,8 +140,7 @@ describe('ObjektBlattComponent', () => {
   it('lässt den Melder weg, wenn keine Gruppe ihn auflöst', async () => {
     const setup = await build({ ...FIND_ENTRY, ownerId: 'konto-zwei' });
 
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
 
     await vi.waitFor(() => {
       setup.http.expectOne('/api/people/names?ids=konto-zwei').flush([]);
@@ -154,12 +157,13 @@ describe('ObjektBlattComponent', () => {
 
     setup.state.object.set({ kind: 'marker', id: MARKER.id });
     setup.refresh();
-    expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
-    expect(setup.container.querySelector('.object__dot')).not.toBeNull();
+    expect(screen.getByRole('heading', { name: 'Marker' })).toBeInTheDocument();
+    expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
 
     setup.state.object.set({ kind: 'zone', id: ZONE.id });
     setup.refresh();
-    expect(screen.getByRole('heading', { name: 'Schönbuch Nord' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Zone' })).toBeInTheDocument();
+    expect(screen.getByText('Schönbuch Nord')).toBeInTheDocument();
     expect(screen.getByText('Zone · 42 ha · privat')).toBeInTheDocument();
   });
 
@@ -170,8 +174,7 @@ describe('ObjektBlattComponent', () => {
     setup.refresh();
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('444px');
 
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('594px');
 
     setup.state.object.set({ kind: 'zone', id: ZONE.id });
@@ -181,8 +184,7 @@ describe('ObjektBlattComponent', () => {
 
   it('stellt das Formular höher und dunkelt die Karte für den Fund ab', async () => {
     const setup = await build();
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
     setup.refresh();
@@ -193,15 +195,13 @@ describe('ObjektBlattComponent', () => {
 
   it('trägt im Formular den Titel des Formulars und den Ort im Kopf', async () => {
     const setup = await build();
-    setup.state.object.set({ kind: 'find', id: FIND.id });
-    setup.refresh();
+    await openFind(setup);
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
     setup.refresh();
 
     expect(screen.getByRole('heading', { name: 'Fund bearbeiten' })).toBeInTheDocument();
     expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
-    expect(setup.container.querySelector('.object__dot')).toBeNull();
   });
 
   it('führt das X aus dem Formular zurück zum Objekt und dann erst hinaus', async () => {
@@ -214,7 +214,8 @@ describe('ObjektBlattComponent', () => {
     await userEvent.click(sheetClose(setup.container));
     setup.refresh();
 
-    expect(screen.getByRole('heading', { name: 'Alter Fichtenhang' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Marker' })).toBeInTheDocument();
+    expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
 
     await userEvent.click(sheetClose(setup.container));
     setup.refresh();

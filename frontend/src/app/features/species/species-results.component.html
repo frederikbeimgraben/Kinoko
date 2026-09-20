@@ -10,7 +10,13 @@
 
 @if (failed()) {
   <div class="results__middle">
-    <app-error-state [text]="'common.loadFailed' | t" (retry)="retry.emit()" />
+    <app-state-view
+      kind="error"
+      icon="warning"
+      [title]="'common.loadFailed' | t"
+      [action]="'common.retry' | t"
+      (actionClick)="retry.emit()"
+    />
   </div>
 } @else if (loading()) {
   <div class="results__card">
@@ -26,9 +32,9 @@
   </div>
 } @else if (rows().length === 0) {
   <div class="results__middle">
-    <app-empty-state
+    <app-state-view
       icon="search"
-      [text]="'species.filter.noMatch' | t"
+      [title]="'species.filter.noMatch' | t"
       [action]="'filter.resetAll' | t"
       (actionClick)="resetFilter.emit()"
     />

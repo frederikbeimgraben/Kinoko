@@ -1,28 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import type { Find, Marker, Zone } from '../../core/api/models';
-import { AccountService } from '../../core/access/account.service';
-import { PersonNamesService } from '../../core/access/person-names.service';
-import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
 import { coordinatesText } from '../add-entry/coordinates';
-import { visibilityText } from '../add-entry/visibility';
 import { EntriesState } from '../entries/entries.state';
-import { colourHex } from '../entries/colors';
-import { hectaresText } from '../entries/formats';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapState, type ObjectKind } from '../map/map.state';
-import { SpeciesState } from '../species/species.state';
 import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
 import { ObjectSheetState } from './object-sheet.state';
 import { ZoneSheetComponent } from './zone-sheet.component';
-import { findSubline } from '../entries/find-subline';
 
 /** Der Name des Blatts für Hilfsmittel. */
 const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
@@ -67,7 +58,6 @@ const ZOOM_OBJECT = 14;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FindSheetComponent,
-    LevelPillComponent,
     MarkerSheetComponent,
     OverlayHostComponent,
     SheetComponent,
@@ -80,12 +70,9 @@ const ZOOM_OBJECT = 14;
 })
 export class ObjectSheetComponent {
   private readonly adapter = inject(MAP_ADAPTER);
-  private readonly account = inject(AccountService);
   private readonly eintraege = inject(EntriesState);
-  private readonly names = inject(PersonNamesService);
   private readonly i18n = inject(I18nService);
   private readonly sheet = inject(ObjectSheetState);
-  private readonly species = inject(SpeciesState);
 
   protected readonly map = inject(MapState);
 
@@ -129,34 +116,20 @@ export class ObjectSheetComponent {
     return offen === null ? '' : this.i18n.translate(SHEET_NAME[offen.kind]);
   });
 
-  /** Der Titel im Kopf: der Name des Objekts, im Formular der des Formulars. */
+  /** Der Titel im Kopf: die Art des Objekts. Der Name steht als `ObjectTitle` im Rumpf. */
   protected readonly headTitle = computed(() => {
     const offen = this.map.object();
     if (offen === null) return '';
     if (this.editing()) return this.i18n.translate(EDIT_TITLE[offen.kind]);
-    const find = this.find();
-    if (find !== null) return this.speciesName(find);
-    return this.marker()?.name ?? this.zone()?.name ?? '';
+    return this.sheetName();
   });
 
-  /** Die gedämpfte Zeile unter dem Titel. Der Marker trägt seine Notiz im Rumpf. */
+  /** Die gedämpfte Zeile unter dem Titel, nur im Formular. */
   protected readonly headNote = computed(() => {
+    if (!this.editing()) return '';
     const find = this.find();
-    if (this.editing()) return find === null ? '' : coordinatesText([find.lon, find.lat], this.i18n);
-    if (find !== null) return this.findSubline(find);
-    const zone = this.zone();
-    return zone === null ? '' : this.zoneSubline(zone);
+    return find === null ? '' : coordinatesText([find.lon, find.lat], this.i18n);
   });
-
-  /** Der Punkt vor dem Namen trägt die Farbe (Boards `MarkerSheet`, `ZoneSheet`). */
-  protected readonly dotColour = computed<string | null>(() => {
-    if (this.editing()) return null;
-    const object = this.marker() ?? this.zone();
-    return object === null ? null : colourHex(object.colour);
-  });
-
-  /** Die Plakette neben dem Namen des Fundes, wie das Brett `FindSheet`. */
-  protected readonly shared = computed(() => !this.editing() && this.find()?.visibility === 'shared');
 
   /** Offen, aber nichts gefunden: der Eintrag ist fort oder gehört einem anderen Konto. */
   protected readonly missing = computed(
@@ -193,28 +166,5 @@ export class ObjectSheetComponent {
   protected dismiss(): void {
     if (this.editing()) this.editing.set(false);
     else this.close();
-  }
-
-  private speciesName(find: Find): string {
-    const id = find.speciesId;
-    return (id === null ? null : this.species.entryById(id)?.name) ?? '';
-  }
-
-  private findSubline(find: Find): string {
-    const date = longDate(find.foundOn, this.i18n.locale());
-    return findSubline(this.i18n, date, find.count, this.reporterName(find));
-  }
-
-  /** Der eigene Name kommt aus dem Konto, ein fremder nur bei gemeinsamer Gruppe. */
-  private reporterName(find: Find): string | null {
-    if (this.account.owns(find.ownerId)) return this.eintraege.reporter() ?? '';
-    return this.names.nameOf(find.ownerId);
-  }
-
-  private zoneSubline(zone: Zone): string {
-    return this.i18n.translate('zone.unter', {
-      flaeche: hectaresText(zone.areaHa, this.i18n.locale()),
-      sichtbarkeit: visibilityText(this.i18n, zone.visibility),
-    });
   }
 }

@@ -9,6 +9,7 @@
   />
 } @else {
   <div class="objectsheet">
+    <app-object-title [title]="marker().name" [sub]="sub()" [colour]="colour()" icon="flag" />
     @if (marker().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }

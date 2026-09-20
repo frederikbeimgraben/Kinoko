@@ -13,6 +13,7 @@
   </app-object-form>
 } @else {
   <div class="objectsheet">
+    <app-object-title [title]="zone().name" [sub]="sub()" [colour]="colour()" icon="zone" />
     @if (zone().note; as note) {
       <p class="objectsheet__note">{{ note }}</p>
     }

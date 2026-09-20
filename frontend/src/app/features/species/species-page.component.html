@@ -64,9 +64,9 @@
   <app-page-header [title]="'species.title' | t" [back]="true" (backClick)="back()" />
   <div class="page">
     @if (!waiting()) {
-      <app-empty-state
+      <app-state-view
         icon="species"
-        [text]="'species.notFound' | t"
+        [title]="'species.notFound' | t"
         [action]="'species.backToList' | t"
         (actionClick)="toList()"
       />
