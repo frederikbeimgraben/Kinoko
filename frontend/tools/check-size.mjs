@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-/**
- * Prüft Dateigrössen in `src/app`.
- * Grenzen: `features/` eng, `ui/` und `core/` weiter (CLAUDE.md).
- */
+/** Prüft die Dateigrößen: `features/` eng, `ui/` und `core/` weiter. */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';

@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-/**
- * Prüft Kommentarregeln in `src` und `tools`.
- * Siehe CLAUDE.md: Kommentare sagen Warum, nie Was.
- */
+/** Prüft Kommentare unter `src`, `e2e` und `tools`: Länge, Erzähltext und Geschichte. */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
