@@ -226,7 +226,7 @@ test.describe('Seitenhöhe am Telefon', () => {
       '/api/photos': photoPage(SPECIES_PHOTOS),
       '/api/me/permissions': { permissions: ['image.review'], roles: [] },
     });
-    await expect(page.getByText('CC BY-SA 4.0')).toBeVisible();
+    await expect(page.getByText('CC BY-SA 4.0', { exact: true })).toBeVisible();
     await assertFillsViewport(page);
   });
 

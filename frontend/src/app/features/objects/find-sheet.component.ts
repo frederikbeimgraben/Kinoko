@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   inject,
+  Injector,
   input,
   output,
   signal,
@@ -84,6 +86,8 @@ export class FindSheetComponent {
   /** Die Fotos, die der Dienst zu dem Fund kennt; Leiste und Formular zeigen sie. */
   protected readonly held = signal<readonly Photo[]>([]);
   protected readonly viewing = signal<number | null>(null);
+  private readonly injector = inject(Injector);
+  private tile: HTMLElement | null = null;
   private readonly value = signal<number | null>(null);
 
   protected readonly strip = computed<readonly StripPhoto[]>(() =>
@@ -169,11 +173,14 @@ export class FindSheetComponent {
   }
 
   protected openPhoto(index: number): void {
+    const active = document.activeElement;
+    this.tile = active instanceof HTMLElement ? active : null;
     this.viewing.set(index);
   }
 
   protected closeGallery(): void {
     this.viewing.set(null);
+    afterNextRender(() => this.tile?.focus(), { injector: this.injector });
   }
 
   protected async save(submission: FindSubmission): Promise<void> {
