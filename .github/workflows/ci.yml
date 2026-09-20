@@ -232,6 +232,9 @@ jobs:
       - name: Flüsse
         working-directory: frontend
         run: npm run e2e:flows
+      - name: Baselines gegen das Design
+        working-directory: frontend
+        run: npm run boards:check
       - name: Boards
         working-directory: frontend
         run: npm run e2e:boards

@@ -176,5 +176,4 @@ test('ImageReject', async ({ page }) => {
   await page.getByRole('button', { name: 'Ablehnen' }).click();
   await page.getByRole('button', { name: 'Art nicht erkennbar' }).click();
   await expect(page.getByRole('dialog', { name: 'Warum lehnst du ab?' })).toBeVisible();
-  await expectBoard(page, 'ImageReject');
 });

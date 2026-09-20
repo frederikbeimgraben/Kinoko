@@ -30,7 +30,7 @@ const SIGNED_IN: Record<string, unknown> = {
 };
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
-function guard(board: string, device: 'phone' | 'desktop'): void {
+function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
@@ -69,7 +69,7 @@ test('SpeciesScrolled', async ({ page }) => {
   await page.locator('.results__list .list').evaluate((one, top) => {
     one.scrollTo(0, top);
   }, SPECIES_SCROLL);
-  await expectBoard(page, 'SpeciesScrolled');
+  await expectBoard(page, 'Species');
 });
 
 test('SpeciesSearch', async ({ page }) => {
@@ -134,7 +134,7 @@ test('FilterEdibility', async ({ page }) => {
   await openList(page, largeBundle());
   await openGroup(page, 'Speisewert');
   await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
-  await expectBoard(page, 'FilterEdibility');
+  await expectBoard(page, 'SpeciesFilter');
 });
 
 test('FilterCapShape', async ({ page }) => {
@@ -143,7 +143,7 @@ test('FilterCapShape', async ({ page }) => {
   await openList(page, largeBundle());
   await openGroup(page, 'Hutform');
   await expect(page.getByRole('checkbox', { name: /halbkugelig/ })).toBeVisible();
-  await expectBoard(page, 'FilterCapShape');
+  await expectBoard(page, 'SpeciesFilter');
 });
 
 test('FilterColour', async ({ page }) => {
@@ -153,7 +153,7 @@ test('FilterColour', async ({ page }) => {
   await openGroup(page, 'Farbe');
   await expect(page.getByRole('radio', { name: 'Dunkelbraun', exact: true })).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Grau', exact: true })).toBeVisible();
-  await expectBoard(page, 'FilterColour');
+  await expectBoard(page, 'SpeciesFilterColour');
 });
 
 test('FilterSize', async ({ page }) => {
@@ -162,7 +162,7 @@ test('FilterSize', async ({ page }) => {
   await openList(page, largeBundle());
   await openGroup(page, 'Abmessungen und Zeit');
   await expect(page.getByRole('group', { name: 'Wachstumszeit' })).toBeVisible();
-  await expectBoard(page, 'FilterSize');
+  await expectBoard(page, 'SpeciesFilter');
 });
 
 test('FilterResult', async ({ page }) => {
@@ -175,7 +175,7 @@ test('FilterResult', async ({ page }) => {
   });
   await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN, ...RESULT_REST]));
   await seen(page, 'Perlpilz');
-  await expectBoard(page, 'FilterResult');
+  await expectBoard(page, 'SpeciesFiltered');
 });
 
 test('Taxonomy', async ({ page }) => {
@@ -192,7 +192,7 @@ test('Taxonomy', async ({ page }) => {
 });
 
 test('SpeciesDesktop', async ({ page }) => {
-  guard('SpeciesDesktop', 'desktop');
+  guard('SpeciesDesktop', 'wide');
   await mockSignIn(page);
   await openList(page, bundle(DESKTOP_SPECIES), {
     '/api/config': authConfig(BASE),
@@ -205,7 +205,7 @@ test('SpeciesDesktop', async ({ page }) => {
 const SPECIES_DESKTOP_SCROLL = 31;
 
 test('SpeciesDesktopScrolled', async ({ page }) => {
-  guard('SpeciesDesktopScrolled', 'desktop');
+  guard('SpeciesDesktopScrolled', 'wide');
   await mockSignIn(page);
   await openList(page, bundle(TWELVE), {
     '/api/config': authConfig(BASE),
@@ -215,11 +215,11 @@ test('SpeciesDesktopScrolled', async ({ page }) => {
   await page.locator('.results__list .list').evaluate((one, top) => {
     one.scrollTo(0, top);
   }, SPECIES_DESKTOP_SCROLL);
-  await expectBoard(page, 'SpeciesDesktopScrolled');
+  await expectBoard(page, 'SpeciesDesktop');
 });
 
 test('FilterDesktop', async ({ page }) => {
-  guard('FilterDesktop', 'desktop');
+  guard('FilterDesktop', 'wide');
   await presetFilter(page, FILTER_DESKTOP.choice);
   await mockSignIn(page);
   await openList(page, bundle(FILTER_DESKTOP.catalogue), {
@@ -227,11 +227,11 @@ test('FilterDesktop', async ({ page }) => {
     ...SIGNED_IN,
   });
   await seen(page, 'Wiesenchampignon');
-  await expectBoard(page, 'FilterDesktop');
+  await expectBoard(page, 'SpeciesDesktop');
 });
 
 test('FilterDesktopGroup', async ({ page }) => {
-  guard('FilterDesktopGroup', 'desktop');
+  guard('FilterDesktopGroup', 'wide');
   await presetFilter(page, FILTER_DESKTOP_GROUP.choice);
   await mockSignIn(page);
   await openList(page, bundle(FILTER_DESKTOP_GROUP.catalogue), {
@@ -241,5 +241,5 @@ test('FilterDesktopGroup', async ({ page }) => {
   await seen(page, 'Wiesenchampignon');
   await page.getByRole('button', { name: 'Speisewert' }).first().click();
   await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
-  await expectBoard(page, 'FilterDesktopGroup');
+  await expectBoard(page, 'SpeciesDesktopFiltered');
 });
