@@ -1,3 +1,5 @@
-@use 'section';
-
-@include section.block;
+:host {
+  display: block;
+  // Der Teilname steht fett vor dem gedämpften Farbnamen, wie am Brett.
+  --list-row-title-weight: var(--fw-semibold);
+}

@@ -178,7 +178,7 @@ describe('FundBlattComponent', () => {
     });
   });
 
-  /** Beantwortet jede offene Abfrage der Fotoliste. Galerie und Formular fragen. */
+  /** Beantwortet jede offene Abfrage der Fotoliste. */
   async function answerPhotos(setup: Setup, ids: readonly string[]): Promise<void> {
     await vi.waitFor(() => {
       const open = setup.http.match((request) => request.url === '/api/photos' && request.method === 'GET');
