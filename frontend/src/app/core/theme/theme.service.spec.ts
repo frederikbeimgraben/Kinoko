@@ -104,11 +104,11 @@ describe('ThemeService', () => {
     theme.setChoice('dunkel');
     const metas = document.head.querySelectorAll('meta[name="theme-color"]');
     expect(metas.length).toBe(1);
-    expect(metas[0].getAttribute('content')).toBe('#161c18');
+    expect(metas[0].getAttribute('content')).toBe('#111411');
     expect(metas[0].hasAttribute('media')).toBe(false);
     expect(document.head.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('dark');
     theme.setChoice('hell');
-    expect(document.head.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe('#ffffff');
+    expect(document.head.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe('#f6faf4');
     expect(document.head.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('light');
   });
 });

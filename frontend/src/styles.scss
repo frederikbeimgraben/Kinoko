@@ -1,10 +1,19 @@
 @use '@stupa-makers/ui-kit/styles';
 @use 'styles/tokens';
+@use 'styles/legacy-colour-aliases';
+@use 'styles/font';
 @use 'styles/kit-helpers';
 @use 'styles/press';
 @use 'styles/pointer';
 @use 'styles/stopgap';
 @use 'styles/route-motion';
+
+body {
+  font-family: 'Archivo', 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
 
 // Die App füllt das Gerät und scrollt nur innerhalb ihrer Flächen. Ein
 // Seitenscroll würde das Blatt und die Navigation vom Rand lösen.

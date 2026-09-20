@@ -8,8 +8,8 @@ const STORAGE_KEY = 'pilzkarte.theme';
 /** Das ui-kit erwartet `data-theme="light|dark"` auf `<html>`. */
 const AS_ATTRIBUTE: Record<EffectiveTheme, string> = { hell: 'light', dunkel: 'dark' };
 
-/** `--color-surface` je Theme: Kopf und Reiterleiste grenzen an die Systemleisten. */
-const SYSTEM_BAR: Record<EffectiveTheme, string> = { hell: '#ffffff', dunkel: '#161c18' };
+/** `--bg` je Theme: Kopf und Reiterleiste grenzen an die Systemleisten. */
+const SYSTEM_BAR: Record<EffectiveTheme, string> = { hell: '#f6faf4', dunkel: '#111411' };
 
 /**
  * Hell, dunkel oder System. Die Wahl wird gespeichert und beim Start wieder

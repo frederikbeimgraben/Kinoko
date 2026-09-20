@@ -1,0 +1,42 @@
+:root {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--surface-high);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-low);
+  --color-border: var(--outline);
+  --color-border-strong: var(--outline-strong);
+
+  --color-text: var(--text);
+  --color-text-muted: var(--text-var);
+  --color-text-disabled: var(--label);
+  --color-text-inverse: var(--on-primary);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-hover);
+  --color-primary-subtle: var(--sel);
+  --color-on-primary: var(--on-primary);
+  --color-focus-ring: var(--primary);
+
+  --color-accent: var(--bar);
+  --color-accent-soft: var(--hero);
+
+  --color-danger: var(--bad);
+  --color-danger-subtle: var(--bad-bg);
+  --color-warning: var(--warn);
+  --color-warning-subtle: var(--warn-bg);
+  --color-info: var(--banner);
+  --color-info-subtle: var(--banner-bg);
+  --color-success: var(--ok);
+  --color-success-subtle: var(--ok-bg);
+
+  --color-handle: #ffffff;
+  --color-on-media: #ffffff;
+
+  --colour-object-green: var(--primary);
+  --colour-object-brown: var(--hero);
+  --colour-object-blue: var(--label);
+  --colour-object-red: var(--bad);
+  --colour-object-gold: var(--bar);
+  --colour-object-grey: var(--outline-strong);
+}

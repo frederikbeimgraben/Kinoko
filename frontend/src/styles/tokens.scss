@@ -1,113 +1,88 @@
-// Quelle der Werte ist das Token-Wörterbuch der Mockups.
-// Das Kit setzt dieselben Namen; diese Datei steht danach und gewinnt.
+// Werte aus artefakte/mockups/design/uebergabe/tokens.json.
 
 :root,
-:root[data-theme='light'] {
-  color-scheme: light;
-
-  --color-bg: #f7f8f7;
-  --color-bg-elevated: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-sunken: #eef0ee;
-  --color-border: #e0e3e0;
-  --color-border-strong: #828a84;
-
-  --color-text: #141815;
-  --color-text-muted: #666c67;
-  --color-text-inverse: #ffffff;
-
-  --color-primary: #004225;
-  --color-primary-hover: #00351e;
-  --color-primary-active: #002615;
-  --color-primary-subtle: #e9f1ec;
-  --color-on-primary: #ffffff;
-  --color-focus-ring: #2c6e48;
-
-  --color-accent: #8c6820;
-  --color-accent-soft: #c8a25a;
-
-  --color-danger: #8c1c16;
-  --color-danger-subtle: #f5e2e0;
-  --color-warning: #876010;
-  --color-warning-subtle: #f7eed8;
-  --color-info: #185468;
-  --color-info-subtle: #dfeef3;
-
-  // Die Farbe eines Markers oder einer Zone in einer Liste und auf der Karte.
-  // Die Farbfelder im Formular tragen die festen Werte aus `OBJECT_COLOURS`.
-  --colour-object-green: #004225;
-  --colour-object-brown: #8c6820;
-  --colour-object-blue: #185468;
-  --colour-object-red: #8c1c16;
-  --colour-object-gold: #876010;
-  --colour-object-grey: #3a3f3b;
-
-  --shadow-sm: 0 1px 2px rgb(0 38 21 / 6%), 0 1px 3px rgb(0 38 21 / 8%);
-  --shadow-md: 0 2px 6px rgb(0 38 21 / 8%), 0 6px 16px rgb(0 38 21 / 8%);
-  --shadow-lg: 0 8px 28px rgb(0 38 21 / 14%);
-}
-
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg: #101512;
-  --color-bg-elevated: #161c18;
-  --color-surface: #161c18;
-  --color-surface-sunken: #1d2420;
-  --color-border: #2a332d;
-  --color-border-strong: #646f68;
-
-  --color-text: #e8eee9;
-  --color-text-muted: #95a09a;
-  --color-text-inverse: #08130c;
-
-  --color-primary: #4f9d6f;
-  --color-primary-hover: #72a384;
-  --color-primary-active: #a0c1ac;
-  --color-primary-subtle: #16291f;
-  --color-on-primary: #08130c;
-  --color-focus-ring: #4f9d6f;
-
-  --color-accent: #c8a25a;
-  --color-accent-soft: #e3c17f;
-
-  --color-danger: #d2685f;
-  --color-danger-subtle: #2a1a19;
-  --color-warning: #c8a25a;
-  --color-warning-subtle: #2a2013;
-  --color-info: #7fc4d9;
-  --color-info-subtle: #122a30;
-
-  --colour-object-green: #4f9d6f;
-  --colour-object-brown: #c8a25a;
-  --colour-object-blue: #7fc4d9;
-  --colour-object-red: #d2685f;
-  --colour-object-gold: #e3c17f;
-  --colour-object-grey: #95a09a;
+  --bg: #111411;
+  --surface-low: #191d1a;
+  --surface: #1d211e;
+  --surface-high: #272b28;
+  --desk: #1b1f1c;
+  --surface-mid: #151916;
+  --sheet: #161a17;
+  --nav: #1f2420;
+  --search: #0b0e0c;
+  --text: #e1e3de;
+  --text-var: #c0c9c0;
+  --label: #9aa39b;
+  --outline: #404942;
+  --outline-strong: #737c74;
+  --primary: #8fd6a8;
+  --on-primary: #00391f;
+  --primary-hover: #abf2c3;
+  --fab: #2c5a3f;
+  --on-fab: #c9f0d5;
+  --sel: #35493c;
+  --on-sel: #d0e8d6;
+  --tonal: #2b322d;
+  --ok-bg: #1f3a2a;
+  --ok: #a6e3b9;
+  --warn-bg: #4a2f12;
+  --warn: #ffc98a;
+  --bad-bg: #5c1f24;
+  --bad: #ffb3b5;
+  --banner-bg: #4a3a14;
+  --banner: #ffdf9e;
+  --hero-bg: #2a2620;
+  --hero: #7a5230;
+  --bar: #e3c17f;
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
   --shadow-md: 0 2px 8px rgb(0 0 0 / 50%);
   --shadow-lg: 0 10px 32px rgb(0 0 0 / 60%);
 }
 
-// Das Grün der Meldung steht heller als die Marke, wie die Bretter es malen.
-:root,
-:root[data-theme='light'],
-:root[data-theme='dark'] {
-  --color-success: var(--color-primary);
-  --color-success-subtle: var(--color-primary-subtle);
-  --color-handle: #ffffff;
-  --color-on-media: #ffffff;
-}
+:root[data-theme='light'] {
+  color-scheme: light;
 
-:root[data-theme='dark'] {
-  --color-success: #5fb37f;
-}
+  --bg: #f6faf4;
+  --surface-low: #f0f5ee;
+  --surface: #eaefe8;
+  --surface-high: #dfe6dd;
+  --desk: #e4eae2;
+  --surface-mid: #eef3ec;
+  --sheet: #f6faf4;
+  --nav: #e4eae2;
+  --search: #ffffff;
+  --text: #181d19;
+  --text-var: #414942;
+  --label: #5c655d;
+  --outline: #c0c9c0;
+  --outline-strong: #717971;
+  --primary: #2c6a45;
+  --on-primary: #ffffff;
+  --primary-hover: #1d5234;
+  --fab: #b1f1c3;
+  --on-fab: #00210f;
+  --sel: #cfe9d6;
+  --on-sel: #0b1f13;
+  --tonal: #dde5dc;
+  --ok-bg: #cdebd5;
+  --ok: #0f5229;
+  --warn-bg: #ffddb8;
+  --warn: #6b3d00;
+  --bad-bg: #ffdad9;
+  --bad: #8c1c16;
+  --banner-bg: #ffe8b0;
+  --banner: #5a4300;
+  --hero-bg: #e9e2d6;
+  --hero: #7a5230;
+  --bar: #8c6820;
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --color-success: #5fb37f;
-  }
+  --shadow-sm: 0 1px 2px rgb(0 38 21 / 6%), 0 1px 3px rgb(0 38 21 / 8%);
+  --shadow-md: 0 2px 6px rgb(0 38 21 / 8%), 0 6px 16px rgb(0 38 21 / 8%);
+  --shadow-lg: 0 8px 28px rgb(0 38 21 / 14%);
 }
 
 :root {
