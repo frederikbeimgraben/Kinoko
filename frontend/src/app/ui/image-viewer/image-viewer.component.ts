@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import { longDate } from '../../core/i18n/dates';
 import { COARSE_DIGITS } from '../../core/location/grid';
 import { coarsePlace } from '../../core/i18n/places';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../image-credit/licences';
+import { LevelPillComponent } from '../level-pill/level-pill.component';
 import { ListRowComponent } from '../list-row/list-row.component';
 import { PageHeaderComponent } from '../page-header/page-header.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
@@ -24,7 +24,7 @@ interface Detail {
 @Component({
   selector: 'app-image-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, ListRowComponent, PageHeaderComponent, PrivateImageComponent, TranslatePipe],
+  imports: [LevelPillComponent, ListRowComponent, PageHeaderComponent, PrivateImageComponent, TranslatePipe],
   templateUrl: './image-viewer.component.html',
   styleUrl: './image-viewer.component.scss',
 })

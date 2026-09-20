@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent, ToastService } from '@stupa-makers/ui-kit';
+import { ToastService } from '@stupa-makers/ui-kit';
 import type { TextEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TextCatalogService } from '../../core/i18n/text-catalog.service';
@@ -8,6 +8,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
@@ -45,8 +46,8 @@ interface Draft {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    BadgeComponent,
     FormFieldComponent,
+    LevelPillComponent,
     OverlayHostComponent,
     PageHeaderComponent,
     SearchFieldComponent,

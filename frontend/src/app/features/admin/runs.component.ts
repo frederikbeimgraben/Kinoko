@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { PipelineRun, RunKind } from '../../core/api/models';
 import { RUN_KINDS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -8,6 +7,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { ProgressComponent } from '../../ui/progress/progress.component';
@@ -48,8 +48,8 @@ interface Active {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    BadgeComponent,
     ConfirmDialogComponent,
+    LevelPillComponent,
     ListRowComponent,
     PageHeaderComponent,
     ProgressComponent,

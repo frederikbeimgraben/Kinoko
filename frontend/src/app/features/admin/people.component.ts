@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { BadgeComponent } from '@stupa-makers/ui-kit';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
@@ -25,8 +25,6 @@ const EVERY_ONE = 'user';
 interface Mark {
   id: string;
   name: string;
-  /** Die Rolle Admin trägt die Primärfarbe, jede andere den Grundton. */
-  lead: boolean;
 }
 
 /** Eine Zeile der Personenliste. */
@@ -50,9 +48,9 @@ interface Choice {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    BadgeComponent,
     CheckRowComponent,
     ConfirmDialogComponent,
+    LevelPillComponent,
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
@@ -80,11 +78,7 @@ export class PeopleComponent {
       id: person.id,
       name: person.name ?? this.i18n.translate('admin.people.noName'),
       email: person.email ?? '',
-      roles: person.roles.map((role) => ({
-        id: role.id,
-        name: roleName(this.i18n, role.name),
-        lead: role.slug === 'admin',
-      })),
+      roles: person.roles.map((role) => ({ id: role.id, name: roleName(this.i18n, role.name) })),
     })),
   );
 

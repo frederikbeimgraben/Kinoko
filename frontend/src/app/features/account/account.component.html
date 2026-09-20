@@ -105,7 +105,7 @@
       <app-list-row [title]="'account.sourcesAndLicences' | t" [clickable]="true" (chosen)="toLicences()" />
       <app-list-row [title]="'konto.version' | t" [value]="version">
         @if (updateReady()) {
-          <app-badge trail variant="success">{{ 'konto.aktualisierungBereit' | t }}</app-badge>
+          <app-level-pill trail [text]="'konto.aktualisierungBereit' | t" kind="ok" />
         }
       </app-list-row>
     </div>

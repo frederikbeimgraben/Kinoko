@@ -25,9 +25,7 @@
       <span titleLead class="object__dot" [style.background]="colour"></span>
     }
     @if (shared()) {
-      <app-badge titleLead class="object__badge" variant="success">
-        {{ 'entry.badge.shared' | t }}
-      </app-badge>
+      <app-level-pill titleLead class="object__badge" [text]="'entry.badge.shared' | t" kind="ok" />
     }
     @if (find(); as entry) {
       <app-find-sheet [find]="entry" (closed)="close()" />

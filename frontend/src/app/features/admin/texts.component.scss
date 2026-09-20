@@ -98,7 +98,7 @@
   display: contents;
 }
 
-.texts__mark app-badge {
+.texts__mark app-level-pill {
   order: 1;
 }
 
@@ -123,9 +123,4 @@
 
 app-action-bar {
   --action-bar-height: var(--size-tap);
-}
-
-app-badge {
-  --space-1: 3px;
-  --space-3: 10px;
 }

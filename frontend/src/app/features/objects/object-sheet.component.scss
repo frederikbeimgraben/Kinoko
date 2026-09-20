@@ -13,9 +13,6 @@
 // Die Plakette steht hinter dem Namen, nicht davor. Sie misst im Brett drei
 // auf zehn Punkte.
 .object__badge {
-  --space-1: 3px;
-  --space-3: 10px;
-
   flex: none;
   order: 1;
 }

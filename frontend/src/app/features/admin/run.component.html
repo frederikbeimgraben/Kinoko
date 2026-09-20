@@ -7,7 +7,7 @@
     }
     @if (result(); as result) {
       <app-list-row kind="catalogue" [title]="resultTitle()">
-        <app-badge trail variant="primary">{{ result }}</app-badge>
+        <app-level-pill trail [text]="result" />
       </app-list-row>
     }
   </div>
@@ -21,7 +21,7 @@
             @if (step.done) {
               <app-svg-icon trail class="run__check" name="check" [size]="18" [strokeWidth]="2" />
             } @else {
-              <app-badge trail variant="primary">{{ step.state }}</app-badge>
+              <app-level-pill trail [text]="step.state" [kind]="step.kind" />
             }
           </app-list-row>
         }
