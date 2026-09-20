@@ -1,32 +1,39 @@
 @if (rows().length > 0) {
-  <h2 class="section__title">{{ 'species.section.lookalikes' | t }}</h2>
-  <div class="section__card">
-    @for (row of rows(); track row.slug) {
-      <app-list-row kind="catalogue" [title]="row.name">
-        <span action class="lookalike__ways">
-          <button
-            class="lookalike__way lookalike__way--compare tap"
-            type="button"
-            data-press="scale"
-            [attr.aria-label]="'species.compare' | t"
-            (click)="compared.emit(row.slug)"
-          >
-            <app-svg-icon name="compare" [size]="18" />
-          </button>
-          <button
-            class="lookalike__way tap"
-            type="button"
-            data-press="scale"
-            [attr.aria-label]="row.name"
-            (click)="opened.emit(row.slug)"
-          >
-            <app-svg-icon name="chevron" [size]="18" />
-          </button>
-          @if (row.image; as path) {
-            <app-private-image class="lookalike__photo" [path]="path" [alt]="row.name" />
-          }
-        </span>
-      </app-list-row>
-    }
-  </div>
+  <app-section [label]="'species.section.lookalikes' | t">
+    <app-row-group>
+      @for (row of rows(); track row.slug) {
+        <app-list-row kind="catalogue" [title]="row.name" [subline]="row.note">
+          <app-private-image
+            lead
+            class="lookalike__photo"
+            [path]="row.image ?? ''"
+            [alt]="row.name"
+            [colour]="row.colour"
+          />
+          <span trail class="lookalike__ways">
+            <button
+              class="lookalike__way lookalike__way--compare tap"
+              type="button"
+              appRipple
+              data-press="scale"
+              [attr.aria-label]="'species.compare' | t"
+              (click)="compared.emit(row.slug)"
+            >
+              <app-svg-icon name="compare" [size]="18" />
+            </button>
+            <button
+              class="lookalike__way tap"
+              type="button"
+              appRipple
+              data-press="scale"
+              [attr.aria-label]="row.name"
+              (click)="opened.emit(row.slug)"
+            >
+              <app-svg-icon name="chevron" [size]="18" tone="dim" />
+            </button>
+          </span>
+        </app-list-row>
+      }
+    </app-row-group>
+  </app-section>
 }

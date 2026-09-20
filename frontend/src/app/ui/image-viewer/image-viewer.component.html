@@ -1,14 +1,15 @@
 @if (image()) {
-  <app-page-header class="viewer__head" [title]="title()" [back]="true" (backClick)="back.emit()">
-    @if (count() > 0) {
-      <span class="viewer__count">{{ counter() }}</span>
-    }
-  </app-page-header>
+  <app-page-header class="viewer__head" [title]="title()" [back]="true" (backClick)="back.emit()" />
   <div class="viewer__body">
-    <app-private-image class="viewer__image" [path]="path() ?? ''" [alt]="alt()" />
-    @if (image()?.caption; as caption) {
-      <p class="viewer__caption">{{ caption }}</p>
-    }
+    <app-hero
+      class="viewer__hero"
+      [photo]="heroPhoto()"
+      [alt]="alt()"
+      [height]="300"
+      [index]="index()"
+      [count]="count()"
+      [interactive]="false"
+    />
     <section class="viewer__block">
       <h2 class="viewer__label">{{ 'image.section.image' | t }}</h2>
       <div class="viewer__facts">

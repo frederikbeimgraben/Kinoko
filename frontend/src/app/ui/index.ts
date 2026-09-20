@@ -39,6 +39,7 @@ export { FloatingButtonComponent } from './floating-button/floating-button.compo
 export { FoldSectionComponent } from './fold-section/fold-section.component';
 export { FormFieldComponent } from './form-field/form-field.component';
 export { FormSheetComponent } from './form-sheet/form-sheet.component';
+export { HeroComponent, type HeroPhoto } from './hero/hero.component';
 export { HistogramComponent } from './histogram/histogram.component';
 export {
   IconButtonComponent,
@@ -69,7 +70,11 @@ export { ObjectTitleComponent } from './object-title/object-title.component';
 export { OptionSheetComponent, type OptionSheetOption } from './option-sheet/option-sheet.component';
 export { OverlayHostComponent } from './overlay-host/overlay-host.component';
 export { PageHeaderComponent } from './page-header/page-header.component';
-export { PhotoPickerComponent } from './photo-picker/photo-picker.component';
+export {
+  PhotoStripComponent,
+  type PhotoStripMode,
+  type StripPhoto,
+} from './photo-strip/photo-strip.component';
 export { PrivateImageComponent } from './private-image/private-image.component';
 export { ProgressComponent } from './progress/progress.component';
 export { RampComponent, type RampKind } from './ramp/ramp.component';

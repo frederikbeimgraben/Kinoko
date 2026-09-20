@@ -1,12 +1,13 @@
 @if (genus()) {
-  <div class="section__card">
+  <app-row-group>
     <app-list-row
       kind="catalogue"
+      icon="tree"
       [title]="'species.section.taxonomy' | t"
-      [value]="line()"
+      [subline]="line()"
       [chevron]="true"
       [clickable]="true"
       (chosen)="open()"
     />
-  </div>
+  </app-row-group>
 }

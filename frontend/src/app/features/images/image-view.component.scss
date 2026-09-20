@@ -8,10 +8,7 @@
   overflow: hidden;
 }
 
-// Das Bild der Seite steht größer als im Stapel.
 .view {
-  --image-viewer-height: 300px;
-
   flex: 1;
   min-block-size: 0;
   overflow-y: auto;
