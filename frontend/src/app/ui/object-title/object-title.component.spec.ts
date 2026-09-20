@@ -3,6 +3,12 @@ import { noViolations } from '../../testing/axe';
 import { ObjectTitleComponent } from './object-title.component';
 
 describe('ObjectTitleComponent', () => {
+  it('führt den Namen als Überschrift', async () => {
+    await render(ObjectTitleComponent, { inputs: { title: 'Steinpilz' } });
+
+    expect(screen.getByRole('heading', { name: 'Steinpilz' })).toBeInTheDocument();
+  });
+
   it('zeigt Bild, Namen und die gedämpfte Zeile', async () => {
     const { container } = await render(ObjectTitleComponent, {
       inputs: { title: 'Steinpilz', sub: '6. September 2026 · 3 Stück · Frederik' },
