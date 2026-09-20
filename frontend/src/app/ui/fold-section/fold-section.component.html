@@ -1,0 +1,18 @@
+<section class="sec">
+  <button
+    type="button"
+    class="lbl fold"
+    appRipple
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="contentId"
+    (click)="toggle()"
+  >
+    <span>{{ label() }}</span>
+    <app-svg-icon name="chevron" [size]="18" [style.rotate]="open() ? '-90deg' : '90deg'" />
+  </button>
+  @if (open()) {
+    <div [id]="contentId">
+      <ng-content />
+    </div>
+  }
+</section>

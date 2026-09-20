@@ -5,21 +5,24 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { BannerComponent } from './banner.component';
 
 describe('BannerComponent', () => {
-  it('meldet, dass keine Verbindung steht', async () => {
+  it('meldet, dass keine Verbindung steht, im Fehlerton', async () => {
     const { container } = await render(BannerComponent, {
       inputs: { kind: 'noConnection' },
     });
 
-    expect(screen.getByRole('status')).toHaveTextContent('Keine Verbindung');
+    const banner = screen.getByRole('button', { name: 'Keine Verbindung' });
+    expect(banner).toHaveClass('banner--error');
     await noViolations(container);
   });
 
-  it('meldet, dass etwas auf die Übertragung wartet', async () => {
+  it('meldet, dass etwas auf die Übertragung wartet, im Warnton', async () => {
     const { container } = await render(BannerComponent, {
       inputs: { kind: 'pending' },
     });
 
-    expect(screen.getByRole('status')).toHaveTextContent('Offline');
+    const banner = screen.getByRole('button', { name: 'Offline' });
+    expect(banner).not.toHaveClass('banner--error');
+    expect(banner).not.toHaveClass('banner--info');
     await noViolations(container);
   });
 
@@ -32,17 +35,18 @@ describe('BannerComponent', () => {
     noGermanText(container);
   });
 
-  it('meldet eine bereitstehende Fassung ohne Piktogramm', async () => {
+  it('meldet eine bereitstehende Fassung ohne Piktogramm, im Hinweiston', async () => {
     const { container } = await render(BannerComponent, {
       inputs: { kind: 'update' },
     });
 
-    expect(screen.getByRole('status')).toHaveTextContent('Neue Version');
+    const banner = screen.getByRole('button', { name: 'Neue Version' });
+    expect(banner).toHaveClass('banner--info');
     expect(container.querySelector('.banner__glyph')).toBeNull();
     await noViolations(container);
   });
 
-  it('trägt eine Aktion und meldet ihren Klick', async () => {
+  it('trägt eine Aktion und meldet ihren Klick von der ganzen Fläche', async () => {
     const { container, fixture } = await render(BannerComponent, {
       inputs: { kind: 'update', actionIcon: 'refresh', actionLabel: 'app.update.reload' },
     });
@@ -55,9 +59,49 @@ describe('BannerComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt ohne Aktion keinen Knopf', async () => {
-    await render(BannerComponent, { inputs: { kind: 'noConnection' } });
+  it('trägt ohne eigene Aktion einen Pfeil als Vorgabe', async () => {
+    const { container } = await render(BannerComponent, { inputs: { kind: 'pending' } });
 
-    expect(screen.queryByRole('button')).toBeNull();
+    expect(container.querySelector('.banner__action')).not.toBeNull();
+  });
+
+  it('trägt mit einer Aktion nur deren Symbol, nicht auch den Pfeil', async () => {
+    const { container } = await render(BannerComponent, {
+      inputs: { kind: 'update', actionIcon: 'refresh', actionLabel: 'app.update.reload' },
+    });
+
+    expect(container.querySelectorAll('.banner__action')).toHaveLength(1);
+  });
+
+  it('ist auch ohne eigene Aktion drückbar', async () => {
+    const { fixture } = await render(BannerComponent, { inputs: { kind: 'noConnection' } });
+    let calls = 0;
+    fixture.componentInstance.actionClick.subscribe(() => (calls += 1));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Keine Verbindung' }));
+
+    expect(calls).toBe(1);
+  });
+
+  it('setzt einen Kreis am Berührungspunkt', async () => {
+    const { container } = await render(BannerComponent, { inputs: { kind: 'noConnection' } });
+
+    const banner = container.querySelector<HTMLElement>('.banner');
+    if (banner === null) throw new Error('kein Banner');
+
+    vi.spyOn(banner, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      width: 390,
+      height: 38,
+      right: 390,
+      bottom: 38,
+      toJSON: () => undefined,
+    });
+    banner.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 20 }));
+
+    expect(banner.querySelector('.ripple')).not.toBeNull();
   });
 });

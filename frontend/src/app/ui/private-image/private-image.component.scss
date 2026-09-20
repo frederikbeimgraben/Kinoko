@@ -1,11 +1,13 @@
 // Die Fläche steht schon, bevor das Bild da ist. Sonst springt die Zeile,
-// sobald die Antwort kommt.
+// sobald die Antwort kommt. Vorgabe 44 px und Radius 14, per `kit.css` `.sq`.
 :host {
   position: relative;
   display: block;
+  inline-size: 44px;
+  block-size: 44px;
   overflow: hidden;
-  background: var(--color-surface-sunken);
-  border-radius: var(--radius-sm);
+  background: var(--surface-low);
+  border-radius: 14px;
 }
 
 .private__image {
@@ -38,7 +40,21 @@
   justify-content: center;
   inline-size: 28px;
   block-size: 28px;
-  color: var(--color-on-media);
+  color: #ffffff;
   background: rgb(0 0 0 / 45%);
   border-radius: 50%;
+}
+
+// Das Ersatzsymbol ohne Bild: Icon auf Farbe, per `kit.css` `.sq` mit `fill`.
+.private__fallback {
+  display: flex;
+  inline-size: 100%;
+  block-size: 100%;
+  align-items: center;
+  justify-content: center;
+  color: rgb(255 255 255 / 88%);
+}
+
+.private__fallback--dark {
+  color: rgb(0 0 0 / 70%);
 }

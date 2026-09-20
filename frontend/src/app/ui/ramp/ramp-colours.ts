@@ -1,14 +1,14 @@
 /** Farbverlauf der Wertkacheln, fest wie die Daten selbst, ohne Angular-Import. */
 export const FORECAST_RAMP: readonly string[] = [
-  '#0d0827',
-  '#361152',
-  '#651a68',
-  '#942864',
-  '#c23b54',
-  '#e55c3c',
-  '#f88937',
-  '#fcbb59',
-  '#fce79b',
+  '#0d0829',
+  '#3b0f70',
+  '#721f81',
+  '#9f2f7f',
+  '#cd4071',
+  '#f1605d',
+  '#fd9668',
+  '#feb078',
+  '#fde39a',
 ];
 
 /** Ramp for a rain or precipitation layer, per `kit.css` `.legend .ramp.rain`. */

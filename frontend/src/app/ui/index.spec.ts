@@ -78,6 +78,7 @@ const BLOCKS = [
   'app-row-group',
   'app-skeleton',
   'app-section',
+  'app-fold-section',
   'app-progress',
   'app-toast',
 ] as const;

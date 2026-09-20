@@ -67,4 +67,23 @@ describe('PrivateImageComponent', () => {
     });
     await noViolations(container);
   });
+
+  it('zeigt ohne Weg das Ersatzsymbol auf Farbe, per `kit.css` `.sq`', async () => {
+    const { container } = await render(PrivateImageComponent, {
+      inputs: { alt: 'Steinpilz', colour: '#7a5230', icon: 'mushroom' },
+    });
+
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    const fallback = container.querySelector<HTMLElement>('.private__fallback');
+    expect(fallback).toHaveStyle({ background: 'rgb(122, 82, 48)' });
+    await noViolations(container);
+  });
+
+  it('trägt dunkle Tinte auf hellem Ersatzgrund', async () => {
+    const { container } = await render(PrivateImageComponent, {
+      inputs: { alt: 'Pfifferling', colour: '#e3b341', ink: 'dark' },
+    });
+
+    expect(container.querySelector('.private__fallback')).toHaveClass('private__fallback--dark');
+  });
 });

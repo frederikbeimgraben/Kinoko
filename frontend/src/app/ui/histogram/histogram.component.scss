@@ -4,10 +4,10 @@
 }
 
 .histogram__bar {
-  fill: var(--color-border);
+  fill: var(--outline);
 }
 
 .histogram__bar--inside {
-  fill: var(--color-primary);
+  fill: var(--primary);
   opacity: 0.85;
 }

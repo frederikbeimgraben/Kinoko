@@ -1,17 +1,20 @@
-<div class="banner" [class.banner--update]="kind() === 'update'" role="status">
+<button
+  type="button"
+  class="banner"
+  appRipple
+  aria-live="polite"
+  [class.banner--error]="tone() === 'error'"
+  [class.banner--info]="tone() === 'info'"
+  [attr.aria-label]="ariaLabel()"
+  (click)="actionClick.emit()"
+>
   @if (showsIcon()) {
     <app-svg-icon class="banner__glyph" [name]="icon()" [size]="18" [strokeWidth]="1.8" />
   }
   <span class="banner__text">{{ textKey() | t }}</span>
   @if (action(); as action) {
-    <button
-      class="banner__action tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="action.label | t"
-      (click)="actionClick.emit()"
-    >
-      <app-svg-icon [name]="action.icon" [size]="18" [strokeWidth]="1.8" />
-    </button>
+    <app-svg-icon class="banner__action" [name]="action.icon" [size]="18" [strokeWidth]="1.8" />
+  } @else {
+    <app-svg-icon class="banner__action" name="chevron" [size]="18" [strokeWidth]="1.8" />
   }
-</div>
+</button>
