@@ -211,13 +211,13 @@ beside the other layers in `reports/maps/layers_kacheln/<name>`, and
 
 The manifest of such a layer names two more levels. `haveZoom` is the last
 level whose tiles the manifest lists one by one. Above it the app asks the
-coarser tile over the same place, because a full list of the zoom 14 tiles
+coarser tile over the same place, because a full list of the finest tiles
 would be larger than the manifest. `offlineZoomTo` is the finest level that an
 offline area takes.
 
 `input_layers.py` and `region_map.py` render the layers that live on the map
 grid. `--step` names their zoom span through the same `finest_zoom`, so a step
-of 500 m gives zoom 5 to 9. `--zoom-cap` limits it.
+of 500 m gives zoom 5 to 9. `--zoom-cap` limits it. The default cap is zoom 13.
 
 ## The forecast horizons
 
