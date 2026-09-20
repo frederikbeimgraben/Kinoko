@@ -27,8 +27,7 @@ export default defineConfig({
   use: {
     baseURL: ADDRESS,
     browserName: 'chromium',
-    // Dieselben Schalter wie `tools/render-boards.mjs`: der Schriftsatz der
-    // Boards und der Tests muss gleich sein.
+    // Der Schriftsatz der Boards und der Tests muss gleich sein.
     launchOptions: {
       args: ['--disable-lcd-text', '--font-render-hinting=none'],
       ...(BROWSER_PATH ? { executablePath: BROWSER_PATH } : {}),

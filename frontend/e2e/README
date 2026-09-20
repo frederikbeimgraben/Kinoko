@@ -56,8 +56,7 @@ Die Lücke kommt vom Rechner der CI: die Total Blocking Time liegt dort bei
 Die dreizehn Boards der Seite `map` haben je einen Test in
 `boards/map.spec.ts`. Der Test sperrt die Grundkarte und legt das
 Kartenbild aus `boards/fixtures` über die Fläche, damit das Bild jedes Mal
-dasselbe ist. `tools/sync-boards.mjs` holt die Bilder aus
-`artefakte/mockups/code/fixtures`.
+dasselbe ist. Die Bilder liegen eingecheckt in `boards/fixtures`.
 
 Ein Kartenbild je Kartenhöhe: `map-<art>-<höhe>.png`, oben links, ohne
 Skalierung. Die Höhe ist der freie Streifen über dem Blatt: 660 bei
