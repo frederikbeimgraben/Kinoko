@@ -21,7 +21,7 @@ npm run build     Produktionsbündel, mit Budgets
 src/app/core/     theme, i18n, api, config, kacheln, layout
 src/app/map/      MapLibre hinter einem Adapter, wert://-Protokoll, Färbe-Worker
 src/app/shell/    Navigation und Avatar um die Reiter
-src/app/ui/       die gemeinsamen Bausteine aus CLAUDE.md
+src/app/ui/       die gemeinsamen Bausteine
 src/app/features/ die Reiter
 src/app/dev/      /bausteine, nur in der Entwicklung
 src/styles/       Maße der Pilzkarte und Hilfsklassen für das Kit
@@ -37,7 +37,7 @@ Das Kit liegt nicht auf npm. `vendor/stupa-makers-ui-kit-0.1.0.tgz` ist der
 Bau des lokalen Klons:
 
 ```
-cd ~/Workspace/ui-kit && npm ci && npm run build && cd dist && npm pack
+cd <ui-kit> && npm ci && npm run build && cd dist && npm pack
 cp stupa-makers-ui-kit-*.tgz <repo>/frontend/vendor/
 ```
 

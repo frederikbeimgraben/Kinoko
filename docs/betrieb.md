@@ -115,7 +115,7 @@ sich für einen Testlauf überschreiben.
 ## Lokale Entwicklung
 
 - Umgebung: `nix develop` bringt beide Seiten mit, `nix develop .#backend` und
-  `nix develop .#frontend` je eine. Darin laufen die Befehle aus `CLAUDE.md`
+  `nix develop .#frontend` je eine. Darin laufen die Befehle aus `README.md`
   ohne Umwege. NixOS hat kein `/lib64`; darum reicht die Schale die fertigen
   Binärpakete von `uv` und `npm` durch einen FHS-Baum, sonst starten `ruff`,
   `basedpyright`, `esbuild` und `greenlet` nicht. `uv` nimmt das Python 3.13
