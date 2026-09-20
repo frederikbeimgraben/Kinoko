@@ -16,7 +16,7 @@ Nichts wird von Hand geklickt.
 | Refresh Token | 30 Tage |
 | Scopes | `openid`, `email`, `profile`, `offline_access` |
 | Redirect URIs | `https://pilze.beimgraben.net/anmeldung`, `…/anmeldung/still`, dazu `http://localhost:4200/…` für die Entwicklung |
-| Anwendung `pilze` | Name Pilzkarte, Launch URL `https://pilze.beimgraben.net/` |
+| Anwendung `pilze` | Name Kinoko, Launch URL `https://pilze.beimgraben.net/` |
 | Gruppe `app_pilze` | wer speichern darf. Mitglieder werden in der Admin-Oberfläche zugewiesen |
 
 `/anmeldung/still` ist die stille Erneuerung im iframe. Es gibt kein

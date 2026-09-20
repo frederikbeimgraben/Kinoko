@@ -1,6 +1,6 @@
-# Pilzkarte
+# Kinoko
 
-[![CI](https://github.com/frederikbeimgraben/pilzkarte/actions/workflows/ci.yml/badge.svg)](https://github.com/frederikbeimgraben/pilzkarte/actions/workflows/ci.yml)
+[![CI](https://github.com/frederikbeimgraben/Kinoko/actions/workflows/ci.yml/badge.svg)](https://github.com/frederikbeimgraben/Kinoko/actions/workflows/ci.yml)
 
 Web-App zur Pilzvorhersage in Deutschland. Die Karte zeigt je Kalenderwoche,
 wo eine sammelbare Art wahrscheinlich wächst. Dazu Eingabe-Ebenen, ein
