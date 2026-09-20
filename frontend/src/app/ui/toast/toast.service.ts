@@ -22,7 +22,11 @@ export class ToastService {
   show(message: string, variant: ToastVariant = 'info', timeout = AUTO_DISMISS_MS): number {
     const id = this.nextId++;
     this._toasts.update((all) => [...all, { id, message, variant }]);
-    if (timeout > 0) setTimeout(() => this.dismiss(id), timeout);
+    if (timeout > 0) {
+      setTimeout(() => {
+        this.dismiss(id);
+      }, timeout);
+    }
     return id;
   }
 

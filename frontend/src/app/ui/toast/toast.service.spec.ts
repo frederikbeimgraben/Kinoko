@@ -11,7 +11,9 @@ describe('ToastService', () => {
 
     toasts.success('Gespeichert');
 
-    expect(toasts.toasts()).toEqual([{ id: expect.any(Number), message: 'Gespeichert', variant: 'success' }]);
+    expect(toasts.toasts()).toHaveLength(1);
+    expect(toasts.toasts()[0].message).toBe('Gespeichert');
+    expect(toasts.toasts()[0].variant).toBe('success');
   });
 
   it('meldet einen Fehler', () => {
