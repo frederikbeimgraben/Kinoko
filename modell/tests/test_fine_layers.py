@@ -18,7 +18,7 @@ def test_jede_ebene_nennt_eine_aufloesung():
 
 
 def test_zoom_folgt_der_quelle_je_ebene():
-    assert layer_zoom(TREES["fichte"]) == 14
+    assert layer_zoom(TREES["fichte"]) == 13
     assert layer_zoom(RASTERS["hoehe"]) == 12
     assert layer_zoom(RASTERS["hangneigung"]) == 12
     assert layer_zoom(RASTERS["boden_ph"]) == 10

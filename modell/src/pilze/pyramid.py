@@ -16,9 +16,9 @@ import numpy as np
 
 from tiles import KACHEL, RAND, from_byte, kachelbox, kachelraster, to_byte
 
-# Zoom 5 shows Germany. Zoom 14 is the last level of the base map.
+# Zoom 5 shows Germany. Zoom 13 is the finest level that the server stores.
 ZOOM_BASE = 5
-ZOOM_CAP = 14
+ZOOM_CAP = 13
 # Metres per point at zoom 0, on the equator.
 RESOLUTION_ZERO = 2 * RAND / KACHEL
 CENTRE_LATITUDE = 51.2

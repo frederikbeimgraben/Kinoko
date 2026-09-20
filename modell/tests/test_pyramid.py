@@ -27,7 +27,8 @@ from pyramid import (
 
 
 def test_feinster_zoom_folgt_der_aufloesung():
-    assert finest_zoom(10) == 14
+    assert finest_zoom(10) == 13
+    assert finest_zoom(10, cap=14) == 14
     assert finest_zoom(25) == 13
     assert finest_zoom(30) == 13
     assert finest_zoom(90) == 12
