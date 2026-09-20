@@ -1,9 +1,7 @@
 import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
 import { placeholder, type PlaceholderSpec } from '../fixtures/placeholder';
-import { boardCards, expectCard, skipPending } from './board';
-
-const CARDS = boardCards();
+import { expectCard, liveCards } from './board';
 
 /** Die Farben des Platzhalters, wie das Board sie an die Stelle eines Fotos setzt. */
 const STOPS = ['#3d4a36', '#6b6136', '#2f3a2c'];
@@ -24,7 +22,7 @@ const PHOTOS: Readonly<Record<string, PlaceholderSpec>> = {
 test('Blocks', async ({ page }) => {
   // Das Board ist 900 × 9144 gross und läuft nur in seinem eigenen Projekt.
   test.skip(test.info().project.name !== 'blocks', 'Blocks hat ein eigenes Fenster');
-  skipPending('Blocks');
+  const CARDS = liveCards();
   await mockApi(page);
   await page.route('**/api/photos/**', async (route) => {
     const parts = new URL(route.request().url()).pathname.split('/');
@@ -37,7 +35,8 @@ test('Blocks', async ({ page }) => {
   const order = await page
     .locator('[data-block]')
     .evaluateAll((blocks) => blocks.map((block) => block.getAttribute('data-block')));
-  expect(order).toEqual(CARDS.map((card) => card.selector));
+  const live = CARDS.map((card) => card.selector);
+  expect(order.filter((name) => name !== null && live.includes(name))).toEqual(live);
 
   for (const card of CARDS) await expectCard(page, card);
 });

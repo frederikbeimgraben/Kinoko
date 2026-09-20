@@ -38,6 +38,12 @@ function frame(box: { x: number; y: number; width: number; height: number }): {
   };
 }
 
+/** Die Karten, die nicht in `pending.json` stehen. */
+export function liveCards(): BoardCard[] {
+  const pending = pendingStems();
+  return boardCards().filter((card) => !pending.has(`blocks/${card.stem}`));
+}
+
 /** Liest das Manifest der Baustein-Karten. */
 export function boardCards(): BoardCard[] {
   return JSON.parse(readFileSync(join(__dirname, 'blocks-cards.json'), 'utf8')) as BoardCard[];
