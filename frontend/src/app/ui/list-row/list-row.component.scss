@@ -6,15 +6,34 @@
 
 // Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
 :host(:not(:first-child)) {
-  border-block-start: var(--border-width) solid var(--color-border);
+  border-block-start: var(--border-width) solid var(--outline);
 }
 
-// Die Zeile ist der Rahmen, das Feld darin der tippbare Teil. Eine Aktion am
-// Ende bleibt daneben: ein Knopf im Knopf wäre für Hilfsmittel ein Fehler.
+// Der Abstand der Gruppe ersetzt den Strich.
+:host-context(.grp) {
+  border-block-start: 0;
+}
+
+:host-context(.grp):first-child .row {
+  border-radius: 20px 20px 4px 4px;
+}
+
+:host-context(.grp):last-child .row {
+  border-radius: 4px 4px 20px 20px;
+}
+
+:host-context(.grp):only-child .row {
+  border-radius: 20px;
+}
+
+// Rahmen ums Feld, Fläche und Radius des Kits: 4 für sich, 20 aussen in einer Gruppe.
+// Eine Aktion am Ende bleibt daneben: ein Knopf im Knopf wäre für Hilfsmittel ein Fehler.
 .row {
   display: flex;
   align-items: stretch;
   inline-size: 100%;
+  background: var(--surface);
+  border-radius: 4px;
 }
 
 // Ein Knopf bringt das Polster des Browsers mit. Ohne diese Zeile steht eine
@@ -75,12 +94,12 @@
 }
 
 .row__field--selected {
-  background: var(--color-primary-subtle);
+  background: var(--sel);
 }
 
 .row__icon {
   flex: none;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 .row__lead:empty,
@@ -141,11 +160,11 @@
 .row__title--link {
   font-size: var(--fs-row-title);
   font-weight: var(--fw-semibold);
-  color: var(--color-primary);
+  color: var(--primary);
 }
 
 .row__title--accent {
-  color: var(--color-primary);
+  color: var(--primary);
 }
 
 // Die Unterzeile bleibt einzeilig; ein längerer Text endet mit Auslassung.
@@ -153,7 +172,7 @@
   overflow: hidden;
   font-size: var(--list-row-sub, var(--fs-sm));
   line-height: var(--list-row-sub-height, inherit);
-  color: var(--color-text-muted);
+  color: var(--text-var);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -162,13 +181,13 @@
   flex: none;
   font-size: var(--list-row-value, var(--fs-sm));
   font-weight: var(--list-row-value-weight, inherit);
-  color: var(--list-row-value-colour, var(--color-text-muted));
+  color: var(--list-row-value-colour, var(--text-var));
 }
 
 .row__value--accent {
   font-size: var(--fs-row-meta);
   font-weight: var(--fw-semibold);
-  color: var(--color-primary);
+  color: var(--primary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -180,7 +199,7 @@
 
 .row__chevron {
   flex: none;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 .row__action:empty {

@@ -1,17 +1,25 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
+import { RippleDirective } from '../ripple/ripple.directive';
+import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Eine aktive Marke im Filterkopf einer Liste. Sie trägt Beschriftung und X. */
+/** A toggle or a removable mark, per `kit.css` `.chip`. */
 @Component({
   selector: 'app-filter-chip',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [RippleDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './filter-chip.component.html',
   styleUrl: './filter-chip.component.scss',
 })
 export class FilterChipComponent {
   readonly label = input.required<string>();
+  readonly icon = input<IconName>();
+  readonly dot = input<string>();
+  readonly on = input(false);
+  readonly caret = input(false);
+  readonly clear = input(false);
+  readonly small = input(false);
 
+  readonly chosen = output();
   readonly removed = output();
 }

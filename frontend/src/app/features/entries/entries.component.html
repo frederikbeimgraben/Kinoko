@@ -46,11 +46,7 @@
       (actionClick)="signIn()"
     />
   } @else if (segment() === 'finds') {
-    <div class="entries__list">
-      @for (row of rows(); track row.key) {
-        <app-entry-row [entry]="row.entry" [pending]="row.pending" (chosen)="open(row)" />
-      }
-    </div>
+    <app-entry-list [rows]="rows()" (chosen)="open($event)" />
   } @else {
     <div class="entries__list">
       @for (row of rows(); track row.key) {

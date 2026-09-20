@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+.acct {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px 12px 12px;
+  background: var(--surface);
+  border-radius: 20px;
+}
+
+.acct__circle {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-avatar);
+  block-size: var(--size-avatar);
+  font-weight: var(--fw-semibold);
+  color: var(--primary);
+  background: var(--sel);
+  border-radius: 50%;
+}
+
+.acct__stack {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-inline-size: 0;
+}
+
+.acct__name {
+  font-size: 15px;
+  font-weight: var(--fw-semibold);
+}
+
+.acct__mail,
+.acct__server {
+  overflow: hidden;
+  font-size: var(--fs-sm);
+  color: var(--text-var);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

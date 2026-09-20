@@ -3,25 +3,16 @@
 <div class="account">
   <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.konto' | t }}</h2>
-    <app-row-group>
-      <div class="account__row">
-        @if (user(); as person) {
-          <span class="account__circle" aria-hidden="true">{{ initiale(person) }}</span>
-          <span class="account__stack">
-            <span class="account__name">{{ person.name }}</span>
-            <span class="account__email">{{ person.email }}</span>
-            <span class="account__issuer">{{ aussteller() }}</span>
-          </span>
-          <button
-            class="account__signout tap"
-            type="button"
-            data-press="scale"
-            [attr.aria-label]="'account.signOut' | t"
-            (click)="signOut()"
-          >
-            <app-svg-icon name="sign-out" [size]="20" />
-          </button>
-        } @else {
+    @if (user(); as person) {
+      <app-account-tile
+        [user]="person.name"
+        [mail]="person.email"
+        [server]="aussteller()"
+        (signOut)="signOut()"
+      />
+    } @else {
+      <app-row-group>
+        <div class="account__row">
           <span class="account__stack">
             <span class="account__name">{{ 'konto.nichtAngemeldet' | t }}</span>
             <span class="account__sub">{{ 'konto.nichtAngemeldetUnter' | t }}</span>
@@ -29,9 +20,9 @@
           <app-push-button kind="tonal" (click)="signIn()">
             {{ 'konto.anmelden' | t }}
           </app-push-button>
-        }
-      </div>
-    </app-row-group>
+        </div>
+      </app-row-group>
+    }
   </section>
 
   <section class="account__block">

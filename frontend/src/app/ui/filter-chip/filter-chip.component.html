@@ -1,12 +1,42 @@
-<span class="filterchip">
-  <span class="filterchip__label">{{ label() }}</span>
+@if (clear()) {
+  <span class="chip" [class.chip--on]="on()" [class.chip--small]="small()">
+    @if (icon(); as glyph) {
+      <app-svg-icon [name]="glyph" [size]="18" [strokeWidth]="1.8" />
+    }
+    @if (dot(); as colour) {
+      <i class="chip__dot" [style.background]="colour"></i>
+    }
+    <span class="chip__label">{{ label() }}</span>
+    <button
+      class="chip__remove tap"
+      type="button"
+      appRipple
+      [attr.aria-label]="'common.remove' | t"
+      (click)="removed.emit()"
+    >
+      <app-svg-icon name="close" [size]="15" [strokeWidth]="2.2" />
+    </button>
+  </span>
+} @else {
   <button
-    class="filterchip__remove tap"
+    class="chip tap"
     type="button"
-    data-press="scale"
-    [attr.aria-label]="'common.remove' | t"
-    (click)="removed.emit()"
+    appRipple
+    [class.chip--on]="on()"
+    [class.chip--plain]="!icon() && !dot()"
+    [class.chip--small]="small()"
+    [attr.aria-pressed]="on()"
+    (click)="chosen.emit()"
   >
-    <app-svg-icon name="close" [size]="15" [strokeWidth]="2.2" />
+    @if (icon(); as glyph) {
+      <app-svg-icon [name]="glyph" [size]="18" [strokeWidth]="1.8" />
+    }
+    @if (dot(); as colour) {
+      <i class="chip__dot" [style.background]="colour"></i>
+    }
+    {{ label() }}
+    @if (caret()) {
+      <app-svg-icon name="chevron" [size]="14" [style.rotate]="'90deg'" />
+    }
   </button>
-</span>
+}

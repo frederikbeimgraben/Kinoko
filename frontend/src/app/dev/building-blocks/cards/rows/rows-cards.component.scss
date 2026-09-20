@@ -1,0 +1,9 @@
+.chiprow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}

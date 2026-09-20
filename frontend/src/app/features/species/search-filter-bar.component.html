@@ -5,19 +5,15 @@
   (valueChange)="valueChange.emit($event)"
 />
 @if (showsMarks()) {
-  <div class="marks">
-    <button
-      class="marks__button tap"
-      type="button"
-      data-press="scale"
-      [class.marks__button--on]="filtered()"
-      (click)="filter.openSheet()"
-    >
-      <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />
-      {{ 'common.filter' | t }}
-    </button>
+  <div class="chiprow">
+    <app-filter-chip
+      [label]="'common.filter' | t"
+      icon="filter"
+      [on]="filtered()"
+      (chosen)="filter.openSheet()"
+    />
     @for (chip of chips(); track chip.group + chip.value) {
-      <app-filter-chip [label]="chip.label" (removed)="drop(chip)" />
+      <app-filter-chip [label]="chip.label" [on]="true" [clear]="true" (removed)="drop(chip)" />
     }
   </div>
 }

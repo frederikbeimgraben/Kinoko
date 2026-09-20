@@ -5,6 +5,7 @@ import { ControlsCardsComponent } from './cards/controls/controls-cards.componen
 import { DataCardsComponent } from './cards/data/data-cards.component';
 import { DisplayCardsComponent } from './cards/display/display-cards.component';
 import { PrimitivesCardsComponent } from './cards/primitives/primitives-cards.component';
+import { RowsCardsComponent } from './cards/rows/rows-cards.component';
 
 const THEME_ATTRIBUTE = 'data-theme';
 const DARK = 'dark';
@@ -13,7 +14,13 @@ const DARK = 'dark';
 @Component({
   selector: 'app-building-blocks',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ControlsCardsComponent, DataCardsComponent, DisplayCardsComponent, PrimitivesCardsComponent],
+  imports: [
+    ControlsCardsComponent,
+    DataCardsComponent,
+    DisplayCardsComponent,
+    PrimitivesCardsComponent,
+    RowsCardsComponent,
+  ],
   templateUrl: './building-blocks.component.html',
   styleUrl: './building-blocks.component.scss',
 })

@@ -53,6 +53,7 @@ export type IconName =
   | 'hourglass'
   | 'refresh'
   | 'sign-out'
+  | 'upload'
   | 'mushroom';
 
 /** Die drei gefüllten Pfeile und die Wiedergabe sitzen auf einem 12er-Raster. */
@@ -125,5 +126,7 @@ export const ICONS: Record<IconName, string> = {
   refresh: '<path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/>',
   'sign-out':
     '<path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/><path d="M15 8l4 4-4 4"/><path d="M19 12H9"/>',
+  upload:
+    '<path d="M7 17.5h10a4 4 0 0 0 0-8 5.5 5.5 0 0 0-10.6 1.5A3.5 3.5 0 0 0 7 17.5z"/><path d="M12 9.5v7M9 12l3-3 3 3"/>',
   mushroom: '<path d="M4 11a8 8 0 0 1 16 0zM10 11v6a2 2 0 0 0 4 0v-6"/>',
 };

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { PermissionsService } from '../../core/access/permissions.service';
-import { AuthService, type SignedInUser } from '../../core/auth';
+import { AuthService } from '../../core/auth';
 import { ConfigService } from '../../core/config/config.service';
 import { I18nService, LANGUAGE_CHOICES, type LanguageChoice } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -9,13 +9,13 @@ import { MapAppService, type MapApp } from '../../core/maps/map-app.service';
 import { PwaService } from '../../core/pwa/pwa.service';
 import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
 import { APP_VERSION } from '../../core/version.generated';
+import { AccountTileComponent } from '../../ui/account-tile/account-tile.component';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { ADMIN_PERMISSIONS } from '../admin/admin.entries';
 
 /** Die drei Wahlmöglichkeiten der Darstellung, in der Reihenfolge des Artboards. */
@@ -37,13 +37,13 @@ const MAP_APPS: readonly MapApp[] = ['osm', 'google'];
   selector: 'app-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AccountTileComponent,
     ButtonComponent,
     LevelPillComponent,
     ListRowComponent,
     PageHeaderComponent,
     RowGroupComponent,
     SegmentedComponent,
-    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './account.component.html',
@@ -80,10 +80,6 @@ export class AccountComponent {
   protected selectLanguage(value: string): void {
     const selected = LANGUAGE_CHOICES.find((candidate) => candidate === value);
     if (selected) this.i18n.setChoice(selected satisfies LanguageChoice);
-  }
-
-  protected initiale(person: SignedInUser): string {
-    return person.name.trim().charAt(0).toUpperCase();
   }
 
   protected readonly version = APP_VERSION;

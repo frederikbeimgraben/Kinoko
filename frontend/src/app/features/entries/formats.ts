@@ -23,6 +23,11 @@ export function shortDate(iso: string, i18n: I18nService, heute: string): string
   return catalogueDay(iso, i18n);
 }
 
+/** Der Vorname, wie ihn die Unterzeile eines Fundes nennt. */
+export function firstName(full: string | null): string {
+  return (full ?? '').split(' ')[0] ?? '';
+}
+
 /** Eine Fläche in Hektar, ohne Nachkommastellen ab einem Hektar. */
 export function hectaresText(hectares: number, locale: string): string {
   const spots = hectares < 10 ? 1 : 0;

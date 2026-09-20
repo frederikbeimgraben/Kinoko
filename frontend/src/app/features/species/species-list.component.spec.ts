@@ -130,7 +130,7 @@ describe('SpeciesListComponent', () => {
       expect(screen.getByText('Röhren')).toBeInTheDocument();
     });
 
-    const chip = screen.getByText('Röhren').closest('.filterchip');
+    const chip = screen.getByText('Röhren').closest('.chip');
     await userEvent.click(within(chip as HTMLElement).getByRole('button'));
 
     expect(filter.chosenIn('hymenium').size).toBe(0);

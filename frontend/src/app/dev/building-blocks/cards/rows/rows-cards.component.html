@@ -1,0 +1,47 @@
+<app-block-card block="Row" [width]="358" [height]="56">
+  <app-list-row [title]="'species.field.edibility' | t" />
+</app-block-card>
+
+<app-block-card block="Chip" [width]="160" [height]="36">
+  <app-filter-chip [label]="'species.field.edibility' | t" />
+</app-block-card>
+
+<app-block-card block="ChipRow" [width]="390" [height]="44">
+  <div class="chiprow">
+    <app-filter-chip [label]="'common.filter' | t" icon="filter" />
+    <app-filter-chip [label]="'enum.edibility.edible' | t" [on]="true" [clear]="true" />
+    <app-filter-chip [label]="'enum.colour.brown' | t" [on]="true" [clear]="true" />
+  </div>
+</app-block-card>
+
+<app-block-card block="ChipSet" [width]="272" [height]="120">
+  <app-fold-section [label]="'species.field.edibility' | t">
+    <app-chip-group
+      [chips]="edibilityChips"
+      [value]="[]"
+      [label]="'species.field.edibility' | t"
+      [small]="true"
+    />
+  </app-fold-section>
+</app-block-card>
+
+<app-block-card block="EntryRow" [width]="374" [height]="84">
+  <app-entry-row [entry]="entry" />
+</app-block-card>
+
+<app-block-card block="EntryList" [width]="390" [height]="520">
+  <app-entry-list [rows]="entryListRows" />
+</app-block-card>
+
+<app-block-card block="AccountTile" [width]="358" [height]="72">
+  <app-account-tile user="Frederik" mail="frederik@beimgraben.net" server="sso.beimgraben.net" />
+</app-block-card>
+
+<app-block-card block="ExpandRow" [width]="358" [height]="120">
+  <app-expand-row
+    [label]="'species.field.cap' | t"
+    [value]="'enum.colour.brown' | t"
+    dot="#7a4a2a"
+    [open]="true"
+  />
+</app-block-card>

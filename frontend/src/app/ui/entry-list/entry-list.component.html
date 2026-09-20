@@ -1,0 +1,13 @@
+<div class="list">
+  @for (row of rows(); track row.key; let i = $index) {
+    @if (isNewDay(row, i)) {
+      <div class="lbl">{{ row.day }}</div>
+    }
+    <app-entry-row
+      [entry]="row.entry"
+      [pending]="row.pending ?? false"
+      [selected]="row.selected ?? false"
+      (chosen)="chosen.emit(row)"
+    />
+  }
+</div>

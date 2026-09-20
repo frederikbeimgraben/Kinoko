@@ -1,21 +1,12 @@
 <div class="chips" role="group" [attr.aria-label]="label()">
   @for (chip of chips(); track chip.value) {
-    <button
-      class="chip tap"
-      type="button"
-      data-press="scale"
-      [class.chip--active]="isChosen(chip)"
-      [attr.aria-pressed]="isChosen(chip)"
-      (click)="toggle(chip)"
-    >
-      {{ chip.label }}
-    </button>
+    <app-filter-chip [label]="chip.label" [on]="isChosen(chip)" [small]="small()" (chosen)="toggle(chip)" />
   }
   @if (addable()) {
     <button
       class="chip chip--add tap"
       type="button"
-      data-press="scale"
+      appRipple
       [attr.aria-label]="'map.factor.add' | t"
       (click)="added.emit()"
     >

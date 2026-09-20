@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Wo die Zeile steht: frei, in einer Karte, im Filter oder als Verweis. */
@@ -9,7 +10,7 @@ export type ListRowKind = 'default' | 'catalogue' | 'filter' | 'link';
 @Component({
   selector: 'app-list-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, SvgIconComponent],
+  imports: [NgTemplateOutlet, RippleDirective, SvgIconComponent],
   templateUrl: './list-row.component.html',
   styleUrl: './list-row.component.scss',
 })

@@ -1,5 +1,3 @@
-@use '../../../styles/tap-icon';
-
 :host {
   display: flex;
   flex-direction: column;
@@ -44,19 +42,6 @@
   border-radius: 20px;
 }
 
-.account__circle {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--size-avatar);
-  block-size: var(--size-avatar);
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
-  background: var(--color-primary-subtle);
-  border-radius: 50%;
-}
-
 .account__stack {
   display: flex;
   flex: 1;
@@ -70,24 +55,7 @@
   font-weight: var(--fw-semibold);
 }
 
-.account__email,
-.account__issuer {
-  overflow: hidden;
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .account__list {
   display: flex;
   flex-direction: column;
-}
-
-// Randlos, Tippfläche 44 px, rechter Rand wie im Artboard `Account`.
-.account__signout {
-  @include tap-icon.frameless;
-
-  margin-inline-end: -8px;
-  color: var(--color-text);
 }

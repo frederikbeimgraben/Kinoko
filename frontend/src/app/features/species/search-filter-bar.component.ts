@@ -3,7 +3,6 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { chipsOf, type FilterChip } from './chips';
 import { isActive } from './facets';
 import { SpeciesFilterState } from './filter.state';
@@ -13,7 +12,7 @@ import { SpeciesState } from './species.state';
 @Component({
   selector: 'app-species-search-filter-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FilterChipComponent, SearchFieldComponent, SvgIconComponent, TranslatePipe],
+  imports: [FilterChipComponent, SearchFieldComponent, TranslatePipe],
   templateUrl: './search-filter-bar.component.html',
   styleUrl: './search-filter-bar.component.scss',
 })
