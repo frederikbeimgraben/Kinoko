@@ -10,6 +10,7 @@
   [class.textdanger]="kind() === 'textdanger'"
   [class.wide]="wide()"
   [class.busy]="busy()"
+  [attr.aria-busy]="busy()"
   [disabled]="disabled() || busy()"
 >
   @if (icon(); as name) {

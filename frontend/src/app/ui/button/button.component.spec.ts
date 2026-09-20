@@ -45,6 +45,7 @@ describe('ButtonComponent', () => {
 
     const button = screen.getByRole('button');
     expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
     expect(container.querySelector('.spin')).not.toBeNull();
     expect(button.querySelector('span')).toHaveAttribute('hidden');
   });
