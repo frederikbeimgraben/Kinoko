@@ -50,7 +50,7 @@ async function seen(page: Page, name: string): Promise<void> {
 /** Öffnet das Filterblatt und darin eine Gruppe. */
 async function openGroup(page: Page, group: string): Promise<void> {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await page.getByRole('button', { name: group }).first().click();
+  await page.getByRole('dialog').getByRole('button', { name: group }).first().click();
 }
 
 test('Species', async ({ page }) => {
@@ -228,7 +228,7 @@ test('FilterDesktopGroup', async ({ page }) => {
     ...SIGNED_IN,
   });
   await seen(page, 'Wiesenchampignon');
-  await page.getByRole('button', { name: 'Speisewert' }).first().click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Speisewert' }).first().click();
   await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
   await expectBoard(page, 'SpeciesDesktopFiltered');
 });

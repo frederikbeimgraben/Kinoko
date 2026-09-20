@@ -46,12 +46,12 @@ test.describe('Zurück in der Artenliste', () => {
     await mockApi(page, { '/api/species/bundle': largeBundle() });
     await page.goto('/arten');
     await page.getByRole('button', { name: 'Filter', exact: true }).click();
-    await page.getByRole('button', { name: 'Speisewert' }).first().click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Speisewert' }).first().click();
     await expect(page.getByRole('checkbox', { name: /essbar/ }).first()).toBeVisible();
 
     await page.locator('.filtersheet__back').tap();
 
-    await expect(page.getByRole('button', { name: 'Speisewert' })).toBeVisible();
+    await expect(page.getByRole('dialog').getByRole('button', { name: 'Speisewert' })).toBeVisible();
     await expect(page.getByRole('checkbox')).toHaveCount(0);
   });
 
@@ -59,16 +59,16 @@ test.describe('Zurück in der Artenliste', () => {
     await mockApi(page, { '/api/species/bundle': largeBundle() });
     await page.goto('/arten');
     await page.getByRole('button', { name: 'Filter', exact: true }).click();
-    await page.getByRole('button', { name: 'Speisewert' }).first().click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Speisewert' }).first().click();
     await expect(page.getByRole('checkbox', { name: /essbar/ }).first()).toBeVisible();
 
     await page.goBack();
-    await expect(page.getByRole('button', { name: 'Speisewert' })).toBeVisible();
+    await expect(page.getByRole('dialog').getByRole('button', { name: 'Speisewert' })).toBeVisible();
     await expect(page.getByRole('checkbox')).toHaveCount(0);
 
     await page.goBack();
     await expect(page.getByRole('button', { name: 'Filter', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Speisewert' })).toHaveCount(0);
+    await expect(page.getByRole('dialog').getByRole('button', { name: 'Speisewert' })).toHaveCount(0);
   });
 });
 
@@ -76,11 +76,11 @@ test('Am Rechner führt der Pfeil aus der Gruppe zur Übersicht zurück', async 
   await page.setViewportSize({ width: 1280, height: 820 });
   await mockApi(page, { '/api/species/bundle': bundle([]) });
   await page.goto('/arten');
-  await page.getByRole('button', { name: 'Speisewert' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Speisewert' }).click();
   await expect(page.getByRole('heading', { name: 'Speisewert' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Zurück', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Speisewert' })).toBeVisible();
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'Speisewert' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Speisewert' })).toHaveCount(0);
 });
 
@@ -88,11 +88,11 @@ test('Am Rechner schließt die Browser-Geste die Gruppe', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 });
   await mockApi(page, { '/api/species/bundle': bundle([]) });
   await page.goto('/arten');
-  await page.getByRole('button', { name: 'Speisewert' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Speisewert' }).click();
   await expect(page.getByRole('heading', { name: 'Speisewert' })).toBeVisible();
 
   await page.goBack();
-  await expect(page.getByRole('button', { name: 'Speisewert' })).toBeVisible();
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'Speisewert' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Speisewert' })).toHaveCount(0);
 });
 

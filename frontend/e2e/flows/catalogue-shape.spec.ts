@@ -55,7 +55,7 @@ async function serveBundle(page: Page, etag: string): Promise<void> {
 /** Öffnet das Filterblatt und darin eine Gruppe. */
 async function openGroup(page: Page, group: string): Promise<void> {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await page.getByRole('button', { name: group }).first().click();
+  await page.getByRole('dialog').getByRole('button', { name: group }).first().click();
 }
 
 test('Die Gruppen des Filters füllen sich aus der Antwort des Dienstes', async ({ page }) => {

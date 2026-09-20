@@ -28,7 +28,7 @@ test('Filter mit Farbe je Teil', async ({ page }) => {
   await expect(page.getByText('Speitäubling')).toBeVisible();
 
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await page.getByRole('button', { name: 'Farbe' }).first().click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Farbe' }).first().click();
 
   await page.getByRole('radio', { name: 'Braun', exact: true }).click();
   await page.getByRole('button', { name: 'Stiel' }).click();
@@ -46,7 +46,7 @@ test('Marke entfernt die Farbe wieder', async ({ page }) => {
   await mockApi(page, { '/api/species/bundle': CATALOGUE });
   await page.goto('/arten');
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await page.getByRole('button', { name: 'Farbe' }).first().click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Farbe' }).first().click();
   await page.getByRole('radio', { name: 'Braun', exact: true }).click();
   await page.getByRole('button', { name: /Arten anzeigen/ }).click();
   await expect(page.getByText('Speitäubling')).toHaveCount(0);
