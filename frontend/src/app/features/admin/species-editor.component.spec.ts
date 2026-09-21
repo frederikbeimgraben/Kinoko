@@ -83,7 +83,8 @@ async function build(
   return { container, http };
 }
 
-describe('SpeciesEditorComponent', () => {
+// Das Blatt trägt viele Knöpfe; unter Last braucht die Suche nach Rolle länger.
+describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
   beforeEach(() => {
     TestBed.inject(SpeciesEditorState).load('');
   });

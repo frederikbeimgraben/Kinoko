@@ -14,7 +14,8 @@
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-columns: minmax(0, 1fr);
   block-size: 100%;
-  background: var(--color-bg);
+  overflow: hidden;
+  background: var(--bg);
 }
 
 // Nur der Reiterinhalt nimmt an der View Transition teil. Leiste, Kopfzeile
@@ -55,6 +56,7 @@
 .shell--column {
   grid-template-rows: minmax(0, 1fr);
   grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
+  background: var(--desk);
 }
 
 // Ohne eigene Ebene hier fängt sich ein deckendes Blatt der Karte in dieser Zelle.
@@ -93,7 +95,7 @@
 .shell--column .shell__content {
   z-index: 1;
   grid-area: 1 / 2 / 2 / 3;
-  background: var(--color-bg);
+  background: var(--bg);
 }
 
 // Die Verwaltung bringt ihre eigenen Spalten mit und legt sich über die Karte.

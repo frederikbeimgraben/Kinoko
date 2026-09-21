@@ -87,7 +87,7 @@ describe('SpeciesPickerComponent', () => {
       inputs: { species: SPECIES, label: 'Art für die Karte' },
     });
 
-    expect(container.querySelectorAll('.picker__rows > .scroll-fade')).toHaveLength(2);
+    expect(container.querySelectorAll('.picker__rows.scroll')).toHaveLength(1);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

@@ -1,0 +1,40 @@
+:host {
+  display: contents;
+}
+
+.navtab {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-var);
+  text-decoration: none;
+}
+
+.navtab--active {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.navtab--rail {
+  flex: 0 0 auto;
+  inline-size: 96px;
+}
+
+.navtab__pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 64px;
+  block-size: 32px;
+  border-radius: 16px;
+}
+
+.navtab--active .navtab__pill {
+  color: var(--on-sel);
+  background: var(--sel);
+}

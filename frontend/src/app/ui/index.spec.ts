@@ -8,6 +8,8 @@ import * as ui from './index';
 const BLOCKS = [
   'app-page-header',
   'app-nav',
+  'app-nav-tab',
+  'app-surface',
   'app-sheet',
   'app-sheet-head',
   'app-overlay-host',

@@ -45,11 +45,8 @@ function stubGeometry(): void {
   }
 }
 
-function fades(view: RenderResult<object>): { top: Element | null; bottom: Element | null } {
-  return {
-    top: view.container.querySelector('.scroll-fade--top'),
-    bottom: view.container.querySelector('.scroll-fade--bottom'),
-  };
+function fade(view: RenderResult<object>): string | null {
+  return view.container.querySelector('.scroll')?.getAttribute('data-fade') ?? null;
 }
 
 async function list(scrollTop: number, clientHeight: number, scrollHeight: number) {
@@ -75,9 +72,7 @@ describe('ScrollFadeDirective', () => {
   it('blendet am Anfang nur unten aus', async () => {
     const view = await list(0, 100, 300);
 
-    const { top, bottom } = fades(view);
-    expect(top).toHaveAttribute('hidden');
-    expect(bottom).not.toHaveAttribute('hidden');
+    expect(fade(view)).toBe('bottom');
   });
 
   it('blendet in der Mitte oben und unten aus', async () => {
@@ -85,9 +80,7 @@ describe('ScrollFadeDirective', () => {
 
     scrollTo(view, 100);
 
-    const { top, bottom } = fades(view);
-    expect(top).not.toHaveAttribute('hidden');
-    expect(bottom).not.toHaveAttribute('hidden');
+    expect(fade(view)).toBe('both');
   });
 
   it('blendet am Ende nur oben aus', async () => {
@@ -95,9 +88,7 @@ describe('ScrollFadeDirective', () => {
 
     scrollTo(view, 200);
 
-    const { top, bottom } = fades(view);
-    expect(top).not.toHaveAttribute('hidden');
-    expect(bottom).toHaveAttribute('hidden');
+    expect(fade(view)).toBe('top');
   });
 
   it('blendet nichts aus, solange der Inhalt passt', async () => {
@@ -105,54 +96,30 @@ describe('ScrollFadeDirective', () => {
 
     scrollTo(view, 0);
 
-    const { top, bottom } = fades(view);
-    expect(top).toHaveAttribute('hidden');
-    expect(bottom).toHaveAttribute('hidden');
+    expect(fade(view)).toBe('none');
   });
 
-  it('hält die Ränder vor dem Zugriff und vor der Vorlesehilfe fern', async () => {
+  it('macht den Wirt zum Scroll-Bereich der Seite', async () => {
     const view = await list(0, 100, 300);
 
-    for (const node of view.container.querySelectorAll('.scroll-fade')) {
-      expect(node).toHaveAttribute('aria-hidden', 'true');
-      expect(node).toHaveStyle({ 'pointer-events': 'none' });
-    }
-  });
-
-  it('stellt den oberen Rand vor und den unteren hinter die Zeilen', async () => {
-    const view = await list(0, 100, 300);
-    view.fixture.componentInstance.rows.set([1, 2, 3]);
-    view.detectChanges();
-
-    const host = view.container.querySelector('div');
-    expect(host?.firstElementChild).toHaveClass('scroll-fade--top');
-    expect(host?.lastElementChild).toHaveClass('scroll-fade--bottom');
-  });
-
-  it('räumt seine Ränder mit dem Wirt ab', async () => {
-    const view = await list(0, 100, 300);
-    view.fixture.componentInstance.open.set(false);
-    view.detectChanges();
-
-    expect(view.container.querySelectorAll('.scroll-fade')).toHaveLength(0);
+    expect(view.container.querySelector('.scroll')).not.toBeNull();
   });
 
   it('blendet unten aus, wenn eine Karte in der Liste überläuft', async () => {
     const view = await cardList(0, 100, 300);
 
-    const { bottom } = fades(view);
-    expect(bottom).not.toHaveAttribute('hidden');
+    expect(fade(view)).toBe('bottom');
   });
 
   it('blendet unten wieder ein, sobald Zeilen in einer Karte wegfallen und der Rest passt', async () => {
     const view = await cardList(0, 100, 300);
-    expect(fades(view).bottom).not.toHaveAttribute('hidden');
+    expect(fade(view)).toBe('bottom');
 
     box.scrollHeight = 100;
     view.fixture.componentInstance.rows.set([1]);
     view.detectChanges();
     await view.fixture.whenStable();
 
-    expect(fades(view).bottom).toHaveAttribute('hidden');
+    expect(fade(view)).toBe('none');
   });
 });

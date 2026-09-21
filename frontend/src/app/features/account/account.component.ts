@@ -15,6 +15,7 @@ import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { ADMIN_PERMISSIONS } from '../admin/admin.entries';
 
@@ -43,6 +44,7 @@ const MAP_APPS: readonly MapApp[] = ['osm', 'google'];
     ListRowComponent,
     PageHeaderComponent,
     RowGroupComponent,
+    ScrollFadeDirective,
     SegmentedComponent,
     TranslatePipe,
   ],

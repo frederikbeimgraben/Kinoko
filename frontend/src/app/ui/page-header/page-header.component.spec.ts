@@ -7,9 +7,9 @@ import { PageHeaderComponent } from './page-header.component';
 
 @Component({
   imports: [PageHeaderComponent],
-  template: `<app-page-header title="Einträge"><span marks>Offline</span></app-page-header>`,
+  template: `<app-page-header><span headline>Art suchen</span></app-page-header>`,
 })
-class MarkedHostComponent {}
+class HeadlineHostComponent {}
 
 describe('PageHeaderComponent', () => {
   it('renders with minimal inputs', async () => {
@@ -25,7 +25,7 @@ describe('PageHeaderComponent', () => {
       inputs: { title: 'Porcini', back: true },
     });
 
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Zurück' })).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -36,18 +36,17 @@ describe('PageHeaderComponent', () => {
     let calls = 0;
     fixture.componentInstance.backClick.subscribe(() => (calls += 1));
 
-    await userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 
     expect(calls).toBe(1);
   });
 
-  it('marks the back button as a tap target with a press state', async () => {
-    await render(PageHeaderComponent, { inputs: { title: 'Porcini', back: true } });
+  it('pulls the title in when a lead stands before it', async () => {
+    const { container } = await render(PageHeaderComponent, {
+      inputs: { title: 'Porcini', back: true },
+    });
 
-    const back = screen.getByRole('button');
-
-    expect(back).toHaveClass('tap');
-    expect(back).toHaveAttribute('data-press', 'scale');
+    expect(container.querySelector('.bar--lead')).not.toBeNull();
   });
 
   it('shows the close button when the page has one', async () => {
@@ -71,10 +70,33 @@ describe('PageHeaderComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('projects a mark next to the title', async () => {
-    const { container } = await render(MarkedHostComponent);
+  it('shows the count next to the title', async () => {
+    const { container } = await render(PageHeaderComponent, {
+      inputs: { title: 'Einträge', count: '12' },
+    });
 
-    expect(container.querySelector('.pageheader__marks')).toContainHTML('Offline');
+    expect(container.querySelector('.bar__count')).toHaveTextContent('12');
+  });
+
+  it('leaves the count out without a value', async () => {
+    const { container } = await render(PageHeaderComponent, { inputs: { title: 'Einträge' } });
+
+    expect(container.querySelector('.bar__count')).toBeNull();
+  });
+
+  it('takes a projected headline in place of the title', async () => {
+    const { container } = await render(HeadlineHostComponent);
+
+    expect(container.querySelector('h1')).toBeNull();
+    expect(container.querySelector('.bar')).toHaveTextContent('Art suchen');
+  });
+
+  it('holds the wide indent of a detail bar without a lead', async () => {
+    const { container } = await render(PageHeaderComponent, {
+      inputs: { title: 'Steinpilz', wide: true },
+    });
+
+    expect(container.querySelector('.bar--wide')).not.toBeNull();
   });
 
   it('renders without German text against an empty catalogue', async () => {
