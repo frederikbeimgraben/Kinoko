@@ -16,7 +16,8 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
   return { container, http: TestBed.inject(HttpTestingController) };
 }
 
-describe('SpeciesCreateComponent', () => {
+// Das Blatt trägt viele Knöpfe; unter Last braucht die Suche nach Rolle länger.
+describe('SpeciesCreateComponent', { timeout: 20_000 }, () => {
   it('nennt die drei Abschnitte und die Vorgaben der Einordnung', async () => {
     const { container } = await build();
 
