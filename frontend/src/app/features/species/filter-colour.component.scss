@@ -1,57 +1,9 @@
 :host {
+  display: block;
+}
+
+.grp {
   display: flex;
   flex-direction: column;
-  gap: var(--size-gutter);
-}
-
-.colour__card {
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-
-.colour__head {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  inline-size: 100%;
-  block-size: 52px;
-  padding-inline: 14px;
-  font: inherit;
-  color: inherit;
-  text-align: start;
-  background: none;
-  border: 0;
-}
-
-.colour__part {
-  flex: 1;
-  font-size: 15px;
-  font-weight: var(--fw-medium);
-}
-
-.colour__swatch {
-  inline-size: 22px;
-  block-size: 22px;
-  border-radius: 6px;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
-}
-
-.colour__name {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--color-primary);
-}
-
-.colour__none {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-.colour__chevron {
-  color: var(--color-text-muted);
-}
-
-.colour__chevron--open {
-  rotate: 90deg;
+  gap: 2px;
 }

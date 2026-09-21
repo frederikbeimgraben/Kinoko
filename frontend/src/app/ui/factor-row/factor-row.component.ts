@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Ein Faktor der Kombination: Name, Bereich und Bedingung. */
@@ -13,7 +14,7 @@ export interface CombinationFactor {
 @Component({
   selector: 'app-factor-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconButtonComponent, SvgIconComponent],
+  imports: [IconButtonComponent, RippleDirective, SvgIconComponent],
   templateUrl: './factor-row.component.html',
   styleUrl: './factor-row.component.scss',
 })

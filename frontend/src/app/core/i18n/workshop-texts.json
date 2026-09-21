@@ -37,7 +37,13 @@
     "beispiel.farbeOcker": "ocker",
     "beispiel.farbeRot": "rot",
     "beispiel.farbeOlivbraun": "olivbraun",
-    "beispiel.sortieren": "Sortieren"
+    "beispiel.sortieren": "Sortieren",
+    "beispiel.summeKw": "Summe KW 35 bis 38",
+    "beispiel.knollenblaetterpilz": "Grüner Knollenblätterpilz",
+    "beispiel.pantherpilz": "Pantherpilz",
+    "beispiel.perlpilz": "Perlpilz",
+    "beispiel.semmelstoppelpilz": "Semmelstoppelpilz",
+    "beispiel.wiesenchampignon": "Wiesenchampignon"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -77,6 +83,12 @@
     "beispiel.farbeOcker": "ochre",
     "beispiel.farbeRot": "red",
     "beispiel.farbeOlivbraun": "olive brown",
-    "beispiel.sortieren": "Sort"
+    "beispiel.sortieren": "Sort",
+    "beispiel.summeKw": "Sum weeks 35 to 38",
+    "beispiel.knollenblaetterpilz": "Death cap",
+    "beispiel.pantherpilz": "Panther cap",
+    "beispiel.perlpilz": "Blusher",
+    "beispiel.semmelstoppelpilz": "Wood hedgehog",
+    "beispiel.wiesenchampignon": "Field mushroom"
   }
 }

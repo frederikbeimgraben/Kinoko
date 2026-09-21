@@ -79,7 +79,7 @@ describe('TimelineComponent', () => {
     const selected: TimelineWeek[] = [];
     fixture.componentInstance.chosen.subscribe((week) => selected.push(week));
 
-    expect(screen.getByRole('group', { name: 'Wochen' })).toHaveClass('bar--dimmed');
+    expect(screen.getByRole('group', { name: 'Wochen' })).toHaveClass('weeks--dimmed');
     await userEvent.type(screen.getByRole('group', { name: 'Wochen' }), '{ArrowRight}');
 
     expect(selected).toHaveLength(0);
@@ -89,7 +89,7 @@ describe('TimelineComponent', () => {
     const { container } = await render(TimelineComponent, {
       inputs: { weeks: WEEKS, active: { year: 2026, week: 1 }, label: 'Wochen' },
     });
-    const bar = container.querySelector<HTMLElement>('.bar');
+    const bar = container.querySelector<HTMLElement>('.weeks');
     if (bar === null) throw new Error('keine Leiste');
     const scrollTo = vi.fn();
     Object.defineProperty(bar, 'scrollTo', { value: scrollTo, configurable: true });
@@ -104,16 +104,16 @@ describe('TimelineComponent', () => {
     expect(scrollTo).toHaveBeenCalledWith({ left: 120 - (200 - 48) / 2, behavior: 'smooth' });
   });
 
-  it('zeigt am Rechner keinen Pfeil ohne verdeckte Wochen', async () => {
-    const { container } = await render(TimelineComponent, {
+  it('sperrt beide Pfeile ohne verdeckte Wochen', async () => {
+    await render(TimelineComponent, {
       inputs: { weeks: WEEKS, active: { year: 2025, week: 52 }, label: 'Wochen' },
     });
 
-    expect(container.querySelector('.arrow--start')).toBeNull();
-    expect(container.querySelector('.arrow--end')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Frühere Wochen zeigen' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Spätere Wochen zeigen' })).toBeDisabled();
   });
 
-  it('zeigt die Pfeile nach verdeckten Wochen und schiebt beim Klick', async () => {
+  it('gibt die Pfeile nach verdeckten Wochen frei und schiebt beim Klick', async () => {
     vi.spyOn(Element.prototype, 'scrollLeft', 'get').mockReturnValue(40);
     vi.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(200);
     vi.spyOn(Element.prototype, 'scrollWidth', 'get').mockReturnValue(400);
@@ -121,18 +121,17 @@ describe('TimelineComponent', () => {
     const { container, fixture } = await render(TimelineComponent, {
       inputs: { weeks: WEEKS, active: { year: 2025, week: 52 }, label: 'Wochen' },
     });
-    const bar = container.querySelector<HTMLElement>('.bar');
+    const bar = container.querySelector<HTMLElement>('.weeks');
     if (bar === null) throw new Error('keine Leiste');
     const scrollBy = vi.fn();
     Object.defineProperty(bar, 'scrollBy', { value: scrollBy, configurable: true });
     bar.dispatchEvent(new Event('scroll'));
     fixture.detectChanges();
 
-    const back = container.querySelector<HTMLElement>('.arrow--start');
-    const forward = container.querySelector<HTMLElement>('.arrow--end');
-    if (back === null || forward === null) throw new Error('keine Pfeile');
-    expect(back).toHaveAttribute('aria-label', 'Frühere Wochen zeigen');
-    expect(forward).toHaveAttribute('aria-label', 'Spätere Wochen zeigen');
+    const back = screen.getByRole('button', { name: 'Frühere Wochen zeigen' });
+    const forward = screen.getByRole('button', { name: 'Spätere Wochen zeigen' });
+    expect(back).not.toBeDisabled();
+    expect(forward).not.toBeDisabled();
 
     fireEvent.click(back);
     expect(scrollBy).toHaveBeenCalledWith({ left: -152, behavior: 'smooth' });
@@ -162,15 +161,14 @@ describe('TimelineComponent', () => {
     const { container, fixture } = await render(TimelineComponent, {
       inputs: { weeks: WEEKS, active: { year: 2025, week: 52 }, label: 'Wochen' },
     });
-    const bar = container.querySelector<HTMLElement>('.bar');
+    const bar = container.querySelector<HTMLElement>('.weeks');
     if (bar === null) throw new Error('keine Leiste');
     const scrollBy = vi.fn();
     Object.defineProperty(bar, 'scrollBy', { value: scrollBy, configurable: true });
     bar.dispatchEvent(new Event('scroll'));
     fixture.detectChanges();
 
-    const forward = container.querySelector<HTMLElement>('.arrow--end');
-    if (forward === null) throw new Error('kein Pfeil');
+    const forward = screen.getByRole('button', { name: 'Spätere Wochen zeigen' });
     fireEvent.click(forward);
 
     expect(scrollBy).toHaveBeenCalledWith({ left: 152, behavior: 'auto' });

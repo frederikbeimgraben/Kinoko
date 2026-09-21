@@ -26,13 +26,7 @@
   padding-block-end: var(--size-gutter);
 }
 
-.results__card {
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-
-.results__card--muted {
+.results__group--muted {
   opacity: 0.62;
 }
 
@@ -42,7 +36,7 @@
   align-items: center;
   block-size: var(--size-row-tall);
   padding-inline: 14px;
-  border-block-end: var(--border-width) solid var(--color-border);
+  border-block-end: var(--border-width) solid var(--outline);
 }
 
 .results__bars {
@@ -57,7 +51,7 @@
   flex: none;
   inline-size: var(--size-thumb);
   block-size: var(--size-thumb);
-  background: var(--color-surface-sunken);
+  background: var(--surface-low);
   border-radius: var(--pilz-colour-radius);
 }
 
@@ -76,7 +70,7 @@
   font-size: 11px;
   font-weight: var(--fw-semibold);
   line-height: normal;
-  color: var(--color-text-muted);
+  color: var(--text-var);
   text-transform: uppercase;
   letter-spacing: 0.09em;
 }
@@ -84,5 +78,15 @@
 .results__gap i {
   flex: 1;
   block-size: 1px;
-  background: var(--color-border);
+  background: var(--outline);
+}
+
+// Der Buchstabenkopf trennt die Treffer alphabetisch, per `kit.css` `.list .lbl`.
+.lbl {
+  padding: 14px 12px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
 }

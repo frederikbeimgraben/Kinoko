@@ -43,9 +43,16 @@ export class SpeciesResultsComponent {
 
   protected readonly skeletons = Array.from({ length: SKELETON_ROWS }, (_, at) => at);
 
-  protected readonly rows = computed(() =>
-    this.hits().map((one) => ({ slug: one.species.slug, species: speciesRow(one.species, this.i18n) })),
-  );
+  protected readonly rows = computed(() => {
+    let last = '';
+    return this.hits().map((one) => {
+      const species = speciesRow(one.species, this.i18n);
+      const letter = species.name.charAt(0).toLocaleUpperCase();
+      const head = letter !== last;
+      last = letter;
+      return { slug: one.species.slug, species, letter, head };
+    });
+  });
 
   protected readonly gapRows = computed(() =>
     this.unassessable().map((one) => ({

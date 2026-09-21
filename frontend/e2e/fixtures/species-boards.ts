@@ -187,32 +187,6 @@ export const FILTER_DESKTOP = {
   },
 };
 
-/** Arten außerhalb ihrer Wachstumszeit: sie zählen mit, treffen aber nie. */
-function fillerOf(edibility: string, count: number, from: number): Entry[] {
-  return Array.from({ length: count }, (_, at) => ({
-    slug: `filler-${edibility}-${String(from + at)}`,
-    name: `Art ${String(from + at)}`,
-    latin: `Genus specimen${String(from + at)}`,
-    edibility,
-    hymenium: 'tubes',
-    months: [1, 3] as const,
-  }));
-}
-
-/** Katalog des Bretts `FilterDesktopGroup`: dieselben Zahlen wie `FilterEdibility`. */
-export const FILTER_DESKTOP_GROUP = {
-  catalogue: [
-    ...DESKTOP_HITS,
-    ...DESKTOP_REST,
-    ...fillerOf('edible', 71, 0),
-    ...fillerOf('conditionally_edible', 5, 71),
-    ...fillerOf('inedible', 142, 76),
-    ...fillerOf('poisonous', 68, 218),
-    ...fillerOf('deadly', 14, 286),
-  ],
-  choice: FILTER_DESKTOP.choice,
-};
-
 const TAXON_SPECIES: readonly Entry[] = [
   {
     slug: 'boletus-edulis',

@@ -7,7 +7,6 @@ const STORAGE_KEY = 'pilzkarte.speciesfilter';
 interface Saved {
   values?: Record<string, string[]>;
   colours?: Record<string, string>;
-  sizes?: Record<string, [number, number]>;
   keepUnknown?: string[];
 }
 
@@ -32,7 +31,7 @@ export class SpeciesFilterState {
   readonly chosenCount = computed(() => {
     const held = this._selection();
     const values = [...held.values.values()].reduce((sum, set) => sum + set.size, 0);
-    return values + held.colours.size + held.sizes.size;
+    return values + held.colours.size;
   });
 
   constructor() {
@@ -48,10 +47,6 @@ export class SpeciesFilterState {
 
   colourOf(part: string): string | null {
     return this._selection().colours.get(part) ?? null;
-  }
-
-  sizeOf(key: string): readonly [number, number] | null {
-    return this._selection().sizes.get(key) ?? null;
   }
 
   keeps(key: GroupKey): boolean {
@@ -76,15 +71,6 @@ export class SpeciesFilterState {
       if (hex === null || colours.get(part) === hex) colours.delete(part);
       else colours.set(part, hex);
       return { ...held, colours };
-    });
-  }
-
-  setSize(key: string, span: readonly [number, number] | null): void {
-    this.patch((held) => {
-      const sizes = new Map(held.sizes);
-      if (span === null) sizes.delete(key);
-      else sizes.set(key, span);
-      return { ...held, sizes };
     });
   }
 
@@ -151,7 +137,6 @@ export class SpeciesFilterState {
     const saved: Saved = {
       values: Object.fromEntries([...held.values].map(([key, set]) => [key, [...set]])),
       colours: Object.fromEntries(held.colours),
-      sizes: Object.fromEntries([...held.sizes].map(([key, span]) => [key, [span[0], span[1]]])),
       keepUnknown: [...held.keepUnknown],
     };
     try {
@@ -177,15 +162,9 @@ export class SpeciesFilterState {
     for (const [key, chosen] of Object.entries(saved.values ?? {})) {
       if (isGroup(key) && Array.isArray(chosen) && chosen.length) values.set(key, new Set(chosen));
     }
-    const sizes = new Map<string, readonly [number, number]>();
-    for (const [key, span] of Object.entries(saved.sizes ?? {})) {
-      const [low, high] = Array.isArray(span) ? span : [];
-      if (typeof low === 'number' && typeof high === 'number') sizes.set(key, [low, high]);
-    }
     this._selection.set({
       values,
       colours: new Map(Object.entries(saved.colours ?? {})),
-      sizes,
       keepUnknown: new Set((saved.keepUnknown ?? []).filter(isGroup)),
     });
   }
