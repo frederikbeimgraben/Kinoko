@@ -14,6 +14,9 @@ import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { GroupKey } from './facets';
 
+/** Plakettenfarbe und Fläche ohne eigenes Thema, etwa Schutz und Handel. */
+export const MUTED_TONE = { colour: 'var(--color-text-muted)', background: 'var(--color-surface-sunken)' };
+
 /** Plakettenfarbe und Fläche je Speisewert, aus Thema-Tokens. */
 export const EDIBILITY_TONE: Record<Edibility, { colour: string; background: string }> = {
   edible: { colour: 'var(--color-primary)', background: 'var(--color-primary-subtle)' },
@@ -65,6 +68,7 @@ export const PART_TEXT: Record<BodyPart, TranslationKey> = {
   fruitbody: 'species.field.fruitbody',
   cap: 'species.field.cap',
   stem: 'species.field.stem',
+  ring: 'species.field.ring',
   stem_base: 'species.field.stemBase',
   gills: 'species.field.gills',
   flesh: 'species.field.flesh',

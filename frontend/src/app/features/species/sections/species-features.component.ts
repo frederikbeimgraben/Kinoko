@@ -4,7 +4,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LevelPillComponent } from '../../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
 import type { SpeciesEntry } from '../../../core/api/models';
-import { EDIBILITY_TEXT, EDIBILITY_TONE, PROTECTION_TEXT } from '../labels';
+import { EDIBILITY_TEXT, EDIBILITY_TONE, MUTED_TONE, PROTECTION_TEXT } from '../labels';
 
 /** Eine Plakette der Einstufung: Text und Farben. */
 export interface Level {
@@ -12,11 +12,6 @@ export interface Level {
   colour: string;
   background: string;
 }
-
-const MUTED: Pick<Level, 'colour' | 'background'> = {
-  colour: 'var(--color-text-muted)',
-  background: 'var(--color-surface-sunken)',
-};
 
 /** Die Einstufung einer Art: Speisewert, Schutz und Handel. */
 @Component({
@@ -38,13 +33,13 @@ export class SpeciesFeaturesComponent {
 
   protected readonly protection = computed<Level>(() => ({
     text: this.i18n.translate(PROTECTION_TEXT[this.species().protection]),
-    ...MUTED,
+    ...MUTED_TONE,
   }));
 
   protected readonly trade = computed<Level>(() => ({
     text: this.i18n.translate(
       this.species().marketable === true ? 'species.value.tradeAllowed' : 'species.value.tradeLimited',
     ),
-    ...MUTED,
+    ...MUTED_TONE,
   }));
 }

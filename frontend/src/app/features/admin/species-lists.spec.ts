@@ -160,6 +160,7 @@ describe('species-lists', () => {
   it('bietet nur die Teile, die weder Art noch Wahl führen', () => {
     expect(freeParts(SPECIES, ['gills'])).toEqual([
       'fruitbody',
+      'ring',
       'stem_base',
       'pores',
       'flesh',

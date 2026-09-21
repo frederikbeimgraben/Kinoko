@@ -1,18 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { speciesEntry } from '../../../testing/species-fixture';
-import {
-  capWidthOf,
-  hymeniumPartOf,
-  levelOf,
-  periodOf,
-  pressureOf,
-  stemOf,
-  swatchOf,
-  flavoursOf,
-} from './comparison.rows';
+import { capShapeOf, compareGroups, measurementOf, partNoteOf, seasonOf, senseSmellOf, swatchOf } from './comparison.rows';
 
-const WHITE = { name: 'weiß', hex: '#f0ece0' };
+const WHITE = { name: 'weiß', hex: '#f2efe6' };
+const BROWN = { name: 'braun', hex: '#7a5230' };
 const PINK = { name: 'rosa', hex: '#e8c8cf' };
 const DARK_PINK = { name: 'dunkelrosa', hex: '#d9a0ac' };
 
@@ -20,118 +12,177 @@ const STONE = speciesEntry({
   slug: 'steinpilz',
   name: 'Steinpilz',
   scientificName: 'Boletus edulis',
-  periodStartMonth: 5,
-  periodEndMonth: 11,
-  measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] }],
-  colours: [{ part: 'tubes', mode: 'distinct', colours: [WHITE, { name: 'oliv', hex: '#cfd08a' }] }],
-  traits: [{ key: 'stem', text: 'weiß, fein' }],
-  terms: [
-    { term: { id: 'a', slug: 'mild', name: 'mild', kind: 'taste' }, fromExperience: false },
-    { term: { id: 'b', slug: 'earthy', name: 'erdig', kind: 'smell' }, fromExperience: false },
+  edibility: 'edible',
+  protection: 'personal_use',
+  periodStartMonth: 7,
+  periodEndMonth: 10,
+  capShapeYoung: 'hemispherical',
+  capShapeOld: 'flat',
+  hymeniumType: 'tubes',
+  measurements: [
+    { part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] },
+    { part: 'stem', measurements: [{ dimension: 'length', unit: 'cm', low: 5, high: 15 }] },
   ],
+  colours: [
+    { part: 'cap', mode: 'distinct', colours: [WHITE, BROWN] },
+    { part: 'tubes', mode: 'single', colours: [WHITE] },
+  ],
+  partNotes: [{ part: 'stem', description: 'fein, weiß', comment: '' }],
+  colourChanges: [
+    { part: 'tubes', kind: 'mechanical', from: WHITE, to: PINK, speed: 'immediate', triggers: [] },
+  ],
+  terms: [{ term: { id: 'a', slug: 'earthy', name: 'erdig', kind: 'smell' }, fromExperience: false }],
 });
 
-const GALL = speciesEntry({
-  slug: 'gallenroehrling',
-  name: 'Gallenröhrling',
-  scientificName: 'Tylopilus felleus',
-  edibility: 'inedible',
-  colours: [{ part: 'tubes', mode: 'single', colours: [PINK] }],
-  colourChanges: [
-    { part: 'tubes', kind: 'mechanical', from: PINK, to: DARK_PINK, speed: '1min', triggers: [] },
-  ],
+const KNIGHT = speciesEntry({
+  slug: 'gift',
+  name: 'Grüner Knollenblätterpilz',
+  scientificName: 'Amanita phalloides',
+  edibility: 'deadly',
+  protection: 'none',
+  hymeniumType: 'gills',
+  colours: [{ part: 'gills', mode: 'single', colours: [WHITE] }],
 });
 
 function i18n(): I18nService {
   return TestBed.inject(I18nService);
 }
 
-describe('comparison rows', () => {
-  it('nennt den Speisewert mit seiner Farbe', () => {
-    expect(levelOf(GALL, i18n()).text).toBe('ungenießbar');
-  });
-
-  it('liest die Hutbreite mit ihrer Einheit', () => {
-    expect(capWidthOf(STONE, i18n())).toEqual({ value: '4 – 20', unit: 'cm' });
-  });
-
-  it('lässt die Hutbreite aus, wo kein Maß steht', () => {
-    expect(capWidthOf(GALL, i18n())).toBeNull();
+describe('comparison.rows', () => {
+  it('liest ein Maß eines Teils mit seiner Einheit', () => {
+    expect(measurementOf(STONE, 'cap', 'width', i18n())).toEqual({ value: '4 – 20', unit: 'cm' });
+    expect(measurementOf(KNIGHT, 'cap', 'width', i18n())).toBeNull();
   });
 
   it('nimmt die Farben eines Teils samt Namen', () => {
-    expect(swatchOf(STONE, 'tubes')).toEqual({
-      colours: STONE.colours[0].colours,
-      mode: 'multiple',
-      label: 'weiß, oliv',
-    });
+    expect(swatchOf(STONE, 'cap')).toEqual({ colours: [WHITE, BROWN], mode: 'multiple', label: 'weiß, braun' });
+    expect(swatchOf(STONE, 'ring')).toBeNull();
   });
 
-  it('lässt eine Farbe aus, wo der Teil fehlt', () => {
-    expect(swatchOf(STONE, 'gills')).toBeNull();
-    expect(swatchOf(STONE, null)).toBeNull();
+  it('nennt die Hutform von Jugend bis Alter, wo sie sich unterscheiden', () => {
+    expect(capShapeOf(STONE, i18n())).toBe('halbkugelig bis flach');
+    expect(capShapeOf(KNIGHT, i18n())).toBeNull();
   });
 
-  it('sucht den Teil der Fruchtschicht über alle Arten', () => {
-    expect(hymeniumPartOf([STONE, GALL])).toBe('tubes');
-    expect(hymeniumPartOf([])).toBeNull();
+  it('liest die Notiz eines Teils', () => {
+    expect(partNoteOf(STONE, 'stem')).toBe('fein, weiß');
+    expect(partNoteOf(STONE, 'ring')).toBeNull();
   });
 
-  it('zeigt ohne Verfärbung die Farbe der Fruchtschicht allein', () => {
-    const test = pressureOf(STONE, 'tubes', i18n());
-
-    expect(test?.from?.mode).toBe('single');
-    expect(test?.to).toBeNull();
-    expect(test?.speed).toBe('bleibt');
+  it('nimmt für den Geruch die Marken, sonst nichts', () => {
+    expect(senseSmellOf(STONE)).toBe('erdig');
+    expect(senseSmellOf(KNIGHT)).toBeNull();
   });
 
-  it('zeigt die Verfärbung mit Von, Nach und Dauer', () => {
-    const test = pressureOf(GALL, 'tubes', i18n());
-
-    expect(test?.from?.colours).toEqual([PINK]);
-    expect(test?.to?.colours).toEqual([DARK_PINK]);
-    expect(test?.speed).toBe('nach 1 min');
+  it('schreibt die Saison mit kurzen Monaten', () => {
+    expect(seasonOf(STONE, i18n())).toBe('Juli – Okt.');
+    expect(seasonOf(KNIGHT, i18n())).toBeNull();
   });
 
-  it('nennt eine sofortige Verfärbung ohne ein Nachher', () => {
-    const quick = speciesEntry({
-      slug: 'maronenroehrling',
-      name: 'Maronenröhrling',
-      scientificName: 'Imleria badia',
-      colourChanges: [{ part: 'tubes', kind: 'mechanical', to: PINK, speed: 'immediate', triggers: [] }],
+  describe('compareGroups', () => {
+    it('trägt eine Auszeichnung für den Speisewert', () => {
+      const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+      const row = groups[0]?.rows.find((one) => one.key === 'Speisewert');
+
+      expect(row?.cells[0]).toEqual({ kind: 'badge', text: 'essbar', colour: expect.any(String), background: expect.any(String) });
+      expect(row?.cells[1]?.kind).toBe('badge');
     });
 
-    expect(pressureOf(quick, null, i18n())?.speed).toBe('sofort');
-  });
+    it('trägt einen Wert mit Einheit für ein Maß', () => {
+      const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+      const cap = groups.find((one) => one.label === 'Hut');
+      const width = cap?.rows.find((one) => one.key === 'Breite');
 
-  it('nennt eine dauerhafte Verfärbung ohne ein Nachher', () => {
-    const lasting = speciesEntry({
-      slug: 'rotfuss',
-      name: 'Rotfußröhrling',
-      scientificName: 'Xerocomellus chrysenteron',
-      colourChanges: [{ part: 'flesh', kind: 'mechanical', to: PINK, speed: 'permanent', triggers: [] }],
+      expect(width?.cells[0]).toEqual({ kind: 'value', text: '4 – 20', unit: 'cm' });
+      expect(width?.cells[1]).toEqual({ kind: 'none' });
     });
 
-    expect(pressureOf(lasting, null, i18n())?.speed).toBe('bleibt');
-  });
+    it('trägt eine Fläche für eine Farbe', () => {
+      const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+      const cap = groups.find((one) => one.label === 'Hut');
+      const colour = cap?.rows.find((one) => one.key === 'Farbe');
 
-  it('lässt die Druckprobe aus, wo weder Farbe noch Verfärbung steht', () => {
-    expect(pressureOf(GALL, 'gills', i18n())).not.toBeNull();
-    expect(pressureOf(STONE, 'gills', i18n())).toBeNull();
-  });
+      expect(colour?.cells[0]).toEqual({ kind: 'swatch', colours: [WHITE, BROWN], mode: 'multiple', text: 'weiß, braun' });
+    });
 
-  it('liest den Stiel aus seinem Merkmal', () => {
-    expect(stemOf(STONE)).toBe('weiß, fein');
-    expect(stemOf(GALL)).toBeNull();
-  });
+    it('trägt einen Fließtext für eine Notiz', () => {
+      const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+      const stem = groups.find((one) => one.label === 'Stiel');
+      const net = stem?.rows.find((one) => one.key === 'Netz');
 
-  it('nimmt nur die Begriffe des Geschmacks', () => {
-    expect(flavoursOf(STONE)).toEqual(['mild']);
-    expect(flavoursOf(GALL)).toBeNull();
-  });
+      expect(net?.cells[0]).toEqual({ kind: 'plain', text: 'fein, weiß' });
+      expect(net?.cells[1]).toEqual({ kind: 'none' });
+    });
 
-  it('liest die Wachstumszeit als Spanne', () => {
-    expect(periodOf(STONE)).toEqual({ from: 5, to: 11 });
-    expect(periodOf(GALL)).toBeNull();
+    it('lässt eine Zeile aus, für die keine Art einen Wert trägt', () => {
+      const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+      const ring = groups.find((one) => one.label === 'Ring');
+
+      expect(ring).toBeUndefined();
+    });
+
+    it('lässt eine Gruppe ohne Zeile ganz aus', () => {
+      const bare = speciesEntry({ slug: 'bare', name: 'Bare', scientificName: 'Bare' });
+      const groups = compareGroups([bare, bare], i18n(), false);
+
+      expect(groups.find((one) => one.label === 'Hut')).toBeUndefined();
+      expect(groups.find((one) => one.label === 'Ring')).toBeUndefined();
+    });
+
+    it('zeigt bei „nur Unterschiede“ nur die Zeilen, die sich unterscheiden', () => {
+      const all = compareGroups([STONE, KNIGHT], i18n(), false);
+      const onlyDiff = compareGroups([STONE, KNIGHT], i18n(), true);
+      const hymeniumAll = all.find((one) => one.label === 'Fruchtschicht');
+      const hymeniumDiff = onlyDiff.find((one) => one.label === 'Fruchtschicht');
+
+      expect(hymeniumAll?.rows.length).toBeGreaterThan(0);
+      expect(hymeniumDiff?.rows.every((row) => row.diff)).toBe(true);
+    });
+
+    it('nimmt gleiche Werte aus „nur Unterschiede“ heraus', () => {
+      const twin = speciesEntry({
+        slug: 'zwilling',
+        name: 'Zwilling',
+        scientificName: 'Zwilling',
+        edibility: 'edible',
+        protection: 'personal_use',
+      });
+      const groups = compareGroups([STONE, twin], i18n(), true);
+      const classification = groups.find((one) => one.label === 'Einstufung');
+
+      expect(classification?.rows.find((one) => one.key === 'Speisewert')).toBeUndefined();
+    });
+
+    it('trägt eine Zeile je Auslöser der Verfärbung, sonst „keine Angabe“', () => {
+      const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+      const reaction = groups.find((one) => one.label === 'Verfärbung');
+
+      expect(reaction).toBeUndefined();
+    });
+
+    it('zeigt einen Auslöser, den nur eine Art trägt, mit „keine Angabe“ für die andere', () => {
+      const tested = speciesEntry({
+        slug: 'getestet',
+        name: 'Getestet',
+        scientificName: 'Getestet',
+        colourChanges: [
+          {
+            part: 'flesh',
+            kind: 'mechanical',
+            from: WHITE,
+            to: DARK_PINK,
+            speed: '1min',
+            triggers: [{ id: 't1', slug: 'cut', name: 'Anschnitt', kind: 'trigger' }],
+          },
+        ],
+      });
+      const untested = speciesEntry({ slug: 'untested', name: 'Untested', scientificName: 'Untested' });
+      const groups = compareGroups([tested, untested], i18n(), false);
+      const reaction = groups.find((one) => one.label === 'Verfärbung');
+      const row = reaction?.rows.find((one) => one.key === 'Anschnitt');
+
+      expect(row?.cells[0]).toEqual({ kind: 'swatch', colours: [DARK_PINK], mode: 'single', text: 'dunkelrosa' });
+      expect(row?.cells[1]).toEqual({ kind: 'plain', text: 'keine Angabe' });
+    });
   });
 });

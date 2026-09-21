@@ -265,6 +265,32 @@ async def test_replace_species_writes_every_child_kind(
     ]
 
 
+async def test_replace_species_writes_ring_part(
+    session: AsyncSession, api: httpx.AsyncClient
+) -> None:
+    porcini = await cf.make_species(
+        session, slug="boletus-edulis", name="Steinpilz", latin_name="Boletus edulis"
+    )
+    payload = _write_payload(
+        partNotes=[{"part": "ring", "description": "Vergänglich", "comment": ""}],
+        colours=[
+            {
+                "part": "ring",
+                "mode": "distinct",
+                "colours": [{"name": "weiss", "hex": "#ffffff"}],
+            },
+        ],
+    )
+    user = await make_user(session)
+    sign_in(app_of(api), user, "species.edit")
+    response = await api.put(f"/species/{porcini.slug}", json=payload)
+    sign_out(app_of(api))
+    assert response.status_code == 200
+    body = response.json()
+    assert body["partNotes"] == [{"part": "ring", "description": "Vergänglich", "comment": ""}]
+    assert body["colours"][0]["part"] == "ring"
+
+
 async def test_replace_species_lookalike_sync_is_independent_per_side(
     session: AsyncSession,
     api: httpx.AsyncClient,

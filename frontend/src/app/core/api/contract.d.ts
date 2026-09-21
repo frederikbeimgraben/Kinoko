@@ -1068,7 +1068,7 @@ export interface components {
         /** @enum {string} */
         Protection: "none" | "personal_use" | "strict";
         /** @enum {string} */
-        BodyPart: "fruitbody" | "cap" | "stem" | "stem_base" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
+        BodyPart: "fruitbody" | "cap" | "stem" | "ring" | "stem_base" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
         /** @enum {string} */
         Dimension: "width" | "height" | "thickness" | "length";
         /** @enum {string} */
@@ -1860,7 +1860,11 @@ export interface operations {
     };
     exportMyData: {
         parameters: {
-            query?: never;
+            query?: {
+                format?: "json" | "csv" | "gpx";
+                /** @description The parts of the export. The default is all parts. GPX holds finds, markers and zones only. */
+                "include[]"?: ("finds" | "markers" | "zones" | "images" | "combinations")[];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1874,6 +1878,8 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountExport"];
+                    "application/zip": string;
+                    "application/gpx+xml": string;
                 };
             };
             401: components["responses"]["Unauthorized"];
@@ -2221,6 +2227,7 @@ export interface operations {
             query?: {
                 limit?: components["parameters"]["Limit40"];
                 cursor?: components["parameters"]["Cursor"];
+                sort?: "name" | "latinName" | "edibility" | "season";
                 q?: string;
                 taxonId?: string;
                 "edibility[]"?: components["schemas"]["Edibility"][];
@@ -2603,6 +2610,8 @@ export interface operations {
                 speciesId?: string;
                 /** @description minLon,minLat,maxLon,maxLat */
                 bbox?: string;
+                /** @description Keeps the finds that lie in the polygon of this zone. The caller must see the zone. */
+                zoneId?: string;
             };
             header?: never;
             path?: never;
