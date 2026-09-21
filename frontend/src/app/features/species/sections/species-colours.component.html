@@ -1,9 +1,11 @@
-<app-section [label]="'species.section.colours' | t">
-  <app-row-group>
-    @for (row of rows(); track row.part) {
-      <app-list-row kind="catalogue" [title]="row.part" [subline]="row.names">
-        <app-colour-field trail [colours]="row.colours" [mode]="row.mode" [label]="row.names" />
-      </app-list-row>
-    }
-  </app-row-group>
-</app-section>
+@if (rows().length > 0) {
+  <app-section [label]="'species.section.colours' | t">
+    <app-row-group>
+      @for (row of rows(); track row.part) {
+        <app-list-row kind="catalogue" [title]="row.part" [subline]="row.names">
+          <app-colour-field trail [colours]="row.colours" [mode]="row.mode" [label]="row.names" />
+        </app-list-row>
+      }
+    </app-row-group>
+  </app-section>
+}

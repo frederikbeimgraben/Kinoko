@@ -7,36 +7,28 @@
 
 .page {
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: 20px;
-  min-block-size: 0;
   padding: var(--size-gutter);
-  overflow-y: auto;
 }
 
-// Am Rechner stehen Bild, Saison, Bilder und Quellen links, die Daten rechts.
-.page--wide {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--size-facts);
-  gap: 0;
-  padding: 0;
-}
-
-.page--wide .page__column {
+.species__intro {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  min-inline-size: 0;
-  padding: 20px 24px;
-  overflow-y: auto;
+  gap: 10px;
 }
 
-.page--wide .page__column:first-child {
-  border-inline-end: var(--border-width) solid var(--color-border);
+.species__latin {
+  margin: 0;
+  padding-inline: 4px;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--text);
 }
 
-// Die Datenspalte setzt ihre Abschnitte enger, wie das Brett sie zeichnet.
-.page--wide .page__column:last-child {
-  gap: var(--space-4);
+.species__desc {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 15px;
+  line-height: 1.45;
 }

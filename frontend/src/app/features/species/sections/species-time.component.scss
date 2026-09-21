@@ -25,3 +25,15 @@
   line-height: 1.4;
   color: var(--color-text-muted);
 }
+
+.time__curve {
+  margin-block-start: 12px;
+  padding: 12px 12px 8px;
+  background: var(--surface);
+  border-radius: 20px;
+}
+
+// Ohne ein Manifest bleibt die Kurve leer: die Hülle nimmt dann keinen Platz.
+.time__curve:has(app-species-season:empty) {
+  display: none;
+}

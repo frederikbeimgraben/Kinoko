@@ -79,7 +79,8 @@ test('Die Browser-Geste zurück schließt ein Blatt über der Karte', async ({ p
 test.describe('Zurück von einer Bildseite', () => {
   test('Der Pfeil führt vom Formular einmal auf die Artseite', async ({ page }) => {
     await openSpecies(page);
-    await page.getByRole('button', { name: 'Bild hinzufügen' }).click();
+    await page.getByRole('button', { name: 'Mehr' }).click();
+    await page.getByRole('button', { name: 'Bild einreichen' }).click();
     await expect(page).toHaveURL(/bilder\/neu$/);
 
     await page.getByRole('button', { name: 'Zurück' }).click();
@@ -91,7 +92,8 @@ test.describe('Zurück von einer Bildseite', () => {
 
   test('Die Browser-Geste führt vom Formular einmal auf die Artseite', async ({ page }) => {
     await openSpecies(page);
-    await page.getByRole('button', { name: 'Bild hinzufügen' }).click();
+    await page.getByRole('button', { name: 'Mehr' }).click();
+    await page.getByRole('button', { name: 'Bild einreichen' }).click();
     await expect(page).toHaveURL(/bilder\/neu$/);
 
     await page.goBack();
