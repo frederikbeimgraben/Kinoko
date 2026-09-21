@@ -24,7 +24,7 @@ describe('LevelPillComponent', () => {
     if (pill === null) throw new Error('Die Marke steht nicht im Baum.');
     // Das globale Stilblatt mit --radius-md: 8px fehlt im Test. Geprüft
     // wird darum die Bindung an das Token, nicht der aufgelöste Wert.
-    expect(getComputedStyle(pill).borderRadius).toBe('var(--radius-md)');
+    expect(getComputedStyle(pill).borderRadius).toBe('var(--pilz-level-radius, var(--radius-md))');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

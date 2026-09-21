@@ -36,7 +36,8 @@
     "beispiel.farbeCremeweiss": "cremeweiß",
     "beispiel.farbeOcker": "ocker",
     "beispiel.farbeRot": "rot",
-    "beispiel.farbeOlivbraun": "olivbraun"
+    "beispiel.farbeOlivbraun": "olivbraun",
+    "beispiel.sortieren": "Sortieren"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -75,6 +76,7 @@
     "beispiel.farbeCremeweiss": "creamy white",
     "beispiel.farbeOcker": "ochre",
     "beispiel.farbeRot": "red",
-    "beispiel.farbeOlivbraun": "olive brown"
+    "beispiel.farbeOlivbraun": "olive brown",
+    "beispiel.sortieren": "Sort"
   }
 }

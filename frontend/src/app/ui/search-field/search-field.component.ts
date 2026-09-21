@@ -19,6 +19,8 @@ export class SearchFieldComponent {
   readonly placeholder = input<string>('');
   /** Solange der Katalog lädt, bleibt das Feld eine leere Fläche. */
   readonly loading = input(false);
+  /** In einer Leiste steht das Feld ohne eigene Fläche. */
+  readonly plain = input(false);
 
   readonly valueChange = output<string>();
 

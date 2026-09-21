@@ -1,9 +1,25 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RippleDirective } from '../ripple/ripple.directive';
+import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Die Piktogramme, die eine Zeile als Knopf statt als Text trägt. */
-export type IconButtonIcon =
+export type OwnIcon =
   'check' | 'close' | 'delete' | 'pencil' | 'share' | 'sign-out' | 'prev' | 'next' | 'undo';
+
+/** Der Knopf nimmt die eigenen Zeichen und jedes Zeichen des Katalogs. */
+export type IconButtonIcon = OwnIcon | IconName;
+
+const OWN_ICONS: ReadonlySet<string> = new Set<OwnIcon>([
+  'check',
+  'close',
+  'delete',
+  'pencil',
+  'share',
+  'sign-out',
+  'prev',
+  'next',
+  'undo',
+]);
 
 /** Die sieben Auftritte aus `kit.css`, je RoundButton `kind`. */
 export type IconButtonKind = 'tonal' | 'plain' | 'fab' | 'fabl' | 'accept' | 'reject' | 'over';
@@ -13,8 +29,11 @@ const FILLED_ICONS: ReadonlySet<IconButtonIcon> = new Set(['prev', 'next']);
 
 const BIG_KINDS: ReadonlySet<IconButtonKind> = new Set(['accept', 'reject']);
 
+/** Maß und Strich eines Zeichens aus dem Katalog, per `kit.css` `.ic`. */
+const CATALOGUE_GLYPH = { size: 24, stroke: 1.8 } as const;
+
 /** Maß und Strich je Icon: der Haken trägt schwerer als das X. */
-const GLYPHS: Readonly<Record<IconButtonIcon, { size: number; stroke: number }>> = {
+const GLYPHS: Readonly<Partial<Record<IconButtonIcon, { size: number; stroke: number }>>> = {
   check: { size: 20, stroke: 2.4 },
   close: { size: 18, stroke: 2.2 },
   delete: { size: 18, stroke: 1.8 },
@@ -30,7 +49,7 @@ const GLYPHS: Readonly<Record<IconButtonIcon, { size: number; stroke: number }>>
 @Component({
   selector: 'app-icon-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RippleDirective],
+  imports: [RippleDirective, SvgIconComponent],
   templateUrl: './icon-button.component.html',
   styleUrl: './icon-button.component.scss',
 })
@@ -43,7 +62,9 @@ export class IconButtonComponent {
 
   readonly pressed = output();
 
-  protected readonly glyph = computed(() => GLYPHS[this.icon()]);
+  protected readonly own = computed(() => OWN_ICONS.has(this.icon()));
+  protected readonly catalogue = computed(() => this.icon() as IconName);
+  protected readonly glyph = computed(() => GLYPHS[this.icon()] ?? CATALOGUE_GLYPH);
   protected readonly iconSize = computed(() => (BIG_KINDS.has(this.kind()) ? 32 : this.glyph().size));
   protected readonly filled = computed(() => FILLED_ICONS.has(this.icon()));
 }

@@ -1,11 +1,8 @@
-<div class="layout">
-  <div class="layout__rail">
-    <ng-content select="[split-rail]" />
-  </div>
-  <div class="layout__column">
-    <ng-content select="[split-column]" />
-  </div>
-  <div class="layout__content">
-    <ng-content />
-  </div>
+<div
+  class="layout__in"
+  [style.gap.px]="kind() === 'column' || kind() === 'columns' ? gap() : null"
+  [style.padding]="padding() || null"
+  [style.grid-template-columns]="kind() === 'columns' ? grid() : null"
+>
+  <ng-content />
 </div>

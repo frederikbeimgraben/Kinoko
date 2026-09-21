@@ -1,6 +1,6 @@
 <app-page-header [title]="'account.title' | t" [close]="true" (closeClick)="back()" />
 
-<div class="account">
+<div class="account" appScrollFade>
   <section class="account__block">
     <h2 class="account__section">{{ 'konto.abschnitt.konto' | t }}</h2>
     @if (user(); as person) {

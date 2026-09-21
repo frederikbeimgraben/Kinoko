@@ -37,6 +37,7 @@ describe('NavComponent', () => {
     const { container } = await render(NavComponent, { providers: [provideRouter([])] });
 
     expect(container.querySelector('.nav--rail')).toBeNull();
+    expect(container.querySelector('.navtab--rail')).toBeNull();
   });
 
   it('renders as a rail with a slot for the avatar', async () => {
@@ -47,6 +48,7 @@ describe('NavComponent', () => {
 
     expect(container.querySelector('.nav--rail')).not.toBeNull();
     expect(container.querySelector('.nav__slot')).not.toBeNull();
+    expect(container.querySelectorAll('.navtab--rail')).toHaveLength(3);
   });
 
   it('leaves out the avatar slot on the bottom bar', async () => {
@@ -55,15 +57,10 @@ describe('NavComponent', () => {
     expect(container.querySelector('.nav__slot')).toBeNull();
   });
 
-  it('marks every tab as a tap target with a press state', async () => {
+  it('gives every tab the pill of the design', async () => {
     const { container } = await render(NavComponent, { providers: [provideRouter([])] });
 
-    const tabs = container.querySelectorAll('.nav__tab');
-    expect(tabs).toHaveLength(3);
-    for (const tab of Array.from(tabs)) {
-      expect(tab).toHaveClass('tap');
-      expect(tab).toHaveAttribute('data-press', 'tint');
-    }
+    expect(container.querySelectorAll('.navtab__pill')).toHaveLength(3);
   });
 
   it('renders without German text against an empty catalogue', async () => {

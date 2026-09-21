@@ -97,7 +97,7 @@ describe('InfiniteListComponent', () => {
   it('blendet die Ränder der Liste aus', async () => {
     const { container } = await render(InfiniteListComponent, { inputs: { pageSize: 40 } });
 
-    expect(container.querySelectorAll('.list > .scroll-fade')).toHaveLength(2);
+    expect(container.querySelectorAll('.list.scroll')).toHaveLength(1);
   });
 
   it('bleibt ohne Rahmen, solange framed fehlt', async () => {

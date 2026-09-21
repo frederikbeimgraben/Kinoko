@@ -5,7 +5,7 @@
   @for (action of secondary(); track action.label) {
     <app-icon-button
       kind="fabl"
-      [icon]="roundIcon(action.icon)"
+      [icon]="action.icon"
       [label]="action.label"
       (pressed)="chosen.emit(action)"
     />

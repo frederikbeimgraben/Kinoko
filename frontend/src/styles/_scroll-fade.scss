@@ -1,0 +1,26 @@
+// Der eine Scroll-Bereich einer Seite, per `kit.css` `.scroll`. Die Blende
+// steht an jeder Kante, an der Inhalt weitergeht, und mischt in den Grund.
+.scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll[data-fade='top'] {
+  mask-image: linear-gradient(180deg, transparent 0, #000 32px);
+}
+
+.scroll[data-fade='bottom'] {
+  mask-image: linear-gradient(180deg, #000 calc(100% - 40px), transparent);
+}
+
+.scroll[data-fade='both'] {
+  mask-image: linear-gradient(180deg, transparent 0, #000 32px, #000 calc(100% - 40px), transparent);
+}

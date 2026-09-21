@@ -143,7 +143,7 @@ describe('FilterSheetComponent', () => {
   it('blendet die Ränder des Inhalts aus', async () => {
     const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
-    expect(container.querySelectorAll('.filtersheet__content > .scroll-fade')).toHaveLength(2);
+    expect(container.querySelectorAll('.filtersheet__content.scroll')).toHaveLength(1);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

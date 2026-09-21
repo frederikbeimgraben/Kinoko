@@ -1,6 +1,6 @@
-<label class="search" [attr.for]="loading() ? null : fieldId">
+<label class="search" [class.search--plain]="plain()" [attr.for]="loading() ? null : fieldId">
   @if (!loading()) {
-    <app-svg-icon class="search__icon" name="search" [size]="18" [strokeWidth]="1.8" />
+    <app-svg-icon class="search__icon" name="search" [size]="24" [strokeWidth]="1.8" />
     <input
       class="search__input"
       type="text"
@@ -20,7 +20,7 @@
         [attr.aria-label]="'common.clear' | t"
         (click)="clear()"
       >
-        <app-svg-icon name="close" [size]="14" [strokeWidth]="2.2" />
+        <app-svg-icon name="close" [size]="24" [strokeWidth]="1.8" />
       </button>
     }
   }

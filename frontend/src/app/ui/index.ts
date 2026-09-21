@@ -96,7 +96,7 @@ export { StateViewComponent, type StateViewKind } from './state-view/state-view.
 export { StepBarComponent, type StepAction } from './step-bar/step-bar.component';
 export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';
 export { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row/species-row.component';
-export { SplitLayoutComponent } from './split-layout/split-layout.component';
+export { SplitLayoutComponent, type PaneKind, type SplitKind } from './split-layout/split-layout.component';
 export { StatRowComponent, type Stat } from './stat-row/stat-row.component';
 export { SvgIconComponent, type IconName } from './svg-icon/svg-icon.component';
 export { ToastComponent } from './toast/toast.component';
@@ -106,3 +106,5 @@ export { WeekButtonComponent } from './timeline/week-button.component';
 export { YearBandComponent } from './year-band/year-band.component';
 export { YearBandInputComponent } from './year-band-input/year-band-input.component';
 export { ZoneShapeComponent } from './zone-shape/zone-shape.component';
+export { NavTabComponent } from './nav/nav-tab.component';
+export { SurfaceComponent } from './surface/surface.component';
