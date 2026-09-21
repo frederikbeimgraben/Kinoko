@@ -3,11 +3,8 @@
     <div class="map__column">
       <app-map-column
         [factor]="surface.inProgress()"
-        [playing]="playback.playing()"
         (titleChosen)="overlayNav.openTitle()"
         (weekChosen)="playback.select($event)"
-        (stepped)="playback.step($event)"
-        (playToggled)="playback.toggle()"
         (layerChosen)="overlayNav.set('layer')"
         (savedOpened)="overlayNav.set('combinations')"
         (factorOpened)="overlayNav.openFactorFor($event)"
@@ -70,15 +67,9 @@
           [detents]="detents"
           (detentChange)="setDetent($event)"
         >
-          <app-map-head
-            head
-            [playing]="playback.playing()"
+          <app-map-panel
             (titleChosen)="overlayNav.openTitle()"
             (weekChosen)="playback.select($event)"
-            (stepped)="playback.step($event)"
-            (playToggled)="playback.toggle()"
-          />
-          <app-map-panel
             (layerChosen)="overlayNav.set('layer')"
             (savedOpened)="overlayNav.set('combinations')"
             (factorOpened)="overlayNav.openFactorFor($event)"

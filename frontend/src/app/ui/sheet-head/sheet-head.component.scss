@@ -82,31 +82,6 @@
   color: var(--color-danger);
 }
 
-.head__arrows {
-  display: flex;
-  flex: none;
-  margin-inline-start: var(--space-3);
-  overflow: hidden;
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-md);
-}
-
-.head__arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 38px;
-  block-size: var(--size-control);
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: 0;
-  border-inline-start: var(--border-width) solid var(--color-border-strong);
-}
-
-.head__arrow:first-child {
-  border-inline-start: 0;
-}
-
 // Die Leiste reicht an den Rand, wo der Wirt sie nicht schon füllt.
 .head__bar {
   margin-inline: var(--sheet-head-bleed, 0);

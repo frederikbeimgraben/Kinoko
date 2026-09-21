@@ -40,38 +40,6 @@
         }
       </p>
     }
-    @if (arrows()) {
-      <div class="head__arrows">
-        <button
-          class="head__arrow tap"
-          type="button"
-          data-press="scale"
-          [attr.aria-label]="backArrow.key | t"
-          (click)="stepBack.emit()"
-        >
-          <app-svg-icon [name]="backArrow.icon" [size]="12" />
-        </button>
-        <button
-          class="head__arrow tap"
-          type="button"
-          data-press="scale"
-          [attr.aria-label]="(playing() ? 'map.week.pause' : 'map.week.play') | t"
-          [attr.aria-pressed]="playing()"
-          (click)="playback.emit()"
-        >
-          <app-svg-icon [name]="playing() ? 'pause' : 'play'" [size]="12" />
-        </button>
-        <button
-          class="head__arrow tap"
-          type="button"
-          data-press="scale"
-          [attr.aria-label]="forwardArrow.key | t"
-          (click)="forward.emit()"
-        >
-          <app-svg-icon [name]="forwardArrow.icon" [size]="12" />
-        </button>
-      </div>
-    }
   </div>
   <div class="head__bar"><ng-content /></div>
 </div>
