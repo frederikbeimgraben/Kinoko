@@ -43,7 +43,10 @@
     "beispiel.pantherpilz": "Pantherpilz",
     "beispiel.perlpilz": "Perlpilz",
     "beispiel.semmelstoppelpilz": "Semmelstoppelpilz",
-    "beispiel.wiesenchampignon": "Wiesenchampignon"
+    "beispiel.wiesenchampignon": "Wiesenchampignon",
+    "beispiel.fundLoeschen": "Fund löschen?",
+    "beispiel.fundKurz": "Pfifferling · 6. September",
+    "beispiel.hintergrund": "Hintergrund"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -89,6 +92,9 @@
     "beispiel.pantherpilz": "Panther cap",
     "beispiel.perlpilz": "Blusher",
     "beispiel.semmelstoppelpilz": "Wood hedgehog",
-    "beispiel.wiesenchampignon": "Field mushroom"
+    "beispiel.wiesenchampignon": "Field mushroom",
+    "beispiel.fundLoeschen": "Delete find?",
+    "beispiel.fundKurz": "Chanterelle · 6 September",
+    "beispiel.hintergrund": "Background"
   }
 }

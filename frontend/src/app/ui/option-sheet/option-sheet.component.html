@@ -1,13 +1,6 @@
 <app-overlay-host [open]="open()" [modal]="dims()" (closed)="dismiss()">
   @if (open()) {
-    <app-sheet
-      [label]="title()"
-      [title]="title()"
-      [modal]="true"
-      [detent]="detent()"
-      [detents]="detents()"
-      (closed)="dismiss()"
-    >
+    <app-sheet [label]="title()" [title]="title()" [modal]="true" (closed)="dismiss()">
       <div class="overlay-body">
         <div class="option-sheet__scroll" appScrollFade role="group" [attr.aria-label]="title()">
           <div class="option-sheet__card">
@@ -41,7 +34,7 @@
         </div>
       </div>
       @if (multiple()) {
-        <app-action-bar [primary]="confirmLabel()" (primaryClick)="confirm()" />
+        <app-action-bar foot [primary]="confirmLabel()" (primaryClick)="confirm()" />
       }
     </app-sheet>
   }

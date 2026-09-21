@@ -25,6 +25,7 @@ export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 export { ModalLayerDirective } from './modal-layer/modal-layer.directive';
 export { PhotoDialogComponent } from './photo-dialog/photo-dialog.component';
 export { PopoverComponent, type PopoverAnchor } from './popover/popover.component';
+export { PopoverItemComponent } from './popover/popover-item.component';
 export { RejectDialogComponent } from './reject-dialog/reject-dialog.component';
 export { CrosshairComponent } from './crosshair/crosshair.component';
 export { EmptyStateComponent } from './empty-state/empty-state.component';

@@ -22,7 +22,6 @@ const ALL = 'alle';
 const CHANGED = 'geaendert';
 
 /** Das Blatt trägt zwei Felder und die Knöpfe; eine Raste genügt. */
-const DETENTS = ['content', 'content', 'content'] as const;
 
 /** Ein Schlüssel im Blatt, mit den Werten, die gerade im Feld stehen. */
 interface Draft {
@@ -71,7 +70,6 @@ export class TextsComponent {
   protected readonly scope = signal<string>(ALL);
   protected readonly draft = signal<Draft | null>(null);
   protected readonly busy = signal(false);
-  protected readonly detents = DETENTS;
 
   protected readonly scopes = computed<SegmentOption[]>(() => [
     { value: ALL, label: this.i18n.translate('admin.texts.all') },

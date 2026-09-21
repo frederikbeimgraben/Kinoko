@@ -2,7 +2,6 @@
   <button
     class="overlay__scrim tap"
     [class.overlay__scrim--modal]="modal()"
-    [class.overlay__scrim--cover]="cover()"
     [class.overlay__scrim--wide]="wide()"
     type="button"
     data-press="tint"
@@ -11,7 +10,6 @@
   ></button>
   <div
     class="overlay__panel"
-    [class.overlay__panel--cover]="cover()"
     [class.overlay__panel--wide]="wide()"
     tabindex="-1"
     (keydown)="onKeydown($event)"

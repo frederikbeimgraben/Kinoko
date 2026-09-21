@@ -5,7 +5,7 @@
 .overlay__scrim {
   position: absolute;
   inset: 0;
-  z-index: var(--z-dialog);
+  z-index: var(--z-sheet);
   padding: 0;
   background: transparent;
   border: 0;
@@ -20,13 +20,14 @@
   background: var(--pilz-scrim, rgb(0 0 0 / 50%));
 }
 
-// Das Blatt fährt als Bild aus, nicht als Übergang: ein ruhendes `transform`
-// spannte einen Bezugsrahmen auf, in dem ein Dialog darin klebte.
+// Kein ruhendes `transform`: es spannte einen Bezugsrahmen auf.
+// Die Ebene füllt ihre Zelle und lässt jeden Druck durch, nur das Blatt fängt ihn.
 .overlay__panel {
   position: absolute;
-  inset-block-end: 0;
+  inset-block: var(--pilz-overlay-top, 0) 0;
   inset-inline: 0;
-  z-index: calc(var(--z-dialog) + 1);
+  z-index: calc(var(--z-sheet) + 1);
+  pointer-events: none;
   animation: overlay-rise var(--motion-sheet) var(--ease-standard);
 }
 
@@ -48,15 +49,4 @@
 
 .overlay__panel--wide {
   animation: none;
-}
-
-// Ein deckendes Blatt hängt am Fenster, nicht am Reiter: es liegt auch über
-// der Navigationsleiste.
-.overlay__scrim--cover,
-.overlay__panel--cover {
-  position: fixed;
-}
-
-.overlay__panel--cover {
-  inset-block-start: var(--pilz-overlay-top, auto);
 }

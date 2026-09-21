@@ -45,13 +45,7 @@
         (chosen)="$event.run()"
       />
     } @else if (asPopover()) {
-      <app-popover
-        [open]="true"
-        [anchor]="anchor"
-        [rows]="true"
-        [label]="'entry.create' | t"
-        (closed)="cancel()"
-      >
+      <app-popover [open]="true" [anchor]="anchor" [label]="'entry.create' | t" (closed)="cancel()">
         <app-add-actions (chosen)="start($event)" />
       </app-popover>
     } @else {
@@ -61,7 +55,6 @@
         [class.addentry__overlay--object]="state.step() !== 'findForm'"
         [open]="true"
         [modal]="state.dark()"
-        [cover]="state.onForm()"
         (closed)="cancel()"
       >
         <app-sheet
@@ -72,7 +65,6 @@
           [style.--sheet-title-size.px]="titleSize()"
           [style.--sheet-title-weight]="titleBold() ? 700 : null"
           [style.--sheet-title-tracking]="titleBold() ? '-0.01em' : null"
-          [detents]="detents()"
           [modal]="true"
           [dismissible]="true"
           (closed)="cancel()"

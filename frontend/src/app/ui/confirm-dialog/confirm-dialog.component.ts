@@ -13,10 +13,12 @@ import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 })
 export class ConfirmDialogComponent {
   readonly open = input.required<boolean>();
-  readonly title = input.required<string>();
+  readonly title = input('');
   /** Die Zahl als Satz, etwa „12 Funde · 4 Marker“. */
   readonly meta = input<string>();
   readonly danger = input(true);
+  /** Zwei Wege untereinander statt nebeneinander, wie das Brett `DialogSignIn`. */
+  readonly stack = input(false);
   /** Ohne Angabe steht dort „Löschen“. Andere Handlungen setzen ihr eigenes Wort. */
   readonly confirmLabel = input<string>();
   /** Solange ein Schreibvorgang läuft, nimmt die Bestätigung keinen Tipp an. */

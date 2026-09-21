@@ -22,6 +22,7 @@ const BLOCKS = [
   'app-icon-button',
   'app-split-layout',
   'app-popover',
+  'app-popover-item',
   'app-push-button',
   'app-confirm-dialog',
   'app-photo-dialog',

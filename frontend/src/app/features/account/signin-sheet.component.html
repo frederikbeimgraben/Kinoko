@@ -1,10 +1,9 @@
 @if (pending()) {
-  <app-overlay-host class="signin" [open]="true" [modal]="true" [cover]="true" (closed)="later()">
+  <app-overlay-host class="signin" [open]="true" [modal]="true" (closed)="later()">
     <app-sheet
       [label]="'anmelden.blatt' | t"
       [title]="'anmelden.titel' | t"
       [modal]="true"
-      [detents]="detents"
       (closed)="later()"
     >
       <app-action-bar

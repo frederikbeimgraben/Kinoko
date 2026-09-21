@@ -20,9 +20,8 @@ export type Detent = 0 | 1 | 2;
 /** Anteil der Wirtshöhe zwischen 0 und 1, feste Höhe oder `content` für die Inhaltshöhe. */
 export type DetentSize = number | `${number}px` | 'content';
 
-// Die unterste Raste ist --size-sheet-head, 152 Pixel. Die Zug-Physik
-// braucht die Zahl vor dem Zeichnen des Blatts.
-const DEFAULT_DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['152px', 0.4, 0.9];
+// Ein Blatt ist so hoch wie sein Inhalt. Nur die Karte gibt drei Rasten vor.
+const DEFAULT_DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 
 // Erst ab dieser Bewegung in Punkten zählt ein Zug als Zug, nicht als Tipp.
 const DRAG_THRESHOLD = 24;
@@ -180,13 +179,14 @@ export class SheetComponent {
     const height = this.dragged() ?? drag.startHeight;
     this.dragged.set(null);
     if (drag.moved) {
-      const sizes = this.sizesInPx();
-      if (this.dismissible() && height < sizes[0] * DISMISS_SHARE) {
+      // Die Höhe vor dem Zug ist das Maß. Ein Blatt nach dem Inhalt misst
+      // nach dem Zug schon die neue, kleine Höhe.
+      if (this.dismissible() && height < drag.startHeight * DISMISS_SHARE) {
         this.closed.emit();
         setTimeout(() => (this.drag = null));
         return;
       }
-      const target = this.nearestDetent(sizes, this.detent(), height);
+      const target = this.nearestDetent(this.sizesInPx(), this.detent(), height);
       if (target !== this.detent()) this.detentChange.emit(target);
     }
     // Der Klick folgt gleich danach. `nextDetent` prüft darum noch `moved`.

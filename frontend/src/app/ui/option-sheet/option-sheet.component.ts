@@ -4,7 +4,7 @@ import { CheckRowComponent } from '../check-row/check-row.component';
 import { ListRowComponent } from '../list-row/list-row.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
-import { SheetComponent, type Detent, type DetentSize } from '../sheet/sheet.component';
+import { SheetComponent } from '../sheet/sheet.component';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 /** Eine Zeile zur Wahl: Zeichen, Titel und ihr Wert. */
@@ -16,7 +16,6 @@ export interface OptionSheetOption {
 }
 
 /** Ohne Vorgabe fasst das Blatt nur seinen Inhalt. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 
 /** Blatt zur Wahl: unter dem Titel des Blatts eine Karte aus Zeilen. Einfach- oder Mehrfachwahl. */
 @Component({
@@ -44,8 +43,6 @@ export class OptionSheetComponent {
   readonly multiple = input(false);
   /** Die Beschriftung der Fußaktion. Nur bei Mehrfachwahl nötig. */
   readonly confirmLabel = input<string>('');
-  readonly detents = input<readonly [DetentSize, DetentSize, DetentSize]>(DETENTS);
-  readonly detent = input<Detent>(2);
   /** Ein Blatt über eigenem Grund dunkelt ihn ab; eines über der Karte nicht. */
   readonly dims = input(true);
 

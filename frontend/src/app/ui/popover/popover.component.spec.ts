@@ -14,7 +14,7 @@ const ABOVE: PopoverAnchor = { bottom: 92, end: 24 };
   template: `<app-popover
     [open]="open()"
     [anchor]="anchor()"
-    [rows]="rows()"
+    [heading]="heading()"
     label="Auf der Karte"
     (closed)="closes = closes + 1"
   >
@@ -24,7 +24,7 @@ const ABOVE: PopoverAnchor = { bottom: 92, end: 24 };
 class HostComponent {
   readonly open = signal(true);
   readonly anchor = signal<PopoverAnchor>(BELOW);
-  readonly rows = signal(false);
+  readonly heading = signal('');
   closes = 0;
 }
 
@@ -46,12 +46,12 @@ describe('PopoverComponent', () => {
     expect(screen.getByRole('dialog')).toHaveStyle({ insetBlockEnd: '92px', insetInlineEnd: '24px' });
   });
 
-  it('lässt Zeilen die Karte füllen', async () => {
+  it('setzt das Wort der Gruppe über die Zeilen', async () => {
     const { fixture, detectChanges } = await render(HostComponent);
-    fixture.componentInstance.rows.set(true);
+    fixture.componentInstance.heading.set('Hintergrund');
     detectChanges();
 
-    expect(screen.getByRole('dialog')).toHaveClass('popover__card--rows');
+    expect(screen.getByText('Hintergrund')).toHaveClass('popover__heading');
   });
 
   it('bleibt zu, solange niemand sie öffnet', async () => {

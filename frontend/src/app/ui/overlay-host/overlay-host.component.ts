@@ -27,8 +27,6 @@ export class OverlayHostComponent {
   readonly open = input.required<boolean>();
   /** Ein modales Blatt dunkelt ab; ein Blatt über der Karte lässt sie sehen. */
   readonly modal = input(false);
-  /** Ein deckendes Blatt liegt über dem ganzen Fenster, auch über der Leiste. */
-  readonly cover = input(false);
 
   readonly closed = output();
 

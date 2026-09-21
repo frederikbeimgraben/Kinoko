@@ -20,7 +20,7 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { EntriesState, type SaveResult } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
@@ -37,10 +37,6 @@ import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.co
 import { StepInput } from './step-input';
 import { paintRing, clearRing } from './step-painter';
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
-
-/** Ein kurzes Blatt folgt seinem Inhalt, ein Formular füllt seinen Wirt. */
-const DETENTS_CONTENT: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
-const DETENTS_FORM: readonly [DetentSize, DetentSize, DetentSize] = [1, 1, 1];
 
 /** Der gesetzte Ort steht am Rechner blau, wie die Bretter ihn malen. */
 const MARK_COLOUR = 'blue' as const;
@@ -164,8 +160,6 @@ export class AddEntryComponent implements OnDestroy {
   protected readonly stepNote = computed(() =>
     this.state.step() === 'zoneDraw' ? this.drawStatus() : this.aimText(),
   );
-
-  protected readonly detents = computed(() => (this.state.onForm() ? DETENTS_FORM : DETENTS_CONTENT));
 
   protected readonly title = computed(() => {
     const step = this.state.step();

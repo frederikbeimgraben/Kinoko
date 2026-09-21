@@ -1,23 +1,41 @@
 @if (open()) {
   <div class="confirm__scrim" aria-hidden="true" (click)="cancelled.emit()"></div>
-  <div #layer="modalLayer" class="confirm__panel" appModalLayer (dismissed)="cancelled.emit()">
-    <h2 class="confirm__title" [id]="layer.labelId">{{ title() }}</h2>
+  <div
+    #layer="modalLayer"
+    class="confirm__panel"
+    [appModalLayer]="title() === '' ? (confirmLabel() ?? ('common.delete' | t)) : ''"
+    (dismissed)="cancelled.emit()"
+  >
+    @if (title() !== '') {
+      <h2 class="confirm__title" [id]="layer.labelId">{{ title() }}</h2>
+    }
     @if (meta(); as meta) {
       <p class="confirm__meta">{{ meta }}</p>
     }
     <ng-content />
-    <div class="confirm__actions">
-      <app-push-button
-        [kind]="danger() ? 'danger' : 'primary'"
-        [wide]="true"
-        [disabled]="confirmDisabled()"
-        (click)="confirmed.emit()"
-      >
-        {{ confirmLabel() ?? ('common.delete' | t) }}
-      </app-push-button>
-      <app-push-button kind="tonal" [wide]="true" (click)="cancelled.emit()">
+    <div class="confirm__actions" [class.confirm__actions--stack]="stack()">
+      @if (stack()) {
+        <app-push-button
+          [kind]="danger() ? 'danger' : 'primary'"
+          [wide]="true"
+          [disabled]="confirmDisabled()"
+          (click)="confirmed.emit()"
+        >
+          {{ confirmLabel() ?? ('common.delete' | t) }}
+        </app-push-button>
+      }
+      <app-push-button kind="text" [wide]="stack()" (click)="cancelled.emit()">
         {{ 'common.cancel' | t }}
       </app-push-button>
+      @if (!stack()) {
+        <app-push-button
+          [kind]="danger() ? 'textdanger' : 'text'"
+          [disabled]="confirmDisabled()"
+          (click)="confirmed.emit()"
+        >
+          {{ confirmLabel() ?? ('common.delete' | t) }}
+        </app-push-button>
+      }
     </div>
   </div>
 }

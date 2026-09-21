@@ -1,0 +1,13 @@
+<button
+  appRipple
+  class="popi"
+  type="button"
+  [class.popi--active]="active()"
+  [attr.aria-pressed]="active()"
+  (click)="chosen.emit()"
+>
+  @if (icon(); as glyph) {
+    <app-svg-icon class="popi__icon" [name]="glyph" [size]="24" [strokeWidth]="1.8" />
+  }
+  <span class="popi__label">{{ label() }}</span>
+</button>

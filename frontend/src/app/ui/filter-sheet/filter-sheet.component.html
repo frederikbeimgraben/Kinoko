@@ -1,4 +1,4 @@
-<app-overlay-host [open]="open()" [modal]="true" [cover]="true" (closed)="closed.emit()">
+<app-overlay-host [open]="open()" [modal]="true" (closed)="closed.emit()">
   <app-sheet
     class="filtersheet"
     [label]="title()"
@@ -6,7 +6,6 @@
     [headDivider]="true"
     [modal]="true"
     [dismissible]="true"
-    [detents]="detents"
     (closed)="closed.emit()"
   >
     @if (back()) {
@@ -21,29 +20,17 @@
         <app-svg-icon name="back" [size]="20" />
       </button>
     }
-    @if (!back() && resetEnabled()) {
-      <button
-        headAction
-        class="filtersheet__reset tap"
-        type="button"
-        data-press="scale"
-        (click)="resetClick.emit()"
-      >
-        {{ 'common.reset' | t }}
-      </button>
-    }
     <div #content class="filtersheet__content" appScrollFade><ng-content /></div>
     @if (primaryLabel(); as label) {
-      <footer foot class="filtersheet__foot">
-        <button
-          class="filtersheet__primary tap"
-          type="button"
-          data-press="scale"
-          (click)="primaryClick.emit()"
-        >
-          {{ label }}
-        </button>
-      </footer>
+      <app-action-bar
+        foot
+        class="filtersheet__foot"
+        [primary]="label"
+        [secondary]="showsReset() ? ('common.reset' | t) : undefined"
+        [split]="showsReset()"
+        (primaryClick)="primaryClick.emit()"
+        (secondaryClick)="resetClick.emit()"
+      />
     }
   </app-sheet>
 </app-overlay-host>

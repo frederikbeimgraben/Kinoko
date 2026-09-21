@@ -1,0 +1,24 @@
+<app-block-card block="Dialog" [width]="328" [height]="190">
+  <div class="overlays__stage">
+    <app-confirm-dialog
+      [open]="true"
+      [title]="'beispiel.fundLoeschen' | t"
+      [meta]="'beispiel.fundKurz' | t"
+    />
+  </div>
+</app-block-card>
+
+<app-block-card block="Popover" [width]="264" [height]="200">
+  <div class="overlays__stage">
+    <app-popover
+      [open]="true"
+      [anchor]="anchor"
+      [label]="'map.layers.button' | t"
+      [heading]="'beispiel.hintergrund' | t"
+    />
+  </div>
+</app-block-card>
+
+<app-block-card block="PopItem" [width]="240" [height]="48">
+  <app-popover-item icon="map" [label]="'nav.tab.map' | t" />
+</app-block-card>
