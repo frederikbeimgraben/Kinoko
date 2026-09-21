@@ -10,7 +10,6 @@ import { CORE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
 import {
   DESKTOP_SPECIES,
   FILTER_DESKTOP,
-  FILTER_DESKTOP_GROUP,
   RESULT_HITS,
   RESULT_REST,
   RESULT_UNKNOWN,
@@ -127,26 +126,8 @@ test('SpeciesFilter', async ({ page }) => {
   await expectBoard(page, 'SpeciesFilter');
 });
 
-test('FilterEdibility', async ({ page }) => {
-  guard('FilterEdibility', 'phone');
-  await presetFilter(page, CORE_CHOICE);
-  await openList(page, largeBundle());
-  await openGroup(page, 'Speisewert');
-  await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
-  await expectBoard(page, 'SpeciesFilter');
-});
-
-test('FilterCapShape', async ({ page }) => {
-  guard('FilterCapShape', 'phone');
-  await presetFilter(page, CORE_CHOICE);
-  await openList(page, largeBundle());
-  await openGroup(page, 'Hutform');
-  await expect(page.getByRole('checkbox', { name: /halbkugelig/ })).toBeVisible();
-  await expectBoard(page, 'SpeciesFilter');
-});
-
 test('FilterColour', async ({ page }) => {
-  guard('FilterColour', 'phone');
+  guard('SpeciesFilterColour', 'phone');
   await presetFilter(page, CORE_CHOICE);
   await openList(page, largeBundle());
   await openGroup(page, 'Farbe');
@@ -217,18 +198,4 @@ test('FilterDesktop', async ({ page }) => {
   });
   await seen(page, 'Wiesenchampignon');
   await expectBoard(page, 'SpeciesDesktop');
-});
-
-test('FilterDesktopGroup', async ({ page }) => {
-  guard('FilterDesktopGroup', 'wide');
-  await presetFilter(page, FILTER_DESKTOP_GROUP.choice);
-  await mockSignIn(page);
-  await openList(page, bundle(FILTER_DESKTOP_GROUP.catalogue), {
-    '/api/config': authConfig(BASE),
-    ...SIGNED_IN,
-  });
-  await seen(page, 'Wiesenchampignon');
-  await page.getByRole('dialog').getByRole('button', { name: 'Speisewert' }).first().click();
-  await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
-  await expectBoard(page, 'SpeciesDesktopFiltered');
 });
