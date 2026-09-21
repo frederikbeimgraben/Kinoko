@@ -20,10 +20,8 @@
   background: var(--pilz-scrim, rgb(0 0 0 / 50%));
 }
 
-// Das Blatt fährt als Bild aus, nicht als Übergang: ein ruhendes `transform`
-// spannte einen Bezugsrahmen auf. Es endet am Fuß seiner Zelle.
-// Die Ebene füllt ihre Zelle, damit das Blatt darin seine Höchsthöhe kennt.
-// Sie lässt jeden Druck durch; nur das Blatt selbst fängt ihn.
+// Kein ruhendes `transform`: es spannte einen Bezugsrahmen auf.
+// Die Ebene füllt ihre Zelle und lässt jeden Druck durch, nur das Blatt fängt ihn.
 .overlay__panel {
   position: absolute;
   inset-block: var(--pilz-overlay-top, 0) 0;
