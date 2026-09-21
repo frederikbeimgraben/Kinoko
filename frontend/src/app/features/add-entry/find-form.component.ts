@@ -6,7 +6,7 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { PhotoPickerComponent, type HeldPhoto } from '../../ui/photo-picker/photo-picker.component';
+import { PhotoStripComponent, type StripPhoto } from '../../ui/photo-strip/photo-strip.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
@@ -36,7 +36,7 @@ export interface FindSubmission {
     SpeciesPickerComponent,
     FormFieldComponent,
     OverlayHostComponent,
-    PhotoPickerComponent,
+    PhotoStripComponent,
     SheetComponent,
     SwitchComponent,
     VisibilityChoiceComponent,
@@ -56,7 +56,7 @@ export class FindFormComponent {
   readonly start = input<Find | null>(null);
   readonly withPhotos = input(true);
   /** Die Fotos, die der Dienst zu diesem Fund schon hat. */
-  readonly held = input<readonly HeldPhoto[]>([]);
+  readonly held = input<readonly StripPhoto[]>([]);
   /** Ein vorhandener Fund zeigt den Pfeil an der Art und einen Rahmen am Weg zurück. */
   readonly editing = input(false);
   readonly busy = input(false);

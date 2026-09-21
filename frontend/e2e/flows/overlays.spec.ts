@@ -54,10 +54,14 @@ test('Das Objektblatt lässt die Reiterleiste frei', async ({ page }) => {
   await expect(tab).toBeVisible();
 
   const sheet = page.getByRole('dialog', { name: 'Marker', exact: true });
-  const sheetBox = await sheet.boundingBox();
-  const barBox = await bar.boundingBox();
-  if (sheetBox === null || barBox === null) throw new Error('Blatt oder Leiste ohne Fläche.');
-  expect(Math.round(sheetBox.y + sheetBox.height)).toBeLessThanOrEqual(Math.round(barBox.y) + 1);
+  // Das Blatt fährt ein; gemessen wird sein Ruhestand.
+  await expect(async () => {
+    const sheetBox = await sheet.boundingBox();
+    const barBox = await bar.boundingBox();
+    if (sheetBox === null || barBox === null) throw new Error('Blatt oder Leiste ohne Fläche.');
+    expect(Math.round(sheetBox.y + sheetBox.height)).toBeLessThanOrEqual(Math.round(barBox.y) + 1);
+    expect(sheetBox.y).toBeGreaterThan(0);
+  }).toPass({ timeout: 5000 });
 
   await tab.click();
   await expect(page).toHaveURL(/\/arten$/);

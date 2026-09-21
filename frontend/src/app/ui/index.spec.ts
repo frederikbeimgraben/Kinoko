@@ -54,7 +54,7 @@ const BLOCKS = [
   'app-colour-swatches',
   'app-colour-picker',
   'app-species-picker',
-  'app-photo-picker',
+  'app-photo-strip',
   'app-year-band-input',
   'app-level-pill',
   'app-tag-list',
@@ -89,6 +89,7 @@ const BLOCKS = [
   'app-fold-section',
   'app-progress',
   'app-toast',
+  'app-hero',
 ] as const;
 
 const UI_ROOT = join(process.cwd(), 'src', 'app', 'ui');

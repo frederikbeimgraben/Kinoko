@@ -1,0 +1,66 @@
+<div class="photos">
+  @for (photo of photos(); track photo.id; let i = $index) {
+    <div class="pht">
+      @if (mode() === 'view') {
+        <button
+          class="pht__tap tap"
+          type="button"
+          appRipple
+          [attr.aria-label]="'melden.fotoVorschau' | t: { nummer: i + 1 }"
+          (click)="opened.emit(i)"
+        >
+          <app-private-image class="pht__image" [path]="photo.path" alt="" />
+        </button>
+      } @else {
+        <app-private-image class="pht__image" [path]="photo.path" alt="" />
+      }
+      @if (photo.lead) {
+        <span class="pht__lead"><app-level-pill [text]="'image.cover' | t" kind="ok" /></span>
+      }
+      @if (removable() && mode() === 'edit') {
+        <button
+          class="pht__remove tap"
+          type="button"
+          appRipple
+          data-press="scale"
+          [attr.aria-label]="'image.remove' | t"
+          (click)="removed.emit(photo.id)"
+        >
+          <app-svg-icon name="close" [size]="16" [strokeWidth]="2.2" />
+        </button>
+      }
+    </div>
+  }
+  @if (mode() === 'edit') {
+    @for (tile of pendingTiles(); track tile.file) {
+      <div class="pht">
+        <img class="pht__image" [src]="tile.preview" alt="" />
+        @if (removable()) {
+          <button
+            class="pht__remove tap"
+            type="button"
+            appRipple
+            data-press="scale"
+            [attr.aria-label]="'image.remove' | t"
+            (click)="removePending(tile.file)"
+          >
+            <app-svg-icon name="close" [size]="16" [strokeWidth]="2.2" />
+          </button>
+        }
+      </div>
+    }
+    @if (canAdd()) {
+      <label class="pht pht--add tap" appRipple data-press="scale">
+        <app-svg-icon name="plus" [size]="24" />
+        <span class="sr-only">{{ 'image.add.title' | t }}</span>
+        <input
+          class="sr-only"
+          type="file"
+          accept="image/jpeg,image/webp"
+          multiple
+          (change)="onPick($event)"
+        />
+      </label>
+    }
+  }
+</div>

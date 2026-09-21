@@ -1,3 +1,8 @@
-@use 'section';
+:host {
+  display: block;
+}
 
-@include section.block;
+// Ohne Gattung darf der Platz nicht als Abstand stehen bleiben.
+:host(:empty) {
+  display: none;
+}
