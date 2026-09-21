@@ -1068,7 +1068,7 @@ export interface components {
         /** @enum {string} */
         Protection: "none" | "personal_use" | "strict";
         /** @enum {string} */
-        BodyPart: "fruitbody" | "cap" | "stem" | "stem_base" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
+        BodyPart: "fruitbody" | "cap" | "stem" | "ring" | "stem_base" | "gills" | "flesh" | "spore_print" | "spore" | "tubes" | "pores";
         /** @enum {string} */
         Dimension: "width" | "height" | "thickness" | "length";
         /** @enum {string} */

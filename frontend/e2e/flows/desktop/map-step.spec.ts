@@ -150,7 +150,7 @@ test('Ein Klick setzt den Fundort, ein zweiter verschiebt ihn', async ({ page })
 
   await expect(note).not.toHaveText(first);
 
-  await page.getByRole('button', { name: 'Fundort übernehmen' }).click();
+  await page.getByRole('button', { name: 'Bestätigen' }).click();
 
   await expect(page.getByRole('dialog', { name: 'Fund melden' })).toBeVisible();
 });

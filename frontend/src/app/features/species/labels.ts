@@ -15,6 +15,9 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import type { BadgeKind } from '../../ui/level-pill/level-pill.component';
 import type { GroupKey } from './facets';
 
+/** Plakettenfarbe und Fläche ohne eigenes Thema, etwa Schutz und Handel. */
+export const MUTED_TONE = { colour: 'var(--text-var)', background: 'var(--tonal)' };
+
 /** Die Plakettenfarbe je Speisewert, per `kit.css` `.badge`. */
 export const EDIBILITY_KIND: Record<Edibility, BadgeKind> = {
   edible: 'ok',
@@ -75,6 +78,7 @@ export const PART_TEXT: Record<BodyPart, TranslationKey> = {
   fruitbody: 'species.field.fruitbody',
   cap: 'species.field.cap',
   stem: 'species.field.stem',
+  ring: 'species.field.ring',
   stem_base: 'species.field.stemBase',
   gills: 'species.field.gills',
   flesh: 'species.field.flesh',

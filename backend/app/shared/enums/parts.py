@@ -9,6 +9,7 @@ class BodyPart(StrEnum):
     FRUITBODY = "fruitbody"
     CAP = "cap"
     STEM = "stem"
+    RING = "ring"
     STEM_BASE = "stem_base"
     GILLS = "gills"
     FLESH = "flesh"

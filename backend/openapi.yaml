@@ -2439,7 +2439,7 @@ components:
 
     BodyPart:
       type: string
-      enum: [fruitbody, cap, stem, stem_base, gills, flesh, spore_print, spore, tubes, pores]
+      enum: [fruitbody, cap, stem, ring, stem_base, gills, flesh, spore_print, spore, tubes, pores]
 
     Dimension:
       type: string

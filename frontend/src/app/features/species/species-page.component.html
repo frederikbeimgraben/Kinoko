@@ -14,7 +14,7 @@
     [label]="'common.more' | t"
     (closed)="menuOpen.set(false)"
   >
-    <app-popover-item icon="share" [label]="'species.share' | t" (chosen)="share()" />
+    <app-popover-item icon="share" [label]="'species.menu.share' | t" (chosen)="share()" />
     @if (canSubmitImage()) {
       <app-popover-item icon="image" [label]="'image.submit.title' | t" (chosen)="submitImage()" />
     }

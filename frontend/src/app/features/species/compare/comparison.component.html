@@ -3,104 +3,52 @@
     <span class="compare__count">{{ 'species.compare.count' | t }}</span>
   }
 </app-page-header>
-<div class="compare">
-  @if (species().length > 0) {
-    <div class="compare__card">
-      <app-key-value-table class="compare__table" [columns]="species().length">
-        <app-key-value-row key="" [values]="names()" [head]="true" />
-        <app-key-value-row [key]="'species.field.edibility' | t" [cells]="levels()">
-          <ng-template let-level>
-            <app-level-pill [text]="level.text" [colour]="level.colour" [background]="level.background" />
-          </ng-template>
-        </app-key-value-row>
-        @if (filled(widths())) {
-          <app-key-value-row [key]="'species.compare.capWidth' | t" [cells]="widths()">
-            <ng-template let-size>
-              @if (size) {
-                <span class="compare__measure"
-                  >{{ size.value }} <em>{{ size.unit }}</em></span
-                >
-              }
-            </ng-template>
-          </app-key-value-row>
-        }
-        @for (row of colourRows(); track row.key) {
-          <app-key-value-row [key]="row.key" [cells]="row.cells">
-            <ng-template let-swatch>
-              @if (swatch) {
-                <app-colour-field [colours]="swatch.colours" [mode]="swatch.mode" [label]="swatch.label" />
-              }
-            </ng-template>
-          </app-key-value-row>
-        }
-        @if (filled(pressures())) {
-          <app-key-value-row [key]="'species.compare.pressure' | t" [cells]="pressures()">
-            <ng-template let-test>
-              @if (test) {
-                <span class="compare__change">
-                  <span class="compare__colours" [class.compare__colours--split]="test.to">
-                    @if (test.from) {
-                      <app-colour-field
-                        class="compare__from"
-                        [colours]="test.from.colours"
-                        [mode]="test.from.mode"
-                        [label]="test.from.label"
-                      />
-                    }
-                    @if (test.to) {
-                      <app-svg-icon
-                        class="compare__arrow"
-                        name="forward"
-                        [size]="12"
-                        [label]="arrowLabel()"
-                      />
-                      <app-colour-field
-                        class="compare__to"
-                        [colours]="test.to.colours"
-                        [mode]="test.to.mode"
-                        [label]="test.to.label"
-                      />
-                    }
-                  </span>
-                  <span class="compare__speed">{{ test.speed }}</span>
+@if (species().length > 0) {
+  <div class="compare">
+    <div class="compare__head">
+      @for (name of names(); track name) {
+        <span class="compare__head-name">{{ name }}</span>
+      }
+    </div>
+    <app-switch
+      class="compare__toggle"
+      [checked]="diffOnly()"
+      [label]="diffOnlyLabel()"
+      (checkedChange)="setDiffOnly($event)"
+    />
+    @for (group of groups(); track group.label) {
+      <section class="compare__group">
+        <div class="compare__group-label">{{ group.label }}</div>
+        <div class="compare__group-rows">
+          @for (row of group.rows; track row.key) {
+            <div [class]="rowClass(row.diff)">
+              <span class="compare__key">{{ row.key }}</span>
+              @for (cell of row.cells; track $index) {
+                <span class="compare__cell">
+                  @if (cell.kind === 'badge') {
+                    <app-level-pill
+                      [text]="cell.text"
+                      [colour]="cell.colour"
+                      [background]="cell.background"
+                    />
+                  } @else if (cell.kind === 'value') {
+                    <span class="compare__value"
+                      >{{ cell.text }}<small>{{ cell.unit }}</small></span
+                    >
+                  } @else if (cell.kind === 'swatch') {
+                    <app-colour-field [colours]="cell.colours" [mode]="cell.mode" [label]="cell.text" />
+                    <span class="compare__swatch-text">{{ cell.text }}</span>
+                  } @else if (cell.kind === 'plain') {
+                    <span class="compare__text">{{ cell.text }}</span>
+                  } @else {
+                    <span class="compare__none" [attr.aria-label]="'species.reaction.unknown' | t">–</span>
+                  }
                 </span>
               }
-            </ng-template>
-          </app-key-value-row>
-        }
-        @if (filled(stems())) {
-          <app-key-value-row [key]="'species.compare.stem' | t" [cells]="stems()">
-            <ng-template let-text>
-              @if (text) {
-                <span class="compare__text">{{ text }}</span>
-              }
-            </ng-template>
-          </app-key-value-row>
-        }
-        @if (filled(flavours())) {
-          <app-key-value-row [key]="'species.field.taste' | t" [cells]="flavours()">
-            <ng-template let-tags>
-              @if (tags) {
-                <app-tag-list class="compare__tags" [tags]="tags" [label]="flavourLabel()" />
-              }
-            </ng-template>
-          </app-key-value-row>
-        }
-        @if (filled(periods())) {
-          <app-key-value-row [key]="'species.field.time' | t" [cells]="periods()">
-            <ng-template let-time>
-              @if (time) {
-                <app-year-band
-                  class="compare__band"
-                  [fromMonth]="time.from"
-                  [toMonth]="time.to"
-                  [label]="bandLabel()"
-                />
-              }
-            </ng-template>
-          </app-key-value-row>
-        }
-      </app-key-value-table>
-    </div>
-  }
-</div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+}

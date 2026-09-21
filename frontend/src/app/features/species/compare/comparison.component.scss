@@ -1,5 +1,3 @@
-@use '../../../../styles/card';
-
 :host {
   display: flex;
   flex-direction: column;
@@ -17,112 +15,113 @@
 }
 
 .compare {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: 20px;
   min-block-size: 0;
   padding: var(--size-gutter);
   overflow-y: auto;
 }
 
-.compare__card {
-  @include card.card;
-
-  overflow: hidden;
+.compare__head {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
-// Die Spalten sind schmal: Beschriftung, Polster und Schrift folgen dem Brett,
-// damit zwei Werte nebeneinander passen.
-.compare__table {
-  --key-value-table-label: 58px;
-  --key-value-table-gutter: 9px;
-  --key-value-table-gap: 9px;
-  --key-value-table-pad: 10px;
-  --key-value-table-line: normal;
-  --key-value-table-text: var(--fs-xs);
-  --key-value-table-head: 11px;
-  --key-value-table-weight: var(--fw-regular);
-  --key-value-table-last: var(--border-width);
-  --key-value-table-nowrap: nowrap;
-  --key-value-table-anchor: center;
+.compare__head-name {
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.compare__measure,
-.compare__text {
-  font-size: var(--fs-row-meta);
+.compare__toggle {
+  align-self: flex-start;
 }
 
-.compare__measure {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+.compare__group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.compare__measure em {
-  font-style: normal;
+.compare__group-label {
+  padding-left: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
 }
 
-// Eine Probe ohne Nachher lässt ihre Spur leer, damit beide Arten auf einer
-// Linie liegen.
-.compare__change {
+.compare__group-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compare__group-rows > .compare__row:first-of-type {
+  border-radius: 20px 20px 4px 4px;
+}
+
+.compare__group-rows > .compare__row:last-of-type {
+  border-radius: 4px 4px 20px 20px;
+}
+
+.compare__group-rows > .compare__row:first-of-type:last-of-type {
+  border-radius: 20px;
+}
+
+.compare__row {
+  display: grid;
+  grid-template-columns: 96px repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 2px 8px;
+  min-block-size: 52px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  background: var(--color-surface);
+  font-size: var(--fs-row-meta);
+}
+
+.compare__key {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.compare__row--diff > .compare__key {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.compare__cell {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+  min-inline-size: 0;
 }
 
-// Bleibt die Farbe, steht ihr Feld allein und genau in Feldbreite.
-.compare__colours {
-  display: flex;
-  align-items: center;
+.compare__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
 }
 
-// Zwei Farben mit Pfeil tragen zusammen genau eine Farbfeldbreite.
-.compare__colours--split {
-  --compare-swatch: calc((var(--pilz-colour-width, 96px) - 12px - 8px) / 2);
-
-  display: grid;
-  grid-template-columns: var(--compare-swatch) 12px var(--compare-swatch);
-  gap: 4px;
-}
-
-.compare__colours--split .compare__from,
-.compare__colours--split .compare__to {
-  --pilz-colour-width: var(--compare-swatch);
-}
-
-.compare__from {
-  grid-column: 1;
-}
-
-.compare__arrow {
-  grid-column: 2;
-  justify-self: center;
+.compare__value small {
+  margin-left: 3px;
+  font-size: 12px;
+  font-weight: 400;
   color: var(--color-text-muted);
 }
 
-.compare__to {
-  grid-column: 3;
-}
-
-.compare__speed {
-  display: block;
-  font-size: 11px;
-  line-height: 1.4;
+.compare__swatch-text,
+.compare__text {
+  font-size: 12px;
   color: var(--color-text-muted);
 }
 
-.compare__tags {
-  --pilz-tag-height: 18px;
-  --pilz-tag-inset: 8px;
-  --pilz-tag-size: 11px;
-  --pilz-tag-gap: 4px;
-  --pilz-tag-drop: 4px;
-  --pilz-tag-border: var(--color-border-strong);
-}
-
-.compare__band {
-  --pilz-year-height: 10px;
-
-  inline-size: 100%;
+.compare__none {
+  color: var(--color-text-muted);
 }
 
 @media (min-width: 1024px) {
@@ -130,11 +129,8 @@
     padding: var(--space-5) var(--space-6);
   }
 
-  .compare__table {
-    --key-value-table-label: 138px;
-    --key-value-table-gutter: var(--space-4);
-    --key-value-table-gap: var(--space-4);
-    --key-value-table-pad: 14px;
-    --key-value-table-text: var(--fs-sm);
+  .compare__row {
+    grid-template-columns: 138px repeat(2, minmax(0, 1fr));
+    padding: 14px;
   }
 }

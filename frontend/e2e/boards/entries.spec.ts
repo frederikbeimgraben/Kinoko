@@ -152,7 +152,7 @@ const SENT_FIND = {
 async function reportFind(page: Page, species: string | null, count: string, note?: string): Promise<void> {
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await page.getByRole('button', { name: 'Fund melden' }).click();
-  await page.getByRole('button', { name: 'Fundort übernehmen' }).click();
+  await page.getByRole('button', { name: 'Bestätigen' }).click();
   const form = page.getByRole('dialog', { name: 'Fund melden' });
   await expect(form.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   if (species !== null) {
