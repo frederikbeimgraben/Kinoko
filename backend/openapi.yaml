@@ -81,21 +81,6 @@ paths:
     get:
       operationId: exportMyData
       tags: [account]
-      parameters:
-        - name: format
-          in: query
-          schema:
-            type: string
-            enum: [json, csv, gpx]
-            default: json
-        - name: "include[]"
-          in: query
-          description: The parts of the export. The default is all parts. GPX holds finds, markers and zones only.
-          schema:
-            type: array
-            items:
-              type: string
-              enum: [finds, markers, zones, images, combinations]
       responses:
         "200":
           description: OK
@@ -103,13 +88,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AccountExport"
-            application/zip:
-              schema:
-                type: string
-                format: binary
-            application/gpx+xml:
-              schema:
-                type: string
         "401":
           $ref: "#/components/responses/Unauthorized"
 
@@ -392,12 +370,6 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Limit40"
         - $ref: "#/components/parameters/Cursor"
-        - name: sort
-          in: query
-          schema:
-            type: string
-            enum: [name, latinName, edibility, season]
-            default: name
         - name: q
           in: query
           schema:
@@ -823,12 +795,6 @@ paths:
           description: minLon,minLat,maxLon,maxLat
           schema:
             type: string
-        - name: zoneId
-          in: query
-          description: Keeps the finds that lie in the polygon of this zone. The caller must see the zone.
-          schema:
-            type: string
-            format: uuid
       responses:
         "200":
           description: OK
