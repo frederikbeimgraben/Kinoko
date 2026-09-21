@@ -2,44 +2,43 @@
   display: block;
   box-sizing: border-box;
   flex: none;
-  block-size: var(--size-row-tall);
-}
-
-// Der Strich liegt in der Höhe der zweiten Zeile, wie auf dem Brett.
-:host(:not(:first-child)) {
-  border-block-start: var(--border-width) solid var(--color-border);
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 16px;
   inline-size: 100%;
-  block-size: 100%;
-  padding-inline: var(--space-row-inline);
+  min-block-size: 72px;
+  padding: 12px 8px 12px 12px;
   font: inherit;
-  color: inherit;
+  color: var(--text);
   text-align: start;
   background: none;
   border: 0;
+  border-radius: 20px;
 }
 
 .row--active {
-  background: var(--color-primary-subtle);
+  background: var(--sel);
+}
+
+.row__thumb {
+  flex: none;
 }
 
 .row__names {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-row-names);
-  min-inline-size: var(--size-row-names);
+  gap: 3px;
+  min-inline-size: 0;
 }
 
 .row__name {
   overflow: hidden;
-  font-size: var(--fs-row-title);
-  font-weight: var(--fw-medium);
+  font-size: 16px;
+  font-weight: var(--fw-semibold);
   line-height: normal;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -47,28 +46,16 @@
 
 .row__latin {
   overflow: hidden;
-  font-size: var(--fs-row-latin);
+  font-size: 14px;
   font-style: italic;
   line-height: normal;
-  color: var(--color-text-muted);
+  color: var(--text-var);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-// Die Plakette läuft am rechten Rand aus, statt umzubrechen.
-.row__marks {
-  display: flex;
-  flex: 0 1 auto;
-  gap: var(--space-2);
-  min-inline-size: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-// Vor dem Titelbild braucht die Plakette einen Übergang, sonst nicht.
-.row__marks--photo {
-  padding-inline-end: var(--space-row-inline);
-  mask-image: linear-gradient(90deg, #000 calc(100% - var(--space-row-inline)), transparent);
+.row__badge {
+  flex: none;
 }
 
 .row__trail {
@@ -79,11 +66,7 @@
   display: none;
 }
 
-.row__image {
-  display: block;
+.row__chevron {
   flex: none;
-  inline-size: var(--size-thumb);
-  block-size: var(--size-thumb);
-  background: none;
-  border-radius: 9px;
+  color: var(--label);
 }

@@ -1,6 +1,7 @@
 import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
 import { placeholder, type PlaceholderSpec } from '../fixtures/placeholder';
+import { largeBundle } from '../fixtures/species-catalogue';
 import { expectCard, liveCards } from './board';
 
 /** Die Farben des Platzhalters, wie das Board sie an die Stelle eines Fotos setzt. */
@@ -23,7 +24,7 @@ test('Blocks', async ({ page }) => {
   // Das Board ist 900 × 9144 gross und läuft nur in seinem eigenen Projekt.
   test.skip(test.info().project.name !== 'blocks', 'Blocks hat ein eigenes Fenster');
   const CARDS = liveCards();
-  await mockApi(page);
+  await mockApi(page, { '/api/species/bundle': largeBundle() });
   await page.route('**/api/photos/**', async (route) => {
     const parts = new URL(route.request().url()).pathname.split('/');
     const spec = PHOTOS[parts.at(-2) ?? ''] ?? PHOTOS['bild-eins'];

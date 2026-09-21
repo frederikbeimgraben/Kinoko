@@ -5,30 +5,33 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
 import { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row.component';
 
+/** Die gerechneten Stile eines Elements, das es geben muss. */
+function styleOf(element: Element | null): CSSStyleDeclaration {
+  if (element === null) throw new Error('Das Element steht nicht im Baum.');
+  return getComputedStyle(element);
+}
+
 const STEINPILZ: SpeciesRowSpecies = {
   name: 'Steinpilz',
   latin: 'Boletus edulis',
   levelText: 'essbar',
   levelColour: 'var(--color-success)',
+  levelKind: 'ok',
+  colour: '#7a5230',
   image: '/photos/bild-eins/list',
 };
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
-function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
-  if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
-  return getComputedStyle(element);
-}
-
-/** Zwei Zeilen übereinander: nur so zeigt sich die Trennlinie dazwischen. */
 @Component({
   imports: [SpeciesRowComponent],
   template: `
-    <app-species-row [species]="species" />
-    <app-species-row [species]="species" />
+    <app-species-row [species]="species">
+      <span trail>{{ mark }}</span>
+    </app-species-row>
   `,
 })
-class StackHostComponent {
+class TrailHostComponent {
   readonly species = STEINPILZ;
+  readonly mark = 'Merkzeichen';
 }
 
 describe('SpeciesRowComponent', () => {
@@ -42,70 +45,22 @@ describe('SpeciesRowComponent', () => {
     await noViolations(container);
   });
 
-  it('reserviert ohne Titelbild keinen Platz rechts', async () => {
+  it('zeigt ohne Titelbild das Ersatzsymbol, nicht die Bildspalte leer', async () => {
     const { container } = await render(SpeciesRowComponent, {
       inputs: { species: { ...STEINPILZ, image: null } },
     });
 
-    expect(container.querySelector('app-private-image')).toBeNull();
-    expect(container.querySelector('.row__image')).toBeNull();
-    expect(container.querySelector('img')).toBeNull();
-  });
-
-  it('reserviert ohne Titelbild keinen Platz vor der Plakette', async () => {
-    const { container } = await render(SpeciesRowComponent, {
-      inputs: { species: { ...STEINPILZ, image: null } },
-    });
-
-    const marks = styleOf(container.querySelector('.row__marks'));
-    expect(marks.getPropertyValue('padding-inline-end')).toBe('');
-    expect(marks.getPropertyValue('mask-image')).toBe('');
-  });
-
-  it('reserviert mit Titelbild Platz vor der Plakette', async () => {
-    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
-
-    const marks = styleOf(container.querySelector('.row__marks'));
-    expect(marks.getPropertyValue('padding-inline-end')).toBe('var(--space-row-inline)');
-    expect(marks.getPropertyValue('mask-image')).not.toBe('none');
-  });
-
-  it('lässt ohne Titelbild kein Element für die Bildspalte im Baum', async () => {
-    const { container } = await render(SpeciesRowComponent, {
-      inputs: { species: { ...STEINPILZ, image: null } },
-    });
-
-    const children = Array.from(container.querySelectorAll('.row > *'));
-    expect(children.some((child) => child.classList.contains('row__image'))).toBe(false);
-  });
-
-  it('hält das Titelbild bei einer Art mit Foto 44 × 44', async () => {
-    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
-
-    const image = styleOf(container.querySelector('.row__image'));
-    expect(image.getPropertyValue('inline-size')).toBe('var(--size-thumb)');
-    expect(image.getPropertyValue('block-size')).toBe('var(--size-thumb)');
-  });
-
-  it('steht so hoch wie eine hohe Zeile, den Rand eingerechnet', async () => {
-    const { container } = await render(StackHostComponent);
-
-    const rows = container.querySelectorAll('app-species-row');
-    const first = styleOf(rows[0]);
-    expect(first.getPropertyValue('block-size')).toBe('var(--size-row-tall)');
-    expect(first.boxSizing).toBe('border-box');
-    expect(first.getPropertyValue('border-block-start')).toBe('');
-    expect(styleOf(rows[1]).getPropertyValue('border-block-start')).toContain('var(--border-width)');
+    expect(container.querySelector('app-private-image')).not.toBeNull();
+    expect(container.querySelector('.private__fallback')).not.toBeNull();
   });
 
   it('setzt Name und lateinischen Namen in die Schriftgrade des Bretts', async () => {
     const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
 
     const name = styleOf(container.querySelector('.row__name'));
-    expect(name.fontSize).toBe('var(--fs-row-title)');
-    expect(name.fontWeight).toBe('var(--fw-medium)');
+    expect(name.fontSize).toBe('16px');
     const latin = styleOf(container.querySelector('.row__latin'));
-    expect(latin.fontSize).toBe('var(--fs-row-latin)');
+    expect(latin.fontSize).toBe('14px');
     expect(latin.fontStyle).toBe('italic');
   });
 
@@ -113,7 +68,7 @@ describe('SpeciesRowComponent', () => {
     const longName = 'Schwarzhütiger Steinpilz aus dem Schönbuch';
     await render(SpeciesRowComponent, { inputs: { species: { ...STEINPILZ, name: longName } } });
 
-    const name = styleOf(screen.getByText(longName));
+    const name = getComputedStyle(screen.getByText(longName));
     expect(name.textOverflow).toBe('ellipsis');
     expect(name.whiteSpace).toBe('nowrap');
     expect(name.overflow).toBe('hidden');
@@ -125,7 +80,7 @@ describe('SpeciesRowComponent', () => {
     });
 
     expect(screen.queryByText('essbar')).not.toBeInTheDocument();
-    expect(container.querySelector('.row__marks')).toBeNull();
+    expect(container.querySelector('.row__badge')).toBeNull();
   });
 
   it('reicht die Fläche der Plakette durch', async () => {
@@ -143,6 +98,18 @@ describe('SpeciesRowComponent', () => {
     const button = screen.getByRole('button', { name: /Steinpilz/ });
     expect(button).toHaveAttribute('aria-current', 'true');
     expect(button).toHaveClass('row--active');
+  });
+
+  it('trägt den Aufdruck jeder tippbaren Zeile', async () => {
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
+
+    expect(container.querySelector('button.row')).toHaveAttribute('appRipple', '');
+  });
+
+  it('gibt den hinteren Steckplatz an aufrufenden Inhalt weiter', async () => {
+    const { container } = await render(TrailHostComponent);
+
+    expect(container.querySelector('.row__trail')?.textContent).toContain('Merkzeichen');
   });
 
   it('nimmt den Fokus auf Zuruf an, damit Pfeiltasten durch die Liste wandern', async () => {

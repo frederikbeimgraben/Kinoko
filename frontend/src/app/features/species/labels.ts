@@ -12,7 +12,17 @@ import type {
 } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
+import type { BadgeKind } from '../../ui/level-pill/level-pill.component';
 import type { GroupKey } from './facets';
+
+/** Die Plakettenfarbe je Speisewert, per `kit.css` `.badge`. */
+export const EDIBILITY_KIND: Record<Edibility, BadgeKind> = {
+  edible: 'ok',
+  conditionally_edible: 'warn',
+  inedible: '',
+  poisonous: 'bad',
+  deadly: 'bad',
+};
 
 /** Plakettenfarbe und Fläche je Speisewert, aus Thema-Tokens. */
 export const EDIBILITY_TONE: Record<Edibility, { colour: string; background: string }> = {
@@ -114,7 +124,6 @@ export const GROUP_TEXT: Record<GroupKey, TranslationKey> = {
   hymenium: 'species.section.hymenium',
   capShape: 'filter.group.hutform',
   colour: 'filter.colour.title',
-  size: 'filter.group.sizeTime',
   period: 'filter.group.period',
   senses: 'filter.group.senses',
   treePartner: 'filter.group.treePartner',

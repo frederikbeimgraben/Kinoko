@@ -63,7 +63,6 @@ export const GROUP_KEYS = [
   'hymenium',
   'capShape',
   'colour',
-  'size',
   'period',
   'senses',
   'treePartner',
@@ -96,31 +95,23 @@ export const FORECAST_ABSENT = 'off';
 export interface Facts {
   readonly values: ReadonlyMap<GroupKey, readonly string[]>;
   readonly colours: ReadonlyMap<string, readonly string[]>;
-  readonly sizes: ReadonlyMap<string, readonly [number, number]>;
 }
 
 /** Die Wahl im Filterblatt. */
 export interface Selection {
   readonly values: ReadonlyMap<GroupKey, ReadonlySet<string>>;
   readonly colours: ReadonlyMap<string, string>;
-  readonly sizes: ReadonlyMap<string, readonly [number, number]>;
   readonly keepUnknown: ReadonlySet<GroupKey>;
 }
 
 export const EMPTY_SELECTION: Selection = {
   values: new Map(),
   colours: new Map(),
-  sizes: new Map(),
   keepUnknown: new Set(),
 };
 
 /** Ob eine Art trifft, an fehlenden Angaben scheitert oder ausscheidet. */
 export type Verdict = 'hit' | 'unknown' | 'miss';
-
-/** Der Schlüssel eines Maßes: Teil und Strecke. */
-export function sizeKey(part: string, dimension: string): string {
-  return `${part}.${dimension}`;
-}
 
 function months(entry: SpeciesEntry): string[] {
   const start = entry.periodStartMonth;
@@ -159,21 +150,11 @@ export function factsOf(entry: SpeciesEntry, palette: readonly StandardColour[])
       .filter((key): key is string => key !== undefined);
     colours.set(group.part, [...new Set(keys)]);
   }
-  const sizes = new Map<string, readonly [number, number]>();
-  for (const group of entry.measurements) {
-    for (const measure of group.measurements) {
-      sizes.set(sizeKey(group.part, measure.dimension), [measure.low, measure.high]);
-    }
-  }
-  return { values, colours, sizes };
+  return { values, colours };
 }
 
 function isSense(kind: string): boolean {
   return kind === 'smell' || kind === 'taste';
-}
-
-function overlaps(held: readonly [number, number], wanted: readonly [number, number]): boolean {
-  return held[1] >= wanted[0] && held[0] <= wanted[1];
 }
 
 /** Zählt, ob eine Gruppe trifft, nichts weiß oder ausscheidet. */
@@ -196,18 +177,13 @@ export function judge(facts: Facts, selection: Selection, palette: readonly Stan
     if (held.length === 0) unknown = unknown || !selection.keepUnknown.has('colour');
     else if (!held.includes(nearestColour(hex, palette)?.key ?? '')) return 'miss';
   }
-  for (const [key, wanted] of selection.sizes) {
-    const held = facts.sizes.get(key);
-    if (held === undefined) unknown = unknown || !selection.keepUnknown.has('size');
-    else if (!overlaps(held, wanted)) return 'miss';
-  }
   return unknown ? 'unknown' : 'hit';
 }
 
 /** Ob die Wahl überhaupt einschränkt. */
 export function isActive(selection: Selection): boolean {
   const chosen = [...selection.values.values()].some((values) => values.size > 0);
-  return chosen || selection.colours.size > 0 || selection.sizes.size > 0;
+  return chosen || selection.colours.size > 0;
 }
 
 /** Die gezählten Achsen des Bündels. */

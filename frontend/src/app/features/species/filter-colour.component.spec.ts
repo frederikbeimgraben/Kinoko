@@ -33,10 +33,10 @@ interface Setup {
   filter: SpeciesFilterState;
 }
 
-/** Der Name des Körperteils, dessen Karte die Farbwahl zeigt. */
+/** Der Name des Körperteils, dessen Ziehharmonika-Zeile die Farbwahl zeigt. */
 function openPart(container: Element): string | undefined {
-  const card = container.querySelector('.colour__card:has(app-colour-picker)');
-  return card?.querySelector('.colour__part')?.textContent ?? undefined;
+  const row = container.querySelector('app-expand-row:has(app-colour-picker)');
+  return row?.querySelector('.xp__head > span:first-child')?.textContent ?? undefined;
 }
 
 async function build(): Promise<Setup> {
@@ -55,12 +55,18 @@ describe('SpeciesColourComponent', () => {
     localStorage.removeItem('pilzkarte.speciesfilter');
   });
 
+  it('steht im Abschnitt Farbe, per FoldSection', async () => {
+    await build();
+
+    expect(screen.getByRole('button', { name: 'Farbe' })).toBeInTheDocument();
+  });
+
   it('führt nur die Körperteile, für die der Katalog Farben hat', async () => {
     const { container } = await build();
 
     expect(screen.getByText('Stiel')).toBeInTheDocument();
     expect(screen.queryByText('Lamellen')).not.toBeInTheDocument();
-    expect(container.querySelectorAll('.colour__card')).toHaveLength(2);
+    expect(container.querySelectorAll('app-expand-row')).toHaveLength(2);
     await noViolations(container);
   });
 
@@ -87,7 +93,7 @@ describe('SpeciesColourComponent', () => {
 
     expect(filter.colourOf('cap')).toBe('#6b4423');
     await vi.waitFor(() => {
-      expect(container.querySelector('.colour__name')?.textContent).toBe('Braun');
+      expect(container.querySelector('.xp__value')?.textContent).toBe('Braun');
     });
   });
 

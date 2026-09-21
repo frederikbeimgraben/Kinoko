@@ -1,9 +1,15 @@
-<div class="wrap">
+<div class="wrow">
+  <app-icon-button
+    icon="prev"
+    [label]="'map.timeline.scrollEarlier' | t"
+    [disabled]="!canScrollBack()"
+    (pressed)="scrollByPage(-1)"
+  />
   <div
     #bar
-    class="bar"
+    class="weeks"
     role="group"
-    [class.bar--dimmed]="dimmed()"
+    [class.weeks--dimmed]="dimmed()"
     [attr.aria-label]="label()"
     (keydown)="onKey($event)"
   >
@@ -26,26 +32,10 @@
       />
     }
   </div>
-  @if (canScrollBack()) {
-    <button
-      class="arrow arrow--start tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'map.timeline.scrollEarlier' | t"
-      (click)="scrollByPage(-1)"
-    >
-      <app-svg-icon name="back" [size]="14" />
-    </button>
-  }
-  @if (canScrollForward()) {
-    <button
-      class="arrow arrow--end tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'map.timeline.scrollLater' | t"
-      (click)="scrollByPage(1)"
-    >
-      <app-svg-icon name="forward" [size]="14" />
-    </button>
-  }
+  <app-icon-button
+    icon="next"
+    [label]="'map.timeline.scrollLater' | t"
+    [disabled]="!canScrollForward()"
+    (pressed)="scrollByPage(1)"
+  />
 </div>

@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, ElementRef, input, output, viewChild } from '@angular/core';
-import { LevelPillComponent } from '../level-pill/level-pill.component';
+import { RippleDirective } from '../ripple/ripple.directive';
+import { LevelPillComponent, type BadgeKind } from '../level-pill/level-pill.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
+import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Eine Art, wie sie die Artenzeile braucht. */
 export interface SpeciesRowSpecies {
@@ -9,15 +11,19 @@ export interface SpeciesRowSpecies {
   readonly levelText: string;
   readonly levelColour: string;
   readonly levelBackground?: string;
-  /** Der Weg zum Titelbild. Ohne Bild entfällt die Bildspalte. */
+  /** Die Plakettenart, per `kit.css` `.badge`. Ohne Angabe gilt die freie Farbe. */
+  readonly levelKind?: BadgeKind;
+  /** Grundfarbe des Ersatzsymbols im Titelbild, ohne Foto. */
+  readonly colour?: string;
+  /** Der Weg zum Titelbild. Ohne Bild zeigt das Ersatzsymbol. */
   readonly image?: string | null;
 }
 
-/** Artenzeile, 62 px hoch: Name, Speisewert als feste Plakette, Bild rechts. */
+/** Artenzeile, 72 px hoch: Titelbild, Name, Speisewert als feste Plakette. */
 @Component({
   selector: 'app-species-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LevelPillComponent, PrivateImageComponent],
+  imports: [LevelPillComponent, PrivateImageComponent, RippleDirective, SvgIconComponent],
   templateUrl: './species-row.component.html',
   styleUrl: './species-row.component.scss',
 })

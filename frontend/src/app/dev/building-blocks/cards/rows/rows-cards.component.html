@@ -8,9 +8,10 @@
 
 <app-block-card block="ChipRow" [width]="390" [height]="44">
   <div class="chiprow">
-    <app-filter-chip [label]="'common.filter' | t" icon="filter" />
-    <app-filter-chip [label]="'enum.edibility.edible' | t" [on]="true" [clear]="true" />
-    <app-filter-chip [label]="'enum.colour.brown' | t" [on]="true" [clear]="true" />
+    <app-filter-chip label="" icon="filter" [iconLabel]="'common.filter' | t" />
+    <app-filter-chip [label]="'species.field.edibility' | t" icon="eat" />
+    <app-filter-chip [label]="'filter.group.hutform' | t" icon="mushroom" />
+    <app-filter-chip [label]="'filter.colour.title' | t" icon="palette" />
   </div>
 </app-block-card>
 

@@ -82,14 +82,5 @@ export function largeBundle(): Record<string, unknown> {
 export const CORE_CHOICE = {
   values: { edibility: ['edible'], hymenium: ['gills'], period: ['9'] },
   colours: { cap: '#6b4423', stem: '#e8d9b5', spore_print: '#3e2a17' },
-  sizes: {},
-  keepUnknown: [],
-};
-
-/** Die Wahl hinter dem Brett `FilterSize`. */
-export const SIZE_CHOICE = {
-  values: { period: ['8', '9', '10'] },
-  colours: {},
-  sizes: { 'cap.width': [4, 12] },
   keepUnknown: [],
 };
