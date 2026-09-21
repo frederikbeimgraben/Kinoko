@@ -58,7 +58,8 @@ export type IconName =
   | 'flag'
   | 'eat'
   | 'palette'
-  | 'ruler';
+  | 'ruler'
+  | 'sort';
 
 /** Die drei gefüllten Pfeile und die Wiedergabe sitzen auf einem 12er-Raster. */
 export const FILLED_ICONS: readonly IconName[] = ['left', 'right', 'play', 'pause'];
@@ -138,4 +139,5 @@ export const ICONS: Record<IconName, string> = {
   palette:
     '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0M7.7 10a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0 -1.6 0M11.2 7.5a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0 -1.6 0M14.7 10a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0 -1.6 0"/>',
   ruler: '<path d="M3 17 17 3l4 4L7 21zM7 13l2 2M10 10l2 2M13 7l2 2"/>',
+  sort: '<path d="M4 7h16M4 12h10M4 17h5"/>',
 };

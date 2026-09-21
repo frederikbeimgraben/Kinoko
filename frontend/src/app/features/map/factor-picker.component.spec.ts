@@ -44,6 +44,6 @@ describe('FactorPickerComponent', () => {
       inputs: { open: true, layers: LAYERS },
     });
 
-    expect(container.querySelectorAll('.option-sheet__scroll > .scroll-fade')).toHaveLength(2);
+    expect(container.querySelectorAll('.option-sheet__scroll.scroll')).toHaveLength(1);
   });
 });

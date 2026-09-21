@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+
+.surface {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: 0;
+  padding-block-start: 4px;
+  overflow: hidden;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+}
+
+.surface--closed {
+  border-radius: 28px;
+}

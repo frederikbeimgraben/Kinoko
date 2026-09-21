@@ -9,12 +9,12 @@
   flex: 1 1 auto;
   align-items: center;
   gap: 5px;
-  height: 24px;
-  padding: 0 10px;
-  border-radius: var(--radius-md);
+  height: var(--pilz-level-height, 24px);
+  padding: 0 var(--pilz-level-inline, 10px);
+  border-radius: var(--pilz-level-radius, var(--radius-md));
   background: var(--pilz-level-area, var(--tonal));
   color: var(--pilz-level-colour, var(--text-var));
-  font-size: var(--fs-xs);
+  font-size: var(--pilz-level-font, var(--fs-xs));
   font-weight: var(--fw-semibold);
   white-space: nowrap;
 }
