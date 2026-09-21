@@ -83,7 +83,7 @@ async function start(setup: Setup, row: string): Promise<void> {
 /** Der Fund geht über das Fadenkreuz ins Formular, das den Katalog holt. */
 async function openFindForm(setup: Setup): Promise<void> {
   await start(setup, 'Fund melden');
-  await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
   setup.refresh();
   TestBed.inject(MapState).species.set('steinpilz');
   await vi.waitFor(() => {
@@ -142,7 +142,7 @@ describe('EintragenComponent', () => {
     expect(screen.getByRole('group', { name: 'Fundort festlegen' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Fundort festlegen' })).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
     setup.refresh();
 
     expect(setup.flow.location()).toEqual([9.05, 48.52]);
@@ -154,7 +154,7 @@ describe('EintragenComponent', () => {
     setup.map.pointPoint = [9.11, 48.61];
     await start(setup, 'Fund melden');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
     setup.refresh();
 
     expect(setup.flow.location()).toEqual([9.11, 48.61]);
@@ -181,7 +181,7 @@ describe('EintragenComponent', () => {
     setup.map.centerPoint = null;
     await start(setup, 'Fund melden');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Fundort übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
 
     expect(setup.toasts.failure).toEqual(['Die Karte steht noch nicht.']);
     expect(setup.flow.step()).toBe('findLocation');
@@ -192,7 +192,7 @@ describe('EintragenComponent', () => {
     await start(setup, 'Marker setzen');
 
     expect(screen.getByRole('group', { name: 'Marker setzen' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Marker übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
     setup.refresh();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Alter Fichtenhang');
@@ -209,7 +209,7 @@ describe('EintragenComponent', () => {
   it('speichert einen Marker nicht ohne Namen', async () => {
     const setup = await build();
     await start(setup, 'Marker setzen');
-    await userEvent.click(screen.getByRole('button', { name: 'Marker übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));

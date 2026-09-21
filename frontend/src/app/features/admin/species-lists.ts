@@ -111,6 +111,7 @@ export const PART_ORDER: readonly BodyPart[] = [
   'fruitbody',
   'cap',
   'stem',
+  'ring',
   'stem_base',
   'gills',
   'tubes',

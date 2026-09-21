@@ -97,7 +97,7 @@ async function addPhoto(page: Page): Promise<void> {
 
 test('MapFindForm', async ({ page }) => {
   guard('MapFindForm', 'phone');
-  await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await openForm(page, 'Fund melden', 'Bestätigen');
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
   await addPhoto(page);
@@ -106,7 +106,7 @@ test('MapFindForm', async ({ page }) => {
 
 test('MapFindFormShared', async ({ page }) => {
   guard('MapFindFormShared', 'phone');
-  await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await openForm(page, 'Fund melden', 'Bestätigen');
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
   await addPhoto(page);
@@ -127,7 +127,7 @@ test('MapFindSaving', async ({ page }) => {
   const held = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await openForm(page, 'Fund melden', 'Bestätigen');
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
   await addPhoto(page);
@@ -157,7 +157,7 @@ test('MapFindSaving', async ({ page }) => {
 
 test('MapMarkerForm', async ({ page }) => {
   guard('MapMarkerForm', 'phone');
-  await openForm(page, 'Marker setzen', 'Marker übernehmen');
+  await openForm(page, 'Marker setzen', 'Bestätigen');
   await expect(page.getByRole('heading', { name: 'Marker setzen' })).toBeVisible();
   // Das Board zeigt die dritte Farbe gewählt.
   await page.getByRole('radio').nth(2).click();
@@ -337,7 +337,7 @@ test('MapDesktopAdd', async ({ page }) => {
 
 test('MapDesktopFindForm', async ({ page }) => {
   guard('MapDesktopFindForm', 'wide');
-  await openForm(page, 'Fund melden', 'Fundort übernehmen');
+  await openForm(page, 'Fund melden', 'Bestätigen');
   await setDate(page);
   await addPhoto(page);
   await board(page, 'MapDesktopFindForm', 'map-desktop-stein-900.png');

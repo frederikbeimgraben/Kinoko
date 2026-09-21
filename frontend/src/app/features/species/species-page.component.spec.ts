@@ -74,7 +74,7 @@ describe('SpeciesPageComponent', () => {
     const container = await build('gibt-es-nicht');
 
     expect(screen.getByText('Art nicht gefunden')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Zur Liste' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Zu allen Arten' })).toBeInTheDocument();
     await noViolations(container);
   });
 
