@@ -8,7 +8,8 @@ import { LevelPillComponent } from '../../../ui/level-pill/level-pill.component'
 import { PageHeaderComponent } from '../../../ui/page-header/page-header.component';
 import { SwitchComponent } from '../../../ui/switch/switch.component';
 import { SpeciesState } from '../species.state';
-import { compareGroups, type Group } from './comparison.rows';
+import type { Group } from './comparison.cells';
+import { compareGroups } from './comparison.groups';
 import { ComparisonState } from './comparison.state';
 
 /** Zwei Arten nebeneinander, nach Gruppen des Körpers geordnet. */

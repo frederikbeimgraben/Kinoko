@@ -26,9 +26,15 @@
               @for (cell of row.cells; track $index) {
                 <span class="compare__cell">
                   @if (cell.kind === 'badge') {
-                    <app-level-pill [text]="cell.text" [colour]="cell.colour" [background]="cell.background" />
+                    <app-level-pill
+                      [text]="cell.text"
+                      [colour]="cell.colour"
+                      [background]="cell.background"
+                    />
                   } @else if (cell.kind === 'value') {
-                    <span class="compare__value">{{ cell.text }}<small>{{ cell.unit }}</small></span>
+                    <span class="compare__value"
+                      >{{ cell.text }}<small>{{ cell.unit }}</small></span
+                    >
                   } @else if (cell.kind === 'swatch') {
                     <app-colour-field [colours]="cell.colours" [mode]="cell.mode" [label]="cell.text" />
                     <span class="compare__swatch-text">{{ cell.text }}</span>
