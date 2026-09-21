@@ -6,11 +6,12 @@ import { FilterSheetComponent } from './filter-sheet.component';
 
 const OPEN = { open: true, title: 'Filter', primaryLabel: 'Show 12 species' };
 
-/** Die Knöpfe des Blatts, ohne Griff und ohne den Scrim des Overlay-Wirts. */
+/** Die eigenen Knöpfe des Blatts, ohne Griff, Fuß und den Scrim des Wirts. */
 function dialogButtons(): HTMLElement[] {
   return within(screen.getByRole('dialog'))
     .getAllByRole('button')
-    .filter((button) => !button.classList.contains('sheet__handle'));
+    .filter((button) => !button.classList.contains('sheet__handle'))
+    .filter((button) => !button.classList.contains('btn'));
 }
 
 describe('FilterSheetComponent', () => {
@@ -64,20 +65,20 @@ describe('FilterSheetComponent', () => {
   });
 
   it('lässt Zurücksetzen weg, solange nichts gefiltert ist', async () => {
-    const { container } = await render(FilterSheetComponent, { inputs: OPEN });
+    await render(FilterSheetComponent, { inputs: OPEN });
 
-    expect(container.querySelector('.filtersheet__reset')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
   });
 
-  it('stellt Zurücksetzen in die Zeile unter dem Titel', async () => {
+  it('stellt Zurücksetzen und die Haupthandlung als Paar in den Fuß', async () => {
     const { container } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
     });
 
-    const reset = container.querySelector('.filtersheet__reset');
-    expect(reset).toHaveTextContent('Zurücksetzen');
-    expect(reset?.closest('.sheet__head')).not.toBeNull();
-    expect(reset?.closest('.sheet__head-title')).toBeNull();
+    const pair = container.querySelector('.footer__pair--split');
+    expect(pair).not.toBeNull();
+    const labels = [...(pair?.querySelectorAll('button') ?? [])].map((button) => button.textContent.trim());
+    expect(labels).toEqual(['Show 12 species', 'Zurücksetzen']);
   });
 
   it('nimmt das X des Blatts und bringt kein eigenes mit', async () => {
@@ -114,7 +115,7 @@ describe('FilterSheetComponent', () => {
     let calls = 0;
     fixture.componentInstance.backClick.subscribe(() => (calls += 1));
 
-    expect(container.querySelector('.filtersheet__reset')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
     expect(container.querySelector('.filtersheet__back')?.closest('.sheet__head-title')).not.toBeNull();
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 
@@ -143,7 +144,7 @@ describe('FilterSheetComponent', () => {
   it('blendet die Ränder des Inhalts aus', async () => {
     const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
-    expect(container.querySelectorAll('.filtersheet__content > .scroll-fade')).toHaveLength(2);
+    expect(container.querySelectorAll('.filtersheet__content.scroll')).toHaveLength(1);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

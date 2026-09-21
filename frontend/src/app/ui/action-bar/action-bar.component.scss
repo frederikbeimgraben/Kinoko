@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 10px;
   margin-block-start: auto;
-  padding: var(--space-3) var(--size-gutter) var(--size-gutter);
+  padding: var(--space-4) var(--size-gutter) var(--size-gutter);
   background: var(--color-surface);
   border-block-start: var(--border-width) solid var(--color-border);
 }
@@ -47,14 +47,14 @@
   gap: var(--space-3);
 }
 
-// Beide Aktionen teilen sich die Breite. Ein längeres Wort nimmt sich mehr,
-// so wie eine Spalte `1fr` im Brett.
+// Beide Aktionen teilen sich die Breite zur Hälfte, wie das Brett sie zeigt.
 .footer__pair--split .footer__main {
   --btn-font-size: var(--fs-control);
   --space-5: 20px;
   --btn-height: var(--size-tap);
 
   flex: 1 1 0;
+  min-inline-size: 0;
 }
 
 // Die Hauptaktion steht rechts, die zweite links.

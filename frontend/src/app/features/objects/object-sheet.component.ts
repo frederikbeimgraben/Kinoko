@@ -5,7 +5,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { coordinatesText } from '../add-entry/coordinates';
 import { EntriesState } from '../entries/entries.state';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
@@ -28,23 +28,6 @@ const EDIT_TITLE: Record<ObjectKind, TranslationKey> = {
   marker: 'entry.marker.editTitle',
   zone: 'entry.zone.editTitle',
 };
-
-/** Die Höhe je Art steht so in den Boards `MarkerSheet`, `FindSheet` und `ZoneSheet`. */
-const HEIGHT: Record<ObjectKind, DetentSize> = {
-  find: '594px',
-  marker: '444px',
-  zone: '444px',
-};
-
-/** Die Höhe des Formulars aus den Boards `MarkerEdit`, `FindEdit` und `ZoneEdit`. */
-const HEIGHT_EDIT: Record<ObjectKind, DetentSize> = {
-  find: '694px',
-  marker: '624px',
-  zone: '734px',
-};
-
-/** Ein Objekt ohne Datensatz trägt nur seinen Hinweis. */
-const HEIGHT_MISSING: DetentSize = 'content';
 
 /**
  * So nah holt ein geöffnetes Objekt die Karte heran. Nah genug, um den Weg
@@ -140,13 +123,6 @@ export class ObjectSheetComponent {
 
   /** Das Formular des Fundes dunkelt die Karte ab, wie das Brett `FindEdit`. */
   protected readonly dark = computed(() => this.editing() && this.map.object()?.kind === 'find');
-
-  protected readonly detents = computed<readonly [DetentSize, DetentSize, DetentSize]>(() => {
-    const offen = this.map.object();
-    if (offen === null || this.missing()) return [HEIGHT_MISSING, HEIGHT_MISSING, HEIGHT_MISSING];
-    const size = this.editing() ? HEIGHT_EDIT[offen.kind] : HEIGHT[offen.kind];
-    return [size, size, size];
-  });
 
   constructor() {
     // Ein Tipp auf einen Marker soll ihn zeigen, nicht nur sein Blatt öffnen.

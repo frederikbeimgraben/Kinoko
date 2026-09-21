@@ -1,25 +1,3 @@
 :host {
   display: block;
 }
-
-// Ohne Titelbild darf der Platz nicht als Abstand stehen bleiben.
-:host(:empty) {
-  display: none;
-}
-
-.lead {
-  container-type: inline-size;
-  display: block;
-  inline-size: 100%;
-  padding: 0;
-  background: none;
-  border: 0;
-}
-
-.lead__image {
-  --private-image-cap: 100cqw;
-
-  display: block;
-  inline-size: 100%;
-  border-radius: var(--radius-lg);
-}

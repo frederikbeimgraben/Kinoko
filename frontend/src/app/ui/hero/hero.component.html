@@ -1,0 +1,35 @@
+<figure class="herofig" [class.herofig--bare]="bare()">
+  <div class="heroframe" [style.height.px]="height()">
+    @if (interactive()) {
+      <button
+        class="hero__frame tap"
+        type="button"
+        appRipple
+        [attr.aria-label]="alt()"
+        (click)="opened.emit()"
+      >
+        <app-private-image class="hero__image" [path]="path()" [alt]="alt()" />
+      </button>
+    } @else {
+      <app-private-image class="hero__image" [path]="path()" [alt]="alt()" />
+    }
+    @if (showPrev()) {
+      <span class="heronav heronav--l">
+        <app-icon-button icon="prev" kind="over" [label]="'image.previous' | t" (pressed)="prev.emit()" />
+      </span>
+    }
+    @if (showNext()) {
+      <span class="heronav heronav--r">
+        <app-icon-button icon="next" kind="over" [label]="'image.next' | t" (pressed)="next.emit()" />
+      </span>
+    }
+  </div>
+  @if (showCaption()) {
+    <figcaption class="hero__caption">
+      <app-image-credit [photographer]="photo()!.photographer" [licence]="photo()!.licence" />
+      @if (count() > 0) {
+        <span class="hero__count">{{ counter() }}</span>
+      }
+    </figcaption>
+  }
+</figure>

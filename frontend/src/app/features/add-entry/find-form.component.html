@@ -34,11 +34,12 @@
     @if (withPhotos()) {
       <div>
         <p class="form__label">{{ 'entry.field.photos' | t }}</p>
-        <app-photo-picker
-          [files]="photos()"
-          [held]="held()"
-          (filesChange)="photos.set($event)"
-          (heldRemoved)="removeHeld($event)"
+        <app-photo-strip
+          mode="edit"
+          [pending]="photos()"
+          [photos]="held()"
+          (pendingChange)="photos.set($event)"
+          (removed)="removeHeld($event)"
         />
       </div>
     }
@@ -69,7 +70,6 @@
       [label]="'map.species.choose' | t"
       [title]="'map.species.choose' | t"
       [modal]="true"
-      [detents]="DETENTS"
       (closed)="pickerOpen.set(false)"
     >
       <div class="overlay-body">

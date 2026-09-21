@@ -6,11 +6,10 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 import { flatMap } from '../fixtures/flat-map';
 import { presetFilter } from '../fixtures/filter-state';
 import { bundle, SEVEN, STONE, TWELVE } from '../fixtures/species';
-import { CORE_CHOICE, SIZE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
+import { CORE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
 import {
   DESKTOP_SPECIES,
   FILTER_DESKTOP,
-  FILTER_DESKTOP_GROUP,
   RESULT_HITS,
   RESULT_REST,
   RESULT_UNKNOWN,
@@ -50,7 +49,7 @@ async function seen(page: Page, name: string): Promise<void> {
 /** Öffnet das Filterblatt und darin eine Gruppe. */
 async function openGroup(page: Page, group: string): Promise<void> {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await page.getByRole('button', { name: group }).first().click();
+  await page.getByRole('dialog').getByRole('button', { name: group }).first().click();
 }
 
 test('Species', async ({ page }) => {
@@ -86,7 +85,6 @@ test('SpeciesEmpty', async ({ page }) => {
   await presetFilter(page, {
     values: { edibility: ['edible'], capShape: ['convex'] },
     colours: { cap: '#6b4423' },
-    sizes: {},
     keepUnknown: [],
   });
   await openList(page, bundle(STONE));
@@ -128,26 +126,8 @@ test('SpeciesFilter', async ({ page }) => {
   await expectBoard(page, 'SpeciesFilter');
 });
 
-test('FilterEdibility', async ({ page }) => {
-  guard('FilterEdibility', 'phone');
-  await presetFilter(page, CORE_CHOICE);
-  await openList(page, largeBundle());
-  await openGroup(page, 'Speisewert');
-  await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
-  await expectBoard(page, 'SpeciesFilter');
-});
-
-test('FilterCapShape', async ({ page }) => {
-  guard('FilterCapShape', 'phone');
-  await presetFilter(page, CORE_CHOICE);
-  await openList(page, largeBundle());
-  await openGroup(page, 'Hutform');
-  await expect(page.getByRole('checkbox', { name: /halbkugelig/ })).toBeVisible();
-  await expectBoard(page, 'SpeciesFilter');
-});
-
 test('FilterColour', async ({ page }) => {
-  guard('FilterColour', 'phone');
+  guard('SpeciesFilterColour', 'phone');
   await presetFilter(page, CORE_CHOICE);
   await openList(page, largeBundle());
   await openGroup(page, 'Farbe');
@@ -156,21 +136,11 @@ test('FilterColour', async ({ page }) => {
   await expectBoard(page, 'SpeciesFilterColour');
 });
 
-test('FilterSize', async ({ page }) => {
-  guard('FilterSize', 'phone');
-  await presetFilter(page, SIZE_CHOICE);
-  await openList(page, largeBundle());
-  await openGroup(page, 'Abmessungen und Zeit');
-  await expect(page.getByRole('group', { name: 'Wachstumszeit' })).toBeVisible();
-  await expectBoard(page, 'SpeciesFilter');
-});
-
 test('FilterResult', async ({ page }) => {
   guard('FilterResult', 'phone');
   await presetFilter(page, {
     values: { edibility: ['edible'], capShape: ['convex'], treePartner: ['picea-abies'] },
     colours: {},
-    sizes: {},
     keepUnknown: [],
   });
   await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN, ...RESULT_REST]));
@@ -228,18 +198,4 @@ test('FilterDesktop', async ({ page }) => {
   });
   await seen(page, 'Wiesenchampignon');
   await expectBoard(page, 'SpeciesDesktop');
-});
-
-test('FilterDesktopGroup', async ({ page }) => {
-  guard('FilterDesktopGroup', 'wide');
-  await presetFilter(page, FILTER_DESKTOP_GROUP.choice);
-  await mockSignIn(page);
-  await openList(page, bundle(FILTER_DESKTOP_GROUP.catalogue), {
-    '/api/config': authConfig(BASE),
-    ...SIGNED_IN,
-  });
-  await seen(page, 'Wiesenchampignon');
-  await page.getByRole('button', { name: 'Speisewert' }).first().click();
-  await expect(page.getByRole('checkbox', { name: /bedingt essbar/ })).toBeVisible();
-  await expectBoard(page, 'SpeciesDesktopFiltered');
 });

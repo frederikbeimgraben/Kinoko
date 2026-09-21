@@ -1,10 +1,7 @@
-@use 'section';
-
-@include section.block;
-
-// Eine Verwechslung trägt ein Bild und steht darum höher als eine Datenzeile.
-.section__card {
-  --size-row: 60px;
+:host {
+  display: block;
+  // Der Name steht fett vor dem gedämpften Satz, der die Art unterscheidet.
+  --list-row-title-weight: var(--fw-semibold);
 }
 
 .lookalike__photo {
@@ -19,7 +16,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding-inline-end: var(--size-gutter);
 }
 
 .lookalike__way {
@@ -28,11 +24,11 @@
   justify-content: center;
   inline-size: 24px;
   block-size: 24px;
-  color: var(--color-text-muted);
+  color: var(--text-var);
   background: none;
   border: 0;
 }
 
 .lookalike__way--compare {
-  color: var(--color-primary);
+  color: var(--primary);
 }

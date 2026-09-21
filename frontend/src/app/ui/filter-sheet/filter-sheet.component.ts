@@ -3,30 +3,36 @@ import {
   Component,
   ElementRef,
   afterRenderEffect,
+  computed,
   input,
   output,
   viewChild,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
-import { SheetComponent, type DetentSize } from '../sheet/sheet.component';
+import { SheetComponent } from '../sheet/sheet.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Das Filterblatt steht über der Liste und füllt den Streifen unter dem Kopf. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [1, 1, 1];
 
 /** Blatt für Filterinhalte: Übersicht mit Zurücksetzen, Gruppe mit Weg zurück. */
 @Component({
   selector: 'app-filter-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OverlayHostComponent, ScrollFadeDirective, SheetComponent, SvgIconComponent, TranslatePipe],
+  imports: [
+    ActionBarComponent,
+    OverlayHostComponent,
+    ScrollFadeDirective,
+    SheetComponent,
+    SvgIconComponent,
+    TranslatePipe,
+  ],
   templateUrl: './filter-sheet.component.html',
   styleUrl: './filter-sheet.component.scss',
 })
 export class FilterSheetComponent {
-  protected readonly detents = DETENTS;
-
   readonly open = input.required<boolean>();
   readonly title = input.required<string>();
   readonly resetEnabled = input(false);
@@ -39,6 +45,9 @@ export class FilterSheetComponent {
   readonly primaryClick = output();
   readonly backClick = output();
   readonly closed = output();
+
+  /** Eine Gruppe trägt den Weg zurück; das Zurücksetzen gehört zur Übersicht. */
+  protected readonly showsReset = computed(() => this.resetEnabled() && !this.back());
 
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
 

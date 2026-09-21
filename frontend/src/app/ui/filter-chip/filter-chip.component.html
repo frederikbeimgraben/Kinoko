@@ -25,7 +25,9 @@
     [class.chip--on]="on()"
     [class.chip--plain]="!icon() && !dot()"
     [class.chip--small]="small()"
+    [class.chip--icononly]="label() === ''"
     [attr.aria-pressed]="on()"
+    [attr.aria-label]="label() === '' ? (iconLabel() ?? null) : null"
     (click)="chosen.emit()"
   >
     @if (icon(); as glyph) {

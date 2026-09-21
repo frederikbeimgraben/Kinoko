@@ -6,8 +6,8 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { PhotoPickerComponent, type HeldPhoto } from '../../ui/photo-picker/photo-picker.component';
-import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
+import { PhotoStripComponent, type StripPhoto } from '../../ui/photo-strip/photo-strip.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
@@ -26,7 +26,6 @@ export interface FindSubmission {
 }
 
 /** Die Artwahl steht über dem Formular und füllt fast die ganze Höhe. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.9, 0.9, 0.9];
 
 /** Das Formular eines Fundes (Boards `FindForm` und `MapDesktopFindForm`). */
 @Component({
@@ -37,7 +36,7 @@ const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.9, 0.9, 0.9];
     SpeciesPickerComponent,
     FormFieldComponent,
     OverlayHostComponent,
-    PhotoPickerComponent,
+    PhotoStripComponent,
     SheetComponent,
     SwitchComponent,
     VisibilityChoiceComponent,
@@ -57,15 +56,13 @@ export class FindFormComponent {
   readonly start = input<Find | null>(null);
   readonly withPhotos = input(true);
   /** Die Fotos, die der Dienst zu diesem Fund schon hat. */
-  readonly held = input<readonly HeldPhoto[]>([]);
+  readonly held = input<readonly StripPhoto[]>([]);
   /** Ein vorhandener Fund zeigt den Pfeil an der Art und einen Rahmen am Weg zurück. */
   readonly editing = input(false);
   readonly busy = input(false);
 
   readonly submitted = output<FindSubmission>();
   readonly heldRemoved = output<string>();
-
-  protected readonly DETENTS = DETENTS;
 
   private readonly slugChoice = signal<string | null>(null);
   protected readonly visibilityChoice = signal<Visibility | null>(null);

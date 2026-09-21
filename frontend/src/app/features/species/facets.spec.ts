@@ -11,7 +11,6 @@ import {
   factsOf,
   isActive,
   judge,
-  sizeKey,
   type Counts,
   type Facts,
   type GroupKey,
@@ -113,10 +112,6 @@ describe('factsOf', () => {
     expect(facts.values.get('forecast')).toEqual([FORECAST_VALUE]);
     expect(factsFor(BARE).values.get('forecast')).toEqual([FORECAST_ABSENT]);
   });
-
-  it('legt jedes Maß unter Teil und Strecke ab', () => {
-    expect(factsFor(STEINPILZ).sizes.get(sizeKey('cap', 'width'))).toEqual([8, 20]);
-  });
 });
 
 describe('judge', () => {
@@ -176,24 +171,6 @@ describe('judge', () => {
     expect(judge(factsFor(STEINPILZ), held, PALETTE)).toBe('unknown');
     expect(judge(factsFor(STEINPILZ), kept, PALETTE)).toBe('hit');
   });
-
-  it('nimmt ein Maß, sobald sich die Spannen überschneiden', () => {
-    const key = sizeKey('cap', 'width');
-    const hit = selection({ sizes: new Map([[key, [18, 30] as const]]) });
-    const miss = selection({ sizes: new Map([[key, [0, 5] as const]]) });
-
-    expect(judge(factsFor(STEINPILZ), hit, PALETTE)).toBe('hit');
-    expect(judge(factsFor(STEINPILZ), miss, PALETTE)).toBe('miss');
-  });
-
-  it('meldet unknown, solange die Art das Maß nicht führt', () => {
-    const key = sizeKey('cap', 'width');
-    const held = selection({ sizes: new Map([[key, [0, 5] as const]]) });
-    const kept = selection({ ...held, keepUnknown: new Set<GroupKey>(['size']) });
-
-    expect(judge(factsFor(BARE), held, PALETTE)).toBe('unknown');
-    expect(judge(factsFor(BARE), kept, PALETTE)).toBe('hit');
-  });
 });
 
 describe('isActive', () => {
@@ -205,7 +182,6 @@ describe('isActive', () => {
   it('meldet jede Art von Wahl', () => {
     expect(isActive(wanting('hymenium', 'tubes'))).toBe(true);
     expect(isActive(selection({ colours: new Map([['cap', '#6b4423']]) }))).toBe(true);
-    expect(isActive(selection({ sizes: new Map([['cap.width', [0, 5] as const]]) }))).toBe(true);
   });
 });
 

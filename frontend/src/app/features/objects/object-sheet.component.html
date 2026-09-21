@@ -3,7 +3,6 @@
   [class.object--dark]="dark()"
   [open]="map.object() !== null"
   [modal]="dark()"
-  [cover]="true"
   (closed)="close()"
 >
   <app-sheet
@@ -12,7 +11,6 @@
     [label]="sheetName()"
     [title]="headTitle()"
     [note]="headNote()"
-    [detents]="detents()"
     [modal]="true"
     [dismissible]="true"
     (closed)="dismiss()"

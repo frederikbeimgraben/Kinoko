@@ -1,29 +1,23 @@
-@for (part of parts(); track part.part) {
-  <div class="colour__card">
-    <button class="colour__head tap" type="button" data-press="tint" (click)="toggle(part.part)">
-      <b class="colour__part">{{ part.label }}</b>
-      @if (part.chosen; as hex) {
-        <i class="colour__swatch" [style.background]="hex"></i>
-        <span class="colour__name">{{ part.name }}</span>
-      } @else {
-        <span class="colour__none">&#8211;</span>
-      }
-      <app-svg-icon
-        class="colour__chevron"
-        [name]="part.open ? 'chevron' : 'forward'"
-        [size]="18"
-        [class.colour__chevron--open]="part.open"
-      />
-    </button>
-    @if (part.open) {
-      <app-colour-picker
-        [colours]="swatches()"
-        [value]="part.chosen"
+<app-fold-section [label]="'filter.colour.title' | t">
+  <div class="grp">
+    @for (part of parts(); track part.part) {
+      <app-expand-row
         [label]="part.label"
-        [nearest]="tones()"
-        [nearestLabel]="tonesLabel()"
-        (valueChange)="choose(part.part, $event)"
-      />
+        [value]="part.name"
+        [dot]="part.chosen ?? undefined"
+        [tall]="true"
+        [open]="part.open"
+        (openChange)="toggle(part.part)"
+      >
+        <app-colour-picker
+          [colours]="swatches()"
+          [value]="part.chosen"
+          [label]="part.label"
+          [nearest]="tones()"
+          [nearestLabel]="tonesLabel()"
+          (valueChange)="choose(part.part, $event)"
+        />
+      </app-expand-row>
     }
   </div>
-}
+</app-fold-section>

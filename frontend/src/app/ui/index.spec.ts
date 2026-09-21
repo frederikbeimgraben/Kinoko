@@ -8,6 +8,8 @@ import * as ui from './index';
 const BLOCKS = [
   'app-page-header',
   'app-nav',
+  'app-nav-tab',
+  'app-surface',
   'app-sheet',
   'app-sheet-head',
   'app-overlay-host',
@@ -20,6 +22,7 @@ const BLOCKS = [
   'app-icon-button',
   'app-split-layout',
   'app-popover',
+  'app-popover-item',
   'app-push-button',
   'app-confirm-dialog',
   'app-photo-dialog',
@@ -53,7 +56,7 @@ const BLOCKS = [
   'app-colour-swatches',
   'app-colour-picker',
   'app-species-picker',
-  'app-photo-picker',
+  'app-photo-strip',
   'app-year-band-input',
   'app-level-pill',
   'app-tag-list',
@@ -88,6 +91,7 @@ const BLOCKS = [
   'app-fold-section',
   'app-progress',
   'app-toast',
+  'app-hero',
 ] as const;
 
 const UI_ROOT = join(process.cwd(), 'src', 'app', 'ui');

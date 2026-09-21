@@ -1,0 +1,35 @@
+<app-block-card block="SpeciesRow" [width]="374" [height]="72">
+  <app-species-row [species]="steinpilz" />
+</app-block-card>
+
+<app-block-card block="SpeciesList" [width]="390" [height]="640">
+  <div style="display: flex; block-size: 100%">
+    <app-species-results [hits]="hits" />
+  </div>
+</app-block-card>
+
+<app-block-card block="ColourFilter" [width]="358" [height]="330">
+  <div style="block-size: 100%; overflow: hidden">
+    <app-species-filter-colour />
+  </div>
+</app-block-card>
+
+<app-block-card block="FilterColumn" [width]="272" [height]="820">
+  <div style="block-size: 100%; overflow: hidden">
+    <app-species-filter-panel />
+  </div>
+</app-block-card>
+
+<app-block-card block="FilterSheet" [width]="390" [height]="640">
+  <div style="display: flex; block-size: 100%; overflow: hidden">
+    <app-species-filter-sheet />
+  </div>
+</app-block-card>
+
+<app-block-card block="FactorRow" [width]="358" [height]="64">
+  <app-factor-row [factor]="factor" icon="cloud" [removeLabel]="'map.factor.remove' | t" />
+</app-block-card>
+
+<app-block-card block="WeekStrip" [width]="358" [height]="64">
+  <app-timeline [weeks]="weeks" [active]="{ year: 2026, week: 38 }" [label]="'map.timeline' | t" />
+</app-block-card>

@@ -23,7 +23,7 @@ class HostComponent {}
 @Component({
   imports: [SheetComponent],
   template: `
-    <app-sheet label="Map" [detent]="1">
+    <app-sheet label="Map" [detent]="1" [detents]="['152px', 0.4, 0.9]">
       <div head>
         <p>Header</p>
         <button type="button">Week 40</button>
@@ -123,6 +123,12 @@ describe('SheetComponent', () => {
     expect(container.querySelector('[aria-modal]')).toBeNull();
   });
 
+  it('nimmt ohne Rasten die Höhe des Inhalts', async () => {
+    const { container } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
+
+    expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
+  });
+
   it('sets the detent with the arrow keys and stops at both ends', async () => {
     const { fixture } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 2 } });
     const calls: number[] = [];
@@ -137,7 +143,9 @@ describe('SheetComponent', () => {
   });
 
   it('goes to the nearest detent on a handle drag and skips the click', async () => {
-    const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 1, detents: ['152px', 0.4, 0.9] },
+    });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
     const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
@@ -181,7 +189,9 @@ describe('SheetComponent', () => {
   });
 
   it('leaves the detent alone on a small wobble', async () => {
-    const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Porcini', detent: 1 } });
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 1, detents: ['152px', 0.4, 0.9] },
+    });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
     const handle = screen.getByRole('button', { name: 'Blatt ziehen' });

@@ -1,24 +1,29 @@
 :host {
   display: block;
-  overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
 }
 
-.group__part {
+.grp {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.group__head {
   display: flex;
   align-items: center;
-  margin: 0;
-  block-size: 44px;
-  padding-inline: 14px;
-  border-block-end: var(--border-width) solid var(--color-border);
+  min-block-size: var(--size-row);
+  padding-inline: var(--size-gutter);
+  background: var(--surface);
+  border-radius: 4px;
   font-size: var(--fs-row-title);
   font-weight: var(--fw-semibold);
-  color: var(--color-text);
+  color: var(--text);
 }
 
-// Ohne eine Zeile darunter läge die Trennlinie auf dem Kartenrand.
-.group__part--bare {
-  border-block-end: 0;
+.grp > .group__head:first-child {
+  border-radius: 20px 20px 4px 4px;
+}
+
+.grp > .group__head:only-child {
+  border-radius: 20px;
 }

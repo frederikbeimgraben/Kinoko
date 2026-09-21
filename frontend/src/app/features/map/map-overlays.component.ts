@@ -14,7 +14,6 @@ import { FactorSheetComponent } from './factor-sheet.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
-import { DETENT_SIZES } from './map-surface';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
 
@@ -69,10 +68,8 @@ export class MapOverlaysComponent {
   readonly saved = output<string>();
 
   /** Ein Blatt über der Karte steht in derselben obersten Raste. */
-  protected readonly detents = DETENT_SIZES;
 
   /** Der Name einer Kombination braucht wenig Platz, der Rest die ganze Höhe. */
-  protected readonly detent = computed(() => overlayDetent(this.open()));
 
   /** Die Faktorwahl trägt ihr eigenes Blatt. Am Rechner steht der Faktor in der Spalte. */
   protected readonly shown = computed(

@@ -4,7 +4,7 @@
     [start]="find()"
     [editing]="true"
     [busy]="busy()"
-    [held]="held()"
+    [held]="strip()"
     (submitted)="save($event)"
     (heldRemoved)="removePhoto($event)"
   />
@@ -16,7 +16,7 @@
         <app-level-pill class="findsheet__badge" [text]="'entry.badge.shared' | t" kind="ok" />
       }
     </div>
-    <app-photo-gallery [findId]="find().id" />
+    <app-photo-strip mode="view" [photos]="strip()" (opened)="openPhoto($event)" />
     @if (find().note; as note) {
       <p class="findsheet__note">{{ note }}</p>
     }
@@ -54,3 +54,6 @@
   (confirmed)="remove()"
   (cancelled)="deleteAsk.set(false)"
 />
+@if (viewing() !== null) {
+  <app-photo-dialog [photos]="held()" [index]="viewing() ?? 0" (closed)="closeGallery()" />
+}

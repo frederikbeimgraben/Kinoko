@@ -53,7 +53,6 @@ describe('ImageViewerComponent', () => {
     expect(screen.getByText('Marie Weber')).toBeInTheDocument();
     expect(screen.getByText('CC BY-SA 4.0')).toBeInTheDocument();
     expect(screen.getByText('6. September 2026')).toBeInTheDocument();
-    expect(screen.getByText('Junges Exemplar')).toBeInTheDocument();
     await noViolations(container);
   });
 

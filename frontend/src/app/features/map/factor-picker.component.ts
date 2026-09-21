@@ -4,7 +4,6 @@ import { layerIcon } from '../../core/tiles/layer-groups';
 import { layerGroups, unitOf, type Layer } from '../../core/tiles/layers';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
 import { layerTitle } from './layer-name';
-import { DETENT_SIZES } from './map-surface';
 
 /** Die Quelle eines neuen Faktors: Ebenen und Arten. Belegtes fehlt. */
 @Component({
@@ -27,7 +26,6 @@ export class FactorPickerComponent {
 
   protected readonly title = computed(() => this.i18n.translate('map.factor.choose'));
   /** Dieselbe Höhe wie jedes andere Blatt über der Karte. */
-  protected readonly detents = DETENT_SIZES;
 
   private readonly free = computed<readonly Layer[]>(() => {
     const { perWeek, fixed } = layerGroups(this.layers());

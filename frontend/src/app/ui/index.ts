@@ -25,6 +25,7 @@ export { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 export { ModalLayerDirective } from './modal-layer/modal-layer.directive';
 export { PhotoDialogComponent } from './photo-dialog/photo-dialog.component';
 export { PopoverComponent, type PopoverAnchor } from './popover/popover.component';
+export { PopoverItemComponent } from './popover/popover-item.component';
 export { RejectDialogComponent } from './reject-dialog/reject-dialog.component';
 export { CrosshairComponent } from './crosshair/crosshair.component';
 export { EmptyStateComponent } from './empty-state/empty-state.component';
@@ -39,6 +40,7 @@ export { FloatingButtonComponent } from './floating-button/floating-button.compo
 export { FoldSectionComponent } from './fold-section/fold-section.component';
 export { FormFieldComponent } from './form-field/form-field.component';
 export { FormSheetComponent } from './form-sheet/form-sheet.component';
+export { HeroComponent, type HeroPhoto } from './hero/hero.component';
 export { HistogramComponent } from './histogram/histogram.component';
 export {
   IconButtonComponent,
@@ -69,7 +71,11 @@ export { ObjectTitleComponent } from './object-title/object-title.component';
 export { OptionSheetComponent, type OptionSheetOption } from './option-sheet/option-sheet.component';
 export { OverlayHostComponent } from './overlay-host/overlay-host.component';
 export { PageHeaderComponent } from './page-header/page-header.component';
-export { PhotoPickerComponent } from './photo-picker/photo-picker.component';
+export {
+  PhotoStripComponent,
+  type PhotoStripMode,
+  type StripPhoto,
+} from './photo-strip/photo-strip.component';
 export { PrivateImageComponent } from './private-image/private-image.component';
 export { ProgressComponent } from './progress/progress.component';
 export { RampComponent, type RampKind } from './ramp/ramp.component';
@@ -91,7 +97,7 @@ export { StateViewComponent, type StateViewKind } from './state-view/state-view.
 export { StepBarComponent, type StepAction } from './step-bar/step-bar.component';
 export { SpeciesPickerComponent, type SpeciesPickerEntry } from './species-picker/species-picker.component';
 export { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row/species-row.component';
-export { SplitLayoutComponent } from './split-layout/split-layout.component';
+export { SplitLayoutComponent, type PaneKind, type SplitKind } from './split-layout/split-layout.component';
 export { StatRowComponent, type Stat } from './stat-row/stat-row.component';
 export { SvgIconComponent, type IconName } from './svg-icon/svg-icon.component';
 export { ToastComponent } from './toast/toast.component';
@@ -101,3 +107,5 @@ export { WeekButtonComponent } from './timeline/week-button.component';
 export { YearBandComponent } from './year-band/year-band.component';
 export { YearBandInputComponent } from './year-band-input/year-band-input.component';
 export { ZoneShapeComponent } from './zone-shape/zone-shape.component';
+export { NavTabComponent } from './nav/nav-tab.component';
+export { SurfaceComponent } from './surface/surface.component';

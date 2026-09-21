@@ -39,7 +39,7 @@
 
 <app-overlay-host [open]="draft() !== null" [modal]="true" (closed)="close()">
   @if (draft(); as open) {
-    <app-sheet [label]="open.key" [title]="open.key" [modal]="true" [detents]="detents" (closed)="close()">
+    <app-sheet [label]="open.key" [title]="open.key" [modal]="true" (closed)="close()">
       <span titleLead class="texts__mark">
         @if (resettable()) {
           <app-level-pill [text]="'admin.texts.changed' | t" />

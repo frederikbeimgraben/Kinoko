@@ -4,9 +4,13 @@ import { WORKSHOP_TEXTS } from '../../core/i18n/workshop-texts';
 import { ControlsCardsComponent } from './cards/controls/controls-cards.component';
 import { DataCardsComponent } from './cards/data/data-cards.component';
 import { DisplayCardsComponent } from './cards/display/display-cards.component';
+import { FramesCardsComponent } from './cards/frames/frames-cards.component';
 import { MapCardsComponent } from './cards/map/map-cards.component';
+import { OverlaysCardsComponent } from './cards/overlays/overlays-cards.component';
 import { PrimitivesCardsComponent } from './cards/primitives/primitives-cards.component';
 import { RowsCardsComponent } from './cards/rows/rows-cards.component';
+import { SpeciesListCardsComponent } from './cards/species-list/species-list-cards.component';
+import { SpeciesPageCardsComponent } from './cards/species-page/species-page-cards.component';
 
 const THEME_ATTRIBUTE = 'data-theme';
 const DARK = 'dark';
@@ -19,9 +23,13 @@ const DARK = 'dark';
     ControlsCardsComponent,
     DataCardsComponent,
     DisplayCardsComponent,
+    FramesCardsComponent,
     MapCardsComponent,
+    OverlaysCardsComponent,
     PrimitivesCardsComponent,
     RowsCardsComponent,
+    SpeciesListCardsComponent,
+    SpeciesPageCardsComponent,
   ],
   templateUrl: './building-blocks.component.html',
   styleUrl: './building-blocks.component.scss',

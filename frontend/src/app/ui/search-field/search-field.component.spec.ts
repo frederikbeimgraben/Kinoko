@@ -63,6 +63,18 @@ describe('SearchFieldComponent', () => {
     expect(container.querySelector('input')).toHaveFocus();
   });
 
+  it('lässt die Fläche in einer Leiste weg', async () => {
+    const { container, rerender } = await render(SearchFieldComponent, {
+      inputs: { plain: false },
+    });
+
+    expect(container.querySelector('.search--plain')).toBeNull();
+
+    await rerender({ inputs: { plain: true } });
+
+    expect(container.querySelector('.search--plain')).not.toBeNull();
+  });
+
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
     const { container } = await render(SearchFieldComponent, {
       inputs: { value: 'x', placeholder: 'search' },

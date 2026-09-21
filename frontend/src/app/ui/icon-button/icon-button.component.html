@@ -13,7 +13,14 @@
   [disabled]="disabled()"
   (click)="pressed.emit()"
 >
-  @if (filled()) {
+  @if (!own()) {
+    <app-svg-icon
+      class="icon-button__glyph"
+      [name]="catalogue()"
+      [size]="iconSize()"
+      [strokeWidth]="glyph().stroke"
+    />
+  } @else if (filled()) {
     <svg
       class="icon-button__glyph"
       viewBox="0 0 12 12"

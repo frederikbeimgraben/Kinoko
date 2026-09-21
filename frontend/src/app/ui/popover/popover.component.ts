@@ -20,8 +20,8 @@ export class PopoverComponent {
   readonly open = input.required<boolean>();
   readonly anchor = input.required<PopoverAnchor>();
   readonly label = input.required<string>();
-  /** Zeilen füllen die Karte: Polster nur seitlich, kein Abstand dazwischen. */
-  readonly rows = input(false);
+  /** Das Wort über den Zeilen, wenn die Karte eine Gruppe benennt. */
+  readonly heading = input('');
 
   readonly closed = output();
 }

@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { Router, provideRouter } from '@angular/router';
-import { render, screen, within } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { SpeciesBundle } from '../../core/api/models';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -122,18 +122,17 @@ describe('SpeciesListComponent', () => {
     expect(screen.getByText('Pfifferling')).toBeInTheDocument();
   });
 
-  it('zeigt je gewähltem Wert eine Marke und nimmt sie wieder weg', async () => {
+  it('zeigt die Gruppe mit Wahl als Zeichen und öffnet das Filterblatt beim Antippen', async () => {
     const { filter } = await build();
 
-    filter.toggle('hymenium', 'tubes');
+    filter.toggle('edibility', 'edible');
     await vi.waitFor(() => {
-      expect(screen.getByText('Röhren')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Speisewert/ })).toBeInTheDocument();
     });
 
-    const chip = screen.getByText('Röhren').closest('.chip');
-    await userEvent.click(within(chip as HTMLElement).getByRole('button'));
+    await userEvent.click(screen.getByRole('button', { name: /Speisewert/ }));
 
-    expect(filter.chosenIn('hymenium').size).toBe(0);
+    expect(filter.open()).toBe(true);
   });
 
   it('zeigt ohne Treffer den Leerzustand und setzt darüber zurück', async () => {
@@ -220,7 +219,7 @@ describe('SpeciesListComponent', () => {
       expect(container.querySelectorAll('app-species-row')).toHaveLength(1);
     });
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
-    expect(container.querySelector('.results__card--muted')).toBeNull();
+    expect(container.querySelector('.results__group--muted')).toBeNull();
     expect(screen.queryByText(/Nicht beurteilbar/)).not.toBeInTheDocument();
   });
 
@@ -230,7 +229,7 @@ describe('SpeciesListComponent', () => {
     filter.setColour('cap', '#6b4423');
 
     await vi.waitFor(() => {
-      expect(container.querySelector('.results__card--muted')).not.toBeNull();
+      expect(container.querySelector('.results__group--muted')).not.toBeNull();
     });
     expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
   });

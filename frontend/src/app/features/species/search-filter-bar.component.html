@@ -6,14 +6,14 @@
 />
 @if (showsMarks()) {
   <div class="chiprow">
-    <app-filter-chip
-      [label]="'common.filter' | t"
-      icon="filter"
-      [on]="filtered()"
-      (chosen)="filter.openSheet()"
-    />
-    @for (chip of chips(); track chip.group + chip.value) {
-      <app-filter-chip [label]="chip.label" [on]="true" [clear]="true" (removed)="drop(chip)" />
+    @for (chip of chips(); track chip.key) {
+      <app-filter-chip
+        [label]="chip.label"
+        [icon]="chip.icon"
+        [on]="chip.on"
+        [iconLabel]="chip.key === 'all' ? ('common.filter' | t) : undefined"
+        (chosen)="open(chip.key)"
+      />
     }
   </div>
 }

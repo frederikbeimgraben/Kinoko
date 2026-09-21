@@ -1,27 +1,16 @@
-<header class="pageheader">
+<header class="bar" [class.bar--lead]="lead()" [class.bar--wide]="!lead() && wide()">
   @if (back()) {
-    <button
-      class="pageheader__back tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'common.back' | t"
-      (click)="backClick.emit()"
-    >
-      <app-svg-icon name="back" [size]="20" />
-    </button>
+    <app-icon-button icon="back" kind="plain" [label]="'common.back' | t" (pressed)="backClick.emit()" />
+  } @else if (close()) {
+    <app-icon-button icon="close" kind="plain" [label]="'common.close' | t" (pressed)="closeClick.emit()" />
   }
-  <h1 class="pageheader__title">{{ title() }}</h1>
-  <div class="pageheader__marks"><ng-content select="[marks]" /></div>
-  <div class="pageheader__actions"><ng-content /></div>
-  @if (close()) {
-    <button
-      class="pageheader__close tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'common.close' | t"
-      (click)="closeClick.emit()"
-    >
-      <app-svg-icon name="close" [size]="22" [strokeWidth]="2.2" />
-    </button>
+  @if (title()) {
+    <h1 class="bar__title">{{ title() }}</h1>
+  } @else {
+    <ng-content select="[headline]" />
   }
+  @if (count()) {
+    <span class="bar__count"><app-level-pill [text]="count()" /></span>
+  }
+  <ng-content />
 </header>

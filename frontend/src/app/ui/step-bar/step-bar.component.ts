@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FloatingButtonComponent } from '../floating-button/floating-button.component';
-import { IconButtonComponent, type IconButtonIcon } from '../icon-button/icon-button.component';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
 import type { IconName } from '../svg-icon/svg-icon.component';
 
 /** Eine Aktion der Schritt-Leiste: ein Zeichen, seine Beschriftung, seine Rolle. */
@@ -34,9 +34,4 @@ export class StepBarComponent {
   protected readonly primary = computed(() =>
     this.actions().filter((action) => action.variant === 'primary'),
   );
-
-  /** Die runden Knöpfe kennen nur die kleine Menge aus `kit.css` `RoundButton`. */
-  protected roundIcon(icon: IconName): IconButtonIcon {
-    return icon as IconButtonIcon;
-  }
 }
