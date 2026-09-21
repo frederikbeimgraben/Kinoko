@@ -180,28 +180,17 @@ describe('MapComponent', () => {
     expect(TestBed.inject(MapState).week()).toBe('2025-39');
   });
 
-  it('geht mit den Pfeilen eine Woche weiter', async () => {
+  it('geht mit den Pfeiltasten der Zeitleiste eine Woche weiter', async () => {
     const { stable } = await map();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Nächste Woche' }));
+    screen.getByRole('button', { name: /KW 40/ }).focus();
+    await userEvent.keyboard('{ArrowRight}');
     await stable();
     expect(TestBed.inject(MapState).week()).toBe('2025-41');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Vorige Woche' }));
+    await userEvent.keyboard('{ArrowLeft}');
     await stable();
     expect(TestBed.inject(MapState).week()).toBe('2025-40');
-  });
-
-  it('macht aus dem Abspielknopf ein Pausensymbol und zurück', async () => {
-    const { stable } = await map();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Wochen abspielen' }));
-    await stable();
-    const pause = screen.getByRole('button', { name: 'Wiedergabe anhalten' });
-
-    await userEvent.click(pause);
-    await stable();
-    expect(screen.getByRole('button', { name: 'Wochen abspielen' })).toBeInTheDocument();
   });
 
   it('wechselt den Reiter und hält dabei die Art', async () => {
@@ -212,7 +201,7 @@ describe('MapComponent', () => {
 
     expect(TestBed.inject(MapState).view()).toBe('layer');
     expect(TestBed.inject(MapState).species()).toBe('boletus-edulis');
-    expect(screen.getAllByRole('button', { name: 'Niederschlag der letzten 4 Wochen' })).toHaveLength(2);
+    expect(screen.getByRole('button', { name: 'Niederschlag der letzten 4 Wochen' })).toBeInTheDocument();
   });
 
   it('wählt die Art im Kopf und bleibt auf der Karte', async () => {

@@ -4,7 +4,6 @@
       [title]="source.label"
       [icon]="glyph()"
       [note]="source.note"
-      [arrows]="false"
       [back]="true"
       (backClick)="closed.emit()"
     />
@@ -18,15 +17,9 @@
     />
   }
 } @else {
-  <app-map-head
-    [column]="true"
-    [playing]="playing()"
+  <app-map-panel
     (titleChosen)="titleChosen.emit()"
     (weekChosen)="weekChosen.emit($event)"
-    (stepped)="stepped.emit($event)"
-    (playToggled)="playToggled.emit()"
-  />
-  <app-map-panel
     (layerChosen)="layerChosen.emit()"
     (savedOpened)="savedOpened.emit()"
     (factorOpened)="factorOpened.emit($event)"

@@ -5,15 +5,16 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { YearBandComponent } from '../../../ui/year-band/year-band.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 import { MONTH_TEXT } from '../labels';
+import { SpeciesSeasonComponent } from './species-season.component';
 
 /** Die vier Marken unter dem Jahresband. Monate 1–12. */
 const MARKS: readonly number[] = [1, 4, 7, 10];
 
-/** Die Wachstumszeit einer Art als Jahresband. */
+/** Die Wachstumszeit einer Art als Jahresband, darunter die Saisonkurve. */
 @Component({
   selector: 'app-species-time',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, YearBandComponent],
+  imports: [SpeciesSeasonComponent, TranslatePipe, YearBandComponent],
   templateUrl: './species-time.component.html',
   styleUrl: './species-time.component.scss',
 })
@@ -21,6 +22,8 @@ export class SpeciesTimeComponent {
   private readonly i18n = inject(I18nService);
 
   readonly species = input.required<SpeciesEntry>();
+
+  protected readonly slug = computed(() => this.species().slug);
 
   protected readonly period = computed(() => {
     const held = this.species();

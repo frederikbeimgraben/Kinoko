@@ -3,9 +3,9 @@
   --range-slider-lane: 28px;
   --range-slider-track: 4px;
   --range-slider-handle: 24px;
-  --range-slider-border: 2px;
-  --range-slider-thumb: var(--color-handle);
-  --range-slider-ring: var(--color-primary);
+  --range-slider-border: 3px;
+  --range-slider-thumb: var(--on-sel);
+  --range-slider-ring: var(--primary);
 }
 
 .rangeslider {
@@ -18,16 +18,16 @@
   position: absolute;
   inset-block-start: calc((var(--range-slider-lane) - var(--range-slider-track)) / 2);
   block-size: var(--range-slider-track);
-  border-radius: var(--radius-sm);
+  border-radius: 2px;
 }
 
 .rangeslider__track {
   inset-inline: 0;
-  background: var(--color-border);
+  background: var(--outline);
 }
 
 .rangeslider__chosen {
-  background: var(--color-primary);
+  background: var(--primary);
 }
 
 // Nur die Griffe nehmen Zeiger an. Der Regler ragt um einen halben Griff über
@@ -52,14 +52,14 @@
   background: var(--range-slider-thumb);
   border: var(--range-slider-border) solid var(--range-slider-ring);
   border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
 }
 
 // Ein Anteil trägt einen vollen Punkt, eine Spanne einen hellen Ring.
 .rangeslider--dot {
   --range-slider-handle: 18px;
-  --range-slider-thumb: var(--color-primary);
-  --range-slider-ring: var(--color-primary);
+  --range-slider-thumb: var(--primary);
+  --range-slider-ring: var(--primary);
 }
 
 .rangeslider__thumb::-moz-range-thumb {
@@ -69,5 +69,5 @@
   background: var(--range-slider-thumb);
   border: var(--range-slider-border) solid var(--range-slider-ring);
   border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
 }

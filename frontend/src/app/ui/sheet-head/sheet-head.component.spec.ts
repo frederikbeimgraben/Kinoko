@@ -35,40 +35,6 @@ describe('SheetHeadComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('emits stepBack, playback and forward for the three arrows', async () => {
-    const { fixture } = await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
-    const calls: string[] = [];
-    fixture.componentInstance.stepBack.subscribe(() => calls.push('back'));
-    fixture.componentInstance.playback.subscribe(() => calls.push('playback'));
-    fixture.componentInstance.forward.subscribe(() => calls.push('forward'));
-    const buttons = screen.getAllByRole('button').slice(1);
-
-    await userEvent.click(buttons[0]);
-    await userEvent.click(buttons[1]);
-    await userEvent.click(buttons[2]);
-
-    expect(calls).toEqual(['back', 'playback', 'forward']);
-  });
-
-  it('shows the pause icon and a pressed state while playing', async () => {
-    const { fixture } = await render(SheetHeadComponent, { inputs: { title: 'Porcini', playing: false } });
-    const buttons = screen.getAllByRole('button').slice(1);
-
-    expect(buttons[1]).toHaveAttribute('aria-pressed', 'false');
-
-    fixture.componentRef.setInput('playing', true);
-    fixture.detectChanges();
-
-    expect(buttons[1]).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('leaves out the arrows when the head has none', async () => {
-    await render(SheetHeadComponent, { inputs: { title: 'Combination', arrows: false } });
-
-    expect(screen.getByText('Combination')).toBeInTheDocument();
-    expect(screen.getAllByRole('button')).toHaveLength(1);
-  });
-
   it('marks the title as a link only when it opens a choice', async () => {
     const { fixture } = await render(SheetHeadComponent, {
       inputs: { title: 'Porcini', titleLink: false },
@@ -82,18 +48,9 @@ describe('SheetHeadComponent', () => {
     expect(screen.getByRole('button', { name: 'Porcini' })).toHaveClass('head__species--link');
   });
 
-  it('marks every arrow as a tap target with a press state', async () => {
-    await render(SheetHeadComponent, { inputs: { title: 'Porcini' } });
-
-    for (const button of screen.getAllByRole('button').slice(1)) {
-      expect(button).toHaveClass('tap');
-      expect(button).toHaveAttribute('data-press', 'scale');
-    }
-  });
-
   it('trägt einen Zurück-Pfeil und meldet seinen Druck', async () => {
     const { container, fixture } = await render(SheetHeadComponent, {
-      inputs: { title: 'Niederschlag', note: 'Summe KW 37 bis 40', arrows: false, back: true },
+      inputs: { title: 'Niederschlag', note: 'Summe KW 37 bis 40', back: true },
     });
     let calls = 0;
     fixture.componentInstance.backClick.subscribe(() => (calls += 1));

@@ -88,8 +88,8 @@ test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) =>
   const asked: string[] = [];
   page.on('request', (request) => asked.push(request.url()));
 
-  await page.getByRole('button', { name: 'Vorige Woche' }).click();
-  await page.getByRole('button', { name: 'Vorige Woche' }).click();
+  await page.getByRole('button', { name: /KW 40/ }).press('ArrowLeft');
+  await page.getByRole('button', { name: /KW 39/ }).press('ArrowLeft');
 
   await expect(page.getByRole('button', { name: /KW 38/ })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText('KW 38 · 2025')).toBeVisible();

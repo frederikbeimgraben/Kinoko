@@ -1,5 +1,5 @@
 :host {
-  --progress-height: 6px;
+  --progress-height: 4px;
 
   display: flex;
   flex-direction: column;
@@ -10,21 +10,20 @@
   align-self: flex-end;
   font-size: var(--fs-caption);
   font-weight: var(--fw-semibold);
-  color: var(--color-handle);
-  text-shadow: 0 1px 2px rgb(0 0 0 / 40%);
+  color: var(--label);
 }
 
 .progress__track {
   overflow: hidden;
   inline-size: 100%;
   block-size: var(--progress-height);
-  background: var(--progress-track, color-mix(in srgb, var(--color-handle) 35%, transparent));
-  border-radius: var(--radius-pill);
+  background: var(--outline);
+  border-radius: 2px;
 }
 
 .progress__fill {
   block-size: 100%;
-  background: var(--color-primary);
-  border-radius: var(--radius-pill);
+  background: var(--primary);
+  border-radius: 2px;
   transition: inline-size var(--motion-base) var(--ease-standard);
 }

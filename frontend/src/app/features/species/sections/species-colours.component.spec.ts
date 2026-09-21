@@ -31,4 +31,10 @@ describe('SpeciesColoursComponent', () => {
     const fields = container.querySelectorAll('app-colour-field .field');
     expect(fields[0].getAttribute('style')).toContain('linear-gradient');
   });
+
+  it('bleibt ohne Farben leer', async () => {
+    const { container } = await render(SpeciesColoursComponent, { inputs: { groups: [] } });
+
+    expect(container.querySelector('app-section')).toBeNull();
+  });
 });

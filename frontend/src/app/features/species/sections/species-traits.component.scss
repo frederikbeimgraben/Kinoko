@@ -1,0 +1,28 @@
+@use 'section';
+
+@include section.block;
+
+.section__parts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trait__part {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  block-size: 44px;
+  padding-inline: var(--list-row-inline);
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-semibold);
+  border-block-end: var(--border-width) solid var(--outline);
+}
+
+.trait__text {
+  margin: 0;
+  padding: 12px 14px 14px;
+  font-size: var(--fs-row-meta);
+  line-height: 1.4;
+  color: var(--text-var);
+}

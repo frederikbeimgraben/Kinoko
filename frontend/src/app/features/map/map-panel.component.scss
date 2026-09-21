@@ -8,14 +8,36 @@
   padding: var(--size-gutter) var(--size-gutter) var(--space-5);
 }
 
+.panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.panel__head-spacer {
+  block-size: var(--size-chip);
+}
+
+.panel__when {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  font-size: var(--fs-control);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 // Die gespeicherten Kombinationen stehen als Karte unter den Reitern.
 .panel__saved {
   --fw-row-filter: var(--fw-regular);
   --space-row-gap: var(--space-row-inline);
 
   margin-block-start: calc(10px - var(--space-5));
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  background: var(--surface);
+  border: var(--border-width) solid var(--outline);
   border-radius: var(--radius-lg);
 }
 
@@ -28,6 +50,6 @@
 .panel__bar {
   block-size: 12px;
   margin-block-start: 10px;
-  background: var(--color-surface-sunken);
+  background: var(--surface-low);
   border-radius: 6px;
 }

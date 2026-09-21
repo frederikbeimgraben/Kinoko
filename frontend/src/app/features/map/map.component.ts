@@ -18,7 +18,6 @@ import { LocationService } from '../../core/location/location.service';
 import { SyncService } from '../../core/offline/sync.service';
 import { TileService } from '../../core/tiles/tile.service';
 import type { Layer } from '../../core/tiles/layers';
-import { VisibilityService } from '../../core/visibility/visibility.service';
 import { MAP_PROVIDERS } from '../../map/map.tokens';
 import { BannerComponent } from '../../ui/banner/banner.component';
 import { MapAttributionComponent } from '../../ui/map-attribution/map-attribution.component';
@@ -35,7 +34,6 @@ import { FactorPickerComponent } from './factor-picker.component';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { MapButtonsComponent } from './map-buttons.component';
 import { MapColumnComponent } from './map-column.component';
-import { MapHeadComponent } from './map-head.component';
 import { MapOverlayState } from './map-overlay.state';
 import { MapPanelComponent } from './map-panel.component';
 import { MapOverlaysComponent, overlayDetent } from './map-overlays.component';
@@ -56,7 +54,6 @@ import { MapView } from './map.view';
     MapButtonsComponent,
     MapAttributionComponent,
     MapColumnComponent,
-    MapHeadComponent,
     MapPanelComponent,
     MapObjectsDirective,
     MapOverlaysComponent,
@@ -74,7 +71,6 @@ export class MapComponent implements OnDestroy {
   private readonly host = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly objects = viewChild(MapObjectsDirective);
   private readonly tiles = inject(TileService);
-  private readonly visible = inject(VisibilityService).visible;
   private readonly viewport = inject(ViewportService);
   private readonly entries = inject(EntriesState);
   private readonly sync = inject(SyncService);
@@ -150,7 +146,6 @@ export class MapComponent implements OnDestroy {
   constructor() {
     effect(() => {
       const hidden = this.hidden();
-      if (!this.visible() || hidden) this.playback.stop();
       if (!hidden && this.wasHidden) this.surface.resize();
       this.wasHidden = hidden;
     });
@@ -193,7 +188,6 @@ export class MapComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.playback.stop();
     this.surface.destroy();
   }
 

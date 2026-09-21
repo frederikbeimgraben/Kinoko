@@ -1,65 +1,117 @@
 @if (species(); as one) {
   <app-page-header [title]="title()" [back]="true" (backClick)="back()">
     @if (mayEdit()) {
-      <app-icon-button
-        class="species__edit"
-        icon="pencil"
-        kind="plain"
-        [label]="'admin.species.edit' | t"
-        (pressed)="edit()"
-      />
+      <app-filter-chip [label]="'admin.species.edit' | t" icon="edit" (chosen)="edit()" />
+    } @else {
+      <app-filter-chip [label]="'species.compare' | t" icon="compare" (chosen)="compareSelf()" />
     }
+    <app-icon-button icon="more" kind="plain" [label]="'common.more' | t" (pressed)="menuOpen.set(true)" />
   </app-page-header>
 
-  <ng-template #media>
-    <app-species-lead [slug]="slug()" />
+  <app-popover
+    [open]="menuOpen()"
+    [anchor]="menuAnchor()"
+    [label]="'common.more' | t"
+    (closed)="menuOpen.set(false)"
+  >
+    <app-popover-item icon="share" [label]="'species.menu.share' | t" (chosen)="share()" />
+    @if (canSubmitImage()) {
+      <app-popover-item icon="image" [label]="'image.submit.title' | t" (chosen)="submitImage()" />
+    }
+    @if (mayEdit()) {
+      <app-popover-item icon="compare" [label]="'species.compare' | t" (chosen)="compareSelf()" />
+    }
+  </app-popover>
+
+  <ng-template #latin>
+    <div class="species__intro">
+      <p class="species__latin">{{ one.scientificName }}</p>
+      @if (one.description; as text) {
+        <app-surface [open]="false">
+          <p class="species__desc">{{ text }}</p>
+        </app-surface>
+      }
+    </div>
   </ng-template>
-  <ng-template #season>
-    <app-species-season [slug]="slug()" />
-  </ng-template>
-  <ng-template #photos>
-    <app-species-photos [slug]="slug()" />
-  </ng-template>
-  <ng-template #sources>
-    <app-species-sources [species]="one" />
-  </ng-template>
-  <ng-template #facts>
+  <ng-template #rating>
     <app-species-features [species]="one" />
+  </ng-template>
+  <ng-template #taxon>
     <app-species-taxonomy [species]="one" />
+  </ng-template>
+  <ng-template #sizes>
     <app-species-size [groups]="one.measurements" [notes]="one.partNotes ?? []" />
+  </ng-template>
+  <ng-template #traits>
+    <app-species-traits [species]="one" />
+  </ng-template>
+  <ng-template #colours>
     <app-species-colours [groups]="one.colours" />
+  </ng-template>
+  <ng-template #reactions>
     <app-species-colour-change [changes]="one.colourChanges" />
+  </ng-template>
+  <ng-template #period>
     <app-species-time [species]="one" />
+  </ng-template>
+  <ng-template #senses>
     <app-species-senses [species]="one" />
+  </ng-template>
+  <ng-template #hymenium>
     <app-species-hymenium [species]="one" />
+  </ng-template>
+  <ng-template #lookalikes>
     <app-species-lookalikes
       [lookalikes]="one.lookalikes"
       (compared)="compare($event)"
       (opened)="open($event)"
     />
   </ng-template>
+  <ng-template #images>
+    <app-species-photos [slug]="slug()" />
+  </ng-template>
+  <ng-template #sources>
+    <app-species-sources [species]="one" />
+  </ng-template>
 
-  @if (wide()) {
-    <div class="page page--wide">
-      <div class="page__column">
-        <ng-container [ngTemplateOutlet]="media" />
-        <ng-container [ngTemplateOutlet]="season" />
-        <ng-container [ngTemplateOutlet]="photos" />
-        <ng-container [ngTemplateOutlet]="sources" />
-      </div>
-      <div class="page__column">
-        <ng-container [ngTemplateOutlet]="facts" />
-      </div>
-    </div>
-  } @else {
-    <div class="page">
-      <ng-container [ngTemplateOutlet]="media" />
-      <ng-container [ngTemplateOutlet]="facts" />
-      <ng-container [ngTemplateOutlet]="photos" />
+  <div class="page" appScrollFade>
+    <app-species-lead [slug]="slug()" />
+    @if (wide()) {
+      <app-split-layout kind="columns" [cols]="2">
+        <app-split-layout kind="column">
+          <ng-container [ngTemplateOutlet]="latin" />
+          <ng-container [ngTemplateOutlet]="rating" />
+          <ng-container [ngTemplateOutlet]="traits" />
+          <ng-container [ngTemplateOutlet]="lookalikes" />
+          <ng-container [ngTemplateOutlet]="images" />
+        </app-split-layout>
+        <app-split-layout kind="column">
+          <ng-container [ngTemplateOutlet]="taxon" />
+          <ng-container [ngTemplateOutlet]="sizes" />
+          <ng-container [ngTemplateOutlet]="colours" />
+          <ng-container [ngTemplateOutlet]="reactions" />
+          <ng-container [ngTemplateOutlet]="period" />
+          <ng-container [ngTemplateOutlet]="senses" />
+          <ng-container [ngTemplateOutlet]="hymenium" />
+          <ng-container [ngTemplateOutlet]="sources" />
+        </app-split-layout>
+      </app-split-layout>
+    } @else {
+      <ng-container [ngTemplateOutlet]="latin" />
+      <ng-container [ngTemplateOutlet]="rating" />
+      <ng-container [ngTemplateOutlet]="taxon" />
+      <ng-container [ngTemplateOutlet]="sizes" />
+      <ng-container [ngTemplateOutlet]="traits" />
+      <ng-container [ngTemplateOutlet]="colours" />
+      <ng-container [ngTemplateOutlet]="reactions" />
+      <ng-container [ngTemplateOutlet]="period" />
+      <ng-container [ngTemplateOutlet]="senses" />
+      <ng-container [ngTemplateOutlet]="hymenium" />
+      <ng-container [ngTemplateOutlet]="lookalikes" />
+      <ng-container [ngTemplateOutlet]="images" />
       <ng-container [ngTemplateOutlet]="sources" />
-      <ng-container [ngTemplateOutlet]="season" />
-    </div>
-  }
+    }
+  </div>
 } @else {
   <app-page-header [title]="'species.title' | t" [back]="true" (backClick)="back()" />
   <div class="page">

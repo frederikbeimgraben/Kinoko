@@ -1,8 +1,10 @@
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { noViolations } from '../../testing/axe';
+import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../testing/species-fixture';
@@ -36,6 +38,7 @@ async function build(slug = 'boletus-edulis', wide = false): Promise<Element> {
   const { container } = await render(SpeciesPageComponent, {
     providers: [
       ...catalogueProviders(speciesBundle([STONE])),
+      ...authStubProviders(new AuthStub()),
       provideRouter(ANY_ROUTE),
       { provide: ViewportService, useValue: { wide: signal(wide) } },
     ],
@@ -62,11 +65,21 @@ describe('SpeciesPageComponent', () => {
     const container = await build();
 
     const order = [...container.querySelectorAll('.page > *')].map((one) => one.tagName.toLowerCase());
-    expect(order.slice(0, 4)).toEqual([
+    expect(order).toEqual([
       'app-species-lead',
+      'div',
       'app-species-features',
       'app-species-taxonomy',
       'app-species-size',
+      'app-species-traits',
+      'app-species-colours',
+      'app-species-colour-change',
+      'app-species-time',
+      'app-species-senses',
+      'app-species-hymenium',
+      'app-species-lookalikes',
+      'app-species-photos',
+      'app-species-sources',
     ]);
   });
 
@@ -81,13 +94,28 @@ describe('SpeciesPageComponent', () => {
   it('zeigt die Verwechslung mit einem eigenen Weg zum Vergleich', async () => {
     await build();
 
-    expect(screen.getByRole('button', { name: 'Vergleichen' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Vergleichen' })).toHaveLength(2);
     expect(screen.getByRole('button', { name: 'Gallenröhrling' })).toBeInTheDocument();
+  });
+
+  it('trägt den Kopf mit dem Vergleichen-Zeichen und dem Mehr-Knopf', async () => {
+    await build();
+
+    expect(screen.getByRole('button', { name: 'Mehr' })).toBeInTheDocument();
+  });
+
+  it('öffnet das Menü mit Teilen und Bild einreichen', async () => {
+    await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Mehr' }));
+
+    expect(screen.getByRole('button', { name: 'Teilen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bild einreichen' })).toBeInTheDocument();
   });
 
   it('stellt am Rechner zwei Spalten', async () => {
     const container = await build('boletus-edulis', true);
 
-    expect(container.querySelector('.page--wide')).not.toBeNull();
+    expect(container.querySelector('.layout--columns')).not.toBeNull();
   });
 });

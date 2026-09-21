@@ -1,4 +1,4 @@
-@if (tiles().length > 0 || canAdd()) {
+@if (tiles().length > 0) {
   <h2 class="section__title">{{ 'species.section.images' | t }}</h2>
   <div class="photos">
     @for (tile of tiles(); track tile.id) {
@@ -12,17 +12,6 @@
             background="var(--color-primary-subtle)"
           />
         }
-      </button>
-    }
-    @if (canAdd()) {
-      <button
-        class="photos__add tap"
-        type="button"
-        data-press="scale"
-        [attr.aria-label]="'image.add.title' | t"
-        (click)="add()"
-      >
-        <app-svg-icon name="plus" [size]="20" />
       </button>
     }
   </div>

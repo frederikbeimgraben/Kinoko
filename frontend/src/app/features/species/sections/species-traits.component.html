@@ -1,0 +1,11 @@
+@if (traits().length > 0) {
+  <h2 class="section__title">{{ 'species.section.traits' | t }}</h2>
+  <div class="section__parts">
+    @for (trait of traits(); track trait.titleKey) {
+      <div class="section__card">
+        <h3 class="trait__part">{{ trait.titleKey | t }}</h3>
+        <p class="trait__text">{{ trait.text }}</p>
+      </div>
+    }
+  </div>
+}

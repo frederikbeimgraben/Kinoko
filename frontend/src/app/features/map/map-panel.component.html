@@ -1,3 +1,29 @@
+<div class="panel__head">
+  @if (onForecast()) {
+    <app-filter-chip
+      icon="mushroom"
+      [label]="view.speciesTitle()"
+      [caret]="true"
+      (chosen)="titleChosen.emit()"
+    />
+  } @else {
+    <span class="panel__head-spacer"></span>
+  }
+  <b class="panel__when">{{ view.weekText() }}</b>
+</div>
+
+@if (view.loading()) {
+  <app-timeline [weeks]="[]" [loading]="true" [label]="'map.timeline' | t" />
+} @else if (!view.noSpecies()) {
+  <app-timeline
+    [weeks]="view.weeks()"
+    [active]="view.activeWeek()"
+    [dimmed]="dimmed()"
+    [label]="'map.timeline' | t"
+    (chosen)="weekChosen.emit($event)"
+  />
+}
+
 <app-segmented
   [options]="views()"
   [value]="state.view()"

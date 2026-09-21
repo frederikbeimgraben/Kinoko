@@ -5,7 +5,6 @@ import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { FactorSheetComponent } from './factor-sheet.component';
-import { MapHeadComponent } from './map-head.component';
 import { MapPanelComponent } from './map-panel.component';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
@@ -14,7 +13,7 @@ import type { Factor } from './factors';
 @Component({
   selector: 'app-map-column',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FactorSheetComponent, MapHeadComponent, MapPanelComponent, SheetHeadComponent],
+  imports: [FactorSheetComponent, MapPanelComponent, SheetHeadComponent],
   templateUrl: './map-column.component.html',
   styleUrl: './map-column.component.scss',
 })
@@ -22,12 +21,9 @@ export class MapColumnComponent {
   private readonly view = inject(MapView);
 
   readonly factor = input<Factor | null>(null);
-  readonly playing = input(false);
 
   readonly titleChosen = output();
   readonly weekChosen = output<TimelineWeek>();
-  readonly stepped = output<1 | -1>();
-  readonly playToggled = output();
   readonly layerChosen = output();
   readonly savedOpened = output();
   readonly factorOpened = output<string>();

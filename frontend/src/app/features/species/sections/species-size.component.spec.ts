@@ -40,5 +40,6 @@ describe('SpeciesSizeComponent', () => {
     const { container } = await render(SpeciesSizeComponent, { inputs: { groups: [] } });
 
     expect(container.querySelectorAll('app-measurement-group')).toHaveLength(0);
+    expect(container.querySelector('.section__title')).toBeNull();
   });
 });
