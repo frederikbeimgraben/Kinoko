@@ -40,8 +40,8 @@ const GLYPHS: Readonly<Partial<Record<IconButtonIcon, { size: number; stroke: nu
   pencil: { size: 20, stroke: 1.8 },
   share: { size: 18, stroke: 1.8 },
   'sign-out': { size: 20, stroke: 1.8 },
-  prev: { size: 12, stroke: 0 },
-  next: { size: 12, stroke: 0 },
+  prev: { size: 24, stroke: 0 },
+  next: { size: 24, stroke: 0 },
   undo: { size: 20, stroke: 2 },
 };
 

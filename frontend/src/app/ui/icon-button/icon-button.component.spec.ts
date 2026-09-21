@@ -42,7 +42,7 @@ describe('IconButtonComponent', () => {
     });
 
     const svg = container.querySelector('svg');
-    expect(svg).toHaveAttribute('viewBox', '0 0 12 12');
+    expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
     expect(svg).toHaveAttribute('fill', 'currentColor');
   });
 
