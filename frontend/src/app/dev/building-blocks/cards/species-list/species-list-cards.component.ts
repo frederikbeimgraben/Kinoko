@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import type { WorkshopKey } from '../../../../core/i18n/workshop-texts';
-import { photoPath, type SpeciesEntry } from '../../../../core/api/models';
+import type { SpeciesEntry } from '../../../../core/api/models';
 import { FactorRowComponent, type CombinationFactor } from '../../../../ui/factor-row/factor-row.component';
 import {
   SpeciesRowComponent,
@@ -14,11 +14,11 @@ import { SpeciesColourComponent } from '../../../../features/species/filter-colo
 import { SpeciesFilterPanelComponent } from '../../../../features/species/filter-panel.component';
 import { SpeciesFilterSheetComponent } from '../../../../features/species/filter-sheet.component';
 import { SpeciesResultsComponent } from '../../../../features/species/species-results.component';
-import { SpeciesFilterState } from '../../../../features/species/filter.state';
-import { SpeciesState, type CatalogueEntry } from '../../../../features/species/species.state';
+import { SpeciesFilterStore } from '../../../../features/species/filter.store';
+import { SpeciesStore, type CatalogueEntry } from '../../../../features/species/species.store';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** A species with all required fields of the contract, as short as possible. */
+/** A species with all required fields of the contract and no more. */
 function entry(
   seed: Partial<SpeciesEntry> & Pick<SpeciesEntry, 'slug' | 'name' | 'scientificName'>,
 ): SpeciesEntry {
@@ -46,12 +46,12 @@ function entry(
   };
 }
 
-/** The cap colour of a species, in the form of the contract. */
+/** The cap colour of a species, in the shape of the contract. */
 function capColour(hex: string): SpeciesEntry['colours'] {
   return [{ part: 'cap', mode: 'single', colours: [{ name: hex, hex }] }];
 }
 
-/** Nine of the ten species of the board `SpeciesList.dc.html`, in its sequence. */
+/** Nine of the ten species of `SpeciesList.dc.html`, in its order. */
 const LIST_SPECIES: readonly {
   slug: string;
   name: WorkshopKey;
@@ -138,7 +138,7 @@ const WEEKS: readonly [number, number, boolean][] = [
   [40, 60, true],
 ];
 
-/** The species and filter blocks, each with the values of its board. */
+/** The species and filter blocks, each with the default of its board. */
 @Component({
   selector: 'app-species-list-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -157,8 +157,8 @@ const WEEKS: readonly [number, number, boolean][] = [
 })
 export class SpeciesListCardsComponent {
   private readonly i18n = inject(I18nService);
-  private readonly state = inject(SpeciesState);
-  protected readonly filter = inject(SpeciesFilterState);
+  private readonly state = inject(SpeciesStore);
+  protected readonly filter = inject(SpeciesFilterStore);
 
   protected readonly steinpilz: SpeciesRowSpecies = {
     name: this.i18n.translate('beispiel.steinpilz'),
@@ -167,7 +167,7 @@ export class SpeciesListCardsComponent {
     levelColour: 'var(--ok)',
     levelKind: 'ok',
     colour: '#7a5230',
-    image: photoPath('art-stein', 'list'),
+    image: null,
   };
 
   protected readonly hits: readonly CatalogueEntry[] = LIST_SPECIES.map((one) =>

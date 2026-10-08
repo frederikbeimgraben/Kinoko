@@ -1,34 +1,55 @@
+// The popover of the head hangs from this box.
 :host {
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   block-size: 100%;
+  min-block-size: 0;
   overflow: hidden;
 }
 
+// The one scroll area of the page.
 .page {
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+}
+
+// Kit `.pad`.
+.pad {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
+  gap: 24px;
+  padding: 8px 16px 32px;
 }
 
 .species__intro {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 0 4px;
 }
 
-.species__latin {
+// Kit `.latin`.
+.latin {
   margin: 0;
-  padding-inline: 4px;
   font-size: 22px;
   font-style: italic;
   color: var(--text);
 }
 
-.species__desc {
+// Kit `.note.desc`.
+.note {
   margin: 0;
   padding: 14px 16px;
   font-size: 15px;
   line-height: 1.45;
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 20px;
+}
+
+.species__missing {
+  flex: 1;
 }

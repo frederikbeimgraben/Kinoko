@@ -25,7 +25,7 @@ func (b *boosterHandle) free() {
 	}
 }
 
-// Booster is a LightGBM model. Call Close when it is no longer needed.
+// Booster is a LightGBM model. Call Close when the model is not necessary.
 // A finalizer frees it if Close is not called. The methods are safe for concurrent use.
 type Booster struct {
 	mu      sync.RWMutex
@@ -40,7 +40,8 @@ func newBooster(inner *boosterHandle) *Booster {
 }
 
 // Train creates a booster on ds with params and runs rounds boosting iterations.
-// It stops early only when LightGBM reports that no further split is possible.
+// It runs each round as lightgbm.train, also after a round without a split,
+// because the next bag or column sample can still grow a tree.
 func Train(ds *Dataset, params string, rounds int) (*Booster, error) {
 	train, err := ds.handle()
 	if err != nil {
@@ -49,19 +50,16 @@ func Train(ds *Dataset, params string, rounds int) (*Booster, error) {
 	cparams, free := cString(params)
 	defer free()
 	var h C.BoosterHandle
-	if err := call("BoosterCreate", func() C.int { return C.LGBM_BoosterCreate(train.h, cparams, &h) }); err != nil {
+	if err := call("BoosterCreate", func() C.int { return C.LGBM_BoosterCreate(train.h, cparams, &h) }); err != nil { //nolint:gocritic // The cgo expansion of this C call has a repeated operand; this source has none.
 		train.release()
 		return nil, err
 	}
 	b := newBooster(&boosterHandle{h: h, train: train})
 	for range rounds {
-		var finished C.int
+		var finished C.int // lightgbm.train ignores it too.
 		if err := call("BoosterUpdateOneIter", func() C.int { return C.LGBM_BoosterUpdateOneIter(h, &finished) }); err != nil {
 			b.Close()
 			return nil, err
-		}
-		if finished != 0 {
-			break
 		}
 	}
 	return b, nil
@@ -74,7 +72,7 @@ func Load(modelText string) (*Booster, error) {
 	var iterations C.int
 	var h C.BoosterHandle
 	if err := call("BoosterLoadModelFromString", func() C.int {
-		return C.LGBM_BoosterLoadModelFromString(text, &iterations, &h)
+		return C.LGBM_BoosterLoadModelFromString(text, &iterations, &h) //nolint:gocritic // The cgo expansion of this C call has a repeated operand; this source has none.
 	}); err != nil {
 		return nil, err
 	}

@@ -8,15 +8,18 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
 // Fetcher pages the GBIF search API into the cache directory, one file per year
 // or per month. The zero value of each optional field takes the gbif_fetch.py default.
 type Fetcher struct {
-	HTTP           *http.Client // nil: http.DefaultClient
-	BaseURL        string       // "": API
-	Dir            string       // the cache, $PILZE_DATA/cache/gbif
-	Country        string       // "": DE
+	HTTP           *http.Client  // nil: http.DefaultClient
+	Idle           time.Duration // 0: pio.IdleTimeout. A transfer without bytes fails after it.
+	BaseURL        string        // "": API
+	Dir            string        // the cache, $PILZE_DATA/cache/gbif
+	Country        string        // "": DE
 	Pause          time.Duration
 	MonthThreshold int
 	Attempts       int
@@ -51,12 +54,7 @@ func (f *Fetcher) pause() time.Duration { return orZero(f.Pause, Pause) }
 func (f *Fetcher) threshold() int       { return orZero(f.MonthThreshold, MonthThreshold) }
 func (f *Fetcher) attempts() int        { return orZero(f.Attempts, Attempts) }
 
-func (f *Fetcher) client() *http.Client {
-	if f.HTTP == nil {
-		return http.DefaultClient
-	}
-	return f.HTTP
-}
+func (f *Fetcher) client() *http.Client { return pio.Watched(f.HTTP, orZero(f.Idle, pio.IdleTimeout)) }
 
 func (f *Fetcher) now() time.Time {
 	if f.Now == nil {

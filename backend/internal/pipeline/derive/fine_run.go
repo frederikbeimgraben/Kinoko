@@ -180,15 +180,23 @@ func (r *fineRun) openTrees(work string) error {
 	if err != nil {
 		return fmt.Errorf("derive: open outline: %w", err)
 	}
-	defer vec.Close()
+	defer func() { _ = vec.Close() }()
 	if err := os.MkdirAll(work, 0o755); err != nil {
 		return err
 	}
 	target := filepath.Join(work, "outline_32632.geojson")
 	_ = os.Remove(target)
-	r.outline, err = vec.VectorTranslate(target, []string{"-f", "GeoJSON", "-t_srs", fmt.Sprintf("EPSG:%d", UTMCode)}, quiet)
+	written, err := vec.VectorTranslate(target, []string{"-f", "GeoJSON", "-t_srs", fmt.Sprintf("EPSG:%d", UTMCode)}, quiet)
 	if err != nil {
 		return fmt.Errorf("derive: reproject outline: %w", err)
+	}
+	// A GeoJSON layer in write mode gives no features, so read the closed file.
+	if err := written.Close(); err != nil {
+		return fmt.Errorf("derive: write outline: %w", err)
+	}
+	r.outline, err = godal.Open(target, godal.VectorOnly())
+	if err != nil {
+		return fmt.Errorf("derive: open reprojected outline: %w", err)
 	}
 	return nil
 }

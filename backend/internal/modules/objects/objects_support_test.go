@@ -145,8 +145,10 @@ func writeTile(t *testing.T, folder string, zoom, x, y int, value uint8, size in
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
 	if err := png.Encode(file, img); err != nil {
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
 		t.Fatal(err)
 	}
 }

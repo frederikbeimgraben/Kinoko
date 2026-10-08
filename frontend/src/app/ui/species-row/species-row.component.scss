@@ -23,6 +23,10 @@
   background: var(--sel);
 }
 
+.row--soft {
+  background: var(--surface-low);
+}
+
 .row__thumb {
   flex: none;
 }

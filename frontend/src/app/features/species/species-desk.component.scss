@@ -1,0 +1,12 @@
+:host {
+  display: flex;
+  block-size: 100%;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+// The overlays of a detail route (popover, modal) hang from the detail pane.
+.desk__detail {
+  position: relative;
+  min-inline-size: 0;
+}

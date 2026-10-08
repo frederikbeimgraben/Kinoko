@@ -54,14 +54,14 @@ const (
 // RegionDE is REGIONEN["de"] of region_map.py: west, south, east, north in degrees.
 var RegionDE = [4]float64{5.75, 47.15, 15.15, 55.15}
 
-// Inputs are the data of one species map. The runner loads them; RenderSpecies only reads them.
+// Inputs are the data of one species map. The runner loads them; Species only reads them.
 type Inputs struct {
 	// Tables holds the trees grid, the tree scales and the site grid.
 	Tables Tables
 	// Weather holds the observed weeks of pr, tas and tasmin over the full record.
 	// The normals of the anomalies need each year.
 	Weather *weather.Cube
-	// Records are the occurrences. RenderSpecies keeps occ.TrainingSet of them (finding 5).
+	// Records are the occurrences. Species keeps occ.TrainingSet of them (finding 5).
 	Records []occ.Record
 	// Activity replaces the fields built from Records when it is not nil.
 	Activity *activity.Fields

@@ -1,10 +1,9 @@
 <app-page-header [title]="title() | t" [back]="true" (backClick)="backClick.emit()" />
 
-<div class="about">
-  @for (section of sections(); track section.heading) {
-    <section class="about__block">
-      <h2 class="about__heading">{{ section.heading | t }}</h2>
-      <p class="about__body">{{ section.body | t }}</p>
-    </section>
-  }
+<div class="pad">
+  <app-row-group>
+    @for (section of sections(); track section.heading) {
+      <app-list-row [title]="section.heading | t" [subline]="section.body | t" [wrap]="true" />
+    }
+  </app-row-group>
 </div>

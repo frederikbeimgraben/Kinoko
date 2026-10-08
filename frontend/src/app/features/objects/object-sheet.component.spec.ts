@@ -19,7 +19,7 @@ import {
   page,
 } from '../../testing/entries-fixture';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { EntriesState } from '../entries/entries.state';
 import { MapStore } from '../map/map.store';
 import { ObjectSheetComponent } from './object-sheet.component';
@@ -54,7 +54,7 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
   });
   const http = TestBed.inject(HttpTestingController);
   // Set the catalogue before the sheet. If not, its name comes after the test.
-  const katalog = TestBed.inject(SpeciesState).loadBundle();
+  const katalog = TestBed.inject(SpeciesStore).loadBundle();
   await vi.waitFor(() => {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });

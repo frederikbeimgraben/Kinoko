@@ -1,80 +1,88 @@
-<app-page-header [title]="'entry.list.title' | t">
-  @if (offline()) {
-    <app-level-pill
-      marks
-      role="status"
-      class="entries__offline"
-      kind="warn"
-      icon="wifi-off"
-      [text]="'state.offlinePending' | t"
-    />
+<ng-template #list>
+  @if (waiting()) {
+    <app-skeleton kind="rows" shape="item" lead="thumb" trail="chevron" [count]="5" [labels]="[0]" />
+  } @else if (rows().length === 0) {
+    <app-state-view icon="entries" [title]="emptyText() | t" />
+  } @else {
+    <app-entry-list class="motion-list-in" [rows]="rows()" (chosen)="open($event)" />
   }
-  @if (signedIn() && !wide()) {
-    <button class="entries__add tap" type="button" data-press="scale" (click)="startEntry()">
-      <app-svg-icon name="plus" [size]="16" [strokeWidth]="2" />
-      {{ 'entry.create' | t }}
-    </button>
+</ng-template>
+
+<app-page-header [title]="'entry.list.title' | t">
+  @if (signedIn()) {
+    <app-icon-button
+      icon="filter"
+      [kind]="filtered() ? 'tonal' : 'plain'"
+      [label]="'common.filter' | t"
+      (pressed)="filterOpen.set(true)"
+    />
   }
 </app-page-header>
-<div class="entries">
-  <app-segmented
-    [options]="segments()"
-    [value]="segment()"
-    [label]="'entry.list.title' | t"
-    (valueChange)="selectSegment($event)"
+
+@if (signedIn()) {
+  <div class="chips" role="group" [attr.aria-label]="'entry.list.title' | t">
+    @for (one of segments; track one.value) {
+      <app-filter-chip
+        [label]="one.label | t"
+        [icon]="one.icon"
+        [on]="segment() === one.value"
+        (chosen)="selectSegment(one.value)"
+      />
+    }
+  </div>
+  @if (zoneChip(); as zone) {
+    <div class="chips chips--active">
+      <app-filter-chip icon="zone" [label]="zone.name" [on]="true" [clear]="true" (removed)="clearZone()" />
+    </div>
+  }
+  <div class="area">
+    @if (wide()) {
+      <div class="frame">
+        <app-surface class="surface">
+          <div class="scroll" appScrollFade><ng-container [ngTemplateOutlet]="list" /></div>
+        </app-surface>
+      </div>
+    } @else {
+      <div class="scroll" appScrollFade><ng-container [ngTemplateOutlet]="list" /></div>
+      <app-floating-button class="fab" icon="plus" [label]="'entry.create' | t" (pressed)="startEntry()" />
+    }
+  </div>
+} @else {
+  <app-state-view
+    class="guest"
+    icon="entries"
+    [title]="'state.notSignedIn' | t"
+    [action]="'account.signIn' | t"
+    (actionClick)="signIn()"
   />
-  @if (segment() === 'finds') {
-    <div class="marks">
-      <button
-        class="marks__button tap"
-        type="button"
-        data-press="scale"
-        [class.marks__button--on]="filtered()"
-        (click)="filterOpen.set(true)"
-      >
-        <app-svg-icon name="filter" [size]="17" [strokeWidth]="1.8" />
-        {{ 'common.filter' | t }}
-      </button>
-    </div>
-  }
-  @if (rows().length === 0) {
-    <app-empty-state
-      [icon]="signedIn() ? 'entries' : 'account'"
-      [text]="emptyText() | t"
-      [action]="signedIn() ? undefined : ('account.signIn' | t)"
-      (actionClick)="signIn()"
-    />
-  } @else if (segment() === 'finds') {
-    <app-entry-list [rows]="rows()" (chosen)="open($event)" />
-  } @else {
-    <div class="entries__list">
-      @for (row of rows(); track row.key) {
-        @if (row.pending) {
-          <app-entry-row [entry]="row.entry" [pending]="true" />
-        } @else {
-          <app-list-row
-            [title]="row.entry.title"
-            [subline]="row.entry.meta"
-            [chevron]="true"
-            [clickable]="row.object !== null"
-            (chosen)="open(row)"
-          >
-            <span lead class="entries__dot" [style.background]="row.colour"></span>
-          </app-list-row>
-        }
-      }
-    </div>
-  }
-</div>
+}
+
+@if (banner(); as state) {
+  <app-banner
+    [kind]="state.offline ? 'noConnection' : 'pending'"
+    [text]="state.text"
+    [count]="state.count"
+    [chev]="false"
+    [actionIcon]="state.offline ? undefined : 'refresh'"
+    [actionLabel]="state.offline ? undefined : 'entry.pending.send'"
+    (actionClick)="send()"
+  />
+}
+
 <app-filter-sheet
   [open]="filterOpen()"
   [title]="'common.filter' | t"
   [resetEnabled]="filtered()"
-  [primaryLabel]="'entry.filter.showEntries' | t"
+  [primaryLabel]="matchCount()"
   (resetClick)="resetFilter()"
   (primaryClick)="filterOpen.set(false)"
   (closed)="filterOpen.set(false)"
 >
-  <app-choice-row [label]="'entry.filter.own' | t" [checked]="own()" (toggled)="own.set($event)" />
-  <app-choice-row [label]="'entry.filter.shared' | t" [checked]="shared()" (toggled)="shared.set($event)" />
+  <app-entries-filter-body
+    [filter]="filter()"
+    [groups]="groupList()"
+    [zones]="zones()"
+    [today]="today"
+    (filterChange)="changeFilter($event)"
+  />
 </app-filter-sheet>

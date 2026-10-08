@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NOW } from '../../core/tiles/now';
 import { TileService } from '../../core/tiles/tile.service';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { BUNDLE_ITEMS, RAW_LAYERS, RAW_MANIFEST, answerManifest } from '../../testing/map-doubles';
 import type { SpeciesEntry } from '../../core/api/models';
 import { CombinationStore } from './combination.store';
@@ -65,7 +65,7 @@ async function view(
   const tiles = TestBed.inject(TileService);
   await tiles.load('boletus-edulis');
   await tiles.loadLayers();
-  const catalogue = TestBed.inject(SpeciesState) as unknown as {
+  const catalogue = TestBed.inject(SpeciesStore) as unknown as {
     species: () => readonly SpeciesEntry[];
   };
   catalogue.species = () => BUNDLE_ITEMS as unknown as readonly SpeciesEntry[];
@@ -140,7 +140,7 @@ describe('MapView', () => {
 
   it('bittet um eine Art, wenn keine eine Vorhersage hat', async () => {
     const { view: model } = await view();
-    const catalogue = TestBed.inject(SpeciesState) as unknown as {
+    const catalogue = TestBed.inject(SpeciesStore) as unknown as {
       species: () => readonly SpeciesEntry[];
     };
     catalogue.species = () => [];

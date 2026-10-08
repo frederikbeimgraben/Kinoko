@@ -12,7 +12,7 @@ func TestMigrateFreshDatabase(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer handle.Close()
+	defer func() { _ = handle.Close() }()
 	if err := Migrate(ctx, handle); err != nil {
 		t.Fatal(err)
 	}
@@ -31,7 +31,7 @@ func TestMigrateAdoptsAlembicDatabase(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer handle.Close()
+	defer func() { _ = handle.Close() }()
 	baseline, err := loadMigrations(migrationsFS())
 	if err != nil {
 		t.Fatal(err)

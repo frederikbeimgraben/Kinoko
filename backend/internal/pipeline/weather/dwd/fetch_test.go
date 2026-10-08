@@ -27,6 +27,7 @@ type fakeDWD struct {
 	ignoreIMS bool            // answer conditional requests with 200
 	broken    map[string]bool // send a short body
 	missing   map[string]bool // a directory that gives 404
+	stalled   map[string]bool // send part of the body, then nothing
 }
 
 type fakeFile struct {
@@ -36,7 +37,8 @@ type fakeFile struct {
 }
 
 func newFake() *fakeDWD {
-	return &fakeDWD{files: map[string]fakeFile{}, gets: map[string]int{}, broken: map[string]bool{}, missing: map[string]bool{}}
+	return &fakeDWD{files: map[string]fakeFile{}, gets: map[string]int{}, broken: map[string]bool{}, missing: map[string]bool{},
+		stalled: map[string]bool{}}
 }
 
 func (f *fakeDWD) put(p string, body []byte, mod time.Time) {
@@ -56,7 +58,7 @@ func (f *fakeDWD) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	f.mu.Lock()
 	f.gets[r.URL.Path]++
 	file, ok := f.files[r.URL.Path]
-	ignore, broken, missing := f.ignoreIMS, f.broken[r.URL.Path], f.missing[r.URL.Path]
+	ignore, broken, missing, stalled := f.ignoreIMS, f.broken[r.URL.Path], f.missing[r.URL.Path], f.stalled[r.URL.Path]
 	var names []string
 	for p := range f.files {
 		if strings.HasPrefix(p, r.URL.Path) && !strings.Contains(p[len(r.URL.Path):], "/") {
@@ -75,12 +77,18 @@ func (f *fakeDWD) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(&b, "<a href=%q>%s</a> 01-Jan-2026 00:00 1M\n", n, n)
 		}
 		b.WriteString("</pre></body></html>")
-		w.Write([]byte(b.String()))
+		_, _ = w.Write([]byte(b.String()))
 	case !ok:
 		http.NotFound(w, r)
+	case stalled:
+		w.Header().Set("Content-Length", fmt.Sprint(len(file.body)))
+		_, _ = w.Write(file.body[:len(file.body)/2])
+		w.(http.Flusher).Flush()
+		<-r.Context().Done()
 	case broken:
 		w.Header().Set("Content-Length", fmt.Sprint(len(file.body)))
-		w.Write(file.body[:len(file.body)/2])
+		// The fake sends a short body on purpose, so a failed write is not important.
+		_, _ = w.Write(file.body[:len(file.body)/2])
 	default:
 		if ignore {
 			r.Header.Del("If-None-Match")

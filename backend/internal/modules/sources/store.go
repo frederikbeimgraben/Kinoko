@@ -200,7 +200,7 @@ func peopleOf(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]person,
 		var p person
 		return p, s.Scan(&p.ID, &p.Name)
 	}, "SELECT id, name FROM user WHERE id IN ("+db.Placeholders(len(unique))+")",
-		db.Args(fn.Map(unique, func(text string) db.ID { return db.MustID(text) }))...)
+		db.Args(fn.Map(unique, db.MustID))...)
 	if err != nil {
 		return nil, err
 	}

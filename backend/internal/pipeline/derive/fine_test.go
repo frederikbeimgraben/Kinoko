@@ -159,3 +159,25 @@ func TestTreeField(t *testing.T) {
 		}
 	}
 }
+
+// TestInlandMaskBurnsOutline checks that the reprojected outline gives
+// features to gdal_rasterize, so that the inland mask is not empty.
+func TestInlandMaskBurnsOutline(t *testing.T) {
+	r := &fineRun{in: FineInputs{Trees: in("trees_32632.tif"), Outline: in("outline.geojson")}}
+	if err := r.openTrees(t.TempDir()); err != nil {
+		t.Fatal(err)
+	}
+	defer r.close()
+	gt, err := r.trees.ds.GeoTransform()
+	if err != nil {
+		t.Fatal(err)
+	}
+	mask, w, h, err := inlandMask(r.outline, r.trees.bounds, math.Abs(gt[1]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	inland := len(slices.DeleteFunc(slices.Clone(mask), func(v uint8) bool { return v == 0 }))
+	if inland == 0 || inland == w*h {
+		t.Fatalf("inland mask burns %d of %d pixels, want a part of the box", inland, w*h)
+	}
+}

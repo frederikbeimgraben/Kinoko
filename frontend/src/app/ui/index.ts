@@ -8,6 +8,7 @@ export { BannerComponent, type BannerKind } from './banner/banner.component';
 export { ButtonComponent, type ButtonKind } from './button/button.component';
 export { CheckRowComponent } from './check-row/check-row.component';
 export { ChipGroupComponent, type Chip } from './chip-group/chip-group.component';
+export { ChipRowComponent, type ChipRowItem } from './chip-row/chip-row.component';
 export { ChoiceRowComponent } from './choice-row/choice-row.component';
 export { ColourChangeComponent } from './colour-change/colour-change.component';
 export {
@@ -83,6 +84,7 @@ export { RampComponent, type RampKind } from './ramp/ramp.component';
 export { FORECAST_RAMP, RAIN_RAMP } from './ramp/ramp-colours';
 export { RangeSliderComponent, type Handles } from './range-slider/range-slider.component';
 export { ReviewQueueComponent } from './review-queue/review-queue.component';
+export { QueueCardSkeletonComponent } from './review-queue/queue-card-skeleton.component';
 export { RippleDirective } from './ripple/ripple.directive';
 export { RowGroupComponent } from './row-group/row-group.component';
 export { ScrollFadeDirective } from './scroll-fade/scroll-fade.directive';

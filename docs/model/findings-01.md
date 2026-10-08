@@ -1,15 +1,20 @@
-# First results — Boletus edulis
+# First results: Boletus edulis
 
-Date: 2026-09-06. Data: 626,420 of 746,827 GBIF records. October to December
-2025 and all of 2026 were still downloading, so repeat this run later.
+This file is a research note of the earlier research chain in Python
+(`modell/`). The repository does not hold that code any more. The results
+are the base of the model design that the Go pipeline keeps.
+
+Date: 2026-09-06. Data: 626,420 of 746,827 GBIF records. The download of
+October to December 2025 and of all of 2026 was not complete. Thus do this
+run again later.
 
 Training table: 125,449 cell-weeks, 2,632 of them positive. The base rate is
-2.08 percent. Cells are 5 km in EPSG:3035. Steps are ISO weeks. The rows cover
-2015 to 2025.
+2.08 percent. The cells are 5 km in EPSG:3035. The steps are ISO weeks. The
+rows cover 2015 to 2025.
 
-## What the models saw
+## Feature sets
 
-| set | features |
+| Set | Features |
 |---|---|
 | effort_only | record count, species count, observer count |
 | season | effort + week of the year |
@@ -19,9 +24,9 @@ Training table: 125,449 cell-weeks, 2,632 of them positive. The base rate is
 
 ## Results
 
-AUC and average precision, mean over the folds.
+AUC and average precision (AP), mean of the folds:
 
-| set | year AUC | year AP | space AUC | space AP |
+| Set | Year AUC | Year AP | Space AUC | Space AP |
 |---|---|---|---|---|
 | effort_only | 0.819 | 0.189 | 0.802 | 0.164 |
 | season | 0.863 | 0.221 | 0.865 | 0.197 |
@@ -29,73 +34,70 @@ AUC and average precision, mean over the folds.
 | weather | **0.885** | **0.275** | **0.878** | **0.225** |
 | weather_noeffort | 0.807 | 0.109 | 0.795 | 0.071 |
 
-Folds are blocked. The year scheme holds out one whole year, eleven times. The
-space scheme holds out one band of cells about 100 km wide, seven times.
+The folds are blocked. The year scheme holds out one full year, eleven times.
+The space scheme holds out one band of cells about 100 km wide, seven times.
 
 ## The main finding
 
-Survey effort alone reaches an AUC of 0.819. Everything else together, without
-the effort columns, reaches 0.807. The strongest single signal in this dataset
-is how hard people looked, not what the weather did.
+The survey effort alone gets an AUC of 0.819. All other features together,
+without the effort columns, get 0.807. The strongest single signal in this
+dataset is how much people looked, not what the weather did.
 
-This matters more than it looks, because **the effort columns cannot be known
-in advance**. Nobody knows next week how many species other people will report
-in a cell. A model that forecasts must therefore run without them. The row that
-describes real forecast skill is weather_noeffort: an AUC of 0.807 and an
-average precision of 0.109 against a base rate of 0.021. That is a lift of
-about five times over chance. It is a real signal. It is not yet a useful
-prediction.
+This is more important than it seems, because **nobody can know the effort
+columns in advance**. Nobody knows how many species other people will report
+in a cell next week. Thus a forecast model must run without them.
 
-The target-group background removed part of the effort effect, as intended.
+The row for the real forecast skill is weather_noeffort. It has an AUC of
+0.807 and an average precision of 0.109. The base rate is 0.021. That is about
+five times better than chance. It is a real signal. It is not yet a useful
+forecast.
+
+The target-group background removed a part of the effort effect, as intended.
 It did not remove enough.
 
-## What the weather contributed
+## The effect of the weather
 
-Weather improves the full model by 0.009 AUC over season and place under year
-blocking, and by 0.022 under space blocking. The improvement is small but it
-is consistent across both fold schemes.
+With year blocks, the weather adds 0.009 AUC to season and place. With space
+blocks, it adds 0.022. The increase is small, but it is the same in the two
+fold schemes.
 
-The features it chose make biological sense. Rain at a lag of two to eight
-weeks ranks 5, 6, 9, 12 and 13 by gain, above rain in the current week. Rolling
-rain sums over four and eight weeks also rank high. Fruiting follows rain after
-a delay, and the model found that delay without being told.
+The features that the model selected agree with the biology. Rain at a lag of
+two to eight weeks has the ranks 5, 6, 9, 12 and 13 by gain. These ranks are
+above the rain of the current week. Rolling rain sums over four and eight weeks
+also have high ranks. Fruiting follows rain after a delay. The model found that
+delay without help.
 
-The cell position helps under year blocking and hurts under space blocking
-(0.865 to 0.856). Raw coordinates cannot extrapolate into a region that the
-model never saw. Replace them with site properties.
+The cell position helps with year blocks and has a bad effect with space
+blocks (0.865 to 0.856). Raw coordinates cannot extrapolate into a region that
+the model did not see. Replace them with site properties.
 
 ## The negative result
 
-The DWD soil moisture grids contributed nothing. Not one of the sixteen
-paws features reached the top thirty by gain, for any of the four tree
-species. The download was about 9 GB.
+The DWD soil moisture grids added nothing. None of the sixteen paws features
+got into the top thirty by gain, for any of the four tree species. The
+download was about 9 GB.
 
-Two likely reasons. The values correlate strongly with recent rain, which the
-model already has. The stand type in the grid says what the soil moisture would
-be under spruce, beech, oak or pine, but it does not say which of them actually
-grows in the cell. Until the model knows the real forest composition, the four
-fields are four versions of the same thing.
+There are two probable causes:
 
-Test the anomaly instead of the value. Soil moisture 30 percent below the
-normal level for that cell in that week probably matters more than 90 percent
-nFK on its own.
+- The values have a strong correlation with recent rain, which the model already has.
+- The stand type of the grid tells the soil moisture under spruce, beech, oak or pine. It does not tell which of them grows in the cell. Until the model knows the real forest composition, the four fields are four forms of the same value.
+
+Test the anomaly, not the value. Soil moisture 30 percent below the normal of
+that cell and week is probably more important than 90 percent nFK.
 
 ## Calibration
 
-The model reproduces the shape of the season well. The peak is week 39, in late
-September, which matches the known season. January to May is near zero.
+The model gives the correct shape of the season. The peak is week 39, at the
+end of September. This agrees with the known season. January to May is almost
+zero.
 
-The peak height is too low. In week 39 the observed rate is 0.064 and the mean
-prediction is 0.043. The model is under-confident where it matters most.
+The peak is too low. In week 39, the observed rate is 0.064 and the mean
+prediction is 0.043. The model is not confident enough where it is most
+important.
 
 ## Next steps
 
-1. Replace the effort columns with values that are known in advance: the mean
-   effort of that cell in that week of the year over past years, population
-   density, distance to a road or a parking place, and a weekend flag.
-2. Add the static site data. The DEM, SoilGrids and the OpenStreetMap forest
-   polygons are downloaded but no model uses them yet. These also replace the
-   raw cell position, which fails across regions.
-3. Pool species into groups that share a host tree. Boletus edulis alone gives
-   2,632 positive cell-weeks. That is too few to learn a lag structure well.
+1. Replace the effort columns with values that are known in advance: the mean effort of that cell in that week of the year in past years, the population density, the distance to a road or a car park, and a weekend flag.
+2. Add the static site data. The DEM, SoilGrids and the OpenStreetMap forest polygons are available, but no model uses them yet. They also replace the raw cell position, which fails across regions.
+3. Put species into groups that share a host tree. Boletus edulis alone gives 2,632 positive cell-weeks. That is too few to learn a lag structure well.
 4. Use the soil moisture anomaly, not the soil moisture.

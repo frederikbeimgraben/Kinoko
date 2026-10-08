@@ -1,38 +1,77 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { TAXON_RANKS, type SpeciesSummary, type TaxonRank } from '../../core/api/models';
+import { TAXON_RANKS, type SpeciesSummary, type TaxonPage, type TaxonRank } from '../../core/api/models';
+import { photoPath } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { SpeciesRowComponent, type SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
-import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
-import { speciesRow } from '../species/rows';
-import { SpeciesState } from '../species/species.state';
+import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { leadColour } from '../species/rows';
+import { SpeciesStore } from '../species/species.store';
 import { CHILDREN_TEXT, RANK_TEXT, SPECIES_OF_TEXT } from './labels';
-import { TaxonomyState } from './taxonomy.state';
-import { input } from '@angular/core';
+import { TaxonomyStore, type TaxonKey } from './taxonomy.store';
 
-/** Eine Zeile, die auf eine untergeordnete Stufe zeigt. */
-interface ChildRow {
-  route: string;
-  name: string;
-  count: string;
+/** A row of the section "Rang": the rank and the name of one step. */
+export interface RankRow {
+  readonly rank: string;
+  readonly name: string;
+  readonly route: string;
+  readonly current: boolean;
 }
 
-/** Eine Stufe der Einordnung: Weg von oben, Gattungen darunter, Arten daran. */
+/** A row that points to a lower step. */
+interface ChildRow {
+  readonly route: string;
+  readonly name: string;
+  readonly count: string;
+}
+
+/** A species row with its thumb. */
+interface SpeciesLine {
+  readonly slug: string;
+  readonly name: string;
+  readonly latin: string;
+  readonly image: string;
+  readonly colour: string;
+}
+
+/** The steps from the top to the page itself, each with its rank text. */
+export function rankRows(page: TaxonPage, rankText: (rank: TaxonRank) => string): RankRow[] {
+  const steps = page.path.some((step) => step.slug === page.slug) ? page.path : [...page.path, page];
+  return steps.map((step) => ({
+    rank: rankText(step.rank),
+    name: step.name,
+    route: `/taxonomie/${step.rank}/${step.slug}`,
+    current: step.slug === page.slug,
+  }));
+}
+
+/** One step of the taxonomy: the ranks above, the lower steps and the species. */
 @Component({
   selector: 'app-taxonomy',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, PageHeaderComponent, SpeciesRowComponent, StateViewComponent, TranslatePipe],
+  imports: [
+    ListRowComponent,
+    PageHeaderComponent,
+    PrivateImageComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SectionComponent,
+    StateViewComponent,
+    TranslatePipe,
+  ],
   templateUrl: './taxonomy.component.html',
   styleUrl: './taxonomy.component.scss',
 })
 export class TaxonomyComponent {
-  private readonly state = inject(TaxonomyState);
-  private readonly catalogue = inject(SpeciesState);
+  private readonly store = inject(TaxonomyStore);
+  private readonly catalogue = inject(SpeciesStore);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly i18n = inject(I18nService);
@@ -40,37 +79,33 @@ export class TaxonomyComponent {
   readonly rank = input.required<string>();
   readonly slug = input.required<string>();
 
+  private readonly knownRank = computed<TaxonRank | null>(
+    () => TAXON_RANKS.find((known) => known === this.rank()) ?? null,
+  );
+
+  private readonly step = computed<TaxonKey | null>(() => {
+    const rank = this.knownRank();
+    return rank === null ? null : { rank, slug: this.slug() };
+  });
+
   constructor() {
     void this.catalogue.loadBundle();
-    effect(() => {
-      const rank = this.knownRank();
-      if (rank !== null) this.state.load(rank, this.slug());
-    });
+    this.store.load(this.step);
   }
 
-  /** Der Trenner im Weg trägt Leerraum, damit die Zeile dort umbrechen darf. */
-  protected readonly arrow = ' \u203a ';
-
   protected readonly page = computed(() => {
-    const rank = this.knownRank();
-    return rank === null ? null : this.state.pageOf(rank, this.slug());
+    const step = this.step();
+    return step === null ? null : this.store.pageOf(step.rank, step.slug);
   });
 
   protected readonly unknown = computed(() => {
-    const rank = this.knownRank();
-    return rank === null || this.state.isUnknown(rank, this.slug());
+    const step = this.step();
+    return step === null || this.store.isUnknown(step.rank, step.slug);
   });
 
-  protected readonly title = computed(() => {
+  protected readonly ranks = computed<RankRow[]>(() => {
     const held = this.page();
-    return held === null ? '' : `${this.i18n.translate(RANK_TEXT[held.rank])} ${held.name}`;
-  });
-
-  protected readonly trail = computed<string[]>(() => {
-    const held = this.page();
-    if (held === null) return [];
-    const steps = held.path.some((step) => step.slug === held.slug) ? held.path : [...held.path, held];
-    return steps.map((step) => `${this.i18n.translate(RANK_TEXT[step.rank])} ${step.name}`);
+    return held === null ? [] : rankRows(held, (rank) => this.i18n.translate(RANK_TEXT[rank]));
   });
 
   protected readonly childrenTitle = computed(() => {
@@ -91,8 +126,8 @@ export class TaxonomyComponent {
     })),
   );
 
-  protected readonly species = computed(() =>
-    (this.page()?.species ?? []).map((one) => ({ slug: one.slug, species: this.row(one) })),
+  protected readonly species = computed<SpeciesLine[]>(() =>
+    (this.page()?.species ?? []).map((one) => this.line(one)),
   );
 
   protected back(): void {
@@ -107,27 +142,21 @@ export class TaxonomyComponent {
     void this.router.navigate(['/arten', slug]);
   }
 
-  private knownRank(): TaxonRank | null {
-    const asked = this.rank();
-    return TAXON_RANKS.find((known) => known === asked) ?? null;
-  }
-
   private countText(count: number): string {
     const key = count === 1 ? 'species.taxonomy.oneSpecies' : 'species.taxonomy.speciesCount';
     return this.i18n.translate(key, { anzahl: String(count) });
   }
 
-  /** Die Töne der Zeile stehen im lokalen Katalog, nicht in der Stufe. */
-  private row(one: SpeciesSummary): SpeciesRowSpecies {
+  /** The colour of the thumb is in the local catalogue, not in the step. */
+  private line(one: SpeciesSummary): SpeciesLine {
     const local = this.catalogue.entryOf(one.slug);
-    if (local !== null) return speciesRow(local, this.i18n);
-    const tone = EDIBILITY_TONE[one.edibility];
+    const photo = one.leadPhotoId ?? local?.leadPhotoId ?? null;
     return {
+      slug: one.slug,
       name: one.name,
       latin: one.scientificName,
-      levelText: this.i18n.translate(EDIBILITY_TEXT[one.edibility]),
-      levelColour: tone.colour,
-      levelBackground: tone.background,
+      image: photo === null ? '' : photoPath(photo, 'list'),
+      colour: local === null ? '#7a5230' : leadColour(local),
     };
   }
 }

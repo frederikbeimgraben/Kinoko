@@ -8,10 +8,9 @@ var (
 	maxTimestamp = time.Unix(0, 1<<63-1)
 )
 
-// ParseEventDate is the date step of build_occurrences.add_time:
-// pd.to_datetime(eventDate, format="ISO8601", errors="coerce", utc=True), made naive and normalised.
-// A time with an offset goes to UTC first, so the day can change. ok is false where pandas gives NaT.
-// "now" and "today" also give false: pandas reads them as the clock, which a record never means.
+// ParseEventDate is the date step of build_occurrences.add_time: pd.to_datetime(eventDate, format="ISO8601",
+// errors="coerce", utc=True), naive and normalised. An offset goes to UTC first, so the day can change.
+// ok is false where pandas gives NaT, and for the pandas words of the current day and time: a record never means the clock.
 func ParseEventDate(s string) (day time.Time, ok bool) {
 	t, ok := parseISO(s)
 	if !ok || t.Before(minTimestamp) || t.After(maxTimestamp) {

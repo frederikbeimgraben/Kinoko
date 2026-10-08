@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { ColourChange, Speed, TermRef, TriggerGroup } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -11,12 +11,12 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { PART_TEXT, SPEED_TEXT } from '../species/labels';
-import { TermsState } from './terms.state';
-import { SpeciesEditorState } from './species-editor.state';
+import { TermsStore } from './terms.store';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SPEEDS, TRIGGER_GROUPS, TRIGGER_GROUP_TEXT, changeAt } from './section-colour-change.rows';
 import { withChange, withoutChange } from './species-lists';
 
-/** Eine Verfärbung eines Teils: Auslöser, zwei Farben und die Dauer. */
+/** A colour change of a part: the triggers, two colours and the speed. */
 @Component({
   selector: 'app-section-colour-change',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,18 +35,20 @@ import { withChange, withoutChange } from './species-lists';
 export class SectionColourChangeComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
-  private readonly terms = inject(TermsState);
+  private readonly state = inject(SpeciesEditorStore);
+  private readonly terms = inject(TermsStore);
 
   protected readonly slug = injectRouteParam('slug');
   private readonly index = injectRouteParam('index', '0');
   protected readonly at = computed(() => Number(this.index()));
 
-  protected readonly kind = signal<TriggerGroup>('mechanical');
-  protected readonly triggers = signal<readonly string[]>([]);
-  protected readonly speed = signal<Speed | null>(null);
-
   private readonly change = computed<ColourChange | null>(() => changeAt(this.state.species(), this.at()));
+
+  protected readonly kind = linkedSignal<TriggerGroup>(() => this.change()?.kind ?? 'mechanical');
+  protected readonly triggers = linkedSignal<readonly string[]>(
+    () => this.change()?.triggers.map((one) => one.id) ?? [],
+  );
+  protected readonly speed = linkedSignal<Speed | null>(() => this.change()?.speed ?? null);
 
   protected readonly partName = computed(() => {
     const part = this.change()?.part;
@@ -84,18 +86,8 @@ export class SectionColourChangeComponent {
   protected readonly toHex = computed(() => (this.change()?.to.hex ?? '').toUpperCase());
 
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
+    this.state.load(this.slug);
     this.terms.load();
-    effect(() => {
-      const change = this.change();
-      if (change === null) return;
-      this.kind.set(change.kind);
-      this.triggers.set(change.triggers.map((one) => one.id));
-      this.speed.set(change.speed ?? null);
-    });
   }
 
   protected chooseKind(value: string): void {

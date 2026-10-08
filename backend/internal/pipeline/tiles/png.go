@@ -80,8 +80,8 @@ func ReadTile(root string, id geo.TileID) ([]uint8, error) {
 }
 
 // WritePyramid writes the tiles of p under root and returns the bytes on
-// disk, as render_field. It writes to root.tmp and then replaces root, so a
-// reader never sees half a week.
+// disk, as render_field. It writes to root.tmp and then swaps it with root,
+// so a reader never sees half a week.
 func WritePyramid(root string, p Pyramid) (int64, error) {
 	tmp := root + ".tmp"
 	if err := os.RemoveAll(tmp); err != nil {
@@ -105,14 +105,33 @@ func WritePyramid(root string, p Pyramid) (int64, error) {
 	if err := os.MkdirAll(tmp, 0o755); err != nil {
 		return 0, err
 	}
-	if err := os.RemoveAll(root); err != nil {
-		return 0, err
+	return size, swapDir(tmp, root)
+}
+
+// swapDir moves tmp to root as render.replaceTree. The live folder is gone
+// only between two renames, and a failed swap restores it.
+func swapDir(tmp, root string) error {
+	old := root + ".old"
+	if err := os.RemoveAll(old); err != nil {
+		return err
 	}
 	if err := os.MkdirAll(filepath.Dir(root), 0o755); err != nil {
-		return 0, err
+		return err
 	}
-	return size, os.Rename(tmp, root)
+	if err := renameDir(root, old); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return err
+	}
+	if err := renameDir(tmp, root); err != nil {
+		if back := renameDir(old, root); back != nil && !errors.Is(back, fs.ErrNotExist) {
+			return errors.Join(err, back)
+		}
+		return err
+	}
+	return os.RemoveAll(old)
 }
+
+// renameDir is os.Rename. A test replaces it to make the swap fail.
+var renameDir = os.Rename
 
 // DirStore is a Store on disk: the value tree under Root and the weight tree
 // under Weights, as the block loop of fine_layers.py. It suits pyramids that

@@ -1,7 +1,3 @@
-@use '../../../styles/filter-marks' as marks;
-
-@include marks.filter-marks;
-
 :host {
   display: flex;
   flex-direction: column;
@@ -9,58 +5,63 @@
   overflow: hidden;
 }
 
-.entries {
+// Kit `.chips` with the padding of `Entries.dc.html`.
+.chips {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 4px;
+}
+
+.chips--active {
+  padding-block-end: 8px;
+}
+
+// Kit `.area`: the list and the floating button above it.
+.area {
+  position: relative;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 20px;
   min-block-size: 0;
-  padding: 20px var(--size-gutter);
-  overflow-y: auto;
+}
+
+.scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
   scrollbar-width: none;
 }
 
-.entries__list {
+// Room below the last row, so that the floating button does not cover it.
+.area > .scroll {
+  padding-block-end: 88px;
+}
+
+// Kit `.stack` with `right: 16px; bottom: 16px`.
+.fab {
+  position: absolute;
+  inset-block-end: 16px;
+  inset-inline-end: 16px;
+}
+
+// `EntriesDesktop.dc.html`: the list is on a surface with the padding 8 8 0 16.
+.frame {
   display: flex;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding: 8px 8px 0 16px;
+}
+
+.surface {
+  display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
+  min-block-size: 0;
 }
 
-// Der Punkt trägt die Farbe des Objekts, nur bei Marker und Zone.
-.entries__dot {
-  display: block;
-  inline-size: 12px;
-  block-size: 12px;
-  border-radius: 50%;
-}
-
-.entries__offline {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.entries__add {
-  display: inline-flex;
-  gap: var(--space-2);
-  align-items: center;
-  block-size: 40px;
-  padding-inline: var(--size-gutter);
-  font: inherit;
-  font-size: 15px;
-  font-weight: var(--fw-semibold);
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  border: 0;
-  border-radius: 10px;
-}
-
-// Die Zeile eines Markers und einer Zone misst siebenundsechzig Punkte, wie
-// die Bretter `EntriesMarkers` und `EntriesZones` sie zeigen.
-.entries__list app-list-row {
-  --size-row-tall: 67px;
-  --list-row-gap: var(--space-3);
-  --list-row-title-top: 0;
-  --list-row-title-height: normal;
-  --list-row-sub-height: normal;
-  --space-row-stack: 2px;
+.guest {
+  flex: 1 1 auto;
 }

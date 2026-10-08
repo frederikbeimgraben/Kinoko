@@ -1,0 +1,33 @@
+// The geometry of the review queue: a `.qcard` above the `.qacts` row.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// The card itself is a `--surface` area. The lines in it use `--surface-high`, so they stay visible.
+.qskel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border-radius: var(--r-sheet);
+}
+
+.qskel app-skeleton {
+  --surface: var(--surface-high);
+}
+
+.qskel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.qskel__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}

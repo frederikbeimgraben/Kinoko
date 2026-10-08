@@ -24,7 +24,7 @@ describe('AdminGroupComponent', () => {
 
     expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Pilzgruppe Karlsruhe');
     expect(screen.getByText('PILZ-7F3K')).toBeInTheDocument();
-    expect(screen.getByText('Eigentümer')).toBeInTheDocument();
+    expect(screen.getByText(/^Eigentümer · seit/)).toBeInTheDocument();
     await noViolations(container);
   });
 

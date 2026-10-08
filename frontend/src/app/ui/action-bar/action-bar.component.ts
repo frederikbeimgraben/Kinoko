@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent, type ButtonKind } from '../button/button.component';
-import type { IconName } from '../svg-icon/icons';
+import type { IconName } from '../svg-icon/svg-icon.component';
 
 /** The actions of a sheet or a page: the main action and at most one second action.
  * In the `foot` slot of `app-sheet`, it floats over the body, per `kit.css` `.sact` and `.mact`. */
@@ -23,6 +23,8 @@ import type { IconName } from '../svg-icon/icons';
 })
 export class ActionBarComponent {
   readonly primary = input.required<string>();
+  /** An icon before the label of the main action, for example `download` for an export. */
+  readonly primaryIcon = input<IconName>();
   readonly secondary = input<string>();
   /** Colours the main action red instead of green, for example for "Delete all". */
   readonly danger = input(false);
@@ -41,8 +43,7 @@ export class ActionBarComponent {
   /** The main action stands on the left, as some boards show it. */
   readonly leadFirst = input(false);
 
-  /** The icons of the buttons, per the board `MapFindView`: "edit" and "trash". */
-  readonly primaryIcon = input<IconName>();
+  /** The icon of the second action, per the board `MapFindView`: "trash". */
   readonly secondaryIcon = input<IconName>();
 
   readonly primaryClick = output();

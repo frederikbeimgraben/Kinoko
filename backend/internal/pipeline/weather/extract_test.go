@@ -13,10 +13,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// extractGolden is testdata/extract.json from testdata/gen_golden.py:
-//   - main, refreshMain: the checkpoints of extract_grids.main (the second run with --refresh-from 2021);
-//   - fixed, refreshFixed: extract_grids.weekly over the days of both files, with NaN for a
-//     sum without a value. These are the values with bug 8 and bug 9 fixed.
+// extractGolden is testdata/extract.json of testdata/gen_golden.py. main and refreshMain are the checkpoints
+// of extract_grids.main (the second with --refresh-from 2021). fixed and refreshFixed are extract_grids.weekly
+// over the days of both files, with NaN for a sum without a value: the values without bug 8 and bug 9.
 type extractGolden struct {
 	Main         map[string][][4]any `json:"main"`
 	Fixed        map[string][][4]any `json:"fixed"`
@@ -148,8 +147,14 @@ func TestExtractRefresh(t *testing.T) {
 	copyTree(t, "testdata/raw2", raw)
 	year := 2021
 	extract(t, raw, out, &year)
+	full := t.TempDir()
+	extract(t, raw, full, nil)
 	for _, job := range Jobs {
-		compareRows(t, job.Name, readRows(t, out, job.Name), goldenRows(g.RefreshFixed[job.Name]), nil)
+		got := readRows(t, out, job.Name)
+		// Python keeps the old 2020-W53, although it holds days of 2021; the refresh computes it again.
+		straddle := func(r weekRow) bool { return r.key.year == 2020 && r.key.week == 53 }
+		compareRows(t, job.Name, got, goldenRows(g.RefreshFixed[job.Name]), straddle)
+		compareRows(t, job.Name+" (full)", got, readRows(t, full, job.Name), nil)
 	}
 }
 
@@ -206,7 +211,7 @@ func copyTree(t *testing.T, src, dst string) {
 		if err != nil {
 			return err
 		}
-		defer in.Close()
+		defer func() { _ = in.Close() }()
 		out, err := os.Create(target)
 		if err != nil {
 			return err

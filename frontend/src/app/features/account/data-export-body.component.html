@@ -1,0 +1,20 @@
+<div class="field">
+  <span class="lbl">{{ 'account.export.format' | t }}</span>
+  <app-segmented
+    [options]="formats"
+    [value]="format()"
+    [label]="'account.export.format' | t"
+    (valueChange)="selectFormat($event)"
+  />
+</div>
+<app-row-group>
+  @for (row of rows(); track row.part) {
+    <app-check-row
+      [title]="row.label"
+      [count]="row.count"
+      [checked]="row.on"
+      [locked]="row.locked"
+      (toggled)="partToggle.emit(row.part)"
+    />
+  }
+</app-row-group>

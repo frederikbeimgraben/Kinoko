@@ -20,15 +20,23 @@ type Tables struct {
 // LoadTables reads the columns that the map needs. An empty path skips that table.
 // Of scaleCols only the columns that the file has are read.
 func LoadTables(treesPath, scalesPath, sitePath string, scaleCols []string) (Tables, error) {
+	t, err := LoadGrids(treesPath, sitePath)
+	if err != nil || scalesPath == "" {
+		return t, err
+	}
+	if t.Scales, err = LoadScales(scalesPath, scaleCols); err != nil {
+		return Tables{}, err
+	}
+	return t, nil
+}
+
+// LoadGrids reads the trees grid and the site grid, the tables of each map and of the layers.
+// An empty sitePath skips the site grid.
+func LoadGrids(treesPath, sitePath string) (Tables, error) {
 	var t Tables
 	var err error
 	if t.Trees, err = readSome(treesPath, []string{"x", "y", "forest_fraction"}, []string{"x", "y"}); err != nil {
 		return Tables{}, err
-	}
-	if scalesPath != "" {
-		if t.Scales, err = readSome(scalesPath, append([]string{"cell"}, scaleCols...), []string{"cell"}); err != nil {
-			return Tables{}, err
-		}
 	}
 	if sitePath != "" {
 		if t.Site, err = readSome(sitePath, []string{"cell", "soil_phh2o_0_5cm"}, []string{"cell", "soil_phh2o_0_5cm"}); err != nil {
@@ -36,6 +44,11 @@ func LoadTables(treesPath, scalesPath, sitePath string, scaleCols []string) (Tab
 		}
 	}
 	return t, nil
+}
+
+// LoadScales reads cell and the columns of cols that the tree-scales file has.
+func LoadScales(path string, cols []string) (*pio.Table, error) {
+	return readSome(path, append([]string{"cell"}, cols...), []string{"cell"})
 }
 
 // readSome reads the wanted columns that the file has. Each required column must exist.
@@ -68,12 +81,16 @@ func readSome(path string, wanted, required []string) (*pio.Table, error) {
 // each horizon of each bundle plus forest_fraction_500m, sorted, as region_map.py.
 // LoadTables drops the names that are not in the file, such as the weather features.
 func ScaleColumns(bundles ...*bundle.Bundle) []string {
-	out := []string{"forest_fraction_500m"}
+	var features []string
 	for _, b := range bundles {
-		for _, hz := range b.Horizons {
-			out = append(out, hz.Features...)
-		}
+		features = append(features, featureUnion(b)...)
 	}
+	return ScaleColumnsOf(features)
+}
+
+// ScaleColumnsOf is ScaleColumns for a list of feature names.
+func ScaleColumnsOf(features []string) []string {
+	out := append([]string{"forest_fraction_500m"}, features...)
 	slices.Sort(out)
 	return slices.Compact(out)
 }

@@ -1,19 +1,21 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 
-/** Ein Absatz einer Textseite: Zwischenüberschrift und Text, je ein Schlüssel. */
+/** One part of a text page: a heading and a text, one key each. */
 export interface AboutSection {
   heading: TranslationKey;
   body: TranslationKey;
 }
 
-/** Eine reine Textseite unter dem Konto: Titel, dann Absätze mit Zwischenüberschrift. */
+/** A text page below the account, per `AboutMethod.dc.html`: a group of rows that wrap. */
 @Component({
   selector: 'app-about-text',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PageHeaderComponent, TranslatePipe],
+  imports: [ListRowComponent, PageHeaderComponent, RowGroupComponent, TranslatePipe],
   templateUrl: './about-text.component.html',
   styleUrl: './about-text.component.scss',
 })

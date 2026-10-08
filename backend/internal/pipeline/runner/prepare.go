@@ -129,6 +129,10 @@ func (c *Chain) seedCheckpoints(j *Job, dir string) error {
 		if err := copyFile(a.Path, target); err != nil {
 			return err
 		}
+		// A seeded checkpoint is older than each raw file of the cache, so RefreshFrom extracts them.
+		if err := os.Chtimes(target, time.Unix(0, 0), time.Unix(0, 0)); err != nil {
+			return err
+		}
 		j.Printf("weather: %s from weather-checkpoints version %d", name, v.Number)
 	}
 	return nil
@@ -143,12 +147,13 @@ func copyFile(from, to string) error {
 	if err != nil {
 		return err
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 	tmp, err := os.CreateTemp(filepath.Dir(to), "."+filepath.Base(to)+".*")
 	if err != nil {
 		return err
 	}
-	defer os.Remove(tmp.Name())
+	// After the rename the temporary name does not exist, so the error is expected.
+	defer func() { _ = os.Remove(tmp.Name()) }()
 	_, err = io.Copy(tmp, in)
 	if err = errors.Join(err, tmp.Close()); err != nil {
 		return err
@@ -166,6 +171,11 @@ func (c *Chain) Occurrences(ctx context.Context, j *Job) error {
 	app, err := c.appFinds(ctx)
 	if err != nil {
 		return err
+	}
+	app, dropped := occ.BoundAppFinds(app, j.Now)
+	if dropped != (occ.AppDropped{}) {
+		j.Printf("occurrences: dropped %d app finds outside Germany and %d after %s",
+			dropped.Outside, dropped.Future, j.Now.Format(time.DateOnly))
 	}
 	records, stats, err := occ.BuildOccurrences(src, app, occ.MaxUncertainty)
 	if err != nil {

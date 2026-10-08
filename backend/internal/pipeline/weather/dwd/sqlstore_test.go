@@ -16,7 +16,7 @@ func TestSQLStore(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer handle.Close()
+	defer func() { _ = handle.Close() }()
 	if err := db.Migrate(ctx, handle); err != nil {
 		t.Fatal(err)
 	}

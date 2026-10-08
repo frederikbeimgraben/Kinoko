@@ -3,8 +3,8 @@
     <app-push-button
       class="acts__button acts__main"
       [class.acts__danger]="quietDanger()"
-      [icon]="primaryIcon()"
       [kind]="primaryVariant()"
+      [icon]="primaryIcon()"
       [wide]="!modal()"
       [busy]="busy()"
       [disabled]="busy()"
@@ -39,6 +39,7 @@
         [class.footer__slim]="split() || (ghost() && secondary() === undefined && !busy())"
         [class.footer__danger]="quietDanger()"
         [kind]="primaryVariant()"
+        [icon]="primaryIcon()"
         [wide]="!inline()"
         [busy]="busy()"
         [disabled]="busy()"

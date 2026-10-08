@@ -7,9 +7,9 @@ import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
-import { CatalogueState } from './catalogue.state';
+import { CatalogueStore } from './catalogue.store';
 import { SectionColourComponent } from './section-colour.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 const PALETTE = [
@@ -36,8 +36,8 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
 
 describe('SectionColourComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
-    TestBed.inject(CatalogueState);
+    TestBed.inject(SpeciesEditorStore).load('');
+    TestBed.inject(CatalogueStore);
   });
 
   it('nennt Teil, Art des Werts und die Farben', async () => {

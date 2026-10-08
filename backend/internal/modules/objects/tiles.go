@@ -190,7 +190,7 @@ func tileSum(file string, cells []cell) (float64, int, error) {
 	if err != nil {
 		return 0, 0, err
 	}
-	defer handle.Close()
+	defer func() { _ = handle.Close() }()
 	img, err := png.Decode(handle)
 	if err != nil {
 		return 0, 0, fmt.Errorf("tile %s: %w", file, err)

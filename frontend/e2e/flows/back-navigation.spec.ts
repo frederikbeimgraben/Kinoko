@@ -83,7 +83,11 @@ test.describe('Zurück von einer Bildseite', () => {
     await page.getByRole('button', { name: 'Bild einreichen' }).click();
     await expect(page).toHaveURL(/bilder\/neu$/);
 
-    await page.getByRole('button', { name: 'Zurück' }).click();
+    // The form is a sheet over the species page: its close button leaves it.
+    await page
+      .getByRole('dialog', { name: 'Bild einreichen' })
+      .getByRole('button', { name: 'Schließen' })
+      .click();
     await expect(page).toHaveURL(/\/arten\/boletus-edulis$/);
 
     await page.goBack();

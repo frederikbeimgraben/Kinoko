@@ -63,7 +63,7 @@ func readForm(r *http.Request, limit int64) (form, error) {
 	mediaType, params, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	switch {
 	case err != nil:
-		return empty, nil
+		return empty, nil //nolint:nilerr // A body without a known type gives no fields; the field checks then report the error.
 	case mediaType == "application/x-www-form-urlencoded":
 		raw, err := io.ReadAll(body)
 		if err != nil {

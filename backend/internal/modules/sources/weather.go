@@ -75,7 +75,7 @@ func (weatherCheckpoints) Validate(ctx context.Context, v *Version) (map[string]
 	if err != nil {
 		return nil, err
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	entries, err := zipFiles(z)
 	if err != nil {
 		return nil, err
@@ -114,7 +114,7 @@ func checkWeekly(file, name string) (map[string]any, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer t.Close()
+	defer func() { _ = t.Close() }()
 	if err := t.require([]string{"iso_year", "iso_week", "cell", name}); err != nil {
 		_, detail := failureOf(err, "schema")
 		return nil, Fail("schema", "%s: %s", name, detail)

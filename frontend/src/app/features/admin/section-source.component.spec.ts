@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionSourceComponent } from './section-source.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 const WITH_SOURCE = {
@@ -41,7 +41,7 @@ async function build(index = '0'): Promise<{ container: Element; http: HttpTesti
 
 describe('SectionSourceComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt Art, Titel, Adresse und Prüftag', async () => {

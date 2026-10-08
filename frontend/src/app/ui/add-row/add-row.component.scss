@@ -18,6 +18,7 @@
   border-radius: 4px;
 }
 
+// Per `kit.css` `.grp>.row`: the first and the last row of a group have round outer corners.
 :host-context(.grp):first-child .add-row {
   border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
 }

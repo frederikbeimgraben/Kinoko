@@ -1,0 +1,8 @@
+<app-page-header [title]="'account.appearanceAndLanguage' | t" />
+<div class="pad">
+  @if (signedIn()) {
+    <app-account-stats [cols]="5" />
+  }
+  <app-appearance-fields />
+  <app-offline-section />
+</div>

@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AccountStore } from '../../core/access/account.store';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -25,7 +25,7 @@ function provider(owns = true): (EnvironmentProviders | Provider)[] {
 
 /** The catalogue gets into the state through the storage, not with the call. */
 async function catalogueReady(): Promise<void> {
-  const catalogue = TestBed.inject(SpeciesState);
+  const catalogue = TestBed.inject(SpeciesStore);
   await vi.waitFor(() => {
     expect(catalogue.species()).not.toHaveLength(0);
   });

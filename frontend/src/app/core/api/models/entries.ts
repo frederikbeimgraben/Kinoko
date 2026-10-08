@@ -1,4 +1,4 @@
-/** Die eigenen Einträge des Vertrags: Funde, Marker und Zonen. */
+/** The own entries of the contract: finds, markers and zones. */
 
 import type { components } from '../contract';
 import type { SharedFind } from './finds';
@@ -12,20 +12,20 @@ export type MarkerWrite = components['schemas']['MarkerWrite'];
 export type ZoneWrite = components['schemas']['ZoneWrite'];
 export type ZoneValue = components['schemas']['ZoneValue'];
 
-/** Wer ein Objekt sehen darf. */
+/** Who can see an object. */
 export const VISIBILITIES: readonly Visibility[] = ['private', 'shared'];
 
-/** Die sechs Farben aus den Mockups. Eine freie Farbwahl gibt es nicht. */
+/** The six colours of the mockups. There is no free choice of a colour. */
 export const MARKER_COLOURS: readonly MarkerColour[] = ['green', 'brown', 'blue', 'red', 'gold', 'grey'];
 
-/** Ein eigener Fund, mit genauem Ort. */
+/** An own find, with its exact place. */
 export interface Find extends SharedFind {
   visibility: Visibility;
   groupId: string | null;
   forTraining: boolean;
 }
 
-/** Ein eigener Marker: ein Punkt mit Name, Farbe und Notiz. */
+/** An own marker: a point with a name, a colour and a note. */
 export interface Marker {
   id: string;
   name: string;
@@ -35,9 +35,11 @@ export interface Marker {
   note: string | null;
   visibility: Visibility;
   groupId: string | null;
+  /** The instant of the first save. The entry list groups by it. */
+  createdAt?: string;
 }
 
-/** Eine eigene Zone. Die Fläche rechnet der Dienst, nie das Gerät. */
+/** An own zone. The service calculates the area, never the device. */
 export interface Zone {
   id: string;
   name: string;
@@ -47,4 +49,6 @@ export interface Zone {
   note: string | null;
   visibility: Visibility;
   groupId: string | null;
+  /** The instant of the first save. The entry list groups by it. */
+  createdAt?: string;
 }

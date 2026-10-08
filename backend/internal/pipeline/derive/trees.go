@@ -23,7 +23,7 @@ const (
 	classSlots = 18
 )
 
-// TreeClass is one class of the Thünen map and its column name.
+// TreeClass is one class of the Thuenen map and its column name.
 type TreeClass struct {
 	Value int
 	Name  string
@@ -63,14 +63,9 @@ type TreeOptions struct {
 	Progress func(done, total int)
 }
 
-// TileTrees counts the classes of the tree map in each cell, as tile_trees:
-// each tile of the grid is warped to EPSG:3035 at 10 m with the nearest
-// neighbour and nodata 0, then each block of step/10 pixels is counted.
-// The source is a local file in any CRS instead of the WCS of the Thünen
-// service. An error in a tile stops the count; Python skips the tile.
-// The warp adds "-srcnodata 0": without it GDAL 3.13 turns class 0 of a
-// map without nodata into 1 to keep it apart from the dstnodata 0, and so
-// counts ground without forest as forest.
+// TileTrees counts the classes of the tree map in each cell, as tile_trees: it warps each tile to
+// EPSG:3035 at 10 m (nearest neighbour, nodata 0) and counts each block of step/10 pixels. The source
+// is a local file in any CRS, not the Thuenen WCS. An error in a tile stops the count; Python skips it.
 func TileTrees(ctx context.Context, source string, g Grid, opt TreeOptions) (*ClassCounts, error) {
 	if err := g.Check(); err != nil {
 		return nil, err
@@ -86,7 +81,7 @@ func TileTrees(ctx context.Context, source string, g Grid, opt TreeOptions) (*Cl
 	if err != nil {
 		return nil, err
 	}
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 	out := &ClassCounts{Grid: g, Counts: make([]uint16, g.Len()*classSlots)}
 	boxes := treeTiles(g, tile)
 	for i, box := range boxes {
@@ -120,6 +115,8 @@ func treeTiles(g Grid, tile int) [][4]int {
 // gdalwarp call of tile_trees.
 func warpTreeTile(src *godal.Dataset, box [4]int) ([]uint8, int, int, error) {
 	px := strconv.Itoa(TreePixel)
+	// Without "-srcnodata 0", GDAL 3.13 turns class 0 of a map without nodata into 1 to keep it
+	// apart from the dstnodata 0. Then it counts ground without forest as forest.
 	switches := []string{"-t_srs", ModelCRS,
 		"-te", itoa(box[0]), itoa(box[1]), itoa(box[2]), itoa(box[3]),
 		"-tr", px, px, "-r", "near", "-srcnodata", "0", "-dstnodata", "0"}
@@ -127,7 +124,7 @@ func warpTreeTile(src *godal.Dataset, box [4]int) ([]uint8, int, int, error) {
 	if err != nil {
 		return nil, 0, 0, err
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	nx, ny := size(ds)
 	band, err := readBytes(ds)
 	return band, nx, ny, err

@@ -6,8 +6,11 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
+import { PermissionsStore } from '../../core/access/permissions.store';
+import { DataSourcesApi } from '../../core/api/data-sources.api';
+import { DataSourcesApiDouble } from './data-sources/data-sources.testing';
 import { RunsComponent } from './runs.component';
-import { RunsState } from './runs.state';
+import { RunsStore } from './runs.store';
 
 const RUNNING = {
   id: 'lauf-aktiv',
@@ -51,7 +54,7 @@ async function build(items: unknown[] = [RUNNING, DONE]): Promise<{
 
 describe('RunsComponent', () => {
   beforeEach(() => {
-    TestBed.inject(RunsState);
+    TestBed.inject(RunsStore);
   });
 
   it('zeigt den laufenden Lauf über der Liste der letzten', async () => {
@@ -90,5 +93,32 @@ describe('RunsComponent', () => {
 
     expect(screen.getByRole('heading', { name: 'Läufe' })).toBeInTheDocument();
     expect(screen.queryByText('Vollständig')).not.toBeInTheDocument();
+  });
+
+  it('offers the fetch run and blocks a kind with missing inputs', async () => {
+    TestBed.resetTestingModule();
+    await render(RunsComponent, {
+      providers: [
+        provideRouter(ANY_ROUTE),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: PermissionsStore, useValue: { can: () => true } },
+        { provide: DataSourcesApi, useValue: new DataSourcesApiDouble() },
+      ],
+    });
+    TestBed.inject(HttpTestingController)
+      .expectOne('/api/pipeline-runs')
+      .flush({ items: [], nextCursor: null });
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Lauf anstoßen' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Rendern' }));
+
+    expect(screen.getByText(/Es fehlen: .*Standortraster/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Anstoßen' })).toBeDisabled();
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Daten abrufen' }));
+
+    expect(screen.queryByText(/Es fehlen/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Anstoßen' })).toBeEnabled();
   });
 });

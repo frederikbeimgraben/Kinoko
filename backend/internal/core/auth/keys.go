@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
+	"slices"
 	"sync"
 	"time"
 )
@@ -20,6 +21,7 @@ const (
 	positiveTTL = time.Hour
 	negativeTTL = time.Minute
 	groupClaim  = "groups"
+	p256Bytes   = 32
 )
 
 // Issuer reads the discovery document, the signing keys and the user
@@ -175,7 +177,7 @@ func (i *Issuer) getJSON(ctx context.Context, url, bearer string, target any) er
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	if response.StatusCode < 200 || response.StatusCode > 299 {
 		return fmt.Errorf("GET %s: status %d", url, response.StatusCode)
 	}
@@ -208,18 +210,31 @@ func (k jwk) public() (any, error) {
 		if k.Crv != "P-256" {
 			return nil, fmt.Errorf("curve %s is not supported", k.Crv)
 		}
-		x, err := bigOf(k.X)
+		x, err := coordinateOf(k.X)
 		if err != nil {
 			return nil, err
 		}
-		y, err := bigOf(k.Y)
+		y, err := coordinateOf(k.Y)
 		if err != nil {
 			return nil, err
 		}
-		return &ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}, nil
+		return ecdsa.ParseUncompressedPublicKey(elliptic.P256(), slices.Concat([]byte{4}, x, y))
 	default:
 		return nil, fmt.Errorf("key type %s is not supported", k.Kty)
 	}
+}
+
+// coordinateOf gives a P-256 coordinate as 32 bytes. It accepts a value with
+// fewer bytes, because some issuers remove the leading zero bytes.
+func coordinateOf(value string) ([]byte, error) {
+	n, err := bigOf(value)
+	if err != nil {
+		return nil, err
+	}
+	if n.BitLen() > p256Bytes*8 {
+		return nil, fmt.Errorf("coordinate has more than %d bytes", p256Bytes)
+	}
+	return n.FillBytes(make([]byte, p256Bytes)), nil
 }
 
 func bigOf(value string) (*big.Int, error) {

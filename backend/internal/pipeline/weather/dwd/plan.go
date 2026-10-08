@@ -19,13 +19,56 @@ type Request struct {
 }
 
 // Bootstrap returns the request of the first fetch: each year from start to the
-// year of now. The open years are checked again.
-func Bootstrap(now time.Time, start int) Request {
+// year of current. The fetch checks the open years again.
+func Bootstrap(current time.Time, start int) Request {
 	years := []int{}
-	for y := start; y <= now.Year(); y++ {
+	for y := start; y <= current.Year(); y++ {
 		years = append(years, y)
 	}
-	return Request{Years: years, Refresh: openYears(now)}
+	return Request{Years: years, Refresh: openYears(current)}
+}
+
+// Resume returns the request that completes an interrupted bootstrap: the
+// missing closed years and the years of Weekly. No missing year gives Weekly.
+func Resume(now time.Time, missing []int) Request {
+	weekly := Weekly(now)
+	years := slices.Sorted(slices.Values(append(slices.Clone(missing), weekly.Years...)))
+	return Request{Years: slices.Compact(years), Refresh: weekly.Refresh}
+}
+
+// MissingYears gives each year from start to end that lacks a usable row
+// (StateOK or StatePruned) in a folder of source. rows are the rows of source.
+func MissingYears(rows []CacheRecord, source string, start, end int) []int {
+	have := map[string]bool{}
+	for _, r := range rows {
+		if year, ok := YearOf(r.Key); ok && (r.State == StateOK || r.State == StatePruned) {
+			have[path.Dir(r.Key)+"/"+strconv.Itoa(year)] = true
+		}
+	}
+	folders := Folders(source)
+	var out []int
+	for y := start; y <= end; y++ {
+		if slices.ContainsFunc(folders, func(dir string) bool { return !have[dir+"/"+strconv.Itoa(y)] }) {
+			out = append(out, y)
+		}
+	}
+	return out
+}
+
+// Folders gives the cache folders of source, as the keys of its rows hold them.
+func Folders(source string) []string {
+	var out []string
+	switch source {
+	case SourceHyras:
+		for _, hv := range HyrasFolders {
+			out = append(out, path.Join("dwd", "hyras", hv.Folder))
+		}
+	case SourceSoil:
+		for _, tree := range TreeSpecies {
+			out = append(out, path.Join("dwd", "soil_moisture", tree))
+		}
+	}
+	return out
 }
 
 // Weekly returns the request of the weekly run: the previous and the current

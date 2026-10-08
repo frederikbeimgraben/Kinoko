@@ -77,7 +77,7 @@ func (g *grid) dailyCellMeans(path, v string, soil bool) ([]float32, []time.Time
 	if err != nil {
 		return nil, nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	x, y, days, err := f.Coords()
 	if err != nil {
 		return nil, nil, err

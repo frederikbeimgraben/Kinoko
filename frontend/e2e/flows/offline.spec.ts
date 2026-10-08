@@ -3,10 +3,10 @@ import { type Page, type Request } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 
-/** Der Server kennt noch nichts Eigenes. */
+/** The server knows no own entry yet. */
 const EMPTY_PAGE = { items: [], nextCursor: null };
 
-/** Die Schalter des Netzes und die Anfragen, die der Abgleich sendet. */
+/** The switches of the network and the requests that the sync sends. */
 interface Wire {
   sent: Request[];
   cut: () => Promise<void>;
@@ -27,8 +27,8 @@ async function wire(page: Page, origin: string): Promise<Wire> {
     sent.push(route.request());
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{"id":"marker-eins"}' });
   });
-  // Ohne Netz scheitert das Schreiben. Lesen bleibt bei dem, was schon da ist,
-  // sonst deckte ein Schwall Toasts die Knöpfe zu.
+  // Without network a write fails. A read keeps what is already there:
+  // else a flood of toasts covers the buttons.
   await page.route('**/api/**', async (route) => {
     if (down && route.request().method() !== 'GET') {
       await route.abort('internetdisconnected');
@@ -73,7 +73,7 @@ test('Melden ohne Netz, Senden bei Netz', async ({ page, baseURL }) => {
 
   await page.getByRole('link', { name: 'Einträge' }).click();
   await expect(page).toHaveURL(/eintraege/);
-  await page.getByRole('tab', { name: 'Marker', exact: true }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   await expect(page.getByRole('img', { name: 'Übertragung ausstehend' })).toBeVisible();
 
   await net.join();

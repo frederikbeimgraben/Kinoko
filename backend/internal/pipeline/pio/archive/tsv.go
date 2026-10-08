@@ -36,7 +36,8 @@ func NewTSVReader(r io.Reader, opt TSVOptions) (*TSVReader, error) {
 	}
 	br := bufio.NewReaderSize(r, 1<<20)
 	if bom, err := br.Peek(len(utf8BOM)); err == nil && string(bom) == utf8BOM {
-		br.Discard(len(utf8BOM))
+		// Peek holds these bytes, so Discard cannot fail.
+		_, _ = br.Discard(len(utf8BOM))
 	}
 	t := &TSVReader{br: br, delim: string(opt.Delim)}
 	switch opt.Quote {

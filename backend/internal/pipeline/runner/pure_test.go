@@ -78,21 +78,25 @@ func TestPlanNamesTheStagesOfEachKind(t *testing.T) {
 func TestWeatherRequestBootstrapsAnEmptyCacheOnly(t *testing.T) {
 	june := time.Date(2026, 6, 1, 3, 30, 0, 0, time.UTC)
 	january := time.Date(2026, 1, 5, 3, 30, 0, 0, time.UTC)
-	if r := runner.WeatherRequest(nil, true, june); !slices.Equal(r.Years, []int{2025, 2026}) || !slices.Equal(r.Refresh, []int{2026}) {
+	if r := runner.WeatherRequest(nil, nil, june); !slices.Equal(r.Years, []int{2025, 2026}) || !slices.Equal(r.Refresh, []int{2026}) {
 		t.Errorf("weekly June = %+v", r)
 	}
-	if r := runner.WeatherRequest(nil, true, january); !slices.Equal(r.Refresh, []int{2025, 2026}) {
+	if r := runner.WeatherRequest(nil, nil, january); !slices.Equal(r.Refresh, []int{2025, 2026}) {
 		t.Errorf("weekly January = %+v", r)
 	}
-	if r := runner.WeatherRequest(nil, false, june); r.Years[0] != dwd.FirstYear || r.Years[len(r.Years)-1] != 2026 {
+	empty := yearsFrom(dwd.FirstYear, 2025)
+	if r := runner.WeatherRequest(nil, empty, june); !slices.Equal(r.Years, yearsFrom(dwd.FirstYear, 2026)) || !slices.Equal(r.Refresh, []int{2026}) {
 		t.Errorf("bootstrap = %+v", r)
 	}
+	if r := runner.WeatherRequest(nil, []int{2017}, june); !slices.Equal(r.Years, []int{2017, 2025, 2026}) {
+		t.Errorf("resume = %+v", r)
+	}
 	from, to := 2020, 2021
-	r := runner.WeatherRequest(&sources.FetchRequest{Source: dwd.SourceHyras, FromYear: &from, ToYear: &to}, true, june)
+	r := runner.WeatherRequest(&sources.FetchRequest{Source: dwd.SourceHyras, FromYear: &from, ToYear: &to}, nil, june)
 	if !slices.Equal(r.Years, []int{2020, 2021}) || len(r.Refresh) != 0 {
 		t.Errorf("range = %+v", r)
 	}
-	r = runner.WeatherRequest(&sources.FetchRequest{Source: dwd.SourceHyras, Force: true}, true, june)
+	r = runner.WeatherRequest(&sources.FetchRequest{Source: dwd.SourceHyras, Force: true}, nil, june)
 	if !slices.Equal(r.Refresh, r.Years) {
 		t.Errorf("force = %+v", r)
 	}
@@ -101,17 +105,20 @@ func TestWeatherRequestBootstrapsAnEmptyCacheOnly(t *testing.T) {
 func TestOccurrencePlanRefreshesTheOpenYears(t *testing.T) {
 	march := time.Date(2026, 3, 2, 0, 0, 0, 0, time.UTC)
 	february := time.Date(2026, 2, 2, 0, 0, 0, 0, time.UTC)
-	if p := runner.OccurrencePlan(nil, true, march); !slices.Equal(p.Years, []int{2026}) || !p.Refresh[2026] {
+	if p := runner.OccurrencePlan(nil, nil, march); !slices.Equal(p.Years, []int{2026}) || !p.Refresh[2026] {
 		t.Errorf("weekly March = %+v", p)
 	}
-	if p := runner.OccurrencePlan(nil, true, february); !slices.Equal(p.Years, []int{2025, 2026}) || !p.Refresh[2025] {
+	if p := runner.OccurrencePlan(nil, nil, february); !slices.Equal(p.Years, []int{2025, 2026}) || !p.Refresh[2025] {
 		t.Errorf("weekly February = %+v", p)
 	}
-	if p := runner.OccurrencePlan(nil, false, march); p.Years[0] != 2000 || p.Refresh[2010] || !p.Refresh[2026] {
+	if p := runner.OccurrencePlan(nil, yearsFrom(2000, 2025), march); !slices.Equal(p.Years, yearsFrom(2000, 2026)) || p.Refresh[2010] || !p.Refresh[2026] {
 		t.Errorf("bootstrap = %+v", p)
 	}
+	if p := runner.OccurrencePlan(nil, []int{2008, 2025}, february); !slices.Equal(p.Years, []int{2008, 2025, 2026}) || p.Refresh[2008] || !p.Refresh[2025] {
+		t.Errorf("resume = %+v", p)
+	}
 	from := 2024
-	p := runner.OccurrencePlan(&sources.FetchRequest{FromYear: &from, Force: true}, true, march)
+	p := runner.OccurrencePlan(&sources.FetchRequest{FromYear: &from, Force: true}, nil, march)
 	if !slices.Equal(p.Years, []int{2024, 2025, 2026}) || !p.Refresh[2024] {
 		t.Errorf("forced range = %+v", p)
 	}

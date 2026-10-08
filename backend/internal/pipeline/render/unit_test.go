@@ -131,11 +131,11 @@ func TestInstallStaticLayersMergesStaticFirst(t *testing.T) {
  "wald": {"label": "Wald", "static": true, "tiles": "layers_kacheln/wald"}}}`)
 	writeFile(t, filepath.Join(src, "layers_kacheln/relief/6/2/2.png"), "new")
 	writeFile(t, filepath.Join(src, "layers_kacheln/wald/5/1/1.png"), "wald")
-	meta, err := InstallStaticLayers(maps, src)
+	res, err := InstallStaticLayers(maps, StaticSource{Dir: src})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := layerEntries(meta).Keys(); !slices.Equal(got, []string{"relief", "wald", "hoehe", "regen"}) {
+	if got := layerEntries(res.Manifest).Keys(); !slices.Equal(got, []string{"relief", "wald", "hoehe", "regen"}) {
 		t.Fatalf("order %v", got)
 	}
 	if exists(filepath.Join(maps, "layers_kacheln/relief/5/1/1.png")) || !exists(filepath.Join(maps, "layers_kacheln/relief/6/2/2.png")) ||
@@ -143,12 +143,66 @@ func TestInstallStaticLayersMergesStaticFirst(t *testing.T) {
 		t.Fatal("the tile folders were not replaced")
 	}
 	data, _ := os.ReadFile(filepath.Join(maps, LayersFile))
-	if !slices.Contains([]string{string(data)}, string(pyjson.MarshalManifest(meta))) {
+	if string(data) != string(pyjson.MarshalManifest(res.Manifest)) || !res.Written {
 		t.Fatal("layers.json differs from the returned manifest")
 	}
 	writeFile(t, filepath.Join(src, LayersFile), `{"layers": {"x": {"static": true, "tiles": "../x"}}}`)
-	if _, err := InstallStaticLayers(maps, src); err == nil {
+	if _, err := InstallStaticLayers(maps, StaticSource{Dir: src}); err == nil {
 		t.Fatal("a tile path outside layers_kacheln must fail")
+	}
+	writeFile(t, filepath.Join(src, LayersFile), `{"layers": {"regen": {"static": false, "tiles": "layers_kacheln/regen"}}}`)
+	if _, err := InstallStaticLayers(maps, StaticSource{Dir: src}); err == nil {
+		t.Fatal("a weekly layer in a static source must fail")
+	}
+}
+
+func TestInstallStaticLayersCopiesAVersionOnce(t *testing.T) {
+	maps, upload, dem := t.TempDir(), t.TempDir(), t.TempDir()
+	writeFile(t, filepath.Join(upload, LayersFile), `{"bounds": [[47.0, 5.5], [55.0, 15.5]], "layers": {
+ "hoehe": {"label": "alt", "static": true, "tiles": "layers_kacheln/hoehe"},
+ "relief": {"label": "Relief", "static": true, "tiles": "layers_kacheln/relief"}}}`)
+	writeFile(t, filepath.Join(upload, "layers_kacheln/hoehe/5/1/1.png"), "upload")
+	writeFile(t, filepath.Join(upload, "layers_kacheln/relief/5/1/1.png"), "relief")
+	writeFile(t, filepath.Join(dem, LayersFile), `{"layers": {
+ "hoehe": {"label": "Höhe", "static": true, "tiles": "layers_kacheln/hoehe"}}}`)
+	writeFile(t, filepath.Join(dem, "layers_kacheln/hoehe/6/2/2.png"), "dem")
+	srcs := []StaticSource{{Dir: upload, Tag: "static-layers/v1"}, {Dir: dem, Tag: "dem/v1"}}
+	first, err := InstallStaticLayers(maps, srcs...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(first.Copied, []string{"hoehe", "relief"}) || len(first.Kept) != 0 || !first.Written {
+		t.Fatalf("first: %+v", first)
+	}
+	entry, _ := layerEntries(first.Manifest).Get("hoehe")
+	if label, _ := entry.(*pyjson.Obj).Get("label"); label != "Höhe" {
+		t.Fatalf("the later source must win: %v", label)
+	}
+	if exists(filepath.Join(maps, "layers_kacheln/hoehe/5/1/1.png")) || !exists(filepath.Join(maps, "layers_kacheln/hoehe/6/2/2.png")) {
+		t.Fatal("hoehe must hold the tiles of the dem")
+	}
+	if markerOf(filepath.Join(maps, "layers_kacheln/hoehe")) != "dem/v1" {
+		t.Fatal("the marker must name the dem version")
+	}
+	stamp := filepath.Join(maps, "layers_kacheln/relief/5/1/1.png")
+	writeFile(t, stamp, "published")
+	again, err := InstallStaticLayers(maps, srcs...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(again.Copied) != 0 || !slices.Equal(again.Kept, []string{"hoehe", "relief"}) || again.Written {
+		t.Fatalf("again: %+v", again)
+	}
+	if data, _ := os.ReadFile(stamp); string(data) != "published" {
+		t.Fatal("the same version must not copy the tiles again")
+	}
+	srcs[1].Tag = "dem/v2"
+	next, err := InstallStaticLayers(maps, srcs...)
+	if err != nil || !slices.Equal(next.Copied, []string{"hoehe"}) || next.Written {
+		t.Fatalf("next: %+v, %v", next, err)
+	}
+	if exists(filepath.Join(maps, "layers_kacheln/hoehe.tmp")) || exists(filepath.Join(maps, "layers_kacheln/hoehe.old")) {
+		t.Fatal("the replacement left a temporary folder")
 	}
 }
 
@@ -166,5 +220,20 @@ func TestLayerScale(t *testing.T) {
 		if got := layerScale(l, vals); got != want {
 			t.Errorf("%s: %v, want %v", l.Name, got, want)
 		}
+	}
+}
+
+func TestWeatherInputsNameOnlyTheCheckpointsOfTheTask(t *testing.T) {
+	got := WeatherInputs([]string{"forest_fraction_500m", "pr_sum4_anom", "tas_lag1", "fichte_scale"})
+	if !slices.Equal(got, []string{"pr", "tas"}) {
+		t.Fatalf("species inputs %v", got)
+	}
+	want := []string{"days_since_rain", "frost_days", "heat_days", "hurs", "paws_beech", "paws_oak", "paws_pine",
+		"paws_spruce", "pr", "tas", "tasmax", "tasmin"}
+	if got := LayerWeather(); !slices.Equal(got, want) {
+		t.Fatalf("layer inputs %v", got)
+	}
+	if got := ScaleColumnsOf([]string{"tas_lag1", "buche", "buche"}); !slices.Equal(got, []string{"buche", "forest_fraction_500m", "tas_lag1"}) {
+		t.Fatalf("scale columns %v", got)
 	}
 }

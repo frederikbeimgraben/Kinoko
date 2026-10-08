@@ -12,9 +12,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
-// The rules below are those of the Python pipeline worker (tools/pipeline_worker.py). The step at position
-// i has the name of script i; each species state goes queued, running, then
-// finished or failed; a run fails when one species fails.
+// These rules are those of tools/pipeline_worker.py: step i has the name of script i. A species state goes
+// queued, running, then finished or failed. A run fails when one species fails.
 
 var stages = map[enums.RunKind][]string{
 	enums.RunKindTraining: {"run_all.sh"},

@@ -1,62 +1,12 @@
+// The popovers of the search bar hang from this box.
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
   block-size: 100%;
   overflow: hidden;
 }
 
-.species {
-  position: relative;
-  display: flex;
+.species__choose {
   flex: 1;
-  flex-direction: column;
-  gap: var(--size-gutter);
-  min-block-size: 0;
-  padding: 14px var(--size-gutter);
-}
-
-// Die aktiven Filter laufen an den Rand und blenden dort aus.
-// Am Rechner steht die Steuerspalte links und der Inhalt rechts.
-.species--wide {
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  gap: 0;
-  padding: 0;
-}
-
-.species__column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-card-stack);
-  min-block-size: 0;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  border-inline-end: var(--border-width) solid var(--color-border);
-}
-// Am Rechner stehen die Karten des Filters enger als im Blatt.
-.species__column app-species-filter-panel {
-  gap: var(--space-card-stack);
-}
-
-// Der Rand unten liegt in der Liste. Sie scrollt an die Kante der Spalte.
-.species__pane {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  min-block-size: 0;
-  padding: var(--size-gutter) var(--size-gutter) 0;
-  overflow: hidden;
-}
-
-.species__summary {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
-// Am Telefon zieht die Zeile vier Punkte aus dem Abstand der Fläche.
-.species:not(.species--wide) > .species__summary {
-  margin-block-start: -4px;
 }

@@ -6,10 +6,9 @@ import (
 	"strings"
 )
 
-// PyFloat formats f as Python repr(float): the shortest digits that read back
-// as f, in exponent form when the exponent is < -4 or >= 16 ("1e-05"),
-// otherwise in fixed form with at least one decimal ("1.0").
-// NaN and the infinities give "NaN", "Infinity" and "-Infinity", as json.dumps.
+// PyFloat formats f as Python repr(float): the shortest digits that read back as f, in exponent
+// form when the exponent is < -4 or >= 16 ("1e-05"), else in fixed form with one decimal or more
+// ("1.0"). NaN and the infinities give "NaN", "Infinity" and "-Infinity", as json.dumps.
 func PyFloat(f float64) string {
 	switch {
 	case math.IsNaN(f):

@@ -2,13 +2,14 @@
   display: block;
 }
 
+// Per `kit.css` `.acct`, `.avatar` and `.txt`.
 .acct {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px 8px 12px 12px;
   background: var(--surface);
-  border-radius: 20px;
+  border-radius: var(--r-item);
 }
 
 .acct__circle {
@@ -16,12 +17,13 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  inline-size: var(--size-avatar);
-  block-size: var(--size-avatar);
-  font-weight: var(--fw-semibold);
-  color: var(--primary);
+  inline-size: 40px;
+  block-size: 40px;
+  font-size: var(--fs-15);
+  font-weight: var(--fw-bold);
+  color: var(--on-sel);
   background: var(--sel);
-  border-radius: 50%;
+  border-radius: 20px;
 }
 
 .acct__stack {
@@ -33,14 +35,17 @@
 }
 
 .acct__name {
-  font-size: 15px;
+  overflow: hidden;
+  font-size: var(--fs-16);
   font-weight: var(--fw-semibold);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .acct__mail,
 .acct__server {
   overflow: hidden;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-14);
   color: var(--text-var);
   white-space: nowrap;
   text-overflow: ellipsis;

@@ -1,8 +1,8 @@
-<app-page-header [title]="'admin.runs.title' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.runs.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
 
 <div class="runs">
   @if (active(); as run) {
-    <button class="runs__card runs__active" type="button" (click)="open(run.id)">
+    <button class="runs__active tap" type="button" (click)="open(run.id)">
       <span class="runs__head">
         <i class="runs__dot runs__dot--running"></i>
         <span class="runs__name">{{ run.title }}</span>
@@ -13,23 +13,27 @@
     </button>
   }
 
-  <section>
-    <h2 class="runs__section">{{ 'admin.runs.section.recent' | t }}</h2>
-    <div class="runs__card">
-      @for (row of rows(); track row.id) {
-        <app-list-row
-          kind="catalogue"
-          [title]="row.title"
-          [subline]="row.subline"
-          [value]="row.duration"
-          [clickable]="true"
-          (chosen)="open(row.id)"
-        >
-          <i lead class="runs__dot" [class.runs__dot--failed]="row.failed"></i>
-        </app-list-row>
-      }
-    </div>
-  </section>
+  @if (!loaded()) {
+    <app-row-group-skeleton [count]="5" [label]="true" [lines]="2" trail="value" />
+  } @else if (rows().length === 0 && active() === null) {
+    <app-state-view icon="hourglass" [title]="'admin.runs.empty' | t" />
+  } @else if (rows().length > 0) {
+    <app-section [label]="'admin.runs.section.recent' | t">
+      <app-row-group>
+        @for (row of rows(); track row.id) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.subline"
+            [value]="row.duration"
+            [clickable]="true"
+            (chosen)="open(row.id)"
+          >
+            <i lead class="runs__dot" [class.runs__dot--failed]="row.failed"></i>
+          </app-list-row>
+        }
+      </app-row-group>
+    </app-section>
+  }
 </div>
 
 <app-action-bar [primary]="'admin.runs.start' | t" (primaryClick)="starting.set(true)" />
@@ -37,8 +41,10 @@
 <app-confirm-dialog
   [open]="starting()"
   [title]="'admin.runs.startConfirm' | t"
+  [meta]="missing()"
   [danger]="false"
   [confirmLabel]="'admin.runs.startAction' | t"
+  [confirmDisabled]="missing() !== ''"
   (confirmed)="start()"
   (cancelled)="starting.set(false)"
 >

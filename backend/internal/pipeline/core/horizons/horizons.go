@@ -62,14 +62,12 @@ func Knowable(name string, h int) bool {
 // HorizonFor returns the horizon that week w takes. A week up to observedLast
 // takes 0. A later week takes the smallest available horizon that is at least
 // its distance. It is an error when no such horizon is available.
-//
-// Deviation from horizon_for: the distance comes from the calendar, not from
-// the difference of week IDs. The ID difference is one too large across a
-// year with 52 weeks (bug 4).
 func HorizonFor(w calendar.Week, observedLast *calendar.Week, available []int) (int, error) {
 	if observedLast == nil {
 		return 0, nil
 	}
+	// horizon_for uses the difference of week IDs, which is one too large across a
+	// year with 52 weeks (bug 4). The calendar distance is correct.
 	dist := calendar.Distance(*observedLast, w)
 	if dist <= 0 {
 		return 0, nil

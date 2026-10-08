@@ -1,0 +1,12 @@
+<app-section [label]="'account.section.offline' | t">
+  <app-row-group>
+    <app-list-row
+      [title]="'map.offlineArea.title' | t"
+      [plain]="size()"
+      [chevron]="true"
+      [clickable]="true"
+      (chosen)="toAreas()"
+    />
+    <app-list-row [title]="'account.pendingTransfers' | t" [value]="pending()" />
+  </app-row-group>
+</app-section>

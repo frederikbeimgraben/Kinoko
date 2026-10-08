@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { BodyPart } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -12,29 +12,32 @@ import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { PartPickerComponent } from './part-picker.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { featureRows, lookalikeRows, sourceRows, type EditorRow } from './species-editor.rows';
 import { lookalikeWrites } from './species-lists';
 
-/** Wohin ein Abschnitt führt: auf ein Teil, einen Text, eine Verwechslung, eine Quelle. */
+/** The target of a section: a part, a text, a lookalike or a source. */
 type BlockKind = 'part' | 'text' | 'lookalike' | 'source';
 
-/** Ein Abschnitt des Editors mit seinen Zeilen. */
+/** A section of the editor with its rows. */
 interface Block {
   kind: BlockKind;
   title: string;
   rows: readonly EditorRow[];
-  /** Ein Abschnitt, der wächst, trägt unten eine Zeile zum Anlegen. */
+  /** A section that can grow has a row at the end that adds an item. */
   add: string | null;
   addAction: string | null;
-  /** Eine Zeile, die auf eine Unterseite führt, ist ein Knopf. */
+  /** A row that opens a subpage is a button. */
   opens: boolean;
 }
 
-/** Die Art im Bearbeiten-Modus: Zahlen, Vorhersage, Abschnitte, Quelle. */
+/** The species in edit mode: counts, forecast, sections and source. */
 @Component({
   selector: 'app-species-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,6 +48,9 @@ interface Block {
     PartPickerComponent,
     ListRowComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SectionComponent,
     StatRowComponent,
     SwitchComponent,
     TranslatePipe,
@@ -55,7 +61,7 @@ interface Block {
 export class SpeciesEditorComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
+  private readonly state = inject(SpeciesEditorStore);
 
   private readonly slug = injectRouteParam('slug');
 
@@ -132,7 +138,7 @@ export class SpeciesEditorComponent {
     return blocks.filter((block) => block.rows.length > 0 || block.add !== null);
   });
 
-  /** Wer die Art zuletzt angefasst hat und wann. */
+  /** The person who changed the species last, and the day of the change. */
   protected readonly sourceText = computed(() => {
     const one = this.species();
     if (one === null) return '';
@@ -146,7 +152,7 @@ export class SpeciesEditorComponent {
     () => `${this.species()?.name ?? ''} ${this.i18n.translate('admin.species.deleteConfirmSuffix')}`,
   );
 
-  /** Was der Löschung im Weg steht: Funde und eine gerechnete Karte. */
+  /** The items that block the deletion: finds and a computed map. */
   protected readonly deleteMeta = computed(() => {
     const finds = this.state.counts()?.finds ?? 0;
     return joined([
@@ -158,27 +164,24 @@ export class SpeciesEditorComponent {
   protected readonly deleteBlocked = computed(() => (this.state.counts()?.finds ?? 0) > 0);
 
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
+    this.state.load(this.slug);
   }
 
-  /** Eine Zeile führt auf die Unterseite ihres Abschnitts. */
+  /** A row opens the subpage of its section. */
   protected openRow(kind: BlockKind, at: number, key: string): void {
     if (kind === 'part') void this.router.navigate(['/verwaltung/arten', this.slug(), 'teil', key]);
     if (kind === 'lookalike') this.open('verwechslung', at);
     if (kind === 'source') this.open('quelle', at);
   }
 
-  /** Die Zeile am Ende eines Abschnitts legt einen weiteren Eintrag an. */
+  /** The row at the end of a section adds an item. */
   protected addRow(kind: BlockKind): void {
     if (kind === 'part') this.picking.set(true);
     if (kind === 'lookalike') this.open('verwechslung', lookalikeWrites(this.species()).length);
     if (kind === 'source') this.open('quelle', this.species()?.sources.length ?? 0);
   }
 
-  /** Nimmt die gewählten Teile in die Art auf und schließt das Blatt. */
+  /** Adds the chosen parts to the species and closes the sheet. */
   protected addParts(parts: readonly BodyPart[]): void {
     this.state.addParts(parts);
     this.picking.set(false);
@@ -194,8 +197,11 @@ export class SpeciesEditorComponent {
 
   protected remove(): void {
     this.removing.set(false);
-    this.state.remove();
-    this.back();
+    this.state.remove({
+      onDone: () => {
+        this.back();
+      },
+    });
   }
 
   protected back(): void {

@@ -12,11 +12,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// deriveGolden is testdata/derive.json.gz from testdata/gen_golden.py on a random
-// 30-cell by 120-week cube with NaN and the week 2020W53. Values are [week][cell].
-//   - full: build_dataset.add_anomalies(add_lags(weather)), as visit_model.py;
-//   - forecast: two forecast weeks, region_map.normalwerte, add_lags on the last weeks, as region_map.py;
-//   - layers: input_layers.wochenwetter.
+// deriveGolden is testdata/derive.json.gz of testdata/gen_golden.py on a random 30-cell, 120-week cube with NaN
+// and 2020W53. Values are [week][cell]. full is add_anomalies(add_lags(weather)) as visit_model.py; forecast is
+// region_map.py with two forecast weeks; layers is input_layers.wochenwetter.
 type deriveGolden struct {
 	Cells     []string                `json:"cells"`
 	Weeks     [][2]int                `json:"weeks"`
@@ -38,7 +36,7 @@ func loadDeriveGolden(t *testing.T) (deriveGolden, *Cube) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	zr, err := gzip.NewReader(f)
 	if err != nil {
 		t.Fatal(err)
@@ -168,5 +166,16 @@ func TestDeriveRejectsUnknownNames(t *testing.T) {
 	}
 	if _, err := DeriveWith(cube, []string{"tas_anom"}, &Normals{}); err == nil {
 		t.Error("no error without normals")
+	}
+}
+
+func TestInputsNamesTheCheckpointsOfTheFeatures(t *testing.T) {
+	got := Inputs([]string{"pr_sum4_anom", "tas_lag3", "tas_drop_2w", "paws", "days_since_rain", "tasmin_mean8"})
+	want := []string{"days_since_rain", "paws_beech", "paws_oak", "paws_pine", "paws_spruce", "pr", "tas", "tasmin"}
+	if !slices.Equal(got, want) {
+		t.Fatalf("Inputs = %v, want %v", got, want)
+	}
+	if got := Inputs(nil); got == nil || len(got) != 0 {
+		t.Fatalf("Inputs(nil) = %#v, want an empty list", got)
 	}
 }

@@ -7,11 +7,11 @@ import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../../ui/section/section.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
 import { photoPath, type Lookalike } from '../../../core/api/models';
-import { SpeciesState } from '../species.state';
+import { SpeciesStore } from '../species.store';
 
 const FALLBACK_COLOUR = '#7a5230';
 
-/** Eine Verwechslung in der Zeile: Bild oder Ersatzfarbe, Name und der Satz, der sie trennt. */
+/** A lookalike in its row: photo or fallback colour, name and the sentence that tells the difference. */
 interface LookalikeRow {
   slug: string;
   name: string;
@@ -20,7 +20,7 @@ interface LookalikeRow {
   image: string | null;
 }
 
-/** Die Verwechslungen einer Art. Ein Weg vergleicht, der andere öffnet die Art. */
+/** The lookalikes of a species. One action compares, the other opens the species. */
 @Component({
   selector: 'app-species-lookalikes',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +37,7 @@ interface LookalikeRow {
   styleUrl: './species-lookalikes.component.scss',
 })
 export class SpeciesLookalikesComponent {
-  private readonly catalogue = inject(SpeciesState);
+  private readonly catalogue = inject(SpeciesStore);
 
   readonly lookalikes = input.required<readonly Lookalike[]>();
 

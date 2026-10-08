@@ -39,7 +39,7 @@ describe('RoleComponent', () => {
     await build('rolle-berater');
 
     for (const area of ['Arten', 'Oberfläche', 'Zugang', 'Daten']) {
-      expect(screen.getByRole('heading', { name: area })).toBeInTheDocument();
+      expect(screen.getByText(area, { selector: '.lbl' })).toBeInTheDocument();
     }
   });
 

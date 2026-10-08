@@ -1,0 +1,46 @@
+<app-fold-section [label]="'entry.field.visibility' | t">
+  <app-chip-group
+    [chips]="visibilityChips()"
+    [value]="visibility()"
+    [label]="'entry.field.visibility' | t"
+    (valueChange)="setVisibility($event)"
+  />
+</app-fold-section>
+@if (groupChips().length > 0) {
+  <app-fold-section [label]="'entry.field.group' | t">
+    <app-chip-group
+      [chips]="groupChips()"
+      [value]="group()"
+      [label]="'entry.field.group' | t"
+      (valueChange)="setGroup($event)"
+    />
+  </app-fold-section>
+}
+@if (zoneChips().length > 0) {
+  <app-fold-section [label]="'entry.filter.zone' | t">
+    <app-chip-group
+      [chips]="zoneChips()"
+      [value]="zone()"
+      [label]="'entry.filter.zone' | t"
+      (valueChange)="setZone($event)"
+    />
+  </app-fold-section>
+}
+<app-fold-section [label]="'entry.filter.time' | t">
+  <app-chip-group
+    [chips]="timeChips()"
+    [value]="time()"
+    [label]="'entry.filter.time' | t"
+    (valueChange)="setTime($event)"
+  />
+</app-fold-section>
+<app-row-group>
+  <app-list-row [title]="'entry.filter.withPhoto' | t">
+    <app-switch
+      action
+      [checked]="filter().withPhoto"
+      [label]="'entry.filter.withPhoto' | t"
+      (checkedChange)="setPhoto($event)"
+    />
+  </app-list-row>
+</app-row-group>

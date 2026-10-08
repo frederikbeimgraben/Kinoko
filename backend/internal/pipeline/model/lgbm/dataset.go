@@ -39,7 +39,7 @@ func (d *datasetHandle) release() {
 	}
 }
 
-// Dataset is a LightGBM training set. Call Close when it is no longer needed.
+// Dataset is a LightGBM training set. Call Close when the set is not necessary.
 // A finalizer frees it if Close is not called.
 type Dataset struct {
 	mu      sync.Mutex
@@ -69,7 +69,7 @@ func NewDataset[T Float](x []T, nrow, ncol int, label []float32, names []string,
 	var h C.DatasetHandle
 	err := call("DatasetCreateFromMat", func() C.int {
 		return C.LGBM_DatasetCreateFromMat(unsafe.Pointer(&x[0]), C.int(dtypeOf(x)),
-			C.int32_t(nrow), C.int32_t(ncol), rowMajor, cparams, nil, &h)
+			C.int32_t(nrow), C.int32_t(ncol), rowMajor, cparams, nil, &h) //nolint:gocritic // The cgo expansion of this C call has a repeated operand; this source has none.
 	})
 	runtime.KeepAlive(x)
 	if err != nil {

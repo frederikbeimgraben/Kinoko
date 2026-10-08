@@ -85,7 +85,7 @@ func ExtractZip(zipPath, dir string, keep func(name string) bool) ([]string, err
 	if err != nil {
 		return nil, err
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	var written []string
 	for _, f := range z.rc.File {
 		if f.FileInfo().IsDir() || !keep(f.Name) {
@@ -121,7 +121,7 @@ func extractOne(f *zip.File, target string) (err error) {
 	if err != nil {
 		return err
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 	tmp := target + ".partial"
 	out, err := os.Create(tmp)
 	if err != nil {
@@ -129,8 +129,9 @@ func extractOne(f *zip.File, target string) (err error) {
 	}
 	defer func() {
 		if err != nil {
-			out.Close()
-			os.Remove(tmp)
+			// This cleans up after a failure. The first error is the one to report.
+			_ = out.Close()
+			_ = os.Remove(tmp)
 		}
 	}()
 	if _, err = io.Copy(out, r); err != nil {

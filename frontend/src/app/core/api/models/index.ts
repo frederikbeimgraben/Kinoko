@@ -1,4 +1,4 @@
-/** Die Modelle der API an einer Stelle, damit Seiten nur einen Pfad kennen. */
+/** The API models in one place, so that a page knows only one path. */
 export {
   CAP_SHAPES,
   DIMENSIONS,
@@ -72,11 +72,30 @@ export { RUN_KINDS } from './runs';
 export type {
   PipelineRun,
   PipelineRunDetail,
+  PipelineRunInput,
   PipelineRunSpecies,
   PipelineRunStep,
   RunKind,
   RunState,
 } from './runs';
+export { DATA_SOURCE_KINDS, REMOTE_SOURCE_IDS } from './data-sources';
+export type {
+  DataSource,
+  DataSourceAccept,
+  DataSourceArtifact,
+  DataSourceDetail,
+  DataSourceKind,
+  DataSourceState,
+  DataSourceUse,
+  DataSourceVersion,
+  RefreshRange,
+  RemoteSource,
+  RemoteSourceId,
+  RemoteSourceState,
+  UploadCreate,
+  UploadSession,
+  VersionState,
+} from './data-sources';
 export { MARKER_COLOURS, VISIBILITIES } from './entries';
 export { LICENCES, PHOTO_STATES, photoPath } from './photos';
 export type { OpenFind, ReviewState, SharedFind } from './finds';

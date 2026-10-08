@@ -76,12 +76,12 @@ func readSlim(path string, fn func(slimLine)) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	gz, err := gzip.NewReader(bufio.NewReaderSize(f, 1<<16))
 	if err != nil {
 		return fmt.Errorf("occ: %s: %w", path, err)
 	}
-	defer gz.Close()
+	defer func() { _ = gz.Close() }()
 	sc := bufio.NewScanner(gz)
 	sc.Buffer(make([]byte, 1<<16), 1<<26)
 	for n := 1; sc.Scan(); n++ {

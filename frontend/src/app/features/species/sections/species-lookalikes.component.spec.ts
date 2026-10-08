@@ -4,7 +4,7 @@ import { noViolations } from '../../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../../testing/i18n';
 import { speciesEntry } from '../../../testing/species-fixture';
 import type { Lookalike, SpeciesEntry } from '../../../core/api/models';
-import { SpeciesState } from '../species.state';
+import { SpeciesStore } from '../species.store';
 import { SpeciesLookalikesComponent } from './species-lookalikes.component';
 
 const SLUG = 'tylopilus-felleus';
@@ -27,16 +27,16 @@ const WITH_PHOTO = speciesEntry({
   leadPhotoId: 'bild-eins',
 });
 
-/** Ein Katalog, der genau eine Art mit Titelbild kennt. */
+/** A catalogue with exactly one species with a lead photo. */
 class CatalogueDouble {
   entryOf(slug: string): SpeciesEntry | null {
     return slug === SLUG ? WITH_PHOTO : null;
   }
 }
 
-const WITH_CATALOGUE = [{ provide: SpeciesState, useClass: CatalogueDouble }];
+const WITH_CATALOGUE = [{ provide: SpeciesStore, useClass: CatalogueDouble }];
 
-/** Die Marken der Elemente am Zeilenende, in ihrer Reihenfolge. */
+/** The marks of the elements at the end of the row, in their order. */
 function wayTags(container: Element): string[] {
   const ways = container.querySelector('.lookalike__ways');
   if (ways === null) throw new Error('Die Zeile trägt kein Ende.');

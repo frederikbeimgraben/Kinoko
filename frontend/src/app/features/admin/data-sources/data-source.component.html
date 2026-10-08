@@ -1,0 +1,122 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()">
+  @if (kind() !== null) {
+    <app-icon-button icon="upload" [label]="uploadLabel()" (pressed)="upload()" />
+  }
+</app-page-header>
+
+<div class="source">
+  @if (kind() === null) {
+    <app-state-view icon="search" [title]="'admin.dataSources.notFound' | t" />
+  } @else if (detail(); as detail) {
+    @if (interrupted(); as line) {
+      <app-banner kind="pending" icon="upload" [text]="line" (actionClick)="upload()" />
+    }
+
+    <p class="source__about">{{ about() }}</p>
+
+    <app-section [label]="'admin.dataSources.section.format' | t">
+      <app-row-group>
+        @if (state(); as state) {
+          <app-list-row
+            [title]="'admin.dataSources.stateTitle' | t"
+            [badge]="state.text"
+            [badgeKind]="state.tone"
+          />
+        }
+        @for (fact of format(); track fact.key) {
+          <app-list-row [title]="fact.title" [plain]="fact.value" />
+        }
+      </app-row-group>
+    </app-section>
+
+    @if (perSpecies()) {
+      <app-section [label]="'admin.dataSources.section.species' | t">
+        <app-row-group>
+          <app-list-row
+            icon="mushroom"
+            [title]="'admin.dataSources.chooseSpecies' | t"
+            [plain]="speciesName()"
+            [clickable]="true"
+            [chevron]="true"
+            (chosen)="picking.set(true)"
+          />
+          @for (row of perSpeciesRows(); track row.speciesId) {
+            <app-list-row
+              [title]="row.title"
+              [subline]="row.subline"
+              [clickable]="true"
+              [chevron]="true"
+              (chosen)="chooseSpecies(row.speciesId)"
+            />
+          }
+        </app-row-group>
+      </app-section>
+    }
+
+    @if (meta().length > 0) {
+      <app-section [label]="'admin.dataSources.section.active' | t">
+        <app-row-group>
+          @for (fact of meta(); track fact.key) {
+            <app-list-row [title]="fact.title" [plain]="fact.value" />
+          }
+        </app-row-group>
+      </app-section>
+    }
+
+    @if (artifacts().length > 0) {
+      <app-section [label]="'admin.dataSources.section.artifacts' | t">
+        <app-row-group>
+          @for (artifact of artifacts(); track artifact.name) {
+            <app-list-row [title]="artifact.name" [plain]="artifact.size" />
+          }
+        </app-row-group>
+      </app-section>
+    }
+
+    <app-section [label]="'admin.dataSources.section.versions' | t">
+      @if (versions().length === 0) {
+        <app-state-view
+          icon="upload"
+          [title]="'admin.dataSources.empty' | t"
+          [action]="uploadLabel()"
+          (actionClick)="upload()"
+        />
+      } @else {
+        <app-row-group>
+          @for (row of versions(); track row.id) {
+            <app-list-row
+              [title]="row.title"
+              [subline]="row.subline"
+              [badge]="row.state"
+              [badgeKind]="row.tone"
+              [clickable]="true"
+              (chosen)="openVersion.set(row.id)"
+            />
+          }
+          @if (more()) {
+            <app-list-row
+              kind="link"
+              [title]="'admin.dataSources.more' | t"
+              [clickable]="true"
+              (chosen)="loadMore()"
+            />
+          }
+        </app-row-group>
+      }
+    </app-section>
+  } @else {
+    <app-row-group-skeleton [count]="4" [label]="true" trail="value" />
+    <app-row-group-skeleton [count]="3" [label]="true" [lines]="2" trail="badge" />
+  }
+</div>
+
+<app-version-sheet [versionId]="openVersion()" (closed)="openVersion.set(null)" />
+<app-upload-sheet [kind]="uploading()" (closed)="uploading.set(null)" />
+<app-option-sheet
+  [open]="picking()"
+  [title]="'admin.dataSources.chooseSpecies' | t"
+  [options]="speciesOptions()"
+  [selected]="speciesId() ?? ''"
+  (chosen)="chooseSpecies($event)"
+  (closed)="picking.set(false)"
+/>

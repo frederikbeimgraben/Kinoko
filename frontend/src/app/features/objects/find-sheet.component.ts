@@ -12,7 +12,7 @@ import {
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
 import { AccountStore } from '../../core/access/account.store';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import { PersonNamesStore } from '../../core/access/person-names.store';
 import { photoPath } from '../../core/api/models';
 import type { Find, Photo } from '../../core/api/models';
@@ -35,7 +35,7 @@ import { ToastService } from '../../ui/toast/toast.service';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
 import { EntriesState } from '../entries/entries.state';
 import { findSubline } from '../entries/find-subline';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { ObjectSheetStore } from './object-sheet.store';
 
 /** The object sheet of a find, per the board `FindViewBody`. */
@@ -62,10 +62,10 @@ import { ObjectSheetStore } from './object-sheet.store';
 export class FindSheetComponent {
   private readonly account = inject(AccountStore);
   private readonly names = inject(PersonNamesStore);
-  private readonly groups = inject(GroupsState);
+  private readonly groups = inject(GroupsStore);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
-  private readonly arten = inject(SpeciesState);
+  private readonly arten = inject(SpeciesStore);
   private readonly eintraege = inject(EntriesState);
   protected readonly sheet = inject(ObjectSheetStore);
   protected readonly wide = inject(ViewportService).wide;

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  linkedSignal,
+  signal,
+  type Signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import type { Permission, PermissionArea, Role } from '../../core/api/models';
 import { PERMISSION_AREAS } from '../../core/api/models';
@@ -10,28 +18,41 @@ import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { AdminState } from './admin.state';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { AdminStore } from './admin.store';
 import { AREA_TEXT, PERMISSION_TEXT } from './labels';
 import { roleName } from './role-name';
 
-/** Der Weg, unter dem eine neue Rolle angelegt wird. */
+/** The route segment that creates a new role. */
 export const NEW_ROLE = 'neu';
 
-/** Ein Recht in der Matrix. */
+/** A permission in the matrix. */
 interface Right {
   key: Permission;
   titel: string;
   checked: boolean;
 }
 
-/** Eine Gruppe der Matrix, nach Bereich. */
+/** A group of the matrix, by area. */
 interface Area {
   area: PermissionArea;
   titel: string;
   rights: Right[];
 }
 
-/** Eine Rolle anlegen oder ändern. Feste Rolle: Name fest, kein Löschen. */
+/** A field that starts with a value of the role. After that, the input of the person stays. */
+function seeded<T>(role: Signal<Role | null>, pick: (role: Role | null) => T) {
+  return linkedSignal<Role | null, T>({
+    source: role,
+    computation: (next, previous) =>
+      previous !== undefined && previous.source?.id === next?.id ? previous.value : pick(next),
+  });
+}
+
+/** Creates or changes a role. A built-in role keeps its name and cannot be deleted. */
 @Component({
   selector: 'app-role',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +62,10 @@ interface Area {
     ConfirmDialogComponent,
     FormFieldComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SectionComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './role.component.html',
@@ -49,36 +74,39 @@ interface Area {
 export class RoleComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(AdminState);
+  private readonly store = inject(AdminStore);
 
   private readonly id = injectRouteParam('id', NEW_ROLE);
 
   protected readonly creating = computed(() => this.id() === NEW_ROLE);
   protected readonly role = computed<Role | null>(
-    () => this.state.roles()?.find((one) => one.id === this.id()) ?? null,
+    () => this.store.roles()?.find((one) => one.id === this.id()) ?? null,
   );
-  /** Eine Kennung, die es nicht gibt: die Liste ist da, die Rolle nicht. */
+  protected readonly waiting = computed(() => !this.creating() && this.store.roles() === null);
+  /** The list is there, but it has no role with this id. */
   protected readonly missing = computed(
-    () => !this.creating() && this.state.roles() !== null && this.role() === null,
+    () => !this.creating() && this.store.roles() !== null && this.role() === null,
   );
   protected readonly locked = computed(() => this.role()?.builtIn === true);
+  protected readonly saving = this.store.saving;
 
-  protected readonly name = signal('');
-  protected readonly slug = signal('');
-  protected readonly description = signal('');
-  protected readonly chosen = signal<ReadonlySet<Permission>>(new Set());
+  protected readonly name = seeded(this.role, (role) => role?.name ?? '');
+  protected readonly slug = seeded(this.role, (role) => role?.slug ?? '');
+  protected readonly description = seeded(this.role, (role) => role?.description ?? '');
+  protected readonly chosen = seeded<ReadonlySet<Permission>>(
+    this.role,
+    (role) => new Set(role?.permissions),
+  );
   protected readonly confirming = signal(false);
-  /** Ein zweiter Druck auf Speichern legte die Rolle ein zweites Mal an. */
-  protected readonly saving = signal(false);
 
-  /** Der Kopf trägt den Namen der Rolle, eine neue trägt „Neue Rolle“. */
+  /** The head shows the name of the role. A new role shows "New role". */
   protected readonly title = computed(() => {
     const current = this.role();
     if (current) return roleName(this.i18n, current.name);
     return this.i18n.translate(this.creating() ? 'admin.role.new' : 'admin.roles.title');
   });
 
-  /** Das Namensfeld einer festen Rolle zeigt den übersetzten Namen, nicht den Schlüssel. */
+  /** The name field of a built-in role shows the translated name, not the key. */
   protected readonly displayName = computed(() =>
     this.locked() ? roleName(this.i18n, this.name()) : this.name(),
   );
@@ -86,7 +114,7 @@ export class RoleComponent {
   protected readonly ready = computed(() => this.name().trim().length > 0 && this.slug().trim().length > 0);
 
   protected readonly areas = computed<Area[]>(() => {
-    const catalogue = this.state.catalogue() ?? [];
+    const catalogue = this.store.catalogue() ?? [];
     const held = this.chosen();
     return PERMISSION_AREAS.map((area) => ({
       area,
@@ -110,20 +138,8 @@ export class RoleComponent {
   });
 
   constructor() {
-    this.state.loadRoles();
-    this.state.loadCatalogue();
-    // Die Felder folgen der Rolle, sobald sie da ist. Danach führt die Eingabe:
-    // sonst überschriebe jede Antwort des Servers, was gerade getippt wird.
-    let seeded: string | null = null;
-    effect(() => {
-      const role = this.role();
-      if (role === null || seeded === role.id) return;
-      seeded = role.id;
-      this.name.set(role.name);
-      this.slug.set(role.slug);
-      this.description.set(role.description ?? '');
-      this.chosen.set(new Set(role.permissions));
-    });
+    this.store.loadRoles();
+    this.store.loadCatalogue();
   }
 
   protected toggle(permission: Permission, on: boolean): void {
@@ -136,32 +152,26 @@ export class RoleComponent {
   }
 
   protected save(): void {
-    if (!this.ready() || this.saving()) return;
-    this.saving.set(true);
+    if (!this.ready()) return;
     const permissions = [...this.chosen()];
     const description = this.description().trim() || null;
-    const request = this.creating()
-      ? this.state.createRole({
-          slug: this.slug().trim(),
-          name: this.name().trim(),
-          description,
-          permissions,
-        })
-      : this.state.patchRole(this.id(), { name: this.name().trim(), description, permissions });
-    request.subscribe({
-      next: () => {
-        this.leave();
-      },
-      error: () => {
-        this.saving.set(false);
-      },
-    });
+    const onDone = (): void => {
+      this.leave();
+    };
+    this.store.saveRole(
+      this.creating()
+        ? { input: { slug: this.slug().trim(), name: this.name().trim(), description, permissions }, onDone }
+        : { id: this.id(), patch: { name: this.name().trim(), description, permissions }, onDone },
+    );
   }
 
   protected remove(): void {
     this.confirming.set(false);
-    this.state.deleteRole(this.id()).subscribe(() => {
-      this.leave();
+    this.store.deleteRole({
+      id: this.id(),
+      onDone: () => {
+        this.leave();
+      },
     });
   }
 

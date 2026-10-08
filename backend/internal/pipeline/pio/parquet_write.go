@@ -33,11 +33,12 @@ func WriteParquet(path string, t *Table, schema []ColumnSpec) (err error) {
 	}
 	defer func() {
 		if err != nil {
-			tmp.Close()
-			os.Remove(tmp.Name())
+			// This cleans up after a failure. The first error is the one to report.
+			_ = tmp.Close()
+			_ = os.Remove(tmp.Name())
 		}
 	}()
-	w := parquet.NewWriter(tmp,
+	w := parquet.NewGenericWriter[any](tmp,
 		parquet.NewSchema("schema", orderedGroup(fieldsOf(schema))),
 		parquet.Compression(&parquet.Snappy),
 		parquet.MaxRowsPerRowGroup(rowGroupRows),
@@ -60,7 +61,7 @@ func WriteParquet(path string, t *Table, schema []ColumnSpec) (err error) {
 	return nil
 }
 
-func writeRows(w *parquet.Writer, n int, writers []func(i int) parquet.Value) error {
+func writeRows(w *parquet.GenericWriter[any], n int, writers []func(i int) parquet.Value) error {
 	rows := make([]parquet.Row, 0, writeBatch)
 	for start := 0; start < n; start += writeBatch {
 		end := min(start+writeBatch, n)

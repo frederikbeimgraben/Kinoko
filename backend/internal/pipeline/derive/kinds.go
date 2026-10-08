@@ -18,7 +18,8 @@ const (
 	MinCoverage     = 0.9
 	TreeMaxPixelM   = 10.5
 	DEMMaxPixelM    = 100
-	DEMLow, DEMHigh = -500, 5000
+	DEMLow          = -500
+	DEMHigh         = 5000
 	SoilMaxPixelM   = 300
 	OtherClassShare = 0.01
 )
@@ -48,7 +49,7 @@ func inspectUpload(path string, g Grid, dtypes []string, maxPixel float64) (Rast
 	if err != nil {
 		return RasterReport{}, sources.Fail("unreadable", "GDAL cannot open the raster: %v", err)
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	r, err := Inspect(ds, g)
 	switch {
 	case err != nil:
@@ -84,7 +85,7 @@ func (p TreeMap) Validate(ctx context.Context, v *sources.Version) (map[string]a
 	if err != nil {
 		return nil, err
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	counts, err := ClassHistogram(ds)
 	if err != nil {
 		return nil, err
@@ -173,7 +174,7 @@ func (p DEM) Validate(ctx context.Context, v *sources.Version) (map[string]any, 
 	if err != nil {
 		return nil, err
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	lo, hi, ok, err := ValueRange(ds)
 	if err != nil {
 		return nil, err

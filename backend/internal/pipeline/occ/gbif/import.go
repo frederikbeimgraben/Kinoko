@@ -43,7 +43,7 @@ func ImportArchive(ctx context.Context, zipPath, outDir string, opt ImportOption
 	if err != nil {
 		return ImportMeta{}, err
 	}
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 	if missing := src.Missing(archive.OccurrenceTerms); len(missing) > 0 {
 		return ImportMeta{}, fmt.Errorf("gbif: archive lacks the columns %s", strings.Join(missing, ", "))
 	}

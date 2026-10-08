@@ -15,19 +15,19 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import type { BadgeKind } from '../../ui/level-pill/level-pill.component';
 import type { GroupKey } from './facets';
 
-/** Plakettenfarbe und Fläche ohne eigenes Thema, etwa Schutz und Handel. */
+/** The badge colour and ground without a theme of their own, for example protection and trade. */
 export const MUTED_TONE = { colour: 'var(--text-var)', background: 'var(--tonal)' };
 
-/** Die Plakettenfarbe je Speisewert, per `kit.css` `.badge`. */
+/** The badge kind for each edibility, per `kit.css` `.badge`. */
 export const EDIBILITY_KIND: Record<Edibility, BadgeKind> = {
   edible: 'ok',
   conditionally_edible: 'warn',
   inedible: '',
-  poisonous: 'bad',
+  poisonous: 'warn',
   deadly: 'bad',
 };
 
-/** Plakettenfarbe und Fläche je Speisewert, aus Thema-Tokens. */
+/** The badge colour and ground for each edibility, from theme tokens. */
 export const EDIBILITY_TONE: Record<Edibility, { colour: string; background: string }> = {
   edible: { colour: 'var(--color-primary)', background: 'var(--color-primary-subtle)' },
   conditionally_edible: { colour: 'var(--color-warning)', background: 'var(--color-warning-subtle)' },
@@ -136,12 +136,12 @@ export const GROUP_TEXT: Record<GroupKey, TranslationKey> = {
   forecast: 'filter.group.forecast',
 };
 
-/** Der Titel einer Filtergruppe, im Blattkopf am Telefon und in der Spalte am Rechner. */
+/** The title of a filter group, in the sheet head on the phone and in the column on the desktop. */
 export function groupTitle(group: GroupKey, i18n: I18nService): string {
   return i18n.translate(GROUP_TEXT[group]);
 }
 
-/** Die Körperteile mit eigener Farbwahl, in der Reihenfolge des Bretts. */
+/** The body parts with their own colour choice, in the order of the board. */
 export const COLOUR_PARTS: readonly BodyPart[] = ['cap', 'stem', 'gills', 'flesh', 'spore_print'];
 
 export const MONTH_TEXT: readonly TranslationKey[] = [
@@ -159,7 +159,7 @@ export const MONTH_TEXT: readonly TranslationKey[] = [
   'enum.month.12',
 ];
 
-/** Der Schlüssel einer Standardfarbe im Katalog. */
+/** The text key of a standard colour in the catalogue. */
 export const COLOUR_TEXT: Record<string, TranslationKey> = {
   white: 'enum.colour.white',
   cream: 'enum.colour.cream',
@@ -175,7 +175,7 @@ export const COLOUR_TEXT: Record<string, TranslationKey> = {
   grey: 'enum.colour.grey',
 };
 
-/** Der Name der Gruppe, die eine Art einordnet. */
+/** The name of the group that classifies a species. */
 export const GROUP_NAME_TEXT: Record<string, TranslationKey> = {
   bolete: 'enum.group.bolete',
   rough_stemmed_bolete: 'enum.group.rough_stemmed_bolete',

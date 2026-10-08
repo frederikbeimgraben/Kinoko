@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/calendar"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
@@ -87,7 +88,7 @@ func buildGrid(cfg ExtractConfig, log Logger) (*grid, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	x, y, _, err := f.Coords()
 	if err != nil {
 		return nil, err
@@ -163,16 +164,17 @@ func runJob(ctx context.Context, cfg ExtractConfig, g *grid, names []string, job
 		log.Printf("%s: from cache", job.Name)
 		return nil
 	}
+	dir := filepath.Join(cfg.RawDir, filepath.FromSlash(job.Dir))
 	var old rows
 	from := cfg.Start
+	keepOld := func(calendar.Week) bool { return false }
 	if exists {
-		rf := *cfg.RefreshFrom
+		from = max(cfg.Start, *cfg.RefreshFrom-1)
+		keepOld = refreshCut(*cfg.RefreshFrom, from, firstFileYear(dir, from, cfg.End))
 		var err error
-		if old, err = readCheckpoint(path, job.Name, func(w calendar.Week) bool { return w.Year < rf }); err != nil {
+		if old, err = readCheckpoint(path, job.Name, keepOld); err != nil {
 			return err
 		}
-		// An ISO week can span the turn of the year, so the refresh starts one year early and keeps none of it.
-		from = max(cfg.Start, rf-1)
 	}
 	var measure DayMeasure
 	if job.Measure != nil {
@@ -184,7 +186,7 @@ func runJob(ctx context.Context, cfg ExtractConfig, g *grid, names []string, job
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		file := YearFile(filepath.Join(cfg.RawDir, filepath.FromSlash(job.Dir)), year)
+		file := YearFile(dir, year)
 		if file == "" {
 			continue
 		}
@@ -203,13 +205,45 @@ func runJob(ctx context.Context, cfg ExtractConfig, g *grid, names []string, job
 		return nil
 	}
 	out := old
-	fresh := toRows(acc.result(), names, func(w calendar.Week) bool { return !exists || w.Year >= *cfg.RefreshFrom })
+	oldWeeks := map[calendar.Week]bool{}
+	for _, w := range old.weeks {
+		oldWeeks[w] = true
+	}
+	fresh := toRows(acc.result(), names, func(w calendar.Week) bool { return !keepOld(w) || !oldWeeks[w] })
 	out.weeks, out.cells, out.vals = append(out.weeks, fresh.weeks...), append(out.cells, fresh.cells...), append(out.vals, fresh.vals...)
 	if err := writeCheckpoint(path, job.Name, out.sorted()); err != nil {
 		return err
 	}
 	log.Printf("%s: %d old plus %d new cell-weeks", job.Name, len(old.vals), len(fresh.vals))
 	return nil
+}
+
+// refreshWarmUp is the span after the first raw file of a refresh in which
+// the old rows stay: the cross-year week and the 60-day days_since_rain counter.
+const refreshWarmUp = 9 * 7
+
+// refreshCut tells which old weeks a refresh from the ISO year rf keeps. It
+// keeps a week that ends before Jan 1 of rf: each later week starts on or
+// after Dec 26 of rf-1, so the files from rf-1 cover it.
+func refreshCut(rf, from, first int) func(calendar.Week) bool {
+	cut := time.Date(rf, time.January, 1, 0, 0, 0, 0, time.UTC)
+	if first > from {
+		// Without the file of from, the first weeks of a later file are incomplete.
+		if warm := time.Date(first, time.January, 1, 0, 0, 0, 0, time.UTC).AddDate(0, 0, refreshWarmUp); warm.After(cut) {
+			cut = warm
+		}
+	}
+	return func(w calendar.Week) bool { return w.Day(7).Before(cut) }
+}
+
+// firstFileYear gives the first year in from..end with a file in dir, or 0.
+func firstFileYear(dir string, from, end int) int {
+	for year := from; year <= end; year++ {
+		if YearFile(dir, year) != "" {
+			return year
+		}
+	}
+	return 0
 }
 
 // toRows gives the weeks that keep accepts in long form, each week with every cell.

@@ -1,0 +1,14 @@
+@use '../page';
+
+:host {
+  @include page.page;
+}
+
+.sources {
+  @include page.body;
+}
+
+.sources__uses {
+  display: flex;
+  gap: 4px;
+}

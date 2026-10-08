@@ -2,7 +2,7 @@ import type { Routes } from '@angular/router';
 import { requiresPermission } from './features/admin/admin.guard';
 import { DEV_ROUTES } from './dev/dev.routes';
 
-/** Die vier Reiter. Wo das Arbeitspaket aussteht, steht ein Platzhalter. */
+/** The four tabs and the pages below them. */
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'karte' },
   {
@@ -15,7 +15,7 @@ export const routes: Routes = [
       import('./features/species/species-list.component').then((m) => m.SpeciesListComponent),
   },
   {
-    // Der Vergleich steht vor der Artseite: sonst nähme `:slug` das Wort.
+    // The comparison comes before the species page: else `:slug` takes the word.
     path: 'arten/vergleich',
     loadComponent: () =>
       import('./features/species/compare/comparison.component').then((m) => m.ComparisonComponent),
@@ -34,8 +34,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/images/image-view.component').then((m) => m.ImageViewComponent),
   },
   {
-    // Ein eigener Brocken: die Einordnung wird selten geöffnet und kostet im
-    // ersten Bündel darum nichts.
+    // A chunk of its own: the taxonomy opens seldom, so it adds nothing to the first bundle.
     path: 'taxonomie/:rank/:slug',
     loadComponent: () => import('./features/taxonomy/taxonomy.component').then((m) => m.TaxonomyComponent),
   },
@@ -44,36 +43,60 @@ export const routes: Routes = [
     loadComponent: () => import('./features/entries/entries.component').then((m) => m.EntriesComponent),
   },
   {
+    // On the desktop the account is a list with a detail pane. The empty child is the default detail.
     path: 'konto',
     loadComponent: () => import('./features/account/account.component').then((m) => m.AccountComponent),
-  },
-  {
-    path: 'konto/gruppen',
-    loadComponent: () => import('./features/account/groups.component').then((m) => m.GroupsComponent),
-  },
-  {
-    path: 'konto/gruppen/:id',
-    loadComponent: () => import('./features/account/group.component').then((m) => m.GroupComponent),
-  },
-  {
-    path: 'konto/glossar',
-    loadComponent: () => import('./features/account/glossary.component').then((m) => m.GlossaryComponent),
-  },
-  {
-    path: 'konto/bilder',
-    loadComponent: () => import('./features/account/my-images.component').then((m) => m.MyImagesComponent),
-  },
-  {
-    path: 'konto/daten',
-    loadComponent: () => import('./features/account/my-data.component').then((m) => m.MyDataComponent),
-  },
-  {
-    path: 'konto/methode',
-    loadComponent: () => import('./features/account/method.component').then((m) => m.MethodComponent),
-  },
-  {
-    path: 'konto/lizenzen',
-    loadComponent: () => import('./features/account/licences.component').then((m) => m.LicencesComponent),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/account/appearance.component').then((m) => m.AppearanceComponent),
+      },
+      {
+        path: 'gruppen',
+        loadComponent: () => import('./features/account/groups.component').then((m) => m.GroupsComponent),
+      },
+      {
+        path: 'gruppen/:id',
+        loadComponent: () => import('./features/account/group.component').then((m) => m.GroupComponent),
+      },
+      {
+        path: 'glossar',
+        loadComponent: () => import('./features/account/glossary.component').then((m) => m.GlossaryComponent),
+      },
+      {
+        path: 'bilder',
+        loadComponent: () =>
+          import('./features/account/my-images.component').then((m) => m.MyImagesComponent),
+      },
+      {
+        path: 'daten',
+        loadComponent: () => import('./features/account/my-data.component').then((m) => m.MyDataComponent),
+      },
+      {
+        path: 'offline',
+        loadComponent: () =>
+          import('./features/account/offline-areas.component').then((m) => m.OfflineAreasComponent),
+      },
+      {
+        path: 'offline/zonen',
+        loadComponent: () =>
+          import('./features/account/area-picker.component').then((m) => m.AreaPickerComponent),
+      },
+      {
+        path: 'ueber',
+        loadComponent: () => import('./features/account/about.component').then((m) => m.AboutComponent),
+      },
+      {
+        path: 'methode',
+        loadComponent: () => import('./features/account/method.component').then((m) => m.MethodComponent),
+      },
+      {
+        path: 'lizenzen',
+        loadComponent: () => import('./features/account/licences.component').then((m) => m.LicencesComponent),
+      },
+    ],
   },
   {
     path: 'verwaltung',
@@ -151,6 +174,18 @@ export const routes: Routes = [
         path: 'laeufe/:id',
         canActivate: [requiresPermission('run.manage')],
         loadComponent: () => import('./features/admin/run.component').then((m) => m.RunComponent),
+      },
+      {
+        path: 'datenquellen',
+        canActivate: [requiresPermission('data.manage')],
+        loadComponent: () =>
+          import('./features/admin/data-sources/data-sources.component').then((m) => m.DataSourcesComponent),
+      },
+      {
+        path: 'datenquellen/:kind',
+        canActivate: [requiresPermission('data.manage')],
+        loadComponent: () =>
+          import('./features/admin/data-sources/data-source.component').then((m) => m.DataSourceComponent),
       },
       {
         path: 'arten/neu',

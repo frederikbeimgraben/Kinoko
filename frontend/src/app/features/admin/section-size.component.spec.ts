@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionSizeComponent } from './section-size.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 function routeFor(params: Record<string, string>): { provide: typeof ActivatedRoute; useValue: unknown } {
@@ -34,7 +34,7 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
 
 describe('SectionSizeComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt Teil und Strecke im Kopf und füllt die Spanne', async () => {

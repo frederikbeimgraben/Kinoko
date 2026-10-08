@@ -67,12 +67,16 @@ func writeZip(t *testing.T, files map[string]string) string {
 		if err != nil {
 			t.Fatal(err)
 		}
-		w.Write([]byte(body))
+		if _, err := w.Write([]byte(body)); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if err := z.Close(); err != nil {
 		t.Fatal(err)
 	}
-	out.Close()
+	if err := out.Close(); err != nil {
+		t.Fatal(err)
+	}
 	return path
 }
 

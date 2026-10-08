@@ -126,7 +126,7 @@ func readAll(t *testing.T, path string) ([]float32, int, int) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	v, err := readRawFloat(ds, 0)
 	if err != nil {
 		t.Fatal(err)

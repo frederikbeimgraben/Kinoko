@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
+	"sync"
 	"testing"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
@@ -305,5 +307,36 @@ func TestForecastChainsAreSeeded(t *testing.T) {
 	}
 	if forest := scalar[float64](f, "SELECT min_forest FROM species_forecast WHERE chain_key = 'schopftintling'"); forest != 0 {
 		t.Fatal(forest)
+	}
+}
+
+func TestEachActivationStartsTheHook(t *testing.T) {
+	f := newFixture(t)
+	var mu sync.Mutex
+	var kinds []sources.Kind
+	f.m.OnActivate(func(_ context.Context, kind sources.Kind) {
+		mu.Lock()
+		defer mu.Unlock()
+		kinds = append(kinds, kind)
+	})
+	seen := func() []sources.Kind {
+		f.m.Wait()
+		mu.Lock()
+		defer mu.Unlock()
+		return slices.Clone(kinds)
+	}
+	f.m.UseProcessor(sources.KindDEM, acceptAll{})
+	first := f.upload(sources.KindDEM, "dem.tif", []byte("raster"), nil)
+	if got := seen(); !slices.Equal(got, []sources.Kind{sources.KindDEM}) {
+		t.Fatalf("after the upload: %v", got)
+	}
+	f.upload(sources.KindDEM, "dem2.tif", []byte("raster 2"), map[string]any{"activate": false})
+	if got := seen(); len(got) != 1 {
+		t.Fatalf("a version without activation started the hook: %v", got)
+	}
+	f.env.Post(versionPath(sources.KindDEM, first["id"].(string))+"/activate", nil, f.admin).Expect(t, http.StatusOK)
+	f.env.Delete(versionPath(sources.KindDEM, first["id"].(string)), f.admin).Expect(t, http.StatusNoContent)
+	if got := seen(); !slices.Equal(got, []sources.Kind{sources.KindDEM, sources.KindDEM, sources.KindDEM}) {
+		t.Fatalf("after the activation and the delete: %v", got)
 	}
 }

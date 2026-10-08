@@ -3,6 +3,7 @@ package gbif
 import (
 	"bufio"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -42,6 +43,12 @@ func ParseChunkName(name string) (country string, year, month int, ok bool) {
 		month, _ = strconv.Atoi(m[3])
 	}
 	return m[1], year, month, true
+}
+
+// DoneName gives the name of the empty marker file that tells that the fetch
+// of a year ended without an error, for example fungi_de_2026.done.
+func DoneName(country string, year int) string {
+	return fmt.Sprintf("fungi_%s_%d.done", strings.ToLower(country), year)
 }
 
 // YearFiles gives the chunk files of one country and year in dir, sorted by name.
@@ -91,16 +98,13 @@ func (w *chunkWriter) write(line []byte) error {
 // finish closes the partial file and keeps it for a later commit.
 func (w *chunkWriter) finish() error {
 	if err := w.gz.Close(); err != nil {
-		w.file.Close()
-		return err
+		return errors.Join(err, w.file.Close())
 	}
 	if err := w.buf.Flush(); err != nil {
-		w.file.Close()
-		return err
+		return errors.Join(err, w.file.Close())
 	}
 	if err := w.file.Sync(); err != nil {
-		w.file.Close()
-		return err
+		return errors.Join(err, w.file.Close())
 	}
 	return w.file.Close()
 }
@@ -108,6 +112,7 @@ func (w *chunkWriter) finish() error {
 func (w *chunkWriter) commit() error { return os.Rename(w.path+PartialSuffix, w.path) }
 
 func (w *chunkWriter) abort() {
-	w.file.Close()
-	os.Remove(w.path + PartialSuffix)
+	// abort only cleans up after a failure, so a second error adds nothing.
+	_ = w.file.Close()
+	_ = os.Remove(w.path + PartialSuffix)
 }

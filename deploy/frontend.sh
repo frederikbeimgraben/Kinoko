@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Den Angular-Build in die Dokumentwurzel des Homeservers spiegeln.
+# Mirror the Angular build into the document root of the homeserver.
 #
-# Die Wurzel gehoert nicht dem Build allein: das Rendering schreibt dort die
-# Kacheln, Manifeste und Ebenen. Ohne die Schutzfilter wuerde --delete sie
-# mitnehmen. assets/ faellt unter denselben Schutz; veraltete Dateien darin
-# schaden nicht, weil Angular sie nicht mehr referenziert.
+# The build does not own the root alone. The pipeline writes the tiles, the
+# manifests and the layers there. Without the protect filters, --delete would
+# remove them. The same filter protects assets/. Old files in it do no harm,
+# because Angular does not refer to them.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ZIEL=${ZIEL:-pilzedeploy@10.66.66.6}

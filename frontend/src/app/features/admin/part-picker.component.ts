@@ -6,7 +6,7 @@ import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sh
 import { PART_TEXT } from '../species/labels';
 import { freeParts } from './species-lists';
 
-/** Das Blatt zur Wahl weiterer Teile einer Art. */
+/** The sheet that adds more parts to a species. */
 @Component({
   selector: 'app-part-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,7 +19,7 @@ export class PartPickerComponent {
 
   readonly open = input(false);
   readonly species = input<SpeciesEntry | null>(null);
-  /** Teile, die schon gewählt sind und darum nicht mehr zur Wahl stehen. */
+  /** The parts that are chosen already. The sheet does not offer them again. */
   readonly held = input<readonly BodyPart[]>([]);
 
   readonly chosen = output<readonly BodyPart[]>();

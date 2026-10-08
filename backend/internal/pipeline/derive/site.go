@@ -51,7 +51,7 @@ func SampleGrid(source *godal.Dataset, g Grid, resampler, srcNodata string) ([]f
 	if err != nil {
 		return nil, err
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	if nx, ny := size(ds); nx != g.NX() || ny != g.NY() {
 		return nil, fmt.Errorf("derive: warp gave %d×%d points, want %d×%d", nx, ny, g.NX(), g.NY())
 	}
@@ -63,7 +63,7 @@ func sampleFile(path string, g Grid, resampler, srcNodata string) ([]float32, er
 	if err != nil {
 		return nil, err
 	}
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 	return SampleGrid(src, g, resampler, srcNodata)
 }
 

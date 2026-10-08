@@ -1,20 +1,11 @@
+@use './page';
+@use './section';
+
 :host {
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
 .adminGroup {
-  --form-field-inline: 14px;
-  --form-field-size: var(--fs-row-title);
-  --form-field-shift: 0;
-
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
+  @include page.body;
+  @include section.fields;
 }

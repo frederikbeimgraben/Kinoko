@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -9,16 +9,19 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { AdminState } from './admin.state';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { AdminStore } from './admin.store';
 import { ADMIN_ENTRIES, ADMIN_SECTIONS, SECTION_TITLE, type AdminEntry } from './admin.entries';
 
-/** Ein Block der Übersicht mit seinen Zeilen. */
+/** A block of the overview with its rows. */
 interface Block {
   title: string;
   rows: readonly Row[];
 }
 
-/** Eine Zeile der Übersicht. */
+/** A row of the overview. */
 interface Row {
   title: string;
   counts: string;
@@ -26,11 +29,19 @@ interface Row {
   ready: boolean;
 }
 
-/** Die Verwaltung: am Telefon die Liste, am Rechner Liste und Punkt zugleich. */
+/** The administration: the list on the phone, the list and the chosen item side by side on the desktop. */
 @Component({
   selector: 'app-admin',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, PageHeaderComponent, RouterOutlet, TranslatePipe],
+  imports: [
+    ListRowComponent,
+    PageHeaderComponent,
+    RouterOutlet,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SectionComponent,
+    TranslatePipe,
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
 })
@@ -38,7 +49,7 @@ export class AdminComponent {
   private readonly i18n = inject(I18nService);
   private readonly rights = inject(PermissionsStore);
   private readonly router = inject(Router);
-  private readonly state = inject(AdminState);
+  private readonly store = inject(AdminStore);
   private readonly viewport = inject(ViewportService);
 
   protected readonly wide = this.viewport.wide;
@@ -51,9 +62,12 @@ export class AdminComponent {
     { initialValue: this.router.url },
   );
 
-  /** Ein gewählter Punkt schiebt am Telefon die Liste beiseite. */
+  /** On the phone, a chosen item replaces the list. */
   protected readonly onEntry = computed(() => this.address().startsWith('/verwaltung/'));
   protected readonly showList = computed(() => this.wide() || !this.onEntry());
+
+  /** The rows wait for the own permissions: without them, the overview does not know its items. */
+  protected readonly waiting = computed(() => this.rights.permissions() === null);
 
   protected readonly blocks = computed<readonly Block[]>(() =>
     ADMIN_SECTIONS.map((section) => ({
@@ -63,16 +77,14 @@ export class AdminComponent {
   );
 
   constructor() {
-    effect(() => {
-      if (this.rights.permissions() !== null) this.state.loadSummary();
-    });
+    this.store.followSummary(this.rights.permissions);
   }
 
   protected chosen(path: string): boolean {
     return this.address().startsWith(path);
   }
 
-  /** Ein Punkt führt weiter, sobald sein Weg in der Routentabelle steht. */
+  /** An item opens when its route is in the route table. */
   private ready(path: string): boolean {
     const children = this.router.config.find((route) => route.path === 'verwaltung')?.children ?? [];
     return children.some((child) => `/verwaltung/${child.path ?? ''}` === path);
@@ -97,9 +109,9 @@ export class AdminComponent {
     }));
   }
 
-  /** Die Zahlen des Punktes. Solange die Antwort aussteht, steht keine da. */
+  /** The counters of the item. While the response is pending, the row shows none. */
   private counts(entry: AdminEntry): string {
-    const held = this.state.summary();
+    const held = this.store.summary();
     if (held === null) return '';
     return joined(entry.counts.map((key) => (held[key] === undefined ? null : grouped(held[key]))));
   }

@@ -222,7 +222,7 @@ func (f fileResponse) Send(w http.ResponseWriter) {
 		problem.Write(w, problem.NotFound())
 		return
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil {
 		problem.Write(w, problem.NotFound())

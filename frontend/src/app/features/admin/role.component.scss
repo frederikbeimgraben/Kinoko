@@ -1,41 +1,11 @@
-@use '../../../styles/card';
+@use './page';
+@use './section';
 
 :host {
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
-// Die Felder tragen die Schrift der Zeile, wie das Brett sie zeigt.
 .role {
-  --form-field-size: var(--fs-row-title);
-  --form-field-inline: 14px;
-  --form-field-shift: 0;
-
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-}
-
-.role__section {
-  @include card.section-title;
-}
-
-.role__confirm {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-// Die Rechte stehen ohne Karte auf der Fläche, wie das Brett sie zeigt.
-.role__rights {
-  margin-block-start: -4px;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+  @include page.body;
+  @include section.fields;
 }

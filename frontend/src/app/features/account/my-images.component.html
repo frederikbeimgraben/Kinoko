@@ -1,34 +1,30 @@
-<app-page-header [title]="'bild.meine' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'bild.meine' | t" [back]="back()" (backClick)="toAccount()" />
 
-<div class="mine">
-  @if (loaded() && rows().length === 0) {
-    <app-state-view icon="empty" [title]="'bild.meineLeer' | t" />
+<div class="pad">
+  @if (!loaded()) {
+    <app-row-group-skeleton [count]="3" [lines]="2" lead="thumb" trail="badge" />
+  } @else if (rows().length === 0) {
+    <app-state-view icon="image" [title]="'bild.meineLeer' | t" />
   } @else {
-    <ul class="mine__list">
+    <app-row-group class="motion-list-in">
       @for (row of rows(); track row.id) {
-        <li>
-          <app-row-group>
-            <div class="mine__row">
-              <app-private-image class="mine__thumb" [path]="row.thumbPath" [alt]="row.alt" />
-              <div class="mine__text">
-                <span class="mine__title">{{ row.species }}</span>
-                <span class="mine__sub">{{ row.submitted }}</span>
-                @if (row.reason; as reason) {
-                  <span class="mine__reason">{{ reason }}</span>
-                }
-              </div>
-              <app-level-pill [text]="row.badgeText" [kind]="row.badge" />
-            </div>
-          </app-row-group>
-        </li>
+        <app-list-row
+          [title]="row.title"
+          [subline]="row.sub"
+          [badge]="row.badge"
+          [badgeKind]="row.kind"
+          [thumbed]="true"
+          [clickable]="row.link !== null"
+          (chosen)="open(row)"
+        >
+          <app-private-image lead [path]="row.thumb" [alt]="row.title" />
+        </app-list-row>
       }
-    </ul>
+    </app-row-group>
     @if (more()) {
-      <div class="mine__more">
-        <app-push-button kind="tonal" [disabled]="loading()" (click)="loadMore()">
-          {{ 'bild.mehr' | t }}
-        </app-push-button>
-      </div>
+      <app-push-button kind="tonal" [busy]="busy()" [disabled]="busy()" (click)="next()">
+        {{ 'bild.mehr' | t }}
+      </app-push-button>
     }
   }
 </div>

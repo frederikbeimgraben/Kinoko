@@ -1,4 +1,4 @@
-<app-page-header [title]="'admin.groups.title' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.groups.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
 
 <div class="adminGroups">
   <app-search-field
@@ -6,16 +6,21 @@
     [placeholder]="'admin.groups.search' | t"
     (valueChange)="onSearch($event)"
   />
-  <div class="adminGroups__card">
-    @for (row of rows(); track row.id) {
-      <app-list-row
-        kind="catalogue"
-        [title]="row.name"
-        [subline]="row.subline"
-        [clickable]="true"
-        [chevron]="true"
-        (chosen)="open(row.id)"
-      />
-    }
-  </div>
+  @if (!loaded()) {
+    <app-row-group-skeleton [count]="4" [lines]="2" trail="chevron" />
+  } @else if (rows().length === 0) {
+    <app-state-view icon="account" [title]="'admin.groups.empty' | t" />
+  } @else {
+    <app-row-group>
+      @for (row of rows(); track row.id) {
+        <app-list-row
+          [title]="row.name"
+          [subline]="row.subline"
+          [clickable]="true"
+          [chevron]="true"
+          (chosen)="open(row.id)"
+        />
+      }
+    </app-row-group>
+  }
 </div>

@@ -12,7 +12,7 @@ import {
 } from '../../testing/open-finds-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesEntry } from '../../testing/species-fixture';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { FindQueueComponent } from './find-queue.component';
 
 const STONE = speciesEntry({
@@ -37,7 +37,7 @@ async function build(api = new FindsApiDouble()): Promise<{
       provideRouter(ANY_ROUTE),
       findsApiProvider(api),
       findPhotosApiProvider(photos),
-      { provide: SpeciesState, useValue: speciesStub() },
+      { provide: SpeciesStore, useValue: speciesStub() },
     ],
   });
   return { container, api, router: TestBed.inject(Router) };

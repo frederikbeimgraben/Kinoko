@@ -11,7 +11,13 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
+
+// ListingTimeout limits one request for a directory listing. A listing is
+// small, so a total timeout does not cut a valid answer.
+const ListingTimeout = 120 * time.Second
 
 // statusError is an HTTP answer other than 200 or 304.
 type statusError struct {
@@ -57,11 +63,13 @@ func validatorsOf(prev CacheRecord, file string) *validators {
 func (f *Fetcher) listing(ctx context.Context, url string) ([]string, error) {
 	var names []string
 	err := f.retry(ctx, func() error {
+		ctx, cancel := context.WithTimeout(ctx, ListingTimeout)
+		defer cancel()
 		resp, err := f.request(ctx, url, nil)
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		if resp.StatusCode != http.StatusOK {
 			return &statusError{url: url, code: resp.StatusCode}
 		}
@@ -92,7 +100,7 @@ func (f *Fetcher) downloadOnce(ctx context.Context, url, target string, cond *va
 	if err != nil {
 		return fetched{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	got := fetched{etag: resp.Header.Get("ETag"), lastModified: resp.Header.Get("Last-Modified")}
 	switch {
 	case resp.StatusCode == http.StatusNotModified && cond != nil:
@@ -132,8 +140,9 @@ func writeAtomic(target string, body io.Reader, want int64) (size int64, sum str
 	}
 	defer func() {
 		if err != nil {
-			out.Close()
-			os.Remove(partial)
+			// This cleans up after a failure. The first error is the one to report.
+			_ = out.Close()
+			_ = os.Remove(partial)
 		}
 	}()
 	hash := sha256.New()
@@ -170,11 +179,11 @@ func (f *Fetcher) request(ctx context.Context, url string, cond *validators) (*h
 			req.Header.Set("If-Modified-Since", cond.lastModified)
 		}
 	}
-	client := f.HTTP
-	if client == nil {
-		client = http.DefaultClient
+	idle := f.Idle
+	if idle <= 0 {
+		idle = pio.IdleTimeout
 	}
-	return client.Do(req)
+	return pio.Watched(f.HTTP, idle).Do(req)
 }
 
 // retry runs try up to Attempts times. It stops early on a permanent HTTP error or a done context.

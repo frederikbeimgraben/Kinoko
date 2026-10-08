@@ -1,48 +1,26 @@
-@use '../../../styles/card';
+@use './page';
 
 :host {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
 .runs {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
+  @include page.body;
+  @include page.with-actions;
 }
 
-.runs__section {
-  @include card.section-title;
-}
-
-// Die Zeilen stehen 14 px vom Kartenrand und messen 56, wie die Bretter.
-.runs__card {
-  @include card.card;
-
-  --list-row-inline: 14px;
-  --size-row: 56px;
-  --size-row-tall: 56px;
-  --list-row-sub: var(--fs-row-meta);
-  --list-row-sub-height: 1.4;
-  --list-row-title-height: normal;
-  --space-row-stack: 2px;
-}
-
+// The running run: a kit card with a head line, a sub-line and the progress.
 .runs__active {
   display: flex;
   flex-direction: column;
   gap: 8px;
   inline-size: 100%;
-  padding: 14px;
+  padding: 14px 16px;
   color: inherit;
   text-align: start;
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r-item);
 }
 
 .runs__head {
@@ -53,40 +31,33 @@
 
 .runs__name {
   flex: 1;
-  font-size: var(--fs-row-title);
+  font-size: var(--fs-16);
   font-weight: var(--fw-semibold);
 }
 
 .runs__sub {
-  font-size: var(--fs-row-meta);
+  font-size: var(--fs-14);
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
-// Der Punkt nennt den Zustand: grün fertig, rot fehlgeschlagen, orange läuft.
+// The dot names the state: the primary colour for done, red for failed, the warn colour while it runs.
 .runs__dot {
   flex: none;
   inline-size: 8px;
   block-size: 8px;
-  background: var(--color-primary);
+  background: var(--primary);
   border-radius: 50%;
 }
 
 .runs__dot--failed {
-  background: var(--color-danger);
+  background: var(--bad);
 }
 
 .runs__dot--running {
-  background: var(--color-accent);
+  background: var(--warn);
 }
 
 .runs__active app-progress {
-  --progress-height: 6px;
-  --progress-track: var(--color-surface-sunken);
-
   margin-block-start: 2px;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
 }

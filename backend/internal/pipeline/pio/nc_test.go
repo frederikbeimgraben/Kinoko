@@ -31,7 +31,7 @@ func TestNCMatchesXarray(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer f.Close()
+			defer func() { _ = f.Close() }()
 			x, y, days, err := f.Coords()
 			if err != nil {
 				t.Fatal(err)
@@ -109,7 +109,7 @@ func TestNCErrors(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	if err := f.ReadDays("pr", 4, 2, make([]float32, 24)); err == nil {
 		t.Error("read past the time axis gives no error")
 	}
@@ -133,7 +133,7 @@ func TestNCConcurrentReads(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	var wg sync.WaitGroup
 	for range 8 {
 		wg.Go(func() {

@@ -10,7 +10,7 @@ import (
 )
 
 // treeClasses are the share columns of the trees grid: the eleven classes
-// of the Thünen map, then the conifer and broadleaf sums (tree_species.py).
+// of the Thuenen map, then the conifer and broadleaf sums (tree_species.py).
 var treeClasses = []string{
 	"birch", "beech", "douglas_fir", "oak", "alder", "spruce", "pine", "larch", "fir",
 	"deciduous_long_lived", "deciduous_short_lived", "conifer", "broadleaf",
@@ -42,7 +42,7 @@ func (g treesGrid) Validate(ctx context.Context, v *Version) (map[string]any, er
 	if err != nil {
 		return nil, err
 	}
-	defer t.Close()
+	defer func() { _ = t.Close() }()
 	columns := append([]string{"x", "y", "gx", "gy", "forest_fraction", "forest_pixels", "cell"}, treeColumns()...)
 	if err := t.require(columns); err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (s treeScales) Validate(ctx context.Context, v *Version) (map[string]any, e
 	if err != nil {
 		return nil, err
 	}
-	defer t.Close()
+	defer func() { _ = t.Close() }()
 	values := scaleColumns()
 	if err := t.require(append([]string{"cell", "x", "y"}, values...)); err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (s treeScales) gridRows() (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer grid.Close()
+	defer func() { _ = grid.Close() }()
 	return grid.rows(), nil
 }
 
@@ -163,7 +163,7 @@ func (siteGrid) Validate(ctx context.Context, v *Version) (map[string]any, error
 	if err != nil {
 		return nil, err
 	}
-	defer t.Close()
+	defer func() { _ = t.Close() }()
 	if err := t.require([]string{"cell", "soil_phh2o_0_5cm"}); err != nil {
 		return nil, err
 	}

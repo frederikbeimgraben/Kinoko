@@ -50,7 +50,10 @@
     "beispiel.uebertragungAusstehend": "1 Übertragung ausstehend",
     "beispiel.ohneGruppe": "ohne Gruppe",
     "beispiel.herbstSteinpilz": "Herbst Steinpilz",
-    "beispiel.nachRegen": "Nach Regen"
+    "beispiel.nachRegen": "Nach Regen",
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Familie",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -103,6 +106,9 @@
     "beispiel.uebertragungAusstehend": "1 transfer pending",
     "beispiel.ohneGruppe": "no group",
     "beispiel.herbstSteinpilz": "Autumn penny bun",
-    "beispiel.nachRegen": "After rain"
+    "beispiel.nachRegen": "After rain",
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Family",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   }
 }

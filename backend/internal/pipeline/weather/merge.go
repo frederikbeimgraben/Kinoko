@@ -16,7 +16,10 @@ import (
 // LoadOption narrows what LoadCube reads.
 type LoadOption func(*loadConfig)
 
-type loadConfig struct{ cells map[string]bool }
+type loadConfig struct {
+	cells   map[string]bool
+	allKeys bool
+}
 
 // OnlyCells keeps only the given cells. Use it to save memory when a run needs few cells.
 func OnlyCells(cells []geo.CellKey) LoadOption {
@@ -27,6 +30,10 @@ func OnlyCells(cells []geo.CellKey) LoadOption {
 		}
 	}
 }
+
+// KeysOfAll takes the cells and the weeks from each checkpoint in the folder, also when vars
+// names only some. A narrow cube then has the cells and the weeks of the full cube.
+func KeysOfAll() LoadOption { return func(c *loadConfig) { c.allKeys = true } }
 
 // LoadCube reads the checkpoints of vars (each *.parquet in dir when vars is nil)
 // into one Cube. It is an outer join: a cell-week that a checkpoint lacks is NaN.
@@ -42,7 +49,14 @@ func LoadCube(checkpointDir string, vars []string, opts ...LoadOption) (*Cube, e
 			return nil, err
 		}
 	}
-	keys, err := scanKeys(checkpointDir, vars, cfg)
+	keyVars := vars
+	if cfg.allKeys {
+		var err error
+		if keyVars, err = checkpointNames(checkpointDir); err != nil {
+			return nil, err
+		}
+	}
+	keys, err := scanKeys(checkpointDir, keyVars, cfg)
 	if err != nil {
 		return nil, err
 	}

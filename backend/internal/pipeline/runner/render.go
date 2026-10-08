@@ -7,13 +7,14 @@ import (
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/bundle"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/render"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
 // ErrNoRenderer tells that the service has no renderer for the render steps.
 var ErrNoRenderer = errors.New("runner: the service has no map renderer")
 
-// Assets are the active derived grids that the renderer reads.
+// Assets are the paths of the active derived grids.
 type Assets struct {
 	TreesGrid  string
 	TreeScales string
@@ -29,10 +30,12 @@ type SpeciesRender struct {
 	MinForest float64
 	// SharedHorizon is the forecast cap: the largest horizon that each active model has.
 	SharedHorizon int
-	Cube          *weather.Cube
-	Records       []occ.Record
-	Assets        Assets
-	Maps          string
+	// Tables are the grids of the run with the tree-scale columns of each model of the run.
+	Tables render.Tables
+	// Cube holds the weather checkpoints that the models of the run read.
+	Cube    *weather.Cube
+	Records []occ.Record
+	Maps    string
 	// Today is the date of the automatic forecast: the start of the run.
 	Today time.Time
 	Log   func(format string, args ...any)
@@ -40,10 +43,12 @@ type SpeciesRender struct {
 
 // LayersRender is the input of the weekly input layers.
 type LayersRender struct {
-	Cube   *weather.Cube
-	Assets Assets
-	Maps   string
-	Log    func(format string, args ...any)
+	// Tables hold the trees grid and the site grid.
+	Tables render.Tables
+	// Cube holds the weather checkpoints of render.LayerWeather.
+	Cube *weather.Cube
+	Maps string
+	Log  func(format string, args ...any)
 }
 
 // Renderer draws the maps and the weekly layers, and removes the week

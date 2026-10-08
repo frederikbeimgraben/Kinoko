@@ -1,0 +1,11 @@
+<div class="chiprow">
+  @for (chip of chips(); track chip.key) {
+    <app-filter-chip
+      [label]="chip.label"
+      [icon]="chip.icon"
+      [on]="chip.on ?? false"
+      [iconLabel]="chip.iconLabel"
+      (chosen)="chosen.emit(chip.key)"
+    />
+  }
+</div>

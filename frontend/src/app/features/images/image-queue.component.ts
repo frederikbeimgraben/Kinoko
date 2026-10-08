@@ -15,12 +15,12 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RejectDialogComponent } from '../../ui/reject-dialog/reject-dialog.component';
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import type { Photo } from '../../core/api/models';
-import { ImagesState } from './images.state';
+import { ImagesStore } from './images.store';
 import { reviewCard, type ReviewCard } from './review-card';
 
-/** Der Prüfstapel: rechts wischen gibt frei, links fragt nach dem Grund. */
+/** The review stack: a swipe to the right approves, a swipe to the left asks for the reason. */
 @Component({
   selector: 'app-image-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,17 +36,17 @@ import { reviewCard, type ReviewCard } from './review-card';
   styleUrl: './image-queue.component.scss',
 })
 export class ImageQueueComponent {
-  private readonly images = inject(ImagesState);
-  private readonly species = inject(SpeciesState);
+  private readonly images = inject(ImagesStore);
+  private readonly species = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
-  /** Die Karte, deren Absage gerade nach einem Grund fragt. */
+  /** The card whose rejection asks for a reason now. */
   protected readonly rejecting = signal<ReviewCard | null>(null);
-  /** Wie viele Karten schon entschieden sind. Der Kopf zählt die laufende mit. */
+  /** The count of decided cards. The head also counts the current card. */
   private readonly decided = signal(0);
 
-  /** Der Stapel steht fest, sobald er gefüllt ist: eine Entscheidung darf ihn nicht kürzen. */
+  /** The stack is fixed when it is full: a decision must not make it shorter. */
   private readonly held = signal<readonly Photo[]>([]);
 
   protected readonly cards = computed<readonly ReviewCard[]>(() =>

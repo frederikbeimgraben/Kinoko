@@ -7,7 +7,7 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
 import { EntriesState } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { MapStore, type ObjectKind } from '../map/map.store';
 import { ObjectSheetStore } from './object-sheet.store';
 
@@ -44,7 +44,7 @@ export class MapObjectsDirective {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
   private readonly locating = inject(LocationService);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
   private readonly map = inject(MapStore);
   private readonly sheet = inject(ObjectSheetStore);
 

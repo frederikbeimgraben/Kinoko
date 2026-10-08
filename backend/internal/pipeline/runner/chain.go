@@ -76,7 +76,11 @@ func (c *Chain) FetchWeather(ctx context.Context, j *Job) error {
 		if err != nil {
 			return err
 		}
-		req := WeatherRequest(j.Request, len(cached) > 0 || checkpoints, j.Now)
+		var missing []int
+		if !checkpoints {
+			missing = dwd.MissingYears(cached, source, dwd.FirstYear, j.Now.Year()-1)
+		}
+		req := WeatherRequest(j.Request, missing, j.Now)
 		j.Printf("%s: years %v, refresh %v", source, req.Years, req.Refresh)
 		var res dwd.Result
 		if source == dwd.SourceHyras {
@@ -100,24 +104,36 @@ func outcomes(res dwd.Result) string {
 		counts[dwd.Downloaded], counts[dwd.Unchanged], counts[dwd.Cached], counts[dwd.Missing], counts[dwd.Failed])
 }
 
-// FetchOccurrences pages the GBIF records of the open years into the cache
-// and records each written chunk in remote_cache_file.
+// FetchOccurrences pages the GBIF records of the open years and of the
+// missing closed years into the cache and records each written chunk in remote_cache_file.
 func (c *Chain) FetchOccurrences(ctx context.Context, j *Job) error {
-	files, err := filepath.Glob(filepath.Join(c.gbifDir(), "*.jsonl.gz"))
-	if err != nil {
-		return err
-	}
-	archive, err := c.hasActive(sources.KindGBIFArchive)
-	if err != nil {
-		return err
-	}
-	plan := OccurrencePlan(j.Request, len(files) > 0 || archive, j.Now)
-	j.Printf("%s: years %v", SourceOccurrences, plan.Years)
 	f := &gbif.Fetcher{HTTP: c.HTTP, BaseURL: c.GBIFBase, Dir: c.gbifDir(), Pause: c.GBIFPause, Log: j.Printf, Now: c.Now}
+	from, err := c.occurrencesFrom(j)
+	if err != nil {
+		return err
+	}
+	plan := OccurrencePlan(j.Request, f.MissingYears(from, j.Now.Year()-1), j.Now)
+	j.Printf("%s: years %v", SourceOccurrences, plan.Years)
 	chunks, fetchErr := f.Fetch(ctx, plan)
 	record := context.WithoutCancel(ctx)
 	if err := c.recordChunks(record, chunks); err != nil {
 		return errors.Join(fetchErr, err)
 	}
 	return errors.Join(fetchErr, c.dropGone(record))
+}
+
+// occurrencesFrom gives the first year that the API cache must hold. The
+// active gbif-archive gives the years before its cutoff year.
+func (c *Chain) occurrencesFrom(j *Job) (int, error) {
+	src, err := c.gbifSources()
+	switch {
+	case err != nil:
+		return 0, err
+	case src.Archive == "":
+		return gbif.BootstrapFrom, nil
+	case src.ArchiveCutoff == 0:
+		j.Printf("%s: the active gbif-archive has no cutoff year; it counts for each closed year", SourceOccurrences)
+		return j.Now.Year(), nil
+	}
+	return max(src.ArchiveCutoff, gbif.BootstrapFrom), nil
 }
