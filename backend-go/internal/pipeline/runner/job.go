@@ -10,7 +10,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/runs"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/fit"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
 // Species is one species of a run. Chain is nil when the species has no
@@ -52,11 +54,18 @@ type Job struct {
 	Request *sources.FetchRequest
 	// Now is the time at the start of the run. Each stage uses it as "today".
 	Now time.Time
+	// Species are the species of the run, by name.
+	Species []Species
 	// Records are the occurrences that the occurrence step built.
 	Records []occ.Record
 
 	mu  sync.Mutex
 	log io.Writer
+
+	// The stages of Chain read these large inputs once per run.
+	trees  *fit.TreeScales
+	cube   *weather.Cube
+	shared *int
 }
 
 // Printf writes one line with the time to the run log.

@@ -23,12 +23,14 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/system"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/texts"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/runner"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/server"
 )
 
 // Modules makes each module of the service, in start order.
 func Modules(deps server.Deps) []server.Module {
 	runModule := runs.New(deps)
+	sourceModule := sources.New(deps, runModule.Store())
 	return []server.Module{
 		system.New(deps),
 		texts.New(deps),
@@ -37,7 +39,8 @@ func Modules(deps server.Deps) []server.Module {
 		objects.New(deps),
 		photos.New(deps),
 		runModule,
-		sources.New(deps, runModule.Store()),
+		sourceModule,
+		runner.FromDeps(deps, runModule.Store(), sourceModule),
 	}
 }
 
