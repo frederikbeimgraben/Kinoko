@@ -33,8 +33,10 @@
             pname = "kinoko";
             inherit version;
             src = ./backend;
-            vendorHash = null;
+            vendorHash = "sha256-onDA6qj0kLhZfbXUtNJJtlUQinqRlJ8q7wIh1yL3z5c=";
             proxyVendor = true;
+            # CI runs the tests in the dev shell. The package build only compiles.
+            doCheck = false;
             subPackages = [ "cmd/kinoko" ];
             env.CGO_ENABLED = "1";
             nativeBuildInputs = [ pkgs.pkg-config ];
