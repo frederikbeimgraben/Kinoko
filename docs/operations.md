@@ -53,8 +53,9 @@ and set the options:
 
   services.kinoko = {
     enable = true;
-    origin = "https://pilze.beimgraben.net";
-    oidc.issuer = "https://sso.beimgraben.net/application/o/pilze/";
+    origin = "https://pilze.example.org";
+    oidc.issuer = "https://sso.example.org/application/o/pilze/";
+    oidc.name = "Example SSO";
   };
 }
 ```
@@ -69,6 +70,7 @@ and set the options:
 | `mapsDir` | `/var/www/pilze` | Folder of the manifests and the tiles. The web server serves it |
 | `origin` | none, required | Public origin of the app, for CORS and links |
 | `oidc.issuer` | none, required | OpenID issuer. Discovery and keys come from it |
+| `oidc.name` | empty | Name of the SSO on the sign-in button. Empty gives the host of the issuer |
 | `oidc.clientId` | `pilze` | Expected audience of the access tokens |
 | `oidc.adminGroup` | `pilze-admins` | A person in this group has each permission |
 | `pipeline.enable` | `true` | Runs the data pipeline in the service |
@@ -107,7 +109,8 @@ are for local development; they point to `./var/`.
 | `PILZE_RUN_LOGS` | `./var/runs` | `<stateDir>/runs` | Folder of the run logs |
 | `PILZE_LISTEN` | `127.0.0.1:8111` | `listen` | Address and port of the API |
 | `PILZE_ORIGIN` | `http://localhost:4200` | `origin` | Public origin, for CORS and for `GET /api/config` |
-| `PILZE_OIDC_ISSUER` | `https://sso.beimgraben.net/application/o/pilze/` | `oidc.issuer` | OpenID issuer. The service adds a final `/` when it is missing |
+| `PILZE_OIDC_ISSUER` | empty | `oidc.issuer` | OpenID issuer. The service adds a final `/` when it is missing. Without it, nobody can sign in |
+| `PILZE_OIDC_NAME` | host of the issuer | `oidc.name` | Name of the SSO on the sign-in button |
 | `PILZE_OIDC_CLIENT_ID` | `pilze` | `oidc.clientId` | Expected `aud` of the access token |
 | `PILZE_ADMIN_GROUP` | `pilze-admins` | `oidc.adminGroup` | Group in the token. A person in it is an admin, also without a row in the database |
 | `PILZE_PIPELINE` | `true` | `pipeline.enable` | Starts the run queue and the weekly schedule. A boolean |
@@ -290,4 +293,5 @@ deploy the frontend.
 - Use `nix develop` for both sides. Use `nix develop .#backend` or `nix develop .#frontend` for one side.
 - Service: `cd backend && go run ./cmd/kinoko serve`.
 - App: `cd frontend && npm ci && npm start`. `proxy.conf.json` sends `/api` to `127.0.0.1:8111` and the tile paths to `https://pilze.beimgraben.net/`.
-- SSO: use the same Authentik instance with the redirect `http://localhost:4200/anmeldung`.
+- SSO: use your Authentik instance with the redirect `http://localhost:4200/anmeldung`. Set `PILZE_OIDC_ISSUER` for it.
+- SSO without Authentik: `cd backend && go run ./tools/devsso -admin`. It signs in a test person at once. Start the service with `PILZE_OIDC_ISSUER=http://127.0.0.1:9000/`. Use it only on localhost.

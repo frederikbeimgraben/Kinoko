@@ -21,7 +21,8 @@ func TestConfig(t *testing.T) {
 	env := testkit.New(t)
 	answer := env.Get("/config", nil).Expect(t, http.StatusOK).Map(t)
 	if answer["oidcClientId"] != "pilze" || answer["version"] != config.Version ||
-		answer["oidcIssuer"] != env.Settings.OIDCIssuer || answer["origin"] != env.Settings.Origin {
+		answer["oidcIssuer"] != env.Settings.OIDCIssuer || answer["origin"] != env.Settings.Origin ||
+		answer["oidcName"] != env.Settings.ProviderName() || answer["oidcName"] == "" {
 		t.Fatal(answer)
 	}
 }

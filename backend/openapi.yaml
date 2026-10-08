@@ -2562,13 +2562,17 @@ components:
       properties:
         oidcIssuer:
           type: string
+          description: Issuer URL of the SSO. Empty when the service has no SSO.
+        oidcName:
+          type: string
+          description: Name of the SSO for the sign-in button. Empty without an SSO.
         oidcClientId:
           type: string
         origin:
           type: string
         version:
           type: string
-      required: [oidcIssuer, oidcClientId, origin, version]
+      required: [oidcIssuer, oidcName, oidcClientId, origin, version]
 
     Me:
       type: object

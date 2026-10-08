@@ -34,6 +34,7 @@ func (m *Module) health(*http.Request) (web.Response, error) {
 
 type frontendConfig struct {
 	OIDCIssuer   string `json:"oidcIssuer"`
+	OIDCName     string `json:"oidcName"`
 	OIDCClientID string `json:"oidcClientId"`
 	Origin       string `json:"origin"`
 	Version      string `json:"version"`
@@ -42,6 +43,7 @@ type frontendConfig struct {
 func (m *Module) config(*http.Request) (web.Response, error) {
 	return web.OK(frontendConfig{
 		OIDCIssuer:   m.settings.OIDCIssuer,
+		OIDCName:     m.settings.ProviderName(),
 		OIDCClientID: m.settings.OIDCClientID,
 		Origin:       m.settings.Origin,
 		Version:      config.Version,

@@ -6,6 +6,7 @@ package config
 import (
 	"bufio"
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -16,10 +17,12 @@ const Version = "3.0.0"
 
 // Settings are the values that the service reads at start.
 type Settings struct {
-	DB             string
-	Photos         string
-	Maps           string
-	OIDCIssuer     string
+	DB         string
+	Photos     string
+	Maps       string
+	OIDCIssuer string
+	// OIDCName is the name of the SSO that the sign-in button shows.
+	OIDCName       string
 	OIDCClientID   string
 	Origin         string
 	AdminGroup     string
@@ -39,7 +42,7 @@ func Defaults() Settings {
 		DB:             "./var/pilze.sqlite",
 		Photos:         "./var/fotos",
 		Maps:           "./var/maps",
-		OIDCIssuer:     "https://sso.beimgraben.net/application/o/pilze/",
+		OIDCIssuer:     "",
 		OIDCClientID:   "pilze",
 		Origin:         "http://localhost:4200",
 		AdminGroup:     "pilze-admins",
@@ -76,6 +79,7 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("FOTOS", &s.Photos)
 	text("MAPS", &s.Maps)
 	text("OIDC_ISSUER", &s.OIDCIssuer)
+	text("OIDC_NAME", &s.OIDCName)
 	text("OIDC_CLIENT_ID", &s.OIDCClientID)
 	text("ORIGIN", &s.Origin)
 	text("ADMIN_GROUP", &s.AdminGroup)
@@ -99,7 +103,9 @@ func FromLookup(lookup Lookup) (Settings, error) {
 		s.PipelineEnable = on
 	}
 	s.DB = DatabasePath(s.DB)
-	s.OIDCIssuer = withSlash(s.OIDCIssuer)
+	if s.OIDCIssuer != "" {
+		s.OIDCIssuer = withSlash(s.OIDCIssuer)
+	}
 	return s, nil
 }
 
@@ -112,6 +118,18 @@ func DatabasePath(value string) string {
 		}
 	}
 	return value
+}
+
+// ProviderName is the SSO name for the sign-in button: OIDCName, else the host of the issuer.
+func (s Settings) ProviderName() string {
+	if s.OIDCName != "" {
+		return s.OIDCName
+	}
+	parsed, err := url.Parse(s.OIDCIssuer)
+	if err != nil {
+		return ""
+	}
+	return parsed.Hostname()
 }
 
 // DiscoveryURL is the address of the OpenID configuration document.
