@@ -1,0 +1,70 @@
+name = "Lavendelfarbener Rötelritterling"
+lateinisch = "Lepista glaucocana"
+gruppe = "roetelritterling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["herbst", "winter"]
+baeume = []
+weitereNamen = ["Blassblauer Rötelritterling", "Blasser Rötelritterling"]
+synonyme = ["Lepista nuda var. glaucocana", "Rhodopaxillus glaucocanus", "Clitocybe glaucocana"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/LavendelRoetelritterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 12.0, seltenBis = 16.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 10.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 3.0, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 9
+bisMonat = 1
+
+[farben]
+hut = [{ name = "lila", hex = "#8a5fa8" }]
+sporenlager = [{ name = "lila", hex = "#8a5fa8" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "lila", hex = "#8a5fa8" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "lila", hex = "#8a5fa8" }]
+sporenpulver = [{ name = "beige", hex = "#d9c9a3" }, { name = "rosa", hex = "#e8a0b0" }]
+
+[geruch]
+tags = ["wuerzig", "angenehm"]
+text = "Parfümiert, angenehm würzig, fast wie beim Violetten Rötelritterling."
+
+[geschmack]
+tags = ["mild", "nussig"]
+text = "Mild, nussig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 12, selten bis 16 cm breit, rötlichlila bis lavendelfarben, beim Trocknen heller werdend. Huthaut kahl und glatt, Rand lange eingerollt."
+lamellen = "Lila, am Stiel ausgebuchtet angewachsen, leicht ablösbar."
+stiel = "6 bis 10 cm lang, 1 bis 2 cm dick, blass lila, kahl, Oberfläche etwas flockig weiß bereift."
+fleisch = "Lila bis weißlich lila, im Zentrum weißlich."
+geruch = "Parfümiert, angenehm würzig, fast wie beim Violetten Rötelritterling."
+geschmack = "Mild, nussig."
+sporenpulver = "Beigerosa."
+vorkommen = "Folgezersetzer in Mischwald, Parks, Gärten und auf Ruderalflächen."
+zeit = "Herbst bis Winteranfang."
+
+[[verwechslungen]]
+slug = "bocksdickfuss"
+unterschied = "Lamellen bald zimtbraun, Sporenpulver gelbbräunlich, Geruch widerlich nach Ziegenbock."
+
+[[verwechslungen]]
+slug = "riesenroetling"
+unterschied = "Hut elfenbeinfarben bis bleigrau ohne Lilaton, Lamellen jung gelblich, später rosaocker, Geruch säuerlich mehlig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/LavendelRoetelritterling.htm"

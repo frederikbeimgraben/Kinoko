@@ -1,0 +1,72 @@
+name = "Großsporiger Blutchampignon"
+lateinisch = "Agaricus langei"
+gruppe = "champignon"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+weitereNamen = ["Großer Waldchampignon", "Großer Blutegerling", "Grosser Blutchampignon"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+stielmerkmale = ["ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/GrosserWaldCh.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Nicht oder kaum verfärbend."
+
+[[reagenzien]]
+reagenz = "schaeffer"
+reaktion = "Negativ."
+
+[masse]
+hutBreiteCm = { von = 6.0, bis = 15.0, seltenBis = 20.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.0, bis = 9.0, einheit = "um" }
+sporenBreiteUm = { von = 3.4, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "rostbraun", hex = "#8a4b23" }, { name = "ocker", hex = "#c8963c" }]
+sporenlager = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "blutrot", hex = "#8e1f1f" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "purpurbraun", hex = "#5f3346" }]
+
+[geruch]
+tags = ["bittermandel", "pilzig", "angenehm"]
+text = "Pilzig angenehm, kann einen leichten Ton nach Bittermandel oder Marzipan haben."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "6 bis 15, selten bis 20 cm breit, ockerbräunlich bis dunkelbraun, mit rostbraunen Fasern auf hellerem Grund, geschuppt."
+lamellen = "Rosa, im Alter dunkel rotbraun, frei."
+stiel = "Weißlich mit rosa Schimmer, glatt. Ring weißlich, doppelrandig und hängend. Angeritzte Stielrinde färbt sich sofort rötlich."
+fleisch = "Weiß, sofort rötlich bis blutrot verfärbend."
+geruch = "Pilzig angenehm, kann einen leichten Ton nach Bittermandel oder Marzipan haben."
+geschmack = "Mild."
+sporenpulver = "Rotbraun bis purpurbraun."
+vorkommen = "Folgezersetzer im Nadelwald."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "karbolegerling"
+unterschied = "Riecht nach Karbol oder Tinte, die Stielbasis gilbt beim Anschneiden stark chromgelb, das Fleisch rötet nicht."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/GrosserWaldCh.htm"

@@ -1,0 +1,90 @@
+name = "Kuhmaul"
+lateinisch = "Gomphidius glutinosus"
+gruppe = "gelbfuss"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["fichte"]
+speisewertHinweis = "Die schleimige Huthaut schon im Wald abziehen. Sonst färbt der Pilz im Korb die Berührungsstellen an Pfifferlingen schwarz; das ist nicht giftig, sieht aber unappetitlich aus."
+weitereNamen = ["Großer Gelbfuß", "Großer Schmierling", "Großer Keilpilz", "Großer Schleimpilz", "Rotzer", "Rotznase", "Schafsnase"]
+fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Kuhmaul.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 15.0, seltenBis = 20.0, einheit = "cm" }
+sporenLaengeUm = { von = 17.5, bis = 21.5, einheit = "um" }
+sporenBreiteUm = { von = 5.8, bis = 7.1, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "violett", hex = "#6b4a8a" }, { name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }]
+sporenpulver = [{ name = "schwarzbraun", hex = "#3a2a1c" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 15, selten bis 20 cm breit, braun, violett bis blau, stark schmierig und schleimig, oft mit schwarzbraunen Flecken. Die Huthaut lässt sich leicht abziehen."
+lamellen = "Jung weißlich, später grau bis graubraun, dick, wachsartig, herablaufend, leicht ablösbar. Jung von einer Schleimschicht überzogen."
+stiel = "Weißlich, zur Spitze abnehmend gelblich, Basis kanariengelb, sehr schleimig."
+fleisch = "Weißlich, alt grau, unter der Huthaut bräunlich, in der Stielbasis kanariengelb."
+geruch = "Neutral."
+geschmack = "Mild."
+sporenpulver = "Schwarzbraun."
+vorkommen = "Symbiosepilz im Nadelwald bei Fichte, auf saurem Boden."
+zeit = "Frühsommer bis Herbst."
+
+[[verwechslungen]]
+slug = "aprikosen-gelbfuss"
+unterschied = "Hut orangebraun, rosa bis violett, Lamellen jung purpurbraun, Stiel mit orangefarbener Ringzone."
+
+[[verwechslungen]]
+slug = "gefleckter-gelbfuss"
+unterschied = "Hut hell zimtbraun mit dunkler Mitte, Stiel auf weißem Grund rotbraun gefleckt, Fleisch im Schnitt rötend, bei Lärche."
+
+[[verwechslungen]]
+slug = "gelbgestiefelter-schleimkopf"
+unterschied = "Lamellen cremegrau bis ockerbraun, Stiel mit braunfuchsigen Velumbändern und knolliger Basis, bei Birke."
+eigenerUnterschied = "Lamellen dick, weit stehend und herablaufend, Hut graubraun und schleimig, Stielbasis innen leuchtend gelb."
+
+[[verwechslungen]]
+slug = "kupferroter-gelbfuss"
+unterschied = "Lamellen und Fleisch gelborange, bei Verletzung rötend, bei Kiefer."
+
+[[verwechslungen]]
+slug = "rosenroter-gelbfuss"
+unterschied = "Hut rosenrot und samtig, nur schmierig statt schleimig, bei Kiefer auf dem Myzel des Kuhröhrlings."
+eigenerUnterschied = "Hut graubraun bis violettbraun und stark schleimig, Stielbasis leuchtend chromgelb, bei Fichte."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Kuhmaul.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Großer_Schmierling"

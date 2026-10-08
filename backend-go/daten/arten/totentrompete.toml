@@ -1,0 +1,90 @@
+name = "Totentrompete"
+lateinisch = "Craterellus cornucopioides"
+gruppe = "leistling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["eiche", "buche"]
+speisewertHinweis = "Gut zum Trocknen. Beim Putzen den hohlen Stiel prüfen, dort sitzen oft Schnecken und Insekten."
+schutzHinweis = "Die Verordnung führt die Pfifferlinge als Gattung Cantharellus. Die Totentrompete steht heute als Craterellus cornucopioides und wird hier mit ihnen geschützt."
+haeufigkeit = "sehrHaeufig"
+weitereNamen = ["Herbsttrompete", "Füllhorn", "Kraterpilz", "Herbstleistling"]
+fruchtschicht = { art = "leisten" }
+hutform = { von = "trichterfoermig" }
+hutmerkmale = ["genabelt"]
+
+[baeumeAusErfahrung]
+baeume = ["hainbuche"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Totentrompete.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 6.0, seltenBis = 8.0, einheit = "cm" }
+stielLaengeCm = { von = 3.0, bis = 11.0, seltenBis = 13.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 3.0, seltenBis = 4.0, einheit = "cm" }
+sporenLaengeUm = { von = 11.0, bis = 14.0, einheit = "um" }
+sporenBreiteUm = { von = 7.0, bis = 9.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+stiel = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "schwarzbraun", hex = "#3a2a1c" }, { name = "braun", hex = "#7a5230" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["fruchtig", "suesslich", "angenehm"]
+text = "Angenehm fruchtig aromatisch, etwas süßlich."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 6, selten bis 8 cm breit, grauschwarz, braunschwarz bis gelbbraun, trichterförmig genabelt, dünnfleischig, bräunlich feinkörnig bereift."
+leisten = "Grauschwarz bis braunschwarz, fast nicht sichtbar."
+stiel = "3 bis 11, selten bis 13 cm lang, 1 bis 3, selten bis 4 cm dick, grauschwarz, ohne Absatz in den Hut übergehend, Basis schwarz werdend."
+fleisch = "Schwarzbraun, gelbbraun bis rußbraun, dünn, zäh, elastisch."
+geruch = "Angenehm fruchtig aromatisch, etwas süßlich."
+geschmack = "Mild."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz im Laubwald, gern bei Eiche und Buche, kalkliebend. Sehr häufig, wegen der grauschwarzen Farbe aber leicht zu übersehen."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "grauer-leistling"
+unterschied = "Hut schwarzgrau bis graubraun und feinschuppig, Rand wellig, Fleisch schmutzig weißlich bis grau."
+
+[[verwechslungen]]
+slug = "kohlenleistling"
+unterschied = "1 bis 4, selten bis 6 cm breit, Unterseite mit grauweißen, eng stehenden Lamellen statt fast glatter Leisten."
+
+[[verwechslungen]]
+slug = "schwarzer-kelchpilz"
+unterschied = "Kelchförmig, ohne Leisten, Fleisch braun und fleischig lederartig, Stiel nach unten verjüngt."
+eigenerUnterschied = "Trichterig bis röhrig durchbohrt, dünnfleischig und biegsam, Außenseite aschgrau bereift, im Herbst unter Buche und Eiche."
+
+[[verwechslungen]]
+slug = "verbogener-leistling"
+unterschied = "Viel kleiner, 1 bis 3, selten bis 4 cm breit, Hut lehmbraun bis gelbbraun, Fleisch blassgrau."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Totentrompete.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Totentrompete"

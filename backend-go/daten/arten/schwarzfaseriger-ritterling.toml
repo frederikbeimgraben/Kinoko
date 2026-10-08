@@ -1,0 +1,90 @@
+name = "Schwarzfaseriger Ritterling"
+lateinisch = "Tricholoma portentosum"
+gruppe = "ritterling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["herbst", "winter"]
+baeume = ["fichte", "kiefer", "tanne", "pappel", "birke"]
+speisewertHinweis = "In Deutschland gefährdet (RL 3). Graue Ritterlinge sind untereinander schwer zu trennen; nur eindeutig bestimmte Funde nehmen."
+haeufigkeit = "selten"
+gefaehrdung = "gefaehrdet"
+weitereNamen = ["Schneeritterling", "Rußkopf"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
+hutform = { von = "halbkugelig", nach = "gewoelbt" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["faserig", "hohl"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Schwarzfaserigerritterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 9.0, seltenBis = 11.0, einheit = "cm" }
+stielDickeCm = { von = 2.0, bis = 3.0, einheit = "cm" }
+sporenLaengeUm = { von = 5.0, bis = 7.0, einheit = "um" }
+sporenBreiteUm = { von = 3.0, bis = 6.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 9
+bisMonat = 2
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "dunkelgrau", hex = "#4f4f4f" }, { name = "violett", hex = "#6b4a8a" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "gelb", hex = "#e8c33a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }]
+stiel = [{ name = "grüngelb", hex = "#9fb02f" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["mehlig", "gurkenartig"]
+text = "Frisch leicht melonen- und gurkenartig, etwas mehlig."
+
+[geschmack]
+tags = ["mehlig"]
+text = "Mehlig, beim längeren Kauen melonenartig oder nach Austern."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 12, selten bis 15 cm breit, dunkelgrau bis graubraun mit schwarzen Radialstreifen, teils mit gelbem oder violettem Einschlag. Schmierig und klebrig, trocken glänzend. Jung halbkugelig bis glockig, später gewölbt bis flach oder stumpf gebuckelt."
+lamellen = "Weißlich, später gelbgrünlich, alt mit gelblichen Flecken, weich, ausgebuchtet angewachsen, gedrängt stehend, mit Zwischenlamellen."
+stiel = "6 bis 9, selten bis 11 cm lang, etwa 2 bis 3 cm dick, weiß, später grüngelblich, faserig, kahl, im Alter hohl."
+fleisch = "Weiß, faserig."
+geruch = "Frisch leicht melonen- und gurkenartig, etwas mehlig."
+geschmack = "Mehlig, beim längeren Kauen melonenartig oder nach Austern."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz im Nadelwald, gern bei Fichte, Kiefer und Weißtanne, selten bei Espe und Birke. Regional häufiger, sonst selten, in Deutschland gefährdet."
+zeit = "Herbst bis Winter, nach den ersten Frösten."
+
+[[verwechslungen]]
+slug = "brennendscharfer-ritterling"
+unterschied = "Hut aschgrau und radial einreißend wie bei den Risspilzen, Geruch erdig, Geschmack extrem scharf und pfeffrig."
+
+[[verwechslungen]]
+slug = "schaerflicher-ritterling"
+unterschied = "Hut graubraun und angedrückt schuppig, Stielbasis abrupt abgeplattet, Geschmack bitter und dann extrem scharf, bei Buche."
+
+[[verwechslungen]]
+slug = "schwarzschuppiger-erdritterling"
+unterschied = "Hut grauschwarz mit wolligen sparrigen Schüppchen, ohne schwarze Radialstreifen, Stiel trocken."
+
+[[verwechslungen]]
+slug = "seifenritterling"
+unterschied = "Fleisch rötet an verletzten Stellen, besonders an der Stielbasis, Geruch nach Seifenlauge."
+
+[[verwechslungen]]
+slug = "tigerritterling"
+unterschied = "Hut weiß mit silbergrauen bis schwarzbraunen Schüppchen, Lamellenschneiden jung tränend, Stielbasis keulig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Schwarzfaserigerritterling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Schwarzfaseriger_Ritterling"

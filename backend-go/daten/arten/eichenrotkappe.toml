@@ -1,0 +1,78 @@
+name = "Eichenrotkappe"
+lateinisch = "Leccinum quercinum"
+gruppe = "raufussroehrling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = false
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["eiche", "buche", "hasel"]
+speisewertHinweis = "Raufußröhrlinge sind besonders geschützt und die Art ist selten. Nur wenig für den Eigenbedarf nehmen. Roh sind Rotkappen unverträglich, deshalb durchgaren."
+haeufigkeit = "selten"
+weitereNamen = ["Eichenraufuss", "Laubwald-Rotkappe"]
+synonyme = ["Leccinum aurantiacum var. quercinum", "Leccinum rufum", "Boletus quercinus", "Krombholziella quercina"]
+fruchtschicht = { art = "roehren" }
+stielmerkmale = ["beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Eichenrot.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 17.0, seltenBis = 21.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 20.0, seltenBis = 22.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 4.0, seltenBis = 5.0, einheit = "cm" }
+sporenLaengeUm = { von = 12.0, bis = 19.0, einheit = "um" }
+sporenBreiteUm = { von = 3.0, bis = 6.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "rot", hex = "#c0392b" }]
+sporenlager = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "rot", hex = "#c0392b" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenpulver = [{ name = "gelbbraun", hex = "#a3813f" }]
+
+[geruch]
+tags = ["pilzig"]
+text = "Pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild und angenehm."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 17, selten bis 21 cm breit, rotbraun, ziegelfarben bis rot, feinfilzig. Die Huthaut ist meist verkürzt, anders als bei der fast gleichen Espenrotkappe mit ihrer über die Röhren eingerollten Huthaut."
+roehren = "Weißlich, grauweiß bis gelbbraun, später bräunlich, am Stiel stark ausgebuchtet angewachsen."
+stiel = "6 bis 20, selten bis 22 cm hoch und 1 bis 4, selten bis 5 cm dick, mit rötlichen bis rotgrauen Schüppchen auf weißem Grund, nicht mit schwärzlichen wie bei der Birkenrotkappe."
+fleisch = "Weiß, im Schnitt etwas rötlich bis rosalila."
+geruch = "Pilzig."
+geschmack = "Mild und angenehm."
+sporenpulver = "Gelbbraun."
+vorkommen = "Symbiosepilz im Laubwald, überwiegend bei Eiche, selten bei Buche, Hasel und anderen Laubbäumen. Selten, in der Schweiz gefährdet."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "fichtenrotkappe"
+unterschied = "Stielschuppen schwarz, wächst bei Nadelbäumen."
+eigenerUnterschied = "Hut ziegelrot bis orangebraun, Stielschuppen rotbraun, bei Eiche."
+
+[[verwechslungen]]
+slug = "fuchsrotkappe"
+unterschied = "Hut fuchsrot und samtig, Schuppen erst hellbraun, dann rötlich, bei Kiefer."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Eichenrot.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Laubwald-Rotkappe"

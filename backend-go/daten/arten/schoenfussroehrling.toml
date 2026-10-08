@@ -1,0 +1,79 @@
+name = "Schönfußröhrling"
+lateinisch = "Caloboletus calopus"
+gruppe = "roehrling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Giftig und dazu bitter. Kennzeichen sind der lehmgraue samtige Hut, der zur Basis rote Stiel mit Netz und das sofort blauende Fleisch."
+weitereNamen = ["Hantling", "Dickfußröhrling", "Dickfuß", "Bitterpilz"]
+fruchtschicht = { art = "roehren" }
+hutmerkmale = ["unregelmaessig"]
+hutrand = { von = ["wellig", "ueberstehend"] }
+stielmerkmale = ["genetzt", "wurzelnd"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Schoenfussroehrling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 12.0, seltenBis = 18.0, einheit = "cm" }
+sporenLaengeUm = { von = 11.0, bis = 16.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 4.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "braunrot", hex = "#7d3324" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }, { name = "ocker", hex = "#c8963c" }, { name = "oliv", hex = "#6b7a3a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "rot", hex = "#c0392b" }]
+dauer = "schnell"
+
+[geruch]
+tags = ["muffig", "unangenehm", "saeuerlich", "angenehm"]
+text = "Säuerlich unangenehm, etwas muffig mit Essignote, ähnlich einem Textmarker."
+
+[geschmack]
+tags = ["mild", "bitter"]
+text = "Bitter, manchmal fast mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 12, selten bis 18 cm breit, lehmgrau bis tonfarben, trocken und samtig, unregelmäßig wellig, Rand überstehend."
+roehren = "Gelblich, auf Druck blauend, ausgebuchtet angewachsen, mit feinen Mündungen."
+stiel = "Leicht keulig und dickfüßig, Spitze gelblich, zur Basis rötlich werdend, mit weißem, gelbem bis braunrotem Netz. Basis braungelb mit rötlicher Zone, teils wurzelnd."
+fleisch = "Weißlich bis leicht gelblich, sofort leicht bis stark blauend, alt zur Basis etwas rötend."
+geruch = "Säuerlich unangenehm, etwas muffig mit Essignote, ähnlich einem Textmarker."
+geschmack = "Bitter, manchmal fast mild."
+sporenpulver = "Olivbraun bis ockeroliv."
+vorkommen = "Symbiosepilz im Mischwald, gern im Nadelwald, auf saurem, nährstoffarmem Boden."
+zeit = "Frühling bis Spätherbst."
+
+[[verwechslungen]]
+slug = "satansroehrling"
+unterschied = "Hut weißlich bis hellgrau, Röhrenmündungen karminrot, Stiel bauchig mit rotem Netz."
+
+[[verwechslungen]]
+slug = "wurzelnder-bitterroehrling"
+unterschied = "Hut grau bis weißgrau, Fleisch stark blauend, Geruch nach Maggi oder Tinte, Stielbasis wurzelnd."
+eigenerUnterschied = "Hut lehmgrau und samtig, Stiel zur Basis karminrot, Fleisch blaut sofort, Geruch nicht nach Maggi."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Schoenfussroehrling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Schönfuß-Röhrling"

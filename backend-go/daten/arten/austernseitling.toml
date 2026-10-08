@@ -1,0 +1,100 @@
+name = "Austernseitling"
+lateinisch = "Pleurotus ostreatus"
+gruppe = "seitling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["herbst", "winter", "fruehling"]
+baeume = ["buche", "eiche"]
+speisewertHinweis = "Roh zersetzt er rote Blutkörperchen. Nur durchgegart essen."
+weitereNamen = ["Austernpilz", "Kalbfleischpilz", "Buchenschwamm", "Drehling", "Austernschwamm", "Eichhännchen", "Muschelpilz", "Sommerauster"]
+fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }
+hutform = { von = "muschelfoermig" }
+hutrand = { von = ["eingerollt"] }
+
+[baeumeAusErfahrung]
+baeume = ["pappel", "weide"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Austernseitling1105.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Auf dem Hut ohne Reaktion."
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 15.0, seltenBis = 20.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.0, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 2.0, bis = 4.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 9
+bisMonat = 5
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "silbergrau", hex = "#b8bcc0" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "lila", hex = "#8a5fa8" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["wuerzig", "pilzig"]
+text = "Würzig pilzig, etwas nach Porling."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 15, selten bis 20 cm breit, silbergrau, grau bis graubraun, nach den ersten Frostschäden meist brauner. Muschelförmig, glatt und kahl, Rand jung eingerollt."
+lamellen = "Weißlich, später gelblich, am Stiel herablaufend, Schneiden wellig und leicht gekerbt. Sie laufen nicht bis zur Stielbasis."
+stiel = "Kurz und dick, seitlich angesetzt, oft fast fehlend, an der Basis filzig, korkig und zäh."
+fleisch = "Weiß bis grauweiß, im Alter zäh, im Stielbereich schon jung sehr zäh."
+geruch = "Würzig pilzig, etwas nach Porling."
+geschmack = "Mild."
+sporenpulver = "Weiß bis hell lilagrau."
+vorkommen = "Folgezersetzer an lebenden und abgestorbenen Laubbäumen, vor allem Buche und Eiche, vereinzelt an Nadelholz. Wächst bis zehn Meter hoch am Stamm."
+zeit = "Herbst bis Frühjahr. Er braucht einen Kältereiz und ist ab Mitte November häufig."
+
+[[verwechslungen]]
+slug = "berindeter-seitling"
+unterschied = "Hut mit dunklen Schüppchen, Stiel mit flüchtigem Ring."
+
+[[verwechslungen]]
+slug = "gelbstieliger-muschelseitling"
+unterschied = "Hut grünbraun bis schwarzbraun, Stiel ockergelb mit bräunlichen Schüppchen."
+eigenerUnterschied = "Stiel ohne gelbe Töne, die Lamellen laufen ohne Abgrenzung tief am Stiel herab."
+
+[[verwechslungen]]
+slug = "lungenseitling"
+unterschied = "Nie rein weiß, sondern milchweiß bis cremeweiß, dünnfleischiger, im Sommer."
+eigenerUnterschied = "Hut silbergrau bis graubraun statt cremeweiß, dickfleischiger. Er braucht einen Kältereiz und kommt erst im Winter."
+
+[[verwechslungen]]
+slug = "ohrfoermiger-seitling"
+unterschied = "Rein weiß, ohne Stiel, Lamellen sehr gedrängt."
+
+[[verwechslungen]]
+slug = "rillstieliger-seitling"
+unterschied = "Lamellen queradrig und netzig verbunden, laufen bis zur Stielbasis."
+eigenerUnterschied = "Hut muschelförmig und grau bis graubraun, Lamellen laufen nicht bis zur Stielbasis, im Winterhalbjahr."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Austernseitling1105.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Austern-Seitling"

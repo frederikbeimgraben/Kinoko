@@ -1,0 +1,72 @@
+name = "Nadelschüppling"
+lateinisch = "Pholiota spumosa"
+gruppe = "schueppling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Schüpplinge taugen meist nicht als Speisepilze, einige sind giftig. Dieser schmeckt bitter und wächst büschelig an Nadelholz, also dort, wo auch der tödlich giftige Gifthäubling steht."
+haeufigkeit = "selten"
+weitereNamen = ["Nadelwaldschüppling", "Nadelholzschüppling"]
+synonyme = ["Gymnopilus spumosus", "Pholiotina spumosa", "Pholiota graveolens", "Naucoria spuniosa"]
+fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
+stielmerkmale = ["faserig", "ring", "hohl"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Nadelschueppling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 4.0, seltenBis = 6.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 9.5, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "zitronengelb", hex = "#f2e14c" }, { name = "orangegelb", hex = "#e9a32c" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grün", hex = "#4f8a3a" }]
+sporenlager = [{ name = "orangegelb", hex = "#e9a32c" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "oliv", hex = "#6b7a3a" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["angenehm"]
+text = "Holzig, nicht unangenehm."
+
+[geschmack]
+tags = ["bitter"]
+text = "Bitter."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 4, selten bis 6 cm breit, zitronengelb, orangegelb bis dunkelgelb, Scheitel fuchsigbraun bis rostbraun, mit Schüppchen besetzt, Rand lange gewölbt. Unter UV-Licht leuchtet er gelblich bis grünlich."
+lamellen = "Jung hellgelb, sonst gelb bis hell orangegelb, alt bräunlich, angewachsen und leicht herablaufend, mit Zwischenlamellen."
+stiel = "Gelblich bis weißlich, überfasert, oft mit faseriger Ringzone, hohl. Basis oft schmutzig braunschwarz bis olivschwarz."
+fleisch = "Hellgelb, im Stiel rostgelb."
+geruch = "Holzig, nicht unangenehm."
+geschmack = "Bitter."
+sporenpulver = "Bräunlich."
+vorkommen = "Folgezersetzer im Nadelwald, meist am Boden auf Nadelholz, seltener an Stümpfen und Totholz. Oft büschelig, selten."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "gifthaeubling"
+unterschied = "Hut hellbraun bis dunkelbraun und meist gebuckelt, Stiel silbrig überfasert mit dünnem, vergänglichem Ring, Sporenpulver rostbraun, Geruch muffig mehlig."
+
+[[verwechslungen]]
+slug = "samtschuppiger-tannenflaemmling"
+unterschied = "Hut gelbfuchsig mit trockener, schuppiger Oberfläche, Lamellen mit rostbraunen Flecken, an Tanne und Kiefer."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Nadelschueppling.htm"

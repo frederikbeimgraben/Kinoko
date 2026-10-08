@@ -1,0 +1,67 @@
+name = "Brennender Rübling"
+lateinisch = "Gymnopus peronatus"
+gruppe = "ruebling"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Der Geschmack wird nach kurzer Zeit brennend scharf und pfefferig. Das macht ihn ungenießbar."
+haeufigkeit = "haeufig"
+weitereNamen = ["Brennender Blasssporrübling"]
+synonyme = ["Collybia peronata", "Marasmius peronatus", "Chamaeceras urens"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "weit" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/BrennenderRuebling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 8.0, seltenBis = 10.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 8.0, seltenBis = 19.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.5, bis = 11.2, einheit = "um" }
+sporenBreiteUm = { von = 2.7, bis = 4.4, einheit = "um" }
+
+[zeitraum]
+vonMonat = 5
+bisMonat = 11
+
+[farben]
+hut = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig, junge Stücke leicht nach Essig. Zum Prüfen die Lamellen quetschen."
+
+[geschmack]
+tags = ["mild", "scharf"]
+text = "Zuerst mild, nach einiger Zeit scharf und pfefferig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 8, selten bis 10 cm breit, braun bis gelblich, oft mit einem Buckel in der Mitte. Zieht man den Stiel ab, bleibt ein Loch im Hut."
+lamellen = "Bräunlich, gelblich bis dottergelb, ausgebuchtet angewachsen und fast frei wirkend, entfernt stehend, am Grund queraderig, mit kürzeren Zwischenlamellen. Schneiden heller."
+stiel = "5 bis 8, selten bis 19 cm lang und nur 0,3 bis 0,7 mm dick, weißlich bis braun, faserig, die Basis mit weißlichem Myzelfilz."
+fleisch = "Weiß bis gelbbraun."
+geruch = "Angenehm pilzig, junge Stücke leicht nach Essig. Zum Prüfen die Lamellen quetschen."
+geschmack = "Zuerst mild, nach einiger Zeit scharf und pfefferig."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer im Mischwald auf Blatt- und Nadelstreu, häufig."
+zeit = "Spätfrühling bis Herbst."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/BrennenderRuebling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Brennender_Rübling"

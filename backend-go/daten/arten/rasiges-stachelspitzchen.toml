@@ -1,0 +1,56 @@
+name = "Rasiges Stachelspitzchen"
+lateinisch = "Mucronella calva"
+gruppe = "stachelpilz"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["herbst", "winter"]
+baeume = ["kiefer", "fichte", "tanne"]
+haeufigkeit = "selten"
+weitereNamen = ["Rasiges Pfriempilzchen"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/RasigesStachelpilzchen.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+sporenLaengeUm = { von = 5.0, bis = 7.0, einheit = "um" }
+sporenBreiteUm = { von = 2.5, bis = 3.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 9
+bisMonat = 2
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral."
+
+[geschmack]
+tags = []
+text = "Unbedeutend."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+fruchtkoerper = "1 bis 2, selten bis 3 mm lang, weiß, später milchkaffeefarben bis ocker, stachelförmig, in dichten Rasen."
+fleisch = "Weiß, transparent."
+geruch = "Neutral."
+geschmack = "Unbedeutend."
+sporenpulver = "Weiß, transparent."
+vorkommen = "Folgezersetzer an Nadelholz, meist Kieferntotholz, seltener an Fichte und Tanne. Gern an der feuchten Unterseite von Totholz oder an der Schattenseite eines Stumpfes. Selten."
+zeit = "Herbst bis Winter."
+
+[[verwechslungen]]
+slug = "igelstachelbart"
+unterschied = "Großer weißer Klumpen mit langen herabhängenden Stacheln, an Laubholz."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/RasigesStachelpilzchen.htm"

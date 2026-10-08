@@ -1,0 +1,78 @@
+name = "Grünblättriger Schwefelkopf"
+lateinisch = "Hypholoma fasciculare"
+gruppe = "schueppling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
+baeume = []
+speisewertHinweis = "Er macht starke Magen-Darm-Störungen, die über mehrere Tage anhalten. Zu erkennen an den grünen bis grüngelben Lamellen und am stark bitteren Geschmack."
+weitereNamen = ["Büscheliger Schwefelkopf", "Bitterer Schwefelkopf"]
+fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
+hutform = { von = "halbkugelig", nach = "flach" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["faserig", "hohl", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/GruenblaettrigerSchwefelkopf.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+stielLaengeCm = { von = 2.0, bis = 8.0, seltenBis = 11.0, einheit = "cm" }
+stielDickeCm = { von = 0.4, bis = 2.0, seltenBis = 3.0, einheit = "cm" }
+
+[zeitraum]
+vonMonat = 1
+bisMonat = 12
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "schwefelgelb", hex = "#e3d13a" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "grün", hex = "#4f8a3a" }]
+sporenlager = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "grüngelb", hex = "#9fb02f" }, { name = "oliv", hex = "#6b7a3a" }, { name = "grün", hex = "#4f8a3a" }, { name = "lila", hex = "#8a5fa8" }]
+stiel = [{ name = "schwefelgelb", hex = "#e3d13a" }, { name = "orangegelb", hex = "#e9a32c" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "schwefelgelb", hex = "#e3d13a" }, { name = "gelb", hex = "#e8c33a" }]
+sporenpulver = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "purpurbraun", hex = "#5f3346" }, { name = "lila", hex = "#8a5fa8" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "braun", hex = "#7a5230" }]
+
+[geruch]
+tags = ["obstartig", "unangenehm", "angenehm", "unauffaellig"]
+text = "Unbedeutend bis unangenehm, schwach obstartig."
+
+[geschmack]
+tags = ["bitter"]
+text = "Stark bitter."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 7, selten bis 9 cm breit, schwefelgelb bis grünlich, Mitte ocker bis rotbraun, Rand heller und oft mit gelblichem Flockensaum. Kahl und dünnfleischig, jung halbkugelig und oft stumpf gebuckelt, im Alter flach."
+lamellen = "Grün bis grüngelb, alt olivbräunlich bis dunkelbraun mit Lilastich, schmal angewachsen."
+stiel = "2 bis 8, selten bis 11 cm lang und 0,4 bis 2, selten bis 3 cm dick, schwefelgelb bis orangegelb, zur Basis dunkler bräunlich, Spitze fast neongelb, faserig, hohl und gebogen. Jung manchmal mit schwacher faseriger Ringzone."
+fleisch = "Gelblich bis schwefelgelb, bräunend, am Stiel mehr bräunlich, dünn."
+geruch = "Unbedeutend bis unangenehm, schwach obstartig."
+geschmack = "Stark bitter."
+sporenpulver = "Dunkelbraun-lila bis purpurbraun."
+vorkommen = "Folgezersetzer an Laub- und Nadelholzstümpfen, Ästen und vergrabenem Holz, gesellig bis büschelig."
+zeit = "Ganzjährig."
+
+[[verwechslungen]]
+slug = "nadelschueppling"
+unterschied = "An Nadelholz, Hut gelb mit spitzen Schuppen, Lamellen ohne Grünton."
+eigenerUnterschied = "Lamellen grün bis grüngelb, Sporenpulver purpurbraun, Geschmack stark bitter."
+
+[[verwechslungen]]
+slug = "rotbrauner-flaemmling"
+unterschied = "Hut rotbraun bis gelbbraun, Lamellen und Sporenpulver rostbraun, ohne Grünton."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/GruenblaettrigerSchwefelkopf.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Grünblättriger_Schwefelkopf"

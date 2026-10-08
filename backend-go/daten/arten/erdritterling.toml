@@ -1,0 +1,86 @@
+name = "Gemeiner Erdritterling"
+lateinisch = "Tricholoma terreum"
+gruppe = "ritterling"
+speisewert = "toedlichGiftig"
+marktfaehig = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["kiefer", "fichte", "tanne", "douglasie"]
+warnung = "123pilzsuche führt den Erdritterling als tödlich giftig. Die grauen Ritterlinge sind untereinander kaum zu trennen, und einige schädigen die Muskulatur. Er steht hier, weil die Kette ihn zählt, nicht weil man ihn sammeln soll."
+speisewertHinweis = "123pilzsuche führt ihn als tödlich giftig. Er galt lange als Speisepilz; die grauen Ritterlinge sind untereinander kaum zu trennen und einige schädigen die Muskulatur. Stehen lassen."
+weitereNamen = ["Erdritterling", "Silber Erdritterling"]
+fruchtschicht = { art = "lamellen", schneide = "gesaegt" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/GemeinerErdritterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+stielLaengeCm = { von = 3.0, bis = 9.0, seltenBis = 12.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 2.0, seltenBis = 2.2, einheit = "cm" }
+sporenLaengeUm = { von = 5.0, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "silbergrau", hex = "#b8bcc0" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+stiel = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral, ausdrücklich nicht mehlartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild, nicht mehlartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 7, selten bis 9 cm breit, hell silbergrau bis graubraun, trocken, filzig und feinschuppig, mit kleinem Buckel. Rand jung fein wollig."
+lamellen = "Grauweißlich, Schneiden manchmal schwärzlich und leicht gesägt. Junge Fruchtkörper mit Schleier."
+stiel = "3 bis 9, selten bis 12 cm lang, weiß bis grauweiß, Spitze weißlich flockig bereift, nach Berührung etwas rostbraun."
+fleisch = "Weiß, weich, höchstens etwas grauend."
+geruch = "Neutral, ausdrücklich nicht mehlartig."
+geschmack = "Mild, nicht mehlartig."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz mit Nadelbäumen, gern Kiefer, Fichte, Tanne und Douglasie, auf nährstoffreichen und oft kalkhaltigen Böden. In Mischwald, Nadelwald, Wiesen und Parks."
+zeit = "Frühsommer bis Spätherbst, im Herbst häufiger."
+
+[[verwechslungen]]
+slug = "gilbender-erdritterling"
+unterschied = "Lamellen gilben beim Reiben."
+
+[[verwechslungen]]
+slug = "mausgrauer-erdritterling"
+unterschied = "Hut mausgrau bis aschgrau mit bläulichem Ton, Stiel jung mit weißem Haarschleier."
+
+[[verwechslungen]]
+slug = "risspilzaehnlicher-erdritterling"
+unterschied = "Hut lilabraun getönt, Lamellen mit Zwischenlamellen."
+
+[[verwechslungen]]
+slug = "roetender-erdritterling"
+unterschied = "Lamellen schimmern rötlich, Stiel mit dunklen Fasern."
+
+[[verwechslungen]]
+slug = "tigerritterling"
+unterschied = "Hut weiß mit silbergrauen bis graubraunen Schuppen, Lamellen im Alter gelblich, Stiel keulig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/GemeinerErdritterling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Gemeiner_Erd-Ritterling"

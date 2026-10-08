@@ -1,0 +1,98 @@
+name = "Perlpilz"
+lateinisch = "Amanita rubescens"
+gruppe = "wulstling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Roh giftig. Mindestens fünf Minuten garen, bis 90 °C Kerntemperatur erreicht sind. Nur junge Fruchtkörper nehmen, alte verderben schnell. Der stark geriefte Ring und das Röten sind Pflichtmerkmale; wer den Pantherpilz nicht sicher trennt, lässt ihn stehen."
+weitereNamen = ["Rötender Knollenblätterpilz", "Rötender Wulstling", "Perlen-Wulstling"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+stielmerkmale = ["knolle", "genattert", "wurzelnd", "ring"]
+
+[baeumeAusErfahrung]
+baeume = ["buche", "fichte", "eiche"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Perlpilz.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Auf dem Hut ohne Verfärbung."
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 12.0, seltenBis = 18.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 15.0, seltenBis = 20.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 12.5, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 9.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "braunrot", hex = "#7d3324" }, { name = "violett", hex = "#6b4a8a" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "rot", hex = "#c0392b" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral."
+
+[geschmack]
+tags = ["mild", "kratzend"]
+text = "Mild, später etwas kratzend, roh giftig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 12, selten bis 18 cm breit, rotbraun, fleischrötlich, braunrot, gelblich bis hell violettbraun, mit grauen und leicht abwischbaren Schüppchen. Huthaut abziehbar."
+lamellen = "Weiß, im Alter rötlich fleckend, überwiegend frei, Schneiden feinstflockig."
+stiel = "5 bis 15, selten bis 20 cm lang, 1 bis 4, selten bis 6 cm dick, weißlich bis hell braunrosa. Knolle rübenförmig mit Warzengürtel, oft etwas wurzelnd, ohne Scheide. Ring weiß, gelb bis rosa, häutig, herabhängend und stark gerieft."
+fleisch = "Weiß, unter der Huthaut rotbraun, an Druckstellen und Schneckenfraßstellen rötend, zart und weich."
+geruch = "Neutral."
+geschmack = "Mild, später etwas kratzend, roh giftig."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz im Mischwald, bei Nadel- und Laubbäumen."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "grauer-wulstling"
+unterschied = "Der ganze Pilz ohne Rottöne, Geruch rüben- bis rettichartig, Knolle abgesetzt und ohne Söckchen."
+
+[[verwechslungen]]
+slug = "gruener-knollenblaetterpilz"
+unterschied = "Hut olivgrün bis gelbgrün, Fleisch unveränderlich, Stielbasis in einer häutigen Volva."
+
+[[verwechslungen]]
+slug = "koenigsfliegenpilz"
+unterschied = "Hut braun bis gelbbraun mit gelblichen Flocken, Fleisch unter der Huthaut gelb bis gelbgrün, Basis mit Söckchen."
+
+[[verwechslungen]]
+slug = "pantherpilz"
+unterschied = "Hut mit rein weißen, gleichmäßig angeordneten Flöckchen, Fleisch rötet nie, Knolle abgesetzt mit Söckchen, Ring nicht gerieft."
+
+[[verwechslungen]]
+slug = "rauer-wulstling"
+unterschied = "Velumreste am Hut und der Warzengürtel am Stiel sind gelblich, Fleisch rötet nicht."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Perlpilz.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Perlpilz"

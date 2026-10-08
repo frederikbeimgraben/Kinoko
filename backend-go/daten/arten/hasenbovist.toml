@@ -1,0 +1,80 @@
+name = "Hasenstäubling"
+lateinisch = "Lycoperdon utriforme"
+gruppe = "staeubling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Nur jung, solange das Innere rein weiß ist. Jedes Stück längs durchschneiden: zeigt der Schnitt Lamellenansätze, ist es ein junger Knollenblätterpilz."
+weitereNamen = ["Hasenbovist"]
+synonyme = ["Handkea utriformis", "Calvatia utriformis", "Calvatia caelata", "Lycoperdon sinclairii"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Hasenstaubling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+fruchtkoerperBreiteCm = { von = 3.0, bis = 16.0, seltenBis = 18.0, einheit = "cm" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "olivbraun", hex = "#6e6435" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }, { name = "dunkelbraun", hex = "#4a3120" }]
+
+[geruch]
+tags = ["angenehm"]
+text = "Angenehm."
+
+[geschmack]
+tags = ["mild", "unangenehm"]
+text = "Mild und angenehm, im Alter unangenehm karbolartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+fruchtkoerper = "3 bis 16, selten bis 18 cm breit, weiß, später grau, ballon-, sack- oder kreiselförmig. Jung mit plattenartigen, etwas spitzkegeligen Erhebungen, die im Alter verschwinden."
+fleisch = "Zuerst weiß und schwammig, jung zweigeteilt, später gelbgrün, alt eine olivbraune pulverige Sporenmasse."
+geruch = "Angenehm."
+geschmack = "Mild und angenehm, im Alter unangenehm karbolartig."
+sporenpulver = "Olivbraun bis dunkelbraun."
+vorkommen = "Folgezersetzer auf Wiesen, Weiden, Rasen, in Hecken und Obstgärten, besonders in Gebirgslagen."
+zeit = "Frühsommer bis Herbst."
+
+[[verwechslungen]]
+slug = "beutelstaeubling"
+unterschied = "Kleiner, bis 25 cm hoch, Außenhaut mit spitzen ablösbaren Warzen, Fleisch alt purpurbraun."
+eigenerUnterschied = "Ballon-, sack- oder kreiselförmig und meist viel größer, ohne abgesetzten Stielteil, auf Wiesen und Weiden."
+
+[[verwechslungen]]
+slug = "flaschenbovist"
+unterschied = "Kleiner, keulig bis birnenförmig mit stielartigem Fuß, mit körnigen Stacheln besetzt."
+
+[[verwechslungen]]
+slug = "riesenbovist"
+unterschied = "Deutlich größer, kugelig, Haut glatt und lederartig, Geruch unangenehm."
+eigenerUnterschied = "Nur 3 bis 16 cm breit, jung mit plattenartigen Erhebungen, auf Wiesen und Weiden, gern in Gebirgslagen."
+
+[[verwechslungen]]
+slug = "weisser-knollenblaetterpilz"
+unterschied = "Jung kugelig, im Schnitt aber mit Hut, Lamellen und Stiel angelegt, Basis in einer häutigen Scheide."
+
+[[verwechslungen]]
+slug = "wiesenstaeubling"
+unterschied = "Kleiner, kugel- bis birnenförmig, Basis mit weißem Myzelfilz und kräftigen Strängen."
+eigenerUnterschied = "Größer, die Außenhaut reißt im Alter netzig felderig auf."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Hasenstaubling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Hasen-Stäubling"

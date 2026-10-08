@@ -1,0 +1,75 @@
+name = "Orangeroter Mairitterling"
+lateinisch = "Calocybe graveolens"
+gruppe = "ritterling"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer"]
+baeume = ["laerche"]
+speisewertHinweis = "Sehr selten und kaum bekannt. Er riecht schwächer und weniger angenehm als der Maipilz."
+weitereNamen = ["Starkriechender Schönkopf", "Starkriechender Maipilz"]
+synonyme = ["Calocybe gambosa f. graveolens", "Gyrophila graveolens"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/OrangerMairitterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 8.0, seltenBis = 10.0, einheit = "cm" }
+stielLaengeCm = { von = 3.0, bis = 6.0, einheit = "cm" }
+sporenLaengeUm = { von = 5.0, bis = 6.0, einheit = "um" }
+sporenBreiteUm = { von = 3.0, bis = 4.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 7
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "orange", hex = "#e08a2e" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["mehlig", "gurkenartig", "angenehm"]
+text = "Mehlig bis gurkenartig, schwächer und weniger angenehm als beim Maipilz."
+
+[geschmack]
+tags = ["mild", "mehlig"]
+text = "Mehlig, mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 8, selten bis 10 cm breit, zuerst rotbraun, cremeockerbraun bis ockerorange, später schmutzig weiß bis gelblich, fast immer mit rötlichem Unterton. Huthaut glatt, Rand jung eingerollt, manchmal ausbleichend, alt von der Mitte her bräunlich schuppig."
+lamellen = "Weiß, später gelblich, sehr dicht stehend, ausgebuchtet angewachsen, manchmal mit Zahn etwas herablaufend."
+stiel = "3 bis 6 cm lang, weißlich bis gelblich, zylindrisch, faserig."
+fleisch = "Weiß, teils etwas gelblich, dick, fest, faserig, bei Verletzung ohne Verfärbung."
+geruch = "Mehlig bis gurkenartig, schwächer und weniger angenehm als beim Maipilz."
+geschmack = "Mehlig, mild."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer auf Wiesen und in Parks, gern bei Lärche. Gesellig in Hexenringen, sehr selten."
+zeit = "Frühling bis Frühsommer."
+
+[[verwechslungen]]
+slug = "riesenroetling"
+unterschied = "Lamellen jung gelblich und später rotocker, Sporenpulver fleischrötlich, Geruch unangenehm säuerlich."
+
+[[verwechslungen]]
+slug = "ziegelroter-risspilz"
+unterschied = "Hut ziegelrot bis rotbraun und radialfaserig aufreißend, Lamellen und Sporenpulver braun."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/OrangerMairitterling.htm"

@@ -1,0 +1,93 @@
+name = "Parasol"
+lateinisch = "Macrolepiota procera"
+gruppe = "schirmling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+karte = "parasol"
+speisewertHinweis = "Nicht roh essen. Ungenügend gegart löst er Magen-Darm-Beschwerden aus, deshalb gut durchgaren. Riesenschirmlinge vom Komposthaufen oder aus dem Garten stehen lassen, dort wächst der Gift-Riesenschirmling."
+weitereNamen = ["Riesenschirmling", "Riesenschirmpilz", "Paukenschläger", "Paukenschleger", "Gemeiner Riesenschirmling", "Gugermukken", "Schulmeisterpilz", "Eulchen"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+hutmerkmale = ["gezont"]
+stielmerkmale = ["genattert", "faserig", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Parasol.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 25.0, seltenBis = 30.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 30.0, seltenBis = 40.0, einheit = "cm" }
+stielDickeCm = { von = 2.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+sporenLaengeUm = { von = 12.0, bis = 18.0, einheit = "um" }
+sporenBreiteUm = { von = 9.0, bis = 12.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "hellbraun", hex = "#a97c50" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }]
+stiel = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["angenehm"]
+text = "Angenehm nussartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Angenehm nussartig, mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 25, selten bis 30 cm breit, hellbraun, mit gezonten, weichen, wolligen Schüppchen. Rand behangen."
+lamellen = "Weiß, frei, weich."
+stiel = "6 bis 30, selten bis 40 cm lang, 2 bis 7, selten bis 9 cm dick, weißlich bis hellbräunlich mit dunkelbrauner Natterung, schlank, zäh, faserig. Bei jungen Pilzen ist die Basis wie ein breiter Teller, der sich mit dem Wachstum abbaut. Ring wollig weißlich, doppelrandig und am Stiel verschiebbar."
+fleisch = "Hellbraun bis gelbbraun, weich, im Stiel faserig und weiß."
+geruch = "Angenehm nussartig."
+geschmack = "Angenehm nussartig, mild."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer in Mischwäldern, an Waldrändern, auf Waldwegen und in Heiden."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "ackerschirmpilz"
+unterschied = "Stiel ohne Natterung, von der Spitze bis zum Ring fein gerieft, auf Äckern, Wiesen und Brachflächen."
+eigenerUnterschied = "Deutlich größer, Stiel mit dunkelbrauner Natterung."
+
+[[verwechslungen]]
+slug = "jungfernschirmling"
+unterschied = "Stiel ohne Natterung, Lamellen gilben leicht, Fleisch rötet nicht. Im Nadelwald auf saurem Boden."
+eigenerUnterschied = "Stiel mit dunkelbrauner Natterung, Hut bis 25, selten 30 cm breit, Geruch nussartig."
+
+[[verwechslungen]]
+slug = "safranschirmling"
+unterschied = "Fleisch läuft bei Verletzung sofort rötlich an und wird später weinbraun, Stiel ohne Natterung, Basis mit gerandeter Knolle."
+eigenerUnterschied = "Stiel deutlich dunkelbraun genattert, Fleisch rötet nicht, wächst im Wald."
+
+[[verwechslungen]]
+slug = "sternschuppiger-riesenschirmpilz"
+unterschied = "Hutschuppen kastanienbraun und sternförmig auseinanderlaufend, Mitte schwarzbraun und gebuckelt."
+eigenerUnterschied = "Hutschuppen weich und wollig, nicht sternförmig aufreißend, Sporenpulver weiß."
+
+[[verwechslungen]]
+slug = "zitzen-riesenschirmling"
+unterschied = "Hut braunocker mit grob schollig abreißenden Schuppen und braunem Buckel, Natterung am Stiel nur schwach."
+eigenerUnterschied = "Deutlich größer, Stiel kräftig genattert, Doppelring stark ausgeprägt, Buckel meist nur stumpf."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Parasol.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Gemeiner_Riesenschirmling"

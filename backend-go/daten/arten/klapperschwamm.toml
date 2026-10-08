@@ -1,0 +1,88 @@
+name = "Klapperschwamm"
+lateinisch = "Grifola frondosa"
+gruppe = "porling"
+speisewert = "essbar"
+marktfaehig = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["eiche", "kastanie", "linde", "buche"]
+speisewertHinweis = "Nur jung essbar, im Alter wird er sehr zäh."
+weitereNamen = ["Maitake", "Spatelhütiger Porling", "Laubporling", "Kamm-Porling Graue Gans", "Gemeiner Klapperschwamm"]
+fruchtschicht = { art = "roehren" }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Klapperschwamm.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+sporenLaengeUm = { von = 5.0, bis = 7.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
+stiel = [{ name = "graubraun", hex = "#7d6f5e" }]
+fleisch = [{ name = "hellbraun", hex = "#a97c50" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "schwarz", hex = "#1a1a1a" }]
+
+[geruch]
+tags = ["angenehm"]
+text = "Angenehm."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 7, selten bis 9 cm breit je Einzelhut, graubraun, in Büscheln bis 50 cm Breite. Breite halbierte Einzelhüte, büschelig oder rosettenartig verwachsen, Oberseite etwas radialfaserig oder runzelig."
+roehren = "Weißlich bis weißbraun, auf Druck nicht schwärzend."
+stiel = "Graubraun, verzweigt sich in viele dünnere Äste."
+fleisch = "Hellbraun."
+geruch = "Angenehm."
+geschmack = "Mild."
+sporenpulver = "Weiß."
+vorkommen = "Parasit und Folgezersetzer im Wurzelbereich von Eiche und Kastanie, seltener bei Linde oder Buche. Er löst Weißfäule aus."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "bergporling"
+unterschied = "Hüte braun und samtig, fächerförmig ineinander verwachsen, Geschmack jung mild und schnell extrem scharf, bei Weißtanne."
+eigenerUnterschied = "Graubraune halbierte Einzelhüte in Büscheln, im Wurzelbereich von Eiche und Kastanie."
+
+[[verwechslungen]]
+slug = "breitblaettrige-glucke"
+unterschied = "Hirnartig breit gekräuselt, ohne Hüte und ohne Röhren, beim Kochen Waschküchengeruch."
+
+[[verwechslungen]]
+slug = "eichhase"
+unterschied = "Viele kleine runde Porenpilze mit mittigem Stielchen an einem Strunk, Fruchtkörper heller und gesprenkelt bräunlich."
+eigenerUnterschied = "Hüte breiter und zungenförmig, grau bis graubraun, in einem großen Büschel am Stammfuß."
+
+[[verwechslungen]]
+slug = "krause-glucke"
+unterschied = "Blumenkohlartig aus krausen Lappen, ohne Hüte und ohne Röhren, am Wurzelgeflecht von Kiefern."
+
+[[verwechslungen]]
+slug = "riesenporling"
+unterschied = "Einzelhüte viel größer, Poren auf Druck und Fleisch im Schnitt schwärzend."
+eigenerUnterschied = "Graubraune Einzelhüte, rosettenartig verwachsen, Röhren schwärzen auf Druck nicht, am Wurzelbereich von Eiche."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Klapperschwamm.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Gemeiner_Klapperschwamm"

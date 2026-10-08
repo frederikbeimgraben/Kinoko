@@ -1,0 +1,72 @@
+name = "Samtiger Filzröhrling"
+lateinisch = "Xerocomus lanatus"
+gruppe = "roehrling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["buche", "eiche"]
+speisewertHinweis = "Guter Speisepilz, in der Schweiz aber nicht marktfaehig."
+synonyme = ["Boletus lanatus", "Boletus subtomentosus"]
+fruchtschicht = { art = "roehren" }
+stielmerkmale = ["genetzt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SamtigerFilzroehrling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "ammoniak"
+reaktion = "Huthaut gruenblau."
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 9.0, seltenBis = 12.0, einheit = "cm" }
+sporenLaengeUm = { von = 11.0, bis = 16.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "rotbraun", hex = "#8b4a2b" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenlager = [{ name = "chromgelb", hex = "#e5b820" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = []
+text = "Leicht nach Schwefel, besonders beim Trocknen."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 9, selten bis 12 cm breit, graubraun bis rotbraun, filzig, unter der Huthaut leicht rosalich."
+roehren = "Chromgelb, gelegentlich leicht blauend, am Stiel ausgebuchtet."
+stiel = "Gelblich mit braeunlicher Netzzeichnung von der Mitte bis zur Spitze, lang, schlank und verdreht, im Mittelbereich braunfleckig. Basis verdickt und meist heller, darunter zugespitzt."
+fleisch = "Hellgelblich, leicht blauend, an der Basis gelblich bis gruenblau verfaerbend."
+geruch = "Leicht nach Schwefel, besonders beim Trocknen."
+geschmack = "Mild."
+sporenpulver = "Olivbraun."
+vorkommen = "Symbiosepilz im Laubwald, besonders gern bei Buchen und Eichen."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "rotfussroehrling"
+unterschied = "Stiel rot beflockt, Fleisch unter der Huthaut roetlich, Huthaut oft feldrig aufgerissen."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SamtigerFilzroehrling.htm"
