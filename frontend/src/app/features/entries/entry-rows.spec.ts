@@ -108,10 +108,7 @@ describe('entry rows', () => {
   });
 
   it('shows a waiting find with the reporter and without optional fields', () => {
-    const row = pendingRow(
-      contextOf(),
-      task({ lat: 1, lon: 2, foundOn: '2026-09-06', forTraining: false }),
-    );
+    const row = pendingRow(contextOf(), task({ lat: 1, lon: 2, foundOn: '2026-09-06', forTraining: false }));
 
     expect(row.pending).toBe(true);
     expect(row.key).toBe('waiting-task-1');

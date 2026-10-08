@@ -109,7 +109,15 @@ describe('export files', () => {
     const full = {
       ...DATA,
       photos: [
-        { id: 'photo-1', speciesId: 'steinpilz', takenOn: '2026-09-05', lat: 48, lon: 9, state: 'ready', caption: 'cap' },
+        {
+          id: 'photo-1',
+          speciesId: 'steinpilz',
+          takenOn: '2026-09-05',
+          lat: 48,
+          lon: 9,
+          state: 'ready',
+          caption: 'cap',
+        },
         { id: 'photo-2', speciesId: null, createdAt: '2026-09-04T10:00:00Z', state: 'ready' },
       ],
       combinations: [
@@ -154,7 +162,12 @@ describe('export files', () => {
   });
 
   it('writes a CSV file and quotes a field with a quote', () => {
-    const quoted = { ...DATA, finds: [], zones: [], markers: [{ ...DATA.markers[0], name: 'The "big" one' }] };
+    const quoted = {
+      ...DATA,
+      finds: [],
+      zones: [],
+      markers: [{ ...DATA.markers[0], name: 'The "big" one' }],
+    };
 
     const file = exportFile(quoted, 'csv', species, '2026-09-12');
 

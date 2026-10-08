@@ -164,7 +164,13 @@ describe('UploadSheetComponent states', () => {
   it('asks for the same file after a reload and continues its session', async () => {
     localStorage.setItem(
       KEY,
-      JSON.stringify({ uploadId: 'upload-old', kind: 'trees-grid', name: 'trees.parquet', size: 10, lastModified: 5 }),
+      JSON.stringify({
+        uploadId: 'upload-old',
+        kind: 'trees-grid',
+        name: 'trees.parquet',
+        size: 10,
+        lastModified: 5,
+      }),
     );
     const { api } = await build();
 

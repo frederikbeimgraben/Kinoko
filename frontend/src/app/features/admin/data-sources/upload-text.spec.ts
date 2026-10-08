@@ -58,7 +58,9 @@ describe('upload text', () => {
     expect(uploadError({ ...sending, phase: 'failed', error: 'disk_full' }, text)).toBe(
       'admin.upload.error.disk_full',
     );
-    expect(uploadError({ ...sending, phase: 'failed', error: 'odd' }, text)).toBe('admin.upload.error.failed');
+    expect(uploadError({ ...sending, phase: 'failed', error: 'odd' }, text)).toBe(
+      'admin.upload.error.failed',
+    );
     expect(uploadError({ ...sending, phase: 'failed', error: null }, text)).toBe('admin.upload.error.failed');
     expect(uploadError(sending, text)).toBe('');
   });

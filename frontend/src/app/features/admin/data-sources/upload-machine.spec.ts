@@ -217,8 +217,25 @@ describe('upload state machine', () => {
 
     expect(throughput(still)).toBeNull();
     expect(etaSeconds({ ...started, samples: still })).toBeNull();
-    expect(etaSeconds({ ...started, samples: [{ at: 0, sent: 16 }, { at: 1000, sent: 16 }] })).toBeNull();
-    expect(etaSeconds({ ...started, file: null, samples: [{ at: 0, sent: 0 }, { at: 1000, sent: 16 }] })).toBeNull();
+    expect(
+      etaSeconds({
+        ...started,
+        samples: [
+          { at: 0, sent: 16 },
+          { at: 1000, sent: 16 },
+        ],
+      }),
+    ).toBeNull();
+    expect(
+      etaSeconds({
+        ...started,
+        file: null,
+        samples: [
+          { at: 0, sent: 0 },
+          { at: 1000, sent: 16 },
+        ],
+      }),
+    ).toBeNull();
   });
 
   it('keeps no record for an upload without a session, or a finished upload', () => {
