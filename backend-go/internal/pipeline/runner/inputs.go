@@ -93,7 +93,8 @@ func (r *Runner) inputsOf(ctx context.Context, kind enums.RunKind, species []Spe
 	if err != nil {
 		return nil, err
 	}
-	return append(append(fn.FlatMap(uploaded, fn.Identity[[]Input]), fn.FlatMap(models, fn.Identity[[]Input])...), remote...), nil
+	flat := func(rows []Input) []Input { return rows }
+	return append(append(fn.FlatMap(uploaded, flat), fn.FlatMap(models, flat)...), remote...), nil
 }
 
 // snapshot gives the cache state of a public source: the count of good files and the newest fetch.
