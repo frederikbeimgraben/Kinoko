@@ -2,30 +2,37 @@
   display: block;
 }
 
+// Per `kit.css` `.wrow`.
 .wrow {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+// Per `kit.css` `.weeks.fade`. The strip is the offset parent of its weeks, so the scroll target is exact.
 .weeks {
+  position: relative;
   display: flex;
   flex: 1;
   gap: 4px;
   min-inline-size: 0;
-  // Waagrecht scrollt die Leiste, senkrecht zieht das Blatt darunter.
+  // The strip scrolls horizontally. A vertical drag moves the sheet below it.
   touch-action: pan-x;
   overflow-x: auto;
   scrollbar-width: none;
   mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent);
 }
 
+// Per `kit.css` `.weeks.fade-l`: on the phone, the strip ends at the last whole week.
+.weeks--end {
+  mask-image: linear-gradient(90deg, transparent, #000 28px);
+}
+
 .weeks::-webkit-scrollbar {
   display: none;
 }
 
-// Eine feste Ebene hat keine Woche. Die Leiste bleibt stehen, damit die Zeit
-// greifbar bleibt, tritt aber zurück.
+// A fixed layer has no week. The strip stays, so the time stays visible, but it is less prominent.
 .weeks--dimmed {
   opacity: 0.45;
 }

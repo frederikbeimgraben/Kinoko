@@ -21,7 +21,13 @@ import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import { conditionText, span, type Factor } from './factors';
 
-/** Wie fein der Griff läuft: fein genug zum Zielen, grob genug zum Ablesen. */
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SectionComponent } from '../../ui/section/section.component';
+
+/** The step of the handle: fine enough to aim, coarse enough to read. */
 export function stepSize(layer: Layer): number {
   const width = layer.high - layer.low;
   if (width > 50) return 1;
@@ -29,7 +35,7 @@ export function stepSize(layer: Layer): number {
   return 0.01;
 }
 
-/** Welche Griffe eine Bedingung braucht. */
+/** The handles of each condition. */
 const HANDLES: Record<Condition, Handles> = { below: 'to', above: 'from', between: 'both' };
 
 const CONDITION_KEY: Record<Condition, TranslationKey> = {
@@ -38,14 +44,19 @@ const CONDITION_KEY: Record<Condition, TranslationKey> = {
   between: 'map.factor.operator.between',
 };
 
-/** Der Faktor: die Verteilung der Quelle und die Bedingung darüber. */
+/** The factor: the distribution of the source and the condition on it. */
 @Component({
   selector: 'app-factor-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
+    FormFieldComponent,
     HistogramComponent,
+    ListRowComponent,
     RangeSliderComponent,
+    RowGroupComponent,
+    ScrollFadeDirective,
+    SectionComponent,
     SegmentedComponent,
     SheetHeadComponent,
     TranslatePipe,
@@ -57,7 +68,7 @@ export class FactorSheetComponent {
   private readonly i18n = inject(I18nService);
 
   readonly factor = input.required<Factor>();
-  /** In der Spalte trägt die Seite den Kopf; das Blatt lässt ihn dann weg. */
+  /** In the column, the page has the head. The sheet then has no head. */
   readonly withHead = input(true);
   readonly layer = input.required<Layer>();
   readonly histogram = input<Histogram | null>(null);
@@ -65,7 +76,7 @@ export class FactorSheetComponent {
   readonly apply = output<Factor>();
   readonly removed = output<Factor>();
 
-  /** Der Faktor in Arbeit. Ein neuer Faktor von außen setzt ihn zurück. */
+  /** The factor in work. A new factor from the parent resets it. */
   protected readonly draft = linkedSignal<Factor, Factor>({
     source: this.factor,
     computation: (factor) => factor,
@@ -93,7 +104,7 @@ export class FactorSheetComponent {
   protected readonly scaleFrom = computed(() => this.text(this.layer().low));
   protected readonly scaleTo = computed(() => this.text(this.layer().high));
 
-  /** Die Grenze, die der Griff gerade setzt, in der Mitte der Skala. */
+  /** The limit that the handle sets, in the middle of the scale. */
   protected readonly bound = computed(() =>
     this.text(this.draft().condition === 'below' ? this.values().high : this.values().low),
   );
@@ -102,7 +113,7 @@ export class FactorSheetComponent {
     this.i18n.translate('map.factor.distribution', { source: this.head() }),
   );
 
-  /** Die Quelle mit ihrem Zeitraum, wie die Überschrift sie nennt. */
+  /** The source with its period, as the heading gives it. */
   protected readonly head = computed(() => {
     const layer = this.layer();
     return layer.range === '' ? layer.label : `${layer.label} ${layer.range}`;
@@ -111,8 +122,7 @@ export class FactorSheetComponent {
   protected setCondition(value: string): void {
     const condition = (['below', 'above', 'between'] as const).find((entry) => entry === value);
     if (!condition) return;
-    // Die Spanne bleibt, wo sie war: der Wechsel der Form soll den Faktor
-    // nicht auf einen anderen Ausschnitt der Skala werfen.
+    // The range stays: a change of the condition does not move the factor to another part of the scale.
     const values = this.values();
     this.draft.set({ ...this.draft(), condition, low: values.low, high: values.high });
   }

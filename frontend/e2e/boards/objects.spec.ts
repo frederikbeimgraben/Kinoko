@@ -3,22 +3,19 @@ import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { GROUPS } from '../fixtures/groups';
-import { SPECIES_BUNDLE, SPECIES_MANIFEST, mockMap, showMapImage } from '../fixtures/map';
+import { SPECIES_BUNDLE, SPECIES_MANIFEST, mockMap, showDesignMap } from '../fixtures/map';
 import { mockValueTile } from '../fixtures/tiles';
-import { expectBoard, skipPending } from './board';
+import { expectBoard, neutralisePhotos, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Die Karte des Boards läuft unter dem Blatt weiter. */
-const MAP_HEIGHT = 844;
-
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device and does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Der Marker aus dem Board `MarkerSheet`. */
+/** The marker of the board `MarkerSheet`. */
 const MARKERS = {
   items: [
     {
@@ -36,11 +33,12 @@ const MARKERS = {
   nextCursor: null,
 };
 
-/** Der Fund aus dem Board `FindSheet`. */
+/** The find of the board `FindSheet`. */
 const FINDS = {
   items: [
     {
       id: 'find-eins',
+      ownerId: 'konto-eins',
       lat: 48.5203,
       lon: 9.0511,
       speciesId: '00000000-0000-4000-8000-000000000014',
@@ -58,7 +56,7 @@ const FINDS = {
   nextCursor: null,
 };
 
-/** Die zwei Fotos, die das Board `FindSheet` nebeneinander zeigt. */
+/** The two photos of the board `FindSheet`. */
 const PHOTOS = {
   items: [
     { id: 'foto-eins', findId: 'find-eins', state: 'accepted', source: 'own', ownerName: 'Frederik' },
@@ -67,7 +65,7 @@ const PHOTOS = {
   nextCursor: null,
 };
 
-/** Die Zone aus dem Board `ZoneEdit`. */
+/** The zone of the board `ZoneEdit`. */
 const ZONES = {
   items: [
     {
@@ -111,12 +109,13 @@ const REPLIES = {
     ownFinds: 2,
   },
   '/api/groups': { items: GROUPS },
+  '/api/me': { id: 'konto-eins', name: 'Frederik' },
 };
 
-/** Das Manifest der Art mit genau der Kachel, die den Fund trägt. */
+/** The manifest of the species with the tile of the find. */
 const MANIFEST = { ...SPECIES_MANIFEST, tiles: { zooms: [5, 8], have: { '8': ['134/88'] } } };
 
-/** Geht über die Liste der Einträge in das Blatt eines Objekts. */
+/** Goes through the entry list into the sheet of an object. */
 async function openObject(page: Page, tab: string, row: string): Promise<void> {
   await mockSignIn(page);
   await mockApi(
@@ -125,12 +124,13 @@ async function openObject(page: Page, tab: string, row: string): Promise<void> {
     { photo: { 'foto-eins/list': 'tile-1-72x72.png', 'foto-zwei/list': 'tile-2-72x72.png' } },
   );
   await mockMap(page, { detent: 1 });
+  await neutralisePhotos(page);
   await mockValueTile(page, 'boletus-edulis', MANIFEST);
   await page.goto('/eintraege');
-  await page.getByRole('tab', { name: tab }).click();
+  await page.getByRole('button', { name: tab, exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: row }).first();
   await expect(entry).toBeVisible();
-  // Unter Last kommt der Tipp vor dem Zuhörer der Zeile an.
+  // Under load, the tap can come before the listener of the row.
   await expect(async () => {
     await entry.click();
     await expect(page).toHaveURL(/\/karte$/, { timeout: 2000 });
@@ -139,9 +139,9 @@ async function openObject(page: Page, tab: string, row: string): Promise<void> {
   await expect(page.getByRole('heading', { name: row })).toBeVisible();
 }
 
-/** Legt das Kartenbild auf und vergleicht dann mit dem Board. */
+/** Puts the design map surface on the canvas and compares the page with the board. */
 async function board(page: Page, stem: string): Promise<void> {
-  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
+  await showDesignMap(page);
   await expectBoard(page, stem);
 }
 
@@ -173,13 +173,13 @@ test('MapDialogFindDelete', async ({ page }) => {
   await board(page, 'MapDialogFindDelete');
 });
 
-/** Der Haken der App, über den der Test die Karte genau setzt. */
+/** The hook of the app that lets the test set the map exactly. */
 interface MapHandle {
   aimAt(x: number, y: number): [number, number];
   showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
 }
 
-/** Die Ecke, an der das Brett `ObjectMenu` das Menü zeigt. */
+/** The corner where the board `ObjectMenu` shows the menu. */
 const MENU_SPOT: readonly [number, number] = [160, 296];
 
 test('ObjectMenu', async ({ page }) => {
@@ -192,7 +192,7 @@ test('ObjectMenu', async ({ page }) => {
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
   await page.waitForFunction(() => 'pilzMap' in window);
-  // Der Marker liegt unter dem Punkt, an dem das Menü aufgeht.
+  // The marker is below the point where the menu opens.
   await page.evaluate(
     ([lon, lat, x, y]) => {
       (window as unknown as { pilzMap: MapHandle }).pilzMap.showAt(lon, lat, x, y, 14);
@@ -205,10 +205,10 @@ test('ObjectMenu', async ({ page }) => {
   await page.waitForTimeout(800);
   await page.mouse.up();
   await expect(page.getByRole('menu')).toBeVisible();
-  await showMapImage(page, 'map-stein-631.png', 631);
+  await showDesignMap(page);
 });
 
-/** Wechselt vom Blatt in das Formular des Objekts. */
+/** Goes from the sheet to the form of the object. */
 async function edit(page: Page, heading: string): Promise<void> {
   await page.getByRole('button', { name: 'Bearbeiten' }).click();
   await expect(page.getByRole('heading', { name: heading })).toBeVisible();
@@ -231,7 +231,7 @@ test('MapDesktopZoneView', async ({ page }) => {
   guard('MapDesktopZoneView', 'wide');
   await page.context().grantPermissions(['geolocation']);
   await openObject(page, 'Zonen', 'Schönbuch Nord');
-  await showMapImage(page, 'map-desktop-stein-900.png');
+  await showDesignMap(page);
   await expectBoard(page, 'MapDesktopZoneView');
 });
 
@@ -246,5 +246,14 @@ test('MapFindEdit', async ({ page }) => {
   guard('MapFindEdit', 'phone');
   await openObject(page, 'Funde', 'Steinpilz');
   await edit(page, 'Fund bearbeiten');
+  // The board shows the fields as the person changes them: a new date, no count and no note.
+  await page.locator('input[type="date"]').fill('2026-09-09');
+  await page.getByRole('spinbutton').fill('');
+  await page.locator('textarea').fill('');
+  await page.mouse.move(0, 0);
+  await page.evaluate(() => {
+    const active: Element | null = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+  });
   await board(page, 'MapFindEdit');
 });

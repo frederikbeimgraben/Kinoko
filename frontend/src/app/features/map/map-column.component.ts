@@ -5,15 +5,16 @@ import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { FactorSheetComponent } from './factor-sheet.component';
+import { MapPanelBodyComponent } from './map-panel-body.component';
 import { MapPanelComponent } from './map-panel.component';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
 
-/** Die Spalte am Rechner: Kopf und Inhalt, beim Faktor dessen Seite. */
+/** The column of the desktop: the panel and its body, or the page of a factor. */
 @Component({
   selector: 'app-map-column',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FactorSheetComponent, MapPanelComponent, SheetHeadComponent],
+  imports: [FactorSheetComponent, MapPanelBodyComponent, MapPanelComponent, SheetHeadComponent],
   templateUrl: './map-column.component.html',
   styleUrl: './map-column.component.scss',
 })

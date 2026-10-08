@@ -43,6 +43,9 @@ export class ActionBarComponent {
   /** The main action stands on the left, as some boards show it. */
   readonly leadFirst = input(false);
 
+  /** The icon of the second action, per the board `MapFindView`: "trash". */
+  readonly secondaryIcon = input<IconName>();
+
   readonly primaryClick = output();
   readonly secondaryClick = output();
 

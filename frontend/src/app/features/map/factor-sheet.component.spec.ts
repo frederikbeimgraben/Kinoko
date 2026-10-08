@@ -33,8 +33,8 @@ describe('FactorSheetComponent', () => {
   it('zeigt Quelle, Zeitbezug, Verteilung und Bedingung', async () => {
     const { container } = await sheet();
 
-    expect(screen.getByText('Niederschlag')).toBeInTheDocument();
-    expect(screen.getByText('Summe KW 37 bis 40')).toBeInTheDocument();
+    expect(screen.getAllByText(/Niederschlag/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Summe KW 37 bis 40/).length).toBeGreaterThan(0);
     expect(screen.getByRole('img', { name: /Verteilung über Deutschland/ })).toBeInTheDocument();
     expect(screen.getAllByText('≥ 80 mm').length).toBeGreaterThan(0);
     await noViolations(container);

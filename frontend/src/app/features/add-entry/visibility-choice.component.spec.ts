@@ -38,7 +38,7 @@ describe('VisibilityChoiceComponent', () => {
     expect(setup.api.calls).toEqual([false]);
     expect(screen.getByText('Pilzgruppe Karlsruhe')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Pilzgruppe Karlsruhe' }));
+    await userEvent.click(screen.getByRole('button', { name: /Pilzgruppe Karlsruhe/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Familie' }));
 
     expect(setup.groups.at(-1)).toBe('gruppe-zwei');

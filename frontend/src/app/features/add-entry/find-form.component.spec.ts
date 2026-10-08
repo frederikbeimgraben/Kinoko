@@ -9,7 +9,7 @@ import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 
 /** The place of the form without an existing find. */
@@ -40,7 +40,7 @@ async function build(
     },
     providers: [provideHttpClient(), provideHttpClientTesting()],
   });
-  TestBed.inject(MapState).species.set('steinpilz');
+  TestBed.inject(MapStore).setSpecies('steinpilz');
   await vi.waitFor(() => {
     TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(bundle);
   });
@@ -177,14 +177,14 @@ describe('FundFormularComponent', () => {
   it('dimmt und sperrt die Felder, solange das Speichern läuft', async () => {
     const setup = await build({ busy: true });
 
-    expect(setup.container.querySelector('.form__fields')).toHaveClass('form__fields--busy');
+    expect(setup.container.querySelector('.form__body')).toHaveClass('form__body--busy');
     expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
   });
 
   it('lässt die Felder frei, solange nichts läuft', async () => {
     const setup = await build();
 
-    expect(setup.container.querySelector('.form__fields')).not.toHaveClass('form__fields--busy');
+    expect(setup.container.querySelector('.form__body')).not.toHaveClass('form__body--busy');
   });
 
   it('füllt sich aus einem vorhandenen Fund, lässt die Fotos weg und behält die Freigabe', async () => {

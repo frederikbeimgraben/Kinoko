@@ -1,26 +1,36 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  output,
+  signal,
+} from '@angular/core';
+import type { Combination } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { histogramFor, type Layer } from '../../core/tiles/layers';
-import type { Combination } from '../../core/api/models';
-import { LayerListComponent } from './layer-list.component';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
 import { CombinationsComponent } from './combinations.component';
 import { FactorSheetComponent } from './factor-sheet.component';
-import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
-import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
-import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
-import { MapView } from './map.view';
 import type { Factor } from './factors';
+import { encodeFactors, fromWire } from './factors';
+import { LayerPickComponent } from './layer-pick.component';
+import { MapView } from './map.view';
+import { SpeciesPickComponent } from './species-pick.component';
 
-/** Welches Blatt gerade über der Karte liegt. */
+/** The sheet that is over the map. */
 export type Overlay = 'species' | 'layer' | 'factors' | 'factor' | 'combinations' | 'save' | null;
 
-/** Der Kopf des Blatts nennt, worum es geht. Der Faktor trägt seinen eigenen Kopf. */
+/** The head of each sheet names its subject. The factor sheet names its source. */
 const TITLE: Partial<Record<NonNullable<Overlay>, TranslationKey>> = {
   species: 'map.species.choose',
   layer: 'map.tab.layer',
@@ -28,12 +38,12 @@ const TITLE: Partial<Record<NonNullable<Overlay>, TranslationKey>> = {
   save: 'map.combination.save',
 };
 
-/** Ein Name braucht wenig Platz, jedes andere Blatt die ganze Höhe. */
+/** A name needs little space. Each other sheet takes the full height. */
 export function overlayDetent(open: Overlay): Detent {
   return open === 'save' ? 1 : 2;
 }
 
-/** Die Blätter über der Karte. Über der Karte liegt immer nur eines. */
+/** The sheets over the map, per the boards `MapSpecies`, `MapLayerPicker`, `MapCombinations` and `MapCombinationSave`. */
 @Component({
   selector: 'app-map-overlays',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,11 +52,11 @@ export function overlayDetent(open: Overlay): Detent {
     CombinationsComponent,
     FactorSheetComponent,
     FormFieldComponent,
-    LayerListComponent,
-    NgTemplateOutlet,
+    LayerPickComponent,
     OverlayHostComponent,
+    ScrollFadeDirective,
     SheetComponent,
-    SpeciesPickerComponent,
+    SpeciesPickComponent,
     TranslatePipe,
   ],
   templateUrl: './map-overlays.component.html',
@@ -60,33 +70,43 @@ export class MapOverlaysComponent {
   protected readonly combination = this.view.combination;
 
   readonly open = input.required<Overlay>();
-  /** Der Faktor, den das Blatt `Faktor` gerade bearbeitet. */
+  /** The factor that the factor sheet changes. */
   readonly factor = input<Factor | null>(null);
   readonly closed = output();
   readonly factorApplied = output<Factor>();
   readonly factorRemoved = output<Factor>();
   readonly saved = output<string>();
 
-  /** Ein Blatt über der Karte steht in derselben obersten Raste. */
-
-  /** Der Name einer Kombination braucht wenig Platz, der Rest die ganze Höhe. */
-
-  /** Die Faktorwahl trägt ihr eigenes Blatt. Am Rechner steht der Faktor in der Spalte. */
+  /** The factor choice has its own sheet. On the desktop, the factor is in the column. */
   protected readonly shown = computed(
     () => this.open() !== null && this.open() !== 'factors' && !(this.wide() && this.open() === 'factor'),
   );
 
+  protected readonly factorLayer = computed<Layer | null>(() => {
+    const factor = this.factor();
+    return factor === null ? null : (this.view.sources().get(factor.source) ?? null);
+  });
+
   protected readonly title = computed(() => {
     const open = this.open();
+    if (open === 'factor') return this.factorLayer()?.label ?? '';
     const key = open === null ? undefined : TITLE[open];
     return key === undefined ? '' : this.i18n.translate(key);
   });
 
   protected readonly name = signal('');
 
-  protected readonly factorLayer = computed<Layer | null>(() => {
-    const factor = this.factor();
-    return factor === null ? null : (this.view.sources().get(factor.source) ?? null);
+  /** The species in the sheet. "Apply" takes it, the close button drops it. */
+  protected readonly draftSpecies = linkedSignal<string | null>(() => this.view.species()?.value ?? null);
+
+  /** The saved combination in the sheet. It starts with the one that the map shows. */
+  protected readonly draftCombination = linkedSignal<Combination | null>(() => {
+    const shown = encodeFactors(this.combination.factors());
+    return (
+      this.combination
+        .saved()
+        .find((saved) => encodeFactors((saved.factors ?? []).map(fromWire)) === shown) ?? null
+    );
   });
 
   protected readonly histogram = computed(() => {
@@ -94,18 +114,20 @@ export class MapOverlaysComponent {
     return layer === null ? null : histogramFor(layer, this.view.weekKey());
   });
 
-  protected chooseSpecies(slug: string): void {
-    this.state.species.set(slug);
+  protected chooseSpecies(): void {
+    const slug = this.draftSpecies();
+    if (slug !== null) this.state.setSpecies(slug);
     this.closed.emit();
   }
 
   protected chooseLayer(layer: Layer): void {
-    this.state.layer.set(layer.id);
+    this.state.setLayer(layer.id);
     this.closed.emit();
   }
 
-  protected pick(combination: Combination): void {
-    this.combination.pick(combination);
+  protected pick(): void {
+    const chosen = this.draftCombination();
+    if (chosen !== null) this.combination.pick(chosen);
     this.closed.emit();
   }
 
@@ -116,7 +138,7 @@ export class MapOverlaysComponent {
     this.saved.emit(name);
   }
 
-  /** Das X und die Abdunkelung schließen das Blatt und verwerfen den Namen. */
+  /** The close button and a tap outside the sheet close it and drop the name. */
   protected dismiss(): void {
     this.name.set('');
     this.closed.emit();

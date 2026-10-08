@@ -2,23 +2,32 @@
   display: contents;
 }
 
+// Per `kit.css` `.field` with its `.lbl`.
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-inline-size: 0;
+}
+
 .choice__label {
-  display: block;
-  margin: 0 0 var(--space-2);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  line-height: 15px;
+  padding-inline-start: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
 }
 
 .choice__inline {
-  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
 }
 
 .choice__label--inline {
-  margin: 0;
+  padding: 0;
 }
 
 .choice__segment {

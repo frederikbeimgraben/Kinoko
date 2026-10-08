@@ -1,0 +1,17 @@
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
+:host {
+  display: contents;
+}
+
+.picker {
+  overflow-y: auto;
+}
+
+// Board `MapFactorPicker`: a strip of 16 px below the body.
+.picker__end {
+  flex: none;
+  block-size: 16px;
+}

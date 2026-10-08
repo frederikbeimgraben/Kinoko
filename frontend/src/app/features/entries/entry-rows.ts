@@ -6,7 +6,7 @@ import type { SyncTask } from '../../core/offline/sync.types';
 import type { EntryListRow } from '../../ui/entry-list/entry-list.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import { visibilityText } from '../add-entry/visibility';
-import type { ObjectKind } from '../map/map.state';
+import type { ObjectKind } from '../map/map.store';
 import { colourToken } from './colors';
 import type { EntryBody } from './entries.store';
 import { hectaresText, isoDatum } from './formats';

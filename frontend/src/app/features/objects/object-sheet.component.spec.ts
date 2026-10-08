@@ -21,13 +21,13 @@ import {
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { SpeciesStore } from '../species/species.store';
 import { EntriesState } from '../entries/entries.state';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { ObjectSheetComponent } from './object-sheet.component';
 
 interface Setup {
   container: Element;
   map: MapAdapterDouble;
-  state: MapState;
+  state: MapStore;
   router: Router;
   http: HttpTestingController;
   refresh: () => void;
@@ -71,7 +71,7 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
   return {
     container,
     map,
-    state: TestBed.inject(MapState),
+    state: TestBed.inject(MapStore),
     router: TestBed.inject(Router),
     http,
     refresh: detectChanges,
@@ -87,7 +87,7 @@ function sheetClose(container: Element): HTMLElement {
 
 /** Opens the find of the fixture. The sheet of the find resolves the account. */
 async function openFind(setup: Setup, id = FIND.id): Promise<void> {
-  setup.state.object.set({ kind: 'find', id });
+  setup.state.setObject({ kind: 'find', id });
   setup.refresh();
   await vi.waitFor(() => {
     setup.http.expectOne('/api/me').flush(ME);
@@ -155,12 +155,12 @@ describe('ObjektBlattComponent', () => {
   it('öffnet Marker und Zone aus derselben Adresse', async () => {
     const setup = await build();
 
-    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.state.setObject({ kind: 'marker', id: MARKER.id });
     setup.refresh();
     expect(screen.getByRole('heading', { name: 'Marker' })).toBeInTheDocument();
     expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
 
-    setup.state.object.set({ kind: 'zone', id: ZONE.id });
+    setup.state.setObject({ kind: 'zone', id: ZONE.id });
     setup.refresh();
     expect(screen.getByRole('heading', { name: 'Zone' })).toBeInTheDocument();
     expect(screen.getByText('Schönbuch Nord')).toBeInTheDocument();
@@ -170,14 +170,14 @@ describe('ObjektBlattComponent', () => {
   it('nimmt die Höhe seines Inhalts, für jede Art des Objekts', async () => {
     const setup = await build();
 
-    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.state.setObject({ kind: 'marker', id: MARKER.id });
     setup.refresh();
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
 
     await openFind(setup);
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
 
-    setup.state.object.set({ kind: 'zone', id: ZONE.id });
+    setup.state.setObject({ kind: 'zone', id: ZONE.id });
     setup.refresh();
     expect(setup.container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
   });
@@ -205,7 +205,7 @@ describe('ObjektBlattComponent', () => {
 
   it('führt das X aus dem Formular zurück zum Objekt und dann erst hinaus', async () => {
     const setup = await build();
-    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.state.setObject({ kind: 'marker', id: MARKER.id });
     setup.refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
     setup.refresh();
@@ -225,7 +225,7 @@ describe('ObjektBlattComponent', () => {
   it('sagt es, wenn den Eintrag niemand mehr kennt', async () => {
     const setup = await build();
 
-    setup.state.object.set({ kind: 'find', id: 'weg' });
+    setup.state.setObject({ kind: 'find', id: 'weg' });
     setup.refresh();
 
     expect(screen.getByText('Diesen Eintrag gibt es nicht mehr.')).toBeInTheDocument();
@@ -234,7 +234,7 @@ describe('ObjektBlattComponent', () => {
   it('zoomt die Karte auf das Objekt, sobald es offen ist', async () => {
     const setup = await build();
 
-    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.state.setObject({ kind: 'marker', id: MARKER.id });
     setup.refresh();
 
     expect(setup.map.flights).toHaveLength(1);
@@ -247,7 +247,7 @@ describe('ObjektBlattComponent', () => {
     const ring = ZONE.polygon.coordinates[0];
     const middle = ring.reduce((sum, point) => [sum[0] + point[0], sum[1] + point[1]], [0, 0]);
 
-    setup.state.object.set({ kind: 'zone', id: ZONE.id });
+    setup.state.setObject({ kind: 'zone', id: ZONE.id });
     setup.refresh();
 
     expect(setup.map.flights[0].target).toEqual([middle[0] / ring.length, middle[1] / ring.length]);
@@ -256,7 +256,7 @@ describe('ObjektBlattComponent', () => {
   it('lässt die Karte stehen, wenn das Objekt niemand mehr kennt', async () => {
     const setup = await build();
 
-    setup.state.object.set({ kind: 'find', id: 'weg' });
+    setup.state.setObject({ kind: 'find', id: 'weg' });
     setup.refresh();
 
     expect(setup.map.flights).toHaveLength(0);
@@ -264,7 +264,7 @@ describe('ObjektBlattComponent', () => {
 
   it('schließt, wenn ein Objekt gelöscht wurde', async () => {
     const setup = await build();
-    setup.state.object.set({ kind: 'marker', id: MARKER.id });
+    setup.state.setObject({ kind: 'marker', id: MARKER.id });
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));

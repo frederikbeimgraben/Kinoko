@@ -11,7 +11,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { AddEntryState } from '../add-entry/add-entry.state';
+import { AddEntryStore } from '../add-entry/add-entry.store';
 import { EntriesState } from '../entries/entries.state';
 import { hectaresText } from '../entries/formats';
 import { OfflineAreasStore } from './offline-areas.store';
@@ -41,7 +41,7 @@ interface Row {
   styleUrl: './account-area-page.scss',
 })
 export class AreaPickerComponent {
-  private readonly addEntry = inject(AddEntryState);
+  private readonly addEntry = inject(AddEntryStore);
   private readonly entries = inject(EntriesState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);

@@ -35,19 +35,28 @@
 }
 
 // The full head drags the sheet. The browser still scrolls horizontally, so the timeline can move.
+// Per `kit.css` the grip of a full sheet gives way to the body: 0.3 on 80 px is the weight of its 24 px.
 .sheet__drag {
-  flex: none;
+  display: flex;
+  flex: 0 0.3 auto;
+  flex-direction: column;
+  min-block-size: 0;
   touch-action: pan-x;
+}
+
+.sheet__drag > :not(.sheet__handle) {
+  flex: none;
 }
 
 // Per `kit.css` `.grip`. A button is only as wide as its content, so the full width keeps the bar centred.
 .sheet__handle {
   display: flex;
-  flex: none;
+  flex: 0 1 auto;
   align-items: center;
   justify-content: center;
   inline-size: 100%;
   block-size: 24px;
+  min-block-size: 4px;
   padding: 0;
   touch-action: none;
   background: none;

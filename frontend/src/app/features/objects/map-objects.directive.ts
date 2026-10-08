@@ -8,14 +8,10 @@ import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
 import { EntriesState } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
 import { SpeciesStore } from '../species/species.store';
-import { MapState, type ObjectKind } from '../map/map.state';
-import { ObjectSheetState } from './object-sheet.state';
+import { MapStore, type ObjectKind } from '../map/map.store';
+import { ObjectSheetStore } from './object-sheet.store';
 
-/**
- * Die Farben der Punkte aus `docs/mockups/bauen.py`: ein eigener Fund trägt
- * `accent4`, ein fremder geteilter das gedämpfte `info`. So sind die eigenen
- * Funde auf der Karte auf einen Blick von den fremden zu unterscheiden.
- */
+/** The point colours: an own find is `accent4`, a shared find of another person the muted `info`. */
 const OWN_FIND = '#c8a25a';
 const FOREIGN_FIND = '#185468';
 
@@ -31,15 +27,10 @@ function collection(features: Feature[]): FeatureCollection {
   return { type: 'FeatureCollection', features };
 }
 
-/**
- * Legt die eigenen Marker, Zonen und Funde sowie die geteilten Funde auf die
- * Karte und öffnet auf einen Tipp das Objekt-Blatt.
- *
- * Was liegt, entscheiden die drei Signale des Kartenzustands; der Ebenen-Knopf
- * aus B1 schaltet dieselben Signale.
- */
+/** The time in ms of a long press on an object. */
 const HOLD = 500;
 
+/** Puts the own markers, zones and finds and the shared finds on the map. A tap opens the object sheet. */
 @Directive({
   selector: '[appMapObjects]',
   host: {
@@ -54,16 +45,16 @@ export class MapObjectsDirective {
   private readonly eintraege = inject(EntriesState);
   private readonly locating = inject(LocationService);
   private readonly species = inject(SpeciesStore);
-  private readonly map = inject(MapState);
-  private readonly sheet = inject(ObjectSheetState);
+  private readonly map = inject(MapStore);
+  private readonly sheet = inject(ObjectSheetStore);
 
-  /** Ein langer Druck auf ein Objekt: der Ort auf dem Bildschirm und das Ziel. */
+  /** A long press on an object: the point on the screen and the object. */
   readonly objectHeld = output<{ x: number; y: number }>();
 
   private timer: ReturnType<typeof setTimeout> | null = null;
   private held: ObjectHit | null = null;
 
-  /** Das Objekt, auf das zuletzt lange gedrückt wurde. */
+  /** The object of the last long press. */
   target(): ObjectHit | null {
     return this.held;
   }
@@ -105,7 +96,7 @@ export class MapObjectsDirective {
     effect(() => {
       this.put('geteilteFunde', this.map.showSharedFinds(), () => this.shared(this.eintraege.shared()));
     });
-    // Eigene Funde liegen immer: sie sind der Grund, warum jemand eintraegt.
+    // Own finds always show: they are the reason to add entries.
     effect(() => {
       this.put('funde', true, () => this.finds(this.eintraege.finds()));
     });
@@ -144,7 +135,7 @@ export class MapObjectsDirective {
     return collection(finds.map((find) => point(find.id, find.lon, find.lat, { farbe: OWN_FIND })));
   }
 
-  /** Der Dienst gibt nur fremde geteilte Funde her; die eigenen liegen darüber. */
+  /** The service gives only the shared finds of other persons. The own finds are on top. */
   private shared(finds: readonly SharedFind[]): FeatureCollection {
     return collection(
       finds.map((find) =>
@@ -153,13 +144,13 @@ export class MapObjectsDirective {
     );
   }
 
-  /** Der Ort einer geschützten Art kommt gerundet und liegt als blasse Fläche. */
+  /** The location of a protected species is rounded and shows as a pale area. */
   private coarse(find: SharedFind): boolean {
     if (find.speciesId === null) return false;
     return (this.species.entryById(find.speciesId)?.protection ?? 'none') !== 'none';
   }
 
-  /** Punkt und Genauigkeitskreis. Ohne Ortung bleibt die Ebene leer. */
+  /** The point and the accuracy circle. Without a position, the layer stays empty. */
   private ownLocation(own: OwnLocation | null): FeatureCollection {
     if (own === null) return collection([]);
     return collection([

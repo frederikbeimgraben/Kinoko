@@ -6,10 +6,13 @@
   color: var(--text);
 }
 
+// Per `kit.css` `.txt`: 3 px between the title and the line below it.
 .otitle__txt {
   display: flex;
+  flex: 1;
   min-inline-size: 0;
   flex-direction: column;
+  gap: 3px;
 }
 
 .otitle__title {

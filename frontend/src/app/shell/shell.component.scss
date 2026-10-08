@@ -31,11 +31,14 @@
   view-transition-name: shell-nav;
 }
 
+// Per `MapControls.dc.html`: the avatar is 16 px from the edges and casts a float shadow.
 .shell__avatar {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + 12px);
-  inset-inline-start: 12px;
+  inset-block-start: calc(var(--top-bar-height, 0px) + 16px);
+  inset-inline-start: 16px;
   z-index: 2;
+  border-radius: 20px;
+  box-shadow: var(--shadow-float);
 }
 
 // Kit `.stage > .banner`: the banner is the last item of the stage, above the nav.
@@ -46,7 +49,9 @@
 }
 
 // Over the map the floating banner is above the map sheets and clear of the notch.
+// Without a grid area, the shell and not the banner row is the frame of the floating banner.
 .shell .shell__banner--float {
+  grid-area: auto;
   inset-block-start: calc(12px + var(--safe-top));
   z-index: 6;
 }

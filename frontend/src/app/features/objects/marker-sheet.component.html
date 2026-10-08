@@ -8,27 +8,33 @@
     (submitted)="save($event)"
   />
 } @else {
-  <div class="objectsheet">
+  <div class="overlay-body objectsheet" appScrollFade>
     <app-object-title [title]="marker().name" [sub]="sub()" [colour]="colour()" icon="flag" />
     @if (marker().note; as note) {
-      <p class="objectsheet__note">{{ note }}</p>
+      <app-section [label]="'entry.field.note' | t">
+        <p class="objectsheet__note">{{ note }}</p>
+      </app-section>
     }
     <app-row-group>
       <app-map-app-link [target]="location()" />
     </app-row-group>
   </div>
   <app-action-bar
+    foot
     [primary]="'common.edit' | t"
+    primaryIcon="edit"
     [secondary]="'common.delete' | t"
-    [quiet]="true"
+    secondaryIcon="trash"
     [secondaryDanger]="true"
-    [split]="true"
-    (primaryClick)="editing.set(true)"
+    (primaryClick)="sheet.setEditing(true)"
     (secondaryClick)="deleteAsk.set(true)"
   />
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
+  [meta]="marker().name"
+  [aboveNav]="!wide()"
+  [stageScrim]="!wide()"
   [title]="'entry.marker.deleteTitle' | t"
   [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"

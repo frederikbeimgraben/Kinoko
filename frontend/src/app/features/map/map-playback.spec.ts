@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MapPlayback } from './map-playback';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
 
 describe('MapPlayback', () => {
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('MapPlayback', () => {
 
   it('wählt eine Woche der Zeitleiste', () => {
     const playback = TestBed.inject(MapPlayback);
-    const state = TestBed.inject(MapState);
+    const state = TestBed.inject(MapStore);
 
     playback.select({ year: 2025, week: 39 });
 

@@ -1,5 +1,5 @@
-<div class="map" [style.--pilz-sheet-inset]="sheetInset()">
-  @if (wide() && !surfaceOnly()) {
+<div class="map">
+  @if (wide() && !surfaceOnly() && !aiming()) {
     <div class="map__column">
       <app-map-column
         [factor]="surface.inProgress()"
@@ -16,60 +16,67 @@
       />
     </div>
   }
-  <div
-    #canvas
-    appMapObjects
-    class="map__canvas"
-    role="region"
-    [attr.aria-label]="'map.label' | t"
-    (objectHeld)="onObjectHeld($event)"
-  ></div>
 
-  <app-map-attribution [note]="view.creditNote()" [above]="attributionAbove()" />
+  <div class="map__pane" [class.map__pane--full]="aiming()">
+    <div
+      #canvas
+      appMapObjects
+      class="map__canvas"
+      role="region"
+      [attr.aria-label]="'map.label' | t"
+      (objectHeld)="onObjectHeld($event)"
+    ></div>
 
-  @if (view.loading()) {
-    <app-skeleton class="map__skeleton" kind="map" />
-  }
-  @if (offline()) {
-    <div class="map__grey" aria-hidden="true"></div>
-    <app-banner class="map__banner" kind="noConnection" />
-  }
+    <app-map-attribution [note]="view.creditNote()" [above]="attributionAbove()" />
 
-  @if (!surfaceOnly() || wide()) {
-    @if (showsButtons()) {
-      <app-map-buttons
-        class="map__buttons"
-        [layersOpen]="state.layersSheetOpen()"
-        [showsLocation]="!tall()"
-        [locationAllowed]="locating.allowed()"
-        [showAdd]="showsAdd()"
-        [turned]="turned()"
-        [needle]="needle()"
-        (layersToggled)="state.layersSheetOpen.set(!state.layersSheetOpen())"
-        (located)="surface.locate()"
-        (add)="openAddEntry()"
-        (northed)="surface.resetNorth()"
-      />
+    @if (view.loading()) {
+      <app-skeleton class="map__skeleton" kind="map" />
+    }
+    @if (offline()) {
+      <div class="map__grey" aria-hidden="true"></div>
+      <app-banner class="map__banner" role="status" kind="noConnection" [float]="true" [chev]="false" />
     }
 
-    <app-add-entry />
-  }
+    @if (!surfaceOnly() || wide()) {
+      @if (showsButtons()) {
+        <app-map-buttons
+          class="map__buttons"
+          [layersOpen]="state.layersSheetOpen()"
+          [locationAllowed]="locating.allowed()"
+          [showAdd]="showsAdd()"
+          [turned]="turned()"
+          [needle]="needle()"
+          (layersToggled)="state.toggleLayersSheet()"
+          (located)="surface.locate()"
+          (add)="openAddEntry()"
+          (northed)="surface.resetNorth()"
+        />
+      }
+
+      <app-add-entry />
+    }
+
+    @if (!surfaceOnly()) {
+      <app-object-sheet />
+    }
+  </div>
 
   @if (!surfaceOnly()) {
-    <app-object-sheet />
-
-    @if (!overlaid() && !covered() && !wide()) {
+    @if (showsMapSheet()) {
       <div class="map__sheet">
         <app-sheet
           [label]="'nav.tab.map' | t"
           [closable]="false"
           [detent]="state.detent()"
           [detents]="detents"
-          (detentChange)="setDetent($event)"
+          (detentChange)="state.setDetent($event)"
         >
           <app-map-panel
+            class="map__panel"
             (titleChosen)="overlayNav.openTitle()"
             (weekChosen)="playback.select($event)"
+          />
+          <app-map-panel-body
             (layerChosen)="overlayNav.set('layer')"
             (savedOpened)="overlayNav.set('combinations')"
             (factorOpened)="overlayNav.openFactorFor($event)"
@@ -100,25 +107,7 @@
 
   @if (!surfaceOnly() || wide()) {
     @if (state.layersSheetOpen()) {
-      <app-layers-sheet
-        [background]="state.background()"
-        [opacity]="state.opacity()"
-        [showsLayer]="view.onLayer()"
-        [forecastBelow]="state.forecastBelow()"
-        [showMarkers]="state.showMarkers()"
-        [showZones]="state.showZones()"
-        [showSharedFinds]="state.showSharedFinds()"
-        [markerCount]="view.entryCounts().markers"
-        [zoneCount]="view.entryCounts().zones"
-        [sharedFindCount]="view.entryCounts().sharedFinds"
-        (backgroundChange)="state.setBackground($event)"
-        (opacityChange)="state.opacity.set($event)"
-        (forecastBelowChange)="state.forecastBelow.set($event)"
-        (showMarkersChange)="state.showMarkers.set($event)"
-        (showZonesChange)="state.showZones.set($event)"
-        (showSharedFindsChange)="state.showSharedFinds.set($event)"
-        (closed)="state.layersSheetOpen.set(false)"
-      />
+      <app-layers-sheet (closed)="state.setLayersSheetOpen(false)" />
     }
   }
 

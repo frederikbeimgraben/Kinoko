@@ -4,8 +4,8 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  afterRenderEffect,
   computed,
-  effect,
   inject,
   input,
   output,
@@ -17,7 +17,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { WeekButtonComponent } from './week-button.component';
 
-/** Eine Woche des Manifests. `anteil` ist `mean` geteilt durch den Höchstwert. */
+/** A week of the manifest. `share` is `mean` divided by the peak. */
 export interface TimelineWeek {
   year: number;
   week: number;
@@ -30,7 +30,7 @@ interface ShownWeek extends TimelineWeek {
   key: string;
 }
 
-/** Wie weit die Leiste steht und wie viel Inhalt auf jeder Seite verdeckt ist. */
+/** The scroll position of the strip and the hidden content on each side. */
 interface ScrollState {
   left: number;
   width: number;
@@ -39,7 +39,7 @@ interface ScrollState {
 
 const REST: ScrollState = { left: 0, width: 0, scrollWidth: 0 };
 
-/** Die Wochen einer Art nebeneinander, ein Tabulatorziel mit Pfeiltasten. */
+/** The weeks in a row with one tab stop. `align="end"` puts the slack and the fade only at the start. */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,12 +55,14 @@ export class TimelineComponent implements AfterViewInit {
   readonly weeks = input.required<readonly TimelineWeek[]>();
   readonly active = input<{ year: number; week: number } | null>(null);
   readonly label = input.required<string>();
-  /** Gedämpft und ohne Wahl, für eine feste Ebene ohne Woche. */
+  /** Dim and without a choice, for a fixed layer without a week. */
   readonly dimmed = input(false);
-  /** Ohne Manifest steht die Leiste als Reihe von Platzhaltern. */
+  /** Without a manifest, the strip shows a row of placeholders. */
   readonly loading = input(false);
+  /** Where the slack of the strip goes: to both sides, or only to the start. */
+  readonly align = input<'centre' | 'end'>('centre');
 
-  /** Acht Tasten, so viele wie das Manifest im Regelfall trägt. */
+  /** Eight buttons, as many as a usual manifest has. */
   protected readonly placeholders = [0, 1, 2, 3, 4, 5, 6, 7];
 
   readonly chosen = output<TimelineWeek>();
@@ -82,27 +84,26 @@ export class TimelineComponent implements AfterViewInit {
 
   private readonly scroll = signal<ScrollState>(REST);
 
-  /** Weitere Wochen stehen links verdeckt: der Rechner zeigt einen Pfeil. */
+  /** More weeks are hidden at the start. */
   protected readonly canScrollBack = computed(() => this.scroll().left > 1);
 
-  /** Weitere Wochen stehen rechts verdeckt: der Rechner zeigt einen Pfeil. */
+  /** More weeks are hidden at the end. */
   protected readonly canScrollForward = computed(() => {
     const state = this.scroll();
     return state.left + state.width < state.scrollWidth - 1;
   });
 
   constructor() {
-    // Die gewählte Woche muss sichtbar sein, auch wenn sie über einen Deep Link
-    // oder die Pfeile im Kopf gesetzt wurde und weit außerhalb liegt.
-    effect(() => {
-      this.bringIntoView(this.activeIndex(), false);
+    // The chosen week must be visible, also after a deep link or a far step of the arrows.
+    // The buttons exist only after the render, so the scroll waits for it.
+    afterRenderEffect(() => {
+      this.bringIntoView(this.activeIndex(), false, this.buttons().length);
     });
   }
 
   ngAfterViewInit(): void {
     const bar = this.bar().nativeElement;
-    // Neue oder entfernte Wochen und eine andere Blattbreite ändern, was die
-    // Leiste verdeckt.
+    // New or removed weeks and a new sheet width change the hidden part of the strip.
     const size = new ResizeObserver(this.measure);
     const rows = new MutationObserver(this.measure);
     size.observe(bar);
@@ -132,7 +133,7 @@ export class TimelineComponent implements AfterViewInit {
     this.bringIntoView(target, true);
   }
 
-  /** Ein Pfeilknopf schiebt die Leiste um eine Sichtbreite minus eine Kachel. */
+  /** An arrow button moves the strip by its visible width minus one tile. */
   protected scrollByPage(direction: 1 | -1): void {
     const bar = this.bar().nativeElement;
     const tile = (this.buttons()[0] as WeekButtonComponent | undefined)?.element();
@@ -147,14 +148,20 @@ export class TimelineComponent implements AfterViewInit {
     this.scroll.set({ left: bar.scrollLeft, width: bar.clientWidth, scrollWidth: bar.scrollWidth });
   };
 
-  /** Schiebt die Woche in die Mitte. `scrollTo` bewegt nur die Leiste, nicht die Seite. */
-  private bringIntoView(index: number, withFocus: boolean): void {
+  /** Moves the week to the middle of the whole tiles that fit, or to the end for `align="end"`. */
+  private bringIntoView(index: number, withFocus: boolean, count = this.buttons().length): void {
     const button = (this.buttons()[index] as WeekButtonComponent | undefined)?.element();
     const bar = this.bar().nativeElement;
-    if (!button) return;
-    // Die Mitte fällt auf einen ganzen Punkt, sonst steht die Leiste auf halber Linie.
-    const center = Math.round(button.offsetLeft - (bar.clientWidth - button.offsetWidth) / 2);
-    bar.scrollTo({ left: Math.max(center, 0), behavior: 'smooth' });
+    if (!button || count === 0) return;
+    const tile = button.offsetWidth;
+    const gap = Number.parseFloat(getComputedStyle(bar).columnGap) || 0;
+    const fits = Math.max(1, Math.floor((bar.clientWidth + gap) / (tile + gap)));
+    const slack = bar.clientWidth - (fits * tile + (fits - 1) * gap);
+    const before = Math.floor((fits - 1) / 2);
+    const lead = this.align() === 'end' ? slack : Math.round(slack / 2);
+    const first = button.offsetLeft - before * (tile + gap);
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    bar.scrollTo({ left: Math.max(first - lead, 0), behavior: withFocus && !reduced ? 'smooth' : 'instant' });
     if (withFocus) button.focus();
   }
 

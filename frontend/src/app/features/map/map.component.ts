@@ -22,27 +22,28 @@ import { MAP_PROVIDERS } from '../../map/map.tokens';
 import { BannerComponent } from '../../ui/banner/banner.component';
 import { MapAttributionComponent } from '../../ui/map-attribution/map-attribution.component';
 import { ObjectMenuComponent, type ObjectMenuTarget } from '../../ui/object-menu/object-menu.component';
-import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 import { AddEntryComponent } from '../add-entry/add-entry.component';
-import { AddEntryState } from '../add-entry/add-entry.state';
+import { AddEntryStore } from '../add-entry/add-entry.store';
 import { EntriesState } from '../entries/entries.state';
 import { MapObjectsDirective } from '../objects/map-objects.directive';
 import { ObjectSheetComponent } from '../objects/object-sheet.component';
-import { CombinationState } from './combination.state';
+import { CombinationStore } from './combination.store';
 import { FactorPickerComponent } from './factor-picker.component';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { MapButtonsComponent } from './map-buttons.component';
 import { MapColumnComponent } from './map-column.component';
-import { MapOverlayState } from './map-overlay.state';
+import { MapOverlayStore } from './map-overlay.store';
+import { MapPanelBodyComponent } from './map-panel-body.component';
 import { MapPanelComponent } from './map-panel.component';
-import { MapOverlaysComponent, overlayDetent } from './map-overlays.component';
+import { MapOverlaysComponent } from './map-overlays.component';
 import { MapPlayback } from './map-playback';
-import { DETENTS, DETENT_SIZES, MapSurface } from './map-surface';
-import { MapState } from './map.state';
+import { DETENT_SIZES, MapSurface } from './map-surface';
+import { MapStore } from './map.store';
 import { MapView } from './map.view';
 
-/** Der Reiter Karte: Hintergrund, Wertkacheln und das Blatt darüber. */
+/** The map tab: the background, the value tiles and the sheet over them. */
 @Component({
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +55,7 @@ import { MapView } from './map.view';
     MapButtonsComponent,
     MapAttributionComponent,
     MapColumnComponent,
+    MapPanelBodyComponent,
     MapPanelComponent,
     MapObjectsDirective,
     MapOverlaysComponent,
@@ -63,7 +65,7 @@ import { MapView } from './map.view';
     SkeletonComponent,
     TranslatePipe,
   ],
-  providers: [...MAP_PROVIDERS, MapSurface, MapOverlayState],
+  providers: [...MAP_PROVIDERS, MapSurface, MapOverlayStore],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
@@ -76,83 +78,82 @@ export class MapComponent implements OnDestroy {
   private readonly sync = inject(SyncService);
   protected readonly surface = inject(MapSurface);
   protected readonly locating = inject(LocationService);
-  protected readonly overlayNav = inject(MapOverlayState);
+  protected readonly overlayNav = inject(MapOverlayStore);
 
-  /** Nur die Zeichenfläche, ohne Blatt und Knöpfe, für die anderen Reiter. */
+  /** Only the canvas, without the sheet and the buttons, for the other tabs. */
   readonly surfaceOnly = input(false);
 
   protected readonly view = inject(MapView);
-  protected readonly state = inject(MapState);
-  protected readonly combination = inject(CombinationState);
-  protected readonly addEntry = inject(AddEntryState);
+  protected readonly state = inject(MapStore);
+  protected readonly combination = inject(CombinationStore);
+  protected readonly addEntry = inject(AddEntryStore);
   protected readonly wide = this.viewport.wide;
 
   protected readonly playback = inject(MapPlayback);
   protected readonly overlay = this.overlayNav.overlay;
   protected readonly menuAt = signal<ObjectMenuTarget | null>(null);
-  /** Am Telefon, außerhalb des Reiters Karte, steht die Fläche unsichtbar in der Hülle. */
+  /** On the phone, outside the map tab, the canvas stays hidden in the shell. */
   protected readonly hidden = computed(() => !this.wide() && this.surfaceOnly());
-  private wasHidden = false;
   protected readonly offline = computed(() => !this.sync.online());
 
-  /** Ein Eintrag braucht eine Karte ohne Blatt darüber. */
+  /** On the phone, a sheet over the map covers the map sheet. */
   protected readonly covered = computed(() => !this.wide() && this.overlay() !== null);
 
-  /** Ein Blatt in voller Höhe lässt nur den Ebenen-Knopf stehen. */
-  protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
-
-  /** Die Quellen, die schon einen Faktor haben; die Wahl lässt sie weg. */
+  /** The sources that have a factor. The choice does not show them. */
   protected readonly usedSources = computed(
     () => new Set(this.combination.factors().map((factor) => factor.source)),
   );
 
-  /** Als Faktor steht die Vorhersage der Art bereit, die die Karte zeigt. */
+  /** The forecast of the shown species is available as a factor. */
   protected readonly speciesLayers = computed<readonly Layer[]>(() => {
     const layer = this.view.sources().get(this.view.slug());
     return layer ? [layer] : [];
   });
-  /** Der Kompass steht nur über einer gedrehten oder geneigten Karte. */
+
+  /** The compass shows only over a turned or tilted map. */
   protected readonly turned = computed(() => {
     const turn = this.surface.rotation();
     return turn.bearing !== 0 || turn.pitch !== 0;
   });
 
-  /** Norden liegt bei minus `bearing`: MapLibre dreht gegen die Blickrichtung. */
+  /** North is at minus `bearing`: MapLibre turns against the view direction. */
   protected readonly needle = computed(() => -this.surface.rotation().bearing);
 
-  /** Am Rechner stehen die Knöpfe der Karte auch unter einem Modal. */
-  protected readonly showsButtons = computed(
-    () => this.wide() || (!this.addEntry.onForm() && this.state.object() === null),
+  /** A step that looks for a point gets the full map, without the column and the buttons. */
+  protected readonly aiming = this.addEntry.showsCrosshair;
+
+  /** The map buttons stay below each sheet and modal, as the boards show them. */
+  protected readonly showsButtons = computed(() => !this.aiming());
+
+  /** Only one sheet is over the map at a time. */
+  protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
+
+  /** The map sheet of the phone. Each other sheet over the map replaces it. */
+  protected readonly showsMapSheet = computed(
+    () => !this.wide() && !this.overlaid() && !this.covered() && !this.state.layersSheetOpen(),
   );
 
-  /** Der Plus-Knopf tritt ab, solange ein Schritt auf der Karte den Ort sucht. */
+  /** The add button. It goes away while its flow runs, and on the phone below a sheet (board `MapCombination`). */
   protected readonly showsAdd = computed(() => {
-    if (this.covered() || this.addEntry.showsCrosshair()) return false;
-    return this.wide() || !this.addEntry.running() || this.addEntry.onActions();
+    if (this.overlay() !== null || this.addEntry.running() || this.state.object() !== null) return false;
+    if (this.wide()) return true;
+    return !this.state.layersSheetOpen() && !(this.showsMapSheet() && this.state.detent() === 2);
   });
 
-  /** Über der Karte liegt immer nur ein Blatt. */
-  protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
-  /** Die Rasten, mit denen das Blatt der Karte zeichnet. */
+  /** The detents of the map sheet. Above the lowest one, the sheet is as high as its content. */
   protected readonly detents = DETENT_SIZES;
 
-  protected readonly sheetInset = computed(() => (this.wide() ? '0px' : `${DETENTS[this.state.detent()]}px`));
-
-  /** Nur das Blatt der Karte selbst hält die Marke frei, kein anderes Blatt darüber. */
+  /** The kit map ends 28 px below the top of the map sheet. The mark stands at that end, as on the board `Map`. */
   protected readonly attributionAbove = computed(() =>
-    this.overlaid() || this.covered() || this.wide() ? null : this.sheetInset(),
+    this.showsMapSheet() ? 'calc(var(--pilz-sheet-inset, 0px) - 28px)' : null,
   );
 
   constructor() {
+    // A canvas that shows again measures its size again.
     effect(() => {
-      const hidden = this.hidden();
-      if (!hidden && this.wasHidden) this.surface.resize();
-      this.wasHidden = hidden;
+      if (!this.hidden()) this.surface.resize();
     });
-    effect(() => {
-      this.state.species.set(this.view.slug());
-    });
-    effect(() => void this.tiles.load(this.state.species()));
+    effect(() => void this.tiles.load(this.view.slug()));
     void this.tiles.loadLayers();
     effect(() => {
       if (this.view.onCombination()) void this.loadSpeciesManifests();
@@ -191,27 +192,22 @@ export class MapComponent implements OnDestroy {
     this.surface.destroy();
   }
 
-  protected setDetent(detent: Detent): void {
-    this.state.detent.set(detent);
-  }
-
   protected async saveCombination(name: string): Promise<void> {
     this.overlayNav.close();
     await this.combination.save(name);
   }
 
   protected openAddEntry(): void {
-    this.state.layersSheetOpen.set(false);
+    this.state.setLayersSheetOpen(false);
     this.overlayNav.close();
     this.addEntry.open();
   }
 
-  /** Langes Drücken auf ein Objekt öffnet das Menü an dieser Stelle. */
+  /** A long press on an object opens the menu at that point. */
   protected onObjectHeld(at: ObjectMenuTarget): void {
     this.menuAt.set(at);
   }
 
-  /** Zentriert die Karte auf das gedrückte Objekt. */
   protected centreObject(): void {
     const hit = this.objects()?.target() ?? null;
     this.menuAt.set(null);
@@ -224,13 +220,13 @@ export class MapComponent implements OnDestroy {
 
   private refresh(): void {
     this.tiles.forget();
-    void this.tiles.load(this.state.species());
+    void this.tiles.load(this.view.slug());
     void this.tiles.loadLayers();
   }
 
-  /** Ein Schwenk holt die geteilten Funde des neuen Ausschnitts. */
+  /** A pan loads the shared finds of the new extent. */
   private onMove(): void {
-    this.state.moved.update((count) => count + 1);
+    this.state.countMove();
     this.surface.paint();
     const view = this.surface.extent();
     if (view !== null) void this.entries.loadShared(view.extent);

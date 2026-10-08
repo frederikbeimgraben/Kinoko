@@ -22,8 +22,8 @@ import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SurfaceComponent } from '../../ui/surface/surface.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import { MyImagesStore } from '../account/my-images.store';
-import { AddEntryState } from '../add-entry/add-entry.state';
-import { ObjectSheetState } from '../objects/object-sheet.state';
+import { AddEntryStore } from '../add-entry/add-entry.store';
+import { ObjectSheetStore } from '../objects/object-sheet.store';
 import { SpeciesStore } from '../species/species.store';
 import { entriesBanner } from './entries-banner';
 import { EntriesStore } from './entries.store';
@@ -73,14 +73,14 @@ const SEGMENTS: readonly { value: Segment; label: TranslationKey; icon: IconName
   styleUrl: './entries.component.scss',
 })
 export class EntriesComponent {
-  private readonly addEntry = inject(AddEntryState);
+  private readonly addEntry = inject(AddEntryStore);
   private readonly auth = inject(AuthService);
   private readonly groups = inject(GroupsStore);
   private readonly i18n = inject(I18nService);
   private readonly names = inject(PersonNamesStore);
   private readonly photos = inject(MyImagesStore);
   private readonly router = inject(Router);
-  private readonly sheet = inject(ObjectSheetState);
+  private readonly sheet = inject(ObjectSheetStore);
   private readonly species = inject(SpeciesStore);
   private readonly store = inject(EntriesStore);
   private readonly sync = inject(SyncStore);

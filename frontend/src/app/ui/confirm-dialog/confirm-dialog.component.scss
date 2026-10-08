@@ -17,6 +17,14 @@
   border-radius: var(--r-sheet);
 }
 
+.confirm__scrim--stage {
+  inset-block-end: var(--size-nav);
+}
+
+.confirm__panel--stage {
+  inset-block-end: var(--size-nav);
+}
+
 .confirm__title {
   margin: 0;
   font-size: var(--fs-22);

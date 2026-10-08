@@ -19,8 +19,8 @@ import { AvatarButtonComponent } from '../ui/avatar-button/avatar-button.compone
 import { NavComponent } from '../ui/nav/nav.component';
 import { BannerComponent } from '../ui/banner/banner.component';
 import { MapComponent } from '../features/map/map.component';
-import { MapState } from '../features/map/map.state';
-import { AddEntryState } from '../features/add-entry/add-entry.state';
+import { MapStore } from '../features/map/map.store';
+import { AddEntryStore } from '../features/add-entry/add-entry.store';
 import { SyncService } from '../core/offline/sync.service';
 import { PwaStore } from '../core/pwa/pwa.store';
 import { deskFrame, paneWidth, type DeskFrame } from './desk-frame';
@@ -34,8 +34,8 @@ const WITHOUT_NAV: readonly RegExp[] = [
   /^\/konto(\/|$)/,
 ];
 
-/** The space that a floating banner takes at the top of the map (kit `.banner.float`). */
-const FLOAT_BANNER_OFFSET = 'calc(48px + env(safe-area-inset-top, 0px))';
+/** The space that a floating banner takes at the top of the map: `MapControls top=60` on the boards. */
+const FLOAT_BANNER_OFFSET = 'calc(60px + env(safe-area-inset-top, 0px))';
 
 /** The frame around each tab. The map lives here and stays in memory when the tab changes. */
 @Component({
@@ -51,8 +51,8 @@ export class ShellComponent {
   private readonly i18n = inject(I18nService);
   private readonly viewport = inject(ViewportService);
   private readonly session = inject(SessionStore);
-  private readonly map = inject(MapState);
-  private readonly addEntry = inject(AddEntryState);
+  private readonly map = inject(MapStore);
+  private readonly addEntry = inject(AddEntryStore);
   private readonly sync = inject(SyncService);
   private readonly pwa = inject(PwaStore);
 
@@ -90,7 +90,9 @@ export class ShellComponent {
   protected readonly mapHidden = computed(() => !this.wide() && !this.onTheMap());
 
   /** On the desktop the rail holds the avatar, so the map shows none (board `MapDesktop`). */
-  protected readonly showAvatar = computed(() => this.onTheMap() && !this.wide());
+  protected readonly showAvatar = computed(
+    () => this.onTheMap() && !this.wide() && !this.addEntry.showsCrosshair(),
+  );
 
   /** The map shows its own banner when there is no network on the map tab. */
   private readonly mapOffline = computed(() => this.onTheMap() && !this.sync.online());

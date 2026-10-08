@@ -1,18 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
-import { MapState } from '../map/map.state';
-import { ObjectSheetState } from './object-sheet.state';
+import { MapStore } from '../map/map.store';
+import { ObjectSheetStore } from './object-sheet.store';
 
-function build(): { state: ObjectSheetState; map: MapState; stack: OverlayStackService } {
+function build(): { state: ObjectSheetStore; map: MapStore; stack: OverlayStackService } {
   return {
-    state: TestBed.inject(ObjectSheetState),
-    map: TestBed.inject(MapState),
+    state: TestBed.inject(ObjectSheetStore),
+    map: TestBed.inject(MapStore),
     stack: TestBed.inject(OverlayStackService),
   };
 }
 
-describe('ObjectSheetState', () => {
-  it('legt beim Öffnen einen Verlaufseintrag an', () => {
+describe('ObjectSheetStore', () => {
+  it('adds a history entry on open', () => {
     const { state, map, stack } = build();
     const open = vi.spyOn(stack, 'open');
 
@@ -22,7 +22,7 @@ describe('ObjectSheetState', () => {
     expect(open).toHaveBeenCalledTimes(1);
   });
 
-  it('legt beim Wechsel auf ein anderes Objekt keinen zweiten Eintrag an', () => {
+  it('adds no second entry for a change to another object', () => {
     const { state, stack } = build();
     const open = vi.spyOn(stack, 'open');
     state.show('marker', 'marker-eins');
@@ -32,7 +32,7 @@ describe('ObjectSheetState', () => {
     expect(open).toHaveBeenCalledTimes(1);
   });
 
-  it('geht beim Schließen einen Schritt zurück', () => {
+  it('goes back one step on close', () => {
     const { state, map, stack } = build();
     const back = vi.spyOn(stack, 'back').mockImplementation(() => undefined);
     state.show('find', 'fund-eins');
@@ -43,7 +43,7 @@ describe('ObjectSheetState', () => {
     expect(back).toHaveBeenCalledTimes(1);
   });
 
-  it('geht ohne offenes Objekt nicht zurück', () => {
+  it('does not go back without an open object', () => {
     const { state, stack } = build();
     const back = vi.spyOn(stack, 'back').mockImplementation(() => undefined);
 
@@ -52,7 +52,7 @@ describe('ObjectSheetState', () => {
     expect(back).not.toHaveBeenCalled();
   });
 
-  it('schließt, wenn die Browser-Geste zurück greift', () => {
+  it('closes on the back gesture of the browser', () => {
     const { state, map } = build();
     vi.spyOn(history, 'pushState').mockImplementation(() => undefined);
     state.show('marker', 'marker-eins');

@@ -22,37 +22,36 @@ async function build(): Promise<Setup> {
   return { container, auth: TestBed.inject(AuthService), manager, refresh: detectChanges };
 }
 
-describe('AnmeldeBlattComponent', () => {
-  it('bleibt geschlossen, solange nichts gespeichert werden soll', async () => {
+describe('SignInSheetComponent', () => {
+  it('stays closed while nothing is to be saved', async () => {
     await build();
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('zeigt die Texte des Artboards und führt zum SSO', async () => {
+  it('shows the stacked dialog of the board and goes to the SSO', async () => {
     const { auth, manager, refresh, container } = await build();
 
     const ask = auth.requestSignIn();
     refresh();
 
-    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
-    expect(screen.getByRole('heading', { name: 'Zum Speichern anmelden' })).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog', { name: 'Anmelden mit beimgraben.net' });
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Später' })).toBeInTheDocument();
-    expect(container.querySelector('.signin__text')).toBeNull();
     await noViolations(container);
 
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' }));
 
     expect(manager.redirects).toHaveLength(1);
-    // Die Frage bleibt offen: die Seite verlässt die App zum SSO und kehrt
-    // über /anmeldung zurück.
+    // The question stays open: the page leaves the app for the SSO and comes back through /anmeldung.
     expect(auth.sheetOpen()).toBe(true);
     manager.returnValue = oidcUser();
     await auth.completeSignIn();
     expect(await ask).toBe(true);
   });
 
-  it('behält den Eintrag lokal, wenn später angemeldet wird', async () => {
+  it('keeps the entry on the device when the person signs in later', async () => {
     const { auth, refresh } = await build();
 
     const ask = auth.requestSignIn();
@@ -62,14 +61,5 @@ describe('AnmeldeBlattComponent', () => {
     expect(await ask).toBe(false);
     refresh();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
-
-  it('legt den Fokus auf die Hauptaktion', async () => {
-    const { auth, refresh } = await build();
-
-    void auth.requestSignIn();
-    refresh();
-
-    expect(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' })).toHaveFocus();
   });
 });

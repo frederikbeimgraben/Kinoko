@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 
-/** Die Marke unten links auf der Karte: „© OpenStreetMap“, mit Vermerk. */
+/** The mark at the bottom left of the map: "© OpenStreetMap", with the credit of a layer. */
 @Component({
   selector: 'app-map-attribution',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,7 +13,7 @@ export class MapAttributionComponent {
   private readonly i18n = inject(I18nService);
 
   readonly note = input<string | null>(null);
-  /** Der freie Streifen über dem Blatt, wenn eines die Karte unten deckt. */
+  /** The height that a sheet covers at the bottom of the map. */
   readonly above = input<string | null>(null);
 
   protected readonly text = computed(() => {

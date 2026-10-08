@@ -1,57 +1,64 @@
-<div class="form__body" [class.form__body--dense]="editing()">
-  <div class="form__fields" [class.form__fields--busy]="busy()">
-    <app-form-field
-      [label]="'species.fieldLabel' | t"
-      [value]="speciesName()"
-      [placeholder]="'map.species.choose' | t"
-      [readOnly]="true"
-      [chevron]="editing()"
-      (displayClick)="pickerOpen.set(true)"
+<div class="overlay-body form__body" appScrollFade [class.form__body--busy]="busy()">
+  <app-row-group>
+    <app-list-row
+      [title]="'entry.field.location' | t"
+      [plain]="place()"
+      [chevron]="!editing()"
+      [clickable]="!editing()"
+      (chosen)="locationClick.emit()"
     />
-    <div class="form__pair">
-      <app-form-field
-        kind="date"
-        [label]="'entry.field.date' | t"
-        [value]="date()"
-        [display]="dateText()"
-        (valueChange)="dateChoice.set($event)"
-      />
-      <app-form-field
-        kind="number"
-        [label]="'entry.field.count' | t"
-        [placeholder]="'common.optional' | t"
-        [value]="count()"
-        (valueChange)="countChoice.set($event)"
-      />
-    </div>
+  </app-row-group>
+  <app-form-field
+    [label]="'species.fieldLabel' | t"
+    [value]="speciesName()"
+    [placeholder]="'map.species.choose' | t"
+    [readOnly]="true"
+    [chevron]="editing()"
+    (displayClick)="pickerOpen.set(true)"
+  />
+  <div class="form__pair">
     <app-form-field
-      [label]="'entry.field.note' | t"
-      [multiline]="true"
+      kind="date"
+      [label]="'entry.field.date' | t"
+      [value]="date()"
+      [display]="dateText()"
+      (valueChange)="dateChoice.set($event)"
+    />
+    <app-form-field
+      kind="number"
+      [label]="'entry.field.count' | t"
       [placeholder]="'common.optional' | t"
-      [value]="note()"
-      (valueChange)="noteChoice.set($event)"
+      [value]="count()"
+      (valueChange)="countChoice.set($event)"
     />
-    @if (withPhotos()) {
-      <div>
-        <p class="form__label">{{ 'entry.field.photos' | t }}</p>
-        <app-photo-strip
-          mode="edit"
-          [pending]="photos()"
-          [photos]="held()"
-          (pendingChange)="photos.set($event)"
-          (removed)="removeHeld($event)"
-        />
-      </div>
-    }
-    <app-visibility-choice
-      [visibility]="visibility()"
-      [groupId]="groupId()"
-      [inline]="editing()"
-      (visibilityChange)="visibilityChoice.set($event)"
-      (groupChange)="groupChoice.set($event)"
-    />
-    @if (editing()) {
-      <div class="form__inline form__inline--switch">
+  </div>
+  <app-form-field
+    [label]="'entry.field.note' | t"
+    [multiline]="true"
+    [placeholder]="'common.optional' | t"
+    [value]="note()"
+    (valueChange)="noteChoice.set($event)"
+  />
+  @if (withPhotos()) {
+    <app-section [label]="'entry.field.photos' | t">
+      <app-photo-strip
+        mode="edit"
+        [pending]="photos()"
+        [photos]="held()"
+        (pendingChange)="photos.set($event)"
+        (removed)="removeHeld($event)"
+      />
+    </app-section>
+  }
+  <app-visibility-choice
+    [visibility]="visibility()"
+    [groupId]="groupId()"
+    (visibilityChange)="visibilityChoice.set($event)"
+    (groupChange)="groupChoice.set($event)"
+  />
+  @if (editing()) {
+    <app-row-group>
+      <div class="form__switch">
         <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
         <app-switch
           [checked]="training()"
@@ -59,10 +66,10 @@
           (checkedChange)="trainingChoice.set($event)"
         />
       </div>
-    }
-  </div>
+    </app-row-group>
+  }
 </div>
-<app-action-bar [primary]="'common.save' | t" [busy]="busy()" (primaryClick)="submit()" />
+<app-action-bar foot [primary]="'common.save' | t" [busy]="busy()" (primaryClick)="submit()" />
 
 <app-overlay-host [open]="pickerOpen()" [modal]="true" (closed)="pickerOpen.set(false)">
   @if (pickerOpen()) {

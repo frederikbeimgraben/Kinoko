@@ -2,7 +2,7 @@ import { render } from '@testing-library/angular';
 import { MapCardsComponent } from './map-cards.component';
 
 describe('MapCardsComponent', () => {
-  it('zeigt die Karten in der Reihenfolge des Boards', async () => {
+  it('shows the cards in the sequence of the board', async () => {
     const { container } = await render(MapCardsComponent);
 
     const blocks = [...container.querySelectorAll('[data-block]')].map((el) => el.getAttribute('data-block'));
@@ -14,10 +14,14 @@ describe('MapCardsComponent', () => {
       'ObjectTitle',
       'QueueCard',
       'StateView',
+      'LayersBody',
+      'LayerPickBody',
+      'CombinationsBody',
+      'CombinationSaveBody',
     ]);
   });
 
-  it('trägt die Größe jeder Karte aus dem Verzeichnis', async () => {
+  it('gives each card the size of the list', async () => {
     const { container } = await render(MapCardsComponent);
 
     const sizes: Record<string, { width: string; height: string }> = {
@@ -28,6 +32,10 @@ describe('MapCardsComponent', () => {
       ObjectTitle: { width: '358px', height: '56px' },
       QueueCard: { width: '358px', height: '300px' },
       StateView: { width: '390px', height: '360px' },
+      LayersBody: { width: '358px', height: '400px' },
+      LayerPickBody: { width: '358px', height: '400px' },
+      CombinationsBody: { width: '358px', height: '400px' },
+      CombinationSaveBody: { width: '358px', height: '400px' },
     };
     for (const [name, size] of Object.entries(sizes)) {
       const card = container.querySelector<HTMLElement>(`[data-block="${name}"]`);

@@ -10,6 +10,7 @@
     class="weeks"
     role="group"
     [class.weeks--dimmed]="dimmed()"
+    [class.weeks--end]="align() === 'end'"
     [attr.aria-label]="label()"
     (keydown)="onKey($event)"
   >

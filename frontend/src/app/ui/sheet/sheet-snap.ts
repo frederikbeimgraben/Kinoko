@@ -7,6 +7,18 @@ export interface DragSample {
   readonly height: number;
 }
 
+/** A drag of the sheet: the start, the detent sizes in px measured at the start, and the samples. */
+export interface Drag {
+  readonly pointer: number;
+  readonly startY: number;
+  readonly startX: number;
+  readonly startHeight: number;
+  sizes: readonly [number, number, number];
+  samples: DragSample[];
+  moved: boolean;
+  captured: boolean;
+}
+
 /** Above this speed in px/ms, a release goes to the next detent in its direction. */
 export const FLING_SPEED = 0.5;
 

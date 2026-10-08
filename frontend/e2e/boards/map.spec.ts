@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
-import { authConfig, mockSignIn, mockSignInPending } from '../fixtures/auth';
+import { authConfig, mockSignIn, mockSignInPending, mockSignedOut } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
   COMBINATIONS,
@@ -12,23 +12,24 @@ import {
   SPECIES_BUNDLE,
   ZONES,
   mockMap,
-  showMapImage,
+  showDesignMap,
+  type DesignMap,
   type BoardState,
 } from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Die Drehung der Boards `MapRotated` und `MapDesktopRotated`. */
+/** The bearing of the boards `MapRotated` and `MapDesktopRotated`. */
 const BOARD_BEARING = 30;
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device and does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Die Antworten des Vertrags, die die Karte braucht. */
+/** The contract answers that the map needs. */
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
@@ -51,19 +52,22 @@ async function openMap(
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
 }
 
-/** Legt das Kartenbild auf und vergleicht dann mit dem Board. */
-async function board(page: Page, stem: string, image = 'map-stein-470.png'): Promise<void> {
-  if (image !== '') await showMapImage(page, image);
+/** The map surface ends 28 px below the top of the map sheet, as in the kit `.sheet`. */
+const BELOW_SHEET: DesignMap = { belowSheet: 28 };
+
+/** Puts the design map surface on the canvas and compares the page with the board. */
+async function board(page: Page, stem: string, map: DesignMap = BELOW_SHEET): Promise<void> {
+  await showDesignMap(page, map);
   await expectBoard(page, stem);
 }
 
-/** Dieselbe Karte, aber mit Konto: Speichern fragt dann nicht erst nach. */
+/** The same map, but with an account: a save then does not ask for the sign-in. */
 async function openSignedIn(page: Page, factors = ''): Promise<void> {
   await openMap(page, { view: 'combination', detent: 2 }, factors);
   await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
 }
 
-/** Ein Board zeigt weder Fokusring noch Mauszustand. */
+/** A board shows no focus ring and no hover state. */
 async function blur(page: Page): Promise<void> {
   await page.mouse.move(0, 0);
   await page.evaluate(() => {
@@ -72,7 +76,7 @@ async function blur(page: Page): Promise<void> {
   });
 }
 
-/** Speichern führt ohne Konto zuerst durch die Anmeldung. */
+/** Without an account, a save first asks for the sign-in. */
 async function askForName(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Speichern' }).first().click();
   const signIn = page.getByRole('button', { name: /beimgraben\.net/ });
@@ -88,7 +92,7 @@ test('Map', async ({ page }) => {
   await board(page, 'Map');
 });
 
-/** Dreht die Karte über den Testhaken, wie eine Geste es täte. */
+/** Turns the map through the test hook, as a gesture does. */
 async function turnMap(page: Page, bearing: number): Promise<void> {
   await page.waitForFunction(() => 'pilzMap' in window);
   await page.evaluate((angle) => {
@@ -98,10 +102,10 @@ async function turnMap(page: Page, bearing: number): Promise<void> {
 
 test('MapRotated', async ({ page }) => {
   guard('MapRotated', 'phone');
-  await openMap(page, { detent: 0 });
+  await openMap(page);
   await turnMap(page, -BOARD_BEARING);
   await expect(page.getByRole('button', { name: 'Nach Norden drehen' })).toBeVisible();
-  await showMapImage(page, 'map-stein-631-gedreht.png');
+  await showDesignMap(page, { rotated: true, belowSheet: 28 });
   await expectBoard(page, 'MapRotated');
 });
 
@@ -110,7 +114,7 @@ test('MapDesktopRotated', async ({ page }) => {
   await openMap(page);
   await turnMap(page, -BOARD_BEARING);
   await expect(page.getByRole('button', { name: 'Nach Norden drehen' })).toBeVisible();
-  await showMapImage(page, 'map-desktop-stein-900-gedreht.png');
+  await showDesignMap(page, { rotated: true });
   await expectBoard(page, 'MapDesktopRotated');
 });
 
@@ -121,15 +125,15 @@ test('MapCollapsed', async ({ page }) => {
 
 test('MapLayers', async ({ page }) => {
   guard('MapLayers', 'phone');
-  await openMap(page, { detent: 0 });
+  await openMap(page, { detent: 0, zones: false });
   await page.getByRole('button', { name: 'Ebenen' }).click();
-  await board(page, 'MapLayers', 'map-stein-631.png');
+  await board(page, 'MapLayers', {});
 });
 
 test('MapLayer', async ({ page }) => {
   guard('MapLayer', 'phone');
   await openMap(page, { view: 'layer' });
-  await board(page, 'MapLayer', 'map-regen-470.png');
+  await board(page, 'MapLayer', { heat: 'rain', belowSheet: 28 });
 });
 
 test('LayerTabCredit', async ({ page }) => {
@@ -140,28 +144,28 @@ test('LayerTabCredit', async ({ page }) => {
 test('MapCombination', async ({ page }) => {
   guard('MapCombination', 'phone');
   await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
-  await board(page, 'MapCombination', 'map-schnitt-300.png');
+  await board(page, 'MapCombination', { heat: 'rain', belowSheet: 28 });
 });
 
 test('MapFactor', async ({ page }) => {
   guard('MapFactor', 'phone');
   await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
   await page.getByRole('button', { name: '≥ 80 mm' }).click();
-  await board(page, 'MapFactor', 'map-regen-300.png');
+  await board(page, 'MapFactor', { heat: 'rain' });
 });
 
 test('MapSpecies', async ({ page }) => {
   guard('MapSpecies', 'phone');
   await openMap(page);
   await page.getByRole('button', { name: 'Steinpilz' }).click();
-  await board(page, 'MapSpecies', 'map-stein-300.png');
+  await board(page, 'MapSpecies', {});
 });
 
 test('MapFactorPicker', async ({ page }) => {
   guard('MapFactorPicker', 'phone');
   await openMap(page, { view: 'combination', detent: 2 }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
-  await board(page, 'MapFactorPicker', 'map-regen-300.png');
+  await board(page, 'MapFactorPicker', { heat: 'rain' });
 });
 
 test('MapCombinationSave', async ({ page }) => {
@@ -171,14 +175,14 @@ test('MapCombinationSave', async ({ page }) => {
   await expect(page.getByText('Kombination speichern')).toBeVisible();
   await page.getByRole('textbox').fill('Herbst Steinpilz');
   await blur(page);
-  await board(page, 'MapCombinationSave', 'map-schnitt-470.png');
+  await board(page, 'MapCombinationSave', { heat: 'rain' });
 });
 
 test('MapCombinations', async ({ page }) => {
   guard('MapCombinations', 'phone');
   await openSignedIn(page, BOARD_FACTORS);
-  await page.getByRole('button', { name: /Gespeicherte Kombinationen/ }).click();
-  await board(page, 'MapCombinations', 'map-schnitt-300.png');
+  await page.getByRole('button', { name: 'Kombinationen', exact: true }).click();
+  await board(page, 'MapCombinations', { heat: 'rain' });
 });
 
 test('MapUpdate', async ({ page }) => {
@@ -206,13 +210,41 @@ test('MapOffline', async ({ page }) => {
   await board(page, 'MapOffline');
 });
 
+/**
+ * Some desktop boards show the forecast in the column below a modal of the combination.
+ * The tab changes below the modal layer, as a click there cannot reach it.
+ */
+async function forecastBelow(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const tab = [...document.querySelectorAll<HTMLElement>('[role="tab"]')].find(
+      (one) => one.textContent.trim() === 'Vorhersage',
+    );
+    tab?.click();
+  });
+}
+
+test('MapSignIn', async ({ page }) => {
+  guard('MapSignIn', 'phone');
+  await page.context().grantPermissions(['geolocation']);
+  await mockSignedOut(page);
+  await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
+  await mockMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await page.goto('/karte');
+  // Without an account, the save asks for the sign-in first.
+  await page.getByRole('button', { name: 'Speichern' }).click();
+  await expect(page.getByRole('button', { name: 'Später', exact: true })).toBeVisible();
+  await forecastBelow(page);
+  await blur(page);
+  await board(page, 'MapSignIn');
+});
+
 test('MapSkeleton', async ({ page }) => {
   guard('MapSkeleton', 'phone');
-  // Ohne Antwort des SSO bleibt die Sitzung offen und der Avatar ein Skelett.
+  // Without an SSO answer, the session stays open and the avatar is a skeleton.
   await mockSignInPending(page);
   await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
   await mockMap(page);
-  // Ohne Manifest zeigt die Karte ihr Raster; ein Kartenbild gehört nicht dazu.
+  // Without a manifest the map shows its skeleton. A map image is not part of it.
   await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {
     await route.fulfill({ status: 404, body: '' });
   });
@@ -223,21 +255,21 @@ test('MapSkeleton', async ({ page }) => {
 test('MapDesktop', async ({ page }) => {
   guard('MapDesktop', 'wide');
   await openMap(page);
-  await board(page, 'MapDesktop', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktop', {});
 });
 
 test('MapDesktopSpecies', async ({ page }) => {
   guard('MapDesktopSpecies', 'wide');
   await openMap(page);
   await page.getByRole('button', { name: 'Steinpilz' }).click();
-  await board(page, 'MapDesktopSpecies', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopSpecies', {});
 });
 
 test('MapDesktopLayers', async ({ page }) => {
   guard('MapDesktopLayers', 'wide');
   await openMap(page);
   await page.getByRole('button', { name: 'Ebenen' }).click();
-  await board(page, 'MapDesktopLayers', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopLayers', {});
 });
 
 test('MapDesktopLayersCredit', async ({ page }) => {
@@ -250,14 +282,16 @@ test('MapDesktopFactorPicker', async ({ page }) => {
   guard('MapDesktopFactorPicker', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
-  await board(page, 'MapDesktopFactorPicker', 'map-desktop-stein-900.png');
+  await forecastBelow(page);
+  await board(page, 'MapDesktopFactorPicker', {});
 });
 
 test('MapDesktopCombinations', async ({ page }) => {
   guard('MapDesktopCombinations', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
-  await page.getByRole('button', { name: /Gespeicherte Kombinationen/ }).click();
-  await board(page, 'MapDesktopCombinations', 'map-desktop-stein-900.png');
+  await page.getByRole('button', { name: 'Kombinationen', exact: true }).click();
+  await forecastBelow(page);
+  await board(page, 'MapDesktopCombinations', {});
 });
 
 test('MapDesktopCombinationSave', async ({ page }) => {
@@ -267,20 +301,21 @@ test('MapDesktopCombinationSave', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Kombination speichern' })).toBeVisible();
   await page.getByRole('textbox').fill('Herbst Steinpilz');
   await blur(page);
-  await board(page, 'MapDesktopCombinationSave', 'map-desktop-stein-900.png');
+  await forecastBelow(page);
+  await board(page, 'MapDesktopCombinationSave', {});
 });
 
 test('MapDesktopFactor', async ({ page }) => {
   guard('MapDesktopFactor', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: '≥ 80 mm' }).click();
-  await board(page, 'MapDesktopFactor', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopFactor', {});
 });
 
 test('MapDesktopTimelineEnd', async ({ page }) => {
   guard('MapDesktopTimelineEnd', 'wide');
   await openMap(page);
-  await page.getByRole('button', { name: 'KW 43 · 2025 · Prognose' }).click();
+  await page.getByRole('button', { name: 'KW 41 · 2026 · Prognose' }).click();
   await page.waitForTimeout(400);
   await blur(page);
 });

@@ -9,46 +9,44 @@
     (heldRemoved)="removePhoto($event)"
   />
 } @else {
-  <div class="objectsheet">
-    <div class="findsheet__head">
-      <app-object-title [title]="speciesName()" [sub]="sub()" [photo]="thumbPhoto()" />
-      @if (shared()) {
-        <app-level-pill class="findsheet__badge" [text]="'entry.badge.shared' | t" kind="ok" />
-      }
-    </div>
-    <app-photo-strip mode="view" [photos]="strip()" (opened)="openPhoto($event)" />
+  <div class="overlay-body objectsheet" appScrollFade>
+    <app-object-title [title]="speciesName()" [sub]="sub()" [photo]="thumbPhoto()" />
+    @if (strip().length > 0) {
+      <app-photo-strip mode="view" [photos]="strip()" (opened)="openPhoto($event)" />
+    }
     @if (find().note; as note) {
-      <p class="findsheet__note">{{ note }}</p>
+      <app-section [label]="'entry.field.note' | t">
+        <p class="objectsheet__note">{{ note }}</p>
+      </app-section>
     }
-    @if (valueText(); as value) {
-      <app-row-group>
-        <app-list-row
-          class="findsheet__value"
-          kind="catalogue"
-          [title]="'entry.fund.forecastHere' | t"
-          [subline]="valueScope()"
-          [value]="value"
-        />
-      </app-row-group>
-    }
+    <app-row-group>
+      <app-list-row
+        [title]="'entry.field.visibility' | t"
+        [badge]="(shared() ? 'entry.badge.shared' : 'entry.badge.private') | t"
+        [badgeKind]="shared() ? 'ok' : ''"
+      />
+      @if (groupName(); as group) {
+        <app-list-row [title]="'entry.field.group' | t" [plain]="group" />
+      }
+      <app-map-app-link [target]="location()" />
+    </app-row-group>
   </div>
   <app-action-bar
+    foot
     [primary]="'common.edit' | t"
+    primaryIcon="edit"
     [secondary]="'common.delete' | t"
-    [quiet]="true"
+    secondaryIcon="trash"
     [secondaryDanger]="true"
-    [split]="true"
-    (primaryClick)="editing.set(true)"
+    (primaryClick)="sheet.setEditing(true)"
     (secondaryClick)="deleteAsk.set(true)"
-  >
-    <app-push-button class="findsheet__main" kind="primary" [wide]="true" (click)="showOnMap()">
-      <app-svg-icon name="map" [size]="16" />
-      {{ 'entry.showOnMap' | t }}
-    </app-push-button>
-  </app-action-bar>
+  />
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
+  [meta]="deleteMeta()"
+  [aboveNav]="!wide()"
+  [stageScrim]="!wide()"
   [title]="'entry.fund.delete' | t"
   [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"

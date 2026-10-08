@@ -128,10 +128,10 @@ describe('ShellComponent', () => {
     const { container, navigate } = await shell(true);
     await navigate('/karte');
 
-    expect(screen.getByRole('button', { name: 'Neu laden' })).toHaveTextContent('Neue Version');
+    expect(screen.getByRole('button', { name: 'Neue Version bereit' })).toBeInTheDocument();
     expect(container.querySelector('app-banner')).toHaveClass('shell__banner--float');
     expect(container.querySelector('.shell')).toHaveStyle({
-      '--top-bar-height': 'calc(48px + env(safe-area-inset-top, 0px))',
+      '--top-bar-height': 'calc(60px + env(safe-area-inset-top, 0px))',
     });
   });
 
@@ -158,7 +158,7 @@ describe('ShellComponent', () => {
     detectChanges();
 
     expect(container.querySelector('.shell')).toHaveStyle({
-      '--top-bar-height': 'calc(48px + env(safe-area-inset-top, 0px))',
+      '--top-bar-height': 'calc(60px + env(safe-area-inset-top, 0px))',
     });
     expect(screen.getByRole('button', { name: 'Konto' })).toBeInTheDocument();
   });

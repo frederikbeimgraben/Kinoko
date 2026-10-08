@@ -1,44 +1,34 @@
 import { InjectionToken } from '@angular/core';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { clearRing, paintRing, type StepView } from './step-painter';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
-/** Ein Ring, wie ihn Terra Draw nach dem Ziehen zurückgibt. */
+/** A ring, as Terra Draw gives it back after a drag. */
 export type RingListener = (ring: Location[]) => void;
 
-/**
- * Terra Draw über der Karte: es zeichnet den Ring und lässt seine Eckpunkte
- * mit dem Finger ziehen.
- */
+/** Terra Draw over the map: it draws the ring and lets the finger drag its corners. */
 export interface DrawSession {
-  /** Legt den Ring neu auf die Karte. Ein leerer Ring löscht ihn. */
+  /** Puts the ring on the map again. An empty ring removes it. */
   showRing(ring: readonly Location[], view?: StepView): void;
-  /** Schaltet auf Auswahl: die Eckpunkte lassen sich ziehen. */
+  /** Sets the select mode: the corners can move. */
   edit(handler: RingListener): void;
   stop(): void;
 }
 
-/**
- * Terra Draw weist Koordinaten mit mehr Stellen zurück. Sechs sind rund elf
- * Zentimeter; genauer trifft weder der Daumen noch die Karte.
- */
+/** Terra Draw refuses coordinates with more decimals. Six decimals are approximately 11 cm. */
 const DECIMALS = 1e6;
 
 function gerundet(location: Location): [number, number] {
   return [Math.round(location[0] * DECIMALS) / DECIMALS, Math.round(location[1] * DECIMALS) / DECIMALS];
 }
 
-/** Die Formen, die Terra Draw je nach Zahl der Eckpunkte hält. */
+/** The shapes that Terra Draw keeps for each number of corners. */
 export type Geometry =
   | { type: 'Point'; coordinates: [number, number] }
   | { type: 'LineString'; coordinates: [number, number][] }
   | { type: 'Polygon'; coordinates: [number, number][][] };
 
-/**
- * Welche Form ein Ring gerade hat. Terra Draw nimmt nur Features an, die zu
- * einem seiner Modi passen; ein Ring aus einem oder zwei Punkten ist noch
- * keine Fläche.
- */
+/** The shape of a ring. Terra Draw accepts only features of its modes, and two points are not an area. */
 export function geometryFor(ring: readonly Location[]): { geometry: Geometry; mode: string } | null {
   if (ring.length === 0) return null;
   if (ring.length === 1)
@@ -50,13 +40,13 @@ export function geometryFor(ring: readonly Location[]): { geometry: Geometry; mo
   return { geometry: { type: 'Polygon', coordinates: [[...punkte, punkte[0]]] }, mode: 'polygon' };
 }
 
-/** Terra Draw und sein MapLibre-Adapter. */
+/** Terra Draw and its MapLibre adapter. */
 export interface TerraModule {
   terra: typeof import('terra-draw');
   adapter: typeof import('terra-draw-maplibre-gl-adapter');
 }
 
-/** Holt beide als eigenes Paket, erst wenn eine Fläche im Spiel ist. */
+/** Loads both as a separate chunk, only when an area is necessary. */
 export type TerraLoader = () => Promise<TerraModule>;
 
 const defaultLoader: TerraLoader = async () => {
@@ -67,14 +57,7 @@ const defaultLoader: TerraLoader = async () => {
   return { terra, adapter };
 };
 
-/**
- * Startet Terra Draw auf der Karte.
- *
- * Die Eckpunkte kommen nicht aus einem Tipp auf die Karte, sondern aus dem
- * Fadenkreuz und dem Knopf darunter (Konzept, „Bedienung am Telefon“): am
- * Telefon trifft der Daumen die Karte schlechter als die Mitte des Bildes.
- * Terra Draw zeichnet den Ring und übernimmt danach das Ziehen der Eckpunkte.
- */
+/** Starts Terra Draw on the map. The step sets the corners, Terra Draw then moves them. */
 export async function startDrawing(
   map: MapLibreMap,
   farbe: `#${string}`,
@@ -102,8 +85,7 @@ export async function startDrawing(
     ],
   });
   draw.start();
-  // Auswahl ist der einzige Modus, der auf einen Tipp nichts zeichnet. Der Ring
-  // kommt ausschließlich über `zeigeRing` herein.
+  // Only the select mode draws nothing on a tap. The ring comes in only through `showRing`.
   draw.setMode('select');
 
   let id: string | number | null = null;
@@ -111,8 +93,7 @@ export async function startDrawing(
   let held: readonly Location[] = [];
 
   return {
-    // Beim Zeichnen malen eigene Ebenen: Terra Draw kennt weder Strichmuster
-    // noch Eckpunkte.
+    // While the step draws, own layers paint the ring: Terra Draw has no dashes and no corner marks.
     showRing: (ring, view) => {
       held = ring;
       draw.clear();
@@ -131,8 +112,7 @@ export async function startDrawing(
       draw.on('change', () => {
         const feature = id === null ? undefined : draw.getSnapshotFeature(id);
         if (feature?.geometry.type !== 'Polygon') return;
-        // Der geschlossene Ring trägt den ersten Punkt zweimal; die Oberfläche
-        // zählt Eckpunkte, nicht Stützstellen.
+        // The closed ring has the first point twice. The step counts corners, not ring points.
         const punkte = feature.geometry.coordinates[0].slice(0, -1);
         handler(punkte.map((point) => [point[0], point[1]] as Location));
       });
@@ -145,7 +125,7 @@ export async function startDrawing(
   };
 }
 
-/** Der Zeichner hinter einem Token, damit ein Test ihn ohne WebGL stellt. */
+/** The drawer behind a token, so a test can give it without WebGL. */
 export const ZONE_DRAWER = new InjectionToken<typeof startDrawing>('ZonenZeichner', {
   providedIn: 'root',
   factory: () => startDrawing,

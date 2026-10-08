@@ -1,7 +1,7 @@
 @if (withHead()) {
   <app-sheet-head [title]="layer().label" [icon]="glyph()" [week]="layer().note" />
 }
-<div class="factor">
+<div class="overlay-body factor" appScrollFade>
   <app-segmented
     [options]="conditions()"
     [value]="draft().condition"
@@ -9,8 +9,7 @@
     (valueChange)="setCondition($event)"
   />
 
-  <div>
-    <h3 class="factor__title">{{ distribution() }}</h3>
+  <app-section [label]="head()">
     @if (histogram(); as shares) {
       <app-histogram
         [shares]="shares.shares"
@@ -34,14 +33,18 @@
       <span>{{ bound() }}</span>
       <span>{{ scaleTo() }}</span>
     </div>
-  </div>
+  </app-section>
 
-  <div class="factor__applied">
-    <span class="factor__key">{{ 'map.factor.condition' | t }}</span>
-    <output class="factor__box">{{ condition() }}</output>
-  </div>
+  <app-form-field [label]="'map.factor.condition' | t" [value]="condition()" [readOnly]="true" />
+
+  @if (layer().note !== '') {
+    <app-row-group>
+      <app-list-row [title]="'map.factor.period' | t" [plain]="layer().note" [chevron]="true" />
+    </app-row-group>
+  }
 </div>
 <app-action-bar
+  foot
   [primary]="'common.apply' | t"
   [secondary]="'map.factor.remove' | t"
   [secondaryDanger]="true"

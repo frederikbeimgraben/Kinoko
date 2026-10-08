@@ -16,6 +16,7 @@
       <app-push-button
         class="acts__button"
         [class.acts__danger]="quietSecondaryDanger()"
+        [icon]="secondaryIcon()"
         [kind]="secondaryVariant()"
         [wide]="!modal()"
         (click)="secondaryClick.emit()"

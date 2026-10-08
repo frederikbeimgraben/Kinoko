@@ -12,26 +12,35 @@ import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesStore } from '../species/species.store';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { numericDate } from '../../core/i18n/dates';
 import { isoDatum } from '../entries/formats';
 import { speciesPickerEntry } from '../species/species-picker-entry';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
+import { coordinatesText } from './coordinates';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SectionComponent } from '../../ui/section/section.component';
 
-/** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */
+/** The result of the form: the find and its photos that are not sent yet. */
 export interface FindSubmission {
   input: FindWrite;
   photos: readonly File[];
 }
 
-/** Die Artwahl steht über dem Formular und füllt fast die ganze Höhe. */
+/** The species choice is above the form and fills almost the full height. */
 
-/** Das Formular eines Fundes (Boards `FindForm` und `MapDesktopFindForm`). */
+/** The form of a find (boards `FindForm` and `MapDesktopFindForm`). */
 @Component({
   selector: 'app-find-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ListRowComponent,
+    RowGroupComponent,
+    ScrollFadeDirective,
+    SectionComponent,
     ActionBarComponent,
     SpeciesPickerComponent,
     FormFieldComponent,
@@ -49,20 +58,25 @@ export class FindFormComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly species = inject(SpeciesStore);
-  private readonly map = inject(MapState);
+  private readonly map = inject(MapStore);
 
   readonly location = input.required<Location>();
-  /** Ein vorhandener Fund, wenn das Formular ihn ändert statt anzulegen. */
+
+  /** The location as text, per the row `Ort` of the board `FindFormBody`. */
+  protected readonly place = computed(() => coordinatesText(this.location(), this.i18n));
+  /** An existing find, when the form changes it. */
   readonly start = input<Find | null>(null);
   readonly withPhotos = input(true);
-  /** Die Fotos, die der Dienst zu diesem Fund schon hat. */
+  /** The photos of this find that the service has. */
   readonly held = input<readonly StripPhoto[]>([]);
-  /** Ein vorhandener Fund zeigt den Pfeil an der Art und einen Rahmen am Weg zurück. */
+  /** An existing find shows the chevron at the species and a border at the back way. */
   readonly editing = input(false);
   readonly busy = input(false);
 
   readonly submitted = output<FindSubmission>();
   readonly heldRemoved = output<string>();
+  /** The location row goes back to the location step. */
+  readonly locationClick = output();
 
   private readonly slugChoice = signal<string | null>(null);
   protected readonly visibilityChoice = signal<Visibility | null>(null);
@@ -102,7 +116,7 @@ export class FindFormComponent {
     return chosen === undefined ? (this.start()?.groupId ?? null) : chosen;
   });
 
-  /** Die Vorgabe ist die Art der Karte. */
+  /** The default is the species of the map. */
   protected readonly selectedSpecies = computed<SpeciesEntry | null>(() => {
     const chosen = this.slugChoice();
     if (chosen !== null) return this.species.entryOf(chosen);
@@ -131,10 +145,7 @@ export class FindFormComponent {
     if (input !== null) this.submitted.emit({ input, photos: this.photos() });
   }
 
-  /**
-   * Prüft, was der Vertrag verlangt: eine Art aus dem Katalog, ein Datum, das
-   * nicht in der Zukunft liegt, und eine Anzahl ab eins, falls eine dasteht.
-   */
+  /** Checks the contract: a catalogue species, a date that is not in the future, and a count of 1 or more. */
   private validate(): FindWrite | null {
     const species = this.selectedSpecies();
     if (species === null) {

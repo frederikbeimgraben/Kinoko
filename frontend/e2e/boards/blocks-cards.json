@@ -99,7 +99,7 @@
     "selector": "Progress",
     "stem": "Progress",
     "w": 358,
-    "h": 8
+    "h": 40
   },
   {
     "selector": "QueueCard",
@@ -159,7 +159,7 @@
     "selector": "Slider",
     "stem": "Slider",
     "w": 358,
-    "h": 28
+    "h": 40
   },
   {
     "selector": "Split",

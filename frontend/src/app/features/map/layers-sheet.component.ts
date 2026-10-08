@@ -1,72 +1,32 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { TranslationKey } from '../../core/i18n/translations';
-import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
-import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
+import { ViewportService } from '../../core/layout/viewport.service';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
-import { RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
-import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { LayersBodyComponent } from './layers-body.component';
 
-/** Ein Text je Hintergrund, in der Reihenfolge des Boards. */
-const BACKGROUND_KEY: Record<Background, TranslationKey> = {
-  map: 'map.basemap.map',
-  light: 'map.basemap.light',
-  topo: 'map.basemap.topo',
-  satellite: 'map.basemap.satellite',
-};
-
-/** Was auf der Karte liegt: Hintergrund, eigene Objekte, Deckkraft. */
+/** What is on the map: a sheet on the phone (board `MapLayers`), a popover at the layers button on the desktop. */
 @Component({
   selector: 'app-layers-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ChoiceRowComponent, PopoverComponent, RangeSliderComponent, SegmentedComponent, TranslatePipe],
+  imports: [
+    LayersBodyComponent,
+    OverlayHostComponent,
+    PopoverComponent,
+    ScrollFadeDirective,
+    SheetComponent,
+    TranslatePipe,
+  ],
   templateUrl: './layers-sheet.component.html',
   styleUrl: './layers-sheet.component.scss',
 })
 export class LayersSheetComponent {
-  private readonly i18n = inject(I18nService);
+  protected readonly wide = inject(ViewportService).wide;
 
-  /** Der Knopf steht rechts oben, die Karte hängt an derselben Kante. */
-  protected readonly anchor: PopoverAnchor = { top: 68, end: 12 };
+  /** Board `MapDesktopLayers`: the card is 104 px from the right edge, at the top of the layers button. */
+  protected readonly anchor: PopoverAnchor = { top: 40, end: 104 };
 
-  readonly background = input.required<Background>();
-  /** Deckkraft der Wertebene, 0 als kein Wert, 1 als volle Deckung. */
-  readonly opacity = input.required<number>();
-  /** Nur in der Darstellung Ebene lässt sich die Vorhersage darunter legen. */
-  readonly showsLayer = input(false);
-  readonly forecastBelow = input(false);
-  readonly showMarkers = input(true);
-  readonly showZones = input(true);
-  readonly showSharedFinds = input(true);
-  readonly markerCount = input(0);
-  readonly zoneCount = input(0);
-  readonly sharedFindCount = input(0);
-
-  readonly backgroundChange = output<Background>();
-  readonly opacityChange = output<number>();
-  readonly forecastBelowChange = output<boolean>();
-  readonly showMarkersChange = output<boolean>();
-  readonly showZonesChange = output<boolean>();
-  readonly showSharedFindsChange = output<boolean>();
   readonly closed = output();
-
-  protected readonly choices = computed<SegmentOption[]>(() =>
-    BACKGROUNDS.map((value) => ({ value, label: this.i18n.translate(BACKGROUND_KEY[value]) })),
-  );
-
-  protected readonly percent = computed(() => Math.round(this.opacity() * 100));
-
-  protected chooseBackground(value: string): void {
-    const chosen = BACKGROUNDS.find((entry) => entry === value);
-    if (chosen && backgroundAvailable(chosen)) this.backgroundChange.emit(chosen);
-  }
-
-  protected onOpacity(percent: number): void {
-    this.opacityChange.emit(percent / 100);
-  }
-
-  protected count(value: number): string {
-    return new Intl.NumberFormat(this.i18n.locale()).format(value);
-  }
 }

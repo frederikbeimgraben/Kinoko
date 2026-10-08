@@ -8,18 +8,18 @@ import { FactorPickerComponent } from './factor-picker.component';
 const LAYERS = readLayers(RAW_LAYERS).layers;
 
 describe('FactorPickerComponent', () => {
-  it('nennt jede freie Quelle mit Namen, Zeichen und Einheit', async () => {
+  it('shows each free source as a row of the sheet', async () => {
     const { container } = await render(FactorPickerComponent, {
       inputs: { open: true, layers: LAYERS },
     });
 
+    expect(screen.getByRole('dialog', { name: 'Faktor wählen' })).toBeInTheDocument();
     expect(screen.getByText('Waldanteil')).toBeInTheDocument();
-    expect(screen.getByRole('group', { name: 'Faktor wählen' })).toHaveTextContent('Grad');
-    expect(container.querySelectorAll('.row__icon')).toHaveLength(LAYERS.length);
+    expect(container.querySelectorAll('app-list-row')).toHaveLength(LAYERS.length);
     await noViolations(container);
   });
 
-  it('lässt eine Quelle mit Faktor weg', async () => {
+  it('leaves out a source that has a factor', async () => {
     await render(FactorPickerComponent, {
       inputs: { open: true, layers: LAYERS, assigned: new Set(['wald']) },
     });
@@ -27,7 +27,7 @@ describe('FactorPickerComponent', () => {
     expect(screen.queryByText('Waldanteil')).toBeNull();
   });
 
-  it('meldet die gewählte Ebene', async () => {
+  it('reports the chosen layer', async () => {
     const { fixture } = await render(FactorPickerComponent, {
       inputs: { open: true, layers: LAYERS },
     });
@@ -39,11 +39,11 @@ describe('FactorPickerComponent', () => {
     expect(picks).toEqual(['wald']);
   });
 
-  it('blendet die Ränder der Karte aus', async () => {
+  it('fades the edges of the list when it scrolls', async () => {
     const { container } = await render(FactorPickerComponent, {
       inputs: { open: true, layers: LAYERS },
     });
 
-    expect(container.querySelectorAll('.option-sheet__scroll.scroll')).toHaveLength(1);
+    expect(container.querySelectorAll('.picker.scroll')).toHaveLength(1);
   });
 });

@@ -6,28 +6,12 @@
   display: contents;
 }
 
-// Unter dem Kopf steht der Name mit vollem Abstand.
-.overlay-body--roomy {
-  padding-block-start: var(--size-gutter);
+.overlay-body {
+  overflow-y: auto;
 }
 
-app-species-picker,
-app-layer-list {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--space-5);
-  min-block-size: 0;
-  overflow: hidden;
-}
-
-// Im Modal am Rechner steht die Liste dichter unter dem Suchfeld.
-:host-context(.shell--column) app-species-picker,
-:host-context(.shell--column) app-layer-list {
-  gap: var(--space-4);
-}
-
-// Im Modal endet der Rumpf ohne Polster; der Fuß setzt den Abstand.
-:host-context(.shell--column) .overlay-body--roomy {
-  padding-block-end: 0;
+// Boards `MapLayerPicker` and `MapFactorPicker`: a strip of 16 px below a body without actions.
+.overlays__end {
+  flex: none;
+  block-size: 16px;
 }

@@ -3,60 +3,57 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   Injector,
   input,
   output,
   signal,
 } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { PhotosApi } from '../../core/api/photos.api';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
+import { AccountStore } from '../../core/access/account.store';
+import { GroupsStore } from '../../core/access/groups.store';
+import { PersonNamesStore } from '../../core/access/person-names.store';
 import { photoPath } from '../../core/api/models';
 import type { Find, Photo } from '../../core/api/models';
-import { AccountStore } from '../../core/access/account.store';
-import { PersonNamesStore } from '../../core/access/person-names.store';
+import { PhotosApi } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { TileService } from '../../core/tiles/tile.service';
-import { NOW } from '../../core/tiles/now';
-import { currentWeek, findWeek, type ManifestWeek } from '../../core/tiles/manifest';
-import { valueAtPoint } from '../../core/tiles/value-at-point';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { PhotoDialogComponent } from '../../ui/photo-dialog/photo-dialog.component';
 import { PhotoStripComponent, type StripPhoto } from '../../ui/photo-strip/photo-strip.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
+import { EntriesState } from '../entries/entries.state';
 import { findSubline } from '../entries/find-subline';
 import { SpeciesStore } from '../species/species.store';
-import { EntriesState } from '../entries/entries.state';
-import { ObjectSheetState } from './object-sheet.state';
-import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
-import { MapState } from '../map/map.state';
+import { ObjectSheetStore } from './object-sheet.store';
 
-/** Das Objekt-Blatt eines Fundes; die Kennzahl kommt aus der Wertkachel der Karte. */
+/** The object sheet of a find, per the board `FindViewBody`. */
 @Component({
   selector: 'app-find-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    ButtonComponent,
     ConfirmDialogComponent,
     FindFormComponent,
-    LevelPillComponent,
     ListRowComponent,
+    MapAppLinkComponent,
     ObjectTitleComponent,
     PhotoDialogComponent,
     PhotoStripComponent,
     RowGroupComponent,
-    SvgIconComponent,
+    ScrollFadeDirective,
+    SectionComponent,
     TranslatePipe,
   ],
   templateUrl: './find-sheet.component.html',
@@ -65,15 +62,15 @@ import { MapState } from '../map/map.state';
 export class FindSheetComponent {
   private readonly account = inject(AccountStore);
   private readonly names = inject(PersonNamesStore);
+  private readonly groups = inject(GroupsStore);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly arten = inject(SpeciesStore);
   private readonly eintraege = inject(EntriesState);
-  private readonly sheet = inject(ObjectSheetState);
-  private readonly map = inject(MapState);
-  private readonly tiles = inject(TileService);
+  protected readonly sheet = inject(ObjectSheetStore);
+  protected readonly wide = inject(ViewportService).wide;
   private readonly photos = inject(PhotosApi);
-  private readonly now = inject(NOW);
+  private readonly injector = inject(Injector);
 
   readonly find = input.required<Find>();
 
@@ -82,13 +79,20 @@ export class FindSheetComponent {
   protected readonly editing = this.sheet.editing;
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
-  private readonly week = signal<ManifestWeek | null>(null);
-  /** Die Fotos, die der Dienst zu dem Fund kennt; Leiste und Formular zeigen sie. */
-  protected readonly held = signal<readonly Photo[]>([]);
   protected readonly viewing = signal<number | null>(null);
-  private readonly injector = inject(Injector);
   private tile: HTMLElement | null = null;
-  private readonly value = signal<number | null>(null);
+
+  /** The photos of the find that the service knows. The strip and the form show them. */
+  private readonly photoList = rxResource({
+    params: () => this.find().id,
+    stream: ({ params: findId }) =>
+      this.photos.list({ findId }).pipe(
+        map((page): readonly Photo[] => page.items),
+        // Without the list, the form shows only the new files.
+        catchError(() => of<readonly Photo[]>([])),
+      ),
+  });
+  protected readonly held = computed(() => this.photoList.value() ?? []);
 
   protected readonly strip = computed<readonly StripPhoto[]>(() =>
     this.held().map((one) => ({ id: one.id, path: photoPath(one.id, 'list'), lead: one.lead })),
@@ -102,56 +106,40 @@ export class FindSheetComponent {
   protected readonly speciesName = computed(() => this.art()?.name ?? '');
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
 
-  /** Die gedämpfte Zeile unter dem Namen: Datum, Anzahl, Melder. */
+  /** The muted line below the name: date, count and reporter. */
   protected readonly sub = computed(() => {
     const date = longDate(this.find().foundOn, this.i18n.locale());
     return findSubline(this.i18n, date, this.find().count, this.reporterName());
   });
 
+  /** The line of the delete dialog: species and date, per the board `MapDialogFindDelete`. */
+  protected readonly deleteMeta = computed(
+    () => `${this.speciesName()} · ${longDate(this.find().foundOn, this.i18n.locale())}`,
+  );
+
   protected readonly thumbPhoto = computed(() => this.strip()[0]?.path ?? '');
 
-  /** Die Plakette neben dem Namen, solange der Fund geteilt ist. */
   protected readonly shared = computed(() => this.find().visibility === 'shared');
 
-  /** Der eigene Name kommt aus dem Konto, ein fremder nur bei gemeinsamer Gruppe. */
+  /** The group of a shared find, when the person knows it. */
+  protected readonly groupName = computed(() => {
+    const id = this.find().groupId;
+    return id === null ? null : ((this.groups.groups() ?? []).find((group) => group.id === id)?.name ?? null);
+  });
+
+  constructor() {
+    void this.arten.loadBundle();
+    if (this.groups.groups() === null) this.groups.load(false, true);
+  }
+
+  /** The own name comes from the account. Another name only shows with a shared group. */
   private reporterName(): string | null {
     const find = this.find();
     if (this.account.owns(find.ownerId)) return this.eintraege.reporter() ?? '';
     return this.names.nameOf(find.ownerId);
   }
 
-  /** Der Fund rückt in die Mitte der Karte; das Blatt macht ihn frei. */
-  protected showOnMap(): void {
-    this.closed.emit();
-  }
-
-  /** „Steinpilz, KW 40 · 2025, je Begehung“ — jede Zahl nennt ihren Bezug. */
-  protected readonly valueScope = computed(() => {
-    const week = this.week();
-    if (week === null) return '';
-    return this.i18n.translate('fund.vorhersageUnter', {
-      art: this.speciesName(),
-      woche: week.week,
-      jahr: week.year,
-    });
-  });
-
-  protected readonly valueText = computed(() => {
-    const value = this.value();
-    return value === null ? null : this.i18n.translate('karte.prozent', { wert: Math.round(value * 100) });
-  });
-
-  constructor() {
-    void this.arten.loadBundle();
-    effect(() => {
-      void this.fetchValue(this.find(), this.map.week());
-    });
-    effect(() => {
-      void this.loadPhotos(this.find().id);
-    });
-  }
-
-  /** Nimmt ein vorhandenes Foto weg und holt die Liste neu. */
+  /** Removes a photo of the find and loads the list again. */
   protected async removePhoto(id: string): Promise<void> {
     try {
       await firstValueFrom(this.photos.remove(id));
@@ -159,17 +147,7 @@ export class FindSheetComponent {
       this.toasts.error(this.i18n.translate('melden.verworfen'));
       return;
     }
-    await this.loadPhotos(this.find().id);
-  }
-
-  private async loadPhotos(findId: string): Promise<void> {
-    try {
-      const page = await firstValueFrom(this.photos.list({ findId }));
-      this.held.set(page.items);
-    } catch {
-      // Ohne Liste zeigt das Formular nur die neuen Dateien.
-      this.held.set([]);
-    }
+    this.photoList.reload();
   }
 
   protected openPhoto(index: number): void {
@@ -188,7 +166,7 @@ export class FindSheetComponent {
     try {
       if (await this.eintraege.updateFind(this.find(), submission.input)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
-        this.editing.set(false);
+        this.sheet.setEditing(false);
       }
     } finally {
       this.busy.set(false);
@@ -200,29 +178,6 @@ export class FindSheetComponent {
     if (await this.eintraege.deleteFind(this.find().id)) {
       this.toasts.success(this.i18n.translate('fund.geloescht'));
       this.closed.emit();
-    }
-  }
-
-  /**
-   * Liest den Wert der aktiven Woche am Ort des Fundes. Ohne Vorhersagekarte
-   * für diese Art bleibt die Zeile weg, statt eine Null zu behaupten.
-   */
-  private async fetchValue(find: Find, weekKey: string | null): Promise<void> {
-    this.value.set(null);
-    this.week.set(null);
-    const art = this.art();
-    if (!art?.forecastEnabled) return;
-    try {
-      await this.tiles.load(art.slug);
-      const manifest = this.tiles.manifestOf(art.slug);
-      if (manifest === null) return;
-      const week =
-        (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
-      if (week === null) return;
-      this.week.set(week);
-      this.value.set(await valueAtPoint(manifest, week.tilePath, find.lon, find.lat));
-    } catch {
-      // Ohne Manifest gibt es keine Zahl mit Bezug, also auch keine Zeile.
     }
   }
 }

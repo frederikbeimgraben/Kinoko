@@ -14,8 +14,8 @@ const CLOSE_SIZE = 48;
 const RAIL = 96;
 /** The first marker of the mock. */
 const MARKER = 'marker 0';
-/** The kit pane of each tab: `list` on the entries tab, `panel` on the map tab. */
-const COLUMN: Readonly<Record<string, number>> = { '/eintraege': 520, '/karte': 420 };
+/** The kit pane `list` of the entries tab. The modal centres on the area to its right. */
+const LIST = 520;
 
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
@@ -47,8 +47,10 @@ async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   if (viewport === null) throw new Error('Kein Fenster.');
 
   expect(Math.round(box.width)).toBe(MODAL_WIDTH);
-  const column = COLUMN[new URL(page.url()).pathname] ?? 0;
-  expect(Math.round(box.x + box.width / 2)).toBe(Math.round((RAIL + column + viewport.width) / 2));
+  // On the map tab the modal centres on the window, per `kit.css` `.modal` in the board `MapDesktopFindView`.
+  const onMap = new URL(page.url()).pathname === '/karte';
+  const centre = onMap ? viewport.width / 2 : (RAIL + LIST + viewport.width) / 2;
+  expect(Math.round(box.x + box.width / 2)).toBe(Math.round(centre));
 
   const close = dialog.locator('.overlay-head__close');
   await expect(close).toBeVisible();
@@ -77,7 +79,7 @@ test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
   await expectCentredModal(page, page.getByRole('dialog', { name: 'Marker' }));
 });
 
-test('Anmelden steht am Rechner als zentriertes Modal', async ({ page }) => {
+test('sign-in shows on the desktop as a dialog in the centre of the window', async ({ page }) => {
   await openApp(page, '/eintraege', false);
   const dialog = page.getByRole('dialog', { name: 'Anmelden' });
   // The empty state renders again until the list is complete.
@@ -86,7 +88,11 @@ test('Anmelden steht am Rechner als zentriertes Modal', async ({ page }) => {
     await expect(dialog).toBeVisible({ timeout: 2000 });
   }).toPass({ timeout: 20000 });
 
-  await expectCentredModal(page, dialog);
+  // Per the board `MapSignIn`: a dialog of the kit, not a modal sheet.
+  const box = await dialog.boundingBox();
+  const viewport = page.viewportSize();
+  if (box === null || viewport === null) throw new Error('Dialog ohne Fläche.');
+  expect(Math.round(box.x + box.width / 2)).toBe(Math.round(viewport.width / 2));
 });
 
 test('Der Plus-Knopf lässt den Reiter Einträge stehen', async ({ page }) => {

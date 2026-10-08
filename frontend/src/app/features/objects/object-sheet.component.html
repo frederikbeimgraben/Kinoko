@@ -1,16 +1,9 @@
-<app-overlay-host
-  class="object"
-  [class.object--dark]="dark()"
-  [open]="map.object() !== null"
-  [modal]="dark()"
-  (closed)="close()"
->
+<app-overlay-host class="object" [open]="map.object() !== null" [modal]="true" (closed)="close()">
   <app-sheet
     appSheetHeight
     class="object__sheet"
     [label]="sheetName()"
     [title]="headTitle()"
-    [note]="headNote()"
     [modal]="true"
     [dismissible]="true"
     (closed)="dismiss()"

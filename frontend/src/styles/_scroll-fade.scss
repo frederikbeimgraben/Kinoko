@@ -31,3 +31,8 @@
     transparent
   );
 }
+
+// A mask makes a stacking context. A sheet that opens in the scroll area must stay above the floating actions.
+.scroll[data-fade]:has(app-overlay-host app-sheet) {
+  mask-image: none;
+}

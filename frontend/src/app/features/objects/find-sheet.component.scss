@@ -5,37 +5,3 @@
 }
 
 @include object-sheet.object-sheet;
-
-.findsheet__head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.findsheet__badge {
-  flex: none;
-}
-
-// 15 px Fließtext steht so im Board `FindSheet`.
-.findsheet__note {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.55;
-  text-wrap: wrap;
-}
-
-.findsheet__main {
-  --btn-font-size: var(--fs-control);
-  --btn-height: 48px;
-}
-
-// Die Kennzahl des Boards: Name fett, Bezug gedämpft, Wert zwanzig Punkte.
-.findsheet__value {
-  --size-row-tall: 58px;
-  --list-row-title-weight: var(--fw-semibold);
-  --list-row-value: 20px;
-  --list-row-value-weight: var(--fw-bold);
-  --list-row-value-colour: var(--color-text);
-  --list-row-sub: var(--fs-sm);
-  --space-row-stack: 2px;
-}

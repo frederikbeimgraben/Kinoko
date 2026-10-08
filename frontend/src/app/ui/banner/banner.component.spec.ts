@@ -40,7 +40,7 @@ describe('BannerComponent', () => {
       inputs: { kind: 'update' },
     });
 
-    const banner = screen.getByRole('button', { name: 'Neue Version' });
+    const banner = screen.getByRole('button', { name: 'Neue Version bereit' });
     expect(banner).toHaveClass('banner--info');
     expect(container.querySelector('.banner__glyph')).not.toBeNull();
     await noViolations(container);

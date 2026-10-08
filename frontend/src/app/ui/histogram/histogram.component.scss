@@ -1,13 +1,17 @@
+// Per `kit.css` `.histo`: one bar per class with a gap of 2 px, round at the top.
 .histogram {
-  display: block;
-  inline-size: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
 }
 
 .histogram__bar {
-  fill: var(--outline);
+  flex: 1;
+  background: var(--outline);
+  border-radius: 2px 2px 0 0;
 }
 
 .histogram__bar--inside {
-  fill: var(--primary);
+  background: var(--primary);
   opacity: 0.85;
 }
