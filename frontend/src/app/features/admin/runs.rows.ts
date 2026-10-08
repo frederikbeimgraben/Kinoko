@@ -17,6 +17,7 @@ export const RUN_KIND_TEXT: Readonly<Record<RunKind, TranslationKey>> = {
   training: 'enum.run_kind.training',
   render: 'enum.run_kind.render',
   full: 'enum.run_kind.full',
+  fetch: 'enum.run_kind.fetch',
 };
 
 export const RUN_STATE_TEXT: Readonly<Record<RunState, TranslationKey>> = {

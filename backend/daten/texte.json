@@ -859,7 +859,19 @@
     "unit.percent": "%",
     "unit.second": "s",
     "unit.um": "µm",
-    "unit.week": "KW"
+    "unit.week": "KW",
+    "admin.role.manageData": "Datenquellen verwalten",
+    "enum.run_kind.fetch": "Daten abrufen",
+    "error.checksumMismatch": "Die Prüfsumme stimmt nicht",
+    "error.incomplete": "Die Übertragung ist unvollständig",
+    "error.noOriginal": "Die Originaldatei fehlt",
+    "error.notReady": "Die Fassung ist noch nicht bereit",
+    "error.offsetMismatch": "Der Teil passt nicht an diese Stelle",
+    "error.runActive": "Ein Lauf ist schon aktiv",
+    "error.uploadClosed": "Die Übertragung ist abgeschlossen",
+    "error.uploadOpen": "Für diese Quelle läuft schon eine Übertragung",
+    "error.diskFull": "Nicht genug Speicherplatz",
+    "error.inputsMissing": "Es fehlen Eingangsdaten"
   },
   "en": {
     "account.deleteAllConfirmTitle": "Delete everything",
@@ -1721,6 +1733,18 @@
     "unit.percent": "%",
     "unit.second": "s",
     "unit.um": "µm",
-    "unit.week": "wk"
+    "unit.week": "wk",
+    "admin.role.manageData": "Manage data sources",
+    "enum.run_kind.fetch": "Fetch data",
+    "error.checksumMismatch": "The checksum does not agree",
+    "error.incomplete": "The upload is not complete",
+    "error.noOriginal": "The original file is missing",
+    "error.notReady": "The version is not ready",
+    "error.offsetMismatch": "The part does not fit at this position",
+    "error.runActive": "A run is already active",
+    "error.uploadClosed": "The upload is closed",
+    "error.uploadOpen": "An upload for this source is already open",
+    "error.diskFull": "Not enough disk space",
+    "error.inputsMissing": "Input data is missing"
   }
 }

@@ -11,6 +11,7 @@ export const PERMISSION_TEXT: Readonly<Record<Permission, TranslationKey>> = {
   'role.assign': 'admin.role.assignRoles',
   'find.review': 'admin.role.reviewFinds',
   'run.manage': 'admin.role.manageRuns',
+  'data.manage': 'admin.role.manageData',
   'group.manage': 'admin.role.manageGroups',
 };
 
