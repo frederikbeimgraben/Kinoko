@@ -9,10 +9,12 @@ import (
 	"slices"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/testkit"
 )
 
 func gridFixture(t *testing.T, f *fixture) []byte {
@@ -142,6 +144,9 @@ func TestDeleteRules(t *testing.T) {
 		t.Fatal("the folder stays", err)
 	}
 	f.env.Delete(versionPath(sources.KindTreeScales, only), f.admin).Expect(t, http.StatusNotFound)
+	// The runner holds JobLock for the whole run.
+	sources.JobLock.Lock()
+	defer sources.JobLock.Unlock()
 	f.exec(`INSERT INTO pipeline_run (id, kind, state, queued_at, progress_done, progress_total)
 		VALUES (?, 'render', 'running', ?, 0, 0)`, db.NewID(), db.Now())
 	busy := f.env.Delete(versionPath(sources.KindTreesGrid, only), f.admin).Expect(t, http.StatusConflict).Map(t)
@@ -339,4 +344,61 @@ func TestEachActivationStartsTheHook(t *testing.T) {
 	if got := seen(); !slices.Equal(got, []sources.Kind{sources.KindDEM, sources.KindDEM, sources.KindDEM}) {
 		t.Fatalf("after the activation and the delete: %v", got)
 	}
+}
+
+// TestVersionChangesCheckTheRunInTheirTransaction lets a run start between
+// the check and the change: the change must see it and refuse.
+func TestVersionChangesCheckTheRunInTheirTransaction(t *testing.T) {
+	f := newFixture(t)
+	data := gridFixture(t, f)
+	only := f.upload(sources.KindTreesGrid, "g.parquet", data, nil)["id"].(string)
+	newer := f.upload(sources.KindTreesGrid, "g.parquet", data, nil)["id"].(string)
+	// The runner holds JobLock, then claims the run.
+	sources.JobLock.Lock()
+	defer sources.JobLock.Unlock()
+	for _, change := range []testkit.Request{
+		{Method: http.MethodDelete, Path: versionPath(sources.KindTreesGrid, newer), As: f.admin},
+		{Method: http.MethodPost, Path: versionPath(sources.KindTreesGrid, only) + "/activate", As: f.admin},
+	} {
+		claim, err := f.env.DB.BeginTx(t.Context(), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		run := db.NewID()
+		if _, err := claim.Exec(`INSERT INTO pipeline_run (id, kind, state, queued_at, progress_done, progress_total)
+			VALUES (?, 'render', 'running', ?, 0, 0)`, run, db.Now()); err != nil {
+			t.Fatal(err)
+		}
+		answer := make(chan testkit.Response, 1)
+		go func() { answer <- f.env.Do(change) }()
+		time.Sleep(300 * time.Millisecond)
+		if err := claim.Commit(); err != nil {
+			t.Fatal(err)
+		}
+		if got := <-answer; got.Status != http.StatusConflict {
+			t.Errorf("%s %s during a run: status %d %s", change.Method, change.Path, got.Status, got.Body)
+		}
+		f.exec("DELETE FROM pipeline_run WHERE id = ?", run)
+	}
+}
+
+// TestAStaleRunDoesNotBlockVersionChanges checks that a running run that no
+// runner executes fails, as at a start, and lets the change through.
+func TestAStaleRunDoesNotBlockVersionChanges(t *testing.T) {
+	f := newFixture(t)
+	data := gridFixture(t, f)
+	only := f.upload(sources.KindTreesGrid, "g.parquet", data, nil)["id"].(string)
+	newer := f.upload(sources.KindTreesGrid, "g.parquet", data, nil)["id"].(string)
+	stale := db.NewID()
+	f.exec(`INSERT INTO pipeline_run (id, kind, state, queued_at, progress_done, progress_total)
+		VALUES (?, 'fetch', 'running', ?, 0, 0)`, stale, db.Now())
+	f.env.Delete(versionPath(sources.KindTreesGrid, newer), f.admin).Expect(t, http.StatusNoContent)
+	state, err := db.Scalar[string](t.Context(), f.env.DB, "SELECT state FROM pipeline_run WHERE id = ?", stale)
+	if err != nil || state != "failed" {
+		t.Fatalf("the stale run is %q, %v", state, err)
+	}
+	f.env.Post(versionPath(sources.KindTreesGrid, only)+"/activate", nil, f.admin).Expect(t, http.StatusOK)
+	f.exec(`INSERT INTO pipeline_run (id, kind, state, queued_at, progress_done, progress_total)
+		VALUES (?, 'fetch', 'running', ?, 0, 0)`, db.NewID(), db.Now())
+	f.env.Post("/remote-sources/dwd-hyras/refresh", nil, f.admin).Expect(t, http.StatusAccepted)
 }

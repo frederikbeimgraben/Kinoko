@@ -130,7 +130,7 @@ func (m *Module) findValues(r *http.Request) func(db.ID) ([]column, error) {
 }
 
 // checkFind checks the place and the day of a find. The day may be one day
-// after the UTC date of now, because the person can live east of UTC.
+// after the current UTC date, because the person can live east of UTC.
 func checkFind(body findWrite, now time.Time) error {
 	var errs []problem.FieldError
 	for _, c := range []struct {

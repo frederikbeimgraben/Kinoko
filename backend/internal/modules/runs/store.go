@@ -98,7 +98,17 @@ func (s *Store) QueueScheduled(ctx context.Context, kind enums.RunKind) (Run, er
 	return s.queue(ctx, kind, nil)
 }
 
+// QueueWith is Queue with more writes in the same transaction, for example
+// the parameters of the run. The runner wakes only after the commit of all writes.
+func (s *Store) QueueWith(ctx context.Context, kind enums.RunKind, by db.ID, with func(tx *sql.Tx, run Run) error) (Run, error) {
+	return s.queueWith(ctx, kind, &by, with)
+}
+
 func (s *Store) queue(ctx context.Context, kind enums.RunKind, by *db.ID) (Run, error) {
+	return s.queueWith(ctx, kind, by, nil)
+}
+
+func (s *Store) queueWith(ctx context.Context, kind enums.RunKind, by *db.ID, with func(tx *sql.Tx, run Run) error) (Run, error) {
 	run, err := db.InTxValue(ctx, s.handle, func(tx *sql.Tx) (Run, error) {
 		species, err := db.Column[db.ID](ctx, tx, "SELECT id FROM species WHERE forecast_enabled = 1")
 		if err != nil {
@@ -123,6 +133,9 @@ func (s *Store) queue(ctx context.Context, kind enums.RunKind, by *db.ID) (Run, 
 				run.ID, id, enums.RunStateQueued); err != nil {
 				return Run{}, err
 			}
+		}
+		if with != nil {
+			return run, with(tx, run)
 		}
 		return run, nil
 	})
@@ -282,7 +295,13 @@ func (s *Store) Finish(ctx context.Context, runID db.ID, state enums.RunState, l
 // FailStale sets each running run to failed. Only a stopped process leaves
 // a run in that state, because the pipeline runs in the process.
 func (s *Store) FailStale(ctx context.Context) (int64, error) {
-	return db.Exec(ctx, s.handle, `UPDATE pipeline_run SET state = ?, finished_at = ? WHERE state = ?`,
+	return s.FailStaleIn(ctx, s.handle)
+}
+
+// FailStaleIn is FailStale in the transaction or connection q. The caller
+// must know that no run executes, for example because it holds sources.JobLock.
+func (s *Store) FailStaleIn(ctx context.Context, q db.Querier) (int64, error) {
+	return db.Exec(ctx, q, `UPDATE pipeline_run SET state = ?, finished_at = ? WHERE state = ?`,
 		enums.RunStateFailed, s.stamp(), enums.RunStateRunning)
 }
 

@@ -44,7 +44,7 @@ func TestExtractRefreshReplacesPartialCrossYearWeek(t *testing.T) {
 // without the file of the year before keeps the complete old rows.
 func TestExtractRefreshWithoutPreviousYearKeepsWarmUp(t *testing.T) {
 	jobs := append(slices.Clone(Jobs), Job{Name: "day_count", Dir: referenceDir, Var: "pr", How: Last,
-		Measure: func() DayMeasure { return dayCount() }})
+		Measure: dayCount})
 	run := func(raw, out string, refresh *int) {
 		cfg := ExtractConfig{Start: 2020, End: 2021, RefreshFrom: refresh, RawDir: raw, CheckpointDir: out, Jobs: jobs}
 		if err := Extract(context.Background(), cfg, nil); err != nil {

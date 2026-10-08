@@ -3,6 +3,7 @@ package runner_test
 import (
 	"context"
 	"math"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -11,6 +12,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/runner"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/testkit"
 )
 
@@ -288,6 +290,42 @@ func TestTheLoopTakesQueuedRunsUntilTheContextEnds(t *testing.T) {
 	for _, id := range []db.ID{first.ID, second.ID} {
 		if got := f.get(id); got.State != enums.RunStateFinished {
 			t.Fatalf("run %s = %s", id, got.State)
+		}
+	}
+}
+
+// TestAFailedSpeciesReportStillFinishesTheRun checks that the run ends as
+// failed when the last species report fails, so it does not stay running.
+func TestAFailedSpeciesReportStillFinishesTheRun(t *testing.T) {
+	f := newFixture(t, 2)
+	run := f.queue(enums.RunKindFetch)
+	f.exec(`CREATE TRIGGER refuse_species BEFORE UPDATE ON pipeline_run_species
+		WHEN NEW.state = 'finished' BEGIN SELECT RAISE(ABORT, 'disk full'); END`)
+	if ran, err := f.runner.RunNext(context.Background()); !ran || err == nil {
+		t.Fatalf("RunNext = %v, %v; want the report error", ran, err)
+	}
+	if got := f.get(run.ID); got.State != enums.RunStateFailed || got.FinishedAt == nil {
+		t.Fatalf("run = %+v", got)
+	}
+}
+
+// TestARunWithoutLogEndsItsSpecies checks that a run whose log cannot be
+// opened fails and ends each species row.
+func TestARunWithoutLogEndsItsSpecies(t *testing.T) {
+	f := newFixture(t, 2)
+	blocked := filepath.Join(t.TempDir(), "file")
+	writeText(t, blocked, "not a folder")
+	r := runner.New(runner.Config{DB: f.env.DB, Runs: f.runs, Sources: f.sources, Stages: f.stages, Logs: blocked})
+	run := f.queue(enums.RunKindFetch)
+	if ran, err := r.RunNext(context.Background()); !ran || err != nil {
+		t.Fatalf("RunNext = %v, %v", ran, err)
+	}
+	if got := f.get(run.ID); got.State != enums.RunStateFailed {
+		t.Fatalf("run = %+v", got)
+	}
+	for _, sp := range f.species(run.ID) {
+		if sp.State != enums.RunStateFailed {
+			t.Errorf("species %s is %s", sp.Slug, sp.State)
 		}
 	}
 }

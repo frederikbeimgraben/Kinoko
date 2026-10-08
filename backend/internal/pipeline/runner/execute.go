@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"path/filepath"
@@ -35,27 +36,34 @@ type execution struct {
 
 // execute runs the steps of a claimed run and finishes it. A failure of a
 // step goes into the run state; the returned error is a failure to report.
+// The run always ends, so that a failed report does not leave it running.
 func (r *Runner) execute(ctx context.Context, run runs.Run) (err error) {
 	// The reports must reach the database also when ctx ends at a shutdown.
 	report := context.WithoutCancel(ctx)
 	logPath := runs.LogPath(r.logs, run.ID)
-	logFile, err := openLog(logPath)
-	if err != nil {
-		return r.runs.Finish(report, run.ID, enums.RunStateFailed, "", nil)
+	log := io.Discard
+	logFile, logErr := openLog(logPath)
+	if logErr != nil {
+		r.log.Error("open the run log", "run", run.ID, "err", logErr)
+		logPath = ""
+	} else {
+		defer func() { err = errors.Join(err, logFile.Close()) }()
+		log = logFile
 	}
-	defer func() { err = errors.Join(err, logFile.Close()) }()
-	job := &Job{Run: run, Now: r.now(), log: logFile}
+	job := &Job{Run: run, Now: r.now(), log: log}
 	x := &execution{r: r, job: job, states: map[db.ID]*speciesState{}}
-	failed := x.prepare(report)
+	failed := x.prepare(report) || logErr != nil
 	if !failed {
 		failed = x.steps(ctx, report, Plan(run.Kind, job.Request))
 	}
-	if err := x.closeSpecies(report, failed); err != nil {
-		return err
+	closeErr := x.closeSpecies(report, failed)
+	if closeErr != nil {
+		job.Printf("close the species: %v", closeErr)
+		failed = true
 	}
 	state := runs.EndState(failed)
 	job.Printf("run %s %s", run.Kind, state)
-	return r.runs.Finish(report, run.ID, state, logPath, runs.MeanBrier(x.briers))
+	return errors.Join(closeErr, r.runs.Finish(report, run.ID, state, logPath, runs.MeanBrier(x.briers)))
 }
 
 func openLog(path string) (*os.File, error) {
@@ -218,12 +226,9 @@ func (x *execution) reportSpecies(ctx context.Context, sp Species, s *speciesSta
 // state of the run, so that the progress of a fetch run or a stopped run ends.
 func (x *execution) closeSpecies(ctx context.Context, failed bool) error {
 	open := fn.Filter(x.species, func(sp Species) bool { return !x.states[sp.ID].reported })
-	for _, sp := range open {
-		if err := x.r.runs.ReportSpecies(ctx, x.job.Run.ID, sp.ID, runs.EndState(failed), 0); err != nil {
-			return err
-		}
-	}
-	return nil
+	return errors.Join(fn.Map(open, func(sp Species) error {
+		return x.r.runs.ReportSpecies(ctx, x.job.Run.ID, sp.ID, runs.EndState(failed), 0)
+	})...)
 }
 
 // guard runs a stage and turns a panic into an error, so that one stage cannot stop the service.

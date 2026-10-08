@@ -2,6 +2,7 @@ package sources
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"regexp"
 	"slices"
@@ -162,15 +163,18 @@ func (m *Module) refreshRemote(r *http.Request) (web.Response, error) {
 		return nil, problem.InvalidField("toYear", "greater_than_equal")
 	}
 	ctx := r.Context()
-	if err := m.noFetchWaiting(ctx); err != nil {
-		return nil, err
-	}
-	run, err := m.runs.Queue(ctx, enums.RunKindFetch, user.ID)
+	run, err := m.runs.QueueWith(ctx, enums.RunKindFetch, user.ID, func(tx *sql.Tx, run runs.Run) error {
+		if err := m.failStaleRuns(ctx, tx); err != nil {
+			return err
+		}
+		if err := noFetchWaiting(ctx, tx, run.ID); err != nil {
+			return err
+		}
+		_, err := tx.ExecContext(ctx, `INSERT INTO remote_fetch_request (run_id, source, from_year, to_year, force)
+			VALUES (?, ?, ?, ?, ?)`, run.ID, source, body.FromYear, body.ToYear, body.Force)
+		return err
+	})
 	if err != nil {
-		return nil, err
-	}
-	if _, err := m.deps.DB.ExecContext(ctx, `INSERT INTO remote_fetch_request (run_id, source, from_year, to_year, force)
-		VALUES (?, ?, ?, ?, ?)`, run.ID, source, body.FromYear, body.ToYear, body.Force); err != nil {
 		return nil, err
 	}
 	return web.JSON(http.StatusAccepted, runs.Summary{
@@ -187,9 +191,10 @@ func readRefresh(r *http.Request) (refreshBody, error) {
 	return web.Decode[refreshBody](r)
 }
 
-func (m *Module) noFetchWaiting(ctx context.Context) error {
-	n, err := db.Scalar[int](ctx, m.deps.DB, "SELECT count(*) FROM pipeline_run WHERE kind = ? AND state IN (?, ?)",
-		enums.RunKindFetch, enums.RunStateQueued, enums.RunStateRunning)
+// noFetchWaiting refuses a second fetch run besides the run self.
+func noFetchWaiting(ctx context.Context, q db.Querier, self db.ID) error {
+	n, err := db.Scalar[int](ctx, q, "SELECT count(*) FROM pipeline_run WHERE kind = ? AND state IN (?, ?) AND id <> ?",
+		enums.RunKindFetch, enums.RunStateQueued, enums.RunStateRunning, self)
 	if err != nil {
 		return err
 	}

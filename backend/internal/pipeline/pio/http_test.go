@@ -53,7 +53,11 @@ func TestWatchedStopsMissingHeader(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { <-release }))
 	defer srv.Close()
 	defer close(release)
-	if _, err := Watched(srv.Client(), 500*time.Millisecond).Get(srv.URL); !errors.Is(err, ErrStalled) {
+	resp, err := Watched(srv.Client(), 500*time.Millisecond).Get(srv.URL)
+	if err == nil {
+		_ = resp.Body.Close()
+	}
+	if !errors.Is(err, ErrStalled) {
 		t.Fatalf("get gives %v, want ErrStalled", err)
 	}
 }

@@ -23,8 +23,16 @@ const keepSuperseded = 2
 // earlier active version becomes superseded. Versions that the processing
 // of this version made are activated too.
 func (m *Module) activate(ctx context.Context, id db.ID) (Version, error) {
+	return m.activateIf(ctx, id, func(*sql.Tx) error { return nil })
+}
+
+// activateIf is activate after the check guard in the same transaction.
+func (m *Module) activateIf(ctx context.Context, id db.ID, guard func(tx *sql.Tx) error) (Version, error) {
 	var removed []Version
 	err := db.InTx(ctx, m.deps.DB, func(tx *sql.Tx) error {
+		if err := guard(tx); err != nil {
+			return err
+		}
 		var err error
 		removed, err = m.activateTx(ctx, tx, id)
 		return err
@@ -134,8 +142,13 @@ func (m *Module) getVersion(r *http.Request) (web.Response, error) {
 	return web.OK(views[0]), nil
 }
 
-func (m *Module) noRunActive(ctx context.Context) error {
-	active, err := runActive(ctx, m.deps.DB)
+// noRunActive refuses a change of the versions while a run reads them. The
+// caller runs it in the transaction of the change, so a run cannot start in between.
+func (m *Module) noRunActive(ctx context.Context, tx *sql.Tx) error {
+	if err := m.failStaleRuns(ctx, tx); err != nil {
+		return err
+	}
+	active, err := runActive(ctx, tx)
 	if err != nil {
 		return err
 	}
@@ -145,16 +158,24 @@ func (m *Module) noRunActive(ctx context.Context) error {
 	return nil
 }
 
+// failStaleRuns sets the running runs to failed, as FailStale, when JobLock is
+// free: the runner holds it for the whole run, so such a run does not execute.
+func (m *Module) failStaleRuns(ctx context.Context, tx *sql.Tx) error {
+	if !JobLock.TryLock() {
+		return nil
+	}
+	defer JobLock.Unlock()
+	_, err := m.runs.FailStaleIn(ctx, tx)
+	return err
+}
+
 func (m *Module) activateVersion(r *http.Request) (web.Response, error) {
 	v, err := m.pathVersion(r)
 	if err != nil {
 		return nil, err
 	}
 	ctx := r.Context()
-	if err := m.noRunActive(ctx); err != nil {
-		return nil, err
-	}
-	activated, err := m.activate(ctx, v.ID)
+	activated, err := m.activateIf(ctx, v.ID, func(tx *sql.Tx) error { return m.noRunActive(ctx, tx) })
 	if err != nil {
 		return nil, err
 	}
@@ -173,16 +194,19 @@ func (m *Module) reprocessVersion(r *http.Request) (web.Response, error) {
 		return nil, err
 	}
 	ctx := r.Context()
-	if err := m.noRunActive(ctx); err != nil {
-		return nil, err
-	}
 	if busy(v) {
 		return nil, problem.Conflict("run_active", "the version is "+string(v.State))
 	}
 	if original := v.Original(); original == "" || !exists(original) {
 		return nil, problem.Conflict("no_original", "the version has no uploaded file")
 	}
-	if err := setState(ctx, m.deps.DB, v.ID, StateValidating); err != nil {
+	err = db.InTx(ctx, m.deps.DB, func(tx *sql.Tx) error {
+		if err := m.noRunActive(ctx, tx); err != nil {
+			return err
+		}
+		return setState(ctx, tx, v.ID, StateValidating)
+	})
+	if err != nil {
 		return nil, err
 	}
 	m.schedule(v.ID, v.Active)
@@ -205,14 +229,14 @@ func (m *Module) deleteVersion(r *http.Request) (web.Response, error) {
 		return nil, err
 	}
 	ctx := r.Context()
-	if err := m.noRunActive(ctx); err != nil {
-		return nil, err
-	}
 	if busy(v) {
 		return nil, problem.Conflict("run_active", "the version is "+string(v.State))
 	}
 	var removed []Version
 	err = db.InTx(ctx, m.deps.DB, func(tx *sql.Tx) error {
+		if err := m.noRunActive(ctx, tx); err != nil {
+			return err
+		}
 		var err error
 		removed, err = m.deleteTx(ctx, tx, v)
 		return err

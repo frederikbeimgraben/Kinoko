@@ -43,7 +43,7 @@ The service fetches no taxonomy. The taxonomy of the catalogue comes from
 
 The service also reads two internal inputs from the database at each run:
 
-- The training finds of the app: accepted, released for training, not deleted, of a species with a forecast.
+- The training finds of the app: accepted, released for training, not deleted, of a species with a forecast. A find write needs a latitude from -90 to 90 and a longitude from -180 to 180. Its day is at most one day after the current UTC date. Else the answer is 422 with the field code `greater_than_equal` or `less_than_equal`.
 - The forecast species: the species with `forecast_enabled`, with their row in `species_forecast`.
 
 `species_forecast` holds the chain key, the scientific names (taxa) and the
@@ -55,17 +55,21 @@ Lactarius species.
 
 The table `remote_cache_file` records each cached file with its state.
 
-- An empty cache gets a bootstrap: the DWD years from 2014 and the GBIF years from 2000.
-- A filled cache gets the weekly years. The DWD fetch checks the current year with a conditional GET. In January, it also checks the previous year.
+- Each fetch gets the weekly years. The DWD fetch checks the current year with a conditional GET. In January, it also checks the previous year.
 - The GBIF fetch gets the current year again. In January and February, it also gets the previous year, because of late reports.
+- Each fetch also gets the missing closed years. An empty cache thus gets a bootstrap: the DWD years from 2014 and the GBIF years from 2000. A stopped bootstrap continues at the next fetch.
+- A closed DWD year is present when each HYRAS folder or soil moisture stand has a usable row for it. A usable row has the state `ok` or `pruned`. A failed row does not count.
+- A closed GBIF year is present when its year file or the marker `fungi_de_<year>.done` is in the cache. The fetcher writes the marker when the fetch of a year ends without an error. Thus a year split into months or a year without records also counts.
 - A closed year does not change after its first fetch.
 - A download goes to a temporary file first. Then the service renames it.
-- An active `gbif-archive` version counts as a filled cache for the GBIF years.
-- An active `weather-checkpoints` version counts as a filled cache for the DWD years.
+- An active `gbif-archive` version holds the GBIF years before its cutoff year. The fetch gets the closed years from the cutoff year on, and the weekly years. An archive without a cutoff year holds each closed year.
+- An active `weather-checkpoints` version holds the closed DWD years. The fetch then gets only the weekly years.
+- A request waits at most 2 minutes for the response header. A transfer stops when no bytes come for 3 minutes; then the fetcher tries again. A large download has no total time limit. A DWD directory listing has a limit of 120 s.
 
 `POST /api/remote-sources/{source}/refresh` queues a fetch run for one source.
 The body can give `fromYear`, `toYear` and `force`. `force` checks each year
-of the request again.
+of the request again. The run and its request go into the database in one
+transaction. The runner starts only after that transaction.
 
 ## (B) Upload kinds
 
@@ -110,6 +114,13 @@ The proxy accepts a body of 40 MB at most. Thus an upload goes in parts of 16 Mi
 A session expires 24 hours after its last part. The processing and the runs
 use one lock. Thus a run never reads a version that is in processing.
 
+An activation, a deletion or a new processing of a version is refused with
+`run_active` while a run is running. The check and the change are in one
+transaction, so a run cannot start between them. A run in the state
+`running` while no run holds the lock is stale: the change sets it to
+`failed`, as a start of the service does. The runner always ends a run, also
+when a report to the database fails.
+
 ## Run kinds
 
 A run has a kind and a list of steps. The runner does one run at a time.
@@ -139,8 +150,9 @@ required kind has no active, ready version:
 
 - **fetch weather**: gets the DWD files into the cache by the fetch rules.
 - **fetch occurrences**: gets the GBIF files into the cache by the fetch rules.
-- **weather checkpoints**: copies a missing checkpoint from an active `weather-checkpoints` version. Then it extracts the weeks again from the oldest year whose raw file changed. The result is `interim/weekly/<name>.parquet`.
-- **occurrences**: builds `interim/occurrences.parquet` from the GBIF cache, the active `gbif-archive` and the app finds. It keeps the class Agaricomycetes and gives each record an ISO week and a 5 km cell.
+- **weather checkpoints**: copies a missing checkpoint from an active `weather-checkpoints` version. A copied checkpoint gets the change time 1970-01-01, so each raw file of the cache counts as newer. Then it extracts the weeks again from the oldest year `rf` whose raw file changed. The result is `interim/weekly/<name>.parquet`.
+  - The extraction keeps an old week only when it ends before January 1 of `rf`; it computes each later week from the files of `rf-1` on. Without the file of `rf-1`, it keeps more old weeks: up to 63 days after January 1 of the first file. These days cover the week across the turn of the year and the 60-day counter of `days_since_rain`.
+- **occurrences**: builds `interim/occurrences.parquet` from the GBIF cache, the active `gbif-archive` and the app finds. It keeps the class Agaricomycetes and gives each record an ISO week and a 5 km cell. It drops an app find outside latitude 47 to 55.5 and longitude 5.5 to 15.5. It also drops an app find with a day after the day of the run. The run log shows the counts. It drops each record with a latitude outside -90 to 90 or a longitude outside -180 to 180. The activity grid is dense, so one far find would make it too large for the memory.
 - **train models**: trains each species of the run. It makes the visit table, trains one LightGBM model for each horizon 0 to 4, and calibrates the scores. It installs the bundle as the new active `model-bundle` version of the species. It writes `funde/<slug>.json` into `PILZE_MAPS`.
 - **render maps**: draws the weekly map of each species with its active model.
 - **render layers**: publishes the static layers first. Then it draws the fifteen weekly input layers and removes the week folders that no manifest names.
@@ -167,7 +179,7 @@ service read them. Keep their form when you change the code.
 | File | Content | Readers |
 | --- | --- | --- |
 | `<slug>.json` | Manifest of a species. `<slug>` is the catalogue slug | Frontend (`core/tiles/manifest.ts`), zone values of the service |
-| `<slug>_kacheln/<YYYY>W<ww>/<z>/<x>/<y>.png` | Value tiles of a species, one folder per week | Frontend, zone values of the service |
+| `<slug>_kacheln/<YYYY>W<ww>/<z>/<x>/<y>.png` | Value tiles of a species, one folder per week. A week folder changes in two renames (old folder to `.old`, new folder into place). A failed rename puts the old folder back | Frontend, zone values of the service |
 | `layers.json` | Manifest of the input layers: static entries first, then the weekly entries | Frontend (`core/tiles/layers.ts`), combinations of the service |
 | `layers_kacheln/<layer>/...` | Tiles of the input layers. A weekly layer has one folder per week | Frontend |
 | `funde/<slug>.json` | Training finds per 5 km cell and week | No reader at this time |
@@ -243,6 +255,10 @@ port plan; the code comments use them.
 | 10 | The smoothing filled masked cells (forest, abroad, water) next to valid cells | A masked cell stays empty. The setting `Spill` gives the old result; it is off by default |
 | 11 | The render held the full input matrix in memory | The prediction works in chunks. Read "Memory" |
 | 12 | The proxy limit of 40 MB stopped large uploads | Uploads go in parts of 16 MiB |
+| 13 | A refresh from the year `rf` kept each old week of the ISO year `rf-1`. A week across the turn of the year kept the part of the earlier run. Without the file of `rf-1`, the first weeks of `rf` lost the days of December. Then `days_since_rain` started again at 60 | The refresh splits the weeks by date and keeps the old weeks that the files cannot give again. Read the step "weather checkpoints" |
+
+LightGBM runs each boosting round, as `lightgbm.train`, also after a round
+without a split. The next bag or column sample can still grow a tree.
 
 The port also places the values of a week by the cell indices `(gy, gx)`.
 The Python chain used the row order of a table and a reshape. The result is
