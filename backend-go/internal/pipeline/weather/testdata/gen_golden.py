@@ -22,7 +22,7 @@ import xarray as xr
 from pyproj import Transformer
 
 OUT = Path(sys.argv[1]).resolve()
-PILZE = Path(__file__).resolve().parents[6] / "modell" / "src" / "pilze"
+PILZE = Path(__file__).resolve().parents[5] / "modell" / "src" / "pilze"
 sys.path.insert(0, str(PILZE))
 
 # input_layers and region_map import rasterio at module level; the functions used here do not need it.

@@ -2,7 +2,6 @@ package photos
 
 import (
 	"context"
-	"math"
 	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
