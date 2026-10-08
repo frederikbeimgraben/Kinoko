@@ -96,12 +96,3 @@ func FromBytes(codes []uint8) []float32 {
 	}
 	return out
 }
-
-// Decode returns the value of a byte on the scale low to high, as
-// low + (b - 1)/254*(high - low). Byte 0 gives NaN.
-func Decode(b uint8, low, high float64) float64 {
-	if b == 0 {
-		return math.NaN()
-	}
-	return low + (float64(b)-1)/Steps*(high-low)
-}

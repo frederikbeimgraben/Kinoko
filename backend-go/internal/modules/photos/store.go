@@ -3,6 +3,7 @@ package photos
 import (
 	"context"
 	"math"
+	"math/big"
 	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
@@ -193,6 +194,27 @@ func coarse(lon, lat, km float64) (float64, float64) {
 	roundedLat := math.RoundToEven(lat/stepLat) * stepLat
 	degree := math.Pi
 	degree /= 180.0
-	stepLon := stepLat / math.Max(math.Cos(roundedLat*degree), 0.01)
+	stepLon := stepLat / math.Max(cosine(roundedLat*degree), 0.01)
 	return math.RoundToEven(lon/stepLon) * stepLon, roundedLat
+}
+
+// cosine gives cos(x) rounded correctly to float64, as the C library of
+// the old service does. math.Cos can differ in the last bit.
+func cosine(x float64) float64 {
+	if math.IsNaN(x) || math.IsInf(x, 0) || math.Abs(x) > 4 {
+		return math.Cos(x)
+	}
+	const precision = 160
+	square := new(big.Float).SetPrec(precision).SetFloat64(x)
+	square.Mul(square, square)
+	sum := new(big.Float).SetPrec(precision).SetInt64(1)
+	term := new(big.Float).SetPrec(precision).SetInt64(1)
+	for n := int64(1); n < 60; n++ {
+		term.Mul(term, square)
+		term.Quo(term, new(big.Float).SetPrec(precision).SetInt64((2*n-1)*(2*n)))
+		term.Neg(term)
+		sum.Add(sum, term)
+	}
+	out, _ := sum.Float64()
+	return out
 }

@@ -331,28 +331,6 @@ func (m *Module) speciesCounts(r *http.Request) (web.Response, error) {
 	return web.OK(counts[row.ID]), nil
 }
 
-type countsEntry struct {
-	SpeciesID db.ID `json:"speciesId"`
-	Records   int   `json:"records"`
-	Finds     int   `json:"finds"`
-	Photos    int   `json:"photos"`
-}
-
-func (m *Module) adminSpeciesCounts(r *http.Request) (web.Response, error) {
-	ids, err := db.Column[db.ID](r.Context(), m.deps.DB, "SELECT id FROM species")
-	if err != nil {
-		return nil, err
-	}
-	counts, err := countsFor(r.Context(), m.deps.DB, ids)
-	if err != nil {
-		return nil, err
-	}
-	return web.OK(map[string][]countsEntry{"items": fn.Map(ids, func(id db.ID) countsEntry {
-		c := counts[id]
-		return countsEntry{id, c.Records, c.Finds, c.Photos}
-	})}), nil
-}
-
 type idCount struct {
 	ID    db.ID
 	Count int
