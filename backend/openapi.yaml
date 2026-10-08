@@ -2653,7 +2653,7 @@ components:
       required: [speciesId, records, finds, photos]
 
     AdminSummary:
-      description: Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu.
+      description: Counts of the admin overview. A field is absent when the viewer does not have its permission.
       type: object
       properties:
         texts:
@@ -3374,7 +3374,7 @@ components:
         - type: object
           properties:
             updatedByName:
-              description: Der Name des Kontos, das zuletzt geändert hat.
+              description: The name of the person who made the last change.
               oneOf:
                 - type: string
                 - type: "null"
@@ -4498,7 +4498,7 @@ components:
               format: uuid
             - type: "null"
         speciesName:
-          description: Der Name der einzigen Art eines Trainings, sonst null.
+          description: The name of the species when the run has only one species, else null.
           oneOf:
             - type: string
             - type: "null"
@@ -4570,7 +4570,7 @@ components:
                 type: string
               maxItems: 200
             inputs:
-              description: Die Datenquellen, die der Lauf gelesen hat, aus pipeline_run_input.
+              description: The data sources that the run read, from pipeline_run_input.
               type: array
               items:
                 $ref: "#/components/schemas/PipelineRunInput"
@@ -4648,7 +4648,7 @@ components:
         required:
           type: boolean
         perSpecies:
-          description: true für model-bundle.
+          description: True for model-bundle.
           type: boolean
         usedBy:
           type: array
@@ -4658,7 +4658,7 @@ components:
         state:
           $ref: "#/components/schemas/DataSourceState"
         satisfiedBy:
-          description: Die Art der Quelle, deren abgeleitete Ausgabe diese Quelle erfüllt, etwa tree-species-map für trees-grid.
+          description: The kind whose derived output satisfies this kind, for example tree-species-map for trees-grid.
           oneOf:
             - $ref: "#/components/schemas/DataSourceKind"
             - type: "null"
@@ -4819,7 +4819,7 @@ components:
         sha256:
           $ref: "#/components/schemas/Sha256"
         speciesId:
-          description: Nur für model-bundle mit einer einzigen Art.
+          description: Only for model-bundle with one species.
           type: string
           format: uuid
         activate:

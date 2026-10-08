@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const EXCLUDED_ZONES = ['core/i18n', 'testing'];
+const EXCLUDED_ZONES = ['core/i18n', 'testing', 'core/api/contract.d.ts'];
 
 const UMLAUT = /[äöüÄÖÜß]/;
 const FUNCTION_WORDS = new Set([

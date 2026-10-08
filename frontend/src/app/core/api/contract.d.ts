@@ -1143,7 +1143,7 @@ export interface components {
             finds: number;
             photos: number;
         };
-        /** @description Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu. */
+        /** @description Counts of the admin overview. A field is absent when the viewer does not have its permission. */
         AdminSummary: {
             texts?: number;
             photos?: number;
@@ -1392,7 +1392,7 @@ export interface components {
             }[];
         };
         Species: components["schemas"]["SpeciesSummary"] & {
-            /** @description Der Name des Kontos, das zuletzt geändert hat. */
+            /** @description The name of the person who made the last change. */
             updatedByName?: string | null;
             description?: string | null;
             marketable?: boolean;
@@ -1828,7 +1828,7 @@ export interface components {
             startedAt?: string | null;
             finishedAt?: string | null;
             triggeredById?: string | null;
-            /** @description Der Name der einzigen Art eines Trainings, sonst null. */
+            /** @description The name of the species when the run has only one species, else null. */
             speciesName?: string | null;
             speciesCount: number;
             recordCount: number;
@@ -1850,7 +1850,7 @@ export interface components {
             species: components["schemas"]["PipelineRunSpeciesEntry"][];
             steps: components["schemas"]["PipelineRunStep"][];
             logTail: string[];
-            /** @description Die Datenquellen, die der Lauf gelesen hat, aus pipeline_run_input. */
+            /** @description The data sources that the run read, from pipeline_run_input. */
             inputs?: components["schemas"]["PipelineRunInput"][];
         };
         PipelineRunPage: {
@@ -1874,11 +1874,11 @@ export interface components {
         DataSource: {
             kind: components["schemas"]["DataSourceKind"];
             required: boolean;
-            /** @description true für model-bundle. */
+            /** @description True for model-bundle. */
             perSpecies: boolean;
             usedBy: ("training" | "render" | "layers" | "occurrences")[];
             state: components["schemas"]["DataSourceState"];
-            /** @description Die Art der Quelle, deren abgeleitete Ausgabe diese Quelle erfüllt, etwa tree-species-map für trees-grid. */
+            /** @description The kind whose derived output satisfies this kind, for example tree-species-map for trees-grid. */
             satisfiedBy: components["schemas"]["DataSourceKind"] | null;
             accept: components["schemas"]["Accept"];
             activeVersion: components["schemas"]["DataSourceVersion"] | null;
@@ -1931,7 +1931,7 @@ export interface components {
             sha256?: components["schemas"]["Sha256"];
             /**
              * Format: uuid
-             * @description Nur für model-bundle mit einer einzigen Art.
+             * @description Only for model-bundle with one species.
              */
             speciesId?: string;
             /** @default true */
