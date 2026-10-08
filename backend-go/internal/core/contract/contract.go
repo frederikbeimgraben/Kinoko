@@ -179,6 +179,10 @@ func (c *Contract) validateInput(r *http.Request, path string, target Path, oper
 	}
 	shadow := r.Clone(r.Context())
 	shadow.URL.Path = path
+	if !jsonBody {
+		// The clone shares the body. The validator must not read a multipart body.
+		shadow.Body = http.NoBody
+	}
 	input := &openapi3filter.RequestValidationInput{
 		Request:    shadow,
 		PathParams: params,
