@@ -44,15 +44,15 @@ const Quality = 85
 // maxPixels is the decompression bomb limit of Pillow: two times MAX_IMAGE_PIXELS.
 const maxPixels = 2 * 89_478_485
 
-// Rendered is one image in each size, with the dimensions of the original.
+// Rendered is one image in each size, with the dimensions of the upright original.
 type Rendered struct {
 	Width  int
 	Height int
 	Files  map[enums.PhotoSize][]byte
 }
 
-// Accept checks an uploaded image and makes each size. It keeps no
-// metadata, because each size is a new JPEG from the pixels only.
+// Accept checks an uploaded image and makes each size. It turns a JPEG upright by
+// its EXIF orientation and keeps no metadata: each size is a new JPEG.
 func Accept(raw []byte, mediaType string, limit int64) (Rendered, error) {
 	if !slices.Contains(MediaTypes, mediaType) {
 		return Rendered{}, problem.InvalidField("file", "media_type")
@@ -64,7 +64,7 @@ func Accept(raw []byte, mediaType string, limit int64) (Rendered, error) {
 	if err != nil {
 		return Rendered{}, problem.InvalidField("file", "image")
 	}
-	clean := rgb(decoded)
+	clean := Orient(rgb(decoded), Orientation(raw))
 	files, err := encodeAll(clean)
 	if err != nil {
 		return Rendered{}, err

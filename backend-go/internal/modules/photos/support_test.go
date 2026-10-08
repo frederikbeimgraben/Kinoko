@@ -77,9 +77,11 @@ func signIn(t *testing.T, env *testkit.Env, p testkit.Person, rights ...string) 
 func makeSpecies(t *testing.T, env *testkit.Env, slug string, protection enums.Protection) db.ID {
 	t.Helper()
 	id := db.NewID()
+	// The seed catalogue holds real slugs, so each test species gets a unique suffix.
+	unique := "test-" + slug + "-" + id.String()[:8]
 	exec(t, env, `INSERT INTO species (id, slug, name, latin_name, group_key, edibility, marketable,
 		forecast_enabled, protection, updated_at) VALUES (?, ?, ?, ?, 'bolete', 'edible', 0, 0, ?, ?)`,
-		id, slug, slug, slug, string(protection), db.Now())
+		id, unique, unique, unique, string(protection), db.Now())
 	return id
 }
 
