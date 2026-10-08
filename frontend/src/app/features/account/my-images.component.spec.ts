@@ -1,27 +1,28 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import type { Photo } from '../../core/api/models';
 import { noViolations } from '../../testing/axe';
+import { photo } from '../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
-import { photo } from '../../testing/photos-fixture';
 import { SpeciesState } from '../species/species.state';
-import type { Photo } from '../../core/api/models';
 import { MyImagesComponent } from './my-images.component';
 
 interface Setup {
   container: Element;
   http: HttpTestingController;
+  router: Router;
   refresh: () => void;
 }
 
 async function build(items: Photo[], nextCursor: string | null = null): Promise<Setup> {
   vi.stubGlobal('URL', {
     ...URL,
-    createObjectURL: () => 'blob:eins',
+    createObjectURL: () => 'blob:one',
     revokeObjectURL: () => undefined,
   });
   const { container, detectChanges } = await render(MyImagesComponent, {
@@ -40,48 +41,52 @@ async function build(items: Photo[], nextCursor: string | null = null): Promise<
     expect(TestBed.inject(SpeciesState).species().length).toBeGreaterThan(0);
   });
   detectChanges();
-  return { container, http, refresh: detectChanges };
+  return { container, http, router: TestBed.inject(Router), refresh: detectChanges };
 }
 
 describe('MyImagesComponent', () => {
-  it('zeigt je Einreichung den Zustand', async () => {
+  it('shows each photo with its day, its state and a badge', async () => {
     const { container } = await build([
-      photo({ id: 'bild-eins', speciesId: 'steinpilz', state: 'approved' }),
-      photo({ id: 'bild-zwei', speciesId: 'maronenroehrling', state: 'submitted' }),
+      photo({ id: 'image-one', speciesId: 'steinpilz', state: 'approved' }),
+      photo({ id: 'image-two', speciesId: 'maronenroehrling', state: 'submitted' }),
     ]);
 
-    expect(screen.getByText('Freigegeben')).toBeInTheDocument();
-    expect(screen.getByText('Eingereicht')).toBeInTheDocument();
+    expect(screen.getByText('9. Sept. · freigegeben')).toBeInTheDocument();
+    expect(screen.getByText('frei')).toBeInTheDocument();
+    expect(screen.getByText('9. Sept. · in Prüfung')).toBeInTheDocument();
+    expect(screen.getByText('offen')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('nennt bei einer Absage den Grund', async () => {
-    await build([
-      photo({
-        id: 'bild-drei',
-        state: 'rejected',
-        rejectReason: 'Unscharf, die Röhren sind nicht zu erkennen.',
-      }),
-    ]);
+  it('names the reason of a rejection', async () => {
+    await build([photo({ id: 'image-three', state: 'rejected', rejectReason: 'unscharf' })]);
 
-    expect(screen.getByText('Abgelehnt')).toBeInTheDocument();
-    expect(screen.getByText('Unscharf, die Röhren sind nicht zu erkennen.')).toBeInTheDocument();
+    expect(screen.getByText('9. Sept. · abgelehnt: unscharf')).toBeInTheDocument();
   });
 
-  it('zeigt ohne Einreichung den Leerzustand', async () => {
+  it('opens the image page of a known species', async () => {
+    const { router } = await build([photo({ id: 'image-one', speciesId: 'steinpilz' })]);
+    const navigate = vi.spyOn(router, 'navigate');
+
+    await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
+
+    expect(navigate).toHaveBeenCalledWith(['/arten', 'steinpilz', 'bilder', 'image-one']);
+  });
+
+  it('shows the empty state without a photo', async () => {
     await build([]);
 
     expect(screen.getByText('Du hast noch kein Bild eingereicht.')).toBeInTheDocument();
   });
 
-  it('holt die nächste Seite über den Zeiger', async () => {
-    const first = ['eins', 'zwei'].map((id) => photo({ id, state: 'approved' }));
-    const { http, refresh } = await build(first, 'zeiger-eins');
+  it('gets the next page by the cursor', async () => {
+    const first = ['one', 'two'].map((id) => photo({ id, state: 'approved' }));
+    const { http, refresh } = await build(first, 'cursor-one');
 
     await userEvent.click(screen.getByRole('button', { name: 'Mehr laden' }));
-    http.expectOne('/api/photos?mine=true&cursor=zeiger-eins').flush({
-      items: [photo({ id: 'drei', state: 'rejected', rejectReason: 'Unscharf.' })],
+    http.expectOne('/api/photos?mine=true&cursor=cursor-one').flush({
+      items: [photo({ id: 'three', state: 'rejected', rejectReason: 'Unscharf.' })],
       nextCursor: null,
     });
     refresh();
@@ -90,7 +95,7 @@ describe('MyImagesComponent', () => {
     }
     refresh();
 
-    expect(screen.getByText('Unscharf.')).toBeInTheDocument();
+    expect(screen.getByText('9. Sept. · abgelehnt: Unscharf.')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Mehr laden' })).not.toBeInTheDocument();
   });
 });

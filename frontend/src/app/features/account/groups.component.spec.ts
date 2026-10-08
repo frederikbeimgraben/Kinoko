@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { AccountStore } from '../../core/access/account.store';
 import { noViolations } from '../../testing/axe';
-import { GroupsApiDouble, groupsApiProvider } from '../../testing/groups-fixture';
+import { GroupsApiDouble, OWNER_ID, groupsApiProvider } from '../../testing/groups-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { GroupsComponent } from './groups.component';
 
@@ -13,21 +14,26 @@ async function build(api = new GroupsApiDouble()): Promise<{
   router: Router;
 }> {
   const { container } = await render(GroupsComponent, {
-    providers: [provideRouter(ANY_ROUTE), groupsApiProvider(api)],
+    providers: [
+      provideRouter(ANY_ROUTE),
+      groupsApiProvider(api),
+      { provide: AccountStore, useValue: { owns: (one: string | null) => one === OWNER_ID, userId: () => OWNER_ID } },
+    ],
   });
   return { container, api, router: TestBed.inject(Router) };
 }
 
 describe('GroupsComponent', () => {
-  it('zeigt jede Gruppe mit der Zahl ihrer Mitglieder', async () => {
+  it('shows each group with its members and the own role', async () => {
     const { container } = await build();
 
-    expect(screen.getByText('2 Mitglieder')).toBeInTheDocument();
-    expect(screen.getByText('1 Mitglied')).toBeInTheDocument();
+    expect(screen.getByText('2 Mitglieder · Eigentümer')).toBeInTheDocument();
+    expect(screen.getByText('1 Mitglied · Eigentümer')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Gruppe beitreten' })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('führt von einer Zeile in die Gruppe', async () => {
+  it('opens a group from its row', async () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigate');
 
@@ -36,18 +42,20 @@ describe('GroupsComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/konto/gruppen', 'gruppe-zwei']);
   });
 
-  it('legt eine Gruppe über das Blatt an', async () => {
+  it('creates a group in the sheet of the floating button', async () => {
     const { api } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Gruppe anlegen' }));
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Aa');
     await userEvent.click(screen.getByRole('button', { name: /^Anlegen$/ }));
 
+    await vi.waitFor(() => {
+      expect(screen.queryByRole('button', { name: /^Anlegen$/ })).not.toBeInTheDocument();
+    });
     expect(api.created).toEqual(['Aa']);
-    expect(screen.queryByRole('button', { name: /^Anlegen$/ })).not.toBeInTheDocument();
   });
 
-  it('legt ohne Namen nichts an', async () => {
+  it('creates nothing without a name', async () => {
     const { api } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Gruppe anlegen' }));
@@ -56,20 +64,22 @@ describe('GroupsComponent', () => {
     expect(api.created).toEqual([]);
   });
 
-  it('tritt einer Gruppe über den Code bei', async () => {
+  it('joins a group with a code', async () => {
     const { api } = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Code eingeben' }));
-    await userEvent.type(screen.getByRole('textbox', { name: 'Code' }), 'PILZ-7F3K');
+    await userEvent.click(screen.getByRole('button', { name: 'Gruppe beitreten' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Einladungscode' }), 'PILZ-7F3K');
     await userEvent.click(screen.getByRole('button', { name: /^Beitreten$/ }));
 
-    expect(api.joined).toEqual(['PILZ-7F3K']);
+    await vi.waitFor(() => {
+      expect(api.joined).toEqual(['PILZ-7F3K']);
+    });
   });
 
-  it('tritt ohne Code nirgends bei und bricht ab', async () => {
+  it('joins nothing without a code and closes', async () => {
     const { api } = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Code eingeben' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Gruppe beitreten' }));
     await userEvent.click(screen.getByRole('button', { name: /^Beitreten$/ }));
     expect(api.joined).toEqual([]);
 
@@ -78,7 +88,7 @@ describe('GroupsComponent', () => {
     expect(screen.queryByRole('button', { name: /^Beitreten$/ })).not.toBeInTheDocument();
   });
 
-  it('führt zurück auf das Konto', async () => {
+  it('goes back to the account', async () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigateByUrl');
 

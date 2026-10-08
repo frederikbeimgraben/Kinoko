@@ -22,7 +22,7 @@ describe('offline tiles', () => {
     expect(tileX(0, 1)).toBe(1);
     expect(tileY(10, 1)).toBe(0);
     expect(tileX(9.05, 10)).toBe(537);
-    expect(tileY(48.52, 10)).toBe(354);
+    expect(tileY(48.52, 10)).toBe(353);
   });
 
   it('lists each tile of a box at one zoom level', () => {

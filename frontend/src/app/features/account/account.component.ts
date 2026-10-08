@@ -104,8 +104,11 @@ export class AccountComponent {
   protected readonly wide = inject(ViewportService).wide;
   protected readonly user = this.auth.user;
   protected readonly signedIn = this.auth.signedIn;
-  /** While the session is not known, the account tile is a skeleton. */
-  protected readonly unknown = computed(() => this.session.status() === 'unknown');
+  /** While the session or the user is not known, the account tile is a skeleton. */
+  protected readonly unknown = computed(() => {
+    const status = this.session.status();
+    return status === 'unknown' || (status === 'signedIn' && this.user() === null);
+  });
 
   private readonly path = toSignal(
     this.router.events.pipe(

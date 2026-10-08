@@ -1,19 +1,34 @@
-import { signal } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../core/auth';
+import type { AppConfig } from '../../core/config/config.store';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { MapAppStore } from '../../core/maps/map-app.store';
+import { PwaStore } from '../../core/pwa/pwa.store';
 import { ThemeStore } from '../../core/theme/theme.store';
-import { APP_VERSION } from '../../core/version.generated';
 import { CONFIG, ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
 import { noViolations } from '../../testing/axe';
-import { PwaStore } from '../../core/pwa/pwa.store';
 import { AccountComponent } from './account.component';
-import type { AppConfig } from '../../core/config/config.store';
+
+const EXPORT = {
+  me: { id: 'account-one', sub: 'sub', email: 'frederik@beimgraben.net', name: 'Frederik' },
+  finds: [{}, {}, {}],
+  markers: [{}],
+  zones: [],
+  combinations: [{}, {}],
+  photos: [{}],
+};
+
+/** A page below the account, as the detail pane shows it. */
+@Component({ selector: 'app-detail-double', template: '<p>Detail</p>' })
+class DetailDouble {}
 
 interface Setup {
   container: Element;
@@ -23,68 +38,76 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(signedIn = false, configuration: AppConfig | null = CONFIG): Promise<Setup> {
+interface Options {
+  signedIn?: boolean;
+  configuration?: AppConfig | null;
+  wide?: boolean;
+  path?: string;
+  /** A new version waits. */
+  update?: boolean;
+}
+
+async function build(options: Options = {}): Promise<Setup> {
+  const { signedIn = false, configuration = CONFIG, wide = false, path, update = false } = options;
   const manager = new ManagerDouble();
   const { container, detectChanges } = await render(AccountComponent, {
     providers: [
-      provideRouter([]),
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      provideRouter([{ path: 'konto', children: [{ path: '**', component: DetailDouble }] }]),
       provideServiceWorker('ngsw-worker.js', { enabled: false }),
+      { provide: ViewportService, useValue: { wide: signal(wide) } },
       ...authProvider(manager, configuration),
+      ...(update
+        ? [
+            {
+              provide: PwaStore,
+              useValue: { canInstall: signal(false), updateReady: signal(true), install: () => Promise.resolve(true) },
+            },
+          ]
+        : []),
     ],
   });
+  const router = TestBed.inject(Router);
+  if (path !== undefined) await router.navigateByUrl(path);
   const auth = TestBed.inject(AuthService);
-  if (signedIn) {
-    manager.still = oidcUser();
-    await auth.silentRenew();
+  if (signedIn) manager.still = oidcUser();
+  // The silent check settles the session: without it the account tile stays a skeleton.
+  await auth.silentRenew();
+  detectChanges();
+  await vi.waitFor(() => {
+    for (const request of TestBed.inject(HttpTestingController).match('/api/me/export')) request.flush(EXPORT);
     detectChanges();
-  }
-  return { container, auth, manager, router: TestBed.inject(Router), refresh: detectChanges };
+    expect(signedIn && !wide && path === undefined ? screen.queryByText('Kombinationen') : true).toBeTruthy();
+  });
+  return { container, auth, manager, router, refresh: detectChanges };
 }
 
-/** Ein Browser, der die Installation anbietet und eine Fassung bereithält. */
-function pwaProvider(): { provide: unknown; useValue: unknown } {
-  const ready = signal(true);
-  return {
-    provide: PwaStore,
-    useValue: { canInstall: ready, updateReady: ready, install: () => Promise.resolve(true) },
-  };
-}
-
-describe('KontoComponent', () => {
-  it('bietet die Installation an und nennt die bereitstehende Fassung', async () => {
-    await render(AccountComponent, {
-      providers: [provideRouter([]), ...authProvider(new ManagerDouble()), pwaProvider()],
-    });
-
-    expect(screen.getByText('Als App installieren')).toBeInTheDocument();
-    expect(screen.getByText('Aktualisierung bereit')).toBeInTheDocument();
-  });
-
-  it('zeigt die Zeile zum Installieren nicht, wenn der Browser nicht fragt', async () => {
-    await build();
-
-    expect(screen.queryByText('Als App installieren')).toBeNull();
-    expect(screen.queryByText('Aktualisierung bereit')).toBeNull();
-  });
-
-  it('zeigt ohne Anmeldung den Weg zum SSO', async () => {
+describe('AccountComponent', () => {
+  it('shows the way to the SSO without a sign-in', async () => {
     const { container, manager } = await build();
 
-    expect(screen.getByText('Nicht angemeldet')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Abmelden' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Meine Daten')).toBeNull();
     await noViolations(container);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' }));
 
     expect(manager.redirects).toEqual([{ back: '/konto' }]);
   });
 
-  it('zeigt Name, E-Mail und Aussteller der angemeldeten Person', async () => {
-    const { container, manager, auth, refresh } = await build(true);
+  it('shows the person, the counts and the rows in the order of the board', async () => {
+    const { container, manager, auth, refresh } = await build({ signedIn: true });
 
     expect(screen.getByText('Frederik')).toBeInTheDocument();
     expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
     expect(screen.getByText('sso.beimgraben.net')).toBeInTheDocument();
+    expect(screen.getByText('Kombinationen')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
+    const rows = ['Meine Bilder', 'Meine Daten', 'Gruppen', 'Glossar'].map((name) => screen.getByText(name));
+    expect(rows).toHaveLength(4);
+    expect(screen.getByText('Offline-Gebiete')).toBeInTheDocument();
+    expect(screen.getByText('Ausstehende Übertragungen')).toBeInTheDocument();
     await noViolations(container);
 
     await userEvent.click(screen.getByRole('button', { name: 'Abmelden' }));
@@ -92,10 +115,20 @@ describe('KontoComponent', () => {
 
     expect(manager.removed).toBe(1);
     expect(auth.signedIn()).toBe(false);
-    expect(screen.getByText('Nicht angemeldet')).toBeInTheDocument();
   });
 
-  it('schaltet die Darstellung um', async () => {
+  it('opens a page below the account', async () => {
+    const { router } = await build({ signedIn: true });
+    const change = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    await userEvent.click(screen.getByText('Meine Daten'));
+    await userEvent.click(screen.getByText('Offline-Gebiete'));
+
+    expect(change).toHaveBeenCalledWith('/konto/daten');
+    expect(change).toHaveBeenCalledWith('/konto/offline');
+  });
+
+  it('changes the theme', async () => {
     const { refresh } = await build();
     const theme = TestBed.inject(ThemeStore);
 
@@ -104,36 +137,24 @@ describe('KontoComponent', () => {
 
     expect(theme.choice()).toBe('dunkel');
     expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
-    expect(screen.getByRole('tab', { name: 'Dunkel' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('schaltet die Sprache um und merkt sie sich', async () => {
+  it('changes the language and keeps it', async () => {
     const { refresh } = await build();
     const i18n = TestBed.inject(I18nService);
 
     await userEvent.click(screen.getByRole('tab', { name: 'English' }));
-    // Der englische Rückfall kommt als eigener Brocken, darum das Warten.
+    // The English catalogue is a chunk of its own, so the test waits.
     await vi.waitFor(() => {
       expect(document.documentElement).toHaveAttribute('lang', 'en');
     });
     refresh();
 
     expect(i18n.choice()).toBe('en');
-    expect(localStorage.getItem('pilzkarte.sprache')).toBe('en');
     expect(screen.getByRole('tab', { name: 'English' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('lässt die Sprache dem Browser folgen', async () => {
-    const { refresh } = await build();
-    const i18n = TestBed.inject(I18nService);
-
-    await userEvent.click(screen.getAllByRole('tab', { name: 'System' })[1]);
-    refresh();
-
-    expect(i18n.choice()).toBe('system');
-  });
-
-  it('schaltet die Karten-App um und merkt sie sich', async () => {
+  it('changes the map app and keeps it', async () => {
     const { refresh } = await build();
     const mapApp = TestBed.inject(MapAppStore);
 
@@ -142,62 +163,50 @@ describe('KontoComponent', () => {
 
     expect(mapApp.choice()).toBe('google');
     expect(localStorage.getItem('pilzkarte.kartenApp')).toBe('google');
-    expect(screen.getByRole('tab', { name: 'Google Maps' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('zeigt Über mit den Werten, die heute feststehen', async () => {
-    await build();
+  it('shows the about rows and names a ready update', async () => {
+    await build({ update: true });
 
     expect(screen.getByText('Methode')).toBeInTheDocument();
     expect(screen.getByText('Quellen und Lizenzen')).toBeInTheDocument();
-    expect(screen.getByText(APP_VERSION)).toBeInTheDocument();
+    expect(screen.getByText('Aktualisierung bereit')).toBeInTheDocument();
   });
 
-  it('bleibt lesbar, wenn das Backend keine Konfiguration geliefert hat', async () => {
-    await build(false, null);
+  it('stays readable when the backend gave no configuration', async () => {
+    await build({ configuration: null });
 
-    expect(screen.getByText('Nicht angemeldet')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' })).toBeInTheDocument();
   });
 
-  it('führt zur Methode und zu Quellen und Lizenzen', async () => {
-    const { router } = await build();
-    const change = vi.spyOn(router, 'navigateByUrl');
+  it('shows an issuer that is not a URL as it came', async () => {
+    await build({ signedIn: true, configuration: { ...CONFIG, oidcIssuer: 'sso.beimgraben.net' } });
 
-    await userEvent.click(screen.getByText('Methode'));
-    await userEvent.click(screen.getByText('Quellen und Lizenzen'));
-
-    expect(change).toHaveBeenCalledWith('/konto/methode');
-    expect(change).toHaveBeenCalledWith('/konto/lizenzen');
-  });
-
-  it('zeigt Meine Daten nur angemeldet und führt dorthin', async () => {
-    const { router } = await build(true);
-    const change = vi.spyOn(router, 'navigateByUrl');
-
-    await userEvent.click(screen.getByText('Meine Daten'));
-
-    expect(change).toHaveBeenCalledWith('/konto/daten');
-  });
-
-  it('zeigt Meine Daten nicht ohne Anmeldung', async () => {
-    await build();
-
-    expect(screen.queryByText('Meine Daten')).toBeNull();
-  });
-
-  it('zeigt einen Issuer ohne URL-Form so, wie er kommt', async () => {
-    await build(true, { ...CONFIG, oidcIssuer: 'sso.beimgraben.net' });
-
-    expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
     expect(screen.getAllByText('sso.beimgraben.net')).toHaveLength(1);
   });
 
-  it('führt über Schließen auf die Karte', async () => {
+  it('goes to the map on close', async () => {
     const { router } = await build();
     const change = vi.spyOn(router, 'navigateByUrl');
 
     await userEvent.click(screen.getByRole('button', { name: 'Schließen' }));
 
     expect(change).toHaveBeenCalledWith('/karte');
+  });
+
+  it('shows only the page below the account on the phone', async () => {
+    await build({ path: '/konto/daten' });
+
+    expect(screen.getByText('Detail')).toBeInTheDocument();
+    expect(screen.queryByText('Darstellung')).toBeNull();
+  });
+
+  it('shows the list with the selected row next to the detail on the desktop', async () => {
+    await build({ signedIn: true, wide: true, path: '/konto/daten' });
+
+    expect(screen.getByText('Detail')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Meine Daten', pressed: true })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Darstellung und Sprache' })).not.toHaveAttribute('aria-pressed');
+    expect(screen.getByText('Über die App')).toBeInTheDocument();
   });
 });

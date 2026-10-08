@@ -82,7 +82,7 @@ export const MyDataStore = signalStore(
       if (done) {
         await Promise.all([store._offline.clear('objects'), store._offline.clear('queue')]);
         await store._sync.read();
-        await store._entries.load();
+        void store._entries.load();
       }
       patchState(store, ({ data }) => ({
         deleting: false,

@@ -3,10 +3,13 @@
   inline-size: 100%;
 }
 
+// Per `kit.css` `.list`: rows 2 px apart, 8 px from the edges.
 .list {
   display: flex;
   flex-direction: column;
+  gap: 2px;
   inline-size: 100%;
+  padding: 0 8px;
 }
 
 .lbl {
