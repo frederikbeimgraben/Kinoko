@@ -1,0 +1,64 @@
+name = "Tropfender Schillerporling"
+lateinisch = "Pseudoinonotus dryadeus"
+gruppe = "porling"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
+baeume = ["eiche", "buche"]
+speisewertHinweis = "Ungenießbar, weil das Fleisch korkig und zäh ist."
+haeufigkeit = "selten"
+gefaehrdung = "unbekanntesAusmass"
+synonyme = ["Inonotus dryadeus", "Boletus dryadeus"]
+fruchtschicht = { art = "poren" }
+hutform = { von = "gewoelbt" }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/TropfenderSchillerporling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 8.0, bis = 20.0, seltenBis = 30.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.5, bis = 8.5, einheit = "um" }
+sporenBreiteUm = { von = 5.5, bis = 6.5, einheit = "um" }
+
+[farben]
+hut = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "hellbraun", hex = "#a97c50" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "rostbraun", hex = "#8a4b23" }]
+sporenpulver = [{ name = "hellbraun", hex = "#a97c50" }]
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral."
+
+[geschmack]
+tags = []
+text = "Unbedeutend."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "8 bis 20, selten bis 30 cm breit, hellbraun, tabakbraun bis gelbbraun, gewölbt und rundlich, manchmal dachziegelartig. Oberfläche bereift, jung mit hellbraunen Tröpfchen."
+poren = "Klein und rundlich, weißlich bereift, Röhren dunkelbraun und mehrschichtig."
+stiel = "Fehlt, der Fruchtkörper liegt dem Substrat auf."
+fleisch = "Dunkel rostbraun, schwammig bis korkig und faserig."
+geruch = "Neutral."
+geschmack = "Unbedeutend."
+sporenpulver = "Hellbraun."
+vorkommen = "Folgezersetzer im Laubwald, meist an toten Eichen- oder Buchenstümpfen und -stämmen. Selten, in Deutschland gefährdet."
+zeit = "Mehrjährig, ganzjährig zu finden."
+
+[[verwechslungen]]
+slug = "eichenfeuerschwamm"
+unterschied = "An lebenden Eichen, Fruchtkörper holzig hart und oft von Algen grünlich, Poren gelblich rostbraun."
+
+[[verwechslungen]]
+slug = "flacher-schillerporling"
+unterschied = "Fruchtkörper flach konsolen- bis fächerförmig, Oberfläche rauhaarig-filzig, Poren jung gelb und schillernd."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/TropfenderSchillerporling.htm"

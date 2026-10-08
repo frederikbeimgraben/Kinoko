@@ -1,0 +1,80 @@
+name = "Silberröhrling"
+lateinisch = "Butyriboletus fechtneri"
+gruppe = "roehrling"
+speisewert = "essbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["buche", "eiche"]
+speisewertHinweis = "Laut Bundesartenschutzgesetz vollständig geschützt und in Deutschland stark gefährdet. Nicht sammeln."
+haeufigkeit = "selten"
+gefaehrdung = "starkGefaehrdet"
+weitereNamen = ["Sommerröhrling"]
+synonyme = ["Boletus fechtneri"]
+fruchtschicht = { art = "roehren" }
+hutform = { von = "halbkugelig" }
+stielmerkmale = ["genetzt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Silberroehrling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 15.0, seltenBis = 19.0, einheit = "cm" }
+sporenLaengeUm = { von = 10.0, bis = 15.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "rotbraun", hex = "#8b4a2b" }, { name = "silbergrau", hex = "#b8bcc0" }, { name = "violett", hex = "#6b4a8a" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "zitronengelb", hex = "#f2e14c" }, { name = "goldgelb", hex = "#e2b13a" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "braun", hex = "#7a5230" }, { name = "oliv", hex = "#6b7a3a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["bittermandel", "angenehm"]
+text = "Angenehm nussig, nach Marzipan."
+
+[geschmack]
+tags = ["mild", "nussig"]
+text = "Mild, nussig."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 15, selten bis 19 cm breit, milchkaffeebraun, silbergrau bis rotbraun, alt graubraun, seidig und trocken, ohne violette Farben, halbkugelig bis polsterförmig, Rand uneben."
+roehren = "Gelb, zitronengelb bis goldgelb, bei Verletzung blauend, etwas herablaufend."
+stiel = "Grund gelblich mit feinem weißem oder rosa Netz, Basis etwas rötlich, bauchig bis keulig."
+fleisch = "Gelblich mit blassblauem bis grünlichblauem Schimmer, im Schnitt lagunenblau verfärbend, in der Stielbasis rötlich. Nach einigen Stunden verblasst das Blau zu einem trüben Gelb."
+geruch = "Angenehm nussig, nach Marzipan."
+geschmack = "Mild, nussig."
+sporenpulver = "Braunoliv."
+vorkommen = "Symbiosepilz in Laub- und Auwäldern, gern bei Buche und Eiche, auf kalkreichem Boden. Selten und in Deutschland stark gefährdet."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "schoenfussroehrling"
+unterschied = "Hut lehmgrau und samtig, Stiel zur Basis rot, Fleisch sofort blauend, Geschmack bitter."
+
+[[verwechslungen]]
+slug = "wurzelnder-bitterroehrling"
+unterschied = "Hut grau bis graubraun, Geschmack bitter, Geruch nach Maggi oder Tinte, Stielbasis wurzelnd."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Silberroehrling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Silber-Röhrling"

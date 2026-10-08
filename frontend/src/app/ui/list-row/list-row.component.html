@@ -1,12 +1,14 @@
 <ng-template #primary>
   @if (icon(); as glyph) {
-    <app-svg-icon class="row__icon" [name]="glyph" [size]="22" [strokeWidth]="1.8" />
+    <app-svg-icon class="row__icon" tone="dim" [name]="glyph" [size]="24" [strokeWidth]="1.8" />
   }
   <span class="row__lead"><ng-content select="[lead]" /></span>
   <span class="row__stack">
     <span
       class="row__title"
-      [class]="'row__title--' + kind()"
+      [class.row__title--strong]="strong()"
+      [class.row__title--sub]="variant() === 'sub'"
+      [class.row__title--link]="kind() === 'link'"
       [class.row__title--accent]="accent() && !chevron()"
       >{{ title() }}</span
     >
@@ -15,35 +17,44 @@
     }
   </span>
   @if (value()) {
-    <span class="row__value" [class.row__value--accent]="accent()">{{ value() }}</span>
+    <span class="row__value" [class.row__value--accent]="accent()"
+      >{{ value() }}<small class="row__unit">{{ unit() }}</small></span
+    >
+  }
+  @if (plain()) {
+    <span class="row__plain">{{ plain() }}</span>
+  }
+  @if (badge(); as text) {
+    <app-level-pill [text]="text" [kind]="badgeKind()" />
+  }
+  @if (swatch(); as fill) {
+    <span class="row__swatch" aria-hidden="true" [style.background]="fill"></span>
   }
   <span class="row__trail"><ng-content select="[trail]" /></span>
   @if (chevron()) {
-    <app-svg-icon class="row__chevron" name="chevron" [size]="18" />
+    <app-svg-icon class="row__chevron" name="chevron" tone="dim" [size]="24" [strokeWidth]="1.8" />
   }
 </ng-template>
 
-<div class="row">
+<div
+  class="row"
+  [class.row--selected]="selected()"
+  [class.row--head]="variant() === 'head'"
+  [class.row--thumbed]="thumbed()"
+  [class.row--wrap]="wrap()"
+>
   @if (clickable()) {
     <button
       class="row__field row__field--button tap"
       type="button"
       appRipple
-      [class]="'row__field--' + kind()"
-      [class.row__field--tall]="subline()"
-      [class.row__field--selected]="selected()"
       [attr.aria-pressed]="selected() ? true : null"
       (click)="chosen.emit()"
     >
       <ng-container [ngTemplateOutlet]="primary" />
     </button>
   } @else {
-    <div
-      class="row__field"
-      [class]="'row__field--' + kind()"
-      [class.row__field--tall]="subline()"
-      [class.row__field--selected]="selected()"
-    >
+    <div class="row__field">
       <ng-container [ngTemplateOutlet]="primary" />
     </div>
   }

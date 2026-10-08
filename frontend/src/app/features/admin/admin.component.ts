@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -36,7 +36,7 @@ interface Row {
 })
 export class AdminComponent {
   private readonly i18n = inject(I18nService);
-  private readonly rights = inject(PermissionsService);
+  private readonly rights = inject(PermissionsStore);
   private readonly router = inject(Router);
   private readonly state = inject(AdminState);
   private readonly viewport = inject(ViewportService);

@@ -1,0 +1,69 @@
+name = "Duftender Goldporling"
+lateinisch = "Auriporia aurulenta"
+gruppe = "porling"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
+baeume = ["fichte", "kiefer"]
+speisewertHinweis = "Er wächst flach auf dem Holz und besteht fast nur aus Röhren. Als Speisepilz kommt er nicht infrage. In Deutschland extrem selten, deshalb stehen lassen."
+haeufigkeit = "selten"
+gefaehrdung = "extremSelten"
+fruchtschicht = { art = "poren" }
+hutrand = { von = ["fransig"] }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/DuftenderGoldporling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+fruchtkoerperBreiteCm = { von = 5.0, bis = 13.0, seltenBis = 30.0, einheit = "cm" }
+sporenLaengeUm = { von = 4.0, bis = 6.1, einheit = "um" }
+sporenBreiteUm = { von = 2.4, bis = 4.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 1
+bisMonat = 12
+
+[farben]
+hut = [{ name = "karottenrot", hex = "#e2642a" }, { name = "blutrot", hex = "#8e1f1f" }, { name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
+stiel = [{ name = "orangerot", hex = "#df5a25" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["anisartig", "fruchtig", "suesslich"]
+text = "Nach Anis, Aprikosenkompott oder süßlich nach Vanille."
+
+[geschmack]
+tags = []
+text = "Unbedeutend."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+fruchtkoerper = "5 bis 13, selten bis 30 cm breit, orange bis leuchtend gelb, karottenrot bis blutrot, die Zuwachsstellen oft orangerosa. Rand oft ausgefranst. Er wirkt, als bestünde er nur aus Röhren."
+poren = "Zwei bis drei je Millimeter, rundlich, orange bis gelb."
+stiel = "Fehlt. Der Pilz liegt flach dem Holz auf, das Myzel ist orangerot."
+fleisch = "Gelb bis orange, weich und fast gallertig, später verhärtend."
+geruch = "Nach Anis, Aprikosenkompott oder süßlich nach Vanille."
+geschmack = "Unbedeutend."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer an totem Nadelholz, gern an verrottetem Holz von Fichte und Kiefer, überzieht auch alte Porlinge. Löst Braunfäule aus. In Deutschland extrem selten."
+zeit = "Ganzjährig."
+
+[[verwechslungen]]
+slug = "leuchtender-weichporling"
+unterschied = "Blasser gelborange, ohne den süßlichen Anisgeruch."
+eigenerUnterschied = "Liegt dem Holz flach auf und wirkt, als bestehe er nur aus Röhren. Geruch nach Anis oder Aprikose."
+
+[[verwechslungen]]
+slug = "zimtfarbener-weichporling"
+unterschied = "Zimtbraune bis rostbraune Farben statt Orange, ohne Anisgeruch."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/DuftenderGoldporling.htm"

@@ -1,0 +1,77 @@
+name = "Olivgrauer Schneckling"
+lateinisch = "Hygrophorus mesotephrus"
+gruppe = "schneckling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["buche", "eiche"]
+speisewertHinweis = "Sehr selten und in Deutschland gefährdet, in manchen Regionen fast ausgestorben. Den Fund besser stehen lassen."
+haeufigkeit = "sehrSelten"
+gefaehrdung = "gefaehrdet"
+weitereNamen = ["Graubrauner Schleimstiel-Schneckling", "Olivbrauner Schneckling"]
+synonyme = ["Limacium mesotephrum", "Limacium arbustivum var. mesotephrum"]
+fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
+stielmerkmale = ["genattert"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/OlivgrauerSchneckling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "An der Stielbasis orangerot bis orangegelb."
+
+[[reagenzien]]
+reagenz = "ammoniak"
+reaktion = "Im Fleisch keine Reaktion."
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 6.0, seltenBis = 8.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 1.2, seltenBis = 1.5, einheit = "cm" }
+sporenLaengeUm = { von = 6.5, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "grau", hex = "#8a8a8a" }, { name = "oliv", hex = "#6b7a3a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "grau", hex = "#8a8a8a" }, { name = "oliv", hex = "#6b7a3a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 6, selten bis 8 cm breit, dunkelbraun, graubraun bis olivgrau, Rand heller. Schmierig bis schleimig."
+lamellen = "Weiß, leicht herablaufend, weich und wachsartig."
+stiel = "5 bis 12, selten bis 15 cm lang, 1 bis 1,2, selten bis 1,5 cm dick, graubräunlich, meist genattert, Spitze hell, schmierig bis schleimig, zur Basis meist dunkler olivgrau."
+fleisch = "Weiß."
+geruch = "Neutral."
+geschmack = "Mild."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz im Laubwald, gern bei Eiche und Buche, auf kalkreichem Boden. Sehr selten, in Deutschland gefährdet."
+zeit = "Sommer bis Spätherbst."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/OlivgrauerSchneckling.htm"

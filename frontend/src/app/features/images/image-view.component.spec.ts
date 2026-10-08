@@ -4,8 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { AccountService } from '../../core/access/account.service';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { AccountStore } from '../../core/access/account.store';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -39,11 +39,11 @@ async function build(items: Photo[], id = 'zwei', access: Access = {}): Promise<
       provideHttpClientTesting(),
       provideRouter(ANY_ROUTE),
       {
-        provide: PermissionsService,
+        provide: PermissionsStore,
         useValue: { can: (permission: string) => access.reviewer === true && permission === 'image.review' },
       },
       {
-        provide: AccountService,
+        provide: AccountStore,
         useValue: { owns: (ownerId: string | null) => access.owner === true && ownerId !== null },
       },
     ],

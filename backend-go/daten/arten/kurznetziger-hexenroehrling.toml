@@ -1,0 +1,73 @@
+name = "Kurznetziger Hexenröhrling"
+lateinisch = "Suillellus mendax"
+gruppe = "roehrling"
+speisewert = "bedingtEssbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Der Seitenkopf nennt ihn nur bedingt essbar und mit Alkohol giftig. Von ihm stammt der Rat, zum Pilzgericht keinen Alkohol zu trinken; er verursacht dann Magen-Darm-Beschwerden. Alte Pilze sind vom Netzstieligen Hexenröhrling nur mikroskopisch zu trennen."
+weitereNamen = ["Trügerischer Hexenpilz"]
+synonyme = ["Boletus mendax"]
+fruchtschicht = { art = "roehren" }
+stielmerkmale = ["genetzt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/KurznetzHexe.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 15.0, seltenBis = 22.0, einheit = "cm" }
+sporenLaengeUm = { von = 13.2, bis = 15.5, einheit = "um" }
+sporenBreiteUm = { von = 4.5, bis = 5.7, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "olivbraun", hex = "#6e6435" }, { name = "dunkelbraun", hex = "#4a3120" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "weinrot", hex = "#7b2436" }, { name = "rot", hex = "#c0392b" }]
+sporenlager = [{ name = "orangerot", hex = "#df5a25" }, { name = "rot", hex = "#c0392b" }]
+stiel = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "rotbraun", hex = "#8b4a2b" }]
+fleisch = [{ name = "weinrot", hex = "#7b2436" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "goldgelb", hex = "#e2b13a" }, { name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "schnell"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 15, selten bis 22 cm breit, dunkelbraun, weinrot, olivbraun oder graubraun, samtig und klebrig. Zwischen Hutfleisch und Röhren liegt eine rote Zone, ein gutes Erkennungsmerkmal."
+roehren = "Mündungen rot, Röhrenboden orangerot, leicht vom Fleisch lösbar."
+stiel = "Mit rötlicher, rotbrauner bis dunkelbrauner Netzzeichnung. Jung nur im oberen Bereich genetzt, im Alter verschiebt sich das Netz in die Mitte und nach unten."
+fleisch = "Gelb, sofort schwarzblau verfärbend. In der Stielbasis rötlich, das Stielfleisch stark weinrot, bisweilen auch im Hut."
+geruch = "Angenehm pilzig."
+geschmack = "Mild."
+sporenpulver = "Goldgelb bis olivgelb."
+vorkommen = "Symbiosepilz in Laubwäldern und Parkanlagen, wärmeliebend. Zum Boden gibt es widersprüchliche Angaben, teils kalkhaltig, teils sauer."
+zeit = "Frühling bis Spätherbst."
+
+[[verwechslungen]]
+slug = "falscher-satansroehrling"
+unterschied = "Hut purpurrosa bis rostgelb, Stiel kräftig rot mit rotem Netz, Fleisch chromgelb."
+
+[[verwechslungen]]
+slug = "glattstieliger-hexenroehrling"
+unterschied = "Stiel ohne Netz, nur rillig labyrinthisch, Hut ohne Olivton."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/KurznetzHexe.htm"

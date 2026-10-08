@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
@@ -52,7 +52,7 @@ async function build(curates: boolean): Promise<Setup> {
       provideHttpClientTesting(),
       provideRouter(ANY_ROUTE),
       ...authStubProviders(new AuthStub()),
-      { provide: PermissionsService, useValue: { can: () => curates } },
+      { provide: PermissionsStore, useValue: { can: () => curates } },
     ],
   });
   const http = TestBed.inject(HttpTestingController);

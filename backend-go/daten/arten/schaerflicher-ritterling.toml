@@ -1,0 +1,80 @@
+name = "Schärflicher Ritterling"
+lateinisch = "Tricholoma sciodes"
+gruppe = "ritterling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["buche"]
+speisewertHinweis = "Giftig. Kennzeichen sind der graubraune, wie bei einem Risspilz radial einreißende Hut, die alt schwärzenden Lamellenschneiden und der nach kurzem Kauen brennend scharfe Geschmack."
+synonyme = ["Tricholoma virgatum var. sciodes", "Tricholoma sciodes var. sciodes", "Agaricus murinaceus"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
+hutform = { von = "flach" }
+hutmerkmale = ["gebuckelt"]
+hutrand = { von = ["eingebogen"] }
+stielmerkmale = ["faserig", "hohl"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SchaerflicherRitterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 8.0, seltenBis = 10.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 10.0, seltenBis = 12.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 2.0, seltenBis = 2.5, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 5.0, bis = 6.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "schwarz", hex = "#1a1a1a" }]
+
+[geruch]
+tags = ["erdartig"]
+text = "Erdig."
+
+[geschmack]
+tags = ["bitter", "scharf"]
+text = "Bitter, nach kurzer Zeit extrem scharf."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 8, selten bis 10 cm breit, graubraun, radialfaserig und angedrückt schuppig, radial einreißend, gebuckelt, später abgeflacht. Mitte deutlich dunkler als der lange herabgebogene Rand."
+lamellen = "Weißlich mit leichtem rosa Reflex, am Stiel ausgebuchtet angewachsen, Schneiden alt etwas wellig gekerbt und schwärzend."
+stiel = "5 bis 10, selten bis 12 cm lang und 1 bis 2, selten 2,5 cm dick, grauweiß, eingewachsen faserig, alt hohl, Basis abrupt abgeplattet."
+fleisch = "Weiß bis grauweiß."
+geruch = "Erdig."
+geschmack = "Bitter, nach kurzer Zeit extrem scharf."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz im Laubwald, gern bei Buche."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "roetender-erdritterling"
+unterschied = "Hut grau geschuppt, Fleisch und Lamellen röten bei Verletzung."
+
+[[verwechslungen]]
+slug = "tigerritterling"
+unterschied = "Größer und kräftiger, Hut mit dachziegelig angeordneten dunkelgrauen Schuppen, Geschmack mild, Geruch mehlartig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SchaerflicherRitterling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Schärflicher_Ritterling"

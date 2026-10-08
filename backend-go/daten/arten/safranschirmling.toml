@@ -1,0 +1,96 @@
+name = "Keulenstieliger Garten-Safranschirmling"
+lateinisch = "Chlorophyllum rhacodes"
+gruppe = "schirmling"
+speisewert = "essbar"
+wertigkeit = 3
+marktfaehig = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Roh unverträglich, gut durchgaren. Riesenschirmlinge aus Garten, Kompost oder Gewächshaus stehen lassen; dort wächst der giftige Gerandetknollige Garten-Safranschirmling."
+weitereNamen = ["Safranschirmling", "Gemeiner Safranschirmling", "Gartenform des Safran-Schirmpilzes", "Safran-Riesenschirmpilz", "Safran-Riesenschirmling", "Rötender Schirmling"]
+synonyme = ["Macrolepiota rhacodes var. hortensis", "Macrolepiota bohemica", "Agaricus rachodes", "Chlorophyllum rhacodes sensu", "Lepiota rhacodes", "Leucocoprinus rhacodes", "Agaricus rhacodes var. candidus", "Lepiota procera var. rhacodes"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+hutform = { von = "eifoermig", nach = "halbkugelig" }
+hutrand = { von = ["fransig"] }
+stielmerkmale = ["faserig", "ring", "knolle"]
+
+[baeumeAusErfahrung]
+baeume = ["fichte"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Safranschirmling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 15.0, seltenBis = 20.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 22.0, seltenBis = 25.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 6.0, seltenBis = 7.0, einheit = "cm" }
+sporenLaengeUm = { von = 10.0, bis = 14.0, einheit = "um" }
+sporenBreiteUm = { von = 5.0, bis = 8.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "ocker", hex = "#c8963c" }]
+sporenlager = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "cremefarben", hex = "#f0e6c8" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "rot", hex = "#c0392b" }, { name = "braun", hex = "#7a5230" }]
+dauer = "schnell"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig."
+
+[geschmack]
+tags = []
+text = "Angenehm pilzartig. Roh unverträglich."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 15, selten bis 20 cm breit, auf cremefarbenem bis hell ockerlichem Grund grob bräunlich geschuppt, zur Mitte hin dichter. Schuppen weich, wollig und abstehend, Rand flockig fransig. Jung eiförmig, später halbkugelig."
+lamellen = "Weiß bis cremefarben, frei, weich, im Alter bräunend, bei Verletzung rötend."
+stiel = "6 bis 22, selten bis 25 cm lang, 1 bis 6, selten bis 7 cm dick, weißlich bis hellbräunlich, ohne Natterung, bräunlich überfasert, zäh und faserig. Ring verschiebbar, wattig, abstehend und doppelt. Basis rübenartig verdickt, die Knolle ist nicht abgesetzt und nicht gerandet."
+fleisch = "Weiß bis cremefarben, weich, bei Verletzung sofort safranrötlich anlaufend, später bräunend."
+geruch = "Angenehm pilzig."
+geschmack = "Angenehm pilzartig. Roh unverträglich."
+sporenpulver = "Cremefarben."
+vorkommen = "Folgezersetzer in Gärten, Heiden und an Waldrändern, in der Regel außerhalb der Wälder, auf nährstoffreichem Boden."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "buescheliger-egerlingsschirmling"
+unterschied = "Ring nicht verschiebbar, Stiel und Fleisch verfärben bei Verletzung stark gelb."
+eigenerUnterschied = "Stielbasis knollig ohne Rand, Fleisch rötet safranrot, ohne kräftiges Gilben."
+
+[[verwechslungen]]
+slug = "gerandetknolliger-garten-safranschirmling"
+unterschied = "Ring einfach statt doppelt, Knolle deutlich abgesetzt und gerandet, wächst auf Kompost und in Gewächshäusern."
+
+[[verwechslungen]]
+slug = "haselbrauner-schirmling"
+unterschied = "Klein, nur 1 bis 7 cm breit, Ring nicht verschiebbar, Stielbasis mit brauner genatterter Gürtelzone."
+eigenerUnterschied = "Viel größer, Hut über 8 cm mit groben aufgerissenen Schuppen, Fleisch rötet safranrot, Ring dick und verschiebbar."
+
+[[verwechslungen]]
+slug = "jungfernschirmling"
+unterschied = "Fleisch läuft bei Verletzung nicht rot an, höchstens im Alter etwas grauend, im Nadelwald."
+eigenerUnterschied = "Fleisch bei Verletzung sofort safranrötlich anlaufend, Stielbasis verdickt aber ohne abgesetzte Knolle."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Safranschirmling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Gemeiner_Safranschirmling"

@@ -4,7 +4,7 @@ import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component'
 /** A named level reads its colour from a token pair, per `kit.css` `.badge`. */
 export type BadgeKind = '' | 'ok' | 'warn' | 'bad';
 
-/** Eine Plakette. Eine Art nimmt die Tonfarbe, sonst gilt die eigene Farbe. */
+/** The kit badge. A kind sets the tone colours. Without a kind, the own colour applies. */
 @Component({
   selector: 'app-level-pill',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,9 +15,9 @@ export type BadgeKind = '' | 'ok' | 'warn' | 'bad';
 export class LevelPillComponent {
   readonly text = input.required<string>();
   readonly colour = input<string>();
-  /** Die Fläche. Ohne Angabe mischt sie sich aus der Farbe. */
+  /** The area colour. Without a value, the tonal area applies. */
   readonly background = input<string>();
   readonly kind = input<BadgeKind>('');
-  /** Ein Zeichen vor dem Wort, wie bei der Melde-Warnung ohne Netz. */
+  /** An icon before the text, for example the offline warning. */
   readonly icon = input<IconName>();
 }

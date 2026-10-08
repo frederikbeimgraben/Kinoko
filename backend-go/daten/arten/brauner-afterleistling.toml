@@ -1,0 +1,78 @@
+name = "Brauner Afterleistling"
+lateinisch = "Hygrophoropsis rufa"
+gruppe = "leistling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Erst in größerer Menge reizt er Magen und Darm; einzelne Stücke sind harmlos, schmecken aber muffig. Er schmeckt mild, echte Pfifferlinge schmecken pfefferig scharf."
+haeufigkeit = "sehrSelten"
+synonyme = ["Hygrophoropsis aurantiaca var. rufa"]
+fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["beflockt", "hohl"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/BrauneAfterleistling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+sporenLaengeUm = { von = 5.5, bis = 6.4, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 4.4, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "orange", hex = "#e08a2e" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "orangegelb", hex = "#e9a32c" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "orangebraun", hex = "#c86e28" }, { name = "orangegelb", hex = "#e9a32c" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
+sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["saeuerlich", "unauffaellig"]
+text = "Säuerlich, unbedeutend."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 12, selten bis 15 cm breit, braun bis braunorange, feinfilzig, Rand lange eingerollt."
+lamellen = "Orangegelb bis braungelb, herablaufend, viele gegabelt und vom Fleisch ablösbar. Bei Leistlingen wie dem Pfifferling sind die Leisten fest mit dem Fleisch verwachsen."
+stiel = "Orangegelb, orangebraun bis gelbbraun, körnig schuppig, biegsam, größtenteils hohl und deutlich dicker als beim Falschen Pfifferling."
+fleisch = "Gelblich bis orange, dünn, biegsam, weich, zäh und schwammig."
+geruch = "Säuerlich, unbedeutend."
+geschmack = "Mild."
+sporenpulver = "Hellgelb."
+vorkommen = "Folgezersetzer im Laubwald an Strünken oder an vergrabenem Holz. Sehr selten."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "falscher-pfifferling"
+unterschied = "Hut leuchtend orange statt braun, Stiel dünner, im Nadelwald auf Nadelstreu."
+eigenerUnterschied = "Hut graubraun bis olivbraun statt leuchtend orange."
+
+[[verwechslungen]]
+slug = "oelbaumtrichterling"
+unterschied = "Lamellen leuchtend goldgelb und kaum gegabelt, an Laubholz, bei uns fast nur im Mittelmeerraum."
+
+[[verwechslungen]]
+slug = "purpuroranger-afterleistling"
+unterschied = "Kleiner, Lamellen weißlich bis fleischrosa und marmoriert, auf kalkhaltigem Boden im Nadel- und Mischwald."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/BrauneAfterleistling.htm"

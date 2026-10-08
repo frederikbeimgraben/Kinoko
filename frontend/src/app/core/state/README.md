@@ -37,6 +37,11 @@ Reads the saved state when the store starts. Writes each change of the selected 
 A blocked or full storage is not an error. The state then stays for this session only.
 Put the feature after the `withState` that it saves.
 
+### `plainTextStorage(base?)`
+
+A `storage` for `withStorageSync` that keeps a string value as bare text, not as JSON.
+Use it for a key that older builds wrote as bare text (`pilzkarte.theme`, `pilzkarte.kartenApp`).
+
 ### `withSearchableList<T extends { id: string }>({ matches, sortKey })`
 
 - State: `items: readonly T[] | null` (`null` while pending), `search: string`.

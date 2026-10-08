@@ -35,18 +35,18 @@ describe('BannerComponent', () => {
     noGermanText(container);
   });
 
-  it('meldet eine bereitstehende Fassung ohne Piktogramm, im Hinweiston', async () => {
+  it('reports a new version with the check icon, in the info tone', async () => {
     const { container } = await render(BannerComponent, {
       inputs: { kind: 'update' },
     });
 
     const banner = screen.getByRole('button', { name: 'Neue Version' });
     expect(banner).toHaveClass('banner--info');
-    expect(container.querySelector('.banner__glyph')).toBeNull();
+    expect(container.querySelector('.banner__glyph')).not.toBeNull();
     await noViolations(container);
   });
 
-  it('trägt eine Aktion und meldet ihren Klick von der ganzen Fläche', async () => {
+  it('has an action and reports its click from the full area', async () => {
     const { container, fixture } = await render(BannerComponent, {
       inputs: { kind: 'update', actionIcon: 'refresh', actionLabel: 'app.update.reload' },
     });
@@ -59,18 +59,45 @@ describe('BannerComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt ohne eigene Aktion einen Pfeil als Vorgabe', async () => {
+  it('shows a chevron when it has no action', async () => {
     const { container } = await render(BannerComponent, { inputs: { kind: 'pending' } });
 
-    expect(container.querySelector('.banner__action')).not.toBeNull();
+    expect(container.querySelector('.banner__chev')).not.toBeNull();
+    expect(container.querySelector('.banner__action')).toBeNull();
   });
 
-  it('trägt mit einer Aktion nur deren Symbol, nicht auch den Pfeil', async () => {
+  it('shows only the action icon when it has an action', async () => {
     const { container } = await render(BannerComponent, {
       inputs: { kind: 'update', actionIcon: 'refresh', actionLabel: 'app.update.reload' },
     });
 
     expect(container.querySelectorAll('.banner__action')).toHaveLength(1);
+    expect(container.querySelector('.banner__chev')).toBeNull();
+  });
+
+  it('shows its own text, a count pill and no chevron on request', async () => {
+    const { container } = await render(BannerComponent, {
+      inputs: { kind: 'noConnection', text: 'Keine Verbindung', count: '2 ausstehend', chev: false },
+    });
+
+    expect(container.querySelector('.banner__text')).toHaveTextContent('Keine Verbindung');
+    expect(container.querySelector('.banner__count')).toHaveTextContent('2 ausstehend');
+    expect(container.querySelector('.banner__chev')).toBeNull();
+  });
+
+  it('floats with a shadow and without a margin', async () => {
+    const { container } = await render(BannerComponent, { inputs: { kind: 'update', float: true } });
+
+    expect(container).toHaveClass('banner-host--float');
+    expect(container.querySelector('.banner')).toHaveStyle({ margin: '0px' });
+  });
+
+  it('has the kit geometry: 48 px high with a gap of 14 px', async () => {
+    const { container } = await render(BannerComponent, { inputs: { kind: 'pending' } });
+
+    const style = getComputedStyle(container.querySelector('.banner') ?? container);
+    expect(style.getPropertyValue('block-size')).toBe('48px');
+    expect(style.gap).toBe('14px');
   });
 
   it('ist auch ohne eigene Aktion drückbar', async () => {
@@ -87,7 +114,7 @@ describe('BannerComponent', () => {
     const { container } = await render(BannerComponent, { inputs: { kind: 'noConnection' } });
 
     const banner = container.querySelector<HTMLElement>('.banner');
-    if (banner === null) throw new Error('kein Banner');
+    if (banner === null) throw new Error('The banner is not in the tree.');
 
     vi.spyOn(banner, 'getBoundingClientRect').mockReturnValue({
       x: 0,

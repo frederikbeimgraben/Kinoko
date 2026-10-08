@@ -1,7 +1,7 @@
 version: 2
 
-# Minor und Patch kommen je Ökosystem als ein Pull Request. Ein Solo-Projekt
-# hält sonst mehr Update-PRs offen, als es prüfen kann.
+# Minor and patch updates come as one pull request per ecosystem. A project
+# with one maintainer cannot review more update pull requests.
 updates:
   - package-ecosystem: npm
     directory: /frontend
@@ -11,7 +11,7 @@ updates:
       klein:
         update-types: [minor, patch]
 
-  - package-ecosystem: pip
+  - package-ecosystem: gomod
     directory: /backend
     schedule:
       interval: weekly

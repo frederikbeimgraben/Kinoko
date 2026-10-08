@@ -1,0 +1,62 @@
+name = "Weißer Großstäubling"
+lateinisch = "Calvatia candida"
+gruppe = "staeubling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehigSchweiz = false
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Nur essbar, solange das Innere rein weiß ist; später wird es gelb und ungenießbar. Jeden Fruchtkörper aufschneiden, um junge Knollenblätterpilze auszuschließen."
+synonyme = ["Langermannia candida", "Lycoperdon candidum", "Aussereuropäische form: calvatia craniiformis"]
+hutform = { von = "kugelig" }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/WeisserGrossstaeubling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+fruchtkoerperBreiteCm = { von = 3.0, bis = 9.0, seltenBis = 11.0, einheit = "cm" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }, { name = "gelbbraun", hex = "#a3813f" }]
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm, pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild, angenehm."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+fruchtkoerper = "3 bis 9, selten bis 11 cm breit, weiß bis grauweiß, später gelblich, netzartig fleckig bis wellig vertieft, teils mit stielartigem Teil und kugeligem Kopf."
+fleisch = "Innen zuerst weiß, später gelb, alt gelbbraun. Der Stielteil ist weiß bis grauweiß, später gelblich, ocker bis ockerbraun."
+geruch = "Angenehm, pilzig."
+geschmack = "Mild, angenehm."
+sporenpulver = "Olivbraun bis gelbbraun."
+vorkommen = "Folgezersetzer im Mischwald, in Hecken, Parks, Steppen und Heiden, wärmeliebend. Häufiger im Mittelmeerraum, in Europa sonst extrem selten."
+zeit = "Frühsommer bis Herbst."
+
+[[verwechslungen]]
+slug = "hasenbovist"
+unterschied = "Jung mit plattenartigen, spitzkegeligen Erhebungen, wächst auf Wiesen, Weiden und in Obstgärten."
+
+[[verwechslungen]]
+slug = "weisser-knollenblaetterpilz"
+unterschied = "Jung ebenfalls ein weißes Ei; im Längsschnitt zeigen sich aber Hut, Lamellen und Stiel, die Basis steckt in einer häutigen Scheide."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/WeisserGrossstaeubling.htm"

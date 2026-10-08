@@ -1,0 +1,94 @@
+name = "Lilastieliger Rötelritterling"
+lateinisch = "Lepista personata"
+gruppe = "roetelritterling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["herbst", "winter", "fruehling"]
+baeume = []
+speisewertHinweis = "Regional sehr selten und in Deutschland gefährdet. Nur wenige Fruchtkörper nehmen."
+haeufigkeit = "sehrSelten"
+gefaehrdung = "gefaehrdet"
+weitereNamen = ["Maskierter Ritterling", "Maskierter Rötelritterling", "Fleischbräunlicher Rötelritterling"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
+hutmerkmale = ["hygrophan"]
+hutrand = { von = ["eingerollt"], nach = ["scharf"] }
+stielmerkmale = ["faserig", "voll"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/LilastieligerRoetelritterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 9
+bisMonat = 1
+
+[farben]
+hut = [{ name = "violett", hex = "#6b4a8a" }, { name = "beige", hex = "#d9c9a3" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }, { name = "rot", hex = "#c0392b" }]
+sporenlager = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }]
+stiel = [{ name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }]
+fleisch = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "hellgrau", hex = "#c0c0c0" }, { name = "weiß", hex = "#ffffff" }, { name = "lila", hex = "#8a5fa8" }]
+sporenpulver = [{ name = "rosa", hex = "#e8a0b0" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "gelb", hex = "#e8c33a" }]
+
+[geruch]
+tags = ["fruchtig"]
+text = "Leicht fruchtig, parfümiert, nicht so kräftig wie beim Violetten Rötelritterling."
+
+[geschmack]
+tags = ["mild", "suesslich"]
+text = "Mild, leicht süßlich."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 12, selten bis 15 cm breit, grauviolett, beigebräunlich, graubräunlich bis graublau, nie ganz braun ohne rotviolette Töne. Hygrophan, Huthaut glatt und leicht bereift, manchmal etwas fleckend, Rand lange eingerollt, später scharfkantig."
+lamellen = "Weißlich lila bis blass violettblau, am Stiel ausgebuchtet angewachsen, leicht ablösbar."
+stiel = "Blass blaulila bis rötlichlila, etwas überfasert, kahl, voll. Basis verdickt und manchmal etwas gilbend."
+fleisch = "Weißlich lila bis hellgrau, alt graubraun, im Zentrum lange weiß bleibend."
+geruch = "Leicht fruchtig, parfümiert, nicht so kräftig wie beim Violetten Rötelritterling."
+geschmack = "Mild, leicht süßlich."
+sporenpulver = "Blassrosa."
+vorkommen = "Folgezersetzer auf Wiesen und Weiden, in Laubwäldern und Parkanlagen, meist gesellig in Reihen oder Hexenringen. In Deutschland gefährdet."
+zeit = "Herbst bis Winteranfang, selten im Frühling."
+
+[[verwechslungen]]
+slug = "bocksdickfuss"
+unterschied = "Geruch widerlich nach Ziegenbock und Schweißfüßen, Lamellen laufen zimtbraun an, Stiel mit rostbraunem Sporenpulver behaftet."
+eigenerUnterschied = "Hut grauviolett bis beigebräunlich, Lamellen weißlich lila, Geruch leicht fruchtig."
+
+[[verwechslungen]]
+slug = "horngrauer-roetelritterling"
+unterschied = "Hut graubraun mit konzentrischen Wasserflecken, Geruch mehlartig statt parfümiert."
+
+[[verwechslungen]]
+slug = "lavendelfarbener-roetelritterling"
+unterschied = "Hut rötlichlila bis lavendelfarben, Lamellen lila, Stiel schlanker."
+
+[[verwechslungen]]
+slug = "schmutziger-roetelritterling"
+unterschied = "Deutlich kleiner, Lamellen schmutzig weiß bis graurosa und etwas herablaufend."
+
+[[verwechslungen]]
+slug = "violetter-roetelritterling"
+unterschied = "Auch der Hut ist lilaviolett, Geruch stärker parfümiert, im Laubwald."
+eigenerUnterschied = "Hut grauviolett bis graubräunlich statt lilaviolett, Lamellen nur weißlich lila."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/LilastieligerRoetelritterling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Lilastiel-Rötelritterling"

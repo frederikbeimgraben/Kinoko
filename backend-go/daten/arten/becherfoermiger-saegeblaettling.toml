@@ -1,0 +1,81 @@
+name = "Becherförmiger Sägeblättling"
+lateinisch = "Neolentinus cyathiformis"
+gruppe = "seitling"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Das Fleisch bleibt zäh und schmeckt bitterlich. Sehr selten und in Deutschland gefährdet."
+haeufigkeit = "sehrSelten"
+gefaehrdung = "gefaehrdet"
+weitereNamen = ["Trichterförmiger Sägeblättling"]
+synonyme = ["Lentinus cyathiformis", "Agaricus cyathiformis", "Neolentinus schaefferi", "Favolus cyathiformis", "Pocillaria cyathiformis", "Panus cyathiformis"]
+fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }
+hutform = { von = "trichterfoermig" }
+hutmerkmale = ["gebuckelt"]
+hutrand = { von = ["eingerollt"] }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/BecherfoermigerSaegeblaettling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 5.0, bis = 11.0, seltenBis = 13.0, einheit = "cm" }
+sporenLaengeUm = { von = 10.0, bis = 16.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["pilzig", "unauffaellig"]
+text = "Unbedeutend bis leicht pilzig."
+
+[geschmack]
+tags = ["bitter"]
+text = "Bitterlich."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "5 bis 11, selten bis 13 cm breit, ockerbraun bis hell rotbraun mit fuchsigbraunen Schuppen. Rand lange eingerollt, Mitte jung gebuckelt, später leicht bis stark trichterförmig."
+lamellen = "Cremebräunlich, schmal, weit herablaufend, Schneiden wellig und gesägt, gegabelt und aderig mit Querverbindungen."
+stiel = "Ockerbraun, feinschuppig bis filzig, zur Basis rotbraun und verdickt."
+fleisch = "Weißlich und zäh."
+geruch = "Unbedeutend bis leicht pilzig."
+geschmack = "Bitterlich."
+sporenpulver = "Cremegelblich."
+vorkommen = "Folgezersetzer und Braunfäuleerreger auf Laub- und Nadelholz, meist an verrotteten Strünken, büschelig. Sehr selten, in Deutschland gefährdet."
+zeit = "Frühling bis Herbst."
+
+[[verwechslungen]]
+slug = "berindeter-seitling"
+unterschied = "Hut grau bis hellbraun, Stiel mit flüchtigem Ring, Lamellenschneiden nicht gesägt."
+
+[[verwechslungen]]
+slug = "brauner-haarstielporling"
+unterschied = "Unterseite mit weißlichen Poren statt Lamellen, Stiel weißlich filzig."
+
+[[verwechslungen]]
+slug = "schuppiger-saegeblaettling"
+unterschied = "Hut mit rotbraunen Schuppen auf gelblichem Grund, Lamellenschneiden stark gesägt, Geruch nach Anis, an Nadelholz."
+eigenerUnterschied = "Hut becherförmig vertieft, Schuppen schwächer, an Laubholz."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/BecherfoermigerSaegeblaettling.htm"

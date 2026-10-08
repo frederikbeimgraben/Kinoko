@@ -42,7 +42,6 @@
       [icon]="signedIn() ? 'entries' : 'account'"
       [text]="emptyText() | t"
       [action]="signedIn() ? undefined : ('account.signIn' | t)"
-      [primaryAction]="!signedIn()"
       (actionClick)="signIn()"
     />
   } @else if (segment() === 'finds') {
@@ -76,16 +75,6 @@
   (primaryClick)="filterOpen.set(false)"
   (closed)="filterOpen.set(false)"
 >
-  <app-choice-row
-    [label]="'entry.filter.own' | t"
-    [checked]="own()"
-    variant="boxed"
-    (toggled)="own.set($event)"
-  />
-  <app-choice-row
-    [label]="'entry.filter.shared' | t"
-    [checked]="shared()"
-    variant="boxed"
-    (toggled)="shared.set($event)"
-  />
+  <app-choice-row [label]="'entry.filter.own' | t" [checked]="own()" (toggled)="own.set($event)" />
+  <app-choice-row [label]="'entry.filter.shared' | t" [checked]="shared()" (toggled)="shared.set($event)" />
 </app-filter-sheet>

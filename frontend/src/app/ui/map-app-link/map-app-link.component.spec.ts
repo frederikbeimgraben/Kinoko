@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { MapAppService } from '../../core/maps/map-app.service';
+import { MapAppStore } from '../../core/maps/map-app.store';
 import { MapAppLinkComponent } from './map-app-link.component';
 
 const LOCATION: readonly [number, number] = [9.1829, 48.7758];
@@ -13,7 +13,7 @@ async function build(wide: boolean, choice: 'osm' | 'google' = 'osm'): Promise<E
     inputs: { target: LOCATION },
     providers: [
       { provide: ViewportService, useValue: { wide: signal(wide) } },
-      { provide: MapAppService, useValue: { choice: signal(choice) } },
+      { provide: MapAppStore, useValue: { choice: signal(choice) } },
     ],
   });
   return container;

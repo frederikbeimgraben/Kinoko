@@ -4,7 +4,7 @@ import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component'
 
 export type StateViewKind = 'empty' | 'error';
 
-/** Leer- oder Fehlerzustand: Bild, Satz, eine mögliche Handlung. Per `StateView.dc.html`. */
+/** An empty or error state per `StateView.dc.html`: an icon, a title and one optional action. */
 @Component({
   selector: 'app-state-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +16,7 @@ export class StateViewComponent {
   readonly kind = input<StateViewKind>('empty');
   readonly title = input.required<string>();
   readonly icon = input<IconName>('search');
-  /** Ohne Beschriftung bleibt der Zustand ohne Knopf. */
+  /** Without a label, the state has no button. */
   readonly action = input('');
 
   readonly actionClick = output();

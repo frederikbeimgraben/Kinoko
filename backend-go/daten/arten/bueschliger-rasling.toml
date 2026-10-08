@@ -1,0 +1,90 @@
+name = "Brauner Rasling"
+lateinisch = "Lyophyllum decastes"
+gruppe = "rasling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+weitereNamen = ["Büscheliger Rasling", "Büschelrasling", "Geselliger Rasling", "Gepanzerter Rasling", "Knorpeliger Knäuelrasling", "Frostrasling", "Geselliger Ritterling", "Buchele"]
+synonyme = ["Lyophyllum aggregatum"]
+fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
+hutmerkmale = ["gebuckelt", "vertieft"]
+hutrand = { von = ["wellig", "eingerollt"] }
+stielmerkmale = ["faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/BraunerRasling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 9.0, seltenBis = 13.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 10.0, seltenBis = 13.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 7.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 4.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 8
+bisMonat = 11
+
+[farben]
+hut = [{ name = "orangebraun", hex = "#c86e28" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["mehlig", "unauffaellig"]
+text = "Neutral bis etwas mehlartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild und angenehm."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 9, selten bis 13 cm breit, ledergelb, blass braungrau bis orangebraun, leicht gebuckelt oder in der Mitte eingedrückt, jung mit feiner Radialfaserung. Rand wellig eingerollt, Huthaut gummiartig elastisch bis knorpelig."
+lamellen = "Weißlich, breit angewachsen oder etwas herablaufend."
+stiel = "5 bis 10, selten bis 13 cm lang, weißlich bis hellbräunlich, längsfaserig, Spitze bereift."
+fleisch = "Weiß, fest, zäh und elastisch."
+geruch = "Neutral bis etwas mehlartig."
+geschmack = "Mild und angenehm."
+sporenpulver = "Reinweiß."
+vorkommen = "Folgezersetzer im Laubwald, auf Wegen, an Wegrändern und in Parks, meist büschelig aus einem Strunk."
+zeit = "Spätsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "frostrasling"
+unterschied = "Hut aschgrau bis dunkel graubraun, Stiele meist einzeln nebeneinander und tief im Boden."
+
+[[verwechslungen]]
+slug = "nebelkappe"
+unterschied = "Hut nebelgrau, Geruch auffallend süßlich, wächst in Reihen statt in Büscheln."
+eigenerUnterschied = "Hut ledergelb bis orangebraun, wächst büschelig aus einem Strunk, Fleisch zäh und elastisch."
+
+[[verwechslungen]]
+slug = "panzerrasling"
+unterschied = "Hut dunkelbraun bis schwarzbraun, Fleisch unter der Huthaut stark bräunlich durchfärbt."
+eigenerUnterschied = "Hut heller braun und ohne die knorpelige Panzerschicht, Fleisch unter der Huthaut nicht dunkel durchfärbt."
+
+[[verwechslungen]]
+slug = "weissstieliger-roetling"
+unterschied = "Lamellen laufen rosa an, Sporenpulver rosa, wächst nicht büschelig."
+eigenerUnterschied = "Lamellen bleiben weißlich, Sporenpulver ist reinweiß, und er wächst büschelig aus einem Strunk."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/BraunerRasling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Büscheliger_Rasling"

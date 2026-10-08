@@ -1,0 +1,78 @@
+name = "Taubentäubling"
+lateinisch = "Russula grisea"
+gruppe = "taeubling"
+speisewert = "essbar"
+wertigkeit = 3
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["birke", "buche", "eiche"]
+weitereNamen = ["Grauvioletter Reif-Täubling"]
+synonyme = ["Russula palumbina"]
+fruchtschicht = { art = "lamellen", stand = "eng", schneide = "glatt" }
+hutmerkmale = ["vertieft"]
+hutrand = { von = ["gerieft"] }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Taubentaebling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "guajak"
+reaktion = "Blaugrün."
+
+[[reagenzien]]
+reagenz = "phenol"
+reaktion = "Hellrosa."
+
+[[reagenzien]]
+reagenz = "ammoniak"
+reaktion = "Positiv."
+
+[masse]
+stielLaengeCm = { von = 3.0, bis = 9.0, seltenBis = 10.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 2.0, seltenBis = 3.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.5, bis = 9.2, einheit = "um" }
+sporenBreiteUm = { von = 5.0, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "blaugrün", hex = "#2f7f7a" }, { name = "violett", hex = "#6b4a8a" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }, { name = "oliv", hex = "#6b7a3a" }]
+sporenlager = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]
+
+[geruch]
+tags = ["fischartig", "angenehm"]
+text = "Angenehm, unspezifisch."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 11, selten bis 14 cm breit, schwarzoliv, schwarzgrau, hell blaugrün, olivgrau, graulila, purpurviolett, eisengrau bis violettgrau, alt gelblich. Mitte alt vertieft und meist dunkler, Rand gerieft, bei Feuchtigkeit glänzend und schmierig."
+lamellen = "Jung weiß, alt cremefarben, sehr brüchig, einzelne gegabelt, eng stehend, Schneiden glatt, alt rostfleckig."
+stiel = "3 bis 9, selten bis 10 cm hoch, 1 bis 2, selten bis 3 cm dick, weiß, glatt, im Alter mit bräunlichen, gelblichen oder rosabraunen Flecken, Basis etwas verjüngt."
+fleisch = "Weiß, zart und brüchig; unter der Huthaut und an Schneckenfraßstellen verfärbt es rosaviolett."
+geruch = "Angenehm, unspezifisch."
+geschmack = "Mild."
+sporenpulver = "Hellgelb bis cremegelblich."
+vorkommen = "Symbiosepilz im Laubwald, gern bei Birke, Buche und Eiche."
+zeit = "Sommer bis Spätherbst."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Taubentaebling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Tauben-Täubling"

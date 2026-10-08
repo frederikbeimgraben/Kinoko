@@ -1,9 +1,4 @@
-<app-search-field
-  [value]="value()"
-  [loading]="state.loading()"
-  [placeholder]="placeholder()"
-  (valueChange)="valueChange.emit($event)"
-/>
+<app-search-field [value]="value()" [placeholder]="placeholder()" (valueChange)="valueChange.emit($event)" />
 @if (showsMarks()) {
   <div class="chiprow">
     @for (chip of chips(); track chip.key) {

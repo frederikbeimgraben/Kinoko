@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { SessionState } from '../core/auth';
+import { SessionStore } from '../core/auth';
 import { ViewportService } from '../core/layout/viewport.service';
 import { I18nService } from '../core/i18n/i18n.service';
 // Diese Datei laedt beim Start mit. Sie nimmt die Bausteine darum einzeln
@@ -16,7 +16,7 @@ import { MapComponent } from '../features/map/map.component';
 import { MapState } from '../features/map/map.state';
 import { AddEntryState } from '../features/add-entry/add-entry.state';
 import { SyncService } from '../core/offline/sync.service';
-import { PwaService } from '../core/pwa/pwa.service';
+import { PwaStore } from '../core/pwa/pwa.store';
 
 /** Reiter, die am Rechner ihre eigenen Spalten mitbringen. */
 const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
@@ -41,11 +41,11 @@ export class ShellComponent {
   private readonly router = inject(Router);
   private readonly i18n = inject(I18nService);
   private readonly viewport = inject(ViewportService);
-  private readonly session = inject(SessionState);
+  private readonly session = inject(SessionStore);
   private readonly map = inject(MapState);
   private readonly addEntry = inject(AddEntryState);
   private readonly sync = inject(SyncService);
-  private readonly pwa = inject(PwaService);
+  private readonly pwa = inject(PwaStore);
 
   protected readonly updateReady = this.pwa.updateReady;
 

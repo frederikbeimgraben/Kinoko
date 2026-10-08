@@ -1,6 +1,6 @@
 :host {
   --list-row-inline: var(--space-row-inline);
-  --size-row: 72px;
+  --list-row-height: 72px;
 
   display: block;
   overflow: hidden;
@@ -9,7 +9,12 @@
   border-radius: var(--radius-lg);
 }
 
-// Der Weg der Farbe steht in Feldbreite: der Text bricht wie im Feld.
+// The card separates its rows with a line, not with the gap of a group.
+app-list-row:not(:first-child) {
+  border-block-start: var(--border-width) solid var(--outline);
+}
+
+// The colour change has the width of a colour field, so the text breaks as in the field.
 .change__value {
   display: flex;
   flex-direction: column;
@@ -18,7 +23,7 @@
   gap: 4px;
 }
 
-// Zwei Farben mit Pfeil zusammen tragen genau eine Farbfeldbreite.
+// Two colours with the arrow have the width of one colour field.
 .change__swatches {
   --change-swatch: calc((var(--pilz-colour-width, 96px) - 12px - 8px) / 2);
 

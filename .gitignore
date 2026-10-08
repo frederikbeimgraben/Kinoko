@@ -29,3 +29,6 @@ modell/.venv/
 
 # Angular-Cache, wenn ng aus der Wurzel gestartet wird
 .angular/
+
+# Agent worktrees
+.claude/worktrees/

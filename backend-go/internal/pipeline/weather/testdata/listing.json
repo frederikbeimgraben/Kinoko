@@ -1,0 +1,31 @@
+{
+ "hyras_precipitation.html": {
+  "names": [
+   "BESCHREIBUNG_gridsgermany_daily_hyras_de_precipitation_de.pdf",
+   "pr_hyras_1_2023_v6-0_de.nc",
+   "pr_hyras_1_2024_v5-0_de.nc",
+   "pr_hyras_1_2024_v6-1_de.nc",
+   "pr_hyras_1_2024_v6-0_de.nc",
+   "pr_hyras_5_2024_v6-0_de.nc",
+   "pr_hyras_1_2025_v6-0_de.nc",
+   "pr_hyras_1_2025_v6-0_de.nc.md5"
+  ],
+  "newest": {
+   "2023": "pr_hyras_1_2023_v6-0_de.nc",
+   "2024": "pr_hyras_1_2024_v6-1_de.nc",
+   "2025": "pr_hyras_1_2025_v6-0_de.nc",
+   "2026": null
+  }
+ },
+ "soil_spruce_2024.html": {
+  "names": [
+   "grids_germany_daily_soil_moisture_spruce_2024_0-30_v1-0.nc",
+   "grids_germany_daily_soil_moisture_spruce_2024_0-30_v1-1.nc",
+   "grids_germany_daily_soil_moisture_spruce_2024_0-10_v1-2.nc",
+   "grids_germany_daily_soil_moisture_spruce_2024_30-60_v1-0.nc"
+  ],
+  "newest": {
+   "0-30": "grids_germany_daily_soil_moisture_spruce_2024_0-30_v1-0.nc"
+  }
+ }
+}

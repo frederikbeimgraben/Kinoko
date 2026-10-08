@@ -6,9 +6,9 @@ import { noViolations } from '../../testing/axe';
 import { RowGroupComponent } from '../row-group/row-group.component';
 import { ListRowComponent } from './list-row.component';
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** Returns the computed styles of an element that must exist. */
 function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
-  if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
+  if (element === null || element === undefined) throw new Error('The element is not in the tree.');
   return getComputedStyle(element);
 }
 
@@ -70,12 +70,52 @@ describe('ListRowComponent', () => {
     expect(style.overflow).toBe('hidden');
   });
 
-  it('setzt den Gruppentitel des Filters auf die Zeilenhöhe des Boards', async () => {
+  it('makes the label bold only for a head row or a row with a sub-line', async () => {
+    const { container, rerender } = await render(ListRowComponent, { inputs: { title: 'Speisewert' } });
+    const strong = (): boolean => !!container.querySelector('.row__title--strong');
+
+    expect(strong()).toBe(false);
+    await rerender({ inputs: { title: 'Speisewert', variant: 'head' } });
+    expect(strong()).toBe(true);
+    await rerender({ inputs: { title: 'Speisewert', variant: 'plain', subline: 'essbar' } });
+    expect(strong()).toBe(true);
+  });
+
+  it('uses the kit geometry: padding 8 16 and gap 12', async () => {
+    const { container } = await render(ListRowComponent, { inputs: { title: 'Speisewert' } });
+
+    const field = styleOf(container.querySelector('.row__field'));
+    expect(field.padding).toBe('8px var(--list-row-inline, 16px)');
+    expect(field.gap).toBe('var(--list-row-gap, 12px)');
+  });
+
+  it('shows the value with its unit, a plain text, a badge and a swatch', async () => {
     const { container } = await render(ListRowComponent, {
-      inputs: { title: 'Speisewert', kind: 'filter' },
+      inputs: {
+        title: 'Hut',
+        value: '8',
+        unit: 'cm',
+        plain: 'braun',
+        badge: 'essbar',
+        badgeKind: 'ok',
+        swatch: 'rgb(122, 82, 48)',
+      },
     });
 
-    expect(styleOf(container.querySelector('.row__title--filter')).lineHeight).toBe('normal');
+    expect(container.querySelector('.row__unit')).toHaveTextContent('cm');
+    expect(styleOf(container.querySelector('.row__value')).fontVariantNumeric).toBe('tabular-nums');
+    expect(screen.getByText('braun')).toHaveClass('row__plain');
+    expect(container.querySelector('app-level-pill')).toHaveTextContent('essbar');
+    expect(styleOf(container.querySelector('.row__swatch')).backgroundColor).toBe('rgb(122, 82, 48)');
+  });
+
+  it('gives a thumbed row the small start padding and a wrapped row more lines', async () => {
+    const { container } = await render(ListRowComponent, {
+      inputs: { title: 'Lamellen', subline: 'eine lange Erklärung', thumbed: true, wrap: true },
+    });
+
+    expect(container.querySelector('.row')).toHaveClass('row--thumbed', 'row--wrap');
+    expect(styleOf(container.querySelector('.row__sub')).whiteSpace).toBe('normal');
   });
 
   it('wird zur Schaltfläche, wenn die Zeile anklickbar ist', async () => {
@@ -136,7 +176,7 @@ describe('ListRowComponent', () => {
   it('trägt für sich den kleinen Radius des Kits', async () => {
     const { container } = await render(ListRowComponent, { inputs: { title: 'Speisewert' } });
 
-    expect(styleOf(container.querySelector('.row')).borderRadius).toBe('4px');
+    expect(styleOf(container.querySelector('.row')).borderRadius).toBe('var(--r-row)');
   });
 
   it('trägt in einer Gruppe die Radien des Kits, aussen 20, innen 4', async () => {
@@ -146,8 +186,8 @@ describe('ListRowComponent', () => {
     const firstRow = styleOf(rows[0].querySelector('.row'));
     const lastRow = styleOf(rows[1].querySelector('.row'));
 
-    expect(firstRow.borderRadius).toBe('20px 20px 4px 4px');
-    expect(lastRow.borderRadius).toBe('4px 4px 20px 20px');
+    expect(firstRow.borderRadius).toBe('var(--r-item) var(--r-item) var(--r-row) var(--r-row)');
+    expect(lastRow.borderRadius).toBe('var(--r-row) var(--r-row) var(--r-item) var(--r-item)');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

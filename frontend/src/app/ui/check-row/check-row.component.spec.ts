@@ -19,7 +19,7 @@ describe('CheckRowComponent', () => {
     const box = screen.getByRole('checkbox', { name: /Profile ändern/ });
     expect(box).not.toBeChecked();
     expect(box.closest('.row')).toHaveClass('tap');
-    expect(box.closest('.row')).toHaveAttribute('data-press', 'tint');
+    expect(box.closest('.row')).not.toHaveAttribute('data-press');
 
     await userEvent.click(box);
 
@@ -62,6 +62,14 @@ describe('CheckRowComponent', () => {
     expect(box).toBeDisabled();
     expect(box).toBeChecked();
     expect(calls).toBe(0);
+    expect(box.closest('.row')).toHaveClass('row--off');
+  });
+
+  it('has the kit padding and gap and shows the count', async () => {
+    const { container } = await render(CheckRowComponent, { inputs: { title: 'essbar', count: 77 } });
+
+    expect(container.querySelector('.row')).toHaveStyle({ padding: '8px 16px', gap: '12px' });
+    expect(container.querySelector('.row__count')).toHaveTextContent('77');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

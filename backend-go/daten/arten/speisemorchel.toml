@@ -1,0 +1,82 @@
+name = "Speisemorchel"
+lateinisch = "Morchella esculenta"
+gruppe = "morchel"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["fruehling"]
+baeume = []
+speisewertHinweis = "Roh giftig. Gut durchgaren. Besonders geschützt, deshalb nur kleine Mengen für den Eigenbedarf."
+weitereNamen = ["Morchel", "Rundmorchel"]
+hutform = { von = "eifoermig" }
+hutmerkmale = ["unregelmaessig"]
+stielmerkmale = ["hohl"]
+
+[baeumeAusErfahrung]
+baeume = ["esche", "ulme", "obstbaum"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Speisemorchel.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+fruchtkoerperBreiteCm = { von = 3.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+fruchtkoerperHoeheCm = { von = 5.0, bis = 12.0, seltenBis = 16.0, einheit = "cm" }
+sporenLaengeUm = { von = 17.0, bis = 22.0, einheit = "um" }
+sporenBreiteUm = { von = 8.0, bis = 12.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 5
+
+[farben]
+hut = [{ name = "hellbraun", hex = "#a97c50" }, { name = "grüngelb", hex = "#9fb02f" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+sporenpulver = [{ name = "cremefarben", hex = "#f0e6c8" }]
+
+[geruch]
+tags = ["wuerzig", "pilzig", "angenehm"]
+text = "Angenehm würzig, pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild. Roh ist er giftig."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+fruchtkoerper = "5 bis 12, selten bis 16 cm hoch und 3 bis 7, selten bis 9 cm breit, gelb, hellbraun, graugelb bis grüngelb, unregelmäßig wabenartig und hohl. Eiförmig, manchmal stumpfkegelig."
+stiel = "Weißlich und hohl. Ein klumpig dicker Stiel weist auf die Dickfüßige Morchel hin, die ebenso essbar ist."
+fleisch = "Weißlich bis hellgelb, brüchig, wachsartig, hohl."
+geruch = "Angenehm würzig, pilzig."
+geschmack = "Mild. Roh ist er giftig."
+sporenpulver = "Hell cremefarben."
+vorkommen = "In Auwäldern, Parks, Gärten, an Waldrändern, auf Waldwiesen und in Rindenmulch, sehr standorttreu. Oft zusammen mit Morchelbecherlingen."
+zeit = "Frühling, in Bayern meist erst ab April bis Mitte Mai."
+
+[[verwechslungen]]
+slug = "dickfuessige-morchel"
+unterschied = "Stiel klumpig dick und längs gefurcht, sonst gleich."
+eigenerUnterschied = "Kleiner, Stiel schlank und nicht klumpig verdickt."
+
+[[verwechslungen]]
+slug = "gemeine-morchel"
+unterschied = "Kleiner, 2 bis 6, selten bis 8 cm breit, hellbraun, graubraun bis rußbraun mit rostfarbenen Flecken."
+
+[[verwechslungen]]
+slug = "spitzmorchel"
+unterschied = "Käppchen zugespitzt, olivbeige bis graubraun, mit Längsrippen und Kammern statt runder Waben."
+eigenerUnterschied = "Käppchen eiförmig mit runden Waben statt Längsrippen, gelb bis hellbraun."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Speisemorchel.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Speise-Morchel"

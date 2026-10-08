@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { AccountService } from '../../core/access/account.service';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { AccountStore } from '../../core/access/account.store';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { HistoryService } from '../../core/navigation/history.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -22,8 +22,8 @@ export class ImageViewComponent {
   private readonly images = inject(ImagesState);
   private readonly species = inject(SpeciesState);
   private readonly history = inject(HistoryService);
-  private readonly rights = inject(PermissionsService);
-  private readonly account = inject(AccountService);
+  private readonly rights = inject(PermissionsStore);
+  private readonly account = inject(AccountStore);
 
   readonly slug = input.required<string>();
   readonly id = input.required<string>();

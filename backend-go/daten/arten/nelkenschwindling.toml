@@ -1,0 +1,89 @@
+name = "Nelkenschwindling"
+lateinisch = "Marasmius oreades"
+gruppe = "schwindling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehig = true
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Roh in größeren Mengen unbekömmlich, er gibt Blausäure ab. Beim Kochen und Trocknen verflüchtigt sie sich. Nur die Hüte nehmen, die Stiele sind zäh."
+haeufigkeit = "sehrHaeufig"
+weitereNamen = ["Feldschwindling", "Suppenpilz", "Hartbeindl", "Herbstmusseron", "Oreadenpilz"]
+synonyme = ["Collybia oreades", "Agaricus coriaceus", "Agaricus pseudomouceron", "Scorteus oreades"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "weit" }
+hutmerkmale = ["gebuckelt"]
+hutrand = { von = ["gerieft"] }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Nelkenschwindling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 1.0, bis = 6.0, seltenBis = 7.0, einheit = "cm" }
+stielLaengeCm = { von = 3.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.0, bis = 10.8, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 6.2, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "hellbraun", hex = "#a97c50" }, { name = "ocker", hex = "#c8963c" }]
+sporenlager = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+stiel = [{ name = "hellbraun", hex = "#a97c50" }]
+fleisch = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["bittermandel", "pilzig", "angenehm"]
+text = "Nach Bittermandel und Blausäure, dazu nach Sägespänen und Gewürznelken, etwas stechend alkalisch, dennoch angenehm pilzig."
+
+[geschmack]
+tags = ["mild", "pilzig"]
+text = "Mild, würzig, angenehm pilzig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "1 bis 6, selten bis 7 cm breit, hellbraun bis ocker-rotbraun, gebuckelt, Rand etwas gerieft und beim Abtrocknen ausblassend."
+lamellen = "Weißlich, hellbraun, gelbbraun bis gelblich, ausgebuchtet angeheftet, meist weit entfernt stehend, mit Zwischenlamellen und mit Querlamellen am Grund."
+stiel = "3 bis 7, selten bis 9 cm lang, 2 bis 5, selten bis 6 mm dick, hellbraun, zur Basis dunkler, Spitze heller. Starr, zäh, elastisch und knorpelig."
+fleisch = "Weißlich bis cremefarben, faserig und zäh."
+geruch = "Nach Bittermandel und Blausäure, dazu nach Sägespänen und Gewürznelken, etwas stechend alkalisch, dennoch angenehm pilzig."
+geschmack = "Mild, würzig, angenehm pilzig."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer auf Rasen, Wiesen, in Parks und Gärten, an Waldrändern und Waldwegen, oft in Hexenringen. Das Gras um das Myzel wird auffallend grün. Sehr häufig."
+zeit = "Frühling bis Spätherbst."
+
+[[verwechslungen]]
+slug = "brennender-ruebling"
+unterschied = "Lamellen gelbbraun bis dottergelb, Stiel sehr dünn, Geschmack nach kurzer Zeit scharf pfefferig. Auf Laub- und Nadelstreu im Wald."
+eigenerUnterschied = "Hut ledergelb bis hellbraun, Lamellen weißlich und entfernt, Stiel zäh und hornartig, Geschmack bleibt mild."
+
+[[verwechslungen]]
+slug = "gruenender-risspilz"
+unterschied = "Hut strohgelb bis grünlichbraun und radialrissig, Stiel von unten her blaugrün, Fleisch bei Verletzung grünend."
+eigenerUnterschied = "Hut ledergelb mit stumpfem Buckel, Lamellen blass creme und entfernt, Stiel zäh und verdrehbar, Sporenpulver weiß."
+
+[[verwechslungen]]
+slug = "huegelschwindling"
+unterschied = "Geruch nach Zedernholz, zerrieben mehlig ranzig, nie nach Bittermandel. Geschmack unangenehm. Wächst in dichten Büscheln."
+
+[[verwechslungen]]
+slug = "rinnigbereifter-trichterling"
+unterschied = "Hut weißlich und weiß bereift, Lamellen fast gerade angewachsen und sehr gedrängt, Stiel kurz und brüchig. Auf denselben Wiesen."
+
+[[verwechslungen]]
+slug = "ziegelroter-risspilz"
+unterschied = "Hut radialfaserig aufreißend, ziegelrot bis ockerbraun, Lamellen später rötlich bis olivbraun, Fleisch rötend."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Nelkenschwindling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Nelken-Schwindling"

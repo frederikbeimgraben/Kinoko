@@ -1,0 +1,89 @@
+name = "Rotgelber Stoppelpilz"
+lateinisch = "Hydnum rufescens"
+gruppe = "stoppelpilz"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Sind die Stoppeln länger als drei Millimeter, schmeckt er oft etwas bitter. Die Größe des Fruchtkörpers sagt darüber nichts aus."
+haeufigkeit = "sehrHaeufig"
+weitereNamen = ["Semmelstoppelpilz", "Rostgelber Semmelstoppelpilz", "Semmelgelber Stacheling", "Rotgelber Semmelstoppelpilz", "Orangeroter Stoppelpilz"]
+fruchtschicht = { art = "stacheln" }
+hutrand = { von = ["eingerollt"] }
+
+[baeumeAusErfahrung]
+baeume = ["fichte", "buche"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Semmelstoppelpilze.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 20.0, seltenBis = 25.0, einheit = "cm" }
+sporenLaengeUm = { von = 4.6, bis = 10.0, einheit = "um" }
+sporenBreiteUm = { von = 4.9, bis = 7.8, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }, { name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "gelb", hex = "#e8c33a" }]
+
+[geruch]
+tags = ["angenehm"]
+text = "Angenehm, nach Orangenblütenwasser."
+
+[geschmack]
+tags = ["mild", "bitter", "scharf"]
+text = "Mild. Alte Stücke werden bitterlich, erinnern an getrocknete Haferflocken und schmecken beim längeren Kauen etwas scharf."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 20, selten bis 25 cm breit, jung weißlich gelb bis semmelgelb, später dunkler gelblich. Rand lange eingerollt."
+stacheln = "Weiß bis hellorange, im Alter gelblich, kegelig und relativ weit auseinander stehend, am Stiel etwas herablaufend."
+stiel = "Weißlich bis hellgelb, auf Druck gilbend."
+fleisch = "Gelblich weiß, creme- bis hellorange, fest und etwas brüchig. Bei Verletzung läuft es gelbrosa bis braun an."
+geruch = "Angenehm, nach Orangenblütenwasser."
+geschmack = "Mild. Alte Stücke werden bitterlich, erinnern an getrocknete Haferflocken und schmecken beim längeren Kauen etwas scharf."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz im Mischwald, sehr häufig und oft in Massen."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "ellipsoidsporige-stoppelpilz"
+unterschied = "Nur 2 bis 5 cm breit, Hut gelborange bis terrakottafarben."
+
+[[verwechslungen]]
+slug = "genabelter-semmelstoppelpilz"
+unterschied = "Hutmitte genabelt und vertieft, extrem selten."
+
+[[verwechslungen]]
+slug = "schafporling"
+unterschied = "Poren statt Stoppeln, Hut weiß bis schmutzig weiß, Stiel mit graubraunen Flecken."
+
+[[verwechslungen]]
+slug = "semmelporling"
+unterschied = "Poren statt Stoppeln, Hut semmelgelb bis orangebraun, schmeckt schnell bitterlich."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Semmelstoppelpilze.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Stoppelpilze"

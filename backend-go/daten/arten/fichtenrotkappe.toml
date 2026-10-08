@@ -1,0 +1,65 @@
+name = "Fichtenrotkappe"
+lateinisch = "Leccinum piceinum"
+gruppe = "raufussroehrling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = false
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["fichte"]
+speisewertHinweis = "Raufußröhrlinge sind in Deutschland besonders geschützt. Die Art ist sehr selten; nur wenige Fruchtkörper für den Eigenbedarf nehmen oder den Fund stehen lassen."
+haeufigkeit = "sehrSelten"
+synonyme = ["Krombholziella piceina", "Leccinum piceinum pilát", "Boletus piceinus"]
+fruchtschicht = { art = "roehren" }
+hutrand = { von = ["ueberstehend", "eingerollt"] }
+stielmerkmale = ["beflockt", "faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/FichtenRotkappe.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 18.0, seltenBis = 21.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 20.0, seltenBis = 22.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 4.0, seltenBis = 5.0, einheit = "cm" }
+sporenLaengeUm = { von = 14.0, bis = 19.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "orangebraun", hex = "#c86e28" }, { name = "braunrot", hex = "#7d3324" }]
+sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+stiel = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "gelbbraun", hex = "#a3813f" }]
+
+[geruch]
+tags = ["obstartig", "angenehm"]
+text = "Angenehm, frisch etwas obstartig."
+
+[geschmack]
+tags = ["mild", "saeuerlich"]
+text = "Mild, säuerlich."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 18, selten bis 21 cm breit, braunrot bis orangebraun, feinfilzig, Huthaut am Rand überstehend und eingerollt."
+roehren = "Weißlich grau, graubraun bis gelbbraun, leicht ablösbar."
+stiel = "6 bis 20, selten bis 22 cm hoch, 1 bis 4, selten bis 5 cm dick, weißlich mit schwarzen faserigen Schüppchen, zur Spitze weniger geschuppt."
+fleisch = "Weiß, dann rötlich, später violett verfärbend."
+geruch = "Angenehm, frisch etwas obstartig."
+geschmack = "Mild, säuerlich."
+sporenpulver = "Gelbbraun."
+vorkommen = "Symbiosepilz bei Fichte, gern zwischen Heidelbeeren. Allgemein sehr selten, in Tschechien häufiger."
+zeit = "Sommer bis Herbst."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/FichtenRotkappe.htm"

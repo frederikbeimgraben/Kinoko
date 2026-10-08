@@ -1,5 +1,5 @@
 import type { Bounds } from './map-adapter';
-import type { EffectiveTheme } from '../core/theme/theme.service';
+import type { EffectiveTheme } from '../core/theme/theme.store';
 
 /**
  * Die Hintergrundkarte kommt von OpenFreeMap: frei, ohne Schlüssel, in hell und

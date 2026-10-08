@@ -1,0 +1,87 @@
+name = "Reifpilz"
+lateinisch = "Cortinarius caperatus"
+gruppe = "schleierling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["kiefer", "fichte"]
+speisewertHinweis = "Er ist häufig von Maden befallen."
+weitereNamen = ["Zigeuner", "Runzelschüppling", "Hühnerkoppe", "Scheidenrunzling Reifpilz"]
+synonyme = ["Rozites caperatus", "Rozites caperata", "Agaricus caperatus", "Pholiota caperata", "Dryophila caperata", "Togaria caperata"]
+fruchtschicht = { art = "lamellen", ansatz = "angewachsen", schneide = "gesaegt" }
+stielmerkmale = ["faserig", "voll", "ring", "knolle"]
+
+[baeumeAusErfahrung]
+baeume = ["birke"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/ReifpilzEssbar1004.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 10.0, seltenBis = 15.0, einheit = "cm" }
+sporenLaengeUm = { von = 10.0, bis = 14.0, einheit = "um" }
+sporenBreiteUm = { von = 7.0, bis = 9.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "hellbraun", hex = "#a97c50" }, { name = "violett", hex = "#6b4a8a" }, { name = "beige", hex = "#d9c9a3" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+sporenlager = [{ name = "beige", hex = "#d9c9a3" }, { name = "ocker", hex = "#c8963c" }]
+stiel = [{ name = "hellbraun", hex = "#a97c50" }, { name = "violett", hex = "#6b4a8a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "gelb", hex = "#e8c33a" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 10, selten bis 15 cm breit, violett-hellbraun, graubraun, rosabraun, umbrabraun, gelb-, orange- bis beigebraun, meist mit weißem oder hell violettem Reifüberzug. Haut uneben."
+lamellen = "Blassrötlich bis blassbeige, später ocker, angeheftet angewachsen, Schneiden gekerbt und wellig."
+stiel = "Hellbraun bis hellviolett, alt etwas gilbend, faserig, voll, mit häutigem Ring. Basis meist knollig verdickt."
+fleisch = "Weißlich, fest, alt wässrig und weich."
+geruch = "Angenehm pilzig."
+geschmack = "Mild."
+sporenpulver = "Zimtbraun, ockerbraun bis rostbraun."
+vorkommen = "Symbiosepilz im Nadelwald, gern unter Kiefern und Fichten, auf sauren und sandigen Böden."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "gruener-knollenblaetterpilz"
+unterschied = "Hut olivgrün bis gelbgrün, Lamellen weiß und frei, Stielbasis in einer eierschaligen Volva, Sporenpulver weiß."
+
+[[verwechslungen]]
+slug = "kegelhuetiger-knollenblaetterpilz"
+unterschied = "Hut weißlich und seidig radialfaserig, Lamellen bleiben weiß, Stielbasis in einer häutigen Scheide, Sporenpulver weiß. Gleicher Standort und gleicher Boden."
+
+[[verwechslungen]]
+slug = "zimtroter-guertelfuss"
+unterschied = "Lamellen zimtrot bis rotbraun, Hut ohne Reifüberzug, Stiel wollig gegürtelt statt mit häutigem Ring, Geruch rettichartig."
+eigenerUnterschied = "Hut mit weißem Reifüberzug, Stiel mit häutigem Ring statt wolliger Gürtelung."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/ReifpilzEssbar1004.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Reifpilz"

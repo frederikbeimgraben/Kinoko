@@ -8,7 +8,7 @@ import {
   signal,
   type OnDestroy,
 } from '@angular/core';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { HistoryService } from '../../core/navigation/history.service';
 import { AuthService } from '../../core/auth';
 import { LICENCES, type Licence } from '../../core/api/models';
@@ -46,7 +46,7 @@ import { ImagesState } from './images.state';
 export class ImageFormComponent implements OnDestroy {
   private readonly images = inject(ImagesState);
   private readonly species = inject(SpeciesState);
-  private readonly rights = inject(PermissionsService);
+  private readonly rights = inject(PermissionsStore);
   private readonly auth = inject(AuthService);
   private readonly i18n = inject(I18nService);
   private readonly history = inject(HistoryService);

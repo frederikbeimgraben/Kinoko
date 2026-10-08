@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { Router, type CanActivateFn, type UrlTree } from '@angular/router';
 import { filter, map, take, type Observable } from 'rxjs';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import type { Permission } from '../../core/api/models';
 import { ADMIN_PERMISSIONS } from './admin.entries';
 
@@ -16,7 +16,7 @@ import { ADMIN_PERMISSIONS } from './admin.entries';
  */
 export function requiresPermission(permission: Permission | null): CanActivateFn {
   return (): Observable<boolean | UrlTree> => {
-    const rights = inject(PermissionsService);
+    const rights = inject(PermissionsStore);
     const router = inject(Router);
     // Beim Start läuft die stille Anmeldung noch. Ohne das Warten fiele ein
     // tiefer Link in die Verwaltung immer auf das Konto zurück.
@@ -28,6 +28,6 @@ export function requiresPermission(permission: Permission | null): CanActivateFn
   };
 }
 
-function allowed(rights: PermissionsService, permission: Permission | null): boolean {
+function allowed(rights: PermissionsStore, permission: Permission | null): boolean {
   return permission === null ? rights.canAny(ADMIN_PERMISSIONS) : rights.can(permission);
 }

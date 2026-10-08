@@ -1,0 +1,71 @@
+name = "Fleischbräunlicher Anistrichterling"
+lateinisch = "Clitocybe obsoleta"
+gruppe = "trichterling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Giftig. Zu erkennen am aufdringlich anis- bis fenchelartigen Geruch, am hygrophanen graubraunen Hut mit eingedrückter Mitte und am knorpelig-elastischen, oft breitgedrückten Stiel."
+weitereNamen = ["Wohlriechender Trichterling"]
+synonyme = ["Omphalia obsoleta", "Agaricus obsoletus"]
+fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng", schneide = "glatt" }
+hutmerkmale = ["hygrophan", "vertieft", "genabelt"]
+hutrand = { von = ["wellig", "eingebogen", "gerieft"] }
+stielmerkmale = ["faserig", "hohl"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/FleischAnistrichterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 6.0, seltenBis = 8.0, einheit = "cm" }
+stielLaengeCm = { von = 1.0, bis = 3.5, seltenBis = 5.0, einheit = "cm" }
+sporenLaengeUm = { von = 5.5, bis = 7.5, einheit = "um" }
+sporenBreiteUm = { von = 3.0, bis = 4.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "beige", hex = "#d9c9a3" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "hellbraun", hex = "#a97c50" }, { name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["anisartig", "suesslich"]
+text = "Aufdringlich anisartig, fenchelartig, süßlich."
+
+[geschmack]
+tags = ["mild", "suesslich"]
+text = "Mild, süßlich, etwas ranzig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 6, selten bis 8 cm breit, caramelbraun, graubraun, graubeige bis fleischbräunlich, hygrophan, Mitte eingedrückt und alt genabelt, speckig glänzend. Rand lange wellig nach unten gebogen und leicht durchscheinend gerieft."
+lamellen = "Grauweiß bis gelblichweiß, angewachsen und bogig herablaufend, gedrängt, mit vielen Zwischenlamellen, Schneiden gleichfarbig und glatt."
+stiel = "1 bis 3,5, selten bis 5 cm lang, 5 bis 8, selten bis 11 mm dick, braunweißlich, durchscheinend, schwach weißfaserig, etwas bereift, knorpelig-elastisch und steif, oft breitgedrückt, alt hohl. Basis spindelig erweitert mit weißem Myzelgeflecht."
+fleisch = "Weiß bis cremeweiß oder hellbraun, im Hut- und Stielkern cremeweiß, dünn."
+geruch = "Aufdringlich anisartig, fenchelartig, süßlich."
+geschmack = "Mild, süßlich, etwas ranzig."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer im Mischwald, gern Nadelwald, im Laub oder Moos an feuchten Stellen."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "graublaettriger-trichterling"
+unterschied = "Lamellen deutlich grau, kein Anisgeruch."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/FleischAnistrichterling.htm"

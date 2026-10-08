@@ -1,0 +1,103 @@
+name = "Mönchskopf"
+lateinisch = "Infundibulicybe geotropa"
+gruppe = "trichterling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Alte Stiele sind wässrig und zäh und bleiben besser stehen. Unter den Trichterlingen stehen einige tödlich giftige Arten; nur mit sicherer Bestimmung sammeln."
+haeufigkeit = "haeufig"
+weitereNamen = ["Falber Riesentrichterling"]
+synonyme = ["Clitocybe geotropa", "Omphalia geotropa var. geotropa", "Omphalia geotropa", "Clitocybe subinvoluta sensu", "Clitocybe maxima sensu", "Infundibulicybe geotropa var. maxima", "Clitocybe geotropa var. minor"]
+fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }
+hutmerkmale = ["gebuckelt"]
+hutrand = { von = ["eingerollt"], nach = ["wellig"] }
+
+[baeumeAusErfahrung]
+baeume = ["buche", "fichte"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/MoenchskopfEssbar1004.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Nur an frischen Fruchtkörpern, auf dem Hut olivgrün."
+
+[masse]
+hutBreiteCm = { von = 5.0, bis = 20.0, seltenBis = 25.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 15.0, seltenBis = 17.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 3.0, seltenBis = 4.0, einheit = "cm" }
+sporenLaengeUm = { von = 5.8, bis = 10.0, einheit = "um" }
+sporenBreiteUm = { von = 5.0, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+sporenlager = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+fleisch = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["bittermandel", "mehlig", "suesslich", "muffig"]
+text = "Süßlich, etwas nach Lavendel, teils stechend alkalisch wie Bittermandel. Im Alter muffig mehlartig."
+
+[geschmack]
+tags = ["mild", "bitter"]
+text = "Mild, jung nach längerem Kauen etwas bitterlich."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "5 bis 20, selten bis 25 cm breit, bräunlich, feinfilzig, später kahl. In der Mitte ein Buckel, der oft nur mit den Fingern zu ertasten ist. Rand jung weit eingerollt und gekrempelt, alt unregelmäßig wellig."
+lamellen = "Weiß bis cremefarben, herablaufend, eng stehend."
+stiel = "6 bis 15, selten bis 17 cm lang, 1 bis 3, selten bis 4 cm dick, bräunlich wie der Hut, Basis keulig verdickt."
+fleisch = "Weißlich bis cremefarben, in der Hutmitte dick, in der Stielrinde bräunlich, außen ziemlich hart und innen weich, im Alter wässrig und zäh faserig."
+geruch = "Süßlich, etwas nach Lavendel, teils stechend alkalisch wie Bittermandel. Im Alter muffig mehlartig."
+geschmack = "Mild, jung nach längerem Kauen etwas bitterlich."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer im Mischwald, gern auf kalkreichem Boden, oft in Hexenringen. Häufig."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "bleiweisser-trichterling"
+unterschied = "Deutlich kleiner und dünnfleischig, Hut weiß und glasig bereift, ohne Buckel in der Mitte."
+
+[[verwechslungen]]
+slug = "nebelkappe"
+unterschied = "Hut graubraun bis weißgrau ohne Buckel, Geruch unangenehm süßlich nach Raps, Sporenpulver cremegelblich."
+eigenerUnterschied = "Hut bräunlich mit einem Buckel in der Mitte, Lamellen weit herablaufend, Stiel keulig."
+
+[[verwechslungen]]
+slug = "riesenkrempentrichterling"
+unterschied = "Hut weiß bis blassocker, im Alter mit braunen Flecken und kreisförmigen Rissen, Geruch mehlig, Geschmack nussig."
+
+[[verwechslungen]]
+slug = "riesentrichterling"
+unterschied = "Hutmitte ohne Buckel, Rand nur wenig eingerollt, Hut seidig glatt."
+eigenerUnterschied = "Hut mit deutlich fühlbarem Buckel in der Mitte, sonst sehr ähnlich."
+
+[[verwechslungen]]
+slug = "rillstieliger-weichritterling"
+unterschied = "Hut rotbraun bis kastanienbraun und stark ausblassend, Lamellen nur mit einem Zahn herablaufend, Stiel rillig gestreift."
+eigenerUnterschied = "Hut ockerbraun mit deutlichem Buckel, Lamellen weit herablaufend, Geruch süßlich parfümiert."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/MoenchskopfEssbar1004.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Mönchskopf"
