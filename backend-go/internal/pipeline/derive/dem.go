@@ -78,7 +78,7 @@ func demProcess(source, target, mode string, switches ...string) error {
 		return err
 	}
 	defer src.Close()
-	out, err := src.Dem(target, mode, "", append([]string{"-of", "GTiff"}, switches...))
+	out, err := src.Dem(target, mode, "", append([]string{"-of", "GTiff"}, switches...), quiet)
 	if err != nil {
 		return fmt.Errorf("derive: gdaldem %s: %w", mode, err)
 	}

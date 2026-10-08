@@ -172,6 +172,7 @@ func (acceptAll) Derive(context.Context, *sources.Version) ([]sources.Artifact, 
 
 func TestKindWithoutProcessorFailsAndCanBeReprocessed(t *testing.T) {
 	f := newFixture(t)
+	f.m.UseProcessor(sources.KindGBIFArchive, nil)
 	v := f.upload(sources.KindGBIFArchive, "fungi.zip", []byte("PK"), nil)
 	failure := v["error"].(map[string]any)
 	if v["state"] != "failed" || v["active"] != false || failure["code"] != "processor_missing" {

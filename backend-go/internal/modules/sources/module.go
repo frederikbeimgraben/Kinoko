@@ -21,13 +21,14 @@ const janitorEvery = 15 * time.Minute
 
 // Module is the sources module.
 type Module struct {
-	deps     server.Deps
-	runs     *runs.Store
-	files    files
-	free     func(path string) (uint64, error)
-	builtins map[Kind]Processor
-	locks    sync.Map
-	work     sync.WaitGroup
+	deps      server.Deps
+	runs      *runs.Store
+	files     files
+	free      func(path string) (uint64, error)
+	builtins  map[Kind]Processor
+	overrides map[Kind]Processor
+	locks     sync.Map
+	work      sync.WaitGroup
 }
 
 // New makes the module. The run store queues the fetch runs; it must be
@@ -44,6 +45,7 @@ func New(deps server.Deps, runStore *runs.Store) *Module {
 		free:  freeBytes,
 	}
 	m.builtins = builtinProcessors(m)
+	m.overrides = map[Kind]Processor{}
 	return m
 }
 

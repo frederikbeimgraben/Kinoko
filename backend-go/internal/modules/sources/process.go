@@ -30,6 +30,9 @@ func Register(kind Kind, p Processor) {
 }
 
 func (m *Module) processor(kind Kind) (Processor, bool) {
+	if p, ok := m.overrides[kind]; ok {
+		return p, p != nil
+	}
 	registry.RLock()
 	p, ok := registry.processors[kind]
 	registry.RUnlock()

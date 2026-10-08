@@ -1,6 +1,7 @@
 package derive
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -10,6 +11,15 @@ import (
 )
 
 var registerGDAL = sync.OnceFunc(godal.RegisterAll)
+
+// quiet lets GDAL warnings pass, as the command-line tools of the Python
+// chain do. A failure stays an error.
+var quiet = godal.ErrLogger(func(ec godal.ErrorCategory, _ int, msg string) error {
+	if ec > godal.CE_Warning {
+		return errors.New(msg)
+	}
+	return nil
+})
 
 // openRaster opens a raster file or a GDAL virtual path.
 func openRaster(path string) (*godal.Dataset, error) {
@@ -24,7 +34,7 @@ func openRaster(path string) (*godal.Dataset, error) {
 // warpMem runs gdalwarp into a MEM dataset. The switches are those of the
 // Python command without "-q", "-overwrite" and the file names.
 func warpMem(src *godal.Dataset, switches []string) (*godal.Dataset, error) {
-	out, err := src.Warp("", switches, godal.Memory)
+	out, err := src.Warp("", switches, godal.Memory, quiet)
 	if err != nil {
 		return nil, fmt.Errorf("derive: warp %v: %w", switches, err)
 	}
@@ -33,7 +43,7 @@ func warpMem(src *godal.Dataset, switches []string) (*godal.Dataset, error) {
 
 // warpFile runs gdalwarp into a GeoTIFF file.
 func warpFile(src *godal.Dataset, target string, switches []string) error {
-	out, err := src.Warp(target, switches, godal.GTiff)
+	out, err := src.Warp(target, switches, godal.GTiff, quiet)
 	if err != nil {
 		return fmt.Errorf("derive: warp %s %v: %w", target, switches, err)
 	}
@@ -148,7 +158,7 @@ func epsgOfDataset(ds *godal.Dataset) int {
 // buildVRT runs gdalbuildvrt over the files.
 func buildVRT(target string, files []string) (*godal.Dataset, error) {
 	registerGDAL()
-	ds, err := godal.BuildVRT(target, files, nil)
+	ds, err := godal.BuildVRT(target, files, nil, quiet)
 	if err != nil {
 		return nil, fmt.Errorf("derive: build VRT: %w", err)
 	}

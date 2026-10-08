@@ -65,7 +65,7 @@ func (m treeMap) cut(box [4]float64) (*godal.Dataset, error) {
 	}
 	f := func(v float64) string { return fmt.Sprintf("%.0f", v) }
 	if m.utm {
-		out, err := m.ds.Translate("", []string{"-projwin", f(box[0]), f(box[3]), f(box[2]), f(box[1])}, godal.Memory)
+		out, err := m.ds.Translate("", []string{"-projwin", f(box[0]), f(box[3]), f(box[2]), f(box[1])}, godal.Memory, quiet)
 		if err != nil {
 			return nil, fmt.Errorf("derive: cut tree map: %w", err)
 		}
@@ -84,7 +84,7 @@ func inlandMask(outline *godal.Dataset, box [4]float64, pixel float64) ([]uint8,
 	f := func(v float64) string { return fmt.Sprintf("%.3f", v) }
 	ds, err := outline.Rasterize("", []string{"-burn", "1", "-init", "0", "-ot", "Byte",
 		"-a_srs", fmt.Sprintf("EPSG:%d", UTMCode), "-te", f(box[0]), f(box[1]), f(box[2]), f(box[3]),
-		"-ts", itoa(width), itoa(height)}, godal.Memory)
+		"-ts", itoa(width), itoa(height)}, godal.Memory, quiet)
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("derive: rasterize outline: %w", err)
 	}
@@ -169,6 +169,8 @@ func allOf[T any](items []T, ok func(T) bool) bool {
 
 // cutLayer warps the field of one layer onto the tile grid of the block and
 // writes its tiles, as warp_block and cut_block. It gives the tiles with data.
+// Python warps all bands in one call. One band per call gives the same values
+// with UNIFIED_SRC_NODATA=NO and keeps one float field in memory (1 GB limit).
 func cutLayer(b *blockFields, l FineLayer, store tiles.DirStore, merc [4]float64, side, zoom, tx0, ty0 int) ([]geo.TileID, error) {
 	src := tiles.Raster{Bands: [][]float32{b.field(l)}, NX: b.nx, NY: b.ny, GeoTransform: b.gt, EPSG: b.epsg}
 	warped, err := tiles.NewGDALWarper().Warp(src, tiles.TileGridSwitches(merc, side, side))

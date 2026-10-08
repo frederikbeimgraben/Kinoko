@@ -5,6 +5,9 @@ Run it in the geo shell of modell/ from the repository root:
     cd modell && nix develop .#geo -c python \
         ../backend-go/internal/pipeline/derive/testdata/gen_golden.py
 
+The tree map declares nodata 0, as the Go warp does with "-srcnodata 0";
+without it GDAL 3.13 turns class 0 into 1 and counts it as forest.
+
 Inputs (testdata/in): a tree species map in EPSG:32632 at 10 m, a DEM in
 two EPSG:4326 tiles, three SoilGrids rasters and an outline. Each covers a
 crop of 20 x 20 km near Kassel. Golden outputs (testdata/golden) come from:
@@ -94,7 +97,7 @@ def make_trees(bounds) -> Path:
     classes[(h % 997) == 0] = 7
     classes[(h % 1999) == 1] = 200
     path = IN / "trees_32632.tif"
-    write(path, classes, "EPSG:32632", from_origin(e0, n0 + ny * 10, 10, 10), nodata=None)
+    write(path, classes, "EPSG:32632", from_origin(e0, n0 + ny * 10, 10, 10), nodata=0)
     return path
 
 

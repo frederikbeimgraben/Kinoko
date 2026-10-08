@@ -31,4 +31,6 @@ func (m *Module) UseTreesGridRows(lo, hi int64) {
 }
 
 // UseProcessor sets the processor of a kind for this module only.
-func (m *Module) UseProcessor(kind Kind, p Processor) { m.builtins[kind] = p }
+// UseProcessor replaces the processor of a kind for this module. A nil
+// processor makes the kind act as a kind without a processor.
+func (m *Module) UseProcessor(kind Kind, p Processor) { m.overrides[kind] = p }

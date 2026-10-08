@@ -68,6 +68,9 @@ type TreeOptions struct {
 // neighbour and nodata 0, then each block of step/10 pixels is counted.
 // The source is a local file in any CRS instead of the WCS of the Thünen
 // service. An error in a tile stops the count; Python skips the tile.
+// The warp adds "-srcnodata 0": without it GDAL 3.13 turns class 0 of a
+// map without nodata into 1 to keep it apart from the dstnodata 0, and so
+// counts ground without forest as forest.
 func TileTrees(ctx context.Context, source string, g Grid, opt TreeOptions) (*ClassCounts, error) {
 	if err := g.Check(); err != nil {
 		return nil, err
@@ -119,7 +122,7 @@ func warpTreeTile(src *godal.Dataset, box [4]int) ([]uint8, int, int, error) {
 	px := strconv.Itoa(TreePixel)
 	switches := []string{"-t_srs", ModelCRS,
 		"-te", itoa(box[0]), itoa(box[1]), itoa(box[2]), itoa(box[3]),
-		"-tr", px, px, "-r", "near", "-dstnodata", "0"}
+		"-tr", px, px, "-r", "near", "-srcnodata", "0", "-dstnodata", "0"}
 	ds, err := warpMem(src, switches)
 	if err != nil {
 		return nil, 0, 0, err
