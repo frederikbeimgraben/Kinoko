@@ -72,16 +72,21 @@ func New(cfg Config) *Runner {
 }
 
 // FromDeps makes the runner of the service: a Chain on the data folder of
-// the sources module and the maps folder of the settings.
+// the sources module and the maps folder of the settings. With the pipeline
+// on, the chain publishes the static layers each time a static kind becomes active.
 func FromDeps(deps server.Deps, store *runs.Store, src *sources.Module) *Runner {
 	chain := &Chain{
 		DB: deps.DB, Sources: src, Data: src.Root(), Maps: deps.Settings.Maps,
 		HTTP: &http.Client{}, Now: deps.Now, Renderer: NewMaps(),
 	}
-	return New(Config{
+	r := New(Config{
 		DB: deps.DB, Runs: store, Sources: src, Stages: chain, Logs: deps.Settings.RunLogs,
 		Enabled: deps.Settings.PipelineEnable, Schedule: deps.Settings.Schedule, Now: deps.Now, Log: deps.Log,
 	})
+	if r.enabled {
+		src.OnActivate(func(ctx context.Context, kind sources.Kind) { chain.Activated(ctx, kind, r.log) })
+	}
+	return r
 }
 
 // Routes adds no endpoint.

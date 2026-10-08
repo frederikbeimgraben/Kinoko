@@ -29,6 +29,7 @@ type Module struct {
 	overrides map[Kind]Processor
 	locks     sync.Map
 	work      sync.WaitGroup
+	activated func(ctx context.Context, kind Kind)
 }
 
 // New makes the module. The run store queues the fetch runs; it must be
@@ -84,6 +85,22 @@ func (m *Module) Start(ctx context.Context) error {
 	}
 	go m.janitor(ctx)
 	return nil
+}
+
+// OnActivate sets a function that runs in the background each time a version of a kind
+// becomes active. The pipeline uses it to publish the static layers. Set it before Start.
+func (m *Module) OnActivate(hook func(ctx context.Context, kind Kind)) { m.activated = hook }
+
+// notifyActive starts the hook of OnActivate for a kind.
+func (m *Module) notifyActive(kind Kind) {
+	if m.activated == nil {
+		return
+	}
+	m.work.Add(1)
+	go func() {
+		defer m.work.Done()
+		m.activated(context.Background(), kind)
+	}()
 }
 
 // Wait blocks until the processing in the background is done.

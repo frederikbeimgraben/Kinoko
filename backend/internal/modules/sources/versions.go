@@ -33,7 +33,11 @@ func (m *Module) activate(ctx context.Context, id db.ID) (Version, error) {
 		return Version{}, err
 	}
 	m.removeFolders(removed)
-	return m.files.version(ctx, m.deps.DB, id)
+	v, err := m.files.version(ctx, m.deps.DB, id)
+	if err == nil {
+		m.notifyActive(v.Kind)
+	}
+	return v, err
 }
 
 func (m *Module) activateTx(ctx context.Context, tx *sql.Tx, id db.ID) ([]Version, error) {
@@ -217,6 +221,9 @@ func (m *Module) deleteVersion(r *http.Request) (web.Response, error) {
 		return nil, err
 	}
 	m.removeFolders(append(removed, v))
+	if v.Active {
+		m.notifyActive(v.Kind)
+	}
 	return web.Empty(http.StatusNoContent), nil
 }
 

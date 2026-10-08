@@ -88,3 +88,15 @@ func weatherNames(features []string) []string {
 	candidates := slices.Concat(weather.LagVars, weather.LagNames(), weather.AnomalyNames())
 	return slices.DeleteFunc(slices.Clone(candidates), func(n string) bool { return !slices.Contains(features, n) })
 }
+
+// WeatherInputs returns the weather checkpoints that a map with the features reads.
+func WeatherInputs(features []string) []string { return weather.Inputs(weatherNames(features)) }
+
+// LayerWeather returns the weather checkpoints that the weekly layers read.
+func LayerWeather() []string {
+	columns := make([]string, len(WeeklyLayers))
+	for i, l := range WeeklyLayers {
+		columns[i] = l.Column
+	}
+	return weather.Inputs(columns)
+}

@@ -121,6 +121,37 @@ func DeriveWith(c *Cube, names []string, n *Normals) (map[string][]float32, erro
 	return out, nil
 }
 
+// Inputs gives the checkpoints of Jobs that the names of DeriveWith read, sorted.
+// A name that is not a feature of DeriveWith stays as it is.
+func Inputs(names []string) []string {
+	out := []string{}
+	for _, name := range names {
+		out = append(out, inputsOf(name)...)
+	}
+	slices.Sort(out)
+	return slices.Compact(out)
+}
+
+func inputsOf(name string) []string {
+	if slices.ContainsFunc(Jobs, func(j Job) bool { return j.Name == name }) {
+		return []string{name}
+	}
+	if name == "paws" {
+		return PawsVars
+	}
+	for _, suffix := range []string{"_anom", "_ratio"} {
+		if base, ok := strings.CutSuffix(name, suffix); ok {
+			return inputsOf(base)
+		}
+	}
+	for _, re := range []*regexp.Regexp{dropRe, lagRe, rollRe} {
+		if m := re.FindStringSubmatch(name); m != nil {
+			return inputsOf(m[1])
+		}
+	}
+	return []string{name}
+}
+
 func anomalyBases(names []string) []string {
 	var out []string
 	for _, name := range names {

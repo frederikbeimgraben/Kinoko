@@ -118,6 +118,43 @@ func TestLoadCubeIsOuterJoin(t *testing.T) {
 	}
 }
 
+func TestLoadCubeKeysOfAllKeepsTheShapeOfTheFullCube(t *testing.T) {
+	dir := t.TempDir()
+	copyTree(t, "testdata/py_weekly", dir)
+	soil, err := readCheckpoint(CheckpointPath(dir, "paws_spruce"), "paws_spruce", func(calendar.Week) bool { return true })
+	if err != nil {
+		t.Fatal(err)
+	}
+	var more rows
+	for i, c := range soil.cells {
+		more.add(soil.weeks[i], c, soil.vals[i])
+	}
+	more.add(calendar.Week{Year: 2020, Week: 52}, "999_999", 7)
+	if err := writeCheckpoint(CheckpointPath(dir, "paws_spruce"), "paws_spruce", more.sorted()); err != nil {
+		t.Fatal(err)
+	}
+	full, err := LoadCube(dir, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	narrow, err := LoadCube(dir, []string{"pr"}, KeysOfAll())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(narrow.Cells, full.Cells) || !slices.Equal(narrow.Weeks, full.Weeks) || len(narrow.Vars) != 1 {
+		t.Fatalf("narrow cube: %d cells, %d weeks, %d variables", len(narrow.Cells), len(narrow.Weeks), len(narrow.Vars))
+	}
+	for i, v := range full.Vars["pr"] {
+		if got := narrow.Vars["pr"][i]; got != v && !(isNaN32(got) && isNaN32(v)) {
+			t.Fatalf("pr %d = %v, want %v", i, got, v)
+		}
+	}
+	plain, err := LoadCube(dir, []string{"pr"})
+	if err != nil || len(plain.Cells) != len(full.Cells)-1 {
+		t.Fatalf("without the option the rain grid gives the cells: %v", err)
+	}
+}
+
 func TestLoadCubeWithoutFiles(t *testing.T) {
 	if _, err := LoadCube(t.TempDir(), nil); err == nil {
 		t.Error("no error for an empty directory")

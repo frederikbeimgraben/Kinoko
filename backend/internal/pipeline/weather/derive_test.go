@@ -168,3 +168,14 @@ func TestDeriveRejectsUnknownNames(t *testing.T) {
 		t.Error("no error without normals")
 	}
 }
+
+func TestInputsNamesTheCheckpointsOfTheFeatures(t *testing.T) {
+	got := Inputs([]string{"pr_sum4_anom", "tas_lag3", "tas_drop_2w", "paws", "days_since_rain", "tasmin_mean8"})
+	want := []string{"days_since_rain", "paws_beech", "paws_oak", "paws_pine", "paws_spruce", "pr", "tas", "tasmin"}
+	if !slices.Equal(got, want) {
+		t.Fatalf("Inputs = %v, want %v", got, want)
+	}
+	if got := Inputs(nil); got == nil || len(got) != 0 {
+		t.Fatalf("Inputs(nil) = %#v, want an empty list", got)
+	}
+}
