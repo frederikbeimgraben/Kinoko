@@ -239,6 +239,21 @@ func TestCreateRoleThenReadItBack(t *testing.T) {
 	}
 }
 
+func TestCreateRoleShowsARepeatedPermissionOnceAsStored(t *testing.T) {
+	env := testkit.New(t)
+	u := makeUser(t, env, "person-1")
+	as := signIn(t, env, u, "role.manage")
+	body := env.Post("/roles", map[string]any{"slug": "scout", "name": "Scout",
+		"permissions": []string{"text.edit", "find.review", "text.edit"}}, as).Expect(t, http.StatusCreated).Map(t)
+	if perms := body["permissions"].([]any); len(perms) != 2 || perms[0] != "text.edit" || perms[1] != "find.review" {
+		t.Fatal(body)
+	}
+	back := env.Get("/roles/"+body["id"].(string), as).Expect(t, http.StatusOK).Map(t)
+	if perms := back["permissions"].([]any); len(perms) != 2 {
+		t.Fatal(back)
+	}
+}
+
 func TestCreateRoleRejectsATakenSlug(t *testing.T) {
 	env := testkit.New(t)
 	u := makeUser(t, env, "person-1")

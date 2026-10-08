@@ -70,3 +70,12 @@ func TestSummaryKeepsTheOrder(t *testing.T) {
 		t.Fatal(string(out), err)
 	}
 }
+
+func TestDistinctKeepsTheFirstOrderAndIsNeverNil(t *testing.T) {
+	if got := distinct([]string{"b", "a", "b"}); !slices.Equal(got, []string{"b", "a"}) {
+		t.Fatal(got)
+	}
+	if got := distinct(nil); got == nil {
+		t.Fatal("nil")
+	}
+}

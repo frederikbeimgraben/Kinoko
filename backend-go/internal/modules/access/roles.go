@@ -88,11 +88,11 @@ func loadRoleOut(ctx context.Context, q db.Querier, role roleRow) (roleOut, erro
 // not show a key twice because setPermissions stores each key once.
 func distinct(keys []string) []string {
 	seen := map[string]bool{}
-	return fn.Filter(append([]string{}, keys...), func(key string) bool {
+	return append([]string{}, fn.Filter(keys, func(key string) bool {
 		first := !seen[key]
 		seen[key] = true
 		return first
-	})
+	})...)
 }
 
 // sorted gives a sorted copy that is never nil.
