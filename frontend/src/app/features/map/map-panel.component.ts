@@ -20,7 +20,7 @@ import { layerIcon } from '../../core/tiles/layer-groups';
 import { CombinationComponent } from './combination.component';
 import { layerTitle } from './layer-name';
 import { MapView } from './map.view';
-import { VIEW_MODES } from './map.state';
+import { VIEW_MODES } from './map.store';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 
 /** Der Kopf und der Inhalt der Karte: Art, Woche, Reiter, Legende, Ebene oder Kombination. */
@@ -85,10 +85,10 @@ export class MapPanelComponent {
 
   protected setView(value: string): void {
     const chosen = VIEW_MODES.find((mode) => mode === value);
-    if (chosen) this.state.view.set(chosen);
+    if (chosen) this.state.setView(chosen);
   }
 
   protected setRule(value: string): void {
-    if (value === 'intersection' || value === 'graded') this.combination.rule.set(value);
+    if (value === 'intersection' || value === 'graded') this.combination.setRule(value);
   }
 }

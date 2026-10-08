@@ -13,8 +13,8 @@ import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND_ENTRY, MARKER_ENTRY, SHARED_FIND_ENTRY, ZONE_ENTRY, page } from '../../testing/entries-fixture';
-import { AddEntryState } from '../add-entry/add-entry.state';
-import { MapState } from '../map/map.state';
+import { AddEntryStore } from '../add-entry/add-entry.store';
+import { MapStore } from '../map/map.store';
 import { EntriesComponent } from './entries.component';
 import { EntriesState } from './entries.state';
 
@@ -153,7 +153,7 @@ describe('EintraegeComponent', () => {
     // Ein wartender Eintrag hat noch keine Kennung vom Dienst: er öffnet nichts.
     await userEvent.click(within(rows[0] as HTMLElement).getByRole('button'));
 
-    expect(TestBed.inject(MapState).object()).toBeNull();
+    expect(TestBed.inject(MapStore).object()).toBeNull();
   });
 
   it('führt fremde Funde in derselben Liste wie die eigenen', async () => {
@@ -183,7 +183,7 @@ describe('EintraegeComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
 
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'find', id: FIND_ENTRY.id });
+      expect(TestBed.inject(MapStore).object()).toEqual({ kind: 'find', id: FIND_ENTRY.id });
     });
   });
 
@@ -195,7 +195,7 @@ describe('EintraegeComponent', () => {
     await vi.waitFor(() => {
       expect(setup.router.url).toBe('/karte');
     });
-    expect(TestBed.inject(AddEntryState).step()).toBe('actions');
+    expect(TestBed.inject(AddEntryStore).step()).toBe('actions');
   });
 
   it('lässt den Knopf Eintragen am Rechner weg', async () => {

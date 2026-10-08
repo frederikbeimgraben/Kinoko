@@ -1,5 +1,5 @@
 import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 /** Die Kennungen der Ebenen, die den Schritt auf die Karte malen. */
 const SOURCE = 'pilz-ring';

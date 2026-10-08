@@ -1,6 +1,6 @@
 import type { Provider } from '@angular/core';
 import type { Map as MapLibreMap } from 'maplibre-gl';
-import type { Location } from '../features/add-entry/add-entry.state';
+import type { Location } from '../features/add-entry/add-entry.store';
 import { ZONE_DRAWER, type RingListener, type DrawSession } from '../features/add-entry/zone-drawer';
 
 /** Terra Draw ohne Karte: die Sitzung merkt sich, was sie zeichnen sollte. */

@@ -8,8 +8,8 @@ import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
 import { EntriesState } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
 import { SpeciesState } from '../species/species.state';
-import { MapState, type ObjectKind } from '../map/map.state';
-import { ObjectSheetState } from './object-sheet.state';
+import { MapStore, type ObjectKind } from '../map/map.store';
+import { ObjectSheetStore } from './object-sheet.store';
 
 /**
  * Die Farben der Punkte aus `docs/mockups/bauen.py`: ein eigener Fund trägt
@@ -54,8 +54,8 @@ export class MapObjectsDirective {
   private readonly eintraege = inject(EntriesState);
   private readonly locating = inject(LocationService);
   private readonly species = inject(SpeciesState);
-  private readonly map = inject(MapState);
-  private readonly sheet = inject(ObjectSheetState);
+  private readonly map = inject(MapStore);
+  private readonly sheet = inject(ObjectSheetStore);
 
   /** Ein langer Druck auf ein Objekt: der Ort auf dem Bildschirm und das Ziel. */
   readonly objectHeld = output<{ x: number; y: number }>();

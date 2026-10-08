@@ -45,7 +45,7 @@
         [showAdd]="showsAdd()"
         [turned]="turned()"
         [needle]="needle()"
-        (layersToggled)="state.layersSheetOpen.set(!state.layersSheetOpen())"
+        (layersToggled)="state.toggleLayersSheet()"
         (located)="surface.locate()"
         (add)="openAddEntry()"
         (northed)="surface.resetNorth()"
@@ -112,12 +112,12 @@
         [zoneCount]="view.entryCounts().zones"
         [sharedFindCount]="view.entryCounts().sharedFinds"
         (backgroundChange)="state.setBackground($event)"
-        (opacityChange)="state.opacity.set($event)"
-        (forecastBelowChange)="state.forecastBelow.set($event)"
-        (showMarkersChange)="state.showMarkers.set($event)"
-        (showZonesChange)="state.showZones.set($event)"
-        (showSharedFindsChange)="state.showSharedFinds.set($event)"
-        (closed)="state.layersSheetOpen.set(false)"
+        (opacityChange)="state.setOpacity($event)"
+        (forecastBelowChange)="state.setForecastBelow($event)"
+        (showMarkersChange)="state.setShowMarkers($event)"
+        (showZonesChange)="state.setShowZones($event)"
+        (showSharedFindsChange)="state.setShowSharedFinds($event)"
+        (closed)="state.setLayersSheetOpen(false)"
       />
     }
   }

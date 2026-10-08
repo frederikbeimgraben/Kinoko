@@ -1,5 +1,5 @@
 import type { GeoPolygon } from '../../core/api/models';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 /** Ein Hektar sind 10 000 Quadratmeter. Turf rechnet in Quadratmetern. */
 const SQUARE_METRES_PER_HECTARE = 10_000;

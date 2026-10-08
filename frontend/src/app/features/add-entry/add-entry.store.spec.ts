@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
-import { AddEntryState } from './add-entry.state';
+import { AddEntryStore } from './add-entry.store';
 
-function state(): AddEntryState {
-  return TestBed.inject(AddEntryState);
+function state(): AddEntryStore {
+  return TestBed.inject(AddEntryStore);
 }
 
-describe('EintragenZustand', () => {
-  it('beginnt beim Aktionsblatt und dunkelt die Karte ab', () => {
+describe('AddEntryStore', () => {
+  it('starts with the actions sheet and makes the map dark', () => {
     const flow = state();
 
     flow.open();
@@ -18,7 +18,7 @@ describe('EintragenZustand', () => {
     expect(flow.showsCrosshair()).toBe(false);
   });
 
-  it('führt vom Fundort ins Fund-Formular', () => {
+  it('goes from the find location to the find form', () => {
     const flow = state();
 
     flow.startFind();
@@ -30,7 +30,7 @@ describe('EintragenZustand', () => {
     expect(flow.location()).toEqual([9.05, 48.52]);
   });
 
-  it('führt vom Marker-Ort ins Marker-Formular', () => {
+  it('goes from the marker location to the marker form', () => {
     const flow = state();
 
     flow.startMarker();
@@ -39,7 +39,7 @@ describe('EintragenZustand', () => {
     expect(flow.step()).toBe('markerForm');
   });
 
-  it('sammelt Eckpunkte und nimmt den letzten wieder weg', () => {
+  it('collects corners and removes the last one', () => {
     const flow = state();
 
     flow.startZone();
@@ -51,7 +51,7 @@ describe('EintragenZustand', () => {
     expect(flow.ringClosed()).toBe(false);
   });
 
-  it('schließt eine Zone erst ab drei Eckpunkten', () => {
+  it('closes a zone only with three corners or more', () => {
     const flow = state();
     flow.startZone();
     flow.addCorner([9.0, 48.5]);
@@ -65,7 +65,7 @@ describe('EintragenZustand', () => {
     expect(flow.step()).toBe('zoneForm');
   });
 
-  it('übernimmt einen Ring, den Terra Draw verschoben hat', () => {
+  it('accepts a ring that Terra Draw moved', () => {
     const flow = state();
     flow.startZone();
 
@@ -78,7 +78,7 @@ describe('EintragenZustand', () => {
     expect(flow.ring()).toHaveLength(3);
   });
 
-  it('geht aus jedem Formular auf seinen Schritt davor zurück', () => {
+  it('goes back from each form to the step before it', () => {
     const flow = state();
 
     flow.startFind();
@@ -105,7 +105,7 @@ describe('EintragenZustand', () => {
     expect(flow.step()).toBeNull();
   });
 
-  it('legt beim Öffnen einen Weg zurück an und nimmt ihn beim Beenden weg', () => {
+  it('adds a history step on open and removes it on stop', () => {
     const stack = TestBed.inject(OverlayStackService);
     const opened = vi.spyOn(stack, 'open');
     const back = vi.spyOn(stack, 'back');
@@ -118,7 +118,7 @@ describe('EintragenZustand', () => {
     expect(back).toHaveBeenCalledOnce();
   });
 
-  it('räumt beim Beenden Ort und Eckpunkte weg', () => {
+  it('clears the point and the corners on stop', () => {
     const flow = state();
     flow.startZone();
     flow.addCorner([9, 48]);
@@ -130,7 +130,7 @@ describe('EintragenZustand', () => {
     expect(flow.location()).toBeNull();
   });
 
-  it('räumt beim Verlassen des Reiters weg, ohne die Geschichte zu bewegen', () => {
+  it('clears when the tab closes and keeps the history', () => {
     const stack = TestBed.inject(OverlayStackService);
     const back = vi.spyOn(stack, 'back');
     const flow = state();

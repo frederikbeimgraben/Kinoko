@@ -11,7 +11,7 @@ import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
 import { colourHex } from '../entries/colors';
 import { EntriesState } from '../entries/entries.state';
-import { ObjectSheetState } from './object-sheet.state';
+import { ObjectSheetStore } from './object-sheet.store';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 
 /** Das Objekt-Blatt eines Markers und sein Formular (Boards `SheetMarkerView`, `MarkerEdit`). */
@@ -34,7 +34,7 @@ export class MarkerSheetComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly eintraege = inject(EntriesState);
-  private readonly sheet = inject(ObjectSheetState);
+  protected readonly sheet = inject(ObjectSheetStore);
 
   readonly marker = input.required<Marker>();
 
@@ -74,7 +74,7 @@ export class MarkerSheetComponent {
     try {
       if (await this.eintraege.updateMarker(this.marker(), values)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
-        this.editing.set(false);
+        this.sheet.setEditing(false);
       }
     } finally {
       this.busy.set(false);

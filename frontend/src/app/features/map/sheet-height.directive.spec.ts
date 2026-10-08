@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { render } from '@testing-library/angular';
 import { SheetHeightDirective } from './sheet-height.directive';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
 
 @Component({
   imports: [SheetHeightDirective],
@@ -65,7 +65,7 @@ describe('SheetHeightDirective', () => {
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(240);
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(240);
   });
 
   it('misst die Leiste selbst, solange im Wirt kein Blatt steht', async () => {
@@ -77,7 +77,7 @@ describe('SheetHeightDirective', () => {
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(144);
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(144);
   });
 
   it('meldet nichts, solange das Blatt keine Fläche hat', async () => {
@@ -87,13 +87,13 @@ describe('SheetHeightDirective', () => {
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(0);
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(0);
   });
 
   it('stellt die Überlagerung zurück, sobald das Blatt geht', async () => {
     const { fixture, detectChanges } = await render(HostComponent);
-    const state = TestBed.inject(MapState);
-    state.overlayHeight.set(240);
+    const state = TestBed.inject(MapStore);
+    state.setOverlayHeight(240);
 
     fixture.componentInstance.open.set(false);
     detectChanges();

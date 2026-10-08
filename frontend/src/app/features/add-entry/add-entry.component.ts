@@ -26,9 +26,9 @@ import { EntriesState, type SaveResult } from '../entries/entries.state';
 import { colourHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { AddActionsComponent, type AddAction } from './add-actions.component';
-import { AddEntryState, CORNERS_MINIMUM, type Location } from './add-entry.state';
+import { AddEntryStore, CORNERS_MINIMUM, type Location } from './add-entry.store';
 import { coordinatesText } from './coordinates';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 import { asPolygon, loadAreaCalculator, type AreaCalculator } from './area';
@@ -82,10 +82,10 @@ export class AddEntryComponent implements OnDestroy {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly entries = inject(EntriesState);
-  private readonly map = inject(MapState);
+  private readonly map = inject(MapStore);
   private readonly draw = inject(ZONE_DRAWER);
 
-  protected readonly state = inject(AddEntryState);
+  protected readonly state = inject(AddEntryStore);
   protected readonly wide = inject(ViewportService).wide;
   protected readonly anchor = POPOVER_ANCHOR;
 
@@ -404,6 +404,6 @@ export class AddEntryComponent implements OnDestroy {
     this.session?.stop();
     this.session = null;
     this.sessionRunning = null;
-    this.map.overlayHeight.set(0);
+    this.map.setOverlayHeight(0);
   }
 }

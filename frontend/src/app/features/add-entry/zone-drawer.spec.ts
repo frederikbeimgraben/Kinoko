@@ -1,6 +1,6 @@
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { geometryFor, startDrawing, type TerraModule } from './zone-drawer';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 const RING: Location[] = [
   [9.0, 48.5],

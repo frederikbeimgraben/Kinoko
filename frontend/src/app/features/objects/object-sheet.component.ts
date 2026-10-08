@@ -9,10 +9,10 @@ import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { coordinatesText } from '../add-entry/coordinates';
 import { EntriesState } from '../entries/entries.state';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
-import { MapState, type ObjectKind } from '../map/map.state';
+import { MapStore, type ObjectKind } from '../map/map.store';
 import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
-import { ObjectSheetState } from './object-sheet.state';
+import { ObjectSheetStore } from './object-sheet.store';
 import { ZoneSheetComponent } from './zone-sheet.component';
 
 /** Der Name des Blatts für Hilfsmittel. */
@@ -55,9 +55,9 @@ export class ObjectSheetComponent {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
   private readonly i18n = inject(I18nService);
-  private readonly sheet = inject(ObjectSheetState);
+  private readonly sheet = inject(ObjectSheetStore);
 
-  protected readonly map = inject(MapState);
+  protected readonly map = inject(MapStore);
 
   protected readonly find = computed<Find | null>(() => {
     const offen = this.map.object();
@@ -140,7 +140,7 @@ export class ObjectSheetComponent {
 
   /** Das X am Kopf: aus dem Formular zurück zum Objekt, sonst zu.  */
   protected dismiss(): void {
-    if (this.editing()) this.editing.set(false);
+    if (this.editing()) this.sheet.setEditing(false);
     else this.close();
   }
 }

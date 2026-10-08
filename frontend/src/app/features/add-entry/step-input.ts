@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { MAP_ADAPTER } from '../../map/map.tokens';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 /** Woher der Ort eines Schritts kommt. */
 export type StepInputMode = 'crosshair' | 'pointer';

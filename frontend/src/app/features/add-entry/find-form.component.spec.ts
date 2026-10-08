@@ -9,7 +9,7 @@ import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 
 /** The place of the form without an existing find. */
@@ -40,7 +40,7 @@ async function build(
     },
     providers: [provideHttpClient(), provideHttpClientTesting()],
   });
-  TestBed.inject(MapState).species.set('steinpilz');
+  TestBed.inject(MapStore).setSpecies('steinpilz');
   await vi.waitFor(() => {
     TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(bundle);
   });

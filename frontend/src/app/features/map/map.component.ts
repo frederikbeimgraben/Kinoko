@@ -25,21 +25,21 @@ import { ObjectMenuComponent, type ObjectMenuTarget } from '../../ui/object-menu
 import { SheetComponent, type Detent } from '../../ui/sheet/sheet.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 import { AddEntryComponent } from '../add-entry/add-entry.component';
-import { AddEntryState } from '../add-entry/add-entry.state';
+import { AddEntryStore } from '../add-entry/add-entry.store';
 import { EntriesState } from '../entries/entries.state';
 import { MapObjectsDirective } from '../objects/map-objects.directive';
 import { ObjectSheetComponent } from '../objects/object-sheet.component';
-import { CombinationState } from './combination.state';
+import { CombinationStore } from './combination.store';
 import { FactorPickerComponent } from './factor-picker.component';
 import { LayersSheetComponent } from './layers-sheet.component';
 import { MapButtonsComponent } from './map-buttons.component';
 import { MapColumnComponent } from './map-column.component';
-import { MapOverlayState } from './map-overlay.state';
+import { MapOverlayStore } from './map-overlay.store';
 import { MapPanelComponent } from './map-panel.component';
 import { MapOverlaysComponent, overlayDetent } from './map-overlays.component';
 import { MapPlayback } from './map-playback';
 import { DETENTS, DETENT_SIZES, MapSurface } from './map-surface';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
 import { MapView } from './map.view';
 
 /** Der Reiter Karte: Hintergrund, Wertkacheln und das Blatt darüber. */
@@ -63,7 +63,7 @@ import { MapView } from './map.view';
     SkeletonComponent,
     TranslatePipe,
   ],
-  providers: [...MAP_PROVIDERS, MapSurface, MapOverlayState],
+  providers: [...MAP_PROVIDERS, MapSurface, MapOverlayStore],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
@@ -76,15 +76,15 @@ export class MapComponent implements OnDestroy {
   private readonly sync = inject(SyncService);
   protected readonly surface = inject(MapSurface);
   protected readonly locating = inject(LocationService);
-  protected readonly overlayNav = inject(MapOverlayState);
+  protected readonly overlayNav = inject(MapOverlayStore);
 
   /** Nur die Zeichenfläche, ohne Blatt und Knöpfe, für die anderen Reiter. */
   readonly surfaceOnly = input(false);
 
   protected readonly view = inject(MapView);
-  protected readonly state = inject(MapState);
-  protected readonly combination = inject(CombinationState);
-  protected readonly addEntry = inject(AddEntryState);
+  protected readonly state = inject(MapStore);
+  protected readonly combination = inject(CombinationStore);
+  protected readonly addEntry = inject(AddEntryStore);
   protected readonly wide = this.viewport.wide;
 
   protected readonly playback = inject(MapPlayback);
@@ -149,10 +149,7 @@ export class MapComponent implements OnDestroy {
       if (!hidden && this.wasHidden) this.surface.resize();
       this.wasHidden = hidden;
     });
-    effect(() => {
-      this.state.species.set(this.view.slug());
-    });
-    effect(() => void this.tiles.load(this.state.species()));
+    effect(() => void this.tiles.load(this.view.slug()));
     void this.tiles.loadLayers();
     effect(() => {
       if (this.view.onCombination()) void this.loadSpeciesManifests();
@@ -192,7 +189,7 @@ export class MapComponent implements OnDestroy {
   }
 
   protected setDetent(detent: Detent): void {
-    this.state.detent.set(detent);
+    this.state.setDetent(detent);
   }
 
   protected async saveCombination(name: string): Promise<void> {
@@ -201,7 +198,7 @@ export class MapComponent implements OnDestroy {
   }
 
   protected openAddEntry(): void {
-    this.state.layersSheetOpen.set(false);
+    this.state.setLayersSheetOpen(false);
     this.overlayNav.close();
     this.addEntry.open();
   }
@@ -224,13 +221,13 @@ export class MapComponent implements OnDestroy {
 
   private refresh(): void {
     this.tiles.forget();
-    void this.tiles.load(this.state.species());
+    void this.tiles.load(this.view.slug());
     void this.tiles.loadLayers();
   }
 
   /** Ein Schwenk holt die geteilten Funde des neuen Ausschnitts. */
   private onMove(): void {
-    this.state.moved.update((count) => count + 1);
+    this.state.countMove();
     this.surface.paint();
     const view = this.surface.extent();
     if (view !== null) void this.entries.loadShared(view.extent);

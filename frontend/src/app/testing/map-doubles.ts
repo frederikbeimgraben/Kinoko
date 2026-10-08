@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MapComponent } from '../features/map/map.component';
 import { MAP_ADAPTER, VALUE_WORKER } from '../map/map.tokens';
 import type { Viewbox } from '../map/tile-grid';
+import type { Combination } from '../core/api/models';
 import type { FeatureCollection } from 'geojson';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import type {
@@ -370,8 +371,8 @@ export const RAW_MANIFEST = {
   ],
 };
 
-/** Eine gespeicherte Kombination, wie der Dienst sie liefert. */
-export const SAVED_COMBINATION = {
+/** A saved combination, as the service sends it. */
+export const SAVED_COMBINATION: Combination = {
   id: 'k1',
   name: 'Buchenwald im Herbst',
   rule: 'graded',
@@ -381,6 +382,7 @@ export const SAVED_COMBINATION = {
   ],
   createdAt: '2026-09-01T10:00:00+02:00',
   updatedAt: '2026-09-01T10:00:00+02:00',
+  deleted: false,
 };
 
 /** Das Bündel, wie die Karte es zur Artwahl braucht. */

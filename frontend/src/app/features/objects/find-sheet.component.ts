@@ -3,14 +3,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   Injector,
   input,
   output,
+  resource,
   signal,
 } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find, Photo } from '../../core/api/models';
@@ -37,9 +38,9 @@ import { ToastService } from '../../ui/toast/toast.service';
 import { findSubline } from '../entries/find-subline';
 import { SpeciesState } from '../species/species.state';
 import { EntriesState } from '../entries/entries.state';
-import { ObjectSheetState } from './object-sheet.state';
+import { ObjectSheetStore } from './object-sheet.store';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 
 /** Das Objekt-Blatt eines Fundes; die Kennzahl kommt aus der Wertkachel der Karte. */
 @Component({
@@ -69,8 +70,8 @@ export class FindSheetComponent {
   private readonly toasts = inject(ToastService);
   private readonly arten = inject(SpeciesState);
   private readonly eintraege = inject(EntriesState);
-  private readonly sheet = inject(ObjectSheetState);
-  private readonly map = inject(MapState);
+  protected readonly sheet = inject(ObjectSheetStore);
+  private readonly map = inject(MapStore);
   private readonly tiles = inject(TileService);
   private readonly photos = inject(PhotosApi);
   private readonly now = inject(NOW);
@@ -82,13 +83,29 @@ export class FindSheetComponent {
   protected readonly editing = this.sheet.editing;
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
-  private readonly week = signal<ManifestWeek | null>(null);
-  /** Die Fotos, die der Dienst zu dem Fund kennt; Leiste und Formular zeigen sie. */
-  protected readonly held = signal<readonly Photo[]>([]);
   protected readonly viewing = signal<number | null>(null);
   private readonly injector = inject(Injector);
   private tile: HTMLElement | null = null;
-  private readonly value = signal<number | null>(null);
+
+  /** The photos of the find that the service knows. The strip and the form show them. */
+  private readonly photoList = rxResource({
+    params: () => this.find().id,
+    stream: ({ params: findId }) =>
+      this.photos.list({ findId }).pipe(
+        map((page): readonly Photo[] => page.items),
+        // Without the list, the form shows only the new files.
+        catchError(() => of<readonly Photo[]>([])),
+      ),
+  });
+  protected readonly held = computed(() => this.photoList.value() ?? []);
+
+  /** The value of the active week at the find. */
+  private readonly reading = resource({
+    params: () => ({ find: this.find(), weekKey: this.map.week(), slug: this.forecastSlug() }),
+    loader: ({ params }) => this.readValue(params.find, params.weekKey, params.slug),
+  });
+  private readonly week = computed(() => this.reading.value()?.week ?? null);
+  private readonly value = computed(() => this.reading.value()?.value ?? null);
 
   protected readonly strip = computed<readonly StripPhoto[]>(() =>
     this.held().map((one) => ({ id: one.id, path: photoPath(one.id, 'list'), lead: one.lead })),
@@ -100,6 +117,12 @@ export class FindSheetComponent {
   });
 
   protected readonly speciesName = computed(() => this.art()?.name ?? '');
+
+  /** Only a species with a forecast map gives a value. */
+  private readonly forecastSlug = computed(() => {
+    const art = this.art();
+    return art?.forecastEnabled ? art.slug : null;
+  });
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
 
   /** Die gedämpfte Zeile unter dem Namen: Datum, Anzahl, Melder. */
@@ -143,12 +166,6 @@ export class FindSheetComponent {
 
   constructor() {
     void this.arten.loadBundle();
-    effect(() => {
-      void this.fetchValue(this.find(), this.map.week());
-    });
-    effect(() => {
-      void this.loadPhotos(this.find().id);
-    });
   }
 
   /** Nimmt ein vorhandenes Foto weg und holt die Liste neu. */
@@ -159,17 +176,7 @@ export class FindSheetComponent {
       this.toasts.error(this.i18n.translate('melden.verworfen'));
       return;
     }
-    await this.loadPhotos(this.find().id);
-  }
-
-  private async loadPhotos(findId: string): Promise<void> {
-    try {
-      const page = await firstValueFrom(this.photos.list({ findId }));
-      this.held.set(page.items);
-    } catch {
-      // Ohne Liste zeigt das Formular nur die neuen Dateien.
-      this.held.set([]);
-    }
+    this.photoList.reload();
   }
 
   protected openPhoto(index: number): void {
@@ -188,7 +195,7 @@ export class FindSheetComponent {
     try {
       if (await this.eintraege.updateFind(this.find(), submission.input)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
-        this.editing.set(false);
+        this.sheet.setEditing(false);
       }
     } finally {
       this.busy.set(false);
@@ -204,25 +211,26 @@ export class FindSheetComponent {
   }
 
   /**
-   * Liest den Wert der aktiven Woche am Ort des Fundes. Ohne Vorhersagekarte
-   * für diese Art bleibt die Zeile weg, statt eine Null zu behaupten.
+   * Reads the value of the active week at the find. Without a forecast map for the species,
+   * the row stays away and does not show a false zero.
    */
-  private async fetchValue(find: Find, weekKey: string | null): Promise<void> {
-    this.value.set(null);
-    this.week.set(null);
-    const art = this.art();
-    if (!art?.forecastEnabled) return;
+  private async readValue(
+    find: Find,
+    weekKey: string | null,
+    slug: string | null,
+  ): Promise<{ week: ManifestWeek; value: number | null } | null> {
+    if (slug === null) return null;
     try {
-      await this.tiles.load(art.slug);
-      const manifest = this.tiles.manifestOf(art.slug);
-      if (manifest === null) return;
+      await this.tiles.load(slug);
+      const manifest = this.tiles.manifestOf(slug);
+      if (manifest === null) return null;
       const week =
         (weekKey !== null ? findWeek(manifest, weekKey) : null) ?? currentWeek(manifest, this.now());
-      if (week === null) return;
-      this.week.set(week);
-      this.value.set(await valueAtPoint(manifest, week.tilePath, find.lon, find.lat));
+      if (week === null) return null;
+      return { week, value: await valueAtPoint(manifest, week.tilePath, find.lon, find.lat) };
     } catch {
-      // Ohne Manifest gibt es keine Zahl mit Bezug, also auch keine Zeile.
+      // Without a manifest, there is no value with a reference, so no row.
+      return null;
     }
   }
 }

@@ -1,6 +1,6 @@
 import type { I18nService } from '../../core/i18n/i18n.service';
 import { locationText } from '../../core/i18n/places';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 /** Länge und Breite, so wie der Kopf eines Formulars sie zeigt. */
 export function coordinatesText(location: Location | null, i18n: I18nService): string {

@@ -95,12 +95,12 @@ export class MapOverlaysComponent {
   });
 
   protected chooseSpecies(slug: string): void {
-    this.state.species.set(slug);
+    this.state.setSpecies(slug);
     this.closed.emit();
   }
 
   protected chooseLayer(layer: Layer): void {
-    this.state.layer.set(layer.id);
+    this.state.setLayer(layer.id);
     this.closed.emit();
   }
 

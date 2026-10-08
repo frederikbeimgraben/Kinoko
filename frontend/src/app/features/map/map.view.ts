@@ -18,8 +18,8 @@ import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesState } from '../entries/entries.state';
 import { photoPath } from '../../core/api/models';
 import { SpeciesState } from '../species/species.state';
-import { CombinationState } from './combination.state';
-import { DEFAULT_LAYER, MapState } from './map.state';
+import { CombinationStore } from './combination.store';
+import { DEFAULT_LAYER, MapStore } from './map.store';
 
 /** Die Werte, die Kopf und Inhalt der Karte lesen. Eine Quelle für beide Geräte. */
 @Injectable({ providedIn: 'root' })
@@ -29,8 +29,8 @@ export class MapView {
   private readonly now = inject(NOW);
   private readonly catalogue = inject(SpeciesState);
   private readonly entries = inject(EntriesState);
-  readonly state = inject(MapState);
-  readonly combination = inject(CombinationState);
+  readonly state = inject(MapStore);
+  readonly combination = inject(CombinationStore);
 
   /** Die Zahlen neben den Schaltern des Ebenen-Knopfs. */
   readonly entryCounts = computed(() => ({
@@ -45,7 +45,7 @@ export class MapView {
   /** Die Eingabe-Ebenen, wie das Manifest sie nennt. */
   readonly layers = computed(() => this.tiles.layerList());
 
-  readonly manifest = computed(() => this.tiles.manifests().get(this.state.species()) ?? null);
+  readonly manifest = computed(() => this.tiles.manifests().get(this.slug()) ?? null);
 
   /** Solange weder Manifest noch Ebenen da sind, zeigt die Karte ihr Skelett. */
   readonly loading = computed(() => this.manifest() === null && this.tiles.layers() === null);

@@ -12,12 +12,12 @@ import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { numericDate } from '../../core/i18n/dates';
 import { isoDatum } from '../entries/formats';
 import { speciesPickerEntry } from '../species/species-picker-entry';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 /** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */
 export interface FindSubmission {
@@ -49,7 +49,7 @@ export class FindFormComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly species = inject(SpeciesState);
-  private readonly map = inject(MapState);
+  private readonly map = inject(MapStore);
 
   readonly location = input.required<Location>();
   /** Ein vorhandener Fund, wenn das Formular ihn ändert statt anzulegen. */

@@ -1,5 +1,5 @@
 import { asPolygon, loadAreaCalculator } from './area';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 const RING: Location[] = [
   [9.0, 48.5],

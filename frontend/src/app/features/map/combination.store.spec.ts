@@ -1,10 +1,11 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
 import { CombinationsApi } from '../../core/api/combinations.api';
 import { AuthService } from '../../core/auth';
-import { CombinationState, STORAGE_KEY } from './combination.state';
+import { CombinationStore, STORAGE_KEY } from './combination.store';
 import type { Combination } from '../../core/api/models';
 import type { Factor } from './factors';
 
@@ -17,7 +18,7 @@ const SAVED: Combination = {
   deleted: false,
 };
 
-function state(api: Partial<CombinationsApi> = {}, signedIn = false): CombinationState {
+function state(api: Partial<CombinationsApi> = {}, signedIn = false): CombinationStore {
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
@@ -26,18 +27,18 @@ function state(api: Partial<CombinationsApi> = {}, signedIn = false): Combinatio
         provide: CombinationsApi,
         useValue: { catalogue: () => of({ items: [], nextCursor: null }), ...api },
       },
-      { provide: AuthService, useValue: { signedIn: () => signedIn } },
+      { provide: AuthService, useValue: { signedIn: signal(signedIn) } },
     ],
   });
-  return TestBed.inject(CombinationState);
+  return TestBed.inject(CombinationStore);
 }
 
-describe('CombinationState', () => {
+describe('CombinationStore', () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
-  it('beginnt mit der Schnittmenge und ohne Faktoren', () => {
+  it('starts with the intersection and without factors', () => {
     const combination = state();
 
     expect(combination.rule()).toBe('intersection');
@@ -45,7 +46,7 @@ describe('CombinationState', () => {
     expect(combination.saved()).toEqual([]);
   });
 
-  it('legt einen Faktor an und entfernt ihn', () => {
+  it('adds a factor and removes it', () => {
     const combination = state();
 
     const factor = combination.start('niederschlag', 0, 240);
@@ -56,7 +57,7 @@ describe('CombinationState', () => {
     expect(combination.factors()).toEqual([]);
   });
 
-  it('übernimmt eine gespeicherte Kombination', () => {
+  it('applies a saved combination', () => {
     const combination = state();
 
     combination.pick(SAVED);
@@ -67,7 +68,7 @@ describe('CombinationState', () => {
     ]);
   });
 
-  it('holt die gespeicherten Kombinationen mit Konto', async () => {
+  it('loads the saved combinations with an account', async () => {
     const combination = state({ catalogue: () => of({ items: [SAVED], nextCursor: null }) }, true);
 
     TestBed.tick();
@@ -76,13 +77,13 @@ describe('CombinationState', () => {
     });
   });
 
-  it('meldet einen Fehlschlag beim Speichern', async () => {
+  it('reports a failed save', async () => {
     const combination = state({ create: () => throwError(() => new Error('weg')) }, true);
 
     await expect(combination.save('Name')).resolves.toBe(false);
   });
 
-  it('speichert und löscht über den Vertrag', async () => {
+  it('saves and deletes through the contract', async () => {
     const create = vi.fn(() => of(SAVED));
     const remove = vi.fn(() => of(null));
     const combination = state({ create, remove }, true);
@@ -100,13 +101,13 @@ describe('CombinationState', () => {
     expect(remove).toHaveBeenCalledWith('k1');
   });
 
-  it('übersteht einen Fehler beim Löschen', async () => {
+  it('continues after a failed delete', async () => {
     const combination = state({ remove: () => throwError(() => new Error('weg')) }, true);
 
     await expect(combination.delete(SAVED)).resolves.toBeUndefined();
   });
 
-  it('liest einen gesicherten Stand', () => {
+  it('reads a saved state', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ rule: 'graded', factors: 'buche:ge:0.3' }));
 
     const combination = state();
@@ -115,7 +116,7 @@ describe('CombinationState', () => {
     expect(combination.factors()).toHaveLength(1);
   });
 
-  it('verwirft einen unlesbaren Stand', () => {
+  it('ignores a state that is not JSON', () => {
     localStorage.setItem(STORAGE_KEY, '{kaputt');
 
     expect(state().rule()).toBe('intersection');

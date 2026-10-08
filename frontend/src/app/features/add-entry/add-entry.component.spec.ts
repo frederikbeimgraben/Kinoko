@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -15,14 +15,14 @@ import { MapAdapterDouble } from '../../testing/map-doubles';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { AddEntryComponent } from './add-entry.component';
-import { AddEntryState } from './add-entry.state';
+import { AddEntryStore } from './add-entry.store';
 
 /** Der Rechner: dort hängen die Aktionen als Karte am Plus-Knopf. */
 const WIDE: Provider = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 interface Setup {
   container: Element;
-  flow: AddEntryState;
+  flow: AddEntryStore;
   map: MapAdapterDouble;
   auth: AuthStub;
   queue: SyncStub;
@@ -48,7 +48,7 @@ async function build(extra: readonly Provider[] = []): Promise<Setup> {
   });
   return {
     container,
-    flow: TestBed.inject(AddEntryState),
+    flow: TestBed.inject(AddEntryStore),
     map,
     auth,
     queue,
@@ -85,7 +85,7 @@ async function openFindForm(setup: Setup): Promise<void> {
   await start(setup, 'Fund melden');
   await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
   setup.refresh();
-  TestBed.inject(MapState).species.set('steinpilz');
+  TestBed.inject(MapStore).setSpecies('steinpilz');
   await vi.waitFor(() => {
     setup.http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });

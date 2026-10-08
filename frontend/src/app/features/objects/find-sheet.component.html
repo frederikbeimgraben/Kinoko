@@ -38,7 +38,7 @@
     [quiet]="true"
     [secondaryDanger]="true"
     [split]="true"
-    (primaryClick)="editing.set(true)"
+    (primaryClick)="sheet.setEditing(true)"
     (secondaryClick)="deleteAsk.set(true)"
   >
     <app-push-button class="findsheet__main" kind="primary" [wide]="true" (click)="showOnMap()">

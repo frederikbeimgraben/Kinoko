@@ -20,10 +20,10 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { SpeciesState } from '../species/species.state';
-import { ObjectSheetState } from '../objects/object-sheet.state';
-import { AddEntryState } from '../add-entry/add-entry.state';
+import { ObjectSheetStore } from '../objects/object-sheet.store';
+import { AddEntryStore } from '../add-entry/add-entry.store';
 import { visibilityText } from '../add-entry/visibility';
-import type { ObjectKind } from '../map/map.state';
+import type { ObjectKind } from '../map/map.store';
 import { EntriesState, type EntryBody } from './entries.state';
 import { colourToken } from './colors';
 import { findSubline } from './find-subline';
@@ -72,11 +72,11 @@ export class EntriesComponent {
   private readonly species = inject(SpeciesState);
   private readonly auth = inject(AuthService);
   private readonly names = inject(PersonNamesStore);
-  private readonly sheet = inject(ObjectSheetState);
+  private readonly sheet = inject(ObjectSheetStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(EntriesState);
-  private readonly addEntry = inject(AddEntryState);
+  private readonly addEntry = inject(AddEntryStore);
   private readonly viewport = inject(ViewportService);
 
   /** Am Rechner übernimmt der schwebende Plus-Knopf auf der Karte das Eintragen. */

@@ -11,9 +11,9 @@ import { MAP_ADAPTER, VALUE_WORKER } from '../../map/map.tokens';
 import { ValueProtocol } from '../../map/value-protocol';
 import type { Detent } from '../../ui/sheet/sheet.component';
 import { ToastService } from '../../ui/toast/toast.service';
-import { CombinationState } from './combination.state';
+import { CombinationStore } from './combination.store';
 import { MapPainter } from './map-painter';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
 
@@ -38,8 +38,8 @@ export class MapSurface {
   private readonly theme = inject(ThemeStore);
   private readonly tiles = inject(TileService);
   private readonly view = inject(MapView);
-  private readonly state = inject(MapState);
-  private readonly combination = inject(CombinationState);
+  private readonly state = inject(MapStore);
+  private readonly combination = inject(CombinationStore);
   private readonly toasts = inject(ToastService);
   private readonly i18n = inject(I18nService);
   private readonly locating = inject(LocationService);

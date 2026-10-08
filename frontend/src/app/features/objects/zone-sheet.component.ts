@@ -22,12 +22,12 @@ import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
 import { EntriesState } from '../entries/entries.state';
 import { hectaresText } from '../entries/formats';
-import { ObjectSheetState } from './object-sheet.state';
+import { ObjectSheetStore } from './object-sheet.store';
 import { colourHex } from '../entries/colors';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
-import type { Location } from '../add-entry/add-entry.state';
+import type { Location } from '../add-entry/add-entry.store';
 
 /** Das Objekt-Blatt einer Zone; „Umriss ändern“ gibt die Ecken an Terra Draw. */
 @Component({
@@ -49,7 +49,7 @@ import type { Location } from '../add-entry/add-entry.state';
 export class ZoneSheetComponent implements OnDestroy {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
-  private readonly sheet = inject(ObjectSheetState);
+  protected readonly sheet = inject(ObjectSheetStore);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly draw = inject(ZONE_DRAWER);
@@ -102,7 +102,7 @@ export class ZoneSheetComponent implements OnDestroy {
     try {
       if (await this.eintraege.updateZone(this.zone(), values)) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
-        this.editing.set(false);
+        this.sheet.setEditing(false);
       }
     } finally {
       this.busy.set(false);
@@ -113,7 +113,7 @@ export class ZoneSheetComponent implements OnDestroy {
   protected async editCorners(): Promise<void> {
     const map = this.adapter.rawMap();
     if (map === null) return;
-    this.editing.set(false);
+    this.sheet.setEditing(false);
     this.editingCorners.set(true);
     this.session = await this.draw(map, colourHex(this.zone().colour));
     const ring = this.zone()

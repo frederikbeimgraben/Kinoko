@@ -20,7 +20,7 @@ import {
 import { MapAdapterDouble } from '../../testing/map-doubles';
 import { speciesBundle, speciesEntry, PENNY_BUN } from '../../testing/species-fixture';
 import { EntriesState } from '../entries/entries.state';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { MapObjectsDirective } from './map-objects.directive';
 
 @Component({
@@ -33,7 +33,7 @@ class HostComponent {
 
 interface Setup {
   map: MapAdapterDouble;
-  state: MapState;
+  state: MapStore;
   router: Router;
   refresh: () => void;
   host: HostComponent;
@@ -76,7 +76,7 @@ async function build(): Promise<Setup> {
   detectChanges();
   return {
     map,
-    state: TestBed.inject(MapState),
+    state: TestBed.inject(MapStore),
     router: TestBed.inject(Router),
     refresh: detectChanges,
     host: fixture.componentInstance,
@@ -147,9 +147,9 @@ describe('MapObjectsDirective', () => {
   it('nimmt eine Ebene weg, sobald der Ebenen-Knopf sie abschaltet', async () => {
     const setup = await build();
 
-    setup.state.showZones.set(false);
-    setup.state.showMarkers.set(false);
-    setup.state.showSharedFinds.set(false);
+    setup.state.setShowZones(false);
+    setup.state.setShowMarkers(false);
+    setup.state.setShowSharedFinds(false);
     setup.refresh();
 
     expect(setup.map.layers.has('zonen')).toBe(false);
@@ -163,17 +163,17 @@ describe('MapObjectsDirective', () => {
 
     setup.map.chosen?.('funde', FIND.id);
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'find', id: FIND.id });
+      expect(TestBed.inject(MapStore).object()).toEqual({ kind: 'find', id: FIND.id });
     });
 
     setup.map.chosen?.('marker', MARKER.id);
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'marker', id: MARKER.id });
+      expect(TestBed.inject(MapStore).object()).toEqual({ kind: 'marker', id: MARKER.id });
     });
 
     setup.map.chosen?.('zonen', ZONE.id);
     await vi.waitFor(() => {
-      expect(TestBed.inject(MapState).object()).toEqual({ kind: 'zone', id: ZONE.id });
+      expect(TestBed.inject(MapStore).object()).toEqual({ kind: 'zone', id: ZONE.id });
     });
   });
 
@@ -182,7 +182,7 @@ describe('MapObjectsDirective', () => {
 
     setup.map.chosen?.('geteilteFunde', SHARED_FIND.id);
 
-    expect(TestBed.inject(MapState).object()).toBeNull();
+    expect(TestBed.inject(MapStore).object()).toBeNull();
   });
 
   it('legt den eigenen Standort als Punkt mit Genauigkeitskreis auf die Karte', async () => {

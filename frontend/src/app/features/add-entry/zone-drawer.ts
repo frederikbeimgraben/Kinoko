@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import { clearRing, paintRing, type StepView } from './step-painter';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 /** Ein Ring, wie ihn Terra Draw nach dem Ziehen zurückgibt. */
 export type RingListener = (ring: Location[]) => void;
