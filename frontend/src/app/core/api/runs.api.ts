@@ -5,7 +5,7 @@ import type { Items, PipelineRun, PipelineRunDetail, RunKind } from './models';
 
 const RUNS_PATH = '/pipeline-runs';
 
-/** Die Rechenläufe der Kette. Jeder Endpunkt braucht das Recht `run.manage`. */
+/** The pipeline runs. Each endpoint needs the `run.manage` permission. */
 @Injectable({ providedIn: 'root' })
 export class RunsApi {
   private readonly api = inject(ApiClient);
@@ -18,7 +18,7 @@ export class RunsApi {
     return this.api.get<PipelineRunDetail>(`${RUNS_PATH}/${encodeURIComponent(id)}`);
   }
 
-  /** Stößt einen Lauf an. Die Antwort trägt den neuen Lauf. */
+  /** Starts a run. The response contains the new run. */
   create(kind: RunKind): Observable<PipelineRun> {
     return this.api.post<PipelineRun>(RUNS_PATH, { kind });
   }

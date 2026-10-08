@@ -5,7 +5,7 @@ import { I18nService } from '../i18n/i18n.service';
 import { SIGN_IN_REQUIRED, type ProblemDetail } from '../api/problem';
 import { AuthService } from './auth.service';
 
-/** Nur die eigene API bekommt das Token. Der Issuer und Kacheln nie. */
+/** Only the own API gets the token. The issuer and the tiles never get it. */
 function ownApi(url: string): boolean {
   const target = new URL(url, location.origin);
   return target.origin === location.origin && target.pathname.startsWith('/api/');
@@ -17,7 +17,7 @@ function withToken<T>(request: HttpRequest<T>, token: string): HttpRequest<T> {
 
 const UNAUTHORIZED = 401;
 
-/** Das Problem, das der ApiClient stumm weiterreicht, weil das Blatt schon fragt. */
+/** The ApiClient passes this problem on silently, because the sign-in sheet is already open. */
 function signInRequired(i18n: I18nService): ProblemDetail {
   return {
     type: 'about:blank',
@@ -28,10 +28,7 @@ function signInRequired(i18n: I18nService): ProblemDetail {
 }
 
 /**
- * Hängt `Authorization: Bearer` an jede Anfrage an die eigene API. Auf eine 401
- * folgt genau ein stiller Erneuerungsversuch und die Wiederholung. Scheitert
- * auch der, fragt das Anmelde-Blatt nach; der Aufrufer bekommt ein Problem, das
- * keinen Toast auslöst.
+ * Adds `Authorization: Bearer` to each request to the own API. A 401 causes one silent renewal and one retry. If that fails, the sign-in sheet opens. The caller gets a problem that shows no toast.
  */
 export const authInterceptor: HttpInterceptorFn = (request, more) => {
   if (!ownApi(request.url)) return more(request);

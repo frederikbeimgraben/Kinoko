@@ -1,24 +1,24 @@
-/** Die Funde des Vertrags, so wie die Karte und die Liste sie brauchen. */
+/** The contract finds, in the form that the map and the list need. */
 
 import type { components } from '../contract';
 
 export type ReviewState = components['schemas']['ReviewState'];
 
-/** Ein geteilter Fund. Der Ort einer geschützten Art kommt gerundet. */
+/** A shared find. The location of a protected species is rounded. */
 export interface SharedFind {
   id: string;
   ownerId: string;
   speciesId: string | null;
   lat: number;
   lon: number;
-  /** ISO-Datum ohne Zeit. */
+  /** ISO date without time. */
   foundOn: string;
   count: number | null;
   note: string | null;
   reviewState: ReviewState;
 }
 
-/** Ein offener Fund der Prüfung. Er nennt das Konto, dem er gehört. */
+/** An open find in review. It names the account that owns it. */
 export interface OpenFind extends SharedFind {
   ownerId: string;
 }

@@ -1,7 +1,7 @@
-/** Zwischen zwei Angaben derselben Zeile. */
+/** The separator between two values on one line. */
 export const SEPARATOR = ' · ';
 
-/** Eine Zahl in der Sprache der Oberfläche, eine Nachkommastelle als Regelfall. */
+/** A number in the UI language. The default is one decimal place. */
 export function decimal(
   value: number,
   locale: string,
@@ -10,12 +10,12 @@ export function decimal(
   return new Intl.NumberFormat(locale, options).format(value);
 }
 
-/** Tausender mit Leerzeichen, wie die Bretter sie schreiben: `1 284`. */
+/** Groups thousands with spaces, as the boards show them: `1 284`. */
 export function grouped(value: number): string {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
-/** Fügt die Teile einer Zeile zusammen. Was fehlt, fällt weg. */
+/** Joins the parts of a line. Missing parts are skipped. */
 export function joined(parts: readonly (string | null | undefined)[]): string {
   return parts.filter((part): part is string => Boolean(part)).join(SEPARATOR);
 }

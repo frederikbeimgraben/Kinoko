@@ -9,7 +9,7 @@ function one(id: string): string {
   return `${PATH}/${encodeURIComponent(id)}`;
 }
 
-/** Der Katalog der Begriffe: Geruch, Geschmack, Bäume und Auslöser. */
+/** The term catalogue: smell, taste, trees and triggers. */
 @Injectable({ providedIn: 'root' })
 export class TermsApi {
   private readonly api = inject(ApiClient);
@@ -30,7 +30,7 @@ export class TermsApi {
     return this.api.delete<null>(one(id));
   }
 
-  /** Hängt jede Verwendung auf das Zielwort um und löscht den Begriff. */
+  /** Moves each use to the target term and deletes this term. */
   merge(id: string, into: string): Observable<null> {
     return this.api.post<null>(`${one(id)}/merge`, { into });
   }

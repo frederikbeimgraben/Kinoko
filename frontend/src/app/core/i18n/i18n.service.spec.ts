@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { FALLBACK_TEXTS, I18nService } from './i18n.service';
 import { CATALOG_DE, SUPPORTED_LOCALES, loadCatalog, type TranslationKey } from './translations';
 
-/** Ein Dienst ohne jeden eingebauten Text. */
+/** A service without built-in texts. */
 function withoutFallback(): I18nService {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
@@ -12,15 +12,14 @@ function withoutFallback(): I18nService {
 }
 
 /**
- * Ein frischer Dienst je Test. Die Sprache wird beim Bauen gelesen; ohne
- * Schnitt trüge die Wahl aus dem vorigen Test in den nächsten.
+ * Gives a new service for each test. The service reads the language at construction. Without a reset, the choice of one test goes into the next test.
  */
 function service(): I18nService {
   TestBed.resetTestingModule();
   return TestBed.inject(I18nService);
 }
 
-/** Wartet auf den Rückfall der Sprache. Danach springt das Signal um. */
+/** Waits for the fallback of the language. Then the signal changes. */
 async function ready(i18n: I18nService, locale: 'de' | 'en'): Promise<void> {
   await vi.waitFor(() => {
     expect(i18n.locale()).toBe(locale);
@@ -71,8 +70,8 @@ describe('I18nService', () => {
 
     i18n.setLocale('en');
 
-    // Der Brocken kommt erst im nächsten Zug. Solange steht Deutsch da, nicht
-    // der nackte Schlüssel.
+    // The chunk loads in the next task. Until then, the German text shows,
+    // not the bare key.
     expect(i18n.locale()).toBe('de');
     expect(i18n.translate('nav.karte')).toBe('Karte');
 
@@ -85,7 +84,7 @@ describe('I18nService', () => {
 
     i18n.setChoice('system');
 
-    // Der Testbrowser steht auf de-DE, siehe `test-setup.ts`.
+    // The test browser uses de-DE. See `test-setup.ts`.
     expect(i18n.choice()).toBe('system');
     expect(i18n.locale()).toBe('de');
     expect(localStorage.getItem('pilzkarte.sprache')).toBe('system');
@@ -95,8 +94,8 @@ describe('I18nService', () => {
     localStorage.setItem('pilzkarte.sprache', 'de');
     Object.defineProperty(navigator, 'language', { configurable: true, get: () => 'en-GB' });
 
-    // Ein englischer Browser machte aus der App sonst eine halb übersetzte
-    // Seite: die Oberfläche englisch, der Artenkatalog deutsch.
+    // Otherwise an English browser gives a half-translated app:
+    // English UI, German species catalogue.
     expect(service().locale()).toBe('de');
   });
 

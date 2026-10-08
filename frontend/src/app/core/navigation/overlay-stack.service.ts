@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 
-/** Ebenen außerhalb der Route, jede mit einem Weg zurück über die Adresszeile. */
+/** Layers outside the route. The browser back gesture closes each layer. */
 @Injectable({ providedIn: 'root' })
 export class OverlayStackService implements OnDestroy {
   private readonly layers: (() => void)[] = [];
@@ -21,13 +21,13 @@ export class OverlayStackService implements OnDestroy {
     window.removeEventListener('popstate', this.onPopState);
   }
 
-  /** Öffnet eine Ebene. Die Browser-Geste zurück ruft dann `onBack`. */
+  /** Opens a layer. The browser back gesture then calls `onBack`. */
   open(onBack: () => void): void {
     this.layers.push(onBack);
     history.pushState({ overlayDepth: this.layers.length }, '');
   }
 
-  /** Nimmt die oberste Ebene weg, für einen Tipp auf den eigenen Pfeil. */
+  /** Removes the top layer when the user taps the in-app back arrow. */
   back(): void {
     if (this.layers.length === 0) return;
     this.layers.pop();
@@ -35,7 +35,7 @@ export class OverlayStackService implements OnDestroy {
     history.back();
   }
 
-  /** Nimmt jede offene Ebene weg, für ein Blatt, das ganz schließt. */
+  /** Removes all open layers when a sheet closes fully. */
   closeAll(): void {
     const depth = this.layers.length;
     if (depth === 0) return;

@@ -1,7 +1,7 @@
-/** Die Gruppe einer Eingabe-Ebene: sie gibt den Namen und das Zeichen. */
+/** The group of an input layer. It gives the name and the icon. */
 export type LayerGroup = 'precipitation' | 'temperature' | 'moisture' | 'forest' | 'terrain' | 'soil';
 
-/** Die Gruppe je Schlüssel der Kette. */
+/** Maps each pipeline key to its group. */
 const GROUPS: Readonly<Record<string, LayerGroup>> = {
   regen: 'precipitation',
   regen_2w: 'precipitation',
@@ -35,10 +35,9 @@ const GROUPS: Readonly<Record<string, LayerGroup>> = {
   boden_kohlenstoff: 'soil',
 };
 
-/** Die Zeichen der Gruppen, wie `app-svg-icon` sie nennt. */
+/** The group icons, as `app-svg-icon` names them. */
 export type LayerIcon = 'cloud' | 'thermometer' | 'drop' | 'tree' | 'mountain' | 'layers';
 
-/** Das Zeichen je Gruppe. */
 const ICONS: Readonly<Record<LayerGroup, LayerIcon>> = {
   precipitation: 'cloud',
   temperature: 'thermometer',
@@ -48,12 +47,11 @@ const ICONS: Readonly<Record<LayerGroup, LayerIcon>> = {
   soil: 'layers',
 };
 
-/** Die Gruppe einer Ebene. Eine unbekannte Ebene hat keine. */
+/** Gives the group of a layer. An unknown layer has no group. */
 export function layerGroup(id: string): LayerGroup | null {
   return GROUPS[id] ?? null;
 }
 
-/** Das Zeichen der Gruppe einer Ebene. */
 export function layerIcon(id: string): LayerIcon | null {
   const group = layerGroup(id);
   return group === null ? null : ICONS[group];

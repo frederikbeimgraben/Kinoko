@@ -1,4 +1,4 @@
-/** Die Typen des Artenkatalogs, direkt aus dem Vertrag. */
+/** The species catalogue types, directly from the contract. */
 
 import type { components } from '../contract';
 

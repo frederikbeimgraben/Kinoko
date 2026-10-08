@@ -1,11 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 
-/** Ab dieser Breite steht das Blatt als Spalte neben der Karte (Artboard `Desktop`). */
+/** From this width, the sheet shows as a column next to the map (artboard `Desktop`). */
 export const COLUMN_FROM = 1024;
 
 /**
- * Ob das Fenster breit genug für die Spaltenansicht ist. Als Signal, damit
- * Blatt und Karte demselben Wert folgen und nicht jede Seite selbst misst.
+ * Tells if the window is wide enough for the column view. Sheet and map use this one signal.
  */
 @Injectable({ providedIn: 'root' })
 export class ViewportService {

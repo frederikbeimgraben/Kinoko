@@ -3,7 +3,7 @@ import type { Observable } from 'rxjs';
 import { ApiClient } from './api-client';
 import type { TaxonPage, TaxonRank } from './models/catalogue';
 
-/** Die Einordnung einer Stufe. Sie ist offen, auch ohne Anmeldung. */
+/** The taxonomy of one rank. It is public and needs no sign-in. */
 @Injectable({ providedIn: 'root' })
 export class TaxaApi {
   private readonly api = inject(ApiClient);

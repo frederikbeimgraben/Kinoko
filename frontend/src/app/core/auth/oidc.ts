@@ -1,21 +1,11 @@
 import { InjectionToken } from '@angular/core';
 import type { UserManager, UserManagerSettings } from 'oidc-client-ts';
 
-/** Was der Dienst braucht, um einen `UserManager` zu bekommen. */
+/** Gives the service a `UserManager`. */
 export type UserManagerFactory = (settings: UserManagerSettings) => Promise<UserManager>;
 
 /**
- * `oidc-client-ts` liegt hinter einem dynamischen Import, damit die Bibliothek
- * ein eigener Chunk bleibt und der Start der Karte nichts von ihr weiß.
- *
- * Die beiden Speicher sind die eigentliche Entscheidung:
- *
- * - `userStore` hält Access- und Refresh-Token. Er liegt im Arbeitsspeicher,
- *   damit kein Token einen Reload, `localStorage` oder ein Cookie überlebt.
- *   Der Preis: nach dem Reload holt eine stille Erneuerung die Sitzung zurück.
- * - `stateStore` hält den PKCE-Prüfwert zwischen Hinweg und Rückkehr. Der muss
- *   den Seitenwechsel überstehen, ist aber kein Token; `sessionStorage` endet
- *   mit dem Tab, `localStorage` täte es nicht.
+ * Loads `oidc-client-ts` with a dynamic import, so the map start does not load it. `userStore` keeps the tokens in memory, so no token survives a reload. A silent renewal restores the session. `stateStore` keeps the PKCE verifier in `sessionStorage`. It survives the redirect and ends with the tab.
  */
 export const USER_MANAGER_FACTORY = new InjectionToken<UserManagerFactory>('USER_MANAGER_FABRIK', {
   providedIn: 'root',

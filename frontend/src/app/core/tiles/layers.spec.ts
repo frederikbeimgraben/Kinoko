@@ -178,7 +178,7 @@ describe('Ebenen', () => {
     expect(shareMet(distribution, 0, 30)).toBeCloseTo(1);
     expect(shareMet(distribution, 10, 20)).toBeCloseTo(0.3);
     expect(shareMet(distribution, 20, 30)).toBeCloseTo(0.2);
-    // Eine halb getroffene Klasse zählt halb: gleichmäßig ist die ehrlichste Annahme.
+    // A half-covered class counts half. A uniform spread is the most honest assumption.
     expect(shareMet(distribution, 15, 20)).toBeCloseTo(0.15);
     expect(shareMet(distribution, 5, 25)).toBeCloseTo(0.25 + 0.3 + 0.1);
     expect(shareMet(distribution, 40, 50)).toBe(0);

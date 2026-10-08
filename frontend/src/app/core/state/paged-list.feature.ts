@@ -68,7 +68,7 @@ export function withPagedList<E>(source: () => PageSource<E>, pageSize = DEFAULT
         next(): void {
           load(false);
         },
-        /** Removes the rows that no longer belong to this view, without a new request. */
+        /** Removes the rows that do not belong to this view, without a new request. */
         withoutEntry(matches: (entry: E) => boolean): void {
           patchState(store, ({ _held, total }) => {
             if (_held === null) return {};

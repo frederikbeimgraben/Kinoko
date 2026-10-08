@@ -3,8 +3,7 @@ import { I18nService } from './i18n.service';
 import type { TranslationKey } from './translations';
 
 /**
- * `{{ 'nav.karte' | t }}`. Unrein, damit ein Sprachwechsel sofort durchschlägt;
- * die aktive Sprache ist ein Signal im Dienst.
+ * `{{ 'nav.karte' | t }}`. The pipe is impure, so a language change applies immediately. The active language is a signal in the service.
  */
 @Pipe({ name: 't', pure: false })
 export class TranslatePipe implements PipeTransform {

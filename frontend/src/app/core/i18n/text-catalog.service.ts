@@ -6,7 +6,7 @@ import { I18nService, type LoadedTexts } from './i18n.service';
 import { TEXT_CACHE, type CachedTexts } from './text-cache';
 import type { Locale } from './translations';
 
-/** Aus den Einträgen wird je Sprache ein Wörterbuch für den `I18nService`. */
+/** Makes one dictionary for each language from the entries, for the `I18nService`. */
 export function textsOf(entries: readonly TextEntry[]): LoadedTexts {
   const texts: Partial<Record<Locale, Record<string, string>>> = {};
   for (const entry of entries) {
@@ -17,9 +17,7 @@ export function textsOf(entries: readonly TextEntry[]): LoadedTexts {
   return texts;
 }
 
-/**
- * Die Texte aus der Datenbank: erst aus dem `TextCache`, dann vom Server.
- */
+/** The texts from the database: first from the `TextCache`, then from the server. */
 @Injectable({ providedIn: 'root' })
 export class TextCatalogService {
   private readonly api = inject(TextsApi);
@@ -30,12 +28,12 @@ export class TextCatalogService {
   private etag: string | null = null;
 
   readonly entries = this._entries.asReadonly();
-  /** Die Bereiche der Schlüssel: alles vor dem ersten Punkt, ohne Doppel. */
+  /** The key areas: the part before the first dot, without duplicates. */
   readonly areas = computed<readonly string[]>(() => [
     ...new Set(this._entries().map((entry) => areaOf(entry.key))),
   ]);
 
-  /** Der Katalog aus dem Zwischenspeicher, noch vor dem ersten Netzweg. */
+  /** Loads the catalogue from the cache, before the first network request. */
   async restore(): Promise<void> {
     const stored = await this.held();
     if (stored === null) return;
@@ -43,24 +41,23 @@ export class TextCatalogService {
     this.apply(stored.entries);
   }
 
-  /** Holt den Katalog vom Server. Ein Fehler lässt den bisherigen stehen. */
+  /** Loads the catalogue from the server. On an error, the current catalogue stays. */
   async load(): Promise<void> {
     try {
       const answer = await firstValueFrom(this.api.catalogue(this.etag));
       this.etag = answer.etag;
       if (answer.body !== null) await this.adopt(answer.body.entries);
     } catch {
-      // Der ApiClient hat den Fehler schon gemeldet. Ohne Server bleibt es
-      // beim abgelegten Katalog, sonst beim eingebauten.
+      // The ApiClient reports the error. Without the server, the cached
+      // catalogue stays, or else the built-in one.
     }
   }
 
-  /** Setzt einen Text in einer Sprache. */
   async change(key: string, locale: Locale, value: string): Promise<void> {
     await this.replace(await firstValueFrom(this.api.change(key, locale, value)));
   }
 
-  /** Holt die Vorgabe eines Textes zurück. */
+  /** Resets a text to its default. */
   async reset(key: string, locale: Locale): Promise<void> {
     await this.replace(await firstValueFrom(this.api.reset(key, locale)));
   }
@@ -74,7 +71,7 @@ export class TextCatalogService {
     try {
       await this.cache.write({ etag: this.etag, entries });
     } catch {
-      // Ohne Ablage holt der nächste Start den Katalog wieder vom Server.
+      // Without a cache, the next start loads the catalogue from the server.
     }
   }
 
@@ -87,13 +84,13 @@ export class TextCatalogService {
     try {
       return await this.cache.read();
     } catch {
-      // Ein gesperrter Ablageort führt zum eingebauten Katalog.
+      // A blocked cache gives the built-in catalogue.
       return null;
     }
   }
 }
 
-/** Der Bereich eines Schlüssels: `karte.legende` gehört zu `karte`. */
+/** The area of a key: `karte.legende` is in `karte`. */
 export function areaOf(key: string): string {
   return key.split('.')[0];
 }

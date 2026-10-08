@@ -1,7 +1,7 @@
-/** Sechs Nachkommastellen sind elf Zentimeter. Mehr trägt kein Fundort. */
+/** Six decimal places are eleven centimeters. No find location needs more. */
 const DIGITS = 6;
 
-/** Die Adresse, die OpenStreetMap auf einen Punkt führt, Zoom 17. */
+/** The URL that opens OpenStreetMap at a point, zoom 17. */
 export function osmUrl(location: readonly [number, number]): string {
   const [lon, lat] = location;
   const la = lat.toFixed(DIGITS);
@@ -9,14 +9,14 @@ export function osmUrl(location: readonly [number, number]): string {
   return `https://www.openstreetmap.org/?mlat=${la}&mlon=${lo}#map=17/${la}/${lo}`;
 }
 
-/** Die Adresse, die Google Maps auf einen Punkt führt. */
+/** The URL that opens Google Maps at a point. */
 export function googleMapsUrl(location: readonly [number, number]): string {
   const [lon, lat] = location;
   const query = `${lat.toFixed(DIGITS)},${lon.toFixed(DIGITS)}`;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
-/** Der `geo:`-Verweis, den das Betriebssystem des Telefons öffnet. */
+/** The `geo:` link that the phone operating system opens. */
 export function geoUri(location: readonly [number, number]): string {
   const [lon, lat] = location;
   return `geo:${lat.toFixed(DIGITS)},${lon.toFixed(DIGITS)}`;

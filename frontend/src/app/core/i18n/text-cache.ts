@@ -1,19 +1,19 @@
 import { InjectionToken } from '@angular/core';
 import type { TextEntry } from '../api/models';
 
-/** Der geholte Katalog mit dem ETag, unter dem er kam. */
+/** The loaded catalogue with its ETag. */
 export interface CachedTexts {
   etag: string | null;
   entries: readonly TextEntry[];
 }
 
-/** Der Ablageort des Katalogs zwischen zwei Starts. */
+/** Keeps the catalogue between two app starts. */
 export interface TextCache {
   read(): Promise<CachedTexts | null>;
   write(value: CachedTexts): Promise<void>;
 }
 
-/** Der Katalog im Arbeitsspeicher: er trägt nur durch diese Sitzung. */
+/** Keeps the catalogue in memory, for this session only. */
 export class MemoryTextCache implements TextCache {
   private held: CachedTexts | null = null;
 

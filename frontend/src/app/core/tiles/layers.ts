@@ -1,50 +1,49 @@
-/** Das Manifest der Eingabe-Ebenen, wie es `modell/src/pilze/input_layers.py` neben die … */
+/** The manifest of the input layers, as `modell/src/pilze/input_layers.py` writes it. */
 
 import { decimal } from '../i18n/numbers';
 
-/** Die Verteilung einer Quelle über Deutschland, vorgerechnet von der Kette … */
+/** The distribution of a source over Germany. The pipeline calculates it in advance. */
 export interface Histogram {
   classes: readonly number[];
   shares: readonly number[];
 }
 
-/** Eine Eingabe-Ebene: Wald, Boden-pH, Niederschlag der letzten vier Wochen. */
+/** An input layer, for example forest, soil pH or rain of the last four weeks. */
 export interface Layer {
   id: string;
-  /** Der kurze Name für Kopf und Liste: „Niederschlag 4 Wochen“. */
+  /** The short name for header and list, for example „Niederschlag 4 Wochen“. */
   label: string;
-  /** Der ganze Name für das Feld der Ebene. */
+  /** The full name for the layer field. */
   title: string;
-  /** Herkunft und Raster, wie die Kette sie nennt: „5-km-Raster, DWD HYRAS“. */
+  /** Source and grid, as the pipeline names them, for example „5-km-Raster, DWD HYRAS“. */
   note: string;
-  /** Der Zeitraum, den die Ebene misst, als fertiger Text der Kette. */
+  /** The time range of the layer, as finished text from the pipeline. */
   range: string;
-  /** `mm`, `Grad`, `m` oder leer für einen Anteil. */
+  /** `mm`, `Grad`, `m`, or empty for a share. */
   unit: string;
-  /** Eine feste Ebene gilt für all Wochen; eine Wochenebene folgt der Zeitleiste. */
+  /** A fixed layer applies to all weeks. A weekly layer follows the timeline. */
   fixed: boolean;
-  /** Was Byte 1 und Byte 255 bedeuten, in der Einheit der Ebene. */
+  /** The values of byte 1 and byte 255, in the unit of the layer. */
   low: number;
   high: number;
-  /** Ordner der Kacheln. */
   tilePath: string;
   zoomFrom: number;
   zoomTo: number;
-  /** Die gröbste Stufe, deren Kacheln `existing` einzeln nennt. */
+  /** The coarsest zoom level whose tiles `existing` lists one by one. */
   haveZoom: number;
-  /** Die feinste Stufe, die ein Offline-Gebiet mitnimmt. */
+  /** The finest zoom level that an offline area keeps. */
   offlineZoomTo: number;
   existing: ReadonlySet<string>;
-  /** Wochenschlüssel der Form `JJJJWWW`, aufsteigend. */
+  /** Week keys in the form `YYYYWww`, in ascending order. */
   weeks: readonly string[];
-  /** Die Verteilung einer festen Ebene. */
+  /** The distribution of a fixed layer. */
   histogram: Histogram | null;
-  /** Je Woche eine Verteilung, bei einer Wochenebene. */
+  /** One distribution for each week of a weekly layer. */
   histograms: ReadonlyMap<string, Histogram>;
 }
 
 export interface LayersManifest {
-  /** Südwest- und Nordostecke als [Länge, Breite], wie MapLibre sie erwartet. */
+  /** South-west and north-east corner as [lon, lat], as MapLibre expects. */
   bounds: readonly [readonly [number, number], readonly [number, number]];
   layers: readonly Layer[];
 }
@@ -62,7 +61,7 @@ function number(value: unknown, fallback = 0): number {
 }
 
 function corner(value: unknown): readonly [number, number] {
-  // Die Kette schreibt [Breite, Länge], MapLibre erwartet [Länge, Breite].
+  // The pipeline writes [lat, lon]. MapLibre expects [lon, lat].
   const pair = Array.isArray(value) ? value : [];
   return [number(pair[1]), number(pair[0])];
 }
@@ -124,7 +123,6 @@ function readLayer(id: string, raw: unknown): Layer | null {
   };
 }
 
-/** Liest `layers.json`. */
 export function readLayers(raw: unknown): LayersManifest {
   const data = isObject(raw) ? raw : {};
   const bounds = Array.isArray(data['bounds']) ? data['bounds'] : [];
@@ -137,28 +135,28 @@ export function readLayers(raw: unknown): LayersManifest {
   };
 }
 
-/** Der Schlüssel einer Woche im Manifest der Ebenen: `JJJJWWW`. */
+/** The key of a week in the layer manifest: `YYYYWww`. */
 export function layerWeek(year: number, week: number): string {
   return `${year}W${String(week).padStart(2, '0')}`;
 }
 
-/** Der Kachelordner einer Ebene für eine Woche. */
+/** The tile folder of a layer for a week. */
 export function layerFolders(layer: Layer, week: string | null): string | null {
   if (layer.fixed) return layer.tilePath;
   const selected = matchingWeek(layer, week);
   return selected === null ? null : `${layer.tilePath}/${selected}`;
 }
 
-/** Die Woche der Ebene, die für die gewählte Woche gilt. */
+/** The layer week that applies to the selected week. */
 export function matchingWeek(layer: Layer, week: string | null): string | null {
   if (layer.weeks.length === 0) return null;
   if (week === null) return layer.weeks[layer.weeks.length - 1];
-  // Die Schlüssel sind gleich lang, ein Vergleich als Text reicht.
+  // All keys have the same length, so a text comparison is sufficient.
   const matches = layer.weeks.filter((own) => own <= week);
   return matches.length > 0 ? matches[matches.length - 1] : layer.weeks[0];
 }
 
-/** Die Ebenen in zwei Gruppen, je Woche zuerst. */
+/** Splits the layers into two groups, weekly layers first. */
 export function layerGroups(layers: readonly Layer[]): {
   perWeek: readonly Layer[];
   fixed: readonly Layer[];
@@ -174,12 +172,12 @@ export function findLayer(manifest: LayersManifest | null, id: string | null): L
   return manifest.layers.find((layer) => layer.id === id) ?? null;
 }
 
-/** Eine Ebene ohne Einheit, die zwischen 0 und 1 liegt, ist ein Anteil. */
+/** A layer without a unit and with values from 0 to 1 is a share. */
 export function asPercent(layer: Layer): boolean {
   return layer.unit === '' && layer.low >= 0 && layer.high <= 1;
 }
 
-/** Ein Wert der Ebene ohne Einheit, in der Sprache der Oberfläche. */
+/** A layer value without unit, in the UI language. */
 export function formatNumber(value: number, layer: Layer, locale: string): string {
   if (asPercent(layer)) {
     return decimal(value * 100, locale, { maximumFractionDigits: 0 });
@@ -187,32 +185,31 @@ export function formatNumber(value: number, layer: Layer, locale: string): strin
   return decimal(value, locale, { maximumFractionDigits: Math.abs(value) >= 100 ? 0 : 1 });
 }
 
-/** Die Einheit, in der die Ebene misst. */
 export function unitOf(layer: Layer): string {
   return asPercent(layer) ? '%' : layer.unit;
 }
 
-/** Ein Wert der Ebene mit seiner Einheit, in der Sprache der Oberfläche. */
+/** A layer value with its unit, in the UI language. */
 export function formatValue(value: number, layer: Layer, locale: string): string {
   const unit = unitOf(layer);
   const number = formatNumber(value, layer, locale);
   return unit === '' ? number : `${number} ${unit}`;
 }
 
-/** Die Verteilung, die für eine Woche gilt. */
+/** The distribution that applies to a week. */
 export function histogramFor(layer: Layer, week: string | null): Histogram | null {
   if (layer.fixed) return layer.histogram;
   const selected = matchingWeek(layer, week);
   return selected === null ? null : (layer.histograms.get(selected) ?? null);
 }
 
-/** Vermerke ohne Doppelte, mit „ · " verbunden; ohne Vermerk `null`. */
+/** Joins the notes without duplicates with " · ". Gives `null` without notes. */
 export function joinNotes(notes: readonly string[]): string | null {
   const unique = [...new Set(notes.filter((note) => note !== ''))];
   return unique.length > 0 ? unique.join(' · ') : null;
 }
 
-/** Der Anteil der Fläche, dessen Wert in der Spanne liegt. */
+/** The share of the area whose value is in the range. */
 export function shareMet(histogram: Histogram, von: number, bis: number): number {
   let sum = 0;
   for (let cssClass = 0; cssClass < histogram.shares.length; cssClass++) {

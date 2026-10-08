@@ -1,4 +1,4 @@
-/** Das Glossar des Vertrags. */
+/** The contract glossary. */
 
 import type { components } from '../contract';
 

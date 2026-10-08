@@ -1,34 +1,27 @@
 /**
- * Ein Tag, wie ihn eine Person liest. Die Form kommt aus den Mockups:
- * „6. September 2026“.
- *
- * Die beiden Funktionen stehen im Kern und nicht in einer Seite: Funde, Arten
- * und Bilder schreiben denselben Tag, und jede Seite ihre eigene Fassung
- * bauen zu lassen ergäbe drei Schreibweisen.
+ * Formats a day for people to read. The format comes from the mockups. These functions are in the core, so finds, species and photos all show one format.
  */
 
 import type { I18nService } from './i18n.service';
 
 /**
- * Liest ein ISO-Datum als lokalen Tag. `new Date('2026-09-06')` läge in UTC
- * und verschöbe den Tag östlich der Datumsgrenze.
+ * Reads an ISO date as a local day. `new Date(iso)` uses UTC and can move the day by one in some time zones.
  */
 export function asDate(iso: string): Date {
   const [year, month, day] = iso.split('-').map(Number);
   return new Date(year, (month || 1) - 1, day || 1);
 }
 
-/** „6. September 2026“, so wie das Fund-Blatt es schreibt. */
+/** Day, full month and year, as the find sheet shows it. */
 export function longDate(iso: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(
     asDate(iso),
   );
 }
 
-/** Übersetzt einen Schlüssel mit Platzhaltern. */
 type Translate = (key: string, values?: Record<string, string | number>) => string;
 
-/** Der Tag in Ziffern, so wie ein Formular ihn schreibt. */
+/** The day in digits, as a form shows it. */
 export function numericDate(iso: string, translate: Translate): string {
   const date = asDate(iso);
   return translate('common.dateNumeric', {
@@ -38,12 +31,12 @@ export function numericDate(iso: string, translate: Translate): string {
   });
 }
 
-/** „6. Sept.“: Tag und kurzer Monat, beides aus dem Katalog. */
+/** Day and short month, both from the catalogue. */
 export function shortDate(iso: string, i18n: I18nService): string {
   return shortDay(asDate(iso), i18n);
 }
 
-/** Derselbe Tag aus einem Zeitpunkt, den ein Dienst als Zeitstempel liefert. */
+/** The same format for a `Date`, for example from a service timestamp. */
 export function shortDay(date: Date, i18n: I18nService): string {
   return i18n.translate('common.dateShort', {
     tag: date.getDate(),
@@ -51,7 +44,7 @@ export function shortDay(date: Date, i18n: I18nService): string {
   });
 }
 
-/** Der kurze Monatsname aus dem Katalog. `month`: 1–12. */
+/** The short month name from the catalogue. `month` is 1 to 12. */
 export function shortMonth(month: number, i18n: I18nService): string {
   return i18n.translate(`enum.monthShort.${month}` as 'enum.monthShort.1');
 }

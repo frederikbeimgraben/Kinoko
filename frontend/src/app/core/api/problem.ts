@@ -1,6 +1,5 @@
 /**
- * Fehlerkörper nach RFC 9457. Das Backend antwortet auf jedem Fehlerpfad mit
- * `application/problem+json`, nie mit dem FastAPI-`detail`.
+ * Error body as per RFC 9457. The backend sends `application/problem+json` on each error path, never the FastAPI `detail`.
  */
 export interface ProblemDetail {
   type: string;
@@ -13,13 +12,11 @@ export interface ProblemDetail {
 }
 
 /**
- * Der Code einer 401, die schon beantwortet wird: Der Interceptor hat still
- * erneuert, es half nicht, und das Anmelde-Blatt fragt gerade nach. Ein Toast
- * daneben wäre Lärm, darum schweigt der ApiClient bei diesem Code.
+ * Code of a 401 that the sign-in sheet handles after a failed silent renewal. The ApiClient shows no toast for this code, because the sheet is already open.
  */
 export const SIGN_IN_REQUIRED = 'anmeldung_noetig';
 
-/** Prüft, ob ein Antwortkörper wirklich ein problem+json ist. */
+/** Checks that a response body is a problem+json. */
 export function isProblemDetail(value: unknown): value is ProblemDetail {
   if (typeof value !== 'object' || value === null) return false;
   const candidate = value as Partial<ProblemDetail>;

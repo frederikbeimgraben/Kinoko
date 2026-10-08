@@ -1,23 +1,23 @@
 import type { components } from '../contract';
 
-/** Die Zähler der Verwaltungsübersicht. */
+/** The counters of the admin overview. */
 export type AdminSummary = components['schemas']['AdminSummary'];
 
-/** Das eigene Konto mit allen eigenen Funden, Objekten und Fotos. */
+/** The own account with all own finds, objects and photos. */
 export type AccountExport = components['schemas']['AccountExport'];
 
-/** Die Zahlen einer Art in der Artenverwaltung. */
+/** The counts of one species in the species admin. */
 export type SpeciesCountsEntry = components['schemas']['SpeciesCountsEntry'];
 
-/** Eine Antwort, die ihre Einträge unter `items` trägt. */
+/** A response that keeps its entries in `items`. */
 export interface Items<E> {
   items: E[];
 }
 
-/** Das eigene Konto, so wie `/api/me` es liefert. */
+/** The own account, as `/api/me` gives it. */
 export type Me = components['schemas']['Me'];
 
-/** Die Rechte des Vertrags. Der Server bleibt die Quelle, wer sie trägt. */
+/** The contract permissions. The server decides who has them. */
 export type Permission = components['schemas']['Permission'];
 
 export const PERMISSIONS: readonly Permission[] = [
@@ -32,18 +32,17 @@ export const PERMISSIONS: readonly Permission[] = [
   'group.manage',
 ];
 
-/** Die vier Gruppen, unter denen die Rechtematrix ihre Zeilen zeigt. */
+/** The four groups that the permission matrix uses for its rows. */
 export type PermissionArea = components['schemas']['Area'];
 
 export const PERMISSION_AREAS: readonly PermissionArea[] = ['species', 'interface', 'access', 'data'];
 
-/** Ein Recht des Katalogs mit seiner Gruppe. */
+/** A catalogue permission with its group. */
 export type PermissionEntry = components['schemas']['PermissionEntry'];
 
-/** Die Antwort von `/api/me/permissions`. */
 export type MyPermissions = components['schemas']['MyPermissions'];
 
-/** Eine Rolle, so kurz wie sie neben einer Person steht. */
+/** The short form of a role, as shown next to a person. */
 export interface RoleRef {
   id: string;
   slug: string;
@@ -52,7 +51,7 @@ export interface RoleRef {
 
 export interface Role extends RoleRef {
   description: string | null;
-  /** Admin und Nutzer stehen fest: nicht löschbar, nicht umbenennbar. */
+  /** Admin and user are fixed. You cannot delete or rename them. */
   builtIn: boolean;
   permissions: Permission[];
   peopleCount: number;
@@ -67,20 +66,20 @@ export interface RoleInput {
   permissions: Permission[];
 }
 
-/** Weggelassene Felder bleiben, wie sie sind. */
+/** Omitted fields keep their values. */
 export interface RolePatch {
   name?: string;
   description?: string | null;
   permissions?: Permission[];
 }
 
-/** Ein Konto, das den Dienst schon einmal benutzt hat. */
+/** An account that used the service at least once. */
 export type Person = components['schemas']['Person'];
 
-/** Der Name einer Person, auflösbar bei gemeinsamer Gruppe. */
+/** The name of a person. It resolves only when you share a group. */
 export type PersonName = components['schemas']['PersonName'];
 
-/** Ein Ausschnitt der Personenliste, mit der Gesamtzahl dahinter. */
+/** A part of the person list, with the total count. */
 export interface Page<E> {
   eintraege: E[];
   gesamt: number;

@@ -1,12 +1,11 @@
 import type { EntryKind } from '../api/entry-paths';
 
-/** Die Objekte, die ohne Netz entstehen dürfen. */
+/** The objects that the user can make without network. */
 export type SyncKind = EntryKind;
 
-/** Was mit einem Objekt geschehen soll. */
 export type SyncOperation = 'create' | 'update' | 'delete';
 
-/** Ein Auftrag, der fehlt. `target` kommt vom Gerät und macht `PUT` idempotent. */
+/** A pending task. The device makes `target`, so `PUT` is idempotent. */
 export interface SyncTask<B = unknown> {
   id: string;
   kind: SyncKind;

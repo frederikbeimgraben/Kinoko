@@ -33,12 +33,12 @@ function build(): Setup {
   };
 }
 
-/** Lässt die Mikroaufgaben der stillen Erneuerung durchlaufen. */
+/** Lets the microtasks of the silent renewal run. */
 function pass(): Promise<void> {
   return new Promise((done) => setTimeout(done, 0));
 }
 
-/** Bringt den Dienst in den Zustand „angemeldet“, ohne durch das SSO zu gehen. */
+/** Puts the service in the signed-in state without the SSO. */
 async function signedIn(setup: Setup, token = 'token-eins'): Promise<void> {
   setup.manager.still = oidcUser({ token });
   await setup.auth.silentRenew();

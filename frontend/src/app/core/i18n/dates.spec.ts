@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { catalogueOf } from '../../testing/i18n';
 import { asDate, longDate, numericDate, shortDate, shortDay, shortMonth } from './dates';
 
-/** Der Katalog der Tests: die Muster der beiden kurzen Formen. */
+/** The test catalogue: the patterns of the two short forms. */
 const PATTERN = {
   'common.dateShort': '{tag}. {monat}',
   'common.dateNumeric': '{tag}. {monat}. {jahr}',

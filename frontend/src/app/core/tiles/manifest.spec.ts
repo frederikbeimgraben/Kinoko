@@ -68,7 +68,7 @@ describe('Manifest', () => {
   it('nimmt die laufende Kalenderwoche, wenn das Manifest sie hat', () => {
     const manifest = readManifest(RAW, 'boletus_edulis');
 
-    // Der 2. Oktober 2025 liegt in der KW 40, der 6. Januar 2026 in der KW 2.
+    // The October date is in ISO week 40. The January date is in ISO week 2.
     expect(currentWeek(manifest, new Date('2025-10-02'))?.week).toBe(40);
     expect(isoWeek(new Date('2025-10-02'))).toEqual({ year: 2025, week: 40 });
     expect(isoWeek(new Date('2026-01-06'))).toEqual({ year: 2026, week: 2 });
@@ -77,7 +77,7 @@ describe('Manifest', () => {
   it('nimmt auch eine Prognosewoche, wenn heute in ihr liegt', () => {
     const manifest = readManifest(RAW, 'boletus_edulis');
 
-    // Der 1. Januar 2026 liegt in der KW 1, die im Manifest Prognose ist.
+    // The test date is in ISO week 1. The manifest marks this week as forecast.
     expect(currentWeek(manifest, new Date('2026-01-01'))?.forecast).toBe(true);
   });
 
