@@ -15,6 +15,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/core/geo"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 )
 

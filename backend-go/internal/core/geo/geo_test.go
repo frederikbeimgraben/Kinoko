@@ -69,8 +69,8 @@ func TestCoarseAgreesWithPython(t *testing.T) {
 	}
 }
 
-// The expected values come from coarse() of the Python photo service
-// (app/modules/photos), with a grid of 1 km.
+// The expected values come from coarse() of the Python service
+// (app/shared/geometry.py), as the photos module uses it.
 func TestCoarseAgreesWithPythonPhotoGrid(t *testing.T) {
 	cases := []struct{ in, out Point }{
 		{Point{13.411, 52.523}, Point{13.40618535749036, 52.52425440172476}},
