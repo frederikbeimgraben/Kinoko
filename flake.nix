@@ -57,7 +57,7 @@
             inherit version;
             src = ./frontend;
             nodejs = pkgs.nodejs_24;
-            npmDepsHash = pkgs.lib.fakeHash;
+            npmDepsHash = "sha256-WexreanumtWdd4gQuzQTnvOFwbWOXcGSJLdZHdYFtLk=";
             env.KINOKO_VERSION = version;
             installPhase = ''
               runHook preInstall
