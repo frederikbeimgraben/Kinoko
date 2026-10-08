@@ -136,3 +136,13 @@ func (p *Params) UnmarshalJSON(data []byte) error {
 	*p = out
 	return nil
 }
+
+// ForTrain returns the parameters that lightgbm.train hands to the Dataset and the Booster:
+// num_iterations=rounds is added at the end when absent, as _choose_num_iterations does.
+// The value shows in the model text only; the caller still runs the rounds.
+func (p Params) ForTrain(rounds int) Params {
+	if _, ok := p.Get("num_iterations"); ok {
+		return p
+	}
+	return p.With("num_iterations", rounds)
+}

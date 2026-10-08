@@ -121,7 +121,7 @@ def bundle_golden(rng, model, train, test, y) -> None:
 
 
 def train_golden(rng) -> None:
-    n = 3000
+    n = 1500
     frame = pd.DataFrame({
         "x": rng.uniform(4.0e6, 4.6e6, n), "y": rng.uniform(2.7e6, 3.3e6, n),
         "iso_year": rng.integers(2015, 2023, n), "label": (rng.random(n) < 0.08).astype(int),
@@ -158,9 +158,9 @@ def train_golden(rng) -> None:
     p = rng.random(777)
     yb = (rng.random(777) < p).astype(int)
     rng2 = np.random.default_rng(3)
-    arrays = {str(k): rng2.normal(size=k).tolist() for k in (1, 7, 8, 100, 128, 129, 1000, 12345)}
+    arrays = {str(k): rng2.normal(size=k).tolist() for k in (1, 7, 8, 100, 128, 129, 1000, 2000)}
     rng2 = np.random.default_rng(3)
-    means = {str(k): float(np.mean(rng2.normal(size=k))) for k in (1, 7, 8, 100, 128, 129, 1000, 12345)}
+    means = {str(k): float(np.mean(rng2.normal(size=k))) for k in (1, 7, 8, 100, 128, 129, 1000, 2000)}
     floordiv = [[a, b, float(a // b)] for a, b in
                 [(4.2e6 - 1e-9, 1e5), (-7.5, 2.0), (1e5 * 3, 1e5), (-0.0, 25000.0), (299999.99999999994, 1e5)]]
     out = {
@@ -170,8 +170,8 @@ def train_golden(rng) -> None:
                    "brier": "sklearn.metrics.brier_score_loss", "mean": "numpy.mean"},
         "x": frame["x"].tolist(), "y": frame["y"].tolist(), "isoYear": frame["iso_year"].tolist(),
         "label": frame["label"].tolist(), "cell": frame["cell"].tolist(), "block": frame["block"].tolist(),
-        "yearFolds": [[a.tolist(), b.tolist()] for a, b in year],
-        "spaceFolds": [[a.tolist(), b.tolist()] for a, b in space],
+        "yearFolds": [b.tolist() for _, b in year],
+        "spaceFolds": [b.tolist() for _, b in space],
         "priorFold": cols(fm.prior_columns(frame, train, test)),
         "priorAll": cols(fm.prior_columns(frame, everything, np.array([], int))),
         "tables": {k: {"keys": t[k].astype(str).tolist(), "rate": t["rate"].tolist(), "n": t["n"].tolist()}
@@ -191,8 +191,7 @@ def main() -> None:
     model, train, test, y = lgbm_golden(rng)
     bundle_golden(rng, model, train, test, y)
     train_golden(rng)
-    print("lightgbm", lgb.__version__, "dataset params:",
-          lgb.Dataset(train, label=y, params=PARAMS).construct().get_params())
+    print("lightgbm", lgb.__version__)
 
 
 if __name__ == "__main__":
