@@ -11,6 +11,12 @@ import (
 	"strings"
 )
 
+// CacheDir gives the folder of the API cache under the data folder PILZE_DATA.
+func CacheDir(dataDir string) string { return filepath.Join(dataDir, "cache", "gbif") }
+
+// ArchiveDir gives the folder of the files that ImportArchive derives from a gbif-archive version folder.
+func ArchiveDir(versionDir string) string { return filepath.Join(versionDir, "derived", "gbif") }
+
 // PartialSuffix ends the name of a chunk file that is not complete.
 const PartialSuffix = ".partial"
 

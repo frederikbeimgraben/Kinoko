@@ -256,9 +256,12 @@ def observers_golden() -> dict:
         "hash_observer": [[v, gbif_fetch.hash_observer(v)] for v in gbif_values],
         "observer_hash": [[i, bo.observer_hash(i)] for i in app_ids],
         "blake2s_32": [[i, hashlib.blake2s(i.encode()).hexdigest()] for i in app_ids],
-        "slim": [gbif_fetch.slim({"gbifID": "1", "key": 1, "recordedBy": "Anna", "decimalLatitude": 48.5,
-                                  "year": 2024, "issues": ["A"], "extra": {"x": 1}, "species": "Bär"}),
-                 gbif_fetch.slim({"gbifID": "2", "recordedBy": None})],
+        "slim_lines": [json.dumps(gbif_fetch.slim(r), ensure_ascii=False) + "\n" for r in (
+            {"gbifID": "1", "key": 1, "recordedBy": "Anna", "decimalLatitude": 48.5, "year": 2024,
+             "issues": ["A"], "extra": {"x": 1}, "species": "B\u00e4r", "elevation": 1e-05,
+             "coordinateUncertaintyInMeters": 30.0, "individualCount": 12345678901234},
+            {"gbifID": "2", "recordedBy": None},
+            {"gbifID": "3", "recordedBy": ["Anna", "Bert"], "eventDate": "2024-01-02/2024-01-03"})],
     }
 
 
