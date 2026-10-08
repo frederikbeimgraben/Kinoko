@@ -1,8 +1,7 @@
+@use './page';
+
 :host {
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
 .queue {
@@ -11,13 +10,13 @@
   flex-direction: column;
   justify-content: center;
   min-block-size: 0;
-  padding: 20px var(--size-gutter) 24px;
+  padding: 20px 16px 24px;
   overflow: hidden;
 }
 
 .queue__counter {
-  font-size: var(--fs-row-meta);
-  color: var(--color-text-muted);
+  font-size: var(--fs-14);
+  color: var(--label);
   font-variant-numeric: tabular-nums;
 }
 
@@ -31,24 +30,25 @@
   border-radius: 0;
 }
 
+// The body per `kit.css` `.qcard .qbody`.
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 14px var(--space-4);
+  gap: 10px;
+  padding: 16px;
 }
 
 .card__species {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
+  font-size: var(--fs-20);
+  font-weight: 500;
 }
 
 .card__meta {
-  font-size: var(--fs-row-meta);
+  font-size: var(--fs-14);
   line-height: 1.4;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
 .card__caption {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-14);
 }

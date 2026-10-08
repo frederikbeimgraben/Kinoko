@@ -153,6 +153,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/run.component').then((m) => m.RunComponent),
       },
       {
+        path: 'datenquellen',
+        canActivate: [requiresPermission('data.manage')],
+        loadComponent: () =>
+          import('./features/admin/data-sources/data-sources.component').then((m) => m.DataSourcesComponent),
+      },
+      {
+        path: 'datenquellen/:kind',
+        canActivate: [requiresPermission('data.manage')],
+        loadComponent: () =>
+          import('./features/admin/data-sources/data-source.component').then((m) => m.DataSourceComponent),
+      },
+      {
         path: 'arten/neu',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>

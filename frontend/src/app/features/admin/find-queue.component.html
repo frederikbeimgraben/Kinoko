@@ -1,12 +1,14 @@
 <app-page-header [title]="'find.queue.title' | t" [back]="true" (backClick)="back()">
-  <span class="queue__counter">{{ counter() }}</span>
   @if (cards().length > 0) {
+    <span class="queue__counter">{{ counter() }}</span>
     <app-icon-button icon="check" [label]="'find.queue.acceptAll' | t" (pressed)="asking.set(true)" />
   }
 </app-page-header>
 
 <div class="queue">
-  @if (cards().length === 0) {
+  @if (!loaded()) {
+    <app-queue-card-skeleton />
+  } @else if (cards().length === 0) {
     <app-state-view icon="check" [title]="'find.queue.empty' | t" />
   } @else {
     <app-review-queue

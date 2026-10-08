@@ -83,6 +83,7 @@ export { RampComponent, type RampKind } from './ramp/ramp.component';
 export { FORECAST_RAMP, RAIN_RAMP } from './ramp/ramp-colours';
 export { RangeSliderComponent, type Handles } from './range-slider/range-slider.component';
 export { ReviewQueueComponent } from './review-queue/review-queue.component';
+export { QueueCardSkeletonComponent } from './review-queue/queue-card-skeleton.component';
 export { RippleDirective } from './ripple/ripple.directive';
 export { RowGroupComponent } from './row-group/row-group.component';
 export { ScrollFadeDirective } from './scroll-fade/scroll-fade.directive';

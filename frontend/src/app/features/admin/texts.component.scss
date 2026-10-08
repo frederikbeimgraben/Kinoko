@@ -1,63 +1,59 @@
-@use '../../../styles/card';
+@use './page';
+@use './section';
 
-// Das Blatt der Textänderung dunkelt die Liste ab, wie das Brett es zeigt.
 :host {
-  --pilz-scrim: rgb(0 18 10 / 55%);
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
 .texts {
+  @include page.body;
+}
+
+// The rows of a kit `.grp`: 2 px gaps and the group radii.
+.texts__group {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
+  gap: 2px;
 }
 
-.texts__card {
-  @include card.card;
-}
-
-// Die Zeile trägt zwei Ebenen: oben der Schlüssel, darunter beide Sprachen
-// nebeneinander. Als Schaltfläche ist sie über die Tastatur erreichbar.
+// A row has two levels: the key on top, both languages side by side below it.
 .texts__row {
   display: flex;
   flex-direction: column;
   gap: 10px;
   inline-size: 100%;
-  padding: 14px;
-  background: none;
-  border: 0;
-  border-block-end: var(--border-width) solid var(--color-border);
+  padding: 12px 16px;
+  color: var(--text);
   text-align: start;
+  background: var(--surface);
+  border: 0;
+  border-radius: var(--r-row);
+}
 
-  &:last-child {
-    border-block-end: 0;
-  }
+.texts__row:first-child {
+  border-start-start-radius: var(--r-item);
+  border-start-end-radius: var(--r-item);
+}
+
+.texts__row:last-child {
+  border-end-start-radius: var(--r-item);
+  border-end-end-radius: var(--r-item);
 }
 
 .texts__head {
   display: flex;
-  gap: var(--space-2);
+  gap: 8px;
   align-items: center;
 }
 
-// Der Schlüssel ist Technik, kein Satz: dieselbe Breite je Zeichen liest sich
-// schneller und macht den Punkt zwischen Bereich und Namen sichtbar.
+// A key is technical, not a sentence: a fixed width per character shows the dot between area and name.
 .texts__key {
   flex: 1 1 auto;
   overflow: hidden;
   font-family: ui-monospace, monospace;
-  font-size: var(--fs-xs);
+  font-size: var(--fs-12);
   line-height: normal;
-  color: var(--color-text-muted);
+  color: var(--label);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -75,25 +71,17 @@
   min-inline-size: 0;
 }
 
-.texts__language {
-  font-size: var(--fs-source);
-  line-height: normal;
-  color: var(--color-border-strong);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .texts__text {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-14);
   line-height: 1.4;
 }
 
-// Die zweite Sprache tritt zurück: die Vorgabe steht vorn.
+// The second language steps back: the default comes first.
 .texts__text--other {
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
-// Das Merkmal steht rechts vom Schlüssel, wie das Brett es zeigt.
+// The mark is on the right of the key in the head.
 .texts__mark {
   display: contents;
 }
@@ -102,25 +90,23 @@
   order: 1;
 }
 
-.texts__section {
-  @include card.section-title;
-}
-
-// Die Felder tragen Schrift und Polster der Zeile, wie das Brett sie zeigt.
 .texts__form {
-  --form-field-size: var(--fs-row-title);
-  --form-field-inline: 14px;
-  --form-field-shift: 0;
+  @include section.fields;
+
   --form-field-lines: 96px;
   --form-field-lines-top: 8px;
 
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding-inline: var(--size-gutter);
-  overflow-y: auto;
 }
 
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+.texts__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.texts__field .lbl {
+  padding-inline-start: 4px;
 }

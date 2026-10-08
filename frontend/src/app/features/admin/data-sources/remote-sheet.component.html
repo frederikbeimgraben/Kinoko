@@ -1,0 +1,59 @@
+<app-overlay-host [open]="source() !== null" [modal]="true" (closed)="closed.emit()">
+  @if (source() !== null) {
+    <app-sheet
+      [label]="title()"
+      [title]="title()"
+      [modal]="true"
+      [dismissible]="true"
+      (closed)="closed.emit()"
+    >
+      <div class="remote">
+        <app-row-group>
+          @for (fact of facts(); track fact.key) {
+            <app-list-row [title]="fact.title" [subline]="fact.value" [wrap]="true" />
+          }
+        </app-row-group>
+
+        @if (fetchRun(); as run) {
+          <app-row-group>
+            <app-list-row
+              kind="link"
+              icon="refresh"
+              [title]="'admin.dataSources.remote.run' | t"
+              [clickable]="true"
+              [chevron]="true"
+              (chosen)="openRun(run)"
+            />
+          </app-row-group>
+        }
+
+        <app-section [label]="'admin.dataSources.remote.range' | t">
+          <div class="remote__range">
+            <app-form-field
+              kind="number"
+              [label]="'admin.dataSources.remote.fromYear' | t"
+              [placeholder]="'admin.dataSources.remote.fromYear' | t"
+              [hideLabel]="true"
+              [value]="fromYear()"
+              (valueChange)="fromYear.set($event)"
+            />
+            <app-form-field
+              kind="number"
+              [label]="'admin.dataSources.remote.toYear' | t"
+              [placeholder]="'admin.dataSources.remote.toYear' | t"
+              [hideLabel]="true"
+              [value]="toYear()"
+              (valueChange)="toYear.set($event)"
+            />
+          </div>
+        </app-section>
+      </div>
+      <app-action-bar
+        foot
+        [primary]="'admin.dataSources.remote.refresh' | t"
+        [busy]="busy()"
+        (primaryClick)="refresh()"
+      />
+    </app-sheet>
+  }
+</app-overlay-host>

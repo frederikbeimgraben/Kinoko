@@ -1,4 +1,4 @@
-<app-page-header [title]="'admin.people.title' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.people.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
 
 <div class="people">
   <app-search-field
@@ -6,24 +6,29 @@
     [placeholder]="'admin.people.searchPlaceholder' | t"
     (valueChange)="onSearch($event)"
   />
-  <div class="people__card">
-    @for (row of rows(); track row.id) {
-      <app-list-row
-        kind="catalogue"
-        [title]="row.name"
-        [subline]="row.email"
-        [accent]="true"
-        [clickable]="true"
-        (chosen)="edit(row.id)"
-      >
-        <span trail class="people__roles">
-          @for (role of row.roles; track role.id) {
-            <app-level-pill [text]="role.name" />
-          }
-        </span>
-      </app-list-row>
-    }
-  </div>
+  @if (!loaded()) {
+    <app-row-group-skeleton [count]="5" [lines]="2" trail="badge" />
+  } @else if (rows().length === 0) {
+    <app-state-view icon="search" [title]="'admin.people.empty' | t" />
+  } @else {
+    <app-row-group>
+      @for (row of rows(); track row.id) {
+        <app-list-row
+          [title]="row.name"
+          [subline]="row.email"
+          [clickable]="true"
+          [accent]="true"
+          (chosen)="edit(row.id)"
+        >
+          <span trail class="people__roles">
+            @for (role of row.roles; track role.id) {
+              <app-level-pill [text]="role.name" />
+            }
+          </span>
+        </app-list-row>
+      }
+    </app-row-group>
+  }
 </div>
 
 <app-overlay-host [open]="editing() !== null" [modal]="true" (closed)="close()">
@@ -35,17 +40,17 @@
       [modal]="true"
       (closed)="close()"
     >
-      <div class="people__choices">
+      <app-row-group>
         @for (choice of choices(); track choice.id) {
           <app-check-row
             [title]="choice.name"
             [checked]="choice.checked"
-            [flush]="true"
             (toggled)="toggle(choice.id, $event)"
           />
         }
-      </div>
+      </app-row-group>
       <app-action-bar
+        foot
         [primary]="'common.apply' | t"
         [secondary]="'admin.people.delete' | t"
         [secondaryDanger]="true"

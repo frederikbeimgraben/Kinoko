@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionPartComponent } from './section-part.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 function routeFor(part: string): { provide: typeof ActivatedRoute; useValue: unknown } {
@@ -29,7 +29,7 @@ async function build(part = 'cap'): Promise<{ container: Element; http: HttpTest
 
 describe('SectionPartComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt das Teil im Kopf und je Wert eine Zeile', async () => {

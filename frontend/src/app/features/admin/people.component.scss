@@ -1,51 +1,16 @@
-@use '../../../styles/card';
+@use './page';
 
-// Das Blatt der Zuweisung dunkelt die Liste ab, wie das Brett es zeigt.
 :host {
-  --pilz-scrim: rgb(0 18 10 / 55%);
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
 .people {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.people__card {
-  @include card.card;
-
-  --list-row-inline: 14px;
-  --size-row-tall: var(--size-row);
-  --list-row-sub: var(--fs-row-meta);
-  --list-row-sub-height: 1.4;
-  --list-row-title-height: normal;
-  --space-row-stack: 2px;
+  @include page.body;
 }
 
 .people__roles {
   display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-// Der Strich trennt den Kopf von den Rollen, wie das Brett es zeigt.
-.people__choices {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-2) var(--size-gutter);
-  border-block-start: var(--border-width) solid var(--color-border);
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
 }

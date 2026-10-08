@@ -3,37 +3,51 @@ import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { AdminState } from './admin.state';
+import { AdminStore } from './admin.store';
 import { roleName } from './role-name';
 
-/** Eine Zeile der Rollenliste. */
+/** A row of the role list. */
 interface Row {
   id: string;
   name: string;
   subline: string;
-  /** Eine feste Rolle trägt ein Schloss statt eines Wegs zum Ändern. */
+  /** A built-in role shows a lock. */
   locked: boolean;
 }
 
-/** Die Rollenliste: eine Zeile führt in die Rolle, die letzte legt eine an. */
+/** The role list: a row opens the role, the last row adds a role. */
 @Component({
   selector: 'app-roles',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AddRowComponent, ListRowComponent, PageHeaderComponent, SvgIconComponent, TranslatePipe],
+  imports: [
+    AddRowComponent,
+    ListRowComponent,
+    PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SvgIconComponent,
+    TranslatePipe,
+  ],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
 })
 export class RolesComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(AdminState);
+  private readonly store = inject(AdminStore);
+
+  protected readonly wide = inject(ViewportService).wide;
+  protected readonly loaded = computed(() => this.store.roles() !== null);
 
   protected readonly rows = computed<Row[]>(() =>
-    (this.state.roles() ?? []).map((role) => ({
+    (this.store.roles() ?? []).map((role) => ({
       id: role.id,
       name: roleName(this.i18n, role.name),
       subline: joined([role.description, this.people(role.peopleCount)]),
@@ -44,7 +58,7 @@ export class RolesComponent {
   protected readonly lockLabel = computed(() => this.i18n.translate('admin.roles.locked'));
 
   constructor() {
-    this.state.loadRoles();
+    this.store.loadRoles();
   }
 
   protected open(id: string): void {
@@ -59,7 +73,7 @@ export class RolesComponent {
     void this.router.navigateByUrl('/verwaltung');
   }
 
-  /** Eine Rolle ohne Person nennt keine Zahl. */
+  /** A role without a person shows no count. */
   private people(count: number): string | null {
     if (count === 0) return null;
     if (count === 1) return this.i18n.translate('admin.roles.onePerson');

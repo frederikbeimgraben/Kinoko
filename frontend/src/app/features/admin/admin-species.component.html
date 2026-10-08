@@ -1,4 +1,4 @@
-<app-page-header [title]="'admin.species.title' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.species.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
 
 <div class="species">
   <app-species-search-filter-bar
@@ -6,36 +6,41 @@
     [placeholder]="'admin.species.searchPlaceholder' | t"
     (valueChange)="find($event)"
   />
-  <app-infinite-list class="species__list" [hasMore]="hasMore()" (more)="more()">
-    <app-add-row
-      [label]="'admin.species.add' | t"
-      [action]="'admin.species.create' | t"
-      (pressed)="create()"
-    />
-    <div class="species__card">
-      @for (row of rows(); track row.slug) {
-        <app-list-row
-          kind="catalogue"
-          [title]="row.name"
-          [subline]="row.latin"
-          [accent]="true"
-          [clickable]="true"
-          (chosen)="open(row.slug)"
-        >
-          @if (!row.forecast) {
-            <app-svg-icon
-              trail
-              class="species__mark"
-              name="map-off"
-              [size]="14"
-              [strokeWidth]="1.5"
-              [label]="noForecast()"
-            />
+  @if (loading()) {
+    <app-row-group-skeleton [count]="7" [lines]="2" />
+  } @else {
+    <app-infinite-list class="species__list" skeleton="rows" [hasMore]="hasMore()" (more)="more()">
+      <div class="species__rows">
+        <app-add-row
+          [label]="'admin.species.add' | t"
+          [action]="'admin.species.create' | t"
+          (pressed)="create()"
+        />
+        <app-row-group>
+          @for (row of rows(); track row.slug) {
+            <app-list-row
+              [title]="row.name"
+              [subline]="row.latin"
+              [clickable]="true"
+              [accent]="true"
+              (chosen)="open(row.slug)"
+            >
+              @if (!row.forecast) {
+                <app-svg-icon
+                  trail
+                  name="map-off"
+                  tone="dim"
+                  [size]="18"
+                  [strokeWidth]="1.6"
+                  [label]="noForecast()"
+                />
+              }
+            </app-list-row>
           }
-        </app-list-row>
-      }
-    </div>
-  </app-infinite-list>
+        </app-row-group>
+      </div>
+    </app-infinite-list>
+  }
 </div>
 
 <app-species-filter-sheet />

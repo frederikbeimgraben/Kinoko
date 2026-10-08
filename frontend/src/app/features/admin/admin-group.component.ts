@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { GroupsState } from '../../core/access/groups.state';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -7,9 +15,12 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { GroupMembersComponent } from '../account/group-members.component';
+import { AdminSharedStore } from './admin-shared.store';
 
-/** Eine Gruppe in der Verwaltung: umbenennen, Mitglied entfernen, löschen. */
+/** A group in the administration: rename it, remove a member or delete it. */
 @Component({
   selector: 'app-admin-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,6 +30,8 @@ import { GroupMembersComponent } from '../account/group-members.component';
     FormFieldComponent,
     GroupMembersComponent,
     PageHeaderComponent,
+    RowGroupSkeletonComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './admin-group.component.html',
@@ -30,13 +43,16 @@ export class AdminGroupComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(GroupsState);
+  private readonly writes = inject(AdminSharedStore);
 
-  protected readonly nameChoice = signal<string | null>(null);
   protected readonly asking = signal(false);
-  protected readonly saving = signal(false);
+  protected readonly saving = this.writes.saving;
 
+  protected readonly loaded = computed(() => this.state.groups() !== null);
   protected readonly group = computed(() => this.state.one(this.id()));
-  protected readonly name = computed(() => this.nameChoice() ?? this.group()?.name ?? '');
+  private readonly savedName = computed(() => this.group()?.name ?? '');
+  /** A member change gives a new group object with the same name. The input then stays. */
+  protected readonly name = linkedSignal(() => this.savedName());
   protected readonly title = computed(() => this.group()?.name ?? this.i18n.translate('admin.groups.title'));
 
   protected readonly question = computed(
@@ -48,28 +64,28 @@ export class AdminGroupComponent {
   }
 
   protected removeMember(userId: string): void {
-    this.state.removeMember(this.id(), userId).subscribe();
+    this.writes.removeMember({ id: this.id(), userId });
   }
 
   protected save(): void {
     const name = this.name().trim();
     if (name === '') return;
-    this.saving.set(true);
-    this.state.rename(this.id(), name).subscribe({
-      next: () => {
-        this.saving.set(false);
+    this.writes.renameGroup({
+      id: this.id(),
+      name,
+      onDone: () => {
         this.back();
-      },
-      error: () => {
-        this.saving.set(false);
       },
     });
   }
 
   protected remove(): void {
-    this.state.remove(this.id()).subscribe(() => {
-      this.asking.set(false);
-      this.back();
+    this.writes.removeGroup({
+      id: this.id(),
+      onDone: () => {
+        this.asking.set(false);
+        this.back();
+      },
     });
   }
 

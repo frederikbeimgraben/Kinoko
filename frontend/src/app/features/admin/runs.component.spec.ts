@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { RunsComponent } from './runs.component';
-import { RunsState } from './runs.state';
+import { RunsStore } from './runs.store';
 
 const RUNNING = {
   id: 'lauf-aktiv',
@@ -51,7 +51,7 @@ async function build(items: unknown[] = [RUNNING, DONE]): Promise<{
 
 describe('RunsComponent', () => {
   beforeEach(() => {
-    TestBed.inject(RunsState);
+    TestBed.inject(RunsStore);
   });
 
   it('zeigt den laufenden Lauf über der Liste der letzten', async () => {

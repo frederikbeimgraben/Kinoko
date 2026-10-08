@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { RunComponent } from './run.component';
-import { RunState } from './run.state';
+import { RunStore } from './run.store';
 
 const DETAIL = {
   id: 'lauf-training',
@@ -54,7 +54,7 @@ async function build(detail: Record<string, unknown> = DETAIL): Promise<Element>
 
 describe('RunComponent', () => {
   beforeEach(() => {
-    TestBed.inject(RunState).load('');
+    TestBed.inject(RunStore).load('');
   });
 
   it('nennt Kopf, Zahlen, Schritte und Ausgabe', async () => {

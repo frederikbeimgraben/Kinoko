@@ -2,7 +2,10 @@
 
 <div class="role">
   @if (missing()) {
-    <p class="note">{{ 'admin.role.notFound' | t }}</p>
+    <app-state-view icon="lock" [title]="'admin.role.notFound' | t" />
+  } @else if (waiting()) {
+    <app-row-group-skeleton [count]="3" />
+    <app-row-group-skeleton [count]="4" [label]="true" />
   } @else {
     <app-form-field
       [label]="'common.name' | t"
@@ -30,29 +33,28 @@
     />
 
     @for (group of areas(); track group.area) {
-      <section class="role__block">
-        <h2 class="role__section">{{ group.titel }}</h2>
-        <div class="role__rights">
+      <app-section [label]="group.titel">
+        <app-row-group>
           @for (right of group.rights; track right.key) {
             <app-check-row
               [title]="right.titel"
               [checked]="right.checked"
               [locked]="locked()"
-              [flush]="true"
               (toggled)="toggle(right.key, $event)"
             />
           }
-        </div>
-      </section>
+        </app-row-group>
+      </app-section>
     }
   }
 </div>
 
-@if (!missing()) {
+@if (!missing() && !waiting()) {
   <app-action-bar
     [primary]="'common.save' | t"
     [secondary]="locked() || creating() ? undefined : ('admin.role.delete' | t)"
     [secondaryDanger]="true"
+    [busy]="saving()"
     (primaryClick)="save()"
     (secondaryClick)="confirming.set(true)"
   />

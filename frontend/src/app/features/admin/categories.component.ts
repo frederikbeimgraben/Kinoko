@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import type { Observable } from 'rxjs';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { TERM_KINDS, type TermKind } from '../../core/api/models';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
@@ -11,18 +11,20 @@ import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
-import { CategoriesState } from './categories.state';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { CategoriesStore } from './categories.store';
 import { KIND_TEXT } from './labels';
 
-/** Eine Kategorie ohne Kennung ist noch nicht angelegt. */
+/** A category without an id is not created yet. */
 const NEW = 'neu';
 
-/** Was die Bestätigung gerade fragt. */
+/** The question of the confirmation. */
 type Ask = 'delete' | 'merge';
 
-/** Die Kategorien des Katalogs: anlegen, umbenennen, löschen, zusammenführen. */
+/** The categories of the catalogue: create, rename, delete and merge. */
 @Component({
   selector: 'app-categories',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +36,8 @@ type Ask = 'delete' | 'merge';
     ListRowComponent,
     OptionSheetComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
     SearchFieldComponent,
     SegmentedComponent,
     TranslatePipe,
@@ -44,15 +48,17 @@ type Ask = 'delete' | 'merge';
 export class CategoriesComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(CategoriesState);
+  private readonly store = inject(CategoriesStore);
 
-  protected readonly search = this.state.search;
-  protected readonly kind = this.state.kind;
-  protected readonly categories = this.state.visible;
+  protected readonly wide = inject(ViewportService).wide;
+  protected readonly search = this.store.search;
+  protected readonly kind = this.store.kind;
+  protected readonly categories = this.store.visible;
+  protected readonly saving = this.store.saving;
+  protected readonly loaded = computed(() => this.store.items() !== null);
 
   protected readonly editing = signal<string | null>(null);
   protected readonly name = signal('');
-  protected readonly saving = signal(false);
   protected readonly picking = signal(false);
   protected readonly target = signal<string | null>(null);
   protected readonly asking = signal<Ask | null>(null);
@@ -65,7 +71,7 @@ export class CategoriesComponent {
     () => this.name().trim() || this.i18n.translate('admin.category.create'),
   );
 
-  /** Jede andere Kategorie der Gattung kommt als Ziel infrage. */
+  /** Each other category of the kind can be the target. */
   protected readonly targets = computed<OptionSheetOption[]>(() =>
     this.categories()
       .filter((one) => one.id !== this.editing())
@@ -80,15 +86,15 @@ export class CategoriesComponent {
   });
 
   constructor() {
-    this.state.load();
+    this.store.load();
   }
 
   protected onSearch(value: string): void {
-    this.state.setSearch(value);
+    this.store.setSearch(value);
   }
 
   protected onKind(value: string): void {
-    this.state.setKind(value as TermKind);
+    this.store.setKind(value as TermKind);
   }
 
   protected add(): void {
@@ -97,7 +103,7 @@ export class CategoriesComponent {
   }
 
   protected edit(id: string): void {
-    const found = this.state.one(id);
+    const found = this.store.one(id);
     if (found === null) return;
     this.name.set(found.name);
     this.editing.set(id);
@@ -107,15 +113,11 @@ export class CategoriesComponent {
     const id = this.editing();
     const name = this.name().trim();
     if (id === null || name === '') return;
-    this.saving.set(true);
-    const call = id === NEW ? this.state.create(name) : this.state.rename(id, name);
-    call.subscribe({
-      next: () => {
-        this.saving.set(false);
+    this.store.save({
+      id: id === NEW ? null : id,
+      name,
+      onDone: () => {
         this.close();
-      },
-      error: () => {
-        this.saving.set(false);
       },
     });
   }
@@ -139,15 +141,19 @@ export class CategoriesComponent {
     this.asking.set('merge');
   }
 
+  /** A merge without a target sends no request. */
   protected confirm(): void {
     const id = this.editing();
     const ask = this.asking();
-    if (id === null || ask === null) return;
-    const call = ask === 'delete' ? this.state.remove(id) : this.mergeCall(id);
-    if (call === null) return;
-    call.subscribe(() => {
-      this.cancel();
-      this.close();
+    const into = this.target();
+    if (id === null || ask === null || (ask === 'merge' && into === null)) return;
+    this.store.drop({
+      id,
+      into: ask === 'merge' ? into : null,
+      onDone: () => {
+        this.cancel();
+        this.close();
+      },
     });
   }
 
@@ -165,14 +171,8 @@ export class CategoriesComponent {
     void this.router.navigateByUrl('/verwaltung');
   }
 
-  /** Ohne Ziel steht kein Aufruf an. */
-  private mergeCall(id: string): Observable<null> | null {
-    const into = this.target();
-    return into === null ? null : this.state.merge(id, into);
-  }
-
   private chosenName(): string {
     const id = this.editing();
-    return id === null ? '' : (this.state.one(id)?.name ?? '');
+    return id === null ? '' : (this.store.one(id)?.name ?? '');
   }
 }

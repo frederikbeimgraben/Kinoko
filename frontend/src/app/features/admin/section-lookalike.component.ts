@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
@@ -10,10 +10,10 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesState } from '../species/species.state';
 import { speciesPickerEntry } from '../species/species-picker-entry';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { withLookalike, withoutLookalike } from './species-lists';
 
-/** Eine Verwechslung einer Art: die andere Art und der Unterschied. */
+/** A lookalike of a species: the other species and the difference. */
 @Component({
   selector: 'app-section-lookalike',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,18 +31,18 @@ import { withLookalike, withoutLookalike } from './species-lists';
 export class SectionLookalikeComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
+  private readonly state = inject(SpeciesEditorStore);
   private readonly catalogue = inject(SpeciesState);
 
   protected readonly slug = injectRouteParam('slug');
   private readonly index = injectRouteParam('index', '0');
   protected readonly at = computed(() => Number(this.index()));
 
-  protected readonly other = signal('');
-  protected readonly difference = signal('');
-  protected readonly picking = signal(false);
-
   private readonly held = computed(() => this.state.species()?.lookalikes[this.at()] ?? null);
+
+  protected readonly other = linkedSignal(() => this.held()?.slug ?? '');
+  protected readonly difference = linkedSignal(() => this.held()?.difference ?? '');
+  protected readonly picking = signal(false);
 
   protected readonly choices = computed(() =>
     this.catalogue.species().map((entry) => speciesPickerEntry(entry, this.i18n)),
@@ -56,16 +56,8 @@ export class SectionLookalikeComponent {
   });
 
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
+    this.state.load(this.slug);
     void this.catalogue.loadBundle();
-    effect(() => {
-      const one = this.held();
-      this.other.set(one?.slug ?? '');
-      this.difference.set(one?.difference ?? '');
-    });
   }
 
   protected choose(slug: string): void {

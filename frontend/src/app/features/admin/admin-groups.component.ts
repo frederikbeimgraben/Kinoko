@@ -4,23 +4,35 @@ import { GroupsState } from '../../core/access/groups.state';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { memberCount, ownerOf } from '../account/group-text';
 
-/** Eine Zeile der Gruppenliste der Verwaltung. */
+/** A row of the group list of the administration. */
 interface Row {
   id: string;
   name: string;
   subline: string;
 }
 
-/** Alle Gruppen: suchen und eine öffnen. Braucht das Recht `group.manage`. */
+/** All groups: search and open one. Needs the permission `group.manage`. */
 @Component({
   selector: 'app-admin-groups',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, PageHeaderComponent, SearchFieldComponent, TranslatePipe],
+  imports: [
+    ListRowComponent,
+    PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SearchFieldComponent,
+    StateViewComponent,
+    TranslatePipe,
+  ],
   templateUrl: './admin-groups.component.html',
   styleUrl: './admin-groups.component.scss',
 })
@@ -29,7 +41,9 @@ export class AdminGroupsComponent {
   private readonly router = inject(Router);
   private readonly state = inject(GroupsState);
 
+  protected readonly wide = inject(ViewportService).wide;
   protected readonly search = this.state.search;
+  protected readonly loaded = computed(() => this.state.groups() !== null);
 
   protected readonly rows = computed<Row[]>(() =>
     this.state.found().map((group) => ({

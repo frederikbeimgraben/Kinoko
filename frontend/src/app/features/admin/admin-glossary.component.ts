@@ -3,17 +3,21 @@ import { Router } from '@angular/router';
 import { GlossaryState } from '../../core/access/glossary.state';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { AdminSharedStore } from './admin-shared.store';
 
-/** Ein neuer Begriff trägt noch keine Kennung. */
+/** A new entry has no id yet. */
 const NEW = 'neu';
 
-/** Das Glossar der Verwaltung: anlegen, ändern, löschen. Braucht `text.edit`. */
+/** The glossary of the administration: create, change and delete. Needs `text.edit`. */
 @Component({
   selector: 'app-admin-glossary',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +27,8 @@ const NEW = 'neu';
     FormSheetComponent,
     ListRowComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
     SearchFieldComponent,
     TranslatePipe,
   ],
@@ -33,14 +39,17 @@ export class AdminGlossaryComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(GlossaryState);
+  private readonly writes = inject(AdminSharedStore);
 
+  protected readonly wide = inject(ViewportService).wide;
   protected readonly search = this.state.search;
   protected readonly entries = this.state.found;
+  protected readonly loaded = computed(() => this.state.items() !== null);
+  protected readonly saving = this.writes.saving;
 
   protected readonly editing = signal<string | null>(null);
   protected readonly term = signal('');
   protected readonly definition = signal('');
-  protected readonly saving = signal(false);
 
   protected readonly sheetTitle = computed(
     () => this.term().trim() || this.i18n.translate('glossary.create'),
@@ -72,15 +81,11 @@ export class AdminGlossaryComponent {
     const id = this.editing();
     const write = { term: this.term().trim(), definition: this.definition().trim() };
     if (id === null || write.term === '' || write.definition === '') return;
-    this.saving.set(true);
-    const call = id === NEW ? this.state.create(write) : this.state.update(id, write);
-    call.subscribe({
-      next: () => {
-        this.saving.set(false);
+    this.writes.saveEntry({
+      id: id === NEW ? null : id,
+      write,
+      onDone: () => {
         this.close();
-      },
-      error: () => {
-        this.saving.set(false);
       },
     });
   }
@@ -91,8 +96,11 @@ export class AdminGlossaryComponent {
       this.close();
       return;
     }
-    this.state.remove(id).subscribe(() => {
-      this.close();
+    this.writes.removeEntry({
+      id,
+      onDone: () => {
+        this.close();
+      },
     });
   }
 
