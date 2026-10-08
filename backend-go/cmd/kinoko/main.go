@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -12,9 +13,11 @@ import (
 	"syscall"
 	"time"
 
+	backend "github.com/frederikbeimgraben/kinoko/backend"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/app"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/config"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/catalog/importer"
 )
 
 func main() {
@@ -49,11 +52,19 @@ func run(args []string) error {
 			return err
 		}
 		return serve(ctx, settings.Listen, service.Handler)
+	case "import-catalog":
+		var data fs.FS = os.DirFS(settings.DataDir)
+		if settings.DataDir == "" {
+			if data, err = fs.Sub(backend.Data, "daten"); err != nil {
+				return err
+			}
+		}
+		return importer.Run(ctx, handle, data, time.Now, os.Stdout)
 	case "version":
 		fmt.Println(config.Version)
 		return nil
 	default:
-		return fmt.Errorf("unknown command %q; use serve, migrate or version", command)
+		return fmt.Errorf("unknown command %q; use serve, migrate, import-catalog or version", command)
 	}
 }
 
