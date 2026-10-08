@@ -52,7 +52,9 @@ export function search(entries: readonly CatalogueEntry[], query: string): reado
   );
 }
 
-const byName = (one: SpeciesEntry, other: SpeciesEntry): number => one.name.localeCompare(other.name, 'de');
+/** Numbers in a name sort by their value, so "Art 2" comes before "Art 10". */
+const byName = (one: SpeciesEntry, other: SpeciesEntry): number =>
+  one.name.localeCompare(other.name, 'de', { numeric: true });
 
 /** The comparison of each sort. Equal species keep the order of their names. */
 const ORDER: Readonly<Record<SpeciesSort, (one: SpeciesEntry, other: SpeciesEntry) => number>> = {
