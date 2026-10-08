@@ -1,24 +1,12 @@
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
 // The flow is over the map, but lets presses through: while the crosshair shows, the map stays below the finger.
 .addentry {
   position: absolute;
   inset: 0;
   pointer-events: none;
-}
-
-.addentry__overlay {
-  // Die Deckkraft steht so im Board `AddActions`.
-  --pilz-scrim: rgb(0 18 10 / 45%);
-}
-
-// Die Formulare decken die Leiste ab und dunkeln stärker ab, wie die Boards
-// `FindForm`, `MarkerForm` und `ZoneForm` es zeigen.
-.addentry__overlay--form {
-  --pilz-scrim: rgb(0 18 10 / 55%);
-  --pilz-overlay-top: 150px;
-}
-
-.addentry__overlay--form.addentry__overlay--object {
-  --pilz-overlay-top: 220px;
 }
 
 // Per `kit.css` `.cross`: the crosshair is at the centre of the map pane.
@@ -30,9 +18,8 @@
   translate: -50% -50%;
 }
 
-.addentry__brief {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--size-gutter) var(--space-2);
+// Board `MapAdd`: a strip of 16 px below the body.
+.addentry__end {
+  flex: none;
+  block-size: 16px;
 }

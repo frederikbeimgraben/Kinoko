@@ -139,15 +139,13 @@ export class MapComponent implements OnDestroy {
   );
 
   /**
-   * The add button. It goes away while a step looks for a point on the map.
-   * On the phone, the tall map sheet has no room for it (board `MapCombination`).
+   * The add button. It goes away while the flow behind it runs, and on the phone below a sheet.
+   * The tall map sheet of the phone has no room for it (board `MapCombination`).
    */
   protected readonly showsAdd = computed(() => {
-    if (this.covered() || this.addEntry.showsCrosshair()) return false;
+    if (this.covered() || this.addEntry.running()) return false;
     if (this.wide()) return true;
-    if (this.state.layersSheetOpen()) return false;
-    if (this.showsMapSheet() && this.state.detent() === 2) return false;
-    return !this.addEntry.running() || this.addEntry.onActions();
+    return !this.state.layersSheetOpen() && !(this.showsMapSheet() && this.state.detent() === 2);
   });
 
   /** The detents of the map sheet. Above the lowest one, the sheet is as high as its content. */

@@ -41,8 +41,8 @@ import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 /** Der gesetzte Ort steht am Rechner blau, wie die Bretter ihn malen. */
 const MARK_COLOUR = 'blue' as const;
 
-/** Die Karte des Eintragens hängt am Plus-Knopf unten rechts. */
-const POPOVER_ANCHOR: PopoverAnchor = { bottom: 92, end: 24 };
+/** Board `MapDesktopAdd`: the menu is at the bottom right of the map pane, where the plus button was. */
+const POPOVER_ANCHOR: PopoverAnchor = { bottom: 24, end: 24 };
 
 /** Der Kopf des Modals am Rechner nennt, worum es geht. */
 const TITLE: Record<string, TranslationKey> = {
@@ -157,21 +157,6 @@ export class AddEntryComponent implements OnDestroy {
     const step = this.state.step();
     return step === null ? '' : this.i18n.translate(TITLE[step]);
   });
-
-  /** Die Titelgröße je Schritt, wie die Bretter `AddActions`, `FindForm`, `MarkerForm` und `ZoneForm` sie zeigen. */
-  protected readonly titleSize = computed(() => {
-    const step = this.state.step();
-    if (step === 'findForm') return 24;
-    if (step === 'markerForm' || step === 'zoneForm') return 22;
-    return 17;
-  });
-
-  /** Nur der Formtitel ist fett mit engerer Laufweite, der Aktionstitel bleibt halbfett. */
-  protected readonly titleBold = computed(() => this.state.onForm());
-
-  protected readonly coordinates = computed(() =>
-    this.state.onForm() ? coordinatesText(this.state.location(), this.i18n) : '',
-  );
 
   private readonly input = inject(StepInput);
 
