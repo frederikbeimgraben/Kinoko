@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/** Die Kategorien eines Merkmals als Reihe, ohne Auswahl, ohne Interaktion. */
+/** Shows the categories of a feature as a row. It has no selection and no interaction. */
 @Component({
   selector: 'app-tag-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,6 +10,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class TagListComponent {
   readonly tags = input.required<readonly string[]>();
   readonly label = input.required<string>();
-  /** Marken der Art selbst stehen gefüllt, Marken zur Wahl nur umrandet. */
+  /** Tags of the species are filled. Tags for selection have only an outline. */
   readonly filled = input(false);
 }

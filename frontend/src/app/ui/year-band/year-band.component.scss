@@ -20,7 +20,7 @@
   background: var(--color-primary);
 }
 
-// Die genannte Zeit tritt zurück, sobald die gemessene daneben liegt.
+// The stated period becomes pale when the observed period is also shown.
 .year__body--muted {
   background: var(--color-primary-subtle);
 }

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { findViolations } from '../../tools/check-frames.mjs';
 
-/** Legt eine Datei unter `src/app/<folder>/<name>` an und gibt die Wurzel. */
+/** Makes a file under `src/app/<folder>/<name>` and gives the root. */
 function fixture(folder: string, name: string, source: string): string {
   const root = mkdtempSync(join(tmpdir(), 'check-frames-'));
   mkdirSync(join(root, 'src', 'app', ...folder.split('/')), { recursive: true });

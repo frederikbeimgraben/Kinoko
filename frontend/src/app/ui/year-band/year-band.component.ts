@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** Ein Stück der Bahn: wo es anfängt und wie breit es ist, in Prozent. */
+/** A part of the track: its start and its width, in percent. */
 interface Body {
   left: number;
   width: number;
@@ -8,7 +8,7 @@ interface Body {
 
 const MONTHS = 12;
 
-/** Das Jahr als Bahn mit vier Marken. Hauptzeit kräftig, Randzeit blass. */
+/** The year as a track with four marks. The main season is strong, the edge season is pale. */
 @Component({
   selector: 'app-year-band',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +20,7 @@ export class YearBandComponent {
   readonly toMonth = input.required<number>();
   readonly peakFromMonth = input<number | null>(null);
   readonly peakToMonth = input<number | null>(null);
-  /** Die Marken unter der Bahn. Ohne Marken bleibt die Reihe aus. */
+  /** The marks below the track. Without marks, the row does not show. */
   readonly months = input<readonly string[]>([]);
   readonly label = input.required<string>();
 
@@ -32,11 +32,11 @@ export class YearBandComponent {
     return from === null || to === null ? [] : bodies(from, to);
   });
 
-  /** Ohne beobachtete Zeit trägt die genannte die volle Farbe. */
+  /** Without an observed period, the stated period shows full color. */
   protected readonly muted = computed(() => this.observed().length > 0);
 }
 
-/** Die Körper einer Monatsspanne. Über den Jahreswechsel werden es zwei. */
+/** The bodies of a month range. A range across the year end gives two bodies. */
 export function bodies(fromMonth: number, toMonth: number): Body[] {
   const share = 100 / MONTHS;
   if (fromMonth <= toMonth) {

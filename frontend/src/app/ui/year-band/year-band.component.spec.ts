@@ -20,7 +20,7 @@ describe('YearBandComponent', () => {
 
     expect(screen.getByRole('img', { name: 'Wachstum von Juni bis Oktober' })).toBeInTheDocument();
     expect(container.querySelectorAll('.year__body')).toHaveLength(2);
-    // Die genannte Zeit tritt zurück, sobald die gemessene daneben liegt.
+    // The stated period becomes pale when the observed period is also shown.
     expect(container.querySelectorAll('.year__body--muted')).toHaveLength(1);
     await noViolations(container);
   });
@@ -49,7 +49,7 @@ describe('YearBandComponent', () => {
   });
 
   it('zerlegt den Jahreswechsel in zwei Körper', () => {
-    // Der Austernseitling steht links und rechts, nicht quer über die Bahn.
+    // The oyster mushroom shows at the left and right ends, not across the track.
     const [start, end] = bodies(11, 2);
 
     expect(start.left).toBe(0);

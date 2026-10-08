@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-/** Prüft, dass nur die Rahmen-Bausteine einen Rahmen bauen. */
+/** Checks that only the frame components make a frame. */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-/** Die Regeln, ihr Muster und die Ordner, die sie tragen dürfen. */
+/** The rules, their patterns and the folders that can contain them. */
 const RULES = [
   {
     name: 'dialog',
@@ -32,13 +32,13 @@ const RULES = [
   {
     name: 'griff',
     pattern: /[-\w]*__handle[-\w]*|handle-line/g,
-    // `ui/reject-dialog` trägt den Griff aus dem Board `ImageReject`. Das
-    // Blatt geht mit dem Bilder-Paket auf `ui/sheet` über.
+    // `ui/reject-dialog` has the handle from the board `ImageReject`.
+    // The image package moves this sheet to `ui/sheet`.
     owners: ['ui/sheet', 'ui/reject-dialog'],
   },
 ];
 
-/** Eine Eigenschaft wie `--pilz-scrim` stellt einen Rahmen ein, sie baut keinen. */
+/** A property like `--pilz-scrim` configures a frame. It does not make one. */
 function isCustomProperty(text) {
   return text.startsWith('--');
 }
@@ -55,7 +55,7 @@ function walk(folder, found) {
   return found;
 }
 
-/** Jeder Rahmen, den eine Datei außerhalb der Bausteine selbst baut. */
+/** Each frame that a file outside the frame components makes itself. */
 export function findViolations(root) {
   const base = join(root, 'src', 'app');
   const found = [];

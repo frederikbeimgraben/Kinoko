@@ -1,4 +1,4 @@
-/** Typen für die `.mjs`-Werkzeuge aus den Tests unter `src/tools`. */
+/** Types for the `.mjs` tools, for the tests under `src/tools`. */
 
 declare module '*/tools/check-comments.mjs' {
   export interface Violation {

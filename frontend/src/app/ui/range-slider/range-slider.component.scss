@@ -30,8 +30,8 @@
   background: var(--primary);
 }
 
-// Nur die Griffe nehmen Zeiger an. Der Regler ragt um einen halben Griff über
-// die Spur: so steht die Mitte des Griffs auf dem Wert.
+// Only the thumbs take pointer input. The input extends half a thumb past the track.
+// Thus the centre of the thumb is on the value.
 .rangeslider__thumb {
   position: absolute;
   inset-inline: calc(var(--range-slider-handle) / -2);
@@ -55,7 +55,7 @@
   box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
 }
 
-// Ein Anteil trägt einen vollen Punkt, eine Spanne einen hellen Ring.
+// A share shows a solid dot. A span shows a light ring.
 .rangeslider--dot {
   --range-slider-handle: 18px;
   --range-slider-thumb: var(--primary);

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { allowKey, report } from '../../tools/check-german.mjs';
 
-/** Legt eine Quelldatei unter `src/app` an. */
+/** Makes a source file under `src/app`. */
 function fixture(source: string): { root: string; allowPath: string } {
   const root = mkdtempSync(join(tmpdir(), 'check-german-'));
   mkdirSync(join(root, 'src', 'app'), { recursive: true });

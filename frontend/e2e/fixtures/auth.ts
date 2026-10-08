@@ -14,7 +14,7 @@ function base64url(value: unknown): string {
   return Buffer.from(JSON.stringify(value)).toString('base64url');
 }
 
-/** A token that `oidc-client-ts` can read. It has no signature check. */
+/** A token that `oidc-client-ts` can read. The library does not check the signature. */
 function idToken(nonce: string): string {
   const now = Math.floor(Date.now() / 1000);
   const claims = {

@@ -1,4 +1,4 @@
-/** Die Marke des Titelbildes, oben links auf der Kachel. */
+/** The badge of the cover image, at the top left of the tile. */
 @mixin lead-badge {
   position: absolute;
   inset-block-start: var(--space-2);

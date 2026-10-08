@@ -211,7 +211,7 @@ test('MapOffline', async ({ page }) => {
 });
 
 /**
- * Some desktop boards show the forecast in the column below a modal.
+ * Some desktop boards show the forecast in the column below a combination modal.
  * A click cannot reach that tab, so the tab changes below the modal layer. */
 async function forecastBelow(page: Page): Promise<void> {
   await page.evaluate(() => {

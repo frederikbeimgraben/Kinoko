@@ -6,7 +6,7 @@
   min-block-size: 0;
 }
 
-// Die Zeilen stehen in einer Karte, das Suchfeld darüber bleibt frei.
+// The rows are in a card. The search field above stays outside the card.
 .picker__rows {
   display: flex;
   flex: 0 1 auto;

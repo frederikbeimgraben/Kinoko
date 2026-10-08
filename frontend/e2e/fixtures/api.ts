@@ -22,7 +22,7 @@ const IMAGE_PATH = '/api/photos/';
 /** What the mock gives for a photo request. */
 export interface ApiOptions {
   /**
-   * A file in `e2e/boards/fixtures`, e.g. `photo-358x269.png`, or a table by size (`list`) or image and size.
+   * A file in `e2e/boards/fixtures`, e.g. `photo-358x269.png`, or a table by size (`list`) or by image and size (`eins/list`).
    */
   photo?: string | Record<string, string | undefined>;
 }

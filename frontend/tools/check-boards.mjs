@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-/** Prüft, ob jeder Board-Stem einen Test oder einen Pending-Eintrag hat. */
+/** Checks that each board stem has a test or a pending entry. */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const EXCLUDED = new Set(['SpecLevels']);
 const EXPECT_BOARD = /expectBoard\(\s*[^,]+,\s*['"]([^'"]+)['"]/g;
-// Die Karte prüft über eine eigene Hilfsfunktion; `guard` nennt dort das Board.
+// The map uses its own helper for the check. There, `guard` names the board.
 const GUARD = /guard\(\s*['"]([^'"]+)['"]/g;
 
-/** Liest die Board-Stems aus den PNG-Dateien in `dir`. */
+/** Reads the board stems from the PNG files in `dir`. */
 function baselineStems(dir) {
   return new Set(
     readdirSync(dir)
@@ -19,7 +19,7 @@ function baselineStems(dir) {
   );
 }
 
-/** Liest die Board-Stems aus den `expectBoard`-Aufrufen unter `dir`. */
+/** Reads the board stems from the `expectBoard` calls under `dir`. */
 function testedStems(dir) {
   const stems = new Set();
   for (const name of readdirSync(dir)) {
@@ -31,12 +31,12 @@ function testedStems(dir) {
   return stems;
 }
 
-/** Liest die Stems aus `pending.json` unter `dir`. */
+/** Reads the stems from `pending.json` under `dir`. */
 function pendingStems(dir) {
   return new Set(JSON.parse(readFileSync(join(dir, 'pending.json'), 'utf8')));
 }
 
-/** Vergleicht die Ausschnitte der Bausteine mit `blocks-cards.json`. */
+/** Compares the component crops with `blocks-cards.json`. */
 function checkCards(dir, pending) {
   const manifest = JSON.parse(readFileSync(join(dir, 'blocks-cards.json'), 'utf8'));
   const wanted = manifest.map((card) => card.stem);
@@ -47,7 +47,7 @@ function checkCards(dir, pending) {
   return { checked: wanted.length - waiting.length, pending: waiting, lost, extra };
 }
 
-/** Vergleicht baseline, Tests und `pending.json` unter `root/e2e/boards`. */
+/** Compares baselines, tests and `pending.json` under `root/e2e/boards`. */
 export function checkBoards(root) {
   const dir = join(root, 'e2e', 'boards');
   const baseline = baselineStems(join(dir, 'baseline'));

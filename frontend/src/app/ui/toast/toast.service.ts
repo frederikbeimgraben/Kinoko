@@ -10,7 +10,7 @@ export interface Toast {
 
 const AUTO_DISMISS_MS = 4000;
 
-/** Meldungshub. Eine Zeile ruft `success` oder `error`, `app-toast` rendert. */
+/** Message hub. Callers use `success` or `error`, and `app-toast` shows the message. */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   private readonly _toasts = signal<readonly Toast[]>([]);
@@ -18,7 +18,7 @@ export class ToastService {
 
   private nextId = 0;
 
-  /** Zeigt eine Meldung; `timeout=0` lässt das Schließen von selbst weg. */
+  /** Shows a message. With `timeout=0`, the message does not close by itself. */
   show(message: string, variant: ToastVariant = 'info', timeout = AUTO_DISMISS_MS): number {
     const id = this.nextId++;
     this._toasts.update((all) => [...all, { id, message, variant }]);

@@ -4,7 +4,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 const FIRST_MONTH = 1;
 const LAST_MONTH = 12;
 
-/** Ein Zeitraum im Jahr als Band mit zwei Griffen, Monat für Monat. */
+/** A period in the year as a band with two handles, in steps of one month. */
 @Component({
   selector: 'app-year-band-input',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,7 +26,7 @@ export class YearBandInputComponent {
   protected readonly fromShare = computed(() => share(this.from() - 1));
   protected readonly toShare = computed(() => share(this.to()));
 
-  /** Die Griffe dürfen sich nicht überholen, sonst kehrt sich der Zeitraum um. */
+  /** The handles must not pass each other. Otherwise the period turns around. */
   protected onFrom(event: Event): void {
     const value = Number((event.target as HTMLInputElement).value);
     this.fromChange.emit(Math.min(value, this.to()));
@@ -38,7 +38,7 @@ export class YearBandInputComponent {
   }
 }
 
-/** Ein Monat belegt ein Zwölftel des Bandes. */
+/** One month fills one twelfth of the band. */
 function share(edge: number): string {
   return `${(edge / LAST_MONTH) * 100}%`;
 }

@@ -1,5 +1,5 @@
-// Die Reihe über einer Liste: der Filterknopf und die aktiven Filter. Sie
-// läuft bis zum Rand und blendet rechts aus.
+// The row above a list: the filter button and the active filters.
+// It runs to the edge and fades out at the right.
 @mixin filter-marks {
   .marks {
     display: flex;

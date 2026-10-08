@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/** Eine Kennzahl der Reihe: ein Wert, darunter sein Name. */
+/** One figure of the row: a value with its name below it. */
 export interface Stat {
   readonly value: string | number;
   readonly label: string;
 }
 
-/** Kennzahlen nebeneinander, etwa Funde und Marker im Konto. */
+/** Shows figures side by side, for example finds and markers in the account. */
 @Component({
   selector: 'app-stat-row',
   changeDetection: ChangeDetectionStrategy.OnPush,

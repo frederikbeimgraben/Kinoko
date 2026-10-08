@@ -19,7 +19,7 @@ class HostComponent {
   readonly rows = signal([1]);
 }
 
-/** Die Zeilen stecken in einer Karte, wie im Katalog: kein Kind des Wirts. */
+/** The rows are in a card, as in the catalogue. They are not children of the host. */
 @Component({
   imports: [ScrollFadeDirective],
   template: `
@@ -38,7 +38,7 @@ class CardHostComponent {
 
 const box = { scrollTop: 0, clientHeight: 0, scrollHeight: 0 };
 
-/** jsdom rechnet kein Layout; die Maße der Liste gibt der Test vor. */
+/** jsdom does no layout. The test sets the size of the list. */
 function stubGeometry(): void {
   for (const name of ['scrollTop', 'clientHeight', 'scrollHeight'] as const) {
     vi.spyOn(Element.prototype, name, 'get').mockImplementation(() => box[name]);
@@ -61,7 +61,7 @@ async function cardList(scrollTop: number, clientHeight: number, scrollHeight: n
   return render(CardHostComponent);
 }
 
-/** Bewegt die Liste und lässt den Wirt auf das Ereignis antworten. */
+/** Scrolls the list and lets the host react to the event. */
 function scrollTo(view: RenderResult<HostComponent>, scrollTop: number): void {
   box.scrollTop = scrollTop;
   view.container.querySelector('div')?.dispatchEvent(new Event('scroll'));

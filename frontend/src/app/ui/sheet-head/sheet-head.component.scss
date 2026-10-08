@@ -11,7 +11,7 @@
   block-size: var(--size-tap);
 }
 
-// Der Pfeil führt aus einer Ansicht zurück; er steht vor dem Titel.
+// The arrow goes back from a view. It is before the title.
 .head__back {
   display: flex;
   flex: none;
@@ -25,8 +25,8 @@
   border: 0;
 }
 
-// Das Zeichen der Ebenengruppe steht vor dem Titel. Der negative Rand hält
-// den Titel auf seiner Linie: sonst hebt das Zeichen die Zeile an.
+// The icon of the layer group is before the title. The negative margin keeps
+// the title on its line. Otherwise the icon makes the line taller.
 .head__icon {
   flex: none;
   align-self: center;
@@ -82,7 +82,7 @@
   color: var(--color-danger);
 }
 
-// Die Leiste reicht an den Rand, wo der Wirt sie nicht schon füllt.
+// The bar extends to the edge where the host does not fill it.
 .head__bar {
   margin-inline: var(--sheet-head-bleed, 0);
 }

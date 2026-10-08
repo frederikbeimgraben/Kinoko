@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
-/** Welche Griffe die Spur trägt. Eine feste Grenze steht am Ende der Skala. */
+/** The thumbs on the track. A fixed bound is at the end of the scale. */
 export type Handles = 'both' | 'from' | 'to';
 
-/** Der Griff: heller Ring über einer Spanne, voller Punkt über einem Anteil. */
+/** The thumb: a light ring for a span, a solid dot for a share. */
 export type SliderVariant = 'ring' | 'dot';
 
 /**
- * Ein oder zwei Griffe über einer Spur. Jeder Griff ist ein Regler des Browsers.
+ * One or two thumbs on a track. Each thumb is a native range input.
  */
 @Component({
   selector: 'app-range-slider',
@@ -34,7 +34,7 @@ export class RangeSliderComponent {
   protected readonly showsFrom = computed(() => this.handles() !== 'to');
   protected readonly showsTo = computed(() => this.handles() !== 'from');
 
-  /** Die Griffe dürfen sich nicht überholen, sonst kehrt sich die Bedingung um. */
+  /** The thumbs must not pass each other. Otherwise the condition inverts. */
   protected onFrom(event: Event): void {
     const value = Number((event.target as HTMLInputElement).value);
     this.fromChange.emit(Math.min(value, this.to()));

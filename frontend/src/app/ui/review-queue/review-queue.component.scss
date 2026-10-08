@@ -21,7 +21,7 @@
   min-block-size: 0;
 }
 
-// Kein eigener Rahmen: nur Fläche und Rundung, wie `kit.css` `.qcard`.
+// No border: only a surface and a radius, as in `kit.css` `.qcard`.
 .queue__card {
   overflow: hidden;
   background: var(--surface);
@@ -54,7 +54,7 @@
   transition: none;
 }
 
-// Abstand und Größe der drei Knöpfe, wie `kit.css` `.qacts`.
+// Gap and size of the three buttons, as in `kit.css` `.qacts`.
 .queue__actions {
   display: flex;
   align-items: center;
@@ -62,8 +62,8 @@
   gap: 28px;
 }
 
-// Der leere Platz wiegt den Zurück-Knopf der Seite auf: Ablehnen und
-// Annehmen stehen damit in der Mitte des Fensters.
+// The empty space balances the back button of the page.
+// Thus reject and accept are in the centre of the window.
 .queue__balance {
   inline-size: var(--size-tap);
 }
@@ -75,7 +75,7 @@
   border: 0;
 }
 
-// Rückgängig: klein und gedämpft, wie `kit.css` `.tb`.
+// Undo: small and muted, as in `kit.css` `.tb`.
 .queue__round--undo {
   inline-size: var(--size-tap);
   block-size: var(--size-tap);
@@ -84,7 +84,7 @@
   border-radius: var(--radius-pill);
 }
 
-// Ablehnen und Annehmen: groß und angehoben, wie `kit.css` `.rbig`.
+// Reject and accept: large and raised, as in `kit.css` `.rbig`.
 .queue__round--reject,
 .queue__round--accept {
   inline-size: 72px;

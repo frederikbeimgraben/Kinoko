@@ -10,7 +10,7 @@ svg {
   stroke-linejoin: round;
 }
 
-// Die Pfeile der Kopfzeile sind Flächen, keine Striche.
+// The header arrows are filled shapes, not strokes.
 svg.filled {
   fill: currentColor;
   stroke: none;

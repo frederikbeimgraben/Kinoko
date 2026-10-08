@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-/** Ein Zustand an oder aus, per `kit.css` `.sw-t`. */
+/** An on or off state, from `kit.css` `.sw-t`. */
 @Component({
   selector: 'app-switch',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -9,9 +9,9 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 })
 export class SwitchComponent {
   readonly checked = input.required<boolean>();
-  /** Der barrierefreie Name. Er nennt, was der Schalter schaltet. */
+  /** The accessible name. It tells what the switch controls. */
   readonly label = input.required<string>();
-  /** Ein Zustand ohne Rückweg sperrt den Schalter, sobald er an ist. */
+  /** A state that cannot go back locks the switch when it is on. */
   readonly disabled = input(false);
 
   readonly checkedChange = output<boolean>();

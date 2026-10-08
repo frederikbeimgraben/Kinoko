@@ -75,7 +75,7 @@ export class ApiClient {
   }
 
   /**
-   * Uploads a file and the form fields as `multipart/form-data`. Only the browser sets `Content-Type`.
+   * Uploads a file and the form fields as `multipart/form-data`. Do not set `Content-Type`: only the browser knows the part boundary.
    */
   postFile<T>(path: string, field: string, file: File, fields: Query = {}, options?: Silent): Observable<T> {
     const body = new FormData();

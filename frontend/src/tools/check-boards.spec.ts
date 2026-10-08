@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { checkBoards } from '../../tools/check-boards.mjs';
 
-/** Legt `e2e/boards` mit Baseline-Bildern unter einem frischen Wurzelordner an. */
+/** Makes `e2e/boards` with baseline images under a new root folder. */
 function fixture(stems: string[], cards: string[] = []): string {
   const root = mkdtempSync(join(tmpdir(), 'check-boards-'));
   mkdirSync(join(root, 'e2e', 'boards', 'baseline', 'blocks'), { recursive: true });
@@ -20,16 +20,16 @@ function fixture(stems: string[], cards: string[] = []): string {
   return root;
 }
 
-/** Das Ergebnis der Bausteine, wenn keine Karte im Manifest steht. */
+/** The component result when the manifest has no card. */
 const NO_CARDS = { checked: 0, pending: [], lost: [], extra: [] };
 
-/** Legt eine Spec-Datei mit `expectBoard`-Aufrufen unter `e2e/boards` an. */
+/** Makes a spec file with `expectBoard` calls under `e2e/boards`. */
 function spec(root: string, name: string, boards: string[]): void {
   const calls = boards.map((board) => `expectBoard(page, '${board}');`).join('\n');
   writeFileSync(join(root, 'e2e', 'boards', name), calls, 'utf8');
 }
 
-/** Schreibt `pending.json` unter `e2e/boards`. */
+/** Writes `pending.json` under `e2e/boards`. */
 function pending(root: string, stems: string[]): void {
   writeFileSync(join(root, 'e2e', 'boards', 'pending.json'), JSON.stringify(stems));
 }

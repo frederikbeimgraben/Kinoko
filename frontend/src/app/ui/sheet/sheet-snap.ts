@@ -33,7 +33,7 @@ const DRAG_THRESHOLD = 24;
 
 const DETENTS: readonly Detent[] = [0, 1, 2];
 
-/** The speed in px/ms of the samples in the window before `now`. A positive value moves the sheet up. */
+/** The speed in px/ms of the samples in the window before the release time. A positive value moves the sheet up. */
 export function releaseVelocity(samples: readonly DragSample[], now: number): number {
   const recent = samples.filter((sample) => now - sample.time <= VELOCITY_WINDOW);
   const first = recent.at(0);

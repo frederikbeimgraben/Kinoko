@@ -7,7 +7,7 @@ export type { IconName };
 /** A dim icon reads var(--label), otherwise it inherits its color. */
 export type IconTone = '' | 'dim';
 
-/** Ein Piktogramm aus der festen Tabelle. Ohne Beschriftung bleibt es Schmuck. */
+/** An icon from the fixed table. Without a label, it is decorative. */
 @Component({
   selector: 'app-svg-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +27,7 @@ export class SvgIconComponent {
   protected readonly viewBox = computed(() => (this.filled() ? '0 0 12 12' : '0 0 24 24'));
   protected readonly role = computed(() => (this.label() ? 'img' : null));
   protected readonly hidden = computed(() => (this.label() ? null : true));
-  /** `name` ist eine geschlossene Aufzählung. Der Baustein sieht nie Fremdtext. */
+  /** `name` is a closed enumeration. The component never gets external text. */
   protected readonly markup = computed<SafeHtml>(() =>
     this.sanitizer.bypassSecurityTrustHtml(ICONS[this.name()]),
   );

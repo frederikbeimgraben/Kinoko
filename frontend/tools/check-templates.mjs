@@ -1,21 +1,21 @@
 #!/usr/bin/env node
-/** Sucht festen Text in den Vorlagen unter `src/app`. Jeder sichtbare Text ist ein Schlüssel. */
+/** Finds fixed text in the templates under `src/app`. All visible text must be a key. */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = new URL('../src/app', import.meta.url).pathname;
 
-/** `@if (...) {`, `@else if (...) {`, `@for (...) {` und alles Weitere. */
+/** `@if (...) {`, `@else if (...) {`, `@for (...) {` and all other blocks. */
 const BLOCK = /@[a-z]+(?:\s+[a-z]+)?\s*(?:\([^{]*\))?\s*\{/g;
 const COMMENT = /<!--[\s\S]*?-->/g;
 const TAG = /<[^>]*>/g;
 const EXPRESSION = /\{\{[^}]*\}\}/g;
 const WORD = /[A-Za-zÄÖÜäöüß]{2,}/;
 
-/** Attribute, die eine Person liest. Gebunden (`[title]="… | t"`) sind sie in Ordnung. */
+/** Attributes that people read. A bound attribute (`[title]="… | t"`) is correct. */
 const VISIBLE_ATTRIBUTES = /\s(?:placeholder|title|alt|aria-label)="([^"]*)"/g;
 
-/** Jeder feste Text einer Vorlage. */
+/** All fixed text in a template. */
 function hardCoded(source) {
   const withoutComments = source.replace(COMMENT, ' ');
   const found = [];

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Prüft die Dateigrößen: `features/` eng, `ui/` und `core/` weiter. */
+/** Checks file sizes. `features/` has a tight limit, `ui/` and `core/` have wider limits. */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +10,7 @@ const LIMITS = {
   core: { '.ts': 300, '.html': 300 },
 };
 
-/** Ordner in `src/app`, für die eine Grenze gilt. */
+/** Folders in `src/app` that have a limit. */
 function zone(relPath) {
   const first = relPath.split(sep)[0];
   return LIMITS[first] ? first : null;
@@ -29,7 +29,7 @@ function collectFiles(folder, found) {
   return found;
 }
 
-/** Sucht Grössenverstöße unter `root/src/app`. */
+/** Finds size violations under `root/src/app`. */
 export function findViolations(root) {
   const appRoot = join(root, 'src', 'app');
   const found = [];
@@ -55,7 +55,7 @@ function readAllow(allowPath) {
   }
 }
 
-/** Meldet Grössenverstöße unter `root` ohne die in `allowPath` freigegebenen. */
+/** Reports size violations under `root`, except the ones that `allowPath` allows. */
 export function report(root, allowPath) {
   const allowed = new Set(readAllow(allowPath).size ?? []);
   return findViolations(root).filter((v) => !allowed.has(v.path));

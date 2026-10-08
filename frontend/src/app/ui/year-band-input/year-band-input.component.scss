@@ -31,8 +31,8 @@
   background: var(--color-primary);
 }
 
-// Beide Regler liegen übereinander. Nur die Griffe nehmen Zeiger an. Ein Monat
-// belegt ein Zwölftel; der Griff steht auf der Kante seines Monats.
+// The two sliders lie on top of each other. Only the handles accept the pointer.
+// A month fills one twelfth. The handle stays on the edge of its month.
 .yearband__thumb {
   position: absolute;
   inset-inline-start: calc(var(--year-band-handle) / -2);

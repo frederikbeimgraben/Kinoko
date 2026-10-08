@@ -1,6 +1,5 @@
-// The one scroll area of a page or a sheet, per `kit.css` `.scroll` and `.sbody`.
-// The fade is at each edge where more content continues, and blends into the ground.
-// A sheet with floating actions sets `--scroll-fade-end`, so the fade ends below the buttons.
+// The scroll area of a page or sheet, from `kit.css` `.scroll` and `.sbody`. Each edge with more content fades.
+// A sheet with floating actions sets `--scroll-fade-end` to end the fade below the buttons.
 .scroll {
   flex: 1 1 auto;
   min-block-size: 0;

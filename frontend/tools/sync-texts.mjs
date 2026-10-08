@@ -1,18 +1,16 @@
 #!/usr/bin/env node
-/**
- * Schreibt `core/i18n/texts.<sprache>.json` aus `backend/daten/texte.json`.
- */
+/** Writes `core/i18n/texts.<sprache>.json` from `backend/daten/texte.json`. */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const SOURCE = new URL('../../backend/daten/texte.json', import.meta.url);
 
-/** Der Weg einer Sprache im Frontend. */
+/** The frontend path for a language. */
 export function target(locale) {
   return new URL(`../src/app/core/i18n/texts.${locale}.json`, import.meta.url);
 }
 
-/** Die Vorgabe, je Sprache nach Schlüssel geordnet. */
+/** The source texts for each language, sorted by key. */
 export function sorted(source) {
   const out = {};
   for (const locale of Object.keys(source).sort()) {

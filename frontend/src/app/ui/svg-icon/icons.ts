@@ -1,4 +1,4 @@
-/** Die Piktogramme aus dem Design, ein Pfadinhalt je Name. */
+/** The icons from the design, with one path content for each name. */
 export type IconName =
   | 'map'
   | 'map-off'
@@ -74,7 +74,7 @@ export type IconName =
   | 'chevl'
   | 'star';
 
-/** Die drei gefüllten Pfeile und die Wiedergabe sitzen auf einem 12er-Raster. */
+/** The three filled arrows and the play icon use a 12-unit grid. */
 export const FILLED_ICONS: readonly IconName[] = ['left', 'right', 'play', 'pause'];
 
 export const DESIGN_ICON_NAMES: Readonly<Record<string, IconName>> = {
@@ -87,7 +87,7 @@ export const DESIGN_ICON_NAMES: Readonly<Record<string, IconName>> = {
   reset: 'refresh',
 };
 
-/** Der Inhalt des `<svg>` je Piktogramm, Strich 2 auf Raster 24 ausser den gefüllten. */
+/** The `<svg>` content for each icon. All icons except the filled ones use stroke 2 on a 24-unit grid. */
 export const ICONS: Record<IconName, string> = {
   map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/>',
   'map-off': '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/><path d="M3 21L21 3"/>',

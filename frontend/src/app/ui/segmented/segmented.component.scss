@@ -19,7 +19,7 @@
   border-radius: 20px;
 }
 
-// Gesperrt heißt: zu sehen, was kommt, ohne dass es sich bedienen lässt.
+// Locked means: the user sees the option but cannot select it.
 .seg--locked .seg__choice {
   color: var(--label);
   opacity: 0.6;
