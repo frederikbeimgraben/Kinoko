@@ -16,7 +16,9 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -82,6 +84,11 @@ func New(t testing.TB, opts ...Option) *Env {
 	if chosen.settings != nil {
 		chosen.settings(&settings)
 	}
+	if chosen.data == nil && chosen.settings == nil {
+		if err := copyTemplate(settings.DB); err != nil {
+			t.Fatal(err)
+		}
+	}
 	handle, err := db.Open(settings.DB)
 	if err != nil {
 		t.Fatal(err)
@@ -101,6 +108,51 @@ func New(t testing.TB, opts ...Option) *Env {
 	}
 	env.Service = service
 	return env
+}
+
+var (
+	templateOnce sync.Once
+	templatePath string
+	templateErr  error
+)
+
+// copyTemplate copies a database that is migrated and seeded once per test
+// process. The catalogue import takes seconds, and most tests need it.
+func copyTemplate(target string) error {
+	templateOnce.Do(func() {
+		dir, err := os.MkdirTemp("", "kinoko-template-")
+		if err != nil {
+			templateErr = err
+			return
+		}
+		templatePath = filepath.Join(dir, "template.sqlite")
+		templateErr = buildTemplate(templatePath)
+	})
+	if templateErr != nil {
+		return templateErr
+	}
+	data, err := os.ReadFile(templatePath)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(target, data, 0o600)
+}
+
+func buildTemplate(path string) error {
+	settings := config.Defaults()
+	settings.DB = path
+	settings.PipelineEnable = false
+	settings.OIDCIssuer = issuerURL
+	handle, err := db.Open(path)
+	if err != nil {
+		return err
+	}
+	defer handle.Close()
+	if _, err := app.Build(context.Background(), settings, handle, app.Options{}); err != nil {
+		return err
+	}
+	_, err = handle.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+	return err
 }
 
 // Person describes the token of a test person.
