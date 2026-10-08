@@ -54,7 +54,7 @@ describe('SheetComponent keys and axes', () => {
     const { fixture, container } = await render(SheetComponent, { inputs: { label: 'Map', detent: 1 } });
     const calls: number[] = [];
     fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
-    const host = container as HTMLElement;
+    const host = container;
     Object.defineProperty(host, 'clientHeight', { value: 800, configurable: true });
     const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
 

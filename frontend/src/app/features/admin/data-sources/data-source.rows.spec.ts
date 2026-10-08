@@ -17,7 +17,7 @@ function detailOf(change: Partial<DataSourceDetail> = {}): DataSourceDetail {
     nextCursor: null,
     openUpload: null,
     ...change,
-  } as DataSourceDetail;
+  };
 }
 
 describe('data source rows', () => {

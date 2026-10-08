@@ -156,7 +156,7 @@ describe('export files', () => {
   it('writes a CSV file and quotes a field with a quote', () => {
     const quoted = { ...DATA, finds: [], zones: [], markers: [{ ...DATA.markers[0], name: 'The "big" one' }] };
 
-    const file = exportFile(quoted as unknown as AccountExport, 'csv', species, '2026-09-12');
+    const file = exportFile(quoted, 'csv', species, '2026-09-12');
 
     expect(file.name).toBe('kinoko-export-2026-09-12.csv');
     expect(file.type).toBe('text/csv');

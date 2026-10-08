@@ -86,8 +86,8 @@ describe('DataSourceComponent states', () => {
     expect(screen.getByText('Noch keine Version')).toBeInTheDocument();
     expect(screen.queryByText('Aktive Version')).not.toBeInTheDocument();
 
-    const empty = screen.getByText('Noch keine Version').closest('app-state-view') as HTMLElement;
-    await userEvent.click(within(empty).getByRole('button', { name: 'Hochladen' }));
+    const empty = screen.getByText('Noch keine Version').closest<HTMLElement>('app-state-view');
+    await userEvent.click(within(empty ?? document.body).getByRole('button', { name: 'Hochladen' }));
 
     expect(screen.getByRole('dialog', { name: 'Höhenmodell hochladen' })).toBeInTheDocument();
   });
