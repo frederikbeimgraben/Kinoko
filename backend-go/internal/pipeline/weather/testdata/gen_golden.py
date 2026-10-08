@@ -44,6 +44,12 @@ def num(v):
     return None if np.isnan(v) else v
 
 
+def num32(v):
+    """A value as its shortest float32 text; the derive tests compare with a tolerance of 1e-4."""
+    v = float(v)
+    return None if np.isnan(v) else float(str(np.float32(v)))
+
+
 # ---------------------------------------------------------------- netCDF fixtures
 HX = 4_102_500.0 + 1000.0 * np.arange(12)
 HY = 3_008_500.0 - 1000.0 * np.arange(9)
@@ -261,7 +267,7 @@ def by_key(frame, cols):
     out = {}
     for col in cols:
         vals = frame[col].to_numpy()
-        out[col] = [[num(vals[key[(c, y, w)]]) if (c, y, w) in key else None for c in cells]
+        out[col] = [[num32(vals[key[(c, y, w)]]) if (c, y, w) in key else None for c in cells]
                     for y, w in OUTWEEKS]
     return out
 
@@ -312,14 +318,16 @@ OUTWEEKS = weeks
 derive_layers = by_key(layers, ["paws", "pr_sum2", "pr_sum4", "pr_sum8", "tas_mittel2", "tas_mittel4",
                                 "pr_sum4_anom"])
 
-(OUT / "derive.json").write_text(json.dumps({
+import gzip  # noqa: E402
+
+(OUT / "derive.json.gz").write_bytes(gzip.compress(json.dumps({
     "cells": cells, "weeks": weeks,
     "input": {k: [[num(v) for v in row] for row in values[k]] for k in names},
     "lagNames": lag_names, "anomNames": anom_names,
     "full": derive_full,
     "forecast": {"renderWeeks": RENDER_WEEKS, "grenze": grenze, "weeks": fweeks, "values": derive_forecast},
     "layers": derive_layers,
-}))
+}).encode(), mtime=0))
 
 # ---------------------------------------------------------------- listings
 LISTINGS = {
