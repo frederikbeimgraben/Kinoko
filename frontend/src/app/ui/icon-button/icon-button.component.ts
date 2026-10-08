@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Die Piktogramme, die eine Zeile als Knopf statt als Text trägt. */
+/** The glyphs that a row shows as a button and not as a text. */
 export type OwnIcon =
   'check' | 'close' | 'delete' | 'pencil' | 'share' | 'sign-out' | 'prev' | 'next' | 'undo';
 
-/** Der Knopf nimmt die eigenen Zeichen und jedes Zeichen des Katalogs. */
+/** The button takes its own glyphs and each glyph of the catalogue. */
 export type IconButtonIcon = OwnIcon | IconName;
 
 const OWN_ICONS: ReadonlySet<string> = new Set<OwnIcon>([
@@ -21,18 +21,18 @@ const OWN_ICONS: ReadonlySet<string> = new Set<OwnIcon>([
   'undo',
 ]);
 
-/** Die sieben Auftritte aus `kit.css`, je RoundButton `kind`. */
+/** The seven looks of `kit.css`, one for each RoundButton `kind`. */
 export type IconButtonKind = 'tonal' | 'plain' | 'fab' | 'fabl' | 'accept' | 'reject' | 'over';
 
-/** Der volle Pfeil aus dem Zwölfer-Raster, wie `app-svg-icon` ihn kennt. */
+/** The full arrow of the 12-unit grid, as `app-svg-icon` has it. */
 const FILLED_ICONS: ReadonlySet<IconButtonIcon> = new Set(['prev', 'next']);
 
 const BIG_KINDS: ReadonlySet<IconButtonKind> = new Set(['accept', 'reject']);
 
-/** Maß und Strich eines Zeichens aus dem Katalog, per `kit.css` `.ic`. */
+/** The size and the stroke of a catalogue glyph, per `kit.css` `.ic`. */
 const CATALOGUE_GLYPH = { size: 24, stroke: 1.8 } as const;
 
-/** Maß und Strich je Icon: der Haken trägt schwerer als das X. */
+/** The size and the stroke of each icon: the check mark is heavier than the X. */
 const GLYPHS: Readonly<Partial<Record<IconButtonIcon, { size: number; stroke: number }>>> = {
   check: { size: 20, stroke: 2.4 },
   close: { size: 18, stroke: 2.2 },
@@ -45,7 +45,7 @@ const GLYPHS: Readonly<Partial<Record<IconButtonIcon, { size: number; stroke: nu
   undo: { size: 20, stroke: 2 },
 };
 
-/** Ein runder Knopf mit Icon, per `kit.css` `.tb`/`.ib`/`.fab-s`/`.rbig`. */
+/** A round button with an icon, per `kit.css` `.tb`/`.ib`/`.fab-s`/`.rbig`. */
 @Component({
   selector: 'app-icon-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,7 +56,7 @@ const GLYPHS: Readonly<Partial<Record<IconButtonIcon, { size: number; stroke: nu
 export class IconButtonComponent {
   readonly icon = input.required<IconButtonIcon>();
   readonly kind = input<IconButtonKind>('tonal');
-  /** Der barrierefreie Name. Ohne sichtbares Wort trägt nur er die Bedeutung. */
+  /** The accessible name. Without a visible word, only this name gives the meaning. */
   readonly label = input.required<string>();
   readonly disabled = input(false);
 

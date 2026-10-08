@@ -5,7 +5,7 @@ type FindEntry = components['schemas']['Find'];
 type MarkerEntry = components['schemas']['Marker'];
 type ZoneEntry = components['schemas']['Zone'];
 
-/** Eine Seite, wie sie jede Liste des Dienstes liefert. */
+/** A page, as each list of the service gives it. */
 export function page<E>(items: readonly E[]): { items: E[]; nextCursor: string | null } {
   return { items: [...items], nextCursor: null };
 }
@@ -106,7 +106,7 @@ export const ZONE: Zone = {
   createdAt: ZONE_ENTRY.createdAt,
 };
 
-/** Ein geteilter Fund, so wie ihn der Vertrag abgibt. */
+/** A shared find, as the contract gives it. */
 export const SHARED_FIND_ENTRY: FindEntry = {
   id: 'geteilt-eins',
   ownerId: 'konto-zwei',

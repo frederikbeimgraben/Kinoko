@@ -9,14 +9,14 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { memberCount, ownerOf } from '../account/group-text';
 
-/** Eine Zeile der Gruppenliste der Verwaltung. */
+/** One row of the group list of the administration. */
 interface Row {
   id: string;
   name: string;
   subline: string;
 }
 
-/** Alle Gruppen: suchen und eine öffnen. Braucht das Recht `group.manage`. */
+/** All groups: search and open one. It needs the permission `group.manage`. */
 @Component({
   selector: 'app-admin-groups',
   changeDetection: ChangeDetectionStrategy.OnPush,

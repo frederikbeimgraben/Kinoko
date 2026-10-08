@@ -9,7 +9,7 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { GroupMembersComponent } from '../account/group-members.component';
 
-/** Eine Gruppe in der Verwaltung: umbenennen, Mitglied entfernen, löschen. */
+/** One group in the administration: rename it, remove a member, delete it. */
 @Component({
   selector: 'app-admin-group',
   changeDetection: ChangeDetectionStrategy.OnPush,

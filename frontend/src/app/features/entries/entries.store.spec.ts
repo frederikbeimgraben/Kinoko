@@ -47,7 +47,7 @@ function build(): Setup {
   };
 }
 
-/** Lädt die drei Listen, so wie eine Seite es beim Öffnen tut. */
+/** Loads the three lists, as a page does when it opens. */
 async function load(setup: Setup): Promise<void> {
   const loaded = setup.state.load();
   await vi.waitFor(() => {
@@ -58,7 +58,7 @@ async function load(setup: Setup): Promise<void> {
   await loaded;
 }
 
-describe('EintraegeZustand', () => {
+describe('EntriesStore', () => {
   it('holt Funde, Marker und Zonen des Kontos', async () => {
     const setup = build();
 

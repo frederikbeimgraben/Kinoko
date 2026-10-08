@@ -1,4 +1,4 @@
-/** Liest Fund, Marker und Zone. Ein Grabstein oder ein Teilstand fällt weg. */
+/** Reads a find, a marker and a zone. A tombstone or a partial entry falls out. */
 
 import type { components } from './contract';
 import type { Find, Marker, OpenFind, SharedFind, Zone } from './models';
@@ -7,7 +7,7 @@ type FindEntry = components['schemas']['Find'];
 type MarkerEntry = components['schemas']['Marker'];
 type ZoneEntry = components['schemas']['Zone'];
 
-/** Ein geteilter Fund. Der Ort einer geschützten Art kommt gerundet. */
+/** A shared find. The place of a protected species comes rounded. */
 export function sharedFind(entry: FindEntry): SharedFind | null {
   const { lat, lon, foundOn, reviewState, ownerId } = entry;
   if (lat === undefined || lon === undefined || foundOn === undefined) return null;
@@ -25,14 +25,14 @@ export function sharedFind(entry: FindEntry): SharedFind | null {
   };
 }
 
-/** Ein offener Fund der Prüfung: ein geteilter, dazu sein Konto. */
+/** An open find of the review: a shared find and its account. */
 export function openFind(entry: FindEntry): OpenFind | null {
   const shared = sharedFind(entry);
   if (shared === null || entry.ownerId === undefined) return null;
   return { ...shared, ownerId: entry.ownerId };
 }
 
-/** Ein eigener Fund: ein geteilter, dazu Sichtbarkeit und Freigabe. */
+/** An own find: a shared find with its visibility and its release. */
 export function ownFind(entry: FindEntry): Find | null {
   const shared = sharedFind(entry);
   if (shared === null || entry.visibility === undefined) return null;

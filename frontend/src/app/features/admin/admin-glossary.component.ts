@@ -10,10 +10,10 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 
-/** Ein neuer Begriff trägt noch keine Kennung. */
+/** A new term has no id yet. */
 const NEW = 'neu';
 
-/** Das Glossar der Verwaltung: anlegen, ändern, löschen. Braucht `text.edit`. */
+/** The glossary of the administration: create, change, delete. It needs `text.edit`. */
 @Component({
   selector: 'app-admin-glossary',
   changeDetection: ChangeDetectionStrategy.OnPush,
