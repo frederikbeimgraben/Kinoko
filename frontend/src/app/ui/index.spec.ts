@@ -3,8 +3,8 @@ import { join } from 'node:path';
 import { reflectComponentType, type Type } from '@angular/core';
 import * as ui from './index';
 
-/** Die Liste aus `artefakte/komponenten.md`, Abschnitt Gerüst und weitere,
- * dazu die Meldung, die das Board flach über die Breite zeichnet. */
+/** The list from `artefakte/komponenten.md` (frame section and more), the full-width toast
+ * and the skeleton compositions. */
 const BLOCKS = [
   'app-page-header',
   'app-nav',
@@ -87,6 +87,9 @@ const BLOCKS = [
   'app-infinite-list',
   'app-row-group',
   'app-skeleton',
+  'app-map-panel-skeleton',
+  'app-species-page-skeleton',
+  'app-row-group-skeleton',
   'app-section',
   'app-fold-section',
   'app-progress',
