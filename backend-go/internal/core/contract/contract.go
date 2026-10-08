@@ -100,7 +100,7 @@ func (c *Contract) match(path string) []Path {
 func (c *Contract) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path, under := strings.CutPrefix(r.URL.Path, Prefix)
-		if !under || r.Method == http.MethodOptions {
+		if !under || (r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "") {
 			next.ServeHTTP(w, r)
 			return
 		}
