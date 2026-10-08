@@ -1,6 +1,6 @@
-// A byte-limited cache for raw value tiles. A raw tile has one byte per pixel (5 to 40 kB
-// from the server). A colored tile has four bytes per pixel (256 kB). Thus the cache holds
-// the preloaded adjacent weeks, and a week change needs no network request.
+/** A byte-limited cache for raw value tiles: one byte per pixel, 5 to 40 kB per tile. A coloured tile
+ * needs four bytes per pixel (256 kB). Thus the cache holds the preloaded adjacent weeks,
+ * and a week change needs no network request. */
 export class TileCache {
   // A Map keeps the insertion order. The oldest entry is first,
   // so it goes first when the cache reaches the limit.

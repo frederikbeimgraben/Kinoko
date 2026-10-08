@@ -19,10 +19,8 @@ export function colourFromHex(hex: string): MarkerColour {
   return index === -1 ? 'green' : MARKER_COLOURS[index];
 }
 
-/**
- * The choices for `ColorSwatches`. The value is the colour, because the swatch paints it as background.
- * The label gives the name, so a screen reader does not read a hex code.
- */
+/** The choices for `ColorSwatches`. The value is the colour, because the swatch paints it as background.
+ * The label gives the name, so a screen reader does not read a hex code. */
 export function colourSwatches(i18n: I18nService): ColourSwatch[] {
   return MARKER_COLOURS.map((colour) => ({
     value: colourHex(colour),

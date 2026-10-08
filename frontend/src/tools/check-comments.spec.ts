@@ -65,6 +65,8 @@ describe('check-comments', () => {
   });
 
   it('reports a history word', () => {
-    expect(reasons('export const x = 1; // this was previously a list\n')).toEqual(['history word "previously"']);
+    expect(reasons('export const x = 1; // this was previously a list\n')).toEqual([
+      'history word "previously"',
+    ]);
   });
 });

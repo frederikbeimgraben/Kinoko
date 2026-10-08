@@ -82,9 +82,7 @@ function scanHtml(source) {
 
 /** Removes quoted UI text and links. A comment can cite a German label. */
 function withoutQuotes(text) {
-  return text
-    .replace(/„[^“]*“|"[^"]*"|'[^']*'|`[^`]*`|«[^»]*»/g, ' ')
-    .replace(/https?:\/\/\S+/g, ' ');
+  return text.replace(/„[^“]*“|"[^"]*"|'[^']*'|`[^`]*`|«[^»]*»/g, ' ').replace(/https?:\/\/\S+/g, ' ');
 }
 
 /** Makes the violations of one file from its comments. */
@@ -121,7 +119,12 @@ function violationsIn(path, comments) {
     const reason = forbiddenReason(comment.text);
     if (reason) found.push({ line: comment.line, rule: 'content', text: comment.text, reason });
     if (isGerman(withoutQuotes(comment.text)))
-      found.push({ line: comment.line, rule: 'language', text: comment.text, reason: 'German comment, write ASD-STE100 English' });
+      found.push({
+        line: comment.line,
+        rule: 'language',
+        text: comment.text,
+        reason: 'German comment, write ASD-STE100 English',
+      });
     if (comment.type === 'doc') {
       const span = comment.endLine - comment.line + 1;
       if (span > 3) {
@@ -164,7 +167,9 @@ function collectFiles(folder, extensions, found) {
 export function findViolations(root) {
   const files = [
     ...collectFiles(join(root, 'src', 'app'), ['.ts', '.html', '.scss'], []),
-    ...collectFiles(join(root, 'src'), ['.ts', '.scss'], []).filter((f) => !f.includes(`${join('src', 'app')}`)),
+    ...collectFiles(join(root, 'src'), ['.ts', '.scss'], []).filter(
+      (f) => !f.includes(`${join('src', 'app')}`),
+    ),
     ...collectFiles(join(root, 'e2e'), ['.ts', '.mjs'], []),
     ...collectFiles(join(root, 'tools'), ['.mjs'], []),
   ];

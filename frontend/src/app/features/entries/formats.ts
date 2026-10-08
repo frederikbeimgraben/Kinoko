@@ -1,7 +1,5 @@
-/**
- * Formats dates, places and areas for the UI, as the mockups show them.
- * `core` has the long day and the place, because species and images use them too.
- */
+/** Formats dates, places and areas for the UI, as the mockups show them.
+ * `core` has the long day and the place, because species and images use them too. */
 
 import { shortDate as catalogueDay } from '../../core/i18n/dates';
 import type { I18nService } from '../../core/i18n/i18n.service';
