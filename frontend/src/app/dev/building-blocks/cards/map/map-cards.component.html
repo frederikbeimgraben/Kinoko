@@ -15,7 +15,9 @@
 </app-block-card>
 
 <app-block-card block="StepBar" [width]="358" [height]="56">
-  <app-step-bar class="stepbar-demo" [label]="'beispiel.fertig' | t" [actions]="stepBarActions" />
+  <div class="controls-wrap">
+    <app-step-bar class="stepbar-demo" [label]="'beispiel.fertig' | t" [actions]="stepBarActions" />
+  </div>
 </app-block-card>
 
 <app-block-card block="ObjectTitle" [width]="358" [height]="56">
@@ -35,4 +37,20 @@
 
 <app-block-card block="StateView" [width]="390" [height]="360">
   <app-state-view class="state-demo" [title]="'beispiel.keineTreffer' | t" icon="search" />
+</app-block-card>
+
+<app-block-card block="LayersBody" [width]="358" [height]="400">
+  <app-layers-body />
+</app-block-card>
+
+<app-block-card block="LayerPickBody" [width]="358" [height]="400">
+  <app-layer-pick [layers]="layers()" [selected]="layers()[0].id" [label]="'map.tab.layer' | t" />
+</app-block-card>
+
+<app-block-card block="CombinationsBody" [width]="358" [height]="400">
+  <app-combinations [saved]="combinations()" [selected]="combinations()[0].id" />
+</app-block-card>
+
+<app-block-card block="CombinationSaveBody" [width]="358" [height]="400">
+  <app-form-field [label]="'common.name' | t" [value]="'beispiel.herbstSteinpilz' | t" />
 </app-block-card>

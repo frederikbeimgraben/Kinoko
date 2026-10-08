@@ -1,19 +1,5 @@
-<svg
-  class="histogram"
-  [attr.viewBox]="'0 0 ' + width + ' ' + height()"
-  preserveAspectRatio="none"
-  [style.block-size.px]="height()"
-  role="img"
-  [attr.aria-label]="label()"
->
+<div class="histogram" [style.block-size.px]="height()" role="img" [attr.aria-label]="label()">
   @for (bar of bars(); track $index) {
-    <rect
-      [class.histogram__bar--inside]="bar.inside"
-      class="histogram__bar"
-      [attr.x]="bar.x"
-      [attr.y]="bar.y"
-      [attr.width]="bar.width"
-      [attr.height]="bar.height"
-    />
+    <i class="histogram__bar" [class.histogram__bar--inside]="bar.inside" [style.block-size.%]="bar.height"></i>
   }
-</svg>
+</div>

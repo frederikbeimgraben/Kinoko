@@ -18,7 +18,7 @@ import { SpeciesFilterState } from '../../../../features/species/filter.state';
 import { SpeciesState, type CatalogueEntry } from '../../../../features/species/species.state';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Eine Art mit allen Pflichtfeldern des Vertrags, so knapp wie möglich. */
+/** A species with all required fields of the contract, as short as possible. */
 function entry(
   seed: Partial<SpeciesEntry> & Pick<SpeciesEntry, 'slug' | 'name' | 'scientificName'>,
 ): SpeciesEntry {
@@ -46,12 +46,12 @@ function entry(
   };
 }
 
-/** Die Hutfarbe einer Art, in der Form des Vertrags. */
+/** The cap colour of a species, in the form of the contract. */
 function capColour(hex: string): SpeciesEntry['colours'] {
   return [{ part: 'cap', mode: 'single', colours: [{ name: hex, hex }] }];
 }
 
-/** Neun der zehn Arten des Bretts `SpeciesList.dc.html`, in seiner Reihenfolge. */
+/** Nine of the ten species of the board `SpeciesList.dc.html`, in its sequence. */
 const LIST_SPECIES: readonly {
   slug: string;
   name: WorkshopKey;
@@ -138,7 +138,7 @@ const WEEKS: readonly [number, number, boolean][] = [
   [40, 60, true],
 ];
 
-/** Die Art- und Filter-Bausteine des D1-Batch 7, je ihre Vorgabe im Brett. */
+/** The species and filter blocks, each with the values of its board. */
 @Component({
   selector: 'app-species-list-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,

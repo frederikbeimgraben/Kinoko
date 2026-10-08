@@ -16,13 +16,9 @@
   block-size: 100%;
 }
 
-// `app-step-bar` schwebt sonst frei über der Seite: in der Karte steht sie
-// statt dessen an ihrem Platz, mit demselben Rand wie `StepBar.dc.html`.
+// Per `StepBar.dc.html`: the bar stands 16 px above the end of the card.
 .stepbar-demo {
-  position: static !important;
-  inset: auto !important;
-  padding-inline: 16px;
-  box-sizing: border-box;
+  inset-block-end: 16px !important;
 }
 
 .queue-demo,
