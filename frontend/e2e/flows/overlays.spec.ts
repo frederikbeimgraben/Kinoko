@@ -23,7 +23,7 @@ const MARKERS = {
   nextCursor: null,
 };
 
-/** Geht über die Liste der Einträge in das Blatt des Markers. */
+/** Opens the sheet of the marker from the list of entries. */
 async function openMarker(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -36,7 +36,7 @@ async function openMarker(page: Page): Promise<void> {
   });
   await mockMap(page);
   await page.goto('/eintraege');
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: 'Alter Fichtenbestand' }).first();
   await expect(entry).toBeVisible();
   await expect(async () => {
@@ -54,7 +54,7 @@ test('Das Objektblatt lässt die Reiterleiste frei', async ({ page }) => {
   await expect(tab).toBeVisible();
 
   const sheet = page.getByRole('dialog', { name: 'Marker', exact: true });
-  // Das Blatt fährt ein; gemessen wird sein Ruhestand.
+  // The sheet moves in; the test measures it when it stands still.
   await expect(async () => {
     const sheetBox = await sheet.boundingBox();
     const barBox = await bar.boundingBox();

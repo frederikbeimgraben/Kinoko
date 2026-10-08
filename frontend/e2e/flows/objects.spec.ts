@@ -36,7 +36,7 @@ async function openMarker(page: Page): Promise<void> {
   });
   await mockMap(page);
   await page.goto('/eintraege');
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: 'Alter Fichtenbestand' }).first();
   await expect(entry).toBeVisible();
   // Under load, the tap can come before the listener of the row.
