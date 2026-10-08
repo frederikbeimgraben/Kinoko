@@ -21,7 +21,7 @@ class HostComponent {
   readonly withSheet = signal(true);
 }
 
-/** Der Beobachter des Tests: er meldet erst, wenn der Test es sagt. */
+/** The observer of the test: it reports only when the test tells it to. */
 function observer(): { report: () => void } {
   const handle = { report: (): void => undefined };
   vi.stubGlobal(
@@ -31,17 +31,17 @@ function observer(): { report: () => void } {
         handle.report = callback;
       }
       observe(): void {
-        // Ohne Layout ändert sich keine Größe von selbst.
+        // Without a layout, no size changes by itself.
       }
       disconnect(): void {
-        // Es gibt nichts zu lösen.
+        // There is nothing to disconnect.
       }
     },
   );
   return handle;
 }
 
-/** jsdom rechnet kein Layout; jedes Element beginnt dort, wo der Test es sagt. */
+/** jsdom has no layout. Each element starts where the test tells. */
 function stubTop(sheetTop: number, hostTop: number, size = 100): void {
   const real = Object.getOwnPropertyDescriptor(Element.prototype, 'getBoundingClientRect');
   Object.defineProperty(Element.prototype, 'getBoundingClientRect', {

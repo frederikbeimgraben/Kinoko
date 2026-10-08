@@ -23,7 +23,7 @@ import {
   releaseVelocity,
   rubberBand,
   type Detent,
-  type DragSample,
+  type Drag,
 } from './sheet-snap';
 
 export type { Detent } from './sheet-snap';
@@ -34,36 +34,20 @@ export type DetentSize = number | `${number}px` | 'content';
 // A sheet is as high as its content. Only the map sets three different detents.
 const DEFAULT_DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 
-// Above this movement in px, the sheet captures the pointer.
-// A tap on a week in the head stays a tap below it.
+// Above this movement in px, the sheet captures the pointer. Below it, a tap on a week stays a tap.
 const GRAB_THRESHOLD = 6;
 
-// Above this horizontal movement in px, the sheet releases the touch.
-// The timeline then gets it and scrolls below the finger.
+// Above this horizontal movement in px, the sheet releases the touch to the timeline.
 const AXIS_THRESHOLD = 8;
 
 // A drag down below this share of the start height closes a dismissible sheet.
 const DISMISS_SHARE = 0.5;
 
-// Below this movement in px, a press on the scrim is a click.
-// Above it, the press is a drag on the surface below.
+// Below this movement in px, a press on the scrim is a click. Above it, it drags the surface below.
 const SCRIM_SLOP = 6;
 
-interface Drag {
-  readonly pointer: number;
-  readonly startY: number;
-  readonly startX: number;
-  readonly startHeight: number;
-  /** The detent sizes in px, measured once at the start of the drag. */
-  sizes: readonly [number, number, number];
-  samples: DragSample[];
-  moved: boolean;
-  captured: boolean;
-}
-
 /** A sheet over the map on the phone, a centred modal on the desktop. */
-// The grip and each element with `head` drag the sheet. The thumb gets the top edge more easily than a thin strip.
-// The height goes to `--pilz-sheet-inset` on the document, so floating buttons stay above the sheet.
+// The grip and each `head` element drag the sheet. `--pilz-sheet-inset` keeps floating buttons above it.
 @Component({
   selector: 'app-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,10 +7,7 @@ export const BACKGROUND: Record<EffectiveTheme, string> = {
   dunkel: 'https://tiles.openfreemap.org/styles/dark',
 };
 
-/**
- * The choices of the layers sheet. "map" follows the theme of the app, "light" and "dark" are fixed.
- * Topo and satellite have no source yet.
- */
+/** The choices of the layers sheet. "map" follows the app theme, "light" and "dark" are fixed. */
 export type Background = 'map' | 'light' | 'dark' | 'topo' | 'satellite';
 
 export const BACKGROUNDS: readonly Background[] = ['map', 'light', 'dark', 'topo', 'satellite'];
@@ -33,18 +30,12 @@ export const GERMANY: Bounds = [
   [15.1, 55.1],
 ];
 
-/**
- * The limit of a pan. The margin of six degrees is wide on purpose: the map centres
- * Germany above the sheet, so the space below the sheet must also be inside the limit.
- */
+/** The limit of a pan. Six degrees of margin keep the space below the sheet inside the limit. */
 export const MAX_BOUNDS: Bounds = [
   [-1.0, 40.5],
   [22.0, 59.5],
 ];
 
-/**
- * MapLibre counts zoom levels for 512 px tiles, one level below the 256 px value tiles.
- * Thus 4 is level 5 of the value tiles, with all of Germany. 14 is the last level of the vector style.
- */
+/** Zoom levels of the 512 px style: 4 shows all of Germany, 14 is the last level of the vector style. */
 export const ZOOM_MIN = 4;
 export const ZOOM_MAX = 14;

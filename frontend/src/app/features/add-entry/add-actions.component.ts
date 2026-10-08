@@ -21,10 +21,7 @@ const CHOICES: readonly Choice[] = [
   { key: 'zone', icon: 'zone', label: 'entry.drawZone.title' },
 ];
 
-/**
- * The three ways to add an entry: a group of rows (board `AddActionsBody`),
- * or the items of a popover at the plus button on the desktop (board `MapDesktopAdd`).
- */
+/** The three ways to add an entry: rows (board `AddActionsBody`) or a popover on the desktop (`MapDesktopAdd`). */
 @Component({
   selector: 'app-add-actions',
   changeDetection: ChangeDetectionStrategy.OnPush,

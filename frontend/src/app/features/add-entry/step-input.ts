@@ -9,10 +9,7 @@ export type StepInputMode = 'crosshair' | 'pointer';
 /** A click this near to a set point is a click on the point. */
 const HIT_RADIUS = 12;
 
-/**
- * The point of a step: the crosshair on the phone, the pointer on the desktop.
- * A zone takes its corners from taps on both devices (boards `ZoneDraw` and `MapDesktopZoneDraw`).
- */
+/** The point of a step: the crosshair on the phone, the pointer on the desktop. A zone takes its corners from taps. */
 @Injectable()
 export class StepInput {
   private readonly adapter = inject(MAP_ADAPTER);

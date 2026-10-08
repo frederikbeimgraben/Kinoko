@@ -14,27 +14,24 @@ import { MarkerSheetComponent } from './marker-sheet.component';
 import { ObjectSheetStore } from './object-sheet.store';
 import { ZoneSheetComponent } from './zone-sheet.component';
 
-/** Der Name des Blatts für Hilfsmittel. */
+/** The name of the sheet for assistive technology. */
 const SHEET_NAME: Record<ObjectKind, TranslationKey> = {
   find: 'fund.blatt',
   marker: 'marker.blatt',
   zone: 'zone.blatt',
 };
 
-/** Der Titel des Formulars je Art (Boards `MarkerEdit`, `ZoneEdit`, `FindEdit`). */
+/** The title of the form for each kind (boards `MarkerEdit`, `ZoneEdit`, `FindEdit`). */
 const EDIT_TITLE: Record<ObjectKind, TranslationKey> = {
   find: 'entry.fund.editTitle',
   marker: 'entry.marker.editTitle',
   zone: 'entry.zone.editTitle',
 };
 
-/**
- * So nah holt ein geöffnetes Objekt die Karte heran. Nah genug, um den Weg
- * dorthin zu sehen, weit genug, um zu wissen, wo man ist.
- */
+/** The zoom of an open object: near enough to see the way, far enough to see where you are. */
 const ZOOM_OBJECT = 14;
 
-/** Das Blatt über der Karte, das einen Fund, einen Marker oder eine Zone zeigt. */
+/** The sheet over the map that shows a find, a marker or a zone. */
 @Component({
   selector: 'app-object-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,10 +73,7 @@ export class ObjectSheetComponent {
     return this.eintraege.zones().find((candidate) => candidate.id === offen.id) ?? null;
   });
 
-  /**
-   * Der Punkt des offenen Objekts. Bei einer Zone der Mittelpunkt ihrer Ecken:
-   * eine Fläche hat keinen einen Ort.
-   */
+  /** The point of the open object. For a zone, the centre of its corners. */
   protected readonly location = computed<readonly [number, number] | null>(() => {
     const find = this.find();
     if (find) return [find.lon, find.lat];
@@ -92,13 +86,13 @@ export class ObjectSheetComponent {
     return [sum[0] / ring.length, sum[1] / ring.length];
   });
 
-  /** Der Name des Blatts für Hilfsmittel: Fund, Marker oder Zone. */
+  /** The name of the sheet for assistive technology: find, marker or zone. */
   protected readonly sheetName = computed(() => {
     const offen = this.map.object();
     return offen === null ? '' : this.i18n.translate(SHEET_NAME[offen.kind]);
   });
 
-  /** Der Titel im Kopf: die Art des Objekts. Der Name steht als `ObjectTitle` im Rumpf. */
+  /** The title in the head: the kind of the object. The name is the `ObjectTitle` in the body. */
   protected readonly headTitle = computed(() => {
     const offen = this.map.object();
     if (offen === null) return '';
@@ -106,7 +100,7 @@ export class ObjectSheetComponent {
     return this.sheetName();
   });
 
-  /** Offen, aber nichts gefunden: der Eintrag ist fort oder gehört einem anderen Konto. */
+  /** Open, but not found: the entry is gone or belongs to another account. */
   protected readonly missing = computed(
     () => this.map.object() !== null && !this.find() && !this.marker() && !this.zone(),
   );
@@ -114,9 +108,7 @@ export class ObjectSheetComponent {
   protected readonly editing = this.sheet.editing;
 
   constructor() {
-    // Ein Tipp auf einen Marker soll ihn zeigen, nicht nur sein Blatt öffnen.
-    // Der Weg über den Zustand fasst beide Wege zusammen: den Tipp auf der
-    // Karte und den auf eine Zeile im Reiter Einträge.
+    // A tap on an object moves the map to it. The tap on the map and the tap on an entry row use this path.
     effect(() => {
       const point = this.location();
       if (point !== null) this.adapter.flyTo(point, ZOOM_OBJECT);
@@ -127,7 +119,7 @@ export class ObjectSheetComponent {
     this.sheet.close();
   }
 
-  /** Das X am Kopf: aus dem Formular zurück zum Objekt, sonst zu.  */
+  /** The close button in the head: from the form back to the object, else close. */
   protected dismiss(): void {
     if (this.editing()) this.sheet.setEditing(false);
     else this.close();

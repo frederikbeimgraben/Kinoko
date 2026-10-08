@@ -12,7 +12,7 @@ import { MapView } from './map.view';
 import { patchState } from '@ngrx/signals';
 import { unprotected } from '@ngrx/signals/testing';
 
-/** `RAW_LAYERS` mit drei festen Ebenen, die Quellenpflicht tragen, nur für diese Tests. */
+/** `RAW_LAYERS` with three fixed layers that need a credit, only for these tests. */
 const CREDIT_LAYERS = {
   bounds: RAW_LAYERS.bounds,
   layers: {

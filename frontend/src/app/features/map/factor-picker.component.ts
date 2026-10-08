@@ -8,10 +8,7 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 
-/**
- * The source of a new factor: the layers and the species, per the board `FactorPickBody`.
- * A source that has a factor already is not in the list.
- */
+/** The source of a new factor, per the board `FactorPickBody`. A source with a factor is not in the list. */
 @Component({
   selector: 'app-factor-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,

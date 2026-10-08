@@ -17,7 +17,7 @@ import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetStore } from './object-sheet.store';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 
-/** Das Objekt-Blatt eines Markers und sein Formular (Boards `SheetMarkerView`, `MarkerEdit`). */
+/** The object sheet of a marker and its form (boards `SheetMarkerView`, `MarkerEdit`). */
 @Component({
   selector: 'app-marker-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +57,7 @@ export class MarkerSheetComponent {
 
   protected readonly colour = computed(() => colourHex(this.marker().colour));
 
-  /** Die gedämpfte Zeile unter dem Namen, per `MarkerViewBody.dc.html`. */
+  /** The muted line below the name, per `MarkerViewBody.dc.html`. */
   protected readonly sub = computed(() =>
     this.i18n.translate('marker.unter', {
       sichtbarkeit: visibilityText(this.i18n, this.marker().visibility),

@@ -42,7 +42,7 @@ export const SPECIES_MANIFEST = {
   weeks: weeks(),
 };
 
-/** Die Verteilung aus dem Board `Faktor`: vierzig Klassen, ein Buckel links. */
+/** The distribution of the board `Factor`: forty classes, one peak at the left. */
 const CURVE = [
   0.005354, 0.007244, 0.009528, 0.012283, 0.015591, 0.019213, 0.023228, 0.027402, 0.031654, 0.035827,
   0.039606, 0.042756, 0.045276, 0.04685, 0.047479, 0.047087, 0.045827, 0.043701, 0.041024, 0.037953, 0.034803,
@@ -55,7 +55,7 @@ function share(count: number): { classes: number[]; shares: number[] } {
   return { classes, shares: CURVE };
 }
 
-/** Die Eingabe-Ebenen, mit denselben Namen wie in den Boards. */
+/** The input layers, with the names of the boards. */
 export const LAYERS_MANIFEST = {
   bounds: [
     [47.2, 5.7],
@@ -134,7 +134,7 @@ export const LAYERS_MANIFEST = {
   },
 };
 
-/** `LAYERS_MANIFEST` mit der festen Ebene Fichte, nur für ihre eigenen Boards. */
+/** `LAYERS_MANIFEST` with the fixed layer spruce, only for its own boards. */
 export const FICHTE_LAYERS_MANIFEST = {
   bounds: LAYERS_MANIFEST.bounds,
   layers: {
@@ -197,7 +197,7 @@ function markers(count: number): { items: unknown[]; nextCursor: null } {
   return { items, nextCursor: null };
 }
 
-/** Geteilte Funde des Vertrags, geblättert wie `/finds`. */
+/** Shared finds of the contract, in pages as `/finds` gives them. */
 function finds(count: number): { items: unknown[]; nextCursor: null } {
   const items = Array.from({ length: count }, (_, i) => ({
     id: `find-${i}`,
@@ -215,7 +215,7 @@ function finds(count: number): { items: unknown[]; nextCursor: null } {
   return { items, nextCursor: null };
 }
 
-/** Die Zahlen aus dem Board `KarteEbenen`: 12 geteilte Funde, 5 Marker, 2 Zonen. */
+/** The numbers of the board `MapLayers`: 12 shared finds, 5 markers, 2 zones. */
 export const SHARED_FINDS = finds(12);
 export const MARKERS = markers(5);
 export const ZONES = {
@@ -243,7 +243,7 @@ export const ZONES = {
   nextCursor: null,
 };
 
-/** Die gespeicherten Kombinationen aus dem Board `Combinations`. */
+/** The saved combinations of the board `Combinations`. */
 export const COMBINATIONS = {
   items: [
     {

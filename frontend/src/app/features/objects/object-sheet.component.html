@@ -1,9 +1,4 @@
-<app-overlay-host
-  class="object"
-  [open]="map.object() !== null"
-  [modal]="true"
-  (closed)="close()"
->
+<app-overlay-host class="object" [open]="map.object() !== null" [modal]="true" (closed)="close()">
   <app-sheet
     appSheetHeight
     class="object__sheet"

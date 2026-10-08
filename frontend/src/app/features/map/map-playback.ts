@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { weekKey } from '../../core/tiles/manifest';
 import { MapStore } from './map.store';
 
-/** Die Wochenwahl der Zeitleiste: ein Tipp oder ein Sprung über einen Deep Link. */
+/** The week choice of the timeline: a tap or a jump through a deep link. */
 @Injectable({ providedIn: 'root' })
 export class MapPlayback {
   private readonly state = inject(MapStore);

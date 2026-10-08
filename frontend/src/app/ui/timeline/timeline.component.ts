@@ -39,10 +39,7 @@ interface ScrollState {
 
 const REST: ScrollState = { left: 0, width: 0, scrollWidth: 0 };
 
-/**
- * The weeks of a species in a row: one tab stop with arrow keys.
- * `align="end"` is the kit `.weeks.fade-l` of the phone: the slack and the fade are only at the start.
- */
+/** The weeks in a row with one tab stop. `align="end"` puts the slack and the fade only at the start. */
 @Component({
   selector: 'app-timeline',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -151,10 +148,7 @@ export class TimelineComponent implements AfterViewInit {
     this.scroll.set({ left: bar.scrollLeft, width: bar.clientWidth, scrollWidth: bar.scrollWidth });
   };
 
-  /**
-   * Moves the week to the middle of the whole tiles that fit. `scrollTo` moves only the strip.
-   * The slack goes to both sides, or only to the start for `align="end"`.
-   */
+  /** Moves the week to the middle of the whole tiles that fit, or to the end for `align="end"`. */
   private bringIntoView(index: number, withFocus: boolean, count = this.buttons().length): void {
     const button = (this.buttons()[index] as WeekButtonComponent | undefined)?.element();
     const bar = this.bar().nativeElement;

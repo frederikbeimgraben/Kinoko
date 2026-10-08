@@ -38,13 +38,13 @@ import { StepInput } from './step-input';
 import { paintRing, clearRing } from './step-painter';
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 
-/** Der gesetzte Ort steht am Rechner blau, wie die Bretter ihn malen. */
+/** The set location is blue on the desktop, as on the boards. */
 const MARK_COLOUR = 'blue' as const;
 
 /** Board `MapDesktopAdd`: the menu is at the bottom right of the map pane, where the plus button was. */
 const POPOVER_ANCHOR: PopoverAnchor = { bottom: 24, end: 24 };
 
-/** Der Kopf des Modals am Rechner nennt, worum es geht. */
+/** The head of the modal on the desktop gives the subject. */
 const TITLE: Record<string, TranslationKey> = {
   actions: 'entry.create',
   findLocation: 'entry.setLocation.title',
@@ -55,7 +55,7 @@ const TITLE: Record<string, TranslationKey> = {
   zoneForm: 'entry.zone.saveTitle',
 };
 
-/** Der Ablauf hinter dem Plus-Knopf: am Telefon ein Blatt, am Rechner ein Modal. */
+/** The flow behind the add button: a sheet on the phone, a modal on the desktop. */
 @Component({
   selector: 'app-add-entry',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -94,7 +94,7 @@ export class AddEntryComponent implements OnDestroy {
   private sessionRunning: Promise<DrawSession | null> | null = null;
 
   protected readonly saving = signal(false);
-  /** Die Farbe, in der die Zone gerade gezeichnet wird. */
+  /** The colour of the zone that the step draws. */
   protected readonly zoneColor = signal<MarkerColour>('green');
 
   /** On the desktop, the actions hang at the button. Each other step is a modal. */
@@ -103,10 +103,7 @@ export class AddEntryComponent implements OnDestroy {
   /** A step on the map has the step bar, not a sheet. */
   protected readonly asStepBar = this.state.showsCrosshair;
 
-  /**
-   * The buttons of a step, per `StepBar.dc.html`: undo, cancel and the main action.
-   * Undo takes back the last corner of a zone or the set point of a location.
-   */
+  /** The buttons of a step, per `StepBar.dc.html`. Undo removes the last corner or the set point. */
   protected readonly barActions = computed<readonly StepAction[]>(() => {
     const zone = this.state.step() === 'zoneDraw';
     const marker = this.state.step() === 'markerLocation';
@@ -160,7 +157,7 @@ export class AddEntryComponent implements OnDestroy {
 
   private readonly input = inject(StepInput);
 
-  /** Der Ort, den der nächste Punkt bekäme: Fadenkreuz oder Zeiger. */
+  /** The location of the next point: the crosshair or the pointer. */
   private readonly aim = this.input.aim;
 
   protected readonly aimText = computed(() =>
@@ -181,16 +178,14 @@ export class AddEntryComponent implements OnDestroy {
   );
 
   constructor() {
-    // Das Kreuz steht erst nach dem Zeichnen im Baum, und sein Ort ändert
-    // sich mit jedem Schwenk.
+    // The crosshair is in the DOM only after the render, and its location changes with each pan.
     afterRenderEffect(() => {
       this.map.moved();
       this.state.step();
       this.input.aimAt(this.pointUnderCrosshair());
     });
 
-    // Der Zeiger setzt am Rechner die Punkte. Er hört nur, solange ein
-    // Schritt den Ort sucht.
+    // The pointer sets the points. It listens only while a step looks for a location.
     effect(() => {
       if (!this.state.showsCrosshair()) {
         this.input.stop();
@@ -206,7 +201,7 @@ export class AddEntryComponent implements OnDestroy {
       );
     });
 
-    // Der gesetzte Ort und die Vorschau am Zeiger liegen auf der Karte.
+    // The set location and the preview at the pointer are on the map.
     effect(() => {
       const map = this.adapter.rawMap();
       const step = this.state.step();
@@ -215,8 +210,7 @@ export class AddEntryComponent implements OnDestroy {
       paintRing(map, [], colourHex(MARK_COLOUR), { mark: this.state.location() });
     });
 
-    // Terra Draw und Turf kommen erst, wenn eine Zone entsteht. Beide liegen in
-    // eigenen Paketen und fehlen dem Erstpaket.
+    // Terra Draw and Turf load only for a zone. Both are separate chunks, not in the first bundle.
     effect(() => {
       const step = this.state.step();
       if (step !== 'zoneDraw' && step !== 'zoneForm') {
@@ -250,12 +244,12 @@ export class AddEntryComponent implements OnDestroy {
     this.state.stop();
   }
 
-  /** Der Ort unter dem Zeiger, nur am Rechner: er hängt an der Vorschau-Kante. */
+  /** The location below the pointer, only on the desktop: the preview edge goes to it. */
   private pointerAim(): Location | null {
     return this.wide() ? this.aim() : null;
   }
 
-  /** Ein Klick auf die Karte setzt eine Ecke oder den Ort. */
+  /** A click on the map sets a corner or the location. */
   private onPick(point: Location): void {
     if (this.state.step() !== 'zoneDraw') {
       this.state.setPoint(point);
@@ -269,7 +263,7 @@ export class AddEntryComponent implements OnDestroy {
     this.state.addCorner(point);
   }
 
-  /** Übernimmt den Ort unter dem Fadenkreuz oder unter dem Zeiger. */
+  /** Takes the location below the crosshair or below the pointer. */
   protected adoptLocation(): void {
     const location = this.state.location() ?? this.center();
     if (location === null) return;
@@ -334,7 +328,7 @@ export class AddEntryComponent implements OnDestroy {
     }
   }
 
-  /** Die Vorschau auf der Karte folgt der gewählten Farbe. */
+  /** The preview on the map follows the chosen colour. */
   protected onZoneValues(values: ObjectValues): void {
     this.zoneColor.set(values.colour);
   }
@@ -348,7 +342,7 @@ export class AddEntryComponent implements OnDestroy {
     this.state.stop();
   }
 
-  /** Der Ort unter dem Fadenkreuz, nicht der in der Mitte der Karte. */
+  /** The location below the crosshair, not the centre of the map. */
   private center(): Location | null {
     const location = this.pointUnderCrosshair() ?? this.aim() ?? this.adapter.center();
     if (location === null) this.toasts.error(this.i18n.translate('entry.locationMissing'));
@@ -363,7 +357,7 @@ export class AddEntryComponent implements OnDestroy {
     return point === null ? null : [point[0], point[1]];
   }
 
-  /** Holt Turf und Terra Draw und legt den Ring auf die Karte. */
+  /** Loads Turf and Terra Draw and puts the ring on the map. */
   private async prepareZone(): Promise<void> {
     this.area.set(await loadAreaCalculator());
     const map = this.adapter.rawMap();

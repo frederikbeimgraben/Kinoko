@@ -23,13 +23,13 @@ export const DETENTS = [149, 317, 584] as const;
 /** The detents as `app-sheet` reads them. Above the lowest one, the sheet is as high as its content, as the kit `.sheet`. */
 export const DETENT_SIZES = ['149px', 'content', 'content'] as const;
 
-/** British Racing Green, falls das Theme keine Farbe hergibt. */
+/** British racing green, if the theme gives no colour. */
 const MEAN_FALLBACK = '#004225';
 
-/** Nah genug für einen Waldweg. */
+/** Near enough for a forest path. */
 export const ZOOM_LOCATION = 11;
 
-/** Die Zeichenfläche: MapLibre, die Wertebenen und der freie Streifen. */
+/** The canvas: MapLibre, the value layers and the free strip. */
 @Injectable()
 export class MapSurface {
   private readonly adapter = inject(MAP_ADAPTER);
@@ -48,11 +48,11 @@ export class MapSurface {
   private readonly _ready = signal(false);
   readonly ready = this._ready.asReadonly();
 
-  /** Der Faktor in Arbeit liegt oben, damit man sieht, was man einstellt. */
+  /** The factor in work is on top, so the person sees what changes. */
   readonly inProgress = signal<Factor | null>(null);
 
   private readonly _rotation = signal<Rotation>({ bearing: 0, pitch: 0 });
-  /** Drehung und Neigung der Karte, für den Kompass. */
+  /** The bearing and the pitch of the map, for the compass. */
   readonly rotation = this._rotation.asReadonly();
 
   async start(host: HTMLElement, wide: boolean, onMove: () => void): Promise<void> {
@@ -79,7 +79,7 @@ export class MapSurface {
     if (this._ready()) this.adapter.setStyle(styleFor(this.state.background(), this.theme.effective()));
   }
 
-  /** Dreht die Karte zurück nach Norden und stellt sie flach. */
+  /** Turns the map back to north and makes it flat. */
   resetNorth(): void {
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.adapter.resetNorth(!still);
@@ -95,12 +95,12 @@ export class MapSurface {
     if (this._ready()) this.adapter.setPadding(this.padding(detent, wide, overlaid));
   }
 
-  /** Misst die Zeichenfläche neu, nach einer Zeit unsichtbar in der Hülle. */
+  /** Measures the canvas again, after a time hidden in the shell. */
   resize(): void {
     if (this._ready()) this.adapter.resize();
   }
 
-  /** Der Ausschnitt, den die Karte gerade zeigt. */
+  /** The area that the map shows. */
   extent(): { zoom: number; extent: Viewbox } | null {
     return this.adapter.extent();
   }
@@ -109,7 +109,7 @@ export class MapSurface {
     this.adapter.centerOn(point, ZOOM_LOCATION);
   }
 
-  /** Zentriert auf den eigenen Standort. Ohne Signal bleibt die Karte stehen. */
+  /** Centres on the own position. Without a signal, the map does not move. */
   locate(): void {
     const own = this.locating.location();
     if (own !== null) {
@@ -131,7 +131,7 @@ export class MapSurface {
     );
   }
 
-  /** Legt Vorhersage und obere Ebene auf die Karte. */
+  /** Puts the forecast and the top layer on the map. */
   paint(): void {
     const manifest = this.view.manifest();
     const week = this.view.week();
@@ -174,13 +174,13 @@ export class MapSurface {
     this.painter.showLayer(layer, layers, this.view.weekKey());
   }
 
-  /** Die Farbe der Schnittmenge kommt aus dem Theme, nicht aus den Daten. */
+  /** The colour of the intersection comes from the theme, not from the data. */
   private intersectionColour(): string {
     const value = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
     return /^#[0-9a-f]{6}$/i.test(value) ? value : MEAN_FALLBACK;
   }
 
-  /** Der freie Streifen der Karte: was Blatt und Navigation verdecken. */
+  /** The free strip of the map: the part that the sheet and the navigation cover. */
   private padding(detent: Detent, wide: boolean, overlaid = 0): Padding {
     if (wide) return { top: 0, bottom: 0, left: 0, right: 0 };
     const height = this.host?.clientHeight ?? 0;

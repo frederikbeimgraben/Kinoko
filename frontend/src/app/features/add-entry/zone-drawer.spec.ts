@@ -8,7 +8,7 @@ const RING: Location[] = [
   [9.1, 48.6],
 ];
 
-/** Terra Draw ohne Karte: die Attrappe schreibt mit, was sie bekommen hat. */
+/** Terra Draw without a map: the double records what it got. */
 class DrawDouble {
   static last: DrawDouble | null = null;
   readonly features: { id: string | number; geometry: { type: string } }[] = [];
@@ -62,7 +62,7 @@ class DrawDouble {
   }
 }
 
-/** Die zuletzt gebaute Zeichnung. Ohne sie gäbe es nichts zu prüfen. */
+/** The last drawing that the double built. */
 function drawDouble(): DrawDouble {
   if (DrawDouble.last === null) throw new Error('Es wurde keine Zeichnung gebaut.');
   return DrawDouble.last;
@@ -84,7 +84,7 @@ const loader = (): Promise<TerraModule> =>
     adapter: { TerraDrawMapLibreGLAdapter: ModeDouble },
   } as unknown as TerraModule);
 
-/** Eine Karte, die mitschreibt, welche Ebenen und Daten sie bekommen hat. */
+/** A map that records the layers and the data it got. */
 class MapDouble {
   readonly layers: string[] = [];
   data: {
@@ -118,7 +118,7 @@ class MapDouble {
   }
 
   once(): void {
-    // Der Stil steht in der Attrappe sofort.
+    // The style of the double is ready at once.
   }
 }
 

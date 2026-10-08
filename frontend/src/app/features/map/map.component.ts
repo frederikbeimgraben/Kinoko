@@ -133,10 +133,7 @@ export class MapComponent implements OnDestroy {
     () => !this.wide() && !this.overlaid() && !this.covered() && !this.state.layersSheetOpen(),
   );
 
-  /**
-   * The add button. It goes away while the flow behind it runs, and on the phone below a sheet.
-   * The tall map sheet of the phone has no room for it (board `MapCombination`).
-   */
+  /** The add button. It goes away while its flow runs, and on the phone below a sheet (board `MapCombination`). */
   protected readonly showsAdd = computed(() => {
     if (this.overlay() !== null || this.addEntry.running() || this.state.object() !== null) return false;
     if (this.wide()) return true;
@@ -146,10 +143,7 @@ export class MapComponent implements OnDestroy {
   /** The detents of the map sheet. Above the lowest one, the sheet is as high as its content. */
   protected readonly detents = DETENT_SIZES;
 
-  /**
-   * The kit `.karte` ends 28 px below the top of the map sheet, and the mark is 8 px above its end.
-   * The mark thus stays below the round top of the sheet, as on the board `Map`.
-   */
+  /** The kit map ends 28 px below the top of the map sheet. The mark stands at that end, as on the board `Map`. */
   protected readonly attributionAbove = computed(() =>
     this.showsMapSheet() ? 'calc(var(--pilz-sheet-inset, 0px) - 28px)' : null,
   );

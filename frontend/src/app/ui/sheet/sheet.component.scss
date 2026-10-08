@@ -35,8 +35,7 @@
 }
 
 // The full head drags the sheet. The browser still scrolls horizontally, so the timeline can move.
-// Per `kit.css`, only the grip of a full sheet gives way to the body, by the share of its 24 px.
-// A shrink factor of 0.3 on the 80 px of grip and head gives the same weight.
+// Per `kit.css` the grip of a full sheet gives way to the body: 0.3 on 80 px is the weight of its 24 px.
 .sheet__drag {
   display: flex;
   flex: 0 0.3 auto;

@@ -40,7 +40,7 @@ interface Setup {
   surface: HTMLElement;
 }
 
-/** Der Ort dieser Art kommt gerundet: die Karte legt dafür eine blasse Fläche. */
+/** The location of this species is rounded: the map shows a pale area for it. */
 const PROTECTED = speciesEntry({
   slug: 'maronenroehrling',
   name: 'Maronenröhrling',
@@ -206,7 +206,7 @@ describe('MapObjectsDirective', () => {
     const dot = features[1].geometry;
     expect(dot.type === 'Point' && dot.coordinates).toEqual([9.1, 48.8]);
     const ring = features[0].geometry;
-    // Ein Viertel des Rings weiter liegt der Norden: 40 m sind 40 / 111320 Grad.
+    // North is a quarter of the ring further: 40 m are 40 / 111320 degrees.
     expect(ring.type === 'Polygon' && ring.coordinates[0][12][1]).toBeCloseTo(48.8 + 40 / 111320, 6);
   });
 });

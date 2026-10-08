@@ -1,5 +1,9 @@
 <div class="histogram" [style.block-size.px]="height()" role="img" [attr.aria-label]="label()">
   @for (bar of bars(); track $index) {
-    <i class="histogram__bar" [class.histogram__bar--inside]="bar.inside" [style.block-size.%]="bar.height"></i>
+    <i
+      class="histogram__bar"
+      [class.histogram__bar--inside]="bar.inside"
+      [style.block-size.%]="bar.height"
+    ></i>
   }
 </div>

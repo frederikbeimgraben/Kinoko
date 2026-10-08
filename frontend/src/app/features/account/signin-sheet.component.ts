@@ -6,10 +6,7 @@ import { ViewportService } from '../../core/layout/viewport.service';
 // the barrel pulls each block into the first bundle.
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 
-/**
- * Asks for the sign-in when something is to be saved, as a stacked dialog (board `MapSignIn`).
- * It shows only on {@link AuthService.requestSignIn}: map, species and layers stay usable without an account.
- */
+/** Asks for the sign-in before a save, as a stacked dialog (board `MapSignIn`). The map stays usable without it. */
 @Component({
   selector: 'app-signin-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,

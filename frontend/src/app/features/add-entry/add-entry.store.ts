@@ -5,10 +5,7 @@ import { OverlayStackService } from '../../core/navigation/overlay-stack.service
 /** A point on the map as [longitude, latitude], as in GeoJSON. */
 export type Location = readonly [number, number];
 
-/**
- * The steps to add an entry. A find and a marker use the same path: first the point
- * below the crosshair, then the form. A zone sets its corners instead of one point.
- */
+/** The steps to add an entry. A find and a marker set one point, then the form. A zone sets its corners. */
 export type Step =
   'actions' | 'findLocation' | 'findForm' | 'markerLocation' | 'markerForm' | 'zoneDraw' | 'zoneForm';
 
@@ -35,10 +32,7 @@ const BACK: Partial<Record<Step, Step>> = {
   zoneForm: 'zoneDraw',
 };
 
-/**
- * The flow behind the plus button. It keeps only the step and the collected data.
- * The {@link EntriesStore} saves the result, so the flow is testable without a network.
- */
+/** The flow behind the add button: only the step and the data. {@link EntriesStore} saves the result. */
 export const AddEntryStore = signalStore(
   { providedIn: 'root' },
   withState<AddEntryStoreState>(CLEAR),

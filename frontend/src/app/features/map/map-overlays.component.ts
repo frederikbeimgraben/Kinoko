@@ -138,7 +138,7 @@ export class MapOverlaysComponent {
     this.saved.emit(name);
   }
 
-  /** The close button and the scrim close the sheet and drop the name. */
+  /** The close button and a tap outside the sheet close it and drop the name. */
   protected dismiss(): void {
     this.name.set('');
     this.closed.emit();

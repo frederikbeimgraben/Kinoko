@@ -38,7 +38,7 @@ const PENDING: SyncTask = {
   createdAt: '2026-09-10T08:00:00+02:00',
 };
 
-/** Eine Warteschlange mit einem festen Inhalt. */
+/** A queue with fixed content. */
 class QueueStub {
   readonly online = signal(true);
 
@@ -86,7 +86,7 @@ async function build(options: Options = {}): Promise<Setup> {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
-      // Ohne Route ginge jede Navigation ins Leere; der Reiter führt auf die Karte.
+      // Without a route, each navigation fails. The tab goes to the map.
       provideRouter([{ path: '**', children: [] }]),
       { provide: SyncService, useValue: queue },
       { provide: ViewportService, useValue: { wide: signal(wide) } },
@@ -107,7 +107,7 @@ async function build(options: Options = {}): Promise<Setup> {
     http.expectOne('/api/markers?limit=50').flush(page(own ? [MARKER_ENTRY] : []));
     http.expectOne('/api/zones?limit=50').flush(page(own ? [ZONE_ENTRY] : []));
   }
-  // Erst wenn der Zustand steht, trägt die Liste ihre Zeilen.
+  // The list shows its rows only when the state is ready.
   const state = TestBed.inject(EntriesState);
   await vi.waitFor(() => {
     expect(state.shared()).toHaveLength(shared.length);
@@ -117,7 +117,7 @@ async function build(options: Options = {}): Promise<Setup> {
   return { container, auth, queue, router: TestBed.inject(Router), refresh: detectChanges };
 }
 
-/** Wechselt das Segment über der Liste. */
+/** Changes the segment above the list. */
 async function choose(setup: Setup, segment: string): Promise<void> {
   await userEvent.click(screen.getByRole('tab', { name: segment }));
   setup.refresh();
@@ -150,7 +150,7 @@ describe('EintraegeComponent', () => {
     expect(rows[0]).toHaveTextContent('Heute · 2 Stück · Frederik');
     expect(rows[0].querySelector('[role="img"]')).toHaveAttribute('aria-label', 'Übertragung ausstehend');
 
-    // Ein wartender Eintrag hat noch keine Kennung vom Dienst: er öffnet nichts.
+    // A waiting entry has no service ID yet: it opens nothing.
     await userEvent.click(within(rows[0] as HTMLElement).getByRole('button'));
 
     expect(TestBed.inject(MapStore).object()).toBeNull();

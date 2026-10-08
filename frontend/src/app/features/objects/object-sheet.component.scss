@@ -2,7 +2,7 @@
   display: contents;
 }
 
-// Der Punkt vor dem Namen misst im Brett vierzehn Punkte.
+// The dot before the name is 14 px on the board.
 .object__dot {
   flex: none;
   inline-size: 14px;
@@ -10,8 +10,7 @@
   border-radius: var(--radius-pill);
 }
 
-// Die Plakette steht hinter dem Namen, nicht davor. Sie misst im Brett drei
-// auf zehn Punkte.
+// The badge is after the name, not before it. Its padding is 3 px by 10 px on the board.
 .object__badge {
   flex: none;
   order: 1;

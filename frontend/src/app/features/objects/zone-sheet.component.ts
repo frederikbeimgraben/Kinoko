@@ -32,7 +32,7 @@ import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
 import type { Location } from '../add-entry/add-entry.store';
 
-/** Das Objekt-Blatt einer Zone; „Umriss ändern“ gibt die Ecken an Terra Draw. */
+/** The object sheet of a zone. "Change outline" gives the corners to Terra Draw. */
 @Component({
   selector: 'app-zone-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,7 +82,7 @@ export class ZoneSheetComponent implements OnDestroy {
     };
   });
 
-  /** Der Mittelpunkt der Fläche: der Punkt, den eine Navigation ansteuert. */
+  /** The centre of the area: the point for a navigation app. */
   protected readonly center = computed<readonly [number, number]>(() => {
     const ring = this.zone().polygon.coordinates[0];
     const sum = ring.reduce((links, point) => [links[0] + point[0], links[1] + point[1]], [0, 0]);
@@ -91,7 +91,7 @@ export class ZoneSheetComponent implements OnDestroy {
 
   protected readonly colour = computed(() => colourHex(this.zone().colour));
 
-  /** Die gedämpfte Zeile unter dem Namen, per `ZoneViewBody.dc.html`. */
+  /** The muted line below the name, per `ZoneViewBody.dc.html`. */
   protected readonly sub = computed(() =>
     this.i18n.translate('zone.unter', {
       flaeche: hectaresText(this.zone().areaHa, this.i18n.locale()),
@@ -115,7 +115,7 @@ export class ZoneSheetComponent implements OnDestroy {
     }
   }
 
-  /** Gibt die Ecken an Terra Draw. Sie lassen sich dann mit dem Finger ziehen. */
+  /** Gives the corners to Terra Draw. The finger can then move them. */
   protected async editCorners(): Promise<void> {
     const map = this.adapter.rawMap();
     if (map === null) return;

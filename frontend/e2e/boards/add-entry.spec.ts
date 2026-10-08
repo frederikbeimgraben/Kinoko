@@ -18,11 +18,11 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Der Tag und der Ort, die in den Boards stehen. */
+/** The day and the location of the boards. */
 const FOUND_ON = '2026-09-09';
 const PLACE = { latitude: 48.5203, longitude: 9.0511 };
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device and does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
@@ -45,19 +45,19 @@ async function openMap(page: Page, clear = false): Promise<void> {
   await mockMap(page, { detent: 1, clear });
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
-  // Die Boards nennen den Ort unter dem Fadenkreuz; die Karte steht dort.
+  // The boards give the location below the crosshair. The map shows that location.
   await page.getByRole('button', { name: 'Standort' }).click();
   await page.waitForTimeout(800);
 }
 
-/** Öffnet das Blatt hinter dem Plus-Knopf. */
+/** Opens the sheet of the add button. */
 async function openActions(page: Page, clear = false): Promise<void> {
   await openMap(page, clear);
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await expect(page.getByRole('button', { name: 'Fund melden' })).toBeVisible();
 }
 
-/** Geht über das Fadenkreuz in ein Formular. */
+/** Goes through the crosshair into a form. */
 async function openForm(page: Page, action: string, confirm: string): Promise<void> {
   await openActions(page);
   await page.getByRole('button', { name: action }).click();
@@ -81,12 +81,12 @@ test('MapAdd', async ({ page }) => {
   await board(page, 'MapAdd');
 });
 
-/** Setzt den Tag, den die Fund-Boards zeigen. */
+/** Sets the day of the find boards. */
 async function setDate(page: Page): Promise<void> {
   await page.locator('input[type="date"]').fill(FOUND_ON);
 }
 
-/** Legt das Foto ab, das die Boards in der ersten Kachel zeigen. */
+/** Adds the photo of the first tile of the boards. */
 async function addPhoto(page: Page): Promise<void> {
   const file = join(test.info().config.rootDir, 'boards/fixtures/tile-1-72x72.png');
   await page.locator('input[type="file"]').setInputFiles(file);
@@ -112,7 +112,7 @@ test('MapFindFormShared', async ({ page }) => {
   await page.getByRole('button', { name: 'Gruppe' }).click();
   await page.getByRole('button', { name: 'Pilzgruppe Karlsruhe' }).click();
   await expect(page.getByText('Pilzgruppe Karlsruhe')).toBeVisible();
-  // Das Brett zeigt das Blatt von oben; die Wahl hatte es nach unten gerollt.
+  // The board shows the top of the sheet. The choice scrolled it down.
   await page.locator('.form__body').evaluate((body) => {
     body.scrollTo(0, 0);
   });
@@ -129,10 +129,9 @@ test('MapFindSaving', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
   await addPhoto(page);
-  // Das Datum des Bretts liegt nach der festen Uhr; sie rückt vor, damit
-  // die Prüfung beim Speichern durchgeht.
+  // The date of the board is after the fixed clock. The clock moves on, so the save check passes.
   await page.clock.setFixedTime(new Date(`${FOUND_ON}T12:00:00Z`));
-  // Hält die Antwort an, bis das Bild des beschäftigten Zustands steht.
+  // Holds the answer until the screenshot of the busy state is done.
   await page.route('**/api/finds', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.fallback();
@@ -146,7 +145,7 @@ test('MapFindSaving', async ({ page }) => {
     });
   });
   await page.getByRole('button', { name: 'Speichern' }).click();
-  // Der Auftrag läuft: der Knopf verliert seine Beschriftung an den Spinner.
+  // The request runs: the button shows the spinner instead of its label.
   await expect(page.locator('.btn.primary[aria-busy="true"]')).toBeVisible();
   await showDesignMap(page);
   await expectBoard(page, 'MapFindSaving', { idle: false });
@@ -157,7 +156,7 @@ test('MapMarkerForm', async ({ page }) => {
   guard('MapMarkerForm', 'phone');
   await openForm(page, 'Marker setzen', 'Bestätigen');
   await expect(page.getByRole('heading', { name: 'Marker setzen' })).toBeVisible();
-  // Das Board zeigt die dritte Farbe gewählt.
+  // The board shows the third colour as selected.
   await page.getByRole('radio').nth(2).click();
   await board(page, 'MapMarkerForm');
 });
@@ -172,18 +171,18 @@ test('MapZoneForm', async ({ page }) => {
   await board(page, 'MapZoneForm');
 });
 
-/** Der Haken der App, über den der Test die Karte genau setzt. */
+/** The hook of the app that lets the test set the map exactly. */
 interface MapHandle {
   aimAt(x: number, y: number): [number, number];
   showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
 }
 
-/** Der Ort, der gerade unter einem Punkt des Fensters liegt. */
+/** The location below a point of the window. */
 async function aimAt(page: Page, spot: readonly [number, number]): Promise<[number, number]> {
   return page.evaluate(([x, y]) => (window as unknown as { pilzMap: MapHandle }).pilzMap.aimAt(x, y), spot);
 }
 
-/** Schiebt die Karte, bis der Ort unter dem Punkt des Fensters liegt. */
+/** Pans the map until the location is below the point of the window. */
 async function showAt(
   page: Page,
   place: readonly [number, number],
@@ -199,7 +198,7 @@ async function showAt(
   await page.waitForTimeout(150);
 }
 
-/** Der Maßstab des Bretts `ZoneDraw`: sein Ring misst darauf 42 Hektar. */
+/** The scale of the board `ZoneDraw`: its ring has an area of 42 ha. */
 const ZONE_ZOOM = 11.6635;
 
 /** The four corners of the board `ZoneDraw`, in px of the window. */
@@ -210,7 +209,7 @@ const ZONE_CORNERS: readonly (readonly [number, number])[] = [
   [120, 438],
 ];
 
-/** Die Karte des Bretts trägt keine eigenen Objekte und keinen Standort. */
+/** The map of the board has no own objects and no position. */
 async function openEmptyMap(page: Page): Promise<void> {
   await page.context().grantPermissions(['geolocation']);
   await page.context().setGeolocation(PLACE);
@@ -230,7 +229,7 @@ async function openEmptyMap(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Zone zeichnen' })).toBeVisible();
 }
 
-/** Die Mitte des Fadenkreuzes im Fenster. */
+/** The centre of the crosshair in the window. */
 async function crosshairAt(page: Page): Promise<[number, number]> {
   const cross = await page.locator('app-crosshair').boundingBox();
   return [(cross?.x ?? 0) + (cross?.width ?? 0) / 2, (cross?.y ?? 0) + (cross?.height ?? 0) / 2];
@@ -241,8 +240,7 @@ test('FindLocation', async ({ page }) => {
   await openActions(page);
   await page.getByRole('button', { name: 'Fund melden' }).click();
   await expect(page.getByRole('group', { name: 'Fundort festlegen' })).toBeVisible();
-  // Die Leiste ändert das Polster der Karte; der Ort des Bretts gehört danach
-  // wieder unter das Fadenkreuz.
+  // The bar changes the padding of the map. Then the location of the board goes below the crosshair again.
   await page.waitForTimeout(600);
   await showAt(page, [PLACE.longitude, PLACE.latitude], await crosshairAt(page), ZONE_ZOOM);
   await expect(page.getByText('48,5203 · 9,0511')).toBeVisible();
@@ -260,7 +258,7 @@ test('ZoneDraw', async ({ page }) => {
   await boardUnder(page, 'ZoneDraw');
 });
 
-/** Der Maßstab des Rechner-Bretts: sein Ring misst ebenfalls 42 Hektar. */
+/** The scale of the desktop board: its ring also has an area of 42 ha. */
 const ZONE_ZOOM_WIDE = 16.14;
 
 /** The corners and the pointer of the board `MapDesktopZoneDraw`, in px of the window. */
@@ -272,7 +270,7 @@ const WIDE_CORNERS: readonly (readonly [number, number])[] = [
 ];
 const WIDE_POINTER: readonly [number, number] = [505, 515];
 
-/** Öffnet einen Schritt am Rechner. */
+/** Opens a step on the desktop. */
 async function openStep(page: Page, action: string): Promise<void> {
   await openEmptyMap(page);
   await page.getByRole('button', { name: action }).click();

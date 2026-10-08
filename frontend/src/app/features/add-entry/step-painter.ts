@@ -9,10 +9,7 @@ const PREVIEW = 'pilz-ring-preview';
 const CORNERS = 'pilz-ring-corners';
 const MARK = 'pilz-ring-mark';
 
-/**
- * Sizes from the boards `ZoneDraw` and `MapDesktopZoneDraw`. The boards stretch a 390 × 400 drawing
- * over the map, so the desktop lines and corners are thicker than on the phone.
- */
+/** Sizes from the boards `ZoneDraw` and `MapDesktopZoneDraw`. The desktop lines and corners are thicker. */
 interface RingStyle {
   readonly width: number;
   readonly dash: readonly number[];

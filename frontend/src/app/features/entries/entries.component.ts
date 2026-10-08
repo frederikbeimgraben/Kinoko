@@ -29,7 +29,7 @@ import { colourToken } from './colors';
 import { findSubline } from './find-subline';
 import { firstName, hectaresText, isoDatum, shortDate } from './formats';
 
-/** Die drei Segmente über der Liste (Boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
+/** The three segments above the list (boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
 type Segment = 'finds' | 'markers' | 'zones';
 
 const SEGMENTS: readonly { value: Segment; label: TranslationKey; waiter: SyncKind }[] = [
@@ -38,17 +38,17 @@ const SEGMENTS: readonly { value: Segment; label: TranslationKey; waiter: SyncKi
   { value: 'zones', label: 'entry.zones', waiter: 'zone' },
 ];
 
-/** Eine Zeile der Liste, fertig für die Vorlage. */
+/** A row of the list, ready for the template. */
 interface Row {
   key: string;
   colour: string;
   entry: EntryRowEntry;
   pending: boolean;
-  /** `null` bei einem Eintrag, der noch auf die Übertragung wartet. */
+  /** `null` for an entry that waits for the upload. */
   object: { kind: ObjectKind; id: string } | null;
 }
 
-/** Der Reiter Einträge: Segment, Filter, Liste; ein Tipp öffnet das Objekt. */
+/** The entries tab: segment, filter and list. A tap opens the object. */
 @Component({
   selector: 'app-entries',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,7 +79,7 @@ export class EntriesComponent {
   private readonly addEntry = inject(AddEntryStore);
   private readonly viewport = inject(ViewportService);
 
-  /** Am Rechner übernimmt der schwebende Plus-Knopf auf der Karte das Eintragen. */
+  /** On the desktop, the floating add button on the map starts the add flow. */
   protected readonly wide = this.viewport.wide;
 
   protected readonly segment = signal<Segment>('finds');
@@ -120,7 +120,7 @@ export class EntriesComponent {
   constructor() {
     void this.species.loadBundle();
     void this.state.loadShared();
-    // Die Anmeldung kommt manchmal erst nach dem ersten Bild der Seite.
+    // The sign-in can come after the first render of the page.
     effect(() => {
       this.signedIn();
       void this.state.load();
@@ -131,7 +131,7 @@ export class EntriesComponent {
     void this.auth.requestSignIn();
   }
 
-  /** Der Weg zum Eintragen führt über die Karte: dort steht das Fadenkreuz. */
+  /** The add flow goes through the map: the crosshair is there. */
   protected async startEntry(): Promise<void> {
     await this.router.navigate(['/karte']);
     this.addEntry.open();

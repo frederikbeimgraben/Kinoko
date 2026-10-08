@@ -20,16 +20,16 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Die Drehung der Boards `MapRotated` und `MapDesktopRotated`. */
+/** The bearing of the boards `MapRotated` and `MapDesktopRotated`. */
 const BOARD_BEARING = 30;
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device and does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Die Antworten des Vertrags, die die Karte braucht. */
+/** The contract answers that the map needs. */
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
   '/api/combinations': COMBINATIONS,
@@ -61,13 +61,13 @@ async function board(page: Page, stem: string, map: DesignMap = BELOW_SHEET): Pr
   await expectBoard(page, stem);
 }
 
-/** Dieselbe Karte, aber mit Konto: Speichern fragt dann nicht erst nach. */
+/** The same map, but with an account: a save then does not ask for the sign-in. */
 async function openSignedIn(page: Page, factors = ''): Promise<void> {
   await openMap(page, { view: 'combination', detent: 2 }, factors);
   await expect(page.getByRole('button', { name: 'Speichern' })).toBeVisible();
 }
 
-/** Ein Board zeigt weder Fokusring noch Mauszustand. */
+/** A board shows no focus ring and no hover state. */
 async function blur(page: Page): Promise<void> {
   await page.mouse.move(0, 0);
   await page.evaluate(() => {
@@ -76,7 +76,7 @@ async function blur(page: Page): Promise<void> {
   });
 }
 
-/** Speichern führt ohne Konto zuerst durch die Anmeldung. */
+/** Without an account, a save first asks for the sign-in. */
 async function askForName(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Speichern' }).first().click();
   const signIn = page.getByRole('button', { name: /beimgraben\.net/ });
@@ -92,7 +92,7 @@ test('Map', async ({ page }) => {
   await board(page, 'Map');
 });
 
-/** Dreht die Karte über den Testhaken, wie eine Geste es täte. */
+/** Turns the map through the test hook, as a gesture does. */
 async function turnMap(page: Page, bearing: number): Promise<void> {
   await page.waitForFunction(() => 'pilzMap' in window);
   await page.evaluate((angle) => {
@@ -240,11 +240,11 @@ test('MapSignIn', async ({ page }) => {
 
 test('MapSkeleton', async ({ page }) => {
   guard('MapSkeleton', 'phone');
-  // Ohne Antwort des SSO bleibt die Sitzung offen und der Avatar ein Skelett.
+  // Without an SSO answer, the session stays open and the avatar is a skeleton.
   await mockSignInPending(page);
   await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
   await mockMap(page);
-  // Ohne Manifest zeigt die Karte ihr Raster; ein Kartenbild gehört nicht dazu.
+  // Without a manifest the map shows its skeleton. A map image is not part of it.
   await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {
     await route.fulfill({ status: 404, body: '' });
   });

@@ -12,23 +12,20 @@ import {
   ZONES,
 } from './map-data';
 
-/**
- * Ein Stil ohne Kacheln. Die Grundkarte des Betriebs träfe im Test nie
- * zweimal dasselbe Bild.
- */
+/** A style without tiles. The live base map never gives the same image twice in a test. */
 const FLAT_STYLE = {
   version: 8,
   sources: {},
   layers: [{ id: 'grund', type: 'background', paint: { 'background-color': '#101512' } }],
 };
 
-/** Der Stand der Karte, den jedes Board im Speicher des Geräts vorfindet. */
+/** The map state that each board finds in the storage of the device. */
 export interface BoardState {
   view?: 'forecast' | 'layer' | 'combination';
   detent?: 0 | 1 | 2;
   layer?: string;
   species?: string;
-  /** Ein Stil ohne Grundfläche: das Kartenbild liegt dann unter der Zeichnung. */
+  /** A style without a background: the map image is then below the drawing. */
   clear?: boolean;
   /** The zones on the map. Board `MapLayers` shows them off. */
   zones?: boolean;
@@ -37,13 +34,13 @@ export interface BoardState {
 const STORAGE_KEY = 'pilzkarte.map.v1';
 const COMBINATION_KEY = 'pilzkarte.combination.v1';
 
-/** Die Faktoren aus den Boards der Kombination, als Wert des Speichers. */
+/** The factors of the combination boards, as a stored value. */
 export const BOARD_FACTORS = 'regen:ge:80,temperatur:bw:12:18';
 
 /** Today for each board: KW 38 of the fixtures is the current week. */
 const BOARD_NOW = '2026-09-17T12:00:00Z';
 
-/** Legt Zustand, Manifeste und Kacheln auf die Seite. Kacheln bleiben leer. */
+/** Gives the page the state, the manifests and the tiles. The tiles stay empty. */
 export async function mockMap(
   page: Page,
   state: BoardState = {},
@@ -94,7 +91,7 @@ export async function mockMap(
   });
 }
 
-/** Der Zustand der Blätter: wie viele es sind und wo das oberste steht. */
+/** The state of the sheets: how many there are and where the top one is. */
 async function sheetState(page: Page): Promise<string> {
   return page.evaluate(() => {
     const tops = [...document.querySelectorAll('.sheet')].map((sheet) =>
@@ -104,11 +101,11 @@ async function sheetState(page: Page): Promise<string> {
   });
 }
 
-/** Wartet, bis kein Blatt mehr in Bewegung ist. Sonst misst das Bild zu früh. */
+/** Waits until no sheet moves. Else the screenshot is too early. */
 async function settled(page: Page): Promise<void> {
   let seen = '';
   let same = 0;
-  // Das Blatt fährt in 250 ms aus. Sechs gleiche Proben decken den Weg ab.
+  // The sheet moves in for 250 ms. Six equal samples cover the movement.
   while (same < 6) {
     const now = await sheetState(page);
     same = now === seen ? same + 1 : 0;
@@ -117,35 +114,32 @@ async function settled(page: Page): Promise<void> {
   }
 }
 
-/** Das Kartenbild eines Boards, als Datenadresse aus `boards/fixtures`. */
+/** The map image of a board, as a data URL from `boards/fixtures`. */
 function fixtureImage(name: string): string {
   const path = join(test.info().config.rootDir, 'boards/fixtures', name);
   return `data:image/png;base64,${readFileSync(path).toString('base64')}`;
 }
 
-/**
- * Legt das Kartenbild des Boards über die Zeichenfläche. Es füllt sie ganz,
- * unter den Knöpfen und dem Blatt der App.
- */
+/** Puts the map image of the board over the canvas, below the buttons and the sheet of the app. */
 export async function showMapImage(page: Page, name: string, fixed?: number, under = false): Promise<void> {
   await settled(page);
   await page.evaluate(
     ([source, given, below]) => {
       const host = document.querySelector('.map__canvas');
       if (host === null) return;
-      // Das Bild füllt den freien Streifen über dem obersten Blatt, wie im Board.
+      // The image fills the free strip above the top sheet, as on the board.
       const frame = host.getBoundingClientRect();
-      // Ein Modal schwebt über der Karte. Nur ein Blatt von unten kürzt sie.
+      // A modal floats over the map. Only a sheet from below makes the map shorter.
       const sheets = [...document.querySelectorAll('.sheet:not(.sheet--modal)')].map(
         (sheet) => sheet.getBoundingClientRect().top,
       );
       const top = sheets.length > 0 ? Math.min(...sheets) : frame.bottom;
-      // Ein Board, dessen Karte unter dem Blatt weiterläuft, gibt seine Höhe vor.
+      // A board whose map continues below the sheet gives its height.
       const height = given ?? Math.max(0, Math.min(top, frame.bottom) - frame.top);
       const image = document.createElement('img');
       image.src = source;
       image.alt = '';
-      // Unter der Zeichenfläche bleibt sichtbar, was die Karte selbst malt.
+      // Below the canvas, the layers that the map paints stay visible.
       image.setAttribute(
         'style',
         `position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;height:${height}px;object-fit:fill;z-index:${below ? 0 : 1}`,
