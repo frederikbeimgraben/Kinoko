@@ -21,6 +21,12 @@ import { SheetHeadComponent } from '../../ui/sheet-head/sheet-head.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import { conditionText, span, type Factor } from './factors';
 
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SectionComponent } from '../../ui/section/section.component';
+
 /** Wie fein der Griff läuft: fein genug zum Zielen, grob genug zum Ablesen. */
 export function stepSize(layer: Layer): number {
   const width = layer.high - layer.low;
@@ -44,8 +50,13 @@ const CONDITION_KEY: Record<Condition, TranslationKey> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
+    FormFieldComponent,
     HistogramComponent,
+    ListRowComponent,
     RangeSliderComponent,
+    RowGroupComponent,
+    ScrollFadeDirective,
+    SectionComponent,
     SegmentedComponent,
     SheetHeadComponent,
     TranslatePipe,

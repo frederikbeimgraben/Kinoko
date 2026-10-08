@@ -646,7 +646,7 @@
     "map.combination.rule": "Regel",
     "map.combination.save": "Kombination speichern",
     "map.combination.saved": "Gespeicherte Kombinationen",
-    "map.combination.summary": "{rule} · {count} Faktoren",
+    "map.combination.summary": "{count} Faktoren · {rule}",
     "map.compass": "Nach Norden drehen",
     "map.factor.add": "Faktor hinzufügen",
     "map.factor.assigned": "schon dabei",
@@ -876,7 +876,9 @@
     "map.basemap.terrain": "Gelände",
     "map.basemap.aerialCredit": "© GeoBasis-DE / BKG",
     "map.layers.show": "Anzeigen",
-    "entry.field.location": "Ort"
+    "entry.field.location": "Ort",
+    "map.combination.oneFactor": "1 Faktor",
+    "map.factor.period": "Zeitraum"
   },
   "en": {
     "account.deleteAllConfirmTitle": "Delete everything",
@@ -1525,7 +1527,7 @@
     "map.combination.rule": "Rule",
     "map.combination.save": "Save combination",
     "map.combination.saved": "Saved combinations",
-    "map.combination.summary": "{rule} · {count} factors",
+    "map.combination.summary": "{count} factors · {rule}",
     "map.compass": "Turn to north",
     "map.factor.add": "Add factor",
     "map.factor.assigned": "already in use",
@@ -1755,6 +1757,8 @@
     "map.basemap.terrain": "Terrain",
     "map.basemap.aerialCredit": "© GeoBasis-DE / BKG",
     "map.layers.show": "Show",
-    "entry.field.location": "Location"
+    "entry.field.location": "Location",
+    "map.combination.oneFactor": "1 factor",
+    "map.factor.period": "Period"
   }
 }

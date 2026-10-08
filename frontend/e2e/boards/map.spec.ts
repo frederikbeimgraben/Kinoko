@@ -181,7 +181,7 @@ test('MapCombinationSave', async ({ page }) => {
 test('MapCombinations', async ({ page }) => {
   guard('MapCombinations', 'phone');
   await openSignedIn(page, BOARD_FACTORS);
-  await page.getByRole('button', { name: /Gespeicherte Kombinationen/ }).click();
+  await page.getByRole('button', { name: 'Kombinationen', exact: true }).click();
   await board(page, 'MapCombinations', { heat: 'rain' });
 });
 
@@ -281,7 +281,7 @@ test('MapDesktopFactorPicker', async ({ page }) => {
 test('MapDesktopCombinations', async ({ page }) => {
   guard('MapDesktopCombinations', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
-  await page.getByRole('button', { name: /Gespeicherte Kombinationen/ }).click();
+  await page.getByRole('button', { name: 'Kombinationen', exact: true }).click();
   await board(page, 'MapDesktopCombinations', {});
 });
 

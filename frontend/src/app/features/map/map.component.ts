@@ -37,7 +37,7 @@ import { MapColumnComponent } from './map-column.component';
 import { MapOverlayStore } from './map-overlay.store';
 import { MapPanelBodyComponent } from './map-panel-body.component';
 import { MapPanelComponent } from './map-panel.component';
-import { MapOverlaysComponent, overlayDetent } from './map-overlays.component';
+import { MapOverlaysComponent } from './map-overlays.component';
 import { MapPlayback } from './map-playback';
 import { DETENT_SIZES, MapSurface } from './map-surface';
 import { MapStore } from './map.store';
@@ -98,9 +98,6 @@ export class MapComponent implements OnDestroy {
 
   /** On the phone, a sheet over the map covers the map sheet. */
   protected readonly covered = computed(() => !this.wide() && this.overlay() !== null);
-
-  /** A sheet at full height keeps only the layers button. */
-  protected readonly tall = computed(() => this.covered() && overlayDetent(this.overlay()) === 2);
 
   /** The sources that have a factor. The choice does not show them. */
   protected readonly usedSources = computed(

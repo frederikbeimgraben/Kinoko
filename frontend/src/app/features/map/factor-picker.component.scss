@@ -6,12 +6,12 @@
   display: contents;
 }
 
-.overlay-body {
+.picker {
   overflow-y: auto;
 }
 
-// Boards `MapLayerPicker` and `MapFactorPicker`: a strip of 16 px below a body without actions.
-.overlays__end {
+// Board `MapFactorPicker`: a strip of 16 px below the body.
+.picker__end {
   flex: none;
   block-size: 16px;
 }

@@ -1,62 +1,20 @@
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
 :host {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-block-size: 0;
+  display: contents;
 }
 
 .factor {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--space-3);
-  min-block-size: 0;
-  overflow: hidden;
-  padding: var(--size-gutter) var(--size-gutter) 10px;
+  overflow-y: auto;
 }
 
-.factor__title {
-  margin-block-end: 10px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  line-height: 14px;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
+// Per `kit.css` `.ends3`: the low end, the bound and the high end below the slider.
 .factor__ends {
   display: flex;
   justify-content: space-between;
-  margin-block-start: 6px;
-  font-size: 13px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-}
-
-// Die geltende Bedingung: Beschriftung links, der Wert daneben im Feld.
-.factor__applied {
-  display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
-  column-gap: var(--space-3);
-  align-items: center;
-}
-
-.factor__key {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-}
-
-.factor__box {
-  display: flex;
-  align-items: center;
-  block-size: var(--pilz-field-height);
-  padding-inline: var(--pilz-gutter);
-  font-size: var(--fs-md);
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--pilz-swatch-radius);
+  color: var(--text-var);
 }

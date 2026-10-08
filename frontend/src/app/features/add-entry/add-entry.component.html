@@ -54,11 +54,7 @@
         <app-add-actions [menu]="true" (chosen)="start($event)" />
       </app-popover>
     } @else {
-      <app-overlay-host
-        [open]="true"
-        [modal]="state.dark()"
-        (closed)="cancel()"
-      >
+      <app-overlay-host [open]="true" [modal]="state.dark()" (closed)="cancel()">
         <app-sheet
           appSheetHeight
           [label]="title()"

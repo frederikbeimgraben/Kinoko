@@ -172,14 +172,13 @@ function species(slug: string, name: string, scientific: string): unknown {
   };
 }
 
-/** Der Katalog vom Gerät: fünf Arten mit Vorhersage, wie in den Boards. */
+/** The catalogue of the device: four species with a forecast, as on the board `SpeciesPickBody`. */
 export const SPECIES_BUNDLE = {
   items: [
     species('boletus-edulis', 'Steinpilz', 'Boletus edulis'),
     species('cantharellus-cibarius', 'Pfifferling', 'Cantharellus cibarius'),
     species('imleria-badia', 'Maronenröhrling', 'Imleria badia'),
-    species('hydnum-repandum', 'Semmelstoppelpilz', 'Hydnum repandum'),
-    species('morchella-esculenta', 'Speisemorchel', 'Morchella esculenta'),
+    species('macrolepiota-procera', 'Parasol', 'Macrolepiota procera'),
   ],
 };
 
@@ -253,32 +252,18 @@ export const COMBINATIONS = {
       rule: 'intersection',
       factors: [
         { source: 'regen', condition: 'above', low: 80, high: null, active: true },
-        { source: 'temperatur', condition: 'between', low: 8, high: 16, active: true },
-        { source: 'buche', condition: 'above', low: 0.3, high: null, active: true },
-        { source: 'hangneigung', condition: 'below', low: null, high: 15, active: true },
+        { source: 'temperatur', condition: 'between', low: 12, high: 18, active: true },
       ],
-      updatedAt: '2025-10-01T00:00:00Z',
+      updatedAt: '2026-09-01T00:00:00Z',
+      deleted: false,
     },
     {
       id: '22222222-2222-4222-8222-222222222222',
-      name: 'Pfifferling Sommer',
-      rule: 'graded',
-      factors: [
-        { source: 'regen', condition: 'above', low: 60, high: null, active: true },
-        { source: 'temperatur', condition: 'between', low: 12, high: 22, active: true },
-        { source: 'bodenfeuchte', condition: 'above', low: 0.4, high: null, active: true },
-      ],
-      updatedAt: '2025-10-01T00:00:00Z',
-    },
-    {
-      id: '33333333-3333-4333-8333-333333333333',
-      name: 'Frostfrei',
+      name: 'Nach Regen',
       rule: 'intersection',
-      factors: [
-        { source: 'frosttage', condition: 'below', low: null, high: 1, active: true },
-        { source: 'temperatur', condition: 'above', low: 5, high: null, active: true },
-      ],
-      updatedAt: '2025-10-01T00:00:00Z',
+      factors: [{ source: 'regen', condition: 'above', low: 40, high: null, active: true }],
+      updatedAt: '2026-09-01T00:00:00Z',
+      deleted: false,
     },
   ],
   nextCursor: null,
