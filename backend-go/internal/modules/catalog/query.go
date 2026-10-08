@@ -89,7 +89,7 @@ func parseColours(values url.Values) (map[enums.BodyPart]string, error) {
 	found := map[enums.BodyPart]string{}
 	for _, c := range colourParams {
 		key := "colour[" + c.Name + "]"
-		value := values.Get(key)
+		value := lastValue(values, key)
 		if value == "" {
 			continue
 		}
@@ -99,6 +99,16 @@ func parseColours(values url.Values) (map[enums.BodyPart]string, error) {
 		found[c.Part] = value
 	}
 	return found, nil
+}
+
+// lastValue gives the last value of a query key, or "" when the key is not
+// there. Starlette's QueryParams.get and FastAPI's scalar query parameters
+// take the last value, so a repeated key must give the same filter.
+func lastValue(values url.Values, key string) string {
+	if all := values[key]; len(all) > 0 {
+		return all[len(all)-1]
+	}
+	return ""
 }
 
 func distinct[T comparable](values []T) []T {

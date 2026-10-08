@@ -15,6 +15,7 @@ import (
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/geo"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 var tileRing = geo.RingOf([2]float64{10.0, 50.0}, [2]float64{10.02, 50.0}, [2]float64{10.02, 50.02}, [2]float64{10.0, 50.02}, [2]float64{10.0, 50.0})
@@ -258,17 +259,39 @@ func TestCheckSources(t *testing.T) {
 	}
 }
 
-func TestPyFloatIsPythonRepr(t *testing.T) {
-	cases := map[float64]string{
-		9: "9.0", 1e-07: "1e-07", 1000000: "1000000.0", 0.1: "0.1", 1e16: "1e+16",
-		123456789012345.6: "123456789012345.6", -0.0001: "-0.0001", 0.00001: "1e-05",
+func TestStoredFactorsIsPythonJSONDumps(t *testing.T) {
+	got := storedFactors([]factor{
+		{Source: "a\"b\\\n\x01\x7f\u00e9\U0001f600/", Condition: "above", Low: fn.Ptr(9.0), High: nil, Active: true},
+		{Source: "x", Condition: "below", Low: fn.Ptr(1e-07), High: fn.Ptr(1e16), Active: false},
+	})
+	want := `[{"source": "a\"b\\\n\u0001\u007f\u00e9\ud83d\ude00/", "condition": "above", "low": 9.0, "high": null, "active": true}, ` +
+		`{"source": "x", "condition": "below", "low": 1e-07, "high": 1e+16, "active": false}]`
+	if got != want {
+		t.Fatalf("%s\nexpected %s", got, want)
 	}
-	for in, want := range cases {
-		if got := pyFloat(in); got != want {
-			t.Errorf("%v: %s, expected %s", in, got, want)
+}
+
+func TestStoredPolygonUsesPythonFloats(t *testing.T) {
+	p := polygon{Type: "Polygon", Coordinates: [][][]float64{{{9, 48.5}, {0.00001, 123456789012345.6}}}}
+	if got := p.stored(); got != `{"type":"Polygon","coordinates":[[[9.0,48.5],[1e-05,123456789012345.6]]]}` {
+		t.Fatal(got)
+	}
+	if got := (polygon{}).stored(); got != `{"type":"Polygon","coordinates":[]}` {
+		t.Fatal(got)
+	}
+}
+
+func TestParseLaxIntRejectsWhatInt64CannotHold(t *testing.T) {
+	good := map[string]int64{"3": 3, "3.0": 3, "1e3": 1000, `"7"`: 7, "9007199254740993": 9007199254740993,
+		"-9223372036854775808": math.MinInt64}
+	for in, want := range good {
+		if got, ok := parseLaxInt([]byte(in)); !ok || got != want {
+			t.Errorf("%s: %d %v", in, got, ok)
 		}
 	}
-	if got := pyString("a\"b\\\n\x01\u00e9\U0001f600/"); got != `"a\"b\\\n\u0001\u00e9\ud83d\ude00/"` {
-		t.Fatal(got)
+	for _, in := range []string{"1e19", "10000000000000000000", "9223372036854775808", "9.3e18", "-1e19", "3.5", "NaN", "x"} {
+		if got, ok := parseLaxInt([]byte(in)); ok {
+			t.Errorf("%s: %d", in, got)
+		}
 	}
 }

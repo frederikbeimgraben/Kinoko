@@ -1,8 +1,10 @@
 package objects_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
@@ -255,5 +257,22 @@ func TestTrainingFindsFiltersCorrectly(t *testing.T) {
 	if len(rows) != 1 || rows[0].ID.String() != ready || rows[0].SpeciesID != species ||
 		rows[0].Count == nil || *rows[0].Count != 3 || rows[0].FoundOn.String() != "2026-09-01" {
 		t.Fatal(rows)
+	}
+}
+
+func TestCreateFindRejectsACountThatInt64CannotHold(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	for _, count := range []string{"1e19", "10000000000000000000"} {
+		answer := env.Post("/finds", with(aFind, object{"count": json.RawMessage(count)}), anna.Person).
+			Expect(t, http.StatusUnprocessableEntity)
+		if errs := fieldErrors(t, answer); len(errs) != 1 || errs[0]["field"] != "count" || errs[0]["code"] != "int_parsing" {
+			t.Fatal(string(answer.Body))
+		}
+	}
+	made := env.Post("/finds", with(aFind, object{"count": json.RawMessage("9007199254740993")}), anna.Person).
+		Expect(t, http.StatusCreated).Body
+	if !strings.Contains(string(made), `"count":9007199254740993`) {
+		t.Fatal(string(made))
 	}
 }

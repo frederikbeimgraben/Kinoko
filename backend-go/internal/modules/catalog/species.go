@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
+	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
@@ -27,7 +28,7 @@ func (m *Module) listSpecies(r *http.Request) (web.Response, error) {
 	}
 	query := r.URL.Query()
 	var taxonIDs []db.ID
-	if raw := query.Get("taxonId"); raw != "" {
+	if raw := lastValue(query, "taxonId"); raw != "" {
 		root, err := db.ParseID(raw)
 		if err != nil {
 			return nil, problem.InvalidField("taxonId", "uuid_parsing")
@@ -37,7 +38,7 @@ func (m *Module) listSpecies(r *http.Request) (web.Response, error) {
 			return nil, err
 		}
 	}
-	candidates, err := searchSpecies(ctx, m.deps.DB, query.Get("q"), taxonIDs, selection)
+	candidates, err := searchSpecies(ctx, m.deps.DB, lastValue(query, "q"), taxonIDs, selection)
 	if err != nil {
 		return nil, err
 	}
@@ -94,12 +95,8 @@ func searchSpecies(ctx context.Context, q db.Querier, text string, taxonIDs []db
 			GROUP BY species_id HAVING count(DISTINCT term_id) = ?)`, append(db.Args(s.Terms), len(s.Terms))...)
 	}
 	query := "SELECT " + speciesCols + " FROM species"
-	for i, clause := range where {
-		if i == 0 {
-			query += " WHERE " + clause
-		} else {
-			query += " AND " + clause
-		}
+	if len(where) > 0 {
+		query += " WHERE " + strings.Join(where, " AND ")
 	}
 	return db.All(ctx, q, scanSpecies, query+" ORDER BY name", args...)
 }

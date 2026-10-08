@@ -166,7 +166,9 @@ func (acceptAll) Validate(context.Context, *sources.Version) (map[string]any, er
 	return map[string]any{"checked": true}, nil
 }
 
-func (acceptAll) Derive(context.Context, *sources.Version) ([]sources.Artifact, error) { return nil, nil }
+func (acceptAll) Derive(context.Context, *sources.Version) ([]sources.Artifact, error) {
+	return nil, nil
+}
 
 func TestKindWithoutProcessorFailsAndCanBeReprocessed(t *testing.T) {
 	f := newFixture(t)
@@ -215,7 +217,7 @@ func TestStartResumesInterruptedProcessing(t *testing.T) {
 }
 
 func steinpilz(f *fixture) db.ID {
-	return scalar[db.ID](f, "SELECT id FROM species WHERE slug = 'steinpilz'")
+	return scalar[db.ID](f, "SELECT id FROM species WHERE latin_name = 'Boletus edulis'")
 }
 
 // bundleZip packs the test bundle of package bundle under the folder.
@@ -235,7 +237,7 @@ func bundleZip(t *testing.T, folder string) []byte {
 
 func TestModelBundleArchiveMakesOneVersionPerSpecies(t *testing.T) {
 	f := newFixture(t)
-	set := f.upload(sources.KindModelBundle, "models.zip", bundleZip(t, "steinpilz"), nil)
+	set := f.upload(sources.KindModelBundle, "models.zip", bundleZip(t, "boletus_edulis"), nil)
 	if set["state"] != "ready" || set["active"] != true || set["speciesId"] != nil {
 		t.Fatal(set)
 	}
@@ -248,7 +250,7 @@ func TestModelBundleArchiveMakesOneVersionPerSpecies(t *testing.T) {
 		t.Fatal(model)
 	}
 	bundleDir, ok := model.Artifact("bundle")
-	if !ok || bundleDir.Path != f.m.Abs("models/steinpilz/v1") {
+	if !ok || bundleDir.Path != f.m.Abs("models/boletus-edulis/v1") {
 		t.Fatal(model.Artifacts)
 	}
 	if _, err := os.Stat(filepath.Join(bundleDir.Path, "bundle.json")); err != nil {
@@ -258,12 +260,12 @@ func TestModelBundleArchiveMakesOneVersionPerSpecies(t *testing.T) {
 	if len(detail["versions"].([]any)) != 1 || detail["state"] != "ready" {
 		t.Fatal(detail)
 	}
-	again := f.upload(sources.KindModelBundle, "models.zip", bundleZip(t, "steinpilz"), nil)
+	again := f.upload(sources.KindModelBundle, "models.zip", bundleZip(t, "boletus_edulis"), nil)
 	if again["state"] != "ready" {
 		t.Fatal(again)
 	}
 	newer, err := f.m.Resolver().Active(sources.KindModelBundle, species.String())
-	if err != nil || newer.Number != 2 || newer.Dir != f.m.Abs("models/steinpilz/v2") {
+	if err != nil || newer.Number != 2 || newer.Dir != f.m.Abs("models/boletus-edulis/v2") {
 		t.Fatal(newer, err)
 	}
 }
@@ -275,8 +277,8 @@ func TestModelBundleForOneSpecies(t *testing.T) {
 	if v["state"] != "ready" || v["speciesId"] != species.String() || v["active"] != true {
 		t.Fatal(v)
 	}
-	other := scalar[db.ID](f, "SELECT id FROM species WHERE slug = 'parasol'")
-	wrong := f.upload(sources.KindModelBundle, "x.zip", bundleZip(t, "steinpilz"), map[string]any{"speciesId": other.String()})
+	other := scalar[db.ID](f, "SELECT id FROM species WHERE latin_name = 'Macrolepiota procera'")
+	wrong := f.upload(sources.KindModelBundle, "x.zip", bundleZip(t, "boletus_edulis"), map[string]any{"speciesId": other.String()})
 	if wrong["state"] != "failed" || wrong["error"].(map[string]any)["code"] != "species_mismatch" {
 		t.Fatal(wrong)
 	}
@@ -284,7 +286,7 @@ func TestModelBundleForOneSpecies(t *testing.T) {
 	if unknown["state"] != "failed" {
 		t.Fatal(unknown)
 	}
-	broken := f.upload(sources.KindModelBundle, "x.zip", sources.ZipOf(t, map[string][]byte{"steinpilz/bundle.json": []byte("{}")}), nil)
+	broken := f.upload(sources.KindModelBundle, "x.zip", sources.ZipOf(t, map[string][]byte{"boletus_edulis/bundle.json": []byte("{}")}), nil)
 	if broken["state"] != "failed" || broken["error"].(map[string]any)["code"] != "model" {
 		t.Fatal(broken)
 	}
@@ -297,7 +299,7 @@ func TestForecastChainsAreSeeded(t *testing.T) {
 	}
 	slug := scalar[string](f, `SELECT s.slug FROM species_forecast f JOIN species s ON s.id = f.species_id
 		WHERE f.chain_key = 'reizker'`)
-	if slug != "edelreizker" {
+	if slug != "lactarius-deliciosus" {
 		t.Fatal(slug)
 	}
 	if forest := scalar[float64](f, "SELECT min_forest FROM species_forecast WHERE chain_key = 'schopftintling'"); forest != 0 {

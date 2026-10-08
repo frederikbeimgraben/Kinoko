@@ -95,4 +95,3 @@ func (f *fixture) version(kind sources.Kind, id string) map[string]any {
 	f.t.Helper()
 	return f.env.Get("/data-sources/"+string(kind)+"/versions/"+id, f.admin).Expect(f.t, http.StatusOK).Map(f.t)
 }
-

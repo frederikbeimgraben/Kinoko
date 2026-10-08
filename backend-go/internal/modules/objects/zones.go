@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
@@ -12,6 +11,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/web"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/pyjson"
 )
 
 type zoneRow struct {
@@ -59,12 +59,7 @@ func (p polygon) outerRing() geo.Ring {
 
 // stored writes the polygon as pydantic model_dump_json does.
 func (p polygon) stored() string {
-	ring := func(r [][]float64) string {
-		return "[" + strings.Join(fn.Map(r, func(pos []float64) string {
-			return "[" + strings.Join(fn.Map(pos, pyFloat), ",") + "]"
-		}), ",") + "]"
-	}
-	return `{"type":"Polygon","coordinates":[` + strings.Join(fn.Map(p.Coordinates, ring), ",") + "]}"
+	return `{"type":"Polygon","coordinates":` + string(pyjson.MarshalCompact(p.Coordinates, false)) + "}"
 }
 
 func readPolygon(text string) polygon {

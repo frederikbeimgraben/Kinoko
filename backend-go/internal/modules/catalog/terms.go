@@ -28,7 +28,7 @@ func termOut(t termRow) Term { return Term(t) }
 func (m *Module) listTerms(r *http.Request) (web.Response, error) {
 	query := "SELECT " + termCols + " FROM term"
 	args := []any{}
-	if kind := r.URL.Query().Get("kind"); kind != "" {
+	if kind := lastValue(r.URL.Query(), "kind"); kind != "" {
 		query += " WHERE kind = ?"
 		args = append(args, kind)
 	}

@@ -99,6 +99,14 @@ func TestColourFilterUsesNearestStandardColour(t *testing.T) {
 	expectSlugs(t, search(t, env, url.Values{"colour[cap]": {"#7a5230"}}), seed.porcini.Slug)
 }
 
+func TestRepeatedColourAndTaxonUseTheLastValue(t *testing.T) {
+	env := newEnv(t)
+	seed := seedList(t, env)
+	expectSlugs(t, search(t, env, url.Values{"colour[cap]": {"#c0392b", "#7a5230"}}), seed.porcini.Slug)
+	expectSlugs(t, search(t, env, url.Values{"taxonId": {"00000000-0000-4000-8000-000000000001", seed.genus.ID.String()}}),
+		seed.porcini.Slug)
+}
+
 func TestColourFilterRejectsMalformedHex(t *testing.T) {
 	env := newEnv(t)
 	seedList(t, env)
