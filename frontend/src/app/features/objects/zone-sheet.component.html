@@ -46,6 +46,9 @@
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
+  [meta]="zone().name"
+  [aboveNav]="!wide()"
+  [stageScrim]="!wide()"
   [title]="'entry.zone.deleteTitle' | t"
   [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"

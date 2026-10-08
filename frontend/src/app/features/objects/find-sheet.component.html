@@ -44,6 +44,9 @@
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
+  [meta]="deleteMeta()"
+  [aboveNav]="!wide()"
+  [stageScrim]="!wide()"
   [title]="'entry.fund.delete' | t"
   [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"

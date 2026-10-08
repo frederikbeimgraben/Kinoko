@@ -53,19 +53,20 @@
   <app-visibility-choice
     [visibility]="visibility()"
     [groupId]="groupId()"
-    [inline]="editing()"
     (visibilityChange)="visibilityChoice.set($event)"
     (groupChange)="groupChoice.set($event)"
   />
   @if (editing()) {
-    <div class="form__inline form__inline--switch">
-      <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
-      <app-switch
-        [checked]="training()"
-        [label]="'entry.forTraining' | t"
-        (checkedChange)="trainingChoice.set($event)"
-      />
-    </div>
+    <app-row-group>
+      <div class="form__switch">
+        <span class="form__switchLabel">{{ 'entry.forTraining' | t }}</span>
+        <app-switch
+          [checked]="training()"
+          [label]="'entry.forTraining' | t"
+          (checkedChange)="trainingChoice.set($event)"
+        />
+      </div>
+    </app-row-group>
   }
 </div>
 <app-action-bar foot [primary]="'common.save' | t" [busy]="busy()" (primaryClick)="submit()" />

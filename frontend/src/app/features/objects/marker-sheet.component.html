@@ -32,6 +32,9 @@
 }
 <app-confirm-dialog
   [open]="deleteAsk()"
+  [meta]="marker().name"
+  [aboveNav]="!wide()"
+  [stageScrim]="!wide()"
   [title]="'entry.marker.deleteTitle' | t"
   [confirmLabel]="'common.delete' | t"
   (confirmed)="remove()"

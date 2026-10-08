@@ -19,6 +19,7 @@ import type { Find, Photo } from '../../core/api/models';
 import { PhotosApi } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
@@ -67,6 +68,7 @@ export class FindSheetComponent {
   private readonly arten = inject(SpeciesState);
   private readonly eintraege = inject(EntriesState);
   protected readonly sheet = inject(ObjectSheetStore);
+  protected readonly wide = inject(ViewportService).wide;
   private readonly photos = inject(PhotosApi);
   private readonly injector = inject(Injector);
 
@@ -109,6 +111,11 @@ export class FindSheetComponent {
     const date = longDate(this.find().foundOn, this.i18n.locale());
     return findSubline(this.i18n, date, this.find().count, this.reporterName());
   });
+
+  /** The line of the delete dialog: species and date, per the board `MapDialogFindDelete`. */
+  protected readonly deleteMeta = computed(
+    () => `${this.speciesName()} · ${longDate(this.find().foundOn, this.i18n.locale())}`,
+  );
 
   protected readonly thumbPhoto = computed(() => this.strip()[0]?.path ?? '');
 

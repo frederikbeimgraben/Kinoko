@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import type { Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -54,6 +55,7 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly eintraege = inject(EntriesState);
   protected readonly sheet = inject(ObjectSheetStore);
+  protected readonly wide = inject(ViewportService).wide;
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly draw = inject(ZONE_DRAWER);

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import type { Marker } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
@@ -39,6 +40,7 @@ export class MarkerSheetComponent {
   private readonly toasts = inject(ToastService);
   private readonly eintraege = inject(EntriesState);
   protected readonly sheet = inject(ObjectSheetStore);
+  protected readonly wide = inject(ViewportService).wide;
 
   readonly marker = input.required<Marker>();
 

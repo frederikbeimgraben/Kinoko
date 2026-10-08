@@ -25,6 +25,8 @@ export class ConfirmDialogComponent {
   readonly cancelLabel = input<string>();
   /** On the phone, the dialog stands at the centre of the stage above the nav (boards `MapSignIn`, `MapDialogFindDelete`). */
   readonly aboveNav = input(false);
+  /** The scrim leaves the nav bright, as the kit `.scrim.top` (board `MapDialogFindDelete`). */
+  readonly stageScrim = input(false);
   /** While a write runs, the confirmation takes no tap. */
   readonly confirmDisabled = input(false);
 

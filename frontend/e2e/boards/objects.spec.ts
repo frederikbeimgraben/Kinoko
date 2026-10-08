@@ -246,5 +246,14 @@ test('MapFindEdit', async ({ page }) => {
   guard('MapFindEdit', 'phone');
   await openObject(page, 'Funde', 'Steinpilz');
   await edit(page, 'Fund bearbeiten');
+  // The board shows the fields as the person changes them: a new date, no count and no note.
+  await page.locator('input[type="date"]').fill('2026-09-09');
+  await page.getByRole('spinbutton').fill('');
+  await page.locator('textarea').fill('');
+  await page.mouse.move(0, 0);
+  await page.evaluate(() => {
+    const active: Element | null = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+  });
   await board(page, 'MapFindEdit');
 });
