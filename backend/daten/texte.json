@@ -871,7 +871,11 @@
     "error.uploadClosed": "Die Übertragung ist abgeschlossen",
     "error.uploadOpen": "Für diese Quelle läuft schon eine Übertragung",
     "error.diskFull": "Nicht genug Speicherplatz",
-    "error.inputsMissing": "Es fehlen Eingangsdaten"
+    "error.inputsMissing": "Es fehlen Eingangsdaten",
+    "map.basemap.aerial": "Luftbild",
+    "map.basemap.terrain": "Gelände",
+    "map.basemap.aerialCredit": "© GeoBasis-DE / BKG",
+    "map.layers.show": "Anzeigen"
   },
   "en": {
     "account.deleteAllConfirmTitle": "Delete everything",
@@ -1745,6 +1749,10 @@
     "error.uploadClosed": "The upload is closed",
     "error.uploadOpen": "An upload for this source is already open",
     "error.diskFull": "Not enough disk space",
-    "error.inputsMissing": "Input data is missing"
+    "error.inputsMissing": "Input data is missing",
+    "map.basemap.aerial": "Aerial photo",
+    "map.basemap.terrain": "Terrain",
+    "map.basemap.aerialCredit": "© GeoBasis-DE / BKG",
+    "map.layers.show": "Show"
   }
 }

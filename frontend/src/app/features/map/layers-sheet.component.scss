@@ -1,27 +1,24 @@
+@use '../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
+// Board `MapDesktopLayers`: a card of 360 px with the body inset by 4 px.
 :host {
-  --popover-gap: var(--space-3);
-  --popover-width: 300px;
+  --popover-width: 360px;
 
   display: contents;
 }
 
-.layers__title {
-  margin-block-end: 10px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  line-height: 14px;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.overlay-body {
+  overflow-y: auto;
 }
 
-// Die Spur trägt ihre Bahn für den Griff; das Board misst ab der Spur.
-.layers__part app-range-slider {
-  margin-block: -10px -4px;
+// Board `MapLayers`: a strip of 16 px below the body.
+.layers__end {
+  flex: none;
+  block-size: 16px;
 }
 
-.layers__switches {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+.layers__pop {
+  padding: 4px;
 }

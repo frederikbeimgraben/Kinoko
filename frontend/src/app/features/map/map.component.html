@@ -108,25 +108,7 @@
 
   @if (!surfaceOnly() || wide()) {
     @if (state.layersSheetOpen()) {
-      <app-layers-sheet
-        [background]="state.background()"
-        [opacity]="state.opacity()"
-        [showsLayer]="view.onLayer()"
-        [forecastBelow]="state.forecastBelow()"
-        [showMarkers]="state.showMarkers()"
-        [showZones]="state.showZones()"
-        [showSharedFinds]="state.showSharedFinds()"
-        [markerCount]="view.entryCounts().markers"
-        [zoneCount]="view.entryCounts().zones"
-        [sharedFindCount]="view.entryCounts().sharedFinds"
-        (backgroundChange)="state.setBackground($event)"
-        (opacityChange)="state.setOpacity($event)"
-        (forecastBelowChange)="state.setForecastBelow($event)"
-        (showMarkersChange)="state.setShowMarkers($event)"
-        (showZonesChange)="state.setShowZones($event)"
-        (showSharedFindsChange)="state.setShowSharedFinds($event)"
-        (closed)="state.setLayersSheetOpen(false)"
-      />
+      <app-layers-sheet (closed)="state.setLayersSheetOpen(false)" />
     }
   }
 

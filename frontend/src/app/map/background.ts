@@ -1,43 +1,41 @@
 import type { Bounds } from './map-adapter';
 import type { EffectiveTheme } from '../core/theme/theme.store';
 
-/**
- * Die Hintergrundkarte kommt von OpenFreeMap: frei, ohne Schlüssel, in hell und
- * dunkel.
- */
+/** The background map comes from OpenFreeMap: free, without a key, light and dark. */
 export const BACKGROUND: Record<EffectiveTheme, string> = {
   hell: 'https://tiles.openfreemap.org/styles/liberty',
   dunkel: 'https://tiles.openfreemap.org/styles/dark',
 };
 
-/** Was der Ebenen-Knopf zur Wahl stellt. Für Topo und Satellit fehlt die Quelle. */
-export type Background = 'map' | 'light' | 'topo' | 'satellite';
+/**
+ * The choices of the layers sheet. "map" follows the theme of the app, "light" and "dark" are fixed.
+ * Topo and satellite have no source yet.
+ */
+export type Background = 'map' | 'light' | 'dark' | 'topo' | 'satellite';
 
-export const BACKGROUNDS: readonly Background[] = ['map', 'light', 'topo', 'satellite'];
+export const BACKGROUNDS: readonly Background[] = ['map', 'light', 'dark', 'topo', 'satellite'];
 
-/** Topo und Satellit sind noch nicht wählbar. */
+/** Topo and satellite are not available yet. */
 export function backgroundAvailable(choice: Background): boolean {
-  return choice === 'map' || choice === 'light';
+  return choice === 'map' || choice === 'light' || choice === 'dark';
 }
 
-/** Der Stil zur Wahl. „Karte“ folgt dem Theme der App. */
+/** The style of a choice. */
 export function styleFor(choice: Background, theme: EffectiveTheme): string {
-  return choice === 'light' ? BACKGROUND.hell : BACKGROUND[theme];
+  if (choice === 'light') return BACKGROUND.hell;
+  if (choice === 'dark') return BACKGROUND.dunkel;
+  return BACKGROUND[theme];
 }
 
-/** Deutschland als [Länge, Breite]. Darauf wird die Karte beim Öffnen gepasst. */
+/** Germany as [longitude, latitude]. The map fits it when it opens. */
 export const GERMANY: Bounds = [
   [5.7, 47.2],
   [15.1, 55.1],
 ];
 
 /**
- * Wie weit die Karte geschoben werden darf.
- *
- * Der Rand ist mit gut sechs Grad bewusst breit. Die Karte rechnet ihre Mitte
- * auf den freien Streifen über dem Blatt, schiebt Deutschland also nach oben;
- * unter dem Blatt liegt dann Luft, die innerhalb der Grenze liegen muss. Läge
- * die Grenze an Deutschland selbst, bliebe das Land halb unter dem Blatt.
+ * The limit of a pan. The margin of six degrees is wide on purpose: the map centres
+ * Germany above the sheet, so the space below the sheet must also be inside the limit.
  */
 export const MAX_BOUNDS: Bounds = [
   [-1.0, 40.5],
@@ -45,10 +43,8 @@ export const MAX_BOUNDS: Bounds = [
 ];
 
 /**
- * MapLibre zählt Zoomstufen für 512er-Kacheln und liegt damit eine Stufe unter
- * der Zählung der Wertkacheln, die 256 Punkte breit sind. Die 4 hier ist also
- * die 5 des Renderings: Deutschland ganz im Bild. Die 14 ist die letzte Stufe,
- * für die der Vektorstil Daten hat.
+ * MapLibre counts zoom levels for 512 px tiles, one level below the 256 px value tiles.
+ * Thus 4 is level 5 of the value tiles, with all of Germany. 14 is the last level of the vector style.
  */
 export const ZOOM_MIN = 4;
 export const ZOOM_MAX = 14;

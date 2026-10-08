@@ -30,6 +30,8 @@ export interface BoardState {
   species?: string;
   /** Ein Stil ohne Grundfläche: das Kartenbild liegt dann unter der Zeichnung. */
   clear?: boolean;
+  /** The zones on the map. Board `MapLayers` shows them off. */
+  zones?: boolean;
 }
 
 const STORAGE_KEY = 'pilzkarte.map.v1';
@@ -61,11 +63,11 @@ export async function mockMap(
         species: state.species ?? 'boletus-edulis',
         view: state.view ?? 'forecast',
         layer: state.layer ?? 'regen',
-        opacity: 0.8,
-        background: 'map',
+        opacity: 0.7,
+        background: 'light',
         forecastBelow: false,
         showMarkers: true,
-        showZones: true,
+        showZones: state.zones ?? true,
         showSharedFinds: true,
         detent: state.detent ?? 1,
       }),

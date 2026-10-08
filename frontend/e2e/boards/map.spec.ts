@@ -125,7 +125,7 @@ test('MapCollapsed', async ({ page }) => {
 
 test('MapLayers', async ({ page }) => {
   guard('MapLayers', 'phone');
-  await openMap(page, { detent: 0 });
+  await openMap(page, { detent: 0, zones: false });
   await page.getByRole('button', { name: 'Ebenen' }).click();
   await board(page, 'MapLayers', {});
 });

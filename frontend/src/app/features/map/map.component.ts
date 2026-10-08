@@ -142,6 +142,7 @@ export class MapComponent implements OnDestroy {
   protected readonly showsAdd = computed(() => {
     if (this.covered() || this.addEntry.showsCrosshair()) return false;
     if (this.wide()) return true;
+    if (this.state.layersSheetOpen()) return false;
     if (this.showsMapSheet() && this.state.detent() === 2) return false;
     return !this.addEntry.running() || this.addEntry.onActions();
   });
