@@ -1,4 +1,4 @@
-/** The tiles that a source has. Above `haveZoom`, the coarser tile decides. */
+/** The tiles that a source has. Above `haveZoom`, the parent tile at `haveZoom` decides. */
 
 import { tileKey } from './tile-paths';
 

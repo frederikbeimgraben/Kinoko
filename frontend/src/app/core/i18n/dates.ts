@@ -1,6 +1,5 @@
-/**
- * Formats a day for people to read. The format comes from the mockups. These functions are in the core, so finds, species and photos all show one format.
- */
+// Formats a day for people to read, as in the mockups. These functions are in the core,
+// so finds, species and photos all show the same format.
 
 import type { I18nService } from './i18n.service';
 

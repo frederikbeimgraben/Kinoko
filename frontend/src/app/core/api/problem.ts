@@ -1,6 +1,4 @@
-/**
- * Error body as per RFC 9457. The backend sends `application/problem+json` on each error path, never the FastAPI `detail`.
- */
+/** The RFC 9457 error body. Each backend error is `application/problem+json`, never a FastAPI `detail`. */
 export interface ProblemDetail {
   type: string;
   title: string;
@@ -11,9 +9,8 @@ export interface ProblemDetail {
   errors?: { field: string; msg: string }[];
 }
 
-/**
- * Code of a 401 that the sign-in sheet handles after a failed silent renewal. The ApiClient shows no toast for this code, because the sheet is already open.
- */
+// The code of a 401 after a failed silent renewal. The sign-in sheet is open, so the ApiClient
+// shows no toast for this code.
 export const SIGN_IN_REQUIRED = 'anmeldung_noetig';
 
 /** Checks that a response body is a problem+json. */

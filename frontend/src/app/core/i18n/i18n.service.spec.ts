@@ -11,9 +11,8 @@ function withoutFallback(): I18nService {
   return TestBed.inject(I18nService);
 }
 
-/**
- * Gives a new service for each test. The service reads the language at construction. Without a reset, the choice of one test goes into the next test.
- */
+// Gives a new service for each test. The service reads the language when it is made.
+// Without a reset, the choice of one test goes into the next test.
 function service(): I18nService {
   TestBed.resetTestingModule();
   return TestBed.inject(I18nService);

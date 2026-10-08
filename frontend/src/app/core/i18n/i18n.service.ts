@@ -44,16 +44,13 @@ function isDynamicKey(key: string): boolean {
 /** German, English or the browser language. */
 export type LanguageChoice = Locale | 'system';
 
-/**
- * The texts from the database, one dictionary for each language. They use the keys of the built-in catalogue and override it.
- */
+/** The database texts, one dictionary for each language. They override the built-in catalogue. */
 export type LoadedTexts = Readonly<Partial<Record<Locale, Readonly<Record<string, string>>>>>;
 
 export const LANGUAGE_CHOICES: readonly LanguageChoice[] = ['de', 'en', 'system'];
 
-/**
- * The UI language as a signal. `TextCatalogService` gives the database texts with {@link useTexts}.
- */
+// The UI language as a signal. A key that is missing in the active language falls back to German.
+// The built-in catalogue is the fallback for the first start and for offline use.
 @Injectable({ providedIn: 'root' })
 export class I18nService {
   private readonly _fallback = signal<FallbackTexts>(inject(FALLBACK_TEXTS));
@@ -86,7 +83,8 @@ export class I18nService {
     return this;
   }
 
-  /** Uses the texts from the database. They apply immediately. */
+  // Uses the database texts from `TextCatalogService`. This service cannot load them,
+  // because the ApiClient needs this service.
   useTexts(texts: LoadedTexts): void {
     this._texts.set(texts);
   }
@@ -121,7 +119,7 @@ export class I18nService {
     return params ? this.fill(text, params) : text;
   }
 
-  /** Translates a free name that can also be no key. A missing key gives no message. */
+  /** Translates a free name that is possibly not a key. A missing key gives no message. */
   translateOptional(name: string): string {
     return this.lookup(name) ?? name;
   }

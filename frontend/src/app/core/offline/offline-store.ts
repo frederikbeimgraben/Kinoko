@@ -8,7 +8,7 @@ export type OfflineArea = (typeof OFFLINE_AREAS)[number];
 
 const DB_NAME = 'primordium';
 
-/** A new number makes the store again from zero. There is no migration path. */
+/** A new number deletes the store and makes it again. There is no migration path. */
 export const DB_VERSION = 2;
 
 /** The store on the device: catalog, texts and own objects. */

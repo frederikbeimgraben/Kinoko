@@ -5,7 +5,7 @@ import { I18nService } from '../i18n/i18n.service';
 import { SIGN_IN_REQUIRED, type ProblemDetail } from '../api/problem';
 import { AuthService } from './auth.service';
 
-/** Only the own API gets the token. The issuer and the tiles never get it. */
+/** Only the app API gets the token. The issuer and the tiles never get it. */
 function ownApi(url: string): boolean {
   const target = new URL(url, location.origin);
   return target.origin === location.origin && target.pathname.startsWith('/api/');
@@ -27,9 +27,8 @@ function signInRequired(i18n: I18nService): ProblemDetail {
   };
 }
 
-/**
- * Adds `Authorization: Bearer` to each request to the own API. A 401 causes one silent renewal and one retry. If that fails, the sign-in sheet opens. The caller gets a problem that shows no toast.
- */
+// Adds `Authorization: Bearer` to each app API request. A 401 causes one silent renewal and one retry.
+// If the retry fails, the sign-in sheet opens, and the caller gets a problem that shows no toast.
 export const authInterceptor: HttpInterceptorFn = (request, more) => {
   if (!ownApi(request.url)) return more(request);
   const auth = inject(AuthService);

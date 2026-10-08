@@ -7,7 +7,7 @@ import type { Permission } from '../../core/api/models';
 import { ADMIN_PERMISSIONS } from './admin.entries';
 
 // Opens an admin route only with the matching permission, else goes to the account page. `null` accepts any admin permission.
-// This guard only hides routes. The server checks each permission and gives 403.
+// This guard only hides routes. Each server route checks its permission and gives 403 for a typed URL.
 export function requiresPermission(permission: Permission | null): CanActivateFn {
   return (): Observable<boolean | UrlTree> => {
     const rights = inject(PermissionsStore);

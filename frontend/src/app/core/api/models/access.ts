@@ -3,7 +3,7 @@ import type { components } from '../contract';
 /** The counters of the admin overview. */
 export type AdminSummary = components['schemas']['AdminSummary'];
 
-/** The own account with all own finds, objects and photos. */
+/** The account of the current user with all its finds, objects and photos. */
 export type AccountExport = components['schemas']['AccountExport'];
 
 /** The counts of one species in the species admin. */
@@ -14,7 +14,7 @@ export interface Items<E> {
   items: E[];
 }
 
-/** The own account, as `/api/me` gives it. */
+/** The account of the current user, as `/api/me` gives it. */
 export type Me = components['schemas']['Me'];
 
 /** The contract permissions. The server decides who has them. */
@@ -40,6 +40,7 @@ export const PERMISSION_AREAS: readonly PermissionArea[] = ['species', 'interfac
 /** A catalogue permission with its group. */
 export type PermissionEntry = components['schemas']['PermissionEntry'];
 
+/** The response of `/api/me/permissions`. */
 export type MyPermissions = components['schemas']['MyPermissions'];
 
 /** The short form of a role, as shown next to a person. */
@@ -76,10 +77,10 @@ export interface RolePatch {
 /** An account that used the service at least once. */
 export type Person = components['schemas']['Person'];
 
-/** The name of a person. It resolves only when you share a group. */
+/** The name of a person. It resolves only when you and the person share a group. */
 export type PersonName = components['schemas']['PersonName'];
 
-/** A part of the person list, with the total count. */
+/** One page of the person list, with the total count. */
 export interface Page<E> {
   eintraege: E[];
   gesamt: number;

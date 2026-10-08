@@ -4,9 +4,7 @@ import type { Locale } from '../i18n/translations';
 import { ApiClient, type Tagged } from './api-client';
 import type { TextCatalogue, TextEntry } from './models';
 
-/**
- * The three UI text endpoints. Read is public. Change and reset need the `text.edit` permission. The backend checks it.
- */
+/** The three UI text endpoints. Read is public. Change and reset need `text.edit`. The backend checks it. */
 @Injectable({ providedIn: 'root' })
 export class TextsApi {
   private readonly api = inject(ApiClient);

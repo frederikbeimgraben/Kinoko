@@ -1,4 +1,4 @@
-/** Paths of the own objects. The online path and the offline queue both use them. */
+/** The paths of the user objects. The online requests and the offline queue both use them. */
 export const ENTRY_PATHS = {
   find: '/finds',
   marker: '/markers',

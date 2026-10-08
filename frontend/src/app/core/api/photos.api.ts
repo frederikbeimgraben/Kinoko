@@ -6,7 +6,7 @@ import type { Licence, Photo, PhotoState } from './models';
 
 const PATH = ENTRY_PATHS.photo;
 
-/** A photo of an own find belongs to the person who took it. */
+/** A photo of the user's own find belongs to the person who took it. */
 const OWN_LICENCE: Licence = 'own';
 
 /** The fields that the service needs with the file. Photographer and licence are mandatory. */
@@ -54,7 +54,7 @@ export class PhotosApi {
     return this.api.uploadFile<Photo>(PATH, 'file', file, { ...input });
   }
 
-  /** A photo of an own find. The find gives the permission for it. */
+  /** A photo of the user's own find. The permission comes from the find. */
   ofFind(findId: string, photographer: string, file: File, options?: Silent): Observable<Photo> {
     return this.api.postFile<Photo>(
       PATH,

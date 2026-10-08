@@ -13,7 +13,7 @@ function errorResponse(code: string): Error {
   return Object.assign(new Error(code), { error: code });
 }
 
-/** Gives a new service for each call. Some tests need more than one case. */
+/** Gives a new service for each call. Some tests check more than one case. */
 function build(configured = true): Setup {
   TestBed.resetTestingModule();
   const manager = new ManagerDouble();

@@ -13,7 +13,7 @@ export interface FindCard {
   photos: readonly string[];
 }
 
-/** Date, count and account in one line. Without a count, the line has no count. */
+/** Date, count and account in one line. If the count is not known, the line omits it. */
 export function metaText(find: OpenFind, i18n: I18nService): string {
   const date = shortDate(find.foundOn, i18n);
   const person = find.ownerId;

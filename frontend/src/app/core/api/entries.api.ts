@@ -20,7 +20,7 @@ function id(value: string): string {
   return encodeURIComponent(value);
 }
 
-/** The own finds, markers and zones. Each route needs an account. */
+/** The finds, markers and zones of the current user. Each route needs an account. */
 @Injectable({ providedIn: 'root' })
 export class EntriesApi {
   private readonly api = inject(ApiClient);

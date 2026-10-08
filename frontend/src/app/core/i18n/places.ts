@@ -1,15 +1,12 @@
-/**
- * Formats a location for people to read: „48,5203 · 9,0511“. This is in the core, so finds and photos show one format.
- */
+// Formats a location for people to read: „48,5203 · 9,0511“. This is in the core,
+// so finds and photos show the same format.
 
 import { decimal } from './numbers';
 
 /** Four decimal places are about eleven metres. A finger on a screen is not more precise. */
 const LOCATION_DIGITS = 4;
 
-/**
- * A coordinate pair in the format of the language. The default is four digits. A rounded location shows fewer digits, because it has less precision.
- */
+/** A coordinate pair in the language format. A rounded location is less precise, so it shows fewer digits. */
 export function locationText(
   lat: number,
   lon: number,

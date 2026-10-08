@@ -8,7 +8,7 @@ import type { FriendGroup, Items } from './models';
 export class GroupsApi {
   private readonly api = inject(ApiClient);
 
-  /** The own groups. `all` needs the `group.manage` permission. */
+  /** The groups of the current user. `all` needs the `group.manage` permission. */
   list(all = false, options?: Silent): Observable<FriendGroup[]> {
     return this.api
       .get<Items<FriendGroup>>('/groups', { all: all || undefined }, options)

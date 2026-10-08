@@ -3,7 +3,7 @@ import type { Observable } from 'rxjs';
 import { ApiClient } from './api-client';
 import type { Combination, CombinationInput, CombinationPage } from './models';
 
-/** The own combinations. Each route needs an account. */
+/** The combinations of the current user. Each route needs an account. */
 @Injectable({ providedIn: 'root' })
 export class CombinationsApi {
   private readonly api = inject(ApiClient);

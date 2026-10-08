@@ -16,7 +16,7 @@ type FindPage = components['schemas']['FindPage'];
 /** Finds per page. The contract allows a maximum of 50. */
 const PAGE_SIZE = 50;
 
-/** A missing path stays silent. The map keeps the data that it shows. */
+/** A 404 gives no error message. The map keeps the data that it shows. */
 const NOT_FOUND = 404;
 
 function bbox(view: Viewbox): string {
