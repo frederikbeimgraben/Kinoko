@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, untracked } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { AccountStore } from '../../core/access/account.store';
@@ -20,6 +20,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { SpeciesDeskComponent } from '../species/species-desk.component';
 import { SpeciesStore } from '../species/species.store';
@@ -46,6 +47,7 @@ const NONE = '–';
     SectionComponent,
     SkeletonComponent,
     SpeciesDeskComponent,
+    StateViewComponent,
     SwitchComponent,
     TranslatePipe,
   ],
@@ -105,11 +107,24 @@ export class ImageViewComponent {
     () => this.canSetLead() || this.account.owns(this.photo()?.ownerId ?? null),
   );
 
-  /** The view loads the approved photos of the species one time; a known view stays. */
+  private readonly speciesId = computed(() => this.species.entryOf(this.slug())?.id ?? null);
+
+  /** True when the photo is not in the view of the species after the load. */
+  protected readonly missing = computed(
+    () =>
+      this.photo() === null &&
+      this.images.query()?.speciesId === this.speciesId() &&
+      (this.images.loaded() || this.images.failed()),
+  );
+
+  /** The view loads the approved photos of the species one time; a loaded view of the species stays.
+   * The query does not read the photos, so that an empty answer does not start a new load. */
   private readonly query = computed<PhotoQuery | null>(() => {
-    const speciesId = this.species.entryOf(this.slug())?.id;
-    const known = this.images.photos().some((one) => one.speciesId === speciesId);
-    return speciesId === undefined || known ? null : { speciesId, state: 'approved' };
+    const speciesId = this.speciesId();
+    const held = this.images.query();
+    const known =
+      held?.speciesId === speciesId && held.state === 'approved' && !untracked(() => this.images.failed());
+    return speciesId === null || known ? null : { speciesId, state: 'approved' };
   });
 
   constructor() {

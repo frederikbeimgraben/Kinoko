@@ -140,6 +140,9 @@ export class MapComponent implements OnDestroy {
     return !this.state.layersSheetOpen() && !(this.showsMapSheet() && this.state.detent() === 2);
   });
 
+  /** The measured map sheet. The map pads its centre by it, as detents 1 and 2 both take the content height. */
+  protected readonly mapSheetHeight = signal(0);
+
   /** The detents of the map sheet. Above the lowest one, the sheet is as high as its content. */
   protected readonly detents = DETENT_SIZES;
 
@@ -168,7 +171,8 @@ export class MapComponent implements OnDestroy {
       this.surface.setOpacity(this.state.opacity(), this.view.onLayer());
     });
     effect(() => {
-      this.surface.setPadding(this.state.detent(), this.wide(), this.state.overlayHeight());
+      const mapSheet = this.showsMapSheet() ? this.mapSheetHeight() : 0;
+      this.surface.setPadding(this.state.detent(), this.wide(), this.state.overlayHeight() || mapSheet);
     });
     effect(() => {
       this.entries.signedIn();

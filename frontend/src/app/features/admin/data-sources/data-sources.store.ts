@@ -31,7 +31,9 @@ import {
   followLog,
   settling,
   versionCall,
+  withFirstPage,
   withPage,
+  without,
   type DetailQuery,
   type RemoteRefresh,
   type VersionAction,
@@ -102,8 +104,8 @@ export const DataSourcesStore = signalStore(
           });
         }),
         switchMap((query) => followDetail(store._api, query)),
-        tap((detail) => {
-          patchState(store, { detail });
+        tap((first) => {
+          patchState(store, ({ detail }) => ({ detail: withFirstPage(detail, first) }));
         }),
       ),
     );
@@ -153,6 +155,9 @@ export const DataSourcesStore = signalStore(
             return versionCall(store._api, request).pipe(
               tapResponse({
                 next: () => {
+                  if (request.action === 'remove') {
+                    patchState(store, ({ detail }) => ({ detail: without(detail, request.version.id) }));
+                  }
                   done(request);
                   reopen();
                 },

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
+import { EMPTY_FIND_DRAFT } from './find-draft';
 import { AddEntryStore } from './add-entry.store';
 
 function state(): AddEntryStore {
@@ -103,6 +104,23 @@ describe('AddEntryStore', () => {
 
     flow.back();
     expect(flow.step()).toBeNull();
+  });
+
+  it('returns to the find location with the draft, and clears the point unless asked to keep it', () => {
+    const flow = state();
+    const draft = { ...EMPTY_FIND_DRAFT, note: 'Unter Fichten' };
+
+    flow.startFind();
+    flow.adoptLocation([9, 48]);
+    flow.editFindLocation(draft, false);
+    expect([flow.step(), flow.location(), flow.findDraft()]).toEqual(['findLocation', null, draft]);
+
+    flow.adoptLocation([9.1, 48.1]);
+    flow.editFindLocation(draft, true);
+    expect(flow.location()).toEqual([9.1, 48.1]);
+
+    flow.startFind();
+    expect(flow.findDraft()).toEqual(EMPTY_FIND_DRAFT);
   });
 
   it('adds a history step on open and removes it on stop', () => {

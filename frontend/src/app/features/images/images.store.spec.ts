@@ -145,4 +145,20 @@ describe('ImagesStore', () => {
 
     expect(state.photos()).toHaveLength(0);
   });
+
+  it('removes the photos of the old view when a new view loads', () => {
+    const { state, http } = build();
+    state.load({ speciesId: 'art-eins', state: 'approved' });
+    http
+      .expectOne('/api/photos?speciesId=art-eins&state=approved')
+      .flush({ items: [photo({ id: 'alt' })], nextCursor: null });
+
+    state.load({ state: 'submitted' });
+
+    expect(state.photos()).toEqual([]);
+    expect(state.loading()).toBe(true);
+    expect(state.query()).toEqual({ state: 'submitted' });
+    http.expectOne('/api/photos?state=submitted').flush({ items: [photo({ id: 'neu' })], nextCursor: null });
+    expect(state.photos().map((one) => one.id)).toEqual(['neu']);
+  });
 });

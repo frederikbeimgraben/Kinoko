@@ -46,4 +46,8 @@ export class AccountStatsComponent {
           label: this.i18n.translate(LABELS[part]),
         }));
   });
+
+  constructor() {
+    this.data.refresh();
+  }
 }

@@ -154,4 +154,15 @@ describe('ImageViewComponent', () => {
 
     expect(screen.getByText('Eigenes Foto')).toBeInTheDocument();
   });
+
+  it('asks one time and shows a state view when the species has no approved photos', async () => {
+    const { http, refresh } = await build([]);
+
+    refresh();
+    TestBed.tick();
+    refresh();
+
+    http.expectNone('/api/photos?speciesId=steinpilz&state=approved');
+    expect(screen.getByText('Bild nicht gefunden')).toBeInTheDocument();
+  });
 });

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  output,
+  signal,
+} from '@angular/core';
 import type { SpeciesEntry, Find, FindWrite, Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -18,6 +27,7 @@ import { isoDatum } from '../entries/formats';
 import { speciesPickerEntry } from '../species/species-picker-entry';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
 import type { Location } from './add-entry.store';
+import { EMPTY_FIND_DRAFT, type FindDraft } from './find-draft';
 import { coordinatesText } from './coordinates';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
@@ -72,21 +82,23 @@ export class FindFormComponent {
   /** An existing find shows the chevron at the species and a border at the back way. */
   readonly editing = input(false);
   readonly busy = input(false);
+  /** The choices from before a return to the location step. */
+  readonly draft = input<FindDraft>(EMPTY_FIND_DRAFT);
 
   readonly submitted = output<FindSubmission>();
   readonly heldRemoved = output<string>();
-  /** The location row goes back to the location step. */
-  readonly locationClick = output();
+  /** The location row goes back to the location step. It gives the choices, so the flow can keep them. */
+  readonly locationClick = output<FindDraft>();
 
-  private readonly slugChoice = signal<string | null>(null);
-  protected readonly visibilityChoice = signal<Visibility | null>(null);
-  protected readonly groupChoice = signal<string | null | undefined>(undefined);
+  private readonly slugChoice = linkedSignal(() => this.draft().slug);
+  protected readonly visibilityChoice = linkedSignal<Visibility | null>(() => this.draft().visibility);
+  protected readonly groupChoice = linkedSignal<string | null | undefined>(() => this.draft().group);
 
-  protected readonly dateChoice = signal<string | null>(null);
-  protected readonly countChoice = signal<string | null>(null);
-  protected readonly noteChoice = signal<string | null>(null);
-  protected readonly photos = signal<readonly File[]>([]);
-  protected readonly trainingChoice = signal<boolean | null>(null);
+  protected readonly dateChoice = linkedSignal(() => this.draft().date);
+  protected readonly countChoice = linkedSignal(() => this.draft().count);
+  protected readonly noteChoice = linkedSignal(() => this.draft().note);
+  protected readonly photos = linkedSignal<readonly File[]>(() => this.draft().photos);
+  protected readonly trainingChoice = linkedSignal(() => this.draft().training);
   protected readonly pickerOpen = signal(false);
 
   protected readonly date = computed(
@@ -138,6 +150,19 @@ export class FindFormComponent {
   protected selectSpecies(slug: string): void {
     this.slugChoice.set(slug);
     this.pickerOpen.set(false);
+  }
+
+  protected editLocation(): void {
+    this.locationClick.emit({
+      slug: this.slugChoice(),
+      visibility: this.visibilityChoice(),
+      group: this.groupChoice(),
+      date: this.dateChoice(),
+      count: this.countChoice(),
+      note: this.noteChoice(),
+      photos: this.photos(),
+      training: this.trainingChoice(),
+    });
   }
 
   protected submit(): void {

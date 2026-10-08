@@ -260,6 +260,7 @@
     "app.update.reload": "Neu laden",
     "area.download": "Gebiet laden",
     "area.empty": "Noch keine Offline-Gebiete",
+    "area.failed": "Gebiet konnte nicht geladen werden",
     "area.hectares": "{area} ha",
     "area.loading": "Gebiet wird geladen",
     "area.noZones": "Noch keine Zonen",
@@ -607,6 +608,7 @@
     "image.manage.title": "Bilder",
     "image.myImages.title": "Meine Bilder",
     "image.next": "Nächstes Bild",
+    "image.notFound": "Bild nicht gefunden",
     "image.previous": "Voriges Bild",
     "image.queue.title": "Bilder prüfen",
     "image.reject": "Ablehnen",
@@ -674,6 +676,7 @@
     "map.basemap.title": "Hintergrund",
     "map.basemap.topo": "Topo",
     "map.centre": "Zentrieren",
+    "map.combination.deleteTitle": "Kombination löschen?",
     "map.combination.graduated": "Abgestuft",
     "map.combination.intersection": "Schnittmenge",
     "map.combination.list": "Kombinationen",
@@ -1074,7 +1077,10 @@
     "admin.upload.error.disk_full": "Auf dem Server ist nicht genug Platz.",
     "admin.upload.error.checksum_mismatch": "Die Prüfsumme passt nicht. Bitte erneut hochladen.",
     "admin.upload.error.network": "Keine Verbindung zum Server.",
-    "admin.upload.error.failed": "Das Hochladen ist fehlgeschlagen."
+    "admin.upload.error.failed": "Das Hochladen ist fehlgeschlagen.",
+    "admin.upload.error.upload_closed": "Das Hochladen ist geschlossen. Bitte neu starten.",
+    "admin.upload.openHint": "Auf dem Server ist ein Hochladen von {name} offen.",
+    "admin.upload.discard": "Offenes Hochladen verwerfen"
   },
   "en": {
     "account.appearanceAndLanguage": "Appearance and language",
@@ -1337,6 +1343,7 @@
     "app.update.reload": "Reload",
     "area.download": "Load area",
     "area.empty": "No offline areas yet",
+    "area.failed": "Area could not be loaded",
     "area.hectares": "{area} ha",
     "area.loading": "Area is loading",
     "area.noZones": "No zones yet",
@@ -1684,6 +1691,7 @@
     "image.manage.title": "Images",
     "image.myImages.title": "My images",
     "image.next": "Next image",
+    "image.notFound": "Image not found",
     "image.previous": "Previous image",
     "image.queue.title": "Review images",
     "image.reject": "Reject",
@@ -1751,6 +1759,7 @@
     "map.basemap.title": "Background",
     "map.basemap.topo": "Topo",
     "map.centre": "Centre",
+    "map.combination.deleteTitle": "Delete combination?",
     "map.combination.graduated": "Graduated",
     "map.combination.intersection": "Intersection",
     "map.combination.list": "Combinations",
@@ -2151,6 +2160,9 @@
     "admin.upload.error.disk_full": "The server has not enough disk space.",
     "admin.upload.error.checksum_mismatch": "The checksum does not match. Upload the file again.",
     "admin.upload.error.network": "No connection to the server.",
-    "admin.upload.error.failed": "The upload failed."
+    "admin.upload.error.failed": "The upload failed.",
+    "admin.upload.error.upload_closed": "The upload is closed. Start it again.",
+    "admin.upload.openHint": "An upload of {name} is open on the server.",
+    "admin.upload.discard": "Discard the open upload"
   }
 }

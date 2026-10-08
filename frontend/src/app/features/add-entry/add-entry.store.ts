@@ -1,6 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
+import { EMPTY_FIND_DRAFT, type FindDraft } from './find-draft';
 
 /** A point on the map as [longitude, latitude], as in GeoJSON. */
 export type Location = readonly [number, number];
@@ -18,9 +19,11 @@ interface AddEntryStoreState {
   location: Location | null;
   /** The corners of the zone, in the sequence of the taps. */
   ring: readonly Location[];
+  /** The find form choices while the person sets the location again. */
+  findDraft: FindDraft;
 }
 
-const CLEAR: AddEntryStoreState = { step: null, location: null, ring: [] };
+const CLEAR: AddEntryStoreState = { step: null, location: null, ring: [], findDraft: EMPTY_FIND_DRAFT };
 
 const FORMS: readonly Step[] = ['findForm', 'markerForm', 'zoneForm'];
 const AIMING: readonly Step[] = ['findLocation', 'markerLocation', 'zoneDraw'];
@@ -58,7 +61,15 @@ export const AddEntryStore = signalStore(
         store._stack.open(clear);
       },
       startFind(): void {
-        patchState(store, { location: null, step: 'findLocation' });
+        patchState(store, { location: null, step: 'findLocation', findDraft: EMPTY_FIND_DRAFT });
+      },
+      /** Goes back from the find form to its location and keeps the choices. Without `keepPoint`, the crosshair aims again. */
+      editFindLocation(findDraft: FindDraft, keepPoint: boolean): void {
+        patchState(store, (state) => ({
+          findDraft,
+          step: 'findLocation' as const,
+          location: keepPoint ? state.location : null,
+        }));
       },
       startMarker(): void {
         patchState(store, { location: null, step: 'markerLocation' });

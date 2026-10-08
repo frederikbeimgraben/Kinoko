@@ -25,6 +25,7 @@ import {
   type Detent,
   type Drag,
 } from './sheet-snap';
+import { focusTargets, wrapTarget } from './sheet-focus';
 
 export type { Detent } from './sheet-snap';
 
@@ -82,6 +83,8 @@ export class SheetComponent {
   readonly detentChange = output<Detent>();
   readonly closed = output();
   readonly backClick = output();
+  /** The measured height of the sheet in px, 0 as a modal. */
+  readonly heightChange = output<number>();
 
   private readonly wide = inject(ViewportService).wide;
 
@@ -121,8 +124,9 @@ export class SheetComponent {
     afterNextRender(() => {
       const sheet = this.host.nativeElement.querySelector('.sheet');
       if (sheet === null || typeof ResizeObserver === 'undefined') return;
+      // A projected sheet stays alive after its overlay closes. Its detached node then reports 0 px.
       const observer = new ResizeObserver(() => {
-        this.applyInset();
+        if (sheet.isConnected) this.applyInset();
       });
       observer.observe(sheet);
       this.destroyRef.onDestroy(() => {
@@ -229,18 +233,14 @@ export class SheetComponent {
       return;
     }
     if (!(this.modal() || this.asModal()) || event.key !== 'Tab') return;
-    const targets = this.focusable();
-    if (targets.length === 0) return;
-    const first = targets[0];
-    const last = targets[targets.length - 1];
-    const active = document.activeElement;
-    if (event.shiftKey && active === first) {
-      last.focus();
-      event.preventDefault();
-    } else if (!event.shiftKey && active === last) {
-      first.focus();
-      event.preventDefault();
-    }
+    const target = wrapTarget(
+      focusTargets(this.host.nativeElement.querySelector('.sheet'), this.asModal()),
+      document.activeElement,
+      event.shiftKey,
+    );
+    if (target === null) return;
+    target.focus();
+    event.preventDefault();
   }
 
   /** The height before the drag is the measure: a content sheet already has its small height after the drag. */
@@ -283,14 +283,10 @@ export class SheetComponent {
     ];
   }
 
-  private focusable(): HTMLElement[] {
-    const chosen =
-      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    return Array.from(this.host.nativeElement.querySelectorAll<HTMLElement>(chosen));
-  }
-
   private applyInset(): void {
+    if (!this.host.nativeElement.isConnected) return;
     const height = this.wide() ? 0 : this.sheetHeight();
     document.documentElement.style.setProperty('--pilz-sheet-inset', `${height}px`);
+    this.heightChange.emit(height);
   }
 }

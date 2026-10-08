@@ -41,7 +41,8 @@ export interface UploadStart {
 
 /** The code of a failed request, for a text in the catalogue. */
 export function codeOf(failure: unknown): string {
-  if (failure instanceof PartFailure) return failure.retry ? 'network' : `status_${failure.status}`;
+  if (failure instanceof PartFailure)
+    return failure.retry ? 'network' : (failure.code ?? `status_${failure.status}`);
   const problem = failure as Partial<ProblemDetail> | null;
   return problem?.code ?? 'failed';
 }
@@ -111,4 +112,14 @@ export function followVersion(
     exhaustMap(() => api.version(version.kind, version.id).pipe(catchError(() => EMPTY))),
     takeWhile((next) => SETTLING.includes(next.state), true),
   );
+}
+
+/** Asks the server to drop a session. A failure changes nothing: the session expires. */
+export function dropSession(api: DataSourcesApi, id: string | null): Observable<null> {
+  return id === null ? of(null) : api.abort(id).pipe(catchError(() => of(null)));
+}
+
+/** The session that a cancel drops: the session of the upload, or the saved session of its kind. */
+export function ownedSession(state: UploadState, saved: ResumeRecord | null): string | null {
+  return state.uploadId ?? (saved !== null && saved.kind === state.kind ? saved.uploadId : null);
 }

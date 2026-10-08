@@ -71,11 +71,15 @@ export class LayersBodyComponent {
     return background === 'satellite' || background === 'topo' ? background : 'map';
   });
 
+  /** The style that the theme of the app gives. */
+  private readonly themeStyle = computed<MapStyle>(() =>
+    this.theme.effective() === 'hell' ? 'light' : 'dark',
+  );
+
   /** "Map" follows the theme of the app. "Light" and "dark" are fixed. */
   protected readonly style = computed<MapStyle>(() => {
     const background = this.state.background();
-    if (background === 'light' || background === 'dark') return background;
-    return this.theme.effective() === 'hell' ? 'light' : 'dark';
+    return background === 'light' || background === 'dark' ? background : this.themeStyle();
   });
 
   protected readonly styles = computed<SegmentOption[]>(() => [
@@ -121,12 +125,12 @@ export class LayersBodyComponent {
   ]);
 
   protected chooseGround(ground: Ground): void {
-    if (ground === this.ground()) return;
-    this.choose(ground === 'map' ? this.style() : ground);
+    if (ground !== this.ground()) this.choose(ground);
   }
 
+  // The style of the theme stores "map", so the map follows a later change of the theme again.
   protected chooseStyle(value: string): void {
-    if (value === 'light' || value === 'dark') this.choose(value);
+    if (value === 'light' || value === 'dark') this.choose(value === this.themeStyle() ? 'map' : value);
   }
 
   protected onOpacity(percent: number): void {

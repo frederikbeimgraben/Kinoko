@@ -1,15 +1,22 @@
-import { signal } from '@angular/core';
+import { signal, type Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { NEVER, of, type Observable } from 'rxjs';
 import { DataSourcesApi } from '../../../core/api/data-sources.api';
-import type { DataSourceDetail, DataSourceKind, DataSourceVersion } from '../../../core/api/models';
+import type {
+  DataSourceDetail,
+  DataSourceKind,
+  DataSourceVersion,
+  UploadSession,
+} from '../../../core/api/models';
 import { ANY_ROUTE } from '../../../testing/routes';
 import { SpeciesStore } from '../../species/species.store';
 import { DataSourceComponent } from './data-source.component';
 import { DataSourcesApiDouble, sourceOf, versionOf } from './data-sources.testing';
+import { FILE_HASHER } from './hash-file';
+import { UploadStore } from './upload.store';
 
 const SPECIES = [
   { id: 'boletus', name: 'Steinpilz' },
@@ -41,10 +48,15 @@ class DetailApiDouble extends DataSourcesApiDouble {
   }
 }
 
-async function build(kind: string, api: DataSourcesApiDouble = new DetailApiDouble()) {
+async function build(
+  kind: string,
+  api: DataSourcesApiDouble = new DetailApiDouble(),
+  extra: Provider[] = [],
+) {
   const map = convertToParamMap({ kind });
   await render(DataSourceComponent, {
     providers: [
+      ...extra,
       provideRouter(ANY_ROUTE),
       { provide: DataSourcesApi, useValue: api },
       { provide: SpeciesStore, useValue: { loadBundle: () => Promise.resolve(), species: signal(SPECIES) } },
@@ -109,6 +121,26 @@ describe('DataSourceComponent states', () => {
     expect(screen.getByText('Hochladen unterbrochen: big.parquet')).toBeInTheDocument();
     expect(screen.getByText('tiles.pmtiles')).toBeInTheDocument();
     expect(screen.getByText('Artefakte')).toBeInTheDocument();
+  });
+
+  it('reads the detail again when an upload of this kind ends', async () => {
+    const api = new DetailApiDouble();
+    const open = { id: 'upload-3', receivedBytes: 4, partSize: 4, state: 'open' } as UploadSession;
+    Object.assign(api, {
+      createUpload: () => of({ ...open, receivedBytes: 0 }),
+      append: () => of(open),
+      complete: () => of(versionOf('v-9', 9, 'validating')),
+    });
+    const hashed = { provide: FILE_HASHER, useValue: () => of({ hex: 'ab'.repeat(32) }) };
+    await build('trees-grid', api, [hashed]);
+    expect(api.filters).toHaveLength(1);
+
+    const file = new File([new Uint8Array(4)], 'trees.parquet', { lastModified: 1 });
+    TestBed.inject(UploadStore).start({ kind: 'trees-grid', file, activate: true });
+    TestBed.tick();
+
+    expect(TestBed.inject(UploadStore).phase()).toBe('done');
+    expect(api.filters).toHaveLength(2);
   });
 
   it('goes back to the list of data sources', async () => {

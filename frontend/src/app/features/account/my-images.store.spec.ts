@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { NEVER, of, throwError, type Observable } from 'rxjs';
 import { PhotosApi, type PhotoPage, type PhotoQuery } from '../../core/api/photos.api';
+import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { photo } from '../../testing/photos-fixture';
 import { MyImagesStore } from './my-images.store';
 
@@ -15,9 +16,14 @@ class PhotosApiDouble {
   }
 }
 
-function build(api = new PhotosApiDouble()): { store: MyImagesStore; api: PhotosApiDouble } {
-  TestBed.configureTestingModule({ providers: [{ provide: PhotosApi, useValue: api }] });
-  return { store: TestBed.inject(MyImagesStore), api };
+function build(
+  api = new PhotosApiDouble(),
+  auth = new AuthStub(),
+): { store: MyImagesStore; api: PhotosApiDouble; auth: AuthStub } {
+  TestBed.configureTestingModule({
+    providers: [{ provide: PhotosApi, useValue: api }, ...authStubProviders(auth)],
+  });
+  return { store: TestBed.inject(MyImagesStore), api, auth };
 }
 
 describe('MyImagesStore', () => {
@@ -82,5 +88,20 @@ describe('MyImagesStore', () => {
     expect(api.queries).toHaveLength(2);
     expect(store.busy()).toBe(true);
     expect(store.photos()?.map((one) => one.id)).toEqual(['a']);
+  });
+
+  it('forgets the photos of the last person after a sign-out', () => {
+    const { store, api, auth } = build();
+    api.answers = [() => of({ items: [photo({ id: 'a', findId: 'find-1' })], nextCursor: 'c2' })];
+    TestBed.tick();
+    store.load();
+    expect(store.loaded()).toBe(true);
+
+    auth.user.set(null);
+    TestBed.tick();
+
+    expect(store.photos()).toBeNull();
+    expect(store.more()).toBe(false);
+    expect(store.findIds().size).toBe(0);
   });
 });

@@ -120,6 +120,12 @@ describe('upload state machine', () => {
     expect(reduce(INITIAL_UPLOAD, { type: 'cancel' })).toBe(INITIAL_UPLOAD);
   });
 
+  it('keeps a completing upload on cancel, because the server installs the version', () => {
+    const completing: UploadState = { ...started, phase: 'completing' };
+
+    expect(reduce(completing, { type: 'cancel' })).toBe(completing);
+  });
+
   it('refuses a second start while an upload is active', () => {
     const other = { ...FILE, name: 'other.zip' };
 

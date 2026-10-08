@@ -67,7 +67,7 @@ export class ZoneSheetComponent implements OnDestroy {
   protected readonly deleteAsk = signal(false);
   protected readonly busy = signal(false);
   protected readonly editing = this.sheet.editing;
-  protected readonly editingCorners = signal(false);
+  protected readonly editingCorners = this.sheet.editingCorners;
   private readonly newCorners = signal<readonly Location[] | null>(null);
   private session: DrawSession | null = null;
 
@@ -120,7 +120,7 @@ export class ZoneSheetComponent implements OnDestroy {
     const map = this.adapter.rawMap();
     if (map === null) return;
     this.sheet.setEditing(false);
-    this.editingCorners.set(true);
+    this.sheet.setEditingCorners(true);
     this.session = await this.draw(map, colourHex(this.zone().colour));
     const ring = this.zone()
       .polygon.coordinates[0].slice(0, -1)
@@ -157,6 +157,6 @@ export class ZoneSheetComponent implements OnDestroy {
     this.session?.stop();
     this.session = null;
     this.newCorners.set(null);
-    this.editingCorners.set(false);
+    this.sheet.setEditingCorners(false);
   }
 }

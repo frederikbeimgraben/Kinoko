@@ -117,6 +117,15 @@ export class UploadSheetComponent {
     return this.text('admin.upload.resumeHint', { name: saved.name });
   });
 
+  /** An open session of this kind on the server that this browser cannot continue. It blocks a new upload. */
+  protected readonly blocking = computed(() => {
+    const kind = this.kind();
+    const detail = this.sources.detail();
+    const open = detail?.kind === kind ? (detail?.openUpload ?? null) : null;
+    if (open === null || this.running() || this.store.saved()?.uploadId === open.id) return null;
+    return { id: open.id, note: this.text('admin.upload.openHint', { name: open.fileName }) };
+  });
+
   protected readonly resumes = computed(() => {
     const file = this.picked();
     const kind = this.kind();
@@ -163,8 +172,21 @@ export class UploadSheetComponent {
   }
 
   protected cancel(): void {
-    this.store.cancel();
+    this.store.cancel({ onDone: () => this.refresh() });
     this.picked.set(null);
+  }
+
+  protected discard(): void {
+    const open = this.blocking();
+    if (open !== null) this.store.discard({ id: open.id, onDone: () => this.refresh() });
+  }
+
+  /** Reads the detail of this kind again, so that it shows the open session of the server. */
+  private refresh(): void {
+    const kind = this.kind();
+    if (kind !== null && this.sources.kind() === kind) {
+      this.sources.openDetail({ kind, speciesId: this.sources.speciesId() });
+    }
   }
 
   /** Opens the page of the new version and leaves the dialog ready for the next upload. */

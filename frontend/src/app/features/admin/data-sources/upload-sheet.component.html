@@ -43,6 +43,9 @@
           @if (resumeHint(); as hint) {
             <p class="upload__note">{{ hint }}</p>
           }
+          @if (blocking(); as open) {
+            <p class="upload__note">{{ open.note }}</p>
+          }
           @if (fileLine(); as file) {
             <app-row-group>
               <app-list-row icon="upload" [title]="file.name" [plain]="file.size" />
@@ -62,7 +65,7 @@
         }
       </div>
 
-      @if (running()) {
+      @if (running() && phase() !== 'completing') {
         <app-action-bar
           foot
           [primary]="(phase() === 'paused' ? 'admin.upload.resume' : 'admin.upload.pause') | t"
@@ -83,7 +86,17 @@
         <app-action-bar
           foot
           [primary]="(resumes() ? 'admin.upload.resume' : 'admin.upload.start') | t"
+          [secondary]="blocking() === null ? undefined : ('admin.upload.discard' | t)"
+          [secondaryDanger]="true"
           (primaryClick)="start()"
+          (secondaryClick)="discard()"
+        />
+      } @else if (!running() && phase() !== 'done' && blocking() !== null) {
+        <app-action-bar
+          foot
+          [primary]="'admin.upload.discard' | t"
+          [danger]="true"
+          (primaryClick)="discard()"
         />
       }
     </app-sheet>

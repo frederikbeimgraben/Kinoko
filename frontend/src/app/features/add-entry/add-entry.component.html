@@ -9,8 +9,9 @@
       <app-find-form
         [location]="state.location()!"
         [busy]="saving()"
+        [draft]="state.findDraft()"
         (submitted)="saveFind($event)"
-        (locationClick)="state.back()"
+        (locationClick)="editLocation($event)"
       />
     }
     @case ('markerForm') {

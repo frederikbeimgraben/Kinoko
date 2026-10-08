@@ -76,9 +76,29 @@ export function followLog(
   );
 }
 
-/** Adds a page of older versions to the held detail. */
+/** Adds a page of older versions to the held detail. The cursor is an offset, so a new version can repeat one. */
 export function withPage(held: DataSourceDetail | null, page: DataSourceDetail): DataSourceDetail {
-  return held === null
-    ? page
-    : { ...held, versions: [...held.versions, ...page.versions], nextCursor: page.nextCursor };
+  if (held === null) return page;
+  const fresh = page.versions.filter((one) => !held.versions.some((known) => known.id === one.id));
+  return { ...held, versions: [...held.versions, ...fresh], nextCursor: page.nextCursor };
+}
+
+/** Puts a new first page over the held detail. Older pages that `more` added stay after it. */
+export function withFirstPage(held: DataSourceDetail | null, first: DataSourceDetail): DataSourceDetail {
+  const last = first.versions.at(-1);
+  if (held === null || held.kind !== first.kind || first.nextCursor === null || last === undefined)
+    return first;
+  const at = held.versions.findIndex((one) => one.id === last.id);
+  return at < 0
+    ? first
+    : {
+        ...first,
+        versions: [...first.versions, ...held.versions.slice(at + 1)],
+        nextCursor: held.nextCursor,
+      };
+}
+
+/** Takes a removed version out of the held detail. */
+export function without(held: DataSourceDetail | null, id: string): DataSourceDetail | null {
+  return held === null ? null : { ...held, versions: held.versions.filter((one) => one.id !== id) };
 }

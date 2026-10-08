@@ -78,7 +78,11 @@ export class MyDataComponent {
 
   protected export(): void {
     const data = this.store.data();
-    if (data === null) return;
+    if (data === null) {
+      this.toasts.error(this.i18n.translate('state.loadFailed'));
+      this.store.refresh();
+      return;
+    }
     const format = this.format();
     const allowed = new Set(partsFor(format).filter((part) => this.parts().has(part)));
     const name = (id: string | null | undefined): string =>

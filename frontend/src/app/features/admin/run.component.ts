@@ -12,6 +12,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { ErrorStateComponent } from '../../ui/error-state/error-state.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { KIND_TEXT } from './data-sources/labels';
@@ -58,6 +59,7 @@ interface InputRow {
   selector: 'app-run',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ErrorStateComponent,
     LevelPillComponent,
     ListRowComponent,
     MonoComponent,
@@ -83,7 +85,8 @@ export class RunComponent {
     this.i18n.translate(key, values);
 
   protected readonly run = this.store.run;
-  protected readonly missing = this.store.failed;
+  protected readonly missing = this.store.missing;
+  protected readonly failed = this.store.failed;
 
   protected readonly title = computed(() => {
     const run = this.run();
@@ -141,6 +144,10 @@ export class RunComponent {
 
   constructor() {
     this.store.load(this.id);
+  }
+
+  protected retry(): void {
+    this.store.load(this.id());
   }
 
   protected openInput(kind: DataSourceKind | null): void {

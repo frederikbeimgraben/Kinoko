@@ -12,6 +12,8 @@ import { setFailed, setLoaded, setLoading, withLoadState } from '../../core/stat
 interface ImagesState {
   photos: readonly Photo[];
   cursor: string | null;
+  /** The query of the shown view. `null` before the first load. */
+  query: PhotoQuery | null;
   /** The share of the running upload. `null` means that no upload runs. */
   percent: number | null;
   /** True while a submission without network waits on the device. */
@@ -21,7 +23,7 @@ interface ImagesState {
 /** The photos of one view: load, submit, review and set the lead photo. */
 export const ImagesStore = signalStore(
   { providedIn: 'root' },
-  withState<ImagesState>({ photos: [], cursor: null, percent: null, queued: false }),
+  withState<ImagesState>({ photos: [], cursor: null, query: null, percent: null, queued: false }),
   withLoadState(),
   withProps(() => ({ _api: inject(PhotosApi), _sync: inject(SyncStore) })),
   withComputed(({ photos }) => ({
@@ -38,12 +40,13 @@ export const ImagesStore = signalStore(
     };
 
     return {
-      /** Gets a view again. A second query replaces the first. `null` waits for a query. */
+      /** Gets a view again. A second query replaces the first. `null` waits for a query.
+       * The photos of the old view go at the start, so that no view shows the photos of another. */
       load: rxMethod<PhotoQuery | null>(
         pipe(
           filter((query): query is PhotoQuery => query !== null),
-          tap(() => {
-            patchState(store, setLoading());
+          tap((query) => {
+            patchState(store, { photos: [], cursor: null, query }, setLoading());
           }),
           switchMap((query) =>
             store._api.list(query).pipe(

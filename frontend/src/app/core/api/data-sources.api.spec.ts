@@ -120,6 +120,13 @@ describe('partError', () => {
     }
   });
 
+  it('keeps the problem code of a refused part', () => {
+    const closed = new HttpErrorResponse({ status: 409, error: { code: 'upload_closed', title: 'closed' } });
+
+    expect(partError(closed)).toEqual(new PartFailure(409, false, 'upload_closed'));
+    expect((partError(failure(409)) as PartFailure).code).toBeUndefined();
+  });
+
   it('allows a new try after an error that is not an HTTP answer', () => {
     const error = partError(new Error('gone'));
 

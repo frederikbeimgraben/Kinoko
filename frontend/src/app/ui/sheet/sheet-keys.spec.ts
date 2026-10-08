@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { SheetComponent } from './sheet.component';
+
+const WIDE = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 @Component({
   imports: [SheetComponent],
@@ -37,6 +40,43 @@ describe('SheetComponent keys and axes', () => {
 
     expect(press(last).defaultPrevented).toBe(true);
     expect(document.activeElement).toBe(handle);
+  });
+
+  it('keeps the modal trap inside the section and skips the scrim and the hidden grip', async () => {
+    const { container } = await render(ModalHostComponent, { providers: [WIDE] });
+    const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
+    const first = container.querySelector<HTMLElement>('.overlay-head__close');
+    if (first === null) throw new Error('The close button is missing.');
+    const last = screen.getByRole('button', { name: 'last' });
+
+    expect(scrim?.getAttribute('tabindex')).toBe('-1');
+    first.focus();
+    expect(press(first, true).defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(last);
+    expect(press(last).defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(first);
+  });
+
+  it('brings the focus back into the section on Shift+Tab from the section itself', async () => {
+    const { container } = await render(ModalHostComponent, { providers: [WIDE] });
+    const section = container.querySelector<HTMLElement>('section.sheet');
+    if (section === null) throw new Error('The section is missing.');
+
+    section.focus();
+
+    expect(press(section, true).defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'last' }));
+  });
+
+  it('keeps the inset of the open sheet when a closed sheet leaves the page', async () => {
+    const { fixture } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
+    const root = document.documentElement.style;
+    root.setProperty('--pilz-sheet-inset', '42px');
+
+    (fixture.nativeElement as HTMLElement).remove();
+    (fixture.componentInstance as unknown as { applyInset(): void }).applyInset();
+
+    expect(root.getPropertyValue('--pilz-sheet-inset')).toBe('42px');
   });
 
   it('leaves Tab alone inside the order and other keys alone', async () => {

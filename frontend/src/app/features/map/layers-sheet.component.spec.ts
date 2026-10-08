@@ -5,6 +5,9 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { LayersBodyComponent } from './layers-body.component';
 import { LayersSheetComponent } from './layers-sheet.component';
+import { patchState } from '@ngrx/signals';
+import { unprotected } from '@ngrx/signals/testing';
+import { ThemeStore } from '../../core/theme/theme.store';
 import { MapStore } from './map.store';
 import { MapView } from './map.view';
 
@@ -63,6 +66,21 @@ describe('LayersBodyComponent', () => {
 
     await userEvent.click(screen.getByText('Gelände'));
     expect(store.background()).toBe('dark');
+  });
+
+  it('follows the app theme again when the style of the theme is chosen', async () => {
+    const theme = { provide: ThemeStore, useValue: { effective: signal('hell') } };
+    await render(LayersBodyComponent, { providers: [VIEW, theme] });
+    const store = TestBed.inject(MapStore);
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Dunkel' }));
+    expect(store.background()).toBe('dark');
+    await userEvent.click(screen.getByRole('tab', { name: 'Hell' }));
+    expect(store.background()).toBe('map');
+
+    patchState(unprotected(store), { background: 'satellite' });
+    await userEvent.click(screen.getByText('Karte'));
+    expect(store.background()).toBe('map');
   });
 
   it('writes the opacity as a share', async () => {

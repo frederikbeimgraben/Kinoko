@@ -63,8 +63,10 @@ export class ImageQueueComponent {
   constructor() {
     void this.species.loadBundle();
     this.images.load({ state: 'submitted' });
+    // Only the answer to the queue query fills the stack, not the photos of an earlier view.
     effect(() => {
       const photos = this.images.photos();
+      if (!this.images.loaded() || this.images.query()?.state !== 'submitted') return;
       if (photos.length === 0 || untracked(() => this.held().length) > 0) return;
       this.held.set(photos);
     });

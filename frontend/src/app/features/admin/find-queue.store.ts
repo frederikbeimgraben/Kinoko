@@ -36,6 +36,19 @@ export interface ReviewWrite {
   readonly decision: Decision;
 }
 
+/** Puts the find `id` back as the first open card after a failed decision. Other decisions stay. */
+export function restored(
+  stack: readonly OpenFind[] | null,
+  decided: number,
+  id: string,
+): Pick<FindQueueState, 'stack' | 'decided'> | null {
+  const all = stack ?? [];
+  const index = all.findIndex((one) => one.id === id);
+  if (index < 0 || index >= decided) return null;
+  const rest = all.filter((one) => one.id !== id);
+  return { stack: [...rest.slice(0, decided - 1), all[index], ...rest.slice(decided - 1)], decided: decided - 1 };
+}
+
 /** The review queue of the finds, with the photos of each find. */
 export const FindQueueStore = signalStore(
   { providedIn: 'root' },
@@ -109,7 +122,14 @@ export const FindQueueStore = signalStore(
           mergeMap((request) =>
             store._api
               .review(request.id, request.decision)
-              .pipe(tapResponse({ next: () => undefined, error: () => undefined })),
+              .pipe(
+                tapResponse({
+                  next: () => undefined,
+                  error: () => {
+                    patchState(store, ({ stack, decided }) => restored(stack, decided, request.id) ?? {});
+                  },
+                }),
+              ),
           ),
         ),
       ),

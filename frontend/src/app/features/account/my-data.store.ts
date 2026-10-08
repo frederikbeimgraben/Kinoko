@@ -9,7 +9,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, of, pipe, switchMap, tap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { catchError, map, of, pipe, skip, switchMap, tap } from 'rxjs';
 import { AccessApi } from '../../core/api/access.api';
 import type { AccountExport } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
@@ -30,6 +31,8 @@ export interface DataCounts {
 interface MyDataState {
   /** `null` while the export is not known. */
   data: AccountExport | null;
+  /** True when the last read of the export failed. */
+  failed: boolean;
   deleting: boolean;
 }
 
@@ -47,7 +50,7 @@ export function countsOf(data: AccountExport): DataCounts {
 /** The own data of the account: the counts, the export and the full delete. */
 export const MyDataStore = signalStore(
   { providedIn: 'root' },
-  withState<MyDataState>({ data: null, deleting: false }),
+  withState<MyDataState>({ data: null, failed: false, deleting: false }),
   withProps(() => ({
     _api: inject(AccessApi),
     _auth: inject(AuthService),
@@ -63,17 +66,29 @@ export const MyDataStore = signalStore(
     }),
   })),
   withMethods((store) => ({
-    /** Reads the export when a person is signed in. A failure keeps the last known data. */
-    _follow: rxMethod<boolean>(
+    /** Reads the export for a signed-in person and forgets it after a sign-out.
+     * A failure keeps the last known data. */
+    _read: rxMethod<boolean>(
       pipe(
         switchMap((signedIn) =>
-          signedIn ? store._api.exportData().pipe(catchError(() => of(undefined))) : of(null),
+          signedIn
+            ? store._api.exportData().pipe(
+                map((data): Partial<MyDataState> => ({ data, failed: false })),
+                catchError(() => of<Partial<MyDataState>>({ failed: true })),
+              )
+            : of<Partial<MyDataState>>({ data: null, failed: false }),
         ),
-        tap((data) => {
-          if (data !== undefined) patchState(store, { data });
+        tap((change) => {
+          patchState(store, change);
         }),
       ),
     ),
+  })),
+  withMethods((store) => ({
+    /** Reads the export again, so that the counts and the file show the current data. */
+    refresh(): void {
+      store._read(store._auth.signedIn());
+    },
 
     /** Deletes all own data in the service and on the device. True on success. */
     async deleteAll(): Promise<boolean> {
@@ -96,7 +111,8 @@ export const MyDataStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      store._follow(store._auth.signedIn);
+      // The pages call `refresh` when they open. The hook only follows later sign-ins and sign-outs.
+      store._read(toObservable(store._auth.signedIn).pipe(skip(1)));
     },
   }),
 );

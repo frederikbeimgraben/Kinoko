@@ -1,11 +1,13 @@
 import { TestBed } from '@angular/core/testing';
+import { throwError } from 'rxjs';
+import type { OpenFind } from '../../core/api/models';
 import {
   FindPhotosApiDouble,
   FindsApiDouble,
   findPhotosApiProvider,
   findsApiProvider,
 } from '../../testing/open-finds-fixture';
-import { FindQueueStore } from './find-queue.store';
+import { FindQueueStore, restored } from './find-queue.store';
 
 function build(): { store: FindQueueStore; api: FindsApiDouble; photos: FindPhotosApiDouble } {
   const api = new FindsApiDouble();
@@ -59,6 +61,25 @@ describe('FindQueueStore', () => {
     store.undo();
 
     expect(store.decided()).toBe(0);
+  });
+
+  it('puts the find back as the next open card when the decision fails', () => {
+    const { store, api } = build();
+    store.load();
+    vi.spyOn(api, 'review').mockReturnValueOnce(throwError(() => new Error('offline')));
+
+    store.review({ id: 'fund-eins', decision: 'accepted' });
+
+    expect(store.decided()).toBe(0);
+    expect(store.open().map((one) => one.id)).toEqual(['fund-eins', 'fund-zwei']);
+  });
+
+  it('keeps the other decisions when an earlier decision fails', () => {
+    const finds = ['a', 'b', 'c', 'd'].map((id) => ({ id }) as OpenFind);
+
+    expect(restored(finds, 3, 'a')?.stack?.map((one) => one.id)).toEqual(['b', 'c', 'a', 'd']);
+    expect(restored(finds, 3, 'a')?.decided).toBe(2);
+    expect(restored(finds, 1, 'c')).toBeNull();
   });
 
   it('empties the stack when all finds are accepted', () => {

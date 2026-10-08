@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, untracked } from '@angular/core';
 import { Router } from '@angular/router';
 import { DATA_SOURCE_KINDS, type DataSourceKind } from '../../../core/api/models';
 import { I18nService } from '../../../core/i18n/i18n.service';
@@ -126,6 +126,12 @@ export class DataSourceComponent {
     return this.text('admin.dataSources.openUpload', { name: open.fileName });
   });
 
+  /** The id of the version that the last upload of this kind made. */
+  private readonly uploadedId = computed(() => {
+    const version = this.uploads.upload().version;
+    return version !== null && version.kind === this.kind() ? version.id : null;
+  });
+
   protected readonly perSpecies = computed(() => this.detail()?.perSpecies === true);
   protected readonly speciesId = this.store.speciesId;
 
@@ -155,6 +161,14 @@ export class DataSourceComponent {
       computed(() => {
         const kind = this.kind();
         return kind === null ? null : { kind, speciesId: null };
+      }),
+    );
+    // The upload sheet stays on this URL, so the route does not load the detail again after an upload.
+    this.store.openDetail(
+      computed(() => {
+        const kind = this.kind();
+        const version = this.uploadedId();
+        return kind === null || version === null ? null : { kind, speciesId: untracked(this.speciesId) };
       }),
     );
     void this.species.loadBundle();

@@ -422,6 +422,25 @@ describe('EintragenComponent', () => {
     });
   });
 
+  it('aims again with the crosshair on the phone and keeps the form choices on a return to the location', async () => {
+    const setup = await build();
+    setup.map.pointPoint = [9.11, 48.61];
+    await openFindForm(setup);
+    await userEvent.type(screen.getByLabelText('Notiz'), 'Unter Fichten');
+
+    await userEvent.click(screen.getByRole('button', { name: /^Ort/ }));
+    setup.refresh();
+    expect(setup.flow.step()).toBe('findLocation');
+    expect(setup.flow.location()).toBeNull();
+
+    setup.map.pointPoint = [9.2, 48.7];
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
+    setup.refresh();
+
+    expect(setup.flow.location()).toEqual([9.2, 48.7]);
+    expect(screen.getByLabelText('Notiz')).toHaveValue('Unter Fichten');
+  });
+
   it('räumt den Ablauf weg, wenn der Reiter Karte schließt, ohne die Geschichte zu bewegen', async () => {
     const setup = await build();
     await start(setup, 'Fund melden');

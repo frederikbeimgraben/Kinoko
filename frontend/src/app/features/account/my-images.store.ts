@@ -1,9 +1,18 @@
 import { computed, inject } from '@angular/core';
-import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withHooks,
+  withMethods,
+  withProps,
+  withState,
+} from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, exhaustMap, of, pipe, tap } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, expand, of, pipe, reduce, skip, switchMap, tap } from 'rxjs';
 import type { Photo } from '../../core/api/models';
 import { PhotosApi, type PhotoPage } from '../../core/api/photos.api';
+import { AuthService } from '../../core/auth';
 
 interface MyImagesState {
   /** `null` while the first page is pending. */
@@ -17,7 +26,10 @@ interface MyImagesState {
 export const MyImagesStore = signalStore(
   { providedIn: 'root' },
   withState<MyImagesState>({ photos: null, cursor: null, busy: false }),
-  withProps(() => ({ _api: inject(PhotosApi) })),
+  withProps(() => {
+    const auth = inject(AuthService);
+    return { _api: inject(PhotosApi), _account: computed(() => auth.user()?.sub ?? null) };
+  }),
   withComputed(({ photos, cursor }) => ({
     loaded: computed(() => photos() !== null),
     more: computed(() => cursor() !== null),
@@ -51,6 +63,38 @@ export const MyImagesStore = signalStore(
       ),
     );
     return {
+      /** Forgets the photos when another person signs in or the person signs out. */
+      _reset: rxMethod<string | null>(
+        pipe(
+          skip(1),
+          tap(() => {
+            patchState(store, { photos: null, cursor: null });
+          }),
+        ),
+      ),
+      /** Reads all pages again, for a filter that must know each own photo. */
+      loadAll: rxMethod<void>(
+        pipe(
+          tap(() => {
+            patchState(store, { busy: true });
+          }),
+          switchMap(() =>
+            store._api.list({ mine: true }).pipe(
+              expand((answer) =>
+                answer.nextCursor === null ? EMPTY : store._api.list({ mine: true, cursor: answer.nextCursor }),
+              ),
+              reduce<PhotoPage, readonly Photo[]>((all, answer) => [...all, ...answer.items], []),
+              tap((photos) => {
+                patchState(store, { photos, cursor: null, busy: false });
+              }),
+              catchError(() => {
+                patchState(store, ({ photos }) => ({ busy: false, photos: photos ?? [] }));
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
+      ),
       /** Reads the first page again. */
       load(): void {
         page({ fresh: true });
@@ -59,6 +103,11 @@ export const MyImagesStore = signalStore(
         if (store.more()) page({ fresh: false });
       },
     };
+  }),
+  withHooks({
+    onInit(store) {
+      store._reset(store._account);
+    },
   }),
 );
 

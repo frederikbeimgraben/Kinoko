@@ -52,6 +52,8 @@
     }
   } @else if (missing()) {
     <app-state-view icon="search" [title]="'admin.run.notFound' | t" />
+  } @else if (failed()) {
+    <app-error-state [text]="'state.loadFailed' | t" (retry)="retry()" />
   } @else {
     <app-row-group-skeleton [count]="3" trail="value" />
     <app-row-group-skeleton [count]="5" [label]="true" [lines]="2" trail="badge" />

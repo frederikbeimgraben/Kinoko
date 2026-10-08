@@ -6,8 +6,8 @@ import { MapStore, type ObjectKind } from '../map/map.store';
 /** The object over the map, with the way back through the address bar. */
 export const ObjectSheetStore = signalStore(
   { providedIn: 'root' },
-  /** The form of the object. It is higher than the view, as on the board. */
-  withState({ editing: false }),
+  /** The form of the object, and the zone corners that the finger moves on the map. */
+  withState({ editing: false, editingCorners: false }),
   withProps(() => {
     const map = inject(MapStore);
     return { _stack: inject(OverlayStackService), _map: map, open: map.object };
@@ -16,21 +16,24 @@ export const ObjectSheetStore = signalStore(
     setEditing(editing: boolean): void {
       patchState(store, { editing });
     },
+    setEditingCorners(editingCorners: boolean): void {
+      patchState(store, { editingCorners });
+    },
     /** Opens an object. The back gesture of the browser closes it. */
     show(kind: ObjectKind, id: string): void {
       const first = store._map.object() === null;
-      patchState(store, { editing: false });
+      patchState(store, { editing: false, editingCorners: false });
       store._map.setObject({ kind, id });
       if (first) {
         store._stack.open(() => {
-          patchState(store, { editing: false });
+          patchState(store, { editing: false, editingCorners: false });
           store._map.setObject(null);
         });
       }
     },
     close(): void {
       if (store._map.object() === null) return;
-      patchState(store, { editing: false });
+      patchState(store, { editing: false, editingCorners: false });
       store._map.setObject(null);
       store._stack.back();
     },

@@ -1,10 +1,16 @@
-<app-overlay-host class="object" [open]="map.object() !== null" [modal]="true" (closed)="close()">
+<app-overlay-host
+  class="object"
+  [class.object--corners]="editingCorners()"
+  [open]="map.object() !== null"
+  [modal]="!editingCorners()"
+  (closed)="close()"
+>
   <app-sheet
     appSheetHeight
     class="object__sheet"
     [label]="sheetName()"
     [title]="headTitle()"
-    [modal]="true"
+    [modal]="!editingCorners()"
     [dismissible]="true"
     (closed)="dismiss()"
   >

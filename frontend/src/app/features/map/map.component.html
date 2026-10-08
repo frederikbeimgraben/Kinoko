@@ -70,6 +70,7 @@
           [detent]="state.detent()"
           [detents]="detents"
           (detentChange)="state.setDetent($event)"
+          (heightChange)="mapSheetHeight.set($event)"
         >
           <app-map-panel
             class="map__panel"

@@ -63,7 +63,15 @@
         <app-action-bar foot [primary]="'common.apply' | t" (primaryClick)="chooseSpecies()" />
       }
       @case ('combinations') {
-        <app-action-bar foot [primary]="'common.apply' | t" (primaryClick)="pick()" />
+        <app-action-bar
+          foot
+          [primary]="'common.apply' | t"
+          [secondary]="draftCombination() === null ? undefined : ('common.delete' | t)"
+          secondaryIcon="trash"
+          [secondaryDanger]="true"
+          (primaryClick)="pick()"
+          (secondaryClick)="deleteAsk.set(true)"
+        />
       }
       @case ('save') {
         <app-action-bar foot [primary]="'common.save' | t" (primaryClick)="confirmName()" />
@@ -74,3 +82,13 @@
     }
   </app-sheet>
 </app-overlay-host>
+<app-confirm-dialog
+  [open]="deleteAsk()"
+  [meta]="draftCombination()?.name ?? undefined"
+  [aboveNav]="!wide()"
+  [stageScrim]="!wide()"
+  [title]="'map.combination.deleteTitle' | t"
+  [confirmLabel]="'common.delete' | t"
+  (confirmed)="deleteCombination()"
+  (cancelled)="deleteAsk.set(false)"
+/>

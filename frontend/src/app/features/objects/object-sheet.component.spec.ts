@@ -23,6 +23,7 @@ import { SpeciesStore } from '../species/species.store';
 import { EntriesStore } from '../entries/entries.store';
 import { MapStore } from '../map/map.store';
 import { ObjectSheetComponent } from './object-sheet.component';
+import { ObjectSheetStore } from './object-sheet.store';
 
 interface Setup {
   container: Element;
@@ -190,6 +191,22 @@ describe('ObjektBlattComponent', () => {
     setup.refresh();
 
     expect(setup.container.querySelector('.overlay__scrim--modal')).not.toBeNull();
+  });
+
+  it('keeps the map bright and lets taps through to it while zone corners move', async () => {
+    const setup = await build();
+    setup.state.setObject({ kind: 'zone', id: ZONE.id });
+    setup.refresh();
+    expect(setup.container.querySelector('.overlay__scrim--modal')).not.toBeNull();
+
+    TestBed.inject(ObjectSheetStore).setEditingCorners(true);
+    setup.refresh();
+
+    expect(setup.container.querySelector('.overlay__scrim--modal')).toBeNull();
+    expect(setup.container.querySelector('app-overlay-host')).toHaveClass('object--corners');
+    const scrim = setup.container.querySelector('.overlay__scrim');
+    if (scrim === null) throw new Error('The scrim is missing.');
+    expect(getComputedStyle(scrim).pointerEvents).toBe('none');
   });
 
   it('trägt im Formular den Titel des Formulars und den Ort im Kopf', async () => {

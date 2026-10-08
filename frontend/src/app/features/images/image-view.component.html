@@ -39,6 +39,8 @@
           }
         </app-row-group>
       </app-section>
+    } @else if (missing()) {
+      <app-state-view icon="search" [title]="'image.notFound' | t" />
     } @else {
       <app-skeleton kind="block" radius="var(--r-sheet)" [height]="heroHeight() + 'px'" />
       <app-skeleton kind="block" radius="var(--r-item)" height="64px" />

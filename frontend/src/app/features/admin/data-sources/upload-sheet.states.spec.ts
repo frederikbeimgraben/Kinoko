@@ -217,4 +217,45 @@ describe('UploadSheetComponent states', () => {
     expect(closed).toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledWith(['/verwaltung/datenquellen', 'trees-grid']);
   });
+
+  it('offers to discard an open session of the server that this browser cannot continue', async () => {
+    const api = new SheetApiDouble();
+    const open = api.session('upload-other');
+    const reads = { count: 0 };
+    api.detail = (kind) => {
+      reads.count++;
+      return of({
+        ...sourceOf(kind),
+        versions: [],
+        nextCursor: null,
+        openUpload: reads.count > 1 ? null : open,
+      });
+    };
+    const { view } = await build(api);
+    TestBed.inject(DataSourcesStore).openDetail({ kind: 'trees-grid' });
+    view.detectChanges();
+
+    expect(screen.getByText('Auf dem Server ist ein Hochladen von trees.parquet offen.')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Offenes Hochladen verwerfen' }));
+
+    expect(api.aborted).toEqual(['upload-other']);
+    expect(reads.count).toBe(2);
+    expect(screen.queryByRole('button', { name: 'Offenes Hochladen verwerfen' })).not.toBeInTheDocument();
+  });
+
+  it('shows no cancel while the server completes the upload', async () => {
+    const api = new SheetApiDouble();
+    api.appendAnswer = () => of(api.session('upload-9', 10));
+    const hashed = { provide: FILE_HASHER, useValue: () => of({ hex: 'cd'.repeat(32) }) };
+    await render(UploadSheetComponent, {
+      inputs: { kind: 'trees-grid' },
+      providers: [provideRouter(ANY_ROUTE), { provide: DataSourcesApi, useValue: api }, hashed],
+    });
+    await userEvent.upload(screen.getByLabelText(DROP), trees());
+    await userEvent.click(screen.getByRole('button', { name: 'Hochladen' }));
+    TestBed.tick();
+
+    expect(await screen.findByText('Wird abgeschlossen …')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
+  });
 });

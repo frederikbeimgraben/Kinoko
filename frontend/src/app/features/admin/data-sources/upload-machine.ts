@@ -91,6 +91,7 @@ export const INITIAL_UPLOAD: UploadState = {
 };
 
 const ACTIVE: readonly UploadPhase[] = ['creating', 'sending', 'retrying', 'paused', 'completing'];
+const CANCELLABLE: readonly UploadPhase[] = ['creating', 'sending', 'retrying', 'paused', 'failed'];
 
 /** True while an upload holds a session: a new upload must wait. */
 export function isActive(phase: UploadPhase): boolean {
@@ -159,7 +160,8 @@ export function reduce(state: UploadState, event: UploadEvent): UploadState {
     case 'failed':
       return isActive(state.phase) ? { ...state, phase: 'failed', error: event.code } : state;
     case 'cancel':
-      return isActive(state.phase) || state.phase === 'failed' ? { ...state, phase: 'cancelled' } : state;
+      // The server installs the version after the complete request, so a cancel cannot stop it.
+      return CANCELLABLE.includes(state.phase) ? { ...state, phase: 'cancelled' } : state;
     case 'reset':
       return isActive(state.phase) ? state : INITIAL_UPLOAD;
   }

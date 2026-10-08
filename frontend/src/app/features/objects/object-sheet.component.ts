@@ -106,6 +106,8 @@ export class ObjectSheetComponent {
   );
 
   protected readonly editing = this.sheet.editing;
+  /** While the finger moves zone corners, the map stays bright and takes each tap. */
+  protected readonly editingCorners = this.sheet.editingCorners;
 
   constructor() {
     // A tap on an object moves the map to it. The tap on the map and the tap on an entry row use this path.

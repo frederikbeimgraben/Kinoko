@@ -1,10 +1,12 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import type { Zone } from '../../core/api/models';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { withStorageSync } from '../../core/state';
 import { cachedFetch, TILE_CACHE } from '../../core/tiles/tile-cache';
 import { layerFolders } from '../../core/tiles/layers';
 import { TileService } from '../../core/tiles/tile.service';
+import { ToastService } from '../../ui/toast/toast.service';
 import { areaTilePaths, MEAN_TILE_BYTES, polygonBounds, type TileSource } from './offline-tiles';
 
 /** A zone whose tiles are on the device. */
@@ -51,16 +53,36 @@ function batches<T>(items: readonly T[], size: number): T[][] {
   );
 }
 
-/** Loads the tiles into the tile cache and gives the bytes that arrived. A failed tile counts zero. */
-async function loadTiles(urls: readonly string[]): Promise<number> {
-  const size = async (url: string): Promise<number> => {
-    const reply = await cachedFetch(url, 'image').catch(() => null);
-    return reply === null ? 0 : (await reply.blob()).size;
-  };
-  return batches(urls, PARALLEL).reduce<Promise<number>>(async (sum, batch) => {
-    const sizes = await Promise.all(batch.map(size));
-    return (await sum) + sizes.reduce((total, one) => total + one, 0);
-  }, Promise.resolve(0));
+/** The result of a tile download. */
+interface Loaded {
+  readonly bytes: number;
+  /** The number of tiles that arrived. */
+  readonly count: number;
+}
+
+/** Gives the size of one tile, `null` when it did not arrive. */
+async function loadTile(url: string): Promise<number | null> {
+  try {
+    const reply = await cachedFetch(url, 'image');
+    return reply === null ? null : (await reply.blob()).size;
+  } catch {
+    return null;
+  }
+}
+
+/** Loads the tiles into the tile cache and gives the bytes and the number of tiles that arrived. */
+async function loadTiles(urls: readonly string[]): Promise<Loaded> {
+  return batches(urls, PARALLEL).reduce<Promise<Loaded>>(
+    async (sum, batch) => {
+      const sizes = (await Promise.all(batch.map(loadTile))).filter((one) => one !== null);
+      const before = await sum;
+      return {
+        bytes: before.bytes + sizes.reduce((total, one) => total + one, 0),
+        count: before.count + sizes.length,
+      };
+    },
+    Promise.resolve({ bytes: 0, count: 0 }),
+  );
 }
 
 /** Removes tiles from the tile cache. A context without Cache Storage has nothing to remove. */
@@ -84,7 +106,11 @@ export const OfflineAreasStore = signalStore(
     select: (state) => state.areas,
     restore: restoreAreas,
   }),
-  withProps(() => ({ _tiles: inject(TileService) })),
+  withProps(() => ({
+    _tiles: inject(TileService),
+    _i18n: inject(I18nService),
+    _toasts: inject(ToastService),
+  })),
   withComputed(({ areas, _tiles }) => ({
     totalBytes: computed(() => areas().reduce((total, area) => total + area.bytes, 0)),
     /** The folders and zoom levels that an area takes. */
@@ -137,18 +163,26 @@ export const OfflineAreasStore = signalStore(
         return pathsOf(zone).length * MEAN_TILE_BYTES;
       },
 
-      /** Loads the tiles of a zone. A second call while one runs has no effect. */
+      /** Loads the tiles of a zone. A second call while one runs has no effect.
+       * When no tile arrives, the area does not go on the device and a toast tells the user. */
       async add(zone: Zone): Promise<void> {
         if (store.loading() !== null) return;
         patchState(store, { loading: zone.id });
-        await store._tiles.loadLayers();
-        const paths = pathsOf(zone);
-        const bytes = await loadTiles(paths.map((path) => store._tiles.url(path)));
-        const area: OfflineArea = { id: zone.id, name: zone.name, areaHa: zone.areaHa, bytes, paths };
-        patchState(store, ({ areas }) => ({
-          areas: [...areas.filter((one) => one.id !== zone.id), area],
-          loading: null,
-        }));
+        try {
+          await store._tiles.loadLayers();
+          const paths = pathsOf(zone);
+          const { bytes, count } = await loadTiles(paths.map((path) => store._tiles.url(path)));
+          if (count === 0) {
+            store._toasts.error(store._i18n.translate('area.failed'));
+            return;
+          }
+          const area: OfflineArea = { id: zone.id, name: zone.name, areaHa: zone.areaHa, bytes, paths };
+          patchState(store, ({ areas }) => ({ areas: [...areas.filter((one) => one.id !== zone.id), area] }));
+        } catch {
+          store._toasts.error(store._i18n.translate('area.failed'));
+        } finally {
+          patchState(store, { loading: null });
+        }
       },
 
       /** Removes an area and the tiles that no other area uses. */

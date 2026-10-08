@@ -104,7 +104,8 @@ export class MyImagesComponent {
       thumb: photoPath(photo.id, 'list'),
       badge: this.i18n.translate(state.badge),
       kind: state.kind,
-      link: entry ? ['/arten', entry.slug, 'bilder', photo.id] : null,
+      // The image view shows only approved photos.
+      link: entry && photo.state === 'approved' ? ['/arten', entry.slug, 'bilder', photo.id] : null,
     };
   }
 }

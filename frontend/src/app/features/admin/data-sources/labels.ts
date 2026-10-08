@@ -110,6 +110,7 @@ export const META_TEXT: Readonly<Record<string, TranslationKey>> = {
 /** The upload error codes with a text in the catalogue. */
 export const UPLOAD_ERROR_TEXT: Readonly<Record<string, TranslationKey>> = {
   upload_open: 'admin.upload.error.upload_open',
+  upload_closed: 'admin.upload.error.upload_closed',
   too_large: 'admin.upload.error.too_large',
   disk_full: 'admin.upload.error.disk_full',
   checksum_mismatch: 'admin.upload.error.checksum_mismatch',

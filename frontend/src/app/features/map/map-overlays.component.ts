@@ -15,6 +15,7 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { histogramFor, type Layer } from '../../core/tiles/layers';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
@@ -50,6 +51,7 @@ export function overlayDetent(open: Overlay): Detent {
   imports: [
     ActionBarComponent,
     CombinationsComponent,
+    ConfirmDialogComponent,
     FactorSheetComponent,
     FormFieldComponent,
     LayerPickComponent,
@@ -96,11 +98,8 @@ export class MapOverlaysComponent {
 
   protected readonly name = signal('');
 
-  /** The species in the sheet. "Apply" takes it, the close button drops it. */
-  protected readonly draftSpecies = linkedSignal<string | null>(() => this.view.species()?.value ?? null);
-
-  /** The saved combination in the sheet. It starts with the one that the map shows. */
-  protected readonly draftCombination = linkedSignal<Combination | null>(() => {
+  /** The saved combination that the map shows. */
+  private readonly shownCombination = computed<Combination | null>(() => {
     const shown = encodeFactors(this.combination.factors());
     return (
       this.combination
@@ -108,6 +107,22 @@ export class MapOverlaysComponent {
         .find((saved) => encodeFactors((saved.factors ?? []).map(fromWire)) === shown) ?? null
     );
   });
+
+  // Each open or close starts the drafts again, so a cancelled choice does not come back.
+  /** The species in the sheet. "Apply" takes it, the close button drops it. */
+  protected readonly draftSpecies = linkedSignal({
+    source: () => ({ open: this.open(), slug: this.view.species()?.value ?? null }),
+    computation: ({ slug }): string | null => slug,
+  });
+
+  /** The saved combination in the sheet. It starts with the one that the map shows. */
+  protected readonly draftCombination = linkedSignal({
+    source: () => ({ open: this.open(), shown: this.shownCombination() }),
+    computation: ({ shown }): Combination | null => shown,
+  });
+
+  /** The delete of the chosen saved combination waits for a confirmation. */
+  protected readonly deleteAsk = signal(false);
 
   protected readonly histogram = computed(() => {
     const layer = this.factorLayer();
@@ -129,6 +144,14 @@ export class MapOverlaysComponent {
     const chosen = this.draftCombination();
     if (chosen !== null) this.combination.pick(chosen);
     this.closed.emit();
+  }
+
+  protected async deleteCombination(): Promise<void> {
+    const chosen = this.draftCombination();
+    this.deleteAsk.set(false);
+    if (chosen === null) return;
+    this.draftCombination.set(null);
+    await this.combination.delete(chosen);
   }
 
   protected confirmName(): void {

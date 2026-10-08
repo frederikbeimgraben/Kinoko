@@ -74,6 +74,12 @@ describe('MyImagesComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/arten', 'steinpilz', 'bilder', 'image-one']);
   });
 
+  it('gives no link to a photo that is not approved', async () => {
+    await build([photo({ id: 'image-two', speciesId: 'steinpilz', state: 'submitted' })]);
+
+    expect(screen.queryByRole('button', { name: /Steinpilz/ })).not.toBeInTheDocument();
+  });
+
   it('shows the empty state without a photo', async () => {
     await build([]);
 

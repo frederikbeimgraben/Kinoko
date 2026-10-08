@@ -43,6 +43,20 @@ describe('ObjectSheetStore', () => {
     expect(back).toHaveBeenCalledTimes(1);
   });
 
+  it('ends the corner editing on close and on a new object', () => {
+    const { state } = build();
+    vi.spyOn(TestBed.inject(OverlayStackService), 'back').mockImplementation(() => undefined);
+    state.show('zone', 'zone-eins');
+    state.setEditingCorners(true);
+
+    state.show('zone', 'zone-zwei');
+    expect(state.editingCorners()).toBe(false);
+
+    state.setEditingCorners(true);
+    state.close();
+    expect(state.editingCorners()).toBe(false);
+  });
+
   it('does not go back without an open object', () => {
     const { state, stack } = build();
     const back = vi.spyOn(stack, 'back').mockImplementation(() => undefined);

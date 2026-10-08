@@ -28,6 +28,8 @@ import { patchState } from '@ngrx/signals';
 import { unprotected } from '@ngrx/signals/testing';
 import { MapComponent } from './map.component';
 import { MapStore } from './map.store';
+import { By } from '@angular/platform-browser';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 @Component({
   selector: 'app-router-stub',
@@ -56,6 +58,7 @@ interface Harness {
   container: HTMLElement;
   auth: AuthStub;
   net: HttpTestingController;
+  sheet: () => SheetComponent;
 }
 
 async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
@@ -84,7 +87,9 @@ async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
   };
   await navigate('/karte');
   await stable();
-  return { double, worker, stable, container, auth, net: TestBed.inject(HttpTestingController) };
+  const sheet = (): SheetComponent =>
+    fixture.debugElement.query(By.css('.map__sheet app-sheet')).componentInstance as SheetComponent;
+  return { double, worker, stable, container, auth, net: TestBed.inject(HttpTestingController), sheet };
 }
 
 /** jsdom has no geolocation. The test sets it on the navigator. */
@@ -506,6 +511,15 @@ describe('MapComponent', () => {
     await stable();
 
     expect(screen.queryByRole('group', { name: 'Art wählen' })).not.toBeInTheDocument();
+  });
+
+  it('pads the map by the measured map sheet, as detents 1 and 2 both take the content height', async () => {
+    const { double, stable, sheet } = await map();
+
+    sheet().heightChange.emit(402);
+    await stable();
+
+    expect(double.padding.at(-1)?.bottom).toBe(402);
   });
 
   it('räumt Karte und Worker beim Verlassen auf', async () => {

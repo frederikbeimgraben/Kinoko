@@ -31,6 +31,7 @@ import { AddActionsComponent, type AddAction } from './add-actions.component';
 import { AddEntryStore, CORNERS_MINIMUM, type Location } from './add-entry.store';
 import { coordinatesText } from './coordinates';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
+import type { FindDraft } from './find-draft';
 import { asPolygon, loadAreaCalculator, type AreaCalculator } from './area';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
 import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
@@ -261,6 +262,11 @@ export class AddEntryComponent implements OnDestroy {
       return;
     }
     this.state.addCorner(point);
+  }
+
+  // On the phone, the crosshair aims and only the undo clears a set point. A kept point would win over the crosshair.
+  protected editLocation(draft: FindDraft): void {
+    this.state.editFindLocation(draft, this.input.mode() === 'pointer');
   }
 
   /** Takes the location below the crosshair or below the pointer. */

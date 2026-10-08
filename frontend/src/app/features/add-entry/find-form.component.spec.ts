@@ -10,6 +10,7 @@ import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
 import { MapStore } from '../map/map.store';
+import { EMPTY_FIND_DRAFT, type FindDraft } from './find-draft';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 
 /** The place of the form without an existing find. */
@@ -20,11 +21,13 @@ interface Extra {
   withPhotos?: boolean;
   editing?: boolean;
   busy?: boolean;
+  draft?: FindDraft;
 }
 
 interface Setup {
   container: Element;
   submissions: FindSubmission[];
+  drafts: FindDraft[];
   toasts: ToastSpy;
 }
 
@@ -52,7 +55,9 @@ async function build(
   detectChanges();
   const submissions: FindSubmission[] = [];
   fixture.componentInstance.submitted.subscribe((submission) => submissions.push(submission));
-  return { container, submissions, toasts: toastSpy() };
+  const drafts: FindDraft[] = [];
+  fixture.componentInstance.locationClick.subscribe((draft) => drafts.push(draft));
+  return { container, submissions, drafts, toasts: toastSpy() };
 }
 
 /** The close button in the head of the species choice sheet. */
@@ -99,6 +104,21 @@ describe('FundFormularComponent', () => {
       groupId: null,
       forTraining: false,
     });
+  });
+
+  it('gives its choices with the location row and takes them back as a draft', async () => {
+    const setup = await build();
+    await userEvent.type(screen.getByLabelText('Anzahl'), '3');
+    await userEvent.click(screen.getByRole('button', { name: /^Ort/ }));
+
+    expect(setup.drafts).toEqual([{ ...EMPTY_FIND_DRAFT, count: '3' }]);
+  });
+
+  it('starts from a draft', async () => {
+    await build({ draft: { ...EMPTY_FIND_DRAFT, note: 'Unter Fichten', count: '2' } });
+
+    expect(screen.getByLabelText('Notiz')).toHaveValue('Unter Fichten');
+    expect(screen.getByLabelText('Anzahl')).toHaveValue('2');
   });
 
   it('lässt Anzahl und Notiz weg, wenn nichts dasteht', async () => {

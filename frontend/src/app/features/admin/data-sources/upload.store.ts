@@ -17,8 +17,9 @@ import {
   exhaustMap,
   expand,
   filter,
+  ignoreElements,
   map,
-  of,
+  mergeMap,
   pipe,
   switchMap,
   takeUntil,
@@ -27,9 +28,18 @@ import {
 import { DataSourcesApi } from '../../../core/api/data-sources.api';
 import type { UploadSession } from '../../../core/api/models';
 import { withStorageSync } from '../../../core/state';
-import { trigger } from '../write';
+import { finish, trigger, type AfterWrite } from '../write';
 import { FILE_HASHER } from './hash-file';
-import { SETTLING, codeOf, followVersion, sendPart, sessionFor, type UploadStart } from './upload-parts';
+import { uploadEnds, type UploadStoreState } from './upload-ends';
+import {
+  SETTLING,
+  codeOf,
+  dropSession,
+  ownedSession,
+  sendPart,
+  sessionFor,
+  type UploadStart,
+} from './upload-parts';
 import {
   INITIAL_UPLOAD,
   asResumeRecord,
@@ -40,19 +50,12 @@ import {
   resumeRecord,
   type ResumeRecord,
   type UploadEvent,
-  type UploadState,
 } from './upload-machine';
 
 export type { UploadStart } from './upload-parts';
 
 /** The storage key of the open upload. */
 const STORAGE_KEY = 'pilzkarte.datenquellen.upload';
-
-interface UploadStoreState {
-  upload: UploadState;
-  /** The open session for a reload. It stays until the upload ends. */
-  saved: ResumeRecord | null;
-}
 
 /** One upload at a time: resumable parts, a hash in a worker and the state of the new version. */
 export const UploadStore = signalStore(
@@ -80,19 +83,26 @@ export const UploadStore = signalStore(
     _api: inject(DataSourcesApi),
     _hasher: inject(FILE_HASHER),
     _stop: new Subject<void>(),
-    _file: { current: null as File | null },
+    /** The start request that owns the state. An answer to an older request is stale. */
+    _run: { request: null as UploadStart | null },
   })),
-  withMethods((store) => {
-    const apply = (event: UploadEvent): void => {
+  withProps((store) => ({
+    _apply: (event: UploadEvent): void => {
       patchState(store, ({ upload, saved }) => {
         const next = reduce(upload, event);
         const ended = next.phase === 'done' || next.phase === 'cancelled';
         return { upload: next, saved: ended ? null : (resumeRecord(next) ?? saved) };
       });
+    },
+  })),
+  withMethods((store) => uploadEnds(store)),
+  withMethods((store) => {
+    const apply = (event: UploadEvent): void => {
+      store._apply(event);
     };
 
     const part = () =>
-      sendPart(store._api, store.upload, store._file.current, (attempt) => {
+      sendPart(store._api, store.upload, store._run.request?.file ?? null, (attempt) => {
         apply({ type: 'retry', attempt });
       }).pipe(
         tap((answer) => {
@@ -135,12 +145,35 @@ export const UploadStore = signalStore(
       pump();
     };
 
+    /** True while the request owns the state and waits for its session. */
+    const owns = (request: UploadStart): boolean =>
+      store._run.request === request && store.upload().phase === 'creating';
+
+    const stop = rxMethod<AfterWrite>(
+      pipe(
+        filter(() => store.upload().phase !== 'completing'),
+        map((request) => ({ request, id: ownedSession(store.upload(), store.saved()) })),
+        tap(() => {
+          store._stop.next();
+          apply({ type: 'cancel' });
+          store._run.request = null;
+        }),
+        mergeMap(({ request, id }) =>
+          dropSession(store._api, id).pipe(
+            tap(() => {
+              finish(request);
+            }),
+          ),
+        ),
+      ),
+    );
+
     return {
       start: rxMethod<UploadStart>(
         pipe(
           filter(() => !isActive(store.upload().phase)),
           tap((request) => {
-            store._file.current = request.file;
+            store._run.request = request;
             apply({
               type: 'start',
               kind: request.kind,
@@ -148,16 +181,21 @@ export const UploadStore = signalStore(
               activate: request.activate,
             });
           }),
-          exhaustMap((request) =>
+          // A cancel or a new start can come before the answer. The stale session then goes back to the server.
+          mergeMap((request) =>
             sessionFor(store._api, store.saved(), request).pipe(
+              map((session) => ({ session, current: owns(request) })),
               tapResponse({
-                next: (session) => {
-                  begin(session, request.file);
+                next: ({ session, current }) => {
+                  if (current) begin(session, request.file);
                 },
                 error: (failure: unknown) => {
-                  apply({ type: 'failed', code: codeOf(failure) });
+                  if (owns(request)) apply({ type: 'failed', code: codeOf(failure) });
                 },
               }),
+              filter(({ current }) => !current),
+              mergeMap(({ session }) => dropSession(store._api, session.id)),
+              ignoreElements(),
             ),
           ),
         ),
@@ -174,57 +212,14 @@ export const UploadStore = signalStore(
       },
 
       /** Stops the parts and the hash, and asks the server to drop the session. */
-      cancel: trigger(
-        rxMethod<true>(
-          pipe(
-            map(() => store.upload().uploadId),
-            tap(() => {
-              store._stop.next();
-              apply({ type: 'cancel' });
-              store._file.current = null;
-            }),
-            switchMap((id) => (id === null ? EMPTY : store._api.abort(id).pipe(catchError(() => of(null))))),
-          ),
-        ),
-      ),
+      cancel(request: AfterWrite = {}): void {
+        stop(request);
+      },
 
       /** Forgets an upload that ended, so that the dialog can start a new one. */
       reset(): void {
         apply({ type: 'reset' });
       },
-
-      _finish: rxMethod<boolean>(
-        pipe(
-          filter((ready) => ready),
-          tap(() => {
-            apply({ type: 'completing' });
-          }),
-          exhaustMap(() => {
-            const state = store.upload();
-            return store._api.complete(state.uploadId ?? '', state.sha256).pipe(
-              tapResponse({
-                next: (version) => {
-                  store._file.current = null;
-                  apply({ type: 'completed', version });
-                },
-                error: (failure: unknown) => {
-                  apply({ type: 'failed', code: codeOf(failure) });
-                },
-              }),
-            );
-          }),
-        ),
-      ),
-
-      _watch: rxMethod<string | null>(
-        pipe(
-          map((id) => (id === null ? null : store.upload().version)),
-          switchMap((version) => (version === null ? EMPTY : followVersion(store._api, version))),
-          tap((version) => {
-            apply({ type: 'version', version });
-          }),
-        ),
-      ),
     };
   }),
   withHooks({

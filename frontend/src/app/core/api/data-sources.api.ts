@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { catchError, map, throwError, type Observable } from 'rxjs';
 import { ApiClient } from './api-client';
 import { API_BASE_URL } from './api.config';
+import type { ProblemDetail } from './problem';
 import type {
   DataSource,
   DataSourceDetail,
@@ -29,11 +30,13 @@ export class OffsetMismatch extends Error {
   }
 }
 
-/** A part failed. `retry` is false when a new try cannot help, for example after an abort. */
+/** A part failed. `retry` is false when a new try cannot help, for example after an abort.
+ * `code` is the problem code of the server, for example `upload_closed`. */
 export class PartFailure extends Error {
   constructor(
     readonly status: number,
     readonly retry: boolean,
+    readonly code?: string,
   ) {
     super(`part_failed_${status}`);
   }
@@ -141,5 +144,6 @@ export function partError(failure: unknown): Error {
   // A network gap (0), a time-out (408), a rate limit (429) or a server error can pass with a new try.
   const retry =
     failure.status === 0 || failure.status === 408 || failure.status === 429 || failure.status >= 500;
-  return new PartFailure(failure.status, retry);
+  const code = (failure.error as Partial<ProblemDetail> | null)?.code;
+  return new PartFailure(failure.status, retry, typeof code === 'string' ? code : undefined);
 }

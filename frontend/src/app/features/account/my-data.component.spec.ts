@@ -11,6 +11,7 @@ import { ANY_ROUTE } from '../../testing/routes';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { toastSpy } from '../../testing/toast-spy';
 import { MyDataComponent } from './my-data.component';
+import { MyDataStore } from './my-data.store';
 
 const EXPORT = {
   me: { id: 'account-one', sub: 'sub', email: 'a@b.de', name: 'Frederik' },
@@ -46,7 +47,7 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(): Promise<Setup> {
+async function build(answer: 'ok' | 'error' = 'ok'): Promise<Setup> {
   vi.stubGlobal('URL', {
     ...URL,
     createObjectURL: () => 'blob:one',
@@ -65,7 +66,9 @@ async function build(): Promise<Setup> {
   });
   const http = TestBed.inject(HttpTestingController);
   await vi.waitFor(() => {
-    http.expectOne('/api/me/export').flush(EXPORT);
+    const request = http.expectOne('/api/me/export');
+    if (answer === 'ok') request.flush(EXPORT);
+    else request.flush({ title: 'Internal', status: 500 }, { status: 500, statusText: 'Server Error' });
   });
   detectChanges();
   return { container, http, offline, router: TestBed.inject(Router), refresh: detectChanges };
@@ -135,5 +138,28 @@ describe('MyDataComponent', () => {
     });
     expect(await offline.all('queue')).toEqual([]);
     expect(spy.success).toEqual(['Alle Daten gelöscht']);
+  });
+
+  it('reads the export again each time the page opens', async () => {
+    const { http, refresh } = await build();
+    const store = TestBed.inject(MyDataStore);
+
+    store.refresh();
+    http.expectOne('/api/me/export').flush({ ...EXPORT, markers: [] });
+    refresh();
+
+    expect(store.counts()?.markers).toBe(0);
+  });
+
+  it('tells the user and reads again when the export is not known', async () => {
+    const { http, refresh } = await build('error');
+    const spy = toastSpy();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Daten exportieren' }));
+    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Exportieren' }));
+
+    expect(spy.failure).toContain('Laden fehlgeschlagen');
+    http.expectOne('/api/me/export').flush(EXPORT);
   });
 });

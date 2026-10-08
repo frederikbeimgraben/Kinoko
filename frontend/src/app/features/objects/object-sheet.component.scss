@@ -2,6 +2,11 @@
   display: contents;
 }
 
+// The tap layer of the overlay inherits this, so a tap reaches Terra Draw. The sheet sets its own value.
+.object--corners {
+  pointer-events: none;
+}
+
 // The dot before the name is 14 px on the board.
 .object__dot {
   flex: none;

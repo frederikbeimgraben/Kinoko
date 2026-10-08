@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { DataSourcesApi } from '../../../core/api/data-sources.api';
-import { DataSourcesApiDouble } from './data-sources.testing';
+import { DataSourcesApiDouble, versionOf } from './data-sources.testing';
 import { DataSourcesStore } from './data-sources.store';
 
 function build(api = new DataSourcesApiDouble()): { store: DataSourcesStore; api: DataSourcesApiDouble } {
@@ -30,6 +30,30 @@ describe('DataSourcesStore', () => {
     expect(api.details).toEqual(['trees-grid', 'trees-grid@next']);
     expect(store.detail()?.versions.map((one) => one.id)).toEqual(['v-2', 'v-1', 'v-0']);
     expect(store.detail()?.nextCursor).toBeNull();
+  });
+
+  it('keeps the older pages when the detail is read again', () => {
+    const { store, api } = build();
+    store.openDetail({ kind: 'trees-grid' });
+    store.more();
+
+    api.versions = [versionOf('v-3', 3, 'validating'), ...api.versions];
+    store.openDetail({ kind: 'trees-grid' });
+
+    expect(store.detail()?.versions.map((one) => one.id)).toEqual(['v-3', 'v-2', 'v-1', 'v-0']);
+    expect(store.detail()?.nextCursor).toBeNull();
+  });
+
+  it('drops a removed version of an older page', () => {
+    const { store } = build();
+    store.openDetail({ kind: 'trees-grid' });
+    store.more();
+    const old = store.detail()?.versions[2];
+    if (old === undefined) throw new Error('no version');
+
+    store.act({ version: old, action: 'remove' });
+
+    expect(store.detail()?.versions.map((one) => one.id)).not.toContain('v-0');
   });
 
   it('runs an action on a version, then reads the detail again', () => {

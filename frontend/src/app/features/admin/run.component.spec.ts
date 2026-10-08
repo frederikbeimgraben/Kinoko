@@ -108,4 +108,36 @@ describe('RunComponent', () => {
 
     expect(await screen.findByText('Lauf nicht gefunden', { selector: 'b' })).toBeInTheDocument();
   });
+
+  it('shows a load error with a retry for a failure that is not a 404', async () => {
+    TestBed.resetTestingModule();
+    await render(RunComponent, {
+      providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor('lauf-training')],
+    });
+    const http = TestBed.inject(HttpTestingController);
+    http
+      .expectOne('/api/pipeline-runs/lauf-training')
+      .flush({ title: 'Internal', status: 500 }, { status: 500, statusText: 'Server Error' });
+
+    expect(await screen.findByText('Laden fehlgeschlagen')).toBeInTheDocument();
+    expect(screen.queryByText('Lauf nicht gefunden')).not.toBeInTheDocument();
+
+    (await screen.findByRole('button', { name: 'Erneut versuchen' })).click();
+    http.expectOne('/api/pipeline-runs/lauf-training').flush(DETAIL);
+
+    expect(await screen.findByRole('heading', { name: 'Training Steinpilz' })).toBeInTheDocument();
+  });
+
+  it('gets the same run again on a second load and keeps the old data until the answer', async () => {
+    await build();
+    const store = TestBed.inject(RunStore);
+
+    store.load('lauf-training');
+
+    expect(store.run()?.id).toBe('lauf-training');
+    TestBed.inject(HttpTestingController)
+      .expectOne('/api/pipeline-runs/lauf-training')
+      .flush({ ...DETAIL, state: 'finished' });
+    expect(store.run()?.state).toBe('finished');
+  });
 });

@@ -195,6 +195,7 @@ export class EntriesComponent {
     void this.store.loadShared();
     this.store.loadOnSignIn(this.signedIn);
     this.groups.load(false, true);
+    if (this.filter().withPhoto) this.photos.loadAll();
   }
 
   protected selectSegment(segment: Segment): void {
@@ -202,7 +203,8 @@ export class EntriesComponent {
   }
 
   protected changeFilter(filter: EntriesFilter): void {
-    if (filter.withPhoto && !this.photos.loaded()) this.photos.load();
+    // The filter needs all own photos, also the photos that came after the last read.
+    if (filter.withPhoto && !this.filter().withPhoto) this.photos.loadAll();
     this.store.setFilter(filter);
   }
 
