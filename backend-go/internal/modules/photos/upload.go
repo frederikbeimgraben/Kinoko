@@ -265,8 +265,8 @@ func locationOf(ctx context.Context, q db.Querier, find findRow) (*float64, *flo
 	if err != nil || !ok || protection == enums.ProtectionNone {
 		return nil, nil, err
 	}
-	lon, lat := coarse(find.lon, find.lat, 1.0)
-	return &lat, &lon, nil
+	place := geo.Coarse(geo.Point{Lon: find.lon, Lat: find.lat}, 1.0)
+	return &place.Lat, &place.Lon, nil
 }
 
 func speciesExists(ctx context.Context, q db.Querier, id db.ID) error {

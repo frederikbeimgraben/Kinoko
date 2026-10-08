@@ -59,8 +59,8 @@ def hyras_values(short, days, shift):
             "hurs": rng.uniform(50, 100, shape)}[short] + shift
     base[rng.uniform(size=shape) < 0.04] = np.nan
     # Not land: no value on the first day, so these pixels define no cell.
-    base[:, 4:, 8:] = np.nan if days[0].year == 2020 else base[:, 4:, 8:]
-    base[0, 4:, 8:] = np.nan
+    if days[0].year == 2020:
+        base[0, 4:, 8:] = np.nan
     if short == "pr" and days[0].year == 2021:
         week2 = (days >= "2021-01-11") & (days <= "2021-01-17")
         base[np.ix_(week2, np.arange(0, 4), np.arange(0, 3))] = np.nan
