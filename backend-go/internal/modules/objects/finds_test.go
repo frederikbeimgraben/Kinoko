@@ -115,7 +115,7 @@ var protectedFind = object{"lat": 50.123456, "lon": 8.123456, "foundOn": "2026-0
 func TestSharedFindsCoarsenAProtectedSpecies(t *testing.T) {
 	env := testkit.New(t)
 	anna, bert := makeUser(t, env, "anna"), makeUser(t, env, "bert")
-	species := makeSpecies(t, env, "boletus-edulis", enums.ProtectionStrict)
+	species := makeSpecies(t, env, "probe-species", enums.ProtectionStrict)
 	group := makeGroup(t, env, anna.ID)
 	env.Post("/finds", with(with(protectedFind, sharedTo(group)), object{"speciesId": species.String()}), anna.Person).
 		Expect(t, http.StatusCreated)
@@ -130,7 +130,7 @@ func TestSharedFindsCoarsenAProtectedSpecies(t *testing.T) {
 func TestOwnFindsStayExactForAProtectedSpecies(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")
-	species := makeSpecies(t, env, "boletus-edulis", enums.ProtectionStrict)
+	species := makeSpecies(t, env, "probe-species", enums.ProtectionStrict)
 	env.Post("/finds", with(protectedFind, object{"speciesId": species.String()}), anna.Person).Expect(t, http.StatusCreated)
 	listed := items(t, env.Get("/finds", anna.Person))
 	if listed[0]["lat"] != 50.123456 || listed[0]["lon"] != 8.123456 {
@@ -141,7 +141,7 @@ func TestOwnFindsStayExactForAProtectedSpecies(t *testing.T) {
 func TestSpeciesFilter(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")
-	species := makeSpecies(t, env, "boletus-edulis", enums.ProtectionNone)
+	species := makeSpecies(t, env, "probe-species", enums.ProtectionNone)
 	env.Post("/finds", with(aFind, object{"speciesId": species.String()}), anna.Person).Expect(t, http.StatusCreated)
 	env.Post("/finds", object{"lat": 2.0, "lon": 2.0, "foundOn": "2026-09-01"}, anna.Person).Expect(t, http.StatusCreated)
 	if listed := items(t, env.Get("/finds?speciesId="+species.String(), anna.Person)); len(listed) != 1 {
@@ -242,7 +242,7 @@ func TestAcceptAllOpenFinds(t *testing.T) {
 func TestTrainingFindsFiltersCorrectly(t *testing.T) {
 	env := testkit.New(t)
 	anna, reviewer := makeUser(t, env, "anna"), makeReviewer(t, env, "reviewer")
-	species := makeSpecies(t, env, "boletus-edulis", enums.ProtectionNone)
+	species := makeSpecies(t, env, "probe-species", enums.ProtectionNone)
 	ready := env.Post("/finds", with(aFind, object{"speciesId": species.String(), "forTraining": true, "count": 3}), anna.Person).
 		Map(t)["id"].(string)
 	env.Post("/finds", object{"lat": 2.0, "lon": 2.0, "foundOn": "2026-09-01", "forTraining": true}, anna.Person).

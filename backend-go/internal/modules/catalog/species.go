@@ -324,7 +324,7 @@ func (m *Module) speciesCounts(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	counts, err := countsFor(r.Context(), m.deps.DB, []db.ID{row.ID})
+	counts, err := CountsFor(r.Context(), m.deps.DB, []db.ID{row.ID})
 	if err != nil {
 		return nil, err
 	}
@@ -348,9 +348,9 @@ func countMap(rows []idCount) map[db.ID]int {
 	})
 }
 
-// countsFor gives records, finds and photos of each species. The records
+// CountsFor gives records, finds and photos of each species. The records
 // come from the finished run with the latest queued_at.
-func countsFor(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]SpeciesCounts, error) {
+func CountsFor(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]SpeciesCounts, error) {
 	if len(ids) == 0 {
 		return map[db.ID]SpeciesCounts{}, nil
 	}

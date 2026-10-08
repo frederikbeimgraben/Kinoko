@@ -3,14 +3,13 @@ package access
 import (
 	"database/sql"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/web"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/photos"
 )
 
 // Me is the signed-in account.
@@ -69,8 +68,8 @@ func (m *Module) deleteMyData(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	photos, err := db.InTxValue(ctx, m.deps.DB, func(tx *sql.Tx) ([]db.ID, error) {
-		ids, err := db.Column[db.ID](ctx, tx, "SELECT id FROM photo WHERE owner_id = ?", user.ID)
+	owned, err := db.InTxValue(ctx, m.deps.DB, func(tx *sql.Tx) ([]db.ID, error) {
+		ids, err := photos.OwnerPhotoIDs(ctx, tx, user.ID)
 		if err != nil {
 			return nil, err
 		}
@@ -84,21 +83,8 @@ func (m *Module) deleteMyData(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := removePhotoFiles(m.deps.Settings.Photos, photos); err != nil {
+	if err := photos.RemoveFiles(m.deps.Settings.Photos, owned); err != nil {
 		return nil, problem.Internal()
 	}
 	return web.Empty(http.StatusNoContent), nil
-}
-
-// photoFolder gives the folder of the image files of a photo, as the photos
-// module writes them: <root>/<id with dashes>/<size>.jpg.
-func photoFolder(root string, id db.ID) string { return filepath.Join(root, id.String()) }
-
-func removePhotoFiles(root string, ids []db.ID) error {
-	for _, id := range ids {
-		if err := os.RemoveAll(photoFolder(root, id)); err != nil {
-			return err
-		}
-	}
-	return nil
 }
