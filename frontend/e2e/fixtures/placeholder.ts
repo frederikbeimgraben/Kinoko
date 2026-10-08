@@ -1,6 +1,6 @@
 import { encode } from '../../tools/png.mjs';
 
-/** Ein Platzhalter des Boards: Verlauf über einen Winkel, dazu Kreise. */
+/** A board placeholder: a gradient at an angle, with circles. */
 export interface PlaceholderSpec {
   readonly width: number;
   readonly height: number;
@@ -9,7 +9,7 @@ export interface PlaceholderSpec {
   readonly bubbles?: boolean;
 }
 
-/** Die drei Kreise: Anteil der Breite, Anteil der Höhe, Kantenlänge. */
+/** The three circles: share of width, share of height, edge length. */
 const BUBBLES: readonly (readonly [number, number, number])[] = [
   [0.3, 0.4, 34],
   [0.7, 0.25, 22],
@@ -18,24 +18,23 @@ const BUBBLES: readonly (readonly [number, number, number])[] = [
 const BUBBLE_ALPHA = 0.1;
 const MIDDLE = 0.55;
 
-/** Zerlegt `#rrggbb` in seine drei Kanäle. */
 function channels(hex: string): number[] {
   return [1, 3, 5].map((at) => Number.parseInt(hex.slice(at, at + 2), 16));
 }
 
-/** Mischt zwei Farben im Verhältnis `share`. */
+/** Mixes two colours at the ratio `share`. */
 function blend(one: readonly number[], other: readonly number[], share: number): number[] {
   return one.map((value, index) => value + (other[index] - value) * share);
 }
 
-/** Die Farbe des Verlaufs an der Stelle `t` der Achse. */
+/** The gradient colour at position `t` on the axis. */
 function ramp(stops: number[][], t: number): number[] {
   if (stops.length < 3) return blend(stops[0], stops[1], t);
   if (t < MIDDLE) return blend(stops[0], stops[1], t / MIDDLE);
   return blend(stops[1], stops[2], (t - MIDDLE) / (1 - MIDDLE));
 }
 
-/** Zeichnet den Platzhalter, wie das Board ihn an die Stelle eines Fotos setzt. */
+/** Draws the placeholder that the board shows instead of a photo. */
 export function placeholder(spec: PlaceholderSpec): Buffer {
   const { width, height } = spec;
   const stops = spec.stops.map(channels);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Gibt den Angular-Build statisch aus. Unbekannte Wege fallen auf `index.html`. */
+/** Serves the Angular build as static files. Unknown paths get `index.html`. */
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
@@ -29,7 +29,7 @@ if (!existsSync(join(ROOT, 'index.html'))) {
   process.exit(1);
 }
 
-/** Löst einen Weg auf eine Datei im Build auf. */
+/** Maps a path to a file in the build. */
 function file(path) {
   const safe = normalize(decodeURIComponent(path.split('?')[0])).replace(/^(\.\.[/\\])+/, '');
   const target = join(ROOT, safe);
@@ -51,7 +51,7 @@ createServer((request, reply) => {
     'cache-control': 'no-store',
   });
   const stream = createReadStream(target);
-  // Ein Abbruch des Browsers darf den Server nicht beenden.
+  // A browser abort must not stop the server.
   stream.on('error', () => reply.destroy());
   reply.on('close', () => stream.destroy());
   stream.pipe(reply);

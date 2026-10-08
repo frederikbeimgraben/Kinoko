@@ -1,14 +1,14 @@
-/** Die Gruppen der Bretter Groups, Group, GroupMember und der Verwaltung. */
+/** The groups of the boards Groups, Group, GroupMember and the admin boards. */
 
 const FREDERIK = '11111111-1111-1111-1111-111111111111';
 const JONAS = '22222222-2222-2222-2222-222222222222';
 const MARIE = '33333333-3333-3333-3333-333333333333';
 const LENA = '55555555-5555-5555-5555-555555555555';
 
-/** Das eigene Konto: Eigentümer der Pilzgruppe Karlsruhe. */
+/** The own account: owner of the group "Pilzgruppe Karlsruhe". */
 export const ME = { id: FREDERIK, sub: 'sub-eins', name: 'Frederik', email: 'frederik@beimgraben.net' };
 
-/** Dasselbe Konto als Mitglied, nicht als Eigentümer. */
+/** The same account as a member, not as the owner. */
 export const OTHER_ME = { ...ME, id: MARIE };
 
 export const GROUPS = [

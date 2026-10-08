@@ -1,8 +1,8 @@
-/** Die Attrappen der Verwaltung für Boards und Flüsse. */
+/** The admin mocks for boards and flows. */
 
 export const NOW = '2026-09-12T10:00:00+02:00';
 
-/** Die Rechte, die jeden Punkt der Verwaltung zeigen. */
+/** The permissions that show each admin item. */
 export const EVERY_RIGHT = [
   'text.edit',
   'image.review',
@@ -14,7 +14,7 @@ export const EVERY_RIGHT = [
   'group.manage',
 ];
 
-/** Die Zähler des Bretts `Admin`. */
+/** The counters of the `Admin` board. */
 export const SUMMARY = {
   texts: 1284,
   photos: 312,
@@ -32,7 +32,7 @@ export const SUMMARY = {
   glossary: 24,
 };
 
-/** Eine leere Zählung der Verwaltung, für den Leerzustand. */
+/** An empty admin count for the empty state. */
 export const EMPTY_SUMMARY = {
   texts: 0,
   photos: 0,
@@ -47,7 +47,7 @@ export const EMPTY_SUMMARY = {
   runsRunning: 0,
 };
 
-/** Eine Rolle, so wie `/api/roles` sie liefert. */
+/** A role as `/api/roles` gives it. */
 export function role(
   slug: string,
   name: string,
@@ -68,7 +68,7 @@ export function role(
   };
 }
 
-/** Die vier Rollen des Bretts `Roles`. */
+/** The four roles of the `Roles` board. */
 export const ROLES = {
   items: [
     role('admin', 'Admin', 'Alle Rechte', 1, true),
@@ -82,7 +82,7 @@ export const ROLES = {
   nextCursor: null,
 };
 
-/** Der Rechtekatalog, wie ihn `/api/permissions` liefert. */
+/** The permission catalogue as `/api/permissions` gives it. */
 export const CATALOGUE = [
   { key: 'species.edit', area: 'species' },
   { key: 'image.submit', area: 'species' },
@@ -94,7 +94,7 @@ export const CATALOGUE = [
   { key: 'run.manage', area: 'data' },
 ];
 
-/** Ein Konto, so wie `/api/people` es liefert. */
+/** An account as `/api/people` gives it. */
 export function person(
   slug: string,
   name: string,
@@ -112,7 +112,7 @@ export function person(
   };
 }
 
-/** Die vier Konten des Bretts `People`. */
+/** The four accounts of the `People` board. */
 export const PEOPLE = {
   items: [
     person('frederik', 'Frederik', 'frederik@beimgraben.net', 'admin', 'Admin'),
@@ -123,7 +123,7 @@ export const PEOPLE = {
   nextCursor: null,
 };
 
-/** Die vier Arten des Bretts `AdminSpecies` mit ihren Zahlen. */
+/** The four species of the `AdminSpecies` board with their numbers. */
 export const ADMIN_SPECIES: readonly {
   slug: string;
   name: string;
@@ -155,12 +155,12 @@ export const ADMIN_SPECIES: readonly {
   },
 ];
 
-/** Ein Schlüssel der Oberfläche, so wie `/api/texts` ihn liefert. */
+/** A UI text key as `/api/texts` gives it. */
 export function text(key: string, de: string, en: string, changed = false): Record<string, unknown> {
   return { key, values: { de, en }, changed, updatedAt: NOW };
 }
 
-/** Die vier Schlüssel des Bretts `Texts`. */
+/** The four keys of the `Texts` board. */
 export const TEXTS = {
   revision: 'e2e',
   locales: ['de', 'en'],
@@ -172,8 +172,8 @@ export const TEXTS = {
   ],
 };
 
-/** Eine leere Liste, für die Leerzustände der Verwaltung. */
+/** An empty list for the admin empty states. */
 export const EMPTY_LIST = { items: [], nextCursor: null };
 
-/** Leere Texte, für den Leerzustand von `Texts`. */
+/** Empty texts for the empty state of `Texts`. */
 export const EMPTY_TEXTS = { revision: 'e2e', locales: ['de', 'en'], entries: [] };

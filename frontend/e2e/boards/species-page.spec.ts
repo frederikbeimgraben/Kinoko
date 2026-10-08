@@ -6,7 +6,7 @@ import { bundle, SEVEN } from '../fixtures/species';
 import { profileBundle, profileManifest, profilePhotos } from '../fixtures/species-page';
 import { expectBoard, skipPending } from './board';
 
-/** Die Fotos der Artseite: das Titelbild gross, die Kacheln in Listengrösse. */
+/** The photos of the species page: a large title image and tiles in list size. */
 const ROWS = {
   'la-1/list': 'photo-44x44.png',
   'la-2/list': 'photo-44x44.png',
@@ -15,13 +15,13 @@ const ROWS = {
 const PHOTOS = { full: 'photo-358x269.png', list: 'photo-88x88.png', ...ROWS };
 const PHOTOS_WIDE = { full: 'photo-866x650.png', list: 'photo-88x88.png', ...ROWS };
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device. It does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Öffnet die Artseite mit dem vollen Profil, den Bildern und der Karte. */
+/** Opens the species page with the full profile, the images and the map. */
 async function openProfile(page: Page, photos = PHOTOS, rights: string[] = []): Promise<void> {
   await mockApi(
     page,
@@ -45,7 +45,7 @@ async function openProfile(page: Page, photos = PHOTOS, rights: string[] = []): 
   await expect(page.locator('app-species-season app-season-curve')).toBeVisible();
 }
 
-/** Die Rollhöhe je Abschnitts-Brett, aus dem Bild des Bretts gemessen. */
+/** The scroll position for each section board, measured from the board image. */
 const SECTION_TOP: Record<string, number> = {
   SpeciesSize: 543,
   SpeciesColours: 1121,
@@ -56,7 +56,7 @@ const SECTION_TOP: Record<string, number> = {
   CompareEntry: 2439,
 };
 
-/** Rollt die Seite auf die Höhe, die das Brett zeigt. */
+/** Scrolls the page to the position that the board shows. */
 async function scrollToSection(page: Page, board: string): Promise<void> {
   await page.evaluate((top) => {
     const view = document.querySelector('.page');

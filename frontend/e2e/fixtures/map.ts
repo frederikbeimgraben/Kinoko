@@ -169,10 +169,8 @@ export interface DesignMap {
   under?: boolean;
 }
 
-/**
- * The kit `.karte`, `.turn` and `.heat` of `kit.css`. The boards draw this surface, not a real map.
- * The road is in `.turn`, so the rule `.karte>svg` does not apply: it is a square as wide as the map.
- */
+/** The kit `.karte`, `.turn` and `.heat` of `kit.css`. The boards draw this surface, not a real map.
+ * The road is in `.turn`, so `.karte>svg` does not apply: it is a square as wide as the map. */
 const KARTE =
   'position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;overflow:hidden;pointer-events:none;background:' +
   'radial-gradient(120px 90px at 22% 18%,#dfe8d6 0,transparent 100%),' +
@@ -198,10 +196,8 @@ const ROAD =
   '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
   '<path d="M0 74 C18 66 30 80 50 76 S78 60 100 70" fill="none" stroke="#9aa3c4" stroke-width=".900" opacity=".700"></path></svg>';
 
-/**
- * Puts the design map surface of `MapView` over the canvas, below the buttons and the sheets.
- * The design draws CSS gradients, so the board compares the app frame, not the map engine.
- */
+/** Puts the design map surface of `MapView` over the canvas, below the buttons and the sheets.
+ * The design draws CSS gradients, so the board compares the app frame, not the map engine. */
 export async function showDesignMap(page: Page, map: DesignMap = {}): Promise<void> {
   await settled(page);
   const heat = map.heat ?? 'forecast';

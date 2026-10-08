@@ -17,39 +17,38 @@ import type {
 } from './models';
 
 /**
- * Die Endpunkte der Rechteverwaltung. Bis auf die eigenen Rechte verlangt jeder
- * ein Recht; ohne antwortet der Dienst mit 403.
+ * The permission endpoints. All except the own permissions need a permission, else the service gives 403.
  */
 @Injectable({ providedIn: 'root' })
 export class AccessApi {
   private readonly api = inject(ApiClient);
 
-  /** Das eigene Konto. Braucht nur eine Anmeldung. */
+  /** The own account. Needs only a sign-in. */
   me(options?: Silent): Observable<Me> {
     return this.api.get<Me>('/me', undefined, options);
   }
 
-  /** Die eigenen Rechte. Braucht nur eine Anmeldung. */
+  /** The own permissions. Needs only a sign-in. */
   mine(): Observable<MyPermissions> {
     return this.api.get<MyPermissions>('/me/permissions');
   }
 
-  /** Das eigene Konto mit allen eigenen Funden, Objekten und Fotos. */
+  /** The own account with all own finds, objects and photos. */
   exportData(): Observable<AccountExport> {
     return this.api.get<AccountExport>('/me/export');
   }
 
-  /** Löscht alle eigenen Daten. Das Konto selbst bleibt bestehen. */
+  /** Deletes all own data. The account itself stays. */
   deleteData(): Observable<null> {
     return this.api.delete<null>('/me/data');
   }
 
-  /** Die Zähler der Übersicht. Ein Punkt ohne Recht kommt ohne Zahl. */
+  /** The counters of the overview. An item without permission has no number. */
   summary(): Observable<AdminSummary> {
     return this.api.get<AdminSummary>('/admin/summary');
   }
 
-  /** Die Zahlen jeder Art. Braucht das Recht `species.edit`. */
+  /** The numbers of each species. Needs the permission `species.edit`. */
   speciesCounts(): Observable<SpeciesCountsEntry[]> {
     return this.api.get<Items<SpeciesCountsEntry>>('/admin/species-counts').pipe(map((page) => page.items));
   }
@@ -78,12 +77,12 @@ export class AccessApi {
     return this.api.get<Items<Person>>('/people', { q: search || undefined }).pipe(map((page) => page.items));
   }
 
-  /** Die Namen zu Kennungen, mit denen das eigene Konto eine Gruppe teilt. */
+  /** The names for IDs that share a group with the own account. */
   personNames(ids: readonly string[]): Observable<PersonName[]> {
     return this.api.get<PersonName[]>('/people/names', { ids: ids.join(',') });
   }
 
-  /** Setzt die Rollen einer Person neu. Die Liste ersetzt, sie ergänzt nicht. */
+  /** Sets the roles of a person. The list replaces the roles; it does not add to them. */
   setRoles(id: string, roleIds: string[]): Observable<Person> {
     return this.api.put<Person>(`/people/${encodeURIComponent(id)}/roles`, { roleIds });
   }

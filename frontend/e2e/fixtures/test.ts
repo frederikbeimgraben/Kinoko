@@ -1,4 +1,4 @@
-/** Der Testbaustein für Flüsse und Bretter: bricht bei einem fehlenden Textschlüssel ab. */
+/** The test fixture for flows and boards. It stops the test on a missing text key. */
 
 import { test as base, expect, type ConsoleMessage } from '@playwright/test';
 import { MISSING_KEY_PREFIX } from '../../src/app/core/i18n/i18n.service';

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, type Page } from '@playwright/test';
 
-/** Die Antworten des Vertrags, die jede Seite beim Start holt. */
+/** The contract responses that each page gets at start. */
 const REPLIES: Record<string, unknown> = {
   '/api/config': { oidcIssuer: '', oidcClientId: '', origin: '', version: 'e2e' },
   '/api/texts': { revision: 'e2e', locales: ['de', 'en'], entries: [] },
@@ -11,7 +11,7 @@ const REPLIES: Record<string, unknown> = {
   '/api/terms': { items: [] },
 };
 
-/** Ein Bild aus vier Brauntönen. Ohne Bild meldet der Abruf einen Fehler. */
+/** An image of four brown tones. Without an image, the request gives an error. */
 const IMAGE = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAAH0lEQVR42mN4dHzWyRVZXdl22S7KDHAWUJQBzgKKAgBr/xJqbTqUmgAAAABJRU5ErkJggg==',
   'base64',
@@ -19,16 +19,15 @@ const IMAGE = Buffer.from(
 
 const IMAGE_PATH = '/api/photos/';
 
-/** Womit die Attrappe eine Fotoanfrage beantwortet. */
+/** What the mock gives for a photo request. */
 export interface ApiOptions {
   /**
-   * Eine Datei unter `e2e/boards/fixtures`, etwa `photo-358x269.png`. Eine
-   * Tabelle wählt je Größe (`list`) oder je Bild und Größe (`eins/list`).
+   * A file in `e2e/boards/fixtures`, e.g. `photo-358x269.png`, or a table by size (`list`) or image and size.
    */
   photo?: string | Record<string, string | undefined>;
 }
 
-/** Wählt die Fotoattrappe eines Bretts. Fehlt die Datei, bricht der Test ab. */
+/** Selects the photo mock of a board. If the file is missing, the test stops. */
 function photoOf(chosen: ApiOptions['photo'], id: string, size: string): Buffer {
   if (chosen === undefined) return IMAGE;
   const name = typeof chosen === 'string' ? chosen : (chosen[`${id}/${size}`] ?? chosen[size]);
@@ -36,7 +35,7 @@ function photoOf(chosen: ApiOptions['photo'], id: string, size: string): Buffer 
   return readFileSync(join(test.info().config.rootDir, 'boards/fixtures', name));
 }
 
-/** Legt die Vertrags-Attrappe auf die Seite. Ein Weg ohne Eintrag bleibt leer. */
+/** Puts the contract mock on the page. A path without an entry stays empty. */
 export async function mockApi(
   page: Page,
   extra: Record<string, unknown> = {},

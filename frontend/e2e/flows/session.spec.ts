@@ -5,7 +5,7 @@ import { ISSUER, authConfig, mockSignIn, mockSignedOut } from '../fixtures/auth'
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** So lange bleibt die Sitzungsprüfung ohne Antwort. */
+/** The time that the session check stays without an answer. */
 const SLOW_MS = 3000;
 
 const MEMORY_KEY = 'pilzkarte.session.v1';
@@ -15,7 +15,7 @@ const MEMORY = JSON.stringify({ name: 'Frederik', permissions: [] });
 async function rememberSession(page: Page): Promise<void> {
   await page.addInitScript(
     ([key, value]) => {
-      // Nur das Fenster, nicht der iframe der stillen Erneuerung.
+      // Only the window, not the iframe of the silent renewal.
       if (window.top === window) window.localStorage.setItem(key, value);
     },
     [MEMORY_KEY, MEMORY],
@@ -35,7 +35,7 @@ test('zeigt bei offener Sitzung ein Skelett und nie den Gast', async ({ page }) 
   await expect(avatar).toBeVisible();
   await expect(avatar.locator('app-skeleton')).toBeVisible();
   await expect(avatar).toHaveText('');
-  // Die Karte bleibt bedienbar, während die Prüfung läuft.
+  // The map stays usable while the check runs.
   await expect(page.getByRole('navigation')).toBeVisible();
   await page.getByRole('link', { name: 'Arten' }).click();
   await expect(page).toHaveURL(/\/arten$/);
@@ -71,7 +71,7 @@ test('behält die Sitzung, wenn die Prüfung am Netz scheitert', async ({ page }
   await rememberSession(page);
   await mockSignIn(page);
   await mockApi(page, { '/api/config': authConfig(BASE) });
-  // Das SSO ist nicht erreichbar. Das sagt nichts darüber, ob die Sitzung steht.
+  // The SSO is not reachable. This does not tell if the session exists.
   await page.route(`${ISSUER}/.well-known/openid-configuration`, (route) => route.abort());
   await page.goto('/karte');
 
@@ -111,7 +111,7 @@ test('die Reiterleiste kehrt nach der Rückkehr vom SSO zurück', async ({ page 
   await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
 
   await mockSignIn(page);
-  /** Die stille Anmeldung kann dem Klick zuvorkommen; beide Wege enden angemeldet. */
+  /** The silent sign-in can come before the click. Both paths end signed in. */
   await page
     .getByRole('button', { name: 'Anmelden' })
     .click({ timeout: 5_000 })

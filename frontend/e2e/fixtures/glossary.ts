@@ -1,4 +1,4 @@
-/** Die Begriffe der Bretter Glossary, AdminGlossary und GlossaryEdit. */
+/** The terms of the boards Glossary, AdminGlossary and GlossaryEdit. */
 
 const STAMP = '2026-09-12T10:00:00Z';
 

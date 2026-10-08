@@ -5,8 +5,7 @@ export const WEEK = { year: 2026, week: 38 };
 export const SPECIES = 'boletus-edulis';
 
 /**
- * The mean of each week, as a share of the peak in week 34. The bars of the
- * board `WeekStrip` fill 35, 55, 70, 85, 75, 60 and 40 % from week 35.
+ * The weekly mean as a share of the week-34 peak. The `WeekStrip` bars fill 35, 55, 70, 85, 75, 60, 40 %.
  */
 const SHARES = [1, 0.35, 0.55, 0.7, 0.85, 0.75, 0.6, 0.4];
 

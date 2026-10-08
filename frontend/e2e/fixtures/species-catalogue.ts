@@ -1,4 +1,4 @@
-/** Ein Katalog mit 306 Arten, dessen Zahlen den Brettern des Filters folgen. */
+/** A catalogue with 306 species. Its numbers match the filter boards. */
 
 import { bundle } from './species';
 
@@ -21,7 +21,7 @@ const SHAPES: readonly (readonly [string, number])[] = [
   ['egg', 9],
 ];
 const SHAPED = 94;
-/** Die sechs Katalogtöne des Bretts `FilterColour`, in seiner Reihenfolge. */
+/** The six catalogue colours of the `FilterColour` board, in its order. */
 const TONES: readonly (readonly string[])[] = [
   ['#6b4423'],
   ['#5e3d22'],
@@ -55,7 +55,7 @@ function capOf(at: number): readonly string[] {
   return at < TONES.length ? TONES[at] : ['#6b4423'];
 }
 
-/** Die 306 Arten des Katalogs, als Bündel des Vertrags. */
+/** The 306 catalogue species as a contract bundle. */
 export function largeBundle(): Record<string, unknown> {
   return bundle(
     Array.from({ length: TOTAL }, (_, at) => ({
@@ -78,7 +78,7 @@ export function largeBundle(): Record<string, unknown> {
   );
 }
 
-/** Die Wahl hinter den Brettern des Filters. */
+/** The choice behind the filter boards. */
 export const CORE_CHOICE = {
   values: { edibility: ['edible'], hymenium: ['gills'], period: ['9'] },
   colours: { cap: '#6b4423', stem: '#e8d9b5', spore_print: '#3e2a17' },

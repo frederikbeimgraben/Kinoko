@@ -2,24 +2,23 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** Liest Breite und Höhe aus dem IHDR-Kopf einer PNG-Datei. */
+/** Reads width and height from the IHDR header of a PNG file. */
 function size(file: string): { width: number; height: number } {
   const header = readFileSync(file).subarray(16, 24);
   return { width: header.readUInt32BE(0), height: header.readUInt32BE(4) };
 }
 
-/** Liest die Stems aus `pending.json`. */
 function pendingStems(): Set<string> {
   const path = join(test.info().config.rootDir, 'boards/pending.json');
   return new Set(JSON.parse(readFileSync(path, 'utf8')) as string[]);
 }
 
-/** Ein Board aus `pending.json` läuft gar nicht, auch nicht seine Schritte. */
+/** A board in `pending.json` does not run, and its steps also do not run. */
 export function skipPending(board: string): void {
   test.skip(pendingStems().has(board), `${board} steht in pending.json`);
 }
 
-/** Eine Karte des Baustein-Boards mit Lage, Groesse und Dateinamen. */
+/** A card of the blocks board with position, size and file name. */
 export interface BoardCard {
   readonly selector: string;
   readonly stem: string;
@@ -27,7 +26,7 @@ export interface BoardCard {
   readonly h: number;
 }
 
-/** Deckt jede angebrochene Zeile ab, wie Playwright ein Element aufnimmt. */
+/** Covers each partial pixel row, as Playwright does when it captures an element. */
 function frame(box: { x: number; y: number; width: number; height: number }): {
   w: number;
   h: number;
@@ -38,21 +37,19 @@ function frame(box: { x: number; y: number; width: number; height: number }): {
   };
 }
 
-/** Die Karten, die nicht in `pending.json` stehen. */
+/** The cards that are not in `pending.json`. */
 export function liveCards(): BoardCard[] {
   const pending = pendingStems();
   return boardCards().filter((card) => !pending.has(`blocks/${card.stem}`));
 }
 
-/** Liest das Manifest der Baustein-Karten. */
 export function boardCards(): BoardCard[] {
   return JSON.parse(readFileSync(join(__dirname, 'blocks-cards.json'), 'utf8')) as BoardCard[];
 }
 
 /**
- * Prüft Groesse und Bild einer Karte gegen `baseline/blocks/<stem>.png`,
- * Toleranz 0,5 % Pixel. Eine Karte aus `pending.json` bleibt aus.
- */
+ * Compares size and image of a card with `baseline/blocks/<stem>.png` (0.5 % pixel tolerance).
+ * Skips a card in `pending.json`. */
 export async function expectCard(page: Page, card: BoardCard): Promise<void> {
   if (pendingStems().has(`blocks/${card.stem}`)) return;
   const block = page.locator(`[data-block="${card.selector}"]`);
@@ -74,16 +71,14 @@ export async function neutralisePhotos(page: Page): Promise<void> {
   });
 }
 
-/** Ein Board, dessen Seite noch lädt, wartet nicht auf Ruhe im Netz. */
+/** A board whose page keeps loading does not wait for network idle. */
 export interface BoardOptions {
   idle?: boolean;
 }
 
 /**
- * Vergleicht die Ansicht mit `baseline/<board>.png`, Toleranz 0,5 % Pixel.
- * Ein Board aus `pending.json` läuft nicht. Das Board läuft sonst nur in
- * dem Projekt, dessen Fenster zum Bild passt.
- */
+ * Compares the view with `baseline/<board>.png` (0.5 % pixel tolerance). Skips a board in `pending.json`.
+ * The board runs only in the project whose window fits the image. */
 export async function expectBoard(page: Page, board: string, options: BoardOptions = {}): Promise<void> {
   test.skip(pendingStems().has(board), `${board} steht in pending.json`);
   const image = size(join(test.info().config.rootDir, 'boards/baseline', `${board}.png`));

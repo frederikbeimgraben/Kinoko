@@ -1,6 +1,6 @@
 import { expect, test } from '../fixtures/test';
 
-/** Dieser Fluss prüft den Service Worker selbst und lässt ihn darum laufen. */
+/** This flow tests the service worker itself, so it lets it run. */
 test.use({ serviceWorkers: 'allow' });
 
 interface Manifest {

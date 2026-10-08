@@ -4,11 +4,11 @@ import { placeholder, type PlaceholderSpec } from '../fixtures/placeholder';
 import { largeBundle } from '../fixtures/species-catalogue';
 import { expectCard, liveCards } from './board';
 
-/** Die Farben des Platzhalters, wie das Board sie an die Stelle eines Fotos setzt. */
+/** The placeholder colours that the board shows instead of a photo. */
 const STOPS = ['#3d4a36', '#6b6136', '#2f3a2c'];
 const THUMB = { width: 44, height: 44, angle: 140, stops: STOPS, bubbles: true } as const;
 
-/** Je Bild die Fläche, die das Board an seiner Stelle malt. */
+/** For each image, the area that the board paints in its place. */
 const PHOTOS: Readonly<Record<string, PlaceholderSpec>> = {
   'bild-eins': { width: 380, height: 120, angle: 140, stops: STOPS, bubbles: true },
   'bild-zwei': { width: 380, height: 300, angle: 140, stops: STOPS, bubbles: true },
@@ -21,7 +21,7 @@ const PHOTOS: Readonly<Record<string, PlaceholderSpec>> = {
 };
 
 test('Blocks', async ({ page }) => {
-  // Das Board ist 900 × 9144 gross und läuft nur in seinem eigenen Projekt.
+  // The board is 900 × 9144 and runs only in its own project.
   test.skip(test.info().project.name !== 'blocks', 'Blocks hat ein eigenes Fenster');
   const CARDS = liveCards();
   await mockApi(page, { '/api/species/bundle': largeBundle() });

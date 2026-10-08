@@ -1,4 +1,4 @@
-/** Die Attrappen der Artseite. Die Werte stehen so in den Boards. */
+/** The mocks of the species page. The values match the boards. */
 
 import { PALETTE } from './species';
 
@@ -10,7 +10,7 @@ function colour(name: string, hex: string): Record<string, unknown> {
   return { name, hex };
 }
 
-/** Der Steinpilz mit dem Profil, das die Boards zeichnen. */
+/** The cep with the profile that the boards draw. */
 export const STONE_PROFILE: Record<string, unknown> = {
   id: '00000000-0000-4000-8000-000000000001',
   slug: 'boletus-edulis',
@@ -180,7 +180,7 @@ export const STONE_PROFILE: Record<string, unknown> = {
   ],
 };
 
-/** Die drei Verwechslungen als eigene Arten, jede mit Titelbild. */
+/** The three lookalikes as separate species, each with a title image. */
 const LOOKALIKE_SPECIES = ['tylopilus-felleus', 'imleria-badia', 'boletus-reticulatus'].map((slug, at) => ({
   ...STONE_PROFILE,
   id: `00000000-0000-4000-8000-00000000000${String(at + 2)}`,
@@ -191,7 +191,7 @@ const LOOKALIKE_SPECIES = ['tylopilus-felleus', 'imleria-badia', 'boletus-reticu
   sources: [],
 }));
 
-/** Eine Art, die nur ihre Verwechslungen trägt: der Einstieg in den Vergleich. */
+/** A species with only its lookalikes: the entry into the comparison. */
 const LOOKALIKES_ONLY: Record<string, unknown> = {
   ...STONE_PROFILE,
   measurements: [],
@@ -208,17 +208,17 @@ const LOOKALIKES_ONLY: Record<string, unknown> = {
   leadPhotoId: null,
 };
 
-/** Das Bündel des Bretts `CompareEntry`: nur Verwechslungen, kein anderes Merkmal. */
+/** The bundle of the `CompareEntry` board: only lookalikes, no other feature. */
 export function lookalikesBundle(): Record<string, unknown> {
   return { items: [LOOKALIKES_ONLY, ...LOOKALIKE_SPECIES], standardColours: PALETTE, facets: {} };
 }
 
-/** Das Bündel der Artseite: die Art mit vollem Profil und ihre Verwechslungen. */
+/** The species page bundle: the species with its full profile and its lookalikes. */
 export function profileBundle(): Record<string, unknown> {
   return { items: [STONE_PROFILE, ...LOOKALIKE_SPECIES], standardColours: PALETTE, facets: {} };
 }
 
-/** Die vier freigegebenen Bilder der Artseite. */
+/** The four approved images of the species page. */
 export function profilePhotos(): Record<string, unknown> {
   const items = ['eins', 'zwei', 'drei', 'vier'].map((id, at) => ({
     id,
@@ -246,7 +246,7 @@ export function profilePhotos(): Record<string, unknown> {
   return { items, nextCursor: null };
 }
 
-/** Die Glocke der Saison, wie die Werkstatt sie zeichnet. */
+/** The season bell curve, as the workshop draws it. */
 function bell(week: number, peak: number, offset: number, factor: number): number {
   const position = week - peak - offset;
   return (
@@ -255,7 +255,7 @@ function bell(week: number, peak: number, offset: number, factor: number): numbe
   );
 }
 
-/** Das Manifest der Karte: 2024 als Fläche, 2025 als Linie bis KW 39. */
+/** The map manifest: the earlier season as an area, the later season as a line up to week 39. */
 export function profileManifest(): Record<string, unknown> {
   const week = (year: number, number_: number, mean: number): Record<string, unknown> => ({
     year,

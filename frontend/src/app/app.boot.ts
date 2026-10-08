@@ -1,9 +1,9 @@
 import type { EnvironmentInjector } from '@angular/core';
 
-/** Erst wenn der Hauptfaden frei ist, sonst drückt der Start auf die Anzeige. */
+/** Wait until the main thread is free. Else the start slows the first render. */
 const IDLE_TIMEOUT = 1000;
 
-/** Was erst nach dem ersten Bild läuft und den Start nicht aufhält. */
+/** Starts the work that runs after the first render and does not block the start. */
 export function bootOffline(injector: EnvironmentInjector): void {
   whenIdle(() => {
     void import('./boot-tasks').then((tasks) => tasks.runBootTasks(injector));

@@ -6,7 +6,7 @@ import { TAXON } from '../fixtures/species-boards';
 
 const PAGE = 40;
 
-/** Ein Katalog, der über eine Seite hinausreicht. */
+/** A catalogue that is longer than one page. */
 function manySpecies(count: number): Record<string, unknown> {
   return {
     items: Array.from({ length: count }, (_, at) =>
@@ -82,8 +82,8 @@ test('Die Einordnung holt die Stufe aus dem Vertrag', async ({ page }) => {
   await page.goto('/taxonomie/family/boletaceae');
   await expect(page.getByText('Rotfußröhrling')).toBeVisible();
 
-  // Die Zusicherung wartet auf die Anfrage. Ihre Stelle in der Reihe der
-  // Anfragen schwankt unter Last.
+  // The assertion waits for the request. Its position in the request order
+  // changes under load.
   const call = page.waitForRequest('**/api/taxa/genus/boletus');
   await page.getByRole('button', { name: 'Boletus 3 Arten' }).click();
 
