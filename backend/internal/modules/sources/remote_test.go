@@ -61,3 +61,16 @@ func TestRefreshQueuesOneFetchRun(t *testing.T) {
 		t.Fatal(shown)
 	}
 }
+
+// TestRefreshQueuesNoRunWithoutItsRequest checks that the run and its fetch
+// request are one write: a failed request leaves no plain fetch run behind.
+func TestRefreshQueuesNoRunWithoutItsRequest(t *testing.T) {
+	f := newFixture(t)
+	f.exec(`CREATE TRIGGER refuse_request BEFORE INSERT ON remote_fetch_request BEGIN SELECT RAISE(ABORT, 'refused'); END`)
+	f.env.Post("/remote-sources/dwd-hyras/refresh", map[string]any{"fromYear": 2014, "toYear": 2018, "force": true},
+		f.admin).Expect(t, http.StatusInternalServerError)
+	n, err := db.Scalar[int](t.Context(), f.env.DB, "SELECT count(*) FROM pipeline_run WHERE kind = 'fetch'")
+	if err != nil || n != 0 {
+		t.Fatalf("%d fetch runs, %v", n, err)
+	}
+}
