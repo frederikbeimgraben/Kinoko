@@ -239,8 +239,9 @@ func (s *cellSeries) pawsMean() ([]float64, error) {
 		}
 	}
 	for w := range out {
-		out[w] = math.NaN()
-		if cnt[w] > 0 {
+		if cnt[w] == 0 {
+			out[w] = math.NaN()
+		} else {
 			out[w] = float64(float32(out[w] / float64(cnt[w])))
 		}
 	}

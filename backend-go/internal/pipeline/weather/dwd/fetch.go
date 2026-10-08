@@ -22,15 +22,15 @@ type Logger interface {
 // Fetcher downloads DWD grids into Dir (PILZE_DATA/cache/dwd) and records each
 // file in Cache. The zero values of the optional fields give the defaults.
 type Fetcher struct {
-	HTTP      *http.Client                   // http.DefaultClient when nil
-	Base      string                         // BaseURL when empty
-	Dir       string                         // the cache root of the DWD files
-	Cache     CacheStore                     // no bookkeeping when nil
-	UserAgent string                         // DefaultUserAgent when empty
-	Attempts  int                            // 4 when 0, as dwd_fetch.download
+	HTTP      *http.Client                    // http.DefaultClient when nil
+	Base      string                          // BaseURL when empty
+	Dir       string                          // the cache root of the DWD files
+	Cache     CacheStore                      // no bookkeeping when nil
+	UserAgent string                          // DefaultUserAgent when empty
+	Attempts  int                             // 4 when 0, as dwd_fetch.download
 	Backoff   func(attempt int) time.Duration // the wait before the next attempt
-	Now       func() time.Time               // time.Now when nil
-	Log       Logger                         // no log when nil
+	Now       func() time.Time                // time.Now when nil
+	Log       Logger                          // no log when nil
 }
 
 // DefaultUserAgent names the service to the DWD server.

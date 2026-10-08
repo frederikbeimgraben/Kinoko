@@ -322,7 +322,7 @@ import gzip  # noqa: E402
 
 (OUT / "derive.json.gz").write_bytes(gzip.compress(json.dumps({
     "cells": cells, "weeks": weeks,
-    "input": {k: [[num(v) for v in row] for row in values[k]] for k in names},
+    "input": {k: [[num32(v) for v in row] for row in values[k]] for k in names},
     "lagNames": lag_names, "anomNames": anom_names,
     "full": derive_full,
     "forecast": {"renderWeeks": RENDER_WEEKS, "grenze": grenze, "weeks": fweeks, "values": derive_forecast},
