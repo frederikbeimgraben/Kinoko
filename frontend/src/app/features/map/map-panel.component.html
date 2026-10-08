@@ -19,6 +19,7 @@
     [weeks]="view.weeks()"
     [active]="view.activeWeek()"
     [dimmed]="dimmed()"
+    [align]="wide() ? 'centre' : 'end'"
     [label]="'map.timeline' | t"
     (chosen)="weekChosen.emit($event)"
   />
@@ -31,59 +32,3 @@
   [loading]="view.loading()"
   (valueChange)="setView($event)"
 />
-
-@if (view.loading()) {
-  <div class="panel__wait">
-    <app-skeleton kind="line" width="60%" height="12px" />
-    <div class="panel__bar"></div>
-  </div>
-} @else {
-  @switch (state.view()) {
-    @case ('forecast') {
-      @if (!view.noSpecies()) {
-        <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
-      }
-    }
-    @case ('layer') {
-      <app-form-field
-        [label]="'map.tab.layer' | t"
-        [section]="true"
-        [value]="layerName()"
-        [icon]="layerGlyph()"
-        [readOnly]="true"
-        (displayClick)="layerChosen.emit()"
-      />
-      <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
-    }
-    @case ('combination') {
-      <div class="panel__saved">
-        <app-list-row
-          kind="filter"
-          [title]="'map.combination.saved' | t"
-          [value]="savedCount()"
-          [chevron]="true"
-          [clickable]="true"
-          (chosen)="savedOpened.emit()"
-        />
-      </div>
-      <app-segmented
-        class="panel__rule"
-        [options]="rules()"
-        [value]="combination.rule()"
-        [label]="'map.combination.rule' | t"
-        (valueChange)="setRule($event)"
-      />
-      @if (combination.rule() === 'graded') {
-        <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
-      }
-      <app-combination
-        [factors]="combination.factors()"
-        [sources]="view.sources()"
-        (openFactor)="factorOpened.emit($event)"
-        (removed)="combination.remove($event)"
-        (add)="factorAdded.emit()"
-        (saveRequested)="saveRequested.emit()"
-      />
-    }
-  }
-}

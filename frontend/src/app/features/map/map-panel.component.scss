@@ -1,55 +1,32 @@
+// Per `kit.css` `.panel` with the padding of the board `MapPanel`.
 :host {
   display: flex;
-  flex: 1 1 auto;
+  flex: none;
   flex-direction: column;
-  gap: var(--space-5);
-  min-block-size: 0;
-  overflow: hidden;
-  padding: var(--size-gutter) var(--size-gutter) var(--space-5);
+  gap: 20px;
+  padding: 16px;
 }
 
+// Per `kit.css` `.phead`.
 .panel__head {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 8px;
 }
 
 .panel__head-spacer {
-  block-size: var(--size-chip);
+  block-size: var(--h-chip);
 }
 
 .panel__when {
-  flex: 1 1 auto;
+  flex: 1;
   min-inline-size: 0;
+  padding-inline-end: 4px;
   overflow: hidden;
-  font-size: var(--fs-control);
-  font-weight: var(--fw-semibold);
+  font-size: 16px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: end;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-// Die gespeicherten Kombinationen stehen als Karte unter den Reitern.
-.panel__saved {
-  --fw-row-filter: var(--fw-regular);
-  --space-row-gap: var(--space-row-inline);
-
-  margin-block-start: calc(10px - var(--space-5));
-  background: var(--surface);
-  border: var(--border-width) solid var(--outline);
-  border-radius: var(--radius-lg);
-}
-
-// Die Regel steht dicht unter der Karte: beide sagen, was die Karte zeigt.
-.panel__rule {
-  margin-block-start: calc(10px - var(--space-5));
-}
-
-// Solange kein Manifest da ist, steht hier die Rampe als Platzhalter.
-.panel__bar {
-  block-size: 12px;
-  margin-block-start: 10px;
-  background: var(--surface-low);
-  border-radius: 6px;
 }

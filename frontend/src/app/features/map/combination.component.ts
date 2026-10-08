@@ -3,13 +3,12 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { layerIcon, type LayerIcon } from '../../core/tiles/layer-groups';
 import type { Layer } from '../../core/tiles/layers';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { FactorRowComponent } from '../../ui/factor-row/factor-row.component';
-import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { conditionText, type Factor } from './factors';
 
-/** Ein Faktor, wie ihn die Zeile braucht: mit aufgelöster Quelle. */
+/** A factor with its resolved source, as the row needs it. */
 interface Row {
   factor: Factor;
   name: string;
@@ -18,25 +17,23 @@ interface Row {
   icon: LayerIcon | null;
 }
 
-/** Die Darstellung „Kombination“: die Faktoren und die Aktionen darunter. */
+/** The factors of the combination view as one group, per the board `MapCombination`. */
 @Component({
   selector: 'app-combination',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, AddRowComponent, FactorRowComponent, ScrollFadeDirective, TranslatePipe],
+  imports: [AddRowComponent, FactorRowComponent, RowGroupComponent, TranslatePipe],
   templateUrl: './combination.component.html',
-  styleUrl: './combination.component.scss',
 })
 export class CombinationComponent {
   private readonly i18n = inject(I18nService);
 
   readonly factors = input.required<readonly Factor[]>();
-  /** Die Quellen der Faktoren, nach Kennung. Was fehlt, wird nicht gezeigt. */
+  /** The sources of the factors by identifier. A factor without a source does not show. */
   readonly sources = input.required<ReadonlyMap<string, Layer>>();
 
   readonly openFactor = output<string>();
   readonly removed = output<Factor>();
   readonly add = output();
-  readonly saveRequested = output();
 
   protected readonly rows = computed<Row[]>(() => {
     const sources = this.sources();
@@ -56,11 +53,4 @@ export class CombinationComponent {
       ];
     });
   });
-
-  protected readonly canSave = computed(() => this.factors().length > 0);
-
-  /** `app-action-bar` zeigt keinen gesperrten Zustand, darum prüft der Griff. */
-  protected requestSave(): void {
-    if (this.canSave()) this.saveRequested.emit();
-  }
 }

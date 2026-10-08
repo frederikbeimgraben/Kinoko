@@ -31,11 +31,14 @@
   view-transition-name: shell-nav;
 }
 
+// Per `MapControls.dc.html`: the avatar is 16 px from the edges and casts a float shadow.
 .shell__avatar {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + 12px);
-  inset-inline-start: 12px;
+  inset-block-start: calc(var(--top-bar-height, 0px) + 16px);
+  inset-inline-start: 16px;
   z-index: 2;
+  border-radius: 20px;
+  box-shadow: var(--shadow-float);
 }
 
 // Kit `.stage > .banner`: the banner is the last item of the stage, above the nav.

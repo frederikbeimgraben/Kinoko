@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  afterNextRender,
   ElementRef,
   computed,
   contentChild,
@@ -131,6 +132,18 @@ export class SheetComponent {
     effect(() => {
       this.height();
       this.applyInset();
+    });
+    // A content sheet changes its height without a new detent, for example when its content loads.
+    afterNextRender(() => {
+      const sheet = this.host.nativeElement.querySelector('.sheet');
+      if (sheet === null || typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(() => {
+        this.applyInset();
+      });
+      observer.observe(sheet);
+      this.destroyRef.onDestroy(() => {
+        observer.disconnect();
+      });
     });
     this.destroyRef.onDestroy(() => document.documentElement.style.removeProperty('--pilz-sheet-inset'));
   }

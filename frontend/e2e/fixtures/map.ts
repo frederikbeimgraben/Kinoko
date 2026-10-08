@@ -38,8 +38,8 @@ const COMBINATION_KEY = 'pilzkarte.combination.v1';
 /** Die Faktoren aus den Boards der Kombination, als Wert des Speichers. */
 export const BOARD_FACTORS = 'regen:ge:80';
 
-/** Heute, für jedes Board: KW 40 der Fixtures gilt als laufende Woche. */
-const BOARD_NOW = '2025-10-02T12:00:00Z';
+/** Today for each board: KW 38 of the fixtures is the current week. */
+const BOARD_NOW = '2026-09-17T12:00:00Z';
 
 /** Legt Zustand, Manifeste und Kacheln auf die Seite. Kacheln bleiben leer. */
 export async function mockMap(
@@ -156,6 +156,83 @@ export async function showMapImage(page: Page, name: string, fixed?: number, und
     const image = document.querySelector<HTMLImageElement>('.map__canvas img');
     return image?.complete === true;
   });
+}
+
+/** The heat of the design map surface: the forecast, the rain or none. */
+export type DesignHeat = 'forecast' | 'rain' | 'none';
+
+/** How the design map surface of a board looks. */
+export interface DesignMap {
+  heat?: DesignHeat;
+  rotated?: boolean;
+  /** A fixed height in px. Without it, the surface fills the canvas. */
+  height?: number;
+  /** The surface ends this number of px below the top of the map sheet, as in the kit `.sheet`. */
+  belowSheet?: number;
+}
+
+/**
+ * The kit `.karte`, `.turn` and `.heat` of `kit.css`. The boards draw this surface, not a real map.
+ * The road is in `.turn`, so the rule `.karte>svg` does not apply: it is a square as wide as the map.
+ */
+const KARTE =
+  'position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;overflow:hidden;z-index:1;pointer-events:none;background:' +
+  'radial-gradient(120px 90px at 22% 18%,#dfe8d6 0,transparent 100%),' +
+  'radial-gradient(160px 120px at 78% 30%,#d3dfcb 0,transparent 100%),' +
+  'radial-gradient(200px 140px at 40% 62%,#d8e3d0 0,transparent 100%),' +
+  'linear-gradient(180deg,#eef2ea,#e4ebe0)';
+const TURN = 'position:absolute;inset:0';
+const TURNED = 'position:absolute;inset:-30%;transform:rotate(-28deg)';
+const HEAT: Record<Exclude<DesignHeat, 'none'>, string> = {
+  forecast:
+    'radial-gradient(38% 34% at 30% 34%,#b5367a 0,transparent 100%),' +
+    'radial-gradient(34% 30% at 62% 22%,#f1605d 0,transparent 100%),' +
+    'radial-gradient(40% 36% at 52% 56%,#cd4071 0,transparent 100%),' +
+    'radial-gradient(30% 30% at 84% 58%,#feb078 0,transparent 100%),' +
+    'radial-gradient(28% 30% at 14% 70%,#721f81 0,transparent 100%)',
+  rain:
+    'radial-gradient(40% 36% at 28% 30%,#2c6fa3 0,transparent 100%),' +
+    'radial-gradient(36% 32% at 66% 24%,#5aa4c9 0,transparent 100%),' +
+    'radial-gradient(42% 38% at 50% 60%,#1f4e86 0,transparent 100%),' +
+    'radial-gradient(30% 30% at 84% 62%,#9fd0de 0,transparent 100%)',
+};
+const ROAD =
+  '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
+  '<path d="M0 74 C18 66 30 80 50 76 S78 60 100 70" fill="none" stroke="#9aa3c4" stroke-width=".900" opacity=".700"></path></svg>';
+
+/**
+ * Puts the design map surface of `MapView` over the canvas, below the buttons and the sheets.
+ * The design draws CSS gradients, so the board compares the app frame, not the map engine.
+ */
+export async function showDesignMap(page: Page, map: DesignMap = {}): Promise<void> {
+  await settled(page);
+  const heat = map.heat ?? 'forecast';
+  const turn = map.rotated ? TURNED : TURN;
+  const inner =
+    `<div style="${turn}">${ROAD}` +
+    (heat === 'none'
+      ? ''
+      : `<div style="position:absolute;inset:0;mix-blend-mode:multiply;opacity:.9;background:${HEAT[heat]}"></div>`) +
+    '</div>';
+  await page.evaluate(
+    ([karte, html, fixed, below]) => {
+      const host = document.querySelector('.map__canvas');
+      if (host === null) return;
+      const frame = host.getBoundingClientRect();
+      const sheet = document.querySelector('.map__sheet .sheet');
+      const height =
+        fixed ??
+        (below !== null && sheet !== null
+          ? sheet.getBoundingClientRect().top + below - frame.top
+          : frame.height);
+      const surface = document.createElement('div');
+      surface.className = 'design-map';
+      surface.setAttribute('style', `${karte};height:${height}px`);
+      surface.innerHTML = html;
+      host.prepend(surface);
+    },
+    [KARTE, inner, map.height ?? null, map.belowSheet ?? null] as const,
+  );
 }
 
 export {

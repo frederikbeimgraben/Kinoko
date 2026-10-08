@@ -17,11 +17,11 @@ import { MapStore } from './map.store';
 import { MapView } from './map.view';
 import type { Factor } from './factors';
 
-/** Die drei Rasten des Blatts in Punkten, aus den Boards. */
-export const DETENTS = [149, 310, 480] as const;
+/** The three detents of the map sheet in px. The map pads its centre by them (boards `Map` and `MapCombination`). */
+export const DETENTS = [149, 317, 584] as const;
 
-/** Dieselben Rasten in der Schreibweise, die `app-sheet` erwartet. */
-export const DETENT_SIZES = ['149px', '310px', '480px'] as const;
+/** The detents as `app-sheet` reads them. Above the lowest one, the sheet is as high as its content, as the kit `.sheet`. */
+export const DETENT_SIZES = ['149px', 'content', 'content'] as const;
 
 /** British Racing Green, falls das Theme keine Farbe hergibt. */
 const MEAN_FALLBACK = '#004225';

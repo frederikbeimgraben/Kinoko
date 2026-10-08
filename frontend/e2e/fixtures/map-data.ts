@@ -1,32 +1,36 @@
-/** Die Woche, die jedes Karten-Board zeigt. */
-export const WEEK = { year: 2025, week: 40 };
+/** The week that each map board shows. */
+export const WEEK = { year: 2026, week: 38 };
 
-/** Die Art, die jedes Karten-Board zeigt. */
+/** The species that each map board shows. */
 export const SPECIES = 'boletus-edulis';
 
-const SHARES = [0.18, 0.26, 0.4, 0.48, 0.62, 0.7, 0.88, 1];
+/**
+ * The mean of each week, as a share of the peak in week 34. The bars of the
+ * board `WeekStrip` fill 35, 55, 70, 85, 75, 60 and 40 % from week 35.
+ */
+const SHARES = [1, 0.35, 0.55, 0.7, 0.85, 0.75, 0.6, 0.4];
 
-/** Die erste Woche der Leiste. Gewählt ist KW 40, sie steht in der Mitte. */
-const FIRST_WEEK = 36;
+/** The first week of the strip. KW 38 is chosen and stands in the middle. */
+const FIRST_WEEK = 34;
 
-/** Ab dieser Woche rechnet die Kette, sie misst nicht mehr. */
-const FIRST_FORECAST = 41;
+/** From this week, the chain calculates and does not measure. */
+const FIRST_FORECAST = 39;
 
 function weeks(): unknown[] {
   return SHARES.map((share, index) => {
     const week = FIRST_WEEK + index;
     return {
-      year: 2025,
+      year: 2026,
       week,
       forecast: week >= FIRST_FORECAST,
-      tiles: `boletus_edulis_kacheln/2025W${week}`,
+      tiles: `boletus_edulis_kacheln/2026W${week}`,
       mean: share,
       max: share,
     };
   });
 }
 
-/** Das Manifest der Art: acht Wochen um KW 40, Höchstwert 0,5. */
+/** The manifest of the species: eight weeks around KW 38, peak 0.5. */
 export const SPECIES_MANIFEST = {
   species: ['Boletus edulis'],
   top: 0.5,
@@ -62,70 +66,70 @@ export const LAYERS_MANIFEST = {
       label: 'Niederschlag 4 Wochen',
       title: 'Niederschlag der letzten 4 Wochen',
       note: 'je Woche, 5-km-Raster, DWD HYRAS',
-      range: 'KW 40',
+      range: 'KW 38',
       unit: 'mm',
       low: 0,
       high: 152,
       tiles: 'layers_kacheln/regen_4w',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(240) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(240) },
     },
     regen: {
       label: 'Niederschlag',
-      note: 'Summe KW 37 bis 40',
-      range: 'KW 37 bis 40',
+      note: 'Summe KW 35 bis 38',
+      range: 'KW 35 bis 38',
       unit: 'mm',
       low: 0,
       high: 240,
       tiles: 'layers_kacheln/regen',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(240) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(240) },
     },
     temperatur: {
       label: 'Mitteltemperatur',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: '°C',
       low: -5,
       high: 30,
       tiles: 'layers_kacheln/temperatur',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(30) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(30) },
     },
     bodenfeuchte: {
       label: 'Bodenfeuchte',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: '% nFK',
       low: 0,
       high: 1,
       tiles: 'layers_kacheln/bodenfeuchte',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(1) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(1) },
     },
     frosttage: {
       label: 'Frosttage',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: 'Tage',
       low: 0,
       high: 7,
       tiles: 'layers_kacheln/frosttage',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(7) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(7) },
     },
     hitzetage: {
       label: 'Hitzetage',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: 'Tage',
       low: 0,
       high: 7,
       tiles: 'layers_kacheln/hitzetage',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(7) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(7) },
     },
   },
 };

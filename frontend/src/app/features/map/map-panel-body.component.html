@@ -1,0 +1,68 @@
+@if (view.loading()) {
+  <app-skeleton kind="block" height="64px" />
+} @else {
+  @switch (state.view()) {
+    @case ('forecast') {
+      @if (!view.noSpecies()) {
+        <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+      }
+    }
+    @case ('layer') {
+      <app-ramp
+        [label]="view.rampLabel()"
+        [from]="view.rampFrom()"
+        [to]="view.rampTo()"
+        [kind]="rampKind()"
+      />
+      @if (wide()) {
+        <app-layer-pick
+          [layers]="view.layers()"
+          [selected]="view.layer()?.id ?? null"
+          [label]="'map.tab.layer' | t"
+          (chosen)="chooseLayer($event)"
+        />
+      } @else {
+        <app-row-group>
+          <app-list-row
+            [title]="'map.tab.layer' | t"
+            [plain]="layerName()"
+            icon="layers"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="layerChosen.emit()"
+          />
+        </app-row-group>
+      }
+    }
+    @case ('combination') {
+      <app-segmented
+        [options]="rules()"
+        [value]="combination.rule()"
+        [label]="'map.combination.rule' | t"
+        (valueChange)="setRule($event)"
+      />
+      @if (combination.rule() === 'graded') {
+        <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
+      }
+      <app-combination
+        [factors]="combination.factors()"
+        [sources]="view.sources()"
+        (openFactor)="factorOpened.emit($event)"
+        (removed)="combination.remove($event)"
+        (add)="factorAdded.emit()"
+      />
+      <div class="body__halves">
+        <app-push-button kind="tonal" [wide]="true" (click)="savedOpened.emit()">{{
+          'map.combination.list' | t
+        }}</app-push-button>
+        <app-push-button
+          [wide]="true"
+          [disabled]="combination.factors().length === 0"
+          (click)="saveRequested.emit()"
+        >
+          {{ 'common.save' | t }}
+        </app-push-button>
+      </div>
+    }
+  }
+}

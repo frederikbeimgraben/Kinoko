@@ -9,13 +9,25 @@
   overflow: hidden;
 }
 
+// The map pane holds the canvas and each part that is placed on the map. On the phone it fills the map.
+.map__pane {
+  position: absolute;
+  inset: 0;
+}
+
+// Kit `.pane.map`: on the desktop the pane is inset next to the column, with round corners (board `MapDesktop`).
+:host-context(.shell--column) .map__pane {
+  inset: 16px 16px 16px calc(var(--size-rail) + var(--size-column));
+  overflow: hidden;
+  border-radius: var(--r-sheet);
+}
+
 .map__canvas {
   position: absolute;
   inset: 0;
 }
 
-// The sheet host covers the full map: a detent is a part of this height,
-// and the top detent covers the floating buttons.
+// The sheet host covers the full map. The sheet is at its bottom edge.
 .map__sheet {
   position: absolute;
   inset: 0;
@@ -23,36 +35,12 @@
   pointer-events: none;
 }
 
-// Parts that go together are closer: the view, the rule and its text.
-.map__switch {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+// Board `Map`: the panel starts 12 px into the grip.
+.map__panel {
+  margin-block-start: -12px;
 }
 
-.map__content {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--space-5);
-  min-block-size: 0;
-  padding: var(--size-gutter) var(--size-gutter) var(--space-5);
-  overflow-y: auto;
-  // As the chip row and the species list: the app fills the device, and a scroll bar
-  // belongs to a window.
-  scrollbar-width: none;
-}
-
-// Kit `.pane.map`: on the desktop the canvas is an inset pane with round corners
-// next to the column (board `MapDesktop`).
-:host-context(.shell--column) .map__canvas {
-  inset: 16px 16px 16px calc(var(--size-rail) + var(--size-column));
-  overflow: hidden;
-  border-radius: var(--r-sheet);
-}
-
-// Kit `.pane.panel`: on the desktop the map panel is a `--sheet` card in the column.
-// It has a head and content, and no detents.
+// Kit `.pane.panel`: on the desktop the map panel is a `--sheet` card in the column, without detents.
 .map__column {
   position: absolute;
   inset-block: 16px;
@@ -62,13 +50,13 @@
   flex-direction: column;
   inline-size: calc(var(--size-column) - 16px);
   overflow: hidden;
-  padding-block-start: calc(var(--top-bar-height, 0px) + var(--space-3));
+  padding-block-start: var(--top-bar-height, 0px);
   background: var(--sheet);
   border-radius: var(--r-sheet);
 }
 
-// Add-entry and the object sheet are on top: they are why the map shows,
-// and only one of the two is open at a time.
+// Add-entry and the object sheet are on top: they are the reason that the map shows.
+// Only one of the two is open at a time.
 app-add-entry,
 app-object-sheet {
   position: absolute;
@@ -84,22 +72,13 @@ app-object-sheet {
   z-index: 1;
 }
 
-// Without a connection the map is grey: it shows the last known data.
+// Without a connection, the map is grey: it shows the last known data.
 .map__grey {
   position: absolute;
-  inset: 0 0 var(--pilz-sheet-inset, 0) 0;
+  inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: var(--color-text-muted);
+  background: var(--text-var);
   mix-blend-mode: saturation;
   opacity: 0.7;
-}
-
-// The banner is on the map at the top edge, as in the board `MapOffline`.
-.map__banner {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 3;
-  padding-block-start: env(safe-area-inset-top);
 }

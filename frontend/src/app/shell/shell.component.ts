@@ -33,8 +33,8 @@ const WITHOUT_NAV: readonly RegExp[] = [
   /^\/konto(\/|$)/,
 ];
 
-/** The space that a floating banner takes at the top of the map (kit `.banner.float`). */
-const FLOAT_BANNER_OFFSET = 'calc(48px + env(safe-area-inset-top, 0px))';
+/** The space that a floating banner takes at the top of the map: `MapControls top=60` on the boards. */
+const FLOAT_BANNER_OFFSET = 'calc(60px + env(safe-area-inset-top, 0px))';
 
 /** The frame around each tab. The map lives here and stays in memory when the tab changes. */
 @Component({

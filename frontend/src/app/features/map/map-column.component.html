@@ -17,9 +17,8 @@
     />
   }
 } @else {
-  <app-map-panel
-    (titleChosen)="titleChosen.emit()"
-    (weekChosen)="weekChosen.emit($event)"
+  <app-map-panel (titleChosen)="titleChosen.emit()" (weekChosen)="weekChosen.emit($event)" />
+  <app-map-panel-body
     (layerChosen)="layerChosen.emit()"
     (savedOpened)="savedOpened.emit()"
     (factorOpened)="factorOpened.emit($event)"
