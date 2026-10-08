@@ -1,8 +1,8 @@
 import { computed, inject } from '@angular/core';
-import { rxResource, toObservable } from '@angular/core/rxjs-interop';
-import { signalStore, withComputed, withMethods, withProps } from '@ngrx/signals';
-import { filter, firstValueFrom } from 'rxjs';
+import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
+import { catchError, defer, firstValueFrom, map, of, shareReplay } from 'rxjs';
 import { ApiClient } from '../api/api-client';
+import { setFailed, setLoaded, setLoading, withLoadState } from '../state';
 
 /** What the backend tells about itself and the sign-in. `GET /api/config`. */
 export interface AppConfig {
@@ -12,29 +12,38 @@ export interface AppConfig {
   version: string;
 }
 
+interface ConfigState {
+  /** The configuration, or `null`. The map and the species work without the backend. */
+  configuration: AppConfig | null;
+}
+
 /** The configuration of the backend. The read goes through `ApiClient`, so a failure shows a toast. */
 export const ConfigStore = signalStore(
   { providedIn: 'root' },
+  withState<ConfigState>({ configuration: null }),
+  withLoadState(),
+  withComputed(({ status }) => ({
+    /** True when the read has an answer or failed. */
+    settled: computed(() => status() === 'loaded' || status() === 'error'),
+  })),
   withProps(() => {
     const api = inject(ApiClient);
-    return { _resource: rxResource({ stream: () => api.get<AppConfig>('/config') }) };
+    // A resource adds a pending task, so the app is not stable while the read waits.
+    // A shared observable reads one time for all callers and adds no pending task.
+    return {
+      _read$: defer(() => api.get<AppConfig>('/config')).pipe(
+        map((configuration): AppConfig | null => configuration),
+        catchError(() => of(null)),
+        shareReplay(1),
+      ),
+    };
   }),
-  withComputed(({ _resource }) => ({
-    /** The configuration, or `null`. The map and the species work without the backend. */
-    configuration: computed<AppConfig | null>(() => (_resource.hasValue() ? _resource.value() : null)),
-    /** True when the read has an answer or failed. */
-    settled: computed(() => {
-      const status = _resource.status();
-      return status === 'resolved' || status === 'error' || status === 'local';
-    }),
-  })),
-  withProps(({ settled }) => ({
-    _settled$: toObservable(settled).pipe(filter(Boolean)),
-  })),
   withMethods((store) => ({
-    /** Resolves when the read has an answer or failed. All callers share the same read. */
+    /** Reads the configuration one time. All callers share the same read. */
     async load(): Promise<void> {
-      await firstValueFrom(store._settled$);
+      if (store.status() === 'idle') patchState(store, setLoading());
+      const configuration = await firstValueFrom(store._read$);
+      patchState(store, { configuration }, configuration === null ? setFailed() : setLoaded());
     },
   })),
 );

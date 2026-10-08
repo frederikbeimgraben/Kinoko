@@ -39,9 +39,11 @@ function start(catalog: TextCatalogDouble, restoreSession = () => Promise.resolv
       },
       {
         provide: ConfigStore,
-        useFactory: () => {
-          calls.config += 1;
-          return { load: () => new Promise<void>(() => undefined) };
+        useValue: {
+          load: () => {
+            calls.config += 1;
+            return new Promise<void>(() => undefined);
+          },
         },
       },
       {

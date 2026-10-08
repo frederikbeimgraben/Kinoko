@@ -9,8 +9,7 @@ import { bootOffline } from './app.boot';
 export function startApp(): void {
   // The theme store paints the page when it starts, so the first frame has the correct theme.
   inject(ThemeStore);
-  // The config store starts its read when it starts. `AuthService` waits for the answer itself.
-  inject(ConfigStore);
+  const config = inject(ConfigStore);
   const auth = inject(AuthService);
   const texts = inject(TextCatalogService);
   const injector = inject(EnvironmentInjector);
@@ -21,6 +20,8 @@ export function startApp(): void {
     },
     { injector },
   );
+  void config.load();
+  // `AuthService` waits for the configuration itself.
   void auth.restoreSession();
   // The server comes after the local copy, because the local copy holds the ETag.
   void texts
