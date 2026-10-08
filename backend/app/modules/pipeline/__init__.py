@@ -1,1 +1,0 @@
-"""Läufe der Vorhersagekette."""
