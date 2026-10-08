@@ -10,13 +10,10 @@ type Float interface{ ~float32 | ~float64 }
 // pairwiseBlock is PW_BLOCKSIZE of numpy.
 const pairwiseBlock = 128
 
-// Sum returns np.sum of a in the type of a. numpy starts the reduction with
-// a[0] and adds the pairwise sum of the rest, so the rounding equals np.sum.
+// Sum returns np.sum of a contiguous array in the type of a, with the
+// pairwise summation of numpy, so the rounding equals np.sum.
 func Sum[T Float](a []T) T {
-	if len(a) == 0 {
-		return 0
-	}
-	return a[0] + pairwise(a[1:])
+	return pairwise(a)
 }
 
 // Mean returns np.mean of a float64 slice: np.sum divided by the count.

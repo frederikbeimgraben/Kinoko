@@ -244,17 +244,17 @@ func fieldsOf(schema []ColumnSpec) []parquet.Field {
 // parquet.Group sorts its fields by name, but the column order of the pandas tables matters.
 type orderedGroup []parquet.Field
 
-func (g orderedGroup) ID() int                       { return 0 }
-func (g orderedGroup) String() string                { return "orderedGroup" }
-func (g orderedGroup) Type() parquet.Type            { return parquet.Group{}.Type() }
-func (g orderedGroup) Optional() bool                { return false }
-func (g orderedGroup) Repeated() bool                { return false }
-func (g orderedGroup) Required() bool                { return true }
-func (g orderedGroup) Leaf() bool                    { return false }
-func (g orderedGroup) Fields() []parquet.Field       { return g }
-func (g orderedGroup) Encoding() encoding.Encoding   { return nil }
-func (g orderedGroup) Compression() compress.Codec   { return nil }
-func (g orderedGroup) GoType() reflect.Type          { return reflect.TypeFor[map[string]any]() }
+func (g orderedGroup) ID() int                     { return 0 }
+func (g orderedGroup) String() string              { return "orderedGroup" }
+func (g orderedGroup) Type() parquet.Type          { return parquet.Group{}.Type() }
+func (g orderedGroup) Optional() bool              { return false }
+func (g orderedGroup) Repeated() bool              { return false }
+func (g orderedGroup) Required() bool              { return true }
+func (g orderedGroup) Leaf() bool                  { return false }
+func (g orderedGroup) Fields() []parquet.Field     { return g }
+func (g orderedGroup) Encoding() encoding.Encoding { return nil }
+func (g orderedGroup) Compression() compress.Codec { return nil }
+func (g orderedGroup) GoType() reflect.Type        { return reflect.TypeFor[map[string]any]() }
 
 // namedField gives a node a name in its parent group.
 type namedField struct {

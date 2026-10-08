@@ -75,7 +75,7 @@ func Coarsen(s Store, finest, base int) ([]geo.TileID, error) {
 func parentsOf(ids []geo.TileID) []parentKey {
 	set := map[parentKey]bool{}
 	for _, id := range ids {
-		set[parentKey{floorHalf(id.X), floorHalf(id.Y)}] = true
+		set[parentKey{floorDiv(id.X, 2), floorDiv(id.Y, 2)}] = true
 	}
 	return slices.SortedFunc(maps.Keys(set), func(a, b parentKey) int {
 		if a.x != b.x {
@@ -83,14 +83,6 @@ func parentsOf(ids []geo.TileID) []parentKey {
 		}
 		return a.y - b.y
 	})
-}
-
-// floorHalf is Python x // 2.
-func floorHalf(v int) int {
-	if v < 0 {
-		return -((-v + 1) / 2)
-	}
-	return v / 2
 }
 
 func coarsenOne(s Store, zoom int, p parentKey) (bool, error) {
