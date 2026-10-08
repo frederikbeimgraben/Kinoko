@@ -86,8 +86,7 @@ export function withPage(held: DataSourceDetail | null, page: DataSourceDetail):
 /** Puts a new first page over the held detail. Older pages that `more` added stay after it. */
 export function withFirstPage(held: DataSourceDetail | null, first: DataSourceDetail): DataSourceDetail {
   const last = first.versions.at(-1);
-  if (held === null || held.kind !== first.kind || first.nextCursor === null || last === undefined)
-    return first;
+  if (held?.kind !== first.kind || first.nextCursor === null || last === undefined) return first;
   const at = held.versions.findIndex((one) => one.id === last.id);
   return at < 0
     ? first

@@ -26,7 +26,11 @@ export const RunStore = signalStore(
     load: rxMethod<string>(
       pipe(
         tap((id) => {
-          patchState(store, ({ id: before, run }) => ({ id, run: id === before ? run : null, missing: false }), setLoading());
+          patchState(
+            store,
+            ({ id: before, run }) => ({ id, run: id === before ? run : null, missing: false }),
+            setLoading(),
+          );
         }),
         filter((id) => id !== ''),
         switchMap((id) =>
@@ -36,7 +40,11 @@ export const RunStore = signalStore(
                 patchState(store, { run }, setLoaded());
               },
               error: (problem: unknown) => {
-                patchState(store, { missing: isProblemDetail(problem) && problem.status === 404 }, setFailed());
+                patchState(
+                  store,
+                  { missing: isProblemDetail(problem) && problem.status === 404 },
+                  setFailed(),
+                );
               },
             }),
           ),

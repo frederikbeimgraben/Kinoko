@@ -269,15 +269,20 @@ describe('EntriesComponent', () => {
   it('reads all pages of the own photos each time the photo filter goes on', async () => {
     const setup = await build();
     const http = TestBed.inject(HttpTestingController);
-    const photos = (cursor: string | null) => (call: { url: string; params: { get: (name: string) => string | null } }) =>
-      call.url === '/api/photos' && call.params.get('mine') === 'true' && call.params.get('cursor') === cursor;
+    const photos =
+      (cursor: string | null) => (call: { url: string; params: { get: (name: string) => string | null } }) =>
+        call.url === '/api/photos' &&
+        call.params.get('mine') === 'true' &&
+        call.params.get('cursor') === cursor;
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
     setup.refresh();
     await userEvent.click(screen.getByRole('switch', { name: 'nur mit Foto' }));
 
     http.expectOne(photos(null)).flush({ items: [photo({ id: 'p1', findId: null })], nextCursor: 'c2' });
-    http.expectOne(photos('c2')).flush({ items: [photo({ id: 'p2', findId: FIND_ENTRY.id })], nextCursor: null });
+    http
+      .expectOne(photos('c2'))
+      .flush({ items: [photo({ id: 'p2', findId: FIND_ENTRY.id })], nextCursor: null });
 
     expect([...TestBed.inject(MyImagesStore).findIds()]).toEqual([FIND_ENTRY.id]);
     expect(TestBed.inject(EntriesStore).filter().withPhoto).toBe(true);

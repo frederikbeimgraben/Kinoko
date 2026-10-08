@@ -62,6 +62,28 @@ export const MyImagesStore = signalStore(
         }),
       ),
     );
+    const all = rxMethod<true>(
+      pipe(
+        tap(() => {
+          patchState(store, { busy: true });
+        }),
+        switchMap(() =>
+          store._api.list({ mine: true }).pipe(
+            expand((answer) =>
+              answer.nextCursor === null ? EMPTY : store._api.list({ mine: true, cursor: answer.nextCursor }),
+            ),
+            reduce<PhotoPage, readonly Photo[]>((sum, answer) => [...sum, ...answer.items], []),
+            tap((photos) => {
+              patchState(store, { photos, cursor: null, busy: false });
+            }),
+            catchError(() => {
+              patchState(store, ({ photos }) => ({ busy: false, photos: photos ?? [] }));
+              return EMPTY;
+            }),
+          ),
+        ),
+      ),
+    );
     return {
       /** Forgets the photos when another person signs in or the person signs out. */
       _reset: rxMethod<string | null>(
@@ -73,28 +95,9 @@ export const MyImagesStore = signalStore(
         ),
       ),
       /** Reads all pages again, for a filter that must know each own photo. */
-      loadAll: rxMethod<void>(
-        pipe(
-          tap(() => {
-            patchState(store, { busy: true });
-          }),
-          switchMap(() =>
-            store._api.list({ mine: true }).pipe(
-              expand((answer) =>
-                answer.nextCursor === null ? EMPTY : store._api.list({ mine: true, cursor: answer.nextCursor }),
-              ),
-              reduce<PhotoPage, readonly Photo[]>((all, answer) => [...all, ...answer.items], []),
-              tap((photos) => {
-                patchState(store, { photos, cursor: null, busy: false });
-              }),
-              catchError(() => {
-                patchState(store, ({ photos }) => ({ busy: false, photos: photos ?? [] }));
-                return EMPTY;
-              }),
-            ),
-          ),
-        ),
-      ),
+      loadAll(): void {
+        all(true);
+      },
       /** Reads the first page again. */
       load(): void {
         page({ fresh: true });

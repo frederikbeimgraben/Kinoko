@@ -12,7 +12,17 @@ const zone = {
   id: 'zone-1',
   name: 'Wald',
   areaHa: 3,
-  polygon: { type: 'Polygon', coordinates: [[[9, 48], [9.001, 48], [9.001, 48.001], [9, 48]]] },
+  polygon: {
+    type: 'Polygon',
+    coordinates: [
+      [
+        [9, 48],
+        [9.001, 48],
+        [9.001, 48.001],
+        [9, 48],
+      ],
+    ],
+  },
 } as unknown as Zone;
 
 const layer = {

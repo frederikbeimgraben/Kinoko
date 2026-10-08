@@ -121,7 +121,7 @@ export class UploadSheetComponent {
   protected readonly blocking = computed(() => {
     const kind = this.kind();
     const detail = this.sources.detail();
-    const open = detail?.kind === kind ? (detail?.openUpload ?? null) : null;
+    const open = detail?.kind === kind ? detail.openUpload : null;
     if (open === null || this.running() || this.store.saved()?.uploadId === open.id) return null;
     return { id: open.id, note: this.text('admin.upload.openHint', { name: open.fileName }) };
   });
@@ -172,13 +172,23 @@ export class UploadSheetComponent {
   }
 
   protected cancel(): void {
-    this.store.cancel({ onDone: () => this.refresh() });
+    this.store.cancel({
+      onDone: () => {
+        this.refresh();
+      },
+    });
     this.picked.set(null);
   }
 
   protected discard(): void {
     const open = this.blocking();
-    if (open !== null) this.store.discard({ id: open.id, onDone: () => this.refresh() });
+    if (open !== null)
+      this.store.discard({
+        id: open.id,
+        onDone: () => {
+          this.refresh();
+        },
+      });
   }
 
   /** Reads the detail of this kind again, so that it shows the open session of the server. */

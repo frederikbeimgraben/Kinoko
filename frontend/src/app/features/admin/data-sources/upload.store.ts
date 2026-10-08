@@ -97,9 +97,7 @@ export const UploadStore = signalStore(
   })),
   withMethods((store) => uploadEnds(store)),
   withMethods((store) => {
-    const apply = (event: UploadEvent): void => {
-      store._apply(event);
-    };
+    const apply = store._apply;
 
     const part = () =>
       sendPart(store._api, store.upload, store._run.request?.file ?? null, (attempt) => {

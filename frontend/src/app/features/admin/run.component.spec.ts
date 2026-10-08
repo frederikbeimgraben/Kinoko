@@ -112,7 +112,12 @@ describe('RunComponent', () => {
   it('shows a load error with a retry for a failure that is not a 404', async () => {
     TestBed.resetTestingModule();
     await render(RunComponent, {
-      providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor('lauf-training')],
+      providers: [
+        provideRouter(ANY_ROUTE),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        routeFor('lauf-training'),
+      ],
     });
     const http = TestBed.inject(HttpTestingController);
     http
