@@ -1,4 +1,10 @@
-// Werte aus artefakte/mockups/design/uebergabe/tokens.json.
+// The colour values come from artefakte/mockups/design/uebergabe/tokens.json.
+
+// Kit tokens from kit.css: --r-*, --shadow-fab/float/sheet/overlay/knob, --scrim,
+// --h-*, --w-*, --ic, --ic-s, --fs-10 to --fs-24, --ease-emph-*, --motion-enter/leave/pop.
+
+// Use the kit tokens in new styles. Do not change the values of the older tokens:
+// old styles use them until their unit moves to the kit tokens.
 
 :root,
 :root[data-theme='dark'] {
@@ -132,7 +138,7 @@
 
   --lh-normal: normal;
 
-  // Masse der Zeilen und Koepfe aus den Brettern.
+  // Sizes of the rows and heads, measured on the boards.
   --fs-row-title: 15px;
   --fs-row-latin: 12.5px;
   --fs-row-meta: 13px;
@@ -160,6 +166,66 @@
   --motion-sheet: 250ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 
+  // Kit radii. Each name is a kit element with that radius.
+  --r-row: 4px;
+  --r-line: 6px;
+  --r-badge: 8px;
+  --r-sq: 14px;
+  --r-box: 16px;
+  --r-chip: 18px;
+  --r-item: 20px;
+  --r-pop: 24px;
+  --r-sheet: 28px;
+  --r-blob: 32px;
+
+  // Kit shadows. The kit uses the same values in the dark and the light theme.
+  --shadow-fab: 0 4px 12px rgb(0 0 0 / 45%);
+  --shadow-float: 0 3px 10px rgb(0 0 0 / 40%);
+  --shadow-sheet: 0 -6px 24px rgb(0 0 0 / 35%);
+  --shadow-overlay: 0 12px 40px rgb(0 0 0 / 50%);
+  --shadow-knob: 0 2px 6px rgb(0 0 0 / 40%);
+
+  --scrim: rgb(0 0 0 / 45%);
+
+  // Kit sizes: heights (--h-*), icons (--ic*) and widths (--w-*).
+  --h-row: 56px;
+  --h-item: 72px;
+  --h-chip: 36px;
+  --h-btn: 56px;
+  --h-btn-text: 48px;
+  --h-ib: 48px;
+  --h-tb: 44px;
+  --h-field: 56px;
+  --ic: 24px;
+  --ic-s: 18px;
+  --w-modal: 560px;
+  --w-dialog: 328px;
+  --w-pane-panel: 420px;
+  --w-pane-middle: 640px;
+  --w-pane-list: 520px;
+  --w-filter-col: 272px;
+
+  // Kit font sizes. The number is the size in px.
+  --fs-10: 10px;
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-15: 15px;
+  --fs-16: 16px;
+  --fs-17: 17px;
+  --fs-18: 18px;
+  --fs-20: 20px;
+  --fs-22: 22px;
+  --fs-24: 24px;
+
+  // Motion for enter and leave animations (see _motion.scss).
+  --ease-emph-in: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-emph-out: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --motion-enter: 300ms;
+  --motion-leave: 200ms;
+  --motion-pop: 150ms;
+
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -170,7 +236,7 @@ app-toast {
   --radius-md: 10px;
 }
 
-// Ohne diese Regeln markiert ein langer Druck Text und ein Tipp blitzt blau auf.
+// These rules stop a long press from selecting text and a tap from a blue flash.
 body {
   user-select: none;
   -webkit-user-select: none;
@@ -193,6 +259,9 @@ textarea,
     --motion-base: 0ms;
     --motion-page: 0ms;
     --motion-sheet: 0ms;
+    --motion-enter: 0ms;
+    --motion-leave: 0ms;
+    --motion-pop: 0ms;
   }
 
   *,
