@@ -69,7 +69,7 @@ test('Einträge-Filter steht am Rechner als zentriertes Modal', async ({ page })
 
 test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
   await openApp(page, '/eintraege');
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: MARKER }).first();
   await expect(entry).toBeVisible();
   await entry.click();
@@ -91,7 +91,7 @@ test('Anmelden steht am Rechner als zentriertes Modal', async ({ page }) => {
 
 test('Der Plus-Knopf lässt den Reiter Einträge stehen', async ({ page }) => {
   await openApp(page, '/eintraege');
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   const list = page.getByRole('button').filter({ hasText: MARKER }).first();
   await expect(list).toBeVisible();
 

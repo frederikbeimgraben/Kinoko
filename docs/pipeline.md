@@ -143,7 +143,7 @@ required kind has no active, ready version:
 - **occurrences**: builds `interim/occurrences.parquet` from the GBIF cache, the active `gbif-archive` and the app finds. It keeps the class Agaricomycetes and gives each record an ISO week and a 5 km cell.
 - **train models**: trains each species of the run. It makes the visit table, trains one LightGBM model for each horizon 0 to 4, and calibrates the scores. It installs the bundle as the new active `model-bundle` version of the species. It writes `funde/<slug>.json` into `PILZE_MAPS`.
 - **render maps**: draws the weekly map of each species with its active model.
-- **render layers**: draws the fifteen weekly input layers. Then it removes the week folders that no manifest names.
+- **render layers**: publishes the static layers first. Then it draws the fifteen weekly input layers and removes the week folders that no manifest names.
 - **season table**: writes `derived/saison.json` into `PILZE_DATA`.
 
 A failed species does not stop the steps "train models" and "render maps".
@@ -207,11 +207,22 @@ never sees a week without its tiles.
 
 ### Static layers
 
-The step "render layers" keeps the static entries that are in `layers.json`.
-It does not add static entries. The function `render.InstallStaticLayers`
-copies the layers of a `static-layers` version into `PILZE_MAPS`, but no
-step calls it at this time. The fine layers that the raster uploads derive
-stay in their version folder.
+These active versions hold static layers: the `static-layers` upload and the
+fine layers of `tree-species-map`, `dem` and `soilgrids`. A version without
+`layers.json`, for example a tree map without an outline, holds none.
+
+The runner publishes these layers with `render.InstallStaticLayers`:
+
+- It copies each layer to `layers_kacheln/<name>` in `PILZE_MAPS`. Each folder changes in one rename.
+- A derived fine layer replaces an uploaded layer with the same name.
+- The file `.source` in each folder names the version and its processing time. A folder of the same version is not copied again.
+- Then it writes `layers.json` with the static entries first and the weekly entries after them. It writes the file only when the text changes.
+- A static entry stays in `layers.json` when its version is no longer active.
+
+The publication occurs at two times:
+
+- At the start of the step "render layers", before it writes `layers.json`.
+- After a version of one of these kinds becomes active. The service then waits for the end of a run or of a processing. This occurs only when `PILZE_PIPELINE` is on.
 
 ## Errors of the Python chain
 
@@ -244,7 +255,9 @@ Training and rendering need most. These rules keep the use low:
 
 - The prediction of a week works in chunks of 200,000 rows. Only one chunk of the input matrix is in memory.
 - The weather extraction computes two checkpoints at a time. Each holds about one year of daily cell means.
-- A run reads the weather cube and the tree scales once and shares them between the species.
+- A run reads the trees grid, the site grid and the tree scales once and shares them between the species and the layers. The tree scales hold only the columns of the models of the run.
+- The maps read only the weather checkpoints of the model features, for example `pr`, `tas` and `tasmin`. The layers read their own checkpoints; these are all twelve.
+- A run keeps one weather cube at a time. It removes the cube of the maps before it reads the cube of the layers. It also removes the tree scales of the training and of the maps when no later step needs them.
 - The tree map goes through GDAL in tiles of 50 km.
 - A fine layer keeps one float field of one block in memory. Large tile pyramids go to disk, not to memory.
 - An upload goes to disk part by part. The service does not keep a part in memory.

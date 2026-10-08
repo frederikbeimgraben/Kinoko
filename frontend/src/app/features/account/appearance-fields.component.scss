@@ -1,0 +1,10 @@
+@use 'page';
+
+// The fields sit in the gap of the page around them.
+:host {
+  display: contents;
+}
+
+.field {
+  @include page.field;
+}

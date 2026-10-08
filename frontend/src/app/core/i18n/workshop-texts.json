@@ -48,7 +48,10 @@
     "beispiel.fundKurz": "Pfifferling · 6. September",
     "beispiel.hintergrund": "Hintergrund",
     "beispiel.uebertragungAusstehend": "1 Übertragung ausstehend",
-    "beispiel.ohneGruppe": "ohne Gruppe"
+    "beispiel.ohneGruppe": "ohne Gruppe",
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Familie",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -99,6 +102,9 @@
     "beispiel.fundKurz": "Chanterelle · 6 September",
     "beispiel.hintergrund": "Background",
     "beispiel.uebertragungAusstehend": "1 transfer pending",
-    "beispiel.ohneGruppe": "no group"
+    "beispiel.ohneGruppe": "no group",
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Family",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   }
 }

@@ -1,17 +1,26 @@
-<app-page-header [title]="'glossary.title' | t" [back]="true" (backClick)="back()" />
+@if (back()) {
+  <app-page-header [back]="true" (backClick)="toAccount()">
+    <app-search-field
+      headline
+      [value]="search()"
+      [placeholder]="'glossary.search' | t"
+      (valueChange)="onSearch($event)"
+    />
+  </app-page-header>
+} @else {
+  <app-page-header [title]="'glossary.title' | t" />
+}
 
-<div class="glossary">
-  <app-search-field
-    [value]="search()"
-    [placeholder]="'glossary.search' | t"
-    (valueChange)="onSearch($event)"
-  />
-  <div class="glossary__card">
-    @for (entry of entries(); track entry.id) {
-      <div class="glossary__entry">
-        <span class="glossary__term">{{ entry.term }}</span>
-        <span class="glossary__definition">{{ entry.definition }}</span>
-      </div>
-    }
-  </div>
+<div class="pad">
+  @if (!loaded()) {
+    <app-row-group-skeleton [count]="4" [lines]="3" />
+  } @else if (entries().length === 0) {
+    <app-state-view icon="search" [title]="'glossary.notFound' | t" />
+  } @else {
+    <app-row-group class="motion-list-in">
+      @for (entry of entries(); track entry.id) {
+        <app-list-row [title]="entry.term" [subline]="entry.definition" [wrap]="true" />
+      }
+    </app-row-group>
+  }
 </div>

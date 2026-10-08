@@ -35,10 +35,10 @@ const MARKERS = {
   nextCursor: null,
 };
 
-/** Zieht den Griff des offenen Blatts weit nach unten. */
+/** Drags the grip of the open sheet far down. */
 async function pullDown(page: Page): Promise<void> {
   const handle = page.locator('.sheet__handle').first();
-  // Das Blatt fährt aus. Der Zeiger wartet, bis es steht.
+  // The sheet moves in. The pointer waits until it stands still.
   await handle.hover();
   const box = await handle.boundingBox();
   if (box === null) throw new Error('Griff fehlt.');
@@ -51,7 +51,7 @@ async function pullDown(page: Page): Promise<void> {
   await page.mouse.up();
 }
 
-/** Der Reiter Einträge mit einem Marker und angemeldetem Konto. */
+/** The entries tab with one marker and a signed-in account. */
 async function openEntries(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -91,7 +91,7 @@ test('Einträge-Filter schließt mit einem Zug am Griff', async ({ page }) => {
 
 test('Objektblatt schließt mit demselben Zug am Griff', async ({ page }) => {
   await openEntries(page);
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: 'Alter Fichtenbestand' }).first();
   await expect(entry).toBeVisible();
   await expect(async () => {

@@ -9,7 +9,7 @@ const SECTIONS: readonly AboutSection[] = [
 ];
 
 describe('AboutTextComponent', () => {
-  it('zeigt Titel und Absätze mit Zwischenüberschrift', async () => {
+  it('shows the title and a row for each part', async () => {
     const { container } = await render(AboutTextComponent, {
       inputs: { title: 'account.method', sections: SECTIONS },
     });
@@ -23,7 +23,7 @@ describe('AboutTextComponent', () => {
     await noViolations(container);
   });
 
-  it('meldet einen Klick auf Zurück', async () => {
+  it('reports a tap on back', async () => {
     const backClick = vi.fn();
     await render(AboutTextComponent, {
       inputs: { title: 'account.method', sections: SECTIONS },

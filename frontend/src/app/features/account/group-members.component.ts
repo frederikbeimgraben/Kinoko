@@ -2,49 +2,60 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import type { FriendGroup } from '../../core/api/models';
 import { shortDay } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
 
-/** Eine Zeile der Mitgliederliste. */
+/** One row of the member list. */
 interface Row {
-  userId: string;
-  name: string;
-  since: string;
-  owner: boolean;
+  readonly userId: string;
+  readonly name: string;
+  readonly sub: string;
+  readonly owner: boolean;
 }
 
-/** Einladungscode und Mitglieder: das Innere einer Gruppe, im Konto und in der Verwaltung. */
+/** The invitation code and the members, per `GroupPage.dc.html`. The account and the administration show it. */
 @Component({
   selector: 'app-group-members',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconButtonComponent, LevelPillComponent, ListRowComponent, TranslatePipe],
+  imports: [IconButtonComponent, ListRowComponent, RowGroupComponent, SectionComponent, TranslatePipe],
   templateUrl: './group-members.component.html',
   styleUrl: './group-members.component.scss',
 })
 export class GroupMembersComponent {
   readonly group = input.required<FriendGroup>();
-  /** Nur der Eigentümer und die Verwaltung nehmen jemanden heraus. */
+  /** Only the owner and the administration remove a member. */
   readonly removable = input(false);
 
   readonly removed = output<string>();
 
   private readonly i18n = inject(I18nService);
 
-  protected readonly rows = computed<Row[]>(() => {
+  protected readonly rows = computed<readonly Row[]>(() => {
     const group = this.group();
-    return group.members.map((member) => ({
-      userId: member.userId,
-      name: member.name,
-      since: this.i18n.translate('group.since', {
-        date: shortDay(new Date(member.joinedAt), this.i18n),
-      }),
-      owner: member.userId === group.ownerId,
-    }));
+    return group.members.map((member) => {
+      const owner = member.userId === group.ownerId;
+      return {
+        userId: member.userId,
+        name: member.name,
+        sub: joined([
+          owner ? this.i18n.translate('group.owner') : null,
+          this.i18n.translate('group.since', { date: shortDay(new Date(member.joinedAt), this.i18n) }),
+        ]),
+        owner,
+      };
+    });
   });
 
   protected share(): void {
-    void navigator.clipboard.writeText(this.group().inviteCode);
+    const code = this.group().inviteCode;
+    if (typeof navigator.share === 'function') {
+      navigator.share({ text: code }).catch(() => undefined);
+      return;
+    }
+    void navigator.clipboard.writeText(code);
   }
 }

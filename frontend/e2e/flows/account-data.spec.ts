@@ -14,7 +14,7 @@ const EXPORT = {
   photos: [{}],
 };
 
-/** Meldet an und legt den Vertrag auf die Seite. */
+/** Signs in and puts the contract on the page. */
 async function start(page: Page, path: string, extra: Record<string, unknown> = {}): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, { '/api/config': authConfig(BASE), ...extra });
@@ -29,15 +29,21 @@ test('Meine Daten zeigt Zähler, exportiert und löscht alles', async ({ page })
     await route.fulfill({ status: 204 });
   });
 
-  await expect(page.getByText('Funde')).toBeVisible();
-  await expect(page.getByText('Kombinationen')).toBeVisible();
+  await expect(page.getByText('Funde', { exact: true })).toBeVisible();
 
+  await page.getByRole('button', { name: 'Daten exportieren' }).click();
   const download = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Als JSON exportieren' }).click();
+  await page.getByRole('button', { name: 'Exportieren', exact: true }).click();
   expect((await download).suggestedFilename()).toMatch(/^kinoko-export-\d{4}-\d{2}-\d{2}\.json$/);
 
+  await page.getByRole('button', { name: 'Daten exportieren' }).click();
+  await page.getByRole('tab', { name: 'GPX' }).click();
+  const gpx = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Exportieren', exact: true }).click();
+  expect((await gpx).suggestedFilename()).toMatch(/\.gpx$/);
+
   await page.getByRole('button', { name: 'Alles löschen' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Löschen' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Alles löschen' }).click();
 
   await expect(page).toHaveURL(/\/konto$/);
   expect(deletes).toEqual(['DELETE']);

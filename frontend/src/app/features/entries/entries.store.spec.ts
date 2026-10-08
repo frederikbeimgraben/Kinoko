@@ -14,11 +14,11 @@ import {
   ZONE_ENTRY,
   page,
 } from '../../testing/entries-fixture';
-import { EntriesState } from './entries.state';
+import { EntriesStore } from './entries.store';
 import { findWrite, markerWrite, zoneWrite } from './writes';
 
 interface Setup {
-  state: EntriesState;
+  state: EntriesStore;
   http: HttpTestingController;
   auth: AuthStub;
   queue: SyncStub;
@@ -40,14 +40,14 @@ function build(): Setup {
     ],
   });
   return {
-    state: TestBed.inject(EntriesState),
+    state: TestBed.inject(EntriesStore),
     http: TestBed.inject(HttpTestingController),
     auth,
     queue,
   };
 }
 
-/** Lädt die drei Listen, so wie eine Seite es beim Öffnen tut. */
+/** Loads the three lists, as a page does when it opens. */
 async function load(setup: Setup): Promise<void> {
   const loaded = setup.state.load();
   await vi.waitFor(() => {
@@ -58,7 +58,7 @@ async function load(setup: Setup): Promise<void> {
   await loaded;
 }
 
-describe('EintraegeZustand', () => {
+describe('EntriesStore', () => {
   it('holt Funde, Marker und Zonen des Kontos', async () => {
     const setup = build();
 

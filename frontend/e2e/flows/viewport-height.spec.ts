@@ -27,11 +27,8 @@ const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 const EMPTY_BUNDLE = { items: [], standardColours: [], facets: {} };
 const EMPTY_FINDS = { items: [], nextCursor: null };
 
-/**
- * Am Telefon füllt die Hülle den Bildschirm. Trägt die Seite eine
- * Reiterleiste, steht sie ganz im Fenster. Nur der Inhalt scrollt, nicht die
- * Seite selbst.
- */
+/** On the phone the shell fills the screen. A tab bar is fully in the window.
+ * Only the content scrolls, not the page. */
 async function assertFillsViewport(page: Page): Promise<void> {
   const viewport = page.viewportSize();
   const bar = page.getByRole('navigation');
@@ -177,7 +174,8 @@ test.describe('Seitenhöhe am Telefon', () => {
   });
 
   test('Einträge, Filter offen', async ({ page }) => {
-    await open(page, '/eintraege');
+    await mockSignIn(page);
+    await open(page, '/eintraege', { '/api/config': authConfig(BASE) });
     await page.getByRole('button', { name: 'Filter', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await assertFillsViewport(page);

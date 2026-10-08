@@ -1,0 +1,27 @@
+<div class="field">
+  <span class="lbl">{{ 'account.section.appearance' | t }}</span>
+  <app-segmented
+    [options]="themes()"
+    [value]="themeChoice()"
+    [label]="'account.section.appearance' | t"
+    (valueChange)="selectTheme($event)"
+  />
+</div>
+<div class="field">
+  <span class="lbl">{{ 'account.section.language' | t }}</span>
+  <app-segmented
+    [options]="languages()"
+    [value]="locale()"
+    [label]="'account.section.language' | t"
+    (valueChange)="selectLanguage($event)"
+  />
+</div>
+<div class="field">
+  <span class="lbl">{{ 'account.mapApp' | t }}</span>
+  <app-segmented
+    [options]="mapApps()"
+    [value]="mapAppChoice()"
+    [label]="'account.mapApp' | t"
+    (valueChange)="selectMapApp($event)"
+  />
+</div>

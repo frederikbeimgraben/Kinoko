@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { NEVER } from 'rxjs';
 import { AccountStore } from '../../core/access/account.store';
 import { noViolations } from '../../testing/axe';
 import {
@@ -31,59 +32,74 @@ async function build(
 }
 
 describe('GroupComponent', () => {
-  it('zeigt Code und Mitglieder mit ihrem Eintrittstag', async () => {
+  it('shows the code and the members with the day they joined', async () => {
     const { container } = await build(OWNER_ID);
 
     expect(screen.getByText('PILZ-7F3K')).toBeInTheDocument();
-    expect(screen.getByText('Eigentümer')).toBeInTheDocument();
+    expect(screen.getByText('Eigentümer · seit 3. Sept.')).toBeInTheDocument();
     expect(screen.getByText('seit 5. Sept.')).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('gibt dem Eigentümer das Entfernen und das Löschen', async () => {
+  it('shows a skeleton and not "not found" while the groups load', async () => {
+    const api = new GroupsApiDouble();
+    vi.spyOn(api, 'list').mockReturnValue(NEVER);
+    const { container } = await build(OWNER_ID, KARLSRUHE.id, api);
+
+    expect(screen.queryByText('Gruppe nicht gefunden')).not.toBeInTheDocument();
+    expect(container.querySelector('app-row-group-skeleton')).not.toBeNull();
+  });
+
+  it('gives the owner the remove and the delete action', async () => {
     const { api } = await build(OWNER_ID);
 
     await userEvent.click(screen.getByRole('button', { name: 'Mitglied entfernen' }));
 
-    expect(api.dropped).toEqual([{ id: KARLSRUHE.id, userId: MEMBER_ID }]);
+    await vi.waitFor(() => {
+      expect(api.dropped).toEqual([{ id: KARLSRUHE.id, userId: MEMBER_ID }]);
+    });
     expect(screen.getByRole('button', { name: 'Gruppe löschen' })).toBeInTheDocument();
   });
 
-  it('gibt einem Mitglied nur das Verlassen', async () => {
+  it('gives a member only the leave action', async () => {
     await build(MEMBER_ID);
 
     expect(screen.queryByRole('button', { name: 'Mitglied entfernen' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Verlassen' })).toBeInTheDocument();
   });
 
-  it('löscht die Gruppe nach der Rückfrage', async () => {
+  it('deletes the group after the question', async () => {
     const { api, router } = await build(OWNER_ID);
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
     await userEvent.click(screen.getByRole('button', { name: 'Gruppe löschen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
 
+    await vi.waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith('/konto/gruppen');
+    });
     expect(api.removed).toEqual([KARLSRUHE.id]);
-    expect(navigate).toHaveBeenCalledWith('/konto/gruppen');
   });
 
-  it('verlässt die Gruppe nach der Rückfrage', async () => {
+  it('leaves the group after the question', async () => {
     const { api } = await build(MEMBER_ID);
 
     await userEvent.click(screen.getByRole('button', { name: 'Verlassen' }));
     const both = screen.getAllByRole('button', { name: 'Verlassen' });
     await userEvent.click(both[both.length - 1]);
 
-    expect(api.dropped).toEqual([{ id: KARLSRUHE.id, userId: MEMBER_ID }]);
+    await vi.waitFor(() => {
+      expect(api.dropped).toEqual([{ id: KARLSRUHE.id, userId: MEMBER_ID }]);
+    });
   });
 
-  it('meldet eine unbekannte Gruppe', async () => {
-    await build(OWNER_ID, 'fehlt');
+  it('tells about a group that is not there', async () => {
+    await build(OWNER_ID, 'missing');
 
     expect(screen.getByText('Gruppe nicht gefunden')).toBeInTheDocument();
   });
 
-  it('legt den Code in die Zwischenablage', async () => {
+  it('copies the code without a share sheet', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
     await build(OWNER_ID);

@@ -1,0 +1,11 @@
+// Per the body of `EntriesFilterBody.dc.html`: a column with a gap of 20.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// Kit `.row` puts the switch 16 px from the edge, as for a trailing mark.
+app-switch {
+  margin-inline-end: 16px;
+}

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -9,7 +9,7 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { GroupMembersComponent } from '../account/group-members.component';
 
-/** Eine Gruppe in der Verwaltung: umbenennen, Mitglied entfernen, löschen. */
+/** One group in the administration: rename it, remove a member, delete it. */
 @Component({
   selector: 'app-admin-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,7 +29,7 @@ export class AdminGroupComponent {
 
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(GroupsState);
+  private readonly state = inject(GroupsStore);
 
   protected readonly nameChoice = signal<string | null>(null);
   protected readonly asking = signal(false);
@@ -48,26 +48,22 @@ export class AdminGroupComponent {
   }
 
   protected removeMember(userId: string): void {
-    this.state.removeMember(this.id(), userId).subscribe();
+    void this.state.removeMember(this.id(), userId);
   }
 
   protected save(): void {
     const name = this.name().trim();
     if (name === '') return;
     this.saving.set(true);
-    this.state.rename(this.id(), name).subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.back();
-      },
-      error: () => {
-        this.saving.set(false);
-      },
+    void this.state.rename(this.id(), name).then((group) => {
+      this.saving.set(false);
+      if (group !== null) this.back();
     });
   }
 
   protected remove(): void {
-    this.state.remove(this.id()).subscribe(() => {
+    void this.state.remove(this.id()).then((done) => {
+      if (!done) return;
       this.asking.set(false);
       this.back();
     });

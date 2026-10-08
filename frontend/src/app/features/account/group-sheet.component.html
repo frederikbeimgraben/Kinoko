@@ -5,12 +5,5 @@
   (submitted)="submitted.emit(text())"
   (cancelled)="cancelled.emit()"
 >
-  <app-form-field
-    [label]="label()"
-    [hideLabel]="!section()"
-    [section]="section()"
-    [placeholder]="placeholder()"
-    [value]="text()"
-    (valueChange)="text.set($event)"
-  />
+  <app-form-field [label]="label()" [section]="true" [value]="text()" (valueChange)="text.set($event)" />
 </app-form-sheet>
