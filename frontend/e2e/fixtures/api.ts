@@ -9,6 +9,10 @@ const REPLIES: Record<string, unknown> = {
   '/api/me/permissions': { permissions: [], roles: [] },
   '/api/species/bundle': { items: [], standardColours: [], facets: {} },
   '/api/terms': { items: [] },
+  '/api/finds': { items: [], nextCursor: null },
+  '/api/markers': { items: [], nextCursor: null },
+  '/api/zones': { items: [], nextCursor: null },
+  '/api/people/names': [],
 };
 
 /** An image of four brown tones. Without an image, the request gives an error. */

@@ -77,9 +77,9 @@ export class AccessApi {
     return this.api.get<Items<Person>>('/people', { q: search || undefined }).pipe(map((page) => page.items));
   }
 
-  /** The names for IDs that share a group with the own account. */
+  /** The names for IDs that share a group with the current user. A background call: it shows no toast. */
   personNames(ids: readonly string[]): Observable<PersonName[]> {
-    return this.api.get<PersonName[]>('/people/names', { ids: ids.join(',') });
+    return this.api.get<PersonName[]>('/people/names', { ids: ids.join(',') }, { quiet: true });
   }
 
   /** Sets the roles of a person. The list replaces the roles; it does not add to them. */
