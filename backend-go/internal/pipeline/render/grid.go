@@ -115,7 +115,9 @@ func NewGrid(b Bounds, step int, t Tables, cols []string) (*Grid, error) {
 		if err != nil {
 			return nil, fmt.Errorf("render: site grid: %w", err)
 		}
-		g.Soil = soil["soil_phh2o_0_5cm"]
+		if g.Soil = soil["soil_phh2o_0_5cm"]; g.Soil == nil {
+			return nil, fmt.Errorf("render: site grid: column soil_phh2o_0_5cm is missing")
+		}
 	}
 	if t.Scales != nil {
 		joined, err := joinColumns(t.Scales, fine, cols)
@@ -128,8 +130,7 @@ func NewGrid(b Bounds, step int, t Tables, cols []string) (*Grid, error) {
 }
 
 // joinColumns is a left merge on the fine cell key: the column "cell" of t
-// against keys. A key without a row gives NaN. A column that t lacks is left out,
-// except soil_phh2o_0_5cm, which the water mask needs.
+// against keys. A key without a row gives NaN. A column that t lacks is left out.
 func joinColumns(t *pio.Table, keys []geo.CellKey, cols []string) (map[string][]float32, error) {
 	cells, ok := t.Str["cell"]
 	if !ok {
@@ -150,9 +151,6 @@ func joinColumns(t *pio.Table, keys []geo.CellKey, cols []string) (map[string][]
 	for _, name := range cols {
 		src, ok := float32s(t, name)
 		if !ok {
-			if name == "soil_phh2o_0_5cm" {
-				return nil, fmt.Errorf("column %s is missing", name)
-			}
 			continue
 		}
 		dst := make([]float32, len(keys))

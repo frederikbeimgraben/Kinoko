@@ -268,8 +268,10 @@ func latLonBounds(merc [4]float64) [][]float64 {
 	return [][]float64{{s, w}, {n, e}}
 }
 
-// invMercator is the spherical inverse of EPSG:3857, as PROJ webmerc.
+// invMercator is the spherical inverse of EPSG:3857 in the arithmetic that
+// reproduces pyproj to the last bit: a product with 1/a and asin(tanh(y)).
 func invMercator(x, y float64) (lon, lat float64) {
-	const r = 6378137.0
-	return x / r * (180 / math.Pi), math.Atan(math.Sinh(y/r)) * (180 / math.Pi)
+	const ra = 1 / 6378137.0
+	const degToRad = 0.017453292519943296
+	return x * ra / degToRad, math.Asin(math.Tanh(y*ra)) / degToRad
 }

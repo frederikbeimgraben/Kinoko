@@ -128,6 +128,7 @@ func compareText(t *testing.T, name string, got, want []byte, tol float64) int {
 			continue
 		}
 		off++
+		t.Logf("%s: number %d is %s, Python wrote %s", name, i, gn[i], wn[i])
 		a, _ := strconv.ParseFloat(gn[i], 64)
 		b, _ := strconv.ParseFloat(wn[i], 64)
 		if math.Abs(a-b) > tol*max(1, math.Abs(b)) {
@@ -171,6 +172,9 @@ func compareTiles(t *testing.T, gotRoot, wantRoot string) int {
 		if off*1000 > len(a) {
 			t.Errorf("tile %s: %d points differ by one step", rel, off)
 		}
+		if off > 0 {
+			t.Logf("tile %s: %d points differ by one step", rel, off)
+		}
 	}
 	return len(want)
 }
@@ -212,9 +216,11 @@ func TestRenderSpeciesMatchesRegionMap(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	off := compareText(t, "species manifest", got, want, 1e-9)
+	if off := compareText(t, "species manifest", got, want, 1e-9); off != 0 {
+		t.Errorf("species manifest: %d numbers are not byte-equal", off)
+	}
 	n := compareTiles(t, filepath.Join(maps, "steinpilz-test_kacheln"), goldenPath("maps", "steinpilz-test_kacheln"))
-	t.Logf("%d tiles equal; %d numbers of the manifest not byte-equal", n, off)
+	t.Logf("manifest byte-equal, %d tiles equal", n)
 }
 
 func TestRenderLayersMatchesInputLayers(t *testing.T) {
@@ -242,7 +248,8 @@ func TestRenderLayersMatchesInputLayers(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	off := compareText(t, "layers.json", got, want, 1e-9)
+	// Only "bounds" may differ: geo.InvLAEA3035 is 1 to 3 ULP from pyproj there.
+	off := compareText(t, "layers.json", got, want, 1e-12)
 	n := compareTiles(t, filepath.Join(maps, "layers_kacheln"), goldenPath("maps", "layers_kacheln"))
 	t.Logf("%d tiles equal; %d numbers of layers.json not byte-equal", n, off)
 }

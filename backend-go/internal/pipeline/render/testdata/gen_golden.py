@@ -236,9 +236,7 @@ def main() -> None:
     import input_layers
     region_map.REGIONEN["tt"] = REGION
     out = work / "out"; out.mkdir()
-    dump = work / "dump"; dump.mkdir()
     os.chdir(work)
-    os.environ["PILZE_DUMP"] = str(dump)
     sys.argv = ["region_map.py", "--model", "models/test.pkl", "--name", SLUG, "--region", "tt",
                 "--weeks", str(WEEKS), "--forecast", str(FORECAST), "--tiles", "--no-image",
                 "--out", "out"]
@@ -271,9 +269,6 @@ def main() -> None:
           "species": r.species, "observer": r.recordedByHash} for r in occ.itertuples()]))
     (OUT / "input" / "old_layers.json").write_text(json.dumps(OLD_LAYERS, indent=1))
     shutil.copytree(out, OUT / "maps", ignore=shutil.ignore_patterns("_work_*", "layers", "*_weeks"))
-    dumps = sorted(dump.glob("dump_*.parquet"))
-    frames = [pd.read_parquet(p).assign(week=p.stem[5:]) for p in dumps]
-    pd.concat(frames).to_parquet(OUT / "dump.parquet", index=False)
     print("golden written to", OUT)
 
 
