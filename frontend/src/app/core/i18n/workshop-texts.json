@@ -49,7 +49,9 @@
     "beispiel.hintergrund": "Hintergrund",
     "beispiel.uebertragungAusstehend": "1 Übertragung ausstehend",
     "beispiel.ohneGruppe": "ohne Gruppe",
-    "beispiel.schoenbuchNord": "Schönbuch Nord"
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Familie",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -101,6 +103,8 @@
     "beispiel.hintergrund": "Background",
     "beispiel.uebertragungAusstehend": "1 transfer pending",
     "beispiel.ohneGruppe": "no group",
-    "beispiel.schoenbuchNord": "Schönbuch Nord"
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Family",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   }
 }

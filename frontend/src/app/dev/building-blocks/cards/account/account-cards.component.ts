@@ -50,8 +50,12 @@ function zone(id: string, name: string): Zone {
 export class AccountCardsComponent {
   protected readonly counts = COUNTS;
   protected readonly parts = PARTS;
-  protected readonly groups = [group('karlsruhe', 'Pilzgruppe Karlsruhe'), group('familie', 'Familie')];
   private readonly i18n = inject(I18nService);
+
+  protected readonly groups = computed(() => [
+    group('karlsruhe', this.i18n.translate('beispiel.pilzgruppeKarlsruhe')),
+    group('familie', this.i18n.translate('beispiel.familie')),
+  ]);
 
   protected readonly zones = computed(() => [
     zone('schoenbuch', this.i18n.translate('beispiel.schoenbuchNord')),

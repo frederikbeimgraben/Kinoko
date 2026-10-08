@@ -393,10 +393,8 @@ describe('MapComponent', () => {
 
   it('zeigt die Leiste ohne Verbindung und lässt die Wochen bedienbar', async () => {
     const { stable } = await map();
-    const sync = TestBed.inject(SyncService) as unknown as {
-      _online: { set: (value: boolean) => void };
-    };
-    sync._online.set(false);
+    TestBed.inject(SyncService);
+    dispatchEvent(new Event('offline'));
     await stable();
 
     expect(screen.getByRole('button', { name: 'Keine Verbindung' })).toBeInTheDocument();
