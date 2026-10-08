@@ -39,10 +39,6 @@ stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-
 [geruch]
 tags = ["suesslich", "unangenehm"]
 text = "Jung fast geruchlos, nach Kleeheu, süßlich oder hornartig, alt widerlich nach Ammoniak."

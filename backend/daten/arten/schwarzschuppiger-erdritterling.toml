@@ -34,10 +34,6 @@ stiel = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#f
 fleisch = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "gelb", hex = "#e8c33a" }]
-
 [geruch]
 tags = ["mehlig", "unauffaellig"]
 text = "Unbedeutend bis mehlartig, alt mehlartig ranzig."

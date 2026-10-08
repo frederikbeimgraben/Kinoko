@@ -34,11 +34,6 @@ stiel = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#f
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
 sporenpulver = [{ name = "gelbbraun", hex = "#a3813f" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "rot", hex = "#c0392b" }]
-dauer = "langsam"
-
 [geruch]
 tags = ["pilzig", "unauffaellig"]
 text = "Neutral, allenfalls schwach pilzig."

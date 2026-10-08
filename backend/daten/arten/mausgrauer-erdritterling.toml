@@ -30,10 +30,6 @@ stiel = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "weiß", hex = "#fffff
 fleisch = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-
 [geruch]
 tags = ["unauffaellig"]
 text = "Neutral."

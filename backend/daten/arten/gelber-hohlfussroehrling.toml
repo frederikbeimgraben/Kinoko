@@ -36,10 +36,6 @@ stiel = [{ name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "gelb", hex = "#e8c33a" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-
 [geruch]
 tags = ["wuerzig", "pilzig"]
 text = "Pilzig, würzig."

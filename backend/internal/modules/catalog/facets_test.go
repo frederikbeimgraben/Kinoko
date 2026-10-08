@@ -158,8 +158,8 @@ func TestFacetsNameTheGenusFromTheLatinName(t *testing.T) {
 }
 
 func TestFacetsTakeTheGenusOfTheTaxonomy(t *testing.T) {
-	family := taxonRow{ID: db.NewID(), Rank: enums.TaxonRankFamily, Name: "Boletaceae"}
-	genus := taxonRow{ID: db.NewID(), Rank: enums.TaxonRankGenus, Name: "Boletus", ParentID: &family.ID}
+	family := taxonRow{ID: db.NewID(), Rank: enums.TaxonRankFamily, Name: "Röhrlinge", LatinName: "Boletaceae"}
+	genus := taxonRow{ID: db.NewID(), Rank: enums.TaxonRankGenus, Name: "Dickröhrlinge", LatinName: "Boletus", ParentID: &family.ID}
 	row := speciesRowOf("Something else")
 	row.TaxonID = &genus.ID
 	f := facetsOf(row, children{}, nil, taxonNames{family.ID: family, genus.ID: genus})
