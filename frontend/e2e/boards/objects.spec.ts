@@ -127,7 +127,7 @@ async function openObject(page: Page, tab: string, row: string): Promise<void> {
   await neutralisePhotos(page);
   await mockValueTile(page, 'boletus-edulis', MANIFEST);
   await page.goto('/eintraege');
-  await page.getByRole('tab', { name: tab }).click();
+  await page.getByRole('button', { name: tab, exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: row }).first();
   await expect(entry).toBeVisible();
   // Under load, the tap can come before the listener of the row.
