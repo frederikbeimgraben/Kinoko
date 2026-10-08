@@ -166,8 +166,8 @@ func (staticLayers) Validate(ctx context.Context, v *Version) (map[string]any, e
 	return map[string]any{"layers": counts}, nil
 }
 
-// Derive unpacks the manifest and the tiles. The layer publication of the
-// render unit copies them to the map folder.
+// Derive unpacks the manifest and the tiles. The runner publishes them in
+// PILZE_MAPS (runner.Chain.PublishStatic).
 func (staticLayers) Derive(ctx context.Context, v *Version) ([]Artifact, error) {
 	z, err := openZip(v.Original())
 	if err != nil {
