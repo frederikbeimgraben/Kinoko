@@ -49,7 +49,10 @@ export class OverlayHostComponent {
   }
 
   // The modal is in the view of `app-sheet`. Angular does not run a leave animation in a child component view.
+  // A closing panel takes no input and leaves the accessibility tree at once.
   protected onLeave(event: AnimationCallbackEvent): void {
+    event.target.setAttribute('inert', '');
+    event.target.setAttribute('aria-hidden', 'true');
     this.play(event, 'out');
   }
 
