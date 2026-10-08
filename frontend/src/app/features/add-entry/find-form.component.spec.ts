@@ -118,7 +118,7 @@ describe('FundFormularComponent', () => {
     await build({ draft: { ...EMPTY_FIND_DRAFT, note: 'Unter Fichten', count: '2' } });
 
     expect(screen.getByLabelText('Notiz')).toHaveValue('Unter Fichten');
-    expect(screen.getByLabelText('Anzahl')).toHaveValue('2');
+    expect(screen.getByLabelText('Anzahl')).toHaveValue(2);
   });
 
   it('lässt Anzahl und Notiz weg, wenn nichts dasteht', async () => {

@@ -147,6 +147,7 @@ export const UploadStore = signalStore(
     const owns = (request: UploadStart): boolean =>
       store._run.request === request && store.upload().phase === 'creating';
 
+    // The server installs the version after the complete request, so a cancel cannot stop it.
     const stop = rxMethod<AfterWrite>(
       pipe(
         filter(() => store.upload().phase !== 'completing'),

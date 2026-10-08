@@ -5,6 +5,7 @@ export function focusTargets(section: Element | null, hideGrip: boolean): HTMLEl
   if (section === null) return [];
   return Array.from(section.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
     (el) =>
+      el.tabIndex >= 0 &&
       el.closest('[inert]') === null &&
       !(hideGrip && el.classList.contains('sheet__handle')) &&
       (!('checkVisibility' in el) || el.checkVisibility()),

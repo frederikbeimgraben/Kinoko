@@ -160,7 +160,6 @@ export function reduce(state: UploadState, event: UploadEvent): UploadState {
     case 'failed':
       return isActive(state.phase) ? { ...state, phase: 'failed', error: event.code } : state;
     case 'cancel':
-      // The server installs the version after the complete request, so a cancel cannot stop it.
       return CANCELLABLE.includes(state.phase) ? { ...state, phase: 'cancelled' } : state;
     case 'reset':
       return isActive(state.phase) ? state : INITIAL_UPLOAD;

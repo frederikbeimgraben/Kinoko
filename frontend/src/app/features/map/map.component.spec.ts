@@ -365,10 +365,10 @@ describe('MapComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Ebenen' }));
     await stable();
-    await userEvent.click(screen.getByRole('tab', { name: 'Hell' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Dunkel' }));
     await stable();
 
-    expect(TestBed.inject(MapStore).background()).toBe('light');
+    expect(TestBed.inject(MapStore).background()).toBe('dark');
   });
 
   it('zentriert auf den Standort und meldet einen Fehlschlag', async () => {
