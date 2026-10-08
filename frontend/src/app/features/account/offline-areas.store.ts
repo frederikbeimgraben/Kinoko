@@ -74,10 +74,8 @@ async function forgetTiles(urls: readonly string[]): Promise<void> {
   }
 }
 
-/**
- * The offline areas: zones whose value tiles stay on the device.
- * An area takes each input layer in its latest week and each loaded species in its forecast weeks.
- */
+/** The offline areas: zones whose value tiles stay on the device. An area takes each input
+ * layer in its latest week and each loaded species in its forecast weeks. */
 export const OfflineAreasStore = signalStore(
   { providedIn: 'root' },
   withState<OfflineAreasState>({ areas: [], loading: null }),
@@ -108,15 +106,13 @@ export const OfflineAreasStore = signalStore(
       const species = [..._tiles.manifests().values()].flatMap((manifest) =>
         manifest.weeks
           .filter((week, index) => week.forecast || index === manifest.weeks.length - 1)
-          .map(
-            (week): TileSource => ({
-              existing: manifest.existing,
-              haveZoom: manifest.haveZoom,
-              folder: week.tilePath,
-              zoomFrom: manifest.zoomFrom,
-              zoomTo: manifest.offlineZoomTo,
-            }),
-          ),
+          .map((week): TileSource => ({
+            existing: manifest.existing,
+            haveZoom: manifest.haveZoom,
+            folder: week.tilePath,
+            zoomFrom: manifest.zoomFrom,
+            zoomTo: manifest.offlineZoomTo,
+          })),
       );
       return [...layers, ...species];
     }),

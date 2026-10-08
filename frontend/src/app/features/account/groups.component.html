@@ -23,12 +23,7 @@
       <app-row-group-skeleton [count]="3" [lines]="2" />
     }
   </div>
-  <app-floating-button
-    class="fab"
-    icon="plus"
-    [label]="'group.create' | t"
-    (pressed)="sheet.set('create')"
-  />
+  <app-floating-button class="fab" icon="plus" [label]="'group.create' | t" (pressed)="sheet.set('create')" />
 </div>
 
 @if (sheet() === 'create') {

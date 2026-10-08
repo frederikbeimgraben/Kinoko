@@ -63,8 +63,7 @@ export const routes: Routes = [
       },
       {
         path: 'glossar',
-        loadComponent: () =>
-          import('./features/account/glossary.component').then((m) => m.GlossaryComponent),
+        loadComponent: () => import('./features/account/glossary.component').then((m) => m.GlossaryComponent),
       },
       {
         path: 'bilder',
@@ -95,8 +94,7 @@ export const routes: Routes = [
       },
       {
         path: 'lizenzen',
-        loadComponent: () =>
-          import('./features/account/licences.component').then((m) => m.LicencesComponent),
+        loadComponent: () => import('./features/account/licences.component').then((m) => m.LicencesComponent),
       },
     ],
   },

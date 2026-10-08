@@ -55,10 +55,17 @@ function speciesColour(species: SpeciesEntry | null): string {
 }
 
 /** The meta line of a find: the day (not for today), the count and the person. */
-function findMeta(context: RowContext, foundOn: string, count: number | null | undefined, person: string | null): string {
+function findMeta(
+  context: RowContext,
+  foundOn: string,
+  count: number | null | undefined,
+  person: string | null,
+): string {
   return joined([
     foundOn === context.today ? null : shortDate(foundOn, context.i18n),
-    count === null || count === undefined ? null : context.i18n.translate('find.pieces', { count: grouped(count) }),
+    count === null || count === undefined
+      ? null
+      : context.i18n.translate('find.pieces', { count: grouped(count) }),
     person,
   ]);
 }
@@ -140,10 +147,16 @@ export function pendingRow(context: RowContext, task: SyncTask<EntryBody>): Entr
   const body = task.body;
   const created = isoDatum(new Date(task.createdAt));
   if ('foundOn' in body) {
-    return findRow(context, `waiting-${task.id}`, { ...body, note: body.note ?? null, speciesId: body.speciesId ?? null, count: body.count ?? null }, context.reporter, {
-      pending: true,
-      object: null,
-    });
+    return findRow(
+      context,
+      `waiting-${task.id}`,
+      { ...body, note: body.note ?? null, speciesId: body.speciesId ?? null, count: body.count ?? null },
+      context.reporter,
+      {
+        pending: true,
+        object: null,
+      },
+    );
   }
   return {
     key: `waiting-${task.id}`,

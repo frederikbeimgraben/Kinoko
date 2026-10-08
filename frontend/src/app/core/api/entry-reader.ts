@@ -59,5 +59,15 @@ export function zone(entry: ZoneEntry): Zone | null {
   if (colour === undefined || visibility === undefined || entry.deleted) return null;
   const note = entry.note ?? null;
   const groupId = entry.groupId ?? null;
-  return { id: entry.id, name, polygon, areaHa, colour, note, visibility, groupId, createdAt: entry.createdAt };
+  return {
+    id: entry.id,
+    name,
+    polygon,
+    areaHa,
+    colour,
+    note,
+    visibility,
+    groupId,
+    createdAt: entry.createdAt,
+  };
 }

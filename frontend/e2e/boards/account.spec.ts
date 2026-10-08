@@ -19,7 +19,13 @@ function guard(board: string, device: 'phone' | 'wide'): void {
 
 /** The own photos of the board `MyImages`. */
 const MY_PHOTOS = photoPage([
-  photo({ id: 'image-one', speciesId: '', photographer: 'Frederik', licence: 'cc_by_4', createdAt: '2026-09-06T08:00:00Z' }),
+  photo({
+    id: 'image-one',
+    speciesId: '',
+    photographer: 'Frederik',
+    licence: 'cc_by_4',
+    createdAt: '2026-09-06T08:00:00Z',
+  }),
   photo({
     id: 'image-two',
     speciesId: '',
@@ -49,7 +55,17 @@ const ZONES = {
     areaHa,
     colour: 'green',
     visibility: 'private',
-    polygon: { type: 'Polygon', coordinates: [[[9, 48], [9.01, 48], [9.01, 48.01], [9, 48]]] },
+    polygon: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [9, 48],
+          [9.01, 48],
+          [9.01, 48.01],
+          [9, 48],
+        ],
+      ],
+    },
     createdAt: '2026-09-01T08:00:00Z',
     updatedAt: '2026-09-01T08:00:00Z',
     deleted: false,
@@ -122,9 +138,11 @@ const ready = {
   areaPicker: async (page: Page): Promise<void> => {
     await expect(page.getByText('Kirnbachtal')).toBeVisible();
   },
-  heading: (name: string) => async (page: Page): Promise<void> => {
-    await expect(page.getByRole('heading', { name })).toBeVisible();
-  },
+  heading:
+    (name: string) =>
+    async (page: Page): Promise<void> => {
+      await expect(page.getByRole('heading', { name })).toBeVisible();
+    },
 };
 
 /** Opens the path, waits for the content and compares the board. */

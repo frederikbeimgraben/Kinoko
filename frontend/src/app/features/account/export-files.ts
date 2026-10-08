@@ -95,10 +95,7 @@ function zoneTrack(zone: ExportZone): string | null {
 
 /** GPX 1.1: finds and markers as waypoints, zones as tracks. Waypoints come first, as the schema wants. */
 export function toGpx(data: AccountExport, species: SpeciesName): string {
-  const points = [
-    ...data.finds.map((find) => findPoint(find, species)),
-    ...data.markers.map(markerPoint),
-  ];
+  const points = [...data.finds.map((find) => findPoint(find, species)), ...data.markers.map(markerPoint)];
   const tracks = data.zones.map(zoneTrack);
   const body = [...points, ...tracks].filter((line): line is string => line !== null);
   return [

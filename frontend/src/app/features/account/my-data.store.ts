@@ -86,7 +86,10 @@ export const MyDataStore = signalStore(
       }
       patchState(store, ({ data }) => ({
         deleting: false,
-        data: done && data !== null ? { me: data.me, finds: [], markers: [], zones: [], photos: [], combinations: [] } : data,
+        data:
+          done && data !== null
+            ? { me: data.me, finds: [], markers: [], zones: [], photos: [], combinations: [] }
+            : data,
       }));
       return done;
     },

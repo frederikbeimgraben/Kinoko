@@ -87,8 +87,8 @@ function inRing(lon: number, lat: number, ring: readonly (readonly number[])[]):
 
 /** True when the point is in the outer ring and in no hole of the polygon. */
 export function inPolygon(lon: number, lat: number, polygon: GeoPolygon): boolean {
-  const [outer, ...holes] = polygon.coordinates;
-  return outer !== undefined && inRing(lon, lat, outer) && !holes.some((hole) => inRing(lon, lat, hole));
+  const [outer = [], ...holes] = polygon.coordinates;
+  return inRing(lon, lat, outer) && !holes.some((hole) => inRing(lon, lat, hole));
 }
 
 /** True when the find passes each part of the filter. */

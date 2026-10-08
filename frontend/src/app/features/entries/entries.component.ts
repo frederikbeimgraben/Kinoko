@@ -25,6 +25,7 @@ import { MyImagesStore } from '../account/my-images.store';
 import { AddEntryState } from '../add-entry/add-entry.state';
 import { ObjectSheetState } from '../objects/object-sheet.state';
 import { SpeciesState } from '../species/species.state';
+import { entriesBanner } from './entries-banner';
 import { EntriesStore } from './entries.store';
 import { EntriesFilterBodyComponent } from './entries-filter-body.component';
 import { NO_FILTER, isFiltered, passes, type EntriesFilter, type FilterContext } from './entry-filter';
@@ -47,13 +48,6 @@ const SEGMENTS: readonly { value: Segment; label: TranslationKey; icon: IconName
   { value: 'markers', label: 'entry.markers', icon: 'flag', kind: 'marker' },
   { value: 'zones', label: 'entry.zones', icon: 'zone', kind: 'zone' },
 ];
-
-/** The state banner at the bottom, per `Banner.dc.html`. */
-interface EntriesBanner {
-  readonly offline: boolean;
-  readonly text: string;
-  readonly count: string | undefined;
-}
 
 /** The entry tab, per `Entries.dc.html`: chips, filter, list and the pending banner. A tap opens the object. */
 @Component({
@@ -166,13 +160,13 @@ export class EntriesComponent {
       .filter((entry) => entry.kind === kind)
       .map((entry) => entry.row);
     const context = this.context();
-    const listed =
+    const items =
       segment === 'finds'
         ? this.findRows()
         : segment === 'markers'
           ? this.store.markers().map((marker) => markerRow(context, marker))
           : this.store.zones().map((zone) => zoneRow(context, zone));
-    return byDay([...pending, ...listed]);
+    return byDay([...pending, ...items]);
   });
 
   /** The number in the main button of the filter sheet. */
@@ -192,25 +186,9 @@ export class EntriesComponent {
     this.filtered() && this.segment() === 'finds' ? 'entry.noMatch' : 'state.noEntries',
   );
 
-  protected readonly banner = computed<EntriesBanner | null>(() => {
-    const count = this.sync.pendingCount();
-    if (!this.sync.online()) {
-      return {
-        offline: true,
-        text: this.i18n.translate('state.noConnection'),
-        count: count === 0 ? undefined : this.i18n.translate('entry.pending.count', { count }),
-      };
-    }
-    if (count === 0) return null;
-    return {
-      offline: false,
-      text:
-        count === 1
-          ? this.i18n.translate('entry.pending.one')
-          : this.i18n.translate('entry.pending.many', { count }),
-      count: undefined,
-    };
-  });
+  protected readonly banner = computed(() =>
+    entriesBanner(this.sync.pendingCount(), this.sync.online(), this.i18n),
+  );
 
   constructor() {
     void this.species.loadBundle();

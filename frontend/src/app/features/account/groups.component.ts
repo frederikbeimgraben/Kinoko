@@ -58,16 +58,17 @@ export class GroupsComponent {
   protected readonly rows = computed<readonly Row[]>(() => {
     const groups = this.store.groups() ?? [];
     const owned = (ownerId: string): boolean => this.account.owns(ownerId);
-    return [...groups.filter((group) => owned(group.ownerId)), ...groups.filter((group) => !owned(group.ownerId))].map(
-      (group) => ({
-        id: group.id,
-        name: group.name,
-        sub: joined([
-          memberCount(this.i18n, group.members.length),
-          owned(group.ownerId) ? this.i18n.translate('group.owner') : null,
-        ]),
-      }),
-    );
+    return [
+      ...groups.filter((group) => owned(group.ownerId)),
+      ...groups.filter((group) => !owned(group.ownerId)),
+    ].map((group) => ({
+      id: group.id,
+      name: group.name,
+      sub: joined([
+        memberCount(this.i18n, group.members.length),
+        owned(group.ownerId) ? this.i18n.translate('group.owner') : null,
+      ]),
+    }));
   });
 
   constructor() {

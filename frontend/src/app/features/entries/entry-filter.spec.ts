@@ -52,8 +52,8 @@ describe('entry filter', () => {
     );
     expect(passes(FIND, { ...NO_FILTER, time: 'today' }, CONTEXT)).toBe(false);
     expect(passes(FIND, { ...NO_FILTER, withPhoto: true }, CONTEXT)).toBe(false);
-    expect(passes(FIND, { ...NO_FILTER, withPhoto: true }, { ...CONTEXT, photoFinds: new Set(['find']) })).toBe(
-      true,
-    );
+    expect(
+      passes(FIND, { ...NO_FILTER, withPhoto: true }, { ...CONTEXT, photoFinds: new Set(['find']) }),
+    ).toBe(true);
   });
 });

@@ -15,8 +15,22 @@ import { MyDataComponent } from './my-data.component';
 const EXPORT = {
   me: { id: 'account-one', sub: 'sub', email: 'a@b.de', name: 'Frederik' },
   finds: [
-    { id: 'find-1', lat: 48.5, lon: 9.05, foundOn: '2026-09-06', updatedAt: '2026-09-06T08:00:00Z', deleted: false },
-    { id: 'find-2', lat: 48.6, lon: 9.1, foundOn: '2026-09-07', updatedAt: '2026-09-07T08:00:00Z', deleted: false },
+    {
+      id: 'find-1',
+      lat: 48.5,
+      lon: 9.05,
+      foundOn: '2026-09-06',
+      updatedAt: '2026-09-06T08:00:00Z',
+      deleted: false,
+    },
+    {
+      id: 'find-2',
+      lat: 48.6,
+      lon: 9.1,
+      foundOn: '2026-09-07',
+      updatedAt: '2026-09-07T08:00:00Z',
+      deleted: false,
+    },
   ],
   markers: [{}, {}, {}, {}],
   zones: [],

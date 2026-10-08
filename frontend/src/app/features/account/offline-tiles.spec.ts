@@ -37,7 +37,13 @@ describe('offline tiles', () => {
   });
 
   it('keeps only tiles with data and each path one time', () => {
-    const source = { folder: 'rain/2026W36', zoomFrom: 0, zoomTo: 1, existing: new Set(['0/0/0']), haveZoom: 0 };
+    const source = {
+      folder: 'rain/2026W36',
+      zoomFrom: 0,
+      zoomTo: 1,
+      existing: new Set(['0/0/0']),
+      haveZoom: 0,
+    };
 
     const paths = areaTilePaths({ west: -1, south: -1, east: 1, north: 1 }, [source, source]);
 

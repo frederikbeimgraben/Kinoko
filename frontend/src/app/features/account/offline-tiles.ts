@@ -17,10 +17,8 @@ export interface TileSource extends Coverage {
   readonly zoomTo: number;
 }
 
-/**
- * The mean size of one value tile. It gives the size of an area before the download.
- * The real size replaces it after the download.
- */
+/** The mean size of one value tile. It gives the size of an area before the download.
+ * The real size replaces it after the download. */
 export const MEAN_TILE_BYTES = 24_000;
 
 /** The box around all rings of a polygon. */
@@ -61,7 +59,10 @@ export function tilesIn(bounds: Bounds, z: number): (readonly [number, number, n
 /** The paths of all tiles with data in the box, one time each. */
 export function areaTilePaths(bounds: Bounds, sources: readonly TileSource[]): readonly string[] {
   const paths = sources.flatMap((source) =>
-    Array.from({ length: Math.max(0, source.zoomTo - source.zoomFrom + 1) }, (_, step) => source.zoomFrom + step)
+    Array.from(
+      { length: Math.max(0, source.zoomTo - source.zoomFrom + 1) },
+      (_, step) => source.zoomFrom + step,
+    )
       .flatMap((z) => tilesIn(bounds, z))
       .filter(([z, x, y]) => covers(source, z, x, y))
       .map(([z, x, y]) => tilePath(source.folder, z, x, y)),

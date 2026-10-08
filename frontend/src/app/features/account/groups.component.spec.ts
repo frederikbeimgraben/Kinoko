@@ -17,7 +17,10 @@ async function build(api = new GroupsApiDouble()): Promise<{
     providers: [
       provideRouter(ANY_ROUTE),
       groupsApiProvider(api),
-      { provide: AccountStore, useValue: { owns: (one: string | null) => one === OWNER_ID, userId: () => OWNER_ID } },
+      {
+        provide: AccountStore,
+        useValue: { owns: (one: string | null) => one === OWNER_ID, userId: () => OWNER_ID },
+      },
     ],
   });
   return { container, api, router: TestBed.inject(Router) };

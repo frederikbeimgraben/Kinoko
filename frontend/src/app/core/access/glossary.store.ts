@@ -16,7 +16,7 @@ export const GlossaryStore = signalStore(
   withState({ writing: false }),
   withProps(({ items }) => ({ entries: items, _api: inject(GlossaryApi) })),
   withMethods((store) => {
-    const fetch = rxMethod<void>(
+    const fetch = rxMethod<null>(
       pipe(
         switchMap(() => store._api.list().pipe(catchError(() => of<GlossaryEntry[]>([])))),
         tap((entries) => {
@@ -40,7 +40,7 @@ export const GlossaryStore = signalStore(
 
     return {
       load(): void {
-        fetch();
+        fetch(null);
       },
       create(entry: GlossaryEntryWrite): Promise<GlossaryEntry | null> {
         return write(store._api.create(entry), keep);

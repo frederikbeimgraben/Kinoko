@@ -62,7 +62,11 @@ async function build(options: Options = {}): Promise<Setup> {
         ? [
             {
               provide: PwaStore,
-              useValue: { canInstall: signal(false), updateReady: signal(true), install: () => Promise.resolve(true) },
+              useValue: {
+                canInstall: signal(false),
+                updateReady: signal(true),
+                install: () => Promise.resolve(true),
+              },
             },
           ]
         : []),
@@ -76,7 +80,8 @@ async function build(options: Options = {}): Promise<Setup> {
   await auth.silentRenew();
   detectChanges();
   await vi.waitFor(() => {
-    for (const request of TestBed.inject(HttpTestingController).match('/api/me/export')) request.flush(EXPORT);
+    for (const request of TestBed.inject(HttpTestingController).match('/api/me/export'))
+      request.flush(EXPORT);
     detectChanges();
     expect(signedIn && !wide && path === undefined ? screen.queryByText('Kombinationen') : true).toBeTruthy();
   });
@@ -206,7 +211,9 @@ describe('AccountComponent', () => {
 
     expect(screen.getByText('Detail')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Meine Daten', pressed: true })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Darstellung und Sprache' })).not.toHaveAttribute('aria-pressed');
+    expect(screen.getByRole('button', { name: 'Darstellung und Sprache' })).not.toHaveAttribute(
+      'aria-pressed',
+    );
     expect(screen.getByText('Über die App')).toBeInTheDocument();
   });
 });

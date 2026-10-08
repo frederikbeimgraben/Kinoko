@@ -41,6 +41,9 @@ export class AccountStatsComponent {
     const counts = this.data.counts();
     return counts === null
       ? null
-      : this.parts().map((part) => ({ value: grouped(counts[part]), label: this.i18n.translate(LABELS[part]) }));
+      : this.parts().map((part) => ({
+          value: grouped(counts[part]),
+          label: this.i18n.translate(LABELS[part]),
+        }));
   });
 }

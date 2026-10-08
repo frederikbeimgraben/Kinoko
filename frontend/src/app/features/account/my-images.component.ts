@@ -19,12 +19,13 @@ import { SpeciesState } from '../species/species.state';
 import { MyImagesStore } from './my-images.store';
 
 /** The badge, the badge word and the state word of each review state, per `MyImages.dc.html`. */
-const STATE: Readonly<Record<PhotoState, { kind: BadgeKind; badge: TranslationKey; text: TranslationKey }>> = {
-  private: { kind: '', badge: 'image.badge.private', text: 'image.state.private' },
-  submitted: { kind: 'warn', badge: 'image.badge.submitted', text: 'image.state.submitted' },
-  approved: { kind: 'ok', badge: 'image.badge.approved', text: 'image.state.approved' },
-  rejected: { kind: 'bad', badge: 'image.badge.rejected', text: 'image.state.rejected' },
-};
+const STATE: Readonly<Record<PhotoState, { kind: BadgeKind; badge: TranslationKey; text: TranslationKey }>> =
+  {
+    private: { kind: '', badge: 'image.badge.private', text: 'image.state.private' },
+    submitted: { kind: 'warn', badge: 'image.badge.submitted', text: 'image.state.submitted' },
+    approved: { kind: 'ok', badge: 'image.badge.approved', text: 'image.state.approved' },
+    rejected: { kind: 'bad', badge: 'image.badge.rejected', text: 'image.state.rejected' },
+  };
 
 /** One own photo, ready for the template. */
 interface Row {

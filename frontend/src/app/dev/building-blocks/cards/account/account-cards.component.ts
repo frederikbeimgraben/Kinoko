@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import type { FriendGroup, Zone } from '../../../../core/api/models';
+import { I18nService } from '../../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { FormFieldComponent } from '../../../../ui/form-field/form-field.component';
 import { DataExportBodyComponent } from '../../../../features/account/data-export-body.component';
@@ -37,13 +38,24 @@ function zone(id: string, name: string): Zone {
 @Component({
   selector: 'app-account-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BlockCardComponent, DataExportBodyComponent, EntriesFilterBodyComponent, FormFieldComponent, TranslatePipe],
+  imports: [
+    BlockCardComponent,
+    DataExportBodyComponent,
+    EntriesFilterBodyComponent,
+    FormFieldComponent,
+    TranslatePipe,
+  ],
   templateUrl: './account-cards.component.html',
 })
 export class AccountCardsComponent {
   protected readonly counts = COUNTS;
   protected readonly parts = PARTS;
   protected readonly groups = [group('karlsruhe', 'Pilzgruppe Karlsruhe'), group('familie', 'Familie')];
-  protected readonly zones = [zone('schoenbuch', 'Schönbuch Nord'), zone('kirnbach', 'Kirnbachtal')];
+  private readonly i18n = inject(I18nService);
+
+  protected readonly zones = computed(() => [
+    zone('schoenbuch', this.i18n.translate('beispiel.schoenbuchNord')),
+    zone('kirnbach', 'Kirnbachtal'),
+  ]);
   protected readonly filter: EntriesFilter = { ...NO_FILTER, visibility: 'shared', time: 'month' };
 }

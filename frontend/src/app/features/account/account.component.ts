@@ -67,10 +67,8 @@ const NAV: readonly NavRow[] = [
   },
 ];
 
-/**
- * The account. On the phone it is one page, and each entry opens its own page.
- * On the desktop it is a list with the selected entry in a detail pane.
- */
+/** The account. On the phone it is one page, and each entry opens its own page.
+ * On the desktop it is a list with the selected entry in a detail pane. */
 @Component({
   selector: 'app-account',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -138,8 +136,7 @@ export class AccountComponent {
   private readonly allowed = computed(() => {
     const admin = this.rights.canAny(ADMIN_PERMISSIONS);
     const signedIn = this.signedIn();
-    return (row: NavRow): boolean =>
-      row.needs === 'all' || (row.needs === 'signedIn' ? signedIn : admin);
+    return (row: NavRow): boolean => row.needs === 'all' || (row.needs === 'signedIn' ? signedIn : admin);
   });
 
   /** The phone list has only the rows that open their own page. */

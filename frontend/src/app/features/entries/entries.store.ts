@@ -1,63 +1,27 @@
 import { computed, inject } from '@angular/core';
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withMethods,
-  withProps,
-  withState,
-} from '@ngrx/signals';
+import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { firstValueFrom, tap, type Observable } from 'rxjs';
 import { EntriesApi } from '../../core/api/entries.api';
 import { FindsApi } from '../../core/api/finds.api';
 import { PhotosApi } from '../../core/api/photos.api';
-import type {
-  Find,
-  FindWrite,
-  Marker,
-  MarkerWrite,
-  SharedFind,
-  Zone,
-  ZoneWrite,
-} from '../../core/api/models';
+import type { Find, FindWrite, Marker, MarkerWrite, Zone, ZoneWrite } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
 import { SyncStore } from '../../core/offline/sync.store';
 import type { SyncKind, SyncOperation, SyncTask } from '../../core/offline/sync.types';
 import { setFailed, setLoaded, setLoading, withLoadState } from '../../core/state';
 import type { Viewbox } from '../../map/tile-grid';
 import { EntriesCache } from './entries.cache';
+import type { EntriesState, EntryBody, ItemOf, OwnList, SaveResult } from './entries.types';
 import { NO_FILTER, type EntriesFilter } from './entry-filter';
 import { attachPhotos } from './photos';
 import { findWrite, markerWrite, zoneWrite } from './writes';
 
-/** The result of a save. */
-export type SaveResult = 'gespeichert' | 'wartet' | 'verworfen';
+export type { EntryBody, SaveResult } from './entries.types';
 
-/** The body that an object carries on the wire. */
-export type EntryBody = FindWrite | MarkerWrite | ZoneWrite;
-
-interface EntriesState {
-  finds: readonly Find[];
-  markers: readonly Marker[];
-  zones: readonly Zone[];
-  /** Shared finds in the last asked view, also of other people. */
-  shared: readonly SharedFind[];
-  /** The filter of the entry list. */
-  filter: EntriesFilter;
-}
-
-/** The three own lists, by the name of their state field. */
-type OwnList = 'finds' | 'markers' | 'zones';
-
-type Listed<K extends OwnList> = EntriesState[K][number];
-
-/**
- * The own entries in memory. No page owns them: the map, the list and the object sheets
- * read the same signals, so that a new find shows at all places at once.
+/** The own entries in memory: the map, the list and the object sheets read the same signals.
  * A save asks for a sign-in first. Without a sign-in or without network the entry goes
- * into the queue, and the list marks it as "transfer pending".
- */
+ * into the queue, and the list marks it as "transfer pending". */
 export const EntriesStore = signalStore(
   { providedIn: 'root' },
   withState<EntriesState>({ finds: [], markers: [], zones: [], shared: [], filter: NO_FILTER }),
@@ -85,62 +49,51 @@ export const EntriesStore = signalStore(
     /** The last state of the device, before the service answers. */
     async function restore(): Promise<void> {
       const known = await store._cache.read();
-      if (known !== null) patchState(store, { finds: known.finds, markers: known.markers, zones: known.zones });
+      if (known !== null)
+        patchState(store, { finds: known.finds, markers: known.markers, zones: known.zones });
     }
 
     function keep(): Promise<void> {
       return store._cache.write({ finds: store.finds(), markers: store.markers(), zones: store.zones() });
     }
 
-    /** Without space on the device the entry is lost, and the result says so. */
-    async function enqueue(kind: SyncKind, body: EntryBody, photos: readonly File[] = []): Promise<SaveResult> {
-      return (await store._sync.enqueue(kind, 'create', body, photos)) === null ? 'verworfen' : 'wartet';
-    }
-
-    /** Without network the change goes into the queue and is not lost. */
-    async function queueChange(
+    /** Puts a task into the queue. `false` means: the device has no space. */
+    async function queue(
       kind: SyncKind,
       operation: SyncOperation,
-      id: string,
       body: EntryBody | null,
+      target?: string,
+      photos: readonly File[] = [],
     ): Promise<boolean> {
-      return (await store._sync.enqueue(kind, operation, body, [], id)) !== null;
+      return (await store._sync.enqueue(kind, operation, body, photos, target)) !== null;
     }
 
-    function prepend<K extends OwnList>(list: K, item: Listed<K>): void {
-      patchState(store, (state) => ({ [list]: [item, ...state[list]] }) as Partial<EntriesState>);
+    /** Without space on the device the entry is lost, and the result says so. */
+    async function enqueue(
+      kind: SyncKind,
+      body: EntryBody,
+      photos: readonly File[] = [],
+    ): Promise<SaveResult> {
+      return (await queue(kind, 'create', body, undefined, photos)) ? 'wartet' : 'verworfen';
     }
 
-    function replace<K extends OwnList>(list: K, id: string, item: (old: Listed<K>) => Listed<K>): void {
-      patchState(
-        store,
-        (state) =>
-          ({
-            [list]: (state[list] as readonly Listed<K>[]).map((one) => (one.id === id ? item(one) : one)),
-          }) as Partial<EntriesState>,
-      );
-    }
-
-    function remove(list: OwnList, id: string): void {
-      patchState(
-        store,
-        (state) =>
-          ({
-            [list]: (state[list] as readonly { id: string }[]).filter((one) => one.id !== id),
-          }) as Partial<EntriesState>,
-      );
+    function patchList<K extends OwnList>(
+      list: K,
+      next: (items: readonly ItemOf<K>[]) => readonly ItemOf<K>[],
+    ): void {
+      patchState(store, (state) => ({ [list]: next(state[list] as readonly ItemOf<K>[]) }));
     }
 
     async function save<K extends 'markers' | 'zones'>(
       kind: SyncKind,
       list: K,
       body: EntryBody,
-      send: () => Observable<Listed<K> | null>,
+      send: () => Observable<ItemOf<K> | null>,
     ): Promise<SaveResult> {
       if (!(await store._auth.requestSignIn())) return enqueue(kind, body);
       try {
         const fresh = await firstValueFrom(send());
-        if (fresh !== null) prepend(list, fresh);
+        if (fresh !== null) patchList(list, (items) => [fresh, ...items]);
         return 'gespeichert';
       } catch {
         return enqueue(kind, body);
@@ -153,25 +106,30 @@ export const EntriesStore = signalStore(
       list: K,
       id: string,
       body: B,
-      send: (body: B) => Observable<Listed<K> | null>,
+      send: (body: B) => Observable<ItemOf<K> | null>,
     ): Promise<boolean> {
       try {
         const fresh = await firstValueFrom(send(body));
-        if (fresh !== null) replace(list, id, () => fresh);
+        if (fresh !== null) patchList(list, (items) => items.map((one) => (one.id === id ? fresh : one)));
         return true;
       } catch {
-        replace(list, id, (old) => ({ ...old, ...body }));
-        return queueChange(kind, 'update', id, body);
+        patchList(list, (items) => items.map((one) => (one.id === id ? { ...one, ...body } : one)));
+        return queue(kind, 'update', body, id);
       }
     }
 
-    async function drop(kind: SyncKind, list: OwnList, id: string, send: () => Observable<unknown>): Promise<boolean> {
-      remove(list, id);
+    async function drop(
+      kind: SyncKind,
+      list: OwnList,
+      id: string,
+      send: () => Observable<unknown>,
+    ): Promise<boolean> {
+      patchList(list, (items) => items.filter((one) => one.id !== id));
       try {
         await firstValueFrom(send());
         return true;
       } catch {
-        return queueChange(kind, 'delete', id, null);
+        return queue(kind, 'delete', null, id);
       }
     }
 
@@ -227,7 +185,7 @@ export const EntriesStore = signalStore(
           const find = await firstValueFrom(store._api.createFind(body));
           if (find === null) return 'gespeichert';
           await attachPhotos(store._photosApi, find.id, store.reporter() ?? '', photos);
-          prepend('finds', find);
+          patchList('finds', (items) => [find, ...items]);
           return 'gespeichert';
         } catch {
           return enqueue('find', body, photos);

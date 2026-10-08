@@ -2,7 +2,12 @@ import type { Page } from '@playwright/test';
 
 /** The counts of the boards `Account` and `MyData`: 12 finds, 4 markers, 2 zones, 3 images, 2 combinations. */
 export const ACCOUNT_EXPORT = {
-  me: { id: '11111111-1111-1111-1111-111111111111', sub: 'sub-eins', name: 'Frederik', email: 'frederik@beimgraben.net' },
+  me: {
+    id: '11111111-1111-1111-1111-111111111111',
+    sub: 'sub-eins',
+    name: 'Frederik',
+    email: 'frederik@beimgraben.net',
+  },
   finds: Array.from({ length: 12 }, (_, index) => ({
     id: `find-${String(index)}`,
     lat: 48.5,
@@ -34,10 +39,19 @@ export const ACCOUNT_EXPORT = {
 };
 
 /** The offline area of the board `OfflineAreas`: 42 ha and 84 MB. */
-export const OFFLINE_AREA = { id: 'zone-schoenbuch', name: 'Schönbuch Nord', areaHa: 42, bytes: 84_000_000, paths: [] };
+export const OFFLINE_AREA = {
+  id: 'zone-schoenbuch',
+  name: 'Schönbuch Nord',
+  areaHa: 42,
+  bytes: 84_000_000,
+  paths: [],
+};
 
 /** Puts the offline areas into the storage before the app starts. */
-export async function seedOfflineAreas(page: Page, areas: readonly unknown[] = [OFFLINE_AREA]): Promise<void> {
+export async function seedOfflineAreas(
+  page: Page,
+  areas: readonly unknown[] = [OFFLINE_AREA],
+): Promise<void> {
   await page.addInitScript((saved) => {
     localStorage.setItem('pilzkarte.offlineAreas', saved);
   }, JSON.stringify(areas));

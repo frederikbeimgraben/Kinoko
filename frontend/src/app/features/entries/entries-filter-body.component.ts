@@ -21,7 +21,14 @@ function single(value: string | null): readonly string[] {
 @Component({
   selector: 'app-entries-filter-body',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ChipGroupComponent, FoldSectionComponent, ListRowComponent, RowGroupComponent, SwitchComponent, TranslatePipe],
+  imports: [
+    ChipGroupComponent,
+    FoldSectionComponent,
+    ListRowComponent,
+    RowGroupComponent,
+    SwitchComponent,
+    TranslatePipe,
+  ],
   templateUrl: './entries-filter-body.component.html',
   styleUrl: './entries-filter-body.component.scss',
 })

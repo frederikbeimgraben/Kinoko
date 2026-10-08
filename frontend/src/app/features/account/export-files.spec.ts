@@ -16,7 +16,14 @@ const DATA = {
       updatedAt: '2026-09-06T08:00:00Z',
       deleted: false,
     },
-    { id: 'find-gone', lat: 1, lon: 1, foundOn: '2026-09-01', updatedAt: '2026-09-01T08:00:00Z', deleted: true },
+    {
+      id: 'find-gone',
+      lat: 1,
+      lon: 1,
+      foundOn: '2026-09-01',
+      updatedAt: '2026-09-01T08:00:00Z',
+      deleted: true,
+    },
   ],
   markers: [
     {

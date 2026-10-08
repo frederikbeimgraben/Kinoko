@@ -4,7 +4,9 @@
   } @else if (unknown()) {
     <app-skeleton kind="block" height="80px" radius="var(--r-item)" />
   } @else {
-    <app-push-button kind="primary" [wide]="true" (click)="signIn()">{{ 'account.signInWith' | t }}</app-push-button>
+    <app-push-button kind="primary" [wide]="true" (click)="signIn()">{{
+      'account.signInWith' | t
+    }}</app-push-button>
   }
 </ng-template>
 
@@ -39,7 +41,12 @@
       <app-account-stats />
       <app-row-group>
         @for (row of phoneRows(); track row.key) {
-          <app-list-row [title]="row.label | t" [chevron]="true" [clickable]="true" (chosen)="open(row.path)" />
+          <app-list-row
+            [title]="row.label | t"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="open(row.path)"
+          />
         }
       </app-row-group>
     }

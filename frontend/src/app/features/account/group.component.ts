@@ -42,7 +42,9 @@ export class GroupComponent {
   protected readonly loading = computed(() => this.store.groups() === null);
   protected readonly group = computed(() => this.store.one(this.id()));
   protected readonly mine = computed(() => this.account.owns(this.group()?.ownerId ?? null));
-  protected readonly title = computed(() => this.group()?.name ?? (this.loading() ? '' : this.i18n.translate('group.title')));
+  protected readonly title = computed(
+    () => this.group()?.name ?? (this.loading() ? '' : this.i18n.translate('group.title')),
+  );
 
   protected readonly question = computed(() =>
     this.mine()

@@ -86,8 +86,8 @@ export const SyncStore = signalStore(
 
     /** A submission goes out as a form, not as a `PUT` on an object. */
     async function sendPhoto(task: SyncTask): Promise<Outcome> {
+      if (task.photos.length === 0) return 'sent';
       const [blob] = task.photos;
-      if (blob === undefined) return 'sent';
       const file = new File([blob], `${task.target}.jpg`, { type: blob.type || 'image/jpeg' });
       const fields = task.body as Record<string, string | undefined>;
       try {
@@ -116,13 +116,16 @@ export const SyncStore = signalStore(
     async function run(): Promise<number> {
       if (!store.online() || !store._auth.signedIn()) return 0;
       const tasks = await read();
-      const sent = await tasks.reduce<Promise<{ sent: number; stopped: boolean }>>(async (state, task) => {
-        const progress = await state;
-        if (progress.stopped) return progress;
-        const outcome = await send(task);
-        if (outcome === 'sent') await store._offline.remove('queue', task.id);
-        return { sent: progress.sent + (outcome === 'sent' ? 1 : 0), stopped: outcome === 'stop' };
-      }, Promise.resolve({ sent: 0, stopped: false }));
+      const sent = await tasks.reduce<Promise<{ sent: number; stopped: boolean }>>(
+        async (state, task) => {
+          const progress = await state;
+          if (progress.stopped) return progress;
+          const outcome = await send(task);
+          if (outcome === 'sent') await store._offline.remove('queue', task.id);
+          return { sent: progress.sent + (outcome === 'sent' ? 1 : 0), stopped: outcome === 'stop' };
+        },
+        Promise.resolve({ sent: 0, stopped: false }),
+      );
       await read();
       return sent.sent;
     }
