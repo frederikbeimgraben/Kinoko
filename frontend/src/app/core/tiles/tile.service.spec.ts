@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ConfigService } from '../config/config.service';
+import { ConfigStore } from '../config/config.store';
 import { TileService } from './tile.service';
 
 function reply(data: unknown, ok = true): Response {
@@ -14,11 +14,13 @@ function reply(data: unknown, ok = true): Response {
 }
 
 function service(origin = ''): TileService {
-  TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
-  const config = TestBed.inject(ConfigService) as unknown as {
-    configuration: () => { origin: string } | null;
-  };
-  config.configuration = () => ({ origin });
+  TestBed.configureTestingModule({
+    providers: [
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      { provide: ConfigStore, useValue: { configuration: () => ({ origin }) } },
+    ],
+  });
   return TestBed.inject(TileService);
 }
 

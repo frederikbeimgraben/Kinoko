@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { LocationService } from '../../core/location/location.service';
-import { ThemeService } from '../../core/theme/theme.service';
+import { ThemeStore } from '../../core/theme/theme.store';
 import { TileService } from '../../core/tiles/tile.service';
 import { layerWeek } from '../../core/tiles/layers';
 import { GERMANY, MAX_BOUNDS, ZOOM_MAX, ZOOM_MIN, styleFor } from '../../map/background';
@@ -35,7 +35,7 @@ export class MapSurface {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly protocol = new ValueProtocol(inject(VALUE_WORKER));
   private readonly painter = new MapPainter(this.adapter, this.protocol);
-  private readonly theme = inject(ThemeService);
+  private readonly theme = inject(ThemeStore);
   private readonly tiles = inject(TileService);
   private readonly view = inject(MapView);
   private readonly state = inject(MapState);

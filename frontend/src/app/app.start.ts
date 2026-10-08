@@ -1,28 +1,28 @@
 import { afterNextRender, inject, EnvironmentInjector } from '@angular/core';
 import { AuthService } from './core/auth';
-import { ConfigService } from './core/config/config.service';
+import { ConfigStore } from './core/config/config.store';
 import { TextCatalogService } from './core/i18n/text-catalog.service';
-import { ThemeService } from './core/theme/theme.service';
+import { ThemeStore } from './core/theme/theme.store';
 import { bootOffline } from './app.boot';
 
-/** Der Start der App. Hülle, Karte, Katalog und Sitzung laufen nebeneinander. */
+/** The start of the app. The shell, the map, the catalogue and the session start in parallel. */
 export function startApp(): void {
-  inject(ThemeService).init();
+  // The theme store paints the page when it starts, so the first frame has the correct theme.
+  inject(ThemeStore);
+  // The config store starts its read when it starts. `AuthService` waits for the answer itself.
+  inject(ConfigStore);
   const auth = inject(AuthService);
   const texts = inject(TextCatalogService);
-  const config = inject(ConfigService);
   const injector = inject(EnvironmentInjector);
-  // Service Worker, Warteschlange und Katalog erst nach dem ersten Bild.
+  // The service worker, the queue and the catalogue start after the first frame.
   afterNextRender(
     () => {
       bootOffline(injector);
     },
     { injector },
   );
-  void config.load();
-  // Die Sitzung wartet in `AuthService` selbst auf die Konfiguration.
   void auth.restoreSession();
-  // Der Server erst nach der Ablage: sein ETag steht dort.
+  // The server comes after the local copy, because the local copy holds the ETag.
   void texts
     .restore()
     .catch(() => undefined)

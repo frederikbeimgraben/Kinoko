@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountService } from '../../core/access/account.service';
+import { AccountStore } from '../../core/access/account.store';
 import { GroupsState } from '../../core/access/groups.state';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -26,7 +26,7 @@ import { GroupMembersComponent } from './group-members.component';
 export class GroupComponent {
   readonly id = input.required<string>();
 
-  private readonly account = inject(AccountService);
+  private readonly account = inject(AccountStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(GroupsState);

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { MapAppService } from '../../core/maps/map-app.service';
+import { MapAppStore } from '../../core/maps/map-app.store';
 import { geoUri, googleMapsUrl, osmUrl } from '../../core/maps/map-links';
 import { ListRowComponent } from '../list-row/list-row.component';
 
@@ -15,7 +15,7 @@ import { ListRowComponent } from '../list-row/list-row.component';
 })
 export class MapAppLinkComponent {
   private readonly viewport = inject(ViewportService);
-  private readonly mapApp = inject(MapAppService);
+  private readonly mapApp = inject(MapAppStore);
 
   readonly target = input.required<readonly [number, number]>();
 

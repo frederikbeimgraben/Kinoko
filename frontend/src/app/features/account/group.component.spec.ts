@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { AccountService } from '../../core/access/account.service';
+import { AccountStore } from '../../core/access/account.store';
 import { noViolations } from '../../testing/axe';
 import {
   GroupsApiDouble,
@@ -24,7 +24,7 @@ async function build(
     providers: [
       provideRouter(ANY_ROUTE),
       groupsApiProvider(api),
-      { provide: AccountService, useValue: { owns: (one: string | null) => one === who, userId: () => who } },
+      { provide: AccountStore, useValue: { owns: (one: string | null) => one === who, userId: () => who } },
     ],
   });
   return { container, api, router: TestBed.inject(Router) };

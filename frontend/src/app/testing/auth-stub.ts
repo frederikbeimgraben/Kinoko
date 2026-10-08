@@ -1,10 +1,7 @@
 import { computed, signal, type Provider } from '@angular/core';
 import { AuthService, type SignedInUser } from '../core/auth';
 
-/**
- * Ein Auth-Dienst ohne SSO: der Test sagt, wer angemeldet ist und wie das
- * Anmelde-Blatt antwortet.
- */
+/** An auth service without an SSO. The test sets the person who is signed in and the answer of the sign-in sheet. */
 export class AuthStub {
   readonly user = signal<SignedInUser | null>({
     sub: 'sub-eins',
@@ -12,13 +9,13 @@ export class AuthStub {
     email: 'frederik@beimgraben.net',
   });
   readonly signedIn = computed(() => this.user() !== null);
-  /** Wahr, solange eine stille Anmeldung läuft. */
+  /** True while a silent sign-in runs. */
   readonly busy = signal(false);
-  /** Wahr, sobald die Sitzungsprüfung einmal geantwortet hat. */
+  /** True after the first answer of the session check. */
   readonly checked = signal(true);
-  /** Wahr, sobald das SSO selbst geantwortet hat. */
+  /** True after an answer of the SSO itself. */
   readonly settled = signal(true);
-  /** Die Antwort auf `anmeldungAnfordern`. */
+  /** The answer to `requestSignIn`. */
   reply = true;
   asked = 0;
 
@@ -28,7 +25,7 @@ export class AuthStub {
   }
 }
 
-/** Hängt den Stummel an die Stelle des echten Dienstes. */
+/** Puts the stub in the place of the real service. */
 export function authStubProviders(stub: AuthStub): Provider[] {
   return [{ provide: AuthService, useValue: stub }];
 }

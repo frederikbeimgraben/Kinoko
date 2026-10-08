@@ -1,29 +1,29 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { ConfigService } from '../config/config.service';
+import { ConfigStore } from '../config/config.store';
 import { TileStore } from './tile-store';
 import { readLayers, type Layer, type LayersManifest } from './layers';
 import { readManifest, type SpeciesManifest } from './manifest';
 import { layerFromSpecies } from './species-as-layer';
 import { LAYERS_MANIFEST, manifestPath } from './tile-paths';
 
-/** Manifeste und Kacheln. Der Ursprung steht in `Config`, die Kacheln liegen statisch. */
+/** The manifests and the tiles. `Config` gives the origin. The tiles are static files. */
 @Injectable({ providedIn: 'root' })
 export class TileService {
   private readonly store = inject(TileStore);
-  private readonly config = inject(ConfigService);
+  private readonly config = inject(ConfigStore);
 
   private readonly running = new Map<string, Promise<void>>();
   private readonly _manifests = signal<ReadonlyMap<string, SpeciesManifest>>(new Map());
   private readonly _layers = signal<LayersManifest | null>(null);
 
-  /** Die geladenen Art-Manifeste, nach Slug. */
+  /** The loaded species manifests, by slug. */
   readonly manifests = this._manifests.asReadonly();
   readonly layers = this._layers.asReadonly();
 
-  /** Die Eingabe-Ebenen, leer solange nichts geladen ist. */
+  /** The input layers. The list is empty until the manifest loads. */
   readonly layerList = computed<readonly Layer[]>(() => this._layers()?.layers ?? []);
 
-  /** Der Weg einer Datei neben den Kacheln, am Ursprung aus `Config`. */
+  /** The path of a file next to the tiles, at the origin from `Config`. */
   url(path: string): string {
     const origin = this.config.configuration()?.origin ?? '';
     return origin === '' ? path : `${origin.replace(/\/$/, '')}${path}`;
@@ -33,13 +33,13 @@ export class TileService {
     return this._manifests().get(slug) ?? null;
   }
 
-  /** Eine Art als Eingabe-Ebene, damit sie als Faktor taugt. */
+  /** A species as an input layer, so that it can be a factor. */
   speciesLayer(slug: string, label: string): Layer | null {
     const manifest = this.manifestOf(slug);
     return manifest === null ? null : layerFromSpecies(manifest, label);
   }
 
-  /** Holt ein Manifest genau einmal. Ein Fehlschlag wird nicht gemerkt. */
+  /** Loads a manifest one time. The service does not keep a failure, so the next call tries again. */
   load(slug: string): Promise<void> {
     let run = this.running.get(slug);
     if (!run) {
@@ -58,7 +58,7 @@ export class TileService {
     return run;
   }
 
-  /** Vergisst alles. Der nächste Aufruf fragt den Server erneut. */
+  /** Forgets all loads. The next call asks the server again. */
   forget(): void {
     this.running.clear();
   }
