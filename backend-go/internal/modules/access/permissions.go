@@ -30,6 +30,7 @@ var Permissions = []PermissionEntry{
 	{"find.review", enums.AreaData},
 	{"run.manage", enums.AreaData},
 	{"group.manage", enums.AreaAccess},
+	{"data.manage", enums.AreaData},
 }
 
 // AdminSlug is the slug of the role that the last-admin guard protects.

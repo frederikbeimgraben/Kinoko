@@ -117,10 +117,11 @@ const (
 	RunKindTraining RunKind = "training"
 	RunKindRender   RunKind = "render"
 	RunKindFull     RunKind = "full"
+	RunKindFetch    RunKind = "fetch"
 )
 
 // RunKindValues lists each value of RunKind in declaration order.
-var RunKindValues = []RunKind{"training", "render", "full"}
+var RunKindValues = []RunKind{"training", "render", "full", "fetch"}
 
 // Valid tells if the value is in the set.
 func (v RunKind) Valid() bool { return slices.Contains(RunKindValues, v) }

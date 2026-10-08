@@ -180,7 +180,8 @@ func TestListPermissionsReportsAreasByContract(t *testing.T) {
 	expected := `{"items":[{"key":"species.edit","area":"species"},{"key":"image.submit","area":"species"},` +
 		`{"key":"image.review","area":"species"},{"key":"text.edit","area":"interface"},` +
 		`{"key":"role.manage","area":"access"},{"key":"role.assign","area":"access"},` +
-		`{"key":"find.review","area":"data"},{"key":"run.manage","area":"data"},{"key":"group.manage","area":"access"}]}`
+		`{"key":"find.review","area":"data"},{"key":"run.manage","area":"data"},{"key":"group.manage","area":"access"},` +
+		`{"key":"data.manage","area":"data"}]}`
 	if string(answer.Body) != expected {
 		t.Fatalf("%s", answer.Body)
 	}

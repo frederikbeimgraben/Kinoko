@@ -37,21 +37,24 @@ func TestCoarseSampler(t *testing.T) {
 // predict (testdata/gen_golden.py).
 func TestIsotonic(t *testing.T) {
 	var cases []struct {
-		X, Y, BigX, BigY, T, Pred floats
-		Xmin, Xmax                float64
+		X    floats  `json:"x"`
+		Y    floats  `json:"y"`
+		BigX floats  `json:"X"`
+		BigY floats  `json:"Y"`
+		T    floats  `json:"t"`
+		Pred floats  `json:"pred"`
+		XMin float64 `json:"xmin"`
+		XMax float64 `json:"xmax"`
 	}
 	load(t, "isotonic.json", &cases)
-	// encoding/json matches field names without case, so read X_thresholds_ by hand.
-	var raw []map[string]floats
-	load(t, "isotonic.json", &raw)
-	for i, c := range cases {
-		iso := FitIsotonic(raw[i]["x"], raw[i]["y"])
-		checkAll(t, "X", iso.X, raw[i]["X"], 0, 0)
-		checkAll(t, "Y", iso.Y, raw[i]["Y"], 1e-15, 1e-15)
-		if iso.XMin != c.Xmin || iso.XMax != c.Xmax {
-			t.Fatalf("range %v %v, want %v %v", iso.XMin, iso.XMax, c.Xmin, c.Xmax)
+	for _, c := range cases {
+		iso := FitIsotonic(c.X, c.Y)
+		checkAll(t, "X", iso.X, c.BigX, 0, 0)
+		checkAll(t, "Y", iso.Y, c.BigY, 0, 0)
+		if iso.XMin != c.XMin || iso.XMax != c.XMax {
+			t.Fatalf("range %v %v, want %v %v", iso.XMin, iso.XMax, c.XMin, c.XMax)
 		}
-		checkAll(t, "pred", iso.PredictAll(raw[i]["t"]), raw[i]["pred"], 1e-15, 1e-15)
+		checkAll(t, "pred", iso.PredictAll(c.T), c.Pred, 0, 0)
 	}
 }
 

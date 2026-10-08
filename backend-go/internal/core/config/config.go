@@ -29,6 +29,7 @@ type Settings struct {
 	Chain          string
 	RunLogs        string
 	DataDir        string
+	DataRoot       string
 	PipelineEnable bool
 }
 
@@ -47,6 +48,7 @@ func Defaults() Settings {
 		Listen:         "127.0.0.1:8111",
 		Chain:          "./var/modell",
 		RunLogs:        "./var/runs",
+		DataRoot:       "./var/daten",
 		PipelineEnable: true,
 	}
 }
@@ -83,6 +85,7 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("CHAIN", &s.Chain)
 	text("RUN_LOGS", &s.RunLogs)
 	text("DATEN", &s.DataDir)
+	text("DATA", &s.DataRoot)
 	if value, ok := lookup("PILZE_MAX_PHOTO_BYTES"); ok {
 		n, err := strconv.ParseInt(value, 10, 64)
 		if err != nil || n <= 0 {
