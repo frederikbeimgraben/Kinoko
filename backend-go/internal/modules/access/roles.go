@@ -83,6 +83,18 @@ func loadRoleOut(ctx context.Context, q db.Querier, role roleRow) (roleOut, erro
 	return renderRole(role, sorted(keys), count), err
 }
 
+// distinct gives the keys without repeats in their first order. The create
+// response keeps the request order as the Python service does, but it must
+// not show a key twice because setPermissions stores each key once.
+func distinct(keys []string) []string {
+	seen := map[string]bool{}
+	return fn.Filter(append([]string{}, keys...), func(key string) bool {
+		first := !seen[key]
+		seen[key] = true
+		return first
+	})
+}
+
 // sorted gives a sorted copy that is never nil.
 func sorted(keys []string) []string { return slices.Sorted(slices.Values(append([]string{}, keys...))) }
 
@@ -185,7 +197,7 @@ func (m *Module) createRole(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return web.Created(renderRole(made, append([]string{}, keys...), 0)), nil
+	return web.Created(renderRole(made, distinct(keys), 0)), nil
 }
 
 func (m *Module) getRole(r *http.Request) (web.Response, error) {
