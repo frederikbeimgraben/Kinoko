@@ -3,10 +3,12 @@ package importer
 import (
 	"fmt"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 // Context is all that a profile needs to build its rows.
@@ -334,15 +336,16 @@ func senseText(s *Sense) *string {
 }
 
 func nameRows(ctx Context, _ SpeciesRow) (Children, error) {
-	var rows []NameRow
-	add := func(names []string, kind enums.NameKind) {
-		for _, name := range names {
-			rows = append(rows, NameRow{SpeciesID: ctx.SpeciesID, Position: len(rows), Name: name, Kind: kind})
-		}
+	of := func(kind enums.NameKind) func(string) NameRow {
+		return func(name string) NameRow { return NameRow{SpeciesID: ctx.SpeciesID, Name: name, Kind: kind} }
 	}
-	add(ctx.Profile.WeitereNamen, enums.NameKindCommon)
-	add(ctx.Profile.Synonyme, enums.NameKindSynonym)
-	return Children{Names: rows}, nil
+	names := slices.Concat(fn.Map(ctx.Profile.WeitereNamen, of(enums.NameKindCommon)),
+		fn.Map(ctx.Profile.Synonyme, of(enums.NameKindSynonym)))
+	return Children{Names: fn.Map(fn.Enumerate(names), func(p fn.Pair[int, NameRow]) NameRow {
+		row := p.Second
+		row.Position = p.First
+		return row
+	})}, nil
 }
 
 func measurementRows(ctx Context, _ SpeciesRow) (Children, error) {
@@ -395,9 +398,9 @@ func colourRows(ctx Context, species SpeciesRow) (Children, error) {
 			mode = enums.ColourModeSingle
 		}
 		out.Ranges = append(out.Ranges, ColourRangeRow{SpeciesID: ctx.SpeciesID, Part: part, Mode: mode})
-		for i, c := range set.Colours {
-			out.Colours = append(out.Colours, ColourRow{SpeciesID: ctx.SpeciesID, Part: part, Position: i, Name: c.Name, Hex: c.Hex})
-		}
+		out.Colours = append(out.Colours, fn.Map(fn.Enumerate(set.Colours), func(p fn.Pair[int, NamedColour]) ColourRow {
+			return ColourRow{SpeciesID: ctx.SpeciesID, Part: part, Position: p.First, Name: p.Second.Name, Hex: p.Second.Hex}
+		})...)
 	}
 	return out, nil
 }

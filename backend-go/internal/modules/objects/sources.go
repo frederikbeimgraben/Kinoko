@@ -66,13 +66,13 @@ func checkSources(maps string, sources []string) []problem.FieldError {
 	if len(known) == 0 {
 		return nil
 	}
-	out := []problem.FieldError{}
-	for index, source := range sources {
-		if _, ok := known[source]; !ok {
-			out = append(out, problem.FieldError{Field: fmt.Sprintf("factors.%d.source", index), Code: "unknown_source"})
-		}
-	}
-	return out
+	unknown := fn.Filter(fn.Enumerate(sources), func(p fn.Pair[int, string]) bool {
+		_, ok := known[p.Second]
+		return !ok
+	})
+	return append([]problem.FieldError{}, fn.Map(unknown, func(p fn.Pair[int, string]) problem.FieldError {
+		return problem.FieldError{Field: fmt.Sprintf("factors.%d.source", p.First), Code: "unknown_source"}
+	})...)
 }
 
 func isFile(path string) bool {

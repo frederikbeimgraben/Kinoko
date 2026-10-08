@@ -3,6 +3,7 @@ package objects
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"maps"
 	"net/http"
 	"slices"
@@ -51,7 +52,7 @@ var finds = kind[findRow]{
 	inserted: []column{{"review_state", enums.ReviewStateOpen}},
 }
 
-// findOut is a find in the order of the old schema.
+// findOut is a find, with the fields in the order of the Python schema.
 type findOut struct {
 	ID           db.ID             `json:"id"`
 	OwnerID      db.ID             `json:"ownerId"`
@@ -94,7 +95,7 @@ type findWrite struct {
 	Lat         float64           `json:"lat"`
 	Lon         float64           `json:"lon"`
 	FoundOn     db.Date           `json:"foundOn"`
-	Count       *laxInt           `json:"count"`
+	Count       *json.RawMessage  `json:"count"`
 	ForTraining bool              `json:"forTraining"`
 	Visibility  *enums.Visibility `json:"visibility"`
 	GroupID     *db.ID            `json:"groupId"`
@@ -112,9 +113,9 @@ func (m *Module) findValues(r *http.Request) func(db.ID) ([]column, error) {
 		if err != nil {
 			return nil, err
 		}
-		var count *int
-		if body.Count != nil {
-			count = fn.Ptr(int(*body.Count))
+		count, err := countOf(body.Count)
+		if err != nil {
+			return nil, err
 		}
 		return []column{
 			{"species_id", body.SpeciesID}, {"lat", body.Lat}, {"lon", body.Lon},
@@ -122,6 +123,19 @@ func (m *Module) findValues(r *http.Request) func(db.ID) ([]column, error) {
 			{"visibility", visibility}, {"group_id", group}, {"note", body.Note},
 		}, nil
 	}
+}
+
+// countOf reads the find count. A count that int64 cannot hold exactly is
+// an error, so a wrapped or rounded count never gets into the table.
+func countOf(raw *json.RawMessage) (*int64, error) {
+	if raw == nil {
+		return nil, nil
+	}
+	value, ok := parseLaxInt(*raw)
+	if !ok {
+		return nil, problem.InvalidField("count", "int_parsing")
+	}
+	return &value, nil
 }
 
 // findQuery is the filter of the find list.

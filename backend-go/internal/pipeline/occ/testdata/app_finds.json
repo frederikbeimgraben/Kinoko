@@ -1,0 +1,148 @@
+{
+ "items": [
+  {
+   "id": "3f2b-0000",
+   "speciesId": "a1",
+   "scientificName": "Imleria badia",
+   "lat": 48.165542,
+   "lon": 11.426352,
+   "foundOn": "2026-09-04",
+   "count": null
+  },
+  {
+   "id": "3f2b-0001",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 48.006198,
+   "lon": 11.529289,
+   "foundOn": "2025-11-06",
+   "count": null
+  },
+  {
+   "id": "3f2b-0002",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 48.618879,
+   "lon": 9.246403,
+   "foundOn": "2026-06-11",
+   "count": null
+  },
+  {
+   "id": "3f2b-0003",
+   "speciesId": "a1",
+   "scientificName": "Imleria badia",
+   "lat": 48.635296,
+   "lon": 9.323704,
+   "foundOn": "2025-09-16",
+   "count": null
+  },
+  {
+   "id": "3f2b-0004",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 51.028144,
+   "lon": 9.928449,
+   "foundOn": "2025-08-22",
+   "count": null
+  },
+  {
+   "id": "3f2b-0005",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 51.128526,
+   "lon": 9.98556,
+   "foundOn": "2026-07-01",
+   "count": null
+  },
+  {
+   "id": "3f2b-0006",
+   "speciesId": "a1",
+   "scientificName": "Imleria badia",
+   "lat": 48.728111,
+   "lon": 9.130564,
+   "foundOn": "2025-08-08",
+   "count": null
+  },
+  {
+   "id": "3f2b-0007",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 51.012426,
+   "lon": 10.005208,
+   "foundOn": "2025-12-02",
+   "count": null
+  },
+  {
+   "id": "3f2b-0008",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 51.05484,
+   "lon": 10.010491,
+   "foundOn": "2026-03-14",
+   "count": null
+  },
+  {
+   "id": "3f2b-0009",
+   "speciesId": "a1",
+   "scientificName": "Imleria badia",
+   "lat": 51.033195,
+   "lon": 9.949415,
+   "foundOn": "2026-06-24",
+   "count": null
+  },
+  {
+   "id": "3f2b-0010",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 50.02631,
+   "lon": 8.600105,
+   "foundOn": "2026-03-23",
+   "count": null
+  },
+  {
+   "id": "3f2b-0011",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 48.719369,
+   "lon": 9.321294,
+   "foundOn": "2025-09-12",
+   "count": null
+  },
+  {
+   "id": "3f2b-0012",
+   "speciesId": "a1",
+   "scientificName": "Imleria badia",
+   "lat": 48.747886,
+   "lon": 9.234199,
+   "foundOn": "2026-04-20",
+   "count": null
+  },
+  {
+   "id": "3f2b-0013",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 50.163227,
+   "lon": 8.611959,
+   "foundOn": "2025-09-25",
+   "count": null
+  },
+  {
+   "id": "3f2b-0014",
+   "speciesId": "a1",
+   "scientificName": "Boletus edulis",
+   "lat": 48.132306,
+   "lon": 11.525983,
+   "foundOn": "2025-09-04",
+   "count": null
+  },
+  {
+   "id": "3f2b-0015",
+   "speciesId": "a1",
+   "scientificName": "Imleria badia",
+   "lat": 48.520948,
+   "lon": 9.048648,
+   "foundOn": "2025-11-16",
+   "count": null
+  }
+ ]
+}

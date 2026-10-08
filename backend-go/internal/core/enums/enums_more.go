@@ -5,6 +5,7 @@ import "slices"
 // PhotoSize is a value of the set PhotoSize.
 type PhotoSize string
 
+// The values of PhotoSize.
 const (
 	PhotoSizeThumb PhotoSize = "thumb"
 	PhotoSizeList  PhotoSize = "list"
@@ -20,6 +21,7 @@ func (v PhotoSize) Valid() bool { return slices.Contains(PhotoSizeValues, v) }
 // PhotoState is a value of the set PhotoState.
 type PhotoState string
 
+// The values of PhotoState.
 const (
 	PhotoStatePrivate   PhotoState = "private"
 	PhotoStateSubmitted PhotoState = "submitted"
@@ -36,6 +38,7 @@ func (v PhotoState) Valid() bool { return slices.Contains(PhotoStateValues, v) }
 // Protection is a value of the set Protection.
 type Protection string
 
+// The values of Protection.
 const (
 	ProtectionNone        Protection = "none"
 	ProtectionPersonalUse Protection = "personal_use"
@@ -51,6 +54,7 @@ func (v Protection) Valid() bool { return slices.Contains(ProtectionValues, v) }
 // RedListStatus is a value of the set RedListStatus.
 type RedListStatus string
 
+// The values of RedListStatus.
 const (
 	RedListStatusCriticallyEndangered RedListStatus = "critically_endangered"
 	RedListStatusEndangered           RedListStatus = "endangered"
@@ -70,6 +74,7 @@ func (v RedListStatus) Valid() bool { return slices.Contains(RedListStatusValues
 // ReviewDecision is a value of the set ReviewDecision.
 type ReviewDecision string
 
+// The values of ReviewDecision.
 const (
 	ReviewDecisionAccepted ReviewDecision = "accepted"
 	ReviewDecisionRejected ReviewDecision = "rejected"
@@ -84,6 +89,7 @@ func (v ReviewDecision) Valid() bool { return slices.Contains(ReviewDecisionValu
 // ReviewState is a value of the set ReviewState.
 type ReviewState string
 
+// The values of ReviewState.
 const (
 	ReviewStateOpen     ReviewState = "open"
 	ReviewStateAccepted ReviewState = "accepted"
@@ -99,6 +105,7 @@ func (v ReviewState) Valid() bool { return slices.Contains(ReviewStateValues, v)
 // Rule is a value of the set Rule.
 type Rule string
 
+// The values of Rule.
 const (
 	RuleIntersection Rule = "intersection"
 	RuleGraded       Rule = "graded"
@@ -113,14 +120,16 @@ func (v Rule) Valid() bool { return slices.Contains(RuleValues, v) }
 // RunKind is a value of the set RunKind.
 type RunKind string
 
+// The values of RunKind.
 const (
 	RunKindTraining RunKind = "training"
 	RunKindRender   RunKind = "render"
 	RunKindFull     RunKind = "full"
+	RunKindFetch    RunKind = "fetch"
 )
 
 // RunKindValues lists each value of RunKind in declaration order.
-var RunKindValues = []RunKind{"training", "render", "full"}
+var RunKindValues = []RunKind{"training", "render", "full", "fetch"}
 
 // Valid tells if the value is in the set.
 func (v RunKind) Valid() bool { return slices.Contains(RunKindValues, v) }
@@ -128,6 +137,7 @@ func (v RunKind) Valid() bool { return slices.Contains(RunKindValues, v) }
 // RunState is a value of the set RunState.
 type RunState string
 
+// The values of RunState.
 const (
 	RunStateQueued   RunState = "queued"
 	RunStateRunning  RunState = "running"
@@ -144,6 +154,7 @@ func (v RunState) Valid() bool { return slices.Contains(RunStateValues, v) }
 // Season is a value of the set Season.
 type Season string
 
+// The values of Season.
 const (
 	SeasonSpring Season = "spring"
 	SeasonSummer Season = "summer"
@@ -160,6 +171,7 @@ func (v Season) Valid() bool { return slices.Contains(SeasonValues, v) }
 // SourceScope is a value of the set SourceScope.
 type SourceScope string
 
+// The values of SourceScope.
 const (
 	SourceScopeProfile SourceScope = "profile"
 	SourceScopeFurther SourceScope = "further"
@@ -174,6 +186,7 @@ func (v SourceScope) Valid() bool { return slices.Contains(SourceScopeValues, v)
 // Speed is a value of the set Speed.
 type Speed string
 
+// The values of Speed.
 const (
 	SpeedImmediate     Speed = "immediate"
 	SpeedThirtySeconds Speed = "30s"
@@ -192,6 +205,7 @@ func (v Speed) Valid() bool { return slices.Contains(SpeedValues, v) }
 // StemFeature is a value of the set StemFeature.
 type StemFeature string
 
+// The values of StemFeature.
 const (
 	StemFeatureRing    StemFeature = "ring"
 	StemFeatureBulb    StemFeature = "bulb"
@@ -217,6 +231,7 @@ func (v StemFeature) Valid() bool { return slices.Contains(StemFeatureValues, v)
 // TaxonRank is a value of the set TaxonRank.
 type TaxonRank string
 
+// The values of TaxonRank.
 const (
 	TaxonRankDivision TaxonRank = "division"
 	TaxonRankClass    TaxonRank = "class"
@@ -234,6 +249,7 @@ func (v TaxonRank) Valid() bool { return slices.Contains(TaxonRankValues, v) }
 // TermKind is a value of the set TermKind.
 type TermKind string
 
+// The values of TermKind.
 const (
 	TermKindSmell   TermKind = "smell"
 	TermKindTaste   TermKind = "taste"
@@ -250,6 +266,7 @@ func (v TermKind) Valid() bool { return slices.Contains(TermKindValues, v) }
 // TraitKey is a value of the set TraitKey.
 type TraitKey string
 
+// The values of TraitKey.
 const (
 	TraitKeyFruitbody  TraitKey = "fruitbody"
 	TraitKeyCap        TraitKey = "cap"
@@ -280,6 +297,7 @@ func (v TraitKey) Valid() bool { return slices.Contains(TraitKeyValues, v) }
 // TriggerGroup is a value of the set TriggerGroup.
 type TriggerGroup string
 
+// The values of TriggerGroup.
 const (
 	TriggerGroupMechanical  TriggerGroup = "mechanical"
 	TriggerGroupReagent     TriggerGroup = "reagent"
@@ -295,6 +313,7 @@ func (v TriggerGroup) Valid() bool { return slices.Contains(TriggerGroupValues, 
 // Unit is a value of the set Unit.
 type Unit string
 
+// The values of Unit.
 const (
 	UnitCm Unit = "cm"
 	UnitMm Unit = "mm"
@@ -310,6 +329,7 @@ func (v Unit) Valid() bool { return slices.Contains(UnitValues, v) }
 // Visibility is a value of the set Visibility.
 type Visibility string
 
+// The values of Visibility.
 const (
 	VisibilityPrivate Visibility = "private"
 	VisibilityShared  Visibility = "shared"

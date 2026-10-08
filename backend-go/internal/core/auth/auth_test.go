@@ -308,7 +308,7 @@ func TestAdminGroupGrantsEveryRight(t *testing.T) {
 func TestMyPermissionsEndpointGrantsEveryRightToTheAdminGroup(t *testing.T) {
 	env := testkit.New(t)
 	answer := env.Get("/me/permissions", testkit.Ptr(testkit.Admin())).Expect(t, http.StatusOK)
-	expected := `{"permissions":["find.review","group.manage","image.review","image.submit","role.assign",` +
+	expected := `{"permissions":["data.manage","find.review","group.manage","image.review","image.submit","role.assign",` +
 		`"role.manage","run.manage","species.edit","text.edit"]}`
 	if string(answer.Body) != expected {
 		t.Fatalf("%s", answer.Body)

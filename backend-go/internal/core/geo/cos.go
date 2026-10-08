@@ -41,7 +41,7 @@ func (a dd) div(n float64) dd {
 const cosLimit = 4.0
 
 // Cos gives the cosine rounded to the nearest float64, as the C library of
-// the old service does. math.Cos can differ in the last bit.
+// the Python service uses. math.Cos can differ in the last bit.
 func Cos(x float64) float64 {
 	if math.IsNaN(x) || math.Abs(x) > cosLimit {
 		return math.Cos(x)

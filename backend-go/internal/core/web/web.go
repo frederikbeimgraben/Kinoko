@@ -56,7 +56,7 @@ func (j jsonResponse) Send(w http.ResponseWriter) {
 	_, _ = w.Write(encoded)
 }
 
-// Encode gives the JSON form of v as the old service wrote it: no HTML
+// Encode gives the JSON form of v as the Python service writes it: no HTML
 // escapes and no line end.
 func Encode(v any) ([]byte, error) {
 	var buffer bytes.Buffer
@@ -120,18 +120,20 @@ func Bytes(status int, contentType string, body []byte, header http.Header) Resp
 }
 
 type fileResponse struct {
-	path   string
-	header http.Header
+	request *http.Request
+	path    string
+	header  http.Header
 }
 
 func (f fileResponse) Send(w http.ResponseWriter) {
 	copyHeader(w.Header(), f.header)
-	http.ServeFile(w, &http.Request{Method: http.MethodGet, Header: http.Header{}}, f.path)
+	http.ServeFile(w, f.request, f.path)
 }
 
-// File is a response with the content of a file.
-func File(path string, header http.Header) Response {
-	return fileResponse{path: path, header: header}
+// File is a response with the content of a file. The request gives the
+// range and the conditional headers.
+func File(r *http.Request, path string, header http.Header) Response {
+	return fileResponse{request: r, path: path, header: header}
 }
 
 func copyHeader(target, source http.Header) {

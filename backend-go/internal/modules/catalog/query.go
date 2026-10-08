@@ -89,7 +89,7 @@ func parseColours(values url.Values) (map[enums.BodyPart]string, error) {
 	found := map[enums.BodyPart]string{}
 	for _, c := range colourParams {
 		key := "colour[" + c.Name + "]"
-		value := values.Get(key)
+		value := lastValue(values, key)
 		if value == "" {
 			continue
 		}
@@ -101,13 +101,14 @@ func parseColours(values url.Values) (map[enums.BodyPart]string, error) {
 	return found, nil
 }
 
-func distinct[T comparable](values []T) []T {
-	return fn.Reduce(values, []T{}, func(acc []T, v T) []T {
-		if fn.Any(acc, func(x T) bool { return x == v }) {
-			return acc
-		}
-		return append(acc, v)
-	})
+// lastValue gives the last value of a query key, or "" when the key is not
+// there. Starlette's QueryParams.get and FastAPI's scalar query parameters
+// take the last value, so a repeated key must give the same filter.
+func lastValue(values url.Values, key string) string {
+	if all := values[key]; len(all) > 0 {
+		return all[len(all)-1]
+	}
+	return ""
 }
 
 // parseSelection builds the filter from the query. The contract has
@@ -131,11 +132,11 @@ func parseSelection(u *url.URL) (Selection, error) {
 		return Selection{}, err
 	}
 	return Selection{
-		Edibility: distinct(fn.Map(values["edibility[]"], func(v string) enums.Edibility { return enums.Edibility(v) })),
-		Hymenium:  distinct(fn.Map(values["hymenium[]"], func(v string) enums.HymeniumType { return enums.HymeniumType(v) })),
-		CapShape:  distinct(fn.Map(values["capShape[]"], func(v string) enums.CapShape { return enums.CapShape(v) })),
-		Terms:     distinct(terms),
-		Months:    distinct(months),
+		Edibility: fn.Unique(fn.Map(values["edibility[]"], func(v string) enums.Edibility { return enums.Edibility(v) })),
+		Hymenium:  fn.Unique(fn.Map(values["hymenium[]"], func(v string) enums.HymeniumType { return enums.HymeniumType(v) })),
+		CapShape:  fn.Unique(fn.Map(values["capShape[]"], func(v string) enums.CapShape { return enums.CapShape(v) })),
+		Terms:     fn.Unique(terms),
+		Months:    fn.Unique(months),
 		Colours:   colours,
 		Sizes:     sizes,
 	}, nil

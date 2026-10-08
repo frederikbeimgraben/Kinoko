@@ -1,15 +1,18 @@
 package runs
 
 import (
+	"math"
+	"math/big"
 	"path/filepath"
 	"regexp"
 	"strconv"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
-// The rules below are those of the old pipeline worker. The step at position
+// The rules below are those of the Python pipeline worker (tools/pipeline_worker.py). The step at position
 // i has the name of script i; each species state goes queued, running, then
 // finished or failed; a run fails when one species fails.
 
@@ -67,18 +70,24 @@ func BrierIn(output string) *float64 {
 }
 
 // MeanBrier gives the Brier score of a run: the mean of the species scores,
-// else nil.
+// else nil. Python's statistics.mean adds exact fractions and rounds once,
+// so the sum is exact here too.
 func MeanBrier(scores []float64) *float64 {
 	if len(scores) == 0 {
 		return nil
 	}
-	sum := 0.0
-	for _, s := range scores {
-		sum += s
+	if !fn.All(scores, isFinite) {
+		mean := fn.Reduce(scores, 0.0, func(sum, s float64) float64 { return sum + s }) / float64(len(scores))
+		return &mean
 	}
-	mean := sum / float64(len(scores))
+	sum := fn.Reduce(scores, new(big.Rat), func(sum *big.Rat, s float64) *big.Rat {
+		return sum.Add(sum, new(big.Rat).SetFloat64(s))
+	})
+	mean, _ := sum.Quo(sum, big.NewRat(int64(len(scores)), 1)).Float64()
 	return &mean
 }
+
+func isFinite(x float64) bool { return !math.IsNaN(x) && !math.IsInf(x, 0) }
 
 // EndState gives the state of a step or a run: failed when a species failed.
 func EndState(failed bool) enums.RunState {

@@ -187,7 +187,7 @@ func newAccumulator(info colInfo, n int) accumulator {
 	switch {
 	case ct == String:
 		return &acc[string]{vals: make([]string, 0, n), null: make([]bool, 0, n),
-			conv: func(v parquet.Value) string { return string(v.ByteArray()) },
+			conv: interner(),
 			put:  func(t *Table, name string, vals []string) { t.Str[name] = vals }}
 	case ct == Bool:
 		return &acc[bool]{vals: make([]bool, 0, n), null: make([]bool, 0, n),
@@ -238,5 +238,26 @@ func timeConverter(ct ColType, nanos int64) func(parquet.Value) time.Time {
 			return time.Unix(days*86400, ns).UTC()
 		}
 		return time.Unix(0, v.Int64()*nanos).UTC()
+	}
+}
+
+// maxInterned bounds the strings that one column shares. Above it, a column of unique
+// values such as gbifID gets no benefit, so each value gets its own copy.
+const maxInterned = 1 << 16
+
+// interner gives a string converter that shares equal values. The cell column of the
+// weather table repeats about 15k values over 10M rows.
+func interner() func(parquet.Value) string {
+	seen := map[string]string{}
+	return func(v parquet.Value) string {
+		b := v.ByteArray()
+		if s, ok := seen[string(b)]; ok {
+			return s
+		}
+		s := string(b)
+		if len(seen) < maxInterned {
+			seen[s] = s
+		}
+		return s
 	}
 }

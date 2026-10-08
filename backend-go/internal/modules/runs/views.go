@@ -45,7 +45,15 @@ type StepEntry struct {
 	DurationS *int           `json:"durationS"`
 }
 
-// Detail is a run with its species, steps and log tail.
+// InputEntry is one data source that a run read, from pipeline_run_input.
+// A public source has no version.
+type InputEntry struct {
+	Kind      string `json:"kind"`
+	VersionID *db.ID `json:"versionId"`
+	Version   *int   `json:"version"`
+}
+
+// Detail is a run with its species, steps, log tail and inputs.
 type Detail struct {
 	Summary
 	LogPath             *string        `json:"logPath"`
@@ -54,6 +62,7 @@ type Detail struct {
 	Species             []SpeciesEntry `json:"species"`
 	Steps               []StepEntry    `json:"steps"`
 	LogTail             []string       `json:"logTail"`
+	Inputs              []InputEntry   `json:"inputs"`
 }
 
 // tally holds the counts of a run and the name of its only species.
@@ -140,6 +149,14 @@ func detailOf(ctx context.Context, q db.Querier, run Run) (Detail, error) {
 	if err != nil {
 		return Detail{}, err
 	}
+	inputs, err := db.All(ctx, q, func(s db.Scanner) (InputEntry, error) {
+		var e InputEntry
+		return e, s.Scan(&e.Kind, &e.VersionID, &e.Version)
+	}, `SELECT i.kind, i.version_id, v.version FROM pipeline_run_input i
+		LEFT JOIN data_source_version v ON v.id = i.version_id WHERE i.run_id = ? ORDER BY i.kind`, run.ID)
+	if err != nil {
+		return Detail{}, err
+	}
 	return Detail{
 		Summary:             summaryOf(run, counted[run.ID]),
 		LogPath:             run.LogPath,
@@ -148,6 +165,7 @@ func detailOf(ctx context.Context, q db.Querier, run Run) (Detail, error) {
 		Species:             species,
 		Steps:               steps,
 		LogTail:             logTail(run.LogPath, logTailLines),
+		Inputs:              inputs,
 	}, nil
 }
 

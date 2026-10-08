@@ -8,7 +8,9 @@ import (
 	"context"
 	"errors"
 	"io"
+	"mime"
 	"net/http"
+	"net/url"
 	"regexp"
 	"slices"
 	"strings"
@@ -99,14 +101,15 @@ func (c *Contract) match(path string) []Path {
 // Middleware applies the contract to each request under Prefix.
 func (c *Contract) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		path, under := strings.CutPrefix(r.URL.Path, Prefix)
+		path, under := strings.CutPrefix(r.URL.EscapedPath(), Prefix)
 		if !under || (r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "") {
 			next.ServeHTTP(w, r)
 			return
 		}
 		hits := c.match(path)
 		if len(hits) == 0 {
-			next.ServeHTTP(w, r)
+			// Fail closed: a path outside the contract never reaches a handler.
+			problem.Write(w, problem.NotFound())
 			return
 		}
 		allowed := slices.Compact(slices.Sorted(slices.Values(fn.FlatMap(hits, func(p Path) []string { return p.methods }))))
@@ -168,7 +171,10 @@ func unknownQuery(r *http.Request, target Path, operation *openapi3.Operation) e
 
 func (c *Contract) validateInput(r *http.Request, path string, target Path, operation *openapi3.Operation) error {
 	params := pathParams(target.Template, path)
-	jsonBody := strings.HasPrefix(r.Header.Get("Content-Type"), "application/json")
+	jsonBody, err := expectsJSON(r, operation)
+	if err != nil {
+		return err
+	}
 	if jsonBody && r.Body != nil {
 		body, err := io.ReadAll(io.LimitReader(r.Body, 4<<20))
 		if err != nil {
@@ -178,7 +184,9 @@ func (c *Contract) validateInput(r *http.Request, path string, target Path, oper
 		defer func() { r.Body = io.NopCloser(bytes.NewReader(body)) }()
 	}
 	shadow := r.Clone(r.Context())
-	shadow.URL.Path = path
+	if plain, err := url.PathUnescape(path); err == nil {
+		shadow.URL.Path = plain
+	}
 	if !jsonBody {
 		// The clone shares the body. The validator must not read a multipart body.
 		shadow.Body = http.NoBody
@@ -205,13 +213,36 @@ func (c *Contract) validateInput(r *http.Request, path string, target Path, oper
 	return nil
 }
 
+// expectsJSON tells if the body is JSON. An operation with a JSON body
+// accepts a JSON media type or no media type, as the Python service does.
+func expectsJSON(r *http.Request, operation *openapi3.Operation) (bool, error) {
+	if operation.RequestBody == nil || operation.RequestBody.Value == nil ||
+		operation.RequestBody.Value.Content.Get("application/json") == nil {
+		return false, nil
+	}
+	header := r.Header.Get("Content-Type")
+	if header == "" {
+		r.Header.Set("Content-Type", "application/json")
+		return true, nil
+	}
+	media, _, err := mime.ParseMediaType(header)
+	if err != nil || !(media == "application/json" || strings.HasSuffix(media, "+json")) {
+		return false, problem.InvalidField("body", "model_attributes_type")
+	}
+	return true, nil
+}
+
 func pathParams(template, path string) map[string]string {
 	names := strings.Split(strings.Trim(template, "/"), "/")
 	values := strings.Split(strings.Trim(path, "/"), "/")
 	out := map[string]string{}
 	for i, name := range names {
 		if strings.HasPrefix(name, "{") && i < len(values) {
-			out[strings.Trim(name, "{}")] = values[i]
+			value, err := url.PathUnescape(values[i])
+			if err != nil {
+				value = values[i]
+			}
+			out[strings.Trim(name, "{}")] = value
 		}
 	}
 	return out

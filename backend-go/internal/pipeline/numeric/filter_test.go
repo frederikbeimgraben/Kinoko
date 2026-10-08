@@ -35,8 +35,8 @@ func TestUniform2D(t *testing.T) {
 	load(t, "uniform.json", &cases)
 	for _, c := range cases {
 		in := c.Input.f32()
-		checkAll(t, c.Mode, Uniform2D(in, c.Ny, c.Nx, c.Size, modes[c.Mode]), c.Output, 1e-6, 1e-6)
-		checkAll(t, "sum", UniformSum2D(in, c.Ny, c.Nx, c.Size), c.Sum, 1e-6, 1e-4)
+		checkAll(t, c.Mode, Uniform2D(in, c.Ny, c.Nx, c.Size, modes[c.Mode]), c.Output, 0, 0)
+		checkAll(t, "sum", UniformSum2D(in, c.Ny, c.Nx, c.Size), c.Sum, 0, 0)
 	}
 }
 
@@ -56,5 +56,5 @@ func TestVolume(t *testing.T) {
 	for i, c := range g.Coords {
 		got[i] = MapLinearNearest3(rate, g.RateShape, c)
 	}
-	checkAll(t, "map", got, g.Values, 1e-6, 1e-7)
+	checkAll(t, "map", got, g.Values, 0, 0)
 }

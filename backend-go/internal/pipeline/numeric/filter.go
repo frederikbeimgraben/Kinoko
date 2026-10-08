@@ -59,7 +59,8 @@ func fillLine(buf []float64, get func(int) float64, n, before int, mode Mode) {
 }
 
 // GaussianKernel returns the weights of scipy _gaussian_kernel1d for order 0
-// and the radius int(Truncate*sigma + 0.5).
+// and the radius int(Truncate*sigma + 0.5). The SIMD exp of numpy can differ
+// from math.Exp by one unit in the last place, so a weight can too.
 func GaussianKernel(sigma float64) []float64 {
 	radius := int(Truncate*sigma + 0.5)
 	factor := -0.5 / (sigma * sigma)
@@ -116,18 +117,18 @@ func correlateLine(out, buf, w []float64) {
 }
 
 // uniformLine is the inner loop of NI_UniformFilter1D with origin 0: a
-// running mean in float64 that adds the new cell and drops the old one.
+// running sum in float64 that adds the new cell and drops the old one.
+// Each output divides the sum by the size, as scipy 1.17 does.
 func uniformLine(out, buf []float64, size int) {
 	div := float64(size)
 	acc := 0.0
 	for k := range size {
 		acc += buf[k]
 	}
-	acc /= div
-	out[0] = acc
+	out[0] = acc / div
 	for l := 1; l < len(out); l++ {
-		acc += (buf[l-1+size] - buf[l-1]) / div
-		out[l] = acc
+		acc += buf[l-1+size] - buf[l-1]
+		out[l] = acc / div
 	}
 }
 
@@ -185,14 +186,14 @@ func Uniform2D[T Float](a []T, ny, nx, size int, mode Mode) []T {
 	return pass(pass(a, ny, nx, 0, before, after, mode, line), ny, nx, 1, before, after, mode, line)
 }
 
-// UniformSum2D is uniform_filter(a, size, mode="constant") * size * size in
-// float32, the window sum of tree_scales.py.
+// UniformSum2D is uniform_filter(a, size, mode="constant") * size * size,
+// the window sum of tree_scales.py. Python multiplies twice in float32.
 func UniformSum2D(a []float32, ny, nx, size int) []float32 {
-	area := float32(size * size)
+	side := float32(size)
 	mean := Uniform2D(a, ny, nx, size, Constant)
 	out := make([]float32, len(mean))
 	for i, v := range mean {
-		out[i] = v * area
+		out[i] = float32(v*side) * side
 	}
 	return out
 }

@@ -29,7 +29,10 @@ type Settings struct {
 	Chain          string
 	RunLogs        string
 	DataDir        string
+	DataRoot       string
 	PipelineEnable bool
+	// Schedule is the weekly start of the fetch and render runs: "<Weekday> HH:MM <IANA zone>".
+	Schedule string
 }
 
 // Defaults are the settings for local development.
@@ -47,7 +50,9 @@ func Defaults() Settings {
 		Listen:         "127.0.0.1:8111",
 		Chain:          "./var/modell",
 		RunLogs:        "./var/runs",
+		DataRoot:       "./var/daten",
 		PipelineEnable: true,
+		Schedule:       "Mon 03:30 Europe/Berlin",
 	}
 }
 
@@ -83,6 +88,8 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("CHAIN", &s.Chain)
 	text("RUN_LOGS", &s.RunLogs)
 	text("DATEN", &s.DataDir)
+	text("DATA", &s.DataRoot)
+	text("SCHEDULE", &s.Schedule)
 	if value, ok := lookup("PILZE_MAX_PHOTO_BYTES"); ok {
 		n, err := strconv.ParseInt(value, 10, 64)
 		if err != nil || n <= 0 {
@@ -102,8 +109,8 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	return s, nil
 }
 
-// DatabasePath accepts a file path or an SQLAlchemy URL of the old service.
-// The NixOS module of the old service sets "sqlite+aiosqlite:////var/lib/x.sqlite".
+// DatabasePath accepts a file path or an SQLAlchemy URL of the Python service.
+// The NixOS module of the Python service sets "sqlite+aiosqlite:////var/lib/x.sqlite".
 func DatabasePath(value string) string {
 	for _, prefix := range []string{"sqlite+aiosqlite:///", "sqlite:///"} {
 		if rest, ok := strings.CutPrefix(value, prefix); ok {

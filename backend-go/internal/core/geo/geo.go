@@ -7,6 +7,8 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 const (
@@ -40,7 +42,7 @@ func Radians(deg float64) float64 { return deg * degToRad }
 func Degrees(rad float64) float64 { return rad * radToDeg }
 
 // Sum adds the values with the compensated sum of Python 3.12 and later.
-// The result is equal to the old service to the last bit.
+// The result is equal to the Python service to the last bit.
 func Sum(values []float64) float64 {
 	total, compensation := 0.0, 0.0
 	for _, x := range values {
@@ -58,21 +60,9 @@ func Sum(values []float64) float64 {
 	return total
 }
 
-func lons(ring Ring) []float64 {
-	out := make([]float64, len(ring))
-	for i, p := range ring {
-		out[i] = p.Lon
-	}
-	return out
-}
+func lons(ring Ring) []float64 { return fn.Map(ring, func(p Point) float64 { return p.Lon }) }
 
-func lats(ring Ring) []float64 {
-	out := make([]float64, len(ring))
-	for i, p := range ring {
-		out[i] = p.Lat
-	}
-	return out
-}
+func lats(ring Ring) []float64 { return fn.Map(ring, func(p Point) float64 { return p.Lat }) }
 
 // AreaHa gives the area of a ring in hectares. It uses a plane
 // approximation at the mean latitude. A ring with less than four points has no area.

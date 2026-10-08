@@ -7,6 +7,7 @@ import "slices"
 // Area is a value of the set Area.
 type Area string
 
+// The values of Area.
 const (
 	AreaSpecies   Area = "species"
 	AreaInterface Area = "interface"
@@ -23,6 +24,7 @@ func (v Area) Valid() bool { return slices.Contains(AreaValues, v) }
 // BodyPart is a value of the set BodyPart.
 type BodyPart string
 
+// The values of BodyPart.
 const (
 	BodyPartFruitbody  BodyPart = "fruitbody"
 	BodyPartCap        BodyPart = "cap"
@@ -46,6 +48,7 @@ func (v BodyPart) Valid() bool { return slices.Contains(BodyPartValues, v) }
 // CapFeature is a value of the set CapFeature.
 type CapFeature string
 
+// The values of CapFeature.
 const (
 	CapFeatureUmbonate     CapFeature = "umbonate"
 	CapFeatureHygrophanous CapFeature = "hygrophanous"
@@ -64,6 +67,7 @@ func (v CapFeature) Valid() bool { return slices.Contains(CapFeatureValues, v) }
 // CapMargin is a value of the set CapMargin.
 type CapMargin string
 
+// The values of CapMargin.
 const (
 	CapMarginInrolled    CapMargin = "inrolled"
 	CapMarginWavy        CapMargin = "wavy"
@@ -85,6 +89,7 @@ func (v CapMargin) Valid() bool { return slices.Contains(CapMarginValues, v) }
 // CapShape is a value of the set CapShape.
 type CapShape string
 
+// The values of CapShape.
 const (
 	CapShapeHemispherical CapShape = "hemispherical"
 	CapShapeConvex        CapShape = "convex"
@@ -110,6 +115,7 @@ func (v CapShape) Valid() bool { return slices.Contains(CapShapeValues, v) }
 // ColourMode is a value of the set ColourMode.
 type ColourMode string
 
+// The values of ColourMode.
 const (
 	ColourModeSingle   ColourMode = "single"
 	ColourModeGradient ColourMode = "gradient"
@@ -125,6 +131,7 @@ func (v ColourMode) Valid() bool { return slices.Contains(ColourModeValues, v) }
 // Condition is a value of the set Condition.
 type Condition string
 
+// The values of Condition.
 const (
 	ConditionBelow   Condition = "below"
 	ConditionAbove   Condition = "above"
@@ -140,6 +147,7 @@ func (v Condition) Valid() bool { return slices.Contains(ConditionValues, v) }
 // Dimension is a value of the set Dimension.
 type Dimension string
 
+// The values of Dimension.
 const (
 	DimensionWidth     Dimension = "width"
 	DimensionHeight    Dimension = "height"
@@ -156,6 +164,7 @@ func (v Dimension) Valid() bool { return slices.Contains(DimensionValues, v) }
 // Edibility is a value of the set Edibility.
 type Edibility string
 
+// The values of Edibility.
 const (
 	EdibilityEdible              Edibility = "edible"
 	EdibilityConditionallyEdible Edibility = "conditionally_edible"
@@ -173,6 +182,7 @@ func (v Edibility) Valid() bool { return slices.Contains(EdibilityValues, v) }
 // Frequency is a value of the set Frequency.
 type Frequency string
 
+// The values of Frequency.
 const (
 	FrequencyVeryCommon Frequency = "very_common"
 	FrequencyCommon     Frequency = "common"
@@ -190,6 +200,7 @@ func (v Frequency) Valid() bool { return slices.Contains(FrequencyValues, v) }
 // GillAttachment is a value of the set GillAttachment.
 type GillAttachment string
 
+// The values of GillAttachment.
 const (
 	GillAttachmentFree       GillAttachment = "free"
 	GillAttachmentAdnate     GillAttachment = "adnate"
@@ -206,6 +217,7 @@ func (v GillAttachment) Valid() bool { return slices.Contains(GillAttachmentValu
 // GillEdge is a value of the set GillEdge.
 type GillEdge string
 
+// The values of GillEdge.
 const (
 	GillEdgeSmooth  GillEdge = "smooth"
 	GillEdgeSerrate GillEdge = "serrate"
@@ -221,6 +233,7 @@ func (v GillEdge) Valid() bool { return slices.Contains(GillEdgeValues, v) }
 // GillSpacing is a value of the set GillSpacing.
 type GillSpacing string
 
+// The values of GillSpacing.
 const (
 	GillSpacingClose   GillSpacing = "close"
 	GillSpacingNormal  GillSpacing = "normal"
@@ -236,6 +249,7 @@ func (v GillSpacing) Valid() bool { return slices.Contains(GillSpacingValues, v)
 // Group is a value of the set Group.
 type Group string
 
+// The values of Group.
 const (
 	GroupBolete             Group = "bolete"
 	GroupRoughStemmedBolete Group = "rough_stemmed_bolete"
@@ -281,6 +295,7 @@ func (v Group) Valid() bool { return slices.Contains(GroupValues, v) }
 // HymeniumType is a value of the set HymeniumType.
 type HymeniumType string
 
+// The values of HymeniumType.
 const (
 	HymeniumTypeGills  HymeniumType = "gills"
 	HymeniumTypeTubes  HymeniumType = "tubes"
@@ -298,6 +313,7 @@ func (v HymeniumType) Valid() bool { return slices.Contains(HymeniumTypeValues, 
 // Licence is a value of the set Licence.
 type Licence string
 
+// The values of Licence.
 const (
 	LicenceOwn          Licence = "own"
 	LicenceCc0          Licence = "cc0"
@@ -315,6 +331,7 @@ func (v Licence) Valid() bool { return slices.Contains(LicenceValues, v) }
 // MarkerColour is a value of the set MarkerColour.
 type MarkerColour string
 
+// The values of MarkerColour.
 const (
 	MarkerColourGreen MarkerColour = "green"
 	MarkerColourBrown MarkerColour = "brown"
@@ -333,6 +350,7 @@ func (v MarkerColour) Valid() bool { return slices.Contains(MarkerColourValues, 
 // NameKind is a value of the set NameKind.
 type NameKind string
 
+// The values of NameKind.
 const (
 	NameKindCommon  NameKind = "common"
 	NameKindSynonym NameKind = "synonym"
@@ -347,6 +365,7 @@ func (v NameKind) Valid() bool { return slices.Contains(NameKindValues, v) }
 // Phase is a value of the set Phase.
 type Phase string
 
+// The values of Phase.
 const (
 	PhaseYoung Phase = "young"
 	PhaseOld   Phase = "old"

@@ -180,7 +180,8 @@ func TestListPermissionsReportsAreasByContract(t *testing.T) {
 	expected := `{"items":[{"key":"species.edit","area":"species"},{"key":"image.submit","area":"species"},` +
 		`{"key":"image.review","area":"species"},{"key":"text.edit","area":"interface"},` +
 		`{"key":"role.manage","area":"access"},{"key":"role.assign","area":"access"},` +
-		`{"key":"find.review","area":"data"},{"key":"run.manage","area":"data"},{"key":"group.manage","area":"access"}]}`
+		`{"key":"find.review","area":"data"},{"key":"run.manage","area":"data"},{"key":"group.manage","area":"access"},` +
+		`{"key":"data.manage","area":"data"}]}`
 	if string(answer.Body) != expected {
 		t.Fatalf("%s", answer.Body)
 	}
@@ -234,6 +235,21 @@ func TestCreateRoleThenReadItBack(t *testing.T) {
 	}
 	back := env.Get("/roles/"+body["id"].(string), as).Expect(t, http.StatusOK).Map(t)
 	if perms := back["permissions"].([]any); len(perms) != 1 || perms[0] != "find.review" {
+		t.Fatal(back)
+	}
+}
+
+func TestCreateRoleShowsARepeatedPermissionOnceAsStored(t *testing.T) {
+	env := testkit.New(t)
+	u := makeUser(t, env, "person-1")
+	as := signIn(t, env, u, "role.manage")
+	body := env.Post("/roles", map[string]any{"slug": "scout", "name": "Scout",
+		"permissions": []string{"text.edit", "find.review", "text.edit"}}, as).Expect(t, http.StatusCreated).Map(t)
+	if perms := body["permissions"].([]any); len(perms) != 2 || perms[0] != "text.edit" || perms[1] != "find.review" {
+		t.Fatal(body)
+	}
+	back := env.Get("/roles/"+body["id"].(string), as).Expect(t, http.StatusOK).Map(t)
+	if perms := back["permissions"].([]any); len(perms) != 2 {
 		t.Fatal(back)
 	}
 }

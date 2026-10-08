@@ -3,13 +3,13 @@ package objects
 import (
 	"encoding/json"
 	"net/http"
-	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/web"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/pyjson"
 )
 
 type combinationRow struct {
@@ -30,7 +30,7 @@ var combinations = kind[combinationRow]{
 	meta: func(c combinationRow) owned { return c.owned },
 }
 
-// factor is one factor of a combination, in the order of the old schema.
+// factor is one factor of a combination, with the fields in the order of the Python schema.
 type factor struct {
 	Source    string          `json:"source"`
 	Condition enums.Condition `json:"condition"`
@@ -64,15 +64,9 @@ func optFloat(f *laxFloat) *float64 {
 // storedFactors writes the factors as Python json.dumps does, with its
 // default separators and with ensure_ascii.
 func storedFactors(factors []factor) string {
-	return "[" + strings.Join(fn.Map(factors, func(f factor) string {
-		return "{" + strings.Join([]string{
-			`"source": ` + pyString(f.Source),
-			`"condition": ` + pyString(string(f.Condition)),
-			`"low": ` + pyOptFloat(f.Low),
-			`"high": ` + pyOptFloat(f.High),
-			`"active": ` + pyBool(f.Active),
-		}, ", ") + "}"
-	}), ", ") + "]"
+	return string(pyjson.Marshal(fn.Map(factors, func(f factor) *pyjson.Obj {
+		return pyjson.O("source", f.Source, "condition", string(f.Condition), "low", f.Low, "high", f.High, "active", f.Active)
+	}), -1, true))
 }
 
 func readFactors(text string) []factor {

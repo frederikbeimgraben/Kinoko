@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"slices"
 
-	// The decoders register their formats. The old service read each format that Pillow reads.
+	// The decoders register their formats. The Python service reads each format that Pillow reads.
 	_ "image/gif"
 	_ "image/png"
 
@@ -94,24 +94,42 @@ func rgb(src image.Image) *image.RGBA {
 		draw.Draw(out, out.Bounds(), src, bounds.Min, draw.Src)
 		return out
 	}
-	if nrgba, ok := src.(*image.NRGBA); ok {
-		for y := range bounds.Dy() {
-			row := nrgba.Pix[nrgba.PixOffset(bounds.Min.X, bounds.Min.Y+y):]
-			line := out.Pix[y*out.Stride:]
-			for x := range bounds.Dx() {
-				copy(line[x*4:x*4+3], row[x*4:x*4+3])
-				line[x*4+3] = 0xff
-			}
-		}
-		return out
-	}
+	at := straightRGB(src)
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			c := color.NRGBAModel.Convert(src.At(x, y)).(color.NRGBA)
-			out.SetRGBA(x-bounds.Min.X, y-bounds.Min.Y, color.RGBA{R: c.R, G: c.G, B: c.B, A: 0xff})
+			out.SetRGBA(x-bounds.Min.X, y-bounds.Min.Y, at(x, y))
 		}
 	}
 	return out
+}
+
+// straightRGB gives a reader of the colour of a pixel before alpha applies.
+// The decoders of PNG and WebP give the types with straight alpha. The
+// premultiplied conversion is only for other types: it makes a transparent
+// pixel black.
+func straightRGB(src image.Image) func(x, y int) color.RGBA {
+	switch img := src.(type) {
+	case *image.NRGBA:
+		return func(x, y int) color.RGBA {
+			c := img.NRGBAAt(x, y)
+			return color.RGBA{R: c.R, G: c.G, B: c.B, A: 0xff}
+		}
+	case *image.NRGBA64:
+		return func(x, y int) color.RGBA {
+			c := img.NRGBA64At(x, y)
+			return color.RGBA{R: uint8(c.R >> 8), G: uint8(c.G >> 8), B: uint8(c.B >> 8), A: 0xff}
+		}
+	case *image.NYCbCrA:
+		return func(x, y int) color.RGBA {
+			c := img.YCbCrAt(x, y)
+			r, g, b := color.YCbCrToRGB(c.Y, c.Cb, c.Cr)
+			return color.RGBA{R: r, G: g, B: b, A: 0xff}
+		}
+	}
+	return func(x, y int) color.RGBA {
+		c := color.NRGBAModel.Convert(src.At(x, y)).(color.NRGBA)
+		return color.RGBA{R: c.R, G: c.G, B: c.B, A: 0xff}
+	}
 }
 
 func encodeAll(clean *image.RGBA) (map[enums.PhotoSize][]byte, error) {

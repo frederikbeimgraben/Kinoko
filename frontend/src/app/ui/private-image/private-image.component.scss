@@ -1,20 +1,25 @@
-// Die Fläche steht schon, bevor das Bild da ist. Sonst springt die Zeile,
-// sobald die Antwort kommt. Vorgabe 44 px und Radius 14, per `kit.css` `.sq`.
+// The area has its size before the image comes, so the row does not move.
+// The default is 44 px with radius 14, per `kit.css` `.sq`. The host sets its own shape.
 :host {
   position: relative;
   display: block;
   inline-size: 44px;
   block-size: 44px;
   overflow: hidden;
-  background: var(--surface-low);
-  border-radius: 14px;
+  background-color: var(--surface-low);
+  border-radius: var(--r-sq);
+}
+
+// The `.skel` look while the file loads. Only `background-color` changes: the shimmer is an image.
+:host(.private--loading) {
+  background-color: var(--surface);
 }
 
 .private__image {
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
-  // Ohne das nimmt der Browser einen Wisch über das Bild als Ziehen an.
+  // Without this rule, the browser starts a drag on a swipe over the image.
   -webkit-user-drag: none;
 }
 
@@ -22,15 +27,15 @@
   object-fit: contain;
 }
 
-// Die Höhe kommt aus dem Seitenverhältnis des Bildes. Über `--private-image-cap`
-// setzt die Seite die Obergrenze, darunter passt `contain` das Bild ein.
+// The height comes from the aspect ratio of the image. `--private-image-cap` sets the maximum.
+// Below the maximum, `contain` fits the image.
 .private__image--natural {
   block-size: auto;
   max-block-size: var(--private-image-cap, none);
   object-fit: contain;
 }
 
-// Das Schloss sitzt in der Ecke des Bildes, auf dunklem Grund.
+// The lock is in the corner of the image, on a dark area.
 .private__lock {
   position: absolute;
   inset-block-start: var(--space-2);
@@ -45,7 +50,7 @@
   border-radius: 50%;
 }
 
-// Das Ersatzsymbol ohne Bild: Icon auf Farbe, per `kit.css` `.sq` mit `fill`.
+// The fallback without an image: an icon on a colour, per `kit.css` `.sq` with `fill`.
 .private__fallback {
   display: flex;
   inline-size: 100%;

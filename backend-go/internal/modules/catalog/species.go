@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
+	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
@@ -27,7 +28,7 @@ func (m *Module) listSpecies(r *http.Request) (web.Response, error) {
 	}
 	query := r.URL.Query()
 	var taxonIDs []db.ID
-	if raw := query.Get("taxonId"); raw != "" {
+	if raw := lastValue(query, "taxonId"); raw != "" {
 		root, err := db.ParseID(raw)
 		if err != nil {
 			return nil, problem.InvalidField("taxonId", "uuid_parsing")
@@ -37,7 +38,7 @@ func (m *Module) listSpecies(r *http.Request) (web.Response, error) {
 			return nil, err
 		}
 	}
-	candidates, err := searchSpecies(ctx, m.deps.DB, query.Get("q"), taxonIDs, selection)
+	candidates, err := searchSpecies(ctx, m.deps.DB, lastValue(query, "q"), taxonIDs, selection)
 	if err != nil {
 		return nil, err
 	}
@@ -94,12 +95,8 @@ func searchSpecies(ctx context.Context, q db.Querier, text string, taxonIDs []db
 			GROUP BY species_id HAVING count(DISTINCT term_id) = ?)`, append(db.Args(s.Terms), len(s.Terms))...)
 	}
 	query := "SELECT " + speciesCols + " FROM species"
-	for i, clause := range where {
-		if i == 0 {
-			query += " WHERE " + clause
-		} else {
-			query += " AND " + clause
-		}
+	if len(where) > 0 {
+		query += " WHERE " + strings.Join(where, " AND ")
 	}
 	return db.All(ctx, q, scanSpecies, query+" ORDER BY name", args...)
 }
@@ -156,7 +153,7 @@ func loadOne(ctx context.Context, q db.Querier, row speciesRow) (Species, error)
 
 // loadTargets reads the other species of the pairs of one species.
 func loadTargets(ctx context.Context, q db.Querier, self db.ID, rows []lookalikeRow) (map[db.ID]lookalikeTarget, error) {
-	others := distinct(fn.Map(rows, func(r lookalikeRow) db.ID {
+	others := fn.Unique(fn.Map(rows, func(r lookalikeRow) db.ID {
 		if r.A == self {
 			return r.B
 		}
@@ -282,8 +279,8 @@ type forecastWrite struct {
 	Enabled bool `json:"enabled"`
 }
 
-// setForecast changes updated_at only when the value changes, as the old
-// service did. The bundle tag depends on it.
+// setForecast changes updated_at only when the value changes, as the
+// Python service does. The bundle tag depends on it.
 func (m *Module) setForecast(r *http.Request) (web.Response, error) {
 	body, err := web.Decode[forecastWrite](r)
 	if err != nil {

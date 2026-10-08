@@ -3,11 +3,11 @@ package importer
 import (
 	"bytes"
 	"fmt"
-	"maps"
 	"slices"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 // Report counts the written rows and the skipped cases of one import.
@@ -45,10 +45,7 @@ var rankOrder = map[enums.TaxonRank]int{
 // LoadTaxonomy builds the taxon rows, sorted by rank so that each parent comes
 // first, and the key of each genus by its slug.
 func LoadTaxonomy(entries []TaxonEntry, newID func() db.ID) ([]TaxonRow, map[string]db.ID, error) {
-	ids := map[string]db.ID{}
-	for _, entry := range entries {
-		ids[entry.Slug] = newID()
-	}
+	ids := fn.ToMap(entries, func(entry TaxonEntry) (string, db.ID) { return entry.Slug, newID() })
 	rows := make([]TaxonRow, 0, len(entries))
 	genus := map[string]db.ID{}
 	for _, entry := range entries {
@@ -100,10 +97,7 @@ type Terms struct {
 
 // NewTerms indexes term rows by kind and slug.
 func NewTerms(rows []TermRow) Terms {
-	ids := map[termKey]db.ID{}
-	for _, row := range rows {
-		ids[termKey{row.Kind, row.Slug}] = row.ID
-	}
+	ids := fn.ToMap(rows, func(row TermRow) (termKey, db.ID) { return termKey{row.Kind, row.Slug}, row.ID })
 	return Terms{Rows: rows, ids: ids}
 }
 
@@ -149,23 +143,11 @@ func experienceTrees(p Profile) []string {
 }
 
 func sortedSet(words []string) []string {
-	return slices.Sorted(maps.Keys(setOf(words)))
-}
-
-func setOf[T comparable](items []T) map[T]struct{} {
-	out := make(map[T]struct{}, len(items))
-	for _, item := range items {
-		out[item] = struct{}{}
-	}
-	return out
+	return fn.SortedKeys(fn.Set(words))
 }
 
 func collect(profiles []StemProfile, words func(Profile) []string) []string {
-	var all []string
-	for _, p := range profiles {
-		all = append(all, words(p.Profile)...)
-	}
-	return sortedSet(all)
+	return sortedSet(fn.FlatMap(profiles, func(p StemProfile) []string { return words(p.Profile) }))
 }
 
 // BuildTerms builds each term in a fixed order: smells, tastes, trees, then
@@ -225,5 +207,5 @@ func BuildTerms(profiles []StemProfile, newID func() db.ID) (Terms, error) {
 	return NewTerms(rows), nil
 }
 
-// idLess orders keys as the old service compared UUIDs.
+// idLess orders keys by their bytes, as Python compares uuid.UUID values.
 func idLess(a, b db.ID) bool { return bytes.Compare(a[:], b[:]) < 0 }

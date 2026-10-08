@@ -57,7 +57,7 @@ func count(t testing.TB, handle *sql.DB, query string, args ...any) int {
 
 func ptr[T any](v T) *T { return &v }
 
-// testProfile is the smallest valid profile, as _profile() in the old tests.
+// testProfile is the smallest valid profile, as _profile() in the Python tests.
 func testProfile(change func(*Profile)) Profile {
 	p := Profile{
 		Name:       "Testpilz",

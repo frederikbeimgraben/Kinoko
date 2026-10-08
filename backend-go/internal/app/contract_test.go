@@ -3,6 +3,7 @@ package app_test
 import (
 	"net/http"
 	"slices"
+	"strings"
 	"testing"
 
 	backend "github.com/frederikbeimgraben/kinoko/backend"
@@ -46,5 +47,33 @@ func TestHealthAndProblems(t *testing.T) {
 	missing := env.Get("/nothing-here", nil).Expect(t, http.StatusNotFound)
 	if missing.Header.Get("Content-Type") != "application/problem+json" {
 		t.Fatal(missing.Header)
+	}
+}
+
+func TestBodyRulesHoldForEveryMediaType(t *testing.T) {
+	env := testkit.New(t)
+	admin := testkit.Admin()
+	long := strings.Repeat("x", 5000)
+	for _, media := range []string{"text/plain", "Application/JSON", ""} {
+		response := env.Do(testkit.Request{
+			Method: http.MethodPut, Path: "/texts/error.notFound", As: &admin,
+			RawBody: []byte(`{"locale":"de","value":"` + long + `"}`), Type: media,
+		})
+		if response.Status != http.StatusUnprocessableEntity {
+			t.Errorf("media %q: status %d", media, response.Status)
+		}
+	}
+}
+
+func TestEncodedSlashDoesNotPassTheGuard(t *testing.T) {
+	env := testkit.New(t)
+	someone := testkit.Someone("plain")
+	response := env.Do(testkit.Request{Method: http.MethodPut, Path: "/texts/a%2Fb", As: &someone,
+		Body: map[string]string{"locale": "de", "value": "x"}})
+	if response.Status != http.StatusForbidden && response.Status != http.StatusNotFound {
+		t.Fatalf("status %d", response.Status)
+	}
+	if response.Status == http.StatusNotFound && response.Map(t)["code"] != "not_found" {
+		t.Fatal(string(response.Body))
 	}
 }

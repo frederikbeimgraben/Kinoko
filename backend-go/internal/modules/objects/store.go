@@ -63,7 +63,7 @@ func where(filters []filter) (string, []any) {
 		fn.FlatMap(filters, func(f filter) []any { return f.args })
 }
 
-// page reads one page of rows. The queries of the old service have no
+// page reads one page of rows. The queries of the Python service have no
 // ORDER BY, so these have none: SQLite then gives the same order.
 func (k kind[T]) page(ctx context.Context, q db.Querier, p paging.Paging, filters ...filter) ([]T, error) {
 	condition, args := where(filters)

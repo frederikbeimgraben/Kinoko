@@ -1,5 +1,18 @@
+// Geometry per `kit.css` `.row`, `.txt`, `.num` and `.box-c`.
 :host {
   display: block;
+}
+
+:host-context(.grp):first-child .row {
+  border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
+}
+
+:host-context(.grp):last-child .row {
+  border-radius: var(--r-row) var(--r-row) var(--r-item) var(--r-item);
+}
+
+:host-context(.grp):only-child .row {
+  border-radius: var(--r-item);
 }
 
 .row {
@@ -7,19 +20,20 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-block-size: 56px;
+  min-block-size: var(--h-row);
   padding: 8px 16px;
-  font-size: 16px;
+  font-size: var(--fs-16);
+  line-height: normal;
   color: var(--text);
   background: var(--surface);
-  border-radius: 4px;
+  border-radius: var(--r-row);
 }
 
-.row--locked {
-  opacity: 0.5;
+.row--off {
+  opacity: 0.38;
 }
 
-// Ohne Karte um die Zeile bleibt ihr Inhalt am Rand der Fläche.
+// Without a card around the row, its content stays at the edge of the area.
 .row--flush {
   padding-inline: 0;
   background: none;
@@ -35,33 +49,32 @@
   opacity: 0;
 }
 
-.row__lock {
-  flex: none;
-  color: var(--label);
-}
-
 .row__stack {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-inline-size: 0;
 }
 
 .row__title {
-  font-weight: 400;
-  line-height: 1.2;
+  overflow: hidden;
+  font-weight: var(--fw-regular);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row__sub {
-  font-size: 14px;
-  line-height: 1.4;
+  overflow: hidden;
+  font-size: var(--fs-14);
   color: var(--text-var);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row__count {
   flex: none;
-  font-size: 14px;
+  font-size: var(--fs-14);
   color: var(--label);
   font-variant-numeric: tabular-nums;
 }
@@ -75,7 +88,7 @@
   block-size: 20px;
   color: var(--on-primary);
   border: 2px solid var(--outline-strong);
-  border-radius: 4px;
+  border-radius: var(--r-row);
 }
 
 .row__box--on {

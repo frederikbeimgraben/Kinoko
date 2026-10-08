@@ -39,6 +39,13 @@ var SummaryItems = []SummaryItem{
 	{"find.review", "findsPending", "SELECT count(*) FROM find WHERE deleted_at IS NULL AND review_state = 'open'"},
 	{"run.manage", "runs", "SELECT count(*) FROM pipeline_run"},
 	{"run.manage", "runsRunning", "SELECT count(*) FROM pipeline_run WHERE state IN ('queued', 'running')"},
+	// The kinds in this query are sources.RequiredKinds. Keep the two lists equal.
+	{"data.manage", "dataSourcesMissing", `WITH required(kind) AS (VALUES ('trees-grid'), ('tree-scales'), ('site-grid'), ('model-bundle'))
+		SELECT count(*) FROM required WHERE NOT EXISTS (SELECT 1 FROM data_source_version v
+			WHERE v.kind = required.kind AND v.active = 1 AND v.state = 'ready')`},
+	{"data.manage", "dataSourcesFailed", `SELECT count(*) FROM data_source_version v WHERE v.state = 'failed'
+		AND v.version = (SELECT max(w.version) FROM data_source_version w
+			WHERE w.kind = v.kind AND coalesce(w.species_id, '') = coalesce(v.species_id, ''))`},
 }
 
 // counted is one key with its count.

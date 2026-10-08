@@ -115,11 +115,7 @@ func displayNames(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]str
 	if err != nil {
 		return nil, err
 	}
-	out := make(map[db.ID]string, len(users))
-	for _, u := range users {
-		out[u.ID] = displayName(u)
-	}
-	return out, nil
+	return fn.ToMap(users, func(u auth.User) (db.ID, string) { return u.ID, displayName(u) }), nil
 }
 
 // sharedWith gives the ids that share a group with the user, plus the user,
@@ -194,7 +190,7 @@ func isMember(ctx context.Context, q db.Querier, group, user db.ID) (bool, error
 		"SELECT EXISTS (SELECT 1 FROM group_member WHERE group_id = ? AND user_id = ?)", group, user)
 }
 
-// laxBool reads a query flag as the old service did.
+// laxBool reads a query flag as pydantic reads a lax bool.
 func laxBool(raw string) bool {
 	switch strings.ToLower(raw) {
 	case "true", "1", "yes", "on", "t", "y":
