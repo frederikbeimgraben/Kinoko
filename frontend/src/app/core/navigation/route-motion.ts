@@ -1,10 +1,12 @@
 import { inject } from '@angular/core';
 import { Router, type ViewTransitionInfo } from '@angular/router';
+import { ViewportService } from '../layout/viewport.service';
+import { attachSharedElement } from './shared-element';
 
-/** Art des Übergangs zwischen zwei Adressen. */
-export type RouteMotion = 'tab-forward' | 'tab-back' | 'push' | 'pop' | 'none';
+/** The kind of transition between two addresses. */
+export type RouteMotion = 'tab-forward' | 'tab-back' | 'push' | 'pop' | 'fade' | 'none';
 
-/** Die drei Reiter, in ihrer Reihenfolge auf der Leiste. */
+/** The three tabs, in their order on the nav. */
 const TAB_ORDER: readonly string[] = ['karte', 'arten', 'eintraege'];
 
 function pathOf(url: string): string {
@@ -19,8 +21,9 @@ function isPrefixOf(shorter: readonly string[], longer: readonly string[]): bool
   return shorter.length < longer.length && shorter.every((part, index) => part === longer[index]);
 }
 
-/** Übergangsart aus alter und neuer Adresse, `from` `null` beim ersten Laden. */
-export function routeMotion(from: string | null, to: string): RouteMotion {
+/** The transition from the old and the new address; `from` is `null` on the first load.
+ * On the desktop a change in one section is a crossfade, so the list pane stays still. */
+export function routeMotion(from: string | null, to: string, wide = false): RouteMotion {
   if (from === null || pathOf(from) === pathOf(to)) return 'none';
 
   const fromSegments = segmentsOf(from);
@@ -29,6 +32,7 @@ export function routeMotion(from: string | null, to: string): RouteMotion {
   const toSection = toSegments[0] ?? '';
 
   if (fromSection === toSection) {
+    if (wide) return 'fade';
     if (isPrefixOf(fromSegments, toSegments)) return 'push';
     if (isPrefixOf(toSegments, fromSegments)) return 'pop';
     return 'none';
@@ -42,15 +46,18 @@ export function routeMotion(from: string | null, to: string): RouteMotion {
   return 'none';
 }
 
-/** Setzt `data-motion` am `<html>` und bricht ohne Bewegung oder bei `prefers-reduced-motion` ab. */
+/** Sets `data-motion` on `<html>`. It skips the transition without motion or with `prefers-reduced-motion`. */
 export function applyRouteMotion({ transition }: ViewTransitionInfo): void {
   const router = inject(Router);
+  const wide = inject(ViewportService).wide();
   const from = router.url;
   const to = router.currentNavigation()?.finalUrl?.toString() ?? from;
-  const motion = routeMotion(from, to);
+  const motion = routeMotion(from, to, wide);
 
   document.documentElement.dataset['motion'] = motion;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (motion === 'none' || reduced) transition.skipTransition();
+  const skipped = motion === 'none' || reduced;
+  attachSharedElement(transition, skipped);
+  if (skipped) transition.skipTransition();
 }

@@ -34,6 +34,18 @@
   padding-inline-start: 4px;
 }
 
+// Kit `.bar .chip { margin-right: 4px }`: a chip has more space to the buttons after it.
+.bar__chips {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  margin-inline-end: 4px;
+
+  &:empty {
+    display: none;
+  }
+}
+
 .bar__count {
   --pilz-level-height: 28px;
   --pilz-level-inline: 12px;

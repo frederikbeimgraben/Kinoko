@@ -4,13 +4,16 @@
   } @else if (close()) {
     <app-icon-button icon="close" kind="plain" [label]="'common.close' | t" (pressed)="closeClick.emit()" />
   }
-  @if (title()) {
+  @if (title() === null) {
+    <ng-content select="[headline]" />
+  } @else if (title()) {
     <h1 class="bar__title">{{ title() }}</h1>
   } @else {
-    <ng-content select="[headline]" />
+    <span class="bar__title"></span>
   }
   @if (count()) {
     <span class="bar__count"><app-level-pill [text]="count()" /></span>
   }
+  <span class="bar__chips"><ng-content select="app-filter-chip, [barChip]" /></span>
   <ng-content />
 </header>

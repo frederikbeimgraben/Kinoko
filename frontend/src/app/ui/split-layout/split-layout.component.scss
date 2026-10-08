@@ -7,7 +7,7 @@
   min-inline-size: 0;
 }
 
-// Eine Spalte des Rechners trägt ihre Fläche außen und ihren Inhalt innen.
+// A desktop pane has its ground outside and its content inside.
 :host(.layout--pane) {
   display: flex;
   flex: 1 1 0;
@@ -18,7 +18,7 @@
   flex: 1 1 0;
 }
 
-// Eine feste Breite hält die Spalte gegen jeden Rest.
+// A fixed width keeps the pane at its width when the space changes.
 :host(.layout--fixed) {
   flex: 0 0 auto;
 }
@@ -35,6 +35,13 @@
 
 :host(.layout--detail) {
   background: var(--bg);
+}
+
+// On the desktop a route change in one section crossfades the detail pane (see `_route-motion.scss`).
+@media (min-width: 1024px) {
+  :host(.layout--detail) {
+    view-transition-name: detail-pane;
+  }
 }
 
 :host(.layout--pane) .layout__in {

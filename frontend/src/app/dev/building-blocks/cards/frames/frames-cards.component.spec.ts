@@ -10,6 +10,8 @@ const SIZES: Record<string, { width: string; height: string }> = {
   NavTab: { width: '124px', height: '68px' },
   Rail: { width: '96px', height: '900px' },
   Surface: { width: '340px', height: '200px' },
+  Phone: { width: '390px', height: '844px' },
+  Desk: { width: '1440px', height: '900px' },
   Pane: { width: '420px', height: '900px' },
   Column: { width: '300px', height: '200px' },
   Columns: { width: '640px', height: '200px' },
@@ -18,7 +20,7 @@ const SIZES: Record<string, { width: string; height: string }> = {
 };
 
 describe('FramesCardsComponent', () => {
-  it('zeigt jede Karte der D2-Rahmen', async () => {
+  it('shows each frame card', async () => {
     const { container } = await render(FramesCardsComponent, {
       providers: [provideRouter([])],
     });
@@ -27,7 +29,7 @@ describe('FramesCardsComponent', () => {
     expect(blocks).toEqual(Object.keys(SIZES));
   });
 
-  it('trägt die Größe jeder Karte aus dem Verzeichnis', async () => {
+  it('gives each card the size from the manifest', async () => {
     const { container } = await render(FramesCardsComponent, {
       providers: [provideRouter([])],
     });

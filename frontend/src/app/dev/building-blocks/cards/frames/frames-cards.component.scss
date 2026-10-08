@@ -6,3 +6,23 @@
 .frames__scroll {
   display: block;
 }
+
+// Kit `.tel`: the stage fills the phone above the nav.
+.frames__phone {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  background: var(--bg);
+}
+
+.frames__stage {
+  flex: 1;
+  min-block-size: 0;
+}
+
+// Kit `.desk`: the rail on the desk ground.
+.frames__desk {
+  display: flex;
+  block-size: 100%;
+  background: var(--desk);
+}
