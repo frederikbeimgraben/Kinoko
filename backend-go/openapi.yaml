@@ -20,6 +20,7 @@ tags:
   - name: texts
   - name: access
   - name: pipeline-runs
+  - name: data-sources
 
 paths:
   /health:
@@ -1993,6 +1994,443 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
+  /data-sources:
+    get:
+      operationId: listDataSources
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/DataSource"
+                required: [items]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /data-sources/{kind}:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceKind"
+    get:
+      operationId: getDataSource
+      tags: [data-sources]
+      x-permission: data.manage
+      parameters:
+        - $ref: "#/components/parameters/Limit50"
+        - $ref: "#/components/parameters/Cursor"
+        - name: speciesId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSourceDetail"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /data-sources/{kind}/uploads:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceKind"
+    post:
+      operationId: createDataSourceUpload
+      tags: [data-sources]
+      x-permission: data.manage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Another upload of this kind is open (code upload_open).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: sizeBytes is more than the limit of the kind (code too_large).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          $ref: "#/components/responses/Validation"
+        "507":
+          description: Not enough free disk space (code disk_full).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /data-source-uploads/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      operationId: getDataSourceUpload
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: appendDataSourceUpload
+      tags: [data-sources]
+      x-permission: data.manage
+      description: Appends one part at the offset Upload-Offset. The part is at most partSize bytes.
+      parameters:
+        - name: Upload-Offset
+          in: header
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              maxLength: 16777216
+      responses:
+        "200":
+          description: Part stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Upload"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: offset_mismatch (the header Upload-Offset gives the current offset) or upload_closed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "413":
+          description: The part is larger than partSize or goes past sizeBytes.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "415":
+          description: The body is not application/octet-stream.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          $ref: "#/components/responses/Validation"
+    delete:
+      operationId: abortDataSourceUpload
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "204":
+          description: Aborted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The upload is complete (code upload_closed).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /data-source-uploads/{id}/complete:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      operationId: completeDataSourceUpload
+      tags: [data-sources]
+      x-permission: data.manage
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sha256:
+                  $ref: "#/components/schemas/Sha256"
+      responses:
+        "202":
+          description: Version made, validation queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSourceVersion"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: incomplete, checksum_mismatch or upload_closed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /data-sources/{kind}/versions/{versionId}:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceKind"
+      - $ref: "#/components/parameters/VersionId"
+    get:
+      operationId: getDataSourceVersion
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSourceVersion"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteDataSourceVersion
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: in_use (active and required, no other ready version) or run_active.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /data-sources/{kind}/versions/{versionId}/activate:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceKind"
+      - $ref: "#/components/parameters/VersionId"
+    post:
+      operationId: activateDataSourceVersion
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSourceVersion"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: not_ready or run_active.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /data-sources/{kind}/versions/{versionId}/reprocess:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceKind"
+      - $ref: "#/components/parameters/VersionId"
+    post:
+      operationId: reprocessDataSourceVersion
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "202":
+          description: Queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSourceVersion"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: run_active, or the version has no original file (code no_original).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /data-sources/{kind}/versions/{versionId}/log:
+    parameters:
+      - $ref: "#/components/parameters/DataSourceKind"
+      - $ref: "#/components/parameters/VersionId"
+    get:
+      operationId: getDataSourceVersionLog
+      tags: [data-sources]
+      x-permission: data.manage
+      parameters:
+        - name: tail
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2000
+            default: 200
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lines:
+                    type: array
+                    items:
+                      type: string
+                required: [lines]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/Validation"
+
+  /remote-sources:
+    get:
+      operationId: listRemoteSources
+      tags: [data-sources]
+      x-permission: data.manage
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RemoteSource"
+                required: [items]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /remote-sources/{source}/refresh:
+    parameters:
+      - name: source
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/RemoteSourceId"
+    post:
+      operationId: refreshRemoteSource
+      tags: [data-sources]
+      x-permission: data.manage
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fromYear:
+                  type: integer
+                  minimum: 1900
+                  maximum: 2100
+                toYear:
+                  type: integer
+                  minimum: 1900
+                  maximum: 2100
+                force:
+                  type: boolean
+                  default: false
+      responses:
+        "202":
+          description: Queued as a pipeline run of kind fetch
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunSummary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: A fetch run is queued or running (code run_active).
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          $ref: "#/components/responses/Validation"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -2030,6 +2468,19 @@ components:
         minimum: 1
         maximum: 50
         default: 50
+    DataSourceKind:
+      name: kind
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/DataSourceKind"
+    VersionId:
+      name: versionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     Cursor:
       name: cursor
       in: query
@@ -2181,6 +2632,7 @@ components:
         - text.edit
         - run.manage
         - group.manage
+        - data.manage
 
     Area:
       type: string
@@ -2232,6 +2684,10 @@ components:
           type: integer
         glossary:
           type: integer
+        dataSourcesMissing:
+          type: integer
+        dataSourcesFailed:
+          type: integer
 
     PermissionEntry:
       type: object
@@ -2260,7 +2716,7 @@ components:
 
     RunKind:
       type: string
-      enum: [training, render, full]
+      enum: [training, render, full, fetch]
 
     RunState:
       type: string
@@ -4113,6 +4569,11 @@ components:
               items:
                 type: string
               maxItems: 200
+            inputs:
+              description: Die Datenquellen, die der Lauf gelesen hat, aus pipeline_run_input.
+              type: array
+              items:
+                $ref: "#/components/schemas/PipelineRunInput"
           required:
             - species
             - steps
@@ -4132,3 +4593,323 @@ components:
             - type: string
             - type: "null"
       required: [items, nextCursor]
+
+    DataSourceKind:
+      type: string
+      enum:
+        - gbif-archive
+        - tree-species-map
+        - dem
+        - soilgrids
+        - germany-outline
+        - trees-grid
+        - tree-scales
+        - site-grid
+        - weather-checkpoints
+        - model-bundle
+        - static-layers
+
+    DataSourceState:
+      type: string
+      enum: [missing, validating, processing, ready, failed]
+
+    VersionState:
+      type: string
+      enum: [validating, processing, ready, failed, superseded]
+
+    RemoteSourceId:
+      type: string
+      enum: [dwd-hyras, dwd-soil-moisture, gbif-occurrences, gbif-taxonomy, p123]
+
+    Sha256:
+      type: string
+      pattern: "^[0-9a-f]{64}$"
+
+    Accept:
+      type: object
+      properties:
+        extensions:
+          type: array
+          items:
+            type: string
+        mediaTypes:
+          type: array
+          items:
+            type: string
+        maxBytes:
+          type: integer
+      required: [extensions, mediaTypes, maxBytes]
+
+    DataSource:
+      type: object
+      properties:
+        kind:
+          $ref: "#/components/schemas/DataSourceKind"
+        required:
+          type: boolean
+        perSpecies:
+          description: true für model-bundle.
+          type: boolean
+        usedBy:
+          type: array
+          items:
+            type: string
+            enum: [training, render, layers, occurrences]
+        state:
+          $ref: "#/components/schemas/DataSourceState"
+        satisfiedBy:
+          description: Die Art der Quelle, deren abgeleitete Ausgabe diese Quelle erfüllt, etwa tree-species-map für trees-grid.
+          oneOf:
+            - $ref: "#/components/schemas/DataSourceKind"
+            - type: "null"
+        accept:
+          $ref: "#/components/schemas/Accept"
+        activeVersion:
+          oneOf:
+            - $ref: "#/components/schemas/DataSourceVersion"
+            - type: "null"
+        latestVersion:
+          oneOf:
+            - $ref: "#/components/schemas/DataSourceVersion"
+            - type: "null"
+      required: [kind, required, perSpecies, usedBy, state, satisfiedBy, accept, activeVersion, latestVersion]
+
+    DataSourceDetail:
+      allOf:
+        - $ref: "#/components/schemas/DataSource"
+        - type: object
+          properties:
+            versions:
+              type: array
+              items:
+                $ref: "#/components/schemas/DataSourceVersion"
+            nextCursor:
+              oneOf:
+                - type: string
+                - type: "null"
+            openUpload:
+              oneOf:
+                - $ref: "#/components/schemas/Upload"
+                - type: "null"
+          required: [versions, nextCursor, openUpload]
+
+    DataSourceArtifact:
+      type: object
+      properties:
+        name:
+          type: string
+        sizeBytes:
+          type: integer
+      required: [name, sizeBytes]
+
+    DataSourceVersion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: "#/components/schemas/DataSourceKind"
+        version:
+          type: integer
+        origin:
+          type: string
+          enum: [upload, derived, training]
+        derivedFromId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        speciesId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        state:
+          $ref: "#/components/schemas/VersionState"
+        active:
+          type: boolean
+        fileName:
+          oneOf:
+            - type: string
+            - type: "null"
+        sizeBytes:
+          oneOf:
+            - type: integer
+            - type: "null"
+        sha256:
+          oneOf:
+            - type: string
+            - type: "null"
+        metadata:
+          type: object
+          additionalProperties: true
+        artifacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/DataSourceArtifact"
+        error:
+          oneOf:
+            - type: object
+              properties:
+                code:
+                  type: string
+                detail:
+                  oneOf:
+                    - type: string
+                    - type: "null"
+              required: [code, detail]
+            - type: "null"
+        createdBy:
+          oneOf:
+            - type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  oneOf:
+                    - type: string
+                    - type: "null"
+              required: [id, name]
+            - type: "null"
+        createdAt:
+          type: string
+          format: date-time
+        processedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        activatedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+      required:
+        - id
+        - kind
+        - version
+        - origin
+        - derivedFromId
+        - speciesId
+        - state
+        - active
+        - fileName
+        - sizeBytes
+        - sha256
+        - metadata
+        - artifacts
+        - error
+        - createdBy
+        - createdAt
+        - processedAt
+        - activatedAt
+
+    UploadCreate:
+      type: object
+      properties:
+        fileName:
+          type: string
+          minLength: 1
+          maxLength: 255
+        sizeBytes:
+          type: integer
+          minimum: 1
+        sha256:
+          $ref: "#/components/schemas/Sha256"
+        speciesId:
+          description: Nur für model-bundle mit einer einzigen Art.
+          type: string
+          format: uuid
+        activate:
+          type: boolean
+          default: true
+      required: [fileName, sizeBytes]
+
+    Upload:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: "#/components/schemas/DataSourceKind"
+        speciesId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        fileName:
+          type: string
+        sizeBytes:
+          type: integer
+        receivedBytes:
+          type: integer
+        partSize:
+          type: integer
+        state:
+          type: string
+          enum: [open, complete, aborted, expired]
+        expiresAt:
+          type: string
+          format: date-time
+        versionId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+      required: [id, kind, speciesId, fileName, sizeBytes, receivedBytes, partSize, state, expiresAt, versionId]
+
+    RemoteSource:
+      type: object
+      properties:
+        source:
+          $ref: "#/components/schemas/RemoteSourceId"
+        url:
+          type: string
+          format: uri
+        cadence:
+          type: string
+        state:
+          type: string
+          enum: [empty, bootstrapping, ok, stale, failed]
+        years:
+          type: array
+          items:
+            type: integer
+        files:
+          type: integer
+        sizeBytes:
+          type: integer
+        lastCheckedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        lastChangedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+        error:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [source, url, cadence, state, years, files, sizeBytes, lastCheckedAt, lastChangedAt, error]
+
+    PipelineRunInput:
+      type: object
+      properties:
+        kind:
+          type: string
+        versionId:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        version:
+          oneOf:
+            - type: integer
+            - type: "null"
+      required: [kind, versionId, version]

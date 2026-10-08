@@ -59,7 +59,8 @@ func fillLine(buf []float64, get func(int) float64, n, before int, mode Mode) {
 }
 
 // GaussianKernel returns the weights of scipy _gaussian_kernel1d for order 0
-// and the radius int(Truncate*sigma + 0.5).
+// and the radius int(Truncate*sigma + 0.5). The SIMD exp of numpy can differ
+// from math.Exp by one unit in the last place, so a weight can too.
 func GaussianKernel(sigma float64) []float64 {
 	radius := int(Truncate*sigma + 0.5)
 	factor := -0.5 / (sigma * sigma)
