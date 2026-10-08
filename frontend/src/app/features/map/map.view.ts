@@ -15,7 +15,7 @@ import { barShares, currentWeek, findWeek, isFuture, type ManifestWeek } from '.
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { photoPath } from '../../core/api/models';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
@@ -28,7 +28,7 @@ export class MapView {
   private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
   private readonly catalogue = inject(SpeciesStore);
-  private readonly entries = inject(EntriesState);
+  private readonly entries = inject(EntriesStore);
   readonly state = inject(MapStore);
   readonly combination = inject(CombinationStore);
 

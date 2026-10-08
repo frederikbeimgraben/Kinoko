@@ -21,7 +21,7 @@ import { BannerComponent } from '../ui/banner/banner.component';
 import { MapComponent } from '../features/map/map.component';
 import { MapStore } from '../features/map/map.store';
 import { AddEntryStore } from '../features/add-entry/add-entry.store';
-import { SyncService } from '../core/offline/sync.service';
+import { SyncStore } from '../core/offline/sync.store';
 import { PwaStore } from '../core/pwa/pwa.store';
 import { deskFrame, paneWidth, type DeskFrame } from './desk-frame';
 
@@ -53,7 +53,7 @@ export class ShellComponent {
   private readonly session = inject(SessionStore);
   private readonly map = inject(MapStore);
   private readonly addEntry = inject(AddEntryStore);
-  private readonly sync = inject(SyncService);
+  private readonly sync = inject(SyncStore);
   private readonly pwa = inject(PwaStore);
 
   protected readonly updateReady = this.pwa.updateReady;

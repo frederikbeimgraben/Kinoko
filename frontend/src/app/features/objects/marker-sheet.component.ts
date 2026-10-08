@@ -13,7 +13,7 @@ import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
 import { colourHex } from '../entries/colors';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { ObjectSheetStore } from './object-sheet.store';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 
@@ -38,7 +38,7 @@ import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form
 export class MarkerSheetComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
-  private readonly eintraege = inject(EntriesState);
+  private readonly eintraege = inject(EntriesStore);
   protected readonly sheet = inject(ObjectSheetStore);
   protected readonly wide = inject(ViewportService).wide;
 

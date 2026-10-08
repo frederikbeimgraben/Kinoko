@@ -22,7 +22,7 @@ import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.compone
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { ToastService } from '../../ui/toast/toast.service';
-import { EntriesState, type SaveResult } from '../entries/entries.state';
+import { EntriesStore, type SaveResult } from '../entries/entries.store';
 import { colourHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
@@ -81,7 +81,7 @@ export class AddEntryComponent implements OnDestroy {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
-  private readonly entries = inject(EntriesState);
+  private readonly entries = inject(EntriesStore);
   private readonly map = inject(MapStore);
   private readonly draw = inject(ZONE_DRAWER);
 

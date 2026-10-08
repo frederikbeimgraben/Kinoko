@@ -15,7 +15,7 @@ import {
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { LocationService } from '../../core/location/location.service';
-import { SyncService } from '../../core/offline/sync.service';
+import { SyncStore } from '../../core/offline/sync.store';
 import { TileService } from '../../core/tiles/tile.service';
 import type { Layer } from '../../core/tiles/layers';
 import { MAP_PROVIDERS } from '../../map/map.tokens';
@@ -26,7 +26,7 @@ import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 import { AddEntryComponent } from '../add-entry/add-entry.component';
 import { AddEntryStore } from '../add-entry/add-entry.store';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { MapObjectsDirective } from '../objects/map-objects.directive';
 import { ObjectSheetComponent } from '../objects/object-sheet.component';
 import { CombinationStore } from './combination.store';
@@ -74,8 +74,8 @@ export class MapComponent implements OnDestroy {
   private readonly objects = viewChild(MapObjectsDirective);
   private readonly tiles = inject(TileService);
   private readonly viewport = inject(ViewportService);
-  private readonly entries = inject(EntriesState);
-  private readonly sync = inject(SyncService);
+  private readonly entries = inject(EntriesStore);
+  private readonly sync = inject(SyncStore);
   protected readonly surface = inject(MapSurface);
   protected readonly locating = inject(LocationService);
   protected readonly overlayNav = inject(MapOverlayStore);

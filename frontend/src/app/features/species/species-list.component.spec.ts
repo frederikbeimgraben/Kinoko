@@ -91,12 +91,12 @@ describe('SpeciesListComponent', () => {
     stubIntersectionObserver();
   });
 
-  it('shows the species of the bundle sorted by name, without a page title', async () => {
+  it('shows the species of the bundle sorted by name, with a hidden page title', async () => {
     const { container } = await build();
 
     const names = [...container.querySelectorAll('.row__name')].map((one) => one.textContent);
     expect(names).toEqual(['Pfifferling', 'Steinpilz']);
-    expect(screen.queryByRole('heading')).toBeNull();
+    expect(screen.getByRole('heading', { name: 'Arten' })).toHaveClass('sr-only');
     await noViolations(container);
   });
 

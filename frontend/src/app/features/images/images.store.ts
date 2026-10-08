@@ -6,7 +6,7 @@ import { tapResponse } from '@ngrx/operators';
 import { PhotosApi, type PhotoInput, type PhotoQuery } from '../../core/api/photos.api';
 import type { Photo } from '../../core/api/models';
 import { withoutMetadata } from '../../core/images/prepare-photo';
-import { SyncService } from '../../core/offline/sync.service';
+import { SyncStore } from '../../core/offline/sync.store';
 import { setFailed, setLoaded, setLoading, withLoadState } from '../../core/state';
 
 interface ImagesState {
@@ -23,7 +23,7 @@ export const ImagesStore = signalStore(
   { providedIn: 'root' },
   withState<ImagesState>({ photos: [], cursor: null, percent: null, queued: false }),
   withLoadState(),
-  withProps(() => ({ _api: inject(PhotosApi), _sync: inject(SyncService) })),
+  withProps(() => ({ _api: inject(PhotosApi), _sync: inject(SyncStore) })),
   withComputed(({ photos }) => ({
     lead: computed<Photo | null>(() => photos().find((one) => one.lead) ?? photos().at(0) ?? null),
   })),

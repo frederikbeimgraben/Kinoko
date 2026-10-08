@@ -20,7 +20,7 @@ import {
 } from '../../testing/entries-fixture';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { SpeciesStore } from '../species/species.store';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { MapStore } from '../map/map.store';
 import { ObjectSheetComponent } from './object-sheet.component';
 
@@ -59,7 +59,7 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   await katalog;
-  const eintraege = TestBed.inject(EntriesState);
+  const eintraege = TestBed.inject(EntriesStore);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
     http.expectOne('/api/finds?mine=true&limit=50').flush(page([findEntry]));

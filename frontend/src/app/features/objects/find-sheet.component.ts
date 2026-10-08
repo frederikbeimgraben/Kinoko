@@ -33,7 +33,7 @@ import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive'
 import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { findSubline } from '../entries/find-subline';
 import { SpeciesStore } from '../species/species.store';
 import { ObjectSheetStore } from './object-sheet.store';
@@ -66,7 +66,7 @@ export class FindSheetComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly arten = inject(SpeciesStore);
-  private readonly eintraege = inject(EntriesState);
+  private readonly eintraege = inject(EntriesStore);
   protected readonly sheet = inject(ObjectSheetStore);
   protected readonly wide = inject(ViewportService).wide;
   private readonly photos = inject(PhotosApi);

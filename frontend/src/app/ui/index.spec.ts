@@ -76,7 +76,6 @@ const BLOCKS = [
   'app-week-button',
   'app-image-tile',
   'app-image-credit',
-  'app-image-viewer',
   'app-private-image',
   'app-avatar-button',
   'app-back-head',

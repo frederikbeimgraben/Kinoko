@@ -20,7 +20,7 @@ import {
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import type { SpeciesEntry } from '../../core/api/models';
 import { toastSpy } from '../../testing/toast-spy';
-import { SyncService } from '../../core/offline/sync.service';
+import { SyncStore } from '../../core/offline/sync.store';
 import { TileService } from '../../core/tiles/tile.service';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
@@ -399,7 +399,7 @@ describe('MapComponent', () => {
 
   it('zeigt die Leiste ohne Verbindung und lässt die Wochen bedienbar', async () => {
     const { stable } = await map();
-    TestBed.inject(SyncService);
+    TestBed.inject(SyncStore);
     dispatchEvent(new Event('offline'));
     await stable();
 

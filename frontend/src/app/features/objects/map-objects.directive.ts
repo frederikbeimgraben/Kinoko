@@ -5,7 +5,7 @@ import { LocationService, type OwnLocation } from '../../core/location/location.
 import { circleAround } from '../../map/geo-circle';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import type { ObjectHit, ObjectLayer } from '../../map/map-adapter';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { colourHex } from '../entries/colors';
 import { SpeciesStore } from '../species/species.store';
 import { MapStore, type ObjectKind } from '../map/map.store';
@@ -42,7 +42,7 @@ const HOLD = 500;
 })
 export class MapObjectsDirective {
   private readonly adapter = inject(MAP_ADAPTER);
-  private readonly eintraege = inject(EntriesState);
+  private readonly eintraege = inject(EntriesStore);
   private readonly locating = inject(LocationService);
   private readonly species = inject(SpeciesStore);
   private readonly map = inject(MapStore);

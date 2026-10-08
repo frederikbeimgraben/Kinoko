@@ -19,7 +19,7 @@ import {
 } from '../../testing/entries-fixture';
 import { MapAdapterDouble } from '../../testing/map-doubles';
 import { speciesBundle, speciesEntry, PENNY_BUN } from '../../testing/species-fixture';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { MapStore } from '../map/map.store';
 import { MapObjectsDirective } from './map-objects.directive';
 
@@ -60,7 +60,7 @@ async function build(): Promise<Setup> {
   });
   await catalogueReady();
   const http = TestBed.inject(HttpTestingController);
-  const eintraege = TestBed.inject(EntriesState);
+  const eintraege = TestBed.inject(EntriesStore);
   const loaded = eintraege.load();
   await vi.waitFor(() => {
     http.expectOne('/api/finds?mine=true&limit=50').flush(page([FIND_ENTRY]));

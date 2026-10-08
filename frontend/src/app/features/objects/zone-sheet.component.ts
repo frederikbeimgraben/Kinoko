@@ -23,7 +23,7 @@ import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive'
 import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { hectaresText } from '../entries/formats';
 import { ObjectSheetStore } from './object-sheet.store';
 import { colourHex } from '../entries/colors';
@@ -53,7 +53,7 @@ import type { Location } from '../add-entry/add-entry.store';
 })
 export class ZoneSheetComponent implements OnDestroy {
   private readonly adapter = inject(MAP_ADAPTER);
-  private readonly eintraege = inject(EntriesState);
+  private readonly eintraege = inject(EntriesStore);
   protected readonly sheet = inject(ObjectSheetStore);
   protected readonly wide = inject(ViewportService).wide;
   private readonly i18n = inject(I18nService);

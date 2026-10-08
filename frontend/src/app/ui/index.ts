@@ -51,7 +51,6 @@ export {
 export { ImageCreditComponent } from './image-credit/image-credit.component';
 export { LICENCE_CODE, OWN_PHOTO_KEY } from './image-credit/licences';
 export { ImageTileComponent } from './image-tile/image-tile.component';
-export { ImageViewerComponent } from './image-viewer/image-viewer.component';
 export { InfiniteListComponent, type PageSize } from './infinite-list/infinite-list.component';
 export { KeyValueRowComponent } from './key-value-table/key-value-row.component';
 export { KeyValueTableComponent } from './key-value-table/key-value-table.component';

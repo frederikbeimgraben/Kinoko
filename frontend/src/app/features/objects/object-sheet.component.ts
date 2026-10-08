@@ -6,7 +6,7 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore, type ObjectKind } from '../map/map.store';
 import { FindSheetComponent } from './find-sheet.component';
@@ -49,7 +49,7 @@ const ZOOM_OBJECT = 14;
 })
 export class ObjectSheetComponent {
   private readonly adapter = inject(MAP_ADAPTER);
-  private readonly eintraege = inject(EntriesState);
+  private readonly eintraege = inject(EntriesStore);
   private readonly i18n = inject(I18nService);
   private readonly sheet = inject(ObjectSheetStore);
 

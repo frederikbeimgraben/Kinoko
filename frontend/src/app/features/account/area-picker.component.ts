@@ -12,7 +12,7 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { AddEntryStore } from '../add-entry/add-entry.store';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { hectaresText } from '../entries/formats';
 import { OfflineAreasStore } from './offline-areas.store';
 import { sizeText } from './sizes';
@@ -42,7 +42,7 @@ interface Row {
 })
 export class AreaPickerComponent {
   private readonly addEntry = inject(AddEntryStore);
-  private readonly entries = inject(EntriesState);
+  private readonly entries = inject(EntriesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly store = inject(OfflineAreasStore);
