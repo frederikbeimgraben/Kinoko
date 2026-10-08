@@ -57,9 +57,8 @@ export function createLut(scale: ValueScale, colors: readonly string[] = FORECAS
   return lut;
 }
 
-/**
- * Colours a decoded tile in place. The value tile is grey, so the red channel holds the byte.
- */
+/** Colours a decoded tile in place. The value tile is grey, so the red channel holds the byte.
+ * The lookup table replaces all four channels. */
 export function colorize(pixel: Uint8ClampedArray, lut: Uint8ClampedArray): void {
   for (let i = 0; i < pixel.length; i += 4) {
     const target = pixel[i] * 4;

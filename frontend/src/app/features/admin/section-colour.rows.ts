@@ -6,7 +6,7 @@ export function withColour(colours: readonly ColourValue[], at: number, colour: 
   return colours.map((one, index) => (index === at ? colour : one));
 }
 
-/** Mode `single` keeps exactly one colour. The other modes keep all colours. */
+/** Mode `single` keeps exactly one colour. A gradient needs two colours, thus the other modes keep all colours. */
 export function trimmed(colours: readonly ColourValue[], mode: ColourMode): ColourValue[] {
   return mode === 'single' ? colours.slice(0, 1) : [...colours];
 }

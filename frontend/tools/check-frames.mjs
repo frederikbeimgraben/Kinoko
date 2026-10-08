@@ -33,7 +33,7 @@ const RULES = [
     name: 'griff',
     pattern: /[-\w]*__handle[-\w]*|handle-line/g,
     // `ui/reject-dialog` has the handle from the board `ImageReject`.
-    // The image package moves this sheet to `ui/sheet`.
+    // With the image package, this sheet moves to `ui/sheet`.
     owners: ['ui/sheet', 'ui/reject-dialog'],
   },
 ];

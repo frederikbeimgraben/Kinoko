@@ -28,10 +28,10 @@ export class HeroComponent {
   readonly photo = input<HeroPhoto | null>(null);
   readonly alt = input.required<string>();
   readonly height = input(260);
-  /** The position in the stack and the number of images. */
+  /** The position in the stack, counted from one, and the number of images. */
   readonly index = input(0);
   readonly count = input(0);
-  /** When false, the arrows do not show, also with many images. */
+  /** When false, the arrows do not show, also with more than one image. */
   readonly nav = input(true);
   /** No border and no credit line: the image fills all of its area. */
   readonly bare = input(false);

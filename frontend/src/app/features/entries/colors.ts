@@ -2,7 +2,7 @@ import { MARKER_COLOURS, type MarkerColour } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import { type ColourSwatch, OBJECT_COLOURS } from '../../ui/colour-swatches/colour-swatches.component';
 
-/** The contract colours and the values of the artboard `Zone` have the same order. */
+/** Gives the hex value of a contract colour. The contract colours and the artboard `Zone` values have the same order. */
 export function colourHex(colour: MarkerColour): `#${string}` {
   const index = MARKER_COLOURS.indexOf(colour);
   return OBJECT_COLOURS[index === -1 ? 0 : index];
@@ -21,7 +21,8 @@ export function colourFromHex(hex: string): MarkerColour {
 
 /**
  * The choices for `ColorSwatches`. The value is the colour, because the swatch paints it as background.
- * The label gives the name, so a screen reader does not read a hex code. */
+ * The label gives the name, so a screen reader does not read a hex code.
+ */
 export function colourSwatches(i18n: I18nService): ColourSwatch[] {
   return MARKER_COLOURS.map((colour) => ({
     value: colourHex(colour),

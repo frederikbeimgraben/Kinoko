@@ -95,7 +95,7 @@ export interface MapAdapter {
   extent(): { zoom: number; extent: Viewbox } | null;
   onMove(handler: () => void): void;
   destroy(): void;
-  /** Measures the canvas again, for example after a period without layout changes. */
+  /** Measures the canvas again, for example after the map was hidden without a layout change. */
   resize(): void;
   center(): readonly [number, number] | null;
   /** The location under a window point, for example under the crosshair. */
@@ -294,7 +294,7 @@ export class MapLibreAdapter implements MapAdapter {
     // Add the protocol before the map. Otherwise the first tile request fails.
     module.addProtocol(options.protocol.name, (request) => options.protocol.resolve(request.url));
     this.protocolName = options.protocol.name;
-    // Keep the map private while the style loads.
+    // Do not set `this.map` until the style is loaded.
     // Before that, MapLibre refuses each source.
     const map = new module.Map({
       container: host,

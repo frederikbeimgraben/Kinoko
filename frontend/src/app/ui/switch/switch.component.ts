@@ -11,7 +11,7 @@ export class SwitchComponent {
   readonly checked = input.required<boolean>();
   /** The accessible name. It tells what the switch controls. */
   readonly label = input.required<string>();
-  /** A state that cannot go back locks the switch when it is on. */
+  /** If the state cannot be reversed, the switch locks when it is on. */
   readonly disabled = input(false);
 
   readonly checkedChange = output<boolean>();

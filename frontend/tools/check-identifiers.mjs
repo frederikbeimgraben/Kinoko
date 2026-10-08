@@ -339,7 +339,7 @@ function regexEnde(quelle, i) {
   return j;
 }
 
-/** Strings and comments contain text for people, so the check skips them. */
+/** Strings and comments contain text for people and can stay German, so the check skips them. */
 function ohneTextTs(quelle) {
   let raus = '';
   for (let i = 0; i < quelle.length;) {

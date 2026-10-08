@@ -12,7 +12,6 @@ const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
   return value >>> 0;
 });
 
-/** Calculates the CRC-32 checksum of a buffer. */
 function crc32(buffer) {
   let value = 0xffffffff;
   for (const byte of buffer) value = CRC_TABLE[(value ^ byte) & 0xff] ^ (value >>> 8);

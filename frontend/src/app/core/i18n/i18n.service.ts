@@ -54,7 +54,7 @@ export const LANGUAGE_CHOICES: readonly LanguageChoice[] = ['de', 'en', 'system'
 @Injectable({ providedIn: 'root' })
 export class I18nService {
   private readonly _fallback = signal<FallbackTexts>(inject(FALLBACK_TEXTS));
-  // A saved choice wins over the browser. An English browser gives a half-translated app,
+  // A saved choice wins over the browser. Otherwise, an English browser gives a half-translated app,
   // because the species catalogue stays German.
   private readonly _choice = signal<LanguageChoice>(this.read() ?? 'system');
   private readonly _locale = signal<Locale>(DEFAULT_LOCALE);

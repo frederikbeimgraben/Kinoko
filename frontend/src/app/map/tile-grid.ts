@@ -1,5 +1,5 @@
 // The Web Mercator (XYZ) tile grid. The forecast uses it to find the visible tiles.
-// It preloads only these tiles for the next weeks, not a full week.
+// Thus it preloads only these tiles for the adjacent weeks, not all tiles of a week.
 
 /** A map extent in degrees. */
 export interface Viewbox {

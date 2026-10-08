@@ -1,5 +1,5 @@
 // Utility classes (`p-5`, `text-lg`, `gap-2` …) in Tailwind style, without Tailwind in the app.
-// The values come from the vendor kit that uses these classes.
+// The values come from the vendor kit that used these classes.
 .p-0 {
   padding: 0;
 }
@@ -158,7 +158,7 @@ app-choice-row app-checkbox label {
 }
 
 // The red action in the footer is 44 points high. The kit button sets its own height.
-// A page rule cannot reach it.
+// A global rule can reach it.
 app-action-bar .footer__slim .btn {
   block-size: var(--size-tap);
 }

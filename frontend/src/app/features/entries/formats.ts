@@ -1,6 +1,7 @@
 /**
- * Formats dates, places and areas for the UI.
- * `core` has the long day and the place, because species and images use them too. */
+ * Formats dates, places and areas for the UI, as the mockups show them.
+ * `core` has the long day and the place, because species and images use them too.
+ */
 
 import { shortDate as catalogueDay } from '../../core/i18n/dates';
 import type { I18nService } from '../../core/i18n/i18n.service';
@@ -23,7 +24,7 @@ export function firstName(full: string | null): string {
   return (full ?? '').split(' ')[0] ?? '';
 }
 
-/** An area in hectares. Large areas show no decimal places. */
+/** An area in hectares. An area of 10 ha or more shows no decimal places. */
 export function hectaresText(hectares: number, locale: string): string {
   const spots = hectares < 10 ? 1 : 0;
   return new Intl.NumberFormat(locale, {
