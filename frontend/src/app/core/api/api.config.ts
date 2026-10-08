@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
 /**
- * Wurzel der eigenen API. Lokal führt `proxy.conf.json` sie auf den
- * Entwicklungs-Server; im Betrieb liegt sie hinter demselben Ursprung.
+ * Root of the own API. Locally, `proxy.conf.json` sends it to the dev server.
+ * In production, it is on the same origin.
  */
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL', {
   providedIn: 'root',

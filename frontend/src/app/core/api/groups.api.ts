@@ -3,12 +3,12 @@ import { map, type Observable } from 'rxjs';
 import { ApiClient, type Silent } from './api-client';
 import type { FriendGroup, Items } from './models';
 
-/** Die Endpunkte der Freundesgruppen. Jeder verlangt eine Anmeldung. */
+/** The friend group endpoints. Each one needs a sign-in. */
 @Injectable({ providedIn: 'root' })
 export class GroupsApi {
   private readonly api = inject(ApiClient);
 
-  /** Die eigenen Gruppen. `all` verlangt das Recht `group.manage`. */
+  /** The own groups. `all` needs the `group.manage` permission. */
   list(all = false, options?: Silent): Observable<FriendGroup[]> {
     return this.api
       .get<Items<FriendGroup>>('/groups', { all: all || undefined }, options)

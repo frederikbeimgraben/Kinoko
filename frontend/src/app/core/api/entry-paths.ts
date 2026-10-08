@@ -1,4 +1,4 @@
-/** Die Wege der eigenen Objekte. Der Online-Weg und die Warteschlange teilen sie. */
+/** Paths of the own objects. The online path and the offline queue both use them. */
 export const ENTRY_PATHS = {
   find: '/finds',
   marker: '/markers',
@@ -6,5 +6,5 @@ export const ENTRY_PATHS = {
   photo: '/photos',
 } as const;
 
-/** Die Objektarten, die ein Gerät anlegt. */
+/** The object kinds that a device makes. */
 export type EntryKind = keyof typeof ENTRY_PATHS;
