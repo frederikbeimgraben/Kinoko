@@ -6,7 +6,12 @@
       </div>
     }
     @case ('findForm') {
-      <app-find-form [location]="state.location()!" [busy]="saving()" (submitted)="saveFind($event)" />
+      <app-find-form
+        [location]="state.location()!"
+        [busy]="saving()"
+        (submitted)="saveFind($event)"
+        (locationClick)="state.back()"
+      />
     }
     @case ('markerForm') {
       <app-object-form

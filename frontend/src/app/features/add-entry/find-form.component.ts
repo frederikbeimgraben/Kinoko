@@ -18,6 +18,11 @@ import { isoDatum } from '../entries/formats';
 import { speciesPickerEntry } from '../species/species-picker-entry';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
 import type { Location } from './add-entry.store';
+import { coordinatesText } from './coordinates';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SectionComponent } from '../../ui/section/section.component';
 
 /** Was das Formular abliefert: der Fund und seine noch nicht gesendeten Fotos. */
 export interface FindSubmission {
@@ -32,6 +37,10 @@ export interface FindSubmission {
   selector: 'app-find-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ListRowComponent,
+    RowGroupComponent,
+    ScrollFadeDirective,
+    SectionComponent,
     ActionBarComponent,
     SpeciesPickerComponent,
     FormFieldComponent,
@@ -52,6 +61,9 @@ export class FindFormComponent {
   private readonly map = inject(MapStore);
 
   readonly location = input.required<Location>();
+
+  /** The location as text, per the row `Ort` of the board `FindFormBody`. */
+  protected readonly place = computed(() => coordinatesText(this.location(), this.i18n));
   /** Ein vorhandener Fund, wenn das Formular ihn ändert statt anzulegen. */
   readonly start = input<Find | null>(null);
   readonly withPhotos = input(true);
@@ -63,6 +75,8 @@ export class FindFormComponent {
 
   readonly submitted = output<FindSubmission>();
   readonly heldRemoved = output<string>();
+  /** The location row goes back to the location step. */
+  readonly locationClick = output();
 
   private readonly slugChoice = signal<string | null>(null);
   protected readonly visibilityChoice = signal<Visibility | null>(null);

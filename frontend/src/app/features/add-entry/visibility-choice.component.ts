@@ -12,8 +12,9 @@ import { GroupsState } from '../../core/access/groups.state';
 import type { Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { visibilitySegments } from './visibility';
 
@@ -23,7 +24,7 @@ import { visibilitySegments } from './visibility';
 @Component({
   selector: 'app-visibility-choice',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormFieldComponent, OptionSheetComponent, SegmentedComponent, TranslatePipe],
+  imports: [ListRowComponent, OptionSheetComponent, RowGroupComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './visibility-choice.component.html',
   styleUrl: './visibility-choice.component.scss',
 })

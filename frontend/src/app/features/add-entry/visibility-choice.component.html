@@ -1,7 +1,7 @@
-<div [class.choice__inline]="inline()">
-  <p class="choice__label" [class.choice__label--inline]="inline()">
+<div class="choice" [class.choice__inline]="inline()">
+  <span class="choice__label" [class.choice__label--inline]="inline()">
     {{ 'entry.field.visibility' | t }}
-  </p>
+  </span>
   <app-segmented
     [class.choice__segment]="inline()"
     [options]="segments()"
@@ -12,18 +12,15 @@
 </div>
 
 @if (visibility() === 'shared') {
-  <div>
-    <p class="choice__label">{{ 'entry.field.group' | t }}</p>
-    <app-form-field
-      [label]="'entry.field.group' | t"
-      [hideLabel]="true"
-      [value]="groupName()"
-      [placeholder]="'group.title' | t"
-      [readOnly]="true"
+  <app-row-group>
+    <app-list-row
+      [title]="'entry.field.group' | t"
+      [plain]="groupName() || ('group.title' | t)"
       [chevron]="true"
-      (displayClick)="picking.set(true)"
+      [clickable]="true"
+      (chosen)="picking.set(true)"
     />
-  </div>
+  </app-row-group>
 }
 
 <app-option-sheet

@@ -875,7 +875,8 @@
     "map.basemap.aerial": "Luftbild",
     "map.basemap.terrain": "Gelände",
     "map.basemap.aerialCredit": "© GeoBasis-DE / BKG",
-    "map.layers.show": "Anzeigen"
+    "map.layers.show": "Anzeigen",
+    "entry.field.location": "Ort"
   },
   "en": {
     "account.deleteAllConfirmTitle": "Delete everything",
@@ -1753,6 +1754,7 @@
     "map.basemap.aerial": "Aerial photo",
     "map.basemap.terrain": "Terrain",
     "map.basemap.aerialCredit": "© GeoBasis-DE / BKG",
-    "map.layers.show": "Show"
+    "map.layers.show": "Show",
+    "entry.field.location": "Location"
   }
 }

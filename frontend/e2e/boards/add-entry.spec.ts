@@ -90,7 +90,7 @@ async function setDate(page: Page): Promise<void> {
 async function addPhoto(page: Page): Promise<void> {
   const file = join(test.info().config.rootDir, 'boards/fixtures/tile-1-72x72.png');
   await page.locator('input[type="file"]').setInputFiles(file);
-  await expect(page.locator('app-photo-picker img')).toBeVisible();
+  await expect(page.locator('app-photo-strip img')).toBeVisible();
 }
 
 test('MapFindForm', async ({ page }) => {

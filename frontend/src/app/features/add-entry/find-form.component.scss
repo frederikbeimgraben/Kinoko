@@ -7,34 +7,13 @@
 @include overlay.overlay-body;
 
 .form__body {
-  --form-gap: 18px;
-
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--form-gap);
-  min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-5);
   overflow-y: auto;
 }
 
-.form__fields {
-  display: flex;
-  flex-direction: column;
-  gap: var(--form-gap);
-}
-
-// Solange das Speichern läuft, sperrt das Formular seine Felder, wie im Board.
-.form__fields--busy {
+// While the save runs, the form locks its fields, as on the board `MapFindSaving`.
+.form__body--busy {
   opacity: 0.45;
   pointer-events: none;
-}
-
-// Das Formular eines vorhandenen Fundes trägt ein Feld mehr und steht enger.
-.form__body--dense {
-  --form-gap: 13px;
-
-  padding-block: 2px var(--space-3);
 }
 
 .form__inline {
@@ -62,8 +41,8 @@
 
 .form__pair {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .form__label {

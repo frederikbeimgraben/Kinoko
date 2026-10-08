@@ -125,10 +125,8 @@ export class MapComponent implements OnDestroy {
   /** A step that looks for a point gets the full map, without the column and the buttons. */
   protected readonly aiming = this.addEntry.showsCrosshair;
 
-  /** On the desktop, the map buttons stay also below a modal. */
-  protected readonly showsButtons = computed(
-    () => !this.aiming() && (this.wide() || (!this.addEntry.onForm() && this.state.object() === null)),
-  );
+  /** The map buttons stay below each sheet and modal, as the boards show them. */
+  protected readonly showsButtons = computed(() => !this.aiming());
 
   /** Only one sheet is over the map at a time. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);

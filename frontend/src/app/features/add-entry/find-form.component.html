@@ -1,5 +1,13 @@
-<div class="form__body" [class.form__body--dense]="editing()">
-  <div class="form__fields" [class.form__fields--busy]="busy()">
+<div class="overlay-body form__body" appScrollFade [class.form__body--busy]="busy()">
+    <app-row-group>
+      <app-list-row
+        [title]="'entry.field.location' | t"
+        [plain]="place()"
+        [chevron]="!editing()"
+        [clickable]="!editing()"
+        (chosen)="locationClick.emit()"
+      />
+    </app-row-group>
     <app-form-field
       [label]="'species.fieldLabel' | t"
       [value]="speciesName()"
@@ -32,8 +40,7 @@
       (valueChange)="noteChoice.set($event)"
     />
     @if (withPhotos()) {
-      <div>
-        <p class="form__label">{{ 'entry.field.photos' | t }}</p>
+      <app-section [label]="'entry.field.photos' | t">
         <app-photo-strip
           mode="edit"
           [pending]="photos()"
@@ -41,7 +48,7 @@
           (pendingChange)="photos.set($event)"
           (removed)="removeHeld($event)"
         />
-      </div>
+      </app-section>
     }
     <app-visibility-choice
       [visibility]="visibility()"
@@ -60,9 +67,8 @@
         />
       </div>
     }
-  </div>
 </div>
-<app-action-bar [primary]="'common.save' | t" [busy]="busy()" (primaryClick)="submit()" />
+<app-action-bar foot [primary]="'common.save' | t" [busy]="busy()" (primaryClick)="submit()" />
 
 <app-overlay-host [open]="pickerOpen()" [modal]="true" (closed)="pickerOpen.set(false)">
   @if (pickerOpen()) {
