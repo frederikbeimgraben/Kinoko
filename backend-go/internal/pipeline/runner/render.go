@@ -3,6 +3,7 @@ package runner
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/bundle"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ"
@@ -32,7 +33,9 @@ type SpeciesRender struct {
 	Records       []occ.Record
 	Assets        Assets
 	Maps          string
-	Log           func(format string, args ...any)
+	// Today is the date of the automatic forecast: the start of the run.
+	Today time.Time
+	Log   func(format string, args ...any)
 }
 
 // LayersRender is the input of the weekly input layers.

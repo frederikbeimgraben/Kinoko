@@ -229,7 +229,7 @@ func (c *Chain) RenderSpecies(ctx context.Context, j *Job, sp Species) error {
 	defer b.Close()
 	return c.Renderer.RenderSpecies(ctx, SpeciesRender{
 		Slug: sp.Slug, ChainKey: sp.Chain.Key, Bundle: b, MinForest: sp.Chain.MinForest, SharedHorizon: shared,
-		Cube: cube, Records: j.Records, Assets: assets, Maps: c.Maps, Log: j.Printf,
+		Cube: cube, Records: j.Records, Assets: assets, Maps: c.Maps, Today: j.Now, Log: j.Printf,
 	})
 }
 

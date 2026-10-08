@@ -76,7 +76,7 @@ func New(cfg Config) *Runner {
 func FromDeps(deps server.Deps, store *runs.Store, src *sources.Module) *Runner {
 	chain := &Chain{
 		DB: deps.DB, Sources: src, Data: src.Root(), Maps: deps.Settings.Maps,
-		HTTP: &http.Client{}, Now: deps.Now,
+		HTTP: &http.Client{}, Now: deps.Now, Renderer: NewMaps(),
 	}
 	return New(Config{
 		DB: deps.DB, Runs: store, Sources: src, Stages: chain, Logs: deps.Settings.RunLogs,
