@@ -1,0 +1,119 @@
+// Enter and leave animations for Angular `animate.enter` and `animate.leave`.
+// Example: `<div animate.enter="motion-sheet-in" animate.leave="motion-sheet-out">`.
+
+// Set `--motion-duration` on the element to change the default duration.
+// Do not put these classes on an element with a `view-transition-name`.
+
+@keyframes sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+
+@keyframes sheet-out {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+// `scale` and `translate` are separate properties, so a centring `transform` stays.
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: var(--pop-in-scale, 0.96);
+  }
+}
+
+@keyframes pop-out {
+  to {
+    opacity: 0;
+    scale: var(--pop-out-scale, 0.98);
+  }
+}
+
+@keyframes list-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--rise, 6px);
+  }
+}
+
+// The highlight starts and ends outside the element, so the first frame shows no highlight.
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.motion-sheet-in {
+  animation: sheet-in var(--motion-duration, var(--motion-enter)) var(--ease-emph-in) both;
+}
+
+.motion-sheet-out {
+  animation: sheet-out var(--motion-duration, var(--motion-leave)) var(--ease-emph-out) both;
+}
+
+.motion-fade-in {
+  animation: fade-in var(--motion-duration, var(--motion-enter)) var(--ease-emph-in) both;
+}
+
+.motion-fade-out {
+  animation: fade-out var(--motion-duration, var(--motion-leave)) var(--ease-emph-out) both;
+}
+
+// Modal and dialog. A popover sets `--pop-in-scale: 0.92` and a shorter duration.
+.motion-pop-in {
+  animation: pop-in var(--motion-duration, var(--motion-base)) var(--ease-emph-in) both;
+}
+
+.motion-pop-out {
+  animation: pop-out var(--motion-duration, var(--motion-pop)) var(--ease-emph-out) both;
+}
+
+// Set `--i` to the index of the row. The delay stops at the ninth row.
+// A toast sets `--rise: 16px`.
+.motion-list-in {
+  animation: list-in var(--motion-duration, var(--motion-base)) var(--ease-emph-in) both;
+  animation-delay: calc(min(var(--i, 0), 8) * 20ms);
+}
+
+// Put it on a skeleton block. The block keeps its own `background-color`.
+.motion-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--surface-high) 70%, transparent),
+    transparent
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  animation: shimmer 1.4s linear infinite;
+}
+
+// The global rule in tokens.scss makes each animation 0.01 ms long.
+// Thus `animate.leave` gets its `animationend` event and removes the element.
+@media (prefers-reduced-motion: reduce) {
+  .motion-shimmer {
+    animation: none;
+  }
+
+  .motion-list-in {
+    animation-delay: 0ms;
+  }
+}

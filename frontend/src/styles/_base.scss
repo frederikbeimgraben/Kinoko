@@ -1,7 +1,5 @@
-// Werte, die vorher das entfernte Vendor-Kit beiträgt: Typografie- und
-// Abstands-Raster (`artefakte/mockups/design/uebergabe/tokens.json` kennt sie
-// nicht, `kit.css` nutzt sie nur literal), dazu der Grundreset aus `kit.css`
-// Zeile 4 bis 8 (`*`, `body`, `a`, `button`).
+// Type and space scales of the removed vendor kit. tokens.json does not have them.
+// The reset below is the reset of kit.css (`*`, `body`, `a`, `button`).
 :root {
   --fw-regular: 400;
   --fw-medium: 500;
@@ -25,7 +23,7 @@
 
   --border-width: 1px;
 
-  // Blatt und Modal, darüber der Dialog, darüber die Meldung.
+  // The dialog is above the sheet and the modal. The toast is above the dialog.
   --z-sheet: 1300;
   --z-dialog: 1320;
   --z-toast: 1400;
@@ -68,14 +66,13 @@ button {
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
-  border-radius: var(--radius-sm);
 }
 
 :focus:not(:focus-visible) {
   outline: none;
 }
 
-// Nur für Bildschirmleser: `form-field`, `photo-picker`, `colour-picker`.
+// For screen readers only: `form-field`, `photo-picker`, `colour-picker`.
 .sr-only {
   position: absolute;
   width: 1px;

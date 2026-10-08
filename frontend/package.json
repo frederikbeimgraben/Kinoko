@@ -42,6 +42,8 @@
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@angular/service-worker": "22.1.5",
+    "@ngrx/operators": "^22.0.1",
+    "@ngrx/signals": "^22.0.1",
     "@turf/area": "^7.4.0",
     "idb": "^8.0.3",
     "maplibre-gl": "^6.9.0",
