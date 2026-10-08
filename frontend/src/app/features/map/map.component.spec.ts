@@ -203,7 +203,7 @@ describe('MapComponent', () => {
 
     expect(TestBed.inject(MapStore).view()).toBe('layer');
     expect(TestBed.inject(MapStore).species()).toBe('boletus-edulis');
-    expect(screen.getByRole('button', { name: 'Niederschlag der letzten 4 Wochen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Ebene / })).toBeInTheDocument();
   });
 
   it('wählt die Art im Kopf und bleibt auf der Karte', async () => {
@@ -211,9 +211,11 @@ describe('MapComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
     await stable();
-    const picker = screen.getByRole('group', { name: 'Art wählen' });
+    const picker = screen.getByRole('radiogroup', { name: 'Art wählen' });
     expect(screen.queryByRole('button', { name: 'Zum Katalog' })).toBeNull();
-    await userEvent.click(within(picker).getByRole('button', { name: /Pfifferling/ }));
+    await userEvent.click(within(picker).getByRole('checkbox', { name: /Pfifferling/ }));
+    await stable();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
 
     expect(TestBed.inject(MapStore).species()).toBe('cantharellus-cibarius');
@@ -224,10 +226,10 @@ describe('MapComponent', () => {
     TestBed.inject(MapStore).setView('layer');
     await stable();
 
-    const fields = screen.getAllByRole('button', { name: 'Niederschlag der letzten 4 Wochen' });
-    await userEvent.click(fields[fields.length - 1]);
+    await userEvent.click(screen.getByRole('button', { name: /^Ebene / }));
     await stable();
-    await userEvent.click(screen.getByRole('button', { name: /Waldanteil/ }));
+    const picker = screen.getByRole('radiogroup', { name: 'Ebene' });
+    await userEvent.click(within(picker).getByRole('checkbox', { name: /Waldanteil/ }));
     await stable();
 
     expect(TestBed.inject(MapStore).layer()).toBe('wald');
@@ -266,7 +268,7 @@ describe('MapComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Faktor hinzufügen' }));
     await stable();
-    const picker = screen.getByRole('group', { name: 'Faktor wählen' });
+    const picker = screen.getByRole('dialog', { name: 'Faktor wählen' });
     await userEvent.click(within(picker).getByRole('button', { name: /Waldanteil/ }));
     await stable();
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
@@ -342,9 +344,11 @@ describe('MapComponent', () => {
     TestBed.inject(MapStore).setView('combination');
     await stable();
 
-    await userEvent.click(screen.getByRole('button', { name: /Gespeicherte Kombinationen/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kombinationen' }));
     await stable();
-    await userEvent.click(screen.getByRole('button', { name: /^Buchenwald im Herbst/ }));
+    await userEvent.click(screen.getByRole('checkbox', { name: /^Buchenwald im Herbst/ }));
+    await stable();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
 
     expect(combination.rule()).toBe('graded');

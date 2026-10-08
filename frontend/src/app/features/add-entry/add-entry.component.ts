@@ -276,10 +276,10 @@ export class AddEntryComponent implements OnDestroy {
     this.state.adoptLocation(location);
   }
 
-  /** Am Rechner: Eingabe schließt, Rücktaste nimmt die letzte Ecke, Esc bricht ab. */
+  /** On the desktop: Enter closes, Backspace removes the last corner, Esc cancels. */
   @HostListener('document:keydown', ['$event'])
   protected onKey(event: KeyboardEvent): void {
-    if (!this.state.showsCrosshair() || this.input.mode() !== 'pointer') return;
+    if (!this.state.showsCrosshair() || !this.wide()) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       this.cancel();
