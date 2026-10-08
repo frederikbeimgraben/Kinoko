@@ -857,7 +857,6 @@
   "species.taxonomy.oneSpecies": "1 Art",
   "species.taxonomy.order": "Ordnung",
   "species.taxonomy.rank": "Rang",
-  "species.taxonomy.species": "Art",
   "species.taxonomy.speciesCount": "{anzahl} Arten",
   "species.taxonomy.speciesOf.class": "Arten dieser Klasse",
   "species.taxonomy.speciesOf.division": "Arten dieser Abteilung",
