@@ -19,6 +19,7 @@ const (
 	TreeMaxPixelM   = 10.5
 	DEMMaxPixelM    = 100
 	DEMLow, DEMHigh = -500, 5000
+	SoilMaxPixelM   = 300
 	OtherClassShare = 0.01
 )
 
@@ -241,7 +242,7 @@ func (p SoilGrids) Validate(ctx context.Context, v *sources.Version) (map[string
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
-		r, err := inspectUpload(f, p.grid(), []string{"Int16"}, DEMMaxPixelM*3)
+		r, err := inspectUpload(f, p.grid(), []string{"Int16"}, SoilMaxPixelM)
 		if err != nil {
 			return nil, err
 		}

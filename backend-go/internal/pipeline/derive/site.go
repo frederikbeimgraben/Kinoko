@@ -127,7 +127,8 @@ func TPI(field []float32, ny, nx, size int) []float32 {
 			count++
 		}
 	}
-	mean := numeric.Sum(zeroed) / float32(count)
+	// np.nanmean divides the float32 sum by the count in float64 and casts back.
+	mean := float32(float64(numeric.Sum(zeroed)) / float64(count))
 	for i, v := range field {
 		if !isFinite(v) {
 			filled[i] = mean
