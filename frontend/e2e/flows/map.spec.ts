@@ -3,7 +3,7 @@ import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { COMBINATIONS, SPECIES_BUNDLE, mockMap } from '../fixtures/map';
 
-/** Die Höchsthöhe eines Blatts aus `project/Sheet.dc.html`. */
+/** The maximum height of a sheet, per `project/Sheet.dc.html`. */
 const SHEET_MAX = 640;
 
 const REPLIES = {
@@ -31,7 +31,7 @@ test('Reiterwechsel hält den Zustand der Karte', async ({ page }) => {
   await page.getByRole('navigation').locator('a[href="/karte"]').click();
 
   await expect(page.getByRole('tab', { name: 'Ebene' })).toHaveAttribute('aria-selected', 'true');
-  await expect(page.getByText('KW 40 · 2025')).toBeVisible();
+  await expect(page.getByText('KW 38 · 2026', { exact: true })).toBeVisible();
 });
 
 test('Reiterwechsel lädt keinen neuen Kartenstil', async ({ page }) => {
@@ -77,9 +77,9 @@ test('Reiterwechsel setzt die Übergangsart und lädt keinen neuen Kartenstil', 
 
 test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) => {
   await openMap(page);
-  await expect(page.getByRole('button', { name: /KW 40/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: /KW 38/ })).toHaveAttribute('aria-pressed', 'true');
 
-  // Kein Netz: die Manifeste liegen schon im Cache, die Leiste bleibt bedienbar.
+  // No connection: the manifests are in the cache, the strip stays usable.
   await page.evaluate(() => {
     Object.defineProperty(navigator, 'onLine', { configurable: true, value: false });
     window.dispatchEvent(new Event('offline'));
@@ -88,22 +88,22 @@ test('Wochenwechsel ohne Netz aus dem Speicher des Geräts', async ({ page }) =>
   const asked: string[] = [];
   page.on('request', (request) => asked.push(request.url()));
 
-  await page.getByRole('button', { name: /KW 40/ }).press('ArrowLeft');
-  await page.getByRole('button', { name: /KW 39/ }).press('ArrowLeft');
+  await page.getByRole('button', { name: /KW 38/ }).press('ArrowLeft');
+  await page.getByRole('button', { name: /KW 37/ }).press('ArrowLeft');
 
-  await expect(page.getByRole('button', { name: /KW 38/ })).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByText('KW 38 · 2025')).toBeVisible();
+  await expect(page.getByRole('button', { name: /KW 36/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText('KW 36 · 2026', { exact: true })).toBeVisible();
   expect(asked.filter((url) => url.endsWith('layers.json'))).toHaveLength(0);
 });
 
 test('Das Ebenen-Blatt folgt seiner Liste bis zur Höchsthöhe', async ({ page }) => {
   await openMap(page);
   await page.getByRole('tab', { name: 'Ebene' }).click();
-  await page.getByRole('button', { name: 'Niederschlag der letzten 4 Wochen' }).first().click();
+  await page.getByRole('button', { name: 'Ebene Niederschlag' }).click();
 
-  const list = page.getByRole('group', { name: 'Ebene' });
+  const list = page.getByRole('radiogroup', { name: 'Ebene' });
   await expect(list).toBeVisible();
-  await expect(page.getByRole('button', { name: /Hitzetage der Woche/ })).toBeVisible();
+  await expect(list.getByText('Hitzetage')).toBeVisible();
 
   const sheet = page.getByRole('dialog', { name: 'Karte' });
   const box = await sheet.boundingBox();
