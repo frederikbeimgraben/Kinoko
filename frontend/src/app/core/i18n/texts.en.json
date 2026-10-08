@@ -296,6 +296,7 @@
   "entries.filter.zone": "Zone",
   "entries.pending.retry": "Send again",
   "entries.zoneFinds": "Finds in the zone",
+  "entry.badge.private": "private",
   "entry.badge.shared": "shared",
   "entry.badge.transferPending": "Transfer pending",
   "entry.confirmLocation": "Confirm",

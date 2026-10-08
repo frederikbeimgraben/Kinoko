@@ -878,7 +878,8 @@
     "map.layers.show": "Anzeigen",
     "entry.field.location": "Ort",
     "map.combination.oneFactor": "1 Faktor",
-    "map.factor.period": "Zeitraum"
+    "map.factor.period": "Zeitraum",
+    "entry.badge.private": "privat"
   },
   "en": {
     "account.deleteAllConfirmTitle": "Delete everything",
@@ -1759,6 +1760,7 @@
     "map.layers.show": "Show",
     "entry.field.location": "Location",
     "map.combination.oneFactor": "1 factor",
-    "map.factor.period": "Period"
+    "map.factor.period": "Period",
+    "entry.badge.private": "private"
   }
 }

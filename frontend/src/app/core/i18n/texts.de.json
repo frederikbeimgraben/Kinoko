@@ -296,6 +296,7 @@
   "entries.filter.zone": "Zone",
   "entries.pending.retry": "Erneut senden",
   "entries.zoneFinds": "Funde in der Zone",
+  "entry.badge.private": "privat",
   "entry.badge.shared": "geteilt",
   "entry.badge.transferPending": "Übertragung ausstehend",
   "entry.confirmLocation": "Bestätigen",

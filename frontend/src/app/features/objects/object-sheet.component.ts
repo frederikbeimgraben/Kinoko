@@ -6,7 +6,6 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
-import { coordinatesText } from '../add-entry/coordinates';
 import { EntriesState } from '../entries/entries.state';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore, type ObjectKind } from '../map/map.store';
@@ -107,22 +106,12 @@ export class ObjectSheetComponent {
     return this.sheetName();
   });
 
-  /** Die gedämpfte Zeile unter dem Titel, nur im Formular. */
-  protected readonly headNote = computed(() => {
-    if (!this.editing()) return '';
-    const find = this.find();
-    return find === null ? '' : coordinatesText([find.lon, find.lat], this.i18n);
-  });
-
   /** Offen, aber nichts gefunden: der Eintrag ist fort oder gehört einem anderen Konto. */
   protected readonly missing = computed(
     () => this.map.object() !== null && !this.find() && !this.marker() && !this.zone(),
   );
 
   protected readonly editing = this.sheet.editing;
-
-  /** Das Formular des Fundes dunkelt die Karte ab, wie das Brett `FindEdit`. */
-  protected readonly dark = computed(() => this.editing() && this.map.object()?.kind === 'find');
 
   constructor() {
     // Ein Tipp auf einen Marker soll ihn zeigen, nicht nur sein Blatt öffnen.

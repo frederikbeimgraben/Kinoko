@@ -12,10 +12,12 @@
     </app-push-button>
   </app-object-form>
 } @else {
-  <div class="objectsheet">
+  <div class="overlay-body objectsheet" appScrollFade>
     <app-object-title [title]="zone().name" [sub]="sub()" [colour]="colour()" icon="zone" />
     @if (zone().note; as note) {
-      <p class="objectsheet__note">{{ note }}</p>
+      <app-section [label]="'entry.field.note' | t">
+        <p class="objectsheet__note">{{ note }}</p>
+      </app-section>
     }
     <app-row-group>
       <app-map-app-link [target]="center()" />
@@ -23,6 +25,7 @@
   </div>
   @if (editingCorners()) {
     <app-action-bar
+      foot
       [primary]="'zone.eckpunkteFertig' | t"
       [secondary]="'common.cancel' | t"
       (primaryClick)="applyCorners()"
@@ -30,11 +33,12 @@
     />
   } @else {
     <app-action-bar
+      foot
       [primary]="'common.edit' | t"
+      primaryIcon="edit"
       [secondary]="'common.delete' | t"
-      [quiet]="true"
+      secondaryIcon="trash"
       [secondaryDanger]="true"
-      [split]="true"
       (primaryClick)="sheet.setEditing(true)"
       (secondaryClick)="deleteAsk.set(true)"
     />

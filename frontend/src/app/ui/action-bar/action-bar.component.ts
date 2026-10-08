@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent, type ButtonKind } from '../button/button.component';
+import type { IconName } from '../svg-icon/icons';
 
 /** The actions of a sheet or a page: the main action and at most one second action.
  * In the `foot` slot of `app-sheet`, it floats over the body, per `kit.css` `.sact` and `.mact`. */
@@ -39,6 +40,10 @@ export class ActionBarComponent {
   readonly split = input(false);
   /** The main action stands on the left, as some boards show it. */
   readonly leadFirst = input(false);
+
+  /** The icons of the buttons, per the board `MapFindView`: "edit" and "trash". */
+  readonly primaryIcon = input<IconName>();
+  readonly secondaryIcon = input<IconName>();
 
   readonly primaryClick = output();
   readonly secondaryClick = output();

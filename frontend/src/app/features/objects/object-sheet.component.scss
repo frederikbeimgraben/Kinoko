@@ -17,11 +17,6 @@
   order: 1;
 }
 
-// Das Formular des Fundes dunkelt die Karte so ab, wie das Brett es zeigt.
-.object--dark {
-  --pilz-scrim: rgb(0 18 10 / 55%);
-}
-
 .object__missing {
   text-align: center;
   padding: var(--space-6);

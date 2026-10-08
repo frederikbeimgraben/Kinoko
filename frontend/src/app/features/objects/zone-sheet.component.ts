@@ -18,6 +18,8 @@ import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.c
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
 import { EntriesState } from '../entries/entries.state';
@@ -41,6 +43,8 @@ import type { Location } from '../add-entry/add-entry.store';
     ObjectFormComponent,
     ObjectTitleComponent,
     RowGroupComponent,
+    ScrollFadeDirective,
+    SectionComponent,
     TranslatePipe,
   ],
   templateUrl: './zone-sheet.component.html',

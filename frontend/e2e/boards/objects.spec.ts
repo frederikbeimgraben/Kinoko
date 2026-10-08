@@ -3,14 +3,11 @@ import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { GROUPS } from '../fixtures/groups';
-import { SPECIES_BUNDLE, SPECIES_MANIFEST, mockMap, showMapImage } from '../fixtures/map';
+import { SPECIES_BUNDLE, SPECIES_MANIFEST, mockMap, showDesignMap } from '../fixtures/map';
 import { mockValueTile } from '../fixtures/tiles';
-import { expectBoard, skipPending } from './board';
+import { expectBoard, neutralisePhotos, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
-
-/** Die Karte des Boards läuft unter dem Blatt weiter. */
-const MAP_HEIGHT = 844;
 
 /** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
 function guard(board: string, device: 'phone' | 'wide'): void {
@@ -41,6 +38,7 @@ const FINDS = {
   items: [
     {
       id: 'find-eins',
+      ownerId: 'konto-eins',
       lat: 48.5203,
       lon: 9.0511,
       speciesId: '00000000-0000-4000-8000-000000000014',
@@ -111,6 +109,7 @@ const REPLIES = {
     ownFinds: 2,
   },
   '/api/groups': { items: GROUPS },
+  '/api/me': { id: 'konto-eins', name: 'Frederik' },
 };
 
 /** Das Manifest der Art mit genau der Kachel, die den Fund trägt. */
@@ -125,6 +124,7 @@ async function openObject(page: Page, tab: string, row: string): Promise<void> {
     { photo: { 'foto-eins/list': 'tile-1-72x72.png', 'foto-zwei/list': 'tile-2-72x72.png' } },
   );
   await mockMap(page, { detent: 1 });
+  await neutralisePhotos(page);
   await mockValueTile(page, 'boletus-edulis', MANIFEST);
   await page.goto('/eintraege');
   await page.getByRole('tab', { name: tab }).click();
@@ -139,9 +139,9 @@ async function openObject(page: Page, tab: string, row: string): Promise<void> {
   await expect(page.getByRole('heading', { name: row })).toBeVisible();
 }
 
-/** Legt das Kartenbild auf und vergleicht dann mit dem Board. */
+/** Puts the design map surface on the canvas and compares the page with the board. */
 async function board(page: Page, stem: string): Promise<void> {
-  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
+  await showDesignMap(page);
   await expectBoard(page, stem);
 }
 
@@ -205,7 +205,7 @@ test('ObjectMenu', async ({ page }) => {
   await page.waitForTimeout(800);
   await page.mouse.up();
   await expect(page.getByRole('menu')).toBeVisible();
-  await showMapImage(page, 'map-stein-631.png', 631);
+  await showDesignMap(page);
 });
 
 /** Wechselt vom Blatt in das Formular des Objekts. */
@@ -231,7 +231,7 @@ test('MapDesktopZoneView', async ({ page }) => {
   guard('MapDesktopZoneView', 'wide');
   await page.context().grantPermissions(['geolocation']);
   await openObject(page, 'Zonen', 'Schönbuch Nord');
-  await showMapImage(page, 'map-desktop-stein-900.png');
+  await showDesignMap(page);
   await expectBoard(page, 'MapDesktopZoneView');
 });
 

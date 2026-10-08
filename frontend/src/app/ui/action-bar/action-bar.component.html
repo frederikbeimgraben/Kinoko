@@ -3,6 +3,7 @@
     <app-push-button
       class="acts__button acts__main"
       [class.acts__danger]="quietDanger()"
+      [icon]="primaryIcon()"
       [kind]="primaryVariant()"
       [wide]="!modal()"
       [busy]="busy()"
@@ -15,6 +16,7 @@
       <app-push-button
         class="acts__button"
         [class.acts__danger]="quietSecondaryDanger()"
+        [icon]="secondaryIcon()"
         [kind]="secondaryVariant()"
         [wide]="!modal()"
         (click)="secondaryClick.emit()"
