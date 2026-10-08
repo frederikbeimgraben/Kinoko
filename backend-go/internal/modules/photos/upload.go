@@ -5,10 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"io"
+	"maps"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -17,6 +19,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/geo"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 // maxFieldBytes limits a text part, as the 1 MiB part limit of Starlette does.
@@ -123,13 +126,8 @@ func isFile(part *multipart.Part) bool {
 }
 
 func lastValues(values url.Values) map[string]string {
-	out := make(map[string]string, len(values))
-	for key, list := range values {
-		if len(list) > 0 {
-			out[key] = list[len(list)-1]
-		}
-	}
-	return out
+	filled := fn.Filter(slices.Collect(maps.Keys(values)), func(key string) bool { return len(values[key]) > 0 })
+	return fn.ToMap(filled, func(key string) (string, string) { return key, values[key][len(values[key])-1] })
 }
 
 func readError(err error) error {
@@ -140,13 +138,13 @@ func readError(err error) error {
 	return badBody()
 }
 
-// badBody is the answer of the old service to a body it cannot parse: status
+// badBody is the answer of the Python service to a body it cannot parse: status
 // 400 without a code of its own.
 func badBody() error {
 	return problem.New("internal", http.StatusBadRequest, "There was an error parsing the body")
 }
 
-// check validates the form as the old service did, in the order of its
+// check validates the form as the Python service does, in the order of its
 // fields. An empty text value counts as a missing value.
 func check(f form) (Arrival, error) {
 	errs := []problem.FieldError{}
@@ -355,7 +353,7 @@ func (m *Module) insert(ctx context.Context, tx *sql.Tx, user auth.User, a Arriv
 }
 
 // replace puts a new image into a rejected photo and submits it again.
-// The source stays, as in the old service.
+// The source stays, as in the Python service.
 func (m *Module) replace(ctx context.Context, tx *sql.Tx, id db.ID, a Arrival, rendered Rendered) error {
 	if _, err := tx.ExecContext(ctx, `UPDATE photo SET width = ?, height = ?, photographer = ?,
 		licence = ?, caption = ?, taken_on = ?, state = 'submitted', reject_reason = NULL,

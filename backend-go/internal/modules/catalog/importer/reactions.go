@@ -12,6 +12,7 @@ import (
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 // ReactionsFile is the name of the reaction seed in the data folder.
@@ -93,11 +94,7 @@ type ReactionPlan struct {
 
 // Reagents gives the sorted slugs of the reagents that the rows use.
 func (p ReactionPlan) Reagents() []string {
-	slugs := make([]string, len(p.Rows))
-	for i, row := range p.Rows {
-		slugs[i] = row.Reagent
-	}
-	return sortedSet(slugs)
+	return sortedSet(fn.Map(p.Rows, func(row ReactionRow) string { return row.Reagent }))
 }
 
 var reactionResults = []string{"positive", "negative", "variable", "unknown"}
@@ -151,7 +148,7 @@ func reactionRow(entry ReactionEntry, colours map[string]string) ReactionRow {
 		Result:          result,
 		Contested:       entry.Contested,
 		PartlyConfirmed: entry.PartlyConfirmed,
-		SourceKeys:      uniqueInOrder(entry.Sources),
+		SourceKeys:      fn.Unique(entry.Sources),
 	}
 	if entry.PartSlug != nil && enums.BodyPart(*entry.PartSlug).Valid() {
 		part := enums.BodyPart(*entry.PartSlug)
@@ -163,17 +160,6 @@ func reactionRow(entry ReactionEntry, colours map[string]string) ReactionRow {
 		}
 	}
 	return row
-}
-
-// uniqueInOrder keeps the first of each key, in list order.
-func uniqueInOrder(keys []string) []string {
-	var out []string
-	for _, key := range keys {
-		if !slices.Contains(out, key) {
-			out = append(out, key)
-		}
-	}
-	return out
 }
 
 type catalogueNames struct {
@@ -329,7 +315,7 @@ func ensureReagentTerms(ctx context.Context, tx *sql.Tx, slugs []string) (map[st
 
 // upsertSources writes each source by its key and gives the row key of each.
 func upsertSources(ctx context.Context, tx *sql.Tx, sources []ReactionSource) (map[string]db.ID, error) {
-	rows := rowsOf(sources, func(s ReactionSource) []any { return []any{db.NewID(), s.ID, s.Label, s.URL, s.Year} })
+	rows := fn.Map(sources, func(s ReactionSource) []any { return []any{db.NewID(), s.ID, s.Label, s.URL, s.Year} })
 	err := execMany(ctx, tx, `INSERT INTO reaction_source (id, "key", label, url, year) VALUES (?, ?, ?, ?, ?)
 		ON CONFLICT ("key") DO UPDATE SET label = excluded.label, url = excluded.url, year = excluded.year`, rows)
 	if err != nil {
@@ -346,19 +332,15 @@ func upsertSources(ctx context.Context, tx *sql.Tx, sources []ReactionSource) (m
 	if err != nil {
 		return nil, err
 	}
-	out := make(map[string]db.ID, len(stored))
-	for _, s := range stored {
-		out[s.key] = s.id
-	}
-	return out, nil
+	return fn.ToMap(stored, func(s source) (string, db.ID) { return s.key, s.id }), nil
 }
 
 func writeReactions(ctx context.Context, tx *sql.Tx, plan ReactionPlan, terms, sources map[string]db.ID) error {
-	stale := rowsOf(plan.Species, func(id db.ID) []any { return []any{id} })
+	stale := fn.Map(plan.Species, func(id db.ID) []any { return []any{id} })
 	if err := execMany(ctx, tx, "DELETE FROM species_reaction WHERE species_id = ?", stale); err != nil {
 		return err
 	}
-	reactions := rowsOf(plan.Rows, func(r ReactionRow) []any {
+	reactions := fn.Map(plan.Rows, func(r ReactionRow) []any {
 		return []any{r.SpeciesID, r.Position, terms[r.Reagent], r.Reading, r.Part, r.Location, r.Result,
 			r.ColourName, r.ColourHex, r.Contested, r.PartlyConfirmed}
 	})

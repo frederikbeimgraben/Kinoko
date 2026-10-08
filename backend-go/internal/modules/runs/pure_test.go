@@ -111,6 +111,10 @@ func TestMeanBrier(t *testing.T) {
 	if got := MeanBrier([]float64{0.25, 0.75}); got == nil || *got != 0.5 {
 		t.Fatal(got)
 	}
+	// statistics.mean([0.1, 0.2, 0.3]) is 0.2; a float sum from left to right gives 0.20000000000000004.
+	if got := MeanBrier([]float64{0.1, 0.2, 0.3}); got == nil || *got != 0.2 {
+		t.Fatal(*got)
+	}
 	if EndState(true) != enums.RunStateFailed || EndState(false) != enums.RunStateFinished {
 		t.Fatal("end state")
 	}

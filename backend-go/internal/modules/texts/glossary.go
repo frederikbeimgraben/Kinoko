@@ -99,8 +99,8 @@ func (m *Module) createGlossaryEntry(r *http.Request) (web.Response, error) {
 	return web.Created(made.GlossaryEntry), nil
 }
 
-// unchanged tells if a write keeps each value of the row. The old service
-// then wrote nothing, so updated_at stayed as it was.
+// unchanged tells if a write keeps each value of the row. The Python service
+// then writes nothing, so updated_at stays as it is.
 func unchanged(row glossaryRow, body glossaryWrite, user db.ID) bool {
 	return row.Term == body.Term && row.Definition == body.Definition &&
 		row.UpdatedBy != nil && *row.UpdatedBy == user

@@ -12,7 +12,7 @@ import (
 )
 
 // ID is the key of a row. The database keeps it as 32 hex digits without
-// dashes, as the old service did. JSON shows it as a UUID with dashes.
+// dashes, as the Python service does. JSON shows it as a UUID with dashes.
 type ID uuid.UUID
 
 // NewID makes a random key.
@@ -36,6 +36,7 @@ func MustID(value string) ID {
 	return id
 }
 
+// String gives the UUID form with dashes.
 func (id ID) String() string { return uuid.UUID(id).String() }
 
 // IsZero tells if the key has no value.
@@ -81,7 +82,7 @@ const (
 )
 
 // Time is a point in time in UTC. The database keeps it as text without a
-// zone, as the old service did. JSON shows it as ISO 8601 with "Z".
+// zone, as the Python service does. JSON shows it as ISO 8601 with "Z".
 type Time struct{ time.Time }
 
 // Now gives the current time in UTC, to the microsecond.
@@ -171,6 +172,7 @@ func ParseDate(text string) (Date, error) {
 	return Date{parsed}, nil
 }
 
+// String gives the stored form YYYY-MM-DD.
 func (d Date) String() string { return d.Format(storedDate) }
 
 // Value gives the database form.

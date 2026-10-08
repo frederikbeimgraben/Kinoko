@@ -85,6 +85,30 @@ func KeyBy[T any, K comparable](items []T, key func(T) K) map[K]T {
 	return out
 }
 
+// ToMap returns a map of the key and value that entry gives for each item.
+// A later item wins.
+func ToMap[T any, K comparable, V any](items []T, entry func(T) (K, V)) map[K]V {
+	out := make(map[K]V, len(items))
+	for _, item := range items {
+		key, value := entry(item)
+		out[key] = value
+	}
+	return out
+}
+
+// Unique returns the first of each value, in input order. The result is never nil.
+func Unique[T comparable](items []T) []T {
+	seen := make(map[T]struct{}, len(items))
+	out := make([]T, 0, len(items))
+	for _, item := range items {
+		if _, ok := seen[item]; !ok {
+			seen[item] = struct{}{}
+			out = append(out, item)
+		}
+	}
+	return out
+}
+
 // GroupBy returns a map from key(item) to the items with that key, in input order.
 func GroupBy[T any, K comparable](items []T, key func(T) K) map[K][]T {
 	out := make(map[K][]T)

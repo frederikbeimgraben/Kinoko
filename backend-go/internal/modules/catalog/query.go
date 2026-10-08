@@ -111,15 +111,6 @@ func lastValue(values url.Values, key string) string {
 	return ""
 }
 
-func distinct[T comparable](values []T) []T {
-	return fn.Reduce(values, []T{}, func(acc []T, v T) []T {
-		if fn.Any(acc, func(x T) bool { return x == v }) {
-			return acc
-		}
-		return append(acc, v)
-	})
-}
-
 // parseSelection builds the filter from the query. The contract has
 // already checked the enum, uuid and month values.
 func parseSelection(u *url.URL) (Selection, error) {
@@ -141,11 +132,11 @@ func parseSelection(u *url.URL) (Selection, error) {
 		return Selection{}, err
 	}
 	return Selection{
-		Edibility: distinct(fn.Map(values["edibility[]"], func(v string) enums.Edibility { return enums.Edibility(v) })),
-		Hymenium:  distinct(fn.Map(values["hymenium[]"], func(v string) enums.HymeniumType { return enums.HymeniumType(v) })),
-		CapShape:  distinct(fn.Map(values["capShape[]"], func(v string) enums.CapShape { return enums.CapShape(v) })),
-		Terms:     distinct(terms),
-		Months:    distinct(months),
+		Edibility: fn.Unique(fn.Map(values["edibility[]"], func(v string) enums.Edibility { return enums.Edibility(v) })),
+		Hymenium:  fn.Unique(fn.Map(values["hymenium[]"], func(v string) enums.HymeniumType { return enums.HymeniumType(v) })),
+		CapShape:  fn.Unique(fn.Map(values["capShape[]"], func(v string) enums.CapShape { return enums.CapShape(v) })),
+		Terms:     fn.Unique(terms),
+		Months:    fn.Unique(months),
 		Colours:   colours,
 		Sizes:     sizes,
 	}, nil

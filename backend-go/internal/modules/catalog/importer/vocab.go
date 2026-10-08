@@ -12,6 +12,7 @@ type UnknownVocabulary struct {
 	Message string
 }
 
+// Error gives the message.
 func (e *UnknownVocabulary) Error() string { return e.Message }
 
 var (
@@ -271,7 +272,7 @@ var TraitKey = map[string]string{
 	"schutz":        "protection",
 }
 
-// SmellName gives the display name of a smell tag.
+// SmellName gives the German name to show for a smell tag.
 var SmellName = map[string]string{
 	"angenehm":     "Angenehm",
 	"anisartig":    "Anisartig",
@@ -297,7 +298,7 @@ var SmellName = map[string]string{
 	"wuerzig":      "Würzig",
 }
 
-// TasteName gives the display name of a taste tag.
+// TasteName gives the German name to show for a taste tag.
 var TasteName = map[string]string{
 	"bitter":     "Bitter",
 	"brennend":   "Brennend",
@@ -330,7 +331,7 @@ var ReagentSlug = map[string]string{
 	"schaeffer":     "schaeffer",
 }
 
-// ReagentName gives the display name of each reagent term slug.
+// ReagentName gives the German name to show for each reagent term slug.
 // The last four occur only in daten/reaktionen.json.
 var ReagentName = map[string]string{
 	"koh":           "Kalilauge (KOH)",

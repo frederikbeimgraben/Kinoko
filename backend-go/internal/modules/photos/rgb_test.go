@@ -3,6 +3,8 @@ package photos
 import (
 	"image"
 	"image/color"
+	"maps"
+	"net/url"
 	"testing"
 )
 
@@ -34,5 +36,12 @@ func TestRGBKeepsTheColourOfTransparentPixelsOfEachDecoderType(t *testing.T) {
 	}
 	if wr < 150 {
 		t.Fatal(wr)
+	}
+}
+
+func TestLastValuesTakesTheLastValueOfEachFilledKey(t *testing.T) {
+	got := lastValues(url.Values{"a": {"1", "2"}, "b": {}, "c": {"3"}})
+	if !maps.Equal(got, map[string]string{"a": "2", "c": "3"}) {
+		t.Fatal(got)
 	}
 }

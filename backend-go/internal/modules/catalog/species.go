@@ -153,7 +153,7 @@ func loadOne(ctx context.Context, q db.Querier, row speciesRow) (Species, error)
 
 // loadTargets reads the other species of the pairs of one species.
 func loadTargets(ctx context.Context, q db.Querier, self db.ID, rows []lookalikeRow) (map[db.ID]lookalikeTarget, error) {
-	others := distinct(fn.Map(rows, func(r lookalikeRow) db.ID {
+	others := fn.Unique(fn.Map(rows, func(r lookalikeRow) db.ID {
 		if r.A == self {
 			return r.B
 		}
@@ -279,8 +279,8 @@ type forecastWrite struct {
 	Enabled bool `json:"enabled"`
 }
 
-// setForecast changes updated_at only when the value changes, as the old
-// service did. The bundle tag depends on it.
+// setForecast changes updated_at only when the value changes, as the
+// Python service does. The bundle tag depends on it.
 func (m *Module) setForecast(r *http.Request) (web.Response, error) {
 	body, err := web.Decode[forecastWrite](r)
 	if err != nil {

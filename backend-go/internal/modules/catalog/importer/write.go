@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 // Catalog is the complete built catalogue, ready to write.
@@ -69,65 +70,57 @@ type insert struct {
 	rows  [][]any
 }
 
-func rowsOf[T any](items []T, values func(T) []any) [][]any {
-	out := make([][]any, len(items))
-	for i, item := range items {
-		out[i] = values(item)
-	}
-	return out
-}
-
 // inserts gives the statements in an order that the foreign keys accept.
 func inserts(c Catalog, now db.Time) []insert {
 	ch := c.Children
 	return []insert{
 		{"INSERT INTO taxon (id, rank, slug, name, latin_name, description, parent_id) VALUES (?, ?, ?, ?, ?, NULL, ?)",
-			rowsOf(c.Taxa, func(r TaxonRow) []any { return []any{r.ID, r.Rank, r.Slug, r.Name, r.LatinName, r.ParentID} })},
+			fn.Map(c.Taxa, func(r TaxonRow) []any { return []any{r.ID, r.Rank, r.Slug, r.Name, r.LatinName, r.ParentID} })},
 		{"INSERT INTO term (id, kind, group_key, slug, name, position) VALUES (?, ?, ?, ?, ?, ?)",
-			rowsOf(c.Terms.Rows, func(r TermRow) []any { return []any{r.ID, r.Kind, r.GroupKey, r.Slug, r.Name, r.Position} })},
+			fn.Map(c.Terms.Rows, func(r TermRow) []any { return []any{r.ID, r.Kind, r.GroupKey, r.Slug, r.Name, r.Position} })},
 		{`INSERT INTO species (id, slug, name, latin_name, taxon_id, group_key, edibility, marketable, forecast_enabled,
 			frequency, red_list, description, edibility_note, protection, protection_note, period_start_month,
 			period_end_month, period_peak_month, smell_text, taste_text, hymenium_type, gill_attachment, gill_spacing,
 			gill_edge, cap_shape_young, cap_shape_old, updated_at, updated_by_id)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
-			rowsOf(c.Species, func(r SpeciesRow) []any {
+			fn.Map(c.Species, func(r SpeciesRow) []any {
 				return []any{r.ID, r.Slug, r.Name, r.LatinName, r.TaxonID, r.GroupKey, r.Edibility, r.Marketable,
 					r.ForecastEnabled, r.Frequency, r.RedList, r.EdibilityNote, r.Protection, r.ProtectionNote,
 					r.PeriodStartMonth, r.PeriodEndMonth, r.PeriodPeakMonth, r.SmellText, r.TasteText, r.HymeniumType,
 					r.GillAttachment, r.GillSpacing, r.GillEdge, r.CapShapeYoung, r.CapShapeOld, now}
 			})},
 		{"INSERT INTO species_name (species_id, position, name, kind) VALUES (?, ?, ?, ?)",
-			rowsOf(ch.Names, func(r NameRow) []any { return []any{r.SpeciesID, r.Position, r.Name, r.Kind} })},
+			fn.Map(ch.Names, func(r NameRow) []any { return []any{r.SpeciesID, r.Position, r.Name, r.Kind} })},
 		{"INSERT INTO species_measurement (species_id, part, dimension, low, high, unit) VALUES (?, ?, ?, ?, ?, ?)",
-			rowsOf(ch.Measurements, func(r MeasurementRow) []any {
+			fn.Map(ch.Measurements, func(r MeasurementRow) []any {
 				return []any{r.SpeciesID, r.Part, r.Dimension, r.Low, r.High, r.Unit}
 			})},
 		{"INSERT INTO species_colour_range (species_id, part, mode) VALUES (?, ?, ?)",
-			rowsOf(ch.Ranges, func(r ColourRangeRow) []any { return []any{r.SpeciesID, r.Part, r.Mode} })},
+			fn.Map(ch.Ranges, func(r ColourRangeRow) []any { return []any{r.SpeciesID, r.Part, r.Mode} })},
 		{"INSERT INTO species_colour_change (species_id, position, part, from_name, from_hex, to_name, to_hex, speed) VALUES (?, ?, ?, NULL, NULL, ?, ?, ?)",
-			rowsOf(ch.Changes, func(r ChangeRow) []any {
+			fn.Map(ch.Changes, func(r ChangeRow) []any {
 				return []any{r.SpeciesID, r.Position, r.Part, r.ToName, r.ToHex, r.Speed}
 			})},
 		{"INSERT INTO species_part_feature (species_id, part, feature, phase) VALUES (?, ?, ?, ?)",
-			rowsOf(ch.PartFeatures, func(r PartFeatureRow) []any { return []any{r.SpeciesID, r.Part, r.Feature, r.Phase} })},
+			fn.Map(ch.PartFeatures, func(r PartFeatureRow) []any { return []any{r.SpeciesID, r.Part, r.Feature, r.Phase} })},
 		{`INSERT INTO species_trait (species_id, "key", body) VALUES (?, ?, ?)`,
-			rowsOf(ch.Traits, func(r TraitRow) []any { return []any{r.SpeciesID, r.Key, r.Body} })},
+			fn.Map(ch.Traits, func(r TraitRow) []any { return []any{r.SpeciesID, r.Key, r.Body} })},
 		{"INSERT INTO species_source (species_id, position, scope, title, url, checked_on) VALUES (?, ?, ?, ?, ?, ?)",
-			rowsOf(ch.Sources, func(r SourceRow) []any {
+			fn.Map(ch.Sources, func(r SourceRow) []any {
 				return []any{r.SpeciesID, r.Position, r.Scope, r.Title, r.URL, r.CheckedOn}
 			})},
 		{"INSERT INTO species_season (species_id, season) VALUES (?, ?)",
-			rowsOf(ch.Seasons, func(r SeasonRow) []any { return []any{r.SpeciesID, r.Season} })},
+			fn.Map(ch.Seasons, func(r SeasonRow) []any { return []any{r.SpeciesID, r.Season} })},
 		{"INSERT INTO species_term (species_id, term_id, from_experience) VALUES (?, ?, ?)",
-			rowsOf(ch.Terms, func(r SpeciesTermRow) []any { return []any{r.SpeciesID, r.TermID, r.FromExperience} })},
+			fn.Map(ch.Terms, func(r SpeciesTermRow) []any { return []any{r.SpeciesID, r.TermID, r.FromExperience} })},
 		{"INSERT INTO species_lookalike (species_a_id, species_b_id, difference_a, difference_b) VALUES (?, ?, ?, ?)",
-			rowsOf(ch.Lookalikes, func(r LookalikeRow) []any {
+			fn.Map(ch.Lookalikes, func(r LookalikeRow) []any {
 				return []any{r.SpeciesAID, r.SpeciesBID, r.DifferenceA, r.DifferenceB}
 			})},
 		{"INSERT INTO species_colour (species_id, part, position, name, hex) VALUES (?, ?, ?, ?, ?)",
-			rowsOf(ch.Colours, func(r ColourRow) []any { return []any{r.SpeciesID, r.Part, r.Position, r.Name, r.Hex} })},
+			fn.Map(ch.Colours, func(r ColourRow) []any { return []any{r.SpeciesID, r.Part, r.Position, r.Name, r.Hex} })},
 		{"INSERT INTO species_colour_change_trigger (species_id, position, term_id) VALUES (?, ?, ?)",
-			rowsOf(ch.Triggers, func(r TriggerRow) []any { return []any{r.SpeciesID, r.Position, r.TermID} })},
+			fn.Map(ch.Triggers, func(r TriggerRow) []any { return []any{r.SpeciesID, r.Position, r.TermID} })},
 	}
 }
 

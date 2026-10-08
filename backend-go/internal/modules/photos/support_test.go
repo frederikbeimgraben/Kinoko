@@ -19,7 +19,7 @@ import (
 const jpegType = "image/jpeg"
 
 // newEnv builds the service. The base role loses its rights, so each test
-// person holds only the rights that signIn gives, as in the old tests.
+// person holds only the rights that signIn gives, as in the Python tests.
 func newEnv(t *testing.T, opts ...testkit.Option) *testkit.Env {
 	t.Helper()
 	env := testkit.New(t, opts...)
@@ -43,7 +43,7 @@ func scalar[T any](t *testing.T, env *testkit.Env, query string, args ...any) T 
 	return value
 }
 
-// makeUser adds a person row, as make_user of the old tests.
+// makeUser adds a person row, as make_user of the Python tests.
 func makeUser(t *testing.T, env *testkit.Env, sub string) testkit.Person {
 	t.Helper()
 	person := testkit.Someone(sub)

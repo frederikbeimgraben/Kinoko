@@ -31,6 +31,7 @@ type Problem struct {
 	Header http.Header
 }
 
+// Error gives the code and, when there is one, the detail.
 func (p *Problem) Error() string {
 	if p.Detail != "" {
 		return p.Code + ": " + p.Detail
