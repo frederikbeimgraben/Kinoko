@@ -38,6 +38,21 @@
   <app-surface class="frames__fill" />
 </app-block-card>
 
+<app-block-card block="Phone" [width]="390" [height]="844">
+  <div class="frames__phone">
+    <div class="frames__stage"></div>
+    <app-nav active="/karte" />
+  </div>
+</app-block-card>
+
+<app-block-card block="Desk" [width]="1440" [height]="900">
+  <div class="frames__desk">
+    <app-nav active="/karte" variant="rail">
+      <app-avatar-button name="Frederik" [label]="'nav.konto' | t" />
+    </app-nav>
+  </div>
+</app-block-card>
+
 <app-block-card block="Pane" [width]="420" [height]="900">
   <app-split-layout class="frames__fill" kind="pane" pane="panel" />
 </app-block-card>

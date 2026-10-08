@@ -6,14 +6,15 @@ import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fix
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Breite des Modals und die Spalten links davon, aus den Boards. */
+/** The width of the modal and of the columns at its left, from the boards. */
 const MODAL_WIDTH = 480;
-/** Das X steht 14 px vom Rand. Der Rahmen des Modals misst einen Punkt mehr. */
+/** The X is 14 px from the edge. The modal border adds one pixel. */
 const CLOSE_INSET = 15;
-const RAIL = 88;
-/** Der erste Marker der Attrappe. */
+const RAIL = 96;
+/** The first marker of the double. */
 const MARKER = 'marker 0';
-const COLUMN = 400;
+/** The kit pane of each tab: `list` on the entries tab, `panel` on the map tab. */
+const COLUMN: Readonly<Record<string, number>> = { '/eintraege': 520, '/karte': 420 };
 
 const REPLIES = {
   '/api/species/bundle': SPECIES_BUNDLE,
@@ -35,7 +36,7 @@ async function openApp(page: Page, path: string, signedIn = true): Promise<void>
   await page.goto(path);
 }
 
-/** Prüft Breite, Mitte über der Kartenfläche und das X des Modals. */
+/** Checks the width, the centre over the map area and the X of the modal. */
 async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveClass(/sheet--modal/);
@@ -45,7 +46,8 @@ async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   if (viewport === null) throw new Error('Kein Fenster.');
 
   expect(Math.round(box.width)).toBe(MODAL_WIDTH);
-  expect(Math.round(box.x + box.width / 2)).toBe(Math.round((RAIL + COLUMN + viewport.width) / 2));
+  const column = COLUMN[new URL(page.url()).pathname] ?? 0;
+  expect(Math.round(box.x + box.width / 2)).toBe(Math.round((RAIL + column + viewport.width) / 2));
 
   const close = dialog.locator('.sheet__close');
   await expect(close).toBeVisible();
@@ -77,7 +79,7 @@ test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
 test('Anmelden steht am Rechner als zentriertes Modal', async ({ page }) => {
   await openApp(page, '/eintraege', false);
   const dialog = page.getByRole('dialog', { name: 'Anmelden' });
-  // Der Leerzustand zeichnet neu, bis die Liste steht.
+  // The empty state renders again until the list is complete.
   await expect(async () => {
     await page.getByRole('button', { name: 'Anmelden' }).click();
     await expect(dialog).toBeVisible({ timeout: 2000 });

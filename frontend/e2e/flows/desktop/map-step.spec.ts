@@ -6,10 +6,11 @@ import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fix
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-const RAIL = 88;
-const COLUMN = 400;
+const RAIL = 96;
+/** The kit `panel` pane of the map tab. */
+const COLUMN = 420;
 
-/** Vier Punkte über der Kartenfläche, im Uhrzeigersinn. */
+/** Four points over the map area, clockwise. */
 const CORNERS: readonly (readonly [number, number])[] = [
   [700, 300],
   [900, 280],
@@ -17,7 +18,7 @@ const CORNERS: readonly (readonly [number, number])[] = [
   [720, 520],
 ];
 
-/** Der Ort unter einem Punkt des Fensters. */
+/** The place under a point of the window. */
 async function placeAt(page: Page, spot: readonly [number, number]): Promise<[number, number]> {
   return page.evaluate(
     ([x, y]) =>
@@ -29,7 +30,7 @@ async function placeAt(page: Page, spot: readonly [number, number]): Promise<[nu
   );
 }
 
-/** Der Zeiger über der Karte, wie ihn der Schritt setzt. */
+/** The cursor over the map, as the step sets it. */
 async function cursorOfMap(page: Page): Promise<string> {
   return page.evaluate(() => {
     const canvas = document.querySelector('.map__canvas canvas');
@@ -52,7 +53,7 @@ async function openMap(page: Page): Promise<void> {
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
 }
 
-/** Zieht quer über die Karte, wie beim Verschieben des Ausschnitts. */
+/** Drags across the map, as a pan of the view does. */
 async function dragMap(page: Page): Promise<void> {
   const viewport = page.viewportSize();
   if (viewport === null) throw new Error('Kein Fenster.');
@@ -167,13 +168,13 @@ test('Die Marke lässt sich mit der Maus verschieben', async ({ page }) => {
   const first = (await note.textContent()) ?? '';
   const before = await placeAt(page, CORNERS[1]);
 
-  // Ein Zug an der Marke schiebt sie, nicht die Karte.
+  // A drag on the pin moves the pin, not the map.
   await page.mouse.move(CORNERS[0][0], CORNERS[0][1]);
   await page.mouse.down();
   await page.mouse.move(CORNERS[0][0] + 120, CORNERS[0][1] + 80, { steps: 10 });
   await page.mouse.up();
 
   await expect(note).not.toHaveText(first);
-  // Die Karte bleibt stehen: der Zug gehört der Marke.
+  // The map stays still: the drag belongs to the pin.
   expect(await placeAt(page, CORNERS[1])).toEqual(before);
 });

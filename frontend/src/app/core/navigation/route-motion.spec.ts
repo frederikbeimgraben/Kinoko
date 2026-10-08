@@ -21,8 +21,24 @@ const CASES: readonly [string | null, string, RouteMotion][] = [
   ['/foo', '/bar', 'none'],
 ];
 
+/** On the desktop a change in one section crossfades; a tab change moves as on the phone. */
+const WIDE_CASES: readonly [string | null, string, RouteMotion][] = [
+  [null, '/arten', 'none'],
+  ['/arten', '/arten?q=stein', 'none'],
+  ['/arten', '/arten/boletus-edulis', 'fade'],
+  ['/arten/boletus-edulis', '/arten', 'fade'],
+  ['/arten/boletus-edulis', '/arten/agaricus-bisporus', 'fade'],
+  ['/konto', '/konto/gruppen', 'fade'],
+  ['/karte', '/arten', 'tab-forward'],
+  ['/karte', '/konto', 'push'],
+];
+
 describe('routeMotion', () => {
-  it.each(CASES)('%s -> %s ergibt %s', (from, to, expected) => {
+  it.each(CASES)('%s -> %s gives %s on the phone', (from, to, expected) => {
     expect(routeMotion(from, to)).toBe(expected);
+  });
+
+  it.each(WIDE_CASES)('%s -> %s gives %s on the desktop', (from, to, expected) => {
+    expect(routeMotion(from, to, true)).toBe(expected);
   });
 });

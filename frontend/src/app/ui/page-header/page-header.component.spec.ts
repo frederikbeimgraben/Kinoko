@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
+import { FilterChipComponent } from '../filter-chip/filter-chip.component';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { PageHeaderComponent } from './page-header.component';
 
 @Component({
@@ -10,6 +12,15 @@ import { PageHeaderComponent } from './page-header.component';
   template: `<app-page-header><span headline>Art suchen</span></app-page-header>`,
 })
 class HeadlineHostComponent {}
+
+@Component({
+  imports: [PageHeaderComponent, FilterChipComponent, IconButtonComponent],
+  template: `<app-page-header title="Steinpilz" [back]="true">
+    <app-icon-button icon="more" kind="plain" label="Mehr" />
+    <app-filter-chip label="Vergleichen" icon="compare" />
+  </app-page-header>`,
+})
+class DetailHostComponent {}
 
 describe('PageHeaderComponent', () => {
   it('renders with minimal inputs', async () => {
@@ -89,6 +100,22 @@ describe('PageHeaderComponent', () => {
 
     expect(container.querySelector('h1')).toBeNull();
     expect(container.querySelector('.bar')).toHaveTextContent('Art suchen');
+  });
+
+  it('keeps the space of an empty title and shows no empty heading', async () => {
+    const { container } = await render(PageHeaderComponent, { inputs: { title: '', back: true } });
+
+    expect(container.querySelector('h1')).toBeNull();
+    expect(container.querySelector('.bar__title')).toBeInTheDocument();
+    await noViolations(container);
+  });
+
+  it('puts a projected chip before the buttons, in its own slot', async () => {
+    const { container } = await render(DetailHostComponent);
+
+    const chips = container.querySelector('.bar__chips');
+    expect(chips?.querySelector('app-filter-chip')).not.toBeNull();
+    expect(chips?.nextElementSibling?.tagName).toBe('APP-ICON-BUTTON');
   });
 
   it('holds the wide indent of a detail bar without a lead', async () => {

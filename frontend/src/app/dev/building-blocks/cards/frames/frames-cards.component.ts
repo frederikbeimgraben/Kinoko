@@ -12,7 +12,7 @@ import { SurfaceComponent } from '../../../../ui/surface/surface.component';
 import { AvatarButtonComponent } from '../../../../ui/avatar-button/avatar-button.component';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Die Rahmen der D2-Lieferung: Leisten, Reiter, Spalten und Flächen. */
+/** The frame cards: phone and desk frames, bars, tabs, panes and surfaces. */
 @Component({
   selector: 'app-frames-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
