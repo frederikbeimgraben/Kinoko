@@ -98,10 +98,12 @@ func loadTiles(t *testing.T) tilesGolden {
 	return g
 }
 
+// Go math.Tan and math.Log differ from libm by a few ulps, so y gets a
+// relative tolerance of 1e-14.
 func TestMercatorMatchesPython(t *testing.T) {
 	for _, m := range loadTiles(t).Mercator {
 		x, y := ToMercator(f64(t, m.Lon), f64(t, m.Lat))
-		if x != f64(t, m.X) || math.Abs(y-f64(t, m.Y)) > 1e-9 {
+		if x != f64(t, m.X) || math.Abs(y-f64(t, m.Y)) > 1e-14*math.Abs(y) {
 			t.Errorf("ToMercator(%v, %v) = %v, %v; want %v, %v", f64(t, m.Lon), f64(t, m.Lat), x, y, f64(t, m.X), f64(t, m.Y))
 		}
 	}
