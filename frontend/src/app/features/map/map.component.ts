@@ -138,7 +138,7 @@ export class MapComponent implements OnDestroy {
    * The tall map sheet of the phone has no room for it (board `MapCombination`).
    */
   protected readonly showsAdd = computed(() => {
-    if (this.covered() || this.addEntry.running()) return false;
+    if (this.overlay() !== null || this.addEntry.running()) return false;
     if (this.wide()) return true;
     return !this.state.layersSheetOpen() && !(this.showsMapSheet() && this.state.detent() === 2);
   });

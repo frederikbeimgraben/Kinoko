@@ -210,6 +210,19 @@ test('MapOffline', async ({ page }) => {
   await board(page, 'MapOffline');
 });
 
+/**
+ * Some desktop boards show the forecast in the column below a modal of the combination.
+ * The tab changes below the modal layer, as a click there cannot reach it.
+ */
+async function forecastBelow(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const tab = [...document.querySelectorAll<HTMLElement>('[role="tab"]')].find(
+      (one) => one.textContent.trim() === 'Vorhersage',
+    );
+    tab?.click();
+  });
+}
+
 test('MapSignIn', async ({ page }) => {
   guard('MapSignIn', 'phone');
   await page.context().grantPermissions(['geolocation']);
@@ -220,13 +233,7 @@ test('MapSignIn', async ({ page }) => {
   // Without an account, the save asks for the sign-in first.
   await page.getByRole('button', { name: 'Speichern' }).click();
   await expect(page.getByRole('button', { name: 'Später', exact: true })).toBeVisible();
-  // The board shows the question over the forecast. The tab changes below the modal layer.
-  await page.evaluate(() => {
-    const tab = [...document.querySelectorAll<HTMLElement>('[role="tab"]')].find(
-      (one) => one.textContent.trim() === 'Vorhersage',
-    );
-    tab?.click();
-  });
+  await forecastBelow(page);
   await blur(page);
   await board(page, 'MapSignIn');
 });
@@ -275,6 +282,7 @@ test('MapDesktopFactorPicker', async ({ page }) => {
   guard('MapDesktopFactorPicker', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Faktor hinzufügen' }).click();
+  await forecastBelow(page);
   await board(page, 'MapDesktopFactorPicker', {});
 });
 
@@ -282,6 +290,7 @@ test('MapDesktopCombinations', async ({ page }) => {
   guard('MapDesktopCombinations', 'wide');
   await openMap(page, { view: 'combination' }, BOARD_FACTORS);
   await page.getByRole('button', { name: 'Kombinationen', exact: true }).click();
+  await forecastBelow(page);
   await board(page, 'MapDesktopCombinations', {});
 });
 
@@ -292,6 +301,7 @@ test('MapDesktopCombinationSave', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Kombination speichern' })).toBeVisible();
   await page.getByRole('textbox').fill('Herbst Steinpilz');
   await blur(page);
+  await forecastBelow(page);
   await board(page, 'MapDesktopCombinationSave', {});
 });
 
