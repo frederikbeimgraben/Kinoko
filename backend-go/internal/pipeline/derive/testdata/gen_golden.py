@@ -172,6 +172,7 @@ def golden_trees(bounds, trees: Path, work: Path) -> Path:
     rm.urllib.request.urlopen = lambda *a, **k: Answer()
     rm.time.sleep = lambda s: None
     rm.TILE = TREE_TILE
+    work.mkdir(parents=True, exist_ok=True)
     grid, _ = rm.tile_trees(bounds, 500, work)
     grid["cell"] = ((grid["x"] // 500).astype(int).astype(str) + "_"
                     + (grid["y"] // 500).astype(int).astype(str))
