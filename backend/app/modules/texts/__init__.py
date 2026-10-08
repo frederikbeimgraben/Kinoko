@@ -1,1 +1,0 @@
-"""Der Textkatalog der Oberfläche."""
