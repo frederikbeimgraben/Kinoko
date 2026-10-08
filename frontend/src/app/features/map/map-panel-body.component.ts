@@ -12,7 +12,6 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 import { CombinationComponent } from './combination.component';
-import { layerTitle } from './layer-name';
 import { LayerPickComponent } from './layer-pick.component';
 import { MapView } from './map.view';
 
@@ -55,10 +54,8 @@ export class MapPanelBodyComponent {
   readonly factorAdded = output();
   readonly saveRequested = output();
 
-  protected readonly layerName = computed(() => {
-    const layer = this.view.layer();
-    return layer === null ? '' : layerTitle(layer, this.i18n);
-  });
+  /** The short name of the layer, as on the board `MapLayer`. */
+  protected readonly layerName = computed(() => this.view.layer()?.label ?? '');
 
   protected readonly rampKind = computed<RampKind>(() =>
     RAIN_LAYERS.includes(this.view.layer()?.id ?? '') ? 'rain' : 'forecast',

@@ -102,7 +102,7 @@ async function turnMap(page: Page, bearing: number): Promise<void> {
 
 test('MapRotated', async ({ page }) => {
   guard('MapRotated', 'phone');
-  await openMap(page, { detent: 0 });
+  await openMap(page);
   await turnMap(page, -BOARD_BEARING);
   await expect(page.getByRole('button', { name: 'Nach Norden drehen' })).toBeVisible();
   await showDesignMap(page, { rotated: true, belowSheet: 28 });

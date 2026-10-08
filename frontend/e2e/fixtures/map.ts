@@ -60,7 +60,7 @@ export async function mockMap(
       JSON.stringify({
         species: state.species ?? 'boletus-edulis',
         view: state.view ?? 'forecast',
-        layer: state.layer ?? 'regen_4w',
+        layer: state.layer ?? 'regen',
         opacity: 0.8,
         background: 'map',
         forecastBelow: false,

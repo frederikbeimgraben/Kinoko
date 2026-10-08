@@ -34,7 +34,7 @@
     }
     @if (offline()) {
       <div class="map__grey" aria-hidden="true"></div>
-      <app-banner class="map__banner" kind="noConnection" [float]="true" [chev]="false" />
+      <app-banner class="map__banner" role="status" kind="noConnection" [float]="true" [chev]="false" />
     }
 
     @if (!surfaceOnly() || wide()) {

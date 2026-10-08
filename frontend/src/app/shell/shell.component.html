@@ -29,11 +29,10 @@
   @if (updateReady()) {
     <app-banner
       class="shell__banner"
+      role="status"
       [class.shell__banner--float]="bannerFloats()"
       [float]="bannerFloats()"
       kind="update"
-      actionIcon="refresh"
-      actionLabel="app.update.reload"
       (actionClick)="reload()"
     />
   }

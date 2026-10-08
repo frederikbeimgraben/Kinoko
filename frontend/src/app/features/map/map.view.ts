@@ -175,7 +175,10 @@ export class MapView {
   });
 
   readonly rampLabel = computed(() => {
-    if (this.onLayer()) return this.layer()?.note ?? '';
+    if (this.onLayer()) {
+      const layer = this.layer();
+      return layer === null ? '' : [layer.label, layer.note].filter((part) => part !== '').join(', ');
+    }
     return this.i18n.translate('map.legend.findProbability');
   });
 
