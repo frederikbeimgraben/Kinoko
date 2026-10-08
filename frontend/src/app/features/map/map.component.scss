@@ -3,6 +3,11 @@
   block-size: 100%;
 }
 
+// Boards `MapDesktopFindForm` and `MapDesktopCombinationSave`: a modal over the map stands at the centre of the window.
+:host-context(.shell--column) {
+  --sheet-modal-start: 0px;
+}
+
 .map {
   position: relative;
   block-size: 100%;

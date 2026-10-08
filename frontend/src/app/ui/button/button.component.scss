@@ -60,7 +60,8 @@
   opacity: 0.45;
 }
 
-.busy {
+// Per `kit.css` `.btn.busy`: a running button is also disabled, but keeps more of its fill.
+.btn.busy {
   opacity: 0.8;
   pointer-events: none;
 }

@@ -9,6 +9,7 @@
   <div
     #layer="modalLayer"
     class="confirm__panel"
+    [class.confirm__panel--stage]="aboveNav()"
     animate.enter="motion-pop-in"
     animate.leave="motion-pop-out"
     [appModalLayer]="title() === '' ? (confirmLabel() ?? ('common.delete' | t)) : ''"
@@ -33,7 +34,7 @@
         </app-push-button>
       }
       <app-push-button kind="text" [wide]="stack()" (click)="cancelled.emit()">
-        {{ 'common.cancel' | t }}
+        {{ cancelLabel() ?? ('common.cancel' | t) }}
       </app-push-button>
       @if (!stack()) {
         <app-push-button

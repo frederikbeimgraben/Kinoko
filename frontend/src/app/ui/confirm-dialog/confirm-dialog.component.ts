@@ -21,6 +21,10 @@ export class ConfirmDialogComponent {
   readonly stack = input(false);
   /** Without a value, the label is "Delete". Other actions set their own word. */
   readonly confirmLabel = input<string>();
+  /** Without a value, the label of the second action is "Cancel". */
+  readonly cancelLabel = input<string>();
+  /** On the phone, the dialog stands at the centre of the stage above the nav (boards `MapSignIn`, `MapDialogFindDelete`). */
+  readonly aboveNav = input(false);
   /** While a write runs, the confirmation takes no tap. */
   readonly confirmDisabled = input(false);
 

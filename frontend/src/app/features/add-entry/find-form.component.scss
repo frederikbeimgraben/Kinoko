@@ -10,9 +10,8 @@
   overflow-y: auto;
 }
 
-// While the save runs, the form locks its fields, as on the board `MapFindSaving`.
+// While the save runs, the form locks its fields.
 .form__body--busy {
-  opacity: 0.45;
   pointer-events: none;
 }
 

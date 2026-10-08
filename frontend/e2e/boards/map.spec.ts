@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
-import { authConfig, mockSignIn, mockSignInPending } from '../fixtures/auth';
+import { authConfig, mockSignIn, mockSignInPending, mockSignedOut } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
   COMBINATIONS,
@@ -208,6 +208,27 @@ test('MapOffline', async ({ page }) => {
   });
   await expect(page.getByRole('status')).toContainText('Keine Verbindung');
   await board(page, 'MapOffline');
+});
+
+test('MapSignIn', async ({ page }) => {
+  guard('MapSignIn', 'phone');
+  await page.context().grantPermissions(['geolocation']);
+  await mockSignedOut(page);
+  await mockApi(page, { ...REPLIES, '/api/config': authConfig(BASE) }, { photo: ROW_PHOTO });
+  await mockMap(page, { view: 'combination' }, BOARD_FACTORS);
+  await page.goto('/karte');
+  // Without an account, the save asks for the sign-in first.
+  await page.getByRole('button', { name: 'Speichern' }).click();
+  await expect(page.getByRole('button', { name: 'Später', exact: true })).toBeVisible();
+  // The board shows the question over the forecast. The tab changes below the modal layer.
+  await page.evaluate(() => {
+    const tab = [...document.querySelectorAll<HTMLElement>('[role="tab"]')].find(
+      (one) => one.textContent.trim() === 'Vorhersage',
+    );
+    tab?.click();
+  });
+  await blur(page);
+  await board(page, 'MapSignIn');
 });
 
 test('MapSkeleton', async ({ page }) => {
