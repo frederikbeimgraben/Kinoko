@@ -5,8 +5,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ButtonComponent } from '../../ui/button/button.component';
 
 /**
- * Die Rückkehr vom SSO. Der Code wird gegen die Token getauscht, danach führt
- * der Weg auf die Route zurück, auf der die Anmeldung begonnen hat.
+ * The SSO return page. It exchanges the code for tokens and goes back to the route where sign-in started.
  */
 @Component({
   selector: 'app-signin',
@@ -33,8 +32,8 @@ export class SignInCallbackComponent {
     try {
       await this.router.navigateByUrl(await this.auth.completeSignIn());
     } catch {
-      // Ein abgelaufener oder doppelt eingelöster Code endet hier. Die Seite
-      // sagt es und lässt den Weg zurück zur Karte offen.
+      // An expired or reused code ends here. The page shows the error
+      // and keeps the path back to the map open.
       this.failure.set(true);
     }
   }

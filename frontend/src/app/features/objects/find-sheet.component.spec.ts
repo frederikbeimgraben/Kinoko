@@ -1,61 +1,31 @@
 import { provideHttpClient } from '@angular/common/http';
-import { NOW } from '../../core/tiles/now';
 import type { EnvironmentProviders, Provider } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
-import { AccountService } from '../../core/access/account.service';
+import { AccountStore } from '../../core/access/account.store';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { FIND } from '../../testing/entries-fixture';
-import { RAW_MANIFEST, answerValueTile } from '../../testing/map-doubles';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FindSheetComponent } from './find-sheet.component';
 
-/** Karte, Konto und Katalog stehen für jeden Test dieses Blatts gleich. */
+/** The account and the catalogue are the same for each test of this sheet. */
 function provider(owns = true): (EnvironmentProviders | Provider)[] {
   return [
     provideHttpClient(),
     provideHttpClientTesting(),
     ...authStubProviders(new AuthStub()),
-    { provide: AccountService, useValue: { owns: () => owns } },
-    // Ein festes Heute: die Karte steht auf der laufenden Kalenderwoche, und
-    // die Fixtures kennen nur die Wochen von 2025.
-    { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
+    { provide: AccountStore, useValue: { owns: () => owns } },
   ];
 }
 
-/** Die Kachel, in der der Fund der Vorlage liegt: Zoom 7, Spalte 67, Zeile 44. */
-const MANIFEST = { ...RAW_MANIFEST, tiles: { zooms: [7, 7], have: { '7': ['67/44'] } } };
-
-/**
- * Manifest und Wertkachel ohne Netz. Das Manifest kommt als JSON, die Kachel
- * als Bild; beide gehen über `fetch`, nicht über die API.
- */
-function answerMap(byte: number, manifest: unknown = MANIFEST): void {
-  answerValueTile(byte);
-  vi.stubGlobal('fetch', (url: string) =>
-    url.endsWith('.png')
-      ? Promise.resolve({
-          ok: true,
-          headers: new Headers({ 'content-type': 'image/png' }),
-          blob: () => Promise.resolve(new Blob()),
-        })
-      : Promise.resolve({
-          ok: true,
-          status: 200,
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: () => Promise.resolve(manifest),
-        }),
-  );
-}
-
-/** Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf. */
+/** The catalogue gets into the state through the storage, not with the call. */
 async function catalogueReady(): Promise<void> {
-  const catalogue = TestBed.inject(SpeciesState);
+  const catalogue = TestBed.inject(SpeciesStore);
   await vi.waitFor(() => {
     expect(catalogue.species()).not.toHaveLength(0);
   });
@@ -99,13 +69,8 @@ async function build(options: BuildOptions = {}): Promise<Setup> {
   };
 }
 
-describe('FundBlattComponent', () => {
-  beforeEach(() => {
-    // Byte 108 sind (108 - 1) / 254 × 0,5, also 21 % je Begehung.
-    answerMap(108);
-  });
-
-  it('zeigt Art, Zeile, Kennzeichen und Notiz im Rumpf', async () => {
+describe('FindSheetComponent', () => {
+  it('shows the species, the line, the badge and the note in the body', async () => {
     const setup = await build();
 
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
@@ -115,37 +80,7 @@ describe('FundBlattComponent', () => {
     await noViolations(setup.container);
   });
 
-  it('nennt die Vorhersage an diesem Ort mit Art, Woche und Bezug', async () => {
-    const setup = await build();
-
-    await vi.waitFor(() => {
-      setup.refresh();
-      expect(screen.getByText('Vorhersage an diesem Ort')).toBeInTheDocument();
-    });
-    expect(screen.getByText('Steinpilz, KW 40 · 2025, je Begehung')).toBeInTheDocument();
-    expect(screen.getByText('21 %')).toBeInTheDocument();
-  });
-
-  it('lässt die Kennzahl weg, wenn es für den Ort keine gibt', async () => {
-    answerMap(0);
-    const setup = await build();
-
-    await vi.waitFor(() => {
-      setup.refresh();
-    });
-
-    expect(screen.queryByText('Vorhersage an diesem Ort')).not.toBeInTheDocument();
-  });
-
-  it('gibt die Karte frei, wenn der Fund dort gezeigt werden soll', async () => {
-    const setup = await build();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Auf der Karte anzeigen' }));
-
-    expect(setup.closed).toBe(1);
-  });
-
-  it('speichert eine Änderung und kehrt zur Ansicht zurück', async () => {
+  it('saves a change and goes back to the view', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
@@ -162,7 +97,7 @@ describe('FundBlattComponent', () => {
     expect(setup.toasts.success).toEqual(['Gespeichert.']);
   });
 
-  it('bleibt im Formular, wenn die Änderung nicht durchgeht', async () => {
+  it('stays in the form when the change fails', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
@@ -178,7 +113,7 @@ describe('FundBlattComponent', () => {
     });
   });
 
-  /** Beantwortet jede offene Abfrage der Fotoliste. */
+  /** Answers each open request of the photo list. */
   async function answerPhotos(setup: Setup, ids: readonly string[]): Promise<void> {
     await vi.waitFor(() => {
       const open = setup.http.match((request) => request.url === '/api/photos' && request.method === 'GET');
@@ -189,7 +124,7 @@ describe('FundBlattComponent', () => {
     });
   }
 
-  it('nimmt ein vorhandenes Foto weg und holt die Liste neu', async () => {
+  it('removes a photo and gets the list again', async () => {
     const setup = await build();
     await answerPhotos(setup, ['foto-eins']);
 
@@ -203,7 +138,7 @@ describe('FundBlattComponent', () => {
     await answerPhotos(setup, []);
   });
 
-  it('fragt vor dem Löschen und schließt danach', async () => {
+  it('asks before the delete and closes after it', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
@@ -221,7 +156,7 @@ describe('FundBlattComponent', () => {
     expect(setup.toasts.success).toEqual(['Der Fund ist gelöscht.']);
   });
 
-  it('schließt die Rückfrage, ohne zu löschen', async () => {
+  it('closes the question without a delete', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
@@ -231,34 +166,5 @@ describe('FundBlattComponent', () => {
 
     setup.http.expectNone(`/api/finds/${FIND.id}`);
     expect(setup.closed).toBe(0);
-  });
-
-  it('lässt die Kennzahl weg, wenn die Art keine Vorhersagekarte hat', async () => {
-    const { detectChanges } = await render(FindSheetComponent, {
-      inputs: { find: { ...FIND, speciesId: 'semmelstoppelpilz' } },
-      providers: provider(),
-    });
-    await vi.waitFor(() => {
-      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
-    });
-    detectChanges();
-
-    expect(screen.queryByText('Vorhersage an diesem Ort')).not.toBeInTheDocument();
-  });
-
-  it('lässt die Kennzahl weg, wenn das Manifest nicht kommt', async () => {
-    vi.stubGlobal('fetch', () => Promise.reject(new Error('offline')));
-    const { detectChanges } = await render(FindSheetComponent, {
-      inputs: { find: FIND },
-      providers: provider(),
-    });
-    await vi.waitFor(() => {
-      TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
-    });
-    await vi.waitFor(() => {
-      detectChanges();
-    });
-
-    expect(screen.queryByText('Vorhersage an diesem Ort')).not.toBeInTheDocument();
   });
 });

@@ -1,16 +1,8 @@
 import { layerWeek, type Layer, type Histogram } from './layers';
 import type { SpeciesManifest } from './manifest';
 
-/**
- * Eine Vorhersage-Art als Eingabe-Ebene.
- *
- * Die Kombination lässt jede Quelle als Faktor zu, auch eine Art. Beide tragen
- * dasselbe: eine Skala mit `low` und `high`, Kachelordner je Woche, eine
- * Liste vorhandener Kacheln und ein Histogramm. Statt zwei Wege durch die
- * halbe Anwendung zu führen, wird die Art hier in die Form der Ebene gebracht:
- * `low` ist 0, `high` der Höchstwert der Art, und ohne Einheit liest sich das
- * als Prozent, was eine Fundwahrscheinlichkeit auch ist.
- */
+// Gives a forecast species the shape of an input layer, so the combination uses one code path.
+// `low` is 0 and `high` is the species maximum. Without a unit, the value shows as a percent.
 export function layerFromSpecies(manifest: SpeciesManifest, label: string, note = ''): Layer {
   const histograms = new Map<string, Histogram>();
   for (const week of manifest.weeks) {
@@ -39,9 +31,7 @@ export function layerFromSpecies(manifest: SpeciesManifest, label: string, note 
 }
 
 /**
- * Der Ordner über den Wochen. Er wird aus dem Pfad der ersten Woche gelesen
- * und nicht aus dem Slug gebaut: dann trifft ein Umbenennen im Rendering nur
- * das Manifest.
+ * The folder above the weeks. It comes from the first week path, not the slug, so a rename only changes the manifest.
  */
 function tileRoot(manifest: SpeciesManifest): string {
   const first = manifest.weeks.at(0)?.tilePath ?? '';

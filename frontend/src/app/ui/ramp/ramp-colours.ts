@@ -1,4 +1,4 @@
-/** Farbverlauf der Wertkacheln, fest wie die Daten selbst, ohne Angular-Import. */
+/** Colour ramps of the value tiles. They are fixed data with no Angular import. */
 export const FORECAST_RAMP: readonly string[] = [
   '#0d0829',
   '#3b0f70',

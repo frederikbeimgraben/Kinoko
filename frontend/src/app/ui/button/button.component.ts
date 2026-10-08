@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Die sechs Auftritte aus `kit.css` `.btn`. */
+/** The six variants of `kit.css` `.btn`. */
 export type ButtonKind = 'primary' | 'tonal' | 'outline' | 'text' | 'danger' | 'textdanger';
 
-/** Der Knopf des Kits, per `kit.css` `.btn`. Ersetzt den Vendor-Knopf. */
+/** The kit button, styled by `kit.css` `.btn`. */
 @Component({
   selector: 'app-push-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,9 +16,9 @@ export type ButtonKind = 'primary' | 'tonal' | 'outline' | 'text' | 'danger' | '
 export class ButtonComponent {
   readonly kind = input<ButtonKind>('primary');
   readonly icon = input<IconName>();
-  /** Volle Breite des Wirts. */
+  /** Uses the full width of the host. */
   readonly wide = input(false);
-  /** Ein laufender Auftrag zeigt den Kreisel statt der Beschriftung. */
+  /** Shows a spinner in place of the label. */
   readonly busy = input(false);
   readonly disabled = input(false);
   readonly type = input<'button' | 'submit'>('button');

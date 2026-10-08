@@ -5,15 +5,15 @@ import { catalogueProviders, catalogueReady } from '../../testing/catalogue-doub
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { SpeciesSearchFilterBarComponent } from './search-filter-bar.component';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 
-async function build(value = ''): Promise<{ container: Element; filter: SpeciesFilterState }> {
+async function build(value = ''): Promise<{ container: Element; filter: SpeciesFilterStore }> {
   const { container } = await render(SpeciesSearchFilterBarComponent, {
     inputs: { value, placeholder: 'Suchen' },
     providers: [...catalogueProviders()],
   });
   await catalogueReady();
-  return { container, filter: TestBed.inject(SpeciesFilterState) };
+  return { container, filter: TestBed.inject(SpeciesFilterStore) };
 }
 
 describe('SpeciesSearchFilterBarComponent', () => {
@@ -58,7 +58,7 @@ describe('SpeciesSearchFilterBarComponent', () => {
       providers: [...catalogueProviders()],
     });
     await catalogueReady();
-    const filter = TestBed.inject(SpeciesFilterState);
+    const filter = TestBed.inject(SpeciesFilterStore);
     const opened: string[] = [];
     fixture.componentInstance.groupOpened.subscribe((key) => opened.push(key));
     expect(filter.open()).toBe(false);

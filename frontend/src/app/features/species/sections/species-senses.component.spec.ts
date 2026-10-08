@@ -7,7 +7,7 @@ function term(slug: string, name: string, kind: 'smell' | 'taste') {
   return { term: { id: slug, slug, name, kind }, fromExperience: false };
 }
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** The computed styles of an element. The element must exist. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
   if (element === null) throw new Error('Das Element steht nicht im Baum.');
   return getComputedStyle(element);

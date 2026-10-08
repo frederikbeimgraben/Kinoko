@@ -9,7 +9,7 @@
     "selector": "Badge",
     "stem": "Badge",
     "w": 120,
-    "h": 24
+    "h": 40
   },
   {
     "selector": "Column",
@@ -39,7 +39,7 @@
     "selector": "Grip",
     "stem": "Grip",
     "w": 390,
-    "h": 24
+    "h": 40
   },
   {
     "selector": "Group",
@@ -56,8 +56,8 @@
   {
     "selector": "Icon",
     "stem": "Icon",
-    "w": 24,
-    "h": 24
+    "w": 40,
+    "h": 40
   },
   {
     "selector": "Legend",
@@ -99,7 +99,7 @@
     "selector": "Progress",
     "stem": "Progress",
     "w": 358,
-    "h": 8
+    "h": 40
   },
   {
     "selector": "QueueCard",
@@ -159,7 +159,7 @@
     "selector": "Slider",
     "stem": "Slider",
     "w": 358,
-    "h": 28
+    "h": 40
   },
   {
     "selector": "Split",
@@ -237,7 +237,7 @@
     "selector": "Chip",
     "stem": "Chip",
     "w": 160,
-    "h": 36
+    "h": 40
   },
   {
     "selector": "ColourRow",

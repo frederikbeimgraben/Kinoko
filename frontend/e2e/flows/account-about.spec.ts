@@ -5,7 +5,7 @@ import { authConfig, mockSignIn } from '../fixtures/auth';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Meldet an und legt den Vertrag auf die Seite. */
+/** Signs in and puts the contract mock on the page. */
 async function start(page: Page, path: string): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, { '/api/config': authConfig(BASE) });

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { speciesEntry } from '../../../testing/species-fixture';
+import type { SpeciesReaction } from '../species.store';
 import { compareGroups } from './comparison.groups';
 
 const WHITE = { name: 'weiß', hex: '#f2efe6' };
@@ -152,5 +153,32 @@ describe('compareGroups', () => {
       text: 'dunkelrosa',
     });
     expect(row?.cells[1]).toEqual({ kind: 'plain', text: 'keine Angabe' });
+  });
+
+  it('compares the reactions per reagent in the group of the colour change', () => {
+    const reaction: SpeciesReaction = {
+      reagent: { slug: 'koh', name: 'Kalilauge' },
+      reading: 'Huthaut gelb',
+      part: 'cap',
+      location: null,
+      result: 'positive',
+      colour: { name: 'gelb', hex: '#d8c040' },
+      contested: false,
+      partlyConfirmed: false,
+      sources: [],
+    };
+    const negative: SpeciesReaction = { ...reaction, reading: '', result: 'negative', colour: null };
+    const reactions: Record<string, readonly SpeciesReaction[]> = { steinpilz: [reaction], gift: [negative] };
+    const groups = compareGroups([STONE, KNIGHT], i18n(), false, (slug) => reactions[slug] ?? []);
+    const row = groups.find((one) => one.label === 'Verfärbung')?.rows.find((one) => one.key === 'Kalilauge');
+
+    expect(row?.cells[0]).toEqual({
+      kind: 'swatch',
+      colours: [{ name: 'gelb', hex: '#d8c040' }],
+      mode: 'single',
+      text: 'Huthaut gelb',
+    });
+    expect(row?.cells[1]).toEqual({ kind: 'plain', text: 'negativ' });
+    expect(row?.diff).toBe(true);
   });
 });

@@ -3,7 +3,7 @@ import type { Observable } from 'rxjs';
 import { ApiClient } from './api-client';
 import type { Combination, CombinationInput, CombinationPage } from './models';
 
-/** Die eigenen Kombinationen. Jede Route braucht ein Konto. */
+/** The combinations of the current user. Each route needs an account. */
 @Injectable({ providedIn: 'root' })
 export class CombinationsApi {
   private readonly api = inject(ApiClient);
@@ -16,12 +16,12 @@ export class CombinationsApi {
     return this.api.post<Combination>('/combinations', input);
   }
 
-  /** Legt die Kombination mit dieser Kennung an oder ersetzt sie. */
+  /** Makes the combination with this ID or replaces it. */
   put(id: string, input: CombinationInput): Observable<Combination> {
     return this.api.put<Combination>(`/combinations/${encodeURIComponent(id)}`, input);
   }
 
-  /** Die Antwort ist leer; der Aufrufer wartet nur darauf, dass sie kommt. */
+  /** The response is empty. The caller only waits for it. */
   remove(id: string): Observable<null> {
     return this.api.delete<null>(`/combinations/${encodeURIComponent(id)}`);
   }

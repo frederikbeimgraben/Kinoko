@@ -26,8 +26,8 @@ describe('EbenenListeComponent', () => {
       inputs: { layers: LAYERS, label: 'Eingabe-Ebenen' },
     });
 
-    // Niederschlag trägt das Kalenderblatt, der Wald den Baum: vier Ebenen,
-    // vier Zeichen, keins doppelt in dieser Auswahl.
+    // Rain has the calendar icon and forest has the tree icon.
+    // Four layers have four different icons in this selection.
     expect(container.querySelectorAll('.layers__glyph svg')).toHaveLength(4);
   });
 

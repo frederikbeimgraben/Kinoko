@@ -1,53 +1,24 @@
-<app-page-header [title]="'nav.tab.species' | t" />
 @if (wide()) {
-  <div class="species species--wide">
-    <div class="species__column">
-      <app-search-field
-        [value]="query()"
-        [placeholder]="'species.search.placeholder' | t"
-        [loading]="loading()"
-        (valueChange)="query.set($event)"
-      />
-      <app-species-filter-panel />
-    </div>
-    <div class="species__pane">
-      @if (summary(); as text) {
-        <p class="species__summary">{{ text }}</p>
-      }
-      <app-species-results
-        [hits]="hits()"
-        [unassessable]="unassessable()"
-        [loading]="loading()"
-        [failed]="failed()"
-        [hasMore]="hasMore()"
-        (chosen)="open($event)"
-        (more)="more()"
-        (retry)="state.reload()"
-        (resetFilter)="reset()"
-      />
-    </div>
-  </div>
+  <app-species-desk>
+    <app-state-view class="species__choose" icon="species" [title]="'species.detail.choose' | t" />
+  </app-species-desk>
 } @else {
-  <div class="species">
-    <app-species-search-filter-bar
-      [value]="query()"
-      [placeholder]="'species.search.placeholder' | t"
-      (valueChange)="query.set($event)"
-    />
-    @if (summary(); as text) {
-      <p class="species__summary">{{ text }}</p>
-    }
-    <app-species-results
-      [hits]="hits()"
-      [unassessable]="unassessable()"
-      [loading]="loading()"
-      [failed]="failed()"
-      [hasMore]="hasMore()"
-      (chosen)="open($event)"
-      (more)="more()"
-      (retry)="state.reload()"
-      (resetFilter)="reset()"
-    />
-  </div>
+  <app-species-search-bar />
+  @if (!catalogue.loading() && !catalogue.failed()) {
+    <app-species-filter-chips />
+  }
+  <app-species-results
+    [hits]="listing.hits()"
+    [unassessable]="listing.unassessable()"
+    [sort]="filter.sort()"
+    [loading]="catalogue.loading()"
+    [failed]="catalogue.failed()"
+    [hasMore]="listing.hasMore()"
+    [soft]="catalogue.activeSpecies()"
+    (chosen)="open($event)"
+    (more)="listing.more()"
+    (retry)="catalogue.reload()"
+    (resetFilter)="filter.clearAll()"
+  />
   <app-species-filter-sheet />
 }

@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SpeciesEditorComponent } from './species-editor.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 
 const NOW = '2026-09-10T10:00:00+02:00';
 
@@ -83,10 +83,10 @@ async function build(
   return { container, http };
 }
 
-// Das Blatt trägt viele Knöpfe; unter Last braucht die Suche nach Rolle länger.
+// The sheet has many buttons. Under load, a query by role takes longer.
 describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt Kopf, Zahlen, Merkmale und Quelle', async () => {

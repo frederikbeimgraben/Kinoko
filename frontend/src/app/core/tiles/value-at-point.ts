@@ -2,12 +2,11 @@ import { tilePath } from './tile-paths';
 import { covers } from './coverage';
 import type { SpeciesManifest } from './manifest';
 
-/** Eine Wertkachel ist 256 Punkte breit, so wie das Rendering sie schreibt. */
+/** A value tile is 256 pixels wide, as the renderer writes it. */
 const TILE_PIXELS = 256;
 
 /**
- * Der Ort einer Kachel und der Punkt darin. Getrennt von der Rechnung, damit
- * ein Test das Raster ohne Bild prüfen kann.
+ * The tile and the pixel in it. It is separate from the calculation, so a test can check the grid without an image.
  */
 export interface TileLocation {
   z: number;
@@ -17,7 +16,7 @@ export interface TileLocation {
   pixelY: number;
 }
 
-/** Rechnet Länge und Breite auf Kachel und Punkt einer Zoomstufe um. */
+/** Converts longitude and latitude to tile and pixel at one zoom level. */
 export function tileLocation(lon: number, lat: number, zoom: number): TileLocation {
   const n = 2 ** zoom;
   const sinus = Math.sin((Math.min(Math.max(lat, -85.05), 85.05) * Math.PI) / 180);
@@ -35,21 +34,14 @@ export function tileLocation(lon: number, lat: number, zoom: number): TileLocati
 }
 
 /**
- * Rechnet das Byte einer Wertkachel in eine Wahrscheinlichkeit um. Byte 0
- * heißt „keine Daten“; sonst gilt `(byte - 1) / 254 * top`, dieselbe Rechnung
- * wie in `modell/src/pilze/tiles.py`.
+ * Converts a value tile byte to a probability. Byte 0 means no data. Else `(byte - 1) / 254 * top`, as in `modell/src/pilze/tiles.py`.
  */
 export function valueFromByte(byte: number, top: number): number | null {
   return byte === 0 ? null : ((byte - 1) / 254) * top;
 }
 
-/**
- * Die Vorhersage an einem Ort, aus der feinsten vorhandenen Kachel der Woche.
- *
- * Der Wert kommt aus derselben Kachel, die die Karte färbt; ein eigener
- * Endpunkt dafür wäre eine zweite Wahrheit. Ohne Kachel, ohne Leinwand oder
- * ohne Netz gibt es keinen Wert, und das Blatt zeigt die Zeile dann nicht.
- */
+// The forecast at a point, from the finest tile of the week. The map uses the same tile, so there is one source of truth.
+// Without tile, canvas or network, there is no value, and the sheet hides the row.
 export async function valueAtPoint(
   manifest: SpeciesManifest,
   weekFolder: string,
@@ -75,7 +67,7 @@ async function readByte(url: string, location: TileLocation): Promise<number | n
     if (!pen) return null;
     pen.drawImage(shot, 0, 0);
     shot.close();
-    // Die Wertkachel ist grau: der rote Kanal trägt das Byte.
+    // The value tile is gray, so the red channel holds the byte.
     return pen.getImageData(location.pixelX, location.pixelY, 1, 1).data[0];
   } catch {
     return null;

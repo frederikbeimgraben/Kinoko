@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { render } from '@testing-library/angular';
 import { SheetHeightDirective } from './sheet-height.directive';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
 
 @Component({
   imports: [SheetHeightDirective],
@@ -21,7 +21,7 @@ class HostComponent {
   readonly withSheet = signal(true);
 }
 
-/** Der Beobachter des Tests: er meldet erst, wenn der Test es sagt. */
+/** The observer of the test: it reports only when the test tells it to. */
 function observer(): { report: () => void } {
   const handle = { report: (): void => undefined };
   vi.stubGlobal(
@@ -31,17 +31,17 @@ function observer(): { report: () => void } {
         handle.report = callback;
       }
       observe(): void {
-        // Ohne Layout ändert sich keine Größe von selbst.
+        // Without a layout, no size changes by itself.
       }
       disconnect(): void {
-        // Es gibt nichts zu lösen.
+        // There is nothing to disconnect.
       }
     },
   );
   return handle;
 }
 
-/** jsdom rechnet kein Layout; jedes Element beginnt dort, wo der Test es sagt. */
+/** jsdom has no layout. Each element starts where the test tells. */
 function stubTop(sheetTop: number, hostTop: number, size = 100): void {
   const real = Object.getOwnPropertyDescriptor(Element.prototype, 'getBoundingClientRect');
   Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
@@ -65,7 +65,7 @@ describe('SheetHeightDirective', () => {
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(240);
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(240);
   });
 
   it('misst die Leiste selbst, solange im Wirt kein Blatt steht', async () => {
@@ -77,7 +77,7 @@ describe('SheetHeightDirective', () => {
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(144);
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(144);
   });
 
   it('meldet nichts, solange das Blatt keine Fläche hat', async () => {
@@ -87,13 +87,13 @@ describe('SheetHeightDirective', () => {
 
     handle.report();
 
-    expect(TestBed.inject(MapState).overlayHeight()).toBe(0);
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(0);
   });
 
   it('stellt die Überlagerung zurück, sobald das Blatt geht', async () => {
     const { fixture, detectChanges } = await render(HostComponent);
-    const state = TestBed.inject(MapState);
-    state.overlayHeight.set(240);
+    const state = TestBed.inject(MapStore);
+    state.setOverlayHeight(240);
 
     fixture.componentInstance.open.set(false);
     detectChanges();

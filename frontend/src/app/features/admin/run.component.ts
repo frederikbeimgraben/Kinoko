@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { DATA_SOURCE_KINDS, type DataSourceKind } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -8,8 +9,14 @@ import { type BadgeKind, LevelPillComponent } from '../../ui/level-pill/level-pi
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { MonoComponent } from '../../ui/mono/mono.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { ErrorStateComponent } from '../../ui/error-state/error-state.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { RunState } from './run.state';
+import { KIND_TEXT } from './data-sources/labels';
+import { RunStore } from './run.store';
 import {
   RUN_STATE_TEXT,
   brierValue,
@@ -21,14 +28,14 @@ import {
   visitsValue,
 } from './runs.rows';
 
-/** Eine Zeile der Kopfkarte: Beschriftung und Wert. */
+/** A row of the head card: a label and a value. */
 interface Fact {
   key: string;
   title: string;
   value: string;
 }
 
-/** Ein Schritt des Laufs mit seinem Zustand. */
+/** A step of the run with its state. */
 interface Step {
   key: number;
   title: string;
@@ -38,15 +45,29 @@ interface Step {
   kind: BadgeKind;
 }
 
-/** Ein Lauf: seine Zahlen, seine Schritte und seine Ausgabe. */
+/** An input of the run: the data source and its version. */
+interface InputRow {
+  key: string;
+  title: string;
+  version: string;
+  /** A known kind opens the page of its data source. */
+  kind: DataSourceKind | null;
+}
+
+/** One run: its counts, its inputs, its steps and its output. */
 @Component({
   selector: 'app-run',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ErrorStateComponent,
     LevelPillComponent,
     ListRowComponent,
     MonoComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SectionComponent,
+    StateViewComponent,
     SvgIconComponent,
     TranslatePipe,
   ],
@@ -56,29 +77,28 @@ interface Step {
 export class RunComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(RunState);
+  private readonly store = inject(RunStore);
 
   private readonly id = injectRouteParam('id');
 
   private readonly text = (key: TranslationKey, values?: Record<string, string | number>): string =>
     this.i18n.translate(key, values);
 
-  protected readonly run = this.state.run;
+  protected readonly run = this.store.run;
+  protected readonly missing = this.store.missing;
+  protected readonly failed = this.store.failed;
 
   protected readonly title = computed(() => {
     const run = this.run();
-    return run === null ? this.i18n.translate('admin.run.notFound') : runTitle(run, this.text);
+    if (run !== null) return runTitle(run, this.text);
+    return this.missing() ? this.text('admin.run.notFound') : '';
   });
 
   protected readonly facts = computed<Fact[]>(() => {
     const run = this.run();
     if (run === null) return [];
     return [
-      {
-        key: 'started',
-        title: this.text('admin.run.startedAt'),
-        value: startedValue(run, this.i18n),
-      },
+      { key: 'started', title: this.text('admin.run.startedAt'), value: startedValue(run, this.i18n) },
       { key: 'duration', title: this.text('admin.run.duration'), value: this.duration() },
       { key: 'visits', title: this.text('admin.run.visits'), value: visitsValue(run, this.text) },
     ].filter((fact) => fact.value !== '');
@@ -90,6 +110,21 @@ export class RunComponent {
   });
 
   protected readonly resultTitle = computed(() => this.text('admin.run.result'));
+
+  protected readonly inputs = computed<InputRow[]>(() =>
+    (this.run()?.inputs ?? []).map((input) => {
+      const kind = DATA_SOURCE_KINDS.includes(input.kind as DataSourceKind)
+        ? (input.kind as DataSourceKind)
+        : null;
+      return {
+        key: input.kind,
+        title: kind === null ? input.kind : this.text(KIND_TEXT[kind]),
+        version:
+          input.version === null ? '' : this.text('admin.dataSources.version', { nummer: input.version }),
+        kind,
+      };
+    }),
+  );
 
   protected readonly steps = computed<Step[]>(() => {
     const run = this.run();
@@ -108,17 +143,22 @@ export class RunComponent {
   protected readonly logText = computed(() => this.log().join('\n'));
 
   constructor() {
-    effect(() => {
-      const id = this.id();
-      if (id !== '') this.state.load(id);
-    });
+    this.store.load(this.id);
+  }
+
+  protected retry(): void {
+    this.store.load(this.id());
+  }
+
+  protected openInput(kind: DataSourceKind | null): void {
+    if (kind !== null) void this.router.navigate(['/verwaltung/datenquellen', kind]);
   }
 
   protected back(): void {
     void this.router.navigateByUrl('/verwaltung/laeufe');
   }
 
-  /** Ein Lauf ohne Ende trägt keine Dauer. */
+  /** A run without an end has no duration. */
   private duration(): string {
     const run = this.run();
     const started = run?.startedAt;

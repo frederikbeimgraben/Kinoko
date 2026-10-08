@@ -1,20 +1,10 @@
-@if (pending()) {
-  <app-overlay-host class="signin" [open]="true" [modal]="true" (closed)="later()">
-    <app-sheet
-      [label]="'anmelden.blatt' | t"
-      [title]="'anmelden.titel' | t"
-      [modal]="true"
-      (closed)="later()"
-    >
-      <app-action-bar
-        #footer
-        foot
-        [primary]="'anmelden.knopf' | t"
-        [secondary]="'anmelden.spaeter' | t"
-        [ghost]="true"
-        (primaryClick)="signIn()"
-        (secondaryClick)="later()"
-      />
-    </app-sheet>
-  </app-overlay-host>
-}
+<app-confirm-dialog
+  [open]="pending()"
+  [stack]="true"
+  [aboveNav]="!wide()"
+  [danger]="false"
+  [confirmLabel]="'anmelden.knopf' | t"
+  [cancelLabel]="'anmelden.spaeter' | t"
+  (confirmed)="signIn()"
+  (cancelled)="later()"
+/>

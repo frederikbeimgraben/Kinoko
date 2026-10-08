@@ -1,23 +1,22 @@
-// Der Rumpf eines Objekt-Blatts. Fund, Marker und Zone teilen ihn sich;
-// die Maße stehen so in den Boards `MarkerSheet`, `FindSheet` und `ZoneSheet`.
-@mixin object-sheet($gap: var(--space-4)) {
+@use '../../../styles/overlay-body' as overlay;
+
+// The body of an object sheet. Find, marker and zone share it (boards `FindViewBody`, `MarkerViewBody`, `ZoneViewBody`).
+@mixin object-sheet {
+  @include overlay.overlay-body;
+
   .objectsheet {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    gap: $gap;
-    min-block-size: 0;
-    padding: var(--space-1) var(--size-gutter) var(--space-5);
     overflow-y: auto;
   }
 
-  // Ohne diese Zeile gleicht der Browser die letzte Zeile aus und bricht
-  // anders als das Board.
+  // Per `kit.css` `.note`: the note is a card.
   .objectsheet__note {
     margin: 0;
-    font-size: var(--fs-row-meta);
+    padding: 14px 16px;
+    font-size: 15px;
     line-height: 1.45;
-    color: var(--color-text-muted);
+    color: var(--text);
     text-wrap: wrap;
+    background: var(--surface);
+    border-radius: var(--r-item);
   }
 }

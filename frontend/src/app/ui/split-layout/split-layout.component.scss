@@ -7,7 +7,7 @@
   min-inline-size: 0;
 }
 
-// Eine Spalte des Rechners trägt ihre Fläche außen und ihren Inhalt innen.
+// A desktop pane has its ground outside and its content inside.
 :host(.layout--pane) {
   display: flex;
   flex: 1 1 0;
@@ -18,7 +18,7 @@
   flex: 1 1 0;
 }
 
-// Eine feste Breite hält die Spalte gegen jeden Rest.
+// A fixed width keeps the pane at its width when the space changes.
 :host(.layout--fixed) {
   flex: 0 0 auto;
 }
@@ -37,38 +37,46 @@
   background: var(--bg);
 }
 
-:host(.layout--pane) .layout__in {
+// On the desktop a route change in one section crossfades the detail pane (see `_route-motion.scss`).
+@media (min-width: 1024px) {
+  :host(.layout--detail) {
+    view-transition-name: detail-pane;
+  }
+}
+
+// The child combinator keeps each rule off a nested split layout, which has the same scope attribute.
+:host(.layout--pane) > .layout__in {
   display: flex;
   flex: 1;
   min-inline-size: 0;
 }
 
-:host(.layout--panel) .layout__in {
+:host(.layout--panel) > .layout__in {
   flex-direction: column;
   overflow: hidden;
   background: var(--sheet);
   border-radius: 28px;
 }
 
-:host(.layout--map) .layout__in {
+:host(.layout--map) > .layout__in {
   position: relative;
   overflow: hidden;
   border-radius: 28px;
 }
 
-:host(.layout--middle) .layout__in,
-:host(.layout--detail) .layout__in {
+:host(.layout--middle) > .layout__in,
+:host(.layout--detail) > .layout__in {
   position: relative;
   flex-direction: column;
 }
 
-:host(.layout--column) .layout__in {
+:host(.layout--column) > .layout__in {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-:host(.layout--columns) .layout__in {
+:host(.layout--columns) > .layout__in {
   display: grid;
   gap: 24px;
   align-items: start;
@@ -80,7 +88,7 @@
   min-block-size: 0;
 }
 
-:host(.layout--split) .layout__in {
+:host(.layout--split) > .layout__in {
   display: flex;
   flex: 1;
   gap: 8px;

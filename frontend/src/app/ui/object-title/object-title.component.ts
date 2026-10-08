@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { PrivateImageComponent } from '../private-image/private-image.component';
 import type { IconName } from '../svg-icon/svg-icon.component';
 
-/** Der Kopf eines Objekt-Blatts: Bild, Name, gedämpfte Zeile. Per `ObjectTitle.dc.html`. */
+/** The head of an object sheet: image, name and a muted line, as in `ObjectTitle.dc.html`. */
 @Component({
   selector: 'app-object-title',
   changeDetection: ChangeDetectionStrategy.OnPush,

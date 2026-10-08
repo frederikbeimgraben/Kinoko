@@ -1,0 +1,66 @@
+<app-overlay-host [open]="version() !== null" [modal]="true" (closed)="close()">
+  @if (version(); as version) {
+    <app-sheet [label]="title()" [title]="title()" [modal]="true" [dismissible]="true" (closed)="close()">
+      <div class="version">
+        <app-row-group>
+          @for (fact of facts(); track fact.key) {
+            <app-list-row [title]="fact.title" [subline]="fact.value" [wrap]="true" />
+          }
+        </app-row-group>
+
+        <app-row-group>
+          @if (canActivate()) {
+            <app-list-row
+              icon="check"
+              [title]="'admin.dataSources.activate' | t"
+              [clickable]="!busy()"
+              (chosen)="act('activate')"
+            />
+          }
+          <app-list-row
+            icon="refresh"
+            [title]="'admin.dataSources.reprocess' | t"
+            [clickable]="!busy()"
+            (chosen)="act('reprocess')"
+          />
+          <app-list-row
+            icon="info"
+            [title]="'admin.dataSources.log' | t"
+            [clickable]="true"
+            [chevron]="!logOpen()"
+            (chosen)="toggleLog()"
+          />
+          <app-list-row
+            icon="trash"
+            [title]="'admin.dataSources.delete' | t"
+            [clickable]="!busy()"
+            (chosen)="asking.set(true)"
+          />
+        </app-row-group>
+
+        @if (logOpen()) {
+          <app-section [label]="'admin.dataSources.log' | t">
+            @if (log(); as log) {
+              @if (log.lines.length > 0) {
+                <app-mono [text]="logText()" />
+              } @else {
+                <p class="version__empty">{{ 'admin.dataSources.logEmpty' | t }}</p>
+              }
+            } @else {
+              <app-skeleton kind="block" height="96px" radius="var(--r-item)" />
+            }
+          </app-section>
+        }
+      </div>
+    </app-sheet>
+  }
+</app-overlay-host>
+
+<app-confirm-dialog
+  [open]="asking()"
+  [title]="deleteQuestion()"
+  [confirmLabel]="'common.delete' | t"
+  [confirmDisabled]="busy()"
+  (confirmed)="act('remove')"
+  (cancelled)="asking.set(false)"
+/>

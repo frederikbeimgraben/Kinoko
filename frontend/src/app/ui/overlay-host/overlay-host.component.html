@@ -1,10 +1,11 @@
 @if (open()) {
   <button
-    class="overlay__scrim tap"
+    class="overlay__scrim"
     [class.overlay__scrim--modal]="modal()"
     [class.overlay__scrim--wide]="wide()"
     type="button"
-    data-press="tint"
+    [animate.enter]="wide() ? '' : 'motion-fade-in'"
+    [animate.leave]="wide() ? '' : 'motion-fade-out'"
     [attr.aria-label]="'common.close' | t"
     (click)="closed.emit()"
   ></button>
@@ -12,6 +13,8 @@
     class="overlay__panel"
     [class.overlay__panel--wide]="wide()"
     tabindex="-1"
+    (animate.enter)="onEnter($event)"
+    (animate.leave)="onLeave($event)"
     (keydown)="onKeydown($event)"
   >
     <ng-content />

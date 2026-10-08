@@ -7,7 +7,7 @@
 .reject__panel {
   @include modal-layer.panel;
 
-  // Die Vorschläge stehen gedrängt, das Blatt trägt sie nur als Angebot.
+  // The suggestions stand close together. The sheet only offers them.
   --size-chip: 32px;
   --chip-group-size: 13px;
   --chip-group-inline: 14px;
@@ -28,17 +28,18 @@
 
   gap: 14px;
   padding: 20px var(--space-4) var(--space-4);
-  border-block-end: 0;
-  border-inline: 0;
-  border-start-start-radius: var(--radius-xl);
-  border-start-end-radius: var(--radius-xl);
+  background: var(--sheet);
+  border-start-start-radius: var(--r-sheet);
+  border-start-end-radius: var(--r-sheet);
+  box-shadow: var(--shadow-sheet);
 }
 
+// Per `kit.css` `.grip i`.
 .reject__handle {
-  inline-size: 36px;
+  inline-size: 32px;
   block-size: 4px;
   margin: -8px auto 4px;
-  background: var(--color-border);
+  background: var(--outline-strong);
   border-radius: 2px;
 }
 

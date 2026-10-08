@@ -2,10 +2,7 @@ import { Pipe, inject, type PipeTransform } from '@angular/core';
 import { I18nService } from './i18n.service';
 import type { TranslationKey } from './translations';
 
-/**
- * `{{ 'nav.karte' | t }}`. Unrein, damit ein Sprachwechsel sofort durchschlägt;
- * die aktive Sprache ist ein Signal im Dienst.
- */
+/** `{{ 'nav.karte' | t }}`. The pipe is impure, so a change to the language signal applies immediately. */
 @Pipe({ name: 't', pure: false })
 export class TranslatePipe implements PipeTransform {
   private readonly i18n = inject(I18nService);

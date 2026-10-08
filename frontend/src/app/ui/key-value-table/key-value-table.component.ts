@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/** Der Rahmen einer Merkmalstabelle. Die Zeilen kommen als Inhalt. */
+/** The frame of a trait table. The rows come as projected content. */
 @Component({
   selector: 'app-key-value-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -9,6 +9,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   styleUrl: './key-value-table.component.scss',
 })
 export class KeyValueTableComponent {
-  /** Wie viele Wertspalten die Zeilen tragen. Der Vergleich nennt eine je Art. */
+  /** The number of value columns in the rows. A comparison gives one for each species. */
   readonly columns = input(1);
 }

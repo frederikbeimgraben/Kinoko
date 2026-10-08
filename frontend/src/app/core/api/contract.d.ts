@@ -888,47 +888,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/internal/pipeline-runs/claim": {
+    "/data-sources": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["listDataSources"];
         put?: never;
-        post: operations["claimPipelineRun"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/internal/pipeline-runs/{id}/species/{speciesId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["reportPipelineRunSpecies"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/internal/pipeline-runs/{id}/steps/{position}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["reportPipelineRunStep"];
         post?: never;
         delete?: never;
         options?: never;
@@ -936,7 +904,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/internal/pipeline-runs/{id}/finish": {
+    "/data-sources/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+            };
+            cookie?: never;
+        };
+        get: operations["getDataSource"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/data-sources/{kind}/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createDataSourceUpload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/data-source-uploads/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        get: operations["getDataSourceUpload"];
+        put?: never;
+        post?: never;
+        delete: operations["abortDataSourceUpload"];
+        options?: never;
+        head?: never;
+        /** @description Appends one part at the offset Upload-Offset. The part is at most partSize bytes. */
+        patch: operations["appendDataSourceUpload"];
+        trace?: never;
+    };
+    "/data-source-uploads/{id}/complete": {
         parameters: {
             query?: never;
             header?: never;
@@ -947,23 +970,117 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["finishPipelineRun"];
+        post: operations["completeDataSourceUpload"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/internal/training-finds": {
+    "/data-sources/{kind}/versions/{versionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        get: operations["getDataSourceVersion"];
+        put?: never;
+        post?: never;
+        delete: operations["deleteDataSourceVersion"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/data-sources/{kind}/versions/{versionId}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["activateDataSourceVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/data-sources/{kind}/versions/{versionId}/reprocess": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reprocessDataSourceVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/data-sources/{kind}/versions/{versionId}/log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        get: operations["getDataSourceVersionLog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/remote-sources": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["listTrainingFinds"];
+        get: operations["listRemoteSources"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/remote-sources/{source}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source: components["schemas"]["RemoteSourceId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refreshRemoteSource"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1016,7 +1133,7 @@ export interface components {
             photos: components["schemas"]["Photo"][];
         };
         /** @enum {string} */
-        Permission: "species.edit" | "image.review" | "image.submit" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage" | "group.manage";
+        Permission: "species.edit" | "image.review" | "image.submit" | "find.review" | "role.manage" | "role.assign" | "text.edit" | "run.manage" | "group.manage" | "data.manage";
         /** @enum {string} */
         Area: "species" | "interface" | "access" | "data";
         SpeciesCountsEntry: {
@@ -1026,7 +1143,7 @@ export interface components {
             finds: number;
             photos: number;
         };
-        /** @description Zähler der Verwaltungsübersicht. Ein Feld fehlt ohne das Recht dazu. */
+        /** @description Counts of the admin overview. A field is absent when the viewer does not have its permission. */
         AdminSummary: {
             texts?: number;
             photos?: number;
@@ -1042,6 +1159,8 @@ export interface components {
             groups?: number;
             groupMembers?: number;
             glossary?: number;
+            dataSourcesMissing?: number;
+            dataSourcesFailed?: number;
         };
         PermissionEntry: {
             key: components["schemas"]["Permission"];
@@ -1056,7 +1175,7 @@ export interface components {
         /** @enum {string} */
         PhotoState: "private" | "submitted" | "approved" | "rejected";
         /** @enum {string} */
-        RunKind: "training" | "render" | "full";
+        RunKind: "training" | "render" | "full" | "fetch";
         /** @enum {string} */
         RunState: "queued" | "running" | "finished" | "failed";
         /** @enum {string} */
@@ -1273,7 +1392,7 @@ export interface components {
             }[];
         };
         Species: components["schemas"]["SpeciesSummary"] & {
-            /** @description Der Name des Kontos, das zuletzt geändert hat. */
+            /** @description The name of the person who made the last change. */
             updatedByName?: string | null;
             description?: string | null;
             marketable?: boolean;
@@ -1305,6 +1424,30 @@ export interface components {
             seasons: components["schemas"]["Season"][];
             terms: components["schemas"]["SpeciesTermEntry"][];
             lookalikes: components["schemas"]["Lookalike"][];
+            /** @description The reactions to reagents, ordered by position. Only the profile has them; a species write keeps them. */
+            reactions?: components["schemas"]["SpeciesReaction"][];
+            /** @description The count of reactions. Only the items of the bundle have it. */
+            reactionCount?: number;
+        };
+        SpeciesReaction: {
+            reagent: {
+                slug: string;
+                name: string;
+            };
+            reading: string;
+            part: components["schemas"]["BodyPart"] | null;
+            location: string | null;
+            /** @enum {string} */
+            result: "positive" | "negative" | "variable" | "unknown";
+            colour: components["schemas"]["ColourValue"] | null;
+            contested: boolean;
+            partlyConfirmed: boolean;
+            sources: components["schemas"]["ReactionSource"][];
+        };
+        ReactionSource: {
+            label: string;
+            url: string | null;
+            year: string | null;
         };
         SpeciesCounts: {
             records: number;
@@ -1685,7 +1828,7 @@ export interface components {
             startedAt?: string | null;
             finishedAt?: string | null;
             triggeredById?: string | null;
-            /** @description Der Name der einzigen Art eines Trainings, sonst null. */
+            /** @description The name of the species when the run has only one species, else null. */
             speciesName?: string | null;
             speciesCount: number;
             recordCount: number;
@@ -1707,21 +1850,124 @@ export interface components {
             species: components["schemas"]["PipelineRunSpeciesEntry"][];
             steps: components["schemas"]["PipelineRunStep"][];
             logTail: string[];
+            /** @description The data sources that the run read, from pipeline_run_input. */
+            inputs?: components["schemas"]["PipelineRunInput"][];
         };
         PipelineRunPage: {
             items: components["schemas"]["PipelineRunSummary"][];
             nextCursor: string | null;
         };
-        TrainingFind: {
+        /** @enum {string} */
+        DataSourceKind: "gbif-archive" | "tree-species-map" | "dem" | "soilgrids" | "germany-outline" | "trees-grid" | "tree-scales" | "site-grid" | "weather-checkpoints" | "model-bundle" | "static-layers";
+        /** @enum {string} */
+        DataSourceState: "missing" | "validating" | "processing" | "ready" | "failed";
+        /** @enum {string} */
+        VersionState: "validating" | "processing" | "ready" | "failed" | "superseded";
+        /** @enum {string} */
+        RemoteSourceId: "dwd-hyras" | "dwd-soil-moisture" | "gbif-occurrences";
+        Sha256: string;
+        Accept: {
+            extensions: string[];
+            mediaTypes: string[];
+            maxBytes: number;
+        };
+        DataSource: {
+            kind: components["schemas"]["DataSourceKind"];
+            required: boolean;
+            /** @description True for model-bundle. */
+            perSpecies: boolean;
+            usedBy: ("training" | "render" | "layers" | "occurrences")[];
+            state: components["schemas"]["DataSourceState"];
+            /** @description The kind whose derived output satisfies this kind, for example tree-species-map for trees-grid. */
+            satisfiedBy: components["schemas"]["DataSourceKind"] | null;
+            accept: components["schemas"]["Accept"];
+            activeVersion: components["schemas"]["DataSourceVersion"] | null;
+            latestVersion: components["schemas"]["DataSourceVersion"] | null;
+        };
+        DataSourceDetail: components["schemas"]["DataSource"] & {
+            versions: components["schemas"]["DataSourceVersion"][];
+            nextCursor: string | null;
+            openUpload: components["schemas"]["Upload"] | null;
+        };
+        DataSourceArtifact: {
+            name: string;
+            sizeBytes: number;
+        };
+        DataSourceVersion: {
             /** Format: uuid */
             id: string;
+            kind: components["schemas"]["DataSourceKind"];
+            version: number;
+            /** @enum {string} */
+            origin: "upload" | "derived" | "training";
+            derivedFromId: string | null;
+            speciesId: string | null;
+            state: components["schemas"]["VersionState"];
+            active: boolean;
+            fileName: string | null;
+            sizeBytes: number | null;
+            sha256: string | null;
+            metadata: {
+                [key: string]: unknown;
+            };
+            artifacts: components["schemas"]["DataSourceArtifact"][];
+            error: {
+                code: string;
+                detail: string | null;
+            } | null;
+            createdBy: {
+                /** Format: uuid */
+                id: string;
+                name: string | null;
+            } | null;
+            /** Format: date-time */
+            createdAt: string;
+            processedAt: string | null;
+            activatedAt: string | null;
+        };
+        /** @description speciesId is only for a model-bundle with one species. */
+        UploadCreate: {
+            fileName: string;
+            sizeBytes: number;
+            sha256?: components["schemas"]["Sha256"];
             /** Format: uuid */
-            speciesId: string;
-            lat: number;
-            lon: number;
-            /** Format: date */
-            foundOn: string;
-            count?: number | null;
+            speciesId?: string;
+            /** @default true */
+            activate: boolean;
+        };
+        Upload: {
+            /** Format: uuid */
+            id: string;
+            kind: components["schemas"]["DataSourceKind"];
+            speciesId: string | null;
+            fileName: string;
+            sizeBytes: number;
+            receivedBytes: number;
+            partSize: number;
+            /** @enum {string} */
+            state: "open" | "complete" | "aborted" | "expired";
+            /** Format: date-time */
+            expiresAt: string;
+            versionId: string | null;
+        };
+        RemoteSource: {
+            source: components["schemas"]["RemoteSourceId"];
+            /** Format: uri */
+            url: string;
+            cadence: string;
+            /** @enum {string} */
+            state: "empty" | "bootstrapping" | "ok" | "stale" | "failed";
+            years: number[];
+            files: number;
+            sizeBytes: number;
+            lastCheckedAt: string | null;
+            lastChangedAt: string | null;
+            error: string | null;
+        };
+        PipelineRunInput: {
+            kind: string;
+            versionId: string | null;
+            version: number | null;
         };
     };
     responses: {
@@ -1767,6 +2013,8 @@ export interface components {
         SpeciesSlug: string;
         Limit40: number;
         Limit50: number;
+        DataSourceKind: components["schemas"]["DataSourceKind"];
+        VersionId: string;
         Cursor: string;
         Since: string;
     };
@@ -4006,129 +4254,7 @@ export interface operations {
             422: components["responses"]["Validation"];
         };
     };
-    claimPipelineRun: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PipelineRunSummary"];
-                };
-            };
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-        };
-    };
-    reportPipelineRunSpecies: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["Id"];
-                speciesId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    state: string;
-                    recordCount: number;
-                };
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            422: components["responses"]["Validation"];
-        };
-    };
-    reportPipelineRunStep: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["Id"];
-                position: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    name: string;
-                    state: components["schemas"]["RunState"];
-                    durationS: number | null;
-                };
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            422: components["responses"]["Validation"];
-        };
-    };
-    finishPipelineRun: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["Id"];
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    state: components["schemas"]["RunState"];
-                    logPath?: string;
-                    metricBrier?: number | null;
-                };
-            };
-        };
-        responses: {
-            /** @description No Content */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: components["responses"]["Unauthorized"];
-            404: components["responses"]["NotFound"];
-            422: components["responses"]["Validation"];
-        };
-    };
-    listTrainingFinds: {
+    listDataSources: {
         parameters: {
             query?: never;
             header?: never;
@@ -4144,11 +4270,482 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        items: components["schemas"]["TrainingFind"][];
+                        items: components["schemas"]["DataSource"][];
                     };
                 };
             };
             401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    getDataSource: {
+        parameters: {
+            query?: {
+                limit?: components["parameters"]["Limit50"];
+                cursor?: components["parameters"]["Cursor"];
+                speciesId?: string;
+            };
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataSourceDetail"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    createDataSourceUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadCreate"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Upload"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description Another upload of this kind is open (code upload_open). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description sizeBytes is more than the limit of the kind (code too_large). */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            422: components["responses"]["Validation"];
+            /** @description Not enough free disk space (code disk_full). */
+            507: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    getDataSourceUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Upload"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    abortDataSourceUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Aborted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description The upload is complete (code upload_closed). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    appendDataSourceUpload: {
+        parameters: {
+            query?: never;
+            header: {
+                "Upload-Offset": number;
+            };
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/octet-stream": string;
+            };
+        };
+        responses: {
+            /** @description Part stored */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Upload"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description offset_mismatch (the header Upload-Offset gives the current offset) or upload_closed. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description The part is larger than partSize or goes past sizeBytes. */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description The body is not application/octet-stream. */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            422: components["responses"]["Validation"];
+        };
+    };
+    completeDataSourceUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    sha256?: components["schemas"]["Sha256"];
+                };
+            };
+        };
+        responses: {
+            /** @description Version made, validation queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataSourceVersion"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description incomplete, checksum_mismatch or upload_closed. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            422: components["responses"]["Validation"];
+        };
+    };
+    getDataSourceVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataSourceVersion"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+        };
+    };
+    deleteDataSourceVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description in_use (active and required, no other ready version) or run_active. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    activateDataSourceVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataSourceVersion"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description not_ready or run_active. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    reprocessDataSourceVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataSourceVersion"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description run_active, or the version has no original file (code no_original). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+        };
+    };
+    getDataSourceVersionLog: {
+        parameters: {
+            query?: {
+                tail?: number;
+            };
+            header?: never;
+            path: {
+                kind: components["parameters"]["DataSourceKind"];
+                versionId: components["parameters"]["VersionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        lines: string[];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    listRemoteSources: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["RemoteSource"][];
+                    };
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    refreshRemoteSource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source: components["schemas"]["RemoteSourceId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    fromYear?: number;
+                    toYear?: number;
+                    /** @default false */
+                    force?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued as a pipeline run of kind fetch */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PipelineRunSummary"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            /** @description A fetch run is queued or running (code run_active). */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            422: components["responses"]["Validation"];
         };
     };
 }

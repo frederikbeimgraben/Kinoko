@@ -3,7 +3,7 @@ import { map, type Observable } from 'rxjs';
 import { ApiClient } from './api-client';
 import type { GlossaryEntry, GlossaryEntryWrite, Items } from './models';
 
-/** Die Endpunkte des Glossars. Lesen steht jedem offen, Schreiben braucht `text.edit`. */
+/** The glossary endpoints. All users can read. Writes need `text.edit`. */
 @Injectable({ providedIn: 'root' })
 export class GlossaryApi {
   private readonly api = inject(ApiClient);

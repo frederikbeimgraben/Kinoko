@@ -18,7 +18,7 @@ app-page-header {
   @include card.section-title;
 }
 
-// Das Teil führt in eine eigene Wahl; der Pfeil steht am Feldende.
+// The part opens a separate choice. The arrow is at the end of the field.
 .section__part {
   --form-field-trail-push: auto;
 
@@ -30,7 +30,7 @@ app-page-header {
   margin-block-end: 10px;
 }
 
-// Die Marken messen dreißig Punkte, wie die Bretter sie zeigen.
+// The chips are 30 px high, as the design boards show.
 .section__chips {
   --chip-height: 30px;
   --chip-inline: 12px;
@@ -51,7 +51,7 @@ app-page-header {
   min-inline-size: 0;
 }
 
-// Die Farbe steht wie ein Feld, trägt aber eine Fläche statt einer Eingabe.
+// The colour looks like a field, but it shows a swatch, not an input.
 .section__box {
   display: flex;
   gap: 10px;

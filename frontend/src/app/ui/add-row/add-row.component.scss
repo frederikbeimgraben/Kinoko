@@ -2,6 +2,7 @@
   display: block;
 }
 
+// Per `AddRow.dc.html`: a `.row` with a plus icon, in the text colour.
 .add-row {
   display: flex;
   align-items: center;
@@ -10,9 +11,22 @@
   min-block-size: 56px;
   padding: 8px 16px;
   font-size: 16px;
-  color: var(--primary);
+  color: var(--text);
   text-align: start;
   background: var(--surface);
   border: 0;
   border-radius: 4px;
+}
+
+// Per `kit.css` `.grp>.row`: the first and the last row of a group have round outer corners.
+:host-context(.grp):first-child .add-row {
+  border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
+}
+
+:host-context(.grp):last-child .add-row {
+  border-radius: var(--r-row) var(--r-row) var(--r-item) var(--r-item);
+}
+
+:host-context(.grp):only-child .add-row {
+  border-radius: var(--r-item);
 }

@@ -13,22 +13,22 @@ const REVIEWS = `${ENTRY_PATHS.find}/reviews`;
 
 type FindPage = components['schemas']['FindPage'];
 
-/** So viele Funde holt eine Seite. Der Vertrag erlaubt höchstens 50. */
+/** Finds per page. The contract allows a maximum of 50. */
 const PAGE_SIZE = 50;
 
-/** Ein fehlender Weg bleibt still: die Karte hält den Stand, den sie zeigt. */
+/** A 404 gives no error message. The map keeps the data that it shows. */
 const NOT_FOUND = 404;
 
 function bbox(view: Viewbox): string {
   return [view.west, view.south, view.ost, view.nord].join(',');
 }
 
-/** Die Funde des Vertrags. Geteilte Funde liest auch ein Gerät ohne Konto. */
+/** The contract finds. A device without an account can also read shared finds. */
 @Injectable({ providedIn: 'root' })
 export class FindsApi {
   private readonly api = inject(ApiClient);
 
-  /** Die geteilten Funde im Ausschnitt. Ohne Ausschnitt kommt die ganze Karte. */
+  /** The shared finds in the view. Without a view, you get the full map. */
   shared(view?: Viewbox): Observable<readonly SharedFind[]> {
     return this.api
       .get<FindPage>(
@@ -39,7 +39,7 @@ export class FindsApi {
       .pipe(map((answer) => answer.items.flatMap((entry) => sharedFind(entry) ?? [])));
   }
 
-  /** Die offenen Funde aller Konten. Braucht das Recht `find.review`. */
+  /** The open finds of all accounts. Needs the `find.review` permission. */
   open(): Observable<readonly OpenFind[]> {
     return this.api
       .get<FindPage>(`${REVIEWS}/open`, { limit: PAGE_SIZE })

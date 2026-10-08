@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+:host(:empty) {
+  display: none;
+}
+
+.reaction__trail {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.reaction__contested {
+  color: var(--warn);
+}
+
+// Per `kit.css` `.sw`: 88 × 28 at radius 14.
+.reaction__swatch {
+  display: block;
+  flex: 0 0 auto;
+  inline-size: 88px;
+  block-size: 28px;
+  border-radius: 14px;
+}
+
+// A negative result has no colour: an empty ring shows it.
+.reaction__swatch--ring {
+  box-sizing: border-box;
+  border: 2px solid var(--outline-strong);
+}
+
+.reaction__sources {
+  margin-block-start: 10px;
+}
+
+.reaction__legend {
+  margin: 10px 4px 0;
+  font-size: 13px;
+  color: var(--text-var);
+}

@@ -13,7 +13,7 @@ function linear(value: number): number {
   return value <= GAMMA_CUT ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
 }
 
-/** Rechnet eine Farbe in den Oklab-Raum. */
+/** Converts a colour to the Oklab space. */
 export function oklab(value: string): [number, number, number] {
   const [red, green, blue] = channels(value).map(linear);
   const long = 0.4122214708 * red + 0.5363325363 * green + 0.0514459929 * blue;
@@ -27,14 +27,14 @@ export function oklab(value: string): [number, number, number] {
   ];
 }
 
-/** Der Abstand zweier Farben im Oklab-Raum, Buntheit doppelt gewichtet. */
+/** The distance of two colours in Oklab space. Chroma has double weight. */
 export function distance(first: string, second: string): number {
   const left = oklab(first);
   const right = oklab(second);
   return Math.sqrt(left.reduce((sum, part, at) => sum + ((part - right[at]) * WEIGHTS[at]) ** 2, 0));
 }
 
-/** Die nächste Standardfarbe des Bündels zu einer Katalogfarbe. */
+/** The standard colour of the bundle that is nearest to a catalogue colour. */
 export function nearestColour(value: string, palette: readonly StandardColour[]): StandardColour | null {
   let best: StandardColour | null = null;
   let shortest = Number.POSITIVE_INFINITY;
@@ -48,7 +48,7 @@ export function nearestColour(value: string, palette: readonly StandardColour[])
   return best;
 }
 
-/** Die nächsten Katalogtöne zu einer Standardfarbe, in Katalogfolge. */
+/** The catalogue tones nearest to a standard colour, in catalogue order. */
 export function nearestTones(tones: readonly string[], target: string, count: number): string[] {
   const held = [...new Set(tones)];
   const closest = new Set(
@@ -57,7 +57,7 @@ export function nearestTones(tones: readonly string[], target: string, count: nu
   return held.filter((tone) => closest.has(tone));
 }
 
-/** Die Gruppen des Filterblatts, in der Reihenfolge der Karten. */
+/** The groups of the filter sheet, in card order. */
 export const GROUP_KEYS = [
   'edibility',
   'hymenium',
@@ -72,7 +72,7 @@ export const GROUP_KEYS = [
 ] as const;
 export type GroupKey = (typeof GROUP_KEYS)[number];
 
-/** Die Gruppen, die eine Liste aus Werten führen. */
+/** The groups that have a list of values. */
 export const CHOICE_GROUPS: readonly GroupKey[] = [
   'edibility',
   'hymenium',
@@ -85,19 +85,19 @@ export const CHOICE_GROUPS: readonly GroupKey[] = [
   'forecast',
 ];
 
-/** Der wählbare Wert der Gruppe Vorhersage. */
+/** The value that the forecast group can select. */
 export const FORECAST_VALUE = 'on';
 
-/** Die Gegenseite der Gruppe Vorhersage. Sie steht nie im Filterblatt. */
+/** The opposite value of the forecast group. The filter sheet never shows it. */
 export const FORECAST_ABSENT = 'off';
 
-/** Die Achsen einer Art, einmal gerechnet und danach nur gelesen. */
+/** The axes of a species. They are calculated one time and then only read. */
 export interface Facts {
   readonly values: ReadonlyMap<GroupKey, readonly string[]>;
   readonly colours: ReadonlyMap<string, readonly string[]>;
 }
 
-/** Die Wahl im Filterblatt. */
+/** The selection in the filter sheet. */
 export interface Selection {
   readonly values: ReadonlyMap<GroupKey, ReadonlySet<string>>;
   readonly colours: ReadonlyMap<string, string>;
@@ -110,7 +110,7 @@ export const EMPTY_SELECTION: Selection = {
   keepUnknown: new Set(),
 };
 
-/** Ob eine Art trifft, an fehlenden Angaben scheitert oder ausscheidet. */
+/** A species matches, has missing data or does not match. */
 export type Verdict = 'hit' | 'unknown' | 'miss';
 
 function months(entry: SpeciesEntry): string[] {
@@ -129,7 +129,7 @@ function capShapes(entry: SpeciesEntry): string[] {
   return [entry.capShapeYoung, entry.capShapeOld].filter((shape) => Boolean(shape)) as string[];
 }
 
-/** Rechnet die Achsen einer Art gegen die Palette des Bündels. */
+/** Calculates the axes of a species with the palette of the bundle. */
 export function factsOf(entry: SpeciesEntry, palette: readonly StandardColour[]): Facts {
   const terms = entry.terms.map((held) => held.term);
   const values = new Map<GroupKey, readonly string[]>([
@@ -157,14 +157,14 @@ function isSense(kind: string): boolean {
   return kind === 'smell' || kind === 'taste';
 }
 
-/** Zählt, ob eine Gruppe trifft, nichts weiß oder ausscheidet. */
+/** Tells if a group matches, has no data or does not match. */
 function judgeGroup(held: readonly string[], wanted: ReadonlySet<string>): Verdict {
   if (wanted.size === 0) return 'hit';
   if (held.length === 0) return 'unknown';
   return held.some((value) => wanted.has(value)) ? 'hit' : 'miss';
 }
 
-/** Prüft eine Art gegen die Wahl. */
+/** Checks a species against the selection. */
 export function judge(facts: Facts, selection: Selection, palette: readonly StandardColour[]): Verdict {
   let unknown = false;
   for (const [key, wanted] of selection.values) {
@@ -180,31 +180,31 @@ export function judge(facts: Facts, selection: Selection, palette: readonly Stan
   return unknown ? 'unknown' : 'hit';
 }
 
-/** Ob die Wahl überhaupt einschränkt. */
+/** Tells if the selection filters at all. */
 export function isActive(selection: Selection): boolean {
   const chosen = [...selection.values.values()].some((values) => values.size > 0);
   return chosen || selection.colours.size > 0;
 }
 
-/** Die gezählten Achsen des Bündels. */
+/** The counted axes of the bundle. */
 export type Counts = Readonly<Record<string, Readonly<Record<string, number>>>>;
 
-/** Wie viele Arten einen Wert tragen, über den ganzen Katalog. */
+/** The number of species with each value, in the full catalogue. */
 export function countValues(counts: Counts, key: string): Readonly<Record<string, number>> {
   return counts[key] ?? {};
 }
 
-/** Wie viele Arten für einen Körperteil eine Standardfarbe tragen. */
+/** The number of species with each standard colour for a body part. */
 export function countColours(counts: Counts, part: BodyPart): Readonly<Record<string, number>> {
   return counts[`colour.${part}`] ?? {};
 }
 
-/** Wie viele Arten zu einer Gruppe keine Angabe tragen. */
+/** The number of species with no data for a group. */
 export function countUnknown(counts: Counts, key: GroupKey): number {
   return countValues(counts, 'unknown')[key] ?? 0;
 }
 
-/** Die Körperteile, für die das Bündel Farben zählt. */
+/** The body parts for which the bundle counts colours. */
 export function colourParts(counts: Counts): string[] {
   return Object.keys(counts)
     .filter((axis) => axis.startsWith('colour.'))

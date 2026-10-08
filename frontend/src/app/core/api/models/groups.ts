@@ -1,4 +1,4 @@
-/** Die Freundesgruppen des Vertrags. */
+/** The contract friend groups. */
 
 import type { components } from '../contract';
 

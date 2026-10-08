@@ -1,4 +1,4 @@
-<app-page-header [title]="'admin.texts.title' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'admin.texts.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
 
 <div class="texts">
   <app-search-field
@@ -13,28 +13,32 @@
     (valueChange)="scope.set($event)"
   />
 
-  <div class="texts__card">
-    @for (row of rows(); track row.key) {
-      <button class="texts__row" type="button" (click)="open(row)">
-        <span class="texts__head">
-          <span class="texts__key">{{ row.key }}</span>
-          @if (row.changed) {
-            <app-level-pill [text]="'admin.texts.changed' | t" />
-          }
-        </span>
-        <span class="texts__values">
-          @for (locale of locales; track locale) {
-            <span class="texts__value">
-              <span class="texts__language">{{ localeLabel(locale) }}</span>
-              <span class="texts__text" [class.texts__text--other]="locale !== leadLocale">
-                {{ row.values[locale] }}
+  @if (loaded()) {
+    <div class="texts__group">
+      @for (row of rows(); track row.key) {
+        <button class="texts__row tap" type="button" (click)="open(row)">
+          <span class="texts__head">
+            <span class="texts__key">{{ row.key }}</span>
+            @if (row.changed) {
+              <app-level-pill [text]="'admin.texts.changed' | t" />
+            }
+          </span>
+          <span class="texts__values">
+            @for (locale of locales; track locale) {
+              <span class="texts__value">
+                <span class="lbl">{{ localeLabel(locale) }}</span>
+                <span class="texts__text" [class.texts__text--other]="locale !== leadLocale">
+                  {{ row.values[locale] }}
+                </span>
               </span>
-            </span>
-          }
-        </span>
-      </button>
-    }
-  </div>
+            }
+          </span>
+        </button>
+      }
+    </div>
+  } @else {
+    <app-row-group-skeleton [count]="6" [lines]="3" />
+  }
 </div>
 
 <app-overlay-host [open]="draft() !== null" [modal]="true" (closed)="close()">
@@ -48,7 +52,7 @@
       <div class="texts__form">
         @for (locale of locales; track locale) {
           <div class="texts__field">
-            <h2 class="texts__section">{{ localeLabel(locale) }}</h2>
+            <span class="lbl">{{ localeLabel(locale) }}</span>
             <app-form-field
               [label]="localeLabel(locale)"
               [hideLabel]="true"
@@ -60,6 +64,7 @@
         }
       </div>
       <app-action-bar
+        foot
         [primary]="'common.save' | t"
         [secondary]="resettable() ? ('admin.texts.reset' | t) : undefined"
         [busy]="busy()"

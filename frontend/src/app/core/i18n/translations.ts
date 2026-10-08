@@ -1,4 +1,4 @@
-/** Der Rückfall: die Vorgabe des Backends und die Schlüssel der alten Seiten. */
+/** The fallback: the backend default texts and the keys of the legacy pages. */
 import type { WorkshopKey } from './workshop-texts';
 import generatedDe from './texts.de.json';
 import legacyDe from './legacy.de.json';
@@ -11,10 +11,10 @@ type LegacyKey = keyof typeof legacyDe;
 
 export type TranslationKey = LegacyKey | WorkshopKey | keyof typeof generatedDe;
 
-/** Deutsch liegt im ersten Bündel: es ist Vorgabe und Rückfall zugleich. */
+/** German is in the main bundle, because it is the default and the fallback. */
 export const CATALOG_DE: Record<string, string> = { ...legacyDe, ...generatedDe };
 
-/** Englisch kommt erst beim Wechsel, in einem eigenen Brocken. */
+/** English loads on a language change, in a separate chunk. */
 export async function loadCatalog(locale: Locale): Promise<Record<string, string>> {
   if (locale === DEFAULT_LOCALE) return CATALOG_DE;
   const [legacy, generated] = await Promise.all([import('./legacy.en.json'), import('./texts.en.json')]);

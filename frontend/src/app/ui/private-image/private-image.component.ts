@@ -1,71 +1,54 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  input,
-  signal,
-  type OnDestroy,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { ApiClient } from '../../core/api/api-client';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Ein Bild ohne öffentlichen Zugriff. Es lädt mit Token als Objekt-URL. */
+/** An image without public access. It loads with the token and shows as an object URL. */
 @Component({
   selector: 'app-private-image',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SvgIconComponent],
   templateUrl: './private-image.component.html',
   styleUrl: './private-image.component.scss',
+  host: { '[class.private--loading]': 'loading()', '[class.motion-shimmer]': 'loading()' },
 })
-export class PrivateImageComponent implements OnDestroy {
+export class PrivateImageComponent {
   private readonly api = inject(ApiClient);
 
-  /** Der Pfad aus der Antwort, ohne `/api`. Ohne Weg zeigt das Feld das Ersatzsymbol. */
+  /** The path from the response, without `/api`. Without a path, the area shows the fallback icon. */
   readonly path = input<string>('');
   readonly alt = input.required<string>();
-  /** `cover` füllt die Fläche, `contain` passt ein, `natural` nimmt die Höhe des Bildes. */
+  /** `cover` fills the area, `contain` fits the image in it, `natural` uses the height of the image. */
   readonly fit = input<'cover' | 'contain' | 'natural'>('cover');
-  /** Zeigt das Schloss, wenn nur der Besitzer das Bild sehen darf. */
+  /** Shows the lock when only the owner can see the image. */
   readonly locked = input(false);
-  /** Grundfarbe des Ersatzsymbols, ohne Weg oder solange die Datei fehlt. */
+  /** The colour behind the fallback icon. */
   readonly colour = input('#7a5230');
   readonly icon = input<IconName>('mushroom');
-  /** Tinte des Ersatzsymbols: hell auf dunkler Farbe, dunkel auf heller. */
+  /** The ink of the fallback icon: light on a dark colour, dark on a light colour. */
   readonly ink = input<'light' | 'dark'>('light');
 
-  protected readonly source = signal<string | null>(null);
+  /** The ApiClient reports an error with a toast. The area then stays empty, not a broken image. */
+  private readonly file = rxResource({
+    params: () => this.path() || undefined,
+    stream: ({ params }) => this.api.getBlob(params.replace(/^\/api/, '')),
+  });
 
-  /** Die Objekt-URL als einfaches Feld. Der Effekt liest kein Signal. */
-  private held: string | null = null;
+  /** While the file loads, the area is a skeleton block in the shape of its host. */
+  protected readonly loading = computed(() => this.file.isLoading());
+  protected readonly source = computed(() => {
+    const data = this.file.hasValue() ? this.file.value() : undefined;
+    return data ? URL.createObjectURL(data) : null;
+  });
 
   constructor() {
-    effect(() => {
-      const path = this.path();
-      this.release();
-      if (!path) return;
-      this.api.getBlob(path.replace(/^\/api/, '')).subscribe({
-        next: (data) => {
-          this.held = URL.createObjectURL(data);
-          this.source.set(this.held);
-        },
-        // Der ApiClient meldet den Fehler schon per Toast.
-        // Die Fläche bleibt hier leer statt ein kaputtes Bild zu zeigen.
-        error: () => {
-          this.source.set(null);
-        },
-      });
+    // An open object URL stays in memory until it is revoked.
+    effect((onCleanup) => {
+      const url = this.source();
+      if (url !== null)
+        onCleanup(() => {
+          URL.revokeObjectURL(url);
+        });
     });
-  }
-
-  ngOnDestroy(): void {
-    this.release();
-  }
-
-  /** Eine offene Objekt-URL bleibt sonst dauerhaft im Speicher. */
-  private release(): void {
-    if (this.held !== null) URL.revokeObjectURL(this.held);
-    this.held = null;
-    this.source.set(null);
   }
 }

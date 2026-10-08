@@ -1,0 +1,13 @@
+.version {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-block-end: 16px;
+}
+
+.version__empty {
+  margin: 0;
+  padding-inline: 4px;
+  font-size: var(--fs-14);
+  color: var(--label);
+}

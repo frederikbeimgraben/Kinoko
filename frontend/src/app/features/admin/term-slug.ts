@@ -1,4 +1,4 @@
-/** Die Kennung eines Begriffs kommt aus seinem Namen. */
+/** Makes the slug of a term from its name. */
 
 const UMLAUTS: Readonly<Record<string, string>> = {
   ä: 'ae',

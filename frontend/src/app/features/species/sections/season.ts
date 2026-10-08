@@ -2,21 +2,21 @@ import type { SpeciesManifest } from '../../../core/tiles/manifest';
 
 const WEEKS = 52;
 
-/** Die Wochenreihen einer Art: das jüngste Jahr als Linie, die älteren als Fläche. */
+/** The weekly series of a species: the latest year as a line, older years as an area. */
 export interface SeasonData {
-  /** Mittelwerte je Kalenderwoche über die älteren Jahre. */
+  /** Mean per calendar week over the older years. */
   past: readonly number[];
-  /** Mittelwerte je Kalenderwoche des jüngsten Jahres. */
+  /** Mean per calendar week of the latest year. */
   current: readonly number[];
-  /** Das jüngste Jahr und seine letzte Woche. */
+  /** The latest year and its last week. */
   year: number;
   week: number;
-  /** Das erste und das letzte der älteren Jahre. */
+  /** The first and the last of the older years. */
   from: number;
   to: number;
 }
 
-/** Rechnet die Wochen eines Manifests in zwei Reihen um. */
+/** Converts the weeks of a manifest into two series. */
 export function seasonData(manifest: SpeciesManifest | null): SeasonData | null {
   const weeks = manifest?.weeks ?? [];
   if (weeks.length === 0) return null;
@@ -34,7 +34,7 @@ export function seasonData(manifest: SpeciesManifest | null): SeasonData | null 
   };
 }
 
-/** Der Mittelwert je Kalenderwoche über alle gegebenen Wochen. */
+/** The mean per calendar week over all given weeks. */
 function mean(weeks: readonly SpeciesManifest['weeks'][number][]): readonly number[] {
   const sums = new Array<number>(WEEKS).fill(0);
   const counts = new Array<number>(WEEKS).fill(0);

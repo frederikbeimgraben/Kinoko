@@ -1,19 +1,17 @@
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import type { IDBPDatabase } from 'idb';
 
-/** Die Bereiche, die das Gerät vorhält. */
+/** The areas that the device keeps. */
 export const OFFLINE_AREAS = ['catalog', 'texts', 'objects', 'queue'] as const;
 
 export type OfflineArea = (typeof OFFLINE_AREAS)[number];
 
 const DB_NAME = 'primordium';
 
-/** Eine neue Zahl legt den Speicher neu an. Es gibt keinen Migrationspfad. */
+/** A new number deletes the store and makes it again. There is no migration path. */
 export const DB_VERSION = 2;
 
-/**
- * Der Speicher auf dem Gerät: Katalog, Texte und eigene Objekte.
- */
+/** The store on the device: catalog, texts and own objects. */
 @Injectable({ providedIn: 'root' })
 export class OfflineStore {
   private db: Promise<IDBPDatabase | null> | null = null;
@@ -22,7 +20,7 @@ export class OfflineStore {
     inject(DestroyRef).onDestroy(() => void this.close());
   }
 
-  /** Schließt die Verbindung. Der nächste Zugriff öffnet sie neu. */
+  /** Closes the connection. The next access opens it again. */
   async close(): Promise<void> {
     const open = this.db;
     this.db = null;
@@ -40,7 +38,7 @@ export class OfflineStore {
     return db === null ? [] : ((await db.getAll(area)) as T[]);
   }
 
-  /** Legt einen Wert ab. `false` heißt: das Gerät hat keinen Platz dafür. */
+  /** Keeps a value. `false` means that the device has no storage for it. */
   async put(area: OfflineArea, key: string, value: unknown): Promise<boolean> {
     const db = await this.open();
     if (db === null) return false;
@@ -58,7 +56,7 @@ export class OfflineStore {
     await db?.clear(area);
   }
 
-  /** Räumt jeden Bereich. „Meine Daten löschen“ geht diesen Weg. */
+  /** Clears each area. „Meine Daten löschen“ uses this path. */
   async clearAll(): Promise<void> {
     for (const area of OFFLINE_AREAS) await this.clear(area);
   }
@@ -68,7 +66,7 @@ export class OfflineStore {
     return this.db;
   }
 
-  /** `idb` kommt erst beim ersten Zugriff, nicht im ersten Bündel. */
+  /** Loads `idb` on the first access, not in the first bundle. */
   private async create(): Promise<IDBPDatabase | null> {
     try {
       const { openDB } = await import('idb');
@@ -79,7 +77,7 @@ export class OfflineStore {
   }
 }
 
-/** Ein Schemabruch wirft den alten Bestand weg und legt die Bereiche neu an. */
+/** A schema change removes the old data and makes the areas again. */
 function rebuild(db: IDBPDatabase): void {
   for (const name of [...db.objectStoreNames]) db.deleteObjectStore(name);
   for (const area of OFFLINE_AREAS) db.createObjectStore(area);

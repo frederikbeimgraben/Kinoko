@@ -1,13 +1,12 @@
 import type { Page } from '@playwright/test';
 
 /**
- * Eine graue Wertkachel von 256 Punkten. Byte 108 steht bei einem Höchstwert
- * von 0,5 für 21 Prozent, die Zahl aus dem Board `FindSheet`.
+ * A grey value tile of 256 px. At a maximum of 0.5, byte 108 gives 21 %, the number of the `FindSheet` board.
  */
 const VALUE_TILE =
   'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAAAAAB5Gfe6AAABOElEQVR42u3QMQEAAAzDoAqO/3tCBhJYz02AAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAioA1qyBlVCtdTOAAAAAElFTkSuQmCC';
 
-/** Legt eine Wertkachel und ihr Manifest auf die Seite. */
+/** Puts a value tile and its manifest on the page. */
 export async function mockValueTile(page: Page, slug: string, manifest: unknown): Promise<void> {
   await page.route(`**/${slug}.json`, async (route) => {
     await route.fulfill({

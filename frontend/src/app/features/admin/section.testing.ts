@@ -1,4 +1,4 @@
-/** Eine Art mit allen Feldern, die die Abschnitte des Editors bearbeiten. */
+/** A species with all fields that the editor sections edit. */
 export const SECTION_SPECIES: Record<string, unknown> = {
   id: 'art-eins',
   slug: 'boletus-edulis',

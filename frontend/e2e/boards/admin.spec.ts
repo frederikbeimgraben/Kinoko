@@ -23,7 +23,7 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Die Zahlen der vier Arten des Bretts `AdminSpecies`. */
+/** Counts for the four species on the `AdminSpecies` board. */
 const SPECIES_COUNTS = {
   items: [
     { speciesId: (species(ADMIN_SPECIES[0], 0) as { id: string }).id, records: 1284, finds: 12, photos: 3 },
@@ -33,16 +33,15 @@ const SPECIES_COUNTS = {
   ],
 };
 
-/** Die Rollhöhe des Bretts `SpeciesEditScrolled`, aus seinem Bild gemessen. */
+/** Scroll offset of the `SpeciesEditScrolled` board, measured from its image. */
 const EDITOR_SCROLL = 417;
 
-/** Ein Brett gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device. A pending board does not run. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Brett gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Meldet an und öffnet einen Weg der Verwaltung. */
 async function open(page: Page, path: string, extra: Record<string, unknown> = {}): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -130,7 +129,7 @@ test('PersonRoles', async ({ page }) => {
   await expectBoard(page, 'PersonRoles');
 });
 
-/** Das Brett `Role` zeigt die Rolle ohne Beschreibung. */
+/** The `Role` board shows the role without a description. */
 const PLAIN_ROLE = {
   items: [{ ...ROLES.items[2], description: null }],
   nextCursor: null,
@@ -165,7 +164,7 @@ test('Texts', async ({ page }) => {
   await expectBoard(page, 'Texts');
 });
 
-/** Die drei Schlüssel des Bretts `TextEdit`. */
+/** The three keys of the `TextEdit` board. */
 const EDIT_TEXTS = {
   revision: 'e2e',
   locales: ['de', 'en'],

@@ -8,12 +8,12 @@ interface Setup {
   manager: ManagerDouble;
 }
 
-/** Ein Fehler, wie ihn `oidc-client-ts` aus einer Antwort des SSO baut. */
+/** An error as `oidc-client-ts` makes it from an SSO response. */
 function errorResponse(code: string): Error {
   return Object.assign(new Error(code), { error: code });
 }
 
-/** Ein frischer Dienst je Aufruf: mehrere Fälle in einem Test brauchen ihn. */
+/** Gives a new service for each call. Some tests check more than one case. */
 function build(configured = true): Setup {
   TestBed.resetTestingModule();
   const manager = new ManagerDouble();

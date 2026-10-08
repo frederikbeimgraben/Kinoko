@@ -1,0 +1,68 @@
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// The drop area is a large dashed target. The real file input stays hidden behind it.
+.upload__drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 160px;
+  padding: 24px 16px;
+  color: var(--text-var);
+  text-align: center;
+  cursor: pointer;
+  background: var(--surface-low);
+  border: 2px dashed var(--outline);
+  border-radius: var(--r-item);
+}
+
+.upload__drop:focus-within {
+  border-color: var(--primary);
+}
+
+.upload__drop-text {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+
+.upload__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload__line {
+  font-size: var(--fs-14);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.upload__line--dim {
+  color: var(--label);
+}
+
+.upload__note {
+  margin: 0;
+  font-size: var(--fs-14);
+  color: var(--text-var);
+}
+
+.upload__error {
+  margin: 0;
+  font-size: var(--fs-14);
+  color: var(--bad);
+}

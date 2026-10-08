@@ -1,27 +1,19 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-  untracked,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { OpenFind } from '../../core/api/models';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
+import { QueueCardSkeletonComponent } from '../../ui/review-queue/queue-card-skeleton.component';
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { findCard, type FindCard } from './find-card';
-import { FindQueueState } from './find-queue.state';
+import { FindQueueStore } from './find-queue.store';
 
-/** Der Prüfstapel der Funde: rechts wischen nimmt an, links lehnt ab. */
+/** The review queue of the finds: a swipe to the right accepts, a swipe to the left rejects. */
 @Component({
   selector: 'app-find-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +22,7 @@ import { FindQueueState } from './find-queue.state';
     IconButtonComponent,
     PageHeaderComponent,
     PrivateImageComponent,
+    QueueCardSkeletonComponent,
     ReviewQueueComponent,
     StateViewComponent,
     TranslatePipe,
@@ -38,68 +31,50 @@ import { FindQueueState } from './find-queue.state';
   styleUrl: './find-queue.component.scss',
 })
 export class FindQueueComponent {
-  private readonly finds = inject(FindQueueState);
-  private readonly species = inject(SpeciesState);
+  private readonly store = inject(FindQueueStore);
+  private readonly species = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
-  /** Wie viele Karten schon entschieden sind. Der Kopf zählt die laufende mit. */
-  private readonly decided = signal(0);
-  /** Der Stapel steht fest, sobald er gefüllt ist: eine Entscheidung kürzt ihn nicht. */
-  private readonly held = signal<readonly OpenFind[]>([]);
-
   protected readonly asking = signal(false);
+  protected readonly loaded = this.store.loaded;
 
   protected readonly cards = computed<readonly FindCard[]>(() => {
-    const photos = this.finds.photos();
-    return this.held().map((one) =>
+    const photos = this.store.photos();
+    return (this.store.stack() ?? []).map((one) =>
       findCard(one, this.nameOf(one.speciesId), photos[one.id] ?? [], this.i18n),
     );
   });
 
-  protected readonly counter = computed(() =>
-    this.i18n.translate('common.counter', {
-      done: Math.min(this.decided() + 1, this.held().length),
-      total: this.held().length,
-    }),
-  );
+  /** The head counts the card on top as one of the done cards. */
+  protected readonly counter = computed(() => {
+    const total = this.cards().length;
+    return this.i18n.translate('common.counter', {
+      done: Math.min(this.store.decided() + 1, total),
+      total,
+    });
+  });
 
   constructor() {
     void this.species.loadBundle();
-    this.finds.load();
-    effect(() => {
-      const open = this.finds.open();
-      if (open.length === 0 || untracked(() => this.held().length) > 0) return;
-      this.held.set(open);
-    });
-    effect(() => {
-      const at = this.decided();
-      for (const find of this.held().slice(at, at + 2)) {
-        this.finds.loadPhotos(find.id);
-      }
-    });
+    this.store.load();
   }
 
   protected accept(card: FindCard): void {
-    this.decided.update((count) => count + 1);
-    this.finds.review(card.id, 'accepted');
+    this.store.review({ id: card.id, decision: 'accepted' });
   }
 
   protected reject(card: FindCard): void {
-    this.decided.update((count) => count + 1);
-    this.finds.review(card.id, 'rejected');
+    this.store.review({ id: card.id, decision: 'rejected' });
   }
 
   protected undo(): void {
-    this.decided.update((count) => Math.max(0, count - 1));
+    this.store.undo();
   }
 
   protected acceptAll(): void {
     this.asking.set(false);
-    this.finds.acceptAll().subscribe(() => {
-      this.held.set([]);
-      this.decided.set(0);
-    });
+    this.store.acceptAll({});
   }
 
   protected back(): void {

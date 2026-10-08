@@ -2,23 +2,24 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { Location, NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
+import { SharedElementDirective } from '../../core/navigation/shared-element';
 import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
 import { PopoverItemComponent } from '../../ui/popover/popover-item.component';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SpeciesPageSkeletonComponent } from '../../ui/skeleton/species-page-skeleton.component';
 import { SplitLayoutComponent } from '../../ui/split-layout/split-layout.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { SurfaceComponent } from '../../ui/surface/surface.component';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { SpeciesColourChangeComponent } from './sections/species-colour-change.component';
 import { SpeciesColoursComponent } from './sections/species-colours.component';
 import { SpeciesFeaturesComponent } from './sections/species-features.component';
 import { SpeciesHymeniumComponent } from './sections/species-hymenium.component';
 import { SpeciesLookalikesComponent } from './sections/species-lookalikes.component';
+import { SpeciesReactionsComponent } from './sections/species-reactions.component';
 import { SpeciesSensesComponent } from './sections/species-senses.component';
 import { SpeciesSizeComponent } from './sections/species-size.component';
 import { SpeciesLeadComponent } from './sections/species-lead.component';
@@ -27,13 +28,18 @@ import { SpeciesSourcesComponent } from './sections/species-sources.component';
 import { SpeciesTaxonomyComponent } from './sections/species-taxonomy.component';
 import { SpeciesTimeComponent } from './sections/species-time.component';
 import { SpeciesTraitsComponent } from './sections/species-traits.component';
-import { ComparisonState } from './compare/comparison.state';
-import { SpeciesState } from './species.state';
+import { ComparisonStore } from './compare/comparison.store';
+import { SpeciesDeskComponent } from './species-desk.component';
+import { SpeciesStore } from './species.store';
 
 const PHONE_MENU_ANCHOR: PopoverAnchor = { top: 60, end: 8 };
 const DESKTOP_MENU_ANCHOR: PopoverAnchor = { top: 64, end: 12 };
 
-/** Die Artseite: Kopf, das Menü, die Abschnitte des Katalogs und der Weg zur Karte. */
+/** The hero heights of `SpeciesPage.dc.html` and `SpeciesDesktop.dc.html`. */
+const HERO_PHONE = 260;
+const HERO_DESKTOP = 210;
+
+/** The species page: the head, the menu, the sections of the catalogue and the way to compare. */
 @Component({
   selector: 'app-species-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,43 +51,45 @@ const DESKTOP_MENU_ANCHOR: PopoverAnchor = { top: 64, end: 12 };
     PopoverComponent,
     PopoverItemComponent,
     ScrollFadeDirective,
-    SplitLayoutComponent,
-    SpeciesColourChangeComponent,
+    SharedElementDirective,
     SpeciesColoursComponent,
+    SpeciesDeskComponent,
     SpeciesFeaturesComponent,
     SpeciesHymeniumComponent,
-    SpeciesLookalikesComponent,
     SpeciesLeadComponent,
+    SpeciesLookalikesComponent,
+    SpeciesPageSkeletonComponent,
     SpeciesPhotosComponent,
+    SpeciesReactionsComponent,
     SpeciesSensesComponent,
     SpeciesSizeComponent,
     SpeciesSourcesComponent,
     SpeciesTaxonomyComponent,
     SpeciesTimeComponent,
     SpeciesTraitsComponent,
+    SplitLayoutComponent,
     StateViewComponent,
-    SurfaceComponent,
     TranslatePipe,
   ],
   templateUrl: './species-page.component.html',
   styleUrl: './species-page.component.scss',
 })
 export class SpeciesPageComponent {
-  private readonly state = inject(SpeciesState);
+  private readonly catalogue = inject(SpeciesStore);
   private readonly location = inject(Location);
   private readonly router = inject(Router);
-  private readonly rights = inject(PermissionsService);
-  private readonly viewport = inject(ViewportService);
-  private readonly comparison = inject(ComparisonState);
+  private readonly rights = inject(PermissionsStore);
+  private readonly comparison = inject(ComparisonStore);
   private readonly auth = inject(AuthService);
 
   readonly slug = input.required<string>();
 
-  protected readonly wide = this.viewport.wide;
-  protected readonly species = computed(() => this.state.entryOf(this.slug()));
-  protected readonly waiting = computed(() => this.state.loading());
-  protected readonly title = computed(() => this.species()?.name ?? '');
-  /** Wer Profile ändern darf, kommt aus dem Kopf in den Bearbeiten-Modus. */
+  protected readonly wide = inject(ViewportService).wide;
+  protected readonly species = computed(() => this.catalogue.entryOf(this.slug()));
+  protected readonly reactions = computed(() => this.catalogue.reactionsOf(this.slug()));
+  protected readonly waiting = this.catalogue.loading;
+  protected readonly heroHeight = computed(() => (this.wide() ? HERO_DESKTOP : HERO_PHONE));
+  /** A person who may change profiles goes from the head into the editor. */
   protected readonly mayEdit = computed(() => this.rights.can('species.edit'));
   protected readonly canSubmitImage = this.auth.signedIn;
 
@@ -91,7 +99,8 @@ export class SpeciesPageComponent {
   );
 
   constructor() {
-    void this.state.loadBundle();
+    void this.catalogue.loadBundle();
+    this.catalogue.loadProfile(this.slug);
   }
 
   protected edit(): void {

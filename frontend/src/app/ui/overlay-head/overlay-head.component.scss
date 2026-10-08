@@ -1,0 +1,51 @@
+:host {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  min-block-size: var(--h-row);
+  padding: var(--overlay-head-pad, 0 8px);
+}
+
+.overlay-head__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+  padding-inline-start: 12px;
+}
+
+:host(.overlay-head--lead) .overlay-head__text {
+  padding-inline-start: 0;
+}
+
+// A caller sets `--sheet-title-*` on `app-sheet` to match a larger board title.
+.overlay-head__title {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--sheet-title-size, var(--fs-20));
+  font-weight: var(--sheet-title-weight, 500);
+  line-height: normal;
+  letter-spacing: var(--sheet-title-tracking, normal);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.overlay-head__note {
+  font-size: var(--fs-14);
+  color: var(--label);
+}
+
+.overlay-head__button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--h-ib);
+  block-size: var(--h-ib);
+  padding: 0;
+  color: var(--text-var);
+  background: none;
+  border: 0;
+  border-radius: calc(var(--h-ib) / 2);
+}

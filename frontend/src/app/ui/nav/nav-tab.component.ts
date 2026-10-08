@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Ein Reiter der Hauptnavigation, per `NavTab.dc.html`. */
+/** A tab of the main navigation, as in `NavTab.dc.html`. */
 @Component({
   selector: 'app-nav-tab',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,6 +16,6 @@ export class NavTabComponent {
   readonly label = input.required<string>();
   readonly path = input.required<string>();
   readonly active = input(false);
-  /** Am Rechner steht der Reiter in der Schiene und hält seine Breite. */
+  /** On desktop, the tab is in the rail and keeps its width. */
   readonly rail = input(false);
 }

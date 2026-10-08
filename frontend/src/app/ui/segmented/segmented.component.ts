@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
-/** Eine Wahl im Segmented. */
+/** One option of the segmented control. */
 export interface SegmentOption {
   value: string;
   label: string;
 }
 
 /**
- * Zwei, drei oder vier Werte nebeneinander. Pfeiltasten wechseln die Wahl.
+ * Two, three or four values side by side. The arrow keys change the selection.
  */
 @Component({
   selector: 'app-segmented',
@@ -22,9 +22,9 @@ export class SegmentedComponent {
   readonly options = input.required<readonly SegmentOption[]>();
   readonly value = input<string | null>(null);
   readonly label = input.required<string>();
-  /** Ein gesperrtes Segment ist nur zu sehen, nicht zu bedienen. */
+  /** A locked segment shows but the user cannot select it. */
   readonly locked = input(false);
-  /** Ohne Daten tragen die Reiter Platzhalter statt ihrer Wörter. */
+  /** Without data, the tabs show placeholders and not their labels. */
   readonly loading = input(false);
 
   readonly valueChange = output<string>();

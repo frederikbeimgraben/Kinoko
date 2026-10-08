@@ -3,7 +3,7 @@ import type { I18nService } from '../../core/i18n/i18n.service';
 import { type SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from './labels';
 
-/** Wandelt eine Art des Katalogs in eine Zeile für `app-species-picker`. */
+/** Converts a catalogue species into an entry for `app-species-picker`. */
 export function speciesPickerEntry(entry: SpeciesSummary, i18n: I18nService): SpeciesPickerEntry {
   const tone = EDIBILITY_TONE[entry.edibility];
   return {

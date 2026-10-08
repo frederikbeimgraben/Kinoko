@@ -1,123 +1,111 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { photoPath, type Photo, type PhotoState } from '../../core/api/models';
-import { PhotosApi } from '../../core/api/photos.api';
-import { longDate } from '../../core/i18n/dates';
+import { shortDay } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { type BadgeKind, LevelPillComponent } from '../../ui/level-pill/level-pill.component';
+import type { BadgeKind } from '../../ui/level-pill/level-pill.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
+import { MyImagesStore } from './my-images.store';
 
-const STATE_BADGE: Record<PhotoState, BadgeKind> = {
-  private: '',
-  submitted: 'warn',
-  approved: 'ok',
-  rejected: 'bad',
-};
+/** The badge, the badge word and the state word of each review state, per `MyImages.dc.html`. */
+const STATE: Readonly<Record<PhotoState, { kind: BadgeKind; badge: TranslationKey; text: TranslationKey }>> =
+  {
+    private: { kind: '', badge: 'image.badge.private', text: 'image.state.private' },
+    submitted: { kind: 'warn', badge: 'image.badge.submitted', text: 'image.state.submitted' },
+    approved: { kind: 'ok', badge: 'image.badge.approved', text: 'image.state.approved' },
+    rejected: { kind: 'bad', badge: 'image.badge.rejected', text: 'image.state.rejected' },
+  };
 
-const STATE_TEXT: Record<PhotoState, TranslationKey> = {
-  private: 'enum.photo_state.private',
-  submitted: 'enum.photo_state.submitted',
-  approved: 'enum.photo_state.approved',
-  rejected: 'enum.photo_state.rejected',
-};
-
-/** Eine Einreichung, fertig für die Vorlage. */
+/** One own photo, ready for the template. */
 interface Row {
-  id: string;
-  species: string;
-  thumbPath: string;
-  alt: string;
-  submitted: string;
-  badge: BadgeKind;
-  badgeText: string;
-  reason: string | null;
+  readonly id: string;
+  readonly title: string;
+  readonly sub: string;
+  readonly thumb: string;
+  readonly badge: string;
+  readonly kind: BadgeKind;
+  /** The way to the image page, `null` without a known species. */
+  readonly link: readonly string[] | null;
 }
 
-/** „Meine Bilder“ unter dem Konto: je Einreichung ihr Zustand und der Grund. */
+/** "My images" below the account: each photo with its review state and the reason of a rejection. */
 @Component({
   selector: 'app-my-images',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ButtonComponent,
-    LevelPillComponent,
+    ListRowComponent,
     PageHeaderComponent,
     PrivateImageComponent,
     RowGroupComponent,
+    RowGroupSkeletonComponent,
     StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './my-images.component.html',
-  styleUrl: './my-images.component.scss',
+  styleUrl: './account-page.scss',
 })
 export class MyImagesComponent {
-  private readonly api = inject(PhotosApi);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
+  private readonly store = inject(MyImagesStore);
+  private readonly wide = inject(ViewportService).wide;
 
-  private readonly photos = signal<readonly Photo[]>([]);
-  private readonly cursor = signal<string | null>(null);
+  protected readonly back = computed(() => !this.wide());
+  protected readonly loaded = this.store.loaded;
+  protected readonly busy = this.store.busy;
+  protected readonly more = this.store.more;
 
-  protected readonly loaded = signal(false);
-  protected readonly loading = signal(false);
-  protected readonly more = computed(() => this.cursor() !== null);
-
-  protected readonly rows = computed<Row[]>(() =>
-    this.photos().map((image) => {
-      const name = this.nameOf(image.speciesId ?? null);
-      return {
-        id: image.id,
-        species: name,
-        thumbPath: photoPath(image.id, 'list'),
-        alt: image.caption ?? name,
-        submitted: this.i18n.translate('bild.eingereichtAm', {
-          datum: longDate(image.createdAt.slice(0, 10), this.i18n.locale()),
-        }),
-        badge: STATE_BADGE[image.state],
-        badgeText: this.i18n.translate(STATE_TEXT[image.state]),
-        reason: image.rejectReason ?? null,
-      };
-    }),
+  protected readonly rows = computed<readonly Row[]>(() =>
+    (this.store.photos() ?? []).map((photo) => this.row(photo)),
   );
 
   constructor() {
     void this.species.loadBundle();
-    this.fetch();
+    this.store.load();
   }
 
-  protected loadMore(): void {
-    this.fetch();
+  protected next(): void {
+    this.store.next();
   }
 
-  protected back(): void {
+  protected open(row: Row): void {
+    if (row.link !== null) void this.router.navigate(row.link);
+  }
+
+  protected toAccount(): void {
     void this.router.navigateByUrl('/konto');
   }
 
-  private fetch(): void {
-    if (this.loading()) return;
-    this.loading.set(true);
-    this.api.list({ mine: true, cursor: this.cursor() ?? undefined }).subscribe({
-      next: (page) => {
-        this.photos.update((all) => [...all, ...page.items]);
-        this.cursor.set(page.nextCursor);
-        this.loading.set(false);
-        this.loaded.set(true);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.loaded.set(true);
-      },
-    });
-  }
-
-  private nameOf(speciesId: string | null): string {
-    return this.species.species().find((entry) => entry.id === speciesId)?.name ?? '';
+  private row(photo: Photo): Row {
+    const state = STATE[photo.state];
+    const entry = photo.speciesId ? this.species.entryById(photo.speciesId) : null;
+    const reason = photo.state === 'rejected' && photo.rejectReason ? photo.rejectReason : null;
+    const stateText =
+      reason === null
+        ? this.i18n.translate(state.text)
+        : this.i18n.translate('image.rejectedBecause', { reason });
+    return {
+      id: photo.id,
+      title: entry?.name ?? photo.caption ?? '',
+      sub: joined([shortDay(new Date(photo.createdAt), this.i18n), stateText]),
+      thumb: photoPath(photo.id, 'list'),
+      badge: this.i18n.translate(state.badge),
+      kind: state.kind,
+      // The image view shows only approved photos.
+      link: entry && photo.state === 'approved' ? ['/arten', entry.slug, 'bilder', photo.id] : null,
+    };
   }
 }

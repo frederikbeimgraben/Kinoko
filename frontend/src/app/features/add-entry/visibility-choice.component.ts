@@ -8,36 +8,37 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import type { Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { visibilitySegments } from './visibility';
 
-/** Das Blatt der Gruppenwahl ist so hoch wie sein Inhalt. */
+/** The sheet of the group choice is as high as its content. */
 
-/** Privat oder an eine Gruppe: Schalter und Gruppenwahl von Fund, Marker und Zone. */
+/** Private or shared with a group: the segment and the group choice of a find, a marker and a zone. */
 @Component({
   selector: 'app-visibility-choice',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormFieldComponent, OptionSheetComponent, SegmentedComponent, TranslatePipe],
+  imports: [ListRowComponent, OptionSheetComponent, RowGroupComponent, SegmentedComponent, TranslatePipe],
   templateUrl: './visibility-choice.component.html',
   styleUrl: './visibility-choice.component.scss',
 })
 export class VisibilityChoiceComponent {
   readonly visibility = input.required<Visibility>();
   readonly groupId = input<string | null>(null);
-  /** Im engen Formular stehen Beschriftung und Schalter nebeneinander. */
+  /** In a narrow form, the label and the segment are side by side. */
   readonly inline = input(false);
 
   readonly visibilityChange = output<Visibility>();
   readonly groupChange = output<string | null>();
 
   private readonly i18n = inject(I18nService);
-  private readonly state = inject(GroupsState);
+  private readonly state = inject(GroupsStore);
 
   protected readonly picking = signal(false);
   protected readonly segments = computed(() => visibilitySegments(this.i18n));
@@ -52,12 +53,12 @@ export class VisibilityChoiceComponent {
   );
 
   constructor() {
-    // Erst beim Teilen braucht das Formular die Gruppen.
+    // The form needs the groups only for a share.
     effect(() => {
       if (this.visibility() !== 'shared' || this.state.groups() !== null) return;
       this.state.load(false, true);
     });
-    // Wer genau eine Gruppe hat, teilt ohne weiteren Griff an sie.
+    // With exactly one group, the share goes to it without a choice.
     effect(() => {
       const only = this.groups();
       if (this.visibility() !== 'shared' || this.groupId() !== null || only.length !== 1) return;

@@ -85,7 +85,7 @@ describe('TimelineComponent', () => {
     expect(selected).toHaveLength(0);
   });
 
-  it('schiebt die aktive Woche in die Mitte der Leiste', async () => {
+  it('moves the active week to the middle of the whole tiles', async () => {
     const { container } = await render(TimelineComponent, {
       inputs: { weeks: WEEKS, active: { year: 2026, week: 1 }, label: 'Wochen' },
     });
@@ -101,7 +101,8 @@ describe('TimelineComponent', () => {
     screen.getByRole('button', { name: 'KW 52 · 2025' }).focus();
     await userEvent.keyboard('{ArrowRight}');
 
-    expect(scrollTo).toHaveBeenCalledWith({ left: 120 - (200 - 48) / 2, behavior: 'smooth' });
+    // Four whole tiles fit: one before the week, 8 px slack split to both sides.
+    expect(scrollTo).toHaveBeenCalledWith({ left: 120 - 48 - 4, behavior: 'smooth' });
   });
 
   it('sperrt beide Pfeile ohne verdeckte Wochen', async () => {

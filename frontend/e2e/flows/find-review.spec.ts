@@ -34,7 +34,7 @@ const OPEN_FINDS = {
   nextCursor: null,
 };
 
-/** Meldet an und öffnet den Prüfstapel der Funde. */
+/** Signs in and opens the review queue of the finds. */
 async function start(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {

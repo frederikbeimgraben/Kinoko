@@ -1,6 +1,6 @@
 import type { paths } from './contract';
 
-/** Ein Weg des Vertrags, der diese Methode trägt. */
+/** A contract path that has this method. */
 type PathWith<M extends string> = {
   [P in keyof paths]: paths[P] extends Record<M, object> ? P : never;
 }[keyof paths];
@@ -15,14 +15,13 @@ type Success<O> = O extends { responses: { 200: { content: { 'application/json':
 
 type Payload<O> = O extends { requestBody: { content: { 'application/json': infer T } } } ? T : never;
 
-/** Pfadwerte, Parameter und Abbruch eines Aufrufs. */
 export interface CallOptions {
   path?: Record<string, string | number>;
   params?: Record<string, string | number | boolean | undefined>;
   signal?: AbortSignal;
 }
 
-/** Ein Fehler des Vertrags: `application/problem+json` mit englischem Code. */
+/** A contract error: `application/problem+json` with an English code. */
 export class ProblemError extends Error {
   constructor(
     readonly status: number,
@@ -32,7 +31,6 @@ export class ProblemError extends Error {
   }
 }
 
-/** Setzt die Pfadwerte ein und hängt die Parameter an. */
 export function contractUrl(base: string, path: string, options?: CallOptions): string {
   const filled = path.replace(/\{(\w+)\}/g, (_, name: string) =>
     encodeURIComponent(String(options?.path?.[name] ?? '')),
@@ -45,7 +43,7 @@ export function contractUrl(base: string, path: string, options?: CallOptions): 
   return `${base}${filled}${tail ? `?${tail}` : ''}`;
 }
 
-/** Ruft die API über die Wege des Vertrags auf. Ein anderer Weg ist ein Typfehler. */
+/** Calls the API through the contract paths. Any other path is a type error. */
 export class ContractClient {
   constructor(
     private readonly base = '/api',

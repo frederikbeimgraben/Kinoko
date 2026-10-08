@@ -7,9 +7,9 @@ import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { SectionLookalikeComponent } from './section-lookalike.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 const BUNDLE = {
@@ -62,7 +62,7 @@ async function build(
   await vi.waitFor(() => {
     http.expectOne('/api/species/bundle').flush(BUNDLE);
   });
-  const catalogue = TestBed.inject(SpeciesState);
+  const catalogue = TestBed.inject(SpeciesStore);
   await vi.waitFor(() => {
     expect(catalogue.species()).toHaveLength(BUNDLE.items.length);
   });
@@ -71,7 +71,7 @@ async function build(
 
 describe('SectionLookalikeComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt die andere Art und den Unterschied', async () => {

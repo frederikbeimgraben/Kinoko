@@ -14,10 +14,10 @@ import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 import { PrivateImageComponent } from '../private-image/private-image.component';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Ab dieser waagrechten Bewegung gilt ein Zug als Wisch, nicht als Zittern. */
+/** Above this horizontal movement in px, a drag is a swipe and not a tremble. */
 const SWIPE_THRESHOLD = 60;
 
-/** Ein Foto über dem Blatt: dunkler Grund, Bild eingepasst, X und Pfeile. */
+/** A photo above the sheet: a dark ground, the image fitted, a close button and arrows. */
 @Component({
   selector: 'app-photo-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +33,7 @@ export class PhotoDialogComponent {
 
   readonly closed = output();
 
-  /** Der Index folgt der Eingabe. Ein Pfeil oder ein Wisch setzt ihn neu. */
+  /** The index follows the input. An arrow or a swipe sets a new index. */
   protected readonly shown = linkedSignal(() => this.index());
 
   protected readonly many = computed(() => this.photos().length > 1);
@@ -50,7 +50,7 @@ export class PhotoDialogComponent {
   private pointer: number | null = null;
   private startX = 0;
 
-  /** Das letzte Foto führt zum ersten zurück: der Ring hat kein totes Ende. */
+  /** The last photo goes back to the first: the ring has no dead end. */
   protected step(delta: number): void {
     const total = this.photos().length;
     if (total < 2) return;
@@ -64,7 +64,7 @@ export class PhotoDialogComponent {
     this.step(delta);
   }
 
-  /** Ein Tipp auf das Foto oder einen Knopf bleibt dort, nur der Grund schließt. */
+  /** A tap on the photo or a button stays there. Only the ground closes the dialog. */
   protected onGround(event: MouseEvent): void {
     if (event.target === event.currentTarget) this.closed.emit();
   }

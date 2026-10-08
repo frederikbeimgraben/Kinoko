@@ -5,7 +5,7 @@ import { LevelPillComponent } from '../level-pill/level-pill.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
 import { photoPath, type Photo } from '../../core/api/models';
 
-/** Eine Bildkachel mit Titelbild-Marke und Herkunftszeile. */
+/** An image tile with a cover badge and a credit line. */
 @Component({
   selector: 'app-image-tile',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,7 +15,7 @@ import { photoPath, type Photo } from '../../core/api/models';
 })
 export class ImageTileComponent {
   readonly image = input.required<Photo>();
-  /** Zeigt die Marke, wenn dieses Bild das Titelbild der Art ist. */
+  /** Shows the badge when this image is the cover image of the species. */
   readonly lead = input(false);
 
   protected readonly path = computed(() => photoPath(this.image().id, 'list'));

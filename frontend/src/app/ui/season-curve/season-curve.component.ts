@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** Die Marken auf der Grundlinie stehen am Anfang der Monate Jan, Mär, … Nov. */
+/** The marks on the baseline are at the start of the months Jan, Mar, … Nov. */
 const MONTH_MARKS = [0, 9, 18, 27, 36, 44] as const;
 
-/** Der Anteil des stärksten Wertes, unter dem eine Woche als dünn gilt. */
+/** Below this share of the maximum visits, a week is thin. */
 const THIN_BELOW = 0.25;
 
-/** Zentriertes gleitendes Mittel. Am Rand zählen nur die Nachbarn, die es gibt. */
+/** Centred moving average. At the edges, only the existing neighbours count. */
 export function smooth(series: readonly number[], windowSize: number): readonly number[] {
   if (windowSize <= 1) return series;
   const half = Math.floor(windowSize / 2);
@@ -21,31 +21,31 @@ export function smooth(series: readonly number[], windowSize: number): readonly 
 
 let nextNumber = 0;
 
-/** Ein Streifen über einer Woche, die auf wenigen Begehungen ruht. */
+/** A strip over a week with few visits. */
 interface Strip {
   x: number;
   width: number;
 }
 
-/** Eine Monatsmarke unter der Kurve: der Name und die Woche, in der er beginnt. */
+/** A month mark below the curve: the name and the week in which the month starts. */
 export interface MonthMark {
   text: string;
   week: number;
 }
 
-/** Die Form einer Reihe: Fläche über alle Jahre, Linie für das laufende Jahr. */
+/** The shape of a series: an area for all years, a line for the current year. */
 export type SeasonShape = 'area' | 'line';
 
-/** Eine Reihe der Kurve mit ihren Begehungen und ihrer Legende. */
+/** A series of the curve with its visits and its legend. */
 export interface SeasonSeries {
   readonly shape: SeasonShape;
   readonly values: readonly number[];
-  /** Begehungen je Kalenderwoche. Wenige Begehungen dünnen die Woche aus. */
+  /** Visits for each calendar week. Few visits make the week thin. */
   readonly visits?: readonly number[];
   readonly legend?: string;
 }
 
-/** Eine gesetzte Monatsmarke: Anteil der Breite, auf dem sie sitzt. */
+/** A placed month mark with its position as a share of the width. */
 interface PlacedMark {
   text: string;
   left: number;
@@ -59,14 +59,14 @@ interface Drawing {
   currentLine: string;
   hasCurrent: boolean;
   badges: number[];
-  /** Der Endpunkt als Anteil der Fläche, in Prozent. Er steht neben dem SVG,
-   * weil die verzerrte Zeichenfläche aus einem Kreis eine Ellipse machte. */
+  /** The end point as a share of the area, in percent. It is outside the SVG
+   * because the stretched plot area makes a circle into an ellipse. */
   endLeft: number;
   endTop: number;
   thin: Strip[];
 }
 
-/** Saisonkurve einer Art: alle Jahre als Fläche, das laufende Jahr als Linie. */
+/** The season curve of a species: all years as an area, the current year as a line. */
 @Component({
   selector: 'app-season-curve',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,17 +77,17 @@ export class SeasonCurveComponent {
   readonly series = input.required<readonly SeasonSeries[]>();
   readonly label = input.required<string>();
   readonly large = input(false);
-  /** Die Monatsnamen unter der Grundlinie, jeder auf seiner Woche. */
+  /** The month names below the baseline, each on its week. */
   readonly months = input<readonly MonthMark[]>([]);
-  /** Breite des gleitenden Mittels in Wochen. 1 zeichnet die Rohwerte. */
+  /** The width of the moving average in weeks. 1 draws the raw values. */
   readonly smoothing = input(3);
-  /** Der Höchstwert der Skala als Text, etwa „32 %“. Leer bleibt er weg. */
+  /** The maximum of the scale as text, for example „32 %“. An empty value does not show. */
   readonly peak = input('');
 
   protected readonly maskId = `funke-dicht-${nextNumber++}`;
   protected readonly drawing = computed<Drawing>(() => this.compute());
 
-  /** Die Linie steht in der Legende vorn, so wie sie über der Fläche liegt. */
+  /** The line comes first in the legend, as it is on top of the area. */
   protected readonly legend = computed<readonly SeasonSeries[]>(() =>
     [...this.series()]
       .filter((row) => row.legend)
@@ -107,8 +107,8 @@ export class SeasonCurveComponent {
     const rawLine = this.values('line');
     const area = smooth(rawArea, windowSize);
     const current = smooth(rawLine, windowSize);
-    // Der Höchstwert kommt aus den Rohdaten, nicht aus der geglätteten Reihe.
-    // Die kleinste Zahl als Boden schützt vor einer Teilung durch null.
+    // The maximum comes from the raw data, not from the smoothed series.
+    // The smallest number as a floor prevents a division by zero.
     const top = Math.max(...rawArea, ...rawLine, Number.EPSILON);
     const point = (i: number, value: number): [number, number] => [
       (i / 51) * width,
@@ -131,7 +131,7 @@ export class SeasonCurveComponent {
     };
   }
 
-  /** Die Monatsmarken auf derselben Skala wie die Kurve, als Anteil der Breite. */
+  /** Places the month marks on the scale of the curve, as a share of the width. */
   protected readonly monthMarks = computed<PlacedMark[]>(() =>
     this.months().map((badge) => ({
       text: badge.text,
@@ -139,7 +139,7 @@ export class SeasonCurveComponent {
     })),
   );
 
-  /** Wochen, in denen eine Reihe auf wenigen Begehungen ruht, je eigener Skala. */
+  /** Gives the weeks with few visits, each series on its own scale. */
   private thinWeeks(width: number): Strip[] {
     const rows = this.series()
       .map((row) => row.visits ?? [])

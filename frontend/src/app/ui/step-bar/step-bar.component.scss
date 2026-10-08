@@ -1,8 +1,8 @@
-// Die Leiste schwebt über der Kartenfläche. Am Telefon steht sie über der
-// Reiterleiste, am Rechner am unteren Rand der Karte.
+// Per `kit.css` `.stepbar`: the bar floats over the map pane, 16 px from its sides.
+// It is 24 px above the end of the map on the phone and 32 px on the desktop (boards `FindLocation`, `MapDesktopZoneDraw`).
 :host {
-  position: fixed;
-  inset-block-end: calc(var(--size-nav) + var(--size-gutter));
+  position: absolute;
+  inset-block-end: 24px;
   inset-inline: 16px;
   z-index: calc(var(--z-sheet) + 2);
   display: flex;
@@ -11,8 +11,7 @@
 }
 
 :host-context(.shell--column) {
-  inset-block-end: var(--size-gutter);
-  inset-inline-start: calc(var(--size-rail) + var(--size-column));
+  inset-block-end: 32px;
 }
 
 .stepbar {
@@ -22,9 +21,12 @@
   pointer-events: auto;
 }
 
+// The board shows no status text. Screen readers still read the point or the corners.
 .stepbar__note {
-  margin-inline-end: auto;
-  font-size: var(--fs-caption);
-  font-variant-numeric: tabular-nums;
-  color: var(--text-var);
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

@@ -1,49 +1,61 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import type { Combination, Rule } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
-import type { Combination, Rule } from '../../core/api/models';
+import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 
-/** Der Text zu jeder Regel. */
 const RULE_KEY: Record<Rule, TranslationKey> = {
   intersection: 'map.combination.intersection',
   graded: 'map.combination.graduated',
 };
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 
-/** Eine gespeicherte Kombination mit ihrer Unterzeile. */
+/** A saved combination with its sub-line. */
 interface Row {
   combination: Combination;
   subline: string;
 }
 
-/** Die gespeicherten Kombinationen: laden oder entfernen. */
+/** The saved combinations as one group of radio rows, per the board `CombinationsBody`. */
 @Component({
   selector: 'app-combinations',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, SvgIconComponent],
-  templateUrl: './combinations.component.html',
-  styleUrl: './combinations.component.scss',
+  imports: [ChoiceRowComponent, RowGroupComponent],
+  template: `
+    <app-row-group role="radiogroup">
+      @for (row of rows(); track row.combination.id) {
+        <app-choice-row
+          [label]="row.combination.name ?? ''"
+          [subline]="row.subline"
+          [checked]="row.combination.id === selected()"
+          (toggled)="chosen.emit(row.combination)"
+        />
+      }
+    </app-row-group>
+  `,
 })
 export class CombinationsComponent {
   private readonly i18n = inject(I18nService);
 
   readonly saved = input.required<readonly Combination[]>();
+  readonly selected = input<string | null>(null);
 
-  readonly picked = output<Combination>();
-  readonly removed = output<Combination>();
+  readonly chosen = output<Combination>();
 
+  /** One factor needs no rule, so its line names only the count. */
   protected readonly rows = computed<Row[]>(() =>
-    this.saved().map((combination) => ({
-      combination,
-      subline: this.i18n.translate('map.combination.summary', {
-        rule: this.i18n.translate(RULE_KEY[combination.rule ?? 'intersection']),
-        count: combination.factors?.length ?? 0,
-      }),
-    })),
+    this.saved().map((combination) => {
+      const count = combination.factors?.length ?? 0;
+      return {
+        combination,
+        subline:
+          count === 1
+            ? this.i18n.translate('map.combination.oneFactor')
+            : this.i18n.translate('map.combination.summary', {
+                rule: this.i18n.translate(RULE_KEY[combination.rule ?? 'intersection']),
+                count,
+              }),
+      };
+    }),
   );
-
-  protected removeLabel(combination: Combination): string {
-    return `${this.i18n.translate('common.delete')} ${combination.name ?? ''}`.trim();
-  }
 }

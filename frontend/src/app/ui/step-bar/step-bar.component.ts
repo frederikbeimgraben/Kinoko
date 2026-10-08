@@ -3,7 +3,7 @@ import { FloatingButtonComponent } from '../floating-button/floating-button.comp
 import { IconButtonComponent } from '../icon-button/icon-button.component';
 import type { IconName } from '../svg-icon/svg-icon.component';
 
-/** Eine Aktion der Schritt-Leiste: ein Zeichen, seine Beschriftung, seine Rolle. */
+/** An action of the step bar: an icon, its label and its role. */
 export interface StepAction {
   readonly label: string;
   readonly icon: IconName;
@@ -11,7 +11,7 @@ export interface StepAction {
   readonly run: () => void;
 }
 
-/** Die schwebende Leiste eines Karten-Schritts, per `StepBar.dc.html`. */
+/** The floating bar of a step on the map, per `StepBar.dc.html`. */
 @Component({
   selector: 'app-step-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,13 +21,13 @@ export interface StepAction {
 })
 export class StepBarComponent {
   readonly label = input.required<string>();
-  /** Die Marke links der Knöpfe: der Ort oder die Zahl der Eckpunkte. */
+  /** The status for screen readers: the point or the number of corners. */
   readonly note = input('');
   readonly actions = input.required<readonly StepAction[]>();
 
   readonly chosen = output<StepAction>();
 
-  /** Die runden Knöpfe stehen vor dem Fab, wie `StepBar.dc.html` sie ordnet. */
+  /** The round buttons stand before the FAB, as in `StepBar.dc.html`. */
   protected readonly secondary = computed(() =>
     this.actions().filter((action) => action.variant === 'secondary'),
   );

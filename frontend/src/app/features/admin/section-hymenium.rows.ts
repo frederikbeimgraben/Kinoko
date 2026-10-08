@@ -8,17 +8,17 @@ import type {
 import { ATTACHMENT_TEXT, EDGE_TEXT, HYMENIUM_TEXT, SPACING_TEXT } from '../species/labels';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Welches Feld der Fruchtschicht eine Zeile führt. */
+/** The hymenium field that a row shows. */
 export type HymeniumField = 'kind' | 'attachment' | 'spacing' | 'edge';
 
-/** Eine Zeile der Kopfkarte: Beschriftung, Wert und das Feld dahinter. */
+/** A row of the header card: label, value and the field that it edits. */
 export interface HymeniumRow {
   field: HymeniumField;
   title: TranslationKey;
   value: string;
 }
 
-/** Nur Lamellen und Leisten tragen Ansatz, Stand und Schneide. */
+/** Only gills and folds have an attachment, a spacing and an edge. */
 const GILL_ONLY: readonly HymeniumType[] = ['gills', 'folds'];
 
 export const HYMENIUM_TYPES_ORDER: readonly HymeniumType[] = ['gills', 'tubes', 'pores', 'spines', 'folds'];
@@ -34,7 +34,7 @@ export const FIELD_TITLE: Readonly<Record<HymeniumField, TranslationKey>> = {
   edge: 'species.field.hymeniumEdge',
 };
 
-/** Die Werte eines Feldes, in der Reihenfolge des Katalogs. */
+/** The values of a field, in catalogue order. */
 export function choicesOf(field: HymeniumField): readonly string[] {
   if (field === 'kind') return HYMENIUM_TYPES_ORDER;
   if (field === 'attachment') return ATTACHMENTS;
@@ -42,7 +42,6 @@ export function choicesOf(field: HymeniumField): readonly string[] {
   return EDGES;
 }
 
-/** Der Textschlüssel eines Wertes. */
 export function choiceText(field: HymeniumField, value: string): TranslationKey {
   if (field === 'kind') return HYMENIUM_TEXT[value as HymeniumType];
   if (field === 'attachment') return ATTACHMENT_TEXT[value as GillAttachment];
@@ -50,7 +49,7 @@ export function choiceText(field: HymeniumField, value: string): TranslationKey 
   return EDGE_TEXT[value as GillEdge];
 }
 
-/** Der Wert eines Feldes an einer Art. */
+/** The value of a field on a species, or null. */
 export function valueOf(species: SpeciesEntry, field: HymeniumField): string | null {
   if (field === 'kind') return species.hymeniumType ?? null;
   if (field === 'attachment') return species.gillAttachment ?? null;
@@ -58,7 +57,7 @@ export function valueOf(species: SpeciesEntry, field: HymeniumField): string | n
   return species.gillEdge ?? null;
 }
 
-/** Die Zeilen der Kopfkarte. Ohne Lamellen bleibt nur die Art. */
+/** The rows of the header card. Without gills or folds, only the kind row stays. */
 export function hymeniumRows(species: SpeciesEntry, text: (key: TranslationKey) => string): HymeniumRow[] {
   const kind = species.hymeniumType ?? null;
   const fields: HymeniumField[] =

@@ -7,14 +7,14 @@ import { ImageCreditComponent } from '../image-credit/image-credit.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
 import { RippleDirective } from '../ripple/ripple.directive';
 
-/** Das Foto und seine Herkunft, wie das Hero-Bild sie braucht. */
+/** The photo and its credit that the hero image needs. */
 export interface HeroPhoto {
   readonly path: string;
   readonly photographer: string;
   readonly licence: Licence;
 }
 
-/** Das grosse Bild der Artseite und der Bildansicht: Foto, Pfeile, Herkunft. */
+/** The large image of the species page and the image view: photo, arrows and credit. */
 @Component({
   selector: 'app-hero',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,14 +28,14 @@ export class HeroComponent {
   readonly photo = input<HeroPhoto | null>(null);
   readonly alt = input.required<string>();
   readonly height = input(260);
-  /** Die Stelle im Stapel, ab eins gezählt, und wie viele es sind. */
+  /** The position in the stack, counted from one, and the number of images. */
   readonly index = input(0);
   readonly count = input(0);
-  /** Ohne Blättern bleiben die Pfeile weg, auch bei mehreren Bildern. */
+  /** When false, the arrows do not show, also with more than one image. */
   readonly nav = input(true);
-  /** Randlos und ohne Herkunftszeile: das Bild füllt seine Fläche ganz. */
+  /** No border and no credit line: the image fills all of its area. */
   readonly bare = input(false);
-  /** Ein Antippen öffnet das Bild. Ohne das bleibt die Fläche fest. */
+  /** A tap opens the image. When false, the area does not react. */
   readonly interactive = input(true);
 
   readonly opened = output();

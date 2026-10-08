@@ -2,7 +2,7 @@ import sample from './chain-manifests.sample.json';
 import { readLayers, shareMet } from './layers';
 import { readManifest } from './manifest';
 
-/** Die Probe stammt aus `modell/src/pilze/manifest.py`. */
+/** The sample comes from `modell/src/pilze/manifest.py`. */
 const LAYERS = readLayers(sample.layers);
 const SPECIES = readManifest(sample.species, 'boletus-edulis');
 

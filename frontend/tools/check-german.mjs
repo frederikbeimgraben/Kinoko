@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/** Sucht deutschen Text im Code. Text für Personen kommt über `| t`. */
+/** Finds German text in the code. Text for people must come through `| t`. */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const EXCLUDED_ZONES = ['core/i18n', 'testing'];
+const EXCLUDED_ZONES = ['core/i18n', 'testing', 'core/api/contract.d.ts'];
 
 const UMLAUT = /[äöüÄÖÜß]/;
 const FUNCTION_WORDS = new Set([
@@ -42,7 +42,7 @@ const FUNCTION_WORDS = new Set([
   'haben',
 ]);
 
-/** Erkennt deutschen Text: Umlaut oder ein Funktionswort als eigenes Wort. */
+/** Detects German text: an umlaut, or a function word as a separate word. */
 export function isGerman(text) {
   const letters = text.match(/[A-Za-zÄÖÜäöüß]/g) ?? [];
   if (letters.length < 2) return false;
@@ -57,7 +57,7 @@ function lineAt(source, index) {
   return line;
 }
 
-/** Sammelt String-Literale ausserhalb von Kommentaren. */
+/** Collects string literals outside of comments. */
 function stringsInTs(source) {
   const found = [];
   let i = 0;
@@ -87,7 +87,7 @@ function stringsInTs(source) {
   return found;
 }
 
-/** Sammelt Textknoten ausserhalb von Tags, Kommentaren und Ausdrücken. */
+/** Collects text nodes outside of tags, comments and expressions. */
 function textNodesInHtml(source) {
   const found = [];
   let i = 0;
@@ -149,12 +149,13 @@ function collectFiles(appRoot, folder, found) {
       continue;
     }
     if (name.endsWith('.spec.ts')) continue;
+    if (EXCLUDED_ZONES.includes(relative(appRoot, path).split(sep).join('/'))) continue;
     if (name.endsWith('.ts') || name.endsWith('.html')) found.push(path);
   }
   return found;
 }
 
-/** Sucht deutschen Text unter `root`, ausser in `core/i18n` und `testing`. */
+/** Finds German text under `root`, except in `core/i18n` and `testing`. */
 export function findViolations(root) {
   const appRoot = join(root, 'src', 'app');
   const found = [];
@@ -169,7 +170,7 @@ export function findViolations(root) {
   return found;
 }
 
-/** Der Schlüssel hängt am Text, nicht an der Zeile. Eine Verschiebung zählt nicht. */
+/** The key uses the text, not the line. A moved line does not count. */
 export function allowKey(v) {
   const text = v.text.replace(/\s+/g, ' ').trim();
   return `${v.path}#${createHash('sha256').update(text).digest('hex').slice(0, 8)}`;
@@ -183,7 +184,7 @@ function readAllow(allowPath) {
   }
 }
 
-/** Meldet deutsche Texte unter `root` ohne die in `allowPath` freigegebenen. */
+/** Reports German texts under `root`, except the ones that `allowPath` allows. */
 export function report(root, allowPath) {
   const allowed = new Set(readAllow(allowPath).german ?? []);
   return findViolations(root).filter((v) => !allowed.has(allowKey(v)));

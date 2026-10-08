@@ -13,7 +13,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
-/** Eine Woche in der Zeitleiste. Eine Prognosewoche trägt einen gestrichelten Rand. */
+/** A week in the week strip, per the board `WeekCell`. A forecast week has a dashed border. */
 @Component({
   selector: 'app-week-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,24 +27,24 @@ export class WeekButtonComponent {
 
   readonly year = input.required<number>();
   readonly week = input.required<number>();
-  /** Balkenhöhe zwischen 0 und 1. */
+  /** The bar length from 0 to 1. */
   readonly share = input(0);
   readonly forecast = input(false);
   readonly active = input(false);
-  /** Die erste Woche eines Jahres trägt die Jahreszahl über sich. */
+  /** The first week of a year shows the year above it. */
   readonly yearMark = input(false);
-  /** Nur eine Woche der Leiste liegt im Tabulator-Weg; die Pfeile führen weiter. */
+  /** Only one week of the strip is in the tab order. The arrow keys go to the others. */
   readonly inTabOrder = input(true);
-  /** Gesperrt, solange die Darstellung keine Woche kennt. */
+  /** Locked while the view has no week. */
   readonly locked = input(false);
-  /** Solange das Manifest fehlt, trägt die Taste nur einen Balken. */
+  /** Without a manifest, the button shows only a bar. */
   readonly loading = input(false);
 
   readonly chosen = output();
 
   protected readonly bars = computed(() => `${Math.round(Math.min(Math.max(this.share(), 0), 1) * 100)}%`);
 
-  /** Der Knopf selbst; die Leiste schiebt ihn in Sicht. */
+  /** The button element. The strip scrolls it into view. */
   element(): HTMLButtonElement {
     return this.button().nativeElement;
   }

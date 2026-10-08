@@ -1,11 +1,11 @@
 import { Directive, ElementRef, OnDestroy, inject } from '@angular/core';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
 
-/** Meldet, wie viel ein Blatt oder eine Leiste unten von der Karte verdeckt. */
+/** Reports how much of the map a sheet or a bar covers at the bottom. */
 @Directive({ selector: '[appSheetHeight]' })
 export class SheetHeightDirective implements OnDestroy {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly state = inject(MapState);
+  private readonly state = inject(MapStore);
 
   private readonly observer = new ResizeObserver(() => {
     this.report();
@@ -18,14 +18,14 @@ export class SheetHeightDirective implements OnDestroy {
 
   ngOnDestroy(): void {
     this.observer.disconnect();
-    this.state.overlayHeight.set(0);
+    this.state.setOverlayHeight(0);
   }
 
-  /** Der Streifen misst den Weg vom oberen Rand des Elements zum Fensterfuß. Ohne Fläche verdeckt es nichts. */
+  /** The strip goes from the top edge of the element to the bottom of the window. Without an area, it covers nothing. */
   private report(): void {
     const element = this.host.nativeElement.querySelector('.sheet') ?? this.host.nativeElement;
     const box = element.getBoundingClientRect();
     const shown = box.width > 0 && box.height > 0;
-    this.state.overlayHeight.set(shown ? Math.max(0, Math.round(window.innerHeight - box.top)) : 0);
+    this.state.setOverlayHeight(shown ? Math.max(0, Math.round(window.innerHeight - box.top)) : 0);
   }
 }

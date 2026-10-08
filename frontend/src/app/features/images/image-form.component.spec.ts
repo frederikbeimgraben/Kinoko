@@ -2,15 +2,15 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { ImageFormComponent } from './image-form.component';
 
 interface Setup {
@@ -20,7 +20,7 @@ interface Setup {
   refresh: () => void;
 }
 
-/** Ein Gerät, das zeichnen kann: `OffscreenCanvas` fehlt sonst im Test. */
+/** A device that can draw: the test has no `OffscreenCanvas` of its own. */
 function stubCanvas(): void {
   vi.stubGlobal('createImageBitmap', () =>
     Promise.resolve({ width: 100, height: 80, close: () => undefined }),
@@ -52,11 +52,11 @@ async function build(curates: boolean): Promise<Setup> {
       provideHttpClientTesting(),
       provideRouter(ANY_ROUTE),
       ...authStubProviders(new AuthStub()),
-      { provide: PermissionsService, useValue: { can: () => curates } },
+      { provide: PermissionsStore, useValue: { can: () => curates } },
     ],
   });
   const http = TestBed.inject(HttpTestingController);
-  void TestBed.inject(SpeciesState).loadBundle();
+  void TestBed.inject(SpeciesStore).loadBundle();
   await vi.waitFor(() => {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
@@ -65,49 +65,49 @@ async function build(curates: boolean): Promise<Setup> {
 }
 
 async function pick(container: Element): Promise<void> {
-  const field = container.querySelector<HTMLInputElement>('.form__file');
-  if (field === null) throw new Error('form__file');
-  await userEvent.upload(field, new File(['x'], 'pilz.png', { type: 'image/png' }));
+  const field = container.querySelector<HTMLInputElement>('app-photo-strip input[type=file]');
+  if (field === null) throw new Error('photo strip input');
+  await userEvent.upload(field, new File(['x'], 'pilz.jpg', { type: 'image/jpeg' }));
 }
 
 describe('ImageFormComponent', () => {
-  it('heißt beim Anlegen anders als beim Einreichen', async () => {
+  it('has another title to add than to submit', async () => {
     const { container } = await build(true);
 
-    expect(screen.getByRole('heading', { name: 'Bild hinzufügen' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Bild hinzufügen' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Speichern' })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('reicht ohne das Recht zur Prüfung ein', async () => {
+  it('submits for review without the right to review', async () => {
     await build(false);
 
-    expect(screen.getByRole('heading', { name: 'Bild einreichen' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Zur Prüfung einreichen' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Bild einreichen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Einreichen' })).toBeInTheDocument();
   });
 
-  it('zeigt Quelle und Titelbild-Kästchen nur beim Anlegen', async () => {
+  it('shows the source and the lead check box only to add', async () => {
     await build(false);
 
     expect(screen.queryByLabelText('Quelle')).not.toBeInTheDocument();
     expect(screen.queryByText('Als Titelbild der Art')).not.toBeInTheDocument();
   });
 
-  it('nimmt das gewählte Bild als Vorschau', async () => {
+  it('shows the chosen photo as a tile of the strip', async () => {
     const { container, refresh } = await build(true);
 
     await pick(container);
     refresh();
 
-    expect(container.querySelector('.form__image')).not.toBeNull();
+    expect(container.querySelector('app-photo-strip .pht img')).not.toBeNull();
   });
 
-  it('sendet Foto, Lizenz und Angaben', async () => {
+  it('sends the photo, the licence and the data', async () => {
     const { container, http, refresh } = await build(false);
 
     await pick(container);
     refresh();
-    await userEvent.click(screen.getByRole('button', { name: 'Zur Prüfung einreichen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
     const request = await vi.waitFor(() => http.expectOne('/api/photos'));
     const body = request.request.body as FormData;
 
@@ -117,7 +117,7 @@ describe('ImageFormComponent', () => {
     request.flush(photo({ state: 'submitted' }));
   });
 
-  it('sendet die Quelle, die beim Anlegen dasteht', async () => {
+  it('sends the source of an added photo', async () => {
     const { container, http, refresh } = await build(true);
 
     await pick(container);
@@ -131,14 +131,14 @@ describe('ImageFormComponent', () => {
     request.flush(photo({ state: 'approved' }));
   });
 
-  it('wählt eine Lizenz über das Blatt', async () => {
+  it('chooses a licence in the option sheet', async () => {
     const { container, http, refresh } = await build(false);
 
     await pick(container);
     refresh();
     await userEvent.click(screen.getByText('Eigenes Foto'));
     await userEvent.click(await screen.findByText('CC0'));
-    await userEvent.click(screen.getByRole('button', { name: 'Zur Prüfung einreichen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
     const request = await vi.waitFor(() => http.expectOne('/api/photos'));
     const body = request.request.body as FormData;
 
@@ -146,10 +146,11 @@ describe('ImageFormComponent', () => {
     request.flush(photo({ state: 'submitted' }));
   });
 
-  it('geht beim Abbrechen zurück zur Art', async () => {
+  it('goes back to the species when the person closes the sheet', async () => {
     const { router } = await build(true);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Bild hinzufügen' });
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));
 
     expect(router.url).toBe('/arten/steinpilz');
   });

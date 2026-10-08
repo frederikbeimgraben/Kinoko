@@ -5,7 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -15,14 +15,14 @@ import { MapAdapterDouble } from '../../testing/map-doubles';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { AddEntryComponent } from './add-entry.component';
-import { AddEntryState } from './add-entry.state';
+import { AddEntryStore } from './add-entry.store';
 
-/** Der Rechner: dort hängen die Aktionen als Karte am Plus-Knopf. */
+/** The desktop: there the actions are a card at the add button. */
 const WIDE: Provider = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 interface Setup {
   container: Element;
-  flow: AddEntryState;
+  flow: AddEntryStore;
   map: MapAdapterDouble;
   auth: AuthStub;
   queue: SyncStub;
@@ -48,7 +48,7 @@ async function build(extra: readonly Provider[] = []): Promise<Setup> {
   });
   return {
     container,
-    flow: TestBed.inject(AddEntryState),
+    flow: TestBed.inject(AddEntryStore),
     map,
     auth,
     queue,
@@ -61,18 +61,18 @@ async function build(extra: readonly Provider[] = []): Promise<Setup> {
   };
 }
 
-/** Ein Klick auf die Karte, wie der Adapter ihn meldet. */
+/** A click on the map, as the adapter reports it. */
 function clickMap(setup: Setup, point: readonly [number, number]): void {
   setup.map.clicked?.(point);
   setup.refresh();
 }
 
-/** Eine Taste, wie der Schritt sie am Rechner hört. */
+/** A key, as the step gets it on the desktop. */
 function press(key: string): void {
   document.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
 }
 
-/** Das Aktionsblatt öffnen und dort eine Zeile wählen. */
+/** Opens the actions sheet and selects a row in it. */
 async function start(setup: Setup, row: string): Promise<void> {
   setup.flow.open();
   setup.refresh();
@@ -80,27 +80,26 @@ async function start(setup: Setup, row: string): Promise<void> {
   setup.refresh();
 }
 
-/** Der Fund geht über das Fadenkreuz ins Formular, das den Katalog holt. */
+/** The find goes through the crosshair into the form, which gets the catalogue. */
 async function openFindForm(setup: Setup): Promise<void> {
   await start(setup, 'Fund melden');
   await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
   setup.refresh();
-  TestBed.inject(MapState).species.set('steinpilz');
+  TestBed.inject(MapStore).setSpecies('steinpilz');
   await vi.waitFor(() => {
     setup.http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
   });
   setup.refresh();
 }
 
-/** Setzt drei Eckpunkte, mit denen sich eine Fläche schließen lässt. */
-async function drawRing(setup: Setup): Promise<void> {
+/** Sets three corners with taps on the map, enough to close an area. */
+function drawRing(setup: Setup): void {
   for (const location of [
     [9.0, 48.5],
     [9.02, 48.5],
     [9.02, 48.52],
   ] as const) {
-    setup.map.centerPoint = location;
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
+    clickMap(setup, location);
   }
 }
 
@@ -225,7 +224,7 @@ describe('EintragenComponent', () => {
     expect(screen.getByRole('group', { name: 'Zone zeichnen' })).toBeInTheDocument();
     expect(screen.getByText('0 Eckpunkte · 0,0 ha')).toBeInTheDocument();
 
-    await drawRing(setup);
+    drawRing(setup);
     setup.refresh();
 
     await vi.waitFor(() => {
@@ -237,7 +236,7 @@ describe('EintragenComponent', () => {
   it('nimmt den letzten Eckpunkt wieder weg', async () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
-    await drawRing(setup);
+    drawRing(setup);
     setup.refresh();
 
     await userEvent.click(screen.getByRole('button', { name: 'Punkt entfernen' }));
@@ -252,7 +251,7 @@ describe('EintragenComponent', () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abschließen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Fertig' }));
 
     expect(setup.toasts.failure).toEqual(['Eine Zone braucht mindestens drei Eckpunkte.']);
   });
@@ -260,8 +259,8 @@ describe('EintragenComponent', () => {
   it('speichert eine Zone mit ihrer Fläche', async () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
-    await drawRing(setup);
-    await userEvent.click(screen.getByRole('button', { name: 'Abschließen' }));
+    drawRing(setup);
+    await userEvent.click(screen.getByRole('button', { name: 'Fertig' }));
     setup.refresh();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Schönbuch Nord');
@@ -312,9 +311,7 @@ describe('EintragenComponent', () => {
   it('verlässt das Zeichnen einer Zone mit halb gesetzten Ecken', async () => {
     const setup = await build();
     await start(setup, 'Zone zeichnen');
-    setup.map.centerPoint = [9.0, 48.5];
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkt setzen' }));
-    setup.refresh();
+    clickMap(setup, [9.0, 48.5]);
 
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
 
@@ -423,6 +420,25 @@ describe('EintragenComponent', () => {
 
       expect(setup.flow.running()).toBe(true);
     });
+  });
+
+  it('aims again with the crosshair on the phone and keeps the form choices on a return to the location', async () => {
+    const setup = await build();
+    setup.map.pointPoint = [9.11, 48.61];
+    await openFindForm(setup);
+    await userEvent.type(screen.getByLabelText('Notiz'), 'Unter Fichten');
+
+    await userEvent.click(screen.getByRole('button', { name: /^Ort/ }));
+    setup.refresh();
+    expect(setup.flow.step()).toBe('findLocation');
+    expect(setup.flow.location()).toBeNull();
+
+    setup.map.pointPoint = [9.2, 48.7];
+    await userEvent.click(screen.getByRole('button', { name: 'Bestätigen' }));
+    setup.refresh();
+
+    expect(setup.flow.location()).toEqual([9.2, 48.7]);
+    expect(screen.getByLabelText('Notiz')).toHaveValue('Unter Fichten');
   });
 
   it('räumt den Ablauf weg, wenn der Reiter Karte schließt, ohne die Geschichte zu bewegen', async () => {

@@ -1,0 +1,70 @@
+{
+ "bounds": [
+  [
+   51.0,
+   9.0
+  ],
+  [
+   52.0,
+   10.0
+  ]
+ ],
+ "layers": {
+  "relief": {
+   "label": "H\u00f6henunterschied in der Zelle",
+   "unit": "m",
+   "static": true,
+   "low": 1e-05,
+   "high": 151.9,
+   "histogram": {
+    "classes": [
+     0.0,
+     0.5,
+     1.0
+    ],
+    "shares": [
+     0.25,
+     0.75
+    ]
+   },
+   "tiles": "layers_kacheln/relief",
+   "zooms": [
+    5,
+    9
+   ],
+   "have": {
+    "5": [
+     "16/10"
+    ],
+    "9": [
+     "270/170",
+     "271/170"
+    ]
+   }
+  },
+  "regen": {
+   "label": "alt",
+   "unit": "mm",
+   "static": false,
+   "weeks": [
+    "2020W01"
+   ]
+  },
+  "wald": {
+   "label": "Wald",
+   "note": "Th\u00fcnen",
+   "unit": "%",
+   "static": true,
+   "low": 0,
+   "high": 100,
+   "tiles": "layers_kacheln/wald",
+   "zooms": [
+    5,
+    13
+   ],
+   "haveZoom": 10,
+   "offlineZoomTo": 12,
+   "have": {}
+  }
+ }
+}

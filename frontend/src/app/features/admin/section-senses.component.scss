@@ -21,7 +21,7 @@ app-page-header {
   @include card.card;
 }
 
-// Die Marken messen dreißig Punkte, wie die Bretter sie zeigen.
+// The chips are 30 px high, as the design boards show.
 .section__chips {
   --chip-height: 30px;
   --chip-inline: 12px;
@@ -32,7 +32,7 @@ app-page-header {
   padding: 12px 14px;
 }
 
-// Der Satz steht auf einer Karte, nicht in einem Feld mit starkem Rand.
+// The sentence is on a card, not in a field with a strong border.
 .section__note {
   --color-border-strong: var(--color-border);
   --form-field-size: var(--fs-row-title);

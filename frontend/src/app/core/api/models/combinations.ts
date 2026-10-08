@@ -1,12 +1,12 @@
 import type { components } from '../contract';
 
-/** Wie die Karte die Faktoren zusammenrechnet. */
+/** How the map combines the factors. */
 export type Rule = components['schemas']['Rule'];
 
-/** Die drei Formen einer Bedingung. Alle drei sind eine Spanne der Skala. */
+/** The three forms of a condition. Each one is a range of the scale. */
 export type Condition = components['schemas']['Condition'];
 
-/** Ein Faktor auf dem Draht, so wie der Vertrag ihn nennt. */
+/** A factor in the wire format of the contract. */
 export type WireFactor = components['schemas']['Factor'];
 
 export type Combination = components['schemas']['Combination'];

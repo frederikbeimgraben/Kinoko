@@ -1,7 +1,4 @@
 import type { Routes } from '@angular/router';
 
-/**
- * Eine Route, die jede Adresse annimmt. Ein Test prüft, wohin eine Seite
- * führt, nicht was dort steht; ohne diese Route bräche jede Navigation ab.
- */
+/** Accepts each URL, so navigation in a test does not fail. Tests check the target, not its content. */
 export const ANY_ROUTE: Routes = [{ path: '**', children: [] }];

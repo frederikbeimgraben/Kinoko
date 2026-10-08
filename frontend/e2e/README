@@ -1,79 +1,97 @@
-# Playwright und Lighthouse
+# Playwright and Lighthouse
 
-## Browser
+## Environment
 
-Playwright-Browser laufen auf NixOS nicht. Setze BROWSER_PATH auf das
-System-Chrome:
+Use Node 24. The Nix shell gives Node 24 and the Chromium of nixpkgs:
 
-    BROWSER_PATH=$(which google-chrome-stable) npm run e2e:flows
+    nix develop .#frontend
 
-Lighthouse liest CHROME_PATH statt BROWSER_PATH.
+The browsers that Playwright downloads do not run on NixOS. The shell sets
+`BROWSER_PATH` and `CHROME_PATH` to Chromium, and it sets
+`PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD`. Playwright reads `BROWSER_PATH`.
+Lighthouse reads `CHROME_PATH`. Outside the shell, set `BROWSER_PATH` yourself:
 
-## Projekte
+    BROWSER_PATH=$(which chromium) npm run e2e:flows
 
-- `phone` und `wide` messen die Boards gegen die Baselines in
-  `boards/baseline/`. `blocks` misst die Bausteinkarten auf `/dev/blocks`,
-  einem Weg nur im Bau mit `npm run build:e2e`.
-- `desktop` prüft nur `flows/desktop/`.
-- `flows` prüft die Abläufe aus `artefakte/nfr.md`.
+The tests use the built app in `dist/pilzkarte/browser`. Build it first:
+
+    npm run build:e2e
+
+## Port
+
+`e2e/serve.mjs` serves the build on port 4400. Outside CI, Playwright uses a
+server that already listens on that port. Thus two runs at the same time (for
+example in two worktrees) can test the wrong build. Give each parallel run a
+unique port:
+
+    E2E_PORT=4410 npm run e2e:flows
+
+## Projects
+
+- `phone` and `wide` compare the boards with the baselines in `boards/baseline/`.
+- `blocks` compares the cards of the building blocks on `/dev/blocks`. This route exists only in the build of `npm run build:e2e`.
+- `desktop` tests only `flows/desktop/`.
+- `flows` tests the flows of `artefakte/nfr.md`.
 
 ## Board baselines
 
-The source of every board and component baseline is
-`artefakte/mockups/design/uebergabe/`. Run `npm run boards:sync` to copy
-the current images into `boards/baseline/`. The command also writes
-`boards/baseline/SOURCE.json`, the sha256 of each copied file.
+The source of each board baseline and each component baseline is
+`artefakte/mockups/design/uebergabe/`. Run `npm run boards:sync` to copy the
+current images into `boards/baseline/`. The command also writes
+`boards/baseline/SOURCE.json`, with the SHA-256 of each copied file.
 
-Run `npm run boards:check` before a commit. It compares every baseline
-against `SOURCE.json` and fails if a file differs or is not listed. This
-check guards the rule that no baseline may come from the app itself.
+Run `npm run boards:check` before a commit. It compares each baseline with
+`SOURCE.json`. It fails if a file is different or not in the list. This check
+makes sure that no baseline comes from the app itself.
 
 Do not edit a file under `boards/baseline/` by hand.
 
-Ein Service Worker fängt Anfragen ab, bevor eine Attrappe greift. Darum
-sperrt `playwright.config.ts` ihn für alle Tests. Der Installationstest
-schaltet ihn mit `test.use({ serviceWorkers: 'allow' })` wieder an.
+## Service worker
 
-## Lighthouse: Kategorie PWA
+A service worker catches the requests before a mock can answer them. Thus
+`playwright.config.ts` blocks it for all tests. The installation test allows
+it again with `test.use({ serviceWorkers: 'allow' })`.
 
-Lighthouse 11 ist gepinnt, weil Lighthouse 12 die Kategorie PWA nicht mehr
-hat.
+## Lighthouse: category PWA
 
-Die Kategorie PWA ist scharf: `lighthouserc.json` bricht unter 0,9 ab, und
-der Job `fe-lighthouse` läuft ohne `continue-on-error`. Gemessen ergibt die
-Kategorie 1,0 (Manifest installierbar, Splash, Themenfarbe, Viewport,
-maskierbares Icon).
+Lighthouse 11 is pinned, because Lighthouse 12 does not have the category PWA.
 
-## Lighthouse: Kategorie Leistung
+The category PWA stops the job: `lighthouserc.json` fails below 0.9, and the
+job `fe-lighthouse` has no `continue-on-error`. The measured score is 1.0
+(installable manifest, splash screen, theme colour, viewport, maskable icon).
 
-Die Kategorie Leistung warnt bis U12 ab 0,9. Gemessen ergibt sie in der CI
-0,53 und lokal 0,89, derselbe Build ohne dieses Paket ebenfalls 0,89.
-Die Lücke kommt vom Rechner der CI: die Total Blocking Time liegt dort bei
-1 570 ms gegen 140 ms lokal. U12 hebt die Zeile auf `error`.
+## Lighthouse: category performance
 
-## Karten-Boards
+The category performance gives a warning below 0.9 until U12. The measured
+score is 0.53 in CI and 0.89 on a local computer. The same build without
+this package also gives 0.89 locally. The difference comes from the CI
+computer: the Total Blocking Time is 1,570 ms there and 140 ms locally. U12
+changes the rule to `error`.
 
-Die dreizehn Boards der Seite `map` haben je einen Test in
-`boards/map.spec.ts`. Der Test sperrt die Grundkarte und legt das
-Kartenbild aus `boards/fixtures` über die Fläche, damit das Bild jedes Mal
-dasselbe ist. Die Bilder liegen eingecheckt in `boards/fixtures`.
+## Map boards
 
-Ein Kartenbild je Kartenhöhe: `map-<art>-<höhe>.png`, oben links, ohne
-Skalierung. Die Höhe ist der freie Streifen über dem Blatt: 660 bei
-eingeklappt, 470 bei halb, 300 bei voll, 900 am Rechner.
+Each of the thirteen boards of the page `map` has a test in
+`boards/map.spec.ts`. The test blocks the base map. It puts the map image
+from `boards/fixtures` on the map area, so the image is the same at each run.
+The images are in Git in `boards/fixtures`.
 
-Die Boards stehen noch in `pending.json`. Die Abweichung liegt bei 2 bis
-9 %, die Toleranz bei 0,5 %. Was noch fehlt, steht im PR.
+There is one map image for each map height: `map-<species>-<height>.png`, at
+the top left, without scale. The height is the free strip above the sheet:
+660 when the sheet is closed, 470 when it is half open, 300 when it is fully
+open, 900 on a desktop.
 
-## Arten-Boards
+The boards are still in `pending.json`. The difference is 2 to 9 %, and the
+tolerance is 0.5 %. The pull request tells what is missing.
 
-Die vierzehn Boards der Seite `species` haben je einen Test in
-`boards/species.spec.ts`. Jeder Test legt seinen eigenen Katalog auf:
-`fixtures/species.ts` baut eine Art nach dem Vertrag, `fixtures/species-boards.ts`
-hält die Daten der einzelnen Boards, und `fixtures/species-catalogue.ts` baut
-den Katalog mit 306 Arten, dessen Zahlen zu den Brettern des Filters passen.
-`fixtures/filter-state.ts` legt die Filterwahl in den Speicher, bevor die Seite
-startet.
+## Species boards
 
-Die Zeilen tragen keine Bilder: das Bündel nennt `leadPhotoId`, und
-`app-species-row` zeigt den Platzhalter aus den Hutfarben der Art.
+Each of the fourteen boards of the page `species` has a test in
+`boards/species.spec.ts`. Each test sets its own catalogue:
+
+- `fixtures/species.ts` builds a species by the contract.
+- `fixtures/species-boards.ts` holds the data of each board.
+- `fixtures/species-catalogue.ts` builds the catalogue with 306 species. Its counts agree with the boards of the filter.
+- `fixtures/filter-state.ts` puts the filter selection into the storage before the page starts.
+
+The rows have no images. The bundle gives `leadPhotoId`, and
+`app-species-row` shows the placeholder from the cap colours of the species.

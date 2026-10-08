@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { mockApi } from '../fixtures/api';
 import { bundle } from '../fixtures/species';
 
-/** Zwei Arten, die sich nur in der Farbe von Hut und Stiel unterscheiden. */
+/** Two species that differ only in the colour of cap and stem. */
 const CATALOGUE = bundle([
   {
     slug: 'boletus-edulis',

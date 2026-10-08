@@ -5,6 +5,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TextCatalogService } from '../../core/i18n/text-catalog.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '../../core/i18n/translations';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
@@ -13,33 +14,23 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { ToastService } from '../../ui/toast/toast.service';
 
-/** Der Chip ohne Bereich: er zeigt alles. */
+/** The filter value without an area: it shows each entry. */
 const ALL = 'alle';
 
-/** Der Chip für die Einträge, die von der Vorgabe abweichen. */
+/** The filter value for the entries that differ from the default. */
 const CHANGED = 'geaendert';
 
-/** Das Blatt trägt zwei Felder und die Knöpfe; eine Raste genügt. */
-
-/** Ein Schlüssel im Blatt, mit den Werten, die gerade im Feld stehen. */
+/** A key in the sheet, with the current values of its fields. */
 interface Draft {
   key: string;
   values: Record<string, string>;
 }
 
-/**
- * Die Verwaltung der Oberflächentexte (Artboard `Texte`): Suche, Chips nach
- * Bereich, die Liste beider Sprachen nebeneinander und ein Blatt zum Ändern.
- *
- * Der Bereich eines Schlüssels steht in ihm selbst: `karte.legende` gehört zu
- * `karte`. Eine eigene Liste der Bereiche wäre eine zweite Wahrheit und beim
- * nächsten neuen Schlüssel schon veraltet.
- *
- * Die Route hängt am Recht `text.edit`. Sichtbar wird der Punkt nur damit;
- * abgelehnt wird jede Änderung ohnehin im Backend.
- */
+/** The interface texts: a search, a filter, both languages side by side and a sheet to change one.
+ * The route needs `text.edit`. The backend also refuses each change without it. */
 @Component({
   selector: 'app-texts',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +40,7 @@ interface Draft {
     LevelPillComponent,
     OverlayHostComponent,
     PageHeaderComponent,
+    RowGroupSkeletonComponent,
     SearchFieldComponent,
     SegmentedComponent,
     SheetComponent,
@@ -64,12 +56,14 @@ export class TextsComponent {
   private readonly toasts = inject(ToastService);
 
   protected readonly locales = SUPPORTED_LOCALES;
-  /** Die Sprache der Vorgabe steht vorn und in voller Farbe. */
+  /** The default language comes first and in full colour. */
   protected readonly leadLocale = DEFAULT_LOCALE;
   protected readonly search = signal('');
   protected readonly scope = signal<string>(ALL);
   protected readonly draft = signal<Draft | null>(null);
   protected readonly busy = signal(false);
+  protected readonly loaded = computed(() => this.catalog.entries().length > 0);
+  protected readonly wide = inject(ViewportService).wide;
 
   protected readonly scopes = computed<SegmentOption[]>(() => [
     { value: ALL, label: this.i18n.translate('admin.texts.all') },
@@ -85,11 +79,11 @@ export class TextsComponent {
       .filter((entry) => matches(entry, query));
   });
 
-  /** Nur ein geänderter Text hat eine Vorgabe, zu der er zurück kann. */
+  /** Only a changed text has a default to go back to. */
   protected readonly resettable = computed(() => this.entryOf(this.draft()?.key ?? '')?.changed ?? false);
 
   constructor() {
-    // Ein tiefer Link auf diese Seite kommt vor dem ersten Katalog an.
+    // A deep link to this page can come before the first catalogue.
     if (this.catalog.entries().length === 0) void this.catalog.load();
   }
 
@@ -114,7 +108,7 @@ export class TextsComponent {
     void this.router.navigateByUrl('/verwaltung');
   }
 
-  /** Speichert jede Sprache, die sich geändert hat, und schließt das Blatt. */
+  /** Saves each changed language and closes the sheet. */
   protected async save(): Promise<void> {
     const draft = this.draft();
     const known = this.entryOf(draft?.key ?? '');
@@ -142,8 +136,7 @@ export class TextsComponent {
       this.toasts.success(this.i18n.translate('texte.gespeichert'));
       this.draft.set(null);
     } catch {
-      // Der ApiClient hat den Fehler schon gezeigt. Das Blatt bleibt offen,
-      // damit die Eingabe nicht verloren geht.
+      // The ApiClient shows the error. The sheet stays open, so the input stays.
     } finally {
       this.busy.set(false);
     }

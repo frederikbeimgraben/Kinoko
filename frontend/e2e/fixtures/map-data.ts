@@ -1,32 +1,34 @@
-/** Die Woche, die jedes Karten-Board zeigt. */
-export const WEEK = { year: 2025, week: 40 };
+/** The week that each map board shows. */
+export const WEEK = { year: 2026, week: 38 };
 
-/** Die Art, die jedes Karten-Board zeigt. */
+/** The species that each map board shows. */
 export const SPECIES = 'boletus-edulis';
 
-const SHARES = [0.18, 0.26, 0.4, 0.48, 0.62, 0.7, 0.88, 1];
+/** The weekly mean as a share of the week-34 peak.
+ * From week 35, the `WeekStrip` bars fill 35, 55, 70, 85, 75, 60 and 40 %. */
+const SHARES = [1, 0.35, 0.55, 0.7, 0.85, 0.75, 0.6, 0.4];
 
-/** Die erste Woche der Leiste. Gewählt ist KW 40, sie steht in der Mitte. */
-const FIRST_WEEK = 36;
+/** The first week of the strip. KW 38 is chosen and stands in the middle. */
+const FIRST_WEEK = 34;
 
-/** Ab dieser Woche rechnet die Kette, sie misst nicht mehr. */
-const FIRST_FORECAST = 41;
+/** From this week, the chain calculates and does not measure. */
+const FIRST_FORECAST = 39;
 
 function weeks(): unknown[] {
   return SHARES.map((share, index) => {
     const week = FIRST_WEEK + index;
     return {
-      year: 2025,
+      year: 2026,
       week,
       forecast: week >= FIRST_FORECAST,
-      tiles: `boletus_edulis_kacheln/2025W${week}`,
+      tiles: `boletus_edulis_kacheln/2026W${week}`,
       mean: share,
       max: share,
     };
   });
 }
 
-/** Das Manifest der Art: acht Wochen um KW 40, Höchstwert 0,5. */
+/** The manifest of the species: eight weeks around KW 38, peak 0.5. */
 export const SPECIES_MANIFEST = {
   species: ['Boletus edulis'],
   top: 0.5,
@@ -38,7 +40,7 @@ export const SPECIES_MANIFEST = {
   weeks: weeks(),
 };
 
-/** Die Verteilung aus dem Board `Faktor`: vierzig Klassen, ein Buckel links. */
+/** The distribution of the board `Factor`: forty classes, one peak at the left. */
 const CURVE = [
   0.005354, 0.007244, 0.009528, 0.012283, 0.015591, 0.019213, 0.023228, 0.027402, 0.031654, 0.035827,
   0.039606, 0.042756, 0.045276, 0.04685, 0.047479, 0.047087, 0.045827, 0.043701, 0.041024, 0.037953, 0.034803,
@@ -51,7 +53,7 @@ function share(count: number): { classes: number[]; shares: number[] } {
   return { classes, shares: CURVE };
 }
 
-/** Die Eingabe-Ebenen, mit denselben Namen wie in den Boards. */
+/** The input layers, with the names of the boards. */
 export const LAYERS_MANIFEST = {
   bounds: [
     [47.2, 5.7],
@@ -62,75 +64,75 @@ export const LAYERS_MANIFEST = {
       label: 'Niederschlag 4 Wochen',
       title: 'Niederschlag der letzten 4 Wochen',
       note: 'je Woche, 5-km-Raster, DWD HYRAS',
-      range: 'KW 40',
+      range: 'KW 38',
       unit: 'mm',
       low: 0,
       high: 152,
       tiles: 'layers_kacheln/regen_4w',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(240) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(240) },
     },
     regen: {
       label: 'Niederschlag',
-      note: 'Summe KW 37 bis 40',
-      range: 'KW 37 bis 40',
+      note: 'Summe KW 35 bis 38',
+      range: 'KW 35 bis 38',
       unit: 'mm',
       low: 0,
       high: 240,
       tiles: 'layers_kacheln/regen',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(240) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(240) },
     },
     temperatur: {
       label: 'Mitteltemperatur',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: '°C',
       low: -5,
       high: 30,
       tiles: 'layers_kacheln/temperatur',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(30) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(30) },
     },
     bodenfeuchte: {
       label: 'Bodenfeuchte',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: '% nFK',
       low: 0,
       high: 1,
       tiles: 'layers_kacheln/bodenfeuchte',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(1) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(1) },
     },
     frosttage: {
       label: 'Frosttage',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: 'Tage',
       low: 0,
       high: 7,
       tiles: 'layers_kacheln/frosttage',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(7) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(7) },
     },
     hitzetage: {
       label: 'Hitzetage',
-      note: 'KW 40',
+      note: 'KW 38',
       unit: 'Tage',
       low: 0,
       high: 7,
       tiles: 'layers_kacheln/hitzetage',
       zooms: [5, 8],
-      weeks: ['2025W40'],
-      histograms: { '2025W40': share(7) },
+      weeks: ['2026W38'],
+      histograms: { '2026W38': share(7) },
     },
   },
 };
 
-/** `LAYERS_MANIFEST` mit der festen Ebene Fichte, nur für ihre eigenen Boards. */
+/** `LAYERS_MANIFEST` with the fixed layer spruce, only for its own boards. */
 export const FICHTE_LAYERS_MANIFEST = {
   bounds: LAYERS_MANIFEST.bounds,
   layers: {
@@ -168,14 +170,13 @@ function species(slug: string, name: string, scientific: string): unknown {
   };
 }
 
-/** Der Katalog vom Gerät: fünf Arten mit Vorhersage, wie in den Boards. */
+/** The catalogue of the device: four species with a forecast, as on the board `SpeciesPickBody`. */
 export const SPECIES_BUNDLE = {
   items: [
     species('boletus-edulis', 'Steinpilz', 'Boletus edulis'),
     species('cantharellus-cibarius', 'Pfifferling', 'Cantharellus cibarius'),
     species('imleria-badia', 'Maronenröhrling', 'Imleria badia'),
-    species('hydnum-repandum', 'Semmelstoppelpilz', 'Hydnum repandum'),
-    species('morchella-esculenta', 'Speisemorchel', 'Morchella esculenta'),
+    species('macrolepiota-procera', 'Parasol', 'Macrolepiota procera'),
   ],
 };
 
@@ -194,7 +195,7 @@ function markers(count: number): { items: unknown[]; nextCursor: null } {
   return { items, nextCursor: null };
 }
 
-/** Geteilte Funde des Vertrags, geblättert wie `/finds`. */
+/** Shared finds of the contract, in pages as `/finds` gives them. */
 function finds(count: number): { items: unknown[]; nextCursor: null } {
   const items = Array.from({ length: count }, (_, i) => ({
     id: `find-${i}`,
@@ -212,7 +213,7 @@ function finds(count: number): { items: unknown[]; nextCursor: null } {
   return { items, nextCursor: null };
 }
 
-/** Die Zahlen aus dem Board `KarteEbenen`: 12 geteilte Funde, 5 Marker, 2 Zonen. */
+/** The numbers of the board `MapLayers`: 12 shared finds, 5 markers, 2 zones. */
 export const SHARED_FINDS = finds(12);
 export const MARKERS = markers(5);
 export const ZONES = {
@@ -240,7 +241,7 @@ export const ZONES = {
   nextCursor: null,
 };
 
-/** Die gespeicherten Kombinationen aus dem Board `Combinations`. */
+/** The saved combinations of the board `Combinations`. */
 export const COMBINATIONS = {
   items: [
     {
@@ -249,32 +250,18 @@ export const COMBINATIONS = {
       rule: 'intersection',
       factors: [
         { source: 'regen', condition: 'above', low: 80, high: null, active: true },
-        { source: 'temperatur', condition: 'between', low: 8, high: 16, active: true },
-        { source: 'buche', condition: 'above', low: 0.3, high: null, active: true },
-        { source: 'hangneigung', condition: 'below', low: null, high: 15, active: true },
+        { source: 'temperatur', condition: 'between', low: 12, high: 18, active: true },
       ],
-      updatedAt: '2025-10-01T00:00:00Z',
+      updatedAt: '2026-09-01T00:00:00Z',
+      deleted: false,
     },
     {
       id: '22222222-2222-4222-8222-222222222222',
-      name: 'Pfifferling Sommer',
-      rule: 'graded',
-      factors: [
-        { source: 'regen', condition: 'above', low: 60, high: null, active: true },
-        { source: 'temperatur', condition: 'between', low: 12, high: 22, active: true },
-        { source: 'bodenfeuchte', condition: 'above', low: 0.4, high: null, active: true },
-      ],
-      updatedAt: '2025-10-01T00:00:00Z',
-    },
-    {
-      id: '33333333-3333-4333-8333-333333333333',
-      name: 'Frostfrei',
+      name: 'Nach Regen',
       rule: 'intersection',
-      factors: [
-        { source: 'frosttage', condition: 'below', low: null, high: 1, active: true },
-        { source: 'temperatur', condition: 'above', low: 5, high: null, active: true },
-      ],
-      updatedAt: '2025-10-01T00:00:00Z',
+      factors: [{ source: 'regen', condition: 'above', low: 40, high: null, active: true }],
+      updatedAt: '2026-09-01T00:00:00Z',
+      deleted: false,
     },
   ],
   nextCursor: null,

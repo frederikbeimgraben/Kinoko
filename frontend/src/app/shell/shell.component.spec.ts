@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { render, screen } from '@testing-library/angular';
 import { AuthService } from '../core/auth';
-import { PwaService } from '../core/pwa/pwa.service';
+import { PwaStore } from '../core/pwa/pwa.store';
 import { ViewportService } from '../core/layout/viewport.service';
 import { MapRouteComponent } from '../features/map/map-route.component';
 import { SyncStub, syncStubProviders } from '../testing/sync-double';
@@ -33,7 +33,7 @@ const ROUTES = [
   { path: '', pathMatch: 'full' as const, redirectTo: 'karte' },
 ];
 
-/** Je Test eine eigene Attrappe, sonst trüge eine Anmeldung in den nächsten. */
+/** A new double for each test, so a sign-in does not go into the next test. */
 async function shell(updateReady = false) {
   const manager = new ManagerDouble();
   const sync = new SyncStub();
@@ -44,7 +44,7 @@ async function shell(updateReady = false) {
       ...authProvider(manager),
       ...syncStubProviders(sync),
       {
-        provide: PwaService,
+        provide: PwaStore,
         useValue: { updateReady: signal(updateReady), activate: () => Promise.resolve() },
       },
     ],
@@ -53,7 +53,7 @@ async function shell(updateReady = false) {
 }
 
 describe('ShellComponent', () => {
-  it('lässt die Leiste auf der Werkstattseite weg', async () => {
+  it('hides the nav on the workshop page', async () => {
     const { navigate } = await shell();
 
     await navigate('/bausteine');
@@ -61,7 +61,7 @@ describe('ShellComponent', () => {
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
   });
 
-  it('lässt die Leiste auf einer Bildseite weg', async () => {
+  it('hides the nav on an image page', async () => {
     const { navigate } = await shell();
 
     await navigate('/arten/boletus-edulis/bilder/eins');
@@ -69,7 +69,7 @@ describe('ShellComponent', () => {
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
   });
 
-  it('lässt die Leiste im Prüfstapel weg', async () => {
+  it('hides the nav in the review queue', async () => {
     const { navigate } = await shell();
 
     await navigate('/verwaltung/bilder');
@@ -77,7 +77,7 @@ describe('ShellComponent', () => {
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
   });
 
-  it('lässt die Leiste auf der Artseite weg', async () => {
+  it('hides the nav on the species page', async () => {
     const { navigate } = await shell();
 
     await navigate('/arten/boletus-edulis');
@@ -85,7 +85,7 @@ describe('ShellComponent', () => {
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
   });
 
-  it('behält die Leiste auf der Rückkehr vom SSO und danach', async () => {
+  it('keeps the nav on the return from SSO and after it', async () => {
     const { navigate } = await shell();
 
     await navigate('/anmeldung?code=eins&state=zwei');
@@ -95,7 +95,7 @@ describe('ShellComponent', () => {
     expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
   });
 
-  it('lässt die Leiste auf der Wurzel der Einstellungen weg', async () => {
+  it('hides the nav on the settings root', async () => {
     const { navigate } = await shell();
 
     await navigate('/konto');
@@ -103,7 +103,7 @@ describe('ShellComponent', () => {
     expect(screen.queryByRole('navigation', { name: 'Hauptbereiche' })).toBeNull();
   });
 
-  it('behält die Leiste auf dem Reiter Arten', async () => {
+  it('keeps the nav on the species tab', async () => {
     const { navigate } = await shell();
 
     await navigate('/arten');
@@ -111,7 +111,7 @@ describe('ShellComponent', () => {
     expect(screen.getByRole('navigation', { name: 'Hauptbereiche' })).toBeInTheDocument();
   });
 
-  it('zeigt die drei Reiter und den Avatar über der Karte', async () => {
+  it('shows the three tabs and the avatar over the map', async () => {
     const { container, navigate } = await shell();
     await navigate('/karte');
 
@@ -124,35 +124,46 @@ describe('ShellComponent', () => {
     await noViolations(container);
   });
 
-  it('zeigt die Aktualisierungsleiste und schiebt den Avatar herab, sobald eine Fassung bereitsteht', async () => {
+  it('floats the update banner over the map and moves the avatar down', async () => {
     const { container, navigate } = await shell(true);
     await navigate('/karte');
 
-    expect(screen.getByRole('button', { name: 'Neu laden' })).toHaveTextContent('Neue Version');
+    expect(screen.getByRole('button', { name: 'Neue Version bereit' })).toBeInTheDocument();
+    expect(container.querySelector('app-banner')).toHaveClass('shell__banner--float');
     expect(container.querySelector('.shell')).toHaveStyle({
-      '--top-bar-height': 'calc(38px + env(safe-area-inset-top, 0px))',
+      '--top-bar-height': 'calc(60px + env(safe-area-inset-top, 0px))',
     });
   });
 
-  it('lässt keine Leiste ohne bereitstehende Fassung', async () => {
+  it('puts the update banner above the nav outside the map, with no offset', async () => {
+    const { container, navigate } = await shell(true);
+    await navigate('/arten');
+
+    const banner = container.querySelector('app-banner');
+    expect(banner).toHaveClass('shell__banner');
+    expect(banner).not.toHaveClass('shell__banner--float');
+    expect(container.querySelector('.shell')).toHaveStyle({ '--top-bar-height': '0px' });
+  });
+
+  it('shows no banner without a new version', async () => {
     await shell(false);
 
     expect(screen.queryByRole('status')).toBeNull();
   });
 
-  it('schiebt den Avatar auch für die eigene Zustandsleiste der Karte herab', async () => {
+  it('moves the avatar down for the offline banner of the map', async () => {
     const { container, navigate, sync, detectChanges } = await shell();
     await navigate('/karte');
     sync.online.set(false);
     detectChanges();
 
     expect(container.querySelector('.shell')).toHaveStyle({
-      '--top-bar-height': 'calc(38px + env(safe-area-inset-top, 0px))',
+      '--top-bar-height': 'calc(60px + env(safe-area-inset-top, 0px))',
     });
     expect(screen.getByRole('button', { name: 'Konto' })).toBeInTheDocument();
   });
 
-  it('lässt die Karte ohne Netz auf einem anderen Reiter ohne Versatz', async () => {
+  it('gives no offset on another tab when the map is offline', async () => {
     const { container, navigate, sync, detectChanges } = await shell();
     await navigate('/arten');
     sync.online.set(false);
@@ -161,7 +172,7 @@ describe('ShellComponent', () => {
     expect(container.querySelector('.shell')).toHaveStyle({ '--top-bar-height': '0px' });
   });
 
-  it('markiert den Reiter auch bei einer Adresse mit Abfrage', async () => {
+  it('marks the tab for an address with a query', async () => {
     const { navigate } = await shell();
 
     await navigate('/karte?art=pfifferling&kw=2025-40');
@@ -169,7 +180,7 @@ describe('ShellComponent', () => {
     expect(screen.getByRole('link', { name: 'Karte' })).toHaveAttribute('aria-current', 'page');
   });
 
-  it('zeigt den Avatar nur über der Karte', async () => {
+  it('shows the avatar only over the map', async () => {
     const { navigate } = await shell();
 
     await navigate('/arten');
@@ -178,7 +189,7 @@ describe('ShellComponent', () => {
     expect(screen.queryByRole('button', { name: 'Konto' })).not.toBeInTheDocument();
   });
 
-  it('trägt der Avatar angemeldet den ersten Buchstaben des Namens', async () => {
+  it('shows the first letter of the name on the avatar when signed in', async () => {
     const { navigate, detectChanges, manager } = await shell();
     await navigate('/karte');
     manager.still = oidcUser();
@@ -189,7 +200,7 @@ describe('ShellComponent', () => {
     expect(screen.getByRole('button', { name: 'Konto von Frederik' })).toHaveTextContent('F');
   });
 
-  it('führt der Avatar zum Konto', async () => {
+  it('opens the account from the avatar', async () => {
     const { navigate, fixture } = await shell();
     await navigate('/karte');
 
@@ -200,7 +211,7 @@ describe('ShellComponent', () => {
   });
 });
 
-/** Am Rechner steht die Karte in der Hülle; die Route liefert dort nichts. */
+/** On the desktop the map is in the shell; the route gives no content there. */
 const WIDE_ROUTES = [
   { path: 'karte', component: MapRouteComponent },
   { path: 'arten', component: PageComponent },
@@ -217,8 +228,8 @@ async function wideShell(): Promise<{
   answerManifest();
   const { map: double } = mapWithDoubles();
   const { navigate, detectChanges, container, fixture } = await render(ShellComponent, {
-    // Die Karte hängt in einem `@defer`-Block, damit sie am Telefon nicht im
-    // ersten Bündel liegt. Im Test soll er laufen wie im Browser.
+    // The map is in a `@defer` block, so it is not in the first phone bundle.
+    // The test runs the block as the browser does.
     deferBlockBehavior: DeferBlockBehavior.Playthrough,
     providers: [
       provideRouter(WIDE_ROUTES),
@@ -233,8 +244,8 @@ async function wideShell(): Promise<{
   return { double, navigate, detectChanges, container };
 }
 
-describe('ShellComponent am Rechner', () => {
-  it('stellt die Karte neben die Spalte und lässt sie beim Reiterwechsel stehen', async () => {
+describe('ShellComponent on the desktop', () => {
+  it('puts the map next to the column and keeps it when the tab changes', async () => {
     const { double, navigate, detectChanges, container } = await wideShell();
 
     expect(double.started).toBe(1);
@@ -245,27 +256,56 @@ describe('ShellComponent am Rechner', () => {
     await navigate('/eintraege');
     detectChanges();
 
-    // Kein zweiter Aufbau heißt: kein Neuladen der Kacheln, kein zweiter Adapter.
+    // No second start means no new tile load and no second adapter.
     expect(double.started).toBe(1);
     expect(double.destroyed).toBe(false);
     expect(screen.getByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
   });
 
-  it('zeigt das Blatt nur auf dem Reiter Karte, die Knöpfe der Karte immer', async () => {
+  it('gives each section the width of its kit pane', async () => {
+    const { navigate, detectChanges, container } = await wideShell();
+    const frame = container.querySelector('.shell');
+    const content = container.querySelector('.shell__content');
+    const column = (): string => document.documentElement.style.getPropertyValue('--size-column');
+
+    expect(frame).toHaveAttribute('data-pane', 'panel');
+    expect(column()).toBe('var(--w-pane-panel)');
+
+    await navigate('/arten');
+    detectChanges();
+    expect(frame).toHaveAttribute('data-pane', 'middle');
+    expect(content).toHaveClass('shell__content--full');
+    expect(column()).toBe('var(--w-pane-middle)');
+
+    await navigate('/eintraege');
+    detectChanges();
+    expect(frame).toHaveAttribute('data-pane', 'list');
+    expect(content).not.toHaveClass('shell__content--full');
+    expect(column()).toBe('var(--w-pane-list)');
+    document.documentElement.style.removeProperty('--size-column');
+  });
+
+  it('shows no floating avatar, because the rail holds it', async () => {
+    const { container } = await wideShell();
+
+    expect(container.querySelector('.shell__avatar')).toBeNull();
+    expect(container.querySelector('.shell__nav app-avatar-button')).not.toBeNull();
+  });
+
+  it('shows the sheet only on the map tab and the map buttons always', async () => {
     const { navigate, detectChanges, container } = await wideShell();
 
     await navigate('/arten');
     detectChanges();
 
-    // Auf einem anderen Reiter gehört die Spalte diesem Reiter. Das Blatt wäre
-    // dort verdeckt und läge trotzdem in der Tastaturreihenfolge. Die Knöpfe
-    // gehören dagegen der Karte, und die steht rechts weiter offen.
+    // On another tab the column belongs to that tab: a hidden sheet stays in the tab order.
+    // The buttons belong to the map, which stays open on the right.
     expect(container.querySelector('.map__sheet')).toBeNull();
     expect(container.querySelector('.map__buttons')).not.toBeNull();
   });
 });
 
-/** Am Telefon steht die Karte in der Hülle wie am Rechner; die Route liefert dort nichts. */
+/** On the phone the map is in the shell as on the desktop; the route gives no content there. */
 const PHONE_ROUTES = [
   { path: 'karte', component: MapRouteComponent },
   { path: 'arten', component: PageComponent },
@@ -297,8 +337,8 @@ async function phoneShell(): Promise<{
   return { double, navigate, detectChanges, container, stable };
 }
 
-describe('ShellComponent am Telefon', () => {
-  it('hält die Karte über den Wechsel Karte, Arten, Karte im Speicher', async () => {
+describe('ShellComponent on the phone', () => {
+  it('keeps the map in memory from map to species to map', async () => {
     const { navigate, detectChanges, container, stable } = await phoneShell();
 
     await navigate('/karte');
@@ -309,7 +349,7 @@ describe('ShellComponent am Telefon', () => {
 
     await navigate('/arten');
     detectChanges();
-    // Dasselbe Element heißt: kein Neuladen der Kacheln, keine zweite Karte.
+    // The same element means no new tile load and no second map.
     expect(container.querySelector('app-map')).toBe(map);
     expect(screen.queryByRole('region', { name: 'Karte von Deutschland' })).not.toBeInTheDocument();
     expect(map).toHaveClass('shell__map--hidden');
@@ -320,7 +360,7 @@ describe('ShellComponent am Telefon', () => {
     expect(screen.getByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
   });
 
-  it('lädt die Karte nicht, wenn Arten der erste Reiter ist', async () => {
+  it('does not load the map when species is the first tab', async () => {
     const { double, navigate } = await phoneShell();
 
     await navigate('/arten');

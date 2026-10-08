@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionHymeniumComponent } from './section-hymenium.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
@@ -27,10 +27,10 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
   return { container, http };
 }
 
-// Das Blatt trägt viele Knöpfe; unter Last braucht die Suche nach Rolle länger.
+// The sheet has many buttons. Under load, a query by role takes longer.
 describe('SectionHymeniumComponent', { timeout: 20_000 }, () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt die vier Felder und die Wahl des offenen Feldes', async () => {

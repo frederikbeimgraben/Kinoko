@@ -6,16 +6,8 @@ import { FilterSheetComponent } from './filter-sheet.component';
 
 const OPEN = { open: true, title: 'Filter', primaryLabel: 'Show 12 species' };
 
-/** Die eigenen Knöpfe des Blatts, ohne Griff, Fuß und den Scrim des Wirts. */
-function dialogButtons(): HTMLElement[] {
-  return within(screen.getByRole('dialog'))
-    .getAllByRole('button')
-    .filter((button) => !button.classList.contains('sheet__handle'))
-    .filter((button) => !button.classList.contains('btn'));
-}
-
 describe('FilterSheetComponent', () => {
-  it('zeigt nichts, solange das Blatt zu ist', async () => {
+  it('shows nothing while the sheet is closed', async () => {
     const { container } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, open: false },
     });
@@ -23,7 +15,7 @@ describe('FilterSheetComponent', () => {
     expect(container.querySelector('.filtersheet')).toBeNull();
   });
 
-  it('baut auf dem Blatt-Baustein auf und bringt keinen eigenen Rahmen mit', async () => {
+  it('builds on the sheet and has no frame of its own', async () => {
     const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
     expect(container.querySelector('app-sheet.filtersheet')).not.toBeNull();
@@ -32,13 +24,13 @@ describe('FilterSheetComponent', () => {
     expect(container.querySelector('.filtersheet__handle')).toBeNull();
   });
 
-  it('erbt den Griff des Blatts und schließt mit einem Zug nach unten', async () => {
+  it('uses the grip of the sheet and closes on a drag down', async () => {
     const { container, fixture } = await render(FilterSheetComponent, { inputs: OPEN });
     let calls = 0;
     fixture.componentInstance.closed.subscribe(() => (calls += 1));
     const host = container.querySelector<HTMLElement>('app-sheet');
     const sheet = container.querySelector('.sheet');
-    if (host === null || sheet === null) throw new Error('Blatt fehlt.');
+    if (host === null || sheet === null) throw new Error('The sheet is missing.');
     Object.defineProperty(host, 'clientHeight', { value: 800, configurable: true });
     Object.defineProperty(sheet, 'clientHeight', { value: 800, configurable: true });
     const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
@@ -54,7 +46,7 @@ describe('FilterSheetComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('zeigt den Dialog mit Titel, Inhalt und der Haupthandlung', async () => {
+  it('shows the dialog with title, content and the main action', async () => {
     const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
     const dialog = screen.getByRole('dialog');
@@ -64,24 +56,24 @@ describe('FilterSheetComponent', () => {
     await noViolations(container);
   });
 
-  it('lässt Zurücksetzen weg, solange nichts gefiltert ist', async () => {
+  it('leaves out reset while nothing is filtered', async () => {
     await render(FilterSheetComponent, { inputs: OPEN });
 
     expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
   });
 
-  it('stellt Zurücksetzen und die Haupthandlung als Paar in den Fuß', async () => {
+  it('puts reset and the main action side by side into the foot', async () => {
     const { container } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
     });
 
-    const pair = container.querySelector('.footer__pair--split');
-    expect(pair).not.toBeNull();
-    const labels = [...(pair?.querySelectorAll('button') ?? [])].map((button) => button.textContent.trim());
+    const acts = container.querySelector('app-action-bar[foot] .acts');
+    expect(acts).not.toBeNull();
+    const labels = [...(acts?.querySelectorAll('button') ?? [])].map((button) => button.textContent.trim());
     expect(labels).toEqual(['Show 12 species', 'Zurücksetzen']);
   });
 
-  it('nimmt das X des Blatts und bringt kein eigenes mit', async () => {
+  it('uses the close button of the sheet', async () => {
     const { container, fixture } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
     });
@@ -94,7 +86,7 @@ describe('FilterSheetComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('meldet Zurücksetzen und Haupthandlung je Knopf', async () => {
+  it('emits reset and the main action for each button', async () => {
     const { fixture } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
     });
@@ -108,7 +100,7 @@ describe('FilterSheetComponent', () => {
     expect(calls).toEqual(['reset', 'primary']);
   });
 
-  it('stellt in einer Gruppe den Weg zurück vor den Titel', async () => {
+  it('shows the back button instead of the close button in a group', async () => {
     const { container, fixture } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, title: 'Cap shape', back: true, resetEnabled: true },
     });
@@ -116,13 +108,14 @@ describe('FilterSheetComponent', () => {
     fixture.componentInstance.backClick.subscribe(() => (calls += 1));
 
     expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
-    expect(container.querySelector('.filtersheet__back')?.closest('.sheet__head-title')).not.toBeNull();
+    expect(container.querySelector('.sheet__head .overlay-head__back')).not.toBeNull();
+    expect(container.querySelector('.overlay-head__close')).toBeNull();
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 
     expect(calls).toBe(1);
   });
 
-  it('meldet das Schließen auf Escape', async () => {
+  it('emits closed on Escape', async () => {
     const { fixture } = await render(FilterSheetComponent, { inputs: OPEN });
     let calls = 0;
     fixture.componentInstance.closed.subscribe(() => (calls += 1));
@@ -132,22 +125,13 @@ describe('FilterSheetComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('macht jeden Knopf zum Tippziel mit Druckzustand', async () => {
-    await render(FilterSheetComponent, { inputs: { ...OPEN, resetEnabled: true } });
-
-    for (const button of dialogButtons()) {
-      expect(button).toHaveClass('tap');
-      expect(button).toHaveAttribute('data-press', 'scale');
-    }
-  });
-
-  it('blendet die Ränder des Inhalts aus', async () => {
+  it('fades the edges of the content', async () => {
     const { container } = await render(FilterSheetComponent, { inputs: OPEN });
 
     expect(container.querySelectorAll('.filtersheet__content.scroll')).toHaveLength(1);
   });
 
-  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+  it('shows no German word against an empty catalogue', async () => {
     const { container } = await render(FilterSheetComponent, {
       inputs: { ...OPEN, resetEnabled: true },
       providers: [EMPTY_CATALOG],

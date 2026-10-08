@@ -1,7 +1,7 @@
 import type { Permission, PermissionArea, TermKind } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Die Beschriftung zu einem Recht und zu einem Bereich. */
+/** The text key for each permission and each area. */
 export const PERMISSION_TEXT: Readonly<Record<Permission, TranslationKey>> = {
   'species.edit': 'admin.role.editSpeciesProfiles',
   'image.submit': 'admin.role.submitImages',
@@ -11,6 +11,7 @@ export const PERMISSION_TEXT: Readonly<Record<Permission, TranslationKey>> = {
   'role.assign': 'admin.role.assignRoles',
   'find.review': 'admin.role.reviewFinds',
   'run.manage': 'admin.role.manageRuns',
+  'data.manage': 'admin.role.manageData',
   'group.manage': 'admin.role.manageGroups',
 };
 

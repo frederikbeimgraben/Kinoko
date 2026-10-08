@@ -1,7 +1,7 @@
 import type { BodyPart, Dimension, Measurement, MeasurementGroup, SpeciesEntry } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Der Kopf einer Maßseite: Teil und Strecke bilden ein Wort. */
+/** The title of a size page: part and dimension make one word. */
 export const SIZE_TITLE: Readonly<Record<Dimension, TranslationKey>> = {
   width: 'admin.size.width',
   height: 'admin.size.height',
@@ -9,7 +9,7 @@ export const SIZE_TITLE: Readonly<Record<Dimension, TranslationKey>> = {
   length: 'admin.size.length',
 };
 
-/** Das Maß eines Teils für eine Strecke, sofern die Art es trägt. */
+/** The measurement of a part for a dimension, or null if the species has none. */
 export function measurementOf(
   species: SpeciesEntry | null,
   part: BodyPart,
@@ -19,7 +19,7 @@ export function measurementOf(
   return group?.measurements.find((one) => one.dimension === dimension) ?? null;
 }
 
-/** Legt ein Maß in die Gruppe seines Teils, an die Stelle der alten Strecke. */
+/** Puts a measurement in the group of its part. It replaces the old measurement of that dimension. */
 export function withMeasurement(
   species: SpeciesEntry,
   part: BodyPart,

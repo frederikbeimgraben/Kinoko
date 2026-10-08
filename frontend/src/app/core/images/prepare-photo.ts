@@ -1,12 +1,12 @@
-/** Die längste Kante eines hochgeladenen Fotos. */
+/** The maximum edge length of an uploaded photo. */
 export const MAX_EDGE = 1600;
 
-/** Die Güte der neuen JPEG-Datei. */
+/** The quality of the new JPEG file. */
 export const QUALITY = 0.85;
 
 const TYPE = 'image/jpeg';
 
-/** Die Zielgröße: die längste Kante bleibt unter der Grenze, das Verhältnis bleibt. */
+/** The target size. The longest edge stays in the limit, and the aspect ratio stays. */
 export function targetSize(width: number, height: number, max = MAX_EDGE): { width: number; height: number } {
   const longest = Math.max(width, height);
   if (longest <= max || longest === 0) return { width, height };
@@ -14,13 +14,13 @@ export function targetSize(width: number, height: number, max = MAX_EDGE): { wid
   return { width: Math.round(width * factor), height: Math.round(height * factor) };
 }
 
-/** Der Name der neuen Datei: derselbe Stamm, die Endung des neuen Typs. */
+/** The new file name: the same stem with the extension of the new type. */
 export function jpegName(name: string): string {
   const stem = name.replace(/\.[^./\\]+$/, '');
   return `${stem || 'foto'}.jpg`;
 }
 
-/** Zeichnet das Foto neu. Das neue Bild trägt weder EXIF noch GPS. */
+/** Draws the photo again. The new image has no EXIF or GPS data. */
 export async function withoutMetadata(file: File, max = MAX_EDGE): Promise<File> {
   const source = await createImageBitmap(file);
   const size = targetSize(source.width, source.height, max);

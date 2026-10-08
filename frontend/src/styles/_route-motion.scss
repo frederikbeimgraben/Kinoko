@@ -1,6 +1,5 @@
-// `route-content` ist der einzige Name, der an der Übergangsanimation
-// teilnimmt. Leiste und Kopfzeile tragen eigene Namen. Die Karte trägt keinen:
-// ein Name legte eine Stapelebene um ihre Blätter.
+// `route-content` is the name that moves. The nav and the banner have their own names and stay still.
+// The map has no name: a name puts a stacking context around its sheets.
 
 @keyframes route-tab-forward-old {
   from {
@@ -43,6 +42,18 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes route-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
   }
 }
 
@@ -116,6 +127,27 @@ html[data-motion='pop'] {
   &::view-transition-new(route-content) {
     animation: route-pop-new var(--motion-page) var(--ease-standard) both;
   }
+}
+
+// Desktop, one section: the list pane does not change, so a crossfade keeps it still.
+html[data-motion='fade'] {
+  &::view-transition-old(route-content),
+  &::view-transition-old(detail-pane) {
+    animation: route-fade-out var(--motion-pop) var(--ease-standard) both;
+  }
+  &::view-transition-new(route-content),
+  &::view-transition-new(detail-pane) {
+    animation: route-fade-in var(--motion-pop) var(--ease-standard) both;
+  }
+  &::view-transition-group(detail-pane) {
+    animation: none;
+  }
+}
+
+// `shareOnNextRoute` names one source and one target `shared-*`. The group moves between the two boxes.
+::view-transition-group(*.shared) {
+  animation-duration: var(--motion-page);
+  animation-timing-function: var(--ease-emph-in);
 }
 
 ::view-transition-old(root),

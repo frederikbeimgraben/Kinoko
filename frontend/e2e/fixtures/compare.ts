@@ -1,4 +1,4 @@
-/** Die Attrappe der Bretter `Compare` und `CompareDesktop`. */
+/** The mock of the boards `Compare` and `CompareDesktop`. */
 
 import { PALETTE } from './species';
 
@@ -56,7 +56,7 @@ function lookalike(entry: Shape): Record<string, unknown> {
   };
 }
 
-/** Eine Art in der Form des Vertrags, mit allem, was der Vergleich liest. */
+/** A species in the contract shape, with all fields that the comparison reads. */
 export function species(entry: Shape, at: number): Record<string, unknown> {
   return {
     id: identifier('8000', at),
@@ -184,7 +184,7 @@ const STONE: Shape = {
   lookalikes: [GALL, BAY, SUMMER],
 };
 
-/** Ein Bündel ohne gezählte Achsen: der Vergleich liest keine. */
+/** A bundle without counted axes, because the comparison reads none. */
 function bundleOf(entries: readonly Shape[]): Record<string, unknown> {
   return {
     items: entries.map((entry, at) => species(entry, at)),
@@ -193,7 +193,7 @@ function bundleOf(entries: readonly Shape[]): Record<string, unknown> {
   };
 }
 
-/** Beide Bretter: zwei Arten im Vergleich, beide mit einem Merkmal am Stiel. */
+/** Both boards: two species in the comparison, both with a stem feature. */
 export const COMPARE = bundleOf([
   { ...STONE, stem: 'weiß, feines Netz' },
   { ...GALL, stem: 'dunkelbraun, grobes Netz' },

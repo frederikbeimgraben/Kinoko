@@ -62,7 +62,7 @@ function sha256(file) {
   return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
-/** Removes a stray png that no longer belongs to `keep`. */
+/** Removes a stray png that is not in `keep`. */
 function prune(dir, keep) {
   if (!existsSync(dir)) return;
   for (const name of readdirSync(dir)) {

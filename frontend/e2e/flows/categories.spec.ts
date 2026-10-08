@@ -13,7 +13,7 @@ const TERMS = {
   ],
 };
 
-/** Meldet an und öffnet die Kategorien der Verwaltung. */
+/** Signs in and opens the admin categories. */
 async function start(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {

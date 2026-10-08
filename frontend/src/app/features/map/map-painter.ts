@@ -13,36 +13,36 @@ import type { CombinationRule } from '../../map/value-colors';
 import { FORECAST_RAMP } from '../../ui/ramp/ramp-colours';
 import { boundFor, combinationKey, encodeFactors, type Factor } from './factors';
 
-/** So viele Wochen in jede Richtung werden vorgeladen. */
+/** The number of weeks to prefetch in each direction. */
 const LOOKAHEAD = 2;
 
-/** Die Kennung der zusammengesetzten Quelle im Protokoll. */
+/** The protocol ID of the combined source. */
 const COMBINATION_SOURCE = 'combination';
 
-/** Die Kennung einer Ebene im Protokoll, damit sie nicht mit einer Art kollidiert. */
+/** The protocol ID of a layer. The prefix keeps it different from a species ID. */
 export function layerSourceId(layer: Layer): string {
   return `ebene-${layer.id}`;
 }
 
-/** Was die obere Wertebene zeigen soll. */
+/** The data for the upper value layer. */
 export interface UpperLayer {
   layer: Layer | null;
   combination: { rule: CombinationRule; colour: string; factors: readonly Factor[] } | null;
 }
 
-/** Legt die Wertebenen auf die Karte. Sie kennt MapLibre nur über den Adapter. */
+/** Puts the value layers on the map. It uses MapLibre only through the adapter. */
 export class MapPainter {
   constructor(
     private readonly adapter: MapAdapter,
     private readonly protocol: ValueProtocol,
   ) {}
 
-  /** Meldet die Skala einer Art an den Färbe-Worker. */
+  /** Gives the scale of a species to the colouring worker. */
   report(manifest: SpeciesManifest): void {
     this.protocol.report(speciesSource(manifest.slug, manifest.top, manifest));
   }
 
-  /** Die groben Stufen der Woche, noch bevor MapLibre steht. */
+  /** Prefetches the coarse levels of the week before MapLibre is ready. */
   prefetchOverview(manifest: SpeciesManifest, week: ManifestWeek): void {
     this.protocol.prefetch(
       manifest.slug,
@@ -51,7 +51,7 @@ export class MapPainter {
     );
   }
 
-  /** Die Vorhersage liegt unter der Ebene, wenn beide gefragt sind. */
+  /** The forecast is below the layer when both are visible. */
   showForecast(manifest: SpeciesManifest | null, week: ManifestWeek | null, visible: boolean): void {
     if (manifest === null || week === null) return;
     this.adapter.showValue(
@@ -63,7 +63,6 @@ export class MapPainter {
     );
   }
 
-  /** Nichts auf der oberen Ebene. */
   clearUpper(): void {
     this.adapter.showValue('layer', null, MAX_BOUNDS, ZOOM_MIN, ZOOM_MAX);
   }
@@ -86,7 +85,7 @@ export class MapPainter {
     );
   }
 
-  /** Die Kombination als eine Quelle. Ein neuer Schlüssel je Bedingung. */
+  /** Shows the combination as one source. Each condition gets a new key. */
   showCombination(
     manifest: LayersManifest | null,
     sources: ReadonlyMap<string, Layer>,
@@ -130,7 +129,7 @@ export class MapPainter {
     );
   }
 
-  /** Lädt die Kacheln der Nachbarwochen, damit ein Wochenwechsel sofort steht. */
+  /** Loads the tiles of the adjacent weeks, so a week change shows immediately. */
   prefetchNeighbours(
     manifest: SpeciesManifest | null,
     week: ManifestWeek | null,

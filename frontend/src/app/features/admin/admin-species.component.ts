@@ -2,21 +2,24 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { InfiniteListComponent } from '../../ui/infinite-list/infinite-list.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { judge } from '../species/facets';
 import { SpeciesFilterSheetComponent } from '../species/filter-sheet.component';
-import { SpeciesFilterState } from '../species/filter.state';
+import { SpeciesFilterStore } from '../species/filter.store';
 import { SpeciesSearchFilterBarComponent } from '../species/search-filter-bar.component';
 import { search } from '../species/rows';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 
 const PAGE = 40;
 
-/** Eine Zeile der Artenverwaltung. */
+/** A row of the species administration. */
 interface Row {
   slug: string;
   name: string;
@@ -24,7 +27,7 @@ interface Row {
   forecast: boolean;
 }
 
-/** Die Artenverwaltung: Suche, Filter je Art und der Weg zum Anlegen. */
+/** The species administration: a search, the filter and the way to create a species. */
 @Component({
   selector: 'app-admin-species',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +36,8 @@ interface Row {
     InfiniteListComponent,
     ListRowComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
     SpeciesFilterSheetComponent,
     SpeciesSearchFilterBarComponent,
     SvgIconComponent,
@@ -44,9 +49,11 @@ interface Row {
 export class AdminSpeciesComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly catalogue = inject(SpeciesState);
-  protected readonly filter = inject(SpeciesFilterState);
+  private readonly catalogue = inject(SpeciesStore);
+  protected readonly filter = inject(SpeciesFilterStore);
 
+  protected readonly wide = inject(ViewportService).wide;
+  protected readonly loading = this.catalogue.loading;
   protected readonly query = signal('');
   protected readonly shown = signal(PAGE);
 

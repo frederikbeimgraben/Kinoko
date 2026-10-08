@@ -2,7 +2,7 @@
 
 @include section.block;
 
-// Der Inhalt der Karte trägt seine Trennlinie unten, wie das Brett sie zeichnet.
+// The card content has its divider at the bottom, as on the board.
 .time {
   display: flex;
   flex-direction: column;
@@ -33,7 +33,7 @@
   border-radius: 20px;
 }
 
-// Ohne ein Manifest bleibt die Kurve leer: die Hülle nimmt dann keinen Platz.
+// Without a manifest, the curve is empty. Then the wrapper takes no space.
 .time__curve:has(app-species-season:empty) {
   display: none;
 }

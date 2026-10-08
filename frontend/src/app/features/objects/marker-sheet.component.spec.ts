@@ -34,7 +34,7 @@ async function build(): Promise<Setup> {
   };
 }
 
-/** Wechselt vom Blatt in das Formular des Markers. */
+/** Goes from the sheet to the marker form. */
 async function edit(setup: Setup): Promise<void> {
   await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
   setup.refresh();

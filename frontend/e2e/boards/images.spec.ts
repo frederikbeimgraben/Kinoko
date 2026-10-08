@@ -17,13 +17,13 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device. It does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Die Verwaltung holt beim Öffnen ihre Zähler. Ohne Antwort meldet sie einen Fehler. */
+/** The administration gets its counts when it opens. Without a reply it shows an error. */
 const SUMMARY = {
   texts: 0,
   photos: 0,
@@ -38,15 +38,15 @@ const SUMMARY = {
   runsRunning: 0,
 };
 
-/** Dieselben Fotos, das zweite als Titelbild. */
+/** The same photos, with the second one as the lead photo. */
 const LEAD_SECOND = SPECIES_PHOTOS.map((one, at) => ({ ...one, lead: at === 1 }));
 
-/** Die Rechte, die der Dienst der angemeldeten Person gibt. */
+/** The rights that the service gives to the signed-in person. */
 function rights(permissions: readonly string[]): Record<string, unknown> {
   return { '/api/me/permissions': { permissions, roles: [] } };
 }
 
-/** Öffnet einen Weg mit Artenkatalog und Fotos. */
+/** Opens an address with the species catalogue and the photos. */
 async function open(
   page: Page,
   path: string,
@@ -66,11 +66,11 @@ async function open(
   await page.goto(path);
 }
 
-/** Wählt die Fotoattrappe des Bretts im Formular und wartet auf die Vorschau. */
+/** Picks the photo fixture of the board in the form and waits for the tile. */
 async function pick(page: Page, photo: string): Promise<void> {
   const file = join(test.info().config.rootDir, 'boards/fixtures', photo);
-  await page.locator('.form__file').setInputFiles(file);
-  await expect(page.locator('.form__image')).toBeVisible();
+  await page.locator('app-photo-strip input[type=file]').setInputFiles(file);
+  await expect(page.locator('app-photo-strip .pht img')).toBeVisible();
 }
 
 test('ImageView', async ({ page }) => {
@@ -82,7 +82,7 @@ test('ImageView', async ({ page }) => {
     photoFixture(358, 300),
   );
   await expect(page.getByText('2 von 4')).toBeVisible();
-  await expect(page.getByText('CC BY-SA 4.0')).toBeVisible();
+  await expect(page.getByText('CC BY-SA 4.0', { exact: true })).toBeVisible();
   await expectBoard(page, 'ImageView');
 });
 
@@ -109,8 +109,9 @@ test('ImageAdd', async ({ page }) => {
   });
   await expect(page.getByRole('heading', { name: 'Bild hinzufügen' })).toBeVisible();
   await pick(page, photoFixture(358, 160));
-  await page.getByLabel('Foto').fill('Frederik Beimgraben');
-  await page.getByLabel('Lizenz').selectOption('cc_by_sa_4');
+  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
+  await page.getByRole('button', { name: /Herkunft/ }).click();
+  await page.getByRole('button', { name: 'CC BY-SA 4.0' }).click();
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   await page.getByRole('checkbox', { name: 'Als Titelbild der Art' }).check();
   await expectBoard(page, 'ImageAdd');
@@ -125,7 +126,7 @@ test('ImageSubmit', async ({ page }) => {
   });
   await expect(page.getByRole('heading', { name: 'Bild einreichen' })).toBeVisible();
   await pick(page, photoFixture(358, 160));
-  await page.getByLabel('Foto').fill('Frederik Beimgraben');
+  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   await expectBoard(page, 'ImageSubmit');
 });
@@ -138,15 +139,15 @@ test('ImageUploading', async ({ page }) => {
     ...rights([]),
   });
   await pick(page, photoFixture(358, 200));
-  await page.getByLabel('Foto').fill('Frederik Beimgraben');
+  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
-  // Die Antwort bleibt aus: das Board zeigt den laufenden Anteil.
+  // The reply does not come, so the board shows the upload in progress.
   await page.route('**/api/photos', async (route) => {
     if (route.request().method() === 'POST') await new Promise(() => undefined);
     else await route.fallback();
   });
-  await page.getByRole('button', { name: 'Zur Prüfung einreichen' }).click();
-  await expect(page.locator('.form__progress')).toBeVisible();
+  await page.getByRole('button', { name: 'Einreichen', exact: true }).click();
+  await expect(page.locator('app-progress')).toBeVisible();
   await expectBoard(page, 'ImageUploading', { idle: false });
 });
 

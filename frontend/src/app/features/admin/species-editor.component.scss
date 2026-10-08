@@ -1,61 +1,33 @@
-@use '../../../styles/card';
+@use './page';
 
 :host {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
 .editor {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+  @include page.body;
+  @include page.with-actions;
+
   gap: 24px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
 }
 
-.editor__section {
-  @include card.section-title;
-}
-
-// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
-.editor__card {
-  @include card.card;
-
-  --list-row-inline: 14px;
-  --list-row-sub: var(--fs-row-meta);
-  --list-row-title-height: normal;
-  --list-row-sub-height: 1.4;
-  --space-row-stack: 2px;
-}
-
-// Die Kennzahlen tragen den Wert über dem Namen, Maße aus dem Brett.
+// The counts show the value above the name, per the kit `.tiles`.
 .editor__stats {
   --stat-label-height: 1.4;
 
   padding-block: 14px;
   line-height: normal;
+  background: var(--surface);
+  border-radius: var(--r-item);
 }
 
-.editor__source {
-  padding: var(--space-3);
-}
-
+// The kit `.note`: a card with a short text.
 .editor__note {
   margin: 0;
-  font-size: var(--fs-row-meta);
+  padding: 14px 16px;
+  font-size: var(--fs-14);
   line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
-app-add-row {
-  margin-block-start: 10px;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+  color: var(--text-var);
+  background: var(--surface);
+  border-radius: var(--r-item);
 }

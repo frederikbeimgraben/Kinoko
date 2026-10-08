@@ -120,7 +120,7 @@ describe('Wertfarben', () => {
     ];
 
     expect(combine([150, 150], bounds, 'graded')).toBe(1);
-    // Ein Faktor bei 0,52, einer bei 1: das geometrische Mittel ist die Wurzel.
+    // One factor at 0.52 and one at 1: the geometric mean is the square root.
     expect(combine([212, 150], bounds, 'graded')).toBeCloseTo(Math.sqrt(0.52), 2);
     expect(combine([230, 150], bounds, 'graded')).toBe(0);
   });

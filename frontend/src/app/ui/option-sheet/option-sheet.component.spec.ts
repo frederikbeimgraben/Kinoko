@@ -60,7 +60,7 @@ describe('OptionSheetComponent', () => {
     let closes = 0;
     fixture.componentInstance.closed.subscribe(() => (closes += 1));
     expect(container.querySelector('.overlay-body__close')).toBeNull();
-    const close = container.querySelector<HTMLElement>('.sheet__close');
+    const close = container.querySelector<HTMLElement>('.overlay-head__close');
     if (close === null) throw new Error('Der Knopf zum Schließen steht nicht im Baum.');
 
     await userEvent.click(close);

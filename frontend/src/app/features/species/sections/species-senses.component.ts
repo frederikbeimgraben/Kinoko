@@ -4,14 +4,14 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { TagListComponent } from '../../../ui/tag-list/tag-list.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 
-/** Ein Sinn mit seinen Marken und seinem Satz aus dem Katalog. */
+/** A sense with its catalogue tags and sentence. */
 interface Sense {
   titleKey: 'species.field.smell' | 'species.field.taste';
   tags: string[];
   text: string | null;
 }
 
-/** Geruch und Geschmack einer Art: Marken aus dem Katalog, darunter der Satz. */
+/** Smell and taste of a species: catalogue tags with the sentence below. */
 @Component({
   selector: 'app-species-senses',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,7 +38,7 @@ export class SpeciesSensesComponent {
   }
 }
 
-/** Die Begriffe einer Art zu einer Art von Begriff. */
+/** The terms of a species for one term kind. */
 function terms(species: SpeciesEntry, kind: 'smell' | 'taste'): string[] {
   return species.terms.filter((entry) => entry.term.kind === kind).map((entry) => entry.term.name);
 }

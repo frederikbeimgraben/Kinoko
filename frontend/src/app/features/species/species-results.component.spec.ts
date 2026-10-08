@@ -6,7 +6,7 @@ import { IntersectionObserverStub, stubIntersectionObserver } from '../../testin
 import { BAY_BOLETE, HEDGEHOG, PALETTE, PENNY_BUN } from '../../testing/species-fixture';
 import { factsOf } from './facets';
 import { SpeciesResultsComponent } from './species-results.component';
-import type { CatalogueEntry } from './species.state';
+import type { CatalogueEntry } from './species.store';
 
 function entry(species: typeof PENNY_BUN): CatalogueEntry {
   return { species, facts: factsOf(species, PALETTE) };
@@ -19,7 +19,7 @@ describe('SpeciesResultsComponent', () => {
     stubIntersectionObserver();
   });
 
-  it('stellt je Treffer eine Zeile mit Namen und Speisewert', async () => {
+  it('shows one row with name and edibility for each hit', async () => {
     const { container } = await render(SpeciesResultsComponent, { inputs: { hits: HITS } });
 
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
@@ -28,14 +28,14 @@ describe('SpeciesResultsComponent', () => {
     await noViolations(container);
   });
 
-  it('stellt vor jedem neuen Anfangsbuchstaben eine Kopfzeile', async () => {
+  it('puts a head before each new first letter', async () => {
     const { container } = await render(SpeciesResultsComponent, { inputs: { hits: HITS } });
 
     const heads = [...container.querySelectorAll('.lbl')].map((el) => el.textContent);
     expect(heads).toEqual(['S', 'M']);
   });
 
-  it('meldet die gewählte Art nach draußen', async () => {
+  it('reports the chosen species', async () => {
     const { fixture } = await render(SpeciesResultsComponent, { inputs: { hits: HITS } });
     const chosen: string[] = [];
     fixture.componentInstance.chosen.subscribe((slug) => chosen.push(slug));
@@ -45,7 +45,7 @@ describe('SpeciesResultsComponent', () => {
     expect(chosen).toEqual(['steinpilz']);
   });
 
-  it('hebt die aktive Art hervor', async () => {
+  it('marks the active species', async () => {
     const { container } = await render(SpeciesResultsComponent, {
       inputs: { hits: HITS, active: 'maronenroehrling' },
     });
@@ -53,16 +53,35 @@ describe('SpeciesResultsComponent', () => {
     expect(container.querySelectorAll('.row--active')).toHaveLength(1);
   });
 
-  it('zeigt beim Laden Platzhalter statt Zeilen', async () => {
+  it('gives the species that the person opened last the soft ground', async () => {
+    const { container } = await render(SpeciesResultsComponent, {
+      inputs: { hits: HITS, soft: 'steinpilz' },
+    });
+
+    expect(container.querySelectorAll('.row--soft')).toHaveLength(1);
+  });
+
+  it('puts the edibility as the head when the list sorts by edibility', async () => {
+    const { container } = await render(SpeciesResultsComponent, {
+      inputs: { hits: HITS, sort: 'edibility' },
+    });
+
+    const heads = [...container.querySelectorAll('.lbl')].map((el) => el.textContent);
+    expect(heads).toEqual(['essbar']);
+  });
+
+  it('shows seven skeleton rows while the catalogue loads', async () => {
     const { container } = await render(SpeciesResultsComponent, {
       inputs: { hits: [], loading: true },
     });
 
-    expect(container.querySelectorAll('.results__skeleton')).toHaveLength(5);
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('.results__skeleton .skeleton__row')).toHaveLength(7);
+    });
     expect(screen.queryByText('Steinpilz')).not.toBeInTheDocument();
   });
 
-  it('zeigt den Fehlerzustand mit dem erneuten Versuch', async () => {
+  it('shows the error state with a new try', async () => {
     const { fixture } = await render(SpeciesResultsComponent, {
       inputs: { hits: [], failed: true },
     });
@@ -74,7 +93,7 @@ describe('SpeciesResultsComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('zeigt ohne Treffer den Leerzustand mit Zurücksetzen', async () => {
+  it('shows the empty state with a reset without hits', async () => {
     const { fixture } = await render(SpeciesResultsComponent, { inputs: { hits: [] } });
     let calls = 0;
     fixture.componentInstance.resetFilter.subscribe(() => (calls += 1));
@@ -85,17 +104,17 @@ describe('SpeciesResultsComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('stellt die Arten ohne Angabe blass unter die Treffer', async () => {
+  it('puts the species without data pale below the hits', async () => {
     const { container } = await render(SpeciesResultsComponent, {
       inputs: { hits: HITS, unassessable: [entry(HEDGEHOG)] },
     });
 
     expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
-    expect(container.querySelector('.results__group--muted')).not.toBeNull();
+    expect(container.querySelector('.results__muted')).not.toBeNull();
     expect(screen.getAllByText('essbar')).toHaveLength(2);
   });
 
-  it('fordert die nächste Seite an, sobald der Fühler sichtbar wird', async () => {
+  it('asks for the next page when the sentinel becomes visible', async () => {
     const { fixture } = await render(SpeciesResultsComponent, {
       inputs: { hits: HITS, hasMore: true },
     });
@@ -108,7 +127,7 @@ describe('SpeciesResultsComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+  it('has no German word with an empty catalogue', async () => {
     const { container } = await render(SpeciesResultsComponent, {
       inputs: { hits: [] },
       providers: [EMPTY_CATALOG],

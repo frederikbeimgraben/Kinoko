@@ -3,7 +3,7 @@ import { SignInSheetComponent } from './features/account/signin-sheet.component'
 import { ShellComponent } from './shell/shell.component';
 import { ToastComponent } from './ui/toast/toast.component';
 
-/** Die Wurzel der App: die Hülle mit Navigation, darin die Reiter. */
+/** The root of the app: the shell with navigation and the tabs in it. */
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,

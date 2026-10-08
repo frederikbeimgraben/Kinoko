@@ -1,12 +1,18 @@
 <ng-template #body>
   @switch (state.step()) {
     @case ('actions') {
-      <div class="addentry__brief">
+      <div class="overlay-body">
         <app-add-actions (chosen)="start($event)" />
       </div>
     }
     @case ('findForm') {
-      <app-find-form [location]="state.location()!" [busy]="saving()" (submitted)="saveFind($event)" />
+      <app-find-form
+        [location]="state.location()!"
+        [busy]="saving()"
+        [draft]="state.findDraft()"
+        (submitted)="saveFind($event)"
+        (locationClick)="editLocation($event)"
+      />
     }
     @case ('markerForm') {
       <app-object-form
@@ -31,7 +37,7 @@
 
 @if (state.running()) {
   <div class="addentry">
-    @if (state.showsCrosshair() && !wide()) {
+    @if (showsCrosshair()) {
       <div class="addentry__crosshair">
         <app-crosshair [label]="'entry.setLocation.title' | t" />
       </div>
@@ -46,30 +52,22 @@
       />
     } @else if (asPopover()) {
       <app-popover [open]="true" [anchor]="anchor" [label]="'entry.create' | t" (closed)="cancel()">
-        <app-add-actions (chosen)="start($event)" />
+        <app-add-actions [menu]="true" (chosen)="start($event)" />
       </app-popover>
     } @else {
-      <app-overlay-host
-        class="addentry__overlay"
-        [class.addentry__overlay--form]="state.onForm()"
-        [class.addentry__overlay--object]="state.step() !== 'findForm'"
-        [open]="true"
-        [modal]="state.dark()"
-        (closed)="cancel()"
-      >
+      <app-overlay-host [open]="true" [modal]="state.dark()" (closed)="cancel()">
         <app-sheet
           appSheetHeight
           [label]="title()"
           [title]="title()"
-          [note]="coordinates()"
-          [style.--sheet-title-size.px]="titleSize()"
-          [style.--sheet-title-weight]="titleBold() ? 700 : null"
-          [style.--sheet-title-tracking]="titleBold() ? '-0.01em' : null"
           [modal]="true"
           [dismissible]="true"
           (closed)="cancel()"
         >
           <ng-container [ngTemplateOutlet]="body" />
+          @if (state.onActions()) {
+            <div foot class="addentry__end"></div>
+          }
         </app-sheet>
       </app-overlay-host>
     }

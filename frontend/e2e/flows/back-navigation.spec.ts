@@ -10,7 +10,7 @@ import { largeBundle } from '../fixtures/species-catalogue';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Öffnet die Artseite des Steinpilzes über die Liste, angemeldet. */
+/** Signs in and opens the cep species page from the list. */
 async function openSpecies(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -24,7 +24,7 @@ async function openSpecies(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/arten\/boletus-edulis$/);
 }
 
-/** Öffnet die Karte mit Arten und Kombinationen aus dem Gerät. */
+/** Opens the map with species and combinations from the device. */
 async function openMap(page: Page): Promise<void> {
   await mockApi(page, {
     '/api/species/bundle': SPECIES_BUNDLE,
@@ -83,7 +83,11 @@ test.describe('Zurück von einer Bildseite', () => {
     await page.getByRole('button', { name: 'Bild einreichen' }).click();
     await expect(page).toHaveURL(/bilder\/neu$/);
 
-    await page.getByRole('button', { name: 'Zurück' }).click();
+    // The form is a sheet over the species page: its close button leaves it.
+    await page
+      .getByRole('dialog', { name: 'Bild einreichen' })
+      .getByRole('button', { name: 'Schließen' })
+      .click();
     await expect(page).toHaveURL(/\/arten\/boletus-edulis$/);
 
     await page.goBack();

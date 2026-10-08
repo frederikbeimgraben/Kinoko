@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, TemplateRef, contentChild, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-/** Zeile der Merkmalstabelle: Schlüssel links, ein oder mehrere Werte rechts. */
+/** A row of the trait table: the key at the left, one or more values at the right. */
 @Component({
   selector: 'app-key-value-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,17 +13,17 @@ import { RouterLink } from '@angular/router';
 export class KeyValueRowComponent {
   readonly key = input.required<string>();
   readonly value = input<string>();
-  /** Mehrere Werte nebeneinander, eine Spalte je verglichener Art. */
+  /** Many values side by side, one column for each compared species. */
   readonly values = input<readonly string[]>();
-  /** Ein Schlitz je Spalte: der Vergleich stellt Fläche, Marke oder Balken hinein. */
+  /** One slot for each column. The comparison puts a swatch, badge or bar into it. */
   readonly cells = input<readonly unknown[]>();
-  /** Führt der Schlüssel weiter, steht er als Verweis. */
+  /** When the key goes to a different page, it shows as a link. */
   readonly route = input<string | null>(null);
-  /** Ein Wort zum Schlüssel, das den Wert benennt: eine Fläche sagt für sich nichts. */
+  /** A word next to the key that names the value. A swatch alone gives no meaning. */
   readonly hint = input<string | null>(null);
-  /** Ein Wert endet rechts, Fließtext beginnt links. */
+  /** A value ends at the right. Running text starts at the left. */
   readonly flow = input(false);
-  /** Die Kopfzeile eines Vergleichs: die Werte sind die Namen der Spalten. */
+  /** The header row of a comparison. The values are the names of the columns. */
   readonly head = input(false);
 
   protected readonly slot = contentChild(TemplateRef);

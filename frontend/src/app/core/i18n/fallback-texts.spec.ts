@@ -8,7 +8,7 @@ import legacyEn from './legacy.en.json';
 
 const SOURCE = join(process.cwd(), '..', 'backend', 'daten', 'texte.json');
 
-/** Die Vorgabe, wie das Backend sie ausliefert. */
+/** The default texts, as the backend sends them. */
 function source(): Record<string, Record<string, string>> {
   return JSON.parse(readFileSync(SOURCE, 'utf8')) as Record<string, Record<string, string>>;
 }

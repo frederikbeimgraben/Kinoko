@@ -8,19 +8,20 @@ import {
   output,
 } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Punkt, an dem das Menü öffnet: die Stelle des langen Drucks. */
+/** The point where the menu opens: the place of the long press. */
 export interface ObjectMenuTarget {
   readonly x: number;
   readonly y: number;
 }
 
-/** Aktionsmenü nach langem Drücken: Bearbeiten, Zentrieren, Löschen. */
+/** The action menu after a long press: edit, centre, delete. */
 @Component({
   selector: 'app-object-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [RippleDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './object-menu.component.html',
   styleUrl: './object-menu.component.scss',
 })
@@ -35,8 +36,8 @@ export class ObjectMenuComponent {
   readonly closed = output();
 
   constructor() {
-    // Der Fokus folgt dem geöffneten Menü, damit Pfeile und Escape greifen.
-    // Erst nach dem Rendern stehen die Einträge im Baum.
+    // The focus goes to the open menu, so the arrow keys and Escape work.
+    // The items are in the tree only after the render.
     afterRenderEffect(() => {
       if (this.target() !== null) this.items()[0]?.focus();
     });

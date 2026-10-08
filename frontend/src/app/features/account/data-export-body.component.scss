@@ -1,0 +1,12 @@
+@use 'page';
+
+// Per the body of `DataExportBody.dc.html`: a column with a gap of 20.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  @include page.field;
+}

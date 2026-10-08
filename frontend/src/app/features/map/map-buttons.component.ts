@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
 
-/** Die schwebenden Knöpfe oben rechts auf der Karte: Ebenen, Ort, Eintragen, Kompass. */
+/** The floating buttons at the top right of the map: layers, location, add entry, compass. */
 @Component({
   selector: 'app-map-buttons',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,7 +18,7 @@ export class MapButtonsComponent {
   readonly showAdd = input(false);
   readonly turned = input(false);
   readonly needle = input(0);
-  /** Zusätzlicher Abstand von oben, wenn eine Leiste über der Karte liegt. */
+  /** Added top offset when a banner is above the map. */
   readonly bannerOffset = input(0);
 
   readonly layersToggled = output();

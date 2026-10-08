@@ -1,0 +1,23 @@
+// The body of the boards `Map` and `MapDesktop`: padding 4 16 24 below the phone panel, 0 16 16 in the desktop pane.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 16px 24px;
+}
+
+:host-context(.shell--column) {
+  padding: 0 16px 16px;
+}
+
+// Per `kit.css` `.halves`.
+.body__halves {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.body__halves app-push-button {
+  display: block;
+  min-inline-size: 0;
+}

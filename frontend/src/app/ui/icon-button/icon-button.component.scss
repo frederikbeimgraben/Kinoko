@@ -62,7 +62,7 @@
   box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
 }
 
-// Über der Kachel: die Fläche bleibt dunkel, gleich welches Thema läuft.
+// On top of a tile, the surface stays dark in all themes.
 .icon-button--over {
   inline-size: 44px;
   block-size: 44px;

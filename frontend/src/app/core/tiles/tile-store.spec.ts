@@ -14,7 +14,7 @@ function reply(body: string, ok = true): Response {
   });
 }
 
-/** Die Seite der App, wie ein Ursprung ohne Datei sie schickt. */
+/** The app page, as an origin without the file sends it. */
 function page(): Response {
   return new Response('<!doctype html>', { headers: { 'content-type': 'text/html' } });
 }

@@ -2,7 +2,7 @@
   display: block;
 }
 
-// Ohne Gattung darf der Platz nicht als Abstand stehen bleiben.
+// Without a genus, the empty host must not add space.
 :host(:empty) {
   display: none;
 }

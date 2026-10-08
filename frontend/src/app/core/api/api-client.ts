@@ -15,36 +15,32 @@ import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem
 
 const NOT_MODIFIED = 304;
 
-/** Abfragewerte einer URL. `undefined` fällt weg, statt als Text zu landen. */
 /**
- * Ein Feld darf mehrfach stehen: `?wert=a&wert=b`. Der Filter des Katalogs
- * wählt so mehrere Werte einer Gruppe, und der Dienst liest sie als Liste.
+ * Query values of a URL. `undefined` is dropped. A repeated field (`?wert=a&wert=b`) gives a list.
  */
 export type Query = Record<string, string | number | boolean | readonly string[] | undefined>;
 
-/** Eine Antwort mit ETag. Zum bekannten Stand bleibt `body` leer. */
+/** A response with an ETag. For a known version, `body` stays empty. */
 export interface Tagged<T> {
   etag: string | null;
   body: T | null;
 }
 
-/** Ein Schritt beim Hochladen: der Anteil, am Ende die Antwort. */
+/** One upload step: the percentage, and at the end the response. */
 export interface Upload<T> {
   percent: number;
   body: T | null;
 }
 
-/** Ein Aufruf im Hintergrund meldet sich nicht: `quiet` lässt den Toast weg. */
+/** A background call stays silent: `quiet` hides the toast. */
 export interface Silent {
   quiet?: boolean;
-  /** Antwortcodes, die ohne Toast bleiben. Der Aufrufer trägt sie selbst. */
+  /** Status codes that show no toast. The caller handles them. */
   quietStatus?: readonly number[];
 }
 
 /**
- * Der einzige Weg zur eigenen API. Jeder Fehler wird zu einem
- * {@link ProblemDetail}, als Toast gezeigt und weitergereicht, damit der
- * Aufrufer selbst entscheiden kann.
+ * The only path to the own API. Each error becomes a {@link ProblemDetail}, a toast, and goes to the caller.
  */
 @Injectable({ providedIn: 'root' })
 export class ApiClient {
@@ -59,7 +55,7 @@ export class ApiClient {
       .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
-  /** Holt eine Antwort mit ETag. Zum bekannten Stand bleibt der Körper leer. */
+  /** Gets a response with an ETag. For a known version, the body stays empty. */
   getTagged<T>(path: string, etag: string | null, options?: Silent): Observable<Tagged<T>> {
     const headers = etag === null ? undefined : new HttpHeaders({ 'If-None-Match': etag });
     return this.http.get<T>(this.url(path), { headers, observe: 'response' }).pipe(
@@ -79,9 +75,7 @@ export class ApiClient {
   }
 
   /**
-   * Lädt eine Datei als `multipart/form-data`, dazu die Felder, die im selben
-   * Formular stehen. Der Kopf `Content-Type` wird nicht gesetzt: nur der
-   * Browser kennt die Grenze zwischen den Teilen.
+   * Uploads a file and the form fields as `multipart/form-data`. Do not set `Content-Type`: only the browser knows the part boundary.
    */
   postFile<T>(path: string, field: string, file: File, fields: Query = {}, options?: Silent): Observable<T> {
     const body = new FormData();
@@ -94,7 +88,7 @@ export class ApiClient {
       .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
-  /** Lädt eine Datei und meldet den Anteil. Der letzte Schritt trägt die Antwort. */
+  /** Uploads a file and gives the percentage. The last step has the response. */
   uploadFile<T>(path: string, field: string, file: File, fields: Query = {}): Observable<Upload<T>> {
     const body = new FormData();
     body.append(field, file, file.name);
@@ -109,8 +103,7 @@ export class ApiClient {
   }
 
   /**
-   * Holt eine Datei. Ein Foto hängt an den Rechten seines Fundes; es geht
-   * darum denselben Weg mit Token und nicht über `src` am Bild.
+   * Gets a file with the token, not `src` on the image, because a photo uses the permissions of its find.
    */
   getBlob(path: string): Observable<Blob> {
     return this.http
@@ -164,13 +157,10 @@ export class ApiClient {
     return !(options?.quietStatus ?? []).includes(problem.status);
   }
 
-  /**
-   * Auch ein Abbruch ohne Antwort muss ein Problem ergeben, sonst müsste jeder
-   * Aufrufer zwei Fehlerformen kennen.
-   */
+  /** A stop without a response also gives a problem. Thus each caller knows only one error shape. */
   private asProblem(failure: unknown): ProblemDetail {
-    // Der Interceptor wirft schon ein fertiges Problem. Es hier noch einmal zu
-    // deuten machte aus einer bekannten 401 einen unbekannten Fehler.
+    // The interceptor throws a finished problem. A second parse here makes a
+    // known 401 into an unknown error.
     if (isProblemDetail(failure)) return failure;
     if (failure instanceof HttpErrorResponse) {
       if (isProblemDetail(failure.error)) return failure.error;
@@ -185,7 +175,7 @@ export class ApiClient {
   }
 }
 
-/** Deutet ein Ereignis des Hochladens. Ein Zwischenschritt ohne Anteil fällt weg. */
+/** Reads an upload event. A step without a percentage is dropped. */
 function step<T>(event: HttpEvent<T>): Upload<T> | null {
   if (event.type === HttpEventType.UploadProgress) {
     if (event.total === undefined || event.total === 0) return null;

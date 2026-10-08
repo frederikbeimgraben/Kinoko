@@ -1,45 +1,44 @@
-/** Das Manifest einer Vorhersage-Art, wie es `modell/src/pilze/region_map.py` neben die … */
+/** The manifest of a forecast species, as `modell/src/pilze/region_map.py` writes it. */
 
 import { readHistogram, type Histogram } from './layers';
 import { tileKey } from './tile-paths';
 
 export { tileKey };
 
-/** Eine Woche der Art. */
 export interface ManifestWeek {
   year: number;
   week: number;
-  /** Eine Woche ohne gemessenes Wetter, aus der Vorhersage gerechnet. */
+  /** A week without measured weather. The values come from the weather forecast. */
   forecast: boolean;
-  /** Ordner der Kacheln dieser Woche, ohne führenden Schrägstrich. */
+  /** The tile folder of this week, without a leading slash. */
   tilePath: string;
   mean: number;
   max: number;
-  /** Die Verteilung der Woche über Deutschland, null als kleinster Wert. */
+  /** The distribution of the week over Germany, with zero as the lowest value. */
   histogram: Histogram | null;
 }
 
-/** Eine Art mit Vorhersage: Kacheln, Wochen und der Höchstwert der Rampe. */
+/** A species with forecast: tiles, weeks and the maximum of the color ramp. */
 export interface SpeciesManifest {
   slug: string;
-  /** Die wissenschaftlichen Namen, die in die Art eingehen. */
+  /** The scientific names that the species includes. */
   species: readonly string[];
-  /** Der Wert, den Byte 255 einer Kachel bedeutet. */
+  /** The value of byte 255 in a tile. */
   top: number;
-  /** Südwest- und Nordostecke als [Länge, Breite], wie MapLibre sie erwartet. */
+  /** South-west and north-east corner as [lon, lat], as MapLibre expects. */
   bounds: readonly [readonly [number, number], readonly [number, number]];
   zoomFrom: number;
   zoomTo: number;
-  /** Die gröbste Stufe, deren Kacheln `existing` einzeln nennt. */
+  /** The coarsest zoom level whose tiles `existing` lists one by one. */
   haveZoom: number;
-  /** Die feinste Stufe, die ein Offline-Gebiet mitnimmt. */
+  /** The finest zoom level that an offline area keeps. */
   offlineZoomTo: number;
-  /** Alle Kacheln mit Daten, als `z/x/y`. */
+  /** All tiles with data, as `z/x/y`. */
   existing: ReadonlySet<string>;
   weeks: readonly ManifestWeek[];
 }
 
-/** Die Form einer Woche als Text: Jahr, Strich, Wochennummer. */
+/** The text key of a week: year, dash, week number. */
 export function weekKey(week: { year: number; week: number }): string {
   return `${week.year}-${String(week.week).padStart(2, '0')}`;
 }
@@ -53,7 +52,7 @@ function number(value: unknown, fallback = 0): number {
 }
 
 function corner(value: unknown): readonly [number, number] {
-  // Die Kette schreibt [Breite, Länge], MapLibre erwartet [Länge, Breite].
+  // The pipeline writes [lat, lon]. MapLibre expects [lon, lat].
   const pair = Array.isArray(value) ? value : [];
   return [number(pair[1]), number(pair[0])];
 }
@@ -81,7 +80,6 @@ function readExisting(raw: unknown): Set<string> {
   return set;
 }
 
-/** Liest ein Manifest. */
 export function readManifest(raw: unknown, slug: string): SpeciesManifest {
   const data = isObject(raw) ? raw : {};
   const tiles = isObject(data['tiles']) ? data['tiles'] : {};
@@ -103,7 +101,7 @@ export function readManifest(raw: unknown, slug: string): SpeciesManifest {
   };
 }
 
-/** Die ISO-Kalenderwoche eines Tages. */
+/** The ISO week of a day. */
 export function isoWeek(date: Date): { year: number; week: number } {
   const day = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   day.setUTCDate(day.getUTCDate() + 4 - (day.getUTCDay() || 7));
@@ -112,7 +110,7 @@ export function isoWeek(date: Date): { year: number; week: number } {
   return { year: day.getUTCFullYear(), week: Math.ceil((days + 1) / 7) };
 }
 
-/** Die Woche, die beim Öffnen gilt: die laufende Kalenderwoche, wenn das Manifest sie hat, … */
+/** The week to show on open: the current ISO week if the manifest has it, else the latest week. */
 export function currentWeek(manifest: SpeciesManifest, today = new Date()): ManifestWeek | null {
   if (manifest.weeks.length === 0) return null;
   const now = isoWeek(today);
@@ -120,18 +118,17 @@ export function currentWeek(manifest: SpeciesManifest, today = new Date()): Mani
   return current ?? manifest.weeks[manifest.weeks.length - 1];
 }
 
-/** Ob eine Woche nach der laufenden liegt. Nur das trägt in der Anzeige Vorhersage-Stil. */
+/** Tells if a week comes after the current week. Only such weeks use the forecast style. */
 export function isFuture(week: { year: number; week: number }, today: Date): boolean {
   const now = isoWeek(today);
   return week.year > now.year || (week.year === now.year && week.week > now.week);
 }
 
-/** Sucht eine Woche über ihren Schlüssel. */
 export function findWeek(manifest: SpeciesManifest, key: string): ManifestWeek | null {
   return manifest.weeks.find((week) => weekKey(week) === key) ?? null;
 }
 
-/** Alle Kacheln einer Zoomstufe, die Daten tragen. */
+/** All tiles with data at one zoom level. */
 export function tilesAtZoom(manifest: SpeciesManifest, zoom: number): [number, number, number][] {
   const tiles: [number, number, number][] = [];
   for (const key of manifest.existing) {
@@ -141,7 +138,7 @@ export function tilesAtZoom(manifest: SpeciesManifest, zoom: number): [number, n
   return tiles;
 }
 
-/** Die Balken der Zeitleiste. */
+/** The bar heights of the timeline, relative to the highest mean. */
 export function barShares(manifest: SpeciesManifest): readonly number[] {
   const peak = Math.max(1e-9, ...manifest.weeks.map((week) => week.mean));
   return manifest.weeks.map((week) => week.mean / peak);

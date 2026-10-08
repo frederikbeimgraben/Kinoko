@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import '@testing-library/jest-dom/vitest';
 
-// jsdom kennt `matchMedia` nicht. Ohne Ersatz bräche jeder Dienst, der das
-// Betriebssystem nach dem Theme fragt.
+// jsdom has no `matchMedia`. Without this stub, each service that asks the OS for the theme fails.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: (medium: string) => ({
@@ -17,48 +16,47 @@ Object.defineProperty(window, 'matchMedia', {
   }),
 });
 
-// jsdom hat keine Darstellung und keinen Zeiger. Ohne diese Stummel bräche
-// jeder Baustein, der etwas in den Blick holt oder eine Geste fängt.
+// jsdom has no rendering and no pointer.
+// Without these stubs, each component that scrolls into view or catches a gesture fails.
 Element.prototype.scrollIntoView = () => undefined;
 Element.prototype.scrollTo = () => undefined;
 Element.prototype.scrollBy = () => undefined;
 
-// jsdom rechnet kein Layout und kennt darum keinen ResizeObserver. Ohne
-// Ersatz bräche jede Oberfläche, die ihre eigene Höhe misst.
+// jsdom has no layout and so no ResizeObserver.
+// Without this stub, each UI that measures its own height fails.
 Object.defineProperty(window, 'ResizeObserver', {
   configurable: true,
   writable: true,
   value: class {
     observe(): void {
-      // Ohne Layout ändert sich keine Größe; es gibt nichts zu melden.
+      // Without layout, no size changes. There is nothing to report.
     }
     disconnect(): void {
-      // Es gibt nichts zu lösen.
+      // There is nothing to release.
     }
   },
 });
 Element.prototype.setPointerCapture = () => undefined;
 Element.prototype.releasePointerCapture = () => undefined;
 
-// Die Tests prüfen die deutschen Texte. Ohne diese Vorgabe entschiede die
-// Sprache des Testbrowsers, welcher Katalog gilt. Beide Quellen der Sprache
-// werden gesetzt, damit auch ein gesperrter Speicher nichts verschiebt.
+// The tests check the German texts, so the test browser language must not select the catalog.
+// Set both language sources, so that blocked storage does not change the result.
 Object.defineProperty(navigator, 'language', { configurable: true, get: () => 'de-DE' });
 
-// jsdom kennt echte Navigation. Ohne Stummel wüchse der Verlauf über alle
-// Testdateien hinweg und bremste `history.back`/`go` bis zum Zeitüberschreiten.
+// jsdom does real navigation. Without stubs, the history grows across all test files.
+// Then `history.back`/`go` become slow until they time out.
 history.pushState = () => undefined;
 history.back = () => undefined;
 history.go = () => undefined;
 
 beforeEach(() => {
   localStorage.setItem('pilzkarte.sprache', 'de');
-  // Ohne diesen Schnitt behielte ein Dienst aus dem vorigen Test seinen Zustand.
+  // This reset stops a service from keeping its state from the previous test.
   TestBed.resetTestingModule();
 });
 
-// Die Testdateien teilen sich eine Umgebung (der Builder isoliert sie nicht).
-// Ohne diesen Schnitt trüge eine Attrappe aus einer Datei in die nächste.
+// The test files share one environment because the builder does not isolate them.
+// This reset stops a mock from one file from going into the next file.
 afterEach(() => {
   vi.restoreAllMocks();
   localStorage.clear();

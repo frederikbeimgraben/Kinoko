@@ -1,35 +1,43 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  DOCUMENT,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { SessionState } from '../core/auth';
+import { SessionStore } from '../core/auth';
 import { ViewportService } from '../core/layout/viewport.service';
 import { I18nService } from '../core/i18n/i18n.service';
-// Diese Datei laedt beim Start mit. Sie nimmt die Bausteine darum einzeln
-// und nicht ueber `ui/index.ts`: das Sammelmodul zieht jeden Baustein in das
-// erste Buendel, auch die Saisonkurve und die Zeitleiste, die hier niemand
-// braucht. Das waren 81 kB.
+// This file loads at start. It imports each part directly and not from `ui/index.ts`:
+// the barrel puts every part into the first bundle (81 kB more).
 import { AvatarButtonComponent } from '../ui/avatar-button/avatar-button.component';
 import { NavComponent } from '../ui/nav/nav.component';
 import { BannerComponent } from '../ui/banner/banner.component';
 import { MapComponent } from '../features/map/map.component';
-import { MapState } from '../features/map/map.state';
-import { AddEntryState } from '../features/add-entry/add-entry.state';
-import { SyncService } from '../core/offline/sync.service';
-import { PwaService } from '../core/pwa/pwa.service';
+import { MapStore } from '../features/map/map.store';
+import { AddEntryStore } from '../features/add-entry/add-entry.store';
+import { SyncStore } from '../core/offline/sync.store';
+import { PwaStore } from '../core/pwa/pwa.store';
+import { deskFrame, paneWidth, type DeskFrame } from './desk-frame';
 
-/** Reiter, die am Rechner ihre eigenen Spalten mitbringen. */
-const FULL_WIDTH: readonly string[] = ['/verwaltung', '/arten'];
-
-/** Wege ohne Reiterleiste. Die Regel steht am Weg, nicht in der Seite. */
+/** Paths without the tab bar. The rule is on the path, not in the page. */
 const WITHOUT_NAV: readonly RegExp[] = [
   /^\/bausteine(\/|$)/,
   /^\/arten\/[^/]+/,
+  /^\/taxonomie(\/|$)/,
   /^\/verwaltung(\/|$)/,
   /^\/konto(\/|$)/,
 ];
 
-/** Die Hülle um jeden Reiter. Die Karte hängt hier und bleibt beim Reiterwechsel im Speicher. */
+/** The space that a floating banner takes at the top of the map: `MapControls top=60` on the boards. */
+const FLOAT_BANNER_OFFSET = 'calc(60px + env(safe-area-inset-top, 0px))';
+
+/** The frame around each tab. The map lives here and stays in memory when the tab changes. */
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,17 +47,18 @@ const WITHOUT_NAV: readonly RegExp[] = [
 })
 export class ShellComponent {
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
   private readonly i18n = inject(I18nService);
   private readonly viewport = inject(ViewportService);
-  private readonly session = inject(SessionState);
-  private readonly map = inject(MapState);
-  private readonly addEntry = inject(AddEntryState);
-  private readonly sync = inject(SyncService);
-  private readonly pwa = inject(PwaService);
+  private readonly session = inject(SessionStore);
+  private readonly map = inject(MapStore);
+  private readonly addEntry = inject(AddEntryStore);
+  private readonly sync = inject(SyncStore);
+  private readonly pwa = inject(PwaStore);
 
   protected readonly updateReady = this.pwa.updateReady;
 
-  private readonly adresse = toSignal(
+  private readonly address = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map(() => this.router.url),
@@ -57,7 +66,7 @@ export class ShellComponent {
     { initialValue: this.router.url },
   );
 
-  /** Wahr, sobald die erste echte Navigation eingetroffen ist. */
+  /** True after the first real navigation. */
   private readonly navigated = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -68,48 +77,48 @@ export class ShellComponent {
 
   protected readonly wide = this.viewport.wide;
 
-  /** Der erste Abschnitt der Adresse, ohne Abfrage: `/karte?art=…` → `/karte`. */
-  protected readonly active = computed(() => `/${this.adresse().split(/[?#/]/)[1] || 'karte'}`);
+  /** The first part of the path, without the query: `/karte?art=…` → `/karte`. */
+  protected readonly active = computed(() => `/${this.address().split(/[?#/]/)[1] || 'karte'}`);
 
   protected readonly onTheMap = computed(() => this.active() === '/karte');
 
   private readonly _mapWanted = signal(false);
-  /** Wird beim ersten Besuch der Karte oder ab der Spaltenbreite wahr und bleibt es. */
+  /** Becomes true on the first visit of the map or at desktop width, and stays true. */
   protected readonly mapWanted = this._mapWanted.asReadonly();
 
-  /** Am Telefon, außerhalb des Reiters Karte, bleibt sie unsichtbar und untätig. */
+  /** On the phone, outside the map tab, the map is not visible and does no work. */
   protected readonly mapHidden = computed(() => !this.wide() && !this.onTheMap());
 
-  protected readonly showAvatar = this.onTheMap;
-
-  /** Ob die Karte ihre eigene Zustandsleiste zeigt: kein Netz auf dem Reiter Karte. */
-  private readonly mapOffline = computed(() => this.onTheMap() && !this.sync.online());
-
-  /** Höhe der sichtbaren oberen Leiste: schiebt schwebende Elemente und Seitenkopf. */
-  protected readonly topBarHeight = computed(() =>
-    this.updateReady() || this.mapOffline() ? 'calc(38px + env(safe-area-inset-top, 0px))' : '0px',
+  /** On the desktop the rail holds the avatar, so the map shows none (board `MapDesktop`). */
+  protected readonly showAvatar = computed(
+    () => this.onTheMap() && !this.wide() && !this.addEntry.showsCrosshair(),
   );
 
-  /**
-   * Die Verwaltung trägt am Rechner ihre eigenen zwei Spalten und braucht dafür
-   * die ganze Fläche, nicht nur die linke.
-   */
-  protected readonly fullWidth = computed(() => FULL_WIDTH.includes(this.active()));
+  /** The map shows its own banner when there is no network on the map tab. */
+  private readonly mapOffline = computed(() => this.onTheMap() && !this.sync.online());
 
-  /** Kein Reiter, keine Leiste darunter. Am Rechner bleibt die Schiene. */
+  /** Over the phone map the banner floats at the top; elsewhere it sits above the nav. */
+  protected readonly bannerFloats = computed(() => this.onTheMap() && !this.wide());
+
+  /** The space of a banner at the top of the map. Floating parts and the avatar move down by it. */
+  protected readonly topBarHeight = computed(() =>
+    (this.updateReady() && this.bannerFloats()) || this.mapOffline() ? FLOAT_BANNER_OFFSET : '0px',
+  );
+
+  /** The desktop frame of the section: column width and what fills the rest. */
+  protected readonly frame = computed<DeskFrame>(() => deskFrame(this.active()));
+
+  /** No tab, no bar below. The desktop keeps the rail. */
   protected readonly bare = computed(() => {
-    const path = this.adresse().split(/[?#]/)[0];
+    const path = this.address().split(/[?#]/)[0];
     return !this.wide() && WITHOUT_NAV.some((rule) => rule.test(path));
   });
 
-  /**
-   * Solange ein Blatt der Karte offen ist, liegt die Karte über dem Reiter.
-   * Die Knöpfe der Karte stehen am Rechner auf jedem Reiter; ihre Blätter
-   * gehören in die linke Spalte und müssten sonst hinter dem Reiter bleiben.
-   */
+  /** While a map sheet is open, the map is in front of the tab. On the desktop the
+   * map buttons show on each tab, and their sheets go in the left column. */
   protected readonly mapInFront = computed(() => this.map.layersSheetOpen() || this.addEntry.running());
 
-  /** Buchstabe des Namens, als Gast „G“, bei offener Sitzung `null`. */
+  /** The first letter of the name, "G" for a guest, `null` while the session is not known. */
   protected readonly avatarName = computed(() => {
     if (this.session.status() === 'unknown') return null;
     return this.session.name() ?? this.i18n.translate('konto.gast');
@@ -125,6 +134,13 @@ export class ShellComponent {
   constructor() {
     effect(() => {
       if (this.navigated() && (this.wide() || this.onTheMap())) this._mapWanted.set(true);
+    });
+    // Modals outside the shell also read the column width, so it goes on the root element.
+    effect(() => {
+      const width = this.wide() ? paneWidth(this.frame().pane) : null;
+      const root = this.document.documentElement.style;
+      if (width === null) root.removeProperty('--size-column');
+      else root.setProperty('--size-column', width);
     });
   }
 

@@ -17,7 +17,7 @@ import type { ProblemDetail } from '../core/api/problem';
 
 const NOW = '2026-09-12T10:00:00+02:00';
 
-/** Das eigene Konto, so wie `/api/me` es liefert. */
+/** The own account, as `/api/me` gives it. */
 export const ME: Me = {
   id: 'konto-eins',
   sub: 'sub-eins',
@@ -25,7 +25,7 @@ export const ME: Me = {
   name: 'Frederik',
 };
 
-/** Der Katalog, so wie `/api/permissions` ihn liefert. */
+/** The catalogue, as `/api/permissions` gives it. */
 export const CATALOGUE: PermissionEntry[] = [
   { key: 'species.edit', area: 'species' },
   { key: 'image.submit', area: 'species' },
@@ -95,7 +95,7 @@ export const PEOPLE: Person[] = [
   person({ id: 'person-jonas', sub: 'sub-jonas', name: 'Jonas', email: 'jonas@example.test' }),
 ];
 
-/** Die Zähler der Übersicht, so wie `/api/admin/summary` sie liefert. */
+/** The summary counters, as `/api/admin/summary` gives them. */
 export const SUMMARY: AdminSummary = {
   texts: 1284,
   photos: 312,
@@ -110,21 +110,18 @@ export const SUMMARY: AdminSummary = {
   runsRunning: 1,
 };
 
-/** Ein Fehler des Dienstes, so wie der ApiClient ihn weiterreicht. */
+/** A service error, as the ApiClient gives it. */
 export function problem(status: number, detail: string): ProblemDetail {
   return { type: 'about:blank', title: 'Konflikt', status, detail };
 }
 
-/**
- * Ein Doppelgänger der Rechte-API. Der Test sagt, was der Dienst antwortet,
- * und liest hinterher nach, was gefragt wurde.
- */
+/** A double for the access API. The test sets the replies and then reads the requests. */
 export class AccessApiDouble {
   meAnswer: Me = ME;
-  /** Wahr, wenn der Abruf des eigenen Kontos scheitern soll. */
+  /** When true, the request for the own account fails. */
   meFails = false;
   mineAnswer: Permission[] = EVERY_PERMISSION;
-  /** Wahr, wenn der Abruf der eigenen Rechte scheitern soll. */
+  /** When true, the request for the own permissions fails. */
   mineFails = false;
   roleList: Role[] = ROLES;
   peopleList: Person[] = PEOPLE;
@@ -132,9 +129,9 @@ export class AccessApiDouble {
   summaryAnswer: AdminSummary = SUMMARY;
   speciesCountsAnswer: SpeciesCountsEntry[] = [];
   personNamesAnswer: PersonName[] = [];
-  /** Wahr, wenn der Abruf der Personennamen scheitern soll. */
+  /** When true, the request for person names fails. */
   personNamesFails = false;
-  /** Steht hier ein Problem, weist der nächste Schreibzugriff es zurück. */
+  /** When set, the next write fails with this problem. */
   rejectWith: ProblemDetail | null = null;
 
   readonly searches: string[] = [];
@@ -231,7 +228,6 @@ export class AccessApiDouble {
   }
 }
 
-/** Hängt den Doppelgänger an die Stelle der echten API. */
 export function accessApiProvider(double: AccessApiDouble): { provide: typeof AccessApi; useValue: unknown } {
   return { provide: AccessApi, useValue: double };
 }

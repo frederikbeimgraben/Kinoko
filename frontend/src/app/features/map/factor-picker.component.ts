@@ -1,49 +1,68 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { I18nService } from '../../core/i18n/i18n.service';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { layerIcon } from '../../core/tiles/layer-groups';
-import { layerGroups, unitOf, type Layer } from '../../core/tiles/layers';
-import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
-import { layerTitle } from './layer-name';
+import { layerGroups, type Layer } from '../../core/tiles/layers';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
-/** Die Quelle eines neuen Faktors: Ebenen und Arten. Belegtes fehlt. */
+/** The source of a new factor, per the board `FactorPickBody`. A source with a factor is not in the list. */
 @Component({
   selector: 'app-factor-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OptionSheetComponent],
-  templateUrl: './factor-picker.component.html',
+  imports: [
+    ListRowComponent,
+    OverlayHostComponent,
+    RowGroupComponent,
+    ScrollFadeDirective,
+    SheetComponent,
+    TranslatePipe,
+  ],
+  template: `
+    <app-overlay-host [open]="open()" [modal]="true" (closed)="closed.emit()">
+      <app-sheet
+        [label]="'map.factor.choose' | t"
+        [title]="'map.factor.choose' | t"
+        [modal]="true"
+        [dismissible]="true"
+        (closed)="closed.emit()"
+      >
+        <div class="overlay-body picker" appScrollFade>
+          <app-row-group>
+            @for (layer of free(); track layer.id) {
+              <app-list-row
+                [title]="layer.label"
+                [subline]="layer.note || undefined"
+                [icon]="layerIcon(layer.id) ?? 'species'"
+                [chevron]="true"
+                [clickable]="true"
+                (chosen)="chosen.emit(layer)"
+              />
+            }
+          </app-row-group>
+        </div>
+        <div foot class="picker__end"></div>
+      </app-sheet>
+    </app-overlay-host>
+  `,
+  styleUrl: './factor-picker.component.scss',
 })
 export class FactorPickerComponent {
-  private readonly i18n = inject(I18nService);
-
   readonly open = input(false);
   readonly layers = input.required<readonly Layer[]>();
   readonly species = input<readonly Layer[]>([]);
-  /** Die Quellen, die schon einen Faktor haben. Sie stehen nicht zur Wahl. */
+  /** The sources that have a factor. They are not a choice. */
   readonly assigned = input<ReadonlySet<string>>(new Set());
 
   readonly chosen = output<Layer>();
   readonly closed = output();
 
-  protected readonly title = computed(() => this.i18n.translate('map.factor.choose'));
-  /** Dieselbe Höhe wie jedes andere Blatt über der Karte. */
+  protected readonly layerIcon = layerIcon;
 
-  private readonly free = computed<readonly Layer[]>(() => {
+  protected readonly free = computed<readonly Layer[]>(() => {
     const { perWeek, fixed } = layerGroups(this.layers());
     return [...perWeek, ...fixed, ...this.species()].filter((layer) => !this.assigned().has(layer.id));
   });
-
-  protected readonly options = computed<readonly OptionSheetOption[]>(() =>
-    this.free().map((layer) => ({
-      id: layer.id,
-      title: layerTitle(layer, this.i18n),
-      // Eine Art trägt das Zeichen der Arten, eine Ebene das ihrer Gruppe.
-      icon: layerIcon(layer.id) ?? 'species',
-      value: unitOf(layer),
-    })),
-  );
-
-  protected pick(id: string): void {
-    const layer = this.free().find((entry) => entry.id === id);
-    if (layer) this.chosen.emit(layer);
-  }
 }

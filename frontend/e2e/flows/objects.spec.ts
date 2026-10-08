@@ -23,7 +23,7 @@ const MARKERS = {
   nextCursor: null,
 };
 
-/** Geht über die Liste der Einträge in das Blatt des Markers. */
+/** Opens the sheet of the marker from the list of entries. */
 async function openMarker(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -36,10 +36,10 @@ async function openMarker(page: Page): Promise<void> {
   });
   await mockMap(page);
   await page.goto('/eintraege');
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: 'Alter Fichtenbestand' }).first();
   await expect(entry).toBeVisible();
-  // Unter Last kommt der Tipp vor dem Zuhörer der Zeile an.
+  // Under load, the tap can come before the listener of the row.
   await expect(async () => {
     await entry.click();
     await expect(page).toHaveURL(/\/karte$/, { timeout: 2000 });
@@ -50,7 +50,7 @@ async function openMarker(page: Page): Promise<void> {
 test('Das X schließt das Objektblatt, ohne zu löschen', async ({ page }) => {
   await openMarker(page);
 
-  await page.locator('.sheet__close').click();
+  await page.locator('.overlay-head__close').click();
 
   await expect(page.getByRole('heading', { name: 'Alter Fichtenbestand' })).toHaveCount(0);
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
@@ -71,7 +71,7 @@ test('Der Fuß führt in das Formular und wieder zurück', async ({ page }) => {
   await page.getByRole('button', { name: 'Bearbeiten' }).click();
   await expect(page.getByRole('heading', { name: 'Marker bearbeiten' })).toBeVisible();
 
-  await page.locator('.sheet__close').last().click();
+  await page.locator('.overlay-head__close').last().click();
   await expect(page.getByRole('heading', { name: 'Alter Fichtenbestand' })).toBeVisible();
 });
 

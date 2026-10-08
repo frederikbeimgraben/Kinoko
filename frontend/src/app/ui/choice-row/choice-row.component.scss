@@ -1,27 +1,32 @@
+// Geometry per `kit.css` `.row`, `.txt`, `.num` and `.box-r`.
 :host {
   display: block;
 }
 
-// Auf der Karte steht jede Zeile für sich, mit eigenem Rand und Einzug.
-:host(.choice-row--boxed) {
-  border: 1px solid var(--outline);
-  border-radius: 10px;
+:host-context(.grp):first-child .row {
+  border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
+}
+
+:host-context(.grp):last-child .row {
+  border-radius: var(--r-row) var(--r-row) var(--r-item) var(--r-item);
+}
+
+:host-context(.grp):only-child .row {
+  border-radius: var(--r-item);
 }
 
 .row {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-block-size: 56px;
+  min-block-size: var(--h-row);
   padding: 8px 16px;
-  font-size: 16px;
+  font-size: var(--fs-16);
+  line-height: normal;
   color: var(--text);
   background: var(--surface);
-  border-radius: 4px;
-}
-
-:host(.choice-row--boxed) .row {
-  background: none;
+  border-radius: var(--r-row);
+  cursor: pointer;
 }
 
 .row__input {
@@ -32,17 +37,32 @@
   clip-path: inset(50%);
 }
 
-.row__label {
+.row__stack {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: 3px;
   min-inline-size: 0;
-  font-weight: 400;
-  line-height: 1.2;
+}
+
+.row__label {
+  overflow: hidden;
+  font-weight: var(--fw-regular);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.row__sub {
+  overflow: hidden;
+  font-size: var(--fs-14);
+  color: var(--text-var);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row__count {
   flex: none;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: var(--fs-14);
   color: var(--label);
   font-variant-numeric: tabular-nums;
 }
@@ -74,7 +94,7 @@
   border-radius: 5px;
 }
 
-.row__input:focus-visible + .row__label {
+.row__input:focus-visible + .row__stack {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

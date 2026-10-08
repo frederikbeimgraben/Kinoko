@@ -20,12 +20,16 @@ import {
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import type { SpeciesEntry } from '../../core/api/models';
 import { toastSpy } from '../../testing/toast-spy';
-import { SyncService } from '../../core/offline/sync.service';
+import { SyncStore } from '../../core/offline/sync.store';
 import { TileService } from '../../core/tiles/tile.service';
-import { SpeciesState } from '../species/species.state';
-import { CombinationState } from './combination.state';
+import { SpeciesStore } from '../species/species.store';
+import { CombinationStore } from './combination.store';
+import { patchState } from '@ngrx/signals';
+import { unprotected } from '@ngrx/signals/testing';
 import { MapComponent } from './map.component';
-import { MapState } from './map.state';
+import { MapStore } from './map.store';
+import { By } from '@angular/platform-browser';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
 
 @Component({
   selector: 'app-router-stub',
@@ -54,6 +58,7 @@ interface Harness {
   container: HTMLElement;
   auth: AuthStub;
   net: HttpTestingController;
+  sheet: () => SheetComponent;
 }
 
 async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
@@ -67,11 +72,11 @@ async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
       provideHttpClient(),
       provideHttpClientTesting(),
       ...authStubProviders(auth),
-      // Ein festes Heute, damit die Wochen der Fixtures gelten.
+      // A fixed today, so the weeks of the fixtures apply.
       { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
     ],
   });
-  const catalogue = TestBed.inject(SpeciesState) as unknown as {
+  const catalogue = TestBed.inject(SpeciesStore) as unknown as {
     species: () => readonly SpeciesEntry[];
   };
   catalogue.species = () => items as unknown as readonly SpeciesEntry[];
@@ -82,10 +87,12 @@ async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
   };
   await navigate('/karte');
   await stable();
-  return { double, worker, stable, container, auth, net: TestBed.inject(HttpTestingController) };
+  const sheet = (): SheetComponent =>
+    fixture.debugElement.query(By.css('.map__sheet app-sheet')).componentInstance as SheetComponent;
+  return { double, worker, stable, container, auth, net: TestBed.inject(HttpTestingController), sheet };
 }
 
-/** jsdom kennt keine Ortung; der Test setzt sie am Navigator ein. */
+/** jsdom has no geolocation. The test sets it on the navigator. */
 function stubGeolocation(geolocation: Partial<Geolocation>): void {
   Object.defineProperty(navigator, 'geolocation', { configurable: true, value: geolocation });
 }
@@ -177,7 +184,7 @@ describe('MapComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /KW 39/ }));
     await stable();
 
-    expect(TestBed.inject(MapState).week()).toBe('2025-39');
+    expect(TestBed.inject(MapStore).week()).toBe('2025-39');
   });
 
   it('geht mit den Pfeiltasten der Zeitleiste eine Woche weiter', async () => {
@@ -186,11 +193,11 @@ describe('MapComponent', () => {
     screen.getByRole('button', { name: /KW 40/ }).focus();
     await userEvent.keyboard('{ArrowRight}');
     await stable();
-    expect(TestBed.inject(MapState).week()).toBe('2025-41');
+    expect(TestBed.inject(MapStore).week()).toBe('2025-41');
 
     await userEvent.keyboard('{ArrowLeft}');
     await stable();
-    expect(TestBed.inject(MapState).week()).toBe('2025-40');
+    expect(TestBed.inject(MapStore).week()).toBe('2025-40');
   });
 
   it('wechselt den Reiter und hält dabei die Art', async () => {
@@ -199,9 +206,9 @@ describe('MapComponent', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Ebene' }));
     await stable();
 
-    expect(TestBed.inject(MapState).view()).toBe('layer');
-    expect(TestBed.inject(MapState).species()).toBe('boletus-edulis');
-    expect(screen.getByRole('button', { name: 'Niederschlag der letzten 4 Wochen' })).toBeInTheDocument();
+    expect(TestBed.inject(MapStore).view()).toBe('layer');
+    expect(TestBed.inject(MapStore).species()).toBe('boletus-edulis');
+    expect(screen.getByRole('button', { name: /^Ebene / })).toBeInTheDocument();
   });
 
   it('wählt die Art im Kopf und bleibt auf der Karte', async () => {
@@ -209,32 +216,34 @@ describe('MapComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
     await stable();
-    const picker = screen.getByRole('group', { name: 'Art wählen' });
+    const picker = screen.getByRole('radiogroup', { name: 'Art wählen' });
     expect(screen.queryByRole('button', { name: 'Zum Katalog' })).toBeNull();
-    await userEvent.click(within(picker).getByRole('button', { name: /Pfifferling/ }));
+    await userEvent.click(within(picker).getByRole('checkbox', { name: /Pfifferling/ }));
+    await stable();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
 
-    expect(TestBed.inject(MapState).species()).toBe('cantharellus-cibarius');
+    expect(TestBed.inject(MapStore).species()).toBe('cantharellus-cibarius');
   });
 
   it('wählt die Ebene über das Feld im Blatt', async () => {
     const { stable } = await map();
-    TestBed.inject(MapState).view.set('layer');
+    TestBed.inject(MapStore).setView('layer');
     await stable();
 
-    const fields = screen.getAllByRole('button', { name: 'Niederschlag der letzten 4 Wochen' });
-    await userEvent.click(fields[fields.length - 1]);
+    await userEvent.click(screen.getByRole('button', { name: /^Ebene / }));
     await stable();
-    await userEvent.click(screen.getByRole('button', { name: /Waldanteil/ }));
+    const picker = screen.getByRole('radiogroup', { name: 'Ebene' });
+    await userEvent.click(within(picker).getByRole('checkbox', { name: /Waldanteil/ }));
     await stable();
 
-    expect(TestBed.inject(MapState).layer()).toBe('wald');
+    expect(TestBed.inject(MapStore).layer()).toBe('wald');
   });
 
   it('legt die Kombination als eine Quelle auf die Karte', async () => {
     const { stable, double } = await map();
-    TestBed.inject(MapState).view.set('combination');
-    TestBed.inject(CombinationState).apply({
+    TestBed.inject(MapStore).setView('combination');
+    TestBed.inject(CombinationStore).apply({
       source: 'wald',
       condition: 'above',
       low: 0.3,
@@ -248,35 +257,35 @@ describe('MapComponent', () => {
 
   it('wechselt die Regel der Kombination', async () => {
     const { stable } = await map();
-    TestBed.inject(MapState).view.set('combination');
+    TestBed.inject(MapStore).setView('combination');
     await stable();
 
     await userEvent.click(screen.getByRole('tab', { name: 'Abgestuft' }));
     await stable();
 
-    expect(TestBed.inject(CombinationState).rule()).toBe('graded');
+    expect(TestBed.inject(CombinationStore).rule()).toBe('graded');
   });
 
   it('fügt einen Faktor hinzu und übernimmt seine Bedingung', async () => {
     const { stable } = await map();
-    TestBed.inject(MapState).view.set('combination');
+    TestBed.inject(MapStore).setView('combination');
     await stable();
 
     await userEvent.click(screen.getByRole('button', { name: 'Faktor hinzufügen' }));
     await stable();
-    const picker = screen.getByRole('group', { name: 'Faktor wählen' });
+    const picker = screen.getByRole('dialog', { name: 'Faktor wählen' });
     await userEvent.click(within(picker).getByRole('button', { name: /Waldanteil/ }));
     await stable();
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
 
-    expect(TestBed.inject(CombinationState).factors()).toHaveLength(1);
+    expect(TestBed.inject(CombinationStore).factors()).toHaveLength(1);
   });
 
   it('entfernt einen Faktor', async () => {
     const { stable } = await map();
-    const combination = TestBed.inject(CombinationState);
-    TestBed.inject(MapState).view.set('combination');
+    const combination = TestBed.inject(CombinationStore);
+    TestBed.inject(MapStore).setView('combination');
     combination.apply({ source: 'wald', condition: 'above', low: 0.3, high: 0, active: true });
     await stable();
 
@@ -291,8 +300,8 @@ describe('MapComponent', () => {
   it('bietet ohne Konto zuerst die Anmeldung an', async () => {
     const { stable, auth } = await map();
     const asked = vi.spyOn(auth, 'requestSignIn').mockResolvedValue(false);
-    TestBed.inject(MapState).view.set('combination');
-    TestBed.inject(CombinationState).apply({
+    TestBed.inject(MapStore).setView('combination');
+    TestBed.inject(CombinationStore).apply({
       source: 'wald',
       condition: 'above',
       low: 0.3,
@@ -309,8 +318,8 @@ describe('MapComponent', () => {
 
   it('trägt den Titel im Kopf des Blatts und schließt das Speichern über das X', async () => {
     const { stable, container } = await map(true);
-    TestBed.inject(MapState).view.set('combination');
-    TestBed.inject(CombinationState).apply({
+    TestBed.inject(MapStore).setView('combination');
+    TestBed.inject(CombinationStore).apply({
       source: 'wald',
       condition: 'above',
       low: 0.3,
@@ -325,7 +334,7 @@ describe('MapComponent', () => {
     expect(screen.getAllByRole('heading', { name: 'Kombination speichern' })).toHaveLength(1);
     expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
 
-    const close = container.querySelector<HTMLElement>('.sheet__close');
+    const close = container.querySelector<HTMLElement>('.overlay-head__close');
     if (close === null) throw new Error('Das Blatt trägt kein X.');
     await userEvent.click(close);
     await stable();
@@ -335,14 +344,16 @@ describe('MapComponent', () => {
 
   it('zeigt die gespeicherten Kombinationen und lädt eine', async () => {
     const { stable } = await map(true);
-    const combination = TestBed.inject(CombinationState);
-    (combination as unknown as { _saved: { set: (value: unknown) => void } })._saved.set([SAVED_COMBINATION]);
-    TestBed.inject(MapState).view.set('combination');
+    const combination = TestBed.inject(CombinationStore);
+    patchState(unprotected(combination), { saved: [SAVED_COMBINATION] });
+    TestBed.inject(MapStore).setView('combination');
     await stable();
 
-    await userEvent.click(screen.getByRole('button', { name: /Gespeicherte Kombinationen/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kombinationen' }));
     await stable();
-    await userEvent.click(screen.getByRole('button', { name: /^Buchenwald im Herbst/ }));
+    await userEvent.click(screen.getByRole('checkbox', { name: /^Buchenwald im Herbst/ }));
+    await stable();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await stable();
 
     expect(combination.rule()).toBe('graded');
@@ -354,10 +365,10 @@ describe('MapComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Ebenen' }));
     await stable();
-    await userEvent.click(screen.getByRole('tab', { name: 'Hell' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Dunkel' }));
     await stable();
 
-    expect(TestBed.inject(MapState).background()).toBe('light');
+    expect(TestBed.inject(MapStore).background()).toBe('dark');
   });
 
   it('zentriert auf den Standort und meldet einen Fehlschlag', async () => {
@@ -393,10 +404,8 @@ describe('MapComponent', () => {
 
   it('zeigt die Leiste ohne Verbindung und lässt die Wochen bedienbar', async () => {
     const { stable } = await map();
-    const sync = TestBed.inject(SyncService) as unknown as {
-      _online: { set: (value: boolean) => void };
-    };
-    sync._online.set(false);
+    TestBed.inject(SyncStore);
+    dispatchEvent(new Event('offline'));
     await stable();
 
     expect(screen.getByRole('button', { name: 'Keine Verbindung' })).toBeInTheDocument();
@@ -472,8 +481,8 @@ describe('MapComponent', () => {
 
   it('entfernt einen Faktor über den Knopf in der Zeile', async () => {
     const { stable } = await map();
-    const combination = TestBed.inject(CombinationState);
-    TestBed.inject(MapState).view.set('combination');
+    const combination = TestBed.inject(CombinationStore);
+    TestBed.inject(MapStore).setView('combination');
     combination.apply({ source: 'wald', condition: 'above', low: 0.3, high: 0, active: true });
     await stable();
 
@@ -502,6 +511,15 @@ describe('MapComponent', () => {
     await stable();
 
     expect(screen.queryByRole('group', { name: 'Art wählen' })).not.toBeInTheDocument();
+  });
+
+  it('pads the map by the measured map sheet, as detents 1 and 2 both take the content height', async () => {
+    const { double, stable, sheet } = await map();
+
+    sheet().heightChange.emit(402);
+    await stable();
+
+    expect(double.padding.at(-1)?.bottom).toBe(402);
   });
 
   it('räumt Karte und Worker beim Verlassen auf', async () => {

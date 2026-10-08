@@ -1,13 +1,9 @@
-<div class="shell" [class.shell--column]="wide()" [style.--top-bar-height]="topBarHeight()">
-  @if (updateReady()) {
-    <app-banner
-      class="shell__banner"
-      kind="update"
-      actionIcon="refresh"
-      actionLabel="app.update.reload"
-      (actionClick)="reload()"
-    />
-  }
+<div
+  class="shell"
+  [class.shell--column]="wide()"
+  [attr.data-pane]="wide() ? frame().pane : null"
+  [style.--top-bar-height]="topBarHeight()"
+>
   @if (mapWanted()) {
     @defer (when mapWanted()) {
       <app-map
@@ -26,10 +22,20 @@
   <main
     class="shell__content"
     [class.shell__content--off]="onTheMap()"
-    [class.shell__content--full]="wide() && fullWidth()"
+    [class.shell__content--full]="wide() && frame().full"
   >
     <router-outlet />
   </main>
+  @if (updateReady()) {
+    <app-banner
+      class="shell__banner"
+      role="status"
+      [class.shell__banner--float]="bannerFloats()"
+      [float]="bannerFloats()"
+      kind="update"
+      (actionClick)="reload()"
+    />
+  }
   @if (showAvatar()) {
     <app-avatar-button
       class="shell__avatar"

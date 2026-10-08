@@ -14,7 +14,7 @@ import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { ANY_ROUTE } from '../../testing/routes';
 import { requiresPermission } from './admin.guard';
 
-/** Führt den Wächter aus und sagt, wohin er lässt: `true` oder einen Weg. */
+/** Runs the guard and gives its result: `true` or a redirect path. */
 async function decide(
   asked: Permission | null,
   held: Permission[],

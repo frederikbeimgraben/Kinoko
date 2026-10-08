@@ -9,7 +9,7 @@ const FEATURE_COMPONENT_COLLIDING =
 const FEATURE_COMPONENT_LONE =
   "@Component({\n  selector: 'app-bar-lonely',\n})\nexport class BarLonelyComponent {}\n";
 
-/** Legt eine `ui`- und eine `features`-Komponente unter `src/app` an. */
+/** Makes one `ui` component and one `features` component under `src/app`. */
 function fixture(featureComponent: string): { root: string; allowPath: string } {
   const root = mkdtempSync(join(tmpdir(), 'check-selectors-'));
   mkdirSync(join(root, 'src', 'app', 'ui', 'foo-row'), { recursive: true });

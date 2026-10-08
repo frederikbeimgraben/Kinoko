@@ -11,7 +11,7 @@ import { ManagerDouble, authProvider } from '../../testing/auth-double';
 import { FALLBACK_TEXTS } from './i18n.service';
 import generated from './texts.de.json';
 
-/** Ohne Rückfalltabelle und ohne Katalog trägt die Oberfläche nur Schlüssel. */
+/** Without fallback table and catalogue, the UI shows only keys. */
 const EMPTY = [
   { provide: FALLBACK_TEXTS, useValue: { de: {}, en: {} } },
   { provide: WORKSHOP_TEXTS, useValue: { de: {}, en: {} } },
@@ -19,7 +19,7 @@ const EMPTY = [
 
 const KEY = /^[a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9_]+)+[:.,]?$/;
 
-/** Kurze Texte wie „cm“ oder „%“ treffen auch auf Zahlen und Einheiten zu. */
+/** Short texts such as „cm“ or „%“ also match numbers and units. */
 const LONG_ENOUGH = 4;
 
 @Component({
@@ -29,7 +29,6 @@ const LONG_ENOUGH = 4;
 })
 class BlankPageComponent {}
 
-/** Jedes Wort, das die Fläche zeigt. */
 function words(container: Element): string[] {
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const found: string[] = [];
@@ -41,12 +40,12 @@ function words(container: Element): string[] {
   return found;
 }
 
-/** Ein Wort, das kein Schlüssel ist und deutsch aussieht, steht fest im Code. */
+/** A German-looking word that is not a key is hard-coded text. */
 function germanWords(container: Element): string[] {
   return words(container).filter((word) => !KEY.test(word) && isGerman(word));
 }
 
-/** Monats- und Wochentagsnamen kommen aus der Datumsform, nicht aus dem Katalog. */
+/** Month and weekday names come from Intl, not from the catalogue. */
 function localeNames(): Set<string> {
   const months = new Intl.DateTimeFormat('de', { month: 'long' });
   const weekdays = new Intl.DateTimeFormat('de', { weekday: 'long' });
@@ -58,7 +57,7 @@ function localeNames(): Set<string> {
 
 const FROM_LOCALE = localeNames();
 
-/** Ein Text der Vorgabe auf der Fläche. Ein Schlüssel zählt nicht mit. */
+/** Default texts that the UI shows. Keys do not count. */
 function leakedTexts(container: Element): string[] {
   const shown = words(container)
     .filter((word) => !KEY.test(word))
@@ -87,15 +86,15 @@ describe('Die Hülle ohne Textkatalog', () => {
 describe('Die Werkstattseite ohne Textkatalog', () => {
   class ObserverStub {
     observe(): void {
-      // Der Fühler bleibt in diesem Test ungenutzt.
+      // This test does not use the observer.
     }
 
     unobserve(): void {
-      // Der Stummel braucht keine Buchführung über das Ziel.
+      // The stub does not track targets.
     }
 
     disconnect(): void {
-      // Der Stummel räumt nichts auf.
+      // The stub has nothing to clean up.
     }
   }
 

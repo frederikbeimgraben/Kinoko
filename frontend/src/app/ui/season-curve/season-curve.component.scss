@@ -2,7 +2,7 @@
   display: block;
 }
 
-// Die Zeichenfläche und alles, was auf ihr sitzt, aber nicht verzerren darf.
+// The plot area and all items on it that must not stretch.
 .spark__stage {
   position: relative;
   inline-size: 96px;
@@ -14,16 +14,16 @@
   block-size: 72px;
 }
 
-// `preserveAspectRatio="none"`: die Kurve folgt der Breite des Wirts, damit
-// Woche und Marke darunter auf derselben Stelle liegen.
+// `preserveAspectRatio="none"`: the curve follows the width of the host.
+// Thus a week and its mark below are at the same position.
 .spark {
   display: block;
   inline-size: 100%;
   block-size: 100%;
 }
 
-// Der Endpunkt des laufenden Jahres. Im verzerrten SVG wäre aus dem Kreis eine
-// Ellipse geworden.
+// The end point of the current year. It is outside the SVG because
+// the stretched SVG makes a circle into an ellipse.
 .spark__end {
   position: absolute;
   inline-size: 4px;
@@ -97,13 +97,13 @@
   transform: translateX(-50%);
 }
 
-// Die erste Marke rückt nach innen, sonst stünde sie halb außerhalb.
+// The first mark moves inwards. Otherwise half of it is outside.
 .spark__month--first {
   transform: none;
 }
 
-// Die Jahreszahl des laufenden Jahres bricht nicht um; die längere Erklärung
-// der Fläche daneben darf es.
+// The label of the current year does not wrap.
+// The longer label of the area next to it can wrap.
 .spark__legend span:first-child {
   flex: none;
   white-space: nowrap;
@@ -129,7 +129,7 @@
   opacity: 0.35;
 }
 
-// Der Höchstwert der Skala steht in der linken oberen Ecke der Fläche.
+// The maximum of the scale is in the top left corner of the area.
 .spark__peak {
   font-size: 9px;
   fill: var(--text-var);

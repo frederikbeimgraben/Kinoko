@@ -10,6 +10,7 @@
 @use 'styles/pointer';
 @use 'styles/stopgap';
 @use 'styles/route-motion';
+@use 'styles/motion';
 
 body {
   font-family: 'Archivo', 'Segoe UI', system-ui, sans-serif;
@@ -18,14 +19,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-// Die App füllt das Gerät und scrollt nur innerhalb ihrer Flächen. Ein
-// Seitenscroll würde das Blatt und die Navigation vom Rand lösen.
-//
-// `dvh` und nicht `%`: am Telefon rechnet `100%` gegen den Bereich mit
-// eingeklappter Adressleiste. Steht sie noch, ist die Hülle höher als das
-// Sichtbare, und das untere Stück — Fußleiste und der letzte Abschnitt —
-// liegt unter der Leiste des Browsers, ohne dass man dorthin scrollen könnte.
-// `dvh` folgt dem sichtbaren Bereich, wenn die Adressleiste sich einklappt.
+// The app fills the device and scrolls only in its panes. A page scroll moves
+// the sheet and the navigation away from the edge.
+
+// Use `dvh`, not `%`. On a phone, `100%` is the height without the address bar.
+// With the bar visible, the footer goes below the bar and the user cannot scroll to it.
 html,
 body {
   height: 100dvh;
@@ -33,13 +31,13 @@ body {
   overscroll-behavior: none;
 }
 
-// MapLibre setzt eine eigene Schrift und eine feste Zeilenhöhe.
+// MapLibre sets its own font and a fixed line height.
 .maplibregl-map {
   font-family: inherit;
 }
 
-// Die Boards kennen keinen Ausgleich der Zeilenlängen: eine Überschrift
-// bricht nach der Breite ihrer Spalte, nicht nach gleich langen Zeilen.
+// The boards do not balance the line lengths. A heading breaks at the width
+// of its column, so do not use `balance` or `pretty`.
 h1,
 h2,
 h3,

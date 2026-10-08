@@ -9,7 +9,7 @@ import { SwitchComponent } from '../../../../ui/switch/switch.component';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Die Zeilen- und Knopf-Bausteine der D1-Steuerelemente, je ihre Vorgabe. */
+/** The row and button blocks of the D1 controls, each with its reference design. */
 @Component({
   selector: 'app-controls-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,

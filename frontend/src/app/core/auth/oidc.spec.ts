@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { USER_MANAGER_FACTORY } from './oidc';
 
-/** Der WebStorageStateStore stellt jedem Schlüssel `oidc.` voran. */
+/** The WebStorageStateStore adds the prefix `oidc.` to each key. */
 function oidcSchluessel(cache: Storage): string[] {
   return Object.keys(cache).filter((schluessel) => schluessel.startsWith('oidc.'));
 }
@@ -21,15 +21,15 @@ describe('USER_MANAGER_FABRIK', () => {
       redirect_uri: 'http://localhost:4200/anmeldung',
     });
 
-    // Ein Token darf keinen Reload überleben: der Nutzerspeicher liegt im
-    // Arbeitsspeicher und schreibt weder in localStorage noch in die Sitzung.
+    // A token must not survive a reload. The user store is in memory and
+    // writes to neither localStorage nor sessionStorage.
     await manager.settings.userStore.set('nutzer', 'token');
     expect(await manager.settings.userStore.get('nutzer')).toBe('token');
     expect(oidcSchluessel(localStorage)).toEqual([]);
     expect(oidcSchluessel(sessionStorage)).toEqual([]);
 
-    // Der PKCE-Prüfwert muss den Weg zum SSO überstehen. Er steht in der
-    // Sitzung des Tabs, nicht in localStorage.
+    // The PKCE verifier must survive the redirect to the SSO. It is in the
+    // sessionStorage of the tab, not in localStorage.
     await manager.settings.stateStore.set('zustand', 'pruefwert');
     expect(oidcSchluessel(sessionStorage)).toEqual(['oidc.zustand']);
     expect(oidcSchluessel(localStorage)).toEqual([]);

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import type { Find, Marker, Zone } from '../../core/api/models';
 import { OfflineStore } from '../../core/offline/offline-store';
 
-/** Die eigenen Objekte, so wie sie zuletzt vom Server kamen. */
+/** The objects of the user, as the server gave them last. */
 export interface CachedEntries {
   finds: readonly Find[];
   markers: readonly Marker[];
@@ -11,7 +11,7 @@ export interface CachedEntries {
 
 const KEY = 'entries';
 
-/** Die eigenen Objekte auf dem Gerät. Jede Seite zeigt zuerst diesen Stand. */
+/** Keeps the objects of the user on the device. Each page shows this data first. */
 @Injectable({ providedIn: 'root' })
 export class EntriesCache {
   private readonly store = inject(OfflineStore);

@@ -1,24 +1,15 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-/** Der eigene Standort, wie ihn das Gerät meldet. */
+/** The own location, as the device reports it. */
 export interface OwnLocation {
   lon: number;
   lat: number;
-  /** Der Radius in Metern, in dem der Punkt wirklich liegt. */
+  /** The radius in meters that contains the true point. */
   accuracy: number;
 }
 
-/**
- * Der eigene Standort als Signal.
- *
- * Die Karte zeigt ihn als Punkt mit Genauigkeitskreis und zentriert auf
- * Wunsch darauf. Ohne Freigabe bleibt `allowed` falsch; die Seite blendet den
- * Knopf dann aus statt ihn scheitern zu lassen.
- *
- * Eine abgelehnte Freigabe lässt sich im Browser wieder erteilen. `permissions`
- * meldet das von selbst, darum hört der Dienst auf die Änderung, statt beim
- * nächsten Tipp erneut zu fragen.
- */
+// The own location as a signal. Without permission, `allowed` is false and the page hides the button.
+// The service listens to `permissions` changes, because the user can grant a denied permission again.
 @Injectable({ providedIn: 'root' })
 export class LocationService {
   private readonly _location = signal<OwnLocation | null>(null);
@@ -27,8 +18,7 @@ export class LocationService {
 
   readonly location = this._location.asReadonly();
   /**
-   * Nur eine abgelehnte Freigabe sperrt. Ein Browser, der noch nicht gefragt
-   * hat, bleibt offen: sonst gäbe es keinen Weg, die Freigabe je zu erteilen.
+   * Only a denied permission blocks. A browser that did not ask yet stays open, so the user can grant it.
    */
   readonly allowed = computed(() => !this.denied());
 
@@ -37,8 +27,7 @@ export class LocationService {
   }
 
   /**
-   * Beginnt zu folgen. Mehrfaches Anstoßen bleibt ein Beobachter: die Karte
-   * ruft es bei jedem Aufbau, und ein zweiter kostete eine zweite Ortung.
+   * Starts to follow the location. The map calls this on each build, so more calls keep one watcher.
    */
   start(): void {
     if (this.watcher !== null || !this.hasGeolocation()) return;
@@ -52,8 +41,8 @@ export class LocationService {
         });
       },
       (failure) => {
-        // Nur eine abgelehnte Freigabe sperrt den Knopf. Kein Signal im Wald
-        // ist kein Nein, und der nächste Versuch kann gelingen.
+        // Only a denied permission blocks the button. No signal is not a denial,
+        // and the next attempt can succeed.
         if (failure.code === failure.PERMISSION_DENIED) this.denied.set(true);
         this._location.set(null);
       },
@@ -68,8 +57,7 @@ export class LocationService {
   }
 
   /**
-   * Ein altes Gerät kennt die Ortung gar nicht. Der Typ verspricht sie, der
-   * Browser hält das Versprechen nicht immer; darum die Prüfung zur Laufzeit.
+   * Old devices do not have geolocation, but the type says it exists. Thus the check runs at runtime.
    */
   private hasGeolocation(): boolean {
     const api = navigator.geolocation as Partial<Geolocation> | undefined;
@@ -85,8 +73,8 @@ export class LocationService {
       read();
       state.addEventListener('change', read);
     } catch {
-      // Ein Browser ohne diese Abfrage sagt nichts über die Freigabe. Der Knopf
-      // bleibt offen; die erste Ortung entscheidet dann.
+      // A browser without this query gives no permission state.
+      // The button stays open; the first position fix decides.
     }
   }
 }

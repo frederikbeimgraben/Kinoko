@@ -1,6 +1,6 @@
-/** Die Attrappen der Läufe für die Bretter `Runs`, `RunStart` und `Run`. */
+/** The run mocks for the boards `Runs`, `RunStart` and `Run`. */
 
-/** Ein Lauf, so wie `/api/pipeline-runs` ihn liefert. */
+/** A run as `/api/pipeline-runs` gives it. */
 export function run(
   id: string,
   kind: 'training' | 'render' | 'full',
@@ -26,7 +26,7 @@ export function run(
   };
 }
 
-/** Die fünf Läufe des Bretts `Runs`: einer läuft, vier sind fertig. */
+/** The five runs of the `Runs` board: one is running, four are done. */
 export const RUNS = {
   items: [
     run('lauf-aktiv', 'full', 'running', '2026-09-14T09:04:00+02:00', null, { progressDone: 3 }),
@@ -46,10 +46,10 @@ export const RUNS = {
   nextCursor: null,
 };
 
-/** Die Uhrzeit, zu der die Bretter laufen: 22 Minuten nach dem Start. */
+/** The clock time of the boards: 22 minutes after the start. */
 export const NOW = '2026-09-14T09:26:00+02:00';
 
-/** Der Lauf des Bretts `Run`: vier Schritte fertig, einer läuft. */
+/** The run of the `Run` board: four steps are done, one is running. */
 export const RUN_DETAIL = {
   ...run('lauf-training', 'training', 'running', '2026-09-13T19:04:00+02:00', '2026-09-13T19:22:22+02:00', {
     speciesName: 'Steinpilz',

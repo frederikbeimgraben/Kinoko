@@ -1,0 +1,27 @@
+<app-page-header [title]="'map.offlineArea.title' | t" [back]="back()" (backClick)="toAccount()" />
+
+<div class="area">
+  <div class="pad">
+    @if (rows().length === 0 && loading() === null) {
+      <app-state-view icon="wifi-off" [title]="'area.empty' | t" />
+    } @else {
+      <app-row-group class="motion-list-in">
+        @for (row of rows(); track row.id) {
+          <app-list-row icon="zone" [title]="row.name" [subline]="row.sub">
+            <app-icon-button
+              action
+              icon="trash"
+              kind="plain"
+              [label]="'area.remove' | t"
+              (pressed)="remove(row.id)"
+            />
+          </app-list-row>
+        }
+        @if (loading() !== null) {
+          <app-list-row icon="hourglass" [title]="'area.loading' | t" />
+        }
+      </app-row-group>
+    }
+  </div>
+  <app-floating-button class="fab" icon="plus" [label]="'map.offlineArea.loadZone' | t" (pressed)="pick()" />
+</div>

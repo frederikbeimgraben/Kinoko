@@ -2,6 +2,8 @@
   <div
     class="photo__scrim"
     tabindex="-1"
+    animate.enter="motion-fade-in"
+    animate.leave="motion-fade-out"
     [appModalLayer]="label()"
     (dismissed)="closed.emit()"
     (keydown)="onKeydown($event)"

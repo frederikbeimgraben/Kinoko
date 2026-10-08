@@ -2,7 +2,12 @@
   display: contents;
 }
 
-// Der Punkt vor dem Namen misst im Brett vierzehn Punkte.
+// The tap layer of the overlay inherits this, so a tap reaches Terra Draw. The sheet sets its own value.
+.object--corners {
+  pointer-events: none;
+}
+
+// The dot before the name is 14 px on the board.
 .object__dot {
   flex: none;
   inline-size: 14px;
@@ -10,16 +15,10 @@
   border-radius: var(--radius-pill);
 }
 
-// Die Plakette steht hinter dem Namen, nicht davor. Sie misst im Brett drei
-// auf zehn Punkte.
+// The badge is after the name, not before it. Its padding is 3 px by 10 px on the board.
 .object__badge {
   flex: none;
   order: 1;
-}
-
-// Das Formular des Fundes dunkelt die Karte so ab, wie das Brett es zeigt.
-.object--dark {
-  --pilz-scrim: rgb(0 18 10 / 55%);
 }
 
 .object__missing {

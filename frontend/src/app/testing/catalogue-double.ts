@@ -3,11 +3,11 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import type { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { SpeciesBundle } from '../core/api/models';
-import { SpeciesState } from '../features/species/species.state';
+import { SpeciesStore } from '../features/species/species.store';
 import { OfflineStoreDouble, offlineProvider } from './offline-double';
 import { SPECIES_BUNDLE } from './species-fixture';
 
-/** Der Katalog liegt auf dem Gerät. Der Abgleich mit dem Dienst bleibt offen. */
+/** The catalogue is on the device. The comparison with the service stays open. */
 export function catalogueProviders(
   bundle: SpeciesBundle | null = SPECIES_BUNDLE,
 ): (EnvironmentProviders | Provider)[] {
@@ -16,9 +16,9 @@ export function catalogueProviders(
   return [provideHttpClient(), provideHttpClientTesting(), offlineProvider(offline)];
 }
 
-/** Hält an, solange der Zustand den Katalog vom Gerät noch nicht zeigt. */
-export async function catalogueReady(): Promise<SpeciesState> {
-  const state = TestBed.inject(SpeciesState);
+/** Waits until the store shows the catalogue from the device. */
+export async function catalogueReady(): Promise<SpeciesStore> {
+  const state = TestBed.inject(SpeciesStore);
   void state.loadBundle();
   await vi.waitFor(() => {
     expect(state.species()).not.toHaveLength(0);

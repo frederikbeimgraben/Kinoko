@@ -2,25 +2,24 @@ import type { BodyPart, ColourGroup, SpeciesEntry } from '../../core/api/models'
 import { PART_TEXT } from '../species/labels';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Eine Zeile eines Abschnitts im Bearbeiten-Modus. */
+/** A row of a section in edit mode. */
 export interface EditorRow {
   key: string;
   title: string;
   value: string;
 }
 
-/** Ein Maß als Spanne mit seiner Einheit. */
 function span(low: number, high: number, unit: string, to: string): string {
   return `${low} ${to} ${high} ${unit}`;
 }
 
-/** Ein Verlauf liest sich als Spanne, alles andere als Aufzählung. */
+/** A gradient shows as a range. All other modes show as a list. */
 function groupText(group: ColourGroup, to: string): string {
   const names = group.colours.map((colour) => colour.name);
   return group.mode === 'gradient' ? names.join(` ${to} `) : names.join(', ');
 }
 
-/** Die Farben eines Teils, Gruppe für Gruppe. */
+/** The colour text of each part, group by group. */
 function colourText(species: SpeciesEntry, to: string): Map<BodyPart, string> {
   const out = new Map<BodyPart, string>();
   for (const group of species.colours) {
@@ -31,7 +30,7 @@ function colourText(species: SpeciesEntry, to: string): Map<BodyPart, string> {
   return out;
 }
 
-/** Die Merkmalszeilen: je Teil das Maß und die Farben, wie das Brett sie zeigt. */
+/** The feature rows: for each part, the size and the colours, as the design board shows. */
 export function featureRows(
   species: SpeciesEntry,
   extra: readonly BodyPart[],
@@ -56,7 +55,7 @@ export function featureRows(
   });
 }
 
-/** Die Quellen: Titel und die Adresse ohne Schema. */
+/** The source rows: title and the address without the scheme. */
 export function sourceRows(species: SpeciesEntry): EditorRow[] {
   return species.sources.map((one, at) => ({
     key: `quelle-${String(at)}`,
@@ -65,7 +64,7 @@ export function sourceRows(species: SpeciesEntry): EditorRow[] {
   }));
 }
 
-/** Die Verwechslungen: Name und der Unterschied in einem Satz. */
+/** The lookalike rows: name and the difference in one sentence. */
 export function lookalikeRows(species: SpeciesEntry): EditorRow[] {
   return species.lookalikes.map((one) => ({
     key: one.slug,

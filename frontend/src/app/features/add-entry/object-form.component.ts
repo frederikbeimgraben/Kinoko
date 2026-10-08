@@ -10,7 +10,7 @@ import { ToastService } from '../../ui/toast/toast.service';
 import { colourSwatches, colourFromHex, colourHex } from '../entries/colors';
 import { VisibilityChoiceComponent } from './visibility-choice.component';
 
-/** Was ein Marker und eine Zone gemeinsam haben. */
+/** The values that a marker and a zone share. */
 export interface ObjectValues {
   name: string;
   colour: MarkerColour;
@@ -19,7 +19,7 @@ export interface ObjectValues {
   groupId: string | null;
 }
 
-/** Name, Farbe, Notiz und Sichtbarkeit: die Felder von Marker und Zone. */
+/** Name, color, note and visibility: the fields of marker and zone. */
 @Component({
   selector: 'app-object-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,12 +39,12 @@ export class ObjectFormComponent {
   private readonly toasts = inject(ToastService);
 
   readonly start = input<ObjectValues | null>(null);
-  /** Marker und Zone ordnen ihre Felder verschieden (Boards `MarkerForm`, `ZoneForm`). */
+  /** Marker and zone use a different field order (boards `MarkerForm`, `ZoneForm`). */
   readonly kind = input<'marker' | 'zone'>('marker');
-  /** Ein vorhandenes Objekt trägt den Weg zurück mit Rahmen. */
+  /** An existing object shows the back action with a border. */
   readonly editing = input(false);
   readonly busy = input(false);
-  /** Der Text, wenn niemand einen Namen eingetragen hat. */
+  /** The error text when the name is empty. */
   readonly nameMissingText = input.required<string>();
 
   readonly submitted = output<ObjectValues>();
@@ -60,7 +60,7 @@ export class ObjectFormComponent {
 
   protected readonly swatches = computed(() => colourSwatches(this.i18n));
 
-  // Solange niemand ein Feld angefasst hat, führt der Startwert.
+  // Until the user changes a field, the start value applies.
   protected readonly name = computed(() => this.nameChoice() ?? this.start()?.name ?? '');
   protected readonly colour = computed(() => this.colourChoice() ?? this.start()?.colour ?? 'green');
   protected readonly noteText = computed(() => this.noteChoice() ?? this.start()?.note ?? '');
@@ -104,7 +104,7 @@ export class ObjectFormComponent {
     if (values !== null) this.submitted.emit(values);
   }
 
-  /** Liefert die Werte oder `null`, wenn der Name fehlt. */
+  /** Gives the values, or `null` when the name is empty. */
   private values(): ObjectValues | null {
     const name = this.name().trim();
     if (name === '') {
@@ -121,7 +121,7 @@ export class ObjectFormComponent {
     };
   }
 
-  /** Die Vorschau auf der Karte folgt der Farbe, ohne auf Speichern zu warten. */
+  /** The map preview follows the color before the user saves. */
   private report(): void {
     this.valuesChange.emit({
       name: this.name().trim(),

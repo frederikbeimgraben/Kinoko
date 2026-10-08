@@ -3,12 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { report } from '../../tools/check-size.mjs';
 
-/** Zeilen für eine Datei in `features/`, über oder unter der Grenze von 250. */
+/** Lines for a file in `features/`, above or below the limit of 250. */
 function lines(count: number): string {
   return `${Array.from({ length: count }, () => 'const x = 1;').join('\n')}\n`;
 }
 
-/** Legt eine Komponentendatei unter `src/app/features` an. */
+/** Makes a component file under `src/app/features`. */
 function fixture(content: string): { root: string; allowPath: string } {
   const root = mkdtempSync(join(tmpdir(), 'check-size-'));
   mkdirSync(join(root, 'src', 'app', 'features'), { recursive: true });

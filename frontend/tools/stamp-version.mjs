@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Schreibt die Git-Version als `prebuild` in `src/app/core/version.generated.ts`. */
+/** Writes the Git version to `src/app/core/version.generated.ts` as `prebuild`. */
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const TARGET = new URL('../src/app/core/version.generated.ts', import.meta.url);
 const FALLBACK = 'dev';
 
-/** Die Version aus Git, oder `dev` ohne Git-Verzeichnis oder Tags. */
+/** The version from Git, or `dev` when there is no Git directory or no tag. */
 export function describe() {
   try {
     return execFileSync('git', ['describe', '--tags', '--always'], { encoding: 'utf8' }).trim() || FALLBACK;

@@ -1,4 +1,4 @@
-/** Welche Kacheln eine Quelle trägt. Über `haveZoom` entscheidet die gröbere Kachel. */
+/** The tiles that a source has. Above `haveZoom`, the parent tile at `haveZoom` decides. */
 
 import { tileKey } from './tile-paths';
 

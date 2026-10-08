@@ -1,8 +1,17 @@
-@for (choice of choices; track choice.key) {
-  <button class="addactions__row tap" type="button" data-press="tint" (click)="chosen.emit(choice.key)">
-    <span class="addactions__tile">
-      <app-svg-icon [name]="choice.icon" [size]="22" [strokeWidth]="2" />
-    </span>
-    <span class="addactions__title">{{ choice.label | t }}</span>
-  </button>
+@if (menu()) {
+  @for (choice of choices; track choice.key) {
+    <app-popover-item [icon]="choice.icon" [label]="choice.label | t" (chosen)="chosen.emit(choice.key)" />
+  }
+} @else {
+  <app-row-group>
+    @for (choice of choices; track choice.key) {
+      <app-list-row
+        [title]="choice.label | t"
+        [icon]="choice.icon"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="chosen.emit(choice.key)"
+      />
+    }
+  </app-row-group>
 }

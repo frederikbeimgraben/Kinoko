@@ -4,10 +4,7 @@ import type { Locale } from '../i18n/translations';
 import { ApiClient, type Tagged } from './api-client';
 import type { TextCatalogue, TextEntry } from './models';
 
-/**
- * Die drei Endpunkte der Oberflächentexte. Lesen ist offen, Ändern und
- * Zurücksetzen hängen am Recht `text.edit`; geprüft wird das im Backend.
- */
+/** The three UI text endpoints. Read is public. Change and reset need `text.edit`. The backend checks it. */
 @Injectable({ providedIn: 'root' })
 export class TextsApi {
   private readonly api = inject(ApiClient);

@@ -1,3 +1,17 @@
+<app-block-card block="Grip" [width]="390" [height]="40">
+  <div class="overlays__grip">
+    <app-sheet [label]="'entry.reportFind.title' | t" [closable]="false" />
+  </div>
+</app-block-card>
+
+<app-block-card block="SheetBody" [width]="390" [height]="120">
+  <div class="overlay-body"></div>
+</app-block-card>
+
+<app-block-card block="SheetFoot" [width]="390" [height]="72">
+  <div class="overlays__foot"></div>
+</app-block-card>
+
 <app-block-card block="Dialog" [width]="328" [height]="190">
   <div class="overlays__stage">
     <app-confirm-dialog
@@ -21,4 +35,26 @@
 
 <app-block-card block="PopItem" [width]="240" [height]="48">
   <app-popover-item icon="map" [label]="'nav.tab.map' | t" />
+</app-block-card>
+
+<app-block-card block="SheetHead" [width]="390" [height]="56">
+  <app-overlay-head [title]="'entry.reportFind.title' | t" />
+</app-block-card>
+
+<app-block-card block="Modal" [width]="560" [height]="480">
+  <div class="overlays__stage overlays__stage--modal" appWideViewport>
+    <app-sheet [label]="'entry.reportFind.title' | t" [title]="'entry.reportFind.title' | t" [modal]="true" />
+  </div>
+</app-block-card>
+
+<app-block-card block="Sheet" [width]="390" [height]="480">
+  <div class="overlays__stage">
+    <app-overlay-host [open]="true" [modal]="true">
+      <app-sheet
+        [label]="'entry.reportFind.title' | t"
+        [title]="'entry.reportFind.title' | t"
+        [modal]="true"
+      />
+    </app-overlay-host>
+  </div>
 </app-block-card>

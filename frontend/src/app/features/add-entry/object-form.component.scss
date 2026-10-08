@@ -12,7 +12,7 @@
   overflow-y: auto;
 }
 
-// Die Zone setzt ihre Felder weiter auseinander als der Marker.
+// The zone form uses a larger gap between fields than the marker form.
 .form__body--roomy {
   gap: var(--space-5);
 }
@@ -25,7 +25,7 @@
   line-height: 15px;
 }
 
-// Das Formular eines vorhandenen Objekts trägt den Fuß der Bretter.
+// The form of an existing object uses the board footer size.
 .form__actions {
   --action-bar-size: var(--fs-control);
 }

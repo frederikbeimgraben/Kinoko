@@ -1,38 +1,61 @@
 <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 
 <div class="run">
-  <div class="run__card">
-    @for (fact of facts(); track fact.key) {
-      <app-list-row kind="catalogue" [title]="fact.title" [value]="fact.value" />
-    }
-    @if (result(); as result) {
-      <app-list-row kind="catalogue" [title]="resultTitle()">
-        <app-level-pill trail [text]="result" />
-      </app-list-row>
-    }
-  </div>
+  @if (run(); as run) {
+    <app-row-group>
+      @for (fact of facts(); track fact.key) {
+        <app-list-row [title]="fact.title" [value]="fact.value" />
+      }
+      @if (result(); as result) {
+        <app-list-row [title]="resultTitle()">
+          <app-level-pill trail [text]="result" />
+        </app-list-row>
+      }
+    </app-row-group>
 
-  @if (steps().length > 0) {
-    <section>
-      <h2 class="run__section">{{ 'admin.run.section.steps' | t }}</h2>
-      <div class="run__card">
-        @for (step of steps(); track step.key) {
-          <app-list-row kind="catalogue" [title]="step.title" [subline]="step.subline">
-            @if (step.done) {
-              <app-svg-icon trail class="run__check" name="check" [size]="18" [strokeWidth]="2" />
-            } @else {
-              <app-level-pill trail [text]="step.state" [kind]="step.kind" />
-            }
-          </app-list-row>
-        }
-      </div>
-    </section>
-  }
+    @if (inputs().length > 0) {
+      <app-section [label]="'admin.run.section.inputs' | t">
+        <app-row-group>
+          @for (input of inputs(); track input.key) {
+            <app-list-row
+              [title]="input.title"
+              [plain]="input.version"
+              [clickable]="input.kind !== null"
+              [chevron]="input.kind !== null"
+              (chosen)="openInput(input.kind)"
+            />
+          }
+        </app-row-group>
+      </app-section>
+    }
 
-  @if (log().length > 0) {
-    <section>
-      <h2 class="run__section">{{ 'admin.run.section.output' | t }}</h2>
-      <app-mono [text]="logText()" />
-    </section>
+    @if (steps().length > 0) {
+      <app-section [label]="'admin.run.section.steps' | t">
+        <app-row-group>
+          @for (step of steps(); track step.key) {
+            <app-list-row [title]="step.title" [subline]="step.subline">
+              @if (step.done) {
+                <app-svg-icon trail class="run__check" name="check" [size]="18" [strokeWidth]="2" />
+              } @else {
+                <app-level-pill trail [text]="step.state" [kind]="step.kind" />
+              }
+            </app-list-row>
+          }
+        </app-row-group>
+      </app-section>
+    }
+
+    @if (log().length > 0) {
+      <app-section [label]="'admin.run.section.output' | t">
+        <app-mono [text]="logText()" />
+      </app-section>
+    }
+  } @else if (missing()) {
+    <app-state-view icon="search" [title]="'admin.run.notFound' | t" />
+  } @else if (failed()) {
+    <app-error-state [text]="'state.loadFailed' | t" (retry)="retry()" />
+  } @else {
+    <app-row-group-skeleton [count]="3" trail="value" />
+    <app-row-group-skeleton [count]="5" [label]="true" [lines]="2" trail="badge" />
   }
 </div>

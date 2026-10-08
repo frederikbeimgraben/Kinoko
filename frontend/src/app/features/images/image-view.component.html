@@ -1,23 +1,61 @@
-<app-image-viewer
-  class="view"
-  [image]="photo()"
-  [title]="title()"
-  [index]="index()"
-  [count]="count()"
-  (back)="back()"
->
-  @if (canSetLead()) {
-    <app-list-row facts kind="catalogue" [title]="'image.cover' | t">
-      <app-switch
-        trail
-        [checked]="isLead()"
-        [disabled]="isLead()"
-        [label]="'image.cover' | t"
-        (checkedChange)="setCover()"
+<ng-template #view>
+  <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+  <div class="pad" [class.pad--wide]="wide()">
+    @if (photo(); as held) {
+      <app-hero
+        [photo]="hero()"
+        [alt]="held.caption ?? title()"
+        [height]="heroHeight()"
+        [index]="index()"
+        [count]="count()"
+        [interactive]="false"
+        (prev)="step(-1)"
+        (next)="step(1)"
       />
-    </app-list-row>
+      @if (held.caption) {
+        <app-section [label]="'species.section.description' | t">
+          <p class="note">{{ held.caption }}</p>
+        </app-section>
+      }
+      <app-section [label]="'image.section.image' | t">
+        <app-row-group>
+          <app-list-row [title]="'image.field.photo' | t" [plain]="held.photographer" />
+          <app-list-row [title]="'image.field.licence' | t" [badge]="licence()" />
+          @if (held.source) {
+            <app-list-row [title]="'image.field.sourcePlaceholder' | t" [plain]="held.source" />
+          }
+          <app-list-row [title]="'image.field.takenOn' | t" [plain]="takenOn()" />
+          <app-list-row [title]="'image.field.place' | t" [plain]="place()" />
+          @if (canSetLead()) {
+            <app-list-row [title]="'image.cover' | t">
+              <app-switch
+                trail
+                [checked]="isLead()"
+                [disabled]="isLead()"
+                [label]="'image.cover' | t"
+                (checkedChange)="setCover()"
+              />
+            </app-list-row>
+          }
+        </app-row-group>
+      </app-section>
+    } @else if (missing()) {
+      <app-state-view icon="search" [title]="'image.notFound' | t" />
+    } @else {
+      <app-skeleton kind="block" radius="var(--r-sheet)" [height]="heroHeight() + 'px'" />
+      <app-skeleton kind="block" radius="var(--r-item)" height="64px" />
+      <app-skeleton kind="rows" shape="row" lead="none" trail="value" [count]="4" [lines]="1" />
+    }
+  </div>
+  @if (canRemove()) {
+    <app-action-bar [primary]="'image.remove' | t" [ghost]="true" [danger]="true" (primaryClick)="remove()" />
   }
-</app-image-viewer>
-@if (canRemove()) {
-  <app-action-bar [primary]="'image.remove' | t" [ghost]="true" [danger]="true" (primaryClick)="remove()" />
+</ng-template>
+
+@if (wide()) {
+  <app-species-desk [active]="slug()">
+    <ng-container [ngTemplateOutlet]="view" />
+  </app-species-desk>
+} @else {
+  <ng-container [ngTemplateOutlet]="view" />
 }

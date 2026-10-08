@@ -1,5 +1,5 @@
 import { asPolygon, loadAreaCalculator } from './area';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
 const RING: Location[] = [
   [9.0, 48.5],
@@ -31,8 +31,7 @@ describe('Fläche', () => {
     const polygon = asPolygon(RING);
     if (polygon === null) throw new Error('Der Ring spannt keine Fläche auf.');
 
-    // Ein Hundertstel Grad Länge mal ein Hundertstel Grad Breite sind auf der
-    // Höhe von Tübingen rund 82 Hektar.
+    // At this latitude, 0.01 degrees by 0.01 degrees is approximately 82 ha.
     expect(compute(polygon)).toBeGreaterThan(70);
     expect(compute(polygon)).toBeLessThan(95);
   });

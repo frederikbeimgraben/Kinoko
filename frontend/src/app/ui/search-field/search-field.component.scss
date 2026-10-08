@@ -4,7 +4,7 @@
   min-inline-size: 0;
 }
 
-// Geometrie und Farbe aus `kit.css` `.search`.
+// Geometry and colour per `kit.css` `.search`.
 .search {
   display: flex;
   flex: 1;
@@ -20,7 +20,7 @@
   border-radius: 24px;
 }
 
-// In einer Leiste trägt das Feld keine eigene Fläche.
+// In a bar, the field has no area of its own.
 .search--plain {
   padding-inline-start: 8px;
   background: transparent;

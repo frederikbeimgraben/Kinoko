@@ -1,18 +1,17 @@
-// Der Rumpf eines Blatts über der Karte. Die Regel steht hier, weil
-// mehrere Blätter denselben Aufbau tragen und die Kapselung von Angular
-// eine Klasse nicht über Komponenten hinweg trägt.
+// The body of a sheet or a modal, per `kit.css` `.sbody`. The rule is a mixin because many sheets use it,
+// and the Angular encapsulation does not carry a class across components.
 @mixin overlay-body {
   .overlay-body {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: 20px;
     min-block-size: 0;
     overflow: hidden;
-    padding: var(--space-1) var(--size-gutter) var(--space-5);
+    padding: 4px 16px 16px;
   }
 
-  :host-context(.shell--column) .overlay-body {
-    padding: var(--size-gutter) 20px 20px;
+  :host-context(.sheet--modal) .overlay-body {
+    padding: 4px 24px 20px;
   }
 }

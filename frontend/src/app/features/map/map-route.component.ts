@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-/** Der Reiter Karte als Route. Die Karte selbst hängt in der Hülle. */
+/** The map tab as a route. The map itself is in the app shell. */
 @Component({
   selector: 'app-map-route',
   changeDetection: ChangeDetectionStrategy.OnPush,

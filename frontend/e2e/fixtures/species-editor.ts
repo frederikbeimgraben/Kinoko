@@ -1,4 +1,4 @@
-/** Die Attrappen der Artenverwaltung im Bearbeiten-Modus. */
+/** The mocks of the species admin in edit mode. */
 
 const NOW = '2026-09-10T10:00:00+02:00';
 
@@ -6,7 +6,7 @@ function colour(name: string, hex: string): Record<string, unknown> {
   return { name, hex };
 }
 
-/** Das Profil des Bretts `SpeciesEdit`. */
+/** The profile of the `SpeciesEdit` board. */
 export const STONE_EDIT: Record<string, unknown> = {
   id: '00000000-0000-4000-8000-000000000000',
   slug: 'boletus-edulis',
@@ -92,5 +92,5 @@ export const STONE_EDIT: Record<string, unknown> = {
   ],
 };
 
-/** Die Zahlen des Bretts `SpeciesEdit`. */
+/** The numbers of the `SpeciesEdit` board. */
 export const STONE_EDIT_COUNTS = { records: 1284, finds: 12, photos: 3 };

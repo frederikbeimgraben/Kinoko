@@ -6,7 +6,7 @@
 
 @include object-sheet.object-sheet;
 
-// Der Knopf misst vierundvierzig Punkte, wie das Brett `ZoneEdit` ihn zeigt.
+// The button is 44 px high, as the design board `ZoneEdit` shows.
 .zonesheet__outline {
   --btn-font-size: var(--fs-control);
   --btn-height: var(--size-tap);

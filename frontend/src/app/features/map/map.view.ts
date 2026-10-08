@@ -15,24 +15,24 @@ import { barShares, currentWeek, findWeek, isFuture, type ManifestWeek } from '.
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
-import { EntriesState } from '../entries/entries.state';
+import { EntriesStore } from '../entries/entries.store';
 import { photoPath } from '../../core/api/models';
-import { SpeciesState } from '../species/species.state';
-import { CombinationState } from './combination.state';
-import { DEFAULT_LAYER, MapState } from './map.state';
+import { SpeciesStore } from '../species/species.store';
+import { CombinationStore } from './combination.store';
+import { DEFAULT_LAYER, MapStore } from './map.store';
 
-/** Die Werte, die Kopf und Inhalt der Karte lesen. Eine Quelle für beide Geräte. */
+/** The values that the head and the body of the map read. One source for both devices. */
 @Injectable({ providedIn: 'root' })
 export class MapView {
   private readonly i18n = inject(I18nService);
   private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
-  private readonly catalogue = inject(SpeciesState);
-  private readonly entries = inject(EntriesState);
-  readonly state = inject(MapState);
-  readonly combination = inject(CombinationState);
+  private readonly catalogue = inject(SpeciesStore);
+  private readonly entries = inject(EntriesStore);
+  readonly state = inject(MapStore);
+  readonly combination = inject(CombinationStore);
 
-  /** Die Zahlen neben den Schaltern des Ebenen-Knopfs. */
+  /** The numbers next to the switches of the layers button. */
   readonly entryCounts = computed(() => ({
     markers: this.entries.markers().length,
     zones: this.entries.zones().length,
@@ -42,12 +42,12 @@ export class MapView {
   readonly onLayer = computed(() => this.state.view() === 'layer');
   readonly onCombination = computed(() => this.state.view() === 'combination');
 
-  /** Die Eingabe-Ebenen, wie das Manifest sie nennt. */
+  /** The input layers, as the manifest gives them. */
   readonly layers = computed(() => this.tiles.layerList());
 
-  readonly manifest = computed(() => this.tiles.manifests().get(this.state.species()) ?? null);
+  readonly manifest = computed(() => this.tiles.manifests().get(this.slug()) ?? null);
 
-  /** Solange weder Manifest noch Ebenen da sind, zeigt die Karte ihr Skelett. */
+  /** While the manifest and the layers are not there, the map shows its skeleton. */
   readonly loading = computed(() => this.manifest() === null && this.tiles.layers() === null);
 
   readonly week = computed<ManifestWeek | null>(() => {
@@ -96,16 +96,16 @@ export class MapView {
     );
   });
 
-  /** Die Woche, die eine Ebene wirklich zeigt. Das Wetter endet vor der Prognose. */
+  /** The week that a layer really shows. The weather data ends before the forecast. */
   readonly layerWeek = computed(() => {
     const layer = this.layer();
     return layer === null || layer.fixed ? null : matchingWeek(layer, this.weekKey());
   });
 
-  /** Eine feste Ebene kennt keine Woche; die Leiste tritt dann zurück. */
+  /** A fixed layer has no week. The strip is then dimmed. */
   readonly fixedLayer = computed(() => this.onLayer() && this.layer()?.fixed === true);
 
-  /** Der Vermerk der Marke: die feste Ebene mit Quellenpflicht, oder die Kombination daraus. */
+  /** The credit of the mark: the fixed layer that needs a credit, or the combination with it. */
   readonly creditNote = computed<string | null>(() => {
     if (this.onCombination()) {
       return joinNotes(
@@ -115,12 +115,12 @@ export class MapView {
     return this.creditOf(this.layer()) || null;
   });
 
-  /** Nur eine feste Ebene trägt Quellenpflicht; eine Wochenebene nie. */
+  /** Only a fixed layer needs a credit, never a weekly layer. */
   private creditOf(layer: Layer | null): string {
     return layer !== null && layer.fixed && layer.note !== '' ? layer.note : '';
   }
 
-  /** Nur Arten mit Vorhersage bietet die Karte zur Wahl. */
+  /** The map offers only species with a forecast. */
   readonly speciesChoices = computed<readonly SpeciesPickerEntry[]>(() =>
     this.catalogue
       .species()
@@ -136,33 +136,33 @@ export class MapView {
       })),
   );
 
-  /** Die gewählte Art, sonst die erste mit Vorhersage. */
+  /** The selected species, else the first with a forecast. */
   readonly species = computed<SpeciesPickerEntry | null>(() => {
     const choices = this.speciesChoices();
     return choices.find((entry) => entry.value === this.state.species()) ?? choices.at(0) ?? null;
   });
 
-  /** Die Art, deren Kacheln die Karte lädt. */
+  /** The species whose tiles the map loads. */
   readonly slug = computed(() => this.species()?.value ?? this.state.species());
 
-  /** Ohne Art mit Vorhersage kennt die Karte weder Woche noch Rampe. */
+  /** Without a species with a forecast, the map has no week and no ramp. */
   readonly noSpecies = computed(() => this.species() === null);
 
   readonly speciesName = computed(() => this.species()?.name ?? '');
 
-  /** Die Spalte am Rechner nennt immer die Art: die Reiter stehen darunter. */
+  /** The desktop column always gives the species. The tabs are below it. */
   readonly speciesTitle = computed(() =>
     this.noSpecies() ? this.i18n.translate('map.species.choose') : this.speciesName(),
   );
 
-  /** Der Kopf nennt, was die Karte zeigt: die Art, die Ebene oder die Kombination. */
+  /** The head gives what the map shows: the species, the layer or the combination. */
   readonly title = computed(() => {
     if (this.onCombination()) return this.i18n.translate('map.tab.combination');
     if (this.onLayer()) return this.layer()?.label ?? this.i18n.translate('map.tab.layer');
     return this.speciesTitle();
   });
 
-  /** Jede Quelle, die ein Faktor nennen kann: die Ebenen und die Arten. */
+  /** Each source of a factor: the layers and the species. */
   readonly sources = computed<ReadonlyMap<string, Layer>>(() => {
     const all = new Map<string, Layer>();
     for (const entry of this.speciesChoices()) {
@@ -175,7 +175,10 @@ export class MapView {
   });
 
   readonly rampLabel = computed(() => {
-    if (this.onLayer()) return this.layer()?.note ?? '';
+    if (this.onLayer()) {
+      const layer = this.layer();
+      return layer === null ? '' : [layer.label, layer.note].filter((part) => part !== '').join(', ');
+    }
     return this.i18n.translate('map.legend.findProbability');
   });
 
@@ -192,12 +195,12 @@ export class MapView {
     return this.percent(Math.round((this.manifest()?.top ?? 0) * 100));
   });
 
-  /** Die Quelle eines Faktors, wie die Karte sie kennt. */
+  /** The source of a factor, as the map knows it. */
   layerFor(source: string): Layer | null {
     return this.sources().get(source) ?? null;
   }
 
-  /** Die Verteilung einer Quelle in der Woche der Karte. */
+  /** The distribution of a source in the week of the map. */
   spread(layer: Layer): ReturnType<typeof histogramFor> {
     return histogramFor(layer, this.weekKey());
   }

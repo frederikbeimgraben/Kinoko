@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** Eine Farbe mit Namen und Wert, wie die Bausteine sie brauchen. */
+/** A colour with name and value. */
 export interface ColourValue {
   readonly name: string;
   readonly hex: string;
 }
 
-/** Wo die harten Kanten liegen, wenn ein Körper mehrere Farben trägt. */
+/** The angle of the hard edges between many colours. */
 const ANGLE = 105;
 
-/** Ein weicher Verlauf läuft flacher als eine harte Kante. */
+/** A soft gradient uses a flatter angle than a hard edge. */
 const SOFT_ANGLE = 135;
 
-/** Eine Farbe, ein Verlauf über mehrere Stopps, oder mehrere mit harter Kante. */
+/** One colour, a gradient over many stops, or many colours with hard edges. */
 export type ColourMode = 'single' | 'gradient' | 'multiple';
 
-/** Eine Farbe als Fläche. `multiple` trennt hart, `gradient` blendet weich. */
+/** A colour as an area. `multiple` uses hard edges, `gradient` blends. */
 @Component({
   selector: 'app-colour-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,13 +25,13 @@ export type ColourMode = 'single' | 'gradient' | 'multiple';
 export class ColourFieldComponent {
   readonly colours = input.required<readonly ColourValue[]>();
   readonly mode = input<ColourMode>('multiple');
-  /** Die Namen zusammen, für Hilfsmittel. Sichtbar stehen sie links am Merkmal. */
+  /** All names, for assistive technology. The visible names are at the left of the feature. */
   readonly label = input.required<string>();
 
   protected readonly fill = computed(() => paint(this.colours(), this.mode()));
 }
 
-/** Malt die Fläche nach ihrem Modus. Ohne Farbe bleibt sie durchsichtig. */
+/** Gives the CSS background for the mode. With no colour, it is transparent. */
 export function paint(colours: readonly ColourValue[], mode: ColourMode = 'multiple'): string {
   if (colours.length === 0) return 'transparent';
   if (colours.length === 1 || mode === 'single') return colours[0].hex;

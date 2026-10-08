@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MapComponent } from '../features/map/map.component';
 import { MAP_ADAPTER, VALUE_WORKER } from '../map/map.tokens';
 import type { Viewbox } from '../map/tile-grid';
+import type { Combination } from '../core/api/models';
 import type { FeatureCollection } from 'geojson';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import type {
@@ -17,11 +18,11 @@ import type {
 import type { ValueReply, ValueJob } from '../map/value-messages';
 import type { ColorizeWorker } from '../map/value-protocol';
 
-/** Eine Karte ohne WebGL. Sie merkt sich, was die Seite von ihr wollte. */
+/** A map without WebGL. It records what the page asked of it. */
 export class MapAdapterDouble implements MapAdapter {
   options: MapOptions | null = null;
   styles: string[] = [];
-  /** Je Rolle, was zuletzt gefragt wurde. `null` heißt „abgeräumt“. */
+  /** For each role, the last request. `null` means "removed". */
   readonly templatesPerRole = new Map<Role, (string | null)[]>();
   readonly opacity = new Map<Role, number>();
   centered: { point: readonly [number, number]; zoom: number } | null = null;
@@ -35,14 +36,14 @@ export class MapAdapterDouble implements MapAdapter {
   };
 
   warmed = 0;
-  /** Wie oft die Karte aufgebaut wurde. Ein zweites Mal hieße: neu geladen. */
+  /** How often the map was built. A second time means a reload. */
   started = 0;
-  /** Der Ort unter dem Fadenkreuz, den ein Test setzen kann. */
+  /** The location below the crosshair. A test can set it. */
   centerPoint: readonly [number, number] | null = [9.05, 48.52];
   flights: { target: readonly [number, number]; zoom?: number }[] = [];
   layers = new Map<ObjectLayer, FeatureCollection>();
   chosen: ((layer: ObjectLayer, id: string) => void) | null = null;
-  /** Wie oft die Fläche nach einer Zeit unsichtbar neu vermessen wurde. */
+  /** How often the area measured its size again after a delay. */
   resized = 0;
 
   warmUp(): void {
@@ -73,7 +74,7 @@ export class MapAdapterDouble implements MapAdapter {
     this.centered = { point, zoom };
   }
 
-  /** Was für eine Rolle gefragt wurde, ohne die Abräum-Aufrufe. */
+  /** The requests for a role, without the remove calls. */
   templates(role: Role = 'forecast'): string[] {
     return (this.templatesPerRole.get(role) ?? []).filter((value): value is string => value !== null);
   }
@@ -106,9 +107,9 @@ export class MapAdapterDouble implements MapAdapter {
     return this.centerPoint;
   }
 
-  /** Der Punkt, der zuletzt aus einem Bildpunkt gefragt wurde. */
+  /** The last pixel that the page converted to a location. */
   asked: { x: number; y: number } | null = null;
-  /** Was `pointAt` zurückgibt. Ohne Wert antwortet es wie die Mitte. */
+  /** What `pointAt` gives back. Without a value, it gives the centre. */
   pointPoint: readonly [number, number] | null = null;
 
   pointAt(x: number, y: number): readonly [number, number] | null {
@@ -132,30 +133,30 @@ export class MapAdapterDouble implements MapAdapter {
     this.chosen = handler;
   }
 
-  /** Was unter dem Finger liegt. Ein Test setzt es selbst. */
+  /** What is below the finger. A test sets it. */
   hit: ObjectHit | null = null;
 
   objectAt(): ObjectHit | null {
     return this.hit;
   }
 
-  /** Ohne WebGL gibt es keine echte Karte; ein Test setzt hier eine Attrappe. */
+  /** Without WebGL there is no real map. A test sets a double here. */
   raw: MapLibreMap | null = null;
 
   rawMap(): MapLibreMap | null {
     return this.raw;
   }
 
-  /** Drehung und Neigung, die ein Test setzt. */
+  /** The bearing and the pitch that a test sets. */
   turn: Rotation = { bearing: 0, pitch: 0 };
-  /** Was die Seite auf eine Drehung hin tut. */
+  /** What the page does after a rotation. */
   rotated: (() => void) | null = null;
-  /** Wie oft die Karte nach Norden gedreht wurde. */
+  /** How often the map turned back to north. */
   norths: boolean[] = [];
   cursors: string[] = [];
   clicked: ((point: readonly [number, number]) => void) | null = null;
   moved: ((point: readonly [number, number]) => void) | null = null;
-  /** Wohin `project` einen Ort legt. */
+  /** Where `project` puts a location. */
   screen: { x: number; y: number } | null = { x: 100, y: 100 };
 
   rotation(): Rotation {
@@ -190,10 +191,10 @@ export class MapAdapterDouble implements MapAdapter {
     return this.screen;
   }
 
-  /** Was die Seite auf Druck und Loslassen hin tut. */
+  /** What the page does on a press and a release. */
   down: ((point: readonly [number, number]) => void) | null = null;
   up: (() => void) | null = null;
-  /** Ob die Karte gerade schieben darf. */
+  /** Whether the map can pan. */
   dragPan = true;
 
   onPointerDown(handler: (point: readonly [number, number]) => void): () => void {
@@ -210,14 +211,14 @@ export class MapAdapterDouble implements MapAdapter {
     this.dragPan = enabled;
   }
 
-  /** Dreht die Karte, wie eine Geste es täte. */
+  /** Turns the map, as a gesture does. */
   turnTo(bearing: number, pitch = 0): void {
     this.turn = { bearing, pitch };
     this.rotated?.();
   }
 }
 
-/** Ein Worker, der nichts färbt. Der Test antwortet selbst über `antworte`. */
+/** A worker that paints nothing. The test gives the answers itself. */
 export class WorkerDouble implements ColorizeWorker {
   readonly jobs: ValueJob[] = [];
   stopped = false;
@@ -240,10 +241,7 @@ export class WorkerDouble implements ColorizeWorker {
   }
 }
 
-/**
- * Hängt der Kartenseite Attrappen statt MapLibre und Worker unter. Muss vor
- * dem ersten `render` laufen, sonst steht die echte Karte schon.
- */
+/** Gives the map page doubles for MapLibre and the worker. Call it before the first `render`. */
 export function mapWithDoubles(): { map: MapAdapterDouble; worker: WorkerDouble } {
   const map = new MapAdapterDouble();
   const worker = new WorkerDouble();
@@ -258,10 +256,7 @@ export function mapWithDoubles(): { map: MapAdapterDouble; worker: WorkerDouble 
   return { map, worker };
 }
 
-/**
- * Eine Wertkachel ohne Netz und ohne Leinwand: jeder Punkt trägt dasselbe
- * Byte. Byte 0 heißt „keine Daten“, so wie im Rendering.
- */
+/** A value tile without network and canvas: each pixel has the same byte. Byte 0 means "no data". */
 export function answerValueTile(byte: number): void {
   vi.stubGlobal('createImageBitmap', () =>
     Promise.resolve({ width: 256, height: 256, close: () => undefined }),
@@ -276,7 +271,7 @@ export function answerValueTile(byte: number): void {
   );
 }
 
-/** Die Manifeste vom Server, ohne Server. */
+/** The manifests of the server, without a server. */
 export function answerManifest(data: unknown = RAW_MANIFEST, layers: unknown = RAW_LAYERS): void {
   vi.stubGlobal('fetch', (path: string) =>
     Promise.resolve({
@@ -288,7 +283,7 @@ export function answerManifest(data: unknown = RAW_MANIFEST, layers: unknown = R
   );
 }
 
-/** Zwei Wochenebenen und zwei feste, wie sie `input_layers.py` schreibt. */
+/** Two layers per week and two fixed layers, as the backend writes them. */
 export const RAW_LAYERS = {
   bounds: [
     [47.14, 4.93],
@@ -345,7 +340,7 @@ export const RAW_LAYERS = {
   },
 };
 
-/** Zwei gemessene Wochen und eine Prognose, wie sie das Rendering schreibt. */
+/** Two measured weeks and one forecast, as the rendering writes them. */
 export const RAW_MANIFEST = {
   name: 'boletus_edulis',
   species: ['Boletus edulis'],
@@ -370,8 +365,8 @@ export const RAW_MANIFEST = {
   ],
 };
 
-/** Eine gespeicherte Kombination, wie der Dienst sie liefert. */
-export const SAVED_COMBINATION = {
+/** A saved combination, as the service sends it. */
+export const SAVED_COMBINATION: Combination = {
   id: 'k1',
   name: 'Buchenwald im Herbst',
   rule: 'graded',
@@ -381,9 +376,10 @@ export const SAVED_COMBINATION = {
   ],
   createdAt: '2026-09-01T10:00:00+02:00',
   updatedAt: '2026-09-01T10:00:00+02:00',
+  deleted: false,
 };
 
-/** Das Bündel, wie die Karte es zur Artwahl braucht. */
+/** The bundle that the map needs for the species choice. */
 export const BUNDLE_ITEMS = [
   {
     id: '00000000-0000-4000-8000-000000000001',

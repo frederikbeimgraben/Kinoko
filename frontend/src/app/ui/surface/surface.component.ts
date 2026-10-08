@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/** Eine Fläche für den Inhalt einer Spalte, per `kit.css` `.surface`. */
+/** A surface for the content of a column, from `kit.css` `.surface`. */
 @Component({
   selector: 'app-surface',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -8,6 +8,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   styleUrl: './surface.component.scss',
 })
 export class SurfaceComponent {
-  /** Offen läuft die Fläche in den unteren Rand, sonst ist sie ganz gerundet. */
+  /** An open surface runs into the bottom edge. A closed surface has all corners rounded. */
   readonly open = input(true);
 }

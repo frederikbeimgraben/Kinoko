@@ -22,7 +22,7 @@ const SHARE_LAYER: Layer = { ...RAIN, id: 'buche', label: 'Buche', unit: '', low
 
 const FAKTOR: Factor = { source: 'regen_4w', condition: 'above', low: 80, high: 0, active: true };
 
-/** Das Beispiel aus dem Konzept, als Prüfstein für Kodierung und Lesen. */
+/** The example from the concept. It tests encoding and parsing. */
 const VIER: readonly Factor[] = [
   FAKTOR,
   { source: 'temperatur', condition: 'between', low: 8, high: 16, active: true },

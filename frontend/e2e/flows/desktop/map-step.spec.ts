@@ -6,10 +6,17 @@ import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fix
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-const RAIL = 88;
-const COLUMN = 400;
+const RAIL = 96;
+/** The kit `panel` pane of the map tab. */
+const COLUMN = 420;
+/** Board `MapDesktopZoneDraw`: the map pane is 16 px from the window, the bar 32 px from the pane and 16 px from its side. */
+const PANE_GAP = 16;
+const BAR_BOTTOM = 32;
+const BAR_SIDE = 16;
+/** The height of the kit `.stepbar`: the 56 px FAB. */
+const BAR_HEIGHT = 56;
 
-/** Vier Punkte über der Kartenfläche, im Uhrzeigersinn. */
+/** Four points over the map area, clockwise. */
 const CORNERS: readonly (readonly [number, number])[] = [
   [700, 300],
   [900, 280],
@@ -17,7 +24,7 @@ const CORNERS: readonly (readonly [number, number])[] = [
   [720, 520],
 ];
 
-/** Der Ort unter einem Punkt des Fensters. */
+/** The place under a point of the window. */
 async function placeAt(page: Page, spot: readonly [number, number]): Promise<[number, number]> {
   return page.evaluate(
     ([x, y]) =>
@@ -29,7 +36,7 @@ async function placeAt(page: Page, spot: readonly [number, number]): Promise<[nu
   );
 }
 
-/** Der Zeiger über der Karte, wie ihn der Schritt setzt. */
+/** The cursor over the map, as the step sets it. */
 async function cursorOfMap(page: Page): Promise<string> {
   return page.evaluate(() => {
     const canvas = document.querySelector('.map__canvas canvas');
@@ -52,7 +59,7 @@ async function openMap(page: Page): Promise<void> {
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
 }
 
-/** Zieht quer über die Karte, wie beim Verschieben des Ausschnitts. */
+/** Drags across the map, as a pan of the view does. */
 async function dragMap(page: Page): Promise<void> {
   const viewport = page.viewportSize();
   if (viewport === null) throw new Error('Kein Fenster.');
@@ -64,7 +71,7 @@ async function dragMap(page: Page): Promise<void> {
   await page.mouse.up();
 }
 
-test('Zone zeichnen bleibt am Rechner eine Leiste über der freien Karte', async ({ page }) => {
+test('Zone zeichnen bleibt am Rechner eine Leiste über der ganzen Karte', async ({ page }) => {
   await openMap(page);
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
@@ -78,16 +85,18 @@ test('Zone zeichnen bleibt am Rechner eine Leiste über der freien Karte', async
   if (viewport === null) throw new Error('Kein Fenster.');
   const box = await bar.boundingBox();
   if (box === null) throw new Error('Leiste ohne Fläche.');
-  expect(Math.round(box.height)).toBe(64);
-  expect(Math.round(viewport.height - (box.y + box.height))).toBe(16);
-  expect(Math.round(box.x + box.width / 2)).toBe(Math.round((RAIL + COLUMN + viewport.width) / 2));
+  expect(Math.round(box.height)).toBe(BAR_HEIGHT);
+  expect(Math.round(viewport.height - (box.y + box.height))).toBe(PANE_GAP + BAR_BOTTOM);
+  expect(Math.round(viewport.width - (box.x + box.width))).toBe(PANE_GAP + BAR_SIDE);
+  // The step has the full map: the column of the map tab goes away.
+  await expect(page.locator('app-map-column')).toHaveCount(0);
 
   await dragMap(page);
 
   await expect(bar).toBeVisible();
 
   for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
-  await page.getByRole('button', { name: 'Abschließen' }).click();
+  await page.getByRole('button', { name: 'Fertig' }).click();
 
   await expect(page.getByRole('dialog', { name: 'Zone speichern' })).toBeVisible();
 });
@@ -167,13 +176,13 @@ test('Die Marke lässt sich mit der Maus verschieben', async ({ page }) => {
   const first = (await note.textContent()) ?? '';
   const before = await placeAt(page, CORNERS[1]);
 
-  // Ein Zug an der Marke schiebt sie, nicht die Karte.
+  // A drag on the pin moves the pin, not the map.
   await page.mouse.move(CORNERS[0][0], CORNERS[0][1]);
   await page.mouse.down();
   await page.mouse.move(CORNERS[0][0] + 120, CORNERS[0][1] + 80, { steps: 10 });
   await page.mouse.up();
 
   await expect(note).not.toHaveText(first);
-  // Die Karte bleibt stehen: der Zug gehört der Marke.
+  // The map stays still: the drag belongs to the pin.
   expect(await placeAt(page, CORNERS[1])).toEqual(before);
 });

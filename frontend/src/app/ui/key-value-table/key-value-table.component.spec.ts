@@ -26,7 +26,7 @@ class HostComponent {}
 })
 class CompareHostComponent {}
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** Gives the computed styles of an element that must exist. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
   if (element === null) throw new Error('Das Element steht nicht im Baum.');
   return getComputedStyle(element);
@@ -48,16 +48,16 @@ describe('KeyValueTableComponent', () => {
   });
 
   it('trägt das Raster an der Tabelle, nicht an der Zeile', async () => {
-    // Eine Zeile mit eigenen Spalten weicht vom Nachbarn ab, sobald ihr
-    // Inhalt breiter ist. Das gemeinsame Raster der Tabelle hält 104 px ein.
+    // A row with its own columns differs from the next row when its content is wider.
+    // The shared grid of the table keeps 104 px.
     const { container } = await render(HostComponent);
 
     const table = styleOf(container.querySelector('app-key-value-table'));
     expect(table.getPropertyValue('--key-value-table-label')).toBe('76px');
     expect(table.gridTemplateColumns).toContain('minmax(0, 1fr)');
     expect(styleOf(container.querySelector('app-key-value-row')).display).toBe('contents');
-    // Kein Rasterabstand: eine Lücke zwischen den Zellen schnitte Zebra und
-    // Trennlinie in zwei Hälften. Der Abstand steckt im Polster.
+    // No grid gap. A gap between the cells cuts the zebra and the divider in two.
+    // The padding gives the space.
     expect(table.columnGap).not.toBe('12px');
   });
 
@@ -68,12 +68,12 @@ describe('KeyValueTableComponent', () => {
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     const values = container.querySelectorAll('.kv__value');
     expect(values).toHaveLength(4);
-    // Ohne die Zahl der Spalten fiele die dritte Zelle in eine neue Zeile.
+    // Without the column count, the third cell goes into a new line.
     const table = styleOf(container.querySelector('app-key-value-table'));
     expect(table.getPropertyValue('--key-value-table-columns')).toBe('2');
     expect(table.gridTemplateColumns).toContain('repeat(var(--key-value-table-columns, 1)');
-    // Beide Spalten einer Zeile tragen dieselbe Fläche, auch wenn ihr Wert
-    // sich unterscheidet. Ein Zebra bleibt im Vergleich ganz aus.
+    // Both columns of a row have the same background, also with different values.
+    // A comparison shows no zebra.
     expect(styleOf(values[0]).backgroundColor).toBe(styleOf(values[1]).backgroundColor);
     expect(styleOf(values[2]).backgroundColor).toBe(styleOf(values[3]).backgroundColor);
     expect(styleOf(values[0]).backgroundColor).toBe(styleOf(values[2]).backgroundColor);

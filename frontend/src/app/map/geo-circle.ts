@@ -1,21 +1,13 @@
-/**
- * Ein Kreis auf der Erde als Vieleck.
- *
- * Der Genauigkeitskreis um den eigenen Standort steht in Metern, nicht in
- * Punkten: er soll beim Zoomen mit dem Gelände wachsen. MapLibre kann einen
- * Kreis nur in Punkten zeichnen, darum wird aus dem Radius ein Vieleck.
- */
+// A circle on the earth as a polygon. The accuracy circle uses meters, so it scales on zoom.
+// MapLibre draws circles only in pixels, so this file makes a polygon.
 
-/** Meter je Grad Breite. Über die Spanne eines Genauigkeitskreises konstant. */
+/** Meters per degree of latitude. It is constant over the size of an accuracy circle. */
 const METERS_PER_DEGREE = 111320;
 
-/** So viele Ecken sehen bei jedem Zoom rund aus und bleiben klein genug. */
+/** This number of corners looks round at each zoom and keeps the polygon small. */
 const STEPS = 48;
 
-/**
- * Der Ring um `center` mit `radius` in Metern, als Ring einer GeoJSON-Fläche.
- * Der letzte Punkt wiederholt den ersten, wie GeoJSON es verlangt.
- */
+/** A GeoJSON polygon ring around `center` with `radius` in meters. The last point repeats the first. */
 export function circleAround(
   center: readonly [number, number],
   radius: number,
@@ -23,8 +15,8 @@ export function circleAround(
 ): [number, number][] {
   const [lon, lat] = center;
   const spanLat = radius / METERS_PER_DEGREE;
-  // Ein Grad Länge ist am Pol kürzer als am Äquator. Ohne den Kosinus wäre der
-  // Kreis in Deutschland um zwei Drittel zu breit.
+  // A degree of longitude is shorter near the pole than at the equator.
+  // Without the cosine, the circle in Germany is two thirds too wide.
   const spanLon = spanLat / Math.max(Math.cos((lat * Math.PI) / 180), 1e-6);
   const ring: [number, number][] = [];
   for (let step = 0; step < steps; step++) {

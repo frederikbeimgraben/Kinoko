@@ -1,4 +1,4 @@
-/** Liest und schreibt PNG in Echtfarbe, 8 Bit je Kanal, ohne Interlace. */
+/** Reads and writes truecolor PNG with 8 bits for each channel and no interlace. */
 import { deflateSync, inflateSync } from 'node:zlib';
 
 const SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
@@ -12,14 +12,13 @@ const CRC_TABLE = Array.from({ length: 256 }, (_, index) => {
   return value >>> 0;
 });
 
-/** Berechnet die CRC-32-Prüfsumme eines Puffers. */
 function crc32(buffer) {
   let value = 0xffffffff;
   for (const byte of buffer) value = CRC_TABLE[(value ^ byte) & 0xff] ^ (value >>> 8);
   return (value ^ 0xffffffff) >>> 0;
 }
 
-/** Baut einen PNG-Abschnitt aus Kennung und Inhalt. */
+/** Makes a PNG chunk from a type and its data. */
 function chunk(name, body) {
   const head = Buffer.alloc(4);
   head.writeUInt32BE(body.length);
@@ -29,7 +28,7 @@ function chunk(name, body) {
   return Buffer.concat([head, tagged, tail]);
 }
 
-/** Gibt den Paeth-Schätzwert aus linkem, oberem und diagonalem Byte. */
+/** Gives the Paeth predictor from the left, upper and diagonal bytes. */
 function paeth(left, up, corner) {
   const guess = left + up - corner;
   const toLeft = Math.abs(guess - left);
@@ -39,7 +38,7 @@ function paeth(left, up, corner) {
   return toUp <= toCorner ? up : corner;
 }
 
-/** Nimmt den Zeilenfilter aus den Rohdaten heraus. */
+/** Removes the row filter from the raw data. */
 function unfilter(raw, width, height) {
   const stride = width * CHANNELS;
   const pixels = Buffer.alloc(stride * height);
@@ -64,7 +63,7 @@ function unfilter(raw, width, height) {
   return pixels;
 }
 
-/** Legt den Paeth-Filter auf jede Zeile und gibt die Rohdaten zurück. */
+/** Applies the Paeth filter to each row and gives the raw data. */
 function filter(pixels, width, height) {
   const stride = width * CHANNELS;
   const raw = Buffer.alloc((stride + 1) * height);
@@ -82,7 +81,7 @@ function filter(pixels, width, height) {
   return raw;
 }
 
-/** Liest ein PNG und gibt Breite, Höhe und die RGB-Werte zurück. */
+/** Reads a PNG and gives its width, height and RGB values. */
 export function decode(file) {
   if (!file.subarray(0, 8).equals(SIGNATURE)) throw new Error('Keine PNG-Signatur');
   let offset = 8;
@@ -105,7 +104,7 @@ export function decode(file) {
   return { width, height, pixels: unfilter(inflateSync(Buffer.concat(parts)), width, height) };
 }
 
-/** Schreibt Breite, Höhe und RGB-Werte als PNG. */
+/** Writes the width, height and RGB values as a PNG. */
 export function encode({ width, height, pixels }) {
   const head = Buffer.alloc(13);
   head.writeUInt32BE(width, 0);
@@ -116,7 +115,7 @@ export function encode({ width, height, pixels }) {
   return Buffer.concat([SIGNATURE, chunk('IHDR', head), chunk('IDAT', body), chunk('IEND', Buffer.alloc(0))]);
 }
 
-/** Schneidet ein Rechteck aus einem Bild heraus. */
+/** Cuts a rectangle from an image. */
 export function crop(image, { x, y, w, h }) {
   if (x < 0 || y < 0 || x + w > image.width || y + h > image.height) {
     throw new Error(`Ausschnitt ${x},${y} ${w}×${h} liegt nicht im Bild`);

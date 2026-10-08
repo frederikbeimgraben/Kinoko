@@ -1,0 +1,40 @@
+<app-section [label]="'map.basemap.title' | t">
+  <app-row-group role="radiogroup" [attr.aria-label]="'map.basemap.title' | t">
+    @for (choice of grounds(); track choice.value) {
+      <app-choice-row
+        [label]="choice.label | t"
+        [subline]="choice.sub ? (choice.sub | t) : undefined"
+        [checked]="choice.value === ground()"
+        [attr.aria-disabled]="choice.available ? null : 'true'"
+        (toggled)="chooseGround(choice.value)"
+      />
+    }
+  </app-row-group>
+</app-section>
+
+<div class="layers__field">
+  <span class="lbl">{{ 'map.layers.style' | t }}</span>
+  <app-segmented
+    [options]="styles()"
+    [value]="style()"
+    [label]="'map.layers.style' | t"
+    (valueChange)="chooseStyle($event)"
+  />
+</div>
+
+<app-section [label]="'map.layers.opacity' | t">
+  <div class="layers__slider">
+    <app-range-slider [from]="percent()" [to]="100" handles="from" (fromChange)="onOpacity($event)" />
+  </div>
+</app-section>
+
+<app-section [label]="'map.layers.show' | t">
+  <app-row-group>
+    @for (shown of switches(); track shown.label) {
+      <div class="layers__switch">
+        <span class="layers__switch-label">{{ shown.label | t }}</span>
+        <app-switch [checked]="shown.on" [label]="shown.label | t" (checkedChange)="shown.change($event)" />
+      </div>
+    }
+  </app-row-group>
+</app-section>

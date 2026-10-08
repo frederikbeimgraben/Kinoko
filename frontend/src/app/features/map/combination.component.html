@@ -1,4 +1,4 @@
-<div class="combination__factors" appScrollFade role="group" [attr.aria-label]="'map.tab.combination' | t">
+<app-row-group role="group" [attr.aria-label]="'map.tab.combination' | t">
   @for (row of rows(); track row.factor.source) {
     <app-factor-row
       [factor]="{ name: row.name, range: row.subline, condition: row.condition }"
@@ -9,6 +9,4 @@
     />
   }
   <app-add-row [label]="'map.factor.one' | t" [action]="'map.factor.add' | t" (pressed)="add.emit()" />
-</div>
-
-<app-action-bar class="combination__footer" [primary]="'common.save' | t" (primaryClick)="requestSave()" />
+</app-row-group>

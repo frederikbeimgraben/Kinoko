@@ -1,17 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { ToastService } from '../ui/toast/toast.service';
 
-/** Was die Oberfläche gemeldet hat, ohne dass ein Toast im Bild stehen muss. */
+/** The messages the UI sent, without a visible toast. */
 export interface ToastSpy {
   failure: string[];
   success: string[];
 }
 
-/**
- * Fängt die Meldungen des Kits ab. Der Toast-Behälter steht in der Hülle; ein
- * Test einer einzelnen Komponente hat ihn nicht, und die Meldung ginge sonst
- * ins Leere.
- */
+/** Catches kit messages. A single-component test has no toast container, so the messages go here. */
 export function toastSpy(): ToastSpy {
   const service = TestBed.inject(ToastService);
   const spy: ToastSpy = { failure: [], success: [] };

@@ -18,4 +18,10 @@
 >
   {{ factor().condition }}
 </button>
-<app-icon-button icon="close" kind="plain" [label]="removeLabel()" (pressed)="remove.emit()" />
+<app-icon-button
+  class="factor__remove"
+  icon="close"
+  kind="plain"
+  [label]="removeLabel()"
+  (pressed)="remove.emit()"
+/>

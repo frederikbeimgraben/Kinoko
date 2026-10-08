@@ -29,10 +29,10 @@ export const FAMILY: FriendGroup = {
 
 export const GROUPS: FriendGroup[] = [KARLSRUHE, FAMILY];
 
-/** Ein Doppelgänger der Gruppen-API. Der Test liest nach, was gefragt wurde. */
+/** A double for the groups API. The test reads the requests. */
 export class GroupsApiDouble {
   groupList: FriendGroup[] = GROUPS;
-  /** Steht hier ein Problem, weist der nächste Schreibzugriff es zurück. */
+  /** When set, the next write fails with this problem. */
   rejectWith: ProblemDetail | null = null;
 
   readonly calls: boolean[] = [];
@@ -79,7 +79,6 @@ export class GroupsApiDouble {
   }
 }
 
-/** Hängt den Doppelgänger an die Stelle der echten API. */
 export function groupsApiProvider(double: GroupsApiDouble): {
   provide: typeof GroupsApi;
   useValue: unknown;

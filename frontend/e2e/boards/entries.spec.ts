@@ -8,42 +8,44 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device and does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'desktop'): void {
-  test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
+  test.skip(test.info().project.name !== device, `board belongs to ${device}`);
   skipPending(board);
 }
 
-/** Die zwei Marker aus dem Board `EntriesMarkers`. */
+/** The two markers of the board `EntriesMarkers`. */
 const MARKERS = {
   items: [
     {
-      id: 'marker-eins',
+      id: 'marker-one',
       name: 'Alter Fichtenbestand',
       lat: 48.52,
       lon: 9.05,
       colour: 'blue',
-      note: 'Schönbuch',
+      note: 'Guter Steinpilzplatz, Nordhang',
       visibility: 'private',
-      updatedAt: '2026-09-01T08:00:00Z',
+      createdAt: '2026-09-12T08:00:00Z',
+      updatedAt: '2026-09-12T08:00:00Z',
       deleted: false,
     },
     {
-      id: 'marker-zwei',
-      name: 'Parkplatz Nord',
+      id: 'marker-two',
+      name: 'Parkplatz Schönbuch',
       lat: 48.6,
       lon: 9.1,
-      colour: 'brown',
-      note: 'Odenwald',
-      visibility: 'shared',
-      updatedAt: '2026-09-02T08:00:00Z',
+      colour: 'grey',
+      note: null,
+      visibility: 'private',
+      createdAt: '2026-08-30T08:00:00Z',
+      updatedAt: '2026-08-30T08:00:00Z',
       deleted: false,
     },
   ],
   nextCursor: null,
 };
 
-/** Ein Viereck mit der gewünschten Fläche, als Rechteck um den Nullpunkt. */
+/** A square with the wanted area, as a rectangle at the origin. */
 function square(hectares: number): Record<string, unknown> {
   const side = Math.sqrt(hectares * 10_000);
   const degrees = side / 111_320;
@@ -61,29 +63,19 @@ function square(hectares: number): Record<string, unknown> {
   };
 }
 
-/** Die zwei Zonen aus dem Board `EntriesZones`. */
+/** The zone of the board `EntriesZones`. */
 const ZONES = {
   items: [
     {
-      id: 'zone-eins',
+      id: 'zone-one',
       name: 'Schönbuch Nord',
       colour: 'green',
       polygon: square(42),
       areaHa: 42,
-      note: null,
+      note: 'Nordhang, alte Fichten',
       visibility: 'private',
+      createdAt: '2026-09-01T08:00:00Z',
       updatedAt: '2026-09-01T08:00:00Z',
-      deleted: false,
-    },
-    {
-      id: 'zone-zwei',
-      name: 'Odenwald Ost',
-      colour: 'red',
-      polygon: square(18),
-      areaHa: 18,
-      note: null,
-      visibility: 'shared',
-      updatedAt: '2026-09-02T08:00:00Z',
       deleted: false,
     },
   ],
@@ -108,7 +100,7 @@ async function openEntries(page: Page, signedIn = true): Promise<void> {
 test('EntriesMarkers', async ({ page }) => {
   guard('EntriesMarkers', 'phone');
   await openEntries(page);
-  await page.getByRole('tab', { name: 'Marker' }).click();
+  await page.getByRole('button', { name: 'Marker', exact: true }).click();
   await expect(page.getByText('Alter Fichtenbestand')).toBeVisible();
   await expectBoard(page, 'EntriesMarkers');
 });
@@ -116,7 +108,7 @@ test('EntriesMarkers', async ({ page }) => {
 test('EntriesZones', async ({ page }) => {
   guard('EntriesZones', 'phone');
   await openEntries(page);
-  await page.getByRole('tab', { name: 'Zonen' }).click();
+  await page.getByRole('button', { name: 'Zonen', exact: true }).click();
   await expect(page.getByText('Schönbuch Nord')).toBeVisible();
   await expectBoard(page, 'EntriesZones');
 });
@@ -124,11 +116,11 @@ test('EntriesZones', async ({ page }) => {
 test('EntriesGuest', async ({ page }) => {
   guard('EntriesGuest', 'phone');
   await openEntries(page, false);
-  await expect(page.getByText('Ohne Anmeldung keine eigenen Einträge')).toBeVisible();
+  await expect(page.getByText('Nicht angemeldet')).toBeVisible();
   await expectBoard(page, 'EntriesGuest');
 });
 
-/** Der Fund, den der Dienst schon kennt. Er steht unter den wartenden. */
+/** The find that the service knows already. It is below the pending finds. */
 const SENT_FIND = {
   items: [
     {
@@ -148,7 +140,7 @@ const SENT_FIND = {
   nextCursor: null,
 };
 
-/** Meldet einen Fund über das Fadenkreuz. Ohne Netz wartet er im Gerät. */
+/** Reports a find with the crosshair. Without network it waits on the device. */
 async function reportFind(page: Page, species: string | null, count: string, note?: string): Promise<void> {
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await page.getByRole('button', { name: 'Fund melden' }).click();
@@ -180,7 +172,7 @@ test('EntriesOffline', async ({ page }) => {
     },
     { photo: ROW_PHOTO },
   );
-  // Geteilte Funde holt die Liste getrennt. Das Brett zeigt nur eigene.
+  // The list gets the shared finds in a request of its own. The board shows only own finds.
   await page.route(
     (url) => url.pathname === '/api/finds' && url.searchParams.get('mine') === 'false',
     async (route) => {
@@ -191,7 +183,7 @@ test('EntriesOffline', async ({ page }) => {
       });
     },
   );
-  // Ohne Netz scheitert nur das Schreiben. Lesen bleibt bei dem, was da ist.
+  // Without network only a write fails. A read keeps what is there.
   await page.route('**/api/**', async (route) => {
     if (down && route.request().method() !== 'GET') {
       await route.abort('internetdisconnected');
@@ -208,14 +200,14 @@ test('EntriesOffline', async ({ page }) => {
   });
 
   await reportFind(page, 'Pfifferling', '2', 'unter Fichten am Hang');
-  // Die feste Uhr rückt vor: die Warteschlange ordnet sonst gleich alte Einträge zufällig.
+  // The fixed clock moves on: else the queue puts entries of the same age in a random order.
   const now = await page.evaluate(() => Date.now());
   await page.clock.setFixedTime(new Date(now + 1000));
   await reportFind(page, null, '1');
 
   await page.getByRole('link', { name: 'Einträge' }).click();
   await expect(page.getByRole('img', { name: 'Übertragung ausstehend' }).first()).toBeVisible();
-  // Die Meldungen der Toasts gehen von selbst; das Brett zeigt sie nicht.
+  // The toasts go away by themselves; the board does not show them.
   await expect(page.locator('.toast')).toHaveCount(0, { timeout: 20_000 });
   await expectBoard(page, 'EntriesOffline');
 });

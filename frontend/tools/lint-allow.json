@@ -223,7 +223,10 @@
   ],
   "selectors": [],
   "german": [
+    "src/app/core/api/models/data-sources.ts#5bd1269b",
     "src/app/features/account/my-images.component.ts#a2d37bf3",
+    "src/app/features/admin/data-sources/labels.ts#76303edf",
+    "src/app/features/admin/data-sources/labels.ts#fa6916f4",
     "src/app/features/admin/images.component.ts#a2d37bf3"
   ]
 }

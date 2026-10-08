@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-/** Die vier Aufteilungen des Rechners: Spalte, Spaltenzug, Raster, Teilung. */
+/** The four desktop layouts: pane, column, columns grid and split. */
 export type SplitKind = 'pane' | 'column' | 'columns' | 'split';
 
-/** Die Rolle einer Rechner-Spalte, per `Pane.dc.html`. */
+/** The role of a desktop pane, as in `Pane.dc.html`. */
 export type PaneKind = 'panel' | 'map' | 'middle' | 'detail';
 
-/** Die festen Breiten aus `Pane.dc.html`. */
+/** The fixed widths from `Pane.dc.html`. */
 const PANE_WIDTH: Partial<Record<PaneKind, number>> = { panel: 420, middle: 640 };
 
-/** Der Innenabstand, den jede Aufteilung ohne eigene Angabe trägt. */
+/** The padding of each layout when it gets no `pad`. */
 const PAD: Record<SplitKind, string> = {
   pane: '',
   column: '',
@@ -17,7 +17,7 @@ const PAD: Record<SplitKind, string> = {
   split: '0 8px 0 16px',
 };
 
-/** Das Raster des Rechners. Die Eingabe `kind` wählt die Aufteilung. */
+/** The desktop grid. The input `kind` selects the layout. */
 @Component({
   selector: 'app-split-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,9 +40,9 @@ const PAD: Record<SplitKind, string> = {
 export class SplitLayoutComponent {
   readonly kind = input<SplitKind>('column');
   readonly pane = input<PaneKind>('panel');
-  /** Die Fläche hinter der Spalte, wenn sie nicht die des Rahmens ist. */
+  /** The ground behind the pane when it is not the ground of the frame. */
   readonly ground = input<'desk' | 'mid'>('desk');
-  /** Eine feste Breite. Null lässt die Spalte den Rest nehmen. */
+  /** A fixed width. Zero lets the pane take the remaining space. */
   readonly width = input(0);
   readonly gap = input(24);
   readonly pad = input<string | null>(null);

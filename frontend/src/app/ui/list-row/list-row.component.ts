@@ -1,33 +1,53 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { LevelPillComponent, type BadgeKind } from '../level-pill/level-pill.component';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Wo die Zeile steht: frei, in einer Karte, im Filter oder als Verweis. */
+/** Only `link` changes the look: it gives the title the link colour. The other kinds keep the kit row. */
 export type ListRowKind = 'default' | 'catalogue' | 'filter' | 'link';
 
-/** Zeile mit Titel, Unterzeile, Wert und Chevron, dazu Slots vorn, hinten und als Aktion. */
+/** The kit row variants: `head` makes the label bold, `sub` makes it dim. */
+export type ListRowVariant = 'plain' | 'head' | 'sub';
+
+/** A row per `kit.css` `.row` and `Row.dc.html`: label, sub-line, value, trailing parts and an action. */
 @Component({
   selector: 'app-list-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, RippleDirective, SvgIconComponent],
+  imports: [LevelPillComponent, NgTemplateOutlet, RippleDirective, SvgIconComponent],
   templateUrl: './list-row.component.html',
   styleUrl: './list-row.component.scss',
 })
 export class ListRowComponent {
   readonly title = input.required<string>();
   readonly subline = input<string>();
+  /** The `.val` value: tabular figures at weight 500. */
   readonly value = input<string>();
-  /** Primärfarbe für Titel oder Wert; ohne Chevron trägt der Titel sie als Linkzeichen. */
+  /** A small unit after the value, in the label colour. */
+  readonly unit = input<string>();
+  /** A plain trailing text at 14 px in the label colour. */
+  readonly plain = input<string>();
+  readonly badge = input<string>();
+  readonly badgeKind = input<BadgeKind>('');
+  /** A CSS background for the `.sw` swatch, for example a gradient. */
+  readonly swatch = input<string>();
+  /** The primary colour for the title or the value. Without a chevron, the title gets it as a link sign. */
   readonly accent = input(false);
-  /** Polster, Abstand und Titelschrift folgen dem Ort der Zeile. */
   readonly kind = input<ListRowKind>('default');
-  /** Ein Zeichen vor dem Titel, gedämpft: die Gruppe einer Ebene. */
+  readonly variant = input<ListRowVariant>('plain');
+  /** A dim icon before the label. */
   readonly icon = input<IconName>();
+  /** A 44 px thumb in the lead slot needs the smaller start padding of `.row.thumbed`. */
+  readonly thumbed = input(false);
+  /** The sub-line breaks into more lines, per `.row.wrap`. */
+  readonly wrap = input(false);
   readonly chevron = input(false);
   readonly clickable = input(false);
-  /** Eine gewählte Zeile meldet sich als gedrückt. */
+  /** A selected row reports itself as pressed. */
   readonly selected = input(false);
 
   readonly chosen = output();
+
+  /** The kit makes the label bold for a head row and for a row with a sub-line. */
+  protected readonly strong = computed(() => this.variant() === 'head' || !!this.subline());
 }

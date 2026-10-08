@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { RippleDirective } from '../ripple/ripple.directive';
 
-/** Eine der zwölf Standardfarben. */
+/** One of the twelve standard colours. */
 export interface ColourPickerSwatch {
   value: string;
   label: string;
 }
 
-/**
- * Zwölf Standardfarben mit Namen. Darunter stehen die nächsten Katalogtöne.
- */
+/** Twelve named standard colours. The nearest catalogue tones show below them. */
 @Component({
   selector: 'app-colour-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,11 +19,10 @@ export class ColourPickerComponent {
   readonly colours = input.required<readonly ColourPickerSwatch[]>();
   readonly value = input<string | null>(null);
   readonly label = input.required<string>();
-  /** Hex-Werte aus dem Katalog, dem gewählten Ton am nächsten. Nur Vorschau. */
+  /** Catalogue hex values nearest to the selected tone. For preview only. */
   readonly nearest = input<readonly string[]>([]);
-  /** Die Überschrift über den Katalogtönen. */
   readonly nearestLabel = input<string>('');
-  /** Ohne Namen steht nur die Fläche. Der Name bleibt für Hilfsmittel. */
+  /** When false, only the area shows. Assistive technology still gets the name. */
   readonly labels = input(true);
 
   readonly valueChange = output<string>();

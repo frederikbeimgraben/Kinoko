@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 
-/** Wo die Karte hängt: Abstand vom Ende der Zeile und von einer Kante. */
+/** Where the card hangs: the distance from the end of the row and from one edge. */
 export interface PopoverAnchor {
   readonly top?: number;
   readonly bottom?: number;
   readonly end: number;
 }
 
-/** Eine Karte unter einem Knopf. Ein Druck daneben oder Escape schließt sie. */
+/** A card at a button, per `kit.css` `.pop`. A press next to it or Escape closes it. */
 @Component({
   selector: 'app-popover',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +20,7 @@ export class PopoverComponent {
   readonly open = input.required<boolean>();
   readonly anchor = input.required<PopoverAnchor>();
   readonly label = input.required<string>();
-  /** Das Wort über den Zeilen, wenn die Karte eine Gruppe benennt. */
+  /** The word above the rows, when the card names a group. */
   readonly heading = input('');
 
   readonly closed = output();

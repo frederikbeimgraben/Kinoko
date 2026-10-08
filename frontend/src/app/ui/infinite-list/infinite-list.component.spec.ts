@@ -2,7 +2,7 @@ import { render } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
 import { InfiniteListComponent } from './infinite-list.component';
 
-/** jsdom kennt keinen IntersectionObserver. Der Test steuert ihn von Hand. */
+/** jsdom has no IntersectionObserver. The test controls this stub. */
 class ObserverStub {
   static instances: ObserverStub[] = [];
   private readonly callback: IntersectionObserverCallback;
@@ -13,15 +13,15 @@ class ObserverStub {
   }
 
   observe(): void {
-    // Das Ziel selbst braucht der Test nicht, nur die Auslösung danach.
+    // The test does not need the target. It needs only the trigger.
   }
 
   unobserve(): void {
-    // Der Stummel braucht keine Buchführung über das Ziel.
+    // The stub keeps no record of the target.
   }
 
   disconnect(): void {
-    // Der Stummel räumt nichts auf, der Test endet vorher.
+    // The stub has nothing to release. The test ends first.
   }
 
   trigger(isIntersecting: boolean): void {
@@ -78,7 +78,21 @@ describe('InfiniteListComponent', () => {
     await vi.advanceTimersByTimeAsync(300);
     detectChanges();
 
-    expect(container.querySelectorAll('.skeleton__bar--row').length).toBe(3);
+    expect(container.querySelectorAll('.skeleton__row').length).toBe(3);
+    expect(container.querySelectorAll('.skeleton__lead--thumb').length).toBe(3);
+    vi.useRealTimers();
+  });
+
+  it('shows the rows of the entries preset', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { container, detectChanges } = await render(InfiniteListComponent, {
+      inputs: { pageSize: 40, pending: true, skeleton: 'entries' },
+    });
+    await vi.advanceTimersByTimeAsync(300);
+    detectChanges();
+
+    expect(container.querySelectorAll('.skeleton__row--item').length).toBe(3);
+    expect(container.querySelectorAll('.skeleton__chevron').length).toBe(3);
     vi.useRealTimers();
   });
 
@@ -90,7 +104,7 @@ describe('InfiniteListComponent', () => {
     await vi.advanceTimersByTimeAsync(300);
     detectChanges();
 
-    expect(container.querySelectorAll('.skeleton__bar--row').length).toBe(3);
+    expect(container.querySelectorAll('.skeleton__row').length).toBe(3);
     vi.useRealTimers();
   });
 

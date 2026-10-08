@@ -1,0 +1,23 @@
+<app-overlay-host [open]="open()" [modal]="true" (closed)="closed.emit()">
+  @if (open()) {
+    <app-sheet
+      [label]="'admin.dataSources.needs.title' | t"
+      [title]="'admin.dataSources.needs.title' | t"
+      [modal]="true"
+      [dismissible]="true"
+      (closed)="closed.emit()"
+    >
+      <div class="needs">
+        @for (block of blocks(); track block.run) {
+          <app-section [label]="block.title">
+            <app-row-group>
+              @for (need of block.needs; track need) {
+                <app-list-row icon="warning" [title]="need" [wrap]="true" />
+              }
+            </app-row-group>
+          </app-section>
+        }
+      </div>
+    </app-sheet>
+  }
+</app-overlay-host>

@@ -18,7 +18,7 @@ describe('TranslatePipe', () => {
 
     TestBed.inject(I18nService).setLocale('en');
 
-    // Der englische Rückfall kommt als eigener Brocken, darum das Warten.
+    // The English fallback is a separate chunk, so the test must wait.
     await vi.waitFor(() => {
       fixture.detectChanges();
       expect(screen.getByText('Species')).toBeInTheDocument();

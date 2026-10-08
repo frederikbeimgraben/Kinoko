@@ -1,12 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
-/**
- * Der Zeitpunkt „jetzt“ als Abhängigkeit.
- *
- * Die Karte öffnet auf der laufenden Kalenderwoche. Ein Test, der das prüft,
- * braucht ein festes Heute; die Uhr des Rechners global zu verstellen träfe
- * alles andere mit.
- */
+// The current time as a dependency. The map opens on the current ISO week.
+// A test can give a fixed date here and keep the global clock unchanged.
 export const NOW = new InjectionToken<() => Date>('Now', {
   providedIn: 'root',
   factory: () => () => new Date(),

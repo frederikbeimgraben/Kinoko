@@ -4,18 +4,16 @@ import { mockApi } from '../fixtures/api';
 import LIVE_BUNDLE from '../fixtures/live-bundle.json' with { type: 'json' };
 import { DB_VERSION, OFFLINE_AREAS } from '../../src/app/core/offline/offline-store';
 
-/** Der ETag, den ein älterer Stand auf dem Gerät mitbringt. */
+/** The ETag of an old catalogue version on the device. */
 const STALE_ETAG = 'W/"a1b2c3d4e5f60718"';
 
-/** Ein Stand vom Gerät, der vor dem Feld `facets` abgelegt wurde. */
+/** A device version that the app stored before the field `facets` existed. */
 const STALE_BUNDLE = {
   items: LIVE_BUNDLE.items,
   standardColours: LIVE_BUNDLE.standardColours,
 };
 
-/**
- * Legt einen Katalog auf dem Gerät ab, bevor die App startet.
- */
+/** Stores a catalogue on the device before the app starts. */
 async function seedStore(page: Page, bundle: unknown, etag: string): Promise<void> {
   await page.addInitScript(
     ([areas, stored, tag, version]) => {
@@ -33,10 +31,8 @@ async function seedStore(page: Page, bundle: unknown, etag: string): Promise<voi
   );
 }
 
-/**
- * Antwortet wie der Dienst: zum bekannten ETag kommt 304 ohne Körper.
- * Der ETag zählt nur die Arten, also bleibt er über einen Feldzuwachs gleich.
- */
+/** Answers as the service does: a known ETag gives 304 without a body.
+ * The ETag counts only the species, so a new field does not change it. */
 async function serveBundle(page: Page, etag: string): Promise<void> {
   await page.route('**/api/species/bundle', async (route) => {
     if (route.request().headers()['if-none-match'] === etag) {
@@ -52,7 +48,7 @@ async function serveBundle(page: Page, etag: string): Promise<void> {
   });
 }
 
-/** Öffnet das Filterblatt. Jede Gruppe steht darin schon offen. */
+/** Opens the filter sheet. Each group in it is already open. */
 async function openFilter(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
 }

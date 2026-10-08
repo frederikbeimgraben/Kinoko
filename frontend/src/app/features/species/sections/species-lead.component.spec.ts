@@ -9,11 +9,16 @@ import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-d
 import { photo } from '../../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../../testing/routes';
 import type { Photo } from '../../../core/api/models';
-import { ImagesState } from '../../images/images.state';
+import { ImagesStore } from '../../images/images.store';
 import { SpeciesLeadComponent } from './species-lead.component';
 
-function imagesDouble(lead: Photo | null): Partial<ImagesState> {
-  return { photos: signal([]).asReadonly(), lead: computed(() => lead), load: () => undefined };
+function imagesDouble(lead: Photo | null): Partial<ImagesStore> {
+  return {
+    photos: signal([]).asReadonly(),
+    lead: computed(() => lead),
+    positionOf: () => (lead === null ? 0 : 1),
+    load: (() => ({ destroy: () => undefined })) as unknown as ImagesStore['load'],
+  };
 }
 
 async function build(lead: Photo | null): Promise<Element> {
@@ -21,16 +26,19 @@ async function build(lead: Photo | null): Promise<Element> {
     providers: [
       ...catalogueProviders(),
       provideRouter(ANY_ROUTE),
-      { provide: ImagesState, useValue: imagesDouble(lead) },
+      { provide: ImagesStore, useValue: imagesDouble(lead) },
     ],
     inputs: { slug: 'steinpilz' },
   });
   await catalogueReady();
   result.detectChanges();
+  // The image loads through a resource: its request starts after a turn of the event loop.
+  await new Promise((done) => setTimeout(done));
   const http = TestBed.inject(HttpTestingController);
   for (const request of http.match((req) => req.url.startsWith('/api/photos/'))) {
     request.flush(new Blob(['x'], { type: 'image/jpeg' }));
   }
+  await new Promise((done) => setTimeout(done));
   result.detectChanges();
   return result.container;
 }

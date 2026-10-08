@@ -5,19 +5,24 @@ import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { GROUPS } from '../fixtures/groups';
-import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap, showMapImage } from '../fixtures/map';
+import {
+  MARKERS,
+  SHARED_FINDS,
+  SPECIES_BUNDLE,
+  ZONES,
+  mockMap,
+  showDesignMap,
+  type DesignMap,
+} from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Die Karte des Boards läuft unter dem Blatt weiter. */
-const MAP_HEIGHT = 844;
-
-/** Der Tag und der Ort, die in den Boards stehen. */
+/** The day and the location of the boards. */
 const FOUND_ON = '2026-09-09';
 const PLACE = { latitude: 48.5203, longitude: 9.0511 };
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device and does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
@@ -40,41 +45,34 @@ async function openMap(page: Page, clear = false): Promise<void> {
   await mockMap(page, { detent: 1, clear });
   await page.goto('/karte');
   await expect(page.getByRole('region', { name: 'Karte von Deutschland' })).toBeVisible();
-  // Die Boards nennen den Ort unter dem Fadenkreuz; die Karte steht dort.
+  // The boards give the location below the crosshair. The map shows that location.
   await page.getByRole('button', { name: 'Standort' }).click();
   await page.waitForTimeout(800);
 }
 
-/** Öffnet das Blatt hinter dem Plus-Knopf. */
+/** Opens the sheet of the add button. */
 async function openActions(page: Page, clear = false): Promise<void> {
   await openMap(page, clear);
   await page.getByRole('button', { name: 'Eintragen' }).click();
   await expect(page.getByRole('button', { name: 'Fund melden' })).toBeVisible();
 }
 
-/** Geht über das Fadenkreuz in ein Formular. */
+/** Goes through the crosshair into a form. */
 async function openForm(page: Page, action: string, confirm: string): Promise<void> {
   await openActions(page);
   await page.getByRole('button', { name: action }).click();
   await page.getByRole('button', { name: confirm }).click();
 }
 
-/** Legt das Kartenbild auf und vergleicht dann mit dem Board. */
-async function board(page: Page, stem: string, image = 'map-stein-844.png'): Promise<void> {
-  await showMapImage(page, image, image === 'map-desktop-stein-900.png' ? undefined : MAP_HEIGHT);
+/** Puts the design map surface on the canvas and compares the page with the board. */
+async function board(page: Page, stem: string, map: DesignMap = {}): Promise<void> {
+  await showDesignMap(page, map);
   await expectBoard(page, stem);
 }
 
-/** Wie `board`, aber das Kartenbild liegt unter der Zeichnung der Karte. */
+/** As `board`, but the zone of the app is drawn over the design map surface. */
 async function boardUnder(page: Page, stem: string): Promise<void> {
-  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT, true);
-  await expectBoard(page, stem);
-}
-
-/** Dasselbe am Rechner: Marke und Ring der App liegen über dem Kartenbild. */
-async function boardUnderWide(page: Page, stem: string): Promise<void> {
-  await showMapImage(page, 'map-desktop-stein-900.png', undefined, true);
-  await expectBoard(page, stem);
+  await board(page, stem, { under: true });
 }
 
 test('MapAdd', async ({ page }) => {
@@ -83,16 +81,16 @@ test('MapAdd', async ({ page }) => {
   await board(page, 'MapAdd');
 });
 
-/** Setzt den Tag, den die Fund-Boards zeigen. */
+/** Sets the day of the find boards. */
 async function setDate(page: Page): Promise<void> {
   await page.locator('input[type="date"]').fill(FOUND_ON);
 }
 
-/** Legt das Foto ab, das die Boards in der ersten Kachel zeigen. */
+/** Adds the photo of the first tile of the boards. */
 async function addPhoto(page: Page): Promise<void> {
   const file = join(test.info().config.rootDir, 'boards/fixtures/tile-1-72x72.png');
   await page.locator('input[type="file"]').setInputFiles(file);
-  await expect(page.locator('app-photo-picker img')).toBeVisible();
+  await expect(page.locator('app-photo-strip img')).toBeVisible();
 }
 
 test('MapFindForm', async ({ page }) => {
@@ -114,7 +112,7 @@ test('MapFindFormShared', async ({ page }) => {
   await page.getByRole('button', { name: 'Gruppe' }).click();
   await page.getByRole('button', { name: 'Pilzgruppe Karlsruhe' }).click();
   await expect(page.getByText('Pilzgruppe Karlsruhe')).toBeVisible();
-  // Das Brett zeigt das Blatt von oben; die Wahl hatte es nach unten gerollt.
+  // The board shows the top of the sheet. The choice scrolled it down.
   await page.locator('.form__body').evaluate((body) => {
     body.scrollTo(0, 0);
   });
@@ -131,10 +129,9 @@ test('MapFindSaving', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Fund melden' })).toBeVisible();
   await setDate(page);
   await addPhoto(page);
-  // Das Datum des Bretts liegt nach der festen Uhr; sie rückt vor, damit
-  // die Prüfung beim Speichern durchgeht.
+  // The date of the board is after the fixed clock. The clock moves on, so the save check passes.
   await page.clock.setFixedTime(new Date(`${FOUND_ON}T12:00:00Z`));
-  // Hält die Antwort an, bis das Bild des beschäftigten Zustands steht.
+  // Holds the answer until the screenshot of the busy state is done.
   await page.route('**/api/finds', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.fallback();
@@ -148,9 +145,9 @@ test('MapFindSaving', async ({ page }) => {
     });
   });
   await page.getByRole('button', { name: 'Speichern' }).click();
-  // Der Auftrag läuft: der Knopf verliert seine Beschriftung an den Spinner.
+  // The request runs: the button shows the spinner instead of its label.
   await expect(page.locator('.btn.primary[aria-busy="true"]')).toBeVisible();
-  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
+  await showDesignMap(page);
   await expectBoard(page, 'MapFindSaving', { idle: false });
   release();
 });
@@ -159,7 +156,7 @@ test('MapMarkerForm', async ({ page }) => {
   guard('MapMarkerForm', 'phone');
   await openForm(page, 'Marker setzen', 'Bestätigen');
   await expect(page.getByRole('heading', { name: 'Marker setzen' })).toBeVisible();
-  // Das Board zeigt die dritte Farbe gewählt.
+  // The board shows the third colour as selected.
   await page.getByRole('radio').nth(2).click();
   await board(page, 'MapMarkerForm');
 });
@@ -168,26 +165,24 @@ test('MapZoneForm', async ({ page }) => {
   guard('MapZoneForm', 'phone');
   await openActions(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  for (let corner = 0; corner < 3; corner += 1) {
-    await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-  }
-  await page.getByRole('button', { name: 'Abschließen' }).click();
+  for (const corner of ZONE_CORNERS.slice(0, 3)) await page.mouse.click(corner[0], corner[1]);
+  await page.getByRole('button', { name: 'Fertig' }).click();
   await expect(page.getByRole('heading', { name: 'Zone speichern' })).toBeVisible();
   await board(page, 'MapZoneForm');
 });
 
-/** Der Haken der App, über den der Test die Karte genau setzt. */
+/** The hook of the app that lets the test set the map exactly. */
 interface MapHandle {
   aimAt(x: number, y: number): [number, number];
   showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
 }
 
-/** Der Ort, der gerade unter einem Punkt des Fensters liegt. */
+/** The location below a point of the window. */
 async function aimAt(page: Page, spot: readonly [number, number]): Promise<[number, number]> {
   return page.evaluate(([x, y]) => (window as unknown as { pilzMap: MapHandle }).pilzMap.aimAt(x, y), spot);
 }
 
-/** Schiebt die Karte, bis der Ort unter dem Punkt des Fensters liegt. */
+/** Pans the map until the location is below the point of the window. */
 async function showAt(
   page: Page,
   place: readonly [number, number],
@@ -203,18 +198,18 @@ async function showAt(
   await page.waitForTimeout(150);
 }
 
-/** Der Maßstab des Bretts `ZoneDraw`: sein Ring misst darauf 42 Hektar. */
+/** The scale of the board `ZoneDraw`: its ring has an area of 42 ha. */
 const ZONE_ZOOM = 11.6635;
 
-/** Die vier Ecken des Bretts `ZoneDraw`, in Punkten des Fensters. */
+/** The four corners of the board `ZoneDraw`, in px of the window. */
 const ZONE_CORNERS: readonly (readonly [number, number])[] = [
-  [120, 363],
-  [250, 313],
-  [300, 403],
-  [195, 321],
+  [250, 343],
+  [300, 515],
+  [195, 572],
+  [120, 438],
 ];
 
-/** Die Karte des Bretts trägt keine eigenen Objekte und keinen Standort. */
+/** The map of the board has no own objects and no position. */
 async function openEmptyMap(page: Page): Promise<void> {
   await page.context().grantPermissions(['geolocation']);
   await page.context().setGeolocation(PLACE);
@@ -234,7 +229,7 @@ async function openEmptyMap(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Zone zeichnen' })).toBeVisible();
 }
 
-/** Die Mitte des Fadenkreuzes im Fenster. */
+/** The centre of the crosshair in the window. */
 async function crosshairAt(page: Page): Promise<[number, number]> {
   const cross = await page.locator('app-crosshair').boundingBox();
   return [(cross?.x ?? 0) + (cross?.width ?? 0) / 2, (cross?.y ?? 0) + (cross?.height ?? 0) / 2];
@@ -245,8 +240,7 @@ test('FindLocation', async ({ page }) => {
   await openActions(page);
   await page.getByRole('button', { name: 'Fund melden' }).click();
   await expect(page.getByRole('group', { name: 'Fundort festlegen' })).toBeVisible();
-  // Die Leiste ändert das Polster der Karte; der Ort des Bretts gehört danach
-  // wieder unter das Fadenkreuz.
+  // The bar changes the padding of the map. Then the location of the board goes below the crosshair again.
   await page.waitForTimeout(600);
   await showAt(page, [PLACE.longitude, PLACE.latitude], await crosshairAt(page), ZONE_ZOOM);
   await expect(page.getByText('48,5203 · 9,0511')).toBeVisible();
@@ -257,66 +251,43 @@ test('ZoneDraw', async ({ page }) => {
   guard('ZoneDraw', 'phone');
   await openEmptyMap(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  // Die Leiste ändert das Polster der Karte; sie rückt danach noch nach.
+  // The bar changes the padding of the map. The map moves after it.
   await page.waitForTimeout(600);
-  const middle = await crosshairAt(page);
-  // Erst die Orte merken, die im Bild des Bretts unter den Ecken liegen. Dann
-  // jeden davon unter das Fadenkreuz holen und die Ecke setzen.
-  await showAt(page, await aimAt(page, middle), middle, ZONE_ZOOM);
-  const places: [number, number][] = [];
-  for (const spot of ZONE_CORNERS) places.push(await aimAt(page, spot));
-  for (const place of places) {
-    await showAt(page, place, middle);
-    await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-  }
-  // Zum Schluss steht die Karte wieder so, wie das Brett sie zeigt.
-  await showAt(page, places[0], ZONE_CORNERS[0]);
+  await showAt(page, await aimAt(page, ZONE_CORNERS[0]), ZONE_CORNERS[0], ZONE_ZOOM);
+  for (const corner of ZONE_CORNERS) await page.mouse.click(corner[0], corner[1]);
   await boardUnder(page, 'ZoneDraw');
 });
 
-/** Der Maßstab des Rechner-Bretts: sein Ring misst ebenfalls 42 Hektar. */
+/** The scale of the desktop board: its ring also has an area of 42 ha. */
 const ZONE_ZOOM_WIDE = 16.14;
 
-/** Der linke Rand der Kartenfläche am Rechner: Schiene plus Spalte. */
-const MAP_LEFT = 488;
-
-/** Die Ecken und der Zeiger des Bretts `MapDesktopZoneDraw`, im Fenster. */
+/** The corners and the pointer of the board `MapDesktopZoneDraw`, in px of the window. */
 const WIDE_CORNERS: readonly (readonly [number, number])[] = [
-  [MAP_LEFT + 450, 550],
-  [MAP_LEFT + 450, 400],
-  [MAP_LEFT + 650, 380],
-  [MAP_LEFT + 680, 560],
+  [947, 406],
+  [1117, 602],
+  [760, 667],
+  [505, 515],
 ];
-const WIDE_POINTER: readonly [number, number] = [MAP_LEFT + 560, 650];
+const WIDE_POINTER: readonly [number, number] = [505, 515];
 
-/** Der gesetzte Ort der Bretter `MapDesktopFindLocation` und `MapDesktopMarkerLocation`. */
-const WIDE_MARK: readonly [number, number] = [MAP_LEFT + 488, 428];
-
-/** Öffnet einen Schritt am Rechner. */
+/** Opens a step on the desktop. */
 async function openStep(page: Page, action: string): Promise<void> {
   await openEmptyMap(page);
   await page.getByRole('button', { name: action }).click();
 }
 
-/** Setzt den Ort des Bretts unter den Zeiger und klickt ihn. */
-async function markAt(page: Page): Promise<void> {
-  await showAt(page, [PLACE.longitude, PLACE.latitude], WIDE_MARK, ZONE_ZOOM);
-  await page.mouse.click(WIDE_MARK[0], WIDE_MARK[1]);
-  await expect(page.getByText('48,5203 · 9,0511')).toBeVisible();
-}
-
 test('MapDesktopFindLocation', async ({ page }) => {
   guard('MapDesktopFindLocation', 'wide');
   await openStep(page, 'Fund melden');
-  await markAt(page);
-  await boardUnderWide(page, 'MapDesktopFindLocation');
+  await expect(page.locator('app-crosshair')).toBeVisible();
+  await board(page, 'MapDesktopFindLocation');
 });
 
 test('MapDesktopMarkerLocation', async ({ page }) => {
   guard('MapDesktopMarkerLocation', 'wide');
   await openStep(page, 'Marker setzen');
-  await markAt(page);
-  await boardUnderWide(page, 'MapDesktopMarkerLocation');
+  await expect(page.locator('app-crosshair')).toBeVisible();
+  await board(page, 'MapDesktopMarkerLocation');
 });
 
 test('MapDesktopZoneDraw', async ({ page }) => {
@@ -326,13 +297,13 @@ test('MapDesktopZoneDraw', async ({ page }) => {
   for (const corner of WIDE_CORNERS) await page.mouse.click(corner[0], corner[1]);
   await page.mouse.move(WIDE_POINTER[0], WIDE_POINTER[1]);
   await expect(page.getByText(/4 Eckpunkte/)).toBeVisible();
-  await boardUnderWide(page, 'MapDesktopZoneDraw');
+  await boardUnder(page, 'MapDesktopZoneDraw');
 });
 
 test('MapDesktopAdd', async ({ page }) => {
   guard('MapDesktopAdd', 'wide');
   await openActions(page);
-  await board(page, 'MapDesktopAdd', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopAdd');
 });
 
 test('MapDesktopFindForm', async ({ page }) => {
@@ -340,5 +311,5 @@ test('MapDesktopFindForm', async ({ page }) => {
   await openForm(page, 'Fund melden', 'Bestätigen');
   await setDate(page);
   await addPhoto(page);
-  await board(page, 'MapDesktopFindForm', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopFindForm');
 });

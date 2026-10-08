@@ -8,10 +8,10 @@ import {
   type TranslationKey,
 } from './translations';
 
-/** Die eingebauten Texte je Sprache. Eine fehlende Sprache wird nachgeladen. */
+/** The built-in texts for each language. The service loads a missing language on demand. */
 export type FallbackTexts = Readonly<Partial<Record<Locale, Readonly<Record<string, string>>>>>;
 
-/** Die eingebauten Texte. Ein Test setzt sie leer und sieht nur Schlüssel. */
+/** The built-in texts. A test can make them empty to see only keys. */
 export const FALLBACK_TEXTS = new InjectionToken<FallbackTexts>('FALLBACK_TEXTS', {
   providedIn: 'root',
   factory: (): FallbackTexts => ({ de: CATALOG_DE }),
@@ -19,10 +19,10 @@ export const FALLBACK_TEXTS = new InjectionToken<FallbackTexts>('FALLBACK_TEXTS'
 
 const STORAGE_KEY = 'pilzkarte.sprache';
 
-/** Fester Anfang der Meldung, damit ein Test sie erkennt. */
+/** Fixed start of the message, so that a test can find it. */
 export const MISSING_KEY_PREFIX = 'i18n: fehlender Schlüssel';
 
-/** Diese Präfixe kommen vom Server oder aus einer Aufzählung, eine Lücke darin ist kein Fehler. */
+/** Keys with these prefixes come from the server or an enum. A missing key here is not an error. */
 const DYNAMIC_KEY_PREFIXES: readonly string[] = [
   'account.mapApp.',
   'enum.',
@@ -41,45 +41,31 @@ function isDynamicKey(key: string): boolean {
   return DYNAMIC_KEY_PREFIXES.some((prefix) => key.startsWith(prefix));
 }
 
-/** Deutsch, Englisch oder das, was der Browser sagt. */
+/** German, English or the browser language. */
 export type LanguageChoice = Locale | 'system';
 
-/**
- * Die Texte aus der Datenbank, je Sprache ein Wörterbuch. Sie tragen dieselben
- * Schlüssel wie der eingebaute Katalog und stechen ihn aus.
- */
+/** The database texts, one dictionary for each language. They override the built-in catalogue. */
 export type LoadedTexts = Readonly<Partial<Record<Locale, Readonly<Record<string, string>>>>>;
 
 export const LANGUAGE_CHOICES: readonly LanguageChoice[] = ['de', 'en', 'system'];
 
-/**
- * Die Sprache der Oberfläche als Signal.
- *
- * Gewählt wird zwischen Deutsch, Englisch und dem Browser. Ohne Wahl führt der
- * Browser, wie vorher auch. Wer die Wahl trifft, behält sie: ein englischer
- * Browser macht aus der App sonst eine halb übersetzte Seite, weil die Texte
- * des Artenkatalogs deutsch bleiben. Fehlt ein Schlüssel in der aktiven
- * Sprache, greift Deutsch.
- *
- * Die Texte selbst stehen in der Datenbank. `TextCatalogService` holt sie und
- * reicht sie mit {@link useTexts} herein; der eingebaute Katalog bleibt der
- * Rückfall für den ersten Start und für den Betrieb ohne Netz. Der Dienst holt
- * sie nicht selbst: der Weg dorthin führt über den `ApiClient`, und der
- * braucht wiederum diesen Dienst für seine Fehlermeldungen.
- */
+// The UI language as a signal. A key that is missing in the active language falls back to German.
+// The built-in catalogue is the fallback for the first start and for offline use.
 @Injectable({ providedIn: 'root' })
 export class I18nService {
   private readonly _fallback = signal<FallbackTexts>(inject(FALLBACK_TEXTS));
+  // A saved choice wins over the browser. Otherwise, an English browser gives a half-translated app,
+  // because the species catalogue stays German.
   private readonly _choice = signal<LanguageChoice>(this.read() ?? 'system');
   private readonly _locale = signal<Locale>(DEFAULT_LOCALE);
   private readonly _texts = signal<LoadedTexts>({});
 
   readonly choice = this._choice.asReadonly();
-  /** Die Sprache, deren Rückfall schon da ist. Sie wechselt nach dem Laden. */
+  /** The language with a loaded fallback. It changes after the load. */
   readonly locale = this._locale.asReadonly();
   readonly locales = SUPPORTED_LOCALES;
 
-  /** Das aktive Wörterbuch, damit Vorlagen auf den Wechsel reagieren. */
+  /** The active dictionary, so that templates update on a language change. */
   readonly dictionary = computed<Record<string, string>>(() => ({
     ...this._fallback()[this.locale()],
     ...this._texts()[this.locale()],
@@ -89,7 +75,7 @@ export class I18nService {
     void this.apply(this._choice());
   }
 
-  /** Nimmt die Tabelle einer Seite mit eigenen Schlüsseln dazu. */
+  /** Adds the table of a page with its own keys. */
   addFallback(more: Record<Locale, Record<string, string>>): this {
     this._fallback.update((known) =>
       Object.fromEntries(SUPPORTED_LOCALES.map((locale) => [locale, { ...known[locale], ...more[locale] }])),
@@ -97,7 +83,8 @@ export class I18nService {
     return this;
   }
 
-  /** Übernimmt die Texte aus der Datenbank. Sie wirken sofort. */
+  // Uses the database texts from `TextCatalogService`. This service cannot load them,
+  // because the ApiClient needs this service.
   useTexts(texts: LoadedTexts): void {
     this._texts.set(texts);
   }
@@ -109,7 +96,7 @@ export class I18nService {
     void this.apply(choice);
   }
 
-  /** Die Sprache wechselt erst, wenn ihr Rückfall da ist. */
+  /** Changes the language only after its fallback is loaded. */
   private async apply(choice: LanguageChoice): Promise<void> {
     const wanted = choice === 'system' ? this.browserLanguage() : choice;
     if (this._fallback()[wanted] === undefined) {
@@ -124,7 +111,7 @@ export class I18nService {
     this.setChoice(locale);
   }
 
-  /** Übersetzt einen Schlüssel. `{name}` kommt aus `params`, sonst steht er da. */
+  /** Translates a key. `{name}` comes from `params`. An unknown placeholder stays as it is. */
   translate(key: TranslationKey, params?: Record<string, string | number>): string {
     const known = this.lookup(key);
     if (known === null && !isDynamicKey(key)) console.error(`${MISSING_KEY_PREFIX} „${key}“`);
@@ -132,7 +119,7 @@ export class I18nService {
     return params ? this.fill(text, params) : text;
   }
 
-  /** Übersetzt einen freien Namen, der auch kein Schlüssel sein darf: keine Meldung, wenn er fehlt. */
+  /** Translates a free name that is possibly not a key. A missing key gives no message. */
   translateOptional(name: string): string {
     return this.lookup(name) ?? name;
   }
@@ -148,7 +135,7 @@ export class I18nService {
     );
   }
 
-  /** Das Dokument trägt die Sprache, für Vorleser und für die Silbentrennung. */
+  /** Sets the document language for screen readers and hyphenation. */
   private flip(): void {
     document.documentElement.lang = this.locale();
   }
@@ -171,7 +158,7 @@ export class I18nService {
       const value = localStorage.getItem(STORAGE_KEY);
       return value !== null && this.isChoice(value) ? value : null;
     } catch {
-      // Der Browser kann den Speicher sperren. Dann führt die Browsersprache.
+      // The browser can block storage. Then the browser language applies.
       return null;
     }
   }
@@ -180,7 +167,7 @@ export class I18nService {
     try {
       localStorage.setItem(STORAGE_KEY, choice);
     } catch {
-      // Ohne Speicher bleibt die Wahl nur für diese Sitzung.
+      // Without storage, the choice applies only to this session.
     }
   }
 }

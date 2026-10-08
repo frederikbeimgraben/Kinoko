@@ -1,13 +1,13 @@
-// Die Tabelle trägt das Raster, nicht die Zeile: eine eigene Spaltenbreite
-// weicht sonst vom Nachbarn ab. Die Zeilen sind darum `display: contents`.
+// The table holds the grid, not the row. A row grid gives a column width
+// that differs from the next row. Thus the rows use `display: contents`.
 :host {
   --key-value-table-label: 76px;
   --key-value-table-gutter: var(--space-4);
   --key-value-table-gap: var(--space-3);
 
   display: grid;
-  // Jede Spalte des Vergleichs ist gleich breit. Ohne die Zahl fiele die
-  // dritte Zelle in eine neue Zeile, statt neben die zweite zu treten.
+  // All comparison columns have the same width. Without the count, the third
+  // cell goes into a new line and not next to the second cell.
   grid-template-columns:
     calc(var(--key-value-table-gutter) + var(--key-value-table-label) + var(--key-value-table-gap))
     repeat(var(--key-value-table-columns, 1), minmax(0, 1fr));

@@ -1,0 +1,104 @@
+<app-overlay-host [open]="kind() !== null" [modal]="true" (closed)="closed.emit()">
+  @if (kind() !== null) {
+    <app-sheet [label]="title()" [title]="title()" [modal]="true" (closed)="closed.emit()">
+      <div class="upload">
+        @if (running() || phase() === 'done' || phase() === 'failed') {
+          @if (fileLine(); as file) {
+            <app-row-group>
+              <app-list-row icon="upload" [title]="file.name" [plain]="file.size" />
+            </app-row-group>
+          }
+          @if (phase() !== 'done') {
+            <div class="upload__progress">
+              <app-progress [value]="lines().percent" />
+              <span class="upload__line">{{ lines().progress }}</span>
+              <span class="upload__line upload__line--dim">{{ lines().hash }}</span>
+            </div>
+          }
+          @if (lines().note; as note) {
+            <p class="upload__note" aria-live="polite">{{ note }}</p>
+          }
+          @if (versionState(); as state) {
+            <app-row-group>
+              <app-list-row
+                [title]="'admin.upload.toVersion' | t"
+                [badge]="state.text"
+                [badgeKind]="state.tone"
+                [clickable]="true"
+                [chevron]="true"
+                (chosen)="toVersion()"
+              />
+            </app-row-group>
+          }
+          @if (error(); as error) {
+            <p class="upload__error" role="alert">{{ error }}</p>
+          }
+        } @else {
+          <label class="upload__drop" appRipple (dragover)="allowDrop($event)" (drop)="drop($event)">
+            <app-svg-icon name="upload" [size]="32" [strokeWidth]="1.6" />
+            <span class="upload__drop-text">{{ 'admin.upload.drop' | t }}</span>
+            <span class="upload__line upload__line--dim">{{ acceptText() }}</span>
+            <input class="upload__input" type="file" [attr.accept]="acceptAttr()" (change)="pick($event)" />
+          </label>
+          @if (resumeHint(); as hint) {
+            <p class="upload__note">{{ hint }}</p>
+          }
+          @if (blocking(); as open) {
+            <p class="upload__note">{{ open.note }}</p>
+          }
+          @if (fileLine(); as file) {
+            <app-row-group>
+              <app-list-row icon="upload" [title]="file.name" [plain]="file.size" />
+              <app-list-row [title]="'admin.upload.activate' | t">
+                <app-switch
+                  trail
+                  [checked]="activate()"
+                  [label]="'admin.upload.activate' | t"
+                  (checkedChange)="activate.set($event)"
+                />
+              </app-list-row>
+            </app-row-group>
+          }
+          @if (problem(); as problem) {
+            <p class="upload__error" role="alert">{{ problem }}</p>
+          }
+        }
+      </div>
+
+      @if (running() && phase() !== 'completing') {
+        <app-action-bar
+          foot
+          [primary]="(phase() === 'paused' ? 'admin.upload.resume' : 'admin.upload.pause') | t"
+          [secondary]="'admin.upload.cancel' | t"
+          [secondaryDanger]="true"
+          (primaryClick)="toggle()"
+          (secondaryClick)="cancel()"
+        />
+      } @else if (phase() === 'failed') {
+        <app-action-bar
+          foot
+          [primary]="'admin.upload.again' | t"
+          [secondary]="'admin.upload.cancel' | t"
+          (primaryClick)="start()"
+          (secondaryClick)="cancel()"
+        />
+      } @else if (phase() !== 'done' && picked() !== null && problem() === '') {
+        <app-action-bar
+          foot
+          [primary]="(resumes() ? 'admin.upload.resume' : 'admin.upload.start') | t"
+          [secondary]="blocking() === null ? undefined : ('admin.upload.discard' | t)"
+          [secondaryDanger]="true"
+          (primaryClick)="start()"
+          (secondaryClick)="discard()"
+        />
+      } @else if (!running() && phase() !== 'done' && blocking() !== null) {
+        <app-action-bar
+          foot
+          [primary]="'admin.upload.discard' | t"
+          [danger]="true"
+          (primaryClick)="discard()"
+        />
+      }
+    </app-sheet>
+  }
+</app-overlay-host>

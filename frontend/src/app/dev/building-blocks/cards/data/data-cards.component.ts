@@ -19,7 +19,7 @@ import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../../../core/i18n/translations';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Ein Gaußhügel, wie ihn `Histogram.dc.html` und `SeasonCurve.dc.html` malen. */
+/** A Gaussian bump, as `Histogram.dc.html` and `SeasonCurve.dc.html` draw it. */
 function gauss(i: number, peak: number, spread: number): number {
   return Math.exp(-((i - peak) ** 2) / spread);
 }

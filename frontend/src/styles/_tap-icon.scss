@@ -1,4 +1,4 @@
-/** Ein randloser Tippknopf für ein einzelnes Piktogramm. */
+/** A borderless tap button for a single icon. */
 @mixin frameless($size: var(--size-tap)) {
   display: flex;
   flex: 0 0 auto;

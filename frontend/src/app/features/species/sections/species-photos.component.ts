@@ -4,10 +4,10 @@ import { photoPath, type Photo } from '../../../core/api/models';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LevelPillComponent } from '../../../ui/level-pill/level-pill.component';
 import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
-import { ImagesState } from '../../images/images.state';
-import { SpeciesState } from '../species.state';
+import { ImagesStore } from '../../images/images.store';
+import { SpeciesStore } from '../species.store';
 
-/** Eine Kachel im Raster der Bilder. */
+/** One tile in the grid of photos. */
 interface Tile {
   id: string;
   path: string;
@@ -15,7 +15,7 @@ interface Tile {
   lead: boolean;
 }
 
-/** Die freigegebenen Bilder einer Art als Raster. */
+/** The approved photos of a species as a grid. */
 @Component({
   selector: 'app-species-photos',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,8 +24,8 @@ interface Tile {
   styleUrl: './species-photos.component.scss',
 })
 export class SpeciesPhotosComponent {
-  private readonly images = inject(ImagesState);
-  private readonly species = inject(SpeciesState);
+  private readonly images = inject(ImagesStore);
+  private readonly species = inject(SpeciesStore);
   private readonly router = inject(Router);
 
   readonly slug = input.required<string>();

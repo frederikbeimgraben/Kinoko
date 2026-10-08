@@ -1,5 +1,5 @@
-// Utility-Klassen (`p-5`, `text-lg`, `gap-2` …) im Stil von Tailwind, ohne
-// Tailwind in der App. Werte aus dem Vendor-Kit, das diese Klassen nutzte.
+// Utility classes (`p-5`, `text-lg`, `gap-2` …) in Tailwind style, without Tailwind in the app.
+// The values come from the vendor kit that used these classes.
 .p-0 {
   padding: 0;
 }
@@ -123,14 +123,14 @@
   margin-inline-start: 2px;
 }
 
-// Leerzustand einer Liste oder Tabelle im Kit.
+// Empty state of a list or table in the kit.
 .empty-state {
   padding: var(--space-5);
   color: var(--color-text-muted);
   text-align: center;
 }
-// Das Kit legt den Inhalt in `.btn__label`, ohne ihn auszurichten.
-// Ein Piktogramm daneben stünde sonst auf der Grundlinie und zu hoch.
+// The kit puts the content in `.btn__label` and does not align it.
+// Without this rule, an icon next to it sits on the baseline and too high.
 .btn__label {
   display: inline-flex;
   gap: var(--space-2);
@@ -143,41 +143,41 @@
   flex: 0 0 auto;
 }
 
-// Das Kästchen des Kits ist eine Inline-Fläche. Eine Zeile, die eine Zahl an
-// den rechten Rand stellt, braucht die volle Breite.
+// The kit checkbox is an inline box.
+// A row with a number at the right edge needs the full width.
 app-choice-row label,
 app-choice-row .cbx__label {
   display: flex;
   inline-size: 100%;
 }
 
-// Die Schalterzeile trägt zwölf Punkte zwischen Haken und Wort, wie im Board.
-// Die Regel steht global: der Haken kommt aus dem Kit.
+// The switch row has twelve points between check mark and word, as in the board.
+// The rule is global because the check mark comes from the kit.
 app-choice-row app-checkbox label {
   gap: var(--space-3);
 }
 
-// Die rote Aktion im Fuß misst vierundvierzig Punkte. Der Knopf des Kits
-// bringt seine Höhe selbst mit; eine Regel der Seite erreicht ihn.
+// The red action in the footer is 44 points high. The kit button sets its own height.
+// A global rule can reach it.
 app-action-bar .footer__slim .btn {
   block-size: var(--size-tap);
 }
 
-// Die Knöpfe im Fuß des Modals messen zwanzig Punkte Polster.
+// The buttons in the modal footer have 20 points of padding.
 app-action-bar .footer--inline .btn {
   padding-inline: 20px;
   font-size: var(--fs-control);
 }
 
-// Der laufende Auftrag im Fuß steht gedimmt, wie im Board. Das Kit entfärbt
-// zusätzlich; über einer grünen Fläche liest sich das wie ein Fehler.
+// The running task in the footer is dimmed, as in the board. The kit also removes the color.
+// On a green surface, that looks like an error.
 app-action-bar .btn:disabled {
   filter: none;
   opacity: 0.55;
 }
 
-// Die gesperrte Bestätigung steht als versenkte Fläche, wie im Board. Das
-// Kit dimmt und entfärbt stattdessen die rote Fläche.
+// The disabled confirmation shows as a sunken surface, as in the board.
+// The kit dims the red surface and removes its color instead.
 app-confirm-dialog .confirm__actions .btn:disabled {
   color: var(--color-border-strong);
   background: var(--color-surface-sunken);

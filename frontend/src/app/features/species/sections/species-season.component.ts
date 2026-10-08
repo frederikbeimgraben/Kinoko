@@ -10,7 +10,7 @@ import {
 } from '../../../ui/season-curve/season-curve.component';
 import { seasonData } from './season';
 
-/** Die Wochen, in denen ein Monatsname unter der Kurve steht. `at`: Monat 1–12. */
+/** The weeks that show a month name below the curve. `at` is the month, 1 to 12. */
 const MARKS: readonly { at: number; week: number }[] = [
   { at: 1, week: 1 },
   { at: 4, week: 14 },
@@ -21,7 +21,7 @@ const MARKS: readonly { at: number; week: number }[] = [
 
 const PERCENT = 100;
 
-/** Die Saison einer Art aus dem Manifest der Karte. Ohne Karte bleibt sie weg. */
+/** The season of a species from the map manifest. Without a manifest, the section is hidden. */
 @Component({
   selector: 'app-species-season',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,6 +1,6 @@
 import type { SpeciesEntry, SpeciesWrite } from '../../core/api/models';
 
-/** Formt die Antwort auf den Körper. Felder nur der Antwort fallen weg. */
+/** Makes the write body from the response. Fields that only the response has are removed. */
 export function toWrite(species: SpeciesEntry): SpeciesWrite {
   return {
     name: species.name,

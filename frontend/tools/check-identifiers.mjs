@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/** Sucht deutsche Bezeichner in TypeScript. Deutsch steht nur in Texten für Personen. */
+/** Finds German identifiers in TypeScript. Use German only in text for people. */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 
 const WURZEL = new URL('../src/app', import.meta.url).pathname;
 
-/** Stämme, die in einem Bezeichner nichts zu suchen haben. */
+/** Word stems that must not occur in an identifier. */
 const STAEMME = [
   'aender',
   'anmeld',
@@ -152,14 +152,11 @@ const STAEMME = [
   'zelle',
 ];
 
-/** Englische Woerter, die zufaellig mit einem deutschen Stamm beginnen. */
+/** English words that start with a German stem by chance. */
 const ENGLISCH = new Set(['list', 'listener', 'listeners', 'profile', 'random', 'randomuuid']);
 
-/**
- * Was der Vertrag zum Backend, der Speicher im Gerät, die Aufzählungen, die
- * Schlüssel in der Adresse und die Platzhalter der Übersetzungen tragen. Diese
- * Namen wechseln erst mit R3, auf beiden Seiten zugleich.
- */
+/** Names in the backend contract, device storage, enums, URL keys and translation placeholders.
+ * Change these names only in R3, on both sides at the same time. */
 const VERTRAG = new Set([
   'deckkraft',
   'bedingung',
@@ -277,14 +274,14 @@ const VERTRAG = new Set([
   'stielmerkmale',
   'ueberstehend',
   'entwicklung',
-  // Der Merkmalskatalog: Gruppe, Wert und Luecke stehen so auf dem Draht.
+  // The feature catalog: group, value and gap use these names on the wire.
   'werte',
   'gruppen',
   'teile',
   'beschrieben',
   'luecken',
   'unbeurteilbar',
-  // Die Einordnung: Rang und Kette stehen so auf dem Draht.
+  // The classification: rank and chain use these names on the wire.
   'pfad',
   'klasse',
   'geschwister',
@@ -295,7 +292,7 @@ const VERTRAG = new Set([
 
 const STELLEN = [];
 
-/** Zerlegt `zeigeGeteilteFunde` und `karte__flaeche` in einzelne Wörter. */
+/** Splits names like `zeigeGeteilteFunde` and `karte__flaeche` into single words. */
 function woerter(bezeichner) {
   return bezeichner
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
@@ -318,10 +315,10 @@ function pruefeCode(code, datei, zeile) {
   }
 }
 
-/** Ein `/` beginnt einen regulären Ausdruck nur dort, wo kein Wert steht. */
+/** A `/` starts a regular expression only where no value comes before it. */
 const VOR_REGEX = /(?:^|[(,=:[!&|?{};+\-*%~^<>]|\b(?:return|typeof|case|in|of|do|else|yield|await))$/;
 
-/** Sucht das Ende eines regulären Ausdrucks samt Schaltern. */
+/** Finds the end of a regular expression, with its flags. */
 function regexEnde(quelle, i) {
   let j = i + 1;
   let klasse = false;
@@ -342,7 +339,7 @@ function regexEnde(quelle, i) {
   return j;
 }
 
-/** Zeichenketten und Kommentare tragen Text für Menschen und bleiben deutsch. */
+/** Strings and comments contain text for people and can stay German, so the check skips them. */
 function ohneTextTs(quelle) {
   let raus = '';
   for (let i = 0; i < quelle.length;) {
@@ -368,7 +365,7 @@ function ohneTextTs(quelle) {
       i = bis;
       continue;
     }
-    // Ein regulärer Ausdruck sucht nach Text auf dem Schirm.
+    // A regular expression finds text on the screen.
     if (z === '/' && VOR_REGEX.test(raus.replace(/\s+$/, ''))) {
       const bis = regexEnde(quelle, i);
       if (bis !== null) {
@@ -383,14 +380,14 @@ function ohneTextTs(quelle) {
   return raus;
 }
 
-/** In einer Vorlage bleiben einfache Anführungszeichen und Kommentare außen vor. */
+/** In a template, the check skips single-quoted values and comments. */
 function ohneTextHtml(quelle) {
   return (
     quelle
       .replace(/<!--[\s\S]*?-->/g, (t) => t.replace(/[^\n]/g, ' '))
       .replace(/'(?:[^'\\\n]|\\.)*'/g, (t) => ' '.repeat(t.length))
-      // Ein einfacher Attributwert traegt einen Wert, keinen Bezeichner:
-      // `icon="suche"` nennt ein Piktogramm.
+      // A plain attribute value contains a value, not an identifier.
+      // For example, `icon="suche"` names an icon.
       .replace(/([\w.\-]+)="([^"]*)"/g, (ganz, name, wert) =>
         name === 'class' ? ganz : name + '="' + ' '.repeat(wert.length) + '"',
       )
@@ -411,7 +408,7 @@ function gehe(ordner) {
     const code = endung === '.html' ? ohneTextHtml(roh) : ohneTextTs(roh);
     const kurz = pfad.slice(WURZEL.length + 1);
     code.split('\n').forEach((zeile, i) => pruefeCode(zeile, kurz, i + 1));
-    // Der Dateiname selbst ist auch ein Bezeichner.
+    // The file name is also an identifier.
     pruefeCode(name.replace(/[.-]/g, ' '), kurz, 0);
   }
 }

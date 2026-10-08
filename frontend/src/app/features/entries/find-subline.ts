@@ -1,6 +1,6 @@
 import type { I18nService } from '../../core/i18n/i18n.service';
 
-/** Die Unterzeile eines Fundes: Datum, Anzahl, Melder. Ohne auflösbaren Melder bleibt der Name weg. */
+/** The subline of a find: date, count, reporter. If the reporter is unknown, the name is not shown. */
 export function findSubline(
   i18n: I18nService,
   date: string,

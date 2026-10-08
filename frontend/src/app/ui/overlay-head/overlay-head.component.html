@@ -1,0 +1,32 @@
+@if (back()) {
+  <button
+    class="overlay-head__button overlay-head__back"
+    type="button"
+    appRipple
+    [attr.aria-label]="'common.back' | t"
+    (click)="backClick.emit()"
+  >
+    <app-svg-icon name="back" [size]="24" [strokeWidth]="1.8" />
+  </button>
+}
+<ng-content select="[titleLead]" />
+<div class="overlay-head__text">
+  @if (title() !== '') {
+    <h2 class="overlay-head__title">{{ title() }}</h2>
+  }
+  @if (note() !== '') {
+    <span class="overlay-head__note">{{ note() }}</span>
+  }
+</div>
+<ng-content select="[headAction]" />
+@if (close()) {
+  <button
+    class="overlay-head__button overlay-head__close"
+    type="button"
+    appRipple
+    [attr.aria-label]="'common.close' | t"
+    (click)="closeClick.emit()"
+  >
+    <app-svg-icon name="close" [size]="24" [strokeWidth]="1.8" />
+  </button>
+}

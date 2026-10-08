@@ -3,23 +3,20 @@
   block-size: 100%;
 }
 
-// Die Spalte ist ausdrücklich `minmax(0, 1fr)` und nicht `auto`. Eine
-// Auto-Spur wächst bis zur größten Wunschbreite ihrer Kinder: die Chip-Reihe
-// der Artenliste zog die ganze Hülle auf 419 px in einem 390-px-Fenster. Der
-// Inhalt lief rechts aus dem Bild, und die Leiste unten sprang beim
-// Reiterwechsel, weil jeder Reiter eine andere Wunschbreite hat.
+// The column is `minmax(0, 1fr)` and not `auto`: an auto track grows to the widest child.
+// The species chip row made the shell 419 px wide in a 390 px window.
 .shell {
   position: relative;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto;
   grid-template-columns: minmax(0, 1fr);
   block-size: 100%;
   overflow: hidden;
   background: var(--bg);
 }
 
-// Nur der Reiterinhalt nimmt an der View Transition teil. Leiste, Kopfzeile
-// und Karte bekommen eigene Namen, damit sie beim Wechsel stehen bleiben.
+// Only the tab content takes part in the view transition. The nav, the banner and
+// the map keep their own names, so they stay still when the tab changes.
 .shell__content {
   position: relative;
   grid-row: 1;
@@ -29,59 +26,75 @@
 }
 
 .shell__nav {
-  grid-row: 2;
+  grid-row: 3;
   min-inline-size: 0;
   view-transition-name: shell-nav;
 }
 
+// Per `MapControls.dc.html`: the avatar is 16 px from the edges and casts a float shadow.
 .shell__avatar {
   position: absolute;
-  inset-block-start: calc(var(--top-bar-height, 0px) + 12px);
-  inset-inline-start: 12px;
+  inset-block-start: calc(var(--top-bar-height, 0px) + 16px);
+  inset-inline-start: 16px;
   z-index: 2;
+  border-radius: 20px;
+  box-shadow: var(--shadow-float);
 }
 
+// Kit `.stage > .banner`: the banner is the last item of the stage, above the nav.
+// The banner draws its own margin, radius and float geometry.
 .shell__banner {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
-  z-index: 6;
-  margin-block-start: env(safe-area-inset-top, 0px);
+  grid-row: 2;
   view-transition-name: shell-banner;
 }
 
-// Am Rechner liegt die Karte über der ganzen Fläche und schiebt ihre eigene
-// Zeichenfläche neben die Spalte. Darüber liegen Navigation und Reiterinhalt
-// in der linken Spalte.
-.shell--column {
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
-  background: var(--desk);
+// Over the map the floating banner is above the map sheets and clear of the notch.
+// Without a grid area, the shell and not the banner row is the frame of the floating banner.
+.shell .shell__banner--float {
+  grid-area: auto;
+  inset-block-start: calc(12px + var(--safe-top));
+  z-index: 6;
 }
 
-// Ohne eigene Ebene hier fängt sich ein deckendes Blatt der Karte in dieser Zelle.
 .shell__map {
   position: relative;
   grid-row: 1;
   min-block-size: 0;
 }
 
-// Am Rechner liegt die Karte hinter der Spalte und spannt über die ganze
-// Breite der Hülle. Eine eigene Ebene ordnet sie unter Leiste und Reiter ein.
-.shell--column .shell__map {
-  z-index: 0;
-  grid-area: 1 / 1 / 2 / 4;
-}
-
-// Ein offenes Blatt der Karte deckt den Reiter zu, statt hinter ihm zu
-// verschwinden.
+// An open map sheet covers the tab and does not go behind it.
 .shell__map--lead {
   z-index: 2;
 }
 
-// `resize()` in `MapComponent` holt die Größe nach, sobald sie wieder zeigt.
+// `resize()` in `MapComponent` gets the size again when the map shows.
 .shell__map--hidden {
   display: none;
+}
+
+// Kit `.desk`: the rail, a pane of the section width, and the map pane in the rest.
+// The shell sets `--size-column` on the root element for each section.
+.shell--column {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
+  background: var(--desk);
+
+  // Kit `.pane.map.on-mid`: next to a middle pane the map pane is on `--surface-mid`.
+  &::before {
+    grid-area: 1 / 3 / 2 / 4;
+    background: var(--surface-mid);
+    content: '';
+  }
+
+  &[data-pane='panel']::before {
+    content: none;
+  }
+}
+
+// The map is behind the column and fills the full shell. It puts its canvas next to the column.
+.shell--column .shell__map {
+  z-index: 0;
+  grid-area: 1 / 1 / 2 / 4;
 }
 
 .shell--column .shell__nav {
@@ -90,26 +103,27 @@
   block-size: 100%;
 }
 
-// Der Reiter steht in der linken Spalte unter der Navigation und deckt das
-// Blatt der Karte zu, das dort auf dem Reiter Karte liegt.
+// Kit `.pane.middle`: the tab content is on `--surface-mid` and covers the map panel.
 .shell--column .shell__content {
   z-index: 1;
   grid-area: 1 / 2 / 2 / 3;
+  background: var(--surface-mid);
+}
+
+// A section with its own detail pane fills the column and the map area.
+.shell--column .shell__content--full {
+  grid-area: 1 / 2 / 2 / 4;
   background: var(--bg);
 }
 
-// Die Verwaltung bringt ihre eigenen Spalten mit und legt sich über die Karte.
-.shell--column .shell__content--full {
-  grid-area: 1 / 2 / 2 / 4;
+// On the desktop the banner is at the bottom of the column.
+.shell--column .shell__banner {
+  z-index: 3;
+  grid-area: 1 / 2 / 2 / 3;
+  align-self: end;
 }
 
-// Auf dem Reiter Karte liefert die Route nichts: dort steht das Blatt der
-// Karte, das schon in der Hülle hängt.
+// The map route gives no content: the map sheet is in the shell already.
 .shell__content--off {
   display: none;
-}
-
-// Am Rechner steht das Konto über der Karte, rechts der Spalte.
-.shell--column .shell__avatar {
-  inset-inline-start: calc(var(--size-rail) + var(--size-column) + 12px);
 }

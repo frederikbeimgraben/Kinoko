@@ -1,104 +1,61 @@
-<app-page-header [title]="'account.title' | t" [close]="true" (closeClick)="back()" />
+<ng-template #identity>
+  @if (user(); as person) {
+    <app-account-tile [user]="person.name" [mail]="person.email" [server]="server()" (signOut)="signOut()" />
+  } @else if (unknown()) {
+    <app-skeleton kind="block" height="80px" radius="var(--r-item)" />
+  } @else {
+    <app-push-button kind="primary" [wide]="true" (click)="signIn()">{{
+      'account.signInWith' | t
+    }}</app-push-button>
+  }
+</ng-template>
 
-<div class="account" appScrollFade>
-  <section class="account__block">
-    <h2 class="account__section">{{ 'konto.abschnitt.konto' | t }}</h2>
-    @if (user(); as person) {
-      <app-account-tile
-        [user]="person.name"
-        [mail]="person.email"
-        [server]="aussteller()"
-        (signOut)="signOut()"
-      />
-    } @else {
+@if (wide()) {
+  <div class="account account--wide">
+    <section class="account__master">
+      <app-page-header [title]="'account.title' | t" />
+      <div class="pad" appScrollFade>
+        <ng-container [ngTemplateOutlet]="identity" />
+        <app-row-group>
+          @for (row of desktopRows(); track row.key) {
+            <app-list-row
+              [title]="row.label | t"
+              [chevron]="true"
+              [clickable]="true"
+              [selected]="selected() === row.key"
+              (chosen)="open(row.path)"
+            />
+          }
+        </app-row-group>
+      </div>
+    </section>
+    <section class="account__detail account--detail">
+      <router-outlet />
+    </section>
+  </div>
+} @else if (home()) {
+  <app-page-header [title]="'account.title' | t" [close]="true" (closeClick)="close()" />
+  <div class="pad" appScrollFade>
+    <ng-container [ngTemplateOutlet]="identity" />
+    @if (signedIn()) {
+      <app-account-stats />
       <app-row-group>
-        <div class="account__row">
-          <span class="account__stack">
-            <span class="account__name">{{ 'konto.nichtAngemeldet' | t }}</span>
-            <span class="account__sub">{{ 'konto.nichtAngemeldetUnter' | t }}</span>
-          </span>
-          <app-push-button kind="tonal" (click)="signIn()">
-            {{ 'konto.anmelden' | t }}
-          </app-push-button>
-        </div>
+        @for (row of phoneRows(); track row.key) {
+          <app-list-row
+            [title]="row.label | t"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="open(row.path)"
+          />
+        }
       </app-row-group>
     }
-  </section>
-
-  <section class="account__block">
-    <h2 class="account__section">{{ 'konto.abschnitt.darstellung' | t }}</h2>
-    <app-segmented
-      [options]="themes()"
-      [value]="choice()"
-      [label]="'theme.beschriftung' | t"
-      (valueChange)="selectTheme($event)"
-    />
-  </section>
-
-  <section class="account__block">
-    <h2 class="account__section">{{ 'sprache.beschriftung' | t }}</h2>
-    <app-segmented
-      [options]="languages()"
-      [value]="languageChoice()"
-      [label]="'sprache.beschriftung' | t"
-      (valueChange)="selectLanguage($event)"
-    />
-  </section>
-
-  <section class="account__block">
-    <h2 class="account__section">{{ 'account.mapApp' | t }}</h2>
-    <app-segmented
-      [options]="mapApps()"
-      [value]="mapAppChoice()"
-      [label]="'account.mapApp' | t"
-      (valueChange)="selectMapApp($event)"
-    />
-  </section>
-
-  @if (signedIn()) {
-    <section class="account__block">
-      <h2 class="account__section">{{ 'konto.abschnitt.beitraege' | t }}</h2>
-      <div class="account__list">
-        <app-list-row [title]="'bild.meine' | t" [clickable]="true" (chosen)="toMyImages()" />
-        <app-list-row [title]="'account.myData' | t" [clickable]="true" (chosen)="toMyData()" />
-        <app-list-row [title]="'group.title' | t" [clickable]="true" (chosen)="toGroups()" />
-        <app-list-row [title]="'glossary.title' | t" [clickable]="true" (chosen)="toGlossary()" />
-      </div>
-    </section>
-  }
-
-  @if (canInstall()) {
-    <section class="account__block">
-      <div class="account__list">
-        <app-list-row
-          [title]="'konto.installieren' | t"
-          [clickable]="true"
-          [chevron]="true"
-          (chosen)="install()"
-        />
-      </div>
-    </section>
-  }
-
-  @if (canAdminister()) {
-    <section class="account__block">
-      <h2 class="account__section">{{ 'konto.verwaltung' | t }}</h2>
-      <div class="account__list">
-        <app-list-row [title]="'konto.verwaltung' | t" [clickable]="true" (chosen)="toAdministration()" />
-      </div>
-    </section>
-  }
-
-  <section class="account__block">
-    <h2 class="account__section">{{ 'konto.abschnitt.ueber' | t }}</h2>
-    <div class="account__list">
-      <app-list-row [title]="'account.method' | t" [clickable]="true" (chosen)="toMethod()" />
-      <app-list-row [title]="'account.sourcesAndLicences' | t" [clickable]="true" (chosen)="toLicences()" />
-      <app-list-row [title]="'konto.version' | t" [value]="version">
-        @if (updateReady()) {
-          <app-level-pill trail [text]="'konto.aktualisierungBereit' | t" kind="ok" />
-        }
-      </app-list-row>
-    </div>
-  </section>
-</div>
+    <app-appearance-fields />
+    <app-offline-section />
+    <app-section [label]="'account.section.about' | t">
+      <app-about-group />
+    </app-section>
+  </div>
+} @else {
+  <router-outlet />
+}

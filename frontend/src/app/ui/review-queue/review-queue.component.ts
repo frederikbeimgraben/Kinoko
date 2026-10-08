@@ -12,14 +12,14 @@ import { NgTemplateOutlet } from '@angular/common';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { RippleDirective } from '../ripple/ripple.directive';
 
-/** Ab dieser waagrechten Bewegung gilt ein Zug als Entscheidung, nicht als Zittern. */
+/** From this horizontal distance, a drag is a decision and not a jitter. */
 const SWIPE_THRESHOLD = 120;
 
-/** Teilt die Zugweite, um den Kippwinkel der Karte in Grad zu erhalten. */
+/** Divides the drag distance to give the tilt angle of the card in degrees. */
 const TILT_DIVISOR = 18;
 
 /**
- * Ein Prüfstapel. Rechts wischen nimmt an, links wischen lehnt ab.
+ * A review stack. A swipe to the right accepts. A swipe to the left rejects.
  */
 @Component({
   selector: 'app-review-queue',
@@ -30,11 +30,11 @@ const TILT_DIVISOR = 18;
 })
 export class ReviewQueueComponent<T> {
   readonly items = input.required<readonly T[]>();
-  /** Gleicht den Zurück-Knopf der Seite aus, damit die Knöpfe mittig stehen. */
+  /** Balances the back button of the page to keep the buttons centred. */
   readonly balance = input(false);
-  /** Die Karte füllt ihren Wirt, statt der eigenen Höhe zu folgen. */
+  /** The card fills its host and does not use its own height. */
   readonly fill = input(false);
-  /** Ohne die drei runden Knöpfe, für eine leere Karte auf sich allein gestellt. */
+  /** When false, the three round buttons do not show. Use this for an empty card. */
   readonly showActions = input(true);
   readonly card = contentChild.required(TemplateRef);
 

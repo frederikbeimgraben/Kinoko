@@ -1,8 +1,8 @@
-/** Die Attrappen der Abschnitte des Arten-Editors. */
+/** The mocks of the species editor sections. */
 
 import { STONE_EDIT } from './species-editor';
 
-/** Die Begriffe des Katalogs, wie `/api/terms` sie liefert. */
+/** The catalogue terms as `/api/terms` gives them. */
 export const TERMS = {
   items: [
     { id: 't-1', kind: 'smell', group: null, slug: 'mushroomy', name: 'pilzig', position: 1 },
@@ -22,7 +22,7 @@ export const TERMS = {
   ],
 };
 
-/** Die Standardfarben des Bretts `EditColour`. */
+/** The standard colours of the `EditColour` board. */
 export const PALETTE = [
   '#f4efe2',
   '#f0ece0',
@@ -48,7 +48,7 @@ export const PALETTE = [
   '#1b1d1c',
 ].map((hex, at) => ({ key: `ton-${String(at)}`, hex }));
 
-/** Die Art der Abschnitte: Maße, Zeitraum, Fruchtschicht und Geruch. */
+/** The species of the sections: sizes, period, hymenium and smell. */
 export const STONE_SECTIONS: Record<string, unknown> = {
   ...STONE_EDIT,
   periodStartMonth: 6,
@@ -98,7 +98,7 @@ export const STONE_SECTIONS: Record<string, unknown> = {
   ],
 };
 
-/** Die Art des Bretts `EditPart`: ein Maß, eine Farbe, eine Verfärbung. */
+/** The species of the `EditPart` board: one size, one colour, one discolouration. */
 export const PART_SECTIONS: Record<string, unknown> = {
   ...STONE_SECTIONS,
   partNotes: [

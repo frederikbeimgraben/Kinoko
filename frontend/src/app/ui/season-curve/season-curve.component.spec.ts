@@ -6,13 +6,13 @@ import { SeasonCurveComponent, smooth, type SeasonSeries } from './season-curve.
 const ALL = Array.from({ length: 52 }, (_, i) => i / 51);
 const CURRENT = Array.from({ length: 20 }, (_, i) => i / 51);
 
-/** Die zwei Reihen der Artseite: alle Jahre als Fläche, das laufende als Linie. */
+/** The two series of the species page: all years as an area, the current year as a line. */
 const SERIES: SeasonSeries[] = [
   { shape: 'area', values: ALL },
   { shape: 'line', values: CURRENT },
 ];
 
-/** Die Monatsmarken der Artseite: der Name und die Woche, in der er beginnt. */
+/** The month marks of the species page: the name and the week in which the month starts. */
 const MONTHS = [
   { text: 'Jan', week: 1 },
   { text: 'Apr', week: 14 },
@@ -27,7 +27,7 @@ describe('glaette', () => {
   });
 
   it('nimmt am Rand die Nachbarn, die es gibt', () => {
-    // Eine gedachte Null vor der ersten Woche zöge den Anfang nach unten.
+    // An assumed zero before the first week pulls the start down.
     expect(smooth([6, 3, 3], 3)).toEqual([4.5, 4, 3]);
   });
 
@@ -91,8 +91,8 @@ describe('SeasonCurveComponent', () => {
       inputs: { series: SERIES, label: 'Saisonkurve', large: true },
     });
 
-    // Der Punkt sitzt auf Woche 20 von 52, also bei 19/51 der Breite. Er steht
-    // in Anteilen neben dem SVG, weil die verzerrte Fläche ihn oval zöge.
+    // The dot is on week 20 of 52, thus at 19/51 of the width. It uses percentages
+    // outside the SVG because the stretched area makes it oval.
     const point = container.querySelector<HTMLElement>('.spark__end');
     expect(point?.style.left).toBe(`${((19 / 51) * 100).toString()}%`);
   });
@@ -117,14 +117,14 @@ describe('SeasonCurveComponent', () => {
       },
     );
 
-    // Die Kurve füllt die Breite, die Stelle einer Woche ist darum ein Anteil.
-    // Der Vergleich holt sie aus dem Pfad, den die Kurve wirklich malt.
+    // The curve fills the width, thus the position of a week is a share.
+    // The test reads it from the path that the curve draws.
     const okt = [...container.querySelectorAll<HTMLElement>('.spark__month')].find(
       (badge) => badge.textContent === 'Okt',
     );
     expect(okt?.style.left).toBe(`${((39 / 51) * 100).toString()}%`);
 
-    // Dieselbe Stelle malt auch die Kurve für Woche 40, auf eine Nachkommastelle gerundet.
+    // The curve draws week 40 at the same position, rounded to one decimal.
     const path = container.querySelector('.spark__all')?.getAttribute('d') ?? '';
     const xValues = [...path.matchAll(/L(\d+\.\d)/g)].map((matches) => Number(matches[1]));
     expect((xValues[39] / 330) * 100).toBeCloseTo(Number.parseFloat(okt?.style.left ?? ''), 1);
@@ -132,8 +132,8 @@ describe('SeasonCurveComponent', () => {
   });
 
   it('zeichnet geglättet, behält aber den Höchstwert der Rohdaten', async () => {
-    // Eine einzelne starke Woche zwischen leeren: geglättet steigt die Kurve
-    // nur auf ein Drittel, die Achse nennt weiter den rohen Höchstwert.
+    // One strong week between empty weeks. The smoothed curve goes up to one third only.
+    // The axis shows the raw maximum.
     const peak = Array.from({ length: 52 }, (_, i) => (i === 25 ? 30 : 0));
     const series: SeasonSeries[] = [{ shape: 'area', values: peak }];
     const { container } = await render(SeasonCurveComponent, {
@@ -142,7 +142,7 @@ describe('SeasonCurveComponent', () => {
 
     const path = container.querySelector('.spark__all')?.getAttribute('d') ?? '';
     const sizes = [...path.matchAll(/,(\d+\.\d)/g)].map((matches) => Number(matches[1]));
-    // 72 - 3 - (10/30) * 64 = 47,7 statt 5,0 bei ungeglätteten 30 Prozent.
+    // 72 - 3 - (10/30) * 64 = 47.7, not 5.0 as with raw 30 percent.
     expect(Math.min(...sizes)).toBeCloseTo(47.7, 1);
   });
 
@@ -155,7 +155,7 @@ describe('SeasonCurveComponent', () => {
       inputs: { series, label: 'Saisonkurve', large: true },
     });
 
-    // „Geglättet über 3 Wochen“ sagt dem Sammler nichts über die Saison.
+    // A label such as „Geglättet über 3 Wochen“ tells the collector nothing about the season.
     expect(screen.getByText('Schätzung dieses Jahr')).toBeInTheDocument();
     expect(screen.getByText('Mittelwert 2015 bis 2025')).toBeInTheDocument();
     expect(screen.queryByText(/geglättet/)).toBeNull();
@@ -171,7 +171,7 @@ describe('SeasonCurveComponent', () => {
   });
 
   it('legt dünne Wochen unter eine Maske, sobald die Begehungen bekannt sind', async () => {
-    // Vier magere Wochen am Jahresanfang, danach volle Wochen.
+    // Four thin weeks at the start of the year, then full weeks.
     const visits = Array.from({ length: 52 }, (_, i) => (i < 4 ? 5 : 100));
     const series: SeasonSeries[] = [
       { shape: 'area', values: ALL, visits },

@@ -14,12 +14,12 @@ import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
 import { SearchFieldComponent } from '../search-field/search-field.component';
 import { SpeciesRowComponent, type SpeciesRowSpecies } from '../species-row/species-row.component';
 
-/** Eine Art, wie die Wahl sie braucht: die Zeile plus ihr Schlüssel. */
+/** A species as the picker needs it: the row and its key. */
 export interface SpeciesPickerEntry extends SpeciesRowSpecies {
   readonly value: string;
 }
 
-/** Suchfeld plus Artenzeilen. Der Hinten-Slot je Zeile nimmt eine Vorlage auf. */
+/** A search field and species rows. The trailing slot of each row takes a template. */
 @Component({
   selector: 'app-species-picker',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,7 +32,7 @@ export class SpeciesPickerComponent {
   readonly selected = input<string | null>(null);
   readonly label = input.required<string>();
 
-  /** Die Vorlage je Zeile, mit der `SpeciesPickerEntry` als `$implicit`. Freiwillig. */
+  /** Optional template for each row, with the `SpeciesPickerEntry` as `$implicit`. */
   readonly row = contentChild(TemplateRef);
 
   readonly chosen = output<string>();

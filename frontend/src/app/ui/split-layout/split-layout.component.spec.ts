@@ -10,7 +10,7 @@ import { SplitLayoutComponent } from './split-layout.component';
 })
 class HostComponent {}
 
-/** Liefert den Wirt der Aufteilung, den die Klassen tragen. */
+/** Gives the split host element that carries the classes. */
 function host(view: { fixture: ComponentFixture<SplitLayoutComponent> }): HTMLElement {
   return view.fixture.componentRef.location.nativeElement as HTMLElement;
 }

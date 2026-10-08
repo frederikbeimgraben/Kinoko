@@ -13,14 +13,14 @@ type FindPage = components['schemas']['FindPage'];
 type MarkerPage = components['schemas']['MarkerPage'];
 type ZonePage = components['schemas']['ZonePage'];
 
-/** So viele Einträge holt eine Seite. Der Vertrag erlaubt höchstens 50. */
+/** Entries per page. The contract allows a maximum of 50. */
 const PAGE_SIZE = 50;
 
 function id(value: string): string {
   return encodeURIComponent(value);
 }
 
-/** Die eigenen Funde, Marker und Zonen. Jede Route braucht ein Konto. */
+/** The finds, markers and zones of the current user. Each route needs an account. */
 @Injectable({ providedIn: 'root' })
 export class EntriesApi {
   private readonly api = inject(ApiClient);
@@ -79,7 +79,7 @@ export class EntriesApi {
     return this.api.delete<null>(`${ENTRY_PATHS.zone}/${id(target)}`);
   }
 
-  /** Das Flächenmittel der Vorhersage in der Zone, für genau Art und Woche. */
+  /** The area mean of the forecast in the zone, for one species and one week. */
   zoneValue(target: string, speciesId: string, year: number, week: number): Observable<ZoneValue> {
     return this.api.get<ZoneValue>(`${ENTRY_PATHS.zone}/${id(target)}/value`, {
       speciesId,

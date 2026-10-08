@@ -1,25 +1,21 @@
 #!/usr/bin/env node
-/** Prüft Kommentare unter `src`, `e2e` und `tools`: Länge, Erzähltext und Geschichte. */
+/** Checks the comments under `src`, `e2e` and `tools`: length, language and history words. */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isGerman } from './check-german.mjs';
 
 const YEAR = /20\d{2}(?:-\d{2}-\d{2})?/;
 const PR_NUMBER = /#\d+|\bPR\s*\d+\b/i;
-const WORD_BOUNDARY = '(?<![A-Za-zÄÖÜäöüß])';
-const WORD_BOUNDARY_END = '(?![A-Za-zÄÖÜäöüß])';
-const FORBIDDEN_WORDS = new RegExp(
-  `${WORD_BOUNDARY}(bis|frueher|früher|jetzt|seit)${WORD_BOUNDARY_END}`,
-  'i',
-);
+const HISTORY_WORDS = /\b(now|previously|formerly|no longer|anymore|used to|was changed)\b/i;
 
-/** Findet den Grund, warum ein Kommentartext verboten ist. */
+/** Gives the reason why a comment text is not permitted, or null. */
 function forbiddenReason(text) {
-  if (YEAR.test(text)) return 'Jahreszahl oder Datum im Kommentar';
-  if (PR_NUMBER.test(text)) return 'PR-Nummer im Kommentar';
-  const word = FORBIDDEN_WORDS.exec(text);
-  if (word) return `verbotenes Wort „${word[1]}“`;
+  if (YEAR.test(text)) return 'year or date in a comment';
+  if (PR_NUMBER.test(text)) return 'PR number in a comment';
+  const word = HISTORY_WORDS.exec(text);
+  if (word) return `history word "${word[1]}"`;
   return null;
 }
 
@@ -29,7 +25,7 @@ function lineAt(source, index) {
   return line;
 }
 
-/** Zerlegt Quelltext in Zeilen- und Blockkommentare. Strings bleiben aussen vor. */
+/** Splits source code into line and block comments. Strings are not comments. */
 function scanCode(source) {
   const found = [];
   let i = 0;
@@ -72,7 +68,7 @@ function scanCode(source) {
   return found;
 }
 
-/** Zerlegt eine Vorlage in `<!-- -->`-Kommentare. */
+/** Finds the `<!-- -->` comments of a template. */
 function scanHtml(source) {
   const found = [];
   const pattern = /<!--([\s\S]*?)-->/g;
@@ -84,7 +80,12 @@ function scanHtml(source) {
   return found;
 }
 
-/** Baut aus den Rohtreffern die Verstöße einer Datei. */
+/** Removes quoted UI text and links. A comment can cite a German label. */
+function withoutQuotes(text) {
+  return text.replace(/„[^“]*“|"[^"]*"|'[^']*'|`[^`]*`|«[^»]*»/g, ' ').replace(/https?:\/\/\S+/g, ' ');
+}
+
+/** Makes the violations of one file from its comments. */
 function violationsIn(path, comments) {
   const found = [];
   const lineRuns = [];
@@ -111,12 +112,19 @@ function violationsIn(path, comments) {
           .filter((c) => r.includes(c.line))
           .map((c) => c.text)
           .join(' '),
-        reason: `${r.length} zusammenhängende Zeilen`,
+        reason: `${r.length} lines in sequence`,
       });
   }
   for (const comment of comments) {
     const reason = forbiddenReason(comment.text);
-    if (reason) found.push({ line: comment.line, rule: 'inhalt', text: comment.text, reason });
+    if (reason) found.push({ line: comment.line, rule: 'content', text: comment.text, reason });
+    if (isGerman(withoutQuotes(comment.text)))
+      found.push({
+        line: comment.line,
+        rule: 'language',
+        text: comment.text,
+        reason: 'German comment, write ASD-STE100 English',
+      });
     if (comment.type === 'doc') {
       const span = comment.endLine - comment.line + 1;
       if (span > 3) {
@@ -124,7 +132,7 @@ function violationsIn(path, comments) {
           line: comment.line,
           rule: 'docstring',
           text: comment.text,
-          reason: `${span} Zeilen, Grenze 3`,
+          reason: `${span} lines, limit 3`,
         });
       }
     }
@@ -135,7 +143,7 @@ function violationsIn(path, comments) {
           line: comment.line,
           rule: 'block',
           text: comment.text,
-          reason: `${span} Zeilen, Grenze 2`,
+          reason: `${span} lines, limit 2`,
         });
       }
     }
@@ -155,10 +163,14 @@ function collectFiles(folder, extensions, found) {
   return found;
 }
 
-/** Sucht Kommentarverstöße unter `root/src/app` und `root/tools`. */
+/** Finds the comment violations under `root/src`, `root/e2e` and `root/tools`. */
 export function findViolations(root) {
   const files = [
     ...collectFiles(join(root, 'src', 'app'), ['.ts', '.html', '.scss'], []),
+    ...collectFiles(join(root, 'src'), ['.ts', '.scss'], []).filter(
+      (f) => !f.includes(`${join('src', 'app')}`),
+    ),
+    ...collectFiles(join(root, 'e2e'), ['.ts', '.mjs'], []),
     ...collectFiles(join(root, 'tools'), ['.mjs'], []),
   ];
   const found = [];
@@ -171,7 +183,7 @@ export function findViolations(root) {
   return found;
 }
 
-/** Der Schlüssel hängt am Text, nicht an der Zeile. Eine Verschiebung zählt nicht. */
+/** The key uses the text, not the line. A moved comment keeps its key. */
 export function allowKey(v) {
   const text = `${v.rule} ${v.text}`.replace(/\s+/g, ' ').trim();
   return `${v.path}#${createHash('sha256').update(text).digest('hex').slice(0, 8)}`;
@@ -185,7 +197,7 @@ function readAllow(allowPath) {
   }
 }
 
-/** Meldet Verstöße unter `root` ohne die in `allowPath` freigegebenen. */
+/** Gives the violations under `root` that `allowPath` does not permit. */
 export function report(root, allowPath) {
   const allowed = new Set(readAllow(allowPath).comments ?? []);
   return findViolations(root).filter((v) => !allowed.has(allowKey(v)));
@@ -200,15 +212,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const allow = readAllow(ALLOW_PATH);
     allow.comments = keys;
     writeFileSync(ALLOW_PATH, JSON.stringify(allow, null, 2) + '\n');
-    console.log(`${keys.length} Ausnahmen für comments geschrieben.`);
+    console.log(`Wrote ${keys.length} comment exceptions.`);
     process.exit(0);
   }
 
   const reported = report(ROOT, ALLOW_PATH);
   for (const v of reported) console.log(`${v.path}:${v.line}  ${v.rule}  ${v.reason}`);
   if (reported.length > 0) {
-    console.error(`Neue Kommentarverstöße: ${reported.length}.`);
+    console.error(`New comment violations: ${reported.length}.`);
     process.exit(1);
   }
-  console.log('Keine neuen Kommentarverstöße.');
+  console.log('No new comment violations.');
 }

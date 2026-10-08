@@ -7,7 +7,7 @@ import { ListRowComponent } from '../../../ui/list-row/list-row.component';
 import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { taxonSlug } from './taxonomy';
 
-/** Die Einordnung einer Art: Gattung und Familie, der Weg zur Stufe. */
+/** The taxonomy of a species: genus and family, with a link to each rank. */
 @Component({
   selector: 'app-species-taxonomy',
   changeDetection: ChangeDetectionStrategy.OnPush,

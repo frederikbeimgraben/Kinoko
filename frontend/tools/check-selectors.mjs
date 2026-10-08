@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-/**
- * Prüft Selektor-Kollisionen zwischen `ui/` und `features/`.
- * Gleicher Suffix ohne Import der Kachel ist ein Zufallstreffer.
- */
+/** Checks for selector collisions between `ui/` and `features/`.
+ * The same suffix without an import of the tile is a chance match. */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +17,7 @@ function collectFiles(folder, found) {
   return found;
 }
 
-/** Sucht `selector: 'app-...'` samt Zeile in einer Datei, falls vorhanden. */
+/** Finds `selector: 'app-...'` and its line in a file, if it exists. */
 function selectorOf(source) {
   const lines = source.split('\n');
   for (let i = 0; i < lines.length; i += 1) {
@@ -29,12 +27,12 @@ function selectorOf(source) {
   return null;
 }
 
-/** Letztes Segment nach dem letzten `-`, mit Bindestrich, etwa `-row`. */
+/** The last segment after the last `-`, with the hyphen, for example `-row`. */
 function suffixOf(selector) {
   return selector.slice(selector.lastIndexOf('-'));
 }
 
-/** Ein Importpfad zählt als „aus ui“, wenn `ui` ein eigenes Segment ist. */
+/** An import path is from `ui` when `ui` is a separate segment. */
 function importsFromUi(source) {
   for (const match of source.matchAll(IMPORT_FROM)) {
     if (match[1].split('/').includes('ui')) return true;
@@ -42,7 +40,7 @@ function importsFromUi(source) {
   return false;
 }
 
-/** Sucht Selektor-Kollisionen unter `root/src/app`. */
+/** Finds selector collisions under `root/src/app`. */
 export function findViolations(root) {
   const appRoot = join(root, 'src', 'app');
   const files = collectFiles(appRoot, []);
@@ -113,7 +111,7 @@ function readAllow(allowPath) {
   }
 }
 
-/** Meldet Selektor-Kollisionen unter `root` ohne die in `allowPath` freigegebenen. */
+/** Reports selector collisions under `root`, except the ones that `allowPath` allows. */
 export function report(root, allowPath) {
   const allowed = new Set(readAllow(allowPath).selectors ?? []);
   return findViolations(root).filter((v) => !allowed.has(v.key));

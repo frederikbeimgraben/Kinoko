@@ -14,7 +14,7 @@ const MANIFEST = readManifest(
   'boletus_edulis',
 );
 
-/** Eine Leinwand, die immer denselben Punktwert liefert. */
+/** A canvas that always gives the same pixel value. */
 function canvasWith(byte: number): void {
   vi.stubGlobal('createImageBitmap', () =>
     Promise.resolve({ width: 256, height: 256, close: () => undefined }),

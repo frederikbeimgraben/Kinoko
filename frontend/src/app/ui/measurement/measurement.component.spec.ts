@@ -3,7 +3,7 @@ import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { MeasurementComponent, type Extent } from './measurement.component';
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** Gives the computed styles of an element that must exist. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
   if (element === null) throw new Error('Das Element steht nicht im Baum.');
   return getComputedStyle(element);
@@ -57,7 +57,7 @@ describe('MeasurementComponent', () => {
   });
 
   it('trägt die seltene Ausnahme nach oben als Unterzeile', async () => {
-    // Die übliche Spanne endet bei 20, die Ausnahme reicht seltener an 25 heran.
+    // The usual span ends at 20. The rare exception goes up to 25.
     await render(MeasurementComponent, {
       inputs: {
         extent: 'width',
@@ -111,8 +111,8 @@ describe('MeasurementComponent', () => {
       { imports: [MeasurementComponent], componentProperties: { spans: [{ from: 1, to: 2 }] } },
     );
 
-    // Die Trennlinie hängt an :host(:last-child) in der SCSS. jsdom löst
-    // keine CSS-Variable auf, darum prüft der Test die Stellung im Baum.
+    // The SCSS sets the divider on :host(:last-child). jsdom does not resolve
+    // CSS variables, thus the test checks the position in the tree.
     const rows = container.querySelectorAll('app-measurement');
     expect(rows[0].matches(':last-child')).toBe(false);
     expect(rows[1].matches(':last-child')).toBe(true);

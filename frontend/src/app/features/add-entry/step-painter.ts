@@ -1,7 +1,7 @@
 import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl';
-import type { Location } from './add-entry.state';
+import type { Location } from './add-entry.store';
 
-/** Die Kennungen der Ebenen, die den Schritt auf die Karte malen. */
+/** The identifiers of the layers that draw the step on the map. */
 const SOURCE = 'pilz-ring';
 const FILL = 'pilz-ring-fill';
 const LINE = 'pilz-ring-line';
@@ -9,26 +9,35 @@ const PREVIEW = 'pilz-ring-preview';
 const CORNERS = 'pilz-ring-corners';
 const MARK = 'pilz-ring-mark';
 
-/** Maße und Farben aus den Brettern `ZoneDraw` und `MapDesktopZoneDraw`. */
-const OUTLINE_WIDTH = 2;
-const DASH = [3, 2];
+/** Sizes from the boards `ZoneDraw` and `MapDesktopZoneDraw`. The desktop lines and corners are thicker. */
+interface RingStyle {
+  readonly width: number;
+  readonly dash: readonly number[];
+  readonly corner: number;
+}
+
+const PHONE_STYLE: RingStyle = { width: 3, dash: [2, 1.33], corner: 7 };
+const DESKTOP_STYLE: RingStyle = { width: 5, dash: [2.4, 1.6], corner: 12 };
 const FILL_OPACITY = 0.18;
-const CORNER_RADIUS = 6;
-/** Die erste Ecke steht dicker: ein Klick darauf schließt den Ring. */
-const FIRST_RADIUS = 8;
-/** Die Kante zur ersten Ecke steht schwächer als die zum Zeiger. */
+/** The first corner is larger while the pointer is on it: a click there closes the ring. */
+const FIRST_GROWTH = 2;
+/** The edge back to the first corner is less prominent than the edge to the pointer. */
 const CLOSING_OPACITY = 0.5;
-/** Der gesetzte Ort aus dem Brett `MapDesktopFindLocation`. */
+/** The set point of the board `MapDesktopFindLocation`. */
 const MARK_RADIUS = 8;
 
-/** Was ein Schritt gerade auf die Karte malt. */
+/** What a step draws on the map. */
 export interface StepView {
-  /** Die gesetzten Ecken der Zone. */
+  /** The set corners of the zone. */
   ring?: readonly Location[];
-  /** Der Ort unter dem Zeiger, nur am Rechner. */
+  /** The point below the pointer, only on the desktop. */
   pointer?: Location | null;
-  /** Der gesetzte Ort eines Fundes oder eines Markers. */
+  /** The pointer is on the first corner, so a click closes the ring. */
+  closing?: boolean;
+  /** The set point of a find or a marker. */
   mark?: Location | null;
+  /** The desktop draws the thicker lines of its board. */
+  wide?: boolean;
 }
 
 function line(points: readonly Location[], colour: string, closing = false): GeoJSON.Feature {
@@ -44,7 +53,7 @@ function features(view: StepView, colour: string): GeoJSON.FeatureCollection {
   const pointer = view.pointer ?? null;
   const found: GeoJSON.Feature[] = ring.map((point, index) => ({
     type: 'Feature',
-    properties: { colour, mark: false, first: index === 0 && pointer !== null },
+    properties: { colour, mark: false, first: index === 0 && view.closing === true },
     geometry: { type: 'Point', coordinates: [point[0], point[1]] },
   }));
   if (view.mark) {
@@ -62,8 +71,7 @@ function features(view: StepView, colour: string): GeoJSON.FeatureCollection {
       geometry: { type: 'Polygon', coordinates: [closed] },
     });
   }
-  // Am Rechner hängt der Ring am Zeiger: die offene Kette, die Vorschau-Kante
-  // und schwächer die Kante zurück zur ersten Ecke.
+  // On the desktop, the ring follows the pointer: the open chain, the preview edge and the edge back to the start.
   if (pointer !== null && ring.length > 0) {
     if (ring.length > 1) found.push(line(ring, colour));
     found.push(line([ring[ring.length - 1], pointer], colour));
@@ -72,7 +80,7 @@ function features(view: StepView, colour: string): GeoJSON.FeatureCollection {
   return { type: 'FeatureCollection', features: found };
 }
 
-/** Malt den Schritt: Ring, Vorschau am Zeiger und den gesetzten Ort. */
+/** Draws the step: the ring, the preview at the pointer and the set point. */
 export function paintRing(
   map: MapLibreMap,
   ring: readonly Location[],
@@ -80,9 +88,10 @@ export function paintRing(
   view: StepView = {},
 ): void {
   const data = features({ ...view, ring }, colour);
+  const style = view.wide ? DESKTOP_STYLE : PHONE_STYLE;
   const source: GeoJSONSource | undefined = map.getSource(SOURCE);
   if (source === undefined) {
-    // Der Stil kommt über das Netz. Vor ihm nimmt die Karte keine Ebene an.
+    // The style comes over the network. Before it, the map takes no layer.
     try {
       map.addSource(SOURCE, { type: 'geojson', data });
     } catch {
@@ -103,7 +112,7 @@ export function paintRing(
       type: 'line',
       source: SOURCE,
       filter: ['==', ['geometry-type'], 'Polygon'],
-      paint: { 'line-color': colour, 'line-width': OUTLINE_WIDTH, 'line-dasharray': DASH },
+      paint: { 'line-color': colour, 'line-width': style.width, 'line-dasharray': [...style.dash] },
     });
     map.addLayer({
       id: PREVIEW,
@@ -112,8 +121,8 @@ export function paintRing(
       filter: ['==', ['geometry-type'], 'LineString'],
       paint: {
         'line-color': colour,
-        'line-width': OUTLINE_WIDTH,
-        'line-dasharray': DASH,
+        'line-width': style.width,
+        'line-dasharray': [...style.dash],
         'line-opacity': ['case', ['get', 'closing'], CLOSING_OPACITY, 1],
       },
     });
@@ -123,10 +132,10 @@ export function paintRing(
       source: SOURCE,
       filter: ['all', ['==', ['geometry-type'], 'Point'], ['!=', ['get', 'mark'], true]],
       paint: {
-        'circle-radius': ['case', ['get', 'first'], FIRST_RADIUS, CORNER_RADIUS],
+        'circle-radius': ['case', ['get', 'first'], style.corner + FIRST_GROWTH, style.corner],
         'circle-color': ['case', ['get', 'first'], colour, '#ffffff'],
         'circle-stroke-color': ['case', ['get', 'first'], '#ffffff', colour],
-        'circle-stroke-width': OUTLINE_WIDTH,
+        'circle-stroke-width': style.width,
       },
     });
     map.addLayer({
@@ -138,7 +147,7 @@ export function paintRing(
         'circle-radius': MARK_RADIUS,
         'circle-color': colour,
         'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': OUTLINE_WIDTH,
+        'circle-stroke-width': PHONE_STYLE.width,
       },
     });
     return;
@@ -146,7 +155,7 @@ export function paintRing(
   void source.setData(data);
 }
 
-/** Nimmt die Ebenen des Schritts wieder von der Karte. */
+/** Removes the layers of the step from the map. */
 export function clearRing(map: MapLibreMap): void {
   for (const layer of [FILL, LINE, PREVIEW, CORNERS, MARK]) {
     if (map.getLayer(layer) !== undefined) map.removeLayer(layer);

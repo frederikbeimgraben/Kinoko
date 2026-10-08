@@ -1,4 +1,4 @@
-/** Die Fläche einer Karte: Rand, Radius, Grund und feste Höhe. */
+/** The surface of a card: border, radius, background and fixed height. */
 @mixin card {
   flex: none;
   overflow: hidden;
@@ -7,7 +7,6 @@
   border-radius: var(--radius-lg);
 }
 
-/** Die Überschrift über einer Karte. */
 @mixin section-title {
   margin: 0 0 10px;
   font-size: var(--fs-caption);

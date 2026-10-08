@@ -17,7 +17,7 @@ async function build(api = new AccessApiDouble()): Promise<{
   return { container, api, refresh: detectChanges };
 }
 
-/** Legt den Ausschnitt in ein `main`, so wie die Hülle es tut. */
+/** Puts the fragment in a `main`, as the app shell does. */
 function inMain(container: Element): Element {
   const main = document.createElement('main');
   main.append(container);
@@ -57,8 +57,8 @@ describe('PeopleComponent', () => {
     expect(screen.getByRole('dialog', { name: 'Jonas' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /Pilzberater/ })).not.toBeChecked();
     expect(screen.queryByRole('checkbox', { name: /^Nutzer/ })).not.toBeInTheDocument();
-    // Kopfleiste und Blatt tragen je ein `header`. In der App liegen beide im
-    // `main` der Hülle und sind darum keine Banner; hier steht das `main` mit.
+    // The toolbar and the sheet each have a `header`. In the app, both are in the shell `main`.
+    // Thus they are not banners. This test adds the `main` for the same result.
     await noViolations(inMain(container));
   });
 
@@ -78,7 +78,7 @@ describe('PeopleComponent', () => {
 
   it('lässt das Blatt offen, wenn der Dienst die Zuweisung abweist', async () => {
     const { api, refresh } = await build();
-    // So antwortet der Dienst, wenn der letzten Person die Rolle Admin fehlte.
+    // The service gives this answer when the change removes the last Admin role.
     api.rejectWith = problem(409, 'Das ist die letzte Person mit der Rolle Admin.');
 
     await userEvent.click(screen.getByRole('button', { name: /Frederik/ }));

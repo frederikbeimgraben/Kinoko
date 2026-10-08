@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { PopoverItemComponent } from '../../ui/popover/popover-item.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import type { IconName } from '../../ui/svg-icon/icons';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 
-/** Was der Plus-Knopf anbietet. */
+/** The choices behind the plus button. */
 export type AddAction = 'find' | 'marker' | 'zone';
 
 interface Choice {
@@ -14,20 +16,22 @@ interface Choice {
 }
 
 const CHOICES: readonly Choice[] = [
-  { key: 'find', icon: 'entries', label: 'entry.reportFind.title' },
-  { key: 'marker', icon: 'location', label: 'entry.setMarker.title' },
+  { key: 'find', icon: 'mushroom', label: 'entry.reportFind.title' },
+  { key: 'marker', icon: 'flag', label: 'entry.setMarker.title' },
   { key: 'zone', icon: 'zone', label: 'entry.drawZone.title' },
 ];
 
-/** Die drei Wege des Eintragens als Zeilen mit Icon-Kachel (Board `AddActions`). */
+/** The three ways to add an entry: rows (board `AddActionsBody`) or a popover on the desktop (`MapDesktopAdd`). */
 @Component({
   selector: 'app-add-actions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [ListRowComponent, PopoverItemComponent, RowGroupComponent, TranslatePipe],
   templateUrl: './add-actions.component.html',
-  styleUrl: './add-actions.component.scss',
 })
 export class AddActionsComponent {
+  /** The items of a popover instead of a group of rows. */
+  readonly menu = input(false);
+
   readonly chosen = output<AddAction>();
 
   protected readonly choices = CHOICES;

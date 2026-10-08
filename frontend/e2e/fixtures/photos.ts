@@ -1,4 +1,4 @@
-/** Die Attrappen der Fotos für die Boards und Flüsse der Seite Bilder. */
+/** The photo mocks for the boards and flows of the images page. */
 
 interface Shape {
   id: string;
@@ -16,7 +16,7 @@ interface Shape {
   createdAt?: string;
 }
 
-/** Ein Foto in der Form des Vertrags. */
+/** A photo in the contract shape. */
 export function photo(entry: Shape): Record<string, unknown> {
   return {
     id: entry.id,
@@ -43,24 +43,24 @@ export function photo(entry: Shape): Record<string, unknown> {
   };
 }
 
-/** Das Foto in einer Artenzeile: 44 x 44 px. */
+/** The photo in a species row: 44 x 44 px. */
 export const ROW_PHOTO = { list: 'photo-44x44.png' };
 
-/** Der Name der Fotoattrappe eines Bretts: `photo-<breite>x<höhe>.png`. */
+/** The file name of a board photo mock: `photo-<width>x<height>.png`. */
 export function photoFixture(width: number, height: number): string {
   return `photo-${String(width)}x${String(height)}.png`;
 }
 
-/** Eine Seite Fotos ohne Zeiger. */
+/** One page of photos without a cursor. */
 export function photoPage(items: readonly Record<string, unknown>[]): Record<string, unknown> {
   return { items, nextCursor: null };
 }
 
-/** Die Kennung der Art, die `species()` aus demselben Rang vergibt. */
+/** The species ID that `species()` gives for the same rank. */
 export const STONE_ID = '00000000-0000-4000-8000-000000000000';
 export const CHANTERELLE_ID = '00000000-0000-4000-8000-000000000001';
 
-/** Die Art der Boards `SpeciesImages`, `ImageView`, `ImageAdd` und `ImageSubmit`. */
+/** The species of the boards `SpeciesImages`, `ImageView`, `ImageAdd` and `ImageSubmit`. */
 export const STONE_SPECIES = {
   slug: 'boletus-edulis',
   name: 'Steinpilz',
@@ -68,7 +68,7 @@ export const STONE_SPECIES = {
   edibility: 'edible',
 } as const;
 
-/** Die Art der Boards `ImageQueue`, `ImageReviewItem` und `ImageReject`. */
+/** The species of the boards `ImageQueue`, `ImageReviewItem` and `ImageReject`. */
 export const CHANTERELLE_SPECIES = {
   slug: 'cantharellus-cibarius',
   name: 'Pfifferling',
@@ -79,7 +79,7 @@ export const CHANTERELLE_SPECIES = {
 const PHOTOGRAPHER = 'Frederik Beimgraben';
 const LICENCE = 'cc_by_sa_4';
 
-/** Vier freigegebene Bilder der Art, das erste führt. */
+/** Four approved images of the species. The first one is the lead image. */
 export const SPECIES_PHOTOS = [
   photo({ id: 'bild-eins', speciesId: STONE_ID, photographer: PHOTOGRAPHER, licence: LICENCE, lead: true }),
   photo({
@@ -94,7 +94,7 @@ export const SPECIES_PHOTOS = [
   photo({ id: 'bild-vier', speciesId: STONE_ID, photographer: PHOTOGRAPHER, licence: LICENCE }),
 ];
 
-/** Vier Einreichungen im Prüfstapel, die erste gehört Jonas. */
+/** Four submissions in the review queue. The first one belongs to Jonas. */
 export const QUEUE_PHOTOS = [
   photo({
     id: 'einreichung-eins',

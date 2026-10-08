@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerImmediately',
     }),
-    // Der Katalog liegt auf dem Gerät, nicht nur im Arbeitsspeicher.
+    // Keep the catalogue on the device, not only in memory.
     { provide: TEXT_CACHE, useExisting: OfflineTextCache },
     provideAppInitializer(startApp),
   ],

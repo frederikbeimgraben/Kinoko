@@ -1,8 +1,8 @@
 <app-overlay-host
   class="object"
-  [class.object--dark]="dark()"
+  [class.object--corners]="editingCorners()"
   [open]="map.object() !== null"
-  [modal]="dark()"
+  [modal]="!editingCorners()"
   (closed)="close()"
 >
   <app-sheet
@@ -10,8 +10,7 @@
     class="object__sheet"
     [label]="sheetName()"
     [title]="headTitle()"
-    [note]="headNote()"
-    [modal]="true"
+    [modal]="!editingCorners()"
     [dismissible]="true"
     (closed)="dismiss()"
   >

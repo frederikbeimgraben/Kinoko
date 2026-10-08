@@ -1,5 +1,7 @@
-<span class="error__badge"><app-svg-icon [name]="icon()" [size]="26" [strokeWidth]="1.8" /></span>
-<p class="error__text">{{ text() }}</p>
-<button class="error__button tap" type="button" data-press="scale" (click)="retry.emit()">
-  {{ 'common.retry' | t }}
-</button>
+<app-state-view
+  kind="error"
+  [title]="text()"
+  [icon]="icon()"
+  [action]="'common.retry' | t"
+  (actionClick)="retry.emit()"
+/>

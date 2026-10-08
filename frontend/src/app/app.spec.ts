@@ -8,7 +8,7 @@ import { App } from './app';
 import { routes } from './app.routes';
 import { mapWithDoubles, answerManifest } from './testing/map-doubles';
 
-/** Löst den `@defer`-Block der Karte in der Hülle aus. */
+/** Triggers the `@defer` block of the map in the shell. */
 async function renderMap(fixture: ComponentFixture<unknown>): Promise<void> {
   const blocks = await fixture.getDeferBlocks();
   for (const block of blocks) await block.render(DeferBlockState.Complete);
@@ -17,8 +17,8 @@ async function renderMap(fixture: ComponentFixture<unknown>): Promise<void> {
 async function app() {
   answerManifest();
   mapWithDoubles();
-  // Die Hülle hängt über den Avatar am Konto und damit an der API; im Test
-  // antwortet dort niemand.
+  // The shell uses the account through the avatar, and so the API. In the
+  // test, no server gives an answer.
   return render(App, {
     providers: [
       provideRouter(routes),
@@ -42,14 +42,17 @@ describe('App', () => {
   it('führt jeden Reiter auf seine Seite', async () => {
     const { navigate } = await app();
 
+    await navigate('/arten');
+    // The species tab opens with its search bar and has no page title.
+    expect(await screen.findByRole('textbox', { name: 'Art suchen' })).toBeInTheDocument();
+
     for (const [path, titel] of [
-      ['/arten', 'Arten'],
       ['/eintraege', 'Einträge'],
       ['/konto', 'Einstellungen'],
     ]) {
       await navigate(path);
-      // Die Kopfleiste der Seite ist die einzige H1; „Konto“ steht auf dem
-      // Konto-Screen auch als Abschnitt darunter.
+      // The page header is the only H1. The account screen also shows „Konto“
+      // as a section below it.
       expect(await screen.findByRole('heading', { name: titel, level: 1 })).toBeInTheDocument();
     }
   });
@@ -63,5 +66,5 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Karte von Deutschland' })).toBeInTheDocument();
   });
 
-  // Die Werkstattseite hängt an `dev.routes.e2e.ts`; diese Hülle lädt `dev.routes.ts`, eine leere Liste.
+  // The workshop page is in `dev.routes.e2e.ts`. This shell loads `dev.routes.ts`, an empty list.
 });

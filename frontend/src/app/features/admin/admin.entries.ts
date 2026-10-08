@@ -1,12 +1,12 @@
 import type { AdminSummary, Permission } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Die drei Blöcke der Übersicht. */
+/** The three blocks of the overview. */
 export const ADMIN_SECTIONS = ['content', 'access', 'operations'] as const;
 
 export type AdminSection = (typeof ADMIN_SECTIONS)[number];
 
-/** Ein Punkt der Verwaltung: sein Recht, sein Block, sein Weg, seine Zähler. */
+/** An item of the administration: its permission, its block, its route and its counters. */
 export interface AdminEntry {
   title: TranslationKey;
   permission: Permission;
@@ -92,7 +92,14 @@ export const ADMIN_ENTRIES: readonly AdminEntry[] = [
     path: '/verwaltung/laeufe',
     counts: ['runs', 'runsRunning'],
   },
+  {
+    title: 'admin.dataSources.title',
+    permission: 'data.manage',
+    section: 'operations',
+    path: '/verwaltung/datenquellen',
+    counts: ['dataSourcesMissing', 'dataSourcesFailed'],
+  },
 ];
 
-/** Die Rechte, die überhaupt einen Punkt der Verwaltung freischalten. */
+/** The permissions that open at least one item of the administration. */
 export const ADMIN_PERMISSIONS: readonly Permission[] = ADMIN_ENTRIES.map((entry) => entry.permission);

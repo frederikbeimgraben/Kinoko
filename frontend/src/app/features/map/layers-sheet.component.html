@@ -1,56 +1,20 @@
-<app-popover [open]="true" [anchor]="anchor" [label]="'map.layers.button' | t" (closed)="closed.emit()">
-  <section class="layers__part">
-    <h3 class="layers__title">{{ 'map.basemap.title' | t }}</h3>
-    <app-segmented
-      [options]="choices()"
-      [value]="background()"
-      [label]="'map.basemap.title' | t"
-      (valueChange)="chooseBackground($event)"
-    />
-  </section>
-
-  <section class="layers__part">
-    <h3 class="layers__title">{{ 'map.layers.title' | t }}</h3>
-    <div class="layers__switches">
-      <app-choice-row
-        variant="boxed"
-        [label]="'map.layers.sharedFinds' | t"
-        [count]="count(sharedFindCount())"
-        [checked]="showSharedFinds()"
-        (toggled)="showSharedFindsChange.emit($event)"
-      />
-      <app-choice-row
-        variant="boxed"
-        [label]="'map.layers.myMarkers' | t"
-        [count]="count(markerCount())"
-        [checked]="showMarkers()"
-        (toggled)="showMarkersChange.emit($event)"
-      />
-      <app-choice-row
-        variant="boxed"
-        [label]="'entry.zones' | t"
-        [count]="count(zoneCount())"
-        [checked]="showZones()"
-        (toggled)="showZonesChange.emit($event)"
-      />
-      @if (showsLayer()) {
-        <app-choice-row
-          [label]="'map.forecastBelow' | t"
-          [checked]="forecastBelow()"
-          (toggled)="forecastBelowChange.emit($event)"
-        />
-      }
-    </div>
-  </section>
-
-  <section class="layers__part">
-    <h3 class="layers__title">{{ 'map.opacity' | t }}</h3>
-    <app-range-slider
-      [from]="0"
-      [to]="percent()"
-      [handles]="'to'"
-      [variant]="'dot'"
-      (toChange)="onOpacity($event)"
-    />
-  </section>
-</app-popover>
+@if (wide()) {
+  <app-popover [open]="true" [anchor]="anchor" [label]="'map.layers.button' | t" (closed)="closed.emit()">
+    <app-layers-body class="layers__pop" />
+  </app-popover>
+} @else {
+  <app-overlay-host [open]="true" [modal]="true" (closed)="closed.emit()">
+    <app-sheet
+      [label]="'map.layers.button' | t"
+      [title]="'map.layers.button' | t"
+      [modal]="true"
+      [dismissible]="true"
+      (closed)="closed.emit()"
+    >
+      <div class="overlay-body" appScrollFade>
+        <app-layers-body />
+      </div>
+      <div foot class="layers__end"></div>
+    </app-sheet>
+  </app-overlay-host>
+}

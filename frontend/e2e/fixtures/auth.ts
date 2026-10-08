@@ -1,11 +1,11 @@
 import type { Page } from '@playwright/test';
 
-/** Ein SSO, das nur im Test steht. Kein Netzweg verlässt die Seite. */
+/** An SSO that exists only in the test. No network request leaves the page. */
 export const ISSUER = 'https://sso.test.invalid';
 export const CLIENT_ID = 'pilzkarte-e2e';
 export const PERSON = { sub: 'sub-eins', name: 'Frederik', email: 'frederik@beimgraben.net' };
 
-/** Die Konfiguration, die das Backend liefert, damit die App ein SSO kennt. */
+/** The backend configuration that tells the app the SSO. */
 export function authConfig(origin: string): Record<string, unknown> {
   return { oidcIssuer: ISSUER, oidcClientId: CLIENT_ID, origin, version: 'e2e' };
 }
@@ -14,7 +14,7 @@ function base64url(value: unknown): string {
   return Buffer.from(JSON.stringify(value)).toString('base64url');
 }
 
-/** Ein Token, das `oidc-client-ts` lesen kann. Es prüft keine Signatur. */
+/** A token that `oidc-client-ts` can read. The library does not check the signature. */
 function idToken(nonce: string): string {
   const now = Math.floor(Date.now() / 1000);
   const claims = {
@@ -40,10 +40,7 @@ const METADATA = {
   id_token_signing_alg_values_supported: ['RS256'],
 };
 
-/**
- * Legt ein SSO auf die Seite. Die stille Erneuerung läuft danach durch, und
- * die App ist angemeldet.
- */
+/** Puts an SSO on the page. The silent renewal then succeeds, and the app is signed in. */
 export async function mockSignIn(page: Page, delayMs = 0): Promise<void> {
   let nonce = '';
   await page.route(`${ISSUER}/.well-known/openid-configuration`, async (route) => {
@@ -72,7 +69,7 @@ export async function mockSignIn(page: Page, delayMs = 0): Promise<void> {
   );
 }
 
-/** Ein SSO ohne Sitzung: die stille Erneuerung endet mit `login_required`. */
+/** An SSO without a session: the silent renewal ends with `login_required`. */
 export async function mockSignedOut(page: Page): Promise<void> {
   await page.route(`${ISSUER}/.well-known/openid-configuration`, (route) =>
     route.fulfill({ contentType: 'application/json', body: JSON.stringify(METADATA) }),
@@ -86,7 +83,7 @@ export async function mockSignedOut(page: Page): Promise<void> {
   });
 }
 
-/** Ein SSO, das nicht antwortet. Die Sitzung bleibt offen: Zustand `unknown`. */
+/** An SSO that gives no answer. The session stays open: state `unknown`. */
 export async function mockSignInPending(page: Page): Promise<void> {
   await page.route(`${ISSUER}/.well-known/openid-configuration`, () => undefined);
 }

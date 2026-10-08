@@ -6,10 +6,10 @@ import type { Licence, Photo, PhotoState } from './models';
 
 const PATH = ENTRY_PATHS.photo;
 
-/** Ein Foto am eigenen Fund gehört der Person, die es aufgenommen hat. */
+/** A photo of the user's own find belongs to the person who took it. */
 const OWN_LICENCE: Licence = 'own';
 
-/** Was der Dienst neben der Datei erwartet. Fotograf und Lizenz sind Pflicht. */
+/** The fields that the service needs with the file. Photographer and licence are mandatory. */
 export interface PhotoInput {
   speciesId?: string;
   findId?: string;
@@ -20,13 +20,13 @@ export interface PhotoInput {
   takenOn?: string;
 }
 
-/** Eine Seite Fotos. Der Zeiger führt zur nächsten. */
+/** A page of photos. The cursor points to the next page. */
 export interface PhotoPage {
   items: Photo[];
   nextCursor: string | null;
 }
 
-/** Wonach eine Seite Fotos gesucht wird. */
+/** The filters for a page of photos. */
 export interface PhotoQuery {
   state?: PhotoState;
   speciesId?: string;
@@ -36,7 +36,7 @@ export interface PhotoQuery {
   cursor?: string;
 }
 
-/** Die Fotos des Vertrags: lesen, einreichen, prüfen, Titelbild setzen. */
+/** The contract photos: read, submit, review, set the lead photo. */
 @Injectable({ providedIn: 'root' })
 export class PhotosApi {
   private readonly api = inject(ApiClient);
@@ -49,12 +49,12 @@ export class PhotosApi {
     return this.api.get<Photo>(`${PATH}/${encodeURIComponent(id)}`);
   }
 
-  /** Lädt ein Foto hoch und meldet den Anteil. */
+  /** Uploads a photo and reports the progress. */
   create(input: PhotoInput, file: File): Observable<Upload<Photo>> {
     return this.api.uploadFile<Photo>(PATH, 'file', file, { ...input });
   }
 
-  /** Ein Foto an einem eigenen Fund. Der Fund trägt das Recht daran. */
+  /** A photo of the user's own find. The permission comes from the find. */
   ofFind(findId: string, photographer: string, file: File, options?: Silent): Observable<Photo> {
     return this.api.postFile<Photo>(
       PATH,

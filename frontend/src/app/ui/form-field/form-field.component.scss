@@ -43,23 +43,23 @@
   gap: 10px;
 }
 
-// Das Zeichen sitzt auf der Mittellinie, nicht auf dem Polster des Textes.
+// The icon aligns to the centre line, not to the text padding.
 .field__lead {
   flex: none;
   margin-block-start: -2px;
   color: var(--text-var);
 }
 
-// Der Pfeil steht am Ende der Zeile, der Text füllt den Rest. Ein schmales
-// Feld setzt `--form-field-trail-push` auf null: dort folgt er dem Wort.
+// The arrow is at the end of the row. A narrow field sets
+// `--form-field-trail-push` to zero, so the arrow follows the text.
 .field__trail {
   flex: none;
   margin-inline-start: var(--form-field-trail-push, auto);
   color: var(--text-var);
 }
 
-// Der Tag steht in der Schreibweise der Sprache. Die Eingabe des Systems liegt
-// unsichtbar darüber und öffnet den Kalender.
+// The date shows in the locale format. The system input is invisible
+// above it and opens the calendar.
 .field--date {
   position: relative;
 }
@@ -102,8 +102,8 @@
   color: var(--text-var);
 }
 
-// Der Rahmen gehört dem Kasten, nicht der Eingabe darin. Sonst stünden zwei
-// Rahmen ineinander und der Fokus säße am falschen Rand.
+// The border belongs to the box, not to the input. This prevents two borders
+// and keeps the focus ring on the correct edge.
 .field__input {
   flex: 1;
   min-inline-size: 0;

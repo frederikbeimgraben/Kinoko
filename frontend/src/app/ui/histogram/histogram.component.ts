@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 interface Bar {
-  x: number;
-  y: number;
-  width: number;
+  /** The height in percent of the area. */
   height: number;
   inside: boolean;
 }
 
-/** Verteilung einer Ebene, 40 Klassen. Innerhalb der Bedingung in Primärfarbe. */
+/** The distribution of a layer, per the board `Histogram`. The classes inside the condition show in the primary colour. */
 @Component({
   selector: 'app-histogram',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,27 +16,19 @@ interface Bar {
 export class HistogramComponent {
   readonly shares = input.required<readonly number[]>();
   readonly label = input.required<string>();
-  /** Untere und obere Grenze der Bedingung, Werte zwischen 0 und 1. */
+  /** The lower and the upper limit of the condition, values from 0 to 1. */
   readonly from = input(0);
   readonly to = input(1);
-  /** Die Höhe der Fläche. Die Werkstatt zeigt sie höher als die Karte. */
-  readonly height = input(28);
-
-  protected readonly width = 358;
+  readonly height = input(72);
 
   protected readonly bars = computed<Bar[]>(() => {
     const shares = this.shares();
     const count = shares.length || 1;
     const top = Math.max(...shares, Number.EPSILON);
-    const step = this.width / count;
     return shares.map((value, i) => {
-      const height = (value / top) * (this.height() - 4);
       const position = i / count;
       return {
-        x: position * this.width,
-        y: this.height() - height,
-        width: Math.max(step - 1.5, 0.5),
-        height,
+        height: Math.max(4, (value / top) * 100),
         inside: position >= this.from() && position <= this.to(),
       };
     });

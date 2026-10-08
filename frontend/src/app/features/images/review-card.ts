@@ -6,7 +6,7 @@ import { COARSE_DIGITS } from '../../core/location/grid';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
 import type { I18nService } from '../../core/i18n/i18n.service';
 
-/** Eine Karte im Prüfstapel. */
+/** A card in the review stack. */
 export interface ReviewCard {
   id: string;
   path: string;
@@ -17,12 +17,12 @@ export interface ReviewCard {
   alt: string;
 }
 
-/** Die Lizenz als Kennung. Eigene Aufnahmen tragen ein Wort statt einer Marke. */
+/** The licence as a code. Own photos show a word, not a licence code. */
 export function licenceText(photo: Photo, i18n: I18nService): string {
   return photo.licence === 'own' ? i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[photo.licence];
 }
 
-/** Wer eingereicht hat, wann und wo. Was fehlt, fällt weg. */
+/** Who sent the photo, when and where. Missing parts are not shown. */
 export function metaText(photo: Photo, i18n: I18nService): string {
   const parts = [photo.ownerName];
   const day = photo.takenOn ?? photo.createdAt.slice(0, 10);
@@ -34,7 +34,6 @@ export function metaText(photo: Photo, i18n: I18nService): string {
   return parts.join(SEPARATOR);
 }
 
-/** Baut die Karte eines Fotos für den Stapel. */
 export function reviewCard(photo: Photo, species: string, i18n: I18nService): ReviewCard {
   return {
     id: photo.id,

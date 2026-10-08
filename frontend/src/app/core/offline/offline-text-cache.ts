@@ -4,7 +4,7 @@ import { OfflineStore } from './offline-store';
 
 const KEY = 'catalogue';
 
-/** Der Textkatalog auf dem Gerät. Er übersteht den Neustart. */
+/** The text catalog on the device. It stays after a restart. */
 @Injectable({ providedIn: 'root' })
 export class OfflineTextCache implements TextCache {
   private readonly store = inject(OfflineStore);

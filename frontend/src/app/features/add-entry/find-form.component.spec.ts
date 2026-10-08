@@ -4,15 +4,16 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { Find } from '../../core/api/models';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FIND } from '../../testing/entries-fixture';
-import { MapState } from '../map/map.state';
+import { MapStore } from '../map/map.store';
+import { EMPTY_FIND_DRAFT, type FindDraft } from './find-draft';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 
-/** Der Ort, auf dem das Formular ohne vorhandenen Fund steht. */
+/** The place of the form without an existing find. */
 const LOCATION: readonly [number, number] = [9.0511, 48.5203];
 
 interface Extra {
@@ -20,11 +21,13 @@ interface Extra {
   withPhotos?: boolean;
   editing?: boolean;
   busy?: boolean;
+  draft?: FindDraft;
 }
 
 interface Setup {
   container: Element;
   submissions: FindSubmission[];
+  drafts: FindDraft[];
   toasts: ToastSpy;
 }
 
@@ -40,24 +43,26 @@ async function build(
     },
     providers: [provideHttpClient(), provideHttpClientTesting()],
   });
-  TestBed.inject(MapState).species.set('steinpilz');
+  TestBed.inject(MapStore).setSpecies('steinpilz');
   await vi.waitFor(() => {
     TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(bundle);
   });
-  // Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf.
-  const catalogue = TestBed.inject(SpeciesState);
+  // The catalogue goes into the state through the storage, not through the call.
+  const catalogue = TestBed.inject(SpeciesStore);
   await vi.waitFor(() => {
     expect(catalogue.species()).toHaveLength(bundle.items.length);
   });
   detectChanges();
   const submissions: FindSubmission[] = [];
   fixture.componentInstance.submitted.subscribe((submission) => submissions.push(submission));
-  return { container, submissions, toasts: toastSpy() };
+  const drafts: FindDraft[] = [];
+  fixture.componentInstance.locationClick.subscribe((draft) => drafts.push(draft));
+  return { container, submissions, drafts, toasts: toastSpy() };
 }
 
-/** Das X im Kopf des Blatts der Artwahl. */
+/** The close button in the head of the species choice sheet. */
 function sheetClose(container: Element): HTMLElement {
-  const close = container.querySelector<HTMLElement>('.sheet__close');
+  const close = container.querySelector<HTMLElement>('.overlay-head__close');
   if (close === null) throw new Error('Das Blatt trägt kein X.');
   return close;
 }
@@ -99,6 +104,21 @@ describe('FundFormularComponent', () => {
       groupId: null,
       forTraining: false,
     });
+  });
+
+  it('gives its choices with the location row and takes them back as a draft', async () => {
+    const setup = await build();
+    await userEvent.type(screen.getByLabelText('Anzahl'), '3');
+    await userEvent.click(screen.getByRole('button', { name: /^Ort/ }));
+
+    expect(setup.drafts).toEqual([{ ...EMPTY_FIND_DRAFT, count: '3' }]);
+  });
+
+  it('starts from a draft', async () => {
+    await build({ draft: { ...EMPTY_FIND_DRAFT, note: 'Unter Fichten', count: '2' } });
+
+    expect(screen.getByLabelText('Notiz')).toHaveValue('Unter Fichten');
+    expect(screen.getByLabelText('Anzahl')).toHaveValue(2);
   });
 
   it('lässt Anzahl und Notiz weg, wenn nichts dasteht', async () => {
@@ -177,14 +197,14 @@ describe('FundFormularComponent', () => {
   it('dimmt und sperrt die Felder, solange das Speichern läuft', async () => {
     const setup = await build({ busy: true });
 
-    expect(setup.container.querySelector('.form__fields')).toHaveClass('form__fields--busy');
+    expect(setup.container.querySelector('.form__body')).toHaveClass('form__body--busy');
     expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
   });
 
   it('lässt die Felder frei, solange nichts läuft', async () => {
     const setup = await build();
 
-    expect(setup.container.querySelector('.form__fields')).not.toHaveClass('form__fields--busy');
+    expect(setup.container.querySelector('.form__body')).not.toHaveClass('form__body--busy');
   });
 
   it('füllt sich aus einem vorhandenen Fund, lässt die Fotos weg und behält die Freigabe', async () => {

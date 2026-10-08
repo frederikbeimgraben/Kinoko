@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Ein Zurück-Pfeil vor einem Titel, für ein Blatt oder eine Spalte. */
+/** A back arrow before a title, for a sheet or a column. */
 @Component({
   selector: 'app-back-head',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,4 @@
-/** Ein Cache Storage im Speicher. jsdom bringt keinen mit. */
+/** An in-memory Cache Storage, because jsdom has none. */
 class CacheDouble {
   private readonly entries = new Map<string, Response>();
 
@@ -20,7 +20,7 @@ class CacheDouble {
   }
 }
 
-/** Die Speicher der Seite, als Attrappe für `caches`. */
+/** A double for `caches`. */
 export class CacheStorageDouble {
   private readonly stores = new Map<string, CacheDouble>();
 
@@ -54,7 +54,6 @@ export class CacheStorageDouble {
   }
 }
 
-/** Legt die Attrappe auf `caches` und gibt sie zurück. */
 export function stubCaches(): CacheStorageDouble {
   const storage = new CacheStorageDouble();
   vi.stubGlobal('caches', storage);

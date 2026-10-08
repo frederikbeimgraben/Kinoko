@@ -46,7 +46,14 @@
     "beispiel.wiesenchampignon": "Wiesenchampignon",
     "beispiel.fundLoeschen": "Fund löschen?",
     "beispiel.fundKurz": "Pfifferling · 6. September",
-    "beispiel.hintergrund": "Hintergrund"
+    "beispiel.hintergrund": "Hintergrund",
+    "beispiel.uebertragungAusstehend": "1 Übertragung ausstehend",
+    "beispiel.ohneGruppe": "ohne Gruppe",
+    "beispiel.herbstSteinpilz": "Herbst Steinpilz",
+    "beispiel.nachRegen": "Nach Regen",
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Familie",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -87,7 +94,7 @@
     "beispiel.farbeRot": "red",
     "beispiel.farbeOlivbraun": "olive brown",
     "beispiel.sortieren": "Sort",
-    "beispiel.summeKw": "Sum weeks 35 to 38",
+    "beispiel.summeKw": "Sum of week 35 to 38",
     "beispiel.knollenblaetterpilz": "Death cap",
     "beispiel.pantherpilz": "Panther cap",
     "beispiel.perlpilz": "Blusher",
@@ -95,6 +102,13 @@
     "beispiel.wiesenchampignon": "Field mushroom",
     "beispiel.fundLoeschen": "Delete find?",
     "beispiel.fundKurz": "Chanterelle · 6 September",
-    "beispiel.hintergrund": "Background"
+    "beispiel.hintergrund": "Background",
+    "beispiel.uebertragungAusstehend": "1 transfer pending",
+    "beispiel.ohneGruppe": "no group",
+    "beispiel.herbstSteinpilz": "Autumn penny bun",
+    "beispiel.nachRegen": "After rain",
+    "beispiel.schoenbuchNord": "Schönbuch Nord",
+    "beispiel.familie": "Family",
+    "beispiel.pilzgruppeKarlsruhe": "Pilzgruppe Karlsruhe"
   }
 }

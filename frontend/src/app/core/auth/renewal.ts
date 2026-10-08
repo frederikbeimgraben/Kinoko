@@ -1,4 +1,4 @@
-/** Antworten des SSO, nach denen keine Sitzung mehr steht. */
+/** SSO answers that mean the session has ended. */
 const FINAL_ERRORS: readonly string[] = [
   'login_required',
   'interaction_required',
@@ -7,18 +7,17 @@ const FINAL_ERRORS: readonly string[] = [
   'invalid_grant',
 ];
 
-/** Sagt, ob das SSO die Sitzung verneint hat. Alles andere ist ein Netzweg. */
+/** Tells if the SSO rejected the session. Any other failure is a network failure. */
 export function finalAnswer(failure: unknown): boolean {
   if (typeof failure !== 'object' || failure === null) return false;
   const code = (failure as { error?: unknown }).error;
   return typeof code === 'string' && FINAL_ERRORS.includes(code);
 }
 
-/** Der zweite Versuch nach einem Netzfehler, sobald die App wieder sichtbar ist. */
+/** Retries after a network failure when the app becomes visible again. */
 export class ViewRetry {
   private waiting = false;
 
-  /** Legt einen Versuch auf den nächsten Sichtbarkeitswechsel. */
   schedule(again: () => void): void {
     if (this.waiting) return;
     this.waiting = true;

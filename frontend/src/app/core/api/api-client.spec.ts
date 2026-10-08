@@ -102,9 +102,8 @@ describe('ApiClient', () => {
       status: 401,
       code: SIGN_IN_REQUIRED,
     };
-    // So wirft der authInterceptor: kein HttpErrorResponse, sondern ein
-    // fertiges Problem. Der Aufrufer soll es sehen, ohne dass ein Toast
-    // danebensteht, denn das Anmelde-Blatt fragt schon.
+    // The authInterceptor throws a finished problem, not an HttpErrorResponse.
+    // The caller gets it without a toast, because the sign-in sheet already asks.
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [

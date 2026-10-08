@@ -1,22 +1,21 @@
-/** Ein Abmelden gilt für den Tab, sonst holte die stille Erneuerung die Sitzung zurück. */
+/** A sign-out applies to the tab. This stops the silent renewal from restoring the session. */
 const KEY = 'pilzkarte.abgemeldet';
 
-/** Sagt, ob dieser Tab abgemeldet wurde. */
 export function signedOutHere(): boolean {
   try {
     return sessionStorage.getItem(KEY) === 'ja';
   } catch {
-    // Gesperrter Speicher heißt: der Tab weiß nichts von einem Abmelden.
+    // Blocked storage means that the tab has no sign-out record.
     return false;
   }
 }
 
-/** Merkt das Abmelden für diesen Tab, oder nimmt die Merkung zurück. */
+/** Records or clears the sign-out for this tab. */
 export function rememberSignOut(signedOut: boolean): void {
   try {
     if (signedOut) sessionStorage.setItem(KEY, 'ja');
     else sessionStorage.removeItem(KEY);
   } catch {
-    // Ohne Speicher gilt das Abmelden nur für diese Seite.
+    // Without storage, the sign-out applies only to this page.
   }
 }

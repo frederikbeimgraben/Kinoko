@@ -1,26 +1,24 @@
 <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 
-<div class="group">
+<div class="pad">
   @if (group(); as one) {
     <app-group-members [group]="one" [removable]="mine()" (removed)="removeMember($event)" />
+    <app-push-button kind="danger" icon="trash" [wide]="true" (click)="asking.set(true)">
+      {{ mine() ? ('group.delete' | t) : ('group.leave' | t) }}
+    </app-push-button>
+  } @else if (loading()) {
+    <app-row-group-skeleton [count]="1" [label]="true" />
+    <app-row-group-skeleton [count]="3" [lines]="2" [label]="true" />
   } @else {
-    <p class="note">{{ 'group.notFound' | t }}</p>
+    <app-state-view icon="account" [title]="'group.notFound' | t" />
   }
 </div>
-
-@if (group()) {
-  <app-action-bar
-    [primary]="mine() ? ('group.delete' | t) : ('group.leave' | t)"
-    [danger]="true"
-    [split]="true"
-    (primaryClick)="asking.set(true)"
-  />
-}
 
 <app-confirm-dialog
   [open]="asking()"
   [title]="question()"
   [confirmLabel]="mine() ? ('common.delete' | t) : ('group.leave' | t)"
+  [confirmDisabled]="busy()"
   (confirmed)="confirm()"
   (cancelled)="asking.set(false)"
 />
