@@ -114,7 +114,7 @@ func TestDwCA(t *testing.T) {
 }
 
 func TestSimpleCSV(t *testing.T) {
-	body := "﻿gbifID\tspecies\tdecimalLatitude\tcountryCode\n1\tBoletus edulis\t48.5\tDE\r\n2\t\"Krause\" Glucke\t49\tDE\r\n"
+	body := "\ufeffgbifID\tspecies\tdecimalLatitude\tcountryCode\n1\tBoletus edulis\t48.5\tDE\r\n2\t\"Krause\" Glucke\t49\tDE\r\n"
 	o, err := OpenOccurrences(writeZip(t, [][2]string{{"0001-240101.csv", body}}))
 	if err != nil {
 		t.Fatal(err)
@@ -163,7 +163,7 @@ func TestParseMetaDefaults(t *testing.T) {
 }
 
 func TestTSVReaderQuoted(t *testing.T) {
-	r, err := NewTSVReader(strings.NewReader("a\t\"b\tc\"\td\n\"e \"f\"\" g\t\"h\nx\"\n"), TSVOptions{Quote: '"'})
+	r, err := NewTSVReader(strings.NewReader("a\t\"b\tc\"\td\n\"e \"\"f\"\" g\"\t\"h\nx\"\n"), TSVOptions{Quote: '"'})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -178,7 +178,7 @@ func TestTSVReaderQuoted(t *testing.T) {
 		}
 		recs = append(recs, rec)
 	}
-	if len(recs) != 2 || !slices.Equal(recs[0], []string{"a", "b\tc", "d"}) || recs[1][1] != "h\nx" {
+	if len(recs) != 2 || !slices.Equal(recs[0], []string{"a", "b\tc", "d"}) || !slices.Equal(recs[1], []string{`e "f" g`, "h\nx"}) {
 		t.Errorf("records %q", recs)
 	}
 	if _, err := NewTSVReader(strings.NewReader(""), TSVOptions{Quote: '\''}); err == nil {
