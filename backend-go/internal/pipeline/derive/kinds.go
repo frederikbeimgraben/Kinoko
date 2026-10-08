@@ -132,9 +132,16 @@ func (p TreeMap) Derive(ctx context.Context, v *sources.Version) ([]sources.Arti
 	if _, err := writeTable(out, ArtTreeScales, scales, scaleSchema); err != nil {
 		return nil, err
 	}
-	artifacts, err := artifactsOf(out, ArtTreesGrid+".parquet", ArtTreeScales+".parquet")
-	if err != nil {
-		return nil, err
+	var artifacts []sources.Artifact
+	for _, a := range []struct {
+		kind sources.Kind
+		name string
+	}{{sources.KindTreesGrid, ArtTreesGrid}, {sources.KindTreeScales, ArtTreeScales}} {
+		art, err := p.promote(ctx, v, a.kind, a.name, filepath.Join(out, a.name+".parquet"))
+		if err != nil {
+			return nil, err
+		}
+		artifacts = append(artifacts, art)
 	}
 	outline, err := p.optionalPath(sources.KindGermanyOutline, "outline")
 	if err != nil {
@@ -211,11 +218,17 @@ func (p DEM) Derive(ctx context.Context, v *sources.Version) ([]sources.Artifact
 		if _, err := writeSite(out, g, dem, soil); err != nil {
 			return nil, err
 		}
-		rel = append(rel, ArtSite+".parquet")
 	}
 	artifacts, err := artifactsOf(out, rel...)
 	if err != nil {
 		return nil, err
+	}
+	if soilPart != "" {
+		site, err := p.promote(ctx, v, sources.KindSiteGrid, ArtSite, filepath.Join(out, ArtSite+".parquet"))
+		if err != nil {
+			return nil, err
+		}
+		artifacts = append(artifacts, site)
 	}
 	fine, err := p.renderFine(ctx, v, FineInputs{DEM: f})
 	return append(artifacts, fine...), err
@@ -281,10 +294,15 @@ func (p SoilGrids) Derive(ctx context.Context, v *sources.Version) ([]sources.Ar
 	if _, err := writeSite(out, g, dem, soil); err != nil {
 		return nil, err
 	}
-	artifacts, err := artifactsOf(out, ArtSiteSoil+".parquet", ArtSite+".parquet")
+	artifacts, err := artifactsOf(out, ArtSiteSoil+".parquet")
 	if err != nil {
 		return nil, err
 	}
+	site, err := p.promote(ctx, v, sources.KindSiteGrid, ArtSite, filepath.Join(out, ArtSite+".parquet"))
+	if err != nil {
+		return nil, err
+	}
+	artifacts = append(artifacts, site)
 	fine, err := p.renderFine(ctx, v, FineInputs{Soil: fn.ToMap(files, func(f string) (string, string) { return SoilStem(f), f })})
 	return append(artifacts, fine...), err
 }

@@ -6,7 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ/gbif"
 )
 
 // Artifact names of the derived products. The prepared kinds trees-grid,
@@ -23,9 +25,11 @@ const (
 // at 500 m; zero FineOptions take the defaults of fine_layers.py.
 type Config struct {
 	Resolve  sources.Resolver
+	Install  Installer
 	Grid     Grid
 	TreeTile int
 	Fine     FineOptions
+	GBIF     gbif.ImportOptions
 }
 
 func (c Config) grid() Grid {
@@ -35,12 +39,38 @@ func (c Config) grid() Grid {
 	return c.Grid
 }
 
-// Processors gives the processors of the raw raster kinds.
+// Installer installs a file as a new ready version of a kind. The sources
+// module implements it.
+type Installer interface {
+	Install(ctx context.Context, in sources.Install) (sources.Version, error)
+}
+
+// promote installs a derived table as a ready, active version of its
+// prepared kind, so that the resolver of the pipeline finds it. The version
+// path is the file itself. Without an Installer the file stays in place.
+func (c Config) promote(ctx context.Context, v *sources.Version, kind sources.Kind, name, file string) (sources.Artifact, error) {
+	size, err := treeSize(file)
+	if err != nil || c.Install == nil {
+		return sources.Artifact{Name: name, Path: file, SizeBytes: size}, err
+	}
+	child, err := c.Install.Install(ctx, sources.Install{
+		Kind: kind, Origin: sources.OriginDerived, DerivedFromID: &v.ID, From: file,
+		FileName: fn.Ptr(filepath.Base(file)), CreatedByID: v.CreatedByID, Artifact: name, Activate: true,
+	})
+	if err != nil {
+		return sources.Artifact{}, err
+	}
+	v.Logf("%s: version %d of %s", name, child.Number, kind)
+	return sources.Artifact{Name: name, Path: child.Dir, SizeBytes: size}, nil
+}
+
+// Processors gives the processors of the raw raster kinds and of gbif-archive.
 func Processors(cfg Config) map[sources.Kind]sources.Processor {
 	return map[sources.Kind]sources.Processor{
 		sources.KindTreeSpeciesMap: TreeMap{cfg},
 		sources.KindDEM:            DEM{cfg},
 		sources.KindSoilGrids:      SoilGrids{cfg},
+		sources.KindGBIFArchive:    GBIFArchive{Options: cfg.GBIF},
 	}
 }
 
