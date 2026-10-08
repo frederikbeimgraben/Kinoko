@@ -47,5 +47,4 @@ func TestHealthAndProblems(t *testing.T) {
 	if missing.Header.Get("Content-Type") != "application/problem+json" {
 		t.Fatal(missing.Header)
 	}
-	env.Do(testkit.Request{Method: http.MethodGet, Path: "/me", Header: http.Header{"Authorization": {"Bearer broken"}}}).Expect(t, http.StatusUnauthorized)
 }

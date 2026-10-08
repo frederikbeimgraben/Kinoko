@@ -71,8 +71,8 @@ func Build(settings config.Settings, c *contract.Contract, authenticator *auth.A
 		return nil, problem.NotFound()
 	}))
 	var handler http.Handler = router.mux
-	handler = authenticator.Middleware(handler)
 	handler = c.Middleware(handler)
+	handler = authenticator.Middleware(handler)
 	handler = cors(settings.Origin, handler)
 	handler = recoverPanics(handler)
 	return handler

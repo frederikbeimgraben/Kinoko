@@ -28,6 +28,7 @@ type Settings struct {
 	Listen         string
 	Chain          string
 	RunLogs        string
+	DataDir        string
 	PipelineEnable bool
 }
 
@@ -81,6 +82,7 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("LISTEN", &s.Listen)
 	text("CHAIN", &s.Chain)
 	text("RUN_LOGS", &s.RunLogs)
+	text("DATEN", &s.DataDir)
 	if value, ok := lookup("PILZE_MAX_PHOTO_BYTES"); ok {
 		n, err := strconv.ParseInt(value, 10, 64)
 		if err != nil || n <= 0 {

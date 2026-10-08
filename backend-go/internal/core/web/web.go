@@ -3,6 +3,7 @@
 package web
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -43,7 +44,7 @@ type jsonResponse struct {
 }
 
 func (j jsonResponse) Send(w http.ResponseWriter) {
-	encoded, err := json.Marshal(j.body)
+	encoded, err := Encode(j.body)
 	if err != nil {
 		slog.Error("encode response", "error", err)
 		problem.Write(w, problem.Internal())
@@ -53,6 +54,18 @@ func (j jsonResponse) Send(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(j.status)
 	_, _ = w.Write(encoded)
+}
+
+// Encode gives the JSON form of v as the old service wrote it: no HTML
+// escapes and no line end.
+func Encode(v any) ([]byte, error) {
+	var buffer bytes.Buffer
+	encoder := json.NewEncoder(&buffer)
+	encoder.SetEscapeHTML(false)
+	if err := encoder.Encode(v); err != nil {
+		return nil, err
+	}
+	return bytes.TrimSuffix(buffer.Bytes(), []byte("\n")), nil
 }
 
 // JSON is a response with a JSON body.

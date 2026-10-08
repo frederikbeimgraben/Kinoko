@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	backend "github.com/frederikbeimgraben/kinoko/backend"
@@ -14,7 +15,13 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/config"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/contract"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/access"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/catalog"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/objects"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/photos"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/runs"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/system"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/texts"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/server"
 )
 
@@ -22,6 +29,12 @@ import (
 func Modules(deps server.Deps) []server.Module {
 	return []server.Module{
 		system.New(deps),
+		texts.New(deps),
+		access.New(deps),
+		catalog.New(deps),
+		objects.New(deps),
+		photos.New(deps),
+		runs.New(deps),
 	}
 }
 
@@ -54,6 +67,9 @@ func Build(ctx context.Context, settings config.Settings, handle *sql.DB, option
 		now = time.Now
 	}
 	data := options.Data
+	if data == nil && settings.DataDir != "" {
+		data = os.DirFS(settings.DataDir)
+	}
 	if data == nil {
 		data, err = fs.Sub(backend.Data, "daten")
 		if err != nil {

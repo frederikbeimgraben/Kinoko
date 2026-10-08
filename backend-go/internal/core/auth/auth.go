@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -86,33 +87,54 @@ func New(cfg Config, keys *Issuer, handle *sql.DB) *Authenticator {
 	return &Authenticator{cfg: cfg, keys: keys, handle: handle}
 }
 
-type viewerKey struct{}
+type resolverKey struct{}
 
-// Middleware puts the viewer of each request into its context.
-// A request with a token that is not valid gets 401.
+type resolver struct {
+	once   sync.Once
+	viewer Viewer
+	err    error
+	run    func() (Viewer, error)
+}
+
+// Middleware puts a lazy viewer resolver into each request context. The
+// token is checked only when a handler asks for the viewer: a public
+// endpoint ignores a token that is not valid.
 func (a *Authenticator) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		viewer, err := a.ViewerOf(r.Context(), r.Header.Get("Authorization"))
-		if err != nil {
-			problem.Write(w, err)
-			return
-		}
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), viewerKey{}, viewer)))
+		header := r.Header.Get("Authorization")
+		ctx := r.Context()
+		lazy := &resolver{run: func() (Viewer, error) { return a.ViewerOf(ctx, header) }}
+		next.ServeHTTP(w, r.WithContext(context.WithValue(ctx, resolverKey{}, lazy)))
 	})
 }
 
-// From gives the viewer of the request.
-func From(r *http.Request) Viewer {
-	viewer, ok := r.Context().Value(viewerKey{}).(Viewer)
+// From gives the viewer of the request. A token that is not valid gives 401.
+func From(r *http.Request) (Viewer, error) {
+	lazy, ok := r.Context().Value(resolverKey{}).(*resolver)
 	if !ok {
-		return Viewer{Rights: map[string]struct{}{}, Claims: map[string]any{}}
+		return anonymous(), nil
 	}
-	return viewer
+	lazy.once.Do(func() { lazy.viewer, lazy.err = lazy.run() })
+	return lazy.viewer, lazy.err
 }
 
-// WithViewer gives a context that holds the viewer. Tests use it.
+// WithViewer gives a context with a fixed viewer. Tests use it.
 func WithViewer(ctx context.Context, viewer Viewer) context.Context {
-	return context.WithValue(ctx, viewerKey{}, viewer)
+	return context.WithValue(ctx, resolverKey{}, &resolver{run: func() (Viewer, error) { return viewer, nil }})
+}
+
+// Guard gives the viewer when it has the permission: 401 without a token
+// subject, 403 without the permission.
+func Guard(r *http.Request, permission string) (Viewer, error) {
+	viewer, err := From(r)
+	if err != nil {
+		return viewer, err
+	}
+	return viewer, Require(viewer, permission)
+}
+
+func anonymous() Viewer {
+	return Viewer{Rights: map[string]struct{}{}, Claims: map[string]any{}}
 }
 
 func bearer(header string) string {
@@ -125,29 +147,29 @@ func bearer(header string) string {
 
 // ViewerOf reads the viewer from the Authorization header.
 func (a *Authenticator) ViewerOf(ctx context.Context, header string) (Viewer, error) {
-	anonymous := Viewer{Rights: map[string]struct{}{}, Claims: map[string]any{}}
+	none := anonymous()
 	token := bearer(header)
 	if token == "" {
-		return anonymous, nil
+		return none, nil
 	}
 	claims, err := a.claimsOf(ctx, token)
 	if err != nil {
-		return anonymous, err
+		return none, err
 	}
 	viewer := Viewer{Claims: claims}
 	if viewer.Sub() == "" {
-		return anonymous, problem.Unauthorized()
+		return none, problem.Unauthorized()
 	}
 	user, found, err := PersonOf(ctx, a.handle, viewer.Sub())
 	if err != nil {
-		return anonymous, err
+		return none, err
 	}
 	if found {
 		viewer.User = &user
 	}
 	rights, err := a.rightsOf(ctx, viewer.User, a.keys.Groups(ctx, token, claims))
 	if err != nil {
-		return anonymous, err
+		return none, err
 	}
 	viewer.Rights = rights
 	return viewer, nil
@@ -263,4 +285,19 @@ func Require(viewer Viewer, permission string) error {
 		return problem.Forbidden()
 	}
 	return nil
+}
+
+// CurrentUser gives the signed-in person of the request and creates the
+// person row at the first call. Without a token subject it gives 401.
+func (a *Authenticator) CurrentUser(r *http.Request) (User, Viewer, error) {
+	viewer, err := From(r)
+	if err != nil {
+		return User{}, viewer, err
+	}
+	user, err := EnsurePerson(r.Context(), a.handle, viewer)
+	if err != nil {
+		return User{}, viewer, err
+	}
+	viewer.User = &user
+	return user, viewer, nil
 }

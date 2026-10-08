@@ -17,6 +17,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/getkin/kin-openapi/routers"
 
+	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
@@ -127,6 +128,24 @@ func (c *Contract) Middleware(next http.Handler) http.Handler {
 	})
 }
 
+// Permission gives the permission that the operation needs, from x-permission.
+func Permission(operation *openapi3.Operation) string {
+	value, _ := operation.Extensions["x-permission"].(string)
+	return value
+}
+
+func (c *Contract) validate(r *http.Request, path string, target Path, operation *openapi3.Operation) error {
+	if err := unknownQuery(r, target, operation); err != nil {
+		return err
+	}
+	if permission := Permission(operation); permission != "" {
+		if _, err := auth.Guard(r, permission); err != nil {
+			return err
+		}
+	}
+	return c.validateInput(r, path, target, operation)
+}
+
 func queryNames(item *openapi3.PathItem, operation *openapi3.Operation) []string {
 	all := append(slices.Clone(item.Parameters), operation.Parameters...)
 	return fn.Map(fn.Filter(all, func(ref *openapi3.ParameterRef) bool {
@@ -134,7 +153,7 @@ func queryNames(item *openapi3.PathItem, operation *openapi3.Operation) []string
 	}), func(ref *openapi3.ParameterRef) string { return ref.Value.Name })
 }
 
-func (c *Contract) validate(r *http.Request, path string, target Path, operation *openapi3.Operation) error {
+func unknownQuery(r *http.Request, target Path, operation *openapi3.Operation) error {
 	known := queryNames(target.item, operation)
 	unknown := fn.Filter(fn.SortedKeys(r.URL.Query()), func(key string) bool {
 		return !strings.Contains(key, "[") && !slices.Contains(known, key)
@@ -144,6 +163,10 @@ func (c *Contract) validate(r *http.Request, path string, target Path, operation
 			return problem.FieldError{Field: key, Code: "unknown"}
 		})...)
 	}
+	return nil
+}
+
+func (c *Contract) validateInput(r *http.Request, path string, target Path, operation *openapi3.Operation) error {
 	params := pathParams(target.Template, path)
 	jsonBody := strings.HasPrefix(r.Header.Get("Content-Type"), "application/json")
 	if jsonBody && r.Body != nil {
