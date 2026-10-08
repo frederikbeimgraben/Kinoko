@@ -3,7 +3,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 let nextNumber = 0;
 
-/** Zeile mit Haken-Kästchen, per `kit.css` `.box-c`. */
+/** A row with a check box, per `CheckRow.dc.html` and `kit.css` `.box-c`. */
 @Component({
   selector: 'app-check-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,11 +15,11 @@ export class CheckRowComponent {
   readonly title = input.required<string>();
   readonly subline = input<string>();
   readonly checked = input(false);
-  /** Eine feste Rolle trägt jedes Recht und lässt es sich nicht abwählen. */
+  /** A fixed role has each right. The row is then dim (`.row.off`) and does not toggle. */
   readonly locked = input(false);
-  /** Die Anzahl am Ende der Zeile. */
+  /** The count at the end of the row, per `.num`. */
   readonly count = input<number>();
-  /** Ohne Karte um die Zeile bleibt ihr Inhalt am Rand der Fläche. */
+  /** Without a card around the row, its content stays at the edge of the area. */
   readonly flush = input(false);
 
   readonly toggled = output<boolean>();

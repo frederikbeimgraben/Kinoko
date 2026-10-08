@@ -1,0 +1,86 @@
+name = "Zitzen-Riesenschirmling"
+lateinisch = "Macrolepiota mastoidea"
+gruppe = "schirmling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Nicht roh verwenden. Der Ring muss sich am Stiel verschieben lassen, sonst ist es kein Riesenschirmling; sitzt das Velum noch am Hutrand, löst man es mit den Fingern und prüft den Ring. Riesenschirmlinge aus Gärten und von Komposthaufen stehen lassen, dort wächst der Gift-Riesenschirmling. Auch kleine Schirmlinge ohne verschiebbaren Ring bleiben stehen."
+weitereNamen = ["Schlanker Riesenschirmling", "Zitzenwarziger Riesenschirmling", "Warzenschirmpilz", "Gedrungener Riesen-Zitzenschirmling", "Spitzgebuckelter Riesenschirmling"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+hutform = { von = "eifoermig" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["faserig", "ring", "genattert"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SchlankerRiesenschirmling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 15.0, seltenBis = 19.0, einheit = "cm" }
+sporenLaengeUm = { von = 13.0, bis = 14.0, einheit = "um" }
+sporenBreiteUm = { von = 7.4, bis = 8.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "rot", hex = "#c0392b" }]
+
+[geruch]
+tags = ["bittermandel", "angenehm"]
+text = "Angenehm nussartig bis etwas marzipanartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Angenehm mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 15, selten bis 19 cm breit, braunocker, jung eiförmig glockig, mit braunem zitzenartigem Buckel. Grob schollig und braunschuppig, die Schuppen reißen auf."
+lamellen = "Weiß, frei, weich."
+stiel = "Weißlich bis hellbräunlich, schlank, zäh und faserig, mit verschiebbarem Ring. Natterung und doppelrandiger Ring sind schwächer ausgeprägt als bei Parasol und Sternschuppigem Riesenschirmpilz. Jung ist die Basis wie ein breiter Teller, mit zunehmender Größe baut sich der Teller ab."
+fleisch = "Weiß, weich, nicht rötend, höchstens minimal in der Stielrinde beim Abbrechen."
+geruch = "Angenehm nussartig bis etwas marzipanartig."
+geschmack = "Angenehm mild."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer in Mischwäldern, Parks, Gärten und Heiden."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "gruensporschirmling"
+unterschied = "Hut weiß und wollig, jung mit hellbrauner landkartenartiger Zeichnung, Lamellen im Alter grünlich."
+
+[[verwechslungen]]
+slug = "jungfernschirmling"
+unterschied = "Hut hellbraun mit gezonten, weichen, wolligen, abstehenden Schuppen, Lamellen weiß und leicht gilbend."
+
+[[verwechslungen]]
+slug = "safranschirmling"
+unterschied = "Fleisch läuft safranrot an, Hut hellbraun bis olivbraun, Lamellen cremeweiß mit Zwischenlamellen."
+
+[[verwechslungen]]
+slug = "sternschuppiger-riesenschirmpilz"
+unterschied = "Hut mit braunen, sternförmig aufreißenden Schuppen, Stiel fein braun genattert, Stielrinde rötend."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SchlankerRiesenschirmling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Zitzen-Riesenschirmling"

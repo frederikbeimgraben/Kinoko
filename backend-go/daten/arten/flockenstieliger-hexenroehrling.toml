@@ -1,0 +1,100 @@
+name = "Flockenstieliger Hexenröhrling"
+lateinisch = "Neoboletus erythropus"
+gruppe = "roehrling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = ["fichte", "buche"]
+karte = "hexen_flock"
+speisewertHinweis = "Roh unverträglich. Gut durchgaren."
+haeufigkeit = "sehrHaeufig"
+weitereNamen = ["Flocki", "Zigeuner", "Hexenpilz"]
+fruchtschicht = { art = "roehren" }
+hutform = { von = "halbkugelig" }
+stielmerkmale = ["beflockt"]
+
+[baeumeAusErfahrung]
+baeume = ["tanne"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Flocki.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 20.0, seltenBis = 25.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 15.0, einheit = "cm" }
+stielDickeCm = { von = 2.0, bis = 5.0, einheit = "cm" }
+sporenLaengeUm = { von = 12.0, bis = 18.0, einheit = "um" }
+sporenBreiteUm = { von = 4.5, bis = 6.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "rot", hex = "#c0392b" }]
+stiel = [{ name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "schnell"
+
+[geruch]
+tags = ["angenehm"]
+text = "Angenehm pilzartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 20, selten bis 25 cm breit, dunkelbraun, teils gelb gescheckt oder mit olivem Ton, samtig, feucht leicht klebrig. Halbkugelig bis polsterförmig. Nach Schneckenfraß erscheint darunter Rötliches."
+roehren = "Röhrenmündungen rot, Röhrenboden gelb, am Stiel ausgebuchtet angewachsen. Ganz junge Pilze können noch gelbe Röhren haben."
+stiel = "5 bis 15 cm lang, 2 bis 5 cm dick, mit rötlichen Flöckchen auf gelbem Grund, ohne Netz."
+fleisch = "Gelb, im Schnitt sofort schwarzblau, nach Stunden graugelb."
+geruch = "Angenehm pilzartig."
+geschmack = "Mild."
+sporenpulver = "Olivbraun."
+vorkommen = "Symbiosepilz im Mischwald, gern bei Fichte und Buche, auf saurem Boden. Meist sehr häufig."
+zeit = "Frühling bis Spätherbst, oft schon ab April."
+
+[[verwechslungen]]
+slug = "blaufleckender-purpurroehrling"
+unterschied = "Hut purpurrot bis weinrosa, Stiel mit rötlichem Netz."
+
+[[verwechslungen]]
+slug = "buescheliger-hexenroehrling"
+unterschied = "Hut kupfer- bis granatrot, Stiel rötlich benetzt, wächst büschelig."
+
+[[verwechslungen]]
+slug = "falscher-satansroehrling"
+unterschied = "Hut purpurrosa bis rostgelb, Stiel kräftig rot mit rotem Netz."
+eigenerUnterschied = "Stiel ohne Netz, nur rot geflockt, Hut dunkelbraun."
+
+[[verwechslungen]]
+slug = "glattstieliger-hexenroehrling"
+unterschied = "Stiel ohne Flöckchen und ohne Netz, Röhrenmündungen gelborange."
+
+[[verwechslungen]]
+slug = "ochsenroehrling"
+unterschied = "Hut goldgelb bis braungelb, Stielbasis stark verdickt."
+eigenerUnterschied = "Stiel ohne Netz, mit roten Flöckchen auf gelbem Grund, Hut dunkelbraun."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Flocki.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Flockenstieliger_Hexen-Röhrling"

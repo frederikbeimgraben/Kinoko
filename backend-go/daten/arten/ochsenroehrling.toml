@@ -1,0 +1,74 @@
+name = "Ochsenröhrling"
+lateinisch = "Imperator torosus"
+gruppe = "roehrling"
+speisewert = "bedingtEssbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["eiche", "buche"]
+speisewertHinweis = "Der Seitenkopf nennt ihn oft unverträglich, nur bedingt essbar und mit Alkohol giftig. Alle Purpurröhrlinge stehen im Verdacht, Coprin oder ähnliche Stoffe zu enthalten. Kennzeichen sind das auffällige Gewicht, das schwefelgelbe, sofort schwarzblau verfärbende Fleisch und das feine Netz auf gelblichem Stiel."
+haeufigkeit = "sehrSelten"
+synonyme = ["Boletus torosus", "Dictyopus torosus"]
+fruchtschicht = { art = "roehren" }
+stielmerkmale = ["genetzt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Ochsenroehrling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 9.0, seltenBis = 13.0, einheit = "cm" }
+stielLaengeCm = { von = 7.0, bis = 14.0, seltenBis = 16.0, einheit = "cm" }
+sporenLaengeUm = { von = 12.0, bis = 17.5, einheit = "um" }
+sporenBreiteUm = { von = 5.0, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "ockergelb", hex = "#d4a63c" }, { name = "goldgelb", hex = "#e2b13a" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grün", hex = "#4f8a3a" }]
+sporenlager = [{ name = "goldgelb", hex = "#e2b13a" }, { name = "orangerot", hex = "#df5a25" }, { name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }, { name = "blau", hex = "#3a5f9e" }, { name = "rot", hex = "#c0392b" }]
+stiel = [{ name = "purpurbraun", hex = "#5f3346" }, { name = "gelb", hex = "#e8c33a" }, { name = "rot", hex = "#c0392b" }]
+fleisch = [{ name = "schwefelgelb", hex = "#e3d13a" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig, nach Ananas oder Apfel, alt fast geruchlos."
+
+[geschmack]
+tags = ["mild", "pilzig"]
+text = "Mild, pilzig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 9, selten bis 13 cm breit, goldgelb, ockergelb, braungelb oder leicht grünlich, schnell rötlich fleckend. Jung feinfilzig, später kahl."
+roehren = "Gelb, später goldgelb bis rötlich, auf Druck blauend. Der Porenboden ist erst goldgelb, dann orangerot; im Alter verliert sich das Rot und die Röhren werden wieder olivgelb."
+stiel = "7 bis 14, selten bis 16 cm hoch, an der Basis 3 bis 6, selten bis 8 cm dick, an der Spitze 2 bis 4, selten bis 5 cm. Gelblich mit feinem Netz, das oft nur mit der Lupe zu sehen ist, rötlich fleckig, Basis dunkelrot bis purpurbraun."
+fleisch = "Schwefelgelblich, auf Druck schwarzblau, zur Stielbasis nur wenig rötlich, faserig und fest."
+geruch = "Angenehm pilzig, nach Ananas oder Apfel, alt fast geruchlos."
+geschmack = "Mild, pilzig."
+sporenpulver = "Olivbraun."
+vorkommen = "Symbiosepilz meist im Laubwald, gern bei Eiche und Buche. In südlichen Ländern häufiger, hier sehr selten."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "blaufleckender-purpurroehrling"
+unterschied = "Hut purpurrot bis weinrosa und blau fleckend, Fleisch schnell stark blauend, alt aasartiger Geruch."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Ochsenroehrling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Ochsen-Röhrling"

@@ -1,0 +1,73 @@
+name = "Fuchsrotkappe"
+lateinisch = "Leccinum vulpinum"
+gruppe = "raufussroehrling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = false
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["kiefer"]
+speisewertHinweis = "Roh stark unverträglich, deshalb gut durchgaren. In Deutschland stark gefährdet und als Raufußröhrling besonders geschützt; den Fund besser stehen lassen."
+haeufigkeit = "sehrSelten"
+gefaehrdung = "starkGefaehrdet"
+weitereNamen = ["Kiefernrotkappe", "Föhrenrotkappe", "Fuchsröhrling"]
+synonyme = ["Leccinum aurantiacum var. vulpinum", "Boletus vulpinus", "Xanthochrous vulpinus"]
+fruchtschicht = { art = "roehren" }
+hutrand = { von = ["ueberstehend"] }
+stielmerkmale = ["beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Fuchsrotkappe.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 18.0, seltenBis = 22.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 20.0, seltenBis = 22.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 4.0, seltenBis = 5.0, einheit = "cm" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "rot", hex = "#c0392b" }]
+sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "gelbbraun", hex = "#a3813f" }]
+stiel = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenpulver = [{ name = "gelbbraun", hex = "#a3813f" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "schwarz", hex = "#1a1a1a" }]
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig."
+
+[geschmack]
+tags = ["mild", "pilzig"]
+text = "Mild und angenehm pilzig, roh stark unverträglich."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 18, selten bis 22 cm breit, fuchsrot bis rotbraun, samtig, Huthaut angewachsen und über den Rand stehend."
+roehren = "Hell graubraun bis gelbbraun."
+stiel = "6 bis 20, selten bis 22 cm hoch, 1 bis 4, selten bis 5 cm dick, weißlich, die Schuppen zuerst hellbraun, dann rötlich bis dunkelbraun."
+fleisch = "Weiß, am Stiel rosa bis braun verfärbend, beim Kochen schwärzend."
+geruch = "Angenehm pilzig."
+geschmack = "Mild und angenehm pilzig, roh stark unverträglich."
+sporenpulver = "Gelbbraun."
+vorkommen = "Symbiosepilz im Nadelwald bei Kiefer und Föhre. Sehr selten, in Deutschland stark gefährdet."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "fichtenrotkappe"
+unterschied = "Stielschuppen von Anfang an schwarz, Fleisch später violett, bei Fichte."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Fuchsrotkappe.htm"

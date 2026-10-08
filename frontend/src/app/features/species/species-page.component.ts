@@ -11,7 +11,7 @@ import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive'
 import { SplitLayoutComponent } from '../../ui/split-layout/split-layout.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SurfaceComponent } from '../../ui/surface/surface.component';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SpeciesColourChangeComponent } from './sections/species-colour-change.component';
@@ -70,7 +70,7 @@ export class SpeciesPageComponent {
   private readonly state = inject(SpeciesState);
   private readonly location = inject(Location);
   private readonly router = inject(Router);
-  private readonly rights = inject(PermissionsService);
+  private readonly rights = inject(PermissionsStore);
   private readonly viewport = inject(ViewportService);
   private readonly comparison = inject(ComparisonState);
   private readonly auth = inject(AuthService);

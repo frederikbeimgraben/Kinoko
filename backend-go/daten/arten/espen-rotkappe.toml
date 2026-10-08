@@ -1,0 +1,96 @@
+name = "Espen-Rotkappe"
+lateinisch = "Leccinum aurantiacum"
+gruppe = "raufussroehrling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = false
+marktfaehig = true
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = ["pappel"]
+speisewertHinweis = "Fleisch wird beim Kochen schwarz. In Deutschland gefährdet."
+gefaehrdung = "unbekanntesAusmass"
+weitereNamen = ["Espenrotkappe", "Weißstielige Rotkappe", "Rothäubchen", "Pappelrotkappe", "Rothaut-Röhrling"]
+synonyme = ["Leccinum quercinum", "Leccinum rufum", "Leccinum albostipitatum", "Leccinum populinum"]
+fruchtschicht = { art = "roehren" }
+hutrand = { von = ["ueberstehend"] }
+stielmerkmale = ["beflockt"]
+
+[baeumeAusErfahrung]
+baeume = ["eiche"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Espenrotkappe.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "formalin"
+reaktion = "Schmutzig rosenrot, später braunviolett."
+
+[[reagenzien]]
+reagenz = "feso4"
+reaktion = "Fleisch graugrünlich."
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 19.0, seltenBis = 22.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 20.0, seltenBis = 22.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 4.0, seltenBis = 5.0, einheit = "cm" }
+sporenLaengeUm = { von = 13.0, bis = 18.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "orangebraun", hex = "#c86e28" }, { name = "braunrot", hex = "#7d3324" }]
+sporenlager = [{ name = "olivgrün", hex = "#6f8438" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+stiel = [{ name = "orangebraun", hex = "#c86e28" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "grün", hex = "#4f8a3a" }, { name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "lila", hex = "#8a5fa8" }]
+sporenpulver = [{ name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }, { name = "oliv", hex = "#6b7a3a" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "schwarz", hex = "#1a1a1a" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["pilzig"]
+text = "Pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild und angenehm."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 19, selten bis 22 cm breit, braunrot bis orangebraun, feinfilzig. Die Huthaut steht im Alter am Rand über."
+roehren = "Weißlich bis grauweiß, später olivgrün, leicht ablösbar, stark schwammig."
+stiel = "6 bis 20, selten bis 22 cm hoch, jung weißlich, später mit orangebraunen Schüppchen, nicht mit schwärzlichen wie bei der Birken-Rotkappe. Auf Druck rötlich, dann graulila bis grünblau, besonders an der Basis."
+fleisch = "Weiß, im Schnitt graulila, beim Kochen schwärzend."
+geruch = "Pilzig."
+geschmack = "Mild und angenehm."
+sporenpulver = "Oliv- bis ockerbraun."
+vorkommen = "Symbiosepilz bei Espe und Zitterpappel. In Deutschland auf der Roten Liste."
+zeit = "Frühling bis Spätherbst."
+
+[[verwechslungen]]
+slug = "fichtenrotkappe"
+unterschied = "Stielschuppen schwarz, Fleisch weiß, dann rötlich und später violett."
+eigenerUnterschied = "Hut orangerot, Stielschuppen erst weiß, dann rotbraun, bei Espe und Pappel."
+
+[[verwechslungen]]
+slug = "fuchsrotkappe"
+unterschied = "Hut fuchsrot bis rotbraun und samtig, Fleisch am Stiel rosa bis braun."
+eigenerUnterschied = "Hut orangerot, bei Espe und Pappel."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Espenrotkappe.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Laubwald-Rotkappe"

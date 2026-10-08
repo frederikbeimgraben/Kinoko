@@ -1,0 +1,78 @@
+name = "Spitzgebuckelter Raukopf"
+lateinisch = "Cortinarius rubellus"
+gruppe = "schleierling"
+speisewert = "toedlichGiftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["fichte"]
+speisewertHinweis = "Enthält Orellanin und schädigt Nieren und Leber; niemals probieren. Zu erkennen am spitz gebuckelten rotbraunen Hut, den zimtbraunen Lamellen und dem genatterten Stiel ohne echten Ring. Er wächst bei Fichte, oft zwischen Trompetenpfifferlingen."
+weitereNamen = ["Spitzbuckeliger Raukopf", "Prächtiger Schleierling", "Spitzgebuckelter Orangeschleierling", "Spitzkegeliger Raukopf"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["genattert", "voll", "faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SpitzbuckligeRauhkopf.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Hutoberfläche braunschwarz bis schwarz."
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 6.0, seltenBis = 9.0, einheit = "cm" }
+stielLaengeCm = { von = 5.5, bis = 11.0, seltenBis = 13.0, einheit = "cm" }
+sporenLaengeUm = { von = 9.0, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 7.0, bis = 8.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "orangerot", hex = "#df5a25" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "rostbraun", hex = "#8a4b23" }]
+fleisch = [{ name = "orangebraun", hex = "#c86e28" }, { name = "rostbraun", hex = "#8a4b23" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenpulver = [{ name = "rostbraun", hex = "#8a4b23" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["rettichartig"]
+text = "Leicht rettichartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild, leicht rettichartig. Niemals probieren."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 6, selten bis 9 cm breit, braun, rotbraun bis orangerot, meist leicht spitz gebuckelt, radialfaserig, feinschuppig, rau wirkend."
+lamellen = "Zimtbraun, dick und breit, ausgebuchtet angeheftet und manchmal mit einem Zahn etwas herablaufend. Zwischenlamellen vorhanden."
+stiel = "5,5 bis 11, selten bis 13 cm lang, 0,5 bis 1,6, selten bis 2 cm dick, rostbraun, ohne Ringzone, aber meist durch Schleierreste genattert, voll, faserig, fein samtig, Basis leicht verdickt."
+fleisch = "Gelblichbraun, gelbrötlich bis rostbraun, in der Stielbasis orangebraun, faserig."
+geruch = "Leicht rettichartig."
+geschmack = "Mild, leicht rettichartig. Niemals probieren."
+sporenpulver = "Rostbraun."
+vorkommen = "Symbiosepilz im Nadelwald, gern bei Fichte, in Mooren und auf saurem Boden, oft zwischen Trompetenpfifferlingen."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "zitronengelber-raukopf"
+unterschied = "Hut hygrophan und ausbleichend, Lamellen und Fleisch gelblich bis zitronengelb, Stiel mit gelben Velumresten. Ebenfalls tödlich giftig."
+eigenerUnterschied = "Hut nicht hygrophan, mit deutlichem spitzem Buckel, filzig schuppig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SpitzbuckligeRauhkopf.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Spitzgebuckelter_Raukopf"

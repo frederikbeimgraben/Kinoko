@@ -14,8 +14,8 @@ import { firstValueFrom } from 'rxjs';
 import { PhotosApi } from '../../core/api/photos.api';
 import { photoPath } from '../../core/api/models';
 import type { Find, Photo } from '../../core/api/models';
-import { AccountService } from '../../core/access/account.service';
-import { PersonNamesService } from '../../core/access/person-names.service';
+import { AccountStore } from '../../core/access/account.store';
+import { PersonNamesStore } from '../../core/access/person-names.store';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -63,8 +63,8 @@ import { MapState } from '../map/map.state';
   styleUrl: './find-sheet.component.scss',
 })
 export class FindSheetComponent {
-  private readonly account = inject(AccountService);
-  private readonly names = inject(PersonNamesService);
+  private readonly account = inject(AccountStore);
+  private readonly names = inject(PersonNamesStore);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly arten = inject(SpeciesState);

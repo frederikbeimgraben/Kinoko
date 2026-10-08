@@ -1,23 +1,38 @@
+// Geometry per `kit.css` `.banner`: 48 px high with a margin of 0 8 8.
 :host {
   display: block;
 }
 
-// Höhe fest wie in `zustandsleiste()`: 38 px für jeden Zustand, per `kit.css` `.banner`.
+:host(.banner-host--float) {
+  position: absolute;
+  inset: 12px 12px auto;
+  z-index: 3;
+}
+
 .banner {
   position: relative;
   display: flex;
-  inline-size: 100%;
+  inline-size: calc(100% - 16px);
   align-items: center;
-  gap: var(--space-2);
-  block-size: 38px;
-  padding-inline: var(--size-gutter);
+  gap: 14px;
+  block-size: 48px;
+  margin: 0 8px 8px;
+  padding: 0 12px 0 16px;
+  overflow: hidden;
   font: inherit;
-  font-size: var(--fs-row-meta);
+  font-size: var(--fs-14);
   line-height: normal;
   font-weight: var(--fw-semibold);
   color: var(--banner);
   background: var(--banner-bg);
   border: 0;
+  border-radius: var(--r-sq);
+}
+
+:host(.banner-host--float) .banner {
+  inline-size: 100%;
+  margin: 0;
+  box-shadow: var(--shadow-float);
 }
 
 .banner--error {
@@ -31,11 +46,24 @@
 }
 
 .banner__glyph,
-.banner__action {
+.banner__action,
+.banner__chev {
   flex: 0 0 auto;
 }
 
 .banner__text {
   flex: 1;
+  min-inline-size: 0;
   text-align: start;
+}
+
+.banner__count {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  block-size: 24px;
+  padding: 0 10px;
+  font-size: var(--fs-12);
+  background: rgb(0 0 0 / 22%);
+  border-radius: var(--r-badge);
 }

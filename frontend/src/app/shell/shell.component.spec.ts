@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { render, screen } from '@testing-library/angular';
 import { AuthService } from '../core/auth';
-import { PwaService } from '../core/pwa/pwa.service';
+import { PwaStore } from '../core/pwa/pwa.store';
 import { ViewportService } from '../core/layout/viewport.service';
 import { MapRouteComponent } from '../features/map/map-route.component';
 import { SyncStub, syncStubProviders } from '../testing/sync-double';
@@ -44,7 +44,7 @@ async function shell(updateReady = false) {
       ...authProvider(manager),
       ...syncStubProviders(sync),
       {
-        provide: PwaService,
+        provide: PwaStore,
         useValue: { updateReady: signal(updateReady), activate: () => Promise.resolve() },
       },
     ],

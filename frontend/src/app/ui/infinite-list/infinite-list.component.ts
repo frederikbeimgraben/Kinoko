@@ -10,11 +10,11 @@ import {
   type OnDestroy,
 } from '@angular/core';
 import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
-import { SkeletonComponent } from '../skeleton/skeleton.component';
+import { SKELETON_PRESETS, SkeletonComponent, type SkeletonPresetName } from '../skeleton/skeleton.component';
 
 export type PageSize = 40 | 50;
 
-/** Liste mit Seiten. Sie lädt beim Scrollen nach und merkt die Position. */
+/** A paged list. It loads the next page on scroll and keeps the scroll position. */
 @Component({
   selector: 'app-infinite-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,16 +24,20 @@ export type PageSize = 40 | 50;
 })
 export class InfiniteListComponent implements OnDestroy {
   readonly pageSize = input<PageSize>(40);
-  /** Ob eine weitere Seite existiert. Ohne sie bleibt der Fühler stumm. */
+  /** True when a next page exists. Without one, the sentinel stays silent. */
   readonly hasMore = input(true);
-  /** Ob gerade eine Seite lädt. Verhindert doppelte Anfragen. */
+  /** True while a page loads. This prevents a second request. */
   readonly pending = input(false);
-  /** Kartenrahmen: Rand und Radius stehen fest, nur die Zeilen scrollen darin. */
+  /** A card frame: the border and the radius stay, only the rows scroll in it. */
   readonly framed = input(false);
+
+  /** The rows of the skeleton while a page loads. They have the shape of the rows of the list. */
+  readonly skeleton = input<SkeletonPresetName>('species');
 
   readonly more = output();
 
   protected readonly skeletonCount = computed(() => Math.min(3, this.pageSize()));
+  protected readonly preset = computed(() => SKELETON_PRESETS[this.skeleton()]);
 
   private readonly sentinel = viewChild.required<ElementRef<HTMLElement>>('sentinel');
   private observer: IntersectionObserver | null = null;

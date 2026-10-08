@@ -1,0 +1,101 @@
+name = "Riesenchampignon"
+lateinisch = "Agaricus augustus"
+gruppe = "champignon"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Gilbende Champignons reichern Cadmium an, einige Mykologen raten deshalb von großen Mengen ab. Riecht ein Champignon nach Karbol, Tinte oder Medizinschrank, gehört er nicht in den Korb."
+weitereNamen = ["Braunschuppiger Riesenegerling"]
+synonyme = ["Agaricus augustus var. perrarus", "Psalliota subrufescens"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+stielmerkmale = ["beflockt", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Riesenchampignon.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Gelb verfärbend."
+
+[[reagenzien]]
+reagenz = "schaeffer"
+reaktion = "Knallig rot."
+
+[masse]
+hutBreiteCm = { von = 7.0, bis = 20.0, seltenBis = 35.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.0, bis = 10.5, einheit = "um" }
+sporenBreiteUm = { von = 4.3, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "purpurbraun", hex = "#5f3346" }, { name = "braun", hex = "#7a5230" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "gelb", hex = "#e8c33a" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["anisartig", "bittermandel"]
+text = "Anisartig, nach Bittermandeln und Weihnachtsplätzchen."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild, nussartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "7 bis 20, selten bis 35 cm breit, mit braunen Schuppen auf weißlichem, gelblichem oder hell bräunlichem Grund, auf Druck gilbend."
+lamellen = "Blassrosa bis graurosa, etwas gilbend, im Alter braun, frei."
+stiel = "Bräunlich, Spitze weißlich, unterhalb des Rings braunschuppig und gilbend. Ring weißlich, unterseits bräunlich bis gelbbraun, breit und dick."
+fleisch = "Weiß, leicht gilbend."
+geruch = "Anisartig, nach Bittermandeln und Weihnachtsplätzchen."
+geschmack = "Mild, nussartig."
+sporenpulver = "Purpurbraun bis tief schokoladenbraun."
+vorkommen = "Folgezersetzer im Mischwald und in Parks, auf humusreichem Boden."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "grosser-waldchampignon"
+unterschied = "Fleisch verfärbt sich im Schnitt sofort blutrot, Geruch nicht anisartig, im Nadelwald."
+eigenerUnterschied = "Riecht nach Anis, das Fleisch gilbt statt zu röten."
+
+[[verwechslungen]]
+slug = "kleiner-wald-champignon"
+unterschied = "Deutlich kleiner, Fleisch bei Verletzung gelborange und später blutrot, im sauren Nadelwald."
+
+[[verwechslungen]]
+slug = "perlhuhnchampignon"
+unterschied = "Hut fein grau bis schwarzbraun geschuppt, Geruch nach Karbol oder Tinte, Stielbasis stark gilbend."
+
+[[verwechslungen]]
+slug = "rebhuhnegerling"
+unterschied = "Hut graubraun bis rauchschwärzlich mit faserigen Schuppen, Geruch schwach karbolartig, Stielbasis chromgelb, dann braunrot."
+eigenerUnterschied = "Deutlich größer, Geruch anisartig nach Bittermandeln, Ring breit und dick."
+
+[[verwechslungen]]
+slug = "spitzschuppiger-schirmling"
+unterschied = "Lamellen bleiben weißlich bis hellbräunlich und werden nie rosa, Ring nicht verschiebbar, Geruch stechend gasartig."
+eigenerUnterschied = "Hut mit braunen Schuppen statt Stacheln, Lamellen blassrosa und später braun, Sporenpulver purpurbraun, Geruch anisartig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Riesenchampignon.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Riesen-Champignon"

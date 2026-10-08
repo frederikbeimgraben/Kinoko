@@ -1,53 +1,47 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { User, UserManager } from 'oidc-client-ts';
-import { ConfigService } from '../config/config.service';
+import { ConfigStore } from '../config/config.store';
 import { USER_MANAGER_FACTORY } from './oidc';
 import { ViewRetry, finalAnswer } from './renewal';
 import { rememberSignOut, signedOutHere } from './signed-out';
 
-/** Die angemeldete Person, so wie sie im ID-Token steht. */
+/** The person who is signed in, as the ID token tells. */
 export interface SignedInUser {
   sub: string;
   name: string;
   email: string;
 }
 
-/** Rückkehr vom SSO. Steht in `docs/sso-authentik.md` als Redirect URI. */
+/** The return path from the SSO. `docs/sso-authentik.md` lists it as a redirect URI. */
 export const SIGN_IN_PATH = '/anmeldung';
 
-/** Rückkehr der stillen Erneuerung, im iframe. */
+/** The return path of the silent renewal, in an iframe. */
 export const SILENT_PATH = '/anmeldung/still';
 
-/** Ohne `offline_access` gäbe es kein Refresh-Token und keine stille Erneuerung. */
+/** Without `offline_access` there is no refresh token and no silent renewal. */
 const SCOPE = 'openid email profile offline_access';
 
-/** Was im OIDC-`state` über den Umweg zum SSO mitreist. */
+/** The data that goes in the OIDC `state` to the SSO and back. */
 interface SignInState {
   back: string;
 }
 
-/**
- * Die Anmeldung der App: Authorization Code mit PKCE gegen den Issuer aus
- * `GET /api/config`. Lesen geht ohne Konto; gefragt wird erst, wenn etwas
- * gespeichert werden soll.
- *
- * Der Dienst hält Token und Person als Signale. Das Token steht synchron
- * bereit, damit der Interceptor keinen Netzweg je Anfrage braucht.
- */
+/** The sign-in: authorization code with PKCE. A person reads without an account and signs in to save. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly config = inject(ConfigService);
+  private readonly config = inject(ConfigStore);
   private readonly factory = inject(USER_MANAGER_FACTORY);
   private readonly router = inject(Router);
 
   private manager: Promise<UserManager | null> | null = null;
   private renewal: Promise<string | null> | null = null;
-  /** Wer auf die Antwort des Anmelde-Blatts wartet. */
+  /** The callers that wait for the answer of the sign-in sheet. */
   private pendingEntries: ((signedIn: boolean) => void)[] = [];
   private readonly retry = new ViewRetry();
 
   private readonly _user = signal<SignedInUser | null>(null);
+  // A synchronous token lets the interceptor work without a network step for each request.
   private readonly _token = signal<string | null>(null);
   private readonly _busy = signal(false);
   private readonly _sheetOpen = signal(false);
@@ -55,28 +49,25 @@ export class AuthService {
   private readonly _settled = signal(false);
 
   readonly user = this._user.asReadonly();
-  /** Wahr, solange eine Anmeldung oder eine Erneuerung läuft. */
+  /** True while a sign-in or a renewal runs. */
   readonly busy = this._busy.asReadonly();
-  /** Wahr, sobald die Sitzungsprüfung einmal geantwortet hat. */
+  /** True after the first answer of the session check. */
   readonly checked = this._checked.asReadonly();
-  /** Wahr, sobald das SSO selbst geantwortet hat. Ein Netzfehler zählt nicht. */
+  /** True after an answer of the SSO itself. A network failure does not count. */
   readonly settled = this._settled.asReadonly();
-  /** Das Anmelde-Blatt liegt über der Karte. */
+  /** True while the sign-in sheet is on the map. */
   readonly sheetOpen = this._sheetOpen.asReadonly();
   readonly signedIn = computed(() => this._user() !== null);
 
-  /** Das Access-Token der laufenden Sitzung, ohne Netzweg. */
+  /** The access token of the current session, without a network step. */
   token(): string | null {
     return this._token();
   }
 
-  /**
-   * Holt eine Sitzung zurück, die beim SSO noch steht. Läuft beim Start im
-   * Hintergrund; ein Fehler heißt nur: niemand ist angemeldet.
-   */
+  /** Gets back a session that the SSO still has. A failure only means that nobody is signed in. */
   async restoreSession(): Promise<void> {
-    // Auf der Rückkehr vom SSO führt die Route selbst; eine zweite stille
-    // Anfrage daneben verbrauchte denselben Zustand ein zweites Mal.
+    // On the return from the SSO the route does the work.
+    // A second silent request uses the same state again and fails.
     if (location.pathname.startsWith(SIGN_IN_PATH)) return;
     if (signedOutHere()) {
       this.settle();
@@ -89,10 +80,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * Führt zum SSO. Die Seite verlässt die App und kehrt auf {@link SIGN_IN_PATH}
-   * zurück, von dort auf `zurueck`.
-   */
+  /** Goes to the SSO. The page comes back on {@link SIGN_IN_PATH}, then on `back`. */
   async signIn(back = this.router.url): Promise<void> {
     const manager = await this.getManager();
     if (manager === null) return;
@@ -102,17 +90,13 @@ export class AuthService {
     try {
       await manager.signinRedirect({ state: state });
     } catch (failure) {
-      // Kommt die Umleitung nicht zustande, bleibt die App bedienbar, statt
-      // mit einem laufenden Ladezustand stehen zu bleiben.
+      // When the redirect fails, the app must stay usable and not show a busy state for ever.
       this._busy.set(false);
       throw failure;
     }
   }
 
-  /**
-   * Verarbeitet die Rückkehr vom SSO und liefert die Route, auf der die
-   * Anmeldung begonnen hat.
-   */
+  /** Completes the return from the SSO. Gives the route on which the sign-in started. */
   async completeSignIn(): Promise<string> {
     const manager = await this.getManager();
     if (manager === null) return '/';
@@ -127,10 +111,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * Erneuert das Token still. Mehrere Aufrufer teilen sich einen Versuch,
-   * sonst öffnete jede 401 einen eigenen iframe.
-   */
+  /** Renews the token silently. All callers share one attempt, else each 401 opens its own iframe. */
   async silentRenew(): Promise<string | null> {
     this.renewal ??= this.renew();
     try {
@@ -140,40 +121,33 @@ export class AuthService {
     }
   }
 
-  /**
-   * Meldet lokal ab. Die Sitzung beim SSO bleibt: Authentik nimmt nur die
-   * Redirect URIs aus dem Blueprint an, eine Abmelde-URL steht nicht darunter.
-   * Die Merkung verhindert, dass die stille Erneuerung sofort zurückholt, was
-   * gerade abgemeldet wurde.
-   */
+  /** Signs out locally. The blueprint of Authentik has no sign-out URL, so the SSO session stays. */
   async signOut(): Promise<void> {
     const manager = await this.getManager();
     await manager?.removeUser();
+    // The mark stops the silent renewal from a return of the session.
     rememberSignOut(true);
     this.settle();
     this.adopt(null);
   }
 
-  /**
-   * Fragt nach einer Anmeldung, wenn etwas gespeichert werden soll. Wer schon
-   * angemeldet ist, bekommt sofort `true`. Sonst öffnet das Anmelde-Blatt:
-   * „Später“ antwortet mit `false`, der Weg zum SSO verlässt die Seite.
-   */
+  /** Asks for a sign-in before a save. Gives `true` at once for a person who is signed in. */
   async requestSignIn(): Promise<boolean> {
     if (this.signedIn()) return true;
+    // In the sheet, "Later" gives `false`. The way to the SSO leaves the page.
     this._sheetOpen.set(true);
     return new Promise<boolean>((answer) => this.pendingEntries.push(answer));
   }
 
-  /** Das Anmelde-Blatt: „Später anmelden, Eintrag lokal behalten“. */
+  /** The sign-in sheet: "Sign in later, keep the entry on the device". */
   later(): void {
     this._sheetOpen.set(false);
     this.answer(false);
   }
 
   private async renew(): Promise<string | null> {
-    // Der Stand gilt vom ersten Tick an als offen: ein tiefer Link in die
-    // Verwaltung entschiede sonst, bevor die Sitzung zurück ist.
+    // The state is open from the first tick.
+    // Else a deep link into the admin area decides before the session is back.
     this._busy.set(true);
     try {
       const manager = await this.getManager();
@@ -191,8 +165,8 @@ export class AuthService {
         this.adopt(null);
         return null;
       }
-      // Ein Netzweg, der scheitert, sagt nichts über die Sitzung. Der Stand
-      // bleibt, und der nächste Sichtbarkeitswechsel fragt noch einmal.
+      // A network failure tells nothing about the session.
+      // The state stays, and the next change of visibility asks again.
       this.retryWhenVisible();
       return null;
     } finally {
@@ -200,13 +174,13 @@ export class AuthService {
     }
   }
 
-  /** Merkt: das SSO hat geantwortet. */
+  /** Records that the SSO answered. */
   private settle(): void {
     this._checked.set(true);
     this._settled.set(true);
   }
 
-  /** Legt einen zweiten Versuch auf den Moment, in dem die App wieder sichtbar wird. */
+  /** Starts a second attempt when the app becomes visible again. */
   private retryWhenVisible(): void {
     this._checked.set(true);
     this.retry.schedule(() => void this.silentRenew());
@@ -217,10 +191,7 @@ export class AuthService {
     return this.manager;
   }
 
-  /**
-   * Ohne Konfiguration gibt es keinen Issuer und damit keine Anmeldung. Das
-   * ist kein Fehler: die Karte läuft auch dann.
-   */
+  /** Without a configuration there is no issuer and no sign-in. The map works without it. */
   private async create(): Promise<UserManager | null> {
     await this.config.load();
     const config = this.config.configuration();
@@ -234,8 +205,8 @@ export class AuthService {
       response_type: 'code',
       scope: SCOPE,
       automaticSilentRenew: true,
-      // Authentik legt Name und E-Mail ins ID-Token. Ein zweiter Gang zum
-      // UserInfo-Endpunkt brächte dieselben Werte.
+      // Authentik puts the name and the email into the ID token.
+      // The UserInfo endpoint gives the same values again.
       loadUserInfo: false,
     });
     manager.events.addUserLoaded((user: User) => {
@@ -244,8 +215,8 @@ export class AuthService {
     manager.events.addUserUnloaded(() => {
       this.adopt(null);
     });
-    // Die Bibliothek erneuert von selbst. Scheitert sie, bleibt die Sitzung
-    // stehen; der nächste Sichtbarkeitswechsel fragt noch einmal.
+    // The library renews by itself. When it fails, the session stays
+    // and the next change of visibility asks again.
     manager.events.addSilentRenewError(() => {
       this.retryWhenVisible();
     });
@@ -255,7 +226,7 @@ export class AuthService {
     return manager;
   }
 
-  /** Ein abgelaufenes Token zählt wie keines: der nächste Schritt erneuert. */
+  /** An expired token counts as no token: the next step renews it. */
   private adopt(user: User | null): void {
     if (user === null || user.expired === true) {
       this._user.set(null);
@@ -282,8 +253,8 @@ export class AuthService {
   private targetFrom(state: unknown): string {
     if (typeof state === 'object' && state !== null && 'back' in state) {
       const back = (state as SignInState).back;
-      // Nur eigene Wege: eine fremde URL führte die App aus der App. Die
-      // Callback-Route bliebe mit ihrer Fehlermeldung stehen.
+      // Accept only paths of the app. Another URL leaves the app,
+      // and the callback route stays with its error message.
       if (typeof back !== 'string' || !back.startsWith('/') || back.startsWith('//')) return '/';
       if (back === SIGN_IN_PATH || back.startsWith(`${SIGN_IN_PATH}/`) || back.startsWith(`${SIGN_IN_PATH}?`))
         return '/';

@@ -1,0 +1,70 @@
+name = "Feuchtstellen-Schüppling"
+lateinisch = "Pholiota conissans"
+gruppe = "schueppling"
+speisewert = "ungeniessbar"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["weide"]
+haeufigkeit = "selten"
+weitereNamen = ["Feuchtstellen Schüppling", "Weidenschüppling", "Weißbehangener Schüppling", "Feuchtstellenschüppling"]
+synonyme = ["Pholiota graminis", "Pholiota inaurata", "Hypholoma graminis", "Flammula graminis", "Flammula muricella", "Dryophila muricella var. graminis"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
+stielmerkmale = ["faserig", "beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Feuchtstellenschueppling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 5.0, seltenBis = 7.0, einheit = "cm" }
+stielLaengeCm = { von = 3.0, bis = 9.0, seltenBis = 12.0, einheit = "cm" }
+stielDickeCm = { von = 0.4, bis = 1.2, seltenBis = 1.7, einheit = "cm" }
+sporenLaengeUm = { von = 6.5, bis = 7.5, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 4.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "kastanienbraun", hex = "#6b3a20" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }]
+sporenlager = [{ name = "purpurbraun", hex = "#5f3346" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+stiel = [{ name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }]
+sporenpulver = [{ name = "braun", hex = "#7a5230" }]
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Unbedeutend bis grasig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 5, selten bis 7 cm breit, kastanienbraun bis gelbocker, Mitte rötlich ocker, Rand gelbocker, kahl bis eingewachsen faserig, jung mit wolligen Velumresten, im Alter rissig wie bei einem Risspilz, feucht schmierig."
+lamellen = "Hell cremegelb, später zimtbraun, alt dunkel purpurbraun, ausgebuchtet angewachsen, dünn und gedrängt."
+stiel = "3 bis 9, selten bis 12 cm lang, 0,4 bis 1,2, selten bis 1,7 cm dick, hell creme, Mitte und Basis rötlich braun, faserig schuppig, mit flüchtigen Schleierresten."
+fleisch = "Hellgelb, wässrig, dünn und faserig."
+geruch = "Unbedeutend bis grasig."
+geschmack = "Mild."
+sporenpulver = "Haselnussbraun."
+vorkommen = "Folgezersetzer im Mischwald, gern im Auwald bei Weiden, in Gräsern, im Gebüsch und an vergrabenem verrottetem Holz, an sumpfigen, moosig feuchten Stellen. Oft büschelig, selten."
+zeit = "Frühsommer bis Herbst."
+
+[[verwechslungen]]
+slug = "gifthaeubling"
+unterschied = "Hut ockerbraun und beim Abtrocknen verblassend, Stiel unter dem Ring weiß überfasert, Geruch mehlartig."
+
+[[verwechslungen]]
+slug = "nadelschueppling"
+unterschied = "Wächst an Nadelholz, Hut gelblich und schuppig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Feuchtstellenschueppling.htm"

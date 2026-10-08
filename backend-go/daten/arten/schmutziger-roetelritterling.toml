@@ -1,0 +1,77 @@
+name = "Schmutziger Rötelritterling"
+lateinisch = "Lepista sordida"
+gruppe = "roetelritterling"
+speisewert = "essbar"
+wertigkeit = 3
+marktfaehigSchweiz = true
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
+baeume = ["fichte"]
+speisewertHinweis = "Roh giftig, er zersetzt das Blut. Nur gut durchgegart essen."
+weitereNamen = ["Fleischbrauner Rötelritterling"]
+synonyme = ["Lepista sordida var. lilacea", "Lepista sordida var. obscurata", "Rhodopaxillus sordidus forma obscuratus"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
+hutmerkmale = ["hygrophan"]
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SchmutzigerRoetelritterling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 6.0, seltenBis = 7.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 1
+
+[farben]
+hut = [{ name = "violett", hex = "#6b4a8a" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }]
+fleisch = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "weiß", hex = "#ffffff" }, { name = "lila", hex = "#8a5fa8" }]
+sporenpulver = [{ name = "rosa", hex = "#e8a0b0" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["fischartig", "unangenehm", "pilzig", "angenehm", "unauffaellig"]
+text = "Leicht parfümiert, etwas pilzig bis nussartig, schwächer als beim Violetten Rötelritterling. Bei feuchtem Wetter den Fruchtkörper in der Hand zerkrümeln und anwärmen: dann fast unauffällig, teils etwas staubartig. Alte Stücke riechen unangenehm bis fischig."
+
+[geschmack]
+tags = ["mild", "suesslich"]
+text = "Mild, dumpf, eventuell etwas süßlich."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 6, selten bis 7 cm breit, der kleinste Rötelritterling, blass bis stark lila oder rosaviolett, hygrophan und beim Trocknen heller werdend, Haut glatt, Rand lange eingerollt."
+lamellen = "Schmutzig weiß, graurosa bis blass lila, am Stiel ausgebuchtet angewachsen bis herablaufend, leicht ablösbar, Schneiden fein gekerbt und gleichfarbig."
+stiel = "Kahl, blass blaulila bis rötlich lila, Oberfläche etwas weißlich überfasert."
+fleisch = "Helllila bis hellgrau, im Zentrum weiß, im Alter bräunlich."
+geruch = "Leicht parfümiert, etwas pilzig bis nussartig, schwächer als beim Violetten Rötelritterling. Bei feuchtem Wetter den Fruchtkörper in der Hand zerkrümeln und anwärmen: dann fast unauffällig, teils etwas staubartig. Alte Stücke riechen unangenehm bis fischig."
+geschmack = "Mild, dumpf, eventuell etwas süßlich."
+sporenpulver = "Blassrosa."
+vorkommen = "Folgezersetzer auf Wiesen, in Mischwäldern und Fichtenwäldern sowie auf Kompost, einzeln oder büschelig."
+zeit = "Frühling bis Winteranfang."
+
+[[verwechslungen]]
+slug = "bocksdickfuss"
+unterschied = "Riecht stark nach Ziegenbock, Lamellen und Sporenpulver rostbraun."
+
+[[verwechslungen]]
+slug = "lavendelfarbener-roetelritterling"
+unterschied = "Hut blass ockerbräunlich, nur Stiel und Lamellen mit Lila."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SchmutzigerRoetelritterling.htm"

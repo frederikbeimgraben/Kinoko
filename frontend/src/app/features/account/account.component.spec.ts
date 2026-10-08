@@ -6,14 +6,14 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { MapAppService } from '../../core/maps/map-app.service';
-import { ThemeService } from '../../core/theme/theme.service';
+import { MapAppStore } from '../../core/maps/map-app.store';
+import { ThemeStore } from '../../core/theme/theme.store';
 import { APP_VERSION } from '../../core/version.generated';
 import { CONFIG, ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
 import { noViolations } from '../../testing/axe';
-import { PwaService } from '../../core/pwa/pwa.service';
+import { PwaStore } from '../../core/pwa/pwa.store';
 import { AccountComponent } from './account.component';
-import type { AppConfig } from '../../core/config/config.service';
+import type { AppConfig } from '../../core/config/config.store';
 
 interface Setup {
   container: Element;
@@ -45,7 +45,7 @@ async function build(signedIn = false, configuration: AppConfig | null = CONFIG)
 function pwaProvider(): { provide: unknown; useValue: unknown } {
   const ready = signal(true);
   return {
-    provide: PwaService,
+    provide: PwaStore,
     useValue: { canInstall: ready, updateReady: ready, install: () => Promise.resolve(true) },
   };
 }
@@ -97,7 +97,7 @@ describe('KontoComponent', () => {
 
   it('schaltet die Darstellung um', async () => {
     const { refresh } = await build();
-    const theme = TestBed.inject(ThemeService);
+    const theme = TestBed.inject(ThemeStore);
 
     await userEvent.click(screen.getByRole('tab', { name: 'Dunkel' }));
     refresh();
@@ -135,7 +135,7 @@ describe('KontoComponent', () => {
 
   it('schaltet die Karten-App um und merkt sie sich', async () => {
     const { refresh } = await build();
-    const mapApp = TestBed.inject(MapAppService);
+    const mapApp = TestBed.inject(MapAppStore);
 
     await userEvent.click(screen.getByRole('tab', { name: 'Google Maps' }));
     refresh();

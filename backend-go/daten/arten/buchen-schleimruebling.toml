@@ -1,0 +1,94 @@
+name = "Beringter Schleimrübling"
+lateinisch = "Mucidula mucida"
+gruppe = "schleimruebling"
+speisewert = "essbar"
+wertigkeit = 4
+marktfaehig = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["buche", "eiche"]
+karte = "schleimruebling"
+speisewertHinweis = "Essbar, aber ohne Wert. Die Huthaut lässt sich gummiartig abziehen."
+weitereNamen = ["Buchen-Schleimrübling", "Buchenschleimrübling"]
+synonyme = ["Oudemansiella mucida", "Agaricus mucidus"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
+hutrand = { von = ["gerieft"] }
+stielmerkmale = ["faserig", "genattert", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/BeringterSchleimruebling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 1.0, bis = 8.0, seltenBis = 10.0, einheit = "cm" }
+stielLaengeCm = { von = 1.0, bis = 10.0, seltenBis = 15.0, einheit = "cm" }
+stielDickeCm = { von = 0.2, bis = 1.0, seltenBis = 1.2, einheit = "cm" }
+sporenLaengeUm = { von = 13.0, bis = 18.0, einheit = "um" }
+sporenBreiteUm = { von = 12.0, bis = 15.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["rettichartig", "unauffaellig"]
+text = "Neutral bis leicht rettichartig."
+
+[geschmack]
+tags = []
+text = "Nach Weißkraut, leicht rettichartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "1 bis 8, selten bis 10 cm breit, weiß, manchmal von der Mitte her bräunlich, stark schleimig. Huthaut gummiartig abziehbar, Rand gerieft und oft runzelig."
+lamellen = "Weiß, im Alter hellgelb, ausgebuchtet angewachsen und mit einem Zahn herablaufend."
+stiel = "1 bis 10, selten bis 15 cm lang, weißlich bis bräunlich, oft braun bis schwarzbraun faserig oder genattert. Mit häutigem weißem Ring, dessen Rand im Alter schwarzbraun wird."
+fleisch = "Weiß, dünn, zäh."
+geruch = "Neutral bis leicht rettichartig."
+geschmack = "Nach Weißkraut, leicht rettichartig."
+sporenpulver = "Weiß bis cremeweiß."
+vorkommen = "Folgezersetzer an Totholz von Laubbäumen, meist Buche, selten Eiche, einzeln bis büschelig."
+zeit = "Sommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "grauer-dachpilz"
+unterschied = "Hut grau bis graubraun, Lamellen erst weiß, dann rosa, frei. Kein Ring am Stiel."
+
+[[verwechslungen]]
+slug = "olivgrauer-schneckling"
+unterschied = "Hut dunkelbraun bis olivgrau, Stiel genattert, Lamellen wachsartig."
+eigenerUnterschied = "Hut weiß und stark schleimig, Stiel mit häutigem Ring, wächst an Totholz von Buche statt am Boden."
+
+[[verwechslungen]]
+slug = "schleimigberingter-schneckling"
+unterschied = "Lamellen sehr weit auseinander, Stielbasis keulig, an Nadelholz."
+
+[[verwechslungen]]
+slug = "seidiger-dachpilz"
+unterschied = "Hut elfenbeinweiß mit dunklerem Scheitel, Lamellen später rotbraun, ohne Ring."
+
+[[verwechslungen]]
+slug = "weisser-dachpilz"
+unterschied = "Hut weiß, im Alter rosabraun, Lamellen werden fleischrot, ohne Ring."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/BeringterSchleimruebling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Buchen-Schleimrübling"

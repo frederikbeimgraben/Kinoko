@@ -1,0 +1,102 @@
+name = "Netzstieliger Hexenröhrling"
+lateinisch = "Suillellus luridus"
+gruppe = "roehrling"
+speisewert = "bedingtEssbar"
+wertigkeit = 1
+marktfaehig = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+karte = "hexen_netz"
+speisewertHinweis = "123pilzsuche führt ihn als nur bedingt essbar. Gut durchgaren und nicht mit Alkohol zusammen essen, das gibt Magen-Darm-Beschwerden. Etwa ein bis fünf von hundert Personen vertragen ihn nicht; darum nicht weitergeben und Vorräte deutlich beschriften."
+weitereNamen = ["Netzstielige Hexenröhrling", "Netzhexe"]
+synonyme = ["Boletus luridus"]
+fruchtschicht = { art = "roehren" }
+stielmerkmale = ["genetzt"]
+
+[baeumeAusErfahrung]
+baeume = ["eiche", "buche", "linde"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/NetzstieligeHexenroehrling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Hut dunkelrot, Fleisch orange."
+
+[[reagenzien]]
+reagenz = "feso4"
+reaktion = "Hut olivgrau, Fleisch hell olivgelb."
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 15.0, seltenBis = 22.0, einheit = "cm" }
+sporenLaengeUm = { von = 11.0, bis = 18.0, einheit = "um" }
+sporenBreiteUm = { von = 4.5, bis = 7.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "oliv", hex = "#6b7a3a" }, { name = "blau", hex = "#3a5f9e" }, { name = "rot", hex = "#c0392b" }]
+sporenlager = [{ name = "weinrot", hex = "#7b2436" }, { name = "orangegelb", hex = "#e9a32c" }, { name = "gelb", hex = "#e8c33a" }, { name = "rot", hex = "#c0392b" }]
+stiel = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "gelb", hex = "#e8c33a" }, { name = "rot", hex = "#c0392b" }]
+fleisch = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "schnell"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 15, selten bis 22 cm breit, hell- bis dunkelbraun, lederfarben oder graubraun mit Olivton, samtig und etwas klebrig, auf Druck blauend. Zwischen Hutfleisch und Röhren liegt eine rote Zone."
+roehren = "Röhrenmündungen rot, Röhrenboden gelb, orangegelb bis fast weinrot, vom Fleisch lösbar."
+stiel = "Auf gelblichem Grund mit rötlicher bis dunkelbrauner Netzzeichnung über die ganze Länge, oft ganz rötlich überhaucht. Basis dunkler und rot punktiert."
+fleisch = "Gelb, im Schnitt sofort schwarzblau, in der Stielbasis rötlich."
+geruch = "Angenehm pilzig."
+geschmack = "Mild."
+sporenpulver = "Olivbraun."
+vorkommen = "Symbiosepilz in Laubwäldern und Parkanlagen, auf kalkhaltigem Boden."
+zeit = "Frühling bis Spätherbst."
+
+[[verwechslungen]]
+slug = "blaufleckender-purpurroehrling"
+unterschied = "Hut purpurrot bis weinrosa und blau fleckend, Stielbasis karminrot, Fleisch sofort stark blauend."
+
+[[verwechslungen]]
+slug = "flockenstieliger-hexenroehrling"
+unterschied = "Stiel mit roten Flöckchen und ohne jedes Netz, Hut dunkelbraun, auf saurem Boden."
+
+[[verwechslungen]]
+slug = "kurznetziger-hexenroehrling"
+unterschied = "Netz nur im oberen Stielteil, im Alter zur Mitte hin verschoben, Stielfleisch stark weinrot, Röhrenboden orangerot."
+
+[[verwechslungen]]
+slug = "satansroehrling"
+unterschied = "Hut weiß bis hellgrau oder grauoliv, Stielbasis dick knollig und rot, Fleisch nur schwach blauend, Geruch im Alter aasartig."
+
+[[verwechslungen]]
+slug = "schoenfussroehrling"
+unterschied = "Röhren gelblich statt rot, Hut lehmgrau und trocken samtig, Geschmack bitter."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/NetzstieligeHexenroehrling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Netzstieliger_Hexen-Röhrling"

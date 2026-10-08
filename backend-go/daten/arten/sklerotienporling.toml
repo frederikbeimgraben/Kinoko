@@ -1,0 +1,73 @@
+name = "Sklerotienporling"
+lateinisch = "Polyporus tuberaster"
+gruppe = "porling"
+speisewert = "essbar"
+wertigkeit = 3
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Nur junge Fruchtkörper verwenden, ältere werden zäh. Der leicht bittere Geschmack verliert sich beim Zubereiten."
+weitereNamen = ["Kleiner Schuppenporling"]
+fruchtschicht = { art = "poren" }
+hutrand = { von = ["fransig"] }
+stielmerkmale = ["beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Sklerotienporling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Poren leicht gelblich."
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 6.0, seltenBis = 9.0, einheit = "cm" }
+sporenLaengeUm = { von = 9.3, bis = 16.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 6.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "orangebraun", hex = "#c86e28" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["wuerzig", "pilzig"]
+text = "Würzig, pilzig."
+
+[geschmack]
+tags = ["bitter"]
+text = "Leicht bitterlich, das verliert sich beim Zubereiten."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 6, selten bis 9 cm breit, meist kreisrund, bräunlich, blass ockerlich bis orangebraun, auf hellem weißlichem bis gelbem Grund mit dunkleren braunen Schuppen. Rand dünn, meist weißlich und bewimpert."
+poren = "Weißlich bis hell cremeweiß, eckig, herablaufend, 0,5 bis 1,5 Poren je Millimeter."
+stiel = "Weißlich, bräunlich bis gelbbraun, schuppig, überwiegend zentral. Basis oft filzig, aber nicht schwarz wie beim Schuppigen Porling."
+fleisch = "Weißlich, zäh."
+geruch = "Würzig, pilzig."
+geschmack = "Leicht bitterlich, das verliert sich beim Zubereiten."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer, teils Parasit, meist an umgefallenen und leicht verrotteten Laubholzästen und Stämmen, auch an abgestorbenen Bereichen am Baum. Löst Weißfäule aus."
+zeit = "Frühling bis Herbst."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Sklerotienporling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Sklerotien-Stielporling"

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } 
 import { Router } from '@angular/router';
 import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
 import { AuthService } from '../../core/auth';
-import { PersonNamesService } from '../../core/access/person-names.service';
+import { PersonNamesStore } from '../../core/access/person-names.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -71,7 +71,7 @@ interface Row {
 export class EntriesComponent {
   private readonly species = inject(SpeciesState);
   private readonly auth = inject(AuthService);
-  private readonly names = inject(PersonNamesService);
+  private readonly names = inject(PersonNamesStore);
   private readonly sheet = inject(ObjectSheetState);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);

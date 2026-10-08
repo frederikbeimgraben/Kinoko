@@ -1,88 +1,121 @@
 {
-  description = "Pilzkarte: Entwicklungsumgebungen fuer Backend und Frontend";
+  description = "Kinoko: mushroom forecast map for Germany (Go service with data pipeline, Angular app)";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
-    { nixpkgs, ... }:
+    { self, nixpkgs, ... }:
     let
-      systeme = [
+      systems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
-      fuerAlle = f: nixpkgs.lib.genAttrs systeme (system: f nixpkgs.legacyPackages.${system});
+      forAll = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+
+      # The C libraries of the data pipeline. LightGBM trains and applies the
+      # models, netCDF reads the DWD grids, GDAL and PROJ warp the rasters.
+      nativeLibraries =
+        pkgs: with pkgs; [
+          lightgbm
+          netcdf
+          gdal
+          proj
+        ];
     in
     {
-      devShells = fuerAlle (
+      packages = forAll (
         pkgs:
         let
-          # Was ein fertiges Rad zur Laufzeit nachlaedt. Ohne libstdc++ scheitert
-          # greenlet, und damit schon die erste Migration.
-          laufzeit = with pkgs; [
-            stdenv.cc.cc.lib
-            zlib
-          ];
+          version = "3.0.0";
+        in
+        {
+          backend = pkgs.buildGoModule {
+            pname = "kinoko";
+            inherit version;
+            src = ./backend;
+            vendorHash = null;
+            proxyVendor = true;
+            subPackages = [ "cmd/kinoko" ];
+            env.CGO_ENABLED = "1";
+            nativeBuildInputs = [ pkgs.pkg-config ];
+            buildInputs = nativeLibraries pkgs;
+            ldflags = [
+              "-s"
+              "-w"
+            ];
+            # The tests need a writable home for the Go build cache only.
+            preCheck = ''
+              export HOME=$TMPDIR
+            '';
+            meta.mainProgram = "kinoko";
+          };
 
-          backendWerkzeuge = with pkgs; [
-            python313
-            ruff
-            basedpyright
+          frontend = pkgs.buildNpmPackage {
+            pname = "kinoko-frontend";
+            inherit version;
+            src = ./frontend;
+            nodejs = pkgs.nodejs_24;
+            npmDepsHash = pkgs.lib.fakeHash;
+            env.KINOKO_VERSION = version;
+            installPhase = ''
+              runHook preInstall
+              cp -r dist/pilzkarte/browser $out
+              runHook postInstall
+            '';
+          };
+
+          default = self.packages.${pkgs.stdenv.hostPlatform.system}.backend;
+        }
+      );
+
+      devShells = forAll (
+        pkgs:
+        let
+          backendTools = with pkgs; [
+            go
+            gopls
+            gotools
+            golangci-lint
+            gcc
+            pkg-config
+            sqlite
             git
           ];
-
-          frontendWerkzeuge = with pkgs; [
+          frontendTools = with pkgs; [
             nodejs_24
             git
           ];
-
-          # uv und npm holen fertige Binaerpakete (ruff, basedpyright, esbuild).
-          # Die suchen ihren Lader unter /lib64 und finden auf NixOS nur einen
-          # Stummel, der abbricht. Der Aufruf laeuft darum in einem FHS-Baum, in
-          # dem es /lib64 und die Bibliotheken oben gibt. Der Rest der Sitzung
-          # bleibt eine gewoehnliche Schale.
-          imFhs =
-            befehl: werkzeuge:
-            pkgs.buildFHSEnv {
-              name = befehl;
-              targetPkgs = _: werkzeuge ++ laufzeit;
-              runScript = befehl;
-            };
-
-          uvImFhs = imFhs "uv" ([ pkgs.uv ] ++ backendWerkzeuge);
-
-          nodeImFhs = map (befehl: imFhs befehl frontendWerkzeuge) [
-            "node"
-            "npm"
-            "npx"
-          ];
-
-          # Der Dienst laeuft auf dem Python 3.13 aus nixpkgs. Die Umgebung hier
-          # nimmt dasselbe, statt sich ein eigenes zu laden.
-          uvUmgebung = {
-            UV_PYTHON = "${pkgs.python313}/bin/python3.13";
-            UV_PYTHON_DOWNLOADS = "never";
-            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath laufzeit;
+          # Playwright on NixOS uses the Chromium of nixpkgs.
+          browser = {
+            BROWSER_PATH = "${pkgs.chromium}/bin/chromium";
+            CHROME_PATH = "${pkgs.chromium}/bin/chromium";
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
           };
         in
         {
-          backend = pkgs.mkShell (
-            uvUmgebung
-            // {
-              packages = [ uvImFhs ] ++ backendWerkzeuge;
-            }
-          );
-
-          frontend = pkgs.mkShell {
-            packages = nodeImFhs ++ [ pkgs.git ];
+          backend = pkgs.mkShell {
+            packages = backendTools ++ nativeLibraries pkgs;
+            CGO_ENABLED = "1";
           };
 
+          frontend = pkgs.mkShell (browser // { packages = frontendTools; });
+
           default = pkgs.mkShell (
-            uvUmgebung
+            browser
             // {
-              packages = [ uvImFhs ] ++ nodeImFhs ++ backendWerkzeuge;
+              packages = backendTools ++ frontendTools ++ nativeLibraries pkgs;
+              CGO_ENABLED = "1";
             }
           );
         }
       );
+
+      nixosModules.default = import ./deploy/module.nix self;
+
+      checks = forAll (pkgs: {
+        backend = self.packages.${pkgs.stdenv.hostPlatform.system}.backend;
+      });
+
+      formatter = forAll (pkgs: pkgs.nixfmt-rfc-style);
     };
 }

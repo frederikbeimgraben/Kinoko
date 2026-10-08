@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" packageId="0001234-240101000000000" system="http://gbif.org">
+  <dataset>
+    <alternateIdentifier>10.15468/dl.abcdef</alternateIdentifier>
+    <title>GBIF Occurrence Download 0001234-240101000000000</title>
+    <pubDate>2024-05-02</pubDate>
+  </dataset>
+</eml:eml>

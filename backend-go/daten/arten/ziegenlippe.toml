@@ -1,0 +1,107 @@
+name = "Ziegenlippe"
+lateinisch = "Xerocomus subtomentosus"
+gruppe = "roehrling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Es gibt drei Ziegenlippen-Arten mit gleichem Speisewert. Sie trennen sich am Stiel: heller Stiel ohne Netz bei der Ziegenlippe, bräunlicher Stiel mit Netz beim Braunen Filzröhrling."
+haeufigkeit = "haeufig"
+weitereNamen = ["Schafheiterl", "Gänsemaul", "Mooshäuptchen", "Hellstieliger Filz-Röhrling"]
+synonyme = ["Boletus subtomentosus"]
+fruchtschicht = { art = "roehren" }
+stielmerkmale = ["gerieft"]
+
+[baeumeAusErfahrung]
+baeume = ["buche", "eiche", "fichte"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Ziegenlippe.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Auf dem Hut rot bis orangerot, auf dem Fleisch orangerot."
+
+[[reagenzien]]
+reagenz = "ammoniak"
+reaktion = "Auf der Huthaut dunkelrot oder blaugrün möglich, auf dem Fleisch negativ."
+
+[[reagenzien]]
+reagenz = "feso4"
+reaktion = "Negativ bis grau auf Hut und Fleisch."
+
+[[reagenzien]]
+reagenz = "melzer"
+reaktion = "Poren grün."
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 9.0, seltenBis = 12.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 9.0, seltenBis = 11.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 2.0, seltenBis = 3.0, einheit = "cm" }
+sporenLaengeUm = { von = 10.0, bis = 16.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 5.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "olivbraun", hex = "#6e6435" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "ocker", hex = "#c8963c" }, { name = "oliv", hex = "#6b7a3a" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenlager = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "ockergelb", hex = "#d4a63c" }, { name = "chromgelb", hex = "#e5b820" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grün", hex = "#4f8a3a" }]
+stiel = [{ name = "blassgelb", hex = "#efe3a0" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "ockergelb", hex = "#d4a63c" }, { name = "blassgelb", hex = "#efe3a0" }, { name = "cremefarben", hex = "#f0e6c8" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["unauffaellig"]
+text = "Neutral."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 9, selten bis 12 cm breit, graubraun, hell olivbraun bis olivocker, wildlederartig filzig und feinsamtig. Unter der Huthaut leicht rosalich."
+roehren = "Jung leuchtend gelb, chromgelb bis ockergelb, später gelbbraun bis grünbraun, alt gelbgrün, gelegentlich leicht blauend, am Stiel ausgebuchtet angewachsen."
+stiel = "5 bis 9, selten bis 11 cm lang, 1 bis 2, selten 3 cm dick, fast weiß, lang und schlank, etwas bräunlich fleckig, im Alter die Spitze rötlich. Meist etwas verdreht und schwach längsrillig, Basis zugespitzt, das anhängende Myzel weißlich bis blassgelb."
+fleisch = "Hellgelb, im Hut cremegelb bis blassgelb, im Stiel schmutzig cremefarben, vom Hut zur Basis ockergelb bis braunrötlich."
+geruch = "Neutral."
+geschmack = "Mild."
+sporenpulver = "Olivbraun."
+vorkommen = "Symbiosepilz im Mischwald, relativ häufig."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "brauner-filzroehrling"
+unterschied = "Stiel gelblich bis bräunlich mit Netzzeichnung statt fast weiß."
+eigenerUnterschied = "Hut hell olivbraun bis olivocker, Stiel fast weiß und ohne Netzzeichnung."
+
+[[verwechslungen]]
+slug = "goldroehrling"
+unterschied = "Hut schleimig und schmierig, hellgelb bis orangerötlich, Röhren auf Druck rosalila fleckend, Stiel mit Ring."
+
+[[verwechslungen]]
+slug = "samtiger-filzroehrling"
+unterschied = "Hut auch rotbraun, Stiel mit Netz von der Mitte bis zur Spitze, Geruch nach Schwefel."
+eigenerUnterschied = "Hut olivbraun bis gelbbraun und samtig, Stiel ohne Netz, unter der Huthaut nicht rosa."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Ziegenlippe.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Ziegenlippe"

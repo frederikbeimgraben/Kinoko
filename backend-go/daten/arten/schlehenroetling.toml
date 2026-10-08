@@ -1,0 +1,84 @@
+name = "Schlehenrötling"
+lateinisch = "Entoloma sepium"
+gruppe = "roetling"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["fruehling", "sommer"]
+baeume = ["obstbaum"]
+speisewertHinweis = "Nur etwas für Kenner, denn mehrere Rötlinge sind giftig und der Riesenrötling gilt als tödlich giftig. In Deutschland auf der Vorwarnliste."
+haeufigkeit = "selten"
+weitereNamen = ["Blasser Pflaumen-Rötling", "Blassbrauner Schlehenrötling", "Blasser Rötling"]
+synonyme = ["Rhodophyllus sepius", "Agaricus sepius", "Entoloma saundersii sensu", "Entoloma clypeatum var. sepium"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
+hutform = { von = "kegelig", nach = "flach" }
+hutmerkmale = ["gebuckelt", "hygrophan"]
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Schlehenroetling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "anilin"
+reaktion = "Orangerosa bis rot."
+
+[[reagenzien]]
+reagenz = "guajak"
+reaktion = "Blaugrün bis türkis, im Hutfleisch und an der Stielbasis mehr blau."
+
+[masse]
+hutBreiteCm = { von = 2.0, bis = 8.0, seltenBis = 10.0, einheit = "cm" }
+stielLaengeCm = { von = 3.0, bis = 8.0, seltenBis = 14.0, einheit = "cm" }
+stielDickeCm = { von = 0.5, bis = 1.8, seltenBis = 3.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.5, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 7.0, bis = 10.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 8
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "orangebraun", hex = "#c86e28" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "orangebraun", hex = "#c86e28" }, { name = "braunrot", hex = "#7d3324" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+sporenpulver = [{ name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "braun", hex = "#7a5230" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["mehlig", "obstartig", "suesslich"]
+text = "Süßlich obstartig, bei Verletzung mehlig."
+
+[geschmack]
+tags = ["mild", "mehlig"]
+text = "Mild, mehlig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "2 bis 8, selten bis 10 cm breit, weißlich, cremegelb bis graubräunlich, im Alter silbrig braun, kegelig gewölbt, später ausgebreitet und etwas gebuckelt. Oberfläche eingewachsen radialfaserig und fein behaart, nur schwach hygrophan, Rand lange eingerollt."
+lamellen = "Weiß, später leicht rosa, ziemlich dicht, etwas ausgebuchtet angewachsen, mit Zwischenlamellen, zum Stiel vereinzelt gegabelt, manchmal rosa fleckig."
+stiel = "3 bis 8, selten bis 14 cm lang und 0,5 bis 1,8, selten 3 cm dick, weißlich bis cremegelb, alt etwas bräunend, feinfaserig, zur Basis meist verdickt. Fraßgänge von Insekten verfärben leicht orangebraun."
+fleisch = "Weiß bis grauweiß, faserig, fest, in der Hutmitte dick. Bei Verletzung braunrot, orangebraun bis safranfarben verfärbend."
+geruch = "Süßlich obstartig, bei Verletzung mehlig."
+geschmack = "Mild, mehlig."
+sporenpulver = "Rosa bis hell braunrosa."
+vorkommen = "Symbiosepilz von Rosengewächsen, an Waldrändern, in Gärten und Parks unter Schlehe, Weißdorn und Pflaumenbaum, büschelig gedrängt. Selten."
+zeit = "Frühling bis Sommer."
+
+[[verwechslungen]]
+slug = "maipilz"
+unterschied = "Lamellen bleiben weiß bis cremefarben, Sporenpulver weiß, Geruch stark mehlig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Schlehenroetling.htm"

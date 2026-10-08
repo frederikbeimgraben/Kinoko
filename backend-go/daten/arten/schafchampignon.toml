@@ -1,0 +1,97 @@
+name = "Weißer Anis-Champignon"
+lateinisch = "Agaricus arvensis"
+gruppe = "champignon"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+speisewertHinweis = "Anis-Egerlinge gilben nur an der Oberfläche. Gilbt die Stielbasis im Schnitt kräftig und riecht der Pilz nach Karbol, ist es ein Karbolegerling."
+weitereNamen = ["Schafchampignon", "Schaf-Champignon", "Weißer Anisegerling", "Ackerblätterling", "Schaf-Egerling"]
+fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
+hutform = { von = "flach" }
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["knolle", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Schafegerling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Gelb verfärbend."
+
+[[reagenzien]]
+reagenz = "schaeffer"
+reaktion = "Positiv: orange, rotorange bis dunkel purpurrot."
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.0, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 4.5, bis = 5.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "weiß", hex = "#ffffff" }]
+sporenlager = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+sporenpulver = [{ name = "purpurbraun", hex = "#5f3346" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "gelb", hex = "#e8c33a" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["anisartig"]
+text = "Anis- und mandelartig."
+
+[geschmack]
+tags = ["mild", "pilzig", "nussig"]
+text = "Mild, pilzig, nussig, etwas anisartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 12, selten bis 15 cm breit, weiß, abgeflacht und fleischig, Huthaut seidig und etwas flockig feinschuppig. Rand eingerollt."
+lamellen = "Grauweiß, später graurosa, alt schwarzbraun, sehr dicht stehend, frei."
+stiel = "Weiß, leicht gilbend, unter dem Ring körnig, Basis leicht knollig verdickt. Ring weiß, jung sternförmig von der Hutunterseite abreißend, später hängend und wellig."
+fleisch = "Weiß, leicht gelblich anlaufend, fest und kernig."
+geruch = "Anis- und mandelartig."
+geschmack = "Mild, pilzig, nussig, etwas anisartig."
+sporenpulver = "Purpurbraun."
+vorkommen = "Folgezersetzer auf mit Pferdemist gedüngten Wiesen, auf Kuhweiden und in Parks, selten im Wald."
+zeit = "Frühling bis Herbst."
+
+[[verwechslungen]]
+slug = "falscher-wiesenegerling"
+unterschied = "Stielbasis gilbt auf Druck, Lamellenschneiden fast schwarz, Geruch karbolartig."
+eigenerUnterschied = "Riecht nach Anis, gilbt nur an der Oberfläche, nicht an der Schnittstelle in der Stielbasis."
+
+[[verwechslungen]]
+slug = "karbolegerling"
+unterschied = "Stielbasis läuft im Schnitt kräftig gelb an, Geruch tintig bis karbolartig."
+
+[[verwechslungen]]
+slug = "weisser-knollenblaetterpilz"
+unterschied = "Lamellen bleiben weiß, Stiel mit häutigem Ring, Basis mit gerandeter Knolle in einer sackartigen Scheide."
+
+[[verwechslungen]]
+slug = "wiesenchampignon"
+unterschied = "Kleiner, ohne Anisgeruch, Ring verkümmert, Stiel ohne Knolle, Fleisch rötet statt zu gilben."
+eigenerUnterschied = "Größer, Hut weiß mit seidiger Haut, Lamellen jung grauweiß, Geruch nach Anis, Stiel gilbend und unter dem Ring körnig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Schafegerling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Weißer_Anis-Champignon"

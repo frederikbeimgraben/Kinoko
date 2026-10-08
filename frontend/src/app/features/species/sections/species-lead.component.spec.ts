@@ -27,10 +27,13 @@ async function build(lead: Photo | null): Promise<Element> {
   });
   await catalogueReady();
   result.detectChanges();
+  // The image loads through a resource: its request starts after a turn of the event loop.
+  await new Promise((done) => setTimeout(done));
   const http = TestBed.inject(HttpTestingController);
   for (const request of http.match((req) => req.url.startsWith('/api/photos/'))) {
     request.flush(new Blob(['x'], { type: 'image/jpeg' }));
   }
+  await new Promise((done) => setTimeout(done));
   result.detectChanges();
   return result.container;
 }

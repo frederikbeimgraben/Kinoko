@@ -1,0 +1,107 @@
+name = "Goldröhrling"
+lateinisch = "Suillus grevillei"
+gruppe = "schmierroehrling"
+speisewert = "essbar"
+wertigkeit = 1
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["laerche", "douglasie", "kiefer"]
+speisewertHinweis = "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen und den Schleim vom Hut abziehen. Wie alle Schmierröhrlinge löst er bei manchen Magen-Darm-Beschwerden aus."
+weitereNamen = ["Goldgelber Lärchenröhrling", "Schöner Röhrling", "Gelber Röhrling"]
+synonyme = ["Boletopsis elegans", "Suillus grevillei forma badius", "Ixocomus elegans forma badius", "Boletinus grevillei", "Suillus elegans", "Boletopsis annulatus"]
+fruchtschicht = { art = "roehren" }
+hutmerkmale = ["gebuckelt"]
+stielmerkmale = ["ring", "faserig"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Goldroehrling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Hut grau, Fleisch erst rosa, dann blassblau, Poren bräunlich."
+
+[[reagenzien]]
+reagenz = "ammoniak"
+reaktion = "Hut grau, Fleisch erst rosa, dann blassblau, Poren rostrot."
+
+[[reagenzien]]
+reagenz = "feso4"
+reaktion = "Hut grauoliv, Fleisch blau bis olivblau, Poren bräunlich."
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 10.0, seltenBis = 12.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.0, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 2.5, bis = 4.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "zitronengelb", hex = "#f2e14c" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenpulver = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Angenehm pilzig."
+
+[geschmack]
+tags = ["mild", "saeuerlich"]
+text = "Mild, säuerlich, roh fade, im Alter etwas muffig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 12, selten bis 15 cm breit, hellgelb, später orangerötlich, schleimig schmierig, Mitte oft etwas gebuckelt. Der gelbliche Schleim lässt sich feucht gut abziehen, die Haut selbst nur schwer. Junge Pilze sind ganz von einer häutigen Teilhülle umschlossen."
+roehren = "Gelb, später braungelb, auf Druck rosalila fleckend."
+stiel = "5 bis 10, selten bis 12 cm lang, 0,5 bis 2, selten bis 2,5 cm dick, gelb, ganz schmierig schleimig. Mit gelblichem Ring, darunter bräunlich gefasert, darüber gelblich wie die Röhren."
+fleisch = "Zitronengelb bis satt gelb, im Hut oft heller, weich, rosalila verfärbend, selten etwas blauend."
+geruch = "Angenehm pilzig."
+geschmack = "Mild, säuerlich, roh fade, im Alter etwas muffig."
+sporenpulver = "Gelblich braun."
+vorkommen = "Symbiosepilz fast ausschließlich bei Lärche, extrem selten unter Douglasie oder Weymouthskiefer."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "dottergelber-klumpfuss"
+unterschied = "Lamellen statt Röhren, Stiel mit gerandeter Knolle und rostbraunem Sporenpulver, Geruch widerlich erdig."
+eigenerUnterschied = "Röhren statt Lamellen, Stiel mit Ring und ohne gerandete Knolle, Geruch angenehm."
+
+[[verwechslungen]]
+slug = "elfenbeinroehrling"
+unterschied = "Hut weiß bis cremefarben, Stiel mit braunen harzigen Pünktchen, bei Zirbel- und Weymouthskiefer."
+
+[[verwechslungen]]
+slug = "gelber-hohlfussroehrling"
+unterschied = "Hut kanariengelb und bräunlich schuppig filzig, Stiel hohl, Röhren wabenartig und schwer vom Hut trennbar."
+eigenerUnterschied = "Stiel voll und mit häutigem Ring, Hut feucht schmierig statt filzig-schuppig."
+
+[[verwechslungen]]
+slug = "goldporiger-roehrling"
+unterschied = "Hut gelbrosa bis beigerosa, Röhren grobporig, Fleisch weiß mit rosaviolettem Ton, im Laubwald."
+eigenerUnterschied = "Bei Lärche, Hut goldgelb und schleimig, Stiel mit Ring."
+
+[[verwechslungen]]
+slug = "kuhroehrling"
+unterschied = "Hut bräunlich, Röhren graugelb bis rotbraun mit weiten Mündungen, kein Ring, bei Kiefer."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Goldroehrling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Gold-Röhrling"

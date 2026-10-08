@@ -1,0 +1,93 @@
+name = "Rosablättriger Egerlingsschirmling"
+lateinisch = "Leucoagaricus leucothites"
+gruppe = "schirmling"
+speisewert = "giftig"
+marktfaehig = false
+jahreszeiten = ["fruehling", "sommer", "herbst"]
+baeume = []
+warnung = "123pilzsuche führt den Rosablättrigen Egerlingsschirmling als giftig. Dazu kommt die Verwechslung mit weißen Knollenblätterpilzen, die tödlich endet."
+speisewertHinweis = "Die DGfM meldet häufig Magen-Darm-Beschwerden. Er galt früher als essbar. Wegen der Verwechslung mit Knollenblätterpilzen ganz meiden."
+weitereNamen = ["Rosablättriger Egerlingsschirmpilz", "Gemeiner Egerlingsschirmling"]
+fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng", schneide = "gesaegt" }
+hutmerkmale = ["gebuckelt"]
+hutrand = { von = ["ueberstehend"] }
+stielmerkmale = ["hohl", "knolle", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/RosablaettrigerEggerling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 11.0, seltenBis = 15.0, einheit = "cm" }
+stielLaengeCm = { von = 6.0, bis = 7.0, seltenBis = 9.0, einheit = "cm" }
+stielDickeCm = { von = 1.0, bis = 2.0, seltenBis = 2.5, einheit = "cm" }
+sporenLaengeUm = { von = 7.0, bis = 9.8, einheit = "um" }
+sporenBreiteUm = { von = 4.8, bis = 6.1, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 11
+
+[farben]
+hut = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "blassocker", hex = "#dcc48a" }, { name = "weiß", hex = "#ffffff" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
+stiel = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "gelb", hex = "#e8c33a" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["angenehm", "unauffaellig"]
+text = "Neutral bis angenehm pilzartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 11, selten bis 15 cm breit, weiß bis cremefarben, seidig, Rand überhängend. Scheibe im Alter oft blassocker und stumpf gebuckelt."
+lamellen = "Weiß, später blass fleischfarben, alt rosa, frei, dicht stehend, Schneiden heller und fein gezahnt."
+stiel = "6 bis 7, selten bis 9 cm lang, 1 bis 2, selten bis 2,5 cm dick, cremeweiß, von der Basis her hohl werdend, Basis knollig verdickt, aber nie in einer Scheide. Ring weiß, schmal häutig, nach oben abziehbar."
+fleisch = "Weiß, in der Hutmitte dick, zum Rand dünner, nicht gilbend."
+geruch = "Neutral bis angenehm pilzartig."
+geschmack = "Mild."
+sporenpulver = "Zuerst weiß, im Abwurf am nächsten Tag rosa."
+vorkommen = "Folgezersetzer in Parks, Gärten, Wäldern und auf Wiesen, oft zwischen Wiesenchampignons."
+zeit = "Frühling bis Spätherbst."
+
+[[verwechslungen]]
+slug = "fleischblaettriger-egerlingsschirmling"
+unterschied = "Lamellen gelb bis gelbbraun, im Alter rot bis orangerot, Fleisch gelb."
+
+[[verwechslungen]]
+slug = "kegelhuetiger-knollenblaetterpilz"
+unterschied = "Hut spitzkegelig gebuckelt, Basis in einer eierschalenartigen Scheide, Lamellen bleiben weiß. Nur bei Bäumen."
+
+[[verwechslungen]]
+slug = "seidiger-egerlingsschirmling"
+unterschied = "Lamellen bleiben weiß und stehen an einem feinen Collar, Fleisch gilbt bei Berührung und graut später, Sporenpulver weiß."
+eigenerUnterschied = "Lamellen laufen im Alter rosa an, Hut rein weiß und glatt."
+
+[[verwechslungen]]
+slug = "weisser-knollenblaetterpilz"
+unterschied = "Stielbasis in einer häutigen sackartigen Scheide, Lamellen bleiben weiß, Sporenpulver weiß. Nur bei Bäumen."
+
+[[verwechslungen]]
+slug = "wurzelnder-egerlingsschirmling"
+unterschied = "Hut wollig filzig mit federigem Rand, Stielbasis verschmälert und wurzelnd, Lamellen bleiben weiß."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/RosablaettrigerEggerling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Rosablättriger_Egerlingsschirmling"

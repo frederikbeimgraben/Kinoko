@@ -1,9 +1,9 @@
 import { signal, type Provider } from '@angular/core';
 import type { User, UserManager, UserManagerSettings } from 'oidc-client-ts';
 import { USER_MANAGER_FACTORY } from '../core/auth';
-import { ConfigService, type AppConfig } from '../core/config/config.service';
+import { ConfigStore, type AppConfig } from '../core/config/config.store';
 
-/** Was `GET /api/config` in den Tests liefert. Werte aus `docs/sso-authentik.md`. */
+/** The answer of `GET /api/config` in the tests. The values come from `docs/sso-authentik.md`. */
 export const CONFIG: AppConfig = {
   oidcIssuer: 'https://sso.beimgraben.net/application/o/pilze/',
   oidcClientId: 'pilze',
@@ -11,7 +11,7 @@ export const CONFIG: AppConfig = {
   version: '2026-09-09',
 };
 
-/** Felder eines Nutzers, die für die Tests eine Rolle spielen. */
+/** The fields of a user that the tests use. */
 export interface UserValues {
   token?: string;
   sub?: string;
@@ -22,11 +22,7 @@ export interface UserValues {
   state?: unknown;
 }
 
-/**
- * Ein Nutzer, wie ihn oidc-client-ts nach dem Tausch liefert. `expired` ist im
- * Original ein berechnetes Feld; hier steht es fest, damit ein Test die
- * abgelaufene Sitzung ohne Uhr nachstellen kann.
- */
+/** A user as oidc-client-ts gives it. A fixed `expired` lets a test expire a session without a clock. */
 export function oidcUser(values: UserValues = {}): User {
   return {
     access_token: values.token ?? 'token-eins',
@@ -41,21 +37,17 @@ export function oidcUser(values: UserValues = {}): User {
   } as unknown as User;
 }
 
-/**
- * Ein `UserManager` ohne Netz. Jeder Weg zum SSO wird hier gestellt: der Test
- * legt fest, was `signinSilent` und der Callback liefern, und liest hinterher,
- * womit der Dienst umgeleitet hat.
- */
+/** A `UserManager` without a network. The test sets its answers and reads its redirects. */
 export class ManagerDouble {
-  /** Womit der Dienst den Manager gebaut hat. */
+  /** The settings with which the service made the manager. */
   settings: UserManagerSettings | null = null;
-  /** Antwort auf `signinSilent`; ein Fehler wird geworfen. */
+  /** The answer to `signinSilent`. The double throws an error value. */
   still: User | Error | null = null;
-  /** Antwort auf `signinRedirectCallback`. */
-  returnValue: User | Error = new Error('Kein Callback vorbereitet.');
-  /** Fehler, den `signinRedirect` wirft, statt umzuleiten. */
+  /** The answer to `signinRedirectCallback`. */
+  returnValue: User | Error = new Error('No callback is ready.');
+  /** The error that `signinRedirect` throws instead of a redirect. */
   redirectError: Error | null = null;
-  /** Der Zustand jeder Umleitung, in der Reihenfolge der Aufrufe. */
+  /** The state of each redirect, in the sequence of the calls. */
   readonly redirects: unknown[] = [];
   removed = 0;
   silentAttempts = 0;
@@ -106,7 +98,7 @@ export class ManagerDouble {
     return Promise.resolve();
   }
 
-  /** Das Ereignis, das der echte Manager nach einer Erneuerung auslöst. */
+  /** The event that the real manager sends after a renewal. */
   emitLoaded(user: User): void {
     for (const callback of this.loaded) callback(user);
   }
@@ -115,12 +107,12 @@ export class ManagerDouble {
     for (const callback of this.unloaded) callback();
   }
 
-  /** Das Ereignis, das der echte Manager nach einer gescheiterten Erneuerung auslöst. */
+  /** The event that the real manager sends after a failed renewal. */
   emitRenewError(): void {
     for (const callback of this.renewErrors) callback();
   }
 
-  /** Das Ereignis, das der echte Manager beim Ablauf des Tokens auslöst. */
+  /** The event that the real manager sends when the token expires. */
   emitExpired(): void {
     for (const callback of this.expired) callback();
   }
@@ -130,11 +122,7 @@ export class ManagerDouble {
   }
 }
 
-/**
- * Die Anbieter für einen Test mit Anmeldung: der Manager kommt aus der
- * Attrappe, die Konfiguration ohne Netz. `konfiguration: null` stellt den Fall
- * nach, dass das Backend nicht erreichbar war.
- */
+/** The providers for a test with a sign-in. `configuration: null` is a backend that did not answer. */
 export function authProvider(manager: ManagerDouble, configuration: AppConfig | null = CONFIG): Provider[] {
   return [
     {
@@ -145,9 +133,10 @@ export function authProvider(manager: ManagerDouble, configuration: AppConfig | 
       },
     },
     {
-      provide: ConfigService,
+      provide: ConfigStore,
       useValue: {
         configuration: signal(configuration),
+        settled: signal(true),
         load: () => Promise.resolve(),
       },
     },

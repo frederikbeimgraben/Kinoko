@@ -39,22 +39,16 @@
 }
 
 // Kit `.stage > .banner`: the banner is the last item of the stage, above the nav.
+// The banner draws its own margin, radius and float geometry.
 .shell__banner {
   grid-row: 2;
-  margin: 0 8px 8px;
-  overflow: hidden;
-  border-radius: var(--r-sq);
   view-transition-name: shell-banner;
 }
 
-// Kit `.banner.float`: over the map the banner floats and the map keeps its full height.
-.shell__banner--float {
-  position: absolute;
+// Over the map the floating banner is above the map sheets and clear of the notch.
+.shell .shell__banner--float {
   inset-block-start: calc(12px + var(--safe-top));
-  inset-inline: 12px;
   z-index: 6;
-  margin: 0;
-  box-shadow: var(--shadow-float);
 }
 
 .shell__map {

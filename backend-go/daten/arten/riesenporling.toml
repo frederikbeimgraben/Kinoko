@@ -1,0 +1,95 @@
+name = "Riesenporling"
+lateinisch = "Meripilus giganteus"
+gruppe = "porling"
+speisewert = "essbar"
+wertigkeit = 4
+marktfaehig = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["tanne", "buche"]
+speisewertHinweis = "Nur ganz junge Fruchtkörper sind mild. Er wird schnell scharf und bitter und ist dann unbrauchbar."
+synonyme = ["Agaricus aequivocus", "Flabellopilus giganteus", "Polyporus aequivocus", "Polypilus frondosus var. intybaceus", "Polypilus giganteus", "Grifola gigantea", "Grifola acanthoides"]
+fruchtschicht = { art = "poren" }
+hutform = { von = "muschelfoermig" }
+hutmerkmale = ["gezont"]
+
+[baeumeAusErfahrung]
+baeume = ["eiche"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Riesenporling.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Im Fleisch ohne Verfärbung."
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 30.0, seltenBis = 200.0, einheit = "cm" }
+sporenLaengeUm = { von = 4.2, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 3.5, bis = 7.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }]
+fleisch = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenpulver = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "schwarz", hex = "#1a1a1a" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["pilzig", "angenehm"]
+text = "Pilzig, angenehm."
+
+[geschmack]
+tags = ["mild", "bitter", "scharf"]
+text = "Jung mild, später scharf und bitter."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 30, selten bis 200 cm breit, jung fast weiß, später hell- bis gelbbraun, zuletzt mit vielen kleinen braunen flachen Schuppen, fein samtig bis kahl, oft radial gestreift und konzentrisch gezont. Die fächerförmigen Hüte überlappen sich und wachsen aus einem gemeinsamen Strunk. Ganz jung färben sich Druckstellen sofort braunschwarz."
+poren = "Weißlich bis gelblich, eckig, herablaufend, auf Druck schwärzend. Röhren bis 8 mm tief."
+stiel = "Verbogen, gern seitlich angesetzt, Basis weißlich und bräunlich getupft."
+fleisch = "Weiß bis leicht gelblich, weich, im Schnitt langsam braunschwarz verfärbend."
+geruch = "Pilzig, angenehm."
+geschmack = "Jung mild, später scharf und bitter."
+sporenpulver = "Weiß bis cremeweiß."
+vorkommen = "Folgezersetzer im Mischwald, im Nadelwald gern an Weißtanne, im Laubwald an Buchenstümpfen."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "becherfoermiger-saegeblaettling"
+unterschied = "Mit Lamellen statt Poren, Schneiden gesägt und wellig, Geschmack bitterlich."
+
+[[verwechslungen]]
+slug = "bergporling"
+unterschied = "Poren schwärzen auf Druck nicht, Geruch ganz jung etwas anisartig, Wurzelparasit an Weißtanne."
+eigenerUnterschied = "Poren auf Druck schwärzend, Fleisch im Schnitt langsam braunschwarz, gern an Buchenstümpfen."
+
+[[verwechslungen]]
+slug = "brauner-haarstielporling"
+unterschied = "Hut samtig kurzhaarig mit verklebten Haarbüscheln, dünnfleischig, zentral gestielt, Poren schwärzen nicht."
+eigenerUnterschied = "Poren auf Druck schwärzend, Fleisch im Schnitt braunschwarz, an Laubholzstümpfen."
+
+[[verwechslungen]]
+slug = "eichhase"
+unterschied = "Viele kleine Einzelhüte an einem verzweigten Strunk, Poren cremefarben bis hellbraun, am Fuß von Eichen."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Riesenporling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Riesenporling"

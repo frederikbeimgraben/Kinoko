@@ -10,7 +10,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { SessionState } from '../core/auth';
+import { SessionStore } from '../core/auth';
 import { ViewportService } from '../core/layout/viewport.service';
 import { I18nService } from '../core/i18n/i18n.service';
 // This file loads at start. It imports each part directly and not from `ui/index.ts`:
@@ -22,7 +22,7 @@ import { MapComponent } from '../features/map/map.component';
 import { MapState } from '../features/map/map.state';
 import { AddEntryState } from '../features/add-entry/add-entry.state';
 import { SyncService } from '../core/offline/sync.service';
-import { PwaService } from '../core/pwa/pwa.service';
+import { PwaStore } from '../core/pwa/pwa.store';
 import { deskFrame, paneWidth, type DeskFrame } from './desk-frame';
 
 /** Paths without the tab bar. The rule is on the path, not in the page. */
@@ -49,11 +49,11 @@ export class ShellComponent {
   private readonly document = inject(DOCUMENT);
   private readonly i18n = inject(I18nService);
   private readonly viewport = inject(ViewportService);
-  private readonly session = inject(SessionState);
+  private readonly session = inject(SessionStore);
   private readonly map = inject(MapState);
   private readonly addEntry = inject(AddEntryState);
   private readonly sync = inject(SyncService);
-  private readonly pwa = inject(PwaService);
+  private readonly pwa = inject(PwaStore);
 
   protected readonly updateReady = this.pwa.updateReady;
 

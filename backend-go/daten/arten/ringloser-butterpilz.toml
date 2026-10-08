@@ -1,0 +1,73 @@
+name = "Ringloser Butterpilz"
+lateinisch = "Suillus collinitus"
+gruppe = "schmierroehrling"
+speisewert = "essbar"
+wertigkeit = 4
+marktfaehigSchweiz = false
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["fichte", "kiefer"]
+speisewertHinweis = "In der Schweiz nicht marktfähig, Relative Wertigkeit 4. Kulinarisch bringt er kaum etwas."
+weitereNamen = ["Ringloser Butter-Röhrling", "Rosafüßiger Körnchen-Röhrling", "Ringloser Butterröhrling"]
+synonyme = ["Suillus fluryi"]
+fruchtschicht = { art = "roehren" }
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/RingloserButterpilz.htm"
+geprueftAm = "2026-09-12"
+
+[[reagenzien]]
+reagenz = "koh"
+reaktion = "Lachsrosa."
+
+[masse]
+hutBreiteCm = { von = 4.0, bis = 12.0, seltenBis = 14.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.5, bis = 10.5, einheit = "um" }
+sporenBreiteUm = { von = 3.0, bis = 5.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "kastanienbraun", hex = "#6b3a20" }, { name = "rotbraun", hex = "#8b4a2b" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }]
+stiel = [{ name = "gelb", hex = "#e8c33a" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenpulver = [{ name = "hellbraun", hex = "#a97c50" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
+
+[geruch]
+tags = ["obstartig", "saeuerlich"]
+text = "Obstartig, säuerlich."
+
+[geschmack]
+tags = ["mild", "saeuerlich"]
+text = "Mild säuerlich."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "4 bis 12, selten bis 14 cm breit, braun, rotbraun bis kastanienbraun, eingewachsen faserig, glänzend, feucht schleimig bis schmierig."
+roehren = "Gelb, am Stiel ausgebuchtet angewachsen."
+stiel = "Gelblich, ohne Ring, mit bräunlichen Pünktchen, Basis rosa."
+fleisch = "Gelblich, im Hut hellgelb, im Stiel dunkler gelb, unter der Huthaut mit sichtbarer brauner Faserung."
+geruch = "Obstartig, säuerlich."
+geschmack = "Mild säuerlich."
+sporenpulver = "Hellbraun bis ockerbraun."
+vorkommen = "Symbiosepilz an Waldrändern und in Parks unter Fichte und Kiefer, gern auf kalkreichem Boden."
+zeit = "Sommer bis Herbst."
+
+[[verwechslungen]]
+slug = "goldroehrling"
+unterschied = "Bei Lärche, Hut gelb bis gelbbraun, Stiel mit Ring."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/RingloserButterpilz.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Ringloser_Butterpilz"

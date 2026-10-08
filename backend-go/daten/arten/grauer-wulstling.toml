@@ -1,0 +1,76 @@
+name = "Grauer Wulstling"
+lateinisch = "Amanita spissa"
+gruppe = "wulstling"
+speisewert = "essbar"
+wertigkeit = 4
+marktfaehig = true
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["fichte"]
+speisewertHinweis = "Roh giftig. Er schmeckt muffig und herb, 123pilzsuche gibt ihm nur die Wertigkeit 4. Wegen der Ähnlichkeit mit dem tödlich giftigen Pantherpilz ist er kein Pilz für Anfänger."
+weitereNamen = ["Hoher Wulstling", "Gedrungener Wulstling", "Eingesenkter Wulstling", "Schäler"]
+synonyme = ["Amanita excelsa", "Amanita spissa var. valida", "Amanita spissa var. cariosa", "Amanita cariosa"]
+fruchtschicht = { art = "lamellen", ansatz = "frei" }
+stielmerkmale = ["faserig", "genattert", "knolle", "ring"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/GrauerWulstling0904.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+stielLaengeCm = { von = 5.0, bis = 12.0, seltenBis = 15.0, einheit = "cm" }
+sporenLaengeUm = { von = 8.0, bis = 11.0, einheit = "um" }
+sporenBreiteUm = { von = 6.5, bis = 8.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 6
+bisMonat = 11
+
+[farben]
+hut = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "rot", hex = "#c0392b" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+
+[geruch]
+tags = ["rettichartig", "muffig", "unangenehm", "angenehm", "unauffaellig"]
+text = "Rübenartig, rettichartig, muffig, unangenehm bis unbedeutend."
+
+[geschmack]
+tags = ["herb", "bitter"]
+text = "Muffig und rettichartig, mit bitterlichem, leicht herbem Nachgeschmack. Roh giftig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 12, selten bis 15 cm breit, hellbräunlich, grau bis schwarzbraun, mit großflächigen grauweißen Velumflocken, die sich meist leicht abwischen lassen."
+lamellen = "Weiß, überwiegend frei, manchmal schmal angeheftet bis leicht herablaufend."
+stiel = "5 bis 12, selten bis 15 cm lang und 1 bis 3, selten bis 4 cm dick, weiß bis grauweiß, faserig, teils mit gürtelförmigen Velumzonen. Basis rüben- bis zwiebelknollig mit abgesetzter Knolle, aber ohne die weißen Gürtel des Pantherpilzes. Ring weiß, gerieft, hängend und vergänglich."
+fleisch = "Weiß. Der ganze Pilz hat keine Rottöne wie der Perlpilz."
+geruch = "Rübenartig, rettichartig, muffig, unangenehm bis unbedeutend."
+geschmack = "Muffig und rettichartig, mit bitterlichem, leicht herbem Nachgeschmack. Roh giftig."
+sporenpulver = "Weiß."
+vorkommen = "Symbiosepilz, bevorzugt in sauren Mischwäldern, gern bei Fichte."
+zeit = "Frühsommer bis Spätherbst."
+
+[[verwechslungen]]
+slug = "koenigsfliegenpilz"
+unterschied = "Hut braun mit weißen Flocken, Fleisch unter der Huthaut gelb, Knolle mit warzigen Gürteln."
+eigenerUnterschied = "Hut hellbräunlich bis schwarzbraun mit grauweißen Velumresten, Stiel weiß bis grauweiß, Geruch rettich- bis rübenartig."
+
+[[verwechslungen]]
+slug = "pantherpilz"
+unterschied = "Hutrand gerieft, Ring ungerieft, Stielbasis mit abgesetzter Knolle und weißen Gürteln."
+eigenerUnterschied = "Ring deutlich gerieft, Knolle nicht abgesetzt und ohne Söckchen, Geruch rettichartig."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/GrauerWulstling0904.htm"

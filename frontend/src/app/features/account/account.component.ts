@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { PermissionsService } from '../../core/access/permissions.service';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import { AuthService } from '../../core/auth';
-import { ConfigService } from '../../core/config/config.service';
+import { ConfigStore } from '../../core/config/config.store';
 import { I18nService, LANGUAGE_CHOICES, type LanguageChoice } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { MapAppService, type MapApp } from '../../core/maps/map-app.service';
-import { PwaService } from '../../core/pwa/pwa.service';
-import { ThemeService, type ThemeChoice } from '../../core/theme/theme.service';
+import { MapAppStore, type MapApp } from '../../core/maps/map-app.store';
+import { PwaStore } from '../../core/pwa/pwa.store';
+import { ThemeStore, type ThemeChoice } from '../../core/theme/theme.store';
 import { APP_VERSION } from '../../core/version.generated';
 import { AccountTileComponent } from '../../ui/account-tile/account-tile.component';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -53,13 +53,13 @@ const MAP_APPS: readonly MapApp[] = ['osm', 'google'];
 })
 export class AccountComponent {
   private readonly auth = inject(AuthService);
-  private readonly config = inject(ConfigService);
+  private readonly config = inject(ConfigStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly theme = inject(ThemeService);
-  private readonly mapApp = inject(MapAppService);
-  private readonly rights = inject(PermissionsService);
-  private readonly pwa = inject(PwaService);
+  private readonly theme = inject(ThemeStore);
+  private readonly mapApp = inject(MapAppStore);
+  private readonly rights = inject(PermissionsStore);
+  private readonly pwa = inject(PwaStore);
 
   protected readonly canInstall = this.pwa.canInstall;
   protected readonly updateReady = this.pwa.updateReady;

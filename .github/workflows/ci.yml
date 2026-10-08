@@ -1,16 +1,13 @@
 name: CI
 
-# Jeder Job prüft zuerst, ob sein Ordner da ist. Fehlt er, endet der Job grün
-# mit einem Hinweis: ein Job mit `if` auf Job-Ebene wäre übersprungen und
-# meldete dem Branch-Schutz nichts. setup-uv führt oberhalb von v7 keinen
-# mitlaufenden Major-Tag, darum die genaue Version. Dependabot hebt sie an.
+# The backend jobs run in the Nix dev shell of the flake. The shell holds
+# the C libraries of the data pipeline (LightGBM, netCDF, GDAL) that cgo needs.
 
 on:
   pull_request:
   push:
     branches: [main]
 
-# Ein neuer Push macht den laufenden Test desselben Branches wertlos.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -20,145 +17,138 @@ permissions:
 
 env:
   NODE_VERSION: "24"
-  PYTHON_VERSION: "3.13"
 
 jobs:
   be-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - id: ordner
-        name: Backend vorhanden
-        run: .github/scripts/ordner.sh backend/pyproject.toml backend A0
-      - if: steps.ordner.outputs.da == 'true'
-        uses: astral-sh/setup-uv@v10.0.1
+      - uses: DeterminateSystems/nix-installer-action@v23
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-          cache-dependency-glob: |
-            backend/pyproject.toml
-            backend/uv.lock
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv sync --all-extras
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv run ruff check .
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv run ruff format --check .
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv run python -m tools.check_comments
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv run python -m tools.check_size
-
-  be-typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - id: ordner
-        name: Backend vorhanden
-        run: .github/scripts/ordner.sh backend/pyproject.toml backend A0
-      - if: steps.ordner.outputs.da == 'true'
-        uses: astral-sh/setup-uv@v10.0.1
+          diagnostic-endpoint: ""
+      - uses: actions/cache@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-          cache-dependency-glob: |
-            backend/pyproject.toml
-            backend/uv.lock
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv sync --all-extras
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: backend
-        run: uv run basedpyright
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            ~/.cache/golangci-lint
+          key: go-lint-${{ runner.os }}-${{ hashFiles('backend/go.sum') }}
+      - name: Format
+        run: nix develop .#backend -c bash -c 'cd backend && test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }'
+      - name: Vet
+        run: nix develop .#backend -c bash -c 'cd backend && go vet ./...'
+      - name: golangci-lint
+        run: nix develop .#backend -c bash -c 'cd backend && golangci-lint run ./...'
+      - name: Repository rules (size, comment language)
+        run: nix develop .#backend -c bash -c 'cd backend && go run ./tools/lintrules .'
 
   be-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - id: ordner
-        name: Backend vorhanden
-        run: .github/scripts/ordner.sh backend/pyproject.toml backend A0
-      - if: steps.ordner.outputs.da == 'true'
-        uses: astral-sh/setup-uv@v10.0.1
+      - uses: DeterminateSystems/nix-installer-action@v23
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-          cache-dependency-glob: |
-            backend/pyproject.toml
-            backend/uv.lock
-      - if: steps.ordner.outputs.da == 'true'
+          diagnostic-endpoint: ""
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-test-${{ runner.os }}-${{ hashFiles('backend/go.sum') }}
+      - name: Unit and HTTP tests
+        run: nix develop .#backend -c bash -c 'cd backend && go test -race -coverprofile=cover.out ./... && go tool cover -func=cover.out | tail -1'
+
+  be-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v23
+        with:
+          diagnostic-endpoint: ""
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Build the service
+        run: nix develop .#backend -c bash -c 'cd backend && go build -o kinoko ./cmd/kinoko'
+      - name: Start the service
         working-directory: backend
-        run: uv sync --all-extras
-      # Die Abdeckungsgrenze steht in backend/pyproject.toml, nicht hier.
-      - if: steps.ordner.outputs.da == 'true'
+        run: |
+          export PILZE_DB=$RUNNER_TEMP/pilze.sqlite PILZE_PIPELINE=false
+          nix develop ..#backend -c ./kinoko serve &
+          for _ in $(seq 1 60); do
+            curl -sf http://127.0.0.1:8111/api/health >/dev/null && exit 0
+            sleep 1
+          done
+          echo "::error::The service does not answer"
+          exit 1
+      - name: Schemathesis
         working-directory: backend
-        run: uv run pytest --cov
+        run: >
+          pipx run schemathesis run openapi.yaml
+          --url http://127.0.0.1:8111/api
+          --phases examples,coverage
+          --max-failures 25
+          --report junit
+          --report-dir schemathesis-report
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schemathesis
+          path: backend/schemathesis-report
+          if-no-files-found: ignore
+          retention-days: 7
+
+  nix-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v23
+        with:
+          diagnostic-endpoint: ""
+      - name: Build the service and the app with Nix
+        run: nix build .#backend .#frontend --print-build-logs
 
   fe-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - id: ordner
-        name: Frontend vorhanden
-        run: .github/scripts/ordner.sh frontend/package.json frontend A1
-      - if: steps.ordner.outputs.da == 'true'
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      - working-directory: frontend
         run: npm ci
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      - working-directory: frontend
         run: npm run lint
 
   fe-typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - id: ordner
-        name: Frontend vorhanden
-        run: .github/scripts/ordner.sh frontend/package.json frontend A1
-      - if: steps.ordner.outputs.da == 'true'
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      - working-directory: frontend
         run: npm ci
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      - working-directory: frontend
         run: npm run typecheck
 
   fe-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - id: ordner
-        name: Frontend vorhanden
-        run: .github/scripts/ordner.sh frontend/package.json frontend A1
-      - if: steps.ordner.outputs.da == 'true'
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      - working-directory: frontend
         run: npm ci
-      # test:ci läuft einmal durch und misst die Abdeckung. npm test bleibt
-      # der Wachmodus für die Entwicklung.
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      # test:ci runs once and measures the coverage. npm test is the watch mode.
+      - working-directory: frontend
         run: npm run test:ci
 
   fe-build:
@@ -168,44 +158,32 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - id: ordner
-        name: Frontend vorhanden
-        run: .github/scripts/ordner.sh frontend/package.json frontend A1
-      - if: steps.ordner.outputs.da == 'true'
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      - working-directory: frontend
         run: npm ci
-      # Die Budgets stehen in frontend/angular.json und brechen den Build.
-      - if: steps.ordner.outputs.da == 'true'
-        working-directory: frontend
+      # The budgets in frontend/angular.json stop the build.
+      - working-directory: frontend
         run: npm run build
 
-  mo-test:
+  fe-contract-sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - id: ordner
-        name: Modell vorhanden
-        run: .github/scripts/ordner.sh modell/flake.nix modell C2
-      # Die Kette hängt an numpy, pandas und pillow aus nixpkgs.
-      # modell/flake.nix legt diese Versionen als einzige Stelle fest, und
-      # pip-Räder finden auf NixOS kein libstdc++. Darum Nix statt pip.
-      # Die Shell #test trägt nur, was die Tests laden.
-      - if: steps.ordner.outputs.da == 'true'
-        uses: DeterminateSystems/nix-installer-action@v23
+      - uses: actions/setup-node@v7
         with:
-          diagnostic-endpoint: ""
-      # Ohne Store-Cache: magic-nix-cache lud den Abschluss der Shell gemessene
-      # 5 min 25 s in den Actions-Cache, bei 3 min 05 s Testlauf. cache.nixos.org
-      # liefert dieselben Pfade schneller, und der Actions-Cache bleibt für npm
-      # und uv frei.
-      - if: steps.ordner.outputs.da == 'true'
-        run: nix develop ./modell#test -c python -m pytest modell/tests -q
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - working-directory: frontend
+        run: npm ci
+      - working-directory: frontend
+        run: npm run api:generate
+      - name: The generated client agrees with the contract
+        run: git diff --exit-code -- frontend/src/app/core/api/contract.d.ts
 
   fe-e2e:
     runs-on: ubuntu-latest
@@ -229,10 +207,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - working-directory: frontend
         run: npm run build:e2e
-      - name: Flüsse
+      - name: Flows
         working-directory: frontend
         run: npm run e2e:flows
-      - name: Baselines gegen das Design
+      - name: Baselines against the design
         working-directory: frontend
         run: npm run boards:check
       - name: Boards
@@ -261,7 +239,7 @@ jobs:
         run: npm ci
       - working-directory: frontend
         run: npm run build
-      # Kategorie PWA ist scharf. Kategorie Leistung warnt, bis U12 sie hebt.
+      # The PWA category stops the job. The performance category warns.
       - name: Lighthouse
         working-directory: frontend
         run: npm run lighthouse
@@ -270,69 +248,5 @@ jobs:
         with:
           name: lighthouse
           path: frontend/lighthouse-bericht
-          if-no-files-found: ignore
-          retention-days: 7
-
-  fe-contract-sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - working-directory: frontend
-        run: npm ci
-      - working-directory: frontend
-        run: npm run api:generate
-      - name: Der erzeugte Client ist auf dem Stand des Vertrags
-        run: git diff --exit-code -- frontend/src/app/core/api/contract.d.ts
-
-  be-contract:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.0.1
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          enable-cache: true
-          cache-dependency-glob: |
-            backend/pyproject.toml
-            backend/uv.lock
-      - working-directory: backend
-        run: uv sync --all-extras
-      - working-directory: backend
-        run: uv run python -m tools.sync_contract
-      - name: Jeder Pfad des Vertrags hat eine Route
-        working-directory: backend
-        run: uv run pytest -m contract --no-cov -q
-      - name: Datenbank anlegen
-        working-directory: backend
-        run: uv run alembic upgrade head
-      - name: Dienst starten
-        working-directory: backend
-        run: |
-          uv run uvicorn app.main:app --host 127.0.0.1 --port 8111 &
-          for _ in $(seq 1 30); do
-            curl -sf http://127.0.0.1:8111/api/health >/dev/null && exit 0
-            sleep 1
-          done
-          echo "::error::Backend antwortet nicht"
-          exit 1
-      - name: Schemathesis
-        working-directory: backend
-        run: >
-          uv run schemathesis run openapi.yaml
-          --url http://127.0.0.1:8111/api
-          --phases examples,coverage
-          --max-failures 25
-          --report junit
-          --report-dir schemathesis-report
-      - if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: schemathesis
-          path: backend/schemathesis-report
           if-no-files-found: ignore
           retention-days: 7

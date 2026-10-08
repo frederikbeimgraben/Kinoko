@@ -1,0 +1,65 @@
+name = "Sparriger Schüppling"
+lateinisch = "Pholiota squarrosa"
+gruppe = "schueppling"
+speisewert = "giftig"
+marktfaehig = false
+sammelbar = false
+jahreszeiten = ["sommer", "herbst"]
+baeume = ["obstbaum", "fichte"]
+speisewertHinweis = "Verursacht gelegentlich Magen-Darm-Beschwerden; vom Verzehr wird abgeraten. Zu erkennen an den abstehenden sparrigen Schuppen auf Hut und Stiel und am rettichartigen Geruch."
+synonyme = ["Pholiota jahnii sensu", "Hypodendrum floccosum", "Fungus squarrosus", "Stropharia squarrosa", "Dryophila muelleri", "Pholiota squarrosa f. annulosa"]
+fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
+stielmerkmale = ["ring", "beflockt"]
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SparrigerSchueppling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 1.0, bis = 5.0, seltenBis = 10.0, einheit = "cm" }
+stielLaengeCm = { von = 2.0, bis = 18.0, seltenBis = 25.0, einheit = "cm" }
+stielDickeCm = { von = 0.6, bis = 4.0, seltenBis = 5.0, einheit = "cm" }
+sporenLaengeUm = { von = 6.5, bis = 8.0, einheit = "um" }
+sporenBreiteUm = { von = 4.0, bis = 4.5, einheit = "um" }
+
+[zeitraum]
+vonMonat = 8
+bisMonat = 11
+
+[farben]
+hut = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "hellbraun", hex = "#a97c50" }, { name = "gelb", hex = "#e8c33a" }]
+sporenlager = [{ name = "olivbraun", hex = "#6e6435" }, { name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
+stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "hellbraun", hex = "#a97c50" }]
+fleisch = [{ name = "blassgelb", hex = "#efe3a0" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "rostbraun", hex = "#8a4b23" }]
+
+[geruch]
+tags = ["rettichartig", "angenehm"]
+text = "Rettichartig, rübenartig, angenehm."
+
+[geschmack]
+tags = []
+text = "Rübenartig, rettichartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "1 bis 5, selten bis 10 cm breit, strohgelb, trocken, mit abstehenden sparrigen Schüppchen auf gelbbraunem bis hellbraunem Grund."
+lamellen = "Jung blass olivgelb, später olivbraun, ausgebuchtet und breit angewachsen."
+stiel = "2 bis 18, selten bis 25 cm lang, 0,6 bis 4, selten bis 5 cm dick, hellbraun, über der Ringzone kahl, darunter mit rotbraunen Schuppen, zur Basis dunkler."
+fleisch = "Weißlich bis blassgelb, dick, hart, faserig."
+geruch = "Rettichartig, rübenartig, angenehm."
+geschmack = "Rübenartig, rettichartig."
+sporenpulver = "Rostbraun."
+vorkommen = "Folgezersetzer und Weißfäuleerreger, gern an Laubholz und Obstbäumen, seltener an Nadelholz wie Fichte."
+zeit = "Spätsommer bis Spätherbst."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SparrigerSchueppling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Sparriger_Schüppling"

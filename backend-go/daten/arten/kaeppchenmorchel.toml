@@ -1,0 +1,73 @@
+name = "Käppchenmorchel"
+lateinisch = "Mitrophora semilibera"
+gruppe = "morchel"
+speisewert = "essbar"
+wertigkeit = 2
+marktfaehigSchweiz = true
+marktfaehig = true
+jahreszeiten = ["winter", "fruehling"]
+baeume = ["pappel"]
+speisewertHinweis = "Roh giftig wie alle Morcheln. Gut durchgaren, sonst drohen Magen-Darm-Vergiftungen. Dazu kommt das Morchella-Syndrom mit Trunkenheitsgefühl, Zittern und Schwindel. Besonders geschützt, nur für den Eigenbedarf sammeln."
+weitereNamen = ["Halbfreie Morchel", "Glockenmorchel", "Mützenmorchel"]
+stielmerkmale = ["gerieft", "hohl", "beflockt"]
+
+[baeumeAusErfahrung]
+baeume = ["esche"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/Kaeppchen.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+fruchtkoerperBreiteCm = { von = 2.0, bis = 4.5, seltenBis = 6.0, einheit = "cm" }
+sporenLaengeUm = { von = 20.0, bis = 27.0, einheit = "um" }
+sporenBreiteUm = { von = 10.0, bis = 18.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 2
+bisMonat = 6
+
+[farben]
+hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "gelbbraun", hex = "#a3813f" }, { name = "hellbraun", hex = "#a97c50" }]
+stiel = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[geruch]
+tags = ["angenehm"]
+text = "Angenehm."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild. Roh giftig, nicht kosten."
+
+[schutz]
+status = "besondersGeschuetzt"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+fruchtkoerper = "2 bis 4,5, selten bis 6 cm breit, hellbraun, dunkelbraun bis gelbbraun. Wabenartiges Käppchen, innen hohl, meist zugespitzt. Es ist nur zu etwa einem Drittel mit dem Stiel verwachsen, der übrige Rand steht frei ab."
+stiel = "Weißlich bis gelblich oder gelbbraun, dünnfleischig, runzelig furchig, hohl. Die Außenhaut trägt große körnige weiße Schüppchen."
+fleisch = "Weißlich bis gelblich, dünn, wachsartig, sehr zerbrechlich."
+geruch = "Angenehm."
+geschmack = "Mild. Roh giftig, nicht kosten."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer in Mischwald und Auwald, gern bei Pappeln und Espen oder im Rindenmulch. Oft zusammen mit Spitzmorcheln. Funde aus Rindenmulch schmecken schwächer als die aus dem Auwald."
+zeit = "Februar bis Juni, in kälteren Lagen nicht vor Anfang April."
+
+[[verwechslungen]]
+slug = "spitzmorchel"
+unterschied = "Käppchen kammerig und mit dem Rand ganz am Stiel angewachsen, Fruchtkörper deutlich größer."
+
+[[verwechslungen]]
+slug = "zipfellorchel"
+unterschied = "Hut zipfelmützenartig hoch gestülpt und aderig statt wabenartig, mit heller Verbindungsnaht."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/Kaeppchen.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Käppchen-Morchel"

@@ -1,0 +1,98 @@
+name = "Schuppiger Porling"
+lateinisch = "Cerioporus squamosus"
+gruppe = "porling"
+speisewert = "essbar"
+wertigkeit = 4
+marktfaehig = true
+jahreszeiten = ["fruehling", "sommer"]
+baeume = []
+speisewertHinweis = "Nur jung essbar und dann relativ minderwertig. 123pilze gibt ihm die Relative Wertigkeit 4."
+weitereNamen = ["Schuppiger Stielporling", "Schwarzfußporling", "Schuppiger Schwarzfußporling"]
+synonyme = ["Polyporus squamosus", "Bresadolia squamosa", "Polyporus squamosus forma rostkovii", "Polyporus westii", "Polyporellus squamosus forma rostkovii", "Polyporus squamosus forma michelii", "Polyporus retirugus"]
+fruchtschicht = { art = "poren" }
+hutrand = { von = ["eingerollt"] }
+stielmerkmale = ["genetzt"]
+
+[baeumeAusErfahrung]
+baeume = ["ahorn", "esche", "ulme"]
+quelle = "eigene Erfahrung"
+
+[quelle]
+url = "https://www.123pilzsuche.de/daten/details/SchuppigerPorling.htm"
+geprueftAm = "2026-09-12"
+
+[masse]
+hutBreiteCm = { von = 3.0, bis = 25.0, seltenBis = 40.0, einheit = "cm" }
+sporenLaengeUm = { von = 7.8, bis = 17.0, einheit = "um" }
+sporenBreiteUm = { von = 3.6, bis = 6.0, einheit = "um" }
+
+[zeitraum]
+vonMonat = 3
+bisMonat = 8
+
+[farben]
+hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
+sporenlager = [{ name = "blassgelb", hex = "#efe3a0" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+stiel = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
+fleisch = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }]
+sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
+
+[farben.verfaerbung]
+von = []
+nach = [{ name = "blau", hex = "#3a5f9e" }]
+dauer = "langsam"
+
+[geruch]
+tags = ["mehlig", "gurkenartig", "honigartig"]
+text = "Gurkenartig, mehlig, honigartig."
+
+[geschmack]
+tags = ["mild"]
+text = "Mild, mehl- bis nussartig."
+
+[schutz]
+status = "keiner"
+quelle = "Bundesartenschutzverordnung, Anlage 1"
+
+[merkmale]
+hut = "3 bis 25, selten bis 40 cm breit, blassbraun bis weißlich hellgelb, konzentrisch mit erst hellbraunen, im Alter dunkelbraunen Schuppen besetzt, normalerweise ohne Wimpern am Rand. Rand lange eingerollt."
+poren = "Weißlich bis blassgelb, eckig, herablaufend, ein bis zwei Poren je Millimeter."
+stiel = "Dickfleischig, weißlich bis hellbräunlich mit netzartiger Zeichnung, exzentrisch bis seitlich angesetzt. Basis zuerst gelblich, im Alter schwarz."
+fleisch = "Weiß bis cremeweiß, jung wässrig weich, im Alter sehr zäh."
+geruch = "Gurkenartig, mehlig, honigartig."
+geschmack = "Mild, mehl- bis nussartig."
+sporenpulver = "Weiß."
+vorkommen = "Folgezersetzer an Laubholz, gern büschelig zusammenwachsend, löst Weißfäule aus."
+zeit = "Frühjahr bis Sommer, Fruchtkörper sind ganzjährig zu finden."
+
+[[verwechslungen]]
+slug = "berindeter-seitling"
+unterschied = "Lamellen statt Poren, herablaufend und gegabelt, Stiel mit flüchtigem Ring."
+eigenerUnterschied = "Hut mit konzentrisch angeordneten braunen Schuppen, Unterseite mit Poren, Stielbasis im Alter schwarz."
+
+[[verwechslungen]]
+slug = "loewengelber-porling"
+unterschied = "Nur 3 bis 6 cm breit, Hut graugelb bis orange, kahl und ohne Schuppen."
+eigenerUnterschied = "Viel größer, Hut mit groben braunen Schuppen, Poren weißlich und nur ein bis zwei je Millimeter."
+
+[[verwechslungen]]
+slug = "riesenporling"
+unterschied = "Viele fächerförmige Hüte an einem Strunk, Poren schwärzen auf Druck."
+
+[[verwechslungen]]
+slug = "schuppiger-saegeblaettling"
+unterschied = "Lamellen statt Poren, Schneiden stark gesägt, wächst an Nadelholz."
+eigenerUnterschied = "Unterseite mit weiten Poren statt Lamellen, Stielbasis schwarz."
+
+[[verwechslungen]]
+slug = "sklerotienporling"
+unterschied = "Kleiner, Hutrand bewimpert, Stiel meist zentral, Basis filzig und nicht schwarz."
+eigenerUnterschied = "Deutlich größer, Hut mit groben braunen Schuppen, Stielbasis schwarz."
+
+[[links]]
+titel = "123pilzsuche.de"
+url = "https://www.123pilzsuche.de/daten/details/SchuppigerPorling.htm"
+
+[[links]]
+titel = "Wikipedia"
+url = "https://de.wikipedia.org/wiki/Schuppiger_Stielporling"
