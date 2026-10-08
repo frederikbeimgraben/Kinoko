@@ -1,17 +1,32 @@
-import { photoPath, type SpeciesEntry } from '../../core/api/models';
-import type { CatalogueEntry } from './species.state';
+import { photoPath, type Edibility, type SpeciesEntry } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
-import { EDIBILITY_KIND, EDIBILITY_TEXT, EDIBILITY_TONE } from './labels';
+import { judge, type Selection } from './facets';
+import type { SpeciesSort } from './filter.store';
+import { EDIBILITY_KIND, EDIBILITY_TEXT, EDIBILITY_TONE, MONTH_TEXT } from './labels';
+import type { CatalogueEntry } from './species.store';
+import type { StandardColour } from '../../core/api/models';
 
 const FALLBACK_COLOUR = '#7a5230';
 
-/** Die Grundfarbe der Art fuer das Ersatzsymbol im Titelbild. */
-function leadColour(entry: SpeciesEntry): string {
+/** The order of the edibility sort: the safe species first. */
+const EDIBILITY_ORDER: readonly Edibility[] = [
+  'edible',
+  'conditionally_edible',
+  'inedible',
+  'poisonous',
+  'deadly',
+];
+
+/** A month after December puts a species without a season at the end. */
+const NO_MONTH = 13;
+
+/** The base colour of the species for the fallback icon of the thumb. */
+export function leadColour(entry: SpeciesEntry): string {
   return entry.colours.find((group) => group.part === 'cap')?.colours[0]?.hex ?? FALLBACK_COLOUR;
 }
 
-/** Wandelt eine Art in eine Zeile. Sie trägt genau eine Plakette. */
+/** Makes a row from a species. The row has exactly one badge. */
 export function speciesRow(entry: SpeciesEntry, i18n: I18nService): SpeciesRowSpecies {
   const tone = EDIBILITY_TONE[entry.edibility];
   return {
@@ -26,7 +41,7 @@ export function speciesRow(entry: SpeciesEntry, i18n: I18nService): SpeciesRowSp
   };
 }
 
-/** Sucht lokal nach deutschem und lateinischem Namen. */
+/** Searches the German and the Latin name on the device. */
 export function search(entries: readonly CatalogueEntry[], query: string): readonly CatalogueEntry[] {
   const needle = query.trim().toLocaleLowerCase();
   if (needle === '') return entries;
@@ -35,4 +50,60 @@ export function search(entries: readonly CatalogueEntry[], query: string): reado
       one.species.name.toLocaleLowerCase().includes(needle) ||
       one.species.scientificName.toLocaleLowerCase().includes(needle),
   );
+}
+
+const byName = (one: SpeciesEntry, other: SpeciesEntry): number => one.name.localeCompare(other.name, 'de');
+
+/** The comparison of each sort. Equal species keep the order of their names. */
+const ORDER: Readonly<Record<SpeciesSort, (one: SpeciesEntry, other: SpeciesEntry) => number>> = {
+  name: byName,
+  latin: (one, other) => one.scientificName.localeCompare(other.scientificName, 'la'),
+  edibility: (one, other) =>
+    EDIBILITY_ORDER.indexOf(one.edibility) - EDIBILITY_ORDER.indexOf(other.edibility) || byName(one, other),
+  season: (one, other) =>
+    (one.periodStartMonth ?? NO_MONTH) - (other.periodStartMonth ?? NO_MONTH) || byName(one, other),
+};
+
+/** A new list in the order of `sort`. */
+export function sortEntries(entries: readonly CatalogueEntry[], sort: SpeciesSort): CatalogueEntry[] {
+  return [...entries].sort((one, other) => ORDER[sort](one.species, other.species));
+}
+
+/** The head above a group of rows in the order of `sort`. An empty head starts no group. */
+export function headOf(entry: SpeciesEntry, sort: SpeciesSort, i18n: I18nService): string {
+  switch (sort) {
+    case 'name':
+      return entry.name.charAt(0).toLocaleUpperCase();
+    case 'latin':
+      return entry.scientificName.charAt(0).toLocaleUpperCase();
+    case 'edibility':
+      return i18n.translate(EDIBILITY_TEXT[entry.edibility]);
+    case 'season': {
+      const month = entry.periodStartMonth;
+      return month == null ? '' : i18n.translate(MONTH_TEXT[month - 1]);
+    }
+  }
+}
+
+/** The species that match the search and the filter, and the species without the data to judge. */
+export interface Listing {
+  readonly hits: readonly CatalogueEntry[];
+  readonly unknown: readonly CatalogueEntry[];
+}
+
+/** Searches, judges and sorts the catalogue in one pass. */
+export function listing(
+  entries: readonly CatalogueEntry[],
+  query: string,
+  selection: Selection,
+  palette: readonly StandardColour[],
+  sort: SpeciesSort,
+): Listing {
+  const found = search(entries, query).map((one) => ({ one, verdict: judge(one.facts, selection, palette) }));
+  const pick = (verdict: string): CatalogueEntry[] =>
+    sortEntries(
+      found.filter((held) => held.verdict === verdict).map((held) => held.one),
+      sort,
+    );
+  return { hits: pick('hit'), unknown: pick('unknown') };
 }

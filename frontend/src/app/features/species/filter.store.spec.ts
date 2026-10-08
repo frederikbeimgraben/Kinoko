@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 
 const STORAGE_KEY = 'pilzkarte.speciesfilter';
 
@@ -8,13 +8,13 @@ function stored(): Record<string, unknown> {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, unknown>;
 }
 
-function build(): SpeciesFilterState {
-  const state = TestBed.inject(SpeciesFilterState);
+function build(): SpeciesFilterStore {
+  const state = TestBed.inject(SpeciesFilterStore);
   TestBed.tick();
   return state;
 }
 
-describe('SpeciesFilterState', () => {
+describe('SpeciesFilterStore', () => {
   beforeEach(() => {
     localStorage.clear();
   });

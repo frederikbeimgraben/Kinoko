@@ -1,14 +1,4 @@
 <app-search-field [value]="value()" [placeholder]="placeholder()" (valueChange)="valueChange.emit($event)" />
 @if (showsMarks()) {
-  <div class="chiprow">
-    @for (chip of chips(); track chip.key) {
-      <app-filter-chip
-        [label]="chip.label"
-        [icon]="chip.icon"
-        [on]="chip.on"
-        [iconLabel]="chip.key === 'all' ? ('common.filter' | t) : undefined"
-        (chosen)="open(chip.key)"
-      />
-    }
-  </div>
+  <app-species-filter-chips class="bar__chips" (groupOpened)="groupOpened.emit($event)" />
 }

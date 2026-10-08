@@ -18,7 +18,7 @@ export class SpeciesApi {
 
   /** Das volle Profil einer Art. */
   profile(slug: string): Observable<SpeciesEntry> {
-    return this.api.get<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}`);
+    return this.api.get<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}`, undefined, { quiet: true });
   }
 
   /** Datenbestand, Funde und Bilder einer Art. Braucht `species.edit`. */

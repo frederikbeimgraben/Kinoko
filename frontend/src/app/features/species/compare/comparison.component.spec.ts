@@ -9,7 +9,7 @@ import { ViewportService } from '../../../core/layout/viewport.service';
 import { ANY_ROUTE } from '../../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
 import { ComparisonComponent } from './comparison.component';
-import { ComparisonState } from './comparison.state';
+import { ComparisonStore } from './comparison.store';
 
 const WHITE = { name: 'weiß', hex: '#f0ece0' };
 const PINK = { name: 'rosa', hex: '#e8c8cf' };
@@ -44,22 +44,22 @@ const PLAIN = speciesEntry({ slug: 'plain', name: 'Plain', scientificName: 'Plai
 
 const BUNDLE = speciesBundle([STONE, GALL, BARE, PLAIN]);
 
-/** Ein Fenster in Spaltenbreite. */
+/** A window with the width of the desktop. */
 const WIDE: Provider = { provide: ViewportService, useValue: { wide: signal(true) } };
 
-/** Baut die Seite und legt die Wahl in den Zustand. */
+/** Builds the page and puts the choice into the store. */
 async function build(slugs: readonly string[], extra: Provider[] = []): Promise<Element> {
   const view = await render(ComparisonComponent, {
     providers: [...catalogueProviders(BUNDLE), provideRouter(ANY_ROUTE), ...extra],
   });
   await catalogueReady();
-  TestBed.inject(ComparisonState).set(slugs);
+  TestBed.inject(ComparisonStore).set(slugs);
   view.fixture.detectChanges();
   return view.container;
 }
 
 describe('ComparisonComponent', () => {
-  it('nennt die Arten als Köpfe der Spalten', async () => {
+  it('names the species as the heads of the columns', async () => {
     const container = await build(['steinpilz', 'gallenroehrling']);
 
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
@@ -67,35 +67,35 @@ describe('ComparisonComponent', () => {
     await noViolations(container);
   });
 
-  it('stellt den Speisewert beider Arten nebeneinander', async () => {
+  it('puts the edibility of both species side by side', async () => {
     await build(['steinpilz', 'gallenroehrling']);
 
     expect(screen.getByText('essbar')).toBeInTheDocument();
     expect(screen.getByText('ungenießbar')).toBeInTheDocument();
   });
 
-  it('zeigt Hutbreite und die Notiz des Stiels aus dem Katalog', async () => {
+  it('shows the cap width and the note of the stem from the catalogue', async () => {
     const container = await build(['steinpilz', 'gallenroehrling']);
 
     expect(screen.getByText('Breite')).toBeInTheDocument();
-    expect(container.querySelector('.compare__value')?.textContent).toContain('20');
+    expect(container.querySelector('.cmpr .v')?.textContent).toContain('20');
     expect(screen.getByText('weiß, fein')).toBeInTheDocument();
   });
 
-  it('nennt die Art der Fruchtschicht', async () => {
+  it('names the kind of hymenium', async () => {
     await build(['steinpilz', 'gallenroehrling']);
 
     expect(screen.getAllByText('Röhren')).toHaveLength(2);
   });
 
-  it('zeigt die Wachstumszeit als Saison', async () => {
+  it('shows the time of growth as the season', async () => {
     await build(['steinpilz']);
 
     expect(screen.getByText('Zeit')).toBeInTheDocument();
     expect(screen.getByText('Mai – Nov.')).toBeInTheDocument();
   });
 
-  it('lässt eine Zeile aus, für die keine Art einen Wert trägt', async () => {
+  it('leaves out a row where no species has a value', async () => {
     await build(['kahlkopf']);
 
     expect(screen.getByText('Kahlkopf')).toBeInTheDocument();
@@ -103,35 +103,38 @@ describe('ComparisonComponent', () => {
     expect(screen.queryByText('Zeit')).not.toBeInTheDocument();
   });
 
-  it('blendet mit „nur Unterschiede“ eine gleiche Zeile aus', async () => {
+  it('hides an equal row with "only differences" from the menu', async () => {
     const view = await render(ComparisonComponent, {
       providers: [...catalogueProviders(BUNDLE), provideRouter(ANY_ROUTE)],
     });
     await catalogueReady();
-    TestBed.inject(ComparisonState).set(['steinpilz', 'gallenroehrling']);
+    TestBed.inject(ComparisonStore).set(['steinpilz', 'gallenroehrling']);
     view.fixture.detectChanges();
 
     expect(screen.getAllByText('Röhren')).toHaveLength(2);
 
-    screen.getByRole('switch', { name: 'Nur Unterschiede' }).click();
+    screen.getByRole('button', { name: 'Mehr' }).click();
+    view.fixture.detectChanges();
+    screen.getByRole('button', { name: 'Nur Unterschiede' }).click();
     view.fixture.detectChanges();
 
     expect(screen.queryAllByText('Röhren')).toHaveLength(0);
   });
 
-  it('nennt das Paar im Kopf, sobald das Fenster eine Spalte trägt', async () => {
-    await build(['steinpilz', 'gallenroehrling'], [WIDE]);
+  it('shows the list pane next to the table on the desktop', async () => {
+    const container = await build(['steinpilz', 'gallenroehrling'], [WIDE]);
 
-    expect(screen.getByText('zwei Arten')).toBeInTheDocument();
+    expect(container.querySelector('app-species-browser')).not.toBeNull();
+    expect(container.querySelector('.compare--wide')).not.toBeNull();
   });
 
-  it('bleibt ohne Wahl ohne Gruppen', async () => {
+  it('shows no group without a choice', async () => {
     const container = await build([]);
 
-    expect(container.querySelector('.compare__group')).toBeNull();
+    expect(container.querySelector('.cmpg')).toBeNull();
   });
 
-  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+  it('has no German word with an empty catalogue', async () => {
     const container = await build(['plain'], [EMPTY_CATALOG]);
 
     noGermanText(container);

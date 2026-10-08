@@ -10,7 +10,7 @@ import { catalogueProviders } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesSummary, taxonPage, taxonStep } from '../../testing/species-fixture';
-import { TaxonomyComponent } from './taxonomy.component';
+import { TaxonomyComponent, rankRows } from './taxonomy.component';
 
 const NOT_FOUND = 404;
 
@@ -49,22 +49,32 @@ async function build(rank: string, slug: string, page: TaxonPage | null = BOLETA
       http.expectOne(path).flush(page);
     });
     await vi.waitFor(() => {
-      expect(container.querySelector('.taxonomy__trail')).not.toBeNull();
+      expect(screen.getByText('Rang')).toBeInTheDocument();
     });
   }
   return { container, http, router: TestBed.inject(Router) };
 }
 
+describe('rankRows', () => {
+  it('ends with the page itself and marks it', () => {
+    const rows = rankRows(BOLETACEAE, (rank) => rank);
+
+    expect(rows.map((row) => `${row.rank} ${row.name}`)).toEqual(['order Boletales', 'family Boletaceae']);
+    expect(rows.map((row) => row.current)).toEqual([false, true]);
+  });
+});
+
 describe('TaxonomyComponent', () => {
-  it('zeigt den Weg von oben und die eigene Stufe am Ende', async () => {
+  it('shows the ranks from the top as rows', async () => {
     const { container } = await build('family', 'boletaceae');
 
-    expect(container.querySelector('.taxonomy__trail')?.textContent).toContain('Ordnung Boletales');
-    expect(container.querySelector('.taxonomy__trail')?.textContent).toContain('Familie Boletaceae');
+    expect(screen.getByText('Ordnung')).toBeInTheDocument();
+    expect(screen.getByText('Boletales')).toBeInTheDocument();
+    expect(screen.getByText('Boletaceae')).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('führt die Gattungen darunter mit ihrer Zahl', async () => {
+  it('shows the genera below with their count', async () => {
     await build('family', 'boletaceae');
 
     expect(screen.getByText('Gattungen')).toBeInTheDocument();
@@ -73,7 +83,7 @@ describe('TaxonomyComponent', () => {
     expect(screen.getByText('1 Art')).toBeInTheDocument();
   });
 
-  it('führt die Arten dieser Stufe', async () => {
+  it('shows the species of this step', async () => {
     await build('family', 'boletaceae');
 
     expect(screen.getByText('Arten dieser Familie')).toBeInTheDocument();
@@ -81,7 +91,7 @@ describe('TaxonomyComponent', () => {
     expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
   });
 
-  it('führt von einer Gattung zur nächsten Stufe', async () => {
+  it('goes from a genus to the lower step', async () => {
     const setup = await build('family', 'boletaceae');
     const go = vi.spyOn(setup.router, 'navigateByUrl');
 
@@ -90,7 +100,16 @@ describe('TaxonomyComponent', () => {
     expect(go).toHaveBeenCalledWith('/taxonomie/genus/boletus');
   });
 
-  it('führt von einer Zeile zur Artseite', async () => {
+  it('goes from a rank row to the upper step', async () => {
+    const setup = await build('family', 'boletaceae');
+    const go = vi.spyOn(setup.router, 'navigateByUrl');
+
+    await userEvent.click(screen.getByRole('button', { name: /^Ordnung Boletales$/ }));
+
+    expect(go).toHaveBeenCalledWith('/taxonomie/order/boletales');
+  });
+
+  it('goes from a species row to the species page', async () => {
     const setup = await build('family', 'boletaceae');
     const go = vi.spyOn(setup.router, 'navigate');
 
@@ -99,7 +118,7 @@ describe('TaxonomyComponent', () => {
     expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
-  it('geht über den Kopf zurück', async () => {
+  it('goes back through the head', async () => {
     await build('family', 'boletaceae');
     const back = vi.spyOn(TestBed.inject(Location), 'back');
 
@@ -108,7 +127,7 @@ describe('TaxonomyComponent', () => {
     expect(back).toHaveBeenCalled();
   });
 
-  it('zeigt den Leerzustand zu einer unbekannten Stufe', async () => {
+  it('shows the empty state for an unknown step', async () => {
     await build('genus', 'nichts', null);
 
     await vi.waitFor(() => {
@@ -116,18 +135,18 @@ describe('TaxonomyComponent', () => {
     });
   });
 
-  it('zeigt den Leerzustand zu einem unbekannten Rang, ohne zu fragen', async () => {
-    const { container } = await render(TaxonomyComponent, {
+  it('shows the empty state for an unknown rank and sends no request', async () => {
+    await render(TaxonomyComponent, {
       inputs: { rank: 'reich', slug: 'fungi' },
       providers: [...catalogueProviders(), provideRouter(ANY_ROUTE)],
     });
 
     expect(screen.getByText('Art nicht gefunden')).toBeInTheDocument();
     TestBed.inject(HttpTestingController).expectNone('/api/taxa/reich/fungi');
-    expect(container.querySelector('.taxonomy__trail')).toBeNull();
+    expect(screen.queryByText('Rang')).toBeNull();
   });
 
-  it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {
+  it('has no German word with an empty catalogue', async () => {
     const { container } = await render(TaxonomyComponent, {
       inputs: { rank: 'family', slug: 'boletaceae' },
       providers: [...catalogueProviders(), provideRouter(ANY_ROUTE), EMPTY_CATALOG],

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
-import { ComparisonState } from './comparison.state';
+import { ComparisonStore } from './comparison.store';
 
 const STONE = speciesEntry({ slug: 'steinpilz', name: 'Steinpilz', scientificName: 'Boletus edulis' });
 const GALL = speciesEntry({
@@ -15,13 +15,13 @@ const BAY = speciesEntry({
   scientificName: 'Imleria badia',
 });
 
-async function state(): Promise<ComparisonState> {
+async function state(): Promise<ComparisonStore> {
   TestBed.configureTestingModule({ providers: catalogueProviders(speciesBundle([STONE, GALL, BAY])) });
   await catalogueReady();
-  return TestBed.inject(ComparisonState);
+  return TestBed.inject(ComparisonStore);
 }
 
-describe('ComparisonState', () => {
+describe('ComparisonStore', () => {
   it('beginnt ohne Wahl', async () => {
     expect((await state()).slugs()).toEqual([]);
   });

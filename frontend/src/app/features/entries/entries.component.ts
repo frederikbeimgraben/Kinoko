@@ -19,7 +19,7 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { ObjectSheetState } from '../objects/object-sheet.state';
 import { AddEntryState } from '../add-entry/add-entry.state';
 import { visibilityText } from '../add-entry/visibility';
@@ -69,7 +69,7 @@ interface Row {
   styleUrl: './entries.component.scss',
 })
 export class EntriesComponent {
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
   private readonly auth = inject(AuthService);
   private readonly names = inject(PersonNamesStore);
   private readonly sheet = inject(ObjectSheetState);

@@ -3,8 +3,8 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
 import { groupTitle } from './labels';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
-import { SpeciesFilterState } from './filter.state';
-import { SpeciesState } from './species.state';
+import { SpeciesFilterStore } from './filter.store';
+import { SpeciesStore } from './species.store';
 import { judge } from './facets';
 
 /** Das Filterblatt über der Liste. */
@@ -16,9 +16,9 @@ import { judge } from './facets';
   styleUrl: './filter-sheet.component.scss',
 })
 export class SpeciesFilterSheetComponent {
-  private readonly state = inject(SpeciesState);
+  private readonly state = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
-  protected readonly filter = inject(SpeciesFilterState);
+  protected readonly filter = inject(SpeciesFilterStore);
 
   protected readonly resettable = computed(() => this.filter.chosenCount() > 0);
 

@@ -3,7 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import type { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { SpeciesBundle } from '../core/api/models';
-import { SpeciesState } from '../features/species/species.state';
+import { SpeciesStore } from '../features/species/species.store';
 import { OfflineStoreDouble, offlineProvider } from './offline-double';
 import { SPECIES_BUNDLE } from './species-fixture';
 
@@ -17,8 +17,8 @@ export function catalogueProviders(
 }
 
 /** Hält an, solange der Zustand den Katalog vom Gerät noch nicht zeigt. */
-export async function catalogueReady(): Promise<SpeciesState> {
-  const state = TestBed.inject(SpeciesState);
+export async function catalogueReady(): Promise<SpeciesStore> {
+  const state = TestBed.inject(SpeciesStore);
   void state.loadBundle();
   await vi.waitFor(() => {
     expect(state.species()).not.toHaveLength(0);

@@ -4,7 +4,7 @@ import { noViolations } from '../../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../../testing/i18n';
 import { speciesEntry } from '../../../testing/species-fixture';
 import type { Lookalike, SpeciesEntry } from '../../../core/api/models';
-import { SpeciesState } from '../species.state';
+import { SpeciesStore } from '../species.store';
 import { SpeciesLookalikesComponent } from './species-lookalikes.component';
 
 const SLUG = 'tylopilus-felleus';
@@ -34,7 +34,7 @@ class CatalogueDouble {
   }
 }
 
-const WITH_CATALOGUE = [{ provide: SpeciesState, useClass: CatalogueDouble }];
+const WITH_CATALOGUE = [{ provide: SpeciesStore, useClass: CatalogueDouble }];
 
 /** Die Marken der Elemente am Zeilenende, in ihrer Reihenfolge. */
 function wayTags(container: Element): string[] {

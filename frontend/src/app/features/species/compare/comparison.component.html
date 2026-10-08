@@ -1,54 +1,87 @@
-<app-page-header [title]="'species.section.compare' | t" [back]="true" (backClick)="back()">
-  @if (wide() && paired()) {
-    <span class="compare__count">{{ 'species.compare.count' | t }}</span>
-  }
-</app-page-header>
-@if (species().length > 0) {
-  <div class="compare">
-    <div class="compare__head">
-      @for (name of names(); track name) {
-        <span class="compare__head-name">{{ name }}</span>
-      }
-    </div>
-    <app-switch
-      class="compare__toggle"
-      [checked]="diffOnly()"
-      [label]="diffOnlyLabel()"
-      (checkedChange)="setDiffOnly($event)"
+<ng-template #view>
+  <app-page-header [title]="'species.section.compare' | t" [back]="true" (backClick)="back()">
+    <app-icon-button icon="more" kind="plain" [label]="'common.more' | t" (pressed)="menuOpen.set(true)" />
+  </app-page-header>
+
+  <app-popover
+    [open]="menuOpen()"
+    [anchor]="menuAnchor()"
+    [label]="'common.more' | t"
+    (closed)="menuOpen.set(false)"
+  >
+    <app-popover-item
+      icon="compare"
+      [label]="'species.compare.diffOnly' | t"
+      [active]="comparison.diffOnly()"
+      (chosen)="toggleDiffOnly()"
     />
-    @for (group of groups(); track group.label) {
-      <section class="compare__group">
-        <div class="compare__group-label">{{ group.label }}</div>
-        <div class="compare__group-rows">
-          @for (row of group.rows; track row.key) {
-            <div [class]="rowClass(row.diff)">
-              <span class="compare__key">{{ row.key }}</span>
-              @for (cell of row.cells; track $index) {
-                <span class="compare__cell">
-                  @if (cell.kind === 'badge') {
-                    <app-level-pill
-                      [text]="cell.text"
-                      [colour]="cell.colour"
-                      [background]="cell.background"
-                    />
-                  } @else if (cell.kind === 'value') {
-                    <span class="compare__value"
-                      >{{ cell.text }}<small>{{ cell.unit }}</small></span
-                    >
-                  } @else if (cell.kind === 'swatch') {
-                    <app-colour-field [colours]="cell.colours" [mode]="cell.mode" [label]="cell.text" />
-                    <span class="compare__swatch-text">{{ cell.text }}</span>
-                  } @else if (cell.kind === 'plain') {
-                    <span class="compare__text">{{ cell.text }}</span>
-                  } @else {
-                    <span class="compare__none" [attr.aria-label]="'species.reaction.unknown' | t">–</span>
-                  }
-                </span>
-              }
-            </div>
+  </app-popover>
+
+  <div class="compare" [class.compare--wide]="wide()" appScrollFade>
+    @if (heads().length > 0) {
+      <div class="cmpx motion-fade-in">
+        <div class="cmph">
+          @for (head of heads(); track head.slug) {
+            <button class="cmph__head tap" type="button" (click)="open(head.slug)">
+              <app-private-image [path]="head.image" [alt]="head.name" [colour]="head.colour" />
+              <b>{{ head.name }}</b>
+              <em>{{ head.latin }}</em>
+            </button>
           }
         </div>
-      </section>
+        @for (group of groups(); track group.label) {
+          <section class="sec">
+            <div class="lbl">{{ group.label }}</div>
+            <div class="cmpg">
+              @for (row of group.rows; track row.key) {
+                <div class="cmpr" [class.diff]="row.diff">
+                  <span class="k">{{ row.key }}</span>
+                  @for (cell of row.cells; track $index) {
+                    <span class="cell">
+                      @switch (cell.kind) {
+                        @case ('badge') {
+                          <app-level-pill [text]="cell.text" [colour]="cell.colour" [background]="cell.background" />
+                        }
+                        @case ('value') {
+                          <span class="v">{{ cell.text }}<small>{{ cell.unit }}</small></span>
+                        }
+                        @case ('swatch') {
+                          <span
+                            class="sw"
+                            role="img"
+                            [attr.aria-label]="cell.text"
+                            [style.background]="fill(cell.colours, cell.mode)"
+                          ></span>
+                          <span class="t">{{ cell.text }}</span>
+                        }
+                        @case ('plain') {
+                          <span>{{ cell.text }}</span>
+                        }
+                        @default {
+                          <span class="none" [attr.aria-label]="'species.reaction.unknown' | t">–</span>
+                        }
+                      }
+                    </span>
+                  }
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    } @else if (waiting()) {
+      <app-skeleton kind="line" width="60%" height="24px" />
+      <app-skeleton kind="rows" shape="row" lead="none" trail="value" [count]="8" [lines]="1" [labels]="[0, 3, 6]" />
+    } @else {
+      <app-state-view class="compare__empty" icon="compare" [title]="'species.detail.choose' | t" />
     }
   </div>
+</ng-template>
+
+@if (wide()) {
+  <app-species-desk [active]="comparison.slugs().at(0) ?? null">
+    <ng-container [ngTemplateOutlet]="view" />
+  </app-species-desk>
+} @else {
+  <ng-container [ngTemplateOutlet]="view" />
 }

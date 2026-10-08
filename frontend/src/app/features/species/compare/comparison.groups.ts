@@ -1,10 +1,12 @@
 import type { I18nService } from '../../../core/i18n/i18n.service';
 import type { SpeciesEntry } from '../../../core/api/models';
+import type { SpeciesReaction } from '../species.store';
 import { EDIBILITY_TEXT, EDIBILITY_TONE, MUTED_TONE, PROTECTION_TEXT } from '../labels';
 import { badgeCell, buildRow, plainCell, swatchCell, valueCell, type Group } from './comparison.cells';
 import {
   capShapeOf,
   changeRows,
+  reactionRows,
   hymeniumColourOf,
   hymeniumTypeOf,
   measurementOf,
@@ -14,8 +16,15 @@ import {
   swatchOf,
 } from './comparison.rows';
 
-/** Die Gruppen des Bretts, in der Folge des Körpers. */
-function rawGroups(entries: readonly SpeciesEntry[], i18n: I18nService): readonly Group[] {
+/** The reactions of a species by its slug. Only a loaded profile has them. */
+export type ReactionsOf = (slug: string) => readonly SpeciesReaction[];
+
+/** The groups of the table, in the order of the body. */
+function rawGroups(
+  entries: readonly SpeciesEntry[],
+  i18n: I18nService,
+  reactionsOf: ReactionsOf,
+): readonly Group[] {
   return [
     {
       label: i18n.translate('species.section.classification'),
@@ -109,7 +118,10 @@ function rawGroups(entries: readonly SpeciesEntry[], i18n: I18nService): readonl
         buildRow(i18n.translate('species.field.smell'), entries, (entry) => plainCell(senseSmellOf(entry))),
       ],
     },
-    { label: i18n.translate('species.section.colourChange'), rows: changeRows(entries, i18n) },
+    {
+      label: i18n.translate('species.section.colourChange'),
+      rows: [...changeRows(entries, i18n), ...reactionRows(entries, reactionsOf, i18n)],
+    },
     {
       label: i18n.translate('species.field.spore'),
       rows: [
@@ -132,13 +144,14 @@ function rawGroups(entries: readonly SpeciesEntry[], i18n: I18nService): readonl
   ];
 }
 
-/** Die Gruppen des Bretts: leere Zeilen und leere Gruppen fallen weg. */
+/** The groups of the table without empty rows and empty groups. */
 export function compareGroups(
   entries: readonly SpeciesEntry[],
   i18n: I18nService,
   diffOnly: boolean,
+  reactionsOf: ReactionsOf = () => [],
 ): readonly Group[] {
-  return rawGroups(entries, i18n)
+  return rawGroups(entries, i18n, reactionsOf)
     .map((group) => ({
       label: group.label,
       rows: group.rows.filter(

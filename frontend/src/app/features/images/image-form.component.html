@@ -1,86 +1,63 @@
-<app-page-header [title]="title()" [back]="true" (backClick)="cancel()" />
+<app-species-page [slug]="slug()" />
 
-<div class="form">
-  <label class="form__preview tap" data-press="scale">
-    <input
-      class="form__file"
-      type="file"
-      accept="image/*"
-      [attr.aria-label]="'image.section.image' | t"
-      (change)="onPick($event)"
-    />
-    @if (preview(); as source) {
-      <img class="form__image" [src]="source" [alt]="title()" />
-    } @else {
-      <app-svg-icon class="form__plus" name="plus" [size]="26" />
-    }
-    @if (busy()) {
-      <app-progress class="form__progress" [value]="percent() ?? 0" [showValue]="true" />
-    }
-  </label>
-
-  <section class="form__block">
-    <h2 class="form__title">{{ 'image.field.origin' | t }}</h2>
-    <div class="form__fields">
-      <app-form-field
-        [label]="'image.field.photo' | t"
-        [hideLabel]="true"
-        [value]="photographer()"
-        (valueChange)="photographer.set($event)"
-      />
-      <app-form-field
-        [label]="'image.field.licence' | t"
-        [hideLabel]="true"
-        [value]="licenceLabel(licence())"
-        [readOnly]="true"
-        [chevron]="true"
-        (displayClick)="picking.set(true)"
-      />
-      @if (curates()) {
-        <app-form-field
-          [label]="'image.field.sourcePlaceholder' | t"
-          [placeholder]="'image.field.sourcePlaceholder' | t"
-          [hideLabel]="true"
-          [value]="source()"
-          (valueChange)="source.set($event)"
-        />
-      }
-    </div>
-  </section>
-
-  <section class="form__block">
-    <h2 class="form__title">{{ 'image.field.details' | t }}</h2>
-    <div class="form__fields">
-      <app-form-field
-        kind="date"
-        [label]="'image.field.takenOn' | t"
-        [hideLabel]="true"
-        [value]="takenOn()"
-        [display]="takenOnText()"
-        (valueChange)="takenOn.set($event)"
-      />
-      <app-form-field
-        [label]="'image.field.captionPlaceholder' | t"
-        [placeholder]="'image.field.captionPlaceholder' | t"
-        [hideLabel]="true"
-        [value]="caption()"
-        (valueChange)="caption.set($event)"
-      />
-    </div>
-  </section>
-
-  @if (curates()) {
-    <app-check-row [title]="'image.setAsCoverToggle' | t" [checked]="cover()" (toggled)="cover.set($event)" />
-  }
-</div>
-
-<app-action-bar
-  [primary]="action()"
-  [secondary]="'common.cancel' | t"
+<app-form-sheet
+  [title]="title()"
+  [submit]="action()"
   [busy]="busy()"
-  (primaryClick)="save()"
-  (secondaryClick)="cancel()"
-/>
+  (submitted)="save()"
+  (cancelled)="cancel()"
+>
+  <div class="form">
+    <app-photo-strip
+      mode="edit"
+      [max]="1"
+      [pending]="files()"
+      [removable]="!busy()"
+      (pendingChange)="files.set($event)"
+    />
+    @if (busy()) {
+      <app-progress class="form__progress" [value]="percent() ?? 0" />
+    }
+    <app-row-group>
+      <app-list-row
+        [title]="'image.field.origin' | t"
+        [plain]="licenceLabel(licence())"
+        [chevron]="true"
+        [clickable]="!busy()"
+        (chosen)="picking.set(true)"
+      />
+    </app-row-group>
+    <app-form-field
+      [label]="'image.field.author' | t"
+      [value]="photographer()"
+      (valueChange)="photographer.set($event)"
+    />
+    @if (curates()) {
+      <app-form-field
+        [label]="'image.field.sourcePlaceholder' | t"
+        [value]="source()"
+        (valueChange)="source.set($event)"
+      />
+    }
+    <app-form-field
+      kind="date"
+      [label]="'image.field.takenOn' | t"
+      [value]="takenOn()"
+      [display]="takenOnText()"
+      (valueChange)="takenOn.set($event)"
+    />
+    <app-form-field
+      [label]="'image.field.caption' | t"
+      [placeholder]="'image.field.captionPlaceholder' | t"
+      [multiline]="true"
+      [value]="caption()"
+      (valueChange)="caption.set($event)"
+    />
+    @if (curates()) {
+      <app-check-row [title]="'image.setAsCoverToggle' | t" [checked]="cover()" (toggled)="cover.set($event)" />
+    }
+  </div>
+</app-form-sheet>
 
 <app-option-sheet
   [open]="picking()"

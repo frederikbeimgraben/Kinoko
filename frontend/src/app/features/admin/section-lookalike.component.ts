@@ -8,7 +8,7 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { speciesPickerEntry } from '../species/species-picker-entry';
 import { SpeciesEditorState } from './species-editor.state';
 import { withLookalike, withoutLookalike } from './species-lists';
@@ -32,7 +32,7 @@ export class SectionLookalikeComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorState);
-  private readonly catalogue = inject(SpeciesState);
+  private readonly catalogue = inject(SpeciesStore);
 
   protected readonly slug = injectRouteParam('slug');
   private readonly index = injectRouteParam('index', '0');

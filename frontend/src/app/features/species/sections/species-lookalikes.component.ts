@@ -7,7 +7,7 @@ import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../../ui/section/section.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
 import { photoPath, type Lookalike } from '../../../core/api/models';
-import { SpeciesState } from '../species.state';
+import { SpeciesStore } from '../species.store';
 
 const FALLBACK_COLOUR = '#7a5230';
 
@@ -37,7 +37,7 @@ interface LookalikeRow {
   styleUrl: './species-lookalikes.component.scss',
 })
 export class SpeciesLookalikesComponent {
-  private readonly catalogue = inject(SpeciesState);
+  private readonly catalogue = inject(SpeciesStore);
 
   readonly lookalikes = input.required<readonly Lookalike[]>();
 

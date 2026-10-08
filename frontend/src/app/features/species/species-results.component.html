@@ -1,66 +1,56 @@
 <ng-template #hitRows>
   @for (row of rows(); track row.slug) {
     @if (row.head) {
-      <div class="lbl">{{ row.letter }}</div>
+      <div class="lbl">{{ row.head }}</div>
     }
     <app-species-row
       [species]="row.species"
       [active]="row.slug === active()"
+      [soft]="row.slug === soft() && row.slug !== active()"
+      [shareKey]="row.slug"
       (chosen)="chosen.emit(row.slug)"
     />
   }
 </ng-template>
 
 @if (failed()) {
-  <div class="results__middle">
-    <app-state-view
-      kind="error"
-      icon="warning"
-      [title]="'common.loadFailed' | t"
-      [action]="'common.retry' | t"
-      (actionClick)="retry.emit()"
-    />
-  </div>
+  <app-state-view
+    class="results__state"
+    kind="error"
+    icon="wifi-off"
+    [title]="'state.noConnection' | t"
+    [action]="'common.retry' | t"
+    (actionClick)="retry.emit()"
+  />
 } @else if (loading()) {
-  <div class="results__group">
-    @for (bar of skeletons; track bar) {
-      <div class="results__skeleton">
-        <span class="results__bars">
-          <app-skeleton kind="line" width="62%" height="13px" />
-          <app-skeleton kind="line" width="34%" height="11px" />
-        </span>
-        <span class="results__thumb"></span>
-      </div>
-    }
-  </div>
-} @else if (rows().length === 0) {
-  <div class="results__middle">
-    <app-state-view
-      icon="search"
-      [title]="'species.filter.noMatch' | t"
-      [action]="'filter.resetAll' | t"
-      (actionClick)="resetFilter.emit()"
-    />
-  </div>
-} @else if (gapRows().length === 0) {
-  <app-infinite-list class="results__list" [hasMore]="hasMore()" (more)="more.emit()">
-    <ng-container [ngTemplateOutlet]="hitRows" />
-  </app-infinite-list>
+  <app-skeleton class="results__skeleton" kind="rows" [count]="skeletonRows" />
+} @else if (rows().length === 0 && gapRows().length === 0) {
+  <app-state-view
+    class="results__state"
+    icon="search"
+    [title]="'species.filter.noMatch' | t"
+    [action]="'filter.resetAll' | t"
+    (actionClick)="resetFilter.emit()"
+  />
 } @else {
   <app-infinite-list class="results__list" [hasMore]="hasMore()" (more)="more.emit()">
-    <div class="results__stack">
-      <div class="results__group">
-        <ng-container [ngTemplateOutlet]="hitRows" />
-      </div>
-      <div class="results__gap">
-        <span>{{ gapText() }}</span>
-        <i></i>
-      </div>
-      <div class="results__group results__group--muted">
+    <div class="results__rows motion-list-in">
+      <ng-container [ngTemplateOutlet]="hitRows" />
+      @if (gapRows().length > 0) {
+        <div class="results__gap">
+          <span>{{ gapText() }}</span>
+          <i></i>
+        </div>
         @for (row of gapRows(); track row.slug) {
-          <app-species-row [species]="row.species" [muted]="true" (chosen)="chosen.emit(row.slug)" />
+          <app-species-row
+            class="results__muted"
+            [species]="row.species"
+            [muted]="true"
+            [shareKey]="row.slug"
+            (chosen)="chosen.emit(row.slug)"
+          />
         }
-      </div>
+      }
     </div>
   </app-infinite-list>
 }

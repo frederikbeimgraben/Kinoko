@@ -7,9 +7,9 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { BodyPart } from '../../core/api/models';
 import { countColours, nearestColour, nearestTones } from './facets';
 import { partsWithColour, tonesOf } from './filter-groups';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 import { COLOUR_PARTS, COLOUR_TEXT, PART_TEXT } from './labels';
-import { SpeciesState } from './species.state';
+import { SpeciesStore } from './species.store';
 
 const TONES = 6;
 
@@ -22,9 +22,9 @@ const TONES = 6;
   styleUrl: './filter-colour.component.scss',
 })
 export class SpeciesColourComponent {
-  private readonly state = inject(SpeciesState);
+  private readonly state = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
-  protected readonly filter = inject(SpeciesFilterState);
+  protected readonly filter = inject(SpeciesFilterStore);
 
   private readonly opened = signal<BodyPart | null>(null);
 

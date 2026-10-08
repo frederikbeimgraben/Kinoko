@@ -15,9 +15,9 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RejectDialogComponent } from '../../ui/reject-dialog/reject-dialog.component';
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import type { Photo } from '../../core/api/models';
-import { ImagesState } from './images.state';
+import { ImagesStore } from './images.store';
 import { reviewCard, type ReviewCard } from './review-card';
 
 /** Der Prüfstapel: rechts wischen gibt frei, links fragt nach dem Grund. */
@@ -36,8 +36,8 @@ import { reviewCard, type ReviewCard } from './review-card';
   styleUrl: './image-queue.component.scss',
 })
 export class ImageQueueComponent {
-  private readonly images = inject(ImagesState);
-  private readonly species = inject(SpeciesState);
+  private readonly images = inject(ImagesStore);
+  private readonly species = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 

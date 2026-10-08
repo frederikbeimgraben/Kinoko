@@ -33,8 +33,8 @@ async function start(page: Page, path: string, extra: Record<string, unknown>): 
 
 /** Wählt ein Bild im Formular. */
 async function pick(page: Page): Promise<void> {
-  await page.locator('.form__file').setInputFiles({ name: 'pilz.png', mimeType: 'image/png', buffer: PNG });
-  await expect(page.locator('.form__image')).toBeVisible();
+  await page.locator('app-photo-strip input[type=file]').setInputFiles({ name: 'pilz.png', mimeType: 'image/png', buffer: PNG });
+  await expect(page.locator('app-photo-strip .pht img')).toBeVisible();
 }
 
 /** Zieht die oberste Karte des Stapels nach rechts oder nach links. */
@@ -68,9 +68,9 @@ test('Ein Bild geht mit Anteil hinaus', async ({ page }) => {
     await new Promise(() => undefined);
   });
 
-  await page.getByRole('button', { name: 'Zur Prüfung einreichen' }).click();
+  await page.getByRole('button', { name: 'Einreichen', exact: true }).click();
 
-  await expect(page.locator('.form__progress')).toBeVisible();
+  await expect(page.locator('app-progress')).toBeVisible();
   await expect.poll(() => sent.length).toBe(1);
 });
 
@@ -101,7 +101,7 @@ test('Ohne Netz wartet die Einreichung und geht bei Netz hinaus', async ({ page 
   down = true;
   await say('offline');
 
-  await page.getByRole('button', { name: 'Zur Prüfung einreichen' }).click();
+  await page.getByRole('button', { name: 'Einreichen', exact: true }).click();
   await expect(page).toHaveURL(/\/arten\/boletus-edulis$/);
   expect(posts).toEqual([]);
 

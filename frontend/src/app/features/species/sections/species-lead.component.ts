@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { photoPath } from '../../../core/api/models';
+import type { PhotoQuery } from '../../../core/api/photos.api';
 import { HeroComponent, type HeroPhoto } from '../../../ui/hero/hero.component';
-import { ImagesState } from '../../images/images.state';
-import { SpeciesState } from '../species.state';
+import { ImagesStore } from '../../images/images.store';
+import { SpeciesStore } from '../species.store';
 
-/** Das Titelbild der Art, ganz oben auf der Seite. */
+/** The lead photo of the species at the top of the page. */
 @Component({
   selector: 'app-species-lead',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,11 +15,13 @@ import { SpeciesState } from '../species.state';
   styleUrl: './species-lead.component.scss',
 })
 export class SpeciesLeadComponent {
-  private readonly images = inject(ImagesState);
-  private readonly species = inject(SpeciesState);
+  private readonly images = inject(ImagesStore);
+  private readonly species = inject(SpeciesStore);
   private readonly router = inject(Router);
 
   readonly slug = input.required<string>();
+  /** The hero height: 260 px on the phone, 210 px in a desktop column. */
+  readonly height = input(260);
 
   protected readonly lead = this.images.lead;
 
@@ -32,11 +35,13 @@ export class SpeciesLeadComponent {
     () => this.lead()?.caption ?? this.species.nameOf(this.slug()) ?? this.slug(),
   );
 
+  private readonly query = computed<PhotoQuery | null>(() => {
+    const id = this.species.entryOf(this.slug())?.id;
+    return id === undefined ? null : { speciesId: id, state: 'approved' };
+  });
+
   constructor() {
-    effect(() => {
-      const id = this.species.entryOf(this.slug())?.id;
-      if (id !== undefined) this.images.load({ speciesId: id, state: 'approved' });
-    });
+    this.images.load(this.query);
   }
 
   protected open(): void {

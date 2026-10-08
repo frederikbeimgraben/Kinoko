@@ -11,7 +11,7 @@ import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { MapState } from '../map/map.state';
 import { numericDate } from '../../core/i18n/dates';
 import { isoDatum } from '../entries/formats';
@@ -48,7 +48,7 @@ export interface FindSubmission {
 export class FindFormComponent {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
   private readonly map = inject(MapState);
 
   readonly location = input.required<Location>();

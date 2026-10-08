@@ -14,8 +14,8 @@ import { SpeciesColourComponent } from '../../../../features/species/filter-colo
 import { SpeciesFilterPanelComponent } from '../../../../features/species/filter-panel.component';
 import { SpeciesFilterSheetComponent } from '../../../../features/species/filter-sheet.component';
 import { SpeciesResultsComponent } from '../../../../features/species/species-results.component';
-import { SpeciesFilterState } from '../../../../features/species/filter.state';
-import { SpeciesState, type CatalogueEntry } from '../../../../features/species/species.state';
+import { SpeciesFilterStore } from '../../../../features/species/filter.store';
+import { SpeciesStore, type CatalogueEntry } from '../../../../features/species/species.store';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
 /** Eine Art mit allen Pflichtfeldern des Vertrags, so knapp wie möglich. */
@@ -157,8 +157,8 @@ const WEEKS: readonly [number, number, boolean][] = [
 })
 export class SpeciesListCardsComponent {
   private readonly i18n = inject(I18nService);
-  private readonly state = inject(SpeciesState);
-  protected readonly filter = inject(SpeciesFilterState);
+  private readonly state = inject(SpeciesStore);
+  protected readonly filter = inject(SpeciesFilterStore);
 
   protected readonly steinpilz: SpeciesRowSpecies = {
     name: this.i18n.translate('beispiel.steinpilz'),

@@ -5,7 +5,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { AccountStore } from '../../core/access/account.store';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
@@ -55,7 +55,7 @@ function answerMap(byte: number, manifest: unknown = MANIFEST): void {
 
 /** Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf. */
 async function catalogueReady(): Promise<void> {
-  const catalogue = TestBed.inject(SpeciesState);
+  const catalogue = TestBed.inject(SpeciesStore);
   await vi.waitFor(() => {
     expect(catalogue.species()).not.toHaveLength(0);
   });

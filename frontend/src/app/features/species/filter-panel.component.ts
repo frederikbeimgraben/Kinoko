@@ -8,9 +8,9 @@ import { RippleDirective } from '../../ui/ripple/ripple.directive';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { choicesOf, termNamesOf } from './filter-groups';
 import { GROUP_TEXT } from './labels';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 import { SpeciesColourComponent } from './filter-colour.component';
-import { SpeciesState } from './species.state';
+import { SpeciesStore } from './species.store';
 import { judge, type GroupKey } from './facets';
 
 /** Die fünf Gruppen, die flach im Blatt stehen. `labelOf` trägt die Beschriftung. */
@@ -37,9 +37,9 @@ const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
   styleUrl: './filter-panel.component.scss',
 })
 export class SpeciesFilterPanelComponent {
-  private readonly state = inject(SpeciesState);
+  private readonly state = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
-  protected readonly filter = inject(SpeciesFilterState);
+  protected readonly filter = inject(SpeciesFilterStore);
   /** Am Rechner steht der Kopf mit Zahl und Zurücksetzen über der Spalte. */
   protected readonly wide = inject(ViewportService).wide;
 

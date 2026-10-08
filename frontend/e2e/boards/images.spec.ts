@@ -69,8 +69,8 @@ async function open(
 /** Wählt die Fotoattrappe des Bretts im Formular und wartet auf die Vorschau. */
 async function pick(page: Page, photo: string): Promise<void> {
   const file = join(test.info().config.rootDir, 'boards/fixtures', photo);
-  await page.locator('.form__file').setInputFiles(file);
-  await expect(page.locator('.form__image')).toBeVisible();
+  await page.locator('app-photo-strip input[type=file]').setInputFiles(file);
+  await expect(page.locator('app-photo-strip .pht img')).toBeVisible();
 }
 
 test('ImageView', async ({ page }) => {
@@ -109,8 +109,9 @@ test('ImageAdd', async ({ page }) => {
   });
   await expect(page.getByRole('heading', { name: 'Bild hinzufügen' })).toBeVisible();
   await pick(page, photoFixture(358, 160));
-  await page.getByLabel('Foto').fill('Frederik Beimgraben');
-  await page.getByLabel('Lizenz').selectOption('cc_by_sa_4');
+  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
+  await page.getByRole('button', { name: /Herkunft/ }).click();
+  await page.getByRole('button', { name: 'CC BY-SA 4.0' }).click();
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   await page.getByRole('checkbox', { name: 'Als Titelbild der Art' }).check();
   await expectBoard(page, 'ImageAdd');
@@ -125,7 +126,7 @@ test('ImageSubmit', async ({ page }) => {
   });
   await expect(page.getByRole('heading', { name: 'Bild einreichen' })).toBeVisible();
   await pick(page, photoFixture(358, 160));
-  await page.getByLabel('Foto').fill('Frederik Beimgraben');
+  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   await expectBoard(page, 'ImageSubmit');
 });
@@ -138,15 +139,15 @@ test('ImageUploading', async ({ page }) => {
     ...rights([]),
   });
   await pick(page, photoFixture(358, 200));
-  await page.getByLabel('Foto').fill('Frederik Beimgraben');
+  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
   await page.getByLabel('Aufgenommen').fill('2026-09-06');
   // Die Antwort bleibt aus: das Board zeigt den laufenden Anteil.
   await page.route('**/api/photos', async (route) => {
     if (route.request().method() === 'POST') await new Promise(() => undefined);
     else await route.fallback();
   });
-  await page.getByRole('button', { name: 'Zur Prüfung einreichen' }).click();
-  await expect(page.locator('.form__progress')).toBeVisible();
+  await page.getByRole('button', { name: 'Einreichen', exact: true }).click();
+  await expect(page.locator('app-progress')).toBeVisible();
   await expectBoard(page, 'ImageUploading', { idle: false });
 });
 

@@ -12,7 +12,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 
 const STATE_BADGE: Record<PhotoState, BadgeKind> = {
   private: '',
@@ -60,7 +60,7 @@ export class MyImagesComponent {
   private readonly api = inject(PhotosApi);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
 
   private readonly photos = signal<readonly Photo[]>([]);
   private readonly cursor = signal<string | null>(null);
