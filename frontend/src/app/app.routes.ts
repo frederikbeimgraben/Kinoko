@@ -2,7 +2,7 @@ import type { Routes } from '@angular/router';
 import { requiresPermission } from './features/admin/admin.guard';
 import { DEV_ROUTES } from './dev/dev.routes';
 
-/** Die vier Reiter. Wo das Arbeitspaket aussteht, steht ein Platzhalter. */
+/** The four tabs. A tab without its work package shows a placeholder. */
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'karte' },
   {
@@ -15,7 +15,7 @@ export const routes: Routes = [
       import('./features/species/species-list.component').then((m) => m.SpeciesListComponent),
   },
   {
-    // Der Vergleich steht vor der Artseite: sonst nähme `:slug` das Wort.
+    // The compare route comes before the species page. Else `:slug` takes the word.
     path: 'arten/vergleich',
     loadComponent: () =>
       import('./features/species/compare/comparison.component').then((m) => m.ComparisonComponent),
@@ -34,8 +34,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/images/image-view.component').then((m) => m.ImageViewComponent),
   },
   {
-    // Ein eigener Brocken: die Einordnung wird selten geöffnet und kostet im
-    // ersten Bündel darum nichts.
+    // A separate chunk: few people open the taxonomy, so the first bundle stays small.
     path: 'taxonomie/:rank/:slug',
     loadComponent: () => import('./features/taxonomy/taxonomy.component').then((m) => m.TaxonomyComponent),
   },

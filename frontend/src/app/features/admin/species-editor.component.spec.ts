@@ -83,7 +83,7 @@ async function build(
   return { container, http };
 }
 
-// Das Blatt trägt viele Knöpfe; unter Last braucht die Suche nach Rolle länger.
+// The sheet has many buttons. Under load, a query by role takes longer.
 describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
   beforeEach(() => {
     TestBed.inject(SpeciesEditorStore).load('');

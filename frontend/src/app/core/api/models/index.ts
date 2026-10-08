@@ -1,4 +1,4 @@
-/** Die Modelle der API an einer Stelle, damit Seiten nur einen Pfad kennen. */
+/** The API models in one place, so that a page knows only one path. */
 export {
   CAP_SHAPES,
   DIMENSIONS,
