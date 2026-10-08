@@ -1,17 +1,15 @@
 import type { CombinationBound, CombinationRule, ValueScale } from './value-colors';
 
-/** Was der Hauptfaden dem Färbe-Worker schickt und was zurückkommt. */
+/** Messages between the main thread and the colour worker. */
 
 export interface ColorizeJob {
   kind: 'faerbe';
   id: number;
   url: string;
-  /** Wie das Byte zu lesen ist: Vorhersage einer Art oder Spanne einer Ebene. */
   scale: ValueScale;
   colors: readonly string[];
 }
 
-/** Ein Faktor der Kombination an dieser Kachel. */
 export interface CombinationPart {
   url: string;
   bound: CombinationBound;
@@ -32,7 +30,7 @@ export interface PrefetchJob {
 
 export type ValueJob = ColorizeJob | CombinationJob | PrefetchJob;
 
-/** `bild` ist `null`, wenn es die Kachel nicht gibt. Das ist kein Fehler. */
+/** `shot` is `null` when the tile does not exist. This is not an error. */
 export interface ValueReply {
   id: number;
   shot: ImageBitmap | null;

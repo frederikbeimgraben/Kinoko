@@ -23,10 +23,10 @@ export const LAMELLEN: GlossaryEntry = {
 
 export const GLOSSARY: GlossaryEntry[] = [HYMENIUM, LAMELLEN];
 
-/** Ein Doppelgänger der Glossar-API. Der Test liest nach, was gefragt wurde. */
+/** A double for the glossary API. The test reads the requests. */
 export class GlossaryApiDouble {
   entryList: GlossaryEntry[] = GLOSSARY;
-  /** Steht hier ein Problem, weist der nächste Schreibzugriff es zurück. */
+  /** When set, the next write fails with this problem. */
   rejectWith: ProblemDetail | null = null;
 
   readonly created: GlossaryEntryWrite[] = [];
@@ -59,7 +59,6 @@ export class GlossaryApiDouble {
   }
 }
 
-/** Hängt den Doppelgänger an die Stelle der echten API. */
 export function glossaryApiProvider(double: GlossaryApiDouble): {
   provide: typeof GlossaryApi;
   useValue: unknown;

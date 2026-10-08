@@ -3,14 +3,14 @@ import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Ein Faktor der Kombination: Name, Bereich und Bedingung. */
+/** A combination factor: name, range and bound. */
 export interface CombinationFactor {
   readonly name: string;
   readonly range?: string;
   readonly condition: string;
 }
 
-/** Zeile eines Faktors: Zeichen der Gruppe, Name mit Bereich, Bedingung, X. */
+/** The row of a factor: group icon, name with range, bound and a remove button. */
 @Component({
   selector: 'app-factor-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,9 +20,9 @@ export interface CombinationFactor {
 })
 export class FactorRowComponent {
   readonly factor = input.required<CombinationFactor>();
-  /** Das Zeichen der Ebenengruppe vor dem Namen. */
+  /** The icon of the layer group before the name. */
   readonly icon = input<IconName>();
-  /** Der barrierefreie Name des Knopfs, der den Faktor entfernt. */
+  /** The accessible name of the button that removes the factor. */
   readonly removeLabel = input.required<string>();
 
   readonly conditionClick = output();

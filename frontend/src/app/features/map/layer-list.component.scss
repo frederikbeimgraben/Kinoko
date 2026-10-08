@@ -38,8 +38,8 @@
   border-radius: var(--radius-lg);
 }
 
-// Die gewählte Ebene trägt Rahmen, leichten Ton und Haken: dreimal dasselbe
-// gesagt, damit es auch ohne Farbe zu erkennen ist.
+// The selected layer has a border, a light tint and a check mark.
+// Thus users can see the selection without colour.
 .layers__card--active {
   color: var(--color-text);
   background: var(--color-primary-subtle);

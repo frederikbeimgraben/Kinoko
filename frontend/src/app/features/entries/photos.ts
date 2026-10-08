@@ -1,7 +1,7 @@
 import { firstValueFrom } from 'rxjs';
 import type { PhotosApi } from '../../core/api/photos.api';
 
-/** Ein Foto, das nicht durchgeht, kostet nicht den Fund. */
+/** A failed photo upload does not make the find fail. */
 export async function attachPhotos(
   api: PhotosApi,
   findId: string,

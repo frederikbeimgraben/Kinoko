@@ -4,37 +4,27 @@ import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 import type { CombinationBound, CombinationRule, ValueScale } from './value-colors';
 import type { ValueReply, ValueJob } from './value-messages';
 
-/**
- * Nur der Teil eines `Worker`, den das Protokoll benutzt. So kann ein Test eine
- * Attrappe stellen, ohne die ganze Schnittstelle nachzubauen.
- */
+/** The part of `Worker` that the protocol uses. Tests can give a small double. */
 export interface ColorizeWorker {
   postMessage(job: ValueJob): void;
   addEventListener(kind: 'message', handler: (event: MessageEvent<ValueReply>) => void): void;
   terminate(): void;
 }
 
-/**
- * Eine angemeldete Quelle: was ihre Bytes bedeuten, in welchen Farben sie
- * liegen und welche Kacheln es überhaupt gibt.
- */
+/** A registered source: its byte scale, its colours and the tiles that exist. */
 export interface ValueSource extends Coverage {
   id: string;
   scale: ValueScale;
   colors: readonly string[];
 }
 
-/** Ein Faktor der Kombination: sein Kachelordner und seine Bedingung. */
 export interface CombinationSourcePart extends Coverage {
   folder: string;
   bound: CombinationBound;
 }
 
-/**
- * Eine zusammengesetzte Quelle: mehrere Kacheln je Punkt, eine Antwort. Sie
- * wird bei jeder Änderung neu angemeldet; der Ordner in der Adresse trägt die
- * Kennung der Kombination, damit MapLibre alte Kacheln nicht weiterbenutzt.
- */
+/** A combined source: many tiles per point, one result. Each change registers it again.
+ * The folder in the URL holds the combination id, so MapLibre does not use old tiles. */
 export interface CombinationSource {
   id: string;
   rule: CombinationRule;
@@ -42,12 +32,11 @@ export interface CombinationSource {
   parts: readonly CombinationSourcePart[];
 }
 
-/** Eine leere Antwort. MapLibre macht daraus eine durchsichtige Kachel. */
+/** MapLibre shows an empty response as a transparent tile. */
 const EMPTY = new ArrayBuffer(0);
 
 const PATTERN = /^wert:\/\/([^/]+)\/(.+)\/(\d+)\/(\d+)\/(\d+)$/;
 
-/** Die Teile einer `wert://`-Adresse. */
 export interface ValueUrl {
   source: string;
   folder: string;
@@ -56,7 +45,6 @@ export interface ValueUrl {
   y: number;
 }
 
-/** Die Vorlage für eine Rasterquelle: `wert://<quelle>/<ordner>/{z}/{x}/{y}`. */
 export function valueTemplate(source: string, folder: string): string {
   return `wert://${source}/${folder}/{z}/{x}/{y}`;
 }
@@ -73,20 +61,12 @@ export function parseValueUrl(url: string): ValueUrl | null {
   };
 }
 
-/** Die Quelle einer Vorhersage-Art. */
 export function speciesSource(slug: string, top: number, coverage: Coverage): ValueSource {
   return { id: slug, scale: { kind: 'probability', top }, colors: FORECAST_RAMP, ...coverage };
 }
 
-/**
- * Das Protokoll `wert://` für MapLibre.
- *
- * Jede Quelle meldet sich einmal an: mit ihrer Skala, ihrer Rampe und der Liste
- * der Kacheln, die Daten tragen. Eine Kachel, die dort fehlt, wird gar nicht
- * erst geholt: sie kommt leer zurück, ohne 404 und ohne Meldung in der Konsole.
- * Alles andere geht an den Worker, der die Bytes holt, färbt und ein fertiges
- * Bild zurückschickt.
- */
+/** The `wert://` protocol for MapLibre. A tile outside the coverage of its source comes back empty, without a 404.
+ * The worker fetches and colours all other tiles. */
 export class ValueProtocol {
   private readonly worker: ColorizeWorker;
   private readonly sources = new Map<string, ValueSource>();
@@ -112,7 +92,7 @@ export class ValueProtocol {
     this.combinations.set(source.id, source);
   }
 
-  /** Die Funktion für `maplibregl.addProtocol('wert', …)`. */
+  /** The handler for `maplibregl.addProtocol('wert', …)`. */
   readonly resolve = async (url: string): Promise<{ data: ImageBitmap | ArrayBuffer }> => {
     const adresse = parseValueUrl(url);
     if (!adresse) return { data: EMPTY };
@@ -126,10 +106,7 @@ export class ValueProtocol {
     return { data: shot ?? EMPTY };
   };
 
-  /**
-   * Holt die Kacheln der genannten Ordner in den Speicher des Workers, damit
-   * ein Wochenwechsel nicht mehr ins Netz muss.
-   */
+  /** Loads the tiles into the worker cache, so a change of week needs no network. */
   prefetch(sourceId: string, folder: readonly string[], tiles: readonly [number, number, number][]): void {
     const source = this.sources.get(sourceId);
     if (!source) return;
@@ -147,10 +124,7 @@ export class ValueProtocol {
     this.pending.clear();
   }
 
-  /**
-   * Alle Teile müssen die Kachel haben. Fehlt einer, gäbe es an diesem Punkt
-   * nichts zu schneiden, und die Kachel bleibt leer.
-   */
+  /** All parts must cover the tile. If one part does not, the tile stays empty. */
   private askCombination(source: CombinationSource, adresse: ValueUrl): Promise<ImageBitmap | null> {
     const { z, x, y } = adresse;
     if (source.parts.length === 0 || !source.parts.every((part) => covers(part, z, x, y))) {

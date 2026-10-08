@@ -30,7 +30,7 @@ describe('ColourFieldComponent', () => {
   });
 
   it('teilt mehrere Farben mit harter Kante', () => {
-    // Ein Verlauf behauptete Zwischentöne, die die Quelle nicht nennt.
+    // A gradient shows intermediate colours that the source does not give.
     const fill = paint([
       { name: 'weiß', hex: '#ffffff' },
       { name: 'gelb', hex: '#e8c33a' },

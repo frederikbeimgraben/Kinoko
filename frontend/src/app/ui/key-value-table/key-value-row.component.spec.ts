@@ -15,7 +15,7 @@ import { KeyValueRowComponent } from './key-value-row.component';
 })
 class CellHostComponent {}
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** Gives the computed styles of an element that must exist. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
   if (element === null) throw new Error('Das Element steht nicht im Baum.');
   return getComputedStyle(element);

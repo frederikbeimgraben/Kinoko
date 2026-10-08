@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 
-/** Der Kreis oben links auf der Karte. Er führt zum Konto. */
+/** The circle at the top left of the map. It opens the account. */
 @Component({
   selector: 'app-avatar-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,7 +11,7 @@ import { SkeletonComponent } from '../skeleton/skeleton.component';
   styleUrl: './avatar-button.component.scss',
 })
 export class AvatarButtonComponent {
-  /** `null`, solange die Sitzung offen ist. Dann trägt der Kreis ein Skelett. */
+  /** `null` while the session loads. The circle then shows a skeleton. */
   readonly name = input.required<string | null>();
   readonly label = input.required<string>();
 

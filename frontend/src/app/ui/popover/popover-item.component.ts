@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Eine Zeile im Popover: Zeichen, Wort, gewählter Zustand. */
+/** A row in the popover: icon, label and selected state. */
 @Component({
   selector: 'app-popover-item',
   changeDetection: ChangeDetectionStrategy.OnPush,

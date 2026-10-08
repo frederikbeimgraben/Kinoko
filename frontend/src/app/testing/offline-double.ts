@@ -1,7 +1,7 @@
 import type { Provider } from '@angular/core';
 import { OfflineStore, OFFLINE_AREAS, type OfflineArea } from '../core/offline/offline-store';
 
-/** Der Speicher des Geräts im Arbeitsspeicher, ohne IndexedDB. */
+/** The device store in memory, without IndexedDB. */
 export class OfflineStoreDouble {
   readonly values = new Map<string, unknown>();
 

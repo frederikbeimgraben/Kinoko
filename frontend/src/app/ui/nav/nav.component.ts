@@ -4,14 +4,14 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { IconName } from '../svg-icon/svg-icon.component';
 import { NavTabComponent } from './nav-tab.component';
 
-/** Ein Reiter der Hauptnavigation, fest für die ganze App. */
+/** A tab of the main navigation. The set is fixed for the full app. */
 interface NavTab {
   readonly path: string;
   readonly icon: IconName;
   readonly labelKey: TranslationKey;
 }
 
-/** Unten am Telefon, als Schiene mit Avatar-Slot am Rechner. */
+/** At the bottom on a phone. On desktop, a rail with an avatar slot. */
 export type NavVariant = 'bottom' | 'rail';
 
 const TABS: readonly NavTab[] = [
@@ -20,8 +20,8 @@ const TABS: readonly NavTab[] = [
   { path: '/eintraege', icon: 'entries', labelKey: 'nav.tab.entries' },
 ];
 
-/** Die drei Reiter. Der aktive Pfad kommt als Eingabe, nicht aus der Route. */
-// Am Rechner steht unter den Reitern ein Slot für den Avatar-Knopf.
+/** The three tabs. The active path comes as an input, not from the route. */
+// On desktop, a slot for the avatar button is below the tabs.
 @Component({
   selector: 'app-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,

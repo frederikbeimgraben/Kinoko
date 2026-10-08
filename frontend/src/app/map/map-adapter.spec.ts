@@ -14,7 +14,7 @@ interface Handler {
   handler: (payload: unknown) => void;
 }
 
-/** Eine MapLibre-Karte ohne WebGL, so weit der Adapter sie anfasst. */
+/** A MapLibre map double without WebGL. It covers only the parts that the adapter uses. */
 class MapDouble {
   static last: MapDouble | null = null;
   readonly sources = new Map<string, object>();
@@ -38,11 +38,11 @@ class MapDouble {
 
   once(kind: string, handler: () => void): void {
     this.onceHandlers.set(kind, handler);
-    // Die echte Karte meldet `style.load`, sobald der Stil steht.
+    // The real map fires `style.load` when the style is ready.
     if (kind === 'style.load' && !this.styles.length) handler();
   }
 
-  /** Die zweite Form meldet auf eine Schicht an und gibt ein Abo zurück. */
+  /** The second form subscribes to one paint layer and gives a subscription. */
   on(kind: string, second: unknown, third?: (payload: unknown) => void): { unsubscribe: () => void } {
     const handler = (third ?? second) as (payload: unknown) => void;
     const paintLayer = third ? (second as string) : null;
@@ -56,7 +56,7 @@ class MapDouble {
     };
   }
 
-  /** Stellt einen Tipp auf eine Schicht nach. */
+  /** Simulates a tap on a paint layer. */
   tap(paintLayer: string, id: string): void {
     for (const entry of [...this.handler]) {
       if (entry.kind === `click:${paintLayer}`) entry.handler({ features: [{ properties: { id } }] });
@@ -68,7 +68,7 @@ class MapDouble {
     if (index >= 0) this.handler.splice(index, 1);
   }
 
-  /** Stellt ein Ereignis mit eigener Nutzlast nach. */
+  /** Simulates an event with a custom payload. */
   fire(kind: string, payload: unknown): void {
     for (const entry of [...this.handler]) if (entry.kind === kind) entry.handler(payload);
   }
@@ -79,7 +79,7 @@ class MapDouble {
   }
 
   addSource(id: string, source: { type?: string; data?: unknown }): void {
-    // Eine GeoJSON-Quelle nimmt später neue Daten an; eine Rasterquelle nicht.
+    // A GeoJSON source accepts new data later. A raster source does not.
     const saved: { data?: unknown; setData?: (data: unknown) => Promise<void> } = { ...source };
     if (source.type === 'geojson') {
       saved.setData = (data: unknown) => {
@@ -192,7 +192,7 @@ class MapDouble {
   }
 }
 
-/** Eine Sammlung mit genau einem Punkt, so wie die Karte sie bekommt. */
+/** A collection with one point, in the format that the map gets. */
 function collection(id: string): FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -293,7 +293,7 @@ describe('MapLibreAdapter', () => {
 
     const links = document.head.querySelectorAll(`link[href="${STYLE_PATH}"]`);
     expect(links).toHaveLength(1);
-    // Es liegt als Asset und nicht im ersten Buendel: nur die Karte braucht es.
+    // The stylesheet is an asset and not in the first bundle. Only the map uses it.
     expect(STYLE_PATH.startsWith('/assets/')).toBe(true);
   });
 
@@ -481,7 +481,7 @@ describe('MapLibreAdapter', () => {
     a.showObjects('funde', collection('fund-eins'));
 
     map.tap('objekte-funde-punkt', 'fund-eins');
-    // Ein Punkt ohne Kennung öffnet nichts.
+    // A point without an ID opens nothing.
     for (const entry of map.handler) {
       if (entry.kind === 'click:objekte-funde-punkt') entry.handler({ features: [] });
     }

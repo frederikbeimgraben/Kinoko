@@ -1,5 +1,5 @@
-// Die Zeile ist nur eine Klammer: das Raster steht an der Tabelle. Polster und
-// Trennlinie trägt darum die Zelle.
+// The row is only a wrapper. The table holds the grid.
+// Thus the cell holds the padding and the divider.
 :host {
   display: contents;
 }
@@ -21,8 +21,8 @@
   padding-inline: var(--key-value-table-gutter) var(--key-value-table-gap);
 }
 
-// Der Wert endet rechts, wie die Fläche daneben — eine Fläche, die linksbündig
-// in einer breiteren Spalte stünde, ließe den Rest der Zeile leer.
+// The value ends at the right, as the swatch next to it does.
+// A left-aligned swatch in a wider column leaves the rest of the row empty.
 .kv__value {
   display: flex;
   flex-direction: column;
@@ -35,14 +35,14 @@
   overflow-wrap: anywhere;
 }
 
-// Fließtext bleibt links: ein rechtsbündiger Absatz franst links aus.
+// Running text stays left-aligned. A right-aligned paragraph has a ragged left edge.
 .kv__value--flow {
   align-items: flex-start;
   text-align: start;
 }
 
-// Eine Spalte des Vergleichs beginnt links unter ihrem Namen und steht mittig,
-// damit Marke, Fläche und Balken einer Zeile auf einer Linie liegen.
+// A comparison column starts at the left below its name and is centred vertically.
+// Thus the badge, swatch and bar of a row align on one line.
 .kv__value--column {
   align-items: flex-start;
   justify-content: center;
@@ -50,8 +50,8 @@
   text-align: start;
 }
 
-// Die letzte Zeile endet an der Kante der Karte. Eine Tabelle mit eigener
-// Abschlusslinie setzt `--key-value-table-last`.
+// The last row ends at the edge of the card.
+// A table with its own closing line sets `--key-value-table-last`.
 :host(:last-child) .kv__label,
 :host(:last-child) .kv__value {
   border-block-end-width: var(--key-value-table-last, 0);
@@ -64,8 +64,8 @@
   line-height: var(--lh-tight);
 }
 
-// Ein langer Schlüssel bricht um. Eine enge Tabelle lässt ihn mit
-// `--key-value-table-nowrap` überstehen, damit die Zeile flach bleibt.
+// A long key wraps. A narrow table sets `--key-value-table-nowrap`
+// to let the key overflow and keep the row flat.
 .kv__key {
   font-weight: var(--key-value-table-weight, var(--fw-semibold));
   color: var(--key-value-table-key-colour, var(--color-text-muted));
@@ -78,7 +78,7 @@
   text-decoration: none;
 }
 
-// Die Kopfzeile eines Vergleichs nennt die Spalten, sie trägt keinen Wert.
+// The header row of a comparison names the columns and holds no value.
 .kv__label--head,
 .kv__value--head {
   font-size: var(--key-value-table-head, var(--fs-xs));

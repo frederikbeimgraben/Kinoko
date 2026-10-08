@@ -4,7 +4,7 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 let nextId = 0;
 
-/** Ein Abschnitt, den seine Kopfzeile auf- und zuklappt. Per `kit.css` `.sec`, `.lbl.fold`. */
+/** A section that its header opens and closes, as `kit.css` `.sec`, `.lbl.fold`. */
 @Component({
   selector: 'app-fold-section',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -18,7 +18,7 @@ app-page-header {
   @include card.section-title;
 }
 
-// Die Zeilen stehen 14 px vom Kartenrand; Fläche und Pfeil acht auseinander.
+// The rows are 14 px from the card edge. Swatch and arrow are 8 px apart.
 .section__card {
   @include card.card;
 
@@ -28,7 +28,7 @@ app-page-header {
   --space-3: 8px;
 }
 
-// Eine Zeile mit Fläche misst sechsundfünfzig Punkte, wie die Bretter sie zeigen.
+// A row with a swatch is 56 px high, as the design boards show.
 .section__card--tall {
   --size-row: 56px;
 }
@@ -37,7 +37,7 @@ app-add-row {
   margin-block-start: 10px;
 }
 
-// Zwei Notizfelder stehen enger beieinander als die Abschnitte darüber.
+// The two note fields are closer together than the sections above them.
 .section__notes {
   display: flex;
   flex-direction: column;

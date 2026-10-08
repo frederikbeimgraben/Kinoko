@@ -8,7 +8,7 @@ import {
 import type { MeasurementGroup, PartNote } from '../../../core/api/models';
 import { PART_TEXT } from '../labels';
 
-/** Eine Karte je Körperteil mit seinen Strecken und seiner Notiz. */
+/** A card for one body part with its measurements and note. */
 interface PartCard {
   part: string;
   rows: MeasurementRow[];
@@ -16,7 +16,7 @@ interface PartCard {
   comment: string;
 }
 
-/** Die Maße einer Art, je Körperteil eine Karte. */
+/** The size of a species, one card for each body part. */
 @Component({
   selector: 'app-species-size',
   changeDetection: ChangeDetectionStrategy.OnPush,

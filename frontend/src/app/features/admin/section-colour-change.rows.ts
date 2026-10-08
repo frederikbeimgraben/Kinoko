@@ -11,7 +11,7 @@ export const TRIGGER_GROUP_TEXT: Readonly<Record<TriggerGroup, TranslationKey>> 
 
 export const SPEEDS: readonly Speed[] = ['permanent', 'immediate', '30s', '1min', '3min', 'longer'];
 
-/** Die Verfärbung an ihrer Stelle, sofern die Art sie trägt. */
+/** The colour change at the index, or null if the species has no change there. */
 export function changeAt(species: SpeciesEntry | null, at: number): ColourChange | null {
   return species?.colourChanges[at] ?? null;
 }

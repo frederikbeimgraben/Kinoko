@@ -1,25 +1,19 @@
-/**
- * Ein Speicher für rohe Wertkacheln, begrenzt auf eine Zahl Bytes.
- *
- * Die Kacheln bleiben roh (ein Byte je Punkt), nicht gefärbt: gefärbt wären es
- * vier Bytes je Punkt, also 256 kB je Kachel statt der 5 bis 40 kB, die vom
- * Server kommen. Der Speicher trägt so die vorgeladenen Nachbarwochen, ohne
- * dass der Wochenwechsel wieder ins Netz muss.
- */
+// A byte-limited cache for raw value tiles (one byte per pixel, not four as colored).
+// It holds the preloaded next weeks, so a week change needs no network request.
 export class TileCache {
-  // Eine Map behält die Reihenfolge des Einfügens. Der älteste Eintrag steht
-  // vorn und fliegt zuerst, wenn die Grenze erreicht ist.
+  // A Map keeps the insertion order. The oldest entry is first,
+  // so it goes first when the cache reaches the limit.
   private readonly eintraege = new Map<string, ArrayBuffer | null>();
   private used = 0;
 
   constructor(private readonly bound: number) {}
 
-  /** `undefined` heißt „unbekannt“, `null` heißt „geprüft, es gibt sie nicht“. */
+  /** `undefined` means unknown. `null` means checked and not available. */
   get(url: string): ArrayBuffer | null | undefined {
     const content = this.eintraege.get(url);
     if (content === undefined) return undefined;
-    // Ein Treffer wird wieder jung, sonst würde die Kachel unter dem Finger
-    // verdrängt, die gerade dauernd gebraucht wird.
+    // A hit moves the entry to the end. Otherwise the cache removes
+    // the tile under the pointer that the map uses all the time.
     this.eintraege.delete(url);
     this.eintraege.set(url, content);
     return content;

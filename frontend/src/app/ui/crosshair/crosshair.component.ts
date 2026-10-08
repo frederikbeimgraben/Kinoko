@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/** Das Fadenkreuz auf der Karte. Es zeigt den gewählten Ort. */
+/** The crosshair on the map. It shows the selected location. */
 @Component({
   selector: 'app-crosshair',
   changeDetection: ChangeDetectionStrategy.OnPush,

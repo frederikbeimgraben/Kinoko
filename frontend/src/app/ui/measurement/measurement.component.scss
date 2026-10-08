@@ -1,6 +1,6 @@
 :host {
   display: grid;
-  // Die Zahlen aller Strecken beginnen auf derselben Kante.
+  // The numbers of all extents start on the same edge.
   grid-template-columns: minmax(0, 1fr) 126px;
   column-gap: var(--space-3);
   align-items: center;
@@ -14,7 +14,7 @@
   border-radius: 4px 4px 20px 20px;
 }
 
-// Eine Zeile mit der seltenen Spanne trägt zwei Textzeilen und ist höher.
+// A row with the rare span has two text lines and is taller.
 :host(.measure--rare) {
   min-block-size: 56px;
 }
@@ -38,8 +38,8 @@
   color: var(--text-var);
 }
 
-// Die Zahl steht in Ziffern gleicher Breite, damit Werte untereinander
-// fluchten: 4 – 20 und 12 – 19 fangen sonst an unterschiedlichen Stellen an.
+// The number uses tabular digits to align the values in a column.
+// Without them, 4 – 20 and 12 – 19 start at different positions.
 .measure__value {
   display: flex;
   align-items: center;

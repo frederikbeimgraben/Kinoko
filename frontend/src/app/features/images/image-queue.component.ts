@@ -41,7 +41,7 @@ export class ImageQueueComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
-  /** The card whose rejection asks for a reason now. */
+  /** The card whose rejection asks for a reason. */
   protected readonly rejecting = signal<ReviewCard | null>(null);
   /** The count of decided cards. The head also counts the current card. */
   private readonly decided = signal(0);

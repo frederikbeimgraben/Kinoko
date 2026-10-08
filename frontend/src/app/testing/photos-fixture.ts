@@ -1,6 +1,6 @@
 import type { Photo } from '../core/api/models';
 
-/** Ein Foto des Vertrags. Jedes Feld lässt sich einzeln überschreiben. */
+/** A contract photo. The test can override each field. */
 export function photo(override: Partial<Photo> = {}): Photo {
   return {
     id: 'bild-eins',

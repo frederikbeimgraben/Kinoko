@@ -2,7 +2,7 @@
   display: block;
 }
 
-// Sechs Spalten, Zeilen- und Spaltenabstand einzeln: per `kit.css` `.tones`.
+// Six columns with separate row and column gaps, as `kit.css` `.tones`.
 .picker__grid {
   display: grid;
   grid-template-columns: repeat(var(--picker-columns, 6), minmax(0, 1fr));
@@ -25,7 +25,7 @@
   border: 0;
 }
 
-// Ein Punkt, per `kit.css` `.dot`: gleiche Breite und Höhe, ohne Wirt-Masse ein Kreis.
+// A dot, as `kit.css` `.dot`: without host sizes, it is a circle.
 .swatch__field {
   display: block;
   inline-size: var(--picker-width, var(--picker-height, 28px));

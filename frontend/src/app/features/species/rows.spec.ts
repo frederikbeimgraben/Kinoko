@@ -4,7 +4,7 @@ import { speciesEntry } from '../../testing/species-fixture';
 import { factsOf } from './facets';
 import { headOf, leadColour, sortEntries, speciesRow } from './rows';
 
-/** Ein Katalog ohne Texte: jeder Schlüssel steht für sich selbst. */
+/** A translation stub: each key translates to itself. */
 const I18N = { translate: (key: string) => key } as unknown as I18nService;
 
 const STONE = speciesEntry({

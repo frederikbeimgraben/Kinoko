@@ -10,10 +10,10 @@ import type {
   SpeciesWrite,
 } from '../../core/api/models';
 
-/** Eine Verwechslung, wie der Vertrag sie schreibt. */
+/** A lookalike in the contract format. */
 export type LookalikeWrite = NonNullable<SpeciesWrite['lookalikes']>[number];
 
-/** Alles, was ein Teil einer Art trägt. */
+/** All lists that a part of a species has. */
 export interface PartLists {
   measurements: MeasurementGroup[];
   colours: ColourGroup[];
@@ -21,17 +21,16 @@ export interface PartLists {
   partNotes: PartNote[];
 }
 
-/** Die Farbgruppen eines Teils. */
 export function colourGroups(species: SpeciesEntry | null, part: BodyPart): ColourGroup[] {
   return (species?.colours ?? []).filter((one) => one.part === part);
 }
 
-/** Die Farbgruppe eines Teils an ihrer Stelle unter den Gruppen des Teils. */
+/** The colour group at an index among the groups of a part. */
 export function colourGroupAt(species: SpeciesEntry | null, part: BodyPart, at: number): ColourGroup | null {
   return colourGroups(species, part)[at] ?? null;
 }
 
-/** Legt eine Farbgruppe an ihre Stelle im Teil. Eine neue Stelle hängt an. */
+/** Puts a colour group at its index in the part. A new index adds the group at the end. */
 export function withColourGroup(
   species: SpeciesEntry | null,
   part: BodyPart,
@@ -47,7 +46,6 @@ export function withColourGroup(
   return seen >= at ? out : [...out, group];
 }
 
-/** Nimmt eine Farbgruppe aus ihrem Teil. */
 export function withoutColourGroup(species: SpeciesEntry | null, part: BodyPart, at: number): ColourGroup[] {
   let seen = -1;
   return (species?.colours ?? []).filter((one) => {
@@ -57,7 +55,7 @@ export function withoutColourGroup(species: SpeciesEntry | null, part: BodyPart,
   });
 }
 
-/** Nimmt ein Maß aus seinem Teil. Ein Teil ohne Maß fällt weg. */
+/** Removes a measurement from its part. A part with no measurement left is removed. */
 export function withoutMeasurement(
   species: SpeciesEntry | null,
   part: BodyPart,
@@ -72,31 +70,29 @@ export function withoutMeasurement(
     .filter((group) => group.measurements.length > 0);
 }
 
-/** Legt eine Verfärbung an ihre Stelle. Eine neue Stelle hängt an. */
+/** Puts a colour change at its index. A new index adds the change at the end. */
 export function withChange(species: SpeciesEntry | null, at: number, change: ColourChange): ColourChange[] {
   const held = changes(species);
   if (at >= held.length) return [...held, change];
   return held.map((one, index) => (index === at ? change : one));
 }
 
-/** Die Verfärbungen einer Art. */
 export function changes(species: SpeciesEntry | null): readonly ColourChange[] {
   return species?.colourChanges ?? [];
 }
 
-/** Nimmt eine Verfärbung an ihrer Stelle heraus. */
 export function withoutChange(species: SpeciesEntry | null, at: number): ColourChange[] {
   return changes(species).filter((_, index) => index !== at);
 }
 
-/** Legt die Notiz eines Teils an ihre Stelle. Eine leere Notiz fällt weg. */
+/** Replaces the note of a part. An empty note is removed. */
 export function withPartNote(species: SpeciesEntry | null, note: PartNote): PartNote[] {
   const held = (species?.partNotes ?? []).filter((one) => one.part !== note.part);
   if (note.description === '' && note.comment === '') return held;
   return [...held, note];
 }
 
-/** Nimmt ein Teil mit seinen Maßen, Farben und Verfärbungen heraus. */
+/** Removes a part with its measurements, colours and colour changes. */
 export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartLists {
   return {
     measurements: (species?.measurements ?? []).filter((one) => one.part !== part),
@@ -106,7 +102,7 @@ export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartL
   };
 }
 
-/** Die Teile einer Art, in der Reihenfolge des Körpers. */
+/** The parts of a species, in body order. */
 export const PART_ORDER: readonly BodyPart[] = [
   'fruitbody',
   'cap',
@@ -121,7 +117,7 @@ export const PART_ORDER: readonly BodyPart[] = [
   'spore',
 ];
 
-/** Die Teile, die weder die Art noch die offene Wahl schon führt. */
+/** The parts that are not in the species and not in the open choice. */
 export function freeParts(species: SpeciesEntry | null, extra: readonly BodyPart[]): BodyPart[] {
   const held = new Set<BodyPart>([
     ...(species?.measurements ?? []).map((one) => one.part),
@@ -132,19 +128,18 @@ export function freeParts(species: SpeciesEntry | null, extra: readonly BodyPart
   return PART_ORDER.filter((part) => !held.has(part));
 }
 
-/** Legt eine Quelle an ihre Stelle. Eine neue Stelle hängt an. */
+/** Puts a source at its index. A new index adds the source at the end. */
 export function withSource(species: SpeciesEntry | null, at: number, one: SourceEntry): SourceEntry[] {
   const held = [...(species?.sources ?? [])];
   if (at >= held.length) return [...held, one];
   return held.map((entry, index) => (index === at ? one : entry));
 }
 
-/** Nimmt eine Quelle an ihrer Stelle heraus. */
 export function withoutSource(species: SpeciesEntry | null, at: number): SourceEntry[] {
   return (species?.sources ?? []).filter((_, index) => index !== at);
 }
 
-/** Die Verwechslungen, wie der Vertrag sie schreibt. */
+/** The lookalikes in the contract format. */
 export function lookalikeWrites(species: SpeciesEntry | null): LookalikeWrite[] {
   return (species?.lookalikes ?? []).map((one) => ({
     slug: one.slug,
@@ -152,7 +147,7 @@ export function lookalikeWrites(species: SpeciesEntry | null): LookalikeWrite[] 
   }));
 }
 
-/** Legt eine Verwechslung an ihre Stelle. Eine neue Stelle hängt an. */
+/** Puts a lookalike at its index. A new index adds the lookalike at the end. */
 export function withLookalike(
   species: SpeciesEntry | null,
   at: number,
@@ -163,7 +158,6 @@ export function withLookalike(
   return held.map((entry, index) => (index === at ? one : entry));
 }
 
-/** Nimmt eine Verwechslung an ihrer Stelle heraus. */
 export function withoutLookalike(species: SpeciesEntry | null, at: number): LookalikeWrite[] {
   return lookalikeWrites(species).filter((_, index) => index !== at);
 }

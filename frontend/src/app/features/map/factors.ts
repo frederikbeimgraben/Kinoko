@@ -2,7 +2,7 @@ import { formatValue, formatNumber, type Layer } from '../../core/tiles/layers';
 import { EDGE_SHARE, type CombinationBound } from '../../map/value-colors';
 import type { Condition, WireFactor } from '../../core/api/models';
 
-/** Ein Faktor: eine Quelle mit einer Bedingung in ihrer Einheit. */
+/** A factor: a source with a condition in the unit of that source. */
 export interface Factor {
   source: string;
   condition: Condition;
@@ -11,14 +11,14 @@ export interface Factor {
   active: boolean;
 }
 
-/** Kurzform der Bedingung in der Ablage. */
+/** The short form of a condition in the stored value. */
 const SHORT: Record<Condition, string> = { below: 'le', above: 'ge', between: 'bw' };
 
 const FROM_SHORT: Record<string, Condition> = { le: 'below', ge: 'above', bw: 'between' };
 
 const SOURCE_PATTERN = /^[a-z0-9_-]{1,60}$/;
 
-/** Die Kombination als ein Wert. Ein abgehakter Faktor trägt ein `!` vorn. */
+/** The combination as one value. An unchecked factor starts with `!`. */
 export function encodeFactors(factors: readonly Factor[]): string {
   return factors.map(encodeFactor).join(',');
 }
@@ -29,7 +29,7 @@ function encodeFactor(factor: Factor): string {
   return `${head}:${numberText(factor.condition === 'below' ? factor.high : factor.low)}`;
 }
 
-/** Ohne Nachkommastellen, wo keine nötig sind: `0.3`, aber `80`. */
+/** Shows decimal places only when necessary: `0.3`, but `80`. */
 function numberText(value: number): string {
   return String(Math.round(value * 1000) / 1000);
 }
@@ -64,30 +64,30 @@ function readFactor(text: string): Factor | null {
   };
 }
 
-/** Die Bedingung als Spanne über der Skala der Quelle, in ihrer Einheit. */
+/** The condition as a range on the scale of the source, in its unit. */
 export function span(factor: Factor, layer: Layer): { low: number; high: number } {
   if (factor.condition === 'below') return { low: layer.low, high: factor.high };
   if (factor.condition === 'above') return { low: factor.low, high: layer.high };
   return { low: factor.low, high: factor.high };
 }
 
-/** Die Bedingung in Worten, etwa `≥ 80 mm`. */
+/** The condition as text, for example `≥ 80 mm`. */
 export function conditionText(factor: Factor, layer: Layer, locale: string, to: string): string {
   if (factor.condition === 'below') return `≤ ${formatValue(factor.high, layer, locale)}`;
   if (factor.condition === 'above') return `≥ ${formatValue(factor.low, layer, locale)}`;
-  // Die Einheit steht einmal, am Ende der Spanne, nicht zweimal.
+  // Show the unit one time only, at the end of the range.
   const left = formatNumber(factor.low, layer, locale);
   return `${left} ${to} ${formatValue(factor.high, layer, locale)}`;
 }
 
-/** Der Wert als Byte. Byte 0 heißt „keine Daten“, die Skala beginnt bei 1. */
+/** The value as a byte. Byte 0 means "no data", so the scale starts at 1. */
 export function byteForValue(layer: Layer, value: number): number {
   const width = layer.high - layer.low;
   const relative = width === 0 ? 0 : (value - layer.low) / width;
   return Math.min(255, Math.max(1, Math.round(1 + relative * 254)));
 }
 
-/** Die Bedingung, wie der Worker sie braucht: in Bytes, mit Randbreite. */
+/** The condition in the worker format: in bytes, with an edge width. */
 export function boundFor(factor: Factor, layer: Layer): CombinationBound {
   const values = span(factor, layer);
   return {
@@ -97,14 +97,14 @@ export function boundFor(factor: Factor, layer: Layer): CombinationBound {
   };
 }
 
-/** Ein Faktor je Quelle: derselbe Wert zweimal zu prüfen hilft niemandem. */
+/** Keeps one factor for each source. Two checks of the same value give no new data. */
 export function replaceFactor(factors: readonly Factor[], next: Factor): Factor[] {
   const spot = factors.findIndex((factor) => factor.source === next.source);
   if (spot < 0) return [...factors, next];
   return factors.map((factor, i) => (i === spot ? next : factor));
 }
 
-/** Eine Kennung der Kombination. MapLibre verwirft damit alte Kacheln. */
+/** A key for the combination. MapLibre uses it to discard old tiles. */
 export function combinationKey(parts: readonly string[]): string {
   let hash = 5381;
   const text = parts.join('|');
@@ -112,7 +112,7 @@ export function combinationKey(parts: readonly string[]): string {
   return hash.toString(16).padStart(8, '0');
 }
 
-/** Ein Faktor für den Draht. Nur die gebrauchte Grenze steht darin. */
+/** A factor in the wire format. It has only the limit that the condition uses. */
 export function toWire(factor: Factor): WireFactor {
   return {
     source: factor.source,
@@ -123,7 +123,7 @@ export function toWire(factor: Factor): WireFactor {
   };
 }
 
-/** Ein Faktor vom Draht. Eine leere Grenze wird zu null, damit sie zählt. */
+/** A factor from the wire format. An empty limit becomes null, so that it counts. */
 export function fromWire(factor: WireFactor): Factor {
   return {
     source: factor.source,

@@ -1,10 +1,10 @@
 import type { TranslationKey } from '../../core/i18n/translations';
 import type { Licence } from '../../core/api/models';
 
-/** Eigenes Foto trägt eine Übersetzung, der Katalog kennt den Schlüssel. */
+/** An own photo has a translated label. The catalogue holds the key. */
 export const OWN_PHOTO_KEY: TranslationKey = 'image.field.ownPhoto';
 
-/** CC0, CC BY 4.0, CC BY-SA 4.0 und Public Domain sind Kennungen, keine Prosa. */
+/** The licence codes are identifiers, not text to translate. */
 export const LICENCE_CODE: Readonly<Record<Exclude<Licence, 'own'>, string>> = {
   cc0: 'CC0',
   cc_by_4: 'CC BY 4.0',

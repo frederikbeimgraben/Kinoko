@@ -11,7 +11,7 @@ const FULL_PATH = '/api/photos/bild-eins/full';
 
 const PHOTO: HeroPhoto = { path: FULL_PATH, photographer: 'Marie Weber', licence: 'cc_by_sa_4' };
 
-/** Lässt das private Bild seine angefragte Datei bekommen. */
+/** Gives the private image the file that it requests. */
 function flushImage(): void {
   const http = TestBed.inject(HttpTestingController);
   for (const request of http.match((req) => req.url.startsWith('/api/photos/'))) {

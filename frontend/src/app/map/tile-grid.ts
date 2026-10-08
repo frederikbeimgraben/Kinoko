@@ -1,12 +1,7 @@
-/**
- * Das Kachelraster von Web-Mercator (XYZ), so weit die Karte es braucht.
- *
- * Die Vorhersage weiß nur, welche Kacheln es gibt und welche das Bild gerade
- * zeigt. Damit lädt sie die Nachbarwochen vor, statt eine ganze Woche blind zu
- * holen.
- */
+// The Web Mercator (XYZ) tile grid. The forecast uses it to find the visible tiles.
+// It preloads only these tiles for the next weeks, not a full week.
 
-/** Ein Ausschnitt in Grad. */
+/** A map extent in degrees. */
 export interface Viewbox {
   west: number;
   south: number;
@@ -14,7 +9,7 @@ export interface Viewbox {
   nord: number;
 }
 
-/** Die Kachel, in der ein Punkt auf dieser Zoomstufe liegt. */
+/** The tile that contains a point at this zoom level. */
 export function tileIndex(length: number, breite: number, zoom: number): [number, number] {
   const n = 2 ** zoom;
   const sinus = Math.sin((Math.min(Math.max(breite, -85.05), 85.05) * Math.PI) / 180);
@@ -24,11 +19,7 @@ export function tileIndex(length: number, breite: number, zoom: number): [number
   return [Math.min(Math.max(x, 0), last), Math.min(Math.max(y, 0), last)];
 }
 
-/**
- * Die Kacheln unter dem Ausschnitt. Die Zoomstufe wird auf die Stufen des
- * Renderings geklemmt, weil MapLibre darüber hinaus dieselben Kacheln
- * hochrechnet.
- */
+/** The tiles under the extent. Clamps the zoom to the rendered levels, because MapLibre upscales above them. */
 export function visibleTiles(
   extent: Viewbox,
   zoom: number,

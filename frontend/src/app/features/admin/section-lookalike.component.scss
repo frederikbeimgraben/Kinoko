@@ -18,7 +18,7 @@ app-page-header {
   @include card.section-title;
 }
 
-// Die Zeile steht 14 px vom Kartenrand; Wert und Pfeil acht auseinander.
+// The row is 14 px from the card edge. Value and arrow are 8 px apart.
 .section__card {
   @include card.card;
 

@@ -15,19 +15,19 @@ import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component'
 import { EDIBILITY_TEXT, GROUP_NAME_TEXT } from '../species/labels';
 import { EMPTY_DRAFT, toWrite, type SpeciesDraft } from './species-create.draft';
 
-/** Das Blatt der Auswahl ist so hoch wie sein Inhalt. */
+/** The choice sheet has the height of its content. */
 const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.5, 0.5, 0.9];
 
-/** Welche Auswahl offen steht. */
+/** The choice that is open. */
 type Picker = 'group' | 'edibility';
 
-/** Ein Wert der Auswahl mit seinem Namen. */
+/** A choice value with its name. */
 interface Choice {
   key: string;
   name: string;
 }
 
-/** Die neue Art: Name, Einordnung und Quelle. Die Merkmale folgen danach. */
+/** Makes a new species: name, classification and source. The features come after this step. */
 @Component({
   selector: 'app-species-create',
   changeDetection: ChangeDetectionStrategy.OnPush,

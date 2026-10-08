@@ -1,24 +1,23 @@
 import type { BodyPart, ColourChange, ColourGroup, Measurement, SpeciesEntry } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Eine Zeile der Maße: Strecke und Spanne, der Weg führt auf das Maß. */
+/** A size row: dimension and range. Its route opens the measurement. */
 export interface SizeRow {
   dimension: Measurement['dimension'];
   title: TranslationKey;
   value: string;
 }
 
-/** Eine Zeile mit Farbe: Name und die Fläche, die der Wert malt. */
+/** A colour row: name and the swatch that the value paints. */
 export interface ColourRow {
   key: string;
   title: string;
   colours: readonly { name: string; hex: string }[];
   gradient: boolean;
-  /** Die Stelle der Verfärbung in der Art. Eine Farbgruppe trägt keine. */
+  /** The index of the colour change in the species. A colour group has no such index. */
   at: number;
 }
 
-/** Die Maße eines Teils. */
 export function sizeRows(
   species: SpeciesEntry | null,
   part: BodyPart,
@@ -33,7 +32,6 @@ export function sizeRows(
   }));
 }
 
-/** Die Farbgruppen eines Teils. */
 export function colourRows(species: SpeciesEntry | null, part: BodyPart, title: string): ColourRow[] {
   const groups: readonly ColourGroup[] = (species?.colours ?? []).filter((one) => one.part === part);
   return groups.map((group, at) => ({
@@ -45,7 +43,7 @@ export function colourRows(species: SpeciesEntry | null, part: BodyPart, title: 
   }));
 }
 
-/** Die Verfärbungen eines Teils, mit ihrer Stelle in der ganzen Art. */
+/** The colour changes of a part, with their index in the full species. */
 export function changeRows(species: SpeciesEntry | null, part: BodyPart): ColourRow[] {
   const changes: readonly ColourChange[] = species?.colourChanges ?? [];
   return changes

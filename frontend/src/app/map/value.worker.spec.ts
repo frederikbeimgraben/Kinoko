@@ -2,7 +2,7 @@ import { INTERSECTION_OPACITY, createLut, toRgb } from './value-colors';
 import { FORECAST_RAMP as RAMP } from '../ui/ramp/ramp-colours';
 import type { ValueReply, ValueJob } from './value-messages';
 
-/** Eine Kachel aus dem Netz; der Inhaltstyp entscheidet über den Speicher. */
+/** A network tile. The content type decides if the cache keeps it. */
 function png(ok = true): Response {
   return {
     ok,
@@ -11,11 +11,11 @@ function png(ok = true): Response {
   } as unknown as Response;
 }
 
-/** Ein Ersatz für OffscreenCanvas: er merkt sich die Punkte, die er bekommt. */
+/** A double for OffscreenCanvas that records the pixels it gets. */
 class CanvasDouble {
   static last: CanvasDouble | null = null;
   static alle: CanvasDouble[] = [];
-  /** Die Punkte der nächsten Leinwände, je eine je entpackter Kachel. */
+  /** Pixels for the next canvases, one per decoded tile. */
   static cache: number[][] = [];
   punkte: Uint8ClampedArray<ArrayBuffer> = new Uint8ClampedArray(
     CanvasDouble.cache.shift() ?? [1, 1, 1, 255, 0, 0, 0, 255],
@@ -52,7 +52,7 @@ interface Scope {
   addEventListener(kind: 'message', handler: (event: MessageEvent<ValueJob>) => void): void;
 }
 
-/** Ein Bereich, der Aufträge annimmt und die Antworten sammelt. */
+/** A scope that takes jobs and collects the replies. */
 class ScopeDouble implements Scope {
   readonly replies: ValueReply[] = [];
   private handler: ((event: MessageEvent<ValueJob>) => void) | null = null;
@@ -151,7 +151,7 @@ describe('Färbe-Worker', () => {
 
   it('rechnet mehrere Quellen zu einer Kachel zusammen', async () => {
     vi.stubGlobal('fetch', () => Promise.resolve(png()));
-    // Punkt 1: beide innerhalb. Punkt 2: die zweite Quelle hat keine Daten.
+    // Point 1: both in the bound. Point 2: the second source has no data.
     CanvasDouble.cache = [
       [200, 200, 200, 255, 200, 200, 200, 255],
       [200, 200, 200, 255, 0, 0, 0, 255],

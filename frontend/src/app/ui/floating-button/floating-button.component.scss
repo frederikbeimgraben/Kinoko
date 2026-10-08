@@ -1,5 +1,5 @@
-// Block statt inline-flex, wie `.fab` in `kit.css`: es füllt seinen Rahmen.
-// Frei über der Karte bleibt die Breite am Inhalt, absolut platziert.
+// Flex, not inline-flex, as `.fab` in `kit.css`: it fills its frame.
+// Above the map, it is absolutely positioned and fits its content.
 :host {
   display: flex;
 }
@@ -32,7 +32,7 @@
   box-shadow: 0 3px 10px rgb(0 0 0 / 40%);
 }
 
-// Die Nadel dreht mit der Karte, der Knopf steht still.
+// The needle turns with the map. The button does not turn.
 .floating__icon {
   display: flex;
   flex: none;

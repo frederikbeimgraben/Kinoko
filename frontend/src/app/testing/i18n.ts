@@ -1,7 +1,7 @@
 import { computed, signal, type Provider } from '@angular/core';
 import { I18nService } from '../core/i18n/i18n.service';
 
-/** Ein Katalog ohne Texte: jeder Schlüssel steht für sich selbst. */
+/** A catalogue without texts: each key shows as itself. */
 const emptyService = {
   choice: signal('de').asReadonly(),
   locale: signal('de').asReadonly(),
@@ -13,7 +13,7 @@ const emptyService = {
   translate: (key: string) => key,
 };
 
-/** Ein Katalog aus einer Tabelle: die Tests setzen nur die Muster, die sie prüfen. */
+/** A catalogue from a table. Tests set only the patterns that they check. */
 export function catalogueOf(table: Record<string, string>): I18nService {
   return {
     ...emptyService,
@@ -35,7 +35,7 @@ const GERMAN_WORDS =
 
 const UMLAUT = /[äöüÄÖÜß]/;
 
-/** Wirft, wenn ein deutsches Wort im Baum steht. Texte kommen aus Schlüsseln. */
+/** Throws if the tree has a German word. All texts must come from keys. */
 export function noGermanText(element: Element): void {
   const parts = [element.textContent];
   for (const node of element.querySelectorAll('[aria-label], [title], [placeholder], [alt]')) {

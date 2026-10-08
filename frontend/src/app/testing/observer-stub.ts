@@ -1,4 +1,4 @@
-/** jsdom kennt keinen IntersectionObserver. Der Test steuert ihn von Hand. */
+/** jsdom has no IntersectionObserver. The test triggers it by hand. */
 export class IntersectionObserverStub {
   static instances: IntersectionObserverStub[] = [];
   private readonly callback: IntersectionObserverCallback;
@@ -9,15 +9,15 @@ export class IntersectionObserverStub {
   }
 
   observe(): void {
-    // Das Ziel selbst braucht der Test nicht, nur die Auslösung danach.
+    // The test does not need the target, only the trigger after it.
   }
 
   unobserve(): void {
-    // Der Stummel braucht keine Buchführung über das Ziel.
+    // The stub does not track targets.
   }
 
   disconnect(): void {
-    // Der Stummel räumt nichts auf, der Test endet vorher.
+    // The stub has nothing to clean up.
   }
 
   trigger(isIntersecting: boolean): void {
@@ -25,7 +25,7 @@ export class IntersectionObserverStub {
   }
 }
 
-/** Setzt den Stummel als IntersectionObserver ein und leert seine Liste. */
+/** Installs the stub as IntersectionObserver and clears its instance list. */
 export function stubIntersectionObserver(): void {
   IntersectionObserverStub.instances = [];
   vi.stubGlobal('IntersectionObserver', IntersectionObserverStub);

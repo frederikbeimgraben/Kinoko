@@ -3,13 +3,13 @@ import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component'
 
 let nextNumber = 0;
 
-/** Die Bildschirmtastatur, die zur Art des Feldes passt. */
+/** The on-screen keyboard for the field type. */
 type InputMode = 'text' | 'numeric' | 'decimal' | 'search';
 
-/** Die Beschriftung der Eingabetaste auf der Bildschirmtastatur. */
+/** The label of the enter key on the on-screen keyboard. */
 type EnterKeyHint = 'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send';
 
-/** Ein Feld im Formular. Das Feld des Kits deckt `inputmode` nicht ab. */
+/** A form field. The kit field does not support `inputmode`. */
 @Component({
   selector: 'app-form-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,23 +22,23 @@ export class FormFieldComponent {
   readonly value = input<string>('');
   readonly placeholder = input<string>('');
   readonly multiline = input(false);
-  /** Die Art des Feldes. `date` und `number` holen die Tastatur des Systems. */
+  /** `date` and `number` use the system keyboard. */
   readonly kind = input<'text' | 'number' | 'date'>('text');
-  /** Ein Feld, das nur zeigt und beim Tippen eine Auswahl öffnet. */
+  /** The field only shows a value. A tap opens a selection. */
   readonly readOnly = input(false);
-  /** Ein Pfeil am Ende des Feldes: dahinter steht eine eigene Auswahl. */
+  /** Shows an arrow at the end of the field for a separate selection. */
   readonly chevron = input(false);
-  /** Ein Piktogramm vor der Eingabe, wie die Lupe im Suchfeld. */
+  /** An icon before the input, for example the magnifier in a search field. */
   readonly icon = input<IconName>();
-  /** Versteckt die Beschriftung, ohne sie wegzulassen. */
+  /** Hides the label visually but keeps it for assistive technology. */
   readonly hideLabel = input(false);
-  /** Die Beschriftung als Abschnittszeile über dem Feld, nicht als Feldname. */
+  /** Shows the label as a section line above the field. */
   readonly section = input(false);
-  /** Der gezeigte Text, wenn er nicht der Wert ist, etwa ein Tag als Datum. */
+  /** The text to show when it is not the value, for example a formatted date. */
   readonly display = input<string>('');
-  /** Überschreibt die aus `kind` hergeleitete Bildschirmtastatur. */
+  /** Overrides the on-screen keyboard that `kind` gives. */
   readonly inputMode = input<InputMode>();
-  /** Überschreibt die aus `multiline` hergeleitete Eingabetaste. */
+  /** Overrides the enter key that `multiline` gives. */
   readonly enterKeyHint = input<EnterKeyHint>();
 
   readonly valueChange = output<string>();

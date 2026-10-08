@@ -19,8 +19,8 @@ function provider(map: MapAdapterDouble, drawer: DrawerDouble): (EnvironmentProv
     provideHttpClientTesting(),
     { provide: MAP_ADAPTER, useValue: map },
     ...drawerProviders(drawer),
-    // Ein festes Heute: die Karte steht auf der laufenden Kalenderwoche, und
-    // die Fixtures kennen nur die Wochen von 2025.
+    // A fixed date for today. The map shows the current calendar week.
+    // The fixtures have only the weeks of the fixed year.
     { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
   ];
 }
@@ -66,7 +66,7 @@ async function build(withMap = false): Promise<Setup> {
   };
 }
 
-/** Geht über das Formular zum Ziehen der Ecken. */
+/** Goes through the form to the corner drag mode. */
 async function startCorners(setup: Setup): Promise<void> {
   await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
   setup.refresh();
@@ -155,7 +155,7 @@ describe('ZoneBlattComponent', () => {
       setup.refresh();
       expect(screen.getByRole('button', { name: 'Eckpunkte übernehmen' })).toBeInTheDocument();
     });
-    // Der Ring geht ohne den doppelten Endpunkt hinaus.
+    // The ring goes out without the duplicate end point.
     expect(setup.drawer.rings[0]).toHaveLength(4);
 
     setup.drawer.drag([

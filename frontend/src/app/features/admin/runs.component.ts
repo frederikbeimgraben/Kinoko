@@ -51,7 +51,7 @@ interface Active {
   percent: number;
 }
 
-/** The runs: what the pipeline does now and what it did last. */
+/** The runs: what the pipeline does at this time and what it did last. */
 @Component({
   selector: 'app-runs',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -11,28 +11,25 @@ import {
 import { TileCache } from './value-cache';
 import type { ColorizeJob, CombinationJob, PrefetchJob, ValueReply, ValueJob } from './value-messages';
 
-/** Der Name muss zu `core/tiles/tile-cache.ts` passen. */
+/** The name must match `core/tiles/tile-cache.ts`. */
 const TILE_CACHE = 'primordium-tiles';
 
-/** 16 MB rohe Kacheln sind rund 500 Stück, also mehrere Wochen im Blickfeld. */
+/** 16 MB holds about 500 raw tiles: several weeks of the visible area. */
 const CACHE_LIMIT = 16 * 1024 * 1024;
 
 const cache = new TileCache(CACHE_LIMIT);
-// Die Tabelle hängt nur an Skala und Rampe; sie wird je Quelle einmal gebaut.
+// A table depends only on scale and ramp, so each one is built once.
 const tables = new Map<string, Uint8ClampedArray>();
 
-// `self` ist im Worker der globale Bereich. Die DOM-Typen kennen dafür nur die
-// Signatur des Fensters, darum diese enge Sicht statt eines eigenen Lib-Ziels.
+// The DOM types give `self` the window signature. This narrow type
+// gives the worker scope without a separate lib target.
 interface WorkerScope {
   postMessage(reply: ValueReply, transfer: Transferable[]): void;
   addEventListener(kind: 'message', handler: (event: MessageEvent<ValueJob>) => void): void;
 }
 
-/**
- * Eine entpackte Kachel samt der Leinwand, aus der sie kommt. Das Ergebnis
- * wird in dieselben Punkte geschrieben und auf dieselbe Leinwand gelegt; eine
- * zweite wäre eine viertel Megabyte je Kachel umsonst.
- */
+/** A decoded tile and its canvas. The result goes back into the same pixels and canvas.
+ * A second canvas costs a quarter megabyte per tile for no gain. */
 interface Tile {
   shot: ImageData;
   canvas: OffscreenCanvas;
@@ -48,7 +45,7 @@ function table(schluessel: string, create: () => Uint8ClampedArray): Uint8Clampe
   return lut;
 }
 
-/** Der Speicher des TileStore führt. Eine fehlende Kachel zeigt nichts. */
+/** The in-memory cache comes first. A missing tile shows nothing. */
 async function get(url: string): Promise<ArrayBuffer | null> {
   const known = cache.get(url);
   if (known !== undefined) return known;
@@ -57,12 +54,12 @@ async function get(url: string): Promise<ArrayBuffer | null> {
   return content;
 }
 
-/** Eine Kachel ist ein Bild. Die Seite der App ist keine. */
+/** A tile is an image. The app page (a fallback response) is not. */
 function isImage(reply: Response): boolean {
   return (reply.headers.get('content-type') ?? '').startsWith('image/');
 }
 
-/** Derselbe Speicher wie im Fenster, hier ohne Angular. */
+/** The same Cache Storage as in the window, without Angular. */
 async function fromStore(url: string): Promise<ArrayBuffer | null> {
   const store = typeof caches === 'undefined' ? null : caches;
   try {
@@ -78,7 +75,7 @@ async function fromStore(url: string): Promise<ArrayBuffer | null> {
   }
 }
 
-/** Holt eine Kachel und packt sie aus. Der rote Kanal trägt das Byte. */
+/** The red channel of the decoded tile holds the byte. */
 async function unpack(url: string): Promise<Tile | null> {
   const content = await get(url);
   if (content === null || content.byteLength === 0) return null;
@@ -91,7 +88,6 @@ async function unpack(url: string): Promise<Tile | null> {
   return { shot: pen.getImageData(0, 0, canvas.width, canvas.height), canvas, pen };
 }
 
-/** Legt die fertigen Punkte zurück und gibt ein Bild, das MapLibre nimmt. */
 function draw(tile: Tile): ImageBitmap {
   tile.pen.putImageData(tile.shot, 0, 0);
   return tile.canvas.transferToImageBitmap();
@@ -111,10 +107,7 @@ export async function colorizeTile(
   return draw(tile);
 }
 
-/**
- * Eine Kachel aus mehreren Quellen. Fehlt eine davon, bleibt die ganze Kachel
- * leer: eine Aussage über eine Schnittmenge braucht jeden Teil.
- */
+/** A tile from many sources. If one source has no tile, the full tile stays empty. */
 export async function combineTile(job: CombinationJob): Promise<ImageBitmap | null> {
   const fetched = await Promise.all(job.parts.map((part) => unpack(part.url)));
   const tiles = fetched.filter((tile): tile is Tile => tile !== null);
@@ -124,8 +117,8 @@ export async function combineTile(job: CombinationJob): Promise<ImageBitmap | nu
   const lut = table(`kombi|${job.rule}|${job.colors.join(',')}`, () =>
     createCombinationLut(job.colors, job.rule),
   );
-  // Das Ergebnis geht in die erste Kachel zurück. Ihre Bytes sind an dieser
-  // Stelle schon gelesen, das Überschreiben trifft also niemanden mehr.
+  // The result goes into the first tile. Each byte is read before
+  // it is written, so the overwrite is safe.
   const sources = tiles.map((tile) => tile.shot.data);
   const target = first.shot.data;
   const bytes = new Array<number>(sources.length);
@@ -147,7 +140,7 @@ async function answerJob(range: WorkerScope, job: ColorizeJob | CombinationJob):
   range.postMessage({ id: job.id, shot }, shot ? [shot] : []);
 }
 
-/** Die Nachbarwochen liegen danach im Speicher; die Antwort braucht niemand. */
+/** Puts the next weeks into the cache. No reply is necessary. */
 async function load(job: PrefetchJob): Promise<void> {
   for (const url of job.urls) await get(url);
 }

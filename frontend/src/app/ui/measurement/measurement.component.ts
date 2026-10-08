@@ -4,7 +4,7 @@ import { decimal } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 
-/** Welche Strecke die Zeile nennt. Das Wort trägt, kein Zeichen mehr. */
+/** The extent that the row names. A word shows it, not a symbol. */
 export type Extent = 'width' | 'height' | 'length' | 'thickness';
 
 const EXTENT_KEY: Record<Extent, TranslationKey> = {
@@ -14,16 +14,16 @@ const EXTENT_KEY: Record<Extent, TranslationKey> = {
   thickness: 'enum.dimension.thickness',
 };
 
-/** Der Gedankenstrich der Spanne steht mit Leerzeichen, wie im Satz. */
+/** The dash of a span has spaces around it, as in a sentence. */
 const DASH = ' – ';
 
-/** Eine Spanne. Eine Seite kann fehlen, etwa bei der seltenen Ausnahme. */
+/** A span. One side can be missing, for example with the rare exception. */
 export interface Span {
   readonly from: number | null;
   readonly to: number | null;
 }
 
-/** Eine Zeile Maß: das Wort der Strecke, der Wert, darunter die seltene Ausnahme. */
+/** A measure row: the extent word, the value, and the rare exception below. */
 @Component({
   selector: 'app-measurement',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +57,7 @@ export class MeasurementComponent {
   }
 }
 
-/** Eine Spanne als Text. Fehlt eine Seite oder sind beide gleich, bleibt eine Zahl. */
+/** Gives a span as text. A missing side or two equal sides give one number. */
 export function spanText(span: Span | undefined, locale: string): string {
   if (!span) return '';
   if (span.from === null) return span.to === null ? '' : format(span.to, locale);
@@ -65,7 +65,7 @@ export function spanText(span: Span | undefined, locale: string): string {
   return `${format(span.from, locale)}${DASH}${format(span.to, locale)}`;
 }
 
-/** Die Zahl in der Sprache der Oberfläche, keine Nullen hinter dem Komma. */
+/** Gives the number in the UI language, with no trailing decimal zeros. */
 function format(value: number, locale: string): string {
   return decimal(value, locale, { maximumFractionDigits: 1 });
 }

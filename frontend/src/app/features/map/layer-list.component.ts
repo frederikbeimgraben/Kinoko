@@ -6,7 +6,7 @@ import { layerGroups, type Layer } from '../../core/tiles/layers';
 import { SvgIconComponent, type IconName } from '../../ui/svg-icon/svg-icon.component';
 import { layerTitle } from './layer-name';
 
-/** Eine Ebene mit ihrem Namen und ihrem Zeichen. */
+/** A layer with its name and its icon. */
 interface LayerCard {
   layer: Layer;
   name: string;
@@ -18,7 +18,7 @@ interface Group {
   cards: readonly LayerCard[];
 }
 
-/** Die Ebenen in zwei Gruppen: der Woche folgend und zeitlich konstant. */
+/** Shows the layers in two groups: weekly layers and constant layers. */
 @Component({
   selector: 'app-layer-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +44,7 @@ export class LayerListComponent {
     return groups.filter((group) => group.cards.length > 0);
   });
 
-  /** Eine unbekannte Ebene bekommt das allgemeine Zeichen der Ebenen. */
+  /** An unknown layer gets the general layers icon. */
   private card(layer: Layer): LayerCard {
     return { layer, name: layerTitle(layer, this.i18n), glyph: layerIcon(layer.id) ?? 'layers' };
   }

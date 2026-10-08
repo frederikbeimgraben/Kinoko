@@ -8,14 +8,14 @@ import { SectionComponent } from '../../../ui/section/section.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 import { EDIBILITY_TEXT, EDIBILITY_TONE, MUTED_TONE, PROTECTION_TEXT } from '../labels';
 
-/** Eine Plakette der Einstufung: Text und Farben. */
+/** A rating badge: text and colours. */
 export interface Level {
   text: string;
   colour: string;
   background: string;
 }
 
-/** Die Einstufung einer Art: Speisewert, Schutz und Handel. */
+/** The rating of a species: edibility, protection and trade. */
 @Component({
   selector: 'app-species-features',
   changeDetection: ChangeDetectionStrategy.OnPush,

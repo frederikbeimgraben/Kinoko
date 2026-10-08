@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
-/** Bestimmter Fortschritt zwischen 0 und 100 % als Balken auf einer Kachel. */
+/** Shows determinate progress from 0 to 100 % as a bar on a tile. */
 @Component({
   selector: 'app-progress',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,7 +11,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 })
 export class ProgressComponent {
   readonly value = input.required<number>();
-  /** Der Anteil als Zahl über dem Balken. */
+  /** Shows the share as a number above the bar. */
   readonly showValue = input(false);
 
   protected readonly clamped = computed(() => Math.min(100, Math.max(0, Math.round(this.value()))));

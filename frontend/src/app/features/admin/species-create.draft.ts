@@ -1,6 +1,6 @@
 import type { Edibility, Group, SpeciesWrite } from '../../core/api/models';
 
-/** Die Felder, die das Formular zum Anlegen einer Art führt. */
+/** The fields of the form that makes a new species. */
 export interface SpeciesDraft {
   name: string;
   scientificName: string;
@@ -21,7 +21,7 @@ export const EMPTY_DRAFT: SpeciesDraft = {
   source: '',
 };
 
-/** Der Titel einer Quelle ist ihr Rechnername ohne `www.`. */
+/** The title of a source is its host name without `www.`. */
 export function sourceTitle(url: string): string {
   const trimmed = url.trim();
   if (trimmed === '') return '';
@@ -29,7 +29,7 @@ export function sourceTitle(url: string): string {
   return host === null ? trimmed : host[1];
 }
 
-/** Die weiteren Namen stehen in einer Zeile, am Komma getrennt. */
+/** The other names are on one line, with commas between them. */
 function otherNames(value: string): SpeciesWrite['names'] {
   return value
     .split(',')
@@ -38,7 +38,7 @@ function otherNames(value: string): SpeciesWrite['names'] {
     .map((name) => ({ name, kind: 'synonym' as const }));
 }
 
-/** Formt die Eingaben in den Körper des Vertrags. */
+/** Makes the contract body from the form values. */
 export function toWrite(draft: SpeciesDraft, checkedOn: string): SpeciesWrite {
   const url = draft.source.trim();
   return {

@@ -5,17 +5,17 @@ import { PrivateImageComponent } from '../private-image/private-image.component'
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Wie viele Bilder ein Fund oder eine Einreichung höchstens trägt. */
+/** The maximum number of images for a find or a submission. */
 const MAX_PHOTOS = 3;
 
-/** Ein Foto, das der Dienst schon kennt. */
+/** A photo that the service has. */
 export interface StripPhoto {
   readonly id: string;
   readonly path: string;
   readonly lead?: boolean;
 }
 
-/** Eine noch nicht gesendete Kachel: die Datei und ihre Objekt-URL. */
+/** A tile that is not sent: the file and its object URL. */
 interface PendingTile {
   readonly file: File;
   readonly preview: string;
@@ -23,7 +23,7 @@ interface PendingTile {
 
 export type PhotoStripMode = 'view' | 'edit';
 
-/** Die Fotoleiste: `view` zeigt Bilder an, `edit` fügt sie hinzu und entfernt sie. */
+/** The photo strip. `view` shows images. `edit` adds and removes them. */
 @Component({
   selector: 'app-photo-strip',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,12 +33,12 @@ export type PhotoStripMode = 'view' | 'edit';
 })
 export class PhotoStripComponent implements OnDestroy {
   readonly mode = input.required<PhotoStripMode>();
-  /** Die Fotos, die der Dienst schon hat. */
+  /** The photos that the service has. */
   readonly photos = input<readonly StripPhoto[]>([]);
-  /** Neue, noch nicht gesendete Dateien. Nur im Modus `edit`. */
+  /** New files that are not sent. Only in `edit` mode. */
   readonly pending = input<readonly File[]>([]);
   readonly max = input(MAX_PHOTOS);
-  /** Ohne das bleibt jede Kachel fest, auch im Modus `edit`. */
+  /** When false, no tile can be removed, also in `edit` mode. */
   readonly removable = input(true);
 
   readonly pendingChange = output<readonly File[]>();
@@ -84,7 +84,7 @@ export class PhotoStripComponent implements OnDestroy {
     this.pendingChange.emit(this.pending().filter((entry) => entry !== file));
   }
 
-  /** Eine Objekt-URL bleibt sonst im Speicher, wenn die Seite neu lädt. */
+  /** Releases the object URLs. Otherwise they stay in memory after a reload. */
   ngOnDestroy(): void {
     for (const url of this.previews.values()) URL.revokeObjectURL(url);
     this.previews.clear();

@@ -7,10 +7,10 @@ import type { SpeciesEntry } from '../../../core/api/models';
 import { MONTH_TEXT } from '../labels';
 import { SpeciesSeasonComponent } from './species-season.component';
 
-/** Die vier Marken unter dem Jahresband. Monate 1–12. */
+/** The four month marks below the year band. Months are 1 to 12. */
 const MARKS: readonly number[] = [1, 4, 7, 10];
 
-/** Die Wachstumszeit einer Art als Jahresband, darunter die Saisonkurve. */
+/** The fruiting period of a species as a year band, with the season curve below. */
 @Component({
   selector: 'app-species-time',
   changeDetection: ChangeDetectionStrategy.OnPush,

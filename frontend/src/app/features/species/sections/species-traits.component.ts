@@ -10,13 +10,13 @@ const PARTS: readonly { key: 'cap' | 'stem' | 'flesh'; titleKey: TranslationKey 
   { key: 'flesh', titleKey: 'species.field.flesh' },
 ];
 
-/** Ein Körperteil mit seinem Satz aus dem Katalog. */
+/** A body part with its catalogue sentence. */
 interface Trait {
   titleKey: TranslationKey;
   text: string;
 }
 
-/** Merkmale einer Art: Hut, Stiel und Fleisch, je ein Satz aus dem Katalog. */
+/** Traits of a species: cap, stem and flesh, each with a catalogue sentence. */
 @Component({
   selector: 'app-species-traits',
   changeDetection: ChangeDetectionStrategy.OnPush,

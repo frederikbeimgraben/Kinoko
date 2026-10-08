@@ -3,7 +3,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from './licences';
 import type { Licence } from '../../core/api/models';
 
-/** Herkunft eines Bildes in einer Zeile: „Foto: Marie Weber · CC BY-SA 4.0“. */
+/** Shows the credit of an image in one line, for example „Foto: Marie Weber · CC BY-SA 4.0“. */
 @Component({
   selector: 'app-image-credit',
   changeDetection: ChangeDetectionStrategy.OnPush,

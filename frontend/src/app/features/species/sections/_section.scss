@@ -1,12 +1,12 @@
 @use '../../../../styles/card';
 
-/** Ein Abschnitt der Artseite: Überschrift, darunter eine Karte. */
+/** A section of the species page: a title with a card below it. */
 @mixin block {
   :host {
     display: block;
   }
 
-  // Ein Abschnitt ohne Daten darf keinen Abstand kosten.
+  // A section without data must not add space.
   :host(:empty) {
     display: none;
   }
@@ -15,7 +15,7 @@
     @include card.section-title;
   }
 
-  // Die Zeilen der Artseite stehen 14 px vom Kartenrand, wie die Boards.
+  // Rows on the species page have a 14 px inset from the card edge, as on the boards.
   .section__card {
     @include card.card;
 

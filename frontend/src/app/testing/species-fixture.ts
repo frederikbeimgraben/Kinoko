@@ -14,7 +14,7 @@ type SummarySeed = Partial<SpeciesSummary> & Pick<SpeciesSummary, 'slug' | 'name
 
 type PageSeed = Partial<TaxonPage> & Pick<TaxonPage, 'slug' | 'name' | 'rank'>;
 
-/** Eine Art mit allen Pflichtfeldern des Vertrags. */
+/** A species with all required contract fields. */
 export function speciesEntry(seed: Seed): SpeciesEntry {
   return {
     id: seed.slug,
@@ -60,7 +60,7 @@ export const HEDGEHOG = speciesEntry({
   forecastEnabled: false,
 });
 
-/** Die zwölf Standardfarben, wie sie das Bündel führt. */
+/** The twelve standard colours of the bundle. */
 export const PALETTE: SpeciesBundle['standardColours'] = [
   { key: 'white', hex: '#f3efe6' },
   { key: 'cream', hex: '#e8d9b5' },
@@ -76,7 +76,7 @@ export const PALETTE: SpeciesBundle['standardColours'] = [
   { key: 'grey', hex: '#8a8f8a' },
 ];
 
-/** Zählt die Achsen des Katalogs, wie der Dienst sie liefert. */
+/** Counts the catalogue facets, as the service does. */
 export function countAxes(items: readonly SpeciesEntry[]): SpeciesBundle['facets'] {
   const counts: Record<string, Record<string, number>> = {};
   const add = (axis: string, value: string): void => {
@@ -96,7 +96,6 @@ export function countAxes(items: readonly SpeciesEntry[]): SpeciesBundle['facets
   return counts;
 }
 
-/** Ein Bündel mit Palette und gezählten Achsen. */
 export function speciesBundle(
   items: readonly SpeciesEntry[],
   facets: SpeciesBundle['facets'] = countAxes(items),
@@ -106,7 +105,7 @@ export function speciesBundle(
 
 export const SPECIES_BUNDLE: SpeciesBundle = speciesBundle([PENNY_BUN, BAY_BOLETE, HEDGEHOG]);
 
-/** Eine Art in Kurzform, so wie eine Stufe der Einordnung sie führt. */
+/** A short species entry, as a taxon page lists it. */
 export function speciesSummary(seed: SummarySeed): SpeciesSummary {
   return {
     id: seed.slug,
@@ -120,7 +119,7 @@ export function speciesSummary(seed: SummarySeed): SpeciesSummary {
   };
 }
 
-/** Eine Stufe der Einordnung mit Weg, Geschwistern, Kindern und Arten. */
+/** A taxon page with path, siblings, children and species. */
 export function taxonPage(seed: PageSeed): TaxonPage {
   return {
     id: seed.slug,
@@ -133,7 +132,7 @@ export function taxonPage(seed: PageSeed): TaxonPage {
   };
 }
 
-/** Ein Schritt im Weg von oben nach unten. */
+/** One step in the path from top to bottom. */
 export function taxonStep(rank: TaxonRank, slug: string, name: string): TaxonStep {
   return { id: slug, rank, slug, name };
 }

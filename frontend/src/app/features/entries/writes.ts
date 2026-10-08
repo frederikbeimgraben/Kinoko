@@ -1,6 +1,6 @@
 import type { Find, FindWrite, Marker, MarkerWrite, Zone, ZoneWrite } from '../../core/api/models';
 
-/** Der Körper eines Fundes. `PUT` ersetzt, darum steht jedes Feld darin. */
+/** The write body of a find. `PUT` replaces the find, so the body has all fields. */
 export function findWrite(find: Find): FindWrite {
   return {
     speciesId: find.speciesId,

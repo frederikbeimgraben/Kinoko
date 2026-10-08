@@ -2,7 +2,7 @@
   display: flex;
 }
 
-// Ohne Wirt-Masse steht die Fläche in Listengröße, per `kit.css` `.sw`.
+// Without host sizes, the field uses the list size of `kit.css` `.sw`.
 .field {
   inline-size: var(--pilz-colour-width, 96px);
   block-size: var(--pilz-colour-height, 30px);

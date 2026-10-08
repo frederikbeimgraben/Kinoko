@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { PopoverComponent, type PopoverAnchor } from './popover.component';
 
-/** Unter einem Knopf in der Kopfzeile. */
+/** Below a button in the header. */
 const BELOW: PopoverAnchor = { top: 68, end: 12 };
-/** Über dem Plus-Knopf am unteren Rand. */
+/** Above the plus button at the bottom edge. */
 const ABOVE: PopoverAnchor = { bottom: 92, end: 24 };
 
 @Component({

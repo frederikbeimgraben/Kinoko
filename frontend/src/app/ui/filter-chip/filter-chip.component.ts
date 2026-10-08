@@ -19,7 +19,7 @@ export class FilterChipComponent {
   readonly caret = input(false);
   readonly clear = input(false);
   readonly small = input(false);
-  /** Der barrierefreie Name, wo die Beschriftung leer bleibt: nur das Zeichen zeigt sich. */
+  /** The accessible name when the label is empty and only the icon shows. */
   readonly iconLabel = input<string>();
 
   readonly chosen = output();

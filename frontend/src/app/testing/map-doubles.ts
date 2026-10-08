@@ -194,7 +194,7 @@ export class MapAdapterDouble implements MapAdapter {
   /** What the page does on a press and a release. */
   down: ((point: readonly [number, number]) => void) | null = null;
   up: (() => void) | null = null;
-  /** Whether the map can pan now. */
+  /** Whether the map can pan. */
   dragPan = true;
 
   onPointerDown(handler: (point: readonly [number, number]) => void): () => void {

@@ -16,7 +16,7 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
   return { container, http: TestBed.inject(HttpTestingController) };
 }
 
-// Das Blatt trägt viele Knöpfe; unter Last braucht die Suche nach Rolle länger.
+// The sheet has many buttons. Under load, the query by role takes longer.
 describe('SpeciesCreateComponent', { timeout: 20_000 }, () => {
   it('nennt die drei Abschnitte und die Vorgaben der Einordnung', async () => {
     const { container } = await build();

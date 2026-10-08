@@ -25,14 +25,14 @@ import {
   PROTECTION_TEXT,
 } from './labels';
 
-/** Ein wählbarer Wert einer Gruppe. */
+/** A selectable value of a filter group. */
 export interface Choice {
   readonly value: string;
   readonly label: string;
   readonly count: number;
 }
 
-/** Die Gruppen, deren Werte fest im Vertrag stehen. */
+/** The groups with fixed values from the API contract. */
 const FIXED: Partial<Record<GroupKey, readonly { value: string; text: TranslationKey }[]>> = {
   edibility: EDIBILITIES.map((value) => ({ value, text: EDIBILITY_TEXT[value] })),
   hymenium: HYMENIUM_TYPES.map((value) => ({ value, text: HYMENIUM_TEXT[value] })),
@@ -42,7 +42,7 @@ const FIXED: Partial<Record<GroupKey, readonly { value: string; text: Translatio
   period: MONTH_TEXT.map((text, at) => ({ value: String(at + 1), text })),
 };
 
-/** Der Name eines Wertes, auch wenn keine Art ihn trägt. */
+/** The label of a value, also if no species has it. */
 export function valueLabel(
   key: GroupKey,
   value: string,
@@ -54,7 +54,7 @@ export function valueLabel(
   return names.get(value) ?? value;
 }
 
-/** Die Werte einer Gruppe mit ihrer Zahl, ohne die unbelegten. */
+/** The values of a group with their counts. Values with no species are left out. */
 export function choicesOf(
   counts: Counts,
   key: GroupKey,
@@ -77,7 +77,7 @@ export function choicesOf(
     .sort((one, other) => one.label.localeCompare(other.label, 'de'));
 }
 
-/** Der Name jedes Begriffs im Katalog, über seinen Slug. */
+/** The name of each catalogue term, by its slug. */
 export function termNamesOf(entries: readonly { species: SpeciesEntry }[]): ReadonlyMap<string, string> {
   const names = new Map<string, string>();
   for (const one of entries) {
@@ -86,13 +86,13 @@ export function termNamesOf(entries: readonly { species: SpeciesEntry }[]): Read
   return names;
 }
 
-/** Die Körperteile, für die der Katalog Farben führt. */
+/** The body parts that have colours in the catalogue. */
 export function partsWithColour(counts: Counts, wanted: readonly BodyPart[]): BodyPart[] {
   const held = new Set(colourParts(counts));
   return wanted.filter((part) => held.has(part));
 }
 
-/** Alle Katalogtöne eines Körperteils. */
+/** All catalogue colour tones of a body part. */
 export function tonesOf(entries: readonly { species: SpeciesEntry }[], part: BodyPart): string[] {
   const tones: string[] = [];
   for (const one of entries) {
@@ -103,7 +103,7 @@ export function tonesOf(entries: readonly { species: SpeciesEntry }[], part: Bod
   return tones;
 }
 
-/** Der Monatsbereich der gewählten Zeit, ein einzelner Monat oder leer. */
+/** The month range of the selected period, one month, or empty. */
 function periodSummary(selection: Selection, i18n: I18nService): string {
   const months = [...(selection.values.get('period') ?? [])].map(Number).sort((one, other) => one - other);
   if (months.length === 0) return '';
@@ -114,7 +114,7 @@ function periodSummary(selection: Selection, i18n: I18nService): string {
   });
 }
 
-/** Der Wert, den eine Gruppe in ihrer Zeile oder ihrem Chip zeigt. */
+/** The value that a group shows in its row or chip. */
 export function groupSummary(
   key: GroupKey,
   selection: Selection,

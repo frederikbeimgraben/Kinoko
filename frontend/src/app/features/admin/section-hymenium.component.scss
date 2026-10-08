@@ -17,7 +17,7 @@ app-page-header {
   @include card.section-title;
 }
 
-// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
+// The rows are 14 px from the card edge and 52 px high, as the design boards show.
 .section__card {
   @include card.card;
 
@@ -32,7 +32,7 @@ app-page-header {
   --pilz-colour-radius: 7px;
 }
 
-// Die Wahl misst fünfzig Punkte je Zeile, der gewählte Wert steht hell.
+// Each choice row is 50 px high. The selected value is bright.
 .section__choices {
   --size-row: 50px;
 }

@@ -21,7 +21,7 @@ function build(photos: readonly Photo[] = PHOTOS, index = 0): Promise<RenderResu
   });
 }
 
-/** Beantwortet den Abruf des grossen Bildes und wartet auf die Kachel. */
+/** Answers the request for the large image and waits for the tile. */
 async function settle(detectChanges: () => void, id: string): Promise<void> {
   const http = TestBed.inject(HttpTestingController);
   await vi.waitFor(() => {

@@ -3,13 +3,12 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 
-/** Eine Quelle in der Zeile: der Titel führt zur Seite. */
 interface SourceRow {
   title: string;
   url: string;
 }
 
-/** Die Quellen einer Art. Jede Zeile führt zu ihrer Seite. */
+/** The sources of a species. Each row links to its web page. */
 @Component({
   selector: 'app-species-sources',
   changeDetection: ChangeDetectionStrategy.OnPush,

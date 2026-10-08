@@ -11,16 +11,16 @@ import type { SpeciesEntry } from '../../../core/api/models';
 import type { TranslationKey } from '../../../core/i18n/translations';
 import { ATTACHMENT_TEXT, EDGE_TEXT, HYMENIUM_TEXT, SPACING_TEXT } from '../labels';
 
-/** Eine Zeile der Fruchtschicht mit ihrem Wort. */
+/** A hymenium row with its label. */
 interface HymeniumRow {
   labelKey: TranslationKey;
   value: string;
 }
 
-/** Nur Lamellen tragen Ansatz, Stand und Schneide. */
+/** Only gills have attachment, spacing and edge. */
 const GILL_ONLY: SpeciesEntry['hymeniumType'][] = ['gills', 'folds'];
 
-/** Die Fruchtschicht einer Art: Art, Bau und Farbe. */
+/** The hymenium of a species: type, structure and colour. */
 @Component({
   selector: 'app-species-hymenium',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,7 +72,7 @@ export class SpeciesHymeniumComponent {
       .join(', '),
   );
 
-  /** Die Farbe der Fruchtschicht steht an demselben Körperteil. */
+  /** The hymenium colour uses the body part with the same name. */
   private readonly group = computed(() => {
     const kind = this.species().hymeniumType;
     if (!kind) return null;

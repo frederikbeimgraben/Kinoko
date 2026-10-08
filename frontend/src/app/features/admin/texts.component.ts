@@ -23,7 +23,7 @@ const ALL = 'alle';
 /** The filter value for the entries that differ from the default. */
 const CHANGED = 'geaendert';
 
-/** A key in the sheet, with the values that are in the fields now. */
+/** A key in the sheet, with the current values of its fields. */
 interface Draft {
   key: string;
   values: Record<string, string>;

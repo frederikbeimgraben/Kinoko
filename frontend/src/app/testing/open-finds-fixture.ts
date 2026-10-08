@@ -25,7 +25,7 @@ export const SECOND_FIND = openFind({ id: 'fund-zwei', count: null, lat: 48.6, l
 
 export const OPEN_FINDS: OpenFind[] = [FIRST_FIND, SECOND_FIND];
 
-/** Ein Doppelgänger der Fund-API. Der Test liest nach, was entschieden wurde. */
+/** A double for the finds API. The test reads the decisions. */
 export class FindsApiDouble {
   findList: readonly OpenFind[] = OPEN_FINDS;
 
@@ -47,7 +47,7 @@ export class FindsApiDouble {
   }
 }
 
-/** Ein Doppelgänger der Foto-API. Er liefert je Fund ein Foto. */
+/** A double for the photo API. It gives one photo per find. */
 export class FindPhotosApiDouble {
   readonly asked: string[] = [];
   photoList: readonly Photo[] = [photo({ id: 'bild-fund', findId: 'fund-eins', speciesId: null })];

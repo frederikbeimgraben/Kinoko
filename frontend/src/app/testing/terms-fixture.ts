@@ -12,7 +12,7 @@ export const OAK = term({ id: 'begriff-eiche', slug: 'oak', name: 'Eiche', kind:
 
 export const TERMS: Term[] = [ANISE, FLOUR, OAK];
 
-/** Ein Doppelgänger der Begriffs-API. Der Test liest nach, was gefragt wurde. */
+/** A double for the terms API. The test reads the requests. */
 export class TermsApiDouble {
   termList: Term[] = TERMS;
 
@@ -48,7 +48,6 @@ export class TermsApiDouble {
   }
 }
 
-/** Hängt den Doppelgänger an die Stelle der echten API. */
 export function termsApiProvider(double: TermsApiDouble): {
   provide: typeof TermsApi;
   useValue: unknown;

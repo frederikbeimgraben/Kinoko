@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { RippleDirective } from '../ripple/ripple.directive';
 
-/** Eine wählbare Farbe für Zone oder Marker. */
+/** A selectable colour for a zone or marker. */
 export interface ColourSwatch {
   value: string;
   label: string;
 }
 
-/** Die sechs Objektfarben. MapLibre nimmt nur echte Hex-Werte an. */
+/** The six object colours. MapLibre accepts only real hex values. */
 export const OBJECT_COLOURS: readonly `#${string}`[] = [
   '#004225',
   '#8c6820',
@@ -19,7 +19,7 @@ export const OBJECT_COLOURS: readonly `#${string}`[] = [
 
 export type SwatchSize = 's' | 'm' | 'l';
 
-/** Die Farbwahl für ein Kartenobjekt. Rolle `radiogroup` trägt die Pfeiltasten. */
+/** The colour choice for a map object. The `radiogroup` role gives arrow-key control. */
 @Component({
   selector: 'app-colour-swatches',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -52,7 +52,7 @@ const XML_ESCAPES: Readonly<Record<string, string>> = {
 };
 
 function xml(text: string): string {
-  return text.replace(/[&<>"']/g, (sign) => XML_ESCAPES[sign] ?? sign);
+  return text.replace(/[&<>"']/g, (sign) => XML_ESCAPES[sign]);
 }
 
 /** A GPX element with text, or nothing for an empty text. */

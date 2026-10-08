@@ -7,7 +7,7 @@ const WHITE = [{ name: 'weiß', hex: '#f4efe2' }];
 const BLUE = [{ name: 'blau', hex: '#3f6ea8' }];
 const YELLOW = [{ name: 'gelb', hex: '#d9a441' }];
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** The computed styles of an element that must exist. */
 function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
   if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
   return getComputedStyle(element);
@@ -69,7 +69,7 @@ describe('ColourChangeComponent', () => {
     if (value === null) throw new Error('kein Feld');
     const caption = value.querySelector('.change__caption');
     expect(caption?.textContent).toBe('weiß, dann blau · sofort');
-    // Die Zeile steht unter dem Feld: sie ist sein letztes Kind.
+    // The caption is below the field, so it is its last child.
     expect(value.lastElementChild).toBe(caption);
   });
 

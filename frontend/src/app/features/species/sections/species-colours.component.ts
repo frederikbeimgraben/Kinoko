@@ -12,7 +12,7 @@ import { SectionComponent } from '../../../ui/section/section.component';
 import type { ColourGroup } from '../../../core/api/models';
 import { PART_TEXT } from '../labels';
 
-/** Eine Zeile Farbe: der Teil, die Namen und die Fläche. */
+/** A colour row: the part, the names and the swatch. */
 interface ColourRow {
   part: string;
   names: string;
@@ -20,7 +20,7 @@ interface ColourRow {
   mode: ColourMode;
 }
 
-/** Ein Verlauf im Katalog heißt `distinct`, wo die Fläche hart trennt. */
+/** The catalogue mode `distinct` means hard edges between colours. */
 const MODE: Record<ColourGroup['mode'], ColourMode> = {
   single: 'single',
   gradient: 'gradient',
@@ -29,7 +29,7 @@ const MODE: Record<ColourGroup['mode'], ColourMode> = {
 
 const SEPARATOR = ', ';
 
-/** Die Farben einer Art, je Körperteil eine Zeile. */
+/** The colours of a species, one row for each body part. */
 @Component({
   selector: 'app-species-colours',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +51,7 @@ export class SpeciesColoursComponent {
     })),
   );
 
-  /** Ein Verlauf läuft von der einen Farbe zur anderen, mehrere stehen nebeneinander. */
+  /** A gradient reads "from A to B". Other modes list the names side by side. */
   private names(group: ColourGroup): string {
     const words = group.colours.map((colour) => colour.name);
     if (group.mode !== 'gradient') return words.join(SEPARATOR);

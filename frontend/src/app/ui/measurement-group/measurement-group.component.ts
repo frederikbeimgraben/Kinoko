@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MeasurementComponent, type Extent, type Span } from '../measurement/measurement.component';
 
-/** Eine Zeile der Karte: eine Strecke des Körperteils mit ihren Spannen. */
+/** A row of the card: one extent of the body part with its spans. */
 export interface MeasurementRow {
   readonly extent: Extent;
   readonly spans: readonly Span[];
   readonly unit: string;
 }
 
-/** Eine Karte für die Maße eines Körperteils. Andere Teile stehen nie daneben. */
+/** A card for the measures of one body part. It never shows other parts. */
 @Component({
   selector: 'app-measurement-group',
   changeDetection: ChangeDetectionStrategy.OnPush,

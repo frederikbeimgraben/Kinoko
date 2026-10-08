@@ -28,7 +28,7 @@ describe('MeasurementGroupComponent', () => {
 
     const rows = container.querySelectorAll('app-measurement');
     expect(rows).toHaveLength(2);
-    // Beide Zeilen sind Kinder derselben Karte, keine eigene Unterkarte je Maß.
+    // Both rows are children of the same card. No measure gets its own sub-card.
     expect(rows[0].parentElement).toBe(rows[1].parentElement);
   });
 

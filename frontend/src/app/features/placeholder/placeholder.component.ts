@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 
-/** Der leere Rahmen eines Reiters, bis das Arbeitspaket dazu kommt. */
+/** The empty frame of a tab that has no content yet. */
 @Component({
   selector: 'app-placeholder',
   changeDetection: ChangeDetectionStrategy.OnPush,
