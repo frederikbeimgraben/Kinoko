@@ -31,7 +31,7 @@ describe('Fläche', () => {
     const polygon = asPolygon(RING);
     if (polygon === null) throw new Error('Der Ring spannt keine Fläche auf.');
 
-    // At the latitude of Tübingen, 0.01 degrees by 0.01 degrees is approximately 82 ha.
+    // At this latitude, 0.01 degrees by 0.01 degrees is approximately 82 ha.
     expect(compute(polygon)).toBeGreaterThan(70);
     expect(compute(polygon)).toBeLessThan(95);
   });

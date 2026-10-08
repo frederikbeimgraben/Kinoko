@@ -31,7 +31,7 @@ async function build(extra: Extra = {}): Promise<Setup> {
   return { container, saved, reported, toasts: toastSpy() };
 }
 
-/** Die Beschriftungen der Felder in der Reihenfolge des Formulars. */
+/** The field labels in form order. */
 function labels(container: Element): string[] {
   const chosen = '.field__label, .form__label, .choice__label';
   return [...container.querySelectorAll(chosen)].map((node) => node.textContent.trim());

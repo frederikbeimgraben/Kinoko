@@ -18,12 +18,12 @@ async function build(api = new TermsApiDouble()): Promise<{
   return { container, api, router: TestBed.inject(Router) };
 }
 
-/** Die Liste der Ziele im Blatt der Zusammenführung. */
+/** The target list in the merge sheet. */
 function targets(): HTMLElement {
   return screen.getByRole('group', { name: 'Ziel' });
 }
 
-/** Öffnet das Blatt eines Begriffs. */
+/** Opens the sheet of a term. */
 async function open(name: string): Promise<void> {
   await userEvent.click(screen.getByRole('button', { name: new RegExp(name) }));
 }

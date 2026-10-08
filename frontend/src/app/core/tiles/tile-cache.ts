@@ -1,21 +1,21 @@
-/** Was der TileStore hält: Manifeste, Ebenen und Vorhersagekacheln. */
+/** The cache of the TileStore: manifests, layers and forecast tiles. */
 export const TILE_CACHE = 'primordium-tiles';
 
-/** Was eine Antwort tragen muss: ein Manifest JSON, eine Kachel ein Bild. */
+/** The expected reply type: JSON for a manifest, an image for a tile. */
 export type TileKind = 'json' | 'image';
 
-/** Ein Ursprung ohne Datei schickt die Seite der App. Sie zählt nicht. */
+/** An origin without the file sends the app page. This check rejects that reply. */
 export function fits(reply: Response, kind: TileKind): boolean {
   const type = reply.headers.get('content-type') ?? '';
   return kind === 'json' ? type.includes('application/json') : type.startsWith('image/');
 }
 
-/** Ein Kontext ohne Cache Storage (kein sicherer Ursprung) liefert `null`. */
+/** Gives `null` in a context without Cache Storage (no secure origin). */
 function storage(): CacheStorage | null {
   return typeof caches === 'undefined' ? null : caches;
 }
 
-/** Legt eine Antwort ab. Ein volles Gerät lässt die Kachel eben nicht liegen. */
+/** Keeps a reply. On a full device, the tile is not kept. */
 async function keep(url: string, reply: Response): Promise<void> {
   const store = storage();
   if (!store) return;
@@ -27,7 +27,7 @@ async function keep(url: string, reply: Response): Promise<void> {
   }
 }
 
-/** Nimmt einen Eintrag mit falschem Inhalt aus dem Speicher. */
+/** Removes an entry with the wrong content type from the cache. */
 async function drop(url: string): Promise<void> {
   const store = storage();
   if (!store) return;
@@ -39,7 +39,7 @@ async function drop(url: string): Promise<void> {
   }
 }
 
-/** Was schon auf dem Gerät liegt. */
+/** Gives the reply that is on the device. */
 export async function cached(url: string, kind: TileKind): Promise<Response | null> {
   const known = (await storage()?.match(url)) ?? null;
   if (known === null) return null;
@@ -60,7 +60,7 @@ async function fromNetwork(url: string, kind: TileKind): Promise<Response | null
   return reply;
 }
 
-/** Kachel: Speicher zuerst, Netz als Rückfall. Manifest: Netz zuerst, Speicher als Rückfall. */
+/** Tile: cache first, then network. Manifest: network first, then cache. */
 export async function cachedFetch(url: string, kind: TileKind): Promise<Response | null> {
   if (kind === 'json') return (await fromNetwork(url, kind)) ?? cached(url, kind);
   return (await cached(url, kind)) ?? fromNetwork(url, kind);

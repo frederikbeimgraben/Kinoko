@@ -11,19 +11,17 @@ import type { Viewbox } from './tile-grid';
 import { MAP_PIN_BORDER_COLOUR, MAP_PIN_BORDER_WIDTH, MAP_PIN_RADIUS } from '../ui/map-pin/map-pin.constants';
 import { ZONE_FILL_OPACITY, ZONE_STROKE_WIDTH } from '../ui/zone-shape/zone-shape.constants';
 
-/** Nur der Teil von MapLibre, den der Adapter braucht. */
+/** The part of MapLibre that the adapter uses. */
 export type MaplibreModule = Pick<
   typeof import('maplibre-gl'),
   'Map' | 'addProtocol' | 'removeProtocol' | 'setWorkerUrl'
 >;
 
-/** Wo der Worker von MapLibre liegt. */
 export const WORKER_PATH = '/assets/maplibre/maplibre-gl-worker.mjs';
 
-/** Wo das Stylesheet von MapLibre liegt. */
 export const STYLE_PATH = '/assets/maplibre/maplibre-gl.css';
 
-/** Haengt das Stylesheet in den Kopf. */
+/** Adds the MapLibre stylesheet to the head once. */
 export function ensureStyles(head: HTMLHeadElement): void {
   if (head.querySelector(`link[href="${STYLE_PATH}"]`) !== null) return;
   const link = head.ownerDocument.createElement('link');
@@ -32,15 +30,15 @@ export function ensureStyles(head: HTMLHeadElement): void {
   head.append(link);
 }
 
-/** Südwest- und Nordostecke als [Länge, Breite]. */
+/** South-west and north-east corner as [longitude, latitude]. */
 export type Bounds = readonly [readonly [number, number], readonly [number, number]];
 
-/** Zwei Wertebenen liegen übereinander: die Vorhersage unten, die Eingabe-Ebene darüber. */
+/** Two value layers: the forecast at the bottom, the input layer above it. */
 export type Role = 'forecast' | 'layer';
 
 export const ROLES: readonly Role[] = ['forecast', 'layer'];
 
-/** Der freie Streifen der Karte: was Blatt, Navigation und Kopf verdecken. */
+/** The map area that the sheet, navigation and header cover. */
 export interface Padding {
   top: number;
   bottom: number;
@@ -48,14 +46,13 @@ export interface Padding {
   right: number;
 }
 
-/** Ein eigenes Protokoll, das MapLibre kennen muss, bevor die erste Kachel fällt. */
+/** A custom protocol. MapLibre must know it before it loads the first tile. */
 export interface Protocol {
   name: string;
   resolve: (url: string) => Promise<{ data: ImageBitmap | ArrayBuffer }>;
 }
 
 export interface MapOptions {
-  /** Die Quelle der Grundkarte, unten links auf der Karte. */
   style: string;
   centerPoint: readonly [number, number];
   zoom: number;
@@ -65,16 +62,16 @@ export interface MapOptions {
   protocol: Protocol;
 }
 
-/** Die eigenen Ebenen über der Vorhersage, von unten nach oben. */
+/** The object layers above the forecast, from bottom to top. */
 export const OBJECT_LAYERS = ['zonen', 'geteilteFunde', 'marker', 'funde', 'location'] as const;
 
-/** Drehung und Neigung der Karte in Grad. */
+/** Map bearing and pitch in degrees. */
 export interface Rotation {
   bearing: number;
   pitch: number;
 }
 
-/** Ein Objekt unter dem Finger: seine Ebene, seine Kennung und sein Ort. */
+/** An object under the pointer: its layer, its ID and its location. */
 export interface ObjectHit {
   layer: ObjectLayer;
   id: string;
@@ -82,15 +79,15 @@ export interface ObjectHit {
 }
 export type ObjectLayer = (typeof OBJECT_LAYERS)[number];
 
-/** Was die Kartenseite von der Karte braucht. */
+/** The map functions that the map page uses. */
 export interface MapAdapter {
-  /** Holt MapLibre schon, bevor die Karte gebraucht wird. */
+  /** Loads MapLibre before the map is necessary. */
   warmUp(): void;
   start(host: HTMLElement, options: MapOptions): Promise<void>;
   setStyle(style: string): void;
-  /** Legt die Kacheln einer Rolle auf die Karte, ohne Flackern. */
+  /** Shows the tiles of a role on the map without flicker. */
   showValue(role: Role, template: string | null, bounds: Bounds, zoomFrom: number, zoomTo: number): void;
-  /** Deckkraft einer Rolle, null als durchsichtig, eins als deckend. */
+  /** Opacity of a role: 0 is transparent, 1 is opaque. */
   setOpacity(role: Role, value: number): void;
   fitBounds(bounds: Bounds, padding: Padding): void;
   setPadding(padding: Padding): void;
@@ -98,70 +95,65 @@ export interface MapAdapter {
   extent(): { zoom: number; extent: Viewbox } | null;
   onMove(handler: () => void): void;
   destroy(): void;
-  /** Misst die Zeichenfläche neu, nach einer Zeit ohne Layout-Änderung unsichtbar. */
+  /** Measures the canvas again, for example after a period without layout changes. */
   resize(): void;
-  /** Der Ort in der Mitte der Karte. */
   center(): readonly [number, number] | null;
-  /** Der Ort unter einem Punkt des Fensters, etwa unter dem Fadenkreuz. */
+  /** The location under a window point, for example under the crosshair. */
   pointAt(x: number, y: number): readonly [number, number] | null;
-  /** Fährt zu einem Ort. */
   flyTo(centerPoint: readonly [number, number], zoom?: number): void;
-  /** Legt die eigenen Objekte einer Ebene auf die Karte. */
   showObjects(layer: ObjectLayer, data: FeatureCollection): void;
-  /** Nimmt eine Ebene von der Karte, ohne die anderen anzufassen. */
+  /** Removes one layer from the map and keeps the other layers. */
   hideObjects(layer: ObjectLayer): void;
-  /** Ein Tipp auf ein Objekt. */
+  /** A tap on an object. */
   onObjectSelect(handler: (layer: ObjectLayer, id: string) => void): void;
-  /** Das Objekt unter einem Punkt der Fläche, für das lange Drücken. */
+  /** The object under a canvas point, for the long press. */
   objectAt(x: number, y: number): ObjectHit | null;
-  /** Die rohe Karte für Terra Draw. */
+  /** The raw map for Terra Draw. */
   rawMap(): MapLibreMap | null;
-  /** Drehung und Neigung der Karte. */
   rotation(): Rotation;
-  /** Jede Drehung und jede Neigung der Karte. */
+  /** Each change of map bearing or pitch. */
   onRotate(handler: () => void): void;
-  /** Dreht nach Norden und stellt die Karte flach. */
+  /** Turns the map to north and sets the pitch to zero. */
   resetNorth(smooth: boolean): void;
-  /** Ein Zeiger über der Karte, etwa `crosshair` beim Setzen eines Punktes. */
+  /** The map cursor, for example `crosshair` when the user sets a point. */
   setCursor(cursor: string): void;
-  /** Ein Klick auf die Karte, der kein Objekt trifft. */
+  /** A click on the map that hits no object. */
   onMapClick(handler: (point: readonly [number, number]) => void): () => void;
-  /** Der Zeiger über der Karte, auch ohne Taste. */
+  /** The pointer over the map, also without a pressed button. */
   onPointerMove(handler: (point: readonly [number, number]) => void): () => void;
-  /** Rechnet einen Ort in einen Punkt der Fläche um. */
+  /** Converts a location to a canvas point. */
   project(point: readonly [number, number]): { x: number; y: number } | null;
-  /** Ein Druck auf die Karte, mit Maus oder Finger. */
+  /** A press on the map, with mouse or finger. */
   onPointerDown(handler: (point: readonly [number, number]) => void): () => void;
-  /** Das Loslassen, mit Maus oder Finger. */
+  /** The release, with mouse or finger. */
   onPointerUp(handler: () => void): () => void;
-  /** Schaltet das Schieben der Karte aus, solange ein Zug einem Punkt gehört. */
+  /** Stops map panning while a drag moves a point. */
   setDragPan(enabled: boolean): void;
 }
 
-/** Der Haken, über den ein Test die Karte genau setzt. */
+/** The hook that tests use to set the map to an exact position. */
 export interface MapHandle {
-  /** Der Ort unter einem Punkt des Fensters. */
+  /** The location under a window point. */
   aimAt(x: number, y: number): [number, number];
-  /** Schiebt die Karte so weit, dass der Ort unter dem Punkt liegt. */
+  /** Moves the map until the location is under the point. */
   showAt(lon: number, lat: number, x: number, y: number, zoom?: number): void;
-  /** Dreht und neigt die Karte, ohne Geste. */
+  /** Sets bearing and pitch without a gesture. */
   rotate(bearing: number, pitch: number): void;
 }
 
-/** So oft nähert sich die Karte dem Punkt an. Ein Schritt bleibt ungenau. */
+/** Number of approach steps to the point. One step is not accurate. */
 const AIM_STEPS = 4;
 
 interface MapWindow extends Window {
   pilzMap?: MapHandle;
 }
 
-/** Nach dieser Zeit wird die neue Woche auch ohne alle Kacheln sichtbar. */
+/** After this time, the new week shows even if some tiles are missing. */
 const SWAP_DEADLINE = 1500;
 
-/** So lange dreht die Karte zurück nach Norden. */
 const ROTATE_DURATION = 400;
 
-/** Der Zustand einer Rolle: welche Quelle liegt, welche wartet. */
+/** The state of a role: which source shows and which source waits. */
 interface RoleState {
   active: 0 | 1;
   template: string | null;
@@ -174,30 +166,28 @@ function newRoleState(): RoleState {
   return { active: 0, template: null, space: null, swap: null, opacity: 1 };
 }
 
-/** Die beiden Ebenen-Namen einer Rolle. */
 function layerName(role: Role, space: 0 | 1): string {
   return `wert-${role}-${space === 0 ? 'a' : 'b'}`;
 }
 
-/** Ein gerundeter Fund liegt irgendwo in dieser Masche, nicht auf dem Punkt. */
+/** A rounded find is somewhere in this grid cell, not on the point. */
 const ROUNDED_RADIUS = 18;
 const POINT_RADIUS = MAP_PIN_RADIUS;
 
-/** Der eigene Standort trägt nie eine der sechs Objektfarben, sondern Blau. */
+/** The user location is always blue and never one of the six object colours. */
 const LOCATION_COLOR = '#1a73e8';
 
 function sourceFor(layer: ObjectLayer): string {
   return `objekte-${layer}`;
 }
 
-/** Die Schichten einer Ebene, in der Reihenfolge, in der sie liegen. */
+/** The paint layers of an object layer, in stacking order. */
 function layerPaintLayers(layer: ObjectLayer): string[] {
   if (layer === 'zonen') return ['objekte-zonen-flaeche', 'objekte-zonen-linie'];
   if (layer === 'location') return ['objekte-location-kreis', 'objekte-location-punkt'];
   return [`objekte-${layer}-punkt`];
 }
 
-/** Wie eine Ebene aussieht. */
 function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
   const source = sourceFor(layer);
   if (layer === 'zonen') {
@@ -222,8 +212,8 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
         id: 'objekte-location-kreis',
         type: 'fill',
         source: source,
-        // Der Genauigkeitskreis kommt als Fläche in Grad, damit er beim Zoomen
-        // mit dem Gelände wächst statt als fester Punktradius stehen zu bleiben.
+        // The accuracy circle is a polygon in degrees. Thus it scales with the
+        // terrain on zoom and does not keep a fixed pixel radius.
         filter: ['==', ['geometry-type'], 'Polygon'],
         paint: { 'fill-color': LOCATION_COLOR, 'fill-opacity': 0.15 },
       },
@@ -272,40 +262,40 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
   ];
 }
 
-/** MapLibre hinter der Schnittstelle. */
+/** MapLibre behind the adapter interface. */
 export class MapLibreAdapter implements MapAdapter {
   private module: MaplibreModule | null = null;
   private protocolName: string | null = null;
   private map: MapLibreMap | null = null;
   private readonly states = new Map<Role, RoleState>(ROLES.map((role) => [role, newRoleState()]));
-  /** Was auf den eigenen Ebenen liegt. */
+  /** The data on the object layers. */
   private readonly objects = new Map<ObjectLayer, FeatureCollection>();
-  /** Die Klick-Anmeldungen je Ebene. */
+  /** The click subscriptions for each layer. */
   private readonly abos = new Map<ObjectLayer, Subscription[]>();
   private chosen: ((layer: ObjectLayer, id: string) => void) | null = null;
-  /** Solange der Stil lädt, nimmt MapLibre keine Quelle an. */
+  /** MapLibre refuses sources while the style loads. */
   private styleReady = false;
 
   constructor(private readonly load: () => Promise<MaplibreModule>) {}
 
   warmUp(): void {
-    // Der Modullader gibt beim zweiten Aufruf dasselbe Versprechen zurück.
-    // Ein Anstoß vorab kostet darum nichts und spart einen Rahmen.
+    // The module loader gives the same promise on each call.
+    // Thus an early call costs nothing and saves one frame.
     void this.load();
   }
 
   async start(host: HTMLElement, options: MapOptions): Promise<void> {
     const module = await this.load();
     this.module = module;
-    // Das Stylesheet steht vor der Karte: sonst waeren die Bedienelemente
-    // einen Wimpernschlag lang ungestylt.
+    // Add the stylesheet before the map. This prevents a short flash of
+    // unstyled controls.
     ensureStyles(host.ownerDocument.head);
     module.setWorkerUrl(WORKER_PATH);
-    // Das Protokoll steht vor der Karte, sonst fiele die erste Kachel ins Leere.
+    // Add the protocol before the map. Otherwise the first tile request fails.
     module.addProtocol(options.protocol.name, (request) => options.protocol.resolve(request.url));
     this.protocolName = options.protocol.name;
-    // Die Karte bleibt unter Verschluss, solange der Stil lädt. Davor lehnt
-    // MapLibre jede Quelle ab.
+    // Keep the map private while the style loads.
+    // Before that, MapLibre refuses each source.
     const map = new module.Map({
       container: host,
       style: options.style,
@@ -314,12 +304,12 @@ export class MapLibreAdapter implements MapAdapter {
       minZoom: options.minZoom,
       maxZoom: options.maxZoom,
       maxBounds: options.maxBounds as [[number, number], [number, number]],
-      // Der Hinweis der Karte steht als eigener Baustein auf der Seite: der
-      // Stil bringt sonst seine eigenen Namen mit und schiebt sie ins Bild.
+      // The page shows the attribution in its own component.
+      // Otherwise the style adds its own attribution to the map.
       attributionControl: false,
     });
-    // `style.load` meldet den fertigen Stil. `load` wartet auf jede Kachel
-    // und bleibt über einer langsamen Leitung lange aus.
+    // `style.load` fires when the style is ready. `load` waits for each tile
+    // and can take a long time on a slow connection.
     await new Promise<void>((done) => {
       map.once('style.load', () => {
         done();
@@ -327,8 +317,8 @@ export class MapLibreAdapter implements MapAdapter {
     });
     this.map = map;
     this.styleReady = true;
-    // Ein Haken für den Board-Test: er schiebt die Karte um genaue Punkte.
-    // Ein Zug mit der Maus trifft sie nicht.
+    // A hook for the board test: it moves the map by exact points.
+    // A mouse drag is not accurate enough.
     const frame = host.ownerDocument.defaultView as MapWindow | null;
     if (frame !== null) {
       frame.pilzMap = {
@@ -357,8 +347,8 @@ export class MapLibreAdapter implements MapAdapter {
     if (!map) return;
     map.setStyle(style);
     this.styleReady = false;
-    // Ein neuer Stil wirft alle eigenen Quellen weg. Sie kommen zurück, sobald
-    // der Stil steht, sonst wären Vorhersage und Ebene nach dem Wechsel fort.
+    // A new style removes all custom sources. Add them again when the style
+    // is ready. Otherwise forecast and layer disappear after the change.
     map.once('style.load', () => {
       this.styleReady = true;
       for (const role of ROLES) {
@@ -378,8 +368,8 @@ export class MapLibreAdapter implements MapAdapter {
     const map = this.map;
     const state = this.state(role);
     if (!map || template === state.template) return;
-    // Ein noch offener Tausch wird zuerst zu Ende gebracht, sonst lägen drei
-    // Wochen übereinander und keine wäre sichtbar.
+    // Complete an open swap first. Otherwise three weeks stack
+    // and no week is visible.
     this.finishSwap(role);
     const alt = layerName(role, state.active);
     const next = layerName(role, state.active === 0 ? 1 : 0);
@@ -408,12 +398,12 @@ export class MapLibreAdapter implements MapAdapter {
         source: next,
         paint: {
           'raster-opacity': map.getLayer(alt) ? 0 : state.opacity,
-          // Ohne diese beiden Nullen blendet MapLibre über 300 ms ein. Die alte
-          // Woche ist da schon weg, und dazwischen bliebe die Karte leer.
+          // Without these two zeros, MapLibre fades in over 300 ms. The old week
+          // is already gone, so the map is empty during the fade.
           'raster-opacity-transition': { duration: 0, delay: 0 },
           'raster-fade-duration': 0,
-          // Hochgerechnet läge ein weicher Rand weit neben dem Wald der
-          // Grundkarte. Als Quadrat zeigt die Kachel ihre eigene Grenze.
+          // Upscaled tiles give a soft edge far from the base map forest.
+          // Square pixels keep the real tile boundary.
           'raster-resampling': 'nearest',
         },
       },
@@ -429,7 +419,7 @@ export class MapLibreAdapter implements MapAdapter {
     state.opacity = Math.min(Math.max(value, 0), 1);
     const map = this.map;
     if (!map || state.template === null) return;
-    // Nur die sichtbare Ebene: die wartende steht auf 0 und käme sonst zu früh.
+    // Only the visible layer. The waiting layer stays at 0 so it does not show too early.
     const visible = layerName(role, state.active);
     if (map.getLayer(visible)) map.setPaintProperty(visible, 'raster-opacity', state.opacity);
   }
@@ -437,8 +427,8 @@ export class MapLibreAdapter implements MapAdapter {
   fitBounds(bounds: Bounds, padding: Padding): void {
     const map = this.map;
     if (!map) return;
-    // Das Polster gehört an die Karte, nicht an den Aufruf: `fitBounds` zöge es
-    // sonst zweimal ab, einmal beim Rechnen und einmal beim Zeichnen.
+    // Set the padding on the map, not on the call. Otherwise `fitBounds`
+    // subtracts it twice: once to calculate and once to draw.
     map.setPadding(padding);
     map.fitBounds(bounds as [[number, number], [number, number]], { duration: 0 });
   }
@@ -495,7 +485,7 @@ export class MapLibreAdapter implements MapAdapter {
     return state;
   }
 
-  /** Vor welcher Ebene die neue liegt. */
+  /** The layer below which the new layer goes. */
   private ueber(role: Role): string | undefined {
     const map = this.map;
     if (!map) return undefined;
@@ -508,7 +498,7 @@ export class MapLibreAdapter implements MapAdapter {
     return this.firstObjectLayer(0);
   }
 
-  /** Die unterste Objektschicht ab `from` in `OBJECT_LAYERS`, die schon liegt. */
+  /** The lowest object layer from `from` in `OBJECT_LAYERS` that is on the map. */
   private firstObjectLayer(from: number): string | undefined {
     const map = this.map;
     if (!map) return undefined;
@@ -519,7 +509,7 @@ export class MapLibreAdapter implements MapAdapter {
     return undefined;
   }
 
-  /** Blendet die neue Woche ein, sobald ihre Kacheln liegen, und nimmt die alte weg. */
+  /** Shows the new week when its tiles are loaded and removes the old week. */
   private swapAfterLoad(map: MapLibreMap, role: Role, alt: string, next: string): void {
     const state = this.state(role);
     const done = (): void => {
@@ -530,8 +520,8 @@ export class MapLibreAdapter implements MapAdapter {
       this.remove(alt);
     };
     const onData = (event: MapSourceDataEvent): void => {
-      // Meldungen zur Quelle selbst kommen vor der ersten Kachel. Auf sie zu
-      // hören hieße, die alte Woche vor der neuen wegzunehmen.
+      // Source events come before the first tile. If we use them,
+      // the old week goes away before the new week shows.
       if (event.sourceId !== next) return;
       if (event.sourceDataType === 'metadata' || event.sourceDataType === 'visibility') return;
       if (event.isSourceLoaded) done();
@@ -555,7 +545,7 @@ export class MapLibreAdapter implements MapAdapter {
     return [center.lng, center.lat];
   }
 
-  /** Rechnet einen Punkt des Fensters in einen Ort um. */
+  /** Converts a window point to a location. */
   pointAt(x: number, y: number): readonly [number, number] | null {
     const map = this.map;
     if (!map) return null;
@@ -657,7 +647,7 @@ export class MapLibreAdapter implements MapAdapter {
     else map.dragPan.disable();
   }
 
-  /** Meldet einen Zuhörer auf mehrere Ereignisse an und gibt sie zusammen frei. */
+  /** Adds one listener to many events and gives one function that removes all. */
   private onEvents(kinds: readonly string[], run: (event: MapMouseEvent) => void): () => void {
     const map = this.map;
     if (!map) return () => undefined;
@@ -677,16 +667,16 @@ export class MapLibreAdapter implements MapAdapter {
     return { x: shown.x, y: shown.y };
   }
 
-  /** Schreibt die Daten in die Quelle der Ebene und legt Quelle und Schichten an, falls der Stil … */
+  /** Writes the data to the layer source. Adds source and paint layers if they are missing. */
   private addObjectLayer(layer: ObjectLayer, data: FeatureCollection): void {
     const map = this.map;
-    // Die Daten liegen schon in `objects`; der Stil legt sie auf, sobald er steht.
+    // The data is in `objects`. The style load adds it later.
     if (!map || !this.styleReady) return;
     const source = sourceFor(layer);
     const existing = map.getSource<GeoJSONSource>(source);
     if (existing) {
-      // `setData` gibt ein Versprechen zurück; niemand wartet darauf, weil die
-      // Karte selbst neu zeichnet, sobald die Quelle steht.
+      // Do not wait for the `setData` promise.
+      // The map draws again when the source is ready.
       void existing.setData(data);
       return;
     }

@@ -3,7 +3,7 @@ import { shortDate } from '../../core/i18n/dates';
 import { locationText } from '../../core/i18n/places';
 import type { I18nService } from '../../core/i18n/i18n.service';
 
-/** Eine Karte im Prüfstapel der Funde. */
+/** A card in the review stack of finds. */
 export interface FindCard {
   id: string;
   species: string;
@@ -13,7 +13,7 @@ export interface FindCard {
   photos: readonly string[];
 }
 
-/** Tag, Anzahl und Konto in einer Zeile. Ohne Anzahl fällt sie weg. */
+/** Date, count and account in one line. Without a count, the line has no count. */
 export function metaText(find: OpenFind, i18n: I18nService): string {
   const date = shortDate(find.foundOn, i18n);
   const person = find.ownerId;
@@ -22,7 +22,6 @@ export function metaText(find: OpenFind, i18n: I18nService): string {
     : i18n.translate('find.subline', { date, count: find.count, person });
 }
 
-/** Baut die Karte eines Fundes für den Stapel. */
 export function findCard(
   find: OpenFind,
   species: string,

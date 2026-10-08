@@ -5,7 +5,7 @@ import type { UserManager, UserManagerSettings } from 'oidc-client-ts';
 export type UserManagerFactory = (settings: UserManagerSettings) => Promise<UserManager>;
 
 /**
- * Loads `oidc-client-ts` with a dynamic import, so the map start does not load it. `userStore` keeps the tokens in memory, so no token survives a reload. A silent renewal restores the session. `stateStore` keeps the PKCE verifier in `sessionStorage`. It survives the redirect and ends with the tab.
+ * Loads `oidc-client-ts` with a dynamic import, so the map start does not load it.
  */
 export const USER_MANAGER_FACTORY = new InjectionToken<UserManagerFactory>('USER_MANAGER_FABRIK', {
   providedIn: 'root',
@@ -15,7 +15,11 @@ export const USER_MANAGER_FACTORY = new InjectionToken<UserManagerFactory>('USER
       const { InMemoryWebStorage, UserManager, WebStorageStateStore } = await import('oidc-client-ts');
       return new UserManager({
         ...settings,
+        // Tokens stay in memory, so no token survives a reload.
+        // After a reload, a silent renewal restores the session.
         userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
+        // The PKCE verifier must survive the redirect, but it is no token.
+        // `sessionStorage` ends with the tab.
         stateStore: new WebStorageStateStore({ store: sessionStorage }),
       });
     },

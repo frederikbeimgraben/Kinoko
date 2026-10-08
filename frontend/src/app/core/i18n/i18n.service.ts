@@ -52,11 +52,13 @@ export type LoadedTexts = Readonly<Partial<Record<Locale, Readonly<Record<string
 export const LANGUAGE_CHOICES: readonly LanguageChoice[] = ['de', 'en', 'system'];
 
 /**
- * The UI language as a signal: German, English or the browser language. A saved choice wins over the browser. A missing key uses German. `TextCatalogService` loads the database texts and gives them with {@link useTexts}. The built-in catalogue is the offline fallback. This service does not load texts itself, because `ApiClient` needs this service for its error messages.
+ * The UI language as a signal. `TextCatalogService` gives the database texts with {@link useTexts}.
  */
 @Injectable({ providedIn: 'root' })
 export class I18nService {
   private readonly _fallback = signal<FallbackTexts>(inject(FALLBACK_TEXTS));
+  // A saved choice wins over the browser. An English browser gives a half-translated app,
+  // because the species catalogue stays German.
   private readonly _choice = signal<LanguageChoice>(this.read() ?? 'system');
   private readonly _locale = signal<Locale>(DEFAULT_LOCALE);
   private readonly _texts = signal<LoadedTexts>({});

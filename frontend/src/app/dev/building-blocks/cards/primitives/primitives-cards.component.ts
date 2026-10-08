@@ -9,10 +9,10 @@ import { I18nService } from '../../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Die Wahlmöglichkeiten der Segment-Karte, in der Reihenfolge des Boards. */
+/** The options of the segment card, in the board order. */
 const SEGMENT_KEYS = ['forecast', 'layer', 'combination'] as const;
 
-/** Die sechs kleinen Bausteine der D1-Grundausstattung, je ihre Vorgabe. */
+/** The six small blocks of the D1 base kit, each with its reference design. */
 @Component({
   selector: 'app-primitives-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,

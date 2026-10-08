@@ -6,20 +6,14 @@ import { PermissionsStore } from '../../core/access/permissions.store';
 import type { Permission } from '../../core/api/models';
 import { ADMIN_PERMISSIONS } from './admin.entries';
 
-/**
- * Lässt eine Route der Verwaltung nur mit dem passenden Recht zu; ohne führt
- * sie zurück auf das Konto. `null` steht für den Bereich selbst: dafür genügt
- * irgendein Recht der Verwaltung.
- *
- * Der Wächter blendet aus, er entscheidet nichts. Jede Route des Servers prüft
- * ihr Recht selbst; wer die Adresse von Hand tippt, bekommt dort ein 403.
- */
+// Opens an admin route only with the matching permission, else goes to the account page. `null` accepts any admin permission.
+// This guard only hides routes. The server checks each permission and gives 403.
 export function requiresPermission(permission: Permission | null): CanActivateFn {
   return (): Observable<boolean | UrlTree> => {
     const rights = inject(PermissionsStore);
     const router = inject(Router);
-    // Beim Start läuft die stille Anmeldung noch. Ohne das Warten fiele ein
-    // tiefer Link in die Verwaltung immer auf das Konto zurück.
+    // At startup, the silent sign-in still runs. Without this wait, a deep link
+    // into the admin area always goes back to the account page.
     return toObservable(rights.settled).pipe(
       filter(Boolean),
       take(1),

@@ -15,7 +15,7 @@ import { SpeciesLookalikesComponent } from '../../../../features/species/section
 import { SpeciesTaxonomyComponent } from '../../../../features/species/sections/species-taxonomy.component';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Ein Art-Grundgerüst mit den Pflichtfeldern des Vertrags, sonst leer. */
+/** A species skeleton with the required contract fields. All other fields are empty. */
 function baseSpecies(overrides: Partial<SpeciesEntry> & Pick<SpeciesEntry, 'slug' | 'name'>): SpeciesEntry {
   return {
     id: overrides.slug,
@@ -42,7 +42,7 @@ function baseSpecies(overrides: Partial<SpeciesEntry> & Pick<SpeciesEntry, 'slug
   };
 }
 
-/** Die vier Farbzeilen, die `ColourSection.dc.html` für den Steinpilz zeigt. */
+/** The four color rows that `ColourSection.dc.html` shows for the porcini. */
 function boletusColours(i18n: I18nService): readonly ColourGroup[] {
   return [
     {
@@ -77,7 +77,7 @@ function boletusColours(i18n: I18nService): readonly ColourGroup[] {
   ];
 }
 
-/** Zwei Maßgruppen, wie `SizeSection.dc.html` sie für den Steinpilz zeigt. */
+/** Two measurement groups, as `SizeSection.dc.html` shows them for the porcini. */
 const CAP_MEASURES: readonly MeasurementRow[] = [
   { extent: 'width', spans: [{ from: 4, to: 20 }], unit: 'cm' },
 ];
@@ -86,7 +86,7 @@ const SPORE_MEASURES: readonly MeasurementRow[] = [
   { extent: 'width', spans: [{ from: 4.5, to: 5.5 }], unit: 'µm' },
 ];
 
-/** Die drei Verwechslungen, wie `LookalikeSection.dc.html` sie für den Steinpilz zeigt. */
+/** The three lookalikes, as `LookalikeSection.dc.html` shows them for the porcini. */
 function boletusLookalikes(i18n: I18nService): readonly Lookalike[] {
   return [
     {
@@ -116,12 +116,12 @@ function boletusLookalikes(i18n: I18nService): readonly Lookalike[] {
   ];
 }
 
-/** Ein Foto, wie es die Titelbild-Karte des Boards zeigt. */
+/** A photo, as the hero card of the board shows it. */
 function heroPhoto(): HeroPhoto {
   return { path: photoPath('bild-eins', 'full'), photographer: 'Marie Weber', licence: 'cc_by_sa_4' };
 }
 
-/** Die Karten der Artseite: Titelbild, Einstufung, Einordnung, Abmessungen, Farben, Verwechslungen, Bilder. */
+/** The species page cards: hero, rating, taxonomy, sizes, colors, lookalikes and photos. */
 @Component({
   selector: 'app-species-page-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,14 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { VisibilityService } from '../visibility/visibility.service';
 import { cached, cachedFetch, type TileKind } from './tile-cache';
 
-/**
- * Kacheln und Manifeste vom Gerät. Im Hintergrund geht nichts ins Netz.
- */
+/** Tiles and manifests from the device. A hidden page makes no network requests. */
 @Injectable({ providedIn: 'root' })
 export class TileStore {
   private readonly visibility = inject(VisibilityService);
 
-  /** Holt eine Kachel. `null` heißt: nichts zu zeigen. */
+  /** Gets a tile. `null` means that there is nothing to show. */
   tile(url: string): Promise<Response | null> {
     return this.load(url, 'image');
   }

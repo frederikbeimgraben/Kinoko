@@ -5,6 +5,7 @@ import {
   backoffMs,
   etaSeconds,
   nextPart,
+  percentHashed,
   percentSent,
   readyToComplete,
   reduce,
@@ -172,5 +173,62 @@ describe('upload state machine', () => {
     expect(asResumeRecord({ uploadId: 'u', kind: 'dem', ...FILE })).not.toBeNull();
     expect(asResumeRecord({ uploadId: 'u', kind: 'dem', name: 'x' })).toBeNull();
     expect(asResumeRecord('text')).toBeNull();
+  });
+
+  it('uses the default part size when the session gives none', () => {
+    const created = run([
+      { type: 'start', kind: 'trees-grid', file: FILE, activate: true },
+      { type: 'created', session: { ...session(), partSize: 0 }, at: 0 },
+    ]);
+
+    expect(created.partSize).toBe(16 * 1024 * 1024);
+    expect(nextPart(created)).toEqual({ start: 0, end: 40 });
+  });
+
+  it('ignores parts, tries and pauses outside of the send phases', () => {
+    const creating = reduce(INITIAL_UPLOAD, { type: 'start', kind: 'dem', file: FILE, activate: false });
+
+    expect(reduce(creating, { type: 'sent', received: 16, at: 0 })).toBe(creating);
+    expect(reduce(creating, { type: 'retry', attempt: 1 })).toBe(creating);
+    expect(reduce(creating, { type: 'pause' })).toBe(creating);
+    expect(reduce(reduce(started, { type: 'retry', attempt: 1 }), { type: 'pause' }).phase).toBe('paused');
+  });
+
+  it('counts the hashed bytes only with a file and caps them at the file size', () => {
+    expect(reduce(INITIAL_UPLOAD, { type: 'hashed', bytes: 8 })).toBe(INITIAL_UPLOAD);
+    expect(reduce(INITIAL_UPLOAD, { type: 'digest', hex: 'ab' })).toBe(INITIAL_UPLOAD);
+
+    expect(reduce(started, { type: 'hashed', bytes: 10 }).hashed).toBe(10);
+    expect(percentHashed(reduce(started, { type: 'hashed', bytes: 400 }))).toBe(100);
+    expect(percentHashed(INITIAL_UPLOAD)).toBe(0);
+    expect(percentSent(INITIAL_UPLOAD)).toBe(0);
+  });
+
+  it('resets only an upload that is not active', () => {
+    expect(reduce(started, { type: 'reset' })).toBe(started);
+    expect(reduce(reduce(started, { type: 'cancel' }), { type: 'reset' })).toBe(INITIAL_UPLOAD);
+  });
+
+  it('gives no rate for samples at the same time and no remaining time without a rate', () => {
+    const still = [
+      { at: 1000, sent: 0 },
+      { at: 1000, sent: 16 },
+    ];
+
+    expect(throughput(still)).toBeNull();
+    expect(etaSeconds({ ...started, samples: still })).toBeNull();
+    expect(etaSeconds({ ...started, samples: [{ at: 0, sent: 16 }, { at: 1000, sent: 16 }] })).toBeNull();
+    expect(etaSeconds({ ...started, file: null, samples: [{ at: 0, sent: 0 }, { at: 1000, sent: 16 }] })).toBeNull();
+  });
+
+  it('keeps no record for an upload without a session, or a finished upload', () => {
+    expect(resumeRecord({ ...started, kind: null })).toBeNull();
+    expect(resumeRecord({ ...started, phase: 'done' })).toBeNull();
+    expect(resumeRecord({ ...started, phase: 'idle' })).toBeNull();
+    expect(resumeRecord({ ...started, phase: 'failed' })).not.toBeNull();
+    expect(sameFile(null, 'trees-grid', FILE)).toBe(false);
+    expect(sameFile(resumeRecord(started), 'trees-grid', { ...FILE, name: 'x' })).toBe(false);
+    expect(sameFile(resumeRecord(started), 'trees-grid', { ...FILE, size: 1 })).toBe(false);
+    expect(asResumeRecord(null)).toBeNull();
   });
 });

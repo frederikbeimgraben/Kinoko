@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-/** Ob die App im Blick ist. Die Karte pausiert im Hintergrund. */
+/** Tells if the app is visible. The map pauses when the app is in the background. */
 @Injectable({ providedIn: 'root' })
 export class VisibilityService {
   private readonly _visible = signal(document.visibilityState === 'visible');
