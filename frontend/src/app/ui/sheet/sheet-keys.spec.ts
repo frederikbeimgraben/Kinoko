@@ -20,7 +20,9 @@ function press(target: HTMLElement, shiftKey = false): KeyboardEvent {
 }
 
 function pointer(target: HTMLElement, kind: string, clientX: number, clientY: number): void {
-  target.dispatchEvent(new MouseEvent(kind, { bubbles: true, clientX, clientY }));
+  const event = new MouseEvent(kind, { bubbles: true, clientX, clientY });
+  Object.defineProperty(event, 'pointerId', { value: 1 });
+  target.dispatchEvent(event);
 }
 
 describe('SheetComponent keys and axes', () => {
