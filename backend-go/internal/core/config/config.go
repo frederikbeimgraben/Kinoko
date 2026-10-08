@@ -31,6 +31,8 @@ type Settings struct {
 	DataDir        string
 	DataRoot       string
 	PipelineEnable bool
+	// Schedule is the weekly start of the fetch and render runs: "<Weekday> HH:MM <IANA zone>".
+	Schedule string
 }
 
 // Defaults are the settings for local development.
@@ -50,6 +52,7 @@ func Defaults() Settings {
 		RunLogs:        "./var/runs",
 		DataRoot:       "./var/daten",
 		PipelineEnable: true,
+		Schedule:       "Mon 03:30 Europe/Berlin",
 	}
 }
 
@@ -86,6 +89,7 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("RUN_LOGS", &s.RunLogs)
 	text("DATEN", &s.DataDir)
 	text("DATA", &s.DataRoot)
+	text("SCHEDULE", &s.Schedule)
 	if value, ok := lookup("PILZE_MAX_PHOTO_BYTES"); ok {
 		n, err := strconv.ParseInt(value, 10, 64)
 		if err != nil || n <= 0 {

@@ -90,6 +90,15 @@ func (s *Store) stamp() db.Time { return db.At(s.now()) }
 
 // Queue adds a run with one queued species row for each species with forecast.
 func (s *Store) Queue(ctx context.Context, kind enums.RunKind, by db.ID) (Run, error) {
+	return s.queue(ctx, kind, &by)
+}
+
+// QueueScheduled adds a run that no person started, for example a run of the weekly schedule.
+func (s *Store) QueueScheduled(ctx context.Context, kind enums.RunKind) (Run, error) {
+	return s.queue(ctx, kind, nil)
+}
+
+func (s *Store) queue(ctx context.Context, kind enums.RunKind, by *db.ID) (Run, error) {
 	run, err := db.InTxValue(ctx, s.handle, func(tx *sql.Tx) (Run, error) {
 		species, err := db.Column[db.ID](ctx, tx, "SELECT id FROM species WHERE forecast_enabled = 1")
 		if err != nil {
@@ -101,7 +110,7 @@ func (s *Store) Queue(ctx context.Context, kind enums.RunKind, by db.ID) (Run, e
 			State:         enums.RunStateQueued,
 			QueuedAt:      s.stamp(),
 			ProgressTotal: len(species),
-			TriggeredByID: &by,
+			TriggeredByID: by,
 		}
 		if _, err := tx.ExecContext(ctx, `INSERT INTO pipeline_run (`+runCols+`)
 			VALUES (?, ?, ?, ?, NULL, NULL, NULL, NULL, 0, ?, ?)`,
@@ -137,10 +146,11 @@ func getRun(ctx context.Context, q db.Querier, id db.ID) (Run, error) {
 // The bool is false when no run waits.
 func (s *Store) Claim(ctx context.Context) (Run, bool, error) {
 	claimed, err := db.InTxValue(ctx, s.handle, func(tx *sql.Tx) (*Run, error) {
+		// The insert order breaks a tie of queued_at, so a fetch queued before a render runs first.
 		id, found, err := db.Maybe(ctx, tx, func(sc db.Scanner) (db.ID, error) {
 			var id db.ID
 			return id, sc.Scan(&id)
-		}, "SELECT id FROM pipeline_run WHERE state = ? ORDER BY queued_at LIMIT 1", enums.RunStateQueued)
+		}, "SELECT id FROM pipeline_run WHERE state = ? ORDER BY queued_at, rowid LIMIT 1", enums.RunStateQueued)
 		if err != nil || !found {
 			return nil, err
 		}
