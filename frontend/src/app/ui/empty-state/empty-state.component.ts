@@ -1,23 +1,20 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent } from '../button/button.component';
-import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
+import { StateViewComponent } from '../state-view/state-view.component';
+import type { IconName } from '../svg-icon/svg-icon.component';
 
-/** Leerzustand einer Liste: Bild, Satz, dann eine mögliche Handlung. */
+/** The empty state of a list. It shows `app-state-view` with a tonal action. */
 @Component({
   selector: 'app-empty-state',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, SvgIconComponent],
+  imports: [StateViewComponent],
   templateUrl: './empty-state.component.html',
   styleUrl: './empty-state.component.scss',
 })
 export class EmptyStateComponent {
   readonly text = input.required<string>();
-  /** Das Bild über dem Satz. Ohne Angabe steht dort der leere Korb. */
   readonly icon = input<IconName>('empty');
-  /** Die Beschriftung des Knopfs. Ohne sie bleibt der Leerzustand ein Satz. */
+  /** Without a label, the state has no button. */
   readonly action = input<string>();
-  /** Die Handlung als gefüllter Knopf, etwa das Anmelden ohne Konto. */
-  readonly primaryAction = input(false);
 
   readonly actionClick = output();
 }

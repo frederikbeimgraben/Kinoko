@@ -1,0 +1,26 @@
+// The bar per `kit.css` `.bar.lead` and the body per `.pad`.
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.page__bar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  block-size: 72px;
+  padding: 0 8px;
+}
+
+.page__title {
+  flex: 1;
+  padding-inline-start: 8px;
+}
+
+.page__pad {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 16px 32px;
+}

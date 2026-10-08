@@ -13,7 +13,7 @@ import { ImageViewerComponent } from './image-viewer.component';
 
 const FULL_PATH = '/api/photos/bild-eins/full';
 
-/** Der Zurück-Knopf im Kopf der Seite trägt nur seinen Namen. */
+/** The back button in the page head has only its name. */
 function backLabel(): string {
   return TestBed.inject(I18nService).translate('common.back');
 }
@@ -28,9 +28,13 @@ async function build(
     providers: [provideHttpClient(), provideHttpClientTesting(), ...extra],
   });
   const http = TestBed.inject(HttpTestingController);
+  // The image loads through a resource: its request starts after a turn of the event loop.
+  result.detectChanges();
+  await new Promise((done) => setTimeout(done));
   for (const request of http.match(FULL_PATH)) {
     request.flush(new Blob(['x'], { type: 'image/jpeg' }));
   }
+  await new Promise((done) => setTimeout(done));
   result.detectChanges();
   return result;
 }

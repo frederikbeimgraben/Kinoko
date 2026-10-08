@@ -42,6 +42,19 @@ describe('PrivateImageComponent', () => {
     await noViolations(container);
   });
 
+  it('shows a shimmering skeleton area until the file comes', async () => {
+    const { container, http, refresh } = await build('/api/species-images/bild-eins/thumb');
+    refresh();
+
+    expect(container).toHaveClass('private--loading', 'motion-shimmer');
+
+    http.expectOne('/api/species-images/bild-eins/thumb').flush(new Blob(['x'], { type: 'image/jpeg' }));
+    await vi.waitFor(() => {
+      refresh();
+      expect(container).not.toHaveClass('private--loading');
+    });
+  });
+
   it('bleibt leer, wenn die Datei nicht kommt', async () => {
     const { container, http, refresh } = await build('/api/species-images/bild-eins/thumb');
 

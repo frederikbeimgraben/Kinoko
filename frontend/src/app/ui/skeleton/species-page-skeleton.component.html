@@ -1,0 +1,8 @@
+<div class="page__bar">
+  <ng-content select="[lead]" />
+  <app-skeleton class="page__title" kind="line" width="40%" height="24px" />
+</div>
+<div class="page__pad" aria-hidden="true">
+  <app-skeleton kind="block" radius="var(--r-sheet)" [height]="heroHeight()" />
+  <app-skeleton kind="rows" shape="row" lead="none" trail="value" [count]="9" [lines]="1" [labels]="labels" />
+</div>

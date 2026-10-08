@@ -1,25 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 let nextNumber = 0;
 
 /**
- * Ein Suchfeld mit Lupe und Löschen. Das Löschen erscheint bei Inhalt.
+ * A search field with a magnifier and a clear button for text. It stays usable while the data loads.
  */
 @Component({
   selector: 'app-search-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SvgIconComponent, TranslatePipe],
+  imports: [RippleDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './search-field.component.html',
   styleUrl: './search-field.component.scss',
 })
 export class SearchFieldComponent {
   readonly value = input<string>('');
   readonly placeholder = input<string>('');
-  /** Solange der Katalog lädt, bleibt das Feld eine leere Fläche. */
-  readonly loading = input(false);
-  /** In einer Leiste steht das Feld ohne eigene Fläche. */
+  /** In a bar, the field has no area of its own. */
   readonly plain = input(false);
 
   readonly valueChange = output<string>();

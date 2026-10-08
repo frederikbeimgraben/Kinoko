@@ -13,10 +13,10 @@ describe('PrimitivesCardsComponent', () => {
     const { container } = await render(PrimitivesCardsComponent);
 
     const sizes: Record<string, { width: string; height: string }> = {
-      Badge: { width: '120px', height: '24px' },
+      Badge: { width: '120px', height: '40px' },
       Field: { width: '358px', height: '84px' },
       Group: { width: '358px', height: '120px' },
-      Icon: { width: '24px', height: '24px' },
+      Icon: { width: '40px', height: '40px' },
       Section: { width: '358px', height: '160px' },
       Segment: { width: '358px', height: '48px' },
     };

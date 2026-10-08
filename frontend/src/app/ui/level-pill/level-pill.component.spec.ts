@@ -21,10 +21,10 @@ describe('LevelPillComponent', () => {
     });
 
     const pill = container.querySelector<HTMLElement>('.level');
-    if (pill === null) throw new Error('Die Marke steht nicht im Baum.');
-    // Das globale Stilblatt mit --radius-md: 8px fehlt im Test. Geprüft
-    // wird darum die Bindung an das Token, nicht der aufgelöste Wert.
-    expect(getComputedStyle(pill).borderRadius).toBe('var(--pilz-level-radius, var(--radius-md))');
+    if (pill === null) throw new Error('The badge is not in the tree.');
+    // The test has no global style sheet with --r-badge: 8px.
+    // Thus the test checks the link to the token, not the resolved value.
+    expect(getComputedStyle(pill).borderRadius).toBe('var(--pilz-level-radius, var(--r-badge))');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

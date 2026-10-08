@@ -46,7 +46,9 @@
     "beispiel.wiesenchampignon": "Wiesenchampignon",
     "beispiel.fundLoeschen": "Fund löschen?",
     "beispiel.fundKurz": "Pfifferling · 6. September",
-    "beispiel.hintergrund": "Hintergrund"
+    "beispiel.hintergrund": "Hintergrund",
+    "beispiel.uebertragungAusstehend": "1 Übertragung ausstehend",
+    "beispiel.ohneGruppe": "ohne Gruppe"
   },
   "en": {
     "beispiel.steinpilz": "Penny bun",
@@ -95,6 +97,8 @@
     "beispiel.wiesenchampignon": "Field mushroom",
     "beispiel.fundLoeschen": "Delete find?",
     "beispiel.fundKurz": "Chanterelle · 6 September",
-    "beispiel.hintergrund": "Background"
+    "beispiel.hintergrund": "Background",
+    "beispiel.uebertragungAusstehend": "1 transfer pending",
+    "beispiel.ohneGruppe": "no group"
   }
 }
