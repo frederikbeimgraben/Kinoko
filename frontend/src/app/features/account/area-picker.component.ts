@@ -66,7 +66,7 @@ export class AreaPickerComponent {
 
   constructor() {
     this.store.prepare();
-    void this.entries.load();
+    this.entries.loadOnSignIn(this.entries.signedIn);
   }
 
   protected async download(zone: Zone): Promise<void> {

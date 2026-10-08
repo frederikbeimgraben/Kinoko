@@ -6,7 +6,7 @@
     [detents]="DETENTS"
     (closed)="cancelled.emit()"
   >
-    <div class="formSheet__content">
+    <div class="formSheet__content" [class.formSheet__content--modal]="modal()">
       <ng-content />
     </div>
     <app-action-bar

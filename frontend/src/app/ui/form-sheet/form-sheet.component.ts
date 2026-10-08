@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../sheet/sheet.component';
@@ -30,4 +31,7 @@ export class FormSheetComponent {
   readonly cancelled = output();
 
   protected readonly DETENTS = DETENTS;
+
+  /** On the desktop the sheet is a modal. The content is in this view, so the class goes on it here. */
+  protected readonly modal = inject(ViewportService).wide;
 }

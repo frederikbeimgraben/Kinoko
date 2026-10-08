@@ -1,0 +1,19 @@
+<app-block-card block="GroupCreateBody" [width]="358" [height]="400">
+  <app-form-field [label]="'common.name' | t" [section]="true" />
+</app-block-card>
+
+<app-block-card block="GroupJoinBody" [width]="358" [height]="400">
+  <app-form-field [label]="'group.inviteCode' | t" [section]="true" />
+</app-block-card>
+
+<app-block-card block="DataExportBody" [width]="358" [height]="400">
+  <app-data-export-body format="json" [parts]="parts" [counts]="counts" />
+</app-block-card>
+
+<app-block-card block="DataExportGpxBody" [width]="358" [height]="400">
+  <app-data-export-body format="gpx" [parts]="parts" [counts]="counts" />
+</app-block-card>
+
+<app-block-card block="EntriesFilterBody" [width]="358" [height]="400">
+  <app-entries-filter-body [filter]="filter" [groups]="groups" [zones]="zones" today="2026-09-10" />
+</app-block-card>

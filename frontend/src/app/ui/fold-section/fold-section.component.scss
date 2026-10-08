@@ -2,10 +2,11 @@
   display: block;
 }
 
+// `FoldSection.dc.html` sets a gap of 12 on its `.sec`.
 .sec {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .fold {

@@ -11,7 +11,10 @@
 }
 
 // Kit `.pane.middle` 520 px on `--surface-mid` next to `.pane.detail` on `--bg`.
+// The account has no map pane: a modal stands at the centre of the window.
 .account--wide {
+  --sheet-modal-start: 0;
+
   display: grid;
   grid-template-columns: var(--w-pane-list) minmax(0, 1fr);
   block-size: 100%;

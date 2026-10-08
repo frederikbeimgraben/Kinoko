@@ -44,6 +44,7 @@ async function open(page: Page, path: string, me: unknown = ME): Promise<void> {
     '/api/me': me,
     '/api/groups': { items: [BOARD_GROUP, GROUPS[1]] },
     '/api/glossary': { items: BOARD_GLOSSARY },
+    '/api/combinations': { items: [], nextCursor: null },
   });
   await flatMap(page);
   await page.goto(path);
