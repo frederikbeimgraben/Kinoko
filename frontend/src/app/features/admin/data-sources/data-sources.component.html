@@ -40,7 +40,7 @@
         @for (row of uploads(); track row.kind) {
           <app-list-row
             [title]="row.title"
-            [subline]="row.subline"
+            [subline]="wide() ? row.subline : row.sublineWithUses"
             [badge]="row.state"
             [badgeKind]="row.tone"
             [clickable]="true"

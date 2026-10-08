@@ -23,6 +23,8 @@ export interface UploadRow {
   readonly state: string;
   readonly tone: BadgeKind;
   readonly uses: readonly string[];
+  /** The sub-line with the uses as text, for the phone: it has no room for the use badges. */
+  readonly sublineWithUses: string;
 }
 
 /** A row of a remote source in the overview. */
@@ -59,15 +61,17 @@ export function uploadRow(source: DataSource, text: Translate, locale: string): 
     source.satisfiedBy === null
       ? null
       : text('admin.dataSources.satisfiedBy', { name: text(KIND_TEXT[source.satisfiedBy]) });
+  const subline =
+    covered ?? (version === null ? text('admin.dataSources.noVersion') : versionFacts(version, text, locale));
+  const uses = source.usedBy.map((use) => text(USE_TEXT[use]));
   return {
     kind: source.kind,
     title: text(KIND_TEXT[source.kind]),
-    subline:
-      covered ??
-      (version === null ? text('admin.dataSources.noVersion') : versionFacts(version, text, locale)),
+    subline,
     state: text(STATE_TEXT[source.state]),
     tone: STATE_TONE[source.state],
-    uses: source.usedBy.map((use) => text(USE_TEXT[use])),
+    uses,
+    sublineWithUses: joined([subline, ...uses]),
   };
 }
 
