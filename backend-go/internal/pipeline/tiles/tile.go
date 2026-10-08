@@ -79,6 +79,12 @@ func zeroNaN(v float32) float32 {
 	return v
 }
 
+// point returns the value and the weight of one point, NaN as 0, as
+// nan_to_num(from_byte(...)) in pyramid.halve.
+func point(code, weight []uint8, k int) (value, share float32) {
+	return zeroNaN(geo.FromByte(code[k])), zeroNaN(geo.FromByte(weight[k]))
+}
+
 // Halve averages each block of 2×2 points of a rows×cols field into one
 // point, weighted, as pyramid.halve. It returns the mean value and the mean
 // weight. A block without weight gets no data. The arithmetic is float32.
@@ -88,12 +94,15 @@ func Halve(code, weight []uint8, rows, cols int) (c, w []uint8) {
 	nan := float32(math.NaN())
 	for i := range or {
 		for j := range oc {
-			var total, mass float32
-			for _, k := range [4]int{(2*i)*cols + 2*j, (2*i)*cols + 2*j + 1, (2*i+1)*cols + 2*j, (2*i+1)*cols + 2*j + 1} {
-				value, share := zeroNaN(geo.FromByte(code[k])), zeroNaN(geo.FromByte(weight[k]))
-				total += float32(value * share) // The conversion blocks a fused multiply-add: numpy rounds the product.
-				mass += share
-			}
+			top, bottom := (2*i)*cols+2*j, (2*i+1)*cols+2*j
+			v00, w00 := point(code, weight, top)
+			v01, w01 := point(code, weight, top+1)
+			v10, w10 := point(code, weight, bottom)
+			v11, w11 := point(code, weight, bottom+1)
+			// numpy adds the pairs of a row first, then the rows; float32 sums depend on the order.
+			// The float32 conversions block a fused multiply-add, because numpy rounds each product.
+			total := (float32(v00*w00) + float32(v01*w01)) + (float32(v10*w10) + float32(v11*w11))
+			mass := (w00 + w01) + (w10 + w11)
 			mean, quarter := nan, nan
 			if mass > 0 {
 				mean, quarter = total/mass, mass/4

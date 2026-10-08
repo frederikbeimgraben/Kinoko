@@ -1,15 +1,19 @@
 """Write the golden tiles of the Go package tiles from the Python reference.
 
-Run in the modell geo shell:
-  cd modell && nix develop .#geo -c python \
-    ../backend-go/internal/pipeline/tiles/testdata/gen_golden.py \
-    ../backend-go/internal/pipeline/tiles/testdata
+Run with the GDAL of the backend shell (3.13.2, root flake nixpkgs), so the
+warp is the same code as in Go. The modell geo shell builds GDAL 3.12 from source.
+  nix build -o pyenv --impure --expr 'let p = (builtins.getFlake
+    "/home/user/Kinoko").inputs.nixpkgs.legacyPackages.x86_64-linux; in
+    p.symlinkJoin { name = "g"; paths = [ (p.python3.withPackages (ps:
+    [ps.rasterio ps.pyproj ps.pillow ps.numpy])) p.gdal ]; }'
+  PATH=$PWD/pyenv/bin:$PATH python gen_golden.py <this testdata folder>
 
 Outputs:
   render/      pyramid.render_field on a synthetic EPSG:3035 field (2 bands)
   coarsen/     pyramid.coarsen on random zoom-12 tiles with gaps
   golden.json  inputs, tile orders, gdalwarp bounds, fine_layers.raster_block
 """
+import base64
 import json
 import shutil
 import subprocess
@@ -97,7 +101,7 @@ with rasterio.open(bands) as src:
 golden["blockCut"] = {"box": list(box), "side": side, "nodata": -32767.0,
                       "pixel": (box[2] - box[0]) / side,
                       "shape": list(shares.shape),
-                      "bytes": pyramid.to_byte(shares).flatten().tolist()}
+                      "bytes": base64.b64encode(pyramid.to_byte(shares).tobytes()).decode()}
 
 # coarsen on random tiles with gaps; one child of a parent is missing.
 rng = np.random.default_rng(5)
