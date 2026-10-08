@@ -238,9 +238,9 @@ type speciesTermRow struct {
 }
 
 type lookalikeRow struct {
-	A, B         db.ID
-	DifferenceA  *string
-	DifferenceB  *string
+	A, B        db.ID
+	DifferenceA *string
+	DifferenceB *string
 }
 
 // children holds the child rows of some species, grouped by species.

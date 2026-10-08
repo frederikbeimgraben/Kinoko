@@ -120,11 +120,11 @@ fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#2f5fa8"
 // smallData is a data folder with four species and the given reactions.
 func smallData(reactions string) fstest.MapFS {
 	files := fstest.MapFS{
-		"taxonomie.json":                            {Data: []byte(smallTaxonomy)},
-		"arten/steinpilz.toml":                      {Data: []byte(smallProfile("Steinpilz", "Boletus edulis", `synonyme = ["Boletus bulbosus"]`))},
-		"arten/braetling.toml":                      {Data: []byte(smallProfile("Brätling", "Lactarius volemus", ""))},
+		"taxonomie.json":                             {Data: []byte(smallTaxonomy)},
+		"arten/steinpilz.toml":                       {Data: []byte(smallProfile("Steinpilz", "Boletus edulis", `synonyme = ["Boletus bulbosus"]`))},
+		"arten/braetling.toml":                       {Data: []byte(smallProfile("Brätling", "Lactarius volemus", ""))},
 		"arten/flockenstieliger-hexenroehrling.toml": {Data: []byte(smallProfile("Flockenstieliger Hexenröhrling", "Neoboletus erythropus", ""))},
-		"arten/butterpilz.toml":                     {Data: []byte(smallProfile("Butterpilz", "Suillus luteus", ""))},
+		"arten/butterpilz.toml":                      {Data: []byte(smallProfile("Butterpilz", "Suillus luteus", ""))},
 	}
 	if reactions != "" {
 		files[ReactionsFile] = &fstest.MapFile{Data: []byte(reactions)}

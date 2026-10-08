@@ -312,8 +312,8 @@ func (m *Module) setForecast(r *http.Request) (web.Response, error) {
 	return web.OK(profile), nil
 }
 
-// Counts are the numbers of a species for the editors.
-type Counts struct {
+// SpeciesCounts are the numbers of a species for the editors.
+type SpeciesCounts struct {
 	Records int `json:"records"`
 	Finds   int `json:"finds"`
 	Photos  int `json:"photos"`
@@ -372,9 +372,9 @@ func countMap(rows []idCount) map[db.ID]int {
 
 // countsFor gives records, finds and photos of each species. The records
 // come from the finished run with the latest queued_at.
-func countsFor(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]Counts, error) {
+func countsFor(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]SpeciesCounts, error) {
 	if len(ids) == 0 {
-		return map[db.ID]Counts{}, nil
+		return map[db.ID]SpeciesCounts{}, nil
 	}
 	in := db.Placeholders(len(ids))
 	args := db.Args(ids)
@@ -395,8 +395,8 @@ func countsFor(ctx context.Context, q db.Querier, ids []db.ID) (map[db.ID]Counts
 		return nil, err
 	}
 	r, f, p := countMap(records), countMap(finds), countMap(photos)
-	return fn.Reduce(ids, map[db.ID]Counts{}, func(acc map[db.ID]Counts, id db.ID) map[db.ID]Counts {
-		acc[id] = Counts{Records: r[id], Finds: f[id], Photos: p[id]}
+	return fn.Reduce(ids, map[db.ID]SpeciesCounts{}, func(acc map[db.ID]SpeciesCounts, id db.ID) map[db.ID]SpeciesCounts {
+		acc[id] = SpeciesCounts{Records: r[id], Finds: f[id], Photos: p[id]}
 		return acc
 	}), nil
 }

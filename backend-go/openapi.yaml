@@ -3040,6 +3040,14 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/Lookalike"
+            reactions:
+              description: The reactions to reagents, ordered by position. Only the profile has them; a species write keeps them.
+              type: array
+              items:
+                $ref: "#/components/schemas/SpeciesReaction"
+            reactionCount:
+              description: The count of reactions. Only the items of the bundle have it.
+              type: integer
           required:
             - names
             - measurements
@@ -3053,6 +3061,59 @@ components:
             - seasons
             - terms
             - lookalikes
+
+    SpeciesReaction:
+      type: object
+      properties:
+        reagent:
+          type: object
+          properties:
+            slug:
+              type: string
+            name:
+              type: string
+          required: [slug, name]
+        reading:
+          type: string
+        part:
+          oneOf:
+            - $ref: "#/components/schemas/BodyPart"
+            - type: "null"
+        location:
+          oneOf:
+            - type: string
+            - type: "null"
+        result:
+          type: string
+          enum: [positive, negative, variable, unknown]
+        colour:
+          oneOf:
+            - $ref: "#/components/schemas/ColourValue"
+            - type: "null"
+        contested:
+          type: boolean
+        partlyConfirmed:
+          type: boolean
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReactionSource"
+      required: [reagent, reading, part, location, result, colour, contested, partlyConfirmed, sources]
+
+    ReactionSource:
+      type: object
+      properties:
+        label:
+          type: string
+        url:
+          oneOf:
+            - type: string
+            - type: "null"
+        year:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [label, url, year]
 
     SpeciesCounts:
       type: object

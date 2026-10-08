@@ -41,10 +41,10 @@ type Reaction struct {
 }
 
 type reactionRow struct {
-	Position        int
-	Reaction        Reaction
-	ColourName      *string
-	ColourHex       *string
+	Position   int
+	Reaction   Reaction
+	ColourName *string
+	ColourHex  *string
 }
 
 type reactionSourceRow struct {
