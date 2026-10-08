@@ -93,12 +93,6 @@ func inlandMask(outline *godal.Dataset, box [4]float64, pixel float64) ([]uint8,
 	return mask, width, height, err
 }
 
-// band is one field of a block before the warp onto the tile grid.
-type band struct {
-	name   string
-	values []float32
-}
-
 // treeBlock gives the fields of the tree layers on one block, as tree_block,
 // or nil when the block holds no forest and no inland ground.
 func treeBlock(m treeMap, outline *godal.Dataset, merc [4]float64, layers []FineLayer) (*blockFields, error) {

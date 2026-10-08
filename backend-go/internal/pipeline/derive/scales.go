@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/numeric"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
@@ -45,12 +46,8 @@ func mapLabels(radii []int) []string {
 // class list of tree_scales.py. names is the column order of the file.
 func shareColumns(names []string) []string {
 	return slices.DeleteFunc(slices.Clone(names), func(n string) bool {
-		return len(n) < 5 || n[:5] != "tree_" || hasSuffix(n, "_5km") || hasSuffix(n, "_fine")
+		return !strings.HasPrefix(n, "tree_") || strings.HasSuffix(n, "_5km") || strings.HasSuffix(n, "_fine")
 	})
-}
-
-func hasSuffix(s, suffix string) bool {
-	return len(s) >= len(suffix) && s[len(s)-len(suffix):] == suffix
 }
 
 // TreeScales gives the forest-weighted share of each class within 500 m,

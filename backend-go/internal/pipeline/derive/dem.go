@@ -37,11 +37,9 @@ func BuildDEM(ctx context.Context, tiles []string, g Grid, dir string) (DEMFiles
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return f, err
 	}
-	registerGDAL()
-	sorted := slices.Sorted(slices.Values(tiles))
-	vrt, err := godal.BuildVRT(f.VRT, sorted, nil)
+	vrt, err := buildVRT(f.VRT, slices.Sorted(slices.Values(tiles)))
 	if err != nil {
-		return f, fmt.Errorf("derive: build VRT: %w", err)
+		return f, err
 	}
 	if err := vrt.Close(); err != nil {
 		return f, err

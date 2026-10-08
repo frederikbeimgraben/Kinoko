@@ -3,6 +3,7 @@ package derive
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"sync"
 
 	"github.com/airbusgeo/godal"
@@ -116,6 +117,40 @@ func createFloat(driver godal.DriverName, name string, bands [][]float32, nx, ny
 		if err := band.Write(0, 0, bands[i], nx, ny); err != nil {
 			return fail(err)
 		}
+	}
+	return ds, nil
+}
+
+// RasterBounds gives minX, minY, maxX, maxY of a north-up raster.
+func RasterBounds(gt [6]float64, nx, ny int) [4]float64 {
+	x0, x1 := gt[0], gt[0]+float64(nx)*gt[1]
+	y0, y1 := gt[3], gt[3]+float64(ny)*gt[5]
+	return [4]float64{min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)}
+}
+
+// epsgOfDataset gives the EPSG code of the CRS of a dataset, or 0.
+func epsgOfDataset(ds *godal.Dataset) int {
+	sr := ds.SpatialRef()
+	if sr == nil {
+		return 0
+	}
+	defer sr.Close()
+	if sr.AuthorityName("") != "EPSG" && (sr.AutoIdentifyEPSG() != nil || sr.AuthorityName("") != "EPSG") {
+		return 0
+	}
+	code, err := strconv.Atoi(sr.AuthorityCode(""))
+	if err != nil {
+		return 0
+	}
+	return code
+}
+
+// buildVRT runs gdalbuildvrt over the files.
+func buildVRT(target string, files []string) (*godal.Dataset, error) {
+	registerGDAL()
+	ds, err := godal.BuildVRT(target, files, nil)
+	if err != nil {
+		return nil, fmt.Errorf("derive: build VRT: %w", err)
 	}
 	return ds, nil
 }
