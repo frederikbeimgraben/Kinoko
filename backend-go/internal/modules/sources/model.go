@@ -131,6 +131,7 @@ type Failure struct {
 	Detail string
 }
 
+// Error gives the code and the detail of the failure.
 func (f *Failure) Error() string { return f.Code + ": " + f.Detail }
 
 // Fail makes a Failure with a formatted detail.
