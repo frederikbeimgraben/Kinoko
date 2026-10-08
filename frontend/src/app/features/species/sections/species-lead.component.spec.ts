@@ -16,6 +16,7 @@ function imagesDouble(lead: Photo | null): Partial<ImagesStore> {
   return {
     photos: signal([]).asReadonly(),
     lead: computed(() => lead),
+    positionOf: () => (lead === null ? 0 : 1),
     load: (() => ({ destroy: () => undefined })) as unknown as ImagesStore['load'],
   };
 }

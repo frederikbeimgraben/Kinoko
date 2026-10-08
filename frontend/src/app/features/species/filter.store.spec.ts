@@ -204,4 +204,25 @@ describe('SpeciesFilterStore', () => {
     expect(state.chosenCount()).toBe(0);
     expect(state.keeps('hymenium')).toBe(false);
   });
+
+  it('saves a sort other than the name and reads it back', () => {
+    const state = build();
+
+    state.setSort('season');
+    TestBed.tick();
+
+    expect(stored()['sort']).toBe('season');
+    TestBed.resetTestingModule();
+    expect(build().sort()).toBe('season');
+  });
+
+  it('keeps the search text out of the storage', () => {
+    const state = build();
+
+    state.setQuery('stein');
+    TestBed.tick();
+
+    expect(state.query()).toBe('stein');
+    expect(stored()['query']).toBeUndefined();
+  });
 });
