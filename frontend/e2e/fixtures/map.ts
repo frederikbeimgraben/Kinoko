@@ -36,7 +36,7 @@ const STORAGE_KEY = 'pilzkarte.map.v1';
 const COMBINATION_KEY = 'pilzkarte.combination.v1';
 
 /** Die Faktoren aus den Boards der Kombination, als Wert des Speichers. */
-export const BOARD_FACTORS = 'regen:ge:80';
+export const BOARD_FACTORS = 'regen:ge:80,temperatur:bw:12:18';
 
 /** Today for each board: KW 38 of the fixtures is the current week. */
 const BOARD_NOW = '2026-09-17T12:00:00Z';
