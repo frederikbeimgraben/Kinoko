@@ -2,7 +2,7 @@
   display: contents;
 }
 
-// Die Meldung schwebt über dem Inhalt, in der Werkstatt steht sie in der Karte.
+// The message floats above the content. In the workshop, it stays in its card.
 .toasts {
   position: var(--toast-flow, fixed);
   inset-block-end: calc(var(--size-nav) + var(--space-3));
@@ -13,7 +13,10 @@
   gap: var(--space-2);
 }
 
+// It rises 16 px on enter and fades on leave.
 .toast {
+  --rise: 16px;
+
   display: flex;
   gap: var(--space-2);
   align-items: center;
@@ -42,4 +45,8 @@
 .toast--info {
   color: var(--color-info);
   background: var(--color-info-subtle);
+}
+
+.toast--out {
+  animation: fade-out var(--motion-pop) var(--ease-emph-out) both;
 }

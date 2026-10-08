@@ -16,7 +16,7 @@ import { ChipGroupComponent } from '../chip-group/chip-group.component';
 import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 import { FormFieldComponent } from '../form-field/form-field.component';
 
-/** Die Vorschläge aus dem Artboard. Ein Tipp schreibt den Satz ins Feld. */
+/** The suggestions from the artboard. A tap writes the sentence into the field. */
 const SUGGESTIONS: readonly TranslationKey[] = [
   'image.rejectReason.blurry',
   'image.rejectReason.speciesUnclear',
@@ -24,7 +24,7 @@ const SUGGESTIONS: readonly TranslationKey[] = [
   'image.rejectReason.wrongSpecies',
 ];
 
-/** Das Blatt nach dem Grund einer Absage. Ohne Grund geht sie nicht hinaus. */
+/** The sheet that asks for the reason of a rejection. Without a reason, the rejection does not go out. */
 @Component({
   selector: 'app-reject-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,15 +36,15 @@ export class RejectDialogComponent {
   private readonly i18n = inject(I18nService);
 
   readonly open = input.required<boolean>();
-  /** Ein Vorschlag, der schon gewählt ist, wenn das Blatt aufgeht. */
+  /** A suggestion that is already chosen when the sheet opens. */
   readonly suggestion = input('');
 
   readonly rejected = output<string>();
   readonly closed = output();
 
-  /** Der gewählte Vorschlag. Das Feld daneben bleibt frei. */
+  /** The chosen suggestion. The field next to it stays empty. */
   protected readonly chosen = linkedSignal(() => this.suggestion());
-  /** Der geschriebene Grund. Er geht vor dem Vorschlag hinaus. */
+  /** The written reason. It goes out before the suggestion. */
   protected readonly written = signal('');
 
   protected readonly chips = computed(() =>
@@ -54,7 +54,7 @@ export class RejectDialogComponent {
     }),
   );
 
-  /** Ein Grund aus Leerzeichen ist kein Grund. */
+  /** A reason of only spaces is no reason. */
   protected readonly ready = computed(() => this.reason().length > 0);
 
   private readonly reason = computed(() => this.written().trim() || this.chosen());

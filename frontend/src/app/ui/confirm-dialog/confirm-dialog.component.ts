@@ -3,7 +3,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ButtonComponent } from '../button/button.component';
 import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 
-/** Eine Bestätigung: Frage, Zahl als Kontext, zwei Knöpfe. */
+/** A confirmation, per `kit.css` `.dlg`: a question, a count as context, two buttons. */
 @Component({
   selector: 'app-confirm-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,14 +14,14 @@ import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 export class ConfirmDialogComponent {
   readonly open = input.required<boolean>();
   readonly title = input('');
-  /** Die Zahl als Satz, etwa „12 Funde · 4 Marker“. */
+  /** The count as a sentence, for example "12 finds · 4 markers". */
   readonly meta = input<string>();
   readonly danger = input(true);
-  /** Zwei Wege untereinander statt nebeneinander, wie das Brett `DialogSignIn`. */
+  /** Two actions in a column instead of a row, as the board `DialogSignIn` shows them. */
   readonly stack = input(false);
-  /** Ohne Angabe steht dort „Löschen“. Andere Handlungen setzen ihr eigenes Wort. */
+  /** Without a value, the label is "Delete". Other actions set their own word. */
   readonly confirmLabel = input<string>();
-  /** Solange ein Schreibvorgang läuft, nimmt die Bestätigung keinen Tipp an. */
+  /** While a write runs, the confirmation takes no tap. */
   readonly confirmDisabled = input(false);
 
   readonly confirmed = output();

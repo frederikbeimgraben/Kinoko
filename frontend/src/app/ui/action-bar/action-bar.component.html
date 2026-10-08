@@ -1,17 +1,10 @@
-<div class="footer" [class.footer--inline]="inline()">
-  <ng-content />
-  <div
-    class="footer__pair"
-    [class.footer__pair--split]="split()"
-    [class.footer__pair--danger]="split() && (danger() || leadFirst())"
-  >
+@if (foot) {
+  <div class="acts" [class.acts--lead]="leadFirst()">
     <app-push-button
-      class="footer__main"
-      [class.footer__lead]="split()"
-      [class.footer__slim]="split() || (ghost() && secondary() === undefined && !busy())"
-      [class.footer__danger]="quietDanger()"
+      class="acts__button acts__main"
+      [class.acts__danger]="quietDanger()"
       [kind]="primaryVariant()"
-      [wide]="!inline()"
+      [wide]="!modal()"
       [busy]="busy()"
       [disabled]="busy()"
       (click)="primaryClick.emit()"
@@ -20,15 +13,49 @@
     </app-push-button>
     @if (secondary(); as label) {
       <app-push-button
-        class="footer__main"
-        [class.footer__slim]="secondaryDanger() || ghost()"
-        [class.footer__danger]="quietSecondaryDanger()"
+        class="acts__button"
+        [class.acts__danger]="quietSecondaryDanger()"
         [kind]="secondaryVariant()"
-        [wide]="!inline()"
+        [wide]="!modal()"
         (click)="secondaryClick.emit()"
       >
         {{ label }}
       </app-push-button>
     }
   </div>
-</div>
+} @else {
+  <div class="footer" [class.footer--inline]="inline()">
+    <ng-content />
+    <div
+      class="footer__pair"
+      [class.footer__pair--split]="split()"
+      [class.footer__pair--danger]="split() && (danger() || leadFirst())"
+    >
+      <app-push-button
+        class="footer__main"
+        [class.footer__lead]="split()"
+        [class.footer__slim]="split() || (ghost() && secondary() === undefined && !busy())"
+        [class.footer__danger]="quietDanger()"
+        [kind]="primaryVariant()"
+        [wide]="!inline()"
+        [busy]="busy()"
+        [disabled]="busy()"
+        (click)="primaryClick.emit()"
+      >
+        {{ primary() }}
+      </app-push-button>
+      @if (secondary(); as label) {
+        <app-push-button
+          class="footer__main"
+          [class.footer__slim]="secondaryDanger() || ghost()"
+          [class.footer__danger]="quietSecondaryDanger()"
+          [kind]="secondaryVariant()"
+          [wide]="!inline()"
+          (click)="secondaryClick.emit()"
+        >
+          {{ label }}
+        </app-push-button>
+      }
+    </div>
+  </div>
+}

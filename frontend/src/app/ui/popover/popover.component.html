@@ -2,6 +2,9 @@
   <div class="popover__scrim" aria-hidden="true" (click)="closed.emit()"></div>
   <div
     class="popover__card"
+    animate.enter="popover--in"
+    animate.leave="popover--out"
+    [class.popover__card--up]="anchor().bottom !== undefined"
     [appModalLayer]="label()"
     [style.inset-block-start.px]="anchor().top"
     [style.inset-block-end.px]="anchor().bottom"

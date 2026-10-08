@@ -13,6 +13,7 @@ const BLOCKS = [
   'app-sheet',
   'app-sheet-head',
   'app-overlay-host',
+  'app-overlay-head',
   'app-filter-sheet',
   'app-option-sheet',
   'app-object-menu',

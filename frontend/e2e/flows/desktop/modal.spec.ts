@@ -6,12 +6,13 @@ import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fix
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** The width of the modal and of the columns at its left, from the boards. */
-const MODAL_WIDTH = 480;
-/** The X is 14 px from the edge. The modal border adds one pixel. */
-const CLOSE_INSET = 15;
+/** The width of the modal and the columns on its left, from the boards. */
+const MODAL_WIDTH = 560;
+/** The close button is 12 px from the top and the end edge, per `kit.css` `.modal .shead`. */
+const CLOSE_INSET = 12;
+const CLOSE_SIZE = 48;
 const RAIL = 96;
-/** The first marker of the double. */
+/** The first marker of the mock. */
 const MARKER = 'marker 0';
 /** The kit pane of each tab: `list` on the entries tab, `panel` on the map tab. */
 const COLUMN: Readonly<Record<string, number>> = { '/eintraege': 520, '/karte': 420 };
@@ -36,7 +37,7 @@ async function openApp(page: Page, path: string, signedIn = true): Promise<void>
   await page.goto(path);
 }
 
-/** Checks the width, the centre over the map area and the X of the modal. */
+/** Checks the width, the centre above the map area and the close button of the modal. */
 async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveClass(/sheet--modal/);
@@ -49,12 +50,12 @@ async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   const column = COLUMN[new URL(page.url()).pathname] ?? 0;
   expect(Math.round(box.x + box.width / 2)).toBe(Math.round((RAIL + column + viewport.width) / 2));
 
-  const close = dialog.locator('.sheet__close');
+  const close = dialog.locator('.overlay-head__close');
   await expect(close).toBeVisible();
   const closeBox = await close.boundingBox();
   if (closeBox === null) throw new Error('X ohne Fläche.');
-  expect(Math.round(closeBox.width)).toBe(32);
-  expect(Math.round(closeBox.height)).toBe(32);
+  expect(Math.round(closeBox.width)).toBe(CLOSE_SIZE);
+  expect(Math.round(closeBox.height)).toBe(CLOSE_SIZE);
   expect(Math.round(box.x + box.width - (closeBox.x + closeBox.width))).toBe(CLOSE_INSET);
   expect(Math.round(closeBox.y - box.y)).toBe(CLOSE_INSET);
 }

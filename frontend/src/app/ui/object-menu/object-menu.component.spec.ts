@@ -93,16 +93,17 @@ describe('ObjectMenuComponent', () => {
     expect(document.activeElement).toBe(items[2]);
   });
 
-  it('dims the screen behind the menu by a quarter', async () => {
+  it('keeps the screen behind the menu bright', async () => {
     const { container } = await render(ObjectMenuComponent, {
       inputs: { target: { x: 0, y: 0 } },
     });
 
     const scrim = container.querySelector<HTMLElement>('.objectmenu__scrim');
-    expect(scrim).toHaveStyle({ background: 'rgb(0 0 0 / 25%)' });
+    if (scrim === null) throw new Error('The scrim is missing.');
+    expect(getComputedStyle(scrim).backgroundColor).not.toContain('0.25');
   });
 
-  it('draws every icon at seventeen pixels', async () => {
+  it('draws every icon at 24 pixels', async () => {
     const { container } = await render(ObjectMenuComponent, {
       inputs: { target: { x: 0, y: 0 } },
     });
@@ -110,17 +111,8 @@ describe('ObjectMenuComponent', () => {
     const icons = container.querySelectorAll<SVGSVGElement>('[role="menuitem"] svg');
     expect(icons).toHaveLength(3);
     for (const icon of icons) {
-      expect(icon.getAttribute('width')).toBe('17');
-      expect(icon.getAttribute('height')).toBe('17');
-    }
-  });
-
-  it('marks every action as a tap target with a press state', async () => {
-    await render(ObjectMenuComponent, { inputs: { target: { x: 0, y: 0 } } });
-
-    for (const item of screen.getAllByRole('menuitem')) {
-      expect(item).toHaveClass('tap');
-      expect(item).toHaveAttribute('data-press', 'tint');
+      expect(icon.getAttribute('width')).toBe('24');
+      expect(icon.getAttribute('height')).toBe('24');
     }
   });
 

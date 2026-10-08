@@ -1,6 +1,19 @@
 @if (open()) {
-  <div class="reject__scrim" aria-hidden="true" (click)="cancel()"></div>
-  <div #layer="modalLayer" class="reject__panel" appModalLayer (dismissed)="cancel()">
+  <div
+    class="reject__scrim"
+    aria-hidden="true"
+    animate.enter="motion-fade-in"
+    animate.leave="motion-fade-out"
+    (click)="cancel()"
+  ></div>
+  <div
+    #layer="modalLayer"
+    class="reject__panel"
+    appModalLayer
+    animate.enter="motion-sheet-in"
+    animate.leave="motion-sheet-out"
+    (dismissed)="cancel()"
+  >
     <span class="reject__handle" aria-hidden="true"></span>
     <h2 class="reject__title" [id]="layer.labelId">{{ 'image.rejectReasonTitle' | t }}</h2>
     <app-chip-group

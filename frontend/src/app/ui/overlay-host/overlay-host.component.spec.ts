@@ -6,7 +6,7 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { OverlayHostComponent } from './overlay-host.component';
 
-/** Der Rechner: die Hülle meldet die breite Ansicht. */
+/** The desktop: the shell reports the wide view. */
 const WIDE = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 @Component({
@@ -62,16 +62,7 @@ describe('OverlayHostComponent', () => {
     expect(document.activeElement).toBe(container.querySelector('.overlay__panel'));
   });
 
-  it('marks the scrim as a tap target with a press state', async () => {
-    await render(OverlayHostComponent, { inputs: { open: true } });
-
-    const scrim = screen.getByRole('button');
-
-    expect(scrim).toHaveClass('tap');
-    expect(scrim).toHaveAttribute('data-press', 'tint');
-  });
-
-  it('lässt Kopf und Modal dem Blatt', async () => {
+  it('leaves the head and the modal to the sheet', async () => {
     const { container } = await render(HostComponent, { providers: [WIDE] });
 
     expect(container.querySelector('.overlay__head')).toBeNull();
@@ -79,7 +70,7 @@ describe('OverlayHostComponent', () => {
     expect(screen.queryAllByRole('button')).toHaveLength(0);
   });
 
-  it('lässt den Aufstieg am Rechner weg, gleich wo der Wirt im Baum steht', async () => {
+  it('drops the rise on the desktop, wherever the host is in the tree', async () => {
     const { container } = await render(HostComponent, { providers: [WIDE] });
 
     const panel = container.querySelector('.overlay__panel');

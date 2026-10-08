@@ -9,44 +9,27 @@
   padding: 0;
   background: transparent;
   border: 0;
-  transition: opacity var(--motion-sheet) var(--ease-standard);
-
-  @starting-style {
-    opacity: 0;
-  }
 }
 
 .overlay__scrim--modal {
-  background: var(--pilz-scrim, rgb(0 0 0 / 50%));
+  background: var(--scrim);
 }
 
-// Kein ruhendes `transform`: es spannte einen Bezugsrahmen auf.
-// Die Ebene füllt ihre Zelle und lässt jeden Druck durch, nur das Blatt fängt ihn.
+// The layer fills its cell and lets each press through. Only the sheet in it takes a press.
+// It has no transform at rest, because a transform makes a containing block for the modal.
 .overlay__panel {
   position: absolute;
   inset-block: var(--pilz-overlay-top, 0) 0;
   inset-inline: 0;
   z-index: calc(var(--z-sheet) + 1);
   pointer-events: none;
-  animation: overlay-rise var(--motion-sheet) var(--ease-standard);
-}
-
-@keyframes overlay-rise {
-  from {
-    translate: 0 100%;
-  }
 }
 
 .overlay__panel:focus-visible {
   outline: none;
 }
 
-// Am Rechner trägt `app-sheet` Scrim und Modal. Ein eigener Rahmen hier
-// spannte sonst einen Bezugsrahmen auf, in dem das Modal klebte.
+// On the desktop, `app-sheet` shows the scrim and the modal.
 .overlay__scrim--wide {
   display: none;
-}
-
-.overlay__panel--wide {
-  animation: none;
 }

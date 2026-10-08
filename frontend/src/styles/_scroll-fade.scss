@@ -1,5 +1,6 @@
-// Der eine Scroll-Bereich einer Seite, per `kit.css` `.scroll`. Die Blende
-// steht an jeder Kante, an der Inhalt weitergeht, und mischt in den Grund.
+// The one scroll area of a page or a sheet, per `kit.css` `.scroll` and `.sbody`.
+// The fade is at each edge where more content continues, and blends into the ground.
+// A sheet with floating actions sets `--scroll-fade-end`, so the fade ends below the buttons.
 .scroll {
   flex: 1 1 auto;
   min-block-size: 0;
@@ -18,9 +19,15 @@
 }
 
 .scroll[data-fade='bottom'] {
-  mask-image: linear-gradient(180deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - var(--scroll-fade-end, 40px)), transparent);
 }
 
 .scroll[data-fade='both'] {
-  mask-image: linear-gradient(180deg, transparent 0, #000 32px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 32px,
+    #000 calc(100% - var(--scroll-fade-end, 40px)),
+    transparent
+  );
 }

@@ -1,8 +1,7 @@
 @if (asModal() && modal()) {
   <button
-    class="sheet__scrim tap"
+    class="sheet__scrim"
     type="button"
-    data-press="tint"
     [attr.aria-label]="'common.close' | t"
     (pointerdown)="onScrimDown($event)"
     (pointerup)="onScrimUp($event)"
@@ -15,24 +14,13 @@
   tabindex="-1"
   [class.sheet--dragging]="dragging()"
   [class.sheet--modal]="asModal()"
-  [class.sheet--bare]="asModal() && title() === ''"
   [class.sheet--compact]="compact()"
+  [class.sheet--acts]="hasActions()"
   [attr.aria-label]="label()"
   [attr.aria-modal]="modal() || asModal() ? 'true' : null"
   [style.block-size]="height()"
   (keydown)="onKey($event)"
 >
-  @if (closable()) {
-    <button
-      class="sheet__close tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'common.close' | t"
-      (click)="closed.emit()"
-    >
-      <app-svg-icon name="close" [size]="22" [strokeWidth]="2" />
-    </button>
-  }
   <div
     class="sheet__drag"
     (pointerdown)="onPointerDown($event)"
@@ -41,26 +29,29 @@
     (pointercancel)="onPointerUp($event)"
   >
     <button
-      class="sheet__handle tap"
+      class="sheet__handle"
       type="button"
-      data-press="scale"
+      appRipple
       [attr.aria-label]="'sheet.handle' | t"
       (click)="nextDetent()"
       (keydown)="onHandleKey($event)"
     >
       <span class="sheet__handle-line"></span>
     </button>
-    @if (title() !== '') {
-      <header class="sheet__head" [class.sheet__head--divider]="headDivider()">
-        <div class="sheet__head-title">
-          <ng-content select="[titleLead]" />
-          <h2 class="sheet__title">{{ title() }}</h2>
-        </div>
-        @if (note() !== '') {
-          <span class="sheet__note">{{ note() }}</span>
-        }
-        <ng-content select="[headAction]" />
-      </header>
+    @if (hasHead()) {
+      <app-overlay-head
+        class="sheet__head"
+        [class.sheet__head--divider]="headDivider()"
+        [title]="title()"
+        [note]="note()"
+        [back]="back()"
+        [close]="closable()"
+        (backClick)="backClick.emit()"
+        (closeClick)="closed.emit()"
+      >
+        <ng-content select="[titleLead]" ngProjectAs="[titleLead]" />
+        <ng-content select="[headAction]" ngProjectAs="[headAction]" />
+      </app-overlay-head>
     }
     <ng-content select="[head]" />
   </div>

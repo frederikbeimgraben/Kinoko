@@ -69,6 +69,7 @@ export { NavComponent, type NavVariant } from './nav/nav.component';
 export { ObjectMenuComponent, type ObjectMenuTarget } from './object-menu/object-menu.component';
 export { ObjectTitleComponent } from './object-title/object-title.component';
 export { OptionSheetComponent, type OptionSheetOption } from './option-sheet/option-sheet.component';
+export { OverlayHeadComponent } from './overlay-head/overlay-head.component';
 export { OverlayHostComponent } from './overlay-host/overlay-host.component';
 export { PageHeaderComponent } from './page-header/page-header.component';
 export {

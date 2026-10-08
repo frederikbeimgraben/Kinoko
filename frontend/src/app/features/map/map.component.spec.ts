@@ -67,7 +67,7 @@ async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
       provideHttpClient(),
       provideHttpClientTesting(),
       ...authStubProviders(auth),
-      // Ein festes Heute, damit die Wochen der Fixtures gelten.
+      // A fixed today, so the weeks of the fixtures apply.
       { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
     ],
   });
@@ -85,7 +85,7 @@ async function map(signedIn = false, items = BUNDLE_ITEMS): Promise<Harness> {
   return { double, worker, stable, container, auth, net: TestBed.inject(HttpTestingController) };
 }
 
-/** jsdom kennt keine Ortung; der Test setzt sie am Navigator ein. */
+/** jsdom has no geolocation. The test sets it on the navigator. */
 function stubGeolocation(geolocation: Partial<Geolocation>): void {
   Object.defineProperty(navigator, 'geolocation', { configurable: true, value: geolocation });
 }
@@ -325,7 +325,7 @@ describe('MapComponent', () => {
     expect(screen.getAllByRole('heading', { name: 'Kombination speichern' })).toHaveLength(1);
     expect(screen.queryByRole('button', { name: 'Abbrechen' })).not.toBeInTheDocument();
 
-    const close = container.querySelector<HTMLElement>('.sheet__close');
+    const close = container.querySelector<HTMLElement>('.overlay-head__close');
     if (close === null) throw new Error('Das Blatt trägt kein X.');
     await userEvent.click(close);
     await stable();

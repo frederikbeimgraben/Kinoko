@@ -6,21 +6,20 @@
   display: contents;
 }
 
-// Die Karte der Wahl steht dichter unter dem Titel als andere Blätter.
+// The card of choices stands closer below the title than in other sheets.
 .overlay-body {
   gap: var(--space-3);
 }
 
-// Die Zeile der Wahl trägt den Namen in normaler Stärke, nicht wie im Filter.
-// Ein langer Name bricht um, statt mit Auslassung abzuschneiden.
+// The row shows the name in regular weight, not as in the filter.
+// A long name wraps and is not cut with an ellipsis.
 .option-sheet__card app-list-row {
   --fw-row-filter: var(--fw-regular);
   --space-row-gap: var(--space-row-inline);
   --list-row-title-wrap: normal;
 }
 
-// Der weiche Rand sitzt außerhalb der Karte, sonst zählte die erste Zeile
-// nicht mehr als erstes Kind und trüge fälschlich eine Linie oben.
+// The fade is outside the card. Inside, the first row is not the first child and shows a wrong line at the top.
 .option-sheet__scroll {
   display: flex;
   flex: 0 1 auto;
@@ -41,8 +40,4 @@
 
 .option-sheet__card app-check-row {
   --space-3: 12px;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
 }

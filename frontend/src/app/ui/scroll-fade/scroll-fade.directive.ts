@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 
-/** Der eine Scroll-Bereich einer Seite. Er blendet nur aus, wo Inhalt weitergeht. */
+/** The one scroll area of a page or a sheet body. It fades only where more content continues. */
 @Directive({ selector: '[appScrollFade]' })
 export class ScrollFadeDirective {
   private readonly renderer = inject(Renderer2);
@@ -18,7 +18,7 @@ export class ScrollFadeDirective {
   private readonly topVisible = signal(false);
   private readonly bottomVisible = signal(false);
 
-  /** Die offenen Kanten als Wort. Das Stilblatt setzt daraus die Blende. */
+  /** The open edges as a word. The style sheet makes the fade from it. */
   private readonly edges = computed(() => {
     if (this.topVisible() && this.bottomVisible()) return 'both';
     if (this.topVisible()) return 'top';
@@ -33,7 +33,7 @@ export class ScrollFadeDirective {
     });
 
     const size = new ResizeObserver(this.measure);
-    // Zeilen stecken in einer Karte, einem Kind des Wirts, nicht im Wirt selbst.
+    // The rows are in a card, a child of the host, not in the host itself.
     const rows = new MutationObserver(this.measure);
     size.observe(this.host);
     rows.observe(this.host, { childList: true, subtree: true });
@@ -50,7 +50,7 @@ export class ScrollFadeDirective {
   private readonly measure = (): void => {
     const { scrollTop, clientHeight, scrollHeight } = this.host;
     this.topVisible.set(scrollTop > 0);
-    // Aufgerundet, weil ein gebrochener Stand sonst eine Kante vortäuscht.
+    // Round up, because a fractional position can show a wrong edge.
     this.bottomVisible.set(Math.ceil(scrollTop + clientHeight) < scrollHeight);
   };
 }

@@ -1,8 +1,7 @@
 @if (target(); as point) {
   <button
-    class="objectmenu__scrim tap"
+    class="objectmenu__scrim"
     type="button"
-    data-press="tint"
     [attr.aria-label]="'common.close' | t"
     (click)="closed.emit()"
   ></button>
@@ -10,51 +9,28 @@
     class="objectmenu"
     role="menu"
     tabindex="-1"
+    animate.enter="objectmenu--in"
+    animate.leave="objectmenu--out"
     [style.left.px]="point.x"
     [style.top.px]="point.y"
     (keydown)="onKeydown($event)"
   >
-    <button
-      class="objectmenu__item tap"
-      type="button"
-      role="menuitem"
-      data-press="tint"
-      (click)="edit.emit()"
-    >
-      <span class="objectmenu__icon">
-        <svg
-          viewBox="0 0 24 24"
-          width="17"
-          height="17"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" />
-        </svg>
-      </span>
+    <button class="objectmenu__item" type="button" role="menuitem" appRipple (click)="edit.emit()">
+      <span class="objectmenu__icon"><app-svg-icon name="edit" [size]="24" /></span>
       <span>{{ 'common.edit' | t }}</span>
     </button>
-    <button
-      class="objectmenu__item tap"
-      type="button"
-      role="menuitem"
-      data-press="tint"
-      (click)="centre.emit()"
-    >
-      <span class="objectmenu__icon"><app-svg-icon name="location" [size]="17" /></span>
+    <button class="objectmenu__item" type="button" role="menuitem" appRipple (click)="centre.emit()">
+      <span class="objectmenu__icon"><app-svg-icon name="location" [size]="24" /></span>
       <span>{{ 'map.centre' | t }}</span>
     </button>
     <button
-      class="objectmenu__item objectmenu__item--danger tap"
+      class="objectmenu__item objectmenu__item--danger"
       type="button"
       role="menuitem"
-      data-press="tint"
+      appRipple
       (click)="delete.emit()"
     >
-      <span class="objectmenu__icon"><app-svg-icon name="trash" [size]="17" /></span>
+      <span class="objectmenu__icon"><app-svg-icon name="trash" [size]="24" /></span>
       <span>{{ 'common.delete' | t }}</span>
     </button>
   </div>
