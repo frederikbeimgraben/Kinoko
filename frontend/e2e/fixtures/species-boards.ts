@@ -1,67 +1,45 @@
-/** Die Daten der einzelnen Bretter der Seite Arten. */
+/** The data of the single boards of the species tab. */
 
 import { bundle } from './species';
 
 type Entry = Parameters<typeof bundle>[0][number];
 
-/** Der Baumpartner, den das Brett `FilterResult` als Marke zeigt. */
-const SPRUCE = { slug: 'picea-abies', name: 'Fichte', kind: 'tree' };
-
-/** Die Treffer des Bretts `FilterResult`. */
-export const RESULT_HITS: readonly Entry[] = [
-  {
-    slug: 'boletus-edulis',
-    name: 'Steinpilz',
-    latin: 'Boletus edulis',
-    edibility: 'edible',
-    cap: ['#e2c79a', '#6b4423'],
-    capShapes: ['convex'],
-    capWidth: [5, 10],
-    terms: [SPRUCE],
-  },
+/** The four edible hits of the board `SpeciesFiltered`, per `SpeciesList.dc.html` with the filter `edible`. */
+export const EDIBLE_HITS: readonly Entry[] = [
   {
     slug: 'imleria-badia',
     name: 'Maronenröhrling',
     latin: 'Imleria badia',
     edibility: 'edible',
-    cap: ['#8a4e2b', '#4a3220'],
-    capShapes: ['convex'],
-    capWidth: [5, 10],
-    terms: [SPRUCE],
+    cap: ['#5a3220'],
   },
   {
     slug: 'amanita-rubescens',
     name: 'Perlpilz',
     latin: 'Amanita rubescens',
     edibility: 'edible',
-    cap: ['#c9a877', '#8a4e2b'],
-    capShapes: ['convex'],
-    capWidth: [5, 10],
-    terms: [SPRUCE],
+    cap: ['#b97f72'],
+    photo: false,
+  },
+  {
+    slug: 'cantharellus-cibarius',
+    name: 'Pfifferling',
+    latin: 'Cantharellus cibarius',
+    edibility: 'edible',
+    cap: ['#b9832a'],
+    photo: false,
+  },
+  {
+    slug: 'agaricus-campestris',
+    name: 'Wiesenchampignon',
+    latin: 'Agaricus campestris',
+    edibility: 'edible',
+    cap: ['#e6e0cf'],
+    photo: false,
   },
 ];
 
-/** Die Arten ohne Angabe zur Hutform im Brett `FilterResult`. */
-export const RESULT_UNKNOWN: readonly Entry[] = [
-  {
-    slug: 'armillaria-mellea',
-    name: 'Hallimasch',
-    latin: 'Armillaria mellea',
-    edibility: 'edible',
-    cap: ['#c9a877', '#8a6a3a'],
-    capWidth: [5, 10],
-  },
-  {
-    slug: 'coprinus-comatus',
-    name: 'Schopftintling',
-    latin: 'Coprinus comatus',
-    edibility: 'edible',
-    cap: ['#f2e8d5', '#c9a877'],
-    capWidth: [5, 10],
-  },
-];
-
-/** Die Arten der linken Spalte im Brett `SpeciesDesktop`. */
+/** The species of the left column in the board `SpeciesDesktop`. */
 export const DESKTOP_SPECIES: readonly Entry[] = [
   {
     slug: 'boletus-edulis',
@@ -144,7 +122,7 @@ const DESKTOP_HITS: readonly Entry[] = [
   },
 ];
 
-// Der Rest trägt eine andere Fruchtschicht und scheidet darum aus.
+// The rest has another hymenium, so it does not match.
 const DESKTOP_REST: readonly Entry[] = [
   {
     slug: 'boletus-edulis',
@@ -166,7 +144,7 @@ const DESKTOP_REST: readonly Entry[] = [
   },
 ];
 
-/** Der Rest des Katalogs im Brett `FilterResult`: keine Art trifft. */
+/** The rest of the catalogue in the board `SpeciesFiltered`: no species matches. */
 export const RESULT_REST: readonly Entry[] = Array.from({ length: 301 }, (_, at) => ({
   slug: `art-${String(at)}`,
   name: `Art ${String(at)}`,
@@ -176,7 +154,7 @@ export const RESULT_REST: readonly Entry[] = Array.from({ length: 301 }, (_, at)
   capWidth: [5, 10] as const,
 }));
 
-/** Katalog und Wahl des Bretts `FilterDesktop`. */
+/** The catalogue and the choice of the board `FilterDesktop`. */
 export const FILTER_DESKTOP = {
   catalogue: [...DESKTOP_HITS, ...DESKTOP_REST],
   choice: {
@@ -231,7 +209,7 @@ function summary(entry: Entry, at: number): Record<string, unknown> {
   };
 }
 
-/** Katalog und Stufe des Bretts `Taxonomy`. */
+/** The catalogue and the step of the board `Taxonomy`. */
 export const TAXON = {
   catalogue: TAXON_SPECIES,
   page: {

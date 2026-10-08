@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { I18nService } from '../../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import type { WorkshopKey } from '../../../../core/i18n/workshop-texts';
-import { photoPath, type SpeciesEntry } from '../../../../core/api/models';
+import type { SpeciesEntry } from '../../../../core/api/models';
 import { FactorRowComponent, type CombinationFactor } from '../../../../ui/factor-row/factor-row.component';
 import {
   SpeciesRowComponent,
@@ -18,7 +18,7 @@ import { SpeciesFilterStore } from '../../../../features/species/filter.store';
 import { SpeciesStore, type CatalogueEntry } from '../../../../features/species/species.store';
 import { BlockCardComponent } from '../block-card/block-card.component';
 
-/** Eine Art mit allen Pflichtfeldern des Vertrags, so knapp wie möglich. */
+/** A species with all required fields of the contract and no more. */
 function entry(
   seed: Partial<SpeciesEntry> & Pick<SpeciesEntry, 'slug' | 'name' | 'scientificName'>,
 ): SpeciesEntry {
@@ -46,12 +46,12 @@ function entry(
   };
 }
 
-/** Die Hutfarbe einer Art, in der Form des Vertrags. */
+/** The cap colour of a species, in the shape of the contract. */
 function capColour(hex: string): SpeciesEntry['colours'] {
   return [{ part: 'cap', mode: 'single', colours: [{ name: hex, hex }] }];
 }
 
-/** Neun der zehn Arten des Bretts `SpeciesList.dc.html`, in seiner Reihenfolge. */
+/** Nine of the ten species of `SpeciesList.dc.html`, in its order. */
 const LIST_SPECIES: readonly {
   slug: string;
   name: WorkshopKey;
@@ -138,7 +138,7 @@ const WEEKS: readonly [number, number, boolean][] = [
   [40, 60, true],
 ];
 
-/** Die Art- und Filter-Bausteine des D1-Batch 7, je ihre Vorgabe im Brett. */
+/** The species and filter blocks, each with the default of its board. */
 @Component({
   selector: 'app-species-list-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -167,7 +167,7 @@ export class SpeciesListCardsComponent {
     levelColour: 'var(--ok)',
     levelKind: 'ok',
     colour: '#7a5230',
-    image: photoPath('art-stein', 'list'),
+    image: null,
   };
 
   protected readonly hits: readonly CatalogueEntry[] = LIST_SPECIES.map((one) =>

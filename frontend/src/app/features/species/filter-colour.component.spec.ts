@@ -33,7 +33,7 @@ interface Setup {
   filter: SpeciesFilterStore;
 }
 
-/** Der Name des Körperteils, dessen Ziehharmonika-Zeile die Farbwahl zeigt. */
+/** The name of the body part whose fold row shows the colour choice. */
 function openPart(container: Element): string | undefined {
   const row = container.querySelector('app-expand-row:has(app-colour-picker)');
   return row?.querySelector('.xp__head > span:first-child')?.textContent ?? undefined;

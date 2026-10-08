@@ -211,7 +211,7 @@ describe('SpeciesStore', () => {
     expect(setup.state.entries()).toHaveLength(1);
   });
 
-  it('gets a profile one time and gives its reactions', async () => {
+  it('gets a profile one time and gives its reactions', () => {
     const setup = build();
     const reaction = {
       reagent: { slug: 'koh', name: 'Kalilauge' },

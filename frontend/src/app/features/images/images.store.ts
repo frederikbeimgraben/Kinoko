@@ -110,7 +110,9 @@ export const ImagesStore = signalStore(
           () => false,
         );
         if (done) {
-          patchState(store, ({ photos }) => ({ photos: photos.map((one) => ({ ...one, lead: one.id === id })) }));
+          patchState(store, ({ photos }) => ({
+            photos: photos.map((one) => ({ ...one, lead: one.id === id })),
+          }));
         }
       },
     };

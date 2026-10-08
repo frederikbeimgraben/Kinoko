@@ -4,7 +4,7 @@
   </app-species-desk>
 } @else {
   <app-species-search-bar />
-  @if (!catalogue.loading() && !catalogue.failed() && filter.query().trim() === '') {
+  @if (!catalogue.loading() && !catalogue.failed()) {
     <app-species-filter-chips />
   }
   <app-species-results

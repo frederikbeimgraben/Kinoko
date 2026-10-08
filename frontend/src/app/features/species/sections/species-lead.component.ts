@@ -31,6 +31,13 @@ export class SpeciesLeadComponent {
     return { path: photoPath(held.id, 'full'), photographer: held.photographer, licence: held.licence };
   });
 
+  /** The position of the lead photo in the view, from one, for the counter of the hero. */
+  protected readonly index = computed(() => {
+    const held = this.lead();
+    return held === null ? 0 : this.images.positionOf(held.id);
+  });
+  protected readonly count = computed(() => this.images.photos().length);
+
   protected readonly alt = computed(
     () => this.lead()?.caption ?? this.species.nameOf(this.slug()) ?? this.slug(),
   );
@@ -48,5 +55,14 @@ export class SpeciesLeadComponent {
     const held = this.lead();
     if (held === null) return;
     void this.router.navigate(['/arten', this.slug(), 'bilder', held.id]);
+  }
+
+  /** The arrows of the hero open the photo before or after the lead photo. */
+  protected step(by: number): void {
+    const at = this.index() - 1 + by;
+    const next = this.index() > 0 && at >= 0 ? this.images.photos().at(at) : undefined;
+    if (next !== undefined) {
+      void this.router.navigate(['/arten', this.slug(), 'bilder', next.id]);
+    }
   }
 }

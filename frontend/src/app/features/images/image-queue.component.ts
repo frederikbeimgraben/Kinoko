@@ -20,7 +20,7 @@ import type { Photo } from '../../core/api/models';
 import { ImagesStore } from './images.store';
 import { reviewCard, type ReviewCard } from './review-card';
 
-/** Der Prüfstapel: rechts wischen gibt frei, links fragt nach dem Grund. */
+/** The review stack: a swipe to the right approves, a swipe to the left asks for the reason. */
 @Component({
   selector: 'app-image-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,12 +41,12 @@ export class ImageQueueComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
-  /** Die Karte, deren Absage gerade nach einem Grund fragt. */
+  /** The card whose rejection asks for a reason now. */
   protected readonly rejecting = signal<ReviewCard | null>(null);
-  /** Wie viele Karten schon entschieden sind. Der Kopf zählt die laufende mit. */
+  /** The count of decided cards. The head also counts the current card. */
   private readonly decided = signal(0);
 
-  /** Der Stapel steht fest, sobald er gefüllt ist: eine Entscheidung darf ihn nicht kürzen. */
+  /** The stack is fixed when it is full: a decision must not make it shorter. */
   private readonly held = signal<readonly Photo[]>([]);
 
   protected readonly cards = computed<readonly ReviewCard[]>(() =>

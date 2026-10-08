@@ -2,10 +2,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { SplitLayoutComponent } from '../../ui/split-layout/split-layout.component';
 import { SpeciesBrowserComponent } from './species-browser.component';
 
-/**
- * The desktop frame of the species routes: the list pane and the detail pane.
- * Each route draws the same list pane, so a route change crossfades only the detail pane.
- */
+/** The desktop frame of the species routes. Each route draws the same list pane,
+ * so a route change crossfades only the detail pane. */
 @Component({
   selector: 'app-species-desk',
   changeDetection: ChangeDetectionStrategy.OnPush,

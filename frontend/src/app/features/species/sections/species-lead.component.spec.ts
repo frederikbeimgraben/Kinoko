@@ -13,7 +13,11 @@ import { ImagesStore } from '../../images/images.store';
 import { SpeciesLeadComponent } from './species-lead.component';
 
 function imagesDouble(lead: Photo | null): Partial<ImagesStore> {
-  return { photos: signal([]).asReadonly(), lead: computed(() => lead), load: (() => ({ destroy: () => undefined })) as unknown as ImagesStore['load'] };
+  return {
+    photos: signal([]).asReadonly(),
+    lead: computed(() => lead),
+    load: (() => ({ destroy: () => undefined })) as unknown as ImagesStore['load'],
+  };
 }
 
 async function build(lead: Photo | null): Promise<Element> {

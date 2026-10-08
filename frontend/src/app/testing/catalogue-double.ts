@@ -7,7 +7,7 @@ import { SpeciesStore } from '../features/species/species.store';
 import { OfflineStoreDouble, offlineProvider } from './offline-double';
 import { SPECIES_BUNDLE } from './species-fixture';
 
-/** Der Katalog liegt auf dem Gerät. Der Abgleich mit dem Dienst bleibt offen. */
+/** The catalogue is on the device. The comparison with the service stays open. */
 export function catalogueProviders(
   bundle: SpeciesBundle | null = SPECIES_BUNDLE,
 ): (EnvironmentProviders | Provider)[] {
@@ -16,7 +16,7 @@ export function catalogueProviders(
   return [provideHttpClient(), provideHttpClientTesting(), offlineProvider(offline)];
 }
 
-/** Hält an, solange der Zustand den Katalog vom Gerät noch nicht zeigt. */
+/** Waits until the store shows the catalogue from the device. */
 export async function catalogueReady(): Promise<SpeciesStore> {
   const state = TestBed.inject(SpeciesStore);
   void state.loadBundle();

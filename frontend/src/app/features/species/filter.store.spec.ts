@@ -3,7 +3,7 @@ import { SpeciesFilterStore } from './filter.store';
 
 const STORAGE_KEY = 'pilzkarte.speciesfilter';
 
-/** Was nach dem Sichern im Speicher steht. */
+/** The value in the storage after the save. */
 function stored(): Record<string, unknown> {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, unknown>;
 }

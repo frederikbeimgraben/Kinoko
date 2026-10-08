@@ -40,10 +40,16 @@
                     <span class="cell">
                       @switch (cell.kind) {
                         @case ('badge') {
-                          <app-level-pill [text]="cell.text" [colour]="cell.colour" [background]="cell.background" />
+                          <app-level-pill
+                            [text]="cell.text"
+                            [colour]="cell.colour"
+                            [background]="cell.background"
+                          />
                         }
                         @case ('value') {
-                          <span class="v">{{ cell.text }}<small>{{ cell.unit }}</small></span>
+                          <span class="v"
+                            >{{ cell.text }}<small>{{ cell.unit }}</small></span
+                          >
                         }
                         @case ('swatch') {
                           <span
@@ -71,7 +77,15 @@
       </div>
     } @else if (waiting()) {
       <app-skeleton kind="line" width="60%" height="24px" />
-      <app-skeleton kind="rows" shape="row" lead="none" trail="value" [count]="8" [lines]="1" [labels]="[0, 3, 6]" />
+      <app-skeleton
+        kind="rows"
+        shape="row"
+        lead="none"
+        trail="value"
+        [count]="8"
+        [lines]="1"
+        [labels]="[0, 3, 6]"
+      />
     } @else {
       <app-state-view class="compare__empty" icon="compare" [title]="'species.detail.choose' | t" />
     }

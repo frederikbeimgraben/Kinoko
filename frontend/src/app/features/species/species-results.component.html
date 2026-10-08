@@ -24,7 +24,7 @@
   />
 } @else if (loading()) {
   <app-skeleton class="results__skeleton" kind="rows" [count]="skeletonRows" />
-} @else if (rows().length === 0 && gapRows().length === 0) {
+} @else if (rows().length === 0) {
   <app-state-view
     class="results__state"
     icon="search"

@@ -50,7 +50,8 @@ const NO_SWATCH: Omit<RowSwatch, 'label'> = { kind: 'none', colours: [] };
 
 /** The CSS background of a swatch. A ring has no fill: its border shows it. */
 export function swatchBackground(swatch: RowSwatch): string | null {
-  const [first, second] = swatch.colours;
+  const first = swatch.colours.at(0);
+  const second = swatch.colours.at(1);
   switch (swatch.kind) {
     case 'fill':
       return first ?? null;
@@ -77,7 +78,10 @@ export function reactionSwatch(reaction: SpeciesReaction, i18n: I18nService): Ro
 
 /** A row of a reaction: the reagent as label, the reading below, the part and location at the end. */
 export function reactionRow(reaction: SpeciesReaction, index: number, i18n: I18nService): ChangeRow {
-  const place = [reaction.part === null ? '' : i18n.translate(PART_TEXT[reaction.part]), reaction.location ?? '']
+  const place = [
+    reaction.part === null ? '' : i18n.translate(PART_TEXT[reaction.part]),
+    reaction.location ?? '',
+  ]
     .filter((one) => one.trim() !== '')
     .join(SEPARATOR);
   const unknown = reaction.result === 'unknown' && place === '';
@@ -113,7 +117,8 @@ export function colourChangeRow(change: ColourChange, index: number, i18n: I18nS
 /** The sources of all reactions, each one time, in the order of the reactions. */
 export function reactionSources(reactions: readonly SpeciesReaction[]): ReactionSourceRow[] {
   const all = reactions.flatMap((reaction) => reaction.sources);
-  const keyOf = (source: (typeof all)[number]): string => `${source.label}|${source.url ?? ''}|${source.year ?? ''}`;
+  const keyOf = (source: (typeof all)[number]): string =>
+    `${source.label}|${source.url ?? ''}|${source.year ?? ''}`;
   return all
     .filter((source, index) => all.findIndex((other) => keyOf(other) === keyOf(source)) === index)
     .map((source) => ({

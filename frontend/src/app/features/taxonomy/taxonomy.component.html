@@ -13,7 +13,6 @@
             [title]="row.rank"
             [plain]="row.name"
             [clickable]="!row.current"
-            [selected]="row.current"
             (chosen)="toStep(row.route)"
           />
         }

@@ -6,37 +6,39 @@ import type { SpeciesBundle, SpeciesCounts, SpeciesEntry, SpeciesWrite } from '.
 const BUNDLE_PATH = '/species/bundle';
 const SPECIES_PATH = '/species';
 
-/** Der Artenkatalog in einem Zug. Er ist offen, auch ohne Anmeldung. */
+/** The species catalogue in one request. It is open, also without a sign-in. */
 @Injectable({ providedIn: 'root' })
 export class SpeciesApi {
   private readonly api = inject(ApiClient);
 
-  /** Holt das Bündel. Zum bekannten ETag bleibt der Körper leer. */
+  /** Gets the bundle. For a known ETag the body is empty. */
   bundle(etag: string | null): Observable<Tagged<SpeciesBundle>> {
     return this.api.getTagged<SpeciesBundle>(BUNDLE_PATH, etag, { quiet: true });
   }
 
-  /** Das volle Profil einer Art. */
+  /** The full profile of a species, with its reactions. A failed request shows no toast. */
   profile(slug: string): Observable<SpeciesEntry> {
-    return this.api.get<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}`, undefined, { quiet: true });
+    return this.api.get<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}`, undefined, {
+      quiet: true,
+    });
   }
 
-  /** Datenbestand, Funde und Bilder einer Art. Braucht `species.edit`. */
+  /** The counts of records, finds and photos of a species. It needs `species.edit`. */
   counts(slug: string): Observable<SpeciesCounts> {
     return this.api.get<SpeciesCounts>(`${SPECIES_PATH}/${encodeURIComponent(slug)}/counts`);
   }
 
-  /** Legt eine Art an. Die Antwort trägt den Slug für den Editor. */
+  /** Adds a species. The reply has the slug for the editor. */
   create(body: SpeciesWrite): Observable<SpeciesEntry> {
     return this.api.post<SpeciesEntry>(SPECIES_PATH, body);
   }
 
-  /** Schreibt eine Art im Ganzen. Der Vertrag kennt kein Teilschreiben. */
+  /** Writes a full species. The contract has no partial write. */
   replace(slug: string, body: SpeciesWrite): Observable<SpeciesEntry> {
     return this.api.put<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}`, body);
   }
 
-  /** Schaltet die Vorhersage einer Art an oder aus. */
+  /** Turns the forecast of a species on or off. */
   setForecast(slug: string, enabled: boolean): Observable<SpeciesEntry> {
     return this.api.put<SpeciesEntry>(`${SPECIES_PATH}/${encodeURIComponent(slug)}/forecast`, {
       enabled,

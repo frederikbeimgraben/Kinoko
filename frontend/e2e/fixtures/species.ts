@@ -1,4 +1,4 @@
-/** Die Attrappen des Artenkatalogs für Boards und Flüsse. */
+/** The fixtures of the species catalogue for boards and flows. */
 
 import { nearestColour } from '../../src/app/features/species/facets';
 
@@ -25,6 +25,8 @@ interface Shape {
   group?: string;
   family?: string;
   terms?: readonly Term[];
+  /** False for a species without a lead photo: the row then shows the fallback icon. */
+  photo?: boolean;
 }
 
 interface Term {
@@ -62,7 +64,7 @@ function measure(dimension: string, span: readonly [number, number]): unknown {
   return { dimension, unit: 'cm', low: span[0], high: span[1] };
 }
 
-/** Baut eine Art in der Form des Vertrags. */
+/** Makes a species in the shape of the contract. */
 export function species(entry: Shape, at = 0): Record<string, unknown> {
   return {
     id: `00000000-0000-4000-8000-${String(at).padStart(12, '0')}`,
@@ -76,7 +78,7 @@ export function species(entry: Shape, at = 0): Record<string, unknown> {
     edibility: entry.edibility,
     protection: entry.protection ?? 'none',
     forecastEnabled: entry.forecast ?? false,
-    leadPhotoId: `00000000-0000-4000-9000-${String(at).padStart(12, '0')}`,
+    leadPhotoId: entry.photo === false ? null : `00000000-0000-4000-9000-${String(at).padStart(12, '0')}`,
     updatedAt: '2026-01-01T00:00:00Z',
     description: null,
     marketable: false,
@@ -107,7 +109,7 @@ export function species(entry: Shape, at = 0): Record<string, unknown> {
   };
 }
 
-/** Die zwölf Standardfarben, wie sie der Dienst liefert. */
+/** The twelve standard colours, as the service gives them. */
 export const PALETTE: readonly { key: string; hex: string }[] = [
   { key: 'white', hex: '#f3efe6' },
   { key: 'cream', hex: '#e8d9b5' },
@@ -123,13 +125,13 @@ export const PALETTE: readonly { key: string; hex: string }[] = [
   { key: 'grey', hex: '#8a8f8a' },
 ];
 
-/** Ein Bündel aus einer Liste von Arten, mit Palette und gezählten Achsen. */
+/** A bundle from a list of species, with the palette and the counted axes. */
 export function bundle(entries: readonly Shape[]): Record<string, unknown> {
   const items = entries.map((entry, at) => species(entry, at));
   return { items, standardColours: PALETTE, facets: countAxes(entries) };
 }
 
-/** Die sieben Arten des Bretts `Species`. */
+/** The seven species of the board `Species`. */
 export const SEVEN: readonly Shape[] = [
   {
     slug: 'boletus-edulis',
@@ -150,7 +152,8 @@ export const SEVEN: readonly Shape[] = [
     name: 'Pfifferling',
     latin: 'Cantharellus cibarius',
     edibility: 'edible',
-    cap: ['#d9a441', '#e8c86a'],
+    cap: ['#b9832a', '#e8c86a'],
+    photo: false,
   },
   {
     slug: 'amanita-phalloides',
@@ -164,25 +167,28 @@ export const SEVEN: readonly Shape[] = [
     name: 'Pantherpilz',
     latin: 'Amanita pantherina',
     edibility: 'poisonous',
-    cap: ['#4a5a3a', '#8a9a5a'],
+    cap: ['#6b5236', '#8a9a5a'],
+    photo: false,
   },
   {
     slug: 'hydnum-repandum',
     name: 'Semmelstoppelpilz',
     latin: 'Hydnum repandum',
     edibility: 'edible',
-    cap: ['#e2c79a', '#c9a877'],
+    cap: ['#a9825a', '#c9a877'],
+    photo: false,
   },
   {
     slug: 'morchella-esculenta',
     name: 'Speisemorchel',
     latin: 'Morchella esculenta',
     edibility: 'edible',
-    cap: ['#6b5a3a', '#b89a6a'],
+    cap: ['#7d6a45', '#b89a6a'],
+    photo: false,
   },
 ];
 
-/** Die fünf weiteren Arten, die `SEVEN` auf die zwölf des Bretts `SpeciesScrolled` bringen. */
+/** The five more species that make `SEVEN` into the twelve of the desktop list. */
 export const FIVE_MORE: readonly Shape[] = [
   {
     slug: 'amanita-rubescens',
@@ -221,10 +227,10 @@ export const FIVE_MORE: readonly Shape[] = [
   },
 ];
 
-/** Die zwölf Arten des Bretts `SpeciesScrolled`, in seiner Reihenfolge. */
+/** The twelve species of the scrolled desktop list, in their order. */
 export const TWELVE: readonly Shape[] = [...SEVEN, ...FIVE_MORE];
 
-/** Die drei Treffer des Bretts `SpeciesSearch`. */
+/** The three hits of the board `SpeciesSearch`. */
 export const STONE: readonly Shape[] = [
   {
     slug: 'boletus-edulis',
@@ -249,7 +255,7 @@ export const STONE: readonly Shape[] = [
   },
 ];
 
-/** Die nächste Standardfarbe, wie der Dienst sie rechnet. */
+/** The nearest standard colour, as the service calculates it. */
 function nearestKey(hex: string): string {
   return nearestColour(hex, PALETTE)?.key ?? PALETTE[0].key;
 }
@@ -283,7 +289,7 @@ function axesOf(entry: Shape): Record<string, string[]> {
   };
 }
 
-/** Zählt die Achsen des Katalogs, wie der Dienst sie liefert. */
+/** Counts the axes of the catalogue, as the service gives them. */
 export function countAxes(entries: readonly Shape[]): Record<string, Record<string, number>> {
   const counts: Record<string, Record<string, number>> = {};
   const add = (axis: string, value: string) => {

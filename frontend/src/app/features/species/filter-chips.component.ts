@@ -54,7 +54,7 @@ export class SpeciesFilterChipsComponent {
           key,
           icon,
           label: '',
-          on: isActive(selection),
+          on: active === null && isActive(selection),
           iconLabel: this.i18n.translate('common.filter'),
         };
       }

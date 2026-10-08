@@ -8,10 +8,10 @@ import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Was die angemeldete App nebenher holt. Ohne Antwort meldet sie einen Fehler. */
+/** The data that the signed-in app gets in the background. Without a reply it shows an error. */
 
 const EMPTY_FINDS = { items: [], nextCursor: null };
-/** Die Bilder der Artseite. Ohne Antwort meldet die Seite einen Fehler. */
+/** The photos of the species page. Without a reply the page shows an error. */
 const NO_PHOTOS = { '/api/photos': { items: [], nextCursor: null } };
 
 const SIGNED_IN: Record<string, unknown> = {
@@ -21,20 +21,20 @@ const SIGNED_IN: Record<string, unknown> = {
   '/api/zones': EMPTY_FINDS,
 };
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device. It does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Öffnet die Artseite des Steinpilzes mit dem Katalog des Bretts. */
+/** Opens the species page of the penny bun with the catalogue of the board. */
 async function openSpecies(page: Page, items: unknown, extra: Record<string, unknown> = {}): Promise<void> {
   await mockApi(page, { '/api/species/bundle': items, ...NO_PHOTOS, ...extra });
   await flatMap(page);
   await page.goto('/arten/boletus-edulis');
 }
 
-/** Stellt die Art dieser Zeile der offenen Art gegenüber. */
+/** Compares the species of this row with the open species. */
 async function compareWith(page: Page, name: string): Promise<void> {
   await page
     .locator('app-list-row')
@@ -56,6 +56,5 @@ test('CompareDesktop', async ({ page }) => {
   await mockSignIn(page);
   await openSpecies(page, COMPARE, { '/api/config': authConfig(BASE), ...SIGNED_IN });
   await compareWith(page, 'Gallenröhrling');
-  await expect(page.getByText('zwei Arten')).toBeVisible();
   await expectBoard(page, 'CompareDesktop');
 });

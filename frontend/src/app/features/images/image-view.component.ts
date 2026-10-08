@@ -125,7 +125,8 @@ export class ImageViewComponent {
   protected step(by: number): void {
     const at = this.index() - 1 + by;
     const next = this.index() === 0 || at < 0 ? undefined : this.images.photos().at(at);
-    if (next !== undefined) void this.router.navigate(['/arten', this.slug(), 'bilder', next.id], { replaceUrl: true });
+    if (next !== undefined)
+      void this.router.navigate(['/arten', this.slug(), 'bilder', next.id], { replaceUrl: true });
   }
 
   protected async setCover(): Promise<void> {

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  signal,
+} from '@angular/core';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { HistoryService } from '../../core/navigation/history.service';
 import { AuthService } from '../../core/auth';
@@ -19,10 +27,7 @@ import { SpeciesPageComponent } from '../species/species-page.component';
 import { SpeciesStore } from '../species/species.store';
 import { ImagesStore } from './images.store';
 
-/**
- * Adds or submits a photo in a sheet over the species page, per `ImageSubmit.dc.html`.
- * The right `image.review` adds; each other person submits for review.
- */
+/** Adds or submits a photo in a sheet over the species page, per `ImageSubmit.dc.html`. */
 @Component({
   selector: 'app-image-form',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,7 +7,7 @@ import { SpeciesFilterStore } from './filter.store';
 import { SpeciesStore } from './species.store';
 import { judge } from './facets';
 
-/** Das Filterblatt über der Liste. */
+/** The filter sheet over the list. */
 @Component({
   selector: 'app-species-filter-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,

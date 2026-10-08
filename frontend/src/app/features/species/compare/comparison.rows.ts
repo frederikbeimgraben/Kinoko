@@ -143,7 +143,10 @@ export function reactionRows(
       const reaction = reactionsOf(entry.slug).find((one) => one.reagent.slug === slug);
       if (reaction === undefined) return plainCell(i18n.translate('species.reaction.unknown'));
       if (reaction.colour !== null && reaction.result !== 'negative') {
-        return swatchCell({ ...colourSwatch(reaction.colour), label: reaction.reading || reaction.colour.name });
+        return swatchCell({
+          ...colourSwatch(reaction.colour),
+          label: reaction.reading || reaction.colour.name,
+        });
       }
       return plainCell(reaction.reading || i18n.translate(RESULT_TEXT[reaction.result]));
     }),

@@ -21,7 +21,14 @@ import {
 @Component({
   selector: 'app-species-reactions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FoldSectionComponent, ListRowComponent, RowGroupComponent, SectionComponent, SvgIconComponent, TranslatePipe],
+  imports: [
+    FoldSectionComponent,
+    ListRowComponent,
+    RowGroupComponent,
+    SectionComponent,
+    SvgIconComponent,
+    TranslatePipe,
+  ],
   templateUrl: './species-reactions.component.html',
   styleUrl: './species-reactions.component.scss',
 })

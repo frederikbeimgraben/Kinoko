@@ -36,8 +36,8 @@ interface SpeciesStoreState {
   bundle: SpeciesBundle | null;
   failed: boolean;
   activeSpecies: string | null;
-  /** The full profiles from the service. Only a profile has the reactions. */
-  profiles: ReadonlyMap<string, SpeciesEntry>;
+  /** The full details from the service. Only a profile has the reactions. */
+  details: ReadonlyMap<string, SpeciesEntry>;
   /** The slugs whose profile is requested or known. */
   asked: ReadonlySet<string>;
 }
@@ -46,7 +46,7 @@ const INITIAL: SpeciesStoreState = {
   bundle: null,
   failed: false,
   activeSpecies: null,
-  profiles: new Map(),
+  details: new Map(),
   asked: new Set(),
 };
 
@@ -137,7 +137,7 @@ export const SpeciesStore = signalStore(
 
       /** The reactions of a species from its profile. Empty until the profile is known. */
       reactionsOf(slug: string): readonly SpeciesReaction[] {
-        return store.profiles().get(slug)?.reactions ?? [];
+        return store.details().get(slug)?.reactions ?? [];
       },
 
       /** Gets the full profile of each slug one time. A failed request leaves the slug without reactions. */
@@ -154,7 +154,7 @@ export const SpeciesStore = signalStore(
             ),
           ),
           tap(({ slug, profile }) => {
-            patchState(store, ({ profiles }) => ({ profiles: new Map(profiles).set(slug, profile) }));
+            patchState(store, ({ details }) => ({ details: new Map(details).set(slug, profile) }));
           }),
         ),
       ),

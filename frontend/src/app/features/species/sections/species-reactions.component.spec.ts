@@ -63,6 +63,6 @@ describe('SpeciesReactionsComponent', () => {
   it('shows nothing without colour changes and reactions', async () => {
     const { container } = await render(SpeciesReactionsComponent, { inputs: { reactions: [] } });
 
-    expect(container.textContent?.trim()).toBe('');
+    expect(container.textContent.trim()).toBe('');
   });
 });

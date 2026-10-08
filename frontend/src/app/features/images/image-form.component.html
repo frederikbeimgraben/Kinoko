@@ -54,7 +54,11 @@
       (valueChange)="caption.set($event)"
     />
     @if (curates()) {
-      <app-check-row [title]="'image.setAsCoverToggle' | t" [checked]="cover()" (toggled)="cover.set($event)" />
+      <app-check-row
+        [title]="'image.setAsCoverToggle' | t"
+        [checked]="cover()"
+        (toggled)="cover.set($event)"
+      />
     }
   </div>
 </app-form-sheet>

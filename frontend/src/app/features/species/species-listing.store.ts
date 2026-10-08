@@ -1,5 +1,12 @@
 import { computed, inject } from '@angular/core';
-import { patchState, signalStore, withComputed, withLinkedState, withMethods, withProps } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withLinkedState,
+  withMethods,
+  withProps,
+} from '@ngrx/signals';
 import { SpeciesFilterStore } from './filter.store';
 import { listing } from './rows';
 import { SpeciesStore } from './species.store';
@@ -25,7 +32,13 @@ export const SpeciesListingStore = signalStore(
   })),
   withComputed(({ _catalogue, _filter, shown }) => {
     const judged = computed(() =>
-      listing(_catalogue.entries(), _filter.query(), _filter.selection(), _catalogue.palette(), _filter.sort()),
+      listing(
+        _catalogue.entries(),
+        _filter.query(),
+        _filter.selection(),
+        _catalogue.palette(),
+        _filter.sort(),
+      ),
     );
     return {
       hits: computed(() => judged().hits.slice(0, shown())),

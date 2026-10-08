@@ -19,7 +19,7 @@ const PNG = Buffer.from(
   'base64',
 );
 
-/** Meldet an und legt den Vertrag auf die Seite. */
+/** Signs in and puts the contract fixture on the page. */
 async function start(page: Page, path: string, extra: Record<string, unknown>): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -31,15 +31,17 @@ async function start(page: Page, path: string, extra: Record<string, unknown>): 
   await page.goto(path);
 }
 
-/** Wählt ein Bild im Formular. */
+/** Picks a photo in the form. */
 async function pick(page: Page): Promise<void> {
-  await page.locator('app-photo-strip input[type=file]').setInputFiles({ name: 'pilz.png', mimeType: 'image/png', buffer: PNG });
+  await page
+    .locator('app-photo-strip input[type=file]')
+    .setInputFiles({ name: 'pilz.png', mimeType: 'image/png', buffer: PNG });
   await expect(page.locator('app-photo-strip .pht img')).toBeVisible();
 }
 
-/** Zieht die oberste Karte des Stapels nach rechts oder nach links. */
+/** Drags the top card of the stack to the right or to the left. */
 async function swipe(page: Page, direction: 1 | -1): Promise<void> {
-  // Der Stapel steht still; die oberste Karte läuft nach einer Entscheidung zurück.
+  // The stack does not move. The top card goes back after a decision.
   const box = await page.locator('.queue__stack').boundingBox();
   if (box === null) throw new Error('keine Karte');
   const y = box.y + box.height / 2;
@@ -64,7 +66,7 @@ test('Ein Bild geht mit Anteil hinaus', async ({ page }) => {
       return;
     }
     sent.push(route.request().method());
-    // Die Antwort bleibt aus: der Anteil steht auf der Kachel.
+    // The reply does not come, so the progress stays on the sheet.
     await new Promise(() => undefined);
   });
 
