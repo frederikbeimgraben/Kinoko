@@ -7,7 +7,7 @@ import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
 import { SheetComponent } from '../sheet/sheet.component';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
-/** Eine Zeile zur Wahl: Zeichen, Titel und ihr Wert. */
+/** One row to choose: icon, title and its value. */
 export interface OptionSheetOption {
   readonly id: string;
   readonly title: string;
@@ -15,9 +15,7 @@ export interface OptionSheetOption {
   readonly value?: string;
 }
 
-/** Ohne Vorgabe fasst das Blatt nur seinen Inhalt. */
-
-/** Blatt zur Wahl: unter dem Titel des Blatts eine Karte aus Zeilen. Einfach- oder Mehrfachwahl. */
+/** A sheet to choose from: a card of rows below the title. One choice or many. */
 @Component({
   selector: 'app-option-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,17 +35,17 @@ export class OptionSheetComponent {
   readonly open = input(false);
   readonly title = input.required<string>();
   readonly options = input.required<readonly OptionSheetOption[]>();
-  /** Die gewählte Zeile trägt einen Haken statt eines Pfeils. */
+  /** The chosen row shows a check mark instead of a chevron. */
   readonly selected = input<string | null>(null);
-  /** Mehrfachwahl: Prüfzeilen statt Pfeilzeilen, Fuß mit einer Aktion. */
+  /** Many choices: check rows instead of chevron rows, and a foot with one action. */
   readonly multiple = input(false);
-  /** Die Beschriftung der Fußaktion. Nur bei Mehrfachwahl nötig. */
+  /** The label of the foot action. Only many choices need it. */
   readonly confirmLabel = input<string>('');
-  /** Ein Blatt über eigenem Grund dunkelt ihn ab; eines über der Karte nicht. */
+  /** A sheet over its own ground darkens it. A sheet over the map does not. */
   readonly dims = input(true);
 
   readonly chosen = output<string>();
-  /** Bei Mehrfachwahl: die gewählte Menge, ausgelöst über die Fußaktion. */
+  /** For many choices: the chosen set, sent by the foot action. */
   readonly confirmed = output<readonly string[]>();
   readonly closed = output();
 

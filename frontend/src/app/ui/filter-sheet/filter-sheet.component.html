@@ -3,31 +3,19 @@
     class="filtersheet"
     [label]="title()"
     [title]="title()"
-    [headDivider]="true"
+    [back]="back()"
+    [closable]="!back()"
     [modal]="true"
     [dismissible]="true"
+    (backClick)="backClick.emit()"
     (closed)="closed.emit()"
   >
-    @if (back()) {
-      <button
-        titleLead
-        class="filtersheet__back tap"
-        type="button"
-        data-press="scale"
-        [attr.aria-label]="'common.back' | t"
-        (click)="backClick.emit()"
-      >
-        <app-svg-icon name="back" [size]="20" />
-      </button>
-    }
     <div #content class="filtersheet__content" appScrollFade><ng-content /></div>
     @if (primaryLabel(); as label) {
       <app-action-bar
         foot
-        class="filtersheet__foot"
         [primary]="label"
         [secondary]="showsReset() ? ('common.reset' | t) : undefined"
-        [split]="showsReset()"
         (primaryClick)="primaryClick.emit()"
         (secondaryClick)="resetClick.emit()"
       />

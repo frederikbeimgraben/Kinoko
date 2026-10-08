@@ -1,4 +1,8 @@
-// Scrim und Karte hängen an ihrer Zelle, nicht am Fenster der Seite.
+@use '../../../../../styles/overlay-body' as overlay;
+
+@include overlay.overlay-body;
+
+// The dark ground and the card stay in their cell, not in the window of the page.
 .overlays__stage {
   --modal-layer-position: absolute;
   --modal-layer-scrim: transparent;
@@ -7,4 +11,26 @@
   position: relative;
   block-size: 100%;
   overflow: hidden;
+}
+
+.overlays__stage--modal {
+  --sheet-modal-start: 0;
+}
+
+// The board shows the grip alone on the ground of the page, at the top of its cell.
+// The sheet keeps 24 px free above it, so the wrapper is 24 px higher than the grip.
+.overlays__grip {
+  --sheet: transparent;
+  --shadow-sheet: none;
+
+  block-size: 48px;
+}
+
+.overlays__grip app-sheet {
+  align-items: flex-start;
+}
+
+.overlay-body,
+.overlays__foot {
+  block-size: 100%;
 }

@@ -1,3 +1,51 @@
+// In the `foot` slot, per `kit.css` `.sact`. The bar stays in the flow and covers the last 24 px of the body.
+// Thus the body ends 104 px above the bottom edge, as with the absolute `.sact` of the kit.
+:host([foot]) {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  margin-block-start: -24px;
+  pointer-events: none;
+}
+
+.acts {
+  display: flex;
+  gap: 8px;
+  padding: 40px 16px 16px;
+}
+
+.acts__button {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  pointer-events: auto;
+}
+
+// The main action is first in the tab order, but stands on the right, per `kit.css` `.sact`.
+.acts__main {
+  order: 1;
+}
+
+.acts--lead .acts__main {
+  order: -1;
+}
+
+// Per `kit.css` `.mact`: right-aligned, the second action as text.
+:host(.action-bar--modal) .acts {
+  align-items: center;
+  justify-content: flex-end;
+  padding: 36px 24px 24px;
+}
+
+:host(.action-bar--modal) .acts__button {
+  flex: none;
+}
+
+// The text button takes its text colour from `--primary`. Here it shows the danger colour.
+.acts__danger,
+.footer__danger {
+  --primary: var(--bad);
+}
+
 .footer {
   display: flex;
   flex-direction: column;
@@ -21,23 +69,17 @@
   --btn-height: var(--action-bar-height, 48px);
 }
 
-// Im Modal misst die Aktion vierundvierzig Punkte, wie das Board sie zeigt.
+// In the modal, the action is 44 px high, as the board shows it.
 .footer--inline .footer__main {
   --btn-height: var(--action-bar-height, var(--size-tap));
 }
 
-// Die rote Aktion steht schmaler als die grüne, wie die Boards sie zeigen.
+// The red action is lower than the green one, as the boards show it.
 .footer__slim {
   --btn-height: var(--action-bar-height, var(--size-tap));
 }
 
-// Der Textknopf malt seine Schrift aus `--primary`. Hier trägt er die
-// Gefahrfarbe.
-.footer__danger {
-  --primary: var(--bad);
-}
-
-// Ohne eigene Reihe bleibt das Paar Teil der Spalte des Fusses.
+// Without its own row, the pair stays a part of the footer column.
 .footer__pair {
   display: contents;
 }
@@ -47,7 +89,7 @@
   gap: var(--space-3);
 }
 
-// Beide Aktionen teilen sich die Breite zur Hälfte, wie das Brett sie zeigt.
+// The two actions share the width, as the board shows it.
 .footer__pair--split .footer__main {
   --btn-font-size: var(--fs-control);
   --space-5: 20px;
@@ -57,13 +99,13 @@
   min-inline-size: 0;
 }
 
-// Die Hauptaktion steht rechts, die zweite links.
+// The main action stands on the right, the second on the left.
 .footer__pair--split .footer__lead {
   order: 2;
 }
 
-// Die Gefahr steht links, auch wenn sie die erste Aktion ist. Mit `leadFirst`
-// steht die Hauptaktion links, wie das Brett der Gruppe sie zeigt.
+// The danger action stands on the left, also as the first action.
+// With `leadFirst`, the main action stands on the left, as the group board shows it.
 .footer__pair--danger .footer__lead {
   order: 0;
 }

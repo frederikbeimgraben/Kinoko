@@ -1,5 +1,4 @@
-// Das Blatt sitzt am unteren Rand seines Wirts. Über dem Blatt bleibt der
-// Wirt durchlässig, sonst fasste er die Karte darunter ab.
+// The sheet sits at the bottom edge of its host. Above the sheet, the host lets each press through to the map.
 :host {
   display: flex;
   align-items: flex-end;
@@ -7,182 +6,113 @@
   pointer-events: none;
 }
 
+// Per `kit.css` `.sheet-over`.
 .sheet {
   position: relative;
   pointer-events: auto;
   display: flex;
   flex-direction: column;
   inline-size: 100%;
-  // Die Höhe folgt dem Inhalt. Diese Grenze kommt aus `project/Sheet.dc.html`.
   max-block-size: min(var(--size-sheet-max, 640px), calc(100% - 24px));
-  background: var(--color-surface);
-  border-start-start-radius: var(--radius-xl);
-  border-start-end-radius: var(--radius-xl);
-  box-shadow: var(--sheet-shadow, var(--shadow-lg));
-  transition: block-size var(--motion-sheet) var(--ease-standard);
+  background: var(--sheet);
+  border-start-start-radius: var(--r-sheet);
+  border-start-end-radius: var(--r-sheet);
+  box-shadow: var(--shadow-sheet);
+  transition: block-size var(--motion-sheet) var(--ease-emph-in);
+}
+
+// The floating actions cover the end of the body. Per `kit.css` `.acts .sbody.fb`, the fade is longer.
+.sheet--acts {
+  --scroll-fade-end: 48px;
 }
 
 .sheet--dragging {
   transition: none;
 }
 
-// Der ganze Kopf zieht das Blatt. Waagrecht darf der Browser weiter scrollen,
-// sonst bliebe die Zeitleiste stehen.
+.sheet:focus-visible {
+  outline: none;
+}
+
+// The full head drags the sheet. The browser still scrolls horizontally, so the timeline can move.
 .sheet__drag {
   flex: none;
   touch-action: pan-x;
 }
 
+// Per `kit.css` `.grip`. A button is only as wide as its content, so the full width keeps the bar centred.
 .sheet__handle {
   display: flex;
-  touch-action: none;
   flex: none;
   align-items: center;
   justify-content: center;
-  // Ein <button> ist von sich aus nur so breit wie sein Inhalt. Ohne diese
-  // Breite klebte der Balken am Rand statt in der Mitte des Blatts.
   inline-size: 100%;
-  block-size: var(--size-handle-height);
+  block-size: 24px;
   padding: 0;
+  touch-action: none;
   background: none;
   border: 0;
 }
 
 .sheet__handle-line {
   display: block;
-  inline-size: var(--size-handle-width);
+  inline-size: 32px;
   block-size: 4px;
-  background: var(--color-border);
-  border-radius: var(--radius-sm);
+  background: var(--outline-strong);
+  border-radius: 2px;
 }
 
+.sheet__head--divider {
+  border-block-end: 1px solid var(--outline);
+}
+
+// The body of the content sets its own padding, per `kit.css` `.sbody`.
 .sheet__content {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   min-block-size: 0;
-  padding-block-end: 16px;
   overflow: hidden;
 }
 
-.sheet:focus-visible {
-  outline: none;
-}
-
-// Der Scrim dunkelt am Rechner die ganze Seite ab, auch Spalte und Leiste.
-// Das Modal selbst bleibt über dem Inhalt rechts der Spalte zentriert.
+// The scrim covers the full page on the desktop, also the column and the rail.
 .sheet__scrim {
-  position: fixed;
+  position: var(--modal-layer-position, fixed);
   inset: 0;
   z-index: var(--z-sheet);
   padding: 0;
   pointer-events: auto;
-  background: rgb(0 12 7 / 25%);
+  background: var(--scrim);
   border: 0;
-  transition: opacity var(--motion-sheet) var(--ease-standard);
-
-  @starting-style {
-    opacity: 0;
-  }
 }
 
-// Ein schwebender Kasten mit `inset-block: 0 0` nimmt die ganze Höhe. Das
-// schmale Modal steht darum an seiner Mitte.
+// Per `kit.css` `.modal`. A box with `inset-block: 0 0` takes the full height, so the modal stands at its centre.
+// The centring uses `translate`, so the `scale` of the pop animation keeps it.
 .sheet--modal {
-  position: fixed;
+  position: var(--modal-layer-position, fixed);
   inset-block: 50% auto;
-  inset-inline: 0;
+  inset-inline: var(--sheet-modal-start, calc(var(--size-rail) + var(--size-column))) 0;
   z-index: calc(var(--z-sheet) + 1);
-  inline-size: var(--size-modal);
+  inline-size: var(--w-modal);
+  max-inline-size: calc(100% - 48px);
   block-size: auto;
-  max-block-size: 80%;
+  max-block-size: calc(100% - 64px);
   margin-inline: auto;
   overflow: hidden;
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
-  transition: opacity var(--motion-sheet) var(--ease-standard);
+  background: var(--surface-high);
+  border-radius: var(--r-sheet);
+  box-shadow: var(--shadow-overlay);
   translate: 0 -50%;
-
-  @starting-style {
-    opacity: 0;
-  }
 }
 
 .sheet--modal.sheet--compact {
   inline-size: var(--size-modal-compact);
 }
 
-// Das Modal steht über der Fläche rechts der Spalte, auch wenn sein Blatt
-// außerhalb der Hülle hängt.
-.sheet--modal {
-  inset-inline-start: calc(var(--size-rail) + var(--size-column));
-}
-
-// Das Modal hat keinen Griff. Der Kopf des Inhalts bleibt und weicht dem X.
 .sheet--modal .sheet__handle {
   display: none;
 }
 
-.sheet--modal .sheet__drag {
-  padding-inline-end: calc(var(--size-modal-close-inset) + var(--size-modal-close));
-}
-
-// Ohne eigenen Kopf trägt der Inhalt seinen Titel. Er beginnt dort, wo der
-// Kopf beginnt.
-.sheet--bare .sheet__content {
-  padding-block-start: var(--space-modal-head);
-}
-
-.sheet__head {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px var(--space-modal-head-end) 14px var(--space-modal-head);
-}
-
-.sheet__head--divider {
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-.sheet__head-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sheet-title-gap, 8px);
-}
-
-// A caller sets --sheet-title-* on `app-sheet` to match its board title,
-// e.g. the 22px bold title of an object sheet against the 18px default.
-.sheet__title {
-  flex: 0 1 auto;
-  min-inline-size: 0;
-  margin: 0;
-  font-size: var(--sheet-title-size, var(--fs-lg));
-  font-weight: var(--sheet-title-weight, var(--fw-semibold));
-  line-height: var(--lh-normal);
-  letter-spacing: var(--sheet-title-tracking, normal);
-}
-
-.sheet__note {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-}
-
-// Das X steht in jedem Modal an derselben Stelle, auch über einem Inhalt mit
-// eigenem Titel.
-.sheet__close {
-  position: absolute;
-  inset-block-start: var(--size-modal-close-inset);
-  inset-inline-end: var(--size-modal-close-inset);
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--size-modal-close);
-  block-size: var(--size-modal-close);
-  padding: 0;
-  color: var(--color-text-muted);
-  background: none;
-  border: 0;
-  border-radius: var(--radius-md);
+.sheet--modal .sheet__head {
+  --overlay-head-pad: 12px 12px 4px 16px;
 }

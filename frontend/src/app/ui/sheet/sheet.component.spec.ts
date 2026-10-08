@@ -6,7 +6,7 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SheetComponent } from './sheet.component';
 
-/** Der Rechner: die Hülle meldet die breite Ansicht. */
+/** The desktop: the shell reports the wide view. */
 const WIDE = { provide: ViewportService, useValue: { wide: signal(true) } };
 
 @Component({
@@ -34,7 +34,7 @@ class HostComponent {}
 })
 class HeadHostComponent {}
 
-/** Die Spalte am Rechner: das Blatt sitzt darin als Modal über der ganzen Seite. */
+/** The column on the desktop: the sheet in it is a modal over the full page. */
 @Component({
   imports: [SheetComponent],
   template: `
@@ -45,7 +45,7 @@ class HeadHostComponent {}
 })
 class ColumnHostComponent {}
 
-/** jsdom misst keine Höhen, das Blatt braucht sie aber, um zu rasten. */
+/** jsdom measures no heights, but the sheet needs them for its detents. */
 function fakeSize(host: HTMLElement, hostHeight: number, sheetHeight: number): void {
   Object.defineProperty(host, 'clientHeight', { value: hostHeight, configurable: true });
   const sheet = host.querySelector('.sheet');
@@ -59,7 +59,17 @@ function drag(handle: HTMLElement, sizes: readonly number[]): void {
   });
 }
 
-/** Der Wirt des Blatts im Testaufbau, mit oder ohne umgebende Hülle. */
+/** Sends a drag with a time in ms for each step. The last step releases the pointer. */
+function timedDrag(handle: HTMLElement, steps: readonly (readonly [number, number])[]): void {
+  steps.forEach(([clientY, time], index) => {
+    const kind = index === 0 ? 'pointerdown' : index === steps.length - 1 ? 'pointerup' : 'pointermove';
+    const event = new MouseEvent(kind, { bubbles: true, clientY });
+    Object.defineProperty(event, 'timeStamp', { value: time });
+    handle.dispatchEvent(event);
+  });
+}
+
+/** The host of the sheet in the test, with or without a wrapper. */
 function hostOf(container: Element): HTMLElement {
   return container.querySelector<HTMLElement>('app-sheet') ?? (container as HTMLElement);
 }
@@ -123,7 +133,7 @@ describe('SheetComponent', () => {
     expect(container.querySelector('[aria-modal]')).toBeNull();
   });
 
-  it('nimmt ohne Rasten die Höhe des Inhalts', async () => {
+  it('takes the content height without detents', async () => {
     const { container } = await render(SheetComponent, { inputs: { label: 'Porcini' } });
 
     expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('auto');
@@ -157,7 +167,7 @@ describe('SheetComponent', () => {
     expect(calls).toEqual([2]);
   });
 
-  it('schließt ein Blatt mit Zug nach unten unter die halbe Raste', async () => {
+  it('closes a sheet on a drag down below half of its detent', async () => {
     const { fixture, container } = await render(SheetComponent, {
       inputs: { label: 'Porcini', detent: 1, dismissible: true, detents: [0.5, 0.5, 0.5] },
     });
@@ -174,7 +184,7 @@ describe('SheetComponent', () => {
     expect(detents).toEqual([]);
   });
 
-  it('lässt ein Blatt ohne Schließen am Zug nach unten rasten', async () => {
+  it('keeps a sheet that cannot close at its detent on a drag down', async () => {
     const { fixture, container } = await render(SheetComponent, {
       inputs: { label: 'Porcini', detent: 1, detents: [0.5, 0.5, 0.5] },
     });
@@ -246,28 +256,101 @@ describe('SheetComponent', () => {
     expect(tapped).toBe(1);
   });
 
-  it('marks the handle as a tap target with a press state', async () => {
+  it('follows a fast fling up to the next detent', async () => {
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 0, detents: ['152px', 0.4, 0.9] },
+    });
+    const calls: number[] = [];
+    fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 152);
+
+    timedDrag(handle, [
+      [500, 0],
+      [490, 10],
+      [470, 20],
+      [450, 30],
+      [450, 40],
+    ]);
+
+    expect(calls).toEqual([1]);
+  });
+
+  it('goes to the nearest detent after a slow drag', async () => {
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 0, detents: ['152px', 0.4, 0.9] },
+    });
+    const calls: number[] = [];
+    fixture.componentInstance.detentChange.subscribe((detent) => calls.push(detent));
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 152);
+
+    timedDrag(handle, [
+      [500, 0],
+      [490, 100],
+      [470, 200],
+      [450, 300],
+      [450, 400],
+    ]);
+
+    expect(calls).toEqual([]);
+  });
+
+  it('closes a dismissible sheet on a fast fling down', async () => {
+    const { fixture, container } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', dismissible: true },
+    });
+    let closes = 0;
+    fixture.componentInstance.closed.subscribe(() => (closes += 1));
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 400);
+
+    timedDrag(handle, [
+      [400, 0],
+      [420, 10],
+      [450, 20],
+      [480, 30],
+      [480, 40],
+    ]);
+
+    expect(closes).toBe(1);
+  });
+
+  it('resists a drag above the top detent', async () => {
+    const { container, fixture } = await render(SheetComponent, {
+      inputs: { label: 'Porcini', detent: 2, detents: ['152px', 0.4, 0.5] },
+    });
+    const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    fakeSize(hostOf(container), 800, 400);
+
+    handle.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientY: 400 }));
+    handle.dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientY: 300 }));
+    fixture.detectChanges();
+
+    expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('430px');
+  });
+
+  it('gives the handle a ripple and no press state', async () => {
     await render(SheetComponent, { inputs: { label: 'Porcini' } });
 
     const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
 
-    expect(handle).toHaveClass('tap');
-    expect(handle).toHaveAttribute('data-press', 'scale');
+    expect(handle).not.toHaveAttribute('data-press');
   });
 
   it('spans the handle across the full width so the bar sits centred', async () => {
     const { container } = await render(HostComponent);
 
     const handleElement = container.querySelector('.sheet__handle');
-    if (!handleElement) throw new Error('Griff fehlt im Baum.');
+    if (!handleElement) throw new Error('The grip is missing.');
     const handle = getComputedStyle(handleElement);
 
     expect(handle.inlineSize).toBe('100%');
     expect(handle.justifyContent).toBe('center');
   });
 
-  describe('am Rechner', () => {
-    it('trägt den Kopf mit Titel, Zusatz und Schließen', async () => {
+  describe('on the desktop', () => {
+    it('shows the head with title, note and close button', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Fund melden', title: 'Fund melden', note: '48,5203 · 9,0511' },
         providers: [WIDE],
@@ -279,71 +362,53 @@ describe('SheetComponent', () => {
       await noViolations(container);
     });
 
-    it('lässt den Kopf ohne Titel weg', async () => {
+    it('shows only the close button in a head without a title', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini' },
+        providers: [WIDE],
+      });
+
+      const head = container.querySelector('.sheet__head');
+      expect(head).not.toBeNull();
+      expect(screen.queryByRole('heading')).toBeNull();
+      expect(head?.querySelector('.overlay-head__close')).toHaveAccessibleName('Schließen');
+    });
+
+    it('leaves out the head without a title and a close button', async () => {
+      const { container } = await render(SheetComponent, {
+        inputs: { label: 'Porcini', closable: false },
         providers: [WIDE],
       });
 
       expect(container.querySelector('.sheet__head')).toBeNull();
     });
 
-    it('trägt das X auch über einem Inhalt mit eigenem Titel', async () => {
-      const { container } = await render(SheetComponent, {
-        inputs: { label: 'Porcini' },
-        providers: [WIDE],
-      });
-
-      const close = container.querySelector<HTMLElement>('.sheet__close');
-      if (close === null) throw new Error('Schließen fehlt.');
-
-      expect(close).toHaveAccessibleName('Schließen');
-      expect(getComputedStyle(close).position).toBe('absolute');
-      expect(getComputedStyle(close).insetBlockStart).toBe('var(--size-modal-close-inset)');
-      expect(getComputedStyle(close).insetInlineEnd).toBe('var(--size-modal-close-inset)');
-      expect(getComputedStyle(close).inlineSize).toBe('var(--size-modal-close)');
-      expect(getComputedStyle(close).blockSize).toBe('var(--size-modal-close)');
-    });
-
-    it('lässt den Griff weg', async () => {
+    it('leaves out the grip', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini' },
         providers: [WIDE],
       });
 
       const handle = container.querySelector('.sheet__handle');
-      if (handle === null) throw new Error('Griff fehlt im Baum.');
+      if (handle === null) throw new Error('The grip is missing.');
 
       expect(getComputedStyle(handle).display).toBe('none');
     });
 
-    it('setzt über einem eigenen Titel denselben Abstand wie über dem Kopf', async () => {
-      const { container } = await render(SheetComponent, {
-        inputs: { label: 'Porcini' },
-        providers: [WIDE],
-      });
-
-      const content = container.querySelector('.sheet__content');
-      if (content === null) throw new Error('Inhalt fehlt.');
-
-      expect(getComputedStyle(content).paddingBlockStart).toBe('var(--space-modal-head)');
-    });
-
-    it('trägt im schmalen Modal denselben Kopf und dasselbe X', async () => {
+    it('gives the head of the modal the padding of the kit', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini', title: 'Porcini', compact: true },
         providers: [WIDE],
       });
 
       const head = container.querySelector<HTMLElement>('.sheet__head');
-      if (head === null) throw new Error('Kopf fehlt.');
-      const style = getComputedStyle(head);
+      if (head === null) throw new Error('The head is missing.');
 
-      expect(style.padding).toBe('4px var(--space-modal-head-end) 14px var(--space-modal-head)');
-      expect(container.querySelector('.sheet__close')).not.toBeNull();
+      expect(getComputedStyle(head).getPropertyValue('--overlay-head-pad')).toBe('12px 12px 4px 16px');
+      expect(container.querySelector('.overlay-head__close')).not.toBeNull();
     });
 
-    it('lässt die Rasten weg', async () => {
+    it('ignores the detents', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini', detent: 2, detents: [0.1, 0.5, 0.9] },
         providers: [WIDE],
@@ -352,7 +417,7 @@ describe('SheetComponent', () => {
       expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('');
     });
 
-    it('meldet das Schließen über den Knopf im Kopf', async () => {
+    it('emits closed from the button in the head', async () => {
       const { container, fixture } = await render(SheetComponent, {
         inputs: { label: 'Porcini', title: 'Porcini' },
         providers: [WIDE],
@@ -360,14 +425,14 @@ describe('SheetComponent', () => {
       let calls = 0;
       fixture.componentInstance.closed.subscribe(() => (calls += 1));
 
-      const close = container.querySelector<HTMLElement>('.sheet__close');
-      if (close === null) throw new Error('Schließen fehlt im Kopf.');
+      const close = container.querySelector<HTMLElement>('.overlay-head__close');
+      if (close === null) throw new Error('The close button is missing in the head.');
       await userEvent.click(close);
 
       expect(calls).toBe(1);
     });
 
-    it('meldet das Schließen über den Scrim', async () => {
+    it('emits closed from the scrim', async () => {
       const { container, fixture } = await render(SheetComponent, {
         inputs: { label: 'Porcini', modal: true },
         providers: [WIDE],
@@ -379,10 +444,9 @@ describe('SheetComponent', () => {
       scrim?.click();
 
       expect(calls).toBe(1);
-      expect(scrim).toHaveClass('tap');
     });
 
-    it('lässt einen Zug über die Abdunkelung das Blatt nicht schließen', async () => {
+    it('does not close on a drag over the scrim', async () => {
       const { container, fixture } = await render(SheetComponent, {
         inputs: { label: 'Porcini', modal: true },
         providers: [WIDE],
@@ -391,7 +455,7 @@ describe('SheetComponent', () => {
       fixture.componentInstance.closed.subscribe(() => (calls += 1));
 
       const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
-      if (scrim === null) throw new Error('Scrim fehlt.');
+      if (scrim === null) throw new Error('The scrim is missing.');
       scrim.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 100, clientY: 100 }));
       scrim.dispatchEvent(new MouseEvent('pointerup', { bubbles: true, clientX: 260, clientY: 180 }));
       scrim.click();
@@ -399,7 +463,7 @@ describe('SheetComponent', () => {
       expect(calls).toBe(0);
     });
 
-    it('nimmt einen Druck ohne Bewegung auf der Abdunkelung als Klick', async () => {
+    it('takes a press without movement on the scrim as a click', async () => {
       const { container, fixture } = await render(SheetComponent, {
         inputs: { label: 'Porcini', modal: true },
         providers: [WIDE],
@@ -408,7 +472,7 @@ describe('SheetComponent', () => {
       fixture.componentInstance.closed.subscribe(() => (calls += 1));
 
       const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
-      if (scrim === null) throw new Error('Scrim fehlt.');
+      if (scrim === null) throw new Error('The scrim is missing.');
       scrim.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 100, clientY: 100 }));
       scrim.dispatchEvent(new MouseEvent('pointerup', { bubbles: true, clientX: 102, clientY: 101 }));
       scrim.click();
@@ -416,41 +480,41 @@ describe('SheetComponent', () => {
       expect(calls).toBe(1);
     });
 
-    it('dunkelt die ganze Seite ab, auch die Spalte und die Leiste', async () => {
+    it('darkens the full page, also the column and the rail', async () => {
       const { container } = await render(ColumnHostComponent, { providers: [WIDE] });
 
       const scrim = container.querySelector<HTMLElement>('.sheet__scrim');
-      if (scrim === null) throw new Error('Scrim fehlt.');
+      if (scrim === null) throw new Error('The scrim is missing.');
 
-      expect(getComputedStyle(scrim).position).toBe('fixed');
+      expect(getComputedStyle(scrim).position).toContain('fixed');
       expect(getComputedStyle(scrim).insetInlineStart).not.toContain('size-rail');
     });
 
-    it('folgt mit der Höhe immer dem Inhalt', async () => {
+    it('always follows the content height', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Fund melden', title: 'Fund melden' },
         providers: [WIDE],
       });
 
       const modal = container.querySelector<HTMLElement>('.sheet--modal');
-      if (modal === null) throw new Error('Modal fehlt.');
+      if (modal === null) throw new Error('The modal is missing.');
 
       expect(getComputedStyle(modal).blockSize).toBe('auto');
     });
 
-    it('deckelt die Höhe bei 80 % der Seitenhöhe', async () => {
+    it('limits the height to the page height less 64 px', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Fund melden', title: 'Fund melden' },
         providers: [WIDE],
       });
 
       const modal = container.querySelector<HTMLElement>('.sheet--modal');
-      if (modal === null) throw new Error('Modal fehlt.');
+      if (modal === null) throw new Error('The modal is missing.');
 
-      expect(getComputedStyle(modal).maxBlockSize).toBe('80%');
+      expect(getComputedStyle(modal).maxBlockSize).toBe('calc(100% - 64px)');
     });
 
-    it('meldet das Schließen auf Escape und lässt die Taste nicht weiter', async () => {
+    it('emits closed on Escape and stops the key', async () => {
       const { container, fixture } = await render(SheetComponent, {
         inputs: { label: 'Porcini' },
         providers: [WIDE],
@@ -467,7 +531,7 @@ describe('SheetComponent', () => {
       expect(outside).toBe(0);
     });
 
-    it('dunkelt nur ab, was das Blatt sperrt', async () => {
+    it('shows a scrim only for a modal sheet', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini' },
         providers: [WIDE],
@@ -476,7 +540,7 @@ describe('SheetComponent', () => {
       expect(container.querySelector('.sheet__scrim')).toBeNull();
     });
 
-    it('lässt am Telefon Scrim und Modal weg, trägt aber Kopf und X', async () => {
+    it('has no scrim and no modal on the phone, but a head and a close button', async () => {
       const { container } = await render(SheetComponent, {
         inputs: { label: 'Porcini', title: 'Porcini', modal: true },
       });
@@ -484,34 +548,34 @@ describe('SheetComponent', () => {
       expect(container.querySelector('.sheet__scrim')).toBeNull();
       expect(container.querySelector('.sheet--modal')).toBeNull();
       expect(screen.getByRole('heading', { name: 'Porcini' })).toBeInTheDocument();
-      expect(container.querySelector('.sheet__close')).not.toBeNull();
+      expect(container.querySelector('.overlay-head__close')).not.toBeNull();
     });
   });
 
-  it('lässt das X mit closable=false weg, auch mit Titel', async () => {
+  it('leaves out the close button with closable=false, also with a title', async () => {
     const { container } = await render(SheetComponent, {
       inputs: { label: 'Porcini', title: 'Porcini', closable: false },
     });
 
-    expect(container.querySelector('.sheet__close')).toBeNull();
+    expect(container.querySelector('.overlay-head__close')).toBeNull();
     expect(screen.getByRole('heading', { name: 'Porcini' })).toBeInTheDocument();
   });
 
-  it('meldet das Schließen über das X am Telefon', async () => {
+  it('emits closed from the close button on the phone', async () => {
     const { container, fixture } = await render(SheetComponent, {
       inputs: { label: 'Porcini', title: 'Porcini' },
     });
     let calls = 0;
     fixture.componentInstance.closed.subscribe(() => (calls += 1));
 
-    const close = container.querySelector<HTMLElement>('.sheet__close');
-    if (close === null) throw new Error('X fehlt.');
+    const close = container.querySelector<HTMLElement>('.overlay-head__close');
+    if (close === null) throw new Error('The close button is missing.');
     await userEvent.click(close);
 
     expect(calls).toBe(1);
   });
 
-  it('zieht die Linie unter dem Kopf nur mit headDivider', async () => {
+  it('shows the line below the head only with headDivider', async () => {
     const { container } = await render(SheetComponent, {
       inputs: { label: 'Filter', title: 'Filter', headDivider: true },
     });
@@ -519,7 +583,7 @@ describe('SheetComponent', () => {
     expect(container.querySelector('.sheet__head')).toHaveClass('sheet__head--divider');
   });
 
-  it('projiziert ein Element vor den Titel und eine Aktion in die Unterzeile', async () => {
+  it('projects an element before the title and an action into the head', async () => {
     @Component({
       imports: [SheetComponent],
       template: `

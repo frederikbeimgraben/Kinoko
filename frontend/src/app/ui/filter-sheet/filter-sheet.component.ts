@@ -13,22 +13,12 @@ import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { ScrollFadeDirective } from '../scroll-fade/scroll-fade.directive';
 import { SheetComponent } from '../sheet/sheet.component';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
-/** Das Filterblatt steht über der Liste und füllt den Streifen unter dem Kopf. */
-
-/** Blatt für Filterinhalte: Übersicht mit Zurücksetzen, Gruppe mit Weg zurück. */
+/** A sheet for filter content: the overview with reset, a group with a way back. */
 @Component({
   selector: 'app-filter-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ActionBarComponent,
-    OverlayHostComponent,
-    ScrollFadeDirective,
-    SheetComponent,
-    SvgIconComponent,
-    TranslatePipe,
-  ],
+  imports: [ActionBarComponent, OverlayHostComponent, ScrollFadeDirective, SheetComponent, TranslatePipe],
   templateUrl: './filter-sheet.component.html',
   styleUrl: './filter-sheet.component.scss',
 })
@@ -36,9 +26,9 @@ export class FilterSheetComponent {
   readonly open = input.required<boolean>();
   readonly title = input.required<string>();
   readonly resetEnabled = input(false);
-  /** Ohne Beschriftung bleibt der Fuß aus: das Blatt endet am Inhalt. */
+  /** Without a label, the sheet has no foot and ends at the content. */
   readonly primaryLabel = input<string>();
-  /** Eine Gruppe zeigt den Pfeil zurück statt Zurücksetzen und X. */
+  /** A group shows the back button instead of reset and the close button. */
   readonly back = input(false);
 
   readonly resetClick = output();
@@ -46,13 +36,13 @@ export class FilterSheetComponent {
   readonly backClick = output();
   readonly closed = output();
 
-  /** Eine Gruppe trägt den Weg zurück; das Zurücksetzen gehört zur Übersicht. */
+  /** A group has the way back. Reset belongs to the overview. */
   protected readonly showsReset = computed(() => this.resetEnabled() && !this.back());
 
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
 
   constructor() {
-    // Eine neue Gruppe beginnt oben, nicht an der Stelle der Übersicht.
+    // A new group starts at the top, not at the scroll position of the overview.
     afterRenderEffect(() => {
       this.title();
       const box = this.content()?.nativeElement;

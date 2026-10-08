@@ -1,52 +1,66 @@
 :host {
-  --objectmenu-width: 200px;
+  --objectmenu-width: 240px;
 }
 
+// Per `kit.css` `.veil`: the surface only catches a press next to the menu.
 .objectmenu__scrim {
   position: fixed;
   inset: 0;
   z-index: var(--z-sheet);
   padding: 0;
-  background: rgb(0 0 0 / 25%);
-  border: 0;
-}
-
-.objectmenu {
-  position: fixed;
-  z-index: calc(var(--z-sheet) + 1);
-  inline-size: min(var(--objectmenu-width), calc(100vw - 2 * var(--space-4)));
-  overflow: hidden;
-  background: var(--color-surface);
-  border-radius: 14px;
-  box-shadow: var(--shadow-lg);
-}
-
-.objectmenu__item {
-  display: flex;
-  inline-size: 100%;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--fs-row-title);
-  line-height: normal;
-  color: var(--color-text);
-  text-align: start;
   background: none;
   border: 0;
 }
 
-.objectmenu__item + .objectmenu__item {
-  border-block-start: var(--border-width) solid var(--color-border);
+// Per `kit.css` `.pop`. The menu grows from the point of the long press.
+.objectmenu {
+  position: fixed;
+  z-index: calc(var(--z-sheet) + 1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  inline-size: min(var(--objectmenu-width), calc(100vw - 32px));
+  padding: 12px;
+  overflow: hidden;
+  background: var(--surface-high);
+  border-radius: var(--r-pop);
+  box-shadow: var(--shadow-overlay);
+  transform-origin: top left;
+}
+
+.objectmenu--in {
+  --pop-in-scale: 0.92;
+
+  animation: pop-in var(--motion-pop) var(--ease-emph-in) both;
+}
+
+.objectmenu--out {
+  animation: fade-out 100ms var(--ease-emph-out) both;
+}
+
+// Per `kit.css` `.popi`.
+.objectmenu__item {
+  display: flex;
+  inline-size: 100%;
+  align-items: center;
+  gap: 12px;
+  block-size: 48px;
+  padding: 0 12px;
+  font-size: var(--fs-15);
+  line-height: normal;
+  color: var(--text);
+  text-align: start;
+  background: none;
+  border: 0;
+  border-radius: var(--r-box);
 }
 
 .objectmenu__item--danger {
-  color: var(--color-danger);
+  color: var(--bad);
 }
 
 .objectmenu__icon {
   display: flex;
   flex: none;
-  inline-size: 18px;
-  block-size: 18px;
   color: inherit;
 }

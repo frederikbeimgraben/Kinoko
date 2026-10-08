@@ -6,12 +6,13 @@ import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fix
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Breite des Modals und die Spalten links davon, aus den Boards. */
-const MODAL_WIDTH = 480;
-/** Das X steht 14 px vom Rand. Der Rahmen des Modals misst einen Punkt mehr. */
-const CLOSE_INSET = 15;
-const RAIL = 88;
-/** Der erste Marker der Attrappe. */
+/** The width of the modal and the columns on its left, from the boards. */
+const MODAL_WIDTH = 560;
+/** The close button is 12 px from the top and the end edge, per `kit.css` `.modal .shead`. */
+const CLOSE_INSET = 12;
+const CLOSE_SIZE = 48;
+const RAIL = 96;
+/** The first marker of the mock. */
 const MARKER = 'marker 0';
 const COLUMN = 400;
 
@@ -35,7 +36,7 @@ async function openApp(page: Page, path: string, signedIn = true): Promise<void>
   await page.goto(path);
 }
 
-/** Prüft Breite, Mitte über der Kartenfläche und das X des Modals. */
+/** Checks the width, the centre above the map area and the close button of the modal. */
 async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveClass(/sheet--modal/);
@@ -47,12 +48,12 @@ async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   expect(Math.round(box.width)).toBe(MODAL_WIDTH);
   expect(Math.round(box.x + box.width / 2)).toBe(Math.round((RAIL + COLUMN + viewport.width) / 2));
 
-  const close = dialog.locator('.sheet__close');
+  const close = dialog.locator('.overlay-head__close');
   await expect(close).toBeVisible();
   const closeBox = await close.boundingBox();
   if (closeBox === null) throw new Error('X ohne Fläche.');
-  expect(Math.round(closeBox.width)).toBe(32);
-  expect(Math.round(closeBox.height)).toBe(32);
+  expect(Math.round(closeBox.width)).toBe(CLOSE_SIZE);
+  expect(Math.round(closeBox.height)).toBe(CLOSE_SIZE);
   expect(Math.round(box.x + box.width - (closeBox.x + closeBox.width))).toBe(CLOSE_INSET);
   expect(Math.round(closeBox.y - box.y)).toBe(CLOSE_INSET);
 }
@@ -77,7 +78,7 @@ test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
 test('Anmelden steht am Rechner als zentriertes Modal', async ({ page }) => {
   await openApp(page, '/eintraege', false);
   const dialog = page.getByRole('dialog', { name: 'Anmelden' });
-  // Der Leerzustand zeichnet neu, bis die Liste steht.
+  // The empty state renders again until the list is complete.
   await expect(async () => {
     await page.getByRole('button', { name: 'Anmelden' }).click();
     await expect(dialog).toBeVisible({ timeout: 2000 });

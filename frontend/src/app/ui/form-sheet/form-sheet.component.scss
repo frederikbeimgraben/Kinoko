@@ -1,17 +1,14 @@
-:host {
-  --pilz-scrim: rgb(0 18 10 / 55%);
-}
-
+// Per `kit.css` `.sbody`.
 .formSheet__content {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   min-block-size: 0;
-  padding: 0 var(--size-gutter);
+  padding: 4px 16px 16px;
   overflow: hidden;
 }
 
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+:host-context(.sheet--modal) .formSheet__content {
+  padding: 4px 24px 20px;
 }

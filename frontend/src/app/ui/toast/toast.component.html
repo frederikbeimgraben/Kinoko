@@ -1,6 +1,12 @@
 <div class="toasts" aria-live="polite" aria-atomic="false">
   @for (toast of toasts.toasts(); track toast.id) {
-    <p class="toast" [class]="'toast--' + toast.variant" role="status">
+    <p
+      class="toast"
+      animate.enter="motion-list-in"
+      animate.leave="toast--out"
+      [class]="'toast--' + toast.variant"
+      role="status"
+    >
       <app-svg-icon
         [name]="glyph(toast.variant).name"
         [size]="16"

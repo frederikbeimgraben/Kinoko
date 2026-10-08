@@ -53,7 +53,7 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
     ],
   });
   const http = TestBed.inject(HttpTestingController);
-  // Der Katalog steht vor dem Blatt: sonst käme sein Name erst nach dem Test.
+  // Set the catalogue before the sheet. If not, its name comes after the test.
   const katalog = TestBed.inject(SpeciesState).loadBundle();
   await vi.waitFor(() => {
     http.expectOne('/api/species/bundle').flush(SPECIES_BUNDLE);
@@ -78,14 +78,14 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
   };
 }
 
-/** Das X im Kopf des Blatts, nicht das der Abdunkelung darunter. */
+/** The close button in the head of the sheet, not the scrim below it. */
 function sheetClose(container: Element): HTMLElement {
-  const close = container.querySelector<HTMLElement>('.sheet__close');
+  const close = container.querySelector<HTMLElement>('.overlay-head__close');
   if (close === null) throw new Error('Das Blatt trägt kein X.');
   return close;
 }
 
-/** Öffnet den Fund der Vorlage; das Blatt des Fundes löst dabei das Konto auf. */
+/** Opens the find of the fixture. The sheet of the find resolves the account. */
 async function openFind(setup: Setup, id = FIND.id): Promise<void> {
   setup.state.object.set({ kind: 'find', id });
   setup.refresh();

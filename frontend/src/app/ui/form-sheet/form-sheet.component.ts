@@ -3,10 +3,10 @@ import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../sheet/sheet.component';
 
-/** Das Blatt ist so hoch wie sein Inhalt. */
+/** The sheet is as high as its content. */
 const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
 
-/** Ein Blatt mit Titel, Feldern und zwei Aktionen. Die Felder kommen von außen. */
+/** A sheet with a title, fields and two actions. The caller gives the fields. */
 @Component({
   selector: 'app-form-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,7 +18,7 @@ export class FormSheetComponent {
   readonly title = input.required<string>();
   readonly submit = input.required<string>();
   readonly secondary = input('');
-  /** Die zweite Aktion trägt die Gefahrfarbe, etwa beim Löschen. */
+  /** The second action has the danger colour, for example for delete. */
   readonly secondaryDanger = input(false);
   readonly busy = input(false);
 

@@ -12,7 +12,7 @@ import { FIND } from '../../testing/entries-fixture';
 import { MapState } from '../map/map.state';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 
-/** Der Ort, auf dem das Formular ohne vorhandenen Fund steht. */
+/** The place of the form without an existing find. */
 const LOCATION: readonly [number, number] = [9.0511, 48.5203];
 
 interface Extra {
@@ -44,7 +44,7 @@ async function build(
   await vi.waitFor(() => {
     TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(bundle);
   });
-  // Der Katalog landet über den Speicher im Zustand, nicht mit dem Aufruf.
+  // The catalogue goes into the state through the storage, not through the call.
   const catalogue = TestBed.inject(SpeciesState);
   await vi.waitFor(() => {
     expect(catalogue.species()).toHaveLength(bundle.items.length);
@@ -55,9 +55,9 @@ async function build(
   return { container, submissions, toasts: toastSpy() };
 }
 
-/** Das X im Kopf des Blatts der Artwahl. */
+/** The close button in the head of the species choice sheet. */
 function sheetClose(container: Element): HTMLElement {
-  const close = container.querySelector<HTMLElement>('.sheet__close');
+  const close = container.querySelector<HTMLElement>('.overlay-head__close');
   if (close === null) throw new Error('Das Blatt trägt kein X.');
   return close;
 }

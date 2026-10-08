@@ -4,7 +4,7 @@
   display: contents;
 }
 
-// Die Fläche fängt nur den Druck daneben; die Karte darunter bleibt hell.
+// The surface only catches a press next to the card. The page below stays bright, per `kit.css` `.veil`.
 .popover__scrim {
   @include modal-layer.scrim(var(--z-sheet));
 
@@ -13,6 +13,7 @@
   background: none;
 }
 
+// Per `kit.css` `.pop`. The card grows from the corner at its button.
 .popover__card {
   @include modal-layer.panel(var(--z-sheet));
 
@@ -21,19 +22,33 @@
   min-inline-size: 240px;
   inline-size: var(--popover-width, max-content);
   max-inline-size: calc(100% - 24px);
-  padding: var(--space-3);
+  padding: 12px;
   pointer-events: auto;
-  background: var(--surface-high);
-  border: 0;
-  border-radius: var(--radius-popover, 24px);
-  box-shadow: 0 12px 40px rgb(0 0 0 / 50%);
+  border-radius: var(--r-pop);
+  transform-origin: top right;
 }
 
+.popover__card--up {
+  transform-origin: bottom right;
+}
+
+.popover--in {
+  --pop-in-scale: 0.92;
+
+  animation: pop-in var(--motion-pop) var(--ease-emph-in) both;
+}
+
+.popover--out {
+  animation: fade-out 100ms var(--ease-emph-out) both;
+}
+
+// Per `kit.css` `.pop .lbl`.
 .popover__heading {
+  margin: 0;
   padding: 4px 12px 8px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--text-var);
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--label);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }

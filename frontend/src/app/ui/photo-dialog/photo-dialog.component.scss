@@ -1,7 +1,7 @@
 @use '../../../styles/tap-icon';
 @use '../modal-layer/modal-layer';
 
-// Der Grund trägt hier das Foto selbst: es gibt keine Fläche aus Papier.
+// The ground holds the photo itself. There is no panel.
 .photo__scrim {
   @include modal-layer.scrim;
 

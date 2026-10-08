@@ -2,7 +2,7 @@ import { Directive, ElementRef, afterNextRender, inject, input, output } from '@
 
 let nextNumber = 0;
 
-/** Das Blatt einer Schicht: Rolle, Fokus, Escape und der Name der Schicht. */
+/** The panel of a layer: role, focus, Escape and the name of the layer. */
 @Directive({
   selector: '[appModalLayer]',
   exportAs: 'modalLayer',
@@ -18,12 +18,12 @@ let nextNumber = 0;
 export class ModalLayerDirective {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  /** Ein eigener Name der Schicht. Ohne ihn trägt der Titel im Blatt den Namen. */
+  /** A name for the layer. Without it, the title in the panel gives the name. */
   readonly label = input('', { alias: 'appModalLayer' });
 
   readonly dismissed = output();
 
-  /** Der Titel trägt diese Kennung, das Blatt zeigt mit `aria-labelledby` darauf. */
+  /** The title has this id. The panel refers to it with `aria-labelledby`. */
   readonly labelId = `app-modal-layer-${String(nextNumber++)}`;
 
   constructor() {
@@ -32,8 +32,7 @@ export class ModalLayerDirective {
     });
   }
 
-  // Escape gilt der obersten Schicht. Ohne `stopPropagation` schlösse ein
-  // Dialog im Blatt auch das Blatt darunter.
+  // Escape applies to the top layer. Without `stopPropagation`, a dialog in a sheet also closes the sheet.
   protected onKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return;
     event.preventDefault();

@@ -9,7 +9,7 @@ const GLYPHS: Readonly<Record<ToastVariant, { name: IconName; stroke: number }>>
   info: { name: 'info', stroke: 2.2 },
 };
 
-/** Die Meldungen des Dienstes, flach über die Breite, eine je Zeile. */
+/** The messages of the service, flat across the width, one in each row. */
 @Component({
   selector: 'app-toast',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,8 +1,16 @@
 @if (open()) {
-  <div class="confirm__scrim" aria-hidden="true" (click)="cancelled.emit()"></div>
+  <div
+    class="confirm__scrim"
+    aria-hidden="true"
+    animate.enter="motion-fade-in"
+    animate.leave="motion-fade-out"
+    (click)="cancelled.emit()"
+  ></div>
   <div
     #layer="modalLayer"
     class="confirm__panel"
+    animate.enter="motion-pop-in"
+    animate.leave="motion-pop-out"
     [appModalLayer]="title() === '' ? (confirmLabel() ?? ('common.delete' | t)) : ''"
     (dismissed)="cancelled.emit()"
   >

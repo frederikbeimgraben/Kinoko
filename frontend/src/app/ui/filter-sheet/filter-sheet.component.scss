@@ -1,35 +1,15 @@
+// The filter sheet stands above the list and fills the strip below the head.
 :host {
-  // Die Abdunkelung des Filterblatts steht dunkler als über der Karte.
-  --pilz-scrim: rgb(0 0 0 / 50%);
   --pilz-overlay-top: var(--size-header);
-  --size-handle-height: 22px;
-  --sheet-shadow: 0 -8px 28px rgb(0 0 0 / 35%);
-  --sheet-title-size: 19px;
 }
 
-.filtersheet__back {
-  display: flex;
-  flex: none;
-  align-items: center;
-  inline-size: 32px;
-  padding: 0;
-  color: var(--color-primary);
-  background: none;
-  border: 0;
-}
-
+// Per `kit.css` `.sheet-over .sbody`.
 .filtersheet__content {
-  --scroll-fade-gap: var(--size-gutter);
-
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--size-gutter);
+  gap: 20px;
   min-block-size: 0;
-  padding: 14px var(--size-gutter);
+  padding: 4px 16px 16px;
   overflow-y: auto;
-}
-
-.filtersheet__foot {
-  --action-bar-height: 46px;
 }
