@@ -1,0 +1,17 @@
+// The popovers of the search bar hang from this box.
+:host {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+// Per `SpeciesDesktop.dc.html`: a 272 px column with no gap that scrolls on its own.
+.browser__filters {
+  display: flex;
+  flex: 0 0 272px;
+  flex-direction: column;
+  min-block-size: 0;
+  overflow-y: auto;
+}

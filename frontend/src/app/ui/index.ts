@@ -8,6 +8,7 @@ export { BannerComponent, type BannerKind } from './banner/banner.component';
 export { ButtonComponent, type ButtonKind } from './button/button.component';
 export { CheckRowComponent } from './check-row/check-row.component';
 export { ChipGroupComponent, type Chip } from './chip-group/chip-group.component';
+export { ChipRowComponent, type ChipRowItem } from './chip-row/chip-row.component';
 export { ChoiceRowComponent } from './choice-row/choice-row.component';
 export { ColourChangeComponent } from './colour-change/colour-change.component';
 export {

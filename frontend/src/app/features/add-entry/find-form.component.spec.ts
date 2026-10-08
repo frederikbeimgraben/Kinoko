@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import type { Find } from '../../core/api/models';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
 import { noViolations } from '../../testing/axe';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
@@ -45,7 +45,7 @@ async function build(
     TestBed.inject(HttpTestingController).expectOne('/api/species/bundle').flush(bundle);
   });
   // The catalogue goes into the state through the storage, not through the call.
-  const catalogue = TestBed.inject(SpeciesState);
+  const catalogue = TestBed.inject(SpeciesStore);
   await vi.waitFor(() => {
     expect(catalogue.species()).toHaveLength(bundle.items.length);
   });

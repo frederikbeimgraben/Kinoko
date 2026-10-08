@@ -7,13 +7,13 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { BodyPart } from '../../core/api/models';
 import { countColours, nearestColour, nearestTones } from './facets';
 import { partsWithColour, tonesOf } from './filter-groups';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 import { COLOUR_PARTS, COLOUR_TEXT, PART_TEXT } from './labels';
-import { SpeciesState } from './species.state';
+import { SpeciesStore } from './species.store';
 
 const TONES = 6;
 
-/** Die Farbwahl je Körperteil, als Ziehharmonika im Abschnitt Farbe. */
+/** The colour choice for each body part, as fold rows in the colour section. */
 @Component({
   selector: 'app-species-filter-colour',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,9 +22,9 @@ const TONES = 6;
   styleUrl: './filter-colour.component.scss',
 })
 export class SpeciesColourComponent {
-  private readonly state = inject(SpeciesState);
+  private readonly state = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
-  protected readonly filter = inject(SpeciesFilterState);
+  protected readonly filter = inject(SpeciesFilterStore);
 
   private readonly opened = signal<BodyPart | null>(null);
 
@@ -45,7 +45,7 @@ export class SpeciesColourComponent {
     })),
   );
 
-  /** Ohne eigene Wahl steht der erste Teil offen, wie im Brett. */
+  /** Without a choice of the person, the first part is open, as on the board. */
   protected readonly open = computed<BodyPart | null>(
     () => this.opened() ?? partsWithColour(this.state.facets(), COLOUR_PARTS).at(0) ?? null,
   );
@@ -71,7 +71,7 @@ export class SpeciesColourComponent {
     this.filter.setColour(part, hex);
   }
 
-  /** Wie viele Arten diesen Ton am Körperteil tragen. */
+  /** The count of species with this tone on the body part. */
   private wearing(): number {
     const part = this.open();
     const hex = part === null ? null : this.filter.colourOf(part);

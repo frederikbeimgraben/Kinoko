@@ -52,6 +52,7 @@ const BLOCKS = [
   'app-segmented',
   'app-switch',
   'app-chip-group',
+  'app-chip-row',
   'app-filter-chip',
   'app-range-slider',
   'app-colour-swatches',

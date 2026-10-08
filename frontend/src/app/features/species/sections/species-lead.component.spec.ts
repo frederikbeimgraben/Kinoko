@@ -9,11 +9,16 @@ import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-d
 import { photo } from '../../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../../testing/routes';
 import type { Photo } from '../../../core/api/models';
-import { ImagesState } from '../../images/images.state';
+import { ImagesStore } from '../../images/images.store';
 import { SpeciesLeadComponent } from './species-lead.component';
 
-function imagesDouble(lead: Photo | null): Partial<ImagesState> {
-  return { photos: signal([]).asReadonly(), lead: computed(() => lead), load: () => undefined };
+function imagesDouble(lead: Photo | null): Partial<ImagesStore> {
+  return {
+    photos: signal([]).asReadonly(),
+    lead: computed(() => lead),
+    positionOf: () => (lead === null ? 0 : 1),
+    load: (() => ({ destroy: () => undefined })) as unknown as ImagesStore['load'],
+  };
 }
 
 async function build(lead: Photo | null): Promise<Element> {
@@ -21,7 +26,7 @@ async function build(lead: Photo | null): Promise<Element> {
     providers: [
       ...catalogueProviders(),
       provideRouter(ANY_ROUTE),
-      { provide: ImagesState, useValue: imagesDouble(lead) },
+      { provide: ImagesStore, useValue: imagesDouble(lead) },
     ],
     inputs: { slug: 'steinpilz' },
   });

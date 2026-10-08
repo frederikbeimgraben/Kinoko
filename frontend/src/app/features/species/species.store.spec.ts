@@ -10,7 +10,7 @@ import {
   speciesBundle,
   speciesEntry,
 } from '../../testing/species-fixture';
-import { SpeciesState } from './species.state';
+import { SpeciesStore } from './species.store';
 
 const NOT_MODIFIED = 304;
 const BUNDLE_PATH = '/api/species/bundle';
@@ -21,7 +21,7 @@ const LOCAL: SpeciesBundle = speciesBundle([
 ]);
 
 interface Setup {
-  state: SpeciesState;
+  state: SpeciesStore;
   http: HttpTestingController;
   offline: OfflineStoreDouble;
 }
@@ -34,13 +34,13 @@ function build(stored?: { bundle?: SpeciesBundle; etag?: string }): Setup {
     providers: [provideHttpClient(), provideHttpClientTesting(), offlineProvider(offline)],
   });
   return {
-    state: TestBed.inject(SpeciesState),
+    state: TestBed.inject(SpeciesStore),
     http: TestBed.inject(HttpTestingController),
     offline,
   };
 }
 
-describe('SpeciesState', () => {
+describe('SpeciesStore', () => {
   it('lädt und legt Bündel und ETag auf dem Gerät ab', async () => {
     const setup = build();
     const loaded = setup.state.loadBundle();
@@ -209,5 +209,38 @@ describe('SpeciesState', () => {
       expect(setup.state.facts()[0].values.get('senses')).toEqual(['anis']);
     });
     expect(setup.state.entries()).toHaveLength(1);
+  });
+
+  it('gets a profile one time and gives its reactions', () => {
+    const setup = build();
+    const reaction = {
+      reagent: { slug: 'koh', name: 'Kalilauge' },
+      reading: 'Huthaut',
+      part: 'cap',
+      location: null,
+      result: 'positive',
+      colour: { name: 'Rot', hex: '#a33' },
+      contested: false,
+      partlyConfirmed: false,
+      sources: [],
+    } as const;
+
+    expect(setup.state.reactionsOf('steinpilz')).toEqual([]);
+    setup.state.loadProfile('steinpilz');
+    setup.state.loadProfile('steinpilz');
+    setup.http.expectOne('/api/species/steinpilz').flush({ ...PENNY_BUN, reactions: [reaction] });
+
+    expect(setup.state.reactionsOf('steinpilz')).toEqual([reaction]);
+    setup.state.loadProfile('steinpilz');
+    setup.http.verify();
+  });
+
+  it('keeps no reactions when the profile request fails', () => {
+    const setup = build();
+
+    setup.state.loadProfile('steinpilz');
+    setup.http.expectOne('/api/species/steinpilz').error(new ProgressEvent('error'));
+
+    expect(setup.state.reactionsOf('steinpilz')).toEqual([]);
   });
 });

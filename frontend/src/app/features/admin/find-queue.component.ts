@@ -17,7 +17,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { findCard, type FindCard } from './find-card';
 import { FindQueueState } from './find-queue.state';
 
@@ -39,7 +39,7 @@ import { FindQueueState } from './find-queue.state';
 })
 export class FindQueueComponent {
   private readonly finds = inject(FindQueueState);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 

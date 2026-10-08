@@ -7,10 +7,10 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { photo } from '../../testing/photos-fixture';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
-import { ImagesState } from './images.state';
+import { ImagesStore } from './images.store';
 
 interface Setup {
-  state: ImagesState;
+  state: ImagesStore;
   http: HttpTestingController;
   sync: SyncStub;
 }
@@ -20,10 +20,10 @@ function build(): Setup {
   TestBed.configureTestingModule({
     providers: [provideHttpClient(), provideHttpClientTesting(), ...syncStubProviders(sync)],
   });
-  return { state: TestBed.inject(ImagesState), http: TestBed.inject(HttpTestingController), sync };
+  return { state: TestBed.inject(ImagesStore), http: TestBed.inject(HttpTestingController), sync };
 }
 
-/** Der Aufruf verkleinert nicht wirklich: `OffscreenCanvas` fehlt im Test. */
+/** The call does not really scale the photo: the test has no `OffscreenCanvas`. */
 function stubPrepare(): void {
   vi.stubGlobal('createImageBitmap', () =>
     Promise.resolve({ width: 100, height: 80, close: () => undefined }),
@@ -41,7 +41,7 @@ function stubPrepare(): void {
   );
 }
 
-describe('ImagesState', () => {
+describe('ImagesStore', () => {
   it('holt die freigegebenen Bilder einer Art', () => {
     const { state, http } = build();
 

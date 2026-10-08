@@ -8,12 +8,12 @@ import { RippleDirective } from '../../ui/ripple/ripple.directive';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { choicesOf, termNamesOf } from './filter-groups';
 import { GROUP_TEXT } from './labels';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 import { SpeciesColourComponent } from './filter-colour.component';
-import { SpeciesState } from './species.state';
+import { SpeciesStore } from './species.store';
 import { judge, type GroupKey } from './facets';
 
-/** Die fünf Gruppen, die flach im Blatt stehen. `labelOf` trägt die Beschriftung. */
+/** The five groups that the sheet shows flat. `labelOf` gives the label. */
 const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
   { key: 'edibility', labelOf: 'edibility' },
   { key: 'capShape', labelOf: 'capShape' },
@@ -21,7 +21,7 @@ const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
   { key: 'period', labelOf: 'period' },
 ];
 
-/** Der Inhalt des Filters: Speisewert, Hutform, Farbe, Fruchtschicht, Zeit in einer Spalte. */
+/** The content of the filter: edibility, cap shape, colour, hymenium and time in one column. */
 @Component({
   selector: 'app-species-filter-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,17 +37,17 @@ const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
   styleUrl: './filter-panel.component.scss',
 })
 export class SpeciesFilterPanelComponent {
-  private readonly state = inject(SpeciesState);
+  private readonly state = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
-  protected readonly filter = inject(SpeciesFilterState);
-  /** Am Rechner steht der Kopf mit Zahl und Zurücksetzen über der Spalte. */
+  protected readonly filter = inject(SpeciesFilterStore);
+  /** On the desktop the head with the count and the reset is above the column. */
   protected readonly wide = inject(ViewportService).wide;
 
   protected readonly flatGroups = FLAT_GROUPS;
 
   protected readonly resettable = computed(() => this.filter.chosenCount() > 0);
 
-  /** Die Zahl der Arten, welche die aktuelle Wahl trifft, für den Kopf am Rechner. */
+  /** The count of species that match the current choice, for the head on the desktop. */
   protected readonly count = computed(() => {
     const selection = this.filter.selection();
     const palette = this.state.palette();
@@ -59,7 +59,7 @@ export class SpeciesFilterPanelComponent {
     this.filter.clearAll();
   }
 
-  /** Die Wahlmöglichkeiten einer flach angezeigten Gruppe, als Zeichen. */
+  /** The values of a flat group, as chips. */
   protected chipsOf(key: GroupKey): readonly Chip[] {
     return choicesOf(this.state.facets(), key, this.i18n, this.termNames()).map((choice) => ({
       value: choice.value,
@@ -75,7 +75,7 @@ export class SpeciesFilterPanelComponent {
     return this.i18n.translate(GROUP_TEXT[key]);
   }
 
-  /** `ChipGroup` meldet die volle Wahl. Genau ein Wert weicht ab: der getippte. */
+  /** `ChipGroup` gives the full choice. Exactly one value is different: the pressed one. */
   protected chipsChanged(key: GroupKey, next: readonly string[]): void {
     const current = this.filter.chosenIn(key);
     const changed =

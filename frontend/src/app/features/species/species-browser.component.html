@@ -1,0 +1,21 @@
+<app-species-search-bar [plain]="true" />
+<app-split-layout kind="split">
+  <div class="browser__filters" appScrollFade>
+    <app-species-filter-panel />
+  </div>
+  <app-surface class="browser__list">
+    <app-species-results
+      [hits]="listing.hits()"
+      [unassessable]="listing.unassessable()"
+      [sort]="filter.sort()"
+      [loading]="catalogue.loading()"
+      [failed]="catalogue.failed()"
+      [hasMore]="listing.hasMore()"
+      [active]="active()"
+      (chosen)="open($event)"
+      (more)="listing.more()"
+      (retry)="catalogue.reload()"
+      (resetFilter)="filter.clearAll()"
+    />
+  </app-surface>
+</app-split-layout>

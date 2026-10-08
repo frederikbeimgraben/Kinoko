@@ -2,17 +2,12 @@
   <app-list-row [title]="'species.field.edibility' | t" />
 </app-block-card>
 
-<app-block-card block="Chip" [width]="160" [height]="36">
+<app-block-card block="Chip" [width]="160" [height]="40">
   <app-filter-chip [label]="'species.field.edibility' | t" />
 </app-block-card>
 
 <app-block-card block="ChipRow" [width]="390" [height]="44">
-  <div class="chiprow">
-    <app-filter-chip label="" icon="filter" [iconLabel]="'common.filter' | t" />
-    <app-filter-chip [label]="'species.field.edibility' | t" icon="eat" />
-    <app-filter-chip [label]="'filter.group.hutform' | t" icon="mushroom" />
-    <app-filter-chip [label]="'filter.colour.title' | t" icon="palette" />
-  </div>
+  <app-chip-row [chips]="filterChips" />
 </app-block-card>
 
 <app-block-card block="ChipSet" [width]="272" [height]="120">

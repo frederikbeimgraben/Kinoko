@@ -35,7 +35,7 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { findSubline } from '../entries/find-subline';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { EntriesState } from '../entries/entries.state';
 import { ObjectSheetState } from './object-sheet.state';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
@@ -67,7 +67,7 @@ export class FindSheetComponent {
   private readonly names = inject(PersonNamesStore);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
-  private readonly arten = inject(SpeciesState);
+  private readonly arten = inject(SpeciesStore);
   private readonly eintraege = inject(EntriesState);
   private readonly sheet = inject(ObjectSheetState);
   private readonly map = inject(MapState);

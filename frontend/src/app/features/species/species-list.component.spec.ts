@@ -12,7 +12,7 @@ import { stubIntersectionObserver } from '../../testing/observer-stub';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../testing/species-fixture';
 import { FORECAST_VALUE } from './facets';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 import { SpeciesListComponent } from './species-list.component';
 
 const PAGE = 40;
@@ -51,7 +51,7 @@ const FORECAST_MIX: SpeciesBundle = speciesBundle([STEINPILZ, SEMMELSTOPPELPILZ]
 
 const COLOUR_MIX: SpeciesBundle = speciesBundle([MARONE, STEINPILZ]);
 
-/** Ein Katalog, der über eine Seite hinausreicht. */
+/** A catalogue with more species than one page. */
 function manySpecies(count: number): SpeciesBundle {
   return speciesBundle(
     Array.from({ length: count }, (_, at) =>
@@ -66,7 +66,7 @@ function manySpecies(count: number): SpeciesBundle {
 
 interface Setup {
   container: Element;
-  filter: SpeciesFilterState;
+  filter: SpeciesFilterStore;
   router: Router;
 }
 
@@ -82,7 +82,7 @@ async function build(bundle: SpeciesBundle = SMALL, wide = false): Promise<Setup
   await vi.waitFor(() => {
     expect(container.querySelectorAll('app-species-row').length).toBeGreaterThan(0);
   });
-  return { container, filter: TestBed.inject(SpeciesFilterState), router: TestBed.inject(Router) };
+  return { container, filter: TestBed.inject(SpeciesFilterStore), router: TestBed.inject(Router) };
 }
 
 describe('SpeciesListComponent', () => {
@@ -91,16 +91,16 @@ describe('SpeciesListComponent', () => {
     stubIntersectionObserver();
   });
 
-  it('stellt die Arten des Bündels mit ihrer Zahl über der Liste', async () => {
+  it('shows the species of the bundle sorted by name, without a page title', async () => {
     const { container } = await build();
 
-    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
-    expect(screen.getByText('Pfifferling')).toBeInTheDocument();
-    expect(screen.getByText('2 Arten')).toBeInTheDocument();
+    const names = [...container.querySelectorAll('.row__name')].map((one) => one.textContent);
+    expect(names).toEqual(['Pfifferling', 'Steinpilz']);
+    expect(screen.queryByRole('heading')).toBeNull();
     await noViolations(container);
   });
 
-  it('sucht lokal nach deutschem Namen', async () => {
+  it('searches the German name on the device', async () => {
     await build();
 
     await userEvent.type(screen.getByRole('textbox'), 'stein');
@@ -111,7 +111,7 @@ describe('SpeciesListComponent', () => {
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
   });
 
-  it('sucht lokal nach lateinischem Namen', async () => {
+  it('searches the Latin name on the device', async () => {
     await build();
 
     await userEvent.type(screen.getByRole('textbox'), 'canthar');
@@ -122,7 +122,7 @@ describe('SpeciesListComponent', () => {
     expect(screen.getByText('Pfifferling')).toBeInTheDocument();
   });
 
-  it('zeigt die Gruppe mit Wahl als Zeichen und öffnet das Filterblatt beim Antippen', async () => {
+  it('shows the group with a choice as a chip and opens the filter sheet on a press', async () => {
     const { filter } = await build();
 
     filter.toggle('edibility', 'edible');
@@ -135,7 +135,7 @@ describe('SpeciesListComponent', () => {
     expect(filter.open()).toBe(true);
   });
 
-  it('zeigt ohne Treffer den Leerzustand und setzt darüber zurück', async () => {
+  it('shows the empty state without hits and resets the filter from it', async () => {
     const { filter } = await build();
 
     filter.toggle('hymenium', 'gills');
@@ -148,7 +148,7 @@ describe('SpeciesListComponent', () => {
     expect(filter.chosenCount()).toBe(0);
   });
 
-  it('öffnet das Filterblatt über den Knopf', async () => {
+  it('opens the filter sheet from the chip with the filter icon', async () => {
     const { filter } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
@@ -156,7 +156,7 @@ describe('SpeciesListComponent', () => {
     expect(filter.open()).toBe(true);
   });
 
-  it('zeigt den Fehlerzustand und versucht es erneut', async () => {
+  it('shows the error state and tries again', async () => {
     const { container } = await render(SpeciesListComponent, {
       providers: [
         ...catalogueProviders(null),
@@ -169,7 +169,7 @@ describe('SpeciesListComponent', () => {
       http.expectOne('/api/species/bundle').error(new ProgressEvent('error'));
     });
     await vi.waitFor(() => {
-      expect(screen.getByText('Laden fehlgeschlagen')).toBeInTheDocument();
+      expect(screen.getByText('Keine Verbindung')).toBeInTheDocument();
     });
 
     await userEvent.click(screen.getByRole('button', { name: 'Erneut versuchen' }));
@@ -182,7 +182,7 @@ describe('SpeciesListComponent', () => {
     });
   });
 
-  it('zeigt erst eine Seite zu 40 Arten', async () => {
+  it('shows one page of 40 species first', async () => {
     const { container } = await build(manySpecies(PAGE + 1));
 
     await vi.waitFor(() => {
@@ -190,7 +190,7 @@ describe('SpeciesListComponent', () => {
     });
   });
 
-  it('führt von einer Zeile auf die Artseite', async () => {
+  it('goes from a row to the species page', async () => {
     const setup = await build();
     const go = vi.spyOn(setup.router, 'navigate');
 
@@ -199,18 +199,18 @@ describe('SpeciesListComponent', () => {
     expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
-  it('stellt am Rechner Filterspalte und Liste nebeneinander', async () => {
+  it('puts the filter column next to the list on the desktop', async () => {
     const { container, router } = await build(SMALL, true);
     const go = vi.spyOn(router, 'navigate');
 
-    expect(container.querySelector('.species--wide')).not.toBeNull();
+    expect(container.querySelector('app-species-browser')).not.toBeNull();
     expect(container.querySelector('app-species-filter-panel')).not.toBeNull();
     await userEvent.click(screen.getByText('Pfifferling'));
 
     expect(go).toHaveBeenCalledWith(['/arten', 'pfifferling']);
   });
 
-  it('lässt die Arten ohne Vorhersage ausscheiden, ohne zweiten Block', async () => {
+  it('drops the species without forecast and shows no second block', async () => {
     const { container, filter } = await build(FORECAST_MIX, true);
 
     filter.toggle('forecast', FORECAST_VALUE);
@@ -219,29 +219,41 @@ describe('SpeciesListComponent', () => {
       expect(container.querySelectorAll('app-species-row')).toHaveLength(1);
     });
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
-    expect(container.querySelector('.results__group--muted')).toBeNull();
+    expect(container.querySelector('.results__muted')).toBeNull();
     expect(screen.queryByText(/Nicht beurteilbar/)).not.toBeInTheDocument();
   });
 
-  it('hält den zweiten Block, solange eine Art die Farbe nicht führt', async () => {
+  it('keeps the second block while a species has no colour data', async () => {
     const { container, filter } = await build(COLOUR_MIX, true);
 
     filter.setColour('cap', '#6b4423');
 
     await vi.waitFor(() => {
-      expect(container.querySelector('.results__group--muted')).not.toBeNull();
+      expect(container.querySelector('.results__muted')).not.toBeNull();
     });
     expect(screen.getByText('Nicht beurteilbar · 1')).toBeInTheDocument();
   });
 
-  it('nennt am Rechner die Zahl der Treffer, mit der Lücke sobald ein Filter steht', async () => {
-    const { container, filter } = await build(SMALL, true);
+  it('sorts the list by the Latin name from the sort popover', async () => {
+    const { container } = await build();
 
-    expect(container.querySelector('.species__summary')?.textContent).toBe('2 Arten');
-    filter.toggle('hymenium', 'tubes');
+    await userEvent.click(screen.getByRole('button', { name: 'Sortieren' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Lateinischer Name' }));
 
     await vi.waitFor(() => {
-      expect(container.querySelector('.species__summary')?.textContent).toContain('1');
+      const names = [...container.querySelectorAll('.row__name')].map((one) => one.textContent);
+      expect(names).toEqual(['Steinpilz', 'Pfifferling']);
     });
+    expect(TestBed.inject(SpeciesFilterStore).sort()).toBe('latin');
+  });
+
+  it('opens the glossary from the menu', async () => {
+    const { router } = await build();
+    const go = vi.spyOn(router, 'navigateByUrl');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Mehr' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Glossar' }));
+
+    expect(go).toHaveBeenCalledWith('/konto/glossar');
   });
 });

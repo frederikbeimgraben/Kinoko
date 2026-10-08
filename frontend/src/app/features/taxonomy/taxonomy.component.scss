@@ -5,42 +5,13 @@
   overflow: hidden;
 }
 
-.taxonomy {
+// Kit `.pad`: the scroll area below the top bar.
+.pad {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   min-block-size: 0;
-  padding: 20px var(--size-gutter);
+  padding: 8px 16px 32px;
   overflow-y: auto;
-}
-
-.taxonomy__trail {
-  margin: 0;
-  font-size: var(--fs-sm);
-  line-height: normal;
-  color: var(--color-text-muted);
-}
-
-.taxonomy__trail i {
-  font-style: normal;
-  color: var(--color-border-strong);
-}
-
-.taxonomy__title {
-  margin: 0 0 10px;
-  font-size: var(--fs-xs);
-  line-height: normal;
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.taxonomy__card {
-  overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
 }

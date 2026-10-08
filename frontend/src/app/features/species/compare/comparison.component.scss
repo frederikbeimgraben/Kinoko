@@ -1,136 +1,159 @@
+// The popover of the head hangs from this box.
 :host {
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   block-size: 100%;
+  min-block-size: 0;
   overflow: hidden;
 }
 
-// Ein eigener Block. Sonst folgt die Zahl der Schrift des Kopfes und sitzt
-// zu tief.
-.compare__count {
-  display: block;
-  font-size: var(--fs-row-meta);
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
+// Kit `.pad` on the phone, `0 32px 32px` in the desktop pane.
 .compare {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   min-block-size: 0;
-  padding: var(--size-gutter);
+  padding: 8px 16px 32px;
   overflow-y: auto;
 }
 
-.compare__head {
+.compare--wide {
+  padding: 0 32px 32px;
+}
+
+.compare__empty {
+  flex: 1;
+}
+
+// The rules below follow `kit.css` `.cmpx`, `.cmph`, `.cmpg` and `.cmpr`.
+.cmpx {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cmph {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  padding-left: 104px;
 }
 
-.compare__head-name {
+.cmph__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  min-inline-size: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--text);
+  text-align: start;
+  background: none;
+  border: 0;
+}
+
+.cmph b {
   font-size: 15px;
   font-weight: 600;
 }
 
-.compare__toggle {
-  align-self: flex-start;
+.cmph em {
+  font-size: 13px;
+  color: var(--text-var);
 }
 
-.compare__group {
+.sec {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.compare__group-label {
+.sec > .lbl {
   padding-left: 4px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--label);
 }
 
-.compare__group-rows {
+.cmpg {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.compare__group-rows > .compare__row:first-of-type {
+.cmpr {
+  display: grid;
+  grid-template-columns: 96px repeat(2, minmax(0, 1fr));
+  gap: 2px 8px;
+  align-items: center;
+  min-block-size: 52px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+.cmpg > .cmpr:first-of-type {
   border-radius: 20px 20px 4px 4px;
 }
 
-.compare__group-rows > .compare__row:last-of-type {
+.cmpg > .cmpr:last-of-type {
   border-radius: 4px 4px 20px 20px;
 }
 
-.compare__group-rows > .compare__row:first-of-type:last-of-type {
+.cmpg > .cmpr:first-of-type:last-of-type {
   border-radius: 20px;
 }
 
-.compare__row {
-  display: grid;
-  grid-template-columns: 96px repeat(2, minmax(0, 1fr));
-  align-items: center;
-  gap: 2px 8px;
-  min-block-size: 52px;
-  padding: 10px 12px;
-  border-radius: 4px;
-  background: var(--color-surface);
-  font-size: var(--fs-row-meta);
-}
-
-.compare__key {
+.cmpr > .k {
   font-size: 13px;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
-.compare__row--diff > .compare__key {
+.cmpr.diff > .k {
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--text);
 }
 
-.compare__cell {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  min-inline-size: 0;
-}
-
-.compare__value {
+.cmpr .v {
   font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
 
-.compare__value small {
+.cmpr .v small {
   margin-left: 3px;
   font-size: 12px;
   font-weight: 400;
-  color: var(--color-text-muted);
+  color: var(--label);
 }
 
-.compare__swatch-text,
-.compare__text {
+.cmpr .cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  min-inline-size: 0;
+}
+
+.cmpr .cell .sw {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 96px;
+  block-size: 22px;
+  border-radius: 14px;
+}
+
+.cmpr .cell > span.t {
   font-size: 12px;
-  color: var(--color-text-muted);
+  color: var(--text-var);
 }
 
-.compare__none {
-  color: var(--color-text-muted);
-}
-
-@media (min-width: 1024px) {
-  .compare {
-    padding: var(--space-5) var(--space-6);
-  }
-
-  .compare__row {
-    grid-template-columns: 138px repeat(2, minmax(0, 1fr));
-    padding: 14px;
-  }
+.cmpr .none {
+  color: var(--label);
 }

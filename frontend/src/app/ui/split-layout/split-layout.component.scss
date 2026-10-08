@@ -44,38 +44,39 @@
   }
 }
 
-:host(.layout--pane) .layout__in {
+// The child combinator keeps each rule off a nested split layout, which has the same scope attribute.
+:host(.layout--pane) > .layout__in {
   display: flex;
   flex: 1;
   min-inline-size: 0;
 }
 
-:host(.layout--panel) .layout__in {
+:host(.layout--panel) > .layout__in {
   flex-direction: column;
   overflow: hidden;
   background: var(--sheet);
   border-radius: 28px;
 }
 
-:host(.layout--map) .layout__in {
+:host(.layout--map) > .layout__in {
   position: relative;
   overflow: hidden;
   border-radius: 28px;
 }
 
-:host(.layout--middle) .layout__in,
-:host(.layout--detail) .layout__in {
+:host(.layout--middle) > .layout__in,
+:host(.layout--detail) > .layout__in {
   position: relative;
   flex-direction: column;
 }
 
-:host(.layout--column) .layout__in {
+:host(.layout--column) > .layout__in {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-:host(.layout--columns) .layout__in {
+:host(.layout--columns) > .layout__in {
   display: grid;
   gap: 24px;
   align-items: start;
@@ -87,7 +88,7 @@
   min-block-size: 0;
 }
 
-:host(.layout--split) .layout__in {
+:host(.layout--split) > .layout__in {
   display: flex;
   flex: 1;
   gap: 8px;

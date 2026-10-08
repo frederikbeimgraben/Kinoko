@@ -6,7 +6,7 @@ import { catalogueProviders, catalogueReady } from '../../testing/catalogue-doub
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 
 const STEINPILZ = speciesEntry({
   slug: 'steinpilz',
@@ -20,7 +20,7 @@ const BUNDLE = speciesBundle([STEINPILZ]);
 
 interface Setup {
   container: Element;
-  filter: SpeciesFilterState;
+  filter: SpeciesFilterStore;
 }
 
 async function build(): Promise<Setup> {
@@ -28,7 +28,7 @@ async function build(): Promise<Setup> {
     providers: catalogueProviders(BUNDLE),
   });
   await catalogueReady();
-  return { container, filter: TestBed.inject(SpeciesFilterState) };
+  return { container, filter: TestBed.inject(SpeciesFilterStore) };
 }
 
 describe('SpeciesFilterPanelComponent', () => {

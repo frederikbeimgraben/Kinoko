@@ -6,7 +6,6 @@ import {
   input,
   linkedSignal,
   signal,
-  type OnDestroy,
 } from '@angular/core';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { HistoryService } from '../../core/navigation/history.service';
@@ -15,37 +14,41 @@ import { LICENCES, type Licence } from '../../core/api/models';
 import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
-import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { PhotoStripComponent } from '../../ui/photo-strip/photo-strip.component';
 import { ProgressComponent } from '../../ui/progress/progress.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { SpeciesState } from '../species/species.state';
-import { ImagesState } from './images.state';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SpeciesPageComponent } from '../species/species-page.component';
+import { SpeciesStore } from '../species/species.store';
+import { ImagesStore } from './images.store';
 
-/** Ein Bild anlegen oder einreichen. Das Recht `image.review` trennt beides. */
+/** Adds or submits a photo in a sheet over the species page, per `ImageSubmit.dc.html`. */
 @Component({
   selector: 'app-image-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ActionBarComponent,
     CheckRowComponent,
     FormFieldComponent,
+    FormSheetComponent,
+    ListRowComponent,
     OptionSheetComponent,
-    PageHeaderComponent,
+    PhotoStripComponent,
     ProgressComponent,
-    SvgIconComponent,
+    RowGroupComponent,
+    SpeciesPageComponent,
     TranslatePipe,
   ],
   templateUrl: './image-form.component.html',
   styleUrl: './image-form.component.scss',
 })
-export class ImageFormComponent implements OnDestroy {
-  private readonly images = inject(ImagesState);
-  private readonly species = inject(SpeciesState);
+export class ImageFormComponent {
+  private readonly images = inject(ImagesStore);
+  private readonly species = inject(SpeciesStore);
   private readonly rights = inject(PermissionsStore);
   private readonly auth = inject(AuthService);
   private readonly i18n = inject(I18nService);
@@ -53,18 +56,17 @@ export class ImageFormComponent implements OnDestroy {
 
   readonly slug = input.required<string>();
 
-  /** Wer hochladen darf, legt das Bild an. Alle anderen reichen es ein. */
+  /** A person who reviews photos adds the photo. Each other person submits it. */
   protected readonly curates = computed(() => this.rights.can('image.review'));
   protected readonly title = computed(() =>
     this.i18n.translate(this.curates() ? 'image.add.title' : 'image.submit.title'),
   );
   protected readonly action = computed(() =>
-    this.i18n.translate(this.curates() ? 'common.save' : 'image.submitForReview'),
+    this.i18n.translate(this.curates() ? 'common.save' : 'image.submit.action'),
   );
 
-  protected readonly file = signal<File | null>(null);
-  protected readonly preview = signal<string | null>(null);
-  /** Der Name folgt der Anmeldung. Wer ein fremdes Foto einreicht, schreibt um. */
+  protected readonly files = signal<readonly File[]>([]);
+  /** The name follows the sign-in. A person who submits a photo of another person changes it. */
   protected readonly photographer = linkedSignal<string>(() => this.auth.user()?.name ?? '');
   protected readonly licence = signal<Licence>('own');
   protected readonly picking = signal(false);
@@ -73,7 +75,7 @@ export class ImageFormComponent implements OnDestroy {
   protected readonly caption = signal('');
   protected readonly cover = signal(false);
 
-  /** Der Tag in der Schreibweise der Sprache, wie ihn das Board zeigt. */
+  /** The day in the notation of the language, as the board shows it. */
   protected readonly takenOnText = computed(() => {
     const day = this.takenOn();
     return day === '' ? '' : longDate(day, this.i18n.locale());
@@ -81,7 +83,6 @@ export class ImageFormComponent implements OnDestroy {
 
   protected readonly percent = this.images.percent;
   protected readonly busy = computed(() => this.percent() !== null);
-  protected readonly ready = computed(() => this.file() !== null && this.photographer().trim().length > 0);
 
   protected readonly licences = computed<OptionSheetOption[]>(() =>
     LICENCES.map((value) => ({ id: value, title: this.licenceLabel(value) })),
@@ -90,24 +91,14 @@ export class ImageFormComponent implements OnDestroy {
   protected readonly licenceLabel = (value: Licence): string =>
     value === 'own' ? this.i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[value];
 
-  protected onPick(event: Event): void {
-    const field = event.target as HTMLInputElement;
-    const picked = field.files?.[0] ?? null;
-    field.value = '';
-    if (picked === null) return;
-    this.release();
-    this.file.set(picked);
-    this.preview.set(URL.createObjectURL(picked));
-  }
-
   protected setLicence(value: string): void {
     this.licence.set(value as Licence);
     this.picking.set(false);
   }
 
   protected async save(): Promise<void> {
-    const file = this.file();
-    if (file === null || this.busy()) return;
+    const file = this.files().at(0);
+    if (file === undefined || this.photographer().trim() === '' || this.busy()) return;
     const done = await this.images.submit(
       {
         speciesId: this.species.entryOf(this.slug())?.id,
@@ -125,16 +116,5 @@ export class ImageFormComponent implements OnDestroy {
 
   protected cancel(): void {
     this.history.back(['/arten', this.slug()]);
-  }
-
-  /** Eine offene Objekt-URL bliebe sonst im Speicher. */
-  ngOnDestroy(): void {
-    this.release();
-  }
-
-  private release(): void {
-    const held = this.preview();
-    if (held !== null) URL.revokeObjectURL(held);
-    this.preview.set(null);
   }
 }

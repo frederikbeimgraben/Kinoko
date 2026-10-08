@@ -1,20 +1,20 @@
 import { TestBed } from '@angular/core/testing';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 
 const STORAGE_KEY = 'pilzkarte.speciesfilter';
 
-/** Was nach dem Sichern im Speicher steht. */
+/** The value in the storage after the save. */
 function stored(): Record<string, unknown> {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, unknown>;
 }
 
-function build(): SpeciesFilterState {
-  const state = TestBed.inject(SpeciesFilterState);
+function build(): SpeciesFilterStore {
+  const state = TestBed.inject(SpeciesFilterStore);
   TestBed.tick();
   return state;
 }
 
-describe('SpeciesFilterState', () => {
+describe('SpeciesFilterStore', () => {
   beforeEach(() => {
     localStorage.clear();
   });
@@ -203,5 +203,26 @@ describe('SpeciesFilterState', () => {
 
     expect(state.chosenCount()).toBe(0);
     expect(state.keeps('hymenium')).toBe(false);
+  });
+
+  it('saves a sort other than the name and reads it back', () => {
+    const state = build();
+
+    state.setSort('season');
+    TestBed.tick();
+
+    expect(stored()['sort']).toBe('season');
+    TestBed.resetTestingModule();
+    expect(build().sort()).toBe('season');
+  });
+
+  it('keeps the search text out of the storage', () => {
+    const state = build();
+
+    state.setQuery('stein');
+    TestBed.tick();
+
+    expect(state.query()).toBe('stein');
+    expect(stored()['query']).toBeUndefined();
   });
 });

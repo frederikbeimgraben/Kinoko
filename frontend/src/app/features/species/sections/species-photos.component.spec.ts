@@ -2,7 +2,7 @@ import { computed, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { render } from '@testing-library/angular';
 import type { Photo } from '../../../core/api/models';
-import { ImagesState } from '../../images/images.state';
+import { ImagesStore } from '../../images/images.store';
 import { AuthStub, authStubProviders } from '../../../testing/auth-stub';
 import { catalogueProviders } from '../../../testing/catalogue-double';
 import { photo } from '../../../testing/photos-fixture';
@@ -11,7 +11,7 @@ import { SpeciesPhotosComponent } from './species-photos.component';
 
 const PHOTOS: readonly Photo[] = [photo({ id: 'eins', lead: false }), photo({ id: 'zwei', lead: true })];
 
-function imagesDouble(items: readonly Photo[]): Partial<ImagesState> {
+function imagesDouble(items: readonly Photo[]): Partial<ImagesStore> {
   const photos = signal(items);
   return {
     photos: photos.asReadonly(),
@@ -27,7 +27,7 @@ async function build(items: readonly Photo[] = PHOTOS): Promise<Element> {
       ...catalogueProviders(),
       ...authStubProviders(stub),
       provideRouter(ANY_ROUTE),
-      { provide: ImagesState, useValue: imagesDouble(items) },
+      { provide: ImagesStore, useValue: imagesDouble(items) },
     ],
     inputs: { slug: 'boletus-edulis' },
   });
