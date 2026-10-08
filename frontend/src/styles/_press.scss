@@ -1,7 +1,7 @@
-// Am Telefon gibt es keinen Zeiger und damit keinen Hover.
-// Eine Zeile tönt sich statt zu schrumpfen: sonst zöge sie die Liste mit.
+// A phone has no pointer and thus no hover state.
+// A row gets a tint and does not shrink, because a shrink moves the list.
 
-// Das Tippziel wächst unsichtbar auf 44 px, die Optik bleibt bei 36 px.
+// The tap target grows to 44 px. The visible control stays at 36 px.
 .tap {
   position: relative;
 }
