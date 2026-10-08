@@ -121,6 +121,10 @@ export class MapOverlaysComponent {
     computation: ({ shown }): Combination | null => shown,
   });
 
+  // The delete shows only after a tap on a row, so the list opens without it (board `MapCombinations`).
+  /** The person chose a row in this open sheet. */
+  protected readonly rowChosen = linkedSignal({ source: this.open, computation: () => false });
+
   /** The delete of the chosen saved combination waits for a confirmation. */
   protected readonly deleteAsk = signal(false);
 
@@ -144,6 +148,11 @@ export class MapOverlaysComponent {
     const chosen = this.draftCombination();
     if (chosen !== null) this.combination.pick(chosen);
     this.closed.emit();
+  }
+
+  protected chooseCombination(chosen: Combination): void {
+    this.draftCombination.set(chosen);
+    this.rowChosen.set(true);
   }
 
   protected async deleteCombination(): Promise<void> {

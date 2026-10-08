@@ -88,7 +88,9 @@ describe('MapOverlaysComponent', () => {
   it('deletes the chosen saved combination after a confirmation', async () => {
     const { show, deleted } = await overlays();
     await show('combinations');
+    expect(screen.queryByRole('button', { name: 'Löschen' })).not.toBeInTheDocument();
 
+    await userEvent.click(screen.getByRole('checkbox', { name: /^Buchenwald/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     expect(deleted).toEqual([]);
     expect(await screen.findByRole('heading', { name: 'Kombination löschen?' })).toBeInTheDocument();

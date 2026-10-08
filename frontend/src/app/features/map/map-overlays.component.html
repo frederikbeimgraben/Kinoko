@@ -53,7 +53,7 @@
           <app-combinations
             [saved]="combination.saved()"
             [selected]="draftCombination()?.id ?? null"
-            (chosen)="draftCombination.set($event)"
+            (chosen)="chooseCombination($event)"
           />
         </div>
       }
@@ -66,7 +66,7 @@
         <app-action-bar
           foot
           [primary]="'common.apply' | t"
-          [secondary]="draftCombination() === null ? undefined : ('common.delete' | t)"
+          [secondary]="rowChosen() && draftCombination() !== null ? ('common.delete' | t) : undefined"
           secondaryIcon="trash"
           [secondaryDanger]="true"
           (primaryClick)="pick()"
