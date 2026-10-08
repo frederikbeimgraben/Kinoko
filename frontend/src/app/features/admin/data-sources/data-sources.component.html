@@ -1,0 +1,72 @@
+<app-page-header
+  [title]="'admin.dataSources.title' | t"
+  [back]="!wide()"
+  [wide]="wide()"
+  (backClick)="back()"
+/>
+
+<div class="sources">
+  @for (line of blocked(); track line.run) {
+    <app-banner
+      kind="pending"
+      icon="warning"
+      [text]="line.text"
+      [count]="line.count"
+      (actionClick)="needsOpen.set(true)"
+    />
+  }
+
+  @if (!loaded()) {
+    <app-row-group-skeleton [count]="3" [label]="true" [lines]="2" trail="badge" />
+    <app-row-group-skeleton [count]="5" [label]="true" [lines]="2" trail="badge" />
+  } @else {
+    <app-section [label]="'admin.dataSources.section.remote' | t">
+      <app-row-group>
+        @for (row of remotes(); track row.source) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.subline"
+            [badge]="row.state"
+            [badgeKind]="row.tone"
+            [clickable]="true"
+            (chosen)="remote.set(row.source)"
+          />
+        }
+      </app-row-group>
+    </app-section>
+
+    <app-section [label]="'admin.dataSources.section.upload' | t">
+      <app-row-group>
+        @for (row of uploads(); track row.kind) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="wide() ? row.subline : row.sublineWithUses"
+            [badge]="row.state"
+            [badgeKind]="row.tone"
+            [clickable]="true"
+            (chosen)="open(row.kind)"
+          >
+            @if (wide()) {
+              <span trail class="sources__uses">
+                @for (use of row.uses; track use) {
+                  <app-level-pill [text]="use" />
+                }
+              </span>
+            }
+            <app-icon-button
+              action
+              icon="upload"
+              kind="plain"
+              [label]="uploadLabel()"
+              (pressed)="uploading.set(row.kind)"
+            />
+          </app-list-row>
+        }
+      </app-row-group>
+    </app-section>
+  }
+</div>
+
+<app-remote-sheet [source]="remote()" (closed)="remote.set(null)" />
+<app-upload-sheet [kind]="uploading()" (closed)="uploading.set(null)" />
+<app-needs-sheet [open]="needsOpen()" (closed)="needsOpen.set(false)" />

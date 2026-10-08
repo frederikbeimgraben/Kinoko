@@ -4807,6 +4807,7 @@ components:
         - activatedAt
 
     UploadCreate:
+      description: speciesId is only for a model-bundle with one species.
       type: object
       properties:
         fileName:
@@ -4819,7 +4820,6 @@ components:
         sha256:
           $ref: "#/components/schemas/Sha256"
         speciesId:
-          description: Only for model-bundle with one species.
           type: string
           format: uuid
         activate:

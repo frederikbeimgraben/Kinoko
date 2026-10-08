@@ -1,25 +1,27 @@
 <div class="admin" [class.admin--split]="wide()">
   @if (showList()) {
     <div class="admin__list">
-      <app-page-header [title]="'admin.title' | t" [back]="!wide()" (backClick)="back()" />
+      <app-page-header [title]="'admin.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
       <div class="admin__body">
-        @for (block of blocks(); track block.title) {
-          <section>
-            <h2 class="admin__section">{{ block.title }}</h2>
-            <div class="admin__card">
-              @for (row of block.rows; track row.path) {
-                <app-list-row
-                  kind="catalogue"
-                  [title]="row.title"
-                  [subline]="row.counts"
-                  [clickable]="row.ready"
-                  [chevron]="true"
-                  [selected]="wide() && chosen(row.path)"
-                  (chosen)="open(row.path)"
-                />
-              }
-            </div>
-          </section>
+        @if (waiting()) {
+          <app-row-group-skeleton [count]="4" [label]="true" [lines]="2" trail="chevron" />
+        } @else {
+          @for (block of blocks(); track block.title) {
+            <app-section class="motion-list-in" [label]="block.title">
+              <app-row-group>
+                @for (row of block.rows; track row.path) {
+                  <app-list-row
+                    [title]="row.title"
+                    [subline]="row.counts"
+                    [clickable]="row.ready"
+                    [chevron]="true"
+                    [selected]="wide() && chosen(row.path)"
+                    (chosen)="open(row.path)"
+                  />
+                }
+              </app-row-group>
+            </app-section>
+          }
         }
       </div>
     </div>

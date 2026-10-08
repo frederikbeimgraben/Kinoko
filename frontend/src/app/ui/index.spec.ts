@@ -29,6 +29,7 @@ const BLOCKS = [
   'app-photo-dialog',
   'app-reject-dialog',
   'app-review-queue',
+  'app-queue-card-skeleton',
   'app-banner',
   'app-list-row',
   'app-species-row',

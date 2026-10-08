@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { BodyPart, ColourMode, ColourValue } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -16,8 +16,8 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { PART_TEXT } from '../species/labels';
-import { CatalogueState } from './catalogue.state';
-import { SpeciesEditorState } from './species-editor.state';
+import { CatalogueStore } from './catalogue.store';
+import { SpeciesEditorStore } from './species-editor.store';
 import { COLOUR_MODES, fieldMode, trimmed, withColour } from './section-colour.rows';
 import { colourGroupAt, withColourGroup, withoutColourGroup } from './species-lists';
 
@@ -27,14 +27,14 @@ const MODE_TEXT = {
   distinct: 'enum.colour_mode.multiple',
 } as const;
 
-/** Ein Farbwert mit seiner Stelle in der Gruppe. */
+/** A colour value with its position in the group. */
 interface Stop {
   at: number;
   hex: string;
   name: string;
 }
 
-/** Die Farbe eines Teils: Art des Werts, die Werte und der offene Wert. */
+/** The colour of a part: the mode, the values and the open value. */
 @Component({
   selector: 'app-section-colour',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,8 +55,8 @@ interface Stop {
 export class SectionColourComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
-  private readonly catalogue = inject(CatalogueState);
+  private readonly state = inject(SpeciesEditorStore);
+  private readonly catalogue = inject(CatalogueStore);
 
   protected readonly slug = injectRouteParam('slug');
   private readonly partParam = injectRouteParam('part', 'cap');
@@ -64,9 +64,11 @@ export class SectionColourComponent {
   private readonly index = injectRouteParam('index', '0');
   protected readonly at = computed(() => Number(this.index()));
 
-  protected readonly mode = signal<ColourMode>('single');
-  protected readonly colours = signal<ColourValue[]>([]);
-  protected readonly open = signal(0);
+  private readonly group = computed(() => colourGroupAt(this.state.species(), this.part(), this.at()));
+
+  protected readonly mode = linkedSignal<ColourMode>(() => this.group()?.mode ?? 'single');
+  protected readonly colours = linkedSignal<ColourValue[]>(() => [...(this.group()?.colours ?? [])]);
+  protected readonly open = linkedSignal({ source: this.group, computation: () => 0 });
 
   protected readonly title = computed(() =>
     this.i18n.translate('admin.colour.title', { teil: this.i18n.translate(PART_TEXT[this.part()]) }),
@@ -100,17 +102,8 @@ export class SectionColourComponent {
   );
 
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
+    this.state.load(this.slug);
     this.catalogue.load();
-    effect(() => {
-      const group = colourGroupAt(this.state.species(), this.part(), this.at());
-      this.mode.set(group === null ? 'single' : group.mode);
-      this.colours.set(group === null ? [] : [...group.colours]);
-      this.open.set(0);
-    });
   }
 
   protected chooseMode(value: string): void {

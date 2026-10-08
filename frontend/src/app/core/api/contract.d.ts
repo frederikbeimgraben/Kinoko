@@ -1925,14 +1925,12 @@ export interface components {
             processedAt: string | null;
             activatedAt: string | null;
         };
+        /** @description speciesId is only for a model-bundle with one species. */
         UploadCreate: {
             fileName: string;
             sizeBytes: number;
             sha256?: components["schemas"]["Sha256"];
-            /**
-             * Format: uuid
-             * @description Only for model-bundle with one species.
-             */
+            /** Format: uuid */
             speciesId?: string;
             /** @default true */
             activate: boolean;

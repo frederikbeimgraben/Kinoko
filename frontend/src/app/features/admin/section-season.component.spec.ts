@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionSeasonComponent } from './section-season.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
@@ -29,7 +29,7 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
 
 describe('SectionSeasonComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt die Monate des Zeitraums', async () => {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { TermRef } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -8,13 +8,13 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ChipGroupComponent, type Chip } from '../../ui/chip-group/chip-group.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { TermsState } from './terms.state';
-import { SpeciesEditorState } from './species-editor.state';
+import { TermsStore } from './terms.store';
+import { SpeciesEditorStore } from './species-editor.store';
 
-/** Welcher Sinn die Seite trägt. */
+/** The sense that the page edits. */
 type Sense = 'smell' | 'taste';
 
-/** Ein Sinn einer Art: seine Kategorien und ein Satz dazu. */
+/** One sense of a species: its categories and a sentence. */
 @Component({
   selector: 'app-section-senses',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,15 +25,20 @@ type Sense = 'smell' | 'taste';
 export class SectionSensesComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
-  private readonly terms = inject(TermsState);
+  private readonly state = inject(SpeciesEditorStore);
+  private readonly terms = inject(TermsStore);
 
   protected readonly slug = injectRouteParam('slug');
   private readonly senseParam = injectRouteParam('sense');
   protected readonly sense = computed<Sense>(() => (this.senseParam() === 'geschmack' ? 'taste' : 'smell'));
 
-  protected readonly chosen = signal<readonly string[]>([]);
-  protected readonly note = signal('');
+  protected readonly chosen = linkedSignal<readonly string[]>(() =>
+    this.termsOf(this.state.species()?.terms ?? []).map((one) => one.term.id),
+  );
+  protected readonly note = linkedSignal(() => {
+    const species = this.state.species();
+    return (this.sense() === 'taste' ? species?.tasteText : species?.smellText) ?? '';
+  });
 
   protected readonly title = computed(() =>
     this.i18n.translate(this.sense() === 'taste' ? 'species.field.taste' : 'species.field.smell'),
@@ -44,17 +49,8 @@ export class SectionSensesComponent {
   );
 
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
+    this.state.load(this.slug);
     this.terms.load();
-    effect(() => {
-      const species = this.state.species();
-      if (species === null) return;
-      this.chosen.set(this.termsOf(species.terms).map((one) => one.term.id));
-      this.note.set((this.sense() === 'taste' ? species.tasteText : species.smellText) ?? '');
-    });
   }
 
   protected apply(): void {

@@ -3,30 +3,32 @@ import { Router } from '@angular/router';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
-import { AdminState } from './admin.state';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { AdminStore } from './admin.store';
 import { roleName } from './role-name';
 
-/** Das Blatt der Zuweisung ist so hoch wie sein Inhalt. */
-
-/** Die feste Rolle, die jede angemeldete Person trägt. Sie wird nicht vergeben. */
+/** The built-in role of each signed-in person. Nobody assigns it. */
 const EVERY_ONE = 'user';
 
-/** Eine Rolle neben einer Person. */
+/** A role next to a person. */
 interface Mark {
   id: string;
   name: string;
 }
 
-/** Eine Zeile der Personenliste. */
+/** A row of the person list. */
 interface Row {
   id: string;
   name: string;
@@ -34,14 +36,14 @@ interface Row {
   roles: readonly Mark[];
 }
 
-/** Eine Rolle im Blatt der Zuweisung. */
+/** A role in the assignment sheet. */
 interface Choice {
   id: string;
   name: string;
   checked: boolean;
 }
 
-/** Die Personenliste: Suche, Konten und ihre Rollen. Eine Zeile weist zu. */
+/** The person list: search, accounts and their roles. A row opens the assignment. */
 @Component({
   selector: 'app-people',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,8 +55,11 @@ interface Choice {
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
     SearchFieldComponent,
     SheetComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './people.component.html',
@@ -63,16 +68,18 @@ interface Choice {
 export class PeopleComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(AdminState);
+  private readonly store = inject(AdminStore);
 
+  protected readonly wide = inject(ViewportService).wide;
   protected readonly search = signal('');
   protected readonly editing = signal<Person | null>(null);
   protected readonly chosen = signal<ReadonlySet<string>>(new Set());
-  protected readonly saving = signal(false);
+  protected readonly saving = this.store.saving;
   protected readonly removing = signal<Person | null>(null);
+  protected readonly loaded = computed(() => this.store.people() !== null);
 
   protected readonly rows = computed<Row[]>(() =>
-    (this.state.people() ?? []).map((person) => ({
+    (this.store.people() ?? []).map((person) => ({
       id: person.id,
       name: person.name ?? this.i18n.translate('admin.people.noName'),
       email: person.email ?? '',
@@ -80,9 +87,9 @@ export class PeopleComponent {
     })),
   );
 
-  /** Nur freie Rollen: die feste Rolle jeder Person wird nicht vergeben. */
+  /** Only free roles: nobody assigns the built-in role of each person. */
   private readonly assignable = computed<readonly Role[]>(() =>
-    (this.state.roles() ?? []).filter((role) => role.slug !== EVERY_ONE),
+    (this.store.roles() ?? []).filter((role) => role.slug !== EVERY_ONE),
   );
 
   protected readonly choices = computed<Choice[]>(() =>
@@ -93,19 +100,23 @@ export class PeopleComponent {
     })),
   );
 
+  protected readonly deleteQuestion = computed(
+    () => `${this.removing()?.name ?? ''} ${this.i18n.translate('admin.people.deleteConfirm')}`,
+  );
+
   constructor() {
-    this.state.loadPeople('');
-    // Ohne die Rollen bliebe das Blatt der Zuweisung leer.
-    this.state.loadRoles();
+    this.store.loadPeople('');
+    // Without the roles, the assignment sheet is empty.
+    this.store.loadRoles();
   }
 
   protected onSearch(text: string): void {
     this.search.set(text);
-    this.state.loadPeople(text.trim());
+    this.store.loadPeople(text.trim());
   }
 
   protected edit(id: string): void {
-    const person = this.state.people()?.find((one) => one.id === id) ?? null;
+    const person = this.store.people()?.find((one) => one.id === id) ?? null;
     this.editing.set(person);
     this.chosen.set(new Set(person?.roles.map((role) => role.id) ?? []));
   }
@@ -119,26 +130,18 @@ export class PeopleComponent {
     });
   }
 
+  /** The service refuses to take the admin role from the last admin. The sheet then stays open. */
   protected save(): void {
     const person = this.editing();
-    if (person === null || this.saving()) return;
-    this.saving.set(true);
-    this.state.setRoles(person.id, [...this.chosen()]).subscribe({
-      next: () => {
-        this.saving.set(false);
+    if (person === null) return;
+    this.store.setRoles({
+      id: person.id,
+      roles: [...this.chosen()],
+      onDone: () => {
         this.editing.set(null);
-      },
-      // Der Dienst weist ab, wer der letzten Person die Rolle Admin nimmt. Das
-      // Blatt bleibt dann offen, damit die Wahl nicht verloren geht.
-      error: () => {
-        this.saving.set(false);
       },
     });
   }
-
-  protected readonly deleteQuestion = computed(
-    () => `${this.removing()?.name ?? ''} ${this.i18n.translate('admin.people.deleteConfirm')}`,
-  );
 
   protected askDelete(): void {
     this.removing.set(this.editing());
@@ -148,7 +151,7 @@ export class PeopleComponent {
   protected remove(): void {
     const person = this.removing();
     this.removing.set(null);
-    if (person !== null) this.state.deletePerson(person.id).subscribe();
+    if (person !== null) this.store.deletePerson({ id: person.id });
   }
 
   protected close(): void {

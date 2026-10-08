@@ -7,11 +7,14 @@
       [hideLabel]="true"
       [value]="name()"
       [placeholder]="'common.name' | t"
-      (valueChange)="nameChoice.set($event)"
+      (valueChange)="name.set($event)"
     />
     <app-group-members [group]="one" [removable]="true" (removed)="removeMember($event)" />
+  } @else if (loaded()) {
+    <app-state-view icon="account" [title]="'group.notFound' | t" />
   } @else {
-    <p class="note">{{ 'group.notFound' | t }}</p>
+    <app-row-group-skeleton [count]="1" />
+    <app-row-group-skeleton [count]="3" [label]="true" [lines]="2" />
   }
 </div>
 

@@ -1,48 +1,52 @@
 <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 
 <div class="editor">
-  @if (stats().length > 0) {
-    <div class="editor__card editor__stats">
-      <app-stat-row [stats]="stats()" />
-    </div>
-  }
-
-  <div class="editor__card">
-    <app-list-row kind="catalogue" [title]="'admin.species.forecast' | t">
-      <app-switch
-        trail
-        [checked]="forecast()"
-        [label]="'admin.species.forecast' | t"
-        (checkedChange)="setForecast($event)"
-      />
-    </app-list-row>
-  </div>
-
-  @for (block of blocks(); track block.title) {
-    <section>
-      <h2 class="editor__section">{{ block.title }}</h2>
-      <div class="editor__card">
-        @for (row of block.rows; track row.key; let at = $index) {
-          <app-list-row
-            kind="catalogue"
-            [title]="row.title"
-            [subline]="row.value"
-            [chevron]="true"
-            [clickable]="block.opens"
-            (chosen)="openRow(block.kind, at, row.key)"
-          />
-        }
+  @if (species() === null) {
+    <app-row-group-skeleton [count]="1" />
+    <app-row-group-skeleton [count]="4" [label]="true" [lines]="2" trail="chevron" />
+    <app-row-group-skeleton [count]="2" [label]="true" [lines]="2" trail="chevron" />
+  } @else {
+    @if (stats().length > 0) {
+      <div class="editor__stats">
+        <app-stat-row [stats]="stats()" />
       </div>
-      @if (block.add; as label) {
-        <app-add-row [label]="label" [action]="block.addAction ?? label" (pressed)="addRow(block.kind)" />
-      }
-    </section>
-  }
+    }
 
-  @if (sourceText(); as source) {
-    <div class="editor__card editor__source">
+    <app-row-group>
+      <app-list-row [title]="'admin.species.forecast' | t">
+        <app-switch
+          trail
+          [checked]="forecast()"
+          [label]="'admin.species.forecast' | t"
+          (checkedChange)="setForecast($event)"
+        />
+      </app-list-row>
+    </app-row-group>
+
+    @for (block of blocks(); track block.title) {
+      <app-section [label]="block.title">
+        @if (block.rows.length > 0) {
+          <app-row-group>
+            @for (row of block.rows; track row.key; let at = $index) {
+              <app-list-row
+                [title]="row.title"
+                [subline]="row.value"
+                [chevron]="true"
+                [clickable]="block.opens"
+                (chosen)="openRow(block.kind, at, row.key)"
+              />
+            }
+          </app-row-group>
+        }
+        @if (block.add; as label) {
+          <app-add-row [label]="label" [action]="block.addAction ?? label" (pressed)="addRow(block.kind)" />
+        }
+      </app-section>
+    }
+
+    @if (sourceText(); as source) {
       <p class="editor__note">{{ source }}</p>
-    </div>
+    }
   }
 </div>
 

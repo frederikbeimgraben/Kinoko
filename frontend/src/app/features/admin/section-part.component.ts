@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { BodyPart, Measurement } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -11,11 +11,11 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { changeRows, colourRows, sizeRows, type ColourRow, type SizeRow } from './section-part.rows';
 import { changes, withPartNote, withoutPart } from './species-lists';
 
-/** Ein Teil einer Art: seine Maße, seine Farben und seine Verfärbungen. */
+/** A part of a species: its measurements, its colours and its colour changes. */
 @Component({
   selector: 'app-section-part',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +34,7 @@ import { changes, withPartNote, withoutPart } from './species-lists';
 export class SectionPartComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
+  private readonly state = inject(SpeciesEditorStore);
 
   protected readonly slug = injectRouteParam('slug');
   private readonly partParam = injectRouteParam('part', 'cap');
@@ -52,23 +52,15 @@ export class SectionPartComponent {
 
   protected readonly changes = computed<ColourRow[]>(() => changeRows(this.state.species(), this.part()));
 
-  protected readonly description = signal('');
-  protected readonly comment = signal('');
-
   private readonly note = computed(
     () => this.state.species()?.partNotes?.find((one) => one.part === this.part()) ?? null,
   );
 
+  protected readonly description = linkedSignal(() => this.note()?.description ?? '');
+  protected readonly comment = linkedSignal(() => this.note()?.comment ?? '');
+
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
-    effect(() => {
-      const note = this.note();
-      this.description.set(note?.description ?? '');
-      this.comment.set(note?.comment ?? '');
-    });
+    this.state.load(this.slug);
   }
 
   protected openSize(): void {
@@ -111,7 +103,7 @@ export class SectionPartComponent {
     void this.router.navigate(['/verwaltung/arten', this.slug()]);
   }
 
-  /** Eine Spanne liest sich wie im Editor: zwei Zahlen und die Einheit. */
+  /** A span reads as in the editor: two numbers and the unit. */
   private span(one: Measurement): string {
     return `${one.low} ${this.i18n.translate('common.to')} ${one.high} ${one.unit}`;
   }

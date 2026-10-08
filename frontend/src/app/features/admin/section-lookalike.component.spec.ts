@@ -9,7 +9,7 @@ import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SpeciesStore } from '../species/species.store';
 import { SectionLookalikeComponent } from './section-lookalike.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 const BUNDLE = {
@@ -71,7 +71,7 @@ async function build(
 
 describe('SectionLookalikeComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
+    TestBed.inject(SpeciesEditorStore).load('');
   });
 
   it('nennt die andere Art und den Unterschied', async () => {

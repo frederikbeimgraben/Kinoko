@@ -149,6 +149,7 @@ function collectFiles(appRoot, folder, found) {
       continue;
     }
     if (name.endsWith('.spec.ts')) continue;
+    if (EXCLUDED_ZONES.includes(relative(appRoot, path).split(sep).join('/'))) continue;
     if (name.endsWith('.ts') || name.endsWith('.html')) found.push(path);
   }
   return found;

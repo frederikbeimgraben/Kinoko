@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { ColourGroup, GillAttachment, GillEdge, GillSpacing, HymeniumType } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -9,7 +9,7 @@ import { ColourFieldComponent, type ColourMode } from '../../ui/colour-field/col
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { SpeciesEditorState } from './species-editor.state';
+import { SpeciesEditorStore } from './species-editor.store';
 import {
   FIELD_TITLE,
   choiceText,
@@ -20,14 +20,14 @@ import {
   type HymeniumRow,
 } from './section-hymenium.rows';
 
-/** Ein Wert der offenen Wahl. */
+/** One value of the open choice. */
 interface Choice {
   value: string;
   label: string;
   chosen: boolean;
 }
 
-/** Die Fruchtschicht einer Art: ihre Felder und die Wahl des offenen Feldes. */
+/** The hymenium of a species: its fields and the choice for the open field. */
 @Component({
   selector: 'app-section-hymenium',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,7 +45,7 @@ interface Choice {
 export class SectionHymeniumComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(SpeciesEditorState);
+  private readonly state = inject(SpeciesEditorStore);
 
   protected readonly slug = injectRouteParam('slug');
   protected readonly open = signal<HymeniumField>('attachment');
@@ -87,10 +87,7 @@ export class SectionHymeniumComponent {
   });
 
   constructor() {
-    effect(() => {
-      const slug = this.slug();
-      if (slug !== '') this.state.load(slug);
-    });
+    this.state.load(this.slug);
   }
 
   protected choose(value: string): void {

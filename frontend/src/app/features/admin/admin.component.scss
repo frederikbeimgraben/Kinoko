@@ -1,9 +1,10 @@
-@use '../../../styles/card';
+@use './page';
 
 :host {
   display: block;
   block-size: 100%;
   overflow: hidden;
+  background: var(--bg);
 }
 
 .admin {
@@ -12,10 +13,9 @@
   block-size: 100%;
 }
 
-// Am Rechner trägt die Verwaltung ihre eigenen zwei Spalten: links die Punkte,
-// rechts der gewählte.
+// The desktop master-detail per the account boards: a middle pane of rows and a detail pane.
 .admin--split {
-  grid-template-columns: var(--size-column) minmax(0, 1fr);
+  grid-template-columns: var(--w-pane-list) minmax(0, 1fr);
 }
 
 .admin__list,
@@ -27,31 +27,16 @@
 }
 
 .admin--split .admin__list {
-  border-inline-end: var(--border-width) solid var(--color-border);
+  background: var(--surface-mid);
+}
+
+.admin--split .admin__detail {
+  --admin-pad: 0 32px 32px;
+
+  background: var(--bg);
+  view-transition-name: detail-pane;
 }
 
 .admin__body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.admin__section {
-  @include card.section-title;
-}
-
-// Die Zeilen stehen 14 px vom Kartenrand und messen 52, wie die Bretter.
-.admin__card {
-  @include card.card;
-
-  --list-row-inline: 14px;
-  --size-row-tall: var(--size-row);
-  --list-row-sub: var(--fs-row-meta);
-  --list-row-sub-height: 1.4;
-  --list-row-title-height: normal;
-  --space-row-stack: 2px;
+  @include page.body;
 }

@@ -8,8 +8,8 @@ import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionColourChangeComponent } from './section-colour-change.component';
-import { SpeciesEditorState } from './species-editor.state';
-import { TermsState } from './terms.state';
+import { SpeciesEditorStore } from './species-editor.store';
+import { TermsStore } from './terms.store';
 import { SECTION_SPECIES } from './section.testing';
 
 const TERMS = {
@@ -52,8 +52,8 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
 
 describe('SectionColourChangeComponent', () => {
   beforeEach(() => {
-    TestBed.inject(SpeciesEditorState).load('');
-    TestBed.inject(TermsState);
+    TestBed.inject(SpeciesEditorStore).load('');
+    TestBed.inject(TermsStore);
   });
 
   it('nennt Teil, Auslöser, beide Farben und die Dauer', async () => {

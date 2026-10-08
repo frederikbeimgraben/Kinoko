@@ -1,18 +1,27 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { PermissionsStore } from '../../core/access/permissions.store';
 import type { PipelineRun, RunKind } from '../../core/api/models';
 import { RUN_KINDS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { ProgressComponent } from '../../ui/progress/progress.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
-import { RunsState } from './runs.state';
+import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { DataSourcesStore } from './data-sources/data-sources.store';
+import { needText } from './data-sources/data-sources.rows';
+import { RunsStore } from './runs.store';
 import {
   RUN_KIND_TEXT,
   RUN_STATE_TEXT,
@@ -24,7 +33,7 @@ import {
   shortDuration,
 } from './runs.rows';
 
-/** Eine Zeile der Liste der letzten Läufe. */
+/** A row of the list of recent runs. */
 interface Row {
   id: string;
   title: string;
@@ -33,7 +42,7 @@ interface Row {
   failed: boolean;
 }
 
-/** Der laufende Lauf als Karte über der Liste. */
+/** The running run as a card above the list. */
 interface Active {
   id: string;
   title: string;
@@ -42,7 +51,7 @@ interface Active {
   percent: number;
 }
 
-/** Die Läufe: was die Kette gerade tut und was sie zuletzt getan hat. */
+/** The runs: what the pipeline does now and what it did last. */
 @Component({
   selector: 'app-runs',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +62,11 @@ interface Active {
     ListRowComponent,
     PageHeaderComponent,
     ProgressComponent,
+    RowGroupComponent,
+    RowGroupSkeletonComponent,
+    SectionComponent,
     SegmentedComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './runs.component.html',
@@ -62,16 +75,20 @@ interface Active {
 export class RunsComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(RunsState);
+  private readonly store = inject(RunsStore);
+  private readonly sources = inject(DataSourcesStore);
+  private readonly rights = inject(PermissionsStore);
 
+  protected readonly wide = inject(ViewportService).wide;
   protected readonly starting = signal(false);
   protected readonly kind = signal<RunKind>('training');
+  protected readonly loaded = computed(() => this.store.runs() !== null);
 
   private readonly text = (key: TranslationKey, values?: Record<string, string | number>): string =>
     this.i18n.translate(key, values);
 
   protected readonly active = computed<Active | null>(() => {
-    const run = (this.state.runs() ?? []).find((one) => one.state === 'running');
+    const run = (this.store.runs() ?? []).find((one) => one.state === 'running');
     if (run === undefined) return null;
     return {
       id: run.id,
@@ -83,7 +100,7 @@ export class RunsComponent {
   });
 
   protected readonly rows = computed<Row[]>(() =>
-    (this.state.runs() ?? [])
+    (this.store.runs() ?? [])
       .filter((run) => run.state !== 'running' && run.state !== 'queued')
       .map((run) => ({
         id: run.id,
@@ -98,8 +115,18 @@ export class RunsComponent {
     RUN_KINDS.map((kind) => ({ value: kind, label: this.text(RUN_KIND_TEXT[kind]) })),
   );
 
+  /** The missing inputs of the chosen kind. Without `data.manage`, the server checks alone. */
+  protected readonly missing = computed(() => {
+    const blocked = this.sources.blocked().find((entry) => entry.run === this.kind());
+    if (blocked === undefined) return '';
+    return this.text('admin.runs.missing', {
+      inputs: joined(blocked.missing.map((need) => needText(need, this.text))),
+    });
+  });
+
   constructor() {
-    this.state.load();
+    this.store.load();
+    if (this.rights.can('data.manage')) this.sources.loadOverview();
   }
 
   protected chooseKind(value: string): void {
@@ -107,8 +134,13 @@ export class RunsComponent {
   }
 
   protected start(): void {
-    this.starting.set(false);
-    this.state.start(this.kind());
+    if (this.missing() !== '') return;
+    this.store.start({
+      kind: this.kind(),
+      onDone: () => {
+        this.starting.set(false);
+      },
+    });
   }
 
   protected open(id: string): void {
@@ -119,7 +151,7 @@ export class RunsComponent {
     void this.router.navigateByUrl('/verwaltung');
   }
 
-  /** Ein Lauf ohne Ende trägt keine Dauer. */
+  /** A run without an end has no duration. */
   private duration(run: PipelineRun): string {
     const started = run.startedAt;
     const finished = run.finishedAt;
