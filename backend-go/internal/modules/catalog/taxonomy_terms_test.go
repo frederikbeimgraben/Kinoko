@@ -10,7 +10,7 @@ import (
 
 type taxaSeed struct {
 	division, order, family, siblingFamily, genus, otherGenus taxon
-	porcini, jack                                              species
+	porcini, jack                                             species
 }
 
 func seedTaxa(t *testing.T, env *testkit.Env) taxaSeed {

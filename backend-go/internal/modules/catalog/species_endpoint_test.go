@@ -82,4 +82,14 @@ func TestImportedCatalogueThroughTheAPI(t *testing.T) {
 			t.Fatal(len(items(body)))
 		}
 	})
+
+	t.Run("a species shows its imported reactions", func(t *testing.T) {
+		slug := scalar[string](t, env, `SELECT s.slug FROM species s JOIN species_reaction r ON r.species_id = s.id
+			GROUP BY s.id ORDER BY count(*) DESC LIMIT 1`)
+		want := scalar[int](t, env, `SELECT count(*) FROM species_reaction r JOIN species s ON s.id = r.species_id
+			WHERE s.slug = ?`, slug)
+		if got := len(list(profileOf(t, env, slug)["reactions"])); got != want || want == 0 {
+			t.Fatal(slug, got, want)
+		}
+	})
 }
