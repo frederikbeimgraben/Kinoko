@@ -12,6 +12,7 @@ so the Go run with the same settings trains the same trees.
 from __future__ import annotations
 
 import contextlib
+import gzip
 import io
 import json
 import math
@@ -168,6 +169,11 @@ def inputs_json(occ: pd.DataFrame, weather: pd.DataFrame, trees: pd.DataFrame) -
                       "values": {c: trees[c].astype(float).tolist() for c in names}}}
 
 
+def write_gz(name: str, value) -> None:
+    with gzip.GzipFile(HERE / name, "wb", mtime=0) as handle:
+        handle.write(json.dumps(value).encode())
+
+
 def parse_tables(text: str) -> dict:
     """The candidate and settings tables that final_model.main prints, per horizon."""
     out = {}
@@ -193,7 +199,7 @@ def main() -> None:
     weather = weather_table(rng)
     trees = tree_table(rng)
     occ = records(rng, weather, trees)
-    (HERE / "inputs.json").write_text(json.dumps(inputs_json(occ, weather, trees)))
+    write_gz("inputs.json.gz", inputs_json(occ, weather, trees))
 
     # The settings of final_model.py, changed in place so every reference sees them.
     for _, params, _ in fm.GRID:
@@ -246,7 +252,7 @@ def main() -> None:
             "blocks": blocks, "design": design, "horizons": horizons, "prior": prior,
             "finds": finds, "visits": len(frame), "positives": int(frame["label"].sum()),
         }
-    (HERE / "golden.json").write_text(json.dumps(golden))
+    write_gz("golden.json.gz", golden)
     print(printed.getvalue()[-3000:], file=sys.stderr)
 
 

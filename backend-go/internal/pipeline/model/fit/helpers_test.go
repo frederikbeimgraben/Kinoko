@@ -6,6 +6,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 
@@ -153,6 +154,41 @@ func nullable(v []*float64) []float64 {
 		if p != nil {
 			out[i] = *p
 		}
+	}
+	return out
+}
+
+func nearAll(got, want []float64, tol float64) bool {
+	if len(got) != len(want) {
+		return false
+	}
+	for i := range got {
+		if !near(got[i], want[i], tol) {
+			return false
+		}
+	}
+	return true
+}
+
+func atoi(t *testing.T, s string) int {
+	t.Helper()
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return n
+}
+
+func itoa(n int) string { return strconv.Itoa(n) }
+
+// subTable keeps the rows of t in rows.
+func subTable(t *Table, rows []int) *Table {
+	out := &Table{N: len(rows), Keys: pick(t.Keys, rows), Label: pick(t.Label, rows), ISOYear: pick(t.ISOYear, rows),
+		ISOWeek: pick(t.ISOWeek, rows), NSpecies: pick(t.NSpecies, rows), X: pick(t.X, rows), Y: pick(t.Y, rows),
+		Lon: pick(t.Lon, rows), Lat: pick(t.Lat, rows), Date: pick(t.Date, rows), Cell: pick(t.Cell, rows),
+		Block: pick(t.Block, rows), Columns: map[string][]float64{}, Blocks: t.Blocks}
+	for name, col := range t.Columns {
+		out.Columns[name] = pick(col, rows)
 	}
 	return out
 }
