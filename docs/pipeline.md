@@ -37,8 +37,9 @@ file outside `PILZE_DATA` and writes the maps into `PILZE_MAPS`.
 | `dwd-hyras` | `opendata.dwd.de/.../daily/hyras_de/` | Daily grids of rain, mean, lowest and highest temperature, humidity (1 km) | Fetch runs | `cache/dwd/hyras/` |
 | `dwd-soil-moisture` | `opendata.dwd.de/.../daily/soil_moisture/` | Daily plant available soil water under spruce, beech, oak and pine, 0 to 30 cm | Fetch runs | `cache/dwd/soil_moisture/` |
 | `gbif-occurrences` | `api.gbif.org/v1/occurrence/search` | Fungi records in Germany: human observations, present, with a coordinate, without a geospatial issue | Fetch runs | `cache/gbif/` |
-| `gbif-taxonomy` | `api.gbif.org/v1/species/match` | Taxonomic placement | Listed in the overview; no fetch step | none |
-| `p123` | `123pilzsuche.de/daten/details/` | German group names | Listed in the overview; no fetch step | none |
+
+The service fetches no taxonomy. The taxonomy of the catalogue comes from
+`backend/daten/taxonomie.json` in the seed data.
 
 The service also reads two internal inputs from the database at each run:
 

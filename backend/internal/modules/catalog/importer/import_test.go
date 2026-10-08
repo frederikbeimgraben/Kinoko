@@ -128,7 +128,8 @@ func TestRunCreatesSchemaAndImports(t *testing.T) {
 		t.Fatalf("species %d", got)
 	}
 	text := out.String()
-	if !strings.Contains(text, fmt.Sprintf("species: %d\n", speciesFileCount(t))) || !strings.Contains(text, "Warnung") {
+	if !strings.Contains(text, fmt.Sprintf("species: %d\n", speciesFileCount(t))) || !strings.Contains(text, "Warning: the import deletes") ||
+		!strings.Contains(text, "reactions: ") {
 		t.Fatalf("output %s", text)
 	}
 	if count(t, handle, "SELECT count(*) FROM species_reaction") == 0 {
@@ -142,7 +143,7 @@ func TestPrintReportListsCountsAndSkips(t *testing.T) {
 	report.Counts["species_name"] = 5
 	report.Skipped["measurement_ohne_koerperteil"] = 2
 	got := ReportLines(report)
-	want := []string{"species: 3", "taxa: 0", "terms: 0", "species_name: 5", "übersprungen measurement_ohne_koerperteil: 2"}
+	want := []string{"species: 3", "taxa: 0", "terms: 0", "species_name: 5", "skipped measurement_ohne_koerperteil: 2"}
 	if !slices.Equal(got, want) {
 		t.Fatalf("%v", got)
 	}

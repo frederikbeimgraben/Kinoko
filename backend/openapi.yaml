@@ -4619,7 +4619,7 @@ components:
 
     RemoteSourceId:
       type: string
-      enum: [dwd-hyras, dwd-soil-moisture, gbif-occurrences, gbif-taxonomy, p123]
+      enum: [dwd-hyras, dwd-soil-moisture, gbif-occurrences]
 
     Sha256:
       type: string

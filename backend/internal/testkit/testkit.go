@@ -75,7 +75,6 @@ func New(t testing.TB, opts ...Option) *Env {
 	settings.DB = filepath.Join(dir, "pilze.sqlite")
 	settings.Photos = filepath.Join(dir, "fotos")
 	settings.Maps = filepath.Join(dir, "maps")
-	settings.Chain = filepath.Join(dir, "modell")
 	settings.RunLogs = filepath.Join(dir, "runs")
 	settings.OIDCIssuer = issuerURL
 	settings.OIDCClientID = clientID

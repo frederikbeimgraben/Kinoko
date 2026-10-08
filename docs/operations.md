@@ -114,8 +114,6 @@ are for local development; they point to `./var/`.
 | `PILZE_SCHEDULE` | `Mon 03:30 Europe/Berlin` | `pipeline.schedule` | Weekly start: `<weekday> HH:MM <IANA zone>`. Without a zone, the time is UTC |
 | `PILZE_MAX_PHOTO_BYTES` | `12582912` (12 MiB) | not set | Largest photo upload. A positive integer |
 | `PILZE_DATEN` | empty | not set | Folder of the seed data (`texte.json`, `arten/`, `reaktionen.json`). Empty means the copy of `backend/daten` in the binary |
-| `PILZE_INTERNAL_TOKEN` | `intern` | not set | The service reads it, but no module uses it |
-| `PILZE_CHAIN` | `./var/modell` | not set | The service reads it, but no module uses it |
 
 The service does not start when `PILZE_PIPELINE`, `PILZE_MAX_PHOTO_BYTES` or
 `PILZE_SCHEDULE` has a value that it cannot read.

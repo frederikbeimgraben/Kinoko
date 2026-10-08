@@ -192,7 +192,7 @@ func ReportLines(r *Report) []string {
 		}
 	}
 	for _, key := range slices.Sorted(maps.Keys(r.Skipped)) {
-		lines = append(lines, fmt.Sprintf("übersprungen %s: %d", key, r.Skipped[key]))
+		lines = append(lines, fmt.Sprintf("skipped %s: %d", key, r.Skipped[key]))
 	}
 	return lines
 }

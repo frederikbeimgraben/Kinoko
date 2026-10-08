@@ -59,7 +59,7 @@ func Run(ctx context.Context, handle *sql.DB, data fs.FS, now func() time.Time, 
 	if now == nil {
 		now = time.Now
 	}
-	if _, err := fmt.Fprintln(out, "Warnung: der Import löscht alle Arten, Begriffe und Taxa. Fotos und Läufe der Arten gehen verloren, Funde verlieren ihre Art."); err != nil {
+	if _, err := fmt.Fprintln(out, "Warning: the import deletes all species, terms and taxa. The photos and runs of the species are lost, and the finds lose their species."); err != nil {
 		return err
 	}
 	if err := db.Migrate(ctx, handle); err != nil {
@@ -77,7 +77,7 @@ func Run(ctx context.Context, handle *sql.DB, data fs.FS, now func() time.Time, 
 	if err != nil {
 		return err
 	}
-	summary := fmt.Sprintf("reaktionen: %d bei %d Arten, ohne Art: %d", reactions.Reactions, reactions.Species, len(reactions.Unmatched))
+	summary := fmt.Sprintf("reactions: %d on %d species, without species: %d", reactions.Reactions, reactions.Species, len(reactions.Unmatched))
 	_, err = fmt.Fprintln(out, strings.Join(slices.Concat(ReportLines(report), []string{summary}), "\n"))
 	return err
 }

@@ -1864,7 +1864,7 @@ export interface components {
         /** @enum {string} */
         VersionState: "validating" | "processing" | "ready" | "failed" | "superseded";
         /** @enum {string} */
-        RemoteSourceId: "dwd-hyras" | "dwd-soil-moisture" | "gbif-occurrences" | "gbif-taxonomy" | "p123";
+        RemoteSourceId: "dwd-hyras" | "dwd-soil-moisture" | "gbif-occurrences";
         Sha256: string;
         Accept: {
             extensions: string[];

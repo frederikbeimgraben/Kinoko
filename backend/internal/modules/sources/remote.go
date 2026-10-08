@@ -27,13 +27,11 @@ type RemoteSource struct {
 
 const day = 24 * time.Hour
 
-// RemoteSources lists the public sources in the order of the overview.
+// RemoteSources lists the public sources in the order of the overview. Each one has a fetch step.
 var RemoteSources = []RemoteSource{
 	{"dwd-hyras", "https://opendata.dwd.de/climate_environment/CDC/grids_germany/daily/hyras_de/", "weekly Mon 03:30 Europe/Berlin", 8 * day},
 	{"dwd-soil-moisture", "https://opendata.dwd.de/climate_environment/CDC/grids_germany/daily/soil_moisture/", "weekly Mon 03:30 Europe/Berlin", 8 * day},
 	{"gbif-occurrences", "https://api.gbif.org/v1/occurrence/search", "weekly Mon 03:30 Europe/Berlin", 8 * day},
-	{"gbif-taxonomy", "https://api.gbif.org/v1/species/match", "monthly, cache 30 days", 31 * day},
-	{"p123", "https://123pilzsuche.de/daten/details/", "monthly, cache 90 days", 91 * day},
 }
 
 // Cache file states in remote_cache_file. The fetchers write them.
