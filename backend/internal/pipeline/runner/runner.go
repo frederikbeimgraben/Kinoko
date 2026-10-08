@@ -9,7 +9,6 @@ import (
 	"context"
 	"database/sql"
 	"log/slog"
-	"net/http"
 	"sync"
 	"time"
 
@@ -17,6 +16,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/runs"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/server"
 )
 
@@ -77,7 +77,7 @@ func New(cfg Config) *Runner {
 func FromDeps(deps server.Deps, store *runs.Store, src *sources.Module) *Runner {
 	chain := &Chain{
 		DB: deps.DB, Sources: src, Data: src.Root(), Maps: deps.Settings.Maps,
-		HTTP: &http.Client{}, Now: deps.Now, Renderer: NewMaps(),
+		HTTP: pio.NewHTTPClient(), Now: deps.Now, Renderer: NewMaps(),
 	}
 	r := New(Config{
 		DB: deps.DB, Runs: store, Sources: src, Stages: chain, Logs: deps.Settings.RunLogs,

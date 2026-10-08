@@ -40,7 +40,8 @@ func newBooster(inner *boosterHandle) *Booster {
 }
 
 // Train creates a booster on ds with params and runs rounds boosting iterations.
-// It stops early only when LightGBM reports that no further split is possible.
+// It runs each round as lightgbm.train, also after a round without a split,
+// because the next bag or column sample can still grow a tree.
 func Train(ds *Dataset, params string, rounds int) (*Booster, error) {
 	train, err := ds.handle()
 	if err != nil {
@@ -55,13 +56,10 @@ func Train(ds *Dataset, params string, rounds int) (*Booster, error) {
 	}
 	b := newBooster(&boosterHandle{h: h, train: train})
 	for range rounds {
-		var finished C.int
+		var finished C.int // lightgbm.train ignores it too.
 		if err := call("BoosterUpdateOneIter", func() C.int { return C.LGBM_BoosterUpdateOneIter(h, &finished) }); err != nil {
 			b.Close()
 			return nil, err
-		}
-		if finished != 0 {
-			break
 		}
 	}
 	return b, nil

@@ -30,19 +30,16 @@ func ranged(req *sources.FetchRequest) bool {
 }
 
 // WeatherRequest gives the DWD years of a fetch. A year range of the request
-// wins. Without a range, an empty cache gets the bootstrap from dwd.FirstYear
-// and a filled cache gets the weekly years. Force checks each year again.
-func WeatherRequest(req *sources.FetchRequest, filled bool, now time.Time) dwd.Request {
+// wins. Without a range, the fetch gets the missing closed years and the weekly
+// years: an empty cache gets the bootstrap from dwd.FirstYear. Force checks each year again.
+func WeatherRequest(req *sources.FetchRequest, missing []int, now time.Time) dwd.Request {
 	weekly := dwd.Weekly(now)
 	var out dwd.Request
-	switch {
-	case ranged(req):
+	if ranged(req) {
 		years := span(req, dwd.FirstYear, now)
 		out = dwd.Request{Years: years, Refresh: fn.Filter(weekly.Refresh, func(y int) bool { return slices.Contains(years, y) })}
-	case !filled:
-		out = dwd.Bootstrap(now, dwd.FirstYear)
-	default:
-		out = weekly
+	} else {
+		out = dwd.Resume(now, missing)
 	}
 	if req != nil && req.Force {
 		out.Refresh = slices.Clone(out.Years)
@@ -51,21 +48,18 @@ func WeatherRequest(req *sources.FetchRequest, filled bool, now time.Time) dwd.R
 }
 
 // OccurrencePlan gives the GBIF years of a fetch, by the rules of WeatherRequest.
-// An active gbif-archive upload counts as a filled cache for the closed years.
-func OccurrencePlan(req *sources.FetchRequest, filled bool, now time.Time) gbif.Plan {
+// missing are the closed years without a complete fetch.
+func OccurrencePlan(req *sources.FetchRequest, missing []int, now time.Time) gbif.Plan {
 	var out gbif.Plan
-	switch {
-	case ranged(req):
+	if ranged(req) {
 		years := span(req, gbif.BootstrapFrom, now)
 		open := gbif.RefreshYears(now)
 		out = gbif.Plan{Years: years, Refresh: fn.Reduce(years, map[int]bool{}, func(acc map[int]bool, y int) map[int]bool {
 			acc[y] = slices.Contains(open, y)
 			return acc
 		})}
-	case !filled:
-		out = gbif.BootstrapPlan(gbif.BootstrapFrom, now)
-	default:
-		out = gbif.WeeklyPlan(now)
+	} else {
+		out = gbif.ResumePlan(missing, now)
 	}
 	if req != nil && req.Force {
 		out.Refresh = fn.Reduce(out.Years, map[int]bool{}, func(acc map[int]bool, y int) map[int]bool {

@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
@@ -275,4 +276,27 @@ func TestCreateFindRejectsACountThatInt64CannotHold(t *testing.T) {
 	if !strings.Contains(string(made), `"count":9007199254740993`) {
 		t.Fatal(string(made))
 	}
+}
+
+func TestFindWritesCheckThePlaceAndTheDay(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	cases := []struct {
+		body        object
+		field, code string
+	}{
+		{object{"lat": 95.0, "lon": 8.6, "foundOn": "2026-09-01"}, "lat", "less_than_equal"},
+		{object{"lat": -91.0, "lon": 8.6, "foundOn": "2026-09-01"}, "lat", "greater_than_equal"},
+		{object{"lat": 50.1, "lon": 181.0, "foundOn": "2026-09-01"}, "lon", "less_than_equal"},
+		{object{"lat": 50.1, "lon": -180.5, "foundOn": "2026-09-01"}, "lon", "greater_than_equal"},
+		{object{"lat": 50.1, "lon": 8.6, "foundOn": "2099-09-01"}, "foundOn", "less_than_equal"},
+	}
+	for _, c := range cases {
+		answer := env.Post("/finds", c.body, anna.Person).Expect(t, http.StatusUnprocessableEntity)
+		if errs := fieldErrors(t, answer); len(errs) != 1 || errs[0]["field"] != c.field || errs[0]["code"] != c.code {
+			t.Errorf("%v: %v", c.body, errs)
+		}
+	}
+	tomorrow := env.Now.AddDate(0, 0, 1).Format(time.DateOnly)
+	env.Post("/finds", object{"lat": 50.1, "lon": 8.6, "foundOn": tomorrow}, anna.Person).Expect(t, http.StatusCreated)
 }

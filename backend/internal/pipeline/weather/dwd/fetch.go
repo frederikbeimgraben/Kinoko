@@ -23,6 +23,7 @@ type Logger interface {
 // file in Cache. The zero values of the optional fields give the defaults.
 type Fetcher struct {
 	HTTP      *http.Client                    // http.DefaultClient when nil
+	Idle      time.Duration                   // pio.IdleTimeout when 0: a transfer without bytes fails after it
 	Base      string                          // BaseURL when empty
 	Dir       string                          // the cache root of the DWD files
 	Cache     CacheStore                      // no bookkeeping when nil

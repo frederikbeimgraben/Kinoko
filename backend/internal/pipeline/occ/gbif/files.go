@@ -45,6 +45,12 @@ func ParseChunkName(name string) (country string, year, month int, ok bool) {
 	return m[1], year, month, true
 }
 
+// DoneName gives the name of the empty marker file that tells that the fetch
+// of a year ended without an error, for example fungi_de_2026.done.
+func DoneName(country string, year int) string {
+	return fmt.Sprintf("fungi_%s_%d.done", strings.ToLower(country), year)
+}
+
 // YearFiles gives the chunk files of one country and year in dir, sorted by name.
 func YearFiles(dir, country string, year int) ([]string, error) {
 	entries, err := os.ReadDir(dir)

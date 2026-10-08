@@ -176,20 +176,26 @@ func gbifRecord(l slimLine, maxUnc float64, st *Stats, intern func(string) strin
 }
 
 // keepRecord applies the error filter and adds the grid. A record without a
-// coordinate is dropped; pandas would give it a garbage cell.
+// valid coordinate is dropped; pandas would give it a garbage cell.
 func keepRecord(r Record, maxUnc float64, st *Stats) (Record, bool) {
 	if !r.UncertaintyAtMost(maxUnc) {
 		st.TooCoarse++
 		return Record{}, false
 	}
-	if math.IsNaN(r.Lat) || math.IsNaN(r.Lon) {
+	if !(math.Abs(r.Lat) <= 90 && math.Abs(r.Lon) <= 180) {
 		st.NoCoordinate++
 		return Record{}, false
 	}
 	r.X, r.Y = geo.LAEA3035(r.Lon, r.Lat)
+	if !finite(r.X) || !finite(r.Y) {
+		st.NoCoordinate++
+		return Record{}, false
+	}
 	r.Cell = geo.CellOf(r.X, r.Y, CellSize)
 	return r, true
 }
+
+func finite(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
 
 // interner shares the memory of repeated strings such as species names and observer hashes.
 func interner() func(string) string {

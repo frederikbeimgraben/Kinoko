@@ -1,6 +1,7 @@
 // Package pio reads and writes the files of the forecast pipeline.
 // It holds parquet tables with pandas types, netCDF grids with CF
-// decoding, and a raster probe. Package pio/archive reads upload archives.
+// decoding, a raster probe and the HTTP client of the fetchers. Package
+// pio/archive reads upload archives.
 package pio
 
 import (

@@ -38,6 +38,26 @@ func WeeklyPlan(now time.Time) Plan {
 	return Plan{Years: years, Refresh: setOf(years)}
 }
 
+// ResumePlan completes an interrupted bootstrap: it fetches the missing closed
+// years and the refresh years. No missing year gives WeeklyPlan.
+func ResumePlan(missing []int, now time.Time) Plan {
+	refresh := RefreshYears(now)
+	years := slices.Sorted(slices.Values(append(slices.Clone(missing), refresh...)))
+	return Plan{Years: slices.Compact(years), Refresh: setOf(refresh)}
+}
+
+// MissingYears gives each year from start to end without a complete fetch:
+// neither a year file nor the DoneName marker is in the cache.
+func (f *Fetcher) MissingYears(start, end int) []int {
+	var out []int
+	for y := start; y <= end; y++ {
+		if !exists(filepath.Join(f.Dir, ChunkName(f.country(), y, 0))) && !exists(filepath.Join(f.Dir, DoneName(f.country(), y))) {
+			out = append(out, y)
+		}
+	}
+	return out
+}
+
 // BootstrapPlan fetches each year from from to the current year. It skips the
 // present files of closed years and fetches the refresh years again.
 func BootstrapPlan(from int, now time.Time) Plan {
@@ -64,11 +84,23 @@ func (f *Fetcher) Fetch(ctx context.Context, plan Plan) ([]Chunk, error) {
 	for _, year := range plan.Years {
 		chunks, err := f.fetchYear(ctx, year, plan.Refresh[year])
 		done = append(done, chunks...)
+		if err == nil {
+			err = f.markDone(year)
+		}
 		if err != nil {
 			return done, err
 		}
 	}
 	return done, nil
+}
+
+// markDone writes the DoneName marker of year. A year split into months or
+// without records has no year file that tells this.
+func (f *Fetcher) markDone(year int) error {
+	if err := os.MkdirAll(f.Dir, 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(f.Dir, DoneName(f.country(), year)), nil, 0o644)
 }
 
 // pending is a written partial chunk that waits for its commit.

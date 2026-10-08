@@ -117,12 +117,41 @@ func (m *Module) findValues(r *http.Request) func(db.ID) ([]column, error) {
 		if err != nil {
 			return nil, err
 		}
+		if err := checkFind(body, m.deps.Now()); err != nil {
+			return nil, err
+		}
 		return []column{
 			{"species_id", body.SpeciesID}, {"lat", body.Lat}, {"lon", body.Lon},
 			{"found_on", body.FoundOn}, {"count", count}, {"for_training", body.ForTraining},
 			{"visibility", visibility}, {"group_id", group}, {"note", body.Note},
 		}, nil
 	}
+}
+
+// checkFind checks the place and the day of a find. The day may be one day
+// after the UTC date of now, because the person can live east of UTC.
+func checkFind(body findWrite, now time.Time) error {
+	var errs []problem.FieldError
+	for _, c := range []struct {
+		field    string
+		value, b float64
+	}{{"lat", body.Lat, 90}, {"lon", body.Lon, 180}} {
+		switch {
+		case c.value < -c.b:
+			errs = append(errs, problem.FieldError{Field: c.field, Code: "greater_than_equal"})
+		case c.value > c.b:
+			errs = append(errs, problem.FieldError{Field: c.field, Code: "less_than_equal"})
+		}
+	}
+	today := now.UTC()
+	last := time.Date(today.Year(), today.Month(), today.Day()+1, 0, 0, 0, 0, time.UTC)
+	if day := body.FoundOn.Time; time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, time.UTC).After(last) {
+		errs = append(errs, problem.FieldError{Field: "foundOn", Code: "less_than_equal"})
+	}
+	if len(errs) > 0 {
+		return problem.Invalid(errs...)
+	}
+	return nil
 }
 
 // countOf reads the find count. A count that int64 cannot hold exactly is

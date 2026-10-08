@@ -147,8 +147,14 @@ func TestExtractRefresh(t *testing.T) {
 	copyTree(t, "testdata/raw2", raw)
 	year := 2021
 	extract(t, raw, out, &year)
+	full := t.TempDir()
+	extract(t, raw, full, nil)
 	for _, job := range Jobs {
-		compareRows(t, job.Name, readRows(t, out, job.Name), goldenRows(g.RefreshFixed[job.Name]), nil)
+		got := readRows(t, out, job.Name)
+		// Python keeps the old 2020-W53, although it holds days of 2021; the refresh computes it again.
+		straddle := func(r weekRow) bool { return r.key.year == 2020 && r.key.week == 53 }
+		compareRows(t, job.Name, got, goldenRows(g.RefreshFixed[job.Name]), straddle)
+		compareRows(t, job.Name+" (full)", got, readRows(t, full, job.Name), nil)
 	}
 }
 
