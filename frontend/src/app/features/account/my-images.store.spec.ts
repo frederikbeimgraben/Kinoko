@@ -77,17 +77,50 @@ describe('MyImagesStore', () => {
     expect(store.more()).toBe(true);
   });
 
-  it('starts again from the first page and ignores a call while a page loads', () => {
+  it('ignores a next page while a page loads, and a fresh load replaces the pending one', () => {
     const { store, api } = build();
-    api.answers = [() => of({ items: [photo({ id: 'a' })], nextCursor: 'c2' }), () => NEVER];
+    api.answers = [
+      () => of({ items: [photo({ id: 'a' })], nextCursor: 'c2' }),
+      () => NEVER,
+      () => of({ items: [photo({ id: 'b' })], nextCursor: null }),
+    ];
 
     store.load();
-    store.load();
-    store.load();
-
+    store.next();
+    store.next();
     expect(api.queries).toHaveLength(2);
     expect(store.busy()).toBe(true);
+
+    store.load();
+
+    expect(api.queries).toHaveLength(3);
+    expect(store.busy()).toBe(false);
+    expect(store.photos()?.map((one) => one.id)).toEqual(['b']);
+  });
+
+  it('loads the photos again when the sign-in arrives after the first request', () => {
+    const auth = new AuthStub();
+    auth.user.set(null);
+    const { store, api } = build(new PhotosApiDouble(), auth);
+    api.answers = [() => NEVER, () => of({ items: [photo({ id: 'a' })], nextCursor: null })];
+    TestBed.tick();
+    store.load();
+
+    auth.user.set({ sub: 'sub-eins', name: 'Frederik', email: 'frederik@beimgraben.net' });
+    TestBed.tick();
+
+    expect(api.queries).toHaveLength(2);
     expect(store.photos()?.map((one) => one.id)).toEqual(['a']);
+  });
+
+  it('asks for nothing on an account change when no page asked for the photos', () => {
+    const { api, auth } = build();
+    TestBed.tick();
+
+    auth.user.set({ sub: 'sub-zwei', name: 'Anna', email: 'anna@example.invalid' });
+    TestBed.tick();
+
+    expect(api.queries).toHaveLength(0);
   });
 
   it('forgets the photos of the last person after a sign-out', () => {

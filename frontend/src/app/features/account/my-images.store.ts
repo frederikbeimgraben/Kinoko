@@ -9,7 +9,7 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, EMPTY, exhaustMap, expand, of, pipe, reduce, skip, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, expand, filter, of, pipe, reduce, skip, switchMap, tap } from 'rxjs';
 import type { Photo } from '../../core/api/models';
 import { PhotosApi, type PhotoPage } from '../../core/api/photos.api';
 import { AuthService } from '../../core/auth';
@@ -39,10 +39,11 @@ export const MyImagesStore = signalStore(
     ),
   })),
   withMethods((store) => {
-    // A call while a page loads has no effect.
+    // A fresh load replaces a pending one. A next page while a page loads has no effect.
     const page = rxMethod<{ fresh: boolean }>(
       pipe(
-        exhaustMap(({ fresh }) => {
+        filter(({ fresh }) => fresh || !store.busy()),
+        switchMap(({ fresh }) => {
           const cursor = fresh ? undefined : (store.cursor() ?? undefined);
           patchState(store, { busy: true });
           return store._api.list({ mine: true, cursor }).pipe(
@@ -85,12 +86,14 @@ export const MyImagesStore = signalStore(
       ),
     );
     return {
-      /** Forgets the photos when another person signs in or the person signs out. */
+      /** Forgets the photos when the account changes. A list that a page asked for loads again. */
       _reset: rxMethod<string | null>(
         pipe(
           skip(1),
-          tap(() => {
-            patchState(store, { photos: null, cursor: null });
+          tap((account) => {
+            const asked = store.photos() !== null || store.busy();
+            patchState(store, { photos: null, cursor: null, busy: false });
+            if (account !== null && asked) page({ fresh: true });
           }),
         ),
       ),
