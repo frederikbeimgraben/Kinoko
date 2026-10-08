@@ -67,6 +67,7 @@ export const MARKER: Marker = {
   note: MARKER_ENTRY.note ?? null,
   visibility: 'private',
   groupId: null,
+  createdAt: MARKER_ENTRY.createdAt,
 };
 
 const RING: number[][][] = [
@@ -102,6 +103,7 @@ export const ZONE: Zone = {
   note: ZONE_ENTRY.note ?? null,
   visibility: 'private',
   groupId: null,
+  createdAt: ZONE_ENTRY.createdAt,
 };
 
 /** Ein geteilter Fund, so wie ihn der Vertrag abgibt. */

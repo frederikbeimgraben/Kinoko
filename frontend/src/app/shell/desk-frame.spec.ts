@@ -7,7 +7,7 @@ describe('deskFrame', () => {
     ['/arten', 'middle', true],
     ['/taxonomie', 'middle', false],
     ['/eintraege', 'list', false],
-    ['/konto', 'list', false],
+    ['/konto', 'list', true],
     ['/verwaltung', 'own', true],
     ['/anmeldung', 'list', false],
   ])('%s has the pane %s, full %s', (section, pane, full) => {

@@ -14,7 +14,7 @@ const FRAMES: Readonly<Record<string, DeskFrame>> = {
   '/arten': { pane: 'middle', full: true },
   '/taxonomie': { pane: 'middle', full: false },
   '/eintraege': { pane: 'list', full: false },
-  '/konto': { pane: 'list', full: false },
+  '/konto': { pane: 'list', full: true },
   '/verwaltung': { pane: 'own', full: true },
 };
 

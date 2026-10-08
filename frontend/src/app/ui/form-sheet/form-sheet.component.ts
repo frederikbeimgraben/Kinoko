@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHostComponent } from '../overlay-host/overlay-host.component';
 import { SheetComponent, type DetentSize } from '../sheet/sheet.component';
+import type { IconName } from '../svg-icon/svg-icon.component';
 
 /** The sheet is as high as its content. */
 const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'content', 'content'];
@@ -17,6 +18,8 @@ const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = ['content', 'cont
 export class FormSheetComponent {
   readonly title = input.required<string>();
   readonly submit = input.required<string>();
+  /** An icon before the label of the main action. */
+  readonly submitIcon = input<IconName>();
   readonly secondary = input('');
   /** The second action has the danger colour, for example for delete. */
   readonly secondaryDanger = input(false);

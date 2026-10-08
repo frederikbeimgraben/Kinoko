@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output, signal } from '@angu
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 
-/** Ein Blatt mit einem Feld: Gruppe anlegen, Gruppe beitreten. */
+/** A sheet with one required field, per `GroupCreateBody.dc.html` and `GroupJoinBody.dc.html`. */
 @Component({
   selector: 'app-group-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,10 +13,7 @@ import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 export class GroupSheetComponent {
   readonly title = input.required<string>();
   readonly label = input.required<string>();
-  readonly placeholder = input.required<string>();
   readonly submit = input.required<string>();
-  /** Die Beschriftung steht als Abschnittszeile über dem Feld, nicht im Feld. */
-  readonly section = input(false);
   readonly busy = input(false);
 
   readonly submitted = output<string>();

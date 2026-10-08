@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlossaryState } from '../../core/access/glossary.state';
+import { GlossaryStore } from '../../core/access/glossary.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
@@ -32,7 +32,7 @@ const NEW = 'neu';
 export class AdminGlossaryComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(GlossaryState);
+  private readonly state = inject(GlossaryStore);
 
   protected readonly search = this.state.search;
   protected readonly entries = this.state.found;
@@ -74,14 +74,9 @@ export class AdminGlossaryComponent {
     if (id === null || write.term === '' || write.definition === '') return;
     this.saving.set(true);
     const call = id === NEW ? this.state.create(write) : this.state.update(id, write);
-    call.subscribe({
-      next: () => {
-        this.saving.set(false);
-        this.close();
-      },
-      error: () => {
-        this.saving.set(false);
-      },
+    void call.then((entry) => {
+      this.saving.set(false);
+      if (entry !== null) this.close();
     });
   }
 
@@ -91,8 +86,8 @@ export class AdminGlossaryComponent {
       this.close();
       return;
     }
-    this.state.remove(id).subscribe(() => {
-      this.close();
+    void this.state.remove(id).then((done) => {
+      if (done) this.close();
     });
   }
 

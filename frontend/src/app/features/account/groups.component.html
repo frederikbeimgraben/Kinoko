@@ -1,54 +1,54 @@
-<app-page-header [title]="'group.title' | t" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'group.title' | t" [back]="back()" (backClick)="toAccount()" />
 
-<div class="groups">
-  <div>
-    <div class="groups__card">
-      @for (row of rows(); track row.id) {
-        <app-list-row
-          kind="catalogue"
-          [title]="row.name"
-          [subline]="row.members"
-          [clickable]="true"
-          [chevron]="true"
-          (chosen)="open(row.id)"
+<div class="area">
+  <div class="pad">
+    @if (loaded()) {
+      <app-row-group class="motion-list-in">
+        @for (row of rows(); track row.id) {
+          <app-list-row
+            [title]="row.name"
+            [subline]="row.sub"
+            [clickable]="true"
+            [chevron]="true"
+            (chosen)="open(row.id)"
+          />
+        }
+        <app-add-row
+          [label]="'group.joinTitle' | t"
+          [action]="'group.joinTitle' | t"
+          (pressed)="sheet.set('join')"
         />
-      }
-    </div>
-    <app-add-row [label]="'group.add' | t" [action]="'group.create' | t" (pressed)="creating.set(true)" />
+      </app-row-group>
+    } @else {
+      <app-row-group-skeleton [count]="3" [lines]="2" />
+    }
   </div>
-
-  <div class="groups__card">
-    <app-list-row
-      kind="catalogue"
-      [title]="'group.join' | t"
-      [clickable]="true"
-      [chevron]="true"
-      (chosen)="joining.set(true)"
-    />
-  </div>
+  <app-floating-button
+    class="fab"
+    icon="plus"
+    [label]="'group.create' | t"
+    (pressed)="sheet.set('create')"
+  />
 </div>
 
-@if (creating()) {
+@if (sheet() === 'create') {
   <app-group-sheet
     [title]="'group.create' | t"
     [label]="'common.name' | t"
-    [placeholder]="'common.name' | t"
     [submit]="'group.createSubmit' | t"
     [busy]="busy()"
     (submitted)="create($event)"
-    (cancelled)="creating.set(false)"
+    (cancelled)="sheet.set(null)"
   />
 }
 
-@if (joining()) {
+@if (sheet() === 'join') {
   <app-group-sheet
     [title]="'group.joinTitle' | t"
-    [label]="'group.code' | t"
-    [placeholder]="'group.codePlaceholder' | t"
+    [label]="'group.inviteCode' | t"
     [submit]="'group.joinSubmit' | t"
-    [section]="true"
     [busy]="busy()"
     (submitted)="join($event)"
-    (cancelled)="joining.set(false)"
+    (cancelled)="sheet.set(null)"
   />
 }

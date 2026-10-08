@@ -1,101 +1,100 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { DOCUMENT, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccessApi } from '../../core/api/access.api';
-import type { AccountExport } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { grouped } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { OfflineStore } from '../../core/offline/offline-store';
+import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { KeyValueRowComponent } from '../../ui/key-value-table/key-value-row.component';
-import { KeyValueTableComponent } from '../../ui/key-value-table/key-value-table.component';
+import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { SpeciesState } from '../species/species.state';
+import { AccountStatsComponent } from './account-stats.component';
+import { DataExportBodyComponent } from './data-export-body.component';
+import { exportDay, saveFile } from './download';
+import { exportFile, partsFor, selected, type ExportFormat, type ExportPart } from './export-files';
+import { MyDataStore } from './my-data.store';
 
-/** Heutiges Datum, so wie der Dateiname des Exports es braucht: `JJJJ-MM-TT`. */
-function today(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+/** The parts that the sheet selects first, per `DataExportBody.dc.html`. */
+const FIRST_PARTS: ReadonlySet<ExportPart> = new Set<ExportPart>(['finds', 'markers', 'zones']);
 
-/** „Meine Daten“ unter dem Konto: Zähler, Export und vollständiges Löschen. */
+/** "My data" below the account, per `MyData.dc.html`: counts, export and a full delete. */
 @Component({
   selector: 'app-my-data',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AccountStatsComponent,
     ButtonComponent,
     ConfirmDialogComponent,
-    KeyValueRowComponent,
-    KeyValueTableComponent,
+    DataExportBodyComponent,
+    FormSheetComponent,
+    ListRowComponent,
     PageHeaderComponent,
+    RowGroupComponent,
     TranslatePipe,
   ],
   templateUrl: './my-data.component.html',
-  styleUrl: './my-data.component.scss',
+  styleUrl: './account-page.scss',
 })
 export class MyDataComponent {
-  private readonly api = inject(AccessApi);
+  private readonly document = inject(DOCUMENT);
   private readonly i18n = inject(I18nService);
-  private readonly offline = inject(OfflineStore);
   private readonly router = inject(Router);
+  private readonly species = inject(SpeciesState);
+  private readonly store = inject(MyDataStore);
   private readonly toasts = inject(ToastService);
+  private readonly wide = inject(ViewportService).wide;
 
-  private readonly data = signal<AccountExport | null>(null);
+  protected readonly back = computed(() => !this.wide());
+  protected readonly counts = this.store.counts;
+  protected readonly deleting = this.store.deleting;
 
+  protected readonly exporting = signal(false);
   protected readonly asking = signal(false);
-  protected readonly deleting = signal(false);
+  protected readonly format = signal<ExportFormat>('json');
+  protected readonly parts = signal<ReadonlySet<ExportPart>>(FIRST_PARTS);
 
-  protected readonly finds = computed(() => this.data()?.finds.length ?? 0);
-  protected readonly markers = computed(() => this.data()?.markers.length ?? 0);
-  protected readonly zones = computed(() => this.data()?.zones.length ?? 0);
-  protected readonly photos = computed(() => this.data()?.photos.length ?? 0);
-  protected readonly combinations = computed(() => this.data()?.combinations.length ?? 0);
+  /** The counts in the question of the delete dialog, per `DeleteAll.dc.html`. */
+  protected readonly meta = computed(() => {
+    const counts = this.counts();
+    return counts === null
+      ? ''
+      : this.i18n.translate('account.deleteAllCount', {
+          finds: grouped(counts.finds),
+          markers: grouped(counts.markers),
+          zones: grouped(counts.zones),
+          photos: grouped(counts.photos),
+        });
+  });
 
-  protected readonly meta = computed(() =>
-    this.i18n.translate('account.deleteAllMeta', {
-      finds: this.finds(),
-      markers: this.markers(),
-      zones: this.zones(),
-      photos: this.photos(),
-      combinations: this.combinations(),
-    }),
-  );
-
-  constructor() {
-    this.api.exportData().subscribe((data) => {
-      this.data.set(data);
-    });
-  }
-
-  protected back(): void {
-    void this.router.navigateByUrl('/konto');
+  protected toggle(part: ExportPart): void {
+    this.parts.update((parts) =>
+      parts.has(part) ? new Set([...parts].filter((one) => one !== part)) : new Set([...parts, part]),
+    );
   }
 
   protected export(): void {
-    const data = this.data();
+    const data = this.store.data();
     if (data === null) return;
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `kinoko-export-${today()}.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    const format = this.format();
+    const allowed = new Set(partsFor(format).filter((part) => this.parts().has(part)));
+    const name = (id: string | null | undefined): string =>
+      id ? (this.species.entryById(id)?.name ?? '') : '';
+    saveFile(exportFile(selected(data, allowed), format, name, exportDay(new Date())), this.document);
+    this.exporting.set(false);
   }
 
-  protected confirmDelete(): void {
-    this.deleting.set(true);
-    this.api.deleteData().subscribe({
-      next: () => {
-        void this.offline.clear('objects');
-        void this.offline.clear('queue');
-        this.deleting.set(false);
-        this.asking.set(false);
-        this.toasts.success(this.i18n.translate('account.deleteAllDone'));
-        void this.router.navigateByUrl('/konto');
-      },
-      error: () => {
-        this.deleting.set(false);
-      },
-    });
+  protected async confirmDelete(): Promise<void> {
+    if (!(await this.store.deleteAll())) return;
+    this.asking.set(false);
+    this.toasts.success(this.i18n.translate('account.deleteAllDone'));
+    void this.router.navigateByUrl('/konto');
+  }
+
+  protected toAccount(): void {
+    void this.router.navigateByUrl('/konto');
   }
 }

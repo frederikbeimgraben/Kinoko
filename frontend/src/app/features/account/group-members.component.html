@@ -1,28 +1,25 @@
-<div class="members__card">
-  <app-list-row kind="catalogue" [title]="'group.inviteCode' | t">
-    <span trail class="members__trail">
-      <span class="members__code">{{ group().inviteCode }}</span>
-      <app-icon-button icon="share" kind="plain" [label]="'group.share' | t" (pressed)="share()" />
-    </span>
-  </app-list-row>
-</div>
+<app-section [label]="'group.inviteCode' | t">
+  <app-row-group>
+    <app-list-row [title]="group().inviteCode">
+      <app-icon-button action icon="share" kind="plain" [label]="'group.share' | t" (pressed)="share()" />
+    </app-list-row>
+  </app-row-group>
+</app-section>
 
-<section>
-  <h2 class="members__section">{{ 'group.members' | t }}</h2>
-  <div class="members__card">
+<app-section [label]="'group.members' | t">
+  <app-row-group>
     @for (row of rows(); track row.userId) {
-      <app-list-row kind="catalogue" [title]="row.name" [subline]="row.since">
-        @if (row.owner) {
-          <app-level-pill trail [text]="'group.owner' | t" kind="ok" />
-        } @else if (removable()) {
+      <app-list-row [title]="row.name" [subline]="row.sub">
+        @if (removable() && !row.owner) {
           <app-icon-button
-            trail
+            action
             icon="close"
+            kind="plain"
             [label]="'group.removeMember' | t"
             (pressed)="removed.emit(row.userId)"
           />
         }
       </app-list-row>
     }
-  </div>
-</section>
+  </app-row-group>
+</app-section>

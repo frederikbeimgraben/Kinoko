@@ -8,7 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import type { Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -37,7 +37,7 @@ export class VisibilityChoiceComponent {
   readonly groupChange = output<string | null>();
 
   private readonly i18n = inject(I18nService);
-  private readonly state = inject(GroupsState);
+  private readonly state = inject(GroupsStore);
 
   protected readonly picking = signal(false);
   protected readonly segments = computed(() => visibilitySegments(this.i18n));

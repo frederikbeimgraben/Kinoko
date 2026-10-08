@@ -1,10 +1,10 @@
 import { computed, signal, type Provider } from '@angular/core';
-import { SyncService } from '../core/offline/sync.service';
+import { SyncStore } from '../core/offline/sync.store';
 import type { SyncKind, SyncOperation, SyncTask } from '../core/offline/sync.types';
 
-/** Eine Warteschlange ohne IndexedDB. Sie merkt sich, was sie bekommen hat. */
+/** A queue without IndexedDB. It keeps what it gets. */
 export class SyncStub {
-  /** Wenn falsch, hat das Gerät keinen Platz. */
+  /** False means: the device has no space. */
   accepts = true;
   sent = 0;
 
@@ -55,5 +55,5 @@ export class SyncStub {
 }
 
 export function syncStubProviders(stub: SyncStub): Provider[] {
-  return [{ provide: SyncService, useValue: stub }];
+  return [{ provide: SyncStore, useValue: stub }];
 }

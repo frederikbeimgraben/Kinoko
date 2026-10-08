@@ -14,11 +14,11 @@ import {
   ZONE_ENTRY,
   page,
 } from '../../testing/entries-fixture';
-import { EntriesState } from './entries.state';
+import { EntriesStore } from './entries.store';
 import { findWrite, markerWrite, zoneWrite } from './writes';
 
 interface Setup {
-  state: EntriesState;
+  state: EntriesStore;
   http: HttpTestingController;
   auth: AuthStub;
   queue: SyncStub;
@@ -40,7 +40,7 @@ function build(): Setup {
     ],
   });
   return {
-    state: TestBed.inject(EntriesState),
+    state: TestBed.inject(EntriesStore),
     http: TestBed.inject(HttpTestingController),
     auth,
     queue,

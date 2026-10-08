@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent, type ButtonKind } from '../button/button.component';
+import type { IconName } from '../svg-icon/svg-icon.component';
 
 /** The actions of a sheet or a page: the main action and at most one second action.
  * In the `foot` slot of `app-sheet`, it floats over the body, per `kit.css` `.sact` and `.mact`. */
@@ -22,6 +23,8 @@ import { ButtonComponent, type ButtonKind } from '../button/button.component';
 })
 export class ActionBarComponent {
   readonly primary = input.required<string>();
+  /** An icon before the label of the main action, for example `download` for an export. */
+  readonly primaryIcon = input<IconName>();
   readonly secondary = input<string>();
   /** Colours the main action red instead of green, for example for "Delete all". */
   readonly danger = input(false);

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -27,7 +27,7 @@ interface Row {
 export class AdminGroupsComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(GroupsState);
+  private readonly state = inject(GroupsStore);
 
   protected readonly search = this.state.search;
 

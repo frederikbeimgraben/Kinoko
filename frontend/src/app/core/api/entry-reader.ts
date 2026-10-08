@@ -49,7 +49,8 @@ export function marker(entry: MarkerEntry): Marker | null {
   if (name === undefined || lat === undefined || lon === undefined) return null;
   if (colour === undefined || visibility === undefined || entry.deleted) return null;
   const note = entry.note ?? null;
-  return { id: entry.id, name, lat, lon, colour, note, visibility, groupId: entry.groupId ?? null };
+  const groupId = entry.groupId ?? null;
+  return { id: entry.id, name, lat, lon, colour, note, visibility, groupId, createdAt: entry.createdAt };
 }
 
 export function zone(entry: ZoneEntry): Zone | null {
@@ -58,5 +59,5 @@ export function zone(entry: ZoneEntry): Zone | null {
   if (colour === undefined || visibility === undefined || entry.deleted) return null;
   const note = entry.note ?? null;
   const groupId = entry.groupId ?? null;
-  return { id: entry.id, name, polygon, areaHa, colour, note, visibility, groupId };
+  return { id: entry.id, name, polygon, areaHa, colour, note, visibility, groupId, createdAt: entry.createdAt };
 }

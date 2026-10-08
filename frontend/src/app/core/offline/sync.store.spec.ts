@@ -4,12 +4,12 @@ import { TestBed } from '@angular/core/testing';
 import 'fake-indexeddb/auto';
 import { IDBFactory } from 'fake-indexeddb';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
-import { SyncService } from './sync.service';
+import { SyncStore } from './sync.store';
 
 const MARKER = { name: 'Alter Fichtenhang', lat: 48.53, lon: 9.06 };
 
 interface Setup {
-  sync: SyncService;
+  sync: SyncStore;
   http: HttpTestingController;
   auth: AuthStub;
 }
@@ -20,13 +20,13 @@ function build(): Setup {
     providers: [provideHttpClient(), provideHttpClientTesting(), ...authStubProviders(auth)],
   });
   return {
-    sync: TestBed.inject(SyncService),
+    sync: TestBed.inject(SyncStore),
     http: TestBed.inject(HttpTestingController),
     auth,
   };
 }
 
-describe('SyncService', () => {
+describe('SyncStore', () => {
   beforeEach(() => {
     vi.stubGlobal('indexedDB', new IDBFactory());
   });

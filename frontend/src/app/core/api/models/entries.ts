@@ -35,6 +35,8 @@ export interface Marker {
   note: string | null;
   visibility: Visibility;
   groupId: string | null;
+  /** The instant of the first save. The entry list groups by it. */
+  createdAt?: string;
 }
 
 /** Eine eigene Zone. Die Fläche rechnet der Dienst, nie das Gerät. */
@@ -47,4 +49,6 @@ export interface Zone {
   note: string | null;
   visibility: Visibility;
   groupId: string | null;
+  /** The instant of the first save. The entry list groups by it. */
+  createdAt?: string;
 }

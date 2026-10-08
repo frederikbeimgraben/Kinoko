@@ -1,55 +1,37 @@
+@use 'page';
+
 :host {
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.host;
+
   background: var(--bg);
 }
 
-// Der eine Scroll-Bereich der Seite. Die Kopfleiste steht darüber fest.
-.account {
+.pad {
+  @include page.pad;
+}
+
+// Kit `.pane.middle` 520 px on `--surface-mid` next to `.pane.detail` on `--bg`.
+.account--wide {
+  display: grid;
+  grid-template-columns: var(--w-pane-list) minmax(0, 1fr);
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+.account__master,
+.account__detail {
   display: flex;
   flex-direction: column;
-  gap: var(--size-gutter);
-  padding: 20px var(--size-gutter);
+  min-block-size: 0;
+  overflow: hidden;
 }
 
-// Die Abschnittsüberschrift der Mockups, Klasse `.h2`.
-.account__section {
-  margin: 0 0 4px;
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.account__master {
+  background: var(--surface-mid);
 }
 
-// Die Konto-Karte sitzt enger als eine Karte des Kits: 12 px hoch, 14 px
-// seitlich. Der Innenabstand steckt dort als `var(--space-5)`; ihn zu setzen
-// ist derselbe Weg wie `randlos` in den Hilfsklassen.
-.account__row {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  padding: 12px 14px;
-  background: var(--surface);
-  border-radius: 20px;
-}
-
-.account__stack {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 3px;
-  min-inline-size: 0;
-}
-
-.account__name {
-  font-size: 15px;
-  font-weight: var(--fw-semibold);
-}
-
-.account__list {
-  display: flex;
-  flex-direction: column;
+.account__detail {
+  position: relative;
+  view-transition-name: detail-pane;
+  background: var(--bg);
 }
