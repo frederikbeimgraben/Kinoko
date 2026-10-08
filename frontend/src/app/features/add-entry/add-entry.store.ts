@@ -76,6 +76,10 @@ export const AddEntryStore = signalStore(
       setPoint(location: Location): void {
         patchState(store, { location });
       },
+      /** Takes back the set point. The crosshair then leads again. */
+      clearPoint(): void {
+        patchState(store, { location: null });
+      },
       /** Accepts the point and goes to the form. */
       adoptLocation(location: Location): void {
         patchState(store, (state) => ({

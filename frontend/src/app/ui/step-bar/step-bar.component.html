@@ -1,6 +1,6 @@
 <div class="stepbar" role="group" [attr.aria-label]="label()">
   @if (note()) {
-    <span class="stepbar__note">{{ note() }}</span>
+    <span class="stepbar__note" aria-live="polite">{{ note() }}</span>
   }
   @for (action of secondary(); track action.label) {
     <app-icon-button

@@ -5,13 +5,18 @@ import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
 import { authConfig, mockSignIn } from '../fixtures/auth';
 import { GROUPS } from '../fixtures/groups';
-import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap, showMapImage } from '../fixtures/map';
+import {
+  MARKERS,
+  SHARED_FINDS,
+  SPECIES_BUNDLE,
+  ZONES,
+  mockMap,
+  showDesignMap,
+  type DesignMap,
+} from '../fixtures/map';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
-
-/** Die Karte des Boards läuft unter dem Blatt weiter. */
-const MAP_HEIGHT = 844;
 
 /** Der Tag und der Ort, die in den Boards stehen. */
 const FOUND_ON = '2026-09-09';
@@ -59,22 +64,15 @@ async function openForm(page: Page, action: string, confirm: string): Promise<vo
   await page.getByRole('button', { name: confirm }).click();
 }
 
-/** Legt das Kartenbild auf und vergleicht dann mit dem Board. */
-async function board(page: Page, stem: string, image = 'map-stein-844.png'): Promise<void> {
-  await showMapImage(page, image, image === 'map-desktop-stein-900.png' ? undefined : MAP_HEIGHT);
+/** Puts the design map surface on the canvas and compares the page with the board. */
+async function board(page: Page, stem: string, map: DesignMap = {}): Promise<void> {
+  await showDesignMap(page, map);
   await expectBoard(page, stem);
 }
 
-/** Wie `board`, aber das Kartenbild liegt unter der Zeichnung der Karte. */
+/** As `board`, but the zone of the app is drawn over the design map surface. */
 async function boardUnder(page: Page, stem: string): Promise<void> {
-  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT, true);
-  await expectBoard(page, stem);
-}
-
-/** Dasselbe am Rechner: Marke und Ring der App liegen über dem Kartenbild. */
-async function boardUnderWide(page: Page, stem: string): Promise<void> {
-  await showMapImage(page, 'map-desktop-stein-900.png', undefined, true);
-  await expectBoard(page, stem);
+  await board(page, stem, { under: true });
 }
 
 test('MapAdd', async ({ page }) => {
@@ -150,7 +148,7 @@ test('MapFindSaving', async ({ page }) => {
   await page.getByRole('button', { name: 'Speichern' }).click();
   // Der Auftrag läuft: der Knopf verliert seine Beschriftung an den Spinner.
   await expect(page.locator('.btn.primary[aria-busy="true"]')).toBeVisible();
-  await showMapImage(page, 'map-stein-844.png', MAP_HEIGHT);
+  await showDesignMap(page);
   await expectBoard(page, 'MapFindSaving', { idle: false });
   release();
 });
@@ -168,10 +166,8 @@ test('MapZoneForm', async ({ page }) => {
   guard('MapZoneForm', 'phone');
   await openActions(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  for (let corner = 0; corner < 3; corner += 1) {
-    await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-  }
-  await page.getByRole('button', { name: 'Abschließen' }).click();
+  for (const corner of ZONE_CORNERS.slice(0, 3)) await page.mouse.click(corner[0], corner[1]);
+  await page.getByRole('button', { name: 'Fertig' }).click();
   await expect(page.getByRole('heading', { name: 'Zone speichern' })).toBeVisible();
   await board(page, 'MapZoneForm');
 });
@@ -206,12 +202,12 @@ async function showAt(
 /** Der Maßstab des Bretts `ZoneDraw`: sein Ring misst darauf 42 Hektar. */
 const ZONE_ZOOM = 11.6635;
 
-/** Die vier Ecken des Bretts `ZoneDraw`, in Punkten des Fensters. */
+/** The four corners of the board `ZoneDraw`, in px of the window. */
 const ZONE_CORNERS: readonly (readonly [number, number])[] = [
-  [120, 363],
-  [250, 313],
-  [300, 403],
-  [195, 321],
+  [250, 343],
+  [300, 515],
+  [195, 572],
+  [120, 438],
 ];
 
 /** Die Karte des Bretts trägt keine eigenen Objekte und keinen Standort. */
@@ -257,40 +253,24 @@ test('ZoneDraw', async ({ page }) => {
   guard('ZoneDraw', 'phone');
   await openEmptyMap(page);
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
-  // Die Leiste ändert das Polster der Karte; sie rückt danach noch nach.
+  // The bar changes the padding of the map. The map moves after it.
   await page.waitForTimeout(600);
-  const middle = await crosshairAt(page);
-  // Erst die Orte merken, die im Bild des Bretts unter den Ecken liegen. Dann
-  // jeden davon unter das Fadenkreuz holen und die Ecke setzen.
-  await showAt(page, await aimAt(page, middle), middle, ZONE_ZOOM);
-  const places: [number, number][] = [];
-  for (const spot of ZONE_CORNERS) places.push(await aimAt(page, spot));
-  for (const place of places) {
-    await showAt(page, place, middle);
-    await page.getByRole('button', { name: 'Eckpunkt setzen' }).click();
-  }
-  // Zum Schluss steht die Karte wieder so, wie das Brett sie zeigt.
-  await showAt(page, places[0], ZONE_CORNERS[0]);
+  await showAt(page, await aimAt(page, ZONE_CORNERS[0]), ZONE_CORNERS[0], ZONE_ZOOM);
+  for (const corner of ZONE_CORNERS) await page.mouse.click(corner[0], corner[1]);
   await boardUnder(page, 'ZoneDraw');
 });
 
 /** Der Maßstab des Rechner-Bretts: sein Ring misst ebenfalls 42 Hektar. */
 const ZONE_ZOOM_WIDE = 16.14;
 
-/** Der linke Rand der Kartenfläche am Rechner: Schiene plus Spalte. */
-const MAP_LEFT = 488;
-
-/** Die Ecken und der Zeiger des Bretts `MapDesktopZoneDraw`, im Fenster. */
+/** The corners and the pointer of the board `MapDesktopZoneDraw`, in px of the window. */
 const WIDE_CORNERS: readonly (readonly [number, number])[] = [
-  [MAP_LEFT + 450, 550],
-  [MAP_LEFT + 450, 400],
-  [MAP_LEFT + 650, 380],
-  [MAP_LEFT + 680, 560],
+  [947, 406],
+  [1117, 602],
+  [760, 667],
+  [505, 515],
 ];
-const WIDE_POINTER: readonly [number, number] = [MAP_LEFT + 560, 650];
-
-/** Der gesetzte Ort der Bretter `MapDesktopFindLocation` und `MapDesktopMarkerLocation`. */
-const WIDE_MARK: readonly [number, number] = [MAP_LEFT + 488, 428];
+const WIDE_POINTER: readonly [number, number] = [505, 515];
 
 /** Öffnet einen Schritt am Rechner. */
 async function openStep(page: Page, action: string): Promise<void> {
@@ -298,25 +278,18 @@ async function openStep(page: Page, action: string): Promise<void> {
   await page.getByRole('button', { name: action }).click();
 }
 
-/** Setzt den Ort des Bretts unter den Zeiger und klickt ihn. */
-async function markAt(page: Page): Promise<void> {
-  await showAt(page, [PLACE.longitude, PLACE.latitude], WIDE_MARK, ZONE_ZOOM);
-  await page.mouse.click(WIDE_MARK[0], WIDE_MARK[1]);
-  await expect(page.getByText('48,5203 · 9,0511')).toBeVisible();
-}
-
 test('MapDesktopFindLocation', async ({ page }) => {
   guard('MapDesktopFindLocation', 'wide');
   await openStep(page, 'Fund melden');
-  await markAt(page);
-  await boardUnderWide(page, 'MapDesktopFindLocation');
+  await expect(page.locator('app-crosshair')).toBeVisible();
+  await board(page, 'MapDesktopFindLocation');
 });
 
 test('MapDesktopMarkerLocation', async ({ page }) => {
   guard('MapDesktopMarkerLocation', 'wide');
   await openStep(page, 'Marker setzen');
-  await markAt(page);
-  await boardUnderWide(page, 'MapDesktopMarkerLocation');
+  await expect(page.locator('app-crosshair')).toBeVisible();
+  await board(page, 'MapDesktopMarkerLocation');
 });
 
 test('MapDesktopZoneDraw', async ({ page }) => {
@@ -326,13 +299,13 @@ test('MapDesktopZoneDraw', async ({ page }) => {
   for (const corner of WIDE_CORNERS) await page.mouse.click(corner[0], corner[1]);
   await page.mouse.move(WIDE_POINTER[0], WIDE_POINTER[1]);
   await expect(page.getByText(/4 Eckpunkte/)).toBeVisible();
-  await boardUnderWide(page, 'MapDesktopZoneDraw');
+  await boardUnder(page, 'MapDesktopZoneDraw');
 });
 
 test('MapDesktopAdd', async ({ page }) => {
   guard('MapDesktopAdd', 'wide');
   await openActions(page);
-  await board(page, 'MapDesktopAdd', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopAdd');
 });
 
 test('MapDesktopFindForm', async ({ page }) => {
@@ -340,5 +313,5 @@ test('MapDesktopFindForm', async ({ page }) => {
   await openForm(page, 'Fund melden', 'Bestätigen');
   await setDate(page);
   await addPhoto(page);
-  await board(page, 'MapDesktopFindForm', 'map-desktop-stein-900.png');
+  await board(page, 'MapDesktopFindForm');
 });

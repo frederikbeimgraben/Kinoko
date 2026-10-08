@@ -97,66 +97,58 @@ export class AddEntryComponent implements OnDestroy {
   /** Die Farbe, in der die Zone gerade gezeichnet wird. */
   protected readonly zoneColor = signal<MarkerColour>('green');
 
-  /** Die Aktionen hängen am Rechner am Knopf, jeder andere Schritt im Modal. */
+  /** On the desktop, the actions hang at the button. Each other step is a modal. */
   protected readonly asPopover = computed(() => this.wide() && this.state.onActions());
 
-  /** Ein Schritt auf der Karte trägt die Leiste, kein Blatt. */
+  /** A step on the map has the step bar, not a sheet. */
   protected readonly asStepBar = this.state.showsCrosshair;
 
-  /** Die Knöpfe des Schritts, einmal beschrieben. Das X bricht ihn ab. */
+  /**
+   * The buttons of a step, per `StepBar.dc.html`: undo, cancel and the main action.
+   * Undo takes back the last corner of a zone or the set point of a location.
+   */
   protected readonly barActions = computed<readonly StepAction[]>(() => {
-    const cancel: StepAction = {
-      label: this.i18n.translate('common.cancel'),
-      icon: 'close',
-      variant: 'secondary',
-      run: () => {
-        this.cancel();
-      },
-    };
-    if (this.state.step() !== 'zoneDraw') {
-      const marker = this.state.step() === 'markerLocation';
-      return [
-        {
-          label: this.i18n.translate(marker ? 'entry.confirmMarker' : 'entry.confirmLocation'),
-          icon: 'check',
-          variant: 'primary',
-          run: () => {
-            this.adoptLocation();
-          },
-        },
-        cancel,
-      ];
-    }
+    const zone = this.state.step() === 'zoneDraw';
+    const marker = this.state.step() === 'markerLocation';
     return [
-      {
-        label: this.i18n.translate('entry.zone.setVertex'),
-        icon: 'plus',
-        variant: 'primary',
-        run: () => {
-          this.addCorner();
-        },
-      },
       {
         label: this.i18n.translate('entry.zone.removeLastVertex'),
         icon: 'undo',
         variant: 'secondary',
         run: () => {
-          this.state.removeLastCorner();
+          if (zone) this.state.removeLastCorner();
+          else this.state.clearPoint();
         },
       },
       {
-        label: this.i18n.translate('entry.zone.finish'),
-        icon: 'check',
+        label: this.i18n.translate('common.cancel'),
+        icon: 'close',
         variant: 'secondary',
         run: () => {
-          this.closeZone();
+          this.cancel();
         },
       },
-      cancel,
+      {
+        label: this.i18n.translate(
+          zone ? 'entry.zone.finish' : marker ? 'entry.confirmMarker' : 'entry.confirmLocation',
+        ),
+        icon: 'check',
+        variant: 'primary',
+        run: () => {
+          if (zone) this.closeZone();
+          else this.adoptLocation();
+        },
+      },
     ];
   });
 
-  /** Die Marke der Leiste: die Ecken der Zone oder der Ort. */
+  /** A location step aims with the crosshair. A zone takes its corners from taps. */
+  protected readonly showsCrosshair = computed(() => {
+    const step = this.state.step();
+    return step === 'findLocation' || step === 'markerLocation';
+  });
+
+  /** The status of the bar: the corners of the zone or the point. */
   protected readonly stepNote = computed(() =>
     this.state.step() === 'zoneDraw' ? this.drawStatus() : this.aimText(),
   );
@@ -219,11 +211,13 @@ export class AddEntryComponent implements OnDestroy {
         this.input.stop();
         return;
       }
+      const drawing = this.state.step() === 'zoneDraw';
       this.input.watch(
         (point) => {
           this.onPick(point);
         },
-        () => (this.state.step() === 'zoneDraw' ? null : this.state.location()),
+        () => (drawing ? null : this.state.location()),
+        drawing,
       );
     });
 
@@ -249,7 +243,9 @@ export class AddEntryComponent implements OnDestroy {
 
     effect(() => {
       const ring = this.state.ring();
-      this.session?.showRing(ring, { pointer: this.pointerAim() });
+      const pointer = this.pointerAim();
+      const closing = pointer !== null && ring.length >= CORNERS_MINIMUM && this.input.hits(ring[0], pointer);
+      this.session?.showRing(ring, { pointer, closing, wide: this.wide() });
     });
   }
 
@@ -271,7 +267,7 @@ export class AddEntryComponent implements OnDestroy {
 
   /** Der Ort unter dem Zeiger, nur am Rechner: er hängt an der Vorschau-Kante. */
   private pointerAim(): Location | null {
-    return this.input.mode() === 'pointer' ? this.aim() : null;
+    return this.wide() ? this.aim() : null;
   }
 
   /** Ein Klick auf die Karte setzt eine Ecke oder den Ort. */
@@ -314,12 +310,6 @@ export class AddEntryComponent implements OnDestroy {
       event.preventDefault();
       this.state.removeLastCorner();
     }
-  }
-
-  protected addCorner(): void {
-    const location = this.center();
-    if (location === null) return;
-    this.state.addCorner(location);
   }
 
   protected closeZone(): void {
@@ -395,7 +385,7 @@ export class AddEntryComponent implements OnDestroy {
     if (map === null || this.sessionRunning !== null) return;
     this.sessionRunning = this.draw(map, colourHex(this.zoneColor()));
     this.session = await this.sessionRunning;
-    this.session?.showRing(this.state.ring());
+    this.session?.showRing(this.state.ring(), { wide: this.wide() });
   }
 
   private stopSession(): void {

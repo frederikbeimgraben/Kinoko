@@ -3,31 +3,38 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import type { Location } from './add-entry.store';
 
-/** Woher der Ort eines Schritts kommt. */
+/** The source of the point of a step. */
 export type StepInputMode = 'crosshair' | 'pointer';
 
-/** So nah am gesetzten Punkt zählt ein Klick als Klick auf den Punkt. */
+/** A click this near to a set point is a click on the point. */
 const HIT_RADIUS = 12;
 
-/** Der Ort, den ein Schritt meint: Fadenkreuz am Telefon, Zeiger am Rechner. */
+/**
+ * The point of a step: the crosshair on the phone, the pointer on the desktop.
+ * A zone takes its corners from taps on both devices (boards `ZoneDraw` and `MapDesktopZoneDraw`).
+ */
 @Injectable()
 export class StepInput {
   private readonly adapter = inject(MAP_ADAPTER);
   private readonly viewport = inject(ViewportService);
 
   private readonly _aim = signal<Location | null>(null);
+  private readonly drawing = signal(false);
   private release: (() => void)[] = [];
   private pick: ((point: Location) => void) | null = null;
   private dragging = false;
 
-  /** Der Ort, den der nächste Punkt bekäme. */
+  /** The point that the next pick gets. */
   readonly aim = this._aim.asReadonly();
 
-  readonly mode = computed<StepInputMode>(() => (this.viewport.wide() ? 'pointer' : 'crosshair'));
+  readonly mode = computed<StepInputMode>(() =>
+    this.viewport.wide() || this.drawing() ? 'pointer' : 'crosshair',
+  );
 
-  /** Nimmt den Zeiger auf: `pick` ruft jeder Klick und jeder Zug an `target`. */
-  watch(pick: (point: Location) => void, target: () => Location | null = () => null): void {
+  /** Listens to the pointer: each click and each drag at `target` calls `pick`. */
+  watch(pick: (point: Location) => void, target: () => Location | null = () => null, drawing = false): void {
     this.stop();
+    this.drawing.set(drawing);
     this.pick = pick;
     if (this.mode() !== 'pointer') return;
     this.adapter.setCursor('crosshair');
@@ -49,7 +56,7 @@ export class StepInput {
       this.adapter.onPointerDown((point) => {
         const mark = target();
         if (mark === null || !this.hits(mark, [point[0], point[1]])) return;
-        // Der Zug gehört der Marke. Ohne diese Sperre schöbe er die Karte.
+        // The drag belongs to the mark. Without the lock, it moves the map.
         this.dragging = true;
         this.adapter.setDragPan(false);
       }),
@@ -61,19 +68,19 @@ export class StepInput {
     );
   }
 
-  /** Lässt die Marke los und gibt der Karte das Schieben zurück. */
+  /** Releases the mark and gives the pan back to the map. */
   private dropMark(): void {
     if (!this.dragging) return;
     this.dragging = false;
     this.adapter.setDragPan(true);
   }
 
-  /** Am Telefon führt das Fadenkreuz. Der Wirt meldet seinen Ort. */
+  /** On the phone, the crosshair leads. The host reports its point. */
   aimAt(point: Location | null): void {
     if (this.mode() === 'crosshair') this._aim.set(point);
   }
 
-  /** Ob ein Ort nah genug an einem anderen liegt, um ihn zu treffen. */
+  /** Whether a point is near enough to another point to hit it. */
   hits(target: Location, at: Location): boolean {
     const one = this.adapter.project(target);
     const other = this.adapter.project(at);

@@ -122,9 +122,12 @@ export class MapComponent implements OnDestroy {
   /** North is at minus `bearing`: MapLibre turns against the view direction. */
   protected readonly needle = computed(() => -this.surface.rotation().bearing);
 
+  /** A step that looks for a point gets the full map, without the column and the buttons. */
+  protected readonly aiming = this.addEntry.showsCrosshair;
+
   /** On the desktop, the map buttons stay also below a modal. */
   protected readonly showsButtons = computed(
-    () => this.wide() || (!this.addEntry.onForm() && this.state.object() === null),
+    () => !this.aiming() && (this.wide() || (!this.addEntry.onForm() && this.state.object() === null)),
   );
 
   /** Only one sheet is over the map at a time. */

@@ -62,9 +62,12 @@ export class IconButtonComponent {
 
   readonly pressed = output();
 
-  protected readonly own = computed(() => OWN_ICONS.has(this.icon()));
+  protected readonly own = computed(() => OWN_ICONS.has(this.icon()) && this.kind() !== 'fabl');
   protected readonly catalogue = computed(() => this.icon() as IconName);
-  protected readonly glyph = computed(() => GLYPHS[this.icon()] ?? CATALOGUE_GLYPH);
+  /** The large square button of `StepBar.dc.html` draws each icon at the catalogue size. */
+  protected readonly glyph = computed(() =>
+    this.kind() === 'fabl' ? CATALOGUE_GLYPH : (GLYPHS[this.icon()] ?? CATALOGUE_GLYPH),
+  );
   protected readonly iconSize = computed(() => (BIG_KINDS.has(this.kind()) ? 32 : this.glyph().size));
   protected readonly filled = computed(() => FILLED_ICONS.has(this.icon()));
 }

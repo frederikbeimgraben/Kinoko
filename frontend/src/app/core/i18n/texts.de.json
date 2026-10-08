@@ -341,7 +341,7 @@
   "entry.zone.drawStatus": "{points} Eckpunkte · {area} ha",
   "entry.zone.editTitle": "Zone bearbeiten",
   "entry.zone.editVertices": "Eckpunkte bearbeiten",
-  "entry.zone.finish": "Abschließen",
+  "entry.zone.finish": "Fertig",
   "entry.zone.ownFindsInZone": "Eigene Funde in der Zone",
   "entry.zone.removeLastVertex": "Punkt entfernen",
   "entry.zone.saveTitle": "Zone speichern",

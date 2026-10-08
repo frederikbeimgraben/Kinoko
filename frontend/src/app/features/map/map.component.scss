@@ -22,6 +22,11 @@
   border-radius: var(--r-sheet);
 }
 
+// Board `MapDesktopFindLocation`: a step on the map has no column, the pane starts at the rail.
+:host-context(.shell--column) .map__pane--full {
+  inset-inline-start: var(--size-rail);
+}
+
 .map__canvas {
   position: absolute;
   inset: 0;

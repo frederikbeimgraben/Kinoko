@@ -89,7 +89,9 @@ export class ShellComponent {
   protected readonly mapHidden = computed(() => !this.wide() && !this.onTheMap());
 
   /** On the desktop the rail holds the avatar, so the map shows none (board `MapDesktop`). */
-  protected readonly showAvatar = computed(() => this.onTheMap() && !this.wide());
+  protected readonly showAvatar = computed(
+    () => this.onTheMap() && !this.wide() && !this.addEntry.showsCrosshair(),
+  );
 
   /** The map shows its own banner when there is no network on the map tab. */
   private readonly mapOffline = computed(() => this.onTheMap() && !this.sync.online());

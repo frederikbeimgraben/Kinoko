@@ -1,5 +1,5 @@
 <div class="map">
-  @if (wide() && !surfaceOnly()) {
+  @if (wide() && !surfaceOnly() && !aiming()) {
     <div class="map__column">
       <app-map-column
         [factor]="surface.inProgress()"
@@ -17,7 +17,7 @@
     </div>
   }
 
-  <div class="map__pane">
+  <div class="map__pane" [class.map__pane--full]="aiming()">
     <div
       #canvas
       appMapObjects

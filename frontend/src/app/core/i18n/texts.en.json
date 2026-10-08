@@ -341,7 +341,7 @@
   "entry.zone.drawStatus": "{points} corners · {area} ha",
   "entry.zone.editTitle": "Edit zone",
   "entry.zone.editVertices": "Edit vertices",
-  "entry.zone.finish": "Finish",
+  "entry.zone.finish": "Done",
   "entry.zone.ownFindsInZone": "Own finds in zone",
   "entry.zone.removeLastVertex": "Remove point",
   "entry.zone.saveTitle": "Save zone",

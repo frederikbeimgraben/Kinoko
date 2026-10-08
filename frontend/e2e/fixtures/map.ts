@@ -171,6 +171,8 @@ export interface DesignMap {
   height?: number;
   /** The surface ends this number of px below the top of the map sheet, as in the kit `.sheet`. */
   belowSheet?: number;
+  /** The surface is below the drawing of the map, so a zone or a mark of the app shows on it. */
+  under?: boolean;
 }
 
 /**
@@ -178,7 +180,7 @@ export interface DesignMap {
  * The road is in `.turn`, so the rule `.karte>svg` does not apply: it is a square as wide as the map.
  */
 const KARTE =
-  'position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;overflow:hidden;z-index:1;pointer-events:none;background:' +
+  'position:absolute;inset-block-start:0;inset-inline-start:0;width:100%;overflow:hidden;pointer-events:none;background:' +
   'radial-gradient(120px 90px at 22% 18%,#dfe8d6 0,transparent 100%),' +
   'radial-gradient(160px 120px at 78% 30%,#d3dfcb 0,transparent 100%),' +
   'radial-gradient(200px 140px at 40% 62%,#d8e3d0 0,transparent 100%),' +
@@ -217,7 +219,7 @@ export async function showDesignMap(page: Page, map: DesignMap = {}): Promise<vo
       : `<div style="position:absolute;inset:0;mix-blend-mode:multiply;opacity:.9;background:${HEAT[heat]}"></div>`) +
     '</div>';
   await page.evaluate(
-    ([karte, html, fixed, below]) => {
+    ([karte, html, fixed, below, under]) => {
       const host = document.querySelector('.map__canvas');
       if (host === null) return;
       const frame = host.getBoundingClientRect();
@@ -229,11 +231,11 @@ export async function showDesignMap(page: Page, map: DesignMap = {}): Promise<vo
           : frame.height);
       const surface = document.createElement('div');
       surface.className = 'design-map';
-      surface.setAttribute('style', `${karte};height:${height}px`);
+      surface.setAttribute('style', `${karte};height:${height}px;z-index:${under ? 0 : 1}`);
       surface.innerHTML = html;
       host.prepend(surface);
     },
-    [KARTE, inner, map.height ?? null, map.belowSheet ?? null] as const,
+    [KARTE, inner, map.height ?? null, map.belowSheet ?? null, map.under ?? false] as const,
   );
 }
 
