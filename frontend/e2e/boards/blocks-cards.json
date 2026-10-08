@@ -9,7 +9,7 @@
     "selector": "Badge",
     "stem": "Badge",
     "w": 120,
-    "h": 24
+    "h": 40
   },
   {
     "selector": "Column",
@@ -56,8 +56,8 @@
   {
     "selector": "Icon",
     "stem": "Icon",
-    "w": 24,
-    "h": 24
+    "w": 40,
+    "h": 40
   },
   {
     "selector": "Legend",

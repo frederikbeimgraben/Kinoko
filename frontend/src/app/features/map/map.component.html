@@ -28,7 +28,7 @@
   <app-map-attribution [note]="view.creditNote()" [above]="attributionAbove()" />
 
   @if (view.loading()) {
-    <app-skeleton class="map__skeleton" kind="grid" [count]="48" />
+    <app-skeleton class="map__skeleton" kind="map" />
   }
   @if (offline()) {
     <div class="map__grey" aria-hidden="true"></div>

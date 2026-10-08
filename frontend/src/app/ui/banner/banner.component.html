@@ -8,13 +8,15 @@
   [attr.aria-label]="ariaLabel()"
   (click)="actionClick.emit()"
 >
-  @if (showsIcon()) {
-    <app-svg-icon class="banner__glyph" [name]="icon()" [size]="18" [strokeWidth]="1.8" />
+  <app-svg-icon class="banner__glyph" [name]="glyph()" [size]="24" [strokeWidth]="1.8" />
+  <span class="banner__text">{{ text() ?? (textKey() | t) }}</span>
+  @if (countText(); as count) {
+    <b class="banner__count">{{ count }}</b>
   }
-  <span class="banner__text">{{ textKey() | t }}</span>
   @if (action(); as action) {
-    <app-svg-icon class="banner__action" [name]="action.icon" [size]="18" [strokeWidth]="1.8" />
-  } @else {
-    <app-svg-icon class="banner__action" name="chevron" [size]="18" [strokeWidth]="1.8" />
+    <app-svg-icon class="banner__action" [name]="action.icon" [size]="24" [strokeWidth]="1.8" />
+  }
+  @if (showsChev()) {
+    <app-svg-icon class="banner__chev" name="chevron" [size]="24" [strokeWidth]="1.8" />
   }
 </button>

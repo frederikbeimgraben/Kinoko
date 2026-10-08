@@ -4,9 +4,9 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
 import { ChoiceRowComponent } from './choice-row.component';
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** Returns the computed styles of an element that must exist. */
 function styleOf(element: Element | null | undefined): CSSStyleDeclaration {
-  if (element === null || element === undefined) throw new Error('Das Element steht nicht im Baum.');
+  if (element === null || element === undefined) throw new Error('The element is not in the tree.');
   return getComputedStyle(element);
 }
 
@@ -20,15 +20,17 @@ describe('ChoiceRowComponent', () => {
     expect(screen.getByText('77')).toBeInTheDocument();
     const box = screen.getByRole('checkbox', { name: /essbar/ });
     expect(box.closest('.row')).toHaveClass('tap');
-    expect(box.closest('.row')).toHaveAttribute('data-press', 'tint');
+    expect(box.closest('.row')).not.toHaveAttribute('data-press');
     await noViolations(container);
   });
 
-  it('setzt Name und Zahl auf die Zeilenhöhe des Boards', async () => {
-    const { container } = await render(ChoiceRowComponent, { inputs: { label: 'essbar', count: '77' } });
+  it('keeps the normal line height of the kit and shows a sub-line', async () => {
+    const { container } = await render(ChoiceRowComponent, {
+      inputs: { label: 'ohne Gruppe', subline: 'nur für mich' },
+    });
 
-    expect(styleOf(container.querySelector('.row__label')).lineHeight).toBe('1.2');
-    expect(styleOf(container.querySelector('.row__count')).lineHeight).toBe('1.4');
+    expect(styleOf(container.querySelector('.row')).lineHeight).toBe('normal');
+    expect(screen.getByText('nur für mich')).toHaveClass('row__sub');
   });
 
   it('lässt die Zahl weg, wo keine da ist', async () => {

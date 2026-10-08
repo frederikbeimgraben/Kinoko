@@ -1,72 +1,61 @@
+// Geometry per `kit.css` `.skel`, `.skrow`, `.sktiles` and `.skmap`.
+// Each block sets only `background-color`: the `motion-shimmer` class adds the highlight as an image.
 :host {
+  display: block;
+}
+
+:host(.skeleton--map) {
+  overflow: hidden;
+}
+
+.skel {
+  display: block;
+  background-color: var(--surface);
+  border-radius: var(--r-box);
+}
+
+.skel--line {
+  block-size: 12px;
+  border-radius: var(--r-line);
+}
+
+.skeleton__stack {
+  display: flex;
+  block-size: 100%;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton__line {
+  inline-size: 100%;
+}
+
+.skeleton__block {
+  inline-size: 100%;
+  block-size: 56px;
+}
+
+.skeleton__section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  --skeleton-card-height: 120px;
-  --skeleton-block-height: 80px;
-  --skeleton-pulse-duration: 1200ms;
+  gap: 10px;
 }
 
-.skeleton__bar {
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  animation: skeleton-pulse var(--skeleton-pulse-duration) ease-in-out infinite alternate;
+.skeleton__section + .skeleton__section {
+  margin-block-start: 24px;
 }
 
-// Der Strich steht für eine Textzeile.
-.skeleton__bar--line {
-  inline-size: var(--skeleton-line-width, 100%);
-  block-size: var(--skeleton-line-height, 14px);
-  background: var(--surface);
-  border-radius: 6px;
-  animation: none;
+.skeleton__label {
+  inline-size: 80px;
+  margin-inline-start: 4px;
 }
 
-.skeleton__bar--row {
-  inline-size: 100%;
-  block-size: var(--size-row);
+.skeleton__group--row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.skeleton__bar--line {
-  border-radius: var(--radius-sm);
-}
-
-.skeleton__bar--tile {
-  inline-size: var(--size-tile);
-  block-size: var(--size-tile);
-  border-radius: 9px;
-}
-
-.skeleton__bar--card {
-  inline-size: 100%;
-  block-size: var(--skeleton-card-height);
-  border-radius: var(--radius-lg);
-}
-
-.skeleton__bar--block {
-  inline-size: 100%;
-  block-size: var(--skeleton-block-height);
-  border-radius: var(--radius-lg);
-}
-
-// Das Raster steht für die Kacheln der Karte: ein Schachbrett über die Fläche.
-:host(.skeleton--grid) {
-  display: grid;
-  grid-template-rows: repeat(6, 1fr);
-  grid-template-columns: repeat(8, 1fr);
-  gap: 0;
-}
-
-.skeleton__bar--grid {
-  border-radius: 0;
-  animation: none;
-}
-
-.skeleton__bar--grid:nth-child(2n) {
-  background: var(--outline);
-}
-
-// Art `rows`, per `kit.css` `.skrow`: ein Kreis, daneben zwei Striche.
 .skeleton__row {
   display: flex;
   align-items: center;
@@ -74,45 +63,105 @@
   padding: 12px;
 }
 
-.skeleton__row-icon {
-  flex: 0 0 auto;
-  inline-size: 44px;
-  block-size: 44px;
-  background: var(--surface);
-  border-radius: 14px;
+.skeleton__row--item {
+  min-block-size: var(--h-item);
+  padding: 12px 8px 12px 12px;
+  border-radius: var(--r-item);
 }
 
-.skeleton__row-lines {
+// A `.row` card: the lines need a lighter colour than the card.
+.skeleton__row--row {
+  gap: 12px;
+  min-block-size: var(--h-row);
+  padding: 8px 16px;
+  background-color: var(--surface);
+  border-radius: var(--r-row);
+
+  .skel {
+    background-color: var(--surface-high);
+  }
+}
+
+.skeleton__row--row.skeleton__row--thumbed {
+  padding-inline-start: 8px;
+}
+
+.skeleton__row--row:first-child {
+  border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
+}
+
+.skeleton__row--row:last-child {
+  border-radius: var(--r-row) var(--r-row) var(--r-item) var(--r-item);
+}
+
+.skeleton__row--row:only-child {
+  border-radius: var(--r-item);
+}
+
+.skeleton__lead {
+  flex: 0 0 auto;
+}
+
+.skeleton__lead--thumb {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: var(--r-sq);
+}
+
+.skeleton__lead--circle {
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 50%;
+}
+
+.skeleton__lead--icon {
+  inline-size: 24px;
+  block-size: 24px;
+  border-radius: var(--r-line);
+}
+
+.skeleton__lines {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 8px;
+  min-inline-size: 0;
 }
 
-.skeleton__row-line {
-  block-size: 12px;
-  background: var(--surface);
-  border-radius: 6px;
+.skeleton__badge {
+  flex: 0 0 auto;
+  inline-size: 64px;
+  block-size: 24px;
+  border-radius: var(--r-badge);
 }
 
-// Art `tiles`, per `kit.css` `.sktiles`.
+.skeleton__value {
+  flex: 0 0 20%;
+}
+
+.skeleton__chevron {
+  flex: 0 0 auto;
+}
+
 .skeleton__tiles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .skeleton__tile {
   block-size: 96px;
-  background: var(--surface);
-  border-radius: 20px;
+  border-radius: var(--r-item);
 }
 
-@keyframes skeleton-pulse {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.6;
-  }
+// The map tiles: a 45° checkerboard of 96 px tiles.
+.skeleton__map {
+  block-size: 100%;
+  background-color: var(--surface-low);
+  background-image:
+    linear-gradient(45deg, var(--surface) 25%, transparent 25%, transparent 75%, var(--surface) 75%),
+    linear-gradient(45deg, var(--surface) 25%, transparent 25%, transparent 75%, var(--surface) 75%);
+  background-position:
+    0 0,
+    48px 48px;
+  background-size: 96px 96px;
 }
