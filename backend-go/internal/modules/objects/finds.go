@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"maps"
-	"slices"
 	"net/http"
+	"slices"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"

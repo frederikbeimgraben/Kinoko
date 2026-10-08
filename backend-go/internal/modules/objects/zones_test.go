@@ -22,7 +22,7 @@ var square = object{
 	}},
 }
 
-var squareRing = geo.Ring{{8.60, 50.10}, {8.62, 50.10}, {8.62, 50.12}, {8.60, 50.12}, {8.60, 50.10}}
+var squareRing = geo.RingOf([2]float64{8.60, 50.10}, [2]float64{8.62, 50.10}, [2]float64{8.62, 50.12}, [2]float64{8.60, 50.12}, [2]float64{8.60, 50.10})
 
 func aZone(name string) object { return object{"name": name, "polygon": square} }
 

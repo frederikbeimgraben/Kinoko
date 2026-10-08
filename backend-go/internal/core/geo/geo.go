@@ -196,3 +196,12 @@ func validUnderscores(text string) bool {
 }
 
 func isDigit(b byte) bool { return b >= '0' && b <= '9' }
+
+// RingOf builds a ring from [lon, lat] pairs.
+func RingOf(points ...[2]float64) Ring {
+	out := make(Ring, len(points))
+	for i, p := range points {
+		out[i] = Point{Lon: p[0], Lat: p[1]}
+	}
+	return out
+}

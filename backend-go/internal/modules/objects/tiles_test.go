@@ -17,7 +17,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 )
 
-var tileRing = geo.Ring{{10.0, 50.0}, {10.02, 50.0}, {10.02, 50.02}, {10.0, 50.02}, {10.0, 50.0}}
+var tileRing = geo.RingOf([2]float64{10.0, 50.0}, [2]float64{10.02, 50.0}, [2]float64{10.02, 50.02}, [2]float64{10.0, 50.02}, [2]float64{10.0, 50.0})
 
 func writeManifest(t *testing.T, maps, name string, have map[int][]string) {
 	t.Helper()
@@ -129,7 +129,7 @@ func TestWorldPointAgreesWithPython(t *testing.T) {
 }
 
 func TestCellsUnderAgreeWithPython(t *testing.T) {
-	ring := geo.Ring{{8.60, 50.10}, {8.62, 50.10}, {8.62, 50.12}, {8.60, 50.12}, {8.60, 50.10}}
+	ring := geo.RingOf([2]float64{8.60, 50.10}, [2]float64{8.62, 50.10}, [2]float64{8.62, 50.12}, [2]float64{8.60, 50.12}, [2]float64{8.60, 50.10})
 	cells := cellsUnder(ring, 8)
 	if len(cells) != 18 || cells[0] != (cell{134, 86, 30, 176}) || cells[17] != (cell{134, 86, 32, 181}) {
 		t.Fatal(cells)
@@ -141,7 +141,7 @@ func TestCellsUnderAgreeWithPython(t *testing.T) {
 }
 
 func TestCellsUnderASmallRingFallsBackToTheCentre(t *testing.T) {
-	tiny := geo.Ring{{10.0, 50.0}, {10.0001, 50.0}, {10.0001, 50.0001}, {10.0, 50.0001}, {10.0, 50.0}}
+	tiny := geo.RingOf([2]float64{10.0, 50.0}, [2]float64{10.0001, 50.0}, [2]float64{10.0001, 50.0001}, [2]float64{10.0, 50.0001}, [2]float64{10.0, 50.0})
 	if cells := cellsUnder(tiny, 8); len(cells) != 1 {
 		t.Fatal(cells)
 	}
