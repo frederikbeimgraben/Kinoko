@@ -12,12 +12,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/pyjson"
 )
 
-// InstallStaticLayers copies the static layers of an unpacked static-layers
-// upload into maps and merges their entries into layers.json. src holds
-// layers.json and layers_kacheln/<name>/<z>/<x>/<y>.png. The new static
-// entries come first, then the old static entries that the upload does not
-// replace, then the weekly entries. Each tile folder is replaced in one rename
-// before layers.json changes, so a reader never sees an entry without tiles.
+// InstallStaticLayers copies the static layers of an unpacked upload src (layers.json, layers_kacheln/<name>/...)
+// into maps and merges them into layers.json: new static entries, kept old static entries, then weekly entries.
+// Each tile folder changes in one rename before layers.json, so a reader never sees an entry without tiles.
 func InstallStaticLayers(maps, src string) (*pyjson.Obj, error) {
 	upload, err := readLayers(filepath.Join(src, LayersFile))
 	if err != nil {
@@ -111,7 +108,7 @@ func copyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 	out, err := os.OpenFile(dst, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 	if err != nil {
 		return err

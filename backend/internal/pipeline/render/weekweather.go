@@ -23,10 +23,9 @@ func (t *weekTable) column(name string, w int) []float32 {
 	return t.vals[name][w*nc : (w+1)*nc]
 }
 
-// buildWeekTable derives names for the last weeks of cube, with lead weeks in
-// front for the lags and windows, and forecast empty weeks at the end. The
-// anomalies take their normals from the whole cube, as region_map.normalwerte
-// and input_layers.wochenwetter. Only the cells of cells that the cube holds stay.
+// buildWeekTable derives names for the last weeks of cube, with lead weeks for the lags and windows and
+// forecast empty weeks at the end. The normals come from the whole cube, as region_map.normalwerte and
+// input_layers.wochenwetter. It keeps only the cells that the cube holds.
 func buildWeekTable(cube *weather.Cube, cells []geo.CellKey, weeks, forecast int, names []string) (*weekTable, error) {
 	if cube == nil || len(cube.Weeks) == 0 {
 		return nil, fmt.Errorf("render: no weather")

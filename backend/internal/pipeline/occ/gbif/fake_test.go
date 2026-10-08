@@ -86,7 +86,8 @@ func (f *fakeGBIF) serve(w http.ResponseWriter, r *http.Request) {
 	if offset < len(all) {
 		page = all[offset:end]
 	}
-	json.NewEncoder(w).Encode(map[string]any{
+	// A failed write shows in the client as a broken body.
+	_ = json.NewEncoder(w).Encode(map[string]any{
 		"offset": offset, "limit": limit, "count": len(all), "endOfRecords": end >= len(all), "results": page,
 	})
 }
@@ -111,7 +112,7 @@ func readLines(t *testing.T, path string) []map[string]any {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	gz, err := gzip.NewReader(file)
 	if err != nil {
 		t.Fatal(err)
@@ -134,7 +135,9 @@ func gz(t *testing.T, lines ...string) []byte {
 	var buf bytes.Buffer
 	w := gzip.NewWriter(&buf)
 	for _, l := range lines {
-		w.Write([]byte(l + "\n"))
+		if _, err := w.Write([]byte(l + "\n")); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if err := w.Close(); err != nil {
 		t.Fatal(err)

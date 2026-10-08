@@ -156,7 +156,7 @@ func readDotEnv(path string) (Lookup, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	values := map[string]string{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

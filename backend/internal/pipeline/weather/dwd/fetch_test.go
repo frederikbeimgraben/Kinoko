@@ -75,12 +75,13 @@ func (f *fakeDWD) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(&b, "<a href=%q>%s</a> 01-Jan-2026 00:00 1M\n", n, n)
 		}
 		b.WriteString("</pre></body></html>")
-		w.Write([]byte(b.String()))
+		_, _ = w.Write([]byte(b.String()))
 	case !ok:
 		http.NotFound(w, r)
 	case broken:
 		w.Header().Set("Content-Length", fmt.Sprint(len(file.body)))
-		w.Write(file.body[:len(file.body)/2])
+		// The fake sends a short body on purpose, so a failed write is not important.
+		_, _ = w.Write(file.body[:len(file.body)/2])
 	default:
 		if ignore {
 			r.Header.Del("If-None-Match")

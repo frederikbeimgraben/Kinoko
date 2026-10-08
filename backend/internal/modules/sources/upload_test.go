@@ -168,7 +168,9 @@ func TestUploadResumesAfterRestartWithTheStoredHash(t *testing.T) {
 	if _, err := part.Write([]byte("garbage of an interrupted part")); err != nil {
 		t.Fatal(err)
 	}
-	part.Close()
+	if err := part.Close(); err != nil {
+		t.Fatal(err)
+	}
 	m := restarted(f)
 	if code := directPatch(t, m, id, 2000, data[2000:]); code != http.StatusOK {
 		t.Fatal(code)

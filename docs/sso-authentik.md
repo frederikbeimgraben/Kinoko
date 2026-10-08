@@ -1,55 +1,61 @@
-# SSO-Client in Authentik
+# SSO client in Authentik
 
-Der Client ist ein Blueprint im NixOS-Repo, wie die anderen Anwendungen:
-`modules/hosts/server/identity/authentik-blueprints/pilze.yaml`. Der
-Authentik-Worker legt ihn beim Switch des Servers an und gleicht ihn ab.
-Nichts wird von Hand geklickt.
+The client is a blueprint in the NixOS repository, as are the other
+applications: `modules/hosts/server/identity/authentik-blueprints/pilze.yaml`.
+The Authentik worker makes the client when the server switches. It also keeps
+the client in agreement with the blueprint. Do not change the client by hand.
 
-## Was der Blueprint anlegt
+## Objects of the blueprint
 
-| Objekt | Wert |
+| Object | Value |
 | --- | --- |
-| Provider `pilze` | Public Client, Authorization Code mit PKCE, Refresh Token |
+| Provider `pilze` | Public client, authorization code with PKCE, refresh token |
 | Client ID | `pilze` |
-| Signing Key | das selbstsignierte Zertifikat der Instanz |
-| Access Token | 1 Stunde |
-| Refresh Token | 30 Tage |
+| Signing key | The self-signed certificate of the instance |
+| Access token | 1 hour |
+| Refresh token | 30 days |
 | Scopes | `openid`, `email`, `profile`, `offline_access` |
-| Redirect URIs | `https://pilze.beimgraben.net/anmeldung`, `…/anmeldung/still`, dazu `http://localhost:4200/…` für die Entwicklung |
-| Anwendung `pilze` | Name Kinoko, Launch URL `https://pilze.beimgraben.net/` |
-| Gruppe `app_pilze` | wer speichern darf. Mitglieder werden in der Admin-Oberfläche zugewiesen |
+| Redirect URIs | `https://pilze.beimgraben.net/anmeldung`, `…/anmeldung/still`, and `http://localhost:4200/…` for development |
+| Application `pilze` | Name Kinoko, launch URL `https://pilze.beimgraben.net/` |
+| Group `app_pilze` | The persons who can save. Add the members in the admin interface |
 
-`/anmeldung/still` ist die stille Erneuerung im iframe. Es gibt kein
-Client-Secret.
+`/anmeldung/still` is the silent renewal in an iframe. The client has no
+client secret.
 
-## Wie lange die Sitzung hält
+## Duration of the session
 
-Die App hält kein Token über einen Neustart. Nach jedem Neuladen holt sie die
-Sitzung still zurück, mit `prompt=none` gegen Authentik. Das gelingt nur,
-solange die Sitzung bei Authentik selbst steht. Deren Dauer steht nicht im
-Blueprint des Clients, sondern an der Stufe `default-authentication-login` des
-Anmeldeflusses. Der Vorgabewert `seconds=0` endet mit dem Browser. Am Telefon
-heißt das: die App ist nach jedem Neustart abgemeldet.
+The app keeps no token across a restart. After each reload, it gets the
+session again without a prompt (`prompt=none` to Authentik). This works only
+while the session at Authentik is valid.
 
-## Ergebnis
+The client blueprint does not set the duration of that session. The stage
+`default-authentication-login` of the login flow sets it. The default value
+`seconds=0` ends the session when the browser closes. On a phone, the app
+thus signs out at each restart.
 
-| Was | Wert |
+## Result
+
+| Item | Value |
 | --- | --- |
 | Issuer | `https://sso.beimgraben.net/application/o/pilze/` |
 | Discovery | `https://sso.beimgraben.net/application/o/pilze/.well-known/openid-configuration` |
 | JWKS | `https://sso.beimgraben.net/application/o/pilze/jwks/` |
 | Client ID | `pilze` |
 
-Das NixOS-Modul `homeserver-pilze-app` setzt Issuer und Client ID als
-`PILZE_OIDC_ISSUER` und `PILZE_OIDC_CLIENT_ID`. Das Frontend liest sie aus
+The NixOS module `services.kinoko` gives the issuer and the client ID to the
+service. The options are `oidc.issuer` and `oidc.clientId`. The variables are
+`PILZE_OIDC_ISSUER` and `PILZE_OIDC_CLIENT_ID`. The frontend reads them from
 `GET /api/config`.
 
-## Prüfen
+A person in the group of `oidc.adminGroup` (default `pilze-admins`) has each
+permission.
+
+## Check
 
 ```
 curl -s https://sso.beimgraben.net/application/o/pilze/.well-known/openid-configuration | jq .issuer
 ```
 
-Erwartet: `"https://sso.beimgraben.net/application/o/pilze/"`. Bei 404 hat
-der Worker den Blueprint nicht angewendet, siehe `journalctl -u
-authentik-worker` auf dem Server.
+The expected result is `"https://sso.beimgraben.net/application/o/pilze/"`.
+If the result is 404, the worker did not apply the blueprint. Then read
+`journalctl -u authentik-worker` on the server.

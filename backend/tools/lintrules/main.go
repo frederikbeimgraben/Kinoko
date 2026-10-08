@@ -23,9 +23,9 @@ const (
 )
 
 var (
-	year       = regexp.MustCompile(`\b20\d{2}(-\d{2}-\d{2})?\b`)
+	year       = regexp.MustCompile(`\b20\d{2}-\d{2}-\d{2}\b`)
 	prNumber   = regexp.MustCompile(`(?i)(#\d+|\bPR\s*\d+\b)`)
-	history    = regexp.MustCompile(`\b(now|previously|formerly|no longer|anymore|used to|was changed|new version|old version)\b`)
+	history    = regexp.MustCompile(`\b(now|previously|formerly|no longer|anymore|used to|was changed)\b`)
 	umlaut     = regexp.MustCompile(`[äöüÄÖÜß]`)
 	germanWord = regexp.MustCompile(`(?i)\b(der|die|das|und|oder|nicht|mit|für|wird|werden|ist|sind|eine|einer|keine)\b`)
 )

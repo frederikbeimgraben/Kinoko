@@ -101,36 +101,6 @@ func nodataOf(ds *godal.Dataset) (float64, bool) {
 	return nd, true
 }
 
-// createFloat makes a dataset of float32 bands with NaN as nodata, with the
-// CRS and the geotransform of a template dataset. The driver is MEM or GTiff.
-func createFloat(driver godal.DriverName, name string, bands [][]float32, nx, ny int,
-	gt [6]float64, wkt string, opts ...godal.DatasetCreateOption) (*godal.Dataset, error) {
-	registerGDAL()
-	ds, err := godal.Create(driver, name, len(bands), godal.Float32, nx, ny, opts...)
-	if err != nil {
-		return nil, err
-	}
-	fail := func(err error) (*godal.Dataset, error) {
-		_ = ds.Close()
-		return nil, err
-	}
-	if err := ds.SetGeoTransform(gt); err != nil {
-		return fail(err)
-	}
-	if err := ds.SetProjection(wkt); err != nil {
-		return fail(err)
-	}
-	for i, band := range ds.Bands() {
-		if err := band.SetNoData(math.NaN()); err != nil {
-			return fail(err)
-		}
-		if err := band.Write(0, 0, bands[i], nx, ny); err != nil {
-			return fail(err)
-		}
-	}
-	return ds, nil
-}
-
 // RasterBounds gives minX, minY, maxX, maxY of a north-up raster.
 func RasterBounds(gt [6]float64, nx, ny int) [4]float64 {
 	x0, x1 := gt[0], gt[0]+float64(nx)*gt[1]

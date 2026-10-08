@@ -21,7 +21,7 @@ func openDB(t testing.TB) *sql.DB {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { handle.Close() })
+	t.Cleanup(func() { _ = handle.Close() })
 	if err := db.Migrate(context.Background(), handle); err != nil {
 		t.Fatal(err)
 	}

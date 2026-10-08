@@ -88,7 +88,8 @@ func (v *Version) DerivedDir() string { return filepath.Join(v.Dir, "derived") }
 // Logf writes one line to the processing log.
 func (v *Version) Logf(format string, args ...any) {
 	if v.Log != nil {
-		fmt.Fprintf(v.Log, format+"\n", args...)
+		// A failed log line must not stop the processing.
+		_, _ = fmt.Fprintf(v.Log, format+"\n", args...)
 	}
 }
 

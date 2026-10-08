@@ -72,7 +72,7 @@ func TestDwCA(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer o.Close()
+		defer func() { _ = o.Close() }()
 		if o.Format() != FormatDwCA {
 			t.Errorf("format %q", o.Format())
 		}
@@ -119,7 +119,7 @@ func TestSimpleCSV(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer o.Close()
+	defer func() { _ = o.Close() }()
 	if o.Format() != FormatSimpleCSV {
 		t.Errorf("format %q", o.Format())
 	}
@@ -212,7 +212,7 @@ func TestExtractZip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	if es := z.Entries(); len(es) != 3 || es[0].Size != 3 {
 		t.Errorf("entries %v", es)
 	}

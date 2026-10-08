@@ -59,7 +59,7 @@ func zipFiles(t *testing.T, target string, files map[string]string) {
 		if _, err := io.Copy(dst, src); err != nil {
 			t.Fatal(err)
 		}
-		src.Close()
+		_ = src.Close()
 	}
 	if err := w.Close(); err != nil {
 		t.Fatal(err)
@@ -94,10 +94,9 @@ func run(t *testing.T, p sources.Processor, v *sources.Version) ([]sources.Artif
 	return artifacts, meta
 }
 
-// TestProcessors runs the three processors on the synthetic uploads: the
-// tree map as a GeoTIFF, the DEM and SoilGrids as zips. The site grid of
-// the soil run joins the terrain part of the DEM run; it must equal the
-// golden site_500m.parquet of static_features.main.
+// TestProcessors runs the three processors on the synthetic uploads: the tree map as a GeoTIFF,
+// the DEM and SoilGrids as zips. The site grid of the soil run joins the terrain part of the
+// DEM run. It must equal the golden site_500m.parquet of static_features.main.
 func TestProcessors(t *testing.T) {
 	if testing.Short() {
 		t.Skip("the processors take a while")

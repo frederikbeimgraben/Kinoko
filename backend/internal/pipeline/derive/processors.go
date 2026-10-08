@@ -137,7 +137,8 @@ func (c Config) renderFine(ctx context.Context, v *sources.Version, in FineInput
 	opt.Log = v.Logf
 	out := v.DerivedDir()
 	work := filepath.Join(out, "work")
-	defer os.RemoveAll(work)
+	// A failed removal leaves only temporary files, so the render does not fail.
+	defer func() { _ = os.RemoveAll(work) }()
 	layers, err := RenderFine(ctx, in, out, work, opt)
 	if err != nil || len(layers) == 0 {
 		return nil, err

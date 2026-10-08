@@ -38,7 +38,7 @@ func (m *Maps) RenderSpecies(ctx context.Context, in SpeciesRender) error {
 	if !in.Today.IsZero() {
 		cfg.Today = in.Today
 	}
-	_, err = render.RenderSpecies(ctx, render.Inputs{
+	_, err = render.Species(ctx, render.Inputs{
 		Tables: tables, Weather: in.Cube, Records: in.Records, Bundle: in.Bundle, Warper: m.Warper,
 	}, cfg)
 	return err
@@ -52,7 +52,7 @@ func (m *Maps) RenderLayers(ctx context.Context, in LayersRender) error {
 	}
 	cfg := render.DefaultLayerConfig(in.Maps)
 	cfg.Log = logFunc(in.Log)
-	if _, err := render.RenderLayers(ctx, render.LayerInputs{Tables: tables, Weather: in.Cube, Warper: m.Warper}, cfg); err != nil {
+	if _, err := render.Layers(ctx, render.LayerInputs{Tables: tables, Weather: in.Cube, Warper: m.Warper}, cfg); err != nil {
 		return err
 	}
 	return render.Cleanup(in.Maps)

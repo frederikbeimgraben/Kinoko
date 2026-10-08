@@ -130,7 +130,7 @@ func (staticLayers) Validate(ctx context.Context, v *Version) (map[string]any, e
 	if err != nil {
 		return nil, err
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	entries, err := zipFiles(z)
 	if err != nil {
 		return nil, err
@@ -173,7 +173,7 @@ func (staticLayers) Derive(ctx context.Context, v *Version) ([]Artifact, error) 
 	if err != nil {
 		return nil, err
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	entries, err := zipFiles(z)
 	if err != nil {
 		return nil, err

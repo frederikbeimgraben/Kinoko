@@ -23,7 +23,7 @@ func ReadParquet(path string, columns []string) (*Table, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	cols, err := projection(pf, columns)
 	if err != nil {
 		return nil, fmt.Errorf("pio: %s: %w", path, err)
@@ -42,7 +42,7 @@ func ScanParquet(path string, columns []string, fn func(*Table) error) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	cols, err := projection(pf, columns)
 	if err != nil {
 		return fmt.Errorf("pio: %s: %w", path, err)
@@ -66,12 +66,12 @@ func openParquet(path string) (*os.File, *parquet.File, error) {
 	}
 	st, err := f.Stat()
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, nil, fmt.Errorf("pio: %w", err)
 	}
 	pf, err := parquet.OpenFile(f, st.Size(), parquet.SkipPageIndex(true), parquet.SkipBloomFilters(true))
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, nil, fmt.Errorf("pio: %s: %w", path, err)
 	}
 	return f, pf, nil
@@ -133,7 +133,7 @@ func readRowGroups(groups []parquet.RowGroup, cols []projected, n int) (*Table, 
 
 func readChunk(chunk parquet.ColumnChunk, a accumulator, buf []parquet.Value) error {
 	pages := chunk.Pages()
-	defer pages.Close()
+	defer func() { _ = pages.Close() }()
 	for {
 		page, err := pages.ReadPage()
 		if errors.Is(err, io.EOF) {

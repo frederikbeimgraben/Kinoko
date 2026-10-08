@@ -148,7 +148,7 @@ func execMany(ctx context.Context, tx *sql.Tx, query string, rows [][]any) error
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func() { _ = stmt.Close() }()
 	for _, args := range rows {
 		if _, err := stmt.ExecContext(ctx, args...); err != nil {
 			return fmt.Errorf("%s: %w", query, err)

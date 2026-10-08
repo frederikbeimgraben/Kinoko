@@ -93,7 +93,7 @@ func New(t testing.TB, opts ...Option) *Env {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { handle.Close() })
+	t.Cleanup(func() { _ = handle.Close() })
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		t.Fatal(err)
@@ -147,7 +147,7 @@ func buildTemplate(path string) error {
 	if err != nil {
 		return err
 	}
-	defer handle.Close()
+	defer func() { _ = handle.Close() }()
 	if _, err := app.Build(context.Background(), settings, handle, app.Options{}); err != nil {
 		return err
 	}

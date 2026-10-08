@@ -82,7 +82,8 @@ func (c *Chain) Train(ctx context.Context, j *Job, sp Species) (Trained, error) 
 	if err := os.RemoveAll(staging); err != nil {
 		return Trained{}, err
 	}
-	defer os.RemoveAll(filepath.Dir(staging))
+	// A failed removal leaves only temporary files, so the step does not fail.
+	defer func() { _ = os.RemoveAll(filepath.Dir(staging)) }()
 	if err := b.Save(staging); err != nil {
 		return Trained{}, err
 	}

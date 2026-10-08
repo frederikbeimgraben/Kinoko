@@ -44,7 +44,7 @@ func Probe(path string) (RasterInfo, error) {
 	if err != nil {
 		return RasterInfo{}, fmt.Errorf("pio: probe %s: %w", path, err)
 	}
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 	st := ds.Structure()
 	info := RasterInfo{NX: st.SizeX, NY: st.SizeY, Bands: st.NBands, DType: st.DataType.String()}
 	if gt, err := ds.GeoTransform(); err == nil {

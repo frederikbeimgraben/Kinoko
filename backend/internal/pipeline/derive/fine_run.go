@@ -180,7 +180,7 @@ func (r *fineRun) openTrees(work string) error {
 	if err != nil {
 		return fmt.Errorf("derive: open outline: %w", err)
 	}
-	defer vec.Close()
+	defer func() { _ = vec.Close() }()
 	if err := os.MkdirAll(work, 0o755); err != nil {
 		return err
 	}

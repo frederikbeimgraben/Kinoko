@@ -61,7 +61,7 @@ func (f *Fetcher) listing(ctx context.Context, url string) ([]string, error) {
 		if err != nil {
 			return err
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		if resp.StatusCode != http.StatusOK {
 			return &statusError{url: url, code: resp.StatusCode}
 		}
@@ -92,7 +92,7 @@ func (f *Fetcher) downloadOnce(ctx context.Context, url, target string, cond *va
 	if err != nil {
 		return fetched{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	got := fetched{etag: resp.Header.Get("ETag"), lastModified: resp.Header.Get("Last-Modified")}
 	switch {
 	case resp.StatusCode == http.StatusNotModified && cond != nil:
@@ -132,8 +132,9 @@ func writeAtomic(target string, body io.Reader, want int64) (size int64, sum str
 	}
 	defer func() {
 		if err != nil {
-			out.Close()
-			os.Remove(partial)
+			// This cleans up after a failure. The first error is the one to report.
+			_ = out.Close()
+			_ = os.Remove(partial)
 		}
 	}()
 	hash := sha256.New()

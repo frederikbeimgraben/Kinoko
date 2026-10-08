@@ -70,11 +70,10 @@ func DefaultLayerConfig(maps string) LayerConfig {
 	return LayerConfig{Maps: maps, Step: DefaultStep, Weeks: DefaultWeeks, ZoomCap: geo.ZoomCap}
 }
 
-// RenderLayers draws the weekly input layers as input_layers.py --only-weekly
-// --tiles --no-image. It keeps the static entries of layers.json in their
-// order, writes the tiles of each week, then layers.json in one rename, then
-// removes the week folders that the manifest no longer names.
-func RenderLayers(ctx context.Context, in LayerInputs, cfg LayerConfig) (*pyjson.Obj, error) {
+// Layers draws the weekly input layers as input_layers.py --only-weekly --tiles.
+// It keeps the static entries of layers.json in their order, writes the week tiles,
+// then layers.json in one rename, then removes the week folders it does not name.
+func Layers(ctx context.Context, in LayerInputs, cfg LayerConfig) (*pyjson.Obj, error) {
 	log := logOf(cfg.Log)
 	if in.Tables.Trees == nil || in.Tables.Site == nil || in.Warper == nil || cfg.Maps == "" {
 		return nil, fmt.Errorf("render: layer input is incomplete")

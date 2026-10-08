@@ -18,11 +18,10 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/tiles"
 )
 
-// RenderSpecies draws the weekly map of one species as region_map.py with
-// --tiles --no-image. It writes the tiles of each week, then the manifest
-// <Maps>/<Slug>.json in one rename, then removes the week folders that the
-// manifest no longer names. It returns the manifest.
-func RenderSpecies(ctx context.Context, in Inputs, cfg Config) (*pyjson.Obj, error) {
+// Species draws the weekly map of one species as region_map.py --tiles --no-image.
+// It writes the week tiles, then <Maps>/<Slug>.json in one rename, then removes the
+// week folders that the manifest does not name. It returns the manifest.
+func Species(ctx context.Context, in Inputs, cfg Config) (*pyjson.Obj, error) {
 	log := logOf(cfg.Log)
 	b := in.Bundle
 	if b == nil || len(b.Horizons) == 0 || in.Warper == nil || cfg.Slug == "" || cfg.Maps == "" {

@@ -86,10 +86,9 @@ func chunks(dir string, api bool) ([]source, error) {
 	return out, nil
 }
 
-// BuildOccurrences is build_occurrences.main without the parquet write: it reads
-// the slim GBIF files, adds the app finds, and keeps the dated Agaricomycetes
-// records with a coordinate error of at most maxUnc metres (NaN keeps).
-// A gbifID that comes again is dropped; the API copy wins because the API files are read first on a tie.
+// BuildOccurrences is build_occurrences.main without the parquet write: it reads the slim GBIF files,
+// adds the app finds, and keeps dated Agaricomycetes records with a coordinate error of at most maxUnc
+// metres (NaN keeps). It drops a repeated gbifID. The API copy stays, because the API files come first.
 func BuildOccurrences(src Sources, app []AppFind, maxUnc float64) ([]Record, Stats, error) {
 	files, err := src.files()
 	if err != nil {

@@ -119,7 +119,7 @@ func TestRunCreatesSchemaAndImports(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer handle.Close()
+	defer func() { _ = handle.Close() }()
 	var out bytes.Buffer
 	if err := Run(context.Background(), handle, realData(t), fixedNow, &out); err != nil {
 		t.Fatal(err)

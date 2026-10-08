@@ -88,7 +88,7 @@ func (p modelBundles) Validate(ctx context.Context, v *Version) (map[string]any,
 	if err != nil {
 		return nil, err
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	entries, err := zipFiles(z)
 	if err != nil {
 		return nil, err

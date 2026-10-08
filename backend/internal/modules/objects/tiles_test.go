@@ -50,8 +50,10 @@ func writeImage(t *testing.T, maps, path string, zoom, x, y int, img image.Image
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
 	if err := png.Encode(file, img); err != nil {
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
 		t.Fatal(err)
 	}
 }

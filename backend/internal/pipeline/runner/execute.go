@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"os"
@@ -34,7 +35,7 @@ type execution struct {
 
 // execute runs the steps of a claimed run and finishes it. A failure of a
 // step goes into the run state; the returned error is a failure to report.
-func (r *Runner) execute(ctx context.Context, run runs.Run) error {
+func (r *Runner) execute(ctx context.Context, run runs.Run) (err error) {
 	// The reports must reach the database also when ctx ends at a shutdown.
 	report := context.WithoutCancel(ctx)
 	logPath := runs.LogPath(r.logs, run.ID)
@@ -42,7 +43,7 @@ func (r *Runner) execute(ctx context.Context, run runs.Run) error {
 	if err != nil {
 		return r.runs.Finish(report, run.ID, enums.RunStateFailed, "", nil)
 	}
-	defer logFile.Close()
+	defer func() { err = errors.Join(err, logFile.Close()) }()
 	job := &Job{Run: run, Now: r.now(), log: logFile}
 	x := &execution{r: r, job: job, states: map[db.ID]*speciesState{}}
 	failed := x.prepare(report)

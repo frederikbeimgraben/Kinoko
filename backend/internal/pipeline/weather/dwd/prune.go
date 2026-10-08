@@ -35,7 +35,7 @@ func (f *Fetcher) PruneBefore(ctx context.Context, year int) ([]string, error) {
 		root := filepath.Join(f.Dir, src.dir)
 		err := filepath.WalkDir(root, func(p string, d os.DirEntry, err error) error {
 			if err != nil || d.IsDir() || !strings.HasSuffix(p, ".nc") {
-				return nil
+				return nil //nolint:nilerr // An entry that cannot be read holds no file to remove, so the walk skips it.
 			}
 			y, ok := YearOf(p)
 			if !ok || y >= year {

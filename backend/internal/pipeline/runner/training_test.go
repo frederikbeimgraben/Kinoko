@@ -68,7 +68,7 @@ func readGz(t *testing.T, path string, v any) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	r, err := gzip.NewReader(file)
 	if err != nil {
 		t.Fatal(err)

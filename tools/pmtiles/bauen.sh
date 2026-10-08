@@ -1,23 +1,21 @@
 #!/usr/bin/env bash
-# Das PMTiles-Archiv fuer Deutschland bauen.
+# Build the PMTiles archive of Germany.
 #
-# Die Aufrufliste unten ist die von OpenFreeMap (tilegen/tilegen_lib/planetiler.py),
-# nur mit --area=germany statt planet. Nur so tragen die Kacheln dieselben
-# Felder wie die Online-Karte, und die Stile "liberty" und "dark" passen offline
-# ohne Aenderung.
+# The arguments below are those of OpenFreeMap (tilegen/tilegen_lib/planetiler.py),
+# but with --area=germany in place of planet. Thus the tiles have the same
+# fields as the online map, and the styles "liberty" and "dark" work offline
+# without a change.
 #
-# Zwei Abweichungen halten das Archiv unter 3 GB, ohne dass ein Pixel anders
-# aussieht:
+# Two differences keep the archive below 3 GB. No pixel changes:
 #
-# --languages: nur de und en statt der 84 Sprachen von OpenFreeMap. Die Stile
-# lesen als Beschriftung allein name:latin und name:nonlatin, und die App
-# spricht de und en.
+# --languages: only de and en, not the 84 languages of OpenFreeMap. The styles
+# read only name:latin and name:nonlatin for the labels. The app uses de and en.
 #
-# --exclude-ids: die Kacheln tragen keine Merkmal-IDs. Die braucht nur, wer
-# feature-state setzt; die Hintergrundkarte wird bloss gezeichnet.
+# --exclude-ids: the tiles have no feature IDs. Only a map that sets
+# feature-state needs them. The base map only draws.
 #
-# Gemessen an Deutschland, Zoom 14: 3,25 GB mit allen Sprachen, 3,12 GB mit
-# de und en, 2,86 GB auch ohne IDs.
+# Measured for Germany, zoom 14: 3.25 GB with all languages, 3.12 GB with
+# de and en, 2.86 GB also without IDs.
 set -euo pipefail
 
 PLANETILER_VERSION=${PLANETILER_VERSION:-v0.10.2}
@@ -40,9 +38,9 @@ if [ ! -f "$JAR" ]; then
 fi
 echo "$PLANETILER_SHA256  $JAR" | sha256sum -c - >/dev/null
 
-# Der Lauf legt Quellen und Zwischenstaende unter dem Arbeitsverzeichnis ab,
-# nicht unter dem aktuellen Ordner. Die Quellen bleiben liegen, damit ein
-# zweiter Lauf die 5 GB des OSM-Extrakts nicht noch einmal zieht.
+# The run puts the sources and the intermediate files in the work folder, not
+# in the current folder. The sources stay, so a second run does not download
+# the 5 GB of the OSM extract again.
 cd "$ARBEIT"
 zeit_start=$(date +%s)
 nix run nixpkgs#jdk21 -- \

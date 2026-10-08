@@ -57,13 +57,13 @@ func extract(f *zip.File, target string) error {
 	if err != nil {
 		return Fail("zip", "the entry %q cannot be read: %v", f.Name, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 	out, err := os.Create(target)
 	if err != nil {
 		return err
 	}
 	if _, err := io.Copy(out, in); err != nil {
-		out.Close()
+		_ = out.Close()
 		return Fail("zip", "the entry %q cannot be read: %v", f.Name, err)
 	}
 	return out.Close()
@@ -75,7 +75,7 @@ func readEntry(f *zip.File, limit int64) ([]byte, error) {
 	if err != nil {
 		return nil, Fail("zip", "the entry %q cannot be read: %v", f.Name, err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 	data, err := io.ReadAll(io.LimitReader(in, limit))
 	if err != nil {
 		return nil, Fail("zip", "the entry %q cannot be read: %v", f.Name, err)

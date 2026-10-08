@@ -8,6 +8,8 @@ import (
 	"io"
 	"io/fs"
 	"log/slog"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
@@ -57,7 +59,9 @@ func Run(ctx context.Context, handle *sql.DB, data fs.FS, now func() time.Time, 
 	if now == nil {
 		now = time.Now
 	}
-	fmt.Fprintln(out, "Warnung: der Import löscht alle Arten, Begriffe und Taxa. Fotos und Läufe der Arten gehen verloren, Funde verlieren ihre Art.")
+	if _, err := fmt.Fprintln(out, "Warnung: der Import löscht alle Arten, Begriffe und Taxa. Fotos und Läufe der Arten gehen verloren, Funde verlieren ihre Art."); err != nil {
+		return err
+	}
 	if err := db.Migrate(ctx, handle); err != nil {
 		return err
 	}
@@ -73,9 +77,7 @@ func Run(ctx context.Context, handle *sql.DB, data fs.FS, now func() time.Time, 
 	if err != nil {
 		return err
 	}
-	for _, line := range ReportLines(report) {
-		fmt.Fprintln(out, line)
-	}
-	fmt.Fprintf(out, "reaktionen: %d bei %d Arten, ohne Art: %d\n", reactions.Reactions, reactions.Species, len(reactions.Unmatched))
-	return nil
+	summary := fmt.Sprintf("reaktionen: %d bei %d Arten, ohne Art: %d", reactions.Reactions, reactions.Species, len(reactions.Unmatched))
+	_, err = fmt.Fprintln(out, strings.Join(slices.Concat(ReportLines(report), []string{summary}), "\n"))
+	return err
 }

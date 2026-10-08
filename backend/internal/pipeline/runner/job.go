@@ -76,5 +76,6 @@ func (j *Job) Printf(format string, args ...any) {
 	}
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	fmt.Fprintf(j.log, "%s %s\n", time.Now().UTC().Format(time.TimeOnly), fmt.Sprintf(format, args...))
+	// A failed log line must not stop the run.
+	_, _ = fmt.Fprintf(j.log, "%s %s\n", time.Now().UTC().Format(time.TimeOnly), fmt.Sprintf(format, args...))
 }

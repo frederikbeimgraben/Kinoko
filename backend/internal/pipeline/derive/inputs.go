@@ -36,7 +36,7 @@ func RasterFiles(upload string, keep func(base string) bool) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer z.Close()
+	defer func() { _ = z.Close() }()
 	abs, err := filepath.Abs(upload)
 	if err != nil {
 		return nil, err

@@ -25,7 +25,7 @@ func (b *boosterHandle) free() {
 	}
 }
 
-// Booster is a LightGBM model. Call Close when it is no longer needed.
+// Booster is a LightGBM model. Call Close when the model is not necessary.
 // A finalizer frees it if Close is not called. The methods are safe for concurrent use.
 type Booster struct {
 	mu      sync.RWMutex
@@ -49,7 +49,7 @@ func Train(ds *Dataset, params string, rounds int) (*Booster, error) {
 	cparams, free := cString(params)
 	defer free()
 	var h C.BoosterHandle
-	if err := call("BoosterCreate", func() C.int { return C.LGBM_BoosterCreate(train.h, cparams, &h) }); err != nil {
+	if err := call("BoosterCreate", func() C.int { return C.LGBM_BoosterCreate(train.h, cparams, &h) }); err != nil { //nolint:gocritic // The cgo expansion of this C call has a repeated operand; this source has none.
 		train.release()
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func Load(modelText string) (*Booster, error) {
 	var iterations C.int
 	var h C.BoosterHandle
 	if err := call("BoosterLoadModelFromString", func() C.int {
-		return C.LGBM_BoosterLoadModelFromString(text, &iterations, &h)
+		return C.LGBM_BoosterLoadModelFromString(text, &iterations, &h) //nolint:gocritic // The cgo expansion of this C call has a repeated operand; this source has none.
 	}); err != nil {
 		return nil, err
 	}

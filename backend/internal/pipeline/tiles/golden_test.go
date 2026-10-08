@@ -15,11 +15,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/pyjson"
 )
 
-// testdata/golden.json and the trees under testdata/render and
-// testdata/coarsen come from testdata/gen_golden.py: pyramid.render_field,
-// pyramid.coarsen, pyramid.belegung, fine_layers.raster_block and the
-// preview gdalwarp of region_map.schreibe_woche.
-
+// golden is testdata/golden.json. It and the trees in testdata/render and testdata/coarsen come from
+// testdata/gen_golden.py: pyramid.render_field, pyramid.coarsen, pyramid.belegung,
+// fine_layers.raster_block and the preview gdalwarp of region_map.schreibe_woche.
 type golden struct {
 	NX, NY       int
 	GeoTransform [6]float64

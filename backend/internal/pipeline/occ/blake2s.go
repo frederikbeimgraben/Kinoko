@@ -68,11 +68,11 @@ func blake2sCompress(h *[8]uint32, block []byte, t uint64, final bool) {
 	g := func(a, b, c, d int, x, y uint32) {
 		v[a] = v[a] + v[b] + x
 		v[d] = bits.RotateLeft32(v[d]^v[a], -16)
-		v[c] = v[c] + v[d]
+		v[c] += v[d]
 		v[b] = bits.RotateLeft32(v[b]^v[c], -12)
 		v[a] = v[a] + v[b] + y
 		v[d] = bits.RotateLeft32(v[d]^v[a], -8)
-		v[c] = v[c] + v[d]
+		v[c] += v[d]
 		v[b] = bits.RotateLeft32(v[b]^v[c], -7)
 	}
 	for _, s := range blake2sSigma {
