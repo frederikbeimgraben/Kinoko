@@ -86,14 +86,16 @@ func TestProbeInsideZip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 	if _, err := io.Copy(w, in); err != nil {
 		t.Fatal(err)
 	}
 	if err := zw.Close(); err != nil {
 		t.Fatal(err)
 	}
-	out.Close()
+	if err := out.Close(); err != nil {
+		t.Fatal(err)
+	}
 	info, err := Probe("/vsizip/" + zpath + "/tiles/a.tif")
 	if err != nil {
 		t.Fatal(err)

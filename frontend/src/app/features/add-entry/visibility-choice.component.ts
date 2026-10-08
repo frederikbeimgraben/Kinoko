@@ -8,7 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import type { Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
@@ -17,9 +17,9 @@ import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sh
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
 import { visibilitySegments } from './visibility';
 
-/** Das Blatt der Gruppenwahl ist so hoch wie sein Inhalt. */
+/** The sheet of the group choice is as high as its content. */
 
-/** Privat oder an eine Gruppe: Schalter und Gruppenwahl von Fund, Marker und Zone. */
+/** Private or shared with a group: the switch and the group choice of a find, marker or zone. */
 @Component({
   selector: 'app-visibility-choice',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,14 +30,14 @@ import { visibilitySegments } from './visibility';
 export class VisibilityChoiceComponent {
   readonly visibility = input.required<Visibility>();
   readonly groupId = input<string | null>(null);
-  /** Im engen Formular stehen Beschriftung und Schalter nebeneinander. */
+  /** In the narrow form, the label and the switch are side by side. */
   readonly inline = input(false);
 
   readonly visibilityChange = output<Visibility>();
   readonly groupChange = output<string | null>();
 
   private readonly i18n = inject(I18nService);
-  private readonly state = inject(GroupsState);
+  private readonly state = inject(GroupsStore);
 
   protected readonly picking = signal(false);
   protected readonly segments = computed(() => visibilitySegments(this.i18n));
@@ -52,12 +52,12 @@ export class VisibilityChoiceComponent {
   );
 
   constructor() {
-    // Erst beim Teilen braucht das Formular die Gruppen.
+    // The form needs the groups only when a person shares.
     effect(() => {
       if (this.visibility() !== 'shared' || this.state.groups() !== null) return;
       this.state.load(false, true);
     });
-    // Wer genau eine Gruppe hat, teilt ohne weiteren Griff an sie.
+    // A person with exactly one group shares with it without a further step.
     effect(() => {
       const only = this.groups();
       if (this.visibility() !== 'shared' || this.groupId() !== null || only.length !== 1) return;

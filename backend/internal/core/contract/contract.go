@@ -226,7 +226,7 @@ func expectsJSON(r *http.Request, operation *openapi3.Operation) (bool, error) {
 		return true, nil
 	}
 	media, _, err := mime.ParseMediaType(header)
-	if err != nil || !(media == "application/json" || strings.HasSuffix(media, "+json")) {
+	if err != nil || media != "application/json" && !strings.HasSuffix(media, "+json") {
 		return false, problem.InvalidField("body", "model_attributes_type")
 	}
 	return true, nil

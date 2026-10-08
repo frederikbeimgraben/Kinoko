@@ -34,7 +34,7 @@ func emptySchema(t *testing.T) *sql.DB {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { handle.Close() })
+	t.Cleanup(func() { _ = handle.Close() })
 	if err := db.Migrate(context.Background(), handle); err != nil {
 		t.Fatal(err)
 	}
@@ -84,7 +84,7 @@ func storedPairs(t *testing.T, handle *sql.DB) map[pair]struct{} {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	out := map[pair]struct{}{}
 	for rows.Next() {
 		var p pair
@@ -92,6 +92,9 @@ func storedPairs(t *testing.T, handle *sql.DB) map[pair]struct{} {
 			t.Fatal(err)
 		}
 		out[p] = struct{}{}
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
 	}
 	return out
 }

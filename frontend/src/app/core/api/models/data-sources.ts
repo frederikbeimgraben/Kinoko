@@ -42,6 +42,4 @@ export const REMOTE_SOURCE_IDS: readonly RemoteSourceId[] = [
   'dwd-hyras',
   'dwd-soil-moisture',
   'gbif-occurrences',
-  'gbif-taxonomy',
-  'p123',
 ];

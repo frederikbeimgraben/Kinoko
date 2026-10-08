@@ -20,7 +20,7 @@ interface Setup {
   refresh: () => void;
 }
 
-/** Wer prüft, sieht die Titelbild-Zeile. Wer besitzt, nur das Entfernen. */
+/** A reviewer sees the lead row. An owner sees only the removal. */
 interface Access {
   reviewer?: boolean;
   owner?: boolean;
@@ -70,7 +70,7 @@ const TWO = [
 ];
 
 describe('ImageViewComponent', () => {
-  it('zeigt Zähler, Bild und die Angaben', async () => {
+  it('shows the counter, the photo and its data', async () => {
     const { container } = await build(TWO);
 
     expect(screen.getByText('2 von 2')).toBeInTheDocument();
@@ -81,34 +81,42 @@ describe('ImageViewComponent', () => {
     await noViolations(container);
   });
 
-  it('lässt den Ort weg, wenn keiner am Bild hängt', async () => {
-    await build([photo({ id: 'zwei' })]);
+  it('shows a dash for a photo without a place', async () => {
+    await build([photo({ id: 'zwei', lat: null, lon: null })]);
 
-    expect(screen.queryByText('Ort')).not.toBeInTheDocument();
+    expect(screen.getByText('Ort')).toBeInTheDocument();
+    expect(screen.getAllByText('\u2013').length).toBeGreaterThan(0);
   });
 
-  it('zeigt als Gast keine Aktionen', async () => {
+  it('shows the caption as the description', async () => {
+    await build([photo({ id: 'zwei', caption: 'Junge Exemplare im Moos' })]);
+
+    expect(screen.getByText('Beschreibung')).toBeInTheDocument();
+    expect(screen.getByText('Junge Exemplare im Moos')).toBeInTheDocument();
+  });
+
+  it('shows no actions to a guest', async () => {
     await build(TWO);
 
     expect(screen.queryByRole('switch', { name: 'Titelbild' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Bild entfernen' })).not.toBeInTheDocument();
   });
 
-  it('zeigt als Besitzer nur Entfernen', async () => {
+  it('shows only the removal to the owner', async () => {
     await build(TWO, 'zwei', { owner: true });
 
     expect(screen.queryByRole('switch', { name: 'Titelbild' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Bild entfernen' })).toBeInTheDocument();
   });
 
-  it('zeigt als Prüfer die Titelbild-Zeile und das Entfernen', async () => {
+  it('shows the lead row and the removal to a reviewer', async () => {
     await build(TWO, 'zwei', { reviewer: true });
 
     expect(screen.getByRole('switch', { name: 'Titelbild' })).not.toBeChecked();
     expect(screen.getByRole('button', { name: 'Bild entfernen' })).toBeInTheDocument();
   });
 
-  it('setzt das Titelbild und sperrt den Schalter', async () => {
+  it('sets the lead photo and locks the switch', async () => {
     const { http, refresh } = await build(TWO, 'zwei', { reviewer: true });
 
     await userEvent.click(screen.getByRole('switch', { name: 'Titelbild' }));
@@ -122,7 +130,7 @@ describe('ImageViewComponent', () => {
     });
   });
 
-  it('sperrt den Schalter am Titelbild von Anfang an', async () => {
+  it('locks the switch of the lead photo from the start', async () => {
     await build(TWO, 'eins', { reviewer: true });
 
     const toggle = screen.getByRole('switch', { name: 'Titelbild' });
@@ -130,7 +138,7 @@ describe('ImageViewComponent', () => {
     expect(toggle).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('entfernt das Bild und geht zurück zur Art', async () => {
+  it('removes the photo and goes back to the species', async () => {
     const { http, router, refresh } = await build(TWO, 'zwei', { reviewer: true });
 
     await userEvent.click(screen.getByRole('button', { name: 'Bild entfernen' }));
@@ -141,7 +149,7 @@ describe('ImageViewComponent', () => {
     });
   });
 
-  it('schreibt ein eigenes Foto statt einer Lizenzkennung', async () => {
+  it('writes own photo in place of a licence code', async () => {
     await build([photo({ id: 'zwei', licence: 'own' })]);
 
     expect(screen.getByText('Eigenes Foto')).toBeInTheDocument();

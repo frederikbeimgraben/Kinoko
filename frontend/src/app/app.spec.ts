@@ -42,8 +42,11 @@ describe('App', () => {
   it('führt jeden Reiter auf seine Seite', async () => {
     const { navigate } = await app();
 
+    await navigate('/arten');
+    // The species tab opens with its search bar and has no page title.
+    expect(await screen.findByRole('textbox', { name: 'Art suchen' })).toBeInTheDocument();
+
     for (const [path, titel] of [
-      ['/arten', 'Arten'],
       ['/eintraege', 'Einträge'],
       ['/konto', 'Einstellungen'],
     ]) {

@@ -9,7 +9,7 @@ import { PrivateImageComponent } from '../../ui/private-image/private-image.comp
 import { QueueCardSkeletonComponent } from '../../ui/review-queue/queue-card-skeleton.component';
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { findCard, type FindCard } from './find-card';
 import { FindQueueStore } from './find-queue.store';
 
@@ -32,7 +32,7 @@ import { FindQueueStore } from './find-queue.store';
 })
 export class FindQueueComponent {
   private readonly store = inject(FindQueueStore);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 

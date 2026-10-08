@@ -50,7 +50,7 @@ func BuildDEM(ctx context.Context, tiles []string, g Grid, dir string) (DEMFiles
 			if err != nil {
 				return err
 			}
-			defer src.Close()
+			defer func() { _ = src.Close() }()
 			step := itoa(DEMStep)
 			return warpFile(src, f.DEM, append(append([]string{"-t_srs", ModelCRS, "-te"}, g.Extent()...),
 				"-tr", step, step, "-r", "bilinear"))
@@ -77,7 +77,7 @@ func demProcess(source, target, mode string, switches ...string) error {
 	if err != nil {
 		return err
 	}
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 	out, err := src.Dem(target, mode, "", append([]string{"-of", "GTiff"}, switches...), quiet)
 	if err != nil {
 		return fmt.Errorf("derive: gdaldem %s: %w", mode, err)
@@ -93,7 +93,7 @@ func writeAngle(aspect, target string, f func(float64) float64) error {
 	if err != nil {
 		return err
 	}
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 	angle, err := readMasked(src, 0)
 	if err != nil {
 		return err

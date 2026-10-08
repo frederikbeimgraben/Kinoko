@@ -1,0 +1,19 @@
+<app-row-group>
+  <app-list-row
+    [title]="'account.method' | t"
+    [chevron]="true"
+    [clickable]="true"
+    (chosen)="open('/konto/methode')"
+  />
+  <app-list-row
+    [title]="'account.sourcesAndLicences' | t"
+    [chevron]="true"
+    [clickable]="true"
+    (chosen)="open('/konto/lizenzen')"
+  />
+  <app-list-row [title]="'account.version' | t" [plain]="version">
+    @if (updateReady()) {
+      <app-level-pill trail [text]="'konto.aktualisierungBereit' | t" kind="ok" />
+    }
+  </app-list-row>
+</app-row-group>

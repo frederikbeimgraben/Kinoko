@@ -12,6 +12,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/sources"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/fit"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/render"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
@@ -62,10 +64,13 @@ type Job struct {
 	mu  sync.Mutex
 	log io.Writer
 
-	// The stages of Chain read these large inputs once per run.
-	trees  *fit.TreeScales
-	cube   *weather.Cube
-	shared *int
+	// The stages of Chain read these large inputs once per run and drop them when no later step needs them.
+	trees    *fit.TreeScales
+	grids    *render.Tables
+	scales   *pio.Table
+	cube     *weather.Cube
+	cubeVars []string
+	models   *runModels
 }
 
 // Printf writes one line with the time to the run log.
@@ -76,5 +81,6 @@ func (j *Job) Printf(format string, args ...any) {
 	}
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	fmt.Fprintf(j.log, "%s %s\n", time.Now().UTC().Format(time.TimeOnly), fmt.Sprintf(format, args...))
+	// A failed log line must not stop the run.
+	_, _ = fmt.Fprintf(j.log, "%s %s\n", time.Now().UTC().Format(time.TimeOnly), fmt.Sprintf(format, args...))
 }

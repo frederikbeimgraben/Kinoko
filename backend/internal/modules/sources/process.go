@@ -80,7 +80,7 @@ func (m *Module) resume(ctx context.Context) error {
 
 // process validates and derives one version, then activates it when asked.
 // A failure goes into the version row, not into the returned error.
-func (m *Module) process(ctx context.Context, id db.ID, activate bool) error {
+func (m *Module) process(ctx context.Context, id db.ID, activate bool) (err error) {
 	JobLock.Lock()
 	defer JobLock.Unlock()
 	v, err := m.files.version(ctx, m.deps.DB, id)
@@ -95,7 +95,7 @@ func (m *Module) process(ctx context.Context, id db.ID, activate bool) error {
 	if err != nil {
 		return err
 	}
-	defer logFile.Close()
+	defer func() { err = errors.Join(err, logFile.Close()) }()
 	v.Log = logFile
 	if _, err := m.deps.DB.ExecContext(ctx, `UPDATE data_source_version SET state = ?, log_path = ?,
 		error_code = NULL, error_detail = NULL WHERE id = ?`, StateValidating, m.files.rel(logPath), id); err != nil {

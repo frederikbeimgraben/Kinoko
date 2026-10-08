@@ -5,9 +5,9 @@ import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
 import { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row.component';
 
-/** Die gerechneten Stile eines Elements, das es geben muss. */
+/** The computed styles of an element that must be present. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
-  if (element === null) throw new Error('Das Element steht nicht im Baum.');
+  if (element === null) throw new Error('The element is not in the tree.');
   return getComputedStyle(element);
 }
 
@@ -120,7 +120,7 @@ describe('SpeciesRowComponent', () => {
     expect(screen.getByRole('button', { name: /Steinpilz/ })).toHaveFocus();
   });
 
-  it('meldet die gewählte Art und trägt den Druckzustand', async () => {
+  it('reports the chosen species and has only the ripple as press state', async () => {
     const { fixture } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ } });
     let calls = 0;
     fixture.componentInstance.chosen.subscribe(() => (calls += 1));
@@ -130,7 +130,24 @@ describe('SpeciesRowComponent', () => {
 
     expect(calls).toBe(1);
     expect(button).toHaveClass('tap');
-    expect(button).toHaveAttribute('data-press', 'tint');
+    expect(button).not.toHaveAttribute('data-press');
+  });
+
+  it('names the thumb for the shared-element move to the next page', async () => {
+    const { container } = await render(SpeciesRowComponent, {
+      inputs: { species: STEINPILZ, shareKey: 'boletus-edulis' },
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
+
+    const thumb = container.querySelector<HTMLElement>('.row__thumb');
+    expect(thumb?.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
+  });
+
+  it('gives the soft row the low surface', async () => {
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: STEINPILZ, soft: true } });
+
+    expect(container.querySelector('button.row')).toHaveClass('row--soft');
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

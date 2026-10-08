@@ -23,7 +23,7 @@ describe('RowsCardsComponent', () => {
 
     const sizes: Record<string, { width: string; height: string }> = {
       Row: { width: '358px', height: '56px' },
-      Chip: { width: '160px', height: '36px' },
+      Chip: { width: '160px', height: '40px' },
       ChipRow: { width: '390px', height: '44px' },
       ChipSet: { width: '272px', height: '120px' },
       EntryRow: { width: '374px', height: '84px' },

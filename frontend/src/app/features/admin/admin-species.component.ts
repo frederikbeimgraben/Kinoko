@@ -12,10 +12,10 @@ import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { judge } from '../species/facets';
 import { SpeciesFilterSheetComponent } from '../species/filter-sheet.component';
-import { SpeciesFilterState } from '../species/filter.state';
+import { SpeciesFilterStore } from '../species/filter.store';
 import { SpeciesSearchFilterBarComponent } from '../species/search-filter-bar.component';
 import { search } from '../species/rows';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 
 const PAGE = 40;
 
@@ -49,8 +49,8 @@ interface Row {
 export class AdminSpeciesComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly catalogue = inject(SpeciesState);
-  protected readonly filter = inject(SpeciesFilterState);
+  private readonly catalogue = inject(SpeciesStore);
+  protected readonly filter = inject(SpeciesFilterStore);
 
   protected readonly wide = inject(ViewportService).wide;
   protected readonly loading = this.catalogue.loading;

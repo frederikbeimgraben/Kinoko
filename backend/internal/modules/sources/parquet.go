@@ -26,12 +26,12 @@ func openTable(path string) (*table, error) {
 	}
 	info, err := file.Stat()
 	if err != nil {
-		file.Close()
+		_ = file.Close()
 		return nil, err
 	}
 	pf, err := parquet.OpenFile(file, info.Size(), parquet.SkipPageIndex(true), parquet.SkipBloomFilters(true))
 	if err != nil {
-		file.Close()
+		_ = file.Close()
 		return nil, Fail("parquet", "the file is not a parquet file: %v", err)
 	}
 	return &table{file: file, pf: pf}, nil
@@ -89,7 +89,7 @@ func (t *table) each(name string, f func(parquet.Value)) error {
 
 func eachInChunk(chunk parquet.ColumnChunk, buf []parquet.Value, f func(parquet.Value)) error {
 	pages := chunk.Pages()
-	defer pages.Close()
+	defer func() { _ = pages.Close() }()
 	for {
 		page, err := pages.ReadPage()
 		if errors.Is(err, io.EOF) {

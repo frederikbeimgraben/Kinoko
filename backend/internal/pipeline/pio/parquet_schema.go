@@ -20,7 +20,7 @@ func Inspect(path string) (ParquetInfo, error) {
 	if err != nil {
 		return ParquetInfo{}, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	info := ParquetInfo{Rows: pf.NumRows()}
 	for _, col := range pf.Root().Columns() {
 		ct := Any

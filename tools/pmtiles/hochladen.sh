@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Das PMTiles-Archiv in die Dokumentwurzel des Homeservers legen.
+# Put the PMTiles archive into the document root of the homeserver.
 #
-# Ohne --delete: in der Wurzel liegen Angular-Build, Kacheln und Manifeste.
-# rsync schreibt erst eine Temporaerdatei und benennt sie um, darum sieht ein
-# laufender Client entweder das alte oder das neue Archiv, nie ein halbes.
+# No --delete: the root holds the Angular build, the tiles and the manifests.
+# rsync writes a temporary file first and then renames it. Thus a client sees
+# the old archive or the new archive, never half an archive.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -19,7 +19,7 @@ rsync -a --info=progress2 \
   -e "ssh -i $SCHLUESSEL -o IdentitiesOnly=yes" \
   "$QUELLE" "$ZIEL":karte/
 
-# Die App holt Kacheln ueber HTTP-Range. Ohne 206 nuetzt das Archiv nichts.
+# The app gets the tiles with HTTP range requests. Without 206 the archive is of no use.
 echo "Range-Probe:"
 curl -sI -r 0-1023 "$URL" | grep -iE '^(HTTP/|content-range|content-length|content-type)'
 nix run nixpkgs#pmtiles -- show "$URL"

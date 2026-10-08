@@ -5,13 +5,14 @@
   min-block-size: 0;
 }
 
-// Der leere Zustand und der Fehler stehen mittig über der Inhaltsfläche.
-.results__middle {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// The empty and the error state stand in the middle of the content area.
+.results__state {
+  flex: 1;
+}
+
+// Per `SpeciesSkeleton.dc.html`: seven rows inside an 8 px frame.
+.results__skeleton {
+  padding: 8px;
 }
 
 .results__list {
@@ -19,60 +20,32 @@
   min-block-size: 0;
 }
 
-.results__stack {
+// Per `kit.css` `.list`.
+.results__rows {
   display: flex;
   flex-direction: column;
-  gap: var(--size-gutter);
-  padding-block-end: var(--size-gutter);
+  gap: 2px;
+  padding: 0 8px;
 }
 
-.results__group--muted {
+.results__muted {
   opacity: 0.62;
-}
-
-.results__skeleton {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  block-size: var(--size-row-tall);
-  padding-inline: 14px;
-  border-block-end: var(--border-width) solid var(--outline);
-}
-
-.results__bars {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-inline-size: 0;
-}
-
-.results__thumb {
-  flex: none;
-  inline-size: var(--size-thumb);
-  block-size: var(--size-thumb);
-  background: var(--surface-low);
-  border-radius: var(--pilz-colour-radius);
-}
-
-.results__skeleton:last-child {
-  border-block-end: 0;
 }
 
 .results__gap {
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 14px 2px 6px;
+  padding: 14px 12px 6px;
 }
 
 .results__gap span {
-  font-size: 11px;
-  font-weight: var(--fw-semibold);
+  font-size: 12px;
+  font-weight: 600;
   line-height: normal;
-  color: var(--text-var);
+  color: var(--label);
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
 }
 
 .results__gap i {
@@ -81,7 +54,7 @@
   background: var(--outline);
 }
 
-// Der Buchstabenkopf trennt die Treffer alphabetisch, per `kit.css` `.list .lbl`.
+// The head of a group, per `kit.css` `.list .lbl`.
 .lbl {
   padding: 14px 12px 6px;
   font-size: 12px;

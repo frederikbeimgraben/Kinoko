@@ -155,7 +155,8 @@ func writeAtomic(path string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	defer os.Remove(tmp.Name())
+	// After the rename the temporary name does not exist, so the error is expected.
+	defer func() { _ = os.Remove(tmp.Name()) }()
 	_, err = tmp.Write(data)
 	if err = errors.Join(err, tmp.Sync(), tmp.Close()); err != nil {
 		return err

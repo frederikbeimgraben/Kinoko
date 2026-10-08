@@ -1,245 +1,236 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import type { Find, SharedFind, Marker, Zone } from '../../core/api/models';
-import { AuthService } from '../../core/auth';
+import { GroupsStore } from '../../core/access/groups.store';
 import { PersonNamesStore } from '../../core/access/person-names.store';
+import { AuthService } from '../../core/auth';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { SyncService } from '../../core/offline/sync.service';
-import type { SyncKind, SyncTask } from '../../core/offline/sync.types';
-import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
-import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
+import { SyncStore } from '../../core/offline/sync.store';
+import { BannerComponent } from '../../ui/banner/banner.component';
 import { EntryListComponent } from '../../ui/entry-list/entry-list.component';
-import { EntryRowComponent, type EntryRowEntry } from '../../ui/entry-row/entry-row.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
+import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
+import { FilterSheetComponent } from '../../ui/filter-sheet/filter-sheet.component';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
-import { type SegmentOption, SegmentedComponent } from '../../ui/segmented/segmented.component';
-import { SpeciesState } from '../species/species.state';
-import { ObjectSheetState } from '../objects/object-sheet.state';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
+import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { SurfaceComponent } from '../../ui/surface/surface.component';
+import type { IconName } from '../../ui/svg-icon/svg-icon.component';
+import { MyImagesStore } from '../account/my-images.store';
 import { AddEntryState } from '../add-entry/add-entry.state';
-import { visibilityText } from '../add-entry/visibility';
-import type { ObjectKind } from '../map/map.state';
-import { EntriesState, type EntryBody } from './entries.state';
-import { colourToken } from './colors';
-import { findSubline } from './find-subline';
-import { firstName, hectaresText, isoDatum, shortDate } from './formats';
+import { ObjectSheetState } from '../objects/object-sheet.state';
+import { SpeciesStore } from '../species/species.store';
+import { entriesBanner } from './entries-banner';
+import { EntriesStore } from './entries.store';
+import { EntriesFilterBodyComponent } from './entries-filter-body.component';
+import { NO_FILTER, isFiltered, passes, type EntriesFilter, type FilterContext } from './entry-filter';
+import {
+  byDay,
+  markerRow,
+  ownFindRow,
+  pendingRow,
+  sharedFindRow,
+  zoneRow,
+  type EntryRow,
+  type RowContext,
+  type Segment,
+} from './entry-rows';
+import { firstName, isoDatum } from './formats';
 
-/** Die drei Segmente über der Liste (Boards `Entries`, `EntriesMarkers`, `EntriesZones`). */
-type Segment = 'finds' | 'markers' | 'zones';
-
-const SEGMENTS: readonly { value: Segment; label: TranslationKey; waiter: SyncKind }[] = [
-  { value: 'finds', label: 'entry.finds', waiter: 'find' },
-  { value: 'markers', label: 'entry.markers', waiter: 'marker' },
-  { value: 'zones', label: 'entry.zones', waiter: 'zone' },
+/** The chips above the list, per `Entries.dc.html`. */
+const SEGMENTS: readonly { value: Segment; label: TranslationKey; icon: IconName; kind: string }[] = [
+  { value: 'finds', label: 'entry.finds', icon: 'mushroom', kind: 'find' },
+  { value: 'markers', label: 'entry.markers', icon: 'flag', kind: 'marker' },
+  { value: 'zones', label: 'entry.zones', icon: 'zone', kind: 'zone' },
 ];
 
-/** Eine Zeile der Liste, fertig für die Vorlage. */
-interface Row {
-  key: string;
-  colour: string;
-  entry: EntryRowEntry;
-  pending: boolean;
-  /** `null` bei einem Eintrag, der noch auf die Übertragung wartet. */
-  object: { kind: ObjectKind; id: string } | null;
-}
-
-/** Der Reiter Einträge: Segment, Filter, Liste; ein Tipp öffnet das Objekt. */
+/** The entry tab, per `Entries.dc.html`: chips, filter, list and the pending banner. A tap opens the object. */
 @Component({
   selector: 'app-entries',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ChoiceRowComponent,
-    EmptyStateComponent,
-    FilterSheetComponent,
+    BannerComponent,
+    EntriesFilterBodyComponent,
     EntryListComponent,
-    EntryRowComponent,
-    LevelPillComponent,
-    ListRowComponent,
+    FilterChipComponent,
+    FilterSheetComponent,
+    FloatingButtonComponent,
+    IconButtonComponent,
+    NgTemplateOutlet,
     PageHeaderComponent,
-    SegmentedComponent,
-    SvgIconComponent,
+    ScrollFadeDirective,
+    SkeletonComponent,
+    StateViewComponent,
+    SurfaceComponent,
     TranslatePipe,
   ],
   templateUrl: './entries.component.html',
   styleUrl: './entries.component.scss',
 })
 export class EntriesComponent {
-  private readonly species = inject(SpeciesState);
-  private readonly auth = inject(AuthService);
-  private readonly names = inject(PersonNamesStore);
-  private readonly sheet = inject(ObjectSheetState);
-  private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
-  private readonly state = inject(EntriesState);
   private readonly addEntry = inject(AddEntryState);
-  private readonly viewport = inject(ViewportService);
+  private readonly auth = inject(AuthService);
+  private readonly groups = inject(GroupsStore);
+  private readonly i18n = inject(I18nService);
+  private readonly names = inject(PersonNamesStore);
+  private readonly photos = inject(MyImagesStore);
+  private readonly router = inject(Router);
+  private readonly sheet = inject(ObjectSheetState);
+  private readonly species = inject(SpeciesStore);
+  private readonly store = inject(EntriesStore);
+  private readonly sync = inject(SyncStore);
 
-  /** Am Rechner übernimmt der schwebende Plus-Knopf auf der Karte das Eintragen. */
-  protected readonly wide = this.viewport.wide;
-
+  /** On the desktop the floating button of the map adds an entry. */
+  protected readonly wide = inject(ViewportService).wide;
+  protected readonly signedIn = this.store.signedIn;
+  protected readonly segments = SEGMENTS;
   protected readonly segment = signal<Segment>('finds');
   protected readonly filterOpen = signal(false);
-  protected readonly own = signal(true);
-  protected readonly shared = signal(true);
-  protected readonly signedIn = this.state.signedIn;
-  private readonly sync = inject(SyncService);
 
-  protected readonly offline = computed(() => !this.sync.online());
+  protected readonly filter = this.store.filter;
+  protected readonly filtered = computed(() => isFiltered(this.filter()));
+  protected readonly zones = this.store.zones;
+  protected readonly groupList = computed(() => this.groups.groups() ?? []);
 
-  protected readonly segments = computed<SegmentOption[]>(() =>
-    SEGMENTS.map((entry) => ({ value: entry.value, label: this.i18n.translate(entry.label) })),
-  );
+  /** The day of the list. A list that stays open over midnight keeps its day. */
+  protected readonly today = isoDatum(new Date());
 
-  protected readonly filtered = computed(() => !this.own() || !this.shared());
-
-  protected readonly rows = computed<Row[]>(() => {
-    const segment = this.segment();
-    const waiter = SEGMENTS.find((entry) => entry.value === segment)?.waiter ?? 'find';
-    const pending = this.state
-      .pendingEntries()
-      .filter((entry) => entry.kind === waiter)
-      .map((entry) => this.pendingRow(entry));
-    if (segment === 'markers') {
-      return [...pending, ...this.state.markers().map((entry) => this.markerRow(entry))];
-    }
-    if (segment === 'zones') return [...pending, ...this.state.zones().map((zone) => this.zoneRow(zone))];
-    const own = this.own() ? this.state.finds().map((find) => this.findRow(find)) : [];
-    const shared = this.shared() ? this.state.shared().map((find) => this.sharedRow(find)) : [];
-    return [...pending, ...own, ...shared];
+  /** The zone of the zone filter, per `EntriesZone.dc.html`. */
+  protected readonly zoneChip = computed(() => {
+    const id = this.filter().zoneId;
+    return id === null ? null : (this.store.zones().find((zone) => zone.id === id) ?? null);
   });
 
+  private readonly context = computed<RowContext>(() => {
+    // The rows follow the bundle and the names: a name that arrives later fills its row.
+    this.species.species();
+    return {
+      i18n: this.i18n,
+      today: this.today,
+      species: (id) => (id ? this.species.entryById(id) : null),
+      reporter: firstName(this.store.reporter()),
+      person: (ownerId) => {
+        const name = this.names.nameOf(ownerId);
+        return name === null ? null : firstName(name);
+      },
+    };
+  });
+
+  private readonly filterContext = computed<FilterContext>(() => ({
+    today: this.today,
+    zone: this.zoneChip()?.polygon ?? null,
+    photoFinds: this.photos.findIds(),
+  }));
+
+  /** Shared finds of other people. The own shared finds are in the own list already. */
+  private readonly othersFinds = computed(() => {
+    const own = new Set(this.store.finds().map((find) => find.id));
+    return this.store.shared().filter((find) => !own.has(find.id));
+  });
+
+  /** The finds that pass the filter, each with its row. */
+  private readonly findRows = computed<readonly EntryRow[]>(() => {
+    const context = this.context();
+    const filter = this.filter();
+    const check = this.filterContext();
+    const own = this.store
+      .finds()
+      .filter((find) => passes(find, filter, check))
+      .map((find) => ownFindRow(context, find));
+    const others = this.othersFinds()
+      .filter((find) => passes({ ...find, visibility: 'shared', groupId: null }, filter, check))
+      .map((find) => sharedFindRow(context, find));
+    return [...own, ...others];
+  });
+
+  private readonly pending = computed(() => {
+    const context = this.context();
+    return this.store.pendingEntries().map((task) => ({ kind: task.kind, row: pendingRow(context, task) }));
+  });
+
+  protected readonly rows = computed<readonly EntryRow[]>(() => {
+    const segment = this.segment();
+    const kind = SEGMENTS.find((entry) => entry.value === segment)?.kind;
+    const pending = this.pending()
+      .filter((entry) => entry.kind === kind)
+      .map((entry) => entry.row);
+    const context = this.context();
+    const items =
+      segment === 'finds'
+        ? this.findRows()
+        : segment === 'markers'
+          ? this.store.markers().map((marker) => markerRow(context, marker))
+          : this.store.zones().map((zone) => zoneRow(context, zone));
+    return byDay([...pending, ...items]);
+  });
+
+  /** The number in the main button of the filter sheet. */
+  protected readonly matchCount = computed(() => {
+    const count = this.findRows().length;
+    return count === 1
+      ? this.i18n.translate('entry.filter.showOne')
+      : this.i18n.translate('entry.filter.showCount', { count });
+  });
+
+  /** The first answer is pending and the device has nothing: the list is a skeleton. */
+  protected readonly waiting = computed(
+    () => this.store.loading() && this.rows().length === 0 && this.pending().length === 0,
+  );
+
   protected readonly emptyText = computed<TranslationKey>(() =>
-    this.signedIn() ? 'state.noEntries' : 'state.noOwnEntriesGuest',
+    this.filtered() && this.segment() === 'finds' ? 'entry.noMatch' : 'state.noEntries',
+  );
+
+  protected readonly banner = computed(() =>
+    entriesBanner(this.sync.pendingCount(), this.sync.online(), this.i18n),
   );
 
   constructor() {
     void this.species.loadBundle();
-    void this.state.loadShared();
-    // Die Anmeldung kommt manchmal erst nach dem ersten Bild der Seite.
-    effect(() => {
-      this.signedIn();
-      void this.state.load();
-    });
+    void this.store.loadShared();
+    this.store.loadOnSignIn(this.signedIn);
+    this.groups.load(false, true);
+  }
+
+  protected selectSegment(segment: Segment): void {
+    this.segment.set(segment);
+  }
+
+  protected changeFilter(filter: EntriesFilter): void {
+    if (filter.withPhoto && !this.photos.loaded()) this.photos.load();
+    this.store.setFilter(filter);
+  }
+
+  protected resetFilter(): void {
+    this.store.setFilter(NO_FILTER);
+  }
+
+  protected clearZone(): void {
+    this.store.setFilter({ ...this.filter(), zoneId: null });
   }
 
   protected signIn(): void {
     void this.auth.requestSignIn();
   }
 
-  /** Der Weg zum Eintragen führt über die Karte: dort steht das Fadenkreuz. */
+  protected send(): void {
+    void this.store.sendPending();
+  }
+
+  /** An entry starts on the map: the crosshair is there. */
   protected async startEntry(): Promise<void> {
     await this.router.navigate(['/karte']);
     this.addEntry.open();
   }
 
-  protected resetFilter(): void {
-    this.own.set(true);
-    this.shared.set(true);
-  }
-
-  protected selectSegment(value: string): void {
-    const segment = SEGMENTS.find((entry) => entry.value === value);
-    if (segment) this.segment.set(segment.value);
-  }
-
-  protected async open(row: Row): Promise<void> {
+  protected async open(row: EntryRow): Promise<void> {
     if (row.object === null) return;
     await this.router.navigate(['/karte']);
     this.sheet.show(row.object.kind, row.object.id);
-  }
-
-  private speciesName(id: string | null | undefined): string {
-    return id === undefined || id === null ? '' : (this.species.entryById(id)?.name ?? '');
-  }
-
-  private date(iso: string): string {
-    return shortDate(iso, this.i18n, isoDatum(new Date()));
-  }
-
-  private subline(date: string, count: number | null, person: string | null): string {
-    return findSubline(this.i18n, date, count, person);
-  }
-
-  private findRow(find: Find): Row {
-    return {
-      key: `find-${find.id}`,
-      colour: '',
-      entry: {
-        title: this.speciesName(find.speciesId),
-        meta: this.subline(this.date(find.foundOn), find.count, firstName(this.state.reporter())),
-        note: find.note ?? undefined,
-      },
-      pending: false,
-      object: { kind: 'find', id: find.id },
-    };
-  }
-
-  private sharedRow(find: SharedFind): Row {
-    const person = this.names.nameOf(find.ownerId);
-    const name = person === null ? null : firstName(person);
-    return {
-      key: `shared-${find.id}`,
-      colour: '',
-      entry: {
-        title: this.speciesName(find.speciesId),
-        meta: this.subline(this.date(find.foundOn), find.count, name),
-        note: find.note ?? undefined,
-      },
-      pending: false,
-      object: null,
-    };
-  }
-
-  private markerRow(marker: Marker): Row {
-    return {
-      key: `marker-${marker.id}`,
-      colour: colourToken(marker.colour),
-      entry: {
-        title: marker.name,
-        meta: this.i18n.translate('entry.marker.subline', {
-          note: marker.note ?? '',
-          visibility: visibilityText(this.i18n, marker.visibility),
-        }),
-      },
-      pending: false,
-      object: { kind: 'marker', id: marker.id },
-    };
-  }
-
-  private zoneRow(zone: Zone): Row {
-    return {
-      key: `zone-${zone.id}`,
-      colour: colourToken(zone.colour),
-      entry: {
-        title: zone.name,
-        meta: this.i18n.translate('entry.zone.subline', {
-          area: hectaresText(zone.areaHa, this.i18n.locale()),
-          visibility: visibilityText(this.i18n, zone.visibility),
-        }),
-      },
-      pending: false,
-      object: { kind: 'zone', id: zone.id },
-    };
-  }
-
-  private pendingRow(entry: SyncTask<EntryBody>): Row {
-    const body = entry.body;
-    const find = 'foundOn' in body;
-    const title = find ? this.speciesName(body.speciesId) : body.name;
-    const meta = find
-      ? this.subline(this.date(body.foundOn), body.count ?? null, firstName(this.state.reporter()))
-      : '';
-    return {
-      key: `waiting-${entry.id}`,
-      colour: 'colour' in body && body.colour !== undefined ? colourToken(body.colour) : '',
-      entry: { title, meta, note: body.note ?? undefined },
-      pending: true,
-      object: null,
-    };
   }
 }

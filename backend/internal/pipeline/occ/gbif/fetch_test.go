@@ -37,7 +37,9 @@ func TestSlimAndHashMatchPython(t *testing.T) {
 			t.Fatal(err)
 		}
 		var want *string
-		json.Unmarshal(c[1], &want)
+		if err := json.Unmarshal(c[1], &want); err != nil {
+			t.Fatal(err)
+		}
 		got, ok := gbif.HashObserver(obj["v"])
 		if (want == nil) == ok || (ok && got != *want) {
 			t.Errorf("HashObserver(%s) = %q %v, want %s", c[0], got, ok, c[1])

@@ -1,1 +1,11 @@
-<app-hero [photo]="photo()" [alt]="alt()" [height]="260" [interactive]="photo() !== null" (opened)="open()" />
+<app-hero
+  [photo]="photo()"
+  [alt]="alt()"
+  [height]="height()"
+  [index]="index()"
+  [count]="count()"
+  [interactive]="photo() !== null"
+  (opened)="open()"
+  (prev)="step(-1)"
+  (next)="step(1)"
+/>

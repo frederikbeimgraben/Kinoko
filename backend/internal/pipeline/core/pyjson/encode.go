@@ -18,10 +18,9 @@ type layout struct {
 	ensureASCII bool
 }
 
-// Marshal formats v as json.dumps(v, indent=indent, ensure_ascii=ensureASCII).
-// A negative indent means indent=None. Accepted values: nil, bool, string,
-// integers, floats, *Obj, Valuer, slices, arrays, maps with string keys (in
-// key order) and pointers to these. It panics on another type.
+// Marshal formats v as json.dumps(v, indent=indent, ensure_ascii=ensureASCII); a negative indent means None.
+// It accepts nil, bool, string, integers, floats, *Obj, Valuer, slices, arrays, maps with string keys
+// (in key order) and pointers to these. It panics on another type.
 func Marshal(v any, indent int, ensureASCII bool) []byte {
 	l := layout{indent: indent, itemSep: ", ", keySep: ": ", ensureASCII: ensureASCII}
 	if indent >= 0 {

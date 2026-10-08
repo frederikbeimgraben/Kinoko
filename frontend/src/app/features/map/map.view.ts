@@ -17,7 +17,7 @@ import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesState } from '../entries/entries.state';
 import { photoPath } from '../../core/api/models';
-import { SpeciesState } from '../species/species.state';
+import { SpeciesStore } from '../species/species.store';
 import { CombinationState } from './combination.state';
 import { DEFAULT_LAYER, MapState } from './map.state';
 
@@ -27,7 +27,7 @@ export class MapView {
   private readonly i18n = inject(I18nService);
   private readonly tiles = inject(TileService);
   private readonly now = inject(NOW);
-  private readonly catalogue = inject(SpeciesState);
+  private readonly catalogue = inject(SpeciesStore);
   private readonly entries = inject(EntriesState);
   readonly state = inject(MapState);
   readonly combination = inject(CombinationState);

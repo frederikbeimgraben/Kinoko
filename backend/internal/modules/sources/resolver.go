@@ -13,10 +13,9 @@ import (
 // ErrMissing tells that a kind has no active, ready version.
 var ErrMissing = errors.New("sources: no active version")
 
-// Resolver finds the active inputs of the pipeline.
-// Active gives the active version of a kind; speciesID is "" for a kind
-// without species. Path gives the absolute path of an artifact of the
-// active version; the name "original" gives the uploaded file.
+// Resolver finds the active inputs of the pipeline. Active gives the active version of a kind
+// (speciesID "" for a kind without species). Path gives the absolute path of an artifact of
+// the active version. The name "original" gives the uploaded file.
 type Resolver interface {
 	Active(kind Kind, speciesID string) (*Version, error)
 	Path(kind Kind, artifact string) (string, error)

@@ -4,20 +4,7 @@
   gap: var(--size-gutter);
 }
 
-// Der Filterknopf und die aktiven Marken laufen in einer Reihe, die am
-// rechten Rand ausblendet. Per `kit.css` `.chiprow.fade-r`.
-.chiprow {
-  display: flex;
-  flex: none;
-  gap: 8px;
-  padding-inline: var(--size-gutter);
+// The chip row has its own 16 px indent, so it reaches to the edge of the host's gutter.
+.bar__chips {
   margin-inline: calc(var(--size-gutter) * -1);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
-}
-
-.chiprow::-webkit-scrollbar {
-  display: none;
 }

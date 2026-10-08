@@ -19,13 +19,13 @@ type Request struct {
 }
 
 // Bootstrap returns the request of the first fetch: each year from start to the
-// year of now. The open years are checked again.
-func Bootstrap(now time.Time, start int) Request {
+// year of current. The fetch checks the open years again.
+func Bootstrap(current time.Time, start int) Request {
 	years := []int{}
-	for y := start; y <= now.Year(); y++ {
+	for y := start; y <= current.Year(); y++ {
 		years = append(years, y)
 	}
-	return Request{Years: years, Refresh: openYears(now)}
+	return Request{Years: years, Refresh: openYears(current)}
 }
 
 // Weekly returns the request of the weekly run: the previous and the current

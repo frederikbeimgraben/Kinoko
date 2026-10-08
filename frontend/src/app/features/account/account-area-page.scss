@@ -1,0 +1,17 @@
+@use 'page';
+
+:host {
+  @include page.host;
+}
+
+.area {
+  @include page.area;
+}
+
+.pad {
+  @include page.pad;
+}
+
+.fab {
+  @include page.fab;
+}

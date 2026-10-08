@@ -3,6 +3,7 @@ package occ_test
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"math"
 	"os"
 	"path/filepath"
@@ -157,7 +158,7 @@ func TestBuildMergesArchiveAndAPI(t *testing.T) {
 	if st.Duplicates != 2 {
 		t.Errorf("duplicates %d, want 2", st.Duplicates)
 	}
-	if _, _, err := occ.BuildOccurrences(occ.Sources{API: filepath.Join(dir, "none")}, nil, occ.MaxUncertainty); err != occ.ErrNoFiles {
+	if _, _, err := occ.BuildOccurrences(occ.Sources{API: filepath.Join(dir, "none")}, nil, occ.MaxUncertainty); !errors.Is(err, occ.ErrNoFiles) {
 		t.Errorf("no files: %v", err)
 	}
 }

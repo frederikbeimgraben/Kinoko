@@ -2,6 +2,19 @@
   display: block;
 }
 
+// Per `kit.css` `.grp>.row`: the last row of a group has the round lower corners.
+:host-context(.grp):first-child .add-row {
+  border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
+}
+
+:host-context(.grp):last-child .add-row {
+  border-radius: var(--r-row) var(--r-row) var(--r-item) var(--r-item);
+}
+
+:host-context(.grp):only-child .add-row {
+  border-radius: var(--r-item);
+}
+
 .add-row {
   display: flex;
   align-items: center;

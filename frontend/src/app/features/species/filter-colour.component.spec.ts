@@ -6,7 +6,7 @@ import { catalogueProviders, catalogueReady } from '../../testing/catalogue-doub
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
 import { SpeciesColourComponent } from './filter-colour.component';
-import { SpeciesFilterState } from './filter.state';
+import { SpeciesFilterStore } from './filter.store';
 
 const STEINPILZ = speciesEntry({
   slug: 'steinpilz',
@@ -30,10 +30,10 @@ const BUNDLE = speciesBundle([STEINPILZ]);
 
 interface Setup {
   container: Element;
-  filter: SpeciesFilterState;
+  filter: SpeciesFilterStore;
 }
 
-/** Der Name des Körperteils, dessen Ziehharmonika-Zeile die Farbwahl zeigt. */
+/** The name of the body part whose fold row shows the colour choice. */
 function openPart(container: Element): string | undefined {
   const row = container.querySelector('app-expand-row:has(app-colour-picker)');
   return row?.querySelector('.xp__head > span:first-child')?.textContent ?? undefined;
@@ -47,7 +47,7 @@ async function build(): Promise<Setup> {
   await vi.waitFor(() => {
     expect(screen.getByText('Hut')).toBeInTheDocument();
   });
-  return { container, filter: TestBed.inject(SpeciesFilterState) };
+  return { container, filter: TestBed.inject(SpeciesFilterStore) };
 }
 
 describe('SpeciesColourComponent', () => {

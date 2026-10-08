@@ -52,9 +52,9 @@ func TestFetchRunOfOneSourceRunsOnlyItsStep(t *testing.T) {
 func TestFetchOfASourceWithoutFetcherFails(t *testing.T) {
 	f := newFixture(t, 1)
 	run := f.queue(enums.RunKindFetch)
-	f.exec("INSERT INTO remote_fetch_request (run_id, source, force) VALUES (?, 'p123', 0)", run.ID)
+	f.exec("INSERT INTO remote_fetch_request (run_id, source, force) VALUES (?, 'retired-source', 0)", run.ID)
 	f.runNext()
-	f.expectSteps(run.ID, "check inputs=finished", "fetch p123=failed")
+	f.expectSteps(run.ID, "check inputs=finished", "fetch retired-source=failed")
 	if got := f.get(run.ID); got.State != enums.RunStateFailed {
 		t.Fatalf("state = %s", got.State)
 	}

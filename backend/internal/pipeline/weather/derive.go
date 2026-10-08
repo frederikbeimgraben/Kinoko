@@ -96,11 +96,9 @@ func Derive(c *Cube, names []string) (map[string][]float32, error) {
 	return DeriveWith(c, names, n)
 }
 
-// DeriveWith is Derive with normals from another cube, for example the full
-// record when c holds only the last weeks (region_map.py). Names are:
-//   - a column of c, or "paws" (the mean of PawsVars);
-//   - <base>_lag<k>, <base>_sum<w>, <base>_mean<w>, <base>_mittel<w>, <base>_drop_<k>w;
-//   - <base>_anom and <base>_ratio against the normals.
+// DeriveWith is Derive with normals from another cube, for example the full record when c holds only the last
+// weeks (region_map.py). A name is a column of c, "paws" (the mean of PawsVars), <base>_lag<k>, _sum<w>,
+// _mean<w>, _mittel<w>, _drop_<k>w, or <base>_anom and _ratio against the normals.
 func DeriveWith(c *Cube, names []string, n *Normals) (map[string][]float32, error) {
 	nc, nw := len(c.Cells), len(c.Weeks)
 	out := make(map[string][]float32, len(names))
@@ -121,6 +119,37 @@ func DeriveWith(c *Cube, names []string, n *Normals) (map[string][]float32, erro
 		}
 	}
 	return out, nil
+}
+
+// Inputs gives the checkpoints of Jobs that the names of DeriveWith read, sorted.
+// A name that is not a feature of DeriveWith stays as it is.
+func Inputs(names []string) []string {
+	out := []string{}
+	for _, name := range names {
+		out = append(out, inputsOf(name)...)
+	}
+	slices.Sort(out)
+	return slices.Compact(out)
+}
+
+func inputsOf(name string) []string {
+	if slices.ContainsFunc(Jobs, func(j Job) bool { return j.Name == name }) {
+		return []string{name}
+	}
+	if name == "paws" {
+		return PawsVars
+	}
+	for _, suffix := range []string{"_anom", "_ratio"} {
+		if base, ok := strings.CutSuffix(name, suffix); ok {
+			return inputsOf(base)
+		}
+	}
+	for _, re := range []*regexp.Regexp{dropRe, lagRe, rollRe} {
+		if m := re.FindStringSubmatch(name); m != nil {
+			return inputsOf(m[1])
+		}
+	}
+	return []string{name}
 }
 
 func anomalyBases(names []string) []string {

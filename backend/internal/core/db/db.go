@@ -50,8 +50,7 @@ func Open(path string) (*sql.DB, error) {
 		handle.SetMaxOpenConns(1)
 	}
 	if err := handle.Ping(); err != nil {
-		handle.Close()
-		return nil, err
+		return nil, errors.Join(err, handle.Close())
 	}
 	return handle, nil
 }
@@ -86,7 +85,7 @@ func All[T any](ctx context.Context, q Querier, scan func(Scanner) (T, error), q
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	out := []T{}
 	for rows.Next() {
 		value, err := scan(rows)

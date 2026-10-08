@@ -23,10 +23,8 @@ type Settings struct {
 	OIDCClientID   string
 	Origin         string
 	AdminGroup     string
-	InternalToken  string
 	MaxPhotoBytes  int64
 	Listen         string
-	Chain          string
 	RunLogs        string
 	DataDir        string
 	DataRoot       string
@@ -45,10 +43,8 @@ func Defaults() Settings {
 		OIDCClientID:   "pilze",
 		Origin:         "http://localhost:4200",
 		AdminGroup:     "pilze-admins",
-		InternalToken:  "intern",
 		MaxPhotoBytes:  12 * 1024 * 1024,
 		Listen:         "127.0.0.1:8111",
-		Chain:          "./var/modell",
 		RunLogs:        "./var/runs",
 		DataRoot:       "./var/daten",
 		PipelineEnable: true,
@@ -83,9 +79,7 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("OIDC_CLIENT_ID", &s.OIDCClientID)
 	text("ORIGIN", &s.Origin)
 	text("ADMIN_GROUP", &s.AdminGroup)
-	text("INTERNAL_TOKEN", &s.InternalToken)
 	text("LISTEN", &s.Listen)
-	text("CHAIN", &s.Chain)
 	text("RUN_LOGS", &s.RunLogs)
 	text("DATEN", &s.DataDir)
 	text("DATA", &s.DataRoot)
@@ -156,7 +150,7 @@ func readDotEnv(path string) (Lookup, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	values := map[string]string{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

@@ -3,6 +3,7 @@ package gbif
 import (
 	"bufio"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -91,16 +92,13 @@ func (w *chunkWriter) write(line []byte) error {
 // finish closes the partial file and keeps it for a later commit.
 func (w *chunkWriter) finish() error {
 	if err := w.gz.Close(); err != nil {
-		w.file.Close()
-		return err
+		return errors.Join(err, w.file.Close())
 	}
 	if err := w.buf.Flush(); err != nil {
-		w.file.Close()
-		return err
+		return errors.Join(err, w.file.Close())
 	}
 	if err := w.file.Sync(); err != nil {
-		w.file.Close()
-		return err
+		return errors.Join(err, w.file.Close())
 	}
 	return w.file.Close()
 }
@@ -108,6 +106,7 @@ func (w *chunkWriter) finish() error {
 func (w *chunkWriter) commit() error { return os.Rename(w.path+PartialSuffix, w.path) }
 
 func (w *chunkWriter) abort() {
-	w.file.Close()
-	os.Remove(w.path + PartialSuffix)
+	// abort only cleans up after a failure, so a second error adds nothing.
+	_ = w.file.Close()
+	_ = os.Remove(w.path + PartialSuffix)
 }

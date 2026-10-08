@@ -2,6 +2,7 @@ package activity
 
 import (
 	"encoding/json"
+	"errors"
 	"math"
 	"os"
 	"testing"
@@ -102,7 +103,7 @@ func TestWindowLeavesTheDayOut(t *testing.T) {
 	if v := f.SampleAt([]float64{12_500}, []float64{12_500}, d(7), 1)[0]; v.Name != "activity_rate_7d_h1" || !math.IsNaN(float64(v.Values[0])) {
 		t.Errorf("a horizon before the first day gives NaN: %s %v", v.Name, v.Values[0])
 	}
-	if _, err := New(nil, nil, BlockM); err != ErrNoRecords {
+	if _, err := New(nil, nil, BlockM); !errors.Is(err, ErrNoRecords) {
 		t.Errorf("no records: %v", err)
 	}
 }

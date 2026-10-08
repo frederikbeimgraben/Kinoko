@@ -13,10 +13,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// extractGolden is testdata/extract.json from testdata/gen_golden.py:
-//   - main, refreshMain: the checkpoints of extract_grids.main (the second run with --refresh-from 2021);
-//   - fixed, refreshFixed: extract_grids.weekly over the days of both files, with NaN for a
-//     sum without a value. These are the values with bug 8 and bug 9 fixed.
+// extractGolden is testdata/extract.json of testdata/gen_golden.py. main and refreshMain are the checkpoints
+// of extract_grids.main (the second with --refresh-from 2021). fixed and refreshFixed are extract_grids.weekly
+// over the days of both files, with NaN for a sum without a value: the values without bug 8 and bug 9.
 type extractGolden struct {
 	Main         map[string][][4]any `json:"main"`
 	Fixed        map[string][][4]any `json:"fixed"`
@@ -206,7 +205,7 @@ func copyTree(t *testing.T, src, dst string) {
 		if err != nil {
 			return err
 		}
-		defer in.Close()
+		defer func() { _ = in.Close() }()
 		out, err := os.Create(target)
 		if err != nil {
 			return err

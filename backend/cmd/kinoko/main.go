@@ -27,7 +27,7 @@ func main() {
 	}
 }
 
-func run(args []string) error {
+func run(args []string) (err error) {
 	command := "serve"
 	if len(args) > 0 {
 		command = args[0]
@@ -42,7 +42,7 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
-	defer handle.Close()
+	defer func() { err = errors.Join(err, handle.Close()) }()
 	switch command {
 	case "migrate":
 		return db.Migrate(ctx, handle)
@@ -53,7 +53,7 @@ func run(args []string) error {
 		}
 		return serve(ctx, settings.Listen, service.Handler)
 	case "import-catalog":
-		var data fs.FS = os.DirFS(settings.DataDir)
+		data := os.DirFS(settings.DataDir)
 		if settings.DataDir == "" {
 			if data, err = fs.Sub(backend.Data, "daten"); err != nil {
 				return err

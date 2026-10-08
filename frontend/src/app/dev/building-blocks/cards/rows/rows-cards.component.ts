@@ -6,6 +6,7 @@ import { AccountTileComponent } from '../../../../ui/account-tile/account-tile.c
 import { EntryListComponent, type EntryListRow } from '../../../../ui/entry-list/entry-list.component';
 import { EntryRowComponent, type EntryRowEntry } from '../../../../ui/entry-row/entry-row.component';
 import { ExpandRowComponent } from '../../../../ui/expand-row/expand-row.component';
+import { ChipRowComponent, type ChipRowItem } from '../../../../ui/chip-row/chip-row.component';
 import { FilterChipComponent } from '../../../../ui/filter-chip/filter-chip.component';
 import { ChipGroupComponent, type Chip } from '../../../../ui/chip-group/chip-group.component';
 import { FoldSectionComponent } from '../../../../ui/fold-section/fold-section.component';
@@ -71,13 +72,13 @@ const EDIBILITY: readonly (readonly [string, WorkshopKey])[] = [
     EntryListComponent,
     EntryRowComponent,
     ExpandRowComponent,
+    ChipRowComponent,
     FilterChipComponent,
     FoldSectionComponent,
     ListRowComponent,
     TranslatePipe,
   ],
   templateUrl: './rows-cards.component.html',
-  styleUrl: './rows-cards.component.scss',
 })
 export class RowsCardsComponent {
   private readonly i18n = inject(I18nService);
@@ -96,6 +97,13 @@ export class RowsCardsComponent {
     }),
   );
   protected readonly entry: EntryRowEntry = this.entryListRows[1].entry;
+  /** The chips of `ChipRow.dc.html` without an active group. */
+  protected readonly filterChips: readonly ChipRowItem[] = [
+    { key: 'all', label: '', icon: 'filter', iconLabel: this.i18n.translate('common.filter') },
+    { key: 'edibility', label: this.i18n.translate('species.field.edibility'), icon: 'eat' },
+    { key: 'capShape', label: this.i18n.translate('filter.group.hutform'), icon: 'mushroom' },
+    { key: 'colour', label: this.i18n.translate('filter.colour.title'), icon: 'palette' },
+  ];
   protected readonly edibilityChips: readonly Chip[] = EDIBILITY.map(([value, label]) => ({
     value,
     label: this.i18n.translate(label),

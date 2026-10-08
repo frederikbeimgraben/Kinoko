@@ -43,8 +43,6 @@ export const REMOTE_TEXT: Readonly<Record<RemoteSourceId, TranslationKey>> = {
   'dwd-hyras': 'admin.dataSources.remote.dwd-hyras',
   'dwd-soil-moisture': 'admin.dataSources.remote.dwd-soil-moisture',
   'gbif-occurrences': 'admin.dataSources.remote.gbif-occurrences',
-  'gbif-taxonomy': 'admin.dataSources.remote.gbif-taxonomy',
-  p123: 'admin.dataSources.remote.p123',
 };
 
 export const STATE_TEXT: Readonly<Record<DataSourceState | VersionState, TranslationKey>> = {

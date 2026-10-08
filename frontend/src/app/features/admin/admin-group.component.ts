@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { GroupsState } from '../../core/access/groups.state';
+import { GroupsStore } from '../../core/access/groups.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -18,7 +18,6 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { GroupMembersComponent } from '../account/group-members.component';
-import { AdminSharedStore } from './admin-shared.store';
 
 /** A group in the administration: rename it, remove a member or delete it. */
 @Component({
@@ -42,11 +41,10 @@ export class AdminGroupComponent {
 
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(GroupsState);
-  private readonly writes = inject(AdminSharedStore);
+  private readonly state = inject(GroupsStore);
 
   protected readonly asking = signal(false);
-  protected readonly saving = this.writes.saving;
+  protected readonly saving = this.state.writing;
 
   protected readonly loaded = computed(() => this.state.groups() !== null);
   protected readonly group = computed(() => this.state.one(this.id()));
@@ -64,28 +62,23 @@ export class AdminGroupComponent {
   }
 
   protected removeMember(userId: string): void {
-    this.writes.removeMember({ id: this.id(), userId });
+    void this.state.removeMember(this.id(), userId);
   }
 
   protected save(): void {
     const name = this.name().trim();
     if (name === '') return;
-    this.writes.renameGroup({
-      id: this.id(),
-      name,
-      onDone: () => {
-        this.back();
-      },
+    if (this.saving()) return;
+    void this.state.rename(this.id(), name).then((group) => {
+      if (group !== null) this.back();
     });
   }
 
   protected remove(): void {
-    this.writes.removeGroup({
-      id: this.id(),
-      onDone: () => {
-        this.asking.set(false);
-        this.back();
-      },
+    void this.state.remove(this.id()).then((done) => {
+      if (!done) return;
+      this.asking.set(false);
+      this.back();
     });
   }
 

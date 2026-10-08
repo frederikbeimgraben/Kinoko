@@ -1,0 +1,41 @@
+<app-page-header>
+  <app-search-field
+    headline
+    [plain]="plain()"
+    [value]="filter.query()"
+    [placeholder]="'species.search.placeholder' | t"
+    (valueChange)="filter.setQuery($event)"
+  />
+  <app-icon-button
+    icon="sort"
+    kind="plain"
+    [label]="'species.sort.button' | t"
+    (pressed)="open.set('sort')"
+  />
+  <app-icon-button
+    icon="more"
+    kind="plain"
+    [label]="'species.menu.button' | t"
+    (pressed)="open.set('menu')"
+  />
+</app-page-header>
+
+<app-popover
+  [open]="open() === 'sort'"
+  [anchor]="anchors().sort"
+  [label]="'species.sort.button' | t"
+  (closed)="open.set(null)"
+>
+  @for (sort of sorts(); track sort.key) {
+    <app-popover-item [label]="sort.label" [active]="sort.on" (chosen)="setSort(sort.key)" />
+  }
+</app-popover>
+
+<app-popover
+  [open]="open() === 'menu'"
+  [anchor]="anchors().menu"
+  [label]="'species.menu.button' | t"
+  (closed)="open.set(null)"
+>
+  <app-popover-item icon="search" [label]="'species.menu.glossary' | t" (chosen)="toGlossary()" />
+</app-popover>

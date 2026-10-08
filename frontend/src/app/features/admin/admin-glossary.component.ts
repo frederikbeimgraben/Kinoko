@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlossaryState } from '../../core/access/glossary.state';
+import { GlossaryStore } from '../../core/access/glossary.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -12,7 +12,6 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
-import { AdminSharedStore } from './admin-shared.store';
 
 /** A new entry has no id yet. */
 const NEW = 'neu';
@@ -38,14 +37,13 @@ const NEW = 'neu';
 export class AdminGlossaryComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
-  private readonly state = inject(GlossaryState);
-  private readonly writes = inject(AdminSharedStore);
+  private readonly state = inject(GlossaryStore);
 
   protected readonly wide = inject(ViewportService).wide;
   protected readonly search = this.state.search;
   protected readonly entries = this.state.found;
   protected readonly loaded = computed(() => this.state.items() !== null);
-  protected readonly saving = this.writes.saving;
+  protected readonly saving = this.state.writing;
 
   protected readonly editing = signal<string | null>(null);
   protected readonly term = signal('');
@@ -81,12 +79,10 @@ export class AdminGlossaryComponent {
     const id = this.editing();
     const write = { term: this.term().trim(), definition: this.definition().trim() };
     if (id === null || write.term === '' || write.definition === '') return;
-    this.writes.saveEntry({
-      id: id === NEW ? null : id,
-      write,
-      onDone: () => {
-        this.close();
-      },
+    if (this.saving()) return;
+    const call = id === NEW ? this.state.create(write) : this.state.update(id, write);
+    void call.then((entry) => {
+      if (entry !== null) this.close();
     });
   }
 
@@ -96,11 +92,8 @@ export class AdminGlossaryComponent {
       this.close();
       return;
     }
-    this.writes.removeEntry({
-      id,
-      onDone: () => {
-        this.close();
-      },
+    void this.state.remove(id).then((done) => {
+      if (done) this.close();
     });
   }
 

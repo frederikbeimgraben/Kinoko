@@ -21,11 +21,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
-// The fixtures under testdata/golden come from testdata/gen_golden.py. It runs
-// region_map.main (--region tt --weeks 4 --forecast 2 --tiles --no-image) and
-// input_layers.main (--only-weekly --weeks 3 --tiles) of modell/src/pilze on a
-// synthetic region of 616 cells, and keeps the inputs beside the outputs.
-
+// golden holds the fixtures of testdata/gen_golden.py: region_map.main (--region tt --weeks 4 --forecast 2
+// --tiles --no-image) and input_layers.main (--only-weekly --weeks 3 --tiles) of modell/src/pilze on a
+// synthetic region of 616 cells. The inputs are beside the outputs.
 const golden = "testdata/golden"
 
 var goldenRegion = [4]float64{9.40, 51.25, 9.60, 51.35}
@@ -78,7 +76,7 @@ func goldenCube(t *testing.T, vars ...string) *weather.Cube {
 func goldenRecords(t *testing.T) []occ.Record {
 	t.Helper()
 	var raw []struct {
-		X, Y                   float64
+		X, Y                    float64
 		Date, Species, Observer string
 	}
 	readJSON(t, goldenPath("input", "records.json"), &raw)
@@ -205,7 +203,7 @@ func TestRenderSpeciesMatchesRegionMap(t *testing.T) {
 	cfg.ChunkRows = 250 // several chunks over 616 rows
 	in := Inputs{Tables: goldenTables(t, ScaleColumns(b)), Weather: goldenCube(t, "pr", "tas", "tasmin"),
 		Records: goldenRecords(t), Bundle: b, Warper: tiles.NewGDALWarper()}
-	if _, err := RenderSpecies(context.Background(), in, cfg); err != nil {
+	if _, err := Species(context.Background(), in, cfg); err != nil {
 		t.Fatal(err)
 	}
 	got, err := os.ReadFile(filepath.Join(maps, "steinpilz-test.json"))
@@ -237,7 +235,7 @@ func TestRenderLayersMatchesInputLayers(t *testing.T) {
 	in := LayerInputs{Tables: goldenTables(t, nil), Warper: tiles.NewGDALWarper(),
 		Weather: goldenCube(t, "pr", "tas", "tasmin", "tasmax", "hurs", "paws_spruce", "paws_beech",
 			"paws_oak", "paws_pine", "days_since_rain", "frost_days", "heat_days")}
-	if _, err := RenderLayers(context.Background(), in, cfg); err != nil {
+	if _, err := Layers(context.Background(), in, cfg); err != nil {
 		t.Fatal(err)
 	}
 	got, err := os.ReadFile(filepath.Join(maps, LayersFile))

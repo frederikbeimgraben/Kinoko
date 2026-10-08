@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { DataSourcesApi } from '../../../core/api/data-sources.api';
 import { noViolations } from '../../../testing/axe';
 import { ANY_ROUTE } from '../../../testing/routes';
-import { SpeciesState } from '../../species/species.state';
+import { SpeciesStore } from '../../species/species.store';
 import { DataSourceComponent } from './data-source.component';
 import { DataSourcesComponent } from './data-sources.component';
 import { DataSourcesApiDouble } from './data-sources.testing';
@@ -16,7 +16,7 @@ function providers(api: DataSourcesApiDouble): (Provider | EnvironmentProviders)
   return [
     provideRouter(ANY_ROUTE),
     { provide: DataSourcesApi, useValue: api },
-    { provide: SpeciesState, useValue: { loadBundle: () => Promise.resolve(), species: signal([]) } },
+    { provide: SpeciesStore, useValue: { loadBundle: () => Promise.resolve(), species: signal([]) } },
   ];
 }
 

@@ -60,7 +60,7 @@ func cleanLayers(maps string, data []byte) error {
 		} `json:"layers"`
 	}
 	if err := json.Unmarshal(data, &m); err != nil {
-		return nil
+		return nil //nolint:nilerr // A manifest that does not parse names no folder, so there is nothing to clean.
 	}
 	var errs []error
 	for _, l := range m.Layers {

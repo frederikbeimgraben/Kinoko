@@ -3,6 +3,7 @@ package season
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"math"
 	"os"
 	"path/filepath"
@@ -165,7 +166,7 @@ func TestTableSplitsClosedYearsAndCountsPerSpecies(t *testing.T) {
 	if m := doc.Arten["Morchella esculenta"]; m.BegehungenMitFund != 0 || len(m.FundeJeWoche) != 52 {
 		t.Errorf("a species without a find has zeros: %+v", m)
 	}
-	if _, err := Table(nil, LatinNames(), calendar.Week{Year: 2026, Week: 1}); err != ErrNoVisits {
+	if _, err := Table(nil, LatinNames(), calendar.Week{Year: 2026, Week: 1}); !errors.Is(err, ErrNoVisits) {
 		t.Errorf("no visits: %v", err)
 	}
 }

@@ -13,7 +13,6 @@
     "src/app/core/api/api-client.ts#e0e0f635",
     "src/app/core/api/api-client.ts#ecee9a28",
     "src/app/core/api/api.config.ts#cbee7775",
-    "src/app/core/api/contract.d.ts#71871d01",
     "src/app/core/api/contract.d.ts#a420fd4e",
     "src/app/core/api/entries.api.ts#07a0ed49",
     "src/app/core/api/entries.api.ts#0c3b3eed",
@@ -224,7 +223,6 @@
   ],
   "selectors": [],
   "german": [
-    "src/app/core/api/contract.d.ts#5bd1269b",
     "src/app/core/api/models/data-sources.ts#5bd1269b",
     "src/app/features/account/my-images.component.ts#a2d37bf3",
     "src/app/features/admin/data-sources/labels.ts#76303edf",

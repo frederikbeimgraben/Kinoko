@@ -48,7 +48,7 @@ func OpenOccurrences(zipPath string) (*Occurrences, error) {
 	}
 	o, err := openOccurrences(z)
 	if err != nil {
-		z.Close()
+		_ = z.Close()
 		return nil, fmt.Errorf("archive: %s: %w", zipPath, err)
 	}
 	return o, nil
@@ -71,7 +71,7 @@ func openDwCA(z *Zip, metaName string) (*Occurrences, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 	core, err := ParseMeta(r)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func openSimpleCSV(z *Zip, name string) (*Occurrences, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 	tr, err := NewTSVReader(r, TSVOptions{Delim: core.Delim})
 	if err != nil {
 		return nil, err
@@ -161,7 +161,7 @@ func (o *Occurrences) Records() iter.Seq2[Record, error] {
 			yield(Record{}, err)
 			return
 		}
-		defer r.Close()
+		defer func() { _ = r.Close() }()
 		tr, err := NewTSVReader(r, TSVOptions{Delim: o.core.Delim, Quote: o.core.Quote})
 		if err != nil {
 			yield(Record{}, err)
@@ -196,7 +196,7 @@ func (o *Occurrences) PubDate() (date time.Time, ok bool, err error) {
 	if err != nil {
 		return time.Time{}, false, nil
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 	dec := xml.NewDecoder(r)
 	for {
 		tok, err := dec.Token()

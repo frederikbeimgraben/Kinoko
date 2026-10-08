@@ -4,6 +4,7 @@
 package geo
 
 import (
+	"errors"
 	"math"
 	"strconv"
 	"strings"
@@ -168,8 +169,7 @@ func pyFloat(text string) (float64, bool) {
 }
 
 func isRange(err error) bool {
-	numErr, ok := err.(*strconv.NumError)
-	return ok && numErr.Err == strconv.ErrRange
+	return errors.Is(err, strconv.ErrRange)
 }
 
 // validUnderscores accepts an underscore only between two digits, as Python does.

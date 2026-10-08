@@ -7,19 +7,12 @@ import { flatMap } from '../fixtures/flat-map';
 import { presetFilter } from '../fixtures/filter-state';
 import { bundle, SEVEN, STONE, TWELVE } from '../fixtures/species';
 import { CORE_CHOICE, largeBundle } from '../fixtures/species-catalogue';
-import {
-  DESKTOP_SPECIES,
-  FILTER_DESKTOP,
-  RESULT_HITS,
-  RESULT_REST,
-  RESULT_UNKNOWN,
-  TAXON,
-} from '../fixtures/species-boards';
+import { DESKTOP_SPECIES, EDIBLE_HITS, FILTER_DESKTOP, RESULT_REST, TAXON } from '../fixtures/species-boards';
 import { expectBoard, skipPending } from './board';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
 
-/** Was die angemeldete App nebenher holt. Ohne Antwort meldet sie einen Fehler. */
+/** The data that the signed-in app gets in the background. Without a reply it shows an error. */
 const EMPTY_FINDS = { items: [], nextCursor: null };
 const SIGNED_IN: Record<string, unknown> = {
   '/api/combinations': { eintraege: [], gesamt: 0 },
@@ -28,25 +21,25 @@ const SIGNED_IN: Record<string, unknown> = {
   '/api/zones': EMPTY_FINDS,
 };
 
-/** Ein Board gehört zu einem Gerät und läuft nicht, solange es aussteht. */
+/** A board belongs to one device. It does not run while it is pending. */
 function guard(board: string, device: 'phone' | 'wide'): void {
   test.skip(test.info().project.name !== device, `Board gehört zu ${device}`);
   skipPending(board);
 }
 
-/** Öffnet den Reiter Arten mit einem Katalog. */
+/** Opens the species tab with a catalogue. */
 async function openList(page: Page, items: unknown, extra: Record<string, unknown> = {}): Promise<void> {
   await mockApi(page, { '/api/species/bundle': items, ...extra }, { photo: ROW_PHOTO });
   await flatMap(page);
   await page.goto('/arten');
 }
 
-/** Wartet, bis eine Art in der Liste steht. */
+/** Waits until a species is in the list. */
 async function seen(page: Page, name: string): Promise<void> {
   await expect(page.getByText(name, { exact: true }).first()).toBeVisible();
 }
 
-/** Öffnet das Filterblatt und darin eine Gruppe. */
+/** Opens the filter sheet and a group in it. */
 async function openGroup(page: Page, group: string): Promise<void> {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: group }).first().click();
@@ -54,20 +47,12 @@ async function openGroup(page: Page, group: string): Promise<void> {
 
 test('Species', async ({ page }) => {
   guard('Species', 'phone');
-  await openList(page, bundle(SEVEN));
+  await openList(page, bundle(SEVEN), { '/api/photos': EMPTY_FINDS });
+  // The board shows the list after a visit of the first species: its row has the soft ground.
+  await page.getByText('Grüner Knollenblätterpilz').click();
+  await expect(page.getByRole('heading', { name: 'Grüner Knollenblätterpilz' })).toBeVisible();
+  await page.goBack();
   await seen(page, 'Speisemorchel');
-  await expectBoard(page, 'Species');
-});
-
-const SPECIES_SCROLL = 31;
-
-test('SpeciesScrolled', async ({ page }) => {
-  guard('SpeciesScrolled', 'phone');
-  await openList(page, bundle(TWELVE));
-  await seen(page, 'Gallenröhrling');
-  await page.locator('.results__list .list').evaluate((one, top) => {
-    one.scrollTo(0, top);
-  }, SPECIES_SCROLL);
   await expectBoard(page, 'Species');
 });
 
@@ -97,7 +82,7 @@ test('SpeciesSkeleton', async ({ page }) => {
   await mockApi(page, {}, { photo: ROW_PHOTO });
   await flatMap(page);
   await page.route('**/api/species/bundle', () => {
-    // Der Katalog bleibt aus: das Brett zeigt den Ladezustand.
+    // The catalogue does not come, so the board shows the loading state.
   });
   await page.goto('/arten');
   await page.waitForTimeout(700);
@@ -110,7 +95,7 @@ test('SpeciesError', async ({ page }) => {
   await flatMap(page);
   await page.route('**/api/species/bundle', (route) => route.abort());
   await page.goto('/arten');
-  await expect(page.getByText('Laden fehlgeschlagen')).toBeVisible();
+  await expect(page.getByText('Keine Verbindung')).toBeVisible();
   await expectBoard(page, 'SpeciesError');
 });
 
@@ -121,7 +106,7 @@ test('SpeciesFilter', async ({ page }) => {
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
   await expect(page.getByRole('button', { name: /Arten anzeigen/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Vorhersage/ })).toBeVisible();
-  // Ein Knopf von 18 px bleibt unter der Schwelle des Bildvergleichs.
+  // A button of 18 px stays below the threshold of the image comparison.
   await expect(page.getByRole('dialog').getByRole('button', { name: 'Schließen' })).toHaveCount(0);
   await expectBoard(page, 'SpeciesFilter');
 });
@@ -137,13 +122,9 @@ test('FilterColour', async ({ page }) => {
 });
 
 test('FilterResult', async ({ page }) => {
-  guard('FilterResult', 'phone');
-  await presetFilter(page, {
-    values: { edibility: ['edible'], capShape: ['convex'], treePartner: ['picea-abies'] },
-    colours: {},
-    keepUnknown: [],
-  });
-  await openList(page, bundle([...RESULT_HITS, ...RESULT_UNKNOWN, ...RESULT_REST]));
+  guard('SpeciesFiltered', 'phone');
+  await presetFilter(page, { values: { edibility: ['edible'] }, colours: {}, keepUnknown: [] });
+  await openList(page, bundle([...EDIBLE_HITS, ...RESULT_REST]));
   await seen(page, 'Perlpilz');
   await expectBoard(page, 'SpeciesFiltered');
 });

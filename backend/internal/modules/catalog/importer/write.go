@@ -148,7 +148,7 @@ func execMany(ctx context.Context, tx *sql.Tx, query string, rows [][]any) error
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func() { _ = stmt.Close() }()
 	for _, args := range rows {
 		if _, err := stmt.ExecContext(ctx, args...); err != nil {
 			return fmt.Errorf("%s: %w", query, err)
@@ -192,7 +192,7 @@ func ReportLines(r *Report) []string {
 		}
 	}
 	for _, key := range slices.Sorted(maps.Keys(r.Skipped)) {
-		lines = append(lines, fmt.Sprintf("übersprungen %s: %d", key, r.Skipped[key]))
+		lines = append(lines, fmt.Sprintf("skipped %s: %d", key, r.Skipped[key]))
 	}
 	return lines
 }

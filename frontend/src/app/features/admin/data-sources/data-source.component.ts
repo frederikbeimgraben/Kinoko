@@ -17,7 +17,7 @@ import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../../ui/section/section.component';
 import { RowGroupSkeletonComponent } from '../../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../../ui/state-view/state-view.component';
-import { SpeciesState } from '../../species/species.state';
+import { SpeciesStore } from '../../species/species.store';
 import { DataSourcesStore } from './data-sources.store';
 import { versionRow } from './data-sources.rows';
 import { formatFacts, metaFacts, speciesRows } from './data-source.rows';
@@ -56,7 +56,7 @@ export class DataSourceComponent {
   private readonly router = inject(Router);
   private readonly store = inject(DataSourcesStore);
   private readonly uploads = inject(UploadStore);
-  private readonly species = inject(SpeciesState);
+  private readonly species = inject(SpeciesStore);
 
   private readonly param = injectRouteParam('kind');
   protected readonly kind = computed<DataSourceKind | null>(() => {

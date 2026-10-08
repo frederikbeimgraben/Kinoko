@@ -34,12 +34,9 @@ func (a *weekAcc) add(how How, row []float32) {
 	}
 }
 
-// values reduces the week. It fixes two findings of extract_grids.py, which
-// reduces each year file to weeks first and then combines the parts again:
-//   - bug 8: the mean of a week that spans two year files is a mean over its
-//     days, not the mean of two part means;
-//   - bug 9: the sum of a week without a value is NaN, not 0
-//     (pandas sum with min_count=0).
+// values reduces the week. extract_grids.py reduces each year file to weeks and then joins the parts. Here the
+// mean of a week across two year files is a mean over its days, not of two part means (bug 8). The sum of a
+// week without a value is NaN, not 0 as pandas sum with min_count=0 gives (bug 9).
 func (a *weekAcc) values(how How) []float32 {
 	out := make([]float32, len(a.n))
 	for c, n := range a.n {

@@ -135,6 +135,11 @@
   white-space: normal;
 }
 
+// Per `kit.css` `.row.wrap .txt span`: the board renders the label text in a span too.
+.row--wrap .row__title {
+  line-height: 1.35;
+}
+
 .row__value {
   flex: none;
   font-size: var(--list-row-value, inherit);

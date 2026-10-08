@@ -1,41 +1,55 @@
-<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
-<div class="taxonomy">
+<app-page-header [title]="'species.section.taxonomy' | t" [back]="true" (backClick)="back()" />
+<div class="pad">
   @if (unknown()) {
-    <app-state-view [title]="'species.notFound' | t" />
-  } @else if (page()) {
-    <p class="taxonomy__trail">
-      @for (step of trail(); track step; let last = $last) {
-        <span>{{ step }}</span>
-        @if (!last) {
-          <i>{{ arrow }}</i>
+    <app-state-view icon="tree" [title]="'species.notFound' | t" />
+  } @else if (page() === null) {
+    <app-row-group-skeleton [count]="3" [label]="true" trail="value" />
+    <app-row-group-skeleton [count]="3" [label]="true" lead="thumb" [lines]="2" trail="chevron" />
+  } @else {
+    <app-section class="taxonomy__ranks" [label]="'species.taxonomy.rank' | t">
+      <app-row-group>
+        @for (row of ranks(); track row.route) {
+          <app-list-row
+            [title]="row.rank"
+            [plain]="row.name"
+            [clickable]="!row.current"
+            (chosen)="toStep(row.route)"
+          />
         }
-      }
-    </p>
+      </app-row-group>
+    </app-section>
     @if (children().length > 0) {
-      <section>
-        <h2 class="taxonomy__title">{{ childrenTitle() }}</h2>
-        <div class="taxonomy__card">
+      <app-section class="motion-list-in" [label]="childrenTitle()">
+        <app-row-group>
           @for (child of children(); track child.route) {
             <app-list-row
               [title]="child.name"
-              [value]="child.count"
-              kind="catalogue"
+              [plain]="child.count"
+              [chevron]="true"
               [clickable]="true"
               (chosen)="toStep(child.route)"
             />
           }
-        </div>
-      </section>
+        </app-row-group>
+      </app-section>
     }
     @if (species().length > 0) {
-      <section>
-        <h2 class="taxonomy__title">{{ speciesTitle() }}</h2>
-        <div class="taxonomy__card">
+      <app-section class="motion-list-in" [label]="speciesTitle()">
+        <app-row-group>
           @for (row of species(); track row.slug) {
-            <app-species-row [species]="row.species" (chosen)="toSpecies(row.slug)" />
+            <app-list-row
+              [title]="row.name"
+              [subline]="row.latin"
+              [thumbed]="true"
+              [chevron]="true"
+              [clickable]="true"
+              (chosen)="toSpecies(row.slug)"
+            >
+              <app-private-image lead [path]="row.image" [alt]="row.name" [colour]="row.colour" />
+            </app-list-row>
           }
-        </div>
-      </section>
+        </app-row-group>
+      </app-section>
     }
   }
 </div>

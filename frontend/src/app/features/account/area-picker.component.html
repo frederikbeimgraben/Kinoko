@@ -1,0 +1,27 @@
+<app-page-header [title]="'map.offlineArea.loadZone' | t" [back]="true" (backClick)="toAreas()" />
+
+<div class="area">
+  <div class="pad">
+    @if (loading()) {
+      <app-row-group-skeleton [count]="2" [lines]="2" lead="icon" />
+    } @else if (rows().length === 0) {
+      <app-state-view icon="zone" [title]="'area.noZones' | t" />
+    } @else {
+      <app-row-group class="motion-list-in">
+        @for (row of rows(); track row.zone.id) {
+          <app-list-row icon="zone" [title]="row.zone.name" [subline]="row.sub">
+            <app-icon-button
+              action
+              icon="download"
+              kind="plain"
+              [label]="'area.download' | t"
+              [disabled]="busy()"
+              (pressed)="download(row.zone)"
+            />
+          </app-list-row>
+        }
+      </app-row-group>
+    }
+  </div>
+  <app-floating-button class="fab" icon="plus" [label]="'map.offlineArea.add' | t" (pressed)="draw()" />
+</div>

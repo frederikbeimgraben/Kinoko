@@ -87,7 +87,7 @@ func buildGrid(cfg ExtractConfig, log Logger) (*grid, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	x, y, _, err := f.Coords()
 	if err != nil {
 		return nil, err

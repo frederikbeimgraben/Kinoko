@@ -274,7 +274,8 @@ func (m *Module) writePart(u upload, body io.Reader) (int64, []byte, error) {
 	if err != nil {
 		return 0, nil, err
 	}
-	defer file.Close()
+	// Sync makes the part durable before a success, so a Close error loses no data.
+	defer func() { _ = file.Close() }()
 	if err := file.Truncate(u.ReceivedBytes); err != nil {
 		return 0, nil, err
 	}

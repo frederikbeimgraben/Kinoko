@@ -1,20 +1,20 @@
 import type { ColourMode, ColourValue } from '../../../ui/colour-field/colour-field.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 
-/** Eine Farbfläche einer Zelle. */
+/** The colour area of a cell. */
 export interface Swatch {
   readonly colours: readonly ColourValue[];
   readonly mode: ColourMode;
   readonly label: string;
 }
 
-/** Eine Strecke einer Zelle: Zahl und Einheit stehen getrennt. */
+/** The span of a cell: the number and the unit are separate. */
 export interface Measure {
   readonly value: string;
   readonly unit: string;
 }
 
-/** Eine Zelle des Bretts: genau eine der fünf Arten. */
+/** A cell of the table: exactly one of the five kinds. */
 export type Cell =
   | { readonly kind: 'badge'; readonly text: string; readonly colour: string; readonly background: string }
   | { readonly kind: 'value'; readonly text: string; readonly unit: string }
@@ -27,14 +27,14 @@ export type Cell =
   | { readonly kind: 'plain'; readonly text: string }
   | { readonly kind: 'none' };
 
-/** Eine Zeile: ihr Schlüssel, eine Zelle je Art, ob die Zellen sich unterscheiden. */
+/** A row: its key, one cell for each species, and if the cells are different. */
 export interface Row {
   readonly key: string;
   readonly cells: readonly Cell[];
   readonly diff: boolean;
 }
 
-/** Eine Gruppe von Zeilen unter einer Überschrift. */
+/** A group of rows below a heading. */
 export interface Group {
   readonly label: string;
   readonly rows: readonly Row[];
@@ -72,7 +72,7 @@ function cellColourKey(cell: Cell): string {
   return cell.kind === 'swatch' ? cell.colours.map((one) => one.hex).join('|') : '';
 }
 
-/** Zwei Zellen sind gleich, wo Text und Farben übereinstimmen. */
+/** Two cells are equal when their text and their colours are equal. */
 function rowDiffers(cells: readonly Cell[]): boolean {
   if (cells.length === 0) return false;
   const first = cells[0];
@@ -81,7 +81,7 @@ function rowDiffers(cells: readonly Cell[]): boolean {
     .some((cell) => cellText(cell) !== cellText(first) || cellColourKey(cell) !== cellColourKey(first));
 }
 
-/** Eine Zeile aus je einer Zelle der Arten, mit ihrem Unterschied vorgerechnet. */
+/** A row with one cell for each species and its difference calculated. */
 export function buildRow(
   key: string,
   entries: readonly SpeciesEntry[],

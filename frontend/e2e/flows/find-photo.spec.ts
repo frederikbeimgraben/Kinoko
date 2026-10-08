@@ -29,7 +29,7 @@ const FINDS = {
   nextCursor: null,
 };
 
-/** Zwei Fotos am Fund: der Dialog kann damit auch weiterblättern. */
+/** Two photos at the find, so that the dialog can go to the next one. */
 const PHOTOS = {
   items: [
     { id: 'foto-eins', findId: 'find-eins', state: 'accepted', source: 'own', ownerName: 'Frederik' },
@@ -38,7 +38,7 @@ const PHOTOS = {
   nextCursor: null,
 };
 
-/** Geht über die Liste der Einträge in das Blatt des Fundes. */
+/** Opens the sheet of the find from the list of entries. */
 async function openFind(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -53,10 +53,10 @@ async function openFind(page: Page): Promise<void> {
   });
   await mockMap(page, { detent: 1 });
   await page.goto('/eintraege');
-  await page.getByRole('tab', { name: 'Funde' }).click();
+  await page.getByRole('button', { name: 'Funde', exact: true }).click();
   const entry = page.getByRole('button').filter({ hasText: 'Steinpilz' }).first();
   await expect(entry).toBeVisible();
-  // Unter Last kommt der Tipp vor dem Zuhörer der Zeile an.
+  // Under load, the tap can come before the listener of the row.
   await expect(async () => {
     await entry.click();
     await expect(page).toHaveURL(/\/karte$/, { timeout: 2000 });
@@ -72,7 +72,7 @@ test('Ein Tipp auf ein Foto öffnet den Dialog über dem Fundblatt', async ({ pa
 
   const dialog = page.getByRole('dialog', { name: 'Foto 1' });
   await expect(dialog).toBeVisible();
-  // Das Blatt bleibt hinter dem Dialog offen.
+  // The sheet stays open behind the dialog.
   await expect(page.getByRole('heading', { name: 'Steinpilz' })).toBeVisible();
 
   await dialog.locator('.photo__close').click();

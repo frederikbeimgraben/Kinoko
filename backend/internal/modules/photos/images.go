@@ -104,9 +104,8 @@ func rgb(src image.Image) *image.RGBA {
 }
 
 // straightRGB gives a reader of the colour of a pixel before alpha applies.
-// The decoders of PNG and WebP give the types with straight alpha. The
-// premultiplied conversion is only for other types: it makes a transparent
-// pixel black.
+// The PNG and WebP decoders give types with straight alpha. Other types use the
+// premultiplied conversion, which makes a transparent pixel black.
 func straightRGB(src image.Image) func(x, y int) color.RGBA {
 	switch img := src.(type) {
 	case *image.NRGBA:

@@ -1,0 +1,95 @@
+import { TestBed } from '@angular/core/testing';
+import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
+import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
+import { ComparisonStore } from './comparison.store';
+
+const STONE = speciesEntry({ slug: 'steinpilz', name: 'Steinpilz', scientificName: 'Boletus edulis' });
+const GALL = speciesEntry({
+  slug: 'gallenroehrling',
+  name: 'Gallenröhrling',
+  scientificName: 'Tylopilus felleus',
+});
+const BAY = speciesEntry({
+  slug: 'maronenroehrling',
+  name: 'Maronenröhrling',
+  scientificName: 'Imleria badia',
+});
+
+async function state(): Promise<ComparisonStore> {
+  TestBed.configureTestingModule({ providers: catalogueProviders(speciesBundle([STONE, GALL, BAY])) });
+  await catalogueReady();
+  return TestBed.inject(ComparisonStore);
+}
+
+describe('ComparisonStore', () => {
+  it('beginnt ohne Wahl', async () => {
+    expect((await state()).slugs()).toEqual([]);
+  });
+
+  it('nimmt eine Art auf', async () => {
+    const held = await state();
+
+    held.add('steinpilz');
+
+    expect(held.slugs()).toEqual(['steinpilz']);
+  });
+
+  it('nimmt dieselbe Art nur einmal auf', async () => {
+    const held = await state();
+
+    held.add('steinpilz');
+    held.add('steinpilz');
+
+    expect(held.slugs()).toEqual(['steinpilz']);
+  });
+
+  it('gibt eine Art wieder frei', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'gallenroehrling']);
+    held.remove('steinpilz');
+
+    expect(held.slugs()).toEqual(['gallenroehrling']);
+  });
+
+  it('setzt die Wahl neu, ohne eine Art doppelt zu führen', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'steinpilz', 'gallenroehrling']);
+
+    expect(held.slugs()).toEqual(['steinpilz', 'gallenroehrling']);
+  });
+
+  it('tauscht die zweite Art gegen die dritte', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'gallenroehrling']);
+    held.add('maronenroehrling');
+
+    expect(held.slugs()).toEqual(['steinpilz', 'maronenroehrling']);
+  });
+
+  it('nimmt aus einer längeren Wahl nur zwei Arten', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'gallenroehrling', 'maronenroehrling']);
+
+    expect(held.slugs()).toEqual(['steinpilz', 'gallenroehrling']);
+  });
+
+  it('löst die Wahl in Arten des Katalogs auf', async () => {
+    const held = await state();
+
+    held.set(['gallenroehrling', 'steinpilz']);
+
+    expect(held.species().map((one) => one.name)).toEqual(['Gallenröhrling', 'Steinpilz']);
+  });
+
+  it('lässt eine unbekannte Art aus', async () => {
+    const held = await state();
+
+    held.set(['steinpilz', 'pfifferling']);
+
+    expect(held.species().map((one) => one.slug)).toEqual(['steinpilz']);
+  });
+});

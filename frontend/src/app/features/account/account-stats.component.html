@@ -1,0 +1,5 @@
+@if (stats(); as tiles) {
+  <app-stat-row [stats]="tiles" [cols]="cols()" />
+} @else {
+  <app-skeleton kind="tiles" [count]="count()" [cols]="cols()" height="54px" />
+}

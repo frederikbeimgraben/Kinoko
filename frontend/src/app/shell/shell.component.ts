@@ -29,6 +29,7 @@ import { deskFrame, paneWidth, type DeskFrame } from './desk-frame';
 const WITHOUT_NAV: readonly RegExp[] = [
   /^\/bausteine(\/|$)/,
   /^\/arten\/[^/]+/,
+  /^\/taxonomie(\/|$)/,
   /^\/verwaltung(\/|$)/,
   /^\/konto(\/|$)/,
 ];

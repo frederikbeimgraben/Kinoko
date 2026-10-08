@@ -1,0 +1,60 @@
+// The frame of an account page, per `kit.css` `.scroll`, `.pad`, `.area` and `.stack`.
+
+// The page fills its host: a fixed head, then one scroll area.
+@mixin host {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+// Kit `.area`: a scroll area with room for a floating button.
+@mixin area {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+// Kit `.scroll` and `.pad`. In the desktop detail pane the content has 32 px at the sides and a gap of 20.
+@mixin pad {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 24px;
+  min-block-size: 0;
+  padding: 8px 16px 32px;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+
+  :host-context(.account--detail) & {
+    gap: 20px;
+    padding: 0 32px 32px;
+  }
+}
+
+// Kit `.stack` with `right: 16px; bottom: 16px`; 32 px in the desktop detail pane.
+@mixin fab {
+  position: absolute;
+  inset-block-end: 16px;
+  inset-inline-end: 16px;
+
+  :host-context(.account--detail) & {
+    inset-block-end: 32px;
+    inset-inline-end: 32px;
+  }
+}
+
+// Kit `.field` with a `.lbl` above a segment.
+@mixin field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-inline-size: 0;
+
+  .lbl {
+    padding-inline-start: 4px;
+  }
+}

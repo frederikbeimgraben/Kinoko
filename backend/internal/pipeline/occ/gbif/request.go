@@ -122,9 +122,10 @@ func (f *Fetcher) getOnce(ctx context.Context, u string) (page, error) {
 	if err != nil {
 		return page{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<16))
+		// The status gives the error, so a failed drain of the body is not important.
+		_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<16))
 		return page{}, &StatusError{Code: resp.StatusCode, RetryAfter: resp.Header.Get("Retry-After")}
 	}
 	body, err := io.ReadAll(resp.Body)

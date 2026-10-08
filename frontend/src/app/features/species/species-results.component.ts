@@ -4,14 +4,38 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { InfiniteListComponent } from '../../ui/infinite-list/infinite-list.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
-import { SpeciesRowComponent } from '../../ui/species-row/species-row.component';
+import { SpeciesRowComponent, type SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { speciesRow } from './rows';
-import type { CatalogueEntry } from './species.state';
+import type { SpeciesSort } from './filter.store';
+import { headOf, speciesRow } from './rows';
+import type { CatalogueEntry } from './species.store';
 
-const SKELETON_ROWS = 5;
+/** The rows of the skeleton, per `SpeciesSkeleton.dc.html`. */
+const SKELETON_ROWS = 7;
 
-/** Die Liste der Arten mit ihren vier Zuständen. */
+/** One row of the list, with the head that starts its group. */
+export interface ResultRow {
+  readonly slug: string;
+  readonly species: SpeciesRowSpecies;
+  /** The head above the row. Empty when the row continues the group above. */
+  readonly head: string;
+}
+
+/** Makes the rows of a sorted list. A head shows where the group changes. */
+export function resultRows(
+  entries: readonly CatalogueEntry[],
+  sort: SpeciesSort,
+  i18n: I18nService,
+): ResultRow[] {
+  const heads = entries.map((one) => headOf(one.species, sort, i18n));
+  return entries.map((one, index) => ({
+    slug: one.species.slug,
+    species: speciesRow(one.species, i18n),
+    head: heads[index] !== '' && heads[index] !== heads[index - 1] ? heads[index] : '',
+  }));
+}
+
+/** The species list with its four states: error, loading, empty and the rows. */
 @Component({
   selector: 'app-species-results',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,28 +55,23 @@ export class SpeciesResultsComponent {
 
   readonly hits = input.required<readonly CatalogueEntry[]>();
   readonly unassessable = input<readonly CatalogueEntry[]>([]);
+  readonly sort = input<SpeciesSort>('name');
   readonly loading = input(false);
   readonly failed = input(false);
   readonly hasMore = input(false);
+  /** The species of the open page: its row is selected. */
   readonly active = input<string | null>(null);
+  /** The species that the person opened last: its row has the soft ground. */
+  readonly soft = input<string | null>(null);
 
   readonly chosen = output<string>();
   readonly more = output();
   readonly retry = output();
   readonly resetFilter = output();
 
-  protected readonly skeletons = Array.from({ length: SKELETON_ROWS }, (_, at) => at);
+  protected readonly skeletonRows = SKELETON_ROWS;
 
-  protected readonly rows = computed(() => {
-    let last = '';
-    return this.hits().map((one) => {
-      const species = speciesRow(one.species, this.i18n);
-      const letter = species.name.charAt(0).toLocaleUpperCase();
-      const head = letter !== last;
-      last = letter;
-      return { slug: one.species.slug, species, letter, head };
-    });
-  });
+  protected readonly rows = computed(() => resultRows(this.hits(), this.sort(), this.i18n));
 
   protected readonly gapRows = computed(() =>
     this.unassessable().map((one) => ({

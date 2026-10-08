@@ -11,5 +11,5 @@ func freeBytes(path string) (uint64, error) {
 	if err := syscall.Statfs(path, &st); err != nil {
 		return 0, err
 	}
-	return uint64(st.Bavail) * uint64(st.Bsize), nil
+	return st.Bavail * uint64(st.Bsize), nil
 }
