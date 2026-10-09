@@ -78,6 +78,8 @@ export const AddEntryStore = signalStore(
       /** "Eintragen" (board `MapSignIn`): a guest signs in before the form. A known person without network goes on.
        * Gives `false` when the flow did not open. */
       async begin(): Promise<boolean> {
+        // A tap before the first answer of the session check waits for it.
+        if (store._session.status() === 'unknown') await store._auth.whenChecked();
         if (store._session.status() === 'guest' && !(await store._auth.requestSignIn())) return false;
         open();
         return true;

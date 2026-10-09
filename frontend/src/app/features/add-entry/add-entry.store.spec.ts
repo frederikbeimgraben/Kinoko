@@ -28,6 +28,31 @@ describe('AddEntryStore.begin (board MapSignIn)', () => {
     expect(flow.step()).toBeNull();
   });
 
+  it('waits for the session check when the tap comes before its answer', async () => {
+    const auth = new AuthStub();
+    auth.user.set(null);
+    auth.checked.set(false);
+    auth.settled.set(false);
+    let answer: () => void = () => undefined;
+    auth.whenChecked = () =>
+      new Promise<void>((done) => {
+        answer = done;
+      });
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });
+    TestBed.inject(SessionStore).forget();
+    auth.reply = false;
+    const flow = state();
+
+    const begun = flow.begin();
+    await Promise.resolve();
+    expect(auth.asked).toBe(0);
+    auth.settled.set(true);
+    answer();
+
+    expect(await begun).toBe(false);
+    expect(auth.asked).toBe(1);
+  });
+
   it('opens the actions at once with an account', async () => {
     const auth = new AuthStub();
     TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });

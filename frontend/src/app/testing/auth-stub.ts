@@ -32,6 +32,10 @@ export class AuthStub {
     return this.reply;
   }
 
+  whenChecked(): Promise<void> {
+    return Promise.resolve();
+  }
+
   signIn(back = '/'): Promise<void> {
     this.signIns.push(back);
     return Promise.resolve();
