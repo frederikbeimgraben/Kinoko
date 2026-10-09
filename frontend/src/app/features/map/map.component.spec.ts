@@ -13,6 +13,7 @@ import {
   RAW_MANIFEST,
   SAVED_COMBINATION,
   answerManifest,
+  answerMissing,
   answerNoReply,
   mapWithDoubles,
   type MapAdapterDouble,
@@ -464,6 +465,37 @@ describe('MapComponent', () => {
     });
     expect(container.querySelector('.map__skeleton')).toBeNull();
     expect(container.textContent).toContain('Die Kartendaten lassen sich gerade nicht laden.');
+  });
+
+  it('zeigt „Noch keine Vorhersage“, wenn der Server keine Manifeste hat', async () => {
+    answerMissing();
+    mapWithDoubles();
+    const auth = new AuthStub();
+    auth.user.set(null);
+    const { fixture, navigate, container } = await render(HostComponent, {
+      providers: [
+        provideRouter(ROUTES),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        ...authStubProviders(auth),
+        { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
+      ],
+    });
+    await navigate('/karte');
+    await fixture.whenStable();
+
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(container.querySelector('.map__empty')).not.toBeNull();
+    });
+    const empty = container.querySelector('.map__empty [role="status"]');
+    expect(empty).toHaveTextContent('Noch keine Vorhersage');
+    expect(empty).toHaveTextContent('Die Karten erscheinen nach dem nächsten Lauf der Datenpipeline.');
+    expect(container.querySelector('.map__skeleton')).toBeNull();
+    expect(container.querySelector('app-error-state')).toBeNull();
+    expect(container.querySelector('app-timeline')).toBeNull();
+    expect(container.querySelector('app-ramp')).toBeNull();
+    await noViolations(container);
   });
 
   it('öffnet bei langem Drücken das Objektmenü und zentriert', async () => {

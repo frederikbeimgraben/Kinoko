@@ -1,9 +1,9 @@
 @if (view.loading()) {
   <app-skeleton kind="block" height="64px" />
-} @else if (!view.failed()) {
+} @else if (!view.failed() && !view.empty()) {
   @switch (state.view()) {
     @case ('forecast') {
-      @if (!view.noSpecies()) {
+      @if (!view.noSpecies() && !view.forecastMissing()) {
         <app-ramp [label]="view.rampLabel()" [from]="view.rampFrom()" [to]="view.rampTo()" />
       }
     }

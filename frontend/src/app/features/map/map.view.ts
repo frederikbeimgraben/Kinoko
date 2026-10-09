@@ -14,14 +14,13 @@ import { NOW } from '../../core/tiles/now';
 import { barShares, currentWeek, findWeek, isFuture, type ManifestWeek } from '../../core/tiles/manifest';
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
 import type { TimelineWeek } from '../../ui/timeline/timeline.component';
-import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesStore } from '../entries/entries.store';
-import { photoPath } from '../../core/api/models';
-import { aliasOf } from '../species/species-names';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
 import { DEFAULT_LAYER, MapStore } from './map.store';
 import { layerCaption, layerName } from './layer-name';
+import { manifestState, mapData, type ManifestState } from './map-data';
+import { speciesChoice } from './species-choice';
 
 /** The values that the head and the body of the map read. One source for both devices. */
 @Injectable({ providedIn: 'root' })
@@ -49,18 +48,28 @@ export class MapView {
 
   readonly manifest = computed(() => this.tiles.manifests().get(this.slug()) ?? null);
 
-  /** Both manifests failed: the map has nothing to show, so it offers a new try instead of a skeleton. */
-  readonly failed = computed(
-    () =>
-      this.manifest() === null &&
-      this.tiles.layers() === null &&
-      this.tiles.failed().has(this.slug()) &&
-      this.tiles.layersFailed(),
-  );
+  /** The states of the species manifest and the layers manifest. Without a species with a forecast, there is no species manifest. */
+  private readonly states = computed<readonly ManifestState[]>(() => {
+    const slug = this.slug();
+    const tiles = this.tiles;
+    const none = this.noSpecies() && !this.catalogue.loading();
+    return [
+      manifestState(this.manifest() !== null, none || tiles.missing().has(slug), tiles.failed().has(slug)),
+      manifestState(tiles.layers() !== null, tiles.layersMissing(), tiles.layersFailed()),
+    ];
+  });
 
-  /** While the manifest and the layers are not there, the map shows its skeleton. */
-  readonly loading = computed(
-    () => this.manifest() === null && this.tiles.layers() === null && !this.failed(),
+  private readonly data = computed(() => mapData(this.states()));
+  readonly failed = computed(() => this.data().failed);
+  readonly empty = computed(() => this.data().empty);
+  readonly loading = computed(() => this.data().loading);
+
+  /** The species manifest is not at the origin, or no species has a forecast. */
+  readonly forecastMissing = computed(() => this.states()[0] === 'missing');
+
+  /** The map shows the empty state: no map exists, or the forecast view has no forecast. */
+  readonly noForecast = computed(
+    () => this.empty() || (this.state.view() === 'forecast' && this.forecastMissing()),
   );
 
   /** Asks the server again for both manifests. */
@@ -153,16 +162,7 @@ export class MapView {
     this.catalogue
       .species()
       .filter((species) => species.forecastEnabled)
-      .map((species) => ({
-        value: species.slug,
-        name: species.name,
-        latin: species.scientificName,
-        alias: aliasOf(species),
-        levelText: this.i18n.translate(EDIBILITY_TEXT[species.edibility]),
-        levelColour: EDIBILITY_TONE[species.edibility].colour,
-        levelBackground: EDIBILITY_TONE[species.edibility].background,
-        image: species.leadPhotoId ? photoPath(species.leadPhotoId, 'list') : null,
-      })),
+      .map((species) => speciesChoice(species, this.i18n)),
   );
 
   /** The selected species, else the first with a forecast. */

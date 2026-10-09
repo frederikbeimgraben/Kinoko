@@ -1002,6 +1002,8 @@
   "map.combination.summary": "{count, plural, one {# factor} other {# factors}} · {rule}",
   "map.compass": "Turn to north",
   "map.dataFailed": "The map data cannot be loaded at the moment.",
+  "map.empty.text": "The maps appear after the next run of the data pipeline.",
+  "map.empty.title": "No forecast yet",
   "map.factor.add": "Add factor",
   "map.factor.assigned": "already in use",
   "map.factor.choose": "Choose factor",

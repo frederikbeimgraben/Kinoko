@@ -1002,6 +1002,8 @@
   "map.combination.summary": "{count, plural, one {# Faktor} other {# Faktoren}} · {rule}",
   "map.compass": "Nach Norden drehen",
   "map.dataFailed": "Die Kartendaten lassen sich gerade nicht laden.",
+  "map.empty.text": "Die Karten erscheinen nach dem nächsten Lauf der Datenpipeline.",
+  "map.empty.title": "Noch keine Vorhersage",
   "map.factor.add": "Faktor hinzufügen",
   "map.factor.assigned": "schon dabei",
   "map.factor.choose": "Faktor wählen",
