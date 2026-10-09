@@ -11,6 +11,9 @@ baeume = []
 karte = "apioperdon_pyriforme"
 speisewertHinweis = "Nur solange die innere Fruchtschicht rein weiß ist. Er schmeckt fade und gilt in der Schweiz als nicht marktfähig."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner, birnenförmiger Stäubling mit bräunlicher Außenhaut, feinen, kleiigen dunkelbraunen Warzen und einer Öffnung oben, oft in dichten Büscheln. Er wächst von Juni bis November auf totem Holz, alten Ästen und Holzabfällen und ist sehr häufig. Vom Igelstäubling unterscheiden ihn vor allem die kleiigen Warzen und das büschelige Wachstum auf Holz, denn der Igelstäubling trägt Stacheln mit helleren Spitzen, die nach dem Abwaschen ein deutliches Netzmuster hinterlassen."
+beschreibungEn = "A small, pear-shaped puffball with a brownish outer skin, fine, granular dark brown warts and an opening at the top, often in dense clusters. It grows from June to November on dead wood, old branches and wood debris, and is very common. The key difference from the spiny puffball is the fine warts and the growth in clusters on wood, because the spiny puffball has spines with paler tips that leave a clear net pattern when they rub off."
+entwurf = true
 synonyme = ["Lycoperdon pyriforme", "Morganella pyriformis", "Utraria pyriformis"]
 hutform = { von = "kugelig" }
 

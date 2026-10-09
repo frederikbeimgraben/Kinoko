@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Er schmeckt scharf und wird gern für den milden Ockertäubling gehalten. Im Zweifel Sporen nehmen: Bei ihm ist das Pulver weiß, beim Ockertäubling gelblich."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kleiner Täubling mit jung zitronengelbem, später blassem bis gelbockerfarbenem, etwas glänzendem Hut, weißen, später leicht cremefarbenen Lamellen und weißem, keuligem Stiel, der bald hohl wird. Er wächst von Juni bis November im Mischwald, meist bei Laubbäumen wie Buche, gern auf saurem Boden. Vom Ockertäubling unterscheidet ihn vor allem das weiße Sporenpulver, denn das Sporenpulver des größeren Ockertäublings ist gelblich. Der Blassgelbe Täubling ist giftig."
+beschreibungEn = "A small brittlegill with a cap that is lemon-yellow when young and later pale to yellow-ochre and slightly glossy, white gills that later become slightly cream, and a white, club-shaped stem that soon becomes hollow. It grows from June to November in mixed woods, mostly with broadleaf trees such as beech, often on acid soil. The key difference from the ochre brittlegill is the white spore print, because the larger ochre brittlegill has a yellowish spore print. Russula raoultii is poisonous."
+entwurf = true
 weitereNamen = ["Weißblättriger Ockertäubling"]
 synonyme = ["Russula ochroleuca var. raoultii", "Russula emetica f. raoultii", "Russula fragilis var. nivea sensu", "Russula fragilis var. raoultii", "Russula raoultii var. meridionalis"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "weit" }

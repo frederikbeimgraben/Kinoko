@@ -8,6 +8,9 @@ jahreszeiten = ["sommer"]
 baeume = []
 speisewertHinweis = "Er hat schon Unverträglichkeitsreaktionen ausgelöst und ist roh giftig. Zu erkennen an der blauenden Huthaut, dem roten Netz am Stiel und dem im Alter aasartigen Geruch."
 gefaehrdung = "extremSelten"
+beschreibung = "Kräftiger Röhrling mit purpurrotem bis weinrosa, samtigem Hut, der auf Druck blau fleckt, jung gelben, später purpur- bis blutroten Röhren und gelblichem Stiel mit rotem Netz, der zur Basis karminrot wird. Er wächst von Juni bis September im Laubwald auf kalkreichem Boden und ist in Deutschland extrem selten. Vom Gelbhütigen Purpurröhrling unterscheidet ihn vor allem der Geruch, der im Alter aasartig wird, denn der Gelbhütige Purpurröhrling riecht kaum. Der Blaufleckende Purpurröhrling ist giftig."
+beschreibungEn = "A stout bolete with a purple-red to wine-pink, velvety cap that turns blue in spots where pressed, tubes that are yellow when young and purple-red to blood-red later, and a yellowish stem with a red net that becomes carmine-red towards the base. It grows from June to September in broadleaf woods on calcareous soil and is extremely rare in Germany. The key difference from Imperator luteocupreus is the smell, which becomes like carrion with age, because Imperator luteocupreus has almost no smell. Imperator rhodopurpureus is poisonous."
+entwurf = true
 weitereNamen = ["Dunkler Purpurröhrling", "Weinroter Purpurröhrling"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "gewoelbt" }

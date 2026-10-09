@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "tanne"]
 speisewertHinweis = "Das Fleisch ist zäh und gummiartig, roh gilt die Wertigkeit 4 bis 5. Erst mit langer, besonderer Zubereitung wird sie brauchbar. In Deutschland gefährdet, regional stark gefährdet, deshalb besser stehen lassen."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Großer, schwammartiger Pilz aus breiten, hirnartig gekräuselten Lappen, zuerst weißlich, später gelblich und mit helleren Spitzen, auf einem weißlichen Strunk. Die Breitblättrige Glucke wächst von Juni bis November am Wurzelgeflecht von Laubbäumen, gern bei Eiche, seltener an Nadelholz wie Tanne, und ist in Deutschland gefährdet. Von der Krausen Glucke unterscheiden sie vor allem die breiteren Lappen, denn die Krause Glucke hat schmalere, krause Lappen und wächst meist bei Kiefern."
+beschreibungEn = "A large, sponge-like fungus of broad, brain-like curled lobes, first whitish and later yellowish with paler tips, on a whitish base. Sparassis brevipes grows from June to November at the roots of broadleaf trees, often oak, less often on conifers such as fir, and is endangered in Germany. The key difference from the wood cauliflower is the broader lobes, because the wood cauliflower has narrower, curly lobes and mostly grows with pine."
+entwurf = true
 weitereNamen = ["Eichenglucke", "Tannenglucke", "Bärenschädel", "Breitblättrige Krause-Glucke"]
 synonyme = ["Sparassis nemecii", "Eichenglucke: (sparassis laminosa"]
 

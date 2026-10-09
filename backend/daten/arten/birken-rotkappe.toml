@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["birke"]
 speisewertHinweis = "Roh führt er zu Vergiftungen. Durchgaren und nur junge Stücke nehmen, im Alter wird das Fleisch schwarz und ist dann nicht mehr essbar."
 haeufigkeit = "haeufig"
+beschreibung = "Kräftiger Röhrling mit orangegelbem bis braunrotem, feinfilzigem Hut mit überstehender Huthaut, weißlichen, später grauen Röhren und weißlichem Stiel mit schwärzlichen Schüppchen. Die Birken-Rotkappe wächst nur bei Birken, vor allem von Sommer bis Herbst, und ist in Deutschland häufig. Von der Espen-Rotkappe unterscheiden sie vor allem die schwärzlichen Stielschuppen, denn die Espen-Rotkappe hat jung weißliche, später orangebraune Schuppen am Stiel."
+beschreibungEn = "A stout bolete with an orange-yellow to brownish-red, finely felty cap with an overhanging cap skin, whitish tubes that turn grey, and a whitish stem with blackish scales. The orange birch bolete grows only with birch, mainly from summer to autumn, and is common in Germany. The key difference from Leccinum aurantiacum is the blackish stem scales, because Leccinum aurantiacum has stem scales that are whitish when young and orange-brown later."
+entwurf = true
 weitereNamen = ["Birkenrotkappe", "Heiderotkappe", "Schwarzschuppiger Birkenröhrling"]
 fruchtschicht = { art = "roehren" }
 hutrand = { von = ["ueberstehend"] }

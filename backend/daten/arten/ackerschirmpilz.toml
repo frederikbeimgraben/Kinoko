@@ -10,6 +10,9 @@ baeume = []
 speisewertHinweis = "Bei allen Riesenschirmlingen muss der Ring am Stiel verschiebbar sein. Roh ist er unbekömmlich."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Schirmling mit hellbraunen, sternförmig eingedrückten Schüppchen auf cremeweißem Hut, glatter brauner Hutmitte, weißen, freien Lamellen und schlankem Stiel ohne Natterung mit verschiebbarem Ring. Er wächst von Juni bis November auf mageren, sandigen Böden auf Wiesen, Weiden, Äckern und an Waldrändern und ist in Deutschland sehr selten und gefährdet. Vom Grünsporschirmling unterscheiden ihn vor allem die Lamellen, die im Alter rosa Reflexe zeigen, denn beim Grünsporschirmling bekommen sie einen blaugrünen Hauch."
+beschreibungEn = "A medium-sized parasol with light brown, star-shaped scales on a cream-white cap, a smooth brown cap centre, white free gills and a slender stem without a snakeskin pattern and with a movable ring. It grows from June to November on poor, sandy soil in meadows, pastures, fields and at forest edges, and is very rare and endangered in Germany. The key difference from the green-spored parasol is the gills, which show pink tints with age, while the gills of the green-spored parasol get a blue-green tint."
+entwurf = true
 weitereNamen = ["Ackerriesenschirmpilz", "Geschundener Schirmling", "Ackerschirmling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng", schneide = "bewimpert" }
 hutform = { von = "glockig", nach = "flach" }

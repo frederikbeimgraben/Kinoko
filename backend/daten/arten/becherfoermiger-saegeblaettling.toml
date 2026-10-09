@@ -9,6 +9,9 @@ baeume = []
 speisewertHinweis = "Das Fleisch bleibt zäh und schmeckt bitterlich. Sehr selten und in Deutschland gefährdet."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Lamellenpilz mit ockerbraunem bis hell rotbraunem Hut mit fuchsigbraunen Schuppen, der später trichter- bis becherförmig wird, weit herablaufenden Lamellen mit gesägten Schneiden und filzigem, ockerbraunem Stiel. Er wächst von März bis November büschelig an verrotteten Strünken von Laub- und Nadelholz und ist sehr selten und in Deutschland gefährdet. Vom Schuppigen Sägeblättling unterscheiden ihn vor allem der becherförmig vertiefte Hut und der fehlende Anisgeruch, denn der Schuppige Sägeblättling riecht nach Anis und hat einen gelblichen Hut mit kräftigeren rotbraunen Schuppen."
+beschreibungEn = "A medium-sized gilled mushroom with an ochre-brown to light red-brown cap with foxy-brown scales, which later becomes funnel- to cup-shaped, deeply decurrent gills with serrated edges and a felty, ochre-brown stem. It grows in clusters from March to November on rotting stumps of broadleaf and coniferous trees, and is very rare and endangered in Germany. The key difference from the train wrecker is the cup-shaped cap and the absence of an aniseed smell, because the train wrecker smells of aniseed and has a yellowish cap with stronger red-brown scales."
+entwurf = true
 weitereNamen = ["Trichterförmiger Sägeblättling"]
 synonyme = ["Lentinus cyathiformis", "Agaricus cyathiformis", "Neolentinus schaefferi", "Favolus cyathiformis", "Pocillaria cyathiformis", "Panus cyathiformis"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }

@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Der widerliche Geruch nach Ziegenbock, Schweißfüßen oder faulenden Kartoffeln macht ihn leicht kenntlich."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer Schleierling mit helllila bis weißlichem Hut, dessen Mitte gelbbraun wird, lila bis zimtbraunen Lamellen und blasslila Stiel mit weißviolettem Schleier und etwas keuliger Basis. Er wächst von Juni bis November im Nadelwald auf moosigem, feuchtem Boden und ist häufig. Kennzeichnend ist der widerliche Geruch nach Ziegenbock, Schweißfüßen oder faulenden Kartoffeln. Der Bocksdickfuß ist giftig."
+beschreibungEn = "A medium-sized webcap with a light lilac to whitish cap whose centre turns yellow-brown, lilac to cinnamon-brown gills and a pale lilac stem with a white-violet veil and a slightly club-shaped base. It grows from June to November in coniferous woods on mossy, damp soil and is common. A key feature is the repulsive smell of billy goat, sweaty feet or rotting potatoes. Cortinarius camphoratus is poisonous."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutmerkmale = ["hygrophan"]
 

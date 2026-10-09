@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Erst in größerer Menge reizt er Magen und Darm; einzelne Stücke sind harmlos, schmecken aber muffig. Er schmeckt mild, echte Pfifferlinge schmecken pfefferig scharf."
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer Lamellenpilz mit braunem bis braunorangem, feinfilzigem Hut mit lange eingerolltem Rand, orangegelben bis braungelben, herablaufenden, oft gegabelten Lamellen und körnig schuppigem, orangegelbem bis gelbbraunem Stiel. Er wächst von Juni bis November im Laubwald an Strünken oder an vergrabenem Holz und ist sehr selten. Vom Falschen Pfifferling unterscheiden ihn vor allem der braune Hut und der dickere Stiel, denn der Falsche Pfifferling hat einen leuchtend orangen Hut und einen dünneren Stiel und wächst auf Nadelstreu. Der Braune Afterleistling ist giftig."
+beschreibungEn = "A medium-sized gilled mushroom with a brown to brownish-orange, finely felty cap with a long inrolled margin, orange-yellow to brownish-yellow, decurrent, often forked gills and a granular-scaly, orange-yellow to yellow-brown stem. It grows from June to November in broadleaf woods on stumps or on buried wood, and is very rare. The key difference from the false chanterelle is the brown cap and the thicker stem, because the false chanterelle has a bright orange cap and a thinner stem and grows on needle litter. Hygrophoropsis rufa is poisonous."
+entwurf = true
 synonyme = ["Hygrophoropsis aurantiaca var. rufa"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutrand = { von = ["eingerollt"] }

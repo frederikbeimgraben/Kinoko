@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Gekocht schmeckt er sehr fade. Braune Stäublinge sind minderwertig, junge Fruchtkörper allenfalls Beikost."
+beschreibung = "Kleiner, birnenförmiger bis kugeliger, bräunlicher Stäubling mit dunkelbraunen, weichen, leicht ablösbaren kleinen Stacheln auf hellem Grund. Er wächst von Juni bis November am Boden im Nadelwald, gern bei Fichte, selten im Laubwald. Vom Igelstäubling unterscheidet ihn vor allem die Oberfläche nach dem Abwischen der Stacheln, denn bei ihm bleibt kein Netzmuster zurück, beim Igelstäubling dagegen ein deutliches."
+beschreibungEn = "A small, pear-shaped to round, brownish puffball with dark brown, soft, small spines on a pale ground that rub off easily. It grows from June to November on the ground in coniferous woods, often with spruce, rarely in broadleaf woods. The key difference from the spiny puffball is the surface after the spines rub off, because no net pattern stays on it, while the spiny puffball shows a clear net pattern."
+entwurf = true
 weitereNamen = ["Bräunlicher Stäubling", "Brauner Staubbovist"]
 synonyme = ["Lycoperdon umbrinum var. hirtum", "Lycoperdon hirtum", "Lycoperdon umbrinum var. curtisiiforme", "Lycoperdon umbrinum f. fissispinum", "Lycoperdon umbrinum var. hirsutum"]
 hutform = { von = "birnenfoermig" }

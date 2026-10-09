@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche"]
 speisewertHinweis = "Besonders geschützt. Der Fischgeruch verschwindet beim Garen."
+beschreibung = "Mittelgroßer bis großer Milchling mit orangebraunem bis orangefuchsigem, mattem, feinsamtigem Hut, ockergelben Lamellen, die auf Druck dunkelbraun werden, und reichlich weißer Milch, die braun eintrocknet. Er wächst von Juni bis Oktober im Mischwald bei Buche und Eiche, ist in Deutschland stark zurückgegangen und besonders geschützt. Vom Eichenmilchling unterscheiden ihn vor allem der ungezonte Hut und der deutliche Geruch nach Heringslake, denn der Eichenmilchling hat einen dunkler gezonten Hut."
+beschreibungEn = "A medium-sized to large milkcap with an orange-brown to orange-foxy, matt, finely velvety cap, ochre-yellow gills that turn dark brown when pressed, and plentiful white milk that dries brown. It grows from June to October in mixed woods with beech and oak, has declined strongly in Germany and is specially protected. The key difference from the oakbug milkcap is the unzoned cap and the clear smell of herring brine, because the oakbug milkcap has a cap with darker zones."
+entwurf = true
 weitereNamen = ["Milchbrätling", "Birnenmilchling", "Süßling"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }
 hutrand = { von = ["eingebogen"] }
