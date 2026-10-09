@@ -9,7 +9,7 @@
   flex: none;
   inline-size: var(--size-thumb);
   block-size: var(--size-thumb);
-  border-radius: 9px;
+  border-radius: var(--r-sq);
 }
 
 .lookalike__ways {
@@ -27,6 +27,7 @@
   color: var(--text-var);
   background: none;
   border: 0;
+  border-radius: 50%;
 }
 
 .lookalike__way--compare {

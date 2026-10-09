@@ -15,7 +15,7 @@
   text-align: start;
   background: var(--surface);
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--r-row);
 }
 
 // Per `kit.css` `.grp>.row`: the first and the last row of a group have round outer corners.

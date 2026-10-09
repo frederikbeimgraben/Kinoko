@@ -143,11 +143,11 @@ describe('ColourChangeComponent', () => {
     });
 
     const field = styleOf(container.querySelector('.field'));
-    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 96px)');
-    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 30px)');
+    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 88px)');
+    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 28px)');
   });
 
-  it('trennt zwei Zeilen mit dem Strich der zweiten', async () => {
+  it('trennt zwei Zeilen mit der Lücke einer Gruppe, ohne Strich', async () => {
     const { container } = await render(ColourChangeComponent, {
       inputs: {
         triggers: ['Druck', 'Anschnitt'],
@@ -162,7 +162,8 @@ describe('ColourChangeComponent', () => {
 
     const rows = container.querySelectorAll('app-list-row');
     expect(styleOf(rows[0]).getPropertyValue('border-block-start')).toBe('');
-    expect(styleOf(rows[1]).getPropertyValue('border-block-start')).toContain('var(--border-width)');
+    expect(styleOf(rows[1]).getPropertyValue('border-block-start')).toBe('');
+    expect(styleOf(container).getPropertyValue('gap')).toBe('2px');
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {
