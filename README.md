@@ -110,6 +110,12 @@ fails when `contract.d.ts` does not agree with the contract.
 `backend/daten/texte.json` holds the user interface text in German and English.
 The service writes it into the table `text` at start.
 
+## Data
+
+The catalogue data in `backend/daten/` is not verified and not complete. Do
+not use it to decide if you can eat a mushroom. `backend/daten/README.md`
+gives the sources, their licences and the procedure to correct the data.
+
 ## Licence
 
 GPL-3.0-or-later. Read `LICENSE`.
