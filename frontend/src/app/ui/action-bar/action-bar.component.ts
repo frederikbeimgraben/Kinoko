@@ -47,7 +47,7 @@ export class ActionBarComponent {
 
   /** The icon of the second action, per the board `MapFindView`: "trash". */
   readonly secondaryIcon = input<IconName>();
-  /** The second action keeps its fill also in the modal, as "Umriss ändern" on `MapDesktopZoneForm`. */
+  /** The second action keeps its fill also in the modal, as "Umriss ändern" on `MapDesktopZoneForm` and "Löschen" on `MapDesktopFindView`. */
   readonly tonalSecondary = input(false);
 
   readonly primaryClick = output();

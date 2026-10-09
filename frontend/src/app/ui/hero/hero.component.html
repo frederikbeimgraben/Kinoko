@@ -15,12 +15,12 @@
     }
     @if (showPrev()) {
       <span class="heronav heronav--l">
-        <app-icon-button icon="prev" kind="over" [label]="'image.previous' | t" (pressed)="prev.emit()" />
+        <app-icon-button icon="chevl" kind="over" [label]="'image.previous' | t" (pressed)="prev.emit()" />
       </span>
     }
     @if (showNext()) {
       <span class="heronav heronav--r">
-        <app-icon-button icon="next" kind="over" [label]="'image.next' | t" (pressed)="next.emit()" />
+        <app-icon-button icon="chevron" kind="over" [label]="'image.next' | t" (pressed)="next.emit()" />
       </span>
     }
   </div>

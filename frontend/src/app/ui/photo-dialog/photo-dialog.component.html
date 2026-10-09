@@ -2,6 +2,7 @@
   <div
     #scrim
     class="photo__scrim"
+    [class.photo__scrim--stage]="stage()"
     tabindex="-1"
     animate.enter="motion-fade-in"
     animate.leave="motion-fade-out"
@@ -14,7 +15,7 @@
       <div class="photo__frame">
         <app-private-image
           class="photo__image"
-          fit="contain"
+          fit="cover"
           [path]="path"
           [alt]="label()"
           (pointerdown)="onPointerDown($event)"
@@ -25,12 +26,12 @@
         </span>
         @if (hasPrev()) {
           <span class="photo__step photo__step--back">
-            <app-icon-button icon="prev" kind="over" [label]="'image.previous' | t" (pressed)="step(-1)" />
+            <app-icon-button icon="chevl" kind="over" [label]="'image.previous' | t" (pressed)="step(-1)" />
           </span>
         }
         @if (hasNext()) {
           <span class="photo__step photo__step--next">
-            <app-icon-button icon="next" kind="over" [label]="'image.next' | t" (pressed)="step(1)" />
+            <app-icon-button icon="chevron" kind="over" [label]="'image.next' | t" (pressed)="step(1)" />
           </span>
         }
       </div>

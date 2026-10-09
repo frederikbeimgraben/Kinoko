@@ -18,6 +18,20 @@ function build(): { api: ApiClient; http: HttpTestingController; toasts: ToastSe
 }
 
 describe('ApiClient', () => {
+  it('sendet für zwei gleiche Dateien zur selben Zeit nur eine Anfrage', () => {
+    const { api, http } = build();
+    const got: Blob[] = [];
+
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    http.expectOne('/api/photos/eins/list').flush(new Blob(['x']));
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    http.expectOne('/api/photos/eins/list').flush(new Blob(['y']));
+
+    expect(got).toHaveLength(3);
+    http.verify();
+  });
+
   it('ruft die eigene API unter /api', () => {
     const { api, http } = build();
     let got: { version: string } | null = null;

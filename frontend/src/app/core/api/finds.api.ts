@@ -51,7 +51,8 @@ export class FindsApi {
     return this.api.post<null>(`${ENTRY_PATHS.find}/${encodeURIComponent(id)}/review`, { decision });
   }
 
-  acceptAll(): Observable<null> {
-    return this.api.post<null>(`${REVIEWS}/accept-all`);
+  /** Takes back an acceptance or a rejection: the find waits for review again. */
+  reopen(id: string): Observable<null> {
+    return this.api.delete<null>(`${ENTRY_PATHS.find}/${encodeURIComponent(id)}/review`);
   }
 }

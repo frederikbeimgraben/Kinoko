@@ -40,6 +40,8 @@ export class PhotoDialogComponent {
   readonly index = input(0);
   /** The ISO day of the caption, for example the day of the find. Without it the photo gives its day. */
   readonly day = input<string | null>(null);
+  /** The scrim leaves the nav bright and the panel centres above it, as the kit `.scrim.top` (board `MapFindPhoto`). */
+  readonly stage = input(false);
 
   readonly closed = output();
 

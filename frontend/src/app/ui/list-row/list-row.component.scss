@@ -3,16 +3,18 @@
   display: block;
 }
 
+// A wrapper of one row, such as `app-map-app-link`, sets `--grp-top`/`--grp-bottom` from its own place in the group.
 :host-context(.grp):first-child .row {
-  border-radius: var(--r-item) var(--r-item) var(--r-row) var(--r-row);
+  border-radius: var(--grp-top, var(--r-item)) var(--grp-top, var(--r-item)) var(--r-row) var(--r-row);
 }
 
 :host-context(.grp):last-child .row {
-  border-radius: var(--r-row) var(--r-row) var(--r-item) var(--r-item);
+  border-radius: var(--r-row) var(--r-row) var(--grp-bottom, var(--r-item)) var(--grp-bottom, var(--r-item));
 }
 
 :host-context(.grp):only-child .row {
-  border-radius: var(--r-item);
+  border-radius: var(--grp-top, var(--r-item)) var(--grp-top, var(--r-item)) var(--grp-bottom, var(--r-item))
+    var(--grp-bottom, var(--r-item));
 }
 
 // An action stays next to the field: a button in a button is an error for assistive technology.

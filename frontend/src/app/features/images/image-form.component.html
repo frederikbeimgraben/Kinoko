@@ -1,13 +1,4 @@
-<app-species-page [slug]="slug()" />
-
-<app-form-sheet
-  [title]="title()"
-  [submit]="action()"
-  [submitIcon]="curates() ? 'check' : undefined"
-  [busy]="busy()"
-  (submitted)="save()"
-  (cancelled)="cancel()"
->
+<ng-template #fields>
   <div class="form">
     <div class="form__photo">
       <app-photo-strip
@@ -93,7 +84,41 @@
       </app-row-group>
     }
   </div>
-</app-form-sheet>
+</ng-template>
+
+<!-- A curator adds a photo on a page of its own (board ImageAdd). Each other person submits it in a sheet (board ImageSubmit). -->
+<ng-template #page>
+  <app-page-header [title]="title()" [back]="true" (backClick)="cancel()" />
+  <div class="page" [class.page--wide]="wide()">
+    <ng-container [ngTemplateOutlet]="fields" />
+    <app-action-bar
+      [primary]="action()"
+      primaryIcon="check"
+      [stacked]="true"
+      [busy]="busy()"
+      (primaryClick)="save()"
+    />
+  </div>
+</ng-template>
+
+@if (!curates()) {
+  <app-species-page [slug]="slug()" />
+  <app-form-sheet
+    [title]="title()"
+    [submit]="action()"
+    [busy]="busy()"
+    (submitted)="save()"
+    (cancelled)="cancel()"
+  >
+    <ng-container [ngTemplateOutlet]="fields" />
+  </app-form-sheet>
+} @else if (wide()) {
+  <app-species-desk [active]="slug()">
+    <ng-container [ngTemplateOutlet]="page" />
+  </app-species-desk>
+} @else {
+  <ng-container [ngTemplateOutlet]="page" />
+}
 
 <app-option-sheet
   [open]="picking()"

@@ -3,9 +3,6 @@
     <app-level-pill class="queue__badge" kind="ok" aria-hidden="true" [text]="'' + open()" />
     <span class="sr-only">{{ openLabel() }}</span>
   }
-  @if (open() > 1) {
-    <app-icon-button icon="check" [label]="'find.queue.acceptAll' | t" (pressed)="asking.set(true)" />
-  }
 </app-page-header>
 
 <div class="queue" [class.queue--empty]="loaded() && open() === 0">
@@ -44,12 +41,3 @@
     </app-review-queue>
   }
 </div>
-
-<app-confirm-dialog
-  [open]="asking()"
-  [title]="'find.queue.acceptAllConfirm' | t"
-  [danger]="false"
-  [confirmLabel]="'find.queue.acceptAll' | t"
-  (confirmed)="acceptAll()"
-  (cancelled)="asking.set(false)"
-/>

@@ -207,6 +207,29 @@ func TestReviewOfMissingFindIsNotFound(t *testing.T) {
 		Expect(t, http.StatusNotFound)
 }
 
+func TestReopenPutsADecidedFindBackInTheQueue(t *testing.T) {
+	env := testkit.New(t)
+	anna, reviewer := makeUser(t, env, "anna"), makeReviewer(t, env, "reviewer")
+	id := env.Post("/finds", aFind, anna.Person).Map(t)["id"].(string)
+	env.Post("/finds/"+id+"/review", object{"decision": "accepted"}, reviewer.Person).Expect(t, http.StatusOK)
+	body := env.Delete("/finds/"+id+"/review", reviewer.Person).Expect(t, http.StatusOK).Map(t)
+	if body["reviewState"] != "open" || body["reviewedById"] != nil || body["reviewedAt"] != nil {
+		t.Fatal(body)
+	}
+	if listed := items(t, env.Get("/finds/reviews/open", reviewer.Person)); len(listed) != 1 {
+		t.Fatal(listed)
+	}
+	env.Delete("/finds/"+id+"/review", reviewer.Person).Expect(t, http.StatusConflict)
+}
+
+func TestReopenRequiresTheRight(t *testing.T) {
+	env := testkit.New(t)
+	anna, reviewer := makeUser(t, env, "anna"), makeReviewer(t, env, "reviewer")
+	id := env.Post("/finds", aFind, anna.Person).Map(t)["id"].(string)
+	env.Delete("/finds/"+id+"/review", anna.Person).Expect(t, http.StatusForbidden)
+	env.Delete("/finds/"+db.NewID().String()+"/review", reviewer.Person).Expect(t, http.StatusNotFound)
+}
+
 func TestOpenFindsRequiresTheRight(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")

@@ -127,6 +127,25 @@ describe('FindSheetComponent', () => {
     });
   }
 
+  it('does not load the photos again for a new copy of the same find', async () => {
+    const { fixture, detectChanges } = await render(FindSheetComponent, {
+      inputs: { find: GROUPED },
+      providers: provider(),
+    });
+    const http = TestBed.inject(HttpTestingController);
+    const photoList = (request: { url: string; method: string }): boolean =>
+      request.url === '/api/photos' && request.method === 'GET';
+    await vi.waitFor(() => {
+      http.expectOne(photoList).flush({ items: [], nextCursor: null });
+    });
+
+    fixture.componentRef.setInput('find', { ...GROUPED });
+    detectChanges();
+    TestBed.tick();
+
+    http.expectNone(photoList);
+  });
+
   it('removes a photo and gets the list again', async () => {
     const setup = await build();
     await answerPhotos(setup, ['foto-eins']);

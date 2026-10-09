@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import type { SpeciesEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -22,9 +20,7 @@ import { FindQueueStore } from './find-queue.store';
   selector: 'app-find-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ConfirmDialogComponent,
     FindMapComponent,
-    IconButtonComponent,
     LevelPillComponent,
     ListRowComponent,
     ObjectTitleComponent,
@@ -43,7 +39,6 @@ export class FindQueueComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
-  protected readonly asking = signal(false);
   protected readonly loaded = this.store.loaded;
 
   protected readonly cards = computed<readonly FindCard[]>(() => {
@@ -74,11 +69,6 @@ export class FindQueueComponent {
 
   protected undo(): void {
     this.store.undo();
-  }
-
-  protected acceptAll(): void {
-    this.asking.set(false);
-    this.store.acceptAll({});
   }
 
   protected back(): void {

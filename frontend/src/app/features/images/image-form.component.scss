@@ -1,9 +1,25 @@
-// The species page fills the route; the sheet lies over it.
+// The species page or the page of the form fills the route.
 :host {
   display: flex;
   flex-direction: column;
   block-size: 100%;
   overflow: hidden;
+}
+
+// Kit `.pad` on the phone, `0 32px 32px` in the desktop pane. The button follows the fields 24 px below.
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  min-block-size: 0;
+  padding: 8px 16px 32px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.page--wide {
+  padding: 0 32px 32px;
 }
 
 // Per `ImageSubmitBody.dc.html`: the parts stand 20 px apart.
