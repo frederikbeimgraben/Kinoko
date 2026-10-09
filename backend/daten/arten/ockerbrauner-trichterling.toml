@@ -19,6 +19,7 @@ hutrand = { von = ["wellig", "gerieft"] }
 stielmerkmale = ["faserig", "hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Ockertrichter.htm"
 geprueftAm = "2026-09-12"
 

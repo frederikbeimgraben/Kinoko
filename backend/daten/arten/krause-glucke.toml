@@ -11,6 +11,7 @@ speisewertHinweis = "Den Strunk nicht mitessen, er kann Übelkeit und Erbrechen 
 weitereNamen = ["Fette Henne", "Bärenschädel"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/KrauseGlucke.htm"
 geprueftAm = "2026-09-12"
 

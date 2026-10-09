@@ -15,6 +15,7 @@ hutrand = { von = ["eingebogen"] }
 stielmerkmale = ["beflockt", "hohl", "wurzelnd"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GrauerMehltrichterling.htm"
 geprueftAm = "2026-09-12"
 

@@ -16,6 +16,7 @@ hutrand = { von = ["wellig"] }
 stielmerkmale = ["beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Maerzschneckling.htm"
 geprueftAm = "2026-09-12"
 

@@ -21,6 +21,7 @@ baeume = ["fichte", "kiefer"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Goldpfiffi.htm"
 geprueftAm = "2026-09-12"
 

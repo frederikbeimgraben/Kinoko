@@ -13,6 +13,7 @@ weitereNamen = ["Blasse Koralle", "Bauchweh-Ziegenbart", "Rosaliche Koralle"]
 synonyme = ["Ramaria pallida", "Ramaria roseola", "Clavaria pallida"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/BauchwehkoralleGiftig1004.htm"
 geprueftAm = "2026-09-12"
 

@@ -15,6 +15,7 @@ hutform = { von = "muschelfoermig" }
 hutrand = { von = ["wellig"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Bergporling.htm"
 geprueftAm = "2026-09-12"
 
@@ -41,10 +42,6 @@ sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["anisartig", "pilzig", "angenehm"]

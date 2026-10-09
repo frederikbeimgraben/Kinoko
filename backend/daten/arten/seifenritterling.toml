@@ -12,6 +12,7 @@ synonyme = ["Gyrophila saponacea", "Agaricus fusiformis", "Agaricus atrovirens"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/SeifenritterlingGiftig1004.htm"
 geprueftAm = "2026-09-12"
 

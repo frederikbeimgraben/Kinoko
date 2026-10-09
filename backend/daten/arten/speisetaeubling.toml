@@ -14,6 +14,7 @@ synonyme = ["Russula heterophylla var. vesca", "Russula vesca var. major", "Russ
 fruchtschicht = { art = "lamellen" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Speisetaubling.htm"
 geprueftAm = "2026-09-12"
 

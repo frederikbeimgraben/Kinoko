@@ -13,6 +13,7 @@ fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Ochsenroehrling.htm"
 geprueftAm = "2026-09-12"
 

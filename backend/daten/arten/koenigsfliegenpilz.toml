@@ -13,6 +13,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 stielmerkmale = ["hohl", "voll", "knolle", "genattert", "beflockt", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Koenigsfliegenpilz.htm"
 geprueftAm = "2026-09-12"
 

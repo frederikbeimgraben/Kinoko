@@ -15,6 +15,7 @@ synonyme = ["Boletus porosporus", "Xerocomus porosporus", "Boletus porosporus va
 fruchtschicht = { art = "roehren" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RotfussFalsch.htm"
 geprueftAm = "2026-09-12"
 

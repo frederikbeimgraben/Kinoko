@@ -17,6 +17,7 @@ hutrand = { von = ["wellig", "eingerollt", "gerieft"] }
 stielmerkmale = ["beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/PurpurorangerAfterleistling.htm"
 geprueftAm = "2026-09-12"
 

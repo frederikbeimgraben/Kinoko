@@ -627,11 +627,12 @@ func TestSummaryCountsGroupsAndTheGlossary(t *testing.T) {
 	first := env.Post("/groups", map[string]any{"name": "Familie"}, signIn(t, env, anna)).Expect(t, http.StatusCreated).Map(t)
 	env.Post("/groups", map[string]any{"name": "Karlsruhe"}, signIn(t, env, anna)).Expect(t, http.StatusCreated)
 	env.Post("/groups/join", map[string]any{"inviteCode": first["inviteCode"]}, signIn(t, env, bert)).Expect(t, http.StatusOK)
-	exec(t, env, "INSERT INTO glossary_entry (id, term, definition, updated_at) VALUES (?, 'Hymenium', 'Die Fruchtschicht.', ?)",
+	exec(t, env, "INSERT INTO glossary_entry (id, term, definition, updated_at) VALUES (?, 'Zystide', 'Sterile Zelle.', ?)",
 		db.NewID(), db.Now())
+	want := scalar[int](t, env, "SELECT count(*) FROM glossary_entry")
 	body := env.Get("/admin/summary", signIn(t, env, anna, "group.manage", "text.edit")).Expect(t, http.StatusOK).Map(t)
-	if body["groups"] != 2.0 || body["groupMembers"] != 3.0 || body["glossary"] != 1.0 {
-		t.Fatal(body)
+	if body["groups"] != 2.0 || body["groupMembers"] != 3.0 || want < 1 || body["glossary"] != float64(want) {
+		t.Fatal(want, body)
 	}
 }
 

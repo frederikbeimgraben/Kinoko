@@ -15,6 +15,7 @@ hutrand = { von = ["gerieft"] }
 stielmerkmale = ["hohl", "voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Huegelschwindling.htm"
 geprueftAm = "2026-09-12"
 

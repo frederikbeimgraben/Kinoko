@@ -12,6 +12,7 @@ fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Bitterroehrling.htm"
 geprueftAm = "2026-09-12"
 
@@ -40,13 +41,8 @@ bisMonat = 11
 hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "hellbraun", hex = "#a97c50" }]
 sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
 stiel = [{ name = "hellbraun", hex = "#a97c50" }, { name = "braun", hex = "#7a5230" }]
-fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "rosa", hex = "#e8a0b0" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["saeuerlich"]

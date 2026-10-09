@@ -14,6 +14,7 @@ hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/FalscherPfifferling.htm"
 geprueftAm = "2026-09-12"
 

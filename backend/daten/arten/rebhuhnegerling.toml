@@ -14,6 +14,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei", schneide = "gesaegt" }
 stielmerkmale = ["knolle", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Rebhuhnegerling.htm"
 geprueftAm = "2026-09-12"
 

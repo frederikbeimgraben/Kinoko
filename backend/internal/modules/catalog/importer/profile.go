@@ -90,8 +90,9 @@ type ProtectionEntry struct {
 	Status string `toml:"status"`
 }
 
-// SourceEntry is the main source of the profile.
+// SourceEntry is the main source of the profile. Without a title, the host name of the address is the title.
 type SourceEntry struct {
+	Titel      string `toml:"titel"`
 	URL        string `toml:"url"`
 	GeprueftAm string `toml:"geprueftAm"`
 }

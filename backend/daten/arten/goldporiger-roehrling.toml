@@ -14,6 +14,7 @@ fruchtschicht = { art = "roehren" }
 hutrand = { von = ["ueberstehend"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GoldporigerRoehrling.htm"
 geprueftAm = "2026-09-12"
 
@@ -30,7 +31,7 @@ bisMonat = 11
 hut = [{ name = "beige", hex = "#d9c9a3" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenlager = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "zitronengelb", hex = "#f2e14c" }, { name = "goldgelb", hex = "#e2b13a" }, { name = "gelb", hex = "#e8c33a" }]
 stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
-fleisch = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
 
 [geruch]

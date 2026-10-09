@@ -16,6 +16,7 @@ fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 stielmerkmale = ["voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RissigerFrauentaeubling.htm"
 geprueftAm = "2026-09-12"
 

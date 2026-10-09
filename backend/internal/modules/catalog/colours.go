@@ -5,7 +5,23 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 )
+
+// bodyOrder is the order of the parts on a species page: from the top of the fruit body down, then the inside.
+var bodyOrder = []enums.BodyPart{
+	enums.BodyPartFruitbody, enums.BodyPartCap, enums.BodyPartStem, enums.BodyPartRing, enums.BodyPartStemBase,
+	enums.BodyPartGills, enums.BodyPartTubes, enums.BodyPartPores, enums.BodyPartFlesh, enums.BodyPartSporePrint, enums.BodyPartSpore,
+}
+
+// BodyRank gives the place of a part in the page order. An unknown part goes last.
+func BodyRank(part enums.BodyPart) int {
+	if index := slices.Index(bodyOrder, part); index >= 0 {
+		return index
+	}
+	return len(bodyOrder)
+}
 
 // StandardColour is one colour of the filter palette.
 type StandardColour struct {

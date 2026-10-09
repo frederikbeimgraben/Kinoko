@@ -15,6 +15,7 @@ fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 stielmerkmale = ["ring", "voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Aprikosen-Gelbfuss.htm"
 geprueftAm = "2026-09-12"
 

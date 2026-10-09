@@ -14,6 +14,7 @@ hutrand = { von = ["gerieft"] }
 stielmerkmale = ["hohl", "faserig", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Faltentintling.htm"
 geprueftAm = "2026-09-12"
 

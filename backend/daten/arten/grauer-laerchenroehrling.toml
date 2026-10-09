@@ -15,6 +15,7 @@ hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["eingerollt"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GraublasserLaerchenroehrling.htm"
 geprueftAm = "2026-09-12"
 

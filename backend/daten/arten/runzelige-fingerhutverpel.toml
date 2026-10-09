@@ -15,6 +15,7 @@ hutform = { von = "eifoermig" }
 stielmerkmale = ["genattert", "beflockt", "hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RunzeligeVerpel.htm"
 geprueftAm = "2026-09-12"
 

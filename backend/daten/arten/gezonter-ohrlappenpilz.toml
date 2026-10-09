@@ -12,6 +12,7 @@ synonyme = ["Merulioporia violacea", "Stereum mesentericum", "Meruliopsis violac
 hutmerkmale = ["gezont"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GezonterOhrlappenpilz.htm"
 geprueftAm = "2026-09-12"
 
@@ -29,10 +30,6 @@ hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "hellbraun", hex = "#a9
 sporenlager = [{ name = "violett", hex = "#6b4a8a" }, { name = "beige", hex = "#d9c9a3" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
 fleisch = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["unauffaellig"]

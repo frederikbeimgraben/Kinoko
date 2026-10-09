@@ -15,6 +15,7 @@ hutrand = { von = ["eingerollt"], nach = ["scharf"] }
 stielmerkmale = ["faserig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Erlengruebling.htm"
 geprueftAm = "2026-09-12"
 

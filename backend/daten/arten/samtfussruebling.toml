@@ -19,6 +19,7 @@ baeume = ["weide", "pappel", "buche"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Samtfussruebling.htm"
 geprueftAm = "2026-09-12"
 

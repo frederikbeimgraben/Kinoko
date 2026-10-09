@@ -11,6 +11,7 @@ baeume = ["kiefer", "tanne", "fichte"]
 fruchtschicht = { art = "lamellen" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/OrangGraustieltaeub.htm"
 geprueftAm = "2026-09-12"
 

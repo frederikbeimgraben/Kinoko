@@ -16,6 +16,7 @@ hutform = { von = "eifoermig" }
 stielmerkmale = ["hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Verpel.htm"
 geprueftAm = "2026-09-12"
 

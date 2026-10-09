@@ -15,6 +15,7 @@ hutrand = { von = ["gerieft"] }
 stielmerkmale = ["genattert", "beflockt", "hohl", "scheide"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GelberStreifling.htm"
 geprueftAm = "2026-09-12"
 

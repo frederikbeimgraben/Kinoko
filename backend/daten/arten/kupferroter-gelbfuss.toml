@@ -13,6 +13,7 @@ fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 stielmerkmale = ["voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/KupferroterGelbfuss.htm"
 geprueftAm = "2026-09-12"
 

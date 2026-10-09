@@ -14,6 +14,7 @@ hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["faserig", "genattert", "beflockt", "hohl", "voll", "knolle", "scheide", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/KegelhuetigerKnollenblaetterpilz.htm"
 geprueftAm = "2026-09-12"
 
@@ -28,7 +29,7 @@ vonMonat = 6
 bisMonat = 11
 
 [farben]
-hut = [{ name = "weiß", hex = "#ffffff" }, { name = "rot", hex = "#c0392b" }]
+hut = [{ name = "weiß", hex = "#ffffff" }]
 sporenlager = [{ name = "weiß", hex = "#ffffff" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }]
