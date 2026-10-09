@@ -7,41 +7,51 @@
     <app-row-group-skeleton [count]="3" />
     <app-row-group-skeleton [count]="4" [label]="true" />
   } @else {
-    <app-form-field
-      [label]="'common.name' | t"
-      [hideLabel]="true"
-      [value]="displayName()"
-      [placeholder]="'admin.role.namePlaceholder' | t"
-      [readOnly]="locked()"
-      (valueChange)="name.set($event)"
-    />
-    @if (creating()) {
+    <app-section [label]="'common.name' | t">
       <app-form-field
-        [label]="'admin.role.slug' | t"
+        [label]="'common.name' | t"
         [hideLabel]="true"
-        [value]="slug()"
-        [placeholder]="'admin.role.slugPlaceholder' | t"
-        (valueChange)="slug.set($event)"
+        [value]="displayName()"
+        [placeholder]="'admin.role.namePlaceholder' | t"
+        [readOnly]="locked()"
+        (valueChange)="name.set($event)"
       />
+    </app-section>
+    @if (creating()) {
+      <app-section [label]="'admin.role.slug' | t">
+        <app-form-field
+          [label]="'admin.role.slug' | t"
+          [hideLabel]="true"
+          [value]="slug()"
+          [placeholder]="'admin.role.slugPlaceholder' | t"
+          (valueChange)="slug.set($event)"
+        />
+      </app-section>
     }
-    <app-form-field
-      [label]="'admin.role.description' | t"
-      [hideLabel]="true"
-      [value]="description()"
-      [placeholder]="'admin.role.description' | t"
-      (valueChange)="description.set($event)"
-    />
+    <app-section [label]="'admin.role.description' | t">
+      <app-form-field
+        [label]="'admin.role.description' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [value]="description()"
+        [placeholder]="'common.optional' | t"
+        (valueChange)="description.set($event)"
+      />
+    </app-section>
 
     @for (group of areas(); track group.area) {
       <app-section [label]="group.titel">
         <app-row-group>
           @for (right of group.rights; track right.key) {
-            <app-check-row
-              [title]="right.titel"
-              [checked]="right.checked"
-              [locked]="locked()"
-              (toggled)="toggle(right.key, $event)"
-            />
+            <app-list-row [title]="right.titel">
+              <app-switch
+                trail
+                [checked]="right.checked"
+                [disabled]="locked()"
+                [label]="right.titel"
+                (checkedChange)="toggle(right.key, $event)"
+              />
+            </app-list-row>
           }
         </app-row-group>
       </app-section>

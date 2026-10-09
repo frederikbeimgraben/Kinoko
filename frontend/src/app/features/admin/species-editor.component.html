@@ -7,9 +7,7 @@
     <app-row-group-skeleton [count]="2" [label]="true" [lines]="2" trail="chevron" />
   } @else {
     @if (stats().length > 0) {
-      <div class="editor__stats">
-        <app-stat-row [stats]="stats()" />
-      </div>
+      <app-stat-row [stats]="stats()" [cols]="3" />
     }
 
     <app-row-group>
@@ -23,26 +21,116 @@
       </app-list-row>
     </app-row-group>
 
-    @for (block of blocks(); track block.title) {
-      <app-section [label]="block.title">
-        @if (block.rows.length > 0) {
-          <app-row-group>
-            @for (row of block.rows; track row.key; let at = $index) {
-              <app-list-row
-                [title]="row.title"
-                [subline]="row.value"
-                [chevron]="true"
-                [clickable]="block.opens"
-                (chosen)="openRow(block.kind, at, row.key)"
-              />
-            }
-          </app-row-group>
+    <app-section [label]="'admin.species.description' | t">
+      <app-form-field
+        [label]="'admin.species.description' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [value]="description()"
+        (valueChange)="description.set($event)"
+      />
+    </app-section>
+
+    <app-section [label]="'admin.species.section.features' | t">
+      <app-row-group>
+        @for (row of features(); track row.key) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.value"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openPart(row.key)"
+          />
         }
-        @if (block.add; as label) {
-          <app-add-row [label]="label" [action]="block.addAction ?? label" (pressed)="addRow(block.kind)" />
+        <app-add-row
+          [label]="'admin.species.addPart' | t"
+          [action]="'admin.species.addPart' | t"
+          (pressed)="picking.set(true)"
+        />
+      </app-row-group>
+    </app-section>
+
+    <app-section [label]="'species.section.colourChange' | t">
+      <app-row-group>
+        @for (row of changes(); track row.key; let at = $index) {
+          <app-list-row
+            [title]="row.title"
+            [plain]="row.value"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openChange(at)"
+          />
         }
-      </app-section>
-    }
+        <app-add-row
+          [label]="'admin.colourChange.addReagent' | t"
+          [action]="'admin.colourChange.addReagent' | t"
+          (pressed)="addChange()"
+        />
+      </app-row-group>
+    </app-section>
+
+    <app-section [label]="'admin.species.section.more' | t">
+      <app-row-group>
+        @for (row of more(); track row.key) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.value"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openMore(row.key)"
+          />
+        }
+      </app-row-group>
+    </app-section>
+
+    <app-section [label]="'admin.species.field.edibilityNote' | t">
+      <app-form-field
+        [label]="'admin.species.field.edibilityNote' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [placeholder]="'common.optional' | t"
+        [value]="edibilityNote()"
+        (valueChange)="edibilityNote.set($event)"
+      />
+    </app-section>
+
+    <app-section [label]="'admin.species.section.lookalikes' | t">
+      <app-row-group>
+        @for (row of lookalikes(); track row.key; let at = $index) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.value"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openLookalike(at)"
+          />
+        }
+        <app-add-row
+          [label]="'admin.species.addLookalike' | t"
+          [action]="'admin.species.addLookalike' | t"
+          (pressed)="addLookalike()"
+        />
+      </app-row-group>
+    </app-section>
+
+    <app-section [label]="'admin.species.section.sources' | t">
+      <app-row-group>
+        @for (row of sources(); track row.key; let at = $index) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.value"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openSource(at)"
+          />
+        }
+        <app-add-row
+          [label]="'admin.species.addSource' | t"
+          [action]="'admin.species.addSource' | t"
+          (pressed)="addSource()"
+        />
+      </app-row-group>
+    </app-section>
 
     @if (sourceText(); as source) {
       <p class="editor__note">{{ source }}</p>
@@ -54,7 +142,7 @@
   [primary]="'common.save' | t"
   [secondary]="'admin.species.delete' | t"
   [secondaryDanger]="true"
-  (primaryClick)="back()"
+  (primaryClick)="save()"
   (secondaryClick)="removing.set(true)"
 />
 

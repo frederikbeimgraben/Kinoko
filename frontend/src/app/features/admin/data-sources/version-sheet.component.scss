@@ -1,8 +1,11 @@
+@use '../page';
+
 .version {
+  @include page.sheet-body;
+
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding-block-end: 16px;
 }
 
 .version__empty {

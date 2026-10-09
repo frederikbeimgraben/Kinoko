@@ -22,29 +22,28 @@ describe('SpeciesCreateComponent', { timeout: 20_000 }, () => {
     const { container } = await build();
 
     expect(screen.getByRole('heading', { name: 'Art anlegen' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Einordnung' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Röhrling' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'essbar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Einordnung/ })).toHaveTextContent('Röhrling');
+    expect(screen.getByRole('tab', { name: 'essbar' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByText('Name', { selector: '.lbl' })).toBeInTheDocument();
     await noViolations(container);
   });
 
   it('wählt eine andere Gattungsgruppe im Blatt', async () => {
     await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Röhrling' }));
+    await userEvent.click(screen.getByRole('button', { name: /Einordnung/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Tintling' }));
 
-    expect(screen.getByRole('button', { name: 'Tintling' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Einordnung/ })).toHaveTextContent('Tintling');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('wählt einen anderen Speisewert im Blatt', async () => {
+  it('wählt einen anderen Speisewert im Segment', async () => {
     await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'essbar' }));
-    await userEvent.click(screen.getByRole('button', { name: 'giftig' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'giftig' }));
 
-    expect(screen.getByRole('button', { name: 'giftig' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'giftig' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('schickt Name, Einordnung, Namen und Quelle an den Vertrag', async () => {

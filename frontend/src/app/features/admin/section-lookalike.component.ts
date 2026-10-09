@@ -7,6 +7,8 @@ import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesStore } from '../species/species.store';
 import { speciesPickerEntry } from '../species/species-picker-entry';
@@ -22,6 +24,8 @@ import { withLookalike, withoutLookalike } from './species-lists';
     FormFieldComponent,
     ListRowComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    SectionComponent,
     SpeciesPickerComponent,
     TranslatePipe,
   ],
@@ -48,11 +52,15 @@ export class SectionLookalikeComponent {
     this.catalogue.species().map((entry) => speciesPickerEntry(entry, this.i18n)),
   );
 
-  protected readonly otherName = computed(() => {
+  /** The chosen species: name and scientific name. Without a choice, the row asks for one. */
+  protected readonly otherNames = computed(() => {
     const slug = this.other();
     const held = this.held();
-    if (held?.slug === slug) return held.name;
-    return this.catalogue.species().find((one) => one.slug === slug)?.name ?? '';
+    if (held?.slug === slug) return { name: held.name, latin: held.scientificName };
+    const found = this.catalogue.species().find((one) => one.slug === slug);
+    return found === undefined
+      ? { name: this.i18n.translate('admin.lookalike.choose'), latin: '' }
+      : { name: found.name, latin: found.scientificName };
   });
 
   constructor() {

@@ -1,6 +1,6 @@
-import type { Measurement, SpeciesEntry } from '../../core/api/models';
+import type { Measurement, SpeciesEntry, TermRef } from '../../core/api/models';
 import { DIMENSION_TEXT } from '../species/labels';
-import { changeRows, colourRows, sizeRows } from './section-part.rows';
+import { changeRows, colourRows, sizeRows, swatchOf } from './section-part.rows';
 
 const SPECIES = {
   measurements: [
@@ -10,7 +10,14 @@ const SPECIES = {
     },
   ],
   colours: [
-    { part: 'cap', mode: 'gradient', colours: [{ name: 'hellbraun', hex: '#e2c79a' }] },
+    {
+      part: 'cap',
+      mode: 'gradient',
+      colours: [
+        { name: 'hellbraun', hex: '#e2c79a' },
+        { name: 'dunkelbraun', hex: '#5a3d22' },
+      ],
+    },
     { part: 'stem', mode: 'single', colours: [{ name: 'weiß', hex: '#ffffff' }] },
   ],
   colourChanges: [
@@ -33,40 +40,58 @@ const SPECIES = {
   ],
 } as unknown as SpeciesEntry;
 
-function span(one: Measurement): string {
-  return `${one.low} bis ${one.high} ${one.unit}`;
+function span(one: Measurement): { value: string; unit: string } {
+  return { value: `${String(one.low)} – ${String(one.high)}`, unit: one.unit };
 }
 
+const NAME = (one: TermRef): string => one.name;
+
 describe('section-part.rows', () => {
-  it('führt je Maß eine Zeile mit Strecke und Spanne', () => {
+  it('führt je Maß eine Zeile mit Strecke, Spanne und Einheit', () => {
     expect(sizeRows(SPECIES, 'cap', DIMENSION_TEXT, span)).toEqual([
-      { dimension: 'width', title: 'enum.dimension.width', value: '4 bis 20 cm' },
+      { dimension: 'width', title: 'enum.dimension.width', value: '4 – 20', unit: 'cm' },
     ]);
     expect(sizeRows(SPECIES, 'gills', DIMENSION_TEXT, span)).toEqual([]);
     expect(sizeRows(null, 'cap', DIMENSION_TEXT, span)).toEqual([]);
   });
 
-  it('führt je Farbgruppe des Teils eine Zeile', () => {
-    const rows = colourRows(SPECIES, 'cap', 'Farbe');
+  it('führt je Farbgruppe des Teils eine Zeile mit Namen und Farbfeld', () => {
+    const rows = colourRows(SPECIES, 'cap', 'Hutfarbe', 'bis');
 
-    expect(rows).toHaveLength(1);
-    expect(rows[0].gradient).toBe(true);
-    expect(rows[0].colours).toEqual([{ name: 'hellbraun', hex: '#e2c79a' }]);
+    expect(rows).toEqual([
+      {
+        key: 'farbe-0',
+        title: 'Hutfarbe',
+        subline: 'hellbraun bis dunkelbraun',
+        swatch: 'linear-gradient(90deg, #e2c79a, #5a3d22)',
+        at: 0,
+      },
+    ]);
+  });
+
+  it('malt mehrere Farben als harte Streifen und eine Farbe als Fläche', () => {
+    const two = [
+      { name: 'a', hex: '#111111' },
+      { name: 'b', hex: '#222222' },
+    ];
+    expect(swatchOf({ part: 'cap', mode: 'distinct', colours: two })).toBe(
+      'linear-gradient(90deg, #111111 0% 50%, #222222 50% 100%)',
+    );
+    expect(swatchOf({ part: 'cap', mode: 'single', colours: [two[0]] })).toBe('#111111');
   });
 
   it('führt je Verfärbung des Teils eine Zeile mit ihrer Stelle in der Art', () => {
-    const rows = changeRows(SPECIES, 'cap');
+    const rows = changeRows(SPECIES, 'cap', NAME);
 
     expect(rows).toHaveLength(1);
     expect(rows[0].at).toBe(1);
     expect(rows[0].title).toBe('Schnitt');
-    expect(rows[0].colours).toHaveLength(2);
+    expect(rows[0].subline).toBe('blau');
   });
 
-  it('lässt eine Verfärbung ohne Anfangsfarbe die Endfarbe allein tragen', () => {
-    const rows = changeRows(SPECIES, 'stem');
+  it('nennt die Auslöser in der Sprache der Oberfläche', () => {
+    const rows = changeRows(SPECIES, 'cap', () => 'Cut');
 
-    expect(rows[0].colours).toEqual([{ name: 'blau', hex: '#5b7fb0' }]);
-    expect(rows[0].title).toBe('');
+    expect(rows[0].title).toBe('Cut');
   });
 });

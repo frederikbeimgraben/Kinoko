@@ -3,6 +3,7 @@
 }
 
 // Per `AddRow.dc.html`: a `.row` with a plus icon, in the text colour.
+// Alone, the row is a card of its own. In a group, the rules below set the corners.
 .add-row {
   display: flex;
   align-items: center;
@@ -15,7 +16,11 @@
   text-align: start;
   background: var(--surface);
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--r-item);
+}
+
+:host-context(.grp) .add-row {
+  border-radius: var(--r-row);
 }
 
 // Per `kit.css` `.grp>.row`: the first and the last row of a group have round outer corners.

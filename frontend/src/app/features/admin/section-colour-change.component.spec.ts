@@ -16,8 +16,11 @@ const TERMS = {
   items: [
     { id: 'a-1', kind: 'trigger', group: 'mechanical', slug: 'pressure', name: 'Druck', position: 1 },
     { id: 'a-2', kind: 'trigger', group: 'mechanical', slug: 'cut', name: 'Anschnitt', position: 2 },
+    { id: 'a-3', kind: 'trigger', group: 'reagent', slug: 'koh', name: 'Kalilauge (KOH)', position: 3 },
   ],
 };
+
+const PALETTE = [{ key: 'brown', hex: '#7a5230' }];
 
 const WITH_CHANGE = {
   ...SECTION_SPECIES,
@@ -33,20 +36,29 @@ const WITH_CHANGE = {
   ],
 };
 
-function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
-  const map = convertToParamMap({ slug: 'boletus-edulis', part: 'flesh', index: '0' });
+function routeFor(part: string, index: string): { provide: typeof ActivatedRoute; useValue: unknown } {
+  const map = convertToParamMap({ slug: 'boletus-edulis', part, index });
   return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
 }
 
-async function build(): Promise<{ container: Element; http: HttpTestingController }> {
+async function build(
+  part = 'flesh',
+  index = '0',
+): Promise<{ container: Element; http: HttpTestingController }> {
   TestBed.resetTestingModule();
   const { container } = await render(SectionColourChangeComponent, {
-    providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor()],
+    providers: [
+      provideRouter(ANY_ROUTE),
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      routeFor(part, index),
+    ],
   });
   const http = TestBed.inject(HttpTestingController);
   http.expectOne('/api/species/boletus-edulis').flush(WITH_CHANGE);
   http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
   http.expectOne('/api/terms').flush(TERMS);
+  http.expectOne('/api/species/bundle').flush({ items: [], standardColours: PALETTE, facets: {} });
   return { container, http };
 }
 
@@ -60,7 +72,9 @@ describe('SectionColourChangeComponent', () => {
     const { container } = await build();
 
     expect(await screen.findByRole('heading', { name: 'Verfärbung' })).toBeInTheDocument();
-    expect(screen.getByText('#F4EFE2')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Teil/ })).toHaveTextContent('Fleisch');
+    expect(screen.getByRole('button', { name: /von/ })).toHaveTextContent('weiß');
+    expect(screen.getByRole('button', { name: /nach/ })).toHaveTextContent('blau');
     expect(screen.getByRole('button', { name: 'Druck' })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: '1 min' })).toHaveAttribute('aria-pressed', 'true');
     await noViolations(container);
@@ -89,5 +103,58 @@ describe('SectionColourChangeComponent', () => {
     const call = http.expectOne('/api/species/boletus-edulis');
     expect(call.request.method).toBe('PUT');
     expect((call.request.body as { colourChanges: unknown[] }).colourChanges).toEqual([]);
+  });
+
+  it('zeigt nur die Auslöser der gewählten Gruppe', async () => {
+    await build();
+    await screen.findByRole('heading', { name: 'Verfärbung' });
+
+    expect(screen.queryByRole('button', { name: 'Kalilauge (KOH)' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('tab', { name: 'Reagenz' }));
+
+    expect(screen.getByRole('button', { name: 'Kalilauge (KOH)' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Druck' })).not.toBeInTheDocument();
+  });
+
+  it('legt eine neue Verfärbung mit Auslöser und Farbe an', async () => {
+    const { http } = await build('cap', '1');
+    await screen.findByRole('heading', { name: 'Verfärbung' });
+
+    expect(screen.queryByRole('button', { name: 'Verfärbung entfernen' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('tab', { name: 'Reagenz' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kalilauge (KOH)' }));
+    await userEvent.click(screen.getByRole('radio', { name: 'Braun' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    const body = http.expectOne('/api/species/boletus-edulis').request.body as {
+      colourChanges: {
+        part: string;
+        kind: string;
+        to: { hex: string; name: string };
+        triggers: { id: string }[];
+      }[];
+    };
+    expect(body.colourChanges).toHaveLength(2);
+    expect(body.colourChanges[1]).toMatchObject({
+      part: 'cap',
+      kind: 'reagent',
+      to: { hex: '#7a5230', name: 'Braun' },
+      triggers: [{ id: 'a-3' }],
+    });
+  });
+
+  it('schreibt eine neue Verfärbung ohne Auslöser nicht', async () => {
+    const { http } = await build('cap', '1');
+    await screen.findByRole('heading', { name: 'Verfärbung' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    http.expectNone('/api/species/boletus-edulis');
+  });
+
+  it('zeigt bei einem deutschen Teilnamen den Zustand nicht gefunden', async () => {
+    await build('hut', '0');
+
+    expect(await screen.findByText('Teil nicht gefunden')).toBeInTheDocument();
   });
 });

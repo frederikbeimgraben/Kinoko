@@ -1,78 +1,102 @@
 <app-page-header [title]="'species.section.colourChange' | t" [back]="true" (backClick)="back()" />
 
 <div class="section">
-  <app-form-field
-    class="section__part"
-    [label]="'admin.characteristic.part' | t"
-    [section]="true"
-    [readOnly]="true"
-    [chevron]="true"
-    [value]="partName()"
-  />
+  @if (!known()) {
+    <app-state-view icon="search" [title]="'admin.part.notFound' | t" />
+  } @else {
+    <app-row-group>
+      <app-list-row
+        [title]="'admin.characteristic.part' | t"
+        [plain]="partName()"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="picking.set(true)"
+      />
+    </app-row-group>
 
-  <section>
-    <h2 class="section__title">{{ 'admin.category.trigger' | t }}</h2>
-    <app-segmented
-      class="section__segment"
-      [options]="kinds()"
-      [value]="kind()"
-      [label]="'admin.category.trigger' | t"
-      (valueChange)="chooseKind($event)"
-    />
-    <app-chip-group
-      class="section__chips"
-      [chips]="triggerChips()"
-      [value]="triggers()"
-      [multiple]="true"
-      [addable]="true"
-      [label]="'admin.category.trigger' | t"
-      (valueChange)="triggers.set($event)"
-    />
-  </section>
+    <app-section [label]="'admin.category.trigger' | t">
+      <app-segmented
+        [options]="kinds()"
+        [value]="kind()"
+        [label]="'admin.category.trigger' | t"
+        (valueChange)="chooseKind($event)"
+      />
+    </app-section>
 
-  <div class="section__span">
-    <div class="section__field">
-      <h2 class="section__title">{{ 'common.from' | t }}</h2>
-      <div class="section__box">
-        <app-colour-field
-          class="section__chip"
-          [colours]="from()"
-          mode="single"
-          [label]="'common.from' | t"
+    <app-section [label]="'admin.colourChange.kind' | t">
+      <app-chip-group
+        [small]="true"
+        [chips]="triggerChips()"
+        [value]="triggers()"
+        [multiple]="true"
+        [label]="'admin.colourChange.kind' | t"
+        (valueChange)="triggers.set($event)"
+      />
+    </app-section>
+
+    <app-section [label]="'common.colour' | t">
+      <app-row-group>
+        <app-list-row
+          [title]="'common.from' | t"
+          [subline]="from()?.name ?? ('common.optional' | t)"
+          [swatch]="from()?.hex ?? ''"
+          [selected]="openEnd() === 'from'"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openEnd.set('from')"
         />
-        <span class="section__hex">{{ fromHex() }}</span>
-      </div>
-    </div>
-    <div class="section__field">
-      <h2 class="section__title">{{ 'admin.colourChange.to' | t }}</h2>
-      <div class="section__box">
-        <app-colour-field
-          class="section__chip"
-          [colours]="to()"
-          mode="single"
-          [label]="'admin.colourChange.to' | t"
+        <app-list-row
+          [title]="'admin.colourChange.to' | t"
+          [subline]="to()?.name ?? ''"
+          [swatch]="to()?.hex ?? ''"
+          [selected]="openEnd() === 'to'"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openEnd.set('to')"
         />
-        <span class="section__hex">{{ toHex() }}</span>
+      </app-row-group>
+      <div class="section__palette">
+        <app-colour-picker
+          [colours]="swatches()"
+          [value]="openHex()"
+          [labels]="false"
+          [label]="(openEnd() === 'from' ? 'common.from' : 'admin.colourChange.to') | t"
+          (valueChange)="chooseHex($event)"
+        />
       </div>
-    </div>
-  </div>
+    </app-section>
 
-  <section>
-    <h2 class="section__title">{{ 'admin.colourChange.speed' | t }}</h2>
-    <app-chip-group
-      class="section__chips"
-      [chips]="speedChips()"
-      [value]="speedValue()"
-      [label]="'admin.colourChange.speed' | t"
-      (valueChange)="chooseSpeed($event)"
-    />
-  </section>
+    <app-section [label]="'admin.colourChange.speed' | t">
+      <app-chip-group
+        [small]="true"
+        [chips]="speedChips()"
+        [value]="speedValue()"
+        [label]="'admin.colourChange.speed' | t"
+        (valueChange)="chooseSpeed($event)"
+      />
+    </app-section>
+  }
 </div>
 
-<app-action-bar
-  [primary]="'common.apply' | t"
-  [secondary]="'admin.colourChange.remove' | t"
-  [secondaryDanger]="true"
-  (primaryClick)="apply()"
-  (secondaryClick)="remove()"
+@if (known()) {
+  @if (isNew()) {
+    <app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />
+  } @else {
+    <app-action-bar
+      [primary]="'common.apply' | t"
+      [secondary]="'admin.colourChange.remove' | t"
+      [secondaryDanger]="true"
+      (primaryClick)="apply()"
+      (secondaryClick)="remove()"
+    />
+  }
+}
+
+<app-option-sheet
+  [open]="picking()"
+  [title]="'admin.characteristic.part' | t"
+  [options]="parts()"
+  [selected]="part()"
+  (chosen)="choosePart($event)"
+  (closed)="picking.set(false)"
 />

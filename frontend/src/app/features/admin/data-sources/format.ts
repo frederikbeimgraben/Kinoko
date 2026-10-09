@@ -3,14 +3,14 @@ import type { DataSourceAccept } from '../../../core/api/models';
 /** The byte units that `Intl.NumberFormat` knows, from small to large. */
 const BYTE_UNITS = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte'] as const;
 
-/** A size in the largest unit below 1024, for example "1.4 GB". */
+/** A size in the largest unit below 1024, for example "1.4 GB". Plain bytes use the long name: "0 bytes", "0 Byte". */
 export function bytesText(bytes: number, locale: string): string {
   const step = Math.min(BYTE_UNITS.length - 1, bytes > 0 ? Math.floor(Math.log(bytes) / Math.log(1024)) : 0);
   const value = bytes / 1024 ** step;
   return new Intl.NumberFormat(locale, {
     style: 'unit',
     unit: BYTE_UNITS[step],
-    unitDisplay: 'short',
+    unitDisplay: step === 0 ? 'long' : 'short',
     maximumFractionDigits: step === 0 ? 0 : 1,
   }).format(value);
 }

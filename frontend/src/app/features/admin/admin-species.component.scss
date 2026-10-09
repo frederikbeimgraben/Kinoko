@@ -16,9 +16,19 @@
   min-block-size: 0;
 }
 
+// Per `kit.css` `.list`: rows 2 px apart, the letter heads with their own space.
 .species__rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-block-end: 24px;
+  gap: 2px;
+  padding-block-end: calc(var(--h-btn) + 40px);
+  margin-inline: -8px;
+}
+
+.species__head {
+  padding: 12px 12px 6px;
+}
+
+.species__fab {
+  @include page.fab;
 }

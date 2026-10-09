@@ -6,7 +6,11 @@
 
 .runs {
   @include page.body;
-  @include page.with-actions;
+  @include page.with-fab;
+}
+
+.runs__fab {
+  @include page.fab;
 }
 
 // The running run: a kit card with a head line, a sub-line and the progress.

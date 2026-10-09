@@ -273,7 +273,7 @@ type personName struct {
 
 func (m *Module) resolvePersonNames(r *http.Request) (web.Response, error) {
 	ctx := r.Context()
-	user, _, err := m.deps.Auth.CurrentUser(r)
+	user, viewer, err := m.deps.Auth.CurrentUser(r)
 	if err != nil {
 		return nil, err
 	}
@@ -281,9 +281,13 @@ func (m *Module) resolvePersonNames(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	visible, err := sharedWith(ctx, m.deps.DB, user.ID, requested)
-	if err != nil {
-		return nil, err
+	visible := unique(requested)
+	// A reviewer of finds and an assigner of roles work on the data of all persons.
+	if !viewer.May("find.review") && !viewer.May("role.assign") {
+		visible, err = sharedWith(ctx, m.deps.DB, user.ID, requested)
+		if err != nil {
+			return nil, err
+		}
 	}
 	names, err := displayNames(ctx, m.deps.DB, visible)
 	if err != nil {

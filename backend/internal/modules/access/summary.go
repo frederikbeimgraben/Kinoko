@@ -30,6 +30,7 @@ var SummaryItems = []SummaryItem{
 	{"image.review", "photos", "SELECT count(*) FROM photo"},
 	{"image.review", "photosPending", "SELECT count(*) FROM photo WHERE state = 'submitted'"},
 	{"species.edit", "species", "SELECT count(*) FROM species"},
+	{"species.edit", "terms", "SELECT count(*) FROM term"},
 	{"role.manage", "roles", "SELECT count(*) FROM role"},
 	{"role.manage", "permissions", "SELECT count(*) FROM permission"},
 	{"role.assign", "people", "SELECT count(*) FROM user"},

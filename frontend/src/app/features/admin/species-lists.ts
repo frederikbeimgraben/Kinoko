@@ -8,6 +8,7 @@ import type {
   SourceEntry,
   SpeciesEntry,
   SpeciesWrite,
+  TraitEntry,
 } from '../../core/api/models';
 
 /** A lookalike in the contract format. */
@@ -19,6 +20,7 @@ export interface PartLists {
   colours: ColourGroup[];
   colourChanges: ColourChange[];
   partNotes: PartNote[];
+  traits: TraitEntry[];
 }
 
 export function colourGroups(species: SpeciesEntry | null, part: BodyPart): ColourGroup[] {
@@ -92,6 +94,56 @@ export function withPartNote(species: SpeciesEntry | null, note: PartNote): Part
   return [...held, note];
 }
 
+/** The description of a part. An older note text wins over the trait text of the part. */
+export function partDescription(species: SpeciesEntry | null, part: BodyPart): string {
+  const note = species?.partNotes?.find((one) => one.part === part)?.description ?? '';
+  return note !== '' ? note : (species?.traits.find((one) => one.key === part)?.text ?? '');
+}
+
+/** The parts that can hold a trait text. The other parts keep their text in the part note. */
+type TraitPart = Extract<TraitEntry['key'], BodyPart>;
+const TRAIT_PARTS: readonly TraitPart[] = [
+  'fruitbody',
+  'cap',
+  'stem',
+  'gills',
+  'tubes',
+  'pores',
+  'flesh',
+  'spore_print',
+];
+
+export function isTraitPart(part: BodyPart): part is TraitPart {
+  return (TRAIT_PARTS as readonly BodyPart[]).includes(part);
+}
+
+/** Puts the description of a part into its trait. An empty text removes the trait. */
+export function withPartText(species: SpeciesEntry | null, part: TraitPart, text: string): TraitEntry[] {
+  const held = species?.traits ?? [];
+  const others = held.filter((one) => one.key !== part);
+  if (text.trim() === '') return others;
+  return held.some((one) => one.key === part)
+    ? held.map((one) => (one.key === part ? { ...one, text } : one))
+    : [...held, { key: part, text }];
+}
+
+/** True if the value is a known part, for example a route parameter. */
+export function isBodyPart(value: string): value is BodyPart {
+  return (PART_ORDER as readonly string[]).includes(value);
+}
+
+/** The parts that the species holds: with a size, a colour, a colour change or a text. */
+export function heldParts(species: SpeciesEntry | null): BodyPart[] {
+  const named = new Set<string>([
+    ...(species?.measurements ?? []).map((one) => one.part),
+    ...(species?.colours ?? []).map((one) => one.part),
+    ...changes(species).map((one) => one.part),
+    ...(species?.partNotes ?? []).map((one) => one.part),
+    ...(species?.traits ?? []).map((one) => one.key),
+  ]);
+  return PART_ORDER.filter((part) => named.has(part));
+}
+
 /** Removes a part with its measurements, colours and colour changes. */
 export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartLists {
   return {
@@ -99,6 +151,7 @@ export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartL
     colours: (species?.colours ?? []).filter((one) => one.part !== part),
     colourChanges: changes(species).filter((one) => one.part !== part),
     partNotes: (species?.partNotes ?? []).filter((one) => one.part !== part),
+    traits: (species?.traits ?? []).filter((one) => one.key !== part),
   };
 }
 
@@ -119,12 +172,7 @@ export const PART_ORDER: readonly BodyPart[] = [
 
 /** The parts that are not in the species and not in the open choice. */
 export function freeParts(species: SpeciesEntry | null, extra: readonly BodyPart[]): BodyPart[] {
-  const held = new Set<BodyPart>([
-    ...(species?.measurements ?? []).map((one) => one.part),
-    ...(species?.colours ?? []).map((one) => one.part),
-    ...changes(species).map((one) => one.part),
-    ...extra,
-  ]);
+  const held = new Set<BodyPart>([...heldParts(species), ...extra]);
   return PART_ORDER.filter((part) => !held.has(part));
 }
 

@@ -6,6 +6,11 @@
 
 .adminGlossary {
   @include page.body;
+  @include page.with-fab;
+}
+
+.adminGlossary__fab {
+  @include page.fab;
 }
 
 .adminGlossary__list {

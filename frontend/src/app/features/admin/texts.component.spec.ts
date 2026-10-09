@@ -47,12 +47,12 @@ async function build(): Promise<Setup> {
 }
 
 describe('TextsComponent', () => {
-  it('zeigt jeden Schlüssel mit beiden Sprachen', async () => {
+  it('zeigt jeden Text in der Sprache der Oberfläche mit seinem Schlüssel', async () => {
     const setup = await build();
 
     expect(await screen.findByText('karte.legende')).toBeInTheDocument();
     expect(screen.getByText('Fundwahrscheinlichkeit je Begehung')).toBeInTheDocument();
-    expect(screen.getByText('Probability of a find per visit')).toBeInTheDocument();
+    expect(screen.queryByText('Probability of a find per visit')).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 

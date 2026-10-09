@@ -44,10 +44,11 @@ describe('AdminComponent', () => {
     expect(screen.getByText('1 284')).toBeInTheDocument();
   });
 
-  it('setzt zwei Zähler einer Zeile mit einem Punkt zusammen', async () => {
-    await build(['image.review']);
+  it('zeigt offene Arbeit im Abzeichen, sonst die Gesamtzahl', async () => {
+    await build(['image.review', 'species.edit']);
 
-    expect(screen.getByText('312 · 4')).toBeInTheDocument();
+    expect(screen.getByText('4 offen')).toBeInTheDocument();
+    expect(screen.queryByText('312')).not.toBeInTheDocument();
   });
 
   it('führt von der Zeile Texte auf die Texte', async () => {
@@ -72,8 +73,8 @@ describe('AdminComponent', () => {
     await build(['find.review', 'run.manage']);
 
     expect(screen.getByText('Daten')).toBeInTheDocument();
-    expect(screen.getByText('382 · 14')).toBeInTheDocument();
-    expect(screen.getByText('4 · 1')).toBeInTheDocument();
+    expect(screen.getByText('14 offen')).toBeInTheDocument();
+    expect(screen.getByText('1 laufen')).toBeInTheDocument();
   });
 
   it('lässt einen Block ohne Zeile weg', async () => {

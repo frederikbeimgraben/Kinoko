@@ -46,8 +46,9 @@ describe('SectionSensesComponent', () => {
   it('zeigt die Kategorien des Geruchs und den Satz dazu', async () => {
     const { container } = await build();
 
-    expect(await screen.findByRole('heading', { name: 'Geruch' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Geruch und Geschmack' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pilzig' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'mild' })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('button', { name: 'nussig' })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByDisplayValue('Frisch angenehm pilzig.')).toBeInTheDocument();
     await noViolations(container);
@@ -55,14 +56,21 @@ describe('SectionSensesComponent', () => {
 
   it('schreibt die angehakten Kategorien und den Satz', async () => {
     const { http } = await build();
-    await screen.findByRole('heading', { name: 'Geruch' });
+    await screen.findByRole('heading', { name: 'Geruch und Geschmack' });
 
     await userEvent.click(screen.getByRole('button', { name: 'nussig' }));
+    await userEvent.click(screen.getByRole('button', { name: 'mild' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Geschmack' }), 'Mild.');
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 
     const call = http.expectOne('/api/species/boletus-edulis');
-    const body = call.request.body as { terms: { term: { id: string } }[]; smellText: string };
-    expect(body.terms.map((one) => one.term.id)).toEqual(['t-1', 't-2']);
+    const body = call.request.body as {
+      terms: { term: { id: string } }[];
+      smellText: string;
+      tasteText: string;
+    };
+    expect(body.terms.map((one) => one.term.id)).toEqual(['t-1', 't-2', 't-3']);
     expect(body.smellText).toBe('Frisch angenehm pilzig.');
+    expect(body.tasteText).toBe('Mild.');
   });
 });

@@ -442,6 +442,16 @@ func TestPersonNamesOmitAPersonWithoutASharedGroup(t *testing.T) {
 	}
 }
 
+func TestPersonNamesResolveAnyPersonForAReviewerOfFinds(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	bert := makeUser(t, env, "bert")
+	answer := names(env, bert.ID.String(), signIn(t, env, anna, "find.review")).Expect(t, http.StatusOK)
+	if string(answer.Body) != `[{"id":"`+bert.ID.String()+`","name":"bert"}]` {
+		t.Fatalf("%s", answer.Body)
+	}
+}
+
 func TestPersonNamesResolveForTheOwnID(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")
@@ -622,6 +632,17 @@ func TestSummaryCountsGroupsAndTheGlossary(t *testing.T) {
 	body := env.Get("/admin/summary", signIn(t, env, anna, "group.manage", "text.edit")).Expect(t, http.StatusOK).Map(t)
 	if body["groups"] != 2.0 || body["groupMembers"] != 3.0 || body["glossary"] != 1.0 {
 		t.Fatal(body)
+	}
+}
+
+func TestSummaryCountsTheCategories(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	exec(t, env, "INSERT INTO term (id, kind, slug, name, position) VALUES (?, 'smell', 'summary-test', 'Test', 0)", db.NewID())
+	want := scalar[int](t, env, "SELECT count(*) FROM term")
+	body := env.Get("/admin/summary", signIn(t, env, anna, "species.edit")).Expect(t, http.StatusOK).Map(t)
+	if want < 1 || body["terms"] != float64(want) {
+		t.Fatal(want, body)
 	}
 }
 

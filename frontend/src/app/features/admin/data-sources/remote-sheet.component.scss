@@ -1,7 +1,9 @@
+@use '../page';
 @use '../section';
 
 .remote {
   @include section.fields;
+  @include page.sheet-body;
 
   display: flex;
   flex-direction: column;

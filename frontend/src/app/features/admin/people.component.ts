@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -16,24 +16,18 @@ import { SearchFieldComponent } from '../../ui/search-field/search-field.compone
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { AdminStore } from './admin.store';
 import { roleName } from './role-name';
 
 /** The built-in role of each signed-in person. Nobody assigns it. */
 const EVERY_ONE = 'user';
 
-/** A role next to a person. */
-interface Mark {
-  id: string;
-  name: string;
-}
-
-/** A row of the person list. */
+/** A row of the person list: the name and the roles below it. */
 interface Row {
   id: string;
   name: string;
-  email: string;
-  roles: readonly Mark[];
+  roles: string;
 }
 
 /** A role in the assignment sheet. */
@@ -51,7 +45,6 @@ interface Choice {
     ActionBarComponent,
     CheckRowComponent,
     ConfirmDialogComponent,
-    LevelPillComponent,
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
@@ -60,6 +53,7 @@ interface Choice {
     SearchFieldComponent,
     SheetComponent,
     StateViewComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './people.component.html',
@@ -81,9 +75,8 @@ export class PeopleComponent {
   protected readonly rows = computed<Row[]>(() =>
     (this.store.people() ?? []).map((person) => ({
       id: person.id,
-      name: person.name ?? this.i18n.translate('admin.people.noName'),
-      email: person.email ?? '',
-      roles: person.roles.map((role) => ({ id: role.id, name: roleName(this.i18n, role.name) })),
+      name: person.name ?? person.email ?? this.i18n.translate('admin.people.noName'),
+      roles: joined(person.roles.map((role) => roleName(this.i18n, role.name))),
     })),
   );
 
@@ -100,8 +93,8 @@ export class PeopleComponent {
     })),
   );
 
-  protected readonly deleteQuestion = computed(
-    () => `${this.removing()?.name ?? ''} ${this.i18n.translate('admin.people.deleteConfirm')}`,
+  protected readonly deleteQuestion = computed(() =>
+    this.i18n.translate('admin.people.deleteQuestion', { name: this.removing()?.name ?? '' }),
   );
 
   constructor() {

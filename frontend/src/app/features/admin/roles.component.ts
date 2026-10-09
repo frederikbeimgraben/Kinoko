@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { grouped, joined } from '../../core/i18n/numbers';
+import { grouped } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { AddRowComponent } from '../../ui/add-row/add-row.component';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { AdminStore } from './admin.store';
 import { roleName } from './role-name';
 
@@ -18,21 +17,18 @@ interface Row {
   id: string;
   name: string;
   subline: string;
-  /** A built-in role shows a lock. */
-  locked: boolean;
 }
 
-/** The role list: a row opens the role, the last row adds a role. */
+/** The role list: a row opens the role, the floating button adds a role. */
 @Component({
   selector: 'app-roles',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AddRowComponent,
+    FloatingButtonComponent,
     ListRowComponent,
     PageHeaderComponent,
     RowGroupComponent,
     RowGroupSkeletonComponent,
-    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './roles.component.html',
@@ -50,12 +46,9 @@ export class RolesComponent {
     (this.store.roles() ?? []).map((role) => ({
       id: role.id,
       name: roleName(this.i18n, role.name),
-      subline: joined([role.description, this.people(role.peopleCount)]),
-      locked: role.builtIn,
+      subline: this.people(role.peopleCount),
     })),
   );
-
-  protected readonly lockLabel = computed(() => this.i18n.translate('admin.roles.locked'));
 
   constructor() {
     this.store.loadRoles();
@@ -73,9 +66,8 @@ export class RolesComponent {
     void this.router.navigateByUrl('/verwaltung');
   }
 
-  /** A role without a person shows no count. */
-  private people(count: number): string | null {
-    if (count === 0) return null;
+  /** The count of persons with the role, as the board shows it below the name. */
+  private people(count: number): string {
     if (count === 1) return this.i18n.translate('admin.roles.onePerson');
     return this.i18n.translate('admin.roles.people', { count: grouped(count) });
   }

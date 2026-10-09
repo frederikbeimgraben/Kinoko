@@ -21,22 +21,46 @@ type Term struct {
 	Slug     string              `json:"slug"`
 	Name     string              `json:"name"`
 	Position int                 `json:"position"`
+	// Usage is the count of species that use the term. Only the list has it.
+	Usage *int `json:"usage,omitempty"`
 }
 
-func termOut(t termRow) Term { return Term(t) }
+func termOut(t termRow) Term {
+	return Term{ID: t.ID, Kind: t.Kind, Group: t.Group, Slug: t.Slug, Name: t.Name, Position: t.Position}
+}
+
+// termUsage counts the species that use a term: as a category, as a trigger or in a reaction.
+const termUsage = `(SELECT count(*) FROM (
+	SELECT species_id FROM species_term WHERE term_id = term.id
+	UNION SELECT species_id FROM species_colour_change_trigger WHERE term_id = term.id
+	UNION SELECT species_id FROM species_reaction WHERE term_id = term.id))`
+
+type usedTerm struct {
+	row   termRow
+	usage int
+}
 
 func (m *Module) listTerms(r *http.Request) (web.Response, error) {
-	query := "SELECT " + termCols + " FROM term"
+	query := "SELECT " + termCols + ", " + termUsage + " FROM term"
 	args := []any{}
 	if kind := lastValue(r.URL.Query(), "kind"); kind != "" {
 		query += " WHERE kind = ?"
 		args = append(args, kind)
 	}
-	rows, err := db.All(r.Context(), m.deps.DB, scanTerm, query+" ORDER BY position, name", args...)
+	scan := func(s db.Scanner) (usedTerm, error) {
+		var u usedTerm
+		t := &u.row
+		return u, s.Scan(&t.ID, &t.Kind, &t.Group, &t.Slug, &t.Name, &t.Position, &u.usage)
+	}
+	rows, err := db.All(r.Context(), m.deps.DB, scan, query+" ORDER BY position, name", args...)
 	if err != nil {
 		return nil, err
 	}
-	return web.OK(map[string][]Term{"items": fn.Map(rows, termOut)}), nil
+	return web.OK(map[string][]Term{"items": fn.Map(rows, func(u usedTerm) Term {
+		out := termOut(u.row)
+		out.Usage = &u.usage
+		return out
+	})}), nil
 }
 
 type termCreate struct {

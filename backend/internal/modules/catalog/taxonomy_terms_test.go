@@ -132,6 +132,18 @@ func TestListTermsWithoutKindReturnsAll(t *testing.T) {
 	}
 }
 
+func TestListTermsCountsTheSpeciesThatUseATerm(t *testing.T) {
+	env := newEnv(t)
+	used := makeTerm(t, env, "smell", "a", "A", nil, 0)
+	makeTerm(t, env, "smell", "b", "B", nil, 1)
+	addTerm(t, env, makeSpecies(t, env, "one", "", "One", nil, nil), used, false)
+	addTerm(t, env, makeSpecies(t, env, "two", "", "Two", nil, nil), used, true)
+	items := env.Get("/terms?kind=smell", nil).Expect(t, http.StatusOK).Map(t)["items"].([]any)
+	if items[0].(map[string]any)["usage"] != 2.0 || items[1].(map[string]any)["usage"] != 0.0 {
+		t.Fatal(items)
+	}
+}
+
 func TestCreateTermRequiresPermission(t *testing.T) {
 	env := newEnv(t)
 	env.Post("/terms", map[string]any{"kind": "smell", "slug": "a", "name": "A"}, nil).Expect(t, http.StatusUnauthorized)

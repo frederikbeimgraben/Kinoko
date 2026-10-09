@@ -809,7 +809,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Names of the persons behind the given ids. The answer holds a person only if the caller and this person share one group or more, or if the id is the id of the caller. Other ids have no entry. */
+        /** @description Names of the persons behind the given ids. The answer holds a person only if the caller and this person share one group or more, if the id is the id of the caller, or if the caller has find.review or role.assign. Other ids have no entry. */
         get: operations["resolvePersonNames"];
         put?: never;
         post?: never;
@@ -1163,6 +1163,8 @@ export interface components {
             groups?: number;
             groupMembers?: number;
             glossary?: number;
+            /** @description The count of categories, all kinds together. */
+            terms?: number;
             dataSourcesMissing?: number;
             dataSourcesFailed?: number;
         };
@@ -1499,6 +1501,8 @@ export interface components {
             slug: string;
             name: string;
             position: number;
+            /** @description The count of species that use the term. Only the list has it. */
+            usage?: number;
         };
         TermCreate: {
             kind: components["schemas"]["TermKind"];
@@ -1798,6 +1802,8 @@ export interface components {
             id: string;
             term: string;
             definition: string;
+            /** @description The English definition. Empty if nobody has written it. */
+            definitionEn: string;
             updatedByName?: string | null;
             /** Format: date-time */
             updatedAt: string;
@@ -1805,6 +1811,8 @@ export interface components {
         GlossaryEntryWrite: {
             term: string;
             definition: string;
+            /** @description Without the field, a create stores an empty text and an update keeps the old one. */
+            definitionEn?: string;
         };
         PersonName: {
             /** Format: uuid */

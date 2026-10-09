@@ -1,4 +1,4 @@
-<app-page-header [title]="'admin.roles.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
+<app-page-header [title]="'admin.roles.title' | t" [back]="true" [wide]="wide()" (backClick)="back()" />
 
 <div class="roles">
   @if (loaded()) {
@@ -10,15 +10,12 @@
           [clickable]="true"
           [chevron]="true"
           (chosen)="open(row.id)"
-        >
-          @if (row.locked) {
-            <app-svg-icon trail name="lock" tone="dim" [size]="18" [label]="lockLabel()" />
-          }
-        </app-list-row>
+        />
       }
     </app-row-group>
-    <app-add-row [label]="'admin.roles.add' | t" [action]="'admin.role.create' | t" (pressed)="create()" />
   } @else {
     <app-row-group-skeleton [count]="4" [lines]="2" trail="chevron" />
   }
 </div>
+
+<app-floating-button class="roles__fab" icon="plus" [label]="'admin.role.create' | t" (pressed)="create()" />

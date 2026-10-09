@@ -53,8 +53,8 @@ export class AdminGroupComponent {
   protected readonly name = linkedSignal(() => this.savedName());
   protected readonly title = computed(() => this.group()?.name ?? this.i18n.translate('admin.groups.title'));
 
-  protected readonly question = computed(
-    () => `${this.title()} ${this.i18n.translate('group.deleteConfirm')}`,
+  protected readonly question = computed(() =>
+    this.i18n.translate('admin.group.deleteQuestion', { name: this.title() }),
   );
 
   constructor() {

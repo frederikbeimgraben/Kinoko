@@ -1,8 +1,11 @@
 import { DestroyRef, Directive, ElementRef, Renderer2, inject } from '@angular/core';
 
 const REDUCE_MOTION = '(prefers-reduced-motion: reduce)';
-/** The circle grows past every corner from any touch point on the host. */
-const SPREAD = 2.2;
+
+/** The radius that reaches the farthest corner of the box from the touch point. */
+export function reach(width: number, height: number, x: number, y: number): number {
+  return Math.hypot(Math.max(x, width - x), Math.max(y, height - y));
+}
 
 /** A ripple from the touch point, per `kit.css` `.ripple`. */
 @Directive({ selector: '[appRipple]' })
@@ -28,14 +31,17 @@ export class RippleDirective {
       this.renderer.setStyle(this.host, 'position', 'relative');
     }
 
+    // A circle larger than the box shows only its flat middle in a low row, which looks like a box.
     const box = this.host.getBoundingClientRect();
-    const size = Math.max(box.width, box.height) * SPREAD;
+    const x = event.clientX - box.left;
+    const y = event.clientY - box.top;
+    const size = 2 * reach(box.width, box.height, x, y);
     const dot = this.renderer.createElement('span') as HTMLElement;
     this.renderer.addClass(dot, 'ripple');
     this.renderer.setStyle(dot, 'width', `${size}px`);
     this.renderer.setStyle(dot, 'height', `${size}px`);
-    this.renderer.setStyle(dot, 'left', `${event.clientX - box.left - size / 2}px`);
-    this.renderer.setStyle(dot, 'top', `${event.clientY - box.top - size / 2}px`);
+    this.renderer.setStyle(dot, 'left', `${x - size / 2}px`);
+    this.renderer.setStyle(dot, 'top', `${y - size / 2}px`);
     const frame = this.renderer.createElement('span') as HTMLElement;
     this.renderer.addClass(frame, 'ripple-frame');
     this.renderer.appendChild(frame, dot);

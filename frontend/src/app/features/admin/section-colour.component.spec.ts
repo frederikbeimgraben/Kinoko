@@ -13,8 +13,8 @@ import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
 const PALETTE = [
-  { key: 'hell', hex: '#f4efe2' },
-  { key: 'violett', hex: '#7a3b6a' },
+  { key: 'white', hex: '#f4efe2' },
+  { key: 'violet', hex: '#7a3b6a' },
 ];
 
 function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
@@ -44,16 +44,35 @@ describe('SectionColourComponent', () => {
     const { container } = await build();
 
     expect(await screen.findByRole('heading', { name: 'Lamellenfarbe' })).toBeInTheDocument();
-    expect(screen.getAllByText('#E8C8CF')).toHaveLength(2);
+    expect(screen.getByRole('button', { name: /rosa/ })).toHaveTextContent('#E8C8CF');
     expect(screen.getByDisplayValue('rosa')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('nennt die Töne der Palette in der Sprache der Oberfläche', async () => {
+    await build();
+    await screen.findByRole('heading', { name: 'Lamellenfarbe' });
+
+    expect(screen.getByRole('radio', { name: 'Weiß' })).toBeInTheDocument();
+    expect(screen.queryByRole('radio', { name: 'white' })).not.toBeInTheDocument();
+  });
+
+  it('gibt einer Farbe den Namen des gewählten Tons', async () => {
+    await build();
+    await screen.findByRole('heading', { name: 'Lamellenfarbe' });
+
+    await userEvent.click(screen.getByRole('radio', { name: 'Violett' }));
+
+    expect(screen.getByDisplayValue('Violett')).toBeInTheDocument();
   });
 
   it('legt eine Farbe an und schreibt sie an den Vertrag', async () => {
     const { http } = await build();
     await screen.findByRole('heading', { name: 'Lamellenfarbe' });
 
-    await userEvent.click(screen.getByRole('button', { name: '+ Farbe' }));
+    expect(screen.queryByRole('button', { name: 'Farbe hinzufügen' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('tab', { name: 'mehrere' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe hinzufügen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 
     const call = http.expectOne('/api/species/boletus-edulis');
@@ -65,10 +84,12 @@ describe('SectionColourComponent', () => {
     await build();
     await screen.findByRole('heading', { name: 'Lamellenfarbe' });
 
-    await userEvent.click(screen.getByRole('button', { name: '+ Farbe' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'mehrere' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Farbe hinzufügen' }));
+    expect(screen.getAllByRole('button', { name: 'Entfernen' })).toHaveLength(2);
     await userEvent.click(screen.getByRole('tab', { name: 'eine Farbe' }));
 
-    expect(screen.getAllByRole('button', { name: 'Entfernen' })).toHaveLength(1);
+    expect(screen.queryByRole('button', { name: 'Entfernen' })).not.toBeInTheDocument();
   });
 
   it('nimmt die Farbgruppe des Teils heraus', async () => {

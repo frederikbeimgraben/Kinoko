@@ -71,6 +71,11 @@ export const REMOTE_STATE_TEXT: Readonly<Record<RemoteSourceState, TranslationKe
   failed: 'admin.dataSources.remoteState.failed',
 };
 
+/** The schedules that the service sends, as a text of the UI language. Another schedule shows as it is. */
+export const CADENCE_TEXT: Readonly<Record<string, TranslationKey>> = {
+  'weekly Mon 03:30 Europe/Berlin': 'admin.dataSources.remote.weeklyMonday',
+};
+
 export const REMOTE_STATE_TONE: Readonly<Record<RemoteSourceState, BadgeKind>> = {
   empty: 'warn',
   bootstrapping: '',
