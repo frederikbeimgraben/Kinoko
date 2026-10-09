@@ -10,11 +10,12 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { concatMap, filter, from, mergeMap, type Observable, pipe, switchMap, tap } from 'rxjs';
+import { concatMap, exhaustMap, filter, from, mergeMap, type Observable, pipe, switchMap, tap } from 'rxjs';
 import { FindsApi } from '../../core/api/finds.api';
 import { PhotosApi } from '../../core/api/photos.api';
 import { AuthService } from '../../core/auth';
 import type { OpenFind, Photo } from '../../core/api/models';
+import { acceptEach, type BulkAccept, withoutAccepted } from './find-queue.bulk';
 import { trigger } from './write';
 
 /** The decision about a find. */
@@ -29,6 +30,8 @@ interface FindQueueState {
   /** The number of cards with a decision. A decision does not make the stack shorter. */
   decided: number;
   photos: Readonly<Record<string, readonly Photo[]>>;
+  /** True while "accept all" sends its decisions. */
+  accepting: boolean;
 }
 
 /** A decision about the find `id`. */
@@ -71,7 +74,7 @@ export function restored(
 /** The review queue of the finds, with the photos of each find. */
 export const FindQueueStore = signalStore(
   { providedIn: 'root' },
-  withState<FindQueueState>({ stack: null, decided: 0, photos: {} }),
+  withState<FindQueueState>({ stack: null, decided: 0, photos: {}, accepting: false }),
   withComputed(({ stack, decided }) => ({
     open: computed(() => (stack() ?? []).slice(decided())),
     loaded: computed(() => stack() !== null),
@@ -170,6 +173,26 @@ export const FindQueueStore = signalStore(
         patchState(store, ({ decided }) => ({ decided: decided - 1 }));
         write({ id, decision: null });
       },
+
+      /** Accepts each open find with its own request. A find that fails stays open.
+       * A second call while the first one runs has no effect. */
+      acceptAll: rxMethod<BulkAccept>(
+        pipe(
+          exhaustMap((request) => {
+            const ids = store.open().map((one) => one.id);
+            patchState(store, { accepting: true });
+            return acceptEach(store._api, ids).pipe(
+              tap((accepted) => {
+                patchState(store, ({ stack, decided }) => ({
+                  stack: withoutAccepted(stack, decided, accepted),
+                  accepting: false,
+                }));
+                request.onDone?.({ accepted: accepted.size, failed: ids.length - accepted.size });
+              }),
+            );
+          }),
+        ),
+      ),
     };
   }),
   withHooks({

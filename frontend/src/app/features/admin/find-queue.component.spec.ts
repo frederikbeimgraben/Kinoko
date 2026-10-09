@@ -12,6 +12,7 @@ import {
 } from '../../testing/open-finds-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesEntry } from '../../testing/species-fixture';
+import { ToastService } from '../../ui/toast/toast.service';
 import { SpeciesStore } from '../species/species.store';
 import { FindQueueComponent } from './find-queue.component';
 
@@ -97,8 +98,57 @@ describe('FindQueueComponent', () => {
     expect(api.reopened).toEqual(['fund-eins']);
   });
 
-  it('zeigt wie das Board FindQueue kein „Alle annehmen“ im Kopf', async () => {
+  it('nimmt erst nach der Bestätigung jeden offenen Fund an und meldet das Ergebnis', async () => {
+    const { api } = await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Alle annehmen' }));
+    expect(api.reviewed).toEqual([]);
+
+    const buttons = screen.getAllByRole('button', { name: 'Alle annehmen' });
+    await userEvent.click(buttons[buttons.length - 1]);
+
+    expect(api.reviewed).toEqual([
+      { id: 'fund-eins', decision: 'accepted' },
+      { id: 'fund-zwei', decision: 'accepted' },
+    ]);
+    expect(screen.getByText('Keine Funde offen')).toBeInTheDocument();
+    expect(
+      TestBed.inject(ToastService)
+        .toasts()
+        .map((toast) => toast.message),
+    ).toEqual(['2 Funde angenommen']);
+  });
+
+  it('lässt einen Fund mit Fehler offen und nennt die Zahl im Toast', async () => {
+    const api = new FindsApiDouble();
+    api.failing.add('fund-zwei');
+    await build(api);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Alle annehmen' }));
+    const buttons = screen.getAllByRole('button', { name: 'Alle annehmen' });
+    await userEvent.click(buttons[buttons.length - 1]);
+
+    expect(screen.getByText('1 offener Fund')).toBeInTheDocument();
+    const toasts = TestBed.inject(ToastService).toasts();
+    expect(toasts.map((toast) => [toast.variant, toast.message])).toEqual([
+      ['danger', 'Nicht angenommen: 1 von 2. Diese Funde bleiben offen.'],
+    ]);
+  });
+
+  it('nimmt nach dem Abbrechen keinen Fund an', async () => {
+    const { api } = await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Alle annehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+
+    expect(api.reviewed).toEqual([]);
+    expect(screen.getByText('2 offene Funde')).toBeInTheDocument();
+  });
+
+  it('zeigt „Alle annehmen“ erst ab zwei offenen Funden', async () => {
     await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
 
     expect(screen.queryByRole('button', { name: 'Alle annehmen' })).toBeNull();
   });

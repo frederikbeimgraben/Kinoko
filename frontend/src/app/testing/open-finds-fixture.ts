@@ -1,4 +1,4 @@
-import { of, type Observable } from 'rxjs';
+import { of, throwError, type Observable } from 'rxjs';
 import { FindsApi } from '../core/api/finds.api';
 import { PhotosApi, type PhotoPage, type PhotoQuery } from '../core/api/photos.api';
 import type { OpenFind, Photo } from '../core/api/models';
@@ -32,6 +32,8 @@ export class FindsApiDouble {
 
   readonly reviewed: { id: string; decision: Decision }[] = [];
   readonly reopened: string[] = [];
+  /** The ids of the finds whose decision fails. */
+  readonly failing = new Set<string>();
 
   open(): Observable<readonly OpenFind[]> {
     return of(this.findList);
@@ -39,7 +41,7 @@ export class FindsApiDouble {
 
   review(id: string, decision: Decision): Observable<null> {
     this.reviewed.push({ id, decision });
-    return of(null);
+    return this.failing.has(id) ? throwError(() => new Error('offline')) : of(null);
   }
 
   reopen(id: string): Observable<null> {

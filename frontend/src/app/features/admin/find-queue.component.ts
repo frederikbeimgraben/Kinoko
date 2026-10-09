@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { SpeciesEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -13,6 +16,7 @@ import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SpeciesStore } from '../species/species.store';
 import { findCard, type FindCard } from './find-card';
 import { FindMapComponent } from './find-map.component';
+import type { BulkResult } from './find-queue.bulk';
 import { FindQueueStore } from './find-queue.store';
 
 /** The review queue of the finds, per the board `FindQueue`: a swipe to the right accepts, to the left rejects. */
@@ -20,7 +24,9 @@ import { FindQueueStore } from './find-queue.store';
   selector: 'app-find-queue',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ConfirmDialogComponent,
     FindMapComponent,
+    IconButtonComponent,
     LevelPillComponent,
     ListRowComponent,
     ObjectTitleComponent,
@@ -38,8 +44,12 @@ export class FindQueueComponent {
   private readonly species = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
+  private readonly toasts = inject(ToastService);
 
   protected readonly loaded = this.store.loaded;
+  protected readonly accepting = this.store.accepting;
+  /** True while the confirmation of "accept all" shows. */
+  protected readonly asking = signal(false);
 
   protected readonly cards = computed<readonly FindCard[]>(() => {
     const photos = this.store.photos();
@@ -71,8 +81,31 @@ export class FindQueueComponent {
     this.store.undo();
   }
 
+  /** Accepts each open card of the list after the confirmation and tells the result in a toast. */
+  protected acceptAll(): void {
+    this.asking.set(false);
+    this.store.acceptAll({
+      onDone: (result) => {
+        this.report(result);
+      },
+    });
+  }
+
   protected back(): void {
     void this.router.navigate(['/verwaltung']);
+  }
+
+  private report(result: BulkResult): void {
+    if (result.failed === 0) {
+      this.toasts.success(this.i18n.translate('find.queue.acceptAllDone', { count: result.accepted }));
+      return;
+    }
+    this.toasts.error(
+      this.i18n.translate('find.queue.acceptAllFailed', {
+        failed: result.failed,
+        total: result.accepted + result.failed,
+      }),
+    );
   }
 
   private speciesOf(speciesId: string | null): SpeciesEntry | null {
