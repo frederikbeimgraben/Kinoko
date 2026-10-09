@@ -68,10 +68,10 @@ export class ApiClient {
     );
   }
 
-  post<T>(path: string, body?: unknown): Observable<T> {
+  post<T>(path: string, body?: unknown, options?: Silent): Observable<T> {
     return this.http
       .post<T>(this.url(path), body ?? {})
-      .pipe(catchError((failure: unknown) => this.report(failure)));
+      .pipe(catchError((failure: unknown) => this.report(failure, options)));
   }
 
   /**

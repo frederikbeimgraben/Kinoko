@@ -35,8 +35,9 @@
 
   --colour-object-green: var(--primary);
   --colour-object-brown: var(--hero);
-  --colour-object-blue: var(--label);
+  // The thumbs of `EntryList.dc.html` give blue and grey as fixed pastel values with dark ink.
+  --colour-object-blue: #8fb7c9;
   --colour-object-red: var(--bad);
   --colour-object-gold: var(--bar);
-  --colour-object-grey: var(--outline-strong);
+  --colour-object-grey: #c9c2ad;
 }

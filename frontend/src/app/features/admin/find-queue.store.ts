@@ -13,6 +13,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { exhaustMap, filter, from, mergeMap, pipe, switchMap, tap } from 'rxjs';
 import { FindsApi } from '../../core/api/finds.api';
 import { PhotosApi } from '../../core/api/photos.api';
+import { AuthService } from '../../core/auth';
 import type { OpenFind, Photo } from '../../core/api/models';
 import { type AfterWrite, finish, trigger } from './write';
 
@@ -61,7 +62,7 @@ export const FindQueueStore = signalStore(
     loaded: computed(() => stack() !== null),
     _upcoming: computed(() => (stack() ?? []).slice(decided(), decided() + PHOTO_LEAD).map((one) => one.id)),
   })),
-  withProps(() => ({ _api: inject(FindsApi), _photosApi: inject(PhotosApi) })),
+  withProps(() => ({ _api: inject(FindsApi), _auth: inject(AuthService), _photosApi: inject(PhotosApi) })),
   withMethods((store) => {
     const loadPhotos = rxMethod<string>(
       pipe(
@@ -101,8 +102,10 @@ export const FindQueueStore = signalStore(
             tap(() => {
               patchState(store, { stack: null, decided: 0 });
             }),
+            // A direct page load asks only after the session check; else the first request has no token.
             switchMap(() =>
-              store._api.open().pipe(
+              store._auth.sessionReady().pipe(
+                switchMap(() => store._api.open()),
                 tapResponse({
                   next: (stack) => {
                     patchState(store, { stack });

@@ -158,9 +158,9 @@ export const OfflineAreasStore = signalStore(
         void store._tiles.loadLayers();
       },
 
-      /** The size of a zone before the download, from the number of tiles. */
-      estimate(zone: Zone): number {
-        return pathsOf(zone).length * MEAN_TILE_BYTES;
+      /** The size of a zone before the download, from the number of tiles. `null` without a layer manifest. */
+      estimate(zone: Zone): number | null {
+        return store._sources().length === 0 ? null : pathsOf(zone).length * MEAN_TILE_BYTES;
       },
 
       /** Loads the tiles of a zone. A second call while one runs has no effect.

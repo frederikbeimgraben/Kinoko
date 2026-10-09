@@ -3,7 +3,7 @@
 <div class="pad">
   <app-row-group>
     @for (section of sections(); track section.heading) {
-      <app-list-row [title]="section.heading | t" [subline]="section.body | t" [wrap]="true" />
+      <app-list-row [title]="section.heading | t" [subline]="section.body | t" />
     }
   </app-row-group>
 </div>

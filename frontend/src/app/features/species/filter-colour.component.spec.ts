@@ -103,7 +103,7 @@ describe('SpeciesColourComponent', () => {
     filter.setColour('cap', '#6b4423');
 
     await vi.waitFor(() => {
-      expect(screen.getByText('Nächste Töne im Katalog · 1 Arten')).toBeInTheDocument();
+      expect(screen.getByText('Nächste Töne im Katalog · 1 Art')).toBeInTheDocument();
     });
     expect(container.querySelectorAll('.tone').length).toBeGreaterThan(0);
   });

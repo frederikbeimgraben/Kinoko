@@ -16,14 +16,14 @@
         <app-add-row
           [label]="'group.joinTitle' | t"
           [action]="'group.joinTitle' | t"
-          (pressed)="sheet.set('join')"
+          (pressed)="openSheet('join')"
         />
       </app-row-group>
     } @else {
       <app-row-group-skeleton [count]="3" [lines]="2" />
     }
   </div>
-  <app-floating-button class="fab" icon="plus" [label]="'group.create' | t" (pressed)="sheet.set('create')" />
+  <app-floating-button class="fab" icon="plus" [label]="'group.create' | t" (pressed)="openSheet('create')" />
 </div>
 
 @if (sheet() === 'create') {
@@ -31,6 +31,7 @@
     [title]="'group.create' | t"
     [label]="'common.name' | t"
     [submit]="'group.createSubmit' | t"
+    [required]="'group.nameRequired' | t"
     [busy]="busy()"
     (submitted)="create($event)"
     (cancelled)="sheet.set(null)"
@@ -42,8 +43,11 @@
     [title]="'group.joinTitle' | t"
     [label]="'group.inviteCode' | t"
     [submit]="'group.joinSubmit' | t"
+    [required]="'group.codeRequired' | t"
+    [error]="joinError()"
     [busy]="busy()"
     (submitted)="join($event)"
+    (edited)="joinError.set(null)"
     (cancelled)="sheet.set(null)"
   />
 }

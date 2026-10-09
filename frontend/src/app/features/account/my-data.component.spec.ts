@@ -4,8 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { AccountStore } from '../../core/access/account.store';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { noViolations } from '../../testing/axe';
+import { GroupsApiDouble, OWNER_ID, groupsApiProvider } from '../../testing/groups-fixture';
 import { OfflineStoreDouble, offlineProvider } from '../../testing/offline-double';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
@@ -44,10 +46,11 @@ interface Setup {
   http: HttpTestingController;
   offline: OfflineStoreDouble;
   router: Router;
+  groups: GroupsApiDouble;
   refresh: () => void;
 }
 
-async function build(answer: 'ok' | 'error' = 'ok'): Promise<Setup> {
+async function build(answer: 'ok' | 'error' = 'ok', groups = new GroupsApiDouble()): Promise<Setup> {
   vi.stubGlobal('URL', {
     ...URL,
     createObjectURL: () => 'blob:one',
@@ -62,6 +65,8 @@ async function build(answer: 'ok' | 'error' = 'ok'): Promise<Setup> {
       ...authStubProviders(new AuthStub()),
       ...syncStubProviders(new SyncStub()),
       offlineProvider(offline),
+      groupsApiProvider(groups),
+      { provide: AccountStore, useValue: { owns: (one: string | null) => one === OWNER_ID } },
     ],
   });
   const http = TestBed.inject(HttpTestingController);
@@ -71,7 +76,7 @@ async function build(answer: 'ok' | 'error' = 'ok'): Promise<Setup> {
     else request.flush({ title: 'Internal', status: 500 }, { status: 500, statusText: 'Server Error' });
   });
   detectChanges();
-  return { container, http, offline, router: TestBed.inject(Router), refresh: detectChanges };
+  return { container, http, offline, router: TestBed.inject(Router), groups, refresh: detectChanges };
 }
 
 /** Catches the file that the export hands to the browser. */
@@ -122,13 +127,13 @@ describe('MyDataComponent', () => {
   });
 
   it('deletes all data after the question, clears the queue and goes back', async () => {
-    const { http, offline, router } = await build();
+    const { http, offline, router, groups } = await build();
     await offline.put('queue', 'task', {});
     const change = vi.spyOn(router, 'navigateByUrl');
     const spy = toastSpy();
 
     await userEvent.click(screen.getByRole('button', { name: 'Alles löschen' }));
-    expect(screen.getByText('2 Funde · 4 Marker · 0 Zonen · 1 Bilder')).toBeInTheDocument();
+    expect(screen.getByText('2 Funde · 4 Marker · 0 Zonen · 1 Bild · 2 eigene Gruppen')).toBeInTheDocument();
     const dialog = screen.getByRole('dialog');
     await userEvent.click(within(dialog).getByRole('button', { name: 'Alles löschen' }));
     http.expectOne('/api/me/data').flush(null, { status: 204, statusText: 'No Content' });
@@ -138,6 +143,17 @@ describe('MyDataComponent', () => {
     });
     expect(await offline.all('queue')).toEqual([]);
     expect(spy.success).toEqual(['Alle Daten gelöscht']);
+    expect(groups.calls).toHaveLength(2);
+  });
+
+  it('names no groups when the person leads none', async () => {
+    const none = new GroupsApiDouble();
+    none.groupList = [];
+    await build('ok', none);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Alles löschen' }));
+
+    expect(screen.getByText('2 Funde · 4 Marker · 0 Zonen · 1 Bild')).toBeInTheDocument();
   });
 
   it('reads the export again each time the page opens', async () => {

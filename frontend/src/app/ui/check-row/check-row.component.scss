@@ -29,7 +29,8 @@
   border-radius: var(--r-row);
 }
 
-.row--off {
+// Per `DataExportGpx.dc.html`: a locked row keeps its surface, only its content fades.
+.row--off > :not(.row__input) {
   opacity: 0.38;
 }
 

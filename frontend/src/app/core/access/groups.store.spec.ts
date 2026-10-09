@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { Subject } from 'rxjs';
+import { AuthService } from '../auth';
 import { FAMILY, GroupsApiDouble, KARLSRUHE, groupsApiProvider } from '../../testing/groups-fixture';
 import { GroupsStore } from './groups.store';
 
@@ -52,6 +54,18 @@ describe('GroupsStore', () => {
     expect(store.groups()).toHaveLength(1);
   });
 
+  it('tells an unknown invite code from other errors', async () => {
+    const { store, api } = build();
+
+    api.rejectWith = { type: 'about:blank', title: 'Nicht gefunden', status: 404 };
+    await expect(store.join('XXXXXX')).resolves.toBe('invalid');
+    api.rejectWith = { type: 'about:blank', title: 'Fehler', status: 500 };
+    await expect(store.join('XXXXXX')).resolves.toBeNull();
+
+    expect(store.groups() ?? []).toHaveLength(0);
+    expect(store.writing()).toBe(false);
+  });
+
   it('replaces a renamed group', async () => {
     const { store } = build();
     store.load();
@@ -86,5 +100,22 @@ describe('GroupsStore', () => {
     await store.removeMember('missing', 'konto-zwei');
 
     expect(store.groups()).toBeNull();
+  });
+
+  it('asks for the groups only after a running session check', () => {
+    const check = new Subject<unknown>();
+    const api = new GroupsApiDouble();
+    TestBed.configureTestingModule({
+      providers: [groupsApiProvider(api), { provide: AuthService, useValue: { sessionReady: () => check } }],
+    });
+    const store = TestBed.inject(GroupsStore);
+
+    store.load();
+    expect(api.calls).toEqual([]);
+
+    check.next(null);
+    check.complete();
+    expect(api.calls).toEqual([false]);
+    expect(store.groups()).toHaveLength(2);
   });
 });

@@ -134,4 +134,23 @@ describe('FormFieldComponent', () => {
 
     noGermanText(container);
   });
+
+  it('marks a field with an error and names the error for assistive technology', async () => {
+    const { container } = await render(FormFieldComponent, {
+      inputs: { label: 'Name', error: 'Gib einen Namen ein.' },
+    });
+
+    const field = screen.getByRole('textbox', { name: 'Name' });
+    expect(field).toHaveAttribute('aria-invalid', 'true');
+    expect(field).toHaveAccessibleDescription('Gib einen Namen ein.');
+    expect(screen.getByRole('alert')).toHaveTextContent('Gib einen Namen ein.');
+    await noViolations(container);
+  });
+
+  it('shows no error part without an error', async () => {
+    await render(FormFieldComponent, { inputs: { label: 'Name' } });
+
+    expect(screen.getByRole('textbox', { name: 'Name' })).not.toHaveAttribute('aria-invalid');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
 });

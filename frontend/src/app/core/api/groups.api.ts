@@ -19,8 +19,9 @@ export class GroupsApi {
     return this.api.post<FriendGroup>('/groups', { name });
   }
 
+  /** An unknown code gives a 404 without a toast: the join sheet shows its own text. */
   join(inviteCode: string): Observable<FriendGroup> {
-    return this.api.post<FriendGroup>('/groups/join', { inviteCode });
+    return this.api.post<FriendGroup>('/groups/join', { inviteCode }, { quietStatus: [404] });
   }
 
   rename(id: string, name: string): Observable<FriendGroup> {

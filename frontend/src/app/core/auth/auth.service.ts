@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { User, UserManager } from 'oidc-client-ts';
+import { from, of, type Observable } from 'rxjs';
 import { ConfigStore } from '../config/config.store';
 import { USER_MANAGER_FACTORY } from './oidc';
 import { ViewRetry, finalAnswer } from './renewal';
@@ -119,6 +120,11 @@ export class AuthService {
     } finally {
       this.renewal = null;
     }
+  }
+
+  /** Emits after a running session check, at once without one. A store waits, so its first request has the token. */
+  sessionReady(): Observable<unknown> {
+    return this.renewal === null ? of(null) : from(this.renewal.catch(() => null));
   }
 
   /** Signs out locally. The blueprint of Authentik has no sign-out URL, so the SSO session stays. */

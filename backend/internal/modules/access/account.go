@@ -1,6 +1,7 @@
 package access
 
 import (
+	"context"
 	"database/sql"
 	"net/http"
 
@@ -62,6 +63,22 @@ func (m *Module) exportMyData(r *http.Request) (web.Response, error) {
 // ownedTables are the tables whose rows DELETE /me/data removes, in order.
 var ownedTables = []string{"photo", "find", "marker", "zone", "combination"}
 
+// deleteOwnedGroups removes the groups that the user leads. The rows that other
+// members shared with such a group become private, as a single group delete does.
+func deleteOwnedGroups(ctx context.Context, tx *sql.Tx, owner db.ID, now db.Time) error {
+	groups, err := db.Column[db.ID](ctx, tx, `SELECT id FROM "group" WHERE owner_id = ?`, owner)
+	if err != nil {
+		return err
+	}
+	for _, group := range groups {
+		if err := detach(ctx, tx, group, nil, now); err != nil {
+			return err
+		}
+	}
+	_, err = tx.ExecContext(ctx, `DELETE FROM "group" WHERE owner_id = ?`, owner)
+	return err
+}
+
 func (m *Module) deleteMyData(r *http.Request) (web.Response, error) {
 	ctx := r.Context()
 	user, _, err := m.deps.Auth.CurrentUser(r)
@@ -77,6 +94,9 @@ func (m *Module) deleteMyData(r *http.Request) (web.Response, error) {
 			if _, err := tx.ExecContext(ctx, "DELETE FROM "+table+" WHERE owner_id = ?", user.ID); err != nil {
 				return nil, err
 			}
+		}
+		if err := deleteOwnedGroups(ctx, tx, user.ID, m.now()); err != nil {
+			return nil, err
 		}
 		return ids, nil
 	})

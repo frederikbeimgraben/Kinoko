@@ -4,17 +4,14 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { AboutTextComponent, type AboutSection } from './about-text.component';
 
 const SECTIONS: readonly AboutSection[] = [
-  { heading: 'account.licences.osmHeading', body: 'account.licences.osmBody' },
-  { heading: 'account.licences.gbifHeading', body: 'account.licences.gbifBody' },
-  { heading: 'account.licences.dwdHeading', body: 'account.licences.dwdBody' },
-  { heading: 'account.licences.demHeading', body: 'account.licences.demBody' },
-  { heading: 'account.licences.soilHeading', body: 'account.licences.soilBody' },
-  { heading: 'account.licences.treesHeading', body: 'account.licences.treesBody' },
-  { heading: 'account.licences.mapHeading', body: 'account.licences.mapBody' },
-  { heading: 'account.licences.fontHeading', body: 'account.licences.fontBody' },
+  { heading: 'account.licences.mapData', body: 'account.licences.mapDataSub' },
+  { heading: 'account.licences.speciesData', body: 'account.licences.speciesDataSub' },
+  { heading: 'account.licences.occurrences', body: 'account.licences.occurrencesSub' },
+  { heading: 'account.licences.weatherData', body: 'account.licences.weatherDataSub' },
+  { heading: 'account.licences.images', body: 'account.licences.imagesSub' },
 ];
 
-/** Sources and licences below the account: each data source of the map with its licence. */
+/** Sources and licences below the account, per `AboutLicences.dc.html`: each source with its licence. */
 @Component({
   selector: 'app-licences',
   changeDetection: ChangeDetectionStrategy.OnPush,

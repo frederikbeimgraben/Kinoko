@@ -103,7 +103,9 @@ export class FindSheetComponent {
     return id === null ? null : this.arten.entryById(id);
   });
 
-  protected readonly speciesName = computed(() => this.art()?.name ?? '');
+  protected readonly speciesName = computed(
+    () => this.art()?.name ?? this.i18n.translate('find.unknownSpecies'),
+  );
   protected readonly location = computed<readonly [number, number]>(() => [this.find().lon, this.find().lat]);
 
   /** The muted line below the name: date, count and reporter. */

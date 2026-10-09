@@ -5,13 +5,13 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 
-/** One part of a text page: a heading and a text, one key each. */
+/** One row of a text page: a label and a short sub-line, one key each. */
 export interface AboutSection {
   heading: TranslationKey;
   body: TranslationKey;
 }
 
-/** A text page below the account, per `AboutMethod.dc.html`: a group of rows that wrap. */
+/** A text page below the account, per `AboutMethod.dc.html`: a group of rows with one sub-line each. */
 @Component({
   selector: 'app-about-text',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -59,7 +59,7 @@ export class AreaPickerComponent {
         zone,
         sub: joined([
           this.i18n.translate('area.hectares', { area: hectaresText(zone.areaHa, this.i18n.locale()) }),
-          sizeText(this.store.estimate(zone), this.i18n.locale()),
+          this.sizeOf(zone),
         ]),
       })),
   );
@@ -83,5 +83,11 @@ export class AreaPickerComponent {
 
   protected toAreas(): void {
     void this.router.navigateByUrl('/konto/offline');
+  }
+
+  /** Without the layer manifest, the size is not known: "0 MB" would be wrong. */
+  private sizeOf(zone: Zone): string {
+    const bytes = this.store.estimate(zone);
+    return bytes === null ? this.i18n.translate('area.sizeUnknown') : sizeText(bytes, this.i18n.locale());
   }
 }

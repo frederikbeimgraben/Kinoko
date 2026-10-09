@@ -28,4 +28,10 @@ describe('ObjectTitleComponent', () => {
     const fallback = container.querySelector<HTMLElement>('.private__fallback');
     expect(fallback?.style.background).toContain('rgb(79, 138, 60)');
   });
+
+  it('takes the heading level of its place', async () => {
+    await render(ObjectTitleComponent, { inputs: { title: 'Steinpilz', level: 2 } });
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Steinpilz' })).toBeInTheDocument();
+  });
 });

@@ -1,7 +1,9 @@
 import { DOCUMENT, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { AccountStore } from '../../core/access/account.store';
+import { GroupsStore } from '../../core/access/groups.store';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { grouped } from '../../core/i18n/numbers';
+import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -15,7 +17,14 @@ import { SpeciesStore } from '../species/species.store';
 import { AccountStatsComponent } from './account-stats.component';
 import { DataExportBodyComponent } from './data-export-body.component';
 import { exportDay, saveFile } from './download';
-import { exportFile, partsFor, selected, type ExportFormat, type ExportPart } from './export-files';
+import {
+  exportFile,
+  partsFor,
+  selected,
+  speciesNames,
+  type ExportFormat,
+  type ExportPart,
+} from './export-files';
 import { MyDataStore } from './my-data.store';
 
 /** The parts that the sheet selects first, per `DataExportBody.dc.html`. */
@@ -40,7 +49,9 @@ const FIRST_PARTS: ReadonlySet<ExportPart> = new Set<ExportPart>(['finds', 'mark
   styleUrl: './account-page.scss',
 })
 export class MyDataComponent {
+  private readonly account = inject(AccountStore);
   private readonly document = inject(DOCUMENT);
+  private readonly groups = inject(GroupsStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly species = inject(SpeciesStore);
@@ -57,18 +68,30 @@ export class MyDataComponent {
   protected readonly format = signal<ExportFormat>('json');
   protected readonly parts = signal<ReadonlySet<ExportPart>>(FIRST_PARTS);
 
-  /** The counts in the question of the delete dialog, per `DeleteAll.dc.html`. */
+  /** The groups that the person leads. The full delete removes them too. */
+  private readonly ownGroups = computed(
+    () => (this.groups.groups() ?? []).filter((group) => this.account.owns(group.ownerId)).length,
+  );
+
+  /** The counts in the question of the delete dialog, per `DeleteAll.dc.html`, and the own groups. */
   protected readonly meta = computed(() => {
     const counts = this.counts();
-    return counts === null
-      ? ''
-      : this.i18n.translate('account.deleteAllCount', {
-          finds: grouped(counts.finds),
-          markers: grouped(counts.markers),
-          zones: grouped(counts.zones),
-          photos: grouped(counts.photos),
-        });
+    if (counts === null) return '';
+    const groups = this.ownGroups();
+    return joined([
+      this.i18n.translate('account.deleteAllCount', {
+        finds: counts.finds,
+        markers: counts.markers,
+        zones: counts.zones,
+        photos: counts.photos,
+      }),
+      groups === 0 ? null : this.i18n.translate('account.deleteAllGroups', { count: groups }),
+    ]);
   });
+
+  constructor() {
+    this.groups.load(false, true);
+  }
 
   protected toggle(part: ExportPart): void {
     this.parts.update((parts) =>
@@ -85,14 +108,14 @@ export class MyDataComponent {
     }
     const format = this.format();
     const allowed = new Set(partsFor(format).filter((part) => this.parts().has(part)));
-    const name = (id: string | null | undefined): string =>
-      id ? (this.species.entryById(id)?.name ?? '') : '';
-    saveFile(exportFile(selected(data, allowed), format, name, exportDay(new Date())), this.document);
+    const names = speciesNames((id) => this.species.entryById(id), this.i18n.locale());
+    saveFile(exportFile(selected(data, allowed), format, names, exportDay(new Date())), this.document);
     this.exporting.set(false);
   }
 
   protected async confirmDelete(): Promise<void> {
     if (!(await this.store.deleteAll())) return;
+    this.groups.load(false, true);
     this.asking.set(false);
     this.toasts.success(this.i18n.translate('account.deleteAllDone'));
     void this.router.navigateByUrl('/konto');
