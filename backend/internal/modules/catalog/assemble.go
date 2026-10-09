@@ -49,6 +49,7 @@ type Species struct {
 	GillEdge         *enums.GillEdge       `json:"gillEdge"`
 	CapShapeYoung    *enums.CapShape       `json:"capShapeYoung"`
 	CapShapeOld      *enums.CapShape       `json:"capShapeOld"`
+	RingShape        *enums.RingShape      `json:"ringShape"`
 	Names            []NameEntry           `json:"names"`
 	Measurements     []MeasurementGroup    `json:"measurements"`
 	PartNotes        []PartNote            `json:"partNotes"`
@@ -324,6 +325,7 @@ func assemble(s speciesRow, c children, terms map[db.ID]termRow, targets map[db.
 		GillEdge:         s.GillEdge,
 		CapShapeYoung:    s.CapShapeYoung,
 		CapShapeOld:      s.CapShapeOld,
+		RingShape:        s.RingShape,
 		Names:            fn.Map(c.names[s.ID], func(r nameRow) NameEntry { return NameEntry{r.Name, r.Kind} }),
 		Measurements:     measurementGroups(c.measurements[s.ID]),
 		PartNotes: fn.Map(c.partNotes[s.ID], func(r partNoteRow) PartNote {

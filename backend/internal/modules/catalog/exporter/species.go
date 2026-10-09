@@ -60,6 +60,7 @@ func (s *speciesExport) build() File {
 			Nach: s.optionalWord(importer.CapShape, r.CapShapeOld, old, "cap shape"),
 		}
 	}
+	f.Ringform = s.optionalWord(importer.RingShape, r.RingShape, s.base.Ringform, "ring shape")
 	s.features(&f)
 	s.trees(&f)
 	f.Geruch = s.sense(s.base.Geruch, r.SmellText, enums.TermKindSmell, importer.SmellName)

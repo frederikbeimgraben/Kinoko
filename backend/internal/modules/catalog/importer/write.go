@@ -81,15 +81,15 @@ func inserts(c Catalog, now db.Time) []insert {
 		{`INSERT INTO species (id, slug, name, latin_name, taxon_id, group_key, edibility, marketable, forecast_enabled,
 			frequency, red_list, description, description_en, description_draft, edibility_note, protection,
 			protection_note, period_start_month, period_end_month, period_peak_month, smell_text, taste_text,
-			hymenium_type, gill_attachment, gill_spacing, gill_edge, cap_shape_young, cap_shape_old, updated_at,
-			updated_by_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
+			hymenium_type, gill_attachment, gill_spacing, gill_edge, cap_shape_young, cap_shape_old, ring_shape,
+			updated_at, updated_by_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
 			fn.Map(c.Species, func(r SpeciesRow) []any {
 				return []any{r.ID, r.Slug, r.Name, r.LatinName, r.TaxonID, r.GroupKey, r.Edibility, r.Marketable,
 					r.ForecastEnabled, r.Frequency, r.RedList, r.Description, r.DescriptionEn, r.DescriptionDraft,
 					r.EdibilityNote, r.Protection, r.ProtectionNote,
 					r.PeriodStartMonth, r.PeriodEndMonth, r.PeriodPeakMonth, r.SmellText, r.TasteText, r.HymeniumType,
-					r.GillAttachment, r.GillSpacing, r.GillEdge, r.CapShapeYoung, r.CapShapeOld, now}
+					r.GillAttachment, r.GillSpacing, r.GillEdge, r.CapShapeYoung, r.CapShapeOld, r.RingShape, now}
 			})},
 		{"INSERT INTO species_name (species_id, position, name, kind) VALUES (?, ?, ?, ?)",
 			fn.Map(ch.Names, func(r NameRow) []any { return []any{r.SpeciesID, r.Position, r.Name, r.Kind} })},

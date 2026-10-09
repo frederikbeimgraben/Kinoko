@@ -1243,6 +1243,11 @@ export interface components {
         GillEdge: "smooth" | "serrate" | "ciliate";
         /** @enum {string} */
         CapShape: "hemispherical" | "convex" | "flat" | "depressed" | "funnel" | "conical" | "bell" | "egg" | "spherical" | "shell" | "pear" | "club" | "cylindrical";
+        /**
+         * @description The shape of the ring on the stem.
+         * @enum {string}
+         */
+        RingShape: "pendant" | "flaring" | "sheathing" | "double" | "zone" | "cortina";
         /** @enum {string} */
         CapFeature: "umbonate" | "hygrophanous" | "zoned" | "sunken" | "irregular" | "navelled";
         /** @enum {string} */
@@ -1408,6 +1413,7 @@ export interface components {
             gillEdge?: components["schemas"]["GillEdge"] | null;
             capShapeYoung?: components["schemas"]["CapShape"] | null;
             capShapeOld?: components["schemas"]["CapShape"] | null;
+            ringShape?: components["schemas"]["RingShape"] | null;
             names?: components["schemas"]["SpeciesNameEntry"][];
             measurements?: components["schemas"]["MeasurementGroup"][];
             partNotes?: components["schemas"]["PartNote"][];
@@ -1451,6 +1457,7 @@ export interface components {
             gillEdge?: components["schemas"]["GillEdge"] | null;
             capShapeYoung?: components["schemas"]["CapShape"] | null;
             capShapeOld?: components["schemas"]["CapShape"] | null;
+            ringShape?: components["schemas"]["RingShape"] | null;
             names: components["schemas"]["SpeciesNameEntry"][];
             measurements: components["schemas"]["MeasurementGroup"][];
             partNotes?: components["schemas"]["PartNote"][];

@@ -51,6 +51,7 @@ type speciesWrite struct {
 	GillEdge         *enums.GillEdge       `json:"gillEdge"`
 	CapShapeYoung    *enums.CapShape       `json:"capShapeYoung"`
 	CapShapeOld      *enums.CapShape       `json:"capShapeOld"`
+	RingShape        *enums.RingShape      `json:"ringShape"`
 	Names            []NameEntry           `json:"names"`
 	Measurements     []MeasurementGroup    `json:"measurements"`
 	PartNotes        []PartNote            `json:"partNotes"`
@@ -108,7 +109,7 @@ func headValues(b speciesWrite) []any {
 	return []any{b.Name, b.ScientificName, b.TaxonID, b.Group, b.Edibility, b.Marketable, b.Frequency,
 		b.RedList, b.Description, b.EdibilityNote, b.Protection, b.ProtectionNote, b.PeriodStartMonth,
 		b.PeriodEndMonth, peakMonth, b.SmellText, b.TasteText, b.HymeniumType, b.GillAttachment,
-		b.GillSpacing, b.GillEdge, b.CapShapeYoung, b.CapShapeOld, b.PeriodPeakWeek}
+		b.GillSpacing, b.GillEdge, b.CapShapeYoung, b.CapShapeOld, b.PeriodPeakWeek, b.RingShape}
 }
 
 // weekMonth gives the month of the Thursday of a calendar week; week 53 gives December.
@@ -120,7 +121,7 @@ func weekMonth(week int) int {
 const headCols = `name, latin_name, taxon_id, group_key, edibility, marketable, frequency, red_list,
 	description, edibility_note, protection, protection_note, period_start_month, period_end_month,
 	period_peak_month, smell_text, taste_text, hymenium_type, gill_attachment, gill_spacing, gill_edge,
-	cap_shape_young, cap_shape_old, period_peak_week`
+	cap_shape_young, cap_shape_old, period_peak_week, ring_shape`
 
 // uniqueConflict turns a broken UNIQUE constraint of name or latin name into 409.
 func uniqueConflict(err error) error {

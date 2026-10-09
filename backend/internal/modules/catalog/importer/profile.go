@@ -37,6 +37,7 @@ type Profile struct {
 	Stielmerkmale      []string
 	Hutrand            *CapMarginEntry
 	Hutform            *CapShapeEntry
+	Ringform           *string
 	Fruchtschicht      *HymeniumEntry
 	Zeitraum           *Period
 	Geruch             *Sense
@@ -187,6 +188,7 @@ type rawProfile struct {
 	Stielmerkmale      []string                  `toml:"stielmerkmale"`
 	Hutrand            *CapMarginEntry           `toml:"hutrand"`
 	Hutform            *CapShapeEntry            `toml:"hutform"`
+	Ringform           *string                   `toml:"ringform"`
 	Fruchtschicht      *HymeniumEntry            `toml:"fruchtschicht"`
 	Zeitraum           *Period                   `toml:"zeitraum"`
 	Geruch             *Sense                    `toml:"geruch"`
@@ -236,6 +238,7 @@ func ParseProfile(text, source string) (Profile, error) {
 		Stielmerkmale:      raw.Stielmerkmale,
 		Hutrand:            raw.Hutrand,
 		Hutform:            raw.Hutform,
+		Ringform:           raw.Ringform,
 		Fruchtschicht:      raw.Fruchtschicht,
 		Zeitraum:           raw.Zeitraum,
 		Geruch:             raw.Geruch,

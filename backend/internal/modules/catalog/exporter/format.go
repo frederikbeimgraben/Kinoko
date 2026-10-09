@@ -9,7 +9,7 @@ var canonical = map[string][]string{
 	"": {"name", "lateinisch", "gruppe", "speisewert", "wertigkeit", "marktfaehigSchweiz", "marktfaehig",
 		"sammelbar", "jahreszeiten", "baeume", "warnung", "karte", "speisewertHinweis", "schutzHinweis",
 		"haeufigkeit", "gefaehrdung", "beschreibung", "beschreibungEn", "entwurf", "weitereNamen", "synonyme", "fruchtschicht", "hutform",
-		"hutmerkmale", "hutrand", "stielmerkmale", "baeumeAusErfahrung", "quelle", "reagenzien", "masse",
+		"hutmerkmale", "hutrand", "stielmerkmale", "ringform", "baeumeAusErfahrung", "quelle", "reagenzien", "masse",
 		"zeitraum", "farben", "geruch", "geschmack", "schutz", "teilnotizen", "merkmale", "verwechslungen", "links"},
 	"masse": {"hutBreiteCm", "fruchtkoerperBreiteCm", "fruchtkoerperHoeheCm", "stielLaengeCm", "stielDickeCm",
 		"sporenLaengeUm", "sporenBreiteUm"},
@@ -95,6 +95,7 @@ func topLevel(f File) []kv {
 		b.add("hutrand", inline(t))
 	}
 	b.list("stielmerkmale", f.Stielmerkmale)
+	b.text("ringform", f.Ringform)
 	sections(&b, f)
 	return b
 }

@@ -40,6 +40,16 @@ var CapShape = map[string]string{
 	"zylindrisch":     "cylindrical",
 }
 
+// RingShape maps the German shape of the ring on the stem.
+var RingShape = map[string]string{
+	"haengend":     "pendant",
+	"abstehend":    "flaring",
+	"stiefelartig": "sheathing",
+	"doppelt":      "double",
+	"ringzone":     "zone",
+	"cortina":      "cortina",
+}
+
 // CapFeature maps the German cap feature.
 var CapFeature = map[string]string{
 	"gebuckelt":      "umbonate",

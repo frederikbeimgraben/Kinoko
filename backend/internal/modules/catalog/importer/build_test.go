@@ -37,6 +37,7 @@ func TestVocabularyValuesAreKnownEnumMembers(t *testing.T) {
 		{"GillSpacing", GillSpacing, values(enums.GillSpacingValues)},
 		{"GillEdge", GillEdge, values(enums.GillEdgeValues)},
 		{"CapShape", CapShape, values(enums.CapShapeValues)},
+		{"RingShape", RingShape, values(enums.RingShapeValues)},
 		{"CapFeature", CapFeature, values(enums.CapFeatureValues)},
 		{"CapMargin", CapMargin, values(enums.CapMarginValues)},
 		{"StemFeature", StemFeature, values(enums.StemFeatureValues)},
@@ -195,6 +196,16 @@ func TestForecastEnabledFalseWithoutKarteField(t *testing.T) {
 	row, _ := build(t, testContext(testProfile(nil), nil))
 	if row.ForecastEnabled {
 		t.Fatal("forecast on")
+	}
+}
+
+func TestRingShapeMapsTheGermanWord(t *testing.T) {
+	row, _ := build(t, testContext(testProfile(func(p *Profile) { p.Ringform = ptr("haengend") }), nil))
+	if row.RingShape == nil || *row.RingShape != "pendant" {
+		t.Fatalf("ring shape %v", row.RingShape)
+	}
+	if row, _ := build(t, testContext(testProfile(nil), nil)); row.RingShape != nil {
+		t.Fatalf("ring shape %v", *row.RingShape)
 	}
 }
 

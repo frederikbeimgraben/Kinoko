@@ -132,6 +132,7 @@ func speciesRow(ctx Context, taxonID *db.ID) (SpeciesRow, error) {
 		GillEdge:         maybe(GillEdge, hymenium.Schneide, "fruchtschicht.schneide"),
 		CapShapeYoung:    maybe(CapShape, shape.Von, "hutform.von"),
 		CapShapeOld:      maybe(CapShape, shape.Nach, "hutform.nach"),
+		RingShape:        maybe(RingShape, p.Ringform, "ringform"),
 	}
 	for _, err := range errs {
 		if err != nil {

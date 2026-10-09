@@ -2917,6 +2917,11 @@ components:
         - club
         - cylindrical
 
+    RingShape:
+      description: The shape of the ring on the stem.
+      type: string
+      enum: [pendant, flaring, sheathing, double, zone, cortina]
+
     CapFeature:
       type: string
       enum: [umbonate, hygrophanous, zoned, sunken, irregular, navelled]
@@ -3390,6 +3395,10 @@ components:
           oneOf:
             - $ref: "#/components/schemas/CapShape"
             - type: "null"
+        ringShape:
+          oneOf:
+            - $ref: "#/components/schemas/RingShape"
+            - type: "null"
         names:
           type: array
           items:
@@ -3536,6 +3545,10 @@ components:
             capShapeOld:
               oneOf:
                 - $ref: "#/components/schemas/CapShape"
+                - type: "null"
+            ringShape:
+              oneOf:
+                - $ref: "#/components/schemas/RingShape"
                 - type: "null"
             names:
               type: array

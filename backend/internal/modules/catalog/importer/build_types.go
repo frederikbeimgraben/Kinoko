@@ -49,6 +49,7 @@ type SpeciesRow struct {
 	GillEdge         *string
 	CapShapeYoung    *string
 	CapShapeOld      *string
+	RingShape        *string
 }
 
 // NameRow is one row of species_name.

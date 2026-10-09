@@ -425,3 +425,20 @@ func TestWriteSpeciesKeepsTheDraftFlag(t *testing.T) {
 		t.Fatal(body)
 	}
 }
+
+func TestReplaceSpeciesKeepsRingShape(t *testing.T) {
+	env := newEnv(t)
+	fly := makeSpecies(t, env, "amanita-muscaria", "Fliegenpilz", "Amanita muscaria", nil, nil)
+	body := env.Put("/species/"+fly.Slug, writePayload(map[string]any{"ringShape": "pendant"}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if body["ringShape"] != "pendant" || profileOf(t, env, fly.Slug)["ringShape"] != "pendant" {
+		t.Fatal(body["ringShape"])
+	}
+	cleared := env.Put("/species/"+fly.Slug, writePayload(map[string]any{"ringShape": nil}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if cleared["ringShape"] != nil {
+		t.Fatal(cleared["ringShape"])
+	}
+	env.Put("/species/"+fly.Slug, writePayload(map[string]any{"ringShape": "spiral"}), &editor).
+		Expect(t, http.StatusUnprocessableEntity)
+}
