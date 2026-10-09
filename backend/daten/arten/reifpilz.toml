@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "fichte"]
 speisewertHinweis = "Er ist häufig von Maden befallen."
+beschreibung = "Mittelgroßer Schleierling mit violett-hellbraunem bis ockerbraunem Hut, meist mit weißem oder hell violettem Reifüberzug, blassbeigen, später ockerfarbenen Lamellen und hellbraunem, faserigem Stiel mit häutigem Ring und meist knolliger Basis. Er wächst von Juni bis November im Nadelwald, gern unter Kiefern und Fichten auf saurem, sandigem Boden. Vom tödlich giftigen Kegelhütigen Knollenblätterpilz, der an denselben Standorten wächst, unterscheiden ihn vor allem die ockerfarbenen Lamellen und das zimt- bis rostbraune Sporenpulver, denn der Knollenblätterpilz hat weiße Lamellen, weißes Sporenpulver und eine Scheide an der Stielbasis."
+beschreibungEn = "A medium-sized webcap with a violet-light brown to ochre-brown cap, mostly with a white or light violet frosted coating, pale beige gills that later become ochre, and a light brown, fibrous stem with a membranous ring and a mostly bulbous base. It grows from June to November in coniferous woods, often under pine and spruce on acid, sandy soil. The key difference from the deadly poisonous destroying angel, which grows in the same places, is the ochre gills and the cinnamon to rust-brown spore print, because the destroying angel has white gills, a white spore print and a volva at the stem base."
+entwurf = true
 weitereNamen = ["Zigeuner", "Runzelschüppling", "Hühnerkoppe", "Scheidenrunzling Reifpilz"]
 synonyme = ["Rozites caperatus", "Rozites caperata", "Agaricus caperatus", "Pholiota caperata", "Dryophila caperata", "Togaria caperata"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", schneide = "gesaegt" }

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Sehr selten. Von den anderen weißen Stäublingen lässt er sich meist nur mikroskopisch sicher trennen. Nur solange das Innere rein weiß ist."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner, weißlicher, kugeliger, zur Basis zugespitzter Stäubling mit sehr dünner Haut voller dicker, pyramidenartiger Stacheln, die meist zu dritt zueinander geneigt sind, und mit sehr langen Myzelwurzeln. Er wächst von Juni bis November an grasigen Waldwegen und im Nadelwald, gern in Kiefernwäldern auf sandigem Boden, und ist sehr selten. Vom Igelstäubling unterscheiden ihn vor allem die weißlichen Stachelspitzen und die langen Myzelwurzeln, denn der Igelstäubling hat längere, braunspitzige Stacheln und keine solchen Wurzeln."
+beschreibungEn = "A small, whitish, round puffball that is pointed towards the base, with a very thin skin full of thick, pyramid-shaped spines that mostly lean together in groups of three, and with very long mycelium roots. It grows from June to November along grassy forest paths and in coniferous woods, often in pine woods on sandy soil, and is very rare. The key difference from the spiny puffball is the whitish spine tips and the long mycelium roots, because the spiny puffball has longer spines with brown tips and no such roots."
+entwurf = true
 weitereNamen = ["Rauer Stäubling", "Geschwänzsporiger Stäublings", "Moor-Stäubling"]
 synonyme = ["Lycoperdon caudatum", "Lycoperdon pedicellatum", "Bovistella pedicellata"]
 fruchtschicht = { art = "stacheln" }

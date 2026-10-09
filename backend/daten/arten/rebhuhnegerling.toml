@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Zu erkennen am schwach tintigen, karbolartigen Geruch nach Phenol und faulem Stroh und an der Stielbasis, die bei Verletzung chromgelb gilbt und später braunrot wird. Nicht essen."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Mittelgroßer Champignon mit graubraunem, rauchschwärzlichem bis dunkelbraunem, faserig geschupptem Hut, der zum Rand hin rotbraun schuppig ist, freien, erst lachsrosa und später schwarzbraunen Lamellen und weißlichem Stiel mit knolliger Basis und gerandetem Ring. Er wächst von Juni bis November als Folgezersetzer in Parks und im Mischwald, gern bei Laubbäumen. Vom Perlhuhnegerling unterscheidet ihn vor allem der oft nur schwache Geruch nach Tinte oder Karbol und der zum Rand hin rotbraun geschuppte Hut, wobei bei beiden die Stielbasis bei Verletzung chromgelb gilbt. Der Rebhuhnchampignon ist giftig."
+beschreibungEn = "A medium-sized mushroom with a grey-brown, smoky-black to dark brown cap with fibrous scales that become red-brown towards the margin, free gills that are salmon-pink at first and later black-brown, and a whitish stem with a bulbous base and a ring with a rim. It grows from June to November as a saprobe in parks and mixed woods, often with broadleaf trees. The key difference from the inky mushroom is the smell of ink or carbolic acid, which is often only weak, and the cap with red-brown scales towards the margin, while in both species the stem base turns chrome-yellow when it is damaged. This species is poisonous."
+entwurf = true
 weitereNamen = ["Rebhuhnegerling"]
 synonyme = ["Psalliota phaeolepidota"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", schneide = "gesaegt" }

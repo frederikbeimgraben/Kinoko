@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["tanne", "buche"]
 karte = "meripilus_giganteus"
 speisewertHinweis = "Nur ganz junge Fruchtkörper sind mild. Er wird schnell scharf und bitter und ist dann unbrauchbar."
+beschreibung = "Sehr großer Porling aus vielen fächerförmigen, sich überlappenden, hell- bis gelbbraunen, konzentrisch gezonten Hüten, die aus einem gemeinsamen Strunk wachsen, mit weißlichen bis gelblichen Poren, die auf Druck schwärzen. Er wächst von Juni bis November als Folgezersetzer im Mischwald, im Nadelwald gern an Weißtanne, im Laubwald an Buchenstümpfen. Vom Bergporling unterscheiden ihn vor allem die Poren und das Fleisch, die auf Druck oder im Schnitt braunschwarz werden, denn beim Bergporling schwärzen die Poren nicht."
+beschreibungEn = "A very large polypore made of many fan-shaped, overlapping, light to yellow-brown caps with concentric zones that grow from a common base, with whitish to yellowish pores that turn black when pressed. It grows from June to November as a saprobe in mixed woods, in coniferous woods often on silver fir, in broadleaf woods on beech stumps. The key difference from Bondarzewia mesenterica is the pores and the flesh, which turn brown-black when pressed or cut, because the pores of Bondarzewia mesenterica do not turn black."
+entwurf = true
 synonyme = ["Agaricus aequivocus", "Flabellopilus giganteus", "Polyporus aequivocus", "Polypilus frondosus var. intybaceus", "Polypilus giganteus", "Grifola gigantea", "Grifola acanthoides"]
 fruchtschicht = { art = "poren" }
 hutform = { von = "muschelfoermig" }

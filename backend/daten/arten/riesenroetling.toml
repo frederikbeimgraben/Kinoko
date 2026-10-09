@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["eiche", "buche", "pappel"]
 speisewertHinweis = "Zu erkennen am fleischrötlichen Sporenpulver, an den jung gelblichen und später rotocker bis rosaocker werdenden Lamellen, die am Stiel ausgebuchtet sind und praktisch nie herablaufen, und am unangenehm säuerlich-mehligen Geruch. Keine Kostversuche."
+beschreibung = "Großer Rötling mit elfenbeinfarbenem, blassgelbem bis bleigrauem, oft unregelmäßig verbogenem Hut, jung gelblichen und später rotockerfarbenen, am Stiel ausgebuchteten Lamellen, die praktisch nie herablaufen, und dickem, weißlichem, längsfaserigem Stiel mit knolliger Basis. Er wächst von März bis November, häufiger im Herbst, bei Laubbäumen wie Eiche, Buche und Espe, gern auf lehmigem, kalkreichem Boden, und bildet Hexenringe. Vom Mairitterling unterscheiden ihn vor allem die gelblichen bis rotockerfarbenen Lamellen und das fleischrötliche Sporenpulver, denn der Mairitterling hat weiße Lamellen und weißes Sporenpulver. Der Riesenrötling ist tödlich giftig."
+beschreibungEn = "A large pinkgill with an ivory, pale yellow to lead-grey cap that is often irregular in shape, gills that are yellowish when young and later reddish-ochre, are notched at the stem and almost never run down it, and a thick, whitish, fibrous stem with a bulbous base. It grows from March to November, more often in autumn, with broadleaf trees such as oak, beech and aspen, often on loamy, calcareous soil, and forms fairy rings. The key difference from St George's mushroom is the yellowish to reddish-ochre gills and the flesh-pink spore print, because St George's mushroom has white gills and a white spore print. The livid pinkgill is deadly poisonous."
+entwurf = true
 weitereNamen = ["Stinkender Rötling"]
 synonyme = ["Rhodophyllus sinuatus", "Agaricus sinuatus", "Agaricus fertilis"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }

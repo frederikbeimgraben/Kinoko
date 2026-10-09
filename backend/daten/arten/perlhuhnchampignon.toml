@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Zu erkennen an dem tintigen, karbolartigen Geruch nach Phenol, Jodoform oder faulem Stroh und am Gilben des Fleisches, vor allem an der Stielbasis. Der Hut ist grau bis schwarzbraun geschuppt wie ein Perlhuhngefieder. Nicht essen."
+beschreibung = "Mittelgroßer Champignon mit weißem bis hellgelbem Hut, der fein grau bis schwarzbraun geschuppt ist wie ein Perlhuhngefieder, freien, erst blassrosa und später dunkelbraunen Lamellen und weißlichem Stiel mit hängendem, doppelschichtigem Ring. Er wächst von Juni bis November als Folgezersetzer in Parks und im Mischwald, gern auf kalkreichem, sandigem Boden. Vom Rebhuhnchampignon unterscheidet ihn vor allem der deutliche Geruch nach Tinte oder Karbol, denn der Rebhuhnchampignon riecht oft nur schwach danach und ist zum Rand hin rotbraun geschuppt. Der Perlhuhnegerling ist giftig."
+beschreibungEn = "A medium-sized mushroom with a white to light yellow cap that is finely scaled grey to black-brown like the feathers of a guinea fowl, free gills that are pale pink at first and later dark brown, and a whitish stem with a hanging ring with two layers. It grows from June to November as a saprobe in parks and mixed woods, often on calcareous, sandy soil. The key difference from Agaricus phaeolepidotus is the clear smell of ink or carbolic acid, because Agaricus phaeolepidotus often has only a weak smell of this kind and has red-brown scales towards the margin. The inky mushroom is poisonous."
+entwurf = true
 weitereNamen = ["Perlhuhnchampignon"]
 synonyme = ["Agaricus meleagris", "Agaricus praeclaresquamosus", "Agaricus placomyces var. meleagris", "Agaricus xanthodermus var. obscuratus", "Psalliota meleagris var. obscurata"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", schneide = "gesaegt" }

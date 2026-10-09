@@ -7,6 +7,9 @@ marktfaehig = true
 sammelbar = false
 jahreszeiten = ["herbst", "fruehling"]
 baeume = ["kiefer", "fichte", "douglasie"]
+beschreibung = "Kleiner bis mittelgroßer, in Gruppen wachsender Blätterpilz mit ockerbraunem bis gelbbraunem, kahlem Hut mit hellerem Rand, grauen, rauchgrauen bis graulila Lamellen, die nie gelb oder grün sind, und schlankem, schmutzig weißem bis gelbweißem, zur Basis bräunlichem Stiel. Er wächst von September bis November, selten im Frühjahr, als Folgezersetzer auf Nadelholzstümpfen, gern von Kiefer, Fichte und Douglasie, auch an vergrabenen Wurzeln und Ästen. Vom giftigen Grünblättrigen Schwefelkopf unterscheiden ihn vor allem die grauen bis graulila Lamellen, denn der Grünblättrige Schwefelkopf hat grüne bis grüngelbe Lamellen."
+beschreibungEn = "A small to medium-sized mushroom that grows in groups, with an ochre-brown to yellow-brown, bare cap with a paler margin, grey, smoke-grey to grey-lilac gills that are never yellow or green, and a slender, dirty white to yellowish-white stem that is brownish towards the base. It grows from September to November, rarely in spring, as a saprobe on conifer stumps, often of pine, spruce and Douglas fir, also on buried roots and branches. The key difference from the poisonous sulphur tuft is the grey to grey-lilac gills, because the sulphur tuft has green to greenish-yellow gills."
+entwurf = true
 weitereNamen = ["Graublättriger Schwefelkopf"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["faserig", "hohl", "ring"]
