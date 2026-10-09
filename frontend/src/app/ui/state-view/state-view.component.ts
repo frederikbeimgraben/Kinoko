@@ -18,6 +18,10 @@ export class StateViewComponent {
   readonly icon = input<IconName>('search');
   /** Without a label, the state has no button. */
   readonly action = input('');
+  /** A second line below the title, for example why the action is off. */
+  readonly text = input('');
+  readonly actionBusy = input(false);
+  readonly actionDisabled = input(false);
 
   readonly actionClick = output();
 }

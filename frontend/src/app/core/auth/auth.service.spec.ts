@@ -1,6 +1,9 @@
+import type { WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
+import { CONFIG, ManagerDouble, authProvider, oidcUser } from '../../testing/auth-double';
+import { ToastService } from '../../ui/toast/toast.service';
+import { ConfigStore, type AppConfig } from '../config/config.store';
 import { AuthService } from './auth.service';
 
 interface Setup {
@@ -36,7 +39,7 @@ describe('AuthService', () => {
     await auth.silentRenew();
 
     expect(manager.settings).toMatchObject({
-      authority: 'https://sso.beimgraben.net/application/o/pilze/',
+      authority: 'https://sso.example.org/application/o/pilze/',
       client_id: 'pilze',
       redirect_uri: 'http://localhost:4200/anmeldung',
       silent_redirect_uri: 'http://localhost:4200/anmeldung/still',
@@ -64,16 +67,55 @@ describe('AuthService', () => {
     await auth.signIn('/eintraege');
 
     expect(manager.redirects).toEqual([{ back: '/eintraege' }]);
-    expect(auth.busy()).toBe(true);
+    expect(auth.signingIn()).toBe(true);
   });
 
-  it('bleibt bedienbar, wenn die Umleitung scheitert', async () => {
+  it('shows a toast and stays usable when the redirect fails', async () => {
     const { auth, manager } = build();
     manager.redirectError = new Error('kein Netz');
 
-    await expect(auth.signIn('/karte')).rejects.toThrow('kein Netz');
+    await auth.signIn('/karte');
 
-    expect(auth.busy()).toBe(false);
+    expect(auth.signingIn()).toBe(false);
+    expect(TestBed.inject(ToastService).toasts()).toMatchObject([
+      { message: 'Die Anmeldung ist fehlgeschlagen. Versuche es noch einmal.', variant: 'danger' },
+    ]);
+  });
+
+  it('tries the configuration again on the next click after a failed read', async () => {
+    const { auth, manager } = build(false);
+
+    await auth.signIn('/konto');
+    expect(manager.redirects).toEqual([]);
+    expect(auth.signingIn()).toBe(false);
+
+    (TestBed.inject(ConfigStore).configuration as WritableSignal<AppConfig | null>).set(CONFIG);
+    await auth.signIn('/konto');
+
+    expect(manager.redirects).toEqual([{ back: '/konto' }]);
+  });
+
+  it('says so when the server has no SSO', async () => {
+    const { auth, manager } = build();
+    (TestBed.inject(ConfigStore).configuration as WritableSignal<AppConfig | null>).set({
+      ...CONFIG,
+      oidcIssuer: '',
+    });
+
+    await auth.signIn('/konto');
+
+    expect(manager.redirects).toEqual([]);
+    expect(TestBed.inject(ToastService).toasts()).toMatchObject([
+      { message: 'Auf diesem Server ist keine Anmeldung eingerichtet.' },
+    ]);
+  });
+
+  it('takes one click only while the way to the SSO starts', async () => {
+    const { auth, manager } = build();
+
+    await Promise.all([auth.signIn('/karte'), auth.signIn('/karte')]);
+
+    expect(manager.redirects).toHaveLength(1);
   });
 
   it('übernimmt nach dem Callback Person und Token und kehrt zurück', async () => {
@@ -291,10 +333,43 @@ describe('AuthService', () => {
     const { auth, manager } = build();
     manager.still = oidcUser();
 
-    await auth.signOut();
     await auth.restoreSession();
-
     expect(manager.silentAttempts).toBe(1);
+
+    // Without storage the sign-out still holds on this page.
+    await auth.signOut();
+    await auth.silentRenew();
+    expect(manager.silentAttempts).toBe(1);
+    expect(auth.signedIn()).toBe(false);
+  });
+
+  it('keeps the sign-out when a 401 or an expired token asks for a renewal', async () => {
+    const { auth, manager } = build();
+    manager.returnValue = oidcUser();
+    await auth.completeSignIn();
+    await auth.signOut();
+    manager.still = oidcUser();
+
+    expect(await auth.silentRenew()).toBeNull();
+    manager.emitExpired();
+    await Promise.resolve();
+
+    expect(manager.silentAttempts).toBe(0);
+    expect(auth.signedIn()).toBe(false);
+  });
+
+  it('lets requests go after the first answer of the session check', async () => {
+    const { auth, manager } = build();
+    manager.still = oidcUser();
+    let done = false;
+    void auth.whenChecked().then(() => (done = true));
+
+    await Promise.resolve();
+    expect(done).toBe(false);
+    await auth.restoreSession();
+    await Promise.resolve();
+
+    expect(done).toBe(true);
   });
 
   describe('anmeldungAnfordern', () => {
@@ -317,6 +392,34 @@ describe('AuthService', () => {
 
       expect(await ask).toBe(false);
       expect(auth.sheetOpen()).toBe(false);
+    });
+
+    it('keeps the open entries on the device before the sheet goes to the SSO', async () => {
+      const { auth, manager } = build();
+      const steps: string[] = [];
+      const ask = auth.requestSignIn(() => {
+        steps.push(`kept, redirects: ${manager.redirects.length}`);
+        return Promise.resolve();
+      });
+
+      await auth.signInFromSheet();
+
+      expect(steps).toEqual(['kept, redirects: 0']);
+      expect(await ask).toBe(false);
+      expect(manager.redirects).toHaveLength(1);
+      // The sheet stays with its busy button until the page leaves.
+      expect(auth.sheetOpen()).toBe(true);
+    });
+
+    it('closes the sheet when the way to the SSO fails', async () => {
+      const { auth, manager } = build();
+      manager.redirectError = new Error('kein Netz');
+      void auth.requestSignIn();
+
+      await auth.signInFromSheet();
+
+      expect(auth.sheetOpen()).toBe(false);
+      expect(auth.signingIn()).toBe(false);
     });
 
     it('antwortet allen Wartenden, sobald die Anmeldung steht', async () => {

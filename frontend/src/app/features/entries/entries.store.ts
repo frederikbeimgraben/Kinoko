@@ -84,20 +84,18 @@ export const EntriesStore = signalStore(
       patchState(store, (state) => ({ [list]: next(state[list] as readonly ItemOf<K>[]) }));
     }
 
-    async function save<K extends 'markers' | 'zones'>(
+    /** Sends a new entry after the sign-in. Without an account or network it goes into the queue one time:
+     * the sign-in sheet keeps it on the device before the page goes to the SSO. */
+    async function create(
       kind: SyncKind,
-      list: K,
       body: EntryBody,
-      send: () => Observable<ItemOf<K> | null>,
-    ): Promise<SaveResult> {
-      if (!(await store._auth.requestSignIn())) return enqueue(kind, body);
-      try {
-        const fresh = await firstValueFrom(send());
-        if (fresh !== null) patchList(list, (items) => [fresh, ...items]);
-        return 'gespeichert';
-      } catch {
-        return enqueue(kind, body);
-      }
+      photos: readonly File[],
+      send: () => Promise<void>,
+    ) {
+      let queued: Promise<SaveResult> | null = null;
+      const keep = (): Promise<SaveResult> => (queued ??= enqueue(kind, body, photos));
+      if (!(await store._auth.requestSignIn(keep))) return keep();
+      return send().then((): SaveResult => 'gespeichert', keep);
     }
 
     /** Changes the list first. Without network the change goes into the queue. */
@@ -179,25 +177,27 @@ export const EntriesStore = signalStore(
         patchState(store, { filter });
       },
 
-      async saveFind(body: FindWrite, photos: readonly File[] = []): Promise<SaveResult> {
-        if (!(await store._auth.requestSignIn())) return enqueue('find', body, photos);
-        try {
+      saveFind(body: FindWrite, photos: readonly File[] = []): Promise<SaveResult> {
+        return create('find', body, photos, async () => {
           const find = await firstValueFrom(store._api.createFind(body));
-          if (find === null) return 'gespeichert';
+          if (find === null) return;
           await attachPhotos(store._photosApi, find.id, store.reporter() ?? '', photos);
           patchList('finds', (items) => [find, ...items]);
-          return 'gespeichert';
-        } catch {
-          return enqueue('find', body, photos);
-        }
+        });
       },
 
       saveMarker(body: MarkerWrite): Promise<SaveResult> {
-        return save('marker', 'markers', body, () => store._api.createMarker(body));
+        return create('marker', body, [], async () => {
+          const fresh = await firstValueFrom(store._api.createMarker(body));
+          if (fresh !== null) patchList('markers', (items) => [fresh, ...items]);
+        });
       },
 
       saveZone(body: ZoneWrite): Promise<SaveResult> {
-        return save('zone', 'zones', body, () => store._api.createZone(body));
+        return create('zone', body, [], async () => {
+          const fresh = await firstValueFrom(store._api.createZone(body));
+          if (fresh !== null) patchList('zones', (items) => [fresh, ...items]);
+        });
       },
 
       /** Changes a find. `PUT` replaces, so the full body goes out. */

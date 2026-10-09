@@ -178,6 +178,16 @@ describe('EntriesStore', () => {
     http.expectNone('/api/finds');
   });
 
+  it('keeps the find on the device one time when the sheet goes to the SSO', async () => {
+    const { state, auth, queue, http } = build();
+    auth.reply = false;
+    auth.goesToSso = true;
+
+    expect(await state.saveFind(findWrite(FIND))).toBe('wartet');
+    expect(queue.stored).toHaveLength(1);
+    http.expectNone('/api/finds');
+  });
+
   it('stellt einen Fund an, wenn das Netz fehlt', async () => {
     const { state, queue, http } = build();
 

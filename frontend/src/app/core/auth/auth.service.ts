@@ -2,30 +2,22 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import type { User, UserManager } from 'oidc-client-ts';
 import { ConfigStore } from '../config/config.store';
+import { I18nService } from '../i18n/i18n.service';
+import type { TranslationKey } from '../i18n/translations';
+import { ToastService } from '../../ui/toast/toast.service';
 import { USER_MANAGER_FACTORY } from './oidc';
 import { ViewRetry, finalAnswer } from './renewal';
+import {
+  NOTHING_TO_KEEP,
+  SIGN_IN_PATH,
+  managerSettings,
+  personOf,
+  targetFrom,
+  type SignInState,
+  type SignedInUser,
+  type Waiting,
+} from './sign-in';
 import { rememberSignOut, signedOutHere } from './signed-out';
-
-/** The person who is signed in, as the ID token tells. */
-export interface SignedInUser {
-  sub: string;
-  name: string;
-  email: string;
-}
-
-/** The return path from the SSO. `docs/sso-authentik.md` lists it as a redirect URI. */
-export const SIGN_IN_PATH = '/anmeldung';
-
-/** The return path of the silent renewal, in an iframe. */
-export const SILENT_PATH = '/anmeldung/still';
-
-/** Without `offline_access` there is no refresh token and no silent renewal. */
-const SCOPE = 'openid email profile offline_access';
-
-/** The data that goes in the OIDC `state` to the SSO and back. */
-interface SignInState {
-  back: string;
-}
 
 /** The sign-in: authorization code with PKCE. A person reads without an account and signs in to save. */
 @Injectable({ providedIn: 'root' })
@@ -33,17 +25,25 @@ export class AuthService {
   private readonly config = inject(ConfigStore);
   private readonly factory = inject(USER_MANAGER_FACTORY);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
+  private readonly toasts = inject(ToastService);
 
   private manager: Promise<UserManager | null> | null = null;
   private renewal: Promise<string | null> | null = null;
-  /** The callers that wait for the answer of the sign-in sheet. */
-  private pendingEntries: ((signedIn: boolean) => void)[] = [];
+  private waiting: readonly Waiting[] = [];
   private readonly retry = new ViewRetry();
+  // Without session storage, the sign-out applies to this page only.
+  private signedOutOnPage = false;
+  private markChecked: () => void = () => undefined;
+  private readonly checkDone = new Promise<void>((resolve) => {
+    this.markChecked = resolve;
+  });
 
   private readonly _user = signal<SignedInUser | null>(null);
   // A synchronous token lets the interceptor work without a network step for each request.
   private readonly _token = signal<string | null>(null);
   private readonly _busy = signal(false);
+  private readonly _signingIn = signal(false);
   private readonly _sheetOpen = signal(false);
   private readonly _checked = signal(false);
   private readonly _settled = signal(false);
@@ -51,6 +51,8 @@ export class AuthService {
   readonly user = this._user.asReadonly();
   /** True while a sign-in or a renewal runs. */
   readonly busy = this._busy.asReadonly();
+  /** True from the click on "Sign in" until the page goes to the SSO, or until it fails. */
+  readonly signingIn = this._signingIn.asReadonly();
   /** True after the first answer of the session check. */
   readonly checked = this._checked.asReadonly();
   /** True after an answer of the SSO itself. A network failure does not count. */
@@ -58,6 +60,18 @@ export class AuthService {
   /** True while the sign-in sheet is on the map. */
   readonly sheetOpen = this._sheetOpen.asReadonly();
   readonly signedIn = computed(() => this._user() !== null);
+
+  constructor() {
+    // The back button of the browser can show this page again from its cache, with the busy button.
+    addEventListener('pageshow', (event) => {
+      if (event.persisted) this._signingIn.set(false);
+    });
+  }
+
+  /** Resolves after the first answer of the session check. Authenticated requests wait for it. */
+  whenChecked(): Promise<void> {
+    return this.checkDone;
+  }
 
   /** The access token of the current session, without a network step. */
   token(): string | null {
@@ -69,31 +83,30 @@ export class AuthService {
     // On the return from the SSO the route does the work.
     // A second silent request uses the same state again and fails.
     if (location.pathname.startsWith(SIGN_IN_PATH)) return;
-    if (signedOutHere()) {
+    if (this.isSignedOut()) {
       this.settle();
       return;
     }
     try {
       await this.silentRenew();
     } finally {
-      this._checked.set(true);
+      this.check();
     }
   }
 
-  /** Goes to the SSO. The page comes back on {@link SIGN_IN_PATH}, then on `back`. */
-  async signIn(back = this.router.url): Promise<void> {
-    const manager = await this.getManager();
-    if (manager === null) return;
-    rememberSignOut(false);
-    this._busy.set(true);
-    const state: SignInState = { back };
-    try {
-      await manager.signinRedirect({ state: state });
-    } catch (failure) {
-      // When the redirect fails, the app must stay usable and not show a busy state for ever.
-      this._busy.set(false);
-      throw failure;
-    }
+  /** Goes to the SSO, back on {@link SIGN_IN_PATH} and then on `back`. A failure shows a toast. */
+  signIn(back = this.router.url): Promise<void> {
+    return this.redirect(back, NOTHING_TO_KEEP);
+  }
+
+  /** The "Sign in" of the sheet. The page leaves the app, so the open entries go on the device first. */
+  async signInFromSheet(): Promise<void> {
+    const waiting = this.waiting;
+    await this.redirect(this.router.url, async () => {
+      await Promise.all(waiting.map((one) => one.keep()));
+      this.answer(false);
+    });
+    if (!this._signingIn()) this._sheetOpen.set(false);
   }
 
   /** Completes the return from the SSO. Gives the route on which the sign-in started. */
@@ -104,7 +117,7 @@ export class AuthService {
     try {
       const user = await manager.signinRedirectCallback();
       this.adopt(user);
-      return this.targetFrom(user.state);
+      return targetFrom(user.state);
     } finally {
       this._busy.set(false);
       this.settle();
@@ -126,17 +139,18 @@ export class AuthService {
     const manager = await this.getManager();
     await manager?.removeUser();
     // The mark stops the silent renewal from a return of the session.
-    rememberSignOut(true);
+    this.markSignedOut(true);
     this.settle();
     this.adopt(null);
   }
 
-  /** Asks for a sign-in before a save. Gives `true` at once for a person who is signed in. */
-  async requestSignIn(): Promise<boolean> {
+  /** Asks for a sign-in before a save, `true` at once with an account. `keep` saves the entry on the device. */
+  async requestSignIn(keep: () => Promise<unknown> = NOTHING_TO_KEEP): Promise<boolean> {
     if (this.signedIn()) return true;
-    // In the sheet, "Later" gives `false`. The way to the SSO leaves the page.
     this._sheetOpen.set(true);
-    return new Promise<boolean>((answer) => this.pendingEntries.push(answer));
+    return new Promise<boolean>((answer) => {
+      this.waiting = [...this.waiting, { answer, keep }];
+    });
   }
 
   /** The sign-in sheet: "Sign in later, keep the entry on the device". */
@@ -145,12 +159,33 @@ export class AuthService {
     this.answer(false);
   }
 
+  private async redirect(back: string, before: () => Promise<unknown>): Promise<void> {
+    if (this._signingIn()) return;
+    this._signingIn.set(true);
+    const wasSignedOut = this.isSignedOut();
+    try {
+      await before();
+      const manager = await this.getManager();
+      if (manager === null) {
+        // Without a configuration, the read of the configuration already showed its toast.
+        this.failSignIn(this.config.ssoMissing() ? 'account.signInUnavailable' : null);
+        return;
+      }
+      this.markSignedOut(false);
+      const state: SignInState = { back };
+      await manager.signinRedirect({ state });
+    } catch {
+      this.markSignedOut(wasSignedOut);
+      this.failSignIn('account.signInFailed');
+    }
+  }
+
   private async renew(): Promise<string | null> {
     // The state is open from the first tick.
     // Else a deep link into the admin area decides before the session is back.
     this._busy.set(true);
     try {
-      const manager = await this.getManager();
+      const manager = this.isSignedOut() ? null : await this.getManager();
       if (manager === null) {
         this.settle();
         return null;
@@ -176,18 +211,47 @@ export class AuthService {
 
   /** Records that the SSO answered. */
   private settle(): void {
-    this._checked.set(true);
+    this.check();
     this._settled.set(true);
+  }
+
+  private check(): void {
+    this._checked.set(true);
+    this.markChecked();
   }
 
   /** Starts a second attempt when the app becomes visible again. */
   private retryWhenVisible(): void {
-    this._checked.set(true);
+    this.check();
     this.retry.schedule(() => void this.silentRenew());
   }
 
+  private isSignedOut(): boolean {
+    return this.signedOutOnPage || signedOutHere();
+  }
+
+  private markSignedOut(signedOut: boolean): void {
+    this.signedOutOnPage = signedOut;
+    rememberSignOut(signedOut);
+  }
+
+  private failSignIn(message: TranslationKey | null): void {
+    this._signingIn.set(false);
+    if (message !== null) this.toasts.error(this.i18n.translate(message));
+  }
+
+  /** Keeps a manager, but not a missing one: the configuration or the SSO can come back. */
   private getManager(): Promise<UserManager | null> {
-    this.manager ??= this.create();
+    this.manager ??= this.create().then(
+      (made) => {
+        if (made === null) this.manager = null;
+        return made;
+      },
+      (failure: unknown) => {
+        this.manager = null;
+        throw failure;
+      },
+    );
     return this.manager;
   }
 
@@ -196,19 +260,7 @@ export class AuthService {
     await this.config.load();
     const config = this.config.configuration();
     if (config === null || config.oidcIssuer === '') return null;
-    const manager = await this.factory({
-      authority: config.oidcIssuer,
-      client_id: config.oidcClientId,
-      redirect_uri: `${config.origin}${SIGN_IN_PATH}`,
-      silent_redirect_uri: `${config.origin}${SILENT_PATH}`,
-      post_logout_redirect_uri: config.origin,
-      response_type: 'code',
-      scope: SCOPE,
-      automaticSilentRenew: true,
-      // Authentik puts the name and the email into the ID token.
-      // The UserInfo endpoint gives the same values again.
-      loadUserInfo: false,
-    });
+    const manager = await this.factory(managerSettings(config));
     manager.events.addUserLoaded((user: User) => {
       this.adopt(user);
     });
@@ -233,33 +285,15 @@ export class AuthService {
       this._token.set(null);
       return;
     }
-    const profile = user.profile;
-    this._user.set({
-      sub: profile.sub,
-      name: profile.name ?? profile.preferred_username ?? profile.email ?? profile.sub,
-      email: profile.email ?? '',
-    });
+    this._user.set(personOf(user));
     this._token.set(user.access_token);
     this._sheetOpen.set(false);
     this.answer(true);
   }
 
   private answer(signedIn: boolean): void {
-    const pendingEntries = this.pendingEntries;
-    this.pendingEntries = [];
-    for (const answer of pendingEntries) answer(signedIn);
-  }
-
-  private targetFrom(state: unknown): string {
-    if (typeof state === 'object' && state !== null && 'back' in state) {
-      const back = (state as SignInState).back;
-      // Accept only paths of the app. Another URL leaves the app,
-      // and the callback route stays with its error message.
-      if (typeof back !== 'string' || !back.startsWith('/') || back.startsWith('//')) return '/';
-      if (back === SIGN_IN_PATH || back.startsWith(`${SIGN_IN_PATH}/`) || back.startsWith(`${SIGN_IN_PATH}?`))
-        return '/';
-      return back;
-    }
-    return '/';
+    const waiting = this.waiting;
+    this.waiting = [];
+    for (const one of waiting) one.answer(signedIn);
   }
 }

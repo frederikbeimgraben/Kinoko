@@ -5,7 +5,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { AuthService } from '../../core/auth';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SyncStore } from '../../core/offline/sync.store';
 import type { SyncTask } from '../../core/offline/sync.types';
@@ -227,16 +226,22 @@ describe('EntriesComponent', () => {
     expect(screen.getByText('1 ausstehend')).toBeInTheDocument();
   });
 
-  it('asks for a sign-in without an account', async () => {
+  it('goes to the SSO in one tap without an account (board EntriesGuest)', async () => {
     const setup = await build({ signedIn: false, pending: [], shared: [] });
-    const asked = vi.spyOn(TestBed.inject(AuthService), 'requestSignIn').mockResolvedValue(true);
 
     expect(screen.getByText('Nicht angemeldet')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Filter' })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
 
-    expect(asked).toHaveBeenCalledTimes(1);
+    expect(setup.auth.signIns).toEqual(['/eintraege']);
+    expect(setup.auth.asked).toBe(0);
     await noViolations(setup.container);
+  });
+
+  it('reads no groups without an account', async () => {
+    await build({ signedIn: false, pending: [], shared: [] });
+
+    TestBed.inject(HttpTestingController).expectNone('/api/groups');
   });
 
   it('says only that nothing is there with an account', async () => {

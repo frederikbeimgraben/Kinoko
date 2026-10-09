@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, of, pipe, switchMap, tap, type Observable } from 'rxjs';
+import { catchError, filter, of, pipe, switchMap, tap, type Observable } from 'rxjs';
 import { GroupsApi } from '../api/groups.api';
 import type { FriendGroup } from '../api/models';
 import { confirmed, settle, withSearchableList } from '../state';
@@ -51,6 +51,15 @@ export const GroupsStore = signalStore(
       load(all = false, quiet = false): void {
         fetch({ all, quiet });
       },
+      /** Reads the own groups quietly each time a person signs in. A guest has no groups to read. */
+      loadOnSignIn: rxMethod<boolean>(
+        pipe(
+          filter(Boolean),
+          tap(() => {
+            fetch({ all: false, quiet: true });
+          }),
+        ),
+      ),
       create(name: string): Promise<FriendGroup | null> {
         return write(store._api.create(name), keep);
       },

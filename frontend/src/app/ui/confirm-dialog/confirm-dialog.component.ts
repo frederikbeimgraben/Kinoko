@@ -29,6 +29,8 @@ export class ConfirmDialogComponent {
   readonly stageScrim = input(false);
   /** While a write runs, the confirmation takes no tap. */
   readonly confirmDisabled = input(false);
+  /** The confirmation shows a spinner while its action runs. */
+  readonly confirmBusy = input(false);
 
   readonly confirmed = output();
   readonly cancelled = output();
