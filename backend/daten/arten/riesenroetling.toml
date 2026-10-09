@@ -31,14 +31,9 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "blassgelb", hex = "#efe3a0" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "grau", hex = "#8a8a8a" }]
-sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }, { name = "rot", hex = "#c0392b" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "rosa", hex = "#e8a0b0" }, { name = "rot", hex = "#c0392b" }]
 stiel = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["mehlig", "rettichartig", "suesslich", "unangenehm", "saeuerlich", "angenehm"]

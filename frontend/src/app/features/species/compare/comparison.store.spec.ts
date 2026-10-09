@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
-import { ComparisonStore } from './comparison.store';
+import { ComparisonStore, compareQuery, compareSlugs } from './comparison.store';
 
 const STONE = speciesEntry({ slug: 'steinpilz', name: 'Steinpilz', scientificName: 'Boletus edulis' });
 const GALL = speciesEntry({
@@ -91,5 +91,19 @@ describe('ComparisonStore', () => {
     held.set(['steinpilz', 'pfifferling']);
 
     expect(held.species().map((one) => one.slug)).toEqual(['steinpilz']);
+  });
+});
+
+describe('compare address', () => {
+  it('schreibt zwei Arten in einen Parameter und liest sie wieder', () => {
+    const query = compareQuery(['steinpilz', 'gallenroehrling', 'maronenroehrling']);
+
+    expect(query).toEqual({ arten: 'steinpilz,gallenroehrling' });
+    expect(compareSlugs(query['arten'])).toEqual(['steinpilz', 'gallenroehrling']);
+  });
+
+  it('gibt ohne Wert und für leere Teile keine Art', () => {
+    expect(compareSlugs(undefined)).toEqual([]);
+    expect(compareSlugs(' , steinpilz,steinpilz')).toEqual(['steinpilz']);
   });
 });

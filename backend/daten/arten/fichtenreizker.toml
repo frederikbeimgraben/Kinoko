@@ -32,15 +32,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "orangerot", hex = "#df5a25" }, { name = "orange", hex = "#e08a2e" }, { name = "grün", hex = "#4f8a3a" }]
-sporenlager = [{ name = "ocker", hex = "#c8963c" }, { name = "orange", hex = "#e08a2e" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "ocker", hex = "#c8963c" }, { name = "orange", hex = "#e08a2e" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "orange", hex = "#e08a2e" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "orange", hex = "#e08a2e" }]
 sporenpulver = [{ name = "blassocker", hex = "#dcc48a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "schnell"
 
 [geruch]
 tags = ["obstartig", "suesslich"]

@@ -63,3 +63,9 @@
 .private__fallback--dark {
   color: rgb(0 0 0 / 70%);
 }
+
+// Kit `.hero` without a photo: the tinted hero ground with a large outline icon.
+.private__fallback--hero {
+  color: var(--hero);
+  background: var(--hero-bg);
+}

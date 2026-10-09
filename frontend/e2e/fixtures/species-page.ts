@@ -159,7 +159,7 @@ export const STONE_PROFILE: Record<string, unknown> = {
       scientificName: 'Tylopilus felleus',
       edibility: 'inedible',
       capColours: [colour('hellbraun', '#d8b98a'), colour('ocker', '#8a6a3a')],
-      difference: null,
+      difference: 'Röhren rosa, Netz grob, bitter',
     },
     {
       slug: 'imleria-badia',
@@ -167,7 +167,7 @@ export const STONE_PROFILE: Record<string, unknown> = {
       scientificName: 'Imleria badia',
       edibility: 'edible',
       capColours: [colour('dunkelbraun', '#5a3418'), colour('kastanie', '#8a4e2b')],
-      difference: null,
+      difference: 'Röhren blauen auf Druck, Stiel ohne Netz',
     },
     {
       slug: 'boletus-reticulatus',
@@ -175,7 +175,7 @@ export const STONE_PROFILE: Record<string, unknown> = {
       scientificName: 'Boletus reticulatus',
       edibility: 'edible',
       capColours: [colour('hell', '#e2c79a'), colour('braun', '#b88a52')],
-      difference: null,
+      difference: 'Hut feinfilzig, Netz bis zur Stielbasis',
     },
   ],
 };

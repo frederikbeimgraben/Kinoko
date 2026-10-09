@@ -87,6 +87,21 @@ func TestDivisionPageHasEmptyPath(t *testing.T) {
 	equalJSON(t, body["siblings"], `[]`)
 }
 
+func TestTaxonPageNamesEachRankByItsLatinName(t *testing.T) {
+	env := newEnv(t)
+	seed := seedTaxa(t, env)
+	exec(t, env, "UPDATE taxon SET name = 'Röhrlinge', latin_name = 'Boletales' WHERE id = ?", seed.order.ID)
+	exec(t, env, "UPDATE taxon SET name = 'Dickröhrlinge', latin_name = 'Boletus' WHERE id = ?", seed.genus.ID)
+	body := taxonPage(t, env, seed.genus)
+	path := list(body["path"])
+	if body["name"] != "Boletus" || obj(path[1])["name"] != "Boletales" {
+		t.Fatal(body)
+	}
+	if got := obj(list(body["species"])[0])["genusName"]; got != "Boletus" {
+		t.Fatal(got)
+	}
+}
+
 func TestTaxonPage404(t *testing.T) {
 	env := newEnv(t)
 	env.Get("/taxa/genus/unknown-genus", nil).Expect(t, http.StatusNotFound)

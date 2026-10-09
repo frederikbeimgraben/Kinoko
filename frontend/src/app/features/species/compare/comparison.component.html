@@ -28,6 +28,12 @@
               <em>{{ head.latin }}</em>
             </button>
           }
+          @if (heads().length === 1) {
+            <button class="cmph__head cmph__add tap" type="button" (click)="adding.set(true)">
+              <span class="cmph__plus"><app-svg-icon name="plus" [size]="24" [strokeWidth]="1.8" /></span>
+              <b>{{ 'species.compare.add' | t }}</b>
+            </button>
+          }
         </div>
         @for (group of groups(); track group.label) {
           <section class="sec">
@@ -87,10 +93,26 @@
         [labels]="[0, 3, 6]"
       />
     } @else {
-      <app-state-view class="compare__empty" icon="compare" [title]="'species.detail.choose' | t" />
+      <app-state-view
+        class="compare__empty"
+        icon="compare"
+        [title]="'species.detail.choose' | t"
+        [action]="wide() ? '' : ('species.backToList' | t)"
+        (actionClick)="toList()"
+      />
     }
   </div>
 </ng-template>
+
+@if (comparison.slugs().at(0); as first) {
+  <app-compare-entry
+    [slug]="first"
+    [open]="adding()"
+    (picked)="add($event)"
+    (opened)="open($event)"
+    (closed)="adding.set(false)"
+  />
+}
 
 @if (wide()) {
   <app-species-desk [active]="comparison.slugs().at(0) ?? null">

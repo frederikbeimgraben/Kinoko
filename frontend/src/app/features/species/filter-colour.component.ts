@@ -10,6 +10,7 @@ import { partsWithColour, tonesOf } from './filter-groups';
 import { SpeciesFilterStore } from './filter.store';
 import { COLOUR_PARTS, COLOUR_TEXT, PART_TEXT } from './labels';
 import { SpeciesStore } from './species.store';
+import { ViewportService } from '../../core/layout/viewport.service';
 
 const TONES = 6;
 
@@ -25,6 +26,7 @@ export class SpeciesColourComponent {
   private readonly state = inject(SpeciesStore);
   private readonly i18n = inject(I18nService);
   protected readonly filter = inject(SpeciesFilterStore);
+  protected readonly wide = inject(ViewportService).wide;
 
   private readonly opened = signal<BodyPart | null>(null);
 
@@ -38,7 +40,8 @@ export class SpeciesColourComponent {
   protected readonly parts = computed(() =>
     partsWithColour(this.state.facets(), COLOUR_PARTS).map((part) => ({
       part,
-      label: this.i18n.translate(PART_TEXT[part]),
+      // The gill colour stands for the colour of all hymenium kinds, so the board says "Fruchtschicht".
+      label: this.i18n.translate(part === 'gills' ? 'species.section.hymenium' : PART_TEXT[part]),
       chosen: this.filter.colourOf(part),
       name: this.nameOf(part),
       open: this.open() === part,

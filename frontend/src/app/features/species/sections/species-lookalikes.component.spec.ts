@@ -53,7 +53,7 @@ describe('SpeciesLookalikesComponent', () => {
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     expect(screen.getByText('Röhren rosa, Netz grob, bitter')).toBeInTheDocument();
     expect(container.querySelector('.row__lead app-private-image')).not.toBeNull();
-    expect(wayTags(container)).toEqual(['button', 'button']);
+    expect(wayTags(container)).toEqual(['app-icon-button', 'button']);
     await noViolations(container);
   });
 

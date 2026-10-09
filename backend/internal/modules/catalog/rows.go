@@ -91,15 +91,16 @@ type taxonRow struct {
 	Rank        enums.TaxonRank
 	Slug        string
 	Name        string
+	LatinName   string
 	Description *string
 	ParentID    *db.ID
 }
 
-const taxonCols = "id, rank, slug, name, description, parent_id"
+const taxonCols = "id, rank, slug, name, latin_name, description, parent_id"
 
 func scanTaxon(s db.Scanner) (taxonRow, error) {
 	var t taxonRow
-	err := s.Scan(&t.ID, &t.Rank, &t.Slug, &t.Name, &t.Description, &t.ParentID)
+	err := s.Scan(&t.ID, &t.Rank, &t.Slug, &t.Name, &t.LatinName, &t.Description, &t.ParentID)
 	return t, err
 }
 
@@ -116,7 +117,7 @@ func (n taxonNames) named(start taxonRow, rank enums.TaxonRank) *string {
 	node := start
 	for !seen[node.ID] {
 		if node.Rank == rank {
-			return &node.Name
+			return &node.LatinName
 		}
 		seen[node.ID] = true
 		if node.ParentID == nil {

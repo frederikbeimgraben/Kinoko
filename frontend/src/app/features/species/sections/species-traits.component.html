@@ -1,11 +1,9 @@
 @if (traits().length > 0) {
-  <h2 class="section__title">{{ 'species.section.traits' | t }}</h2>
-  <div class="section__parts">
-    @for (trait of traits(); track trait.titleKey) {
-      <div class="section__card">
-        <h3 class="trait__part">{{ trait.titleKey | t }}</h3>
-        <p class="trait__text">{{ trait.text }}</p>
-      </div>
-    }
-  </div>
+  <app-section [label]="'species.section.traits' | t">
+    <app-row-group>
+      @for (trait of traits(); track trait.titleKey) {
+        <app-list-row class="trait" [title]="trait.titleKey | t" [subline]="trait.text" [wrap]="true" />
+      }
+    </app-row-group>
+  </app-section>
 }

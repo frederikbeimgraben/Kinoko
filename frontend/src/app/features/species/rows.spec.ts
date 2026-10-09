@@ -2,7 +2,7 @@ import type { Edibility } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import { speciesEntry } from '../../testing/species-fixture';
 import { factsOf } from './facets';
-import { headOf, leadColour, sortEntries, speciesRow } from './rows';
+import { headOf, initialOf, leadColour, matches, sortEntries, speciesRow } from './rows';
 
 /** A translation stub: each key translates to itself. */
 const I18N = { translate: (key: string) => key } as unknown as I18nService;
@@ -84,6 +84,20 @@ describe('species order', () => {
     expect(headOf(C.species, 'edibility', I18N)).toBe('enum.edibility.deadly');
     expect(headOf(C.species, 'season', I18N)).not.toBe('');
     expect(headOf(A.species, 'season', I18N)).toBe('');
+  });
+
+  it('puts a name with an umlaut under the base letter', () => {
+    expect(initialOf('Ästiger Stachelbart')).toBe('A');
+    expect(initialOf('Österreichischer Rötling')).toBe('O');
+    expect(initialOf('austernseitling')).toBe('A');
+  });
+
+  it('finds a species by one of its more names', () => {
+    const named = speciesEntry({ ...STONE, names: [{ name: 'Herrenpilz', kind: 'common' }] });
+
+    expect(matches(named, 'herren')).toBe(true);
+    expect(matches(named, 'edulis')).toBe(true);
+    expect(matches(named, 'pfiff')).toBe(false);
   });
 
   it('uses the first cap colour, else a brown default', () => {

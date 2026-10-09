@@ -3,6 +3,7 @@ package importer
 import (
 	"fmt"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
@@ -12,10 +13,10 @@ import (
 // changeRows builds the reactions of a species: the mechanical change first, then each reagent.
 func changeRows(ctx Context, _ SpeciesRow) (Children, error) {
 	out := Children{}
-	add := func(name, hex string, speed *string, trigger db.ID) {
+	add := func(part enums.BodyPart, name, hex string, speed *string, trigger db.ID) {
 		position := len(out.Changes)
 		out.Changes = append(out.Changes, ChangeRow{
-			SpeciesID: ctx.SpeciesID, Position: position, Part: enums.BodyPartFlesh,
+			SpeciesID: ctx.SpeciesID, Position: position, Part: part,
 			ToName: name, ToHex: hex, Speed: speed,
 		})
 		out.Triggers = append(out.Triggers, TriggerRow{SpeciesID: ctx.SpeciesID, Position: position, TermID: trigger})
@@ -30,11 +31,11 @@ func changeRows(ctx Context, _ SpeciesRow) (Children, error) {
 			return Children{}, err
 		}
 		for _, colour := range change.Nach {
-			add(colour.Name, colour.Hex, speed, trigger)
+			add(enums.BodyPartFlesh, colour.Name, colour.Hex, speed, trigger)
 		}
 	}
 	for _, entry := range ctx.Profile.Reagenzien {
-		name, hex, ok := FindColour(entry.Reaktion, ctx.Colours)
+		part, name, hex, ok := ReagentChange(entry.Reaktion, ctx.Colours)
 		if !ok {
 			ctx.Report.Skip("reagenz_ohne_zielfarbe")
 			continue
@@ -47,7 +48,7 @@ func changeRows(ctx Context, _ SpeciesRow) (Children, error) {
 		if err != nil {
 			return Children{}, err
 		}
-		add(name, hex, nil, trigger)
+		add(part, name, hex, nil, trigger)
 	}
 	return out, nil
 }
@@ -137,6 +138,11 @@ func hostnameTitle(raw string) string {
 	return strings.TrimPrefix(host, "www.")
 }
 
+func sameURL(a, b string) bool {
+	norm := func(raw string) string { return strings.TrimSuffix(strings.ToLower(strings.TrimSpace(raw)), "/") }
+	return norm(a) == norm(b)
+}
+
 func sourceRows(ctx Context, _ SpeciesRow) (Children, error) {
 	quelle := ctx.Profile.Quelle
 	checked, err := db.ParseDate(quelle.GeprueftAm)
@@ -147,9 +153,13 @@ func sourceRows(ctx Context, _ SpeciesRow) (Children, error) {
 		SpeciesID: ctx.SpeciesID, Position: 0, Scope: enums.SourceScopeProfile,
 		Title: hostnameTitle(quelle.URL), URL: quelle.URL, CheckedOn: checked,
 	}}
-	for i, link := range ctx.Profile.Links {
+	// A link to the address of the profile repeats the profile source.
+	for _, link := range ctx.Profile.Links {
+		if slices.ContainsFunc(rows, func(row SourceRow) bool { return sameURL(row.URL, link.URL) }) {
+			continue
+		}
 		rows = append(rows, SourceRow{
-			SpeciesID: ctx.SpeciesID, Position: i + 1, Scope: enums.SourceScopeFurther,
+			SpeciesID: ctx.SpeciesID, Position: len(rows), Scope: enums.SourceScopeFurther,
 			Title: link.Titel, URL: link.URL, CheckedOn: checked,
 		})
 	}

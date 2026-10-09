@@ -35,9 +35,37 @@ describe('SpeciesReactionsComponent', () => {
 
     expect(screen.getByText('Verfärbung')).toBeInTheDocument();
     expect(screen.getByText('Kalilauge')).toBeInTheDocument();
-    expect(screen.getByText('Huthaut weinrot')).toBeInTheDocument();
+    expect(screen.getByText('Hut · Huthaut weinrot')).toBeInTheDocument();
     expect(screen.getByText('Eisensulfat †')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('shows a reagent one time when the colour changes also name it', async () => {
+    const { container } = await render(SpeciesReactionsComponent, {
+      inputs: {
+        reactions: [POSITIVE],
+        changes: [
+          {
+            part: 'flesh',
+            kind: 'reagent',
+            from: null,
+            to: { name: 'braun', hex: '#6b4423' },
+            triggers: [{ id: 'k', slug: 'koh', name: 'Kalilauge', kind: 'trigger' }],
+          },
+          {
+            part: 'tubes',
+            kind: 'mechanical',
+            from: null,
+            to: { name: 'blau', hex: '#3a5f9e' },
+            triggers: [{ id: 'p', slug: 'pressure', name: 'Druck', kind: 'trigger' }],
+          },
+        ],
+      },
+    });
+
+    expect(container.querySelectorAll('app-list-row.reaction')).toHaveLength(2);
+    expect(screen.getAllByText('Kalilauge')).toHaveLength(1);
+    expect(screen.getByText('Druck')).toBeInTheDocument();
   });
 
   it('marks a contested reaction and names each swatch', async () => {

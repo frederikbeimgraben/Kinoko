@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { from, mergeMap } from 'rxjs';
 import { Location, NgTemplateOutlet } from '@angular/common';
@@ -16,13 +16,16 @@ import { PrivateImageComponent } from '../../../ui/private-image/private-image.c
 import { ScrollFadeDirective } from '../../../ui/scroll-fade/scroll-fade.directive';
 import { SkeletonComponent } from '../../../ui/skeleton/skeleton.component';
 import { StateViewComponent } from '../../../ui/state-view/state-view.component';
+import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
 import { photoPath } from '../../../core/api/models';
+import { CatalogueText } from '../catalogue-text';
 import { leadColour } from '../rows';
 import { SpeciesDeskComponent } from '../species-desk.component';
 import { SpeciesStore } from '../species.store';
 import type { Group } from './comparison.cells';
 import { compareGroups } from './comparison.groups';
-import { ComparisonStore } from './comparison.store';
+import { CompareEntryComponent } from './compare-entry.component';
+import { ComparisonStore, compareQuery, compareSlugs } from './comparison.store';
 
 const PHONE_MENU_ANCHOR: PopoverAnchor = { top: 60, end: 8 };
 const DESKTOP_MENU_ANCHOR: PopoverAnchor = { top: 64, end: 12 };
@@ -42,6 +45,7 @@ export function swatchFill(colours: readonly ColourValue[], mode: ColourMode): s
   selector: 'app-comparison',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CompareEntryComponent,
     IconButtonComponent,
     LevelPillComponent,
     NgTemplateOutlet,
@@ -53,6 +57,7 @@ export function swatchFill(colours: readonly ColourValue[], mode: ColourMode): s
     SkeletonComponent,
     SpeciesDeskComponent,
     StateViewComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './comparison.component.html',
@@ -64,10 +69,15 @@ export class ComparisonComponent {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
   private readonly i18n = inject(I18nService);
+  private readonly names = inject(CatalogueText);
+
+  /** The query parameter `arten`: the slugs of the comparison, separated by a comma. */
+  readonly arten = input<string>();
 
   protected readonly wide = inject(ViewportService).wide;
   protected readonly waiting = this.catalogue.loading;
   protected readonly menuOpen = signal(false);
+  protected readonly adding = signal(false);
   protected readonly menuAnchor = computed(() => (this.wide() ? DESKTOP_MENU_ANCHOR : PHONE_MENU_ANCHOR));
   protected readonly fill = swatchFill;
 
@@ -82,12 +92,16 @@ export class ComparisonComponent {
   );
 
   protected readonly groups = computed<readonly Group[]>(() =>
-    compareGroups(this.comparison.species(), this.i18n, this.comparison.diffOnly(), (slug) =>
+    compareGroups(this.comparison.species(), this.i18n, this.names, this.comparison.diffOnly(), (slug) =>
       this.catalogue.reactionsOf(slug),
     ),
   );
 
   constructor() {
+    // The address holds the choice, so that a link and a reload show the same table.
+    effect(() => {
+      this.comparison.set(compareSlugs(this.arten()));
+    });
     void this.catalogue.loadBundle();
     // The reactions are only in the profile: each chosen species loads it one time.
     this.catalogue.loadProfile(toObservable(this.comparison.slugs).pipe(mergeMap((slugs) => from(slugs))));
@@ -99,6 +113,20 @@ export class ComparisonComponent {
 
   protected open(slug: string): void {
     void this.router.navigate(['/arten', slug]);
+  }
+
+  /** The second species comes from the same sheet as on the species page. */
+  protected add(slug: string): void {
+    this.adding.set(false);
+    const first = this.comparison.slugs().at(0);
+    void this.router.navigate([], {
+      queryParams: compareQuery(first ? [first, slug] : [slug]),
+      replaceUrl: true,
+    });
+  }
+
+  protected toList(): void {
+    void this.router.navigateByUrl('/arten');
   }
 
   protected toggleDiffOnly(): void {

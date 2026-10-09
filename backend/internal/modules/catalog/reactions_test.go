@@ -54,7 +54,7 @@ func seedReactions(t *testing.T, env *testkit.Env) species {
 }
 
 const wantReactions = `[{"reagent":{"slug":"koh","name":"Kalilauge"},"reading":"KOH auf Huthaut gelb","part":"cap",` +
-	`"location":"Huthaut","result":"positive","colour":{"name":"gelb","hex":"#e0b446"},"contested":true,` +
+	`"location":"Huthaut","result":"positive","colour":{"name":"gelb","hex":"#e0b446","nearest":"#e0b446"},"contested":true,` +
 	`"partlyConfirmed":true,"sources":[{"label":"Pilzbuch","url":null,"year":"1999"},` +
 	`{"label":"123pilzsuche","url":"https://example.test","year":null}]},` +
 	`{"reagent":{"slug":"feso4","name":"Eisensulfat"},"reading":"FeSO4 negativ","part":null,"location":null,` +

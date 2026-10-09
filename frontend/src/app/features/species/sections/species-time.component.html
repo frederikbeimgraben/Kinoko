@@ -1,20 +1,10 @@
 @if (period(); as time) {
-  <h2 class="section__title">{{ 'species.section.period' | t }}</h2>
-  <div class="section__card">
-    <div class="time">
-      <div class="time__head">
-        <span>{{ 'species.section.growth' | t }}</span>
-        <span class="time__range">{{ time.text }}</span>
-      </div>
-      <app-year-band
-        [fromMonth]="time.from"
-        [toMonth]="time.to"
-        [months]="marks()"
-        [label]="'species.growthPeriod' | t"
-      />
+  <app-section [label]="'species.section.period' | t">
+    <app-row-group>
+      <app-list-row [title]="'species.section.growth' | t" [plain]="time.text" />
+    </app-row-group>
+    <div class="time__curve">
+      <app-species-season [slug]="slug()" />
     </div>
-  </div>
-  <div class="time__curve">
-    <app-species-season [slug]="slug()" />
-  </div>
+  </app-section>
 }

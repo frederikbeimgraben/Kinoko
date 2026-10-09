@@ -31,7 +31,7 @@
   inline-size: var(--picker-width, var(--picker-height, 28px));
   block-size: var(--picker-height, 28px);
   border-radius: var(--picker-radius, 50%);
-  border: 1px solid rgb(255 255 255 / 14%);
+  border: 1px solid var(--swatch-edge);
 }
 
 .swatch--selected .swatch__field {

@@ -25,7 +25,7 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "braun", hex = "#7a5230" }]
-sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
 stiel = [{ name = "grün", hex = "#4f8a3a" }]
 fleisch = [{ name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
 sporenpulver = [{ name = "braun", hex = "#7a5230" }]

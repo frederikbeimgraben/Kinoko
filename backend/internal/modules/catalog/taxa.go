@@ -36,7 +36,8 @@ type TaxonPage struct {
 	SpeciesCount int          `json:"speciesCount"`
 }
 
-func stepOf(t taxonRow) TaxonStep { return TaxonStep{t.ID, t.Slug, t.Name, t.Rank} }
+// stepOf names a taxon by its latin name: the common names of the data mix ranks and languages.
+func stepOf(t taxonRow) TaxonStep { return TaxonStep{t.ID, t.Slug, t.LatinName, t.Rank} }
 
 // subtree gives the taxon and each descendant, level by level.
 func subtree(rows []taxonRow, root db.ID) []db.ID {

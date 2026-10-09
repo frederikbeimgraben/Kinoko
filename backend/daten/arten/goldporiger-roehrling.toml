@@ -33,11 +33,6 @@ stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "gelb", hex = "#e8c33a
 fleisch = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
-
 [geruch]
 tags = ["obstartig"]
 text = "Obstartig."

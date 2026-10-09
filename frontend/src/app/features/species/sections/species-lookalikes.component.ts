@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
+import { IconButtonComponent } from '../../../ui/icon-button/icon-button.component';
 import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
-import { RippleDirective } from '../../../ui/ripple/ripple.directive';
 import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../../ui/section/section.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
@@ -26,8 +26,8 @@ interface LookalikeRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ListRowComponent,
+    IconButtonComponent,
     PrivateImageComponent,
-    RippleDirective,
     RowGroupComponent,
     SectionComponent,
     SvgIconComponent,
@@ -40,6 +40,8 @@ export class SpeciesLookalikesComponent {
   private readonly catalogue = inject(SpeciesStore);
 
   readonly lookalikes = input.required<readonly Lookalike[]>();
+  /** The section title. Empty gives the title of the species page. */
+  readonly label = input('');
 
   readonly compared = output<string>();
   readonly opened = output<string>();

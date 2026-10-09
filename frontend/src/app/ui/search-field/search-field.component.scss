@@ -26,11 +26,6 @@
   background: transparent;
 }
 
-.search:focus-within {
-  outline: 2px solid var(--outline-strong);
-  outline-offset: 2px;
-}
-
 .search__icon {
   flex: none;
   color: var(--text);

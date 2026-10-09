@@ -8,10 +8,10 @@
         [attr.aria-label]="alt()"
         (click)="opened.emit()"
       >
-        <app-private-image class="hero__image" [path]="path()" [alt]="alt()" />
+        <app-private-image class="hero__image" fallback="hero" [path]="path()" [alt]="alt()" />
       </button>
     } @else {
-      <app-private-image class="hero__image" [path]="path()" [alt]="alt()" />
+      <app-private-image class="hero__image" fallback="hero" [path]="path()" [alt]="alt()" />
     }
     @if (showPrev()) {
       <span class="heronav heronav--l">

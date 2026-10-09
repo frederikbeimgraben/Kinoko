@@ -46,18 +46,17 @@ export function routeMotion(from: string | null, to: string, wide = false): Rout
   return 'none';
 }
 
-/** Sets `data-motion` on `<html>`. It skips the transition without motion or with `prefers-reduced-motion`. */
+/** Sets `data-motion` on `<html>`. Without motion or with `prefers-reduced-motion`, it is `none`.
+ * A `none` transition has no animation and ends at once. A skip makes the router log an AbortError. */
 export function applyRouteMotion({ transition }: ViewTransitionInfo): void {
   const router = inject(Router);
   const wide = inject(ViewportService).wide();
   const from = router.url;
   const to = router.currentNavigation()?.finalUrl?.toString() ?? from;
   const motion = routeMotion(from, to, wide);
-
-  document.documentElement.dataset['motion'] = motion;
-
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const skipped = motion === 'none' || reduced;
-  attachSharedElement(transition, skipped);
-  if (skipped) transition.skipTransition();
+  const still = motion === 'none' || reduced;
+
+  document.documentElement.dataset['motion'] = still ? 'none' : motion;
+  attachSharedElement(transition, still);
 }

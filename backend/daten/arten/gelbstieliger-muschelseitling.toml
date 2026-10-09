@@ -30,15 +30,10 @@ bisMonat = 5
 
 [farben]
 hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "schwarzbraun", hex = "#3a2a1c" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }, { name = "grün", hex = "#4f8a3a" }]
-sporenlager = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }]
 stiel = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "grüngelb", hex = "#9fb02f" }, { name = "ockergelb", hex = "#d4a63c" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["pilzig"]

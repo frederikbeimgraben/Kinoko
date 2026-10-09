@@ -9,6 +9,7 @@ import {
 import { Injectable, inject } from '@angular/core';
 import { catchError, filter, map, of, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
+import { DEFAULT_LOCALE } from '../i18n/translations';
 import { ToastService } from '../../ui/toast/toast.service';
 import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
@@ -42,6 +43,14 @@ export interface Silent {
 /**
  * The only path to the own API. Each error becomes a {@link ProblemDetail}, a toast, and goes to the caller.
  */
+/** The text key of a problem code, as the service makes it: "not_found" gives "error.notFound". */
+export function problemKey(code: string | null | undefined): string | null {
+  const parts = (code ?? '').split('_').filter((part) => part !== '');
+  if (parts.length === 0) return null;
+  const [first, ...rest] = parts;
+  return `error.${first}${rest.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('')}`;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ApiClient {
   private readonly http = inject(HttpClient);
@@ -148,8 +157,17 @@ export class ApiClient {
 
   private report(failure: unknown, options?: Silent): Observable<never> {
     const problem = this.asProblem(failure);
-    if (this.loud(problem, options)) this.toasts.error(problem.detail ?? problem.title);
+    if (this.loud(problem, options)) this.toasts.error(this.messageOf(problem));
     return throwError(() => problem);
+  }
+
+  /** The service writes its texts in German. In another language, the code gives the text. */
+  private messageOf(problem: ProblemDetail): string {
+    const german = problem.detail ?? problem.title;
+    const key = problemKey(problem.code);
+    if (this.i18n.locale() === DEFAULT_LOCALE || key === null) return german;
+    const text = this.i18n.translateOptional(key);
+    return text === key ? german : text;
   }
 
   private loud(problem: ProblemDetail, options?: Silent): boolean {

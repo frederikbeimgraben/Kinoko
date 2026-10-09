@@ -1,28 +1,36 @@
 import type { I18nService } from '../../../core/i18n/i18n.service';
 import type { SpeciesEntry } from '../../../core/api/models';
-import type { SpeciesReaction } from '../species.store';
-import { EDIBILITY_TEXT, EDIBILITY_TONE, MUTED_TONE, PROTECTION_TEXT } from '../labels';
+import type { TranslationKey } from '../../../core/i18n/translations';
+import type { CatalogueNames } from '../catalogue-text';
+import { EDIBILITY_TEXT, EDIBILITY_TONE, MUTED_TONE } from '../labels';
 import { badgeCell, buildRow, plainCell, swatchCell, valueCell, type Group } from './comparison.cells';
 import {
   capShapeOf,
-  changeRows,
-  reactionRows,
   hymeniumColourOf,
   hymeniumTypeOf,
   measurementOf,
   partNoteOf,
   seasonOf,
   senseSmellOf,
+  reagentRows,
   swatchOf,
+  type ReactionsOf,
 } from './comparison.rows';
 
-/** The reactions of a species by its slug. Only a loaded profile has them. */
-export type ReactionsOf = (slug: string) => readonly SpeciesReaction[];
+export type { ReactionsOf } from './comparison.rows';
+
+/** The table has two narrow columns: the protection takes the short words of `CompareTable.dc.html`. */
+const PROTECTION_SHORT: Readonly<Record<SpeciesEntry['protection'], TranslationKey>> = {
+  none: 'species.compare.protection.none',
+  personal_use: 'species.compare.protection.personalUse',
+  strict: 'species.compare.protection.strict',
+};
 
 /** The groups of the table, in the order of the body. */
 function rawGroups(
   entries: readonly SpeciesEntry[],
   i18n: I18nService,
+  names: CatalogueNames,
   reactionsOf: ReactionsOf,
 ): readonly Group[] {
   return [
@@ -38,7 +46,7 @@ function rawGroups(
         ),
         buildRow(i18n.translate('species.field.protection'), entries, (entry) =>
           badgeCell(
-            i18n.translate(PROTECTION_TEXT[entry.protection]),
+            i18n.translate(PROTECTION_SHORT[entry.protection]),
             MUTED_TONE.colour,
             MUTED_TONE.background,
           ),
@@ -52,7 +60,7 @@ function rawGroups(
           valueCell(measurementOf(entry, 'cap', 'width', i18n)),
         ),
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
-          swatchCell(swatchOf(entry, 'cap')),
+          swatchCell(swatchOf(entry, 'cap', names)),
         ),
         buildRow(i18n.translate('species.field.shape'), entries, (entry) =>
           plainCell(capShapeOf(entry, i18n)),
@@ -69,7 +77,7 @@ function rawGroups(
           valueCell(measurementOf(entry, 'stem', 'thickness', i18n)),
         ),
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
-          swatchCell(swatchOf(entry, 'stem')),
+          swatchCell(swatchOf(entry, 'stem', names)),
         ),
         buildRow(i18n.translate('species.field.net'), entries, (entry) =>
           plainCell(partNoteOf(entry, 'stem')),
@@ -83,7 +91,7 @@ function rawGroups(
           plainCell(partNoteOf(entry, 'ring')),
         ),
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
-          swatchCell(swatchOf(entry, 'ring')),
+          swatchCell(swatchOf(entry, 'ring', names)),
         ),
       ],
     },
@@ -94,18 +102,18 @@ function rawGroups(
           plainCell(partNoteOf(entry, 'stem_base')),
         ),
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
-          swatchCell(swatchOf(entry, 'stem_base')),
+          swatchCell(swatchOf(entry, 'stem_base', names)),
         ),
       ],
     },
     {
       label: i18n.translate('species.section.hymenium'),
       rows: [
-        buildRow(i18n.translate('species.fieldLabel'), entries, (entry) =>
+        buildRow(i18n.translate('species.hymeniumType'), entries, (entry) =>
           plainCell(hymeniumTypeOf(entry, i18n)),
         ),
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
-          swatchCell(hymeniumColourOf(entry)),
+          swatchCell(hymeniumColourOf(entry, names)),
         ),
       ],
     },
@@ -113,14 +121,16 @@ function rawGroups(
       label: i18n.translate('species.field.flesh'),
       rows: [
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
-          swatchCell(swatchOf(entry, 'flesh')),
+          swatchCell(swatchOf(entry, 'flesh', names)),
         ),
-        buildRow(i18n.translate('species.field.smell'), entries, (entry) => plainCell(senseSmellOf(entry))),
+        buildRow(i18n.translate('species.field.smell'), entries, (entry) =>
+          plainCell(senseSmellOf(entry, names)),
+        ),
       ],
     },
     {
       label: i18n.translate('species.section.colourChange'),
-      rows: [...changeRows(entries, i18n), ...reactionRows(entries, reactionsOf, i18n)],
+      rows: reagentRows(entries, reactionsOf, i18n, names),
     },
     {
       label: i18n.translate('species.field.spore'),
@@ -129,7 +139,7 @@ function rawGroups(
           valueCell(measurementOf(entry, 'spore', 'length', i18n)),
         ),
         buildRow(i18n.translate('species.field.powder'), entries, (entry) =>
-          swatchCell(swatchOf(entry, 'spore_print')),
+          swatchCell(swatchOf(entry, 'spore_print', names)),
         ),
       ],
     },
@@ -148,10 +158,11 @@ function rawGroups(
 export function compareGroups(
   entries: readonly SpeciesEntry[],
   i18n: I18nService,
+  names: CatalogueNames,
   diffOnly: boolean,
   reactionsOf: ReactionsOf = () => [],
 ): readonly Group[] {
-  return rawGroups(entries, i18n, reactionsOf)
+  return rawGroups(entries, i18n, names, reactionsOf)
     .map((group) => ({
       label: group.label,
       rows: group.rows.filter(

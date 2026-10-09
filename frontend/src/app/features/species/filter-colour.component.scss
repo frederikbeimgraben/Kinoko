@@ -7,3 +7,8 @@
   flex-direction: column;
   gap: 2px;
 }
+
+// The tone dots of `ToneDot.dc.html`: size `l` (44 px) in the phone sheet, `m` (28 px) in the desktop column.
+.colour--large {
+  --picker-height: 44px;
+}

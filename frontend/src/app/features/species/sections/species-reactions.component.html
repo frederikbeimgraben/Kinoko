@@ -2,7 +2,13 @@
   <app-section [label]="'species.section.reactions' | t">
     <app-row-group>
       @for (row of rows(); track row.key) {
-        <app-list-row class="reaction" [title]="row.label" [subline]="row.sub" [plain]="row.plain">
+        <app-list-row
+          class="reaction"
+          [title]="row.label"
+          [subline]="row.sub"
+          [plain]="row.plain"
+          [wrap]="true"
+        >
           <span trail class="reaction__trail">
             @if (row.contested) {
               <app-svg-icon

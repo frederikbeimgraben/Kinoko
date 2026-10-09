@@ -1,35 +1,7 @@
-@use 'section';
-
-@include section.block;
-
-.section__parts {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+:host {
+  display: block;
 }
 
-.sense__part {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  block-size: 44px;
-  padding-inline: var(--list-row-inline);
-  font-size: var(--fs-row-title);
-  font-weight: var(--fw-semibold);
-  border-block-end: var(--border-width) solid var(--color-border);
-}
-
-// The title has its own padding. The body has padding only at the bottom and sides.
-.sense__body {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px 14px 14px;
-}
-
-.sense__text {
-  margin: 0;
-  font-size: var(--fs-row-meta);
-  line-height: 1.4;
-  color: var(--color-text-muted);
+:host(:empty) {
+  display: none;
 }

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, output, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { shareOnNextRoute } from '../../core/navigation/shared-element';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { LevelPillComponent, type BadgeKind } from '../level-pill/level-pill.component';
@@ -44,6 +52,13 @@ export class SpeciesRowComponent {
   readonly chosen = output();
 
   /** Puts the focus on the row. The list moves with the arrow keys this way. */
+  constructor() {
+    // The selected species of a long list can be far down, for example after a link to a comparison.
+    afterRenderEffect(() => {
+      if (this.active()) this.button().nativeElement.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
   focus(): void {
     this.button().nativeElement.focus();
   }

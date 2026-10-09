@@ -24,5 +24,13 @@
         [background]="trade().background"
       />
     </app-list-row>
+    @if (species().edibilityNote; as note) {
+      <app-list-row
+        class="features__note"
+        [title]="'species.field.edibilityNote' | t"
+        [subline]="note"
+        [wrap]="true"
+      />
+    }
   </app-row-group>
 </app-section>

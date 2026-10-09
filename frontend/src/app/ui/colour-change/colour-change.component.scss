@@ -19,13 +19,13 @@ app-list-row:not(:first-child) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  inline-size: var(--pilz-colour-width, 96px);
+  inline-size: var(--pilz-colour-width, 88px);
   gap: 4px;
 }
 
 // Two colours with the arrow have the width of one colour field.
 .change__swatches {
-  --change-swatch: calc((var(--pilz-colour-width, 96px) - 12px - 8px) / 2);
+  --change-swatch: calc((var(--pilz-colour-width, 88px) - 12px - 8px) / 2);
 
   display: grid;
   grid-template-columns: var(--change-swatch) 12px var(--change-swatch);

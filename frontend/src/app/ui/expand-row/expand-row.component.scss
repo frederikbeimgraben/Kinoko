@@ -19,8 +19,9 @@
   font-size: 14px;
   color: var(--text);
   white-space: nowrap;
-  background: none;
+  background: var(--surface);
   border: 0;
+  border-radius: var(--r-row);
 }
 
 .xp__head--tall {
@@ -51,11 +52,24 @@
   inline-size: 14px;
   block-size: 14px;
   border-radius: 50%;
-  border: 1px solid rgb(255 255 255 / 14%);
+  border: 1px solid var(--swatch-edge);
 }
 
 .xp__body {
   display: block;
   min-block-size: 40px;
   padding: 12px;
+  background: var(--surface);
+  border-radius: var(--r-row);
+}
+
+// Per `kit.css` `.grp > .sc-host > .xp > .row`: the rows of a group round only its outer corners.
+:host-context(.grp):first-child .xp > :first-child {
+  border-start-start-radius: var(--r-item);
+  border-start-end-radius: var(--r-item);
+}
+
+:host-context(.grp):last-child .xp > :last-child {
+  border-end-start-radius: var(--r-item);
+  border-end-end-radius: var(--r-item);
 }

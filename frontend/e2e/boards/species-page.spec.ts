@@ -53,7 +53,6 @@ const SECTION_TOP: Record<string, number> = {
   SpeciesSeason: 1928,
   SpeciesSenses: 2064,
   SpeciesHymenium: 2359,
-  CompareEntry: 2439,
 };
 
 /** Scrolls the page to the position that the board shows. */
@@ -127,7 +126,8 @@ test('SpeciesHymenium', async ({ page }) => {
 test('CompareEntry', async ({ page }) => {
   guard('CompareEntry', 'phone');
   await openProfile(page);
-  await scrollToSection(page, 'CompareEntry');
+  await page.locator('app-page-header').getByRole('button', { name: 'Vergleichen' }).click();
+  await expect(page.locator('app-compare-entry app-species-lookalikes')).toBeVisible();
   await expectBoard(page, 'CompareEntry');
 });
 

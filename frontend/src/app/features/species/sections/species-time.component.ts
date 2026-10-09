@@ -1,20 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
-import { shortMonth } from '../../../core/i18n/dates';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { YearBandComponent } from '../../../ui/year-band/year-band.component';
+import { ListRowComponent } from '../../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../../ui/section/section.component';
 import type { SpeciesEntry } from '../../../core/api/models';
 import { MONTH_TEXT } from '../labels';
 import { SpeciesSeasonComponent } from './species-season.component';
 
-/** The four month marks below the year band. Months are 1 to 12. */
-const MARKS: readonly number[] = [1, 4, 7, 10];
-
-/** The fruiting period of a species as a year band, with the season curve below. */
+/** The fruiting period of a species per `SpeciesSections.dc.html`: a row with the months, the season curve below. */
 @Component({
   selector: 'app-species-time',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SpeciesSeasonComponent, TranslatePipe, YearBandComponent],
+  imports: [ListRowComponent, RowGroupComponent, SectionComponent, SpeciesSeasonComponent, TranslatePipe],
   templateUrl: './species-time.component.html',
   styleUrl: './species-time.component.scss',
 })
@@ -31,14 +29,10 @@ export class SpeciesTimeComponent {
     const to = held.periodEndMonth ?? null;
     if (from === null || to === null) return null;
     return {
-      from,
-      to,
       text: this.i18n.translate('species.period.range', {
         von: this.i18n.translate(MONTH_TEXT[from - 1]),
         bis: this.i18n.translate(MONTH_TEXT[to - 1]),
       }),
     };
   });
-
-  protected readonly marks = computed(() => MARKS.map((month) => shortMonth(month, this.i18n)));
 }

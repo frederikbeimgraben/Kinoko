@@ -154,3 +154,10 @@ html[data-motion='fade'] {
 ::view-transition-new(root) {
   animation: none;
 }
+
+// Without motion, no part animates, so the transition ends in the next frame.
+html[data-motion='none']::view-transition-group(*),
+html[data-motion='none']::view-transition-old(*),
+html[data-motion='none']::view-transition-new(*) {
+  animation: none;
+}

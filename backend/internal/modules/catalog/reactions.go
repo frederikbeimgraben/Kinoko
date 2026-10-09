@@ -14,10 +14,11 @@ type Reagent struct {
 	Name string `json:"name"`
 }
 
-// ReactionColour is the colour that a reagent gives.
+// ReactionColour is the colour that a reagent gives. Nearest is the nearest standard colour.
 type ReactionColour struct {
-	Name string `json:"name"`
-	Hex  string `json:"hex"`
+	Name    string `json:"name"`
+	Hex     string `json:"hex"`
+	Nearest string `json:"nearest"`
 }
 
 // ReactionSource is a source that tells a reaction.
@@ -80,7 +81,7 @@ func loadReactions(ctx context.Context, q db.Querier, species db.ID) ([]Reaction
 	return fn.Map(rows, func(r reactionRow) Reaction {
 		out := r.Reaction
 		if r.ColourName != nil && r.ColourHex != nil {
-			out.Colour = &ReactionColour{Name: *r.ColourName, Hex: *r.ColourHex}
+			out.Colour = &ReactionColour{Name: *r.ColourName, Hex: *r.ColourHex, Nearest: Nearest(*r.ColourHex).Hex}
 		}
 		out.Sources = fn.Map(byPosition[r.Position], func(s reactionSourceRow) ReactionSource { return s.Source })
 		return out

@@ -56,6 +56,18 @@
   border: 0;
 }
 
+// The free place of the second species: a tonal square like the kit `.sq`, with a plus.
+.cmph__plus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 44px;
+  block-size: 44px;
+  color: var(--on-sel);
+  background: var(--sel);
+  border-radius: var(--r-sq);
+}
+
 .cmph b {
   font-size: 15px;
   font-weight: 600;
@@ -152,6 +164,11 @@
 .cmpr .cell > span.t {
   font-size: 12px;
   color: var(--text-var);
+}
+
+// A badge may not grow over the next column.
+.cmpr .cell app-level-pill {
+  max-inline-size: 100%;
 }
 
 .cmpr .none {

@@ -20,8 +20,6 @@ export class SpeciesFilterSheetComponent {
   private readonly i18n = inject(I18nService);
   protected readonly filter = inject(SpeciesFilterStore);
 
-  protected readonly resettable = computed(() => this.filter.chosenCount() > 0);
-
   protected readonly title = computed(() => {
     const group = this.filter.group();
     return group === null ? this.i18n.translate('common.filter') : groupTitle(group, this.i18n);
