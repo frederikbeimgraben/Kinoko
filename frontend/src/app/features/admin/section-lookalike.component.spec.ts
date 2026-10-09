@@ -24,6 +24,8 @@ const BUNDLE = {
       edibility: 'inedible',
       protection: 'none',
       forecastEnabled: false,
+      names: [],
+      lookalikes: [],
     },
   ],
   standardColours: [],
@@ -84,14 +86,14 @@ describe('SectionLookalikeComponent', () => {
     await noViolations(container);
   });
 
-  it('nennt die andere Art in Englisch einmal mit dem wissenschaftlichen Namen', async () => {
+  it('names the other species in English by its scientific name, with the German name below', async () => {
     await build();
     const i18n = TestBed.inject(I18nService);
     i18n.setLocale('en');
 
     expect(await screen.findByRole('heading', { name: 'Lookalike' })).toBeInTheDocument();
-    expect(screen.queryByText('Gallenröhrling')).not.toBeInTheDocument();
     expect(screen.getAllByText('Tylopilus felleus')).toHaveLength(1);
+    expect(screen.getByText(/Gallenröhrling/)).toBeInTheDocument();
     i18n.setLocale('de');
   });
 
