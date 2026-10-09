@@ -213,11 +213,21 @@ describe('FundFormularComponent', () => {
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-06');
     expect(screen.getByLabelText('Anzahl')).toHaveValue(3);
     expect(screen.queryByText('Fotos')).not.toBeInTheDocument();
-    expect(setup.container.querySelector('.field__trail')).not.toBeNull();
+    // Per MapFindEdit the species field has no arrow; a tap still opens the picker.
+    expect(setup.container.querySelector('.field__trail')).toBeNull();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.submissions[0].input.forTraining).toBe(true);
+  });
+
+  it('keeps a find without a species without one, and does not take the species of the map', async () => {
+    const setup = await build({ start: { ...FIND, speciesId: null }, withPhotos: false, editing: true });
+
+    expect(screen.queryByText('Steinpilz')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(setup.submissions[0].input.speciesId).toBeNull();
   });
 
   it('schaltet die Freigabe für das Training um', async () => {

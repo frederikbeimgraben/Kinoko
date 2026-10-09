@@ -128,14 +128,19 @@ export class FindFormComponent {
     return chosen === undefined ? (this.start()?.groupId ?? null) : chosen;
   });
 
-  /** The default is the species of the map. */
+  /** A new find starts with the species of the map. A find without a species keeps none until a choice. */
   protected readonly selectedSpecies = computed<SpeciesEntry | null>(() => {
     const chosen = this.slugChoice();
     if (chosen !== null) return this.species.entryOf(chosen);
-    const started = this.start()?.speciesId ?? null;
-    if (started !== null) return this.species.entryById(started);
+    const start = this.start();
+    if (start !== null) return start.speciesId === null ? null : this.species.entryById(start.speciesId);
     return this.species.entryOf(this.map.species());
   });
+
+  /** An existing find without a species can stay without one. */
+  private readonly keepsNoSpecies = computed(
+    () => this.start()?.speciesId === null && this.slugChoice() === null,
+  );
 
   protected readonly speciesName = computed(() => this.selectedSpecies()?.name ?? '');
 
@@ -173,7 +178,7 @@ export class FindFormComponent {
   /** Checks the contract: a catalogue species, a date that is not in the future, and a count of 1 or more. */
   private validate(): FindWrite | null {
     const species = this.selectedSpecies();
-    if (species === null) {
+    if (species === null && !this.keepsNoSpecies()) {
       this.toasts.error(this.i18n.translate('melden.artFehlt'));
       return null;
     }
@@ -190,7 +195,7 @@ export class FindFormComponent {
     const [lon, lat] = this.location();
     const note = this.note().trim();
     return {
-      speciesId: species.id,
+      speciesId: species?.id ?? null,
       lat,
       lon,
       foundOn: this.date(),
