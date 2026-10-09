@@ -14,6 +14,10 @@
   }
 }
 
+.photo__scrim--stage {
+  inset-block-end: var(--size-nav);
+}
+
 // Per `kit.css` `.photodlg`: the raised panel with 12 px around the image.
 .photo__panel {
   display: flex;
@@ -27,7 +31,7 @@
   box-shadow: 0 12px 40px rgb(0 0 0 / 50%);
 }
 
-// The image area of the board: 440 px high on the phone, 560 px on the desktop.
+// The image area of the board: 440 px high on the phone, 560 px on the desktop. The photo fills it, per `kit.css` `.hero`.
 .photo__frame {
   position: relative;
   block-size: min(440px, calc(100dvh - 160px));
