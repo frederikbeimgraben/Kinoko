@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -12,6 +12,7 @@ import { SectionComponent } from '../../ui/section/section.component';
 import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
 import { SpeciesStore } from '../species/species.store';
 import { speciesPickerEntry } from '../species/species-picker-entry';
+import { nameLines } from '../species/species-names';
 import { SpeciesEditorStore } from './species-editor.store';
 import { withLookalike, withoutLookalike } from './species-lists';
 
@@ -34,7 +35,7 @@ import { withLookalike, withoutLookalike } from './species-lists';
 })
 export class SectionLookalikeComponent {
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
   private readonly catalogue = inject(SpeciesStore);
 
@@ -54,15 +55,18 @@ export class SectionLookalikeComponent {
     this.catalogue.species().map((entry) => speciesPickerEntry(entry, this.i18n)),
   );
 
-  /** The chosen species: name and scientific name. Without a choice, the row asks for one. */
+  /** The chosen species: title and second line per the name rule. Without a choice, the row asks for one. */
   protected readonly otherNames = computed(() => {
     const slug = this.other();
     const held = this.held();
-    if (held?.slug === slug) return { name: held.name, latin: held.scientificName };
     const found = this.catalogue.species().find((one) => one.slug === slug);
-    return found === undefined
-      ? { name: this.i18n.translate('admin.lookalike.choose'), latin: '' }
-      : { name: found.name, latin: found.scientificName };
+    const known =
+      found === undefined ? null : { german: found.alias ?? found.name, latin: found.scientificName };
+    const stored = held?.slug === slug ? { german: held.name, latin: held.scientificName } : null;
+    const names = known ?? stored;
+    if (names === null) return { name: this.i18n.translate('admin.lookalike.choose'), latin: '' };
+    const lines = nameLines(names.german, names.latin, this.i18n.locale());
+    return { name: lines.title, latin: lines.latin === '' ? lines.alias : lines.latin };
   });
 
   constructor() {
@@ -91,7 +95,8 @@ export class SectionLookalikeComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 }

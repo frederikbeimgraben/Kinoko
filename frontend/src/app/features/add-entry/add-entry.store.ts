@@ -19,6 +19,8 @@ interface AddEntryStoreState {
   step: Step | null;
   /** The point below the crosshair, after the person accepts it. */
   location: Location | null;
+  /** The point before a new location step: the crosshair starts on it, and the undo goes back to it. */
+  origin: Location | null;
   /** The corners of the zone, in the sequence of the taps. */
   ring: readonly Location[];
   /** The find form choices while the person sets the location again. */
@@ -30,6 +32,7 @@ interface AddEntryStoreState {
 const CLEAR: AddEntryStoreState = {
   step: null,
   location: null,
+  origin: null,
   ring: [],
   findDraft: EMPTY_FIND_DRAFT,
   objectDraft: null,
@@ -85,7 +88,12 @@ export const AddEntryStore = signalStore(
         return true;
       },
       startFind(): void {
-        patchState(store, { location: null, step: 'findLocation', findDraft: EMPTY_FIND_DRAFT });
+        patchState(store, {
+          location: null,
+          origin: null,
+          step: 'findLocation',
+          findDraft: EMPTY_FIND_DRAFT,
+        });
       },
       /** Goes back from the find form to its location and keeps the choices. Without `keepPoint`, the crosshair aims again. */
       editFindLocation(findDraft: FindDraft, keepPoint: boolean): void {
@@ -93,17 +101,23 @@ export const AddEntryStore = signalStore(
           findDraft,
           step: 'findLocation' as const,
           location: keepPoint ? state.location : null,
+          origin: state.location,
         }));
       },
       startMarker(): void {
-        patchState(store, { location: null, step: 'markerLocation', objectDraft: null });
+        patchState(store, { location: null, origin: null, step: 'markerLocation', objectDraft: null });
       },
       startZone(): void {
         patchState(store, { ring: [], step: 'zoneDraw', objectDraft: null });
       },
       /** Goes back from the marker form to its point and keeps the values. The crosshair aims again. */
       editMarkerLocation(objectDraft: ObjectValues): void {
-        patchState(store, { objectDraft, step: 'markerLocation', location: null });
+        patchState(store, (state) => ({
+          objectDraft,
+          step: 'markerLocation' as const,
+          location: null,
+          origin: state.location,
+        }));
       },
       /** Goes back from the zone form to its corners and keeps the values and the corners. */
       editZoneOutline(objectDraft: ObjectValues): void {

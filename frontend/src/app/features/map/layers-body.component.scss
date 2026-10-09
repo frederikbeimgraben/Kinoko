@@ -22,6 +22,7 @@
   color: var(--label);
 }
 
+// Per the boards `LayersBody` and `Slider`: at 100 % half a thumb goes into the side margin, but stays in the sheet.
 .layers__slider {
   padding: 8px 4px 4px;
 }

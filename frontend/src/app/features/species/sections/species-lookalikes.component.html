@@ -1,11 +1,15 @@
 @if (rows().length > 0) {
   <app-section [label]="label() || ('species.section.lookalikes' | t)">
+    @if (noted()) {
+      <app-german-hint />
+    }
     <app-row-group>
       @for (row of rows(); track row.slug) {
         <app-list-row
           kind="catalogue"
           [title]="row.name"
           [subline]="row.note"
+          [sublineLang]="catalogueLang"
           [thumbed]="true"
           [chevron]="true"
         >

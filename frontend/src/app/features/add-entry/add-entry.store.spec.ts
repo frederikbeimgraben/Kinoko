@@ -172,6 +172,8 @@ describe('AddEntryStore', () => {
     flow.adoptLocation([9, 48]);
     flow.editFindLocation(draft, false);
     expect([flow.step(), flow.location(), flow.findDraft()]).toEqual(['findLocation', null, draft]);
+    // The crosshair starts on the earlier point, and the undo goes back to it.
+    expect(flow.origin()).toEqual([9, 48]);
 
     flow.adoptLocation([9.1, 48.1]);
     flow.editFindLocation(draft, true);
@@ -179,6 +181,7 @@ describe('AddEntryStore', () => {
 
     flow.startFind();
     expect(flow.findDraft()).toEqual(EMPTY_FIND_DRAFT);
+    expect(flow.origin()).toBeNull();
   });
 
   it('keeps the marker values while the crosshair sets the point again', () => {
@@ -195,6 +198,7 @@ describe('AddEntryStore', () => {
     flow.adoptLocation([9, 48]);
     flow.editMarkerLocation(draft);
     expect([flow.step(), flow.location(), flow.objectDraft()]).toEqual(['markerLocation', null, draft]);
+    expect(flow.origin()).toEqual([9, 48]);
 
     flow.adoptLocation([9.2, 48.2]);
     expect([flow.step(), flow.objectDraft()]).toEqual(['markerForm', draft]);

@@ -16,6 +16,13 @@ function routeFor(): { provide: typeof ActivatedRoute; useValue: unknown } {
   return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
 }
 
+/** Finds a row of the peak sheet by its label. A role query over the 53 rows of the sheet takes seconds in jsdom. */
+function row(sheet: HTMLElement, label: string): HTMLElement {
+  const found = within(sheet).getByText(label).closest('button');
+  if (found === null) throw new Error(`no row ${label}`);
+  return found;
+}
+
 async function build(): Promise<{ container: Element; http: HttpTestingController }> {
   TestBed.resetTestingModule();
   const { container } = await render(SectionSeasonComponent, {
@@ -51,27 +58,64 @@ describe('SectionSeasonComponent', () => {
     expect(call.request.body).toEqual(expect.objectContaining({ periodStartMonth: 6, periodEndMonth: 10 }));
   });
 
-  it('wählt einen Höhepunkt und nimmt ihn wieder heraus', { timeout: 15_000 }, async () => {
+  it('wählt einen Höhepunkt und nimmt ihn wieder heraus', async () => {
     const { http } = await build();
     await screen.findByText('Juni');
 
     await userEvent.click(screen.getByRole('button', { name: '–' }));
     const sheet = await screen.findByRole('dialog', { name: 'Höhepunkt' });
-    expect(within(sheet).getByRole('button', { name: '–' })).toHaveAttribute('aria-pressed', 'true');
-    await userEvent.click(within(sheet).getByRole('button', { name: 'September' }));
+    expect(row(sheet, '–')).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(row(sheet, 'KW 38'));
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByRole('button', { name: 'September' }));
+    await userEvent.click(screen.getByRole('button', { name: 'KW 38' }));
     const again = await screen.findByRole('dialog', { name: 'Höhepunkt' });
-    await userEvent.click(within(again).getByRole('button', { name: '–' }));
+    await userEvent.click(row(again, '–'));
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 
     const call = http.expectOne('/api/species/boletus-edulis');
-    expect(call.request.body).toEqual(expect.objectContaining({ periodPeakMonth: null }));
+    expect(call.request.body).toEqual(
+      expect.objectContaining({ periodPeakMonth: null, periodPeakWeek: null }),
+    );
+  });
+
+  it('schreibt die Woche des Höhepunkts und ihren Monat', async () => {
+    const { http } = await build();
+    await screen.findByText('Juni');
+
+    await userEvent.click(screen.getByRole('button', { name: '–' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Höhepunkt' });
+    await userEvent.click(row(sheet, 'KW 38'));
+    await userEvent.click(await screen.findByRole('button', { name: 'Übernehmen' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.body).toEqual(expect.objectContaining({ periodPeakWeek: 38, periodPeakMonth: 9 }));
+  });
+
+  it('zeigt die Kurve mit den Monaten der Achse', async () => {
+    await build();
+    await screen.findByText('Juni');
+
+    expect(screen.getByRole('img', { name: 'Zeitraum' })).toBeInTheDocument();
+    expect(['Jan', 'Apr', 'Jul', 'Okt', 'Dez'].every((month) => screen.queryByText(month) !== null)).toBe(
+      true,
+    );
+  });
+
+  it('zeigt einen Höhepunkt aus dem Katalog ohne Woche als Monat', async () => {
+    TestBed.resetTestingModule();
+    await render(SectionSeasonComponent, {
+      providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor()],
+    });
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('/api/species/boletus-edulis').flush({ ...SECTION_SPECIES, periodPeakMonth: 9 });
+    http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
+
+    expect(await screen.findByRole('button', { name: 'September' })).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import { plurals } from './plural';
+import { plurals, preview } from './plural';
 
 const FINDS = '{count, plural, one {# Fund} other {# Funde}}';
 
@@ -43,5 +43,19 @@ describe('plurals', () => {
 
   it('keeps a text without a plural', () => {
     expect(plurals('{count} Stück', { count: 1 }, 'de')).toBe('{count} Stück');
+  });
+});
+
+describe('preview', () => {
+  it('shows the other form of each plural and a gap for each placeholder', () => {
+    expect(preview(`${FINDS} · {markers} Marker`, 'de')).toBe('… Funde · … Marker');
+  });
+
+  it('keeps a text without placeholders', () => {
+    expect(preview('Art suchen', 'de')).toBe('Art suchen');
+  });
+
+  it('resolves a plural inside a plural', () => {
+    expect(preview('{a, plural, one {x} other {{b, plural, one {y} other {# z}}}}', 'en')).toBe('… z');
   });
 });

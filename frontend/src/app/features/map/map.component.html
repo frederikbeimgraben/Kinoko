@@ -28,7 +28,7 @@
     @if (view.loading()) {
       <app-skeleton class="map__skeleton" kind="map" />
     }
-    @if (offline()) {
+    @if (offline() && !hidden()) {
       <div class="map__grey" aria-hidden="true"></div>
       <app-banner class="map__banner" role="status" kind="noConnection" [float]="true" [chev]="false" />
     }

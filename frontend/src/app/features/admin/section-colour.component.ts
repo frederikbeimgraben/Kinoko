@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
-import { Router } from '@angular/router';
 import type { BodyPart, ColourMode, ColourValue } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -63,7 +63,7 @@ interface Stop {
 })
 export class SectionColourComponent {
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
   private readonly catalogue = inject(CatalogueStore);
   private readonly colourLabel = injectColourLabel();
@@ -185,8 +185,9 @@ export class SectionColourComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 
   private setColour(colour: ColourValue): void {

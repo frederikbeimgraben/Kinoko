@@ -13,6 +13,7 @@ export const SECTION_SPECIES: Record<string, unknown> = {
   periodStartMonth: 6,
   periodEndMonth: 10,
   periodPeakMonth: null,
+  periodPeakWeek: null,
   hymeniumType: 'gills',
   gillAttachment: 'free',
   gillSpacing: 'close',

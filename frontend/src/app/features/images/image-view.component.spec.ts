@@ -165,4 +165,11 @@ describe('ImageViewComponent', () => {
     http.expectNone('/api/photos?speciesId=steinpilz&state=approved');
     expect(screen.getByText('Bild nicht gefunden')).toBeInTheDocument();
   });
+
+  it('offers no removal when the photo is not found', async () => {
+    await build([], 'zwei', { reviewer: true });
+
+    expect(screen.getByText('Bild nicht gefunden')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Bild entfernen' })).not.toBeInTheDocument();
+  });
 });

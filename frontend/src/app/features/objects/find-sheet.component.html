@@ -39,6 +39,7 @@
     [secondary]="'common.delete' | t"
     secondaryIcon="trash"
     [secondaryDanger]="true"
+    [tonalSecondary]="true"
     (primaryClick)="sheet.setEditing(true)"
     (secondaryClick)="deleteAsk.set(true)"
   />
@@ -58,6 +59,7 @@
     [photos]="held()"
     [index]="viewing() ?? 0"
     [day]="find().foundOn"
+    [stage]="!wide()"
     (closed)="closeGallery()"
   />
 }

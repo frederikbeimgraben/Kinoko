@@ -4,6 +4,7 @@ import type { TranslationKey } from '../../core/i18n/translations';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SafetyNoticeComponent } from '../../ui/safety-notice/safety-notice.component';
 
 /** One row of a text page: a label and a short sub-line, one key each. */
 export interface AboutSection {
@@ -15,13 +16,15 @@ export interface AboutSection {
 @Component({
   selector: 'app-about-text',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, PageHeaderComponent, RowGroupComponent, TranslatePipe],
+  imports: [ListRowComponent, PageHeaderComponent, RowGroupComponent, SafetyNoticeComponent, TranslatePipe],
   templateUrl: './about-text.component.html',
   styleUrl: './about-text.component.scss',
 })
 export class AboutTextComponent {
   readonly title = input.required<TranslationKey>();
   readonly sections = input.required<readonly AboutSection[]>();
+  /** Shows the safety notice of the catalogue below the rows. */
+  readonly notice = input(false);
 
   readonly backClick = output();
 }

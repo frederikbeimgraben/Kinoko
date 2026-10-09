@@ -164,12 +164,61 @@ writes new maps.
 At each start the service does these steps:
 
 - If the table `species` is empty, it imports the catalogue from the seed data.
-- It imports the reactions of `reaktionen.json`.
+- It imports the reactions of `reaktionen.json` into a new catalogue. It imports them again only when the file changed since the last import (the table `seed_digest` keeps a SHA-256 digest of the file). Thus a restart keeps the reagent terms that an admin deleted or merged.
 - It makes the table `text` agree with `texte.json`. A text that a person changed stays.
+- It adds the glossary terms of `glossar.json` that it did not add before. A term that a person changed or deleted stays.
 - It adds a row to `species_forecast` for each forecast species of the catalogue.
 
 `kinoko import-catalog` replaces the catalogue with the seed data. Use it
 only when you want to discard the catalogue changes in the database.
+
+## Export the catalogue
+
+The admins correct the catalogue in the admin UI (Verwaltung). The changes
+go into the database, not into the seed files. Export the catalogue to keep
+the changes in the repository:
+
+1. Examine and correct the data in the admin UI.
+2. Get a copy of the database, or use the database of the service.
+3. From the repository root, run the export:
+
+   ```sh
+   PILZE_DB=/path/to/pilze.sqlite kinoko export-catalog --out backend/daten
+   ```
+
+4. Examine the difference: `git diff backend/daten`.
+5. Commit the new seed files.
+
+The default of `--out` is `backend/daten`. The command writes these files:
+
+- `arten/<stem>.toml`: one profile for each species. It removes the profiles of deleted species.
+- `reaktionen.json`: the reagent reactions and their sources.
+- `glossar.json`: the glossary, with the German and the English definitions.
+
+The command does not write personal data: no users, finds, markers, zones or
+photos. It does not write `taxonomie.json`, `saison.json` or `texte.json`.
+The admin UI does not change the taxonomy and the season table.
+`texte.json` is the source of the UI texts: change it in the repository.
+
+The command keeps the format of the seed files. An export of an unchanged
+import gives the same files, byte for byte. Some keys of the profiles are not
+in the database, for example `wertigkeit`, `sammelbar`, `marktfaehigSchweiz`,
+`warnung` and `masse.*.seltenBis`. The export keeps their values from the
+files in `--out`. If `--out` has no folder `arten`, it uses the seed data in
+the binary. Two keys of the profiles hold data that only the admin UI sets:
+`beschreibung` (the description) and the table `teilnotizen` (a note and a
+comment for each body part). The import reads both keys.
+
+The seed format cannot hold all data of the database. The command writes a
+warning for each value that it cannot write, for example:
+
+- a cap or stem feature for only one phase (young or old),
+- a colour change with a trigger other than a cut or one reagent,
+- a smell, taste or tree term that an admin added and that has no word in the importer vocabulary,
+- a source with a check date that is not the date of the profile source.
+
+Read the warnings before you commit. The command refuses an empty database,
+because that export would remove each profile.
 
 ## First deploy of the pipeline
 
@@ -347,7 +396,7 @@ Do these steps for the change from the Python service `pilze-app`:
 ### Version
 
 The version of a build comes from Git, for example `v2026-10-08-01-3-g65dd41a`
-(`git describe --tags --always`). The app and the service remove the commit
+(`git describe --tags --match` on the release tag form, so other tags do not count). The app and the service remove the commit
 hash and show `v2026-10-08-01-3`. A release tag has the form `vYYYY-MM-DD-NN`.
 
 - The app: `frontend/tools/stamp-version.mjs` writes it before each build. The about page shows it.

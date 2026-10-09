@@ -2,6 +2,7 @@ import { photoPath, type Edibility, type SpeciesEntry } from '../../core/api/mod
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { SpeciesRowSpecies } from '../../ui/species-row/species-row.component';
 import { judge, type Selection } from './facets';
+import { aliasOf, type LocalSpecies } from './species-names';
 import type { SpeciesSort } from './filter.store';
 import { EDIBILITY_KIND, EDIBILITY_TEXT, EDIBILITY_TONE, MONTH_TEXT } from './labels';
 import type { CatalogueEntry } from './species.store';
@@ -27,11 +28,12 @@ export function leadColour(entry: SpeciesEntry): string {
 }
 
 /** Makes a row from a species. The row has exactly one badge. */
-export function speciesRow(entry: SpeciesEntry, i18n: I18nService): SpeciesRowSpecies {
+export function speciesRow(entry: LocalSpecies, i18n: I18nService): SpeciesRowSpecies {
   const tone = EDIBILITY_TONE[entry.edibility];
   return {
     name: entry.name,
     latin: entry.scientificName,
+    alias: aliasOf(entry),
     levelText: i18n.translate(EDIBILITY_TEXT[entry.edibility]),
     levelColour: tone.colour,
     levelBackground: tone.background,

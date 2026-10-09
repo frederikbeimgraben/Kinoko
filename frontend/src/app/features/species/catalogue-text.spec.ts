@@ -23,12 +23,12 @@ const TERMS: readonly NamedTerm[] = [
 ];
 
 describe('catalogueNames', () => {
-  it('writes a list of terms as a sentence outside German', () => {
+  it('writes a list of terms as a sentence', () => {
     expect(catalogueNames(EN, () => PALETTE).termList(TERMS)).toBe('Mushroomy, pleasant, lovage (Maggi)');
   });
 
-  it('keeps the German names of the catalogue as they are', () => {
-    expect(catalogueNames(DE, () => PALETTE).termList(TERMS)).toBe('Pilzig, Angenehm, Maggiartig');
+  it('writes a German list of terms as a sentence too', () => {
+    expect(catalogueNames(DE, () => PALETTE).termList(TERMS)).toBe('Pilzig, angenehm, maggiartig');
   });
 
   it('shows a free German text in German only', () => {

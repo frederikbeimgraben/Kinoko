@@ -100,5 +100,9 @@ test('Die Artseite führt über die Einordnung zur Gattung', async ({ page }) =>
 
   await page.getByRole('button', { name: /Einordnung/ }).click();
 
-  await expect(page).toHaveURL(/\/taxonomie\/genus\/boletus$/);
+  // The link carries the species: it stands first in the list of the genus.
+  await expect(page).toHaveURL(/\/taxonomie\/genus\/boletus\?art=boletus-edulis$/);
+  await expect(page.locator('app-section').last().locator('app-list-row').first()).toContainText('Steinpilz');
+  await page.getByRole('button', { name: 'Zurück' }).click();
+  await expect(page).toHaveURL(/\/arten\/boletus-edulis$/);
 });

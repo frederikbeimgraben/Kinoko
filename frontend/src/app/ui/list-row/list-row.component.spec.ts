@@ -186,8 +186,10 @@ describe('ListRowComponent', () => {
     const firstRow = styleOf(rows[0].querySelector('.row'));
     const lastRow = styleOf(rows[1].querySelector('.row'));
 
-    expect(firstRow.borderRadius).toBe('var(--r-item) var(--r-item) var(--r-row) var(--r-row)');
-    expect(lastRow.borderRadius).toBe('var(--r-row) var(--r-row) var(--r-item) var(--r-item)');
+    const top = 'var(--grp-top, var(--r-item))';
+    const bottom = 'var(--grp-bottom, var(--r-item))';
+    expect(firstRow.borderRadius).toBe(`${top} ${top} var(--r-row) var(--r-row)`);
+    expect(lastRow.borderRadius).toBe(`var(--r-row) var(--r-row) ${bottom} ${bottom}`);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

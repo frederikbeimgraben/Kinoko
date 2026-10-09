@@ -131,7 +131,21 @@ func traitRows(ctx Context, _ SpeciesRow) (Children, error) {
 	return Children{Traits: rows}, nil
 }
 
-func hostnameTitle(raw string) string {
+func partNoteRows(ctx Context, _ SpeciesRow) (Children, error) {
+	var rows []PartNoteRow
+	for _, note := range ctx.Profile.Teilnotizen {
+		part, err := Lookup(PartNoteKey, note.Key, "teilnotizen", ctx.Stem)
+		if err != nil {
+			return Children{}, err
+		}
+		rows = append(rows, PartNoteRow{SpeciesID: ctx.SpeciesID, Part: enums.BodyPart(part),
+			Description: note.Beschreibung, Comment: note.Kommentar})
+	}
+	return Children{PartNotes: rows}, nil
+}
+
+// HostTitle gives the host name of an address without "www.", the title of a source without title.
+func HostTitle(raw string) string {
 	host := raw
 	if parsed, err := url.Parse(raw); err == nil && parsed.Hostname() != "" {
 		host = strings.ToLower(parsed.Hostname())
@@ -139,7 +153,8 @@ func hostnameTitle(raw string) string {
 	return strings.TrimPrefix(host, "www.")
 }
 
-func sameURL(a, b string) bool {
+// SameURL compares two addresses without case and without a slash at the end.
+func SameURL(a, b string) bool {
 	norm := func(raw string) string { return strings.TrimSuffix(strings.ToLower(strings.TrimSpace(raw)), "/") }
 	return norm(a) == norm(b)
 }
@@ -152,11 +167,11 @@ func sourceRows(ctx Context, _ SpeciesRow) (Children, error) {
 	}
 	rows := []SourceRow{{
 		SpeciesID: ctx.SpeciesID, Position: 0, Scope: enums.SourceScopeProfile,
-		Title: cmp.Or(quelle.Titel, hostnameTitle(quelle.URL)), URL: quelle.URL, CheckedOn: checked,
+		Title: cmp.Or(quelle.Titel, HostTitle(quelle.URL)), URL: quelle.URL, CheckedOn: checked,
 	}}
 	// A link to the address of the profile repeats the profile source.
 	for _, link := range ctx.Profile.Links {
-		if slices.ContainsFunc(rows, func(row SourceRow) bool { return sameURL(row.URL, link.URL) }) {
+		if slices.ContainsFunc(rows, func(row SourceRow) bool { return SameURL(row.URL, link.URL) }) {
 			continue
 		}
 		rows = append(rows, SourceRow{

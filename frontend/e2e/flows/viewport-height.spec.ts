@@ -273,7 +273,7 @@ test.describe('Seitenhöhe am Telefon', () => {
 
   test('Verwaltung, Personen', async ({ page }) => {
     await admin(page, '/verwaltung/personen');
-    await expect(page.getByRole('button', { name: 'Frederik Admin' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Frederik Nutzer · Admin' })).toBeVisible();
     await assertFillsViewport(page);
   });
 

@@ -50,6 +50,31 @@ const PROTECTED = speciesEntry({
   protection: 'strict',
 });
 
+let locationQueried = false;
+
+/** A device with geolocation and the given permission. Gives the callbacks of the watchers. */
+function stubLocation(state: PermissionState): PositionCallback[] {
+  const watchers: PositionCallback[] = [];
+  locationQueried = false;
+  Object.defineProperty(navigator, 'geolocation', {
+    configurable: true,
+    value: {
+      watchPosition: (ok: PositionCallback) => watchers.push(ok),
+      clearWatch: () => undefined,
+    },
+  });
+  Object.defineProperty(navigator, 'permissions', {
+    configurable: true,
+    value: {
+      query: () => {
+        locationQueried = true;
+        return Promise.resolve({ state, addEventListener: () => undefined });
+      },
+    },
+  });
+  return watchers;
+}
+
 async function build(): Promise<Setup> {
   const map = new MapAdapterDouble();
   const { detectChanges, fixture, container } = await render(HostComponent, {
@@ -87,6 +112,10 @@ async function build(): Promise<Setup> {
 }
 
 describe('MapObjectsDirective', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, 'permissions');
+  });
+
   it('meldet ein Objekt erst nach einem halben Sekundenschlag', async () => {
     vi.useFakeTimers();
     const setup = await build();
@@ -239,18 +268,26 @@ describe('MapObjectsDirective', () => {
     expect(TestBed.inject(MapStore).object()).toBeNull();
   });
 
-  it('legt den eigenen Standort als Punkt mit Genauigkeitskreis auf die Karte', async () => {
-    const watchers: PositionCallback[] = [];
-    Object.defineProperty(navigator, 'geolocation', {
-      configurable: true,
-      value: {
-        watchPosition: (ok: PositionCallback) => watchers.push(ok),
-        clearWatch: () => undefined,
-      },
+  it('fragt beim Aufbau der Karte nicht nach dem Standort', async () => {
+    const watchers = stubLocation('prompt');
+    await build();
+
+    await vi.waitFor(() => {
+      TestBed.tick();
+      expect(locationQueried).toBe(true);
     });
+    expect(watchers).toHaveLength(0);
+  });
+
+  it('legt den eigenen Standort als Punkt mit Genauigkeitskreis auf die Karte', async () => {
+    const watchers = stubLocation('granted');
     const setup = await build();
 
     expect(setup.map.layers.has('location')).toBe(false);
+    await vi.waitFor(() => {
+      TestBed.tick();
+      expect(watchers).toHaveLength(1);
+    });
 
     watchers[0]({ coords: { longitude: 9.1, latitude: 48.8, accuracy: 40 } } as GeolocationPosition);
     setup.refresh();

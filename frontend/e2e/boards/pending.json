@@ -1,4 +1,5 @@
 [
+  "AboutMethod",
   "Admin",
   "AdminDesktop",
   "AdminDesktopAdminGlossary",
@@ -50,7 +51,6 @@
   "EditHymenium",
   "EditLookalike",
   "EditPart",
-  "EditSeason",
   "EditSenses",
   "EditSource",
   "Entries",

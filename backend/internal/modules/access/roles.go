@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"slices"
 
+	"github.com/frederikbeimgraben/kinoko/backend/internal/core/auth"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/paging"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
@@ -67,10 +68,11 @@ func roleBySlug(ctx context.Context, q db.Querier, slug string) (roleRow, bool, 
 }
 
 // roleCount counts the people of the role r. A person in the admin group of
-// the SSO holds the admin role also without a stored row.
+// the SSO holds the admin role, and each person holds the base role, without a stored row.
 const roleCount = `SELECT count(*) FROM user u
 	WHERE u.id IN (SELECT user_id FROM user_role WHERE role_id = r.id)
-		OR (r.slug = '` + AdminSlug + `' AND u.group_admin)`
+		OR (r.slug = '` + AdminSlug + `' AND u.group_admin)
+		OR r.slug = '` + auth.BaseRole + `'`
 
 func peopleCount(ctx context.Context, q db.Querier, role db.ID) (int64, error) {
 	return db.Scalar[int64](ctx, q, "SELECT ("+roleCount+") FROM role r WHERE r.id = ?", role)

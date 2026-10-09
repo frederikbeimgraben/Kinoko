@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SafetyNoticeComponent } from '../../ui/safety-notice/safety-notice.component';
 import { AboutGroupComponent } from './about-group.component';
 
 /** The page "About the app", per `AccountDesktopAbout.dc.html`. */
 @Component({
   selector: 'app-about',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AboutGroupComponent, PageHeaderComponent, TranslatePipe],
+  imports: [AboutGroupComponent, PageHeaderComponent, SafetyNoticeComponent, TranslatePipe],
   templateUrl: './about.component.html',
   styleUrl: './account-page.scss',
 })

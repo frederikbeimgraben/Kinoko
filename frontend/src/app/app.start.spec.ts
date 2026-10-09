@@ -1,5 +1,6 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from './core/auth';
+import { AuthService, SessionStore } from './core/auth';
 import { ConfigStore } from './core/config/config.store';
 import { TextCatalogService } from './core/i18n/text-catalog.service';
 import { ThemeStore } from './core/theme/theme.store';
@@ -56,6 +57,7 @@ function start(catalog: TextCatalogDouble, restoreSession = () => Promise.resolv
         },
       },
       { provide: TextCatalogService, useValue: catalog },
+      { provide: SessionStore, useValue: { status: signal('unknown') } },
     ],
   });
   TestBed.runInInjectionContext(startApp);

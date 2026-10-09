@@ -405,7 +405,8 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["reviewFind"];
-        delete?: never;
+        /** @description Takes back an acceptance or a rejection. The find is open again. */
+        delete: operations["reopenFind"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1393,6 +1394,8 @@ export interface components {
             periodStartMonth?: number | null;
             periodEndMonth?: number | null;
             periodPeakMonth?: number | null;
+            /** @description The calendar week with the most finds. A write sets periodPeakMonth to its month. */
+            periodPeakWeek?: number | null;
             smellText?: string | null;
             tasteText?: string | null;
             hymeniumType?: components["schemas"]["HymeniumType"] | null;
@@ -1430,6 +1433,7 @@ export interface components {
             periodStartMonth?: number | null;
             periodEndMonth?: number | null;
             periodPeakMonth?: number | null;
+            periodPeakWeek?: number | null;
             smellText?: string | null;
             tasteText?: string | null;
             hymeniumType?: components["schemas"]["HymeniumType"] | null;
@@ -3059,6 +3063,41 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    reopenFind: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Find"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             422: components["responses"]["Validation"];
         };
     };

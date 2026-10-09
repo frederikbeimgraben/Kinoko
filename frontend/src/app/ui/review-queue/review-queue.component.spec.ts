@@ -217,7 +217,17 @@ describe('ReviewQueueComponent', () => {
     fixture.componentInstance.queue().advance();
     fixture.detectChanges();
     expect(screen.getByText('Fertig')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Ablehnen' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Ablehnen' })).toBeNull();
+  });
+
+  it('zeigt im leeren Stapel nur das Rückgängig, wie das Board ImageQueueEmpty', async () => {
+    const { container } = await render(HostComponent);
+
+    for (let i = 0; i < 3; i += 1) await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
+
+    expect(container.querySelectorAll('.queue__round')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Rückgängig' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Freigeben' })).toBeNull();
   });
 
   it('trägt den Druckzustand an jedem runden Knopf', async () => {

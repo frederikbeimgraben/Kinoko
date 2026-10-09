@@ -49,13 +49,16 @@
   white-space: nowrap;
 }
 
+// Per kit.css `.row .val`: the value at weight 500, the unit in `small` at 13 px in the label colour.
 .measure__number {
   font-size: var(--fs-row-title);
+  font-weight: var(--fw-medium);
   line-height: normal;
   color: var(--text);
 }
 
 .measure__unit {
   font-size: var(--fs-row-meta);
-  color: var(--text-var);
+  font-weight: 400;
+  color: var(--label);
 }

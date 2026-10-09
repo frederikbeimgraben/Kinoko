@@ -45,7 +45,9 @@ describe('SpeciesTaxonomyComponent', () => {
 
     await userEvent.click(screen.getByRole('button'));
 
-    expect(navigate).toHaveBeenCalledWith(['/taxonomie', 'genus', 'boletus']);
+    expect(navigate).toHaveBeenCalledWith(['/taxonomie', 'genus', 'boletus'], {
+      queryParams: { art: 'boletus-edulis' },
+    });
   });
 
   it('bleibt ohne Gattung weg', async () => {

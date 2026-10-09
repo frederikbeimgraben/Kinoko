@@ -32,6 +32,7 @@ type SpeciesRow struct {
 	ForecastEnabled  bool
 	Frequency        *string
 	RedList          *string
+	Description      *string
 	EdibilityNote    *string
 	Protection       string
 	ProtectionNote   *string
@@ -105,6 +106,14 @@ type PartFeatureRow struct {
 	Phase     enums.Phase
 }
 
+// PartNoteRow is one row of species_part_note.
+type PartNoteRow struct {
+	SpeciesID   db.ID
+	Part        enums.BodyPart
+	Description string
+	Comment     string
+}
+
 // TraitRow is one row of species_trait.
 type TraitRow struct {
 	SpeciesID db.ID
@@ -151,6 +160,7 @@ type Children struct {
 	Triggers     []TriggerRow
 	PartFeatures []PartFeatureRow
 	Traits       []TraitRow
+	PartNotes    []PartNoteRow
 	Sources      []SourceRow
 	Seasons      []SeasonRow
 	Terms        []SpeciesTermRow
@@ -168,6 +178,7 @@ func (c Children) Counts() map[string]int {
 		"species_colour_change_trigger": len(c.Triggers),
 		"species_part_feature":          len(c.PartFeatures),
 		"species_trait":                 len(c.Traits),
+		"species_part_note":             len(c.PartNotes),
 		"species_source":                len(c.Sources),
 		"species_season":                len(c.Seasons),
 		"species_term":                  len(c.Terms),
@@ -193,6 +204,7 @@ func (c Children) Append(o Children) Children {
 		Triggers:     append(c.Triggers, o.Triggers...),
 		PartFeatures: append(c.PartFeatures, o.PartFeatures...),
 		Traits:       append(c.Traits, o.Traits...),
+		PartNotes:    append(c.PartNotes, o.PartNotes...),
 		Sources:      append(c.Sources, o.Sources...),
 		Seasons:      append(c.Seasons, o.Seasons...),
 		Terms:        append(c.Terms, o.Terms...),

@@ -103,7 +103,7 @@ export class MapObjectsDirective {
     effect(() => {
       this.put('funde', true, () => this.finds(this.eintraege.finds()));
     });
-    this.locating.start();
+    this.locating.follow();
     effect(() => {
       const own = this.locating.location();
       this.put('location', own !== null, () => this.ownLocation(own));

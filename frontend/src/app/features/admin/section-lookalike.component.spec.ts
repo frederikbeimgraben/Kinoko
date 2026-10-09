@@ -5,6 +5,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SpeciesStore } from '../species/species.store';
@@ -23,6 +24,8 @@ const BUNDLE = {
       edibility: 'inedible',
       protection: 'none',
       forecastEnabled: false,
+      names: [],
+      lookalikes: [],
     },
   ],
   standardColours: [],
@@ -81,6 +84,17 @@ describe('SectionLookalikeComponent', () => {
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     expect(screen.getByLabelText('Unterscheidung')).toHaveValue('Röhren rosa, Netz grob, bitter');
     await noViolations(container);
+  });
+
+  it('names the other species in English by its scientific name, with the German name below', async () => {
+    await build();
+    const i18n = TestBed.inject(I18nService);
+    i18n.setLocale('en');
+
+    expect(await screen.findByRole('heading', { name: 'Lookalike' })).toBeInTheDocument();
+    expect(screen.getAllByText('Tylopilus felleus')).toHaveLength(1);
+    expect(screen.getByText(/Gallenröhrling/)).toBeInTheDocument();
+    i18n.setLocale('de');
   });
 
   it('schreibt den Unterschied an den Vertrag', async () => {

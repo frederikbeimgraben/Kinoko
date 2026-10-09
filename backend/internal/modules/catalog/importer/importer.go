@@ -15,8 +15,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 )
 
-// SeedIfEmpty imports the catalogue when the table species is empty, and
-// imports the reagent reactions of daten/reaktionen.json.
+// SeedIfEmpty imports the catalogue when the table species is empty. It syncs
+// the reagent reactions of daten/reaktionen.json into a new catalogue, or when
+// the file changed since its last sync.
 func SeedIfEmpty(ctx context.Context, handle *sql.DB, data fs.FS, now func() time.Time) error {
 	if now == nil {
 		now = time.Now
@@ -36,6 +37,14 @@ func SeedIfEmpty(ctx context.Context, handle *sql.DB, data fs.FS, now func() tim
 		}
 		slog.Info("catalogue import", "species", report.Counts["species"], "taxa", report.Counts["taxa"],
 			"terms", report.Counts["terms"], "skipped", report.Skipped)
+	}
+	changed, err := reactionSeedChanged(ctx, handle, data)
+	if err != nil {
+		return err
+	}
+	// A sync on each start adds deleted or merged reagent terms again and replaces the reactions.
+	if total > 0 && !changed {
+		return nil
 	}
 	reactions, err := SyncReactions(ctx, handle, data, profiles)
 	if err != nil {

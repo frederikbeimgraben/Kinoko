@@ -14,12 +14,14 @@ interface SpeciesEditorState {
   counts: SpeciesCounts | null;
   /** Parts that a person chose and that have no value yet. */
   extraParts: readonly BodyPart[];
+  /** Values typed on a section page and not applied yet, by field key. They stay while a sub-editor is open. */
+  drafts: Readonly<Record<string, unknown>>;
 }
 
 /** The profile and the counts of a species in edit mode. */
 export const SpeciesEditorStore = signalStore(
   { providedIn: 'root' },
-  withState<SpeciesEditorState>({ slug: '', species: null, counts: null, extraParts: [] }),
+  withState<SpeciesEditorState>({ slug: '', species: null, counts: null, extraParts: [], drafts: {} }),
   withComputed(({ species }) => ({
     forecast: computed(() => species()?.forecastEnabled ?? false),
   })),
@@ -35,7 +37,7 @@ export const SpeciesEditorStore = signalStore(
         pipe(
           filter((slug) => slug !== store.slug()),
           tap((slug) => {
-            patchState(store, { slug, species: null, counts: null, extraParts: [] });
+            patchState(store, { slug, species: null, counts: null, extraParts: [], drafts: {} });
           }),
           switchMap((slug) =>
             slug === ''
@@ -59,6 +61,17 @@ export const SpeciesEditorStore = signalStore(
       addParts(parts: readonly BodyPart[]): void {
         patchState(store, ({ extraParts }) => ({
           extraParts: [...extraParts, ...parts.filter((one) => !extraParts.includes(one))],
+        }));
+      },
+
+      setDraft(key: string, value: unknown): void {
+        patchState(store, ({ drafts }) => ({ drafts: { ...drafts, [key]: value } }));
+      },
+
+      /** Removes the drafts whose key starts with `prefix`, after an apply or when the page closes. */
+      dropDrafts(prefix: string): void {
+        patchState(store, ({ drafts }) => ({
+          drafts: Object.fromEntries(Object.entries(drafts).filter(([key]) => !key.startsWith(prefix))),
         }));
       },
 

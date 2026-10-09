@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../../testing/axe';
 import { speciesEntry } from '../../../testing/species-fixture';
 import type { SpeciesReaction } from '../species.store';
-import { SpeciesSourcesComponent } from './species-sources.component';
+import { SpeciesSourcesComponent, addressKey } from './species-sources.component';
 
 const PROFILE = 'https://www.123pilzsuche.de/daten/details/Steinpilze.htm';
 
@@ -68,5 +68,17 @@ describe('SpeciesSourcesComponent', () => {
     expect(screen.getAllByText('mykoweb.com')).toHaveLength(1);
     expect(screen.getByText('2019')).toBeInTheDocument();
     expect(container.querySelectorAll('app-icon-button')).toHaveLength(3);
+  });
+});
+
+describe('addressKey', () => {
+  it('counts one page one time, also with and without www. and with another scheme', () => {
+    expect(addressKey('https://www.123pilzsuche.de/a/B.htm', '')).toBe(
+      addressKey('http://123pilzsuche.de/a/B.htm/', ''),
+    );
+    expect(addressKey('https://de.wikipedia.org/wiki/A', '')).not.toBe(
+      addressKey('https://en.wikipedia.org/wiki/A', ''),
+    );
+    expect(addressKey(null, 'Buch')).toBe('title:Buch');
   });
 });

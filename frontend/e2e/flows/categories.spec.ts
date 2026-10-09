@@ -49,7 +49,10 @@ test('legt eine Kategorie an', async ({ page }) => {
   });
 
   await page.getByRole('button', { name: 'Kategorie hinzufügen' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Zimt');
+  // A focus on a field below the screen scrolls the page while the sheet rises.
+  const name = page.getByRole('textbox', { name: 'Name' });
+  await expect(name).toBeInViewport({ ratio: 1 });
+  await name.fill('Zimt');
   await page.getByRole('button', { name: 'Speichern' }).click();
 
   await expect.poll(() => sent).toEqual(['{"kind":"smell","slug":"zimt","name":"Zimt"}']);

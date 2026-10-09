@@ -40,6 +40,8 @@ const DESKTOP_MENU_ANCHOR: PopoverAnchor = { top: 64, end: 12 };
 
 /** The hero heights of `SpeciesPage.dc.html` and `SpeciesDesktop.dc.html`. */
 const HERO_PHONE = 260;
+/** Without a photo the hero is lower, per `SpeciesPageNoPhoto.dc.html`. */
+const HERO_PHONE_BARE = 220;
 const HERO_DESKTOP = 210;
 
 /** The species page: the head, the menu, the sections of the catalogue and the way to compare. */
@@ -99,7 +101,10 @@ export class SpeciesPageComponent {
       .map((one) => one.name);
     return names.length === 0 ? '' : this.i18n.translate('species.otherNames', { names: names.join(', ') });
   });
-  protected readonly heroHeight = computed(() => (this.wide() ? HERO_DESKTOP : HERO_PHONE));
+  protected readonly heroHeight = computed(() => {
+    if (this.wide()) return HERO_DESKTOP;
+    return this.species()?.leadPhotoId ? HERO_PHONE : HERO_PHONE_BARE;
+  });
   /** A person who may change profiles goes from the head into the editor. */
   protected readonly mayEdit = computed(() => this.rights.can('species.edit'));
   protected readonly canSubmitImage = this.auth.signedIn;

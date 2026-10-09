@@ -72,4 +72,34 @@ describe('glossaryIn', () => {
   it('keeps the German texts in German', () => {
     expect(glossaryIn([VELUM, LAMELLEN], 'de').map((entry) => entry.term)).toEqual(['Lamellen', 'Velum']);
   });
+
+  it('puts the terms that have the search text before the hits in a definition', () => {
+    const ahorn = {
+      ...HYMENIUM,
+      id: 'a',
+      term: 'Ahorn',
+      termEn: 'Maple',
+      definition: 'Bildet kaum Mykorrhiza.',
+    };
+    const myko = {
+      ...HYMENIUM,
+      id: 'm',
+      term: 'Mykorrhiza',
+      termEn: 'Mycorrhiza',
+      definition: 'Pilz und Baum.',
+    };
+    const ekto = {
+      ...HYMENIUM,
+      id: 'e',
+      term: 'Ektomykorrhiza',
+      termEn: 'Ectomycorrhiza',
+      definition: 'Hülle.',
+    };
+
+    expect(glossaryIn([ahorn, ekto, myko], 'de', ' Myko').map((entry) => entry.term)).toEqual([
+      'Mykorrhiza',
+      'Ektomykorrhiza',
+      'Ahorn',
+    ]);
+  });
 });

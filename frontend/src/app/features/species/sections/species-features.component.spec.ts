@@ -33,6 +33,16 @@ describe('SpeciesFeaturesComponent', () => {
     expect(container.querySelector('.features__note .row--wrap')).not.toBeNull();
   });
 
+  it('zeigt den Sicherheitshinweis, außer die Bausteinseite schaltet ihn ab', async () => {
+    const { container, fixture } = await render(SpeciesFeaturesComponent, { inputs: { species: STONE } });
+    expect(screen.getByRole('note')).toBeInTheDocument();
+
+    fixture.componentRef.setInput('notice', false);
+    fixture.detectChanges();
+
+    expect(container.querySelector('app-safety-notice')).toBeNull();
+  });
+
   it('nennt den Handel begrenzt, wo die Art nicht marktfähig ist', async () => {
     await render(SpeciesFeaturesComponent, {
       inputs: { species: speciesEntry({ ...STONE, marketable: false }) },

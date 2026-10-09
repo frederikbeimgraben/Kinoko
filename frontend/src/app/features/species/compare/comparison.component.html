@@ -27,6 +27,8 @@
               <b>{{ head.name }}</b>
               @if (head.latin !== head.name) {
                 <em>{{ head.latin }}</em>
+              } @else if (head.alias) {
+                <span class="cmph__alias" [attr.lang]="catalogueLang">{{ head.alias }}</span>
               }
             </button>
           }
@@ -87,6 +89,7 @@
             </div>
           </section>
         }
+        <app-safety-notice />
       </div>
     } @else if (waiting()) {
       <app-skeleton kind="line" width="60%" height="24px" />

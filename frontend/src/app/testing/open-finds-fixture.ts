@@ -31,7 +31,7 @@ export class FindsApiDouble {
   findList: readonly OpenFind[] = OPEN_FINDS;
 
   readonly reviewed: { id: string; decision: Decision }[] = [];
-  accepted = 0;
+  readonly reopened: string[] = [];
 
   open(): Observable<readonly OpenFind[]> {
     return of(this.findList);
@@ -42,8 +42,8 @@ export class FindsApiDouble {
     return of(null);
   }
 
-  acceptAll(): Observable<null> {
-    this.accepted += 1;
+  reopen(id: string): Observable<null> {
+    this.reopened.push(id);
     return of(null);
   }
 }

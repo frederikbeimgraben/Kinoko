@@ -36,13 +36,13 @@ const GROUPS: Readonly<Record<string, LayerGroup>> = {
 };
 
 /** The group icons, as `app-svg-icon` names them. */
-export type LayerIcon = 'cloud' | 'thermometer' | 'drop' | 'tree' | 'mountain' | 'layers';
+export type LayerIcon = 'cloud' | 'thermometer' | 'drop' | 'forest' | 'mountain' | 'layers';
 
 const ICONS: Readonly<Record<LayerGroup, LayerIcon>> = {
   precipitation: 'cloud',
   temperature: 'thermometer',
   moisture: 'drop',
-  forest: 'tree',
+  forest: 'forest',
   terrain: 'mountain',
   soil: 'layers',
 };

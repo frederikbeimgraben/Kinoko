@@ -1,3 +1,14 @@
 :host {
   display: contents;
+  --grp-top: var(--r-row);
+  --grp-bottom: var(--r-row);
+}
+
+// The row is the only child of this element, so the place of this element in the group gives its corners.
+:host(:first-child) {
+  --grp-top: var(--r-item);
+}
+
+:host(:last-child) {
+  --grp-bottom: var(--r-item);
 }

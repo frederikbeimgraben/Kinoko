@@ -17,10 +17,11 @@ import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesStore } from '../entries/entries.store';
 import { photoPath } from '../../core/api/models';
+import { aliasOf } from '../species/species-names';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
 import { DEFAULT_LAYER, MapStore } from './map.store';
-import { layerName, layerPeriod } from './layer-name';
+import { layerCaption, layerName } from './layer-name';
 
 /** The values that the head and the body of the map read. One source for both devices. */
 @Injectable({ providedIn: 'root' })
@@ -156,6 +157,7 @@ export class MapView {
         value: species.slug,
         name: species.name,
         latin: species.scientificName,
+        alias: aliasOf(species),
         levelText: this.i18n.translate(EDIBILITY_TEXT[species.edibility]),
         levelColour: EDIBILITY_TONE[species.edibility].colour,
         levelBackground: EDIBILITY_TONE[species.edibility].background,
@@ -209,8 +211,7 @@ export class MapView {
 
   readonly rampLabel = computed(() => {
     const layer = this.layer();
-    if (this.onLayer())
-      return layer === null ? '' : `${this.layerName(layer)}, ${layerPeriod(layer, this.i18n)}`;
+    if (this.onLayer()) return layer === null ? '' : layerCaption(layer, this.layerWeek(), this.i18n);
     // "Abgestuft" shows how well the factors agree, not a probability of a find.
     if (this.onCombination()) return this.i18n.translate('map.legend.factorMatch');
     return this.i18n.translate('map.legend.findProbability');

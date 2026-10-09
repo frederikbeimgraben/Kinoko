@@ -2,6 +2,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { throwError } from 'rxjs';
+import { ConnectionNotice } from '../../ui/banner/connection-notice';
 import { ToastService } from '../../ui/toast/toast.service';
 import { I18nService } from '../i18n/i18n.service';
 import { ApiClient, problemKey } from './api-client';
@@ -17,6 +18,20 @@ function build(): { api: ApiClient; http: HttpTestingController; toasts: ToastSe
 }
 
 describe('ApiClient', () => {
+  it('sendet für zwei gleiche Dateien zur selben Zeit nur eine Anfrage', () => {
+    const { api, http } = build();
+    const got: Blob[] = [];
+
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    http.expectOne('/api/photos/eins/list').flush(new Blob(['x']));
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    http.expectOne('/api/photos/eins/list').flush(new Blob(['y']));
+
+    expect(got).toHaveLength(3);
+    http.verify();
+  });
+
   it('ruft die eigene API unter /api', () => {
     const { api, http } = build();
     let got: { version: string } | null = null;
@@ -110,6 +125,18 @@ describe('ApiClient', () => {
 
     expect(caught[0].title).toBe('Keine Verbindung');
     expect(toasts.toasts()[0].message).toBe('Keine Verbindung');
+  });
+
+  it('zeigt keinen Toast ohne Verbindung, solange das Banner es schon sagt', () => {
+    const { api, http, toasts } = build();
+    TestBed.inject(ConnectionNotice).add();
+    const caught: ProblemDetail[] = [];
+
+    api.get('/config').subscribe({ error: (failure: ProblemDetail) => caught.push(failure) });
+    http.expectOne('/api/config').error(new ProgressEvent('error'), { status: 0 });
+
+    expect(caught[0].title).toBe('Keine Verbindung');
+    expect(toasts.toasts()).toEqual([]);
   });
 
   it('macht aus einer Antwort ohne problem+json einen allgemeinen Fehler', () => {

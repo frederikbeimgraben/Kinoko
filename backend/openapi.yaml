@@ -922,6 +922,32 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "422":
           $ref: "#/components/responses/Validation"
+    delete:
+      operationId: reopenFind
+      description: Takes back an acceptance or a rejection. The find is open again.
+      tags: [finds]
+      x-permission: find.review
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Find"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
 
   /finds/reviews/open:
     get:
@@ -3320,6 +3346,13 @@ components:
               minimum: 1
               maximum: 12
             - type: "null"
+        periodPeakWeek:
+          description: The calendar week with the most finds. A write sets periodPeakMonth to its month.
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 53
+            - type: "null"
         smellText:
           oneOf:
             - type: string
@@ -3453,6 +3486,10 @@ components:
                 - type: integer
                 - type: "null"
             periodPeakMonth:
+              oneOf:
+                - type: integer
+                - type: "null"
+            periodPeakWeek:
               oneOf:
                 - type: integer
                 - type: "null"

@@ -88,6 +88,7 @@ const BLOCKS = [
   'app-error-state',
   'app-infinite-list',
   'app-row-group',
+  'app-safety-notice',
   'app-skeleton',
   'app-map-panel-skeleton',
   'app-species-page-skeleton',

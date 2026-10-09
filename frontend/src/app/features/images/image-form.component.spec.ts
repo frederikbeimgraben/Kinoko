@@ -206,10 +206,20 @@ describe('ImageFormComponent', () => {
   });
 
   it('goes back to the species when the person closes the sheet', async () => {
+    const { router } = await build(false);
+
+    const sheet = await screen.findByRole('dialog', { name: 'Bild einreichen' });
+    await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));
+
+    expect(router.url).toBe('/arten/steinpilz');
+  });
+
+  it('shows the form of a curator as a page with a back button, per the board ImageAdd', async () => {
     const { router } = await build(true);
 
-    const sheet = await screen.findByRole('dialog', { name: 'Bild hinzufügen' });
-    await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));
+    expect(screen.getByRole('heading', { name: 'Bild hinzufügen' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Bild hinzufügen' })).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 
     expect(router.url).toBe('/arten/steinpilz');
   });

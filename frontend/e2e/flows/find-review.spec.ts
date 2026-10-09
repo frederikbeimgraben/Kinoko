@@ -69,17 +69,21 @@ test('nimmt den obersten Fund an und zählt weiter', async ({ page }) => {
   await expectOpen(page, '1', '1 offener Fund');
 });
 
-test('nimmt nach der Bestätigung jeden offenen Fund an', async ({ page }) => {
+test('nimmt eine Entscheidung auch auf dem Server zurück', async ({ page }) => {
   const calls: string[] = [];
   await start(page);
-  await page.route('**/api/finds/reviews/accept-all', async (route) => {
-    calls.push(route.request().method());
-    await route.fulfill({ status: 204, body: '' });
+  await page.route('**/api/finds/*/review', async (route) => {
+    calls.push(`${route.request().method()} ${new URL(route.request().url()).pathname}`);
+    await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
   });
 
-  await page.getByRole('button', { name: 'Alle annehmen' }).click();
-  await page.locator('.confirm__panel').getByRole('button', { name: 'Alle annehmen' }).click();
+  await page.getByRole('button', { name: 'Freigeben' }).click();
+  await expectOpen(page, '1', '1 offener Fund');
+  await page.getByRole('button', { name: 'Rückgängig' }).click();
 
-  await expect.poll(() => calls).toEqual(['POST']);
-  await expect(page.getByText('Keine Funde offen')).toBeVisible();
+  await expect
+    .poll(() => calls)
+    .toEqual(['POST /api/finds/fund-eins/review', 'DELETE /api/finds/fund-eins/review']);
+  await expectOpen(page, '2', '2 offene Funde');
+  await expect(page.getByText('Am Wegrand')).toBeVisible();
 });

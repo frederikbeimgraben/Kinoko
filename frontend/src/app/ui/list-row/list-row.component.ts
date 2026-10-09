@@ -21,6 +21,8 @@ export type ListRowVariant = 'plain' | 'head' | 'sub';
 export class ListRowComponent {
   readonly title = input.required<string>();
   readonly subline = input<string>();
+  /** The language of the subline where it is not the language of the page, for example a German catalogue text. */
+  readonly sublineLang = input<string | null>(null);
   /** The `.val` value: tabular figures at weight 500. */
   readonly value = input<string>();
   /** A small unit after the value, in the label colour. */

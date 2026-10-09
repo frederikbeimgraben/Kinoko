@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 
 /** The own location, as the device reports it. */
 export interface OwnLocation {
@@ -14,6 +14,8 @@ export interface OwnLocation {
 export class LocationService {
   private readonly _location = signal<OwnLocation | null>(null);
   private readonly denied = signal(false);
+  private readonly granted = signal(false);
+  private readonly wanted = signal(false);
   private watcher: number | null = null;
 
   readonly location = this._location.asReadonly();
@@ -24,11 +26,19 @@ export class LocationService {
 
   constructor() {
     void this.followPermission();
+    // A page load must not ask for the location. Only a permission that the person gave before starts the watcher.
+    effect(() => {
+      if (this.wanted() && this.granted()) this.start();
+    });
   }
 
-  /**
-   * Starts to follow the location. The map calls this on each build, so more calls keep one watcher.
-   */
+  /** The map shows the own location when the permission is already given. It does not ask for it. */
+  follow(): void {
+    this.wanted.set(true);
+  }
+
+  /** Starts to follow the location after an action of the person, so it can ask for the permission.
+   * More calls keep one watcher. */
   start(): void {
     if (this.watcher !== null || !this.hasGeolocation()) return;
     this.watcher = navigator.geolocation.watchPosition(
@@ -69,6 +79,7 @@ export class LocationService {
       const state = await navigator.permissions.query({ name: 'geolocation' });
       const read = (): void => {
         this.denied.set(state.state === 'denied');
+        this.granted.set(state.state === 'granted');
       };
       read();
       state.addEventListener('change', read);

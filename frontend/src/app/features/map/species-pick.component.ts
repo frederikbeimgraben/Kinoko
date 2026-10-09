@@ -4,6 +4,7 @@ import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.component';
+import { speciesHasText, speciesSubline } from '../../ui/species-row/species-row.component';
 
 /** The species of the map as a search bar and a group of radio rows, per the board `SpeciesPickBody`. */
 @Component({
@@ -22,7 +23,7 @@ import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.
       @for (entry of rows(); track entry.value) {
         <app-choice-row
           [label]="entry.name"
-          [subline]="entry.latin"
+          [subline]="subline(entry)"
           [checked]="entry.value === selected()"
           (toggled)="chosen.emit(entry.value)"
         />
@@ -72,8 +73,8 @@ export class SpeciesPickComponent {
       ...this.species().filter((entry) => entry.value === first),
       ...this.species().filter((entry) => entry.value !== first),
     ];
-    return needle === ''
-      ? ordered
-      : ordered.filter((entry) => `${entry.name} ${entry.latin}`.toLowerCase().includes(needle));
+    return needle === '' ? ordered : ordered.filter((entry) => speciesHasText(entry, needle));
   });
+
+  protected readonly subline = speciesSubline;
 }

@@ -1,6 +1,13 @@
-import type { Routes } from '@angular/router';
+import type { Route, Routes } from '@angular/router';
+import { requiresSignIn } from './core/auth/signed-in.guard';
 import { requiresPermission } from './features/admin/admin.guard';
 import { DEV_ROUTES } from './dev/dev.routes';
+
+// The guards run again at the end of a session, so a page with an account closes for a guest.
+const SIGNED_IN: Pick<Route, 'canActivate' | 'runGuardsAndResolvers'> = {
+  canActivate: [requiresSignIn()],
+  runGuardsAndResolvers: 'always',
+};
 
 /** The four tabs and the pages below them. */
 export const routes: Routes = [
@@ -27,6 +34,8 @@ export const routes: Routes = [
   },
   {
     path: 'arten/:slug/bilder/neu',
+    canActivate: [requiresSignIn((route) => `/arten/${route.paramMap.get('slug') ?? ''}`)],
+    runGuardsAndResolvers: 'always',
     loadComponent: () => import('./features/images/image-form.component').then((m) => m.ImageFormComponent),
   },
   {
@@ -55,23 +64,28 @@ export const routes: Routes = [
       },
       {
         path: 'gruppen',
+        ...SIGNED_IN,
         loadComponent: () => import('./features/account/groups.component').then((m) => m.GroupsComponent),
       },
       {
         path: 'gruppen/:id',
+        ...SIGNED_IN,
         loadComponent: () => import('./features/account/group.component').then((m) => m.GroupComponent),
       },
       {
         path: 'glossar',
+        ...SIGNED_IN,
         loadComponent: () => import('./features/account/glossary.component').then((m) => m.GlossaryComponent),
       },
       {
         path: 'bilder',
+        ...SIGNED_IN,
         loadComponent: () =>
           import('./features/account/my-images.component').then((m) => m.MyImagesComponent),
       },
       {
         path: 'daten',
+        ...SIGNED_IN,
         loadComponent: () => import('./features/account/my-data.component').then((m) => m.MyDataComponent),
       },
       {
@@ -101,6 +115,7 @@ export const routes: Routes = [
   {
     path: 'verwaltung',
     canActivate: [requiresPermission(null)],
+    runGuardsAndResolvers: 'always',
     loadComponent: () => import('./features/admin/admin.component').then((m) => m.AdminComponent),
     children: [
       {

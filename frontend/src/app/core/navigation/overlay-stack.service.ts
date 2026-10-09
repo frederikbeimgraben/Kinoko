@@ -35,6 +35,11 @@ export class OverlayStackService implements OnDestroy {
     history.back();
   }
 
+  /** Removes the top layer and keeps its history entry. The next route replaces that entry. */
+  release(): void {
+    this.layers.pop();
+  }
+
   /** Removes all open layers when a sheet closes fully. */
   closeAll(): void {
     const depth = this.layers.length;

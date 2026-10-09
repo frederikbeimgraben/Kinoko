@@ -7,7 +7,7 @@ import {
   findPhotosApiProvider,
   findsApiProvider,
 } from '../../testing/open-finds-fixture';
-import { FindQueueStore, restored } from './find-queue.store';
+import { FindQueueStore, redone, restored } from './find-queue.store';
 
 function build(): { store: FindQueueStore; api: FindsApiDouble; photos: FindPhotosApiDouble } {
   const api = new FindsApiDouble();
@@ -61,6 +61,34 @@ describe('FindQueueStore', () => {
     store.undo();
 
     expect(store.decided()).toBe(0);
+    expect(api.reopened).toEqual(['fund-eins']);
+  });
+
+  it('sends no undo without a decision', () => {
+    const { store, api } = build();
+    store.load();
+
+    store.undo();
+
+    expect(api.reopened).toEqual([]);
+  });
+
+  it('takes the card away again when the undo fails', () => {
+    const { store, api } = build();
+    store.load();
+    store.review({ id: 'fund-eins', decision: 'accepted' });
+    vi.spyOn(api, 'reopen').mockReturnValueOnce(throwError(() => new Error('offline')));
+
+    store.undo();
+
+    expect(store.open().map((one) => one.id)).toEqual(['fund-zwei']);
+  });
+
+  it('keeps the count when the undone card is no longer next', () => {
+    const finds = ['a', 'b'].map((id) => ({ id }) as OpenFind);
+
+    expect(redone(finds, 0, 'a')?.decided).toBe(1);
+    expect(redone(finds, 1, 'a')).toBeNull();
   });
 
   it('puts the find back as the next open card when the decision fails', () => {
@@ -80,17 +108,5 @@ describe('FindQueueStore', () => {
     expect(restored(finds, 3, 'a')?.stack?.map((one) => one.id)).toEqual(['b', 'c', 'a', 'd']);
     expect(restored(finds, 3, 'a')?.decided).toBe(2);
     expect(restored(finds, 1, 'c')).toBeNull();
-  });
-
-  it('empties the stack when all finds are accepted', () => {
-    const { store, api } = build();
-    const onDone = vi.fn();
-    store.load();
-
-    store.acceptAll({ onDone });
-
-    expect(api.accepted).toBe(1);
-    expect(store.open()).toEqual([]);
-    expect(onDone).toHaveBeenCalledOnce();
   });
 });

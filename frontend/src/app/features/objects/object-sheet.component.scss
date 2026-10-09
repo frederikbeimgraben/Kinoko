@@ -12,6 +12,11 @@
   visibility: hidden;
 }
 
+// The corner step has only the step bar. The map then pads only the height of the bar.
+.object__sheet--gone {
+  display: none;
+}
+
 // Per `kit.css` `.cross`: the crosshair is at the centre of the map pane. Presses reach the map.
 .object__aim {
   position: absolute;

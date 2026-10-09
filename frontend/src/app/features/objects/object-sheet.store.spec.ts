@@ -43,6 +43,19 @@ describe('ObjectSheetStore', () => {
     expect(back).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps the history entry when it leaves for another route', () => {
+    const { state, map, stack } = build();
+    const back = vi.spyOn(history, 'back');
+    const release = vi.spyOn(stack, 'release');
+    state.show('zone', 'zone-eins');
+
+    state.leave();
+
+    expect(map.object()).toBeNull();
+    expect(release).toHaveBeenCalledTimes(1);
+    expect(back).not.toHaveBeenCalled();
+  });
+
   it('ends the corner editing on close and on a new object', () => {
     const { state } = build();
     vi.spyOn(TestBed.inject(OverlayStackService), 'back').mockImplementation(() => undefined);

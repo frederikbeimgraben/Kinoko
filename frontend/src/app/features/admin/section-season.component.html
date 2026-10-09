@@ -1,15 +1,22 @@
 <app-page-header [title]="'species.section.period' | t" [back]="true" (backClick)="back()" />
 
 <div class="section">
-  <div class="section__band">
-    <app-year-band-input
-      [from]="from()"
-      [to]="to()"
-      [label]="'species.section.period' | t"
-      (fromChange)="from.set($event)"
-      (toChange)="to.set($event)"
-    />
-  </div>
+  <figure class="section__curve">
+    <svg
+      [attr.viewBox]="curveSize"
+      preserveAspectRatio="none"
+      role="img"
+      [attr.aria-label]="'species.section.period' | t"
+    >
+      <path class="section__area" [attr.d]="curve().area" />
+      <path class="section__line" [attr.d]="curve().line" />
+    </svg>
+    <figcaption class="section__months" aria-hidden="true">
+      @for (month of curveMonths(); track $index) {
+        <span>{{ month }}</span>
+      }
+    </figcaption>
+  </figure>
 
   @for (field of fields(); track field.id) {
     <app-section [label]="field.label">
