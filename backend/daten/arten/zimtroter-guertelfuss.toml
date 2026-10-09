@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "tanne"]
+beschreibung = "Schleierling mit orangebraunem bis rötlichbraunem, seidig bereiftem Hut, zimtroten bis rotbraunen Lamellen und weißem bis hellbraunem Stiel, der wollig mit Velum gegürtelt ist und eine knollige Basis hat. Er wächst vom Sommer bis zum Spätherbst im Mischwald, gern im Nadelwald bei Fichte oder Tanne auf moosigem, kalkreichem Boden. Typisch ist der rettichartige Geruch. Er gilt als ungenießbar; viele Schleierlinge sind giftig und schwer zu bestimmen."
+beschreibungEn = "A webcap with an orange-brown to reddish-brown cap with a silky bloom, cinnamon-red to red-brown gills and a white to light brown stem with woolly bands of veil and a bulbous base. It grows from summer to late autumn in mixed woods, often in coniferous woods with spruce or fir on mossy, calcareous soil. A typical feature is the smell of radish. It is classed as inedible; many webcaps are poisonous and difficult to identify."
+entwurf = true
 synonyme = ["Telamonia praesignis", "Telamonia macropus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
 hutform = { von = "halbkugelig" }

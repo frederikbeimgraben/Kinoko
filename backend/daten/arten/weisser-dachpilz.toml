@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Sehr selten; in der Schweiz stark gefährdet. Besser stehen lassen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Dachpilz mit weißem, im Alter rosabraunem, seidigem Hut, weißen, später blassrosa bis fleischroten, freien Lamellen und weißem, brüchigem Stiel mit verdickter Basis. Er wächst vom Frühsommer bis zum Herbst im Laubwald, meist an moderndem Buchenholz wie Ästen und Strünken, und ist sehr selten. Vom ähnlichen Grauen Dachpilz unterscheidet ihn vor allem die Hutfarbe, denn der Graue Dachpilz hat einen blassgrauen bis mausgrauen Hut und einen Stiel mit grünlich bläulichem Schein."
+beschreibungEn = "A shield mushroom with a white, silky cap that turns pink-brown with age, free white gills that later turn pale pink to flesh-red, and a white, brittle stem with a swollen base. It grows from early summer to autumn in broadleaf woods, mostly on rotting beech wood such as branches and stumps, and is very rare. The key difference from the similar Pluteus salicinus is the cap colour, because that species has a pale grey to mouse-grey cap and a stem with a greenish-blue sheen."
+entwurf = true
 synonyme = ["Agaricus pellitus", "Rhodosporus pellitus"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 stielmerkmale = ["faserig", "bruechig"]

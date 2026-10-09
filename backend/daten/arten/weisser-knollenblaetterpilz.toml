@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["buche", "eiche", "esche"]
 speisewertHinweis = "Tödlich giftig, schon ein Fruchtkörper schädigt die Leber. Niemals kosten. Zu erkennen an weißen freien Lamellen, ungerieftem Hutrand, häutigem hängendem Ring und der zwiebeligen Knolle in einer häutigen, sackartigen Scheide."
 haeufigkeit = "selten"
+beschreibung = "Weißer Wulstling mit weißlichem, ungerieftem Hut, weißen, freien Lamellen und weißem Stiel mit häutigem, hängendem Ring und zwiebelförmiger Knolle in einer häutigen, sackartigen Scheide. Er wächst vom Frühling bis zum Spätherbst im Mischwald, in Parks und Gärten, überwiegend bei Laubbäumen wie Buche, Eiche und Esche, und ist selten. Von weißen Champignons unterscheiden ihn vor allem die Lamellen, die immer weiß bleiben, und die Scheide an der Stielbasis, denn Champignons haben rosa bis braune Lamellen und keine Scheide. Der Weiße Knollenblätterpilz ist tödlich giftig."
+beschreibungEn = "A white amanita with a whitish cap without grooves, white free gills and a white stem with a membranous, hanging ring and an onion-shaped bulb in a membranous, sack-like volva. It grows from spring to late autumn in mixed woods, parks and gardens, mostly with broadleaf trees such as beech, oak and ash, and is rare. The key difference from white mushrooms of the genus Agaricus is the gills, which always stay white, and the volva at the stem base, because Agaricus species have pink to brown gills and no volva. The white form of the death cap is deadly poisonous."
+entwurf = true
 weitereNamen = ["Weißer Grüner Knollenblätterpilz", "Weißhütiger Knollenblätterpilz"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "halbkugelig", nach = "flach" }

@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nicht roh verwenden. Der Ring muss sich am Stiel verschieben lassen, sonst ist es kein Riesenschirmling; sitzt das Velum noch am Hutrand, löst man es mit den Fingern und prüft den Ring. Riesenschirmlinge aus Gärten und von Komposthaufen stehen lassen, dort wächst der Gift-Riesenschirmling. Auch kleine Schirmlinge ohne verschiebbaren Ring bleiben stehen."
+beschreibung = "Riesenschirmling mit braunockerem, grob schollig braunschuppigem Hut mit braunem, zitzenartigem Buckel, weißen, freien Lamellen und schlankem, weißlichem bis hellbräunlichem Stiel mit schwacher Natterung und verschiebbarem Ring. Er wächst vom Frühsommer bis zum Spätherbst in Mischwäldern, Parks, Gärten und Heiden. Vom ähnlichen Safranschirmling unterscheidet ihn vor allem das Fleisch, das nicht rötet, denn beim Safranschirmling läuft es safranrot an. Kleine Schirmlinge ohne verschiebbaren Ring sind dagegen oft giftig."
+beschreibungEn = "A parasol with a brown-ochre cap with coarse, brown, crusty scales and a brown, nipple-like umbo, white free gills and a slender, whitish to light brownish stem with a faint snakeskin pattern and a movable ring. It grows from early summer to late autumn in mixed woods, parks, gardens and heaths. The key difference from the similar shaggy parasol is the flesh, which does not turn red, because the flesh of the shaggy parasol turns saffron-red. Small dapperlings without a movable ring, in contrast, are often poisonous."
+entwurf = true
 weitereNamen = ["Schlanker Riesenschirmling", "Zitzenwarziger Riesenschirmling", "Warzenschirmpilz", "Gedrungener Riesen-Zitzenschirmling", "Spitzgebuckelter Riesenschirmling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutform = { von = "eifoermig" }

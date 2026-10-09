@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Giftig. Zu erkennen am aufdringlich anis- bis fenchelartigen Geruch, am hygrophanen graubraunen Hut mit eingedrückter Mitte und am knorpelig-elastischen, oft breitgedrückten Stiel."
+beschreibung = "Kleiner Trichterling mit karamell- bis graubraunem, hygrophanem Hut mit eingedrückter Mitte, grauweißen, bogig herablaufenden Lamellen und knorpelig-elastischem, oft breitgedrücktem Stiel. Er wächst vom Sommer bis zum Spätherbst im Mischwald, gern im Nadelwald, im Laub oder Moos an feuchten Stellen. Vom ähnlichen Graublättrigen Trichterling unterscheidet ihn vor allem der aufdringliche Geruch nach Anis oder Fenchel, denn der Graublättrige Trichterling riecht nicht nach Anis und hat deutlich graue Lamellen. Der Fleischbräunliche Anistrichterling ist giftig."
+beschreibungEn = "A small funnel mushroom with a caramel-brown to grey-brown, hygrophanous cap with a depressed centre, grey-white gills that run down the stem in a curve and a cartilaginous, elastic stem that is often flattened. It grows from summer to late autumn in mixed woods, often in coniferous woods, in leaf litter or moss in moist places. The key difference from the similar Atractosporocybe inornata is the strong smell of anise or fennel, because that species does not smell of anise and has clearly grey gills. Clitocybe obsoleta is poisonous."
+entwurf = true
 weitereNamen = ["Wohlriechender Trichterling"]
 synonyme = ["Omphalia obsoleta", "Agaricus obsoletus"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng", schneide = "glatt" }

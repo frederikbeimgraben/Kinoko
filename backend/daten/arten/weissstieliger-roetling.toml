@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilzsuche führt ihn als giftig und verdächtig. Der mehlige Geruch verleitet dazu, ihn für einen Speisepilz zu halten."
+beschreibung = "Rötling mit graubraunem bis gelbbraunem, glattem, mattem Hut mit gebuckelter Mitte, jung weißlichen, später rosa Lamellen und weißem, faserigem Stiel. Er wächst vom Frühling bis zum Herbst in Mischwäldern, Parks und auf Wiesen. Vom ähnlichen Schildrötling unterscheidet ihn vor allem der Standort, denn der Schildrötling wächst im Frühjahr bei Rosengewächsen in Hecken und auf Streuobstwiesen. Der Weißstielige Rötling ist giftig."
+beschreibungEn = "A pinkgill with a grey-brown to yellow-brown, smooth, matt cap with an umbonate centre, gills that are whitish when young and pink later, and a white, fibrous stem. It grows from spring to autumn in mixed woods, parks and meadows. The key difference from the similar Entoloma clypeatum is the habitat, because that species grows in spring with members of the rose family in hedges and orchard meadows. Entoloma lividoalbum is poisonous."
+entwurf = true
 weitereNamen = ["Weißgrauer Rötling", "Herbstschildrötling"]
 synonyme = ["Rhodophyllus lividoalbus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }

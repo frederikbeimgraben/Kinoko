@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "linde", "buche"]
 speisewertHinweis = "Extrem bitter, Magen-Darm-Beschwerden sind laut DGfM nicht ausgeschlossen. Zu erkennen am grauen bis grauweißen Hut, an den zitronengelben Röhren, am stark blauenden Fleisch und am Geruch nach Maggi oder Tinte."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Großer Röhrling mit grauem bis grauweißem, polsterförmigem Hut, jung leuchtend zitronengelben Röhren, die auf Druck intensiv blau verfärben, und gelblichem Stiel mit Netz und wurzelartig verlängerter, zugespitzter Basis. Er wächst vom Sommer bis zum Spätherbst in Laubwäldern, Parks und Gärten, meist bei Eiche, Linde und Buche, gern auf kalkreichem Boden. Typisch ist der unangenehme Geruch nach Maggi oder Tinte. Der Wurzelnde Bitterröhrling ist giftig."
+beschreibungEn = "A large bolete with a grey to grey-white, cushion-shaped cap, tubes that are bright lemon-yellow when young and turn intensely blue when pressed, and a yellowish stem with a net and a root-like, pointed base. It grows from summer to late autumn in broadleaf woods, parks and gardens, mostly with oak, lime and beech, often on calcareous soil. A typical feature is the unpleasant smell of stock cubes or ink. Caloboletus radicans is poisonous."
+entwurf = true
 weitereNamen = ["Bitterschwamm"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "gewoelbt" }

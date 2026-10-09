@@ -11,6 +11,9 @@ baeume = ["kiefer"]
 speisewertHinweis = "Sehr selten und in Deutschland stark gefährdet (Rote Liste 2). Den Fund besser stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Reizker mit orangem bis beige-orangebräunlichem, gezontem, weißlich bereiftem Hut, der grünblau fleckt, orangeockerfarbenen Lamellen und blutroter bis weinroter Milch, die nach etwa 20 Minuten grün wird; der Stiel ist weinrot und hat Grübchen. Er wächst vom Sommer bis zum Spätherbst bei Kiefern, ist im Mittelmeerraum häufiger, bei uns sehr selten und in Deutschland stark gefährdet. Vom ähnlichen Spangrünen Kiefernreizker unterscheidet ihn vor allem die Milch, denn beim Spangrünen Kiefernreizker ist sie zuerst orangerot und wird erst später weinrot."
+beschreibungEn = "A milkcap with an orange to beige-orange-brownish, zoned cap with a whitish bloom that develops blue-green spots, orange-ochre gills and blood-red to wine-red milk that turns green after about 20 minutes; the stem is wine-red and has pits. It grows from summer to late autumn with pine, is more common in the Mediterranean region, very rare in Germany and highly endangered there. The key difference from the similar Lactarius semisanguifluus is the milk, because in that species it is orange-red at first and turns wine-red only later."
+entwurf = true
 weitereNamen = ["Weinroter Reizker", "Blutreizker"]
 synonyme = ["Hypophyllum sanguifluum", "Lactifluus sanguifluus", "Lactarius vinosus", "Lactarius violaceus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Es gibt drei Ziegenlippen-Arten mit gleichem Speisewert. Sie trennen sich am Stiel: heller Stiel ohne Netz bei der Ziegenlippe, bräunlicher Stiel mit Netz beim Braunen Filzröhrling."
 haeufigkeit = "haeufig"
+beschreibung = "Röhrling mit graubraunem bis olivockerem, wildlederartig filzigem Hut, jung leuchtend gelben, später grünbraunen Röhren und fast weißem, schlankem Stiel ohne Netz. Sie wächst vom Sommer bis zum Herbst im Mischwald und ist relativ häufig. Vom ähnlichen Braunen Filzröhrling unterscheidet sie vor allem der Stiel, denn der Braune Filzröhrling hat einen gelblichen bis bräunlichen Stiel mit Netzzeichnung."
+beschreibungEn = "A bolete with a grey-brown to olive-ochre, suede-like felty cap, tubes that are bright yellow when young and green-brown later, and an almost white, slender stem without a net. It grows from summer to autumn in mixed woods and is fairly common. The key difference from the similar Xerocomus ferrugineus is the stem, because that species has a yellowish to brownish stem with a net."
+entwurf = true
 weitereNamen = ["Schafheiterl", "Gänsemaul", "Mooshäuptchen", "Hellstieliger Filz-Röhrling"]
 synonyme = ["Boletus subtomentosus"]
 fruchtschicht = { art = "roehren" }

@@ -7,6 +7,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Porling mit jung weißlichem, schnell zitronengelbem, glattem und mattem Hut mit scharf eingebogenem Rand, weißlichen Poren, die auf Druck gilben, und weißlichem, strunkartigem Stiel; oft sind mehrere Stiele verwachsen. Er wächst vom Sommer bis zum Spätherbst in Nadel- und Mischwäldern, gern in höheren Lagen, manchmal zusammen mit dem Schafporling. Vom ähnlichen Semmelporling unterscheidet ihn vor allem die Hutfarbe, denn der Semmelporling ist semmelgelb bis blass orange ohne Zitronengelb."
+beschreibungEn = "A polypore with a smooth, matt cap that is whitish when young and soon lemon-yellow and has a sharply incurved margin, whitish pores that turn yellow when pressed and a whitish, stump-like stem; often several stems are fused. It grows from summer to late autumn in coniferous and mixed woods, often at higher altitudes, sometimes together with the sheep polypore. The key difference from the similar Albatrellus confluens is the cap colour, because that species is buff-yellow to pale orange without lemon-yellow."
+entwurf = true
 fruchtschicht = { art = "poren" }
 hutrand = { von = ["scharf", "eingebogen"] }
 stielmerkmale = ["voll"]

@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
+beschreibung = "Schirmling mit weißem bis hellbraunem, seidig filzigem Hut mit federigem Rand, weißen bis hell cremefarbenen, freien Lamellen und weißem Stiel mit schmalem, doppelrandigem Ring und verdickter Basis, die darunter wurzelnd verschmälert ist. Er wächst vom Frühling bis zum Spätherbst in Parks, Gärten, im Wald und auf Wiesen. Vom tödlich giftigen Kegelhütigen Knollenblätterpilz unterscheidet ihn vor allem die Stielbasis, denn der Kegelhütige Knollenblätterpilz hat eine gerandete Knolle in einer häutigen Scheide. Er gilt als ungenießbar."
+beschreibungEn = "A dapperling with a white to light brown, silky-felty cap with a feathery margin, free white to light cream gills and a white stem with a narrow ring with a double edge and a swollen base that tapers below into a root. It grows from spring to late autumn in parks, gardens, woods and meadows. The key difference from the deadly poisonous destroying angel is the stem base, because the destroying angel has a bulb with a rim in a membranous volva. It is classed as inedible."
+entwurf = true
 weitereNamen = ["Wurzelnder Egerlingsschirmpilz"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutmerkmale = ["gebuckelt", "vertieft"]

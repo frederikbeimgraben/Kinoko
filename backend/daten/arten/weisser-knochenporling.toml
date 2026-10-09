@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche"]
 speisewertHinweis = "Ungenießbar, weil das Fleisch zäh ist und trocken steinhart wird. Vermutlich ungiftig."
 gefaehrdung = "extremSelten"
+beschreibung = "Porling mit mehreren weißen bis cremefarbenen, kahlen Hüten, die an kurzen Stielen aus einem gemeinsamen Strunk wachsen, winzigen, herablaufenden Poren und weißem, elastisch zähem Fleisch, das trocken sehr hart wird. Er wächst an toten Lärchenstämmen und -strünken, gern in höheren Gebirgswäldern, und ist in Deutschland extrem selten. Vom ähnlichen Schafporling unterscheidet ihn vor allem das Fleisch, denn der Schafporling hat festes, brüchiges Fleisch und wächst auf dem Boden. Er gilt als ungenießbar."
+beschreibungEn = "A polypore with several white to cream, smooth caps that grow on short stems from a common base, tiny pores that run down the stem and white flesh that is elastic and tough and becomes very hard when dry. It grows on dead larch trunks and stumps, often in mountain woods at higher altitudes, and is extremely rare in Germany. The key difference from the similar sheep polypore is the flesh, because the sheep polypore has firm, brittle flesh and grows on the ground. It is classed as inedible."
+entwurf = true
 synonyme = ["Grifola ossea", "Oligoporus obductus", "Grifola obducta", "Scutiger osseus", "Polypilus osseus"]
 fruchtschicht = { art = "roehren" }
 
