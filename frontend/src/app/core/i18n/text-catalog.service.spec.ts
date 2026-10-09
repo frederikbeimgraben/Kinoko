@@ -139,18 +139,33 @@ describe('TextCatalogService', () => {
     expect(setup.i18n.translate('nav.arten')).toBe('Pilzarten');
   });
 
-  it('holt die Vorgabe zurück', async () => {
+  it('holt die Vorgabe in jeder Sprache zurück und lädt den Katalog neu', async () => {
     const setup = build();
     const loaded = setup.catalog.load();
     setup.http.expectOne('/api/texts').flush(CATALOGUE, { headers: { ETag: TAG } });
     await loaded;
 
-    const reset = setup.catalog.reset('nav.karte', 'de');
-    const request = setup.http.expectOne('/api/texts/nav.karte?locale=de');
-    request.flush({ ...MAP, values: { de: 'Karte', en: 'Chart' }, changed: false });
+    const reset = setup.catalog.reset('nav.karte', ['de', 'en']);
+    const german = setup.http.expectOne('/api/texts/nav.karte?locale=de');
+    expect(german.request.method).toBe('DELETE');
+    german.flush(null, { status: 204, statusText: 'No Content' });
+    await vi.waitFor(() => {
+      setup.http
+        .expectOne('/api/texts/nav.karte?locale=en')
+        .flush(null, { status: 204, statusText: 'No Content' });
+    });
+    const fresh = {
+      ...CATALOGUE,
+      revision: '2-2',
+      entries: [{ ...MAP, values: { de: 'Karte', en: 'Map' }, changed: false }, SPECIES],
+    };
+    await vi.waitFor(() => {
+      setup.http.expectOne('/api/texts').flush(fresh, { headers: { ETag: 'W/"2-2"' } });
+    });
     await reset;
 
-    expect(request.request.method).toBe('DELETE');
     expect(setup.i18n.translate('nav.karte')).toBe('Karte');
+    expect(setup.catalog.entries()[0].changed).toBe(false);
+    setup.http.verify();
   });
 });

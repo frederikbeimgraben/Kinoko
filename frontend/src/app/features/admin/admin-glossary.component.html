@@ -6,7 +6,12 @@
     [placeholder]="'glossary.search' | t"
     (valueChange)="onSearch($event)"
   />
-  @if (loaded()) {
+  @if (loaded() && entries().length === 0) {
+    <app-state-view
+      [icon]="search().trim() === '' ? 'info' : 'search'"
+      [title]="(search().trim() === '' ? 'glossary.empty' : 'glossary.notFound') | t"
+    />
+  } @else if (loaded()) {
     <div class="adminGlossary__list">
       <app-row-group>
         @for (entry of entries(); track entry.id) {

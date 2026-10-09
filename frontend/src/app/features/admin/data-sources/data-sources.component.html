@@ -5,6 +5,7 @@
     <app-banner
       kind="pending"
       icon="warning"
+      [flush]="true"
       [text]="line.text"
       [count]="line.count"
       (actionClick)="needsOpen.set(true)"

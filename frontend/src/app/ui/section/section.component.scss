@@ -11,4 +11,5 @@
 
 .sec > .lbl {
   padding-left: 4px;
+  line-height: var(--section-label-height, inherit);
 }

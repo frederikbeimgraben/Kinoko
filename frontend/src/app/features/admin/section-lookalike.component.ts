@@ -43,6 +43,8 @@ export class SectionLookalikeComponent {
   protected readonly at = computed(() => Number(this.index()));
 
   private readonly held = computed(() => this.state.species()?.lookalikes[this.at()] ?? null);
+  /** Only a stored lookalike can be removed. A new one has nothing to remove. */
+  protected readonly known = computed(() => this.held() !== null);
 
   protected readonly other = linkedSignal(() => this.held()?.slug ?? '');
   protected readonly difference = linkedSignal(() => this.held()?.difference ?? '');

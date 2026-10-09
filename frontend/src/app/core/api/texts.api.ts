@@ -17,7 +17,8 @@ export class TextsApi {
     return this.api.put<TextEntry>(`/texts/${encodeURIComponent(key)}`, { locale, value });
   }
 
-  reset(key: string, locale: Locale): Observable<TextEntry> {
-    return this.api.delete<TextEntry>(`/texts/${encodeURIComponent(key)}`, { locale });
+  /** The service answers 204 without a body. */
+  reset(key: string, locale: Locale): Observable<null> {
+    return this.api.delete<null>(`/texts/${encodeURIComponent(key)}`, { locale });
   }
 }

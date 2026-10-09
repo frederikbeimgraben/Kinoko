@@ -8,7 +8,6 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '../../core/i18n/
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -39,7 +38,6 @@ interface Draft {
   imports: [
     ActionBarComponent,
     FormFieldComponent,
-    LevelPillComponent,
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
@@ -127,11 +125,11 @@ export class TextsComponent {
   }
 
   protected async reset(): Promise<void> {
-    const draft = this.draft();
-    if (!draft) return;
-    await this.run(async () => {
-      for (const locale of this.locales) await this.catalog.reset(draft.key, locale);
-    });
+    const known = this.entryOf(this.draft()?.key ?? '');
+    if (!known) return;
+    // Only a language with a stored row can go back to its default.
+    const stored = this.locales.filter((locale) => locale in known.values);
+    await this.run(() => this.catalog.reset(known.key, stored));
   }
 
   private async run(step: () => Promise<void>): Promise<void> {

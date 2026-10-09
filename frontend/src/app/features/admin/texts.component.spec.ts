@@ -127,7 +127,7 @@ describe('TextsComponent', () => {
     expect(await screen.findByRole('button', { name: 'Zurücksetzen' })).toBeInTheDocument();
   });
 
-  it('holt die Vorgabe in beiden Sprachen zurück', async () => {
+  it('holt die Vorgabe in beiden Sprachen zurück, lädt neu und schließt das Blatt', async () => {
     const setup = await build();
     await screen.findByText('karte.legende');
 
@@ -139,12 +139,18 @@ describe('TextsComponent', () => {
         setup.http.expectOne(`/api/texts/arten.chip.mitVorhersage?locale=${locale}`),
       );
       expect(request.request.method).toBe('DELETE');
-      request.flush({ ...CHIP, changed: false });
+      request.flush(null, { status: 204, statusText: 'No Content' });
     }
+    const fresh = { ...CATALOGUE, entries: [LEGEND, { ...CHIP, changed: false }] };
+    await vi.waitFor(() => {
+      setup.http.expectOne('/api/texts').flush(fresh);
+    });
 
     await vi.waitFor(() => {
       expect(setup.toasts.success).toHaveLength(1);
     });
+    expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
+    expect(screen.queryByText('geändert')).not.toBeInTheDocument();
   });
 
   it('zeigt keine Zeile, wenn nichts zur Suche passt', async () => {

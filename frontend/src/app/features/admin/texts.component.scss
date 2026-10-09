@@ -9,15 +9,6 @@
   @include page.body;
 }
 
-// The mark is on the right of the key in the head.
-.texts__mark {
-  display: contents;
-}
-
-.texts__mark app-level-pill {
-  order: 1;
-}
-
 .texts__form {
   @include section.fields;
   @include page.sheet-body;
@@ -28,6 +19,14 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+// A long key breaks inside the row and stays in the sheet. The label keeps its width.
+.texts__form app-list-row {
+  --list-row-plain-shrink: 1;
+  --list-row-stack-min: max-content;
+
+  overflow-wrap: anywhere;
 }
 
 .texts__field {

@@ -57,9 +57,11 @@ export class TextCatalogService {
     await this.replace(await firstValueFrom(this.api.change(key, locale, value)));
   }
 
-  /** Resets a text to its default. */
-  async reset(key: string, locale: Locale): Promise<void> {
-    await this.replace(await firstValueFrom(this.api.reset(key, locale)));
+  /** Resets a text to its default in each given language, then loads the catalogue again.
+   * The reset gives no body, so only the catalogue has the default values. */
+  async reset(key: string, locales: readonly Locale[]): Promise<void> {
+    for (const locale of locales) await firstValueFrom(this.api.reset(key, locale));
+    await this.load();
   }
 
   private async replace(entry: TextEntry): Promise<void> {

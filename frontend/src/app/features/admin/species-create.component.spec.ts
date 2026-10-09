@@ -18,11 +18,11 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
 
 // The sheet has many buttons. Under load, the query by role takes longer.
 describe('SpeciesCreateComponent', { timeout: 20_000 }, () => {
-  it('nennt die drei Abschnitte und die Vorgaben der Einordnung', async () => {
+  it('nennt die Abschnitte und lässt die Einordnung offen', async () => {
     const { container } = await build();
 
     expect(screen.getByRole('heading', { name: 'Art anlegen' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Einordnung/ })).toHaveTextContent('Röhrling');
+    expect(screen.getByRole('button', { name: /Einordnung/ })).toHaveTextContent('–');
     expect(screen.getByRole('tab', { name: 'essbar' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('Name', { selector: '.lbl' })).toBeInTheDocument();
     await noViolations(container);
@@ -50,18 +50,20 @@ describe('SpeciesCreateComponent', { timeout: 20_000 }, () => {
     const { http } = await build();
 
     await userEvent.type(screen.getByLabelText('Name'), 'Schopftintling');
-    await userEvent.type(screen.getByLabelText('Wissenschaftlicher Name'), 'Coprinus comatus');
+    await userEvent.type(screen.getByLabelText('Lateinischer Name'), 'Coprinus comatus');
     await userEvent.type(screen.getByLabelText('Weitere Namen'), 'Spargelpilz');
     await userEvent.type(screen.getByLabelText('Quelle'), 'https://123pilzsuche.de/a.htm');
     await userEvent.click(screen.getByRole('checkbox', { name: 'Nach BArtSchV geschützt' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Anlegen und Merkmale prüfen' }));
+    await userEvent.click(screen.getByRole('button', { name: /Einordnung/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Tintling' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Anlegen' }));
 
     const call = http.expectOne('/api/species');
     expect(call.request.method).toBe('POST');
     expect(call.request.body).toEqual({
       name: 'Schopftintling',
       scientificName: 'Coprinus comatus',
-      group: 'bolete',
+      group: 'inkcap',
       edibility: 'edible',
       protection: 'personal_use',
       names: [{ name: 'Spargelpilz', kind: 'synonym' }],
@@ -77,12 +79,23 @@ describe('SpeciesCreateComponent', { timeout: 20_000 }, () => {
     call.flush({ slug: 'coprinus-comatus' });
   });
 
+  it('öffnet ohne Einordnung die Auswahl und schickt nichts', async () => {
+    const { http } = await build();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Anlegen' }));
+
+    expect(await screen.findByRole('button', { name: 'Tintling' })).toBeInTheDocument();
+    http.expectNone('/api/species');
+  });
+
   it('gibt den Fuß wieder frei, wenn das Anlegen scheitert', async () => {
     const { http } = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anlegen und Merkmale prüfen' }));
+    await userEvent.click(screen.getByRole('button', { name: /Einordnung/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Tintling' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Anlegen' }));
     http.expectOne('/api/species').flush('', { status: 422, statusText: 'Unprocessable' });
 
-    expect(await screen.findByRole('button', { name: 'Anlegen und Merkmale prüfen' })).toBeEnabled();
+    expect(await screen.findByRole('button', { name: 'Anlegen' })).toBeEnabled();
   });
 });

@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, convertToParamMap } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Router } from '@angular/router';
+import { Router, type NavigationExtras } from '@angular/router';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -186,10 +186,15 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
     await build();
     const router = TestBed.inject(Router);
     const paths: string[] = [];
-    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
-      paths.push(parts.join('/'));
-      return Promise.resolve(true);
-    });
+    vi.spyOn(router, 'navigate').mockImplementation(
+      (parts: readonly unknown[], extras?: NavigationExtras) => {
+        const query = new URLSearchParams(
+          extras?.queryParams as Record<string, string> | undefined,
+        ).toString();
+        paths.push(parts.join('/') + (query === '' ? '' : `?${query}`));
+        return Promise.resolve(true);
+      },
+    );
     await screen.findByRole('button', { name: /Hut/ });
 
     await userEvent.click(screen.getByRole('button', { name: /^Hut/ }));
@@ -203,7 +208,7 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
       '/verwaltung/arten/boletus-edulis/zeitraum',
       '/verwaltung/arten/boletus-edulis/fruchtschicht',
       '/verwaltung/arten/boletus-edulis/sinne/geruch',
-      '/verwaltung/arten/boletus-edulis/verfaerbung/cap/0',
+      '/verwaltung/arten/boletus-edulis/verfaerbung/cap/0?ausloeser=reagent',
     ]);
   });
 

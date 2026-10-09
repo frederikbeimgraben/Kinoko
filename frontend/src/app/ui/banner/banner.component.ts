@@ -36,7 +36,7 @@ const ICON: Record<BannerKind, IconName> = {
   imports: [RippleDirective, SvgIconComponent, TranslatePipe],
   templateUrl: './banner.component.html',
   styleUrl: './banner.component.scss',
-  host: { '[class.banner-host--float]': 'float()' },
+  host: { '[class.banner-host--float]': 'float()', '[class.banner-host--flush]': 'flush()' },
 })
 export class BannerComponent {
   private readonly i18n = inject(I18nService);
@@ -52,6 +52,8 @@ export class BannerComponent {
   readonly chev = input<boolean>();
   /** The banner floats over the map, per `.banner.float`. */
   readonly float = input(false);
+  /** In a page with its own gutter, the banner has the width of the rows, without the 8 px margin. */
+  readonly flush = input(false);
   readonly actionIcon = input<IconName>();
   readonly actionLabel = input<TranslationKey>();
 

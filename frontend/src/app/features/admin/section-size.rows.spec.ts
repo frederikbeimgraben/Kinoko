@@ -1,5 +1,5 @@
 import type { SpeciesEntry } from '../../core/api/models';
-import { measurementOf, withMeasurement } from './section-size.rows';
+import { measurementOf, unitsOf, withMeasurement } from './section-size.rows';
 
 const CAP = {
   dimension: 'width' as const,
@@ -13,6 +13,13 @@ const SPECIES = {
 } as unknown as SpeciesEntry;
 
 describe('section-size.rows', () => {
+  it('bietet für ein Teil mm und cm, für eine Spore µm und behält eine gespeicherte Einheit', () => {
+    expect(unitsOf('cap', undefined)).toEqual(['mm', 'cm']);
+    expect(unitsOf('cap', 'cm')).toEqual(['mm', 'cm']);
+    expect(unitsOf('spore', undefined)).toEqual(['um']);
+    expect(unitsOf('cap', 'um')).toEqual(['mm', 'cm', 'um']);
+  });
+
   it('findet das Maß eines Teils, sonst nichts', () => {
     expect(measurementOf(SPECIES, 'cap', 'width')).toEqual(CAP);
     expect(measurementOf(SPECIES, 'cap', 'height')).toBeNull();

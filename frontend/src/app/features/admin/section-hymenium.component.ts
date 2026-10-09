@@ -12,6 +12,7 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { PART_TEXT } from '../species/labels';
+import { injectColourLabel } from './colour-label';
 import { SpeciesEditorStore } from './species-editor.store';
 import { colourRows, type ColourRow } from './section-part.rows';
 import {
@@ -50,6 +51,7 @@ interface ChipField {
 })
 export class SectionHymeniumComponent {
   private readonly i18n = inject(I18nService);
+  private readonly colourLabel = injectColourLabel();
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorStore);
 
@@ -89,7 +91,7 @@ export class SectionHymeniumComponent {
     const kind = this.kind();
     if (kind === null || kind === 'spines' || kind === 'folds') return [];
     const title = this.i18n.translate('admin.colour.title', { teil: this.i18n.translate(PART_TEXT[kind]) });
-    return colourRows(this.state.species(), kind, title, this.i18n.translate('common.to'));
+    return colourRows(this.state.species(), kind, title, this.i18n.translate('common.to'), this.colourLabel);
   });
 
   constructor() {

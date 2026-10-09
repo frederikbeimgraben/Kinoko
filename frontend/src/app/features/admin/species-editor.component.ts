@@ -29,6 +29,7 @@ import {
   type RowText,
 } from './species-editor.rows';
 import { heldParts, lookalikeWrites } from './species-lists';
+import { injectColourLabel } from './colour-label';
 import { termLabel } from './term-label';
 
 /** The route step of each row in the section of the other features. */
@@ -62,6 +63,7 @@ const MORE_STEP: Readonly<Record<string, readonly string[]>> = {
 })
 export class SpeciesEditorComponent {
   private readonly i18n = inject(I18nService);
+  private readonly colourLabel = injectColourLabel();
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorStore);
 
@@ -95,6 +97,7 @@ export class SpeciesEditorComponent {
     text: (key, values) => this.i18n.translate(key, values),
     locale: this.i18n.locale(),
     term: (term) => termLabel(term, this.i18n),
+    colour: (colour) => this.colourLabel(colour),
   }));
 
   private rows(build: (species: SpeciesEntry) => EditorRow[]): EditorRow[] {
@@ -149,10 +152,12 @@ export class SpeciesEditorComponent {
     if (change !== undefined) this.open(['verfaerbung', change.part, String(at)]);
   }
 
-  /** A new colour change starts on the first part of the species. */
+  /** A new colour change starts on the first part of the species. The row adds a reagent, so it opens that tab. */
   protected addChange(): void {
     const part: BodyPart = heldParts(this.species())[0] ?? 'cap';
-    this.open(['verfaerbung', part, String(this.species()?.colourChanges.length ?? 0)]);
+    this.open(['verfaerbung', part, String(this.species()?.colourChanges.length ?? 0)], {
+      ausloeser: 'reagent',
+    });
   }
 
   protected openMore(key: string): void {
@@ -181,8 +186,8 @@ export class SpeciesEditorComponent {
     this.picking.set(false);
   }
 
-  private open(steps: readonly string[]): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug(), ...steps]);
+  private open(steps: readonly string[], queryParams: Record<string, string> = {}): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug(), ...steps], { queryParams });
   }
 
   protected setForecast(enabled: boolean): void {

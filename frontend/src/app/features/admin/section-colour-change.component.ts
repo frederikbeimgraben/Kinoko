@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import type {
   BodyPart,
   ColourChange,
@@ -27,6 +29,7 @@ import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segme
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { PART_TEXT, SPEED_TEXT } from '../species/labels';
 import { CatalogueStore } from './catalogue.store';
+import { injectColourLabel, toneName } from './colour-label';
 import { TermsStore } from './terms.store';
 import { SpeciesEditorStore } from './species-editor.store';
 import { SPEEDS, TRIGGER_GROUPS, TRIGGER_GROUP_TEXT, changeAt } from './section-colour-change.rows';
@@ -62,6 +65,7 @@ export class SectionColourChangeComponent {
   private readonly state = inject(SpeciesEditorStore);
   private readonly terms = inject(TermsStore);
   private readonly catalogue = inject(CatalogueStore);
+  private readonly colourLabel = injectColourLabel();
 
   protected readonly slug = injectRouteParam('slug');
   private readonly partParam = injectRouteParam('part', 'cap');
@@ -79,13 +83,28 @@ export class SectionColourChangeComponent {
     const value = this.partParam();
     return this.change()?.part ?? (isBodyPart(value) ? value : 'cap');
   });
-  protected readonly kind = linkedSignal<TriggerGroup>(() => this.change()?.kind ?? 'mechanical');
+  /** The editor row "Add reagent" asks for the reagent tab, for example `?ausloeser=reagent`. */
+  private readonly askedKind = toSignal(
+    inject(ActivatedRoute).queryParamMap.pipe(map((params) => params.get('ausloeser') ?? '')),
+    { initialValue: '' },
+  );
+  protected readonly kind = linkedSignal<TriggerGroup>(
+    () => this.change()?.kind ?? TRIGGER_GROUPS.find((one) => one === this.askedKind()) ?? 'mechanical',
+  );
   protected readonly triggers = linkedSignal<readonly string[]>(
     () => this.change()?.triggers.map((one) => one.id) ?? [],
   );
   protected readonly speed = linkedSignal<Speed | null>(() => this.change()?.speed ?? null);
   protected readonly from = linkedSignal<ColourValue | null>(() => this.change()?.from ?? null);
   protected readonly to = linkedSignal<ColourValue | null>(() => this.change()?.to ?? null);
+  protected readonly fromName = computed(() => {
+    const from = this.from();
+    return from === null ? null : this.colourLabel(from);
+  });
+  protected readonly toName = computed(() => {
+    const to = this.to();
+    return to === null ? '' : this.colourLabel(to);
+  });
   protected readonly openEnd = linkedSignal<ColourChange | null, End>({
     source: this.change,
     computation: () => 'to',
@@ -158,8 +177,11 @@ export class SectionColourChangeComponent {
   }
 
   protected chooseHex(hex: string): void {
-    const tone = this.swatches().find((one) => one.value === hex);
-    const colour: ColourValue = { hex, name: tone?.label ?? hex };
+    // The catalogue keeps German names, also when the editor works in English.
+    const colour: ColourValue = {
+      hex,
+      name: toneName(hex, this.catalogue.standardColours(), this.i18n) ?? hex,
+    };
     if (this.openEnd() === 'from') this.from.set(colour);
     else this.to.set(colour);
   }

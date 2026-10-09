@@ -65,15 +65,15 @@
       (valueChange)="set('source', $event)"
     />
   </app-section>
-</div>
 
-<app-action-bar
-  [primary]="'admin.species.createAndCheckTraits' | t"
-  [secondary]="'common.cancel' | t"
-  [busy]="saving()"
-  (primaryClick)="create()"
-  (secondaryClick)="back()"
-/>
+  <app-action-bar
+    [primary]="'admin.species.createSubmit' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    [busy]="saving()"
+    (primaryClick)="create()"
+  />
+</div>
 
 <app-overlay-host [open]="picking() !== null" [modal]="true" (closed)="picking.set(null)">
   @if (picking() !== null) {

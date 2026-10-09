@@ -16,10 +16,12 @@ import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
 import { SpeciesEditorStore } from './species-editor.store';
 import { UNIT_TEXT } from './species-editor.rows';
+import { injectColourLabel } from './colour-label';
 import { termLabel } from './term-label';
 import { changeRows, colourRows, sizeRows, type ColourRow, type SizeRow } from './section-part.rows';
 import {
   changes,
+  heldParts,
   isBodyPart,
   isTraitPart,
   partDescription,
@@ -48,6 +50,7 @@ import {
 })
 export class SectionPartComponent {
   private readonly i18n = inject(I18nService);
+  private readonly colourLabel = injectColourLabel();
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorStore);
 
@@ -57,6 +60,11 @@ export class SectionPartComponent {
   protected readonly part = computed<BodyPart | null>(() => {
     const value = this.partParam();
     return isBodyPart(value) ? value : null;
+  });
+  /** Only a stored part can be removed. A new one has nothing to remove. */
+  protected readonly known = computed(() => {
+    const part = this.part();
+    return part !== null && heldParts(this.state.species()).includes(part);
   });
 
   protected readonly title = computed(() => {
@@ -77,12 +85,14 @@ export class SectionPartComponent {
     const part = this.part();
     if (part === null) return [];
     const title = this.i18n.translate('admin.colour.title', { teil: this.i18n.translate(PART_TEXT[part]) });
-    return colourRows(this.state.species(), part, title, this.i18n.translate('common.to'));
+    return colourRows(this.state.species(), part, title, this.i18n.translate('common.to'), this.colourLabel);
   });
 
   protected readonly changes = computed<ColourRow[]>(() => {
     const part = this.part();
-    return part === null ? [] : changeRows(this.state.species(), part, (one) => termLabel(one, this.i18n));
+    return part === null
+      ? []
+      : changeRows(this.state.species(), part, (one) => termLabel(one, this.i18n), this.colourLabel);
   });
 
   private readonly note = computed(

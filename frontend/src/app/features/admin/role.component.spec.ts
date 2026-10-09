@@ -64,7 +64,7 @@ describe('RoleComponent', () => {
     expect(navigate).toHaveBeenCalledWith('/verwaltung/rollen');
   });
 
-  it('nimmt bei einer neuen Rolle ein Kürzel und legt sie an', async () => {
+  it('nimmt bei einer neuen Rolle ein Kürzel und legt sie ohne leere Beschreibung an', async () => {
     const { api, refresh } = await build('neu');
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Übersetzer');
@@ -74,9 +74,7 @@ describe('RoleComponent', () => {
     refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(api.created).toEqual([
-      { slug: 'uebersetzer', name: 'Übersetzer', description: null, permissions: ['text.edit'] },
-    ]);
+    expect(api.created).toEqual([{ slug: 'uebersetzer', name: 'Übersetzer', permissions: ['text.edit'] }]);
   });
 
   it('lässt sich ohne Namen und Kürzel nicht speichern', async () => {

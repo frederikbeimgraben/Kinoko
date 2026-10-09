@@ -61,7 +61,10 @@ export class SpeciesCreateComponent {
   protected readonly picking = signal<Picker | null>(null);
   protected readonly saving = signal(false);
 
-  protected readonly groupName = computed(() => this.name(GROUP_NAME_TEXT[this.draft().group]));
+  protected readonly groupName = computed(() => {
+    const group = this.draft().group;
+    return group === null ? this.i18n.translate('common.none') : this.name(GROUP_NAME_TEXT[group]);
+  });
 
   protected readonly pickerTitle = computed(() => this.i18n.translate('admin.species.field.group'));
 
@@ -69,7 +72,7 @@ export class SpeciesCreateComponent {
     Object.keys(GROUP_NAME_TEXT).map((key) => ({ key, name: this.name(GROUP_NAME_TEXT[key]) })),
   );
 
-  protected readonly chosen = computed<string>(() => this.draft().group);
+  protected readonly chosen = computed<string>(() => this.draft().group ?? '');
 
   /** The edibility is a segmented choice, as the board shows it. */
   protected readonly edibilities = computed<SegmentOption[]>(() =>
@@ -85,9 +88,15 @@ export class SpeciesCreateComponent {
     this.picking.set(null);
   }
 
+  /** Without a group, the species cannot be made: the group sheet opens. */
   protected create(): void {
+    const write = toWrite(this.draft(), this.today());
+    if (write === null) {
+      this.picking.set('group');
+      return;
+    }
     this.saving.set(true);
-    this.api.create(toWrite(this.draft(), this.today())).subscribe({
+    this.api.create(write).subscribe({
       next: (entry) => {
         void this.router.navigateByUrl(`/verwaltung/arten/${entry.slug}`);
       },

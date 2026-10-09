@@ -27,6 +27,14 @@ describe('AdminGlossaryComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt ohne Begriffe einen leeren Zustand', async () => {
+    const api = new GlossaryApiDouble();
+    api.entryList = [];
+    await build(api);
+
+    expect(screen.getByText('Noch keine Begriffe')).toBeInTheDocument();
+  });
+
   it('legt einen Begriff über das Blatt an', async () => {
     const { api } = await build();
 
@@ -100,8 +108,9 @@ describe('AdminGlossaryComponent', () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
-    await userEvent.type(screen.getByRole('textbox', { name: 'Begriff suchen' }), 'lam');
+    await userEvent.type(screen.getByRole('textbox', { name: 'Begriff suchen' }), 'zzz');
     expect(screen.queryByRole('button', { name: /Hymenium/ })).not.toBeInTheDocument();
+    expect(screen.getByText('Begriff nicht gefunden')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
     expect(navigate).toHaveBeenCalledWith('/verwaltung');

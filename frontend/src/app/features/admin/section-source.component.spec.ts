@@ -51,6 +51,7 @@ describe('SectionSourceComponent', () => {
     expect(screen.getByRole('tab', { name: 'Profil' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByLabelText('Titel')).toHaveValue('123pilzsuche.de');
     expect(screen.getByLabelText('Adresse')).toHaveValue('123pilzsuche.de/daten/details/Steinpilz.htm');
+    expect(screen.getByText('10. September 2026')).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -76,10 +77,11 @@ describe('SectionSourceComponent', () => {
     ]);
   });
 
-  it('hängt eine weitere Quelle an', async () => {
+  it('hängt eine weitere Quelle an und bietet bei ihr kein Entfernen an', async () => {
     const { http } = await build('1');
     await screen.findByRole('heading', { name: 'Quelle' });
 
+    expect(screen.queryByRole('button', { name: 'Quelle entfernen' })).not.toBeInTheDocument();
     await userEvent.type(screen.getByLabelText('Titel'), 'Wikipedia');
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 

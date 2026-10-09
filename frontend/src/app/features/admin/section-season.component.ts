@@ -20,11 +20,23 @@ const MONTHS = Array.from({ length: LAST_MONTH }, (_, at) => at + FIRST_MONTH);
 /** The month that a sheet chooses. */
 type MonthField = 'from' | 'to' | 'peak';
 
+const FIELDS: readonly MonthField[] = ['from', 'to', 'peak'];
+
+/** The option of the peak without a month. */
+const NO_MONTH = 'keiner';
+
 const FIELD_TEXT: Readonly<Record<MonthField, TranslationKey>> = {
   from: 'common.from',
   to: 'common.to',
   peak: 'admin.season.peak',
 };
+
+/** A labelled field of the page: its month, or the text for none. */
+interface MonthRow {
+  readonly id: MonthField;
+  readonly label: string;
+  readonly value: string;
+}
 
 /** The season of a species: a band, the first and the last month and the month with the most finds. */
 @Component({
@@ -54,27 +66,34 @@ export class SectionSeasonComponent {
   protected readonly peak = linkedSignal<number | null>(() => this.state.species()?.periodPeakMonth ?? null);
   protected readonly picking = signal<MonthField | null>(null);
 
-  protected readonly fromName = computed(() => this.monthName(this.from()));
-  protected readonly toName = computed(() => this.monthName(this.to()));
-  protected readonly peakName = computed(() => {
-    const peak = this.peak();
-    return peak === null ? this.i18n.translate('common.none') : this.monthName(peak);
-  });
+  protected readonly fields = computed<MonthRow[]>(() =>
+    FIELDS.map((id) => {
+      const month = this.monthOf(id);
+      return {
+        id,
+        label: this.i18n.translate(FIELD_TEXT[id]),
+        value: month === null ? this.i18n.translate('common.none') : this.monthName(month),
+      };
+    }),
+  );
 
   protected readonly pickTitle = computed(() => {
     const field = this.picking();
     return field === null ? '' : this.i18n.translate(FIELD_TEXT[field]);
   });
 
-  protected readonly months = computed<OptionSheetOption[]>(() =>
-    MONTHS.map((month) => ({ id: String(month), title: this.monthName(month) })),
-  );
+  /** Only the peak is optional: its sheet starts with a row without a month. */
+  protected readonly choices = computed<OptionSheetOption[]>(() => {
+    const months = MONTHS.map((month) => ({ id: String(month), title: this.monthName(month) }));
+    const none = { id: NO_MONTH, title: this.i18n.translate('common.none') };
+    return this.picking() === 'peak' ? [none, ...months] : months;
+  });
 
   protected readonly picked = computed(() => {
     const field = this.picking();
     if (field === null) return null;
-    const value = field === 'from' ? this.from() : field === 'to' ? this.to() : this.peak();
-    return value === null ? null : String(value);
+    const value = this.monthOf(field);
+    return value === null ? NO_MONTH : String(value);
   });
 
   constructor() {
@@ -82,10 +101,10 @@ export class SectionSeasonComponent {
   }
 
   protected choose(id: string): void {
-    const month = Number(id);
+    const month = id === NO_MONTH ? null : Number(id);
     const field = this.picking();
-    if (field === 'from') this.from.set(month);
-    if (field === 'to') this.to.set(month);
+    if (field === 'from' && month !== null) this.from.set(month);
+    if (field === 'to' && month !== null) this.to.set(month);
     if (field === 'peak') this.peak.set(month);
     this.picking.set(null);
   }
@@ -101,6 +120,11 @@ export class SectionSeasonComponent {
 
   protected back(): void {
     void this.router.navigate(['/verwaltung/arten', this.slug()]);
+  }
+
+  private monthOf(field: MonthField): number | null {
+    if (field === 'from') return this.from();
+    return field === 'to' ? this.to() : this.peak();
   }
 
   private monthName(month: number): string {

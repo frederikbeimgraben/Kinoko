@@ -58,6 +58,14 @@ describe('SectionSizeComponent', () => {
     expect(screen.getByLabelText('von')).toHaveValue('4');
     expect(screen.getByLabelText('bis')).toHaveValue('20');
     expect(screen.getByRole('tab', { name: 'cm' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getAllByRole('tab').map((tab) => tab.textContent.trim())).toEqual([
+      'Breite',
+      'Höhe',
+      'Dicke',
+      'Länge',
+      'mm',
+      'cm',
+    ]);
     await noViolations(container);
   });
 
@@ -67,6 +75,7 @@ describe('SectionSizeComponent', () => {
 
     expect(screen.getByRole('tab', { name: 'Höhe' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByLabelText('von')).toHaveValue('');
+    expect(screen.queryByRole('button', { name: 'Maß entfernen' })).not.toBeInTheDocument();
   });
 
   it('wechselt die Strecke und leert die Spanne, die es nicht gibt', async () => {
@@ -108,7 +117,7 @@ describe('SectionSizeComponent', () => {
     const { http } = await build();
     await screen.findByRole('heading', { name: 'Hut · Maß' });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Abmessung entfernen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Maß entfernen' }));
 
     const call = http.expectOne('/api/species/boletus-edulis');
     expect(call.request.method).toBe('PUT');

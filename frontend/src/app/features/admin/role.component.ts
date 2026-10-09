@@ -107,7 +107,7 @@ export class RoleComponent {
   protected readonly title = computed(() => {
     const current = this.role();
     if (current) return roleName(this.i18n, current.name);
-    return this.i18n.translate(this.creating() ? 'admin.role.new' : 'admin.roles.title');
+    return this.i18n.translate(this.creating() ? 'admin.role.create' : 'admin.roles.title');
   });
 
   /** The name field of a built-in role shows the translated name, not the key. */
@@ -168,7 +168,15 @@ export class RoleComponent {
     };
     this.store.saveRole(
       this.creating()
-        ? { input: { slug: this.slug().trim(), name: this.name().trim(), description, permissions }, onDone }
+        ? {
+            input: {
+              slug: this.slug().trim(),
+              name: this.name().trim(),
+              ...(description === null ? {} : { description }),
+              permissions,
+            },
+            onDone,
+          }
         : { id: this.id(), patch: { name: this.name().trim(), description, permissions }, onDone },
     );
   }

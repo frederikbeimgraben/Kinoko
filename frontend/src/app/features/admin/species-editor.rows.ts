@@ -1,6 +1,7 @@
 import type { BodyPart, ColourGroup, Measurement, SpeciesEntry, TermRef, Unit } from '../../core/api/models';
 import { decimal } from '../../core/i18n/numbers';
 import type { TranslationKey } from '../../core/i18n/translations';
+import type { NamedColour } from '../species/catalogue-text';
 import { HYMENIUM_TEXT, PART_TEXT } from '../species/labels';
 import { heldParts, partDescription } from './species-lists';
 
@@ -17,6 +18,8 @@ export interface RowText {
   readonly locale: string;
   /** The name of a term in the UI language. */
   readonly term: (term: TermRef) => string;
+  /** The name of a catalogue colour in the UI language. */
+  readonly colour: (colour: NamedColour) => string;
 }
 
 export const UNIT_TEXT: Readonly<Record<Unit, TranslationKey>> = {
@@ -31,17 +34,17 @@ export function spanText(one: Measurement, t: RowText): string {
 }
 
 /** A gradient shows as a range. All other modes show as a list. */
-function groupText(group: ColourGroup, to: string): string {
-  const names = group.colours.map((colour) => colour.name);
-  return group.mode === 'gradient' ? names.join(` ${to} `) : names.join(', ');
+function groupText(group: ColourGroup, t: RowText): string {
+  const names = group.colours.map((colour) => t.colour(colour));
+  return group.mode === 'gradient' ? names.join(` ${t.text('common.to')} `) : names.join(', ');
 }
 
 /** The colour text of each part, group by group. */
-function colourText(species: SpeciesEntry, to: string): Map<BodyPart, string> {
+function colourText(species: SpeciesEntry, t: RowText): Map<BodyPart, string> {
   const out = new Map<BodyPart, string>();
   for (const group of species.colours) {
     const known = out.get(group.part);
-    const text = groupText(group, to);
+    const text = groupText(group, t);
     out.set(group.part, known === undefined ? text : `${known}, ${text}`);
   }
   return out;
@@ -49,7 +52,7 @@ function colourText(species: SpeciesEntry, to: string): Map<BodyPart, string> {
 
 /** The feature rows: for each part, the size and the colours, as the design board shows. A part with only a text shows the text. */
 export function featureRows(species: SpeciesEntry, extra: readonly BodyPart[], t: RowText): EditorRow[] {
-  const colours = colourText(species, t.text('common.to'));
+  const colours = colourText(species, t);
   const held = heldParts(species);
   const parts = [...held, ...extra.filter((part) => !held.includes(part))];
   return parts.map((part) => {
@@ -69,7 +72,7 @@ export function changeRows(species: SpeciesEntry, t: RowText): EditorRow[] {
   return species.colourChanges.map((one, at) => ({
     key: `verfaerbung-${String(at)}`,
     title: one.triggers.map((trigger) => t.term(trigger)).join(', ') || t.text(PART_TEXT[one.part]),
-    value: one.to.name,
+    value: t.colour(one.to),
   }));
 }
 

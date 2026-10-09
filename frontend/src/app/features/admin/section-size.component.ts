@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import type { BodyPart, Dimension, Measurement, MeasurementGroup, Unit } from '../../core/api/models';
-import { DIMENSIONS, UNITS } from '../../core/api/models';
+import { DIMENSIONS } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { decimal } from '../../core/i18n/numbers';
 import { injectRouteParam } from '../../core/navigation/route-param';
@@ -16,7 +16,7 @@ import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
 import { SpeciesEditorStore } from './species-editor.store';
-import { measurementOf, numberOf, withMeasurement } from './section-size.rows';
+import { measurementOf, numberOf, unitsOf, withMeasurement } from './section-size.rows';
 import { UNIT_TEXT } from './species-editor.rows';
 import { isBodyPart, withoutMeasurement } from './species-lists';
 
@@ -58,14 +58,20 @@ export class SectionSizeComponent {
     return DIMENSIONS.find((one) => one === asked) ?? 'width';
   });
 
-  private readonly chosen = computed<Measurement | null>(() => {
+  protected readonly chosen = computed<Measurement | null>(() => {
     const part = this.part();
     return part === null ? null : measurementOf(this.state.species(), part, this.dimension());
   });
 
   protected readonly low = linkedSignal(() => valueText(this.chosen()?.low, this.i18n.locale()));
   protected readonly high = linkedSignal(() => valueText(this.chosen()?.high, this.i18n.locale()));
-  protected readonly unit = linkedSignal<Unit>(() => this.chosen()?.unit ?? 'cm');
+  /** The units the part offers. A stored value in another unit adds its unit. */
+  private readonly offered = computed<readonly Unit[]>(() => {
+    const part = this.part();
+    return part === null ? [] : unitsOf(part, this.chosen()?.unit);
+  });
+  // Without a stored value, the last unit applies: cm for a part, µm for a spore.
+  protected readonly unit = linkedSignal<Unit>(() => this.chosen()?.unit ?? this.offered().at(-1) ?? 'cm');
 
   protected readonly title = computed(() => {
     const part = this.part();
@@ -79,7 +85,7 @@ export class SectionSizeComponent {
   );
 
   protected readonly units = computed<SegmentOption[]>(() =>
-    UNITS.map((one) => ({ value: one, label: this.i18n.translate(UNIT_TEXT[one]) })),
+    this.offered().map((one) => ({ value: one, label: this.i18n.translate(UNIT_TEXT[one]) })),
   );
 
   protected readonly unitText = computed(() => this.i18n.translate(UNIT_TEXT[this.unit()]));

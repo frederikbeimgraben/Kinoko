@@ -66,6 +66,20 @@ describe('AdminSpeciesComponent', () => {
     expect(screen.getByText('Erdritterling')).toBeInTheDocument();
   });
 
+  it('hat die Suche im Kopf und sortiert über die Sortierung', async () => {
+    await build();
+
+    expect(screen.getByRole('heading', { name: 'Arten' })).toBeInTheDocument();
+    const names = (): string[] =>
+      screen.getAllByText(/^(Steinpilz|Erdritterling)$/).map((one) => one.textContent);
+    expect(names()).toEqual(['Erdritterling', 'Steinpilz']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sortieren' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Lateinischer Name' }));
+
+    expect(names()).toEqual(['Steinpilz', 'Erdritterling']);
+  });
+
   it('legt über die schwebende Schaltfläche eine neue Art an', async () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigate');
