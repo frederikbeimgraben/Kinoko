@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { HistoryService } from '../../core/navigation/history.service';
 import { noViolations } from '../../testing/axe';
@@ -38,10 +39,10 @@ const STONE = speciesEntry({
   ],
 });
 
-async function build(slug = 'boletus-edulis', wide = false): Promise<Element> {
+async function build(slug = 'boletus-edulis', wide = false, stone = STONE): Promise<Element> {
   const { container } = await render(SpeciesPageComponent, {
     providers: [
-      ...catalogueProviders(speciesBundle([STONE])),
+      ...catalogueProviders(speciesBundle([stone])),
       ...authStubProviders(new AuthStub()),
       provideRouter(ANY_ROUTE),
       { provide: ViewportService, useValue: { wide: signal(wide) } },
@@ -67,6 +68,51 @@ describe('SpeciesPageComponent', () => {
     expect(container.querySelector('app-species-time')).not.toBeNull();
     expect(container.querySelector('app-species-photos')).not.toBeNull();
     await noViolations(container);
+  });
+
+  describe('description', () => {
+    const DESCRIBED = speciesEntry({
+      ...STONE,
+      description: 'Kräftiger Röhrling.',
+      descriptionEn: 'A stout bolete.',
+      descriptionDraft: true,
+    });
+
+    afterEach(() => {
+      TestBed.inject(I18nService).setLocale('de');
+    });
+
+    it('shows the German description with the draft hint', async () => {
+      const container = await build('boletus-edulis', false, DESCRIBED);
+
+      expect(screen.getByText('Kräftiger Röhrling.')).toBeInTheDocument();
+      expect(screen.queryByText('A stout bolete.')).not.toBeInTheDocument();
+      expect(screen.getByText('Entwurf, nicht geprüft')).toBeInTheDocument();
+      await noViolations(container);
+    });
+
+    it('shows the English description in English', async () => {
+      await build('boletus-edulis', false, DESCRIBED);
+      TestBed.inject(I18nService).setLocale('en');
+
+      expect(await screen.findByText('A stout bolete.')).toBeInTheDocument();
+      expect(screen.queryByText('Kräftiger Röhrling.')).not.toBeInTheDocument();
+      expect(screen.getByText('Draft, not reviewed')).toBeInTheDocument();
+    });
+
+    it('shows the German description in English without an English text, and no hint without a draft', async () => {
+      await build('boletus-edulis', false, { ...DESCRIBED, descriptionEn: '', descriptionDraft: false });
+      TestBed.inject(I18nService).setLocale('en');
+
+      expect(await screen.findByText('Kräftiger Röhrling.')).toBeInTheDocument();
+      expect(screen.queryByText('Draft, not reviewed')).not.toBeInTheDocument();
+    });
+
+    it('shows no description and no hint without a text', async () => {
+      await build('boletus-edulis', false, { ...DESCRIBED, description: null, descriptionEn: '' });
+
+      expect(screen.queryByText('Entwurf, nicht geprüft')).not.toBeInTheDocument();
+    });
   });
 
   it('makes the hero lower without a photo, per SpeciesPageNoPhoto', async () => {

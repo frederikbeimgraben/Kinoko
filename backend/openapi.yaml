@@ -3598,8 +3598,6 @@ components:
               description: The count of reactions. Only the items of the bundle have it.
               type: integer
           required:
-            - descriptionEn
-            - descriptionDraft
             - names
             - measurements
             - colours

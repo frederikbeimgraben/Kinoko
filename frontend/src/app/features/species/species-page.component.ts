@@ -16,6 +16,7 @@ import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SpeciesColoursComponent } from './sections/species-colours.component';
 import { SpeciesFeaturesComponent } from './sections/species-features.component';
@@ -100,6 +101,12 @@ export class SpeciesPageComponent {
       .filter((one) => one.kind === 'common' && one.name !== this.species()?.name)
       .map((one) => one.name);
     return names.length === 0 ? '' : this.i18n.translate('species.otherNames', { names: names.join(', ') });
+  });
+  /** The description in the language of the interface. Without an English text, the German text shows. */
+  protected readonly description = computed(() => {
+    const one = this.species();
+    const english = this.i18n.locale() === DEFAULT_LOCALE ? '' : (one?.descriptionEn ?? '');
+    return english === '' ? (one?.description ?? '') : english;
   });
   protected readonly heroHeight = computed(() => {
     if (this.wide()) return HERO_DESKTOP;

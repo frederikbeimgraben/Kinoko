@@ -47,8 +47,11 @@
         @if (otherNames(); as names) {
           <p class="species__names">{{ names }}</p>
         }
-        @if (one.description; as text) {
+        @if (description(); as text) {
           <p class="note desc">{{ text }}</p>
+          @if (one.descriptionDraft) {
+            <p class="species__draft">{{ 'species.descriptionDraft' | t }}</p>
+          }
         }
       </div>
     </ng-template>

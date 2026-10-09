@@ -1388,7 +1388,10 @@ export interface components {
             marketable?: boolean;
             frequency?: components["schemas"]["Frequency"] | null;
             redList?: components["schemas"]["RedListStatus"] | null;
+            /** @description The German description. */
             description?: string | null;
+            /** @description The English description. Without the field, a create stores an empty text and an update keeps the old one. */
+            descriptionEn?: string;
             edibilityNote?: string | null;
             protection: components["schemas"]["Protection"];
             protectionNote?: string | null;
@@ -1425,7 +1428,12 @@ export interface components {
         Species: components["schemas"]["SpeciesSummary"] & {
             /** @description The name of the person who made the last change. */
             updatedByName?: string | null;
+            /** @description The German description. */
             description?: string | null;
+            /** @description The English description. Empty if nobody has written it. */
+            descriptionEn?: string;
+            /** @description True when nobody has reviewed the description. */
+            descriptionDraft?: boolean;
             marketable?: boolean;
             frequency?: components["schemas"]["Frequency"] | null;
             redList?: components["schemas"]["RedListStatus"] | null;
