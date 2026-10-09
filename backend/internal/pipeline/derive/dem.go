@@ -11,10 +11,10 @@ import (
 	"github.com/airbusgeo/godal"
 )
 
-// DEMStep is the step of the terrain rasters in metres (static_features.py).
+// DEMStep is the step of the terrain rasters in metres.
 const DEMStep = 90
 
-// DEMFiles are the terrain rasters of static_features.py in EPSG:3035 at
+// DEMFiles are the terrain rasters of the site grid in EPSG:3035 at
 // 90 m. The fine layers hoehe, hangneigung and nordexposition read them.
 type DEMFiles struct {
 	VRT       string // mosaic of the uploaded tiles
@@ -25,8 +25,7 @@ type DEMFiles struct {
 	Eastness  string // eastness90.tif, sin of the aspect
 }
 
-// BuildDEM makes the terrain rasters in dir from the DEM tiles, as
-// static_features.main: one VRT, a bilinear warp to 90 m over the grid,
+// BuildDEM makes the terrain rasters in dir from the DEM tiles: one VRT, a bilinear warp to 90 m over the grid,
 // then gdaldem slope and aspect with compute_edges.
 func BuildDEM(ctx context.Context, tiles []string, g Grid, dir string) (DEMFiles, error) {
 	f := DEMFiles{
@@ -85,8 +84,8 @@ func demProcess(source, target, mode string, switches ...string) error {
 	return out.Close()
 }
 
-// writeAngle writes cos or sin of the aspect in float32, as the northness
-// and eastness loop of static_features.py. The file keeps the nodata value
+// writeAngle writes cos or sin of the aspect in float32 for the northness
+// and the eastness. The file keeps the nodata value
 // of the aspect; the masked points hold NaN.
 func writeAngle(aspect, target string, f func(float64) float64) error {
 	src, err := openRaster(aspect)

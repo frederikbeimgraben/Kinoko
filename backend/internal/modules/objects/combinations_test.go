@@ -34,7 +34,7 @@ func TestCreateWithoutManifestSkipsTheCheck(t *testing.T) {
 	}
 }
 
-func TestFactorsAreStoredAsPythonJSON(t *testing.T) {
+func TestFactorsAreStoredAsCompactJSON(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")
 	id := env.Post("/combinations", aCombination(object{"source": "ä", "condition": "between", "low": 1, "high": 1e-7, "active": false}), anna.Person).

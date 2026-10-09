@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Constants of gbif_fetch.py.
+// Constants of the GBIF fetch.
 const (
 	// API is the occurrence search endpoint.
 	API = "https://api.gbif.org/v1/occurrence/search"
@@ -48,7 +48,7 @@ type StatusError struct {
 
 func (e *StatusError) Error() string { return fmt.Sprintf("gbif: HTTP %d", e.Code) }
 
-// param is one query parameter. A list keeps the order of gbif_fetch.base_params.
+// param is one query parameter. A list keeps its order.
 type param struct{ key, value string }
 
 func encode(params []param) string {
@@ -66,7 +66,7 @@ type page struct {
 	Results      []map[string]any
 }
 
-// get sends one request and retries as gbif_fetch.request: after a 429 it waits
+// get sends one request and retries: after a 429 it waits
 // max(Retry-After, 30 s) times the attempt, after another failure 2 s, doubled each time.
 func (f *Fetcher) get(ctx context.Context, params []param) (page, error) {
 	u := f.base() + "?" + encode(params)
@@ -95,7 +95,7 @@ func (f *Fetcher) get(ctx context.Context, params []param) (page, error) {
 	}
 }
 
-// rateWait treats Retry-After as a floor, as gbif_fetch.request does. Only a plain digit string counts.
+// rateWait treats Retry-After as a floor. Only a plain digit string counts.
 func rateWait(header string, attempt int) time.Duration {
 	suggested := 0.0
 	if header != "" && strings.Trim(header, "0123456789") == "" {
@@ -104,7 +104,7 @@ func rateWait(header string, attempt int) time.Duration {
 	return time.Duration(max(suggested, minRateWait.Seconds()) * float64(attempt) * float64(time.Second))
 }
 
-// decodeError is a body that is not valid JSON. Python does not retry it.
+// decodeError is a body that is not valid JSON. The fetch does not retry it.
 type decodeError struct{ err error }
 
 func (e *decodeError) Error() string { return "gbif: decode: " + e.err.Error() }

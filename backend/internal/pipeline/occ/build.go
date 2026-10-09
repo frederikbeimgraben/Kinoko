@@ -86,7 +86,7 @@ func chunks(dir string, api bool) ([]source, error) {
 	return out, nil
 }
 
-// BuildOccurrences is build_occurrences.main without the parquet write: it reads the slim GBIF files,
+// BuildOccurrences builds the occurrence table without the parquet write: it reads the slim GBIF files,
 // adds the app finds, and keeps dated Agaricomycetes records with a coordinate error of at most maxUnc
 // metres (NaN keeps). It drops a repeated gbifID. The API copy stays, because the API files come first.
 func BuildOccurrences(src Sources, app []AppFind, maxUnc float64) ([]Record, Stats, error) {
@@ -147,7 +147,7 @@ func BuildOccurrences(src Sources, app []AppFind, maxUnc float64) ([]Record, Sta
 	return out, st, nil
 }
 
-// gbifRecord applies the class, date and error filters of build_occurrences.main to one GBIF line.
+// gbifRecord applies the class, date and error filters to one GBIF line.
 func gbifRecord(l slimLine, maxUnc float64, st *Stats, intern func(string) string) (Record, bool) {
 	class := l.Class.s
 	if l.Class.ok && slices.Contains(LichenClasses, class) {

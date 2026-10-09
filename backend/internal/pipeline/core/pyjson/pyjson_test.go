@@ -31,7 +31,7 @@ func readJSON(t *testing.T, path string, v any) {
 	}
 }
 
-// typed is a value of the golden files with its Python type.
+// typed is a value of the golden files with its type name.
 type typed struct {
 	T string          `json:"t"`
 	V json.RawMessage `json:"v"`
@@ -85,9 +85,9 @@ func (n typed) build(t *testing.T) any {
 	return nil
 }
 
-// dumps.json comes from testdata/golden.py (pyjson_golden): manifest.schreibe and
-// json.dumps with indent 2, 0, None, ensure_ascii False and separators (",", ":").
-func TestMarshalMatchesPython(t *testing.T) {
+// dumps.json is the golden file of the manifest writer and of json.dumps with
+// indent 2, 0, None, ensure_ascii False and separators (",", ":").
+func TestMarshalMatchesGolden(t *testing.T) {
 	var cases []struct {
 		Value                               typed
 		Manifest, Indent2, Indent0, Default string
@@ -117,8 +117,8 @@ func TestMarshalMatchesPython(t *testing.T) {
 	}
 }
 
-// floats.json comes from testdata/golden.py (pyjson_golden): repr(float) and round(x, nd).
-func TestFloatsMatchPython(t *testing.T) {
+// floats.json is the golden file of repr(float) and round(x, nd).
+func TestFloatsMatchGolden(t *testing.T) {
 	var g struct {
 		Repr  []struct{ Bits, Repr string }
 		Round []struct {

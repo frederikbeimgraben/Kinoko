@@ -9,8 +9,8 @@ import (
 )
 
 // ncFixture holds the values that xarray.open_dataset decodes from a fixture.
-// testdata/gen_fixtures.py writes the .nc files with Dataset.to_netcdf and the
-// expected .json files with xarray.open_dataset (mask and scale on) and pandas normalize().
+// The expected .json files hold the values with mask and scale applied and
+// each time set to midnight.
 type ncFixture struct {
 	X    []float64 `json:"x"`
 	Y    []float64 `json:"y"`

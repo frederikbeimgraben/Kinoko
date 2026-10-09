@@ -26,9 +26,9 @@ type goldenVisit struct {
 	ISOWeek  int     `json:"iso_week"`
 }
 
-// Golden: visit_model.build_visits (with build_occurrences.visit_gate) on the records of
-// occurrences.json filtered as visit_model.main does (iso_year >= 2015, error <= 500 m).
-func TestBuildMatchesPython(t *testing.T) {
+// Golden: the gated visits of the records of occurrences.json with the training
+// filter (iso_year >= 2015, error <= 500 m).
+func TestBuildMatchesGolden(t *testing.T) {
 	records, err := occtest.Records("../testdata/occurrences.json")
 	if err != nil {
 		t.Fatal(err)
@@ -61,7 +61,7 @@ func TestBuildMatchesPython(t *testing.T) {
 	}
 }
 
-// Port of the gate tests of test_app_funde.py.
+// The gate tests of the app finds.
 func TestGate(t *testing.T) {
 	cases := []struct {
 		name string

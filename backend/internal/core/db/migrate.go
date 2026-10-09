@@ -12,7 +12,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/migrations"
 )
 
-// alembicBaseline is the last Alembic revision of the Python service. Its schema is
+// alembicBaseline is the Alembic revision of an existing database. Its schema is
 // identical to migration 1, so a database at this revision starts at 1.
 const alembicBaseline = "baseline_4"
 

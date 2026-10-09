@@ -96,7 +96,7 @@ func run(t *testing.T, p sources.Processor, v *sources.Version) ([]sources.Artif
 
 // TestProcessors runs the three processors on the synthetic uploads: the tree map as a GeoTIFF,
 // the DEM and SoilGrids as zips. The site grid of the soil run joins the terrain part of the
-// DEM run. It must equal the golden site_500m.parquet of static_features.main.
+// DEM run. It must equal the golden site_500m.parquet.
 func TestProcessors(t *testing.T) {
 	if testing.Short() {
 		t.Skip("the processors take a while")

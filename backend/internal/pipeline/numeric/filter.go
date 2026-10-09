@@ -187,7 +187,7 @@ func Uniform2D[T Float](a []T, ny, nx, size int, mode Mode) []T {
 }
 
 // UniformSum2D is uniform_filter(a, size, mode="constant") * size * size,
-// the window sum of tree_scales.py. Python multiplies twice in float32.
+// the window sum of the tree scales. Both products are float32.
 func UniformSum2D(a []float32, ny, nx, size int) []float32 {
 	side := float32(size)
 	mean := Uniform2D(a, ny, nx, size, Constant)

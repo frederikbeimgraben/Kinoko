@@ -13,7 +13,7 @@ import (
 )
 
 // Fetcher pages the GBIF search API into the cache directory, one file per year
-// or per month. The zero value of each optional field takes the gbif_fetch.py default.
+// or per month. The zero value of each optional field takes the default.
 type Fetcher struct {
 	HTTP           *http.Client  // nil: http.DefaultClient
 	Idle           time.Duration // 0: pio.IdleTimeout. A transfer without bytes fails after it.
@@ -98,7 +98,7 @@ func orZero[T comparable](v, fallback T) T {
 	return v
 }
 
-// baseParams is base_params of gbif_fetch.py followed by extra.
+// baseParams gives the base query parameters followed by extra.
 func (f *Fetcher) baseParams(extra ...param) []param {
 	return append([]param{
 		{"country", f.country()},

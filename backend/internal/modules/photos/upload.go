@@ -138,14 +138,13 @@ func readError(err error) error {
 	return badBody()
 }
 
-// badBody is the answer of the Python service to a body it cannot parse: status
+// badBody is the answer to a body that the service cannot parse: status
 // 400 without a code of its own.
 func badBody() error {
 	return problem.New("internal", http.StatusBadRequest, "There was an error parsing the body")
 }
 
-// check validates the form as the Python service does, in the order of its
-// fields. An empty text value counts as a missing value.
+// check validates the form in the order of its fields. An empty text value counts as a missing value.
 func check(f form) (Arrival, error) {
 	errs := []problem.FieldError{}
 	fail := func(field, code string) { errs = append(errs, problem.FieldError{Field: field, Code: code}) }
@@ -353,7 +352,7 @@ func (m *Module) insert(ctx context.Context, tx *sql.Tx, user auth.User, a Arriv
 }
 
 // replace puts a new image into a rejected photo and submits it again.
-// The source stays, as in the Python service.
+// The source stays.
 func (m *Module) replace(ctx context.Context, tx *sql.Tx, id db.ID, a Arrival, rendered Rendered) error {
 	if _, err := tx.ExecContext(ctx, `UPDATE photo SET width = ?, height = ?, photographer = ?,
 		licence = ?, caption = ?, taken_on = ?, state = 'submitted', reject_reason = NULL,

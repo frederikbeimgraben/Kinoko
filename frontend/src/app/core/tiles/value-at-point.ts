@@ -35,7 +35,7 @@ export function tileLocation(lon: number, lat: number, zoom: number): TileLocati
 }
 
 /**
- * Converts a value tile byte to a probability. Byte 0 means no data. Else `(byte - 1) / 254 * top`, as in `modell/src/pilze/tiles.py`.
+ * Converts a value tile byte to a probability. Byte 0 means no data. Else `(byte - 1) / 254 * top`.
  */
 export function valueFromByte(byte: number, top: number): number | null {
   return byte === 0 ? null : ((byte - 1) / 254) * top;

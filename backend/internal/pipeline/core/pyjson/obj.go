@@ -1,5 +1,5 @@
-// Package pyjson writes JSON byte for byte as Python json.dumps does, with
-// insertion order, Python float repr and the manifest writer of manifest.py.
+// Package pyjson writes JSON byte for byte in the form of Python json.dumps,
+// with insertion order and the shortest float text. The manifests use this form.
 package pyjson
 
 // Obj is a JSON object that keeps the order of insertion, as a Python dict.

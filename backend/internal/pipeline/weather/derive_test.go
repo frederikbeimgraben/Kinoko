@@ -12,9 +12,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// deriveGolden is testdata/derive.json.gz of testdata/gen_golden.py on a random 30-cell, 120-week cube with NaN
-// and 2020W53. Values are [week][cell]. full is add_anomalies(add_lags(weather)) as visit_model.py; forecast is
-// region_map.py with two forecast weeks; layers is input_layers.wochenwetter.
+// deriveGolden is the golden file testdata/derive.json.gz of a random 30-cell, 120-week cube with NaN and
+// 2020W53. Values are [week][cell]. full holds the lags and anomalies of the training; forecast holds those of
+// the species map with two forecast weeks; layers holds the weekly weather of the input layers.
 type deriveGolden struct {
 	Cells     []string                `json:"cells"`
 	Weeks     [][2]int                `json:"weeks"`

@@ -31,7 +31,7 @@ type Chain struct {
 	// DWDBase and GBIFBase replace the public addresses in tests. Empty means the public ones.
 	DWDBase  string
 	GBIFBase string
-	// GBIFPause replaces the pause between GBIF pages. Zero means the pause of gbif_fetch.py.
+	// GBIFPause replaces the pause between GBIF pages. Zero means the default pause.
 	GBIFPause time.Duration
 }
 

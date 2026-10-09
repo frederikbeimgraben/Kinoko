@@ -17,7 +17,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
-// inputsFile is testdata/inputs.json.gz, the synthetic inputs that testdata/gen_golden.py writes.
+// inputsFile is testdata/inputs.json.gz, the synthetic inputs of the golden run.
 type inputsFile struct {
 	Records []struct {
 		GBIFID   string   `json:"gbifID"`
@@ -126,7 +126,7 @@ func to32(v []float64) []float32 {
 	return out
 }
 
-// testGrid is GRID with the settings that gen_golden.py adds for a deterministic run.
+// testGrid is the grid with the settings of the golden run, for a deterministic run.
 func testGrid() []train.Setting {
 	grid := train.WithThreads(train.Grid(), 1)
 	for i, s := range grid {

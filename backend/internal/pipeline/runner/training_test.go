@@ -23,7 +23,7 @@ import (
 )
 
 // fitInputs is model/fit/testdata/inputs.json.gz, the synthetic inputs of
-// model/fit/testdata/gen_golden.py.
+// the golden training run.
 type fitInputs struct {
 	Records []struct {
 		GBIFID   string   `json:"gbifID"`
@@ -54,7 +54,7 @@ type fitInputs struct {
 }
 
 // fitGolden holds the fields of model/fit/testdata/golden.json.gz that the
-// test reads: the output of final_model.main (gen_golden.py) on the inputs.
+// test reads: the result of the golden training run on the inputs.
 type fitGolden struct {
 	Visits   int `json:"visits"`
 	Horizons map[string]struct {

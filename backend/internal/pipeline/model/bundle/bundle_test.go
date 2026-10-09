@@ -9,9 +9,8 @@ import (
 	"testing"
 )
 
-// expectation is testdata/expect.json. gen_golden.py in ../testdata writes it with
-// final_model.calibrated(model, iso, ceiling, x) on a float32 matrix and IsotonicRegression.predict.
-// The bundle in testdata/bundle_v1 comes from the same script, in the layout of export_bundles.py.
+// expectation is the golden file testdata/expect.json: the calibrated scores of the bundle in
+// testdata/bundle_v1 on a float32 matrix, and the isotonic predictions.
 type expectation struct {
 	X        []*float64 `json:"x"`
 	P        []float64  `json:"p"`
@@ -75,7 +74,7 @@ func checkBundle(t *testing.T, b *Bundle, expect map[int]expectation) {
 	}
 }
 
-func TestLoadPythonBundle(t *testing.T) {
+func TestLoadGoldenBundle(t *testing.T) {
 	b, err := Load("testdata/bundle_v1")
 	if err != nil {
 		t.Fatal(err)

@@ -321,7 +321,7 @@ func pairIndex(pairs []wantedPair, other db.ID) int {
 	return -1
 }
 
-// upsertPair keeps the first position of a slug and the last text, as a Python dict does.
+// upsertPair keeps the first position of a slug and the last text.
 func upsertPair(pairs []wantedPair, p wantedPair) []wantedPair {
 	if i := pairIndex(pairs, p.other); i >= 0 {
 		out := append([]wantedPair{}, pairs...)

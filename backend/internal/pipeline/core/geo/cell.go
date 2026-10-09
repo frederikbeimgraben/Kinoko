@@ -24,8 +24,8 @@ func ParseCellKey(s string) (CellKey, error) {
 	return CellKey{X: int32(x), Y: int32(y)}, nil
 }
 
-// CellOf returns the cell of size metres that holds the point x, y, as
-// (x // size, y // size) in Python. The point must be finite.
+// CellOf returns the cell of size metres that holds the point x, y:
+// (FloorDiv(x, size), FloorDiv(y, size)). The point must be finite.
 func CellOf(x, y, size float64) CellKey {
 	return CellKey{X: int32(FloorDiv(x, size)), Y: int32(FloorDiv(y, size))}
 }

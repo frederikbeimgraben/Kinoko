@@ -229,7 +229,7 @@ func (c *Chain) appFinds(ctx context.Context) ([]occ.AppFind, error) {
 	}), nil
 }
 
-// Season writes the season table (arten_zaehlen.py) to PILZE_DATA/derived/saison.json.
+// Season writes the season table to PILZE_DATA/derived/saison.json.
 func (c *Chain) Season(_ context.Context, j *Job) error {
 	entries := season.Begehungen(j.Records, season.AbJahr, season.MinArten, season.MaxUnsicherheitM)
 	stand, err := season.Stand(entries)

@@ -120,8 +120,8 @@ func TestWorldPointRoundTrip(t *testing.T) {
 	}
 }
 
-// The expected values come from tiles.py of the Python service.
-func TestWorldPointAgreesWithPython(t *testing.T) {
+// The expected values are fixed reference values.
+func TestWorldPointAgreesWithGolden(t *testing.T) {
 	x, y := toWorldPoint(geo.Point{Lon: 8.61, Lat: 50.11}, 8)
 	if x != 34335.40266666667 || y != 22195.003039855153 {
 		t.Fatal(x, y)
@@ -131,7 +131,7 @@ func TestWorldPointAgreesWithPython(t *testing.T) {
 	}
 }
 
-func TestCellsUnderAgreeWithPython(t *testing.T) {
+func TestCellsUnderAgreeWithGolden(t *testing.T) {
 	ring := geo.RingOf([2]float64{8.60, 50.10}, [2]float64{8.62, 50.10}, [2]float64{8.62, 50.12}, [2]float64{8.60, 50.12}, [2]float64{8.60, 50.10})
 	cells := cellsUnder(ring, 8)
 	if len(cells) != 18 || cells[0] != (cell{134, 86, 30, 176}) || cells[17] != (cell{134, 86, 32, 181}) {
@@ -261,7 +261,7 @@ func TestCheckSources(t *testing.T) {
 	}
 }
 
-func TestStoredFactorsIsPythonJSONDumps(t *testing.T) {
+func TestStoredFactorsIsCompactJSON(t *testing.T) {
 	got := storedFactors([]factor{
 		{Source: "a\"b\\\n\x01\x7f\u00e9\U0001f600/", Condition: "above", Low: fn.Ptr(9.0), High: nil, Active: true},
 		{Source: "x", Condition: "below", Low: fn.Ptr(1e-07), High: fn.Ptr(1e16), Active: false},
@@ -273,7 +273,7 @@ func TestStoredFactorsIsPythonJSONDumps(t *testing.T) {
 	}
 }
 
-func TestStoredPolygonUsesPythonFloats(t *testing.T) {
+func TestStoredPolygonUsesShortestFloats(t *testing.T) {
 	p := polygon{Type: "Polygon", Coordinates: [][][]float64{{{9, 48.5}, {0.00001, 123456789012345.6}}}}
 	if got := p.stored(); got != `{"type":"Polygon","coordinates":[[[9.0,48.5],[1e-05,123456789012345.6]]]}` {
 		t.Fatal(got)

@@ -2,7 +2,7 @@ import sample from './chain-manifests.sample.json';
 import { readLayers, shareMet } from './layers';
 import { readManifest } from './manifest';
 
-/** The sample comes from `modell/src/pilze/manifest.py`. */
+/** The sample is a manifest of the backend pipeline. */
 const LAYERS = readLayers(sample.layers);
 const SPECIES = readManifest(sample.species, 'boletus-edulis');
 

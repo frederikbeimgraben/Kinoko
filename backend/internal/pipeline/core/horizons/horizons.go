@@ -1,4 +1,4 @@
-// Package horizons holds the forecast horizons of the chain, as horizons.py.
+// Package horizons holds the forecast horizons of the pipeline.
 // A horizon is the distance in weeks from the last week with weather to the
 // week that a model answers for.
 package horizons
@@ -67,7 +67,7 @@ func HorizonFor(w calendar.Week, observedLast *calendar.Week, available []int) (
 		return 0, nil
 	}
 	// horizon_for uses the difference of week IDs, which is one too large across a
-	// year with 52 weeks (bug 4). The calendar distance is correct.
+	// year with 52 weeks (finding 4). The calendar distance is correct.
 	dist := calendar.Distance(*observedLast, w)
 	if dist <= 0 {
 		return 0, nil

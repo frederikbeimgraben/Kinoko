@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Port of test_app_funde.py: a find becomes a GBIF-shaped row with its own observer.
+// A find becomes a GBIF-shaped row with its own observer.
 func TestAppFindRows(t *testing.T) {
 	finds := []AppFind{
 		{ID: "3f2b-0001", ScientificName: "Boletus edulis", Lat: 48.5203, Lon: 9.0511, FoundOn: time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC)},

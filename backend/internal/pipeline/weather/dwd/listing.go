@@ -1,5 +1,5 @@
 // Package dwd fetches the DWD daily grids (HYRAS and soil moisture) into a
-// local cache, as dwd_fetch.py does. It keeps one row per file in the table
+// local cache. It keeps one row per file in the table
 // remote_cache_file through CacheStore.
 package dwd
 
@@ -41,7 +41,7 @@ const DefaultDepth = "0-30"
 var hrefRe = regexp.MustCompile(`href="([^"?][^"]*)"`)
 
 // ParseListing returns the file and directory names of a server directory page.
-// It drops the parent link "../", as dwd_fetch.listing does.
+// It drops the parent link "../".
 func ParseListing(html string) []string {
 	matches := hrefRe.FindAllStringSubmatch(html, -1)
 	out := make([]string, 0, len(matches))
@@ -64,8 +64,8 @@ func SoilPattern(tree string, year int, depth string) *regexp.Regexp {
 		regexp.QuoteMeta(tree), year, regexp.QuoteMeta(depth)))
 }
 
-// versionRe also accepts a "." after the version. dwd_fetch.py requires "_",
-// so it gives each soil file the key (0, 0) and takes the first listed version.
+// versionRe accepts a "_" or a "." after the version, so each soil file gets
+// its real version key.
 var versionRe = regexp.MustCompile(`_v(\d+)(?:-(\d+))?[_.]`)
 
 // VersionKey returns the (major, minor) version of a DWD file name, or (0, 0).
@@ -80,7 +80,7 @@ func VersionKey(name string) [2]int {
 }
 
 // NewestVersion returns the name with the highest version among the names
-// that re matches in full, or "". On a tie the first name wins, as Python max.
+// that re matches in full, or "". On a tie the first name wins.
 func NewestVersion(names []string, re *regexp.Regexp) string {
 	best, bestKey := "", [2]int{-1, -1}
 	for _, n := range names {

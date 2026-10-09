@@ -29,17 +29,16 @@ func (c *Columns) add(name string, v []float32) {
 }
 
 // tpiWindows are the windows of the topographic position index in cells
-// and their column names. The names keep the 5 km labels of the Python chain.
+// and their column names. The names keep the 5 km labels of the model features.
 var tpiWindows = []struct {
 	size int
 	name string
 }{{5, "tpi_25km"}, {11, "tpi_55km"}}
 
-// demFloor is the height below which static_features.py drops a DEM value.
+// demFloor is the height below which the site grid drops a DEM value.
 const demFloor = -20
 
-// SampleGrid warps a raster onto the cells of the grid, as warp and sample of
-// static_features.py. The warp grid is the cell grid, so cell (gx, gy) is
+// SampleGrid warps a raster onto the cells of the grid. The warp grid is the cell grid, so cell (gx, gy) is
 // point gy*nx+gx. srcNodata adds "-srcnodata v -dstnodata nan -ot Float32".
 func SampleGrid(source *godal.Dataset, g Grid, resampler, srcNodata string) ([]float32, error) {
 	step := itoa(g.Step)
@@ -67,7 +66,7 @@ func sampleFile(path string, g Grid, resampler, srcNodata string) ([]float32, er
 	return SampleGrid(src, g, resampler, srcNodata)
 }
 
-// DEMColumns gives the terrain columns of static_features.py in its order:
+// DEMColumns gives the terrain columns in this order:
 // dem_mean, dem_min, dem_max, dem_relief, northness, eastness, slope_mean,
 // slope_max, tpi_25km, tpi_55km.
 func DEMColumns(ctx context.Context, f DEMFiles, g Grid) (Columns, error) {
@@ -115,7 +114,7 @@ func DEMColumns(ctx context.Context, f DEMFiles, g Grid) (Columns, error) {
 }
 
 // TPI gives the height of each cell minus the mean height of the window
-// around it, as static_features.py: missing cells take the mean of the
+// around it: missing cells take the mean of the
 // field first, and the filter repeats the edge (scipy mode "nearest").
 func TPI(field []float32, ny, nx, size int) []float32 {
 	filled := slices.Clone(field)
@@ -147,7 +146,7 @@ func TPI(field []float32, ny, nx, size int) []float32 {
 
 func isFinite(v float32) bool { return !math.IsNaN(float64(v)) && !math.IsInf(float64(v), 0) }
 
-// SoilName gives the column of a SoilGrids file, as static_features.py:
+// SoilName gives the column of a SoilGrids file:
 // "phh2o_0-5cm_mean.tif" is "soil_phh2o_0_5cm".
 func SoilName(path string) string {
 	stem := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
@@ -172,7 +171,7 @@ func SoilColumns(ctx context.Context, files []string, g Grid) (Columns, error) {
 }
 
 // SiteTable joins the cell keys and the column sets into site_500m.parquet,
-// as static_features.py: cell, cell_x, cell_y, then the columns.
+// in this order: cell, cell_x, cell_y, then the columns.
 func SiteTable(g Grid, parts ...Columns) (*pio.Table, []pio.ColumnSpec) {
 	t := pio.NewTable(g.Len())
 	cells, cx, cy := make([]string, g.Len()), make([]int64, g.Len()), make([]int64, g.Len())

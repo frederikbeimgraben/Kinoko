@@ -279,8 +279,8 @@ type forecastWrite struct {
 	Enabled bool `json:"enabled"`
 }
 
-// setForecast changes updated_at only when the value changes, as the
-// Python service does. The bundle tag depends on it.
+// setForecast changes updated_at only when the value changes. The bundle
+// tag depends on it.
 func (m *Module) setForecast(r *http.Request) (web.Response, error) {
 	body, err := web.Decode[forecastWrite](r)
 	if err != nil {

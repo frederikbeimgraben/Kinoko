@@ -11,17 +11,17 @@ type Score struct {
 	SpaceAUC, SpaceAP float64
 }
 
-// Total is the score that final_model.py compares: year AP plus space AP.
+// Total is the score that the search compares: year AP plus space AP.
 func (s Score) Total() float64 { return s.YearAP + s.SpaceAP }
 
-// CandidateScore is one line of the feature table of final_model.py.
+// CandidateScore is one line of the feature table.
 type CandidateScore struct {
 	Features []string
 	Earned   bool
 	Score
 }
 
-// SettingScore is one line of the settings table of final_model.py.
+// SettingScore is one line of the settings table.
 type SettingScore struct {
 	Name string
 	Score
@@ -91,7 +91,7 @@ func (tr *trainer) tune(features []string, grid []train.Setting, f folds) (train
 	return grid[train.PickSetting(totals)], scores, nil
 }
 
-// sameList tells if a and b are the same slice, as "chosen is earned" in final_model.py.
+// sameList tells if a and b are the same slice, not only equal lists.
 func sameList(a, b []string) bool {
 	return len(a) == len(b) && (len(a) == 0 || &a[0] == &b[0])
 }

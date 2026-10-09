@@ -214,7 +214,7 @@ func (c *Contract) validateInput(r *http.Request, path string, target Path, oper
 }
 
 // expectsJSON tells if the body is JSON. An operation with a JSON body
-// accepts a JSON media type or no media type, as the Python service does.
+// accepts a JSON media type or no media type.
 func expectsJSON(r *http.Request, operation *openapi3.Operation) (bool, error) {
 	if operation.RequestBody == nil || operation.RequestBody.Value == nil ||
 		operation.RequestBody.Value.Content.Get("application/json") == nil {

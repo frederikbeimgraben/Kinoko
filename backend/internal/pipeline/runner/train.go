@@ -39,7 +39,7 @@ func (c *Chain) treeScales(j *Job) (fit.TreeScales, error) {
 }
 
 // h0Brier gives the calibrated out-of-fold Brier score of horizon 0. The
-// run reports this score and not the last horizon (finding 7 of the plan).
+// run reports this score and not the last horizon (finding 7).
 func h0Brier(report fit.Report) *float64 {
 	hr, ok := fn.Find(report.Horizons, func(h fit.HorizonReport) bool { return h.Horizon == 0 })
 	if !ok {
@@ -54,7 +54,7 @@ func h0Brier(report fit.Report) *float64 {
 
 // Train trains the model of one species, saves the bundle and installs it as
 // the new active model-bundle version of the species (origin training).
-// It always trains, also when a model exists (finding 6 of the plan).
+// It always trains, also when a model exists (finding 6).
 func (c *Chain) Train(ctx context.Context, j *Job, sp Species) (Trained, error) {
 	if j.Records == nil {
 		return Trained{}, errNoRecords

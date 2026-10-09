@@ -21,9 +21,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
-// golden holds the fixtures of testdata/gen_golden.py: region_map.main (--region tt --weeks 4 --forecast 2
-// --tiles --no-image) and input_layers.main (--only-weekly --weeks 3 --tiles) of modell/src/pilze on a
-// synthetic region of 616 cells. The inputs are beside the outputs.
+// golden holds the golden files: the species maps (4 weeks, 2 forecast weeks, tiles) and the weekly input
+// layers (3 weeks, tiles) of a synthetic region of 616 cells. The inputs are beside the outputs.
 const golden = "testdata/golden"
 
 var goldenRegion = [4]float64{9.40, 51.25, 9.60, 51.35}
@@ -126,7 +125,7 @@ func compareText(t *testing.T, name string, got, want []byte, tol float64) int {
 			continue
 		}
 		off++
-		t.Logf("%s: number %d is %s, Python wrote %s", name, i, gn[i], wn[i])
+		t.Logf("%s: number %d is %s, the golden file has %s", name, i, gn[i], wn[i])
 		a, _ := strconv.ParseFloat(gn[i], 64)
 		b, _ := strconv.ParseFloat(wn[i], 64)
 		if math.Abs(a-b) > tol*max(1, math.Abs(b)) {

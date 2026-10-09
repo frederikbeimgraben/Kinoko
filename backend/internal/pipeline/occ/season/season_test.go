@@ -15,9 +15,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ/internal/occtest"
 )
 
-// Golden: arten_zaehlen.saisontabelle(begehungen_bilden(occ), stand=letzte_volle_woche(max date)),
-// written as arten_zaehlen.main writes it. The bytes must be equal.
-func TestTableMatchesPythonBytes(t *testing.T) {
+// Golden: the season table of the golden visits up to the last full week before the last date,
+// as compact JSON. The bytes must be equal.
+func TestTableMatchesGoldenBytes(t *testing.T) {
 	records, err := occtest.Records("../testdata/occurrences.json")
 	if err != nil {
 		t.Fatal(err)
@@ -44,12 +44,12 @@ func TestTableMatchesPythonBytes(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !bytes.Equal(got, want) {
-		t.Fatalf("saison.json differs from Python:\n got %.300s\nwant %.300s", got, want)
+		t.Fatalf("saison.json differs from the golden file:\n got %.300s\nwant %.300s", got, want)
 	}
 }
 
-// Golden: arten_zaehlen.letzte_volle_woche.
-func TestLastFullWeekMatchesPython(t *testing.T) {
+// Golden: the last full week.
+func TestLastFullWeekMatchesGolden(t *testing.T) {
 	raw, err := os.ReadFile("testdata/weeks.json")
 	if err != nil {
 		t.Fatal(err)
@@ -67,7 +67,7 @@ func TestLastFullWeekMatchesPython(t *testing.T) {
 	}
 }
 
-// fixture is _occ of test_arten_zaehlen.py: six records in four visits, two too coarse or too lonely.
+// fixture gives six records in four visits, two too coarse or too lonely.
 func fixture() []occ.Record {
 	type row struct {
 		species, who, date string

@@ -15,9 +15,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/pyjson"
 )
 
-// golden is testdata/golden.json. It and the trees in testdata/render and testdata/coarsen come from
-// testdata/gen_golden.py: pyramid.render_field, pyramid.coarsen, pyramid.belegung,
-// fine_layers.raster_block and the preview gdalwarp of region_map.schreibe_woche.
+// golden is the golden file testdata/golden.json. It and the trees in testdata/render and testdata/coarsen
+// hold the rendered field, the coarsened pyramid, the "have" list, a fine raster block and the preview warp.
 type golden struct {
 	NX, NY       int
 	GeoTransform [6]float64
@@ -57,7 +56,7 @@ func loadGolden(t *testing.T) golden {
 	return g
 }
 
-// synthetic rebuilds the field of gen_golden.field with the same arithmetic.
+// synthetic rebuilds the golden field with the same arithmetic.
 func synthetic(g golden) Raster {
 	nan := float32(math.NaN())
 	one, two := make([]float32, g.NX*g.NY), make([]float32, g.NX*g.NY)
@@ -167,7 +166,7 @@ func TestAutoBoundsGolden(t *testing.T) {
 	}
 }
 
-// writeGTiff writes band one of the field with nodata -32767, as gen_golden.write_source.
+// writeGTiff writes band one of the field with nodata -32767, as the golden source file.
 func writeGTiff(t *testing.T, path string, r Raster, nodata float64) {
 	t.Helper()
 	registerDrivers()
@@ -256,7 +255,7 @@ func TestCoarsenGolden(t *testing.T) {
 			wantCode, _ := ReadTile("testdata/coarsen/output/value", id)
 			wantWeight, _ := ReadTile("testdata/coarsen/output/weight", id)
 			if got == nil || !slices.Equal(got.Code, wantCode) || !slices.Equal(got.Weight, wantWeight) {
-				t.Fatalf("%s: tile %v differs from pyramid.coarsen", name, id)
+				t.Fatalf("%s: tile %v differs from the golden pyramid", name, id)
 			}
 		}
 	}

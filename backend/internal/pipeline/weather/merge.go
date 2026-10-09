@@ -37,7 +37,7 @@ func KeysOfAll() LoadOption { return func(c *loadConfig) { c.allKeys = true } }
 
 // LoadCube reads the checkpoints of vars (each *.parquet in dir when vars is nil)
 // into one Cube. It is an outer join: a cell-week that a checkpoint lacks is NaN.
-// merge_weekly.py stops when the keys differ (bug 3); the cube keeps the other variables.
+// When the keys differ, the cube keeps the other variables (finding 3).
 func LoadCube(checkpointDir string, vars []string, opts ...LoadOption) (*Cube, error) {
 	var cfg loadConfig
 	for _, o := range opts {
@@ -190,7 +190,7 @@ func scanKeys(dir string, vars []string, cfg loadConfig) (keySet, error) {
 
 // WriteMerged writes the observed weeks of c as weather_weekly.parquet: iso_year
 // int16, iso_week int8, cell, then each variable as float32 in name order,
-// sorted by (iso_year, iso_week, cell) as merge_weekly.py writes it.
+// sorted by (iso_year, iso_week, cell).
 func WriteMerged(path string, c *Cube) error {
 	order := make([]int, len(c.Cells))
 	for i := range order {

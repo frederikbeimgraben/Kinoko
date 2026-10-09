@@ -207,5 +207,5 @@ func BuildTerms(profiles []StemProfile, newID func() db.ID) (Terms, error) {
 	return NewTerms(rows), nil
 }
 
-// idLess orders keys by their bytes, as Python compares uuid.UUID values.
+// idLess orders keys by their bytes.
 func idLess(a, b db.ID) bool { return bytes.Compare(a[:], b[:]) < 0 }

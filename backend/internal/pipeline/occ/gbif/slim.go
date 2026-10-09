@@ -1,5 +1,5 @@
 // Package gbif fills the GBIF occurrence cache of the chain: it pages the
-// public occurrence search API (gbif_fetch.py) and imports an uploaded GBIF
+// public occurrence search API and imports an uploaded GBIF
 // download archive. Both write the same slim JSON-Lines files.
 package gbif
 
@@ -16,7 +16,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/pyjson"
 )
 
-// Fields is FIELDS of gbif_fetch.py: the keys that a slim record keeps, in this order.
+// Fields are the keys that a slim record keeps, in this order.
 var Fields = strings.Fields("gbifID datasetKey publishingOrgKey license basisOfRecord occurrenceStatus " +
 	"kingdom phylum class order family genus species scientificName " +
 	"acceptedScientificName taxonRank taxonKey acceptedTaxonKey speciesKey genusKey " +
@@ -27,7 +27,7 @@ var Fields = strings.Fields("gbifID datasetKey publishingOrgKey license basisOfR
 // ObserverKey is the key of the observer hash in a slim record.
 const ObserverKey = "recordedByHash"
 
-// HashObserver is hash_observer: the first 16 hex digits of the SHA-256 of the
+// HashObserver gives the first 16 hex digits of the SHA-256 of the
 // trimmed, lower-case observer text. ok is false for an empty value.
 // A value that is not a string is hashed in its json.dumps(sort_keys=True) form.
 func HashObserver(value any) (hash string, ok bool) {
@@ -39,8 +39,8 @@ func HashObserver(value any) (hash string, ok bool) {
 	return hex.EncodeToString(sum[:])[:16], true
 }
 
-// observerText gives the text that hash_observer hashes. Python treats
-// None, "", 0, false and empty containers as no observer.
+// observerText gives the text of the observer hash. null, "", 0, false and
+// empty containers count as no observer.
 func observerText(value any) (string, bool) {
 	switch v := value.(type) {
 	case nil:

@@ -134,7 +134,7 @@ func TestCreateAttachToOwnFindRoundsProtectedLocation(t *testing.T) {
 	if lat == 52.523 || lon == 13.411 {
 		t.Fatal(body)
 	}
-	// Values of the Python service for coarse((13.411, 52.523)).
+	// The fixed reference values of geo.Coarse for (13.411, 52.523).
 	if lat != 52.52425440172476 || lon != 13.40618535749036 {
 		t.Fatalf("lat %v lon %v", lat, lon)
 	}

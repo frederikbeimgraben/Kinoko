@@ -43,7 +43,7 @@ func (r rows) sorted() rows {
 func CheckpointPath(dir, name string) string { return filepath.Join(dir, name+".parquet") }
 
 // checkpointSchema gives the columns of weekly/<name>.parquet. The keys use the
-// types of the merged table; extract_grids.py writes them as uint32.
+// types of the merged table.
 func checkpointSchema(name string) []pio.ColumnSpec {
 	return []pio.ColumnSpec{{Name: "iso_year", Type: pio.Int16}, {Name: "iso_week", Type: pio.Int8},
 		{Name: "cell", Type: pio.String}, {Name: name, Type: pio.Float32}}
@@ -93,7 +93,7 @@ func readCheckpoint(path, name string, keep func(calendar.Week) bool) (rows, err
 	return out, nil
 }
 
-// floatColumn returns column name as float32. A float64 column is narrowed, as merge_weekly.py does.
+// floatColumn returns column name as float32. A float64 column is narrowed.
 func floatColumn(t *pio.Table, name string) ([]float32, error) {
 	if v, ok := t.F32[name]; ok {
 		return v, nil

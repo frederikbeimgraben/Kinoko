@@ -27,7 +27,7 @@ describe('Fläche', () => {
   });
 
   it('rechnet die Fläche wie der Dienst', () => {
-    // The values of `TestAreaAndCentroidAgreeWithPython` in `backend/internal/core/geo/geo_test.go`.
+    // The values of `TestAreaAndCentroidAgreeWithGolden` in `backend/internal/core/geo/geo_test.go`.
     const square = asPolygon([
       [10.0, 50.0],
       [10.01, 50.0],

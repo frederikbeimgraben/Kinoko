@@ -56,8 +56,7 @@ func (j jsonResponse) Send(w http.ResponseWriter) {
 	_, _ = w.Write(encoded)
 }
 
-// Encode gives the JSON form of v as the Python service writes it: no HTML
-// escapes and no line end.
+// Encode gives the JSON form of v: no HTML escapes and no line end.
 func Encode(v any) ([]byte, error) {
 	var buffer bytes.Buffer
 	encoder := json.NewEncoder(&buffer)

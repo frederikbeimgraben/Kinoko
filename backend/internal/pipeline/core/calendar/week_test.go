@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// weeks.json comes from testdata/golden.py (calendar_golden): date.isocalendar,
-// date.fromisocalendar, build_dataset.week_number and horizons._week_distance.
+// weeks.json is the golden file of the ISO calendar in both directions, the
+// week number and the week distance.
 type weeksGolden struct {
 	Days []struct {
 		Date, Monday   string
@@ -43,7 +43,7 @@ func mustDate(t *testing.T, s string) time.Time {
 	return d
 }
 
-func TestWeekOfMatchesPython(t *testing.T) {
+func TestWeekOfMatchesGolden(t *testing.T) {
 	g := loadWeeks(t)
 	for _, d := range g.Days {
 		w := WeekOf(mustDate(t, d.Date))
@@ -59,7 +59,7 @@ func TestWeekOfMatchesPython(t *testing.T) {
 	}
 }
 
-func TestDistanceMatchesPython(t *testing.T) {
+func TestDistanceMatchesGolden(t *testing.T) {
 	for _, p := range loadWeeks(t).Distances {
 		a, b := Week{p.A[0], p.A[1]}, Week{p.B[0], p.B[1]}
 		if got := Distance(a, b); got != p.Distance {

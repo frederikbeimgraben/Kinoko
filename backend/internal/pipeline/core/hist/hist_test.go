@@ -20,9 +20,9 @@ func f64(t *testing.T, s string) float64 {
 	return math.Float64frombits(binary.BigEndian.Uint64(b))
 }
 
-// histogram.json comes from testdata/golden.py (hist_golden): manifest.histogram,
-// written with json.dumps(h, separators=(",", ":")).
-func TestComputeMatchesPython(t *testing.T) {
+// histogram.json is the golden file of the manifest histogram, written as
+// compact JSON (separators "," and ":").
+func TestComputeMatchesGolden(t *testing.T) {
 	raw, err := os.ReadFile("testdata/histogram.json")
 	if err != nil {
 		t.Fatal(err)

@@ -11,8 +11,7 @@ import (
 	"strings"
 )
 
-// Cleanup removes the week folders that no manifest in maps names, as step 4b
-// of update.sh. A species manifest keeps the folders of its weeks under
+// Cleanup removes the week folders that no manifest in maps names. A species manifest keeps the folders of its weeks under
 // <name>_kacheln; layers.json keeps the weeks of each weekly layer.
 func Cleanup(maps string) error {
 	files, err := filepath.Glob(filepath.Join(maps, "*.json"))
@@ -76,7 +75,7 @@ func cleanSpecies(maps, name string, keep []string) error {
 }
 
 // keepOnly removes each folder in root whose name is not in keep. An empty
-// keep list or a missing root changes nothing, as raeume in update.sh.
+// keep list or a missing root changes nothing.
 func keepOnly(root string, keep []string) error {
 	if len(keep) == 0 {
 		return nil

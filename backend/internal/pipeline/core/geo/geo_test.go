@@ -40,8 +40,8 @@ func readJSON(t *testing.T, path string, v any) {
 	}
 }
 
-// laea.json comes from testdata/golden.py (geo_golden): pyproj Transformer
-// EPSG:4326 to EPSG:3035 and back, always_xy, on 1000 random points in DE.
+// laea.json is the golden file of the pyproj transform EPSG:4326 to
+// EPSG:3035 and back, always_xy, on 1000 random points in DE.
 func TestLAEAMatchesPyproj(t *testing.T) {
 	var pts []struct{ Lon, Lat, X, Y, Ilon, Ilat string }
 	readJSON(t, "testdata/laea.json", &pts)
@@ -89,9 +89,9 @@ type tilesGolden struct {
 	Cells []struct{ X, Y, Size, Cell, Np string }
 }
 
-// tiles.json comes from testdata/golden.py (geo_golden): pyramid.to_mercator,
-// pyramid.finest_zoom, tiles.kachelraster, tiles.kachelbox, tiles.to_byte,
-// tiles.from_byte, pyramid.belegung, pyramid.have_up_to and Python x // size.
+// tiles.json is the golden file of the mercator transform, the finest zoom,
+// the tile range and box, the byte coding, the "have" list and the floor
+// division x // size.
 func loadTiles(t *testing.T) tilesGolden {
 	var g tilesGolden
 	readJSON(t, "testdata/tiles.json", &g)
@@ -100,7 +100,7 @@ func loadTiles(t *testing.T) tilesGolden {
 
 // Go math.Tan and math.Log differ from libm by a few ulps, so y gets a
 // relative tolerance of 1e-14.
-func TestMercatorMatchesPython(t *testing.T) {
+func TestMercatorMatchesGolden(t *testing.T) {
 	for _, m := range loadTiles(t).Mercator {
 		x, y := ToMercator(f64(t, m.Lon), f64(t, m.Lat))
 		if x != f64(t, m.X) || math.Abs(y-f64(t, m.Y)) > 1e-14*math.Abs(y) {
@@ -109,7 +109,7 @@ func TestMercatorMatchesPython(t *testing.T) {
 	}
 }
 
-func TestFinestZoomMatchesPython(t *testing.T) {
+func TestFinestZoomMatchesGolden(t *testing.T) {
 	for _, z := range loadTiles(t).Zooms {
 		cp, base := z.Cap, z.Base
 		if cp == 0 {
@@ -127,7 +127,7 @@ func TestFinestZoomMatchesPython(t *testing.T) {
 	}
 }
 
-func TestTileRangeAndBoxMatchPython(t *testing.T) {
+func TestTileRangeAndBoxMatchGolden(t *testing.T) {
 	for _, r := range loadTiles(t).Ranges {
 		b := [4]float64{f64(t, r.Box[0]), f64(t, r.Box[1]), f64(t, r.Box[2]), f64(t, r.Box[3])}
 		tx0, ty0, tx1, ty1 := TileRange(b[0], b[1], b[2], b[3], r.Z)
@@ -143,7 +143,7 @@ func TestTileRangeAndBoxMatchPython(t *testing.T) {
 	}
 }
 
-func TestByteCodingMatchesPython(t *testing.T) {
+func TestByteCodingMatchesGolden(t *testing.T) {
 	g := loadTiles(t).Bytes
 	for i, s := range g.Values {
 		v := f32(t, s)
@@ -167,7 +167,7 @@ func TestByteCodingMatchesPython(t *testing.T) {
 
 func slicesEqual(a, b []uint8) bool { return string(a) == string(b) }
 
-func TestHaveListMatchesPython(t *testing.T) {
+func TestHaveListMatchesGolden(t *testing.T) {
 	g := loadTiles(t).Have
 	tiles := make([]TileID, len(g.Tiles))
 	for i, x := range g.Tiles {
@@ -194,7 +194,7 @@ func compact(t *testing.T, raw json.RawMessage) string {
 	return string(out)
 }
 
-func TestCellOfMatchesPython(t *testing.T) {
+func TestCellOfMatchesGolden(t *testing.T) {
 	for _, c := range loadTiles(t).Cells {
 		x, y, size := f64(t, c.X), f64(t, c.Y), f64(t, c.Size)
 		got := CellOf(x, y, size)

@@ -31,8 +31,7 @@ func RefreshYears(now time.Time) []int {
 	return []int{now.Year()}
 }
 
-// WeeklyPlan fetches the refresh years again. This fixes finding 2 of the plan:
-// gbif_fetch.py skipped present files, so the current year never changed after its first fetch.
+// WeeklyPlan fetches the refresh years again, so the current year changes with each fetch (finding 2).
 func WeeklyPlan(now time.Time) Plan {
 	years := RefreshYears(now)
 	return Plan{Years: years, Refresh: setOf(years)}
@@ -76,7 +75,7 @@ func setOf(years []int) map[int]bool {
 	return out
 }
 
-// Fetch runs the plan, one year after the other, as gbif_fetch.main. A year
+// Fetch runs the plan, one year after the other. A year
 // above MonthThreshold records is fetched by month. A refreshed year writes all
 // its chunks first and then replaces its old files, so a failure keeps the old files.
 func (f *Fetcher) Fetch(ctx context.Context, plan Plan) ([]Chunk, error) {

@@ -49,7 +49,7 @@ func (m MemStore) Put(id geo.TileID, t Tile) error {
 
 type parentKey struct{ x, y int }
 
-// Coarsen builds every level from finest-1 down to base, as pyramid.coarsen.
+// Coarsen builds every level from finest-1 down to base.
 // Each parent of a tile with data is the weighted mean of its four children.
 // It returns the parents with data, per zoom in the order (x, y).
 func Coarsen(s Store, finest, base int) ([]geo.TileID, error) {

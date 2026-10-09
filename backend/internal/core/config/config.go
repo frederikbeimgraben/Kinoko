@@ -135,8 +135,8 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	return s, nil
 }
 
-// DatabasePath accepts a file path or an SQLAlchemy URL of the Python service.
-// The NixOS module of the Python service sets "sqlite+aiosqlite:////var/lib/x.sqlite".
+// DatabasePath accepts a file path or an SQLAlchemy SQLite URL, for example
+// "sqlite+aiosqlite:////var/lib/x.sqlite".
 func DatabasePath(value string) string {
 	for _, prefix := range []string{"sqlite+aiosqlite:///", "sqlite:///"} {
 		if rest, ok := strings.CutPrefix(value, prefix); ok {

@@ -10,10 +10,10 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/train"
 )
 
-// ErrNoFolds tells that the year scheme or the space scheme gives no fold. final_model.py fails there too.
+// ErrNoFolds tells that the year scheme or the space scheme gives no fold.
 var ErrNoFolds = errors.New("fit: no blocked fold with enough rows and positives")
 
-// HorizonReport is what final_model.py prints for one horizon.
+// HorizonReport is the training report of one horizon.
 type HorizonReport struct {
 	Horizon    int
 	Candidates []CandidateScore
@@ -46,7 +46,7 @@ func TrainSpecies(ctx context.Context, in Inputs, cfg Config) (*bundle.Bundle, R
 	return Train(ctx, t, cfg, report)
 }
 
-// Train runs final_model.main on a prepared visit table.
+// Train ranks the features, tunes the settings, calibrates and trains the final model on a prepared visit table.
 func Train(ctx context.Context, t *Table, cfg Config, report Report) (*bundle.Bundle, Report, error) {
 	cfg = cfg.withDefaults()
 	f := folds{

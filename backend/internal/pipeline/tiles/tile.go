@@ -28,8 +28,8 @@ func HasData(code []uint8) bool {
 	return slices.ContainsFunc(code, func(b uint8) bool { return b != 0 })
 }
 
-// CodeField codes a band as bytes relative to top, as
-// to_byte(band / max(top, 1e-6)) in render_field. The division is float32, as numpy.
+// CodeField codes a band as bytes relative to top: the byte of
+// band / max(top, 1e-6). The division is float32.
 func CodeField(band []float32, top float64) []uint8 {
 	scale := float32(max(top, 1e-6))
 	out := make([]uint8, len(band))
@@ -39,7 +39,7 @@ func CodeField(band []float32, top float64) []uint8 {
 	return out
 }
 
-// FullWeight is the weight of the finest level, as pyramid.full_weight:
+// FullWeight is the weight of the finest level:
 // a point with data is full (255), a point without data has no weight.
 func FullWeight(code []uint8) []uint8 {
 	out := make([]uint8, len(code))
@@ -51,8 +51,8 @@ func FullWeight(code []uint8) []uint8 {
 	return out
 }
 
-// Cut cuts a coded field of nx×ny points into tiles from tile (tx0, ty0), as
-// pyramid.cut_field. Only tiles with data are returned, rows first.
+// Cut cuts a coded field of nx×ny points into tiles from tile (tx0, ty0).
+// Only tiles with data are returned, rows first.
 // Points beyond whole tiles are dropped.
 func Cut(code []uint8, nx, ny, zoom, tx0, ty0 int) []Placed {
 	var out []Placed
@@ -79,14 +79,13 @@ func zeroNaN(v float32) float32 {
 	return v
 }
 
-// point returns the value and the weight of one point, NaN as 0, as
-// nan_to_num(from_byte(...)) in pyramid.halve.
+// point returns the value and the weight of one point, NaN as 0.
 func point(code, weight []uint8, k int) (value, share float32) {
 	return zeroNaN(geo.FromByte(code[k])), zeroNaN(geo.FromByte(weight[k]))
 }
 
 // Halve averages each block of 2×2 points of a rows×cols field into one
-// point, weighted, as pyramid.halve. It returns the mean value and the mean
+// point, weighted. It returns the mean value and the mean
 // weight. A block without weight gets no data. The arithmetic is float32.
 func Halve(code, weight []uint8, rows, cols int) (c, w []uint8) {
 	or, oc := rows/2, cols/2
@@ -113,7 +112,7 @@ func Halve(code, weight []uint8, rows, cols int) (c, w []uint8) {
 	return c, w
 }
 
-// canvas puts the four children of a parent side by side, as pyramid._canvas.
+// canvas puts the four children of a parent side by side.
 // A missing child stays 0. pick selects the value or the weight bytes.
 func canvas(children [4]*Tile, pick func(*Tile) []uint8) []uint8 {
 	side := 2 * TileSize

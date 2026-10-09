@@ -14,7 +14,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
-// WeeklyLayer is one entry of WEEKLY in input_layers.py.
+// WeeklyLayer is one weekly input layer.
 type WeeklyLayer struct{ Name, Column, Label, Unit string }
 
 // WeeklyLayers are the weekly input layers in the order of the chooser of the page.
@@ -65,12 +65,12 @@ type LayerConfig struct {
 	Log     Logger
 }
 
-// DefaultLayerConfig returns the settings of update.sh.
+// DefaultLayerConfig returns the default settings of the weekly input layers.
 func DefaultLayerConfig(maps string) LayerConfig {
 	return LayerConfig{Maps: maps, Step: DefaultStep, Weeks: DefaultWeeks, ZoomCap: geo.ZoomCap}
 }
 
-// Layers draws the weekly input layers as input_layers.py --only-weekly --tiles.
+// Layers draws the weekly input layers as tiles.
 // It keeps the static entries of layers.json in their order, writes the week tiles,
 // then layers.json in one rename, then removes the week folders it does not name.
 func Layers(ctx context.Context, in LayerInputs, cfg LayerConfig) (*pyjson.Obj, error) {

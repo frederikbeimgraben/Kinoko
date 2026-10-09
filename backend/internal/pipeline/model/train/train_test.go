@@ -10,9 +10,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/lgbm"
 )
 
-// golden is testdata/golden.json, written by ../testdata/gen_golden.py with the Python functions in "source":
-// final_model.blocked_folds, prior_columns, prior_tables, block_key, the ranking lines of final_model.main,
-// the ceiling lines of fit_calibrated, sklearn brier_score_loss and numpy.mean.
+// golden is the golden file testdata/golden.json: the blocked folds, the prior columns and tables, the block
+// keys, the feature ranking, the ceiling, sklearn brier_score_loss and numpy.mean.
 type golden struct {
 	X, Y       []float64
 	IsoYear    []int
@@ -61,7 +60,7 @@ func loadGolden(t *testing.T) golden {
 
 func (g golden) rows() Rows { return Rows{g.Cell, g.Block, g.IsoYear, g.Label} }
 
-func TestFoldsMatchPython(t *testing.T) {
+func TestFoldsMatchGolden(t *testing.T) {
 	g := loadGolden(t)
 	for name, c := range map[string]struct {
 		keys []int64
@@ -102,7 +101,7 @@ func samePrior(t *testing.T, what string, got PriorColumns, want map[string][]*f
 	}
 }
 
-func TestPriorMatchesPython(t *testing.T) {
+func TestPriorMatchesGolden(t *testing.T) {
 	g := loadGolden(t)
 	folds := BlockedFolds(YearKeys(g.IsoYear), g.Label)
 	samePrior(t, "fold", Prior(g.rows(), folds[0].Train, folds[0].Test), g.PriorFold)
@@ -125,7 +124,7 @@ func TestPriorMatchesPython(t *testing.T) {
 	}
 }
 
-func TestSelectionMatchesPython(t *testing.T) {
+func TestSelectionMatchesGolden(t *testing.T) {
 	g := loadGolden(t)
 	r := Rank(g.GainNames, g.Gains)
 	if !slices.Equal(r.Order, g.Order) || !slices.Equal(r.Earned, g.Earned) || r.Total != g.Total {
@@ -146,7 +145,7 @@ func TestSelectionMatchesPython(t *testing.T) {
 	}
 }
 
-func TestScoresMatchPython(t *testing.T) {
+func TestScoresMatchGolden(t *testing.T) {
 	g := loadGolden(t)
 	if c := Ceiling(g.CeilingRaw, g.CeilingY); c != g.Ceiling {
 		t.Errorf("Ceiling = %v, want %v", c, g.Ceiling)
@@ -164,7 +163,7 @@ func TestScoresMatchPython(t *testing.T) {
 	}
 }
 
-func TestGridMatchesPython(t *testing.T) {
+func TestGridMatchesGolden(t *testing.T) {
 	g := loadGolden(t)
 	grid := Grid()
 	if len(grid) != len(g.Grid) {

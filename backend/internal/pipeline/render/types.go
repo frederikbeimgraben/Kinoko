@@ -1,7 +1,6 @@
-// Package render draws the weekly maps of the forecast chain: the species
-// maps of region_map.py, the weekly input layers of input_layers.py, the
-// static layer merge and the week cleanup of update.sh. It writes value
-// tiles and Python-compatible manifests into PILZE_MAPS.
+// Package render draws the weekly maps of the forecast pipeline: the species
+// maps, the weekly input layers, the static layer merge and the week cleanup.
+// It writes value tiles and manifests into PILZE_MAPS.
 package render
 
 import (
@@ -31,7 +30,7 @@ func logOf(l Logger) Logger {
 	return l
 }
 
-// Constants of region_map.py and input_layers.py.
+// Constants of the species maps and the input layers.
 const (
 	// TrainCell is the cell of the weather raster and of the training, in metres.
 	TrainCell = weather.CellSize
@@ -51,7 +50,7 @@ const (
 	smoothNorm = float32(0.08)
 )
 
-// RegionDE is REGIONEN["de"] of region_map.py: west, south, east, north in degrees.
+// RegionDE is the box of Germany: west, south, east, north in degrees.
 var RegionDE = [4]float64{5.75, 47.15, 15.15, 55.15}
 
 // Inputs are the data of one species map. The runner loads them; Species only reads them.
@@ -73,7 +72,7 @@ type Inputs struct {
 
 // Config holds the settings of one species map.
 type Config struct {
-	// Slug is the catalogue slug. It names the manifest and the tile folder (bug 1).
+	// Slug is the catalogue slug. It names the manifest and the tile folder (finding 1).
 	Slug string
 	// Maps is the output folder PILZE_MAPS.
 	Maps string
@@ -94,7 +93,7 @@ type Config struct {
 	MinForest float64
 	// Smooth is the Gaussian sigma in cells. 0 turns the smoothing off.
 	Smooth float64
-	// Spill keeps smoothed values in masked cells, as region_map.py (finding 10).
+	// Spill keeps smoothed values in masked cells (finding 10).
 	Spill bool
 	// ReferenceSpecies and ReferenceRecords are the constant detection columns.
 	ReferenceSpecies, ReferenceRecords float64
@@ -108,7 +107,7 @@ type Config struct {
 	Log Logger
 }
 
-// DefaultConfig returns the settings of update.sh for one species.
+// DefaultConfig returns the default settings for one species.
 func DefaultConfig(slug, maps string) Config {
 	return Config{
 		Slug: slug, Maps: maps, Region: RegionDE, Step: DefaultStep, Weeks: DefaultWeeks,

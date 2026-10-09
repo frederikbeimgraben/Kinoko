@@ -13,7 +13,7 @@ import (
 type Bounds struct{ X0, Y0, X1, Y1 int }
 
 // RegionBounds projects a box in degrees to EPSG:3035 and floors each corner to
-// the step, as the bounds of region_map.main.
+// the step.
 func RegionBounds(region [4]float64, step int) Bounds {
 	x0, y0 := geo.LAEA3035(region[0], region[1])
 	x1, y1 := geo.LAEA3035(region[2], region[3])
@@ -22,7 +22,7 @@ func RegionBounds(region [4]float64, step int) Bounds {
 	return Bounds{align(x0), align(y0), align(x1), align(y1)}
 }
 
-// ExtentBounds is the box of input_layers.main: the cell centres plus half a step on each side.
+// ExtentBounds is the box of the input layers: the cell centres plus half a step on each side.
 func ExtentBounds(xs, ys []float64, step int) Bounds {
 	half := float64(step) / 2
 	trunc := func(v float64) int { return int(math.Trunc(v)) }
@@ -165,7 +165,7 @@ func joinColumns(t *pio.Table, keys []geo.CellKey, cols []string) (map[string][]
 	return out, nil
 }
 
-// Water tells if cell i has no soil value, as the mask "wasser" of region_map.py.
+// Water tells if cell i has no soil value.
 func (g *Grid) Water(i int) bool { return g.Soil != nil && isNaN32(g.Soil[i]) }
 
 // UniqueCells returns the 5 km cells of the grid, each once, in the order of appearance.

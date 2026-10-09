@@ -18,7 +18,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/tiles"
 )
 
-// Species draws the weekly map of one species as region_map.py --tiles --no-image.
+// Species draws the weekly map of one species as tiles.
 // It writes the week tiles, then <Maps>/<Slug>.json in one rename, then removes the
 // week folders that the manifest does not name. It returns the manifest.
 func Species(ctx context.Context, in Inputs, cfg Config) (*pyjson.Obj, error) {
@@ -235,7 +235,7 @@ func fixedColumns(g *Grid, prior bundle.Prior) map[string][]float32 {
 }
 
 // bareMask marks the cells that stay empty: too little forest, no weather cell
-// (abroad) or no soil value (water), as "bare" in region_map.py.
+// (abroad) or no soil value (water).
 func bareMask(g *Grid, weatherCells []geo.CellKey, minForest float64) []bool {
 	known := make(map[geo.CellKey]bool, len(weatherCells))
 	for _, c := range weatherCells {

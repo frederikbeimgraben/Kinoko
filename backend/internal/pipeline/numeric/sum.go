@@ -1,7 +1,7 @@
 // Package numeric holds the numeric kernels of the pipeline: filters,
 // sampling, isotonic regression, metrics, splits and the numpy random state.
 // Each function copies the order of operations of numpy, scipy or sklearn,
-// so that the Go results match the Python chain to the last bits where possible.
+// so that the results match the golden files to the last bits where possible.
 package numeric
 
 // Float is the set of storage types the kernels accept.

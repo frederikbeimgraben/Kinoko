@@ -1,6 +1,6 @@
-// Package weather reduces the DWD daily grids to weekly values per model cell
-// (extract_grids.py, day_measures.py), joins them into a Cube (merge_weekly.py)
-// and derives the lag, rolling and anomaly features (build_dataset.add_lags, add_anomalies).
+// Package weather reduces the DWD daily grids and the day measures to weekly
+// values per model cell, joins them into a Cube and derives the lag, rolling
+// and anomaly features.
 package weather
 
 // CellSize is the edge of a model cell in metres (EPSG:3035).
@@ -38,7 +38,7 @@ type Job struct {
 	Measure func() DayMeasure
 }
 
-// Jobs are the checkpoints of extract_grids.py, in its order: the HYRAS
+// Jobs are the weekly checkpoints, in this order: the HYRAS
 // variables, the soil moisture per stand, then the day measures.
 var Jobs = []Job{
 	{Name: "pr", Dir: "hyras/precipitation", Var: "pr", How: Sum},

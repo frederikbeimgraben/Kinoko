@@ -12,7 +12,7 @@ type Fold struct {
 	Test  []int
 }
 
-// FloorDiv is Python's float floor division a // b, which differs from math.Floor(a/b) near an integer.
+// FloorDiv is the float floor division a // b, which differs from math.Floor(a/b) near an integer.
 func FloorDiv(a, b float64) float64 {
 	mod := math.Mod(a, b)
 	div := (a - mod) / b
@@ -29,7 +29,7 @@ func FloorDiv(a, b float64) float64 {
 	return floor
 }
 
-// BlockKey is block_key of final_model.py: "<x // BlockM>_<y // BlockM>".
+// BlockKey is the key of the spatial block: "<x // BlockM>_<y // BlockM>".
 func BlockKey(x, y float64) string {
 	return strconv.Itoa(int(FloorDiv(x, BlockM))) + "_" + strconv.Itoa(int(FloorDiv(y, BlockM)))
 }
@@ -52,7 +52,7 @@ func SpaceKeys(x []float64) []int64 {
 	return out
 }
 
-// BlockedFolds is blocked_folds of final_model.py. Each distinct key, in ascending order, is the test part
+// BlockedFolds gives the blocked folds. Each distinct key, in ascending order, is the test part
 // of one fold. A fold stays only if its test part has MinFoldRows rows and MinFoldPositives positives.
 func BlockedFolds(key []int64, label []int8) []Fold {
 	groups := slices.Compact(slices.Sorted(slices.Values(key)))

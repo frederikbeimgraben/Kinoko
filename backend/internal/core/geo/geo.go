@@ -36,14 +36,14 @@ type Box struct {
 	West, South, East, North float64
 }
 
-// Radians converts degrees to radians, with the same constant as Python.
+// Radians converts degrees to radians, with the constant pi/180.
 func Radians(deg float64) float64 { return deg * degToRad }
 
-// Degrees converts radians to degrees, with the same constant as Python.
+// Degrees converts radians to degrees, with the constant 180/pi.
 func Degrees(rad float64) float64 { return rad * radToDeg }
 
-// Sum adds the values with the compensated sum of Python 3.12 and later.
-// The result is equal to the Python service to the last bit.
+// Sum adds the values with a compensated (Neumaier) sum, so the result does
+// not depend on the order of large and small values.
 func Sum(values []float64) float64 {
 	total, compensation := 0.0, 0.0
 	for _, x := range values {
@@ -103,8 +103,7 @@ func Inside(p Point, ring Ring) bool {
 	return inside
 }
 
-// Coarse moves a point to a grid of km kilometres. Python rounds half to
-// even, so this function does the same.
+// Coarse moves a point to a grid of km kilometres. A half rounds to even.
 func Coarse(p Point, km float64) Point {
 	stepLat := km / kmPerDegree
 	lat := math.RoundToEven(p.Lat/stepLat) * stepLat
@@ -152,7 +151,8 @@ func ParseBox(raw string) (Box, bool) {
 	return box, true
 }
 
-// pyFloat reads a number as Python float() does for decimal text.
+// pyFloat reads decimal text as a float: spaces around the text, a sign,
+// underscores between digits, "inf" and "nan" are valid.
 func pyFloat(text string) (float64, bool) {
 	trimmed := strings.TrimSpace(text)
 	if strings.ContainsAny(trimmed, "xX") {
@@ -172,7 +172,7 @@ func isRange(err error) bool {
 	return errors.Is(err, strconv.ErrRange)
 }
 
-// validUnderscores accepts an underscore only between two digits, as Python does.
+// validUnderscores accepts an underscore only between two digits.
 func validUnderscores(text string) bool {
 	for i := range len(text) {
 		if text[i] != '_' {

@@ -3,12 +3,12 @@ import { FORECAST_RAMP } from '../ui/ramp/ramp-colours';
 /** Colour and opacity per byte, four values per entry: 256 × RGBA. */
 export const LUT_SIZE = 256 * 4;
 
-/** `probability`: byte 1–255 gives `(byte - 1) / 254 * top`, as `modell/src/pilze/tiles.py` writes it.
+/** `probability`: byte 1–255 gives `(byte - 1) / 254 * top`, as the backend pipeline writes it.
  * `range`: byte 1–255 gives `low + (byte - 1) / 254 * (high - low)` in the unit of the layer. */
 export type ValueScale = { kind: 'probability'; top: number } | { kind: 'range'; low: number; high: number };
 
 // A forecast scales opacity with the value. A layer keeps one opacity, so a low value does not look like missing data.
-// `region_map.py`, `render` uses the same calculation.
+// The backend package `render` uses the same calculation.
 const OPACITY_BASE = 0.1;
 const OPACITY_RANGE = 0.85;
 const OPACITY_MAX = 240;

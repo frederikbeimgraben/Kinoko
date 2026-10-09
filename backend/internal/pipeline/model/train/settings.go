@@ -1,10 +1,10 @@
-// Package train holds the parts of final_model.py that need no other pipeline unit:
+// Package train holds the parts of the training that need no other pipeline unit:
 // the LightGBM settings, the folds, the prior columns, the feature pruning rules and the out-of-fold scores.
 package train
 
 import "github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/lgbm"
 
-// Constants of final_model.py and visit_model.py.
+// Constants of the training.
 const (
 	// Rounds is ROUNDS, the boosting rounds of the base settings.
 	Rounds = 300
@@ -34,7 +34,7 @@ var Sizes = []int{10, 15, 20, 25, 30, 40, 50, 60, 80}
 // PriorNames is PRIOR, the prior columns at the end of each feature list.
 var PriorNames = []string{"prior_rate_cell", "prior_n_cell", "prior_rate_block", "prior_n_block"}
 
-// Base is PARAMS of visit_model.py, in its key order.
+// Base is the base LightGBM setting, in its key order.
 var Base = lgbm.Params{
 	{Key: "objective", Value: "binary"},
 	{Key: "learning_rate", Value: 0.05},
@@ -54,7 +54,7 @@ type Setting struct {
 	Rounds int
 }
 
-// Grid returns GRID of final_model.py. The first entry is the base setting.
+// Grid returns the grid of settings. The first entry is the base setting.
 func Grid() []Setting {
 	return []Setting{
 		{"standard", Base, Rounds},

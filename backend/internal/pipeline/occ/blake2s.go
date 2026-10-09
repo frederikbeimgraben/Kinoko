@@ -90,7 +90,7 @@ func blake2sCompress(h *[8]uint32, block []byte, t uint64, final bool) {
 	}
 }
 
-// AppObserver is build_occurrences.observer_hash: "app:" and the 8-byte BLAKE2s of the find id.
+// AppObserver gives the observer of an app find: "app:" and the 8-byte BLAKE2s of the find id.
 // One find is one observer-day, because the endpoint gives no account.
 func AppObserver(findID string) string {
 	return "app:" + hex.EncodeToString(Blake2s([]byte(findID), 8))

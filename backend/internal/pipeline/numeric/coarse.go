@@ -77,8 +77,8 @@ func NewCoarseSampler(cells []geo.CellKey, xs, ys []float64, cellM float64) *Coa
 	return s
 }
 
-// read is the bilinear read of a filtered field. Python sums the four terms
-// from 0 in float32, so the order of the additions is kept.
+// read is the bilinear read of a filtered field. It sums the four terms
+// from 0 in float32, in a fixed order.
 func (s *CoarseSampler) read(field []float32) []float32 {
 	out := make([]float32, len(s.weights[0]))
 	for i := range out {

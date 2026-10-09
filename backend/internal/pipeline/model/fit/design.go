@@ -8,7 +8,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/train"
 )
 
-// FeatureList is feature_list of final_model.py: the knowable columns of the detection, season, weather
+// FeatureList gives the knowable columns of the detection, season, weather
 // and trees blocks, then the activity columns of horizon h, then the prior columns.
 func FeatureList(b Blocks, t *Table, h int) ([]string, error) {
 	var names []string
@@ -28,7 +28,7 @@ func FeatureList(b Blocks, t *Table, h int) ([]string, error) {
 	return slices.Concat(names, activity, train.PriorNames), nil
 }
 
-// Design is design of final_model.py for the given rows: a row-major matrix with the columns in the
+// Design gives the design matrix of the given rows: a row-major matrix with the columns in the
 // order of features. A prior column comes from prior, every other column from the table.
 func (t *Table) Design(features []string, prior train.PriorColumns, rows []int) ([]float64, error) {
 	cols := make([]func(i int) float64, len(features))

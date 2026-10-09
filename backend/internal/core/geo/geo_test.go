@@ -7,8 +7,8 @@ import (
 
 var square = Ring{{10.0, 50.0}, {10.01, 50.0}, {10.01, 50.01}, {10.0, 50.01}, {10.0, 50.0}}
 
-// The expected values come from the Python service (app/shared/geometry.py).
-func TestAreaAndCentroidAgreeWithPython(t *testing.T) {
+// The expected values are fixed reference values.
+func TestAreaAndCentroidAgreeWithGolden(t *testing.T) {
 	cases := []struct {
 		ring     Ring
 		area     float64
@@ -52,7 +52,7 @@ func TestCoarseRoundsToAGrid(t *testing.T) {
 	}
 }
 
-func TestCoarseAgreesWithPython(t *testing.T) {
+func TestCoarseAgreesWithGolden(t *testing.T) {
 	cases := []struct{ in, out Point }{
 		{Point{10.0004, 50.0004}, Point{10.006272547898448, 50.0}},
 		{Point{8.123456, 50.123456}, Point{8.126918419350993, 50.12576356449874}},
@@ -69,9 +69,9 @@ func TestCoarseAgreesWithPython(t *testing.T) {
 	}
 }
 
-// The expected values come from coarse() of the Python service
-// (app/shared/geometry.py), as the photos module uses it.
-func TestCoarseAgreesWithPythonPhotoGrid(t *testing.T) {
+// The expected values are fixed reference values of the grid that the
+// photos module uses.
+func TestCoarseAgreesWithGoldenPhotoGrid(t *testing.T) {
 	cases := []struct{ in, out Point }{
 		{Point{13.411, 52.523}, Point{13.40618535749036, 52.52425440172476}},
 		{Point{0.0, 0.0}, Point{0.0, 0.0}},

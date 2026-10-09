@@ -11,8 +11,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// TestGridOfGermany compares the Germany grid with trees_germany.main
-// (pyproj), golden grid.json "germany500".
+// TestGridOfGermany compares the Germany grid with the golden grid.json
+// "germany500".
 func TestGridOfGermany(t *testing.T) {
 	want := loadGrid(t).Germany500
 	g := GridOf(Germany, CellStep)
@@ -21,8 +21,8 @@ func TestGridOfGermany(t *testing.T) {
 	}
 }
 
-// TestTileTreesGolden compares the trees grid with region_map.tile_trees and
-// the cell column of trees_germany.main: golden trees_de_500m.parquet.
+// TestTileTreesGolden compares the trees grid and its cell column with the
+// golden trees_de_500m.parquet.
 func TestTileTreesGolden(t *testing.T) {
 	gg := loadGrid(t)
 	counts, err := TileTrees(context.Background(), in("trees_32632.tif"), gg.grid(), TreeOptions{Tile: gg.TreeTile})
@@ -34,7 +34,7 @@ func TestTileTreesGolden(t *testing.T) {
 }
 
 // TestTreeScalesGolden runs TreeScales on the golden trees grid and compares
-// it with tree_scales.main: golden tree_scales.parquet.
+// it with the golden tree_scales.parquet.
 func TestTreeScalesGolden(t *testing.T) {
 	grid, gridInfo := readGolden(t, "trees_de_500m.parquet")
 	names := fn.Map(gridInfo.Columns, func(c pio.ColumnSpec) string { return c.Name })
@@ -72,8 +72,8 @@ func buildSite(t *testing.T, g Grid) (DEMFiles, Columns, Columns) {
 	return files, dem, soil
 }
 
-// TestSiteGolden compares the site grid with static_features.main at 500 m:
-// golden site_500m.parquet. Northness and eastness come from a float32 cos
+// TestSiteGolden compares the site grid at 500 m with the golden
+// site_500m.parquet. Northness and eastness come from a float32 cos
 // and sin, whose last bit can differ from numpy.
 func TestSiteGolden(t *testing.T) {
 	g := loadGrid(t).grid()
@@ -91,8 +91,7 @@ func TestSiteGolden(t *testing.T) {
 	})
 }
 
-// TestDEMRastersGolden compares the 90 m rasters with the work files of
-// static_features.main.
+// TestDEMRastersGolden compares the 90 m rasters with the golden rasters.
 func TestDEMRastersGolden(t *testing.T) {
 	g := loadGrid(t).grid()
 	files, _, _ := buildSite(t, g)
@@ -135,7 +134,7 @@ func readAll(t *testing.T, path string) ([]float32, int, int) {
 	return v, nx, ny
 }
 
-// TestScaleWindow checks the window rule of tree_scales.py.
+// TestScaleWindow checks the window rule of the tree scales.
 func TestScaleWindow(t *testing.T) {
 	got := fn.Map(ScaleRadii, func(r int) int { return ScaleWindow(r, CellStep) })
 	if !slices.Equal(got, []int{5, 9, 21}) {
@@ -146,7 +145,7 @@ func TestScaleWindow(t *testing.T) {
 	}
 }
 
-// TestSoilName checks the column names of static_features.py.
+// TestSoilName checks the column names of the soil rasters.
 func TestSoilName(t *testing.T) {
 	if got := SoilName("/x/phh2o_0-5cm_mean.tif"); got != "soil_phh2o_0_5cm" {
 		t.Fatal(got)

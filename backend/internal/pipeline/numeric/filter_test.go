@@ -4,7 +4,7 @@ import "testing"
 
 var modes = map[string]Mode{"constant": Constant, "reflect": Reflect, "nearest": Nearest}
 
-// Golden values: scipy.ndimage.gaussian_filter (testdata/gen_golden.py).
+// Golden values: scipy.ndimage.gaussian_filter.
 func TestGaussian2D(t *testing.T) {
 	var cases []struct {
 		Dtype         string
@@ -24,8 +24,8 @@ func TestGaussian2D(t *testing.T) {
 	}
 }
 
-// Golden values: scipy.ndimage.uniform_filter, and uniform_filter*size² as in
-// tree_scales.py (testdata/gen_golden.py).
+// Golden values: scipy.ndimage.uniform_filter, and uniform_filter*size² as
+// the window sum of the tree scales.
 func TestUniform2D(t *testing.T) {
 	var cases []struct {
 		Ny, Nx, Size       int
@@ -41,7 +41,7 @@ func TestUniform2D(t *testing.T) {
 }
 
 // Golden values: scipy.ndimage.convolve with a 3x3x1 kernel and
-// map_coordinates(order=1, mode="nearest") (testdata/gen_golden.py).
+// map_coordinates(order=1, mode="nearest").
 func TestVolume(t *testing.T) {
 	var g struct {
 		Vol, Box, Rate, Values floats

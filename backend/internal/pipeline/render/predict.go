@@ -12,7 +12,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ/activity"
 )
 
-// sourceKind is where a model column comes from, as the "quellen" of region_map.py.
+// sourceKind is where a model column comes from.
 type sourceKind int
 
 const (
@@ -37,7 +37,7 @@ type plan struct {
 	sources []source
 }
 
-// newPlan maps each feature of hz to its source, in the order of region_map.py:
+// newPlan maps each feature of hz to its source, in this order:
 // grid, weather, activity, season, constants. A feature without a source stays NaN.
 func newPlan(h int, hz *bundle.Horizon, fixed map[string][]float32, wnames []string, consts map[string]float32, log Logger) plan {
 	p := plan{h: h, model: hz}
