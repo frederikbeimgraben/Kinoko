@@ -14,8 +14,8 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
@@ -24,12 +24,14 @@ import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
 import { EntriesStore } from '../entries/entries.store';
+import { NO_FILTER, inPolygon } from '../entries/entry-filter';
 import { hectaresText } from '../entries/formats';
 import { ObjectSheetStore } from './object-sheet.store';
 import { colourHex } from '../entries/colors';
 import { asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
+import { Router } from '@angular/router';
 import type { Location } from '../add-entry/add-entry.store';
 
 /** The object sheet of a zone. "Change outline" gives the corners to Terra Draw. */
@@ -38,8 +40,8 @@ import type { Location } from '../add-entry/add-entry.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    ButtonComponent,
     ConfirmDialogComponent,
+    ListRowComponent,
     MapAppLinkComponent,
     ObjectFormComponent,
     ObjectTitleComponent,
@@ -59,6 +61,7 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly draw = inject(ZONE_DRAWER);
+  private readonly router = inject(Router);
 
   readonly zone = input.required<Zone>();
 
@@ -90,6 +93,12 @@ export class ZoneSheetComponent implements OnDestroy {
   });
 
   protected readonly colour = computed(() => colourHex(this.zone().colour));
+
+  /** The own finds inside the outline, per `ZoneViewBody.dc.html`. */
+  protected readonly findCount = computed(() => {
+    const polygon = this.zone().polygon;
+    return String(this.eintraege.finds().filter((find) => inPolygon(find.lon, find.lat, polygon)).length);
+  });
 
   /** The muted line below the name, per `ZoneViewBody.dc.html`. */
   protected readonly sub = computed(() =>
@@ -145,12 +154,19 @@ export class ZoneSheetComponent implements OnDestroy {
     this.stopSession();
   }
 
+  // The sheet closes before the request: the delete removes the zone from the list at once.
   protected async remove(): Promise<void> {
+    const id = this.zone().id;
     this.deleteAsk.set(false);
-    if (await this.eintraege.deleteZone(this.zone().id)) {
-      this.toasts.success(this.i18n.translate('objekt.geloescht'));
-      this.closed.emit();
-    }
+    this.closed.emit();
+    if (await this.eintraege.deleteZone(id)) this.toasts.success(this.i18n.translate('entry.zone.deleted'));
+  }
+
+  /** Opens the entries with the filter of this zone, per `EntriesZone.dc.html`. */
+  protected showFinds(): void {
+    this.eintraege.setFilter({ ...NO_FILTER, zoneId: this.zone().id });
+    this.closed.emit();
+    void this.router.navigate(['/eintraege']);
   }
 
   private stopSession(): void {

@@ -19,6 +19,19 @@ const RAIN: Layer = readLayers({
   },
 }).layers[0];
 
+const SPRUCE: Layer = readLayers({
+  layers: {
+    fichte: {
+      label: 'Fichte',
+      note: 'Thünen-Institut, CC BY 4.0',
+      static: true,
+      low: 0,
+      high: 1,
+      tiles: 'y',
+    },
+  },
+}).layers[0];
+
 const DISTRIBUTION: Histogram = { classes: [0, 50, 100], shares: [0.6, 0.4] };
 
 const FACTOR: Factor = { source: 'regen_4w', condition: 'above', low: 80, high: 0, active: true };
@@ -34,10 +47,19 @@ describe('FactorSheetComponent', () => {
     const { container } = await sheet();
 
     expect(screen.getAllByText(/Niederschlag/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Summe KW 37 bis 40/).length).toBeGreaterThan(0);
+    expect(screen.getByText('Zeitraum').closest('.row')).toHaveTextContent('Summe KW 37 bis 40');
     expect(screen.getByRole('img', { name: /Verteilung über Deutschland/ })).toBeInTheDocument();
     expect(screen.getAllByText('≥ 80 mm').length).toBeGreaterThan(0);
     await noViolations(container);
+  });
+
+  it('nennt bei einer festen Ebene den Zeitraum, nicht die Quelle', async () => {
+    await render(FactorSheetComponent, {
+      inputs: { factor: { ...FACTOR, source: 'fichte', low: 0.5 }, layer: SPRUCE, histogram: null },
+    });
+
+    expect(screen.getByText('Zeitraum').closest('.row')).toHaveTextContent('zeitlich konstant');
+    expect(screen.queryByText(/Thünen/)).not.toBeInTheDocument();
   });
 
   it('nennt die Grenzen der Skala und die Bedingung dazwischen', async () => {

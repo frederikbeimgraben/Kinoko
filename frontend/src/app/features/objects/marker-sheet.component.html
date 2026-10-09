@@ -2,10 +2,11 @@
   <app-object-form
     [start]="start()"
     kind="marker"
-    [editing]="true"
+    [location]="place()"
     [busy]="busy()"
     [nameMissingText]="'marker.nameFehlt' | t"
     (submitted)="save($event)"
+    (locationClick)="sheet.startRelocating()"
   />
 } @else {
   <div class="overlay-body objectsheet" appScrollFade>

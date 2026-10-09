@@ -1,3 +1,4 @@
+import type { StyleSpecification } from 'maplibre-gl';
 import type { Bounds } from './map-adapter';
 import type { EffectiveTheme } from '../core/theme/theme.store';
 
@@ -12,13 +13,31 @@ export type Background = 'map' | 'light' | 'dark' | 'topo' | 'satellite';
 
 export const BACKGROUNDS: readonly Background[] = ['map', 'light', 'dark', 'topo', 'satellite'];
 
-/** Topo and satellite are not available yet. */
-export function backgroundAvailable(choice: Background): boolean {
-  return choice === 'map' || choice === 'light' || choice === 'dark';
+/** TopPlusOpen of the BKG: a free topographic raster map with relief, licence dl-de/by-2-0. */
+export const TOPO_TILES =
+  'https://sgx.geodatenzentrum.de/wmts_topplus_open/tile/1.0.0/web/default/WEBMERCATOR/{z}/{y}/{x}.png';
+
+/** Sen2Europe of the BKG: a free Sentinel-2 mosaic of 10 m. The BKG gives no free aerial photo for all of Germany. */
+export const AERIAL_TILES =
+  'https://sgx.geodatenzentrum.de/wms_sen2europe?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=rgb&STYLES=' +
+  '&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256&FORMAT=image/jpeg';
+
+/** A style with one raster source. The object layers need no glyphs, so the style has none. */
+function tiledStyle(tiles: string, maxzoom: number): StyleSpecification {
+  return {
+    version: 8,
+    sources: { ground: { type: 'raster', tiles: [tiles], tileSize: 256, maxzoom } },
+    layers: [{ id: 'ground', type: 'raster', source: 'ground' }],
+  };
 }
 
+export const TOPO_STYLE = tiledStyle(TOPO_TILES, 18);
+export const AERIAL_STYLE = tiledStyle(AERIAL_TILES, 14);
+
 /** The style of a choice. */
-export function styleFor(choice: Background, theme: EffectiveTheme): string {
+export function styleFor(choice: Background, theme: EffectiveTheme): string | StyleSpecification {
+  if (choice === 'topo') return TOPO_STYLE;
+  if (choice === 'satellite') return AERIAL_STYLE;
   if (choice === 'light') return BACKGROUND.hell;
   if (choice === 'dark') return BACKGROUND.dunkel;
   return BACKGROUND[theme];

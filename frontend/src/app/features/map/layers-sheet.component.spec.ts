@@ -50,14 +50,14 @@ describe('LayersBodyComponent', () => {
 
     expect(screen.getByText('Karte')).toBeInTheDocument();
     expect(screen.getByText('Luftbild')).toBeInTheDocument();
-    expect(screen.getByText('© GeoBasis-DE / BKG')).toBeInTheDocument();
+    expect(screen.getByText('© EU, Copernicus Sentinel, BKG')).toBeInTheDocument();
     expect(screen.getByText('Gelände')).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Hell' })).toBeInTheDocument();
     expect(screen.getByRole('switch', { name: 'Funde' })).toHaveAttribute('aria-checked', 'true');
     expect(screen.queryByRole('switch', { name: 'Vorhersage darunter' })).not.toBeInTheDocument();
   });
 
-  it('takes a style that exists and ignores a ground without a source', async () => {
+  it('takes a style, the satellite image and the terrain map', async () => {
     await render(LayersBodyComponent, { providers: [VIEW] });
     const store = TestBed.inject(MapStore);
 
@@ -65,7 +65,9 @@ describe('LayersBodyComponent', () => {
     expect(store.background()).toBe('dark');
 
     await userEvent.click(screen.getByText('Gelände'));
-    expect(store.background()).toBe('dark');
+    expect(store.background()).toBe('topo');
+    await userEvent.click(screen.getByText('Luftbild'));
+    expect(store.background()).toBe('satellite');
   });
 
   it('follows the app theme again when the style of the theme is chosen', async () => {

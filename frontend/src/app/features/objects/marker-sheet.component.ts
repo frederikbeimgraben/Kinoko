@@ -11,8 +11,10 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { longDate } from '../../core/i18n/dates';
 import { visibilityText } from '../add-entry/visibility';
 import { colourHex } from '../entries/colors';
+import { isoDatum } from '../entries/formats';
 import { EntriesStore } from '../entries/entries.store';
 import { ObjectSheetStore } from './object-sheet.store';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
@@ -55,14 +57,22 @@ export class MarkerSheetComponent {
     this.marker().lat,
   ]);
 
+  /** The point in the form: a new point from the crosshair, else the saved point. */
+  protected readonly place = computed(() => this.sheet.moved() ?? this.location());
+
   protected readonly colour = computed(() => colourHex(this.marker().colour));
 
-  /** The muted line below the name, per `MarkerViewBody.dc.html`. */
-  protected readonly sub = computed(() =>
-    this.i18n.translate('marker.unter', {
-      sichtbarkeit: visibilityText(this.i18n, this.marker().visibility),
-    }),
-  );
+  /** The muted line below the name, per `MarkerViewBody.dc.html`: kind, date and visibility. */
+  protected readonly sub = computed(() => {
+    const created = this.marker().createdAt;
+    const visibility = visibilityText(this.i18n, this.marker().visibility);
+    return created === undefined
+      ? this.i18n.translate('marker.unter', { sichtbarkeit: visibility })
+      : this.i18n.translate('entry.marker.sublineDated', {
+          date: longDate(isoDatum(new Date(created)), this.i18n.locale()),
+          visibility,
+        });
+  });
 
   protected readonly start = computed<ObjectValues>(() => {
     const marker = this.marker();
@@ -76,9 +86,10 @@ export class MarkerSheetComponent {
   });
 
   protected async save(values: ObjectValues): Promise<void> {
+    const [lon, lat] = this.place();
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateMarker(this.marker(), values)) {
+      if (await this.eintraege.updateMarker(this.marker(), { ...values, lat, lon })) {
         this.toasts.success(this.i18n.translate('objekt.gespeichert'));
         this.sheet.setEditing(false);
       }
@@ -87,11 +98,12 @@ export class MarkerSheetComponent {
     }
   }
 
+  // The sheet closes before the request: the delete removes the marker from the list at once.
   protected async remove(): Promise<void> {
+    const id = this.marker().id;
     this.deleteAsk.set(false);
-    if (await this.eintraege.deleteMarker(this.marker().id)) {
-      this.toasts.success(this.i18n.translate('objekt.geloescht'));
-      this.closed.emit();
-    }
+    this.closed.emit();
+    if (await this.eintraege.deleteMarker(id))
+      this.toasts.success(this.i18n.translate('entry.marker.deleted'));
   }
 }

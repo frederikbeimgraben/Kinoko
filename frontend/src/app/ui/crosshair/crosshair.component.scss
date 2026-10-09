@@ -2,9 +2,15 @@
   display: inline-flex;
 }
 
+// Per `kit.css` `.cross`: dark green in each scheme. A light halo keeps it visible on the dark base map.
 .crosshair {
   display: block;
   inline-size: 40px;
   block-size: 40px;
-  color: var(--on-primary);
+  color: #00391f;
+}
+
+.crosshair__halo {
+  fill: rgb(255 255 255 / 85%);
+  stroke: rgb(255 255 255 / 85%);
 }

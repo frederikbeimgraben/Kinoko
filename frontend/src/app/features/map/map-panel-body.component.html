@@ -1,6 +1,6 @@
 @if (view.loading()) {
   <app-skeleton kind="block" height="64px" />
-} @else {
+} @else if (!view.failed()) {
   @switch (state.view()) {
     @case ('forecast') {
       @if (!view.noSpecies()) {

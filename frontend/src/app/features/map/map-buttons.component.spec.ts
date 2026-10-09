@@ -1,7 +1,19 @@
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
-import { MapButtonsComponent } from './map-buttons.component';
+import { MapButtonsComponent, addFits } from './map-buttons.component';
+
+describe('addFits', () => {
+  it('lässt den Knopf Eintragen stehen, solange er unter dem Standortknopf bleibt', () => {
+    expect(addFits(780, 300)).toBe(true);
+    expect(addFits(780, 572)).toBe(true);
+  });
+
+  it('nimmt den Knopf weg, wenn das Blatt ihn über den Standortknopf schieben würde', () => {
+    expect(addFits(780, 573)).toBe(false);
+    expect(addFits(780, 700)).toBe(false);
+  });
+});
 
 describe('MapButtonsComponent', () => {
   it('zeigt Ebenen und Ort und meldet einen Tipp', async () => {

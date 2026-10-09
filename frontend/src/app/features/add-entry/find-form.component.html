@@ -3,8 +3,8 @@
     <app-list-row
       [title]="'entry.field.location' | t"
       [plain]="place()"
-      [chevron]="!editing()"
-      [clickable]="!editing()"
+      [chevron]="true"
+      [clickable]="true"
       (chosen)="editLocation()"
     />
   </app-row-group>
@@ -13,7 +13,6 @@
     [value]="speciesName()"
     [placeholder]="'map.species.choose' | t"
     [readOnly]="true"
-    [chevron]="editing()"
     (displayClick)="pickerOpen.set(true)"
   />
   <div class="form__pair">
@@ -79,14 +78,16 @@
       [modal]="true"
       (closed)="pickerOpen.set(false)"
     >
-      <div class="overlay-body">
-        <app-species-picker
+      <div class="overlay-body" appScrollFade>
+        <app-species-pick
           [species]="pickerSpecies()"
-          [selected]="selectedSpecies()?.slug ?? null"
+          [selected]="draftSlug()"
+          [first]="selectedSpecies()?.slug ?? null"
           [label]="'map.species.choose' | t"
-          (chosen)="selectSpecies($event)"
+          (chosen)="draftSlug.set($event)"
         />
       </div>
+      <app-action-bar foot [primary]="'common.apply' | t" (primaryClick)="selectSpecies()" />
     </app-sheet>
   }
 </app-overlay-host>

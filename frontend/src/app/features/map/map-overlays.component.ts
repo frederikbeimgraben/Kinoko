@@ -79,10 +79,8 @@ export class MapOverlaysComponent {
   readonly factorRemoved = output<Factor>();
   readonly saved = output<string>();
 
-  /** The factor choice has its own sheet. On the desktop, the factor is in the column. */
-  protected readonly shown = computed(
-    () => this.open() !== null && this.open() !== 'factors' && !(this.wide() && this.open() === 'factor'),
-  );
+  /** The factor choice has its own sheet. */
+  protected readonly shown = computed(() => this.open() !== null && this.open() !== 'factors');
 
   protected readonly factorLayer = computed<Layer | null>(() => {
     const factor = this.factor();
@@ -91,7 +89,7 @@ export class MapOverlaysComponent {
 
   protected readonly title = computed(() => {
     const open = this.open();
-    if (open === 'factor') return this.factorLayer()?.label ?? '';
+    if (open === 'factor') return this.view.layerName(this.factorLayer());
     const key = open === null ? undefined : TITLE[open];
     return key === undefined ? '' : this.i18n.translate(key);
   });

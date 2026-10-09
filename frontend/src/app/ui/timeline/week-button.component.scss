@@ -19,6 +19,12 @@
   border-radius: 16px;
 }
 
+// Per `kit.css`: `.wk.on` comes after `.wk.fc`, so a chosen forecast week keeps the fill.
+.week--forecast {
+  background: transparent;
+  border: 1px dashed var(--outline-strong);
+}
+
 .week--active {
   background: var(--primary);
   color: var(--on-primary);
@@ -30,16 +36,11 @@
 }
 
 .week--active .week__track {
-  background: rgb(0 57 31 / 25%);
+  background: color-mix(in srgb, var(--on-primary) 25%, transparent);
 }
 
 .week--active .week__bar {
   background: var(--on-primary);
-}
-
-.week--forecast {
-  background: transparent;
-  border: 1px dashed var(--outline-strong);
 }
 
 .week__year {

@@ -169,12 +169,14 @@ describe('EntriesStore', () => {
     expect(state.markers()).toEqual([]);
   });
 
-  it('stellt einen Fund an, wenn niemand sich anmelden will', async () => {
+  it('legt einen Fund ohne Anmeldung zuerst in die Warteschlange und fragt dann nach der Anmeldung', async () => {
     const { state, auth, queue, http } = build();
+    auth.user.set(null);
     auth.reply = false;
 
     expect(await state.saveFind(findWrite(FIND))).toBe('wartet');
     expect(queue.stored[0].kind).toBe('find');
+    expect(auth.asked).toBe(1);
     http.expectNone('/api/finds');
   });
 
@@ -192,7 +194,7 @@ describe('EntriesStore', () => {
 
   it('meldet „verworfen“, wenn auch das Gerät keinen Platz hat', async () => {
     const { state, auth, queue } = build();
-    auth.reply = false;
+    auth.user.set(null);
     queue.accepts = false;
 
     expect(await state.saveFind(findWrite(FIND))).toBe('verworfen');
@@ -215,7 +217,7 @@ describe('EntriesStore', () => {
     expect(await zone).toBe('gespeichert');
     expect(state.zones()).toEqual([ZONE]);
 
-    auth.reply = false;
+    auth.user.set(null);
     expect(await state.saveMarker(markerWrite(MARKER))).toBe('wartet');
     expect(await state.saveZone(zoneWrite(ZONE))).toBe('wartet');
     expect(queue.stored.map((entry) => entry.kind)).toEqual(['marker', 'zone']);
@@ -326,6 +328,96 @@ describe('EntriesStore', () => {
       'delete',
     ]);
     expect(queue.stored[0].body).toEqual(findWrite(FIND));
+  });
+
+  it('stellt einen Körper, den der Dienst abweist, nie an', async () => {
+    const { state, http, queue } = build();
+    const refused = { type: 'about:blank', title: 'Eingabe ungültig', status: 422, code: 'group' };
+
+    const find = state.saveFind({ ...findWrite(FIND), groupId: null });
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/finds', method: 'POST' }).flush(refused, { status: 422, statusText: '' });
+    });
+    const marker = state.saveMarker(markerWrite(MARKER));
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/markers', method: 'POST' }).flush(refused, { status: 422, statusText: '' });
+    });
+
+    expect(await find).toBe('abgelehnt');
+    expect(await marker).toBe('abgelehnt');
+    expect(queue.stored).toEqual([]);
+  });
+
+  it('stellt einen Fund nicht ein zweites Mal an, wenn nur sein Foto scheitert', async () => {
+    const { state, http, queue } = build();
+
+    const result = state.saveFind(findWrite(FIND), [new File(['b'], 'p.jpg')]);
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/finds', method: 'POST' }).flush(FIND_ENTRY);
+    });
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/photos', method: 'POST' }).error(new ProgressEvent('error'));
+    });
+
+    expect(await result).toBe('gespeichert');
+    expect(queue.stored).toEqual([]);
+  });
+
+  it('hält eine abgewiesene Änderung aus Liste und Warteschlange', async () => {
+    const setup = build();
+    await load(setup);
+    const { state, http, queue } = setup;
+
+    const changed = state.updateMarker(MARKER, { name: 'Neu' });
+    await vi.waitFor(() => {
+      http
+        .expectOne({ url: `/api/markers/${MARKER.id}`, method: 'PUT' })
+        .flush({ title: 'Eingabe ungültig', status: 422 }, { status: 422, statusText: '' });
+    });
+
+    expect(await changed).toBe(false);
+    expect(state.markers()).toEqual([MARKER]);
+    expect(queue.stored).toEqual([]);
+  });
+
+  it('nimmt ein Löschen zurück, das der Dienst abweist, und nimmt 404 als gelöscht', async () => {
+    const setup = build();
+    await load(setup);
+    const { state, http, queue } = setup;
+
+    const refused = state.deleteMarker(MARKER.id);
+    await vi.waitFor(() => {
+      http
+        .expectOne({ url: `/api/markers/${MARKER.id}`, method: 'DELETE' })
+        .flush({ title: 'Verboten', status: 403 }, { status: 403, statusText: '' });
+    });
+    expect(await refused).toBe(false);
+    expect(state.markers()).toEqual([MARKER]);
+
+    const gone = state.deleteZone(ZONE.id);
+    await vi.waitFor(() => {
+      http
+        .expectOne({ url: `/api/zones/${ZONE.id}`, method: 'DELETE' })
+        .flush({ title: 'Nicht gefunden', status: 404 }, { status: 404, statusText: '' });
+    });
+    expect(await gone).toBe(true);
+    expect(state.zones()).toEqual([]);
+    expect(queue.stored).toEqual([]);
+  });
+
+  it('schickt die Gruppe eines geteilten Objekts beim Ändern mit', async () => {
+    const setup = build();
+    await load(setup);
+    const { state, http } = setup;
+    const grouped = { ...FIND, groupId: 'gruppe-eins' };
+
+    const changed = state.updateFind(grouped, { count: 2 });
+    await vi.waitFor(() => {
+      const request = http.expectOne({ url: `/api/finds/${FIND.id}`, method: 'PUT' });
+      expect(request.request.body).toMatchObject({ visibility: 'shared', groupId: 'gruppe-eins' });
+      request.flush(FIND_ENTRY);
+    });
+    await changed;
   });
 
   it('sendet Wartendes nur mit Konto und lädt danach neu', async () => {

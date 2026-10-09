@@ -2,15 +2,12 @@
   <app-object-form
     kind="zone"
     [start]="start()"
-    [editing]="true"
+    [area]="zone().areaHa"
     [busy]="busy()"
     [nameMissingText]="'zone.nameFehlt' | t"
     (submitted)="save($event)"
-  >
-    <app-push-button class="zonesheet__outline" kind="tonal" [wide]="true" (click)="editCorners()">
-      {{ 'entry.zone.changeOutline' | t }}
-    </app-push-button>
-  </app-object-form>
+    (outlineClick)="editCorners()"
+  />
 } @else {
   <div class="overlay-body objectsheet" appScrollFade>
     <app-object-title [title]="zone().name" [sub]="sub()" [colour]="colour()" icon="zone" />
@@ -20,13 +17,20 @@
       </app-section>
     }
     <app-row-group>
+      <app-list-row
+        [title]="'entries.zoneFinds' | t"
+        [value]="findCount()"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="showFinds()"
+      />
       <app-map-app-link [target]="center()" />
     </app-row-group>
   </div>
   @if (editingCorners()) {
     <app-action-bar
       foot
-      [primary]="'zone.eckpunkteFertig' | t"
+      [primary]="'common.apply' | t"
       [secondary]="'common.cancel' | t"
       (primaryClick)="applyCorners()"
       (secondaryClick)="cancelCorners()"

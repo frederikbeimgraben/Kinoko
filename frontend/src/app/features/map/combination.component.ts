@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { layerName, layerPeriod } from './layer-name';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { layerIcon, type LayerIcon } from '../../core/tiles/layer-groups';
@@ -45,8 +46,8 @@ export class CombinationComponent {
       return [
         {
           factor,
-          name: layer.label,
-          subline: layer.note,
+          name: layerName(layer, this.i18n),
+          subline: layerPeriod(layer, this.i18n),
           condition: conditionText(factor, layer, locale, to),
           icon: layerIcon(layer.id),
         },

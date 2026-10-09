@@ -9,6 +9,8 @@ export interface StepAction {
   readonly icon: IconName;
   readonly variant: 'primary' | 'secondary';
   readonly run: () => void;
+  /** An action without effect in the current state, for example undo without a point. */
+  readonly disabled?: boolean;
 }
 
 /** The floating bar of a step on the map, per `StepBar.dc.html`. */

@@ -173,11 +173,11 @@ export class FindSheetComponent {
     }
   }
 
+  // The sheet closes before the request: the delete removes the find from the list at once.
   protected async remove(): Promise<void> {
+    const id = this.find().id;
     this.deleteAsk.set(false);
-    if (await this.eintraege.deleteFind(this.find().id)) {
-      this.toasts.success(this.i18n.translate('fund.geloescht'));
-      this.closed.emit();
-    }
+    this.closed.emit();
+    if (await this.eintraege.deleteFind(id)) this.toasts.success(this.i18n.translate('fund.geloescht'));
   }
 }

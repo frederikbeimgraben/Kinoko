@@ -276,10 +276,11 @@ describe('EintragenComponent', () => {
     });
   });
 
-  it('stellt einen Fund an, wenn niemand sich anmelden will', async () => {
+  it('legt einen Fund ohne Anmeldung in die Warteschlange, bevor die Anmeldung fragt', async () => {
     const setup = await build();
     setup.auth.reply = false;
     await openFindForm(setup);
+    setup.auth.user.set(null);
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 

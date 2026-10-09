@@ -1,36 +1,21 @@
-<div class="form__body" [class.form__body--roomy]="!marker()">
+<div class="overlay-body form__body" appScrollFade [class.form__body--busy]="busy()">
+  @if (location(); as point) {
+    <app-row-group>
+      <app-list-row
+        [title]="'entry.field.location' | t"
+        [plain]="place()"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="locationClick.emit(current())"
+      />
+    </app-row-group>
+  }
   <app-form-field
     [label]="'common.name' | t"
     [placeholder]="'entry.field.namePlaceholder' | t"
     [value]="name()"
     (valueChange)="setName($event)"
   />
-  <div>
-    <p class="form__label">{{ 'common.colour' | t }}</p>
-    <app-colour-swatches
-      [colours]="swatches()"
-      [value]="colourHex()"
-      [label]="'common.colour' | t"
-      (valueChange)="setColour($event)"
-    />
-  </div>
-  @if (marker()) {
-    <ng-container [ngTemplateOutlet]="note" />
-    <ng-container [ngTemplateOutlet]="visibility" />
-  } @else {
-    <ng-container [ngTemplateOutlet]="visibility" />
-    <ng-container [ngTemplateOutlet]="note" />
-  }
-  <ng-content />
-</div>
-<app-action-bar
-  [class.form__actions]="editing()"
-  [primary]="'common.save' | t"
-  [busy]="busy()"
-  (primaryClick)="submit()"
-/>
-
-<ng-template #note>
   <app-form-field
     [label]="'entry.field.note' | t"
     [multiline]="true"
@@ -38,13 +23,30 @@
     [value]="noteText()"
     (valueChange)="setNote($event)"
   />
-</ng-template>
-
-<ng-template #visibility>
-  <app-visibility-choice
-    [visibility]="visibilityValue()"
-    [groupId]="groupValue()"
-    (visibilityChange)="setVisibility($event)"
-    (groupChange)="setGroup($event)"
-  />
-</ng-template>
+  <app-section [label]="'common.colour' | t">
+    <div class="form__chips" role="group" [attr.aria-label]="'common.colour' | t">
+      @for (chip of chips(); track chip.value) {
+        <app-filter-chip
+          [label]="chip.label"
+          [dot]="chip.hex"
+          [on]="chip.value === colour()"
+          (chosen)="setColour(chip.value)"
+        />
+      }
+    </div>
+  </app-section>
+  @if (area() !== null) {
+    <app-row-group>
+      <app-list-row [title]="'entry.zone.area' | t" [value]="areaText()" [unit]="'unit.hectare' | t" />
+    </app-row-group>
+  }
+</div>
+<app-action-bar
+  foot
+  [primary]="'common.save' | t"
+  [busy]="busy()"
+  [secondary]="marker() ? undefined : ('entry.zone.changeOutline' | t)"
+  [tonalSecondary]="true"
+  (primaryClick)="submit()"
+  (secondaryClick)="outlineClick.emit(current())"
+/>

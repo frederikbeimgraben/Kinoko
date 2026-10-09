@@ -54,6 +54,23 @@ describe('TileService', () => {
     expect(tiles.layerList()).toHaveLength(1);
   });
 
+  it('meldet jeden Fehlschlag, bis ein neuer Versuch gelingt', async () => {
+    const fetcher = vi.fn(() => Promise.resolve(reply(null, false)));
+    vi.stubGlobal('fetch', fetcher);
+    const tiles = service();
+
+    await Promise.all([tiles.loadLayers(), tiles.load('boletus-edulis')]);
+    expect(tiles.layersFailed()).toBe(true);
+    expect(tiles.failed().has('boletus-edulis')).toBe(true);
+
+    fetcher.mockResolvedValue(reply({ top: 1 }));
+    await tiles.load('boletus-edulis');
+    expect(tiles.failed().has('boletus-edulis')).toBe(false);
+
+    tiles.forget();
+    expect(tiles.layersFailed()).toBe(false);
+  });
+
   it('vergisst auf Wunsch alles', async () => {
     const fetcher = vi.fn(() => Promise.resolve(reply({ top: 1 })));
     vi.stubGlobal('fetch', fetcher);

@@ -17,19 +17,23 @@
     @case ('markerForm') {
       <app-object-form
         kind="marker"
+        [start]="state.objectDraft()"
+        [location]="state.location()"
         [nameMissingText]="'marker.nameFehlt' | t"
         [busy]="saving()"
         (submitted)="saveMarker($event)"
-        (valuesChange)="onZoneValues($event)"
+        (locationClick)="state.editMarkerLocation($event)"
       />
     }
     @case ('zoneForm') {
       <app-object-form
         kind="zone"
+        [start]="state.objectDraft()"
+        [area]="hectares()"
         [nameMissingText]="'zone.nameFehlt' | t"
         [busy]="saving()"
         (submitted)="saveZone($event)"
-        (valuesChange)="onZoneValues($event)"
+        (outlineClick)="state.editZoneOutline($event)"
       />
     }
   }

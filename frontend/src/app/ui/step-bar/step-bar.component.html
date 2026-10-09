@@ -7,6 +7,7 @@
       kind="fabl"
       [icon]="action.icon"
       [label]="action.label"
+      [disabled]="action.disabled ?? false"
       (pressed)="chosen.emit(action)"
     />
   }

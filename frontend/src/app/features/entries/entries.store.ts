@@ -15,10 +15,12 @@ import { EntriesCache } from './entries.cache';
 import type { EntriesState, EntryBody, ItemOf, OwnList, SaveResult } from './entries.types';
 import { NO_FILTER, type EntriesFilter } from './entry-filter';
 import { attachPhotos } from './photos';
+import { NOT_FOUND, retryable, statusOf } from './retry';
 import { findWrite, markerWrite, zoneWrite } from './writes';
 
 export type { EntryBody, SaveResult } from './entries.types';
 
+/** Statuses that can change on a later try. Another 4xx answer stays the same, so the queue never takes it. */
 /** The own entries in memory: the map, the list and the object sheets read the same signals.
  * A save asks for a sign-in first. Without a sign-in or without network the entry goes
  * into the queue, and the list marks it as "transfer pending". */
@@ -53,9 +55,7 @@ export const EntriesStore = signalStore(
         patchState(store, { finds: known.finds, markers: known.markers, zones: known.zones });
     }
 
-    function keep(): Promise<void> {
-      return store._cache.write({ finds: store.finds(), markers: store.markers(), zones: store.zones() });
-    }
+    const signIn = (): void => void store._auth.requestSignIn();
 
     /** Puts a task into the queue. `false` means: the device has no space. */
     async function queue(
@@ -84,20 +84,25 @@ export const EntriesStore = signalStore(
       patchState(store, (state) => ({ [list]: next(state[list] as readonly ItemOf<K>[]) }));
     }
 
-    async function save<K extends 'markers' | 'zones'>(
+    /** A refused body never goes into the queue. A failed photo does not queue the saved find again. */
+    async function save<K extends OwnList>(
       kind: SyncKind,
       list: K,
       body: EntryBody,
       send: () => Observable<ItemOf<K> | null>,
+      photos: readonly File[] = [],
     ): Promise<SaveResult> {
-      if (!(await store._auth.requestSignIn())) return enqueue(kind, body);
-      try {
-        const fresh = await firstValueFrom(send());
-        if (fresh !== null) patchList(list, (items) => [fresh, ...items]);
-        return 'gespeichert';
-      } catch {
-        return enqueue(kind, body);
-      }
+      // The way to the SSO leaves the page. The queue keeps the entry, and the map sends it after the return.
+      if (!store._auth.signedIn()) return enqueue(kind, body, photos).finally(signIn);
+      const { fresh, failure } = await firstValueFrom(send()).then(
+        (item) => ({ fresh: item, failure: undefined }),
+        (error: unknown) => ({ fresh: null, failure: error }),
+      );
+      if (failure !== undefined) return retryable(failure) ? enqueue(kind, body, photos) : 'abgelehnt';
+      if (fresh === null) return 'gespeichert';
+      await attachPhotos(store._photosApi, fresh.id, store.reporter() ?? '', photos);
+      patchList(list, (items) => [fresh, ...items]);
+      return 'gespeichert';
     }
 
     /** Changes the list first. Without network the change goes into the queue. */
@@ -112,7 +117,8 @@ export const EntriesStore = signalStore(
         const fresh = await firstValueFrom(send(body));
         if (fresh !== null) patchList(list, (items) => items.map((one) => (one.id === id ? fresh : one)));
         return true;
-      } catch {
+      } catch (failure) {
+        if (!retryable(failure)) return false;
         patchList(list, (items) => items.map((one) => (one.id === id ? { ...one, ...body } : one)));
         return queue(kind, 'update', body, id);
       }
@@ -124,12 +130,17 @@ export const EntriesStore = signalStore(
       id: string,
       send: () => Observable<unknown>,
     ): Promise<boolean> {
+      const before = store[list]();
       patchList(list, (items) => items.filter((one) => one.id !== id));
       try {
         await firstValueFrom(send());
         return true;
-      } catch {
-        return queue(kind, 'delete', null, id);
+      } catch (failure) {
+        if (retryable(failure)) return queue(kind, 'delete', null, id);
+        // A 404 means that the entry is already gone. Other answers keep it.
+        if (statusOf(failure) === NOT_FOUND) return true;
+        patchState(store, { [list]: before });
+        return false;
       }
     }
 
@@ -148,7 +159,7 @@ export const EntriesStore = signalStore(
           firstValueFrom(store._api.zones()),
         ]);
         patchState(store, { finds, markers, zones }, setLoaded());
-        await keep();
+        await store._cache.write({ finds, markers, zones });
       } catch {
         // A failure keeps what is already there.
         patchState(store, setFailed());
@@ -179,17 +190,8 @@ export const EntriesStore = signalStore(
         patchState(store, { filter });
       },
 
-      async saveFind(body: FindWrite, photos: readonly File[] = []): Promise<SaveResult> {
-        if (!(await store._auth.requestSignIn())) return enqueue('find', body, photos);
-        try {
-          const find = await firstValueFrom(store._api.createFind(body));
-          if (find === null) return 'gespeichert';
-          await attachPhotos(store._photosApi, find.id, store.reporter() ?? '', photos);
-          patchList('finds', (items) => [find, ...items]);
-          return 'gespeichert';
-        } catch {
-          return enqueue('find', body, photos);
-        }
+      saveFind(body: FindWrite, photos: readonly File[] = []): Promise<SaveResult> {
+        return save('find', 'finds', body, () => store._api.createFind(body), photos);
       },
 
       saveMarker(body: MarkerWrite): Promise<SaveResult> {

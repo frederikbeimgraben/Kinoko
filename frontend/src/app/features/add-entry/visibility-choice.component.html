@@ -15,19 +15,45 @@
   <app-row-group>
     <app-list-row
       [title]="'entry.field.group' | t"
-      [plain]="groupName() || ('group.title' | t)"
+      [plain]="groupName() || ('entry.group.none' | t)"
       [chevron]="true"
       [clickable]="true"
-      (chosen)="picking.set(true)"
+      (chosen)="openPicker()"
     />
   </app-row-group>
 }
 
-<app-option-sheet
-  [open]="picking()"
-  [title]="'entry.field.group' | t"
-  [options]="groupOptions()"
-  [selected]="groupId()"
-  (chosen)="chooseGroup($event)"
-  (closed)="picking.set(false)"
-/>
+<app-overlay-host [open]="picking()" [modal]="true" (closed)="picking.set(false)">
+  @if (picking()) {
+    <app-sheet
+      [label]="'entry.group.choose' | t"
+      [title]="'entry.group.choose' | t"
+      [back]="true"
+      [modal]="true"
+      (closed)="picking.set(false)"
+      (backClick)="picking.set(false)"
+    >
+      <div class="overlay-body" appScrollFade>
+        <app-row-group role="radiogroup" [attr.aria-label]="'entry.group.choose' | t">
+          <app-choice-row
+            [label]="'entry.group.none' | t"
+            [checked]="draft() === null"
+            (toggled)="draft.set(null)"
+          />
+          @for (group of rows(); track group.id) {
+            <app-choice-row
+              [label]="group.name"
+              [subline]="group.members"
+              [checked]="draft() === group.id"
+              (toggled)="draft.set(group.id)"
+            />
+          }
+        </app-row-group>
+        @if (rows().length === 0) {
+          <p class="choice__empty">{{ 'entry.group.empty' | t }}</p>
+        }
+      </div>
+      <app-action-bar foot [primary]="'common.apply' | t" (primaryClick)="apply()" />
+    </app-sheet>
+  }
+</app-overlay-host>

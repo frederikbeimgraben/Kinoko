@@ -14,6 +14,7 @@
           <app-species-pick
             [species]="view.speciesChoices()"
             [selected]="draftSpecies()"
+            [first]="view.species()?.value ?? null"
             [label]="'map.species.choose' | t"
             (chosen)="draftSpecies.set($event)"
           />
@@ -63,15 +64,19 @@
         <app-action-bar foot [primary]="'common.apply' | t" (primaryClick)="chooseSpecies()" />
       }
       @case ('combinations') {
-        <app-action-bar
-          foot
-          [primary]="'common.apply' | t"
-          [secondary]="rowChosen() && draftCombination() !== null ? ('common.delete' | t) : undefined"
-          secondaryIcon="trash"
-          [secondaryDanger]="true"
-          (primaryClick)="pick()"
-          (secondaryClick)="deleteAsk.set(true)"
-        />
+        @if (combination.saved().length === 0) {
+          <div foot class="overlays__end"></div>
+        } @else {
+          <app-action-bar
+            foot
+            [primary]="'common.apply' | t"
+            [secondary]="rowChosen() && draftCombination() !== null ? ('common.delete' | t) : undefined"
+            secondaryIcon="trash"
+            [secondaryDanger]="true"
+            (primaryClick)="pick()"
+            (secondaryClick)="deleteAsk.set(true)"
+          />
+        }
       }
       @case ('save') {
         <app-action-bar foot [primary]="'common.save' | t" (primaryClick)="confirmName()" />

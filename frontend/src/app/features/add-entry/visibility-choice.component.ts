@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  linkedSignal,
   output,
   signal,
 } from '@angular/core';
@@ -12,19 +13,33 @@ import { GroupsStore } from '../../core/access/groups.store';
 import type { Visibility } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
-import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
+import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SegmentedComponent } from '../../ui/segmented/segmented.component';
+import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { memberCount } from '../account/group-text';
 import { visibilitySegments } from './visibility';
 
-/** The sheet of the group choice is as high as its content. */
-
-/** Private or shared with a group: the segment and the group choice of a find, a marker and a zone. */
+/** Private or shared with a group: the segment and the group choice of a find (boards `FindFormSharedBody`,
+ * `MapGroupPicker`). The picker takes a choice only with "Übernehmen". */
 @Component({
   selector: 'app-visibility-choice',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListRowComponent, OptionSheetComponent, RowGroupComponent, SegmentedComponent, TranslatePipe],
+  imports: [
+    ActionBarComponent,
+    ChoiceRowComponent,
+    ListRowComponent,
+    OverlayHostComponent,
+    RowGroupComponent,
+    ScrollFadeDirective,
+    SegmentedComponent,
+    SheetComponent,
+    TranslatePipe,
+  ],
   templateUrl: './visibility-choice.component.html',
   styleUrl: './visibility-choice.component.scss',
 })
@@ -48,9 +63,20 @@ export class VisibilityChoiceComponent {
     () => this.groups().find((one) => one.id === this.groupId())?.name ?? '',
   );
 
-  protected readonly groupOptions = computed<readonly OptionSheetOption[]>(() =>
-    this.groups().map((row) => ({ id: row.id, title: row.name })),
+  /** Each group with its member count, per `GroupPickBody.dc.html`. */
+  protected readonly rows = computed(() =>
+    this.groups().map((group) => ({
+      id: group.id,
+      name: group.name,
+      members: memberCount(this.i18n, group.members.length),
+    })),
   );
+
+  /** The group in the open picker. It starts with the chosen group at each open. */
+  protected readonly draft = linkedSignal({
+    source: () => ({ open: this.picking(), chosen: this.groupId() }),
+    computation: ({ chosen }): string | null => chosen,
+  });
 
   constructor() {
     // The form needs the groups only for a share.
@@ -72,8 +98,12 @@ export class VisibilityChoiceComponent {
     if (chosen === 'private') this.groupChange.emit(null);
   }
 
-  protected chooseGroup(id: string): void {
-    this.groupChange.emit(id);
+  protected openPicker(): void {
+    this.picking.set(true);
+  }
+
+  protected apply(): void {
+    this.groupChange.emit(this.draft());
     this.picking.set(false);
   }
 }

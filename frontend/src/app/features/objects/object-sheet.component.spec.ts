@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
+import type { Map as MapLibreMap } from 'maplibre-gl';
 import userEvent from '@testing-library/user-event';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
@@ -259,15 +260,23 @@ describe('ObjektBlattComponent', () => {
     expect(setup.map.flights[0].zoom).toBe(14);
   });
 
-  it('zoomt bei einer Zone auf den Mittelpunkt ihrer Ecken', async () => {
+  it('zeigt bei einer Zone den ganzen Umriss', async () => {
     const setup = await build();
+    const fits: unknown[][] = [];
+    setup.map.raw = { fitBounds: (...args: unknown[]) => fits.push(args) } as unknown as MapLibreMap;
     const ring = ZONE.polygon.coordinates[0];
-    const middle = ring.reduce((sum, point) => [sum[0] + point[0], sum[1] + point[1]], [0, 0]);
 
     setup.state.setObject({ kind: 'zone', id: ZONE.id });
     setup.refresh();
 
-    expect(setup.map.flights[0].target).toEqual([middle[0] / ring.length, middle[1] / ring.length]);
+    expect(setup.map.flights).toHaveLength(0);
+    await vi.waitFor(() => {
+      expect(fits).not.toHaveLength(0);
+    });
+    expect(fits[0][0]).toEqual([
+      [Math.min(...ring.map((point) => point[0])), Math.min(...ring.map((point) => point[1]))],
+      [Math.max(...ring.map((point) => point[0])), Math.max(...ring.map((point) => point[1]))],
+    ]);
   });
 
   it('lässt die Karte stehen, wenn das Objekt niemand mehr kennt', async () => {

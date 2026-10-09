@@ -57,6 +57,35 @@ describe('ObjectSheetStore', () => {
     expect(state.editingCorners()).toBe(false);
   });
 
+  it('keeps a new location for the form until the form closes', () => {
+    const { state } = build();
+    state.show('marker', 'marker-eins');
+    state.setEditing(true);
+
+    state.startRelocating();
+    expect(state.relocating()).toBe(true);
+    state.relocate([9.1, 48.5]);
+
+    expect(state.relocating()).toBe(false);
+    expect(state.editing()).toBe(true);
+    expect(state.moved()).toEqual([9.1, 48.5]);
+
+    state.setEditing(false);
+    expect(state.moved()).toBeNull();
+  });
+
+  it('keeps the old location when the crosshair step is cancelled', () => {
+    const { state } = build();
+    state.show('find', 'fund-eins');
+    state.setEditing(true);
+    state.startRelocating();
+
+    state.cancelRelocating();
+
+    expect(state.relocating()).toBe(false);
+    expect(state.moved()).toBeNull();
+  });
+
   it('does not go back without an open object', () => {
     const { state, stack } = build();
     const back = vi.spyOn(stack, 'back').mockImplementation(() => undefined);

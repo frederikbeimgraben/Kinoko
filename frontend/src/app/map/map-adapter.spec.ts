@@ -4,6 +4,7 @@ import {
   STYLE_PATH,
   WORKER_PATH,
   ensureStyles,
+  labelField,
   type MapHandle,
   type MapOptions,
   type MaplibreModule,
@@ -189,6 +190,29 @@ class MapDouble {
 
   remove(): void {
     this.removed = true;
+  }
+
+  /** The base style: a place label, a road number and an area. */
+  readonly baseLayers = [
+    { id: 'place', type: 'symbol' },
+    { id: 'road-ref', type: 'symbol' },
+    { id: 'water', type: 'fill' },
+  ];
+  readonly layout = new Map<string, unknown>([
+    ['place', ['coalesce', ['get', 'name_en'], ['get', 'name']]],
+    ['road-ref', ['get', 'ref']],
+  ]);
+
+  getStyle(): { layers: { id: string; type: string }[] } {
+    return { layers: this.baseLayers };
+  }
+
+  getLayoutProperty(id: string): unknown {
+    return this.layout.get(id);
+  }
+
+  setLayoutProperty(id: string, _name: string, value: unknown): void {
+    this.layout.set(id, value);
   }
 }
 
@@ -706,6 +730,19 @@ describe('MapLibreAdapter', () => {
     const { adapter: a } = await adapter();
 
     expect(a.project([1, 2])).toEqual({ x: 100, y: 200 });
+  });
+
+  it('zeigt die Ortsnamen in der Sprache der App, auch nach einem Stilwechsel', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.setLabelLanguage('de');
+    expect(map.layout.get('place')).toEqual(labelField('de'));
+    expect(map.layout.get('road-ref')).toEqual(['get', 'ref']);
+
+    map.layout.set('place', ['get', 'name_en']);
+    a.setStyle('dunkel');
+    map.onceHandlers.get('style.load')?.();
+    expect(map.layout.get('place')).toEqual(['coalesce', ['get', 'name:de'], ['get', 'name']]);
   });
 
   it('bleibt ohne Karte still', () => {

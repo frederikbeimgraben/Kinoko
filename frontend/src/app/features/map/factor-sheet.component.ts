@@ -26,6 +26,7 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SectionComponent } from '../../ui/section/section.component';
+import { layerName, layerPeriod } from './layer-name';
 
 /** The step of the handle: fine enough to aim, coarse enough to read. */
 export function stepSize(layer: Layer): number {
@@ -113,10 +114,16 @@ export class FactorSheetComponent {
     this.i18n.translate('map.factor.distribution', { source: this.head() }),
   );
 
+  /** The name of the source in the language of the app. */
+  protected readonly name = computed(() => layerName(this.layer(), this.i18n));
+
+  /** One value for each week, or one value for all weeks. */
+  protected readonly period = computed(() => layerPeriod(this.layer(), this.i18n));
+
   /** The source with its period, as the heading gives it. */
   protected readonly head = computed(() => {
-    const layer = this.layer();
-    return layer.range === '' ? layer.label : `${layer.label} ${layer.range}`;
+    const range = this.layer().range;
+    return range === '' ? this.name() : `${this.name()} ${range}`;
   });
 
   protected setCondition(value: string): void {

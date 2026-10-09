@@ -22,8 +22,9 @@
   color: var(--label);
 }
 
+// The thumb is 24 px and its centre is on the value. A side padding of half a thumb keeps it in the gutter.
 .layers__slider {
-  padding: 8px 4px 4px;
+  padding: 8px 12px 4px;
 }
 
 // Per `SwitchRow.dc.html`: a `.row` with a label and a switch.

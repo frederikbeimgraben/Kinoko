@@ -177,6 +177,13 @@ export class MapAdapterDouble implements MapAdapter {
     this.cursors.push(cursor);
   }
 
+  /** The label languages in the order of the calls. */
+  readonly languages: string[] = [];
+
+  setLabelLanguage(language: string): void {
+    this.languages.push(language);
+  }
+
   onMapClick(handler: (point: readonly [number, number]) => void): () => void {
     this.clicked = handler;
     return () => (this.clicked = null);
