@@ -117,7 +117,7 @@ test('AdminGroupDelete', async ({ page }) => {
 test('People', async ({ page }) => {
   guard('People', 'phone');
   await open(page, '/verwaltung/personen');
-  await expect(page.getByText('frederik@beimgraben.net')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Frederik/ })).toBeVisible();
   await expectBoard(page, 'People');
 });
 
@@ -283,7 +283,7 @@ test('EditSize', async ({ page }) => {
     '/api/species/boletus-edulis': STONE_SECTIONS,
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
   });
-  await expect(page.getByRole('heading', { name: 'Hutbreite' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Hut · Maß' })).toBeVisible();
   await expectBoard(page, 'EditSize');
 });
 
@@ -325,7 +325,7 @@ test('EditColour', async ({ page }) => {
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
     '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
   });
-  await expect(page.getByText('#7A3B6A').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'violett Anfang' })).toBeVisible();
   await expectBoard(page, 'EditColour');
 });
 

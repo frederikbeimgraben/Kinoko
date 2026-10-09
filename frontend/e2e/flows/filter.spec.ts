@@ -33,7 +33,7 @@ test('Filter mit Farbe je Teil', async ({ page }) => {
   await page.getByRole('dialog').getByRole('button', { name: 'Stiel' }).click();
   await page.getByRole('dialog').getByRole('radio', { name: 'Creme', exact: true }).click();
 
-  await page.getByRole('button', { name: /Arten anzeigen/ }).click();
+  await page.getByRole('button', { name: '1 Art anzeigen' }).click();
 
   await expect(page.getByText('Steinpilz')).toBeVisible();
   await expect(page.getByText('Speitäubling')).toHaveCount(0);
@@ -45,12 +45,12 @@ test('Marke entfernt die Farbe wieder', async ({ page }) => {
   await page.goto('/arten');
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
   await page.getByRole('dialog').getByRole('radio', { name: 'Braun', exact: true }).click();
-  await page.getByRole('button', { name: /Arten anzeigen/ }).click();
+  await page.getByRole('button', { name: '1 Art anzeigen' }).click();
   await expect(page.getByText('Speitäubling')).toHaveCount(0);
 
   await page.getByRole('button', { name: /^Farbe/ }).click();
   await page.getByRole('dialog').getByRole('radio', { name: 'Braun', exact: true }).click();
-  await page.getByRole('button', { name: /Arten anzeigen/ }).click();
+  await page.getByRole('button', { name: '2 Arten anzeigen' }).click();
 
   await expect(page.getByText('Speitäubling')).toBeVisible();
 });

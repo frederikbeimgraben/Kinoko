@@ -22,31 +22,8 @@ export const TERMS = {
   ],
 };
 
-/** The standard colours of the `EditColour` board. */
-export const PALETTE = [
-  '#f4efe2',
-  '#f0ece0',
-  '#e2c79a',
-  '#c9a877',
-  '#d9a441',
-  '#e0a33c',
-  '#b8792f',
-  '#8a4e2b',
-  '#6b4423',
-  '#4a3220',
-  '#cfd08a',
-  '#9db44f',
-  '#5f7f42',
-  '#7f8f6a',
-  '#c94f3d',
-  '#a8342c',
-  '#d2685f',
-  '#8a3f6b',
-  '#5b7fb0',
-  '#3f6ea8',
-  '#2f3a4a',
-  '#1b1d1c',
-].map((hex, at) => ({ key: `ton-${String(at)}`, hex }));
+/** The standard colours of the `EditColour` board: the twelve tones of the service. */
+export { PALETTE } from './species';
 
 /** The species of the sections: sizes, period, hymenium and smell. */
 export const STONE_SECTIONS: Record<string, unknown> = {

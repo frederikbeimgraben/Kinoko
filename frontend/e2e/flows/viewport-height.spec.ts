@@ -257,7 +257,7 @@ test.describe('Seitenhöhe am Telefon', () => {
 
   test('Verwaltung, Rollen', async ({ page }) => {
     await admin(page, '/verwaltung/rollen');
-    await expect(page.getByText('Arten und Bilder pflegen · 3 Personen')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Pilzberater 3 Personen' })).toBeVisible();
     await assertFillsViewport(page);
   });
 
@@ -273,7 +273,7 @@ test.describe('Seitenhöhe am Telefon', () => {
 
   test('Verwaltung, Personen', async ({ page }) => {
     await admin(page, '/verwaltung/personen');
-    await expect(page.getByText('frederik@beimgraben.net')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Frederik Admin' })).toBeVisible();
     await assertFillsViewport(page);
   });
 
@@ -320,7 +320,8 @@ test.describe('Seitenhöhe am Telefon', () => {
       '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
       '/api/species/bundle': { items: [], standardColours: PALETTE, facets: {} },
     });
-    await expect(page.getByText('#7A3B6A').first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'violett Anfang' })).toBeVisible();
+    await expect(page.getByRole('radio', { name: 'Violett' })).toBeChecked();
     await assertFillsViewport(page);
   });
 
@@ -362,7 +363,8 @@ test.describe('Seitenhöhe am Telefon', () => {
       '/api/species/boletus-edulis': STONE_SECTIONS,
       '/api/species/boletus-edulis/counts': { records: 1, finds: 0, photos: 0 },
     });
-    await expect(page.getByRole('heading', { name: 'Hutbreite' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Hut · Maß' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'von' })).toHaveValue('4');
     await assertFillsViewport(page);
   });
 

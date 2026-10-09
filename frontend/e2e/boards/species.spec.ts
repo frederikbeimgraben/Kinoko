@@ -104,7 +104,7 @@ test('SpeciesFilter', async ({ page }) => {
   await presetFilter(page, CORE_CHOICE);
   await openList(page, largeBundle());
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
-  await expect(page.getByRole('button', { name: /Arten anzeigen/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Arten? anzeigen/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Vorhersage/ })).toBeVisible();
   // A button of 18 px stays below the threshold of the image comparison.
   await expect(page.getByRole('dialog').getByRole('button', { name: 'Schließen' })).toHaveCount(0);
