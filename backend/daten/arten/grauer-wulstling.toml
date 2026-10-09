@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Roh giftig. Er schmeckt muffig und herb, 123pilzsuche gibt ihm nur die Wertigkeit 4. Wegen der Ähnlichkeit mit dem tödlich giftigen Pantherpilz ist er kein Pilz für Anfänger."
+beschreibung = "Mittelgroßer bis großer Wulstling mit hellbraunem bis schwarzbraunem Hut voller großflächiger, grauweißer Velumflocken, weißen, freien Lamellen und weißem bis grauweißem Stiel mit gerieftem, hängendem Ring und knolliger Basis. Er wächst von Juni bis November im Mischwald, bevorzugt auf saurem Boden und gern bei Fichten. Vom tödlich giftigen Pantherpilz unterscheidet ihn vor allem der geriefte Ring, denn der Pantherpilz hat einen ungerieften Ring, einen gerieften Hutrand und rein weiße Flöckchen."
+beschreibungEn = "A medium-sized to large amanita with a light brown to black-brown cap full of large grey-white veil patches, white free gills and a white to grey-white stem with a striate, hanging ring and a bulbous base. It grows from June to November in mixed woods, mainly on acid soil and often with spruce. The key difference from the deadly poisonous panther cap is the striate ring, because the panther cap has a smooth ring, a striate cap margin and pure white flakes."
+entwurf = true
 weitereNamen = ["Hoher Wulstling", "Gedrungener Wulstling", "Eingesenkter Wulstling", "Schäler"]
 synonyme = ["Amanita excelsa", "Amanita spissa var. valida", "Amanita spissa var. cariosa", "Amanita cariosa"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

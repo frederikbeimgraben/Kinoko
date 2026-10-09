@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "In Deutschland gefährdet und besonders geschützt. Nur wenig oder gar nichts mitnehmen."
 gefaehrdung = "gefaehrdet"
+beschreibung = "Kleiner Leistling mit schwarzgrauem bis graubraunem, feinschuppigem Hut mit welligem Rand, heller weißlich-grauen, herablaufenden Leisten und graubraunem bis schwarzbraunem Stiel, der im Alter hohl wird. Er wächst von Juni bis November im Laubwald, vor allem bei Buchen, und riecht fruchtig nach Pflaumen. Vom Kohlenleistling unterscheidet ihn vor allem der Standort, denn der Kohlenleistling wächst auf Brandstellen. Die Graue Kraterelle ist in Deutschland gefährdet und besonders geschützt."
+beschreibungEn = "A small chanterelle with a black-grey to grey-brown, finely scaly cap with a wavy margin, paler whitish-grey decurrent ridges and a grey-brown to black-brown stem that becomes hollow with age. It grows from June to November in broadleaf woods, mainly with beech, and has a fruity smell of plums. The key difference from Faerberia carbonaria is the habitat, because Faerberia carbonaria grows on burnt ground. This species is endangered and specially protected in Germany."
+entwurf = true
 weitereNamen = ["Grauer Leistling", "Grauer Pfifferling"]
 synonyme = ["Craterellus cinereus", "Pseudocraterellus cinereus", "Merulius cinereus"]
 fruchtschicht = { art = "leisten" }

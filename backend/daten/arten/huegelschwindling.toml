@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilzsuche führt ihn als leicht giftig. Er unterscheidet sich vom Nelkenschwindling durch den Geruch: nach Zedernholz und zwischen den Fingern mehlig-ranzig, nie nach Bittermandeln, dazu ein ekelhaft ranziger Geschmack."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner Schwindling mit haselnussbraunem, hellbraunem bis ocker-rotbraunem, in der Mitte dunklerem und gebuckeltem Hut, weißlichen bis cremerosa, mäßig entfernten Lamellen und zähem, elastischem, blass cremefarbenem bis hellbraunem Stiel. Er wächst von März bis November auf Rasen und Wiesen, in Parks, Gärten und an Waldrändern, oft in dichten Büscheln und Hexenringen, und ist sehr selten. Vom Nelkenschwindling unterscheidet ihn vor allem der Geruch nach Zedernholz, der zwischen den Fingern mehlig-ranzig wird, denn der Nelkenschwindling riecht nach Bittermandeln. Der Hügelschwindling gilt als leicht giftig."
+beschreibungEn = "A small Marasmius with a hazel-brown, light brown to ochre-red-brown cap that is darker and umbonate at the centre, whitish to cream-pink, moderately distant gills and a tough, elastic, pale cream to light brown stem. It grows from March to November on lawns and meadows, in parks, gardens and at forest edges, often in dense clusters and fairy rings, and is very rare. The key difference from the fairy ring champignon is the smell of cedar wood, which becomes mealy and rancid when rubbed between the fingers, because the fairy ring champignon smells of bitter almonds. This species is considered slightly poisonous."
+entwurf = true
 synonyme = ["Agaricus collinus", "Gymnopus collinus", "Collybia collina"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "normal" }
 hutmerkmale = ["gebuckelt"]

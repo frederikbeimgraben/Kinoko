@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner bis mittelgroßer Röhrling mit bräunlichem, samtig filzigem, später aufreißendem Hut, gelben, alt bräunlichen Röhren, die auf Druck kaum blauen, und rötlich punktiertem, flockigem Stiel ohne Netz. Er wächst von Juni bis November im Mischwald und ist sehr häufig. Vom Maronenröhrling unterscheidet ihn vor allem der Stiel, denn der Maronenröhrling hat keine roten Punkte am Stiel und deutlich blauende Röhren."
+beschreibungEn = "A small to medium-sized bolete with a brownish, velvety and felty cap that later cracks, yellow tubes that become brownish with age and hardly turn blue when pressed, and a stem with reddish dots and flakes and without a net. It grows from June to November in mixed woods and is very common. The key difference from the bay bolete is the stem, because the bay bolete has no red dots on the stem and tubes that clearly turn blue."
+entwurf = true
 weitereNamen = ["Herbstrotfuß", "Bereifter Rotfuß", "Stattlicher Rotfuß"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["beflockt", "knolle"]

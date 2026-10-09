@@ -11,6 +11,9 @@ baeume = ["kiefer"]
 speisewertHinweis = "In Deutschland gefährdet und sehr selten. Stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Schneckling mit schleimigem, glänzend graubraunem bis olivbraunem Hut mit dunklerer, stumpf gebuckelter Mitte, weißen bis leicht gelblichen, etwas herablaufenden Lamellen und schleimigem, weißlichem Stiel mit schleimiger Ringzone. Er wächst von August bis November bei Kiefern auf kalkreichem Boden, in Wäldern, Parks, an Waldrändern und in Heiden. Die Art ist in Deutschland sehr selten und gefährdet."
+beschreibungEn = "A medium-sized woodwax with a slimy, glossy grey-brown to olive-brown cap with a darker, bluntly umbonate centre, white to slightly yellowish, slightly decurrent gills and a slimy, whitish stem with a slimy ring zone. It grows from August to November with pines on calcareous soil, in woods, parks, at forest edges and on heaths. The species is very rare and endangered in Germany."
+entwurf = true
 weitereNamen = ["Grauweißer Schneckling", "Dunkler Kiefern-Schneckling"]
 synonyme = ["Hygrophorus fuscoalbus", "Hygrophorus limacinus", "Hygrophorus olivaceoalbus var. obesus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "glatt" }

@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
 baeume = []
 karte = "hypholoma_fasciculare"
 speisewertHinweis = "Er macht starke Magen-Darm-Störungen, die über mehrere Tage anhalten. Zu erkennen an den grünen bis grüngelben Lamellen und am stark bitteren Geschmack."
+beschreibung = "Kleiner, büschelig wachsender Blätterpilz mit schwefelgelbem bis grünlichem, in der Mitte ocker- bis rotbraunem Hut, grünen bis grüngelben, im Alter olivbraunen Lamellen und schwefelgelbem, zur Basis bräunlichem Stiel. Er wächst in ganz Deutschland das ganze Jahr über als Folgezersetzer an Stümpfen, Ästen und vergrabenem Holz von Laub- und Nadelbäumen. Vom Nadelschüppling unterscheiden ihn vor allem die grünen bis grüngelben Lamellen, denn der Nadelschüppling hat Lamellen ohne Grünton. Der Grünblättrige Schwefelkopf ist giftig."
+beschreibungEn = "A small mushroom that grows in clusters, with a sulphur-yellow to greenish cap that is ochre to red-brown at the centre, green to greenish-yellow gills that turn olive-brown with age and a sulphur-yellow stem that is brownish towards the base. It grows throughout Germany all year round as a saprobe on stumps, branches and buried wood of broadleaf and coniferous trees. The key difference from Pholiota spumosa is the green to greenish-yellow colour of the gills, because Pholiota spumosa has gills without a green tone. The sulphur tuft is poisonous."
+entwurf = true
 weitereNamen = ["Büscheliger Schwefelkopf", "Bitterer Schwefelkopf"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutform = { von = "halbkugelig", nach = "flach" }

@@ -9,6 +9,9 @@ baeume = ["buche", "hasel", "eiche", "birke", "kiefer"]
 speisewertHinweis = "Erkennbar am kammförmig gerieften Hutrand, an der rübenartigen Stielbasis mit warzigem Gürtel statt häutiger Scheide und am unbedeutenden Geruch."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kleiner bis mittelgroßer Wulstling mit cremeweißem, isabellfarbenem, ockerfarbenem bis rosa oder weinbraunem Hut mit kammförmig gerieftem Rand und oft weißen, filzigen Hüllresten, weißen, gedrängten Lamellen und weißem bis hellgelbem Stiel mit dünnem, vergänglichem Ring. Er wächst von Juni bis November bei Laubbäumen wie Buche, Hasel, Eiche und Birke, vereinzelt bei Kiefer, überwiegend auf saurem Boden in warmen Lagen, und ist sehr selten. Vom Grünen Knollenblätterpilz unterscheidet ihn vor allem die Stielbasis mit warzigem Gürtel statt häutiger Scheide, dazu der geriefte Hutrand. Der Isabellfarbige Wulstling ist giftig."
+beschreibungEn = "A small to medium-sized amanita with a cream-white, isabelline, ochre to pink or wine-brown cap with a comb-like striate margin and often white, felty veil remnants, white, crowded gills and a white to light yellow stem with a thin ring that soon disappears. It grows from June to November with broadleaf trees such as beech, hazel, oak and birch, occasionally with pine, mostly on acid soil in warm areas, and is very rare. The key difference from the death cap is the stem base with a warty belt instead of a membranous volva, together with the striate cap margin. This species is poisonous."
+entwurf = true
 weitereNamen = ["Isabellfarbige Wulstling", "Kammrandiger Wulstling"]
 synonyme = ["Amanitaria eliae", "Amanita eliae f. griseovelata", "Amanita raymondii", "Amanita griseovelata", "Amanita eliae var. griseovelata", "Amanitaria eliae f. exannulata"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }

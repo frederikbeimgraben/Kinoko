@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["herbst", "winter"]
 baeume = []
 speisewertHinweis = "Kann bei empfindlichen Personen Magen-Darm-Störungen auslösen, die schnell wieder vergehen."
+beschreibung = "Kleiner Nabeling mit gelbem, olivgelbem bis grüngelbem, im Alter immer genabeltem Hut mit fein durchscheinend gerieftem Rand, gelben, dicklichen, weit herablaufenden Lamellen und blassgelbem bis grüngelbem, hohlem Stiel. Er wächst von September bis Februar als Folgezersetzer auf Nadelholzstümpfen, Rindenstücken und verrotteten Ästen, oft gesellig oder büschelig. Vom Starkriechenden Trompetenpfifferling unterscheiden ihn vor allem die Lamellen und der Standort auf Holz, denn der Trompetenpfifferling hat Leisten und wächst am Boden. Der Grüngelbe Nabeling ist ungenießbar."
+beschreibungEn = "A small navel with a yellow, olive-yellow to greenish-yellow cap that is always navel-shaped with age and has a finely translucent striate margin, yellow, thick, deeply decurrent gills and a pale yellow to greenish-yellow, hollow stem. It grows from September to February as a saprobe on conifer stumps, pieces of bark and rotten branches, often in groups or clusters. The key difference from Craterellus lutescens is the gills and the habitat on wood, because Craterellus lutescens has ridges and grows on the ground. This species is inedible."
+entwurf = true
 weitereNamen = ["Gelbgrüner Ellerling", "Olivgelber Nabeling", "Gelbgrüner Nabeling", "Gelboliver Ellerling"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutmerkmale = ["genabelt"]

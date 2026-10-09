@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["buche", "weide"]
 speisewertHinweis = "Leicht giftig, weil er Psilocybin enthält und halluzinogen wirkt. Erkennbar am grünlich-bläulichen Schein des Stiels."
+beschreibung = "Kleiner bis mittelgroßer Dachpilz mit blassgrauem bis graugrünem, seidig feinschuppigem Hut, freien, erst weißen und später rosa Lamellen und weißlichem Stiel mit grünlich-bläulichem Schein. Er wächst von März bis November als Folgezersetzer auf totem Laubholz, gern von Buche, Erle und Weide. Vom ähnlichen Seidigen Dachpilz unterscheidet ihn vor allem der grünlich-bläuliche Schein am Stiel, der dem Seidigen Dachpilz fehlt. Der Graugrüne Dachpilz ist giftig, denn er enthält Psilocybin."
+beschreibungEn = "A small to medium-sized shield with a pale grey to grey-green, silky and finely scaly cap, free gills that are white at first and later pink, and a whitish stem with a greenish-blue tinge. It grows from March to November as a saprobe on dead broadleaf wood, often beech, alder and willow. The key difference from the similar Pluteus petasatus is the greenish-blue tinge on the stem, which Pluteus petasatus does not have. This species is poisonous, because it contains psilocybin."
+entwurf = true
 weitereNamen = ["Grauer Dachpilz", "Silbriger Dachpilz", "Grünlichgrauer Dachpilz"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["faserig"]

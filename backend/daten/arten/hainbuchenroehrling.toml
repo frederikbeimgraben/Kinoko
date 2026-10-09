@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["hainbuche", "hasel"]
 speisewertHinweis = "Als Raufußröhrling besonders geschützt, also nur für den Eigenbedarf sammeln. Das Fleisch wird beim Kochen schwarz."
+beschreibung = "Mittelgroßer Raufußröhrling mit kastanienbraunem, hellbraunem bis olivgelbem Hut mit gehämmert runzeliger, im Alter felderig rissiger Haut, schmutzigweißen bis ockergelben Röhren und weißlichem Stiel mit braunschwarzen bis grauschwarzen Schüppchen. Er wächst von Juni bis November im Laubwald, meist unter Hainbuchen, seltener bei Haseln. Vom Rötenden Birkenpilz unterscheidet ihn vor allem das Fleisch, das sich im Anschnitt erst rötlich und nach wenigen Minuten grauviolett bis schwarzlila färbt, denn der Rötende Birkenpilz rötet nur, wird nicht schwarz und wächst bei Birken. Als Raufußröhrling ist er in Deutschland besonders geschützt."
+beschreibungEn = "A medium-sized scaber stalk with a chestnut-brown, light brown to olive-yellow cap with hammered, wrinkled skin that becomes cracked into patches with age, dirty white to ochre-yellow tubes and a whitish stem with brown-black to grey-black scales. It grows from June to November in broadleaf woods, mostly under hornbeam, less often with hazel. The key difference from Leccinum oxydabile is the flesh, which turns reddish at first when cut and grey-violet to black-lilac after a few minutes, because Leccinum oxydabile only turns red, does not become black and grows with birch. As a scaber stalk, it is specially protected in Germany."
+entwurf = true
 weitereNamen = ["Hainbuchenraufußröhrling"]
 synonyme = ["Leccinum pseudoscabrum", "Leccinum carpini", "Leccinum griseum", "Leccinellum carpini", "Boletus scaber var. carpini", "Boletus pseudoscaber"]
 fruchtschicht = { art = "roehren" }

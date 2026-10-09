@@ -8,6 +8,9 @@ marktfaehig = true
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Großer Champignon mit ockerbräunlichem bis dunkelbraunem, mit rostbraunen Fasern geschupptem Hut, freien, erst rosa und später dunkel rotbraunen Lamellen und weißlichem Stiel mit doppelrandigem, hängendem Ring. Er wächst von Juni bis November als Folgezersetzer im Nadelwald. Vom Karbol-Champignon unterscheidet ihn vor allem das Fleisch, das sich beim Anschneiden sofort rötlich bis blutrot färbt, denn beim Karbol-Champignon gilbt die Stielbasis chromgelb und der Pilz riecht nach Tinte."
+beschreibungEn = "A large mushroom with an ochre-brown to dark brown cap covered with rust-brown fibrous scales, free gills that are pink at first and later dark red-brown, and a whitish stem with a double-edged, hanging ring. It grows from June to November as a saprobe in coniferous woods. The key difference from the yellow stainer is the flesh, which turns reddish to blood-red immediately when it is cut, because the yellow stainer turns chrome-yellow at the stem base and smells of ink."
+entwurf = true
 weitereNamen = ["Großer Waldchampignon", "Großer Blutegerling", "Grosser Blutchampignon"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["ring"]

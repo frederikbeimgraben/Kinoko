@@ -9,6 +9,9 @@ baeume = ["buche", "eiche"]
 karte = "amanita_phalloides"
 speisewertHinweis = "Absolut tödlich, schon 20 Gramm genügen. Das Gift schädigt die Leber. Die wichtigsten Merkmale sind weiße Lamellen, ein häutiger Ring, ein radialfaserig eingewachsener Hut mit wie ein Tortenstück abziehbarer Haut und eine abgerundete Knolle mit häutiger Scheide."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer Wulstling mit grünlichem, olivgrünem bis gelblichem, selten fast weißem Hut mit radialfaserig eingewachsener Haut, weißen, freien Lamellen und weißem bis gelbgrünlichem Stiel mit häutigem Ring und rundlicher Knolle in einer häutigen Scheide. Er wächst in ganz Deutschland von Juni bis November, meist bei Eichen und Buchen, auch in Parks und Gärten, und ist häufig. Vom Frauentäubling unterscheiden ihn vor allem Ring, Knolle und Scheide, denn Täublinge haben nichts davon und dazu brüchige Lamellen. Der Grüne Knollenblätterpilz ist tödlich giftig."
+beschreibungEn = "A medium-sized amanita with a greenish, olive-green to yellowish, rarely almost white cap with radially fibrous, innate skin, white free gills and a white to yellow-greenish stem with a membranous ring and a rounded bulb in a membranous volva. It grows throughout Germany from June to November, mostly with oak and beech, also in parks and gardens, and is common. The key difference from the charcoal burner is the ring, the bulb and the volva, because brittlegills have none of these and have brittle gills. The death cap is deadly poisonous."
+entwurf = true
 weitereNamen = ["Grüner Mörder", "Giftchampignon"]
 synonyme = ["Amanita phalloides f. citrina", "Amanita phalloides f. dunensis", "Amanita phalloides var. umbrina", "Amanita phalloides var. euphalloides", "Amanita phalloides var. larroquei", "Amanita phalloides var. pulla", "Amanita phalloides var. verna", "Amanita phalloides var. striatula"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }

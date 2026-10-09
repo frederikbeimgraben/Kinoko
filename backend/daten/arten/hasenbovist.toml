@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur jung, solange das Innere rein weiß ist. Jedes Stück längs durchschneiden: zeigt der Schnitt Lamellenansätze, ist es ein junger Knollenblätterpilz."
+beschreibung = "Mittelgroßer bis großer Stäubling mit ballon-, sack- oder kreiselförmigem, erst weißem und später grauem Fruchtkörper, der jung plattenartige, etwas spitzkegelige Erhebungen trägt. Er wächst von Juni bis November auf Wiesen, Weiden, Rasen, in Hecken und Obstgärten, besonders in Gebirgslagen. Vom jungen, noch geschlossenen Weißen Knollenblätterpilz unterscheidet ihn vor allem der Längsschnitt, denn der Hasenstäubling ist innen gleichmäßig weiß und ohne Lamellen, der Knollenblätterpilz zeigt im Schnitt Hut, Lamellen und Stiel."
+beschreibungEn = "A medium-sized to large puffball with a balloon-shaped, sack-shaped or top-shaped fruit body that is white at first and later grey and has plate-like, slightly pointed bumps when young. It grows from June to November on meadows, pastures, lawns, in hedges and orchards, especially in mountain areas. The key difference from the young, still closed white form of the death cap is a cut along the length, because the mosaic puffball is evenly white inside and has no gills, while the white death cap shows a cap, gills and a stem in the cut."
+entwurf = true
 weitereNamen = ["Hasenbovist"]
 synonyme = ["Handkea utriformis", "Calvatia utriformis", "Calvatia caelata", "Lycoperdon sinclairii"]
 

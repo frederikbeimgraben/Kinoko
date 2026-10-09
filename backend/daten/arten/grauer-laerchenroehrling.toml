@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche"]
 speisewertHinweis = "Von der DGfM als Speisepilz geführt. Er ist selten, deshalb nur wenig mitnehmen."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer Schmierröhrling mit olivgrauem bis graubraunem, im Alter blassgrauem Hut mit lange eingerolltem Rand, grauen bis graubräunlichen Röhren und graubräunlich marmoriertem, feucht schmierigem Stiel. Er wächst von Juni bis November nur bei Lärchen, vor allem auf kalkreichem Boden, und ist selten. Vom Goldröhrling, der ebenfalls bei Lärchen wächst, unterscheidet ihn vor allem die Farbe, denn der Goldröhrling hat einen goldgelben Hut und goldgelbe Röhren."
+beschreibungEn = "A medium-sized slippery bolete with an olive-grey to grey-brown cap that becomes pale grey with age and has a margin that stays inrolled for a long time, grey to grey-brown tubes and a grey-brown marbled stem that is slimy when wet. It grows from June to November only with larches, mainly on calcareous soil, and is rare. The key difference from the larch bolete, which also grows with larches, is the colour, because the larch bolete has a golden-yellow cap and golden-yellow tubes."
+entwurf = true
 synonyme = ["Suillus laricinus", "Suillus aeruginascens"]
 fruchtschicht = { art = "roehren" }
 hutmerkmale = ["gebuckelt"]

@@ -8,6 +8,9 @@ marktfaehig = true
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Kleiner bis mittelgroßer Rötelritterling mit graubraunem, faserigem Hut mit konzentrischen Wasserflecken und welligem, oft hochgebogenem Rand, weißlichen, später cremerosa bis graurosa, etwas herablaufenden Lamellen und weißlichem bis graubraunem, faserigem Stiel. Er wächst von August bis November als Folgezersetzer in Parks, auf Wiesen, an Waldrändern und an Waldwegen. Vom Seifenritterling unterscheidet ihn vor allem das rosabraune Sporenpulver und der mehlartige Geruch, denn der Seifenritterling hat weißes Sporenpulver, riecht nach Seifenlauge und rötet an verletzten Stellen."
+beschreibungEn = "A small to medium-sized blewit with a grey-brown, fibrous cap with concentric water spots and a wavy margin that is often turned up, whitish gills that later become cream-pink to grey-pink and are slightly decurrent, and a whitish to grey-brown, fibrous stem. It grows from August to November as a saprobe in parks, on meadows, at forest edges and along forest paths. The key difference from the soapy knight is the pink-brown spore print and the mealy smell, because the soapy knight has a white spore print, smells of soapy water and turns red where it is damaged."
+entwurf = true
 weitereNamen = ["Graubräunlicher Rötelritterling", "Marmorierter Röteltrichterling"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutmerkmale = ["gezont"]

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche", "obstbaum"]
 speisewertHinweis = "In freier Natur nur vereinzelt und in Deutschland stark gefährdet. Er wird gezüchtet; den Fund besser stehen lassen."
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Großer, weißlich cremefarbener bis beiger Stachelbart ohne Hut, mit langen, büschelig herabhängenden Stacheln aus einem gemeinsamen Strunk, im Alter rotbraun verfärbend. Er wächst von Juni bis November als Wundparasit und Folgezersetzer an verletzten Laubbäumen wie Eiche, Buche und Obstbäumen. Vom Nördlichen Stachelseitling unterscheidet ihn vor allem die Form, denn der Stachelseitling bildet dachziegelig übereinanderstehende Hüte mit rauhaariger Oberseite. Der Igelstachelbart ist in Deutschland stark gefährdet."
+beschreibungEn = "A large, whitish cream to beige tooth fungus without a cap, with long spines that hang down in tufts from a common base and that turn red-brown with age. It grows from June to November as a wound parasite and saprobe on damaged broadleaf trees such as oak, beech and fruit trees. The key difference from Climacodon septentrionalis is the shape, because Climacodon septentrionalis forms overlapping caps with a hairy upper surface. The lion's mane is highly endangered in Germany."
+entwurf = true
 weitereNamen = ["Yamabusitake", "Löwenmähne", "Pom-Pom blanc", "Affenkopfpilz --- HERICIUM ERINACEUS"]
 synonyme = ["Hericium erinaceum", "Hericium erinaceus forma caput-medusae", "Martella hystrix", "Hydnum juranum"]
 fruchtschicht = { art = "stacheln" }

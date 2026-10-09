@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Magen-Darm-giftig. Aus südlichen Ländern sind viele heftige Vergiftungen gemeldet. Zu erkennen an den im Alter grünlichen Lamellen und am grünlichen Sporenpulver."
+beschreibung = "Mittelgroßer Schirmling mit weißem, wolligem Hut, der jung hellbraune, landkartenartige Zonen und abstehende Schüppchen trägt, weißen, im Alter grünlichen Lamellen und glattem, weißlichem Stiel mit kräftigem, verschiebbarem Ring. In Deutschland ist er bisher nur unter Glas gefunden worden, in Gewächshäusern, botanischen Gärten und auf Komposthaufen, in warmen Gebieten wächst er auch auf Rasenflächen und an Waldrändern. Von weißsporigen Schirmlingen wie dem Jungfernschirmling unterscheidet ihn vor allem das grünliche Sporenpulver, das im Alter auch die Lamellen grünlich färbt. Der Grünsporschirmling ist giftig."
+beschreibungEn = "A medium-sized parasol with a white, woolly cap that has light brown, map-like zones and raised scales when young, white gills that become greenish with age and a smooth, whitish stem with a strong, movable ring. In Germany it is known only under glass, in greenhouses, botanical gardens and on compost heaps, while in warm regions it also grows on lawns and at forest edges. The key difference from white-spored parasols such as Leucoagaricus nympharum is the greenish spore print, which also makes the gills greenish with age. The false parasol is poisonous."
+entwurf = true
 weitereNamen = ["Grünsporiger Riesenschirmling", "Falscher Parasol"]
 fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["gezont"]
