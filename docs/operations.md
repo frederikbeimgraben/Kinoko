@@ -433,7 +433,7 @@ hash and show `v2026-10-08-01-3`. A release tag has the form `vYYYY-MM-DD-NN`.
 - The app: `frontend/tools/stamp-version.mjs` writes it before each build. The about page shows it.
 - The service: `backend/build.sh` gives it to the linker (`-ldflags -X …/config.build=…`). `GET /api/config` and `kinoko version` return it. A plain `go build` gives `dev`.
 - Nix: the flake has no Git tags. It uses the date and the commit of the flake, for example `v2026-10-09+65dd41a`, for the app and the service. Thus the build stays reproducible.
-- `KINOKO_VERSION` replaces the Git value for both sides.
+- `KINOKO_VERSION` replaces the Git value for both sides. A release tag without the `v`, for example `2026-10-08-01`, gets the `v`.
 
 CI stops when the app and the service of one build do not show the same
 version.

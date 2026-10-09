@@ -2630,6 +2630,7 @@ components:
           type: string
         version:
           type: string
+          description: Version of the build, for example v2026-10-08-01-3. "dev" without a version.
       required: [oidcIssuer, oidcName, oidcClientId, origin, version]
 
     Me:
