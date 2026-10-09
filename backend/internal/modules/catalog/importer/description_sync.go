@@ -12,11 +12,9 @@ import (
 // speciesFile gives the seed file name of a profile stem.
 func speciesFile(stem string) string { return "arten/" + stem + ".toml" }
 
-// SyncDescriptions writes the description fields of each species file that changed
-// since its last import into the species with the same slug. A file without
-// beschreibung keeps the description of the database. The other fields of a
-// species stay as they are, because the admin UI can change them.
-// It records the digest of each file and gives the count of changed species.
+// SyncDescriptions writes the description fields of each changed species file into
+// the species with the same slug, records the file digests and gives the count.
+// A file without beschreibung keeps the description; other fields stay for the admin UI.
 func SyncDescriptions(ctx context.Context, handle *sql.DB, data fs.FS, profiles []StemProfile, now db.Time) (int, error) {
 	return db.InTxValue(ctx, handle, func(tx *sql.Tx) (int, error) {
 		stored, err := storedDigests(ctx, tx)

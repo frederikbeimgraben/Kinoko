@@ -1,7 +1,6 @@
 package catalog
 
 import (
-	"maps"
 	"slices"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
@@ -347,57 +346,5 @@ func assemble(s speciesRow, c children, terms map[db.ID]termRow, targets map[db.
 			return nil
 		}),
 		Lookalikes: lookalikesOf(s.ID, c.lookalikes[s.ID], targets),
-	}
-}
-
-// facetsOf builds the filter values of a species from its child rows.
-func facetsOf(s speciesRow, c children, terms map[db.ID]termRow, names taxonNames) Facets {
-	own := c.colours[s.ID]
-	colours := fn.Map(c.colourRanges[s.ID], func(r colourRangeRow) partColours {
-		keys := fn.Map(fn.Filter(own, func(x colourRow) bool { return x.Part == r.Part }),
-			func(x colourRow) string { return Nearest(x.Hex).Key })
-		return partColours{Part: r.Part, Keys: slices.Compact(slices.Sorted(slices.Values(keys)))}
-	})
-	measurements := fn.Reduce(c.measurements[s.ID], map[sizeKey]span{}, func(acc map[sizeKey]span, m measurementRow) map[sizeKey]span {
-		acc[sizeKey{m.Part, m.Dimension}] = span{m.Low, m.High}
-		return acc
-	})
-	var p *period
-	if s.PeriodStartMonth != nil && s.PeriodEndMonth != nil {
-		p = &period{*s.PeriodStartMonth, *s.PeriodEndMonth}
-	}
-	termIDs := fn.Set(fn.Map(c.terms[s.ID], func(r speciesTermRow) db.ID { return r.TermID }))
-	held := fn.FlatMap(fn.SortedBy(slices.Collect(maps.Keys(termIDs)), func(id db.ID) string { return id.String() }), func(id db.ID) []termRow {
-		if t, ok := terms[id]; ok {
-			return []termRow{t}
-		}
-		return nil
-	})
-	slugsOf := func(keep func(termRow) bool) []string {
-		return slices.Compact(slices.Sorted(slices.Values(fn.Map(fn.Filter(held, keep), func(t termRow) string { return t.Slug }))))
-	}
-	shapes := fn.FlatMap([]*enums.CapShape{s.CapShapeYoung, s.CapShapeOld}, func(c *enums.CapShape) []enums.CapShape {
-		if c == nil {
-			return nil
-		}
-		return []enums.CapShape{*c}
-	})
-	genus, family := names.of(s)
-	return Facets{
-		Edibility:    s.Edibility,
-		Hymenium:     s.HymeniumType,
-		CapShapes:    slices.Compact(slices.Sorted(slices.Values(shapes))),
-		Colours:      colours,
-		Measurements: measurements,
-		Period:       p,
-		TermIDs:      termIDs,
-		Protection:   s.Protection,
-		Forecast:     s.ForecastEnabled,
-		GenusName:    genus,
-		FamilyName:   family,
-		Senses: slugsOf(func(t termRow) bool {
-			return t.Kind == enums.TermKindSmell || t.Kind == enums.TermKindTaste
-		}),
-		Trees: slugsOf(func(t termRow) bool { return t.Kind == enums.TermKindTree }),
 	}
 }

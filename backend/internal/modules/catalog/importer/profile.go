@@ -11,10 +11,9 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-// Profile is one species file under daten/arten. The tables farben, masse
-// and merkmale keep the key order of the file because the result depends on it.
-// Beschreibung is the German description, BeschreibungEn the English one.
-// Entwurf is true when nobody has reviewed the description.
+// Profile is one species file under daten/arten. The tables farben, masse and
+// merkmale keep the key order of the file because the result depends on it.
+// Entwurf is true when nobody has reviewed the descriptions.
 type Profile struct {
 	Name               string
 	Lateinisch         string

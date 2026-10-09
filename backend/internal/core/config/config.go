@@ -20,7 +20,7 @@ var build = ""
 var (
 	// commitHash is the "-g<hash>" end of a "git describe".
 	commitHash = regexp.MustCompile(`-g[0-9a-f]{7,}$`)
-	// releaseDate is the start of a release tag without the v, such as 2026-10-08-01.
+	// releaseDate is the start of a release tag without the v: YYYY-MM-DD-NN.
 	// A bare commit hash does not agree.
 	releaseDate = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}-\d+`)
 )
