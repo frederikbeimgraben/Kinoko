@@ -1,8 +1,10 @@
+import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { BannerComponent } from './banner.component';
+import { ConnectionNotice } from './connection-notice';
 
 describe('BannerComponent', () => {
   it('meldet, dass keine Verbindung steht, im Fehlerton', async () => {
@@ -13,6 +15,21 @@ describe('BannerComponent', () => {
     const banner = screen.getByRole('button', { name: 'Keine Verbindung' });
     expect(banner).toHaveClass('banner--error');
     await noViolations(container);
+  });
+
+  it('meldet sich als sichtbare Verbindungsmeldung an und wieder ab', async () => {
+    const { fixture } = await render(BannerComponent, { inputs: { kind: 'noConnection' } });
+    const notice = TestBed.inject(ConnectionNotice);
+    expect(notice.shown()).toBe(true);
+
+    fixture.componentRef.setInput('kind', 'pending');
+    fixture.detectChanges();
+    expect(notice.shown()).toBe(false);
+
+    fixture.componentRef.setInput('kind', 'noConnection');
+    fixture.detectChanges();
+    fixture.destroy();
+    expect(notice.shown()).toBe(false);
   });
 
   it('meldet, dass etwas auf die Übertragung wartet, im Warnton', async () => {

@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output } from '@angular/core';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { ConnectionNotice } from './connection-notice';
 import type { TranslationKey } from '../../core/i18n/translations';
 
 /** The state that the banner reports. */
@@ -75,6 +76,17 @@ export class BannerComponent {
   });
 
   protected readonly showsChev = computed(() => this.chev() ?? this.action() === null);
+
+  constructor() {
+    const notice = inject(ConnectionNotice);
+    effect((onCleanup) => {
+      if (this.kind() !== 'noConnection') return;
+      notice.add();
+      onCleanup(() => {
+        notice.remove();
+      });
+    });
+  }
 
   /** The action gives its name to the full area. Without an action, the text is the name. */
   protected readonly ariaLabel = computed(() => {

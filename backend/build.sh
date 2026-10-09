@@ -9,7 +9,9 @@
 set -euo pipefail
 output=$(realpath -m "${1:-$(dirname "$0")/kinoko}")
 cd "$(dirname "$0")"
-version=${KINOKO_VERSION:-$(git describe --tags --always 2>/dev/null || echo dev)}
+# Only a release tag (vYYYY-MM-DD-NN) gives the version, as RELEASE_TAG in stamp-version.mjs.
+release_tag='v[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9]*'
+version=${KINOKO_VERSION:-$(git describe --tags --match "$release_tag" --always 2>/dev/null || echo dev)}
 CGO_ENABLED=1 go build -trimpath \
   -ldflags "-X github.com/frederikbeimgraben/kinoko/backend/internal/core/config.build=$version" \
   -o "$output" ./cmd/kinoko

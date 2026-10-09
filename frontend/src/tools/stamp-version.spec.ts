@@ -1,4 +1,5 @@
-import { content, describe as stamp, label } from '../../tools/stamp-version.mjs';
+import { readFileSync } from 'node:fs';
+import { RELEASE_TAG, content, describe as stamp, label } from '../../tools/stamp-version.mjs';
 
 describe('stamp-version', () => {
   it('shows the Git version without the commit hash, as the board does', () => {
@@ -31,5 +32,11 @@ describe('stamp-version', () => {
 
   it('writes a TypeScript constant', () => {
     expect(content('v0.1.0-14')).toBe("export const APP_VERSION = 'v0.1.0-14';\n");
+  });
+
+  it('nimmt nur ein Release-Tag, wie das Bauskript des Dienstes', () => {
+    const build = readFileSync('../backend/build.sh', 'utf8');
+    expect(build).toContain(`release_tag='${RELEASE_TAG}'`);
+    expect(RELEASE_TAG).toBe('v[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9]*');
   });
 });

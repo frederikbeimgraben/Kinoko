@@ -1,5 +1,6 @@
 import { afterNextRender, inject, EnvironmentInjector } from '@angular/core';
 import { AuthService } from './core/auth';
+import { leaveSignedInPages } from './core/auth/signed-in.guard';
 import { ConfigStore } from './core/config/config.store';
 import { HistoryService } from './core/navigation/history.service';
 import { TextCatalogService } from './core/i18n/text-catalog.service';
@@ -12,6 +13,7 @@ export function startApp(): void {
   inject(ThemeStore);
   // The in-app back arrow needs every navigation from the first one.
   inject(HistoryService);
+  leaveSignedInPages();
   const config = inject(ConfigStore);
   const auth = inject(AuthService);
   const texts = inject(TextCatalogService);

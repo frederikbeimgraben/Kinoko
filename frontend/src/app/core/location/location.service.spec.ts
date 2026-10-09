@@ -23,25 +23,35 @@ function stubGeolocation(): { watchers: Watcher[]; cleared: number[] } {
   return { watchers, cleared };
 }
 
-function stubPermission(state: PermissionState): { change: () => void } {
+function stubPermission(state: PermissionState): { change: (next?: PermissionState) => void } {
   const listeners: (() => void)[] = [];
+  const status = { state };
   Object.defineProperty(navigator, 'permissions', {
     configurable: true,
     value: {
       query: () =>
-        Promise.resolve({
-          state,
-          addEventListener: (_kind: string, handler: () => void) => {
-            listeners.push(handler);
-          },
-        }),
+        Promise.resolve(
+          Object.assign(status, {
+            addEventListener: (_kind: string, handler: () => void) => {
+              listeners.push(handler);
+            },
+          }),
+        ),
     },
   });
   return {
-    change: () => {
+    change: (next = status.state) => {
+      status.state = next;
       for (const handler of listeners) handler();
     },
   };
+}
+
+/** Lets the permission query answer and the effects run. */
+async function settle(): Promise<void> {
+  await Promise.resolve();
+  await Promise.resolve();
+  TestBed.tick();
 }
 
 function position(lon: number, lat: number, accuracy: number): GeolocationPosition {
@@ -122,5 +132,40 @@ describe('LocationService', () => {
     watchers[0].fail({ code: 1, PERMISSION_DENIED: 1 } as GeolocationPositionError);
     expect(service.allowed()).toBe(false);
     expect(service.location()).toBeNull();
+  });
+
+  it('fragt beim Laden der Karte nicht nach dem Standort', async () => {
+    const { watchers } = stubGeolocation();
+    stubPermission('prompt');
+    const service = TestBed.inject(LocationService);
+
+    service.follow();
+    await settle();
+
+    expect(watchers).toHaveLength(0);
+  });
+
+  it('folgt beim Laden der Karte, wenn die Freigabe schon besteht', async () => {
+    const { watchers } = stubGeolocation();
+    stubPermission('granted');
+    const service = TestBed.inject(LocationService);
+
+    service.follow();
+    await settle();
+
+    expect(watchers).toHaveLength(1);
+  });
+
+  it('folgt, sobald die Person die Freigabe gibt', async () => {
+    const { watchers } = stubGeolocation();
+    const permission = stubPermission('prompt');
+    const service = TestBed.inject(LocationService);
+    service.follow();
+    await settle();
+
+    permission.change('granted');
+    TestBed.tick();
+
+    expect(watchers).toHaveLength(1);
   });
 });

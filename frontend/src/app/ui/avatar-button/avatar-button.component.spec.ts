@@ -31,12 +31,15 @@ describe('AvatarButtonComponent', () => {
     await noViolations(container);
   });
 
-  it('bleibt ohne Namen leer', async () => {
+  it('zeigt ohne Namen das Personen-Symbol statt eines Buchstabens', async () => {
     const { container } = await render(AvatarButtonComponent, {
       inputs: { name: '   ', label: 'Konto' },
     });
 
-    expect(container.querySelector('span[aria-hidden]')?.textContent).toBe('');
+    expect(container.querySelector('app-svg-icon')).toBeInTheDocument();
+    expect(container.querySelector('span[aria-hidden]')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Konto' })).toHaveTextContent('');
+    await noViolations(container);
   });
 
   it('setzt einen Kreis am Berührungspunkt statt der Verkleinerung', async () => {

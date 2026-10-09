@@ -396,7 +396,7 @@ Do these steps for the change from the Python service `pilze-app`:
 ### Version
 
 The version of a build comes from Git, for example `v2026-10-08-01-3-g65dd41a`
-(`git describe --tags --always`). The app and the service remove the commit
+(`git describe --tags --match` on the release tag form, so other tags do not count). The app and the service remove the commit
 hash and show `v2026-10-08-01-3`. A release tag has the form `vYYYY-MM-DD-NN`.
 
 - The app: `frontend/tools/stamp-version.mjs` writes it before each build. The about page shows it.
