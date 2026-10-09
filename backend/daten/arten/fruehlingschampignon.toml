@@ -10,6 +10,9 @@ jahreszeiten = ["fruehling", "sommer"]
 baeume = []
 speisewertHinweis = "Sehr selten, in der Schweiz stark gefährdet."
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer Champignon mit weißem bis gelblichem Hut mit seidigen, gelbbraunen Radialfasern, der bei Berührung strohgelb wird, rosa, später dunkelbraunen, freien Lamellen und sehr langem, nach oben verjüngtem Stiel mit dünnem, weißem Ring. Er wächst von März bis August im Mischwald, in Parks, an Waldrändern und Wegen und ist sehr selten. Vom Karbol-Champignon unterscheidet ihn vor allem der mandel- bis anisartige Geruch, denn der Karbol-Champignon riecht nach Karbol oder Tinte und ist in der Stielbasis kräftig chromgelb."
+beschreibungEn = "A medium-sized mushroom with a white to yellowish cap with silky, yellow-brown radial fibres that turns straw-yellow when touched, free gills that are pink first and dark brown later, and a very long stem that tapers upwards, with a thin, white ring. Agaricus altipes grows from March to August in mixed woods, in parks, at forest edges and beside paths, and is very rare. The key difference from the yellow stainer is the almond- to aniseed-like smell, because the yellow stainer smells of carbolic or ink and is strongly chrome-yellow in the stem base."
+entwurf = true
 weitereNamen = ["Langstieliger Egerling", "Sommeregerling", "Sommerchampignon", "Frühlings-Egerling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["ring"]

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Ein Steinpilz und damit besonders geschützt. Er ist sehr selten, deshalb höchstens ein Fruchtkörper für den Eigenbedarf."
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer bis großer Röhrling mit hell ockerbraunem, dottergelbem bis bronzefarbenem, immer gelbfleckigem Hut, jung weißlichen, später satt gelben, nicht blauenden Röhren und braunem Stiel mit weißer Netzzeichnung, der dünner ist als beim Fichtensteinpilz. Er wächst von Juni bis November im Laubwald und ist sehr selten; als Steinpilz ist er besonders geschützt. Vom Gallenröhrling unterscheiden ihn vor allem die gelben Röhren und das weiße Netz, denn der Gallenröhrling hat bald rosa Röhren und ein grobes, dunkles Netz am Stiel."
+beschreibungEn = "A medium-sized to large bolete with a light ochre-brown, egg-yellow to bronze cap that always has yellow spots, tubes that are whitish when young and deep yellow later and do not turn blue, and a brown stem with a white net, thinner than that of the cep. It grows from June to November in broadleaf woods and is very rare; as a Boletus species it is specially protected. The key difference from the bitter bolete is the yellow tubes and the white net, because the bitter bolete soon has pink tubes and a coarse, dark net on the stem."
+entwurf = true
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt", "faserig", "gerieft"]
 

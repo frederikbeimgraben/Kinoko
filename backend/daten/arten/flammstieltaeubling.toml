@@ -9,6 +9,9 @@ baeume = ["fichte"]
 speisewertHinweis = "Brennend scharf und bitter. In Deutschland gefährdet."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Täubling mit blut- bis kirschrotem, feucht glänzendem Hut mit meist dunklerer Mitte, weißen, ziemlich gedrängten Lamellen und weißem, rot geflammtem, hartem Stiel. Er wächst von Juni bis November in feuchten Nadelwäldern, oft im Moos saurer Bergwälder und gern bei Fichte, und ist sehr selten und in Deutschland gefährdet. Vom Kiefernspeitäubling unterscheidet ihn vor allem die rote Flammung am Stiel, denn der Kiefernspeitäubling hat einen rein weißen Stiel und wächst bei Kiefer."
+beschreibungEn = "A medium-sized brittlegill with a blood-red to cherry-red cap that is glossy when wet and mostly darker in the centre, white, fairly crowded gills and a white, hard stem with a red flush. Russula rhodopus grows from June to November in damp coniferous woods, often in the moss of acid mountain woods and often with spruce, and is very rare and endangered in Germany. The key difference from Russula silvestris is the red flush on the stem, because Russula silvestris has a pure white stem and grows with pine."
+entwurf = true
 weitereNamen = ["Flammstieltäubling"]
 synonyme = ["Russula rhodopoda"]
 fruchtschicht = { art = "lamellen", stand = "eng" }

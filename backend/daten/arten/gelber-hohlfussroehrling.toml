@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche"]
 speisewertHinweis = "In dieser gelben Form sehr selten. Die Schweiz führt ihn als nicht marktfähig."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner bis mittelgroßer Röhrling mit kanariengelbem, bräunlich schuppig filzigem, oft gebuckeltem Hut, gelblichen, wabenartigen, herablaufenden Röhren und hohlem, gelb geschupptem Stiel mit angedeuteter Ringzone. Er wächst von Juni bis November unter Lärchen, meist auf saurem Boden, und ist in dieser gelben Form sehr selten. Vom Kuhröhrling unterscheiden ihn vor allem der hohle Stiel und der filzig schuppige Hut, denn der Kuhröhrling hat einen ockerbraunen, schmierigen Hut und einen vollen Stiel."
+beschreibungEn = "A small to medium-sized bolete with a canary-yellow, brownish-scaly, felty, often umbonate cap, yellowish, honeycomb-like, decurrent tubes and a hollow, yellow-scaly stem with a faint ring zone. Suillus cavipes var. aereus grows from June to November under larch, mostly on acid soil, and is very rare in this yellow form. The key difference from the Jersey cow mushroom is the hollow stem and the felty-scaly cap, because the Jersey cow mushroom has an ochre-brown, slimy cap and a solid stem."
+entwurf = true
 synonyme = ["Suillus cavipes f. aereus", "Boletinus cavipes f. aureus", "Boletinus cavipes var. aureus", "Boletus cavipes", "Suillus cavipes var. aureus", "Boletinus cavipes", "Boletinus cavipe", "Paxillus porosus"]
 fruchtschicht = { art = "roehren" }
 hutmerkmale = ["gebuckelt"]

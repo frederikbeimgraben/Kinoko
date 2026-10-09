@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche", "kastanie", "tanne", "laerche", "fichte"]
 speisewertHinweis = "Riecht unangenehm bis stinkend und schmeckt bitter."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer Porling mit gelbgrünem bis olivgrünem oder gelbbraunem, samtigem, später schuppig aufreißendem Hut mit welligem Rand, weißen, später gelblichen, herablaufenden Poren und kurzem, strunkartigem, weißlichem bis gelbgrünlichem Stiel. Er wächst von Juni bis November im Mischwald, meist bei Laubbäumen wie Buche, Eiche und Kastanie, seltener bei Nadelbäumen, und ist selten. Vom Semmelporling unterscheiden ihn vor allem die gelbgrünen bis olivgrünen Farben und der unangenehme Geruch, denn der Semmelporling hat einen semmelgelben bis orangen Hut."
+beschreibungEn = "A medium-sized polypore with a yellow-green to olive-green or yellow-brown, velvety cap that later cracks into scales, with a wavy margin, white, later yellowish, decurrent pores and a short, stump-like, whitish to yellow-greenish stem. Albatrellus cristatus grows from June to November in mixed woods, mostly with broadleaf trees such as beech, oak and chestnut, less often with conifers, and is rare. The key difference from Albatrellus confluens is the yellow-green to olive-green colours and the unpleasant smell, because Albatrellus confluens has a bun-yellow to orange cap."
+entwurf = true
 weitereNamen = ["Gelbgrüner Kammporling"]
 synonyme = ["Scutiger cristatus", "Polypilus poripes", "Polyporus cristatiformis", "Boletus cristatus"]
 fruchtschicht = { art = "poren" }

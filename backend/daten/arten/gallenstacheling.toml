@@ -9,6 +9,9 @@ baeume = []
 speisewertHinweis = "Extrem scharf und bitter, der unangenehme Geschmack hält lange an."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Stachelpilz mit bräunlichem bis dunkelbraunem, braunschuppigem, unebenem Hut, hell graubraunen bis fuchsigbraunen, herablaufenden Stacheln mit weißlichen Spitzen und bräunlichem Stiel, dessen Basis bläulich bis grünlich verfärbt. Er wächst von Juni bis November nur im sandigen Nadelwald und ist selten und in Deutschland gefährdet. Vom Habichtspilz unterscheidet ihn vor allem die Stielbasis mit schwarzblauem bis schwarzem Fleisch, denn beim Habichtspilz ist die Stielbasis nicht blau verfärbt."
+beschreibungEn = "A medium-sized tooth fungus with a brownish to dark brown, brown-scaly, uneven cap, light grey-brown to foxy-brown, decurrent spines with whitish tips and a brownish stem whose base turns bluish to greenish. The bitter tooth grows from June to November only in sandy coniferous woods and is rare and endangered in Germany. The key difference from the scaly tooth is the stem base with black-blue to black flesh, because the stem base of the scaly tooth has no blue colour."
+entwurf = true
 synonyme = ["Sarcodon scabrosum", "Hydnum scabrosum", "Phaeodon scabrosus", "Sarcodon scabrosus var. fennicus", "Sarcodon scabrosus var. scabrosus"]
 fruchtschicht = { art = "stacheln" }
 

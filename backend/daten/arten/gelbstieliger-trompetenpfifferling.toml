@@ -11,6 +11,9 @@ speisewertHinweis = "Selten und in Deutschland gefährdet. Dünnfleischig, aber 
 schutzHinweis = "Die Verordnung führt die Pfifferlinge als Gattung Cantharellus. Die Trompetenpfifferlinge werden hier gleich behandelt."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Kleiner bis mittelgroßer, dünnfleischiger Pfifferling mit gelblich bräunlichem bis leuchtend gelbem Hut, hell graubrauner bis goldgelber, faltiger Unterseite, auf der Leisten oft kaum zu erkennen sind, und leuchtend gelbem, röhrig hohlem Stiel. Er wächst von September bis November im Mischwald, riecht fruchtig und ist selten und in Deutschland gefährdet. Vom Trompetenpfifferling unterscheidet ihn vor allem der leuchtend gelbe Stiel, denn der Trompetenpfifferling hat deutlich ausgeprägte, graugelbe Leisten und einen nur gelblichen bis gelbbraunen Stiel."
+beschreibungEn = "A small to medium-sized, thin-fleshed chanterelle with a yellowish-brownish to bright yellow cap, a light grey-brown to golden-yellow, wrinkled underside on which ridges are often hard to see, and a bright yellow, tube-like hollow stem. Craterellus lutescens grows from September to November in mixed woods, has a fruity smell and is rare and endangered in Germany. The key difference from the trumpet chanterelle is the bright yellow stem, because the trumpet chanterelle has clear, grey-yellow ridges and a stem that is only yellowish to yellow-brown."
+entwurf = true
 weitereNamen = ["Gelbstieliger Trompetenpfifferling", "Duftleistling", "Starkriechender Pfifferling", "Gelbe Kraterelle", "Gelbstieliger Leistling", "Gelbe Kantherelle", "Goldstieliger Pfifferling", "Wohlriechende Craterelle"]
 synonyme = ["Cantharellus aurora", "Cantarellus lutescens", "Cantarellus aurora", "Weiße arten: cantarellus lutescens forma schizocroica"]
 fruchtschicht = { art = "leisten" }

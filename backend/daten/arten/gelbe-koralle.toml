@@ -10,6 +10,9 @@ baeume = ["buche", "fichte"]
 speisewertHinweis = "In Deutschland gefährdet (Rote Liste 3) und sehr selten. Den Fund besser stehen lassen. Alte Astspitzen schmecken bitter."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Korallenpilz mit dicht gedrängten, gelben bis goldgelben, später schwefelgelb ausblassenden Ästen aus einem dicken, festen, weißen Strunk, der oft fleischrote Flecken zeigt. Die Gelbe Koralle wächst von Juni bis November im Laubwald, gern bei Buche, auch bei Fichte, auf kalkreichem Boden und ist sehr selten und in Deutschland gefährdet. Ihr schmutzig weißes Fleisch verfärbt sich auf Druck nicht."
+beschreibungEn = "A coral fungus with densely packed, yellow to golden-yellow branches that later fade to sulphur-yellow, rising from a thick, firm, white base that often shows flesh-red spots. Ramaria flava grows from June to November in broadleaf woods, often with beech, also with spruce, on calcareous soil, and is very rare and endangered in Germany. Its dirty white flesh does not change colour when pressed."
+entwurf = true
 weitereNamen = ["Zitronengelbe Koralle", "Schwefelgelbe Koralle", "Gelber Korallenpilz", "Trauben-Korallenpilz", "Trauben-Ziegenbart", "Gelber Ziegenbart"]
 synonyme = ["Clavaria botrys", "Corallium flavum", "Coralloides flavus"]
 

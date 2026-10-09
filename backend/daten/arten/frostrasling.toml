@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Der leicht bitterliche Geschmack verliert sich beim Garen."
+beschreibung = "Mittelgroßer Lamellenpilz mit dunkel graubraunem bis aschgrauem, trocken glänzendem Hut mit gummiartig elastischer Huthaut, weißlichen bis grauen, breit angewachsenen Lamellen und weißlichem, längsfaserigem Stiel, der tief in der Erde steckt. Er wächst von August bis November, meist in dichten Gruppen, auf Wegen, an Wegrändern und in Parks, gern an Distelwurzeln. Von der Nebelkappe unterscheiden ihn vor allem der neutrale Geruch und das Wachstum in dichten Gruppen, denn die Nebelkappe riecht auffallend süßlich und wächst in Reihen."
+beschreibungEn = "A medium-sized gilled mushroom with a dark grey-brown to ash-grey cap that is dry and glossy, with a rubbery, elastic cap skin, whitish to grey, broadly attached gills and a whitish, fibrous stem that sits deep in the soil. It grows from August to November, mostly in dense groups, on paths, at path sides and in parks, often at thistle roots. The key difference from the clouded agaric is the neutral smell and the growth in dense groups, because the clouded agaric smells strikingly sweetish and grows in rows."
+entwurf = true
 weitereNamen = ["Geselliger Ritterling", "Brauner Rasling", "Buchele"]
 synonyme = ["Lyophyllum fumosum"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

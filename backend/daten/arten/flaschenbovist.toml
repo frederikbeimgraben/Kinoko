@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 karte = "flaschenbovist"
 speisewertHinweis = "Nur jung, solange das Innere rein weiß ist. Jedes Stück längs durchschneiden."
+beschreibung = "Kleiner, keulen- bis birnenförmiger Stäubling mit stielartigem Fuß, jung weiß und im Alter bräunlich, besetzt mit blassen, pyramidenartig zugespitzten Stacheln, die beim Abfallen ein Netzmuster hinterlassen. Er wächst von Juni bis November im Mischwald aus der Erde, selten aus verrottetem Totholz. Vom Birnenstäubling unterscheiden ihn vor allem die blassen, spitzen Stacheln und das Wachstum am Boden, denn der Birnenstäubling ist bräunlich, fein kleiig und wächst büschelig auf Holz."
+beschreibungEn = "A small, club- to pear-shaped puffball with a stem-like base, white when young and brownish with age, covered with pale, pyramid-shaped pointed spines that leave a net pattern when they fall off. The common puffball grows from June to November in mixed woods from the soil, rarely from rotting dead wood. The key difference from the stump puffball is the pale, pointed spines and the growth on the ground, because the stump puffball is brownish, finely granular and grows in clusters on wood."
+entwurf = true
 weitereNamen = ["Flaschenbovist", "Warzen-Stäubling", "Würziger Staubbuff", "Warziger Staubbuff", "Nonnefürzli", "Judenfurzpilz", "Fohenfist"]
 synonyme = ["Lycoperdon perlatum var. perlatum", "Lycoperdon gemmatum var. perlatum", "Lycoperdon gemmatum"]
 fruchtschicht = { art = "stacheln" }

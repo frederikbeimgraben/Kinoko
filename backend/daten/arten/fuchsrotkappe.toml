@@ -11,6 +11,9 @@ baeume = ["kiefer"]
 speisewertHinweis = "Roh stark unverträglich, deshalb gut durchgaren. In Deutschland stark gefährdet und als Raufußröhrling besonders geschützt; den Fund besser stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Kräftiger Röhrling mit fuchsrotem bis rotbraunem, samtigem Hut mit überstehender Huthaut, hell graubraunen bis gelbbraunen Röhren und weißlichem Stiel mit zuerst hellbraunen, dann rötlichen bis dunkelbraunen Schüppchen. Die Fuchsrotkappe wächst von Juni bis November im Nadelwald bei Kiefer und ist sehr selten und in Deutschland stark gefährdet. Von der Fichtenrotkappe unterscheiden sie vor allem die anfangs hellbraunen Stielschuppen und der Standort bei Kiefer, denn die Fichtenrotkappe hat von Anfang an schwarze Schuppen und wächst bei Fichte."
+beschreibungEn = "A stout bolete with a fox-red to red-brown, velvety cap with an overhanging cap skin, light grey-brown to yellow-brown tubes and a whitish stem with scales that are light brown first and then reddish to dark brown. The foxy bolete grows from June to November in coniferous woods with pine and is very rare and strongly endangered in Germany. The key difference from Leccinum piceinum is the stem scales, which are light brown at first, and the pine habitat, because Leccinum piceinum has black scales from the start and grows with spruce."
+entwurf = true
 weitereNamen = ["Kiefernrotkappe", "Föhrenrotkappe", "Fuchsröhrling"]
 synonyme = ["Leccinum aurantiacum var. vulpinum", "Boletus vulpinus", "Xanthochrous vulpinus"]
 fruchtschicht = { art = "roehren" }

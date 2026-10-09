@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Kenntlich am stark bitteren Geschmack und an den jung hellgelben, bald orangen und rostfleckigen Lamellen."
+beschreibung = "Kleiner bis mittelgroßer Flämmling mit gelbfuchsigem bis zimtbraunem, kahlem, mattem Hut, jung hellgelben, bald orangen und rostfleckigen Lamellen und weißlichem bis gelblichem, rotbräunlich überfasertem Stiel mit angedeuteter Ringzone. Er wächst von Juni bis November an Totholz, meist auf Nadelholzstümpfen und dicken Ästen, oft büschelig. Vom Grünblättrigen Schwefelkopf unterscheiden ihn vor allem die rostfleckigen Lamellen, denn der Grünblättrige Schwefelkopf hat jung schwefelgelbe, später grünliche Lamellen. Der Geflecktblättrige Flämmling ist giftig."
+beschreibungEn = "A small to medium-sized rustgill with a yellow-foxy to cinnamon-brown, smooth, matt cap, gills that are light yellow when young and soon orange with rust spots, and a whitish to yellowish stem with reddish-brown fibres and a faint ring zone. The common rustgill grows from June to November on dead wood, mostly on conifer stumps and thick branches, often in clusters. The key difference from the sulphur tuft is the rust-spotted gills, because the sulphur tuft has gills that are sulphur-yellow when young and greenish later. The common rustgill is poisonous."
+entwurf = true
 weitereNamen = ["Gefleckter Flämmling", "Gemeiner Flämmling", "Schupopilz"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutrand = { von = ["gerieft"] }

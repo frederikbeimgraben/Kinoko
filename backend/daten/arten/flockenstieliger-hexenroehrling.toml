@@ -10,6 +10,9 @@ baeume = ["fichte", "buche"]
 karte = "hexen_flock"
 speisewertHinweis = "Roh unverträglich. Gut durchgaren."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kräftiger Röhrling mit dunkelbraunem, samtigem Hut, roten Röhrenmündungen und gelbem Stiel mit dichten rötlichen Flöckchen ohne Netz; das gelbe Fleisch wird im Schnitt sofort schwarzblau. Er wächst vom Frühjahr, oft schon ab April, bis November im Mischwald, gern bei Fichte und Buche auf saurem Boden, und ist meist sehr häufig. Vom Gelbhütigen Purpurröhrling unterscheiden ihn vor allem der Stiel ohne Netz und der dunkelbraune Hut, denn der Gelbhütige Purpurröhrling hat ein rotes Netz am Stiel und einen purpurrosa bis rostgelben Hut."
+beschreibungEn = "A stout bolete with a dark brown, velvety cap, red pore mouths and a yellow stem densely covered with reddish flakes and without a net; the yellow flesh turns black-blue at once when cut. The scarletina bolete grows from spring, often from April, to November in mixed woods, often with spruce and beech on acid soil, and is mostly very common. The key difference from Imperator luteocupreus is the stem without a net and the dark brown cap, because Imperator luteocupreus has a red net on the stem and a purple-pink to rust-yellow cap."
+entwurf = true
 weitereNamen = ["Flocki", "Zigeuner", "Hexenpilz"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "halbkugelig" }

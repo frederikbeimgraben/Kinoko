@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Die DGfM nennt einen ungeklärten Fall mit muscarinartigen Beschwerden. Zäh und ohne großen Wert; wer ihn nicht sicher von giftigen Trichterlingen trennt, lässt ihn stehen."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer, trichterförmiger Lamellenpilz mit haselnuss- bis gelbbraunem, glattem, fettig wirkendem Hut mit lange eingerolltem Rand, dicht stehenden, weißlichen bis fuchsig ockergelben, herablaufenden Lamellen und bräunlichem Stiel mit weißem Myzelfilz an der Basis. Er wächst von Juni bis November im Mischwald, bildet Hexenringe und ist sehr häufig. Vom Ockerbraunen Trichterling unterscheiden ihn vor allem die fuchsig bis ockergelb getönten Lamellen und der Geruch nach frisch geschnittenem Gras, denn der Ockerbraune Trichterling hat einen blass lederfarbenen Hut und weiße bis cremefarbene Lamellen."
+beschreibungEn = "A medium-sized, funnel-shaped gilled mushroom with a hazel- to yellow-brown, smooth cap that feels greasy and has a long inrolled margin, crowded, whitish to foxy ochre-yellow, decurrent gills and a brownish stem with white mycelial felt at the base. The tawny funnel grows from June to November in mixed woods, forms fairy rings and is very common. The key difference from the common funnel is the foxy to ochre-yellow gills and the smell of freshly cut grass, because the common funnel has a pale leather-coloured cap and white to cream gills."
+entwurf = true
 weitereNamen = ["Fuchsiger Rötelritterling", "Fuchsiger Trichterling"]
 synonyme = ["Agaricus flaccidus", "Clitocybe flaccida"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }

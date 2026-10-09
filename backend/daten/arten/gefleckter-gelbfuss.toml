@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche"]
 speisewertHinweis = "Selten. In der Schweiz auf der Roten Liste als potenziell gefährdet geführt."
 haeufigkeit = "selten"
+beschreibung = "Kleiner bis mittelgroßer Lamellenpilz mit hellbraunem bis fleischbraunem, schmierigem Hut mit dunklerer Mitte, weißlichen, später rotbraun bis schwarzbraun fleckenden Lamellen und weißem, rotbraun geflecktem Stiel; Druckstellen werden schwarzbraun. Er wächst von Juni bis November im Mischwald bei Lärchen, gern auf sandigem Boden, und ist selten. Vom Aprikosen-Gelbfuß unterscheiden ihn vor allem die schwarzbraunen Druckflecken und die anfangs weißlichen Lamellen, denn der Aprikosen-Gelbfuß hat einen aprikosen- bis orangefarbenen Hut ohne solche Flecken."
+beschreibungEn = "A small to medium-sized gilled mushroom with a light brown to flesh-brown, slimy cap with a darker centre, whitish gills that later get red-brown to blackish-brown spots, and a white stem with red-brown spots; pressed parts turn blackish-brown. The larch spike grows from June to November in mixed woods with larch, often on sandy soil, and is rare. The key difference from Chroogomphus fulmineus is the blackish-brown spots where pressed and the gills, which are whitish at first, because Chroogomphus fulmineus has an apricot to orange cap without such spots."
+entwurf = true
 weitereNamen = ["Fleckender Lärchenschmierling", "Fleckender Lärchen-Schmierling", "Fleckender Gelbfuß", "Fleckender Schmierling"]
 synonyme = ["Gomphidius gracilis"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

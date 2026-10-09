@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche"]
 speisewertHinweis = "Die biegsamen, nicht brechenden Lamellen sind sein sicherstes Merkmal."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer bis großer Täubling mit grün, braun, blau bis lila gemischtem, meist glanzlosem Hut mit vertiefter Mitte, weißen, biegsamen Lamellen und festem, weißem Stiel. Er wächst von Juni bis November im Mischwald, gern bei Buche und Eiche, und ist regional sehr häufig. Vom Grasgrünen Täubling unterscheiden ihn vor allem die biegsamen Lamellen, die beim Darüberstreichen nicht brechen, denn der Grasgrüne Täubling hat brüchige Lamellen und einen graugrünen bis grasgrünen Hut."
+beschreibungEn = "A medium-sized to large brittlegill with a cap in mixed shades of green, brown, blue and lilac, mostly without gloss and with a depressed centre, white, flexible gills and a firm, white stem. The charcoal burner grows from June to November in mixed woods, often with beech and oak, and is very common in some regions. The key difference from the green brittlegill is the flexible gills, which do not break when stroked, because the green brittlegill has brittle gills and a grey-green to grass-green cap."
+entwurf = true
 weitereNamen = ["Violettgrüner Frauentäubling", "Blautäubling", "Rissighütiger Frauentäubling", "Bläulicher Täubling", "Grüntäubling"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutmerkmale = ["vertieft"]

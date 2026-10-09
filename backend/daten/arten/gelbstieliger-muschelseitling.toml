@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["herbst", "winter", "fruehling"]
 baeume = []
 speisewertHinweis = "Fleisch zäh, Geschmack oft bitterlich."
+beschreibung = "Muschelförmiger Seitling mit grünbraunem, olivockerfarbenem bis graubraunem, fein filzigem Hut, gedrängten, weißlichen bis cremegelben Lamellen und kurzem, ockergelbem bis grüngelbem Stiel mit bräunlichen Schüppchen. Er wächst von September bis Mai auf Laubholz, gern zusammen mit dem Austernseitling am selben Stamm. Vom Austernseitling unterscheiden ihn vor allem der gelbe, geschuppte Stiel und die Lamellen, die am Stiel scharf abgegrenzt enden, denn der Austernseitling hat einen Stiel ohne Gelbtöne, an dem die Lamellen ohne Abgrenzung herablaufen."
+beschreibungEn = "A shell-shaped mushroom with a green-brown, olive-ochre to grey-brown, finely felty cap, crowded, whitish to cream-yellow gills and a short, ochre-yellow to green-yellow stem with brownish scales. The late oyster grows from September to May on broadleaf wood, often on the same trunk as the oyster mushroom. The key difference from the oyster mushroom is the yellow, scaly stem and the gills, which end with a sharp border on the stem, because the oyster mushroom has a stem without yellow tones on which the gills run down without a border."
+entwurf = true
 weitereNamen = ["Gelbstieliger Zwergknäueling", "Später Seitling", "Gelber Muscheling", "Mukitake"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutform = { von = "muschelfoermig" }
