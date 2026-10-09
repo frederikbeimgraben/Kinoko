@@ -132,6 +132,7 @@ func (r *Runner) writeInputs(ctx context.Context, run db.ID, inputs []Input) err
 }
 
 // speciesOf reads the species rows of a run with their forecast chain, by name.
+// A species without a row in species_forecast gets sources.DefaultChain.
 func (r *Runner) speciesOf(ctx context.Context, run db.ID) ([]Species, error) {
 	return db.All(ctx, r.db, func(s db.Scanner) (Species, error) {
 		var sp Species
@@ -141,6 +142,8 @@ func (r *Runner) speciesOf(ctx context.Context, run db.ID) ([]Species, error) {
 			return sp, err
 		}
 		if key == nil || taxa == nil {
+			chain := sources.DefaultChain(sp.Latin)
+			sp.Chain = &chain
 			return sp, nil
 		}
 		chain := sources.Chain{Key: *key, MinForest: fn.Deref(minForest, 0)}

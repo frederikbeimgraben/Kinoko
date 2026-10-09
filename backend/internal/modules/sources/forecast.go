@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"slices"
 	"strings"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
@@ -36,6 +37,26 @@ var Chains = []Chain{
 	{"schleimruebling", []string{"Mucidula mucida"}, defaultMinForest},
 	// The shaggy ink cap grows at path edges and in meadows. A forest mask would hide it.
 	{"schopftintling", []string{"Coprinus comatus"}, 0.0},
+}
+
+// ChainKey is the chain key of a species without a row in species_forecast:
+// the Latin name in lower case with underscores, for example boletus_edulis.
+func ChainKey(latin string) string {
+	return strings.ToLower(strings.Join(strings.Fields(latin), "_"))
+}
+
+// DefaultChain is the chain of a species without a row in species_forecast. A species
+// that is a taxon of a chain in Chains counts the taxa of that chain, for example a Lactarius of reizker.
+// Another species counts its Latin name and uses the default forest mask.
+func DefaultChain(latin string) Chain {
+	name := strings.Join(strings.Fields(latin), " ")
+	group, ok := fn.Find(Chains, func(c Chain) bool {
+		return slices.ContainsFunc(c.Taxa, func(taxon string) bool { return strings.EqualFold(taxon, name) })
+	})
+	if ok {
+		return Chain{Key: ChainKey(latin), Taxa: slices.Clone(group.Taxa), MinForest: group.MinForest}
+	}
+	return Chain{Key: ChainKey(latin), Taxa: []string{name}, MinForest: defaultMinForest}
 }
 
 // ForecastRow is one row of species_forecast.

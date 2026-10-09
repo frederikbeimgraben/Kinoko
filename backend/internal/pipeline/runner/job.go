@@ -17,8 +17,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/weather"
 )
 
-// Species is one species of a run. Chain is nil when the species has no
-// row in species_forecast; such a species fails in each species step.
+// Species is one species of a run. Chain is the row in species_forecast, or
+// sources.DefaultChain. A nil Chain fails in each species step.
 type Species struct {
 	ID    db.ID
 	Slug  string
