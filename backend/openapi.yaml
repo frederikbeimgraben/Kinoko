@@ -3320,6 +3320,13 @@ components:
               minimum: 1
               maximum: 12
             - type: "null"
+        periodPeakWeek:
+          description: The calendar week with the most finds. A write sets periodPeakMonth to its month.
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 53
+            - type: "null"
         smellText:
           oneOf:
             - type: string
@@ -3453,6 +3460,10 @@ components:
                 - type: integer
                 - type: "null"
             periodPeakMonth:
+              oneOf:
+                - type: integer
+                - type: "null"
+            periodPeakWeek:
               oneOf:
                 - type: integer
                 - type: "null"
