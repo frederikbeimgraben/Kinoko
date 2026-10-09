@@ -41,25 +41,25 @@ async function openApp(page: Page, path: string, signedIn = true): Promise<void>
 async function expectCentredModal(page: Page, dialog: Locator): Promise<void> {
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveClass(/sheet--modal/);
-  const box = await dialog.boundingBox();
-  if (box === null) throw new Error('Modal ohne Fläche.');
   const viewport = page.viewportSize();
   if (viewport === null) throw new Error('Kein Fenster.');
-
-  expect(Math.round(box.width)).toBe(MODAL_WIDTH);
-  // On the map tab the modal centres on the window, per `kit.css` `.modal` in the board `MapDesktopFindView`.
-  const onMap = new URL(page.url()).pathname === '/karte';
-  const centre = onMap ? viewport.width / 2 : (RAIL + LIST + viewport.width) / 2;
-  expect(Math.round(box.x + box.width / 2)).toBe(Math.round(centre));
-
   const close = dialog.locator('.overlay-head__close');
   await expect(close).toBeVisible();
-  const closeBox = await close.boundingBox();
-  if (closeBox === null) throw new Error('X ohne Fläche.');
-  expect(Math.round(closeBox.width)).toBe(CLOSE_SIZE);
-  expect(Math.round(closeBox.height)).toBe(CLOSE_SIZE);
-  expect(Math.round(box.x + box.width - (closeBox.x + closeBox.width))).toBe(CLOSE_INSET);
-  expect(Math.round(closeBox.y - box.y)).toBe(CLOSE_INSET);
+  // The modal grows in from 96 %. Under load that motion can start late, so the check tries again.
+  await expect(async () => {
+    const box = await dialog.boundingBox();
+    const closeBox = await close.boundingBox();
+    if (box === null || closeBox === null) throw new Error('Modal oder X ohne Fläche.');
+    expect(Math.round(box.width)).toBe(MODAL_WIDTH);
+    // On the map tab the modal centres on the window, per `kit.css` `.modal` in the board `MapDesktopFindView`.
+    const onMap = new URL(page.url()).pathname === '/karte';
+    const centre = onMap ? viewport.width / 2 : (RAIL + LIST + viewport.width) / 2;
+    expect(Math.round(box.x + box.width / 2)).toBe(Math.round(centre));
+    expect(Math.round(closeBox.width)).toBe(CLOSE_SIZE);
+    expect(Math.round(closeBox.height)).toBe(CLOSE_SIZE);
+    expect(Math.round(box.x + box.width - (closeBox.x + closeBox.width))).toBe(CLOSE_INSET);
+    expect(Math.round(closeBox.y - box.y)).toBe(CLOSE_INSET);
+  }).toPass({ timeout: 5000 });
 }
 
 test('Einträge-Filter steht am Rechner als zentriertes Modal', async ({ page }) => {

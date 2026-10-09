@@ -63,7 +63,10 @@ test('räumt den Stand weg, wenn die Prüfung ihn nicht bestätigt', async ({ pa
   await mockApi(page, { '/api/config': authConfig(BASE) });
   await page.goto('/karte');
 
-  await expect(page.getByRole('button', { name: 'Konto' })).toHaveText('G');
+  // A guest has no initial: the avatar shows the person icon.
+  const avatar = page.getByRole('button', { name: 'Konto', exact: true });
+  await expect(avatar.locator('app-svg-icon')).toBeVisible();
+  await expect(avatar).toHaveText('');
   expect(await page.evaluate((key) => window.localStorage.getItem(key), MEMORY_KEY)).toBeNull();
 });
 

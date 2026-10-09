@@ -44,6 +44,19 @@ async function cursorOfMap(page: Page): Promise<string> {
   });
 }
 
+/** Waits until the map stops moving: the step closes the map column, and the map then fills the window. */
+async function mapAtRest(page: Page): Promise<void> {
+  await expect(page.locator('app-map-column')).toHaveCount(0);
+  let before = await placeAt(page, CORNERS[0]);
+  let same = 0;
+  while (same < 3) {
+    await page.waitForTimeout(150);
+    const now = await placeAt(page, CORNERS[0]);
+    same = now[0] === before[0] && now[1] === before[1] ? same + 1 : 0;
+    before = now;
+  }
+}
+
 async function openMap(page: Page): Promise<void> {
   await mockSignIn(page);
   await mockApi(page, {
@@ -109,6 +122,7 @@ test('Der Zeiger setzt die Ecken, die Rücktaste nimmt sie weg', async ({ page }
   await expect(bar).toBeVisible();
   expect(await cursorOfMap(page)).toBe('crosshair');
   await expect(page.locator('app-crosshair')).toHaveCount(0);
+  await mapAtRest(page);
 
   for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
 
@@ -124,6 +138,7 @@ test('Ein Klick auf die erste Ecke schließt die Zone', async ({ page }) => {
   await page.locator('.map__add').click();
   await page.getByRole('button', { name: 'Zone zeichnen' }).click();
   await expect(page.getByRole('group', { name: 'Zone zeichnen' })).toBeVisible();
+  await mapAtRest(page);
   for (const corner of CORNERS) await page.mouse.click(corner[0], corner[1]);
 
   await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
@@ -149,6 +164,7 @@ test('Ein Klick setzt den Fundort, ein zweiter verschiebt ihn', async ({ page })
   await page.getByRole('button', { name: 'Fund melden' }).click();
   const bar = page.getByRole('group', { name: 'Fundort festlegen' });
   await expect(bar).toBeVisible();
+  await mapAtRest(page);
 
   const note = bar.locator('.stepbar__note');
   await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
@@ -170,6 +186,7 @@ test('Die Marke lässt sich mit der Maus verschieben', async ({ page }) => {
   await page.getByRole('button', { name: 'Fund melden' }).click();
   const bar = page.getByRole('group', { name: 'Fundort festlegen' });
   await expect(bar).toBeVisible();
+  await mapAtRest(page);
   const note = bar.locator('.stepbar__note');
   await page.mouse.click(CORNERS[0][0], CORNERS[0][1]);
   await expect(note).not.toBeEmpty();

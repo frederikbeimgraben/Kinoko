@@ -66,6 +66,8 @@ test('Melden ohne Netz, Senden bei Netz', async ({ page, baseURL }) => {
   await page.getByRole('button', { name: 'Marker setzen' }).click();
   await page.getByRole('button', { name: 'Bestätigen' }).click();
   await expect(page.getByRole('dialog', { name: 'Marker setzen' })).toBeVisible();
+  // A focus on a field below the screen scrolls the page while the sheet rises.
+  await expect(page.getByLabel('Name')).toBeInViewport({ ratio: 1 });
   await page.getByLabel('Name').fill('Alter Fichtenhang');
   await page.getByRole('button', { name: 'Speichern' }).click();
   await expect(page.getByRole('dialog', { name: 'Marker setzen' })).toBeHidden();
