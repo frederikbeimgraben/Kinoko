@@ -49,6 +49,17 @@ minimum forest share of each species. The service seeds it at start from the
 list in `sources.Chains`. For example, the chain `reizker` counts four
 Lactarius species.
 
+A forecast species without a row in `species_forecast` trains with
+`sources.DefaultChain`. Its chain key is the Latin name in lower case with
+underscores, for example `imleria_badia`. Its only taxon is the Latin name of
+the catalogue, and it uses the default forest mask of 0.03. A species that is a
+taxon of a chain in `sources.Chains` uses the taxa and the forest mask of that
+chain. For example, `Lactarius deterrimus` counts the four taxa of `reizker`.
+
+`docs/forecast-species.md` lists the GBIF record count of each catalogue
+species and the threshold for a forecast. The tool `backend/tools/gbifcount`
+writes it and sets `karte` in the species files.
+
 ### Fetch rules
 
 The table `remote_cache_file` records each cached file with its state.
@@ -257,6 +268,33 @@ without a split. The next bag or column sample can still grow a tree.
 
 The pipeline places the values of a week by the cell indices `(gy, gx)`, not
 by the row order of a table.
+
+## Number of forecast species
+
+The repository holds no measured step times. The table `pipeline_run_step`
+records the time of each step (`duration_s`). Use it to measure a run.
+
+The cost of a run has two parts:
+
+- Shared steps: weather checkpoints, occurrences, render layers and season table. Their time does not change with the number of species.
+- Species steps: train models and render maps. Their time increases linearly with the number of species.
+
+Each species trains on the same visit table: all gated visits in Germany.
+Only the label column changes. Thus a species with few records trains as
+long as a species with many records.
+
+The seed data has 36 forecast species. 13 of them have the `karte` value of a
+chain in `sources.Chains`. Compared with a run of only these 13 species, expect these effects:
+
+- The steps "train models" and "render maps" take about 2.8 times (36 / 13) as long.
+- A `render` run of the weekly schedule takes longer by the same factor for "render maps". The fetch run does not change.
+- The peak memory does not change. The runner trains and renders one species at a time and keeps the shared grids once. The tree scales hold the columns of all models of the run, but these are never more than the columns of the file.
+- The disk use of `PILZE_MAPS` increases about 2.8 times for the species tiles. The layers do not change.
+- Each species keeps up to three `model-bundle` versions (the active version and two superseded versions).
+
+If the species steps take too long, remove `karte` from the species with the
+smallest record count in `docs/forecast-species.md`. Then import the catalogue
+again, or turn the forecast off in the admin area.
 
 ## Memory
 
