@@ -5,10 +5,8 @@ The pipeline makes the forecast maps. It runs in the process of the service
 the module `backend/internal/modules/sources`. The runs are in the module
 `backend/internal/modules/runs`.
 
-The pipeline is a port of the earlier Python chain (`modell/`). The Go code
-keeps the algorithms and the constants of that chain. The tests compare the
-Go results with the Python results. The port also fixes some errors of the
-chain. The section "Errors of the Python chain" lists them.
+The section "Numbered rules" lists rules that the code comments refer to as
+"finding <n>".
 
 ## Data flow
 
@@ -236,33 +234,29 @@ The publication occurs at two times:
 - At the start of the step "render layers", before it writes `layers.json`.
 - After a version of one of these kinds becomes active. The service then waits for the end of a run or of a processing. This occurs only when `PILZE_PIPELINE` is on.
 
-## Errors of the Python chain
+## Numbered rules
 
-The port fixes these errors on purpose. The numbers are the findings of the
-port plan; the code comments use them.
-
-| Finding | Error in the Python chain | Behaviour of the Go pipeline |
-| --- | --- | --- |
-| 1 | The weekly update wrote the manifest and `funde/` under the chain name (`boletus_edulis`). The readers look for the catalogue slug (`boletus-edulis`) | The manifest, the tile folder and `funde/` use the catalogue slug |
-| 2 | The GBIF fetch skipped a file that was present. Thus the current year did not change after the first fetch | The weekly fetch gets the current year again and replaces its files |
-| 3 | The weekly update did not fetch the soil moisture again. The merge then stopped with "cell-weeks do not match" | Each fetch run gets both DWD sources. The merge keeps the other variables when the keys differ |
-| 4 | The distance to a horizon was the difference of `year*53 + week`. After a year with 52 weeks, the distance was one week too large | The distance comes from the calendar |
-| 5 | Training built the activity features from the filtered records (ISO year from 2015, coordinate error at most 500 m). The map used all records | Training and map use the same filter (`occ.TrainingSet`) |
-| 6 | A training run skipped a species that had a model. A render run skipped a species that had a tile folder | A run always trains and renders each species of the run |
-| 7 | The run reported the Brier score of horizon 4 | The run reports the calibrated out-of-fold Brier score of horizon 0 |
-| 8 | The mean of a week across two year files was the mean of two part means | The mean is over the days of the week |
-| 9 | The rain sum of a week without values was 0 | The sum is NaN |
-| 10 | The smoothing filled masked cells (forest, abroad, water) next to valid cells | A masked cell stays empty. The setting `Spill` gives the old result; it is off by default |
-| 11 | The render held the full input matrix in memory | The prediction works in chunks. Read "Memory" |
-| 12 | The proxy limit of 40 MB stopped large uploads | Uploads go in parts of 16 MiB |
-| 13 | A refresh from the year `rf` kept each old week of the ISO year `rf-1`. A week across the turn of the year kept the part of the earlier run. Without the file of `rf-1`, the first weeks of `rf` lost the days of December. Then `days_since_rain` started again at 60 | The refresh splits the weeks by date and keeps the old weeks that the files cannot give again. Read the step "weather checkpoints" |
+| Finding | Rule |
+| --- | --- |
+| 1 | The weekly update names the manifest, the tile folder and `funde/` use the catalogue slug |
+| 2 | The weekly fetch gets the current year again and replaces its files |
+| 3 | Each fetch run gets both DWD sources. The merge keeps the other variables when the keys differ |
+| 4 | The distance to a horizon comes from the ISO calendar. A year with 52 weeks does not add a week |
+| 5 | Training and map use the same filter (`occ.TrainingSet`) |
+| 6 | A run always trains and renders each species of the run |
+| 7 | The run reports the calibrated out-of-fold Brier score of horizon 0 |
+| 8 | The mean of a week across two year files is the mean over the days of the week |
+| 9 | The rain sum of a week without values is NaN, not 0 |
+| 10 | The smoothing does not fill masked cells (forest, abroad, water). The setting `Spill` fills them; it is off by default |
+| 11 | The prediction of a week works in chunks. Read "Memory" |
+| 12 | Uploads go in parts of 16 MiB |
+| 13 | A weather refresh splits the weeks by date and keeps the old weeks that the files cannot give again. Read the step "weather checkpoints" |
 
 LightGBM runs each boosting round, as `lightgbm.train`, also after a round
 without a split. The next bag or column sample can still grow a tree.
 
-The port also places the values of a week by the cell indices `(gy, gx)`.
-The Python chain used the row order of a table and a reshape. The result is
-the same only when the rows are in raster order.
+The pipeline places the values of a week by the cell indices `(gy, gx)`, not
+by the row order of a table.
 
 ## Memory
 

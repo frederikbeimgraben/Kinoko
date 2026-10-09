@@ -122,42 +122,11 @@ are for local development; they point to `./var/`.
 The service does not start when `PILZE_PIPELINE`, `PILZE_MAX_PHOTO_BYTES` or
 `PILZE_SCHEDULE` has a value that it cannot read.
 
-## Database migration from the Python service
+## Database migration
 
-The Go service takes over the database of the Python service. The migration is
-automatic. The default `stateDir` is the folder of the Python service, and the
-user is the same (`pilzeapp`).
-
-At each start, and with `kinoko migrate`, the service does these steps:
-
-1. It makes the table `schema_migrations` if it is missing.
-2. If the table `alembic_version` exists, it reads the revision.
-3. If the revision is `baseline_4`, it records migration 1 (`0001_baseline.sql`) as applied. Then it drops `alembic_version`.
-4. It applies each migration in `backend/migrations` that the database does not have.
-
-The schema of `0001_baseline.sql` is the schema of Alembic revision
-`baseline_4`. Thus the service does not change the tables of the Python service.
-
-If the revision is not `baseline_4`, the service stops. The error is
-`database has alembic revision "<x>", expected "baseline_4"`. Then upgrade the
-database with the Python service to `baseline_4` first. That code is in the
-Git history.
-
-Do these steps for the change from the Python service:
-
-1. Make a copy of `/var/lib/pilze-app/pilze.sqlite`.
-2. Remove the old module `homeserver-pilze-app` from the host configuration.
-3. Enable `services.kinoko` as shown above. Keep the default `stateDir`.
-4. Switch the host. The service migrates the database at start.
-5. Read the log: `journalctl -u kinoko`.
-
-The old value of `PILZE_DB` (`sqlite+aiosqlite:////var/lib/pilze-app/pilze.sqlite`)
-also works.
-
-The service does not read `/var/lib/pilze-render`. The models of the Python
-chain (`models/*.pkl`) do not work in the Go service. The maps in
-`/var/www/pilze` stay; the frontend shows them until the first render run
-writes new maps.
+At each start, and with `kinoko migrate`, the service applies each migration
+in `backend/migrations` that the database does not have. The table
+`schema_migrations` records the applied migrations.
 
 ## Seed data at start
 
@@ -246,10 +215,10 @@ reprocess the `soilgrids` version.
 These uploads are optional:
 
 - `gbif-archive`: a GBIF download for the closed years. It makes the first fetch shorter.
-- `weather-checkpoints`: the weekly weather checkpoints of the earlier chain.
-- `trees-grid`, `tree-scales`, `site-grid`: the prepared tables of the earlier chain, in place of the raw rasters.
-- `model-bundle`: the models of the earlier chain, as bundles with `bundle.json` and `h<k>.txt`.
-- `static-layers`: the static layers of the earlier chain.
+- `weather-checkpoints`: prepared weekly weather checkpoints.
+- `trees-grid`, `tree-scales`, `site-grid`: prepared tables, in place of the raw rasters.
+- `model-bundle`: trained models, as bundles with `bundle.json` and `h<k>.txt`.
+- `static-layers`: prepared static layers.
 
 The upload protocol has three steps:
 
@@ -342,7 +311,7 @@ the run-time packages of the same libraries.
 
 The rsync call uses `--delete`. It keeps `.env`, `var/` and `deploy.stamp`.
 
-The host needs these two units. The paths are those of the Python service:
+The host needs these two units:
 
 ```ini
 # kinoko.service
@@ -381,17 +350,6 @@ ExecStart=systemctl restart kinoko.service
 `PILZE_OIDC_ISSUER` is required. `PILZE_OIDC_NAME` is optional. The table in
 "Settings" gives all variables. A file `.env` in the work directory can also
 give them.
-
-Do these steps for the change from the Python service `pilze-app`:
-
-1. Make a copy of `/var/lib/pilze-app/pilze.sqlite`.
-2. Stop and disable `pilze-app` and its path unit `pilze-app-deploy`.
-3. Install the two units above. Use the same `PILZE_*` values as `pilze-app`. The old value of `PILZE_DB` (`sqlite+aiosqlite:////var/lib/pilze-app/pilze.sqlite`) also works.
-4. Add `PILZE_DATA` and `PILZE_RUN_LOGS`. Make the two folders for the user `pilzeapp`.
-5. Run `deploy/backend.sh`. It removes the Python code from `app/backend` and writes the stamp.
-6. Enable `kinoko.service` and `kinoko-deploy.path`. Start `kinoko.service` if the stamp was first.
-7. Read the log: `journalctl -u kinoko`. The service adopts the database of the Python service at start (see "Database migration from the Python service").
-8. Do a test: `curl -s http://127.0.0.1:8111/api/config`. The value `version` must be the version of the build.
 
 ### Version
 

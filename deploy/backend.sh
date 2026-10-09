@@ -45,8 +45,7 @@ esac
 # rsync does not make parent folders. The first call makes app/ on a new host.
 echo "copy the service to $ZIEL:app/backend"
 rsync -a -e "$SSH" --exclude 'backend/*' "$STAGE/app" "$ZIEL":
-# --delete removes the files of the Python service. The settings, the local
-# data and the stamp stay.
+# --delete removes old files. The settings, the local data and the stamp stay.
 rsync -a --delete --info=stats2 \
   --exclude '.env' --exclude 'var/' --exclude 'deploy.stamp' \
   -e "$SSH" "$STAGE/app/backend/" "$ZIEL":app/backend/
