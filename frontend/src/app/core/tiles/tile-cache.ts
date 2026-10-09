@@ -69,7 +69,7 @@ export async function cachedFetch(url: string, kind: TileKind): Promise<Response
 /** The result of a manifest load. */
 export type ManifestReply =
   | { readonly kind: 'data'; readonly content: unknown }
-  // A 404 or a reply that is not JSON, for example the app page: the origin has no such file.
+  // A 404, or a reply that is not JSON (for example the app page) and no copy on the device.
   | { readonly kind: 'missing' }
   // No reply from the origin and no copy on the device.
   | { readonly kind: 'unreachable' };
@@ -79,7 +79,7 @@ const UNREACHABLE: ManifestReply = { kind: 'unreachable' };
 
 /** A reply that tells that the file is not at the origin. */
 function absent(reply: Response): boolean {
-  return reply.status === 404 || reply.status === 410 || (reply.ok && !fits(reply, 'json'));
+  return reply.status === 404 || reply.status === 410;
 }
 
 /** Reads the body as a JSON object. A body that is not a JSON object gives `MISSING`. */
@@ -118,9 +118,17 @@ export async function fetchManifest(url: string, online: boolean): Promise<Manif
     return MISSING;
   }
   if (!reply.ok) return storedManifest(url);
+  // A captive portal or a proxy can also send a page that is not JSON, so the copy stays.
+  if (!fits(reply, 'json')) return copyOrMissing(url);
   const copy = reply.clone();
   const read = await parse(reply);
-  if (read.kind === 'data') await keep(url, copy);
-  else await drop(url);
+  if (read.kind !== 'data') return copyOrMissing(url);
+  await keep(url, copy);
   return read;
+}
+
+/** The copy on the device, or `MISSING` when there is none. */
+async function copyOrMissing(url: string): Promise<ManifestReply> {
+  const stored = await storedManifest(url);
+  return stored.kind === 'unreachable' ? MISSING : stored;
 }

@@ -84,13 +84,23 @@ describe('fetchManifest', () => {
     expect(await cached('/art.json', 'json')).toBeNull();
   });
 
-  it('meldet die Seite der App mit Status 200 wie 404 als fehlend', async () => {
-    const caching = stubCaches();
-    await (await caching.open(TILE_CACHE)).put('/art.json', manifest('{"weeks":1}'));
+  it('meldet die Seite der App mit Status 200 ohne Kopie als fehlend', async () => {
+    stubCaches();
     vi.stubGlobal('fetch', () => Promise.resolve(page()));
 
     expect(await fetchManifest('/art.json', true)).toEqual({ kind: 'missing' });
-    expect(await cached('/art.json', 'json')).toBeNull();
+  });
+
+  it('behält die Kopie bei einer Seite mit Status 200, etwa vom Anmeldeportal eines WLANs', async () => {
+    const caching = stubCaches();
+    await (await caching.open(TILE_CACHE)).put('/art.json', manifest('{"weeks":1}'));
+
+    vi.stubGlobal('fetch', () => Promise.resolve(page()));
+    expect(await fetchManifest('/art.json', true)).toEqual({ kind: 'data', content: { weeks: 1 } });
+
+    vi.stubGlobal('fetch', () => Promise.resolve(manifest('{"weeks":')));
+    expect(await fetchManifest('/art.json', true)).toEqual({ kind: 'data', content: { weeks: 1 } });
+    expect(await (await cached('/art.json', 'json'))?.text()).toBe('{"weeks":1}');
   });
 
   it('meldet einen Inhalt, der kein JSON-Objekt ist, als fehlend', async () => {

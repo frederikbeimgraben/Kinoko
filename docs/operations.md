@@ -313,12 +313,13 @@ A rewrite of a data path sends the app page with status 200 in place of a
 		file_server
 	}
 
-	# Navigation paths: the file, else the app page.
+	# Navigation paths: the file, else the app page. `/` gives the app page as the folder index.
 	# `route` keeps the order, so the header rule sees the path after the rewrite.
+	@shell path / /index.html
 	handle {
 		route {
 			try_files {path} /index.html
-			header /index.html Cache-Control "no-cache"
+			header @shell Cache-Control "no-cache"
 			file_server
 		}
 	}

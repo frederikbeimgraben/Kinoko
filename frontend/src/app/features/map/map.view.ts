@@ -52,9 +52,11 @@ export class MapView {
   private readonly states = computed<readonly ManifestState[]>(() => {
     const slug = this.slug();
     const tiles = this.tiles;
-    const none = this.noSpecies() && !this.catalogue.loading();
+    // Only a loaded catalogue without a forecast species means "no forecast"; a failed load offers a new try.
+    const none = this.noSpecies() && this.catalogue.bundle() !== null;
+    const failed = tiles.failed().has(slug) || (this.noSpecies() && this.catalogue.failed());
     return [
-      manifestState(this.manifest() !== null, none || tiles.missing().has(slug), tiles.failed().has(slug)),
+      manifestState(this.manifest() !== null, none || tiles.missing().has(slug), failed),
       manifestState(tiles.layers() !== null, tiles.layersMissing(), tiles.layersFailed()),
     ];
   });
@@ -74,6 +76,7 @@ export class MapView {
 
   /** Asks the server again for both manifests. */
   retry(): void {
+    if (this.catalogue.failed()) this.catalogue.reload();
     this.tiles.forget();
     void this.tiles.load(this.slug());
     void this.tiles.loadLayers();

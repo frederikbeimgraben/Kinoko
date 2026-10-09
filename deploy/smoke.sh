@@ -37,8 +37,9 @@ for tool in curl jq; do
 done
 
 # A release tag vYYYY-MM-DD-NN, optional with the commit count of "git describe"
-# (v2026-10-08-01-3), or the Nix form with date and commit (v2026-10-09+65dd41a).
-VERSION_FORM='^v[0-9]{4}-[0-9]{2}-[0-9]{2}(-[0-9]{2})?(-[0-9]+)?(\+[0-9a-f]{7,})?$'
+# (v2026-10-08-01-3), or the Nix form with date and commit (v2026-10-09+65dd41a,
+# v2026-10-09+65dd41a-dirty or v2026-10-09+dirty for a build from a changed tree).
+VERSION_FORM='^v[0-9]{4}-[0-9]{2}-[0-9]{2}(-[0-9]{2})?(-[0-9]+)?(\+([0-9a-f]{7,}(-dirty)?|dirty))?$'
 # The service gives at most 40 species on a page. The limit stops a cursor loop.
 PAGE_LIMIT=100
 

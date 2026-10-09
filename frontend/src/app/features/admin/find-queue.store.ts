@@ -160,14 +160,17 @@ export const FindQueueStore = signalStore(
         ),
       ),
 
-      /** Sends a decision. The card goes away at once and comes back when the write fails. */
+      /** Sends a decision. The card goes away at once and comes back when the write fails.
+       * While "accept all" runs, a decision has no effect, so the two writes cannot cross. */
       review(request: ReviewWrite): void {
+        if (store.accepting()) return;
         patchState(store, ({ decided }) => ({ decided: decided + 1 }));
         write(request);
       },
 
       /** Takes the last decision back on the server too. The card comes back at once. */
       undo(): void {
+        if (store.accepting()) return;
         const id = store.stack()?.[store.decided() - 1]?.id;
         if (id === undefined) return;
         patchState(store, ({ decided }) => ({ decided: decided - 1 }));

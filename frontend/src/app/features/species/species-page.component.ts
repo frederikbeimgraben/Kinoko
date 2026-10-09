@@ -104,11 +104,15 @@ export class SpeciesPageComponent {
       .map((one) => one.name);
     return names.length === 0 ? '' : this.i18n.translate('species.otherNames', { names: names.join(', ') });
   });
-  /** The description in the language of the interface. Without an English text, the German text shows. */
+  /** The description in the language of the interface. Without an English text, the German text shows with its language. */
   protected readonly description = computed(() => {
     const one = this.species();
     const english = this.i18n.locale() === DEFAULT_LOCALE ? '' : (one?.descriptionEn ?? '');
-    return english === '' ? (one?.description ?? '') : english;
+    if (english !== '') return { text: english, lang: null };
+    const german = one?.description ?? '';
+    return german === ''
+      ? null
+      : { text: german, lang: this.i18n.locale() === DEFAULT_LOCALE ? null : DEFAULT_LOCALE };
   });
   protected readonly heroHeight = computed(() => {
     if (this.wide()) return HERO_DESKTOP;

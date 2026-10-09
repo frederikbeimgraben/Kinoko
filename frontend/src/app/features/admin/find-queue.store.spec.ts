@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { patchState } from '@ngrx/signals';
+import { unprotected } from '@ngrx/signals/testing';
 import { throwError } from 'rxjs';
 import type { OpenFind } from '../../core/api/models';
 import {
@@ -149,6 +151,19 @@ describe('FindQueueStore', () => {
     ]);
     expect(store.decided()).toBe(1);
     expect(store.stack()?.map((one) => one.id)).toEqual(['fund-eins']);
+  });
+
+  it('takes no decision and no undo while "accept all" runs', () => {
+    const { store, api } = build();
+    store.load();
+    store.review({ id: 'fund-eins', decision: 'rejected' });
+    patchState(unprotected(store), { accepting: true });
+
+    store.review({ id: 'fund-zwei', decision: 'rejected' });
+    store.undo();
+
+    expect(api.reviewed).toEqual([{ id: 'fund-eins', decision: 'rejected' }]);
+    expect(store.decided()).toBe(1);
   });
 
   it('keeps the cards with a decision in the stack', () => {

@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -103,7 +103,7 @@ describe('SpeciesPageComponent', () => {
       await build('boletus-edulis', false, DESCRIBED);
       TestBed.inject(I18nService).setLocale('en');
 
-      expect(await screen.findByText('A stout bolete.')).toBeInTheDocument();
+      expect(await screen.findByText('A stout bolete.')).not.toHaveAttribute('lang');
       expect(screen.queryByText('Kräftiger Röhrling.')).not.toBeInTheDocument();
       expect(screen.getByText('Draft, not reviewed')).toBeInTheDocument();
     });
@@ -112,7 +112,9 @@ describe('SpeciesPageComponent', () => {
       await build('boletus-edulis', false, { ...DESCRIBED, descriptionEn: '', descriptionDraft: false });
       TestBed.inject(I18nService).setLocale('en');
 
-      expect(await screen.findByText('Kräftiger Röhrling.')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Kräftiger Röhrling.')).toHaveAttribute('lang', 'de');
+      });
       expect(screen.queryByText('Draft, not reviewed')).not.toBeInTheDocument();
     });
 

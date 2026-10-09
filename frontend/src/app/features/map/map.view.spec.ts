@@ -160,6 +160,28 @@ describe('MapView', () => {
     expect(model.layer()).not.toBeNull();
   });
 
+  it('bietet bei einem fehlgeschlagenen Katalog einen neuen Versuch statt „noch keine Vorhersage“', async () => {
+    vi.stubGlobal('fetch', () => Promise.reject(new TypeError('Failed to fetch')));
+    const { view: model } = await view(null, null, () => undefined);
+    const reload = vi.fn();
+    const catalogue = TestBed.inject(SpeciesStore) as unknown as {
+      species: () => readonly SpeciesEntry[];
+      failed: () => boolean;
+      bundle: () => unknown;
+      reload: () => void;
+    };
+    catalogue.species = () => [];
+    catalogue.failed = () => true;
+    catalogue.bundle = () => null;
+    catalogue.reload = reload;
+
+    expect(model.forecastMissing()).toBe(false);
+    expect(model.noForecast()).toBe(false);
+    expect(model.failed()).toBe(true);
+    model.retry();
+    expect(reload).toHaveBeenCalled();
+  });
+
   it('bietet nur Arten mit Vorhersage zur Wahl', async () => {
     const { view: model } = await view();
 

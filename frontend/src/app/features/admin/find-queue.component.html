@@ -21,6 +21,8 @@
   } @else {
     <app-review-queue
       [balance]="true"
+      [showActions]="!accepting()"
+      [attr.inert]="accepting() ? '' : null"
       [items]="cards()"
       (accepted)="accept($event)"
       (rejected)="reject($event)"

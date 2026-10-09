@@ -47,8 +47,8 @@
         @if (otherNames(); as names) {
           <p class="species__names">{{ names }}</p>
         }
-        @if (description(); as text) {
-          <p class="note desc">{{ text }}</p>
+        @if (description(); as shown) {
+          <p class="note desc" [attr.lang]="shown.lang">{{ shown.text }}</p>
           @if (one.descriptionDraft) {
             <p class="species__draft">{{ 'species.descriptionDraft' | t }}</p>
           }
