@@ -13,11 +13,11 @@
   border-radius: var(--r-sq);
 }
 
-// Per `LookalikeRow.dc.html`: the round compare button of 48 px, then the chevron.
+// Per `LookalikeRow.dc.html`: the round compare button of 48 px, then the chevron, 4 px apart.
 .lookalike__ways {
   display: flex;
+  gap: 4px;
   align-items: center;
-  margin-inline-end: -4px;
 }
 
 .lookalike__open {

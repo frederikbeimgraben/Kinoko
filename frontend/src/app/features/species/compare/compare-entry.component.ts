@@ -13,14 +13,11 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { OverlayHostComponent } from '../../../ui/overlay-host/overlay-host.component';
 import { SearchFieldComponent } from '../../../ui/search-field/search-field.component';
 import { SectionComponent } from '../../../ui/section/section.component';
-import { SheetComponent, type DetentSize } from '../../../ui/sheet/sheet.component';
+import { SheetComponent } from '../../../ui/sheet/sheet.component';
 import { SpeciesRowComponent } from '../../../ui/species-row/species-row.component';
 import { matches, speciesRow } from '../rows';
 import { SpeciesLookalikesComponent } from '../sections/species-lookalikes.component';
 import { SpeciesStore } from '../species.store';
-
-/** The sheet opens at half height, per `CompareEntry.dc.html`, and a drag makes it tall for the search. */
-const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.5, 0.5, 0.9];
 
 /** The most hits that the search shows. More text makes the list shorter. */
 const MAX_HITS = 30;
@@ -55,7 +52,6 @@ export class CompareEntryComponent {
   readonly opened = output<string>();
   readonly closed = output();
 
-  protected readonly detents = DETENTS;
   protected readonly query = signal('');
 
   protected readonly lookalikes = computed(() => this.catalogue.entryOf(this.slug())?.lookalikes ?? []);

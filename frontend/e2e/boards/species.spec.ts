@@ -73,7 +73,7 @@ test('SpeciesEmpty', async ({ page }) => {
     keepUnknown: [],
   });
   await openList(page, bundle(STONE));
-  await expect(page.getByText('Keine Art passt zu dieser Auswahl')).toBeVisible();
+  await expect(page.getByText('Keine Treffer')).toBeVisible();
   await expectBoard(page, 'SpeciesEmpty');
 });
 
