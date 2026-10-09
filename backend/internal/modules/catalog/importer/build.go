@@ -10,10 +10,14 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
-var measurements = map[string]struct {
-	part      enums.BodyPart
-	dimension enums.Dimension
-}{
+// MeasurementTarget is the body part and the dimension of a key of the table masse.
+type MeasurementTarget struct {
+	Part      enums.BodyPart
+	Dimension enums.Dimension
+}
+
+// MeasurementKeys map each key of the table masse.
+var MeasurementKeys = map[string]MeasurementTarget{
 	"hutBreiteCm":           {enums.BodyPartCap, enums.DimensionWidth},
 	"stielLaengeCm":         {enums.BodyPartStem, enums.DimensionLength},
 	"stielDickeCm":          {enums.BodyPartStem, enums.DimensionThickness},
@@ -23,14 +27,16 @@ var measurements = map[string]struct {
 	"fruchtkoerperHoeheCm":  {enums.BodyPartFruitbody, enums.DimensionHeight},
 }
 
-var colourParts = map[string]enums.BodyPart{
+// ColourParts map the keys of the table farben, except sporenlager and verfaerbung.
+var ColourParts = map[string]enums.BodyPart{
 	"hut":          enums.BodyPartCap,
 	"stiel":        enums.BodyPartStem,
 	"fleisch":      enums.BodyPartFlesh,
 	"sporenpulver": enums.BodyPartSporePrint,
 }
 
-var hymeniumBodyParts = map[string]enums.BodyPart{
+// HymeniumBodyParts give the body part of the colours sporenlager by hymenium type.
+var HymeniumBodyParts = map[string]enums.BodyPart{
 	"gills": enums.BodyPartGills,
 	"tubes": enums.BodyPartTubes,
 	"pores": enums.BodyPartPores,
@@ -156,7 +162,7 @@ func nameRows(ctx Context, _ SpeciesRow) (Children, error) {
 func measurementRows(ctx Context, _ SpeciesRow) (Children, error) {
 	var rows []MeasurementRow
 	for _, span := range ctx.Profile.Masse {
-		target, ok := measurements[span.Key]
+		target, ok := MeasurementKeys[span.Key]
 		if !ok {
 			ctx.Report.Skip("measurement_ohne_koerperteil")
 			continue
@@ -166,7 +172,7 @@ func measurementRows(ctx Context, _ SpeciesRow) (Children, error) {
 			return Children{}, err
 		}
 		rows = append(rows, MeasurementRow{
-			SpeciesID: ctx.SpeciesID, Part: target.part, Dimension: target.dimension,
+			SpeciesID: ctx.SpeciesID, Part: target.Part, Dimension: target.Dimension,
 			Low: span.Von, High: span.Bis, Unit: unit,
 		})
 	}
@@ -185,14 +191,14 @@ func colourRows(ctx Context, species SpeciesRow) (Children, error) {
 			if species.HymeniumType != nil {
 				hymenium = *species.HymeniumType
 			}
-			found, ok := hymeniumBodyParts[hymenium]
+			found, ok := HymeniumBodyParts[hymenium]
 			if !ok {
 				ctx.Report.Skip("colour_ohne_koerperteil")
 				continue
 			}
 			part = found
 		} else {
-			found, ok := colourParts[set.Key]
+			found, ok := ColourParts[set.Key]
 			if !ok {
 				return Children{}, fmt.Errorf("%s: unknown key farben.%s", ctx.Stem, set.Key)
 			}

@@ -3,13 +3,16 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"flag"
 	"fmt"
 	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -17,6 +20,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/app"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/config"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/catalog/exporter"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/catalog/importer"
 )
 
@@ -65,9 +69,29 @@ func run(args []string) (err error) {
 			}
 		}
 		return importer.Run(ctx, handle, data, time.Now, os.Stdout)
+	case "export-catalog":
+		return exportCatalog(ctx, handle, args[1:])
 	default:
-		return fmt.Errorf("unknown command %q; use serve, migrate, import-catalog or version", command)
+		return fmt.Errorf("unknown command %q; use serve, migrate, import-catalog, export-catalog or version", command)
 	}
+}
+
+// exportCatalog writes the catalogue into the seed files of --out. The keys that the database
+// does not hold come from the files in --out, else from the embedded seed.
+func exportCatalog(ctx context.Context, handle *sql.DB, args []string) error {
+	flags := flag.NewFlagSet("export-catalog", flag.ContinueOnError)
+	out := flags.String("out", filepath.Join("backend", "daten"), "folder of the seed files")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	base, err := fs.Sub(backend.Data, "daten")
+	if err != nil {
+		return err
+	}
+	if info, err := os.Stat(filepath.Join(*out, "arten")); err == nil && info.IsDir() {
+		base = os.DirFS(*out)
+	}
+	return exporter.Run(ctx, handle, base, *out, os.Stdout)
 }
 
 func serve(ctx context.Context, listen string, handler http.Handler) error {
