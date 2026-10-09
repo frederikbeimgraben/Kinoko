@@ -40,7 +40,7 @@ A species without a row in `species_forecast` trains with `sources.DefaultChain`
 A species that is a taxon of a chain in `sources.Chains` counts the taxa of that chain.
 A species with `karte` keeps it, also below the threshold.
 
-An existing database keeps its forecast flags. Run `kinoko import-catalog`, or set the flags in the admin area.
+An existing database takes the new flags at the next start of the service. On the first start after an upgrade, the service only turns forecasts on. Later, a change of `karte` in a file changes the flag, unless an admin changed the flag since the last sync.
 
 ## Count
 

@@ -82,7 +82,7 @@ func TestTheImportWritesTheDescriptionsAndTheDigests(t *testing.T) {
 	if got.german == nil || *got.german != "Ein Pilz." || got.english != "A mushroom." || !got.draft {
 		t.Fatalf("%+v", got)
 	}
-	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%'"); n != 4 {
+	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%#beschreibung'"); n != 4 {
 		t.Fatalf("digests %d", n)
 	}
 }
@@ -164,7 +164,7 @@ func TestADescriptionSyncWithoutStoredDigestsFillsOnlyAnEmptyDescription(t *test
 	if got := descriptionOf(t, handle, "boletus-edulis"); got.german == nil || *got.german != "Von Hand." {
 		t.Fatalf("a description of the database changed: %+v", got)
 	}
-	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%'"); n != 4 {
+	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%#beschreibung'"); n != 4 {
 		t.Fatalf("digests %d", n)
 	}
 }

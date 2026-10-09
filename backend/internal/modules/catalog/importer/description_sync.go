@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
@@ -92,10 +93,13 @@ func writeDescription(ctx context.Context, tx *sql.Tx, p Profile, now db.Time) (
 		p.Beschreibung, english, p.Entwurf, now, Slugify(p.Lateinisch), p.Beschreibung, english, p.Entwurf)
 }
 
-// saveSpeciesDigests records the description digest of each species file after a full import.
+// saveSpeciesDigests records the description digest and the forecast flag of each species file after a full import.
 func saveSpeciesDigests(ctx context.Context, q db.Querier, profiles []StemProfile) error {
 	for _, p := range profiles {
 		if err := storeDigest(ctx, q, descriptionKey(p.Stem), fileDescription(p.Profile).digest()); err != nil {
+			return err
+		}
+		if err := storeDigest(ctx, q, forecastKey(p.Stem), strconv.FormatBool(forecastOf(p.Profile))); err != nil {
 			return err
 		}
 	}
