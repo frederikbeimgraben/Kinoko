@@ -191,6 +191,55 @@ warning for each value that it cannot write, for example:
 Read the warnings before you commit. The command refuses an empty database,
 because that export would remove each profile.
 
+## Seed photos
+
+`backend/daten/fotos.json` gives one freely licensed lead photo for each
+species that has one on Wikimedia Commons. The app does not load an image
+from another host, so the photos must be in the photo folder. The command
+`kinoko seed-photos` puts them there:
+
+```sh
+cd /var/lib/pilze-app
+sudo -u pilzeapp env PILZE_DB=/var/lib/pilze-app/pilze.sqlite \
+  PILZE_FOTOS=/var/lib/pilze-app/fotos kinoko seed-photos
+```
+
+For each entry the command does these steps:
+
+1. It finds the species with the key of the entry as slug (the latin name as a slug, for example `boletus-edulis`).
+2. If a photo with the same source page (`quelle`) is in the database, it does nothing. Thus you can run the command again, for example after a failure.
+3. It downloads the file (`bild`, a copy with a width of 1920 pixels, else `url`) with the User-Agent `KinokoBot/0.1`. It waits 2 seconds between two downloads (`--pause`). After the answer 429 it waits as long as `Retry-After` asks, at least 10 seconds.
+4. It makes the sizes of an upload (`PILZE_MAX_PHOTO_BYTES` applies) and writes the photo row: approved, without owner, with the author (`urheber`), the licence (`lizenz`), the source page and the German and English captions.
+5. If the species has no lead photo, the photo becomes the lead photo.
+
+At the end the command writes the counts. If an entry failed, it names the
+species and stops with an error. Run it again to try the failed entries.
+`--file <path>` reads another seed file. Without it, the command reads
+`fotos.json` of `PILZE_DATEN`, else the copy in the binary.
+
+The photo credit of the app shows the author and links the licence code to
+the licence text and the author to the source page.
+
+### Make the seed file
+
+`backend/tools/commonsfotos` makes `fotos.json` from the Commons API and
+Wikidata. It sends the User-Agent of the project and waits between the
+requests. A full search of all species takes some hours.
+
+```sh
+cd backend
+go run ./tools/commonsfotos find -arten daten/arten -out /tmp/candidates.json
+go run ./tools/commonsfotos names -arten daten/arten -candidates /tmp/candidates.json
+go run ./tools/commonsfotos pick -arten daten/arten -candidates /tmp/candidates.json \
+  -picks /tmp/picks.json -out daten/fotos.json
+```
+
+`find` keeps the 8 best files of each species and the reasons of their
+scores. Examine the candidates. To choose another file, or no file, for a
+species, write it into the picks file: `{"steinpilz": "File:…jpg"}` or
+`{"steinpilz": ""}`. The tool accepts only CC0, public domain and the
+unported licences CC BY and CC BY-SA 2.0 to 4.0.
+
 ## First deploy checklist
 
 Do these steps in this order. The host is `https://kinoko.reutlingen.university`.
@@ -198,10 +247,11 @@ Do these steps in this order. The host is `https://kinoko.reutlingen.university`
 1. Deploy `main`: the service as in "Deploy" below, then the app with `deploy/frontend.sh`.
 2. Set `oidc.name` (`PILZE_OIDC_NAME`), for example `services.kinoko.oidc.name = "Hochschul-Login";`. Without it, the sign-in button shows the host of the issuer. Restart the service.
 3. Check the config: `curl -s https://kinoko.reutlingen.university/api/config | jq`. `oidcIssuer` and `oidcName` are not empty. `version` has the date-tag form, for example `v2026-10-08-01`. `dev` means a plain `go build`.
-4. Sign in as an admin. Upload the data sources, as "First deploy of the pipeline" tells.
-5. Open Verwaltung → Läufe (`/verwaltung/laeufe`). Push "Lauf anstoßen", select "Vollständig" and push "Anstoßen". The dialog names the inputs that are missing. Then it does not start the run.
-6. Watch the run on its page. The first full run fetches the data from 2014 and can take hours. A failed run shows its error. The full log is in `<stateDir>/runs/<run id>.log`.
-7. Run `deploy/smoke.sh https://kinoko.reutlingen.university`. All checks must pass. Before the first full run ends, the manifest checks fail, and the map shows "Noch keine Vorhersage".
+4. Add the lead photos: run `kinoko seed-photos`, as "Seed photos" tells. Then the species pages show a photo with its credit.
+5. Sign in as an admin. Upload the data sources, as "First deploy of the pipeline" tells.
+6. Open Verwaltung → Läufe (`/verwaltung/laeufe`). Push "Lauf anstoßen", select "Vollständig" and push "Anstoßen". The dialog names the inputs that are missing. Then it does not start the run.
+7. Watch the run on its page. The first full run fetches the data from 2014 and can take hours. A failed run shows its error. The full log is in `<stateDir>/runs/<run id>.log`.
+8. Run `deploy/smoke.sh https://kinoko.reutlingen.university`. All checks must pass. Before the first full run ends, the manifest checks fail, and the map shows "Noch keine Vorhersage".
 
 ## First deploy of the pipeline
 
