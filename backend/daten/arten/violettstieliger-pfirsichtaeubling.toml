@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Ältere Fruchtkörper riechen heringsartig; dann besser stehen lassen."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Täubling mit gelbem bis grüngelbem, oft violett überlaufenem Hut mit gummi- bis wachsartiger Huthaut, weißen, später cremefarbenen Lamellen und weißem, später rosalila überhauchtem Stiel. Er wächst vom Frühsommer bis zum Herbst meist im Laubwald auf saurem Boden und ist regional sehr häufig. Vom ähnlichen Ockertäubling unterscheidet ihn vor allem der Stiel, denn der Ockertäubling hat einen weißen Stiel ohne Lilaton. Ältere Fruchtkörper riechen nach Hering."
+beschreibungEn = "A brittlegill with a yellow to green-yellow cap that is often tinged violet and has a rubbery to waxy cap skin, white gills that turn cream later and a white stem that later has a pink-lilac tinge. It grows from early summer to autumn mostly in broadleaf woods on acid soil and is very common in some regions. The key difference from the similar ochre brittlegill is the stem, because the ochre brittlegill has a white stem without a lilac tone. Older fruit bodies smell of herring."
+entwurf = true
 weitereNamen = ["Violettstieliger Brätlingstäubling"]
 synonyme = ["Russula amoena var. violeipes", "Russula violeipes f. citrina"]
 fruchtschicht = { art = "lamellen" }

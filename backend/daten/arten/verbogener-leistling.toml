@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Nicht selten, aber wegen der kleinen, dunklen Fruchtkörper schwer zu finden."
 haeufigkeit = "selten"
+beschreibung = "Kleine, trichterförmige Kraterelle mit lehmbraunem bis graubraunem Hut mit gelblichem, gewelltem Rand, kaum erkennbaren, graubraunen Leisten und grauem bis graubraunem Stiel. Sie wächst vom Sommer bis zum Spätherbst im Laubwald, gern bei Buchen, und ist wegen der kleinen, dunklen Fruchtkörper schwer zu finden. Von der ähnlichen Totentrompete unterscheidet sie vor allem die Größe, denn die Totentrompete ist größer, grauschwarz und hat schwarzbraunes Fleisch."
+beschreibungEn = "A small, funnel-shaped chanterelle relative with a clay-brown to grey-brown cap with a yellowish, wavy margin, barely visible grey-brown ridges and a grey to grey-brown stem. It grows from summer to late autumn in broadleaf woods, often with beech, and is difficult to find because of its small, dark fruit bodies. The key difference from the similar horn of plenty is the size, because the horn of plenty is larger, grey-black and has black-brown flesh."
+entwurf = true
 weitereNamen = ["Verbogener Leistling", "Vollstieliger Leistling", "Krauser Leistling"]
 fruchtschicht = { art = "leisten" }
 hutform = { von = "trichterfoermig" }

@@ -9,6 +9,9 @@ baeume = ["eiche", "buche"]
 speisewertHinweis = "Ungenießbar, weil das Fleisch korkig und zäh ist."
 haeufigkeit = "selten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Großer Porling ohne Stiel mit hellbraunem bis tabakbraunem, gewölbtem, bereiftem Hut, der jung hellbraune Tröpfchen ausscheidet, kleinen, weißlich bereiften Poren und dunkel rostbraunem, korkigem Fleisch. Er ist ganzjährig im Laubwald zu finden, meist an Eichen- oder Buchenstümpfen und -stämmen, ist selten und in Deutschland gefährdet. Vom ähnlichen Eichenfeuerschwamm unterscheidet ihn vor allem der Fruchtkörper, denn der Eichenfeuerschwamm ist holzig hart und hat gelblich rostbraune Poren. Er gilt als ungenießbar."
+beschreibungEn = "A large polypore without a stem with a light brown to tobacco-brown, convex cap with a bloom that releases light brown droplets when young, small pores with a whitish bloom and dark rust-brown, corky flesh. It can be found all year in broadleaf woods, mostly on oak or beech stumps and trunks, is rare and is endangered in Germany. The key difference from the similar Fomitiporia robusta is the fruit body, because that species is hard like wood and has yellowish rust-brown pores. It is classed as inedible."
+entwurf = true
 synonyme = ["Inonotus dryadeus", "Boletus dryadeus"]
 fruchtschicht = { art = "poren" }
 hutform = { von = "gewoelbt" }

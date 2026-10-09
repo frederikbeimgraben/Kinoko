@@ -10,6 +10,9 @@ baeume = ["eiche", "buche"]
 speisewertHinweis = "Gut zum Trocknen. Beim Putzen den hohlen Stiel prüfen, dort sitzen oft Schnecken und Insekten."
 schutzHinweis = "Die Verordnung führt die Pfifferlinge als Gattung Cantharellus. Die Totentrompete steht heute als Craterellus cornucopioides und wird hier mit ihnen geschützt."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Trichterförmiger Leistling mit grauschwarzem bis braunschwarzem, dünnfleischigem Hut, fast glatter, grauschwarzer Außenseite und grauschwarzem Stiel, der ohne Absatz in den Hut übergeht. Er wächst vom Sommer bis zum Spätherbst im Laubwald, gern bei Eiche und Buche auf kalkreichem Boden, und ist sehr häufig, wird wegen seiner dunklen Farbe aber leicht übersehen. Vom ähnlichen Grauen Leistling unterscheidet ihn vor allem das schwarzbraune Fleisch, denn der Graue Leistling hat schmutzig weißliches bis graues Fleisch und einen feinschuppigen Hut."
+beschreibungEn = "A funnel-shaped chanterelle relative with a grey-black to brown-black, thin-fleshed cap, an almost smooth, grey-black outer surface and a grey-black stem that merges into the cap without a break. It grows from summer to late autumn in broadleaf woods, often with oak and beech on calcareous soil, and is very common, but it is easy to miss because of its dark colour. The key difference from the similar ashen chanterelle is the black-brown flesh, because the ashen chanterelle has dirty whitish to grey flesh and a finely scaly cap."
+entwurf = true
 weitereNamen = ["Herbsttrompete", "Füllhorn", "Kraterpilz", "Herbstleistling"]
 fruchtschicht = { art = "leisten" }
 hutform = { von = "trichterfoermig" }

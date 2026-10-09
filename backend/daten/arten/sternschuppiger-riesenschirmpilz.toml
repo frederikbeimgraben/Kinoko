@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Das Fleisch rötet nie; das trennt ihn vom Safranschirmling. Wie alle Riesenschirmlinge nur durchgegart essen."
+beschreibung = "Riesenschirmling mit braunen bis kastanienbraunen Schuppen, die sternförmig auf weißlichem Grund auseinanderlaufen, schwarzbrauner, gebuckelter Mitte, weißlichen bis cremefarbenen, freien Lamellen und fein braun genattertem Stiel mit verschiebbarem, doppelrandigem Ring und knolliger Basis. Er wächst vom Frühsommer bis zum Spätherbst in Wäldern, Parks, auf Wiesen, in Gärten, Heiden und am Waldrand. Vom ähnlichen Safranschirmling unterscheidet ihn vor allem das Fleisch, das nie rötet, denn beim Safranschirmling läuft es bei Verletzung sofort safranrötlich an."
+beschreibungEn = "A parasol with brown to chestnut-brown scales that spread in a star pattern on a whitish background, a black-brown, umbonate centre, whitish to cream, free gills and a stem with a fine brown snakeskin pattern, a movable ring with a double edge and a bulbous base. It grows from early summer to late autumn in woods, parks, meadows, gardens, heaths and at forest edges. The key difference from the similar shaggy parasol is the flesh, which never turns red, because the flesh of the shaggy parasol turns saffron-red at once when damaged."
+entwurf = true
 weitereNamen = ["Essbarer Gartenriesenschirmling"]
 synonyme = ["Macrolepiota rhodosperma", "Macrolepiota konradii", "Leucocoprinus fuliginosus"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }

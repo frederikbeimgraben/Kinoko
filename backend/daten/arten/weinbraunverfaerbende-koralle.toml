@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "buche"]
 speisewertHinweis = "Ungenießbar wegen des stark bitterlichen Geschmacks."
 haeufigkeit = "selten"
+beschreibung = "Koralle mit schmutzig braunen, rosabraunen bis weinbraunen Ästen, die büschelig aus einem Strunk wachsen und geweihförmige Spitzen haben. Sie wächst vom Sommer bis zum Herbst in Bergnadelwäldern unter Fichte und in Buchenwäldern unter Buche auf kalkreichem Boden und ist selten. Typisch ist das weißliche Fleisch, das sich an der Luft rasch rotbraun bis schwarzbraun verfärbt. Sie gilt als ungenießbar."
+beschreibungEn = "A coral fungus with dirty brown, pink-brown to wine-brown branches that grow in a cluster from one base and have antler-like tips. It grows from summer to autumn in mountain conifer woods with spruce and in beech woods with beech on calcareous soil and is rare. A typical feature is the whitish flesh, which quickly turns red-brown to black-brown in air. It is classed as inedible."
+entwurf = true
 weitereNamen = ["Weinbraunverfärbende Koralle", "Kalkbuchenwald-Koralle", "Batailles Koralle"]
 
 [quelle]

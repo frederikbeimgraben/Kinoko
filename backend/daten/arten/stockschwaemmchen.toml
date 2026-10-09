@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 karte = "kuehneromyces_mutabilis"
 speisewertHinweis = "Nicht roh essen. Nur für Sammler, die den tödlich giftigen Gifthäubling sicher trennen: jeden Fruchtkörper einzeln mit Stiel prüfen, nie ganze Büschel abschneiden. Das Stockschwämmchen hat unter dem häutigen Ring deutliche Schüppchen und riecht pilzig, der Gifthäubling ist dort seidig faserig und silbrig. Eine Pilzberatung gibt Stockschwämmchen ohne Stiel nicht frei. Die Stiele sind sehr zäh und taugen höchstens als Pilzpulver."
+beschreibung = "Kleiner Schüppling mit hellbraunem bis haselnussbraunem Hut, der von der Mitte her ausblasst, hellbraunen bis zimtbraunen Lamellen und Stiel mit häutigem, vergänglichem Ring, über dem Ring glatt und hellgelb, darunter mit abstehenden braunen Schüppchen. Er wächst vom Frühling bis zum Spätherbst büschelig an totem Laubholz, an Stümpfen und Ästen, in höheren Lagen vereinzelt auch an Nadelholz. Vom tödlich giftigen Gifthäubling unterscheidet ihn vor allem der Stiel unter dem Ring, denn dieser ist beim Gifthäubling nicht schuppig, sondern seidig faserig und silbrig."
+beschreibungEn = "A small scalycap with a light brown to hazel-brown cap that fades from the centre, light brown to cinnamon-brown gills and a stem with a membranous, fleeting ring, smooth and light yellow above the ring and with protruding brown scales below it. It grows in clusters from spring to late autumn on dead broadleaf wood, on stumps and branches, at higher altitudes sometimes also on conifer wood. The key difference from the deadly poisonous funeral bell is the stem below the ring, because in the funeral bell it is not scaly but silky, fibrous and silvery."
+entwurf = true
 weitereNamen = ["Echtes Stockschwämmchen", "Gemeines Stockschwämmchen"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["ring", "beflockt", "hohl"]

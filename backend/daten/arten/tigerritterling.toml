@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Schon Kostproben verursachen Bauchschmerzen. Zu erkennen an den silbergrauen bis schwarzbraunen Schüppchen auf weißem Hut, den jung tränenden Lamellenschneiden, der oft kupferrötlich gefleckten Stielbasis und dem mehlartigen Geruch."
 haeufigkeit = "haeufig"
+beschreibung = "Kräftiger Ritterling mit weißem Hut voller silbergrauer bis schwarzbrauner Schüppchen, weißlichen, später gelblichen Lamellen mit jung tränenden Schneiden und festem, weißlich gelblichem Stiel mit keuliger, oft kupferrötlich gefleckter Basis. Er wächst vom Sommer bis zum Spätherbst im Mischwald, meist im Laubwald, gern auf kalkreichem Boden, und ist regional häufig. Vom ähnlichen Rötenden Erdritterling unterscheidet ihn vor allem die Größe, denn der Rötende Erdritterling ist kleiner, und seine Lamellen und sein Fleisch röten bei Verletzung. Der Tigerritterling ist tödlich giftig."
+beschreibungEn = "A stout knight with a white cap full of silver-grey to black-brown scales, whitish gills that turn yellowish later and have edges with droplets when young, and a firm, whitish-yellowish stem with a club-shaped base that often has copper-red spots. It grows from summer to late autumn in mixed woods, mostly in broadleaf woods, often on calcareous soil, and is common in some regions. The key difference from the similar Tricholoma orirubens is the size, because that species is smaller, and its gills and flesh turn red when damaged. The tiger tricholoma is deadly poisonous."
+entwurf = true
 synonyme = ["Tricholoma pardalotum", "Pleurotus tigrinus", "Agaricus tigrinus", "Agaricus undulatus", "Agaricus fritillarius"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "normal" }
 hutrand = { von = ["eingerollt"] }

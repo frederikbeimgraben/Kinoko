@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["fruehling"]
 baeume = []
 speisewertHinweis = "Roh giftig. Gut durchgaren. Besonders geschützt, deshalb nur kleine Mengen für den Eigenbedarf."
+beschreibung = "Morchel mit zugespitztem, olivbeigem bis graubraunem, im Alter schwärzlichem Hut mit Längsrippen und Kammern, dessen Rand ganz mit dem weißlichen bis ockergelben, körnigen Stiel verwachsen ist; Hut und Stiel sind hohl. Sie wächst im Frühling, meist von April bis Mitte Mai, häufig in Rindenmulch, dazu in Auwäldern, Parks, Gärten, an Waldrändern und auf Brandstellen. Von der tödlich giftigen Zipfellorchel unterscheidet sie vor allem der Hut, denn die Zipfellorchel hat einen aderigen, zipfelmützenartig hochgestülpten Hut ohne Waben oder Kammern."
+beschreibungEn = "A morel with a pointed, olive-beige to grey-brown cap that turns blackish with age and has vertical ribs and chambers, and whose margin is fully joined to the whitish to ochre-yellow, granular stem; the cap and the stem are hollow. It grows in spring, mostly from April to mid-May, often in bark mulch, also in floodplain woods, parks, gardens, at forest edges and on burnt ground. The key difference from the deadly poisonous Discina fastigiata is the cap, because that species has a veined cap shaped like a pointed hood, without pits or chambers."
+entwurf = true
 weitereNamen = ["Zipfelmützenmorchel", "RiMuMo"]
 stielmerkmale = ["hohl"]
 

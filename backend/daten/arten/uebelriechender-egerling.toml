@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Ungenießbar wegen des widerlich fischartigen Geruchs."
 haeufigkeit = "selten"
+beschreibung = "Champignon mit schmutzig braunem bis gelbbraunem, später braunschuppigem Hut, graurosa, später bräunlichen, freien Lamellen und weißlichem Stiel mit doppeltem Ring. Er wächst vom Frühsommer bis zum Herbst in Gärten, auf Wiesen, an Waldwegen, in Parks und auf Rasenflächen und ist selten. Vom ähnlichen Rebhuhnegerling unterscheidet ihn vor allem der widerlich fischartige Geruch, denn der Rebhuhnegerling riecht nach Karbol, und sein Fleisch läuft chromgelb an. Der Übelriechende Champignon gilt als ungenießbar."
+beschreibungEn = "A mushroom with a dirty brown to yellow-brown cap that later becomes brown-scaly, free grey-pink gills that turn brownish later, and a whitish stem with a double ring. It grows from early summer to autumn in gardens, meadows, along forest paths, in parks and on lawns and is rare. The key difference from the similar Agaricus phaeolepidotus is the disgusting fishy smell, because that species smells of carbolic, and its flesh turns chrome-yellow. Agaricus maleolens is classed as inedible."
+entwurf = true
 weitereNamen = ["Übelriechender Egerling"]
 synonyme = ["Psalliota ingrata", "Agaricus ingratus", "Agaricus bernardii syn. maleolens", "Agaricus ingratus syn. maleolens", "Agaricus ingratus var. maleolens"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

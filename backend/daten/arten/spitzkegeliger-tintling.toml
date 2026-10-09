@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Stark giftig. Zu erkennen am stumpf spitzen, dunkleren Hutscheitel, den braunen Schuppen auf grauweißem Grund und der ringartigen Wulst an der verdickten Stielbasis."
+beschreibung = "Kleiner Tintling mit grauweißem, gerieftem Hut mit braunen Schuppen und oft dunklerem, stumpf spitzem Scheitel, weißlichen bis grauen, bald zerfließenden Lamellen und weißem Stiel mit ringartigem Wulst an der verdickten Basis. Er wächst vom Sommer bis zum Spätherbst an Waldwegen und in Gärten, gern auf lehm- und kalkreichem Boden. Vom ähnlichen Spechttintling unterscheidet ihn vor allem der Hut, denn der Spechttintling hat einen braunen Hut mit weißen, flockigen Schuppen und riecht muffig. Der Spitzkegelige Tintling ist giftig."
+beschreibungEn = "A small ink cap with a grey-white, grooved cap with brown scales and an often darker, bluntly pointed top, whitish to grey gills that soon dissolve, and a white stem with a ring-like bulge at the swollen base. It grows from summer to late autumn along forest paths and in gardens, often on loamy and calcareous soil. The key difference from the similar magpie inkcap is the cap, because the magpie inkcap has a brown cap with white, flaky scales and smells musty. Coprinopsis acuminata is poisonous."
+entwurf = true
 synonyme = ["Coprinus acuminatus", "Coprinus atramentarius var. acuminatus"]
 fruchtschicht = { art = "lamellen", stand = "eng" }
 hutrand = { von = ["gerieft"] }

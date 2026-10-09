@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Enthält Orellanin und schädigt Nieren und Leber; niemals probieren. Zu erkennen am spitz gebuckelten rotbraunen Hut, den zimtbraunen Lamellen und dem genatterten Stiel ohne echten Ring. Er wächst bei Fichte, oft zwischen Trompetenpfifferlingen."
+beschreibung = "Schleierling mit rotbraunem bis orangerotem, meist spitz gebuckeltem, feinschuppigem Hut, dicken, zimtbraunen Lamellen und rostbraunem Stiel, der durch Schleierreste genattert ist und keinen echten Ring hat. Er wächst vom Sommer bis zum Spätherbst im Nadelwald, gern bei Fichte, in Mooren und auf saurem Boden, oft zwischen Trompetenpfifferlingen. Von den Trompetenpfifferlingen, zwischen denen er oft wächst, unterscheidet ihn vor allem die Fruchtschicht, denn er hat echte, zimtbraune Lamellen statt graugelber Leisten. Der Spitzgebuckelte Raukopf ist tödlich giftig."
+beschreibungEn = "A webcap with a red-brown to orange-red, finely scaly cap with a mostly pointed umbo, thick, cinnamon-brown gills and a rust-brown stem with bands from veil remnants and no true ring. It grows from summer to late autumn in coniferous woods, often with spruce, in bogs and on acid soil, often among winter chanterelles. The key difference from the winter chanterelle, among which it often grows, is the hymenium, because it has true, cinnamon-brown gills instead of grey-yellow ridges. Cortinarius rubellus is deadly poisonous."
+entwurf = true
 weitereNamen = ["Spitzbuckeliger Raukopf", "Prächtiger Schleierling", "Spitzgebuckelter Orangeschleierling", "Spitzkegeliger Raukopf"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 hutmerkmale = ["gebuckelt"]
