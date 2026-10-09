@@ -6,6 +6,7 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
+karte = "amanita_pantherina"
 speisewertHinweis = "Er enthält Ibotensäure, Muscimol, Muscazon sowie Stizolob- und Stizolobinsäure. Zu erkennen an den rein weißen Velumflöckchen auf braunem Hut, der abgesetzten Knolle mit söckchenartigen Gürtelzonen und dem Fleisch, das unter der Huthaut nicht gelb ist. Nach Regen können die weißen Schüppchen abgewaschen sein. Keine Kostversuche."
 haeufigkeit = "haeufig"
 beschreibung = "Mittelgroßer Wulstling mit braunem bis graubraunem Hut voller rein weißer Flöckchen, weißen, freien Lamellen und weißem Stiel mit Ring und abgesetzter Knolle. Er wächst in ganz Deutschland vom Frühjahr bis zum Spätherbst, vor allem im Sommer, im Mischwald überwiegend bei Laubbäumen und gern auf sandigem Boden. Vom ähnlichen Perlpilz unterscheidet ihn vor allem das Fleisch, das nie rötet, denn der Perlpilz verfärbt sich an verletzten Stellen weinrötlich. Der Pantherpilz ist tödlich giftig."

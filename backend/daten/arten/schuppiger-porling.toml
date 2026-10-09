@@ -6,6 +6,7 @@ wertigkeit = 4
 marktfaehig = true
 jahreszeiten = ["fruehling", "sommer"]
 baeume = []
+karte = "cerioporus_squamosus"
 speisewertHinweis = "Nur jung essbar und dann relativ minderwertig. 123pilze gibt ihm die Relative Wertigkeit 4."
 weitereNamen = ["Schuppiger Stielporling", "Schwarzfußporling", "Schuppiger Schwarzfußporling"]
 synonyme = ["Polyporus squamosus", "Bresadolia squamosa", "Polyporus squamosus forma rostkovii", "Polyporus westii", "Polyporellus squamosus forma rostkovii", "Polyporus squamosus forma michelii", "Polyporus retirugus"]

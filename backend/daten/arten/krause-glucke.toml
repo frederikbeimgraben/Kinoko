@@ -7,6 +7,7 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "fichte"]
+karte = "sparassis_crispa"
 speisewertHinweis = "Den Strunk nicht mitessen, er kann Übelkeit und Erbrechen auslösen. Im Alter wird sie bitterlich. Zum Putzen kurz in kochendes Wasser tauchen oder in Scheiben schneiden und wässern."
 weitereNamen = ["Fette Henne", "Bärenschädel"]
 

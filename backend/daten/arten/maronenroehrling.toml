@@ -7,6 +7,7 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+karte = "imleria_badia"
 speisewertHinweis = "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen. Er nimmt Cäsium 137 stärker auf als die meisten Arten; für Kinder und Schwangere sind größere Mengen nicht zu empfehlen."
 weitereNamen = ["Braunkappen", "Braunkuppen", "Braune", "Bräunling", "Marone"]
 fruchtschicht = { art = "roehren" }

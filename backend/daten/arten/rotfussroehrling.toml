@@ -7,6 +7,7 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+karte = "xerocomellus_chrysenteron"
 speisewertHinweis = "Nur Mischpilz. Er ist oft madig und häufig von Goldschimmel befallen; befallene Stücke wegwerfen. Lässt sich der Hut mit zwei Fingern eindrücken, ist er nicht mehr brauchbar."
 haeufigkeit = "sehrHaeufig"
 weitereNamen = ["Gemeiner Rotfußröhrling", "Echter Rotfußröhrling"]

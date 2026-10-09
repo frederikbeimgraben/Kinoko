@@ -6,6 +6,7 @@ wertigkeit = 1
 marktfaehig = true
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
+karte = "kuehneromyces_mutabilis"
 speisewertHinweis = "Nicht roh essen. Nur für Sammler, die den tödlich giftigen Gifthäubling sicher trennen: jeden Fruchtkörper einzeln mit Stiel prüfen, nie ganze Büschel abschneiden. Das Stockschwämmchen hat unter dem häutigen Ring deutliche Schüppchen und riecht pilzig, der Gifthäubling ist dort seidig faserig und silbrig. Eine Pilzberatung gibt Stockschwämmchen ohne Stiel nicht frei. Die Stiele sind sehr zäh und taugen höchstens als Pilzpulver."
 weitereNamen = ["Echtes Stockschwämmchen", "Gemeines Stockschwämmchen"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }

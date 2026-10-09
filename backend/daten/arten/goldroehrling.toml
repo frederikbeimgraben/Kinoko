@@ -7,6 +7,7 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche", "douglasie", "kiefer"]
+karte = "suillus_grevillei"
 speisewertHinweis = "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen und den Schleim vom Hut abziehen. Wie alle Schmierröhrlinge löst er bei manchen Magen-Darm-Beschwerden aus."
 weitereNamen = ["Goldgelber Lärchenröhrling", "Schöner Röhrling", "Gelber Röhrling"]
 synonyme = ["Boletopsis elegans", "Suillus grevillei forma badius", "Ixocomus elegans forma badius", "Boletinus grevillei", "Suillus elegans", "Boletopsis annulatus"]

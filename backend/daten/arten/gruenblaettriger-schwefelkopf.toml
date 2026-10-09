@@ -6,6 +6,7 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
 baeume = []
+karte = "hypholoma_fasciculare"
 speisewertHinweis = "Er macht starke Magen-Darm-Störungen, die über mehrere Tage anhalten. Zu erkennen an den grünen bis grüngelben Lamellen und am stark bitteren Geschmack."
 weitereNamen = ["Büscheliger Schwefelkopf", "Bitterer Schwefelkopf"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

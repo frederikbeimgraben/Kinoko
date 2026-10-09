@@ -7,6 +7,7 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["herbst", "winter", "fruehling"]
 baeume = ["buche", "eiche"]
+karte = "pleurotus_ostreatus"
 speisewertHinweis = "Roh zersetzt er rote Blutkörperchen. Nur durchgegart essen."
 weitereNamen = ["Austernpilz", "Kalbfleischpilz", "Buchenschwamm", "Drehling", "Austernschwamm", "Eichhännchen", "Muschelpilz", "Sommerauster"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }

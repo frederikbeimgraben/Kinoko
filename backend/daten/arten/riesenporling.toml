@@ -6,6 +6,7 @@ wertigkeit = 4
 marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["tanne", "buche"]
+karte = "meripilus_giganteus"
 speisewertHinweis = "Nur ganz junge Fruchtkörper sind mild. Er wird schnell scharf und bitter und ist dann unbrauchbar."
 synonyme = ["Agaricus aequivocus", "Flabellopilus giganteus", "Polyporus aequivocus", "Polypilus frondosus var. intybaceus", "Polypilus giganteus", "Grifola gigantea", "Grifola acanthoides"]
 fruchtschicht = { art = "poren" }

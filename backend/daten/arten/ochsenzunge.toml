@@ -7,6 +7,7 @@ marktfaehigSchweiz = true
 marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche", "weide"]
+karte = "fistulina_hepatica"
 speisewertHinweis = "Nur jung nehmen. Der säuerliche Geschmack bleibt auch nach dem Garen; die Seite empfiehlt vor allem Pilzpulver."
 weitereNamen = ["Ochsenzunge", "Leberpilz"]
 synonyme = ["Fistulina hepatica var. endoxantha", "Confistulina hepatica", "Ptychogaster hepaticus", "Fistulina endoxantha", "Ceriomyces hepaticus"]

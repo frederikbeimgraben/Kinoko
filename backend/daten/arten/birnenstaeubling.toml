@@ -8,6 +8,7 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+karte = "apioperdon_pyriforme"
 speisewertHinweis = "Nur solange die innere Fruchtschicht rein weiß ist. Er schmeckt fade und gilt in der Schweiz als nicht marktfähig."
 haeufigkeit = "sehrHaeufig"
 synonyme = ["Lycoperdon pyriforme", "Morganella pyriformis", "Utraria pyriformis"]

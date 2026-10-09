@@ -7,6 +7,7 @@ marktfaehigSchweiz = false
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "birke"]
+karte = "amanita_fulva"
 speisewertHinweis = "Roh unverträglich. Nur für Sammler, die den Pantherpilz sicher trennen: jeden Fruchtkörper mit ganzer Stielbasis ausgraben und die Scheide prüfen."
 weitereNamen = ["Fuchsiger Scheidenstreifling", "Rotbrauner Streifling", "Gelbbräunlicher Scheidenstreifling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
