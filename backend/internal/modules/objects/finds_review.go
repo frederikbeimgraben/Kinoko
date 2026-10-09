@@ -1,13 +1,48 @@
 package objects
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/paging"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/web"
 )
+
+// reopenFind takes back an acceptance or a rejection, for the undo of the review queue.
+// The find is open again and has no reviewer.
+func (m *Module) reopenFind(r *http.Request) (web.Response, error) {
+	id, err := web.PathID(r, "id")
+	if err != nil {
+		return nil, err
+	}
+	now := m.now()
+	row, err := db.InTxValue(r.Context(), m.deps.DB, func(tx *sql.Tx) (findRow, error) {
+		row, found, err := finds.get(r.Context(), tx, id)
+		switch {
+		case err != nil:
+			return findRow{}, err
+		case !found:
+			return findRow{}, problem.NotFound()
+		case row.ReviewState == enums.ReviewStateOpen:
+			return findRow{}, problem.Conflict("", "")
+		}
+		if err := finds.set(r.Context(), tx, id, []column{
+			{"review_state", enums.ReviewStateOpen}, {"reviewed_by_id", nil},
+			{"reviewed_at", nil}, {"updated_at", now},
+		}); err != nil {
+			return findRow{}, err
+		}
+		row, _, err = finds.get(r.Context(), tx, id)
+		return row, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return web.OK(exactFind(row)), nil
+}
 
 // ownerNameColumn is the display name of the owner of a find: the name, else the
 // email, else the subject, as the group member lists show it.

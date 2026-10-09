@@ -87,26 +87,20 @@ describe('FindQueueComponent', () => {
     expect(api.reviewed).toEqual([{ id: 'fund-eins', decision: 'rejected' }]);
   });
 
-  it('zählt nach dem Rückgängig zurück', async () => {
-    await build();
+  it('zählt nach dem Rückgängig zurück und öffnet den Fund auf dem Server wieder', async () => {
+    const { api } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
     await userEvent.click(screen.getByRole('button', { name: 'Rückgängig' }));
 
     expect(screen.getByText('2 offene Funde')).toBeInTheDocument();
+    expect(api.reopened).toEqual(['fund-eins']);
   });
 
-  it('nimmt erst nach der Bestätigung alle an', async () => {
-    const { api } = await build();
+  it('zeigt wie das Board FindQueue kein „Alle annehmen“ im Kopf', async () => {
+    await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Alle annehmen' }));
-    expect(api.accepted).toBe(0);
-
-    const buttons = screen.getAllByRole('button', { name: 'Alle annehmen' });
-    await userEvent.click(buttons[buttons.length - 1]);
-
-    expect(api.accepted).toBe(1);
-    expect(screen.getByText('Keine Funde offen')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Alle annehmen' })).toBeNull();
   });
 
   it('zeigt ohne offenen Fund den Leerzustand', async () => {

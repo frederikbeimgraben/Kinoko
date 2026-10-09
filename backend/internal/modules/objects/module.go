@@ -35,6 +35,7 @@ func (m *Module) Routes(r *server.Router) {
 	r.Handle(http.MethodPut, "/finds/{id}", m.putFind)
 	r.Handle(http.MethodDelete, "/finds/{id}", m.deleteFind)
 	r.Handle(http.MethodPost, "/finds/{id}/review", m.reviewFind)
+	r.Handle(http.MethodDelete, "/finds/{id}/review", m.reopenFind)
 	r.Handle(http.MethodGet, "/finds/reviews/open", m.openFinds)
 	r.Handle(http.MethodPost, "/finds/reviews/accept-all", m.acceptAll)
 
