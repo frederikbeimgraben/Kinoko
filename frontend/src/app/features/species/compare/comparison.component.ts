@@ -15,6 +15,7 @@ import { PopoverComponent, type PopoverAnchor } from '../../../ui/popover/popove
 import { PopoverItemComponent } from '../../../ui/popover/popover-item.component';
 import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
 import { ScrollFadeDirective } from '../../../ui/scroll-fade/scroll-fade.directive';
+import { SafetyNoticeComponent } from '../../../ui/safety-notice/safety-notice.component';
 import { SkeletonComponent } from '../../../ui/skeleton/skeleton.component';
 import { StateViewComponent } from '../../../ui/state-view/state-view.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
@@ -54,6 +55,7 @@ export function swatchFill(colours: readonly ColourValue[], mode: ColourMode): s
     PopoverComponent,
     PopoverItemComponent,
     PrivateImageComponent,
+    SafetyNoticeComponent,
     ScrollFadeDirective,
     SkeletonComponent,
     SpeciesDeskComponent,

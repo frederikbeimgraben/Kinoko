@@ -86,6 +86,7 @@ export { ReviewQueueComponent } from './review-queue/review-queue.component';
 export { QueueCardSkeletonComponent } from './review-queue/queue-card-skeleton.component';
 export { RippleDirective } from './ripple/ripple.directive';
 export { RowGroupComponent } from './row-group/row-group.component';
+export { SafetyNoticeComponent } from './safety-notice/safety-notice.component';
 export { ScrollFadeDirective } from './scroll-fade/scroll-fade.directive';
 export { SearchFieldComponent } from './search-field/search-field.component';
 export { SeasonCurveComponent, type MonthMark } from './season-curve/season-curve.component';

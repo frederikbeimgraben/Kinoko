@@ -1050,6 +1050,7 @@
   "report.title": "Runs",
   "report.trigger": "Trigger",
   "report.trigger.title": "Trigger run?",
+  "safety.notice": "This app is not an identification aid for eating mushrooms. Its information can be wrong or incomplete. Never eat a mushroom that a mushroom expert has not checked. If you suspect a poisoning, call a poison control centre at once.",
   "sheet.handle": "Drag sheet",
   "species.attachment.adnate": "adnate",
   "species.attachment.decurrent": "decurrent",

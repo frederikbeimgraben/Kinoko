@@ -6,4 +6,7 @@
       <app-list-row [title]="section.heading | t" [subline]="section.body | t" />
     }
   </app-row-group>
+  @if (notice()) {
+    <app-safety-notice />
+  }
 </div>
