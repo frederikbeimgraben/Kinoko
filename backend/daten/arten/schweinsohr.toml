@@ -11,6 +11,9 @@ baeume = []
 speisewertHinweis = "Besonders geschützt und in Deutschland gefährdet. Nicht sammeln."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Keulen- bis trichterförmiger Leistling mit violettem, im Alter bräunlichem Fruchtkörper, lilabraunen, oft kaum erkennbaren Leisten auf der Außenseite und kurzem, zur Basis verjüngtem Stiel. Er wächst vom Frühsommer bis zum Spätherbst im Mischwald auf kalkreichem Boden, ist meist selten und in Deutschland gefährdet. Vom ähnlichen Verbogenen Leistling unterscheidet ihn vor allem die Farbe, denn der Verbogene Leistling ist kleiner und dünnfleischig, hat einen graubraunen bis olivfarbenen Hut und kein Violett."
+beschreibungEn = "A club-shaped to funnel-shaped chanterelle relative with a violet fruit body that turns brownish with age, lilac-brown ridges on the outer surface that are often barely visible, and a short stem that tapers to the base. It grows from early summer to late autumn in mixed woods on calcareous soil, is mostly rare and is endangered in Germany. The key difference from the similar Pseudocraterellus undulatus is the colour, because that species is smaller and thin-fleshed, has a grey-brown to olive cap and no violet."
+entwurf = true
 weitereNamen = ["Purpurleistling"]
 synonyme = ["Cantharellus brevipes", "Trombetta clavata", "Cantharellus clavatus"]
 fruchtschicht = { art = "leisten" }

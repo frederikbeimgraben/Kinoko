@@ -9,6 +9,9 @@ baeume = ["buche", "eiche"]
 speisewertHinweis = "Laut Bundesartenschutzgesetz vollständig geschützt und in Deutschland stark gefährdet. Nicht sammeln."
 haeufigkeit = "selten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Kräftiger Röhrling mit milchkaffeebraunem bis silbergrauem, seidigem Hut, zitronen- bis goldgelben Röhren, die bei Verletzung blauen, und gelblichem, bauchigem Stiel mit feinem Netz und rötlicher Basis. Er wächst vom Sommer bis zum Herbst in Laub- und Auwäldern, gern bei Buche und Eiche auf kalkreichem Boden, ist selten und in Deutschland stark gefährdet. Vom ähnlichen Schönfußröhrling unterscheidet ihn vor allem der gelbe Stiel, denn der Schönfußröhrling hat einen Stiel, der zur Basis hin rot wird."
+beschreibungEn = "A stout bolete with a milky-coffee-brown to silver-grey, silky cap, lemon-yellow to golden-yellow tubes that turn blue when damaged and a yellowish, swollen stem with a fine net and a reddish base. It grows from summer to autumn in broadleaf and floodplain woods, often with beech and oak on calcareous soil, is rare and is highly endangered in Germany. The key difference from the similar Caloboletus calopus is the yellow stem, because that species has a stem that turns red towards the base."
+entwurf = true
 weitereNamen = ["Sommerröhrling"]
 synonyme = ["Boletus fechtneri"]
 fruchtschicht = { art = "roehren" }

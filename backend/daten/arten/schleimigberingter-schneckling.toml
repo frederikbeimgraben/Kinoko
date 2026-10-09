@@ -10,6 +10,9 @@ baeume = ["kiefer"]
 speisewertHinweis = "Sehr selten und in Deutschland stark gefährdet. Den Fund besser stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Schneckling mit weißem bis weißlich gelbem, schleimigem Hut, oft mit gelber Mitte, weißen, sehr entfernt stehenden, herablaufenden Lamellen und weißem, sehr schleimigem Stiel mit vergänglicher schleimiger Ringzone. Er wächst vom Sommer bis zum Herbst im Nadelwald bei Kiefern, ist sehr selten und in Deutschland stark gefährdet. Vom ähnlichen Olivgrauen Schneckling unterscheidet ihn vor allem der helle Hut, denn der Olivgraue Schneckling hat einen olivbraunen bis graubraunen Hut und wächst bei Fichten."
+beschreibungEn = "A woodwax with a white to whitish-yellow, slimy cap, often with a yellow centre, white, very distant gills that run down the stem and a white, very slimy stem with a fleeting, slimy ring zone. It grows from summer to autumn in coniferous woods with pine, is very rare and is highly endangered in Germany. The key difference from the similar Hygrophorus mesotephrus is the pale cap, because that species has an olive-brown to grey-brown cap and grows with spruce."
+entwurf = true
 synonyme = ["Hygrophorus ligatus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 hutrand = { von = ["eingerollt"], nach = ["wellig"] }

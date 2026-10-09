@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Wird als giftig geführt, weil Erdritterlinge im Verdacht stehen, die Muskeln zu zersetzen. Er ist am grauschwarz schuppigen Hut, an den dunkler punktierten Lamellenschneiden und am mehlartigen Geruch zu erkennen."
+beschreibung = "Ritterling mit grauschwarzem bis schwarzbraunem Hut voller wolliger, sparriger, dunkler Schüppchen, grauweißen Lamellen mit dunkler punktierten Schneiden und weißlichem, fein schwärzlich geschupptem Stiel. Er wächst vom Sommer bis zum Spätherbst im Mischwald, häufiger bei Nadelbäumen. Vom ähnlichen Seifenritterling unterscheidet ihn vor allem das Fleisch, denn beim Seifenritterling rötet es an verletzten Stellen, und er riecht nach Seifenlauge. Der Schwarzschuppige Erdritterling gilt als giftig."
+beschreibungEn = "A knight with a grey-black to black-brown cap full of woolly, protruding, dark scales, grey-white gills with darker dotted edges and a whitish stem with fine blackish scales. It grows from summer to late autumn in mixed woods, more often with conifers. The key difference from the similar soapy knight is the flesh, because in the soapy knight it turns red where it is damaged, and the soapy knight smells of soapy water. Tricholoma atrosquamosum is classed as poisonous."
+entwurf = true
 weitereNamen = ["Schwarzschuppiger Ritterling"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "glatt" }
 stielmerkmale = ["beflockt", "faserig"]

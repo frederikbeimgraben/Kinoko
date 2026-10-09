@@ -10,6 +10,9 @@ baeume = ["fichte", "kiefer", "tanne", "pappel", "birke"]
 speisewertHinweis = "In Deutschland gefährdet (RL 3). Graue Ritterlinge sind untereinander schwer zu trennen; nur eindeutig bestimmte Funde nehmen."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Ritterling mit dunkelgrauem bis graubraunem Hut mit schwarzen Radialfasern, oft mit gelbem oder violettem Einschlag, weißlichen, später gelbgrünlichen Lamellen und weißem, später grüngelblichem Stiel. Er wächst vom Herbst bis in den Winter, oft nach den ersten Frösten, im Nadelwald bei Kiefer, Fichte und Tanne und ist in Deutschland gefährdet. Vom ähnlichen Schwarzschuppigen Erdritterling unterscheidet ihn vor allem der Hut, denn dieser hat wollige, sparrige Schüppchen und keine schwarzen Radialstreifen. Graue Ritterlinge sind untereinander schwer zu trennen."
+beschreibungEn = "A knight with a dark grey to grey-brown cap with black radial fibres, often with a yellow or violet tinge, whitish gills that later turn yellow-green and a white stem that later turns greenish-yellow. It grows from autumn into winter, often after the first frosts, in coniferous woods with pine, spruce and fir and is endangered in Germany. The key difference from the similar Tricholoma atrosquamosum is the cap, because that species has woolly, protruding scales and no black radial stripes. Grey knights are difficult to tell apart."
+entwurf = true
 weitereNamen = ["Schneeritterling", "Rußkopf"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
 hutform = { von = "halbkugelig", nach = "gewoelbt" }

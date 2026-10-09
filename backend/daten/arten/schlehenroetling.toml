@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling", "sommer"]
 baeume = ["obstbaum"]
 speisewertHinweis = "Nur etwas für Kenner, denn mehrere Rötlinge sind giftig und der Riesenrötling gilt als tödlich giftig. In Deutschland auf der Vorwarnliste."
 haeufigkeit = "selten"
+beschreibung = "Rötling mit weißlichem bis graubräunlichem, radialfaserigem Hut, weißen, später leicht rosa Lamellen und weißlichem bis cremegelbem, faserigem Stiel. Er wächst vom Frühling bis zum Sommer büschelig unter Schlehe, Weißdorn und Pflaumenbaum an Waldrändern, in Gärten und Parks und ist selten. Vom ähnlichen Maipilz unterscheiden ihn vor allem die Lamellen, die rosa werden, denn der Maipilz hat Lamellen, die weiß bis cremefarben bleiben, und weißes Sporenpulver. Rötlinge sind schwer zu bestimmen, und zu ihnen gehören giftige Arten wie der Riesenrötling."
+beschreibungEn = "A pinkgill with a whitish to greyish-brown, radially fibrous cap, white gills that turn slightly pink later and a whitish to cream-yellow, fibrous stem. It grows from spring to summer in clusters under blackthorn, hawthorn and plum trees at forest edges, in gardens and in parks and is rare. The key difference from the similar St George's mushroom is the gills, which turn pink, because St George's mushroom has gills that stay white to cream and a white spore print. Pinkgills are difficult to identify, and the group includes poisonous species such as the livid pinkgill."
+entwurf = true
 weitereNamen = ["Blasser Pflaumen-Rötling", "Blassbrauner Schlehenrötling", "Blasser Rötling"]
 synonyme = ["Rhodophyllus sepius", "Agaricus sepius", "Entoloma saundersii sensu", "Entoloma clypeatum var. sepium"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }

@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Giftig und dazu bitter. Kennzeichen sind der lehmgraue samtige Hut, der zur Basis rote Stiel mit Netz und das sofort blauende Fleisch."
+beschreibung = "Röhrling mit lehmgrauem, samtigem Hut, gelblichen Röhren, die auf Druck blauen, und keuligem Stiel, der oben gelblich und zur Basis rötlich ist und ein weißes bis braunrotes Netz trägt. Er wächst vom Frühling bis zum Spätherbst im Mischwald, gern im Nadelwald, auf saurem, nährstoffarmem Boden. Vom ähnlichen Satansröhrling unterscheiden ihn vor allem die gelben Röhrenmündungen, denn der Satansröhrling hat karminrote Röhrenmündungen und einen weißlichen bis hellgrauen Hut. Der Schönfußröhrling ist giftig."
+beschreibungEn = "A bolete with a clay-grey, velvety cap, yellowish tubes that turn blue when pressed and a club-shaped stem that is yellowish at the top and reddish towards the base and has a white to brown-red net. It grows from spring to late autumn in mixed woods, often in coniferous woods, on acid, nutrient-poor soil. The key difference from the similar Satan's bolete is the yellow pores, because the Satan's bolete has carmine-red pores and a whitish to light grey cap. Caloboletus calopus is poisonous."
+entwurf = true
 weitereNamen = ["Hantling", "Dickfußröhrling", "Dickfuß", "Bitterpilz"]
 fruchtschicht = { art = "roehren" }
 hutmerkmale = ["unregelmaessig"]

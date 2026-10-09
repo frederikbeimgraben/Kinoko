@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche", "linde", "kastanie"]
 schutzHinweis = "Die Verordnung nennt Boletus edulis, Boletus aereus und Boletus appendiculatus, nicht aber Boletus reticulatus. Dieses Projekt behandelt ihn gleich."
+beschreibung = "Kräftiger Steinpilz mit hell lederbraunem bis haselnussbraunem, matt feinfilzigem Hut, der bei Trockenheit felderig aufreißt, weißlichen, später gelbgrünen bis olivgrünen Röhren und hellem Stiel mit einem weißen, erhabenen Netz, das bis weit zur Basis reicht. Er wächst vom Frühsommer bis zum Spätherbst im Mischwald, gern bei Eiche, Buche, Linde und Esskastanie. Vom ähnlichen Gallenröhrling unterscheidet ihn vor allem das Netz am Stiel, denn der Gallenröhrling hat ein grobes, braunes Netz und Röhren, die später rosa werden."
+beschreibungEn = "A stout porcini with a light leather-brown to hazel-brown, matt, finely felty cap that cracks into small fields in dry weather, whitish tubes that later turn yellow-green to olive-green and a pale stem with a white, raised net that reaches far down to the base. It grows from early summer to late autumn in mixed woods, often with oak, beech, lime and sweet chestnut. The key difference from the similar bitter bolete is the net on the stem, because the bitter bolete has a coarse brown net and tubes that turn pink later."
+entwurf = true
 weitereNamen = ["Eichensteinpilz", "Herrenpilz", "Schwarzer Steinpilz", "Steini"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "halbkugelig", nach = "gewoelbt" }

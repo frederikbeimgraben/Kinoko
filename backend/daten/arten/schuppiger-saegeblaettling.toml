@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["laerche", "kiefer"]
 speisewertHinweis = "Ungenießbar, weil das Fleisch rasch zäh wird. Nur ganz junge Fruchtkörper gelten als essbar."
+beschreibung = "Holzbewohnender Blätterpilz mit gelblichem Hut voller rotbrauner bis kastanienbrauner Schuppen, weißen, später gelblichen, herablaufenden Lamellen mit stark gesägten Schneiden und weißlichem, zur Basis braunschuppigem Stiel mit vergänglicher Ringzone. Er wächst meist vom Sommer bis zum Herbst an Nadelholz, gern an Lärche und Kiefer, auch an verbautem Holz wie Bahnschwellen, Pfählen und Holzbrücken, und verursacht Braunfäule. Vom ähnlichen Sklerotienporling unterscheiden ihn vor allem die Lamellen, denn der Sklerotienporling hat Poren und wächst an Laubholz."
+beschreibungEn = "A wood-dwelling gilled mushroom with a yellowish cap full of red-brown to chestnut-brown scales, white gills that turn yellowish later, run down the stem and have strongly serrated edges, and a whitish stem with brown scales towards the base and a fleeting ring zone. It grows mostly from summer to autumn on conifer wood, often on larch and pine, also on wood in structures such as railway sleepers, posts and wooden bridges, and causes brown rot. The key difference from the similar Polyporus tuberaster is the gills, because that species has pores and grows on broadleaf wood."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }
 hutrand = { von = ["eingerollt", "scharf"] }
 stielmerkmale = ["ring", "beflockt"]

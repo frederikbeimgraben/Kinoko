@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 karte = "schopftintling"
 speisewertHinweis = "Roh etwas unverträglich. Nur junge, ganz weiße Fruchtkörper nehmen und rasch verarbeiten; rötliche oder schwarze Teile sind nicht mehr brauchbar."
+beschreibung = "Großer Tintling mit weißem, geschupptem, lang eiförmigem bis walzenförmigem Hut mit bräunlichem Scheitel, weißen, bald rosa und zuletzt schwarz zerfließenden, freien Lamellen und weißem Stiel mit lockerem, tief sitzendem Ring. Er wächst vom Frühling bis zum Spätherbst in Parks, Gärten, auf Wiesen sowie an Waldwegen und Waldrändern auf nährstoffreichem Boden. Vom ähnlichen Faltentintling unterscheidet ihn vor allem der weiße, geschuppte Hut, denn der Faltentintling hat einen grauweißen bis graubraunen, gerieften und faltigen Hut."
+beschreibungEn = "A large ink cap with a white, scaly, elongated egg-shaped to cylindrical cap with a brownish top, free white gills that soon turn pink and finally dissolve into black ink, and a white stem with a loose, low ring. It grows from spring to late autumn in parks, gardens and meadows and along forest paths and forest edges on nutrient-rich soil. The key difference from the similar common ink cap is the white, scaly cap, because the common ink cap has a grey-white to grey-brown, grooved and folded cap."
+entwurf = true
 weitereNamen = ["Spargelpilz", "Schopfpilz", "Tintenpilz", "Porzellantintling"]
 synonyme = ["Coprinus porcellanus", "Coprinus ovatus", "Coprinus comatus var. caprimammillatus", "Coprinus comatus var. ovatus", "Agaricus porcellanus"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

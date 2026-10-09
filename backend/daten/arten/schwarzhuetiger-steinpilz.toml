@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "kastanie"]
 speisewertHinweis = "Besonders geschützt und selten. Wenn überhaupt, nur wenige Fruchtkörper für den Eigenbedarf."
 haeufigkeit = "selten"
+beschreibung = "Kräftiger Steinpilz mit kastanien- bis schwarzbraunem, feinsamtigem, matt bereiftem Hut, weißlichen bis cremegelben Röhren und ockerbraunem bis lederbraunem Stiel mit weißlicher bis brauner Netzzeichnung vor allem an der Spitze. Er wächst vom Sommer bis zum Herbst im Laubwald, meist bei Eiche und Edelkastanie, und ist selten. Vom ähnlichen Gallenröhrling unterscheidet ihn vor allem das Netz am Stiel, denn der Gallenröhrling hat ein grobes, braunes Netz und Röhren, die später rosa werden."
+beschreibungEn = "A stout porcini with a chestnut-brown to black-brown, finely velvety cap with a dull bloom, whitish to cream-yellow tubes and an ochre-brown to leather-brown stem with a whitish to brown net mainly at the top. It grows from summer to autumn in broadleaf woods, mostly with oak and sweet chestnut, and is rare. The key difference from the similar bitter bolete is the net on the stem, because the bitter bolete has a coarse brown net and tubes that turn pink later."
+entwurf = true
 weitereNamen = ["Weißer Bronzeröhrling"]
 synonyme = ["Boletus edulis forma aereus", "Tubiporus edulis subsp. aereus"]
 fruchtschicht = { art = "roehren" }
