@@ -287,12 +287,25 @@ export function answerValueTile(byte: number): void {
 /** The manifests of the server, without a server. */
 export function answerManifest(data: unknown = RAW_MANIFEST, layers: unknown = RAW_LAYERS): void {
   vi.stubGlobal('fetch', (path: string) =>
-    Promise.resolve({
-      ok: true,
-      status: 200,
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: () => Promise.resolve(path === '/layers.json' ? layers : data),
-    } as Response),
+    Promise.resolve(
+      new Response(JSON.stringify(path === '/layers.json' ? layers : data), {
+        headers: { 'content-type': 'application/json' },
+      }),
+    ),
+  );
+}
+
+/** An origin that does not reply, as without network. */
+export function answerNoReply(): void {
+  vi.stubGlobal('fetch', () => Promise.reject(new TypeError('Failed to fetch')));
+}
+
+/** An origin without manifests: the app page with status 200 for each file, as a fallback rule sends it. */
+export function answerMissing(): void {
+  vi.stubGlobal('fetch', () =>
+    Promise.resolve(
+      new Response('<!doctype html><html></html>', { headers: { 'content-type': 'text/html' } }),
+    ),
   );
 }
 

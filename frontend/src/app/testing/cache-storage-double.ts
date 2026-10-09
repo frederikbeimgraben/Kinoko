@@ -2,8 +2,9 @@
 class CacheDouble {
   private readonly entries = new Map<string, Response>();
 
+  /** Gives a copy, as the Cache API does. Each match can read the body again. */
   match(url: string): Promise<Response | undefined> {
-    return Promise.resolve(this.entries.get(url));
+    return Promise.resolve(this.entries.get(url)?.clone());
   }
 
   put(url: string, reply: Response): Promise<void> {

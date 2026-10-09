@@ -4,7 +4,13 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NOW } from '../../core/tiles/now';
 import { TileService } from '../../core/tiles/tile.service';
 import { SpeciesStore } from '../species/species.store';
-import { BUNDLE_ITEMS, RAW_LAYERS, RAW_MANIFEST, answerManifest } from '../../testing/map-doubles';
+import {
+  BUNDLE_ITEMS,
+  RAW_LAYERS,
+  RAW_MANIFEST,
+  answerManifest,
+  answerNoReply,
+} from '../../testing/map-doubles';
 import type { SpeciesEntry } from '../../core/api/models';
 import { CombinationStore } from './combination.store';
 import { MapStore } from './map.store';
@@ -53,8 +59,11 @@ const CREDIT_LAYERS = {
 async function view(
   manifest: unknown = RAW_MANIFEST,
   layers: unknown = RAW_LAYERS,
+  answer: () => void = () => {
+    answerManifest(manifest, layers);
+  },
 ): Promise<{ view: MapView; state: MapStore; combination: CombinationStore; tiles: TileService }> {
-  answerManifest(manifest, layers);
+  answer();
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
@@ -95,7 +104,7 @@ describe('MapView', () => {
   });
 
   it('zeigt statt des Skeletts einen Fehler, wenn beide Manifeste ausbleiben, und versucht es neu', async () => {
-    const { view: model, tiles } = await view(null, null);
+    const { view: model, tiles } = await view(null, null, answerNoReply);
 
     expect(model.failed()).toBe(true);
     expect(model.loading()).toBe(false);

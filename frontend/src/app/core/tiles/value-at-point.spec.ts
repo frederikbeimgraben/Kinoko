@@ -15,6 +15,11 @@ const MANIFEST = readManifest(
 );
 
 /** A canvas that always gives the same pixel value. */
+/** A value tile as the origin sends it. The canvas double gives the pixels. */
+function tile(): Response {
+  return new Response(new Blob(), { headers: { 'content-type': 'image/png' } });
+}
+
 function canvasWith(byte: number): void {
   vi.stubGlobal('createImageBitmap', () =>
     Promise.resolve({ width: 256, height: 256, close: () => undefined }),
@@ -56,7 +61,7 @@ describe('wertAmPunkt', () => {
 
   it('holt die feinste vorhandene Kachel und liest den Punkt', async () => {
     canvasWith(128);
-    vi.stubGlobal('fetch', () => Promise.resolve({ ok: true, blob: () => Promise.resolve(new Blob()) }));
+    vi.stubGlobal('fetch', () => Promise.resolve(tile()));
 
     const value = await valueAtPoint(MANIFEST, 'boletus_edulis_kacheln/2025W40', 9.05, 48.52);
 
@@ -70,6 +75,15 @@ describe('wertAmPunkt', () => {
   it('gibt nichts her, wenn die Kachel nicht kommt', async () => {
     canvasWith(200);
     vi.stubGlobal('fetch', () => Promise.resolve({ ok: false }));
+
+    expect(await valueAtPoint(MANIFEST, 'ordner', 9.05, 48.52)).toBeNull();
+  });
+
+  it('gibt nichts her, wenn statt der Kachel die Seite der App kommt', async () => {
+    canvasWith(200);
+    vi.stubGlobal('fetch', () =>
+      Promise.resolve(new Response('<!doctype html>', { headers: { 'content-type': 'text/html' } })),
+    );
 
     expect(await valueAtPoint(MANIFEST, 'ordner', 9.05, 48.52)).toBeNull();
   });
@@ -93,7 +107,7 @@ describe('wertAmPunkt', () => {
         }
       },
     );
-    vi.stubGlobal('fetch', () => Promise.resolve({ ok: true, blob: () => Promise.resolve(new Blob()) }));
+    vi.stubGlobal('fetch', () => Promise.resolve(tile()));
 
     expect(await valueAtPoint(MANIFEST, 'ordner', 9.05, 48.52)).toBeNull();
   });

@@ -50,7 +50,7 @@ describe('TileStore', () => {
     vi.stubGlobal('fetch', () => Promise.resolve(reply('', false)));
 
     expect(await store().tile('/weg.png')).toBeNull();
-    expect(await store().json('/weg.json')).toBeNull();
+    expect(await store().manifest('/weg.json')).toEqual({ kind: 'missing' });
   });
 
   it('meldet einen Netzfehler als null', async () => {
@@ -62,14 +62,14 @@ describe('TileStore', () => {
   it('liest ein Manifest als JSON', async () => {
     vi.stubGlobal('fetch', () => Promise.resolve(manifest('{"weeks":2}')));
 
-    expect(await store().json('/art.json')).toEqual({ weeks: 2 });
+    expect(await store().manifest('/art.json')).toEqual({ kind: 'data', content: { weeks: 2 } });
   });
 
   it('nimmt die Seite der App weder an noch auf', async () => {
     const caching = stubCaches();
     vi.stubGlobal('fetch', () => Promise.resolve(page()));
 
-    expect(await store().json('/art.json')).toBeNull();
+    expect(await store().manifest('/art.json')).toEqual({ kind: 'missing' });
     expect(await caching.match('/art.json')).toBeUndefined();
   });
 
@@ -79,9 +79,21 @@ describe('TileStore', () => {
     const fetcher = vi.fn(() => Promise.resolve(manifest('{"weeks":3}')));
     vi.stubGlobal('fetch', fetcher);
 
-    expect(await store().json('/art.json')).toEqual({ weeks: 3 });
+    expect(await store().manifest('/art.json')).toEqual({ kind: 'data', content: { weeks: 3 } });
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(await (await caching.match('/art.json'))?.text()).toBe('{"weeks":3}');
+  });
+
+  it('liest im Hintergrund nur das Manifest auf dem Gerät', async () => {
+    const caching = stubCaches();
+    await (await caching.open(TILE_CACHE)).put('/art.json', manifest('{"weeks":4}'));
+    const fetcher = vi.fn(() => Promise.resolve(manifest('{"weeks":5}')));
+    vi.stubGlobal('fetch', fetcher);
+    setVisible('hidden');
+
+    expect(await store().manifest('/art.json')).toEqual({ kind: 'data', content: { weeks: 4 } });
+    expect(await store().manifest('/weg.json')).toEqual({ kind: 'unreachable' });
+    expect(fetcher).not.toHaveBeenCalled();
   });
 
   it('fragt im Hintergrund nicht das Netz', async () => {

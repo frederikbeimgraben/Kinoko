@@ -13,6 +13,7 @@ import {
   RAW_MANIFEST,
   SAVED_COMBINATION,
   answerManifest,
+  answerNoReply,
   mapWithDoubles,
   type MapAdapterDouble,
   type WorkerDouble,
@@ -439,10 +440,8 @@ describe('MapComponent', () => {
     expect(container.querySelector('app-skeleton')).not.toBeNull();
   });
 
-  it('zeigt statt des Rasters einen Fehler mit neuem Versuch, wenn die Manifeste fehlen', async () => {
-    vi.stubGlobal('fetch', () =>
-      Promise.resolve({ ok: false, status: 404, json: () => Promise.resolve(null) }),
-    );
+  it('zeigt statt des Rasters einen Fehler mit neuem Versuch, wenn der Server nicht antwortet', async () => {
+    answerNoReply();
     mapWithDoubles();
     const auth = new AuthStub();
     auth.user.set(null);
