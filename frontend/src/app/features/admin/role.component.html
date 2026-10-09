@@ -72,8 +72,10 @@
 
 <app-confirm-dialog
   [open]="confirming()"
-  [title]="deleteQuestion()"
-  [confirmLabel]="'common.delete' | t"
-  (confirmed)="remove()"
+  [title]="dialog().title"
+  [meta]="dialog().meta"
+  [danger]="dialog().danger"
+  [confirmLabel]="dialog().confirm"
+  (confirmed)="confirm()"
   (cancelled)="confirming.set(false)"
 />

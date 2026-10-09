@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  afterRenderEffect,
+  computed,
+  input,
+  output,
+  viewChild,
+  type ElementRef,
+} from '@angular/core';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
 let nextNumber = 0;
@@ -62,7 +71,26 @@ export class FormFieldComponent {
     () => this.enterKeyHint() ?? (this.multiline() ? 'enter' : 'done'),
   );
 
+  private readonly area = viewChild<ElementRef<HTMLTextAreaElement>>('area');
+
+  constructor() {
+    // A browser without `field-sizing` gets the height of the text from the script.
+    afterRenderEffect(() => {
+      const area = this.area()?.nativeElement;
+      this.value();
+      if (area === undefined || sizesItself()) return;
+      area.style.blockSize = 'auto';
+      area.style.blockSize = `${String(area.scrollHeight)}px`;
+    });
+  }
+
   protected onInput(event: Event): void {
     this.valueChange.emit((event.target as HTMLInputElement | HTMLTextAreaElement).value);
   }
+}
+
+/** True when the browser gives a text area the height of its text (`field-sizing: content`). */
+function sizesItself(): boolean {
+  const css = (globalThis as { CSS?: Partial<typeof CSS> }).CSS;
+  return css?.supports?.('field-sizing', 'content') === true;
 }

@@ -62,3 +62,12 @@ export function plurals(text: string, params: TextParams, locale: string): strin
   );
   return plurals(text.slice(0, match.index) + form + text.slice(end + 1), params, locale);
 }
+
+const GAP = '…';
+
+/** A text as a row title: each plural shows its `other` form, and each placeholder shows `…`.
+ * The Texte list shows this in place of the raw ICU template. */
+export function preview(text: string, locale: string): string {
+  const params = Object.fromEntries([...text.matchAll(PLURAL_START)].map((match) => [match[1], GAP]));
+  return plurals(text, params, locale).replace(/\{\w+\}/g, GAP);
+}

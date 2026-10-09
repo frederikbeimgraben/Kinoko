@@ -85,10 +85,13 @@
   color: var(--label);
 }
 
+// A long text makes the field taller, as on the board `EditPart`. It never scrolls inside.
 .field--multiline {
   align-items: flex-start;
-  block-size: var(--form-field-lines, 112px);
-  padding-block-start: var(--form-field-lines-top, 14px);
+  block-size: auto;
+  min-block-size: var(--form-field-lines, 112px);
+  padding-block: var(--form-field-lines-top, 14px);
+  field-sizing: content;
   line-height: var(--form-field-lines-height, 20px);
   resize: none;
 }

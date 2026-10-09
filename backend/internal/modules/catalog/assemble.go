@@ -39,6 +39,7 @@ type Species struct {
 	PeriodStartMonth *int                  `json:"periodStartMonth"`
 	PeriodEndMonth   *int                  `json:"periodEndMonth"`
 	PeriodPeakMonth  *int                  `json:"periodPeakMonth"`
+	PeriodPeakWeek   *int                  `json:"periodPeakWeek"`
 	SmellText        *string               `json:"smellText"`
 	TasteText        *string               `json:"tasteText"`
 	HymeniumType     *enums.HymeniumType   `json:"hymeniumType"`
@@ -311,6 +312,7 @@ func assemble(s speciesRow, c children, terms map[db.ID]termRow, targets map[db.
 		PeriodStartMonth: s.PeriodStartMonth,
 		PeriodEndMonth:   s.PeriodEndMonth,
 		PeriodPeakMonth:  s.PeriodPeakMonth,
+		PeriodPeakWeek:   s.PeriodPeakWeek,
 		SmellText:        s.SmellText,
 		TasteText:        s.TasteText,
 		HymeniumType:     s.HymeniumType,

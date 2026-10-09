@@ -18,6 +18,7 @@ export function toWrite(species: SpeciesEntry): SpeciesWrite {
     periodStartMonth: species.periodStartMonth ?? null,
     periodEndMonth: species.periodEndMonth ?? null,
     periodPeakMonth: species.periodPeakMonth ?? null,
+    periodPeakWeek: species.periodPeakWeek ?? null,
     smellText: species.smellText ?? null,
     tasteText: species.tasteText ?? null,
     hymeniumType: species.hymeniumType ?? null,

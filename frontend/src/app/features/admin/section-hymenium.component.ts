@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import type { GillAttachment, GillEdge, GillSpacing, HymeniumType } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -13,6 +14,7 @@ import { SectionComponent } from '../../ui/section/section.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { PART_TEXT } from '../species/labels';
 import { injectColourLabel } from './colour-label';
+import { draftField } from './editor-draft';
 import { SpeciesEditorStore } from './species-editor.store';
 import { colourRows, type ColourRow } from './section-part.rows';
 import {
@@ -23,6 +25,8 @@ import {
   choicesOf,
   type HymeniumField,
 } from './section-hymenium.rows';
+
+const DRAFT = 'fruchtschicht.';
 
 /** A field with chips: its title, its chips and the chosen value. */
 interface ChipField {
@@ -53,18 +57,32 @@ export class SectionHymeniumComponent {
   private readonly i18n = inject(I18nService);
   private readonly colourLabel = injectColourLabel();
   private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
 
   protected readonly slug = injectRouteParam('slug');
 
-  protected readonly kind = linkedSignal<HymeniumType | null>(
+  // The choices stay in the store while the colour page of the hymenium is open.
+  protected readonly kind = draftField<HymeniumType | null>(
+    this.state,
+    () => `${DRAFT}kind`,
     () => this.state.species()?.hymeniumType ?? null,
   );
-  private readonly attachment = linkedSignal<string | null>(
+  private readonly attachment = draftField<string | null>(
+    this.state,
+    () => `${DRAFT}attachment`,
     () => this.state.species()?.gillAttachment ?? null,
   );
-  private readonly spacing = linkedSignal<string | null>(() => this.state.species()?.gillSpacing ?? null);
-  private readonly edge = linkedSignal<string | null>(() => this.state.species()?.gillEdge ?? null);
+  private readonly spacing = draftField<string | null>(
+    this.state,
+    () => `${DRAFT}spacing`,
+    () => this.state.species()?.gillSpacing ?? null,
+  );
+  private readonly edge = draftField<string | null>(
+    this.state,
+    () => `${DRAFT}edge`,
+    () => this.state.species()?.gillEdge ?? null,
+  );
 
   protected readonly kinds = computed<SegmentOption[]>(() =>
     HYMENIUM_TYPES_ORDER.map((one) => ({ value: one, label: this.i18n.translate(choiceText('kind', one)) })),
@@ -127,7 +145,9 @@ export class SectionHymeniumComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.state.dropDrafts(DRAFT);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 }

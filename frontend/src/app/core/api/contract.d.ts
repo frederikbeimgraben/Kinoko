@@ -1394,6 +1394,8 @@ export interface components {
             periodStartMonth?: number | null;
             periodEndMonth?: number | null;
             periodPeakMonth?: number | null;
+            /** @description The calendar week with the most finds. A write sets periodPeakMonth to its month. */
+            periodPeakWeek?: number | null;
             smellText?: string | null;
             tasteText?: string | null;
             hymeniumType?: components["schemas"]["HymeniumType"] | null;
@@ -1431,6 +1433,7 @@ export interface components {
             periodStartMonth?: number | null;
             periodEndMonth?: number | null;
             periodPeakMonth?: number | null;
+            periodPeakWeek?: number | null;
             smellText?: string | null;
             tasteText?: string | null;
             hymeniumType?: components["schemas"]["HymeniumType"] | null;

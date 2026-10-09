@@ -49,9 +49,9 @@
           @for (choice of choices(); track choice.id) {
             <app-check-row
               [title]="choice.name"
-              [subline]="choice.fromGroup ? ('admin.people.fromGroup' | t) : undefined"
+              [subline]="choice.note ? (choice.note | t) : undefined"
               [checked]="choice.checked"
-              [locked]="choice.fromGroup"
+              [locked]="choice.locked"
               (toggled)="toggle(choice.id, $event)"
             />
           }

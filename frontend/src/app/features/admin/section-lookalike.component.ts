@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -35,7 +35,7 @@ import { withLookalike, withoutLookalike } from './species-lists';
 })
 export class SectionLookalikeComponent {
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
   private readonly catalogue = inject(SpeciesStore);
 
@@ -95,7 +95,8 @@ export class SectionLookalikeComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 }

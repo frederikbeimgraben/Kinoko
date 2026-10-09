@@ -1,4 +1,8 @@
-<app-page-header [title]="'species.section.colourChange' | t" [back]="true" (backClick)="back()" />
+<app-page-header
+  [title]="(known() ? 'species.section.colourChange' : 'error.notFound') | t"
+  [back]="true"
+  (backClick)="back()"
+/>
 
 <div class="section">
   @if (!known()) {

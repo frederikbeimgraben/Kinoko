@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import type { BodyPart } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { decimal } from '../../core/i18n/numbers';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -14,6 +15,7 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
+import { draftField } from './editor-draft';
 import { SpeciesEditorStore } from './species-editor.store';
 import { UNIT_TEXT } from './species-editor.rows';
 import { injectColourLabel } from './colour-label';
@@ -52,6 +54,7 @@ export class SectionPartComponent {
   private readonly i18n = inject(I18nService);
   private readonly colourLabel = injectColourLabel();
   private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
 
   protected readonly slug = injectRouteParam('slug');
@@ -99,11 +102,20 @@ export class SectionPartComponent {
     () => this.state.species()?.partNotes?.find((one) => one.part === this.part()) ?? null,
   );
 
-  protected readonly description = linkedSignal(() => {
-    const part = this.part();
-    return part === null ? '' : partDescription(this.state.species(), part);
-  });
-  protected readonly comment = linkedSignal(() => this.note()?.comment ?? '');
+  private readonly draftKey = computed(() => `teil.${this.partParam()}.`);
+  protected readonly description = draftField(
+    this.state,
+    () => `${this.draftKey()}description`,
+    () => {
+      const part = this.part();
+      return part === null ? '' : partDescription(this.state.species(), part);
+    },
+  );
+  protected readonly comment = draftField(
+    this.state,
+    () => `${this.draftKey()}comment`,
+    () => this.note()?.comment ?? '',
+  );
 
   constructor() {
     this.state.load(this.slug);
@@ -162,7 +174,9 @@ export class SectionPartComponent {
     this.back();
   }
 
+  /** Closing the page drops what was not applied. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.state.dropDrafts(this.draftKey());
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 }

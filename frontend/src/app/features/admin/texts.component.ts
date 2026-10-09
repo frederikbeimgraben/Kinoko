@@ -2,9 +2,15 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 import type { TextEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { preview } from '../../core/i18n/plural';
 import { TextCatalogService } from '../../core/i18n/text-catalog.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '../../core/i18n/translations';
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  type Locale,
+  type TranslationKey,
+} from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
@@ -23,6 +29,12 @@ const ALL = 'alle';
 
 /** The filter value for the entries that differ from the default. */
 const CHANGED = 'geaendert';
+
+/** A row of the list: the entry and its text as a readable title. */
+interface TextRow {
+  entry: TextEntry;
+  title: string;
+}
 
 /** A key in the sheet, with the current values of its fields. */
 interface Draft {
@@ -58,8 +70,6 @@ export class TextsComponent {
   private readonly toasts = inject(ToastService);
 
   protected readonly locales = SUPPORTED_LOCALES;
-  /** The default language fills a row that has no text in the UI language. */
-  protected readonly leadLocale = DEFAULT_LOCALE;
   protected readonly locale = this.i18n.locale;
   protected readonly search = signal('');
   protected readonly scope = signal<string>(ALL);
@@ -73,13 +83,18 @@ export class TextsComponent {
     { value: CHANGED, label: this.i18n.translate('admin.texts.onlyChanged') },
   ]);
 
-  protected readonly rows = computed<readonly TextEntry[]>(() => {
+  protected readonly rows = computed<readonly TextRow[]>(() => {
     const query = this.search().trim().toLocaleLowerCase();
     const onlyChanged = this.scope() === CHANGED;
+    const locale = this.locale();
     return this.catalog
       .entries()
       .filter((entry) => !onlyChanged || entry.changed)
-      .filter((entry) => matches(entry, query));
+      .filter((entry) => matches(entry, query))
+      .map((entry) => {
+        const text = entry.values[locale] || entry.values[DEFAULT_LOCALE] || '';
+        return { entry, title: text === '' ? entry.key : preview(text, locale) };
+      });
   });
 
   /** Only a changed text has a default to go back to. */
@@ -121,7 +136,7 @@ export class TextsComponent {
         const value = draft.values[locale];
         if (value !== known.values[locale]) await this.catalog.change(draft.key, locale, value);
       }
-    });
+    }, 'admin.texts.saved');
   }
 
   protected async reset(): Promise<void> {
@@ -129,14 +144,14 @@ export class TextsComponent {
     if (!known) return;
     // Only a language with a stored row can go back to its default.
     const stored = this.locales.filter((locale) => locale in known.values);
-    await this.run(() => this.catalog.reset(known.key, stored));
+    await this.run(() => this.catalog.reset(known.key, stored), 'admin.texts.resetDone');
   }
 
-  private async run(step: () => Promise<void>): Promise<void> {
+  private async run(step: () => Promise<void>, done: TranslationKey): Promise<void> {
     this.busy.set(true);
     try {
       await step();
-      this.toasts.success(this.i18n.translate('texte.gespeichert'));
+      this.toasts.success(this.i18n.translate(done));
       this.draft.set(null);
     } catch {
       // The ApiClient shows the error. The sheet stays open, so the input stays.

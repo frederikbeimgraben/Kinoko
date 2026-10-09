@@ -29,6 +29,7 @@ type speciesRow struct {
 	PeriodStartMonth *int
 	PeriodEndMonth   *int
 	PeriodPeakMonth  *int
+	PeriodPeakWeek   *int
 	SmellText        *string
 	TasteText        *string
 	HymeniumType     *enums.HymeniumType
@@ -44,7 +45,8 @@ type speciesRow struct {
 const speciesCols = `id, slug, name, latin_name, taxon_id, group_key, edibility, marketable,
 	forecast_enabled, frequency, red_list, description, edibility_note, protection, protection_note,
 	period_start_month, period_end_month, period_peak_month, smell_text, taste_text, hymenium_type,
-	gill_attachment, gill_spacing, gill_edge, cap_shape_young, cap_shape_old, updated_at, updated_by_id`
+	gill_attachment, gill_spacing, gill_edge, cap_shape_young, cap_shape_old, updated_at, updated_by_id,
+	period_peak_week`
 
 func scanSpecies(s db.Scanner) (speciesRow, error) {
 	var r speciesRow
@@ -52,7 +54,7 @@ func scanSpecies(s db.Scanner) (speciesRow, error) {
 		&r.Marketable, &r.ForecastEnabled, &r.Frequency, &r.RedList, &r.Description, &r.EdibilityNote,
 		&r.Protection, &r.ProtectionNote, &r.PeriodStartMonth, &r.PeriodEndMonth, &r.PeriodPeakMonth,
 		&r.SmellText, &r.TasteText, &r.HymeniumType, &r.GillAttachment, &r.GillSpacing, &r.GillEdge,
-		&r.CapShapeYoung, &r.CapShapeOld, &r.UpdatedAt, &r.UpdatedByID)
+		&r.CapShapeYoung, &r.CapShapeOld, &r.UpdatedAt, &r.UpdatedByID, &r.PeriodPeakWeek)
 	return r, err
 }
 

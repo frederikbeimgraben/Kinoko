@@ -27,6 +27,23 @@ describe('FormFieldComponent', () => {
     expect(container.querySelector('textarea')).not.toBeNull();
   });
 
+  it('gibt einem mehrzeiligen Feld ohne field-sizing die Höhe seines Textes', async () => {
+    const area = vi.spyOn(HTMLTextAreaElement.prototype, 'scrollHeight', 'get').mockReturnValue(156);
+    const { fixture } = await render(FormFieldComponent, {
+      inputs: { label: 'Notiz', multiline: true, value: 'Erste Zeile' },
+    });
+    const field = screen.getByLabelText<HTMLTextAreaElement>('Notiz');
+    expect(field.style.blockSize).toBe('156px');
+
+    area.mockReturnValue(200);
+    fixture.componentRef.setInput('value', 'Erste Zeile\nZweite\nDritte\nVierte\nFünfte\nSechste\nSiebte');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(field.style.blockSize).toBe('200px');
+    area.mockRestore();
+  });
+
   it('öffnet als reines Anzeigefeld eine Auswahl', async () => {
     const { container, fixture } = await render(FormFieldComponent, {
       inputs: { label: 'Art', value: 'Steinpilz', readOnly: true },

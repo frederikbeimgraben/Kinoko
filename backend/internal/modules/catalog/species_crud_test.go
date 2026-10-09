@@ -356,3 +356,22 @@ func TestProfileHasEveryFieldInContractOrder(t *testing.T) {
 		t.Fatal(body)
 	}
 }
+
+func TestReplaceSpeciesKeepsPeakWeekAndItsMonth(t *testing.T) {
+	env := newEnv(t)
+	porcini := makeSpecies(t, env, "boletus-edulis", "Steinpilz", "Boletus edulis", nil, nil)
+	body := env.Put("/species/"+porcini.Slug, writePayload(map[string]any{
+		"periodPeakWeek": 38, "periodPeakMonth": 3,
+	}), &editor).Expect(t, http.StatusOK).Map(t)
+	if body["periodPeakWeek"] != 38.0 || body["periodPeakMonth"] != 9.0 {
+		t.Fatal(body["periodPeakWeek"], body["periodPeakMonth"])
+	}
+	cleared := env.Put("/species/"+porcini.Slug, writePayload(map[string]any{
+		"periodPeakWeek": nil, "periodPeakMonth": 10,
+	}), &editor).Expect(t, http.StatusOK).Map(t)
+	if cleared["periodPeakWeek"] != nil || cleared["periodPeakMonth"] != 10.0 {
+		t.Fatal(cleared["periodPeakWeek"], cleared["periodPeakMonth"])
+	}
+	env.Put("/species/"+porcini.Slug, writePayload(map[string]any{"periodPeakWeek": 54}), &editor).
+		Expect(t, http.StatusUnprocessableEntity)
+}

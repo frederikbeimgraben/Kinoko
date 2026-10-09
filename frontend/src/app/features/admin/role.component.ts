@@ -102,6 +102,8 @@ export class RoleComponent {
     (role) => new Set(role?.permissions),
   );
   protected readonly confirming = signal(false);
+  /** The service refuses to delete a role that people have. The dialog then says how to free it. */
+  protected readonly inUse = computed(() => this.role()?.peopleCount ?? 0);
 
   /** The head shows the name of the role. A new role shows "New role". */
   protected readonly title = computed(() => {
@@ -135,10 +137,25 @@ export class RoleComponent {
     })).filter((group) => group.rights.length > 0);
   });
 
-  protected readonly deleteQuestion = computed(() => {
+  /** A role without people asks to delete it. A role in use says how many people have it and what to do. */
+  protected readonly dialog = computed(() => {
+    const count = this.inUse();
+    if (count > 0) {
+      return {
+        title: this.i18n.translate('admin.role.inUseTitle'),
+        meta: this.i18n.translate('admin.role.inUse', { count }),
+        danger: false,
+        confirm: this.i18n.translate('admin.role.toPeople'),
+      };
+    }
     const current = this.role();
     const name = current ? roleName(this.i18n, current.name) : '';
-    return this.i18n.translate('admin.role.deleteQuestion', { name });
+    return {
+      title: this.i18n.translate('admin.role.deleteQuestion', { name }),
+      meta: undefined,
+      danger: true,
+      confirm: this.i18n.translate('common.delete'),
+    };
   });
 
   constructor() {
@@ -181,7 +198,16 @@ export class RoleComponent {
     );
   }
 
-  protected remove(): void {
+  protected confirm(): void {
+    if (this.inUse() === 0) {
+      this.remove();
+      return;
+    }
+    this.confirming.set(false);
+    void this.router.navigateByUrl('/verwaltung/personen');
+  }
+
+  private remove(): void {
     this.confirming.set(false);
     this.store.deleteRole({
       id: this.id(),

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import type {
   BodyPart,
@@ -11,6 +11,7 @@ import type {
   TriggerGroup,
 } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -61,7 +62,7 @@ type End = 'from' | 'to';
 })
 export class SectionColourChangeComponent {
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
   private readonly terms = inject(TermsStore);
   private readonly catalogue = inject(CatalogueStore);
@@ -208,8 +209,9 @@ export class SectionColourChangeComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 
   private termById(id: string, known: readonly TermRef[]): TermRef {

@@ -13,9 +13,41 @@ app-page-header {
   @include section.fields;
 }
 
-// The band sits on a card without a line, as the board shows the curve.
-.section__band {
-  padding: 16px 14px;
+// The curve sits on a card without a line, as the board EditSeason shows it.
+.section__curve {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 18px 12px 11px;
   background: var(--surface);
   border-radius: var(--r-item);
+
+  svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 64px;
+    overflow: visible;
+  }
+}
+
+.section__area {
+  fill: var(--primary);
+  opacity: 0.2;
+}
+
+.section__line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.section__months {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  line-height: 12px;
+  color: var(--text-var);
 }
