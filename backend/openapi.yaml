@@ -2937,7 +2937,7 @@ components:
 
     MarkerColour:
       type: string
-      enum: [green, brown, blue, red, gold, grey]
+      enum: [green, yellow, orange, red, violet, grey]
 
     HexColour:
       type: string

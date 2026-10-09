@@ -7,7 +7,7 @@ describe('Farben', () => {
   it('bildet jede Farbe des Vertrags auf ihren Wert ab und zurück', () => {
     expect(colourHex('green')).toBe(OBJECT_COLOURS[0]);
     expect(colourHex('grey')).toBe(OBJECT_COLOURS[5]);
-    expect(colourFromHex(OBJECT_COLOURS[2])).toBe('blue');
+    expect(colourFromHex(OBJECT_COLOURS[2])).toBe('orange');
   });
 
   it('fällt auf Grün zurück, wenn eine Farbe unbekannt ist', () => {

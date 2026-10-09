@@ -128,8 +128,8 @@ describe('MapObjectsDirective', () => {
   it('legt Zonen, Marker und Funde in ihrer Farbe auf die Karte', async () => {
     const setup = await build();
 
-    expect(setup.map.layers.get('zonen')?.features[0].properties?.['farbe']).toBe('#004225');
-    expect(setup.map.layers.get('marker')?.features[0].properties?.['farbe']).toBe('#185468');
+    expect(setup.map.layers.get('zonen')?.features[0].properties?.['farbe']).toBe('#4f8a3c');
+    expect(setup.map.layers.get('marker')?.features[0].properties?.['farbe']).toBe('#7d3a78');
     expect(setup.map.layers.get('funde')?.features[0].geometry).toEqual({
       type: 'Point',
       coordinates: [FIND.lon, FIND.lat],

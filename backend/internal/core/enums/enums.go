@@ -333,16 +333,16 @@ type MarkerColour string
 
 // The values of MarkerColour.
 const (
-	MarkerColourGreen MarkerColour = "green"
-	MarkerColourBrown MarkerColour = "brown"
-	MarkerColourBlue  MarkerColour = "blue"
-	MarkerColourRed   MarkerColour = "red"
-	MarkerColourGold  MarkerColour = "gold"
-	MarkerColourGrey  MarkerColour = "grey"
+	MarkerColourGreen  MarkerColour = "green"
+	MarkerColourYellow MarkerColour = "yellow"
+	MarkerColourOrange MarkerColour = "orange"
+	MarkerColourRed    MarkerColour = "red"
+	MarkerColourViolet MarkerColour = "violet"
+	MarkerColourGrey   MarkerColour = "grey"
 )
 
 // MarkerColourValues lists each value of MarkerColour in declaration order.
-var MarkerColourValues = []MarkerColour{"green", "brown", "blue", "red", "gold", "grey"}
+var MarkerColourValues = []MarkerColour{"green", "yellow", "orange", "red", "violet", "grey"}
 
 // Valid tells if the value is in the set.
 func (v MarkerColour) Valid() bool { return slices.Contains(MarkerColourValues, v) }
