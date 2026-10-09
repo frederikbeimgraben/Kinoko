@@ -15,6 +15,7 @@ import (
 type GlossaryEntry struct {
 	ID            db.ID   `json:"id"`
 	Term          string  `json:"term"`
+	TermEn        string  `json:"termEn"`
 	Definition    string  `json:"definition"`
 	DefinitionEn  string  `json:"definitionEn"`
 	UpdatedByName *string `json:"updatedByName"`
@@ -30,20 +31,21 @@ type glossaryList struct {
 	Items []GlossaryEntry `json:"items"`
 }
 
-// glossaryWrite is the body of a write. Without definitionEn, the English text stays empty on create
-// and stays as it is on update.
+// glossaryWrite is the body of a write. Without termEn or definitionEn, the English text stays empty
+// on create and stays as it is on update.
 type glossaryWrite struct {
 	Term         string  `json:"term"`
+	TermEn       *string `json:"termEn"`
 	Definition   string  `json:"definition"`
 	DefinitionEn *string `json:"definitionEn"`
 }
 
-const glossarySelect = `SELECT g.id, g.term, g.definition, g.definition_en, u.name, g.updated_at, g.updated_by_id
+const glossarySelect = `SELECT g.id, g.term, g.term_en, g.definition, g.definition_en, u.name, g.updated_at, g.updated_by_id
 	FROM glossary_entry g LEFT JOIN user u ON u.id = g.updated_by_id`
 
 func scanGlossary(s db.Scanner) (glossaryRow, error) {
 	var r glossaryRow
-	err := s.Scan(&r.ID, &r.Term, &r.Definition, &r.DefinitionEn, &r.UpdatedByName, &r.UpdatedAt, &r.UpdatedBy)
+	err := s.Scan(&r.ID, &r.Term, &r.TermEn, &r.Definition, &r.DefinitionEn, &r.UpdatedByName, &r.UpdatedAt, &r.UpdatedBy)
 	return r, err
 }
 
@@ -91,8 +93,8 @@ func (m *Module) createGlossaryEntry(r *http.Request) (web.Response, error) {
 		}
 		id := db.NewID()
 		if _, err := tx.ExecContext(ctx, `INSERT INTO glossary_entry
-			(id, term, definition, definition_en, updated_at, updated_by_id) VALUES (?, ?, ?, ?, ?, ?)`,
-			id, body.Term, body.Definition, fn.Deref(body.DefinitionEn, ""), now, user.ID); err != nil {
+			(id, term, term_en, definition, definition_en, updated_at, updated_by_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			id, body.Term, fn.Deref(body.TermEn, ""), body.Definition, fn.Deref(body.DefinitionEn, ""), now, user.ID); err != nil {
 			return glossaryRow{}, err
 		}
 		return glossaryByID(ctx, tx, id)
@@ -106,7 +108,7 @@ func (m *Module) createGlossaryEntry(r *http.Request) (web.Response, error) {
 // unchanged tells if a write keeps each value of the row. The Python service
 // then writes nothing, so updated_at stays as it is.
 func unchanged(row glossaryRow, body glossaryWrite, user db.ID) bool {
-	return row.Term == body.Term && row.Definition == body.Definition &&
+	return row.Term == body.Term && row.TermEn == fn.Deref(body.TermEn, row.TermEn) && row.Definition == body.Definition &&
 		row.DefinitionEn == fn.Deref(body.DefinitionEn, row.DefinitionEn) &&
 		row.UpdatedBy != nil && *row.UpdatedBy == user
 }
@@ -141,8 +143,8 @@ func (m *Module) updateGlossaryEntry(r *http.Request) (web.Response, error) {
 			return found, nil
 		}
 		if _, err := tx.ExecContext(ctx, `UPDATE glossary_entry
-			SET term = ?, definition = ?, definition_en = ?, updated_by_id = ?, updated_at = ? WHERE id = ?`,
-			body.Term, body.Definition, fn.Deref(body.DefinitionEn, found.DefinitionEn), user.ID, now, id); err != nil {
+			SET term = ?, term_en = ?, definition = ?, definition_en = ?, updated_by_id = ?, updated_at = ? WHERE id = ?`,
+			body.Term, fn.Deref(body.TermEn, found.TermEn), body.Definition, fn.Deref(body.DefinitionEn, found.DefinitionEn), user.ID, now, id); err != nil {
 			return glossaryRow{}, err
 		}
 		return glossaryByID(ctx, tx, id)

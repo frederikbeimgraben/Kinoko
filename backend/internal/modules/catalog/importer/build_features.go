@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"cmp"
 	"fmt"
 	"net/url"
 	"slices"
@@ -151,7 +152,7 @@ func sourceRows(ctx Context, _ SpeciesRow) (Children, error) {
 	}
 	rows := []SourceRow{{
 		SpeciesID: ctx.SpeciesID, Position: 0, Scope: enums.SourceScopeProfile,
-		Title: hostnameTitle(quelle.URL), URL: quelle.URL, CheckedOn: checked,
+		Title: cmp.Or(quelle.Titel, hostnameTitle(quelle.URL)), URL: quelle.URL, CheckedOn: checked,
 	}}
 	// A link to the address of the profile repeats the profile source.
 	for _, link := range ctx.Profile.Links {

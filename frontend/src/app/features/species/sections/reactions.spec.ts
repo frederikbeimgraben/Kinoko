@@ -10,6 +10,7 @@ import {
   colourChangeRow,
   distinctChanges,
   hostOf,
+  placeOf,
   reactionRow,
   reactionSources,
   reactionSwatch,
@@ -24,6 +25,7 @@ const I18N = catalogueOf({
   'species.field.cap': 'Hut',
   'species.field.flesh': 'Fleisch',
   'species.field.tubes': 'Röhren',
+  'species.place.milk': 'Milch',
   'species.colourChange.change': '{part} {from} nach {to}',
   'species.colourChange.changeTo': '{part} nach {to}',
 });
@@ -34,6 +36,7 @@ const NAMES = catalogueNames(I18N, () => PALETTE);
 const ENGLISH_TEXTS: Record<string, string> = {
   'species.reaction.positive': 'positive',
   'species.field.cap': 'Cap',
+  'species.field.flesh': 'Flesh',
   'species.field.tubes': 'Tubes',
   'species.colourChange.change': '{part} {from} to {to}',
   'term.trigger.koh': 'Potassium hydroxide (KOH)',
@@ -110,6 +113,17 @@ describe('reactionRow', () => {
     const row = reactionRow(reaction({ part: null, location: 'Fleisch, Stielrinde' }), 0, I18N, NAMES);
 
     expect(row.sub).toBe('Fleisch, Stielrinde · Huthaut weinrot');
+  });
+
+  it('names the places of a location with their texts', () => {
+    expect(placeOf(reaction({ part: null, location: 'flesh,cap' }), I18N, NAMES)).toBe('Fleisch, Hut');
+    expect(placeOf(reaction({ part: null, location: 'milk' }), I18N, NAMES)).toBe('Milch');
+    expect(placeOf(reaction({ part: null, location: 'flesh,cap' }), EN, EN_NAMES)).toBe('Flesh, cap');
+  });
+
+  it('shows a German free location in German only', () => {
+    expect(placeOf(reaction({ part: null, location: 'irgendwo' }), I18N, NAMES)).toBe('irgendwo');
+    expect(placeOf(reaction({ part: null, location: 'irgendwo' }), EN, EN_NAMES)).toBe('');
   });
 
   it('translates the reagent and gives the result and the standard colour in English', () => {

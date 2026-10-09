@@ -15,6 +15,7 @@ hutrand = { von = ["fransig"] }
 stielmerkmale = ["ring", "knolle"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Gartenschirmling.htm"
 geprueftAm = "2026-09-12"
 

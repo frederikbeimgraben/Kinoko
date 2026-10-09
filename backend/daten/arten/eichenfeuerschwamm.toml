@@ -12,6 +12,7 @@ fruchtschicht = { art = "poren" }
 hutform = { von = "halbkugelig", nach = "muschelfoermig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Eichenfeuer.htm"
 geprueftAm = "2026-09-12"
 

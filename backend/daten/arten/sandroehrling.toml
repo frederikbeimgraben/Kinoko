@@ -15,6 +15,7 @@ fruchtschicht = { art = "roehren" }
 hutrand = { von = ["ueberstehend", "eingerollt", "scharf"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Sandroehrling.htm"
 geprueftAm = "2026-09-12"
 

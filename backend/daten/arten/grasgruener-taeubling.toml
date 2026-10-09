@@ -14,6 +14,7 @@ fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["gerieft", "hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GrasgruenerTaeubling.htm"
 geprueftAm = "2026-09-12"
 
@@ -58,11 +59,6 @@ sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "gelb", hex = "#e8c33a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["unauffaellig"]

@@ -130,34 +130,12 @@ func PlanReactions(file Reactions, match func(latin string) (db.ID, bool), colou
 		bySpecies[species] = append(bySpecies[species], row)
 	}
 	for _, species := range plan.Species {
-		for position, row := range foldSummaries(bySpecies[species]) {
+		for position, row := range mergeReadings(bySpecies[species]) {
 			row.Position = position
 			plan.Rows = append(plan.Rows, row)
 		}
 	}
 	return plan
-}
-
-func samePlace(a, b ReactionRow) bool {
-	return a.Reagent == b.Reagent && fn.Deref(a.Location, "") == fn.Deref(b.Location, "")
-}
-
-// foldSummaries drops a reading that a variable row of the same reagent and place already sums up.
-// The variable row takes the sources of the dropped rows.
-func foldSummaries(rows []ReactionRow) []ReactionRow {
-	summary := func(row ReactionRow) bool { return row.Result == "variable" }
-	folded := func(row ReactionRow) bool {
-		return !summary(row) && fn.Any(rows, func(other ReactionRow) bool { return summary(other) && samePlace(other, row) })
-	}
-	return fn.Map(fn.Filter(rows, func(row ReactionRow) bool { return !folded(row) }), func(row ReactionRow) ReactionRow {
-		if !summary(row) {
-			return row
-		}
-		parts := fn.Filter(rows, func(other ReactionRow) bool { return folded(other) && samePlace(other, row) })
-		more := fn.FlatMap(parts, func(other ReactionRow) []string { return other.SourceKeys })
-		row.SourceKeys = fn.Unique(append(slices.Clone(row.SourceKeys), more...))
-		return row
-	})
 }
 
 func reactionRow(entry ReactionEntry, colours map[string]string) ReactionRow {
@@ -168,7 +146,6 @@ func reactionRow(entry ReactionEntry, colours map[string]string) ReactionRow {
 	row := ReactionRow{
 		Reagent:         entry.Reagent,
 		Reading:         entry.Reading,
-		Location:        entry.Part,
 		Result:          result,
 		Contested:       entry.Contested,
 		PartlyConfirmed: entry.PartlyConfirmed,
@@ -177,6 +154,8 @@ func reactionRow(entry ReactionEntry, colours map[string]string) ReactionRow {
 	if entry.PartSlug != nil && enums.BodyPart(*entry.PartSlug).Valid() {
 		part := enums.BodyPart(*entry.PartSlug)
 		row.Part = &part
+	} else {
+		row.Part, row.Location = readPlace(entry.Part)
 	}
 	if result == "positive" || result == "variable" {
 		if name, hex, ok := FindColour(entry.Reading, colours); ok {

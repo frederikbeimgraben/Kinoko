@@ -14,6 +14,7 @@ hutrand = { von = ["wellig", "ueberstehend"] }
 stielmerkmale = ["genetzt", "wurzelnd"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Schoenfussroehrling.htm"
 geprueftAm = "2026-09-12"
 

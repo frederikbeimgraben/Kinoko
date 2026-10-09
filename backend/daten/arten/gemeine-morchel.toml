@@ -14,6 +14,7 @@ synonyme = ["Morchella esculenta var. vulgaris"]
 stielmerkmale = ["hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GemeineMorchel.htm"
 geprueftAm = "2026-09-12"
 

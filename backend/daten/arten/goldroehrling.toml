@@ -15,6 +15,7 @@ hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["ring", "faserig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Goldroehrling.htm"
 geprueftAm = "2026-09-12"
 
@@ -44,13 +45,8 @@ bisMonat = 11
 hut = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
 sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
 stiel = [{ name = "gelb", hex = "#e8c33a" }]
-fleisch = [{ name = "zitronengelb", hex = "#f2e14c" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "zitronengelb", hex = "#f2e14c" }, { name = "gelb", hex = "#e8c33a" }, { name = "lila", hex = "#8a5fa8" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["pilzig", "angenehm"]

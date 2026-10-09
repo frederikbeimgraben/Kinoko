@@ -17,6 +17,7 @@ hutrand = { von = ["gerissen", "eingebogen"] }
 stielmerkmale = ["faserig", "gerieft"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Schildroetling.htm"
 geprueftAm = "2026-09-12"
 
@@ -43,7 +44,7 @@ bisMonat = 7
 hut = [{ name = "olivbraun", hex = "#6e6435" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
 sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "rosa", hex = "#e8a0b0" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }]
-fleisch = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }, { name = "grau", hex = "#8a8a8a" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }, { name = "grau", hex = "#8a8a8a" }]
 sporenpulver = [{ name = "rosa", hex = "#e8a0b0" }]
 
 [geruch]

@@ -13,6 +13,7 @@ hutrand = { von = ["wellig", "gerieft"] }
 stielmerkmale = ["beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GraublaettrigerTrichterling.htm"
 geprueftAm = "2026-09-12"
 

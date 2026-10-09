@@ -236,7 +236,8 @@ func measurementGroups(rows []measurementRow) []MeasurementGroup {
 
 func colourGroups(id db.ID, c children) []ColourGroup {
 	own := c.colours[id]
-	return fn.Map(c.colourRanges[id], func(r colourRangeRow) ColourGroup {
+	ranges := fn.SortedBy(c.colourRanges[id], func(r colourRangeRow) int { return BodyRank(r.Part) })
+	return fn.Map(ranges, func(r colourRangeRow) ColourGroup {
 		return ColourGroup{Part: r.Part, Mode: r.Mode, Colours: fn.Map(
 			fn.Filter(own, func(x colourRow) bool { return x.Part == r.Part }), colourValue)}
 	})

@@ -13,6 +13,7 @@ hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["genattert", "voll", "faserig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/SpitzbuckligeRauhkopf.htm"
 geprueftAm = "2026-09-12"
 

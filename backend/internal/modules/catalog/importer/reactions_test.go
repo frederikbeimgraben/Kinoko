@@ -78,10 +78,10 @@ func TestReactionsMatchTheLatinNameAndTheSynonymWithoutCase(t *testing.T) {
 	}
 	first, second := got[0], got[1]
 	if first.latin != "Boletus edulis" || first.reagent != "koh" || first.position != 0 || *first.part != "flesh" ||
-		*first.location != "Fleisch (Schnitt)" || *first.colourName != "blau" || *first.colourHex != "#2f5fa8" {
+		first.location != nil || *first.colourName != "blau" || *first.colourHex != "#2f5fa8" {
 		t.Fatalf("first %+v", first)
 	}
-	if second.latin != "Boletus edulis" || second.position != 1 || second.part != nil || *second.colourName != "braun" {
+	if second.latin != "Boletus edulis" || second.position != 1 || *second.part != "flesh" || *second.colourName != "braun" {
 		t.Fatalf("second %+v", second)
 	}
 	if n := count(t, handle, "SELECT count(*) FROM species_reaction_source WHERE position = 1"); n != 2 {
@@ -131,7 +131,7 @@ func TestNegativeReactionHasNoColour(t *testing.T) {
 		t.Fatalf("%+v", got)
 	}
 	for _, r := range got {
-		if r.colourName != nil || r.colourHex != nil || r.part != nil {
+		if r.colourName != nil || r.colourHex != nil {
 			t.Fatalf("%+v", r)
 		}
 	}

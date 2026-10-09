@@ -17,6 +17,7 @@ hutmerkmale = ["gezont", "vertieft"]
 stielmerkmale = ["hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Fichtenreizker.htm"
 geprueftAm = "2026-09-12"
 

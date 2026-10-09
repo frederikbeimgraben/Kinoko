@@ -7,6 +7,7 @@ import { noViolations } from '../../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../../testing/i18n';
 import { ViewportService } from '../../../core/layout/viewport.service';
+import { HistoryService } from '../../../core/navigation/history.service';
 import { ANY_ROUTE } from '../../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
 import { ComparisonComponent } from './comparison.component';
@@ -149,6 +150,15 @@ describe('ComparisonComponent', () => {
       queryParams: { arten: 'steinpilz,gallenroehrling' },
       replaceUrl: true,
     });
+  });
+
+  it('goes back to the first species of the table without app history', async () => {
+    await build(['steinpilz', 'gallenroehrling']);
+    const back = vi.spyOn(TestBed.inject(HistoryService), 'back').mockImplementation(() => undefined);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(back).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
   it('shows no group without a choice', async () => {

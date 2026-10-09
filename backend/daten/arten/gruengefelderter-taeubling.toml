@@ -13,6 +13,7 @@ synonyme = ["Agaricus virescens", "Russula virescens var. albidocitrina", "Russu
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GruengefelderterTaeubling.htm"
 geprueftAm = "2026-09-12"
 
@@ -44,7 +45,7 @@ vonMonat = 6
 bisMonat = 11
 
 [farben]
-hut = [{ name = "violett", hex = "#6b4a8a" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }, { name = "blau", hex = "#3a5f9e" }]
+hut = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }, { name = "blau", hex = "#3a5f9e" }]
 sporenlager = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]

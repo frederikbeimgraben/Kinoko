@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { TAXON_RANKS, type SpeciesSummary, type TaxonPage, type TaxonRank } from '../../core/api/models';
 import { photoPath } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { HistoryService } from '../../core/navigation/history.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -153,8 +154,8 @@ export class TaxonomyComponent {
     const photo = one.leadPhotoId ?? local?.leadPhotoId ?? null;
     return {
       slug: one.slug,
-      name: one.name,
-      latin: one.scientificName,
+      name: local?.name ?? one.name,
+      latin: (local?.name ?? one.name) === one.scientificName ? '' : one.scientificName,
       image: photo === null ? '' : photoPath(photo, 'list'),
       colour: local === null ? '#7a5230' : leadColour(local),
     };

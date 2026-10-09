@@ -16,6 +16,7 @@ hutform = { von = "kugelig" }
 stielmerkmale = ["wurzelnd"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/WeisserIgelstaeubling.htm"
 geprueftAm = "2026-09-12"
 

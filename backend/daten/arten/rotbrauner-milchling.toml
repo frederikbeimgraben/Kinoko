@@ -16,6 +16,7 @@ hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RotbraunerMilchling2004.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,7 +35,7 @@ bisMonat = 11
 hut = [{ name = "kastanienbraun", hex = "#6b3a20" }, { name = "rotbraun", hex = "#8b4a2b" }]
 sporenlager = [{ name = "ocker", hex = "#c8963c" }]
 stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "rosa", hex = "#e8a0b0" }]
-fleisch = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "rot", hex = "#c0392b" }]
+fleisch = [{ name = "rotbraun", hex = "#8b4a2b" }]
 sporenpulver = [{ name = "rosa", hex = "#e8a0b0" }]
 
 [geruch]

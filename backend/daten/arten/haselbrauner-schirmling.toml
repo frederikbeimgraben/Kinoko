@@ -13,6 +13,7 @@ hutmerkmale = ["gezont"]
 stielmerkmale = ["hohl", "ring", "faserig", "genattert"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Haselbrauner.htm"
 geprueftAm = "2026-09-12"
 

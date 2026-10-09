@@ -15,6 +15,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["beflockt", "genattert", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GelbflockigerWulstling.htm"
 geprueftAm = "2026-09-12"
 

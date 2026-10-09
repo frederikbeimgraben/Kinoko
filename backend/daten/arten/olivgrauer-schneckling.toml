@@ -16,6 +16,7 @@ fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 stielmerkmale = ["genattert"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/OlivgrauerSchneckling.htm"
 geprueftAm = "2026-09-12"
 

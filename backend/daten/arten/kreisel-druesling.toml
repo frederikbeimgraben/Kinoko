@@ -14,6 +14,7 @@ hutform = { von = "gewoelbt", nach = "flach" }
 hutrand = { von = ["scharf", "gerieft"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Kreiseldruesling.htm"
 geprueftAm = "2026-09-12"
 

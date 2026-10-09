@@ -17,6 +17,7 @@ hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["hohl", "beflockt", "faserig", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/HohlfussroehrlingGelb.htm"
 geprueftAm = "2026-09-12"
 

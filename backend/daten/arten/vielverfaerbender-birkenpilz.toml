@@ -18,6 +18,7 @@ hutrand = { von = ["ueberstehend"] }
 stielmerkmale = ["beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/VerfaerbenderBirkenpilz.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,7 +35,7 @@ bisMonat = 11
 hut = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
 sporenlager = [{ name = "olivbraun", hex = "#6e6435" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "cremefarben", hex = "#f0e6c8" }, { name = "beige", hex = "#d9c9a3" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
 stiel = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "blaugrün", hex = "#2f7f7a" }, { name = "braun", hex = "#7a5230" }]
-fleisch = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }]
+fleisch = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
 
 [farben.verfaerbung]

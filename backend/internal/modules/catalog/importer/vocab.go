@@ -5,6 +5,9 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"unicode"
+
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 // UnknownVocabulary is a German profile value without an entry in a mapping table.
@@ -173,10 +176,31 @@ var Speed = map[string]string{"schnell": "immediate", "langsam": "longer"}
 // CutTriggerSlug is the trigger of the colour change in a profile.
 const CutTriggerSlug = "cut"
 
-// FindColour finds the last known colour word in a reaction text. Of two
-// overlapping words, the earlier one wins, then the longer one.
+// colourAside marks the start of a side note after the main colour of a reading.
+var colourAside = regexp.MustCompile(`\smit\s|\svs\.|\(|;`)
+
+// colourSequence marks a reading that goes from one colour to the next. Then the last colour is the result.
+var colourSequence = regexp.MustCompile(`\s(bis|dann|später|zuletzt)\s|→`)
+
+// FindColour finds the colour of a reaction text. It reads the text before a side note.
+// It gives the last colour of a sequence, else the first colour word.
 func FindColour(text string, vocabulary map[string]string) (name, hex string, ok bool) {
 	lowered := strings.ToLower(text)
+	main := lowered
+	if at := colourAside.FindStringIndex(lowered); at != nil {
+		main = lowered[:at[0]]
+	}
+	if name, ok := pickColour(main, vocabulary); ok {
+		return name, vocabulary[name], true
+	}
+	if name, ok := pickColour(lowered, vocabulary); ok {
+		return name, vocabulary[name], true
+	}
+	return "", "", false
+}
+
+// pickColour gives the colour of a text. Of two overlapping colour words, the earlier one wins, then the longer one.
+func pickColour(text string, vocabulary map[string]string) (string, bool) {
 	type span struct {
 		start, end int
 		name       string
@@ -187,7 +211,7 @@ func FindColour(text string, vocabulary map[string]string) (name, hex string, ok
 			continue
 		}
 		for from := 0; ; {
-			index := strings.Index(lowered[from:], word)
+			index := strings.Index(text[from:], word)
 			if index < 0 {
 				break
 			}
@@ -209,9 +233,16 @@ func FindColour(text string, vocabulary map[string]string) (name, hex string, ok
 			kept = append(kept, s)
 		}
 	}
-	if len(kept) == 0 {
-		return "", "", false
+	// In a German compound word the last colour is the hue, so each word gives its last colour.
+	heads := fn.Filter(kept, func(s span) bool {
+		next := slices.IndexFunc(kept, func(k span) bool { return k.start > s.start })
+		return next < 0 || strings.ContainsFunc(text[s.end:kept[next].start], func(r rune) bool { return !unicode.IsLetter(r) })
+	})
+	if len(heads) == 0 {
+		return "", false
 	}
-	last := slices.MaxFunc(kept, func(a, b span) int { return a.start - b.start })
-	return last.name, vocabulary[last.name], true
+	if colourSequence.MatchString(text) {
+		return heads[len(heads)-1].name, true
+	}
+	return heads[0].name, true
 }

@@ -15,6 +15,7 @@ hutrand = { von = ["hoeckerig"] }
 stielmerkmale = ["voll", "beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/ZitronengelberRaukopf.htm"
 geprueftAm = "2026-09-12"
 

@@ -19,6 +19,7 @@ hutmerkmale = ["gezont", "genabelt"]
 stielmerkmale = ["hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/WeinroterReizker.htm"
 geprueftAm = "2026-09-12"
 

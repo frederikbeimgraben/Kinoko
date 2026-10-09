@@ -13,6 +13,7 @@ hutrand = { von = ["gerieft"] }
 stielmerkmale = ["wurzelnd", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/SpitzTintling.htm"
 geprueftAm = "2026-09-12"
 

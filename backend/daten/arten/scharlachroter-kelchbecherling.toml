@@ -13,6 +13,7 @@ weitereNamen = ["Zinnoberroter Kelchbecherling", "Gemeiner Kelchbecherling", "Bl
 hutform = { von = "trichterfoermig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Prachtbecherling.htm"
 geprueftAm = "2026-09-12"
 

@@ -18,6 +18,7 @@ baeume = ["esche", "ulme", "obstbaum"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Speisemorchel.htm"
 geprueftAm = "2026-09-12"
 

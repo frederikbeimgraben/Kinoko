@@ -17,6 +17,7 @@ hutrand = { von = ["gerieft"] }
 stielmerkmale = ["genattert", "beflockt", "hohl", "scheide", "bruechig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GrossscheidigerStreifling.htm"
 geprueftAm = "2026-09-12"
 

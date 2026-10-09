@@ -12,6 +12,7 @@ synonyme = ["Grifola ossea", "Oligoporus obductus", "Grifola obducta", "Scutiger
 fruchtschicht = { art = "roehren" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Knochenporling.htm"
 geprueftAm = "2026-09-12"
 

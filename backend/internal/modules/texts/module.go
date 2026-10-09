@@ -29,7 +29,7 @@ func (m *Module) Routes(r *server.Router) {
 	r.Handle(http.MethodDelete, "/glossary/{id}", m.deleteGlossaryEntry)
 }
 
-// Start writes the text seed and gives the errors their titles.
+// Start writes the text and glossary seeds and gives the errors their titles.
 // The titles stay as they are until the next start.
 func (m *Module) Start(ctx context.Context) error {
 	report, err := Seed(ctx, m.deps.DB, m.deps.Data, m.now())
@@ -38,6 +38,13 @@ func (m *Module) Start(ctx context.Context) error {
 	}
 	if report.Touched() > 0 && m.deps.Log != nil {
 		m.deps.Log.Info("text seed", "added", report.Added, "updated", report.Updated, "removed", report.Removed)
+	}
+	glossary, err := SeedGlossary(ctx, m.deps.DB, m.deps.Data, m.now())
+	if err != nil {
+		return err
+	}
+	if glossary.Touched() > 0 && m.deps.Log != nil {
+		m.deps.Log.Info("glossary seed", "added", glossary.Added, "updated", glossary.Updated)
 	}
 	titles, err := LoadTitles(ctx, m.deps.DB)
 	if err != nil {

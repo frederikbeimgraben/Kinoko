@@ -14,6 +14,7 @@ fruchtschicht = { art = "poren" }
 hutrand = { von = ["wellig"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Haarstielporling.htm"
 geprueftAm = "2026-09-12"
 

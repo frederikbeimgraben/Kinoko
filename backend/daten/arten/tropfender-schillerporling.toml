@@ -14,6 +14,7 @@ fruchtschicht = { art = "poren" }
 hutform = { von = "gewoelbt" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/TropfenderSchillerporling.htm"
 geprueftAm = "2026-09-12"
 

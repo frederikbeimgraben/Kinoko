@@ -14,6 +14,7 @@ fruchtschicht = { art = "poren" }
 hutform = { von = "muschelfoermig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Schwefelporling.htm"
 geprueftAm = "2026-09-12"
 

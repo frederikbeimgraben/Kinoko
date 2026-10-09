@@ -1444,6 +1444,7 @@ export interface components {
             };
             reading: string;
             part: components["schemas"]["BodyPart"] | null;
+            /** @description The places of a reaction without one body part. Known places are slugs joined by "," (a body part, milk, branches, branch_tips or extract). Other text is the German place of the source. */
             location: string | null;
             /** @enum {string} */
             result: "positive" | "negative" | "variable" | "unknown";
@@ -1801,6 +1802,8 @@ export interface components {
             /** Format: uuid */
             id: string;
             term: string;
+            /** @description The English term. Empty if nobody has written it. */
+            termEn: string;
             definition: string;
             /** @description The English definition. Empty if nobody has written it. */
             definitionEn: string;
@@ -1810,6 +1813,8 @@ export interface components {
         };
         GlossaryEntryWrite: {
             term: string;
+            /** @description Without the field, a create stores an empty text and an update keeps the old one. */
+            termEn?: string;
             definition: string;
             /** @description Without the field, a create stores an empty text and an update keeps the old one. */
             definitionEn?: string;

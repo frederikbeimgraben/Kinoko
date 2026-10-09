@@ -48,6 +48,14 @@ func TestLinkToTheProfileAddressGivesOneSource(t *testing.T) {
 	}
 }
 
+func TestTheProfileSourceTakesItsTitleElseTheHost(t *testing.T) {
+	_, plain := build(t, testContext(testProfile(nil), nil))
+	_, titled := build(t, testContext(testProfile(func(p *Profile) { p.Quelle.Titel = "Beispiel" }), nil))
+	if plain.Sources[0].Title != hostnameTitle(plain.Sources[0].URL) || titled.Sources[0].Title != "Beispiel" {
+		t.Fatal(plain.Sources[0], titled.Sources[0])
+	}
+}
+
 func TestReagentChangeIgnoresNegationAndOtherSpecies(t *testing.T) {
 	for _, text := range []string{
 		"Fleisch und Huthaut verfärben sich nicht, anders als beim Kegelhütigen Knollenblätterpilz, der gelb wird.",

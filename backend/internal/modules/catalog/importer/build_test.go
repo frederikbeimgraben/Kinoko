@@ -126,11 +126,30 @@ func TestSlugifyHandlesUmlautsAndSpaces(t *testing.T) {
 	}
 }
 
-func TestFindColourPicksLastKnownWord(t *testing.T) {
-	vocabulary := map[string]string{"ocker": "#c8963c", "grau": "#8a8a8a", "grün": "#4f8a3a"}
-	name, hex, ok := FindColour("Fleisch ocker mit graugrüner Schattierung.", vocabulary)
-	if !ok || name != "grün" || hex != "#4f8a3a" {
-		t.Fatalf("%q %q %v", name, hex, ok)
+func TestFindColourStopsAtASideNote(t *testing.T) {
+	vocabulary := map[string]string{"ocker": "#c8963c", "grau": "#8a8a8a", "grün": "#4f8a3a", "orange": "#d1832f", "gelb": "#e8c33a"}
+	cases := map[string]string{
+		"Fleisch ocker mit graugrüner Schattierung.": "ocker",
+		"orange vs. negativ bis blassgelb":           "orange",
+		"positiv (orange, grün bis gelb)":            "gelb",
+	}
+	for text, want := range cases {
+		if name, hex, ok := FindColour(text, vocabulary); !ok || name != want || hex != vocabulary[want] {
+			t.Errorf("%q: %q %q %v", text, name, hex, ok)
+		}
+	}
+}
+
+func TestFindColourGivesTheEndOfASequenceElseTheFirstColour(t *testing.T) {
+	vocabulary := map[string]string{"gelb": "#1", "braun": "#2", "grün": "#3"}
+	if name, _, _ := FindColour("gelb bis braun", vocabulary); name != "braun" {
+		t.Errorf("sequence: %q", name)
+	}
+	if name, _, _ := FindColour("gelb, grün", vocabulary); name != "gelb" {
+		t.Errorf("list: %q", name)
+	}
+	if name, _, _ := FindColour("braungelb oder grün", vocabulary); name != "gelb" {
+		t.Errorf("compound: %q", name)
 	}
 }
 

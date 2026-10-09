@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlossaryStore, glossaryText } from '../../core/access/glossary.store';
+import { GlossaryStore, glossaryIn } from '../../core/access/glossary.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -41,14 +41,13 @@ export class AdminGlossaryComponent {
 
   protected readonly wide = inject(ViewportService).wide;
   protected readonly search = this.state.search;
-  protected readonly entries = computed(() =>
-    this.state.found().map((entry) => ({ ...entry, definition: glossaryText(entry, this.i18n.locale()) })),
-  );
+  protected readonly entries = computed(() => glossaryIn(this.state.found(), this.i18n.locale()));
   protected readonly loaded = computed(() => this.state.items() !== null);
   protected readonly saving = this.state.writing;
 
   protected readonly editing = signal<string | null>(null);
   protected readonly term = signal('');
+  protected readonly termEn = signal('');
   protected readonly definition = signal('');
   protected readonly definitionEn = signal('');
 
@@ -69,6 +68,7 @@ export class AdminGlossaryComponent {
 
   protected add(): void {
     this.term.set('');
+    this.termEn.set('');
     this.definition.set('');
     this.definitionEn.set('');
     this.editing.set(NEW);
@@ -78,6 +78,7 @@ export class AdminGlossaryComponent {
     const entry = this.state.one(id);
     if (entry === null) return;
     this.term.set(entry.term);
+    this.termEn.set(entry.termEn);
     this.definition.set(entry.definition);
     this.definitionEn.set(entry.definitionEn);
     this.editing.set(id);
@@ -87,6 +88,7 @@ export class AdminGlossaryComponent {
     const id = this.editing();
     const write = {
       term: this.term().trim(),
+      termEn: this.termEn().trim(),
       definition: this.definition().trim(),
       definitionEn: this.definitionEn().trim(),
     };

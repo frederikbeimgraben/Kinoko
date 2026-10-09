@@ -12,24 +12,20 @@
   border-radius: var(--r-sq);
 }
 
-.lookalike__ways {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.lookalike__way {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 24px;
-  block-size: 24px;
-  color: var(--text-var);
+// The button covers the whole row. The compare button lies on top of it.
+.lookalike__open {
+  position: absolute;
+  inset: 0;
+  padding: 0;
   background: none;
   border: 0;
-  border-radius: 50%;
+  border-radius: inherit;
+  cursor: pointer;
 }
 
-.lookalike__way--compare {
-  color: var(--primary);
+// Per LookalikeRow.dc.html the chevron sits right after the compare button.
+.lookalike__compare {
+  position: relative;
+  z-index: 1;
+  margin-inline-end: -8px;
 }

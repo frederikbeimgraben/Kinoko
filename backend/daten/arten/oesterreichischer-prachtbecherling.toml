@@ -14,6 +14,7 @@ hutform = { von = "trichterfoermig", nach = "flach" }
 hutrand = { von = ["eingerollt"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/AustriaPrachtbecherling.htm"
 geprueftAm = "2026-09-12"
 

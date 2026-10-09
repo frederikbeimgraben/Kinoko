@@ -17,6 +17,7 @@ hutrand = { von = ["gerissen", "wellig"] }
 stielmerkmale = ["gerieft"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RillstieligerSeitling.htm"
 geprueftAm = "2026-09-12"
 

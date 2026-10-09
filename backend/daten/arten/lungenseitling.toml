@@ -15,6 +15,7 @@ hutrand = { von = ["eingerollt"], nach = ["wellig"] }
 stielmerkmale = ["behaart"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Lungenseitling.htm"
 geprueftAm = "2026-09-12"
 

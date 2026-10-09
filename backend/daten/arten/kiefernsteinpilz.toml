@@ -15,6 +15,7 @@ hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["genetzt", "knolle"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Kiefernsteinpilz.htm"
 geprueftAm = "2026-09-12"
 
@@ -29,7 +30,7 @@ bisMonat = 11
 hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "purpurbraun", hex = "#5f3346" }, { name = "weinrot", hex = "#7b2436" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
 sporenlager = [{ name = "olivgrün", hex = "#6f8438" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
 stiel = [{ name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }, { name = "rot", hex = "#c0392b" }]
-fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "rot", hex = "#c0392b" }]
+fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }]
 
 [geruch]

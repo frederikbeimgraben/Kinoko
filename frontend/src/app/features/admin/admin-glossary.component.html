@@ -54,6 +54,15 @@
       />
     </div>
     <div class="adminGlossary__field">
+      <span class="lbl">{{ 'glossary.termEn' | t }}</span>
+      <app-form-field
+        [label]="'glossary.termEn' | t"
+        [hideLabel]="true"
+        [value]="termEn()"
+        (valueChange)="termEn.set($event)"
+      />
+    </div>
+    <div class="adminGlossary__field">
       <span class="lbl">{{ 'account.language.german' | t }}</span>
       <app-form-field
         [label]="'account.language.german' | t"

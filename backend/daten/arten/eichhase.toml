@@ -14,6 +14,7 @@ synonyme = ["Dendropolyporus umbellatus"]
 fruchtschicht = { art = "poren" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Eichhase2004.htm"
 geprueftAm = "2026-09-12"
 

@@ -14,6 +14,7 @@ synonyme = ["Aleurodiscus digitali", "Peziza digitalis"]
 hutform = { von = "trichterfoermig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Weisstannenfingerhut.htm"
 geprueftAm = "2026-09-12"
 

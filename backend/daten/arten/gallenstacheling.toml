@@ -13,6 +13,7 @@ synonyme = ["Sarcodon scabrosum", "Hydnum scabrosum", "Phaeodon scabrosus", "Sar
 fruchtschicht = { art = "stacheln" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Gallenstacheling.htm"
 geprueftAm = "2026-09-12"
 

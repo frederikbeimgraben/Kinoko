@@ -22,14 +22,21 @@
       <div class="cmpx motion-fade-in">
         <div class="cmph">
           @for (head of heads(); track head.slug) {
-            <button class="cmph__head tap" type="button" (click)="open(head.slug)">
+            <button class="cmph__head tap" type="button" data-press="scale" (click)="open(head.slug)">
               <app-private-image [path]="head.image" [alt]="head.name" [colour]="head.colour" />
               <b>{{ head.name }}</b>
-              <em>{{ head.latin }}</em>
+              @if (head.latin !== head.name) {
+                <em>{{ head.latin }}</em>
+              }
             </button>
           }
           @if (heads().length === 1) {
-            <button class="cmph__head cmph__add tap" type="button" (click)="adding.set(true)">
+            <button
+              class="cmph__head cmph__add tap"
+              type="button"
+              data-press="scale"
+              (click)="adding.set(true)"
+            >
               <span class="cmph__plus"><app-svg-icon name="plus" [size]="24" [strokeWidth]="1.8" /></span>
               <b>{{ 'species.compare.add' | t }}</b>
             </button>
