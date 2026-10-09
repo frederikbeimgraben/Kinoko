@@ -43,7 +43,7 @@
   <div class="addentry">
     @if (showsCrosshair()) {
       <div class="addentry__crosshair">
-        <app-crosshair [label]="'entry.setLocation.title' | t" />
+        <app-crosshair [label]="'entry.setLocation.title' | t" [halo]="darkGround()" />
       </div>
     }
     @if (asStepBar()) {

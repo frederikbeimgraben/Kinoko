@@ -12,6 +12,8 @@ import type { Find, Marker, Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ThemeStore } from '../../core/theme/theme.store';
+import { darkGround } from '../../map/background';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
@@ -73,6 +75,9 @@ export class ObjectSheetComponent {
   private readonly sheet = inject(ObjectSheetStore);
 
   protected readonly map = inject(MapStore);
+  private readonly theme = inject(ThemeStore);
+  /** The crosshair gets a light halo on a dark base map. */
+  protected readonly darkGround = computed(() => darkGround(this.map.background(), this.theme.effective()));
 
   protected readonly find = computed<Find | null>(() => {
     const offen = this.map.object();

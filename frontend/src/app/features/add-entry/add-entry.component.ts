@@ -15,6 +15,8 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
+import { ThemeStore } from '../../core/theme/theme.store';
+import { darkGround } from '../../map/background';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ZONE_DEFAULT_COLOUR } from '../../ui/zone-shape/zone-shape.constants';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
@@ -87,6 +89,9 @@ export class AddEntryComponent implements OnDestroy {
 
   protected readonly state = inject(AddEntryStore);
   protected readonly wide = inject(ViewportService).wide;
+  private readonly theme = inject(ThemeStore);
+  /** The crosshair gets a light halo on a dark base map. */
+  protected readonly darkGround = computed(() => darkGround(this.map.background(), this.theme.effective()));
   protected readonly anchor = POPOVER_ANCHOR;
 
   private session: DrawSession | null = null;

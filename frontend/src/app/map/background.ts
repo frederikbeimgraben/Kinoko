@@ -43,6 +43,12 @@ export function styleFor(choice: Background, theme: EffectiveTheme): string | St
   return BACKGROUND[theme];
 }
 
+/** A dark ground needs a light halo at the crosshair: the dark style and the satellite image. */
+export function darkGround(choice: Background, theme: EffectiveTheme): boolean {
+  if (choice === 'map') return theme === 'dunkel';
+  return choice === 'dark' || choice === 'satellite';
+}
+
 /** Germany as [longitude, latitude]. The map fits it when it opens. */
 export const GERMANY: Bounds = [
   [5.7, 47.2],

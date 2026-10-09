@@ -30,7 +30,7 @@
 @if (relocating()) {
   <div class="object__aim">
     <div #cross class="object__crosshair">
-      <app-crosshair [label]="aimTitle()" />
+      <app-crosshair [label]="aimTitle()" [halo]="darkGround()" />
     </div>
     <app-step-bar [label]="aimTitle()" [actions]="aimActions()" (chosen)="$event.run()" />
   </div>
