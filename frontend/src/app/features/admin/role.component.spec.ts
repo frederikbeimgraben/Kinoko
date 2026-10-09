@@ -139,8 +139,30 @@ describe('RoleComponent', () => {
     expect(screen.getByRole('button', { name: 'Prüfer' })).toBeInTheDocument();
   });
 
-  it('fragt vor dem Löschen nach und löscht dann', async () => {
+  it('sagt bei einer Rolle in Benutzung, wie viele Personen sie haben, und führt zu den Personen', async () => {
     const { api, router, refresh } = await build('rolle-berater');
+    const navigate = vi.spyOn(router, 'navigateByUrl');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Rolle löschen' }));
+    refresh();
+
+    expect(screen.getByText('Rolle in Benutzung')).toBeVisible();
+    expect(
+      screen.getByText(/^3 Personen haben diese Rolle\. Nimm sie ihnen unter „Personen“ ab/),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Löschen' })).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Zu den Personen' }));
+    refresh();
+
+    expect(api.deleted).toEqual([]);
+    expect(navigate).toHaveBeenCalledWith('/verwaltung/personen');
+  });
+
+  it('fragt vor dem Löschen nach und löscht dann', async () => {
+    const api = new AccessApiDouble();
+    api.roleList = api.roleList.map((one) => (one.id === 'rolle-berater' ? { ...one, peopleCount: 0 } : one));
+    const { router, refresh } = await build('rolle-berater', api);
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
     await userEvent.click(screen.getByRole('button', { name: 'Rolle löschen' }));

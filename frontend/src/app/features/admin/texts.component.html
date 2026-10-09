@@ -17,14 +17,14 @@
 
   @if (loaded()) {
     <app-row-group>
-      @for (row of rows(); track row.key) {
+      @for (row of rows(); track row.entry.key) {
         <app-list-row
-          [title]="row.values[locale()] || row.values[leadLocale] || row.key"
-          [subline]="row.key"
-          [badge]="row.changed ? ('admin.texts.changed' | t) : ''"
+          [title]="row.title"
+          [subline]="row.entry.key"
+          [badge]="row.entry.changed ? ('admin.texts.changed' | t) : ''"
           [chevron]="true"
           [clickable]="true"
-          (chosen)="open(row)"
+          (chosen)="open(row.entry)"
         />
       }
     </app-row-group>

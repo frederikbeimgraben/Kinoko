@@ -144,7 +144,9 @@ test('RoleEdit', async ({ page }) => {
 
 test('RoleDelete', async ({ page }) => {
   guard('RoleDelete', 'phone');
-  await open(page, '/verwaltung/rollen/rolle-advisor', { '/api/roles': PLAIN_ROLE });
+  // A role that people still have offers no delete. It says how to free the role.
+  const unused = { ...PLAIN_ROLE, items: [{ ...PLAIN_ROLE.items[0], peopleCount: 0 }] };
+  await open(page, '/verwaltung/rollen/rolle-advisor', { '/api/roles': unused });
   await page.getByRole('button', { name: 'Rolle löschen' }).click();
   await expect(page.getByRole('dialog', { name: /Pilzberater/ })).toBeVisible();
 });

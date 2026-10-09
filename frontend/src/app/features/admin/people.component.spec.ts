@@ -59,7 +59,7 @@ describe('PeopleComponent', () => {
     expect(api.searches.at(-1)).toBe('jonas');
   });
 
-  it('öffnet die Rollen einer Person ohne die feste Rolle Nutzer', async () => {
+  it('zeigt die feste Rolle Nutzer als gehalten und gesperrt, wie die Tafel PersonRoles', async () => {
     const { container, refresh } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: /Jonas/ }));
@@ -67,7 +67,10 @@ describe('PeopleComponent', () => {
 
     expect(screen.getByRole('dialog', { name: 'Rollen zuweisen' })).toHaveTextContent('jonas@example.test');
     expect(screen.getByRole('checkbox', { name: /Pilzberater/ })).not.toBeChecked();
-    expect(screen.queryByRole('checkbox', { name: /^Nutzer/ })).not.toBeInTheDocument();
+    const base = screen.getByRole('checkbox', { name: /^Nutzer/ });
+    expect(base).toBeChecked();
+    expect(base).toBeDisabled();
+    expect(screen.getByText('Hat jede angemeldete Person')).toBeInTheDocument();
     // The toolbar and the sheet each have a `header`. In the app, both are in the shell `main`.
     // Thus they are not banners. This test adds the `main` for the same result.
     await noViolations(inMain(container));

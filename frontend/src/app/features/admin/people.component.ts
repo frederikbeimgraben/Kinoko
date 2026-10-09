@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import type { TranslationKey } from '../../core/i18n/translations';
 import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -20,7 +21,7 @@ import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { AdminStore } from './admin.store';
 import { roleName } from './role-name';
 
-/** The built-in role of each signed-in person. Nobody assigns it. */
+/** The built-in role of each signed-in person. Nobody assigns it, so the sheet shows it as held and locked. */
 const EVERY_ONE = 'user';
 
 /** The admin role. The admin group of the SSO also gives it. */
@@ -38,8 +39,10 @@ interface Choice {
   id: string;
   name: string;
   checked: boolean;
-  /** The SSO gives the role: the box is checked and does not toggle. */
-  fromGroup: boolean;
+  /** The SSO or the sign-in gives the role: the box is checked and does not toggle. */
+  locked: boolean;
+  /** Why the box is locked. */
+  note?: TranslationKey;
 }
 
 /** The person list: search, accounts and their roles. A row opens the assignment. */
@@ -85,23 +88,16 @@ export class PeopleComponent {
     })),
   );
 
-  /** Only free roles: nobody assigns the built-in role of each person. */
-  private readonly assignable = computed<readonly Role[]>(() =>
-    (this.store.roles() ?? []).filter((role) => role.slug !== EVERY_ONE),
-  );
-
   protected readonly choices = computed<Choice[]>(() => {
     const groupAdmin = this.editing()?.groupAdmin ?? false;
     const locale = this.i18n.locale();
-    return this.assignable()
-      .map((role) => {
-        const fromGroup = groupAdmin && role.slug === ADMIN;
-        return {
-          id: role.id,
-          name: roleName(this.i18n, role.name),
-          checked: fromGroup || this.chosen().has(role.id),
-          fromGroup,
-        };
+    return (this.store.roles() ?? [])
+      .map((role): Choice => {
+        const note = lockNote(role, groupAdmin);
+        const name = roleName(this.i18n, role.name);
+        return note === undefined
+          ? { id: role.id, name, checked: this.chosen().has(role.id), locked: false }
+          : { id: role.id, name, checked: true, locked: true, note };
       })
       .sort((one, other) => one.name.localeCompare(other.name, locale));
   });
@@ -149,12 +145,13 @@ export class PeopleComponent {
     });
   }
 
-  /** The stored roles, and before them the admin role when the SSO group gives it. */
+  /** The stored roles. Before them come the admin role when the SSO group gives it, and the base role. */
   private heldNames(person: Person): string[] {
-    const stored = person.roles.map((role) => roleName(this.i18n, role.name));
-    const admin = (this.store.roles() ?? []).find((role) => role.slug === ADMIN);
+    const roles = this.store.roles() ?? [];
     const implied = person.groupAdmin && !person.roles.some((role) => role.slug === ADMIN);
-    return implied && admin !== undefined ? [roleName(this.i18n, admin.name), ...stored] : stored;
+    const admin = implied ? roles.filter((role) => role.slug === ADMIN) : [];
+    const base = roles.filter((role) => role.slug === EVERY_ONE);
+    return [...admin, ...base, ...person.roles].map((role) => roleName(this.i18n, role.name));
   }
 
   protected askDelete(): void {
@@ -175,4 +172,10 @@ export class PeopleComponent {
   protected back(): void {
     void this.router.navigateByUrl('/verwaltung');
   }
+}
+
+/** Why a role in the sheet is held without a choice, or nothing for a free role. */
+function lockNote(role: Role, groupAdmin: boolean): TranslationKey | undefined {
+  if (role.slug === EVERY_ONE) return 'admin.people.everyOne';
+  return groupAdmin && role.slug === ADMIN ? 'admin.people.fromGroup' : undefined;
 }

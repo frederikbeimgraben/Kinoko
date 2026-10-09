@@ -24,10 +24,17 @@ const CHIP: TextEntry = {
   updatedAt: '2026-09-12T09:00:00+00:00',
 };
 
+const COUNT: TextEntry = {
+  key: 'konto.zaehler',
+  values: { de: '{finds, plural, one {# Fund} other {# Funde}} · {markers} Marker', en: '' },
+  changed: false,
+  updatedAt: '2026-09-12T09:00:00+00:00',
+};
+
 const CATALOGUE: TextCatalogue = {
   revision: 'W/"4-1"',
   locales: ['de', 'en'],
-  entries: [LEGEND, CHIP],
+  entries: [LEGEND, CHIP, COUNT],
 };
 
 interface Setup {
@@ -54,6 +61,13 @@ describe('TextsComponent', () => {
     expect(screen.getByText('Fundwahrscheinlichkeit je Begehung')).toBeInTheDocument();
     expect(screen.queryByText('Probability of a find per visit')).not.toBeInTheDocument();
     await noViolations(setup.container);
+  });
+
+  it('zeigt eine ICU-Vorlage als lesbaren Titel', async () => {
+    await build();
+
+    expect(await screen.findByText('… Funde · … Marker')).toBeInTheDocument();
+    expect(screen.queryByText(/plural/)).not.toBeInTheDocument();
   });
 
   it('markiert einen geänderten Text', async () => {
@@ -147,7 +161,7 @@ describe('TextsComponent', () => {
     });
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toHaveLength(1);
+      expect(setup.toasts.success).toEqual(['Der Text ist wieder der Standardtext.']);
     });
     expect(screen.queryByRole('button', { name: 'Zurücksetzen' })).not.toBeInTheDocument();
     expect(screen.queryByText('geändert')).not.toBeInTheDocument();
