@@ -1,0 +1,23 @@
+<app-section [label]="'species.section.forecast' | t">
+  <app-row-group>
+    @if (species().forecastEnabled) {
+      <app-list-row
+        icon="map"
+        kind="link"
+        [title]="'species.forecast.show' | t"
+        [subline]="'species.forecast.showNote' | t"
+        [wrap]="true"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="showOnMap()"
+      />
+    } @else {
+      <app-list-row
+        icon="map-off"
+        [title]="'species.forecast.none' | t"
+        [subline]="'species.forecast.noneNote' | t"
+        [wrap]="true"
+      />
+    }
+  </app-row-group>
+</app-section>

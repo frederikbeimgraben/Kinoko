@@ -76,6 +76,9 @@
     <ng-template #period>
       <app-species-time [species]="one" />
     </ng-template>
+    <ng-template #forecast>
+      <app-species-forecast [species]="one" />
+    </ng-template>
     <ng-template #senses>
       <app-species-senses [species]="one" />
     </ng-template>
@@ -113,6 +116,7 @@
             <ng-container [ngTemplateOutlet]="colours" />
             <ng-container [ngTemplateOutlet]="reactionRows" />
             <ng-container [ngTemplateOutlet]="period" />
+            <ng-container [ngTemplateOutlet]="forecast" />
             <ng-container [ngTemplateOutlet]="senses" />
             <ng-container [ngTemplateOutlet]="hymenium" />
             <ng-container [ngTemplateOutlet]="sources" />
@@ -129,6 +133,7 @@
           <ng-container [ngTemplateOutlet]="colours" />
           <ng-container [ngTemplateOutlet]="reactionRows" />
           <ng-container [ngTemplateOutlet]="period" />
+          <ng-container [ngTemplateOutlet]="forecast" />
           <ng-container [ngTemplateOutlet]="senses" />
           <ng-container [ngTemplateOutlet]="hymenium" />
           <ng-container [ngTemplateOutlet]="lookalikes" />

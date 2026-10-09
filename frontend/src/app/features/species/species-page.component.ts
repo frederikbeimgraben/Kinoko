@@ -30,6 +30,7 @@ import { SpeciesPhotosComponent } from './sections/species-photos.component';
 import { SpeciesSourcesComponent } from './sections/species-sources.component';
 import { SpeciesTaxonomyComponent } from './sections/species-taxonomy.component';
 import { SpeciesTimeComponent } from './sections/species-time.component';
+import { SpeciesForecastComponent } from './sections/species-forecast.component';
 import { SpeciesTraitsComponent } from './sections/species-traits.component';
 import { CompareEntryComponent } from './compare/compare-entry.component';
 import { compareQuery } from './compare/comparison.store';
@@ -62,6 +63,7 @@ const HERO_DESKTOP = 210;
     SpeciesColoursComponent,
     SpeciesDeskComponent,
     SpeciesFeaturesComponent,
+    SpeciesForecastComponent,
     SpeciesHymeniumComponent,
     SpeciesLeadComponent,
     SpeciesLookalikesComponent,

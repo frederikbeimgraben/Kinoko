@@ -13,6 +13,7 @@ import { catalogueProviders, catalogueReady } from '../../testing/catalogue-doub
 import { stubIntersectionObserver } from '../../testing/observer-stub';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../testing/species-fixture';
+import { MapStore } from '../map/map.store';
 import { SpeciesPageComponent } from './species-page.component';
 
 const STONE = speciesEntry({
@@ -39,10 +40,17 @@ const STONE = speciesEntry({
   ],
 });
 
+const REFERENCE_ONLY = speciesEntry({
+  slug: 'hydnum-repandum',
+  name: 'Semmelstoppelpilz',
+  scientificName: 'Hydnum repandum',
+  forecastEnabled: false,
+});
+
 async function build(slug = 'boletus-edulis', wide = false, stone = STONE): Promise<Element> {
   const { container } = await render(SpeciesPageComponent, {
     providers: [
-      ...catalogueProviders(speciesBundle([stone])),
+      ...catalogueProviders(speciesBundle([stone, REFERENCE_ONLY])),
       ...authStubProviders(new AuthStub()),
       provideRouter(ANY_ROUTE),
       { provide: ViewportService, useValue: { wide: signal(wide) } },
@@ -135,12 +143,34 @@ describe('SpeciesPageComponent', () => {
       'app-species-colours',
       'app-species-reactions',
       'app-species-time',
+      'app-species-forecast',
       'app-species-senses',
       'app-species-hymenium',
       'app-species-lookalikes',
       'app-species-photos',
       'app-species-sources',
     ]);
+  });
+
+  it('links a species with a forecast to its map', async () => {
+    await build();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    expect(screen.queryByText('Keine Vorhersage')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: /Auf der Karte anzeigen/ }));
+
+    expect(TestBed.inject(MapStore).species()).toBe('boletus-edulis');
+    expect(TestBed.inject(MapStore).view()).toBe('forecast');
+    expect(navigate).toHaveBeenCalledWith('/karte');
+  });
+
+  it('shows a note and no map link for a species without a forecast', async () => {
+    const container = await build('hydnum-repandum');
+
+    expect(screen.getByText('Keine Vorhersage')).toBeInTheDocument();
+    expect(screen.getByText(/Der Eintrag dient zum Nachschlagen/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Auf der Karte anzeigen/ })).toBeNull();
+    await noViolations(container);
   });
 
   it('shows the reactions from the profile in the section "Verfärbung"', async () => {

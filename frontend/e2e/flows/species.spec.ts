@@ -106,3 +106,40 @@ test('Die Artseite führt über die Einordnung zur Gattung', async ({ page }) =>
   await page.getByRole('button', { name: 'Zurück' }).click();
   await expect(page).toHaveURL(/\/arten\/boletus-edulis$/);
 });
+
+const FORECAST_MIX = bundle([
+  { slug: 'boletus-edulis', name: 'Steinpilz', latin: 'Boletus edulis', edibility: 'edible', forecast: true },
+  { slug: 'hydnum-repandum', name: 'Semmelstoppelpilz', latin: 'Hydnum repandum', edibility: 'edible' },
+]);
+
+test('Die Liste zeigt, welche Art eine Vorhersage hat, und der Filter wählt sie aus', async ({ page }) => {
+  await openList(page, FORECAST_MIX);
+  await expect(page.getByText('Semmelstoppelpilz')).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Vorhersage auf der Karte' })).toHaveCount(1);
+  await expect(page.getByRole('button', { name: /Steinpilz.*Vorhersage auf der Karte/ })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Filter', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Mit Vorhersage' }).click();
+  await page.getByRole('button', { name: '1 Art anzeigen' }).click();
+
+  await expect(page.getByText('Semmelstoppelpilz')).toHaveCount(0);
+  await expect(page.getByText('Steinpilz')).toBeVisible();
+});
+
+test('Die Artseite führt eine Art mit Vorhersage zur Karte', async ({ page }) => {
+  await mockApi(page, { '/api/species/bundle': FORECAST_MIX });
+  await page.goto('/arten/boletus-edulis');
+
+  await page.getByRole('button', { name: /Auf der Karte anzeigen/ }).click();
+
+  await expect(page).toHaveURL(/\/karte$/);
+});
+
+test('Die Artseite einer Art ohne Vorhersage zeigt einen Hinweis statt der Karte', async ({ page }) => {
+  await mockApi(page, { '/api/species/bundle': FORECAST_MIX });
+  await page.goto('/arten/hydnum-repandum');
+
+  await expect(page.getByText('Keine Vorhersage')).toBeVisible();
+  await expect(page.getByText(/Der Eintrag dient zum Nachschlagen/)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Auf der Karte anzeigen/ })).toHaveCount(0);
+});
