@@ -269,11 +269,72 @@ is in processing.
 These rules apply to the virtual host on the homeserver:
 
 - Send `/api/*` to `127.0.0.1:8111`.
-- Rewrite a path that is not a file to `/index.html`.
-- Cache `*.png` for one week, immutable. Cache `*.<hash>.js` and `*.<hash>.css` for one year, immutable.
+- Rewrite only a navigation path that is not a file to `/index.html`, for example `/karte` or `/arten/boletus-edulis`.
+- Do not rewrite a data path. When the file is missing, send 404. The data paths are `*.json`, `*.png`, `*.pmtiles` and the tile folders `/<slug>_kacheln/`, `/layers_kacheln/`, `/funde/` and `/karte/`.
+- Cache `*.png` for one week, immutable. Cache `*-<hash>.js` and `*-<hash>.css` (8 characters, for example `main-LZMCBVKM.js`) for one year, immutable.
 - Send `no-cache` for `index.html`, `*.json`, `ngsw.json` and `ngsw-worker.js`.
 - Accept a request body up to 40 MB. An upload part is 16 MiB, so the bulk uploads pass.
 - Serve range requests with `file_server`. PMTiles needs them.
+
+A rewrite of a data path sends the app page with status 200 in place of a
+404. The app then reads HTML as a manifest. The app shows such a reply as
+"no data", but a 404 is clear in the browser tools, in the logs and for
+`deploy/smoke.sh`.
+
+```caddyfile
+:8110 {
+	root * /var/www/pilze
+	encode zstd gzip
+
+	request_body {
+		max_size 40MB
+	}
+
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8111
+	}
+
+	# Data paths: the file, or 404. No rewrite to the app page.
+	@data path_regexp data (\.(json|png|pmtiles)$)|(^/([a-z0-9_-]+_kacheln|funde|karte)/)
+	handle @data {
+		file_server
+	}
+
+	# Navigation paths: the file, else the app page.
+	# `route` keeps the order, so the header rule sees the path after the rewrite.
+	handle {
+		route {
+			try_files {path} /index.html
+			header /index.html Cache-Control "no-cache"
+			file_server
+		}
+	}
+
+	@immutablePng path *.png
+	header @immutablePng Cache-Control "public, max-age=604800, immutable"
+	@hashed path_regexp hashed -[A-Za-z0-9_-]{8}\.(js|css)$
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+	@fresh path *.json /ngsw-worker.js
+	header @fresh Cache-Control "no-cache"
+
+	# A missing file must not stay in a cache.
+	handle_errors 404 {
+		header Cache-Control "no-store"
+		respond 404
+	}
+}
+```
+
+The folder part of `@data` does not match the navigation path `/karte`,
+because it needs the slash after the folder name. Thus the map page still
+gets the app page.
+
+Do a check after a change of the rules:
+
+```
+curl -s -o /dev/null -w '%{http_code}\n' https://<host>/nicht-da.json   # 404
+curl -s -o /dev/null -w '%{http_code}\n' https://<host>/karte           # 200
+```
 
 The service reads the training finds directly from the database. No
 endpoint for them exists, and no rule for them is necessary.
