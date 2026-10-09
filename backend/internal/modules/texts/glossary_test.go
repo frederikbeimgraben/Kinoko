@@ -104,7 +104,7 @@ func TestATermStandsOnce(t *testing.T) {
 	if errs := twice["errors"].([]any); errs[0].(map[string]any)["field"] != "term" || errs[0].(map[string]any)["code"] != "taken" {
 		t.Fatal(twice)
 	}
-	other := env.Post("/glossary", with(glossaryEntry, "term", "Lamellenschneide"), anna()).Expect(t, http.StatusCreated).Map(t)
+	other := env.Post("/glossary", with(glossaryEntry, "term", "Trama"), anna()).Expect(t, http.StatusCreated).Map(t)
 	env.Put("/glossary/"+other["id"].(string), glossaryEntry, anna()).Expect(t, http.StatusUnprocessableEntity)
 	env.Put("/glossary/"+first["id"].(string), glossaryEntry, anna()).Expect(t, http.StatusOK)
 }

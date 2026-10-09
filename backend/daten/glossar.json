@@ -71,6 +71,36 @@
       "definitionEn": "Club-shaped cell in the hymenium of the basidiomycetes. It usually carries four spores."
     },
     {
+      "term": "Bedingt essbar",
+      "termEn": "Conditionally edible",
+      "definition": "Speisewert eines Pilzes, den man nur unter bestimmten Bedingungen verträgt, etwa nach langem Abkochen, ohne Alkohol oder nur jung. Auch dann vertragen ihn nicht alle Menschen. Die Hinweise zur Art nennen die Bedingungen.",
+      "definitionEn": "Edibility class of a mushroom that people tolerate only under specific conditions, for example after long boiling, without alcohol or only when young. Even then, not all people tolerate it. The notes of the species give the conditions."
+    },
+    {
+      "term": "Beflockt",
+      "termEn": "Flocculose",
+      "definition": "Mit kleinen, abwischbaren Flöckchen bedeckt, oft am Stiel.",
+      "definitionEn": "Covered with small flakes that rub off, often on the stem."
+    },
+    {
+      "term": "Bereift",
+      "termEn": "Pruinose",
+      "definition": "Mit einem feinen, weißlichen, abwischbaren Belag bedeckt, ähnlich wie eine Pflaume.",
+      "definitionEn": "Covered with a fine, whitish coating that rubs off, similar to a plum."
+    },
+    {
+      "term": "Besonders geschützt",
+      "termEn": "Specially protected",
+      "definition": "Schutzstatus nach der Bundesartenschutzverordnung (Anlage 1). Solche Pilze darf man grundsätzlich nicht sammeln. Für einige Speisepilze, etwa Steinpilz, Pfifferling und Morcheln, erlaubt die Verordnung geringe Mengen für den eigenen Bedarf.",
+      "definitionEn": "Protection status under the German Federal Species Protection Ordinance (BArtSchV, Annex 1). As a rule, you must not collect these fungi. For some edible species, for example porcini, chanterelles and morels, the ordinance permits small quantities for your own use."
+    },
+    {
+      "term": "Bewimpert",
+      "termEn": "Ciliate",
+      "definition": "Die Lamellenschneide trägt feine Härchen. Mit der Lupe sieht sie oft weißlich und fein gefranst aus.",
+      "definitionEn": "The gill edge carries fine hairs. With a hand lens it often looks whitish and finely fringed."
+    },
+    {
       "term": "Birke",
       "termEn": "Birch",
       "definition": "Laubbaum (Betula). Mykorrhizapartner etwa von Birkenpilz und Fliegenpilz.",
@@ -93,6 +123,12 @@
       "termEn": "Bluing",
       "definition": "Fleisch, Röhren oder Poren verfärben sich bei Verletzung blau, weil Farbstoffe an der Luft oxidieren. Typisch für viele Röhrlinge. Das Blauen sagt nichts darüber aus, ob ein Pilz essbar oder giftig ist.",
       "definitionEn": "Flesh, tubes or pores turn blue when damaged, because pigments oxidise in the air. Typical of many boletes. Bluing does not show whether a mushroom is edible or poisonous."
+    },
+    {
+      "term": "Braunfäule",
+      "termEn": "Brown rot",
+      "definition": "Holzfäule, bei der der Pilz vor allem die Zellulose abbaut und das braune Lignin zurücklässt. Das Holz wird braun, bröckelig und zerfällt in würfelförmige Stücke, etwa durch den Schwefelporling.",
+      "definitionEn": "Wood rot in which the fungus mainly breaks down the cellulose and leaves the brown lignin. The wood becomes brown and crumbly and breaks into cubes, for example from chicken of the woods."
     },
     {
       "term": "Brennend",
@@ -143,10 +179,28 @@
       "definitionEn": "Discoloured spot after pressure or damage, for example from handling or transport."
     },
     {
+      "term": "Ehrlich-Reagenz",
+      "termEn": "Ehrlich's reagent",
+      "definition": "Lösung von 4-Dimethylaminobenzaldehyd in Säure. Färbt Indolverbindungen wie Psilocybin rotviolett und dient etwa im Labor zum Nachweis bei Kahlköpfen.",
+      "definitionEn": "Solution of 4-dimethylaminobenzaldehyde in acid. It stains indole compounds such as psilocybin red-violet, for example in laboratory tests of Psilocybe species."
+    },
+    {
       "term": "Eiche",
       "termEn": "Oak",
       "definition": "Laubbaum (Quercus). Partner etwa des Sommersteinpilzes; an alten Eichen wachsen Schwefelporling und Leberreischling.",
       "definitionEn": "Broadleaf tree (Quercus). Partner of, for example, the summer bolete; chicken of the woods and beefsteak fungus grow on old oaks."
+    },
+    {
+      "term": "Eingebogen",
+      "termEn": "Incurved",
+      "definition": "Der Hutrand ist nach unten zum Stiel hin gebogen, aber nicht eingerollt.",
+      "definitionEn": "The cap margin bends down towards the stem but does not roll under."
+    },
+    {
+      "term": "Eingerollt",
+      "termEn": "Inrolled",
+      "definition": "Der Hutrand ist nach unten und innen eingerollt, vor allem bei jungen Fruchtkörpern, etwa beim Kahlen Krempling.",
+      "definitionEn": "The cap margin rolls down and under, mainly in young fruit bodies, for example in the brown rollrim."
     },
     {
       "term": "Eisensulfat (FeSO4)",
@@ -165,6 +219,12 @@
       "termEn": "Ash",
       "definition": "Laubbaum (Fraxinus excelsior). Bildet keine Mykorrhiza mit Großpilzen; im Frühjahr wachsen unter Eschen oft Morcheln.",
       "definitionEn": "Broadleaf tree (Fraxinus excelsior). It forms no mycorrhiza with larger fungi; morels often grow under ash in spring."
+    },
+    {
+      "term": "Faserig",
+      "termEn": "Fibrillose",
+      "definition": "Mit feinen, längs verlaufenden Fasern bedeckt. Faseriges Fleisch lässt sich in Längsrichtung spalten.",
+      "definitionEn": "Covered with fine fibres that run lengthwise. Fibrous flesh splits along its length."
     },
     {
       "term": "Feuchtigkeit",
@@ -215,6 +275,54 @@
       "definitionEn": "The visible part of the fungus that produces the spores, for example cap and stem."
     },
     {
+      "term": "Gegabelt",
+      "termEn": "Forked",
+      "definition": "Lamellen oder Leisten teilen sich in zwei oder mehr Äste, etwa beim Pfifferling oder beim Frauentäubling.",
+      "definitionEn": "Gills or ridges divide into two or more branches, for example in the chanterelle or the charcoal burner."
+    },
+    {
+      "term": "Genabelt",
+      "termEn": "Umbilicate",
+      "definition": "Die Hutmitte hat eine kleine, scharf begrenzte Vertiefung wie ein Nabel.",
+      "definitionEn": "The centre of the cap has a small, sharply defined dip like a navel."
+    },
+    {
+      "term": "Genattert",
+      "termEn": "Snakeskin-banded",
+      "definition": "Der Stiel trägt ein Muster aus zickzackförmigen Bändern oder Schuppen, das an eine Schlangenhaut erinnert, etwa beim Parasol.",
+      "definitionEn": "The stem has a pattern of zigzag bands or scales that looks like a snakeskin, for example in the parasol."
+    },
+    {
+      "term": "Gerieft",
+      "termEn": "Striate",
+      "definition": "Mit feinen, parallelen Rillen oder Linien, etwa am Hutrand vieler Täublinge und Scheidenstreiflinge.",
+      "definitionEn": "With fine parallel grooves or lines, for example at the cap margin of many brittlegills and grisettes."
+    },
+    {
+      "term": "Gesägt",
+      "termEn": "Serrate",
+      "definition": "Die Lamellenschneide ist fein gezähnt wie eine Säge, etwa bei den Sägeblättlingen.",
+      "definitionEn": "The gill edge has fine teeth like a saw, for example in the sawgills."
+    },
+    {
+      "term": "Gezont",
+      "termEn": "Zoned",
+      "definition": "Der Hut zeigt ringförmige Zonen in verschiedenen Farbtönen, etwa bei manchen Milchlingen und bei der Schmetterlingstramete.",
+      "definitionEn": "The cap shows concentric bands of different shades, for example in some milkcaps and in the turkey tail."
+    },
+    {
+      "term": "Gilben",
+      "termEn": "Yellowing",
+      "definition": "Fleisch oder Oberfläche verfärben sich bei Druck, Verletzung oder im Alter gelb. Beim giftigen Karbol-Egerling wird die Stielbasis beim Anschneiden sofort kräftig chromgelb.",
+      "definitionEn": "Flesh or surface turns yellow when pressed, damaged or with age. In the poisonous yellow stainer, the stem base turns bright chrome yellow at once when cut."
+    },
+    {
+      "term": "Gleba",
+      "termEn": "Gleba",
+      "definition": "Innere, sporenbildende Masse der Bauchpilze wie Stäublinge und Boviste. Jung ist sie weiß und fest, reif zerfällt sie zu Sporenpulver. Darunter liegt bei vielen Stäublingen ein steriler Teil, die Subgleba.",
+      "definitionEn": "Inner spore-producing mass of puffballs and their relatives. When young it is white and firm; when ripe it turns into spore powder. Many puffballs have a sterile part below it, the subgleba."
+    },
+    {
       "term": "Guajak",
       "termEn": "Guaiac",
       "definition": "Guajakharz in Alkohol. Zeigt Oxidasen an: Bei positiver Reaktion färbt sich das Fleisch blaugrün. Wichtig bei Täublingen.",
@@ -249,6 +357,12 @@
       "termEn": "Tart",
       "definition": "Geschmack, der den Mund zusammenzieht, oft leicht bitter.",
       "definitionEn": "Taste that makes the mouth feel dry and tight, often slightly bitter."
+    },
+    {
+      "term": "Hexenring",
+      "termEn": "Fairy ring",
+      "definition": "Kreis oder Bogen aus Fruchtkörpern. Er entsteht, weil das Myzel im Boden gleichmäßig nach außen wächst, etwa beim Nelkenschwindling auf Wiesen.",
+      "definitionEn": "Circle or arc of fruit bodies. It forms because the mycelium in the soil grows outwards evenly, for example in the fairy ring champignon on lawns and meadows."
     },
     {
       "term": "Hitze",
@@ -353,6 +467,12 @@
       "definitionEn": "Thin plates under the cap that radiate from the stem and carry the hymenium."
     },
     {
+      "term": "Lamellenschneide",
+      "termEn": "Gill edge",
+      "definition": "Die freie, untere Kante einer Lamelle. Sie kann glatt, gesägt oder bewimpert sein und hat manchmal eine andere Farbe als die Lamellenfläche.",
+      "definitionEn": "The free lower edge of a gill. It can be smooth, serrate or ciliate, and sometimes it has a different colour from the gill face."
+    },
+    {
       "term": "Lärche",
       "termEn": "Larch",
       "definition": "Nadelbaum (Larix), der im Herbst die Nadeln abwirft. Partner etwa des Goldröhrlings.",
@@ -395,6 +515,12 @@
       "definitionEn": "Iodine solution with chloral hydrate. It shows whether spores or tissue are amyloid (blue), dextrinoid (reddish brown) or inamyloid."
     },
     {
+      "term": "Milchlinge",
+      "termEn": "Milkcaps",
+      "definition": "Lamellenpilze der Gattung Lactarius, deren Fleisch bei Verletzung Milchsaft abgibt. Ihr Fleisch bricht spröde wie bei den Täublingen.",
+      "definitionEn": "Gilled mushrooms of the genus Lactarius whose flesh releases latex when damaged. Their flesh breaks cleanly, as in the brittlegills."
+    },
+    {
       "term": "Milchsaft",
       "termEn": "Latex (milk)",
       "definition": "Flüssigkeit, die bei Milchlingen aus verletztem Fleisch austritt. Farbe, Verfärbung und Geschmack der Milch helfen beim Bestimmen.",
@@ -423,6 +549,12 @@
       "termEn": "Mycelium",
       "definition": "Geflecht aus Pilzfäden im Boden oder Holz. Es ist der eigentliche Pilz, der Fruchtkörper ist nur sein Organ für die Sporen.",
       "definitionEn": "Network of fungal threads in soil or wood. It is the fungus itself; the fruit body is only its organ for the spores."
+    },
+    {
+      "term": "Myzelfilz",
+      "termEn": "Mycelial felt",
+      "definition": "Filziges, meist weißes Pilzgeflecht an der Stielbasis.",
+      "definitionEn": "Felt-like, usually white mycelium at the stem base."
     },
     {
       "term": "Natronlauge (NaOH)",
@@ -485,6 +617,12 @@
       "definitionEn": "The openings of the tubes on the underside of the cap. Their colour and size help with identification."
     },
     {
+      "term": "Porlinge",
+      "termEn": "Polypores",
+      "definition": "Meist zähe, korkige oder holzige Pilze an Holz, deren Fruchtschicht aus Poren besteht. Anders als bei den Röhrlingen lassen sich die Röhren nicht vom Fleisch lösen. Ein Beispiel ist der Zunderschwamm.",
+      "definitionEn": "Mostly tough, corky or woody fungi on wood whose hymenium consists of pores. Unlike in boletes, the tubes do not separate from the flesh. An example is the tinder fungus."
+    },
+    {
       "term": "Rettichartig",
       "termEn": "Radish",
       "definition": "Nach Rettich oder Rüben, etwa bei vielen Fälblingen.",
@@ -497,10 +635,34 @@
       "definitionEn": "Remains of the partial veil on the stem, membranous or fleeting. In some species it can move up and down."
     },
     {
+      "term": "Ringzone",
+      "termEn": "Ring zone",
+      "definition": "Schwacher Rest eines Rings am Stiel, oft nur als Linie oder als Fasern sichtbar.",
+      "definitionEn": "Faint remains of a ring on the stem, often visible only as a line or as fibres."
+    },
+    {
       "term": "Röhren",
       "termEn": "Tubes",
       "definition": "Dicht stehende, senkrechte Röhrchen an der Hutunterseite, innen mit dem Hymenium ausgekleidet. Typisch für Röhrlinge und Porlinge.",
       "definitionEn": "Densely packed vertical tubes under the cap, lined inside with the hymenium. Typical of boletes and polypores."
+    },
+    {
+      "term": "Röhrlinge",
+      "termEn": "Boletes",
+      "definition": "Fleischige Hutpilze mit Röhren statt Lamellen an der Hutunterseite. Die Röhrenschicht lässt sich meist leicht vom Hutfleisch lösen. Beispiele sind Steinpilz und Maronenröhrling.",
+      "definitionEn": "Fleshy cap mushrooms with tubes instead of gills under the cap. The tube layer usually separates easily from the cap flesh. Examples are porcini and the bay bolete."
+    },
+    {
+      "term": "Rote Liste",
+      "termEn": "Red List",
+      "definition": "Verzeichnis gefährdeter Arten mit Stufen wie gefährdet, stark gefährdet oder vom Aussterben bedroht. Für Großpilze in Deutschland gibt es eine eigene Rote Liste.",
+      "definitionEn": "List of threatened species with levels such as vulnerable, endangered or critically endangered. Germany has its own Red List for larger fungi."
+    },
+    {
+      "term": "Röten",
+      "termEn": "Reddening",
+      "definition": "Fleisch oder Oberfläche verfärben sich bei Verletzung oder Druck rötlich, etwa beim Perlpilz, dessen Fleisch und Fraßstellen weinrötlich anlaufen.",
+      "definitionEn": "Flesh or surface turns reddish when damaged or pressed, for example in the blusher, whose flesh and feeding marks turn wine red."
     },
     {
       "term": "Salpetersäure (HNO3)",
@@ -539,10 +701,22 @@
       "definitionEn": "Fungi whose spores form in sacs (asci), for example morels, false morels, cup fungi and truffles."
     },
     {
+      "term": "Schmierig",
+      "termEn": "Viscid",
+      "definition": "Die Oberfläche ist bei Feuchtigkeit glitschig und klebrig, trocken oft nur glänzend, etwa beim Butterpilz.",
+      "definitionEn": "The surface is slippery and sticky when wet and often only shiny when dry, for example in the slippery jack."
+    },
+    {
       "term": "Schnitt",
       "termEn": "Cut",
       "definition": "Farbänderung des Fleisches an einer frischen Schnittfläche.",
       "definitionEn": "Colour change of the flesh on a fresh cut surface."
+    },
+    {
+      "term": "Schwärzen",
+      "termEn": "Blackening",
+      "definition": "Fleisch oder Oberfläche verfärben sich bei Verletzung, Druck oder im Alter grau bis schwarz, etwa beim Dickblättrigen Schwärztäubling.",
+      "definitionEn": "Flesh or surface turns grey to black when damaged, pressed or with age, for example in the blackening brittlegill."
     },
     {
       "term": "Schwefelsäure (H2SO4)",
@@ -567,6 +741,12 @@
       "termEn": "Spores",
       "definition": "Mikroskopisch kleine Verbreitungszellen der Pilze, die im Hymenium entstehen. Form, Größe und Ornament sind Bestimmungsmerkmale.",
       "definitionEn": "Microscopic cells of fungi that spread the species and form in the hymenium. Shape, size and ornamentation are identification features."
+    },
+    {
+      "term": "Sporenlager",
+      "termEn": "Spore-bearing surface",
+      "definition": "Allgemeines Wort für die Fruchtschicht an der Hutunterseite, also Lamellen, Röhren, Leisten oder Stacheln. Seine Farbe kann sich mit der Reife der Sporen ändern.",
+      "definitionEn": "General word for the fertile layer under the cap: gills, tubes, ridges or spines. Its colour can change as the spores ripen."
     },
     {
       "term": "Sporenpulver",
@@ -605,16 +785,34 @@
       "definitionEn": "Slightly sweet smell or taste."
     },
     {
+      "term": "Symbiosepilz",
+      "termEn": "Mycorrhizal fungus",
+      "definition": "Pilz, der mit den Wurzeln lebender Bäume eine Mykorrhiza bildet. Er wächst darum nur in der Nähe seiner Partnerbäume.",
+      "definitionEn": "Fungus that forms mycorrhiza with the roots of living trees. For this reason it grows only near its partner trees."
+    },
+    {
       "term": "Tanne",
       "termEn": "Fir",
       "definition": "Nadelbaum (Abies alba). Partner etwa des Steinpilzes.",
       "definitionEn": "Conifer (Abies alba). Partner of, for example, porcini."
     },
     {
+      "term": "Täublinge",
+      "termEn": "Brittlegills",
+      "definition": "Lamellenpilze der Gattung Russula mit sprödem Fleisch, das wie Kreide bricht. Anders als die Milchlinge geben sie keinen Milchsaft ab.",
+      "definitionEn": "Gilled mushrooms of the genus Russula with brittle flesh that breaks like chalk. Unlike the milkcaps, they release no latex."
+    },
+    {
       "term": "Trockenheit",
       "termEn": "Drought",
       "definition": "Farbänderung beim Austrocknen, etwa das Ausblassen hygrophaner Hüte.",
       "definitionEn": "Colour change when the fruit body dries, for example hygrophanous caps that go pale."
+    },
+    {
+      "term": "Überstehend",
+      "termEn": "Overhanging",
+      "definition": "Der Hutrand ragt über die Lamellen oder Röhren hinaus.",
+      "definitionEn": "The cap margin extends beyond the gills or tubes."
     },
     {
       "term": "Ulme",
@@ -633,6 +831,12 @@
       "termEn": "Indistinct",
       "definition": "Ohne deutlichen Geruch.",
       "definitionEn": "Without a clear smell."
+    },
+    {
+      "term": "Ungenießbar",
+      "termEn": "Inedible",
+      "definition": "Speisewert eines Pilzes, der nicht als giftig gilt, aber wegen Geschmack, Geruch oder zähem Fleisch nicht zum Essen taugt, etwa der bittere Gallenröhrling.",
+      "definitionEn": "Edibility class of a mushroom that is not known as poisonous but is not fit to eat because of its taste, smell or tough flesh, for example the bitter bolete."
     },
     {
       "term": "Velum",
@@ -665,10 +869,40 @@
       "definitionEn": "Broadleaf tree or shrub (Salix). It forms mycorrhiza; the willow bracket grows on old willows."
     },
     {
+      "term": "Weißfäule",
+      "termEn": "White rot",
+      "definition": "Holzfäule, bei der der Pilz auch das Lignin abbaut. Das Holz wird hell, weich und faserig, etwa durch den Zunderschwamm.",
+      "definitionEn": "Wood rot in which the fungus also breaks down the lignin. The wood becomes pale, soft and fibrous, for example from the tinder fungus."
+    },
+    {
+      "term": "Wulstlinge",
+      "termEn": "Amanitas",
+      "definition": "Lamellenpilze der Gattung Amanita, etwa Fliegenpilz, Perlpilz und die tödlich giftigen Knollenblätterpilze. Typisch sind weiße, freie Lamellen, eine Knolle oder Volva an der Stielbasis und oft ein Ring und Hutflocken.",
+      "definitionEn": "Gilled mushrooms of the genus Amanita, for example the fly agaric, the blusher and the deadly death caps. Typical are white free gills, a bulb or a volva at the stem base and often a ring and flakes on the cap."
+    },
+    {
+      "term": "Wurzelnd",
+      "termEn": "Rooting",
+      "definition": "Der Stiel setzt sich als wurzelartiger Fortsatz tief in den Boden fort, etwa beim Grubigen Wurzelrübling.",
+      "definitionEn": "The stem continues deep into the soil as a root-like extension, for example in the rooting shank."
+    },
+    {
       "term": "Würzig",
       "termEn": "Spicy",
       "definition": "Kräftig und aromatisch.",
       "definitionEn": "Strong and aromatic."
+    },
+    {
+      "term": "Zwischenlamellen",
+      "termEn": "Lamellulae",
+      "definition": "Kürzere Lamellen, die vom Hutrand ausgehen und den Stiel nicht erreichen. Sie liegen zwischen den ganzen Lamellen.",
+      "definitionEn": "Shorter gills that start at the cap margin and do not reach the stem. They lie between the full-length gills."
+    },
+    {
+      "term": "Zystiden",
+      "termEn": "Cystidia",
+      "definition": "Große, oft auffällig geformte sterile Zellen im Hymenium oder an der Oberfläche des Fruchtkörpers. Ihre Form und Lage sind Bestimmungsmerkmale unter dem Mikroskop.",
+      "definitionEn": "Large sterile cells, often with a distinctive shape, in the hymenium or on the surface of the fruit body. Their shape and position are identification features under the microscope."
     }
   ]
 }
