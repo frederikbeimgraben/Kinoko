@@ -9,6 +9,9 @@ baeume = ["buche", "eiche"]
 speisewertHinweis = "In Deutschland stark gefährdet und vollständig geschützt. Nicht sammeln, nur stehen lassen und melden."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Mittelgroßer bis großer Röhrling mit blutrotem, purpurrotem bis rosarotem Hut, leuchtend zitronengelben bis goldgelben Röhren, die auf Druck schwach blauen, und gelbem, karminrötlich geflecktem Stiel mit Netz. Er wächst von Juni bis November im Laubwald, gern bei Rotbuche und Eiche auf kalkreichem Boden, und ist sehr selten. Vom Silberröhrling unterscheidet ihn vor allem der rosa bis rote Hut, denn der Silberröhrling hat einen silbergrauen bis milchkaffeebraunen Hut. Der Königsröhrling ist in Deutschland stark gefährdet und vollständig geschützt."
+beschreibungEn = "A medium-sized to large bolete with a blood-red, purple-red to rose-red cap, bright lemon-yellow to golden-yellow tubes that turn slightly blue when pressed, and a yellow stem with carmine-red spots and a net. It grows from June to November in broadleaf woods, often with beech and oak on calcareous soil, and is very rare. The key difference from Butyriboletus fechtneri is the pink to red cap, because Butyriboletus fechtneri has a silver-grey to milky-coffee-brown cap. The royal bolete is highly endangered and strictly protected in Germany."
+entwurf = true
 synonyme = ["Boletus regius"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt", "voll"]

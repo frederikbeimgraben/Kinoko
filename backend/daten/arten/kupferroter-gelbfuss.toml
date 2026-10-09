@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Beim Kochen wird er violettbraun und schmeckt parfümiert, ähnlich dem Violetten Rötelritterling."
+beschreibung = "Kleiner bis mittelgroßer Gelbfuß mit braunem, orangebraunem bis graubraunem, feucht schmierigem Hut, entfernt stehenden, weit herablaufenden, gelborangen bis rotbraunen Lamellen und schlankem, gelborangem Stiel, der bei Verletzung rötet. Er wächst von Juni bis November unter Kiefern. Vom tödlich giftigen Spitzgebuckelten Raukopf unterscheiden ihn vor allem die weit herablaufenden Lamellen und das gelborange Fleisch, denn der Raukopf hat zimtbraune, nur angeheftete Lamellen und einen rau faserigen, meist spitz gebuckelten Hut."
+beschreibungEn = "A small to medium-sized spike with a brown, orange-brown to grey-brown cap that is slimy when wet, distant, deeply decurrent, yellow-orange to red-brown gills and a slender, yellow-orange stem that turns red when it is damaged. It grows from June to November under pines. The key difference from the deadly poisonous deadly webcap is the deeply decurrent gills and the yellow-orange flesh, because the deadly webcap has cinnamon-brown gills that are only adnexed and a rough, fibrous cap that mostly has a pointed umbo."
+entwurf = true
 synonyme = ["Chroogomphus britannicus", "Gomphidius rutilus forma testaceus", "Chroogomphus helveticus subsp. tatrensis", "Chroogomphus rutilus var. corallinus", "Chroogomphus rutilus subsp. alabamensis"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 stielmerkmale = ["voll"]

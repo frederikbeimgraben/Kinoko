@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Die schleimige Huthaut schon im Wald abziehen. Sonst färbt der Pilz im Korb die Berührungsstellen an Pfifferlingen schwarz; das ist nicht giftig, sieht aber unappetitlich aus."
+beschreibung = "Mittelgroßer bis großer Gelbfuß mit braunem bis violettem, stark schleimigem, oft schwarzbraun geflecktem Hut, dicken, wachsartigen, herablaufenden, erst weißlichen und später grauen Lamellen und weißlichem, sehr schleimigem Stiel mit kanariengelber Basis. Er wächst von Juni bis November im Nadelwald bei Fichten auf saurem Boden. Vom Gelbgestiefelten Schleimkopf unterscheiden ihn vor allem die dicken, weit herablaufenden Lamellen und die innen leuchtend gelbe Stielbasis, denn der Schleimkopf hat cremegraue bis ockerbraune Lamellen und wächst bei Birken."
+beschreibungEn = "A medium-sized to large spike with a brown to violet, very slimy cap that often has black-brown spots, thick, waxy, decurrent gills that are whitish at first and later grey, and a whitish, very slimy stem with a canary-yellow base. It grows from June to November in coniferous woods with spruce on acid soil. The key difference from Cortinarius triumphans is the thick, decurrent gills and the stem base that is bright yellow inside, because Cortinarius triumphans has cream-grey to ochre-brown gills and grows with birch."
+entwurf = true
 weitereNamen = ["Großer Gelbfuß", "Großer Schmierling", "Großer Keilpilz", "Großer Schleimpilz", "Rotzer", "Rotznase", "Schafsnase"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 

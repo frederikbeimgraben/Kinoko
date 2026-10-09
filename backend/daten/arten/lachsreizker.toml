@@ -9,6 +9,9 @@ jahreszeiten = ["herbst"]
 baeume = ["tanne"]
 karte = "reizker"
 speisewertHinweis = "Schmeckt etwas bitterlich. Der rote Farbstoff färbt den Urin bis zum nächsten Tag, das ist harmlos."
+beschreibung = "Mittelgroßer Milchling mit orangem, weißlich bereiftem, meist deutlich gezontem und schleimig schmierigem Hut mit genabelter bis trichterförmiger Mitte, orangen bis orangeockerfarbenen Lamellen und orangem, hohlem Stiel mit rötlichen Grübchen. Er wächst von September bis November bei Nadelbäumen, überwiegend bei Weißtannen. Vom Weinroten Kiefernreizker unterscheiden ihn vor allem der Standort bei Weißtannen und die karottenrote bis orange Milch, die später weinrot wird, denn der Kiefernreizker wächst bei Kiefern und hat Lamellen, die bei Verletzung dunkel blutrot werden."
+beschreibungEn = "A medium-sized milkcap with an orange, whitish-bloomed, mostly clearly zoned and slimy cap with a navel-shaped to funnel-shaped centre, orange to orange-ochre gills and an orange, hollow stem with reddish pits. It grows from September to November with conifers, mostly with silver fir. The key difference from Lactarius sanguifluus is the habitat with silver fir and the carrot-red to orange milk that later turns wine-red, because Lactarius sanguifluus grows with pine and has gills that turn dark blood-red when they are damaged."
+entwurf = true
 weitereNamen = ["Weißtannenreizker"]
 synonyme = ["Lactarius salmoneus", "Lactarius subsalmoneus", "Lactarius thyinos", "Lactarius salmonicolor f. brigantiacus"]
 fruchtschicht = { art = "lamellen" }

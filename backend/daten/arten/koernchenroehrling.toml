@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen und die schleimige Huthaut abziehen. Die DGfM nennt Magen-Darm-Beschwerden mit starkem Durchfall und mögliche Allergien; wer darauf reagiert, meidet alle Schmierröhrlinge."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer Schmierröhrling mit kastanienbraunem bis ockerbraunem, bei Nässe sehr schmierigem Hut, zitronengelben, jung milchig tropfenden Röhren und gelblichweißem, bräunlich gekörneltem Stiel ohne Ring. Er wächst von Juni bis November bei Kiefern, oft zusammen mit dem Butterpilz, und ist regional sehr häufig. Vom Ringlosen Butterpilz unterscheidet ihn vor allem die Stielbasis, die beim Ringlosen Butterpilz rosa ist, während der Körnchenröhrling oben am Stiel milchige Tröpfchen und Drüsenpunkte zeigt."
+beschreibungEn = "A medium-sized slippery bolete with a chestnut-brown to ochre-brown cap that is very slimy when wet, lemon-yellow tubes that weep milky drops when young, and a yellowish-white stem with brownish granules and without a ring. It grows from June to November with pines, often together with the slippery jack, and is very common in some regions. The key difference from Suillus collinitus is the stem base, which is pink in Suillus collinitus, while the weeping bolete has milky drops and glandular dots on the upper stem."
+entwurf = true
 weitereNamen = ["Schmerling", "Schälpilz", "Rotzer", "Schalschwamm", "Rotzling", "Pimp", "Maschlurken", "Pimk"]
 synonyme = ["Boletus granulatus", "Ixocomus granulatus", "Boletus lactifluus", "Suillus lactifluus", "Boletus granulatus var. lactifluus", "Boletus granulatus var. heterosporus"]
 fruchtschicht = { art = "roehren" }

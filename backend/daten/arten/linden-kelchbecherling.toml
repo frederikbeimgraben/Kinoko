@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["winter", "fruehling"]
 baeume = ["linde"]
 speisewertHinweis = "Ungiftig, aber nicht schmackhaft. 123pilzsuche gibt die Relative Wertigkeit 5."
+beschreibung = "Kleiner bis mittelgroßer, kelch- bis schüsselförmiger Becherling mit zinnoberroter bis karminroter Innenseite, blasser, weißlich filziger Außenseite und kurzem, weißlichem Stiel. Er wächst von Dezember bis Mai als Folgezersetzer an eingegrabenen oder aufliegenden, verrotteten Lindenzweigen, seltener an anderem Laubholz. Vom Österreichischen Prachtbecherling ist er ohne Mikroskop kaum zu trennen, das beste Merkmal ist das Substrat, denn der Prachtbecherling wächst an Erle, Weide und Espe."
+beschreibungEn = "A small to medium-sized, goblet-shaped to bowl-shaped cup fungus with a vermilion to carmine-red inner side, a pale, whitish and felty outer side and a short, whitish stem. It grows from December to May as a saprobe on buried or fallen, rotten twigs of lime trees, less often on other broadleaf wood. Without a microscope it is difficult to separate from the scarlet elfcup, and the best feature is the substrate, because the scarlet elfcup grows on alder, willow and aspen."
+entwurf = true
 weitereNamen = ["Scharlachroter Linden-Kelchbecherling"]
 synonyme = ["Sarcoscypha coccinea var. jurana + sarcoscypha emarginata"]
 hutform = { von = "trichterfoermig" }

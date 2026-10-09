@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["tanne"]
+beschreibung = "Kleiner bis mittelgroßer, stielloser Porling mit leuchtend orangerotem bis orangegelbem, gezontem, später filzig weichem Fruchtkörper und gelblichen bis orangegelben Poren. Er wächst von Juni bis November als Folgezersetzer an Totholz und Bauholz, meist an Nadelholz, gern an Weißtanne, und verursacht Braunfäule. Vom Zimtfarbenen Weichporling unterscheidet ihn vor allem die leuchtend orangerote Farbe, denn der Zimtfarbene Weichporling ist zimtbraun bis rosabraun und wächst meist an Laubholz. Der Leuchtende Weichporling ist ungenießbar."
+beschreibungEn = "A small to medium-sized, stemless polypore with a bright orange-red to orange-yellow, zoned fruit body that later becomes felty and soft, and yellowish to orange-yellow pores. It grows from June to November as a saprobe on dead wood and timber, mostly conifer wood, often silver fir, and causes brown rot. The key difference from the cinnamon bracket is the bright orange-red colour, because the cinnamon bracket is cinnamon-brown to pinkish-brown and mostly grows on broadleaf wood. This species is inedible."
+entwurf = true
 fruchtschicht = { art = "poren" }
 hutform = { von = "kugelig", nach = "flach" }
 hutmerkmale = ["gezont"]

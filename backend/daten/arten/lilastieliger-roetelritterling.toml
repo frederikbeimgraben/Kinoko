@@ -10,6 +10,9 @@ baeume = []
 speisewertHinweis = "Regional sehr selten und in Deutschland gefährdet. Nur wenige Fruchtkörper nehmen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Rötelritterling mit grauviolettem, beigebräunlichem bis graublauem, hygrophanem Hut mit lange eingerolltem Rand, weißlich lila bis blass violettblauen, ausgebuchtet angewachsenen Lamellen und blass blaulila bis rötlichlila, vollem Stiel. Er wächst von September bis Januar, selten im Frühling, auf Wiesen und Weiden, in Laubwäldern und Parks, oft in Reihen oder Hexenringen, und ist regional sehr selten. Vom Violetten Rötelritterling unterscheidet ihn vor allem der Hut, der grauviolett bis graubräunlich statt lilaviolett ist, dazu riecht er schwächer parfümiert. Die Art ist in Deutschland gefährdet."
+beschreibungEn = "A medium-sized blewit with a grey-violet, beige-brownish to grey-blue, hygrophanous cap with a margin that stays inrolled for a long time, whitish-lilac to pale violet-blue, notched gills and a pale blue-lilac to reddish-lilac, solid stem. It grows from September to January, rarely in spring, on meadows and pastures, in broadleaf woods and parks, often in rows or fairy rings, and is very rare in some regions. The key difference from the wood blewit is the cap, which is grey-violet to grey-brownish instead of lilac-violet, and the smell is less perfumed. The field blewit is endangered in Germany."
+entwurf = true
 weitereNamen = ["Maskierter Ritterling", "Maskierter Rötelritterling", "Fleischbräunlicher Rötelritterling"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 hutmerkmale = ["hygrophan"]

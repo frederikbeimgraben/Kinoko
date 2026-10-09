@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
 baeume = ["holunder", "birke"]
 karte = "auricularia_auricula-judae"
+beschreibung = "Ohrförmiger, gallertartig zäher Pilz mit brauner bis schwarzbrauner, von Adern durchzogener und meist fein filziger Oberfläche und blassgrauer, feinkörnig filziger Rückseite, gegen das Licht durchscheinend. Er wächst das ganze Jahr über, vor allem im Winter und Frühjahr bei feuchtem Wetter, an Laubholz, meist an Holunder, auch an Birke, und fast nie an Nadelholz. Vom Gezonten Ohrlappenpilz unterscheidet ihn vor allem die Oberseite, denn der Gezonte Ohrlappenpilz ist striegelig behaart, bunt gezont und gegen das Licht undurchsichtig."
+beschreibungEn = "An ear-shaped, tough and jelly-like fungus with a brown to black-brown, veined and mostly finely felty surface and a pale grey, finely granular and felty underside, translucent against the light. It grows all year round, mainly in winter and spring in wet weather, on broadleaf wood, mostly elder, also birch, and almost never on conifer wood. The key difference from the tripe fungus is the upper side, because the tripe fungus is hairy, has coloured zones and is not translucent against the light."
+entwurf = true
 weitereNamen = ["Judasohr", "Holunderschwammpilz", "Holunderpilz", "Holunderschwamm", "Black Fungus", "Weißes Judasohr"]
 synonyme = ["Auricularia auricula", "Auricularia sambucina oder hirneola auricula-judae", "Auricularia polytricha"]
 

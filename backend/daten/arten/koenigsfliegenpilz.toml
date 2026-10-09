@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Zu erkennen am braunen bis gelbbraunen Hut mit gelblichen, abwischbaren Velumflocken, am hellgelben Stiel und an der warzig-knolligen Basis mit gürtelförmigen Velumzonen."
+beschreibung = "Großer Wulstling mit braunem bis gelbbraunem Hut mit gelblichen bis grauweißen, abwischbaren Velumflocken, weißen bis hellgelblichen, freien Lamellen und hellgelbem Stiel mit hängendem Ring und warziger, knolliger Basis mit gürtelförmigen Velumzonen. Er wächst von Juni bis November im Nadelwald, gern bei Fichten auf saurem Boden. Vom Pantherpilz unterscheidet ihn vor allem das Fleisch, das unter der Huthaut gelb ist, denn der Pantherpilz hat dort weißes Fleisch, rein weiße Flöckchen und einen weißen Stiel. Der Königsfliegenpilz ist giftig."
+beschreibungEn = "A large amanita with a brown to yellow-brown cap with yellowish to grey-white veil flakes that rub off, white to light yellowish free gills and a light yellow stem with a hanging ring and a warty, bulbous base with belt-like veil zones. It grows from June to November in coniferous woods, often with spruce on acid soil. The key difference from the panther cap is the flesh, which is yellow below the cap skin, because the panther cap has white flesh there, pure white flakes and a white stem. The royal fly agaric is poisonous."
+entwurf = true
 weitereNamen = ["Brauner Fliegenpilz"]
 synonyme = ["Amanita muscaria var. regalis", "Amanita regalis forma umbrina", "Amanita emilii"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }

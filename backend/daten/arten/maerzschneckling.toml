@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling"]
 baeume = ["tanne", "fichte", "buche"]
 speisewertHinweis = "Besonders geschützt und in Deutschland stark gefährdet. Den Fund besser stehen lassen."
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Mittelgroßer Schneckling mit weißlichem bis grauschwarzem oder braunschwarzem, fleckigem, klebrigem Hut, weißen, später etwas grauen, weit stehenden Lamellen und weißem bis grauweißem Stiel. Er wächst von März bis Mai im Mischwald, gern bei Tanne und Fichte, seltener bei Buche, auf kalkreichem Boden und oft noch am Schneerand. Vom Großen Kiefernschneckling unterscheidet ihn vor allem die Jahreszeit, denn der Kiefernschneckling erscheint erst im Spätsommer und Herbst, wächst bei Kiefern und hat einen schleimigen Stiel mit Ringzone. Der Märzschneckling ist besonders geschützt und in Deutschland stark gefährdet."
+beschreibungEn = "A medium-sized woodwax with a whitish to grey-black or brown-black, spotted, sticky cap, white gills that later become slightly grey and are distant, and a white to grey-white stem. It grows from March to May in mixed woods, often with fir and spruce, less often with beech, on calcareous soil and often still at the edge of melting snow. The key difference from Hygrophorus latitabundus is the season, because Hygrophorus latitabundus appears only in late summer and autumn, grows with pine and has a slimy stem with a ring zone. The March woodwax is specially protected and highly endangered in Germany."
+entwurf = true
 weitereNamen = ["Märzellerling", "Schneepilz"]
 synonyme = ["Limacium camarophyllum subsp. marzuolum", "Agaricus marzuolus", "Clitocybe marzuolus"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "weit" }

@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Zu erkennen am tinten- bis karbolartigen Geruch nach Phenol und an der starken Gelbfärbung der Stielbasis beim Anschneiden. Die Vergiftung ist nicht gefährlich, aber sehr unangenehm: meist Bauchschmerzen über einige Stunden, in Ausnahmefällen Schwindel und Sehstörungen. Bei jungen Stücken ist der Geruch oft nicht eindeutig; dann den Pilz stehen lassen."
+beschreibung = "Mittelgroßer Champignon mit weißem, im Alter graubraunem Hut, der beim Reiben gelblich anläuft, freien, erst rosa und später braunen Lamellen und weißem Stiel mit breitem, hängendem, doppelrandigem Ring. Er wächst von März bis November auf Wiesen, im Gebüsch, in Parks und gern auf Streuobstwiesen, seltener im Wald. Von essbaren Champignons unterscheidet ihn vor allem die starke chromgelbe Färbung der Stielbasis beim Anschneiden zusammen mit dem Geruch nach Tinte oder Karbol. Der Karbol-Champignon ist giftig."
+beschreibungEn = "A medium-sized mushroom with a white cap that becomes grey-brown with age and turns yellowish when rubbed, free gills that are pink at first and later brown, and a white stem with a broad, hanging, double-edged ring. It grows from March to November on meadows, in scrub, in parks and often in meadow orchards, less often in woods. The key difference from edible mushrooms of the same genus is the strong chrome-yellow colour of the stem base when it is cut, together with the smell of ink or carbolic acid. The yellow stainer is poisonous."
+entwurf = true
 weitereNamen = ["Karbolegerling", "Giftchampignon", "Tintenegerling", "Giftegerling", "Karbolchampignon"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "halbkugelig", nach = "flach" }

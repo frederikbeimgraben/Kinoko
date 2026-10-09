@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling", "sommer"]
 baeume = ["pappel", "laerche"]
 speisewertHinweis = "Ohne den starken Mehlgeruch stehen lassen. Zur selben Zeit und am selben Ort wachsen tödlich giftige Risspilze."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer bis großer Ritterling mit weißem, cremeweißem bis gelblichem, mattem, oft unregelmäßig verbogenem Hut, weißen, sehr dichten, ausgebuchtet angewachsenen Lamellen und kräftigem, weißlichem Stiel ohne Ring. Er wächst in ganz Deutschland von März bis Juli auf Wiesen, in Parks, Laubwäldern und Auwäldern, oft in Hexenringen und meist auf kalkreichem Boden, und ist sehr häufig. Vom tödlich giftigen Ziegelroten Risspilz unterscheiden ihn vor allem der starke Mehlgeruch und das Fleisch, das sich nicht rot verfärbt, denn der Risspilz hat einen radialfaserig aufreißenden Hut, rötendes Fleisch und keinen Mehlgeruch."
+beschreibungEn = "A medium-sized to large knight with a white, cream-white to yellowish, matt cap that is often irregular in shape, white, very crowded, notched gills and a stout, whitish stem without a ring. It grows throughout Germany from March to July on meadows, in parks, broadleaf woods and riverside woods, often in fairy rings and mostly on calcareous soil, and is very common. The key difference from the deadly poisonous Inosperma erubescens is the strong mealy smell and the flesh that does not turn red, because Inosperma erubescens has a radially splitting cap, flesh that turns red and no mealy smell."
+entwurf = true
 weitereNamen = ["Maipilz", "Georgsritterling", "Gelber Schönkopf", "Maischönkopf", "Huf-Ritterling Mairitterling", "Maiblattl", "Huf-Ritterling"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
 hutmerkmale = ["unregelmaessig"]

@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Etwas säuerlich, guter Mischpilz und Trockenpilz. Beim Kochen läuft das Fleisch rosa bis leicht violett an."
+beschreibung = "Kleiner bis mittelgroßer Schmierröhrling mit bräunlichem, glattem, feucht schmierigem Hut mit scharfkantigem, welligem Rand, graugelben bis rotbraunen, weiten, eckigen und etwas herablaufenden Röhren und hellbraunem, vollem Stiel. Er wächst von Juni bis November bei Kiefern, gern auf sandigem, nährstoffarmem Boden, oft zusammen mit dem Rosenroten Gelbfuß, der auf seinem Myzel wächst. Vom Sandröhrling unterscheiden ihn vor allem die weiten, eckigen Röhren und der schmierige Hut, denn der Sandröhrling hat feine, enge Röhren und eine körnig filzige, matte Huthaut."
+beschreibungEn = "A small to medium-sized slippery bolete with a brownish, smooth cap that is slimy when wet and has a sharp, wavy margin, grey-yellow to red-brown, wide, angular and slightly decurrent tubes and a light brown, solid stem. It grows from June to November with pines, often on sandy, nutrient-poor soil, often together with the rosy spike, which grows on its mycelium. The key difference from the velvet bolete is the wide, angular tubes and the slimy cap, because the velvet bolete has fine, narrow tubes and a granular, felty, matt cap skin."
+entwurf = true
 weitereNamen = ["Kuhpilz"]
 synonyme = ["Mariaella bovina", "Ixocomus bovinus", "Boletus bovinus"]
 fruchtschicht = { art = "roehren" }

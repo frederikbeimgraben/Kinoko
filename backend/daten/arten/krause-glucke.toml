@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "fichte"]
 karte = "sparassis_crispa"
 speisewertHinweis = "Den Strunk nicht mitessen, er kann Übelkeit und Erbrechen auslösen. Im Alter wird sie bitterlich. Zum Putzen kurz in kochendes Wasser tauchen oder in Scheiben schneiden und wässern."
+beschreibung = "Großer, blumenkohlartiger Pilz aus vielen krausen, weißlichen bis gelblichen Lappen, die aus einem weißlichen Strunk entspringen. Sie wächst von Juni bis November als Parasit und Folgezersetzer am Wurzelgeflecht von Kiefern, seltener an anderem Nadelholz wie Fichte. Von der Breitblättrigen Glucke unterscheiden sie vor allem die schmaleren, stärker gekrausten Lappen und der Standort an Kiefer, denn die Breitblättrige Glucke hat breitere Lappen und wächst an Laubholz."
+beschreibungEn = "A large, cauliflower-like fungus made of many curly, whitish to yellowish lobes that grow from a whitish base. It grows from June to November as a parasite and saprobe on the roots of pines, less often on other conifers such as spruce. The key difference from Sparassis brevipes is the narrower, more curly lobes and the habitat with pine, because Sparassis brevipes has broader lobes and grows on broadleaf wood."
+entwurf = true
 weitereNamen = ["Fette Henne", "Bärenschädel"]
 
 [quelle]

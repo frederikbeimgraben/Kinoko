@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 haeufigkeit = "selten"
+beschreibung = "Kleiner Pilz mit grauschwarzem bis schwarzbraunem, in der Mitte trichterförmig genabeltem Hut mit dunklerem Rand, grauweißen, eng stehenden, herablaufenden Lamellen und schmutzig grauweißem, später braunem Stiel. Er wächst von Juni bis November im Mischwald, gern auf Brandstellen zwischen verkohltem Holz, und ist selten. Von der Grauen Kraterelle unterscheidet ihn vor allem der Standort auf Brandstellen, denn die Graue Kraterelle wächst im Laubwald, vor allem bei Buchen. Der Kohlenleistling ist ungenießbar."
+beschreibungEn = "A small fungus with a grey-black to black-brown cap with a funnel-shaped centre and a darker margin, grey-white, crowded, decurrent gills and a dirty grey-white stem that later becomes brown. It grows from June to November in mixed woods, often on burnt ground between charred wood, and is rare. The key difference from the ashen chanterelle is the habitat on burnt ground, because the ashen chanterelle grows in broadleaf woods, mainly with beech. This species is inedible."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }
 hutmerkmale = ["genabelt"]
 stielmerkmale = ["faserig"]

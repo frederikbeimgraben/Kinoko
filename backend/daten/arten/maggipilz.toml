@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "In größeren Mengen verursacht er heftige Magen-Darm-Störungen. Erkennbar am Geruch nach Maggi oder Liebstöckel und an der glasklaren, milden Milch. Früher als Würzpilz benutzt, heute besser stehen lassen."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer Milchling mit hellbraunem, graubraunem bis orangebraunem, filzigem Hut, meist mit Buckel, hellgelb ockerlichen, herablaufenden Lamellen und hellem, sehr brüchigem Stiel. Er wächst von Juni bis November im Mischwald, häufig in moorigen Nadelwäldern auf saurem Boden, und ist selten. Sein bestes Merkmal ist der Geruch nach Maggi oder Liebstöckel zusammen mit der glasklaren, wässrigen Milch, die ihn kaum als Milchling erkennen lässt. Der Maggipilz ist giftig."
+beschreibungEn = "A medium-sized milkcap with a light brown, grey-brown to orange-brown, felty cap, mostly with an umbo, light ochre-yellow, decurrent gills and a pale, very brittle stem. It grows from June to November in mixed woods, often in boggy coniferous woods on acid soil, and is rare. Its best feature is the smell of stock seasoning or lovage together with the clear, watery milk, which makes it difficult to recognise as a milkcap. The fenugreek milkcap is poisonous."
+entwurf = true
 weitereNamen = ["Bruchreizker"]
 synonyme = ["Agaricus helvus", "Galorrheus helvus", "Lactifluus helvus", "Agaricus tomentosus", "Lactarius tomentosus", "Lactarius aquifluus", "Lactifluus aquifluus", "Lactarius helvus var. aquifluus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

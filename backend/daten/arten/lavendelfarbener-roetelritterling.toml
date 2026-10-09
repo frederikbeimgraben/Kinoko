@@ -7,6 +7,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["herbst", "winter"]
 baeume = []
+beschreibung = "Mittelgroßer Rötelritterling mit rötlichlila bis lavendelfarbenem, kahlem und glattem Hut mit lange eingerolltem Rand, lila, ausgebuchtet angewachsenen Lamellen und blass lila, weiß bereiftem Stiel. Er wächst von September bis Januar als Folgezersetzer in Mischwäldern, Parks, Gärten und auf Ruderalflächen. Vom Bocksdickfuß unterscheidet ihn vor allem der parfümierte Geruch und das beigerosa Sporenpulver, denn der Bocksdickfuß riecht widerlich nach Ziegenbock und hat bald zimtbraune Lamellen."
+beschreibungEn = "A medium-sized blewit with a reddish-lilac to lavender, bare and smooth cap with a margin that stays inrolled for a long time, lilac, notched gills and a pale lilac, white-bloomed stem. It grows from September to January as a saprobe in mixed woods, parks, gardens and on waste ground. The key difference from the goatcheese webcap is the perfumed smell and the beige-pink spore print, because the goatcheese webcap has a disgusting smell of goat and its gills soon become cinnamon-brown."
+entwurf = true
 weitereNamen = ["Blassblauer Rötelritterling", "Blasser Rötelritterling"]
 synonyme = ["Lepista nuda var. glaucocana", "Rhodopaxillus glaucocanus", "Clitocybe glaucocana"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }

@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
+beschreibung = "Kleiner, schüsselförmiger, hellbrauner Becherling mit gekerbtem Rand, weißlicher bis gelblicher Innenseite und ockerfarbener, etwas kleiiger Außenseite. Er wächst von März bis November als Folgezersetzer auf Erde in Gärten und in Blumentöpfen. Vom Judasohr unterscheidet ihn vor allem das brüchige Fleisch und der Standort auf Erde, denn das Judasohr ist gallertartig und wächst an Laubholz. Der Kerbrandige Napfbecherling ist ungenießbar."
+beschreibungEn = "A small, bowl-shaped, light brown cup fungus with a notched margin, a whitish to yellowish inner side and an ochre, slightly scurfy outer side. It grows from March to November as a saprobe on soil in gardens and in flower pots. The key difference from the jelly ear is the brittle flesh and the habitat on soil, because the jelly ear is jelly-like and grows on broadleaf wood. This species is inedible."
+entwurf = true
 weitereNamen = ["Napfförmiger Kelchbecherling"]
 synonyme = ["Pustulina cupularis", "Tarzetta cupularis var. velata"]
 hutform = { von = "trichterfoermig" }
