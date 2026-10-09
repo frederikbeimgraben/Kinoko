@@ -189,6 +189,18 @@ warning for each value that it cannot write, for example:
 Read the warnings before you commit. The command refuses an empty database,
 because that export would remove each profile.
 
+## First deploy checklist
+
+Do these steps in this order. The host is `https://kinoko.reutlingen.university`.
+
+1. Deploy `main`: the service as in "Deploy" below, then the app with `deploy/frontend.sh`.
+2. Set `oidc.name` (`PILZE_OIDC_NAME`), for example `services.kinoko.oidc.name = "Hochschul-Login";`. Without it, the sign-in button shows the host of the issuer. Restart the service.
+3. Check the config: `curl -s https://kinoko.reutlingen.university/api/config | jq`. `oidcIssuer` and `oidcName` are not empty. `version` has the date-tag form, for example `v2026-10-08-01`. `dev` means a plain `go build`.
+4. Sign in as an admin. Upload the data sources, as "First deploy of the pipeline" tells.
+5. Open Verwaltung → Läufe (`/verwaltung/laeufe`). Push "Lauf anstoßen", select "Vollständig" and push "Anstoßen". The dialog names the inputs that are missing. Then it does not start the run.
+6. Watch the run on its page. The first full run fetches the data from 2014 and can take hours. A failed run shows its error. The full log is in `<stateDir>/runs/<run id>.log`.
+7. Run `deploy/smoke.sh https://kinoko.reutlingen.university`. All checks must pass. Before the first full run ends, the manifest checks fail, and the map shows "Noch keine Vorhersage".
+
 ## First deploy of the pipeline
 
 The pipeline needs data that it cannot fetch. An admin uploads these data
