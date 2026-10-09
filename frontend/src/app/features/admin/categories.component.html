@@ -1,9 +1,4 @@
-<app-page-header
-  [title]="'admin.categories.title' | t"
-  [back]="!wide()"
-  [wide]="wide()"
-  (backClick)="back()"
-/>
+<app-page-header [title]="'admin.categories.title' | t" [back]="true" [wide]="wide()" (backClick)="back()" />
 
 <div class="categories">
   <app-segmented

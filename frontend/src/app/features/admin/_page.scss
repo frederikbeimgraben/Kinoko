@@ -7,14 +7,14 @@
   overflow: hidden;
 }
 
-/** The scroll area per the kit `.panel`. The desktop detail pane sets `--admin-pad` to `0 32px 32px`. */
+/** The scroll area per the kit `.panel`. The phone and the desktop detail pane have the same 16 px gutter, as the boards show. */
 @mixin body {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 20px;
   min-block-size: 0;
-  padding: var(--admin-pad, 4px 16px 24px);
+  padding: var(--admin-pad, 8px 16px 24px);
   overflow-y: auto;
   scrollbar-width: none;
 }
