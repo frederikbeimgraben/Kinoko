@@ -8,7 +8,9 @@ const STAMP = '2026-09-12T10:00:00Z';
 export const HYMENIUM: GlossaryEntry = {
   id: 'begriff-eins',
   term: 'Hymenium',
+  termEn: 'Hymenium',
   definition: 'Die sporenbildende Schicht der Fruchtschicht.',
+  definitionEn: 'The spore-bearing layer.',
   updatedByName: 'Frederik',
   updatedAt: STAMP,
 };
@@ -16,7 +18,9 @@ export const HYMENIUM: GlossaryEntry = {
 export const LAMELLEN: GlossaryEntry = {
   id: 'begriff-zwei',
   term: 'Lamellen',
+  termEn: '',
   definition: 'Blattartige Strukturen unter dem Hut.',
+  definitionEn: '',
   updatedByName: 'Frederik',
   updatedAt: STAMP,
 };

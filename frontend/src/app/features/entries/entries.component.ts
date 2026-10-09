@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { GroupsStore } from '../../core/access/groups.store';
 import { PersonNamesStore } from '../../core/access/person-names.store';
 import { AuthService } from '../../core/auth';
+import { ConfigStore } from '../../core/config/config.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -88,6 +89,8 @@ export class EntriesComponent {
   /** On the desktop the floating button of the map adds an entry. */
   protected readonly wide = inject(ViewportService).wide;
   protected readonly signedIn = this.store.signedIn;
+  protected readonly signingIn = this.auth.signingIn;
+  protected readonly ssoMissing = inject(ConfigStore).ssoMissing;
   protected readonly segments = SEGMENTS;
   protected readonly segment = signal<Segment>('finds');
   protected readonly filterOpen = signal(false);
@@ -109,6 +112,7 @@ export class EntriesComponent {
   private readonly context = computed<RowContext>(() => {
     // The rows follow the bundle and the names: a name that arrives later fills its row.
     this.species.species();
+    const thumbs = this.photos.findThumbs();
     return {
       i18n: this.i18n,
       today: this.today,
@@ -118,6 +122,7 @@ export class EntriesComponent {
         const name = this.names.nameOf(ownerId);
         return name === null ? null : firstName(name);
       },
+      photo: (findId) => thumbs.get(findId),
     };
   });
 
@@ -194,8 +199,9 @@ export class EntriesComponent {
     void this.species.loadBundle();
     void this.store.loadShared();
     this.store.loadOnSignIn(this.signedIn);
-    this.groups.load(false, true);
-    if (this.filter().withPhoto) this.photos.loadAll();
+    this.groups.loadOnSignIn(this.signedIn);
+    // The rows show the photo of a find, and the photo filter needs each own photo.
+    this.photos.loadAllOnSignIn(this.signedIn);
   }
 
   protected selectSegment(segment: Segment): void {
@@ -217,7 +223,7 @@ export class EntriesComponent {
   }
 
   protected signIn(): void {
-    void this.auth.requestSignIn();
+    void this.auth.signIn('/eintraege');
   }
 
   protected send(): void {
@@ -227,7 +233,7 @@ export class EntriesComponent {
   /** An entry starts on the map: the crosshair is there. */
   protected async startEntry(): Promise<void> {
     await this.router.navigate(['/karte']);
-    this.addEntry.open();
+    await this.addEntry.begin();
   }
 
   protected async open(row: EntryRow): Promise<void> {

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, output } from '@a
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
+import { ErrorStateComponent } from '../../ui/error-state/error-state.component';
 import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { TimelineComponent, type TimelineWeek } from '../../ui/timeline/timeline.component';
@@ -12,7 +13,7 @@ import { MapView } from './map.view';
 @Component({
   selector: 'app-map-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FilterChipComponent, SegmentedComponent, TimelineComponent, TranslatePipe],
+  imports: [ErrorStateComponent, FilterChipComponent, SegmentedComponent, TimelineComponent, TranslatePipe],
   templateUrl: './map-panel.component.html',
   styleUrl: './map-panel.component.scss',
 })

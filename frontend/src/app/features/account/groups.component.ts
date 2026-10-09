@@ -12,6 +12,7 @@ import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { ToastService } from '../../ui/toast/toast.service';
 import { GroupSheetComponent } from './group-sheet.component';
 import { memberCount } from './group-text';
 
@@ -47,10 +48,13 @@ export class GroupsComponent {
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
   private readonly store = inject(GroupsStore);
+  private readonly toasts = inject(ToastService);
   private readonly wide = inject(ViewportService).wide;
 
   protected readonly back = computed(() => !this.wide());
   protected readonly sheet = signal<Sheet>(null);
+  /** The message of the join sheet for an unknown code. */
+  protected readonly joinError = signal<string | null>(null);
   protected readonly busy = this.store.writing;
   protected readonly loaded = computed(() => this.store.groups() !== null);
 
@@ -75,16 +79,25 @@ export class GroupsComponent {
     this.store.load();
   }
 
+  /** The sheet sends only a text that is not empty. */
   protected async create(name: string): Promise<void> {
-    if (name.trim() === '') return;
-    const group = await this.store.create(name.trim());
-    if (group !== null) this.sheet.set(null);
+    const group = await this.store.create(name);
+    if (group === null) return;
+    this.sheet.set(null);
+    this.toasts.success(this.i18n.translate('group.created', { name: group.name }));
   }
 
   protected async join(code: string): Promise<void> {
-    if (code.trim() === '') return;
-    const group = await this.store.join(code.trim());
-    if (group !== null) this.sheet.set(null);
+    const group = await this.store.join(code);
+    if (group === 'invalid') this.joinError.set(this.i18n.translate('group.codeInvalid'));
+    if (group === null || group === 'invalid') return;
+    this.sheet.set(null);
+    this.toasts.success(this.i18n.translate('group.joined', { name: group.name }));
+  }
+
+  protected openSheet(sheet: Sheet): void {
+    this.joinError.set(null);
+    this.sheet.set(sheet);
   }
 
   protected open(id: string): void {

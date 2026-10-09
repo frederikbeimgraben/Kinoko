@@ -1,6 +1,7 @@
 import { afterNextRender, inject, EnvironmentInjector } from '@angular/core';
 import { AuthService } from './core/auth';
 import { ConfigStore } from './core/config/config.store';
+import { HistoryService } from './core/navigation/history.service';
 import { TextCatalogService } from './core/i18n/text-catalog.service';
 import { ThemeStore } from './core/theme/theme.store';
 import { bootOffline } from './app.boot';
@@ -9,6 +10,8 @@ import { bootOffline } from './app.boot';
 export function startApp(): void {
   // The theme store paints the page when it starts, so the first frame has the correct theme.
   inject(ThemeStore);
+  // The in-app back arrow needs every navigation from the first one.
+  inject(HistoryService);
   const config = inject(ConfigStore);
   const auth = inject(AuthService);
   const texts = inject(TextCatalogService);

@@ -1,31 +1,33 @@
-<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+<app-page-header [title]="'species.section.senses' | t" [back]="true" (backClick)="back()" />
 
 <div class="section">
-  <section>
-    <h2 class="section__title">{{ 'admin.senses.section.categories' | t }}</h2>
-    <div class="section__card section__chips">
+  @for (block of blocks(); track block.sense) {
+    <app-section [label]="title(block.sense)">
       <app-chip-group
-        [chips]="chips()"
-        [value]="chosen()"
+        [small]="true"
+        [chips]="block.chips"
+        [value]="block.chosen"
         [multiple]="true"
-        [addable]="true"
-        [label]="'admin.senses.section.categories' | t"
-        (valueChange)="chosen.set($event)"
+        [label]="title(block.sense)"
+        (valueChange)="choose(block.sense, $event)"
       />
-    </div>
-  </section>
+    </app-section>
 
-  <section>
-    <h2 class="section__title">{{ 'admin.senses.section.text' | t }}</h2>
-    <app-form-field
-      class="section__note"
-      [label]="'admin.senses.section.text' | t"
-      [hideLabel]="true"
-      [multiline]="true"
-      [value]="note()"
-      (valueChange)="note.set($event)"
-    />
-  </section>
+    <app-section [label]="title(block.sense)">
+      <app-form-field
+        [label]="title(block.sense)"
+        [hideLabel]="true"
+        [multiline]="true"
+        [value]="block.note"
+        (valueChange)="write(block.sense, $event)"
+      />
+    </app-section>
+  }
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
 </div>
-
-<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />

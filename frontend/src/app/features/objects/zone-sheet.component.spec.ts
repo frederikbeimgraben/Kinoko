@@ -7,7 +7,11 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { noViolations } from '../../testing/axe';
-import { ZONE, ZONE_ENTRY } from '../../testing/entries-fixture';
+import { FIND, ZONE, ZONE_ENTRY } from '../../testing/entries-fixture';
+import { patchState } from '@ngrx/signals';
+import { unprotected } from '@ngrx/signals/testing';
+import { EntriesStore } from '../entries/entries.store';
+import { Router } from '@angular/router';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { DrawerDouble, rawMap, drawerProviders } from '../../testing/drawer-double';
@@ -105,37 +109,58 @@ describe('ZoneBlattComponent', () => {
     expect(fakeLocation.href).toMatch(/^geo:/);
   });
 
-  it('speichert Farbe, Sichtbarkeit und Notiz', async () => {
+  it('speichert Farbe und Notiz und zeigt die Fläche im Formular', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
     setup.refresh();
     expect(screen.getByLabelText('Name')).toHaveValue('Schönbuch Nord');
+    expect(screen.getByText('Fläche')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Gelb' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     const request = await vi.waitFor(() => setup.http.expectOne(`/api/zones/${ZONE.id}`));
-    expect((request.request.body as { visibility: string }).visibility).toBe('shared');
+    expect(request.request.body).toMatchObject({ colour: 'yellow', visibility: ZONE.visibility });
     request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toEqual(['Gespeichert.']);
+      expect(setup.toasts.success).toEqual(['Die Zone ist gespeichert.']);
     });
   });
 
-  it('löscht nach der Rückfrage und schließt', async () => {
+  it('schließt beim Löschen sofort und meldet es danach', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     setup.refresh();
     await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
+    expect(setup.closed).toBe(1);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/zones/${ZONE.id}`).flush(null);
     });
 
     await vi.waitFor(() => {
-      expect(setup.closed).toBe(1);
+      expect(setup.toasts.success).toEqual(['Die Zone ist gelöscht.']);
     });
+  });
+
+  it('zählt die eigenen Funde in der Zone und öffnet sie in den Einträgen', async () => {
+    const setup = await build();
+    const ring = ZONE.polygon.coordinates[0];
+    const inside = { ...FIND, lon: (ring[0][0] + ring[2][0]) / 2, lat: (ring[0][1] + ring[2][1]) / 2 };
+    patchState(unprotected(TestBed.inject(EntriesStore)), {
+      finds: [inside, { ...FIND, id: 'weit', lon: 0, lat: 0 }],
+    });
+    setup.refresh();
+
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const row = screen.getByRole('button', { name: /Funde in der Zone/ });
+    expect(row).toHaveTextContent('1');
+    await userEvent.click(row);
+
+    expect(navigate).toHaveBeenCalledWith(['/eintraege']);
+    expect(TestBed.inject(EntriesStore).filter().zoneId).toBe(ZONE.id);
+    expect(setup.closed).toBe(1);
   });
 
   it('bleibt stehen, wenn die Karte für Terra Draw fehlt', async () => {
@@ -147,13 +172,19 @@ describe('ZoneBlattComponent', () => {
     expect(setup.drawer.rings).toHaveLength(0);
   });
 
-  it('gibt die Eckpunkte an Terra Draw und speichert, was gezogen wurde', async () => {
+  it('gibt die Eckpunkte an Terra Draw und speichert sie mit den Eingaben des Formulars', async () => {
     const setup = await build(true);
 
-    await startCorners(setup);
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    const name = screen.getByRole('textbox', { name: 'Name' });
+    await userEvent.clear(name);
+    await userEvent.type(name, 'Schönbuch Süd');
+    await userEvent.click(screen.getByRole('button', { name: 'Umriss ändern' }));
+    setup.refresh();
     await vi.waitFor(() => {
       setup.refresh();
-      expect(screen.getByRole('button', { name: 'Eckpunkte übernehmen' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeInTheDocument();
     });
     // The ring goes out without the duplicate end point.
     expect(setup.drawer.rings[0]).toHaveLength(4);
@@ -163,15 +194,21 @@ describe('ZoneBlattComponent', () => {
       [9.2, 48.5],
       [9.2, 48.7],
     ]);
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    setup.refresh();
+    // Per `MapZoneEdit`, the outline step goes back to the form with its input kept.
+    setup.http.expectNone(`/api/zones/${ZONE.id}`);
+    expect(setup.drawer.stopped).toBe(1);
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Schönbuch Süd');
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     const request = await vi.waitFor(() => setup.http.expectOne(`/api/zones/${ZONE.id}`));
-    expect(
-      (request.request.body as { polygon: { coordinates: number[][][] } }).polygon.coordinates[0],
-    ).toHaveLength(4);
+    const body = request.request.body as { name: string; polygon: { coordinates: number[][][] } };
+    expect(body.name).toBe('Schönbuch Süd');
+    expect(body.polygon.coordinates[0]).toHaveLength(4);
     request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toEqual(['Gespeichert.']);
+      expect(setup.toasts.success).toEqual(['Die Zone ist gespeichert.']);
     });
     expect(setup.drawer.stopped).toBe(1);
   });
@@ -197,9 +234,9 @@ describe('ZoneBlattComponent', () => {
     await startCorners(setup);
     await vi.waitFor(() => {
       setup.refresh();
-      expect(screen.getByRole('button', { name: 'Eckpunkte übernehmen' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeInTheDocument();
     });
-    await userEvent.click(screen.getByRole('button', { name: 'Eckpunkte übernehmen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     setup.refresh();
 
     setup.http.expectNone(`/api/zones/${ZONE.id}`);

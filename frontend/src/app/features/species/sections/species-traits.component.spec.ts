@@ -8,19 +8,28 @@ const STONE = speciesEntry({
   name: 'Steinpilz',
   scientificName: 'Boletus edulis',
   traits: [
-    { key: 'cap', text: 'Halbkugelig, später polsterförmig.' },
     { key: 'stem', text: 'Bauchig bis keulig, hell mit feinem weißem Netz.' },
+    { key: 'cap', text: 'Halbkugelig, später polsterförmig.' },
     { key: 'flesh', text: 'Weiß, fest, unveränderlich.' },
+    { key: 'tubes', text: 'Weiß, später olivgelb.' },
+    { key: 'habitat', text: 'Bei Fichte und Buche.' },
+    { key: 'smell', text: 'Angenehm.' },
   ],
 });
 
 describe('SpeciesTraitsComponent', () => {
-  it('zeigt Hut, Stiel und Fleisch mit ihrem Satz', async () => {
+  it('zeigt jeden Teil als Zeile einer Gruppe, in der Ordnung des Körpers', async () => {
     const { container } = await render(SpeciesTraitsComponent, { inputs: { species: STONE } });
 
-    expect(screen.getByText('Halbkugelig, später polsterförmig.')).toBeInTheDocument();
-    expect(screen.getByText('Bauchig bis keulig, hell mit feinem weißem Netz.')).toBeInTheDocument();
-    expect(screen.getByText('Weiß, fest, unveränderlich.')).toBeInTheDocument();
+    const rows = [...container.querySelectorAll('app-row-group app-list-row.trait')];
+    expect(rows.map((row) => row.querySelector('.row__sub')?.textContent)).toEqual([
+      'Halbkugelig, später polsterförmig.',
+      'Weiß, später olivgelb.',
+      'Bauchig bis keulig, hell mit feinem weißem Netz.',
+      'Weiß, fest, unveränderlich.',
+      'Bei Fichte und Buche.',
+    ]);
+    expect(screen.queryByText('Angenehm.')).toBeNull();
     await noViolations(container);
   });
 
@@ -29,7 +38,7 @@ describe('SpeciesTraitsComponent', () => {
       inputs: { species: speciesEntry({ ...STONE, traits: [STONE.traits[0]] }) },
     });
 
-    expect(container.querySelectorAll('.trait__part')).toHaveLength(1);
+    expect(container.querySelectorAll('app-list-row')).toHaveLength(1);
   });
 
   it('zeigt keinen Abschnitt ohne einen Satz', async () => {
@@ -37,6 +46,6 @@ describe('SpeciesTraitsComponent', () => {
       inputs: { species: speciesEntry({ ...STONE, traits: [] }) },
     });
 
-    expect(container.querySelector('.section__title')).toBeNull();
+    expect(container.querySelector('app-section')).toBeNull();
   });
 });

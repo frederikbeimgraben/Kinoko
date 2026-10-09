@@ -51,6 +51,10 @@ describe('CombinationStore', () => {
 
     const factor = combination.start('niederschlag', 0, 240);
     expect(factor).toEqual({ source: 'niederschlag', condition: 'above', low: 120, high: 0, active: true });
+    // A closed factor sheet must not add the factor: only "Übernehmen" applies it.
+    expect(combination.factors()).toEqual([]);
+
+    combination.apply(factor);
     expect(combination.active()).toHaveLength(1);
 
     combination.remove(factor);

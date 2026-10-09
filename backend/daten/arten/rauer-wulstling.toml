@@ -15,6 +15,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["beflockt", "genattert", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GelbflockigerWulstling.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,10 +35,6 @@ sporenlager = [{ name = "weiß", hex = "#ffffff" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "rot", hex = "#c0392b" }]
 
 [geruch]
 tags = ["angenehm", "unauffaellig"]

@@ -108,6 +108,7 @@ export function person(
     email,
     name,
     roles: [{ id: `rolle-${roleSlug}`, slug: roleSlug, name: roleName }],
+    groupAdmin: false,
     createdAt: NOW,
   };
 }
@@ -115,10 +116,10 @@ export function person(
 /** The four accounts of the `People` board. */
 export const PEOPLE = {
   items: [
-    person('frederik', 'Frederik', 'frederik@beimgraben.net', 'admin', 'Admin'),
-    person('jonas', 'Jonas', 'jonas@example.net', 'advisor', 'Pilzberater'),
-    person('testerin', 'Testerin', 'test@example.net', 'user', 'Nutzer'),
-    person('marie', 'Marie', 'marie@example.net', 'translator', 'Übersetzer'),
+    person('frederik', 'Frederik', 'frederik@example.org', 'admin', 'Admin'),
+    person('jonas', 'Jonas', 'jonas@example.org', 'advisor', 'Pilzberater'),
+    person('testerin', 'Testerin', 'test@example.org', 'user', 'Nutzer'),
+    person('marie', 'Marie', 'marie@example.org', 'translator', 'Übersetzer'),
   ],
   nextCursor: null,
 };

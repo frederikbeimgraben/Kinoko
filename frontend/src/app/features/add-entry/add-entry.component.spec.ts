@@ -224,6 +224,12 @@ describe('EintragenComponent', () => {
     expect(screen.getByRole('group', { name: 'Zone zeichnen' })).toBeInTheDocument();
     expect(screen.getByText('0 Eckpunkte · 0,0 ha')).toBeInTheDocument();
 
+    clickMap(setup, [9.0, 48.5]);
+    await vi.waitFor(() => {
+      setup.refresh();
+      expect(screen.getByText('1 Eckpunkt · 0,0 ha')).toBeInTheDocument();
+    });
+    setup.flow.removeLastCorner();
     drawRing(setup);
     setup.refresh();
 
@@ -276,17 +282,19 @@ describe('EintragenComponent', () => {
     });
   });
 
-  it('stellt einen Fund an, wenn niemand sich anmelden will', async () => {
+  it('legt einen Fund ohne Anmeldung in die Warteschlange, bevor die Anmeldung fragt', async () => {
     const setup = await build();
     setup.auth.reply = false;
     await openFindForm(setup);
+    setup.auth.user.set(null);
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     await vi.waitFor(() => {
       expect(setup.queue.stored.map((task) => task.kind)).toEqual(['find']);
     });
-    expect(setup.toasts.success).toEqual(['Der Fund wartet auf die Übertragung.']);
+    expect(setup.toasts.info).toEqual(['Der Fund wartet auf die Übertragung.']);
+    expect(setup.toasts.success).toEqual([]);
   });
 
   it('bricht ab und lässt nichts stehen', async () => {

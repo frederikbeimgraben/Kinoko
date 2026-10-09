@@ -14,6 +14,7 @@ hutrand = { von = ["ueberstehend"] }
 stielmerkmale = ["hohl", "knolle", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RosablaettrigerEggerling.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,11 +35,6 @@ sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a
 stiel = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }, { name = "rosa", hex = "#e8a0b0" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "gelb", hex = "#e8c33a" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["angenehm", "unauffaellig"]

@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 import type { Person, Role } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -16,24 +16,21 @@ import { SearchFieldComponent } from '../../ui/search-field/search-field.compone
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { AdminStore } from './admin.store';
 import { roleName } from './role-name';
 
 /** The built-in role of each signed-in person. Nobody assigns it. */
 const EVERY_ONE = 'user';
 
-/** A role next to a person. */
-interface Mark {
-  id: string;
-  name: string;
-}
+/** The admin role. The admin group of the SSO also gives it. */
+const ADMIN = 'admin';
 
-/** A row of the person list. */
+/** A row of the person list: the name and the roles below it. */
 interface Row {
   id: string;
   name: string;
-  email: string;
-  roles: readonly Mark[];
+  roles: string;
 }
 
 /** A role in the assignment sheet. */
@@ -41,6 +38,8 @@ interface Choice {
   id: string;
   name: string;
   checked: boolean;
+  /** The SSO gives the role: the box is checked and does not toggle. */
+  fromGroup: boolean;
 }
 
 /** The person list: search, accounts and their roles. A row opens the assignment. */
@@ -51,7 +50,6 @@ interface Choice {
     ActionBarComponent,
     CheckRowComponent,
     ConfirmDialogComponent,
-    LevelPillComponent,
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
@@ -60,6 +58,7 @@ interface Choice {
     SearchFieldComponent,
     SheetComponent,
     StateViewComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './people.component.html',
@@ -81,9 +80,8 @@ export class PeopleComponent {
   protected readonly rows = computed<Row[]>(() =>
     (this.store.people() ?? []).map((person) => ({
       id: person.id,
-      name: person.name ?? this.i18n.translate('admin.people.noName'),
-      email: person.email ?? '',
-      roles: person.roles.map((role) => ({ id: role.id, name: roleName(this.i18n, role.name) })),
+      name: person.name ?? person.email ?? this.i18n.translate('admin.people.noName'),
+      roles: joined(this.heldNames(person)),
     })),
   );
 
@@ -92,16 +90,24 @@ export class PeopleComponent {
     (this.store.roles() ?? []).filter((role) => role.slug !== EVERY_ONE),
   );
 
-  protected readonly choices = computed<Choice[]>(() =>
-    this.assignable().map((role) => ({
-      id: role.id,
-      name: roleName(this.i18n, role.name),
-      checked: this.chosen().has(role.id),
-    })),
-  );
+  protected readonly choices = computed<Choice[]>(() => {
+    const groupAdmin = this.editing()?.groupAdmin ?? false;
+    const locale = this.i18n.locale();
+    return this.assignable()
+      .map((role) => {
+        const fromGroup = groupAdmin && role.slug === ADMIN;
+        return {
+          id: role.id,
+          name: roleName(this.i18n, role.name),
+          checked: fromGroup || this.chosen().has(role.id),
+          fromGroup,
+        };
+      })
+      .sort((one, other) => one.name.localeCompare(other.name, locale));
+  });
 
-  protected readonly deleteQuestion = computed(
-    () => `${this.removing()?.name ?? ''} ${this.i18n.translate('admin.people.deleteConfirm')}`,
+  protected readonly deleteQuestion = computed(() =>
+    this.i18n.translate('admin.people.deleteQuestion', { name: this.removing()?.name ?? '' }),
   );
 
   constructor() {
@@ -141,6 +147,14 @@ export class PeopleComponent {
         this.editing.set(null);
       },
     });
+  }
+
+  /** The stored roles, and before them the admin role when the SSO group gives it. */
+  private heldNames(person: Person): string[] {
+    const stored = person.roles.map((role) => roleName(this.i18n, role.name));
+    const admin = (this.store.roles() ?? []).find((role) => role.slug === ADMIN);
+    const implied = person.groupAdmin && !person.roles.some((role) => role.slug === ADMIN);
+    return implied && admin !== undefined ? [roleName(this.i18n, admin.name), ...stored] : stored;
   }
 
   protected askDelete(): void {

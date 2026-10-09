@@ -20,6 +20,10 @@ export class TileService {
   readonly manifests = this._manifests.asReadonly();
   readonly layers = this._layers.asReadonly();
 
+  private readonly _failed = signal<ReadonlySet<string>>(new Set());
+  /** The manifests whose last load failed: species slugs and the layers manifest. */
+  readonly failed = this._failed.asReadonly();
+
   /** The input layers. The list is empty until the manifest loads. */
   readonly layerList = computed<readonly Layer[]>(() => this._layers()?.layers ?? []);
 
@@ -61,10 +65,26 @@ export class TileService {
   /** Forgets all loads. The next call asks the server again. */
   forget(): void {
     this.running.clear();
+    this._failed.set(new Set());
+  }
+
+  /** Tells if the last load of the layers manifest failed. */
+  layersFailed(): boolean {
+    return this._failed().has(LAYERS_MANIFEST);
+  }
+
+  private mark(key: string, failed: boolean): void {
+    this._failed.update((known) => {
+      const next = new Set(known);
+      if (failed) next.add(key);
+      else next.delete(key);
+      return next;
+    });
   }
 
   private async loadManifest(slug: string): Promise<void> {
     const content = await this.store.json<unknown>(this.url(manifestPath(slug))).catch(() => null);
+    this.mark(slug, content === null);
     if (content === null) {
       this.running.delete(slug);
       return;
@@ -75,6 +95,7 @@ export class TileService {
 
   private async loadLayerManifest(): Promise<void> {
     const content = await this.store.json<unknown>(this.url(LAYERS_MANIFEST)).catch(() => null);
+    this.mark(LAYERS_MANIFEST, content === null);
     if (content === null) {
       this.running.delete(LAYERS_MANIFEST);
       return;

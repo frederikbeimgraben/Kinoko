@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
@@ -7,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import type { TaxonPage } from '../../core/api/models';
 import { noViolations } from '../../testing/axe';
 import { catalogueProviders } from '../../testing/catalogue-double';
+import { HistoryService } from '../../core/navigation/history.service';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesSummary, taxonPage, taxonStep } from '../../testing/species-fixture';
@@ -118,13 +118,13 @@ describe('TaxonomyComponent', () => {
     expect(go).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
-  it('goes back through the head', async () => {
+  it('goes back through the head, to the species list without app history', async () => {
     await build('family', 'boletaceae');
-    const back = vi.spyOn(TestBed.inject(Location), 'back');
+    const back = vi.spyOn(TestBed.inject(HistoryService), 'back');
 
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 
-    expect(back).toHaveBeenCalled();
+    expect(back).toHaveBeenCalledWith(['/arten']);
   });
 
   it('shows the empty state for an unknown step', async () => {

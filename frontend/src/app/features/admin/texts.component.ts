@@ -8,9 +8,10 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '../../core/i18n/
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
-import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
@@ -29,7 +30,7 @@ interface Draft {
   values: Record<string, string>;
 }
 
-/** The interface texts: a search, a filter, both languages side by side and a sheet to change one.
+/** The interface texts: a search, a filter, a row with the text and its key, and a sheet to change one.
  * The route needs `text.edit`. The backend also refuses each change without it. */
 @Component({
   selector: 'app-texts',
@@ -37,9 +38,10 @@ interface Draft {
   imports: [
     ActionBarComponent,
     FormFieldComponent,
-    LevelPillComponent,
+    ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
+    RowGroupComponent,
     RowGroupSkeletonComponent,
     SearchFieldComponent,
     SegmentedComponent,
@@ -56,8 +58,9 @@ export class TextsComponent {
   private readonly toasts = inject(ToastService);
 
   protected readonly locales = SUPPORTED_LOCALES;
-  /** The default language comes first and in full colour. */
+  /** The default language fills a row that has no text in the UI language. */
   protected readonly leadLocale = DEFAULT_LOCALE;
+  protected readonly locale = this.i18n.locale;
   protected readonly search = signal('');
   protected readonly scope = signal<string>(ALL);
   protected readonly draft = signal<Draft | null>(null);
@@ -122,11 +125,11 @@ export class TextsComponent {
   }
 
   protected async reset(): Promise<void> {
-    const draft = this.draft();
-    if (!draft) return;
-    await this.run(async () => {
-      for (const locale of this.locales) await this.catalog.reset(draft.key, locale);
-    });
+    const known = this.entryOf(this.draft()?.key ?? '');
+    if (!known) return;
+    // Only a language with a stored row can go back to its default.
+    const stored = this.locales.filter((locale) => locale in known.values);
+    await this.run(() => this.catalog.reset(known.key, stored));
   }
 
   private async run(step: () => Promise<void>): Promise<void> {

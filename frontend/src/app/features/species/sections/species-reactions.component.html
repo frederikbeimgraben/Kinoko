@@ -2,7 +2,13 @@
   <app-section [label]="'species.section.reactions' | t">
     <app-row-group>
       @for (row of rows(); track row.key) {
-        <app-list-row class="reaction" [title]="row.label" [subline]="row.sub" [plain]="row.plain">
+        <app-list-row
+          class="reaction"
+          [title]="row.label"
+          [subline]="row.sub"
+          [plain]="row.plain"
+          [wrap]="true"
+        >
           <span trail class="reaction__trail">
             @if (row.contested) {
               <app-svg-icon
@@ -26,24 +32,18 @@
         </app-list-row>
       }
     </app-row-group>
-    @if (sources().length > 0) {
-      <app-fold-section class="reaction__sources" [label]="'species.reaction.sources' | t" [open]="false">
-        <app-row-group>
-          @for (source of sources(); track $index) {
-            <app-list-row
-              kind="link"
-              [title]="source.label"
-              [subline]="source.sub"
-              [chevron]="source.url !== null"
-              [clickable]="source.url !== null"
-              (chosen)="open(source.url)"
-            />
-          }
-        </app-row-group>
-        @if (hasDagger()) {
-          <p class="reaction__legend">{{ dagger }} {{ 'species.reaction.partlyConfirmed' | t }}</p>
+    @if (hasContested() || hasDagger()) {
+      <div class="reaction__legend">
+        @if (hasContested()) {
+          <p class="reaction__mark">
+            <app-svg-icon class="reaction__contested" name="warning" [size]="16" [strokeWidth]="1.8" />
+            {{ 'species.reaction.legend.contested' | t }}
+          </p>
         }
-      </app-fold-section>
+        @if (hasDagger()) {
+          <p class="reaction__mark">{{ dagger }} {{ 'species.reaction.legend.partlyConfirmed' | t }}</p>
+        }
+      </div>
     }
   </app-section>
 }

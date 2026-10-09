@@ -53,6 +53,9 @@
     icon="entries"
     [title]="'state.notSignedIn' | t"
     [action]="'account.signIn' | t"
+    [text]="ssoMissing() ? ('account.signInUnavailable' | t) : ''"
+    [actionBusy]="signingIn()"
+    [actionDisabled]="ssoMissing()"
     (actionClick)="signIn()"
   />
 }

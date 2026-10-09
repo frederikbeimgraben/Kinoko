@@ -18,6 +18,7 @@ hutrand = { von = ["wellig"] }
 stielmerkmale = ["voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RoetlicherPfifferling.htm"
 geprueftAm = "2026-09-12"
 
@@ -32,7 +33,7 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "orangegelb", hex = "#e9a32c" }, { name = "orange", hex = "#e08a2e" }]
-sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }]
 stiel = [{ name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "blassgelb", hex = "#efe3a0" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]

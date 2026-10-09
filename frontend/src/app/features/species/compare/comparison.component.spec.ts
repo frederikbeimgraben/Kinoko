@@ -1,11 +1,13 @@
 import { signal, type Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../../testing/i18n';
 import { ViewportService } from '../../../core/layout/viewport.service';
+import { HistoryService } from '../../../core/navigation/history.service';
 import { ANY_ROUTE } from '../../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
 import { ComparisonComponent } from './comparison.component';
@@ -47,13 +49,13 @@ const BUNDLE = speciesBundle([STONE, GALL, BARE, PLAIN]);
 /** A window with the width of the desktop. */
 const WIDE: Provider = { provide: ViewportService, useValue: { wide: signal(true) } };
 
-/** Builds the page and puts the choice into the store. */
+/** Builds the page with the choice in the query parameter `arten`, as a link gives it. */
 async function build(slugs: readonly string[], extra: Provider[] = []): Promise<Element> {
   const view = await render(ComparisonComponent, {
     providers: [...catalogueProviders(BUNDLE), provideRouter(ANY_ROUTE), ...extra],
+    inputs: { arten: slugs.join(',') },
   });
   await catalogueReady();
-  TestBed.inject(ComparisonStore).set(slugs);
   view.fixture.detectChanges();
   return view.container;
 }
@@ -106,9 +108,9 @@ describe('ComparisonComponent', () => {
   it('hides an equal row with "only differences" from the menu', async () => {
     const view = await render(ComparisonComponent, {
       providers: [...catalogueProviders(BUNDLE), provideRouter(ANY_ROUTE)],
+      inputs: { arten: 'steinpilz,gallenroehrling' },
     });
     await catalogueReady();
-    TestBed.inject(ComparisonStore).set(['steinpilz', 'gallenroehrling']);
     view.fixture.detectChanges();
 
     expect(screen.getAllByText('Röhren')).toHaveLength(2);
@@ -126,6 +128,37 @@ describe('ComparisonComponent', () => {
 
     expect(container.querySelector('app-species-browser')).not.toBeNull();
     expect(container.querySelector('.compare--wide')).not.toBeNull();
+  });
+
+  it('takes the species of the link into the store', async () => {
+    await build(['gallenroehrling', 'steinpilz']);
+
+    expect(TestBed.inject(ComparisonStore).slugs()).toEqual(['gallenroehrling', 'steinpilz']);
+  });
+
+  it('offers a place for the second species and puts the pick into the address', async () => {
+    const container = await build(['steinpilz']);
+    const router = TestBed.inject(Router);
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Art hinzufügen' }));
+    expect(container.querySelector('app-compare-entry')).not.toBeNull();
+    await userEvent.type(screen.getByRole('textbox', { name: 'Art suchen' }), 'galle');
+    await userEvent.click(screen.getByRole('button', { name: /Gallenröhrling/ }));
+
+    expect(navigate).toHaveBeenCalledWith([], {
+      queryParams: { arten: 'steinpilz,gallenroehrling' },
+      replaceUrl: true,
+    });
+  });
+
+  it('goes back to the first species of the table without app history', async () => {
+    await build(['steinpilz', 'gallenroehrling']);
+    const back = vi.spyOn(TestBed.inject(HistoryService), 'back').mockImplementation(() => undefined);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(back).toHaveBeenCalledWith(['/arten', 'steinpilz']);
   });
 
   it('shows no group without a choice', async () => {

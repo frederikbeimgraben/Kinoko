@@ -49,6 +49,31 @@ describe('MyImagesStore', () => {
     expect(store.more()).toBe(false);
   });
 
+  it('takes the lead photo of a find as its thumb, else the first photo of the list', () => {
+    const api = new PhotosApiDouble();
+    api.answers = [
+      () =>
+        of({
+          items: [
+            photo({ id: 'a', findId: 'find-1', lead: false }),
+            photo({ id: 'b', findId: 'find-1', lead: false }),
+            photo({ id: 'c', findId: 'find-2', lead: false }),
+            photo({ id: 'd', findId: 'find-2', lead: true }),
+            photo({ id: 'e', findId: null }),
+          ],
+          nextCursor: null,
+        }),
+    ];
+    const { store } = build(api);
+
+    store.load();
+
+    expect(Object.fromEntries(store.findThumbs())).toEqual({
+      'find-1': '/photos/a/list',
+      'find-2': '/photos/d/list',
+    });
+  });
+
   it('asks for no page after the last one', () => {
     const { store, api } = build();
     api.answers = [() => of({ items: [], nextCursor: null })];

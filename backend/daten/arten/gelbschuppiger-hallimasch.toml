@@ -18,6 +18,7 @@ baeume = ["buche", "eiche"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/FleischfarbeneHallimarsch.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,15 +35,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "gelbbraun", hex = "#a3813f" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "grau", hex = "#8a8a8a" }]
-sporenlager = [{ name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "hellbraun", hex = "#a97c50" }, { name = "weiß", hex = "#ffffff" }]
 stiel = [{ name = "goldgelb", hex = "#e2b13a" }, { name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["erdartig", "muffig", "pilzig"]

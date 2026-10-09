@@ -13,6 +13,7 @@ fruchtschicht = { art = "poren" }
 hutrand = { von = ["fransig"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/DuftenderGoldporling.htm"
 geprueftAm = "2026-09-12"
 

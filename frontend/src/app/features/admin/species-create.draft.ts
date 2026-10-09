@@ -5,7 +5,8 @@ export interface SpeciesDraft {
   name: string;
   scientificName: string;
   otherNames: string;
-  group: Group;
+  /** Null until the person chooses: the board shows "–". */
+  group: Group | null;
   edibility: Edibility;
   protected: boolean;
   source: string;
@@ -15,7 +16,7 @@ export const EMPTY_DRAFT: SpeciesDraft = {
   name: '',
   scientificName: '',
   otherNames: '',
-  group: 'bolete',
+  group: null,
   edibility: 'edible',
   protected: false,
   source: '',
@@ -38,8 +39,9 @@ function otherNames(value: string): SpeciesWrite['names'] {
     .map((name) => ({ name, kind: 'synonym' as const }));
 }
 
-/** Makes the contract body from the form values. */
-export function toWrite(draft: SpeciesDraft, checkedOn: string): SpeciesWrite {
+/** Makes the contract body from the form values. A draft without a group gives null. */
+export function toWrite(draft: SpeciesDraft, checkedOn: string): SpeciesWrite | null {
+  if (draft.group === null) return null;
   const url = draft.source.trim();
   return {
     name: draft.name.trim(),

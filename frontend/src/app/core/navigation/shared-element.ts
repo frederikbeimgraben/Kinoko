@@ -1,4 +1,4 @@
-import { Directive, computed, input, signal } from '@angular/core';
+import { Directive, afterRenderEffect, computed, input, signal } from '@angular/core';
 
 /** The `view-transition-name` for the shared element `key`, as a valid CSS name. */
 export function sharedElementName(key: string): string {
@@ -9,6 +9,8 @@ export function sharedElementName(key: string): string {
 const SHARED_CLASS = 'shared';
 
 let source: HTMLElement | null = null;
+// The source keeps its name until the target is on the page.
+let named: HTMLElement | null = null;
 const target = signal<string | null>(null);
 
 function unname(element: HTMLElement): void {
@@ -20,8 +22,9 @@ function unname(element: HTMLElement): void {
  * the tapped species thumb. The element with `appSharedElement` and the same key is the target. */
 export function shareOnNextRoute(element: HTMLElement, key: string): void {
   const name = sharedElementName(key);
-  if (source !== null) unname(source);
+  if (named !== null) unname(named);
   source = element;
+  named = element;
   element.style.setProperty('view-transition-name', name);
   element.style.setProperty('view-transition-class', SHARED_CLASS);
   target.set(name);
@@ -48,6 +51,13 @@ export function attachSharedElement(transition: ViewTransition, skipped: boolean
   void transition.finished.then(clearTarget, clearTarget);
 }
 
+/** Removes the name from the source. Two elements with one name stop the transition,
+ * and on the wide layout the list with the source stays on the page. */
+function releaseSource(): void {
+  if (named !== null) unname(named);
+  named = null;
+}
+
 /** The target of a shared-element move, for example the hero of the species page. */
 @Directive({
   selector: '[appSharedElement]',
@@ -65,4 +75,13 @@ export class SharedElementDirective {
     const name = sharedElementName(this.appSharedElement());
     return target() === name ? name : null;
   });
+
+  constructor() {
+    // The target renders in the update of the transition, after the capture of the old page.
+    afterRenderEffect({
+      write: () => {
+        if (this.name() !== null) releaseSource();
+      },
+    });
+  }
 }

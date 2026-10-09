@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SplitLayoutComponent } from '../../ui/split-layout/split-layout.component';
@@ -36,6 +36,10 @@ export class SpeciesBrowserComponent {
 
   constructor() {
     void this.catalogue.loadBundle();
+    effect(() => {
+      const slug = this.active();
+      if (slug !== null) this.listing.reveal(slug);
+    });
   }
 
   protected open(slug: string): void {

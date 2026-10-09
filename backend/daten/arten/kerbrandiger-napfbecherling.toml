@@ -12,6 +12,7 @@ hutform = { von = "trichterfoermig" }
 hutrand = { von = ["hoeckerig"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/KerbrandigerNapf.htm"
 geprueftAm = "2026-09-12"
 

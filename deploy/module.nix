@@ -60,6 +60,12 @@ in
         example = "https://sso.beimgraben.net/application/o/pilze/";
         description = "OpenID issuer. Discovery and keys follow from it.";
       };
+      name = mkOption {
+        type = types.str;
+        default = "";
+        example = "Beimgraben SSO";
+        description = "Name of the SSO on the sign-in button. Empty gives the host of the issuer.";
+      };
       clientId = mkOption {
         type = types.str;
         default = "pilze";
@@ -126,6 +132,7 @@ in
         PILZE_ORIGIN = cfg.origin;
         PILZE_OIDC_ISSUER = cfg.oidc.issuer;
         PILZE_OIDC_CLIENT_ID = cfg.oidc.clientId;
+        PILZE_OIDC_NAME = cfg.oidc.name;
         PILZE_ADMIN_GROUP = cfg.oidc.adminGroup;
         PILZE_PIPELINE = lib.boolToString cfg.pipeline.enable;
         PILZE_SCHEDULE = cfg.pipeline.schedule;

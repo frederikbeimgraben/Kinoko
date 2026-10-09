@@ -17,7 +17,9 @@
   />
   <span class="row__names">
     <span class="row__name">{{ species().name }}</span>
-    <span class="row__latin">{{ species().latin }}</span>
+    @if (species().latin !== species().name) {
+      <span class="row__latin">{{ species().latin }}</span>
+    }
   </span>
   @if (!muted()) {
     <app-level-pill

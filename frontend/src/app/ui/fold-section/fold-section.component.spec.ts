@@ -42,7 +42,7 @@ describe('FoldSectionComponent', () => {
     expect(screen.getByRole('button', { name: 'Farbe' })).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('setzt einen Kreis am Berührungspunkt der Kopfzeile', async () => {
+  it('zeigt keinen Kasten beim Drücken der Kopfzeile, wie `kit.css` `.fold`', async () => {
     const { container } = await render(`<app-fold-section label="Farbe"><p>Inhalt</p></app-fold-section>`, {
       imports: [FoldSectionComponent],
     });
@@ -63,7 +63,7 @@ describe('FoldSectionComponent', () => {
     });
     head.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 10 }));
 
-    expect(head.querySelector('.ripple')).not.toBeNull();
+    expect(head.querySelector('.ripple')).toBeNull();
   });
 
   it('bleibt ohne deutsches Wort im leeren Katalog', async () => {

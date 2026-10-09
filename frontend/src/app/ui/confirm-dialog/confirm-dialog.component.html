@@ -29,6 +29,7 @@
           [kind]="danger() ? 'danger' : 'primary'"
           [wide]="true"
           [disabled]="confirmDisabled()"
+          [busy]="confirmBusy()"
           (click)="confirmed.emit()"
         >
           {{ confirmLabel() ?? ('common.delete' | t) }}
@@ -41,6 +42,7 @@
         <app-push-button
           [kind]="danger() ? 'textdanger' : 'text'"
           [disabled]="confirmDisabled()"
+          [busy]="confirmBusy()"
           (click)="confirmed.emit()"
         >
           {{ confirmLabel() ?? ('common.delete' | t) }}

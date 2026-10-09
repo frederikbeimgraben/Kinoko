@@ -18,7 +18,7 @@ Live: https://pilze.beimgraben.net/
 | `backend/openapi.yaml` | The API contract. People write it; the frontend client comes from it |
 | `backend/daten/` | Seed data: species profiles, texts, reactions, season table |
 | `frontend/` | Angular 22 app: MapLibre GL, Terra Draw, PWA |
-| `deploy/` | NixOS module (`module.nix`) and the deploy script of the frontend |
+| `deploy/` | NixOS module (`module.nix`) and the deploy scripts of the service (`backend.sh`, for a host without the module) and the frontend |
 | `docs/` | Operations, pipeline, SSO, research notes, style rules, mockups |
 | `tools/pmtiles/` | Build and upload of the offline base map |
 

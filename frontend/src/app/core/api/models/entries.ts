@@ -16,13 +16,15 @@ export type ZoneValue = components['schemas']['ZoneValue'];
 export const VISIBILITIES: readonly Visibility[] = ['private', 'shared'];
 
 /** The six colours of the mockups. There is no free choice of a colour. */
-export const MARKER_COLOURS: readonly MarkerColour[] = ['green', 'brown', 'blue', 'red', 'gold', 'grey'];
+export const MARKER_COLOURS: readonly MarkerColour[] = ['green', 'yellow', 'orange', 'red', 'violet', 'grey'];
 
 /** An own find, with its exact place. */
 export interface Find extends SharedFind {
   visibility: Visibility;
   groupId: string | null;
   forTraining: boolean;
+  /** The instant of the first save. The entry list sorts the finds of one day by it. */
+  createdAt?: string;
 }
 
 /** An own marker: a point with a name, a colour and a note. */

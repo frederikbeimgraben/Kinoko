@@ -47,7 +47,33 @@ describe('ButtonComponent', () => {
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute('aria-busy', 'true');
     expect(container.querySelector('.spin')).not.toBeNull();
-    expect(button.querySelector('span')).toHaveAttribute('hidden');
+    expect(button.querySelector('.face > span')).toHaveAttribute('hidden');
+  });
+
+  it('shows the press of a wide text button around its label, not over the full width', async () => {
+    const { container } = await render(HostComponent, {
+      componentProperties: { kind: 'textdanger', wide: true },
+    });
+    const button = screen.getByRole('button');
+    const face = container.querySelector<HTMLElement>('.face');
+
+    button.dispatchEvent(new PointerEvent('pointerdown', { clientX: 1, clientY: 1 }));
+
+    expect(button).toHaveClass('shapeless');
+    expect(face?.querySelector('.ripple')).not.toBeNull();
+  });
+
+  it('shows the press over the full fill of a wide filled button', async () => {
+    const { container } = await render(HostComponent, {
+      componentProperties: { kind: 'danger', wide: true },
+    });
+    const button = screen.getByRole('button');
+
+    button.dispatchEvent(new PointerEvent('pointerdown', { clientX: 1, clientY: 1 }));
+
+    expect(button).not.toHaveClass('shapeless');
+    expect(container.querySelector('.face .ripple')).toBeNull();
+    expect(button.querySelector(':scope > .ripple-frame .ripple')).not.toBeNull();
   });
 
   it('sperrt sich', async () => {

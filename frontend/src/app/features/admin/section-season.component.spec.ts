@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, waitFor, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
@@ -49,5 +49,29 @@ describe('SectionSeasonComponent', () => {
     const call = http.expectOne('/api/species/boletus-edulis');
     expect(call.request.method).toBe('PUT');
     expect(call.request.body).toEqual(expect.objectContaining({ periodStartMonth: 6, periodEndMonth: 10 }));
+  });
+
+  it('wählt einen Höhepunkt und nimmt ihn wieder heraus', { timeout: 15_000 }, async () => {
+    const { http } = await build();
+    await screen.findByText('Juni');
+
+    await userEvent.click(screen.getByRole('button', { name: '–' }));
+    const sheet = await screen.findByRole('dialog', { name: 'Höhepunkt' });
+    expect(within(sheet).getByRole('button', { name: '–' })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(within(sheet).getByRole('button', { name: 'September' }));
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'September' }));
+    const again = await screen.findByRole('dialog', { name: 'Höhepunkt' });
+    await userEvent.click(within(again).getByRole('button', { name: '–' }));
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.body).toEqual(expect.objectContaining({ periodPeakMonth: null }));
   });
 });

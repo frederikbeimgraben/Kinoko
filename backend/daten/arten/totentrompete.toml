@@ -20,6 +20,7 @@ baeume = ["hainbuche"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Totentrompete.htm"
 geprueftAm = "2026-09-12"
 

@@ -22,10 +22,23 @@
       <div class="cmpx motion-fade-in">
         <div class="cmph">
           @for (head of heads(); track head.slug) {
-            <button class="cmph__head tap" type="button" (click)="open(head.slug)">
+            <button class="cmph__head tap" type="button" data-press="scale" (click)="open(head.slug)">
               <app-private-image [path]="head.image" [alt]="head.name" [colour]="head.colour" />
               <b>{{ head.name }}</b>
-              <em>{{ head.latin }}</em>
+              @if (head.latin !== head.name) {
+                <em>{{ head.latin }}</em>
+              }
+            </button>
+          }
+          @if (heads().length === 1) {
+            <button
+              class="cmph__head cmph__add tap"
+              type="button"
+              data-press="scale"
+              (click)="adding.set(true)"
+            >
+              <span class="cmph__plus"><app-svg-icon name="plus" [size]="24" [strokeWidth]="1.8" /></span>
+              <b>{{ 'species.compare.add' | t }}</b>
             </button>
           }
         </div>
@@ -87,10 +100,26 @@
         [labels]="[0, 3, 6]"
       />
     } @else {
-      <app-state-view class="compare__empty" icon="compare" [title]="'species.detail.choose' | t" />
+      <app-state-view
+        class="compare__empty"
+        icon="compare"
+        [title]="'species.detail.choose' | t"
+        [action]="wide() ? '' : ('species.backToList' | t)"
+        (actionClick)="toList()"
+      />
     }
   </div>
 </ng-template>
+
+@if (comparison.slugs().at(0); as first) {
+  <app-compare-entry
+    [slug]="first"
+    [open]="adding()"
+    (picked)="add($event)"
+    (opened)="open($event)"
+    (closed)="adding.set(false)"
+  />
+}
 
 @if (wide()) {
   <app-species-desk [active]="comparison.slugs().at(0) ?? null">

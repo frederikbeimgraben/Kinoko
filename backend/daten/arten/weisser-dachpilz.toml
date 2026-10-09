@@ -14,6 +14,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 stielmerkmale = ["faserig", "bruechig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/WeisserDachpilz.htm"
 geprueftAm = "2026-09-12"
 

@@ -21,6 +21,7 @@ baeume = ["fichte", "kiefer"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Goldpfiffi.htm"
 geprueftAm = "2026-09-12"
 
@@ -36,7 +37,7 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "gelb", hex = "#e8c33a" }]
-sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "goldgelb", hex = "#e2b13a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "goldgelb", hex = "#e2b13a" }]
 stiel = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "goldgelb", hex = "#e2b13a" }]
 fleisch = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "gelb", hex = "#e8c33a" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]

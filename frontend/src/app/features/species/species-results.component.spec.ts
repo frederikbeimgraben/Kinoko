@@ -93,12 +93,19 @@ describe('SpeciesResultsComponent', () => {
     expect(calls).toBe(1);
   });
 
-  it('shows the empty state with a reset without hits', async () => {
-    const { fixture } = await render(SpeciesResultsComponent, { inputs: { hits: [] } });
+  it('says "Keine Treffer" without a reset when no filter is set', async () => {
+    await render(SpeciesResultsComponent, { inputs: { hits: [] } });
+
+    expect(screen.getByText('Keine Treffer')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Filter zurücksetzen' })).not.toBeInTheDocument();
+  });
+
+  it('shows the empty state with a reset when a filter is set', async () => {
+    const { fixture } = await render(SpeciesResultsComponent, { inputs: { hits: [], filtered: true } });
     let calls = 0;
     fixture.componentInstance.resetFilter.subscribe(() => (calls += 1));
 
-    expect(screen.getByText('Keine Art passt zu dieser Auswahl')).toBeInTheDocument();
+    expect(screen.getByText('Keine Treffer')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Filter zurücksetzen' }));
 
     expect(calls).toBe(1);

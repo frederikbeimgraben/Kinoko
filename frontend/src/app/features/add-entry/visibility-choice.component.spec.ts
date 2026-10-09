@@ -39,9 +39,34 @@ describe('VisibilityChoiceComponent', () => {
     expect(screen.getByText('Pilzgruppe Karlsruhe')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: /Pilzgruppe Karlsruhe/ }));
-    await userEvent.click(screen.getByRole('button', { name: 'Familie' }));
+    expect(screen.getByRole('heading', { name: 'Gruppe wählen' })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: 'ohne Gruppe' })).not.toBeChecked();
+    await userEvent.click(screen.getByRole('checkbox', { name: /Familie/ }));
+    expect(setup.groups).toEqual([]);
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 
     expect(setup.groups.at(-1)).toBe('gruppe-zwei');
+    expect(screen.queryByRole('heading', { name: 'Gruppe wählen' })).not.toBeInTheDocument();
+  });
+
+  it('zeigt „ohne Gruppe“, solange keine Gruppe gewählt ist, und nennt die Mitglieder', async () => {
+    await build('shared');
+
+    expect(screen.getByRole('button', { name: /ohne Gruppe/ })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /ohne Gruppe/ }));
+
+    expect(screen.getByRole('checkbox', { name: 'ohne Gruppe' })).toBeChecked();
+    expect(screen.getByRole('checkbox', { name: /Pilzgruppe Karlsruhe/ })).toHaveAccessibleName(/Mitglied/);
+  });
+
+  it('verwirft die Wahl beim Zurück', async () => {
+    const setup = await build('shared', KARLSRUHE.id);
+
+    await userEvent.click(screen.getByRole('button', { name: /Pilzgruppe Karlsruhe/ }));
+    await userEvent.click(screen.getByRole('checkbox', { name: /Familie/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(setup.groups).toEqual([]);
   });
 
   it('nimmt die einzige Gruppe von allein', async () => {

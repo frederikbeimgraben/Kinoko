@@ -13,6 +13,7 @@ fruchtschicht = { art = "lamellen" }
 stielmerkmale = ["genattert", "beflockt", "faserig", "bruechig", "hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Spechttintling.htm"
 geprueftAm = "2026-09-12"
 

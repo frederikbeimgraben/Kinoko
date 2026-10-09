@@ -1,14 +1,24 @@
 import type { FeatureCollection } from 'geojson';
 import type {
   GeoJSONSource,
+  ExpressionSpecification,
   LayerSpecification,
+  StyleSpecification,
   Map as MapLibreMap,
   MapMouseEvent,
   MapSourceDataEvent,
   Subscription,
 } from 'maplibre-gl';
 import type { Viewbox } from './tile-grid';
-import { MAP_PIN_BORDER_COLOUR, MAP_PIN_BORDER_WIDTH, MAP_PIN_RADIUS } from '../ui/map-pin/map-pin.constants';
+import {
+  MAP_PIN_BORDER_COLOUR,
+  MAP_PIN_BORDER_WIDTH,
+  MAP_PIN_ON_RING_INNER,
+  MAP_PIN_ON_RING_INNER_COLOUR,
+  MAP_PIN_ON_RING_OUTER,
+  MAP_PIN_ON_RING_OUTER_COLOUR,
+  MAP_PIN_RADIUS,
+} from '../ui/map-pin/map-pin.constants';
 import { ZONE_FILL_OPACITY, ZONE_STROKE_WIDTH } from '../ui/zone-shape/zone-shape.constants';
 
 /** The part of MapLibre that the adapter uses. */
@@ -53,13 +63,15 @@ export interface Protocol {
 }
 
 export interface MapOptions {
-  style: string;
+  style: string | StyleSpecification;
   centerPoint: readonly [number, number];
   zoom: number;
   minZoom: number;
   maxZoom: number;
   maxBounds: Bounds;
   protocol: Protocol;
+  /** The name of the map canvas for assistive technology, in the app language. */
+  title: string;
 }
 
 /** The object layers above the forecast, from bottom to top. */
@@ -84,7 +96,7 @@ export interface MapAdapter {
   /** Loads MapLibre before the map is necessary. */
   warmUp(): void;
   start(host: HTMLElement, options: MapOptions): Promise<void>;
-  setStyle(style: string): void;
+  setStyle(style: string | StyleSpecification): void;
   /** Shows the tiles of a role on the map without flicker. */
   showValue(role: Role, template: string | null, bounds: Bounds, zoomFrom: number, zoomTo: number): void;
   /** Opacity of a role: 0 is transparent, 1 is opaque. */
@@ -115,9 +127,13 @@ export interface MapAdapter {
   onRotate(handler: () => void): void;
   /** Turns the map to north and sets the pitch to zero. */
   resetNorth(smooth: boolean): void;
+  /** The language of the place names of the base map, for example `de`. Each new style keeps it. */
+  setLabelLanguage(language: string): void;
+  /** The name of the map canvas for assistive technology, after a change of the app language. */
+  setTitle(title: string): void;
   /** The map cursor, for example `crosshair` when the user sets a point. */
   setCursor(cursor: string): void;
-  /** A click on the map that hits no object. */
+  /** Each click on the map, also a click on an object. */
   onMapClick(handler: (point: readonly [number, number]) => void): () => void;
   /** The pointer over the map, also without a pressed button. */
   onPointerMove(handler: (point: readonly [number, number]) => void): () => void;
@@ -185,7 +201,24 @@ function sourceFor(layer: ObjectLayer): string {
 function layerPaintLayers(layer: ObjectLayer): string[] {
   if (layer === 'zonen') return ['objekte-zonen-flaeche', 'objekte-zonen-linie'];
   if (layer === 'location') return ['objekte-location-kreis', 'objekte-location-punkt'];
-  return [`objekte-${layer}-punkt`];
+  if (layer === 'geteilteFunde') return ['objekte-geteilteFunde-punkt'];
+  return [`objekte-${layer}-auswahl`, `objekte-${layer}-punkt`];
+}
+
+/** The halo below the open find or marker, per kit.css `.pin.on`. The directive sets `selected`. */
+function selectionRing(layer: ObjectLayer): LayerSpecification {
+  return {
+    id: `objekte-${layer}-auswahl`,
+    type: 'circle',
+    source: sourceFor(layer),
+    filter: ['==', ['get', 'selected'], true],
+    paint: {
+      'circle-radius': POINT_RADIUS + MAP_PIN_BORDER_WIDTH + MAP_PIN_ON_RING_INNER,
+      'circle-color': MAP_PIN_ON_RING_INNER_COLOUR,
+      'circle-stroke-width': MAP_PIN_ON_RING_OUTER - MAP_PIN_ON_RING_INNER,
+      'circle-stroke-color': MAP_PIN_ON_RING_OUTER_COLOUR,
+    },
+  };
 }
 
 function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
@@ -248,6 +281,7 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
     ];
   }
   return [
+    selectionRing(layer),
     {
       id: `objekte-${layer}-punkt`,
       type: 'circle',
@@ -260,6 +294,11 @@ function paintLayersFor(layer: ObjectLayer): LayerSpecification[] {
       },
     },
   ];
+}
+
+/** A place name in the given language, else the local name. */
+export function labelField(language: string): ExpressionSpecification {
+  return ['coalesce', ['get', `name:${language}`], ['get', 'name']];
 }
 
 /** MapLibre behind the adapter interface. */
@@ -275,6 +314,7 @@ export class MapLibreAdapter implements MapAdapter {
   private chosen: ((layer: ObjectLayer, id: string) => void) | null = null;
   /** MapLibre refuses sources while the style loads. */
   private styleReady = false;
+  private labelLanguage: string | null = null;
 
   constructor(private readonly load: () => Promise<MaplibreModule>) {}
 
@@ -307,6 +347,7 @@ export class MapLibreAdapter implements MapAdapter {
       // The page shows the attribution in its own component.
       // Otherwise the style adds its own attribution to the map.
       attributionControl: false,
+      locale: { 'Map.Title': options.title },
     });
     // `style.load` fires when the style is ready. `load` waits for each tile
     // and can take a long time on a slow connection.
@@ -317,6 +358,7 @@ export class MapLibreAdapter implements MapAdapter {
     });
     this.map = map;
     this.styleReady = true;
+    this.localise();
     // A hook for the board test: it moves the map by exact points.
     // A mouse drag is not accurate enough.
     const frame = host.ownerDocument.defaultView as MapWindow | null;
@@ -342,7 +384,7 @@ export class MapLibreAdapter implements MapAdapter {
     }
   }
 
-  setStyle(style: string): void {
+  setStyle(style: string | StyleSpecification): void {
     const map = this.map;
     if (!map) return;
     map.setStyle(style);
@@ -351,6 +393,7 @@ export class MapLibreAdapter implements MapAdapter {
     // is ready. Otherwise forecast and layer disappear after the change.
     map.once('style.load', () => {
       this.styleReady = true;
+      this.localise();
       for (const role of ROLES) {
         const state = this.state(role);
         const template = state.template;
@@ -608,6 +651,29 @@ export class MapLibreAdapter implements MapAdapter {
 
   resetNorth(smooth: boolean): void {
     this.map?.easeTo({ bearing: 0, pitch: 0, duration: smooth ? ROTATE_DURATION : 0 });
+  }
+
+  setLabelLanguage(language: string): void {
+    this.labelLanguage = language;
+    this.localise();
+  }
+
+  /** The OpenFreeMap styles show English names. Each label of a place name takes the app language first. */
+  private localise(): void {
+    const map = this.map;
+    const language = this.labelLanguage;
+    if (!map || !this.styleReady || language === null) return;
+    for (const layer of map.getStyle().layers) {
+      if (layer.type !== 'symbol') continue;
+      const field: unknown = map.getLayoutProperty(layer.id, 'text-field');
+      if (field !== undefined && JSON.stringify(field).includes('"name')) {
+        map.setLayoutProperty(layer.id, 'text-field', labelField(language));
+      }
+    }
+  }
+
+  setTitle(title: string): void {
+    this.map?.getCanvas().setAttribute('aria-label', title);
   }
 
   setCursor(cursor: string): void {

@@ -16,6 +16,7 @@ hutrand = { von = ["eingebogen"] }
 stielmerkmale = ["knolle", "genetzt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Satanspilz-Satansroehrling.htm"
 geprueftAm = "2026-09-12"
 
@@ -30,7 +31,7 @@ vonMonat = 6
 bisMonat = 11
 
 [farben]
-hut = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }, { name = "grau", hex = "#8a8a8a" }, { name = "oliv", hex = "#6b7a3a" }, { name = "blau", hex = "#3a5f9e" }]
+hut = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }, { name = "grau", hex = "#8a8a8a" }, { name = "oliv", hex = "#6b7a3a" }]
 sporenlager = [{ name = "purpurrot", hex = "#8e2f4a" }, { name = "orangerot", hex = "#df5a25" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }, { name = "blau", hex = "#3a5f9e" }]
 stiel = [{ name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }, { name = "blau", hex = "#3a5f9e" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]

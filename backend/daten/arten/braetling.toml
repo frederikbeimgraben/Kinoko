@@ -17,6 +17,7 @@ baeume = ["hainbuche"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Braetling2004.htm"
 geprueftAm = "2026-09-12"
 
@@ -32,15 +33,10 @@ bisMonat = 10
 
 [farben]
 hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "orangebraun", hex = "#c86e28" }, { name = "orange", hex = "#e08a2e" }]
-sporenlager = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "ockergelb", hex = "#d4a63c" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "ockergelb", hex = "#d4a63c" }]
 stiel = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "cremeweiß", hex = "#f5efdc" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["fischartig"]

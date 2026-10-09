@@ -4,11 +4,16 @@
   @include page.page;
 }
 
+// The same frame as the species list: the chips under the head, the list in an 8 px frame.
 .species {
-  @include page.body;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
 
-  padding-block-end: 0;
-  overflow: hidden;
+.species__skeleton {
+  padding: 8px 16px;
 }
 
 .species__list {
@@ -16,9 +21,18 @@
   min-block-size: 0;
 }
 
+// Per `kit.css` `.list`: rows 2 px apart, the letter heads with their own space.
 .species__rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-block-end: 24px;
+  gap: 2px;
+  padding: 0 8px calc(var(--h-btn) + 40px);
+}
+
+.species__head {
+  padding: 14px 12px 6px;
+}
+
+.species__fab {
+  @include page.fab;
 }

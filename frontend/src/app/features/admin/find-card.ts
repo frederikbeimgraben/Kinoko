@@ -1,40 +1,65 @@
-import { photoPath, type OpenFind, type Photo } from '../../core/api/models';
-import { shortDate } from '../../core/i18n/dates';
-import { locationText } from '../../core/i18n/places';
+import { photoPath, type OpenFind, type Photo, type SpeciesEntry } from '../../core/api/models';
+import { asDate } from '../../core/i18n/dates';
 import type { I18nService } from '../../core/i18n/i18n.service';
+import { locationText } from '../../core/i18n/places';
+import { capColour } from '../entries/cap-colour';
 
-/** A card in the review stack of finds. */
-export interface FindCard {
-  id: string;
-  species: string;
-  place: string;
-  meta: string;
-  note: string | null;
-  photos: readonly string[];
+/** One label and value row of a card, per the board `FindQueue`. */
+export interface FindCardRow {
+  readonly label: string;
+  readonly value: string;
 }
 
-/** Date, count and account in one line. If the count is not known, the line omits it. */
-export function metaText(find: OpenFind, i18n: I18nService): string {
-  const date = shortDate(find.foundOn, i18n);
-  const person = find.ownerId;
-  return find.count === null
-    ? i18n.translate('find.sublineNoCount', { date, person })
-    : i18n.translate('find.subline', { date, count: find.count, person });
+/** A card in the review stack of finds: map, species, note and the facts of the report. */
+export interface FindCard {
+  readonly id: string;
+  readonly species: string;
+  readonly note: string;
+  /** The cap colour of the species, for the thumb and the pin. */
+  readonly colour: string;
+  /** The first photo of the find for the thumb, or an empty text. */
+  readonly photo: string;
+  /** The find as [longitude, latitude]. */
+  readonly point: readonly [number, number];
+  readonly rows: readonly FindCardRow[];
+}
+
+/** Day and full month, as the board shows it: "6. September". */
+export function dayAndMonth(iso: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(asDate(iso));
+}
+
+/** The rows Melder, Datum, Ort and Anzahl. A find without a count has no Anzahl row. */
+function rowsOf(find: OpenFind, i18n: I18nService): readonly FindCardRow[] {
+  const shown = locationText(find.lat, find.lon, i18n.locale());
+  const row = (label: Parameters<I18nService['translate']>[0], value: string): FindCardRow => ({
+    label: i18n.translate(label),
+    value,
+  });
+  return [
+    row('find.queue.reporter', find.ownerName ?? i18n.translate('find.queue.unknownReporter')),
+    row('entry.field.date', dayAndMonth(find.foundOn, i18n.locale())),
+    row('entry.field.location', i18n.translate('entry.coordinates', { lat: shown.lat, lon: shown.lon })),
+    ...(find.count === null
+      ? []
+      : [row('entry.field.count', i18n.translate('find.pieces', { count: find.count }))]),
+  ];
 }
 
 export function findCard(
   find: OpenFind,
-  species: string,
+  species: SpeciesEntry | null,
   photos: readonly Photo[],
   i18n: I18nService,
 ): FindCard {
-  const shown = locationText(find.lat, find.lon, i18n.locale());
+  const lead = photos.find((one) => one.lead) ?? photos.at(0);
   return {
     id: find.id,
-    species,
-    place: i18n.translate('entry.coordinates', { lat: shown.lat, lon: shown.lon }),
-    meta: metaText(find, i18n),
-    note: find.note,
-    photos: photos.map((one) => photoPath(one.id, 'full')),
+    species: species?.name ?? i18n.translate('find.unknownSpecies'),
+    note: find.note ?? '',
+    colour: capColour(species),
+    photo: lead === undefined ? '' : photoPath(lead.id, 'list'),
+    point: [find.lon, find.lat],
+    rows: rowsOf(find, i18n),
   };
 }

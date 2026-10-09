@@ -78,10 +78,10 @@ func TestReactionsMatchTheLatinNameAndTheSynonymWithoutCase(t *testing.T) {
 	}
 	first, second := got[0], got[1]
 	if first.latin != "Boletus edulis" || first.reagent != "koh" || first.position != 0 || *first.part != "flesh" ||
-		*first.location != "Fleisch (Schnitt)" || *first.colourName != "blau" || *first.colourHex != "#2f5fa8" {
+		first.location != nil || *first.colourName != "blau" || *first.colourHex != "#2f5fa8" {
 		t.Fatalf("first %+v", first)
 	}
-	if second.latin != "Boletus edulis" || second.position != 1 || second.part != nil || *second.colourName != "braun" {
+	if second.latin != "Boletus edulis" || second.position != 1 || *second.part != "flesh" || *second.colourName != "braun" {
 		t.Fatalf("second %+v", second)
 	}
 	if n := count(t, handle, "SELECT count(*) FROM species_reaction_source WHERE position = 1"); n != 2 {
@@ -104,18 +104,34 @@ func TestReactionsUseTheTwoManualMatches(t *testing.T) {
 	}
 }
 
+func TestVariableRowTakesTheReadingsOfTheSameReagentAndPlace(t *testing.T) {
+	handle := openDB(t)
+	seed(t, handle, smallData(reactionsJSON(t, []reaction{
+		entry("Boletus edulis", "koh", "orange vs. negativ", "variable", "flesh", "src-a"),
+		entry("Boletus edulis", "koh", "orangerot", "positive", "flesh", "src-b"),
+		entry("Boletus edulis", "melzer", "braun", "positive", "flesh", "src-b"),
+	}, testSources)))
+	got := storedReactions(t, handle)
+	if len(got) != 2 || got[0].result != "variable" || got[1].reagent != "melzer" || got[1].position != 1 {
+		t.Fatalf("%+v", got)
+	}
+	if n := count(t, handle, "SELECT count(*) FROM species_reaction_source WHERE position = 0"); n != 2 {
+		t.Fatalf("sources of the variable reaction %d", n)
+	}
+}
+
 func TestNegativeReactionHasNoColour(t *testing.T) {
 	handle := openDB(t)
 	seed(t, handle, smallData(reactionsJSON(t, []reaction{
 		entry("Boletus edulis", "koh", "negativ, bleibt braun", "negative", nil),
-		entry("Boletus edulis", "koh", "keine deutliche Farbe", "variable", nil),
+		entry("Boletus edulis", "melzer", "keine deutliche Farbe", "variable", nil),
 	}, testSources)))
 	got := storedReactions(t, handle)
 	if len(got) != 2 {
 		t.Fatalf("%+v", got)
 	}
 	for _, r := range got {
-		if r.colourName != nil || r.colourHex != nil || r.part != nil {
+		if r.colourName != nil || r.colourHex != nil {
 			t.Fatalf("%+v", r)
 		}
 	}

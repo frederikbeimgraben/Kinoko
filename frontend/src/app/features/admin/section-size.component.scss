@@ -13,27 +13,18 @@ app-page-header {
   @include section.fields;
 }
 
-.section__title {
-  margin: 0 0 10px;
-  font-size: var(--fs-caption);
-  line-height: normal;
-  font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
+// The unit stands at the end of the field, in the label colour, as the board shows it.
+.section__number {
+  position: relative;
 }
 
-// The range and its unit are on one row. All columns have the same width.
-.section__span {
+.section__unit {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 16px;
   display: flex;
-  gap: 10px;
-}
-
-.section__field {
-  flex: 1;
-  min-inline-size: 0;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+  align-items: center;
+  font-size: var(--fs-14);
+  color: var(--label);
+  pointer-events: none;
 }

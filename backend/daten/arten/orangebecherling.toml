@@ -12,6 +12,7 @@ hutform = { von = "trichterfoermig", nach = "flach" }
 hutmerkmale = ["unregelmaessig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Orangebecherling.htm"
 geprueftAm = "2026-09-12"
 

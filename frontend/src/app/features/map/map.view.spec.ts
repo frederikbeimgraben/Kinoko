@@ -90,6 +90,22 @@ describe('MapView', () => {
     expect(model.weeks()).toHaveLength(3);
     expect(model.rampFrom()).toBe('0 %');
     expect(model.rampTo()).toBe('50 %');
+    expect(model.rampLabel()).toBe('Fundwahrscheinlichkeit je Begehung');
+    expect(model.loading()).toBe(false);
+  });
+
+  it('zeigt statt des Skeletts einen Fehler, wenn beide Manifeste ausbleiben, und versucht es neu', async () => {
+    const { view: model, tiles } = await view(null, null);
+
+    expect(model.failed()).toBe(true);
+    expect(model.loading()).toBe(false);
+
+    answerManifest();
+    model.retry();
+    expect(model.failed()).toBe(false);
+    await vi.waitFor(() => {
+      expect(tiles.layers()).not.toBeNull();
+    });
     expect(model.loading()).toBe(false);
   });
 
@@ -120,6 +136,8 @@ describe('MapView', () => {
 
     expect(model.title()).toBe('Kombination');
     expect(model.rampTo()).toBe('100 %');
+    // "Abgestuft" shows how well the factors agree, not a probability of a find.
+    expect(model.rampLabel()).toBe('Übereinstimmung mit den Faktoren');
   });
 
   it('nimmt Ebenen und Arten als Quellen eines Faktors', async () => {
@@ -176,6 +194,16 @@ describe('MapView', () => {
     const { view: model } = await view();
 
     expect(model.creditNote()).toBeNull();
+    expect(model.baseCredit()).toBeNull();
+  });
+
+  it('nennt die Quelle des Geländes und des Luftbilds als Grundkarte', async () => {
+    const { view: model, state } = await view();
+
+    state.setBackground('topo');
+    expect(model.baseCredit()).toBe('© BKG, dl-de/by-2-0');
+    state.setBackground('satellite');
+    expect(model.baseCredit()).toContain('Copernicus');
   });
 
   it('nennt den Vermerk einer festen Ebene mit Quellenpflicht, auch in der Vorhersage', async () => {

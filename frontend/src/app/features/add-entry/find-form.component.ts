@@ -19,7 +19,7 @@ import { PhotoStripComponent, type StripPhoto } from '../../ui/photo-strip/photo
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
-import { SpeciesPickerComponent } from '../../ui/species-picker/species-picker.component';
+import { SpeciesPickComponent } from '../map/species-pick.component';
 import { SpeciesStore } from '../species/species.store';
 import { MapStore } from '../map/map.store';
 import { numericDate } from '../../core/i18n/dates';
@@ -52,7 +52,7 @@ export interface FindSubmission {
     ScrollFadeDirective,
     SectionComponent,
     ActionBarComponent,
-    SpeciesPickerComponent,
+    SpeciesPickComponent,
     FormFieldComponent,
     OverlayHostComponent,
     PhotoStripComponent,
@@ -79,7 +79,7 @@ export class FindFormComponent {
   readonly withPhotos = input(true);
   /** The photos of this find that the service has. */
   readonly held = input<readonly StripPhoto[]>([]);
-  /** An existing find shows the chevron at the species and a border at the back way. */
+  /** An existing find shows the switch for the training. */
   readonly editing = input(false);
   readonly busy = input(false);
   /** The choices from before a return to the location step. */
@@ -128,14 +128,19 @@ export class FindFormComponent {
     return chosen === undefined ? (this.start()?.groupId ?? null) : chosen;
   });
 
-  /** The default is the species of the map. */
+  /** A new find starts with the species of the map. A find without a species keeps none until a choice. */
   protected readonly selectedSpecies = computed<SpeciesEntry | null>(() => {
     const chosen = this.slugChoice();
     if (chosen !== null) return this.species.entryOf(chosen);
-    const started = this.start()?.speciesId ?? null;
-    if (started !== null) return this.species.entryById(started);
+    const start = this.start();
+    if (start !== null) return start.speciesId === null ? null : this.species.entryById(start.speciesId);
     return this.species.entryOf(this.map.species());
   });
+
+  /** An existing find without a species can stay without one. */
+  private readonly keepsNoSpecies = computed(
+    () => this.start()?.speciesId === null && this.slugChoice() === null,
+  );
 
   protected readonly speciesName = computed(() => this.selectedSpecies()?.name ?? '');
 
@@ -147,8 +152,15 @@ export class FindFormComponent {
     void this.species.loadBundle();
   }
 
-  protected selectSpecies(slug: string): void {
-    this.slugChoice.set(slug);
+  /** The species in the open picker, per `SpeciesPickBody.dc.html`. "Übernehmen" takes it. */
+  protected readonly draftSlug = linkedSignal({
+    source: () => ({ open: this.pickerOpen(), slug: this.selectedSpecies()?.slug ?? null }),
+    computation: ({ slug }): string | null => slug,
+  });
+
+  protected selectSpecies(): void {
+    const slug = this.draftSlug();
+    if (slug !== null) this.slugChoice.set(slug);
     this.pickerOpen.set(false);
   }
 
@@ -170,11 +182,16 @@ export class FindFormComponent {
     if (input !== null) this.submitted.emit({ input, photos: this.photos() });
   }
 
-  /** Checks the contract: a catalogue species, a date that is not in the future, and a count of 1 or more. */
+  /** Checks the contract: a catalogue species, a date that is not in the future, a count of 1 or more,
+   * and a group for a shared find. The service refuses a share without a group. */
   private validate(): FindWrite | null {
     const species = this.selectedSpecies();
-    if (species === null) {
+    if (species === null && !this.keepsNoSpecies()) {
       this.toasts.error(this.i18n.translate('melden.artFehlt'));
+      return null;
+    }
+    if (this.visibility() === 'shared' && this.groupId() === null) {
+      this.toasts.error(this.i18n.translate('entry.group.missing'));
       return null;
     }
     if (this.date() > isoDatum(new Date())) {
@@ -190,7 +207,7 @@ export class FindFormComponent {
     const [lon, lat] = this.location();
     const note = this.note().trim();
     return {
-      speciesId: species.id,
+      speciesId: species?.id ?? null,
       lat,
       lon,
       foundOn: this.date(),

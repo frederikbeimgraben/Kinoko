@@ -50,16 +50,11 @@ describe('AdminSpeciesComponent', () => {
     await noViolations(container);
   });
 
-  it('trägt den Namen einer Art in der Primärfarbe', async () => {
+  it('zeigt den Speisewert und den Anfangsbuchstaben als Kopf', async () => {
     await build();
 
-    expect(screen.getByText('Steinpilz').closest('.row__title--accent')).not.toBeNull();
-  });
-
-  it('kennzeichnet eine Art ohne Vorhersage', async () => {
-    await build();
-
-    expect(screen.getAllByLabelText('Ohne Vorhersage')).toHaveLength(1);
+    expect(screen.getAllByText('essbar').length).toBeGreaterThan(0);
+    expect(screen.getByText('S')).toBeInTheDocument();
   });
 
   it('sucht im Namen und im lateinischen Namen', async () => {
@@ -71,7 +66,21 @@ describe('AdminSpeciesComponent', () => {
     expect(screen.getByText('Erdritterling')).toBeInTheDocument();
   });
 
-  it('legt über die erste Zeile eine neue Art an', async () => {
+  it('hat die Suche im Kopf und sortiert über die Sortierung', async () => {
+    await build();
+
+    expect(screen.getByRole('heading', { name: 'Arten' })).toBeInTheDocument();
+    const names = (): string[] =>
+      screen.getAllByText(/^(Steinpilz|Erdritterling)$/).map((one) => one.textContent);
+    expect(names()).toEqual(['Erdritterling', 'Steinpilz']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sortieren' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Lateinischer Name' }));
+
+    expect(names()).toEqual(['Steinpilz', 'Erdritterling']);
+  });
+
+  it('legt über die schwebende Schaltfläche eine neue Art an', async () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigate');
 

@@ -59,6 +59,9 @@ func TestGetSpeciesProfileAssemblesAllChildRows(t *testing.T) {
 	if obj(list(change["triggers"])[0])["slug"] != "cut" || change["kind"] != "mechanical" || change["from"] != nil {
 		t.Fatal(change)
 	}
+	if obj(change["to"])["nearest"] == nil {
+		t.Fatal(change["to"])
+	}
 	equalJSON(t, body["capFeatures"], `[{"feature":"umbonate","phase":"young"}]`)
 	equalJSON(t, body["capMargins"], `[{"margin":"inrolled","phase":"young"}]`)
 	equalJSON(t, body["stemFeatures"], `[{"feature":"bulb","phase":"old"}]`)

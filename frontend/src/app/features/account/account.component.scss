@@ -38,3 +38,17 @@
   view-transition-name: detail-pane;
   background: var(--bg);
 }
+
+.signin {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.signin__hint {
+  margin: 0;
+  padding-inline: 4px;
+  font-size: var(--fs-13);
+  line-height: 1.45;
+  color: var(--text-var);
+}

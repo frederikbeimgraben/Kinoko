@@ -13,6 +13,7 @@ hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["genattert", "voll", "faserig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/SpitzbuckligeRauhkopf.htm"
 geprueftAm = "2026-09-12"
 
@@ -32,14 +33,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "orangerot", hex = "#df5a25" }, { name = "braun", hex = "#7a5230" }]
-sporenlager = [{ name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "braun", hex = "#7a5230" }]
 stiel = [{ name = "rostbraun", hex = "#8a4b23" }]
 fleisch = [{ name = "orangebraun", hex = "#c86e28" }, { name = "rostbraun", hex = "#8a4b23" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
 sporenpulver = [{ name = "rostbraun", hex = "#8a4b23" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["rettichartig"]

@@ -81,7 +81,7 @@ export const ADVISOR_ROLE = role({
 export const ROLES: Role[] = [ADMIN_ROLE, USER_ROLE, ADVISOR_ROLE];
 
 export function person(part: Partial<Person> & Pick<Person, 'id' | 'sub'>): Person {
-  return { email: null, name: null, roles: [], createdAt: NOW, ...part };
+  return { email: null, name: null, roles: [], groupAdmin: false, createdAt: NOW, ...part };
 }
 
 export const PEOPLE: Person[] = [

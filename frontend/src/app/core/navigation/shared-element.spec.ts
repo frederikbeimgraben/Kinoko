@@ -57,11 +57,13 @@ describe('shared elements', () => {
     const { transition, update, finish } = transitionDouble();
 
     shareOnNextRoute(thumb, 'boletus-edulis');
+    expect(thumb.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
     attachSharedElement(transition, false);
     detectChanges();
 
-    expect(thumb.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
+    // The new page has the name one time only, also when the list stays on the page.
     expect(hero?.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
+    expect(thumb.style.getPropertyValue('view-transition-name')).toBe('');
 
     update();
     await transition.updateCallbackDone;

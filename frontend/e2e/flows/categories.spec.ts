@@ -48,7 +48,7 @@ test('legt eine Kategorie an', async ({ page }) => {
     });
   });
 
-  await page.getByRole('button', { name: 'Kategorie anlegen' }).click();
+  await page.getByRole('button', { name: 'Kategorie hinzufügen' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill('Zimt');
   await page.getByRole('button', { name: 'Speichern' }).click();
 

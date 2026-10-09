@@ -1,15 +1,11 @@
-<app-page-header
-  [title]="'admin.dataSources.title' | t"
-  [back]="!wide()"
-  [wide]="wide()"
-  (backClick)="back()"
-/>
+<app-page-header [title]="'admin.dataSources.title' | t" [back]="true" [wide]="wide()" (backClick)="back()" />
 
 <div class="sources">
   @for (line of blocked(); track line.run) {
     <app-banner
       kind="pending"
       icon="warning"
+      [flush]="true"
       [text]="line.text"
       [count]="line.count"
       (actionClick)="needsOpen.set(true)"

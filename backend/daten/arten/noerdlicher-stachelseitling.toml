@@ -11,6 +11,7 @@ gefaehrdung = "vomAussterbenBedroht"
 fruchtschicht = { art = "stacheln" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/NoerdlicherStachelseitling.htm"
 geprueftAm = "2026-09-12"
 

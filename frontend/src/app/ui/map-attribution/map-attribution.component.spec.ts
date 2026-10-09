@@ -10,6 +10,12 @@ describe('MapAttributionComponent', () => {
     await noViolations(container);
   });
 
+  it('nennt eine andere Grundkarte statt OpenStreetMap', async () => {
+    await render(MapAttributionComponent, { inputs: { base: '© BKG, dl-de/by-2-0' } });
+
+    expect(screen.getByText('© BKG, dl-de/by-2-0')).toBeInTheDocument();
+  });
+
   it('hängt den Vermerk einer Ebene mit Quellenpflicht an', async () => {
     await render(MapAttributionComponent, { inputs: { note: 'Thünen-Institut, CC BY 4.0' } });
 

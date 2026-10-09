@@ -12,6 +12,7 @@ fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["faserig", "hohl", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Rauchblaettrige.htm"
 geprueftAm = "2026-09-12"
 

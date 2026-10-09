@@ -77,17 +77,9 @@ export const CombinationStore = signalStore(
           factors: state.factors.filter((entry) => entry.source !== factor.source),
         }));
       },
-      /** A new source starts with the upper half of its scale. */
+      /** A new source starts with the upper half of its scale. Only "Übernehmen" adds it with `apply`. */
       start(source: string, low: number, high: number): Factor {
-        const factor: Factor = {
-          source,
-          condition: 'above',
-          low: low + (high - low) / 2,
-          high: 0,
-          active: true,
-        };
-        apply(factor);
-        return factor;
+        return { source, condition: 'above', low: low + (high - low) / 2, high: 0, active: true };
       },
       pick(combination: Combination): void {
         patchState(store, {

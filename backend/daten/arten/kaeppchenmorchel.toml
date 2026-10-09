@@ -16,6 +16,7 @@ baeume = ["esche"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Kaeppchen.htm"
 geprueftAm = "2026-09-12"
 

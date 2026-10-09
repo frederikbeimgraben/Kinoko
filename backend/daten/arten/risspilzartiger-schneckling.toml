@@ -12,6 +12,7 @@ hutrand = { von = ["fransig"] }
 stielmerkmale = ["beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RisspilzartigerSchneckling.htm"
 geprueftAm = "2026-09-12"
 
@@ -26,13 +27,9 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "braun", hex = "#7a5230" }]
-sporenlager = [{ name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "grau", hex = "#8a8a8a" }]
 stiel = [{ name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "grau", hex = "#8a8a8a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["unauffaellig"]

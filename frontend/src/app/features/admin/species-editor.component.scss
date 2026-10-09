@@ -11,16 +11,6 @@
   gap: 24px;
 }
 
-// The counts show the value above the name, per the kit `.tiles`.
-.editor__stats {
-  --stat-label-height: 1.4;
-
-  padding-block: 14px;
-  line-height: normal;
-  background: var(--surface);
-  border-radius: var(--r-item);
-}
-
 // The kit `.note`: a card with a short text.
 .editor__note {
   margin: 0;

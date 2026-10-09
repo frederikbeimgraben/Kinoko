@@ -9,6 +9,7 @@ type Decision = 'accepted' | 'rejected';
 export function openFind(part: Partial<OpenFind> & Pick<OpenFind, 'id'>): OpenFind {
   return {
     ownerId: 'person-eins',
+    ownerName: 'Frederik',
     speciesId: 'boletus-edulis',
     lat: 48.5203,
     lon: 9.0511,

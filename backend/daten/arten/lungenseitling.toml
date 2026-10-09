@@ -15,6 +15,7 @@ hutrand = { von = ["eingerollt"], nach = ["wellig"] }
 stielmerkmale = ["behaart"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Lungenseitling.htm"
 geprueftAm = "2026-09-12"
 
@@ -39,14 +40,14 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "beige", hex = "#d9c9a3" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
-sporenlager = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
 
 [farben.verfaerbung]
 von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "gelb", hex = "#e8c33a" }]
+nach = [{ name = "gelb", hex = "#e8c33a" }]
 dauer = "langsam"
 
 [geruch]

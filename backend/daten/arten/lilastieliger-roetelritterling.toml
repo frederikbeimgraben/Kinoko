@@ -17,6 +17,7 @@ hutrand = { von = ["eingerollt"], nach = ["scharf"] }
 stielmerkmale = ["faserig", "voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/LilastieligerRoetelritterling.htm"
 geprueftAm = "2026-09-12"
 

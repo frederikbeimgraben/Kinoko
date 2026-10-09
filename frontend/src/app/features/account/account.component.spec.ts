@@ -89,6 +89,11 @@ async function build(options: Options = {}): Promise<Setup> {
 }
 
 describe('AccountComponent', () => {
+  afterEach(() => {
+    // A sign-out in one test must not hold for the next test.
+    sessionStorage.clear();
+  });
+
   it('shows the way to the SSO without a sign-in', async () => {
     const { container, manager } = await build();
 
@@ -96,9 +101,17 @@ describe('AccountComponent', () => {
     expect(screen.queryByText('Meine Daten')).toBeNull();
     await noViolations(container);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Anmelden mit Example SSO' }));
 
     expect(manager.redirects).toEqual([{ back: '/konto' }]);
+  });
+
+  it('turns the button off and tells why when the server has no SSO', async () => {
+    const { manager } = await build({ configuration: { ...CONFIG, oidcIssuer: '', oidcName: '' } });
+
+    expect(screen.getByRole('button', { name: 'Anmelden' })).toBeDisabled();
+    expect(screen.getByText('Auf diesem Server ist keine Anmeldung eingerichtet.')).toBeInTheDocument();
+    expect(manager.redirects).toEqual([]);
   });
 
   it('shows the person, the counts and the rows in the order of the board', async () => {
@@ -106,7 +119,7 @@ describe('AccountComponent', () => {
 
     expect(screen.getByText('Frederik')).toBeInTheDocument();
     expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
-    expect(screen.getByText('sso.beimgraben.net')).toBeInTheDocument();
+    expect(screen.getByText('Example SSO')).toBeInTheDocument();
     expect(screen.getByText('Kombinationen')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
     const rows = ['Meine Bilder', 'Meine Daten', 'Gruppen', 'Glossar'].map((name) => screen.getByText(name));
@@ -181,13 +194,27 @@ describe('AccountComponent', () => {
   it('stays readable when the backend gave no configuration', async () => {
     await build({ configuration: null });
 
-    expect(screen.getByRole('button', { name: 'Anmelden mit beimgraben.net' })).toBeInTheDocument();
+    // A click reads the configuration again, so the button stays on.
+    expect(screen.getByRole('button', { name: 'Anmelden' })).toBeEnabled();
   });
 
   it('shows an issuer that is not a URL as it came', async () => {
-    await build({ signedIn: true, configuration: { ...CONFIG, oidcIssuer: 'sso.beimgraben.net' } });
+    await build({
+      signedIn: true,
+      configuration: { ...CONFIG, oidcIssuer: 'sso.example.org', oidcName: '' },
+    });
 
-    expect(screen.getAllByText('sso.beimgraben.net')).toHaveLength(1);
+    expect(screen.getAllByText('sso.example.org')).toHaveLength(1);
+  });
+
+  it('names the SSO with the name of the sign-in button, without the port of the issuer', async () => {
+    await build({
+      signedIn: true,
+      configuration: { ...CONFIG, oidcIssuer: 'http://127.0.0.1:9000/', oidcName: '' },
+    });
+
+    expect(screen.getByText('127.0.0.1')).toBeInTheDocument();
+    expect(screen.queryByText('127.0.0.1:9000')).toBeNull();
   });
 
   it('goes to the map on close', async () => {

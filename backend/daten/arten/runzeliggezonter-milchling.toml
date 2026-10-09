@@ -15,6 +15,7 @@ hutmerkmale = ["vertieft"]
 hutrand = { von = ["hoeckerig", "eingebogen"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RunzeligerMilchling.htm"
 geprueftAm = "2026-09-12"
 
@@ -29,12 +30,7 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "orangebraun", hex = "#c86e28" }, { name = "orange", hex = "#e08a2e" }]
-sporenlager = [{ name = "blau", hex = "#3a5f9e" }]
 stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "orangebraun", hex = "#c86e28" }, { name = "orange", hex = "#e08a2e" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["fischartig", "unauffaellig"]

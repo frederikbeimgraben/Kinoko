@@ -6,6 +6,7 @@ import { SAVED_COMBINATION } from '../../testing/map-doubles';
 import { fromWire } from './factors';
 import { MapOverlaysComponent, type Overlay } from './map-overlays.component';
 import { MapView } from './map.view';
+import { ViewportService } from '../../core/layout/viewport.service';
 
 const SPECIES = [
   { value: 'boletus-edulis', name: 'Steinpilz', latin: 'Boletus edulis' },
@@ -33,6 +34,7 @@ function viewDouble(saved: readonly Combination[]) {
     layers: signal([]),
     layer: signal(null),
     weekKey: signal('2025-40'),
+    layerName: () => '',
   };
   return { view, deleted, picked, chosenSpecies };
 }
@@ -45,20 +47,40 @@ class HostComponent {
   readonly open = signal<Overlay>(null);
 }
 
-async function overlays(saved: readonly Combination[] = [SAVED_COMBINATION]) {
+async function overlays(saved: readonly Combination[] = [SAVED_COMBINATION], wide = false) {
   const double = viewDouble(saved);
-  const { fixture } = await render(HostComponent, {
-    providers: [{ provide: MapView, useValue: double.view }],
+  const { fixture, container } = await render(HostComponent, {
+    providers: [
+      { provide: MapView, useValue: double.view },
+      { provide: ViewportService, useValue: { wide: signal(wide) } },
+    ],
   });
   const show = async (open: Overlay): Promise<void> => {
     fixture.componentInstance.open.set(open);
     fixture.detectChanges();
     await fixture.whenStable();
   };
-  return { ...double, show };
+  return { ...double, show, container };
 }
 
 describe('MapOverlaysComponent', () => {
+  it('opens the factor as a modal over the map also on the desktop (board `MapDesktopFactor`)', async () => {
+    const { show, container } = await overlays([SAVED_COMBINATION], true);
+
+    await show('factor');
+
+    expect(container.querySelector('.overlay__panel')).not.toBeNull();
+  });
+
+  it('says that no combination is saved, and offers no apply then', async () => {
+    const { show } = await overlays([]);
+
+    await show('combinations');
+
+    expect(screen.getByText('Noch keine Kombination gespeichert.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Übernehmen' })).not.toBeInTheDocument();
+  });
+
   it('drops a cancelled species choice, so the next open shows the map species again', async () => {
     const { show, chosenSpecies } = await overlays();
     await show('species');

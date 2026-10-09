@@ -1,7 +1,7 @@
 import { expect, test } from '../../fixtures/test';
 import { type Locator, type Page } from '@playwright/test';
 import { mockApi } from '../../fixtures/api';
-import { authConfig, mockSignIn } from '../../fixtures/auth';
+import { PROVIDER, authConfig, mockSignIn, mockSignedOut } from '../../fixtures/auth';
 import { MARKERS, SHARED_FINDS, SPECIES_BUNDLE, ZONES, mockMap } from '../../fixtures/map';
 
 const BASE = `http://127.0.0.1:${process.env['E2E_PORT'] ?? '4400'}`;
@@ -80,13 +80,13 @@ test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
 });
 
 test('sign-in shows on the desktop as a dialog in the centre of the window', async ({ page }) => {
-  await openApp(page, '/eintraege', false);
-  const dialog = page.getByRole('dialog', { name: 'Anmelden' });
-  // The empty state renders again until the list is complete.
-  await expect(async () => {
-    await page.getByRole('button', { name: 'Anmelden' }).click();
-    await expect(dialog).toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 20000 });
+  await mockSignedOut(page);
+  await openApp(page, '/karte', false);
+  // Per the board `MapSignIn`, a guest sees the dialog at "Eintragen", before the form.
+  await page.getByRole('button', { name: 'Eintragen' }).click();
+  await expect(page.getByRole('button', { name: 'Marker setzen' })).toBeHidden();
+  const dialog = page.getByRole('dialog', { name: `Anmelden mit ${PROVIDER}` });
+  await expect(dialog).toBeVisible();
 
   // Per the board `MapSignIn`: a dialog of the kit, not a modal sheet.
   const box = await dialog.boundingBox();

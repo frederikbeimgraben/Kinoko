@@ -16,14 +16,14 @@ const STONE = speciesEntry({
 const PROVIDERS = [provideHttpClient(), provideHttpClientTesting()];
 
 describe('SpeciesTimeComponent', () => {
-  it('zeigt die Wachstumszeit als Spanne und als Band', async () => {
+  it('zeigt die Wachstumszeit als Zeile einer Gruppe', async () => {
     const { container } = await render(SpeciesTimeComponent, {
       inputs: { species: STONE },
       providers: PROVIDERS,
     });
 
     expect(screen.getByText('Juni bis Oktober')).toBeInTheDocument();
-    expect(container.querySelector('app-year-band')).not.toBeNull();
+    expect(container.querySelector('app-row-group app-list-row')).not.toBeNull();
     await noViolations(container);
   });
 
@@ -33,6 +33,6 @@ describe('SpeciesTimeComponent', () => {
       providers: PROVIDERS,
     });
 
-    expect(container.querySelector('app-year-band')).toBeNull();
+    expect(container.querySelector('app-section')).toBeNull();
   });
 });

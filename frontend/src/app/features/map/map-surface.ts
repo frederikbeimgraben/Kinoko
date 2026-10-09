@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, effect, inject, signal } from '@angular/core';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { LocationService } from '../../core/location/location.service';
 import { ThemeStore } from '../../core/theme/theme.store';
@@ -55,8 +55,23 @@ export class MapSurface {
   /** The bearing and the pitch of the map, for the compass. */
   readonly rotation = this._rotation.asReadonly();
 
+  private readonly _height = signal(Number.POSITIVE_INFINITY);
+  /** The height of the map canvas. The add button needs it to stay clear of the location button. */
+  readonly height = this._height.asReadonly();
+  private readonly resized = new ResizeObserver(([entry]) => {
+    this._height.set(entry.contentRect.height);
+  });
+
+  constructor() {
+    effect(() => {
+      this.adapter.setLabelLanguage(this.i18n.locale());
+      this.adapter.setTitle(this.i18n.translate('map.canvasLabel'));
+    });
+  }
+
   async start(host: HTMLElement, wide: boolean, onMove: () => void): Promise<void> {
     this.host = host;
+    this.resized.observe(host);
     await this.adapter.start(host, {
       style: styleFor(this.state.background(), this.theme.effective()),
       centerPoint: [10.4, 51.2],
@@ -65,6 +80,7 @@ export class MapSurface {
       maxZoom: ZOOM_MAX,
       maxBounds: MAX_BOUNDS,
       protocol: { name: 'wert', resolve: this.protocol.resolve },
+      title: this.i18n.translate('map.canvasLabel'),
     });
     this.adapter.fitBounds(GERMANY, this.padding(this.state.detent(), wide, this.state.overlayHeight()));
     this.adapter.onMove(onMove);
@@ -146,6 +162,7 @@ export class MapSurface {
   }
 
   destroy(): void {
+    this.resized.disconnect();
     this.adapter.destroy();
     this.protocol.stop();
   }

@@ -2,7 +2,7 @@ import { provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { ANY_ROUTE } from '../../testing/routes';
 import userEvent from '@testing-library/user-event';
-import { AccessApiDouble, accessApiProvider, problem } from '../../testing/access-fixture';
+import { AccessApiDouble, accessApiProvider, person, problem } from '../../testing/access-fixture';
 import { noViolations } from '../../testing/axe';
 import { PeopleComponent } from './people.component';
 
@@ -29,15 +29,26 @@ describe('PeopleComponent', () => {
   it('zeigt die Konten mit ihren Rollen', async () => {
     const { container } = await build();
 
-    expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
-    expect(screen.getByText('Admin')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Frederik/ })).toHaveTextContent('Admin');
+    expect(screen.getByRole('button', { name: /Jonas/ })).toBeInTheDocument();
     await noViolations(container);
   });
 
-  it('trägt den Namen einer Person in der Primärfarbe', async () => {
-    await build();
+  it('zeigt die Verwaltung aus der Anmeldung als feste, gewählte Rolle', async () => {
+    const api = new AccessApiDouble();
+    api.peopleList = [person({ id: 'person-sso', sub: 'sub-sso', name: 'Sso', groupAdmin: true })];
+    const { refresh } = await build(api);
 
-    expect(screen.getByText('Frederik').closest('.row__title--accent')).not.toBeNull();
+    expect(screen.getByRole('button', { name: /Sso/ })).toHaveTextContent('Admin');
+    await userEvent.click(screen.getByRole('button', { name: /Sso/ }));
+    refresh();
+
+    const box = screen.getByRole('checkbox', { name: /Admin/ });
+    expect(box).toBeChecked();
+    expect(box).toBeDisabled();
+    expect(screen.getByText('Über die Anmeldung (SSO)')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    expect(api.assigned).toEqual([{ id: 'person-sso', roles: [] }]);
   });
 
   it('fragt den Dienst nach dem, was jemand eintippt', async () => {
@@ -54,7 +65,7 @@ describe('PeopleComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: /Jonas/ }));
     refresh();
 
-    expect(screen.getByRole('dialog', { name: 'Jonas' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Rollen zuweisen' })).toHaveTextContent('jonas@example.test');
     expect(screen.getByRole('checkbox', { name: /Pilzberater/ })).not.toBeChecked();
     expect(screen.queryByRole('checkbox', { name: /^Nutzer/ })).not.toBeInTheDocument();
     // The toolbar and the sheet each have a `header`. In the app, both are in the shell `main`.
@@ -73,7 +84,7 @@ describe('PeopleComponent', () => {
     refresh();
 
     expect(api.assigned).toEqual([{ id: 'person-jonas', roles: ['rolle-berater'] }]);
-    expect(screen.queryByRole('dialog', { name: 'Jonas' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Rollen zuweisen' })).not.toBeInTheDocument();
   });
 
   it('lässt das Blatt offen, wenn der Dienst die Zuweisung abweist', async () => {
@@ -88,7 +99,7 @@ describe('PeopleComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     refresh();
 
-    expect(screen.getByRole('dialog', { name: 'Frederik' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Rollen zuweisen' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeEnabled();
   });
 
@@ -102,6 +113,6 @@ describe('PeopleComponent', () => {
     refresh();
 
     expect(api.assigned).toEqual([]);
-    expect(screen.queryByRole('dialog', { name: 'Jonas' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Rollen zuweisen' })).not.toBeInTheDocument();
   });
 });

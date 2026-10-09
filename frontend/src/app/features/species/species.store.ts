@@ -5,8 +5,10 @@ import { EMPTY, catchError, filter, firstValueFrom, map, mergeMap, pipe, tap } f
 import { SpeciesApi } from '../../core/api/species.api';
 import type { SpeciesBundle, SpeciesEntry, StandardColour } from '../../core/api/models';
 import type { components } from '../../core/api/contract';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { OfflineStore } from '../../core/offline/offline-store';
 import { factsOf, type Counts, type Facts } from './facets';
+import { localSpecies } from './species-names';
 
 /** A species with the filter axes calculated from it. */
 export interface CatalogueEntry {
@@ -54,15 +56,17 @@ const INITIAL: SpeciesStoreState = {
 export const SpeciesStore = signalStore(
   { providedIn: 'root' },
   withState<SpeciesStoreState>(INITIAL),
-  withProps(() => ({ _api: inject(SpeciesApi), _offline: inject(OfflineStore) })),
-  withComputed(({ bundle }) => {
-    const species = computed<readonly SpeciesEntry[]>(() => bundle()?.items ?? []);
+  withProps(() => ({ _api: inject(SpeciesApi), _offline: inject(OfflineStore), _i18n: inject(I18nService) })),
+  withComputed(({ bundle, _i18n }) => {
+    const species = computed<readonly SpeciesEntry[]>(() =>
+      (bundle()?.items ?? []).map((one) => localSpecies(one, _i18n.locale())),
+    );
     const palette = computed<readonly StandardColour[]>(() => bundle()?.standardColours ?? []);
     const entries = computed<readonly CatalogueEntry[]>(() =>
       species().map((one) => ({ species: one, facts: factsOf(one, palette()) })),
     );
     return {
-      /** All species. Empty means that nothing is loaded yet. */
+      /** All species, with the names in the language of the interface. Empty means that nothing is loaded yet. */
       species,
       /** The twelve standard colours of the filter. */
       palette,

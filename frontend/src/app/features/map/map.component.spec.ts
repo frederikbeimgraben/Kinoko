@@ -413,8 +413,11 @@ describe('MapComponent', () => {
   });
 
   it('zeigt beim Laden das Raster der Karte', async () => {
-    vi.stubGlobal('fetch', () =>
-      Promise.resolve({ ok: false, status: 404, json: () => Promise.resolve(null) }),
+    vi.stubGlobal(
+      'fetch',
+      () =>
+        // The manifests never arrive: the map stays in its loading state.
+        new Promise(() => undefined),
     );
     const { map: double } = mapWithDoubles();
     const auth = new AuthStub();
@@ -434,6 +437,34 @@ describe('MapComponent', () => {
 
     expect(double.started).toBe(1);
     expect(container.querySelector('app-skeleton')).not.toBeNull();
+  });
+
+  it('zeigt statt des Rasters einen Fehler mit neuem Versuch, wenn die Manifeste fehlen', async () => {
+    vi.stubGlobal('fetch', () =>
+      Promise.resolve({ ok: false, status: 404, json: () => Promise.resolve(null) }),
+    );
+    mapWithDoubles();
+    const auth = new AuthStub();
+    auth.user.set(null);
+    const { fixture, navigate, container } = await render(HostComponent, {
+      providers: [
+        provideRouter(ROUTES),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        ...authStubProviders(auth),
+        { provide: NOW, useValue: () => new Date('2025-10-02T12:00:00Z') },
+      ],
+    });
+    await navigate('/karte');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(container.querySelector('app-error-state')).not.toBeNull();
+    });
+    expect(container.querySelector('.map__skeleton')).toBeNull();
+    expect(container.textContent).toContain('Die Kartendaten lassen sich gerade nicht laden.');
   });
 
   it('öffnet bei langem Drücken das Objektmenü und zentriert', async () => {

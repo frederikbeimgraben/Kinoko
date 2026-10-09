@@ -7,6 +7,7 @@ import { noViolations } from '../../testing/axe';
 import { MARKER, MARKER_ENTRY } from '../../testing/entries-fixture';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { MarkerSheetComponent } from './marker-sheet.component';
+import { ObjectSheetStore } from './object-sheet.store';
 
 interface Setup {
   container: Element;
@@ -45,7 +46,7 @@ describe('MarkerBlattComponent', () => {
     const setup = await build();
 
     expect(screen.getByText('Alter Fichtenhang')).toBeInTheDocument();
-    expect(screen.getByText('Marker · privat')).toBeInTheDocument();
+    expect(screen.getByText('Marker · 1. September 2026 · privat')).toBeInTheDocument();
     expect(screen.getByText('Nordhang, ab Mitte September.')).toBeInTheDocument();
     await noViolations(setup.container);
   });
@@ -55,9 +56,11 @@ describe('MarkerBlattComponent', () => {
 
     await edit(setup);
 
+    expect(screen.getByRole('button', { name: /Ort/ })).toHaveTextContent('48,5300 · 9,0600');
     expect(screen.getByLabelText('Name')).toHaveValue('Alter Fichtenhang');
-    expect(screen.getByRole('radio', { name: 'Blau' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('button', { name: 'Violett' })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByLabelText('Notiz')).toHaveValue('Nordhang, ab Mitte September.');
+    expect(screen.queryByText('Sichtbarkeit')).not.toBeInTheDocument();
     await noViolations(setup.container);
   });
 
@@ -65,14 +68,14 @@ describe('MarkerBlattComponent', () => {
     const setup = await build();
     await edit(setup);
 
-    await userEvent.click(screen.getByRole('radio', { name: 'Rot' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Rot' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     const request = await vi.waitFor(() => setup.http.expectOne(`/api/markers/${MARKER.id}`));
-    expect((request.request.body as { colour: string }).colour).toBe('red');
+    expect(request.request.body).toMatchObject({ colour: 'red', lat: MARKER.lat, lon: MARKER.lon });
     request.flush(MARKER_ENTRY);
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toEqual(['Gespeichert.']);
+      expect(setup.toasts.success).toEqual(['Der Marker ist gespeichert.']);
     });
   });
 
@@ -94,18 +97,34 @@ describe('MarkerBlattComponent', () => {
     expect(fakeLocation.href).toBe(`geo:${MARKER.lat.toFixed(6)},${MARKER.lon.toFixed(6)}`);
   });
 
-  it('löscht nach der Rückfrage und schließt', async () => {
+  it('speichert den neuen Ort aus dem Fadenkreuz', async () => {
+    const setup = await build();
+    await edit(setup);
+
+    await userEvent.click(screen.getByRole('button', { name: /Ort/ }));
+    const sheet = TestBed.inject(ObjectSheetStore);
+    expect(sheet.relocating()).toBe(true);
+    sheet.relocate([9.2, 48.6]);
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    const request = await vi.waitFor(() => setup.http.expectOne(`/api/markers/${MARKER.id}`));
+    expect(request.request.body).toMatchObject({ lat: 48.6, lon: 9.2 });
+  });
+
+  it('schließt beim Löschen sofort und meldet es danach', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
     setup.refresh();
     await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
+    expect(setup.closed).toBe(1);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/markers/${MARKER.id}`).flush(null);
     });
 
     await vi.waitFor(() => {
-      expect(setup.closed).toBe(1);
+      expect(setup.toasts.success).toEqual(['Der Marker ist gelöscht.']);
     });
   });
 });

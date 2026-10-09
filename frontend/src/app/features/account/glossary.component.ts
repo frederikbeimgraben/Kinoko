@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlossaryStore } from '../../core/access/glossary.store';
+import { GlossaryStore, glossaryIn } from '../../core/access/glossary.store';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -33,10 +34,18 @@ export class GlossaryComponent {
 
   protected readonly back = computed(() => !this.wide());
   protected readonly search = this.store.search;
-  protected readonly entries = this.store.found;
+  private readonly i18n = inject(I18nService);
+  protected readonly entries = computed(() => glossaryIn(this.store.found(), this.i18n.locale()));
   protected readonly loaded = computed(() => this.store.entries() !== null);
+  protected readonly failed = this.store.failed;
+  /** No term at all is a state of its own: "not found" applies only to a search. */
+  protected readonly empty = computed(() => (this.store.entries() ?? []).length === 0);
 
   constructor() {
+    this.store.load();
+  }
+
+  protected retry(): void {
     this.store.load();
   }
 

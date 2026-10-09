@@ -223,6 +223,9 @@ func TestOpenFindsListsEveryAccount(t *testing.T) {
 	if len(listed) != 1 || listed[0]["lat"] != 1.0 || listed[0]["ownerId"] != anna.ID.String() {
 		t.Fatal(listed)
 	}
+	if listed[0]["ownerName"] != "anna" {
+		t.Fatalf("the reviewer sees the reporter by name: %v", listed[0]["ownerName"])
+	}
 }
 
 func TestAcceptAllOpenFinds(t *testing.T) {

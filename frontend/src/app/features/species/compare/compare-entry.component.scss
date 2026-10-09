@@ -1,0 +1,37 @@
+// The overlay host places the sheet over the page.
+:host {
+  display: contents;
+}
+
+// Per `CompareEntryBody.dc.html` in `kit.css` `.sbody`: the search bar, then the lookalikes 20 px below.
+.entry {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 20px;
+  min-block-size: 0;
+  padding: 4px 16px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+// The kit `.bar` of 72 px with its own margins, as in `SpeciesPickBody.dc.html`.
+.entry__bar {
+  display: flex;
+  align-items: center;
+  block-size: 72px;
+  margin: -4px -8px 0 -16px;
+  padding: 0 8px 0 16px;
+}
+
+.entry__hits {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry__empty {
+  margin: 0;
+  padding: 16px 4px;
+  color: var(--text-var);
+}

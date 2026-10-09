@@ -112,7 +112,7 @@ describe('SectionLookalikeComponent', () => {
     const { http } = await build(WITH_LOOKALIKE, '1');
     await screen.findByRole('heading', { name: 'Verwechslung' });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Art' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Art wählen' }));
     await userEvent.click(screen.getByRole('button', { name: /Gallenröhrling/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 
@@ -126,15 +126,17 @@ describe('SectionLookalikeComponent', () => {
     await build(WITH_LOOKALIKE, '1');
     await screen.findByRole('heading', { name: 'Verwechslung' });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Art' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Art wählen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
 
-    expect(screen.getByRole('button', { name: 'Art' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Art wählen' })).toBeInTheDocument();
   });
 
-  it('schreibt nichts, solange keine Art gewählt ist', async () => {
+  it('schreibt nichts, solange keine Art gewählt ist, und bietet kein Entfernen an', async () => {
     const { http } = await build(WITH_LOOKALIKE, '1');
     await screen.findByRole('heading', { name: 'Verwechslung' });
+
+    expect(screen.queryByRole('button', { name: 'Verwechslung entfernen' })).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
 

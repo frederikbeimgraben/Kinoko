@@ -32,6 +32,11 @@ func run(args []string) (err error) {
 	if len(args) > 0 {
 		command = args[0]
 	}
+	// The version needs no settings and no database. deploy/backend.sh runs it on the build host.
+	if command == "version" {
+		fmt.Println(config.Version())
+		return nil
+	}
 	settings, err := config.Load()
 	if err != nil {
 		return err
@@ -60,9 +65,6 @@ func run(args []string) (err error) {
 			}
 		}
 		return importer.Run(ctx, handle, data, time.Now, os.Stdout)
-	case "version":
-		fmt.Println(config.Version)
-		return nil
 	default:
 		return fmt.Errorf("unknown command %q; use serve, migrate, import-catalog or version", command)
 	}
@@ -76,7 +78,7 @@ func serve(ctx context.Context, listen string, handler http.Handler) error {
 	}
 	failed := make(chan error, 1)
 	go func() { failed <- srv.ListenAndServe() }()
-	slog.Info("kinoko listens", "address", listen, "version", config.Version)
+	slog.Info("kinoko listens", "address", listen, "version", config.Version())
 	select {
 	case err := <-failed:
 		return err

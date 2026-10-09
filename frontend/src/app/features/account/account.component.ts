@@ -22,6 +22,7 @@ import { AboutGroupComponent } from './about-group.component';
 import { AccountStatsComponent } from './account-stats.component';
 import { AppearanceFieldsComponent } from './appearance-fields.component';
 import { OfflineSectionComponent } from './offline-section.component';
+import { signInLabel } from './sign-in-label';
 
 /** A row of the account list: its label, its path and who sees it. */
 interface NavRow {
@@ -122,16 +123,11 @@ export class AccountComponent {
   /** On the phone the account page shows only at `/konto`. Below it, the child page fills the screen. */
   protected readonly home = computed(() => this.child() === '');
 
-  /** The issuer host is shorter than the full URL. */
-  protected readonly server = computed(() => {
-    const issuer = this.config.configuration()?.oidcIssuer ?? '';
-    try {
-      return new URL(issuer).host;
-    } catch {
-      // An issuer that is not a URL shows as it came.
-      return issuer;
-    }
-  });
+  /** The same SSO name as on the sign-in button. */
+  protected readonly server = this.config.providerName;
+  protected readonly signInLabel = signInLabel();
+  protected readonly ssoMissing = this.config.ssoMissing;
+  protected readonly signingIn = this.auth.signingIn;
 
   private readonly allowed = computed(() => {
     const admin = this.rights.canAny(ADMIN_PERMISSIONS);

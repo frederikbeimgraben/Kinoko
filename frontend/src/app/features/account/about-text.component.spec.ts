@@ -4,8 +4,8 @@ import { noViolations } from '../../testing/axe';
 import { AboutTextComponent, type AboutSection } from './about-text.component';
 
 const SECTIONS: readonly AboutSection[] = [
-  { heading: 'account.method.whatHeading', body: 'account.method.whatBody' },
-  { heading: 'account.method.modelHeading', body: 'account.method.modelBody' },
+  { heading: 'account.method.visits', body: 'account.method.visitsSub' },
+  { heading: 'account.method.model', body: 'account.method.modelSub' },
 ];
 
 describe('AboutTextComponent', () => {
@@ -15,11 +15,9 @@ describe('AboutTextComponent', () => {
     });
 
     expect(screen.getByText('Methode')).toBeInTheDocument();
-    expect(screen.getByText('Was die Karte zeigt')).toBeInTheDocument();
-    expect(
-      screen.getByText('Die Karte zeigt die Fundwahrscheinlichkeit je Begehung, wöchentlich aktualisiert.'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Das Modell')).toBeInTheDocument();
+    expect(screen.getByText('Begehungen')).toBeInTheDocument();
+    expect(screen.getByText('GBIF, iNaturalist, eigene Funde')).toBeInTheDocument();
+    expect(screen.getByText('Modell')).toBeInTheDocument();
     await noViolations(container);
   });
 

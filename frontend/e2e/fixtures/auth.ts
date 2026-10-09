@@ -3,11 +3,13 @@ import type { Page } from '@playwright/test';
 /** An SSO that exists only in the test. No network request leaves the page. */
 export const ISSUER = 'https://sso.test.invalid';
 export const CLIENT_ID = 'pilzkarte-e2e';
+/** The SSO name on the sign-in button. The boards show this name. */
+export const PROVIDER = 'beimgraben.net';
 export const PERSON = { sub: 'sub-eins', name: 'Frederik', email: 'frederik@beimgraben.net' };
 
 /** The backend configuration that tells the app the SSO. */
 export function authConfig(origin: string): Record<string, unknown> {
-  return { oidcIssuer: ISSUER, oidcClientId: CLIENT_ID, origin, version: 'e2e' };
+  return { oidcIssuer: ISSUER, oidcName: PROVIDER, oidcClientId: CLIENT_ID, origin, version: 'e2e' };
 }
 
 function base64url(value: unknown): string {

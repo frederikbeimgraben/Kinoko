@@ -14,6 +14,7 @@ fruchtschicht = { art = "roehren" }
 stielmerkmale = ["beflockt", "knolle"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/RotfussHerbst.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,7 +35,7 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "gelb", hex = "#e8c33a" }, { name = "rot", hex = "#c0392b" }]
-sporenlager = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
 stiel = [{ name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }, { name = "rot", hex = "#c0392b" }]
 sporenpulver = [{ name = "olivbraun", hex = "#6e6435" }, { name = "gelb", hex = "#e8c33a" }]

@@ -1,0 +1,674 @@
+{
+  "source": {
+    "title": "Kinoko-Glossar",
+    "date": "2026-10-09"
+  },
+  "entries": [
+    {
+      "term": "Ahorn",
+      "termEn": "Maple",
+      "definition": "Laubbaum (Acer). Bildet kaum Mykorrhiza mit Großpilzen, sein Totholz besiedeln Holzzersetzer.",
+      "definitionEn": "Broadleaf tree (Acer). It hardly forms mycorrhiza with larger fungi; wood-decay fungi grow on its dead wood."
+    },
+    {
+      "term": "Alter",
+      "termEn": "Age",
+      "definition": "Farbänderung mit dem Alter, etwa Lamellen, die durch reife Sporen dunkler werden.",
+      "definitionEn": "Colour change with age, for example gills that turn darker as the spores ripen."
+    },
+    {
+      "term": "Ammoniak",
+      "termEn": "Ammonia",
+      "definition": "Wässrige Ammoniaklösung. Gibt auf Huthaut oder Fleisch mancher Röhrlinge und Täublinge eine Farbreaktion.",
+      "definitionEn": "Aqueous ammonia solution. It gives a colour reaction on the cap skin or flesh of some boletes and brittlegills."
+    },
+    {
+      "term": "Amyloid",
+      "termEn": "Amyloid",
+      "definition": "Sporen oder Gewebe färben sich mit Melzers Reagenz blau bis schwarzblau.",
+      "definitionEn": "Spores or tissue stain blue to blue-black in Melzer's reagent."
+    },
+    {
+      "term": "Angenehm",
+      "termEn": "Pleasant",
+      "definition": "Geruch oder Geschmack, der als angenehm empfunden wird, ohne bestimmte Note.",
+      "definitionEn": "Smell or taste that people find pleasant, without a specific note."
+    },
+    {
+      "term": "Angewachsen",
+      "termEn": "Adnate",
+      "definition": "Lamellen oder Röhren setzen mit ihrer ganzen Breite am Stiel an.",
+      "definitionEn": "Gills or tubes join the stem with their full width."
+    },
+    {
+      "term": "Anilin",
+      "termEn": "Aniline",
+      "definition": "Aromatisches Amin, als Anilinwasser verwendet. Zusammen mit Salpetersäure gibt es die Schäffer-Reaktion bei Egerlingen.",
+      "definitionEn": "Aromatic amine, used as aniline water. With nitric acid it gives the Schäffer reaction in Agaricus."
+    },
+    {
+      "term": "Anisartig",
+      "termEn": "Aniseed",
+      "definition": "Süßlich nach Anis, typisch für den Anis-Egerling und den Anis-Trichterling.",
+      "definitionEn": "Sweet smell of aniseed, typical of the horse mushroom and the aniseed funnel."
+    },
+    {
+      "term": "Ascus",
+      "termEn": "Ascus",
+      "definition": "Schlauchförmige Zelle der Schlauchpilze, in der meist acht Sporen entstehen, etwa bei Morcheln und Becherlingen.",
+      "definitionEn": "Sac-shaped cell of the ascomycetes in which usually eight spores form, for example in morels and cup fungi."
+    },
+    {
+      "term": "Ausgebuchtet",
+      "termEn": "Sinuate",
+      "definition": "Lamellen sind kurz vor dem Stiel eingebuchtet und setzen dann mit einem Zähnchen an.",
+      "definitionEn": "Gills curve upwards just before the stem and then join it with a small tooth."
+    },
+    {
+      "term": "Basidie",
+      "termEn": "Basidium",
+      "definition": "Keulenförmige Zelle im Hymenium der Ständerpilze, an der meist vier Sporen entstehen.",
+      "definitionEn": "Club-shaped cell in the hymenium of the basidiomycetes. It usually carries four spores."
+    },
+    {
+      "term": "Birke",
+      "termEn": "Birch",
+      "definition": "Laubbaum (Betula). Mykorrhizapartner etwa von Birkenpilz und Fliegenpilz.",
+      "definitionEn": "Broadleaf tree (Betula). Mycorrhizal partner of, for example, the brown birch bolete and the fly agaric."
+    },
+    {
+      "term": "Bitter",
+      "termEn": "Bitter",
+      "definition": "Bitterer Geschmack. Schon ein Gallenröhrling macht ein ganzes Pilzgericht ungenießbar.",
+      "definitionEn": "Bitter taste. One bitter bolete makes a whole mushroom dish inedible."
+    },
+    {
+      "term": "Bittermandel",
+      "termEn": "Bitter almond",
+      "definition": "Nach Marzipan oder Bittermandeln, etwa bei manchen Egerlingen.",
+      "definitionEn": "Smell of marzipan or bitter almonds, for example in some Agaricus species."
+    },
+    {
+      "term": "Blauen",
+      "termEn": "Bluing",
+      "definition": "Fleisch, Röhren oder Poren verfärben sich bei Verletzung blau, weil Farbstoffe an der Luft oxidieren. Typisch für viele Röhrlinge, kein Zeichen für Giftigkeit.",
+      "definitionEn": "Flesh, tubes or pores turn blue when damaged, because pigments oxidise in the air. Typical of many boletes and no sign of toxicity."
+    },
+    {
+      "term": "Brennend",
+      "termEn": "Burning",
+      "definition": "Sehr scharf, brennt auf der Zunge, etwa bei manchen Täublingen und Milchlingen.",
+      "definitionEn": "Very hot; it burns on the tongue, for example in some brittlegills and milkcaps."
+    },
+    {
+      "term": "Buche",
+      "termEn": "Beech",
+      "definition": "Laubbaum (Fagus sylvatica). Partner vieler Täublinge, Milchlinge und Steinpilze; ihr Totholz trägt etwa den Zunderschwamm.",
+      "definitionEn": "Broadleaf tree (Fagus sylvatica). Partner of many brittlegills, milkcaps and porcini; the tinder fungus, for example, grows on its dead wood."
+    },
+    {
+      "term": "Buckel",
+      "termEn": "Umbo",
+      "definition": "Erhebung in der Hutmitte.",
+      "definitionEn": "Raised area in the centre of the cap."
+    },
+    {
+      "term": "Cortina",
+      "termEn": "Cortina",
+      "definition": "Spinnwebartiger Schleier zwischen Hutrand und Stiel, typisch für die Schleierlinge (Cortinarius).",
+      "definitionEn": "Cobweb-like veil between the cap margin and the stem, typical of the webcaps (Cortinarius)."
+    },
+    {
+      "term": "Dextrinoid",
+      "termEn": "Dextrinoid",
+      "definition": "Sporen oder Gewebe färben sich mit Melzers Reagenz rotbraun.",
+      "definitionEn": "Spores or tissue stain reddish brown in Melzer's reagent."
+    },
+    {
+      "term": "Douglasie",
+      "termEn": "Douglas fir",
+      "definition": "Nadelbaum aus Nordamerika (Pseudotsuga menziesii), in Europa gepflanzt. Hat nur wenige eigene Mykorrhizapartner.",
+      "definitionEn": "Conifer from North America (Pseudotsuga menziesii), planted in Europe. It has only a few mycorrhizal partners of its own."
+    },
+    {
+      "term": "Druck",
+      "termEn": "Pressure",
+      "definition": "Farbänderung beim Drücken, etwa das Blauen der Poren mancher Röhrlinge.",
+      "definitionEn": "Colour change when you press, for example the bluing of the pores of some boletes."
+    },
+    {
+      "term": "Druckstelle",
+      "termEn": "Bruise",
+      "definition": "Verfärbte Stelle nach Druck oder Verletzung, etwa durch Anfassen oder Transport.",
+      "definitionEn": "Discoloured spot after pressure or damage, for example from handling or transport."
+    },
+    {
+      "term": "Eiche",
+      "termEn": "Oak",
+      "definition": "Laubbaum (Quercus). Partner etwa des Sommersteinpilzes; an alten Eichen wachsen Schwefelporling und Leberreischling.",
+      "definitionEn": "Broadleaf tree (Quercus). Partner of, for example, the summer bolete; chicken of the woods and beefsteak fungus grow on old oaks."
+    },
+    {
+      "term": "Eisensulfat (FeSO4)",
+      "termEn": "Iron sulphate (FeSO4)",
+      "definition": "Eisen(II)-sulfat als Kristall oder Lösung. Färbt das Fleisch der meisten Täublinge rosa bis orange, das des Heringstäublings grün.",
+      "definitionEn": "Iron(II) sulphate as a crystal or a solution. It stains the flesh of most brittlegills pink to orange, that of the crab brittlegill green."
+    },
+    {
+      "term": "Erdartig",
+      "termEn": "Earthy",
+      "definition": "Nach feuchter Erde.",
+      "definitionEn": "Smell of damp soil."
+    },
+    {
+      "term": "Esche",
+      "termEn": "Ash",
+      "definition": "Laubbaum (Fraxinus excelsior). Bildet keine Mykorrhiza mit Großpilzen; im Frühjahr wachsen unter Eschen oft Morcheln.",
+      "definitionEn": "Broadleaf tree (Fraxinus excelsior). It forms no mycorrhiza with larger fungi; morels often grow under ash in spring."
+    },
+    {
+      "term": "Feuchtigkeit",
+      "termEn": "Moisture",
+      "definition": "Farbänderung durch Wasser: hygrophane Hüte werden feucht dunkler und durchscheinend.",
+      "definitionEn": "Colour change from water: hygrophanous caps become darker and translucent when wet."
+    },
+    {
+      "term": "Fichte",
+      "termEn": "Spruce",
+      "definition": "Nadelbaum (Picea abies). Wichtiger Mykorrhizapartner, etwa von Steinpilz, Fichtenreizker und Fliegenpilz.",
+      "definitionEn": "Conifer (Picea abies). An important mycorrhizal partner, for example of porcini, the false saffron milkcap and the fly agaric."
+    },
+    {
+      "term": "Fischartig",
+      "termEn": "Fishy",
+      "definition": "Nach Fisch oder Hering, typisch für den Heringstäubling.",
+      "definitionEn": "Smell of fish or herring, typical of the crab brittlegill."
+    },
+    {
+      "term": "Formalin",
+      "termEn": "Formalin",
+      "definition": "Wässrige Formaldehydlösung. Gibt vor allem bei Täublingen und Milchlingen Farbreaktionen.",
+      "definitionEn": "Aqueous formaldehyde solution. It gives colour reactions mainly in brittlegills and milkcaps."
+    },
+    {
+      "term": "Frei",
+      "termEn": "Free",
+      "definition": "Lamellen erreichen den Stiel nicht.",
+      "definitionEn": "Gills do not reach the stem."
+    },
+    {
+      "term": "Frost",
+      "termEn": "Frost",
+      "definition": "Farbänderung nach Frost. Gefrorene und wieder aufgetaute Pilze verderben schnell und sind nicht mehr zum Essen geeignet.",
+      "definitionEn": "Colour change after frost. Mushrooms that froze and thawed spoil fast and are no longer fit to eat."
+    },
+    {
+      "term": "Fruchtig",
+      "termEn": "Fruity",
+      "definition": "Allgemein fruchtig, beim Pfifferling etwa nach Aprikose.",
+      "definitionEn": "Generally fruity; the chanterelle, for example, smells of apricot."
+    },
+    {
+      "term": "Fruchtkörper",
+      "termEn": "Fruit body",
+      "definition": "Der sichtbare Teil des Pilzes, der die Sporen bildet, zum Beispiel Hut und Stiel.",
+      "definitionEn": "The visible part of the fungus that produces the spores, for example cap and stem."
+    },
+    {
+      "term": "Guajak",
+      "termEn": "Guaiac",
+      "definition": "Guajakharz in Alkohol. Zeigt Oxidasen an: positiv färbt sich das Fleisch blaugrün. Wichtig bei Täublingen.",
+      "definitionEn": "Guaiac resin in alcohol. It shows oxidases: the flesh turns blue-green when positive. Important in brittlegills."
+    },
+    {
+      "term": "Gurkenartig",
+      "termEn": "Cucumber",
+      "definition": "Nach frischer Gurke, etwa beim Gurkenschnitzling.",
+      "definitionEn": "Smell of fresh cucumber, for example in the cucumber cap."
+    },
+    {
+      "term": "Hainbuche",
+      "termEn": "Hornbeam",
+      "definition": "Laubbaum (Carpinus betulus). Partner etwa des Hainbuchen-Raufußes.",
+      "definitionEn": "Broadleaf tree (Carpinus betulus). Partner of, for example, the hazel bolete (Leccinum pseudoscabrum)."
+    },
+    {
+      "term": "Hasel",
+      "termEn": "Hazel",
+      "definition": "Strauch (Corylus avellana). Partner etwa des Hasel-Milchlings und mancher Trüffeln.",
+      "definitionEn": "Shrub (Corylus avellana). Partner of, for example, the fiery milkcap and some truffles."
+    },
+    {
+      "term": "Herablaufend",
+      "termEn": "Decurrent",
+      "definition": "Lamellen, Röhren oder Leisten laufen ein Stück am Stiel herab.",
+      "definitionEn": "Gills, tubes or ridges run down the stem for some distance."
+    },
+    {
+      "term": "Herb",
+      "termEn": "Tart",
+      "definition": "Zusammenziehend, leicht bitter.",
+      "definitionEn": "Drying in the mouth and slightly bitter."
+    },
+    {
+      "term": "Hitze",
+      "termEn": "Heat",
+      "definition": "Farbänderung beim Erhitzen oder Kochen, etwa das Schwärzen des Fleisches mancher Raufußröhrlinge.",
+      "definitionEn": "Colour change when heated or cooked, for example the blackening flesh of some scaber stalks."
+    },
+    {
+      "term": "Holunder",
+      "termEn": "Elder",
+      "definition": "Strauch (Sambucus nigra). Bildet keine Mykorrhiza mit Großpilzen; an seinen Ästen wächst oft das Judasohr.",
+      "definitionEn": "Shrub (Sambucus nigra). It forms no mycorrhiza with larger fungi; jelly ear often grows on its branches."
+    },
+    {
+      "term": "Honigartig",
+      "termEn": "Honey",
+      "definition": "Süßlich nach Honig.",
+      "definitionEn": "Sweet smell of honey."
+    },
+    {
+      "term": "Hutdeckschicht",
+      "termEn": "Pileipellis (cap cuticle)",
+      "definition": "Äußerste Gewebeschicht des Hutes, oft als Huthaut bezeichnet. Ob sie sich abziehen lässt und wie sie unter dem Mikroskop aufgebaut ist, sind Bestimmungsmerkmale.",
+      "definitionEn": "Outermost tissue layer of the cap, often called the cap skin. Whether it peels and how it looks under the microscope are identification features."
+    },
+    {
+      "term": "Hutrand",
+      "termEn": "Cap margin",
+      "definition": "Äußerer Rand des Hutes. Ob er eingerollt, gerieft, gekerbt oder mit Hüllresten behangen ist, hilft beim Bestimmen.",
+      "definitionEn": "Outer edge of the cap. Whether it is inrolled, striate, notched or hung with veil remains helps with identification."
+    },
+    {
+      "term": "Hygrophan",
+      "termEn": "Hygrophanous",
+      "definition": "Der Hut ändert beim Austrocknen deutlich die Farbe, meist von dunkel und durchscheinend zu hell, oft von der Mitte aus.",
+      "definitionEn": "The cap changes colour clearly as it dries, usually from dark and translucent to pale, often from the centre outwards."
+    },
+    {
+      "term": "Hymenium",
+      "termEn": "Hymenium",
+      "definition": "Fruchtschicht, in der die Sporen entstehen.",
+      "definitionEn": "Fertile layer in which the spores form."
+    },
+    {
+      "term": "Hymenophor",
+      "termEn": "Hymenophore",
+      "definition": "Träger der Fruchtschicht an der Hutunterseite: Lamellen, Röhren, Leisten oder Stacheln.",
+      "definitionEn": "Structure under the cap that carries the hymenium: gills, tubes, ridges or spines."
+    },
+    {
+      "term": "Hyphen",
+      "termEn": "Hyphae",
+      "definition": "Feine Pilzfäden, aus denen Myzel und Fruchtkörper bestehen.",
+      "definitionEn": "Fine fungal threads that make up the mycelium and the fruit body."
+    },
+    {
+      "term": "Inamyloid",
+      "termEn": "Inamyloid",
+      "definition": "Sporen oder Gewebe färben sich mit Melzers Reagenz nicht, sie bleiben gelblich.",
+      "definitionEn": "Spores or tissue do not stain in Melzer's reagent; they stay yellowish."
+    },
+    {
+      "term": "Kalilauge (KOH)",
+      "termEn": "Potassium hydroxide (KOH)",
+      "definition": "Kaliumhydroxid-Lösung, meist 5 bis 10 %. Vielseitiges Reagenz, zum Beispiel färbt sich der giftige Karbol-Egerling damit gelb.",
+      "definitionEn": "Potassium hydroxide solution, usually 5 to 10 %. A versatile reagent; for example, the poisonous yellow stainer turns yellow with it."
+    },
+    {
+      "term": "Karbolartig",
+      "termEn": "Carbolic",
+      "definition": "Unangenehm nach Tinte oder Desinfektionsmittel, typisch für den giftigen Karbol-Egerling.",
+      "definitionEn": "Unpleasant smell of ink or disinfectant, typical of the poisonous yellow stainer."
+    },
+    {
+      "term": "Kastanie",
+      "termEn": "Chestnut",
+      "definition": "Edelkastanie (Castanea sativa), ein Laubbaum. Partner etwa von Steinpilzen.",
+      "definitionEn": "Sweet chestnut (Castanea sativa), a broadleaf tree. Partner of, for example, porcini."
+    },
+    {
+      "term": "Kiefer",
+      "termEn": "Pine",
+      "definition": "Nadelbaum (Pinus). Partner etwa von Kiefernsteinpilz, Butterpilz und Kuhröhrling.",
+      "definitionEn": "Conifer (Pinus). Partner of, for example, the pine bolete, the slippery jack and the Jersey cow bolete."
+    },
+    {
+      "term": "Knolle",
+      "termEn": "Bulb",
+      "definition": "Verdickte Stielbasis. Bei den Wulstlingen trägt sie oft eine Volva oder Gürtel aus Hüllresten.",
+      "definitionEn": "Swollen stem base. In Amanita it often carries a volva or rings of veil remains."
+    },
+    {
+      "term": "Kratzend",
+      "termEn": "Acrid",
+      "definition": "Kratzt im Hals, oft erst nach einigem Kauen.",
+      "definitionEn": "Scratches in the throat, often only after some chewing."
+    },
+    {
+      "term": "Lamellen",
+      "termEn": "Gills (lamellae)",
+      "definition": "Dünne, strahlenförmig angeordnete Blätter an der Hutunterseite, die das Hymenium tragen.",
+      "definitionEn": "Thin plates under the cap that radiate from the stem and carry the hymenium."
+    },
+    {
+      "term": "Lärche",
+      "termEn": "Larch",
+      "definition": "Nadelbaum (Larix), der im Herbst die Nadeln abwirft. Partner etwa des Goldröhrlings.",
+      "definitionEn": "Conifer (Larix) that sheds its needles in autumn. Partner of, for example, the larch bolete."
+    },
+    {
+      "term": "Leisten",
+      "termEn": "Ridges (false gills)",
+      "definition": "Niedrige, stumpfe, oft gegabelte Falten, die am Stiel herablaufen, etwa beim Pfifferling. Anders als Lamellen sind sie keine dünnen Blätter.",
+      "definitionEn": "Low, blunt, often forked folds that run down the stem, for example in the chanterelle. Unlike gills, they are not thin plates."
+    },
+    {
+      "term": "Linde",
+      "termEn": "Lime",
+      "definition": "Laubbaum (Tilia). Bildet Mykorrhiza, etwa mit dem Steinpilz.",
+      "definitionEn": "Broadleaf tree (Tilia). It forms mycorrhiza, for example with porcini."
+    },
+    {
+      "term": "Maggiartig",
+      "termEn": "Lovage (Maggi)",
+      "definition": "Nach Liebstöckel oder Maggi-Würze, vor allem beim Trocknen, typisch für den Maggipilz.",
+      "definitionEn": "Smell of lovage or Maggi seasoning, mainly when drying, typical of the fenugreek milkcap."
+    },
+    {
+      "term": "Mehlig",
+      "termEn": "Mealy",
+      "definition": "Geruch oder Geschmack nach frischem Mehl, oft mit einer Note von Gurke, etwa beim Mehlräsling.",
+      "definitionEn": "Smell or taste of fresh flour, often with a note of cucumber, for example in the miller."
+    },
+    {
+      "term": "Meixner-Test",
+      "termEn": "Meixner test",
+      "definition": "Nachweis von Amatoxinen: Pilzsaft auf Zeitungspapier trocknen lassen, dann konzentrierte Salzsäure darauf tropfen. Blaufärbung zeigt Amatoxine an. Der Test beweist keine Essbarkeit.",
+      "definitionEn": "Test for amatoxins: let mushroom juice dry on newsprint, then add a drop of concentrated hydrochloric acid. A blue colour shows amatoxins. The test does not prove that a mushroom is edible."
+    },
+    {
+      "term": "Melzers Reagenz",
+      "termEn": "Melzer's reagent",
+      "definition": "Jodlösung mit Chloralhydrat. Zeigt, ob Sporen oder Gewebe amyloid (blau), dextrinoid (rotbraun) oder inamyloid sind.",
+      "definitionEn": "Iodine solution with chloral hydrate. It shows whether spores or tissue are amyloid (blue), dextrinoid (reddish brown) or inamyloid."
+    },
+    {
+      "term": "Milchsaft",
+      "termEn": "Latex (milk)",
+      "definition": "Flüssigkeit, die bei Milchlingen aus verletztem Fleisch austritt. Farbe, Verfärbung und Geschmack der Milch helfen beim Bestimmen.",
+      "definitionEn": "Fluid that comes out of damaged flesh in milkcaps. Colour, colour change and taste of the milk help with identification."
+    },
+    {
+      "term": "Mild",
+      "termEn": "Mild",
+      "definition": "Ohne Schärfe und ohne Bitterkeit. Bei Täublingen ein wichtiges Merkmal.",
+      "definitionEn": "Without heat and without bitterness. An important feature in brittlegills."
+    },
+    {
+      "term": "Muffig",
+      "termEn": "Musty",
+      "definition": "Nach Keller oder Schimmel.",
+      "definitionEn": "Smell of a cellar or of mould."
+    },
+    {
+      "term": "Mykorrhiza",
+      "termEn": "Mycorrhiza",
+      "definition": "Lebensgemeinschaft von Pilz und Baumwurzel.",
+      "definitionEn": "Partnership of a fungus and the roots of a tree."
+    },
+    {
+      "term": "Myzel",
+      "termEn": "Mycelium",
+      "definition": "Geflecht aus Pilzfäden im Boden oder Holz. Es ist der eigentliche Pilz, der Fruchtkörper ist nur sein Organ für die Sporen.",
+      "definitionEn": "Network of fungal threads in soil or wood. It is the fungus itself; the fruit body is only its organ for the spores."
+    },
+    {
+      "term": "Natronlauge (NaOH)",
+      "termEn": "Sodium hydroxide (NaOH)",
+      "definition": "Natriumhydroxid-Lösung. Wirkt ähnlich wie Kalilauge.",
+      "definitionEn": "Sodium hydroxide solution. It acts like potassium hydroxide."
+    },
+    {
+      "term": "Netz",
+      "termEn": "Reticulum (net)",
+      "definition": "Netzartige Zeichnung auf dem Stiel, etwa bei Steinpilzen und Hexenröhrlingen. Ihre Farbe unterscheidet ähnliche Arten.",
+      "definitionEn": "Net-like pattern on the stem, for example in porcini and some red-pored boletes. Its colour separates similar species."
+    },
+    {
+      "term": "Nussig",
+      "termEn": "Nutty",
+      "definition": "Nach Nüssen.",
+      "definitionEn": "Taste of nuts."
+    },
+    {
+      "term": "Obstartig",
+      "termEn": "Fruit-like",
+      "definition": "Nach reifem Obst wie Apfel oder Birne.",
+      "definitionEn": "Smell of ripe fruit such as apple or pear."
+    },
+    {
+      "term": "Obstbaum",
+      "termEn": "Fruit tree",
+      "definition": "Apfel, Birne, Kirsche, Zwetschge und ihre Verwandten. Unter ihnen wächst im Frühjahr der Schildrötling, an alten Bäumen der Schwefelporling.",
+      "definitionEn": "Apple, pear, cherry, plum and their relatives. The shield pinkgill grows under them in spring, chicken of the woods on old trees."
+    },
+    {
+      "term": "Pappel",
+      "termEn": "Poplar",
+      "definition": "Laubbaum (Populus), auch die Zitterpappel (Espe). Partner etwa der Espen-Rotkappe.",
+      "definitionEn": "Broadleaf tree (Populus), also the aspen. Partner of, for example, the aspen bolete."
+    },
+    {
+      "term": "Parasit",
+      "termEn": "Parasite",
+      "definition": "Pilz, der lebende Organismen befällt und schädigt, etwa der Hallimasch an Bäumen.",
+      "definitionEn": "Fungus that attacks and harms living organisms, for example honey fungus on trees."
+    },
+    {
+      "term": "Phenol",
+      "termEn": "Phenol",
+      "definition": "Wässrige Phenollösung, meist 2 bis 3 %. Färbt das Fleisch mancher Täublinge und Egerlinge weinrot bis purpurbraun.",
+      "definitionEn": "Aqueous phenol solution, usually 2 to 3 %. It stains the flesh of some brittlegills and Agaricus species wine red to purple brown."
+    },
+    {
+      "term": "Pilzig",
+      "termEn": "Mushroomy",
+      "definition": "Typischer Pilzgeruch oder -geschmack ohne besondere Note.",
+      "definitionEn": "Typical mushroom smell or taste without a special note."
+    },
+    {
+      "term": "Poren",
+      "termEn": "Pores",
+      "definition": "Die Mündungen der Röhren an der Hutunterseite. Ihre Farbe und Größe helfen beim Bestimmen.",
+      "definitionEn": "The openings of the tubes on the underside of the cap. Their colour and size help with identification."
+    },
+    {
+      "term": "Rettichartig",
+      "termEn": "Radish",
+      "definition": "Nach Rettich oder Rüben, etwa bei vielen Fälblingen.",
+      "definitionEn": "Smell of radish or turnip, for example in many poisonpies."
+    },
+    {
+      "term": "Ring (Manschette)",
+      "termEn": "Ring (annulus)",
+      "definition": "Rest der Teilhülle am Stiel, häutig oder vergänglich. Bei manchen Arten lässt er sich verschieben.",
+      "definitionEn": "Remains of the partial veil on the stem, membranous or fleeting. In some species it can move up and down."
+    },
+    {
+      "term": "Röhren",
+      "termEn": "Tubes",
+      "definition": "Dicht stehende, senkrechte Röhrchen an der Hutunterseite, innen mit dem Hymenium ausgekleidet. Typisch für Röhrlinge und Porlinge.",
+      "definitionEn": "Densely packed vertical tubes under the cap, lined inside with the hymenium. Typical of boletes and polypores."
+    },
+    {
+      "term": "Salpetersäure (HNO3)",
+      "termEn": "Nitric acid (HNO3)",
+      "definition": "Starke Säure, Teil der Schäffer-Reaktion und für eigene Farbreaktionen. Mit Schutzbrille und Handschuhen verwenden.",
+      "definitionEn": "Strong acid, part of the Schäffer reaction and used for its own colour reactions. Use it with safety glasses and gloves."
+    },
+    {
+      "term": "Saprobiont",
+      "termEn": "Saprobe",
+      "definition": "Pilz, der totes organisches Material wie Holz, Laub oder Humus zersetzt.",
+      "definitionEn": "Fungus that decomposes dead organic matter such as wood, leaves or humus."
+    },
+    {
+      "term": "Säuerlich",
+      "termEn": "Sourish",
+      "definition": "Geruch oder Geschmack leicht sauer.",
+      "definitionEn": "Slightly sour smell or taste."
+    },
+    {
+      "term": "Schäffer-Reaktion",
+      "termEn": "Schäffer reaction",
+      "definition": "Kreuzreaktion von Anilin und Salpetersäure auf der Huthaut. Orange bei den gilbenden Anis-Egerlingen, so trennt man sie von anderen Egerlingen.",
+      "definitionEn": "Cross reaction of aniline and nitric acid on the cap skin. It is orange in the yellowing horse mushrooms, which separates them from other Agaricus species."
+    },
+    {
+      "term": "Scharf",
+      "termEn": "Hot",
+      "definition": "Pfeffrig scharf. Bei Täublingen und Milchlingen ein wichtiges Merkmal. Nur ein kleines Stück kauen und wieder ausspucken.",
+      "definitionEn": "Peppery hot. An important feature in brittlegills and milkcaps. Chew only a small piece and spit it out."
+    },
+    {
+      "term": "Schlauchpilze",
+      "termEn": "Ascomycetes",
+      "definition": "Pilze, deren Sporen in Schläuchen (Asci) entstehen, etwa Morcheln, Lorcheln, Becherlinge und Trüffeln.",
+      "definitionEn": "Fungi whose spores form in sacs (asci), for example morels, false morels, cup fungi and truffles."
+    },
+    {
+      "term": "Schnitt",
+      "termEn": "Cut",
+      "definition": "Farbänderung des Fleisches an einer frischen Schnittfläche.",
+      "definitionEn": "Colour change of the flesh on a fresh cut surface."
+    },
+    {
+      "term": "Schwefelsäure (H2SO4)",
+      "termEn": "Sulphuric acid (H2SO4)",
+      "definition": "Konzentrierte Säure für Farbreaktionen auf Fleisch und Sporen. Mit Schutzbrille und Handschuhen verwenden.",
+      "definitionEn": "Concentrated acid for colour reactions on flesh and spores. Use it with safety glasses and gloves."
+    },
+    {
+      "term": "Seifig",
+      "termEn": "Soapy",
+      "definition": "Nach Kernseife, typisch für den Seifenritterling.",
+      "definitionEn": "Smell of plain soap, typical of the soapy knight."
+    },
+    {
+      "term": "Spermatisch",
+      "termEn": "Spermatic",
+      "definition": "Nach Sperma oder Kastanienblüte, typisch für viele Risspilze.",
+      "definitionEn": "Smell of semen or chestnut blossom, typical of many fibrecaps."
+    },
+    {
+      "term": "Sporen",
+      "termEn": "Spores",
+      "definition": "Mikroskopisch kleine Verbreitungszellen der Pilze, die im Hymenium entstehen. Form, Größe und Ornament sind Bestimmungsmerkmale.",
+      "definitionEn": "Microscopic cells of fungi that spread the species and form in the hymenium. Shape, size and ornamentation are identification features."
+    },
+    {
+      "term": "Sporenpulver",
+      "termEn": "Spore print",
+      "definition": "Die Masse der ausgefallenen Sporen. Ihre Farbe zeigt ein Sporenabdruck: den Hut einige Stunden mit der Fruchtschicht nach unten auf Papier oder Glas legen.",
+      "definitionEn": "The mass of shed spores. A spore print shows its colour: put the cap with the hymenium down on paper or glass for a few hours."
+    },
+    {
+      "term": "Stacheln",
+      "termEn": "Spines (teeth)",
+      "definition": "Zähnchen- oder stachelförmige Fortsätze, die das Hymenium tragen, etwa bei Stoppelpilzen und Stachelbärten.",
+      "definitionEn": "Tooth-like or spine-like projections that carry the hymenium, for example in hedgehog mushrooms and tooth fungi."
+    },
+    {
+      "term": "Ständerpilze",
+      "termEn": "Basidiomycetes",
+      "definition": "Pilze, deren Sporen an Basidien entstehen. Zu ihnen gehören die meisten Hut- und Porenpilze.",
+      "definitionEn": "Fungi whose spores form on basidia. Most cap mushrooms and polypores belong to them."
+    },
+    {
+      "term": "Stielbasis",
+      "termEn": "Stem base",
+      "definition": "Unteres Ende des Stiels im Boden. Knolle, Volva, Myzelfilz oder Verfärbungen dort sind oft entscheidend.",
+      "definitionEn": "Lower end of the stem in the soil. A bulb, a volva, mycelial felt or colour changes there are often decisive."
+    },
+    {
+      "term": "Sulfovanillin",
+      "termEn": "Sulfovanillin",
+      "definition": "Vanillin in Schwefelsäure. Färbt die Zystiden mancher Täublinge und Milchlinge schwarzblau, eine Reaktion für das Mikroskop.",
+      "definitionEn": "Vanillin in sulphuric acid. It stains the cystidia of some brittlegills and milkcaps blue-black, a reaction for the microscope."
+    },
+    {
+      "term": "Süßlich",
+      "termEn": "Sweetish",
+      "definition": "Geruch oder Geschmack leicht süß.",
+      "definitionEn": "Slightly sweet smell or taste."
+    },
+    {
+      "term": "Tanne",
+      "termEn": "Fir",
+      "definition": "Nadelbaum (Abies alba). Partner etwa des Steinpilzes.",
+      "definitionEn": "Conifer (Abies alba). Partner of, for example, porcini."
+    },
+    {
+      "term": "Trockenheit",
+      "termEn": "Drought",
+      "definition": "Farbänderung beim Austrocknen, etwa das Ausblassen hygrophaner Hüte.",
+      "definitionEn": "Colour change when the fruit body dries, for example hygrophanous caps that go pale."
+    },
+    {
+      "term": "Ulme",
+      "termEn": "Elm",
+      "definition": "Laubbaum (Ulmus). An ihrem Holz wächst etwa der Ulmen-Rasling.",
+      "definitionEn": "Broadleaf tree (Ulmus). The elm oyster, for example, grows on its wood."
+    },
+    {
+      "term": "Unangenehm",
+      "termEn": "Unpleasant",
+      "definition": "Geruch oder Geschmack, der als unangenehm empfunden wird.",
+      "definitionEn": "Smell or taste that people find unpleasant."
+    },
+    {
+      "term": "Unauffällig",
+      "termEn": "Indistinct",
+      "definition": "Ohne deutlichen Geruch.",
+      "definitionEn": "Without a clear smell."
+    },
+    {
+      "term": "Velum",
+      "termEn": "Veil",
+      "definition": "Hülle junger Fruchtkörper, bleibt als Ring oder Flocken.",
+      "definitionEn": "Cover of the young fruit body; it remains as a ring or as flakes."
+    },
+    {
+      "term": "Velum partiale (Teilhülle)",
+      "termEn": "Partial veil",
+      "definition": "Hülle zwischen Hutrand und Stiel, die die junge Fruchtschicht schützt. Sie bleibt als Ring oder Cortina zurück.",
+      "definitionEn": "Veil from the cap margin to the stem that protects the young hymenium. It remains as a ring or a cortina."
+    },
+    {
+      "term": "Velum universale (Gesamthülle)",
+      "termEn": "Universal veil",
+      "definition": "Hülle um den ganzen jungen Fruchtkörper. Ihre Reste bilden Volva und Hutflocken, etwa bei den Wulstlingen.",
+      "definitionEn": "Veil around the whole young fruit body. Its remains form the volva and the warts on the cap, for example in Amanita."
+    },
+    {
+      "term": "Volva (Scheide)",
+      "termEn": "Volva",
+      "definition": "Häutiger, sackartiger Rest der Gesamthülle an der Stielbasis. Wichtig, um Knollenblätterpilze zu erkennen: immer die ganze Stielbasis ausgraben.",
+      "definitionEn": "Membranous, sac-like remains of the universal veil at the stem base. Important to recognise death caps: always dig out the whole stem base."
+    },
+    {
+      "term": "Weide",
+      "termEn": "Willow",
+      "definition": "Laubbaum oder Strauch (Salix). Bildet Mykorrhiza; an alten Weiden wächst der Weiden-Feuerschwamm.",
+      "definitionEn": "Broadleaf tree or shrub (Salix). It forms mycorrhiza; the willow bracket grows on old willows."
+    },
+    {
+      "term": "Würzig",
+      "termEn": "Spicy",
+      "definition": "Kräftig und aromatisch.",
+      "definitionEn": "Strong and aromatic."
+    }
+  ]
+}

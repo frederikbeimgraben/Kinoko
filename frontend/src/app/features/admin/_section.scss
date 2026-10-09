@@ -1,10 +1,5 @@
-/** The frame of a section page: a head, a scroll body and a foot with one action. */
+/** The frame of a section page: a head, a scroll body and a foot with one action. The head is the page head of the boards. */
 @mixin shell {
-  --size-header: 56px;
-  --space-header-inline: 16px;
-  --size-control: 32px;
-  --fs-xl: 20px;
-
   position: relative;
   display: flex;
   flex-direction: column;
@@ -12,14 +7,17 @@
   overflow: hidden;
 }
 
-/** The body between the head and the foot. */
+/** The body between the head and the foot. Per the edit boards, the sections are 24 px apart
+ * and a label line is 12 px high. */
 @mixin body {
+  --section-label-height: 12px;
+
   display: flex;
   line-height: normal;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
-  padding: var(--admin-pad, 4px 16px 24px);
+  gap: 24px;
+  padding: var(--admin-pad, 8px 16px 24px);
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -27,10 +25,10 @@
 /** The fields use the font and the padding of a kit row. */
 @mixin fields {
   --form-field-size: var(--fs-row-title);
-  --form-field-inline: 14px;
+  --form-field-inline: 16px;
   --form-field-shift: 0;
   --form-field-trail-push: 0;
-  --form-field-label-height: normal;
+  --form-field-label-height: 12px;
 }
 
 /** The head is on the page background, not on a surface of its own. */

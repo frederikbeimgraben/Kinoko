@@ -164,6 +164,34 @@ func TestDeleteMyDataRemovesOwnedRowsButKeepsTheAccount(t *testing.T) {
 	}
 }
 
+func TestDeleteMyDataRemovesOwnedGroupsButKeepsOtherMemberships(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	bert := makeUser(t, env, "bert")
+	asAnna, asBert := signIn(t, env, anna), signIn(t, env, bert)
+	own := aGroup(t, env, asAnna, "Anna")
+	other := aGroup(t, env, asBert, "Bert")
+	join(t, env, asBert, own).Expect(t, http.StatusOK)
+	join(t, env, asAnna, other).Expect(t, http.StatusOK)
+	shared := insertMarker(t, env, bert.ID, "Shared")
+	group, err := db.ParseID(own["id"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+	exec(t, env, `UPDATE marker SET visibility = 'group', group_id = ? WHERE id = ?`, group, shared)
+
+	env.Delete("/me/data", asAnna).Expect(t, http.StatusNoContent)
+	if n := scalar[int](t, env, `SELECT count(*) FROM "group" WHERE owner_id = ?`, anna.ID); n != 0 {
+		t.Fatal(n)
+	}
+	if n := scalar[int](t, env, "SELECT count(*) FROM group_member WHERE user_id = ?", anna.ID); n != 1 {
+		t.Fatal(n)
+	}
+	if v := scalar[string](t, env, "SELECT visibility FROM marker WHERE id = ?", shared); v != "private" {
+		t.Fatal(v)
+	}
+}
+
 func TestListPermissionsNeedsRoleManage(t *testing.T) {
 	env := testkit.New(t)
 	u := makeUser(t, env, "person-1")
@@ -414,6 +442,16 @@ func TestPersonNamesOmitAPersonWithoutASharedGroup(t *testing.T) {
 	}
 }
 
+func TestPersonNamesResolveAnyPersonForAReviewerOfFinds(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	bert := makeUser(t, env, "bert")
+	answer := names(env, bert.ID.String(), signIn(t, env, anna, "find.review")).Expect(t, http.StatusOK)
+	if string(answer.Body) != `[{"id":"`+bert.ID.String()+`","name":"bert"}]` {
+		t.Fatalf("%s", answer.Body)
+	}
+}
+
 func TestPersonNamesResolveForTheOwnID(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")
@@ -589,11 +627,23 @@ func TestSummaryCountsGroupsAndTheGlossary(t *testing.T) {
 	first := env.Post("/groups", map[string]any{"name": "Familie"}, signIn(t, env, anna)).Expect(t, http.StatusCreated).Map(t)
 	env.Post("/groups", map[string]any{"name": "Karlsruhe"}, signIn(t, env, anna)).Expect(t, http.StatusCreated)
 	env.Post("/groups/join", map[string]any{"inviteCode": first["inviteCode"]}, signIn(t, env, bert)).Expect(t, http.StatusOK)
-	exec(t, env, "INSERT INTO glossary_entry (id, term, definition, updated_at) VALUES (?, 'Hymenium', 'Die Fruchtschicht.', ?)",
+	exec(t, env, "INSERT INTO glossary_entry (id, term, definition, updated_at) VALUES (?, 'Zystide', 'Sterile Zelle.', ?)",
 		db.NewID(), db.Now())
+	want := scalar[int](t, env, "SELECT count(*) FROM glossary_entry")
 	body := env.Get("/admin/summary", signIn(t, env, anna, "group.manage", "text.edit")).Expect(t, http.StatusOK).Map(t)
-	if body["groups"] != 2.0 || body["groupMembers"] != 3.0 || body["glossary"] != 1.0 {
-		t.Fatal(body)
+	if body["groups"] != 2.0 || body["groupMembers"] != 3.0 || want < 1 || body["glossary"] != float64(want) {
+		t.Fatal(want, body)
+	}
+}
+
+func TestSummaryCountsTheCategories(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	exec(t, env, "INSERT INTO term (id, kind, slug, name, position) VALUES (?, 'smell', 'summary-test', 'Test', 0)", db.NewID())
+	want := scalar[int](t, env, "SELECT count(*) FROM term")
+	body := env.Get("/admin/summary", signIn(t, env, anna, "species.edit")).Expect(t, http.StatusOK).Map(t)
+	if want < 1 || body["terms"] != float64(want) {
+		t.Fatal(want, body)
 	}
 }
 

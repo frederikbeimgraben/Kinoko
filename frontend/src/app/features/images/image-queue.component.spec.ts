@@ -57,24 +57,74 @@ const STACK = [
 ];
 
 describe('ImageQueueComponent', () => {
-  it('zeigt die oberste Karte mit Art, Lizenz und Unterschrift', async () => {
+  it('zeigt die oberste Karte mit Art, Unterschrift und den Zeilen des Boards', async () => {
     const { container } = await build(STACK);
 
-    expect(screen.getByText('1 von 2')).toBeInTheDocument();
+    expect(screen.getByText('2 offene Bilder')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Junge Exemplare')).toBeInTheDocument();
-    expect(screen.getByText('Jonas · 6. Sept.')).toBeInTheDocument();
+    expect(screen.getByText('Jonas Weber')).toBeInTheDocument();
+    expect(screen.getAllByText('9. September').length).toBeGreaterThan(0);
     await noViolations(container);
   });
 
-  it('gibt mit dem Haken frei und zählt weiter', async () => {
+  it('gibt mit dem Haken frei und zählt herunter', async () => {
     const { http, refresh } = await build(STACK);
 
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
     http.expectOne('/api/photos/eins/approval').flush(photo({ id: 'eins', state: 'approved' }));
     refresh();
 
-    expect(screen.getByText('2 von 2')).toBeInTheDocument();
+    expect(screen.getByText('1 offenes Bild')).toBeInTheDocument();
+  });
+
+  it('nimmt eine Freigabe auch beim Dienst zurück', async () => {
+    const { http, refresh } = await build(STACK);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
+    http.expectOne('/api/photos/eins/approval').flush(photo({ id: 'eins', state: 'approved' }));
+    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Rückgängig' }));
+    await vi.waitFor(() => {
+      const request = http.expectOne({ url: '/api/photos/eins/review', method: 'DELETE' });
+      request.flush(photo({ id: 'eins', state: 'submitted' }));
+    });
+    refresh();
+
+    expect(screen.getByText('2 offene Bilder')).toBeInTheDocument();
+  });
+
+  it('lässt die letzte Entscheidung rückgängig machen und zeigt dann den leeren Stapel', async () => {
+    const { http, refresh } = await build([STACK[0]]);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
+    http.expectOne('/api/photos/eins/approval').flush(photo({ id: 'eins', state: 'approved' }));
+    refresh();
+
+    expect(screen.getByText('Keine Bilder offen')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Rückgängig' })).toBeEnabled();
+  });
+
+  it('zeigt ohne offene Bilder den leeren Zustand des Boards', async () => {
+    await build([]);
+
+    expect(screen.getByText('Keine Bilder offen')).toBeInTheDocument();
+    expect(screen.getByText('0 offene Bilder')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Freigeben' })).not.toBeInTheDocument();
+  });
+
+  it('behält die Karte, wenn die Frage nach dem Grund abgebrochen wird', async () => {
+    const { http, refresh } = await build(STACK);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Ablehnen' }));
+    refresh();
+    const backs = screen.getAllByRole('button', { name: 'Zurück' });
+    await userEvent.click(backs[backs.length - 1]);
+    refresh();
+
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('2 offene Bilder')).toBeInTheDocument();
+    http.expectNone((call) => call.url.endsWith('/rejection'));
   });
 
   it('fragt vor einer Absage nach dem Grund', async () => {

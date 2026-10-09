@@ -10,15 +10,29 @@ import { confirmed, settle, withSearchableList } from '../state';
 export const GlossaryStore = signalStore(
   { providedIn: 'root' },
   withSearchableList<GlossaryEntry>({
-    matches: (entry, needle) => `${entry.term} ${entry.definition}`.toLocaleLowerCase().includes(needle),
+    matches: (entry, needle) =>
+      `${entry.term} ${entry.termEn} ${entry.definition} ${entry.definitionEn}`
+        .toLocaleLowerCase()
+        .includes(needle),
     sortKey: (entry) => entry.term,
   }),
-  withState({ writing: false }),
+  // `failed` tells a load error apart from an empty glossary.
+  withState({ writing: false, failed: false }),
   withProps(({ items }) => ({ entries: items, _api: inject(GlossaryApi) })),
   withMethods((store) => {
     const fetch = rxMethod<null>(
       pipe(
-        switchMap(() => store._api.list().pipe(catchError(() => of<GlossaryEntry[]>([])))),
+        tap(() => {
+          patchState(store, { failed: false });
+        }),
+        switchMap(() =>
+          store._api.list().pipe(
+            catchError(() => {
+              patchState(store, { failed: true });
+              return of<GlossaryEntry[]>([]);
+            }),
+          ),
+        ),
         tap((entries) => {
           store.setItems(entries);
         }),
@@ -61,3 +75,24 @@ export const GlossaryStore = signalStore(
 
 /** The instance type of {@link GlossaryStore}. */
 export type GlossaryStore = InstanceType<typeof GlossaryStore>;
+
+/** The definition in the UI language. An entry without English text shows the German text. */
+export function glossaryText(entry: GlossaryEntry, locale: string): string {
+  return locale !== 'de' && entry.definitionEn !== '' ? entry.definitionEn : entry.definition;
+}
+
+/** The term in the UI language. An entry without English term shows the German term. */
+export function glossaryTerm(entry: GlossaryEntry, locale: string): string {
+  return locale !== 'de' && entry.termEn !== '' ? entry.termEn : entry.term;
+}
+
+/** The entries with term and definition in the UI language, sorted by the term that shows. */
+export function glossaryIn(entries: readonly GlossaryEntry[], locale: string): GlossaryEntry[] {
+  return entries
+    .map((entry) => ({
+      ...entry,
+      term: glossaryTerm(entry, locale),
+      definition: glossaryText(entry, locale),
+    }))
+    .sort((a, b) => a.term.localeCompare(b.term, locale));
+}

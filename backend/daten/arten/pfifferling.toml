@@ -20,6 +20,7 @@ baeume = ["fichte", "buche", "eiche", "kiefer"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Pfiffi.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,7 +35,6 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "zitronengelb", hex = "#f2e14c" }, { name = "blassgelb", hex = "#efe3a0" }, { name = "gelb", hex = "#e8c33a" }]
-sporenlager = [{ name = "blau", hex = "#3a5f9e" }]
 stiel = [{ name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "blassgelb", hex = "#efe3a0" }, { name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]

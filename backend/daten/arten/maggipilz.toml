@@ -16,6 +16,7 @@ hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["bruechig", "hohl", "voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/BruchreizkerMaggipilz.htm"
 geprueftAm = "2026-09-12"
 
@@ -32,14 +33,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "hellbraun", hex = "#a97c50" }, { name = "orangebraun", hex = "#c86e28" }, { name = "rot", hex = "#c0392b" }]
-sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "ocker", hex = "#c8963c" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["maggiartig", "unauffaellig"]

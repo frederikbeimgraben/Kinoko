@@ -16,6 +16,7 @@ hutmerkmale = ["gebuckelt", "vertieft"]
 hutrand = { von = ["eingerollt"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Olbaumtrichterling.htm"
 geprueftAm = "2026-09-12"
 
@@ -39,14 +40,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "orangegelb", hex = "#e9a32c" }, { name = "orange", hex = "#e08a2e" }, { name = "braun", hex = "#7a5230" }]
-sporenlager = [{ name = "goldgelb", hex = "#e2b13a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "goldgelb", hex = "#e2b13a" }]
 stiel = [{ name = "orange", hex = "#e08a2e" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
 sporenpulver = [{ name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["unangenehm", "angenehm", "unauffaellig"]

@@ -16,6 +16,7 @@ hutrand = { von = ["ueberstehend", "gerieft"] }
 stielmerkmale = ["faserig", "gerieft", "bruechig", "hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Fruehlingsroetling.htm"
 geprueftAm = "2026-09-12"
 

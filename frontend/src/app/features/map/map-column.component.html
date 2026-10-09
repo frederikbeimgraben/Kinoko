@@ -1,28 +1,8 @@
-@if (factor(); as chosen) {
-  @if (layer(); as source) {
-    <app-sheet-head
-      [title]="source.label"
-      [icon]="glyph()"
-      [note]="source.note"
-      [back]="true"
-      (backClick)="closed.emit()"
-    />
-    <app-factor-sheet
-      [factor]="chosen"
-      [layer]="source"
-      [histogram]="spread()"
-      [withHead]="false"
-      (apply)="factorApplied.emit($event)"
-      (removed)="factorRemoved.emit($event)"
-    />
-  }
-} @else {
-  <app-map-panel (titleChosen)="titleChosen.emit()" (weekChosen)="weekChosen.emit($event)" />
-  <app-map-panel-body
-    (layerChosen)="layerChosen.emit()"
-    (savedOpened)="savedOpened.emit()"
-    (factorOpened)="factorOpened.emit($event)"
-    (factorAdded)="factorAdded.emit()"
-    (saveRequested)="saveRequested.emit()"
-  />
-}
+<app-map-panel (titleChosen)="titleChosen.emit()" (weekChosen)="weekChosen.emit($event)" />
+<app-map-panel-body
+  (layerChosen)="layerChosen.emit()"
+  (savedOpened)="savedOpened.emit()"
+  (factorOpened)="factorOpened.emit($event)"
+  (factorAdded)="factorAdded.emit()"
+  (saveRequested)="saveRequested.emit()"
+/>

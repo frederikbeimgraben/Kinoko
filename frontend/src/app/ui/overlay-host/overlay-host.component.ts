@@ -56,9 +56,11 @@ export class OverlayHostComponent {
     this.play(event, 'out');
   }
 
+  // Escape applies to the top host. Without `stopPropagation`, a picker in a form also closes the form.
   protected onKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return;
     event.preventDefault();
+    event.stopPropagation();
     this.closed.emit();
   }
 

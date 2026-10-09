@@ -94,6 +94,7 @@ paths:
   /me/data:
     delete:
       operationId: deleteMyData
+      description: Deletes the own finds, markers, zones, photos, combinations and the groups that the person leads.
       tags: [account]
       responses:
         "204":
@@ -936,7 +937,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FindPage"
+                $ref: "#/components/schemas/OpenFindPage"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -1498,6 +1499,36 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
+  /photos/{id}/review:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    delete:
+      operationId: reopenPhoto
+      description: Takes back an approval or a rejection. The photo is submitted again.
+      tags: [photos]
+      x-permission: image.review
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
   /photos/{id}/lead:
     parameters:
       - $ref: "#/components/parameters/Id"
@@ -1811,8 +1842,9 @@ paths:
       tags: [people]
       description: >-
         Names of the persons behind the given ids. The answer holds a person
-        only if the caller and this person share one group or more, or if the
-        id is the id of the caller. Other ids have no entry.
+        only if the caller and this person share one group or more, if the
+        id is the id of the caller, or if the caller has find.review or
+        role.assign. Other ids have no entry.
       parameters:
         - name: ids
           in: query
@@ -2562,13 +2594,17 @@ components:
       properties:
         oidcIssuer:
           type: string
+          description: Issuer URL of the SSO. Empty when the service has no SSO.
+        oidcName:
+          type: string
+          description: Name of the SSO for the sign-in button. Empty without an SSO.
         oidcClientId:
           type: string
         origin:
           type: string
         version:
           type: string
-      required: [oidcIssuer, oidcClientId, origin, version]
+      required: [oidcIssuer, oidcName, oidcClientId, origin, version]
 
     Me:
       type: object
@@ -2684,6 +2720,9 @@ components:
           type: integer
         glossary:
           type: integer
+        terms:
+          type: integer
+          description: The count of categories, all kinds together.
         dataSourcesMissing:
           type: integer
         dataSourcesFailed:
@@ -2937,7 +2976,7 @@ components:
 
     MarkerColour:
       type: string
-      enum: [green, brown, blue, red, gold, grey]
+      enum: [green, yellow, orange, red, violet, grey]
 
     HexColour:
       type: string
@@ -2982,6 +3021,11 @@ components:
           type: string
         hex:
           $ref: "#/components/schemas/HexColour"
+        nearest:
+          description: The hex of the nearest standard colour. It names the colour in other languages.
+          oneOf:
+            - $ref: "#/components/schemas/HexColour"
+            - type: "null"
       required: [name, hex]
 
     StandardColour:
@@ -3536,6 +3580,9 @@ components:
             - $ref: "#/components/schemas/BodyPart"
             - type: "null"
         location:
+          description: >-
+            The places of a reaction without one body part. Known places are slugs joined by ","
+            (a body part, milk, branches, branch_tips or extract). Other text is the German place of the source.
           oneOf:
             - type: string
             - type: "null"
@@ -3684,6 +3731,9 @@ components:
           type: string
         position:
           type: integer
+        usage:
+          type: integer
+          description: The count of species that use the term. Only the list has it.
       required: [id, kind, slug, name, position]
 
     TermCreate:
@@ -3816,6 +3866,30 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Find"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    OpenFind:
+      allOf:
+        - $ref: "#/components/schemas/Find"
+        - type: object
+          properties:
+            ownerName:
+              description: The display name of the person who reported the find.
+              oneOf:
+                - type: string
+                - type: "null"
+
+    OpenFindPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenFind"
         nextCursor:
           oneOf:
             - type: string
@@ -4380,15 +4454,21 @@ components:
           type: string
     GlossaryEntry:
       type: object
-      required: [id, term, definition, updatedAt]
+      required: [id, term, termEn, definition, definitionEn, updatedAt]
       properties:
         id:
           type: string
           format: uuid
         term:
           type: string
+        termEn:
+          type: string
+          description: The English term. Empty if nobody has written it.
         definition:
           type: string
+        definitionEn:
+          type: string
+          description: The English definition. Empty if nobody has written it.
         updatedByName:
           type: string
           nullable: true
@@ -4403,10 +4483,18 @@ components:
           type: string
           minLength: 1
           maxLength: 80
+        termEn:
+          type: string
+          maxLength: 80
+          description: Without the field, a create stores an empty text and an update keeps the old one.
         definition:
           type: string
           minLength: 1
           maxLength: 600
+        definitionEn:
+          type: string
+          maxLength: 600
+          description: Without the field, a create stores an empty text and an update keeps the old one.
     PersonName:
       type: object
       required: [id, name]
@@ -4437,10 +4525,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/RoleBrief"
+        groupAdmin:
+          type: boolean
+          description: The admin group of the SSO makes the person an admin without a stored role.
         createdAt:
           type: string
           format: date-time
-      required: [id, sub, roles, createdAt]
+      required: [id, sub, roles, groupAdmin, createdAt]
 
     PersonPage:
       type: object

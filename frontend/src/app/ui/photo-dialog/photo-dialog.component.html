@@ -1,5 +1,6 @@
 @if (path(); as path) {
   <div
+    #scrim
     class="photo__scrim"
     tabindex="-1"
     animate.enter="motion-fade-in"
@@ -9,42 +10,34 @@
     (keydown)="onKeydown($event)"
     (click)="onGround($event)"
   >
-    <button
-      class="photo__close tap"
-      type="button"
-      data-press="scale"
-      [attr.aria-label]="'common.close' | t"
-      (click)="closed.emit()"
-    >
-      <app-svg-icon name="close" [size]="22" [strokeWidth]="2" />
-    </button>
-    <app-private-image
-      class="photo__image"
-      fit="contain"
-      [path]="path"
-      [alt]="label()"
-      (pointerdown)="onPointerDown($event)"
-      (pointerup)="onPointerUp($event)"
-    />
-    @if (many()) {
-      <button
-        class="photo__step photo__step--back tap"
-        type="button"
-        data-press="scale"
-        [attr.aria-label]="'image.previous' | t"
-        (click)="step(-1)"
-      >
-        <app-svg-icon name="left" [size]="12" />
-      </button>
-      <button
-        class="photo__step photo__step--next tap"
-        type="button"
-        data-press="scale"
-        [attr.aria-label]="'image.next' | t"
-        (click)="step(1)"
-      >
-        <app-svg-icon name="right" [size]="12" />
-      </button>
-    }
+    <figure class="photo__panel">
+      <div class="photo__frame">
+        <app-private-image
+          class="photo__image"
+          fit="contain"
+          [path]="path"
+          [alt]="label()"
+          (pointerdown)="onPointerDown($event)"
+          (pointerup)="onPointerUp($event)"
+        />
+        <span class="photo__close">
+          <app-icon-button icon="close" kind="over" [label]="'common.close' | t" (pressed)="closed.emit()" />
+        </span>
+        @if (hasPrev()) {
+          <span class="photo__step photo__step--back">
+            <app-icon-button icon="prev" kind="over" [label]="'image.previous' | t" (pressed)="step(-1)" />
+          </span>
+        }
+        @if (hasNext()) {
+          <span class="photo__step photo__step--next">
+            <app-icon-button icon="next" kind="over" [label]="'image.next' | t" (pressed)="step(1)" />
+          </span>
+        }
+      </div>
+      <figcaption class="photo__caption">
+        <span>{{ dayText() }}</span>
+        <span>{{ counter() }}</span>
+      </figcaption>
+    </figure>
   </div>
 }

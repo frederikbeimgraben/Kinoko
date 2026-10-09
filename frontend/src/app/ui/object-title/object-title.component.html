@@ -6,6 +6,10 @@
   [alt]="title()"
 />
 <span class="otitle__txt">
-  <h3 class="otitle__title">{{ title() }}</h3>
+  @if (level() === 2) {
+    <h2 class="otitle__title">{{ title() }}</h2>
+  } @else {
+    <h3 class="otitle__title">{{ title() }}</h3>
+  }
   <span class="otitle__sub">{{ sub() }}</span>
 </span>

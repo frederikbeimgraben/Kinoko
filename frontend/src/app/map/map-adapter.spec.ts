@@ -4,6 +4,7 @@ import {
   STYLE_PATH,
   WORKER_PATH,
   ensureStyles,
+  labelField,
   type MapHandle,
   type MapOptions,
   type MaplibreModule,
@@ -173,7 +174,13 @@ class MapDouble {
 
   bearing = 0;
   pitch = 0;
-  readonly canvas = { style: { cursor: '' } };
+  readonly canvas = {
+    style: { cursor: '' },
+    label: '',
+    setAttribute(name: string, value: string): void {
+      if (name === 'aria-label') this.label = value;
+    },
+  };
 
   getBearing(): number {
     return this.bearing;
@@ -183,12 +190,35 @@ class MapDouble {
     return this.pitch;
   }
 
-  getCanvas(): { style: { cursor: string } } {
+  getCanvas(): typeof this.canvas {
     return this.canvas;
   }
 
   remove(): void {
     this.removed = true;
+  }
+
+  /** The base style: a place label, a road number and an area. */
+  readonly baseLayers = [
+    { id: 'place', type: 'symbol' },
+    { id: 'road-ref', type: 'symbol' },
+    { id: 'water', type: 'fill' },
+  ];
+  readonly layout = new Map<string, unknown>([
+    ['place', ['coalesce', ['get', 'name_en'], ['get', 'name']]],
+    ['road-ref', ['get', 'ref']],
+  ]);
+
+  getStyle(): { layers: { id: string; type: string }[] } {
+    return { layers: this.baseLayers };
+  }
+
+  getLayoutProperty(id: string): unknown {
+    return this.layout.get(id);
+  }
+
+  setLayoutProperty(id: string, _name: string, value: unknown): void {
+    this.layout.set(id, value);
   }
 }
 
@@ -218,6 +248,7 @@ const OPTIONEN: MapOptions = {
     [16, 56],
   ],
   protocol: { name: 'wert', resolve: () => Promise.resolve({ data: new ArrayBuffer(0) }) },
+  title: 'Karte',
 };
 
 function module(): {
@@ -284,6 +315,16 @@ describe('MapLibreAdapter', () => {
     expect(map.options['minZoom']).toBe(5);
     expect(map.options['maxBounds']).toEqual(OPTIONEN.maxBounds);
     expect(map.options['attributionControl']).toBe(false);
+    // MapLibre names the canvas "Map" without a locale, also in German.
+    expect(map.options['locale']).toEqual({ 'Map.Title': 'Karte' });
+  });
+
+  it('nennt die Karte nach einem Sprachwechsel in der neuen Sprache', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.setTitle('Map');
+
+    expect(map.canvas.label).toBe('Map');
   });
 
   it('haengt das Stylesheet der Karte in den Kopf, bevor die Karte entsteht', async () => {
@@ -471,7 +512,8 @@ describe('MapLibreAdapter', () => {
 
     const source = map.sources.get('objekte-marker') as { data: { features: { id: string }[] } };
     expect(source.data.features[0].id).toBe('marker-zwei');
-    expect(map.layers.size).toBe(1);
+    // The point and the ring of the open marker.
+    expect(map.layers.size).toBe(2);
   });
 
   it('meldet die Kennung des angetippten Objekts', async () => {
@@ -571,7 +613,7 @@ describe('MapLibreAdapter', () => {
     a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
     a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    expect(map.placedBefore.get('wert-layer-b')).toBe('objekte-funde-punkt');
+    expect(map.placedBefore.get('wert-layer-b')).toBe('objekte-funde-auswahl');
     expect(map.placedBefore.get('wert-forecast-b')).toBe('wert-layer-b');
   });
 
@@ -706,6 +748,19 @@ describe('MapLibreAdapter', () => {
     const { adapter: a } = await adapter();
 
     expect(a.project([1, 2])).toEqual({ x: 100, y: 200 });
+  });
+
+  it('zeigt die Ortsnamen in der Sprache der App, auch nach einem Stilwechsel', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.setLabelLanguage('de');
+    expect(map.layout.get('place')).toEqual(labelField('de'));
+    expect(map.layout.get('road-ref')).toEqual(['get', 'ref']);
+
+    map.layout.set('place', ['get', 'name_en']);
+    a.setStyle('dunkel');
+    map.onceHandlers.get('style.load')?.();
+    expect(map.layout.get('place')).toEqual(['coalesce', ['get', 'name:de'], ['get', 'name']]);
   });
 
   it('bleibt ohne Karte still', () => {

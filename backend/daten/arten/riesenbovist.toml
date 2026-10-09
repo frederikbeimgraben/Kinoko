@@ -12,6 +12,7 @@ synonyme = ["Langermannia gigantea", "Lycoperdon giganteum", "Clavatia maxima", 
 hutform = { von = "kugelig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Riesenbovist.htm"
 geprueftAm = "2026-09-12"
 

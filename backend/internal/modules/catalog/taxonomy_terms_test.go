@@ -87,6 +87,21 @@ func TestDivisionPageHasEmptyPath(t *testing.T) {
 	equalJSON(t, body["siblings"], `[]`)
 }
 
+func TestTaxonPageNamesEachRankByItsLatinName(t *testing.T) {
+	env := newEnv(t)
+	seed := seedTaxa(t, env)
+	exec(t, env, "UPDATE taxon SET name = 'Röhrlinge', latin_name = 'Boletales' WHERE id = ?", seed.order.ID)
+	exec(t, env, "UPDATE taxon SET name = 'Dickröhrlinge', latin_name = 'Boletus' WHERE id = ?", seed.genus.ID)
+	body := taxonPage(t, env, seed.genus)
+	path := list(body["path"])
+	if body["name"] != "Boletus" || obj(path[1])["name"] != "Boletales" {
+		t.Fatal(body)
+	}
+	if got := obj(list(body["species"])[0])["genusName"]; got != "Boletus" {
+		t.Fatal(got)
+	}
+}
+
 func TestTaxonPage404(t *testing.T) {
 	env := newEnv(t)
 	env.Get("/taxa/genus/unknown-genus", nil).Expect(t, http.StatusNotFound)
@@ -114,6 +129,18 @@ func TestListTermsWithoutKindReturnsAll(t *testing.T) {
 	makeTerm(t, env, "taste", "b", "B", nil, 0)
 	if got := termSlugs(t, env, "/terms"); len(got) != 2 {
 		t.Fatal(got)
+	}
+}
+
+func TestListTermsCountsTheSpeciesThatUseATerm(t *testing.T) {
+	env := newEnv(t)
+	used := makeTerm(t, env, "smell", "a", "A", nil, 0)
+	makeTerm(t, env, "smell", "b", "B", nil, 1)
+	addTerm(t, env, makeSpecies(t, env, "one", "", "One", nil, nil), used, false)
+	addTerm(t, env, makeSpecies(t, env, "two", "", "Two", nil, nil), used, true)
+	items := env.Get("/terms?kind=smell", nil).Expect(t, http.StatusOK).Map(t)["items"].([]any)
+	if items[0].(map[string]any)["usage"] != 2.0 || items[1].(map[string]any)["usage"] != 0.0 {
+		t.Fatal(items)
 	}
 }
 

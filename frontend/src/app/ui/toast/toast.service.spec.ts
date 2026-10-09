@@ -33,6 +33,17 @@ describe('ToastService', () => {
     expect(toasts.toasts()).toHaveLength(2);
   });
 
+  it('shows the same message only one time while it shows', () => {
+    const toasts = TestBed.inject(ToastService);
+
+    const first = toasts.error('Keine Verbindung');
+    const second = toasts.error('Keine Verbindung');
+    toasts.success('Keine Verbindung');
+
+    expect(second).toBe(first);
+    expect(toasts.toasts().map((toast) => toast.variant)).toEqual(['danger', 'success']);
+  });
+
   it('nimmt eine Meldung nach der Frist selbst zurück', () => {
     vi.useFakeTimers();
     const toasts = TestBed.inject(ToastService);

@@ -20,6 +20,7 @@ const i18n = catalogueOf({
   'enum.month.9': 'September',
   'enum.month.12': 'December',
   'find.pieces': '{count} pieces',
+  'find.unknownSpecies': 'Unidentified species',
   'sichtbarkeit.private': 'Private',
   'sichtbarkeit.shared': 'Shared',
   'area.hectares': '{area} ha',
@@ -71,7 +72,7 @@ describe('entry rows', () => {
     expect(row.day).toBe('Today');
   });
 
-  it('shows a shared find of an unknown species without count, note or person', () => {
+  it('names a shared find of an unknown species and shows no count, note or person', () => {
     const row = sharedFindRow(contextOf({ person: () => null }), {
       ...SHARED_FIND,
       count: null,
@@ -79,7 +80,7 @@ describe('entry rows', () => {
     });
 
     expect(row.object).toBeNull();
-    expect(row.entry.title).toBe('');
+    expect(row.entry.title).toBe('Unidentified species');
     expect(row.entry.colour).toBe('#7a5230');
     expect(row.entry.note).toBeUndefined();
     expect(row.entry.meta).not.toContain('pieces');
@@ -89,7 +90,7 @@ describe('entry rows', () => {
   it('shows the day and the visibility of a marker, and no day without a creation time', () => {
     const row = markerRow(contextOf(), MARKER);
     expect(row.entry.meta).toContain('private');
-    expect(row.entry.colour).toBe('var(--colour-object-blue)');
+    expect(row.entry.colour).toBe('var(--colour-object-violet)');
     expect(row.day).toBe('September');
 
     const timeless = markerRow(contextOf(), { ...MARKER, createdAt: undefined, note: null });
@@ -141,5 +142,38 @@ describe('entry rows', () => {
     ];
 
     expect(byDay(rows).map((row) => row.key)).toEqual(['first', 'second', 'old']);
+  });
+
+  it('puts the newest save of a day first, and a pending row above both', () => {
+    const early = {
+      ...ownFindRow(contextOf(), { ...FIND, createdAt: '2026-09-06T08:00:00Z' }),
+      key: 'early',
+    };
+    const late = { ...ownFindRow(contextOf(), { ...FIND, createdAt: '2026-09-06T09:00:00Z' }), key: 'late' };
+    const waiting = pendingRow(
+      contextOf(),
+      task({ lat: 1, lon: 2, foundOn: '2026-09-06', forTraining: false }),
+    );
+
+    expect(byDay([early, late, waiting]).map((row) => row.key)).toEqual(['waiting-task-1', 'late', 'early']);
+  });
+
+  it('shows the photo of an own find as its thumb', () => {
+    const row = ownFindRow(
+      contextOf({ photo: (id) => (id === FIND.id ? '/photos/p1/list' : undefined) }),
+      FIND,
+    );
+
+    expect(row.entry.photo).toBe('/photos/p1/list');
+  });
+
+  it('shows no day at a marker of today, as at a find', () => {
+    const row = markerRow(contextOf({ today: '2026-09-01' }), {
+      ...MARKER,
+      createdAt: '2026-09-01T10:00:00',
+    });
+
+    expect(row.day).toBe('Today');
+    expect(row.entry.meta).toBe('private');
   });
 });

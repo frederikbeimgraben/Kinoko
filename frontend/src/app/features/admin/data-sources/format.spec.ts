@@ -4,10 +4,12 @@ const ACCEPT = { extensions: ['.zip', '.TIF'], mediaTypes: [], maxBytes: 1000 };
 
 describe('data source formats', () => {
   it('writes a size in the largest fitting unit', () => {
-    expect(bytesText(512, 'en')).toBe('512 byte');
+    expect(bytesText(512, 'en')).toBe('512 bytes');
+    expect(bytesText(1, 'en')).toBe('1 byte');
     expect(bytesText(1536, 'en')).toBe('1.5 kB');
     expect(bytesText(16 * 1024 * 1024, 'de')).toBe('16 MB');
-    expect(bytesText(0, 'en')).toBe('0 byte');
+    expect(bytesText(0, 'en')).toBe('0 bytes');
+    expect(bytesText(0, 'de')).toBe('0 Byte');
   });
 
   it('writes a duration in its largest unit', () => {

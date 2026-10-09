@@ -11,6 +11,14 @@ describe('CrosshairComponent', () => {
     await noViolations(container);
   });
 
+  it('trägt den hellen Rand nur über einer dunklen Karte', async () => {
+    const { container, rerender } = await render(CrosshairComponent, { inputs: { label: 'Fundort' } });
+    expect(container.querySelector('.crosshair__halo')).toBeNull();
+
+    await rerender({ inputs: { label: 'Fundort', halo: true } });
+    expect(container.querySelector('.crosshair__halo')).not.toBeNull();
+  });
+
   it('bleibt ohne deutschen Text im leeren Katalog', async () => {
     const { container } = await render(CrosshairComponent, {
       inputs: { label: 'location' },

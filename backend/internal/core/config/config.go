@@ -6,20 +6,49 @@ package config
 import (
 	"bufio"
 	"fmt"
+	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
-// Version is the version of the service.
-const Version = "3.0.0"
+// build is the "git describe" of the build. The linker sets it, the flake and
+// backend/build.sh with -X <module>/internal/core/config.build=<value>.
+var build = ""
+
+var (
+	// commitHash is the "-g<hash>" end of a "git describe".
+	commitHash = regexp.MustCompile(`-g[0-9a-f]{7,}$`)
+	// releaseNumber is the start of a number such as 3.0.0. A bare commit hash does not agree.
+	releaseNumber = regexp.MustCompile(`^\d+\.\d+`)
+)
+
+// Version is the version of the build, as the about page of the app shows it.
+func Version() string { return Label(build) }
+
+// Label removes the commit hash of a "git describe" and gives a plain number the prefix v.
+// It agrees with label() in frontend/tools/stamp-version.mjs. An empty value gives "dev".
+func Label(raw string) string {
+	version := commitHash.ReplaceAllString(strings.TrimSpace(raw), "")
+	switch {
+	case version == "":
+		return "dev"
+	case releaseNumber.MatchString(version):
+		return "v" + version
+	default:
+		return version
+	}
+}
 
 // Settings are the values that the service reads at start.
 type Settings struct {
-	DB             string
-	Photos         string
-	Maps           string
-	OIDCIssuer     string
+	DB         string
+	Photos     string
+	Maps       string
+	OIDCIssuer string
+	// OIDCName is the name of the SSO that the sign-in button shows.
+	OIDCName       string
 	OIDCClientID   string
 	Origin         string
 	AdminGroup     string
@@ -39,7 +68,7 @@ func Defaults() Settings {
 		DB:             "./var/pilze.sqlite",
 		Photos:         "./var/fotos",
 		Maps:           "./var/maps",
-		OIDCIssuer:     "https://sso.beimgraben.net/application/o/pilze/",
+		OIDCIssuer:     "",
 		OIDCClientID:   "pilze",
 		Origin:         "http://localhost:4200",
 		AdminGroup:     "pilze-admins",
@@ -76,6 +105,7 @@ func FromLookup(lookup Lookup) (Settings, error) {
 	text("FOTOS", &s.Photos)
 	text("MAPS", &s.Maps)
 	text("OIDC_ISSUER", &s.OIDCIssuer)
+	text("OIDC_NAME", &s.OIDCName)
 	text("OIDC_CLIENT_ID", &s.OIDCClientID)
 	text("ORIGIN", &s.Origin)
 	text("ADMIN_GROUP", &s.AdminGroup)
@@ -99,7 +129,9 @@ func FromLookup(lookup Lookup) (Settings, error) {
 		s.PipelineEnable = on
 	}
 	s.DB = DatabasePath(s.DB)
-	s.OIDCIssuer = withSlash(s.OIDCIssuer)
+	if s.OIDCIssuer != "" {
+		s.OIDCIssuer = withSlash(s.OIDCIssuer)
+	}
 	return s, nil
 }
 
@@ -112,6 +144,18 @@ func DatabasePath(value string) string {
 		}
 	}
 	return value
+}
+
+// ProviderName is the SSO name for the sign-in button: OIDCName, else the host of the issuer.
+func (s Settings) ProviderName() string {
+	if s.OIDCName != "" {
+		return s.OIDCName
+	}
+	parsed, err := url.Parse(s.OIDCIssuer)
+	if err != nil {
+		return ""
+	}
+	return parsed.Hostname()
 }
 
 // DiscoveryURL is the address of the OpenID configuration document.

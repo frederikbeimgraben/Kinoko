@@ -13,6 +13,7 @@ fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "glatt" 
 stielmerkmale = ["beflockt", "faserig"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/SchwarzschuppigerRitterlingEssbar.htm"
 geprueftAm = "2026-09-12"
 
@@ -33,10 +34,6 @@ sporenlager = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "weiß", hex = 
 stiel = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
 fleisch = [{ name = "cremeweiß", hex = "#f5efdc" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "gelb", hex = "#e8c33a" }]
 
 [geruch]
 tags = ["mehlig", "unauffaellig"]

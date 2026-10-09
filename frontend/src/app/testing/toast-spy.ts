@@ -5,18 +5,24 @@ import { ToastService } from '../ui/toast/toast.service';
 export interface ToastSpy {
   failure: string[];
   success: string[];
+  /** The neutral messages, for example of an entry that waits. */
+  info: string[];
 }
 
 /** Catches kit messages. A single-component test has no toast container, so the messages go here. */
 export function toastSpy(): ToastSpy {
   const service = TestBed.inject(ToastService);
-  const spy: ToastSpy = { failure: [], success: [] };
+  const spy: ToastSpy = { failure: [], success: [], info: [] };
   vi.spyOn(service, 'error').mockImplementation((text: string) => {
     spy.failure.push(text);
     return 0;
   });
   vi.spyOn(service, 'success').mockImplementation((text: string) => {
     spy.success.push(text);
+    return 0;
+  });
+  vi.spyOn(service, 'show').mockImplementation((text: string) => {
+    spy.info.push(text);
     return 0;
   });
   return spy;

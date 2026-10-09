@@ -35,7 +35,11 @@
   />
 </app-fold-section>
 <app-row-group>
-  <app-list-row [title]="'entry.filter.withPhoto' | t">
+  <app-list-row
+    [title]="'entry.filter.withPhoto' | t"
+    [clickable]="true"
+    (chosen)="setPhoto(!filter().withPhoto)"
+  >
     <app-switch
       action
       [checked]="filter().withPhoto"

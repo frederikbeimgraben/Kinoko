@@ -52,6 +52,18 @@ describe('GroupsStore', () => {
     expect(store.groups()).toHaveLength(1);
   });
 
+  it('tells an unknown invite code from other errors', async () => {
+    const { store, api } = build();
+
+    api.rejectWith = { type: 'about:blank', title: 'Nicht gefunden', status: 404 };
+    await expect(store.join('XXXXXX')).resolves.toBe('invalid');
+    api.rejectWith = { type: 'about:blank', title: 'Fehler', status: 500 };
+    await expect(store.join('XXXXXX')).resolves.toBeNull();
+
+    expect(store.groups() ?? []).toHaveLength(0);
+    expect(store.writing()).toBe(false);
+  });
+
   it('replaces a renamed group', async () => {
     const { store } = build();
     store.load();

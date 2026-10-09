@@ -60,10 +60,11 @@ export interface Role extends RoleRef {
   updatedAt: string;
 }
 
+/** An empty description is left out, because the contract has no null for a new role. */
 export interface RoleInput {
   slug: string;
   name: string;
-  description: string | null;
+  description?: string;
   permissions: Permission[];
 }
 

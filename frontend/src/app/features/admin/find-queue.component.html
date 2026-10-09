@@ -1,11 +1,14 @@
 <app-page-header [title]="'find.queue.title' | t" [back]="true" (backClick)="back()">
-  @if (cards().length > 0) {
-    <span class="queue__counter">{{ counter() }}</span>
+  @if (loaded()) {
+    <app-level-pill class="queue__badge" kind="ok" aria-hidden="true" [text]="'' + open()" />
+    <span class="sr-only">{{ openLabel() }}</span>
+  }
+  @if (open() > 1) {
     <app-icon-button icon="check" [label]="'find.queue.acceptAll' | t" (pressed)="asking.set(true)" />
   }
 </app-page-header>
 
-<div class="queue">
+<div class="queue" [class.queue--empty]="loaded() && open() === 0">
   @if (!loaded()) {
     <app-queue-card-skeleton />
   } @else if (cards().length === 0) {
@@ -18,18 +21,23 @@
       (rejected)="reject($event)"
       (undone)="undo()"
     >
+      <app-state-view icon="check" [title]="'find.queue.empty' | t" />
       <ng-template let-card>
         <article class="card">
-          @for (photo of card.photos; track photo) {
-            <app-private-image class="card__image" [path]="photo" [alt]="card.species" />
-          }
+          <app-find-map class="card__map" [point]="card.point" [colour]="card.colour" />
           <div class="card__body">
-            <span class="card__species">{{ card.species }}</span>
-            <span class="card__meta">{{ card.meta }}</span>
-            <span class="card__meta">{{ card.place }}</span>
-            @if (card.note) {
-              <span class="card__caption">{{ card.note }}</span>
-            }
+            <app-object-title
+              [level]="2"
+              [title]="card.species"
+              [sub]="card.note"
+              [colour]="card.colour"
+              [photo]="card.photo"
+            />
+            <div class="card__rows">
+              @for (row of card.rows; track row.label) {
+                <app-list-row [title]="row.label" [plain]="row.value" />
+              }
+            </div>
           </div>
         </article>
       </ng-template>

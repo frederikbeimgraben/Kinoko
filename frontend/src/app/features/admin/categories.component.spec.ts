@@ -55,10 +55,11 @@ describe('CategoriesComponent', () => {
     expect(screen.getByRole('button', { name: /Mehl/ })).toBeInTheDocument();
   });
 
-  it('legt eine Kategorie an', async () => {
+  it('legt eine Kategorie an, ohne Löschen anzubieten', async () => {
     const { api } = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Kategorie anlegen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kategorie hinzufügen' }));
+    expect(screen.queryByRole('button', { name: 'Löschen' })).not.toBeInTheDocument();
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Zimt');
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 

@@ -1,20 +1,27 @@
-import { photoPath, type Photo } from '../../core/api/models';
-import { shortDate } from '../../core/i18n/dates';
-import { SEPARATOR } from '../../core/i18n/numbers';
-import { locationText } from '../../core/i18n/places';
-import { COARSE_DIGITS } from '../../core/location/grid';
-import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
+import { photoPath, type Photo, type SpeciesEntry } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
+import type { TranslationKey } from '../../core/i18n/translations';
+import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
+import { dayAndMonth } from '../admin/find-card';
+import { capColour } from '../entries/cap-colour';
+import { isoDatum } from '../entries/formats';
 
-/** A card in the review stack. */
+/** One label and value row of a card, per the board `ImageQueue`. */
+export interface ReviewCardRow {
+  readonly label: string;
+  readonly value: string;
+}
+
+/** A card in the review stack: the photo, the species with the caption, and the facts of the submission. */
 export interface ReviewCard {
-  id: string;
-  path: string;
-  species: string;
-  licence: string;
-  meta: string;
-  caption: string | null;
-  alt: string;
+  readonly id: string;
+  readonly path: string;
+  readonly species: string;
+  /** The cap colour of the species, for the tile next to the name. */
+  readonly colour: string;
+  readonly caption: string;
+  readonly rows: readonly ReviewCardRow[];
+  readonly alt: string;
 }
 
 /** The licence as a code. Own photos show a word, not a licence code. */
@@ -22,26 +29,28 @@ export function licenceText(photo: Photo, i18n: I18nService): string {
   return photo.licence === 'own' ? i18n.translate(OWN_PHOTO_KEY) : LICENCE_CODE[photo.licence];
 }
 
-/** Who sent the photo, when and where. Missing parts are not shown. */
-export function metaText(photo: Photo, i18n: I18nService): string {
-  const parts = [photo.ownerName];
-  const day = photo.takenOn ?? photo.createdAt.slice(0, 10);
-  parts.push(shortDate(day, i18n));
-  if (photo.lat != null && photo.lon != null) {
-    const shown = locationText(photo.lat, photo.lon, i18n.locale(), COARSE_DIGITS);
-    parts.push(`${shown.lat}${SEPARATOR}${shown.lon}`);
-  }
-  return parts.join(SEPARATOR);
+/** The rows Urheber, Lizenz and Eingereicht. */
+function rowsOf(photo: Photo, i18n: I18nService): readonly ReviewCardRow[] {
+  const row = (label: TranslationKey, value: string): ReviewCardRow => ({
+    label: i18n.translate(label),
+    value,
+  });
+  return [
+    row('image.field.author', photo.photographer || photo.ownerName),
+    row('image.field.licence', licenceText(photo, i18n)),
+    row('image.field.submitted', dayAndMonth(isoDatum(new Date(photo.createdAt)), i18n.locale())),
+  ];
 }
 
-export function reviewCard(photo: Photo, species: string, i18n: I18nService): ReviewCard {
+export function reviewCard(photo: Photo, species: SpeciesEntry | null, i18n: I18nService): ReviewCard {
+  const name = species?.name ?? i18n.translate('find.unknownSpecies');
   return {
     id: photo.id,
     path: photoPath(photo.id, 'full'),
-    species,
-    licence: licenceText(photo, i18n),
-    meta: metaText(photo, i18n),
-    caption: photo.caption ?? null,
-    alt: photo.caption ?? species,
+    species: name,
+    colour: capColour(species),
+    caption: photo.caption ?? '',
+    rows: rowsOf(photo, i18n),
+    alt: photo.caption ?? name,
   };
 }

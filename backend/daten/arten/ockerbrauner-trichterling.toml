@@ -19,6 +19,7 @@ hutrand = { von = ["wellig", "gerieft"] }
 stielmerkmale = ["faserig", "hohl"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Ockertrichter.htm"
 geprueftAm = "2026-09-12"
 
@@ -39,15 +40,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "hellbraun", hex = "#a97c50" }, { name = "ocker", hex = "#c8963c" }]
-sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }]
 stiel = [{ name = "hellbraun", hex = "#a97c50" }, { name = "cremefarben", hex = "#f0e6c8" }, { name = "weiß", hex = "#ffffff" }]
 fleisch = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["suesslich", "pilzig", "angenehm"]

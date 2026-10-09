@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, convertToParamMap } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { Router } from '@angular/router';
+import { Router, type NavigationExtras } from '@angular/router';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -95,7 +95,7 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
     expect(await screen.findByRole('heading', { name: 'Steinpilz bearbeiten' })).toBeInTheDocument();
     expect(screen.getByText('1 284')).toBeInTheDocument();
     expect(screen.getByText('4 bis 20 cm, braun')).toBeInTheDocument();
-    expect(screen.getByText(/geändert von Frederik/)).toBeInTheDocument();
+    expect(screen.getByText(/geändert von Frederik am/)).toBeInTheDocument();
     await noViolations(container);
   });
 
@@ -182,19 +182,75 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
     ]);
   });
 
-  it('führt von einem Text nirgends hin und von einem Merkmal auf sein Teil', async () => {
+  it('führt von einem Merkmal auf sein Teil und zu jedem Abschnitt', async () => {
     await build();
     const router = TestBed.inject(Router);
     const paths: string[] = [];
-    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
-      paths.push(parts.join('/'));
-      return Promise.resolve(true);
-    });
+    vi.spyOn(router, 'navigate').mockImplementation(
+      (parts: readonly unknown[], extras?: NavigationExtras) => {
+        const query = new URLSearchParams(
+          extras?.queryParams as Record<string, string> | undefined,
+        ).toString();
+        paths.push(parts.join('/') + (query === '' ? '' : `?${query}`));
+        return Promise.resolve(true);
+      },
+    );
     await screen.findByRole('button', { name: /Hut/ });
 
-    await userEvent.click(screen.getByRole('button', { name: /Hut/ }));
-    await userEvent.click(screen.getByText('Kurzbeschreibung'));
+    await userEvent.click(screen.getByRole('button', { name: /^Hut/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Zeitraum/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Fruchtschicht/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Geruch und Geschmack/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Reagenz hinzufügen' }));
 
-    expect(paths).toEqual(['/verwaltung/arten/boletus-edulis/teil/cap']);
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/teil/cap',
+      '/verwaltung/arten/boletus-edulis/zeitraum',
+      '/verwaltung/arten/boletus-edulis/fruchtschicht',
+      '/verwaltung/arten/boletus-edulis/sinne/geruch',
+      '/verwaltung/arten/boletus-edulis/verfaerbung/cap/0?ausloeser=reagent',
+    ]);
+  });
+
+  it('speichert Beschreibung und Hinweis mit Speichern', async () => {
+    const { http } = await build();
+    await screen.findByRole('textbox', { name: 'Beschreibung' });
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toHaveValue('Brauner Hut');
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Beschreibung' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Beschreibung' }), 'Großer Röhrling.');
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.method).toBe('PUT');
+    expect(call.request.body).toEqual(
+      expect.objectContaining({ description: 'Großer Röhrling.', edibilityNote: 'Geschmacksprobe' }),
+    );
+  });
+
+  it('nennt ohne Namen nur den Tag der Änderung', async () => {
+    await build({ ...PROFILE, updatedByName: null });
+
+    expect(await screen.findByText(/^geändert am/)).toBeInTheDocument();
+    expect(screen.queryByText(/geändert von/)).not.toBeInTheDocument();
+  });
+
+  it('zeigt die Verfärbungen mit ihren Auslösern', async () => {
+    await build({
+      ...PROFILE,
+      colourChanges: [
+        {
+          part: 'flesh',
+          kind: 'mechanical',
+          from: null,
+          to: { name: 'blau', hex: '#5b7fb0' },
+          speed: null,
+          triggers: [{ id: 't', slug: 'pressure', name: 'Druck', kind: 'trigger' }],
+        },
+      ],
+    });
+
+    expect(await screen.findByRole('button', { name: /Druck/ })).toHaveTextContent('blau');
   });
 });

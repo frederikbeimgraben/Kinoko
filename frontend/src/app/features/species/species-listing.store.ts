@@ -41,6 +41,7 @@ export const SpeciesListingStore = signalStore(
       ),
     );
     return {
+      _judged: judged,
       hits: computed(() => judged().hits.slice(0, shown())),
       unassessable: computed(() => judged().unknown),
       hasMore: computed(() => judged().hits.length > shown()),
@@ -49,6 +50,12 @@ export const SpeciesListingStore = signalStore(
   withMethods((store) => ({
     more(): void {
       patchState(store, ({ shown }) => ({ shown: shown + LISTING_PAGE }));
+    },
+    /** Shows enough pages that the row of this species is in the list. */
+    reveal(slug: string): void {
+      const at = store._judged().hits.findIndex((one) => one.species.slug === slug);
+      if (at < store.shown()) return;
+      patchState(store, { shown: Math.ceil((at + 1) / LISTING_PAGE) * LISTING_PAGE });
     },
   })),
 );

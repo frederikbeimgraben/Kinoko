@@ -69,6 +69,19 @@
   --btn-height: var(--action-bar-height, 48px);
 }
 
+// Per the edit boards: two 56 px actions in the flow, 24 px apart, without a bar of their own.
+.footer--stacked {
+  gap: 24px;
+  margin-block-start: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.footer--stacked .footer__main {
+  --btn-height: 56px;
+}
+
 // In the modal, the action is 44 px high, as the board shows it.
 .footer--inline .footer__main {
   --btn-height: var(--action-bar-height, var(--size-tap));

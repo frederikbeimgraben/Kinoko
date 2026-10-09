@@ -34,6 +34,7 @@ export type {
   Measurement,
   MeasurementGroup,
   PartNote,
+  TraitEntry,
   Protection,
   SpeciesBundle,
   SpeciesCounts,

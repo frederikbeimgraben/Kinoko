@@ -1,11 +1,69 @@
 import { TestBed } from '@angular/core/testing';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
+import { SessionStore } from '../../core/auth';
+import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { EMPTY_FIND_DRAFT } from './find-draft';
 import { AddEntryStore } from './add-entry.store';
 
 function state(): AddEntryStore {
   return TestBed.inject(AddEntryStore);
 }
+
+describe('AddEntryStore.begin (board MapSignIn)', () => {
+  function guest(): { flow: AddEntryStore; auth: AuthStub } {
+    const auth = new AuthStub();
+    auth.user.set(null);
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });
+    TestBed.inject(SessionStore).forget();
+    return { flow: state(), auth };
+  }
+
+  it('asks a guest to sign in at "Eintragen", before the form', async () => {
+    const { flow, auth } = guest();
+    auth.reply = false;
+
+    expect(await flow.begin()).toBe(false);
+
+    expect(auth.asked).toBe(1);
+    expect(flow.step()).toBeNull();
+  });
+
+  it('waits for the session check when the tap comes before its answer', async () => {
+    const auth = new AuthStub();
+    auth.user.set(null);
+    auth.checked.set(false);
+    auth.settled.set(false);
+    let answer: () => void = () => undefined;
+    auth.whenChecked = () =>
+      new Promise<void>((done) => {
+        answer = done;
+      });
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });
+    TestBed.inject(SessionStore).forget();
+    auth.reply = false;
+    const flow = state();
+
+    const begun = flow.begin();
+    await Promise.resolve();
+    expect(auth.asked).toBe(0);
+    auth.settled.set(true);
+    answer();
+
+    expect(await begun).toBe(false);
+    expect(auth.asked).toBe(1);
+  });
+
+  it('opens the actions at once with an account', async () => {
+    const auth = new AuthStub();
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });
+    const flow = state();
+
+    expect(await flow.begin()).toBe(true);
+
+    expect(auth.asked).toBe(0);
+    expect(flow.step()).toBe('actions');
+  });
+});
 
 describe('AddEntryStore', () => {
   it('starts with the actions sheet and makes the map dark', () => {
@@ -121,6 +179,48 @@ describe('AddEntryStore', () => {
 
     flow.startFind();
     expect(flow.findDraft()).toEqual(EMPTY_FIND_DRAFT);
+  });
+
+  it('keeps the marker values while the crosshair sets the point again', () => {
+    const flow = state();
+    const draft = {
+      name: 'Alter Fichtenbestand',
+      colour: 'orange',
+      note: null,
+      visibility: 'private',
+      groupId: null,
+    } as const;
+
+    flow.startMarker();
+    flow.adoptLocation([9, 48]);
+    flow.editMarkerLocation(draft);
+    expect([flow.step(), flow.location(), flow.objectDraft()]).toEqual(['markerLocation', null, draft]);
+
+    flow.adoptLocation([9.2, 48.2]);
+    expect([flow.step(), flow.objectDraft()]).toEqual(['markerForm', draft]);
+
+    flow.startMarker();
+    expect(flow.objectDraft()).toBeNull();
+  });
+
+  it('keeps the corners and the zone values for "Umriss ändern"', () => {
+    const flow = state();
+    const draft = {
+      name: 'Schönbuch Nord',
+      colour: 'green',
+      note: null,
+      visibility: 'private',
+      groupId: null,
+    } as const;
+    flow.startZone();
+    flow.addCorner([9, 48]);
+    flow.addCorner([9.1, 48]);
+    flow.addCorner([9.1, 48.1]);
+    flow.closeZone();
+
+    flow.editZoneOutline(draft);
+
+    expect([flow.step(), flow.ring().length, flow.objectDraft()]).toEqual(['zoneDraw', 3, draft]);
   });
 
   it('adds a history step on open and removes it on stop', () => {

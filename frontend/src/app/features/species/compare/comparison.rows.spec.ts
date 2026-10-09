@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { I18nService } from '../../../core/i18n/i18n.service';
-import { speciesEntry } from '../../../testing/species-fixture';
+import { PALETTE, speciesEntry } from '../../../testing/species-fixture';
+import { catalogueNames } from '../catalogue-text';
 import { capShapeOf, measurementOf, partNoteOf, seasonOf, senseSmellOf, swatchOf } from './comparison.rows';
 
 const WHITE = { name: 'weiß', hex: '#f2efe6' };
@@ -37,12 +38,24 @@ describe('comparison.rows', () => {
   });
 
   it('nimmt die Farben eines Teils samt Namen', () => {
-    expect(swatchOf(STONE, 'cap')).toEqual({
+    expect(
+      swatchOf(
+        STONE,
+        'cap',
+        catalogueNames(i18n(), () => PALETTE),
+      ),
+    ).toEqual({
       colours: [WHITE, BROWN],
       mode: 'multiple',
       label: 'weiß, braun',
     });
-    expect(swatchOf(STONE, 'ring')).toBeNull();
+    expect(
+      swatchOf(
+        STONE,
+        'ring',
+        catalogueNames(i18n(), () => PALETTE),
+      ),
+    ).toBeNull();
   });
 
   it('nennt die Hutform von Jugendform und Altersform, wo sie sich unterscheiden', () => {
@@ -56,8 +69,18 @@ describe('comparison.rows', () => {
   });
 
   it('nimmt für den Geruch die Marken, sonst nichts', () => {
-    expect(senseSmellOf(STONE)).toBe('erdig');
-    expect(senseSmellOf(KNIGHT)).toBeNull();
+    expect(
+      senseSmellOf(
+        STONE,
+        catalogueNames(i18n(), () => PALETTE),
+      ),
+    ).toBe('erdig');
+    expect(
+      senseSmellOf(
+        KNIGHT,
+        catalogueNames(i18n(), () => PALETTE),
+      ),
+    ).toBeNull();
   });
 
   it('schreibt die Saison mit kurzen Monaten', () => {

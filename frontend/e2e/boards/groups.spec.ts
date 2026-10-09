@@ -31,6 +31,8 @@ const BOARD_GLOSSARY = [
 ].map(([id, term, definition]) => ({
   id,
   term,
+  termEn: '',
+  definitionEn: '',
   definition,
   updatedByName: 'Frederik',
   updatedAt: '2026-09-12T10:00:00Z',

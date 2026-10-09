@@ -23,6 +23,16 @@ describe('SpeciesFeaturesComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt den Hinweis zum Speisewert als Zeile mit umbrochenem Satz', async () => {
+    const note = 'Tödlich giftig, schon kleine Mengen schaden der Leber.';
+    const { container } = await render(SpeciesFeaturesComponent, {
+      inputs: { species: speciesEntry({ ...STONE, edibilityNote: note }) },
+    });
+
+    expect(screen.getByText(note)).toBeInTheDocument();
+    expect(container.querySelector('.features__note .row--wrap')).not.toBeNull();
+  });
+
   it('nennt den Handel begrenzt, wo die Art nicht marktfähig ist', async () => {
     await render(SpeciesFeaturesComponent, {
       inputs: { species: speciesEntry({ ...STONE, marketable: false }) },

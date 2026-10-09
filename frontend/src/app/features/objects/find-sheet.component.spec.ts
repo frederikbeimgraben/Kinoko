@@ -13,6 +13,9 @@ import { FIND } from '../../testing/entries-fixture';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FindSheetComponent } from './find-sheet.component';
 
+/** A shared find always has a group: the service refuses a share without one. */
+const GROUPED = { ...FIND, groupId: 'gruppe-eins' };
+
 /** The account and the catalogue are the same for each test of this sheet. */
 function provider(owns = true): (EnvironmentProviders | Provider)[] {
   return [
@@ -45,7 +48,7 @@ interface BuildOptions {
 }
 
 async function build(options: BuildOptions = {}): Promise<Setup> {
-  const { find = FIND, owns = true } = options;
+  const { find = GROUPED, owns = true } = options;
   const { container, detectChanges, fixture } = await render(FindSheetComponent, {
     inputs: { find },
     providers: provider(owns),
@@ -94,7 +97,7 @@ describe('FindSheetComponent', () => {
       setup.refresh();
       expect(screen.getByRole('button', { name: 'Bearbeiten' })).toBeInTheDocument();
     });
-    expect(setup.toasts.success).toEqual(['Gespeichert.']);
+    expect(setup.toasts.success).toEqual(['Der Fund ist gespeichert.']);
   });
 
   it('stays in the form when the change fails', async () => {
@@ -138,7 +141,56 @@ describe('FindSheetComponent', () => {
     await answerPhotos(setup, []);
   });
 
-  it('asks before the delete and closes after it', async () => {
+  it('uploads a photo that the edit adds, and gets the list again', async () => {
+    const setup = await build();
+    await answerPhotos(setup, []);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    const input = setup.container.querySelector('input[type=file]');
+    if (!(input instanceof HTMLInputElement)) throw new Error('no file input');
+    await userEvent.upload(input, new File(['bild'], 'pilz.jpg', { type: 'image/jpeg' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await vi.waitFor(() => {
+      setup.http.expectOne(`/api/finds/${FIND.id}`).flush(FIND);
+    });
+    await vi.waitFor(() => {
+      const upload = setup.http.expectOne({ url: '/api/photos', method: 'POST' });
+      expect((upload.request.body as FormData).get('findId')).toBe(FIND.id);
+      upload.flush({ id: 'foto-neu' });
+    });
+    await answerPhotos(setup, ['foto-neu']);
+
+    expect(setup.toasts.success).toEqual(['Der Fund ist gespeichert.']);
+  });
+
+  it('says so when the find is saved but a new photo fails', async () => {
+    const setup = await build();
+    await answerPhotos(setup, []);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    const input = setup.container.querySelector('input[type=file]');
+    if (!(input instanceof HTMLInputElement)) throw new Error('no file input');
+    await userEvent.upload(input, new File(['bild'], 'pilz.jpg', { type: 'image/jpeg' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await vi.waitFor(() => {
+      setup.http.expectOne(`/api/finds/${FIND.id}`).flush(FIND);
+    });
+    await vi.waitFor(() => {
+      setup.http
+        .expectOne({ url: '/api/photos', method: 'POST' })
+        .flush(null, { status: 500, statusText: 'Server Error' });
+    });
+
+    await vi.waitFor(() => {
+      expect(setup.toasts.failure).toContain('Gespeichert, aber ein Foto ließ sich nicht hochladen.');
+    });
+  });
+
+  it('asks before the delete and closes before the answer', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
@@ -146,12 +198,13 @@ describe('FindSheetComponent', () => {
     expect(screen.getByRole('heading', { name: 'Fund löschen?' })).toBeInTheDocument();
 
     await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
+    expect(setup.closed).toBe(1);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/finds/${FIND.id}`).flush(null);
     });
 
     await vi.waitFor(() => {
-      expect(setup.closed).toBe(1);
+      expect(setup.toasts.success).not.toHaveLength(0);
     });
     expect(setup.toasts.success).toEqual(['Der Fund ist gelöscht.']);
   });

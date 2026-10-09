@@ -94,6 +94,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        /** @description Deletes the own finds, markers, zones, photos, combinations and the groups that the person leads. */
         delete: operations["deleteMyData"];
         options?: never;
         head?: never;
@@ -651,6 +652,25 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/photos/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Takes back an approval or a rejection. The photo is submitted again. */
+        delete: operations["reopenPhoto"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/photos/{id}/lead": {
         parameters: {
             query?: never;
@@ -808,7 +828,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Names of the persons behind the given ids. The answer holds a person only if the caller and this person share one group or more, or if the id is the id of the caller. Other ids have no entry. */
+        /** @description Names of the persons behind the given ids. The answer holds a person only if the caller and this person share one group or more, if the id is the id of the caller, or if the caller has find.review or role.assign. Other ids have no entry. */
         get: operations["resolvePersonNames"];
         put?: never;
         post?: never;
@@ -1109,7 +1129,10 @@ export interface components {
             status: string;
         };
         Config: {
+            /** @description Issuer URL of the SSO. Empty when the service has no SSO. */
             oidcIssuer: string;
+            /** @description Name of the SSO for the sign-in button. Empty without an SSO. */
+            oidcName: string;
             oidcClientId: string;
             origin: string;
             version: string;
@@ -1159,6 +1182,8 @@ export interface components {
             groups?: number;
             groupMembers?: number;
             glossary?: number;
+            /** @description The count of categories, all kinds together. */
+            terms?: number;
             dataSourcesMissing?: number;
             dataSourcesFailed?: number;
         };
@@ -1239,7 +1264,7 @@ export interface components {
         /** @enum {string} */
         PhotoSize: "thumb" | "list" | "full";
         /** @enum {string} */
-        MarkerColour: "green" | "brown" | "blue" | "red" | "gold" | "grey";
+        MarkerColour: "green" | "yellow" | "orange" | "red" | "violet" | "grey";
         HexColour: string;
         GeoPoint: {
             /** @constant */
@@ -1254,6 +1279,8 @@ export interface components {
         ColourValue: {
             name: string;
             hex: components["schemas"]["HexColour"];
+            /** @description The hex of the nearest standard colour. It names the colour in other languages. */
+            nearest?: components["schemas"]["HexColour"] | null;
         };
         StandardColour: {
             key: string;
@@ -1436,6 +1463,7 @@ export interface components {
             };
             reading: string;
             part: components["schemas"]["BodyPart"] | null;
+            /** @description The places of a reaction without one body part. Known places are slugs joined by "," (a body part, milk, branches, branch_tips or extract). Other text is the German place of the source. */
             location: string | null;
             /** @enum {string} */
             result: "positive" | "negative" | "variable" | "unknown";
@@ -1493,6 +1521,8 @@ export interface components {
             slug: string;
             name: string;
             position: number;
+            /** @description The count of species that use the term. Only the list has it. */
+            usage?: number;
         };
         TermCreate: {
             kind: components["schemas"]["TermKind"];
@@ -1548,6 +1578,14 @@ export interface components {
         };
         FindPage: {
             items: components["schemas"]["Find"][];
+            nextCursor: string | null;
+        };
+        OpenFind: components["schemas"]["Find"] & {
+            /** @description The display name of the person who reported the find. */
+            ownerName?: string | null;
+        };
+        OpenFindPage: {
+            items: components["schemas"]["OpenFind"][];
             nextCursor: string | null;
         };
         Marker: {
@@ -1783,14 +1821,22 @@ export interface components {
             /** Format: uuid */
             id: string;
             term: string;
+            /** @description The English term. Empty if nobody has written it. */
+            termEn: string;
             definition: string;
+            /** @description The English definition. Empty if nobody has written it. */
+            definitionEn: string;
             updatedByName?: string | null;
             /** Format: date-time */
             updatedAt: string;
         };
         GlossaryEntryWrite: {
             term: string;
+            /** @description Without the field, a create stores an empty text and an update keeps the old one. */
+            termEn?: string;
             definition: string;
+            /** @description Without the field, a create stores an empty text and an update keeps the old one. */
+            definitionEn?: string;
         };
         PersonName: {
             /** Format: uuid */
@@ -1804,6 +1850,8 @@ export interface components {
             email?: string | null;
             name?: string | null;
             roles: components["schemas"]["RoleBrief"][];
+            /** @description The admin group of the SSO makes the person an admin without a stored role. */
+            groupAdmin: boolean;
             /** Format: date-time */
             createdAt: string;
         };
@@ -3032,7 +3080,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FindPage"];
+                    "application/json": components["schemas"]["OpenFindPage"];
                 };
             };
             401: components["responses"]["Unauthorized"];
@@ -3694,6 +3742,41 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    reopenPhoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["Id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Photo"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["Forbidden"];
+            404: components["responses"]["NotFound"];
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             422: components["responses"]["Validation"];
         };
     };

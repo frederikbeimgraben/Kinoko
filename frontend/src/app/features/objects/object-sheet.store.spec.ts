@@ -47,14 +47,75 @@ describe('ObjectSheetStore', () => {
     const { state } = build();
     vi.spyOn(TestBed.inject(OverlayStackService), 'back').mockImplementation(() => undefined);
     state.show('zone', 'zone-eins');
-    state.setEditingCorners(true);
+    state.startCorners();
 
     state.show('zone', 'zone-zwei');
     expect(state.editingCorners()).toBe(false);
 
-    state.setEditingCorners(true);
+    state.startCorners();
     state.close();
     expect(state.editingCorners()).toBe(false);
+  });
+
+  it('keeps a new outline for the zone form until the form closes', () => {
+    const { state } = build();
+    state.show('zone', 'zone-eins');
+    state.setEditing(true);
+    const outline = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [9, 48],
+          [9.1, 48],
+          [9.1, 48.1],
+          [9, 48],
+        ],
+      ],
+    };
+
+    state.startCorners();
+    expect(state.editing()).toBe(false);
+    state.endCorners(outline);
+    expect(state.editing()).toBe(true);
+    expect(state.editingCorners()).toBe(false);
+    expect(state.outline()).toEqual(outline);
+
+    // "Abbrechen" in a second corner step keeps the outline of the first one.
+    state.startCorners();
+    state.endCorners(null);
+    expect(state.outline()).toEqual(outline);
+
+    state.setEditing(false);
+    expect(state.outline()).toBeNull();
+  });
+
+  it('keeps a new location for the form until the form closes', () => {
+    const { state } = build();
+    state.show('marker', 'marker-eins');
+    state.setEditing(true);
+
+    state.startRelocating();
+    expect(state.relocating()).toBe(true);
+    state.relocate([9.1, 48.5]);
+
+    expect(state.relocating()).toBe(false);
+    expect(state.editing()).toBe(true);
+    expect(state.moved()).toEqual([9.1, 48.5]);
+
+    state.setEditing(false);
+    expect(state.moved()).toBeNull();
+  });
+
+  it('keeps the old location when the crosshair step is cancelled', () => {
+    const { state } = build();
+    state.show('find', 'fund-eins');
+    state.setEditing(true);
+    state.startRelocating();
+
+    state.cancelRelocating();
+
+    expect(state.relocating()).toBe(false);
+    expect(state.moved()).toBeNull();
   });
 
   it('does not go back without an open object', () => {

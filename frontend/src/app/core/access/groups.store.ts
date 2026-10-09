@@ -1,9 +1,11 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, of, pipe, switchMap, tap, type Observable } from 'rxjs';
+import { catchError, filter, firstValueFrom, of, pipe, switchMap, tap, type Observable } from 'rxjs';
 import { GroupsApi } from '../api/groups.api';
 import type { FriendGroup } from '../api/models';
+import { isProblemDetail } from '../api/problem';
+import { AuthService } from '../auth';
 import { confirmed, settle, withSearchableList } from '../state';
 
 /** What `load` asks for: all groups (with `group.manage`) and a call without a toast. */
@@ -11,6 +13,11 @@ interface GroupsQuery {
   readonly all: boolean;
   readonly quiet: boolean;
 }
+
+/** The result of a join: the group, `invalid` for an unknown code, or `null` for another error. */
+export type JoinResult = FriendGroup | 'invalid' | null;
+
+const NOT_FOUND = 404;
 
 /** The groups in memory. The account, the visibility choice and the administration read the same list. */
 export const GroupsStore = signalStore(
@@ -20,7 +27,7 @@ export const GroupsStore = signalStore(
     sortKey: (group) => group.name,
   }),
   withState({ writing: false }),
-  withProps(({ items }) => ({ groups: items, _api: inject(GroupsApi) })),
+  withProps(({ items }) => ({ groups: items, _api: inject(GroupsApi), _auth: inject(AuthService) })),
   withMethods((store) => {
     const fetch = rxMethod<GroupsQuery>(
       pipe(
@@ -51,11 +58,30 @@ export const GroupsStore = signalStore(
       load(all = false, quiet = false): void {
         fetch({ all, quiet });
       },
+      /** Reads the own groups quietly each time a person signs in. A guest has no groups to read. */
+      loadOnSignIn: rxMethod<boolean>(
+        pipe(
+          filter(Boolean),
+          tap(() => {
+            fetch({ all: false, quiet: true });
+          }),
+        ),
+      ),
       create(name: string): Promise<FriendGroup | null> {
         return write(store._api.create(name), keep);
       },
-      join(inviteCode: string): Promise<FriendGroup | null> {
-        return write(store._api.join(inviteCode), keep);
+      async join(inviteCode: string): Promise<JoinResult> {
+        patchState(store, { writing: true });
+        const result = await firstValueFrom(store._api.join(inviteCode)).then(
+          (group): JoinResult => {
+            keep(group);
+            return group;
+          },
+          (problem: unknown): JoinResult =>
+            isProblemDetail(problem) && problem.status === NOT_FOUND ? 'invalid' : null,
+        );
+        patchState(store, { writing: false });
+        return result;
       },
       rename(id: string, name: string): Promise<FriendGroup | null> {
         return write(store._api.rename(id, name), keep);

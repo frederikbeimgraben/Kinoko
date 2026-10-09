@@ -6,6 +6,7 @@ import { AccountStore } from '../../core/access/account.store';
 import { noViolations } from '../../testing/axe';
 import { GroupsApiDouble, OWNER_ID, groupsApiProvider } from '../../testing/groups-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
+import { ToastService } from '../../ui/toast/toast.service';
 import { GroupsComponent } from './groups.component';
 
 async function build(api = new GroupsApiDouble()): Promise<{
@@ -58,13 +59,50 @@ describe('GroupsComponent', () => {
     expect(api.created).toEqual(['Aa']);
   });
 
-  it('creates nothing without a name', async () => {
+  it('creates nothing without a name and tells why', async () => {
     const { api } = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Gruppe anlegen' }));
     await userEvent.click(screen.getByRole('button', { name: /^Anlegen$/ }));
 
     expect(api.created).toEqual([]);
+    expect(screen.getByRole('alert')).toHaveTextContent('Gib einen Namen für die Gruppe ein.');
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveAttribute('aria-invalid', 'true');
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Wald');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('confirms a new group with a toast', async () => {
+    await build();
+    const toasts = TestBed.inject(ToastService);
+    const success = vi.spyOn(toasts, 'success');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Gruppe anlegen' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), '  Wald  ');
+    await userEvent.click(screen.getByRole('button', { name: /^Anlegen$/ }));
+
+    await vi.waitFor(() => {
+      expect(success).toHaveBeenCalledWith('Gruppe Wald angelegt');
+    });
+  });
+
+  it('tells that an invite code is unknown and keeps the sheet open', async () => {
+    const api = new GroupsApiDouble();
+    api.rejectWith = { type: 'about:blank', title: 'Nicht gefunden', status: 404 };
+    await build(api);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Gruppe beitreten' }));
+    await userEvent.type(screen.getByRole('textbox', { name: 'Einladungscode' }), 'XXXXXX');
+    await userEvent.click(screen.getByRole('button', { name: /^Beitreten$/ }));
+
+    await vi.waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('Diesen Einladungscode gibt es nicht.');
+    });
+    expect(screen.getByRole('button', { name: /^Beitreten$/ })).toBeInTheDocument();
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Einladungscode' }), 'Y');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('joins a group with a code', async () => {
@@ -85,6 +123,7 @@ describe('GroupsComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Gruppe beitreten' }));
     await userEvent.click(screen.getByRole('button', { name: /^Beitreten$/ }));
     expect(api.joined).toEqual([]);
+    expect(screen.getByRole('alert')).toHaveTextContent('Gib den Einladungscode ein.');
 
     const sheet = screen.getByRole('dialog');
     await userEvent.click(within(sheet).getByRole('button', { name: 'Schließen' }));

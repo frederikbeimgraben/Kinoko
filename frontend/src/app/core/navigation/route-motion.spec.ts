@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
-import { routeMotion, type RouteMotion } from './route-motion';
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { Router, type ViewTransitionInfo } from '@angular/router';
+import { describe, expect, it, vi } from 'vitest';
+import { ViewportService } from '../layout/viewport.service';
+import { applyRouteMotion, routeMotion, type RouteMotion } from './route-motion';
 
 const CASES: readonly [string | null, string, RouteMotion][] = [
   [null, '/karte', 'none'],
@@ -40,5 +44,27 @@ describe('routeMotion', () => {
 
   it.each(WIDE_CASES)('%s -> %s gives %s on the desktop', (from, to, expected) => {
     expect(routeMotion(from, to, true)).toBe(expected);
+  });
+});
+
+describe('applyRouteMotion', () => {
+  it('lets a transition without motion end at once instead of a skip, so no AbortError comes', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: Router,
+          useValue: { url: '/karte', currentNavigation: () => ({ finalUrl: '/karte?x=1' }) },
+        },
+        { provide: ViewportService, useValue: { wide: signal(false) } },
+      ],
+    });
+    const transition = { skipTransition: vi.fn() };
+
+    TestBed.runInInjectionContext(() => {
+      applyRouteMotion({ transition } as unknown as ViewTransitionInfo);
+    });
+
+    expect(transition.skipTransition).not.toHaveBeenCalled();
+    expect(document.documentElement.dataset['motion']).toBe('none');
   });
 });

@@ -38,6 +38,7 @@ func (m *Module) Routes(r *server.Router) {
 	r.Handle(http.MethodGet, "/photos/{id}/{size}", m.file)
 	r.Handle(http.MethodPost, "/photos/{id}/approval", m.approve)
 	r.Handle(http.MethodPost, "/photos/{id}/rejection", m.reject)
+	r.Handle(http.MethodDelete, "/photos/{id}/review", m.reopen)
 	r.Handle(http.MethodPut, "/photos/{id}/lead", m.lead)
 }
 

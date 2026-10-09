@@ -19,7 +19,7 @@ import type { IconName } from '../svg-icon/svg-icon.component';
   imports: [ButtonComponent],
   templateUrl: './action-bar.component.html',
   styleUrl: './action-bar.component.scss',
-  host: { '[class.action-bar--modal]': 'modal()' },
+  host: { '[class.action-bar--modal]': 'modal()', '[class.action-bar--stacked]': 'stacked()' },
 })
 export class ActionBarComponent {
   readonly primary = input.required<string>();
@@ -42,9 +42,13 @@ export class ActionBarComponent {
   readonly split = input(false);
   /** The main action stands on the left, as some boards show it. */
   readonly leadFirst = input(false);
+  /** The actions stand in the flow below the fields, each full width, as the edit boards show it. */
+  readonly stacked = input(false);
 
   /** The icon of the second action, per the board `MapFindView`: "trash". */
   readonly secondaryIcon = input<IconName>();
+  /** The second action keeps its fill also in the modal, as "Umriss ändern" on `MapDesktopZoneForm`. */
+  readonly tonalSecondary = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();
@@ -67,9 +71,9 @@ export class ActionBarComponent {
   protected readonly quietDanger = computed(() => this.ghost() && this.danger());
 
   protected readonly secondaryVariant = computed<ButtonKind>(() => {
-    if (this.modal()) return this.secondaryDanger() ? 'textdanger' : 'text';
+    if (this.modal() && !this.tonalSecondary()) return this.secondaryDanger() ? 'textdanger' : 'text';
     if (this.ghost()) return 'text';
-    if (this.foot) return this.secondaryDanger() ? 'danger' : 'tonal';
+    if (this.foot || this.stacked()) return this.secondaryDanger() ? 'danger' : 'tonal';
     return this.secondaryDanger() ? 'textdanger' : 'tonal';
   });
 

@@ -11,19 +11,20 @@ import {
   signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import type { MarkerColour } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
+import { ThemeStore } from '../../core/theme/theme.store';
+import { darkGround } from '../../map/background';
 import { MAP_ADAPTER } from '../../map/map.tokens';
+import { ZONE_DEFAULT_COLOUR } from '../../ui/zone-shape/zone-shape.constants';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { EntriesStore, type SaveResult } from '../entries/entries.store';
-import { colourHex } from '../entries/colors';
 import { hectaresText } from '../entries/formats';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore } from '../map/map.store';
@@ -32,15 +33,15 @@ import { AddEntryStore, CORNERS_MINIMUM, type Location } from './add-entry.store
 import { coordinatesText } from './coordinates';
 import { FindFormComponent, type FindSubmission } from './find-form.component';
 import type { FindDraft } from './find-draft';
-import { asPolygon, loadAreaCalculator, type AreaCalculator } from './area';
+import { areaHa, asPolygon } from './area';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
 import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
 import { StepInput } from './step-input';
 import { paintRing, clearRing } from './step-painter';
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 
-/** The set location is blue on the desktop, as on the boards. */
-const MARK_COLOUR = 'blue' as const;
+/** The set location is blue on the desktop, as on the boards. No object colour is blue. */
+const MARK_COLOUR = '#185468';
 
 /** Board `MapDesktopAdd`: the menu is at the bottom right of the map pane, where the plus button was. */
 const POPOVER_ANCHOR: PopoverAnchor = { bottom: 24, end: 24 };
@@ -88,15 +89,15 @@ export class AddEntryComponent implements OnDestroy {
 
   protected readonly state = inject(AddEntryStore);
   protected readonly wide = inject(ViewportService).wide;
+  private readonly theme = inject(ThemeStore);
+  /** The crosshair gets a light halo on a dark base map. */
+  protected readonly darkGround = computed(() => darkGround(this.map.background(), this.theme.effective()));
   protected readonly anchor = POPOVER_ANCHOR;
 
-  private readonly area = signal<AreaCalculator | null>(null);
   private session: DrawSession | null = null;
   private sessionRunning: Promise<DrawSession | null> | null = null;
 
   protected readonly saving = signal(false);
-  /** The colour of the zone that the step draws. */
-  protected readonly zoneColor = signal<MarkerColour>('green');
 
   /** On the desktop, the actions hang at the button. Each other step is a modal. */
   protected readonly asPopover = computed(() => this.wide() && this.state.onActions());
@@ -166,9 +167,8 @@ export class AddEntryComponent implements OnDestroy {
   );
 
   protected readonly hectares = computed(() => {
-    const compute = this.area();
     const polygon = asPolygon(this.state.ring());
-    return compute !== null && polygon !== null ? compute(polygon) : 0;
+    return polygon === null ? 0 : areaHa(polygon);
   });
 
   protected readonly drawStatus = computed(() =>
@@ -208,10 +208,10 @@ export class AddEntryComponent implements OnDestroy {
       const step = this.state.step();
       if (map === null) return;
       if (step !== 'findLocation' && step !== 'markerLocation') return;
-      paintRing(map, [], colourHex(MARK_COLOUR), { mark: this.state.location() });
+      paintRing(map, [], MARK_COLOUR, { mark: this.state.location() });
     });
 
-    // Terra Draw and Turf load only for a zone. Both are separate chunks, not in the first bundle.
+    // Terra Draw loads only for a zone. It is a separate chunk, not in the first bundle.
     effect(() => {
       const step = this.state.step();
       if (step !== 'zoneDraw' && step !== 'zoneForm') {
@@ -334,17 +334,17 @@ export class AddEntryComponent implements OnDestroy {
     }
   }
 
-  /** The preview on the map follows the chosen colour. */
-  protected onZoneValues(values: ObjectValues): void {
-    this.zoneColor.set(values.colour);
-  }
-
+  // A refused body keeps the form open. The API client already showed the reason of the service.
   private report(result: SaveResult, range: 'melden' | 'marker' | 'zone'): void {
+    if (result === 'abgelehnt') return;
     if (result === 'verworfen') {
       this.toasts.error(this.i18n.translate('melden.verworfen'));
       return;
     }
-    this.toasts.success(this.i18n.translate(`${range}.${result}`));
+    // A waiting entry is not saved yet, so its message is neutral.
+    const message = this.i18n.translate(`${range}.${result}`);
+    if (result === 'wartet') this.toasts.show(message);
+    else this.toasts.success(message);
     this.state.stop();
   }
 
@@ -363,12 +363,11 @@ export class AddEntryComponent implements OnDestroy {
     return point === null ? null : [point[0], point[1]];
   }
 
-  /** Loads Turf and Terra Draw and puts the ring on the map. */
+  /** Loads Terra Draw and puts the ring on the map. */
   private async prepareZone(): Promise<void> {
-    this.area.set(await loadAreaCalculator());
     const map = this.adapter.rawMap();
     if (map === null || this.sessionRunning !== null) return;
-    this.sessionRunning = this.draw(map, colourHex(this.zoneColor()));
+    this.sessionRunning = this.draw(map, ZONE_DEFAULT_COLOUR);
     this.session = await this.sessionRunning;
     this.session?.showRing(this.state.ring(), { wide: this.wide() });
   }

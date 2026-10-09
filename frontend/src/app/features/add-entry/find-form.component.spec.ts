@@ -67,6 +67,9 @@ function sheetClose(container: Element): HTMLElement {
   return close;
 }
 
+/** A shared find always has a group: the service refuses a share without one. */
+const GROUPED = { ...FIND, groupId: 'gruppe-eins' };
+
 describe('FundFormularComponent', () => {
   beforeEach(() => {
     vi.setSystemTime(new Date(2026, 8, 10, 12));
@@ -90,7 +93,6 @@ describe('FundFormularComponent', () => {
 
     await userEvent.type(screen.getByLabelText('Anzahl'), '3');
     await userEvent.type(screen.getByLabelText('Notiz'), 'Unter Fichten');
-    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.submissions[0].input).toEqual({
@@ -100,10 +102,28 @@ describe('FundFormularComponent', () => {
       foundOn: '2026-09-10',
       count: 3,
       note: 'Unter Fichten',
-      visibility: 'shared',
+      visibility: 'private',
       groupId: null,
       forTraining: false,
     });
+  });
+
+  it('hält einen geteilten Fund ohne Gruppe zurück und sagt es', async () => {
+    const setup = await build();
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Geteilt' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(setup.submissions).toHaveLength(0);
+    expect(setup.toasts.failure).toEqual(['Wähle eine Gruppe, um den Fund zu teilen.']);
+  });
+
+  it('gibt einen geteilten Fund mit seiner Gruppe ab', async () => {
+    const setup = await build({ start: GROUPED, withPhotos: false, editing: true });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(setup.submissions[0].input).toMatchObject({ visibility: 'shared', groupId: 'gruppe-eins' });
   });
 
   it('gives its choices with the location row and takes them back as a draft', async () => {
@@ -134,7 +154,11 @@ describe('FundFormularComponent', () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Steinpilz' }));
-    await userEvent.click(screen.getByRole('button', { name: /Semmelstoppelpilz/ }));
+    const rows = [...setup.container.querySelectorAll('app-choice-row')].map((row) => row.textContent.trim());
+    expect(rows[0]).toMatch(/^Steinpilz/);
+    expect(screen.getByRole('checkbox', { name: /^Steinpilz/ })).toBeChecked();
+    await userEvent.click(screen.getByRole('checkbox', { name: /Semmelstoppelpilz/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.submissions[0].input.speciesId).toBe('semmelstoppelpilz');
@@ -208,20 +232,31 @@ describe('FundFormularComponent', () => {
   });
 
   it('füllt sich aus einem vorhandenen Fund, lässt die Fotos weg und behält die Freigabe', async () => {
-    const setup = await build({ start: FIND, withPhotos: false, editing: true });
+    const setup = await build({ start: GROUPED, withPhotos: false, editing: true });
 
     expect(screen.getByLabelText('Datum')).toHaveValue('2026-09-06');
     expect(screen.getByLabelText('Anzahl')).toHaveValue(3);
     expect(screen.queryByText('Fotos')).not.toBeInTheDocument();
-    expect(setup.container.querySelector('.field__trail')).not.toBeNull();
+    expect(screen.getByRole('button', { name: /^Ort/ })).toBeInTheDocument();
+    // Per MapFindEdit the species field has no arrow; a tap still opens the picker.
+    expect(setup.container.querySelector('.field__trail')).toBeNull();
 
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
     expect(setup.submissions[0].input.forTraining).toBe(true);
   });
 
+  it('keeps a find without a species without one, and does not take the species of the map', async () => {
+    const setup = await build({ start: { ...GROUPED, speciesId: null }, withPhotos: false, editing: true });
+
+    expect(screen.queryByText('Steinpilz')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    expect(setup.submissions[0].input.speciesId).toBeNull();
+  });
+
   it('schaltet die Freigabe für das Training um', async () => {
-    const setup = await build({ start: FIND, withPhotos: false, editing: true });
+    const setup = await build({ start: GROUPED, withPhotos: false, editing: true });
 
     await userEvent.click(screen.getByRole('switch', { name: 'Für Training freigeben' }));
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));

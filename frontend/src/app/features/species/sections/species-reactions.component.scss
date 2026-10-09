@@ -31,12 +31,18 @@
   border: 2px solid var(--outline-strong);
 }
 
-.reaction__sources {
-  margin-block-start: 10px;
+.reaction__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 10px 4px 0;
 }
 
-.reaction__legend {
-  margin: 10px 4px 0;
-  font-size: 13px;
+.reaction__mark {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  font-size: var(--fs-13);
   color: var(--text-var);
 }

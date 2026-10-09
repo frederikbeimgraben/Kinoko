@@ -177,6 +177,19 @@ export class MapAdapterDouble implements MapAdapter {
     this.cursors.push(cursor);
   }
 
+  /** The label languages in the order of the calls. */
+  readonly languages: string[] = [];
+  /** The canvas names in the order of the calls. */
+  readonly titles: string[] = [];
+
+  setLabelLanguage(language: string): void {
+    this.languages.push(language);
+  }
+
+  setTitle(title: string): void {
+    this.titles.push(title);
+  }
+
   onMapClick(handler: (point: readonly [number, number]) => void): () => void {
     this.clicked = handler;
     return () => (this.clicked = null);

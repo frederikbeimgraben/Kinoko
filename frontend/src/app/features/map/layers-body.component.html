@@ -1,11 +1,10 @@
 <app-section [label]="'map.basemap.title' | t">
   <app-row-group role="radiogroup" [attr.aria-label]="'map.basemap.title' | t">
-    @for (choice of grounds(); track choice.value) {
+    @for (choice of grounds; track choice.value) {
       <app-choice-row
         [label]="choice.label | t"
         [subline]="choice.sub ? (choice.sub | t) : undefined"
         [checked]="choice.value === ground()"
-        [attr.aria-disabled]="choice.available ? null : 'true'"
         (toggled)="chooseGround(choice.value)"
       />
     }

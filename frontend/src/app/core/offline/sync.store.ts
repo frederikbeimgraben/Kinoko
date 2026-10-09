@@ -1,4 +1,4 @@
-import { DestroyRef, computed, inject } from '@angular/core';
+import { DestroyRef, computed, effect, inject, untracked } from '@angular/core';
 import {
   patchState,
   signalStore,
@@ -13,6 +13,8 @@ import { ApiClient } from '../api/api-client';
 import { ENTRY_PATHS } from '../api/entry-paths';
 import { PhotosApi } from '../api/photos.api';
 import { AuthService } from '../auth';
+import { I18nService } from '../i18n/i18n.service';
+import { ToastService } from '../../ui/toast/toast.service';
 import { OfflineStore } from './offline-store';
 import type { SyncKind, SyncOperation, SyncTask } from './sync.types';
 
@@ -37,6 +39,8 @@ export const SyncStore = signalStore(
     _photos: inject(PhotosApi),
     _auth: inject(AuthService),
     _offline: inject(OfflineStore),
+    _toasts: inject(ToastService),
+    _i18n: inject(I18nService),
   })),
   withComputed(({ tasks }) => ({
     pendingCount: computed(() => tasks().length),
@@ -127,6 +131,9 @@ export const SyncStore = signalStore(
         Promise.resolve({ sent: 0, stopped: false }),
       );
       await read();
+      // The person saw "waits for the transfer" before, so the end of the wait gets a message too.
+      if (sent.sent === 0) return 0;
+      store._toasts.success(store._i18n.translate('entry.pending.sent', { count: sent.sent }));
       return sent.sent;
     }
 
@@ -182,6 +189,10 @@ export const SyncStore = signalStore(
   }),
   withHooks({
     onInit(store) {
+      // A queued entry goes out at the sign-in on each page, not only on the map.
+      effect(() => {
+        if (store._auth.signedIn()) untracked(() => void store.flush());
+      });
       const online = (): void => {
         store._setOnline(true);
         void store.flush();
@@ -189,6 +200,10 @@ export const SyncStore = signalStore(
       const offline = (): void => {
         store._setOnline(false);
       };
+      // The queue goes out after each sign-in, also after the return from the SSO on any page.
+      effect(() => {
+        if (store._auth.signedIn()) untracked(() => void store.flush());
+      });
       addEventListener('online', online);
       addEventListener('offline', offline);
       inject(DestroyRef).onDestroy(() => {

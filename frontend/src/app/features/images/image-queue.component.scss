@@ -1,24 +1,37 @@
+@use '../admin/page';
+
 :host {
-  display: flex;
-  flex-direction: column;
-  block-size: 100%;
-  overflow: hidden;
+  @include page.page;
 }
 
+// The card starts below the head, as on the board `ImageQueue`. Only the empty state is in the centre.
 .queue {
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: center;
   min-block-size: 0;
-  padding: 20px var(--size-gutter) 24px;
-  overflow: hidden;
+  padding: 0 16px 24px;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.queue__counter {
-  font-size: var(--fs-row-meta);
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
+.queue--empty {
+  justify-content: center;
+}
+
+// On the desktop the card has the width of the board `AdminDesktopImageQueue`, in the centre of the pane.
+app-review-queue {
+  align-self: center;
+  inline-size: min(100%, 488px);
+}
+
+.queue__badge {
+  --pilz-level-height: 28px;
+  --pilz-level-inline: 11px;
+  --pilz-level-radius: 999px;
+  --pilz-level-font: var(--fs-13);
+
+  margin-inline-end: 8px;
 }
 
 .card {
@@ -26,36 +39,27 @@
   flex-direction: column;
 }
 
+// The host of the image is 44 px wide by default. The card image fills the card.
 .card__image {
-  block-size: 330px;
+  inline-size: 100%;
+  block-size: clamp(220px, calc(100dvh - 444px), 400px);
   border-radius: 0;
+}
+
+@media (min-width: 1024px) {
+  .card__image {
+    block-size: 458px;
+  }
 }
 
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 14px var(--space-4);
+  gap: 4px;
+  padding: 16px 16px 12px;
 }
 
-.card__head {
+.card__rows {
   display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.card__species {
-  flex: 1;
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
-}
-
-.card__meta {
-  font-size: var(--fs-row-meta);
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
-.card__caption {
-  font-size: var(--fs-sm);
+  flex-direction: column;
 }

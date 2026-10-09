@@ -16,6 +16,7 @@ hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["voll"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/FilzigerGelbfuss.htm"
 geprueftAm = "2026-09-12"
 
@@ -36,14 +37,14 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "orangebraun", hex = "#c86e28" }]
-sporenlager = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "kupferrot", hex = "#a5522a" }, { name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "kupferrot", hex = "#a5522a" }, { name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
 stiel = [{ name = "orangegelb", hex = "#e9a32c" }]
 fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "orange", hex = "#e08a2e" }]
 sporenpulver = [{ name = "violett", hex = "#6b4a8a" }, { name = "schwarz", hex = "#1a1a1a" }, { name = "oliv", hex = "#6b7a3a" }]
 
 [farben.verfaerbung]
 von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "rot", hex = "#c0392b" }]
+nach = [{ name = "rot", hex = "#c0392b" }]
 
 [geruch]
 tags = ["fruchtig"]

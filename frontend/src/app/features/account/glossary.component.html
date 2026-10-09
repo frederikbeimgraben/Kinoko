@@ -14,6 +14,15 @@
 <div class="pad">
   @if (!loaded()) {
     <app-row-group-skeleton [count]="4" [lines]="3" />
+  } @else if (failed()) {
+    <app-state-view
+      icon="warning"
+      [title]="'state.loadFailed' | t"
+      [action]="'common.retry' | t"
+      (actionClick)="retry()"
+    />
+  } @else if (empty()) {
+    <app-state-view icon="info" [title]="'glossary.empty' | t" />
   } @else if (entries().length === 0) {
     <app-state-view icon="search" [title]="'glossary.notFound' | t" />
   } @else {

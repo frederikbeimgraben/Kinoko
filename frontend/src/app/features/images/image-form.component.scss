@@ -12,3 +12,28 @@
   flex-direction: column;
   gap: 20px;
 }
+
+.form__photo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+// The label of the licence control has the look of a field label, per the board `ImageAdd`.
+.form__label {
+  display: block;
+  margin-block-end: var(--space-2);
+  padding-left: 4px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.form__error {
+  margin: 0;
+  padding-inline-start: 4px;
+  font-size: var(--fs-row-meta);
+  color: var(--bad);
+}

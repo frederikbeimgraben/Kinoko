@@ -1,4 +1,10 @@
-<label class="search" [class.search--plain]="plain()" [attr.for]="fieldId">
+<label
+  class="search"
+  [class.search--plain]="plain()"
+  [class.search--keyboard]="keyboard()"
+  [attr.for]="fieldId"
+  (pointerdown)="onPointerDown()"
+>
   <app-svg-icon class="search__icon" name="search" [size]="24" [strokeWidth]="1.8" />
   <input
     class="search__input"
@@ -10,6 +16,8 @@
     [value]="value()"
     [attr.placeholder]="placeholder() || null"
     (input)="onInput($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
   />
   @if (!empty()) {
     <button

@@ -1,5 +1,3 @@
-@use '../../../styles/card';
-
 :host {
   position: relative;
   display: flex;
@@ -8,28 +6,21 @@
   overflow: hidden;
 }
 
+// The rhythm of the edit boards, as `section.body` gives it.
 .create {
-  --form-field-inline: 14px;
+  --section-label-height: 12px;
+  --form-field-label-height: 12px;
+  --form-field-inline: 16px;
   --form-field-size: var(--fs-row-title);
   --form-field-shift: 0;
 
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 20px;
-  padding: var(--size-gutter);
+  gap: 24px;
+  padding: 8px var(--size-gutter) 24px;
   overflow-y: auto;
   scrollbar-width: none;
-}
-
-.create__section {
-  @include card.section-title;
-}
-
-.create__fields {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .create__choices {
@@ -41,9 +32,4 @@
   padding-inline: var(--size-gutter);
   overflow-y: auto;
   scrollbar-width: none;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
-  --action-bar-size: var(--fs-row-title);
 }

@@ -10,6 +10,7 @@ weitereNamen = ["Maitake", "Spatelhütiger Porling", "Laubporling", "Kamm-Porlin
 fruchtschicht = { art = "roehren" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Klapperschwamm.htm"
 geprueftAm = "2026-09-12"
 
@@ -28,10 +29,6 @@ sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "braun", hex = "#7a
 stiel = [{ name = "graubraun", hex = "#7d6f5e" }]
 fleisch = [{ name = "hellbraun", hex = "#a97c50" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "schwarz", hex = "#1a1a1a" }]
 
 [geruch]
 tags = ["angenehm"]

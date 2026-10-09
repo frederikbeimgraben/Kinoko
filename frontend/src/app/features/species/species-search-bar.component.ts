@@ -11,7 +11,7 @@ import { SearchFieldComponent } from '../../ui/search-field/search-field.compone
 import { SPECIES_SORTS, SpeciesFilterStore, type SpeciesSort } from './filter.store';
 
 /** The text of each sort, in the order of the popover. */
-const SORT_TEXT: Readonly<Record<SpeciesSort, TranslationKey>> = {
+export const SORT_TEXT: Readonly<Record<SpeciesSort, TranslationKey>> = {
   name: 'species.sort.name',
   latin: 'species.sort.latinName',
   edibility: 'species.sort.edibility',

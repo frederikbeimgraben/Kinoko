@@ -5,7 +5,6 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen, within } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import { AuthService } from '../../core/auth';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SyncStore } from '../../core/offline/sync.store';
 import type { SyncTask } from '../../core/offline/sync.types';
@@ -213,9 +212,11 @@ describe('EntriesComponent', () => {
 
     const banner = screen.getByRole('button', { name: 'Jetzt senden' });
     expect(banner).toHaveTextContent('1 Übertragung ausstehend');
+    // The page already sent once after the load of the own entries.
+    const before = setup.queue.sent;
     await userEvent.click(banner);
 
-    expect(setup.queue.sent).toBe(1);
+    expect(setup.queue.sent).toBe(before + 1);
   });
 
   it('tells about a missing connection with the count of the pending transfers', async () => {
@@ -227,16 +228,22 @@ describe('EntriesComponent', () => {
     expect(screen.getByText('1 ausstehend')).toBeInTheDocument();
   });
 
-  it('asks for a sign-in without an account', async () => {
+  it('goes to the SSO in one tap without an account (board EntriesGuest)', async () => {
     const setup = await build({ signedIn: false, pending: [], shared: [] });
-    const asked = vi.spyOn(TestBed.inject(AuthService), 'requestSignIn').mockResolvedValue(true);
 
     expect(screen.getByText('Nicht angemeldet')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Filter' })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Anmelden' }));
 
-    expect(asked).toHaveBeenCalledTimes(1);
+    expect(setup.auth.signIns).toEqual(['/eintraege']);
+    expect(setup.auth.asked).toBe(0);
     await noViolations(setup.container);
+  });
+
+  it('reads no groups without an account', async () => {
+    await build({ signedIn: false, pending: [], shared: [] });
+
+    TestBed.inject(HttpTestingController).expectNone('/api/groups');
   });
 
   it('says only that nothing is there with an account', async () => {
@@ -274,6 +281,8 @@ describe('EntriesComponent', () => {
         call.url === '/api/photos' &&
         call.params.get('mine') === 'true' &&
         call.params.get('cursor') === cursor;
+    // The list reads the own photos once at the start, for the thumbs of the finds.
+    for (const call of http.match(photos(null))) call.flush({ items: [], nextCursor: null });
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
     setup.refresh();
@@ -285,6 +294,28 @@ describe('EntriesComponent', () => {
       .flush({ items: [photo({ id: 'p2', findId: FIND_ENTRY.id })], nextCursor: null });
 
     expect([...TestBed.inject(MyImagesStore).findIds()]).toEqual([FIND_ENTRY.id]);
+    expect(TestBed.inject(EntriesStore).filter().withPhoto).toBe(true);
+  });
+
+  it('shows the own photo of a find as the thumb of its row', async () => {
+    const setup = await build({ pending: [] });
+    const http = TestBed.inject(HttpTestingController);
+    http
+      .expectOne((call) => call.url === '/api/photos' && call.params.get('mine') === 'true')
+      .flush({ items: [photo({ id: 'p9', findId: FIND_ENTRY.id, speciesId: null })], nextCursor: null });
+    setup.refresh();
+
+    await vi.waitFor(() => {
+      http.expectOne('/api/photos/p9/list');
+    });
+  });
+
+  it('toggles the photo filter also with a tap on the row text', async () => {
+    const setup = await build();
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'nur mit Foto' }));
+
     expect(TestBed.inject(EntriesStore).filter().withPhoto).toBe(true);
   });
 });

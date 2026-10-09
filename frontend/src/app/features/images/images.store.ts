@@ -16,7 +16,7 @@ interface ImagesState {
   query: PhotoQuery | null;
   /** The share of the running upload. `null` means that no upload runs. */
   percent: number | null;
-  /** True while a submission without network waits on the device. */
+  /** True when the last submission went into the queue of the device, because there was no network. */
   queued: boolean;
 }
 
@@ -75,6 +75,7 @@ export const ImagesStore = signalStore(
       /** Prepares the photo and sends it. Without network it waits in the queue. */
       async submit(input: PhotoInput, file: File): Promise<Photo | null> {
         const prepared = await withoutMetadata(file);
+        patchState(store, { queued: false });
         if (!store._sync.online()) {
           await store._sync.enqueue('photo', 'create', { ...input }, [prepared]);
           patchState(store, { queued: true });
@@ -100,6 +101,14 @@ export const ImagesStore = signalStore(
 
       reject(id: string, reason: string): Promise<void> {
         return settle(id, store._api.reject(id, reason));
+      },
+
+      /** Takes back a decision. `false` means that the service kept it. */
+      reopen(id: string): Promise<boolean> {
+        return firstValueFrom(store._api.reopen(id)).then(
+          () => true,
+          () => false,
+        );
       },
 
       remove(id: string): Promise<void> {

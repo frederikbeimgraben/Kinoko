@@ -2,12 +2,14 @@ package texts_test
 
 import (
 	"net/http"
+	"slices"
 	"testing"
 
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/testkit"
 )
 
-var glossaryEntry = map[string]string{"term": "Hymenium", "definition": "Die Fruchtschicht eines Pilzes."}
+var glossaryEntry = map[string]string{"term": "Zystide", "definition": "Sterile Zelle im Hymenium."}
 
 func with(base map[string]string, key, value string) map[string]string {
 	out := map[string]string{key: value}
@@ -28,9 +30,9 @@ func anna() *testkit.Person {
 
 func TestListIsOpenToEveryone(t *testing.T) {
 	env := testkit.New(t)
-	listed := env.Get("/glossary", nil).Expect(t, http.StatusOK)
-	if string(listed.Body) != `{"items":[]}` {
-		t.Fatal(string(listed.Body))
+	items := env.Get("/glossary", nil).Expect(t, http.StatusOK).Map(t)["items"].([]any)
+	if len(items) == 0 || items[0].(map[string]any)["termEn"] == "" {
+		t.Fatal(items)
 	}
 }
 
@@ -44,16 +46,18 @@ func TestCreateReadAndDelete(t *testing.T) {
 	env := testkit.New(t)
 	grantTextEdit(t, env)
 	body := env.Post("/glossary", glossaryEntry, anna()).Expect(t, http.StatusCreated).Map(t)
-	if body["term"] != "Hymenium" || body["updatedByName"] != "anna" {
+	if body["term"] != "Zystide" || body["updatedByName"] != "anna" {
 		t.Fatal(body)
 	}
-	items := env.Get("/glossary", nil).Map(t)["items"].([]any)
-	if len(items) != 1 || items[0].(map[string]any)["id"] != body["id"] {
-		t.Fatal(items)
+	ids := func() []any {
+		return fn.Map(env.Get("/glossary", nil).Map(t)["items"].([]any), func(item any) any { return item.(map[string]any)["id"] })
+	}
+	if !slices.Contains(ids(), body["id"]) {
+		t.Fatal(ids())
 	}
 	env.Delete("/glossary/"+body["id"].(string), anna()).Expect(t, http.StatusNoContent)
-	if items := env.Get("/glossary", nil).Map(t)["items"].([]any); len(items) != 0 {
-		t.Fatal(items)
+	if slices.Contains(ids(), body["id"]) {
+		t.Fatal("still listed")
 	}
 }
 
@@ -68,6 +72,30 @@ func TestUpdateChangesTheDefinition(t *testing.T) {
 	}
 }
 
+func TestTheEnglishDefinitionIsStoredAndKeptByAnUpdateWithoutIt(t *testing.T) {
+	env := testkit.New(t)
+	grantTextEdit(t, env)
+	made := env.Post("/glossary", with(glossaryEntry, "definitionEn", "Sterile cell in the hymenium."), anna()).
+		Expect(t, http.StatusCreated).Map(t)
+	if made["definitionEn"] != "Sterile cell in the hymenium." {
+		t.Fatal(made)
+	}
+	changed := env.Put("/glossary/"+made["id"].(string), with(glossaryEntry, "definition", "Kurz."), anna()).
+		Expect(t, http.StatusOK).Map(t)
+	if changed["definitionEn"] != "Sterile cell in the hymenium." || changed["definition"] != "Kurz." {
+		t.Fatal(changed)
+	}
+}
+
+func TestAnEntryWithoutEnglishHasAnEmptyText(t *testing.T) {
+	env := testkit.New(t)
+	grantTextEdit(t, env)
+	made := env.Post("/glossary", glossaryEntry, anna()).Expect(t, http.StatusCreated).Map(t)
+	if made["definitionEn"] != "" {
+		t.Fatal(made)
+	}
+}
+
 func TestATermStandsOnce(t *testing.T) {
 	env := testkit.New(t)
 	grantTextEdit(t, env)
@@ -76,7 +104,7 @@ func TestATermStandsOnce(t *testing.T) {
 	if errs := twice["errors"].([]any); errs[0].(map[string]any)["field"] != "term" || errs[0].(map[string]any)["code"] != "taken" {
 		t.Fatal(twice)
 	}
-	other := env.Post("/glossary", with(glossaryEntry, "term", "Stiel"), anna()).Expect(t, http.StatusCreated).Map(t)
+	other := env.Post("/glossary", with(glossaryEntry, "term", "Lamellenschneide"), anna()).Expect(t, http.StatusCreated).Map(t)
 	env.Put("/glossary/"+other["id"].(string), glossaryEntry, anna()).Expect(t, http.StatusUnprocessableEntity)
 	env.Put("/glossary/"+first["id"].(string), glossaryEntry, anna()).Expect(t, http.StatusOK)
 }
@@ -87,4 +115,15 @@ func TestAnUnknownEntry(t *testing.T) {
 	missing := "/glossary/11111111-1111-1111-1111-111111111111"
 	env.Put(missing, glossaryEntry, anna()).Expect(t, http.StatusNotFound)
 	env.Delete(missing, anna()).Expect(t, http.StatusNotFound)
+}
+
+func TestTheEnglishTermIsStoredAndKeptByAnUpdateWithoutIt(t *testing.T) {
+	env := testkit.New(t)
+	grantTextEdit(t, env)
+	made := env.Post("/glossary", with(glossaryEntry, "termEn", "Cystidium"), anna()).Expect(t, http.StatusCreated).Map(t)
+	changed := env.Put("/glossary/"+made["id"].(string), with(glossaryEntry, "definition", "Kurz."), anna()).
+		Expect(t, http.StatusOK).Map(t)
+	if made["termEn"] != "Cystidium" || changed["termEn"] != "Cystidium" {
+		t.Fatal(made, changed)
+	}
 }

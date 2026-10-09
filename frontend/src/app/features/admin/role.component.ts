@@ -14,17 +14,18 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { SwitchComponent } from '../../ui/switch/switch.component';
 import { AdminStore } from './admin.store';
 import { AREA_TEXT, PERMISSION_TEXT } from './labels';
-import { roleName } from './role-name';
+import { roleAbout, roleName } from './role-name';
 
 /** The route segment that creates a new role. */
 export const NEW_ROLE = 'neu';
@@ -58,7 +59,7 @@ function seeded<T>(role: Signal<Role | null>, pick: (role: Role | null) => T) {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    CheckRowComponent,
+    ListRowComponent,
     ConfirmDialogComponent,
     FormFieldComponent,
     PageHeaderComponent,
@@ -66,6 +67,7 @@ function seeded<T>(role: Signal<Role | null>, pick: (role: Role | null) => T) {
     RowGroupSkeletonComponent,
     SectionComponent,
     StateViewComponent,
+    SwitchComponent,
     TranslatePipe,
   ],
   templateUrl: './role.component.html',
@@ -92,7 +94,9 @@ export class RoleComponent {
 
   protected readonly name = seeded(this.role, (role) => role?.name ?? '');
   protected readonly slug = seeded(this.role, (role) => role?.slug ?? '');
-  protected readonly description = seeded(this.role, (role) => role?.description ?? '');
+  protected readonly description = seeded(this.role, (role) =>
+    role === null ? '' : roleAbout(this.i18n, role),
+  );
   protected readonly chosen = seeded<ReadonlySet<Permission>>(
     this.role,
     (role) => new Set(role?.permissions),
@@ -103,7 +107,7 @@ export class RoleComponent {
   protected readonly title = computed(() => {
     const current = this.role();
     if (current) return roleName(this.i18n, current.name);
-    return this.i18n.translate(this.creating() ? 'admin.role.new' : 'admin.roles.title');
+    return this.i18n.translate(this.creating() ? 'admin.role.create' : 'admin.roles.title');
   });
 
   /** The name field of a built-in role shows the translated name, not the key. */
@@ -134,7 +138,7 @@ export class RoleComponent {
   protected readonly deleteQuestion = computed(() => {
     const current = this.role();
     const name = current ? roleName(this.i18n, current.name) : '';
-    return `${name} ${this.i18n.translate('admin.role.deleteConfirm')}`;
+    return this.i18n.translate('admin.role.deleteQuestion', { name });
   });
 
   constructor() {
@@ -154,13 +158,25 @@ export class RoleComponent {
   protected save(): void {
     if (!this.ready()) return;
     const permissions = [...this.chosen()];
-    const description = this.description().trim() || null;
+    // The built-in text is not stored. Only a text of the person goes to the service.
+    const current = this.role();
+    const typed = this.description().trim();
+    const about = current === null ? '' : roleAbout(this.i18n, { ...current, description: '' });
+    const description = typed === '' || (current?.builtIn === true && typed === about) ? null : typed;
     const onDone = (): void => {
       this.leave();
     };
     this.store.saveRole(
       this.creating()
-        ? { input: { slug: this.slug().trim(), name: this.name().trim(), description, permissions }, onDone }
+        ? {
+            input: {
+              slug: this.slug().trim(),
+              name: this.name().trim(),
+              ...(description === null ? {} : { description }),
+              permissions,
+            },
+            onDone,
+          }
         : { id: this.id(), patch: { name: this.name().trim(), description, permissions }, onDone },
     );
   }

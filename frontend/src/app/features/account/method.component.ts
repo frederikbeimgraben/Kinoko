@@ -4,14 +4,14 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { AboutTextComponent, type AboutSection } from './about-text.component';
 
 const SECTIONS: readonly AboutSection[] = [
-  { heading: 'account.method.whatHeading', body: 'account.method.whatBody' },
-  { heading: 'account.method.modelHeading', body: 'account.method.modelBody' },
-  { heading: 'account.method.horizonHeading', body: 'account.method.horizonBody' },
-  { heading: 'account.method.uncertaintyHeading', body: 'account.method.uncertaintyBody' },
-  { heading: 'account.method.notHeading', body: 'account.method.notBody' },
+  { heading: 'account.method.visits', body: 'account.method.visitsSub' },
+  { heading: 'account.method.weather', body: 'account.method.weatherSub' },
+  { heading: 'account.method.model', body: 'account.method.modelSub' },
+  { heading: 'account.method.calibration', body: 'account.method.calibrationSub' },
+  { heading: 'account.method.update', body: 'account.method.updateSub' },
 ];
 
-/** The method below the account: what the map shows, how, and how sure it is. */
+/** The method below the account, per `AboutMethod.dc.html`: the inputs, the model and the update cycle. */
 @Component({
   selector: 'app-method',
   changeDetection: ChangeDetectionStrategy.OnPush,

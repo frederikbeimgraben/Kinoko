@@ -6,7 +6,7 @@ describe('roleName', () => {
   it('übersetzt eine eingebaute Rolle über ihren Schlüssel', () => {
     const i18n = TestBed.inject(I18nService);
 
-    expect(roleName(i18n, 'account.role.admin')).toBe('Admin');
+    expect(roleName(i18n, 'account.role.admin')).toBe('Verwaltung');
   });
 
   it('lässt den freien Namen einer eigenen Rolle stehen, ohne eine Meldung', () => {

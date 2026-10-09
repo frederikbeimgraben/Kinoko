@@ -15,6 +15,7 @@ hutform = { von = "eifoermig", nach = "flach" }
 stielmerkmale = ["faserig", "genattert", "knolle", "scheide", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GruenerKnollenblaetterpilz0904.htm"
 geprueftAm = "2026-09-12"
 
@@ -34,14 +35,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "olivbraun", hex = "#6e6435" }, { name = "olivgrün", hex = "#6f8438" }, { name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "oliv", hex = "#6b7a3a" }]
-sporenlager = [{ name = "weiß", hex = "#ffffff" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "weiß", hex = "#ffffff" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grün", hex = "#4f8a3a" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["suesslich", "unangenehm"]

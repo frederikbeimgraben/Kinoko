@@ -20,6 +20,7 @@ baeume = ["eiche"]
 quelle = "eigene Erfahrung"
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Espenrotkappe.htm"
 geprueftAm = "2026-09-12"
 
@@ -51,7 +52,7 @@ sporenpulver = [{ name = "ocker", hex = "#c8963c" }, { name = "braun", hex = "#7
 
 [farben.verfaerbung]
 von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }, { name = "schwarz", hex = "#1a1a1a" }]
+nach = [{ name = "blau", hex = "#3a5f9e" }]
 dauer = "langsam"
 
 [geruch]

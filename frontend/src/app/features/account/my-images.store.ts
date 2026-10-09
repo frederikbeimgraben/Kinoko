@@ -10,7 +10,7 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, EMPTY, expand, filter, of, pipe, reduce, skip, switchMap, tap } from 'rxjs';
-import type { Photo } from '../../core/api/models';
+import { photoPath, type Photo } from '../../core/api/models';
 import { PhotosApi, type PhotoPage } from '../../core/api/photos.api';
 import { AuthService } from '../../core/auth';
 
@@ -28,7 +28,7 @@ export const MyImagesStore = signalStore(
   withState<MyImagesState>({ photos: null, cursor: null, busy: false }),
   withProps(() => {
     const auth = inject(AuthService);
-    return { _api: inject(PhotosApi), _account: computed(() => auth.user()?.sub ?? null) };
+    return { _api: inject(PhotosApi), _auth: auth, _account: computed(() => auth.user()?.sub ?? null) };
   }),
   withComputed(({ photos, cursor }) => ({
     loaded: computed(() => photos() !== null),
@@ -37,6 +37,13 @@ export const MyImagesStore = signalStore(
     findIds: computed<ReadonlySet<string>>(
       () => new Set((photos() ?? []).flatMap((photo) => (photo.findId ? [photo.findId] : []))),
     ),
+    /** The thumb of each find with an own photo: the lead photo, else the first photo of the list.
+     * The last entry of a key wins in a map, so the best photo of a find comes last. */
+    findThumbs: computed<ReadonlyMap<string, string>>(() => {
+      const ofFinds = (photos() ?? []).filter((photo) => photo.findId);
+      const ordered = [...ofFinds.filter((one) => !one.lead).reverse(), ...ofFinds.filter((one) => one.lead)];
+      return new Map(ordered.map((photo) => [photo.findId ?? '', photoPath(photo.id, 'list')] as const));
+    }),
   })),
   withMethods((store) => {
     // A fresh load replaces a pending one. A next page while a page loads has no effect.
@@ -101,6 +108,15 @@ export const MyImagesStore = signalStore(
       loadAll(): void {
         all(true);
       },
+      /** Reads all pages at each sign-in, for the thumbs of the entry list. */
+      loadAllOnSignIn: rxMethod<boolean>(
+        pipe(
+          filter(Boolean),
+          tap(() => {
+            all(true);
+          }),
+        ),
+      ),
       /** Reads the first page again. */
       load(): void {
         page({ fresh: true });

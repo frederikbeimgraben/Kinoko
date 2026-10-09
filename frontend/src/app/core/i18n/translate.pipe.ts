@@ -1,5 +1,6 @@
 import { Pipe, inject, type PipeTransform } from '@angular/core';
 import { I18nService } from './i18n.service';
+import type { TextParams } from './plural';
 import type { TranslationKey } from './translations';
 
 /** `{{ 'nav.karte' | t }}`. The pipe is impure, so a change to the language signal applies immediately. */
@@ -7,7 +8,7 @@ import type { TranslationKey } from './translations';
 export class TranslatePipe implements PipeTransform {
   private readonly i18n = inject(I18nService);
 
-  transform(key: TranslationKey, params?: Record<string, string | number>): string {
+  transform(key: TranslationKey, params?: TextParams): string {
     return this.i18n.translate(key, params);
   }
 }

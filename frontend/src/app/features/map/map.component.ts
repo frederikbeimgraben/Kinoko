@@ -32,7 +32,7 @@ import { ObjectSheetComponent } from '../objects/object-sheet.component';
 import { CombinationStore } from './combination.store';
 import { FactorPickerComponent } from './factor-picker.component';
 import { LayersSheetComponent } from './layers-sheet.component';
-import { MapButtonsComponent } from './map-buttons.component';
+import { MapButtonsComponent, addFits } from './map-buttons.component';
 import { MapColumnComponent } from './map-column.component';
 import { MapOverlayStore } from './map-overlay.store';
 import { MapPanelBodyComponent } from './map-panel-body.component';
@@ -137,7 +137,9 @@ export class MapComponent implements OnDestroy {
   protected readonly showsAdd = computed(() => {
     if (this.overlay() !== null || this.addEntry.running() || this.state.object() !== null) return false;
     if (this.wide()) return true;
-    return !this.state.layersSheetOpen() && !(this.showsMapSheet() && this.state.detent() === 2);
+    if (this.state.layersSheetOpen()) return false;
+    if (!this.showsMapSheet()) return true;
+    return this.state.detent() !== 2 && addFits(this.surface.height(), this.mapSheetHeight());
   });
 
   /** The measured map sheet. The map pads its centre by it, as detents 1 and 2 both take the content height. */
@@ -204,7 +206,7 @@ export class MapComponent implements OnDestroy {
   protected openAddEntry(): void {
     this.state.setLayersSheetOpen(false);
     this.overlayNav.close();
-    this.addEntry.open();
+    void this.addEntry.begin();
   }
 
   /** A long press on an object opens the menu at that point. */

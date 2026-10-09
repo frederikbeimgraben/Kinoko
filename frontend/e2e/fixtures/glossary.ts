@@ -3,7 +3,7 @@
 const STAMP = '2026-09-12T10:00:00Z';
 
 function entry(id: string, term: string, definition: string): Record<string, unknown> {
-  return { id, term, definition, updatedByName: 'Frederik', updatedAt: STAMP };
+  return { id, term, termEn: '', definition, definitionEn: '', updatedByName: 'Frederik', updatedAt: STAMP };
 }
 
 export const GLOSSARY = [

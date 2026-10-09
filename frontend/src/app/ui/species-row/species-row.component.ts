@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, output, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { shareOnNextRoute } from '../../core/navigation/shared-element';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { LevelPillComponent, type BadgeKind } from '../level-pill/level-pill.component';
@@ -44,6 +52,15 @@ export class SpeciesRowComponent {
   readonly chosen = output();
 
   /** Puts the focus on the row. The list moves with the arrow keys this way. */
+  constructor() {
+    // The selected species of a long list can be far down, for example after a link to a comparison.
+    // A row that the list shows in full stays where it is; another row moves to the middle.
+    afterRenderEffect(() => {
+      const row = this.button().nativeElement;
+      if (this.active() && !shownInFull(row)) row.scrollIntoView({ block: 'center' });
+    });
+  }
+
   focus(): void {
     this.button().nativeElement.focus();
   }
@@ -53,4 +70,13 @@ export class SpeciesRowComponent {
     if (key !== undefined) shareOnNextRoute(this.thumb().nativeElement as HTMLElement, key);
     this.chosen.emit();
   }
+}
+
+/** True when the box that scrolls the row shows all of the row. */
+function shownInFull(row: HTMLElement): boolean {
+  let box = row.parentElement;
+  while (box !== null && !/(auto|scroll)/.test(getComputedStyle(box).overflowY)) box = box.parentElement;
+  const view = box?.getBoundingClientRect() ?? new DOMRect(0, 0, window.innerWidth, window.innerHeight);
+  const own = row.getBoundingClientRect();
+  return own.top >= view.top && own.bottom <= view.bottom;
 }

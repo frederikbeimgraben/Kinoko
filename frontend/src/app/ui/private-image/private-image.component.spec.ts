@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import { noViolations } from '../../testing/axe';
-import { PrivateImageComponent } from './private-image.component';
+import { PrivateImageComponent, isLight } from './private-image.component';
 
 interface Setup {
   container: Element;
@@ -98,5 +98,35 @@ describe('PrivateImageComponent', () => {
     });
 
     expect(container.querySelector('.private__fallback')).toHaveClass('private__fallback--dark');
+  });
+
+  it('wählt die Tinte nach der Helligkeit des Grundes', async () => {
+    const { container, rerender } = await render(PrivateImageComponent, {
+      inputs: { alt: 'Steinpilz', colour: '#f3efe6' },
+    });
+
+    expect(container.querySelector('.private__fallback')).toHaveClass('private__fallback--dark');
+    await rerender({ inputs: { alt: 'Steinpilz', colour: '#7a5230' } });
+    expect(container.querySelector('.private__fallback')).not.toHaveClass('private__fallback--dark');
+  });
+
+  it('zeigt ohne Bild im Kopf das große Umrisssymbol auf dem Grund des Kopfes', async () => {
+    const { container } = await render(PrivateImageComponent, {
+      inputs: { alt: 'Steinpilz', fallback: 'hero' },
+    });
+
+    expect(container.querySelector('.private__fallback--hero app-svg-icon svg')).toHaveAttribute(
+      'width',
+      '96',
+    );
+  });
+});
+
+describe('isLight', () => {
+  it('nennt Weiß und Creme hell, Braun und Unlesbares dunkel', () => {
+    expect(isLight('#f3efe6')).toBe(true);
+    expect(isLight('#e8d9b5')).toBe(true);
+    expect(isLight('#7a5230')).toBe(false);
+    expect(isLight('kein Wert')).toBe(false);
   });
 });

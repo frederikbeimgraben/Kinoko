@@ -16,6 +16,7 @@ hutmerkmale = ["vertieft", "genabelt"]
 hutrand = { von = ["eingebogen"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/KuhroterMilchling.htm"
 geprueftAm = "2026-09-12"
 
@@ -30,15 +31,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "kastanienbraun", hex = "#6b3a20" }, { name = "purpurbraun", hex = "#5f3346" }, { name = "fleischrosa", hex = "#e7b9a8" }]
-sporenlager = [{ name = "ockergelb", hex = "#d4a63c" }, { name = "blassgelb", hex = "#efe3a0" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "ockergelb", hex = "#d4a63c" }, { name = "blassgelb", hex = "#efe3a0" }]
 stiel = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "blassocker", hex = "#dcc48a" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }]
 sporenpulver = [{ name = "ocker", hex = "#c8963c" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-dauer = "langsam"
 
 [geruch]
 tags = ["obstartig", "maggiartig"]

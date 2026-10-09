@@ -7,7 +7,6 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 10px;
   block-size: var(--btn-height, 56px);
   padding: 0 24px;
   font-size: var(--btn-font-size, 15px);
@@ -54,6 +53,24 @@
 
 .wide {
   inline-size: 100%;
+}
+
+.face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+// A wide button without a fill has no visible shape. The press shows around the label, not over the full width.
+.shapeless {
+  padding: 0;
+
+  .face {
+    block-size: 100%;
+    padding: 0 16px;
+    border-radius: 24px;
+  }
 }
 
 .btn:disabled {

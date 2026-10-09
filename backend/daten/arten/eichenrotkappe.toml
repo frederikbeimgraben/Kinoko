@@ -16,6 +16,7 @@ fruchtschicht = { art = "roehren" }
 stielmerkmale = ["beflockt"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Eichenrot.htm"
 geprueftAm = "2026-09-12"
 

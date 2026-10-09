@@ -12,6 +12,7 @@ fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["faserig", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/GlattstielStockschwamm.htm"
 geprueftAm = "2026-09-12"
 
@@ -26,14 +27,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "graubraun", hex = "#7d6f5e" }, { name = "gelbbraun", hex = "#a3813f" }, { name = "hellbraun", hex = "#a97c50" }, { name = "braun", hex = "#7a5230" }]
-sporenlager = [{ name = "hellbraun", hex = "#a97c50" }, { name = "beige", hex = "#d9c9a3" }, { name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "hellbraun", hex = "#a97c50" }, { name = "beige", hex = "#d9c9a3" }, { name = "braun", hex = "#7a5230" }]
 stiel = [{ name = "dunkelbraun", hex = "#4a3120" }, { name = "rostbraun", hex = "#8a4b23" }, { name = "schwarzbraun", hex = "#3a2a1c" }, { name = "weiß", hex = "#ffffff" }]
 fleisch = [{ name = "rostbraun", hex = "#8a4b23" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
 sporenpulver = [{ name = "braun", hex = "#7a5230" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = []

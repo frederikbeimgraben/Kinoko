@@ -181,10 +181,12 @@ type lookalikeTarget struct {
 	CapColours []ColourValue
 }
 
-func colourValue(r colourRow) ColourValue {
-	nearest := Nearest(r.Hex).Hex
-	return ColourValue{Name: r.Name, Hex: r.Hex, Nearest: &nearest}
+func named(name, hex string) ColourValue {
+	nearest := Nearest(hex).Hex
+	return ColourValue{Name: name, Hex: hex, Nearest: &nearest}
 }
+
+func colourValue(r colourRow) ColourValue { return named(r.Name, r.Hex) }
 
 func capColours(rows []colourRow) []ColourValue {
 	return fn.Map(fn.Filter(rows, func(r colourRow) bool { return r.Part == enums.BodyPartCap }), colourValue)
@@ -234,7 +236,8 @@ func measurementGroups(rows []measurementRow) []MeasurementGroup {
 
 func colourGroups(id db.ID, c children) []ColourGroup {
 	own := c.colours[id]
-	return fn.Map(c.colourRanges[id], func(r colourRangeRow) ColourGroup {
+	ranges := fn.SortedBy(c.colourRanges[id], func(r colourRangeRow) int { return BodyRank(r.Part) })
+	return fn.Map(ranges, func(r colourRangeRow) ColourGroup {
 		return ColourGroup{Part: r.Part, Mode: r.Mode, Colours: fn.Map(
 			fn.Filter(own, func(x colourRow) bool { return x.Part == r.Part }), colourValue)}
 	})
@@ -254,10 +257,10 @@ func colourChanges(id db.ID, c children, terms map[db.ID]termRow) []ColourChange
 		}
 		var from *ColourValue
 		if r.FromName != nil && r.FromHex != nil {
-			from = &ColourValue{Name: *r.FromName, Hex: *r.FromHex}
+			from = fn.Ptr(named(*r.FromName, *r.FromHex))
 		}
 		return ColourChange{
-			Part: r.Part, Kind: kind, From: from, To: ColourValue{Name: r.ToName, Hex: r.ToHex},
+			Part: r.Part, Kind: kind, From: from, To: named(r.ToName, r.ToHex),
 			Speed: r.Speed, Triggers: fn.Map(found, termRef),
 		}
 	})

@@ -13,6 +13,7 @@ fruchtschicht = { art = "stacheln" }
 hutform = { von = "kugelig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Igelstaeubling.htm"
 geprueftAm = "2026-09-12"
 

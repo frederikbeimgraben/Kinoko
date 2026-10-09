@@ -1,10 +1,20 @@
-/** The surface of a card: border, radius, background and fixed height. */
+/** A card per `kit.css` `.note`. With rows, it is a `.grp`: 2 px gaps, and the clip rounds the outer rows. */
 @mixin card {
   flex: none;
   overflow: hidden;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border-radius: var(--r-item);
+
+  &:has(> app-list-row, > app-add-row, > app-check-row, > app-choice-row, > app-factor-row) {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: none;
+  }
+
+  &:empty {
+    display: none;
+  }
 }
 
 @mixin section-title {

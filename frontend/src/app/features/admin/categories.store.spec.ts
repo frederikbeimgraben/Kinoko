@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ANISE, OAK, TermsApiDouble, termsApiProvider } from '../../testing/terms-fixture';
+import { ANISE, FLOUR, OAK, TermsApiDouble, termsApiProvider } from '../../testing/terms-fixture';
 import { CategoriesStore } from './categories.store';
 
 function build(api = new TermsApiDouble()): { store: CategoriesStore; api: TermsApiDouble } {
@@ -41,6 +41,19 @@ describe('CategoriesStore', () => {
     expect(store.saving()).toBe(false);
   });
 
+  it('gives a new term the count 0 and keeps the count of a renamed term', () => {
+    const api = new TermsApiDouble();
+    api.termList = [{ ...ANISE, usage: 7 }, FLOUR, OAK];
+    const { store } = build(api);
+
+    store.save({ id: null, name: 'Zimt' });
+    store.save({ id: ANISE.id, name: 'Sternanis' });
+
+    const usage = new Map(store.visible().map((one) => [one.name, one.usage]));
+    expect(usage.get('Zimt')).toBe(0);
+    expect(usage.get('Sternanis')).toBe(7);
+  });
+
   it('renames and keeps the list sorted', () => {
     const { store, api } = build();
 
@@ -53,7 +66,7 @@ describe('CategoriesStore', () => {
   it('removes a deleted term from the list', () => {
     const { store, api } = build();
 
-    store.drop({ id: ANISE.id, into: null });
+    store.remove({ id: ANISE.id, into: null });
 
     expect(api.removed).toEqual([ANISE.id]);
     expect(store.visible().map((one) => one.id)).toEqual(['begriff-mehl']);
@@ -62,7 +75,7 @@ describe('CategoriesStore', () => {
   it('removes a merged term from the list', () => {
     const { store, api } = build();
 
-    store.drop({ id: ANISE.id, into: 'begriff-mehl' });
+    store.remove({ id: ANISE.id, into: 'begriff-mehl' });
 
     expect(api.merged).toEqual([{ id: ANISE.id, into: 'begriff-mehl' }]);
     expect(store.visible().map((one) => one.id)).toEqual(['begriff-mehl']);

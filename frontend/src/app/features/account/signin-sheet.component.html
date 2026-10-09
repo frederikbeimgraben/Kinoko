@@ -3,8 +3,11 @@
   [stack]="true"
   [aboveNav]="!wide()"
   [danger]="false"
-  [confirmLabel]="'anmelden.knopf' | t"
-  [cancelLabel]="'anmelden.spaeter' | t"
+  [meta]="ssoMissing() ? ('account.signInUnavailable' | t) : undefined"
+  [confirmLabel]="signInLabel()"
+  [cancelLabel]="'account.signInLater' | t"
+  [confirmDisabled]="ssoMissing()"
+  [confirmBusy]="signingIn()"
   (confirmed)="signIn()"
   (cancelled)="later()"
 />

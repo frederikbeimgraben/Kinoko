@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import type { Combination, Rule } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
@@ -20,18 +21,29 @@ interface Row {
 @Component({
   selector: 'app-combinations',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ChoiceRowComponent, RowGroupComponent],
+  imports: [ChoiceRowComponent, RowGroupComponent, TranslatePipe],
   template: `
-    <app-row-group role="radiogroup">
-      @for (row of rows(); track row.combination.id) {
-        <app-choice-row
-          [label]="row.combination.name ?? ''"
-          [subline]="row.subline"
-          [checked]="row.combination.id === selected()"
-          (toggled)="chosen.emit(row.combination)"
-        />
-      }
-    </app-row-group>
+    @if (rows().length === 0) {
+      <p class="combinations__empty">{{ 'map.combination.empty' | t }}</p>
+    } @else {
+      <app-row-group role="radiogroup">
+        @for (row of rows(); track row.combination.id) {
+          <app-choice-row
+            [label]="row.combination.name ?? ''"
+            [subline]="row.subline"
+            [checked]="row.combination.id === selected()"
+            (toggled)="chosen.emit(row.combination)"
+          />
+        }
+      </app-row-group>
+    }
+  `,
+  styles: `
+    .combinations__empty {
+      margin: 0;
+      padding: 16px 4px;
+      color: var(--text-var);
+    }
   `,
 })
 export class CombinationsComponent {

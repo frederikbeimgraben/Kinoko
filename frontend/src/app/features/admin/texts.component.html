@@ -1,11 +1,13 @@
-<app-page-header [title]="'admin.texts.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
-
-<div class="texts">
+<app-page-header [title]="null" [back]="true" [wide]="wide()" (backClick)="back()">
   <app-search-field
+    headline
     [value]="search()"
     [placeholder]="'admin.texts.searchPlaceholder' | t"
     (valueChange)="search.set($event)"
   />
+</app-page-header>
+
+<div class="texts">
   <app-segmented
     [options]="scopes()"
     [value]="scope()"
@@ -14,28 +16,18 @@
   />
 
   @if (loaded()) {
-    <div class="texts__group">
+    <app-row-group>
       @for (row of rows(); track row.key) {
-        <button class="texts__row tap" type="button" (click)="open(row)">
-          <span class="texts__head">
-            <span class="texts__key">{{ row.key }}</span>
-            @if (row.changed) {
-              <app-level-pill [text]="'admin.texts.changed' | t" />
-            }
-          </span>
-          <span class="texts__values">
-            @for (locale of locales; track locale) {
-              <span class="texts__value">
-                <span class="lbl">{{ localeLabel(locale) }}</span>
-                <span class="texts__text" [class.texts__text--other]="locale !== leadLocale">
-                  {{ row.values[locale] }}
-                </span>
-              </span>
-            }
-          </span>
-        </button>
+        <app-list-row
+          [title]="row.values[locale()] || row.values[leadLocale] || row.key"
+          [subline]="row.key"
+          [badge]="row.changed ? ('admin.texts.changed' | t) : ''"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="open(row)"
+        />
       }
-    </div>
+    </app-row-group>
   } @else {
     <app-row-group-skeleton [count]="6" [lines]="3" />
   }
@@ -43,13 +35,16 @@
 
 <app-overlay-host [open]="draft() !== null" [modal]="true" (closed)="close()">
   @if (draft(); as open) {
-    <app-sheet [label]="open.key" [title]="open.key" [modal]="true" (closed)="close()">
-      <span titleLead class="texts__mark">
-        @if (resettable()) {
-          <app-level-pill [text]="'admin.texts.changed' | t" />
-        }
-      </span>
+    <app-sheet
+      [label]="'admin.texts.edit' | t"
+      [title]="'admin.texts.edit' | t"
+      [modal]="true"
+      (closed)="close()"
+    >
       <div class="texts__form">
+        <app-row-group>
+          <app-list-row [title]="'admin.texts.key' | t" [plain]="open.key" />
+        </app-row-group>
         @for (locale of locales; track locale) {
           <div class="texts__field">
             <span class="lbl">{{ localeLabel(locale) }}</span>

@@ -12,6 +12,7 @@ weitereNamen = ["Rosenseitling", "Rosa Seitling", "Rosafarbener Seitling"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Rosenseitling.htm"
 geprueftAm = "2026-09-12"
 
@@ -26,13 +27,9 @@ bisMonat = 12
 
 [farben]
 hut = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }, { name = "rosa", hex = "#e8a0b0" }, { name = "rot", hex = "#c0392b" }]
-sporenlager = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }, { name = "rosa", hex = "#e8a0b0" }]
+sporenlager = [{ name = "hellgrau", hex = "#c0c0c0" }, { name = "gelb", hex = "#e8c33a" }, { name = "rosa", hex = "#e8a0b0" }]
 stiel = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "grau", hex = "#8a8a8a" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "hellbraun", hex = "#a97c50" }, { name = "beige", hex = "#d9c9a3" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = []

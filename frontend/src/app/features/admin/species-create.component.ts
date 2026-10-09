@@ -11,15 +11,19 @@ import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../ui/section/section.component';
+import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SheetComponent, type DetentSize } from '../../ui/sheet/sheet.component';
-import { EDIBILITY_TEXT, GROUP_NAME_TEXT } from '../species/labels';
+import { GROUP_NAME_TEXT } from '../species/labels';
+import { EDIBILITY_SHORT_TEXT } from './labels';
 import { EMPTY_DRAFT, toWrite, type SpeciesDraft } from './species-create.draft';
 
 /** The choice sheet has the height of its content. */
 const DETENTS: readonly [DetentSize, DetentSize, DetentSize] = [0.5, 0.5, 0.9];
 
-/** The choice that is open. */
-type Picker = 'group' | 'edibility';
+/** The choice that is open in the sheet. */
+type Picker = 'group';
 
 /** A choice value with its name. */
 interface Choice {
@@ -38,6 +42,9 @@ interface Choice {
     ListRowComponent,
     OverlayHostComponent,
     PageHeaderComponent,
+    RowGroupComponent,
+    SectionComponent,
+    SegmentedComponent,
     SheetComponent,
     TranslatePipe,
   ],
@@ -54,24 +61,22 @@ export class SpeciesCreateComponent {
   protected readonly picking = signal<Picker | null>(null);
   protected readonly saving = signal(false);
 
-  protected readonly groupName = computed(() => this.name(GROUP_NAME_TEXT[this.draft().group]));
-  protected readonly edibilityName = computed(() => this.name(EDIBILITY_TEXT[this.draft().edibility]));
-
-  protected readonly pickerTitle = computed(() =>
-    this.i18n.translate(
-      this.picking() === 'group' ? 'admin.species.field.group' : 'admin.species.field.edibility',
-    ),
-  );
-
-  protected readonly choices = computed<Choice[]>(() => {
-    if (this.picking() === 'edibility') {
-      return EDIBILITIES.map((key) => ({ key, name: this.name(EDIBILITY_TEXT[key]) }));
-    }
-    return Object.keys(GROUP_NAME_TEXT).map((key) => ({ key, name: this.name(GROUP_NAME_TEXT[key]) }));
+  protected readonly groupName = computed(() => {
+    const group = this.draft().group;
+    return group === null ? this.i18n.translate('common.none') : this.name(GROUP_NAME_TEXT[group]);
   });
 
-  protected readonly chosen = computed<string>(() =>
-    this.picking() === 'edibility' ? this.draft().edibility : this.draft().group,
+  protected readonly pickerTitle = computed(() => this.i18n.translate('admin.species.field.group'));
+
+  protected readonly choices = computed<Choice[]>(() =>
+    Object.keys(GROUP_NAME_TEXT).map((key) => ({ key, name: this.name(GROUP_NAME_TEXT[key]) })),
+  );
+
+  protected readonly chosen = computed<string>(() => this.draft().group ?? '');
+
+  /** The edibility is a segmented choice, as the board shows it. */
+  protected readonly edibilities = computed<SegmentOption[]>(() =>
+    EDIBILITIES.map((key) => ({ value: key, label: this.name(EDIBILITY_SHORT_TEXT[key]) })),
   );
 
   protected set(field: keyof SpeciesDraft, value: string | boolean): void {
@@ -79,14 +84,19 @@ export class SpeciesCreateComponent {
   }
 
   protected choose(key: string): void {
-    if (this.picking() === 'edibility') this.set('edibility', key);
-    else this.set('group', key);
+    this.set('group', key);
     this.picking.set(null);
   }
 
+  /** Without a group, the species cannot be made: the group sheet opens. */
   protected create(): void {
+    const write = toWrite(this.draft(), this.today());
+    if (write === null) {
+      this.picking.set('group');
+      return;
+    }
     this.saving.set(true);
-    this.api.create(toWrite(this.draft(), this.today())).subscribe({
+    this.api.create(write).subscribe({
       next: (entry) => {
         void this.router.navigateByUrl(`/verwaltung/arten/${entry.slug}`);
       },

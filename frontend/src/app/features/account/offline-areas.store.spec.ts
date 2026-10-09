@@ -65,6 +65,18 @@ describe('OfflineAreasStore', () => {
     vi.unstubAllGlobals();
   });
 
+  it('estimates the size from the tiles, and knows no size without a layer manifest', () => {
+    const store = build();
+    expect(store.estimate(zone)).toBeGreaterThan(0);
+
+    tiles.layerList.set([]);
+    try {
+      expect(store.estimate(zone)).toBeNull();
+    } finally {
+      tiles.layerList.set([layer]);
+    }
+  });
+
   it('keeps the area with the bytes of the tiles that arrived', async () => {
     vi.stubGlobal('fetch', () => Promise.resolve(reply('abcd')));
     const store = build();

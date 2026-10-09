@@ -7,6 +7,7 @@ import {
   type Locale,
   type TranslationKey,
 } from './translations';
+import { plurals, type TextParams } from './plural';
 
 /** The built-in texts for each language. The service loads a missing language on demand. */
 export type FallbackTexts = Readonly<Partial<Record<Locale, Readonly<Record<string, string>>>>>;
@@ -111,12 +112,13 @@ export class I18nService {
     this.setChoice(locale);
   }
 
-  /** Translates a key. `{name}` comes from `params`. An unknown placeholder stays as it is. */
-  translate(key: TranslationKey, params?: Record<string, string | number>): string {
+  /** Translates a key. `{name}` comes from `params`, and an unknown placeholder stays as it is.
+   * A count selects the ICU plural form of the language, `{count, plural, one {…} other {…}}`. */
+  translate(key: TranslationKey, params?: TextParams): string {
     const known = this.lookup(key);
     if (known === null && !isDynamicKey(key)) console.error(`${MISSING_KEY_PREFIX} „${key}“`);
     const text = known ?? key;
-    return params ? this.fill(text, params) : text;
+    return params ? this.fill(plurals(text, params, this.locale()), params) : text;
   }
 
   /** Translates a free name that is possibly not a key. A missing key gives no message. */
@@ -124,12 +126,18 @@ export class I18nService {
     return this.lookup(name) ?? name;
   }
 
+  /** The German text of a key, whatever the UI language. The catalogue stores German names. */
+  translateDefault(key: TranslationKey): string {
+    const known = [this._texts()[DEFAULT_LOCALE]?.[key], this._fallback()[DEFAULT_LOCALE]?.[key]];
+    return known.find((text) => text !== undefined && text !== '') ?? key;
+  }
+
   private lookup(key: string): string | null {
     const german = this._fallback()[DEFAULT_LOCALE]?.[key] ?? '';
     return this.dictionary()[key] || german || null;
   }
 
-  private fill(text: string, params: Record<string, string | number>): string {
+  private fill(text: string, params: TextParams): string {
     return text.replace(/\{(\w+)\}/g, (matches, name: string) =>
       name in params ? String(params[name]) : matches,
     );

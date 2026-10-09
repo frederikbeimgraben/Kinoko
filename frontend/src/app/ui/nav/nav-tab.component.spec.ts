@@ -34,4 +34,18 @@ describe('NavTabComponent', () => {
 
     expect(container.querySelector('.navtab--rail')).not.toBeNull();
   });
+
+  it('shows the press only in the pill, as the board shows no box around the tab', async () => {
+    vi.spyOn(window, 'matchMedia').mockReturnValue({ matches: false } as MediaQueryList);
+    const { container } = await render(NavTabComponent, {
+      inputs: { icon: 'map', label: 'Karte', path: '/karte' },
+      providers: [provideRouter([])],
+    });
+
+    const link = screen.getByRole('link', { name: 'Karte' });
+    link.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 4, clientY: 60 }));
+
+    expect(container.querySelector('.navtab__pill > .ripple-frame')).not.toBeNull();
+    expect(link.querySelector(':scope > .ripple-frame')).toBeNull();
+  });
 });

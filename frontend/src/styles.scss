@@ -31,6 +31,22 @@ body {
   overscroll-behavior: none;
 }
 
+// A picker over a phone sheet hides the sheet below, per `MapGroupPicker`: only the top sheet shows.
+// Without this, the handle of the lower sheet shows above the picker.
+.sheet:not(.sheet--modal):has(.overlay__panel .sheet) {
+  visibility: hidden;
+}
+
+.sheet .overlay__panel {
+  visibility: visible;
+}
+
+// A phone sheet with actions at its foot keeps its buttons free: a message stands above them.
+// The rule is global, because the toast and the sheet are in different components.
+:root:has(.sheet:not(.sheet--modal) app-action-bar[foot]) .toasts {
+  inset-block-end: calc(var(--size-nav) + var(--size-sheet-foot) + var(--space-3));
+}
+
 // MapLibre sets its own font and a fixed line height.
 .maplibregl-map {
   font-family: inherit;

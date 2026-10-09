@@ -1,5 +1,6 @@
 import type { AccountExport } from '../../core/api/models';
-import { exportFile, partsFor, selected, toCsv, toGpx } from './export-files';
+import { exportFile, partsFor, selected, speciesNames, toCsv } from './export-files';
+import { toGpx } from './export-gpx';
 
 const DATA = {
   me: { id: 'me', sub: 'sub', email: 'frederik@example.org', name: 'Frederik' },
@@ -33,6 +34,7 @@ const DATA = {
       lon: 9.1,
       note: null,
       visibility: 'shared',
+      createdAt: '2026-09-01T22:30:00Z',
       updatedAt: '2026-09-02T08:00:00Z',
       deleted: false,
     },
@@ -41,7 +43,8 @@ const DATA = {
     {
       id: 'zone-1',
       name: 'Schönbuch',
-      areaHa: 42,
+      areaHa: 163.52037060546874,
+      visibility: 'private',
       polygon: {
         type: 'Polygon',
         coordinates: [
@@ -61,7 +64,9 @@ const DATA = {
   combinations: [],
 } as unknown as AccountExport;
 
-const species = (id: string | null | undefined): string => (id === 'steinpilz' ? 'Steinpilz' : '');
+const STEINPILZ = { name: 'Steinpilz', scientificName: 'Boletus edulis' };
+
+const species = speciesNames((id) => (id === 'steinpilz' ? STEINPILZ : null));
 
 describe('export files', () => {
   it('keeps only the selected parts', () => {
@@ -94,10 +99,31 @@ describe('export files', () => {
   it('writes one CSV with a kind column and quotes a field with a comma', () => {
     const lines = toCsv(DATA, species).trim().split('\r\n');
 
-    expect(lines[0]).toBe('kind,id,name,date,lat,lon,count,visibility,note');
-    expect(lines[1]).toBe('find,find-1,Steinpilz,2026-09-06,48.5,9.05,3,private,unter <Fichten> & Buchen');
+    expect(lines[0]).toBe('kind,id,name,scientific_name,date,lat,lon,count,area_ha,visibility,note');
+    expect(lines[1]).toBe(
+      'find,find-1,Steinpilz,Boletus edulis,2026-09-06,48.5,9.05,3,,private,unter <Fichten> & Buchen',
+    );
     expect(lines[2]).toContain('"Parkplatz, Nord"');
     expect(lines).toHaveLength(4);
+  });
+
+  it('gives each kind a day only and a zone its area in its own column', () => {
+    const lines = toCsv(DATA, species).trim().split('\r\n');
+    const local = new Date('2026-09-01T22:30:00Z');
+    const markerDay = [
+      local.getFullYear(),
+      String(local.getMonth() + 1).padStart(2, '0'),
+      String(local.getDate()).padStart(2, '0'),
+    ].join('-');
+
+    expect(lines[2]).toBe(`marker,marker-1,"Parkplatz, Nord",,${markerDay},48.6,9.1,,,shared,`);
+    expect(lines[3]).toBe('zone,zone-1,Schönbuch,,2026-09-02,,,,163.52,private,');
+  });
+
+  it('gives the shown name and the scientific name, without a repeat', () => {
+    expect(species('steinpilz')).toEqual({ name: 'Steinpilz', scientific: 'Boletus edulis' });
+    expect(species(null)).toBeNull();
+    expect(toGpx(DATA, species)).toContain('<name>Steinpilz</name>');
   });
 
   it('names the file after the day and the format', () => {
@@ -133,9 +159,9 @@ describe('export files', () => {
     expect(all.combinations).toHaveLength(2);
 
     const lines = toCsv(full, species).trim().split('\r\n');
-    expect(lines).toContain('photo,photo-1,Steinpilz,2026-09-05,48,9,,ready,cap');
-    expect(lines).toContain('photo,photo-2,,2026-09-04T10:00:00Z,,,,ready,');
-    expect(lines).toContain('combination,combo-1,Autumn,2026-09-03T10:00:00Z,,,,,');
+    expect(lines).toContain('photo,photo-1,Steinpilz,Boletus edulis,2026-09-05,48,9,,,ready,cap');
+    expect(lines).toContain('photo,photo-2,,,2026-09-04,,,,,ready,');
+    expect(lines).toContain('combination,combo-1,Autumn,,2026-09-03,,,,,,');
     expect(lines.join('\n')).not.toContain('combo-gone');
   });
 

@@ -1,10 +1,13 @@
 import type { ColourChange, ColourGroup, SpeciesEntry } from '../../core/api/models';
 import {
   changes,
-  freeParts,
   colourGroupAt,
   colourGroups,
+  freeParts,
+  isBodyPart,
+  isTraitPart,
   lookalikeWrites,
+  partDescription,
   withChange,
   withColourGroup,
   withLookalike,
@@ -14,6 +17,7 @@ import {
   withoutMeasurement,
   withoutPart,
   withoutSource,
+  withPartText,
   withSource,
 } from './species-lists';
 
@@ -154,7 +158,38 @@ describe('species-lists', () => {
       colours: [],
       colourChanges: [],
       partNotes: [],
+      traits: [],
     });
+  });
+
+  it('erkennt ein Teil des Vertrags und keinen deutschen Namen', () => {
+    expect(isBodyPart('cap')).toBe(true);
+    expect(isBodyPart('hut')).toBe(false);
+    expect(isBodyPart('')).toBe(false);
+  });
+
+  it('nimmt die Beschreibung eines Teils aus der Notiz oder aus dem Merkmal', () => {
+    const species = {
+      ...SPECIES,
+      traits: [{ key: 'cap', text: 'Aus dem Merkmal.' }],
+      partNotes: [{ part: 'stem', description: 'Aus der Notiz.', comment: '' }],
+    } as unknown as SpeciesEntry;
+
+    expect(partDescription(species, 'cap')).toBe('Aus dem Merkmal.');
+    expect(partDescription(species, 'stem')).toBe('Aus der Notiz.');
+    expect(partDescription(species, 'gills')).toBe('');
+  });
+
+  it('setzt, ersetzt und entfernt den Text eines Teils im Merkmal', () => {
+    const species = { ...SPECIES, traits: [{ key: 'cap', text: 'Alt.' }] } as unknown as SpeciesEntry;
+
+    expect(withPartText(species, 'cap', 'Neu.')).toEqual([{ key: 'cap', text: 'Neu.' }]);
+    expect(withPartText(species, 'stem', 'Weiß.')).toEqual([
+      { key: 'cap', text: 'Alt.' },
+      { key: 'stem', text: 'Weiß.' },
+    ]);
+    expect(withPartText(species, 'cap', '  ')).toEqual([]);
+    expect(isTraitPart('ring')).toBe(false);
   });
 
   it('bietet nur die Teile, die weder Art noch Wahl führen', () => {

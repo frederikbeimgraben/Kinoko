@@ -93,7 +93,7 @@
   flex: 1;
   flex-direction: column;
   gap: 3px;
-  min-inline-size: 0;
+  min-inline-size: var(--list-row-stack-min, 0);
 }
 
 .row--wrap .row__stack {
@@ -160,8 +160,11 @@
   color: var(--label);
 }
 
+// A page can let a long plain text shrink and wrap, so that it does not push the trail out of the row.
 .row__plain {
-  flex: none;
+  flex: 0 var(--list-row-plain-shrink, 0) auto;
+  min-inline-size: 0;
+  text-align: end;
   font-size: var(--fs-14);
   color: var(--label);
 }

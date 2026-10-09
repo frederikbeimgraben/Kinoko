@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TAXON_RANKS, type SpeciesSummary, type TaxonPage, type TaxonRank } from '../../core/api/models';
 import { photoPath } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
@@ -73,7 +73,7 @@ export class TaxonomyComponent {
   private readonly store = inject(TaxonomyStore);
   private readonly catalogue = inject(SpeciesStore);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
+  private readonly history = inject(HistoryService);
   private readonly i18n = inject(I18nService);
 
   readonly rank = input.required<string>();
@@ -131,7 +131,7 @@ export class TaxonomyComponent {
   );
 
   protected back(): void {
-    this.location.back();
+    this.history.back(['/arten']);
   }
 
   protected toStep(route: string): void {
@@ -153,8 +153,8 @@ export class TaxonomyComponent {
     const photo = one.leadPhotoId ?? local?.leadPhotoId ?? null;
     return {
       slug: one.slug,
-      name: one.name,
-      latin: one.scientificName,
+      name: local?.name ?? one.name,
+      latin: (local?.name ?? one.name) === one.scientificName ? '' : one.scientificName,
       image: photo === null ? '' : photoPath(photo, 'list'),
       colour: local === null ? '#7a5230' : leadColour(local),
     };

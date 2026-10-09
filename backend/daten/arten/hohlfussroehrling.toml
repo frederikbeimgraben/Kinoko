@@ -15,6 +15,7 @@ hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["hohl", "faserig", "ring"]
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Hohlfussroehrling.htm"
 geprueftAm = "2026-09-12"
 
@@ -29,14 +30,10 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "rostbraun", hex = "#8a4b23" }]
-sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }]
 stiel = [{ name = "gelb", hex = "#e8c33a" }, { name = "braun", hex = "#7a5230" }]
 fleisch = [{ name = "gelb", hex = "#e8c33a" }]
 sporenpulver = [{ name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["wuerzig", "pilzig"]

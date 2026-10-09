@@ -1,3 +1,13 @@
-@use 'section';
+:host {
+  display: block;
+}
 
-@include section.block;
+:host(:empty) {
+  display: none;
+}
+
+// The colour names wrap before they push the swatch out of the row.
+.hymenium__colour {
+  --list-row-plain-shrink: 1;
+  --list-row-stack-min: max-content;
+}

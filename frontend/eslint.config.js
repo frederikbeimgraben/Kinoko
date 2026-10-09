@@ -40,9 +40,9 @@ module.exports = tseslint.config(
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       '@angular-eslint/prefer-signals': 'error',
       '@angular-eslint/use-component-view-encapsulation': 'error',
-      // Maße, Wochen und Anteile werden in Zeichenketten gesetzt; das ist kein Fehler.
+      // Sizes, weeks and shares go into template strings. That is correct.
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
-      // Eine Angular-Komponente ohne Zustand ist eine gültige Klasse.
+      // An Angular component without state is a valid class.
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
       'no-console': 'error',
       'no-restricted-syntax': [
@@ -64,7 +64,7 @@ module.exports = tseslint.config(
     ...tseslint.configs.disableTypeChecked,
   },
   {
-    // Der einzige Ort, der einen fehlenden Textschlüssel laut meldet.
+    // The only place that reports a missing text key aloud.
     files: ['src/app/core/i18n/i18n.service.ts'],
     rules: { 'no-console': ['error', { allow: ['error'] }] },
   },

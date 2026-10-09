@@ -1,9 +1,4 @@
-<app-page-header
-  [title]="'admin.categories.title' | t"
-  [back]="!wide()"
-  [wide]="wide()"
-  (backClick)="back()"
-/>
+<app-page-header [title]="'admin.categories.title' | t" [back]="true" [wide]="wide()" (backClick)="back()" />
 
 <div class="categories">
   <app-segmented
@@ -18,24 +13,19 @@
     (valueChange)="onSearch($event)"
   />
   @if (loaded()) {
-    <div class="categories__list">
-      <app-add-row
-        [label]="'admin.categories.add' | t"
-        [action]="'admin.category.create' | t"
-        (pressed)="add()"
-      />
-      <app-row-group>
-        @for (category of categories(); track category.id) {
-          <app-list-row
-            [title]="category.name"
-            [subline]="category.slug"
-            [clickable]="true"
-            [chevron]="true"
-            (chosen)="edit(category.id)"
-          />
-        }
-      </app-row-group>
-    </div>
+    <app-row-group>
+      @for (category of rows(); track category.id) {
+        <app-list-row
+          [title]="category.name"
+          [plain]="category.usage"
+          [clickable]="true"
+          (chosen)="edit(category.id)"
+        >
+          <app-svg-icon trail name="edit" tone="dim" [size]="22" [strokeWidth]="1.8" />
+        </app-list-row>
+      }
+      <app-add-row [label]="'admin.category.add' | t" [action]="'admin.category.add' | t" (pressed)="add()" />
+    </app-row-group>
   } @else {
     <app-row-group-skeleton [count]="6" [lines]="2" trail="chevron" />
   }
@@ -45,7 +35,7 @@
   <app-form-sheet
     [title]="sheetTitle()"
     [submit]="'common.save' | t"
-    [secondary]="'common.delete' | t"
+    [secondary]="editing() === 'neu' ? '' : ('common.delete' | t)"
     [secondaryDanger]="true"
     [busy]="saving()"
     (submitted)="save()"

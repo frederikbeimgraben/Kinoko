@@ -6,8 +6,23 @@ import { SpeciesStore } from '../species.store';
 /** The comparison puts two species side by side. */
 const PAIR = 2;
 
+/** The query parameter of the comparison address: `/arten/vergleich?arten=a,b`. */
+export const COMPARE_PARAM = 'arten';
+
+/** The query parameters of a comparison of these species. */
+export function compareQuery(slugs: readonly string[]): Record<string, string> {
+  return { [COMPARE_PARAM]: [...new Set(slugs)].slice(0, PAIR).join(',') };
+}
+
+/** The slugs of a comparison address. An empty or a missing value gives no species. */
+export function compareSlugs(value: string | null | undefined): string[] {
+  return [...new Set((value ?? '').split(',').map((one) => one.trim()))]
+    .filter((one) => one !== '')
+    .slice(0, PAIR);
+}
+
 interface ComparisonFields {
-  /** The chosen slugs, in the order of the choice. The choice is in the store, never in the address. */
+  /** The chosen slugs, in the order of the choice. The page takes them from the address. */
   slugs: readonly string[];
   /** True when the table shows only the rows that differ. */
   diffOnly: boolean;

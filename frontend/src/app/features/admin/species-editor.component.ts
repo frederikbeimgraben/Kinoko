@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import type { BodyPart } from '../../core/api/models';
+import type { BodyPart, SpeciesEntry } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { shortDate } from '../../core/i18n/dates';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { grouped, joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
@@ -19,25 +19,27 @@ import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.componen
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { PartPickerComponent } from './part-picker.component';
 import { SpeciesEditorStore } from './species-editor.store';
-import { featureRows, lookalikeRows, sourceRows, type EditorRow } from './species-editor.rows';
-import { lookalikeWrites } from './species-lists';
+import {
+  changeRows,
+  featureRows,
+  lookalikeRows,
+  moreRows,
+  sourceRows,
+  type EditorRow,
+  type RowText,
+} from './species-editor.rows';
+import { heldParts, lookalikeWrites } from './species-lists';
+import { injectColourLabel } from './colour-label';
+import { termLabel } from './term-label';
 
-/** The target of a section: a part, a text, a lookalike or a source. */
-type BlockKind = 'part' | 'text' | 'lookalike' | 'source';
+/** The route step of each row in the section of the other features. */
+const MORE_STEP: Readonly<Record<string, readonly string[]>> = {
+  zeitraum: ['zeitraum'],
+  fruchtschicht: ['fruchtschicht'],
+  sinne: ['sinne', 'geruch'],
+};
 
-/** A section of the editor with its rows. */
-interface Block {
-  kind: BlockKind;
-  title: string;
-  rows: readonly EditorRow[];
-  /** A section that can grow has a row at the end that adds an item. */
-  add: string | null;
-  addAction: string | null;
-  /** A row that opens a subpage is a button. */
-  opens: boolean;
-}
-
-/** The species in edit mode: counts, forecast, sections and source. */
+/** The species in edit mode: counts, forecast, texts, sections and source. */
 @Component({
   selector: 'app-species-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,6 +47,7 @@ interface Block {
     ActionBarComponent,
     AddRowComponent,
     ConfirmDialogComponent,
+    FormFieldComponent,
     PartPickerComponent,
     ListRowComponent,
     PageHeaderComponent,
@@ -60,6 +63,7 @@ interface Block {
 })
 export class SpeciesEditorComponent {
   private readonly i18n = inject(I18nService);
+  private readonly colourLabel = injectColourLabel();
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorStore);
 
@@ -71,9 +75,13 @@ export class SpeciesEditorComponent {
   protected readonly picking = signal(false);
   protected readonly extraParts = this.state.extraParts;
 
-  protected readonly title = computed(() =>
-    [this.species()?.name, this.i18n.translate('admin.species.editTitle')].filter(Boolean).join(' '),
-  );
+  protected readonly description = linkedSignal(() => this.species()?.description ?? '');
+  protected readonly edibilityNote = linkedSignal(() => this.species()?.edibilityNote ?? '');
+
+  protected readonly title = computed(() => {
+    const name = this.species()?.name;
+    return name === undefined ? '' : this.i18n.translate('admin.species.editName', { name });
+  });
 
   protected readonly stats = computed<Stat[]>(() => {
     const counts = this.state.counts();
@@ -85,71 +93,39 @@ export class SpeciesEditorComponent {
     ];
   });
 
-  protected readonly blocks = computed<Block[]>(() => {
+  private readonly rowText = computed<RowText>(() => ({
+    text: (key, values) => this.i18n.translate(key, values),
+    locale: this.i18n.locale(),
+    term: (term) => termLabel(term, this.i18n),
+    colour: (colour) => this.colourLabel(colour),
+  }));
+
+  private rows(build: (species: SpeciesEntry) => EditorRow[]): EditorRow[] {
     const one = this.species();
-    if (one === null) return [];
-    const text = (key: TranslationKey): string => this.i18n.translate(key);
-    const to = this.i18n.translate('common.to');
-    const blocks: Block[] = [
-      {
-        kind: 'part',
-        title: text('admin.species.section.features'),
-        rows: featureRows(one, this.state.extraParts(), text, to),
-        add: text('admin.characteristic.part'),
-        addAction: text('admin.species.addPart'),
-        opens: true,
-      },
-      {
-        kind: 'text',
-        opens: false,
-        addAction: null,
-        title: text('admin.species.section.texts'),
-        rows: [
-          {
-            key: 'description',
-            title: text('admin.species.field.shortDescription'),
-            value: one.description ?? '',
-          },
-          {
-            key: 'edibilityNote',
-            title: text('admin.species.field.edibilityNote'),
-            value: one.edibilityNote ?? '',
-          },
-        ],
-        add: null,
-      },
-      {
-        kind: 'lookalike',
-        title: text('admin.species.section.lookalikes'),
-        rows: lookalikeRows(one),
-        add: text('admin.species.lookalike'),
-        addAction: text('admin.species.addLookalike'),
-        opens: true,
-      },
-      {
-        kind: 'source',
-        title: text('admin.species.section.sources'),
-        rows: sourceRows(one),
-        add: text('admin.source.title'),
-        addAction: text('admin.species.addSource'),
-        opens: true,
-      },
-    ];
-    return blocks.filter((block) => block.rows.length > 0 || block.add !== null);
-  });
+    return one === null ? [] : build(one);
+  }
+
+  protected readonly features = computed(() =>
+    this.rows((one) => featureRows(one, this.extraParts(), this.rowText())),
+  );
+  protected readonly changes = computed(() => this.rows((one) => changeRows(one, this.rowText())));
+  protected readonly more = computed(() => this.rows((one) => moreRows(one, this.rowText())));
+  protected readonly lookalikes = computed(() => this.rows(lookalikeRows));
+  protected readonly sources = computed(() => this.rows(sourceRows));
 
   /** The person who changed the species last, and the day of the change. */
   protected readonly sourceText = computed(() => {
     const one = this.species();
     if (one === null) return '';
-    return this.i18n.translate('admin.species.sourceLine', {
-      wer: one.updatedByName ?? '',
-      geaendert: this.day(one.updatedAt.slice(0, 10)),
-    });
+    const day = shortDate(one.updatedAt.slice(0, 10), this.i18n);
+    const name = one.updatedByName ?? '';
+    return name === ''
+      ? this.i18n.translate('admin.species.changedOn', { geaendert: day })
+      : this.i18n.translate('admin.species.sourceLine', { wer: name, geaendert: day });
   });
 
-  protected readonly deleteQuestion = computed(
-    () => `${this.species()?.name ?? ''} ${this.i18n.translate('admin.species.deleteConfirmSuffix')}`,
+  protected readonly deleteQuestion = computed(() =>
+    this.i18n.translate('admin.species.deleteQuestion', { name: this.species()?.name ?? '' }),
   );
 
   /** The items that block the deletion: finds and a computed map. */
@@ -167,18 +143,41 @@ export class SpeciesEditorComponent {
     this.state.load(this.slug);
   }
 
-  /** A row opens the subpage of its section. */
-  protected openRow(kind: BlockKind, at: number, key: string): void {
-    if (kind === 'part') void this.router.navigate(['/verwaltung/arten', this.slug(), 'teil', key]);
-    if (kind === 'lookalike') this.open('verwechslung', at);
-    if (kind === 'source') this.open('quelle', at);
+  protected openPart(key: string): void {
+    this.open(['teil', key]);
   }
 
-  /** The row at the end of a section adds an item. */
-  protected addRow(kind: BlockKind): void {
-    if (kind === 'part') this.picking.set(true);
-    if (kind === 'lookalike') this.open('verwechslung', lookalikeWrites(this.species()).length);
-    if (kind === 'source') this.open('quelle', this.species()?.sources.length ?? 0);
+  protected openChange(at: number): void {
+    const change = this.species()?.colourChanges[at];
+    if (change !== undefined) this.open(['verfaerbung', change.part, String(at)]);
+  }
+
+  /** A new colour change starts on the first part of the species. The row adds a reagent, so it opens that tab. */
+  protected addChange(): void {
+    const part: BodyPart = heldParts(this.species())[0] ?? 'cap';
+    this.open(['verfaerbung', part, String(this.species()?.colourChanges.length ?? 0)], {
+      ausloeser: 'reagent',
+    });
+  }
+
+  protected openMore(key: string): void {
+    this.open(MORE_STEP[key] ?? []);
+  }
+
+  protected openLookalike(at: number): void {
+    this.open(['verwechslung', String(at)]);
+  }
+
+  protected addLookalike(): void {
+    this.openLookalike(lookalikeWrites(this.species()).length);
+  }
+
+  protected openSource(at: number): void {
+    this.open(['quelle', String(at)]);
+  }
+
+  protected addSource(): void {
+    this.openSource(this.species()?.sources.length ?? 0);
   }
 
   /** Adds the chosen parts to the species and closes the sheet. */
@@ -187,12 +186,19 @@ export class SpeciesEditorComponent {
     this.picking.set(false);
   }
 
-  private open(step: string, at: number): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug(), step, at]);
+  private open(steps: readonly string[], queryParams: Record<string, string> = {}): void {
+    void this.router.navigate(['/verwaltung/arten', this.slug(), ...steps], { queryParams });
   }
 
   protected setForecast(enabled: boolean): void {
     this.state.setForecast(enabled);
+  }
+
+  /** Writes the texts of the page. The subpages write their own fields. */
+  protected save(): void {
+    const text = (value: string): string | null => (value.trim() === '' ? null : value);
+    this.state.save({ description: text(this.description()), edibilityNote: text(this.edibilityNote()) });
+    this.back();
   }
 
   protected remove(): void {
@@ -206,9 +212,5 @@ export class SpeciesEditorComponent {
 
   protected back(): void {
     void this.router.navigateByUrl('/verwaltung/arten');
-  }
-
-  private day(value: string): string {
-    return shortDate(value, this.i18n);
   }
 }

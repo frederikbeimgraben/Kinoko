@@ -44,21 +44,30 @@ async function build(api = new FindsApiDouble()): Promise<{
 }
 
 describe('FindQueueComponent', () => {
-  it('zeigt Art, Zeile und Ort der obersten Karte', async () => {
+  it('shows the species, the note and the rows of the top card, per the board FindQueue', async () => {
     const { container } = await build();
 
-    expect(screen.getByText('1 von 2')).toBeInTheDocument();
+    expect(screen.getByText('2 offene Funde')).toBeInTheDocument();
     expect(screen.getAllByText('Steinpilz').length).toBeGreaterThan(0);
-    expect(screen.getByText('6. Sept. · 3 Stück · person-eins')).toBeInTheDocument();
-    expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
-    expect(screen.getByText('Am Wegrand')).toBeInTheDocument();
+    expect(screen.getAllByText('Am Wegrand').length).toBeGreaterThan(0);
+    const rows = [...container.querySelectorAll('.queue__card--top app-list-row')].map(
+      (row) =>
+        `${row.querySelector('.row__title')?.textContent.trim()} ${row.querySelector('.row__plain')?.textContent.trim()}`,
+    );
+    expect(rows).toEqual(['Melder Frederik', 'Datum 6. September', 'Ort 48,5203 · 9,0511', 'Anzahl 3 Stück']);
+    expect(container.textContent).not.toContain('person-eins');
     await noViolations(container);
   });
 
-  it('lässt eine Karte ohne Anzahl die Anzahl weg', async () => {
-    await build();
+  it('leaves out the count row of a find without a count', async () => {
+    const { container } = await build();
 
-    expect(screen.getByText('6. Sept. · person-eins')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
+
+    const labels = [...container.querySelectorAll('.queue__card--top app-list-row .row__title')].map(
+      (title) => title.textContent.trim(),
+    );
+    expect(labels).toEqual(['Melder', 'Datum', 'Ort']);
   });
 
   it('nimmt mit dem Haken an und zählt weiter', async () => {
@@ -67,7 +76,7 @@ describe('FindQueueComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
 
     expect(api.reviewed).toEqual([{ id: 'fund-eins', decision: 'accepted' }]);
-    expect(screen.getByText('2 von 2')).toBeInTheDocument();
+    expect(screen.getByText('1 offener Fund')).toBeInTheDocument();
   });
 
   it('lehnt mit dem Kreuz ab', async () => {
@@ -84,7 +93,7 @@ describe('FindQueueComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
     await userEvent.click(screen.getByRole('button', { name: 'Rückgängig' }));
 
-    expect(screen.getByText('1 von 2')).toBeInTheDocument();
+    expect(screen.getByText('2 offene Funde')).toBeInTheDocument();
   });
 
   it('nimmt erst nach der Bestätigung alle an', async () => {
@@ -97,7 +106,7 @@ describe('FindQueueComponent', () => {
     await userEvent.click(buttons[buttons.length - 1]);
 
     expect(api.accepted).toBe(1);
-    expect(screen.getByText('Nichts zu prüfen')).toBeInTheDocument();
+    expect(screen.getByText('Keine Funde offen')).toBeInTheDocument();
   });
 
   it('zeigt ohne offenen Fund den Leerzustand', async () => {
@@ -106,7 +115,7 @@ describe('FindQueueComponent', () => {
 
     const { container } = await build(api);
 
-    expect(screen.getByText('Nichts zu prüfen')).toBeInTheDocument();
+    expect(screen.getByText('Keine Funde offen')).toBeInTheDocument();
     await noViolations(container);
   });
 

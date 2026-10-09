@@ -24,7 +24,7 @@ describe('AccessApi', () => {
   it('legt eine Rolle an, ändert und löscht sie', () => {
     const { api, http } = build();
 
-    api.createRole({ slug: 'berater', name: 'Pilzberater', description: null, permissions: [] }).subscribe();
+    api.createRole({ slug: 'berater', name: 'Pilzberater', permissions: [] }).subscribe();
     http.expectOne({ url: '/api/roles', method: 'POST' }).flush(ADVISOR_ROLE);
     api.patchRole('rolle-berater', { name: 'Beraterin' }).subscribe();
     http.expectOne({ url: '/api/roles/rolle-berater', method: 'PATCH' }).flush(ADVISOR_ROLE);

@@ -14,6 +14,7 @@ hutform = { von = "trichterfoermig" }
 hutrand = { von = ["eingebogen"] }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Linden-Kelchbecherling.htm"
 geprueftAm = "2026-09-12"
 

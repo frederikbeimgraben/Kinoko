@@ -41,15 +41,18 @@ export function speciesRow(entry: SpeciesEntry, i18n: I18nService): SpeciesRowSp
   };
 }
 
-/** Searches the German and the Latin name on the device. */
-export function search(entries: readonly CatalogueEntry[], query: string): readonly CatalogueEntry[] {
+/** True when the name, the Latin name or one more name of the species has the search text. */
+export function matches(entry: SpeciesEntry, query: string): boolean {
   const needle = query.trim().toLocaleLowerCase();
-  if (needle === '') return entries;
-  return entries.filter(
-    (one) =>
-      one.species.name.toLocaleLowerCase().includes(needle) ||
-      one.species.scientificName.toLocaleLowerCase().includes(needle),
+  if (needle === '') return true;
+  return [entry.name, entry.scientificName, ...entry.names.map((one) => one.name)].some((name) =>
+    name.toLocaleLowerCase().includes(needle),
   );
+}
+
+/** Searches the names of the species on the device: German, Latin, common names and synonyms. */
+export function search(entries: readonly CatalogueEntry[], query: string): readonly CatalogueEntry[] {
+  return query.trim() === '' ? entries : entries.filter((one) => matches(one.species, query));
 }
 
 /** Numbers in a name sort by their value, so "Art 2" comes before "Art 10". */
@@ -71,13 +74,18 @@ export function sortEntries(entries: readonly CatalogueEntry[], sort: SpeciesSor
   return [...entries].sort((one, other) => ORDER[sort](one.species, other.species));
 }
 
+/** The first letter without its accent: "Ästiger Stachelbart" sorts with A, so it goes under A too. */
+export function initialOf(name: string): string {
+  return name.charAt(0).normalize('NFD').charAt(0).toLocaleUpperCase();
+}
+
 /** The head above a group of rows in the order of `sort`. An empty head starts no group. */
 export function headOf(entry: SpeciesEntry, sort: SpeciesSort, i18n: I18nService): string {
   switch (sort) {
     case 'name':
-      return entry.name.charAt(0).toLocaleUpperCase();
+      return initialOf(entry.name);
     case 'latin':
-      return entry.scientificName.charAt(0).toLocaleUpperCase();
+      return initialOf(entry.scientificName);
     case 'edibility':
       return i18n.translate(EDIBILITY_TEXT[entry.edibility]);
     case 'season': {

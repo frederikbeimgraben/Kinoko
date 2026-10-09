@@ -11,6 +11,10 @@ export class AuthStub {
   readonly signedIn = computed(() => this.user() !== null);
   /** True while a silent sign-in runs. */
   readonly busy = signal(false);
+  /** True while the way to the SSO starts. */
+  readonly signingIn = signal(false);
+  /** The `back` routes of the calls to `signIn`. */
+  readonly signIns: string[] = [];
   /** True after the first answer of the session check. */
   readonly checked = signal(true);
   /** True after an answer of the SSO itself. */
@@ -19,9 +23,22 @@ export class AuthStub {
   reply = true;
   asked = 0;
 
-  requestSignIn(): Promise<boolean> {
+  /** True: the person goes to the SSO from the sheet, so the sheet keeps the entry first. */
+  goesToSso = false;
+
+  async requestSignIn(keep: () => Promise<unknown> = () => Promise.resolve()): Promise<boolean> {
     this.asked += 1;
-    return Promise.resolve(this.reply);
+    if (this.goesToSso) await keep();
+    return this.reply;
+  }
+
+  whenChecked(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  signIn(back = '/'): Promise<void> {
+    this.signIns.push(back);
+    return Promise.resolve();
   }
 }
 

@@ -3,44 +3,49 @@ import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { AddRowComponent } from '../../ui/add-row/add-row.component';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
+import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
 import { InfiniteListComponent } from '../../ui/infinite-list/infinite-list.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { RowGroupComponent } from '../../ui/row-group/row-group.component';
+import { PopoverComponent, type PopoverAnchor } from '../../ui/popover/popover.component';
+import { PopoverItemComponent } from '../../ui/popover/popover-item.component';
+import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { SpeciesRowComponent } from '../../ui/species-row/species-row.component';
 import { judge } from '../species/facets';
+import { SpeciesFilterChipsComponent } from '../species/filter-chips.component';
 import { SpeciesFilterSheetComponent } from '../species/filter-sheet.component';
-import { SpeciesFilterStore } from '../species/filter.store';
-import { SpeciesSearchFilterBarComponent } from '../species/search-filter-bar.component';
-import { search } from '../species/rows';
+import { SPECIES_SORTS, SpeciesFilterStore, type SpeciesSort } from '../species/filter.store';
+import { search, sortEntries } from '../species/rows';
+import { SORT_TEXT } from '../species/species-search-bar.component';
+import { resultRows, type ResultRow } from '../species/species-results.component';
 import { SpeciesStore } from '../species/species.store';
 
 const PAGE = 40;
 
-/** A row of the species administration. */
-interface Row {
-  slug: string;
-  name: string;
-  latin: string;
-  forecast: boolean;
-}
+/** The sort popover opens below the sort button, the last button of the head. */
+const ANCHOR: Readonly<Record<'phone' | 'desk', PopoverAnchor>> = {
+  phone: { top: 60, end: 8 },
+  desk: { top: 64, end: 12 },
+};
 
-/** The species administration: a search, the filter and the way to create a species. */
+/** The species administration per the board `AdminSpecies`: the search and the sort in the head,
+ * the filter chips, the list and the floating button that creates a species. */
 @Component({
   selector: 'app-admin-species',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AddRowComponent,
+    FloatingButtonComponent,
+    IconButtonComponent,
     InfiniteListComponent,
-    ListRowComponent,
     PageHeaderComponent,
-    RowGroupComponent,
+    PopoverComponent,
+    PopoverItemComponent,
     RowGroupSkeletonComponent,
+    SearchFieldComponent,
+    SpeciesFilterChipsComponent,
     SpeciesFilterSheetComponent,
-    SpeciesSearchFilterBarComponent,
-    SvgIconComponent,
+    SpeciesRowComponent,
     TranslatePipe,
   ],
   templateUrl: './admin-species.component.html',
@@ -56,29 +61,37 @@ export class AdminSpeciesComponent {
   protected readonly loading = this.catalogue.loading;
   protected readonly query = signal('');
   protected readonly shown = signal(PAGE);
+  protected readonly sorting = signal(false);
+  protected readonly anchor = computed(() => (this.wide() ? ANCHOR.desk : ANCHOR.phone));
+
+  /** The chips hide while a search text is present, as on the species list. */
+  protected readonly marks = computed(
+    () => !this.catalogue.loading() && !this.catalogue.failed() && this.query().trim() === '',
+  );
+
+  protected readonly sorts = computed(() =>
+    SPECIES_SORTS.map((key) => ({
+      key,
+      label: this.i18n.translate(SORT_TEXT[key]),
+      on: key === this.filter.sort(),
+    })),
+  );
 
   private readonly hits = computed(() => {
     const selection = this.filter.selection();
     const palette = this.catalogue.palette();
-    return search(this.catalogue.entries(), this.query()).filter(
+    const found = search(this.catalogue.entries(), this.query()).filter(
       (one) => judge(one.facts, selection, palette) !== 'miss',
     );
+    return sortEntries(found, this.filter.sort());
   });
 
   protected readonly hasMore = computed(() => this.hits().length > this.shown());
 
-  protected readonly rows = computed<Row[]>(() =>
-    this.hits()
-      .slice(0, this.shown())
-      .map((one) => ({
-        slug: one.species.slug,
-        name: one.species.name,
-        latin: one.species.scientificName,
-        forecast: one.species.forecastEnabled,
-      })),
+  /** The rows of the species list: thumb, names, edibility and a letter head for each group. */
+  protected readonly rows = computed<ResultRow[]>(() =>
+    resultRows(this.hits().slice(0, this.shown()), this.filter.sort(), this.i18n),
   );
-
-  protected readonly noForecast = computed(() => this.i18n.translate('admin.species.noForecast'));
 
   constructor() {
     void this.catalogue.loadBundle();
@@ -87,6 +100,11 @@ export class AdminSpeciesComponent {
   protected find(value: string): void {
     this.query.set(value);
     this.shown.set(PAGE);
+  }
+
+  protected setSort(sort: SpeciesSort): void {
+    this.filter.setSort(sort);
+    this.sorting.set(false);
   }
 
   protected more(): void {

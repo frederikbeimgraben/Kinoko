@@ -1,6 +1,8 @@
 import type { BodyPart, Dimension, HymeniumType, SpeciesEntry } from '../../../core/api/models';
 import type { I18nService } from '../../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../../core/i18n/translations';
+import type { CatalogueNames } from '../catalogue-text';
+import { distinctChanges } from '../sections/reactions';
 import type { SpeciesReaction } from '../species.store';
 import { shortMonth } from '../../../core/i18n/dates';
 import { spanText } from '../../../ui/measurement/measurement.component';
@@ -10,6 +12,7 @@ import {
   colourSwatch,
   plainCell,
   swatchCell,
+  type Cell,
   type Measure,
   type Row,
   type Swatch,
@@ -29,13 +32,13 @@ const SEASON_DASH = ' – ';
 const HYMENIUM_COLOUR_PARTS: readonly HymeniumType[] = ['gills', 'tubes', 'pores'];
 
 /** The colours of a body part, with their names as the label. */
-export function swatchOf(entry: SpeciesEntry, part: BodyPart | null): Swatch | null {
+export function swatchOf(entry: SpeciesEntry, part: BodyPart | null, names: CatalogueNames): Swatch | null {
   const group = part === null ? undefined : entry.colours.find((one) => one.part === part);
   if (!group || group.colours.length === 0) return null;
   return {
     colours: group.colours,
     mode: MODE[group.mode],
-    label: group.colours.map((one) => one.name).join(SEPARATOR),
+    label: [...new Set(group.colours.map((one) => names.colour(one)))].join(SEPARATOR),
   };
 }
 
@@ -78,16 +81,16 @@ export function hymeniumTypeOf(entry: SpeciesEntry, i18n: I18nService): string |
 }
 
 /** The colour of the hymenium is on the body part with the same name. */
-export function hymeniumColourOf(entry: SpeciesEntry): Swatch | null {
+export function hymeniumColourOf(entry: SpeciesEntry, names: CatalogueNames): Swatch | null {
   const kind = entry.hymeniumType;
   if (!kind || !HYMENIUM_COLOUR_PARTS.includes(kind)) return null;
-  return swatchOf(entry, kind as BodyPart);
+  return swatchOf(entry, kind as BodyPart, names);
 }
 
 /** The smell: the terms of the catalogue, or else the free text. */
-export function senseSmellOf(entry: SpeciesEntry): string | null {
-  const tags = entry.terms.filter((one) => one.term.kind === 'smell').map((one) => one.term.name);
-  if (tags.length > 0) return tags.join(SEPARATOR);
+export function senseSmellOf(entry: SpeciesEntry, names: CatalogueNames): string | null {
+  const tags = entry.terms.filter((one) => one.term.kind === 'smell').map((one) => one.term);
+  if (tags.length > 0) return names.termList(tags);
   return entry.smellText && entry.smellText !== '' ? entry.smellText : null;
 }
 
@@ -99,26 +102,6 @@ export function seasonOf(entry: SpeciesEntry, i18n: I18nService): string | null 
   return `${shortMonth(from, i18n)}${SEASON_DASH}${shortMonth(to, i18n)}`;
 }
 
-/** The colour changes: one row for each trigger that at least one species has. */
-export function changeRows(entries: readonly SpeciesEntry[], i18n: I18nService): Row[] {
-  const names: string[] = [];
-  for (const entry of entries) {
-    for (const change of entry.colourChanges) {
-      for (const trigger of change.triggers) {
-        if (!names.includes(trigger.name)) names.push(trigger.name);
-      }
-    }
-  }
-  return names.map((name) =>
-    buildRow(name, entries, (entry) => {
-      const change = entry.colourChanges.find((one) => one.triggers.some((trigger) => trigger.name === name));
-      return change
-        ? swatchCell(colourSwatch(change.to))
-        : plainCell(i18n.translate('species.reaction.unknown'));
-    }),
-  );
-}
-
 /** The text of a reaction without a colour swatch. */
 const RESULT_TEXT = {
   positive: 'species.reaction.positive',
@@ -127,28 +110,49 @@ const RESULT_TEXT = {
   unknown: 'species.reaction.unknown',
 } as const satisfies Record<SpeciesReaction['result'], TranslationKey>;
 
-/** The reactions per reagent: one row for each reagent that at least one species has. */
-export function reactionRows(
+/** A trigger of a colour change or a reagent of a reaction, by its slug. */
+interface Trigger {
+  readonly slug: string;
+  readonly name: string;
+}
+
+/** The reactions of a species by its slug. Only a loaded profile has them. */
+export type ReactionsOf = (slug: string) => readonly SpeciesReaction[];
+
+/** The colour changes and the reactions: one row for each trigger or reagent of a species.
+ * A reaction tells more than a colour change of the same reagent, so the reaction fills the cell. */
+export function reagentRows(
   entries: readonly SpeciesEntry[],
-  reactionsOf: (slug: string) => readonly SpeciesReaction[],
+  reactionsOf: ReactionsOf,
   i18n: I18nService,
+  names: CatalogueNames,
 ): Row[] {
-  const reagents = [
-    ...new Map(
-      entries.flatMap((entry) => reactionsOf(entry.slug).map((one) => [one.reagent.slug, one.reagent.name])),
-    ),
-  ];
-  return reagents.map(([slug, name]) =>
-    buildRow(name, entries, (entry) => {
-      const reaction = reactionsOf(entry.slug).find((one) => one.reagent.slug === slug);
-      if (reaction === undefined) return plainCell(i18n.translate('species.reaction.unknown'));
-      if (reaction.colour !== null && reaction.result !== 'negative') {
-        return swatchCell({
-          ...colourSwatch(reaction.colour),
-          label: reaction.reading || reaction.colour.name,
-        });
-      }
-      return plainCell(reaction.reading || i18n.translate(RESULT_TEXT[reaction.result]));
+  const triggers: Trigger[] = entries.flatMap((entry) => [
+    ...distinctChanges(entry.colourChanges, reactionsOf(entry.slug)).flatMap((change) => change.triggers),
+    ...reactionsOf(entry.slug).map((reaction) => reaction.reagent),
+  ]);
+  const unique = [...new Map(triggers.map((one) => [one.slug, one])).values()];
+  return unique.map((trigger) =>
+    buildRow(names.term({ kind: 'trigger', ...trigger }), entries, (entry) => {
+      const reaction = reactionsOf(entry.slug).find((one) => one.reagent.slug === trigger.slug);
+      if (reaction !== undefined) return reactionCell(reaction, i18n, names);
+      const change = entry.colourChanges.find((one) =>
+        one.triggers.some((term) => term.slug === trigger.slug),
+      );
+      if (change === undefined) return plainCell(i18n.translate('species.reaction.unknown'));
+      return swatchCell({ ...colourSwatch(change.to), label: names.colour(change.to) });
     }),
   );
+}
+
+function reactionCell(reaction: SpeciesReaction, i18n: I18nService, names: CatalogueNames): Cell {
+  const result = i18n.translate(RESULT_TEXT[reaction.result]);
+  if (reaction.colour !== null && reaction.result !== 'negative') {
+    const colour = names.colour(reaction.colour);
+    return swatchCell({
+      ...colourSwatch(reaction.colour),
+      label: names.free(reaction.reading || colour, colour),
+    });
+  }
+  return plainCell(names.free(reaction.reading || result, result));
 }

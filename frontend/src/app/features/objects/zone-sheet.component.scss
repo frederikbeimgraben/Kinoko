@@ -5,9 +5,3 @@
 }
 
 @include object-sheet.object-sheet;
-
-// The button is 44 px high, as the design board `ZoneEdit` shows.
-.zonesheet__outline {
-  --btn-font-size: var(--fs-control);
-  --btn-height: var(--size-tap);
-}

@@ -3,10 +3,12 @@ import {
   Component,
   OnDestroy,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import type { Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -14,8 +16,8 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { MAP_ADAPTER } from '../../map/map.tokens';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
+import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { MapAppLinkComponent } from '../../ui/map-app-link/map-app-link.component';
 import { ObjectTitleComponent } from '../../ui/object-title/object-title.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
@@ -24,12 +26,14 @@ import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
 import { visibilityText } from '../add-entry/visibility';
 import { EntriesStore } from '../entries/entries.store';
+import { NO_FILTER, inPolygon } from '../entries/entry-filter';
 import { hectaresText } from '../entries/formats';
 import { ObjectSheetStore } from './object-sheet.store';
 import { colourHex } from '../entries/colors';
-import { asPolygon } from '../add-entry/area';
+import { areaHa, asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
+import { Router } from '@angular/router';
 import type { Location } from '../add-entry/add-entry.store';
 
 /** The object sheet of a zone. "Change outline" gives the corners to Terra Draw. */
@@ -38,8 +42,8 @@ import type { Location } from '../add-entry/add-entry.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
-    ButtonComponent,
     ConfirmDialogComponent,
+    ListRowComponent,
     MapAppLinkComponent,
     ObjectFormComponent,
     ObjectTitleComponent,
@@ -59,6 +63,7 @@ export class ZoneSheetComponent implements OnDestroy {
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly draw = inject(ZONE_DRAWER);
+  private readonly router = inject(Router);
 
   readonly zone = input.required<Zone>();
 
@@ -69,17 +74,27 @@ export class ZoneSheetComponent implements OnDestroy {
   protected readonly editing = this.sheet.editing;
   protected readonly editingCorners = this.sheet.editingCorners;
   private readonly newCorners = signal<readonly Location[] | null>(null);
+  /** The form values while the corners move. The form shows them again after the corner step. */
+  private readonly draft = signal<ObjectValues | null>(null);
   private session: DrawSession | null = null;
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();
-    return {
-      name: zone.name,
-      colour: zone.colour,
-      note: zone.note,
-      visibility: zone.visibility,
-      groupId: zone.groupId,
-    };
+    return (
+      this.draft() ?? {
+        name: zone.name,
+        colour: zone.colour,
+        note: zone.note,
+        visibility: zone.visibility,
+        groupId: zone.groupId,
+      }
+    );
+  });
+
+  /** The area of the form: from the new outline, if there is one. */
+  protected readonly area = computed(() => {
+    const outline = this.sheet.outline();
+    return outline === null ? this.zone().areaHa : areaHa(outline);
   });
 
   /** The centre of the area: the point for a navigation app. */
@@ -91,6 +106,12 @@ export class ZoneSheetComponent implements OnDestroy {
 
   protected readonly colour = computed(() => colourHex(this.zone().colour));
 
+  /** The own finds inside the outline, per `ZoneViewBody.dc.html`. */
+  protected readonly findCount = computed(() => {
+    const polygon = this.zone().polygon;
+    return String(this.eintraege.finds().filter((find) => inPolygon(find.lon, find.lat, polygon)).length);
+  });
+
   /** The muted line below the name, per `ZoneViewBody.dc.html`. */
   protected readonly sub = computed(() =>
     this.i18n.translate('zone.unter', {
@@ -99,15 +120,28 @@ export class ZoneSheetComponent implements OnDestroy {
     }),
   );
 
+  constructor() {
+    // A closed form drops its values. The store drops the outline.
+    effect(() => {
+      if (this.editing() || this.editingCorners()) return;
+      untracked(() => {
+        this.draft.set(null);
+      });
+    });
+  }
+
   ngOnDestroy(): void {
     this.stopSession();
+    if (this.editingCorners()) this.sheet.setEditing(false);
   }
 
   protected async save(values: ObjectValues): Promise<void> {
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateZone(this.zone(), values)) {
-        this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+      const outline = this.sheet.outline();
+      const update = outline === null ? values : { ...values, polygon: outline };
+      if (await this.eintraege.updateZone(this.zone(), update)) {
+        this.toasts.success(this.i18n.translate('zone.gespeichert'));
         this.sheet.setEditing(false);
       }
     } finally {
@@ -115,15 +149,15 @@ export class ZoneSheetComponent implements OnDestroy {
     }
   }
 
-  /** Gives the corners to Terra Draw. The finger can then move them. */
-  protected async editCorners(): Promise<void> {
+  /** Gives the corners to Terra Draw, in the colour of the form. The form values wait in `draft`. */
+  protected async editCorners(values: ObjectValues): Promise<void> {
     const map = this.adapter.rawMap();
     if (map === null) return;
-    this.sheet.setEditing(false);
-    this.sheet.setEditingCorners(true);
-    this.session = await this.draw(map, colourHex(this.zone().colour));
-    const ring = this.zone()
-      .polygon.coordinates[0].slice(0, -1)
+    this.draft.set(values);
+    this.sheet.startCorners();
+    this.session = await this.draw(map, colourHex(values.colour));
+    const ring = (this.sheet.outline() ?? this.zone().polygon).coordinates[0]
+      .slice(0, -1)
       .map((point) => [point[0], point[1]] as Location);
     this.session.showRing(ring);
     this.session.edit((next) => {
@@ -131,32 +165,36 @@ export class ZoneSheetComponent implements OnDestroy {
     });
   }
 
-  protected async applyCorners(): Promise<void> {
+  /** Keeps the new outline and goes back to the form, per `MapZoneEdit`. */
+  protected applyCorners(): void {
     const corners = this.newCorners();
-    const polygon = corners === null ? null : asPolygon(corners);
     this.stopSession();
-    if (polygon === null) return;
-    if (await this.eintraege.updateZone(this.zone(), { polygon })) {
-      this.toasts.success(this.i18n.translate('objekt.gespeichert'));
-    }
+    this.sheet.endCorners(corners === null ? null : asPolygon(corners));
   }
 
   protected cancelCorners(): void {
     this.stopSession();
+    this.sheet.endCorners(null);
   }
 
+  // The sheet closes before the request: the delete removes the zone from the list at once.
   protected async remove(): Promise<void> {
+    const id = this.zone().id;
     this.deleteAsk.set(false);
-    if (await this.eintraege.deleteZone(this.zone().id)) {
-      this.toasts.success(this.i18n.translate('objekt.geloescht'));
-      this.closed.emit();
-    }
+    this.closed.emit();
+    if (await this.eintraege.deleteZone(id)) this.toasts.success(this.i18n.translate('entry.zone.deleted'));
+  }
+
+  /** Opens the entries with the filter of this zone, per `EntriesZone.dc.html`. */
+  protected showFinds(): void {
+    this.eintraege.setFilter({ ...NO_FILTER, zoneId: this.zone().id });
+    this.closed.emit();
+    void this.router.navigate(['/eintraege']);
   }
 
   private stopSession(): void {
     this.session?.stop();
     this.session = null;
     this.newCorners.set(null);
-    this.sheet.setEditingCorners(false);
   }
 }

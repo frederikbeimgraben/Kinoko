@@ -9,7 +9,7 @@
     <app-state-view icon="search" [title]="'admin.dataSources.notFound' | t" />
   } @else if (detail(); as detail) {
     @if (interrupted(); as line) {
-      <app-banner kind="pending" icon="upload" [text]="line" (actionClick)="upload()" />
+      <app-banner kind="pending" icon="upload" [flush]="true" [text]="line" (actionClick)="upload()" />
     }
 
     <p class="source__about">{{ about() }}</p>

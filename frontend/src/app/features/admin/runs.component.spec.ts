@@ -116,7 +116,7 @@ describe('RunsComponent', () => {
     expect(screen.getByText(/Es fehlen: .*Standortraster/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Anstoßen' })).toBeDisabled();
 
-    await userEvent.click(screen.getByRole('tab', { name: 'Daten abrufen' }));
+    await userEvent.click(screen.getByRole('tab', { name: 'Abrufen' }));
 
     expect(screen.queryByText(/Es fehlen/)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Anstoßen' })).toBeEnabled();

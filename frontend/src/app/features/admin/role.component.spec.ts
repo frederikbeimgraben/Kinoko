@@ -30,8 +30,8 @@ describe('RoleComponent', () => {
 
     expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Pilzberater');
     expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toHaveValue('Arten und Bilder pflegen.');
-    expect(screen.getByRole('checkbox', { name: /Profile ändern/ })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: /Funde prüfen/ })).not.toBeChecked();
+    expect(screen.getByRole('switch', { name: /Profile ändern/ })).toBeChecked();
+    expect(screen.getByRole('switch', { name: /Funde prüfen/ })).not.toBeChecked();
     await noViolations(container);
   });
 
@@ -47,7 +47,7 @@ describe('RoleComponent', () => {
     const { api, router, refresh } = await build('rolle-berater');
     const navigate = vi.spyOn(router, 'navigateByUrl');
 
-    await userEvent.click(screen.getByRole('checkbox', { name: /Texte ändern/ }));
+    await userEvent.click(screen.getByRole('switch', { name: /Texte ändern/ }));
     refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
@@ -64,19 +64,17 @@ describe('RoleComponent', () => {
     expect(navigate).toHaveBeenCalledWith('/verwaltung/rollen');
   });
 
-  it('nimmt bei einer neuen Rolle ein Kürzel und legt sie an', async () => {
+  it('nimmt bei einer neuen Rolle ein Kürzel und legt sie ohne leere Beschreibung an', async () => {
     const { api, refresh } = await build('neu');
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Übersetzer');
     await userEvent.type(screen.getByRole('textbox', { name: 'Kürzel' }), 'uebersetzer');
     refresh();
-    await userEvent.click(screen.getByRole('checkbox', { name: /Texte ändern/ }));
+    await userEvent.click(screen.getByRole('switch', { name: /Texte ändern/ }));
     refresh();
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(api.created).toEqual([
-      { slug: 'uebersetzer', name: 'Übersetzer', description: null, permissions: ['text.edit'] },
-    ]);
+    expect(api.created).toEqual([{ slug: 'uebersetzer', name: 'Übersetzer', permissions: ['text.edit'] }]);
   });
 
   it('lässt sich ohne Namen und Kürzel nicht speichern', async () => {
@@ -95,10 +93,32 @@ describe('RoleComponent', () => {
     expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Speichern' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Rolle löschen' })).not.toBeInTheDocument();
-    const box = screen.getByRole('checkbox', { name: /Rollen verwalten/ });
+    const box = screen.getByRole('switch', { name: /Rollen verwalten/ });
     expect(box).toBeChecked();
-    expect(box).toBeDisabled();
+    expect(box).toHaveAttribute('aria-disabled', 'true');
     await noViolations(container);
+  });
+
+  it('zeigt die Beschreibung einer eingebauten Rolle ohne eigenen Text und speichert sie nicht', async () => {
+    const api = new AccessApiDouble();
+    api.roleList = [
+      role({
+        id: 'rolle-pruefer',
+        slug: 'reviewer',
+        name: 'account.role.reviewer',
+        description: null,
+        builtIn: true,
+        permissions: ['image.review', 'find.review'],
+      }),
+    ];
+    const { refresh } = await build('rolle-pruefer', api);
+
+    expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toHaveValue(
+      'Prüft gemeldete Funde und eingereichte Bilder.',
+    );
+    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    expect(api.patched[0]?.patch.description).toBeNull();
   });
 
   it('übersetzt den Namen einer eingebauten Rolle im Kopf und im Namensfeld', async () => {

@@ -1,13 +1,14 @@
 <app-overlay-host
   class="object"
-  [class.object--corners]="editingCorners()"
+  [class.object--corners]="editingCorners() || relocating()"
   [open]="map.object() !== null"
-  [modal]="!editingCorners()"
-  (closed)="close()"
+  [modal]="!editingCorners() && !relocating()"
+  (closed)="hostClosed()"
 >
   <app-sheet
     appSheetHeight
     class="object__sheet"
+    [class.object__sheet--hidden]="relocating()"
     [label]="sheetName()"
     [title]="headTitle()"
     [modal]="!editingCorners()"
@@ -25,3 +26,12 @@
     }
   </app-sheet>
 </app-overlay-host>
+
+@if (relocating()) {
+  <div class="object__aim">
+    <div #cross class="object__crosshair">
+      <app-crosshair [label]="aimTitle()" [halo]="darkGround()" />
+    </div>
+    <app-step-bar [label]="aimTitle()" [actions]="aimActions()" (chosen)="$event.run()" />
+  </div>
+}

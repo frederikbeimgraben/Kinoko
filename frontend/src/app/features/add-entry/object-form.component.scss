@@ -1,31 +1,23 @@
+@use '../../../styles/overlay-body' as overlay;
+
 :host {
   display: contents;
 }
 
+@include overlay.overlay-body;
+
 .form__body {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: 18px;
-  min-block-size: 0;
-  padding: var(--space-1) var(--size-gutter) var(--space-5);
   overflow-y: auto;
 }
 
-// The zone form uses a larger gap between fields than the marker form.
-.form__body--roomy {
-  gap: var(--space-5);
+// While the save runs, the form locks its fields.
+.form__body--busy {
+  pointer-events: none;
 }
 
-.form__label {
-  display: block;
-  margin: 0 0 var(--space-2);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  line-height: 15px;
-}
-
-// The form of an existing object uses the board footer size.
-.form__actions {
-  --action-bar-size: var(--fs-control);
+// Per `kit.css` `.chips`: the colour chips wrap with 8 px between them.
+.form__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }

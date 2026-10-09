@@ -1,4 +1,3 @@
-@use '../../../styles/card';
 @use 'section';
 
 :host {
@@ -14,27 +13,9 @@ app-page-header {
   @include section.fields;
 }
 
-.section__title {
-  @include card.section-title;
-}
-
-.section__card {
-  @include card.card;
-
+// The band sits on a card without a line, as the board shows the curve.
+.section__band {
   padding: 16px 14px;
-}
-
-// Zwei Monate nebeneinander, beide Spalten gleich breit.
-.section__span {
-  display: flex;
-  gap: 10px;
-}
-
-.section__field {
-  flex: 1;
-  min-inline-size: 0;
-}
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
+  background: var(--surface);
+  border-radius: var(--r-item);
 }

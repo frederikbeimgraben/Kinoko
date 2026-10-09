@@ -13,6 +13,7 @@ synonyme = ["Lycoperdon umbrinum var. hirtum", "Lycoperdon hirtum", "Lycoperdon 
 hutform = { von = "birnenfoermig" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/BraunerStaeubling.htm"
 geprueftAm = "2026-09-12"
 

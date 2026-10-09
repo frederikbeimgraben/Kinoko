@@ -32,6 +32,8 @@
     [attr.placeholder]="placeholder() || null"
     [attr.inputmode]="mode()"
     [attr.enterkeyhint]="hint()"
+    [attr.aria-invalid]="error() ? true : null"
+    [attr.aria-describedby]="describedBy()"
     (input)="onInput($event)"
   ></textarea>
 } @else if (kind() === 'date') {
@@ -70,6 +72,11 @@
     [attr.placeholder]="placeholder() || null"
     [attr.inputmode]="mode()"
     [attr.enterkeyhint]="hint()"
+    [attr.aria-invalid]="error() ? true : null"
+    [attr.aria-describedby]="describedBy()"
     (input)="onInput($event)"
   />
+}
+@if (error(); as message) {
+  <p class="field__error" role="alert" [id]="errorId">{{ message }}</p>
 }

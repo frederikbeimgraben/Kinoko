@@ -12,6 +12,7 @@ weitereNamen = ["Großer Gelbfuß", "Großer Schmierling", "Großer Keilpilz", "
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 
 [quelle]
+titel = "123pilzsuche"
 url = "https://www.123pilzsuche.de/daten/details/Kuhmaul.htm"
 geprueftAm = "2026-09-12"
 
@@ -26,7 +27,7 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "schwarzbraun", hex = "#3a2a1c" }, { name = "violett", hex = "#6b4a8a" }, { name = "braun", hex = "#7a5230" }, { name = "blau", hex = "#3a5f9e" }]
-sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "graubraun", hex = "#7d6f5e" }, { name = "weiß", hex = "#ffffff" }, { name = "grau", hex = "#8a8a8a" }]
 stiel = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }]
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }]
 sporenpulver = [{ name = "schwarzbraun", hex = "#3a2a1c" }]

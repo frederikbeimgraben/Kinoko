@@ -24,6 +24,6 @@ export function colourFromHex(hex: string): MarkerColour {
 export function colourSwatches(i18n: I18nService): ColourSwatch[] {
   return MARKER_COLOURS.map((colour) => ({
     value: colourHex(colour),
-    label: i18n.translate(`farbe.${colour}`),
+    label: i18n.translate(`enum.colour.${colour}`),
   }));
 }

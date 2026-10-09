@@ -1,7 +1,7 @@
 <div class="admin" [class.admin--split]="wide()">
   @if (showList()) {
     <div class="admin__list">
-      <app-page-header [title]="'admin.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
+      <app-page-header [title]="'admin.title' | t" [back]="true" [wide]="wide()" (backClick)="back()" />
       <div class="admin__body">
         @if (waiting()) {
           <app-row-group-skeleton [count]="4" [label]="true" [lines]="2" trail="chevron" />
@@ -12,7 +12,7 @@
                 @for (row of block.rows; track row.path) {
                   <app-list-row
                     [title]="row.title"
-                    [subline]="row.counts"
+                    [badge]="row.badge"
                     [clickable]="row.ready"
                     [chevron]="true"
                     [selected]="wide() && chosen(row.path)"

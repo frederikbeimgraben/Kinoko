@@ -58,6 +58,8 @@ export class SpeciesResultsComponent {
   readonly sort = input<SpeciesSort>('name');
   readonly loading = input(false);
   readonly failed = input(false);
+  /** True when a filter is set. Only then does the empty state offer to reset it, per `SpeciesEmpty.dc.html`. */
+  readonly filtered = input(false);
   readonly hasMore = input(false);
   /** The species of the open page: its row is selected. */
   readonly active = input<string | null>(null);

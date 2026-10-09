@@ -2,7 +2,7 @@
   @if (species(); as one) {
     <app-page-header [title]="one.name" [back]="!wide()" [wide]="wide()" (backClick)="back()">
       @if (mayEdit()) {
-        <app-filter-chip [label]="'admin.species.edit' | t" icon="edit" (chosen)="edit()" />
+        <app-filter-chip [label]="'species.menu.edit' | t" icon="edit" (chosen)="edit()" />
       } @else {
         <app-filter-chip [label]="'species.compare' | t" icon="compare" (chosen)="compareSelf()" />
       }
@@ -17,19 +17,36 @@
     >
       <app-popover-item icon="share" [label]="'species.menu.share' | t" (chosen)="share()" />
       @if (canSubmitImage()) {
-        <app-popover-item icon="image" [label]="'image.submit.title' | t" (chosen)="submitImage()" />
+        <app-popover-item
+          icon="image"
+          [label]="(curatesImages() ? 'image.add.title' : 'image.submit.title') | t"
+          (chosen)="submitImage()"
+        />
       }
       @if (mayEdit()) {
         <app-popover-item icon="compare" [label]="'species.compare' | t" (chosen)="compareSelf()" />
       }
     </app-popover>
 
+    <app-compare-entry
+      [slug]="slug()"
+      [open]="compareOpen()"
+      (picked)="compare($event)"
+      (opened)="openFromSheet($event)"
+      (closed)="compareOpen.set(false)"
+    />
+
     <ng-template #hero>
       <app-species-lead [slug]="slug()" [height]="heroHeight()" [appSharedElement]="slug()" />
     </ng-template>
     <ng-template #latin>
       <div class="species__intro">
-        <p class="latin">{{ one.scientificName }}</p>
+        @if (one.scientificName !== one.name) {
+          <p class="latin">{{ one.scientificName }}</p>
+        }
+        @if (otherNames(); as names) {
+          <p class="species__names">{{ names }}</p>
+        }
         @if (one.description; as text) {
           <p class="note desc">{{ text }}</p>
         }
@@ -73,7 +90,7 @@
       <app-species-photos [slug]="slug()" />
     </ng-template>
     <ng-template #sources>
-      <app-species-sources [species]="one" />
+      <app-species-sources [species]="one" [reactions]="reactions()" />
     </ng-template>
 
     <div class="page" appScrollFade>

@@ -9,4 +9,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class CrosshairComponent {
   readonly label = input.required<string>();
+  /** A light halo for a dark base map. The kit cross is dark green and has none. */
+  readonly halo = input(false);
 }

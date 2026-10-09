@@ -25,6 +25,7 @@ the flake (`deploy/module.nix`). Its options are under `services.kinoko`.
 | `/var/lib/pilze-app/fotos` | Photos. One folder for each find, and `arten/` for the species photos | service `kinoko` |
 | `/var/lib/pilze-app/daten` | Data of the pipeline (`PILZE_DATA`): cache, uploads, checkpoints | service `kinoko` |
 | `/var/lib/pilze-app/runs` | One log file for each pipeline run (`<run id>.log`) | service `kinoko` |
+| `/var/lib/pilze-render/app/backend` | Only without the NixOS module: the binary `kinoko`, `deploy.stamp` and an optional `.env` | `deploy/backend.sh` |
 
 The data folder has this layout:
 
@@ -53,8 +54,9 @@ and set the options:
 
   services.kinoko = {
     enable = true;
-    origin = "https://pilze.beimgraben.net";
-    oidc.issuer = "https://sso.beimgraben.net/application/o/pilze/";
+    origin = "https://pilze.example.org";
+    oidc.issuer = "https://sso.example.org/application/o/pilze/";
+    oidc.name = "Example SSO";
   };
 }
 ```
@@ -69,6 +71,7 @@ and set the options:
 | `mapsDir` | `/var/www/pilze` | Folder of the manifests and the tiles. The web server serves it |
 | `origin` | none, required | Public origin of the app, for CORS and links |
 | `oidc.issuer` | none, required | OpenID issuer. Discovery and keys come from it |
+| `oidc.name` | empty | Name of the SSO on the sign-in button. Empty gives the host of the issuer |
 | `oidc.clientId` | `pilze` | Expected audience of the access tokens |
 | `oidc.adminGroup` | `pilze-admins` | A person in this group has each permission |
 | `pipeline.enable` | `true` | Runs the data pipeline in the service |
@@ -107,7 +110,8 @@ are for local development; they point to `./var/`.
 | `PILZE_RUN_LOGS` | `./var/runs` | `<stateDir>/runs` | Folder of the run logs |
 | `PILZE_LISTEN` | `127.0.0.1:8111` | `listen` | Address and port of the API |
 | `PILZE_ORIGIN` | `http://localhost:4200` | `origin` | Public origin, for CORS and for `GET /api/config` |
-| `PILZE_OIDC_ISSUER` | `https://sso.beimgraben.net/application/o/pilze/` | `oidc.issuer` | OpenID issuer. The service adds a final `/` when it is missing |
+| `PILZE_OIDC_ISSUER` | empty | `oidc.issuer` | Required for a deploy. OpenID issuer. The service adds a final `/` when it is missing. Without it, the service starts, but nobody can sign in |
+| `PILZE_OIDC_NAME` | host of the issuer | `oidc.name` | Optional. Name of the SSO on the sign-in button |
 | `PILZE_OIDC_CLIENT_ID` | `pilze` | `oidc.clientId` | Expected `aud` of the access token |
 | `PILZE_ADMIN_GROUP` | `pilze-admins` | `oidc.adminGroup` | Group in the token. A person in it is an admin, also without a row in the database |
 | `PILZE_PIPELINE` | `true` | `pipeline.enable` | Starts the run queue and the weekly schedule. A boolean |
@@ -258,10 +262,104 @@ endpoint for them exists, and no rule for them is necessary.
 
 ## Deploy
 
-### Service
+### Service with the NixOS module
 
 Update the flake input of the host configuration. Then switch the host. The
 service restarts and migrates the database.
+
+### Service without the NixOS module
+
+`deploy/backend.sh` builds the binary `kinoko` and copies it with rsync to
+`app/backend/` of the target. Then it writes `app/backend/deploy.stamp` in a
+second rsync call. A path unit on the host restarts the service when the stamp
+changes. The binary contains the seed data. No other file is necessary.
+
+```
+deploy/backend.sh                                   # BAU=go: backend/build.sh
+BAU=nix NIX_ZIEL=root@homeserver deploy/backend.sh  # nix build .#backend
+```
+
+| Variable | Default | Function |
+| --- | --- | --- |
+| `ZIEL` | `pilzedeploy@10.66.66.6` | rsync target. The work directory is `app/backend` below the root of the target |
+| `SCHLUESSEL` | `~/.ssh/pilze_daten` | SSH key of the target |
+| `BAU` | `go` | `go`: `backend/build.sh` with cgo. The binary uses the C libraries of the build host. `nix`: `nix build .#backend`. The binary uses the Nix store |
+| `NIX_ZIEL` | none | With `BAU=nix` only. A login with Nix on the host. `nix copy` sends the libraries of the binary to its Nix store |
+
+With `BAU=go`, build on a host with the same system as the homeserver, or on
+the homeserver. The build host needs Go, a C compiler, `pkg-config` and the
+development packages of LightGBM, netCDF, GDAL and PROJ. The homeserver needs
+the run-time packages of the same libraries.
+
+The rsync call uses `--delete`. It keeps `.env`, `var/` and `deploy.stamp`.
+
+The host needs these two units. The paths are those of the Python service:
+
+```ini
+# kinoko.service
+[Unit]
+After=network-online.target
+ConditionPathExists=/var/lib/pilze-render/app/backend/kinoko
+
+[Service]
+User=pilzeapp
+WorkingDirectory=/var/lib/pilze-render/app/backend
+ExecStart=/var/lib/pilze-render/app/backend/kinoko serve
+Restart=on-failure
+RestartSec=5
+MemoryMax=6G
+ProtectSystem=strict
+ReadWritePaths=/var/lib/pilze-app /var/www/pilze
+Environment=PILZE_DB=/var/lib/pilze-app/pilze.sqlite
+Environment=PILZE_FOTOS=/var/lib/pilze-app/fotos
+Environment=PILZE_DATA=/var/lib/pilze-app/daten
+Environment=PILZE_RUN_LOGS=/var/lib/pilze-app/runs
+Environment=PILZE_MAPS=/var/www/pilze
+Environment=PILZE_ORIGIN=https://pilze.example.org
+Environment=PILZE_OIDC_ISSUER=https://sso.example.org/application/o/pilze/
+
+# kinoko-deploy.path
+[Path]
+PathChanged=/var/lib/pilze-render/app/backend/deploy.stamp
+Unit=kinoko-restart.service
+
+# kinoko-restart.service
+[Service]
+Type=oneshot
+ExecStart=systemctl restart kinoko.service
+```
+
+`PILZE_OIDC_ISSUER` is required. `PILZE_OIDC_NAME` is optional. The table in
+"Settings" gives all variables. A file `.env` in the work directory can also
+give them.
+
+Do these steps for the change from the Python service `pilze-app`:
+
+1. Make a copy of `/var/lib/pilze-app/pilze.sqlite`.
+2. Stop and disable `pilze-app` and its path unit `pilze-app-deploy`.
+3. Install the two units above. Use the same `PILZE_*` values as `pilze-app`. The old value of `PILZE_DB` (`sqlite+aiosqlite:////var/lib/pilze-app/pilze.sqlite`) also works.
+4. Add `PILZE_DATA` and `PILZE_RUN_LOGS`. Make the two folders for the user `pilzeapp`.
+5. Run `deploy/backend.sh`. It removes the Python code from `app/backend` and writes the stamp.
+6. Enable `kinoko.service` and `kinoko-deploy.path`. Start `kinoko.service` if the stamp was first.
+7. Read the log: `journalctl -u kinoko`. The service adopts the database of the Python service at start (see "Database migration from the Python service").
+8. Do a test: `curl -s http://127.0.0.1:8111/api/config`. The value `version` must be the version of the build.
+
+### Version
+
+The version of a build comes from Git, for example `v2026-10-08-01-3-g65dd41a`
+(`git describe --tags --always`). The app and the service remove the commit
+hash and show `v2026-10-08-01-3`. A release tag has the form `vYYYY-MM-DD-NN`.
+
+- The app: `frontend/tools/stamp-version.mjs` writes it before each build. The about page shows it.
+- The service: `backend/build.sh` gives it to the linker (`-ldflags -X …/config.build=…`). `GET /api/config` and `kinoko version` return it. A plain `go build` gives `dev`.
+- Nix: the flake has no Git tags. It uses the date and the commit of the flake, for example `v2026-10-09+65dd41a`, for the app and the service. Thus the build stays reproducible.
+- `KINOKO_VERSION` replaces the Git value for both sides.
+
+CI stops when the app and the service of one build do not show the same
+version.
+
+`npm start` stamps the app one time at start. Restart it after a commit. The
+service shows the version of its last `backend/build.sh`.
 
 ### Frontend
 
@@ -290,4 +388,5 @@ deploy the frontend.
 - Use `nix develop` for both sides. Use `nix develop .#backend` or `nix develop .#frontend` for one side.
 - Service: `cd backend && go run ./cmd/kinoko serve`.
 - App: `cd frontend && npm ci && npm start`. `proxy.conf.json` sends `/api` to `127.0.0.1:8111` and the tile paths to `https://pilze.beimgraben.net/`.
-- SSO: use the same Authentik instance with the redirect `http://localhost:4200/anmeldung`.
+- SSO: use your Authentik instance with the redirect `http://localhost:4200/anmeldung`. Set `PILZE_OIDC_ISSUER` for it.
+- SSO without Authentik: `cd backend && go run ./tools/devsso -admin`. It signs in a test person at once. Start the service with `PILZE_OIDC_ISSUER=http://127.0.0.1:9000/`. Use it only on localhost.

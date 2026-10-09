@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { CatalogueText } from '../catalogue-text';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
@@ -39,6 +40,7 @@ const SEPARATOR = ', ';
 })
 export class SpeciesColoursComponent {
   private readonly i18n = inject(I18nService);
+  private readonly text = inject(CatalogueText);
 
   readonly groups = input.required<readonly ColourGroup[]>();
 
@@ -53,7 +55,8 @@ export class SpeciesColoursComponent {
 
   /** A gradient reads "from A to B". Other modes list the names side by side. */
   private names(group: ColourGroup): string {
-    const words = group.colours.map((colour) => colour.name);
+    // Two catalogue colours can have the same standard name in English.
+    const words = [...new Set(group.colours.map((colour) => this.text.colour(colour)))];
     if (group.mode !== 'gradient') return words.join(SEPARATOR);
     return words.join(` ${this.i18n.translate('common.to')} `);
   }

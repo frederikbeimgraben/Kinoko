@@ -1,4 +1,4 @@
-import type { Permission, PermissionArea, TermKind } from '../../core/api/models';
+import type { Edibility, Permission, PermissionArea, TermKind } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
 
 /** The text key for each permission and each area. */
@@ -27,4 +27,13 @@ export const AREA_TEXT: Readonly<Record<PermissionArea, TranslationKey>> = {
   interface: 'admin.role.section.interface',
   access: 'admin.role.section.access',
   data: 'admin.role.section.data',
+};
+
+/** Short names of the edibility for the five segments of the create page. */
+export const EDIBILITY_SHORT_TEXT: Readonly<Record<Edibility, TranslationKey>> = {
+  edible: 'admin.species.edibilityShort.edible',
+  conditionally_edible: 'admin.species.edibilityShort.conditionally_edible',
+  inedible: 'admin.species.edibilityShort.inedible',
+  poisonous: 'admin.species.edibilityShort.poisonous',
+  deadly: 'admin.species.edibilityShort.deadly',
 };

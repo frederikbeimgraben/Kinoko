@@ -63,6 +63,32 @@ describe('SearchFieldComponent', () => {
     expect(container.querySelector('input')).toHaveFocus();
   });
 
+  it('zeigt keinen Ring beim Tippen nach einem Tipp auf das Feld', async () => {
+    const { container, fixture } = await render(SearchFieldComponent, {
+      inputs: { placeholder: 'Art suchen' },
+    });
+
+    await userEvent.click(screen.getByPlaceholderText('Art suchen'));
+    await userEvent.keyboard('Stein');
+    fixture.detectChanges();
+
+    expect(container.querySelector('.search--keyboard')).toBeNull();
+  });
+
+  it('zeigt den Ring nur für den Fokus von der Tastatur', async () => {
+    const { container, fixture } = await render(SearchFieldComponent, {
+      inputs: { placeholder: 'Art suchen' },
+    });
+
+    await userEvent.tab();
+    fixture.detectChanges();
+    expect(container.querySelector('.search--keyboard')).not.toBeNull();
+
+    await userEvent.tab();
+    fixture.detectChanges();
+    expect(container.querySelector('.search--keyboard')).toBeNull();
+  });
+
   it('lässt die Fläche in einer Leiste weg', async () => {
     const { container, rerender } = await render(SearchFieldComponent, {
       inputs: { plain: false },

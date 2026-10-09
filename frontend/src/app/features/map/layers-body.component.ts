@@ -3,7 +3,7 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ThemeStore } from '../../core/theme/theme.store';
-import { backgroundAvailable, type Background } from '../../map/background';
+import type { Background } from '../../map/background';
 import { ChoiceRowComponent } from '../../ui/choice-row/choice-row.component';
 import { RangeSliderComponent } from '../../ui/range-slider/range-slider.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
@@ -13,7 +13,7 @@ import { SwitchComponent } from '../../ui/switch/switch.component';
 import { MapStore } from './map.store';
 import { MapView } from './map.view';
 
-/** The ground of the map: the drawn map, the aerial photo or the terrain. */
+/** The ground of the map: the drawn map, the satellite image or the terrain. */
 type Ground = 'map' | 'satellite' | 'topo';
 
 /** The style of the drawn map. */
@@ -23,7 +23,6 @@ interface GroundChoice {
   readonly value: Ground;
   readonly label: TranslationKey;
   readonly sub?: TranslationKey;
-  readonly available: boolean;
 }
 
 interface ShownSwitch {
@@ -32,7 +31,7 @@ interface ShownSwitch {
   readonly change: (on: boolean) => void;
 }
 
-const GROUNDS: readonly Omit<GroundChoice, 'available'>[] = [
+const GROUNDS: readonly GroundChoice[] = [
   { value: 'map', label: 'map.basemap.map' },
   { value: 'satellite', label: 'map.basemap.aerial', sub: 'map.basemap.aerialCredit' },
   { value: 'topo', label: 'map.basemap.terrain' },
@@ -62,13 +61,11 @@ export class LayersBodyComponent {
 
   readonly changed = output<Background>();
 
-  protected readonly grounds = computed<readonly GroundChoice[]>(() =>
-    GROUNDS.map((choice) => ({ ...choice, available: backgroundAvailable(choice.value) })),
-  );
+  protected readonly grounds = GROUNDS;
 
   protected readonly ground = computed<Ground>(() => {
     const background = this.state.background();
-    return background === 'satellite' || background === 'topo' ? background : 'map';
+    return background === 'topo' || background === 'satellite' ? background : 'map';
   });
 
   /** The style that the theme of the app gives. */
@@ -138,7 +135,6 @@ export class LayersBodyComponent {
   }
 
   private choose(background: Background): void {
-    if (!backgroundAvailable(background)) return;
     this.state.setBackground(background);
     this.changed.emit(background);
   }

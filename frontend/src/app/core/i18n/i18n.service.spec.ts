@@ -58,6 +58,19 @@ describe('I18nService', () => {
     expect(i18n.translate('map.week.value', { week: 40 })).toBe('KW 40 · {year}');
   });
 
+  it('wählt die Einzahl oder Mehrzahl der Sprache für eine Zahl', async () => {
+    const i18n = service();
+
+    expect(i18n.translate('group.memberCount', { count: 1 })).toBe('1 Mitglied');
+    expect(i18n.translate('group.memberCount', { count: 2 })).toBe('2 Mitglieder');
+
+    i18n.setLocale('en');
+    await ready(i18n, 'en');
+
+    expect(i18n.translate('group.memberCount', { count: 1 })).toBe('1 member');
+    expect(i18n.translate('find.pieces', { count: '1 284' })).toBe('1 284 pieces');
+  });
+
   it('nimmt die gesicherte Sprache beim Start', async () => {
     localStorage.setItem('pilzkarte.sprache', 'en');
 

@@ -1,6 +1,6 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { withStorageSync } from '../../core/state';
-import { BACKGROUNDS, backgroundAvailable, type Background } from '../../map/background';
+import { BACKGROUNDS, type Background } from '../../map/background';
 import type { Detent } from '../../ui/sheet/sheet-snap';
 
 /** The three views of the map sheet. */
@@ -95,10 +95,10 @@ function isView(value: unknown): value is ViewMode {
   return typeof value === 'string' && (VIEW_MODES as readonly string[]).includes(value);
 }
 
-/** Accepts only a background that exists and is available. */
+/** Accepts only a background that exists. A strange value from the storage goes. */
 function asBackground(value: unknown): Background | null {
   const found = BACKGROUNDS.find((entry) => entry === value);
-  return found !== undefined && backgroundAvailable(found) ? found : null;
+  return found ?? null;
 }
 
 function asDetent(value: unknown): Detent | null {
