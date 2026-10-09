@@ -7,6 +7,7 @@ import {
   linkedSignal,
   signal,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { HistoryService } from '../../core/navigation/history.service';
 import { AuthService } from '../../core/auth';
@@ -15,17 +16,21 @@ import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ViewportService } from '../../core/layout/viewport.service';
+import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { FormSheetComponent } from '../../ui/form-sheet/form-sheet.component';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
+import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PhotoStripComponent } from '../../ui/photo-strip/photo-strip.component';
 import { ProgressComponent } from '../../ui/progress/progress.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { SpeciesDeskComponent } from '../species/species-desk.component';
 import { SpeciesPageComponent } from '../species/species-page.component';
 import { SpeciesStore } from '../species/species.store';
 import { ImagesStore } from './images.store';
@@ -33,19 +38,23 @@ import { ImagesStore } from './images.store';
 /** The licences of a photo from another source, per the board `ImageAdd`. */
 const CURATED_LICENCES: readonly Licence[] = ['cc_by_4', 'cc_by_sa_4', 'cc0'];
 
-/** Adds a photo (board `ImageAdd`) or submits it (board `ImageSubmit`) in a sheet over the species page. */
+/** Adds a photo on a page (board `ImageAdd`) or submits it in a sheet over the species page (board `ImageSubmit`). */
 @Component({
   selector: 'app-image-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    ActionBarComponent,
     FormFieldComponent,
     FormSheetComponent,
     ListRowComponent,
+    NgTemplateOutlet,
     OptionSheetComponent,
+    PageHeaderComponent,
     PhotoStripComponent,
     ProgressComponent,
     RowGroupComponent,
     SegmentedComponent,
+    SpeciesDeskComponent,
     SpeciesPageComponent,
     SwitchComponent,
     TranslatePipe,
@@ -63,6 +72,8 @@ export class ImageFormComponent {
   private readonly toasts = inject(ToastService);
 
   readonly slug = input.required<string>();
+
+  protected readonly wide = inject(ViewportService).wide;
 
   /** A person who reviews photos adds the photo. Each other person submits it. */
   protected readonly curates = computed(() => this.rights.can('image.review'));

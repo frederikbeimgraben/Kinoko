@@ -109,11 +109,7 @@ test('ImageAdd', async ({ page }) => {
   });
   await expect(page.getByRole('heading', { name: 'Bild hinzufügen' })).toBeVisible();
   await pick(page, photoFixture(358, 160));
-  await page.getByLabel('Urheber').fill('Frederik Beimgraben');
-  await page.getByRole('button', { name: /Herkunft/ }).click();
-  await page.getByRole('button', { name: 'CC BY-SA 4.0' }).click();
-  await page.getByLabel('Aufgenommen').fill('2026-09-06');
-  await page.getByRole('checkbox', { name: 'Als Titelbild der Art' }).check();
+  await page.getByLabel('Urheber').fill('');
   await expectBoard(page, 'ImageAdd');
 });
 

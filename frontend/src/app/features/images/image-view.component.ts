@@ -102,10 +102,11 @@ export class ImageViewComponent {
   /** Only a person who reviews photos sets the lead photo. */
   protected readonly canSetLead = computed(() => this.rights.can('image.review'));
   protected readonly isLead = computed(() => this.images.lead()?.id === this.id());
-  /** A reviewer or the person who submitted the photo may remove it. */
-  protected readonly canRemove = computed(
-    () => this.canSetLead() || this.account.owns(this.photo()?.ownerId ?? null),
-  );
+  /** A reviewer or the person who submitted the photo may remove it. Without a photo, there is nothing to remove. */
+  protected readonly canRemove = computed(() => {
+    const photo = this.photo();
+    return photo !== null && (this.canSetLead() || this.account.owns(photo.ownerId ?? null));
+  });
 
   private readonly speciesId = computed(() => this.species.entryOf(this.slug())?.id ?? null);
 
