@@ -20,7 +20,7 @@ import { photoPath } from '../../core/api/models';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
 import { DEFAULT_LAYER, MapStore } from './map.store';
-import { layerName, layerPeriod } from './layer-name';
+import { layerCaption, layerName } from './layer-name';
 
 /** The values that the head and the body of the map read. One source for both devices. */
 @Injectable({ providedIn: 'root' })
@@ -210,7 +210,7 @@ export class MapView {
   readonly rampLabel = computed(() => {
     const layer = this.layer();
     if (this.onLayer())
-      return layer === null ? '' : `${this.layerName(layer)}, ${layerPeriod(layer, this.i18n)}`;
+      return layer === null ? '' : layerCaption(layer, this.layerWeek(), this.i18n);
     // "Abgestuft" shows how well the factors agree, not a probability of a find.
     if (this.onCombination()) return this.i18n.translate('map.legend.factorMatch');
     return this.i18n.translate('map.legend.findProbability');
