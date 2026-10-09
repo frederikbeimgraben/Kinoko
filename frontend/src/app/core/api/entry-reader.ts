@@ -42,6 +42,7 @@ export function ownFind(entry: FindEntry): Find | null {
     visibility: entry.visibility,
     groupId: entry.groupId ?? null,
     forTraining: entry.forTraining ?? false,
+    createdAt: entry.createdAt,
   };
 }
 

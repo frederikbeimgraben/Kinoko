@@ -22,6 +22,7 @@ import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.co
 import { EntriesStore } from '../entries/entries.store';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore, type ObjectKind } from '../map/map.store';
+import { MapSurface } from '../map/map-surface';
 import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
 import { ObjectSheetStore } from './object-sheet.store';
@@ -70,6 +71,7 @@ const PADDING_SETTLE_MS = 260;
 })
 export class ObjectSheetComponent {
   private readonly adapter = inject(MAP_ADAPTER);
+  private readonly surface = inject(MapSurface);
   private readonly eintraege = inject(EntriesStore);
   private readonly i18n = inject(I18nService);
   private readonly sheet = inject(ObjectSheetStore);
@@ -157,10 +159,18 @@ export class ObjectSheetComponent {
   ]);
 
   constructor() {
-    // A tap on an object moves the map to it. The tap on the map and the tap on an entry row use this path.
-    effect(() => {
+    // A tap on an object or on an entry row moves the map to it. The move waits for the start of the map
+    // and for the sheet height, because a padding change of the map stops a running move.
+    effect((onCleanup) => {
       const point = this.location();
-      if (point !== null) this.adapter.flyTo(point, ZOOM_OBJECT);
+      this.map.overlayHeight();
+      if (point === null || !this.surface.ready() || this.relocating()) return;
+      const timer = setTimeout(() => {
+        this.adapter.flyTo(point, ZOOM_OBJECT);
+      }, PADDING_SETTLE_MS);
+      onCleanup(() => {
+        clearTimeout(timer);
+      });
     });
     // The fit waits for the sheet height: the padding change of the map would stop a running fit.
     effect((onCleanup) => {

@@ -133,7 +133,7 @@ describe('MyDataComponent', () => {
     const spy = toastSpy();
 
     await userEvent.click(screen.getByRole('button', { name: 'Alles löschen' }));
-    expect(screen.getByText('2 Funde · 4 Marker · 0 Zonen · 1 Bild · 2 eigene Gruppen')).toBeInTheDocument();
+    expect(screen.getByText('2 Funde · 4 Marker · 0 Zonen · 1 Bild 2 eigene Gruppen')).toBeInTheDocument();
     const dialog = screen.getByRole('dialog');
     await userEvent.click(within(dialog).getByRole('button', { name: 'Alles löschen' }));
     http.expectOne('/api/me/data').flush(null, { status: 204, statusText: 'No Content' });

@@ -95,23 +95,22 @@
   border: 0;
 }
 
-// Per `kit.css` `.modal`. A box with `inset-block: 0 0` takes the full height, so the modal stands at its centre.
-// The centring uses `translate`, so the `scale` of the pop animation keeps it.
+// Per `kit.css` `.modal`. Auto margins in a full-height box put the modal at its centre.
+// A `translate` would make the modal the frame of each fixed layer in it, for example the photo dialog.
 .sheet--modal {
   position: var(--modal-layer-position, fixed);
-  inset-block: 50% auto;
+  inset-block: 0;
   inset-inline: var(--sheet-modal-start, calc(var(--size-rail) + var(--size-column))) 0;
   z-index: calc(var(--z-sheet) + 1);
   inline-size: var(--w-modal);
   max-inline-size: calc(100% - 48px);
-  block-size: auto;
+  block-size: fit-content;
   max-block-size: calc(100% - 64px);
-  margin-inline: auto;
+  margin: auto;
   overflow: hidden;
   background: var(--surface-high);
   border-radius: var(--r-sheet);
   box-shadow: var(--shadow-overlay);
-  translate: 0 -50%;
 }
 
 .sheet--modal.sheet--compact {

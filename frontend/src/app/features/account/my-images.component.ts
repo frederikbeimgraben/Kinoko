@@ -15,6 +15,7 @@ import { PrivateImageComponent } from '../../ui/private-image/private-image.comp
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
+import { EntriesStore } from '../entries/entries.store';
 import { SpeciesStore } from '../species/species.store';
 import { MyImagesStore } from './my-images.store';
 
@@ -61,6 +62,7 @@ export class MyImagesComponent {
   private readonly router = inject(Router);
   private readonly species = inject(SpeciesStore);
   private readonly store = inject(MyImagesStore);
+  private readonly entries = inject(EntriesStore);
   private readonly wide = inject(ViewportService).wide;
 
   protected readonly back = computed(() => !this.wide());
@@ -75,6 +77,8 @@ export class MyImagesComponent {
   constructor() {
     void this.species.loadBundle();
     this.store.load();
+    // A find photo takes the species of its find. The own finds are not in memory after a direct visit.
+    if (this.entries.finds().length === 0) this.entries.loadOnSignIn(this.entries.signedIn);
   }
 
   protected next(): void {
@@ -91,15 +95,17 @@ export class MyImagesComponent {
 
   private row(photo: Photo): Row {
     const state = STATE[photo.state];
-    const entry = photo.speciesId ? this.species.entryById(photo.speciesId) : null;
+    const speciesId = photo.speciesId ?? this.findSpecies(photo.findId);
+    const entry = speciesId ? this.species.entryById(speciesId) : null;
     const reason = photo.state === 'rejected' && photo.rejectReason ? photo.rejectReason : null;
     const stateText =
       reason === null
         ? this.i18n.translate(state.text)
         : this.i18n.translate('image.rejectedBecause', { reason });
+    const fallback = this.i18n.translate(photo.findId ? 'image.findPhoto' : 'image.untitled');
     return {
       id: photo.id,
-      title: entry?.name ?? photo.caption ?? '',
+      title: entry?.name ?? (photo.caption?.trim() ? photo.caption : fallback),
       sub: joined([shortDay(new Date(photo.createdAt), this.i18n), stateText]),
       thumb: photoPath(photo.id, 'list'),
       badge: this.i18n.translate(state.badge),
@@ -107,5 +113,9 @@ export class MyImagesComponent {
       // The image view shows only approved photos.
       link: entry && photo.state === 'approved' ? ['/arten', entry.slug, 'bilder', photo.id] : null,
     };
+  }
+
+  private findSpecies(findId: string | null | undefined): string | null {
+    return findId ? (this.entries.finds().find((find) => find.id === findId)?.speciesId ?? null) : null;
   }
 }

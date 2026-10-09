@@ -2,6 +2,7 @@ import { photoPath, type OpenFind, type Photo, type SpeciesEntry } from '../../c
 import { asDate } from '../../core/i18n/dates';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import { locationText } from '../../core/i18n/places';
+import { capColour } from '../entries/cap-colour';
 
 /** One label and value row of a card, per the board `FindQueue`. */
 export interface FindCardRow {
@@ -23,15 +24,9 @@ export interface FindCard {
   readonly rows: readonly FindCardRow[];
 }
 
-const FALLBACK_COLOUR = '#7a5230';
-
 /** Day and full month, as the board shows it: "6. September". */
 export function dayAndMonth(iso: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(asDate(iso));
-}
-
-function capColour(species: SpeciesEntry | null): string {
-  return species?.colours.find((group) => group.part === 'cap')?.colours[0]?.hex ?? FALLBACK_COLOUR;
 }
 
 /** The rows Melder, Datum, Ort and Anzahl. A find without a count has no Anzahl row. */

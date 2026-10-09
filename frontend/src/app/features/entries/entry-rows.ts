@@ -7,6 +7,7 @@ import type { EntryListRow } from '../../ui/entry-list/entry-list.component';
 import type { IconName } from '../../ui/svg-icon/svg-icon.component';
 import { visibilityText } from '../add-entry/visibility';
 import type { ObjectKind } from '../map/map.store';
+import { capColour } from './cap-colour';
 import { colourToken } from './colors';
 import type { EntryBody } from './entries.store';
 import { hectaresText, isoDatum } from './formats';
@@ -20,7 +21,12 @@ export interface EntryRow extends EntryListRow {
   readonly object: { kind: ObjectKind; id: string } | null;
   /** The ISO day that sorts the row. */
   readonly sortKey: string;
+  /** Sorts the rows of one day: the instant of the save, newest first. A pending row is on top. */
+  readonly order?: string;
 }
+
+/** The order of a pending row: it is above each saved row of its day. */
+const PENDING_ORDER = '\uffff';
 
 /** What the rows need besides the entries. */
 export interface RowContext {
@@ -32,9 +38,9 @@ export interface RowContext {
   readonly reporter: string;
   /** The first name of another person, `null` while it is not known. */
   readonly person: (ownerId: string) => string | null;
+  /** The path of the thumb of an own find, `undefined` for a find without a photo. */
+  readonly photo?: (findId: string) => string | undefined;
 }
-
-const FALLBACK_COLOUR = '#7a5230';
 
 /** The label of the day group: "Today", or the month, with the year when it is not this year. */
 export function dayLabel(iso: string, today: string, i18n: I18nService): string {
@@ -47,11 +53,6 @@ export function dayLabel(iso: string, today: string, i18n: I18nService): string 
 /** The local day of an instant from the service. */
 function dayOf(instant: string | undefined): string | null {
   return instant ? isoDatum(new Date(instant)) : null;
-}
-
-/** The cap colour of a species, for the thumb without a photo. */
-function speciesColour(species: SpeciesEntry | null): string {
-  return species?.colours.find((group) => group.part === 'cap')?.colours[0]?.hex ?? FALLBACK_COLOUR;
 }
 
 /** The meta line of a find: the day (not for today), the count and the person. */
@@ -75,8 +76,9 @@ function findRow(
   key: string,
   find: Pick<SharedFind, 'speciesId' | 'foundOn' | 'count' | 'note'>,
   person: string | null,
-  extra: { pending: boolean; object: EntryRow['object'] },
+  extra: { pending: boolean; object: EntryRow['object']; order?: string; photo?: string },
 ): EntryRow {
+  const { photo, ...rest } = extra;
   const species = context.species(find.speciesId);
   return {
     key,
@@ -86,10 +88,11 @@ function findRow(
       title: species?.name ?? context.i18n.translate('find.unknownSpecies'),
       meta: findMeta(context, find.foundOn, find.count, person),
       note: find.note ?? undefined,
-      colour: speciesColour(species),
+      colour: capColour(species),
+      photo,
       icon: 'mushroom',
     },
-    ...extra,
+    ...rest,
   };
 }
 
@@ -97,6 +100,8 @@ export function ownFindRow(context: RowContext, find: Find): EntryRow {
   return findRow(context, `find-${find.id}`, find, context.reporter, {
     pending: false,
     object: { kind: 'find', id: find.id },
+    order: find.createdAt,
+    photo: context.photo?.(find.id),
   });
 }
 
@@ -119,6 +124,7 @@ function placeRow(
     key: `${kind}-${item.id}`,
     day: day === null ? undefined : dayLabel(day, context.today, context.i18n),
     sortKey: day ?? '',
+    order: item.createdAt,
     entry: { title: item.name, meta, note: item.note ?? undefined, colour: colourToken(item.colour), icon },
     pending: false,
     object: { kind, id: item.id },
@@ -127,8 +133,9 @@ function placeRow(
 
 export function markerRow(context: RowContext, marker: Marker): EntryRow {
   const day = dayOf(marker.createdAt);
+  // Below "Today" the day is the group label already, as for a find.
   const meta = joined([
-    day === null ? null : shortDate(day, context.i18n),
+    day === null || day === context.today ? null : shortDate(day, context.i18n),
     visibilityText(context.i18n, marker.visibility),
   ]);
   return placeRow(context, 'marker', marker, meta, 'flag');
@@ -152,16 +159,14 @@ export function pendingRow(context: RowContext, task: SyncTask<EntryBody>): Entr
       `waiting-${task.id}`,
       { ...body, note: body.note ?? null, speciesId: body.speciesId ?? null, count: body.count ?? null },
       context.reporter,
-      {
-        pending: true,
-        object: null,
-      },
+      { pending: true, object: null, order: PENDING_ORDER },
     );
   }
   return {
     key: `waiting-${task.id}`,
     day: dayLabel(created, context.today, context.i18n),
     sortKey: created,
+    order: PENDING_ORDER,
     entry: {
       title: body.name,
       meta: visibilityText(context.i18n, body.visibility ?? 'private'),
@@ -174,7 +179,11 @@ export function pendingRow(context: RowContext, task: SyncTask<EntryBody>): Entr
   };
 }
 
-/** Newest day first. Rows of the same day keep their order, so pending rows stay on top. */
+/** Newest first, by day and then by the instant of the save. Pending rows are on top of their day. */
 export function byDay(rows: readonly EntryRow[]): readonly EntryRow[] {
-  return [...rows].sort((left, right) => right.sortKey.localeCompare(left.sortKey));
+  const descending = (left: string, right: string): number => (left === right ? 0 : left < right ? 1 : -1);
+  return [...rows].sort(
+    (left, right) =>
+      descending(left.sortKey, right.sortKey) || descending(left.order ?? '', right.order ?? ''),
+  );
 }

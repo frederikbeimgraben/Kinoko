@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { AccountStore } from '../../core/access/account.store';
 import { GroupsStore } from '../../core/access/groups.store';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -78,15 +77,16 @@ export class MyDataComponent {
     const counts = this.counts();
     if (counts === null) return '';
     const groups = this.ownGroups();
-    return joined([
-      this.i18n.translate('account.deleteAllCount', {
-        finds: counts.finds,
-        markers: counts.markers,
-        zones: counts.zones,
-        photos: counts.photos,
-      }),
-      groups === 0 ? null : this.i18n.translate('account.deleteAllGroups', { count: groups }),
-    ]);
+    // The own groups are on a line of their own: a "·" at the end of a line looks like a mistake.
+    const entries = this.i18n.translate('account.deleteAllCount', {
+      finds: counts.finds,
+      markers: counts.markers,
+      zones: counts.zones,
+      photos: counts.photos,
+    });
+    return groups === 0
+      ? entries
+      : `${entries}\n${this.i18n.translate('account.deleteAllGroups', { count: groups })}`;
   });
 
   constructor() {
@@ -108,7 +108,7 @@ export class MyDataComponent {
     }
     const format = this.format();
     const allowed = new Set(partsFor(format).filter((part) => this.parts().has(part)));
-    const names = speciesNames((id) => this.species.entryById(id), this.i18n.locale());
+    const names = speciesNames((id) => this.species.entryById(id));
     saveFile(exportFile(selected(data, allowed), format, names, exportDay(new Date())), this.document);
     this.exporting.set(false);
   }

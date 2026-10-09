@@ -132,7 +132,7 @@ test('Wischen rechts nimmt an, wischen links fragt nach dem Grund', async ({ pag
   await swipe(page, 1);
 
   await expect.poll(() => decided).toEqual(['/api/photos/einreichung-eins/approval']);
-  await expect(page.getByText('2 von 4')).toBeVisible();
+  await expect(page.getByText('3 offene Bilder')).toBeAttached();
 
   await swipe(page, -1);
 

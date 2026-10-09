@@ -42,6 +42,7 @@ export const FIND: Find = {
   visibility: 'shared',
   groupId: null,
   forTraining: true,
+  createdAt: FIND_ENTRY.createdAt,
 };
 
 export const MARKER_ENTRY: MarkerEntry = {

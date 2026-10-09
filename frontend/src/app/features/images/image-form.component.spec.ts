@@ -10,6 +10,7 @@ import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SPECIES_BUNDLE } from '../../testing/species-fixture';
+import { toastSpy } from '../../testing/toast-spy';
 import { SpeciesStore } from '../species/species.store';
 import { ImageFormComponent } from './image-form.component';
 
@@ -144,6 +145,64 @@ describe('ImageFormComponent', () => {
 
     expect(body.get('licence')).toBe('cc0');
     request.flush(photo({ state: 'submitted' }));
+  });
+
+  it('adds a photo with a licence of the board and approves it at once', async () => {
+    const { container, http, refresh } = await build(true);
+
+    await pick(container);
+    refresh();
+    await userEvent.click(screen.getByRole('tab', { name: 'CC BY-SA 4.0' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    const request = await vi.waitFor(() => http.expectOne('/api/photos'));
+    expect((request.request.body as FormData).get('licence')).toBe('cc_by_sa_4');
+    request.flush(photo({ id: 'neu', state: 'submitted' }));
+
+    await vi.waitFor(() => {
+      http.expectOne({ url: '/api/photos/neu/approval', method: 'POST' }).flush(photo({ id: 'neu' }));
+    });
+  });
+
+  it('asks for a photo and sends nothing without one', async () => {
+    const { http, refresh } = await build(false);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
+    refresh();
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Wähle zuerst ein Foto.');
+    http.expectNone('/api/photos');
+  });
+
+  it('keeps the sheet and the photo when the upload fails', async () => {
+    const { container, http, router, refresh } = await build(false);
+    await router.navigateByUrl('/arten/steinpilz/bilder/neu');
+
+    await pick(container);
+    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
+    const request = await vi.waitFor(() => http.expectOne('/api/photos'));
+    request.flush(null, { status: 500, statusText: 'Server Error' });
+
+    await vi.waitFor(() => {
+      refresh();
+      expect(screen.getByRole('alert')).toHaveTextContent('Das Bild ließ sich nicht hochladen.');
+    });
+    expect(router.url).toBe('/arten/steinpilz/bilder/neu');
+    expect(container.querySelector('app-photo-strip .pht img')).not.toBeNull();
+  });
+
+  it('confirms a submission and says that it waits for the review', async () => {
+    const { container, http, refresh } = await build(false);
+    const toasts = toastSpy();
+
+    await pick(container);
+    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
+    (await vi.waitFor(() => http.expectOne('/api/photos'))).flush(photo({ state: 'submitted' }));
+
+    await vi.waitFor(() => {
+      expect(toasts.success).toEqual(['Bild eingereicht. Es wird geprüft.']);
+    });
   });
 
   it('goes back to the species when the person closes the sheet', async () => {

@@ -501,7 +501,7 @@ describe('SheetComponent', () => {
       const modal = container.querySelector<HTMLElement>('.sheet--modal');
       if (modal === null) throw new Error('The modal is missing.');
 
-      expect(getComputedStyle(modal).blockSize).toBe('auto');
+      expect(getComputedStyle(modal).blockSize).toBe('fit-content');
     });
 
     it('limits the height to the page height less 64 px', async () => {

@@ -1,31 +1,45 @@
 <app-page-header [title]="'image.queue.title' | t" [back]="true" (backClick)="back()">
-  <span class="queue__counter">{{ counter() }}</span>
+  @if (loaded()) {
+    <app-level-pill class="queue__badge" kind="ok" aria-hidden="true" [text]="'' + open()" />
+    <span class="sr-only">{{ openLabel() }}</span>
+  }
 </app-page-header>
 
-<div class="queue">
-  <app-review-queue
-    [balance]="true"
-    [items]="cards()"
-    (accepted)="accept($event)"
-    (rejected)="ask($event)"
-    (undone)="undo()"
-  >
-    <ng-template let-card>
-      <article class="card">
-        <app-private-image class="card__image" [path]="card.path" [alt]="card.alt" />
-        <div class="card__body">
-          <div class="card__head">
-            <span class="card__species">{{ card.species }}</span>
-            <app-level-pill [text]="card.licence" />
+<div class="queue" [class.queue--empty]="loaded() && open() === 0">
+  @if (!loaded()) {
+    <app-queue-card-skeleton />
+  } @else if (cards().length === 0) {
+    <app-state-view icon="check" [title]="'image.queue.empty' | t" />
+  } @else {
+    <app-review-queue
+      [balance]="true"
+      [rejectAsks]="true"
+      [items]="cards()"
+      (accepted)="accept($event)"
+      (rejected)="ask($event)"
+      (undone)="undo($event)"
+    >
+      <app-state-view icon="check" [title]="'image.queue.empty' | t" />
+      <ng-template let-card>
+        <article class="card">
+          <app-private-image class="card__image" [path]="card.path" [alt]="card.alt" />
+          <div class="card__body">
+            <app-object-title
+              [level]="2"
+              [title]="card.species"
+              [sub]="card.caption"
+              [colour]="card.colour"
+            />
+            <div class="card__rows">
+              @for (row of card.rows; track row.label) {
+                <app-list-row [title]="row.label" [plain]="row.value" />
+              }
+            </div>
           </div>
-          <span class="card__meta">{{ card.meta }}</span>
-          @if (card.caption) {
-            <span class="card__caption">{{ card.caption }}</span>
-          }
-        </div>
-      </article>
-    </ng-template>
-  </app-review-queue>
+        </article>
+      </ng-template>
+    </app-review-queue>
+  }
 </div>
 
 <app-reject-dialog [open]="rejecting() !== null" (rejected)="reject($event)" (closed)="rejecting.set(null)" />

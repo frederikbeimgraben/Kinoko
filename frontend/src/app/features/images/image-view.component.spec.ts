@@ -88,10 +88,10 @@ describe('ImageViewComponent', () => {
     expect(screen.getAllByText('\u2013').length).toBeGreaterThan(0);
   });
 
-  it('shows the caption as the description', async () => {
+  it('shows the caption under its form label', async () => {
     await build([photo({ id: 'zwei', caption: 'Junge Exemplare im Moos' })]);
 
-    expect(screen.getByText('Beschreibung')).toBeInTheDocument();
+    expect(screen.getByText('Bildunterschrift')).toBeInTheDocument();
     expect(screen.getByText('Junge Exemplare im Moos')).toBeInTheDocument();
   });
 

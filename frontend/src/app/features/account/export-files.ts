@@ -1,5 +1,4 @@
 import type { AccountExport, SpeciesEntry } from '../../core/api/models';
-import { DEFAULT_LOCALE } from '../../core/i18n/translations';
 import { isoDatum } from '../entries/formats';
 import { toGpx } from './export-gpx';
 
@@ -21,7 +20,7 @@ export interface ExportFile {
   readonly content: string;
 }
 
-/** The names of a species in the export: the name in the UI language and the scientific name. */
+/** The names of a species in the export: the common name and the scientific name. */
 export interface SpeciesLabel {
   readonly name: string;
   readonly scientific: string;
@@ -30,17 +29,16 @@ export interface SpeciesLabel {
 /** Gives the names of the species of an id, or `null` for no or an unknown species. */
 export type SpeciesName = (id: string | null | undefined) => SpeciesLabel | null;
 
-/** The species names of the export. The catalogue has German names only,
- * so another language gets the scientific name, which every reader knows. */
+/** The species names of the export. The common name is the name that the app shows in each language,
+ * so the two columns do not repeat the scientific name. */
 export function speciesNames(
   entry: (id: string) => Pick<SpeciesEntry, 'name' | 'scientificName'> | null,
-  locale: string,
 ): SpeciesName {
   return (id) => {
     const known = id ? entry(id) : null;
     if (known === null) return null;
     return {
-      name: locale === DEFAULT_LOCALE ? known.name : known.scientificName,
+      name: known.name,
       scientific: known.scientificName,
     };
   };

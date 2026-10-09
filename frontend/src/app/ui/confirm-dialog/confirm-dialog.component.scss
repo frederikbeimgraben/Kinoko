@@ -33,8 +33,10 @@
   letter-spacing: normal;
 }
 
+// A line break in the text starts a new line, so a list of counts does not break after a separator.
 .confirm__meta {
   margin: 0;
+  white-space: pre-line;
   font-size: var(--fs-14);
   line-height: 1.45;
   color: var(--text-var);
