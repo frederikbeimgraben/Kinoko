@@ -1,6 +1,8 @@
 <button class="avatar tap" type="button" appRipple [attr.aria-label]="label()" (click)="pressed.emit()">
   @if (name() === null) {
     <app-skeleton class="avatar__pending" kind="block" height="100%" radius="50%" />
+  } @else if (initial() === '') {
+    <app-svg-icon name="account" [size]="22" />
   } @else {
     <span aria-hidden="true">{{ initial() }}</span>
   }

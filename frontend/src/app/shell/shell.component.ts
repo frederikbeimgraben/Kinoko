@@ -119,9 +119,10 @@ export class ShellComponent {
   protected readonly mapInFront = computed(() => this.map.layersSheetOpen() || this.addEntry.running());
 
   /** The first letter of the name, "G" for a guest, `null` while the session is not known. */
+  /** A guest has no name, so the avatar shows the person icon and no letter. */
   protected readonly avatarName = computed(() => {
     if (this.session.status() === 'unknown') return null;
-    return this.session.name() ?? this.i18n.translate('konto.gast');
+    return this.session.name() ?? '';
   });
 
   protected readonly avatarLabel = computed(() => {
