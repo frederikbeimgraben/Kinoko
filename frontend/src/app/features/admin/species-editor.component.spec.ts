@@ -241,6 +241,22 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
     );
   });
 
+  it('speichert die englische Beschreibung neben der deutschen', async () => {
+    const { http } = await build({ ...PROFILE, descriptionEn: 'Brown cap' });
+    const english = await screen.findByRole('textbox', { name: 'Auf Englisch' });
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    expect(english).toHaveValue('Brown cap');
+    await userEvent.clear(english);
+    await userEvent.type(english, 'Large bolete. ');
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.body).toEqual(
+      expect.objectContaining({ description: 'Brauner Hut', descriptionEn: 'Large bolete.' }),
+    );
+  });
+
   it('nennt ohne Namen nur den Tag der Änderung', async () => {
     await build({ ...PROFILE, updatedByName: null });
 
