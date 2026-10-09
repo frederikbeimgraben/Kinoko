@@ -209,8 +209,7 @@ export class MapView {
 
   readonly rampLabel = computed(() => {
     const layer = this.layer();
-    if (this.onLayer())
-      return layer === null ? '' : layerCaption(layer, this.layerWeek(), this.i18n);
+    if (this.onLayer()) return layer === null ? '' : layerCaption(layer, this.layerWeek(), this.i18n);
     // "Abgestuft" shows how well the factors agree, not a probability of a find.
     if (this.onCombination()) return this.i18n.translate('map.legend.factorMatch');
     return this.i18n.translate('map.legend.findProbability');

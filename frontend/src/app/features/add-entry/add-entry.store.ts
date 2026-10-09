@@ -88,7 +88,12 @@ export const AddEntryStore = signalStore(
         return true;
       },
       startFind(): void {
-        patchState(store, { location: null, origin: null, step: 'findLocation', findDraft: EMPTY_FIND_DRAFT });
+        patchState(store, {
+          location: null,
+          origin: null,
+          step: 'findLocation',
+          findDraft: EMPTY_FIND_DRAFT,
+        });
       },
       /** Goes back from the find form to its location and keeps the choices. Without `keepPoint`, the crosshair aims again. */
       editFindLocation(findDraft: FindDraft, keepPoint: boolean): void {

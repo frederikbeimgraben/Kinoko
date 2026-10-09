@@ -346,7 +346,13 @@ describe('EintragenComponent', () => {
     setup.flow.open();
     setup.flow.startMarker();
     setup.flow.adoptLocation([9.05, 48.52]);
-    setup.flow.editMarkerLocation({ name: 'Parkplatz', colour: 'green', note: null, visibility: 'private', groupId: null });
+    setup.flow.editMarkerLocation({
+      name: 'Parkplatz',
+      colour: 'green',
+      note: null,
+      visibility: 'private',
+      groupId: null,
+    });
     setup.refresh();
 
     // The step starts with the earlier point below the crosshair.

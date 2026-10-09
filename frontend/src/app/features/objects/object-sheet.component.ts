@@ -8,7 +8,7 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import type { Find, GeoPolygon, Marker, Zone } from '../../core/api/models';
+import type { Find, Marker, Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -18,7 +18,7 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
-import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
+import { StepBarComponent } from '../../ui/step-bar/step-bar.component';
 import { panBelow } from '../add-entry/crosshair-aim';
 import { EntriesStore } from '../entries/entries.store';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
@@ -27,6 +27,7 @@ import { MapSurface } from '../map/map-surface';
 import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
 import { ObjectSheetStore } from './object-sheet.store';
+import { ZOOM_OBJECT, confirmActions, fitZone } from './object-steps';
 import { ZoneSheetComponent } from './zone-sheet.component';
 
 /** The name of the sheet for assistive technology. */
@@ -42,15 +43,6 @@ const EDIT_TITLE: Record<ObjectKind, TranslationKey> = {
   marker: 'entry.marker.editTitle',
   zone: 'entry.zone.editTitle',
 };
-
-/** The zoom of an open object: near enough to see the way, far enough to see where you are. */
-const ZOOM_OBJECT = 14;
-
-/** The free edge around a zone outline, in pixels. The sides keep the corners clear of the map buttons. */
-const ZONE_PADDING = { top: 48, bottom: 48, left: 88, right: 88 };
-
-/** In the corner step, the step bar is over the map. The desktop map has no padding for it. */
-const CORNER_PADDING = { ...ZONE_PADDING, bottom: 112 };
 
 /** The padding of the map eases in 220 ms (`MapLibreAdapter.setPadding`). */
 const PADDING_SETTLE_MS = 260;
@@ -144,44 +136,30 @@ export class ObjectSheetComponent {
   );
 
   /** Cancel and confirm, per `StepBar.dc.html`. */
-  protected readonly aimActions = computed<readonly StepAction[]>(() => [
-    {
-      label: this.i18n.translate('common.cancel'),
-      icon: 'close',
-      variant: 'secondary',
-      run: () => {
+  protected readonly aimActions = computed(() =>
+    confirmActions(
+      { cancel: this.i18n.translate('common.cancel'), confirm: this.i18n.translate('entry.confirmLocation') },
+      () => {
         this.sheet.cancelRelocating();
       },
-    },
-    {
-      label: this.i18n.translate('entry.confirmLocation'),
-      icon: 'check',
-      variant: 'primary',
-      run: () => {
+      () => {
         this.adoptAim();
       },
-    },
-  ]);
+    ),
+  );
 
   /** The corner step of a zone has a step bar like "Zone zeichnen", not the sheet (`ZoneDraw.dc.html`). */
-  protected readonly cornerActions = computed<readonly StepAction[]>(() => [
-    {
-      label: this.i18n.translate('common.cancel'),
-      icon: 'close',
-      variant: 'secondary',
-      run: () => {
+  protected readonly cornerActions = computed(() =>
+    confirmActions(
+      { cancel: this.i18n.translate('common.cancel'), confirm: this.i18n.translate('common.apply') },
+      () => {
         this.zoneSheet()?.cancelCorners();
       },
-    },
-    {
-      label: this.i18n.translate('common.apply'),
-      icon: 'check',
-      variant: 'primary',
-      run: () => {
+      () => {
         this.zoneSheet()?.applyCorners();
       },
-    },
-  ]);
+    ),
+  );
 
   constructor() {
     // A tap on an object or on an entry row moves the map to it. The move waits for the start of the map
@@ -206,7 +184,7 @@ export class ObjectSheetComponent {
       this.map.overlayHeight();
       if (zone === null || !this.surface.ready()) return;
       const timer = setTimeout(() => {
-        this.fitZone(outline ?? zone.polygon, corners ? CORNER_PADDING : ZONE_PADDING);
+        fitZone(this.adapter.rawMap(), outline ?? zone.polygon, corners);
       }, PADDING_SETTLE_MS);
       onCleanup(() => {
         clearTimeout(timer);
@@ -217,20 +195,6 @@ export class ObjectSheetComponent {
       const cross = this.cross()?.nativeElement;
       if (this.relocating() && cross !== undefined) this.aimAtObject(cross);
     });
-  }
-
-  /** A zone shows its full outline, so "Umriss ändern" has each corner on the screen. */
-  private fitZone(polygon: GeoPolygon, padding: typeof ZONE_PADDING): void {
-    const ring = polygon.coordinates[0];
-    const lons = ring.map((point) => point[0]);
-    const lats = ring.map((point) => point[1]);
-    this.adapter.rawMap()?.fitBounds(
-      [
-        [Math.min(...lons), Math.min(...lats)],
-        [Math.max(...lons), Math.max(...lats)],
-      ],
-      { padding, maxZoom: ZOOM_OBJECT, duration: 400 },
-    );
   }
 
   /** Moves the map so that the point of the form is below the crosshair. */
