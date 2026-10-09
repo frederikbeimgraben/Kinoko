@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { GroupsStore } from '../../core/access/groups.store';
 import { PersonNamesStore } from '../../core/access/person-names.store';
 import { AuthService } from '../../core/auth';
+import { ConfigStore } from '../../core/config/config.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -88,6 +89,8 @@ export class EntriesComponent {
   /** On the desktop the floating button of the map adds an entry. */
   protected readonly wide = inject(ViewportService).wide;
   protected readonly signedIn = this.store.signedIn;
+  protected readonly signingIn = this.auth.signingIn;
+  protected readonly ssoMissing = inject(ConfigStore).ssoMissing;
   protected readonly segments = SEGMENTS;
   protected readonly segment = signal<Segment>('finds');
   protected readonly filterOpen = signal(false);
@@ -194,7 +197,7 @@ export class EntriesComponent {
     void this.species.loadBundle();
     void this.store.loadShared();
     this.store.loadOnSignIn(this.signedIn);
-    this.groups.load(false, true);
+    this.groups.loadOnSignIn(this.signedIn);
     if (this.filter().withPhoto) this.photos.loadAll();
   }
 
@@ -217,7 +220,7 @@ export class EntriesComponent {
   }
 
   protected signIn(): void {
-    void this.auth.requestSignIn();
+    void this.auth.signIn('/eintraege');
   }
 
   protected send(): void {

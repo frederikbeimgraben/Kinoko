@@ -4,9 +4,19 @@
   } @else if (unknown()) {
     <app-skeleton kind="block" height="80px" radius="var(--r-item)" />
   } @else {
-    <app-push-button kind="primary" [wide]="true" (click)="signIn()">{{
-      'account.signInWith' | t
-    }}</app-push-button>
+    <div class="signin">
+      <app-push-button
+        kind="primary"
+        [wide]="true"
+        [busy]="signingIn()"
+        [disabled]="ssoMissing()"
+        (click)="signIn()"
+        >{{ signInLabel() }}</app-push-button
+      >
+      @if (ssoMissing()) {
+        <p class="signin__hint">{{ 'account.signInUnavailable' | t }}</p>
+      }
+    </div>
   }
 </ng-template>
 

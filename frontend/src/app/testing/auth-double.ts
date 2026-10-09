@@ -1,11 +1,12 @@
-import { signal, type Provider } from '@angular/core';
+import { computed, signal, type Provider } from '@angular/core';
 import type { User, UserManager, UserManagerSettings } from 'oidc-client-ts';
 import { USER_MANAGER_FACTORY } from '../core/auth';
 import { ConfigStore, type AppConfig } from '../core/config/config.store';
 
 /** The answer of `GET /api/config` in the tests. The values come from `docs/sso-authentik.md`. */
 export const CONFIG: AppConfig = {
-  oidcIssuer: 'https://sso.beimgraben.net/application/o/pilze/',
+  oidcIssuer: 'https://sso.example.org/application/o/pilze/',
+  oidcName: 'Example SSO',
   oidcClientId: 'pilze',
   origin: 'http://localhost:4200',
   version: '2026-09-09',
@@ -124,6 +125,7 @@ export class ManagerDouble {
 
 /** The providers for a test with a sign-in. `configuration: null` is a backend that did not answer. */
 export function authProvider(manager: ManagerDouble, configuration: AppConfig | null = CONFIG): Provider[] {
+  const config = signal(configuration);
   return [
     {
       provide: USER_MANAGER_FACTORY,
@@ -135,8 +137,10 @@ export function authProvider(manager: ManagerDouble, configuration: AppConfig | 
     {
       provide: ConfigStore,
       useValue: {
-        configuration: signal(configuration),
+        configuration: config,
         settled: signal(true),
+        providerName: computed(() => config()?.oidcName ?? ''),
+        ssoMissing: computed(() => config()?.oidcIssuer === ''),
         load: () => Promise.resolve(),
       },
     },

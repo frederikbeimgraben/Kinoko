@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 import { ACCOUNT_EXPORT, seedOfflineAreas, seedPendingTransfer } from '../fixtures/account';
 import { mockApi } from '../fixtures/api';
 import { flatMap } from '../fixtures/flat-map';
-import { authConfig, mockSignIn, mockSignedOut } from '../fixtures/auth';
+import { PROVIDER, authConfig, mockSignIn, mockSignedOut } from '../fixtures/auth';
 import { ME } from '../fixtures/groups';
 import { ROW_PHOTO, photo, photoPage } from '../fixtures/photos';
 import { SPECIES_BUNDLE } from '../fixtures/map';
@@ -110,7 +110,7 @@ const ready = {
     await expect(page.getByText('Kombinationen')).toBeVisible();
   },
   guest: async (page: Page): Promise<void> => {
-    await expect(page.getByRole('button', { name: 'Anmelden mit beimgraben.net' })).toBeVisible();
+    await expect(page.getByRole('button', { name: `Anmelden mit ${PROVIDER}` })).toBeVisible();
   },
   myData: countsShown,
   exportSheet: async (page: Page): Promise<void> => {

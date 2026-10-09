@@ -1109,7 +1109,10 @@ export interface components {
             status: string;
         };
         Config: {
+            /** @description Issuer URL of the SSO. Empty when the service has no SSO. */
             oidcIssuer: string;
+            /** @description Name of the SSO for the sign-in button. Empty without an SSO. */
+            oidcName: string;
             oidcClientId: string;
             origin: string;
             version: string;

@@ -2,7 +2,7 @@ import { expect, test } from '../fixtures/test';
 import { type Page } from '@playwright/test';
 import { mockApi } from '../fixtures/api';
 import { ROW_PHOTO } from '../fixtures/photos';
-import { authConfig, mockSignIn, mockSignInPending, mockSignedOut } from '../fixtures/auth';
+import { PROVIDER, authConfig, mockSignIn, mockSignInPending, mockSignedOut } from '../fixtures/auth';
 import {
   BOARD_FACTORS,
   COMBINATIONS,
@@ -79,7 +79,7 @@ async function blur(page: Page): Promise<void> {
 /** Without an account, a save first asks for the sign-in. */
 async function askForName(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Speichern' }).first().click();
-  const signIn = page.getByRole('button', { name: /beimgraben\.net/ });
+  const signIn = page.getByRole('button', { name: `Anmelden mit ${PROVIDER}` });
   if (await signIn.isVisible().catch(() => false)) {
     await signIn.click();
     await page.getByRole('button', { name: 'Speichern' }).first().click();

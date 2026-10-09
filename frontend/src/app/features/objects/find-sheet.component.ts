@@ -129,7 +129,7 @@ export class FindSheetComponent {
 
   constructor() {
     void this.arten.loadBundle();
-    if (this.groups.groups() === null) this.groups.load(false, true);
+    if (this.groups.groups() === null) this.groups.loadOnSignIn(this.eintraege.signedIn);
   }
 
   /** The own name comes from the account. Another name only shows with a shared group. */
