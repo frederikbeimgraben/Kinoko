@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "tanne", "laerche"]
 speisewertHinweis = "123pilzsuche gibt die Relative Wertigkeit 4, mit besonderer Zubereitung 1. Nur jung, roh ist er unverträglich. Wächst er an einem giftigen Baum wie der Eibe, kann er dessen Gift aufnehmen; dann meiden."
+beschreibung = "Großer, stielloser Porling aus fächerförmigen, dachziegelartig übereinander wachsenden, orangen bis hellgelben, samtigen Hüten mit gelben Poren, die im Alter weißlich ausbleichen. Er wächst als Parasit oder Folgezersetzer an Nadelholz, meist an Fichte und Tanne, in höheren Lagen auch an Lärche, und verursacht Braunfäule. Vom Leuchtenden Weichporling unterscheiden ihn vor allem die gelben Poren und die viel größeren, dachziegelartig wachsenden Fruchtkörper, denn der Weichporling ist kleiner, filzig und orangerot."
+beschreibungEn = "A large, stemless polypore made of fan-shaped, overlapping, orange to light yellow, velvety caps with yellow pores that fade to whitish with age. It grows as a parasite or saprobe on conifer wood, mostly spruce and fir, at higher altitudes also larch, and causes brown rot. The key difference from Pycnoporellus fulgens is the yellow pores and the much larger, overlapping fruit bodies, because Pycnoporellus fulgens is smaller, felty and orange-red."
+entwurf = true
 synonyme = ["Laetiporus conifericola", "Laetiporus huroniensis"]
 fruchtschicht = { art = "poren" }
 hutform = { von = "muschelfoermig" }

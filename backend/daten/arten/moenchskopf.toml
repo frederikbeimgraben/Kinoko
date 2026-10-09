@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Alte Stiele sind wässrig und zäh und bleiben besser stehen. Unter den Trichterlingen stehen einige tödlich giftige Arten; nur mit sicherer Bestimmung sammeln."
 haeufigkeit = "haeufig"
+beschreibung = "Großer Trichterling mit bräunlichem, feinfilzigem Hut mit einem Buckel in der Mitte und jung weit eingerolltem Rand, weißen bis cremefarbenen, eng stehenden, herablaufenden Lamellen und hohem, bräunlichem Stiel mit keulig verdickter Basis. Er wächst von Juni bis November als Folgezersetzer im Mischwald, gern auf kalkreichem Boden und oft in Hexenringen, und ist häufig. Vom Riesentrichterling unterscheidet ihn vor allem der deutlich fühlbare Buckel in der Hutmitte, denn der Riesentrichterling hat keinen Buckel und einen nur wenig eingerollten Rand."
+beschreibungEn = "A large funnel with a brownish, finely felty cap with an umbo at the centre and a margin that is strongly inrolled when young, white to cream, crowded, decurrent gills and a tall, brownish stem with a club-shaped base. It grows from June to November as a saprobe in mixed woods, often on calcareous soil and often in fairy rings, and is common. The key difference from Clitocybe maxima is the umbo at the centre of the cap, which can be clearly felt, because Clitocybe maxima has no umbo and a margin that is only slightly inrolled."
+entwurf = true
 weitereNamen = ["Falber Riesentrichterling"]
 synonyme = ["Clitocybe geotropa", "Omphalia geotropa var. geotropa", "Omphalia geotropa", "Clitocybe subinvoluta sensu", "Clitocybe maxima sensu", "Infundibulicybe geotropa var. maxima", "Clitocybe geotropa var. minor"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }

@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Bei Erdritterlingen wurde ein Giftstoff gefunden, der Muskelzersetzung auslöst (Rhabdomyolyse). Die Arten sind kaum sicher zu trennen, daher rät 123pilzsuche von allen Erdritterlingen ab."
 haeufigkeit = "selten"
+beschreibung = "Kleiner bis mittelgroßer Ritterling mit mausgrauem, graubraunem bis bläulichgrauem, faserig wolligem Hut mit dunkelbraunem Buckel, grauweißen bis blassgrauen, ausgebuchtet angewachsenen Lamellen mit fein gekerbten Schneiden und weißem bis hellgrauem, faserigem Stiel. Er wächst von August bis November in Nadelwäldern und Parks, gern bei Kiefern auf kalkreichem Boden, auch auf Dünen und gern in Meeresnähe, und ist selten. Vom tödlich giftigen Tigerritterling unterscheidet ihn vor allem der kleinere, dünnfleischigere Fruchtkörper, denn der Tigerritterling ist größer und hat einen weißen Hut mit grauen bis schwarzbraunen Schüppchen. Der Mausgraue Erdritterling ist giftig."
+beschreibungEn = "A small to medium-sized knight with a mouse-grey, grey-brown to bluish-grey, fibrous and woolly cap with a dark brown umbo, grey-white to pale grey, notched gills with finely notched edges and a white to light grey, fibrous stem. It grows from August to November in coniferous woods and parks, often with pine on calcareous soil, also on dunes and often near the sea, and is rare. The key difference from the deadly poisonous tiger tricholoma is the smaller, thinner fruit body, because the tiger tricholoma is larger and has a white cap with grey to black-brown scales. This species is poisonous."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
 hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["faserig", "voll"]

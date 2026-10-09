@@ -7,6 +7,9 @@ marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Eine der wenigen roh essbaren Arten, als Salatpilz oder zum Füllen der Kelche. Er hat kaum Eigengeschmack und ist oft sandig."
+beschreibung = "Kleiner bis mittelgroßer, schüssel- bis kelchförmiger, später unregelmäßig abgeflachter Becherling mit oranger bis gelber, kahler Innenseite und blasserer, weißlich körnig-kleiiger Außenseite, fast ohne Stiel. Er wächst von Juni bis November in Wäldern, Gärten und Parks auf nackter, oft sandiger oder lehmiger Erde, oft in Büscheln. Von den roten Kelch- und Prachtbecherlingen unterscheidet ihn vor allem die orange statt zinnoberrote Farbe und die Jahreszeit, denn diese wachsen von Winter bis Mai an Holz."
+beschreibungEn = "A small to medium-sized, bowl-shaped to goblet-shaped cup fungus that later becomes irregular and flat, with an orange to yellow, bare inner side and a paler, whitish, granular and scurfy outer side, almost without a stem. It grows from June to November in woods, gardens and parks on bare, often sandy or loamy soil, often in clusters. The key difference from the red elfcups is the orange instead of vermilion colour and the season, because the elfcups grow on wood from winter to May."
+entwurf = true
 weitereNamen = ["Gemeiner Orangebecherling", "Orangeroter Becherling", "Feuerroter Becherpilz", "Orangeroter Becherpilz", "Pomeranzenfarbiger Becherpilz"]
 hutform = { von = "trichterfoermig", nach = "flach" }
 hutmerkmale = ["unregelmaessig"]

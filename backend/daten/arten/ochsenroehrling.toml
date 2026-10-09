@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche"]
 speisewertHinweis = "Der Seitenkopf nennt ihn oft unverträglich, nur bedingt essbar und mit Alkohol giftig. Alle Purpurröhrlinge stehen im Verdacht, Coprin oder ähnliche Stoffe zu enthalten. Kennzeichen sind das auffällige Gewicht, das schwefelgelbe, sofort schwarzblau verfärbende Fleisch und das feine Netz auf gelblichem Stiel."
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer, auffällig schwerer Röhrling mit goldgelbem, ockergelbem bis braungelbem, schnell rötlich fleckendem Hut, gelben, später orangeroten Röhrenmündungen, die auf Druck blauen, und gelblichem Stiel mit feinem Netz und dunkelroter Basis. Er wächst von Juni bis November meist im Laubwald, gern bei Eiche und Buche, und ist in Deutschland sehr selten. Vom Blaufleckenden Purpurröhrling unterscheidet ihn vor allem der gelbliche Hut, denn der Purpurröhrling hat einen purpurroten bis weinrosa Hut, der blau fleckt. Das schwefelgelbe Fleisch verfärbt sich auf Druck schwarzblau."
+beschreibungEn = "A medium-sized, noticeably heavy bolete with a golden-yellow, ochre-yellow to brown-yellow cap that soon gets reddish spots, yellow pore openings that later become orange-red and turn blue when pressed, and a yellowish stem with a fine net and a dark red base. It grows from June to November mostly in broadleaf woods, often with oak and beech, and is very rare in Germany. The key difference from Imperator rhodopurpureus is the yellowish cap, because Imperator rhodopurpureus has a purple-red to wine-pink cap that gets blue spots. The sulphur-yellow flesh turns black-blue when pressed."
+entwurf = true
 synonyme = ["Boletus torosus", "Dictyopus torosus"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt"]

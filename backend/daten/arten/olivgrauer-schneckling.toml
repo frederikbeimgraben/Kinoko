@@ -10,6 +10,9 @@ baeume = ["buche", "eiche"]
 speisewertHinweis = "Sehr selten und in Deutschland gefährdet, in manchen Regionen fast ausgestorben. Den Fund besser stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Kleiner Schneckling mit dunkelbraunem, graubraunem bis olivgrauem, schmierig bis schleimigem Hut mit hellerem Rand, weißen, leicht herablaufenden, wachsartigen Lamellen und graubräunlichem, meist genattertem, schleimigem Stiel mit heller Spitze. Er wächst von Juni bis November im Laubwald, gern bei Eiche und Buche auf kalkreichem Boden. Die Art ist sehr selten und in Deutschland gefährdet, in manchen Regionen fast ausgestorben."
+beschreibungEn = "A small woodwax with a dark brown, grey-brown to olive-grey, slimy cap with a paler margin, white, slightly decurrent, waxy gills and a grey-brownish, mostly snakeskin-patterned, slimy stem with a pale top. It grows from June to November in broadleaf woods, often with oak and beech on calcareous soil. The species is very rare and endangered in Germany, and almost extinct in some regions."
+entwurf = true
 weitereNamen = ["Graubrauner Schleimstiel-Schneckling", "Olivbrauner Schneckling"]
 synonyme = ["Limacium mesotephrum", "Limacium arbustivum var. mesotephrum"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche", "weide"]
 karte = "fistulina_hepatica"
 speisewertHinweis = "Nur jung nehmen. Der säuerliche Geschmack bleibt auch nach dem Garen; die Seite empfiehlt vor allem Pilzpulver."
+beschreibung = "Großer, zungen- bis konsolenförmiger Porling mit rötlichem bis blutrotem, im Alter weinrotem bis dunkel braunrotem Hut, blassgelben, später rötlichen Poren, die auf Druck bräunen, und kurzem, seitlichem Stiel. Er wächst von Juni bis November als Schwächeparasit und Folgezersetzer an Laubbäumen in Misch- und Auwäldern, vor allem an alten Eichen, auch an Buche und Weide, und verursacht Braunfäule. Von der Eichenzunge unterscheidet ihn vor allem das weiche, fleischrötliche Fleisch und der rote Hut, denn die Eichenzunge hat einen blass lederfarbenen bis ockerbraunen Hut und später hartes Fleisch."
+beschreibungEn = "A large, tongue-shaped to bracket-shaped polypore with a reddish to blood-red cap that becomes wine-red to dark brown-red with age, pale yellow pores that later become reddish and turn brown when pressed, and a short, lateral stem. It grows from June to November as a weakness parasite and saprobe on broadleaf trees in mixed and riverside woods, mainly on old oaks, also on beech and willow, and causes brown rot. The key difference from Piptoporus quercinus is the soft, flesh-red flesh and the red cap, because Piptoporus quercinus has a pale leather-coloured to ochre-brown cap and flesh that later becomes hard."
+entwurf = true
 weitereNamen = ["Ochsenzunge", "Leberpilz"]
 synonyme = ["Fistulina hepatica var. endoxantha", "Confistulina hepatica", "Ptychogaster hepaticus", "Fistulina endoxantha", "Ceriomyces hepaticus"]
 fruchtschicht = { art = "poren" }

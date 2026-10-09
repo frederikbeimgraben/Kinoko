@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Schüpplinge taugen meist nicht als Speisepilze, einige sind giftig. Dieser schmeckt bitter und wächst büschelig an Nadelholz, also dort, wo auch der tödlich giftige Gifthäubling steht."
 haeufigkeit = "selten"
+beschreibung = "Kleiner Schüppling mit zitronengelbem bis dunkelgelbem, in der Mitte fuchsig- bis rostbraunem Hut mit Schüppchen, gelben, später bräunlichen, angewachsenen Lamellen und gelblichem, überfasertem, hohlem Stiel, oft mit faseriger Ringzone und dunkler Basis. Er wächst von Juni bis November als Folgezersetzer im Nadelwald, meist am Boden auf Nadelholz, seltener an Stümpfen und Totholz, oft büschelig, und ist selten. Vom tödlich giftigen Gifthäubling unterscheidet ihn vor allem der gelbe Hut, denn der Gifthäubling hat einen hell- bis dunkelbraunen Hut, einen silbrig überfaserten Stiel und rostbraunes Sporenpulver. Der Nadelschüppling ist giftig."
+beschreibungEn = "A small scalycap with a lemon-yellow to dark yellow cap with small scales that is foxy to rust-brown at the centre, yellow, later brownish, adnate gills and a yellowish, fibrous, hollow stem, often with a fibrous ring zone and a dark base. It grows from June to November as a saprobe in coniferous woods, mostly on the ground on conifer wood, less often on stumps and dead wood, often in clusters, and is rare. The key difference from the deadly poisonous funeral bell is the yellow cap, because the funeral bell has a light to dark brown cap, a silvery fibrous stem and a rust-brown spore print. This species is poisonous."
+entwurf = true
 weitereNamen = ["Nadelwaldschüppling", "Nadelholzschüppling"]
 synonyme = ["Gymnopilus spumosus", "Pholiotina spumosa", "Pholiota graveolens", "Naucoria spuniosa"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 karte = "hexen_netz"
 speisewertHinweis = "123pilzsuche führt ihn als nur bedingt essbar. Gut durchgaren und nicht mit Alkohol zusammen essen, das gibt Magen-Darm-Beschwerden. Etwa ein bis fünf von hundert Personen vertragen ihn nicht; darum nicht weitergeben und Vorräte deutlich beschriften."
+beschreibung = "Mittelgroßer bis großer Röhrling mit hell- bis dunkelbraunem oder olivgrauem, samtigem Hut, roten Röhrenmündungen und gelblichem Stiel mit rötlicher bis dunkelbrauner Netzzeichnung über die ganze Länge. Er wächst von März bis November in Laubwäldern und Parks auf kalkhaltigem Boden. Vom Flockenstieligen Hexenröhrling unterscheidet ihn vor allem das Netz am Stiel, denn der Flockenstielige Hexenröhrling hat rote Flöckchen und kein Netz. Das gelbe Fleisch blaut im Schnitt sofort schwarzblau, und zwischen Hutfleisch und Röhren liegt eine rote Zone."
+beschreibungEn = "A medium-sized to large bolete with a light to dark brown or olive-grey, velvety cap, red pore openings and a yellowish stem with a reddish to dark brown net along its full length. It grows from March to November in broadleaf woods and parks on calcareous soil. The key difference from the scarletina bolete is the net on the stem, because the scarletina bolete has red flakes and no net. The yellow flesh turns black-blue immediately when cut, and there is a red zone between the cap flesh and the tubes."
+entwurf = true
 weitereNamen = ["Netzstielige Hexenröhrling", "Netzhexe"]
 synonyme = ["Boletus luridus"]
 fruchtschicht = { art = "roehren" }
