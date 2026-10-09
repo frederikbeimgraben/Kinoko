@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Selten. Er lebt parasitisch auf dem Myzel des Kuhröhrlings und steht darum immer neben ihm."
 haeufigkeit = "selten"
+beschreibung = "Kleiner Gelbfuß mit rosenrotem, schmierigem Hut, der oft schwarz fleckt, weißlichen, später graulichen, etwas herablaufenden Lamellen und weißlichem Stiel mit wolliger Ringzone und gelblicher, schleimiger Basis. Er wächst vom Sommer bis zum Herbst bei Kiefern auf sandigem, saurem Boden und ist selten. Er lebt parasitisch auf dem Myzel des Kuhröhrlings und steht darum immer neben diesem Röhrling."
+beschreibungEn = "A small spike with a rose-red, greasy cap that often has black spots, whitish gills that turn greyish later and run slightly down the stem, and a whitish stem with a woolly ring zone and a yellowish, slimy base. It grows from summer to autumn with pine on sandy, acid soil and is rare. It lives as a parasite on the mycelium of the Jersey cow mushroom and thus always grows next to this bolete."
+entwurf = true
 weitereNamen = ["Rosenroter Gelbfuss", "Rosenroter Schmierling", "Rosa Schmierling"]
 synonyme = ["Agaricus glutinosus roseus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

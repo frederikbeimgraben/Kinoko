@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 haeufigkeit = "haeufig"
+beschreibung = "Großer Trichterling mit weißlichem bis hellbraunem, trocken seidigem Hut mit trichterförmiger Mitte, weißlichen bis cremefarbenen, weit herablaufenden Lamellen und festem, faserigem Stiel. Er wächst vom Sommer bis zum Herbst im Laub- und Nadelwald, meist gesellig in Hexenringen, und ist regional häufig, sonst sehr selten. Vom ähnlichen Fuchsigen Rötelritterling unterscheidet ihn vor allem die Hutfarbe, denn der Fuchsige Rötelritterling hat einen fuchsig orangebraunen Hut und blassrosa Sporenpulver."
+beschreibungEn = "A large funnel mushroom with a whitish to light brown, dry, silky cap with a funnel-shaped centre, whitish to cream gills that run far down the stem and a firm, fibrous stem. It grows from summer to autumn in broadleaf and coniferous woods, mostly in groups in fairy rings, and is common in some regions but very rare elsewhere. The key difference from the similar tawny funnel is the cap colour, because the tawny funnel has a tawny orange-brown cap and a pale pink spore print."
+entwurf = true
 synonyme = ["Infundibulicybe geotropa", "Clitocybe geotropa", "Omphalia geotropa var. geotropa", "Omphalia geotropa", "Clitocybe subinvoluta sensu", "Clitocybe geotropa var. minor", "Clitocybe maxima sensu", "Infundibulicybe geotropa var. maxima"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutform = { von = "trichterfoermig" }

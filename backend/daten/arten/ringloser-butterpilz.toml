@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "kiefer"]
 speisewertHinweis = "In der Schweiz nicht marktfähig, Relative Wertigkeit 4. Kulinarisch bringt er kaum etwas."
+beschreibung = "Schmierröhrling mit braunem bis kastanienbraunem, eingewachsen faserigem, feucht schleimigem Hut, gelben Röhren und gelblichem Stiel mit bräunlichen Pünktchen und rosafarbener Basis. Er wächst vom Sommer bis zum Herbst an Waldrändern und in Parks bei Kiefern, gern auf kalkreichem Boden. Vom Butterpilz und vom Goldröhrling unterscheidet ihn vor allem der fehlende Ring am Stiel."
+beschreibungEn = "A Suillus bolete with a brown to chestnut-brown cap with innate fibres that is slimy when moist, yellow tubes and a yellowish stem with brownish dots and a pink base. It grows from summer to autumn at forest edges and in parks with pine, often on calcareous soil. The key difference from the slippery jack and the larch bolete is the missing ring on the stem."
+entwurf = true
 weitereNamen = ["Ringloser Butter-Röhrling", "Rosafüßiger Körnchen-Röhrling", "Ringloser Butterröhrling"]
 synonyme = ["Suillus fluryi"]
 fruchtschicht = { art = "roehren" }

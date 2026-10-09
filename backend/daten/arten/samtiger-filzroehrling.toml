@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche"]
 speisewertHinweis = "Guter Speisepilz, in der Schweiz aber nicht marktfaehig."
+beschreibung = "Röhrling mit graubraunem bis rotbraunem, filzigem Hut, chromgelben Röhren und schlankem, gelblichem Stiel mit bräunlicher Netzzeichnung im oberen Teil. Er wächst vom Sommer bis zum Herbst im Laubwald, besonders gern bei Buchen und Eichen. Vom ähnlichen Rotfußröhrling unterscheidet ihn vor allem der Stiel, denn der Rotfußröhrling hat einen rot beflockten Stiel ohne Netz."
+beschreibungEn = "A bolete with a grey-brown to red-brown, felty cap, chrome-yellow tubes and a slender, yellowish stem with a brownish net on the upper part. It grows from summer to autumn in broadleaf woods, especially with beech and oak. The key difference from the similar red cracking bolete is the stem, because the red cracking bolete has a stem with red flakes and no net."
+entwurf = true
 synonyme = ["Boletus lanatus", "Boletus subtomentosus"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt"]

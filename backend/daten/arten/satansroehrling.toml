@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Giftig. Er ist am weißlichen bis grauen Hut, an den karminroten Röhrenmündungen, am dicken bauchigen Stiel mit roter Netzzeichnung und am aasartigen Geruch alter Fruchtkörper zu erkennen."
 haeufigkeit = "selten"
+beschreibung = "Großer Röhrling mit weißem bis hellgrauem Hut, orangeroten bis karminroten Röhrenmündungen und dickem, bauchigem Stiel mit gelblicher bis rötlicher Netzzeichnung. Er wächst vom Sommer bis zum Spätherbst im Laubwald, gern bei Buchen auf kalkreichem Boden, und ist selten. Vom ähnlichen Falschen Satansröhrling unterscheidet ihn vor allem der Hut, denn der Falsche Satansröhrling hat einen rosa bis fleischfarben getönten Hut und deutlich blauendes Fleisch. Der Satansröhrling ist giftig."
+beschreibungEn = "A large bolete with a white to light grey cap, orange-red to carmine-red pores and a thick, swollen stem with a yellowish to reddish net. It grows from summer to late autumn in broadleaf woods, often with beech on calcareous soil, and is rare. The key difference from the similar Imperator luteocupreus is the cap, because that species has a cap with pink to flesh-coloured tones and flesh that turns clearly blue. The Satan's bolete is poisonous."
+entwurf = true
 weitereNamen = ["Satanspilz", "Teufelspilz"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "halbkugelig", nach = "gewoelbt" }

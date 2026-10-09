@@ -9,6 +9,9 @@ jahreszeiten = ["herbst", "winter", "fruehling"]
 baeume = []
 speisewertHinweis = "Nur die Hüte verwenden. Die Stiele sind zäh und taugen höchstens als Pilzpulver."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner Rübling mit gelbbraunem bis honiggelbem, schmierigem Hut, weißlichen bis hellgelben Lamellen und zähem Stiel ohne Ring mit samtiger, dunkelbrauner Basis. Er wächst büschelig vom Spätherbst bis zum Frühjahr an Laubholz, gern nach dem ersten Frost, und ist sehr häufig. Vom tödlich giftigen Gifthäubling unterscheidet ihn vor allem der Stiel ohne Ring, denn der Gifthäubling hat einen dünnen Ring, einen silbrig überfaserten Stiel und rostbraunes Sporenpulver."
+beschreibungEn = "A small shank with a yellow-brown to honey-yellow, greasy cap, whitish to light yellow gills and a tough stem without a ring and with a velvety, dark brown base. It grows in clusters from late autumn to spring on broadleaf wood, often after the first frost, and is very common. The key difference from the deadly poisonous funeral bell is the stem without a ring, because the funeral bell has a thin ring, a silvery fibrous stem and a rust-brown spore print."
+entwurf = true
 weitereNamen = ["Gemeiner Samtfußrübling", "Enoki", "Winterrübling", "Winterlinge"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 hutrand = { von = ["eingebogen"] }

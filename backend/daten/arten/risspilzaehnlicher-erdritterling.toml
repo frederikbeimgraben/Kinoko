@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Ungeniessbar. Erdritterlinge sind schwer zu trennen und gelten als verdaechtig, deshalb keine Kostproben."
+beschreibung = "Kleiner Ritterling mit hell silbergrauem bis graubraunem, filzig-schuppigem Hut mit kleinem spitzem Buckel, weißen bis grauweißlichen Lamellen und weißlichem bis graubraunem, faserigem Stiel. Er wächst vom Sommer bis zum Spätherbst im Mischwald, auf Wiesen sowie in Parks und Gärten, gern auf kalkreichem Boden, und ist sehr selten. Vom ähnlichen Schwarzschuppigen Erdritterling unterscheidet ihn vor allem der hellere Hut, denn der Schwarzschuppige Erdritterling hat grobe, abstehende schwarze Schuppen. Er gilt als ungenießbar."
+beschreibungEn = "A small knight with a pale silver-grey to grey-brown, felty-scaly cap with a small pointed umbo, white to greyish-white gills and a whitish to grey-brown, fibrous stem. It grows from summer to late autumn in mixed woods, in meadows and in parks and gardens, often on calcareous soil, and is very rare. The key difference from the similar Tricholoma atrosquamosum is the paler cap, because that species has coarse, protruding black scales. It is classed as inedible."
+entwurf = true
 synonyme = ["Tricholoma inocybeoides", "Tricholoma inocyboides", "Tricholoma scalpturatum var. argyraceum", "Tricholoma argyraceum forma inocybeoides", "Tricholoma myomyces var. argyraceum"]
 fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["gebuckelt"]

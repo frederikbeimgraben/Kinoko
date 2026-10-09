@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Ungeniessbar und in Europa sehr selten, deshalb stehen lassen."
+beschreibung = "Schneckling mit braunschuppigem Hut auf hellgrauem Grund und fransigem Rand, weißen bis grauweißen, weichen, leicht herablaufenden Lamellen und braunschuppigem Stiel mit weißlicher Spitze. Er wächst vom Sommer bis zum Herbst im Mischwald an grasigen, feuchten und moosigen Stellen und ist in Europa sehr selten. Vom ähnlichen Großen Kiefernschneckling unterscheidet ihn vor allem der schuppige Hut, denn der Große Kiefernschneckling ist größer und hat einen olivbraunen, schleimigen Hut. Er gilt als ungenießbar."
+beschreibungEn = "A woodwax with a brown-scaly cap on a light grey background and a fringed margin, white to greyish-white, soft gills that run slightly down the stem and a brown-scaly stem with a whitish apex. It grows from summer to autumn in mixed woods in grassy, moist and mossy places and is very rare in Europe. The key difference from the similar Hygrophorus latitabundus is the scaly cap, because that species is larger and has an olive-brown, slimy cap. It is classed as inedible."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutrand = { von = ["fransig"] }
 stielmerkmale = ["beflockt"]

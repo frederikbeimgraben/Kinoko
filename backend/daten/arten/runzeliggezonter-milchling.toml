@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "kiefer"]
 speisewertHinweis = "Essbar, in Mitteleuropa aber kaum zu finden. Sehr alte Fruchtkoerper riechen fischartig und sind dann nicht mehr essbar."
+beschreibung = "Milchling mit orangebraunem bis orangefuchsigem Hut mit eingedrückter Mitte und runzeligem Rand, dicken, weißlichen Lamellen, weißer Milch und gleichfarbigem, aber meist hellerem Stiel. Er wächst vom Sommer bis zum Herbst in warmen Laubwäldern, gern in Kork- und Steineichenwäldern auf kalkreichem Boden, und kommt meist nur im Mittelmeerraum vor; in Mitteleuropa ist er kaum zu finden. Vom ähnlichen Rotbraunen Milchling unterscheidet ihn vor allem der Standort, denn der Rotbraune Milchling wächst bei Nadelholz und riecht harzig."
+beschreibungEn = "A milkcap with an orange-brown to orange-tawny cap with a depressed centre and a wrinkled margin, thick whitish gills, white milk and a stem of the same colour, but mostly paler. It grows from summer to autumn in warm broadleaf woods, often in cork oak and holm oak woods on calcareous soil, and occurs mostly in the Mediterranean region; in Central Europe it is hardly ever found. The key difference from the similar rufous milkcap is the habitat, because the rufous milkcap grows with conifers and smells resinous."
+entwurf = true
 synonyme = ["Lactarius rugatus", "Lactarius hygrophoroides var. rugatus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutform = { von = "flach" }

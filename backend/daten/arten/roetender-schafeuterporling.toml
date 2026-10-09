@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Roh unvertraeglich, deshalb gut durchgaren. Alte Fruchtkoerper koennen bitterlich werden."
+beschreibung = "Porling mit weißem, später gelblichem bis fleischrosa, filzigem Hut, der im Alter aufreißt, weißen bis grünweißlichen, gilbenden Poren und weißlichem, vollem Stiel, der bei Verletzung stark gilbt und etwas rötet. Er wächst vom Sommer bis zum Spätherbst im Mischwald, überwiegend bei Nadelbäumen und vor allem bei Fichte, meist auf saurem oder neutralem Boden. Vom ähnlichen Schafporling unterscheidet ihn vor allem die Verfärbung, denn seine Druckstellen röten und gilben, während der Schafporling nur leicht gilbt."
+beschreibungEn = "A polypore with a white, felty cap that later becomes yellowish to flesh-pink and cracks with age, white to greenish-white pores that turn yellow and a whitish, solid stem that turns strongly yellow and slightly red when damaged. It grows from summer to late autumn in mixed woods, mostly with conifers and especially with spruce, usually on acid or neutral soil. The key difference from the similar sheep polypore is the discolouration, because its bruises turn red and yellow, while the sheep polypore only turns slightly yellow."
+entwurf = true
 weitereNamen = ["Rötender Schafeuterporling"]
 synonyme = ["Scutiger subrubescens", "Albatrellus ovinus", "Polyporus ovinus", "Caloporus ovinus"]
 fruchtschicht = { art = "poren" }

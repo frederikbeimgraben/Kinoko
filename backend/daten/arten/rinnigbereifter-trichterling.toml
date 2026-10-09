@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Toedlich giftig. Er waechst auf Wiesen, schmeckt mild und wird deshalb mit Champignons und Raslingen verwechselt. Zu erkennen ist er am kleinen weissen Hut mit konzentrischen Ringzonen und den sehr gedraengten, weisslichen bis cremefarbenen Lamellen. Keine Kostproben."
+beschreibung = "Kleiner Trichterling mit weißlichem bis elfenbeinweißem, weiß bereiftem Hut, der später konzentrische ockerliche Flecken zeigt, sehr gedrängten, weißlichen bis cremefarbenen Lamellen und kurzem, faserigem Stiel. Er wächst vom Sommer bis zum Spätherbst auf Wiesen, Feldern und in Parks sowie an Weg- und Waldrändern. Vom ähnlichen Mehlräsling unterscheidet ihn vor allem der Geruch, denn der Mehlräsling riecht stark nach Mehl und hat weit herablaufende Lamellen. Der Rinnigbereifte Trichterling ist tödlich giftig."
+beschreibungEn = "A small funnel mushroom with a whitish to ivory, white-frosted cap that later shows concentric ochre spots, very crowded whitish to cream gills and a short, fibrous stem. It grows from summer to late autumn in meadows, fields and parks and at the edges of paths and woods. The key difference from the similar miller is the smell, because the miller smells strongly of flour and has gills that run far down the stem. The fool's funnel is deadly poisonous."
+entwurf = true
 weitereNamen = ["Weißer Gifttrichterling"]
 synonyme = ["Clitocybe rivulosa var. dealbata", "Clitocybe dealbata var. rivulosa", "Omphalia rivulosa", "Clitocybe rivulosa var. neptunea"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }

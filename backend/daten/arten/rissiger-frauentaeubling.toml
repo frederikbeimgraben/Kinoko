@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Guter Speisepilz. Er ist selten und steht in der Schweiz auf der Vorwarnliste."
 haeufigkeit = "selten"
+beschreibung = "Täubling mit violettem, olivgrünem oder braunem, marmoriert fleckigem Hut, dessen Huthaut meist matt und rissig gefeldert ist, weißen, biegsamen Lamellen und weißem, festem Stiel. Er wächst vom Frühsommer bis zum Spätherbst im Mischwald, im Bergland häufiger im Nadelwald, und ist selten. Vom ähnlichen Olivfarbenen Frauentäubling unterscheidet ihn vor allem die rissige Huthaut, denn der Olivfarbene Frauentäubling hat eine glatte Huthaut und einen einfarbig olivfarbenen Hut."
+beschreibungEn = "A brittlegill with a violet, olive-green or brown, marbled cap whose skin is mostly dull and cracked into small fields, white, flexible gills and a white, firm stem. It grows from early summer to late autumn in mixed woods, in the uplands more often in coniferous woods, and is rare. The key difference from the similar olive form of the charcoal burner is the cracked cap skin, because the olive form has a smooth cap skin and a uniformly olive cap."
+entwurf = true
 weitereNamen = ["Rissiger Zinnober-Täubling", "Risshütiger Frauentäubling", "Rissiger Papageientäubling"]
 synonyme = ["Russula cyanoxantha var. cutefracta"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

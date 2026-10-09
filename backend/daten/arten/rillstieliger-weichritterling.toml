@@ -8,6 +8,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Großer Weichritterling mit rotbraunem bis graubraunem, später ausbleichendem Hut mit eingedrückter, gebuckelter Mitte, sehr gedrängten, weißlichen bis cremefarbenen Lamellen und faserigem, etwas rilligem Stiel, der bräunlich gestreift ist. Er wächst vom Frühsommer bis zum Spätherbst im Mischwald, in Parks, auf grasigen Flächen und an Waldrändern, gern auf kalkreichem Boden. Typisch ist der mehlige Geruch, der im Alter unangenehm muffig wird."
+beschreibungEn = "A large cavalier with a red-brown to grey-brown cap that fades later and has a depressed, umbonate centre, very crowded whitish to cream gills and a fibrous, slightly grooved stem with brownish stripes. It grows from early summer to late autumn in mixed woods, in parks, on grassy areas and at forest edges, often on calcareous soil. A typical feature is the mealy smell, which becomes unpleasantly musty with age."
+entwurf = true
 synonyme = ["Melanoleuca grammopus", "Agaricus grammopodius", "Tricholoma grammopodium", "Gyrophila grammopodia", "Melanoleuca subbrevipes", "Melanoleuca grammopodia var. subbrevipes", "Melanoleuca grammopodia var. pseudoevenosa", "Melanoleuca grammopodia var. obscura"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutmerkmale = ["vertieft", "gebuckelt"]

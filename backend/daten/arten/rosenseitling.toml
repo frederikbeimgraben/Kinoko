@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
 baeume = []
 speisewertHinweis = "Essbar. In Mitteleuropa ist er nur als Zuchtpilz zu erwarten."
+beschreibung = "Seitling mit gelblich rosafarbenem bis rosenrotem, samtig filzigem Hut, rosafarbenen bis hellgrauen, herablaufenden Lamellen und weißlichem bis rosa Stiel. Er wächst in den Tropen und Subtropen an Palmen, Gummibäumen und Bambus; in Mitteleuropa ist er nur als Zuchtpilz zu erwarten, der das ganze Jahr auf Laubholz gezogen wird. Vom heimischen Rillstieligen Seitling unterscheidet ihn vor allem die rosa Farbe, denn der Rillstielige Seitling hat einen hellbraunen bis gelbgrauen Hut und einen deutlichen, rilligen Stiel."
+beschreibungEn = "An oyster mushroom with a yellowish-pink to rose-red, velvety-felty cap, pink to light grey gills that run down the stem and a whitish to pink stem. It grows in the tropics and subtropics on palms, rubber trees and bamboo; in Central Europe it occurs only as a cultivated mushroom, which is grown on broadleaf wood all year. The key difference from the native branching oyster is the pink colour, because the branching oyster has a light brown to yellow-grey cap and a distinct, grooved stem."
+entwurf = true
 weitereNamen = ["Rosenseitling", "Rosa Seitling", "Rosafarbener Seitling"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 

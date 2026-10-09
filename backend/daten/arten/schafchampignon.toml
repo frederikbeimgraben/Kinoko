@@ -8,6 +8,9 @@ marktfaehig = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Anis-Egerlinge gilben nur an der Oberfläche. Gilbt die Stielbasis im Schnitt kräftig und riecht der Pilz nach Karbol, ist es ein Karbolegerling."
+beschreibung = "Großer Champignon mit weißem, seidigem, leicht gilbendem Hut, grauweißen, später graurosa bis schwarzbraunen, freien Lamellen und weißem Stiel mit leicht knolliger Basis und einem Ring, der jung sternförmig von der Hutunterseite abreißt. Er wächst vom Frühling bis zum Herbst auf gedüngten Wiesen, auf Weiden und in Parks, selten im Wald. Vom ähnlichen Karbolegerling unterscheiden ihn vor allem der Geruch nach Anis und die Stielbasis, denn der Karbolegerling riecht nach Tinte oder Karbol, und seine Stielbasis läuft im Schnitt kräftig gelb an."
+beschreibungEn = "A large mushroom with a white, silky cap that turns slightly yellow, free grey-white gills that later turn grey-pink to black-brown, and a white stem with a slightly bulbous base and a ring that tears from the cap in a star shape when young. It grows from spring to autumn in fertilised meadows, on pastures and in parks, rarely in woods. The key difference from the similar yellow stainer is the smell of anise and the stem base, because the yellow stainer smells of ink or carbolic, and its stem base turns strongly yellow when cut."
+entwurf = true
 weitereNamen = ["Schafchampignon", "Schaf-Champignon", "Weißer Anisegerling", "Ackerblätterling", "Schaf-Egerling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "flach" }

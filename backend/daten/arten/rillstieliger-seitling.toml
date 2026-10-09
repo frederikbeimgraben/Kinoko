@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["weide", "ulme", "pappel"]
 speisewertHinweis = "Roh enthält er Hämolysine und zersetzt rote Blutkörperchen. Nur durchgegart essen."
 haeufigkeit = "selten"
+beschreibung = "Seitling mit hellbraunem bis blass gelbgrauem, trichterförmigem Hut, schmutzig weißen, queradrig verbundenen Lamellen, die bis zur Stielbasis herablaufen, und längsrilligem, oft seitlichem Stiel. Er wächst vom Frühjahr bis zum Spätherbst an totem Laubholz, gern an Weide, Ulme und Pappel, und ist selten. Vom ähnlichen Ohrförmigen Seitling unterscheidet ihn vor allem der deutliche Stiel, denn der Ohrförmige Seitling ist klein, ohrförmig, fast ohne Stiel und wächst an Nadelholz."
+beschreibungEn = "An oyster mushroom with a light brown to pale yellow-grey, funnel-shaped cap, dirty white gills with cross-veins that run down to the stem base and a grooved, often lateral stem. It grows from spring to late autumn on dead broadleaf wood, often on willow, elm and poplar, and is rare. The key difference from the similar angel's wings is the distinct stem, because angel's wings is small, ear-shaped, almost without a stem and grows on conifer wood."
+entwurf = true
 weitereNamen = ["Verzweigter Austernseitling"]
 synonyme = ["Pleurotus ostreatus var. cornucopiae", "Crepidotus cornucopiae", "Pocillaria cornucopioides"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }

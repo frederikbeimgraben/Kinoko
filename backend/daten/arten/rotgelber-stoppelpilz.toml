@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Sind die Stoppeln länger als drei Millimeter, schmeckt er oft etwas bitter. Die Größe des Fruchtkörpers sagt darüber nichts aus."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Stoppelpilz mit semmelgelbem bis gelblichem Hut mit lange eingerolltem Rand, weißen bis hellorangen Stacheln auf der Unterseite und weißlichem bis hellgelbem Stiel, der auf Druck gilbt. Er wächst vom Frühsommer bis zum Spätherbst im Mischwald, ist sehr häufig und erscheint oft in Massen. Vom ähnlichen Semmelporling unterscheiden ihn vor allem die Stacheln auf der Hutunterseite, denn der Semmelporling hat Poren."
+beschreibungEn = "A hedgehog fungus with a buff-yellow to yellowish cap with a margin that stays inrolled for a long time, white to light orange spines on the underside and a whitish to light yellow stem that turns yellow when pressed. It grows from early summer to late autumn in mixed woods, is very common and often appears in large numbers. The key difference from the similar Albatrellus confluens is the spines on the underside of the cap, because that polypore has pores."
+entwurf = true
 weitereNamen = ["Semmelstoppelpilz", "Rostgelber Semmelstoppelpilz", "Semmelgelber Stacheling", "Rotgelber Semmelstoppelpilz", "Orangeroter Stoppelpilz"]
 fruchtschicht = { art = "stacheln" }
 hutrand = { von = ["eingerollt"] }
