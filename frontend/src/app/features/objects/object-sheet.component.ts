@@ -19,6 +19,7 @@ import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
+import { panBelow } from '../add-entry/crosshair-aim';
 import { EntriesStore } from '../entries/entries.store';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore, type ObjectKind } from '../map/map.store';
@@ -236,14 +237,7 @@ export class ObjectSheetComponent {
   private aimAtObject(cross: HTMLElement): void {
     const map = this.adapter.rawMap();
     const point = this.sheet.moved() ?? this.location();
-    if (map === null || point === null) return;
-    const aim = cross.getBoundingClientRect();
-    const canvas = map.getCanvas().getBoundingClientRect();
-    const shown = map.project([point[0], point[1]]);
-    map.panBy(
-      [shown.x + canvas.left - (aim.left + aim.width / 2), shown.y + canvas.top - (aim.top + aim.height / 2)],
-      { duration: 300 },
-    );
+    if (map !== null && point !== null) panBelow(map, cross, point);
   }
 
   private adoptAim(): void {

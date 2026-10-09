@@ -4,6 +4,7 @@ import { signal, type Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import type { Map as MapLibreMap } from 'maplibre-gl';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { MapStore } from '../map/map.store';
 import { MAP_ADAPTER } from '../../map/map.tokens';
@@ -327,7 +328,52 @@ describe('EintragenComponent', () => {
     expect(setup.flow.ring()).toEqual([]);
   });
 
+  it('bringt das Fadenkreuz am Telefon mit "Punkt entfernen" an den Anfang des Schritts zurück', async () => {
+    const setup = await build();
+    const pans: (readonly [number, number])[] = [];
+    // The earlier point is at pixel (100, 200). The crosshair is at the origin of the test page.
+    setup.map.raw = {
+      getCanvas: () => document.createElement('canvas'),
+      project: () => ({ x: 100, y: 200 }),
+      panBy: (offset: readonly [number, number]) => pans.push(offset),
+      // The step paints the earlier point as its mark.
+      getSource: () => ({ setData: () => undefined }),
+      getLayer: () => undefined,
+      removeLayer: () => undefined,
+      removeSource: () => undefined,
+      getContainer: () => document.body,
+    } as unknown as MapLibreMap;
+    setup.flow.open();
+    setup.flow.startMarker();
+    setup.flow.adoptLocation([9.05, 48.52]);
+    setup.flow.editMarkerLocation({ name: 'Parkplatz', colour: 'green', note: null, visibility: 'private', groupId: null });
+    setup.refresh();
+
+    // The step starts with the earlier point below the crosshair.
+    await vi.waitFor(() => {
+      setup.refresh();
+      expect(pans).toHaveLength(1);
+    });
+    await userEvent.click(screen.getByRole('button', { name: 'Punkt entfernen' }));
+
+    expect(pans).toHaveLength(2);
+    expect(pans[1]).toEqual(pans[0]);
+  });
+
   describe('am Rechner', () => {
+    it('nimmt mit "Punkt entfernen" den geklickten Ort weg, auch aus der Statuszeile', async () => {
+      const setup = await build([WIDE]);
+      await start(setup, 'Fund melden');
+      clickMap(setup, [9.05, 48.52]);
+      expect(screen.getByText(/^48,52.* · 9,05/)).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Punkt entfernen' }));
+      setup.refresh();
+
+      expect(setup.flow.location()).toBeNull();
+      expect(screen.queryByText(/^48,52.* · 9,05/)).toBeNull();
+    });
+
     it('setzt den Fundort mit einem Klick auf die Karte und verschiebt ihn', async () => {
       const setup = await build([WIDE]);
       await start(setup, 'Fund melden');

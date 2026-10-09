@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   HostListener,
   OnDestroy,
   afterRenderEffect,
@@ -37,6 +36,7 @@ import { areaHa, asPolygon } from './area';
 import { ObjectFormComponent, type ObjectValues } from './object-form.component';
 import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
 import { StepInput } from './step-input';
+import { CrosshairAim } from './crosshair-aim';
 import { paintRing, clearRing } from './step-painter';
 import { ZONE_DRAWER, type DrawSession } from './zone-drawer';
 
@@ -74,13 +74,12 @@ const TITLE: Record<string, TranslationKey> = {
     SheetHeightDirective,
     TranslatePipe,
   ],
-  providers: [StepInput],
+  providers: [StepInput, CrosshairAim],
   templateUrl: './add-entry.component.html',
   styleUrl: './add-entry.component.scss',
 })
 export class AddEntryComponent implements OnDestroy {
   private readonly adapter = inject(MAP_ADAPTER);
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly i18n = inject(I18nService);
   private readonly toasts = inject(ToastService);
   private readonly entries = inject(EntriesStore);
@@ -116,7 +115,7 @@ export class AddEntryComponent implements OnDestroy {
         variant: 'secondary',
         run: () => {
           if (zone) this.state.removeLastCorner();
-          else this.state.clearPoint();
+          else this.undoPoint();
         },
       },
       {
@@ -158,6 +157,7 @@ export class AddEntryComponent implements OnDestroy {
   });
 
   private readonly input = inject(StepInput);
+  private readonly crosshair = inject(CrosshairAim);
 
   /** The location of the next point: the crosshair or the pointer. */
   private readonly aim = this.input.aim;
@@ -183,7 +183,10 @@ export class AddEntryComponent implements OnDestroy {
     afterRenderEffect(() => {
       this.map.moved();
       this.state.step();
-      this.input.aimAt(this.pointUnderCrosshair());
+      this.input.aimAt(this.crosshair.point());
+      // On the phone, a location step starts on the earlier point. The undo goes back to that start.
+      if (!this.showsCrosshair() || this.input.mode() !== 'crosshair') this.crosshair.end();
+      else if (!this.crosshair.started()) this.crosshair.begin(this.state.origin());
     });
 
     // The pointer sets the points. It listens only while a step looks for a location.
@@ -243,6 +246,13 @@ export class AddEntryComponent implements OnDestroy {
 
   protected cancel(): void {
     this.state.stop();
+  }
+
+  /** Takes back the clicked point on the desktop. On the phone, the crosshair goes back to the start of the step. */
+  private undoPoint(): void {
+    this.state.clearPoint();
+    this.input.forget();
+    this.crosshair.back();
   }
 
   /** The location below the pointer, only on the desktop: the preview edge goes to it. */
@@ -350,17 +360,9 @@ export class AddEntryComponent implements OnDestroy {
 
   /** The location below the crosshair, not the centre of the map. */
   private center(): Location | null {
-    const location = this.pointUnderCrosshair() ?? this.aim() ?? this.adapter.center();
+    const location = this.crosshair.point() ?? this.aim() ?? this.adapter.center();
     if (location === null) this.toasts.error(this.i18n.translate('entry.locationMissing'));
     return location;
-  }
-
-  private pointUnderCrosshair(): Location | null {
-    const cross = this.host.nativeElement.querySelector('app-crosshair');
-    if (cross === null) return null;
-    const box = cross.getBoundingClientRect();
-    const point = this.adapter.pointAt(box.left + box.width / 2, box.top + box.height / 2);
-    return point === null ? null : [point[0], point[1]];
   }
 
   /** Loads Terra Draw and puts the ring on the map. */
