@@ -21,7 +21,21 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'albatrellus-citrinus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'albatrellus-citrinus' AND c.part = 'flesh' AND c.to_name = 'rot' AND c.from_name IS NULL AND t.slug = 'koh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'albatrellus-cristatus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -77,6 +91,48 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'amanita-spissa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'aphroditeola-olida' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'armillaria-gallica' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'armillaria-mellea' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'armillaria-ostoyae' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'atractosporocybe-inornata' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'aureoboletus-gentilis' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
@@ -112,7 +168,112 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'calocybe-gambosa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'calocybe-graveolens' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'cerioporus-leptocephalus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'cerioporus-leptocephalus' AND c.part = 'flesh' AND c.to_name = 'rosa' AND c.from_name IS NULL AND t.slug = 'naoh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'cerioporus-squamosus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'chroogomphus-fulmineus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'chroogomphus-helveticus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'chroogomphus-rutilus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'chrysomphalina-grossula' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitocybe-ditopa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitocybe-maxima' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitocybe-nebularis' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitocybe-obsoleta' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitocybe-phyllophila' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitocybe-rivulosa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'clitopilus-prunulus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -133,7 +294,28 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'cortinarius-rubellus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'cortinarius-rubellus' AND c.part = 'flesh' AND c.to_name = 'schwarz' AND c.from_name IS NULL AND t.slug = 'koh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'desarmillaria-tabescens' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'entoloma-lividoalbum' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -147,7 +329,112 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'entoloma-sinuatum' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'faerberia-carbonaria' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'galerina-marginata' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'galerina-marginata' AND c.part = 'flesh' AND c.to_name = 'rot' AND c.from_name IS NULL AND t.slug = 'koh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'gomphidius-roseus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'gymnopilus-penetrans' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'gymnopilus-picreus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'gymnopilus-sapineus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrocybe-turunda' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophoropsis-aurantiaca' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophoropsis-rufa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophorus-gliocyclus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophorus-inocybiformis' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophorus-latitabundus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophorus-marzuolus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'hygrophorus-mesotephrus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -196,6 +483,13 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'infundibulicybe-geotropa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'infundibulicybe-geotropa' AND c.part = 'flesh' AND c.to_name = 'olivgrün' AND c.from_name IS NULL AND t.slug = 'koh');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
@@ -203,7 +497,70 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'infundibulicybe-gibba' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'inocybe-hystrix' AND c.part = 'flesh' AND c.to_name = 'grau' AND c.from_name IS NULL AND t.slug = 'koh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'jahnoporus-hirtus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'kuehneromyces-mutabilis' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lactarius-deterrimus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lactarius-helvus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lactarius-hysginus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lactarius-quietus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lactarius-volemus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lactifluus-rugatus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -224,7 +581,21 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lepista-flaccida' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'lepista-flaccida' AND c.part = 'flesh' AND c.to_name = 'orange' AND c.from_name IS NULL AND t.slug = 'koh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lepista-panaeolus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -238,7 +609,63 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'leucopaxillus-giganteus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'lyophyllum-decastes' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'macrolepiota-mastoidea' AND c.part = 'flesh' AND c.to_name = 'rot' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'melanoleuca-grammopodia' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'meripilus-giganteus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'mucidula-mucida' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'neolentinus-cyathiformis' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'neolentinus-lepideus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'omphalotus-olearius' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -259,6 +686,69 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'osteina-obducta' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'panellus-serotinus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pholiota-lignicola' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pholiota-spumosa' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pholiota-squarrosoides' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pleurotus-cornucopiae' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pleurotus-dryinus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pleurotus-ostreatus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'pleurotus-pulmonarius' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'pleurotus-pulmonarius' AND c.part = 'flesh' AND c.to_name = 'orange' AND c.from_name IS NULL AND t.slug = 'koh');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
@@ -266,7 +756,21 @@ DELETE FROM species_colour_change WHERE (species_id, position) IN (
 		JOIN species s ON s.id = c.species_id
 		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
 		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'polyporus-tuberaster' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
 		WHERE s.slug = 'polyporus-tuberaster' AND c.part = 'flesh' AND c.to_name = 'gelb' AND c.from_name IS NULL AND t.slug = 'koh');
+
+DELETE FROM species_colour_change WHERE (species_id, position) IN (
+	SELECT c.species_id, c.position FROM species_colour_change c
+		JOIN species s ON s.id = c.species_id
+		JOIN species_colour_change_trigger x ON x.species_id = c.species_id AND x.position = c.position
+		JOIN term t ON t.id = x.term_id
+		WHERE s.slug = 'polyporus-umbellatus' AND c.part = 'flesh' AND c.to_name = 'blau' AND c.from_name IS NULL AND t.slug = 'cut');
 
 DELETE FROM species_colour_change WHERE (species_id, position) IN (
 	SELECT c.species_id, c.position FROM species_colour_change c
@@ -859,6 +1363,210 @@ INSERT INTO species_colour_change (species_id, position, part, to_name, to_hex)
 INSERT INTO species_colour_change_trigger (species_id, position, term_id)
 	SELECT s.id, (SELECT max(position) FROM species_colour_change WHERE species_id = s.id), t.id
 	FROM species s JOIN term t ON t.kind = 'trigger' AND t.slug = 'melzer' WHERE s.slug = 'xerocomus-subtomentosus';
+
+-- The old import read "blau" inside "herablaufend" and gave the hymenium a blue that no text names.
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'albatrellus-citrinus');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'albatrellus-cristatus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'amanita-phalloides');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'amanita-spissa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'armillaria-gallica');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'armillaria-mellea');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'armillaria-ostoyae');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'atractosporocybe-inornata');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'bondarzewia-mesenterica');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'calocybe-gambosa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'calocybe-graveolens');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'cerioporus-leptocephalus');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'cerioporus-squamosus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'chroogomphus-fulmineus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'chroogomphus-helveticus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'chroogomphus-rutilus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'chrysomphalina-grossula');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitocybe-ditopa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitocybe-maxima');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitocybe-nebularis');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitocybe-obsoleta');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitocybe-phyllophila');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitocybe-rivulosa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'clitopilus-prunulus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'cortinarius-rubellus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'desarmillaria-tabescens');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'entoloma-lividoalbum');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'entoloma-sinuatum');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'faerberia-carbonaria');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'galerina-marginata');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'gomphidius-glutinosus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'gomphidius-roseus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'gymnopilus-penetrans');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'gymnopilus-picreus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'gymnopilus-sapineus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrocybe-turunda');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophoropsis-aurantiaca');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophoropsis-rufa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-gliocyclus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-inocybiformis');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-latitabundus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-marzuolus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-mesotephrus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'infundibulicybe-geotropa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'infundibulicybe-gibba');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'jahnoporus-hirtus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'kuehneromyces-mutabilis');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lactarius-deterrimus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lactarius-helvus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lactarius-hysginus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lactarius-quietus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lactarius-volemus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lactifluus-rugatus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lepista-flaccida');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lepista-panaeolus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lepista-sordida');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'leucopaxillus-giganteus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lyophyllum-decastes');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'melanoleuca-grammopodia');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'meripilus-giganteus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'mucidula-mucida');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'neolentinus-cyathiformis');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'neolentinus-lepideus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'omphalotus-olearius');
+DELETE FROM species_colour WHERE part = 'tubes' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'osteina-obducta');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'panellus-serotinus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pholiota-lignicola');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pholiota-spumosa');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pholiota-squarrosoides');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pleurotus-cornucopiae');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pleurotus-djamor');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pleurotus-dryinus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pleurotus-ostreatus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'pleurotus-pulmonarius');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'polyporus-tuberaster');
+DELETE FROM species_colour WHERE part = 'pores' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'polyporus-umbellatus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'russula-aeruginea');
+DELETE FROM species_colour WHERE part = 'tubes' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'suillus-bovinus');
+DELETE FROM species_colour WHERE part = 'tubes' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'suillus-cavipes');
+DELETE FROM species_colour WHERE part = 'tubes' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'suillus-cavipes-var-aereus');
+DELETE FROM species_colour WHERE part = 'tubes' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'suillus-placidus');
+DELETE FROM species_colour WHERE part = 'gills' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'tricholoma-myomyces');
+DELETE FROM species_colour WHERE part = 'tubes' AND name = 'blau' AND hex = '#3a5f9e'
+	AND species_id = (SELECT id FROM species WHERE slug = 'xerocomellus-chrysenteron');
+DELETE FROM species_colour_range WHERE part = 'gills' AND species_id = (SELECT id FROM species WHERE slug = 'lactarius-quietus')
+	AND NOT EXISTS (SELECT 1 FROM species_colour c WHERE c.species_id = species_colour_range.species_id AND c.part = species_colour_range.part);
+DELETE FROM species_colour_range WHERE part = 'gills' AND species_id = (SELECT id FROM species WHERE slug = 'lactifluus-rugatus')
+	AND NOT EXISTS (SELECT 1 FROM species_colour c WHERE c.species_id = species_colour_range.species_id AND c.part = species_colour_range.part);
+DELETE FROM species_colour_range WHERE part = 'gills' AND species_id = (SELECT id FROM species WHERE slug = 'neolentinus-cyathiformis')
+	AND NOT EXISTS (SELECT 1 FROM species_colour c WHERE c.species_id = species_colour_range.species_id AND c.part = species_colour_range.part);
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'pores' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'albatrellus-citrinus');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'amanita-phalloides');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'amanita-spissa');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'chrysomphalina-grossula');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'cortinarius-rubellus');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'desarmillaria-tabescens');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-gliocyclus');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-inocybiformis');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'hygrophorus-mesotephrus');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'infundibulicybe-gibba');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'pores' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'jahnoporus-hirtus');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'lyophyllum-decastes');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'gills' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'omphalotus-olearius');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'tubes' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'suillus-cavipes');
+UPDATE species_colour_range SET mode = 'single' WHERE part = 'tubes' AND mode = 'distinct'
+	AND species_id = (SELECT id FROM species WHERE slug = 'suillus-cavipes-var-aereus');
 
 -- A further source with the address of the profile source repeats it.
 DELETE FROM species_source WHERE scope = 'further' AND EXISTS (

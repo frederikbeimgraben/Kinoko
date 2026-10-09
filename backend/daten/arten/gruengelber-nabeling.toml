@@ -28,14 +28,10 @@ bisMonat = 2
 
 [farben]
 hut = [{ name = "grüngelb", hex = "#9fb02f" }, { name = "gelb", hex = "#e8c33a" }, { name = "oliv", hex = "#6b7a3a" }]
-sporenlager = [{ name = "gelb", hex = "#e8c33a" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "gelb", hex = "#e8c33a" }]
 stiel = [{ name = "grüngelb", hex = "#9fb02f" }, { name = "blassgelb", hex = "#efe3a0" }]
 fleisch = [{ name = "gelb", hex = "#e8c33a" }, { name = "grau", hex = "#8a8a8a" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["rettichartig", "unauffaellig"]

@@ -37,12 +37,8 @@ bisMonat = 11
 
 [farben]
 hut = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "braun", hex = "#7a5230" }]
-sporenlager = [{ name = "rotbraun", hex = "#8b4a2b" }, { name = "blau", hex = "#3a5f9e" }]
+sporenlager = [{ name = "rotbraun", hex = "#8b4a2b" }]
 stiel = [{ name = "braun", hex = "#7a5230" }]
-
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
 
 [geruch]
 tags = ["muffig", "pilzig"]

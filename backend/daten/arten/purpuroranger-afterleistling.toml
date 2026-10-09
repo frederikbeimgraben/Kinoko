@@ -36,10 +36,6 @@ stiel = [{ name = "gelbbraun", hex = "#a3813f" }, { name = "orangebraun", hex = 
 fleisch = [{ name = "weiß", hex = "#ffffff" }, { name = "gelb", hex = "#e8c33a" }, { name = "ocker", hex = "#c8963c" }, { name = "rosa", hex = "#e8a0b0" }]
 sporenpulver = [{ name = "weiß", hex = "#ffffff" }]
 
-[farben.verfaerbung]
-von = []
-nach = [{ name = "blau", hex = "#3a5f9e" }]
-
 [geruch]
 tags = ["unangenehm", "angenehm"]
 text = "Holzig unangenehm bis aromatisch, teils nach reifen Walderdbeeren. Beim Trocknen chemisch und unangenehm."
