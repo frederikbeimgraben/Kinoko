@@ -4,6 +4,7 @@ import {
   colourGroupAt,
   colourGroups,
   freeParts,
+  heldParts,
   isBodyPart,
   isTraitPart,
   lookalikeWrites,
@@ -106,6 +107,18 @@ describe('species-lists', () => {
     expect(rest.measurements.map((one) => one.part)).toEqual(['stem']);
     expect(rest.colours).toEqual([TUBE_COLOUR, TUBE_LATER]);
     expect(rest.colourChanges).toEqual([TUBE_CHANGE]);
+  });
+
+  it('nimmt mit dem Ring auch seine Form heraus', () => {
+    expect(withoutPart(SPECIES, 'ring').ringShape).toBeNull();
+    expect('ringShape' in withoutPart(SPECIES, 'cap')).toBe(false);
+  });
+
+  it('führt einen Ring mit Form als Teil der Art', () => {
+    const ringed = { ...SPECIES, ringShape: 'pendant' } as SpeciesEntry;
+
+    expect(heldParts(ringed)).toContain('ring');
+    expect(heldParts(SPECIES)).not.toContain('ring');
   });
 
   it('schreibt Verwechslungen ohne Unterscheidung als leeren Text', () => {

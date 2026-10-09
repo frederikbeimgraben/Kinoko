@@ -9,6 +9,7 @@ import type {
   HymeniumType,
   Phase,
   Protection,
+  RingShape,
   Speed,
   StemFeature,
 } from '../../core/api/models';
@@ -138,6 +139,15 @@ export const EDGE_TEXT: Record<GillEdge, TranslationKey> = {
   smooth: 'enum.gill_edge.smooth',
   serrate: 'enum.gill_edge.serrate',
   ciliate: 'enum.gill_edge.ciliate',
+};
+
+export const RING_SHAPE_TEXT: Record<RingShape, TranslationKey> = {
+  pendant: 'enum.ring_shape.pendant',
+  flaring: 'enum.ring_shape.flaring',
+  sheathing: 'enum.ring_shape.sheathing',
+  double: 'enum.ring_shape.double',
+  zone: 'enum.ring_shape.zone',
+  cortina: 'enum.ring_shape.cortina',
 };
 
 export const DIMENSION_TEXT: Record<Dimension, TranslationKey> = {

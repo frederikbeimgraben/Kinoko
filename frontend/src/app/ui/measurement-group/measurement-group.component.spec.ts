@@ -21,6 +21,17 @@ describe('MeasurementGroupComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt eine Textzeile vor den Maßen', async () => {
+    const { container } = await render(MeasurementGroupComponent, {
+      inputs: { part: 'Ring', measurements: STIEL.slice(0, 1), facts: [{ label: 'Form', value: 'hängend' }] },
+    });
+
+    const rows = [...container.querySelectorAll('.grp > *')].map((row) => row.className || row.localName);
+    expect(rows).toEqual(['group__head', 'group__fact', 'app-measurement']);
+    expect(screen.getByText('hängend')).toBeInTheDocument();
+    await noViolations(container);
+  });
+
   it('hält zwei Maße desselben Teils untereinander, nie neben einem anderen Teil', async () => {
     const { container } = await render(MeasurementGroupComponent, {
       inputs: { part: 'Stiel', measurements: STIEL },

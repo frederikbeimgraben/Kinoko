@@ -62,7 +62,11 @@
       <app-species-taxonomy [species]="one" />
     </ng-template>
     <ng-template #sizes>
-      <app-species-size [groups]="one.measurements" [notes]="one.partNotes ?? []" />
+      <app-species-size
+        [groups]="one.measurements"
+        [notes]="one.partNotes ?? []"
+        [ringShape]="one.ringShape ?? null"
+      />
     </ng-template>
     <ng-template #traits>
       <app-species-traits [species]="one" />

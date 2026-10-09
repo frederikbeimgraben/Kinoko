@@ -2,7 +2,7 @@ import type { BodyPart, ColourGroup, Measurement, SpeciesEntry, TermRef, Unit } 
 import { decimal } from '../../core/i18n/numbers';
 import { DEFAULT_LOCALE, type TranslationKey } from '../../core/i18n/translations';
 import type { NamedColour } from '../species/catalogue-text';
-import { HYMENIUM_TEXT, PART_TEXT } from '../species/labels';
+import { HYMENIUM_TEXT, PART_TEXT, RING_SHAPE_TEXT } from '../species/labels';
 import { nameLines } from '../species/species-names';
 import { heldParts, partDescription } from './species-lists';
 
@@ -51,7 +51,8 @@ function colourText(species: SpeciesEntry, t: RowText): Map<BodyPart, string> {
   return out;
 }
 
-/** The feature rows: for each part, the size and the colours, as the design board shows. A part with only a text shows the text. */
+/** The feature rows: for each part, the size and the colours, as the design board shows. The ring also names its shape.
+ * A part with only a text shows the text. */
 export function featureRows(species: SpeciesEntry, extra: readonly BodyPart[], t: RowText): EditorRow[] {
   const colours = colourText(species, t);
   const held = heldParts(species);
@@ -59,7 +60,8 @@ export function featureRows(species: SpeciesEntry, extra: readonly BodyPart[], t
   return parts.map((part) => {
     const group = species.measurements.find((one) => one.part === part);
     const sizes = (group?.measurements ?? []).map((one) => spanText(one, t));
-    const value = [...sizes, colours.get(part)].filter(Boolean).join(', ');
+    const shape = part === 'ring' && species.ringShape ? t.text(RING_SHAPE_TEXT[species.ringShape]) : '';
+    const value = [shape, ...sizes, colours.get(part)].filter(Boolean).join(', ');
     return {
       key: part,
       title: t.text(PART_TEXT[part]),

@@ -2918,7 +2918,6 @@ components:
         - cylindrical
 
     RingShape:
-      description: The shape of the ring on the stem.
       type: string
       enum: [pendant, flaring, sheathing, double, zone, cortina]
 

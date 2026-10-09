@@ -6,6 +6,7 @@ import {
   capShapeOf,
   measurementOf,
   partNoteOf,
+  ringShapeOf,
   seasonOf,
   senseSmellOf,
   stemFeatureOf,
@@ -69,6 +70,13 @@ describe('comparison.rows', () => {
   it('nennt die Hutform von Jugendform und Altersform, wo sie sich unterscheiden', () => {
     expect(capShapeOf(STONE, i18n())).toBe('halbkugelig bis flach');
     expect(capShapeOf(KNIGHT, i18n())).toBeNull();
+  });
+
+  it('nennt die Ringform und nimmt ohne Form die Notiz des Rings', () => {
+    expect(ringShapeOf({ ...STONE, ringShape: 'flaring' }, i18n())).toBe('abstehend');
+    const noted = { ...STONE, partNotes: [{ part: 'ring' as const, description: 'häutig', comment: '' }] };
+    expect(ringShapeOf(noted, i18n())).toBe('häutig');
+    expect(ringShapeOf(STONE, i18n())).toBeNull();
   });
 
   it('liest die Notiz eines Teils', () => {

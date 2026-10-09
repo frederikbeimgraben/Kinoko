@@ -1,5 +1,11 @@
 <div class="grp">
   <div class="group__head">{{ part() }}</div>
+  @for (fact of facts(); track fact.label) {
+    <div class="group__fact">
+      <span class="group__fact-label">{{ fact.label }}</span>
+      <span class="group__fact-value">{{ fact.value }}</span>
+    </div>
+  }
   @for (row of measurements(); track $index) {
     <app-measurement [extent]="row.extent" [spans]="row.spans" [unit]="row.unit" />
   }

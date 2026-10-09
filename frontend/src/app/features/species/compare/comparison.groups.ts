@@ -10,6 +10,7 @@ import {
   hymeniumTypeOf,
   measurementOf,
   partNoteOf,
+  ringShapeOf,
   seasonOf,
   senseSmellOf,
   stemFeatureOf,
@@ -92,7 +93,7 @@ function rawGroups(
           plainCell(stemFeatureOf(entry, ['ring'], i18n)),
         ),
         buildRow(i18n.translate('species.field.shape'), entries, (entry) =>
-          plainCell(partNoteOf(entry, 'ring')),
+          plainCell(ringShapeOf(entry, i18n)),
         ),
         buildRow(i18n.translate('species.section.colour'), entries, (entry) =>
           swatchCell(swatchOf(entry, 'ring', names)),

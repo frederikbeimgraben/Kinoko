@@ -27,6 +27,7 @@ export function toWrite(species: SpeciesEntry): SpeciesWrite {
     gillEdge: species.gillEdge ?? null,
     capShapeYoung: species.capShapeYoung ?? null,
     capShapeOld: species.capShapeOld ?? null,
+    ringShape: species.ringShape ?? null,
     names: species.names,
     measurements: species.measurements,
     partNotes: species.partNotes ?? [],

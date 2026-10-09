@@ -7,7 +7,7 @@ import { hasStemFeature } from '../stem-features';
 import type { SpeciesReaction } from '../species.store';
 import { shortMonth } from '../../../core/i18n/dates';
 import { spanText } from '../../../ui/measurement/measurement.component';
-import { CAP_SHAPE_TEXT, HYMENIUM_TEXT } from '../labels';
+import { CAP_SHAPE_TEXT, HYMENIUM_TEXT, RING_SHAPE_TEXT } from '../labels';
 import {
   buildRow,
   colourSwatch,
@@ -68,6 +68,12 @@ export function capShapeOf(entry: SpeciesEntry, i18n: I18nService): string | nul
   }
   const shape = young ?? old;
   return shape ? i18n.translate(CAP_SHAPE_TEXT[shape]) : null;
+}
+
+/** The ring shape. Without a shape, the note of the ring tells the shape. */
+export function ringShapeOf(entry: SpeciesEntry, i18n: I18nService): string | null {
+  const shape = entry.ringShape ?? null;
+  return shape === null ? partNoteOf(entry, 'ring') : i18n.translate(RING_SHAPE_TEXT[shape]);
 }
 
 /** The note of a body part, where one is present. */

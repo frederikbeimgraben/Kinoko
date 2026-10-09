@@ -1243,10 +1243,7 @@ export interface components {
         GillEdge: "smooth" | "serrate" | "ciliate";
         /** @enum {string} */
         CapShape: "hemispherical" | "convex" | "flat" | "depressed" | "funnel" | "conical" | "bell" | "egg" | "spherical" | "shell" | "pear" | "club" | "cylindrical";
-        /**
-         * @description The shape of the ring on the stem.
-         * @enum {string}
-         */
+        /** @enum {string} */
         RingShape: "pendant" | "flaring" | "sheathing" | "double" | "zone" | "cortina";
         /** @enum {string} */
         CapFeature: "umbonate" | "hygrophanous" | "zoned" | "sunken" | "irregular" | "navelled";

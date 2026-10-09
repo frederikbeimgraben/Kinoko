@@ -27,3 +27,31 @@
 .grp > .group__head:only-child {
   border-radius: 20px;
 }
+
+// A text row has the layout of a measurement row: the label on the left, the value on the right.
+.group__fact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-3);
+  align-items: center;
+  min-block-size: 52px;
+  padding-inline: 28px 14px;
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+.grp > .group__fact:last-child {
+  border-radius: 4px 4px 20px 20px;
+}
+
+.group__fact-label {
+  font-size: var(--fs-row-title);
+  color: var(--text);
+}
+
+.group__fact-value {
+  font-size: var(--fs-row-title);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+  text-align: end;
+}
