@@ -63,7 +63,6 @@ afterEach(() => {
   localStorage.clear();
 });
 
-// A role query checks the computed style of each element and its parents. In jsdom this takes
-// seconds on a large page. Thus role queries also find elements hidden by CSS or aria-hidden;
-// a test that checks hidden content gives `hidden: false` to the query.
+// The CSS check of a role query takes seconds in jsdom, so queries also find hidden elements.
+// A test about hidden content gives `hidden: false` to its query.
 configure({ defaultHidden: true });
