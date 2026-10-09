@@ -140,6 +140,7 @@ export class MapSurface {
     navigator.geolocation.getCurrentPosition(
       (place) => {
         this.centreOn([place.coords.longitude, place.coords.latitude]);
+        this.locating.start();
       },
       () => {
         this.toasts.error(this.i18n.translate('map.locationDenied'));
