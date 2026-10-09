@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { configure } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 
 // jsdom has no `matchMedia`. Without this stub, each service that asks the OS for the theme fails.
@@ -61,3 +62,7 @@ afterEach(() => {
   vi.restoreAllMocks();
   localStorage.clear();
 });
+
+// A role query checks the computed style of each element and its parents. In jsdom this takes
+// seconds on a large page. The tests do not hide elements with CSS, so the check finds nothing.
+configure({ defaultHidden: true });
