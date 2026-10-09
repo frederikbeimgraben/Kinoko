@@ -174,7 +174,13 @@ class MapDouble {
 
   bearing = 0;
   pitch = 0;
-  readonly canvas = { style: { cursor: '' } };
+  readonly canvas = {
+    style: { cursor: '' },
+    label: '',
+    setAttribute(name: string, value: string): void {
+      if (name === 'aria-label') this.label = value;
+    },
+  };
 
   getBearing(): number {
     return this.bearing;
@@ -184,7 +190,7 @@ class MapDouble {
     return this.pitch;
   }
 
-  getCanvas(): { style: { cursor: string } } {
+  getCanvas(): typeof this.canvas {
     return this.canvas;
   }
 
@@ -242,6 +248,7 @@ const OPTIONEN: MapOptions = {
     [16, 56],
   ],
   protocol: { name: 'wert', resolve: () => Promise.resolve({ data: new ArrayBuffer(0) }) },
+  title: 'Karte',
 };
 
 function module(): {
@@ -308,6 +315,16 @@ describe('MapLibreAdapter', () => {
     expect(map.options['minZoom']).toBe(5);
     expect(map.options['maxBounds']).toEqual(OPTIONEN.maxBounds);
     expect(map.options['attributionControl']).toBe(false);
+    // MapLibre names the canvas "Map" without a locale, also in German.
+    expect(map.options['locale']).toEqual({ 'Map.Title': 'Karte' });
+  });
+
+  it('nennt die Karte nach einem Sprachwechsel in der neuen Sprache', async () => {
+    const { adapter: a, map } = await adapter();
+
+    a.setTitle('Map');
+
+    expect(map.canvas.label).toBe('Map');
   });
 
   it('haengt das Stylesheet der Karte in den Kopf, bevor die Karte entsteht', async () => {
@@ -495,7 +512,8 @@ describe('MapLibreAdapter', () => {
 
     const source = map.sources.get('objekte-marker') as { data: { features: { id: string }[] } };
     expect(source.data.features[0].id).toBe('marker-zwei');
-    expect(map.layers.size).toBe(1);
+    // The point and the ring of the open marker.
+    expect(map.layers.size).toBe(2);
   });
 
   it('meldet die Kennung des angetippten Objekts', async () => {
@@ -595,7 +613,7 @@ describe('MapLibreAdapter', () => {
     a.showValue('layer', 'wert://ebene-wald/f/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
     a.showValue('forecast', 'wert://art/w40/{z}/{x}/{y}', OPTIONEN.maxBounds, 5, 8);
 
-    expect(map.placedBefore.get('wert-layer-b')).toBe('objekte-funde-punkt');
+    expect(map.placedBefore.get('wert-layer-b')).toBe('objekte-funde-auswahl');
     expect(map.placedBefore.get('wert-forecast-b')).toBe('wert-layer-b');
   });
 

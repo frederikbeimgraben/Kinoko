@@ -224,6 +224,12 @@ describe('EintragenComponent', () => {
     expect(screen.getByRole('group', { name: 'Zone zeichnen' })).toBeInTheDocument();
     expect(screen.getByText('0 Eckpunkte · 0,0 ha')).toBeInTheDocument();
 
+    clickMap(setup, [9.0, 48.5]);
+    await vi.waitFor(() => {
+      setup.refresh();
+      expect(screen.getByText('1 Eckpunkt · 0,0 ha')).toBeInTheDocument();
+    });
+    setup.flow.removeLastCorner();
     drawRing(setup);
     setup.refresh();
 

@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import type { Map as MapLibreMap } from 'maplibre-gl';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { ThemeStore } from '../../core/theme/theme.store';
 import { styleFor } from '../../map/background';
 import { WORKER_PATH, ensureStyles } from '../../map/map-adapter';
@@ -34,6 +35,7 @@ export class FindMapComponent {
   readonly colour = input('#7a5230');
 
   private readonly theme = inject(ThemeStore);
+  private readonly i18n = inject(I18nService);
   private readonly canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private map: MapLibreMap | null = null;
   private gone = false;
@@ -69,6 +71,7 @@ export class FindMapComponent {
         zoom: ZOOM,
         interactive: false,
         attributionControl: false,
+        locale: { 'Map.Title': this.i18n.translate('map.canvasLabel') },
       });
     } catch {
       this.map = null;
