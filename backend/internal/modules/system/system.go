@@ -46,6 +46,6 @@ func (m *Module) config(*http.Request) (web.Response, error) {
 		OIDCName:     m.settings.ProviderName(),
 		OIDCClientID: m.settings.OIDCClientID,
 		Origin:       m.settings.Origin,
-		Version:      config.Version,
+		Version:      config.Version(),
 	}), nil
 }
