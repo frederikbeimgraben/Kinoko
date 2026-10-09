@@ -346,18 +346,17 @@ Do these steps for the change from the Python service `pilze-app`:
 
 ### Version
 
-The version of a build comes from Git, for example `v0.1.0-64-g5896dc4`
+The version of a build comes from Git, for example `v2026-10-08-01-3-g65dd41a`
 (`git describe --tags --always`). The app and the service remove the commit
-hash and show `v0.1.0-64`.
+hash and show `v2026-10-08-01-3`. A release tag has the form `vYYYY-MM-DD-NN`.
 
 - The app: `frontend/tools/stamp-version.mjs` writes it before each build. The about page shows it.
 - The service: `backend/build.sh` gives it to the linker (`-ldflags -X …/config.build=…`). `GET /api/config` and `kinoko version` return it. A plain `go build` gives `dev`.
-- Nix: the flake has no Git tags. It uses `VERSION` and the commit of the flake, for example `v0.1.0+5896dc4`, for the app and the service. Thus the build stays reproducible.
+- Nix: the flake has no Git tags. It uses the date and the commit of the flake, for example `v2026-10-09+65dd41a`, for the app and the service. Thus the build stays reproducible.
 - `KINOKO_VERSION` replaces the Git value for both sides.
 
-When you add a tag, write the same number into `VERSION`. CI stops when
-`VERSION` and the last tag do not agree. CI also stops when the app and the
-service of one build do not show the same version.
+CI stops when the app and the service of one build do not show the same
+version.
 
 `npm start` stamps the app one time at start. Restart it after a commit. The
 service shows the version of its last `backend/build.sh`.

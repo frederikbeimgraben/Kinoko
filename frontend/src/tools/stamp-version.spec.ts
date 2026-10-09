@@ -4,6 +4,7 @@ describe('stamp-version', () => {
   it('shows the Git version without the commit hash, as the board does', () => {
     expect(label('v0.1.0-14-gf2ac945')).toBe('v0.1.0-14');
     expect(label('v0.1.0')).toBe('v0.1.0');
+    expect(label('v2026-10-08-01-3-g65dd41a')).toBe('v2026-10-08-01-3');
   });
 
   it('keeps the commit of a Nix build, as config.Label in the service does', () => {

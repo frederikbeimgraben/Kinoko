@@ -26,9 +26,10 @@
       packages = forAll (
         pkgs:
         let
-          # Nix has no Git tags. The tag comes from VERSION, the commit from the flake:
-          # v0.1.0+5896dc4. A Git build gives "git describe", for example v0.1.0-64-g5896dc4.
-          version = "v${pkgs.lib.trim (builtins.readFile ./VERSION)}+${
+          # Nix has no Git tags. The date and the commit of the flake give the version:
+          # v2026-10-09+65dd41a. A Git build gives "git describe", for example v2026-10-08-01-3-g65dd41a.
+          date = builtins.substring 0 8 (self.lastModifiedDate or "19700101");
+          version = "v${builtins.substring 0 4 date}-${builtins.substring 4 2 date}-${builtins.substring 6 2 date}+${
             self.shortRev or self.dirtyShortRev or "dirty"
           }";
         in
