@@ -162,7 +162,7 @@ describe('FindSheetComponent', () => {
     });
     await answerPhotos(setup, ['foto-neu']);
 
-    expect(setup.toasts.success).toEqual(['Gespeichert.']);
+    expect(setup.toasts.success).toEqual(['Der Fund ist gespeichert.']);
   });
 
   it('says so when the find is saved but a new photo fails', async () => {

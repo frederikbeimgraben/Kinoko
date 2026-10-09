@@ -5,7 +5,6 @@ import { photoPath } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { HistoryService } from '../../core/navigation/history.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { HistoryService } from '../../core/navigation/history.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';

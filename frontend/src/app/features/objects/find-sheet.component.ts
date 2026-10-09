@@ -176,7 +176,7 @@ export class FindSheetComponent {
         this.photoList.reload();
         this.images.load();
       }
-      if (sent) this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+      if (sent) this.toasts.success(this.i18n.translate('melden.gespeichert'));
       else this.toasts.error(this.i18n.translate('find.photoUploadFailed'));
       this.sheet.setEditing(false);
     } finally {
