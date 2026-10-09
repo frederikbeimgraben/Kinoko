@@ -68,6 +68,30 @@ func TestUpdateChangesTheDefinition(t *testing.T) {
 	}
 }
 
+func TestTheEnglishDefinitionIsStoredAndKeptByAnUpdateWithoutIt(t *testing.T) {
+	env := testkit.New(t)
+	grantTextEdit(t, env)
+	made := env.Post("/glossary", with(glossaryEntry, "definitionEn", "The spore-bearing layer."), anna()).
+		Expect(t, http.StatusCreated).Map(t)
+	if made["definitionEn"] != "The spore-bearing layer." {
+		t.Fatal(made)
+	}
+	changed := env.Put("/glossary/"+made["id"].(string), with(glossaryEntry, "definition", "Kurz."), anna()).
+		Expect(t, http.StatusOK).Map(t)
+	if changed["definitionEn"] != "The spore-bearing layer." || changed["definition"] != "Kurz." {
+		t.Fatal(changed)
+	}
+}
+
+func TestAnEntryWithoutEnglishHasAnEmptyText(t *testing.T) {
+	env := testkit.New(t)
+	grantTextEdit(t, env)
+	made := env.Post("/glossary", glossaryEntry, anna()).Expect(t, http.StatusCreated).Map(t)
+	if made["definitionEn"] != "" {
+		t.Fatal(made)
+	}
+}
+
 func TestATermStandsOnce(t *testing.T) {
 	env := testkit.New(t)
 	grantTextEdit(t, env)

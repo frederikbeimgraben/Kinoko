@@ -1811,8 +1811,9 @@ paths:
       tags: [people]
       description: >-
         Names of the persons behind the given ids. The answer holds a person
-        only if the caller and this person share one group or more, or if the
-        id is the id of the caller. Other ids have no entry.
+        only if the caller and this person share one group or more, if the
+        id is the id of the caller, or if the caller has find.review or
+        role.assign. Other ids have no entry.
       parameters:
         - name: ids
           in: query
@@ -4380,7 +4381,7 @@ components:
           type: string
     GlossaryEntry:
       type: object
-      required: [id, term, definition, updatedAt]
+      required: [id, term, definition, definitionEn, updatedAt]
       properties:
         id:
           type: string
@@ -4389,6 +4390,9 @@ components:
           type: string
         definition:
           type: string
+        definitionEn:
+          type: string
+          description: The English definition. Empty if nobody has written it.
         updatedByName:
           type: string
           nullable: true
@@ -4407,6 +4411,10 @@ components:
           type: string
           minLength: 1
           maxLength: 600
+        definitionEn:
+          type: string
+          maxLength: 600
+          description: Without the field, a create stores an empty text and an update keeps the old one.
     PersonName:
       type: object
       required: [id, name]

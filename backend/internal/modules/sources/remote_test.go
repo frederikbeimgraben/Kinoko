@@ -36,6 +36,17 @@ func TestRemoteSourcesSummarizeTheCache(t *testing.T) {
 	}
 }
 
+func TestRemoteSourcesWithoutCacheSendAnEmptyYearList(t *testing.T) {
+	f := newFixture(t)
+	body := f.env.Get("/remote-sources", f.admin).Expect(t, http.StatusOK).Map(t)
+	for _, item := range body["items"].([]any) {
+		view := item.(map[string]any)
+		if years, ok := view["years"].([]any); !ok || len(years) != 0 || view["state"] != "empty" {
+			t.Fatal(view)
+		}
+	}
+}
+
 func TestRefreshQueuesOneFetchRun(t *testing.T) {
 	f := newFixture(t)
 	run := f.env.Post("/remote-sources/gbif-occurrences/refresh", map[string]any{"fromYear": 2000, "toYear": 2010},

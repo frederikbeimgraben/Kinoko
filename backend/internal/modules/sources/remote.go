@@ -67,6 +67,7 @@ type remoteView struct {
 var yearPattern = regexp.MustCompile(`(?:^|[^0-9])((?:19|20)[0-9]{2})(?:[^0-9]|$)`)
 
 // yearsOf gives the sorted years that the cache keys name.
+// It never gives nil, because the client reads an empty list as "no years".
 func yearsOf(keys []string) []int {
 	found := fn.FlatMap(keys, func(key string) []int {
 		match := yearPattern.FindStringSubmatch(key)
@@ -76,7 +77,7 @@ func yearsOf(keys []string) []int {
 		year, _ := strconv.Atoi(match[1])
 		return []int{year}
 	})
-	return slices.Compact(slices.Sorted(slices.Values(found)))
+	return append([]int{}, slices.Compact(slices.Sorted(slices.Values(found)))...)
 }
 
 func latest(times []*db.Time) *db.Time {
