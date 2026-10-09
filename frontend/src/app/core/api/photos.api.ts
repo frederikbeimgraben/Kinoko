@@ -77,6 +77,11 @@ export class PhotosApi {
     return this.api.post<Photo>(`${PATH}/${encodeURIComponent(id)}/rejection`, { reason });
   }
 
+  /** Takes back an approval or a rejection: the photo waits for review again. */
+  reopen(id: string): Observable<Photo> {
+    return this.api.delete<Photo>(`${PATH}/${encodeURIComponent(id)}/review`);
+  }
+
   setLead(id: string): Observable<Photo> {
     return this.api.put<Photo>(`${PATH}/${encodeURIComponent(id)}/lead`, {});
   }
