@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { from, mergeMap } from 'rxjs';
-import { Location, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { HistoryService } from '../../../core/navigation/history.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ViewportService } from '../../../core/layout/viewport.service';
 import type { ColourMode, ColourValue } from '../../../ui/colour-field/colour-field.component';
@@ -66,7 +67,7 @@ export function swatchFill(colours: readonly ColourValue[], mode: ColourMode): s
 export class ComparisonComponent {
   private readonly catalogue = inject(SpeciesStore);
   protected readonly comparison = inject(ComparisonStore);
-  private readonly location = inject(Location);
+  private readonly history = inject(HistoryService);
   private readonly router = inject(Router);
   private readonly i18n = inject(I18nService);
   private readonly names = inject(CatalogueText);
@@ -107,8 +108,10 @@ export class ComparisonComponent {
     this.catalogue.loadProfile(toObservable(this.comparison.slugs).pipe(mergeMap((slugs) => from(slugs))));
   }
 
+  /** A comparison from a link goes back to its first species. */
   protected back(): void {
-    this.location.back();
+    const first = this.comparison.slugs().at(0);
+    this.history.back(first === undefined ? ['/arten'] : ['/arten', first]);
   }
 
   protected open(slug: string): void {

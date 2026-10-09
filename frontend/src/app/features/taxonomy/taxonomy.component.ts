@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TAXON_RANKS, type SpeciesSummary, type TaxonPage, type TaxonRank } from '../../core/api/models';
 import { photoPath } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { HistoryService } from '../../core/navigation/history.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { PrivateImageComponent } from '../../ui/private-image/private-image.component';
@@ -73,7 +73,7 @@ export class TaxonomyComponent {
   private readonly store = inject(TaxonomyStore);
   private readonly catalogue = inject(SpeciesStore);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
+  private readonly history = inject(HistoryService);
   private readonly i18n = inject(I18nService);
 
   readonly rank = input.required<string>();
@@ -131,7 +131,7 @@ export class TaxonomyComponent {
   );
 
   protected back(): void {
-    this.location.back();
+    this.history.back(['/arten']);
   }
 
   protected toStep(route: string): void {
