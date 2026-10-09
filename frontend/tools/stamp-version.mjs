@@ -7,10 +7,15 @@ import { fileURLToPath } from 'node:url';
 const TARGET = new URL('../src/app/core/version.generated.ts', import.meta.url);
 const FALLBACK = 'dev';
 
-/** The Git version, for example `v0.1.0-14-gf2ac945`, or `null` without a Git directory. */
+/** The form of a release tag: `v`, the day and a number (docs/operations.md). `backend/build.sh` uses the same pattern.
+ * Without it, each other tag, for example a test tag, becomes the version. */
+export const RELEASE_TAG = 'v[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9]*';
+
+/** The Git version after the last release tag, or `null` without a Git directory. */
 function fromGit() {
   try {
-    return execFileSync('git', ['describe', '--tags', '--always'], { encoding: 'utf8' }).trim() || null;
+    const args = ['describe', '--tags', '--match', RELEASE_TAG, '--always'];
+    return execFileSync('git', args, { encoding: 'utf8' }).trim() || null;
   } catch {
     return null;
   }

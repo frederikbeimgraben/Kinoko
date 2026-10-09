@@ -104,4 +104,5 @@ declare module '*/tools/stamp-version.mjs' {
   export function label(raw: string | null | undefined): string;
   export function describe(env?: Record<string, string | undefined>, git?: () => string | null): string;
   export function content(version: string): string;
+  export const RELEASE_TAG: string;
 }
