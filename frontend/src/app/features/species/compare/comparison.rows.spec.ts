@@ -73,7 +73,7 @@ describe('comparison.rows', () => {
   });
 
   it('nennt die Ringform und nimmt ohne Form die Notiz des Rings', () => {
-    expect(ringShapeOf({ ...STONE, ringShape: 'flaring' }, i18n())).toBe('abstehend');
+    expect(ringShapeOf({ ...STONE, ringShape: 'flaring' }, i18n())).toBe('aufsteigend');
     const noted = { ...STONE, partNotes: [{ part: 'ring' as const, description: 'häutig', comment: '' }] };
     expect(ringShapeOf(noted, i18n())).toBe('häutig');
     expect(ringShapeOf(STONE, i18n())).toBeNull();
