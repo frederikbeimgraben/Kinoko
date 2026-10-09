@@ -904,6 +904,7 @@
   "image.field.author": "Author",
   "image.field.authorMissing": "Enter the author.",
   "image.field.caption": "Caption",
+  "image.field.captionEn": "Caption in English",
   "image.field.captionPlaceholder": "Caption, e.g. young specimen",
   "image.field.details": "Details",
   "image.field.licence": "Licence",

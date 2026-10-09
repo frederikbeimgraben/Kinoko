@@ -132,6 +132,37 @@ describe('ImageFormComponent', () => {
     request.flush(photo({ state: 'approved' }));
   });
 
+  it('sends the German and the English caption', async () => {
+    const { container, http, refresh } = await build(false);
+
+    await pick(container);
+    refresh();
+    await userEvent.type(screen.getByRole('textbox', { name: 'Bildunterschrift' }), 'Junges Exemplar');
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Bildunterschrift auf Englisch' }),
+      'Young specimen',
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
+    const request = await vi.waitFor(() => http.expectOne('/api/photos'));
+    const body = request.request.body as FormData;
+
+    expect(body.get('caption')).toBe('Junges Exemplar');
+    expect(body.get('captionEn')).toBe('Young specimen');
+    request.flush(photo({ state: 'submitted' }));
+  });
+
+  it('sends no English caption when the field is empty', async () => {
+    const { container, http, refresh } = await build(false);
+
+    await pick(container);
+    refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Einreichen' }));
+    const request = await vi.waitFor(() => http.expectOne('/api/photos'));
+
+    expect((request.request.body as FormData).has('captionEn')).toBe(false);
+    request.flush(photo({ state: 'submitted' }));
+  });
+
   it('chooses a licence in the option sheet', async () => {
     const { container, http, refresh } = await build(false);
 

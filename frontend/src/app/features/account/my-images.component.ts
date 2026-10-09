@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { photoPath, type Photo, type PhotoState } from '../../core/api/models';
+import { photoCaption, photoPath, type Photo, type PhotoState } from '../../core/api/models';
 import { shortDay } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { joined } from '../../core/i18n/numbers';
@@ -103,9 +103,10 @@ export class MyImagesComponent {
         ? this.i18n.translate(state.text)
         : this.i18n.translate('image.rejectedBecause', { reason });
     const fallback = this.i18n.translate(photo.findId ? 'image.findPhoto' : 'image.untitled');
+    const caption = photoCaption(photo, this.i18n.locale())?.trim() ?? '';
     return {
       id: photo.id,
-      title: entry?.name ?? (photo.caption?.trim() ? photo.caption : fallback),
+      title: entry?.name ?? (caption === '' ? fallback : caption),
       sub: joined([shortDay(new Date(photo.createdAt), this.i18n), stateText]),
       thumb: photoPath(photo.id, 'list'),
       badge: this.i18n.translate(state.badge),

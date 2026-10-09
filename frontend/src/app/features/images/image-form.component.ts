@@ -93,6 +93,7 @@ export class ImageFormComponent {
   protected readonly source = signal('');
   protected readonly takenOn = signal('');
   protected readonly caption = signal('');
+  protected readonly captionEn = signal('');
   protected readonly cover = signal(false);
   /** True after the first press of the main button: from then on the missing fields show their error. */
   protected readonly tried = signal(false);
@@ -148,6 +149,7 @@ export class ImageFormComponent {
         photographer: this.photographer().trim(),
         licence: this.licence(),
         caption: this.caption().trim() || undefined,
+        captionEn: this.captionEn().trim() || undefined,
         source: this.source().trim() || undefined,
         takenOn: this.takenOn() || undefined,
       },

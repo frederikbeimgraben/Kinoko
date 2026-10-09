@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
-import { photoPath } from '../../../core/api/models';
+import { photoCaption, photoPath } from '../../../core/api/models';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import type { PhotoQuery } from '../../../core/api/photos.api';
 import { HeroComponent, type HeroPhoto } from '../../../ui/hero/hero.component';
 import { ImagesStore } from '../../images/images.store';
@@ -18,6 +19,7 @@ export class SpeciesLeadComponent {
   private readonly images = inject(ImagesStore);
   private readonly species = inject(SpeciesStore);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
 
   readonly slug = input.required<string>();
   /** The hero height: 260 px on the phone, 210 px in a desktop column. */
@@ -28,7 +30,12 @@ export class SpeciesLeadComponent {
   protected readonly photo = computed<HeroPhoto | null>(() => {
     const held = this.lead();
     if (held === null) return null;
-    return { path: photoPath(held.id, 'full'), photographer: held.photographer, licence: held.licence };
+    return {
+      path: photoPath(held.id, 'full'),
+      photographer: held.photographer,
+      licence: held.licence,
+      source: held.source,
+    };
   });
 
   /** The position of the lead photo in the view, from one, for the counter of the hero. */
@@ -38,9 +45,11 @@ export class SpeciesLeadComponent {
   });
   protected readonly count = computed(() => this.images.photos().length);
 
-  protected readonly alt = computed(
-    () => this.lead()?.caption ?? this.species.nameOf(this.slug()) ?? this.slug(),
-  );
+  protected readonly alt = computed(() => {
+    const held = this.lead();
+    const caption = held === null ? null : photoCaption(held, this.i18n.locale());
+    return caption ?? this.species.nameOf(this.slug()) ?? this.slug();
+  });
 
   private readonly query = computed<PhotoQuery | null>(() => {
     const id = this.species.entryOf(this.slug())?.id;

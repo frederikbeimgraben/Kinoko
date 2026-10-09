@@ -26,7 +26,11 @@
   </div>
   @if (showCaption()) {
     <figcaption class="hero__caption">
-      <app-image-credit [photographer]="photo()!.photographer" [licence]="photo()!.licence" />
+      <app-image-credit
+        [photographer]="photo()!.photographer"
+        [licence]="photo()!.licence"
+        [source]="photo()!.source"
+      />
       @if (count() > 0) {
         <span class="hero__count">{{ counter() }}</span>
       }

@@ -4,7 +4,7 @@
     @if (photo(); as held) {
       <app-hero
         [photo]="hero()"
-        [alt]="held.caption ?? title()"
+        [alt]="caption() ?? title()"
         [height]="heroHeight()"
         [index]="index()"
         [count]="count()"
@@ -12,9 +12,9 @@
         (prev)="step(-1)"
         (next)="step(1)"
       />
-      @if (held.caption) {
+      @if (caption(); as text) {
         <app-section [label]="'image.field.caption' | t">
-          <p class="note">{{ held.caption }}</p>
+          <p class="note">{{ text }}</p>
         </app-section>
       }
       <app-section [label]="'image.section.image' | t">

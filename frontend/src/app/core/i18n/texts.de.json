@@ -904,6 +904,7 @@
   "image.field.author": "Urheber",
   "image.field.authorMissing": "Gib den Urheber an.",
   "image.field.caption": "Bildunterschrift",
+  "image.field.captionEn": "Bildunterschrift auf Englisch",
   "image.field.captionPlaceholder": "Bildunterschrift, etwa junges Exemplar",
   "image.field.details": "Angaben",
   "image.field.licence": "Lizenz",

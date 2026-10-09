@@ -71,6 +71,13 @@
       [value]="caption()"
       (valueChange)="caption.set($event)"
     />
+    <app-form-field
+      [label]="'image.field.captionEn' | t"
+      [placeholder]="'common.optional' | t"
+      [multiline]="true"
+      [value]="captionEn()"
+      (valueChange)="captionEn.set($event)"
+    />
     @if (curates()) {
       <app-row-group>
         <app-list-row [title]="'image.cover' | t" [clickable]="!busy()" (chosen)="cover.set(!cover())">

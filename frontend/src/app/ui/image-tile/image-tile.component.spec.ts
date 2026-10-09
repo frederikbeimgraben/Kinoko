@@ -26,8 +26,22 @@ describe('ImageTileComponent', () => {
     flush(TestBed.inject(HttpTestingController), LIST_PATH);
     detectChanges();
 
-    expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
+    expect(container.querySelector('.credit')?.textContent.replace(/\s+/g, ' ').trim()).toBe(
+      'Foto: Marie Weber · CC BY-SA 4.0',
+    );
     await noViolations(container);
+  });
+
+  it('nimmt die Bildunterschrift als Alternativtext und verlinkt die Lizenz', async () => {
+    const { detectChanges } = await render(ImageTileComponent, {
+      inputs: { image: photo({ caption: 'Junges Exemplar', captionEn: 'Young specimen' }) },
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    flush(TestBed.inject(HttpTestingController), LIST_PATH);
+    detectChanges();
+
+    expect(await screen.findByRole('img', { name: 'Junges Exemplar' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'CC BY-SA 4.0' })).toBeInTheDocument();
   });
 
   it('zeigt die Titelbild-Marke nur, wenn das Bild führt', async () => {

@@ -31,7 +31,9 @@ describe('HeroComponent', () => {
     });
     flushImage();
 
-    expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
+    expect(container.querySelector('.credit')?.textContent.replace(/\s+/g, ' ').trim()).toBe(
+      'Foto: Marie Weber · CC BY-SA 4.0',
+    );
     expect(screen.getByText('1 von 4')).toBeInTheDocument();
     await noViolations(container);
   });

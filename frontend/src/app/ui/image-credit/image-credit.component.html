@@ -1,4 +1,18 @@
 <span class="credit"
-  >{{ 'image.field.photo' | t }}: {{ photographer() }} ·
-  {{ isOwn() ? (ownPhotoKey | t) : licenceCode() }}</span
->
+  >{{ 'image.field.photo' | t }}:
+  @if (sourceUrl(); as url) {
+    <a class="credit__link" [href]="url" target="_blank" rel="noopener noreferrer">{{ photographer() }}</a>
+  } @else {
+    {{ photographer() }}
+  }
+  ·
+  @if (isOwn()) {
+    {{ ownPhotoKey | t }}
+  } @else if (licenceUrl(); as url) {
+    <a class="credit__link" [href]="url" target="_blank" rel="license noopener noreferrer">{{
+      licenceCode()
+    }}</a>
+  } @else {
+    {{ licenceCode() }}
+  }
+</span>

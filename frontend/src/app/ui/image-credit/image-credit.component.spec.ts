@@ -10,8 +10,40 @@ describe('ImageCreditComponent', () => {
       inputs: { photographer: 'Marie Weber', licence: 'cc_by_sa_4' },
     });
 
-    expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
+    expect(container.querySelector('.credit')?.textContent.replace(/\s+/g, ' ').trim()).toBe(
+      'Foto: Marie Weber · CC BY-SA 4.0',
+    );
     await noViolations(container);
+  });
+
+  it('verlinkt die Lizenz auf ihren Text', async () => {
+    await render(ImageCreditComponent, {
+      inputs: { photographer: 'Marie Weber', licence: 'cc_by_sa_3' },
+    });
+
+    const link = screen.getByRole('link', { name: 'CC BY-SA 3.0' });
+    expect(link).toHaveAttribute('href', 'https://creativecommons.org/licenses/by-sa/3.0/');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link.getAttribute('rel')).toContain('noopener');
+  });
+
+  it('verlinkt den Namen auf eine Quelle mit Webadresse', async () => {
+    const source = 'https://commons.wikimedia.org/wiki/File:Boletus_edulis.jpg';
+    const { container } = await render(ImageCreditComponent, {
+      inputs: { photographer: 'Holger Krisp', licence: 'cc_by_3', source },
+    });
+
+    expect(screen.getByRole('link', { name: 'Holger Krisp' })).toHaveAttribute('href', source);
+    await noViolations(container);
+  });
+
+  it('zeigt eine Quelle ohne Webadresse nicht als Link', async () => {
+    await render(ImageCreditComponent, {
+      inputs: { photographer: 'Marie Weber', licence: 'public_domain', source: 'Pilzbuch, S. 12' },
+    });
+
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.getByText(/Public Domain/)).toBeInTheDocument();
   });
 
   it('schreibt ein eigenes Foto als solches aus', async () => {
@@ -23,7 +55,18 @@ describe('ImageCreditComponent', () => {
   });
 
   it('kennt jede Lizenz aus der Tabelle', async () => {
-    const licences = ['cc0', 'cc_by_4', 'cc_by_sa_4', 'public_domain'] as const;
+    const licences = [
+      'cc0',
+      'cc_by_4',
+      'cc_by_sa_4',
+      'cc_by_3',
+      'cc_by_sa_3',
+      'cc_by_2_5',
+      'cc_by_sa_2_5',
+      'cc_by_2',
+      'cc_by_sa_2',
+      'public_domain',
+    ] as const;
     for (const licence of licences) {
       TestBed.resetTestingModule();
       const { container } = await render(ImageCreditComponent, {
