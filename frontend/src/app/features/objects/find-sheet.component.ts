@@ -85,9 +85,12 @@ export class FindSheetComponent {
   protected readonly viewing = signal<number | null>(null);
   private tile: HTMLElement | null = null;
 
+  /** The id stays the same when the list gives a new copy of the find, so the photos do not load again. */
+  private readonly findId = computed(() => this.find().id);
+
   /** The photos of the find that the service knows. The strip and the form show them. */
   private readonly photoList = rxResource({
-    params: () => this.find().id,
+    params: this.findId,
     stream: ({ params: findId }) =>
       this.photos.list({ findId }).pipe(
         map((page): readonly Photo[] => page.items),

@@ -7,7 +7,7 @@ import {
   type HttpEvent,
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { catchError, filter, map, of, throwError, type Observable } from 'rxjs';
+import { catchError, filter, finalize, map, of, share, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
 import { DEFAULT_LOCALE } from '../i18n/translations';
 import { ToastService } from '../../ui/toast/toast.service';
@@ -57,6 +57,8 @@ export class ApiClient {
   private readonly basis = inject(API_BASE_URL);
   private readonly toasts = inject(ToastService);
   private readonly i18n = inject(I18nService);
+  /** The file requests that run, by path. */
+  private readonly blobs = new Map<string, Observable<Blob>>();
 
   get<T>(path: string, query?: Query, options?: Silent): Observable<T> {
     return this.http
@@ -115,9 +117,16 @@ export class ApiClient {
    * Gets a file with the token, not `src` on the image, because a photo uses the permissions of its find.
    */
   getBlob(path: string): Observable<Blob> {
-    return this.http
-      .get(this.url(path), { responseType: 'blob' })
-      .pipe(catchError((failure: unknown) => this.report(failure)));
+    const running = this.blobs.get(path);
+    if (running !== undefined) return running;
+    // Two images of the same photo on one page, such as a thumb and a strip tile, share one request.
+    const shared = this.http.get(this.url(path), { responseType: 'blob' }).pipe(
+      catchError((failure: unknown) => this.report(failure)),
+      finalize(() => this.blobs.delete(path)),
+      share(),
+    );
+    this.blobs.set(path, shared);
+    return shared;
   }
 
   put<T>(path: string, body: unknown, options?: Silent): Observable<T> {
