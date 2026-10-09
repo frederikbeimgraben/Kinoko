@@ -13,6 +13,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 type colourIn struct {
@@ -34,6 +35,7 @@ type speciesWrite struct {
 	Frequency        *enums.Frequency      `json:"frequency"`
 	RedList          *enums.RedListStatus  `json:"redList"`
 	Description      *string               `json:"description"`
+	DescriptionEn    *string               `json:"descriptionEn"`
 	EdibilityNote    *string               `json:"edibilityNote"`
 	Protection       enums.Protection      `json:"protection"`
 	ProtectionNote   *string               `json:"protectionNote"`
@@ -130,16 +132,17 @@ func uniqueConflict(err error) error {
 
 func insertSpecies(ctx context.Context, tx *sql.Tx, id db.ID, slug string, b speciesWrite, user db.ID, now db.Time) error {
 	args := append([]any{id, slug}, headValues(b)...)
-	args = append(args, false, now, user)
+	args = append(args, fn.Deref(b.DescriptionEn, ""), false, now, user)
 	_, err := tx.ExecContext(ctx, "INSERT INTO species (id, slug, "+headCols+
-		", forecast_enabled, updated_at, updated_by_id) VALUES ("+db.Placeholders(len(args))+")", args...)
+		", description_en, forecast_enabled, updated_at, updated_by_id) VALUES ("+db.Placeholders(len(args))+")", args...)
 	return uniqueConflict(err)
 }
 
 func updateSpecies(ctx context.Context, tx *sql.Tx, id db.ID, b speciesWrite, user db.ID, now db.Time) error {
 	sets := strings.Join(strings.FieldsFunc(headCols, func(r rune) bool { return r == ',' }), " = ?,") + " = ?"
-	args := append(headValues(b), now, user, id)
-	_, err := tx.ExecContext(ctx, "UPDATE species SET "+sets+", updated_at = ?, updated_by_id = ? WHERE id = ?", args...)
+	args := append(headValues(b), b.DescriptionEn, now, user, id)
+	_, err := tx.ExecContext(ctx, "UPDATE species SET "+sets+
+		", description_en = coalesce(?, description_en), updated_at = ?, updated_by_id = ? WHERE id = ?", args...)
 	return uniqueConflict(err)
 }
 

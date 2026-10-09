@@ -133,6 +133,7 @@ in `backend/migrations` that the database does not have. The table
 At each start the service does these steps:
 
 - If the table `species` is empty, it imports the catalogue from the seed data.
+- If the table `species` is not empty, it examines each species file `arten/*.toml`. When a file changed since its last import (the table `seed_digest` keeps a SHA-256 digest of each file) and has the key `beschreibung`, the service writes `beschreibung`, `beschreibungEn` and `entwurf` into the species with the same slug. Other fields of the species stay, because an admin can have changed them.
 - It imports the reactions of `reaktionen.json` into a new catalogue. It imports them again only when the file changed since the last import (the table `seed_digest` keeps a SHA-256 digest of the file). Thus a restart keeps the reagent terms that an admin deleted or merged.
 - It makes the table `text` agree with `texte.json`. A text that a person changed stays.
 - It adds the glossary terms of `glossar.json` that it did not add before. A term that a person changed or deleted stays.

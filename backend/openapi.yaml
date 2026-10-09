@@ -3316,9 +3316,13 @@ components:
             - $ref: "#/components/schemas/RedListStatus"
             - type: "null"
         description:
+          description: The German description.
           oneOf:
             - type: string
             - type: "null"
+        descriptionEn:
+          type: string
+          description: The English description. Without the field, a create stores an empty text and an update keeps the old one.
         edibilityNote:
           oneOf:
             - type: string
@@ -3457,9 +3461,16 @@ components:
                 - type: string
                 - type: "null"
             description:
+              description: The German description.
               oneOf:
                 - type: string
                 - type: "null"
+            descriptionEn:
+              type: string
+              description: The English description. Empty if nobody has written it.
+            descriptionDraft:
+              type: boolean
+              description: True when nobody has reviewed the description.
             marketable:
               type: boolean
             frequency:
@@ -3587,6 +3598,8 @@ components:
               description: The count of reactions. Only the items of the bundle have it.
               type: integer
           required:
+            - descriptionEn
+            - descriptionDraft
             - names
             - measurements
             - colours

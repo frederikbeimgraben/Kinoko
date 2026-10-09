@@ -30,6 +30,8 @@ type File struct {
 	Haeufigkeit        *string
 	Gefaehrdung        *string
 	Beschreibung       *string
+	BeschreibungEn     *string
+	Entwurf            *bool
 	WeitereNamen       []string
 	Synonyme           []string
 	Fruchtschicht      *importer.HymeniumEntry
@@ -93,6 +95,8 @@ type rawFile struct {
 	Haeufigkeit        *string                          `toml:"haeufigkeit"`
 	Gefaehrdung        *string                          `toml:"gefaehrdung"`
 	Beschreibung       *string                          `toml:"beschreibung"`
+	BeschreibungEn     *string                          `toml:"beschreibungEn"`
+	Entwurf            *bool                            `toml:"entwurf"`
 	WeitereNamen       []string                         `toml:"weitereNamen"`
 	Synonyme           []string                         `toml:"synonyme"`
 	Fruchtschicht      *importer.HymeniumEntry          `toml:"fruchtschicht"`
@@ -143,7 +147,8 @@ func ParseFile(text, source string) (File, error) {
 		Sammelbar: raw.Sammelbar, Jahreszeiten: present("jahreszeiten", raw.Jahreszeiten),
 		Baeume: present("baeume", raw.Baeume), Warnung: raw.Warnung, Karte: raw.Karte,
 		SpeisewertHinweis: raw.SpeisewertHinweis, SchutzHinweis: raw.SchutzHinweis, Haeufigkeit: raw.Haeufigkeit,
-		Gefaehrdung: raw.Gefaehrdung, Beschreibung: raw.Beschreibung,
+		Gefaehrdung: raw.Gefaehrdung, Beschreibung: raw.Beschreibung, BeschreibungEn: raw.BeschreibungEn,
+		Entwurf:      raw.Entwurf,
 		WeitereNamen: present("weitereNamen", raw.WeitereNamen), Synonyme: present("synonyme", raw.Synonyme),
 		Fruchtschicht: raw.Fruchtschicht, Hutform: raw.Hutform, Hutmerkmale: present("hutmerkmale", raw.Hutmerkmale),
 		Hutrand: raw.Hutrand, Stielmerkmale: present("stielmerkmale", raw.Stielmerkmale),

@@ -33,6 +33,8 @@ type SpeciesRow struct {
 	Frequency        *string
 	RedList          *string
 	Description      *string
+	DescriptionEn    string
+	DescriptionDraft bool
 	EdibilityNote    *string
 	Protection       string
 	ProtectionNote   *string

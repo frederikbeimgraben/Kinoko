@@ -16,7 +16,8 @@ import (
 const steinpilz = "(SELECT id FROM species WHERE slug = 'boletus-edulis')"
 
 var edits = []string{
-	"UPDATE species SET edibility_note = 'Geprüft: essbar.', description = 'Ein Röhrling.' WHERE slug = 'boletus-edulis'",
+	`UPDATE species SET edibility_note = 'Geprüft: essbar.', description = 'Ein Röhrling.',
+		description_en = 'A bolete.', description_draft = FALSE WHERE slug = 'boletus-edulis'`,
 	"INSERT INTO species_part_note (species_id, part, description, comment) VALUES (" + steinpilz + ", 'cap', 'Braun.', 'Notiz.')",
 	"UPDATE species_colour SET name = 'dunkelbraun', hex = '#4a2c17' WHERE position = 0 AND part = 'cap' AND species_id = " + steinpilz,
 	"DELETE FROM species_season WHERE season = 'summer' AND species_id = " + steinpilz,
@@ -43,7 +44,8 @@ func TestExportCarriesTheChanges(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if *profile.SpeisewertHinweis != "Geprüft: essbar." || *profile.Beschreibung != "Ein Röhrling." {
+	if *profile.SpeisewertHinweis != "Geprüft: essbar." || *profile.Beschreibung != "Ein Röhrling." ||
+		*profile.BeschreibungEn != "A bolete." || profile.Entwurf {
 		t.Fatalf("species texts: %s", body)
 	}
 	if len(profile.Teilnotizen) != 1 || profile.Teilnotizen[0].Key != "hut" || profile.Teilnotizen[0].Kommentar != "Notiz." {

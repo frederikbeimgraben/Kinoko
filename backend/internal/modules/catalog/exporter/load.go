@@ -51,7 +51,7 @@ type catalogue struct {
 const speciesColumns = `s.id, s.slug, s.name, s.latin_name, s.group_key, s.edibility, s.marketable,
 	s.forecast_enabled, s.frequency, s.red_list, s.description, s.edibility_note, s.protection, s.protection_note,
 	s.period_start_month, s.period_end_month, s.period_peak_month, s.smell_text, s.taste_text, s.hymenium_type,
-	s.gill_attachment, s.gill_spacing, s.gill_edge, s.cap_shape_young, s.cap_shape_old, t.slug, t.rank`
+	s.gill_attachment, s.gill_spacing, s.gill_edge, s.cap_shape_young, s.cap_shape_old, s.description_en, s.description_draft, t.slug, t.rank`
 
 func scanSpecies(s db.Scanner) (*stored, error) {
 	out := &stored{Modes: map[enums.BodyPart]enums.ColourMode{}, Colours: map[enums.BodyPart][]importer.NamedColour{}}
@@ -60,7 +60,7 @@ func scanSpecies(s db.Scanner) (*stored, error) {
 		&r.ForecastEnabled, &r.Frequency, &r.RedList, &r.Description, &r.EdibilityNote, &r.Protection,
 		&r.ProtectionNote, &r.PeriodStartMonth, &r.PeriodEndMonth, &r.PeriodPeakMonth, &r.SmellText, &r.TasteText,
 		&r.HymeniumType, &r.GillAttachment, &r.GillSpacing, &r.GillEdge, &r.CapShapeYoung, &r.CapShapeOld,
-		&out.TaxonSlug, &out.TaxonRank)
+		&r.DescriptionEn, &r.DescriptionDraft, &out.TaxonSlug, &out.TaxonRank)
 	return out, err
 }
 

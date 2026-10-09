@@ -79,13 +79,15 @@ func inserts(c Catalog, now db.Time) []insert {
 		{"INSERT INTO term (id, kind, group_key, slug, name, position) VALUES (?, ?, ?, ?, ?, ?)",
 			fn.Map(c.Terms.Rows, func(r TermRow) []any { return []any{r.ID, r.Kind, r.GroupKey, r.Slug, r.Name, r.Position} })},
 		{`INSERT INTO species (id, slug, name, latin_name, taxon_id, group_key, edibility, marketable, forecast_enabled,
-			frequency, red_list, description, edibility_note, protection, protection_note, period_start_month,
-			period_end_month, period_peak_month, smell_text, taste_text, hymenium_type, gill_attachment, gill_spacing,
-			gill_edge, cap_shape_young, cap_shape_old, updated_at, updated_by_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
+			frequency, red_list, description, description_en, description_draft, edibility_note, protection,
+			protection_note, period_start_month, period_end_month, period_peak_month, smell_text, taste_text,
+			hymenium_type, gill_attachment, gill_spacing, gill_edge, cap_shape_young, cap_shape_old, updated_at,
+			updated_by_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
 			fn.Map(c.Species, func(r SpeciesRow) []any {
 				return []any{r.ID, r.Slug, r.Name, r.LatinName, r.TaxonID, r.GroupKey, r.Edibility, r.Marketable,
-					r.ForecastEnabled, r.Frequency, r.RedList, r.Description, r.EdibilityNote, r.Protection, r.ProtectionNote,
+					r.ForecastEnabled, r.Frequency, r.RedList, r.Description, r.DescriptionEn, r.DescriptionDraft,
+					r.EdibilityNote, r.Protection, r.ProtectionNote,
 					r.PeriodStartMonth, r.PeriodEndMonth, r.PeriodPeakMonth, r.SmellText, r.TasteText, r.HymeniumType,
 					r.GillAttachment, r.GillSpacing, r.GillEdge, r.CapShapeYoung, r.CapShapeOld, now}
 			})},
@@ -160,6 +162,7 @@ func execMany(ctx context.Context, tx *sql.Tx, query string, rows [][]any) error
 }
 
 // ImportAll builds the catalogue from the data folder and writes it in one transaction.
+// It records the digest of each species file.
 func ImportAll(ctx context.Context, handle *sql.DB, profiles []StemProfile, data fs.FS, now func() time.Time) (*Report, error) {
 	taxa, err := LoadTaxonEntries(data)
 	if err != nil {
@@ -170,7 +173,12 @@ func ImportAll(ctx context.Context, handle *sql.DB, profiles []StemProfile, data
 	if err != nil {
 		return nil, err
 	}
-	err = db.InTx(ctx, handle, func(tx *sql.Tx) error { return Write(ctx, tx, built, db.At(now())) })
+	err = db.InTx(ctx, handle, func(tx *sql.Tx) error {
+		if err := Write(ctx, tx, built, db.At(now())); err != nil {
+			return err
+		}
+		return saveSpeciesDigests(ctx, tx, data, profiles)
+	})
 	if err != nil {
 		return nil, err
 	}

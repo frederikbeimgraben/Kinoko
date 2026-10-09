@@ -13,6 +13,8 @@ import (
 
 // Profile is one species file under daten/arten. The tables farben, masse
 // and merkmale keep the key order of the file because the result depends on it.
+// Beschreibung is the German description, BeschreibungEn the English one.
+// Entwurf is true when nobody has reviewed the description.
 type Profile struct {
 	Name               string
 	Lateinisch         string
@@ -25,6 +27,8 @@ type Profile struct {
 	SpeisewertHinweis  *string
 	SchutzHinweis      *string
 	Beschreibung       *string
+	BeschreibungEn     *string
+	Entwurf            bool
 	Jahreszeiten       []string
 	Baeume             []string
 	BaeumeAusErfahrung *ExperienceTrees
@@ -173,6 +177,8 @@ type rawProfile struct {
 	SpeisewertHinweis  *string                   `toml:"speisewertHinweis"`
 	SchutzHinweis      *string                   `toml:"schutzHinweis"`
 	Beschreibung       *string                   `toml:"beschreibung"`
+	BeschreibungEn     *string                   `toml:"beschreibungEn"`
+	Entwurf            bool                      `toml:"entwurf"`
 	Jahreszeiten       []string                  `toml:"jahreszeiten"`
 	Baeume             []string                  `toml:"baeume"`
 	BaeumeAusErfahrung *ExperienceTrees          `toml:"baeumeAusErfahrung"`
@@ -220,6 +226,8 @@ func ParseProfile(text, source string) (Profile, error) {
 		SpeisewertHinweis:  raw.SpeisewertHinweis,
 		SchutzHinweis:      raw.SchutzHinweis,
 		Beschreibung:       raw.Beschreibung,
+		BeschreibungEn:     raw.BeschreibungEn,
+		Entwurf:            raw.Entwurf,
 		Jahreszeiten:       raw.Jahreszeiten,
 		Baeume:             raw.Baeume,
 		BaeumeAusErfahrung: raw.BaeumeAusErfahrung,

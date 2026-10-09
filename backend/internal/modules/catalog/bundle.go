@@ -17,7 +17,7 @@ import (
 
 // bundleShape changes when the form of the bundle changes. A new value
 // makes the clients drop the bundles in their caches.
-const bundleShape = 3
+const bundleShape = 4
 
 // bundleCache holds the built bundle of one tag. A build takes more than
 // a second, so requests wait for the first build and do not build again.

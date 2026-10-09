@@ -31,6 +31,8 @@ type Species struct {
 	Summary
 	UpdatedByName    *string               `json:"updatedByName"`
 	Description      *string               `json:"description"`
+	DescriptionEn    string                `json:"descriptionEn"`
+	DescriptionDraft bool                  `json:"descriptionDraft"`
 	Marketable       bool                  `json:"marketable"`
 	Frequency        *enums.Frequency      `json:"frequency"`
 	RedList          *enums.RedListStatus  `json:"redList"`
@@ -304,6 +306,8 @@ func assemble(s speciesRow, c children, terms map[db.ID]termRow, targets map[db.
 	return Species{
 		Summary:          summaryOf(s, leadOf(c, s.ID), names),
 		Description:      s.Description,
+		DescriptionEn:    s.DescriptionEn,
+		DescriptionDraft: s.DescriptionDraft,
 		Marketable:       s.Marketable,
 		Frequency:        s.Frequency,
 		RedList:          s.RedList,

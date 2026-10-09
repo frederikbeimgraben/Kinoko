@@ -116,6 +116,8 @@ func speciesRow(ctx Context, taxonID *db.ID) (SpeciesRow, error) {
 		Frequency:        maybe(Frequency, p.Haeufigkeit, "haeufigkeit"),
 		RedList:          maybe(RedList, p.Gefaehrdung, "gefaehrdung"),
 		Description:      p.Beschreibung,
+		DescriptionEn:    fn.Deref(p.BeschreibungEn, ""),
+		DescriptionDraft: p.Entwurf,
 		EdibilityNote:    p.SpeisewertHinweis,
 		Protection:       must(Protection, p.Schutz.Status, "schutz.status"),
 		ProtectionNote:   p.SchutzHinweis,
