@@ -90,7 +90,7 @@ export class MarkerSheetComponent {
     this.busy.set(true);
     try {
       if (await this.eintraege.updateMarker(this.marker(), { ...values, lat, lon })) {
-        this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+        this.toasts.success(this.i18n.translate('marker.gespeichert'));
         this.sheet.setEditing(false);
       }
     } finally {

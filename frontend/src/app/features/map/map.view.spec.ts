@@ -90,6 +90,7 @@ describe('MapView', () => {
     expect(model.weeks()).toHaveLength(3);
     expect(model.rampFrom()).toBe('0 %');
     expect(model.rampTo()).toBe('50 %');
+    expect(model.rampLabel()).toBe('Fundwahrscheinlichkeit je Begehung');
     expect(model.loading()).toBe(false);
   });
 
@@ -135,6 +136,8 @@ describe('MapView', () => {
 
     expect(model.title()).toBe('Kombination');
     expect(model.rampTo()).toBe('100 %');
+    // "Abgestuft" shows how well the factors agree, not a probability of a find.
+    expect(model.rampLabel()).toBe('Übereinstimmung mit den Faktoren');
   });
 
   it('nimmt Ebenen und Arten als Quellen eines Faktors', async () => {

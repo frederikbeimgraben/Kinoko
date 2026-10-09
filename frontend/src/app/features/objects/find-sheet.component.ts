@@ -167,7 +167,7 @@ export class FindSheetComponent {
     this.busy.set(true);
     try {
       if (await this.eintraege.updateFind(this.find(), submission.input)) {
-        this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+        this.toasts.success(this.i18n.translate('melden.gespeichert'));
         this.sheet.setEditing(false);
       }
     } finally {

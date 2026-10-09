@@ -124,7 +124,7 @@ describe('ZoneBlattComponent', () => {
     request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toEqual(['Gespeichert.']);
+      expect(setup.toasts.success).toEqual(['Die Zone ist gespeichert.']);
     });
   });
 
@@ -172,10 +172,16 @@ describe('ZoneBlattComponent', () => {
     expect(setup.drawer.rings).toHaveLength(0);
   });
 
-  it('gibt die Eckpunkte an Terra Draw und speichert, was gezogen wurde', async () => {
+  it('gibt die Eckpunkte an Terra Draw und speichert sie mit den Eingaben des Formulars', async () => {
     const setup = await build(true);
 
-    await startCorners(setup);
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    const name = screen.getByRole('textbox', { name: 'Name' });
+    await userEvent.clear(name);
+    await userEvent.type(name, 'Schönbuch Süd');
+    await userEvent.click(screen.getByRole('button', { name: 'Umriss ändern' }));
+    setup.refresh();
     await vi.waitFor(() => {
       setup.refresh();
       expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeInTheDocument();
@@ -189,14 +195,20 @@ describe('ZoneBlattComponent', () => {
       [9.2, 48.7],
     ]);
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    setup.refresh();
+    // Per `MapZoneEdit`, the outline step goes back to the form with its input kept.
+    setup.http.expectNone(`/api/zones/${ZONE.id}`);
+    expect(setup.drawer.stopped).toBe(1);
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Schönbuch Süd');
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
     const request = await vi.waitFor(() => setup.http.expectOne(`/api/zones/${ZONE.id}`));
-    expect(
-      (request.request.body as { polygon: { coordinates: number[][][] } }).polygon.coordinates[0],
-    ).toHaveLength(4);
+    const body = request.request.body as { name: string; polygon: { coordinates: number[][][] } };
+    expect(body.name).toBe('Schönbuch Süd');
+    expect(body.polygon.coordinates[0]).toHaveLength(4);
     request.flush(ZONE_ENTRY);
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toEqual(['Gespeichert.']);
+      expect(setup.toasts.success).toEqual(['Die Zone ist gespeichert.']);
     });
     expect(setup.drawer.stopped).toBe(1);
   });

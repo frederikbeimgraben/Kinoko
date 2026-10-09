@@ -67,6 +67,24 @@ describe('SyncStore', () => {
     expect(sync.pendingCount()).toBe(0);
   });
 
+  it('schickt die Warteschlange bei der Anmeldung, auf jeder Seite', async () => {
+    const { sync, http, auth } = build();
+    const user = auth.user();
+    auth.user.set(null);
+    TestBed.tick();
+    const task = await sync.enqueue('marker', 'create', MARKER);
+
+    auth.user.set(user);
+    TestBed.tick();
+
+    await vi.waitFor(() => {
+      http.expectOne(`/api/markers/${task?.target ?? ''}`).flush({ id: task?.target });
+    });
+    await vi.waitFor(() => {
+      expect(sync.pendingCount()).toBe(0);
+    });
+  });
+
   it('löscht mit DELETE', async () => {
     const { sync, http } = build();
     await sync.enqueue('zone', 'delete', null, [], 'zone-eins');

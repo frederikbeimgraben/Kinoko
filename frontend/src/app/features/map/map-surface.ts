@@ -65,6 +65,7 @@ export class MapSurface {
   constructor() {
     effect(() => {
       this.adapter.setLabelLanguage(this.i18n.locale());
+      this.adapter.setTitle(this.i18n.translate('map.canvasLabel'));
     });
   }
 
@@ -79,6 +80,7 @@ export class MapSurface {
       maxZoom: ZOOM_MAX,
       maxBounds: MAX_BOUNDS,
       protocol: { name: 'wert', resolve: this.protocol.resolve },
+      title: this.i18n.translate('map.canvasLabel'),
     });
     this.adapter.fitBounds(GERMANY, this.padding(this.state.detent(), wide, this.state.overlayHeight()));
     this.adapter.onMove(onMove);

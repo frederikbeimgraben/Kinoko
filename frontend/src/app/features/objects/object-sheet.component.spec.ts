@@ -200,7 +200,7 @@ describe('ObjektBlattComponent', () => {
     setup.refresh();
     expect(setup.container.querySelector('.overlay__scrim--modal')).not.toBeNull();
 
-    TestBed.inject(ObjectSheetStore).setEditingCorners(true);
+    TestBed.inject(ObjectSheetStore).startCorners();
     setup.refresh();
 
     expect(setup.container.querySelector('.overlay__scrim--modal')).toBeNull();
@@ -277,6 +277,8 @@ describe('ObjektBlattComponent', () => {
       [Math.min(...ring.map((point) => point[0])), Math.min(...ring.map((point) => point[1]))],
       [Math.max(...ring.map((point) => point[0])), Math.max(...ring.map((point) => point[1]))],
     ]);
+    // The map buttons stand at both sides; the corners must stay clear of them.
+    expect(fits[0][1]).toMatchObject({ padding: { top: 48, bottom: 48, left: 88, right: 88 } });
   });
 
   it('lässt die Karte stehen, wenn das Objekt niemand mehr kennt', async () => {

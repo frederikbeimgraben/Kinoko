@@ -44,8 +44,8 @@ const EDIT_TITLE: Record<ObjectKind, TranslationKey> = {
 /** The zoom of an open object: near enough to see the way, far enough to see where you are. */
 const ZOOM_OBJECT = 14;
 
-/** The free edge around a zone outline, in pixels. The sheet padding of the map adds to it. */
-const ZONE_PADDING = 48;
+/** The free edge around a zone outline, in pixels. The sides keep the corners clear of the map buttons. */
+const ZONE_PADDING = { top: 48, bottom: 48, left: 88, right: 88 };
 
 /** The padding of the map eases in 220 ms (`MapLibreAdapter.setPadding`). */
 const PADDING_SETTLE_MS = 260;

@@ -9,6 +9,7 @@ import { EntriesStore } from '../entries/entries.store';
 import { colourHex } from '../entries/colors';
 import { SpeciesStore } from '../species/species.store';
 import { MapStore, type ObjectKind } from '../map/map.store';
+import { AddEntryStore } from '../add-entry/add-entry.store';
 import { ObjectSheetStore } from './object-sheet.store';
 
 /** The point colours: an own find is `accent4`, a shared find of another person the muted `info`. */
@@ -47,6 +48,7 @@ export class MapObjectsDirective {
   private readonly species = inject(SpeciesStore);
   private readonly map = inject(MapStore);
   private readonly sheet = inject(ObjectSheetStore);
+  private readonly addEntry = inject(AddEntryStore);
 
   /** A long press on an object: the point on the screen and the object. */
   readonly objectHeld = output<{ x: number; y: number }>();
@@ -65,6 +67,7 @@ export class MapObjectsDirective {
     const x = event.clientX - box.left;
     const y = event.clientY - box.top;
     this.stopHold();
+    if (this.pointsPicked()) return;
     this.timer = setTimeout(() => {
       const hit = this.adapter.objectAt(x, y);
       if (hit === null) return;
@@ -115,24 +118,48 @@ export class MapObjectsDirective {
     this.adapter.showObjects(layer, create());
   }
 
+  /** The open zone in the form shows its new outline. While its corners move, Terra Draw shows it instead. */
   private zones(zones: readonly Zone[]): FeatureCollection {
+    const open = this.map.object();
+    const reshaped = open?.kind === 'zone' ? open.id : null;
+    const outline = this.sheet.outline();
+    const moving = this.sheet.editingCorners();
     return collection(
-      zones.map((zone) => ({
-        type: 'Feature',
-        geometry: zone.polygon,
-        properties: { id: zone.id, farbe: colourHex(zone.colour) },
-      })),
+      zones
+        .filter((zone) => !(moving && zone.id === reshaped))
+        .map((zone) => ({
+          type: 'Feature',
+          geometry: zone.id === reshaped && outline !== null ? outline : zone.polygon,
+          properties: { id: zone.id, farbe: colourHex(zone.colour) },
+        })),
     );
   }
 
+  /** The id of the open object of this kind: its point gets the ring of `MapPin` with `on`. */
+  private selected(kind: ObjectKind): string | null {
+    const open = this.map.object();
+    return open?.kind === kind ? open.id : null;
+  }
+
   private markers(markers: readonly Marker[]): FeatureCollection {
+    const selected = this.selected('marker');
     return collection(
-      markers.map((entry) => point(entry.id, entry.lon, entry.lat, { farbe: colourHex(entry.colour) })),
+      markers.map((entry) =>
+        point(entry.id, entry.lon, entry.lat, {
+          farbe: colourHex(entry.colour),
+          selected: entry.id === selected,
+        }),
+      ),
     );
   }
 
   private finds(finds: readonly Find[]): FeatureCollection {
-    return collection(finds.map((find) => point(find.id, find.lon, find.lat, { farbe: OWN_FIND })));
+    const selected = this.selected('find');
+    return collection(
+      finds.map((find) =>
+        point(find.id, find.lon, find.lat, { farbe: OWN_FIND, selected: find.id === selected }),
+      ),
+    );
   }
 
   /** The service gives only the shared finds of other persons. The own finds are on top. */
@@ -163,7 +190,13 @@ export class MapObjectsDirective {
     ]);
   }
 
+  /** While a step sets points or corners, each tap belongs to the step, also a tap on an object. */
+  private pointsPicked(): boolean {
+    return this.addEntry.running() || this.sheet.relocating() || this.sheet.editingCorners();
+  }
+
   private open(layer: ObjectLayer, id: string): void {
+    if (this.pointsPicked()) return;
     const kind: ObjectKind | null =
       layer === 'zonen' ? 'zone' : layer === 'marker' ? 'marker' : layer === 'funde' ? 'find' : null;
     if (kind === null) return;
