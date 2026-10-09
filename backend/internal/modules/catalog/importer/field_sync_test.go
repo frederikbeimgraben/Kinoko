@@ -67,3 +67,33 @@ func TestAnUnchangedKarteKeepsTheFlagOfAnAdmin(t *testing.T) {
 		t.Fatal("removed karte")
 	}
 }
+
+func ringOf(t *testing.T, handle *sql.DB, slug string) string {
+	t.Helper()
+	var shape sql.NullString
+	if err := handle.QueryRowContext(context.Background(), "SELECT ring_shape FROM species WHERE slug = ?", slug).Scan(&shape); err != nil {
+		t.Fatal(err)
+	}
+	return shape.String
+}
+
+func TestAnUpgradeFillsOnlyAnEmptyRingShape(t *testing.T) {
+	handle := openDB(t)
+	seed(t, handle, smallData(""))
+	exec(t, handle, "UPDATE species SET ring_shape = 'double' WHERE slug = 'boletus-edulis'", "DELETE FROM seed_digest")
+	files := smallData("")
+	files["arten/butterpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Butterpilz", "Suillus luteus", `ringform = "haengend"`))}
+	files["arten/steinpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Steinpilz", "Boletus edulis", `ringform = "ringzone"`))}
+	seed(t, handle, files)
+	if got := ringOf(t, handle, "suillus-luteus"); got != "pendant" {
+		t.Fatalf("empty field %q", got)
+	}
+	if got := ringOf(t, handle, "boletus-edulis"); got != "double" {
+		t.Fatalf("the sync changed the value of an admin: %q", got)
+	}
+	files["arten/butterpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Butterpilz", "Suillus luteus", `ringform = "doppelt"`))}
+	seed(t, handle, files)
+	if got := ringOf(t, handle, "suillus-luteus"); got != "double" {
+		t.Fatalf("changed file %q", got)
+	}
+}

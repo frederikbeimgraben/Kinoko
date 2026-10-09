@@ -16,7 +16,7 @@ import (
 )
 
 // SeedIfEmpty imports the catalogue when the table species is empty; otherwise it writes
-// the descriptions and forecast flags of the changed species files. It syncs the reagent
+// the descriptions, forecast flags and ring shapes of the changed species files. It syncs the reagent
 // reactions of daten/reaktionen.json when the catalogue is new or the file changed.
 func SeedIfEmpty(ctx context.Context, handle *sql.DB, data fs.FS, now func() time.Time) error {
 	if now == nil {
@@ -45,12 +45,12 @@ func SeedIfEmpty(ctx context.Context, handle *sql.DB, data fs.FS, now func() tim
 		if described > 0 {
 			slog.Info("description sync", "species", described)
 		}
-		forecasts, err := SyncForecasts(ctx, handle, profiles, db.At(now()))
+		fields, err := SyncFields(ctx, handle, profiles, db.At(now()))
 		if err != nil {
 			return err
 		}
-		if forecasts > 0 {
-			slog.Info("forecast sync", "species", forecasts)
+		if fields > 0 {
+			slog.Info("field sync", "changes", fields)
 		}
 	}
 	changed, err := reactionSeedChanged(ctx, handle, data)
