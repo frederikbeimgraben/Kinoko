@@ -9,6 +9,9 @@ baeume = ["buche", "eiche", "kastanie"]
 speisewertHinweis = "Selten, in Deutschland gefährdet und in der Schweiz verletzlich. Besser stehen lassen."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Kleiner bis mittelgroßer Röhrling mit gelbrosa bis beigerosa, feucht schmierigem Hut, goldgelben bis zitronengelben, grobporigen Röhren und klebrigem, gelbem bis ockerbraunem Stiel mit rotbrauner Basis; das weiße Fleisch blaut nicht. Er wächst von Juni bis November im Laubwald bei Buche, Eiche und Esskastanie an warmen Stellen und ist selten und in Deutschland gefährdet. Von der Ziegenlippe unterscheidet ihn vor allem der rosa getönte, schmierige Hut, denn die Ziegenlippe hat einen trockenen, samtigen, olivbraunen Hut."
+beschreibungEn = "A small to medium-sized bolete with a yellow-pink to beige-pink cap that is slimy when wet, golden-yellow to lemon-yellow, wide-pored tubes and a sticky, yellow to ochre-brown stem with a red-brown base; the white flesh does not turn blue. The gilded bolete grows from June to November in broadleaf woods with beech, oak and sweet chestnut in warm places, and is rare and endangered in Germany. The key difference from the suede bolete is the pink-tinted, slimy cap, because the suede bolete has a dry, velvety, olive-brown cap."
+entwurf = true
 weitereNamen = ["Goldporiger Pulverröhrling"]
 fruchtschicht = { art = "roehren" }
 hutrand = { von = ["ueberstehend"] }

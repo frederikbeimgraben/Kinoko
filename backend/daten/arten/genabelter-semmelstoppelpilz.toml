@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Extrem selten, deshalb besser stehen lassen. Alte Fruchtkörper werden bitter."
 haeufigkeit = "sehrSelten"
+beschreibung = "Stoppelpilz mit jung weißlich gelbem bis semmelgelbem, später dunkler gelblichem Hut mit lange eingerolltem Rand und genabelter, vertiefter Mitte, weißen bis hellorangen Stacheln und weißlichem bis hellgelbem Stiel, der auf Druck gilbt. Er wächst von Juni bis November in Mischwäldern und ist extrem selten. Vom Semmelporling unterscheiden ihn vor allem die Stacheln auf der Hutunterseite, denn der Semmelporling hat dort Poren."
+beschreibungEn = "A hedgehog fungus with a cap that is whitish-yellow to bun-yellow when young and darker yellowish later, with a long inrolled margin and a navel-like, depressed centre, white to light orange spines and a whitish to light yellow stem that turns yellow when pressed. The depressed hedgehog grows from June to November in mixed woods and is extremely rare. The key difference from Albatrellus confluens is the spines on the underside of the cap, because Albatrellus confluens has pores there."
+entwurf = true
 synonyme = ["Dentinum umbilicatum"]
 fruchtschicht = { art = "stacheln" }
 hutmerkmale = ["genabelt", "vertieft"]

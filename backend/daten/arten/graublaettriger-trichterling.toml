@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Graue Trichterlinge sind keine Speisepilze."
+beschreibung = "Kleiner bis mittelgroßer Trichterling mit milchkaffeebraunem, feinfilzigem, von der Mitte her ausbleichendem Hut mit dunklerem, rippig welligem Rand, grauweißen bis graubraunen, eng stehenden, schwach herablaufenden Lamellen und hellgrauem bis braunem, flockigem Stiel mit weißem Myzelfilz an der Basis. Er wächst von Juni bis November im Mischwald auf kalkreichem Boden. Kennzeichnend sind die grauen Lamellen und der Geruch, der jung obstartig bis heringsartig und im Alter ranzig mehlig ist."
+beschreibungEn = "A small to medium-sized funnel with a milky-coffee-brown, finely felty cap that fades from the centre, with a darker, ribbed and wavy margin, grey-white to grey-brown, crowded, slightly decurrent gills and a light grey to brown, flaky stem with white mycelial felt at the base. Atractosporocybe inornata grows from June to November in mixed woods on calcareous soil. Key features are the grey gills and the smell, which is fruity to herring-like when young and rancid and mealy with age."
+entwurf = true
 synonyme = ["Clitocybe inornata", "Omphalia inornata", "Paxillus inornatus", "Agaricus elixus", "Clitocybe zygophylla"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }
 hutrand = { von = ["wellig", "gerieft"] }

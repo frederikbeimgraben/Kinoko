@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "kiefer", "birke"]
 speisewertHinweis = "Bei grünen Täublingen mit weichen Lamellen ist besondere Vorsicht nötig, denn der Grüne Knollenblätterpilz kann ebenso grün sein. Auf Ring, Scheide und Knolle achten."
+beschreibung = "Mittelgroßer Täubling mit graugrünem bis grasgrünem, feucht schmierigem Hut mit meist dunklerer Mitte, weißen, im Alter gelblichen und braunfleckigen, dicht stehenden Lamellen und weißem, längsgerieftem Stiel ohne Ring. Er wächst von Juni bis November im Mischwald, gern unter Fichte oder Kiefer und im Laubwald unter Birke, häufiger in kälteren Regionen. Vom Grünen Knollenblätterpilz unterscheidet ihn vor allem die Stielbasis ohne Knolle und Scheide, denn der Grüne Knollenblätterpilz hat einen häutigen Ring, eine zwiebelartige Knolle und eine Volva."
+beschreibungEn = "A medium-sized brittlegill with a grey-green to grass-green cap that is slimy when wet and mostly darker in the centre, white, crowded gills that turn yellowish with brown spots with age, and a white, grooved stem without a ring. The green brittlegill grows from June to November in mixed woods, often under spruce or pine, and in broadleaf woods under birch, more often in colder regions. The key difference from the death cap is the stem base without a bulb or volva, because the death cap has a membranous ring, an onion-like bulb and a volva."
+entwurf = true
 weitereNamen = ["Grasgrüner Birkentäubling"]
 synonyme = ["Russula furcata", "Russula graminicolor"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }

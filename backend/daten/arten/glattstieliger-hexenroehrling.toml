@@ -10,6 +10,9 @@ baeume = ["eiche", "buche"]
 speisewertHinweis = "Roh giftig, nur durchgegart essen. In Deutschland gefährdet (Rote Liste 3) und in der Schweiz verletzlich."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer bis großer Röhrling mit sehr verschieden gefärbtem, braunem, kupfer- bis karminrotem oder orangem, samtigem Hut ohne Olivton, orangen bis orangeroten Röhrenmündungen und gelbem Stiel ohne Netz, der zur Basis tiefrot wird; Hut, Röhren und Stiel blauen bei Berührung schnell. Er wächst von Juni bis November im Laubwald, gern bei Eiche und Buche, und ist selten und in Deutschland gefährdet. Vom Flockenstieligen Hexenröhrling unterscheidet ihn vor allem der Stiel ohne rote Flöckchen, denn der Flockenstielige Hexenröhrling hat einen dicht rot geflockten Stiel und einen dunkelbraunen Hut."
+beschreibungEn = "A medium-sized to large bolete with a cap of very varied colours, brown, copper-red to carmine-red or orange, velvety and without olive tones, orange to orange-red pore mouths and a yellow stem without a net that turns deep red towards the base; cap, pores and stem turn blue quickly when touched. Suillellus queletii grows from June to November in broadleaf woods, often with oak and beech, and is rare and endangered in Germany. The key difference from the scarletina bolete is the stem without red flakes, because the scarletina bolete has a stem densely covered with red flakes and a dark brown cap."
+entwurf = true
 synonyme = ["Boletus queletii", "Boletus queletii var. lateritius", "Boletus queletii var. rubicundus"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["gerieft"]
