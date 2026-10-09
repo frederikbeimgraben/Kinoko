@@ -581,6 +581,7 @@
   "entry.pending.many": "{count, plural, one {# Übertragung ausstehend} other {# Übertragungen ausstehend}}",
   "entry.pending.one": "1 Übertragung ausstehend",
   "entry.pending.send": "Jetzt senden",
+  "entry.pending.sent": "{count, plural, one {Der wartende Eintrag ist übertragen.} other {# wartende Einträge sind übertragen.}}",
   "entry.reportFind.title": "Fund melden",
   "entry.setLocation.title": "Fundort festlegen",
   "entry.setMarker.title": "Marker setzen",

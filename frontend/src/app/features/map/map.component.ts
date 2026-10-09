@@ -206,7 +206,7 @@ export class MapComponent implements OnDestroy {
   protected openAddEntry(): void {
     this.state.setLayersSheetOpen(false);
     this.overlayNav.close();
-    this.addEntry.open();
+    void this.addEntry.begin();
   }
 
   /** A long press on an object opens the menu at that point. */

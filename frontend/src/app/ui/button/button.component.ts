@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent, type IconName } from '../svg-icon/svg-icon.component';
 
@@ -22,4 +22,9 @@ export class ButtonComponent {
   readonly busy = input(false);
   readonly disabled = input(false);
   readonly type = input<'button' | 'submit'>('button');
+
+  /** A wide text button: the label is the only visible part. */
+  protected readonly shapeless = computed(
+    () => this.wide() && (this.kind() === 'text' || this.kind() === 'textdanger'),
+  );
 }

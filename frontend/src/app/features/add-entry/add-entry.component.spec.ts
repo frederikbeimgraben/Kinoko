@@ -287,7 +287,8 @@ describe('EintragenComponent', () => {
     await vi.waitFor(() => {
       expect(setup.queue.stored.map((task) => task.kind)).toEqual(['find']);
     });
-    expect(setup.toasts.success).toEqual(['Der Fund wartet auf die Übertragung.']);
+    expect(setup.toasts.info).toEqual(['Der Fund wartet auf die Übertragung.']);
+    expect(setup.toasts.success).toEqual([]);
   });
 
   it('bricht ab und lässt nichts stehen', async () => {

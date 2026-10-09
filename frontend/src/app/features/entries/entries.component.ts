@@ -230,7 +230,7 @@ export class EntriesComponent {
   /** An entry starts on the map: the crosshair is there. */
   protected async startEntry(): Promise<void> {
     await this.router.navigate(['/karte']);
-    this.addEntry.open();
+    await this.addEntry.begin();
   }
 
   protected async open(row: EntryRow): Promise<void> {

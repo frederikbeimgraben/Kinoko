@@ -581,6 +581,7 @@
   "entry.pending.many": "{count, plural, one {# transfer pending} other {# transfers pending}}",
   "entry.pending.one": "1 transfer pending",
   "entry.pending.send": "Send now",
+  "entry.pending.sent": "{count, plural, one {The waiting entry is sent.} other {# waiting entries are sent.}}",
   "entry.reportFind.title": "Report find",
   "entry.setLocation.title": "Set find location",
   "entry.setMarker.title": "Set marker",

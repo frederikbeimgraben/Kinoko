@@ -10,6 +10,7 @@ import {
   ZONE_ENTRY,
   page,
 } from '../../testing/entries-fixture';
+import { toastSpy } from '../../testing/toast-spy';
 import { EntriesApi } from './entries.api';
 
 interface Setup {
@@ -120,6 +121,16 @@ describe('EntriesApi', () => {
     http.expectOne({ url: `/api/zones/${ZONE.id}`, method: 'PUT' }).flush(ZONE_ENTRY);
     api.deleteZone(ZONE.id).subscribe();
     http.expectOne({ url: `/api/zones/${ZONE.id}`, method: 'DELETE' }).flush(null);
+  });
+
+  it('shows no toast for a write without an answer, because the queue takes it', () => {
+    const { api, http } = build();
+    const toasts = toastSpy();
+
+    api.createMarker(MARKER_WRITE).subscribe({ error: () => undefined });
+    http.expectOne('/api/markers').error(new ProgressEvent('error'), { status: 0 });
+
+    expect(toasts.failure).toEqual([]);
   });
 
   it('fragt den Zonenwert mit Art, Jahr und Woche des Vertrags', () => {

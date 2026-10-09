@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { SyncStub, syncStubProviders } from '../../testing/sync-double';
@@ -447,5 +448,32 @@ describe('EntriesStore', () => {
     http.expectOne(ZONES).flush(page([]));
 
     expect(await sent).toBe(2);
+  });
+
+  it('sends what waits after a sign-in and then loads the sent entries', async () => {
+    const { state, auth, queue, http } = build();
+    auth.user.set(null);
+    queue.sent = 1;
+    const flush = vi.spyOn(queue, 'flush');
+    const signedIn = signal(false);
+    TestBed.runInInjectionContext(() => {
+      state.loadOnSignIn(signedIn);
+    });
+    TestBed.tick();
+    await new Promise((done) => setTimeout(done, 0));
+    expect(flush).not.toHaveBeenCalled();
+
+    auth.user.set({ sub: 'sub-eins', name: 'Frederik', email: '' });
+    signedIn.set(true);
+    TestBed.tick();
+    for (let round = 0; round < 2; round += 1) {
+      await vi.waitFor(() => {
+        http.expectOne(FINDS).flush(page([]));
+      });
+      http.expectOne(MARKERS).flush(page([]));
+      http.expectOne(ZONES).flush(page([]));
+    }
+
+    expect(flush).toHaveBeenCalledTimes(1);
   });
 });

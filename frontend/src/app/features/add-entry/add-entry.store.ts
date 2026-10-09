@@ -1,5 +1,6 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
+import { AuthService, SessionStore } from '../../core/auth';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
 import { EMPTY_FIND_DRAFT, type FindDraft } from './find-draft';
 import type { ObjectValues } from './object-form.component';
@@ -48,7 +49,11 @@ const BACK: Partial<Record<Step, Step>> = {
 export const AddEntryStore = signalStore(
   { providedIn: 'root' },
   withState<AddEntryStoreState>(CLEAR),
-  withProps(() => ({ _stack: inject(OverlayStackService) })),
+  withProps(() => ({
+    _stack: inject(OverlayStackService),
+    _auth: inject(AuthService),
+    _session: inject(SessionStore),
+  })),
   withComputed(({ step, ring }) => ({
     running: computed(() => step() !== null),
     /** The map is dark behind the actions and behind the find form. */
@@ -63,11 +68,19 @@ export const AddEntryStore = signalStore(
     const clear = (): void => {
       patchState(store, CLEAR);
     };
+    /** The flow adds a step to the history, so the back gesture ends it. */
+    const open = (): void => {
+      patchState(store, { step: 'actions' });
+      store._stack.open(clear);
+    };
     return {
-      /** The flow adds a step to the history, so the back gesture ends it. */
-      open(): void {
-        patchState(store, { step: 'actions' });
-        store._stack.open(clear);
+      open,
+      /** "Eintragen" (board `MapSignIn`): a guest signs in before the form. A known person without network goes on.
+       * Gives `false` when the flow did not open. */
+      async begin(): Promise<boolean> {
+        if (store._session.status() === 'guest' && !(await store._auth.requestSignIn())) return false;
+        open();
+        return true;
       },
       startFind(): void {
         patchState(store, { location: null, step: 'findLocation', findDraft: EMPTY_FIND_DRAFT });

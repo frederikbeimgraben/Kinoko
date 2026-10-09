@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { map, type Observable } from 'rxjs';
-import { ApiClient } from './api-client';
+import { ApiClient, type Silent } from './api-client';
 import type { components } from './contract';
 import { ENTRY_PATHS } from './entry-paths';
 import { marker as readMarker, ownFind, zone as readZone } from './entry-reader';
@@ -20,6 +20,9 @@ function id(value: string): string {
   return encodeURIComponent(value);
 }
 
+/** A write without an answer goes into the queue, and the queue tells the person. A second message is noise. */
+const QUEUED: Silent = { quietStatus: [0] };
+
 /** The finds, markers and zones of the current user. Each route needs an account. */
 @Injectable({ providedIn: 'root' })
 export class EntriesApi {
@@ -32,15 +35,15 @@ export class EntriesApi {
   }
 
   createFind(body: FindWrite): Observable<Find | null> {
-    return this.api.post<FindEntry>(ENTRY_PATHS.find, body).pipe(map(ownFind));
+    return this.api.post<FindEntry>(ENTRY_PATHS.find, body, QUEUED).pipe(map(ownFind));
   }
 
   putFind(target: string, body: FindWrite): Observable<Find | null> {
-    return this.api.put<FindEntry>(`${ENTRY_PATHS.find}/${id(target)}`, body).pipe(map(ownFind));
+    return this.api.put<FindEntry>(`${ENTRY_PATHS.find}/${id(target)}`, body, QUEUED).pipe(map(ownFind));
   }
 
   deleteFind(target: string): Observable<null> {
-    return this.api.delete<null>(`${ENTRY_PATHS.find}/${id(target)}`);
+    return this.api.delete<null>(`${ENTRY_PATHS.find}/${id(target)}`, undefined, QUEUED);
   }
 
   markers(): Observable<readonly Marker[]> {
@@ -50,15 +53,17 @@ export class EntriesApi {
   }
 
   createMarker(body: MarkerWrite): Observable<Marker | null> {
-    return this.api.post<MarkerEntry>(ENTRY_PATHS.marker, body).pipe(map(readMarker));
+    return this.api.post<MarkerEntry>(ENTRY_PATHS.marker, body, QUEUED).pipe(map(readMarker));
   }
 
   putMarker(target: string, body: MarkerWrite): Observable<Marker | null> {
-    return this.api.put<MarkerEntry>(`${ENTRY_PATHS.marker}/${id(target)}`, body).pipe(map(readMarker));
+    return this.api
+      .put<MarkerEntry>(`${ENTRY_PATHS.marker}/${id(target)}`, body, QUEUED)
+      .pipe(map(readMarker));
   }
 
   deleteMarker(target: string): Observable<null> {
-    return this.api.delete<null>(`${ENTRY_PATHS.marker}/${id(target)}`);
+    return this.api.delete<null>(`${ENTRY_PATHS.marker}/${id(target)}`, undefined, QUEUED);
   }
 
   zones(): Observable<readonly Zone[]> {
@@ -68,15 +73,15 @@ export class EntriesApi {
   }
 
   createZone(body: ZoneWrite): Observable<Zone | null> {
-    return this.api.post<ZoneEntry>(ENTRY_PATHS.zone, body).pipe(map(readZone));
+    return this.api.post<ZoneEntry>(ENTRY_PATHS.zone, body, QUEUED).pipe(map(readZone));
   }
 
   putZone(target: string, body: ZoneWrite): Observable<Zone | null> {
-    return this.api.put<ZoneEntry>(`${ENTRY_PATHS.zone}/${id(target)}`, body).pipe(map(readZone));
+    return this.api.put<ZoneEntry>(`${ENTRY_PATHS.zone}/${id(target)}`, body, QUEUED).pipe(map(readZone));
   }
 
   deleteZone(target: string): Observable<null> {
-    return this.api.delete<null>(`${ENTRY_PATHS.zone}/${id(target)}`);
+    return this.api.delete<null>(`${ENTRY_PATHS.zone}/${id(target)}`, undefined, QUEUED);
   }
 
   /** The area mean of the forecast in the zone, for one species and one week. */

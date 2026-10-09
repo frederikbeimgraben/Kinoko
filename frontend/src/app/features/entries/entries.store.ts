@@ -166,16 +166,20 @@ export const EntriesStore = signalStore(
       }
     }
 
+    /** Sends what waits, then gets the own entries again. */
+    async function sendPending(): Promise<number> {
+      if (!store._auth.signedIn()) return 0;
+      const sent = await store._sync.flush();
+      if (sent > 0) await load();
+      return sent;
+    }
+
     return {
       /** Gets all own entries. Without an account there is nothing to get. */
       load,
 
-      /** Gets the own entries again at each change of the sign-in: it can come after the first render. */
-      loadOnSignIn: rxMethod<boolean>(
-        tap(() => {
-          void load();
-        }),
-      ),
+      /** Gets the own entries again at each change of the sign-in, then sends what waits. */
+      loadOnSignIn: rxMethod<boolean>(tap(() => void load().then(sendPending))),
 
       /** Shared finds in the view. This route reads also without an account. */
       async loadShared(view?: Viewbox): Promise<void> {
@@ -233,13 +237,7 @@ export const EntriesStore = signalStore(
         return drop('zone', 'zones', id, () => store._api.deleteZone(id));
       },
 
-      /** Sends what waits, then gets the own entries again. */
-      async sendPending(): Promise<number> {
-        if (!store._auth.signedIn()) return 0;
-        const sent = await store._sync.flush();
-        if (sent > 0) await load();
-        return sent;
-      },
+      sendPending,
     };
   }),
 );

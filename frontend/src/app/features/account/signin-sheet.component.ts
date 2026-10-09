@@ -8,7 +8,7 @@ import { ViewportService } from '../../core/layout/viewport.service';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { signInLabel } from './sign-in-label';
 
-/** Asks for the sign-in before a save, as a stacked dialog (board `MapSignIn`). The map stays usable without it. */
+/** Asks for the sign-in at "Eintragen" or before a save, as a stacked dialog (board `MapSignIn`). The map stays usable without it. */
 @Component({
   selector: 'app-signin-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,

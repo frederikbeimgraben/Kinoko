@@ -82,12 +82,9 @@ test('Objektblatt steht am Rechner als zentriertes Modal', async ({ page }) => {
 test('sign-in shows on the desktop as a dialog in the centre of the window', async ({ page }) => {
   await mockSignedOut(page);
   await openApp(page, '/karte', false);
-  // A guest sees the dialog only when an action needs an account: here the save of a marker.
+  // Per the board `MapSignIn`, a guest sees the dialog at "Eintragen", before the form.
   await page.getByRole('button', { name: 'Eintragen' }).click();
-  await page.getByRole('button', { name: 'Marker setzen' }).click();
-  await page.getByRole('button', { name: 'Bestätigen' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Hochsitz');
-  await page.getByRole('button', { name: 'Speichern' }).last().click();
+  await expect(page.getByRole('button', { name: 'Marker setzen' })).toBeHidden();
   const dialog = page.getByRole('dialog', { name: `Anmelden mit ${PROVIDER}` });
   await expect(dialog).toBeVisible();
 

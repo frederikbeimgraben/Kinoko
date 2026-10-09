@@ -341,7 +341,10 @@ export class AddEntryComponent implements OnDestroy {
       this.toasts.error(this.i18n.translate('melden.verworfen'));
       return;
     }
-    this.toasts.success(this.i18n.translate(`${range}.${result}`));
+    // A waiting entry is not saved yet, so its message is neutral.
+    const message = this.i18n.translate(`${range}.${result}`);
+    if (result === 'wartet') this.toasts.show(message);
+    else this.toasts.success(message);
     this.state.stop();
   }
 

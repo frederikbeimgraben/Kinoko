@@ -212,9 +212,11 @@ describe('EntriesComponent', () => {
 
     const banner = screen.getByRole('button', { name: 'Jetzt senden' });
     expect(banner).toHaveTextContent('1 Übertragung ausstehend');
+    // The page already sent once after the load of the own entries.
+    const before = setup.queue.sent;
     await userEvent.click(banner);
 
-    expect(setup.queue.sent).toBe(1);
+    expect(setup.queue.sent).toBe(before + 1);
   });
 
   it('tells about a missing connection with the count of the pending transfers', async () => {

@@ -1,11 +1,44 @@
 import { TestBed } from '@angular/core/testing';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
+import { SessionStore } from '../../core/auth';
+import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { EMPTY_FIND_DRAFT } from './find-draft';
 import { AddEntryStore } from './add-entry.store';
 
 function state(): AddEntryStore {
   return TestBed.inject(AddEntryStore);
 }
+
+describe('AddEntryStore.begin (board MapSignIn)', () => {
+  function guest(): { flow: AddEntryStore; auth: AuthStub } {
+    const auth = new AuthStub();
+    auth.user.set(null);
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });
+    TestBed.inject(SessionStore).forget();
+    return { flow: state(), auth };
+  }
+
+  it('asks a guest to sign in at "Eintragen", before the form', async () => {
+    const { flow, auth } = guest();
+    auth.reply = false;
+
+    expect(await flow.begin()).toBe(false);
+
+    expect(auth.asked).toBe(1);
+    expect(flow.step()).toBeNull();
+  });
+
+  it('opens the actions at once with an account', async () => {
+    const auth = new AuthStub();
+    TestBed.configureTestingModule({ providers: [...authStubProviders(auth)] });
+    const flow = state();
+
+    expect(await flow.begin()).toBe(true);
+
+    expect(auth.asked).toBe(0);
+    expect(flow.step()).toBe('actions');
+  });
+});
 
 describe('AddEntryStore', () => {
   it('starts with the actions sheet and makes the map dark', () => {

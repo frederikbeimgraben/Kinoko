@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import 'fake-indexeddb/auto';
 import { IDBFactory } from 'fake-indexeddb';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
+import { toastSpy } from '../../testing/toast-spy';
 import { SyncStore } from './sync.store';
 
 const MARKER = { name: 'Alter Fichtenhang', lat: 48.53, lon: 9.06 };
@@ -194,6 +195,36 @@ describe('SyncStore', () => {
     expect(await second).toBe(1);
     expect(http.match(() => true)).toHaveLength(0);
     expect(sync.pendingCount()).toBe(0);
+  });
+
+  it('sends the queue after a sign-in on any page and tells it in one message', async () => {
+    const { sync, http, auth } = build();
+    const toasts = toastSpy();
+    auth.user.set(null);
+    const task = await sync.enqueue('marker', 'create', MARKER);
+    TestBed.tick();
+    http.expectNone(`/api/markers/${task?.target ?? ''}`);
+
+    auth.user.set({ sub: 'sub-eins', name: 'Frederik', email: '' });
+    TestBed.tick();
+    await vi.waitFor(() => {
+      http.expectOne(`/api/markers/${task?.target ?? ''}`).flush({ id: task?.target });
+    });
+
+    await vi.waitFor(() => {
+      expect(toasts.success).toHaveLength(1);
+    });
+    expect(toasts.success).toEqual(['Der wartende Eintrag ist übertragen.']);
+    expect(sync.pendingCount()).toBe(0);
+  });
+
+  it('gives no message when nothing went out', async () => {
+    const { sync } = build();
+    const toasts = toastSpy();
+
+    expect(await sync.flush()).toBe(0);
+
+    expect(toasts.success).toEqual([]);
   });
 
   it('entfernt einen Auftrag von Hand', async () => {

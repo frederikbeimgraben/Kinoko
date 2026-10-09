@@ -18,8 +18,12 @@ export class ToastService {
 
   private nextId = 0;
 
-  /** Shows a message. With `timeout=0`, the message does not close by itself. */
+  /** Shows a message, but not a second time while the same message shows.
+   * With `timeout=0`, the message does not close by itself. */
   show(message: string, variant: ToastVariant = 'info', timeout = AUTO_DISMISS_MS): number {
+    // Parallel failures give the same message. One copy is sufficient.
+    const shown = this._toasts().find((toast) => toast.message === message && toast.variant === variant);
+    if (shown !== undefined) return shown.id;
     const id = this.nextId++;
     this._toasts.update((all) => [...all, { id, message, variant }]);
     if (timeout > 0) {
