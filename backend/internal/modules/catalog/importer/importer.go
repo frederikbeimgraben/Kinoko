@@ -38,7 +38,7 @@ func SeedIfEmpty(ctx context.Context, handle *sql.DB, data fs.FS, now func() tim
 		slog.Info("catalogue import", "species", report.Counts["species"], "taxa", report.Counts["taxa"],
 			"terms", report.Counts["terms"], "skipped", report.Skipped)
 	} else {
-		described, err := SyncDescriptions(ctx, handle, data, profiles, db.At(now()))
+		described, err := SyncDescriptions(ctx, handle, profiles, db.At(now()))
 		if err != nil {
 			return err
 		}

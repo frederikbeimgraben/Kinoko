@@ -91,9 +91,13 @@ func TestAChangedSpeciesFileUpdatesTheDescriptionOnTheNextStart(t *testing.T) {
 	handle := openDB(t)
 	ctx := context.Background()
 	seed(t, handle, smallData(""))
-	if _, err := handle.ExecContext(ctx, `UPDATE species SET edibility_note = 'geprüft', description = 'Von Hand.'
-		WHERE slug IN ('suillus-luteus', 'boletus-edulis')`); err != nil {
-		t.Fatal(err)
+	for _, change := range []string{
+		"UPDATE species SET edibility_note = 'geprüft' WHERE slug IN ('suillus-luteus', 'boletus-edulis')",
+		"UPDATE species SET description = 'Von Hand.' WHERE slug = 'boletus-edulis'",
+	} {
+		if _, err := handle.ExecContext(ctx, change); err != nil {
+			t.Fatal(err)
+		}
 	}
 	seed(t, handle, withDescribedButterpilz(smallData(""),
 		"beschreibung = \"Ein Pilz.\"\nbeschreibungEn = \"A mushroom.\"\nentwurf = true"))
@@ -123,22 +127,42 @@ func TestAnUnchangedSpeciesFileKeepsTheDescriptionOfTheDatabase(t *testing.T) {
 	}
 }
 
-func TestADescriptionSyncWithoutStoredDigestsTakesTheFileDescriptions(t *testing.T) {
+func TestAnEditedDescriptionStaysWhenTheFileChanges(t *testing.T) {
+	handle := openDB(t)
+	ctx := context.Background()
+	seed(t, handle, withDescribedButterpilz(smallData(""), "beschreibung = \"Ein Pilz.\"\nentwurf = true"))
+	if _, err := handle.ExecContext(ctx,
+		"UPDATE species SET description = 'Geprüft.', description_draft = FALSE WHERE slug = 'suillus-luteus'"); err != nil {
+		t.Fatal(err)
+	}
+	seed(t, handle, withDescribedButterpilz(smallData(""), "beschreibung = \"Ein anderer Pilz.\"\nentwurf = true"))
+	if got := descriptionOf(t, handle, "suillus-luteus"); got.german == nil || *got.german != "Geprüft." || got.draft {
+		t.Fatalf("%+v", got)
+	}
+}
+
+func TestADescriptionSyncWithoutStoredDigestsFillsOnlyAnEmptyDescription(t *testing.T) {
 	handle := openDB(t)
 	ctx := context.Background()
 	files := withDescribedButterpilz(smallData(""), "beschreibung = \"Ein Pilz.\"")
+	files["arten/steinpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Steinpilz", "Boletus edulis",
+		"beschreibung = \"Ein Röhrling.\""))}
 	seed(t, handle, files)
-	for _, change := range []string{"UPDATE species SET description = 'Alt.'", "DELETE FROM seed_digest"} {
+	for _, change := range []string{
+		"UPDATE species SET description = NULL WHERE slug = 'suillus-luteus'",
+		"UPDATE species SET description = 'Von Hand.' WHERE slug = 'boletus-edulis'",
+		"DELETE FROM seed_digest",
+	} {
 		if _, err := handle.ExecContext(ctx, change); err != nil {
 			t.Fatal(err)
 		}
 	}
 	seed(t, handle, files)
 	if got := descriptionOf(t, handle, "suillus-luteus"); got.german == nil || *got.german != "Ein Pilz." {
-		t.Fatalf("described %+v", got)
+		t.Fatalf("empty %+v", got)
 	}
-	if got := descriptionOf(t, handle, "boletus-edulis"); got.german == nil || *got.german != "Alt." {
-		t.Fatalf("a file without description changed the database: %+v", got)
+	if got := descriptionOf(t, handle, "boletus-edulis"); got.german == nil || *got.german != "Von Hand." {
+		t.Fatalf("a description of the database changed: %+v", got)
 	}
 	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%'"); n != 4 {
 		t.Fatalf("digests %d", n)

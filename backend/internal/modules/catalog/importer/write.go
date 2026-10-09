@@ -177,7 +177,7 @@ func ImportAll(ctx context.Context, handle *sql.DB, profiles []StemProfile, data
 		if err := Write(ctx, tx, built, db.At(now())); err != nil {
 			return err
 		}
-		return saveSpeciesDigests(ctx, tx, data, profiles)
+		return saveSpeciesDigests(ctx, tx, profiles)
 	})
 	if err != nil {
 		return nil, err

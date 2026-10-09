@@ -2,6 +2,7 @@ package sources_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"os"
@@ -401,4 +402,37 @@ func TestAStaleRunDoesNotBlockVersionChanges(t *testing.T) {
 	f.exec(`INSERT INTO pipeline_run (id, kind, state, queued_at, progress_done, progress_total)
 		VALUES (?, 'fetch', 'running', ?, 0, 0)`, db.NewID(), db.Now())
 	f.env.Post("/remote-sources/dwd-hyras/refresh", nil, f.admin).Expect(t, http.StatusAccepted)
+}
+
+func TestModelBundleOfADefaultChainGoesToTheSpeciesOfItsSlug(t *testing.T) {
+	f := newFixture(t)
+	raw, err := os.ReadFile(filepath.Join("..", "..", "pipeline", "model", "bundle", "testdata", "bundle_v1", "bundle.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var meta map[string]any
+	if err := json.Unmarshal(raw, &meta); err != nil {
+		t.Fatal(err)
+	}
+	meta["label"], meta["slug"] = "lactarius_deterrimus", "lactarius-deterrimus"
+	meta["species"] = []string{"Lactarius deliciosus", "Lactarius deterrimus", "Lactarius salmonicolor", "Lactarius semisanguifluus"}
+	body, err := json.Marshal(meta)
+	if err != nil {
+		t.Fatal(err)
+	}
+	files := map[string][]byte{"lactarius_deterrimus/bundle.json": body}
+	for _, name := range []string{"h0.txt", "h2.txt"} {
+		data, err := os.ReadFile(filepath.Join("..", "..", "pipeline", "model", "bundle", "testdata", "bundle_v1", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		files["lactarius_deterrimus/"+name] = data
+	}
+	if set := f.upload(sources.KindModelBundle, "m.zip", sources.ZipOf(t, files), nil); set["state"] != "ready" {
+		t.Fatal(set)
+	}
+	species := scalar[db.ID](f, "SELECT id FROM species WHERE slug = 'lactarius-deterrimus'")
+	if _, err := f.m.Resolver().Active(sources.KindModelBundle, species.String()); err != nil {
+		t.Fatal(err)
+	}
 }
