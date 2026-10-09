@@ -89,8 +89,8 @@ export function hymeniumColourOf(entry: SpeciesEntry, names: CatalogueNames): Sw
 
 /** The smell: the terms of the catalogue, or else the free text. */
 export function senseSmellOf(entry: SpeciesEntry, names: CatalogueNames): string | null {
-  const tags = entry.terms.filter((one) => one.term.kind === 'smell').map((one) => names.term(one.term));
-  if (tags.length > 0) return tags.join(SEPARATOR);
+  const tags = entry.terms.filter((one) => one.term.kind === 'smell').map((one) => one.term);
+  if (tags.length > 0) return names.termList(tags);
   return entry.smellText && entry.smellText !== '' ? entry.smellText : null;
 }
 

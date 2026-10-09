@@ -18,11 +18,15 @@ export interface NamedTerm {
   readonly name: string;
 }
 
+const LIST_SEPARATOR = ', ';
+
 /** The names of catalogue values in the language of the interface. */
 export interface CatalogueNames {
   colour(value: NamedColour): string;
   term(value: NamedTerm): string;
-  /** A free German text of the catalogue in German, else the fallback. */
+  /** Terms as one list. Outside German, a term after the first starts in lower case, as in a sentence. */
+  termList(values: readonly NamedTerm[]): string;
+  /** A free German text of the catalogue in German, else the fallback. An empty fallback hides the text. */
   free(german: string, fallback: string): string;
 }
 
@@ -34,6 +38,8 @@ export function catalogueNames(i18n: I18nService, palette: () => readonly Standa
     const text = i18n.translateOptional(key);
     return text === key ? fallback : text;
   };
+  const term = (value: NamedTerm): string =>
+    german() ? value.name : lookup(`term.${value.kind}.${value.slug}`, value.name);
   return {
     colour: (value) => {
       if (german()) return value.name;
@@ -41,8 +47,17 @@ export function catalogueNames(i18n: I18nService, palette: () => readonly Standa
       const near = standard ? lookup(`enum.colour.${standard.key}`, value.name) : value.name;
       return lookup(`colour.name.${taxonSlug(value.name)}`, near);
     },
-    term: (value) => (german() ? value.name : lookup(`term.${value.kind}.${value.slug}`, value.name)),
-    free: (text, fallback) => (german() || fallback === '' ? text : fallback),
+    term,
+    termList: (values) =>
+      values
+        .map((value, index) => {
+          const text = term(value);
+          return german() || index === 0
+            ? text
+            : text.charAt(0).toLocaleLowerCase(i18n.locale()) + text.slice(1);
+        })
+        .join(LIST_SEPARATOR),
+    free: (text, fallback) => (german() ? text : fallback),
   };
 }
 
@@ -57,6 +72,10 @@ export class CatalogueText implements CatalogueNames {
 
   term(value: NamedTerm): string {
     return this.names.term(value);
+  }
+
+  termList(values: readonly NamedTerm[]): string {
+    return this.names.termList(values);
   }
 
   free(german: string, fallback: string): string {

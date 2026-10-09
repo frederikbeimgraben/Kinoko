@@ -1,6 +1,6 @@
 import type { ColourChange } from '../../../core/api/models';
 import type { I18nService } from '../../../core/i18n/i18n.service';
-import type { TranslationKey } from '../../../core/i18n/translations';
+import { DEFAULT_LOCALE, type TranslationKey } from '../../../core/i18n/translations';
 import type { CatalogueNames } from '../catalogue-text';
 import { PART_TEXT } from '../labels';
 import type { SpeciesReaction } from '../species.store';
@@ -82,10 +82,32 @@ export function reactionSwatch(
   return { ...NO_SWATCH, label };
 }
 
-/** The place of a reaction: the body part, or the free location where the part is not known. */
-function placeOf(reaction: SpeciesReaction, i18n: I18nService, names: CatalogueNames): string {
+/** The text keys of the places of a reaction: the body parts and the places that are no body part. */
+const PLACE_TEXT = new Map<string, TranslationKey>([
+  ...Object.entries(PART_TEXT),
+  ['milk', 'species.place.milk'],
+  ['branches', 'species.place.branches'],
+  ['branch_tips', 'species.place.branchTips'],
+  ['extract', 'species.place.extract'],
+]);
+
+/** A word in a list. Outside German, a word after the first starts in lower case, as in a sentence. */
+function inList(word: string, index: number, locale: string): string {
+  return index === 0 || locale === DEFAULT_LOCALE
+    ? word
+    : word.charAt(0).toLocaleLowerCase(locale) + word.slice(1);
+}
+
+/** The place of a reaction: the body part, else the places of the location. A place that the catalogue
+ * only has in German shows in German only. */
+export function placeOf(reaction: SpeciesReaction, i18n: I18nService, names: CatalogueNames): string {
   if (reaction.part !== null) return i18n.translate(PART_TEXT[reaction.part]);
-  return names.free(reaction.location ?? '', '');
+  const location = reaction.location ?? '';
+  const keys = location.split(',').map((slug) => PLACE_TEXT.get(slug));
+  if (location !== '' && keys.every((key): key is TranslationKey => key !== undefined)) {
+    return keys.map((key, index) => inList(i18n.translate(key), index, i18n.locale())).join(SEPARATOR);
+  }
+  return names.free(location, '');
 }
 
 /** A row of a reaction: the reagent as label, the place and the reading below. */

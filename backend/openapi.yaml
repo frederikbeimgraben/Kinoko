@@ -3550,6 +3550,9 @@ components:
             - $ref: "#/components/schemas/BodyPart"
             - type: "null"
         location:
+          description: >-
+            The places of a reaction without one body part. Known places are slugs joined by ","
+            (a body part, milk, branches, branch_tips or extract). Other text is the German place of the source.
           oneOf:
             - type: string
             - type: "null"
@@ -4421,13 +4424,16 @@ components:
           type: string
     GlossaryEntry:
       type: object
-      required: [id, term, definition, definitionEn, updatedAt]
+      required: [id, term, termEn, definition, definitionEn, updatedAt]
       properties:
         id:
           type: string
           format: uuid
         term:
           type: string
+        termEn:
+          type: string
+          description: The English term. Empty if nobody has written it.
         definition:
           type: string
         definitionEn:
@@ -4447,6 +4453,10 @@ components:
           type: string
           minLength: 1
           maxLength: 80
+        termEn:
+          type: string
+          maxLength: 80
+          description: Without the field, a create stores an empty text and an update keeps the old one.
         definition:
           type: string
           minLength: 1

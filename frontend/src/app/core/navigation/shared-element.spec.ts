@@ -58,10 +58,12 @@ describe('shared elements', () => {
 
     shareOnNextRoute(thumb, 'boletus-edulis');
     attachSharedElement(transition, false);
-    detectChanges();
-
     expect(thumb.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
+
+    // The target takes the name in the DOM update. The source, which can stay on a wide page, gives it up.
+    detectChanges();
     expect(hero?.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
+    expect(thumb.style.getPropertyValue('view-transition-name')).toBe('');
 
     update();
     await transition.updateCallbackDone;

@@ -1,4 +1,4 @@
-import { Directive, computed, input, signal } from '@angular/core';
+import { Directive, computed, effect, input, signal } from '@angular/core';
 
 /** The `view-transition-name` for the shared element `key`, as a valid CSS name. */
 export function sharedElementName(key: string): string {
@@ -9,6 +9,8 @@ export function sharedElementName(key: string): string {
 const SHARED_CLASS = 'shared';
 
 let source: HTMLElement | null = null;
+/** The source of the running transition, until the target takes its name. */
+let leaving: HTMLElement | null = null;
 const target = signal<string | null>(null);
 
 function unname(element: HTMLElement): void {
@@ -27,14 +29,16 @@ export function shareOnNextRoute(element: HTMLElement, key: string): void {
   target.set(name);
 }
 
-/** Connects the pending shared element to a route transition. The source loses its name
- * after the DOM update, so the new page has the name only one time. */
+/** Connects the pending shared element to a route transition. The source loses its name when the
+ * target takes it, at the latest after the DOM update, so the new page has the name only one time. */
 export function attachSharedElement(transition: ViewTransition, skipped: boolean): void {
   const element = source;
   source = null;
   if (element === null) return;
+  leaving = element;
   const clearSource = (): void => {
     unname(element);
+    if (leaving === element) leaving = null;
   };
   const clearTarget = (): void => {
     target.set(null);
@@ -65,4 +69,14 @@ export class SharedElementDirective {
     const name = sharedElementName(this.appSharedElement());
     return target() === name ? name : null;
   });
+
+  constructor() {
+    // A source that stays on the page, as the list on a wide screen, must lose the name before the
+    // browser takes the picture of the new page.
+    effect(() => {
+      if (this.name() === null || leaving === null) return;
+      unname(leaving);
+      leaving = null;
+    });
+  }
 }

@@ -12,8 +12,6 @@ interface Sense {
   text: string;
 }
 
-const SEPARATOR = ', ';
-
 /** Smell and taste of a species per `SpeciesSections.dc.html`: a row for each, with the sentence below. */
 @Component({
   selector: 'app-species-senses',
@@ -38,10 +36,9 @@ export class SpeciesSensesComponent {
 
   /** The catalogue sentence is German. In another language, the translated terms take its place. */
   private text(species: SpeciesEntry, kind: 'smell' | 'taste', sentence: string | null | undefined): string {
-    const tags = species.terms
-      .filter((entry) => entry.term.kind === kind)
-      .map((entry) => this.names.term(entry.term))
-      .join(SEPARATOR);
+    const tags = this.names.termList(
+      species.terms.filter((entry) => entry.term.kind === kind).map((entry) => entry.term),
+    );
     const text = sentence !== null && sentence !== undefined && sentence !== '' ? sentence : tags;
     return this.names.free(text, tags);
   }

@@ -37,7 +37,9 @@
     </ng-template>
     <ng-template #latin>
       <div class="species__intro">
-        <p class="latin">{{ one.scientificName }}</p>
+        @if (one.scientificName !== one.name) {
+          <p class="latin">{{ one.scientificName }}</p>
+        }
         @if (otherNames(); as names) {
           <p class="species__names">{{ names }}</p>
         }
@@ -84,7 +86,7 @@
       <app-species-photos [slug]="slug()" />
     </ng-template>
     <ng-template #sources>
-      <app-species-sources [species]="one" />
+      <app-species-sources [species]="one" [reactions]="reactions()" />
     </ng-template>
 
     <div class="page" appScrollFade>

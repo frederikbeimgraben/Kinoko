@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { Location, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
+import { HistoryService } from '../../core/navigation/history.service';
 import { SharedElementDirective } from '../../core/navigation/shared-element';
 import { FilterChipComponent } from '../../ui/filter-chip/filter-chip.component';
 import { IconButtonComponent } from '../../ui/icon-button/icon-button.component';
@@ -79,7 +80,7 @@ const HERO_DESKTOP = 210;
 })
 export class SpeciesPageComponent {
   private readonly catalogue = inject(SpeciesStore);
-  private readonly location = inject(Location);
+  private readonly history = inject(HistoryService);
   private readonly router = inject(Router);
   private readonly rights = inject(PermissionsStore);
   private readonly auth = inject(AuthService);
@@ -119,7 +120,7 @@ export class SpeciesPageComponent {
   }
 
   protected back(): void {
-    this.location.back();
+    this.history.back(['/arten']);
   }
 
   protected toList(): void {

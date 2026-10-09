@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/angular';
-import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../../testing/axe';
 import type { SpeciesReaction } from '../species.store';
 import { SpeciesReactionsComponent } from './species-reactions.component';
@@ -78,14 +77,19 @@ describe('SpeciesReactionsComponent', () => {
     expect(screen.getByRole('img', { name: 'negativ' })).toHaveClass('reaction__swatch--ring');
   });
 
-  it('keeps the sources folded until the person opens them', async () => {
+  it('explains the marks of the rows below the group and leaves the sources to the section "Quellen"', async () => {
     await render(SpeciesReactionsComponent, { inputs: { reactions: [POSITIVE, NEGATIVE] } });
 
+    expect(screen.getByText('Umstritten: Die Quellen widersprechen sich.')).toBeInTheDocument();
+    expect(screen.getByText('† Nur teilweise bestätigt.')).toBeInTheDocument();
     expect(screen.queryByText('Pilzkunde')).toBeNull();
-    await userEvent.click(screen.getByRole('button', { name: 'Quellen der Reaktionen' }));
+  });
 
-    expect(screen.getByText('Pilzkunde')).toBeInTheDocument();
-    expect(screen.getByText('† teilweise bestätigt')).toBeInTheDocument();
+  it('shows no legend without a marked row', async () => {
+    const plain = { ...POSITIVE, contested: false };
+    await render(SpeciesReactionsComponent, { inputs: { reactions: [plain] } });
+
+    expect(screen.queryByText(/Umstritten|teilweise/)).toBeNull();
   });
 
   it('shows nothing without colour changes and reactions', async () => {

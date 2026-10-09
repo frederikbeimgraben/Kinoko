@@ -2,7 +2,13 @@
   <app-section [label]="label() || ('species.section.lookalikes' | t)">
     <app-row-group>
       @for (row of rows(); track row.slug) {
-        <app-list-row kind="catalogue" [title]="row.name" [subline]="row.note" [thumbed]="true">
+        <app-list-row
+          kind="catalogue"
+          [title]="row.name"
+          [subline]="row.note"
+          [thumbed]="true"
+          [chevron]="true"
+        >
           <app-private-image
             lead
             class="lookalike__photo"
@@ -10,24 +16,23 @@
             [alt]="row.name"
             [colour]="row.colour"
           />
-          <span trail class="lookalike__ways">
-            <app-icon-button
-              class="lookalike__compare"
-              icon="compare"
-              kind="plain"
-              [label]="'species.compare' | t"
-              (pressed)="compared.emit(row.slug)"
-            />
-            <button
-              class="lookalike__open tap"
-              type="button"
-              data-press="scale"
-              [attr.aria-label]="row.name"
-              (click)="opened.emit(row.slug)"
-            >
-              <app-svg-icon name="chevron" [size]="24" [strokeWidth]="1.8" tone="dim" />
-            </button>
-          </span>
+          <!-- Per LookalikeRow.dc.html the photo, the name and the note open the species. -->
+          <button
+            lead
+            class="lookalike__open"
+            type="button"
+            appRipple
+            [attr.aria-label]="row.name"
+            (click)="opened.emit(row.slug)"
+          ></button>
+          <app-icon-button
+            trail
+            class="lookalike__compare"
+            icon="compare"
+            kind="plain"
+            [label]="'species.compare' | t"
+            (pressed)="compared.emit(row.slug)"
+          />
         </app-list-row>
       }
     </app-row-group>

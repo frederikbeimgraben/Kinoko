@@ -5,7 +5,7 @@ import { IconButtonComponent } from '../../../ui/icon-button/icon-button.compone
 import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
 import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../../ui/section/section.component';
-import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
+import { RippleDirective } from '../../../ui/ripple/ripple.directive';
 import { photoPath, type Lookalike } from '../../../core/api/models';
 import { SpeciesStore } from '../species.store';
 
@@ -29,8 +29,8 @@ interface LookalikeRow {
     IconButtonComponent,
     PrivateImageComponent,
     RowGroupComponent,
+    RippleDirective,
     SectionComponent,
-    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './species-lookalikes.component.html',

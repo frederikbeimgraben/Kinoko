@@ -5,6 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { ViewportService } from '../../core/layout/viewport.service';
+import { HistoryService } from '../../core/navigation/history.service';
 import { noViolations } from '../../testing/axe';
 import { AuthStub, authStubProviders } from '../../testing/auth-stub';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
@@ -123,6 +124,15 @@ describe('SpeciesPageComponent', () => {
     expect(screen.getByRole('button', { name: 'Zu allen Arten' })).toBeInTheDocument();
     expect(screen.queryByRole('heading')).toBeNull();
     await noViolations(container);
+  });
+
+  it('goes back to the list without app history, for example after a shared link', async () => {
+    await build();
+    const back = vi.spyOn(TestBed.inject(HistoryService), 'back').mockImplementation(() => undefined);
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Zurück' })[0]);
+
+    expect(back).toHaveBeenCalledWith(['/arten']);
   });
 
   it('shows the lookalike with its own way to the comparison', async () => {

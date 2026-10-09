@@ -36,13 +36,6 @@ class CatalogueDouble {
 
 const WITH_CATALOGUE = [{ provide: SpeciesStore, useClass: CatalogueDouble }];
 
-/** The marks of the elements at the end of the row, in their order. */
-function wayTags(container: Element): string[] {
-  const ways = container.querySelector('.lookalike__ways');
-  if (ways === null) throw new Error('Die Zeile trägt kein Ende.');
-  return Array.from(ways.children).map((child) => child.tagName.toLowerCase());
-}
-
 describe('SpeciesLookalikesComponent', () => {
   it('zeigt Name, unterscheidenden Satz und das Titelbild am Zeilenanfang', async () => {
     const { container } = await render(SpeciesLookalikesComponent, {
@@ -53,7 +46,8 @@ describe('SpeciesLookalikesComponent', () => {
     expect(screen.getByText('Gallenröhrling')).toBeInTheDocument();
     expect(screen.getByText('Röhren rosa, Netz grob, bitter')).toBeInTheDocument();
     expect(container.querySelector('.row__lead app-private-image')).not.toBeNull();
-    expect(wayTags(container)).toEqual(['app-icon-button', 'button']);
+    expect(container.querySelector('.row__trail .lookalike__compare')).not.toBeNull();
+    expect(container.querySelector('.row__chevron')).not.toBeNull();
     await noViolations(container);
   });
 
@@ -82,6 +76,21 @@ describe('SpeciesLookalikesComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Gallenröhrling' }));
 
     expect(compared).toEqual([SLUG]);
+    expect(opened).toEqual([SLUG]);
+  });
+
+  it('öffnet die Art über die ganze Zeile, per LookalikeRow.dc.html', async () => {
+    const opened: string[] = [];
+    const { container } = await render(SpeciesLookalikesComponent, {
+      inputs: { lookalikes: LOOKALIKES },
+      on: { opened: (slug: string) => opened.push(slug) },
+    });
+    const open = container.querySelector('.lookalike__open');
+    if (open === null) throw new Error('Die Zeile hat keine Fläche zum Öffnen.');
+
+    expect(open.closest('.row__lead')).not.toBeNull();
+    await userEvent.click(open);
+
     expect(opened).toEqual([SLUG]);
   });
 

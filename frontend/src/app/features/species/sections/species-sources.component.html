@@ -1,15 +1,22 @@
 @if (rows().length > 0) {
   <app-section [label]="'species.section.sources' | t">
     <app-row-group>
-      @for (row of rows(); track row.url) {
-        <app-list-row [title]="row.title" [subline]="row.host">
-          <app-icon-button
-            action
-            icon="open"
-            kind="plain"
-            [label]="'species.source.open' | t"
-            (pressed)="open(row.url)"
-          />
+      @for (row of rows(); track $index) {
+        <app-list-row
+          [title]="row.title"
+          [subline]="row.host"
+          [clickable]="row.url !== null"
+          (chosen)="open(row.url)"
+        >
+          @if (row.url !== null) {
+            <app-icon-button
+              action
+              icon="open"
+              kind="plain"
+              [label]="'species.source.open' | t"
+              (pressed)="open(row.url)"
+            />
+          }
         </app-list-row>
       }
     </app-row-group>

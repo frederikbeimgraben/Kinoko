@@ -33,11 +33,14 @@ describe('AdminGlossaryComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Begriff anlegen' }));
     expect(screen.getByRole('dialog', { name: 'Begriff anlegen' })).toBeInTheDocument();
     await userEvent.type(screen.getByRole('textbox', { name: 'Begriff' }), 'Velum');
+    await userEvent.type(screen.getByRole('textbox', { name: 'Begriff (Englisch)' }), 'Veil');
     await userEvent.type(screen.getByRole('textbox', { name: 'Deutsch' }), 'Hülle.');
     await userEvent.type(screen.getByRole('textbox', { name: 'English' }), 'Veil.');
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(api.created).toEqual([{ term: 'Velum', definition: 'Hülle.', definitionEn: 'Veil.' }]);
+    expect(api.created).toEqual([
+      { term: 'Velum', termEn: 'Veil', definition: 'Hülle.', definitionEn: 'Veil.' },
+    ]);
   });
 
   it('legt ohne Erklärung nichts an', async () => {
@@ -63,7 +66,12 @@ describe('AdminGlossaryComponent', () => {
     expect(api.updated).toEqual([
       {
         id: HYMENIUM.id,
-        write: { term: 'Hymenium', definition: 'Neu.', definitionEn: 'The spore-bearing layer.' },
+        write: {
+          term: 'Hymenium',
+          termEn: 'Hymenium',
+          definition: 'Neu.',
+          definitionEn: 'The spore-bearing layer.',
+        },
       },
     ]);
   });
