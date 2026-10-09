@@ -31,12 +31,8 @@ export const GroupsStore = signalStore(
   withMethods((store) => {
     const fetch = rxMethod<GroupsQuery>(
       pipe(
-        // A direct page load asks only after the session check; else the first request has no token.
         switchMap(({ all, quiet }) =>
-          store._auth.sessionReady().pipe(
-            switchMap(() => store._api.list(all, { quiet })),
-            catchError(() => of<FriendGroup[]>([])),
-          ),
+          store._api.list(all, { quiet }).pipe(catchError(() => of<FriendGroup[]>([]))),
         ),
         tap((groups) => {
           store.setItems(groups);

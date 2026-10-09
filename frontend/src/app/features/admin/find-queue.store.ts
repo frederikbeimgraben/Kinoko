@@ -102,10 +102,8 @@ export const FindQueueStore = signalStore(
             tap(() => {
               patchState(store, { stack: null, decided: 0 });
             }),
-            // A direct page load asks only after the session check; else the first request has no token.
             switchMap(() =>
-              store._auth.sessionReady().pipe(
-                switchMap(() => store._api.open()),
+              store._api.open().pipe(
                 tapResponse({
                   next: (stack) => {
                     patchState(store, { stack });

@@ -1,5 +1,4 @@
 import { computed, signal, type Provider } from '@angular/core';
-import { of, type Observable } from 'rxjs';
 import { AuthService, type SignedInUser } from '../core/auth';
 
 /** An auth service without an SSO. The test sets the person who is signed in and the answer of the sign-in sheet. */
@@ -23,10 +22,6 @@ export class AuthStub {
   /** The answer to `requestSignIn`. */
   reply = true;
   asked = 0;
-
-  sessionReady(): Observable<unknown> {
-    return of(null);
-  }
 
   /** True: the person goes to the SSO from the sheet, so the sheet keeps the entry first. */
   goesToSso = false;

@@ -46,9 +46,7 @@ export const MyImagesStore = signalStore(
         switchMap(({ fresh }) => {
           const cursor = fresh ? undefined : (store.cursor() ?? undefined);
           patchState(store, { busy: true });
-          // A direct page load asks only after the session check; else the first request has no token.
-          return store._auth.sessionReady().pipe(
-            switchMap(() => store._api.list({ mine: true, cursor })),
+          return store._api.list({ mine: true, cursor }).pipe(
             catchError(() => of<PhotoPage | null>(null)),
             tap((answer) => {
               if (answer === null) {
@@ -71,8 +69,7 @@ export const MyImagesStore = signalStore(
           patchState(store, { busy: true });
         }),
         switchMap(() =>
-          store._auth.sessionReady().pipe(
-            switchMap(() => store._api.list({ mine: true })),
+          store._api.list({ mine: true }).pipe(
             expand((answer) =>
               answer.nextCursor === null ? EMPTY : store._api.list({ mine: true, cursor: answer.nextCursor }),
             ),

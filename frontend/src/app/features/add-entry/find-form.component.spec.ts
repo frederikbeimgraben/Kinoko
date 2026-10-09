@@ -247,7 +247,7 @@ describe('FundFormularComponent', () => {
   });
 
   it('keeps a find without a species without one, and does not take the species of the map', async () => {
-    const setup = await build({ start: { ...FIND, speciesId: null }, withPhotos: false, editing: true });
+    const setup = await build({ start: { ...GROUPED, speciesId: null }, withPhotos: false, editing: true });
 
     expect(screen.queryByText('Steinpilz')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));

@@ -205,6 +205,7 @@ describe('EntriesStore', () => {
   it('meldet „verworfen“, wenn auch das Gerät keinen Platz hat', async () => {
     const { state, auth, queue } = build();
     auth.user.set(null);
+    auth.reply = false;
     queue.accepts = false;
 
     expect(await state.saveFind(findWrite(FIND))).toBe('verworfen');
@@ -228,6 +229,7 @@ describe('EntriesStore', () => {
     expect(state.zones()).toEqual([ZONE]);
 
     auth.user.set(null);
+    auth.reply = false;
     expect(await state.saveMarker(markerWrite(MARKER))).toBe('wartet');
     expect(await state.saveZone(zoneWrite(ZONE))).toBe('wartet');
     expect(queue.stored.map((entry) => entry.kind)).toEqual(['marker', 'zone']);
