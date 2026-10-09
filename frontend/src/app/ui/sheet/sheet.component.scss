@@ -125,3 +125,13 @@
 .sheet--modal .sheet__head {
   --overlay-head-pad: 12px 12px 4px 16px;
 }
+
+// The keyboard ring is on the grip line, not on the full-width tap area.
+.sheet__handle:focus-visible {
+  outline: none;
+}
+
+.sheet__handle:focus-visible .sheet__handle-line {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}

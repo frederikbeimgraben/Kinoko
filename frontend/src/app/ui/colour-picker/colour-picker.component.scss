@@ -70,3 +70,13 @@
   border-radius: var(--pilz-colour-radius);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 9%);
 }
+
+// The keyboard ring is on the dot, as the selection ring.
+.swatch:focus-visible {
+  outline: none;
+}
+
+.swatch:focus-visible .swatch__field {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

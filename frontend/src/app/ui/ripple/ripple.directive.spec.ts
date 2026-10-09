@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { render } from '@testing-library/angular';
-import { RippleDirective, reach } from './ripple.directive';
+import { RippleDirective, farthestCorner } from './ripple.directive';
 
 @Component({
   imports: [RippleDirective],
@@ -13,6 +13,12 @@ class HostComponent {}
   template: `<button appRipple style="position: absolute">x</button>`,
 })
 class PositionedHostComponent {}
+
+@Component({
+  imports: [RippleDirective],
+  template: `<a appRipple [rippleIn]="pill"><span #pill class="pill">i</span>Karte</a>`,
+})
+class InnerTargetComponent {}
 
 function stubMotion(reduce: boolean): void {
   vi.spyOn(window, 'matchMedia').mockImplementation(
@@ -30,19 +36,25 @@ function stubMotion(reduce: boolean): void {
   );
 }
 
-function press(host: Element): void {
-  vi.spyOn(host, 'getBoundingClientRect').mockReturnValue({
-    x: 10,
-    y: 20,
-    left: 10,
-    top: 20,
-    width: 40,
-    height: 40,
-    right: 50,
-    bottom: 60,
-    toJSON: () => undefined,
-  });
-  host.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 30, clientY: 40 }));
+const BOX = {
+  x: 10,
+  y: 20,
+  left: 10,
+  top: 20,
+  width: 40,
+  height: 40,
+  right: 50,
+  bottom: 60,
+  toJSON: () => undefined,
+};
+
+function press(host: Element, at: { x: number; y: number } = { x: 30, y: 40 }): void {
+  vi.spyOn(host, 'getBoundingClientRect').mockReturnValue(BOX);
+  host.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: at.x, clientY: at.y }));
+}
+
+function px(value: string): number {
+  return Number.parseFloat(value);
 }
 
 describe('RippleDirective', () => {
@@ -56,16 +68,48 @@ describe('RippleDirective', () => {
 
     const dot = host.querySelector<HTMLElement>('.ripple');
     if (dot === null) throw new Error('kein Kreis');
-    const size = 2 * Math.hypot(20, 20);
-    expect(parseFloat(dot.style.width)).toBeCloseTo(size);
-    expect(parseFloat(dot.style.height)).toBeCloseTo(size);
-    expect(parseFloat(dot.style.left)).toBeCloseTo(20 - size / 2);
-    expect(parseFloat(dot.style.top)).toBeCloseTo(20 - size / 2);
+    const radius = Math.hypot(20, 20);
+    expect(px(dot.style.width)).toBeCloseTo(2 * radius);
+    expect(px(dot.style.height)).toBeCloseTo(2 * radius);
+    expect(px(dot.style.left)).toBeCloseTo(20 - radius);
+    expect(px(dot.style.top)).toBeCloseTo(20 - radius);
   });
 
-  it('reicht in einer flachen Zeile genau bis zur fernsten Ecke', () => {
-    expect(reach(358, 56, 179, 28)).toBeCloseTo(Math.hypot(179, 28));
-    expect(reach(358, 56, 10, 50)).toBeCloseTo(Math.hypot(348, 50));
+  it('endet an der fernsten Ecke, damit der Kreis in einer breiten Zeile rund bleibt', () => {
+    const row = { ...BOX, left: 0, top: 0, right: 360, bottom: 56, width: 360, height: 56 } as DOMRect;
+
+    expect(farthestCorner(row, 10, 28)).toBeCloseTo(Math.hypot(350, 28));
+    expect(farthestCorner(row, 350, 0)).toBeCloseTo(Math.hypot(350, 56));
+  });
+
+  it('beginnt einen Druck außerhalb des Ziels in dessen Mitte', async () => {
+    stubMotion(false);
+    const { container } = await render(HostComponent);
+    const host = container.querySelector('button');
+    if (host === null) throw new Error('kein Wirt');
+
+    press(host, { x: 0, y: 40 });
+
+    const dot = host.querySelector<HTMLElement>('.ripple');
+    const radius = Math.hypot(20, 20);
+    expect(px(dot?.style.left ?? '')).toBeCloseTo(20 - radius);
+    expect(px(dot?.style.top ?? '')).toBeCloseTo(20 - radius);
+    expect(px(dot?.style.width ?? '')).toBeCloseTo(2 * radius);
+  });
+
+  it('zeigt den Kreis im Ziel, wenn die Form ein Kind des Wirts ist', async () => {
+    stubMotion(false);
+    const { container } = await render(InnerTargetComponent);
+    const host = container.querySelector<HTMLElement>('a');
+    const pill = container.querySelector<HTMLElement>('.pill');
+    if (host === null || pill === null) throw new Error('kein Wirt');
+
+    vi.spyOn(pill, 'getBoundingClientRect').mockReturnValue(BOX);
+    host.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 30, clientY: 40 }));
+
+    expect(pill.querySelector('.ripple-frame .ripple')).toBeInTheDocument();
+    expect(host.querySelector(':scope > .ripple-frame')).not.toBeInTheDocument();
+    expect(pill.style.position).toBe('relative');
   });
 
   it('nimmt den Wirt aus dem Fluss, wenn er noch keine Lage hat', async () => {

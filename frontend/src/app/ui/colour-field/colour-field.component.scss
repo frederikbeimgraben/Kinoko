@@ -2,12 +2,12 @@
   display: flex;
 }
 
-// Without host sizes, the field uses the list size of `kit.css` `.sw`: 88 × 28 at radius 14.
+// Without host sizes, the field has the size and radius of `kit.css` `.sw`.
 // The inner edge keeps a field in the colour of the ground visible.
 .field {
   inline-size: var(--pilz-colour-width, 88px);
   block-size: var(--pilz-colour-height, 28px);
-  border-radius: var(--pilz-colour-radius, 14px);
+  border-radius: var(--pilz-colour-radius, var(--r-sq));
   box-shadow: inset 0 0 0 1px var(--swatch-edge);
   flex: 0 0 auto;
 }

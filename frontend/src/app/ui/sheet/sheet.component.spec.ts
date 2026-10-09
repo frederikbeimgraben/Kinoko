@@ -330,12 +330,14 @@ describe('SheetComponent', () => {
     expect(container.querySelector<HTMLElement>('.sheet')?.style.blockSize).toBe('430px');
   });
 
-  it('gives the handle a ripple and no press state', async () => {
+  it('gives the handle no ripple and no press state, as `kit.css` `.grip`', async () => {
     await render(SheetComponent, { inputs: { label: 'Porcini' } });
 
     const handle = screen.getByRole('button', { name: 'Blatt ziehen' });
+    handle.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 10 }));
 
     expect(handle).not.toHaveAttribute('data-press');
+    expect(handle.querySelector('.ripple')).toBeNull();
   });
 
   it('spans the handle across the full width so the bar sits centred', async () => {

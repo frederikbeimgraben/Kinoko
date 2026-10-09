@@ -24,3 +24,8 @@
   background: none;
   border: 0;
 }
+
+// The keyboard ring has the radius of a line, so it is not a box around the label.
+.fold:focus-visible {
+  border-radius: var(--r-line);
+}
