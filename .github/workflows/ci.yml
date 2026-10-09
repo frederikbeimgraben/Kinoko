@@ -62,6 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - uses: DeterminateSystems/nix-installer-action@v23
         with:
           diagnostic-endpoint: ""
@@ -69,7 +72,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: Build the service
-        run: nix develop .#backend -c bash -c 'cd backend && go build -o kinoko ./cmd/kinoko'
+        run: nix develop .#backend -c backend/build.sh
       - name: Start the service
         working-directory: backend
         run: |
@@ -81,6 +84,13 @@ jobs:
           done
           echo "::error::The service does not answer"
           exit 1
+      # The app stamps the same "git describe". Both must show the same version.
+      - name: Version of the build
+        working-directory: frontend
+        run: |
+          app=$(node -e "import('./tools/stamp-version.mjs').then((m) => console.log(m.describe()))")
+          service=$(curl -sf http://127.0.0.1:8111/api/config | jq -r .version)
+          [ "$app" = "$service" ] || { echo "::error::app $app, service $service"; exit 1; }
       - name: Schemathesis
         working-directory: backend
         run: >
@@ -163,6 +173,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+      # The Nix build reads the tag from VERSION. It must be the last tag.
+      - name: VERSION agrees with the last tag
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          [ "$tag" = "v$(cat VERSION)" ] || { echo "::error::VERSION is $(cat VERSION), the last tag is $tag"; exit 1; }
       - working-directory: frontend
         run: npm ci
       # The budgets in frontend/angular.json stop the build.

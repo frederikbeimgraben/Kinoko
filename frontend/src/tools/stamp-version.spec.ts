@@ -6,12 +6,18 @@ describe('stamp-version', () => {
     expect(label('v0.1.0')).toBe('v0.1.0');
   });
 
+  it('keeps the commit of a Nix build, as config.Label in the service does', () => {
+    expect(label('v0.1.0+5896dc4')).toBe('v0.1.0+5896dc4');
+    expect(stamp({ KINOKO_VERSION: 'v0.1.0+5896dc4' }, () => null)).toBe('v0.1.0+5896dc4');
+  });
+
   it('gives a plain release number the v', () => {
     expect(label('3.0.0')).toBe('v3.0.0');
   });
 
   it('keeps a bare commit hash and falls back to dev', () => {
     expect(label('f2ac945')).toBe('f2ac945');
+    expect(label('5896dc4')).toBe('5896dc4');
     expect(label('')).toBe('dev');
     expect(label(null)).toBe('dev');
   });

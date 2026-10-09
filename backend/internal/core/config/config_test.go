@@ -2,6 +2,36 @@ package config
 
 import "testing"
 
+func TestLabelRemovesTheCommitHash(t *testing.T) {
+	cases := map[string]string{
+		"v0.1.0-64-g5896dc4": "v0.1.0-64",
+		"v0.1.0":             "v0.1.0",
+		"v0.1.0+5896dc4":     "v0.1.0+5896dc4",
+		"3.0.0":              "v3.0.0",
+		"5896dc4":            "5896dc4",
+		" ":                  "dev",
+		"":                   "dev",
+	}
+	for raw, want := range cases {
+		if got := Label(raw); got != want {
+			t.Errorf("Label(%q) = %q, want %q", raw, got, want)
+		}
+	}
+}
+
+func TestVersionUsesTheStampOfTheLinker(t *testing.T) {
+	saved := build
+	t.Cleanup(func() { build = saved })
+	build = ""
+	if Version() != "dev" {
+		t.Fatal(Version())
+	}
+	build = "v0.1.0-64-g5896dc4"
+	if Version() != "v0.1.0-64" {
+		t.Fatal(Version())
+	}
+}
+
 func lookupOf(values map[string]string) Lookup {
 	return func(name string) (string, bool) {
 		value, ok := values[name]

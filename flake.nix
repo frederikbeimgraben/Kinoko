@@ -26,7 +26,11 @@
       packages = forAll (
         pkgs:
         let
-          version = "3.0.0";
+          # Nix has no Git tags. The tag comes from VERSION, the commit from the flake:
+          # v0.1.0+5896dc4. A Git build gives "git describe", for example v0.1.0-64-g5896dc4.
+          version = "v${pkgs.lib.trim (builtins.readFile ./VERSION)}+${
+            self.shortRev or self.dirtyShortRev or "dirty"
+          }";
         in
         {
           backend = pkgs.buildGoModule {
@@ -44,6 +48,7 @@
             ldflags = [
               "-s"
               "-w"
+              "-X github.com/frederikbeimgraben/kinoko/backend/internal/core/config.build=${version}"
             ];
             # The tests need a writable home for the Go build cache only.
             preCheck = ''
