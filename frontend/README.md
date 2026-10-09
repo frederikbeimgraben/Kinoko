@@ -55,7 +55,7 @@ When two blocks use the same dimension, make it a token in
 ## Proxy
 
 `proxy.conf.json` sends `/api` to the local service on port 8111. It sends
-the tile paths and the manifests to `pilze.beimgraben.net`. Thus development
+the tile paths and the manifests to `kinoko.reutlingen.university`. Thus development
 does not need a local render run. The path forms are in
 `src/app/core/tiles/tile-paths.ts`.
 

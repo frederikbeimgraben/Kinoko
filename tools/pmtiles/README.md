@@ -1,7 +1,7 @@
 # PMTiles archive for the offline map
 
 `deutschland.pmtiles` is at
-`https://pilze.beimgraben.net/karte/deutschland.pmtiles`. For each area, the
+`https://kinoko.reutlingen.university/karte/deutschland.pmtiles`. For each area, the
 app gets the tiles from it with HTTP range requests. It keeps them in
 IndexedDB (F2b). Caddy serves range requests with `file_server`. Read
 `docs/operations.md`.

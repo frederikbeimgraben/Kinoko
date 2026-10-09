@@ -4,23 +4,23 @@
     "secure": false
   },
   "^/layers_kacheln/": {
-    "target": "https://pilze.beimgraben.net",
+    "target": "https://kinoko.reutlingen.university",
     "changeOrigin": true
   },
   "^/funde/": {
-    "target": "https://pilze.beimgraben.net",
+    "target": "https://kinoko.reutlingen.university",
     "changeOrigin": true
   },
   "^/[a-z0-9_-]+_kacheln/": {
-    "target": "https://pilze.beimgraben.net",
+    "target": "https://kinoko.reutlingen.university",
     "changeOrigin": true
   },
   "^/[a-z0-9_-]+_weeks/": {
-    "target": "https://pilze.beimgraben.net",
+    "target": "https://kinoko.reutlingen.university",
     "changeOrigin": true
   },
   "^/[a-z0-9_-]+\\.json$": {
-    "target": "https://pilze.beimgraben.net",
+    "target": "https://kinoko.reutlingen.university",
     "changeOrigin": true
   }
 }

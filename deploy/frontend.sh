@@ -17,4 +17,4 @@ rsync -av --delete --info=stats2 \
   --filter='P /*/' --filter='P /*.json' \
   -e "ssh -i $SCHLUESSEL -o IdentitiesOnly=yes" \
   "$QUELLE" "$ZIEL":
-echo "fertig: https://pilze.beimgraben.net"
+echo "fertig: https://kinoko.reutlingen.university"
