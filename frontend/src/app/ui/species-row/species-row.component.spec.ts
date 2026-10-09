@@ -171,7 +171,7 @@ describe('SpeciesRowComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
 
-    const thumb = container.querySelector<HTMLElement>('.row__thumb');
+    const thumb = container.querySelector<HTMLElement>('.row__thumb app-private-image');
     expect(thumb?.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
   });
 

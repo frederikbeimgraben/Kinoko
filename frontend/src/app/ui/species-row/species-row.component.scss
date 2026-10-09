@@ -28,6 +28,8 @@
 }
 
 .row__thumb {
+  position: relative;
+  display: inline-flex;
   flex: none;
 }
 
@@ -62,11 +64,20 @@
   font-style: normal;
 }
 
-// The map mark of a species with a forecast. It is no badge, so the row keeps exactly one badge.
+// The map mark of a species with a forecast sits on the corner of the picture, so the names keep their width.
 .row__forecast {
+  position: absolute;
+  inset-block-end: -4px;
+  inset-inline-end: -4px;
   display: inline-flex;
-  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 20px;
+  block-size: 20px;
   color: var(--primary);
+  background: var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--surface-low);
 }
 
 .row__badge {
