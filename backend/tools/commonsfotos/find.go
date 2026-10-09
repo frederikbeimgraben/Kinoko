@@ -174,10 +174,7 @@ func search(ctx context.Context, c *client, s species) (found, error) {
 		}
 		add(list)
 	}
-	for i := range all {
-		all[i].Score, all[i].Notes = score(all[i], latinNames(s))
-	}
-	sort.SliceStable(all, func(i, j int) bool { return all[i].Score > all[j].Score })
+	rescore(all, latinNames(s))
 	if len(all) > keep {
 		all = all[:keep]
 	}

@@ -53,3 +53,23 @@ func TestScorePrefersAFieldPhotoOfTheSpecies(t *testing.T) {
 		t.Fatal(fieldScore)
 	}
 }
+
+func TestCleanAuthor(t *testing.T) {
+	cases := map[string]string{
+		"This image was created by user Dan Molter (shroomydan) at Mushroom Observer , a source for mycological images.": "Dan Molter (shroomydan), Mushroom Observer",
+		"voir ci-dessous / see below": "",
+		"Holger Krisp":                "Holger Krisp",
+	}
+	for in, want := range cases {
+		if got := cleanAuthor(in); got != want {
+			t.Errorf("%q: got %q, want %q", in, got, want)
+		}
+	}
+}
+
+func TestWithoutTracking(t *testing.T) {
+	got := withoutTracking("https://upload.wikimedia.org/a/b.jpg?utm_source=commons.wikimedia.org&utm_content=original")
+	if got != "https://upload.wikimedia.org/a/b.jpg" {
+		t.Fatal(got)
+	}
+}

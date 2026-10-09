@@ -69,6 +69,27 @@ func plainText(value string) string {
 	return strings.TrimSpace(spaces.ReplaceAllString(text, " "))
 }
 
+// mushroomObserver matches the author text of a file from Mushroom Observer.
+var mushroomObserver = regexp.MustCompile(`^This image was created by user (.+?) at Mushroom Observer\b`)
+
+// noAuthor lists author texts that name nobody.
+var noAuthor = []string{"see below", "voir ci-dessous", "unknown", "unbekannt", "own work"}
+
+// cleanAuthor makes a short author text: the user of Mushroom Observer with
+// the site, and "" for a text that names nobody.
+func cleanAuthor(author string) string {
+	if match := mushroomObserver.FindStringSubmatch(author); match != nil {
+		return strings.TrimSpace(match[1]) + ", Mushroom Observer"
+	}
+	lower := strings.ToLower(author)
+	for _, word := range noAuthor {
+		if strings.Contains(lower, word) {
+			return ""
+		}
+	}
+	return author
+}
+
 // badWords mark files that do not show the fruiting bodies in the field.
 var badWords = []string{
 	"microscop", "mikroskop", "micrograph", "spore", "cystid", "zystid", "basidia", "basidium", "hyphae",
@@ -93,7 +114,7 @@ func score(c candidate, latin []string) (int, []string) {
 	if c.Licence.Code == "" {
 		note(-1000, "licence "+c.LicenceName)
 	}
-	if c.Author == "" && c.Attribution == "" {
+	if cleanAuthor(c.Author) == "" && cleanAuthor(c.Attribution) == "" {
 		note(-1000, "no author")
 	}
 	if c.Mime != "image/jpeg" {

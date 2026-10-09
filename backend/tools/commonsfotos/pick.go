@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -62,6 +63,7 @@ func runPick(args []string) error {
 	entries := map[string]entry{}
 	missing := []string{}
 	for _, s := range list {
+		rescore(results[s.Slug].Candidates, latinNames(s))
 		chosen, ok := choose(results[s.Slug], picks, s.Slug)
 		if !ok {
 			missing = append(missing, s.Slug)
@@ -78,6 +80,14 @@ func runPick(args []string) error {
 		_, _ = fmt.Fprintln(errOut, " ", slug)
 	}
 	return nil
+}
+
+// rescore rates the candidates again with the rules of this version and sorts them.
+func rescore(list []candidate, latin []string) {
+	for i := range list {
+		list[i].Score, list[i].Notes = score(list[i], latin)
+	}
+	sort.SliceStable(list, func(i, j int) bool { return list[i].Score > list[j].Score })
 }
 
 func readJSON(path string, out any) error {
@@ -112,10 +122,11 @@ func acceptable(c candidate) bool {
 
 // authorOf gives the attribution that the author asks for, else the author.
 func authorOf(c candidate) string {
-	if c.Attribution != "" && !strings.HasPrefix(strings.ToLower(c.Attribution), "http") {
-		return c.Attribution
+	attribution := cleanAuthor(c.Attribution)
+	if attribution != "" && !strings.HasPrefix(strings.ToLower(attribution), "http") {
+		return attribution
 	}
-	return c.Author
+	return cleanAuthor(c.Author)
 }
 
 func toEntry(s species, result found, c candidate) entry {
@@ -125,8 +136,8 @@ func toEntry(s species, result found, c candidate) entry {
 	}
 	return entry{
 		File:       c.Title,
-		URL:        c.URL,
-		Download:   c.ThumbURL,
+		URL:        withoutTracking(c.URL),
+		Download:   withoutTracking(c.ThumbURL),
 		Author:     authorOf(c),
 		Licence:    c.Licence.Name,
 		LicenceURL: c.Licence.URL,
@@ -134,6 +145,22 @@ func toEntry(s species, result found, c candidate) entry {
 		Caption:    s.Name + " (" + s.Latin + ")",
 		CaptionEn:  captionEn,
 	}
+}
+
+// withoutTracking removes the utm_ parameters that the API adds to a file address.
+func withoutTracking(address string) string {
+	parsed, err := url.Parse(address)
+	if err != nil {
+		return address
+	}
+	query := parsed.Query()
+	for key := range query {
+		if strings.HasPrefix(key, "utm_") {
+			query.Del(key)
+		}
+	}
+	parsed.RawQuery = query.Encode()
+	return parsed.String()
 }
 
 func capitalise(text string) string {
