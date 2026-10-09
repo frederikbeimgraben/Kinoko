@@ -8,7 +8,7 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import type { Find, Marker, Zone } from '../../core/api/models';
+import type { Find, GeoPolygon, Marker, Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -47,6 +47,9 @@ const ZOOM_OBJECT = 14;
 
 /** The free edge around a zone outline, in pixels. The sides keep the corners clear of the map buttons. */
 const ZONE_PADDING = { top: 48, bottom: 48, left: 88, right: 88 };
+
+/** In the corner step, the step bar is over the map. The desktop map has no padding for it. */
+const CORNER_PADDING = { ...ZONE_PADDING, bottom: 112 };
 
 /** The padding of the map eases in 220 ms (`MapLibreAdapter.setPadding`). */
 const PADDING_SETTLE_MS = 260;
@@ -133,6 +136,7 @@ export class ObjectSheetComponent {
   protected readonly relocating = this.sheet.relocating;
 
   private readonly cross = viewChild<ElementRef<HTMLElement>>('cross');
+  protected readonly zoneSheet = viewChild<ZoneSheetComponent>('zoneSheet');
 
   protected readonly aimTitle = computed(() =>
     this.i18n.translate(this.marker() ? 'entry.setMarker.title' : 'entry.setLocation.title'),
@@ -158,6 +162,26 @@ export class ObjectSheetComponent {
     },
   ]);
 
+  /** The corner step of a zone has a step bar like "Zone zeichnen", not the sheet (`ZoneDraw.dc.html`). */
+  protected readonly cornerActions = computed<readonly StepAction[]>(() => [
+    {
+      label: this.i18n.translate('common.cancel'),
+      icon: 'close',
+      variant: 'secondary',
+      run: () => {
+        this.zoneSheet()?.cancelCorners();
+      },
+    },
+    {
+      label: this.i18n.translate('common.apply'),
+      icon: 'check',
+      variant: 'primary',
+      run: () => {
+        this.zoneSheet()?.applyCorners();
+      },
+    },
+  ]);
+
   constructor() {
     // A tap on an object or on an entry row moves the map to it. The move waits for the start of the map
     // and for the sheet height, because a padding change of the map stops a running move.
@@ -173,12 +197,15 @@ export class ObjectSheetComponent {
       });
     });
     // The fit waits for the sheet height: the padding change of the map would stop a running fit.
+    // The corner step has only the step bar, so the outline then fills the map.
     effect((onCleanup) => {
       const zone = this.zone();
+      const outline = this.sheet.outline();
+      const corners = this.editingCorners();
       this.map.overlayHeight();
-      if (zone === null || this.editingCorners()) return;
+      if (zone === null || !this.surface.ready()) return;
       const timer = setTimeout(() => {
-        this.fitZone(zone);
+        this.fitZone(outline ?? zone.polygon, corners ? CORNER_PADDING : ZONE_PADDING);
       }, PADDING_SETTLE_MS);
       onCleanup(() => {
         clearTimeout(timer);
@@ -192,8 +219,8 @@ export class ObjectSheetComponent {
   }
 
   /** A zone shows its full outline, so "Umriss ändern" has each corner on the screen. */
-  private fitZone(zone: Zone): void {
-    const ring = zone.polygon.coordinates[0];
+  private fitZone(polygon: GeoPolygon, padding: typeof ZONE_PADDING): void {
+    const ring = polygon.coordinates[0];
     const lons = ring.map((point) => point[0]);
     const lats = ring.map((point) => point[1]);
     this.adapter.rawMap()?.fitBounds(
@@ -201,7 +228,7 @@ export class ObjectSheetComponent {
         [Math.min(...lons), Math.min(...lats)],
         [Math.max(...lons), Math.max(...lats)],
       ],
-      { padding: ZONE_PADDING, maxZoom: ZOOM_OBJECT, duration: 400 },
+      { padding, maxZoom: ZOOM_OBJECT, duration: 400 },
     );
   }
 
@@ -230,9 +257,10 @@ export class ObjectSheetComponent {
     this.sheet.relocate([point[0], point[1]]);
   }
 
-  /** Escape and a tap outside the sheet end the crosshair step first. */
+  /** Escape and a tap outside the sheet end the crosshair step or the corner step first. */
   protected hostClosed(): void {
     if (this.relocating()) this.sheet.cancelRelocating();
+    else if (this.editingCorners()) this.zoneSheet()?.cancelCorners();
     else this.close();
   }
 

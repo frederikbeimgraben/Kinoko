@@ -73,6 +73,13 @@ export const ObjectSheetStore = signalStore(
         });
       }
     },
+    /** Closes the object for a move to another route. That route replaces the history entry of the object. */
+    leave(): void {
+      if (store._map.object() === null) return;
+      patchState(store, FRESH);
+      store._map.setObject(null);
+      store._stack.release();
+    },
     close(): void {
       if (store._map.object() === null) return;
       patchState(store, FRESH);

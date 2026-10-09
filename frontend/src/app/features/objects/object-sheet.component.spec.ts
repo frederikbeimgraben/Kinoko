@@ -217,6 +217,38 @@ describe('ObjektBlattComponent', () => {
     expect(getComputedStyle(scrim).pointerEvents).toBe('none');
   });
 
+  it('hides the zone sheet in the corner step and shows a step bar, per `ZoneDraw.dc.html`', async () => {
+    const setup = await build();
+    const fits: { padding: { bottom: number } }[] = [];
+    setup.map.raw = {
+      fitBounds: (_bounds: unknown, options: { padding: { bottom: number } }) => fits.push(options),
+      getContainer: () => document.body,
+    } as unknown as MapLibreMap;
+    setup.state.setObject({ kind: 'zone', id: ZONE.id });
+    setup.refresh();
+    const store = TestBed.inject(ObjectSheetStore);
+    store.setEditing(true);
+    store.startCorners();
+    setup.refresh();
+
+    expect(setup.container.querySelector('app-sheet')).toHaveClass('object__sheet--gone');
+    // Without the sheet, the outline fills the map above the step bar.
+    await vi.waitFor(() => {
+      expect(fits.at(-1)?.padding.bottom).toBe(112);
+    });
+    const bar = screen.getByRole('group', { name: 'Umriss ändern' });
+    expect(bar).toHaveTextContent('4 Eckpunkte · 42 ha');
+    // The view rows of the zone are not in the step: a tap there would leave the form.
+    expect(screen.queryByRole('button', { name: /Funde in der Zone/ })).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    setup.refresh();
+
+    expect(store.editingCorners()).toBe(false);
+    expect(store.editing()).toBe(true);
+    expect(screen.queryByRole('group', { name: 'Umriss ändern' })).toBeNull();
+  });
+
   it('trägt im Formular den Titel des Formulars und den Ort im Kopf', async () => {
     const setup = await build();
     await openFind(setup);
@@ -284,6 +316,24 @@ describe('ObjektBlattComponent', () => {
       expect(setup.map.flights).toHaveLength(1);
     });
     expect(setup.map.flights[0].target).toEqual([FIND.lon, FIND.lat]);
+  });
+
+  it('fits a zone only after the start of the map', async () => {
+    const setup = await build();
+    const fits: unknown[][] = [];
+    setup.map.raw = { fitBounds: (...args: unknown[]) => fits.push(args) } as unknown as MapLibreMap;
+    setup.ready.set(false);
+
+    setup.state.setObject({ kind: 'zone', id: ZONE.id });
+    setup.refresh();
+    await new Promise((done) => setTimeout(done, 400));
+    expect(fits).toHaveLength(0);
+
+    setup.ready.set(true);
+    setup.refresh();
+    await vi.waitFor(() => {
+      expect(fits).toHaveLength(1);
+    });
   });
 
   it('zeigt bei einer Zone den ganzen Umriss', async () => {

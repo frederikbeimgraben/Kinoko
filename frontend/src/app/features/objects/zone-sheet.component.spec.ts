@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { DrawerDouble, rawMap, drawerProviders } from '../../testing/drawer-double';
+import { ObjectSheetStore } from './object-sheet.store';
 import { ZoneSheetComponent } from './zone-sheet.component';
 
 function provider(map: MapAdapterDouble, drawer: DrawerDouble): (EnvironmentProviders | Provider)[] {
@@ -36,6 +37,8 @@ interface Setup {
   drawer: DrawerDouble;
   closed: number;
   refresh: () => void;
+  /** The step bar of the object sheet calls these methods. */
+  sheet: ZoneSheetComponent;
 }
 
 async function build(withMap = false): Promise<Setup> {
@@ -64,6 +67,7 @@ async function build(withMap = false): Promise<Setup> {
     toasts: toastSpy(),
     drawer,
     refresh: detectChanges,
+    sheet: fixture.componentInstance,
     get closed() {
       return closed;
     },
@@ -154,13 +158,18 @@ describe('ZoneBlattComponent', () => {
     setup.refresh();
 
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const back = vi.spyOn(history, 'back');
+    const leave = vi.spyOn(TestBed.inject(ObjectSheetStore), 'leave');
     const row = screen.getByRole('button', { name: /Funde in der Zone/ });
     expect(row).toHaveTextContent('1');
     await userEvent.click(row);
 
-    expect(navigate).toHaveBeenCalledWith(['/eintraege']);
+    // A history step back would stop the navigation, so the list replaces the entry of the sheet.
+    expect(navigate).toHaveBeenCalledWith(['/eintraege'], { replaceUrl: true });
+    expect(leave).toHaveBeenCalledTimes(1);
+    expect(back).not.toHaveBeenCalled();
     expect(TestBed.inject(EntriesStore).filter().zoneId).toBe(ZONE.id);
-    expect(setup.closed).toBe(1);
+    expect(setup.closed).toBe(0);
   });
 
   it('bleibt stehen, wenn die Karte für Terra Draw fehlt', async () => {
@@ -183,18 +192,19 @@ describe('ZoneBlattComponent', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Umriss ändern' }));
     setup.refresh();
     await vi.waitFor(() => {
-      setup.refresh();
-      expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeInTheDocument();
+      expect(setup.drawer.rings).toHaveLength(1);
     });
     // The ring goes out without the duplicate end point.
     expect(setup.drawer.rings[0]).toHaveLength(4);
+    expect(setup.sheet.cornerNote()).toBe('4 Eckpunkte · 42 ha');
 
     setup.drawer.drag([
       [9, 48.5],
       [9.2, 48.5],
       [9.2, 48.7],
     ]);
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    expect(setup.sheet.cornerNote()).toMatch(/^3 Eckpunkte · /);
+    setup.sheet.applyCorners();
     setup.refresh();
     // Per `MapZoneEdit`, the outline step goes back to the form with its input kept.
     setup.http.expectNone(`/api/zones/${ZONE.id}`);
@@ -218,10 +228,9 @@ describe('ZoneBlattComponent', () => {
 
     await startCorners(setup);
     await vi.waitFor(() => {
-      setup.refresh();
-      expect(screen.getByRole('button', { name: 'Abbrechen' })).toBeInTheDocument();
+      expect(setup.drawer.rings).toHaveLength(1);
     });
-    await userEvent.click(screen.getByRole('button', { name: 'Abbrechen' }));
+    setup.sheet.cancelCorners();
     setup.refresh();
 
     setup.http.expectNone(`/api/zones/${ZONE.id}`);
@@ -233,10 +242,9 @@ describe('ZoneBlattComponent', () => {
 
     await startCorners(setup);
     await vi.waitFor(() => {
-      setup.refresh();
-      expect(screen.getByRole('button', { name: 'Übernehmen' })).toBeInTheDocument();
+      expect(setup.drawer.rings).toHaveLength(1);
     });
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    setup.sheet.applyCorners();
     setup.refresh();
 
     setup.http.expectNone(`/api/zones/${ZONE.id}`);
