@@ -61,8 +61,8 @@
     {
       "term": "Ausgebuchtet",
       "termEn": "Sinuate",
-      "definition": "Lamellen sind kurz vor dem Stiel eingebuchtet und setzen dann mit einem Zähnchen an.",
-      "definitionEn": "Gills curve upwards just before the stem and then join it with a small tooth."
+      "definition": "Lamellen sind kurz vor dem Stiel eingebuchtet und setzen dann nur schmal am Stiel an, oft mit einem kleinen herablaufenden Zahn.",
+      "definitionEn": "Gills curve upwards just before the stem and then join it only narrowly, often with a small decurrent tooth."
     },
     {
       "term": "Basidie",
@@ -91,8 +91,8 @@
     {
       "term": "Blauen",
       "termEn": "Bluing",
-      "definition": "Fleisch, Röhren oder Poren verfärben sich bei Verletzung blau, weil Farbstoffe an der Luft oxidieren. Typisch für viele Röhrlinge, kein Zeichen für Giftigkeit.",
-      "definitionEn": "Flesh, tubes or pores turn blue when damaged, because pigments oxidise in the air. Typical of many boletes and no sign of toxicity."
+      "definition": "Fleisch, Röhren oder Poren verfärben sich bei Verletzung blau, weil Farbstoffe an der Luft oxidieren. Typisch für viele Röhrlinge. Das Blauen sagt nichts darüber aus, ob ein Pilz essbar oder giftig ist.",
+      "definitionEn": "Flesh, tubes or pores turn blue when damaged, because pigments oxidise in the air. Typical of many boletes. Bluing does not show whether a mushroom is edible or poisonous."
     },
     {
       "term": "Brennend",
@@ -109,8 +109,8 @@
     {
       "term": "Buckel",
       "termEn": "Umbo",
-      "definition": "Erhebung in der Hutmitte.",
-      "definitionEn": "Raised area in the centre of the cap."
+      "definition": "Erhebung in der Hutmitte. Ein Hut mit Buckel heißt gebuckelt.",
+      "definitionEn": "Raised area in the centre of the cap. A cap with an umbo is umbonate."
     },
     {
       "term": "Cortina",
@@ -151,8 +151,8 @@
     {
       "term": "Eisensulfat (FeSO4)",
       "termEn": "Iron sulphate (FeSO4)",
-      "definition": "Eisen(II)-sulfat als Kristall oder Lösung. Färbt das Fleisch der meisten Täublinge rosa bis orange, das des Heringstäublings grün.",
-      "definitionEn": "Iron(II) sulphate as a crystal or a solution. It stains the flesh of most brittlegills pink to orange, that of the crab brittlegill green."
+      "definition": "Eisen(II)-sulfat als Kristall oder Lösung. Färbt das Fleisch vieler Täublinge rosa bis orange, das des Heringstäublings grün.",
+      "definitionEn": "Iron(II) sulphate as a crystal or a solution. It stains the flesh of many brittlegills pink to orange, that of the crab brittlegill green."
     },
     {
       "term": "Erdartig",
@@ -193,8 +193,8 @@
     {
       "term": "Frei",
       "termEn": "Free",
-      "definition": "Lamellen erreichen den Stiel nicht.",
-      "definitionEn": "Gills do not reach the stem."
+      "definition": "Lamellen oder Röhren erreichen den Stiel nicht. Zwischen ihnen und dem Stiel bleibt ein schmaler Spalt.",
+      "definitionEn": "Gills or tubes do not reach the stem. A narrow gap stays between them and the stem."
     },
     {
       "term": "Frost",
@@ -217,8 +217,8 @@
     {
       "term": "Guajak",
       "termEn": "Guaiac",
-      "definition": "Guajakharz in Alkohol. Zeigt Oxidasen an: positiv färbt sich das Fleisch blaugrün. Wichtig bei Täublingen.",
-      "definitionEn": "Guaiac resin in alcohol. It shows oxidases: the flesh turns blue-green when positive. Important in brittlegills."
+      "definition": "Guajakharz in Alkohol. Zeigt Oxidasen an: Bei positiver Reaktion färbt sich das Fleisch blaugrün. Wichtig bei Täublingen.",
+      "definitionEn": "Guaiac resin in alcohol. It shows oxidases: when the reaction is positive, the flesh turns blue-green. Important in brittlegills."
     },
     {
       "term": "Gurkenartig",
@@ -247,8 +247,8 @@
     {
       "term": "Herb",
       "termEn": "Tart",
-      "definition": "Zusammenziehend, leicht bitter.",
-      "definitionEn": "Drying in the mouth and slightly bitter."
+      "definition": "Geschmack, der den Mund zusammenzieht, oft leicht bitter.",
+      "definitionEn": "Taste that makes the mouth feel dry and tight, often slightly bitter."
     },
     {
       "term": "Hitze",
@@ -289,8 +289,8 @@
     {
       "term": "Hymenium",
       "termEn": "Hymenium",
-      "definition": "Fruchtschicht, in der die Sporen entstehen.",
-      "definitionEn": "Fertile layer in which the spores form."
+      "definition": "Fruchtschicht, in der die Sporen entstehen. Sie überzieht Lamellen, Röhren, Leisten oder Stacheln.",
+      "definitionEn": "Fertile layer in which the spores form. It covers the gills, tubes, ridges or spines."
     },
     {
       "term": "Hymenophor",
@@ -415,8 +415,8 @@
     {
       "term": "Mykorrhiza",
       "termEn": "Mycorrhiza",
-      "definition": "Lebensgemeinschaft von Pilz und Baumwurzel.",
-      "definitionEn": "Partnership of a fungus and the roots of a tree."
+      "definition": "Lebensgemeinschaft von Pilz und Pflanzenwurzel zum Nutzen beider Partner: Der Pilz liefert Wasser und Nährsalze, die Pflanze liefert Zucker. Viele Waldpilze wachsen darum nur bei bestimmten Bäumen.",
+      "definitionEn": "Partnership of a fungus and plant roots that helps both partners: the fungus supplies water and minerals, the plant supplies sugar. For this reason, many woodland mushrooms grow only near specific trees."
     },
     {
       "term": "Myzel",
@@ -439,7 +439,7 @@
     {
       "term": "Nussig",
       "termEn": "Nutty",
-      "definition": "Nach Nüssen.",
+      "definition": "Geschmack nach Nüssen.",
       "definitionEn": "Taste of nuts."
     },
     {
@@ -523,8 +523,8 @@
     {
       "term": "Schäffer-Reaktion",
       "termEn": "Schäffer reaction",
-      "definition": "Kreuzreaktion von Anilin und Salpetersäure auf der Huthaut. Orange bei den gilbenden Anis-Egerlingen, so trennt man sie von anderen Egerlingen.",
-      "definitionEn": "Cross reaction of aniline and nitric acid on the cap skin. It is orange in the yellowing horse mushrooms, which separates them from other Agaricus species."
+      "definition": "Farbreaktion bei Egerlingen: Auf der Huthaut einen Strich Anilin und quer dazu einen Strich Salpetersäure ziehen. Am Kreuzungspunkt wird es bei den gilbenden Anis-Egerlingen orange, bei anderen Egerlingen nicht.",
+      "definitionEn": "Colour reaction in Agaricus: draw a line of aniline on the cap skin and a line of nitric acid across it. Where the lines cross, the colour becomes orange in the yellowing horse mushrooms, but not in other Agaricus species."
     },
     {
       "term": "Scharf",
@@ -589,8 +589,8 @@
     {
       "term": "Stielbasis",
       "termEn": "Stem base",
-      "definition": "Unteres Ende des Stiels im Boden. Knolle, Volva, Myzelfilz oder Verfärbungen dort sind oft entscheidend.",
-      "definitionEn": "Lower end of the stem in the soil. A bulb, a volva, mycelial felt or colour changes there are often decisive."
+      "definition": "Unteres Ende des Stiels, oft im Boden oder im Substrat verborgen. Knolle, Volva, Myzelfilz oder Verfärbungen dort sind oft entscheidend.",
+      "definitionEn": "Lower end of the stem, often hidden in the soil or the substrate. A bulb, a volva, mycelial felt or colour changes there are often decisive."
     },
     {
       "term": "Sulfovanillin",
@@ -637,8 +637,8 @@
     {
       "term": "Velum",
       "termEn": "Veil",
-      "definition": "Hülle junger Fruchtkörper, bleibt als Ring oder Flocken.",
-      "definitionEn": "Cover of the young fruit body; it remains as a ring or as flakes."
+      "definition": "Schützende Hülle um den jungen Fruchtkörper oder seine Fruchtschicht. Man unterscheidet Gesamthülle und Teilhülle. Ihre Reste bleiben als Ring, Volva, Cortina oder Hutflocken.",
+      "definitionEn": "Protective cover around the young fruit body or its hymenium. There is a universal veil and a partial veil. Their remains stay as a ring, a volva, a cortina or flakes on the cap."
     },
     {
       "term": "Velum partiale (Teilhülle)",
