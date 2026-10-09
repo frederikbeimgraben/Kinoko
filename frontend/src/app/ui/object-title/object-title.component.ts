@@ -16,4 +16,6 @@ export class ObjectTitleComponent {
   readonly colour = input('#7a5230');
   readonly icon = input<IconName>('mushroom');
   readonly photo = input('');
+  /** The heading level: 3 below a sheet title, 2 directly below the page title. */
+  readonly level = input<2 | 3>(3);
 }

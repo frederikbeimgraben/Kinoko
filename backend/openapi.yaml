@@ -94,6 +94,7 @@ paths:
   /me/data:
     delete:
       operationId: deleteMyData
+      description: Deletes the own finds, markers, zones, photos, combinations and the groups that the person leads.
       tags: [account]
       responses:
         "204":
@@ -936,7 +937,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FindPage"
+                $ref: "#/components/schemas/OpenFindPage"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -3825,6 +3826,30 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Find"
+        nextCursor:
+          oneOf:
+            - type: string
+            - type: "null"
+      required: [items, nextCursor]
+
+    OpenFind:
+      allOf:
+        - $ref: "#/components/schemas/Find"
+        - type: object
+          properties:
+            ownerName:
+              description: The display name of the person who reported the find.
+              oneOf:
+                - type: string
+                - type: "null"
+
+    OpenFindPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenFind"
         nextCursor:
           oneOf:
             - type: string

@@ -94,6 +94,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
+        /** @description Deletes the own finds, markers, zones, photos, combinations and the groups that the person leads. */
         delete: operations["deleteMyData"];
         options?: never;
         head?: never;
@@ -1553,6 +1554,14 @@ export interface components {
         };
         FindPage: {
             items: components["schemas"]["Find"][];
+            nextCursor: string | null;
+        };
+        OpenFind: components["schemas"]["Find"] & {
+            /** @description The display name of the person who reported the find. */
+            ownerName?: string | null;
+        };
+        OpenFindPage: {
+            items: components["schemas"]["OpenFind"][];
             nextCursor: string | null;
         };
         Marker: {
@@ -3037,7 +3046,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FindPage"];
+                    "application/json": components["schemas"]["OpenFindPage"];
                 };
             };
             401: components["responses"]["Unauthorized"];

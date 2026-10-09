@@ -83,7 +83,7 @@ function findRow(
     day: dayLabel(find.foundOn, context.today, context.i18n),
     sortKey: find.foundOn,
     entry: {
-      title: species?.name ?? '',
+      title: species?.name ?? context.i18n.translate('find.unknownSpecies'),
       meta: findMeta(context, find.foundOn, find.count, person),
       note: find.note ?? undefined,
       colour: speciesColour(species),

@@ -1,8 +1,4 @@
 [
-  "AboutLicences",
-  "AboutMethod",
-  "AccountDesktopAboutLicences",
-  "AccountDesktopAboutMethod",
   "Admin",
   "AdminDesktop",
   "AdminDesktopAdminGlossary",
@@ -62,7 +58,6 @@
   "EntriesDesktop",
   "EntriesDesktopZone",
   "EntriesFilter",
-  "EntriesMarkers",
   "EntriesOffline",
   "EntriesZone",
   "FindQueue",

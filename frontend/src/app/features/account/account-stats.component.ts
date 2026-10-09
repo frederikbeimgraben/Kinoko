@@ -6,12 +6,13 @@ import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
 import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.component';
 import { MyDataStore, type DataCounts } from './my-data.store';
 
+/** The labels take the count, so that one tile says "1 Fund" and not "1 Funde". */
 const LABELS: Readonly<Record<keyof DataCounts, TranslationKey>> = {
-  finds: 'entry.finds',
-  markers: 'entry.markers',
-  zones: 'entry.zones',
-  photos: 'entry.images',
-  combinations: 'account.export.part.combinations',
+  finds: 'account.stat.finds',
+  markers: 'account.stat.markers',
+  zones: 'account.stat.zones',
+  photos: 'account.stat.images',
+  combinations: 'account.stat.combinations',
 };
 
 const ORDER: readonly (keyof DataCounts)[] = ['finds', 'markers', 'zones', 'photos', 'combinations'];
@@ -43,7 +44,7 @@ export class AccountStatsComponent {
       ? null
       : this.parts().map((part) => ({
           value: grouped(counts[part]),
-          label: this.i18n.translate(LABELS[part]),
+          label: this.i18n.translate(LABELS[part], { count: counts[part] }),
         }));
   });
 

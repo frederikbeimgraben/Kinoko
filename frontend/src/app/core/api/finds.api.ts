@@ -12,6 +12,7 @@ type ReviewDecision = components['schemas']['ReviewDecision'];
 const REVIEWS = `${ENTRY_PATHS.find}/reviews`;
 
 type FindPage = components['schemas']['FindPage'];
+type OpenFindPage = components['schemas']['OpenFindPage'];
 
 /** Finds per page. The contract allows a maximum of 50. */
 const PAGE_SIZE = 50;
@@ -42,7 +43,7 @@ export class FindsApi {
   /** The open finds of all accounts. Needs the `find.review` permission. */
   open(): Observable<readonly OpenFind[]> {
     return this.api
-      .get<FindPage>(`${REVIEWS}/open`, { limit: PAGE_SIZE })
+      .get<OpenFindPage>(`${REVIEWS}/open`, { limit: PAGE_SIZE })
       .pipe(map((answer) => answer.items.flatMap((entry) => openFind(entry) ?? [])));
   }
 

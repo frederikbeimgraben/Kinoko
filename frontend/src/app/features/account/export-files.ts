@@ -1,5 +1,7 @@
-import type { components } from '../../core/api/contract';
-import type { AccountExport } from '../../core/api/models';
+import type { AccountExport, SpeciesEntry } from '../../core/api/models';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
+import { isoDatum } from '../entries/formats';
+import { toGpx } from './export-gpx';
 
 /** The file formats of the export sheet, per `DataExportBody.dc.html`. */
 export type ExportFormat = 'json' | 'csv' | 'gpx';
@@ -19,12 +21,30 @@ export interface ExportFile {
   readonly content: string;
 }
 
-type ExportFind = components['schemas']['Find'];
-type ExportMarker = components['schemas']['Marker'];
-type ExportZone = components['schemas']['Zone'];
+/** The names of a species in the export: the name in the UI language and the scientific name. */
+export interface SpeciesLabel {
+  readonly name: string;
+  readonly scientific: string;
+}
 
-/** Gives the species name for an id, or an empty text. */
-export type SpeciesName = (id: string | null | undefined) => string;
+/** Gives the names of the species of an id, or `null` for no or an unknown species. */
+export type SpeciesName = (id: string | null | undefined) => SpeciesLabel | null;
+
+/** The species names of the export. The catalogue has German names only,
+ * so another language gets the scientific name, which every reader knows. */
+export function speciesNames(
+  entry: (id: string) => Pick<SpeciesEntry, 'name' | 'scientificName'> | null,
+  locale: string,
+): SpeciesName {
+  return (id) => {
+    const known = id ? entry(id) : null;
+    if (known === null) return null;
+    return {
+      name: locale === DEFAULT_LOCALE ? known.name : known.scientificName,
+      scientific: known.scientificName,
+    };
+  };
+}
 
 /** The parts that a format can hold. */
 export function partsFor(format: ExportFormat): readonly ExportPart[] {
@@ -43,147 +63,107 @@ export function selected(data: AccountExport, parts: ReadonlySet<ExportPart>): A
   };
 }
 
-const XML_ESCAPES: Readonly<Record<string, string>> = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&apos;',
-};
+const CSV_HEAD = [
+  'kind',
+  'id',
+  'name',
+  'scientific_name',
+  'date',
+  'lat',
+  'lon',
+  'count',
+  'area_ha',
+  'visibility',
+  'note',
+] as const;
 
-function xml(text: string): string {
-  return text.replace(/[&<>"']/g, (sign) => XML_ESCAPES[sign]);
-}
+type CsvValue = string | number | null | undefined;
+type CsvRow = readonly CsvValue[];
 
-/** A GPX element with text, or nothing for an empty text. */
-function element(tag: string, text: string | null | undefined): string {
-  return text ? `<${tag}>${xml(text)}</${tag}>` : '';
-}
-
-/** A GPX waypoint. GPX wants a full instant, so a date gets midnight UTC. */
-function waypoint(
-  lat: number,
-  lon: number,
-  name: string,
-  note: string | null | undefined,
-  type: string,
-  date?: string,
-): string {
-  const time = date ? `<time>${date.length === 10 ? `${date}T00:00:00Z` : date}</time>` : '';
-  return `  <wpt lat="${String(lat)}" lon="${String(lon)}">${time}${element('name', name)}${element('desc', note)}<type>${type}</type></wpt>`;
-}
-
-function findPoint(find: ExportFind, species: SpeciesName): string | null {
-  if (find.lat === undefined || find.lon === undefined || find.deleted) return null;
-  return waypoint(find.lat, find.lon, species(find.speciesId), find.note, 'find', find.foundOn);
-}
-
-function markerPoint(marker: ExportMarker): string | null {
-  if (marker.lat === undefined || marker.lon === undefined || marker.deleted) return null;
-  return waypoint(marker.lat, marker.lon, marker.name ?? '', marker.note, 'marker');
-}
-
-/** A zone is a closed track: GPX has no polygon. Each ring is one segment. */
-function zoneTrack(zone: ExportZone): string | null {
-  if (zone.polygon === undefined || zone.deleted) return null;
-  const segments = zone.polygon.coordinates.map(
-    (ring) =>
-      `<trkseg>${ring.map(([lon, lat]) => `<trkpt lat="${String(lat)}" lon="${String(lon)}"/>`).join('')}</trkseg>`,
-  );
-  return `  <trk>${element('name', zone.name)}${element('desc', zone.note)}<type>zone</type>${segments.join('')}</trk>`;
-}
-
-/** GPX 1.1: finds and markers as waypoints, zones as tracks. Waypoints come first, as the schema wants. */
-export function toGpx(data: AccountExport, species: SpeciesName): string {
-  const points = [...data.finds.map((find) => findPoint(find, species)), ...data.markers.map(markerPoint)];
-  const tracks = data.zones.map(zoneTrack);
-  const body = [...points, ...tracks].filter((line): line is string => line !== null);
-  return [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<gpx version="1.1" creator="Kinoko" xmlns="http://www.topografix.com/GPX/1/1">',
-    ...body,
-    '</gpx>',
-    '',
-  ].join('\n');
-}
-
-const CSV_HEAD = ['kind', 'id', 'name', 'date', 'lat', 'lon', 'count', 'visibility', 'note'] as const;
-
-type CsvRow = readonly (string | number | null | undefined)[];
+/** The values of a row by column. A missing column stays empty. */
+type CsvLine = Partial<Record<(typeof CSV_HEAD)[number], CsvValue>>;
 
 /** A CSV field. A field with a separator, a quote or a line break goes in quotes. */
-function csvField(value: string | number | null | undefined): string {
+function csvField(value: CsvValue): string {
   const text = value === null || value === undefined ? '' : String(value);
   return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
+/** The local day of an instant. Each kind has a day only, as a find has its `foundOn`. */
+function day(value: string | null | undefined): string | null {
+  if (!value) return null;
+  return value.length === 10 ? value : isoDatum(new Date(value));
+}
+
+/** The area with two decimal places, so that a spreadsheet reads it as a number. */
+function hectares(area: number | null | undefined): number | null {
+  return area === null || area === undefined ? null : Math.round(area * 100) / 100;
+}
+
+function speciesColumns(species: SpeciesName, id: string | null | undefined): CsvLine {
+  const label = species(id);
+  return { name: label?.name, scientific_name: label?.scientific };
+}
+
 /** One CSV file for all parts. The column `kind` tells the part of a row. */
 export function toCsv(data: AccountExport, species: SpeciesName): string {
-  const rows: CsvRow[] = [
+  const lines: CsvLine[] = [
     ...data.finds
       .filter((find) => !find.deleted)
-      .map((find): CsvRow => [
-        'find',
-        find.id,
-        species(find.speciesId),
-        find.foundOn,
-        find.lat,
-        find.lon,
-        find.count,
-        find.visibility,
-        find.note,
-      ]),
+      .map((find): CsvLine => ({
+        kind: 'find',
+        id: find.id,
+        ...speciesColumns(species, find.speciesId),
+        date: day(find.foundOn),
+        lat: find.lat,
+        lon: find.lon,
+        count: find.count,
+        visibility: find.visibility,
+        note: find.note,
+      })),
     ...data.markers
       .filter((marker) => !marker.deleted)
-      .map((marker): CsvRow => [
-        'marker',
-        marker.id,
-        marker.name,
-        marker.updatedAt,
-        marker.lat,
-        marker.lon,
-        null,
-        marker.visibility,
-        marker.note,
-      ]),
+      .map((marker): CsvLine => ({
+        kind: 'marker',
+        id: marker.id,
+        name: marker.name,
+        date: day(marker.createdAt ?? marker.updatedAt),
+        lat: marker.lat,
+        lon: marker.lon,
+        visibility: marker.visibility,
+        note: marker.note,
+      })),
     ...data.zones
       .filter((zone) => !zone.deleted)
-      .map((zone): CsvRow => [
-        'zone',
-        zone.id,
-        zone.name,
-        zone.updatedAt,
-        null,
-        null,
-        zone.areaHa,
-        zone.visibility,
-        zone.note,
-      ]),
-    ...data.photos.map((photo): CsvRow => [
-      'photo',
-      photo.id,
-      species(photo.speciesId),
-      photo.takenOn ?? photo.createdAt,
-      photo.lat,
-      photo.lon,
-      null,
-      photo.state,
-      photo.caption,
-    ]),
+      .map((zone): CsvLine => ({
+        kind: 'zone',
+        id: zone.id,
+        name: zone.name,
+        date: day(zone.createdAt ?? zone.updatedAt),
+        area_ha: hectares(zone.areaHa),
+        visibility: zone.visibility,
+        note: zone.note,
+      })),
+    ...data.photos.map((photo): CsvLine => ({
+      kind: 'photo',
+      id: photo.id,
+      ...speciesColumns(species, photo.speciesId),
+      date: day(photo.takenOn ?? photo.createdAt),
+      lat: photo.lat,
+      lon: photo.lon,
+      visibility: photo.state,
+      note: photo.caption,
+    })),
     ...data.combinations
       .filter((combination) => !combination.deleted)
-      .map((combination): CsvRow => [
-        'combination',
-        combination.id,
-        combination.name,
-        combination.updatedAt,
-        null,
-        null,
-        null,
-        null,
-        null,
-      ]),
+      .map((combination): CsvLine => ({
+        kind: 'combination',
+        id: combination.id,
+        name: combination.name,
+        date: day(combination.createdAt ?? combination.updatedAt),
+      })),
   ];
+  const rows = lines.map((line): CsvRow => CSV_HEAD.map((column) => line[column]));
   return [CSV_HEAD, ...rows].map((row) => row.map(csvField).join(',')).join('\r\n') + '\r\n';
 }
 

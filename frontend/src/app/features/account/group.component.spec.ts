@@ -13,6 +13,7 @@ import {
   groupsApiProvider,
 } from '../../testing/groups-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
+import { ToastService } from '../../ui/toast/toast.service';
 import { GroupComponent } from './group.component';
 
 async function build(
@@ -99,13 +100,30 @@ describe('GroupComponent', () => {
     expect(screen.getByText('Gruppe nicht gefunden')).toBeInTheDocument();
   });
 
-  it('copies the code without a share sheet', async () => {
+  it('copies the code without a share sheet and confirms it', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
     await build(OWNER_ID);
+    const success = vi.spyOn(TestBed.inject(ToastService), 'success');
 
     await userEvent.click(screen.getByRole('button', { name: 'Code teilen' }));
 
     expect(writeText).toHaveBeenCalledWith('PILZ-7F3K');
+    await vi.waitFor(() => {
+      expect(success).toHaveBeenCalledWith('Einladungscode kopiert');
+    });
+  });
+
+  it('shows the code when the clipboard refuses it', async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error('denied'));
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    await build(OWNER_ID);
+    const error = vi.spyOn(TestBed.inject(ToastService), 'error');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Code teilen' }));
+
+    await vi.waitFor(() => {
+      expect(error).toHaveBeenCalledWith('Der Code ließ sich nicht kopieren: PILZ-7F3K');
+    });
   });
 });

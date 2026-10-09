@@ -18,7 +18,8 @@ export interface SharedFind {
   reviewState: ReviewState;
 }
 
-/** An open find in review. It names the account that owns it. */
+/** An open find in review. It names the account that owns it and the name of that person. */
 export interface OpenFind extends SharedFind {
   ownerId: string;
+  ownerName: string | null;
 }

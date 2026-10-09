@@ -40,11 +40,15 @@ export class FormFieldComponent {
   readonly inputMode = input<InputMode>();
   /** Overrides the enter key that `multiline` gives. */
   readonly enterKeyHint = input<EnterKeyHint>();
+  /** A message below the field that marks the value as not valid. */
+  readonly error = input<string | null>(null);
 
   readonly valueChange = output<string>();
   readonly displayClick = output();
 
   protected readonly fieldId = `app-feld-${nextNumber++}`;
+  protected readonly errorId = `${this.fieldId}-fehler`;
+  protected readonly describedBy = computed(() => (this.error() ? this.errorId : null));
   protected readonly empty = computed(() => this.value().length === 0);
   protected readonly shown = computed(() => {
     if (this.empty()) return this.placeholder();

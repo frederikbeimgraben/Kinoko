@@ -319,21 +319,6 @@ func (m *Module) deleteFind(r *http.Request) (web.Response, error) {
 	return ownDelete(m, r, finds)
 }
 
-func (m *Module) openFinds(r *http.Request) (web.Response, error) {
-	p, err := paging.FromRequest(r, paging.MaxLimit)
-	if err != nil {
-		return nil, err
-	}
-	limit, offset := p.SQL()
-	rows, err := db.All(r.Context(), m.deps.DB, finds.scan,
-		"SELECT "+finds.columns+" FROM find WHERE review_state = ? AND deleted_at IS NULL "+
-			"ORDER BY created_at LIMIT ? OFFSET ?", enums.ReviewStateOpen, limit, offset)
-	if err != nil {
-		return nil, err
-	}
-	return web.OK(pageOf(rows, p, exactFind)), nil
-}
-
 type reviewBody struct {
 	Decision enums.ReviewDecision `json:"decision"`
 }

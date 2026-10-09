@@ -20,6 +20,7 @@ const i18n = catalogueOf({
   'enum.month.9': 'September',
   'enum.month.12': 'December',
   'find.pieces': '{count} pieces',
+  'find.unknownSpecies': 'Unidentified species',
   'sichtbarkeit.private': 'Private',
   'sichtbarkeit.shared': 'Shared',
   'area.hectares': '{area} ha',
@@ -71,7 +72,7 @@ describe('entry rows', () => {
     expect(row.day).toBe('Today');
   });
 
-  it('shows a shared find of an unknown species without count, note or person', () => {
+  it('names a shared find of an unknown species and shows no count, note or person', () => {
     const row = sharedFindRow(contextOf({ person: () => null }), {
       ...SHARED_FIND,
       count: null,
@@ -79,7 +80,7 @@ describe('entry rows', () => {
     });
 
     expect(row.object).toBeNull();
-    expect(row.entry.title).toBe('');
+    expect(row.entry.title).toBe('Unidentified species');
     expect(row.entry.colour).toBe('#7a5230');
     expect(row.entry.note).toBeUndefined();
     expect(row.entry.meta).not.toContain('pieces');

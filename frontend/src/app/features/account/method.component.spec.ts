@@ -6,13 +6,14 @@ import { ANY_ROUTE } from '../../testing/routes';
 import { MethodComponent } from './method.component';
 
 describe('MethodComponent', () => {
-  it('zeigt die Absätze der Methode und führt zurück zum Konto', async () => {
+  it('zeigt die Zeilen der Methode und führt zurück zum Konto', async () => {
     await render(MethodComponent, { providers: [provideRouter(ANY_ROUTE)] });
     const router = TestBed.inject(Router);
     const change = vi.spyOn(router, 'navigateByUrl');
 
-    expect(screen.getByText('Was die Karte zeigt')).toBeInTheDocument();
-    expect(screen.getByText('Was die Karte nicht zeigt')).toBeInTheDocument();
+    expect(screen.getByText('Begehungen')).toBeInTheDocument();
+    expect(screen.getByText('isotonisch, Obergrenze 0,50')).toBeInTheDocument();
+    expect(screen.getByText('Aktualisierung')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 

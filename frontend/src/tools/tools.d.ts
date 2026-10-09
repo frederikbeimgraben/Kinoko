@@ -99,3 +99,9 @@ declare module '*/tools/png.mjs' {
   export function encode(raster: Raster): Buffer;
   export function crop(image: Raster, box: { x: number; y: number; w: number; h: number }): Raster;
 }
+
+declare module '*/tools/stamp-version.mjs' {
+  export function label(raw: string | null | undefined): string;
+  export function describe(env?: Record<string, string | undefined>, git?: () => string | null): string;
+  export function content(version: string): string;
+}

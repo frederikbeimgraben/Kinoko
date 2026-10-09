@@ -1,0 +1,23 @@
+:host {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--surface-high);
+}
+
+.findmap__canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.findmap__pin {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+}
+
+app-map-attribution {
+  inset-block-end: 8px;
+}

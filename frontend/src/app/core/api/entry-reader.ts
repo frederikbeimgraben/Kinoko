@@ -4,6 +4,7 @@ import type { components } from './contract';
 import type { Find, Marker, OpenFind, SharedFind, Zone } from './models';
 
 type FindEntry = components['schemas']['Find'];
+type OpenFindEntry = components['schemas']['OpenFind'];
 type MarkerEntry = components['schemas']['Marker'];
 type ZoneEntry = components['schemas']['Zone'];
 
@@ -25,11 +26,11 @@ export function sharedFind(entry: FindEntry): SharedFind | null {
   };
 }
 
-/** An open find of the review: a shared find and its account. */
-export function openFind(entry: FindEntry): OpenFind | null {
+/** An open find of the review: a shared find, its account and the name of the account. */
+export function openFind(entry: OpenFindEntry): OpenFind | null {
   const shared = sharedFind(entry);
   if (shared === null || entry.ownerId === undefined) return null;
-  return { ...shared, ownerId: entry.ownerId };
+  return { ...shared, ownerId: entry.ownerId, ownerName: entry.ownerName ?? null };
 }
 
 /** An own find: a shared find with its visibility and its release. */

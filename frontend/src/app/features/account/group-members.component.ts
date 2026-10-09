@@ -8,6 +8,7 @@ import { IconButtonComponent } from '../../ui/icon-button/icon-button.component'
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
+import { ToastService } from '../../ui/toast/toast.service';
 
 /** One row of the member list. */
 interface Row {
@@ -33,6 +34,7 @@ export class GroupMembersComponent {
   readonly removed = output<string>();
 
   private readonly i18n = inject(I18nService);
+  private readonly toasts = inject(ToastService);
 
   protected readonly rows = computed<readonly Row[]>(() => {
     const group = this.group();
@@ -50,12 +52,27 @@ export class GroupMembersComponent {
     });
   });
 
-  protected share(): void {
+  /** The share sheet of the system, else the clipboard. A cancelled share sheet gives no message. */
+  protected async share(): Promise<void> {
     const code = this.group().inviteCode;
     if (typeof navigator.share === 'function') {
-      navigator.share({ text: code }).catch(() => undefined);
-      return;
+      const shared = await navigator.share({ text: code }).then(
+        () => true,
+        (failure: unknown) => failure instanceof DOMException && failure.name === 'AbortError',
+      );
+      if (shared) return;
     }
-    void navigator.clipboard.writeText(code);
+    await this.copy(code);
+  }
+
+  private async copy(code: string): Promise<void> {
+    const copied = await Promise.resolve()
+      .then(() => navigator.clipboard.writeText(code))
+      .then(
+        () => true,
+        () => false,
+      );
+    if (copied) this.toasts.success(this.i18n.translate('group.codeCopied'));
+    else this.toasts.error(this.i18n.translate('group.codeCopyFailed', { code }));
   }
 }

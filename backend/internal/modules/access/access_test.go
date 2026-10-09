@@ -164,6 +164,34 @@ func TestDeleteMyDataRemovesOwnedRowsButKeepsTheAccount(t *testing.T) {
 	}
 }
 
+func TestDeleteMyDataRemovesOwnedGroupsButKeepsOtherMemberships(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	bert := makeUser(t, env, "bert")
+	asAnna, asBert := signIn(t, env, anna), signIn(t, env, bert)
+	own := aGroup(t, env, asAnna, "Anna")
+	other := aGroup(t, env, asBert, "Bert")
+	join(t, env, asBert, own).Expect(t, http.StatusOK)
+	join(t, env, asAnna, other).Expect(t, http.StatusOK)
+	shared := insertMarker(t, env, bert.ID, "Shared")
+	group, err := db.ParseID(own["id"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+	exec(t, env, `UPDATE marker SET visibility = 'group', group_id = ? WHERE id = ?`, group, shared)
+
+	env.Delete("/me/data", asAnna).Expect(t, http.StatusNoContent)
+	if n := scalar[int](t, env, `SELECT count(*) FROM "group" WHERE owner_id = ?`, anna.ID); n != 0 {
+		t.Fatal(n)
+	}
+	if n := scalar[int](t, env, "SELECT count(*) FROM group_member WHERE user_id = ?", anna.ID); n != 1 {
+		t.Fatal(n)
+	}
+	if v := scalar[string](t, env, "SELECT visibility FROM marker WHERE id = ?", shared); v != "private" {
+		t.Fatal(v)
+	}
+}
+
 func TestListPermissionsNeedsRoleManage(t *testing.T) {
 	env := testkit.New(t)
 	u := makeUser(t, env, "person-1")

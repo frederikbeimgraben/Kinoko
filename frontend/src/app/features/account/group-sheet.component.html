@@ -2,8 +2,14 @@
   [title]="title()"
   [submit]="submit()"
   [busy]="busy()"
-  (submitted)="submitted.emit(text())"
+  (submitted)="send()"
   (cancelled)="cancelled.emit()"
 >
-  <app-form-field [label]="label()" [section]="true" [value]="text()" (valueChange)="text.set($event)" />
+  <app-form-field
+    [label]="label()"
+    [section]="true"
+    [value]="text()"
+    [error]="message()"
+    (valueChange)="change($event)"
+  />
 </app-form-sheet>

@@ -4,20 +4,34 @@
   @include page.page;
 }
 
+// The card starts below the head, as on the board `FindQueue`. Only the empty state is in the centre.
 .queue {
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: center;
   min-block-size: 0;
-  padding: 20px 16px 24px;
-  overflow: hidden;
+  padding: 0 16px 24px;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.queue__counter {
-  font-size: var(--fs-14);
-  color: var(--label);
-  font-variant-numeric: tabular-nums;
+.queue--empty {
+  justify-content: center;
+}
+
+// On the desktop the card has the width of the board `AdminDesktopFindQueue`, in the centre of the pane.
+app-review-queue {
+  align-self: center;
+  inline-size: min(100%, 488px);
+}
+
+.queue__badge {
+  --pilz-level-height: 28px;
+  --pilz-level-inline: 11px;
+  --pilz-level-radius: 999px;
+  --pilz-level-font: var(--fs-13);
+
+  margin-inline-end: 8px;
 }
 
 .card {
@@ -25,30 +39,24 @@
   flex-direction: column;
 }
 
-.card__image {
-  block-size: 240px;
-  border-radius: 0;
+.card__map {
+  block-size: clamp(220px, 41dvh, 344px);
 }
 
-// The body per `kit.css` `.qcard .qbody`.
+@media (min-width: 1024px) {
+  .card__map {
+    block-size: 400px;
+  }
+}
+
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
+  gap: 4px;
+  padding: 16px 16px 12px;
 }
 
-.card__species {
-  font-size: var(--fs-20);
-  font-weight: 500;
-}
-
-.card__meta {
-  font-size: var(--fs-14);
-  line-height: 1.4;
-  color: var(--text-var);
-}
-
-.card__caption {
-  font-size: var(--fs-14);
+.card__rows {
+  display: flex;
+  flex-direction: column;
 }
