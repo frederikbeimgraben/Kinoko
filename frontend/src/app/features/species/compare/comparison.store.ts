@@ -14,11 +14,11 @@ export function compareQuery(slugs: readonly string[]): Record<string, string> {
   return { [COMPARE_PARAM]: [...new Set(slugs)].slice(0, PAIR).join(',') };
 }
 
-/** The slugs of a comparison address. An empty or a missing value gives no species. */
-export function compareSlugs(value: string | null | undefined): string[] {
+/** The slugs of a comparison address, at most `limit`. An empty or a missing value gives no species. */
+export function compareSlugs(value: string | null | undefined, limit = PAIR): string[] {
   return [...new Set((value ?? '').split(',').map((one) => one.trim()))]
     .filter((one) => one !== '')
-    .slice(0, PAIR);
+    .slice(0, limit);
 }
 
 interface ComparisonFields {

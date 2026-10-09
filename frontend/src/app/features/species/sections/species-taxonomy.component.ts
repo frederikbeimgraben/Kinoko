@@ -30,6 +30,8 @@ export class SpeciesTaxonomyComponent {
   });
 
   protected open(): void {
-    void this.router.navigate(['/taxonomie', 'genus', taxonSlug(this.genus())]);
+    void this.router.navigate(['/taxonomie', 'genus', taxonSlug(this.genus())], {
+      queryParams: { art: this.species().slug },
+    });
   }
 }

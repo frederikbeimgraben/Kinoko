@@ -75,13 +75,38 @@ describe('compareGroups', () => {
     });
   });
 
-  it('trägt einen Fließtext für eine Notiz', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
-    const stem = groups.find((one) => one.label === 'Stiel');
-    const net = stem?.rows.find((one) => one.key === 'Netz');
+  it('trägt Netz, Ring, Knolle und Scheide aus den Stielmerkmalen ein', () => {
+    const stone = speciesEntry({ ...STONE, stemFeatures: [{ feature: 'netted', phase: 'old' }] });
+    const knight = speciesEntry({
+      ...KNIGHT,
+      stemFeatures: [
+        { feature: 'ring', phase: 'young' },
+        { feature: 'bulb', phase: 'old' },
+        { feature: 'volva', phase: 'old' },
+      ],
+    });
+    const groups = compareGroups([stone, knight], i18n(), names(), false);
+    const cells = (group: string, row: string) =>
+      groups.find((one) => one.label === group)?.rows.find((one) => one.key === row)?.cells;
 
-    expect(net?.cells[0]).toEqual({ kind: 'plain', text: 'fein, weiß' });
-    expect(net?.cells[1]).toEqual({ kind: 'none' });
+    expect(cells('Stiel', 'Netz')).toEqual([
+      { kind: 'plain', text: 'ja' },
+      { kind: 'plain', text: 'nein' },
+    ]);
+    expect(cells('Ring', 'Vorhanden')).toEqual([
+      { kind: 'plain', text: 'nein' },
+      { kind: 'plain', text: 'ja' },
+    ]);
+    expect(cells('Knolle', 'Vorhanden')?.[1]).toEqual({ kind: 'plain', text: 'ja' });
+    expect(cells('Knolle', 'Scheide')?.[1]).toEqual({ kind: 'plain', text: 'ja' });
+  });
+
+  it('lässt die Stielmerkmale ohne Angabe leer, statt „nein“ zu raten', () => {
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
+
+    expect(
+      groups.find((one) => one.label === 'Stiel')?.rows.find((one) => one.key === 'Netz'),
+    ).toBeUndefined();
   });
 
   it('lässt eine Zeile aus, für die keine Art einen Wert trägt', () => {

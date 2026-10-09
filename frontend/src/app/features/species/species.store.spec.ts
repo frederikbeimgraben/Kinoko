@@ -10,6 +10,7 @@ import {
   speciesBundle,
   speciesEntry,
 } from '../../testing/species-fixture';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { SpeciesStore } from './species.store';
 
 const NOT_MODIFIED = 304;
@@ -55,6 +56,37 @@ describe('SpeciesStore', () => {
     expect(setup.offline.values.get('catalog/etag')).toBe('w/"eins"');
     expect(setup.offline.values.get('catalog/bundle')).toEqual(SPECIES_BUNDLE);
     setup.http.verify();
+  });
+
+  it('ordnet die Arten nach dem gezeigten Namen, auf Englisch nach dem lateinischen', async () => {
+    const setup = build({
+      bundle: speciesBundle([
+        speciesEntry({ slug: 'boletus-edulis', name: 'Steinpilz', scientificName: 'Boletus edulis' }),
+        speciesEntry({
+          slug: 'cantharellus-cibarius',
+          name: 'Pfifferling',
+          scientificName: 'Cantharellus cibarius',
+        }),
+        speciesEntry({ slug: 'amanita-muscaria', name: 'Fliegenpilz', scientificName: 'Amanita muscaria' }),
+      ]),
+    });
+    void setup.state.loadBundle();
+    await vi.waitFor(() => {
+      expect(setup.state.species()).toHaveLength(3);
+    });
+
+    expect(setup.state.species().map((one) => one.name)).toEqual(['Fliegenpilz', 'Pfifferling', 'Steinpilz']);
+    const i18n = TestBed.inject(I18nService);
+    i18n.setLocale('en');
+    await vi.waitFor(() => {
+      expect(setup.state.species().map((one) => one.name)).toEqual([
+        'Amanita muscaria',
+        'Boletus edulis',
+        'Cantharellus cibarius',
+      ]);
+    });
+    expect(setup.state.entryOf('boletus-edulis')?.alias).toBe('Steinpilz');
+    i18n.setLocale('de');
   });
 
   it('nennt Palette und Achsen aus dem Bündel', async () => {

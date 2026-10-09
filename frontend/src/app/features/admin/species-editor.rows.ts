@@ -1,8 +1,9 @@
 import type { BodyPart, ColourGroup, Measurement, SpeciesEntry, TermRef, Unit } from '../../core/api/models';
 import { decimal } from '../../core/i18n/numbers';
-import type { TranslationKey } from '../../core/i18n/translations';
+import { DEFAULT_LOCALE, type TranslationKey } from '../../core/i18n/translations';
 import type { NamedColour } from '../species/catalogue-text';
 import { HYMENIUM_TEXT, PART_TEXT } from '../species/labels';
+import { nameLines } from '../species/species-names';
 import { heldParts, partDescription } from './species-lists';
 
 /** A row of a section in edit mode. */
@@ -114,11 +115,11 @@ export function sourceRows(species: SpeciesEntry): EditorRow[] {
   }));
 }
 
-/** The lookalike rows: name and the difference in one sentence. */
-export function lookalikeRows(species: SpeciesEntry): EditorRow[] {
+/** The lookalike rows: name per the name rule and the difference in one sentence. */
+export function lookalikeRows(species: SpeciesEntry, locale: string = DEFAULT_LOCALE): EditorRow[] {
   return species.lookalikes.map((one) => ({
     key: one.slug,
-    title: one.name,
+    title: nameLines(one.name, one.scientificName, locale).title,
     value: one.difference ?? '',
   }));
 }

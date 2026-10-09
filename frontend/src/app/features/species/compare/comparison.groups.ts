@@ -12,6 +12,7 @@ import {
   partNoteOf,
   seasonOf,
   senseSmellOf,
+  stemFeatureOf,
   reagentRows,
   swatchOf,
   type ReactionsOf,
@@ -80,13 +81,16 @@ function rawGroups(
           swatchCell(swatchOf(entry, 'stem', names)),
         ),
         buildRow(i18n.translate('species.field.net'), entries, (entry) =>
-          plainCell(partNoteOf(entry, 'stem')),
+          plainCell(stemFeatureOf(entry, ['netted'], i18n)),
         ),
       ],
     },
     {
       label: i18n.translate('species.field.ring'),
       rows: [
+        buildRow(i18n.translate('species.compare.present'), entries, (entry) =>
+          plainCell(stemFeatureOf(entry, ['ring'], i18n)),
+        ),
         buildRow(i18n.translate('species.field.shape'), entries, (entry) =>
           plainCell(partNoteOf(entry, 'ring')),
         ),
@@ -98,6 +102,12 @@ function rawGroups(
     {
       label: i18n.translate('species.field.bulb'),
       rows: [
+        buildRow(i18n.translate('species.compare.present'), entries, (entry) =>
+          plainCell(stemFeatureOf(entry, ['bulb'], i18n)),
+        ),
+        buildRow(i18n.translate('species.field.volva'), entries, (entry) =>
+          plainCell(stemFeatureOf(entry, ['volva'], i18n)),
+        ),
         buildRow(i18n.translate('species.field.shape'), entries, (entry) =>
           plainCell(partNoteOf(entry, 'stem_base')),
         ),

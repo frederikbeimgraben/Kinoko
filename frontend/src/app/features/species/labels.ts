@@ -7,8 +7,10 @@ import type {
   GillEdge,
   GillSpacing,
   HymeniumType,
+  Phase,
   Protection,
   Speed,
+  StemFeature,
 } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -56,6 +58,28 @@ export const HYMENIUM_TEXT: Record<HymeniumType, TranslationKey> = {
   pores: 'enum.hymenium.pores',
   spines: 'enum.hymenium.spines',
   folds: 'enum.hymenium.folds',
+};
+
+/** The stem features in the order of the page: first the features that tell the deadly species apart. */
+export const STEM_FEATURE_TEXT: Readonly<Record<StemFeature, TranslationKey>> = {
+  ring: 'enum.stem_feature.ring',
+  volva: 'enum.stem_feature.volva',
+  bulb: 'enum.stem_feature.bulb',
+  netted: 'enum.stem_feature.netted',
+  banded: 'enum.stem_feature.banded',
+  hollow: 'enum.stem_feature.hollow',
+  solid: 'enum.stem_feature.solid',
+  fibrous: 'enum.stem_feature.fibrous',
+  flocked: 'enum.stem_feature.flocked',
+  hairy: 'enum.stem_feature.hairy',
+  striate: 'enum.stem_feature.striate',
+  rooting: 'enum.stem_feature.rooting',
+  brittle: 'enum.stem_feature.brittle',
+};
+
+export const PHASE_TEXT: Readonly<Record<Phase, TranslationKey>> = {
+  young: 'enum.phase.young',
+  old: 'enum.phase.old',
 };
 
 export const CAP_SHAPE_TEXT: Record<CapShape, TranslationKey> = {

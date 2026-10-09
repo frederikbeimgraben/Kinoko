@@ -31,6 +31,8 @@ export type {
   Edibility,
   Group,
   HymeniumType,
+  Phase,
+  StemFeature,
   Measurement,
   MeasurementGroup,
   PartNote,

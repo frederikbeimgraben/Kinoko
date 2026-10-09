@@ -35,7 +35,9 @@ export class GlossaryComponent {
   protected readonly back = computed(() => !this.wide());
   protected readonly search = this.store.search;
   private readonly i18n = inject(I18nService);
-  protected readonly entries = computed(() => glossaryIn(this.store.found(), this.i18n.locale()));
+  protected readonly entries = computed(() =>
+    glossaryIn(this.store.found(), this.i18n.locale(), this.store.search()),
+  );
   protected readonly loaded = computed(() => this.store.entries() !== null);
   protected readonly failed = this.store.failed;
   /** No term at all is a state of its own: "not found" applies only to a search. */

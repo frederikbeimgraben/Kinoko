@@ -19,6 +19,8 @@
     <span class="row__name">{{ species().name }}</span>
     @if (species().latin !== species().name) {
       <span class="row__latin">{{ species().latin }}</span>
+    } @else if (species().alias) {
+      <span class="row__latin row__latin--alias" [attr.lang]="aliasLang">{{ species().alias }}</span>
     }
   </span>
   @if (!muted()) {

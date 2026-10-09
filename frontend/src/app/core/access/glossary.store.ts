@@ -86,13 +86,27 @@ export function glossaryTerm(entry: GlossaryEntry, locale: string): string {
   return locale !== 'de' && entry.termEn !== '' ? entry.termEn : entry.term;
 }
 
-/** The entries with term and definition in the UI language, sorted by the term that shows. */
-export function glossaryIn(entries: readonly GlossaryEntry[], locale: string): GlossaryEntry[] {
+/** The rank of an entry for a search: a term that starts with the text, then a term that has it,
+ * then an entry that has it in the definition only. */
+function searchRank(entry: GlossaryEntry, needle: string): number {
+  const terms = [entry.term, entry.termEn].map((term) => term.toLocaleLowerCase());
+  if (terms.some((term) => term.startsWith(needle))) return 0;
+  return terms.some((term) => term.includes(needle)) ? 1 : 2;
+}
+
+/** The entries with term and definition in the UI language, sorted by the term that shows.
+ * With a search text, the entries whose term has the text come first. */
+export function glossaryIn(entries: readonly GlossaryEntry[], locale: string, search = ''): GlossaryEntry[] {
+  const needle = search.trim().toLocaleLowerCase();
   return entries
     .map((entry) => ({
-      ...entry,
-      term: glossaryTerm(entry, locale),
-      definition: glossaryText(entry, locale),
+      entry: {
+        ...entry,
+        term: glossaryTerm(entry, locale),
+        definition: glossaryText(entry, locale),
+      },
+      rank: needle === '' ? 0 : searchRank(entry, needle),
     }))
-    .sort((a, b) => a.term.localeCompare(b.term, locale));
+    .sort((a, b) => a.rank - b.rank || a.entry.term.localeCompare(b.entry.term, locale))
+    .map((one) => one.entry);
 }

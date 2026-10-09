@@ -14,9 +14,15 @@ interface SourceRow {
   url: string | null;
 }
 
-/** The address without a closing slash and in lower case, so that one page counts one time. */
-function addressKey(url: string | null, title: string): string {
-  return url === null ? `title:${title}` : url.trim().replace(/\/+$/, '').toLowerCase();
+/** The address without scheme, `www.`, closing slash and case, so that one page counts one time. */
+export function addressKey(url: string | null, title: string): string {
+  if (url === null) return `title:${title}`;
+  return url
+    .trim()
+    .toLowerCase()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/\/+$/, '');
 }
 
 /** The sources of a species per `SpeciesSections.dc.html`: title, host and a button to open the page.

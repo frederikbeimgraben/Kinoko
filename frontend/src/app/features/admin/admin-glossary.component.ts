@@ -43,7 +43,9 @@ export class AdminGlossaryComponent {
 
   protected readonly wide = inject(ViewportService).wide;
   protected readonly search = this.state.search;
-  protected readonly entries = computed(() => glossaryIn(this.state.found(), this.i18n.locale()));
+  protected readonly entries = computed(() =>
+    glossaryIn(this.state.found(), this.i18n.locale(), this.state.search()),
+  );
   protected readonly loaded = computed(() => this.state.items() !== null);
   protected readonly saving = this.state.writing;
 

@@ -24,7 +24,7 @@ const LIST_SEPARATOR = ', ';
 export interface CatalogueNames {
   colour(value: NamedColour): string;
   term(value: NamedTerm): string;
-  /** Terms as one list. Outside German, a term after the first starts in lower case, as in a sentence. */
+  /** Terms as one list. A term after the first starts in lower case, as in a sentence. All terms are adjectives. */
   termList(values: readonly NamedTerm[]): string;
   /** A free German text of the catalogue in German, else the fallback. An empty fallback hides the text. */
   free(german: string, fallback: string): string;
@@ -52,9 +52,7 @@ export function catalogueNames(i18n: I18nService, palette: () => readonly Standa
       values
         .map((value, index) => {
           const text = term(value);
-          return german() || index === 0
-            ? text
-            : text.charAt(0).toLocaleLowerCase(i18n.locale()) + text.slice(1);
+          return index === 0 ? text : text.charAt(0).toLocaleLowerCase(i18n.locale()) + text.slice(1);
         })
         .join(LIST_SEPARATOR),
     free: (text, fallback) => (german() ? text : fallback),

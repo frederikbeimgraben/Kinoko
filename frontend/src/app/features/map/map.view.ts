@@ -17,6 +17,7 @@ import type { TimelineWeek } from '../../ui/timeline/timeline.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE } from '../species/labels';
 import { EntriesStore } from '../entries/entries.store';
 import { photoPath } from '../../core/api/models';
+import { aliasOf } from '../species/species-names';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
 import { DEFAULT_LAYER, MapStore } from './map.store';
@@ -156,6 +157,7 @@ export class MapView {
         value: species.slug,
         name: species.name,
         latin: species.scientificName,
+        alias: aliasOf(species),
         levelText: this.i18n.translate(EDIBILITY_TEXT[species.edibility]),
         levelColour: EDIBILITY_TONE[species.edibility].colour,
         levelBackground: EDIBILITY_TONE[species.edibility].background,

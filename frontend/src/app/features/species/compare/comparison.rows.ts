@@ -1,8 +1,9 @@
-import type { BodyPart, Dimension, HymeniumType, SpeciesEntry } from '../../../core/api/models';
+import type { BodyPart, Dimension, HymeniumType, SpeciesEntry, StemFeature } from '../../../core/api/models';
 import type { I18nService } from '../../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../../core/i18n/translations';
 import type { CatalogueNames } from '../catalogue-text';
 import { distinctChanges } from '../sections/reactions';
+import { hasStemFeature } from '../stem-features';
 import type { SpeciesReaction } from '../species.store';
 import { shortMonth } from '../../../core/i18n/dates';
 import { spanText } from '../../../ui/measurement/measurement.component';
@@ -75,6 +76,17 @@ export function partNoteOf(entry: SpeciesEntry, part: BodyPart): string | null {
   return note && note.description !== '' ? note.description : null;
 }
 
+/** A stem feature as yes or no. Without stem data the cell stays empty. */
+export function stemFeatureOf(
+  entry: SpeciesEntry,
+  features: readonly StemFeature[],
+  i18n: I18nService,
+): string | null {
+  const held = hasStemFeature(entry, features);
+  if (held === null) return null;
+  return i18n.translate(held ? 'species.compare.yes' : 'species.compare.no');
+}
+
 /** The kind of hymenium as a word. */
 export function hymeniumTypeOf(entry: SpeciesEntry, i18n: I18nService): string | null {
   return entry.hymeniumType ? i18n.translate(HYMENIUM_TEXT[entry.hymeniumType]) : null;
@@ -87,11 +99,11 @@ export function hymeniumColourOf(entry: SpeciesEntry, names: CatalogueNames): Sw
   return swatchOf(entry, kind as BodyPart, names);
 }
 
-/** The smell: the terms of the catalogue, or else the free text. */
+/** The smell: the terms of the catalogue, or else the free German text, only in German. */
 export function senseSmellOf(entry: SpeciesEntry, names: CatalogueNames): string | null {
   const tags = entry.terms.filter((one) => one.term.kind === 'smell').map((one) => one.term);
   if (tags.length > 0) return names.termList(tags);
-  return entry.smellText && entry.smellText !== '' ? entry.smellText : null;
+  return names.free(entry.smellText ?? '', '') || null;
 }
 
 /** The season as a span of short month names. */

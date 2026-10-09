@@ -12,6 +12,14 @@
 }
 
 <div class="pad">
+  @if (!back() && !empty()) {
+    <app-search-field
+      class="glossary__search"
+      [value]="search()"
+      [placeholder]="'glossary.search' | t"
+      (valueChange)="onSearch($event)"
+    />
+  }
   @if (!loaded()) {
     <app-row-group-skeleton [count]="4" [lines]="3" />
   } @else if (failed()) {

@@ -4,6 +4,7 @@ import { from, mergeMap } from 'rxjs';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { DEFAULT_LOCALE } from '../../../core/i18n/translations';
 import { HistoryService } from '../../../core/navigation/history.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { ViewportService } from '../../../core/layout/viewport.service';
@@ -18,15 +19,17 @@ import { ScrollFadeDirective } from '../../../ui/scroll-fade/scroll-fade.directi
 import { SkeletonComponent } from '../../../ui/skeleton/skeleton.component';
 import { StateViewComponent } from '../../../ui/state-view/state-view.component';
 import { SvgIconComponent } from '../../../ui/svg-icon/svg-icon.component';
+import { ToastService } from '../../../ui/toast/toast.service';
 import { photoPath } from '../../../core/api/models';
 import { CatalogueText } from '../catalogue-text';
 import { leadColour } from '../rows';
+import { aliasOf } from '../species-names';
 import { SpeciesDeskComponent } from '../species-desk.component';
 import { SpeciesStore } from '../species.store';
 import type { Group } from './comparison.cells';
 import { compareGroups } from './comparison.groups';
 import { CompareEntryComponent } from './compare-entry.component';
-import { ComparisonStore, compareQuery, compareSlugs } from './comparison.store';
+import { COMPARE_PARAM, ComparisonStore, compareQuery, compareSlugs } from './comparison.store';
 
 const PHONE_MENU_ANCHOR: PopoverAnchor = { top: 60, end: 8 };
 const DESKTOP_MENU_ANCHOR: PopoverAnchor = { top: 64, end: 12 };
@@ -71,6 +74,7 @@ export class ComparisonComponent {
   private readonly router = inject(Router);
   private readonly i18n = inject(I18nService);
   private readonly names = inject(CatalogueText);
+  private readonly toasts = inject(ToastService);
 
   /** The query parameter `arten`: the slugs of the comparison, separated by a comma. */
   readonly arten = input<string>();
@@ -81,12 +85,14 @@ export class ComparisonComponent {
   protected readonly adding = signal(false);
   protected readonly menuAnchor = computed(() => (this.wide() ? DESKTOP_MENU_ANCHOR : PHONE_MENU_ANCHOR));
   protected readonly fill = swatchFill;
+  protected readonly catalogueLang = DEFAULT_LOCALE;
 
   protected readonly heads = computed(() =>
     this.comparison.species().map((one) => ({
       slug: one.slug,
       name: one.name,
       latin: one.scientificName,
+      alias: aliasOf(one),
       image: one.leadPhotoId ? photoPath(one.leadPhotoId, 'list') : '',
       colour: leadColour(one),
     })),
@@ -103,9 +109,24 @@ export class ComparisonComponent {
     effect(() => {
       this.comparison.set(compareSlugs(this.arten()));
     });
+    // A link can name an unknown species or more than two: the address then names only the shown species.
+    effect(() => {
+      if (this.catalogue.species().length === 0) return;
+      const asked = this.arten() ?? '';
+      const named = compareSlugs(asked, Infinity);
+      const known = named.filter((slug) => this.catalogue.entryOf(slug) !== null);
+      const query = compareQuery(known);
+      if (query[COMPARE_PARAM] === asked) return;
+      if (known.length < named.length) {
+        this.toasts.show(this.i18n.translate('species.compare.unknown'));
+      }
+      void this.router.navigate([], { queryParams: query, replaceUrl: true });
+    });
     void this.catalogue.loadBundle();
-    // The reactions are only in the profile: each chosen species loads it one time.
-    this.catalogue.loadProfile(toObservable(this.comparison.slugs).pipe(mergeMap((slugs) => from(slugs))));
+    // The reactions are only in the profile: each shown species loads it one time.
+    this.catalogue.loadProfile(
+      toObservable(this.comparison.species).pipe(mergeMap((species) => from(species.map((one) => one.slug)))),
+    );
   }
 
   /** A comparison from a link goes back to its first species. */

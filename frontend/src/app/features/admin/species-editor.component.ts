@@ -18,6 +18,7 @@ import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.
 import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
 import { PartPickerComponent } from './part-picker.component';
+import { nameLines } from '../species/species-names';
 import { SpeciesEditorStore } from './species-editor.store';
 import {
   changeRows,
@@ -79,8 +80,10 @@ export class SpeciesEditorComponent {
   protected readonly edibilityNote = linkedSignal(() => this.species()?.edibilityNote ?? '');
 
   protected readonly title = computed(() => {
-    const name = this.species()?.name;
-    return name === undefined ? '' : this.i18n.translate('admin.species.editName', { name });
+    const held = this.species();
+    if (held === null) return '';
+    const name = nameLines(held.name, held.scientificName, this.i18n.locale()).title;
+    return this.i18n.translate('admin.species.editName', { name });
   });
 
   protected readonly stats = computed<Stat[]>(() => {
@@ -110,7 +113,7 @@ export class SpeciesEditorComponent {
   );
   protected readonly changes = computed(() => this.rows((one) => changeRows(one, this.rowText())));
   protected readonly more = computed(() => this.rows((one) => moreRows(one, this.rowText())));
-  protected readonly lookalikes = computed(() => this.rows(lookalikeRows));
+  protected readonly lookalikes = computed(() => this.rows((one) => lookalikeRows(one, this.i18n.locale())));
   protected readonly sources = computed(() => this.rows(sourceRows));
 
   /** The person who changed the species last, and the day of the change. */

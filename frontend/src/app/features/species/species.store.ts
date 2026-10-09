@@ -8,11 +8,11 @@ import type { components } from '../../core/api/contract';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { OfflineStore } from '../../core/offline/offline-store';
 import { factsOf, type Counts, type Facts } from './facets';
-import { localSpecies } from './species-names';
+import { localSpecies, type LocalSpecies } from './species-names';
 
 /** A species with the filter axes calculated from it. */
 export interface CatalogueEntry {
-  readonly species: SpeciesEntry;
+  readonly species: LocalSpecies;
   readonly facts: Facts;
 }
 
@@ -58,8 +58,11 @@ export const SpeciesStore = signalStore(
   withState<SpeciesStoreState>(INITIAL),
   withProps(() => ({ _api: inject(SpeciesApi), _offline: inject(OfflineStore), _i18n: inject(I18nService) })),
   withComputed(({ bundle, _i18n }) => {
-    const species = computed<readonly SpeciesEntry[]>(() =>
-      (bundle()?.items ?? []).map((one) => localSpecies(one, _i18n.locale())),
+    // Each picker and list shows the species in the order of the shown name, also where it is the Latin name.
+    const species = computed<readonly LocalSpecies[]>(() =>
+      (bundle()?.items ?? [])
+        .map((one) => localSpecies(one, _i18n.locale()))
+        .sort((one, other) => one.name.localeCompare(other.name, _i18n.locale(), { numeric: true })),
     );
     const palette = computed<readonly StandardColour[]>(() => bundle()?.standardColours ?? []);
     const entries = computed<readonly CatalogueEntry[]>(() =>
@@ -123,11 +126,11 @@ export const SpeciesStore = signalStore(
         void loadBundle();
       },
 
-      entryOf(slug: string): SpeciesEntry | null {
+      entryOf(slug: string): LocalSpecies | null {
         return store._bySlug().get(slug) ?? null;
       },
 
-      entryById(id: string): SpeciesEntry | null {
+      entryById(id: string): LocalSpecies | null {
         return store._byId().get(id) ?? null;
       },
 
