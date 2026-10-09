@@ -9,6 +9,7 @@
     appSheetHeight
     class="object__sheet"
     [class.object__sheet--hidden]="relocating()"
+    [class.object__sheet--gone]="editingCorners()"
     [label]="sheetName()"
     [title]="headTitle()"
     [modal]="!editingCorners()"
@@ -20,7 +21,7 @@
     } @else if (marker(); as entry) {
       <app-marker-sheet [marker]="entry" (closed)="close()" />
     } @else if (zone(); as entry) {
-      <app-zone-sheet [zone]="entry" (closed)="close()" />
+      <app-zone-sheet #zoneSheet [zone]="entry" (closed)="close()" />
     } @else if (missing()) {
       <p class="note object__missing">{{ 'objekt.nichtGefunden' | t }}</p>
     }
@@ -34,4 +35,14 @@
     </div>
     <app-step-bar [label]="aimTitle()" [actions]="aimActions()" (chosen)="$event.run()" />
   </div>
+}
+
+@if (editingCorners()) {
+  <app-step-bar
+    appSheetHeight
+    [label]="'entry.zone.changeOutline' | t"
+    [note]="zoneSheet()?.cornerNote() ?? ''"
+    [actions]="cornerActions()"
+    (chosen)="$event.run()"
+  />
 }

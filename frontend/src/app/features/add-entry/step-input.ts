@@ -77,6 +77,11 @@ export class StepInput {
     if (this.mode() === 'crosshair') this._aim.set(point);
   }
 
+  /** Forgets the clicked point, so the status names no point. The crosshair of the phone keeps its point. */
+  forget(): void {
+    if (this.mode() === 'pointer') this._aim.set(null);
+  }
+
   /** Whether a point is near enough to another point to hit it. */
   hits(target: Location, at: Location): boolean {
     const one = this.adapter.project(target);

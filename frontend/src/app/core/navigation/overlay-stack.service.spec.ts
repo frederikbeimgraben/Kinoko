@@ -76,6 +76,20 @@ describe('OverlayStackService', () => {
     expect(go).toHaveBeenCalledWith(-2);
   });
 
+  it('gibt bei release die Ebene frei und behält den Verlaufseintrag', () => {
+    const stack = build();
+    const outer = vi.fn();
+    const back = vi.spyOn(history, 'back').mockImplementation(() => undefined);
+    stack.open(outer);
+    stack.open(() => undefined);
+
+    stack.release();
+    window.dispatchEvent(new PopStateEvent('popstate'));
+
+    expect(back).not.toHaveBeenCalled();
+    expect(outer).toHaveBeenCalledTimes(1);
+  });
+
   it('tut nichts, wenn keine Ebene offen steht', () => {
     const stack = build();
     const back = vi.spyOn(history, 'back').mockImplementation(() => undefined);

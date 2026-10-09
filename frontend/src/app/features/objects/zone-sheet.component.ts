@@ -165,14 +165,24 @@ export class ZoneSheetComponent implements OnDestroy {
     });
   }
 
+  /** The status of the corner step for screen readers: the corners and the area. */
+  readonly cornerNote = computed(() => {
+    const moved = asPolygon(this.newCorners() ?? []);
+    const ring = (moved ?? this.sheet.outline() ?? this.zone().polygon).coordinates[0];
+    return this.i18n.translate('entry.zone.drawStatus', {
+      points: ring.length - 1,
+      area: hectaresText(moved === null ? this.area() : areaHa(moved), this.i18n.locale()),
+    });
+  });
+
   /** Keeps the new outline and goes back to the form, per `MapZoneEdit`. */
-  protected applyCorners(): void {
+  applyCorners(): void {
     const corners = this.newCorners();
     this.stopSession();
     this.sheet.endCorners(corners === null ? null : asPolygon(corners));
   }
 
-  protected cancelCorners(): void {
+  cancelCorners(): void {
     this.stopSession();
     this.sheet.endCorners(null);
   }
@@ -185,11 +195,12 @@ export class ZoneSheetComponent implements OnDestroy {
     if (await this.eintraege.deleteZone(id)) this.toasts.success(this.i18n.translate('entry.zone.deleted'));
   }
 
-  /** Opens the entries with the filter of this zone, per `EntriesZone.dc.html`. */
+  /** Opens the entries with the filter of this zone, per `EntriesZone.dc.html`.
+   * A `history.back()` of the sheet would stop the navigation, so the list takes the history entry of the sheet. */
   protected showFinds(): void {
     this.eintraege.setFilter({ ...NO_FILTER, zoneId: this.zone().id });
-    this.closed.emit();
-    void this.router.navigate(['/eintraege']);
+    this.sheet.leave();
+    void this.router.navigate(['/eintraege'], { replaceUrl: true });
   }
 
   private stopSession(): void {

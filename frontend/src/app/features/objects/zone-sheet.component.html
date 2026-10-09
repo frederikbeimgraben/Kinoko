@@ -27,26 +27,16 @@
       <app-map-app-link [target]="center()" />
     </app-row-group>
   </div>
-  @if (editingCorners()) {
-    <app-action-bar
-      foot
-      [primary]="'common.apply' | t"
-      [secondary]="'common.cancel' | t"
-      (primaryClick)="applyCorners()"
-      (secondaryClick)="cancelCorners()"
-    />
-  } @else {
-    <app-action-bar
-      foot
-      [primary]="'common.edit' | t"
-      primaryIcon="edit"
-      [secondary]="'common.delete' | t"
-      secondaryIcon="trash"
-      [secondaryDanger]="true"
-      (primaryClick)="sheet.setEditing(true)"
-      (secondaryClick)="deleteAsk.set(true)"
-    />
-  }
+  <app-action-bar
+    foot
+    [primary]="'common.edit' | t"
+    primaryIcon="edit"
+    [secondary]="'common.delete' | t"
+    secondaryIcon="trash"
+    [secondaryDanger]="true"
+    (primaryClick)="sheet.setEditing(true)"
+    (secondaryClick)="deleteAsk.set(true)"
+  />
 }
 <app-confirm-dialog
   [open]="deleteAsk()"

@@ -18,7 +18,8 @@ import { MAP_ADAPTER } from '../../map/map.tokens';
 import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
-import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
+import { StepBarComponent } from '../../ui/step-bar/step-bar.component';
+import { panBelow } from '../add-entry/crosshair-aim';
 import { EntriesStore } from '../entries/entries.store';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore, type ObjectKind } from '../map/map.store';
@@ -26,6 +27,7 @@ import { MapSurface } from '../map/map-surface';
 import { FindSheetComponent } from './find-sheet.component';
 import { MarkerSheetComponent } from './marker-sheet.component';
 import { ObjectSheetStore } from './object-sheet.store';
+import { ZOOM_OBJECT, confirmActions, fitZone } from './object-steps';
 import { ZoneSheetComponent } from './zone-sheet.component';
 
 /** The name of the sheet for assistive technology. */
@@ -41,12 +43,6 @@ const EDIT_TITLE: Record<ObjectKind, TranslationKey> = {
   marker: 'entry.marker.editTitle',
   zone: 'entry.zone.editTitle',
 };
-
-/** The zoom of an open object: near enough to see the way, far enough to see where you are. */
-const ZOOM_OBJECT = 14;
-
-/** The free edge around a zone outline, in pixels. The sides keep the corners clear of the map buttons. */
-const ZONE_PADDING = { top: 48, bottom: 48, left: 88, right: 88 };
 
 /** The padding of the map eases in 220 ms (`MapLibreAdapter.setPadding`). */
 const PADDING_SETTLE_MS = 260;
@@ -133,30 +129,37 @@ export class ObjectSheetComponent {
   protected readonly relocating = this.sheet.relocating;
 
   private readonly cross = viewChild<ElementRef<HTMLElement>>('cross');
+  protected readonly zoneSheet = viewChild<ZoneSheetComponent>('zoneSheet');
 
   protected readonly aimTitle = computed(() =>
     this.i18n.translate(this.marker() ? 'entry.setMarker.title' : 'entry.setLocation.title'),
   );
 
   /** Cancel and confirm, per `StepBar.dc.html`. */
-  protected readonly aimActions = computed<readonly StepAction[]>(() => [
-    {
-      label: this.i18n.translate('common.cancel'),
-      icon: 'close',
-      variant: 'secondary',
-      run: () => {
+  protected readonly aimActions = computed(() =>
+    confirmActions(
+      { cancel: this.i18n.translate('common.cancel'), confirm: this.i18n.translate('entry.confirmLocation') },
+      () => {
         this.sheet.cancelRelocating();
       },
-    },
-    {
-      label: this.i18n.translate('entry.confirmLocation'),
-      icon: 'check',
-      variant: 'primary',
-      run: () => {
+      () => {
         this.adoptAim();
       },
-    },
-  ]);
+    ),
+  );
+
+  /** The corner step of a zone has a step bar like "Zone zeichnen", not the sheet (`ZoneDraw.dc.html`). */
+  protected readonly cornerActions = computed(() =>
+    confirmActions(
+      { cancel: this.i18n.translate('common.cancel'), confirm: this.i18n.translate('common.apply') },
+      () => {
+        this.zoneSheet()?.cancelCorners();
+      },
+      () => {
+        this.zoneSheet()?.applyCorners();
+      },
+    ),
+  );
 
   constructor() {
     // A tap on an object or on an entry row moves the map to it. The move waits for the start of the map
@@ -173,12 +176,15 @@ export class ObjectSheetComponent {
       });
     });
     // The fit waits for the sheet height: the padding change of the map would stop a running fit.
+    // The corner step has only the step bar, so the outline then fills the map.
     effect((onCleanup) => {
       const zone = this.zone();
+      const outline = this.sheet.outline();
+      const corners = this.editingCorners();
       this.map.overlayHeight();
-      if (zone === null || this.editingCorners()) return;
+      if (zone === null || !this.surface.ready()) return;
       const timer = setTimeout(() => {
-        this.fitZone(zone);
+        fitZone(this.adapter.rawMap(), outline ?? zone.polygon, corners);
       }, PADDING_SETTLE_MS);
       onCleanup(() => {
         clearTimeout(timer);
@@ -191,32 +197,11 @@ export class ObjectSheetComponent {
     });
   }
 
-  /** A zone shows its full outline, so "Umriss ändern" has each corner on the screen. */
-  private fitZone(zone: Zone): void {
-    const ring = zone.polygon.coordinates[0];
-    const lons = ring.map((point) => point[0]);
-    const lats = ring.map((point) => point[1]);
-    this.adapter.rawMap()?.fitBounds(
-      [
-        [Math.min(...lons), Math.min(...lats)],
-        [Math.max(...lons), Math.max(...lats)],
-      ],
-      { padding: ZONE_PADDING, maxZoom: ZOOM_OBJECT, duration: 400 },
-    );
-  }
-
   /** Moves the map so that the point of the form is below the crosshair. */
   private aimAtObject(cross: HTMLElement): void {
     const map = this.adapter.rawMap();
     const point = this.sheet.moved() ?? this.location();
-    if (map === null || point === null) return;
-    const aim = cross.getBoundingClientRect();
-    const canvas = map.getCanvas().getBoundingClientRect();
-    const shown = map.project([point[0], point[1]]);
-    map.panBy(
-      [shown.x + canvas.left - (aim.left + aim.width / 2), shown.y + canvas.top - (aim.top + aim.height / 2)],
-      { duration: 300 },
-    );
+    if (map !== null && point !== null) panBelow(map, cross, point);
   }
 
   private adoptAim(): void {
@@ -230,9 +215,10 @@ export class ObjectSheetComponent {
     this.sheet.relocate([point[0], point[1]]);
   }
 
-  /** Escape and a tap outside the sheet end the crosshair step first. */
+  /** Escape and a tap outside the sheet end the crosshair step or the corner step first. */
   protected hostClosed(): void {
     if (this.relocating()) this.sheet.cancelRelocating();
+    else if (this.editingCorners()) this.zoneSheet()?.cancelCorners();
     else this.close();
   }
 

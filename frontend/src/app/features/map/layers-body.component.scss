@@ -22,8 +22,9 @@
   color: var(--label);
 }
 
+// The thumb centre is on the value, so at 100 % half a thumb is past the track. The side padding keeps it in the sheet.
 .layers__slider {
-  padding: 8px 4px 4px;
+  padding: 8px 12px 4px;
 }
 
 // Per `SwitchRow.dc.html`: a `.row` with a label and a switch.
