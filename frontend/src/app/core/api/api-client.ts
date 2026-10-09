@@ -10,6 +10,7 @@ import { Injectable, inject } from '@angular/core';
 import { catchError, filter, map, of, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
 import { DEFAULT_LOCALE } from '../i18n/translations';
+import { ConnectionNotice } from '../../ui/banner/connection-notice';
 import { ToastService } from '../../ui/toast/toast.service';
 import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
@@ -56,6 +57,7 @@ export class ApiClient {
   private readonly http = inject(HttpClient);
   private readonly basis = inject(API_BASE_URL);
   private readonly toasts = inject(ToastService);
+  private readonly notice = inject(ConnectionNotice);
   private readonly i18n = inject(I18nService);
 
   get<T>(path: string, query?: Query, options?: Silent): Observable<T> {
@@ -172,6 +174,8 @@ export class ApiClient {
 
   private loud(problem: ProblemDetail, options?: Silent): boolean {
     if (options?.quiet === true || problem.code === SIGN_IN_REQUIRED) return false;
+    // The offline banner on the screen tells it already. A toast would only cover the page.
+    if (problem.status === 0 && this.notice.shown()) return false;
     return !(options?.quietStatus ?? []).includes(problem.status);
   }
 
