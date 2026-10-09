@@ -42,9 +42,8 @@
                 "output": "assets/maplibre"
               },
               {
-                // Das Stylesheet der Karte, 84 kB. Als Asset statt in
-                // `styles.scss`: nur der Kartenreiter braucht es, und im
-                // ersten Bündel lud es jeder Aufruf mit.
+                // The map stylesheet (84 kB) is an asset, not part of `styles.scss`.
+                // Only the map tab needs it, so the first bundle stays small.
                 "glob": "maplibre-gl.css",
                 "input": "node_modules/maplibre-gl/dist",
                 "output": "assets/maplibre"
