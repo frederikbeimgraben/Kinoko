@@ -1136,7 +1136,7 @@ export interface components {
             oidcName: string;
             oidcClientId: string;
             origin: string;
-            /** @description Version of the build, for example v2026-10-08-01-3. "dev" without a version. */
+            /** @description Version of the build, the release tag (vYYYY-MM-DD-NN) and the count of later commits. "dev" without a version. */
             version: string;
         };
         Me: {

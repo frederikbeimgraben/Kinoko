@@ -21,7 +21,7 @@ function fromGit() {
   }
 }
 
-/** The version as the about page shows it, for example `v2026-10-08-01-3`.
+/** The version as the about page shows it: the release tag `vYYYY-MM-DD-NN` and the count of later commits.
  * The commit hash goes, and a release tag without `v` gets the `v`. `config.Label` in the service agrees. */
 export function label(raw) {
   const version = (raw ?? '').trim().replace(/-g[0-9a-f]{7,}$/, '');

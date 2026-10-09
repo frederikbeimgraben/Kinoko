@@ -25,7 +25,9 @@ describe('stamp-version', () => {
   });
 
   it('prefers the version of the Nix build to Git', () => {
-    expect(stamp({ KINOKO_VERSION: 'v2026-10-09+5896dc4' }, () => 'v2026-10-08-01-3-g65dd41a')).toBe('v2026-10-09+5896dc4');
+    expect(stamp({ KINOKO_VERSION: 'v2026-10-09+5896dc4' }, () => 'v2026-10-08-01-3-g65dd41a')).toBe(
+      'v2026-10-09+5896dc4',
+    );
     expect(stamp({}, () => 'v2026-10-08-01-3-g65dd41a')).toBe('v2026-10-08-01-3');
     expect(stamp({}, () => null)).toBe('dev');
   });
