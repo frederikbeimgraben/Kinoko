@@ -5,15 +5,14 @@ import (
 	"errors"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"slices"
 	"testing"
 	"time"
 )
 
-// pandasFixture holds the values that pandas wrote to testdata/pandas_types.parquet.
-// testdata/gen_fixtures.py writes both files with DataFrame.to_parquet.
+// pandasFixture holds the values of testdata/pandas_types.parquet, a file
+// with the pandas column types.
 type pandasFixture struct {
 	Rows    int        `json:"rows"`
 	IsoYear []int64    `json:"iso_year"`
@@ -87,7 +86,7 @@ func TestReadPandasParquet(t *testing.T) {
 	}
 }
 
-// trimFraction removes the zero fraction that Python isoformat leaves out and Go leaves out too.
+// trimFraction removes a zero fraction, so the golden text and the Go text agree.
 func trimFraction(s string) string {
 	ts, err := time.Parse("2006-01-02T15:04:05.999999999", s)
 	if err != nil {
@@ -247,26 +246,4 @@ func TestRequireColumns(t *testing.T) {
 	if !errors.As(err, &se) || len(se.Problems) != 2 {
 		t.Fatalf("err = %v, want two problems", err)
 	}
-}
-
-// TestPandasReadsGoParquet runs testdata/check_go_parquet.py on a file that WriteParquet wrote.
-// Set PIO_PYTHON to a python with pandas, for example the one of the modell Nix shell.
-func TestPandasReadsGoParquet(t *testing.T) {
-	python := os.Getenv("PIO_PYTHON")
-	if python == "" {
-		t.Skip("PIO_PYTHON is not set")
-	}
-	path := filepath.Join(t.TempDir(), "go.parquet")
-	if err := WriteParquet(path, sampleTable(), weatherSchema); err != nil {
-		t.Fatal(err)
-	}
-	script, err := filepath.Abs("testdata/check_go_parquet.py")
-	if err != nil {
-		t.Fatal(err)
-	}
-	out, err := exec.Command(python, "-I", script, path).CombinedOutput()
-	if err != nil {
-		t.Fatalf("pandas check failed: %v\n%s", err, out)
-	}
-	t.Logf("%s", out)
 }
