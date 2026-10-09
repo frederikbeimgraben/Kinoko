@@ -54,6 +54,21 @@ this procedure:
 
 `docs/operations.md` ("Export the catalogue") describes the command.
 
+## Glossary
+
+`glossar.json` is a draft. No mycologist has reviewed it. The format has no
+field for the review state, thus this note marks all entries as a draft.
+
+- An expert must examine each term, each German definition and each English
+  definition before the project shows the glossary as verified.
+- Each entry has `term`, `termEn`, `definition` and `definitionEn`.
+- Write each definition in 1 to 3 plain sentences. Do not define a term with
+  the same term.
+- Keep the entries in alphabetical order of `term`.
+- The seed adds a new term and updates a term that no person changed. It does
+  not remove a term from the database. Thus, do not rename a term in the
+  file: the old term stays in the database.
+
 ## Species descriptions
 
 A species file can have a short description. The species page shows it under
