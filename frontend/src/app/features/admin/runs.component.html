@@ -36,7 +36,12 @@
   }
 </div>
 
-<app-action-bar [primary]="'admin.runs.start' | t" (primaryClick)="starting.set(true)" />
+<app-floating-button
+  class="runs__fab"
+  icon="play"
+  [label]="'admin.runs.start' | t"
+  (pressed)="starting.set(true)"
+/>
 
 <app-confirm-dialog
   [open]="starting()"

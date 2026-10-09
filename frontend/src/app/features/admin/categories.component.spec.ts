@@ -58,7 +58,7 @@ describe('CategoriesComponent', () => {
   it('legt eine Kategorie an', async () => {
     const { api } = await build();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Kategorie anlegen' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Kategorie hinzufügen' }));
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'Zimt');
     await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
 

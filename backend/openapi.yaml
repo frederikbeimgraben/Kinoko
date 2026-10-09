@@ -2685,6 +2685,9 @@ components:
           type: integer
         glossary:
           type: integer
+        terms:
+          type: integer
+          description: The count of categories, all kinds together.
         dataSourcesMissing:
           type: integer
         dataSourcesFailed:
@@ -3685,6 +3688,9 @@ components:
           type: string
         position:
           type: integer
+        usage:
+          type: integer
+          description: The count of species that use the term. Only the list has it.
       required: [id, kind, slug, name, position]
 
     TermCreate:

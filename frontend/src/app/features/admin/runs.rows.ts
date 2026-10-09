@@ -20,6 +20,14 @@ export const RUN_KIND_TEXT: Readonly<Record<RunKind, TranslationKey>> = {
   fetch: 'enum.run_kind.fetch',
 };
 
+/** The short names for the choice of the start dialog: four segments fit on one line. */
+export const RUN_KIND_SHORT: Readonly<Record<RunKind, TranslationKey>> = {
+  training: 'enum.run_kind.training',
+  render: 'enum.run_kind.render',
+  full: 'enum.run_kind.full',
+  fetch: 'admin.runs.fetchShort',
+};
+
 export const RUN_STATE_TEXT: Readonly<Record<RunState, TranslationKey>> = {
   queued: 'enum.run_state.queued',
   running: 'enum.run_state.running',

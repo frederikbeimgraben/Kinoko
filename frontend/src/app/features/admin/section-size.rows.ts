@@ -1,13 +1,4 @@
 import type { BodyPart, Dimension, Measurement, MeasurementGroup, SpeciesEntry } from '../../core/api/models';
-import type { TranslationKey } from '../../core/i18n/translations';
-
-/** The title of a size page: part and dimension make one word. */
-export const SIZE_TITLE: Readonly<Record<Dimension, TranslationKey>> = {
-  width: 'admin.size.width',
-  height: 'admin.size.height',
-  thickness: 'admin.size.thickness',
-  length: 'admin.size.length',
-};
 
 /** The measurement of a part for a dimension, or null if the species has none. */
 export function measurementOf(
@@ -41,4 +32,10 @@ function replace(measurements: readonly Measurement[], one: Measurement): Measur
   const known = measurements.some((entry) => entry.dimension === one.dimension);
   if (!known) return [...measurements, one];
   return measurements.map((entry) => (entry.dimension === one.dimension ? one : entry));
+}
+
+/** Reads `0,7` and `0.7` alike. An empty or wrong field gives null. */
+export function numberOf(text: string): number | null {
+  const value = Number(text.trim().replace(',', '.'));
+  return text.trim() === '' || !Number.isFinite(value) ? null : value;
 }

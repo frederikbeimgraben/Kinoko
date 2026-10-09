@@ -16,13 +16,16 @@ function routeFor(part: string): { provide: typeof ActivatedRoute; useValue: unk
   return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
 }
 
-async function build(part = 'cap'): Promise<{ container: Element; http: HttpTestingController }> {
+async function build(
+  part = 'cap',
+  more: Record<string, unknown> = {},
+): Promise<{ container: Element; http: HttpTestingController }> {
   TestBed.resetTestingModule();
   const { container } = await render(SectionPartComponent, {
     providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor(part)],
   });
   const http = TestBed.inject(HttpTestingController);
-  http.expectOne('/api/species/boletus-edulis').flush(SECTION_SPECIES);
+  http.expectOne('/api/species/boletus-edulis').flush({ ...SECTION_SPECIES, ...more });
   http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
   return { container, http };
 }
@@ -36,9 +39,30 @@ describe('SectionPartComponent', () => {
     const { container } = await build();
 
     expect(await screen.findByRole('heading', { name: 'Hut' })).toBeInTheDocument();
-    expect(screen.getByText('Breite')).toBeInTheDocument();
-    expect(screen.getByText('4 bis 20 cm')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Breite/ })).toHaveTextContent('4 – 20cm');
     await noViolations(container);
+  });
+
+  it('zeigt den Text des Teils als Beschreibung und schreibt ihn in das Merkmal', async () => {
+    const { http } = await build('cap', { traits: [{ key: 'cap', text: 'Halbkugelig.' }] });
+    await screen.findByRole('heading', { name: 'Hut' });
+
+    expect(screen.getByRole('textbox', { name: 'Beschreibung' })).toHaveValue('Halbkugelig.');
+    await userEvent.type(screen.getByRole('textbox', { name: 'Beschreibung' }), ' Später flach.');
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    const body = http.expectOne('/api/species/boletus-edulis').request.body as {
+      traits: { key: string; text: string }[];
+      partNotes: unknown[];
+    };
+    expect(body.traits).toEqual([{ key: 'cap', text: 'Halbkugelig. Später flach.' }]);
+    expect(body.partNotes).toEqual([]);
+  });
+
+  it('zeigt bei einem deutschen Teilnamen den Zustand nicht gefunden', async () => {
+    await build('hut');
+
+    expect(await screen.findByText('Teil nicht gefunden')).toBeInTheDocument();
   });
 
   it('bleibt ohne Werte leer, führt aber die Zeilen zum Anlegen', async () => {
@@ -46,7 +70,7 @@ describe('SectionPartComponent', () => {
 
     expect(await screen.findByRole('heading', { name: 'Sporen' })).toBeInTheDocument();
     expect(screen.queryByText('Breite')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Abmessung hinzufügen' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Maß hinzufügen' })).toBeInTheDocument();
   });
 
   it('führt jede wachsende Liste mit einer Zeile zum Anlegen', async () => {
@@ -67,7 +91,7 @@ describe('SectionPartComponent', () => {
     });
     await screen.findByRole('heading', { name: 'Lamellen' });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Farbe Farbe' }));
+    await userEvent.click(screen.getByRole('button', { name: /Lamellenfarbe/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Farbe hinzufügen' }));
     await userEvent.click(screen.getByRole('button', { name: 'Verfärbung hinzufügen' }));
 

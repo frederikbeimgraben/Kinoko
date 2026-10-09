@@ -1,101 +1,97 @@
 <app-page-header [title]="title()" [back]="true" (backClick)="back()" />
 
 <div class="section">
-  <section>
-    <h2 class="section__title">{{ 'admin.part.section.sizes' | t }}</h2>
-    <div class="section__card">
-      @for (row of sizes(); track row.dimension) {
-        <app-list-row
-          kind="catalogue"
-          [title]="row.title | t"
-          [value]="row.value"
-          [chevron]="true"
-          [clickable]="true"
-          (chosen)="openSize()"
+  @if (part() === null) {
+    <app-state-view icon="search" [title]="'admin.part.notFound' | t" />
+  } @else {
+    <app-section [label]="'admin.part.section.sizes' | t">
+      <app-row-group>
+        @for (row of sizes(); track row.dimension) {
+          <app-list-row
+            [title]="row.title | t"
+            [value]="row.value"
+            [unit]="row.unit"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openSize(row.dimension)"
+          />
+        }
+        <app-add-row
+          [label]="'admin.part.addSize' | t"
+          [action]="'admin.part.addSize' | t"
+          (pressed)="openSize()"
         />
-      }
-    </div>
-    <app-add-row [label]="'admin.part.size' | t" [action]="'admin.part.addSize' | t" (pressed)="openSize()" />
-  </section>
+      </app-row-group>
+    </app-section>
 
-  <section>
-    <h2 class="section__title">{{ 'admin.part.section.colours' | t }}</h2>
-    <div class="section__card section__card--tall">
-      @for (row of colours(); track row.key) {
-        <app-list-row
-          kind="catalogue"
-          [title]="row.title"
-          [chevron]="true"
-          [clickable]="true"
-          (chosen)="openColour(row.at)"
-        >
-          <app-colour-field
-            trail
-            class="section__strip"
-            [colours]="row.colours"
-            [mode]="row.gradient ? 'gradient' : 'multiple'"
-            [label]="row.title"
+    <app-section [label]="'admin.part.section.colours' | t">
+      <app-row-group>
+        @for (row of colours(); track row.key) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.subline"
+            [swatch]="row.swatch"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openColour(row.at)"
           />
-        </app-list-row>
-      }
-    </div>
-    <app-add-row
-      [label]="'common.colour' | t"
-      [action]="'admin.part.addColour' | t"
-      (pressed)="addColour()"
-    />
-  </section>
+        }
+        <app-add-row
+          [label]="'admin.part.addColour' | t"
+          [action]="'admin.part.addColour' | t"
+          (pressed)="addColour()"
+        />
+      </app-row-group>
+    </app-section>
 
-  <section>
-    <h2 class="section__title">{{ 'species.section.colourChange' | t }}</h2>
-    <div class="section__card section__card--tall">
-      @for (row of changes(); track row.key) {
-        <app-list-row
-          kind="catalogue"
-          [title]="row.title"
-          [chevron]="true"
-          [clickable]="true"
-          (chosen)="openChange(row.at)"
-        >
-          <app-colour-field
-            trail
-            class="section__strip"
-            [colours]="row.colours"
-            mode="multiple"
-            [label]="row.title"
+    <app-section [label]="'species.section.colourChange' | t">
+      <app-row-group>
+        @for (row of changes(); track row.key) {
+          <app-list-row
+            [title]="row.title"
+            [plain]="row.subline"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openChange(row.at)"
           />
-        </app-list-row>
-      }
-    </div>
-    <app-add-row
-      [label]="'species.section.colourChange' | t"
-      [action]="'admin.part.addChange' | t"
-      (pressed)="addChange()"
-    />
-  </section>
+        }
+        <app-add-row
+          [label]="'admin.part.addChange' | t"
+          [action]="'admin.part.addChange' | t"
+          (pressed)="addChange()"
+        />
+      </app-row-group>
+    </app-section>
 
-  <div class="section__notes">
-    <app-form-field
-      [label]="'admin.part.description' | t"
-      [section]="true"
-      [multiline]="true"
-      [value]="description()"
-      (valueChange)="description.set($event)"
-    />
-    <app-form-field
-      [label]="'admin.part.comment' | t"
-      [section]="true"
-      [multiline]="true"
-      [value]="comment()"
-      (valueChange)="comment.set($event)"
-    />
-  </div>
+    <app-section [label]="'admin.part.description' | t">
+      <app-form-field
+        [label]="'admin.part.description' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [value]="description()"
+        (valueChange)="description.set($event)"
+      />
+    </app-section>
+
+    <app-section [label]="'admin.part.comment' | t">
+      <app-form-field
+        [label]="'admin.part.comment' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [placeholder]="'common.optional' | t"
+        [value]="comment()"
+        (valueChange)="comment.set($event)"
+      />
+    </app-section>
+  }
 </div>
 
-<app-action-bar
-  [primary]="'common.apply' | t"
-  [secondary]="'admin.part.remove' | t"
-  [secondaryDanger]="true"
-  (primaryClick)="apply()"
-  (secondaryClick)="remove()"
-/>
+@if (part() !== null) {
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    [secondary]="'admin.part.remove' | t"
+    [secondaryDanger]="true"
+    (primaryClick)="apply()"
+    (secondaryClick)="remove()"
+  />
+}

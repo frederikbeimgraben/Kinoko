@@ -8,7 +8,7 @@ import { joined } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
 import { ConfirmDialogComponent } from '../../ui/confirm-dialog/confirm-dialog.component';
 import { LevelPillComponent } from '../../ui/level-pill/level-pill.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -23,7 +23,7 @@ import { DataSourcesStore } from './data-sources/data-sources.store';
 import { needText } from './data-sources/data-sources.rows';
 import { RunsStore } from './runs.store';
 import {
-  RUN_KIND_TEXT,
+  RUN_KIND_SHORT,
   RUN_STATE_TEXT,
   activeSubline,
   runPercent,
@@ -56,8 +56,8 @@ interface Active {
   selector: 'app-runs',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ActionBarComponent,
     ConfirmDialogComponent,
+    FloatingButtonComponent,
     LevelPillComponent,
     ListRowComponent,
     PageHeaderComponent,
@@ -112,7 +112,7 @@ export class RunsComponent {
   );
 
   protected readonly choices = computed<SegmentOption[]>(() =>
-    RUN_KINDS.map((kind) => ({ value: kind, label: this.text(RUN_KIND_TEXT[kind]) })),
+    RUN_KINDS.map((kind) => ({ value: kind, label: this.text(RUN_KIND_SHORT[kind]) })),
   );
 
   /** The missing inputs of the chosen kind. Without `data.manage`, the server checks alone. */

@@ -10,7 +10,8 @@ import { confirmed, settle, withSearchableList } from '../state';
 export const GlossaryStore = signalStore(
   { providedIn: 'root' },
   withSearchableList<GlossaryEntry>({
-    matches: (entry, needle) => `${entry.term} ${entry.definition}`.toLocaleLowerCase().includes(needle),
+    matches: (entry, needle) =>
+      `${entry.term} ${entry.definition} ${entry.definitionEn}`.toLocaleLowerCase().includes(needle),
     sortKey: (entry) => entry.term,
   }),
   withState({ writing: false }),
@@ -61,3 +62,8 @@ export const GlossaryStore = signalStore(
 
 /** The instance type of {@link GlossaryStore}. */
 export type GlossaryStore = InstanceType<typeof GlossaryStore>;
+
+/** The definition in the UI language. An entry without English text shows the German text. */
+export function glossaryText(entry: GlossaryEntry, locale: string): string {
+  return locale !== 'de' && entry.definitionEn !== '' ? entry.definitionEn : entry.definition;
+}

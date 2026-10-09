@@ -8,7 +8,6 @@
   />
   @if (loaded()) {
     <div class="adminGlossary__list">
-      <app-add-row [label]="'glossary.add' | t" [action]="'glossary.create' | t" (pressed)="add()" />
       <app-row-group>
         @for (entry of entries(); track entry.id) {
           <app-list-row
@@ -27,11 +26,18 @@
   }
 </div>
 
+<app-floating-button
+  class="adminGlossary__fab"
+  icon="plus"
+  [label]="'glossary.create' | t"
+  (pressed)="add()"
+/>
+
 @if (editing()) {
   <app-form-sheet
     [title]="sheetTitle()"
     [submit]="'common.save' | t"
-    [secondary]="'common.delete' | t"
+    [secondary]="creating() ? '' : ('common.remove' | t)"
     [secondaryDanger]="true"
     [busy]="saving()"
     (submitted)="save()"
@@ -48,13 +54,23 @@
       />
     </div>
     <div class="adminGlossary__field">
-      <span class="lbl">{{ 'glossary.definition' | t }}</span>
+      <span class="lbl">{{ 'account.language.german' | t }}</span>
       <app-form-field
-        [label]="'glossary.definition' | t"
+        [label]="'account.language.german' | t"
         [hideLabel]="true"
         [multiline]="true"
         [value]="definition()"
         (valueChange)="definition.set($event)"
+      />
+    </div>
+    <div class="adminGlossary__field">
+      <span class="lbl">{{ 'account.language.english' | t }}</span>
+      <app-form-field
+        [label]="'account.language.english' | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [value]="definitionEn()"
+        (valueChange)="definitionEn.set($event)"
       />
     </div>
   </app-form-sheet>

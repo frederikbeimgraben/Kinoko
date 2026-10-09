@@ -3,44 +3,33 @@ import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
-import { AddRowComponent } from '../../ui/add-row/add-row.component';
+import { FloatingButtonComponent } from '../../ui/floating-button/floating-button.component';
 import { InfiniteListComponent } from '../../ui/infinite-list/infinite-list.component';
-import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
-import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
-import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
+import { SpeciesRowComponent } from '../../ui/species-row/species-row.component';
 import { judge } from '../species/facets';
 import { SpeciesFilterSheetComponent } from '../species/filter-sheet.component';
 import { SpeciesFilterStore } from '../species/filter.store';
 import { SpeciesSearchFilterBarComponent } from '../species/search-filter-bar.component';
 import { search } from '../species/rows';
+import { resultRows, type ResultRow } from '../species/species-results.component';
 import { SpeciesStore } from '../species/species.store';
 
 const PAGE = 40;
 
-/** A row of the species administration. */
-interface Row {
-  slug: string;
-  name: string;
-  latin: string;
-  forecast: boolean;
-}
-
-/** The species administration: a search, the filter and the way to create a species. */
+/** The species administration: a search, the filter, the list and the floating button that creates a species. */
 @Component({
   selector: 'app-admin-species',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AddRowComponent,
+    FloatingButtonComponent,
     InfiniteListComponent,
-    ListRowComponent,
     PageHeaderComponent,
-    RowGroupComponent,
     RowGroupSkeletonComponent,
     SpeciesFilterSheetComponent,
+    SpeciesRowComponent,
     SpeciesSearchFilterBarComponent,
-    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './admin-species.component.html',
@@ -67,18 +56,10 @@ export class AdminSpeciesComponent {
 
   protected readonly hasMore = computed(() => this.hits().length > this.shown());
 
-  protected readonly rows = computed<Row[]>(() =>
-    this.hits()
-      .slice(0, this.shown())
-      .map((one) => ({
-        slug: one.species.slug,
-        name: one.species.name,
-        latin: one.species.scientificName,
-        forecast: one.species.forecastEnabled,
-      })),
+  /** The rows of the species list: thumb, names, edibility and a letter head for each group. */
+  protected readonly rows = computed<ResultRow[]>(() =>
+    resultRows(this.hits().slice(0, this.shown()), 'name', this.i18n),
   );
-
-  protected readonly noForecast = computed(() => this.i18n.translate('admin.species.noForecast'));
 
   constructor() {
     void this.catalogue.loadBundle();

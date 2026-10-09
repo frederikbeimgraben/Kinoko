@@ -1,4 +1,3 @@
-@use '../../../styles/card';
 @use 'section';
 
 :host {
@@ -14,65 +13,15 @@ app-page-header {
   @include section.fields;
 }
 
-.section__title {
-  @include card.section-title;
-}
+// The tones sit on a card below the two colours, as the colour board shows them.
+.section__palette {
+  --picker-columns: 6;
+  --picker-gap: 10px;
+  --picker-height: 44px;
 
-// The part opens a separate choice. The arrow is at the end of the field.
-.section__part {
-  --form-field-trail-push: auto;
-
-  display: block;
-}
-
-.section__segment {
-  display: block;
-  margin-block-end: 10px;
-}
-
-// The chips are 30 px high, as the design boards show.
-.section__chips {
-  --chip-height: 30px;
-  --chip-inline: 12px;
-  --chip-size: var(--fs-row-meta);
-  --chip-weight: var(--fw-regular);
-  --space-2: 7px;
-
-  display: block;
-}
-
-.section__span {
-  display: flex;
-  gap: 10px;
-}
-
-.section__field {
-  flex: 1;
-  min-inline-size: 0;
-}
-
-// The colour looks like a field, but it shows a swatch, not an input.
-.section__box {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  block-size: var(--pilz-field-height);
-  padding-inline: 14px;
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--pilz-swatch-radius);
-}
-
-.section__chip {
-  --pilz-colour-width: 24px;
-  --pilz-colour-height: 24px;
-  --pilz-colour-radius: 7px;
-}
-
-.section__hex {
-  font-size: var(--fs-row-meta);
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: var(--r-item);
 }
 
 app-action-bar {

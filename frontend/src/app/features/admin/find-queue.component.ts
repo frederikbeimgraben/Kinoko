@@ -10,6 +10,7 @@ import { QueueCardSkeletonComponent } from '../../ui/review-queue/queue-card-ske
 import { ReviewQueueComponent } from '../../ui/review-queue/review-queue.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { SpeciesStore } from '../species/species.store';
+import { PersonNamesStore } from '../../core/access/person-names.store';
 import { findCard, type FindCard } from './find-card';
 import { FindQueueStore } from './find-queue.store';
 
@@ -33,6 +34,7 @@ import { FindQueueStore } from './find-queue.store';
 export class FindQueueComponent {
   private readonly store = inject(FindQueueStore);
   private readonly species = inject(SpeciesStore);
+  private readonly people = inject(PersonNamesStore);
   private readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
@@ -42,7 +44,13 @@ export class FindQueueComponent {
   protected readonly cards = computed<readonly FindCard[]>(() => {
     const photos = this.store.photos();
     return (this.store.stack() ?? []).map((one) =>
-      findCard(one, this.nameOf(one.speciesId), photos[one.id] ?? [], this.i18n),
+      findCard(
+        one,
+        this.nameOf(one.speciesId),
+        this.people.nameOf(one.ownerId),
+        photos[one.id] ?? [],
+        this.i18n,
+      ),
     );
   });
 

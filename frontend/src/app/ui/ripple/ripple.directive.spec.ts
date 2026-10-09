@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { render } from '@testing-library/angular';
-import { RippleDirective } from './ripple.directive';
+import { RippleDirective, reach } from './ripple.directive';
 
 @Component({
   imports: [RippleDirective],
@@ -56,10 +56,16 @@ describe('RippleDirective', () => {
 
     const dot = host.querySelector<HTMLElement>('.ripple');
     if (dot === null) throw new Error('kein Kreis');
-    expect(dot.style.left).toBe('-24px');
-    expect(dot.style.top).toBe('-24px');
-    expect(dot.style.width).toBe('88px');
-    expect(dot.style.height).toBe('88px');
+    const size = 2 * Math.hypot(20, 20);
+    expect(parseFloat(dot.style.width)).toBeCloseTo(size);
+    expect(parseFloat(dot.style.height)).toBeCloseTo(size);
+    expect(parseFloat(dot.style.left)).toBeCloseTo(20 - size / 2);
+    expect(parseFloat(dot.style.top)).toBeCloseTo(20 - size / 2);
+  });
+
+  it('reicht in einer flachen Zeile genau bis zur fernsten Ecke', () => {
+    expect(reach(358, 56, 179, 28)).toBeCloseTo(Math.hypot(179, 28));
+    expect(reach(358, 56, 10, 50)).toBeCloseTo(Math.hypot(348, 50));
   });
 
   it('nimmt den Wirt aus dem Fluss, wenn er noch keine Lage hat', async () => {

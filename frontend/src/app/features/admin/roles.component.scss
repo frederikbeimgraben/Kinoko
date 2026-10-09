@@ -6,6 +6,11 @@
 
 .roles {
   @include page.body;
+  @include page.with-fab;
 
   gap: 10px;
+}
+
+.roles__fab {
+  @include page.fab;
 }

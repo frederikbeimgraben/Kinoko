@@ -1,4 +1,3 @@
-@use '../../../styles/card';
 @use 'section';
 
 :host {
@@ -12,25 +11,6 @@ app-page-header {
 .section {
   @include section.body;
   @include section.fields;
-}
-
-.section__title {
-  @include card.section-title;
-}
-
-// The row is 14 px from the card edge. Value and arrow are 8 px apart.
-.section__card {
-  @include card.card;
-
-  --list-row-inline: 14px;
-  --list-row-value: var(--fs-row-meta);
-  --list-row-title-height: normal;
-  --space-3: 8px;
-}
-
-app-form-field {
-  --form-field-lines: 96px;
-  --form-field-lines-height: normal;
 }
 
 app-species-picker {

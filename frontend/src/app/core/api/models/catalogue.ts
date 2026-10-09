@@ -32,6 +32,7 @@ export type TermUpdate = components['schemas']['TermUpdate'];
 export type TermKind = components['schemas']['TermKind'];
 export type MeasurementGroup = components['schemas']['MeasurementGroup'];
 export type PartNote = components['schemas']['PartNote'];
+export type TraitEntry = components['schemas']['Trait'];
 export type SourceEntry = components['schemas']['SourceEntry'];
 export type SourceScope = components['schemas']['SourceScope'];
 export type Measurement = components['schemas']['Measurement'];

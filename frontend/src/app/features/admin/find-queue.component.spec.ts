@@ -12,6 +12,7 @@ import {
 } from '../../testing/open-finds-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesEntry } from '../../testing/species-fixture';
+import { PersonNamesStore } from '../../core/access/person-names.store';
 import { SpeciesStore } from '../species/species.store';
 import { FindQueueComponent } from './find-queue.component';
 
@@ -20,6 +21,11 @@ const STONE = speciesEntry({
   name: 'Steinpilz',
   scientificName: 'Boletus edulis',
 });
+
+/** The owner of the first find has a name. The other owner has none. */
+function namesStub(): unknown {
+  return { nameOf: (id: string | null) => (id === 'person-eins' ? 'Marie' : null) };
+}
 
 function speciesStub(): unknown {
   return { loadBundle: () => Promise.resolve(), species: signal([STONE]) };
@@ -38,6 +44,7 @@ async function build(api = new FindsApiDouble()): Promise<{
       findsApiProvider(api),
       findPhotosApiProvider(photos),
       { provide: SpeciesStore, useValue: speciesStub() },
+      { provide: PersonNamesStore, useValue: namesStub() },
     ],
   });
   return { container, api, router: TestBed.inject(Router) };
@@ -49,7 +56,7 @@ describe('FindQueueComponent', () => {
 
     expect(screen.getByText('1 von 2')).toBeInTheDocument();
     expect(screen.getAllByText('Steinpilz').length).toBeGreaterThan(0);
-    expect(screen.getByText('6. Sept. · 3 Stück · person-eins')).toBeInTheDocument();
+    expect(screen.getByText('6. Sept. · 3 Stück · Marie')).toBeInTheDocument();
     expect(screen.getByText('48,5203 · 9,0511')).toBeInTheDocument();
     expect(screen.getByText('Am Wegrand')).toBeInTheDocument();
     await noViolations(container);
@@ -58,7 +65,7 @@ describe('FindQueueComponent', () => {
   it('lässt eine Karte ohne Anzahl die Anzahl weg', async () => {
     await build();
 
-    expect(screen.getByText('6. Sept. · person-eins')).toBeInTheDocument();
+    expect(screen.getByText('6. Sept. · Marie')).toBeInTheDocument();
   });
 
   it('nimmt mit dem Haken an und zählt weiter', async () => {

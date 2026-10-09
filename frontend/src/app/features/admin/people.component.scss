@@ -8,9 +8,46 @@
   @include page.body;
 }
 
-.people__roles {
+.people__sheet {
+  @include page.sheet-body;
+
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// The person above the roles: a tonal square with the icon, the name and the address.
+.people__who {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.people__avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 44px;
+  block-size: 44px;
+  color: var(--on-sel);
+  background: var(--sel);
+  border-radius: var(--r-sq);
+}
+
+.people__names {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  line-height: normal;
+}
+
+.people__names b {
+  font-size: 18px;
+  font-weight: var(--fw-semibold);
+}
+
+.people__names small {
+  font-size: var(--fs-14);
+  color: var(--text-var);
 }

@@ -19,19 +19,14 @@ async function build(api = new AccessApiDouble()): Promise<{
 }
 
 describe('RolesComponent', () => {
-  it('zeigt jede Rolle mit ihrer Beschreibung und ihren Personen', async () => {
+  it('zeigt jede Rolle mit der Zahl ihrer Personen', async () => {
     const { container } = await build();
 
-    expect(screen.getByText('Trägt jedes Recht, auch jedes neu eingeführte. · 1 Person')).toBeInTheDocument();
-    expect(screen.getByText('Hat jede angemeldete Person.')).toBeInTheDocument();
-    expect(screen.getByText('Arten und Bilder pflegen. · 3 Personen')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Admin/ })).toHaveTextContent('1 Person');
+    expect(screen.getByRole('button', { name: /Pilzberater/ })).toHaveTextContent('3 Personen');
+    expect(screen.getByText('0 Personen')).toBeInTheDocument();
+    expect(screen.queryByText('Arten und Bilder pflegen.')).not.toBeInTheDocument();
     await noViolations(container);
-  });
-
-  it('gibt nur den festen Rollen ein Schloss', async () => {
-    await build();
-
-    expect(screen.getAllByLabelText('Feste Rolle')).toHaveLength(2);
   });
 
   it('führt von einer Zeile auf die Rolle', async () => {
@@ -43,7 +38,7 @@ describe('RolesComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/verwaltung/rollen', 'rolle-berater']);
   });
 
-  it('legt über die letzte Zeile eine neue Rolle an', async () => {
+  it('legt über die schwebende Schaltfläche eine neue Rolle an', async () => {
     const { router } = await build();
     const navigate = vi.spyOn(router, 'navigate');
 

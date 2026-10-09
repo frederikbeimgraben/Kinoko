@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { grouped } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { TERM_KINDS, type TermKind } from '../../core/api/models';
@@ -15,8 +16,10 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { CategoriesStore } from './categories.store';
 import { KIND_TEXT } from './labels';
+import { termLabel } from './term-label';
 
 /** A category without an id is not created yet. */
 const NEW = 'neu';
@@ -40,6 +43,7 @@ type Ask = 'delete' | 'merge';
     RowGroupSkeletonComponent,
     SearchFieldComponent,
     SegmentedComponent,
+    SvgIconComponent,
     TranslatePipe,
   ],
   templateUrl: './categories.component.html',
@@ -54,6 +58,15 @@ export class CategoriesComponent {
   protected readonly search = this.store.search;
   protected readonly kind = this.store.kind;
   protected readonly categories = this.store.visible;
+
+  /** The rows: the name in the UI language and the count of species that use the category. */
+  protected readonly rows = computed(() =>
+    this.categories().map((one) => ({
+      id: one.id,
+      name: termLabel(one, this.i18n),
+      usage: one.usage === undefined ? '' : grouped(one.usage),
+    })),
+  );
   protected readonly saving = this.store.saving;
   protected readonly loaded = computed(() => this.store.items() !== null);
 
@@ -75,7 +88,7 @@ export class CategoriesComponent {
   protected readonly targets = computed<OptionSheetOption[]>(() =>
     this.categories()
       .filter((one) => one.id !== this.editing())
-      .map((one) => ({ id: one.id, title: one.name })),
+      .map((one) => ({ id: one.id, title: termLabel(one, this.i18n) })),
   );
 
   protected readonly askTitle = computed(() => {

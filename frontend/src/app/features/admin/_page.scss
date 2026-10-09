@@ -23,3 +23,23 @@
 @mixin with-actions {
   padding-block-end: calc(var(--h-btn) + 40px);
 }
+
+/** The floating action at the end corner of the page, per the kit `.fab`. The list keeps its last row clear of it. */
+@mixin fab {
+  position: absolute;
+  inset-block-end: 16px;
+  inset-inline-end: 16px;
+}
+
+@mixin with-fab {
+  padding-block-end: calc(var(--h-btn) + 40px);
+}
+
+/** The body of a sheet, per the kit `.sbody`: the 16 px gutter and its own scroll. */
+@mixin sheet-body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding: 4px 16px 16px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}

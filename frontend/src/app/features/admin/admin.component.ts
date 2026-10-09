@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { grouped, joined } from '../../core/i18n/numbers';
+import { grouped } from '../../core/i18n/numbers';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -24,7 +24,7 @@ interface Block {
 /** A row of the overview. */
 interface Row {
   title: string;
-  counts: string;
+  badge: string;
   path: string;
   ready: boolean;
 }
@@ -103,16 +103,21 @@ export class AdminComponent {
       (entry) => entry.section === section && this.rights.can(entry.permission),
     ).map((entry) => ({
       title: this.i18n.translate(entry.title),
-      counts: this.counts(entry),
+      badge: this.badge(entry),
       path: entry.path,
       ready: this.ready(entry.path),
     }));
   }
 
-  /** The counters of the item. While the response is pending, the row shows none. */
-  private counts(entry: AdminEntry): string {
+  /** The badge: the open work if there is some, else the total. While the response is pending, none. */
+  private badge(entry: AdminEntry): string {
     const held = this.store.summary();
     if (held === null) return '';
-    return joined(entry.counts.map((key) => (held[key] === undefined ? null : grouped(held[key]))));
+    const open = entry.open === undefined ? 0 : (held[entry.open] ?? 0);
+    if (open > 0 && entry.openText !== undefined) {
+      return this.i18n.translate(entry.openText, { zahl: grouped(open) });
+    }
+    const total = entry.total === null ? undefined : held[entry.total];
+    return total === undefined ? '' : grouped(total);
   }
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlossaryStore } from '../../core/access/glossary.store';
+import { GlossaryStore, glossaryText } from '../../core/access/glossary.store';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
@@ -33,7 +34,10 @@ export class GlossaryComponent {
 
   protected readonly back = computed(() => !this.wide());
   protected readonly search = this.store.search;
-  protected readonly entries = this.store.found;
+  private readonly i18n = inject(I18nService);
+  protected readonly entries = computed(() =>
+    this.store.found().map((entry) => ({ ...entry, definition: glossaryText(entry, this.i18n.locale()) })),
+  );
   protected readonly loaded = computed(() => this.store.entries() !== null);
 
   constructor() {

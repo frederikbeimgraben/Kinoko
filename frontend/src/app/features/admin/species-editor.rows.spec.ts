@@ -1,29 +1,60 @@
 import type { SpeciesEntry } from '../../core/api/models';
-import { featureRows, lookalikeRows, sourceRows } from './species-editor.rows';
+import {
+  changeRows,
+  featureRows,
+  lookalikeRows,
+  moreRows,
+  sourceRows,
+  spanText,
+  type RowText,
+} from './species-editor.rows';
 
-const TEXT = (key: string): string => (key === 'species.field.cap' ? 'Hut' : 'Röhren');
+const WORDS: Record<string, string> = {
+  'species.field.cap': 'Hut',
+  'species.field.tubes': 'Röhren',
+  'species.field.stem': 'Stiel',
+  'species.field.flesh': 'Fleisch',
+  'species.section.period': 'Zeitraum',
+  'species.section.hymenium': 'Fruchtschicht',
+  'species.section.senses': 'Geruch und Geschmack',
+  'enum.hymenium.gills': 'Lamellen',
+  'enum.month.6': 'Juni',
+  'enum.month.10': 'Oktober',
+  'enum.unit.cm': 'cm',
+  'enum.unit.um': 'µm',
+  'common.to': 'bis',
+};
+
+function text(locale = 'de'): RowText {
+  return { text: (key) => WORDS[key] ?? key, locale, term: (one) => one.name };
+}
 
 function entry(part: Partial<SpeciesEntry>): SpeciesEntry {
   return {
     measurements: [],
     colours: [],
+    colourChanges: [],
     lookalikes: [],
     sources: [],
     traits: [],
+    partNotes: [],
     ...part,
   } as unknown as SpeciesEntry;
 }
+
+describe('spanText', () => {
+  it('schreibt Zahl und Einheit in der Sprache der Oberfläche', () => {
+    const one = { dimension: 'length', unit: 'um', low: 0.7, high: 1.5 } as const;
+    expect(spanText(one, text('de'))).toBe('0,7 bis 1,5 µm');
+    expect(spanText(one, text('en'))).toBe('0.7 bis 1.5 µm');
+  });
+});
 
 describe('featureRows', () => {
   it('setzt Maß und Farben eines Teils zusammen', () => {
     const rows = featureRows(
       entry({
-        measurements: [
-          {
-            part: 'cap',
-            measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }],
-          },
-        ],
+        measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] }],
         colours: [
           {
             part: 'cap',
@@ -36,55 +67,81 @@ describe('featureRows', () => {
         ],
       }),
       [],
-      TEXT,
-      'bis',
+      text(),
     );
 
     expect(rows).toEqual([{ key: 'cap', title: 'Hut', value: '4 bis 20 cm, hellbraun bis dunkelbraun' }]);
   });
 
-  it('nennt ein Teil auch ohne Maß, wenn es Farben trägt', () => {
-    const rows = featureRows(
-      entry({
-        colours: [
-          { part: 'tubes', mode: 'single', colours: [{ name: 'jung weiß', hex: '#f4efe2' }] },
-          {
-            part: 'tubes',
-            mode: 'gradient',
-            colours: [
-              { name: 'später gelb', hex: '#d9c04a' },
-              { name: 'oliv', hex: '#6f7a3a' },
-            ],
-          },
-        ],
-      }),
-      [],
-      TEXT,
-      'bis',
-    );
+  it('nennt ein Teil mit nur einem Text und zeigt dann den Text', () => {
+    const rows = featureRows(entry({ traits: [{ key: 'flesh', text: 'Weiß, fest.' }] }), [], text());
 
-    expect(rows).toEqual([{ key: 'tubes', title: 'Röhren', value: 'jung weiß, später gelb bis oliv' }]);
+    expect(rows).toEqual([{ key: 'flesh', title: 'Fleisch', value: 'Weiß, fest.' }]);
   });
 
-  it('lässt ein Teil ohne Farben und ohne Maß weg', () => {
-    expect(featureRows(entry({}), [], TEXT, 'bis')).toEqual([]);
+  it('zeigt Maß und Farbe vor dem Text, nicht beide', () => {
+    const rows = featureRows(
+      entry({
+        measurements: [{ part: 'cap', measurements: [{ dimension: 'width', unit: 'cm', low: 4, high: 20 }] }],
+        traits: [{ key: 'cap', text: 'Ein langer Text.' }],
+      }),
+      [],
+      text(),
+    );
+
+    expect(rows[0].value).toBe('4 bis 20 cm');
+  });
+
+  it('lässt Merkmale ohne Teil weg, zum Beispiel das Vorkommen', () => {
+    expect(featureRows(entry({ traits: [{ key: 'habitat', text: 'Wiesen' }] }), [], text())).toEqual([]);
   });
 
   it('nennt ein gewähltes Teil ohne Wert', () => {
-    expect(featureRows(entry({}), ['stem'], () => 'Stiel', 'bis')).toEqual([
-      { key: 'stem', title: 'Stiel', value: '' },
-    ]);
+    expect(featureRows(entry({}), ['stem'], text())).toEqual([{ key: 'stem', title: 'Stiel', value: '' }]);
   });
+});
 
-  it('hängt den Text eines Teils hinter Maß und Farbe', () => {
-    const rows = featureRows(
-      entry({ traits: [{ key: 'tubes', text: 'Poren fein und rund' }] }),
-      ['tubes'],
-      TEXT,
-      'bis',
+describe('changeRows', () => {
+  it('nennt die Auslöser und die Farbe danach', () => {
+    const rows = changeRows(
+      entry({
+        colourChanges: [
+          {
+            part: 'flesh',
+            kind: 'mechanical',
+            from: null,
+            to: { name: 'braun', hex: '#7a5230' },
+            speed: 'longer',
+            triggers: [{ id: 't', slug: 'cut', name: 'Schnitt', kind: 'trigger' }],
+          },
+        ],
+      }),
+      text(),
     );
 
-    expect(rows).toEqual([{ key: 'tubes', title: 'Röhren', value: 'Poren fein und rund' }]);
+    expect(rows).toEqual([{ key: 'verfaerbung-0', title: 'Schnitt', value: 'braun' }]);
+  });
+});
+
+describe('moreRows', () => {
+  it('nennt Zeitraum, Fruchtschicht und die Sinne', () => {
+    const rows = moreRows(
+      entry({
+        periodStartMonth: 6,
+        periodEndMonth: 10,
+        hymeniumType: 'gills',
+        smellText: 'Pilzig.',
+        tasteText: 'Mild.',
+      }),
+      text(),
+    );
+
+    expect(rows.map((one) => one.value)).toEqual(['Juni bis Oktober', 'Lamellen', 'Pilzig. · Mild.']);
+    expect(rows.map((one) => one.key)).toEqual(['zeitraum', 'fruchtschicht', 'sinne']);
+  });
+
+  it('lässt fehlende Werte leer', () => {
+    expect(moreRows(entry({}), text()).map((one) => one.value)).toEqual(['', '', '']);
   });
 });
 

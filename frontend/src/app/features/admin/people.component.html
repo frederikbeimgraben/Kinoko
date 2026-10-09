@@ -1,11 +1,13 @@
-<app-page-header [title]="'admin.people.title' | t" [back]="!wide()" [wide]="wide()" (backClick)="back()" />
-
-<div class="people">
+<app-page-header [title]="null" [back]="true" [wide]="wide()" (backClick)="back()">
   <app-search-field
+    headline
     [value]="search()"
     [placeholder]="'admin.people.searchPlaceholder' | t"
     (valueChange)="onSearch($event)"
   />
+</app-page-header>
+
+<div class="people">
   @if (!loaded()) {
     <app-row-group-skeleton [count]="5" [lines]="2" trail="badge" />
   } @else if (rows().length === 0) {
@@ -15,17 +17,11 @@
       @for (row of rows(); track row.id) {
         <app-list-row
           [title]="row.name"
-          [subline]="row.email"
+          [subline]="row.roles"
           [clickable]="true"
-          [accent]="true"
+          [chevron]="true"
           (chosen)="edit(row.id)"
-        >
-          <span trail class="people__roles">
-            @for (role of row.roles; track role.id) {
-              <app-level-pill [text]="role.name" />
-            }
-          </span>
-        </app-list-row>
+        />
       }
     </app-row-group>
   }
@@ -34,21 +30,31 @@
 <app-overlay-host [open]="editing() !== null" [modal]="true" (closed)="close()">
   @if (editing(); as person) {
     <app-sheet
-      [label]="person.name ?? ''"
-      [title]="person.name ?? ''"
-      [note]="person.email ?? ''"
+      [label]="'admin.people.assignRoles' | t"
+      [title]="'admin.people.assignRoles' | t"
       [modal]="true"
       (closed)="close()"
     >
-      <app-row-group>
-        @for (choice of choices(); track choice.id) {
-          <app-check-row
-            [title]="choice.name"
-            [checked]="choice.checked"
-            (toggled)="toggle(choice.id, $event)"
-          />
-        }
-      </app-row-group>
+      <div class="people__sheet">
+        <div class="people__who">
+          <span class="people__avatar"><app-svg-icon name="account" [size]="22" [strokeWidth]="1.8" /></span>
+          <span class="people__names">
+            <b>{{ person.name ?? person.email ?? '' }}</b>
+            @if (person.name && person.email) {
+              <small>{{ person.email }}</small>
+            }
+          </span>
+        </div>
+        <app-row-group>
+          @for (choice of choices(); track choice.id) {
+            <app-check-row
+              [title]="choice.name"
+              [checked]="choice.checked"
+              (toggled)="toggle(choice.id, $event)"
+            />
+          }
+        </app-row-group>
+      </div>
       <app-action-bar
         foot
         [primary]="'common.apply' | t"

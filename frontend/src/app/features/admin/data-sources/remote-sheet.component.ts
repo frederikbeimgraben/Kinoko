@@ -21,7 +21,7 @@ import { SectionComponent } from '../../../ui/section/section.component';
 import { SheetComponent } from '../../../ui/sheet/sheet.component';
 import { DataSourcesStore } from './data-sources.store';
 import { bytesText, momentText } from './format';
-import { REMOTE_STATE_TEXT, REMOTE_TEXT } from './labels';
+import { CADENCE_TEXT, REMOTE_STATE_TEXT, REMOTE_TEXT } from './labels';
 
 /** A label and a value of the remote source. */
 interface Fact {
@@ -96,7 +96,11 @@ export class RemoteSheetComponent {
         value: this.text(REMOTE_STATE_TEXT[remote.state]),
       },
       { key: 'url', title: this.text('admin.dataSources.remote.url'), value: remote.url },
-      { key: 'cadence', title: this.text('admin.dataSources.remote.cadence'), value: remote.cadence },
+      {
+        key: 'cadence',
+        title: this.text('admin.dataSources.remote.cadence'),
+        value: remote.cadence in CADENCE_TEXT ? this.text(CADENCE_TEXT[remote.cadence]) : remote.cadence,
+      },
       { key: 'years', title: this.text('admin.dataSources.remote.years'), value: years },
       { key: 'files', title: this.text('admin.dataSources.remote.files'), value: String(remote.files) },
       {

@@ -11,36 +11,22 @@
   } @else {
     <app-infinite-list class="species__list" skeleton="rows" [hasMore]="hasMore()" (more)="more()">
       <div class="species__rows">
-        <app-add-row
-          [label]="'admin.species.add' | t"
-          [action]="'admin.species.create' | t"
-          (pressed)="create()"
-        />
-        <app-row-group>
-          @for (row of rows(); track row.slug) {
-            <app-list-row
-              [title]="row.name"
-              [subline]="row.latin"
-              [clickable]="true"
-              [accent]="true"
-              (chosen)="open(row.slug)"
-            >
-              @if (!row.forecast) {
-                <app-svg-icon
-                  trail
-                  name="map-off"
-                  tone="dim"
-                  [size]="18"
-                  [strokeWidth]="1.6"
-                  [label]="noForecast()"
-                />
-              }
-            </app-list-row>
+        @for (row of rows(); track row.slug) {
+          @if (row.head) {
+            <div class="lbl species__head">{{ row.head }}</div>
           }
-        </app-row-group>
+          <app-species-row [species]="row.species" (chosen)="open(row.slug)" />
+        }
       </div>
     </app-infinite-list>
   }
 </div>
+
+<app-floating-button
+  class="species__fab"
+  icon="plus"
+  [label]="'admin.species.create' | t"
+  (pressed)="create()"
+/>
 
 <app-species-filter-sheet />

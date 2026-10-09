@@ -607,6 +607,17 @@ func TestSummaryCountsGroupsAndTheGlossary(t *testing.T) {
 	}
 }
 
+func TestSummaryCountsTheCategories(t *testing.T) {
+	env := testkit.New(t)
+	anna := makeUser(t, env, "anna")
+	exec(t, env, "INSERT INTO term (id, kind, slug, name, position) VALUES (?, 'smell', 'summary-test', 'Test', 0)", db.NewID())
+	want := scalar[int](t, env, "SELECT count(*) FROM term")
+	body := env.Get("/admin/summary", signIn(t, env, anna, "species.edit")).Expect(t, http.StatusOK).Map(t)
+	if want < 1 || body["terms"] != float64(want) {
+		t.Fatal(want, body)
+	}
+}
+
 func TestSummaryHidesTheGroupCountsWithoutTheRight(t *testing.T) {
 	env := testkit.New(t)
 	u := makeUser(t, env, "anna")

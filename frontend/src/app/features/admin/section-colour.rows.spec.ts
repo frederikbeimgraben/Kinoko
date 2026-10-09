@@ -1,4 +1,4 @@
-import { COLOUR_MODES, fieldMode, trimmed, withColour } from './section-colour.rows';
+import { COLOUR_MODES, stopText, trimmed, withColour } from './section-colour.rows';
 
 const CAP = {
   part: 'cap' as const,
@@ -21,10 +21,15 @@ describe('section-colour.rows', () => {
     expect(trimmed(CAP.colours, 'gradient')).toEqual(CAP.colours);
   });
 
-  it('bildet den Modus des Vertrags auf den des Bausteins ab', () => {
+  it('führt die Modi des Vertrags', () => {
     expect(COLOUR_MODES).toEqual(['single', 'gradient', 'distinct']);
-    expect(fieldMode('distinct')).toBe('multiple');
-    expect(fieldMode('gradient')).toBe('gradient');
-    expect(fieldMode('single')).toBe('single');
+  });
+
+  it('nennt Anfang und Ende eines Verlaufs, sonst den Farbcode', () => {
+    const text = (key: string): string => key;
+    expect(stopText('gradient', 0, 3, '#aabbcc', text)).toBe('admin.colour.start');
+    expect(stopText('gradient', 1, 3, '#aabbcc', text)).toBe('admin.colour.middle');
+    expect(stopText('gradient', 2, 3, '#aabbcc', text)).toBe('admin.colour.end');
+    expect(stopText('distinct', 0, 3, '#aabbcc', text)).toBe('#AABBCC');
   });
 });
