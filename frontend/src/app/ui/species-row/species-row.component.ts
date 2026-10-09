@@ -29,6 +29,8 @@ export interface SpeciesRowSpecies {
   readonly colour?: string;
   /** The path to the lead photo. Without a photo the fallback icon shows. */
   readonly image?: string | null;
+  /** The label of the map mark of a species with a forecast. Without a label the row has no mark. */
+  readonly forecastLabel?: string;
 }
 
 /** The second line under the name: the Latin name, or the German name where the title is the Latin name. */
@@ -44,7 +46,7 @@ export function speciesHasText(species: SpeciesRowSpecies, term: string): boolea
   );
 }
 
-/** The species row, 72 px high: thumb, names and the edibility badge, per `SpeciesRow.dc.html`. */
+/** The species row, 72 px high: thumb, names, the map mark and the edibility badge, per `SpeciesRow.dc.html`. */
 @Component({
   selector: 'app-species-row',
   changeDetection: ChangeDetectionStrategy.OnPush,

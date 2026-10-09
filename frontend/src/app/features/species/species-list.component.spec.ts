@@ -223,6 +223,23 @@ describe('SpeciesListComponent', () => {
     expect(screen.queryByText(/Nicht beurteilbar/)).not.toBeInTheDocument();
   });
 
+  it('marks each species with a forecast on its row', async () => {
+    const { container, filter } = await build(FORECAST_MIX);
+
+    expect(screen.getAllByRole('img', { name: 'Vorhersage auf der Karte' })).toHaveLength(1);
+    expect(screen.getByRole('button', { name: /Steinpilz/ })).toHaveAccessibleName(
+      /Vorhersage auf der Karte/,
+    );
+    expect(screen.getByRole('button', { name: /Semmelstoppelpilz/ })).not.toHaveAccessibleName(/Vorhersage/);
+    await noViolations(container);
+
+    filter.toggle('forecast', FORECAST_VALUE);
+    await vi.waitFor(() => {
+      expect(container.querySelectorAll('app-species-row')).toHaveLength(1);
+    });
+    expect(container.querySelectorAll('.row__forecast')).toHaveLength(1);
+  });
+
   it('keeps the second block while a species has no colour data', async () => {
     const { container, filter } = await build(COLOUR_MIX, true);
 

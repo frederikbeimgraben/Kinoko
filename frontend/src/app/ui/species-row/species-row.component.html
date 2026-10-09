@@ -23,6 +23,11 @@
       <span class="row__latin row__latin--alias" [attr.lang]="aliasLang">{{ species().alias }}</span>
     }
   </span>
+  @if (species().forecastLabel; as mark) {
+    <span class="row__forecast" [attr.title]="mark">
+      <app-svg-icon name="map" [size]="20" [label]="mark" />
+    </span>
+  }
   @if (!muted()) {
     <app-level-pill
       class="row__badge"

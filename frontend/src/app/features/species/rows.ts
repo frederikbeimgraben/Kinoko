@@ -27,7 +27,7 @@ export function leadColour(entry: SpeciesEntry): string {
   return entry.colours.find((group) => group.part === 'cap')?.colours[0]?.hex ?? FALLBACK_COLOUR;
 }
 
-/** Makes a row from a species. The row has exactly one badge. */
+/** Makes a row from a species. The row has exactly one badge, and a map mark when the species has a forecast. */
 export function speciesRow(entry: LocalSpecies, i18n: I18nService): SpeciesRowSpecies {
   const tone = EDIBILITY_TONE[entry.edibility];
   return {
@@ -40,6 +40,7 @@ export function speciesRow(entry: LocalSpecies, i18n: I18nService): SpeciesRowSp
     levelKind: EDIBILITY_KIND[entry.edibility],
     colour: leadColour(entry),
     image: entry.leadPhotoId ? photoPath(entry.leadPhotoId, 'list') : null,
+    forecastLabel: entry.forecastEnabled ? i18n.translate('species.forecast.mark') : undefined,
   };
 }
 

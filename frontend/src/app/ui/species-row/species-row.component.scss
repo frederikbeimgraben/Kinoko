@@ -62,6 +62,13 @@
   font-style: normal;
 }
 
+// The map mark of a species with a forecast. It is no badge, so the row keeps exactly one badge.
+.row__forecast {
+  display: inline-flex;
+  flex: none;
+  color: var(--primary);
+}
+
 .row__badge {
   flex: none;
 }
