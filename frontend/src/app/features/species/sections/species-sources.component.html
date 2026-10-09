@@ -1,14 +1,17 @@
 @if (rows().length > 0) {
-  <h2 class="section__title">{{ 'species.section.sources' | t }}</h2>
-  <div class="section__card">
-    @for (row of rows(); track row.url) {
-      <app-list-row
-        kind="link"
-        [title]="row.title"
-        [chevron]="true"
-        [clickable]="true"
-        (chosen)="open(row.url)"
-      />
-    }
-  </div>
+  <app-section [label]="'species.section.sources' | t">
+    <app-row-group>
+      @for (row of rows(); track row.url) {
+        <app-list-row [title]="row.title" [subline]="row.host">
+          <app-icon-button
+            action
+            icon="open"
+            kind="plain"
+            [label]="'species.source.open' | t"
+            (pressed)="open(row.url)"
+          />
+        </app-list-row>
+      }
+    </app-row-group>
+  </app-section>
 }

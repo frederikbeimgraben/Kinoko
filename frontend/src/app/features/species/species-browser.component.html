@@ -10,6 +10,7 @@
       [sort]="filter.sort()"
       [loading]="catalogue.loading()"
       [failed]="catalogue.failed()"
+      [filtered]="filter.chosenCount() !== 0"
       [hasMore]="listing.hasMore()"
       [active]="active()"
       (chosen)="open($event)"

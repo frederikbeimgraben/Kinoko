@@ -35,8 +35,15 @@ export class GlossaryComponent {
   protected readonly search = this.store.search;
   protected readonly entries = this.store.found;
   protected readonly loaded = computed(() => this.store.entries() !== null);
+  protected readonly failed = this.store.failed;
+  /** No term at all is a state of its own: "not found" applies only to a search. */
+  protected readonly empty = computed(() => (this.store.entries() ?? []).length === 0);
 
   constructor() {
+    this.store.load();
+  }
+
+  protected retry(): void {
     this.store.load();
   }
 

@@ -1,44 +1,48 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
-import { TagListComponent } from '../../../ui/tag-list/tag-list.component';
 import type { SpeciesEntry } from '../../../core/api/models';
+import { ListRowComponent } from '../../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../../ui/section/section.component';
+import { CatalogueText } from '../catalogue-text';
 
-/** A sense with its catalogue tags and sentence. */
+/** A sense with the text below its name. */
 interface Sense {
   titleKey: 'species.field.smell' | 'species.field.taste';
-  tags: string[];
-  text: string | null;
+  text: string;
 }
 
-/** Smell and taste of a species: catalogue tags with the sentence below. */
+const SEPARATOR = ', ';
+
+/** Smell and taste of a species per `SpeciesSections.dc.html`: a row for each, with the sentence below. */
 @Component({
   selector: 'app-species-senses',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TagListComponent, TranslatePipe],
+  imports: [ListRowComponent, RowGroupComponent, SectionComponent, TranslatePipe],
   templateUrl: './species-senses.component.html',
   styleUrl: './species-senses.component.scss',
 })
 export class SpeciesSensesComponent {
-  private readonly i18n = inject(I18nService);
+  private readonly names = inject(CatalogueText);
 
   readonly species = input.required<SpeciesEntry>();
 
   protected readonly senses = computed<Sense[]>(() => {
     const held = this.species();
     const rows: Sense[] = [
-      { titleKey: 'species.field.smell', tags: terms(held, 'smell'), text: held.smellText ?? null },
-      { titleKey: 'species.field.taste', tags: terms(held, 'taste'), text: held.tasteText ?? null },
+      { titleKey: 'species.field.smell', text: this.text(held, 'smell', held.smellText) },
+      { titleKey: 'species.field.taste', text: this.text(held, 'taste', held.tasteText) },
     ];
-    return rows.filter((row) => row.tags.length > 0 || row.text !== null);
+    return rows.filter((row) => row.text !== '');
   });
 
-  protected label(sense: Sense): string {
-    return this.i18n.translate(sense.titleKey);
+  /** The catalogue sentence is German. In another language, the translated terms take its place. */
+  private text(species: SpeciesEntry, kind: 'smell' | 'taste', sentence: string | null | undefined): string {
+    const tags = species.terms
+      .filter((entry) => entry.term.kind === kind)
+      .map((entry) => this.names.term(entry.term))
+      .join(SEPARATOR);
+    const text = sentence !== null && sentence !== undefined && sentence !== '' ? sentence : tags;
+    return this.names.free(text, tags);
   }
-}
-
-/** The terms of a species for one term kind. */
-function terms(species: SpeciesEntry, kind: 'smell' | 'taste'): string[] {
-  return species.terms.filter((entry) => entry.term.kind === kind).map((entry) => entry.term.name);
 }

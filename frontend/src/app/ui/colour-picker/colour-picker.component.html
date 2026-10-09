@@ -4,13 +4,12 @@
       class="swatch tap"
       type="button"
       role="radio"
-      appRipple
       [class.swatch--selected]="colour.value === value()"
       [attr.aria-checked]="colour.value === value()"
       [attr.tabindex]="colour.value === value() ? 0 : -1"
       (click)="valueChange.emit(colour.value)"
     >
-      <i class="swatch__field" [style.background]="colour.value"></i>
+      <i class="swatch__field" appRipple [style.background]="colour.value"></i>
       <span class="swatch__label" [class.sr-only]="!labels()">{{ colour.label }}</span>
     </button>
   }

@@ -10,6 +10,8 @@
         (openChange)="toggle(part.part)"
       >
         <app-colour-picker
+          [class.colour--large]="!wide()"
+          [labels]="false"
           [colours]="swatches()"
           [value]="part.chosen"
           [label]="part.label"

@@ -13,12 +13,23 @@ export const GlossaryStore = signalStore(
     matches: (entry, needle) => `${entry.term} ${entry.definition}`.toLocaleLowerCase().includes(needle),
     sortKey: (entry) => entry.term,
   }),
-  withState({ writing: false }),
+  // `failed` tells a load error apart from an empty glossary.
+  withState({ writing: false, failed: false }),
   withProps(({ items }) => ({ entries: items, _api: inject(GlossaryApi) })),
   withMethods((store) => {
     const fetch = rxMethod<null>(
       pipe(
-        switchMap(() => store._api.list().pipe(catchError(() => of<GlossaryEntry[]>([])))),
+        tap(() => {
+          patchState(store, { failed: false });
+        }),
+        switchMap(() =>
+          store._api.list().pipe(
+            catchError(() => {
+              patchState(store, { failed: true });
+              return of<GlossaryEntry[]>([]);
+            }),
+          ),
+        ),
         tap((entries) => {
           store.setItems(entries);
         }),

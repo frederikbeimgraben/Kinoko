@@ -28,8 +28,8 @@
   <app-state-view
     class="results__state"
     icon="search"
-    [title]="'species.filter.noMatch' | t"
-    [action]="'filter.resetAll' | t"
+    [title]="'species.noHits' | t"
+    [action]="filtered() ? ('filter.resetAll' | t) : ''"
     (actionClick)="resetFilter.emit()"
   />
 } @else {

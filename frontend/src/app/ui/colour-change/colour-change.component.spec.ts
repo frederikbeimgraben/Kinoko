@@ -143,8 +143,8 @@ describe('ColourChangeComponent', () => {
     });
 
     const field = styleOf(container.querySelector('.field'));
-    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 96px)');
-    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 30px)');
+    expect(field.getPropertyValue('inline-size')).toBe('var(--pilz-colour-width, 88px)');
+    expect(field.getPropertyValue('block-size')).toBe('var(--pilz-colour-height, 28px)');
   });
 
   it('trennt zwei Zeilen mit dem Strich der zweiten', async () => {

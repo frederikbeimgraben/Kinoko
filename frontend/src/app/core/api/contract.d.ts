@@ -1254,6 +1254,8 @@ export interface components {
         ColourValue: {
             name: string;
             hex: components["schemas"]["HexColour"];
+            /** @description The hex of the nearest standard colour. It names the colour in other languages. */
+            nearest?: components["schemas"]["HexColour"] | null;
         };
         StandardColour: {
             key: string;

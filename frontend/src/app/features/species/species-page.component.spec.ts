@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -130,6 +130,26 @@ describe('SpeciesPageComponent', () => {
 
     expect(screen.getAllByRole('button', { name: 'Vergleichen' })).toHaveLength(2);
     expect(screen.getByRole('button', { name: 'Gallenröhrling' })).toBeInTheDocument();
+  });
+
+  it('opens the compare sheet from the chip and goes to the comparison with both species', async () => {
+    const container = await build();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Vergleichen' })[0]);
+    const sheet = container.querySelector('app-compare-entry');
+    expect(sheet).not.toBeNull();
+    expect(sheet?.querySelector('app-species-lookalikes')).not.toBeNull();
+    expect(screen.getByRole('textbox', { name: 'Art suchen' })).toBeInTheDocument();
+
+    const compare = sheet?.querySelector<HTMLElement>(
+      'app-species-lookalikes button[aria-label="Vergleichen"]',
+    );
+    compare?.click();
+
+    expect(navigate).toHaveBeenCalledWith(['/arten/vergleich'], {
+      queryParams: { arten: 'boletus-edulis,tylopilus-felleus' },
+    });
   });
 
   it('opens the menu with share and submit image', async () => {

@@ -140,7 +140,7 @@ describe('SpeciesListComponent', () => {
 
     filter.toggle('hymenium', 'gills');
     await vi.waitFor(() => {
-      expect(screen.getByText('Keine Art passt zu dieser Auswahl')).toBeInTheDocument();
+      expect(screen.getByText('Keine Treffer')).toBeInTheDocument();
     });
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter zurücksetzen' }));

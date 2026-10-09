@@ -1,6 +1,6 @@
 @use '../../../../styles/card';
 
-/** A section of the species page: a title with a card below it. */
+/** A section of the species page: a title above its content. */
 @mixin block {
   :host {
     display: block;
@@ -13,18 +13,5 @@
 
   .section__title {
     @include card.section-title;
-  }
-
-  // Rows on the species page have a 14 px inset from the card edge, as on the boards.
-  .section__card {
-    @include card.card;
-
-    --list-row-inline: 14px;
-    --size-row-tall: 56px;
-    --list-row-sub: var(--fs-row-meta);
-    --list-row-value: var(--fs-row-meta);
-    --list-row-sub-height: 1.4;
-    --list-row-title-height: normal;
-    --space-row-stack: 2px;
   }
 }

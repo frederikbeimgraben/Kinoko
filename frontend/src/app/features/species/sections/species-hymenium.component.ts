@@ -7,6 +7,9 @@ import {
   type ColourValue,
 } from '../../../ui/colour-field/colour-field.component';
 import { ListRowComponent } from '../../../ui/list-row/list-row.component';
+import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
+import { SectionComponent } from '../../../ui/section/section.component';
+import { CatalogueText } from '../catalogue-text';
 import type { SpeciesEntry } from '../../../core/api/models';
 import type { TranslationKey } from '../../../core/i18n/translations';
 import { ATTACHMENT_TEXT, EDGE_TEXT, HYMENIUM_TEXT, SPACING_TEXT } from '../labels';
@@ -20,16 +23,17 @@ interface HymeniumRow {
 /** Only gills have attachment, spacing and edge. */
 const GILL_ONLY: SpeciesEntry['hymeniumType'][] = ['gills', 'folds'];
 
-/** The hymenium of a species: type, structure and colour. */
+/** The hymenium of a species per `SpeciesSections.dc.html`: type, structure and colour as rows of a group. */
 @Component({
   selector: 'app-species-hymenium',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ColourFieldComponent, ListRowComponent, TranslatePipe],
+  imports: [ColourFieldComponent, ListRowComponent, RowGroupComponent, SectionComponent, TranslatePipe],
   templateUrl: './species-hymenium.component.html',
   styleUrl: './species-hymenium.component.scss',
 })
 export class SpeciesHymeniumComponent {
   private readonly i18n = inject(I18nService);
+  private readonly names = inject(CatalogueText);
 
   readonly species = input.required<SpeciesEntry>();
 
@@ -38,7 +42,7 @@ export class SpeciesHymeniumComponent {
     const kind = held.hymeniumType ?? null;
     if (kind === null) return [];
     const rows: HymeniumRow[] = [
-      { labelKey: 'species.fieldLabel', value: this.i18n.translate(HYMENIUM_TEXT[kind]) },
+      { labelKey: 'species.hymeniumType', value: this.i18n.translate(HYMENIUM_TEXT[kind]) },
     ];
     if (!GILL_ONLY.includes(kind)) return rows;
     if (held.gillAttachment)
@@ -67,9 +71,7 @@ export class SpeciesHymeniumComponent {
   });
 
   protected readonly colourLabel = computed(() =>
-    this.colours()
-      .map((colour) => colour.name)
-      .join(', '),
+    [...new Set(this.colours().map((colour) => this.names.colour(colour)))].join(', '),
   );
 
   /** The hymenium colour uses the body part with the same name. */

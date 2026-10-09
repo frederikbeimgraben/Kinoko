@@ -1,33 +1,13 @@
-@use 'section';
-
-@include section.block;
-
-// The card content has its divider at the bottom, as on the board.
-.time {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  padding: 12px 14px;
-  border-block-end: var(--border-width) solid var(--color-border);
+:host {
+  display: block;
 }
 
-.time__head {
-  display: flex;
-  gap: var(--space-3);
-  align-items: baseline;
-  justify-content: space-between;
-  font-size: var(--fs-row-title);
-  line-height: normal;
+:host(:empty) {
+  display: none;
 }
 
-.time__range {
-  font-size: var(--fs-row-meta);
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-
+// Kit `.note` around the season curve, per `SpeciesSections.dc.html`.
 .time__curve {
-  margin-block-start: 12px;
   padding: 12px 12px 8px;
   background: var(--surface);
   border-radius: 20px;

@@ -70,6 +70,28 @@ describe('SpeciesColourComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt die Töne ohne sichtbare Namen, die Namen bleiben für Vorleser', async () => {
+    const { container } = await build();
+
+    const labels = [...container.querySelectorAll('.swatch__label')];
+    expect(labels.length).toBe(12);
+    expect(labels.every((label) => label.classList.contains('sr-only'))).toBe(true);
+  });
+
+  it('nennt die Farbe der Lamellen Fruchtschicht, wie die Tafel', async () => {
+    const gilled = speciesEntry({
+      ...STEINPILZ,
+      colours: [{ part: 'gills', mode: 'single', colours: [{ name: 'weiß', hex: '#f3efe6' }] }],
+    });
+    await render(SpeciesColourComponent, { providers: catalogueProviders(speciesBundle([gilled])) });
+    await catalogueReady();
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('Fruchtschicht')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Lamellen')).not.toBeInTheDocument();
+  });
+
   it('stellt den ersten Teil offen und die anderen zu', async () => {
     const { container } = await build();
 

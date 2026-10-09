@@ -1,16 +1,13 @@
+import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { noViolations } from '../../../testing/axe';
+import { CATALOGUE_TEXT } from '../../../testing/catalogue-text-double';
 import { speciesEntry } from '../../../testing/species-fixture';
 import { SpeciesSensesComponent } from './species-senses.component';
 
 function term(slug: string, name: string, kind: 'smell' | 'taste') {
   return { term: { id: slug, slug, name, kind }, fromExperience: false };
-}
-
-/** The computed styles of an element. The element must exist. */
-function styleOf(element: Element | null): CSSStyleDeclaration {
-  if (element === null) throw new Error('Das Element steht nicht im Baum.');
-  return getComputedStyle(element);
 }
 
 const STONE = speciesEntry({
@@ -19,32 +16,47 @@ const STONE = speciesEntry({
   scientificName: 'Boletus edulis',
   smellText: 'Frisch angenehm pilzig.',
   tasteText: 'Mild und nussig.',
-  terms: [term('mushroomy', 'pilzig', 'smell'), term('mild', 'mild', 'taste')],
+  terms: [term('pilzig', 'Pilzig', 'smell'), term('mild', 'Mild', 'taste')],
 });
 
+async function build(species = STONE) {
+  return render(SpeciesSensesComponent, { providers: [CATALOGUE_TEXT], inputs: { species } });
+}
+
 describe('SpeciesSensesComponent', () => {
-  it('polstert den Textblock ringsum, oben schmaler als unten', async () => {
-    const { container } = await render(SpeciesSensesComponent, { inputs: { species: STONE } });
+  it('zeigt Geruch und Geschmack als Zeilen einer Gruppe mit dem Satz darunter', async () => {
+    const { container } = await build();
 
-    const body = styleOf(container.querySelector('.sense__body'));
-    expect(body.paddingTop).toBe('12px');
-    expect(body.paddingBottom).toBe('14px');
-  });
-
-  it('zeigt Marken und Satz für Geruch und Geschmack', async () => {
-    const { container } = await render(SpeciesSensesComponent, { inputs: { species: STONE } });
-
-    expect(screen.getByText('pilzig')).toBeInTheDocument();
-    expect(screen.getByText('mild')).toBeInTheDocument();
+    expect(container.querySelectorAll('app-row-group app-list-row')).toHaveLength(2);
     expect(screen.getByText('Frisch angenehm pilzig.')).toBeInTheDocument();
+    expect(screen.getByText('Mild und nussig.')).toBeInTheDocument();
+    expect(container.querySelector('app-tag-list')).toBeNull();
     await noViolations(container);
   });
 
-  it('lässt einen Sinn ohne Angabe weg', async () => {
-    const { container } = await render(SpeciesSensesComponent, {
-      inputs: { species: speciesEntry({ ...STONE, tasteText: null, terms: [] }) },
-    });
+  it('nimmt die Begriffe, wo der Satz fehlt', async () => {
+    await build(speciesEntry({ ...STONE, smellText: null }));
 
-    expect(container.querySelectorAll('.sense__part')).toHaveLength(1);
+    expect(screen.getByText('Pilzig')).toBeInTheDocument();
+  });
+
+  it('zeigt auf Englisch die übersetzten Begriffe statt des deutschen Satzes', async () => {
+    const { fixture } = await build();
+    const i18n = TestBed.inject(I18nService);
+    i18n.setLocale('en');
+    await vi.waitFor(() => {
+      expect(i18n.locale()).toBe('en');
+    });
+    fixture.detectChanges();
+
+    expect(screen.getByText('Mushroomy')).toBeInTheDocument();
+    expect(screen.queryByText('Frisch angenehm pilzig.')).toBeNull();
+    i18n.setLocale('de');
+  });
+
+  it('lässt einen Sinn ohne Angabe weg', async () => {
+    const { container } = await build(speciesEntry({ ...STONE, tasteText: null, terms: [] }));
+
+    expect(container.querySelectorAll('app-list-row')).toHaveLength(1);
   });
 });

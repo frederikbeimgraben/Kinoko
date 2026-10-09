@@ -2982,6 +2982,11 @@ components:
           type: string
         hex:
           $ref: "#/components/schemas/HexColour"
+        nearest:
+          description: The hex of the nearest standard colour. It names the colour in other languages.
+          oneOf:
+            - $ref: "#/components/schemas/HexColour"
+            - type: "null"
       required: [name, hex]
 
     StandardColour:

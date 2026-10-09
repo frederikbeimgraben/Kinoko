@@ -4,31 +4,28 @@
   --list-row-title-weight: var(--fw-semibold);
 }
 
+// Kit `.sq`: 44 px at radius 14.
 .lookalike__photo {
   display: block;
   flex: none;
-  inline-size: var(--size-thumb);
-  block-size: var(--size-thumb);
-  border-radius: 9px;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: var(--r-sq);
 }
 
+// Per `LookalikeRow.dc.html`: the round compare button of 48 px, then the chevron.
 .lookalike__ways {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  margin-inline-end: -4px;
 }
 
-.lookalike__way {
+.lookalike__open {
   display: flex;
   align-items: center;
   justify-content: center;
-  inline-size: 24px;
-  block-size: 24px;
+  padding: 0;
   color: var(--text-var);
   background: none;
   border: 0;
-}
-
-.lookalike__way--compare {
-  color: var(--primary);
 }

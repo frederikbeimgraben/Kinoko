@@ -3,7 +3,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { throwError } from 'rxjs';
 import { ToastService } from '../../ui/toast/toast.service';
-import { ApiClient } from './api-client';
+import { I18nService } from '../i18n/i18n.service';
+import { ApiClient, problemKey } from './api-client';
 import { SIGN_IN_REQUIRED, type ProblemDetail } from './problem';
 
 function build(): { api: ApiClient; http: HttpTestingController; toasts: ToastService } {
@@ -71,6 +72,33 @@ describe('ApiClient', () => {
 
     expect(caught[0]).toEqual(problem);
     expect(toasts.toasts()[0].message).toBe('Der Fund gehört jemand anderem.');
+  });
+
+  it('zeigt auf Englisch den Text zum Code statt des deutschen Titels', async () => {
+    const { api, http, toasts } = build();
+    const i18n = TestBed.inject(I18nService);
+    i18n.setLocale('en');
+    await vi.waitFor(() => {
+      expect(i18n.locale()).toBe('en');
+    });
+    const problem: ProblemDetail = {
+      type: 'about:blank',
+      title: 'Nicht gefunden',
+      status: 404,
+      code: 'not_found',
+    };
+
+    api.get('/species/x').subscribe({ error: () => undefined });
+    http.expectOne('/api/species/x').flush(problem, { status: 404, statusText: 'Not Found' });
+
+    expect(toasts.toasts()[0].message).toBe('Not found');
+    i18n.setLocale('de');
+  });
+
+  it('bildet den Schlüssel eines Codes wie der Dienst', () => {
+    expect(problemKey('not_found')).toBe('error.notFound');
+    expect(problemKey('slug_taken')).toBe('error.slugTaken');
+    expect(problemKey(undefined)).toBeNull();
   });
 
   it('macht aus einem Abbruch ohne Antwort ein Problem', () => {

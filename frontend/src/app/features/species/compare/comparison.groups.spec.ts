@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { I18nService } from '../../../core/i18n/i18n.service';
-import { speciesEntry } from '../../../testing/species-fixture';
+import { PALETTE, speciesEntry } from '../../../testing/species-fixture';
+import { catalogueNames, type CatalogueNames } from '../catalogue-text';
 import type { SpeciesReaction } from '../species.store';
 import { compareGroups } from './comparison.groups';
 
@@ -34,9 +35,13 @@ function i18n(): I18nService {
   return TestBed.inject(I18nService);
 }
 
+function names(): CatalogueNames {
+  return catalogueNames(i18n(), () => PALETTE);
+}
+
 describe('compareGroups', () => {
   it('trägt eine Auszeichnung für den Speisewert', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
     const row = groups[0]?.rows.find((one) => one.key === 'Speisewert');
 
     expect(row?.cells[0]).toEqual({
@@ -49,7 +54,7 @@ describe('compareGroups', () => {
   });
 
   it('trägt einen Wert mit Einheit für ein Maß', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
     const cap = groups.find((one) => one.label === 'Hut');
     const width = cap?.rows.find((one) => one.key === 'Breite');
 
@@ -58,7 +63,7 @@ describe('compareGroups', () => {
   });
 
   it('trägt eine Fläche für eine Farbe', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
     const cap = groups.find((one) => one.label === 'Hut');
     const colour = cap?.rows.find((one) => one.key === 'Farbe');
 
@@ -71,7 +76,7 @@ describe('compareGroups', () => {
   });
 
   it('trägt einen Fließtext für eine Notiz', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
     const stem = groups.find((one) => one.label === 'Stiel');
     const net = stem?.rows.find((one) => one.key === 'Netz');
 
@@ -80,7 +85,7 @@ describe('compareGroups', () => {
   });
 
   it('lässt eine Zeile aus, für die keine Art einen Wert trägt', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
     const ring = groups.find((one) => one.label === 'Ring');
 
     expect(ring).toBeUndefined();
@@ -88,15 +93,15 @@ describe('compareGroups', () => {
 
   it('lässt eine Gruppe ohne Zeile ganz aus', () => {
     const bare = speciesEntry({ slug: 'bare', name: 'Bare', scientificName: 'Bare' });
-    const groups = compareGroups([bare, bare], i18n(), false);
+    const groups = compareGroups([bare, bare], i18n(), names(), false);
 
     expect(groups.find((one) => one.label === 'Hut')).toBeUndefined();
     expect(groups.find((one) => one.label === 'Ring')).toBeUndefined();
   });
 
   it('zeigt bei „nur Unterschiede“ nur die Zeilen, die sich unterscheiden', () => {
-    const all = compareGroups([STONE, KNIGHT], i18n(), false);
-    const onlyDiff = compareGroups([STONE, KNIGHT], i18n(), true);
+    const all = compareGroups([STONE, KNIGHT], i18n(), names(), false);
+    const onlyDiff = compareGroups([STONE, KNIGHT], i18n(), names(), true);
     const hymeniumAll = all.find((one) => one.label === 'Fruchtschicht');
     const hymeniumDiff = onlyDiff.find((one) => one.label === 'Fruchtschicht');
 
@@ -112,14 +117,14 @@ describe('compareGroups', () => {
       edibility: 'edible',
       protection: 'personal_use',
     });
-    const groups = compareGroups([STONE, twin], i18n(), true);
+    const groups = compareGroups([STONE, twin], i18n(), names(), true);
     const classification = groups.find((one) => one.label === 'Einstufung');
 
     expect(classification?.rows.find((one) => one.key === 'Speisewert')).toBeUndefined();
   });
 
   it('trägt eine Zeile je Auslöser der Verfärbung, sonst gar keine Gruppe', () => {
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
     const reaction = groups.find((one) => one.label === 'Verfärbung');
 
     expect(reaction).toBeUndefined();
@@ -142,7 +147,7 @@ describe('compareGroups', () => {
       ],
     });
     const untested = speciesEntry({ slug: 'untested', name: 'Untested', scientificName: 'Untested' });
-    const groups = compareGroups([tested, untested], i18n(), false);
+    const groups = compareGroups([tested, untested], i18n(), names(), false);
     const reaction = groups.find((one) => one.label === 'Verfärbung');
     const row = reaction?.rows.find((one) => one.key === 'Anschnitt');
 
@@ -153,6 +158,42 @@ describe('compareGroups', () => {
       text: 'dunkelrosa',
     });
     expect(row?.cells[1]).toEqual({ kind: 'plain', text: 'keine Angabe' });
+  });
+
+  it('nennt den Schutz mit dem kurzen Wort der Tafel', () => {
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false);
+    const row = groups[0]?.rows.find((one) => one.key === 'Schutz');
+
+    expect(row?.cells.map((cell) => (cell.kind === 'badge' ? cell.text : ''))).toEqual([
+      'Eigenbedarf',
+      'nicht geschützt',
+    ]);
+  });
+
+  it('zeigt ein Reagenz in einer Zeile, auch wenn die Art eine Verfärbung und eine Reaktion dazu hat', () => {
+    const koh = { id: 'k', slug: 'koh', name: 'Kalilauge (KOH)', kind: 'trigger' } as const;
+    const changed = speciesEntry({
+      ...STONE,
+      colourChanges: [{ part: 'flesh', kind: 'reagent', from: null, to: BROWN, triggers: [koh] }],
+    });
+    const reaction: SpeciesReaction = {
+      reagent: { slug: 'koh', name: 'Kalilauge (KOH)' },
+      reading: 'blass braun',
+      part: 'flesh',
+      location: null,
+      result: 'positive',
+      colour: BROWN,
+      contested: false,
+      partlyConfirmed: false,
+      sources: [],
+    };
+    const groups = compareGroups([changed, KNIGHT], i18n(), names(), false, (slug) =>
+      slug === 'steinpilz' ? [reaction] : [],
+    );
+    const rows = groups.find((one) => one.label === 'Verfärbung')?.rows ?? [];
+
+    expect(rows.map((row) => row.key)).toEqual(['Kalilauge (KOH)']);
+    expect(rows[0]?.cells[0]).toMatchObject({ kind: 'swatch', text: 'blass braun' });
   });
 
   it('compares the reactions per reagent in the group of the colour change', () => {
@@ -169,7 +210,7 @@ describe('compareGroups', () => {
     };
     const negative: SpeciesReaction = { ...reaction, reading: '', result: 'negative', colour: null };
     const reactions: Record<string, readonly SpeciesReaction[]> = { steinpilz: [reaction], gift: [negative] };
-    const groups = compareGroups([STONE, KNIGHT], i18n(), false, (slug) => reactions[slug] ?? []);
+    const groups = compareGroups([STONE, KNIGHT], i18n(), names(), false, (slug) => reactions[slug] ?? []);
     const row = groups.find((one) => one.label === 'Verfärbung')?.rows.find((one) => one.key === 'Kalilauge');
 
     expect(row?.cells[0]).toEqual({
