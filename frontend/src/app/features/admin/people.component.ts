@@ -150,7 +150,10 @@ export class PeopleComponent {
     const roles = this.store.roles() ?? [];
     const implied = person.groupAdmin && !person.roles.some((role) => role.slug === ADMIN);
     const admin = implied ? roles.filter((role) => role.slug === ADMIN) : [];
-    const base = roles.filter((role) => role.slug === EVERY_ONE);
+    // A stored base role does not show a second time.
+    const base = roles.filter(
+      (role) => role.slug === EVERY_ONE && !person.roles.some((one) => one.slug === EVERY_ONE),
+    );
     return [...admin, ...base, ...person.roles].map((role) => roleName(this.i18n, role.name));
   }
 

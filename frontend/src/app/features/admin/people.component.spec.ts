@@ -2,7 +2,7 @@ import { provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { ANY_ROUTE } from '../../testing/routes';
 import userEvent from '@testing-library/user-event';
-import { AccessApiDouble, accessApiProvider, person, problem } from '../../testing/access-fixture';
+import { AccessApiDouble, USER_ROLE, accessApiProvider, person, problem } from '../../testing/access-fixture';
 import { noViolations } from '../../testing/axe';
 import { PeopleComponent } from './people.component';
 
@@ -49,6 +49,15 @@ describe('PeopleComponent', () => {
     expect(screen.getByText('Über die Anmeldung (SSO)')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
     expect(api.assigned).toEqual([{ id: 'person-sso', roles: [] }]);
+  });
+
+  it('nennt eine gespeicherte Rolle Nutzer nur einmal', async () => {
+    const api = new AccessApiDouble();
+    const base = { id: USER_ROLE.id, slug: USER_ROLE.slug, name: USER_ROLE.name };
+    api.peopleList = [person({ id: 'person-alt', sub: 'sub-alt', name: 'Alt', roles: [base] })];
+    await build(api);
+
+    expect(screen.getByRole('button', { name: /Alt/ })).toHaveTextContent(/^Alt\s*Nutzer$/);
   });
 
   it('fragt den Dienst nach dem, was jemand eintippt', async () => {

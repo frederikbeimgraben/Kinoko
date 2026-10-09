@@ -38,6 +38,8 @@ export class SpeciesFeaturesComponent {
   private readonly i18n = inject(I18nService);
 
   readonly species = input.required<SpeciesEntry>();
+  /** Shows the safety notice below the rows. The board `RatingSection` has none. */
+  readonly notice = input(true);
   /** The note on edibility is a German catalogue text. */
   protected readonly catalogueLang = DEFAULT_LOCALE;
 
