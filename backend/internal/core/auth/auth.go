@@ -39,6 +39,8 @@ type Viewer struct {
 	User   *User
 	Rights map[string]struct{}
 	Claims map[string]any
+	// GroupAdmin is true when the token puts the person in the admin group of the SSO.
+	GroupAdmin bool
 }
 
 // Sub is the key of the person at the issuer.
@@ -167,7 +169,9 @@ func (a *Authenticator) ViewerOf(ctx context.Context, header string) (Viewer, er
 	if found {
 		viewer.User = &user
 	}
-	rights, err := a.rightsOf(ctx, viewer.User, a.keys.Groups(ctx, token, claims))
+	groups := a.keys.Groups(ctx, token, claims)
+	viewer.GroupAdmin = slices.Contains(groups, any(a.cfg.AdminGroup))
+	rights, err := a.rightsOf(ctx, viewer.User, viewer.GroupAdmin)
 	if err != nil {
 		return none, err
 	}
@@ -201,8 +205,8 @@ func (a *Authenticator) claimsOf(ctx context.Context, token string) (map[string]
 	return claims, nil
 }
 
-func (a *Authenticator) rightsOf(ctx context.Context, user *User, groups []any) (map[string]struct{}, error) {
-	if slices.Contains(groups, any(a.cfg.AdminGroup)) {
+func (a *Authenticator) rightsOf(ctx context.Context, user *User, groupAdmin bool) (map[string]struct{}, error) {
+	if groupAdmin {
 		keys, err := db.Column[string](ctx, a.handle, `SELECT "key" FROM permission`)
 		return fn.Set(keys), err
 	}
@@ -231,7 +235,7 @@ func PersonOf(ctx context.Context, q db.Querier, sub string) (User, bool, error)
 }
 
 // EnsurePerson gives the person of the viewer. The first call creates the
-// row; a later call updates email and name from the token.
+// row; a later call updates email, name and the admin group flag from the token.
 func EnsurePerson(ctx context.Context, handle *sql.DB, viewer Viewer) (User, error) {
 	if viewer.Sub() == "" {
 		return User{}, problem.Unauthorized()
@@ -242,18 +246,25 @@ func EnsurePerson(ctx context.Context, handle *sql.DB, viewer Viewer) (User, err
 		if err != nil {
 			return User{}, err
 		}
-		if ok && equal(found.Email, email) && equal(found.Name, name) {
+		stored := false
+		if ok {
+			if stored, err = db.Scalar[bool](ctx, tx, "SELECT group_admin FROM user WHERE id = ?", found.ID); err != nil {
+				return User{}, err
+			}
+		}
+		if ok && equal(found.Email, email) && equal(found.Name, name) && stored == viewer.GroupAdmin {
 			return found, nil
 		}
 		if !ok {
 			found = User{ID: db.NewID(), Sub: viewer.Sub(), CreatedAt: db.Now()}
 			if _, err := tx.ExecContext(ctx,
-				"INSERT INTO user (id, sub, email, name, created_at) VALUES (?, ?, ?, ?, ?)",
-				found.ID, found.Sub, email, name, found.CreatedAt); err != nil {
+				"INSERT INTO user (id, sub, email, name, created_at, group_admin) VALUES (?, ?, ?, ?, ?, ?)",
+				found.ID, found.Sub, email, name, found.CreatedAt, viewer.GroupAdmin); err != nil {
 				return User{}, err
 			}
 		} else if _, err := tx.ExecContext(ctx,
-			"UPDATE user SET email = ?, name = ? WHERE id = ?", email, name, found.ID); err != nil {
+			"UPDATE user SET email = ?, name = ?, group_admin = ? WHERE id = ?",
+			email, name, viewer.GroupAdmin, found.ID); err != nil {
 			return User{}, err
 		}
 		found.Email, found.Name = email, name

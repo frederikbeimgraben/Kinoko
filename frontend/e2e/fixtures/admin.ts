@@ -108,6 +108,7 @@ export function person(
     email,
     name,
     roles: [{ id: `rolle-${roleSlug}`, slug: roleSlug, name: roleName }],
+    groupAdmin: false,
     createdAt: NOW,
   };
 }

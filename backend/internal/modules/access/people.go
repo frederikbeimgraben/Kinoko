@@ -26,14 +26,28 @@ type roleBrief struct {
 	Name string `json:"name"`
 }
 
-// personOut is an account with its roles.
+// personOut is an account with its roles. GroupAdmin is true when the SSO
+// group makes the account an admin without a stored role.
 type personOut struct {
-	ID        db.ID       `json:"id"`
-	Sub       string      `json:"sub"`
-	Email     *string     `json:"email"`
-	Name      *string     `json:"name"`
-	Roles     []roleBrief `json:"roles"`
-	CreatedAt db.Time     `json:"createdAt"`
+	ID         db.ID       `json:"id"`
+	Sub        string      `json:"sub"`
+	Email      *string     `json:"email"`
+	Name       *string     `json:"name"`
+	Roles      []roleBrief `json:"roles"`
+	GroupAdmin bool        `json:"groupAdmin"`
+	CreatedAt  db.Time     `json:"createdAt"`
+}
+
+// heldRoles are the stored roles of some accounts and the accounts in the
+// admin group of the SSO.
+type heldRoles struct {
+	roles      map[db.ID][]roleBrief
+	groupAdmin map[db.ID]struct{}
+}
+
+func (h heldRoles) render(user auth.User) personOut {
+	_, admin := h.groupAdmin[user.ID]
+	return renderPerson(user, h.roles[user.ID], admin)
 }
 
 type heldRole struct {
@@ -41,9 +55,9 @@ type heldRole struct {
 	role roleBrief
 }
 
-func rolesFor(ctx context.Context, q db.Querier, users []db.ID) (map[db.ID][]roleBrief, error) {
+func rolesFor(ctx context.Context, q db.Querier, users []db.ID) (heldRoles, error) {
 	if len(users) == 0 {
-		return map[db.ID][]roleBrief{}, nil
+		return heldRoles{}, nil
 	}
 	rows, err := db.All(ctx, q, func(s db.Scanner) (heldRole, error) {
 		var h heldRole
@@ -52,21 +66,29 @@ func rolesFor(ctx context.Context, q db.Querier, users []db.ID) (map[db.ID][]rol
 		FROM user_role JOIN role ON role.id = user_role.role_id
 		WHERE user_role.user_id IN (`+db.Placeholders(len(users))+`)`, db.Args(users)...)
 	if err != nil {
-		return nil, err
+		return heldRoles{}, err
+	}
+	admins, err := db.Column[db.ID](ctx, q,
+		`SELECT id FROM user WHERE group_admin AND id IN (`+db.Placeholders(len(users))+`)`, db.Args(users)...)
+	if err != nil {
+		return heldRoles{}, err
 	}
 	grouped := fn.GroupBy(rows, func(h heldRole) db.ID { return h.user })
 	out := make(map[db.ID][]roleBrief, len(grouped))
 	for user, held := range grouped {
 		out[user] = fn.Map(held, func(h heldRole) roleBrief { return h.role })
 	}
-	return out, nil
+	return heldRoles{roles: out, groupAdmin: fn.Set(admins)}, nil
 }
 
-func renderPerson(user auth.User, roles []roleBrief) personOut {
+func renderPerson(user auth.User, roles []roleBrief, groupAdmin bool) personOut {
 	if roles == nil {
 		roles = []roleBrief{}
 	}
-	return personOut{ID: user.ID, Sub: user.Sub, Email: user.Email, Name: user.Name, Roles: roles, CreatedAt: user.CreatedAt}
+	return personOut{
+		ID: user.ID, Sub: user.Sub, Email: user.Email, Name: user.Name,
+		Roles: roles, GroupAdmin: groupAdmin, CreatedAt: user.CreatedAt,
+	}
 }
 
 func personByID(ctx context.Context, q db.Querier, id db.ID) (auth.User, error) {
@@ -74,8 +96,8 @@ func personByID(ctx context.Context, q db.Querier, id db.ID) (auth.User, error) 
 }
 
 func loadPerson(ctx context.Context, q db.Querier, user auth.User) (personOut, error) {
-	roles, err := rolesFor(ctx, q, []db.ID{user.ID})
-	return renderPerson(user, roles[user.ID]), err
+	held, err := rolesFor(ctx, q, []db.ID{user.ID})
+	return held.render(user), err
 }
 
 func (m *Module) listPeople(r *http.Request) (web.Response, error) {
@@ -97,13 +119,11 @@ func (m *Module) listPeople(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	roles, err := rolesFor(ctx, m.deps.DB, fn.Map(people, func(u auth.User) db.ID { return u.ID }))
+	held, err := rolesFor(ctx, m.deps.DB, fn.Map(people, func(u auth.User) db.ID { return u.ID }))
 	if err != nil {
 		return nil, err
 	}
-	return web.OK(paging.Wrap(fn.Map(people, func(u auth.User) personOut {
-		return renderPerson(u, roles[u.ID])
-	}), page)), nil
+	return web.OK(paging.Wrap(fn.Map(people, held.render), page)), nil
 }
 
 func (m *Module) getPerson(r *http.Request) (web.Response, error) {

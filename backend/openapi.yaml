@@ -4485,10 +4485,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/RoleBrief"
+        groupAdmin:
+          type: boolean
+          description: The admin group of the SSO makes the person an admin without a stored role.
         createdAt:
           type: string
           format: date-time
-      required: [id, sub, roles, createdAt]
+      required: [id, sub, roles, groupAdmin, createdAt]
 
     PersonPage:
       type: object

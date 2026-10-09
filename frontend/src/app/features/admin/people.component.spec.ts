@@ -2,7 +2,7 @@ import { provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import { ANY_ROUTE } from '../../testing/routes';
 import userEvent from '@testing-library/user-event';
-import { AccessApiDouble, accessApiProvider, problem } from '../../testing/access-fixture';
+import { AccessApiDouble, accessApiProvider, person, problem } from '../../testing/access-fixture';
 import { noViolations } from '../../testing/axe';
 import { PeopleComponent } from './people.component';
 
@@ -32,6 +32,23 @@ describe('PeopleComponent', () => {
     expect(screen.getByRole('button', { name: /Frederik/ })).toHaveTextContent('Admin');
     expect(screen.getByRole('button', { name: /Jonas/ })).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('zeigt die Verwaltung aus der Anmeldung als feste, gewählte Rolle', async () => {
+    const api = new AccessApiDouble();
+    api.peopleList = [person({ id: 'person-sso', sub: 'sub-sso', name: 'Sso', groupAdmin: true })];
+    const { refresh } = await build(api);
+
+    expect(screen.getByRole('button', { name: /Sso/ })).toHaveTextContent('Admin');
+    await userEvent.click(screen.getByRole('button', { name: /Sso/ }));
+    refresh();
+
+    const box = screen.getByRole('checkbox', { name: /Admin/ });
+    expect(box).toBeChecked();
+    expect(box).toBeDisabled();
+    expect(screen.getByText('Über die Anmeldung (SSO)')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    expect(api.assigned).toEqual([{ id: 'person-sso', roles: [] }]);
   });
 
   it('fragt den Dienst nach dem, was jemand eintippt', async () => {
