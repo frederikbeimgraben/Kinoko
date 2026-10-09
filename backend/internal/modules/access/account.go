@@ -37,12 +37,11 @@ type myPermissions struct {
 	Permissions []string `json:"permissions"`
 }
 
+// getMyPermissions also records the person, because each app start asks for
+// the permissions. Thus an admin from the SSO group shows in the role counts.
 func (m *Module) getMyPermissions(r *http.Request) (web.Response, error) {
-	viewer, err := auth.From(r)
+	_, viewer, err := m.deps.Auth.CurrentUser(r)
 	if err != nil {
-		return nil, err
-	}
-	if err := auth.RequireSignIn(viewer); err != nil {
 		return nil, err
 	}
 	return web.OK(myPermissions{Permissions: fn.SortedKeys(viewer.Rights)}), nil

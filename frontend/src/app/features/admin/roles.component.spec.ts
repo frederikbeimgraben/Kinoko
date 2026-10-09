@@ -25,6 +25,12 @@ describe('RolesComponent', () => {
     expect(screen.getByRole('button', { name: /Admin/ })).toHaveTextContent('1 Person');
     expect(screen.getByRole('button', { name: /Pilzberater/ })).toHaveTextContent('3 Personen');
     expect(screen.getByText('0 Personen')).toBeInTheDocument();
+    const rows = screen.getAllByRole('button').map((row) => row.textContent.trim());
+    expect(rows.filter((row) => row.includes('Person'))).toEqual([
+      expect.stringMatching(/^Admin/),
+      expect.stringMatching(/^Nutzer/),
+      expect.stringMatching(/^Pilzberater/),
+    ]);
     expect(screen.queryByText('Arten und Bilder pflegen.')).not.toBeInTheDocument();
     await noViolations(container);
   });

@@ -12,6 +12,7 @@ import { PageHeaderComponent } from '../../ui/page-header/page-header.component'
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SearchFieldComponent } from '../../ui/search-field/search-field.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 
 /** A new entry has no id yet. */
 const NEW = 'neu';
@@ -29,6 +30,7 @@ const NEW = 'neu';
     RowGroupComponent,
     RowGroupSkeletonComponent,
     SearchFieldComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   templateUrl: './admin-glossary.component.html',

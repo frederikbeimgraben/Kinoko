@@ -21,6 +21,7 @@ import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segme
 import { SvgIconComponent } from '../../ui/svg-icon/svg-icon.component';
 import { PART_TEXT } from '../species/labels';
 import { CatalogueStore } from './catalogue.store';
+import { injectColourLabel, toneName } from './colour-label';
 import { SpeciesEditorStore } from './species-editor.store';
 import { COLOUR_MODES, stopText, trimmed, withColour } from './section-colour.rows';
 import { colourGroupAt, isBodyPart, withColourGroup, withoutColourGroup } from './species-lists';
@@ -65,6 +66,7 @@ export class SectionColourComponent {
   private readonly router = inject(Router);
   private readonly state = inject(SpeciesEditorStore);
   private readonly catalogue = inject(CatalogueStore);
+  private readonly colourLabel = injectColourLabel();
 
   protected readonly slug = injectRouteParam('slug');
   private readonly partParam = injectRouteParam('part', 'cap');
@@ -80,6 +82,8 @@ export class SectionColourComponent {
     const part = this.part();
     return part === null ? null : colourGroupAt(this.state.species(), part, this.at());
   });
+  /** Only a stored colour can be removed. A new one has nothing to remove. */
+  protected readonly known = computed(() => this.group() !== null);
 
   protected readonly mode = linkedSignal<ColourMode>(() => this.group()?.mode ?? 'single');
   protected readonly colours = linkedSignal<ColourValue[]>(() => [...(this.group()?.colours ?? [])]);
@@ -101,7 +105,7 @@ export class SectionColourComponent {
     return colours.map((one, at) => ({
       at,
       hex: one.hex,
-      name: one.name === '' ? one.hex.toUpperCase() : one.name,
+      name: one.name === '' ? one.hex.toUpperCase() : this.colourLabel(one),
       note: stopText(this.mode(), at, colours.length, one.hex, (key: TranslationKey) =>
         this.i18n.translate(key),
       ),
@@ -138,8 +142,12 @@ export class SectionColourComponent {
 
   /** A tone gives its name to the colour. The name field can change it after. */
   protected chooseHex(hex: string): void {
-    const tone = this.swatches().find((one) => one.value === hex);
-    this.setColour({ hex, name: tone?.label ?? this.chosenName() });
+    this.setColour({ hex, name: this.storedName(hex) ?? this.chosenName() });
+  }
+
+  /** The catalogue keeps German names, also when the editor works in English. */
+  private storedName(hex: string): string | null {
+    return toneName(hex, this.catalogue.standardColours(), this.i18n);
   }
 
   protected setName(name: string): void {
@@ -152,8 +160,8 @@ export class SectionColourComponent {
 
   /** A new colour starts as the first standard tone. */
   protected addStop(): void {
-    const tone = this.swatches()[0] ?? { value: '#b08a5a', label: '' };
-    this.colours.update((colours) => [...colours, { hex: tone.value, name: tone.label }]);
+    const hex = this.swatches()[0]?.value ?? '#b08a5a';
+    this.colours.update((colours) => [...colours, { hex, name: this.storedName(hex) ?? '' }]);
     this.open.set(this.colours().length - 1);
   }
 

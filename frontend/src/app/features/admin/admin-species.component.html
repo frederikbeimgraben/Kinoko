@@ -1,13 +1,37 @@
-<app-page-header [title]="'admin.species.title' | t" [back]="true" [wide]="wide()" (backClick)="back()" />
-
-<div class="species">
-  <app-species-search-filter-bar
+<app-page-header [title]="null" [back]="true" [wide]="wide()" (backClick)="back()">
+  <h1 class="sr-only">{{ 'admin.species.title' | t }}</h1>
+  <app-search-field
+    headline
     [value]="query()"
     [placeholder]="'admin.species.searchPlaceholder' | t"
     (valueChange)="find($event)"
   />
+  <app-icon-button
+    icon="sort"
+    kind="plain"
+    [label]="'species.sort.button' | t"
+    (pressed)="sorting.set(true)"
+  />
+</app-page-header>
+
+<app-popover
+  [open]="sorting()"
+  [anchor]="anchor()"
+  [label]="'species.sort.button' | t"
+  (closed)="sorting.set(false)"
+>
+  @for (sort of sorts(); track sort.key) {
+    <app-popover-item [label]="sort.label" [active]="sort.on" (chosen)="setSort(sort.key)" />
+  }
+</app-popover>
+
+@if (marks()) {
+  <app-species-filter-chips />
+}
+
+<div class="species">
   @if (loading()) {
-    <app-row-group-skeleton [count]="7" [lines]="2" />
+    <app-row-group-skeleton class="species__skeleton" [count]="7" [lines]="2" />
   } @else {
     <app-infinite-list class="species__list" skeleton="rows" [hasMore]="hasMore()" (more)="more()">
       <div class="species__rows">

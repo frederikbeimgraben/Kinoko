@@ -160,7 +160,7 @@ export class CategoriesComponent {
     const ask = this.asking();
     const into = this.target();
     if (id === null || ask === null || (ask === 'merge' && into === null)) return;
-    this.store.drop({
+    this.store.remove({
       id,
       into: ask === 'merge' ? into : null,
       onDone: () => {

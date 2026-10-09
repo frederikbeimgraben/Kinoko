@@ -26,7 +26,7 @@ const WORDS: Record<string, string> = {
 };
 
 function text(locale = 'de'): RowText {
-  return { text: (key) => WORDS[key] ?? key, locale, term: (one) => one.name };
+  return { text: (key) => WORDS[key] ?? key, locale, term: (one) => one.name, colour: (one) => one.name };
 }
 
 function entry(part: Partial<SpeciesEntry>): SpeciesEntry {
@@ -120,6 +120,30 @@ describe('changeRows', () => {
     );
 
     expect(rows).toEqual([{ key: 'verfaerbung-0', title: 'Schnitt', value: 'braun' }]);
+  });
+
+  it('nennt die Farbe in der Sprache der Oberfläche', () => {
+    const english = {
+      ...text('en'),
+      colour: (one: { name: string }) => (one.name === 'braun' ? 'brown' : one.name),
+    };
+    const rows = changeRows(
+      entry({
+        colourChanges: [
+          {
+            part: 'flesh',
+            kind: 'mechanical',
+            from: null,
+            to: { name: 'braun', hex: '#7a5230' },
+            speed: 'longer',
+            triggers: [],
+          },
+        ],
+      }),
+      english,
+    );
+
+    expect(rows[0].value).toBe('brown');
   });
 });
 

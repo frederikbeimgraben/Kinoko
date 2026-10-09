@@ -1850,6 +1850,8 @@ export interface components {
             email?: string | null;
             name?: string | null;
             roles: components["schemas"]["RoleBrief"][];
+            /** @description The admin group of the SSO makes the person an admin without a stored role. */
+            groupAdmin: boolean;
             /** Format: date-time */
             createdAt: string;
         };

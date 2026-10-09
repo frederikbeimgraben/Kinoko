@@ -66,8 +66,14 @@ func roleBySlug(ctx context.Context, q db.Querier, slug string) (roleRow, bool, 
 	return db.Maybe(ctx, q, scanRole, "SELECT "+roleColumns+" FROM role WHERE slug = ?", slug)
 }
 
+// roleCount counts the people of the role r. A person in the admin group of
+// the SSO holds the admin role also without a stored row.
+const roleCount = `SELECT count(*) FROM user u
+	WHERE u.id IN (SELECT user_id FROM user_role WHERE role_id = r.id)
+		OR (r.slug = '` + AdminSlug + `' AND u.group_admin)`
+
 func peopleCount(ctx context.Context, q db.Querier, role db.ID) (int64, error) {
-	return db.Scalar[int64](ctx, q, "SELECT count(*) FROM user_role WHERE role_id = ?", role)
+	return db.Scalar[int64](ctx, q, "SELECT ("+roleCount+") FROM role r WHERE r.id = ?", role)
 }
 
 func permissionsOf(ctx context.Context, q db.Querier, role db.ID) ([]string, error) {
@@ -117,7 +123,7 @@ func (m *Module) listRoles(r *http.Request) (web.Response, error) {
 			return nil, err
 		}
 		if counts, err = db.All(ctx, m.deps.DB, scanKeyed[int64],
-			"SELECT role_id, count(*) FROM user_role WHERE role_id IN ("+in+") GROUP BY role_id", ids...); err != nil {
+			"SELECT r.id, ("+roleCount+") FROM role r WHERE r.id IN ("+in+")", ids...); err != nil {
 			return nil, err
 		}
 	}

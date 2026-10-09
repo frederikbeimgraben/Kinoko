@@ -36,14 +36,22 @@ const WITH_CHANGE = {
   ],
 };
 
-function routeFor(part: string, index: string): { provide: typeof ActivatedRoute; useValue: unknown } {
+function routeFor(
+  part: string,
+  index: string,
+  query: Record<string, string>,
+): { provide: typeof ActivatedRoute; useValue: unknown } {
   const map = convertToParamMap({ slug: 'boletus-edulis', part, index });
-  return { provide: ActivatedRoute, useValue: { paramMap: of(map), snapshot: { paramMap: map } } };
+  return {
+    provide: ActivatedRoute,
+    useValue: { paramMap: of(map), queryParamMap: of(convertToParamMap(query)), snapshot: { paramMap: map } },
+  };
 }
 
 async function build(
   part = 'flesh',
   index = '0',
+  query: Record<string, string> = {},
 ): Promise<{ container: Element; http: HttpTestingController }> {
   TestBed.resetTestingModule();
   const { container } = await render(SectionColourChangeComponent, {
@@ -51,7 +59,7 @@ async function build(
       provideRouter(ANY_ROUTE),
       provideHttpClient(),
       provideHttpClientTesting(),
-      routeFor(part, index),
+      routeFor(part, index, query),
     ],
   });
   const http = TestBed.inject(HttpTestingController);
@@ -141,6 +149,13 @@ describe('SectionColourChangeComponent', () => {
       to: { hex: '#7a5230', name: 'Braun' },
       triggers: [{ id: 'a-3' }],
     });
+  });
+
+  it('öffnet eine neue Verfärbung aus „Reagenz hinzufügen“ auf dem Reiter Reagenz', async () => {
+    await build('cap', '1', { ausloeser: 'reagent' });
+    await screen.findByRole('heading', { name: 'Verfärbung' });
+
+    expect(screen.getByRole('tab', { name: 'Reagenz' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('schreibt eine neue Verfärbung ohne Auslöser nicht', async () => {

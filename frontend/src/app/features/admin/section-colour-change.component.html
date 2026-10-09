@@ -38,7 +38,7 @@
       <app-row-group>
         <app-list-row
           [title]="'common.from' | t"
-          [subline]="from()?.name ?? ('common.optional' | t)"
+          [subline]="fromName() ?? ('common.optional' | t)"
           [swatch]="from()?.hex ?? ''"
           [selected]="openEnd() === 'from'"
           [chevron]="true"
@@ -47,7 +47,7 @@
         />
         <app-list-row
           [title]="'admin.colourChange.to' | t"
-          [subline]="to()?.name ?? ''"
+          [subline]="toName()"
           [swatch]="to()?.hex ?? ''"
           [selected]="openEnd() === 'to'"
           [chevron]="true"
@@ -75,22 +75,19 @@
         (valueChange)="chooseSpeed($event)"
       />
     </app-section>
-  }
-</div>
 
-@if (known()) {
-  @if (isNew()) {
-    <app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />
-  } @else {
     <app-action-bar
       [primary]="'common.apply' | t"
-      [secondary]="'admin.colourChange.remove' | t"
+      primaryIcon="check"
+      [secondary]="isNew() ? undefined : ('admin.colourChange.remove' | t)"
+      secondaryIcon="trash"
       [secondaryDanger]="true"
+      [stacked]="true"
       (primaryClick)="apply()"
       (secondaryClick)="remove()"
     />
   }
-}
+</div>
 
 <app-option-sheet
   [open]="picking()"

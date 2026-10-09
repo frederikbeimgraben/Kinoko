@@ -1,4 +1,21 @@
-import type { BodyPart, Dimension, Measurement, MeasurementGroup, SpeciesEntry } from '../../core/api/models';
+import type {
+  BodyPart,
+  Dimension,
+  Measurement,
+  MeasurementGroup,
+  SpeciesEntry,
+  Unit,
+} from '../../core/api/models';
+
+/** Per the board `EditSize`: a part has mm and cm. A spore has µm only. */
+const PART_UNITS: readonly Unit[] = ['mm', 'cm'];
+const SPORE_UNITS: readonly Unit[] = ['um'];
+
+/** The units for a part, in the order of the board. The unit of a stored value stays available. */
+export function unitsOf(part: BodyPart, stored: Unit | undefined): readonly Unit[] {
+  const units = part === 'spore' ? SPORE_UNITS : PART_UNITS;
+  return stored === undefined || units.includes(stored) ? units : [...units, stored];
+}
 
 /** The measurement of a part for a dimension, or null if the species has none. */
 export function measurementOf(

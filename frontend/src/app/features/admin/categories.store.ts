@@ -92,15 +92,17 @@ export const CategoriesStore = signalStore(
                 ? store._api.create({ kind: store.kind(), slug: slugOf(request.name), name: request.name })
                 : store._api.patch(request.id, { name: request.name }),
               request,
+              // A write answers without the count: a new term has no use yet, a renamed term keeps its count.
               (term) => {
-                store.put(term);
+                const known = store.items()?.find((one) => one.id === term.id);
+                store.put({ ...term, usage: term.usage ?? known?.usage ?? 0 });
               },
             ),
           ),
         ),
       ),
 
-      drop: rxMethod<CategoryDrop>(
+      remove: rxMethod<CategoryDrop>(
         pipe(
           filter(() => !store.saving()),
           exhaustMap((request) =>

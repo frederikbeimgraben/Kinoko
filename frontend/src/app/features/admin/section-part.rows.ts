@@ -7,6 +7,7 @@ import type {
   TermRef,
 } from '../../core/api/models';
 import type { TranslationKey } from '../../core/i18n/translations';
+import type { NamedColour } from '../species/catalogue-text';
 
 /** A size row: dimension, range and unit. Its route opens the measurement. */
 export interface SizeRow {
@@ -56,10 +57,11 @@ export function colourRows(
   part: BodyPart,
   title: string,
   to: string,
+  name: (colour: NamedColour) => string,
 ): ColourRow[] {
   const groups: readonly ColourGroup[] = (species?.colours ?? []).filter((one) => one.part === part);
   return groups.map((group, at) => {
-    const names = group.colours.map((one) => one.name).filter(Boolean);
+    const names = group.colours.map((one) => name(one)).filter(Boolean);
     return {
       key: `farbe-${String(at)}`,
       title,
@@ -75,6 +77,7 @@ export function changeRows(
   species: SpeciesEntry | null,
   part: BodyPart,
   term: (one: TermRef) => string,
+  name: (colour: NamedColour) => string,
 ): ColourRow[] {
   const changes: readonly ColourChange[] = species?.colourChanges ?? [];
   return changes
@@ -83,7 +86,7 @@ export function changeRows(
     .map((one) => ({
       key: `verfaerbung-${String(one.at)}`,
       title: one.change.triggers.map((trigger) => term(trigger)).join(', '),
-      subline: one.change.to.name,
+      subline: name(one.change.to),
       swatch: '',
       at: one.at,
     }));

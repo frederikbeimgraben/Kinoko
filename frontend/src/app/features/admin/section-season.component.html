@@ -11,37 +11,26 @@
     />
   </div>
 
-  <app-row-group>
-    <app-list-row
-      [title]="'common.from' | t"
-      [plain]="fromName()"
-      [chevron]="true"
-      [clickable]="true"
-      (chosen)="picking.set('from')"
-    />
-    <app-list-row
-      [title]="'common.to' | t"
-      [plain]="toName()"
-      [chevron]="true"
-      [clickable]="true"
-      (chosen)="picking.set('to')"
-    />
-    <app-list-row
-      [title]="'admin.season.peak' | t"
-      [plain]="peakName()"
-      [chevron]="true"
-      [clickable]="true"
-      (chosen)="picking.set('peak')"
-    />
-  </app-row-group>
-</div>
+  @for (field of fields(); track field.id) {
+    <app-section [label]="field.label">
+      <app-row-group>
+        <app-list-row [title]="field.value" [clickable]="true" (chosen)="picking.set(field.id)" />
+      </app-row-group>
+    </app-section>
+  }
 
-<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
+</div>
 
 <app-option-sheet
   [open]="picking() !== null"
   [title]="pickTitle()"
-  [options]="months()"
+  [options]="choices()"
   [selected]="picked()"
   (chosen)="choose($event)"
   (closed)="picking.set(null)"

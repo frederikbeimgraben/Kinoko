@@ -73,7 +73,7 @@ test('Admin', async ({ page }) => {
 test('Roles', async ({ page }) => {
   guard('Roles', 'phone');
   await open(page, '/verwaltung/rollen');
-  await expect(page.getByText('Arten und Bilder pflegen · 3 Personen')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Pilzberater 3 Personen' })).toBeVisible();
   await expectBoard(page, 'Roles');
 });
 
@@ -218,11 +218,18 @@ test('PartPicker', async ({ page }) => {
 
 test('EditSource', async ({ page }) => {
   guard('EditSource', 'phone');
+  // The source of the board: its title, full address and day of the check.
+  const source = {
+    scope: 'profile',
+    title: '123pilzsuche',
+    url: 'https://www.123pilzsuche.de/daten/details/Steinpilz.htm',
+    checkedOn: '2026-09-20',
+  };
   await open(page, '/verwaltung/arten/boletus-edulis/quelle/0', {
-    '/api/species/boletus-edulis': STONE_EDIT,
+    '/api/species/boletus-edulis': { ...STONE_EDIT, sources: [source] },
     '/api/species/boletus-edulis/counts': STONE_EDIT_COUNTS,
   });
-  await expect(page.getByLabel('Titel')).toHaveValue('123pilzsuche.de');
+  await expect(page.getByLabel('Titel')).toHaveValue('123pilzsuche');
   await expectBoard(page, 'EditSource');
 });
 
@@ -238,13 +245,9 @@ test('SpeciesDelete', async ({ page }) => {
 
 test('SpeciesCreate', async ({ page }) => {
   guard('SpeciesCreate', 'phone');
+  // The board shows the empty form: no group is chosen yet.
   await open(page, '/verwaltung/arten/neu');
-  await page.getByLabel('Name', { exact: true }).fill('Schopftintling');
-  await page.getByLabel('Wissenschaftlicher Name').fill('Coprinus comatus');
-  await page.getByLabel('Quelle').fill('123pilzsuche.de/daten/details/Schopftintling.htm');
-  await page.getByRole('button', { name: 'Röhrling' }).click();
-  await page.getByRole('button', { name: 'Tintling', exact: true }).click();
-  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Einordnung –' })).toBeVisible();
   await page.evaluate(() => {
     (document.activeElement as HTMLElement | null)?.blur();
   });

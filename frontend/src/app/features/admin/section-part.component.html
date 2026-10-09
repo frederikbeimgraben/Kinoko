@@ -83,15 +83,16 @@
         (valueChange)="comment.set($event)"
       />
     </app-section>
+
+    <app-action-bar
+      [primary]="'common.apply' | t"
+      primaryIcon="check"
+      [secondary]="known() ? ('admin.part.remove' | t) : undefined"
+      secondaryIcon="trash"
+      [secondaryDanger]="true"
+      [stacked]="true"
+      (primaryClick)="apply()"
+      (secondaryClick)="remove()"
+    />
   }
 </div>
-
-@if (part() !== null) {
-  <app-action-bar
-    [primary]="'common.apply' | t"
-    [secondary]="'admin.part.remove' | t"
-    [secondaryDanger]="true"
-    (primaryClick)="apply()"
-    (secondaryClick)="remove()"
-  />
-}

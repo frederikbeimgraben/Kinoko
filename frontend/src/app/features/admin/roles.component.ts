@@ -42,13 +42,17 @@ export class RolesComponent {
   protected readonly wide = inject(ViewportService).wide;
   protected readonly loaded = computed(() => this.store.roles() !== null);
 
-  protected readonly rows = computed<Row[]>(() =>
-    (this.store.roles() ?? []).map((role) => ({
-      id: role.id,
-      name: roleName(this.i18n, role.name),
-      subline: this.people(role.peopleCount),
-    })),
-  );
+  /** The rows in the order of their names, as the board shows them. */
+  protected readonly rows = computed<Row[]>(() => {
+    const locale = this.i18n.locale();
+    return (this.store.roles() ?? [])
+      .map((role) => ({
+        id: role.id,
+        name: roleName(this.i18n, role.name),
+        subline: this.people(role.peopleCount),
+      }))
+      .sort((one, other) => one.name.localeCompare(other.name, locale));
+  });
 
   constructor() {
     this.store.loadRoles();

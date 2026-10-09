@@ -23,6 +23,9 @@ import { roleName } from './role-name';
 /** The built-in role of each signed-in person. Nobody assigns it. */
 const EVERY_ONE = 'user';
 
+/** The admin role. The admin group of the SSO also gives it. */
+const ADMIN = 'admin';
+
 /** A row of the person list: the name and the roles below it. */
 interface Row {
   id: string;
@@ -35,6 +38,8 @@ interface Choice {
   id: string;
   name: string;
   checked: boolean;
+  /** The SSO gives the role: the box is checked and does not toggle. */
+  fromGroup: boolean;
 }
 
 /** The person list: search, accounts and their roles. A row opens the assignment. */
@@ -76,7 +81,7 @@ export class PeopleComponent {
     (this.store.people() ?? []).map((person) => ({
       id: person.id,
       name: person.name ?? person.email ?? this.i18n.translate('admin.people.noName'),
-      roles: joined(person.roles.map((role) => roleName(this.i18n, role.name))),
+      roles: joined(this.heldNames(person)),
     })),
   );
 
@@ -85,13 +90,21 @@ export class PeopleComponent {
     (this.store.roles() ?? []).filter((role) => role.slug !== EVERY_ONE),
   );
 
-  protected readonly choices = computed<Choice[]>(() =>
-    this.assignable().map((role) => ({
-      id: role.id,
-      name: roleName(this.i18n, role.name),
-      checked: this.chosen().has(role.id),
-    })),
-  );
+  protected readonly choices = computed<Choice[]>(() => {
+    const groupAdmin = this.editing()?.groupAdmin ?? false;
+    const locale = this.i18n.locale();
+    return this.assignable()
+      .map((role) => {
+        const fromGroup = groupAdmin && role.slug === ADMIN;
+        return {
+          id: role.id,
+          name: roleName(this.i18n, role.name),
+          checked: fromGroup || this.chosen().has(role.id),
+          fromGroup,
+        };
+      })
+      .sort((one, other) => one.name.localeCompare(other.name, locale));
+  });
 
   protected readonly deleteQuestion = computed(() =>
     this.i18n.translate('admin.people.deleteQuestion', { name: this.removing()?.name ?? '' }),
@@ -134,6 +147,14 @@ export class PeopleComponent {
         this.editing.set(null);
       },
     });
+  }
+
+  /** The stored roles, and before them the admin role when the SSO group gives it. */
+  private heldNames(person: Person): string[] {
+    const stored = person.roles.map((role) => roleName(this.i18n, role.name));
+    const admin = (this.store.roles() ?? []).find((role) => role.slug === ADMIN);
+    const implied = person.groupAdmin && !person.roles.some((role) => role.slug === ADMIN);
+    return implied && admin !== undefined ? [roleName(this.i18n, admin.name), ...stored] : stored;
   }
 
   protected askDelete(): void {

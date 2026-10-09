@@ -23,6 +23,11 @@
       />
     </app-section>
   }
-</div>
 
-<app-action-bar [primary]="'common.apply' | t" (primaryClick)="apply()" />
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
+</div>

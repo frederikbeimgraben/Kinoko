@@ -70,15 +70,15 @@
         />
       </app-section>
     }
+
+    <app-action-bar
+      [primary]="'common.apply' | t"
+      [secondary]="known() ? ('admin.colour.remove' | t) : undefined"
+      secondaryIcon="trash"
+      [secondaryDanger]="true"
+      [stacked]="true"
+      (primaryClick)="apply()"
+      (secondaryClick)="remove()"
+    />
   }
 </div>
-
-@if (part() !== null) {
-  <app-action-bar
-    [primary]="'common.apply' | t"
-    [secondary]="'admin.colour.remove' | t"
-    [secondaryDanger]="true"
-    (primaryClick)="apply()"
-    (secondaryClick)="remove()"
-  />
-}

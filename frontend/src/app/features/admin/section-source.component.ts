@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } fr
 import { Router } from '@angular/router';
 import type { SourceScope } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
-import { shortDate } from '../../core/i18n/dates';
+import { longDate } from '../../core/i18n/dates';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
+import { SectionComponent } from '../../ui/section/section.component';
 import { SegmentedComponent, type SegmentOption } from '../../ui/segmented/segmented.component';
 import { SpeciesEditorStore } from './species-editor.store';
 import { withSource, withoutSource } from './species-lists';
@@ -25,7 +26,14 @@ const SCOPE_TEXT: Readonly<Record<SourceScope, TranslationKey>> = {
 @Component({
   selector: 'app-section-source',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ActionBarComponent, FormFieldComponent, PageHeaderComponent, SegmentedComponent, TranslatePipe],
+  imports: [
+    ActionBarComponent,
+    FormFieldComponent,
+    PageHeaderComponent,
+    SectionComponent,
+    SegmentedComponent,
+    TranslatePipe,
+  ],
   templateUrl: './section-source.component.html',
   styleUrl: './section-source.component.scss',
 })
@@ -39,6 +47,8 @@ export class SectionSourceComponent {
   protected readonly at = computed(() => Number(this.index()));
 
   private readonly held = computed(() => this.state.species()?.sources[this.at()] ?? null);
+  /** Only a stored source can be removed. A new one has nothing to remove. */
+  protected readonly known = computed(() => this.held() !== null);
 
   protected readonly scope = linkedSignal<SourceScope>(() => this.held()?.scope ?? 'profile');
   protected readonly title = linkedSignal(() => this.held()?.title ?? '');
@@ -51,7 +61,7 @@ export class SectionSourceComponent {
 
   protected readonly checkedDay = computed(() => {
     const day = this.checkedOn();
-    return day === '' ? '' : shortDate(day, this.i18n);
+    return day === '' ? '' : longDate(day, this.i18n.locale());
   });
 
   constructor() {

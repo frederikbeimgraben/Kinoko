@@ -158,8 +158,8 @@ app-choice-row app-checkbox label {
 }
 
 // The red action in the footer is 44 points high. The kit button sets its own height.
-// A global rule can reach it.
-app-action-bar .footer__slim .btn {
+// A global rule can reach it. The stacked actions of the edit boards are both 56 points high.
+app-action-bar .footer:not(.footer--stacked) .footer__slim .btn {
   block-size: var(--size-tap);
 }
 

@@ -126,6 +126,12 @@ export class I18nService {
     return this.lookup(name) ?? name;
   }
 
+  /** The German text of a key, whatever the UI language. The catalogue stores German names. */
+  translateDefault(key: TranslationKey): string {
+    const known = [this._texts()[DEFAULT_LOCALE]?.[key], this._fallback()[DEFAULT_LOCALE]?.[key]];
+    return known.find((text) => text !== undefined && text !== '') ?? key;
+  }
+
   private lookup(key: string): string | null {
     const german = this._fallback()[DEFAULT_LOCALE]?.[key] ?? '';
     return this.dictionary()[key] || german || null;

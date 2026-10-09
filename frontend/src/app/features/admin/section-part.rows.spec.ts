@@ -46,6 +46,15 @@ function span(one: Measurement): { value: string; unit: string } {
 
 const NAME = (one: TermRef): string => one.name;
 
+const GERMAN = (one: { name: string }): string => one.name;
+
+const ENGLISH_NAMES = new Map([
+  ['hellbraun', 'Light brown'],
+  ['dunkelbraun', 'Dark brown'],
+  ['blau', 'Blue'],
+]);
+const ENGLISH = (one: { name: string }): string => ENGLISH_NAMES.get(one.name) ?? one.name;
+
 describe('section-part.rows', () => {
   it('führt je Maß eine Zeile mit Strecke, Spanne und Einheit', () => {
     expect(sizeRows(SPECIES, 'cap', DIMENSION_TEXT, span)).toEqual([
@@ -56,7 +65,7 @@ describe('section-part.rows', () => {
   });
 
   it('führt je Farbgruppe des Teils eine Zeile mit Namen und Farbfeld', () => {
-    const rows = colourRows(SPECIES, 'cap', 'Hutfarbe', 'bis');
+    const rows = colourRows(SPECIES, 'cap', 'Hutfarbe', 'bis', GERMAN);
 
     expect(rows).toEqual([
       {
@@ -81,7 +90,7 @@ describe('section-part.rows', () => {
   });
 
   it('führt je Verfärbung des Teils eine Zeile mit ihrer Stelle in der Art', () => {
-    const rows = changeRows(SPECIES, 'cap', NAME);
+    const rows = changeRows(SPECIES, 'cap', NAME, GERMAN);
 
     expect(rows).toHaveLength(1);
     expect(rows[0].at).toBe(1);
@@ -90,8 +99,15 @@ describe('section-part.rows', () => {
   });
 
   it('nennt die Auslöser in der Sprache der Oberfläche', () => {
-    const rows = changeRows(SPECIES, 'cap', () => 'Cut');
+    const rows = changeRows(SPECIES, 'cap', () => 'Cut', ENGLISH);
 
     expect(rows[0].title).toBe('Cut');
+    expect(rows[0].subline).toBe('Blue');
+  });
+
+  it('nennt die Farben in der Sprache der Oberfläche', () => {
+    const rows = colourRows(SPECIES, 'cap', 'Cap · Colour', 'to', ENGLISH);
+
+    expect(rows[0].subline).toBe('Light brown to Dark brown');
   });
 });

@@ -12,7 +12,3 @@ app-page-header {
   @include section.body;
   @include section.fields;
 }
-
-app-action-bar {
-  --action-bar-height: var(--size-tap);
-}

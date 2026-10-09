@@ -32,13 +32,16 @@
         (valueChange)="difference.set($event)"
       />
     </app-section>
-  </div>
 
-  <app-action-bar
-    [primary]="'common.apply' | t"
-    [secondary]="'admin.lookalike.remove' | t"
-    [secondaryDanger]="true"
-    (primaryClick)="apply()"
-    (secondaryClick)="remove()"
-  />
+    <app-action-bar
+      [primary]="'common.apply' | t"
+      primaryIcon="check"
+      [secondary]="known() ? ('admin.lookalike.remove' | t) : undefined"
+      secondaryIcon="trash"
+      [secondaryDanger]="true"
+      [stacked]="true"
+      (primaryClick)="apply()"
+      (secondaryClick)="remove()"
+    />
+  </div>
 }
