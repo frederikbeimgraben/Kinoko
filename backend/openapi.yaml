@@ -2999,7 +2999,7 @@ components:
 
     Licence:
       type: string
-      enum: [own, cc0, cc_by_4, cc_by_sa_4, public_domain]
+      enum: [own, cc0, cc_by_4, cc_by_sa_4, public_domain, cc_by_3, cc_by_sa_3, cc_by_2_5, cc_by_sa_2_5, cc_by_2, cc_by_sa_2]
 
     PhotoSize:
       type: string
@@ -4218,6 +4218,10 @@ components:
         caption:
           type: string
           maxLength: 200
+        captionEn:
+          type: string
+          maxLength: 200
+          description: The English caption. Without the field, the photo has no English caption.
         source:
           oneOf:
             - type: string
@@ -4263,6 +4267,9 @@ components:
           oneOf:
             - type: string
             - type: "null"
+        captionEn:
+          type: string
+          description: The English caption. Empty if nobody has written it.
         source:
           oneOf:
             - type: string
@@ -4312,6 +4319,7 @@ components:
         - photographer
         - ownerName
         - licence
+        - captionEn
         - lead
         - state
         - createdAt

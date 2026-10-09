@@ -79,11 +79,11 @@ func TestCreateFieldCodes(t *testing.T) {
 	long := string(make([]rune, 201))
 	response := postForm(t, env, user, map[string]string{
 		"photographer": "Frederik", "licence": "stolen", "speciesId": "x",
-		"caption": long, "takenOn": "gestern",
+		"caption": long, "captionEn": long, "takenOn": "gestern",
 	}, nil, "")
 	response.Expect(t, http.StatusUnprocessableEntity)
 	expectErrors(t, response, "file", "missing", "licence", "enum", "speciesId", "uuid_parsing",
-		"caption", "string_too_long", "takenOn", "date_from_datetime_parsing")
+		"caption", "string_too_long", "captionEn", "string_too_long", "takenOn", "date_from_datetime_parsing")
 }
 
 func TestCreateRejectsWrongMediaType(t *testing.T) {
@@ -116,6 +116,33 @@ func TestCreateAcceptsCaptionAndTakenOn(t *testing.T) {
 	user := signIn(t, env, makeUser(t, env, "u"), submit)
 	body := created(t, env, user, map[string]string{"caption": "Fund im Wald", "takenOn": "2026-09-01"})
 	if body["caption"] != "Fund im Wald" || body["takenOn"] != "2026-09-01" {
+		t.Fatal(body)
+	}
+}
+
+func TestCreateKeepsTheEnglishCaption(t *testing.T) {
+	env := newEnv(t)
+	user := signIn(t, env, makeUser(t, env, "u"), submit)
+	body := created(t, env, user, map[string]string{"caption": "Fund im Wald", "captionEn": "Find in the wood"})
+	if body["caption"] != "Fund im Wald" || body["captionEn"] != "Find in the wood" {
+		t.Fatal(body)
+	}
+}
+
+func TestCreateWithoutEnglishCaptionGivesAnEmptyText(t *testing.T) {
+	env := newEnv(t)
+	user := signIn(t, env, makeUser(t, env, "u"), submit)
+	body := created(t, env, user, map[string]string{"caption": "Fund im Wald"})
+	if body["captionEn"] != "" {
+		t.Fatal(body)
+	}
+}
+
+func TestCreateAcceptsAnOlderCreativeCommonsLicence(t *testing.T) {
+	env := newEnv(t)
+	user := signIn(t, env, makeUser(t, env, "u"), submit)
+	body := created(t, env, user, map[string]string{"licence": "cc_by_sa_3"})
+	if body["licence"] != "cc_by_sa_3" {
 		t.Fatal(body)
 	}
 }
@@ -258,9 +285,11 @@ func TestRejectionAndResubmissionReusesSamePhoto(t *testing.T) {
 	if rejected["state"] != "rejected" || rejected["rejectReason"] != "unscharf" {
 		t.Fatal(rejected)
 	}
-	again := created(t, env, owner, map[string]string{"speciesId": species.String(), "source": "neu"})
+	again := created(t, env, owner, map[string]string{"speciesId": species.String(), "source": "neu",
+		"captionEn": "Second try"})
 	if idOf(again) != idOf(photo) || again["state"] != "submitted" || again["rejectReason"] != nil ||
-		again["reviewedById"] != nil || again["reviewedAt"] != nil || again["source"] != nil {
+		again["reviewedById"] != nil || again["reviewedAt"] != nil || again["source"] != nil ||
+		again["captionEn"] != "Second try" {
 		t.Fatal(again)
 	}
 }

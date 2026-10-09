@@ -13,6 +13,7 @@ export function photo(override: Partial<Photo> = {}): Photo {
     ownerName: 'Marie',
     licence: 'cc_by_sa_4',
     caption: null,
+    captionEn: '',
     source: null,
     takenOn: '2026-09-06',
     lat: null,

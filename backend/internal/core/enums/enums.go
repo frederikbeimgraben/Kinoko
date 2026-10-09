@@ -320,10 +320,17 @@ const (
 	LicenceCcBy4        Licence = "cc_by_4"
 	LicenceCcBySa4      Licence = "cc_by_sa_4"
 	LicencePublicDomain Licence = "public_domain"
+	LicenceCcBy3        Licence = "cc_by_3"
+	LicenceCcBySa3      Licence = "cc_by_sa_3"
+	LicenceCcBy25       Licence = "cc_by_2_5"
+	LicenceCcBySa25     Licence = "cc_by_sa_2_5"
+	LicenceCcBy2        Licence = "cc_by_2"
+	LicenceCcBySa2      Licence = "cc_by_sa_2"
 )
 
 // LicenceValues lists each value of Licence in declaration order.
-var LicenceValues = []Licence{"own", "cc0", "cc_by_4", "cc_by_sa_4", "public_domain"}
+var LicenceValues = []Licence{"own", "cc0", "cc_by_4", "cc_by_sa_4", "public_domain",
+	"cc_by_3", "cc_by_sa_3", "cc_by_2_5", "cc_by_sa_2_5", "cc_by_2", "cc_by_sa_2"}
 
 // Valid tells if the value is in the set.
 func (v Licence) Valid() bool { return slices.Contains(LicenceValues, v) }

@@ -1264,7 +1264,7 @@ export interface components {
         /** @enum {string} */
         TraitKey: "fruitbody" | "cap" | "tubes" | "gills" | "folds" | "spines" | "pores" | "milk" | "stem" | "flesh" | "smell" | "taste" | "spore_print" | "reagents" | "habitat" | "season" | "edibility" | "protection";
         /** @enum {string} */
-        Licence: "own" | "cc0" | "cc_by_4" | "cc_by_sa_4" | "public_domain";
+        Licence: "own" | "cc0" | "cc_by_4" | "cc_by_sa_4" | "public_domain" | "cc_by_3" | "cc_by_sa_3" | "cc_by_2_5" | "cc_by_sa_2_5" | "cc_by_2" | "cc_by_sa_2";
         /** @enum {string} */
         PhotoSize: "thumb" | "list" | "full";
         /** @enum {string} */
@@ -1723,6 +1723,8 @@ export interface components {
             photographer: string;
             licence: components["schemas"]["Licence"];
             caption?: string;
+            /** @description The English caption. Without the field, the photo has no English caption. */
+            captionEn?: string;
             source?: string | null;
             /** Format: date */
             takenOn?: string;
@@ -1739,6 +1741,8 @@ export interface components {
             ownerName: string;
             licence: components["schemas"]["Licence"];
             caption?: string | null;
+            /** @description The English caption. Empty if nobody has written it. */
+            captionEn: string;
             source?: string | null;
             takenOn?: string | null;
             lat?: number | null;
