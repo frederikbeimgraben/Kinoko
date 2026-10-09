@@ -39,15 +39,17 @@ function signInRequired(i18n: I18nService): ProblemDetail {
   };
 }
 
-/** Adds `Authorization: Bearer` to each app API request. After a reload, the request of a known session
- * waits for the session check, else it goes out without a token and gets a 401.
+/** Adds `Authorization: Bearer` to each app API request. While the session check runs, a request waits for it,
+ * else it goes out without a token and gets a 401. A first visit with an SSO session also waits.
  * A 401 causes one silent renewal and one retry. Only a failed write opens the sign-in sheet. */
 export const authInterceptor: HttpInterceptorFn = (request, more) => {
   if (!ownApi(request.url)) return more(request);
   const auth = inject(AuthService);
   const session = inject(SessionStore);
   const i18n = inject(I18nService);
-  const waits = !auth.checked() && session.memory() !== null && !configRead(request.url);
+  // On a first visit the device knows nobody, but the running check can still find a session.
+  const open = auth.busy() || session.memory() !== null;
+  const waits = open && !auth.checked() && !configRead(request.url);
   const ready: Observable<void> = waits
     ? from(auth.whenChecked()).pipe(timeout({ first: CHECK_WAIT_MS, with: () => of(undefined) }))
     : of(undefined);

@@ -1,7 +1,7 @@
 import { computed, signal, type Provider } from '@angular/core';
 import type { User, UserManager, UserManagerSettings } from 'oidc-client-ts';
 import { USER_MANAGER_FACTORY } from '../core/auth';
-import { ConfigStore, type AppConfig } from '../core/config/config.store';
+import { ConfigStore, issuerHost, type AppConfig } from '../core/config/config.store';
 
 /** The answer of `GET /api/config` in the tests. The values come from `docs/sso-authentik.md`. */
 export const CONFIG: AppConfig = {
@@ -139,7 +139,10 @@ export function authProvider(manager: ManagerDouble, configuration: AppConfig | 
       useValue: {
         configuration: config,
         settled: signal(true),
-        providerName: computed(() => config()?.oidcName ?? ''),
+        providerName: computed(() => {
+          const value = config();
+          return value === null ? '' : value.oidcName || issuerHost(value.oidcIssuer);
+        }),
         ssoMissing: computed(() => config()?.oidcIssuer === ''),
         load: () => Promise.resolve(),
       },

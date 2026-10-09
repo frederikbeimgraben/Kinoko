@@ -119,7 +119,7 @@ describe('AccountComponent', () => {
 
     expect(screen.getByText('Frederik')).toBeInTheDocument();
     expect(screen.getByText('frederik@beimgraben.net')).toBeInTheDocument();
-    expect(screen.getByText('sso.example.org')).toBeInTheDocument();
+    expect(screen.getByText('Example SSO')).toBeInTheDocument();
     expect(screen.getByText('Kombinationen')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
     const rows = ['Meine Bilder', 'Meine Daten', 'Gruppen', 'Glossar'].map((name) => screen.getByText(name));
@@ -199,9 +199,22 @@ describe('AccountComponent', () => {
   });
 
   it('shows an issuer that is not a URL as it came', async () => {
-    await build({ signedIn: true, configuration: { ...CONFIG, oidcIssuer: 'sso.example.org' } });
+    await build({
+      signedIn: true,
+      configuration: { ...CONFIG, oidcIssuer: 'sso.example.org', oidcName: '' },
+    });
 
     expect(screen.getAllByText('sso.example.org')).toHaveLength(1);
+  });
+
+  it('names the SSO with the name of the sign-in button, without the port of the issuer', async () => {
+    await build({
+      signedIn: true,
+      configuration: { ...CONFIG, oidcIssuer: 'http://127.0.0.1:9000/', oidcName: '' },
+    });
+
+    expect(screen.getByText('127.0.0.1')).toBeInTheDocument();
+    expect(screen.queryByText('127.0.0.1:9000')).toBeNull();
   });
 
   it('goes to the map on close', async () => {

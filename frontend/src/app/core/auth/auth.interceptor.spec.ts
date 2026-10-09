@@ -163,6 +163,33 @@ describe('authInterceptor', () => {
     request.flush([]);
   });
 
+  it('holds a request on a first visit while the session check runs', async () => {
+    const setup = build();
+    setup.manager.still = oidcUser({ token: 'token-neu' });
+
+    const check = setup.auth.restoreSession();
+    setup.http.get('/api/groups').subscribe();
+    setup.control.expectNone('/api/groups');
+
+    await check;
+    await pass();
+
+    const request = setup.control.expectOne('/api/groups');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer token-neu');
+    request.flush([]);
+  });
+
+  it('does not hold a request after the session check of a guest', async () => {
+    const setup = build();
+    setup.manager.still = Object.assign(new Error('login_required'), { error: 'login_required' });
+    await setup.auth.restoreSession();
+
+    setup.http.get('/api/species/bundle').subscribe();
+
+    expect(setup.auth.checked()).toBe(true);
+    setup.control.expectOne('/api/species/bundle').flush([]);
+  });
+
   it('fragt nicht nach, wenn nur der Netzweg der Erneuerung scheitert', async () => {
     const setup = build();
     await signedIn(setup);

@@ -13,10 +13,10 @@ interface ConfigState {
   configuration: AppConfig | null;
 }
 
-/** The host of an issuer URL. An issuer that is not a URL shows as it came. */
+/** The host name of an issuer URL, as the backend gives it. An issuer that is not a URL shows as it came. */
 export function issuerHost(issuer: string): string {
   try {
-    return new URL(issuer).host;
+    return new URL(issuer).hostname;
   } catch {
     return issuer;
   }

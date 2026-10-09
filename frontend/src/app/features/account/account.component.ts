@@ -5,7 +5,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { AuthService, SessionStore } from '../../core/auth';
-import { ConfigStore, issuerHost } from '../../core/config/config.store';
+import { ConfigStore } from '../../core/config/config.store';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
@@ -123,8 +123,8 @@ export class AccountComponent {
   /** On the phone the account page shows only at `/konto`. Below it, the child page fills the screen. */
   protected readonly home = computed(() => this.child() === '');
 
-  /** The issuer host is shorter than the full URL. */
-  protected readonly server = computed(() => issuerHost(this.config.configuration()?.oidcIssuer ?? ''));
+  /** The same SSO name as on the sign-in button. */
+  protected readonly server = this.config.providerName;
   protected readonly signInLabel = signInLabel();
   protected readonly ssoMissing = this.config.ssoMissing;
   protected readonly signingIn = this.auth.signingIn;
