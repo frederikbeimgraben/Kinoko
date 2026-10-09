@@ -22,7 +22,7 @@ const MARKERS = {
       name: 'Alter Fichtenbestand',
       lat: 48.52,
       lon: 9.05,
-      colour: 'blue',
+      colour: 'violet',
       note: 'Guter Steinpilzplatz, Nordhang',
       visibility: 'private',
       createdAt: '2026-09-12T08:00:00Z',

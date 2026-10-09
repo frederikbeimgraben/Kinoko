@@ -57,6 +57,8 @@ import type { SpeciesPickerEntry } from '../../ui/species-picker/species-picker.
 export class SpeciesPickComponent {
   readonly species = input.required<readonly SpeciesPickerEntry[]>();
   readonly selected = input<string | null>(null);
+  /** The species that stands first: the current one, as on the board `MapSpecies`. */
+  readonly first = input<string | null>(null);
   readonly label = input.required<string>();
 
   readonly chosen = output<string>();
@@ -65,8 +67,13 @@ export class SpeciesPickComponent {
 
   protected readonly rows = computed(() => {
     const needle = this.query().trim().toLowerCase();
+    const first = this.first();
+    const ordered = [
+      ...this.species().filter((entry) => entry.value === first),
+      ...this.species().filter((entry) => entry.value !== first),
+    ];
     return needle === ''
-      ? this.species()
-      : this.species().filter((entry) => `${entry.name} ${entry.latin}`.toLowerCase().includes(needle));
+      ? ordered
+      : ordered.filter((entry) => `${entry.name} ${entry.latin}`.toLowerCase().includes(needle));
   });
 }

@@ -33,10 +33,11 @@
   --color-handle: #ffffff;
   --color-on-media: #ffffff;
 
-  --colour-object-green: var(--primary);
-  --colour-object-brown: var(--hero);
-  --colour-object-blue: var(--label);
-  --colour-object-red: var(--bad);
-  --colour-object-gold: var(--bar);
-  --colour-object-grey: var(--outline-strong);
+  // The chip dots of `MarkerFormBody.dc.html`: the same in both schemes.
+  --colour-object-green: #4f8a3c;
+  --colour-object-yellow: #e3b341;
+  --colour-object-orange: #d9822b;
+  --colour-object-red: #c0302b;
+  --colour-object-violet: #7d3a78;
+  --colour-object-grey: #8d938e;
 }

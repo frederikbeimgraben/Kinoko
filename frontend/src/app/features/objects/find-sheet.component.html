@@ -1,12 +1,13 @@
 @if (editing()) {
   <app-find-form
-    [location]="location()"
+    [location]="sheet.moved() ?? location()"
     [start]="find()"
     [editing]="true"
     [busy]="busy()"
     [held]="strip()"
     (submitted)="save($event)"
     (heldRemoved)="removePhoto($event)"
+    (locationClick)="sheet.startRelocating()"
   />
 } @else {
   <div class="overlay-body objectsheet" appScrollFade>

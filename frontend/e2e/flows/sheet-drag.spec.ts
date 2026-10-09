@@ -25,7 +25,7 @@ const MARKERS = {
       name: 'Alter Fichtenbestand',
       lat: 48.52,
       lon: 9.05,
-      colour: 'blue',
+      colour: 'violet',
       note: 'Nordhang',
       visibility: 'private',
       updatedAt: '2026-09-01T08:00:00Z',

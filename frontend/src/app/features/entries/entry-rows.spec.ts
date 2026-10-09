@@ -89,7 +89,7 @@ describe('entry rows', () => {
   it('shows the day and the visibility of a marker, and no day without a creation time', () => {
     const row = markerRow(contextOf(), MARKER);
     expect(row.entry.meta).toContain('private');
-    expect(row.entry.colour).toBe('var(--colour-object-blue)');
+    expect(row.entry.colour).toBe('var(--colour-object-violet)');
     expect(row.day).toBe('September');
 
     const timeless = markerRow(contextOf(), { ...MARKER, createdAt: undefined, note: null });

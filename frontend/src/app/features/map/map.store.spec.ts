@@ -93,8 +93,11 @@ describe('MapStore', () => {
   it('accepts only a background that exists', () => {
     const state = TestBed.inject(MapStore);
 
-    state.setBackground('topo');
+    state.setBackground('luftschiff');
     expect(state.background()).toBe('map');
+
+    state.setBackground('topo');
+    expect(state.background()).toBe('topo');
 
     state.setBackground('light');
     expect(state.background()).toBe('light');

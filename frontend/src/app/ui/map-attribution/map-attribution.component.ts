@@ -13,12 +13,14 @@ export class MapAttributionComponent {
   private readonly i18n = inject(I18nService);
 
   readonly note = input<string | null>(null);
+  /** The credit of a base map that is not OpenStreetMap. */
+  readonly base = input<string | null>(null);
   /** The height that a sheet covers at the bottom of the map. */
   readonly above = input<string | null>(null);
 
   protected readonly text = computed(() => {
     const note = this.note();
-    const osm = this.i18n.translate('map.attribution.osm');
+    const osm = this.base() ?? this.i18n.translate('map.attribution.osm');
     return note === null || note === '' ? osm : this.i18n.translate('map.attribution.layer', { osm, note });
   });
 

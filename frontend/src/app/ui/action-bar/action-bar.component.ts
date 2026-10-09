@@ -45,6 +45,8 @@ export class ActionBarComponent {
 
   /** The icon of the second action, per the board `MapFindView`: "trash". */
   readonly secondaryIcon = input<IconName>();
+  /** The second action keeps its fill also in the modal, as "Umriss ändern" on `MapDesktopZoneForm`. */
+  readonly tonalSecondary = input(false);
 
   readonly primaryClick = output();
   readonly secondaryClick = output();
@@ -67,7 +69,7 @@ export class ActionBarComponent {
   protected readonly quietDanger = computed(() => this.ghost() && this.danger());
 
   protected readonly secondaryVariant = computed<ButtonKind>(() => {
-    if (this.modal()) return this.secondaryDanger() ? 'textdanger' : 'text';
+    if (this.modal() && !this.tonalSecondary()) return this.secondaryDanger() ? 'textdanger' : 'text';
     if (this.ghost()) return 'text';
     if (this.foot) return this.secondaryDanger() ? 'danger' : 'tonal';
     return this.secondaryDanger() ? 'textdanger' : 'tonal';

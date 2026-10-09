@@ -109,9 +109,10 @@ test('MapFindFormShared', async ({ page }) => {
   await setDate(page);
   await addPhoto(page);
   await page.getByRole('tab', { name: 'Geteilt' }).click();
-  await page.getByRole('button', { name: 'Gruppe' }).click();
-  await page.getByRole('button', { name: 'Pilzgruppe Karlsruhe' }).click();
-  await expect(page.getByText('Pilzgruppe Karlsruhe')).toBeVisible();
+  await page.getByRole('button', { name: /^Gruppe/ }).click();
+  await page.locator('app-choice-row').filter({ hasText: 'Pilzgruppe Karlsruhe' }).click();
+  await page.getByRole('button', { name: 'Übernehmen' }).click();
+  await expect(page.getByRole('button', { name: /^Gruppe/ })).toContainText('Pilzgruppe Karlsruhe');
   // The board shows the top of the sheet. The choice scrolled it down.
   await page.locator('.form__body').evaluate((body) => {
     body.scrollTo(0, 0);

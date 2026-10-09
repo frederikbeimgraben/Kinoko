@@ -7,6 +7,26 @@
   pointer-events: none;
 }
 
+// The form stays alive below the crosshair step, so its fields keep their values.
+.object__sheet--hidden {
+  visibility: hidden;
+}
+
+// Per `kit.css` `.cross`: the crosshair is at the centre of the map pane. Presses reach the map.
+.object__aim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.object__crosshair {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: flex;
+  translate: -50% -50%;
+}
+
 // The dot before the name is 14 px on the board.
 .object__dot {
   flex: none;

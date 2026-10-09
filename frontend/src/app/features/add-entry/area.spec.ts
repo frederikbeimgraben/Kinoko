@@ -1,4 +1,4 @@
-import { asPolygon, loadAreaCalculator } from './area';
+import { areaHa, asPolygon } from './area';
 import type { Location } from './add-entry.store';
 
 const RING: Location[] = [
@@ -26,17 +26,26 @@ describe('Fläche', () => {
     expect(asPolygon(RING.slice(0, 2))).toBeNull();
   });
 
-  it('rechnet die Fläche in Hektar', async () => {
-    const compute = await loadAreaCalculator();
-    const polygon = asPolygon(RING);
-    if (polygon === null) throw new Error('Der Ring spannt keine Fläche auf.');
+  it('rechnet die Fläche wie der Dienst', () => {
+    // The values of `TestAreaAndCentroidAgreeWithPython` in `backend/internal/core/geo/geo_test.go`.
+    const square = asPolygon([
+      [10.0, 50.0],
+      [10.01, 50.0],
+      [10.01, 50.01],
+      [10.0, 50.01],
+    ]);
+    const triangle = asPolygon([
+      [-3.7, 40.4],
+      [-3.6, 40.45],
+      [-3.65, 40.5],
+    ]);
+    if (square === null || triangle === null) throw new Error('Der Ring spannt keine Fläche auf.');
 
-    // At this latitude, 0.01 degrees by 0.01 degrees is approximately 82 ha.
-    expect(compute(polygon)).toBeGreaterThan(70);
-    expect(compute(polygon)).toBeLessThan(95);
+    expect(areaHa(square)).toBeCloseTo(79.46965107421875, 6);
+    expect(areaHa(triangle)).toBeCloseTo(3528.993801696777, 4);
   });
 
-  it('holt Turf nur einmal', async () => {
-    expect(await loadAreaCalculator()).toBe(await loadAreaCalculator());
+  it('gibt einem Ring ohne Fläche null Hektar', () => {
+    expect(areaHa({ type: 'Polygon', coordinates: [[[9, 48]]] })).toBe(0);
   });
 });

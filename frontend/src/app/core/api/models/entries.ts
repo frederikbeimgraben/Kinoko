@@ -16,7 +16,7 @@ export type ZoneValue = components['schemas']['ZoneValue'];
 export const VISIBILITIES: readonly Visibility[] = ['private', 'shared'];
 
 /** The six colours of the mockups. There is no free choice of a colour. */
-export const MARKER_COLOURS: readonly MarkerColour[] = ['green', 'brown', 'blue', 'red', 'gold', 'grey'];
+export const MARKER_COLOURS: readonly MarkerColour[] = ['green', 'yellow', 'orange', 'red', 'violet', 'grey'];
 
 /** An own find, with its exact place. */
 export interface Find extends SharedFind {

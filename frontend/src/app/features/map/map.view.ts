@@ -20,6 +20,7 @@ import { photoPath } from '../../core/api/models';
 import { SpeciesStore } from '../species/species.store';
 import { CombinationStore } from './combination.store';
 import { DEFAULT_LAYER, MapStore } from './map.store';
+import { layerName, layerPeriod } from './layer-name';
 
 /** The values that the head and the body of the map read. One source for both devices. */
 @Injectable({ providedIn: 'root' })
@@ -47,8 +48,26 @@ export class MapView {
 
   readonly manifest = computed(() => this.tiles.manifests().get(this.slug()) ?? null);
 
+  /** Both manifests failed: the map has nothing to show, so it offers a new try instead of a skeleton. */
+  readonly failed = computed(
+    () =>
+      this.manifest() === null &&
+      this.tiles.layers() === null &&
+      this.tiles.failed().has(this.slug()) &&
+      this.tiles.layersFailed(),
+  );
+
   /** While the manifest and the layers are not there, the map shows its skeleton. */
-  readonly loading = computed(() => this.manifest() === null && this.tiles.layers() === null);
+  readonly loading = computed(
+    () => this.manifest() === null && this.tiles.layers() === null && !this.failed(),
+  );
+
+  /** Asks the server again for both manifests. */
+  retry(): void {
+    this.tiles.forget();
+    void this.tiles.load(this.slug());
+    void this.tiles.loadLayers();
+  }
 
   readonly week = computed<ManifestWeek | null>(() => {
     const manifest = this.manifest();
@@ -115,6 +134,14 @@ export class MapView {
     return this.creditOf(this.layer()) || null;
   });
 
+  /** The credit of a raster base map. The vector map is OpenStreetMap. */
+  readonly baseCredit = computed<string | null>(() => {
+    const background = this.state.background();
+    if (background === 'topo') return this.i18n.translate('map.basemap.terrainCredit');
+    if (background === 'satellite') return this.i18n.translate('map.basemap.aerialAttribution');
+    return null;
+  });
+
   /** Only a fixed layer needs a credit, never a weekly layer. */
   private creditOf(layer: Layer | null): string {
     return layer !== null && layer.fixed && layer.note !== '' ? layer.note : '';
@@ -155,10 +182,16 @@ export class MapView {
     this.noSpecies() ? this.i18n.translate('map.species.choose') : this.speciesName(),
   );
 
+  /** The name of a layer in the language of the app. */
+  layerName(layer: Layer | null): string {
+    return layer === null ? '' : layerName(layer, this.i18n);
+  }
+
   /** The head gives what the map shows: the species, the layer or the combination. */
   readonly title = computed(() => {
     if (this.onCombination()) return this.i18n.translate('map.tab.combination');
-    if (this.onLayer()) return this.layer()?.label ?? this.i18n.translate('map.tab.layer');
+    if (this.onLayer())
+      return this.layer() === null ? this.i18n.translate('map.tab.layer') : this.layerName(this.layer());
     return this.speciesTitle();
   });
 
@@ -175,10 +208,9 @@ export class MapView {
   });
 
   readonly rampLabel = computed(() => {
-    if (this.onLayer()) {
-      const layer = this.layer();
-      return layer === null ? '' : [layer.label, layer.note].filter((part) => part !== '').join(', ');
-    }
+    const layer = this.layer();
+    if (this.onLayer())
+      return layer === null ? '' : `${this.layerName(layer)}, ${layerPeriod(layer, this.i18n)}`;
     return this.i18n.translate('map.legend.findProbability');
   });
 

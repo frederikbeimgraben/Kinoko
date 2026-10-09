@@ -10,6 +10,7 @@ export function findWrite(find: Find): FindWrite {
     count: find.count,
     note: find.note,
     visibility: find.visibility,
+    groupId: find.groupId,
     forTraining: find.forTraining,
   };
 }
@@ -22,6 +23,7 @@ export function markerWrite(marker: Marker): MarkerWrite {
     colour: marker.colour,
     note: marker.note,
     visibility: marker.visibility,
+    groupId: marker.groupId,
   };
 }
 
@@ -32,5 +34,6 @@ export function zoneWrite(zone: Zone): ZoneWrite {
     colour: zone.colour,
     note: zone.note,
     visibility: zone.visibility,
+    groupId: zone.groupId,
   };
 }

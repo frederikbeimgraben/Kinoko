@@ -1,11 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  effect,
+  inject,
+  viewChild,
+} from '@angular/core';
 import type { Find, Marker, Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
+import { ThemeStore } from '../../core/theme/theme.store';
+import { darkGround } from '../../map/background';
 import { MAP_ADAPTER } from '../../map/map.tokens';
+import { CrosshairComponent } from '../../ui/crosshair/crosshair.component';
 import { OverlayHostComponent } from '../../ui/overlay-host/overlay-host.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
+import { StepBarComponent, type StepAction } from '../../ui/step-bar/step-bar.component';
 import { EntriesStore } from '../entries/entries.store';
 import { SheetHeightDirective } from '../map/sheet-height.directive';
 import { MapStore, type ObjectKind } from '../map/map.store';
@@ -31,16 +44,24 @@ const EDIT_TITLE: Record<ObjectKind, TranslationKey> = {
 /** The zoom of an open object: near enough to see the way, far enough to see where you are. */
 const ZOOM_OBJECT = 14;
 
+/** The free edge around a zone outline, in pixels. The sheet padding of the map adds to it. */
+const ZONE_PADDING = 48;
+
+/** The padding of the map eases in 220 ms (`MapLibreAdapter.setPadding`). */
+const PADDING_SETTLE_MS = 260;
+
 /** The sheet over the map that shows a find, a marker or a zone. */
 @Component({
   selector: 'app-object-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CrosshairComponent,
     FindSheetComponent,
     MarkerSheetComponent,
     OverlayHostComponent,
     SheetComponent,
     SheetHeightDirective,
+    StepBarComponent,
     TranslatePipe,
     ZoneSheetComponent,
   ],
@@ -54,6 +75,9 @@ export class ObjectSheetComponent {
   private readonly sheet = inject(ObjectSheetStore);
 
   protected readonly map = inject(MapStore);
+  private readonly theme = inject(ThemeStore);
+  /** The crosshair gets a light halo on a dark base map. */
+  protected readonly darkGround = computed(() => darkGround(this.map.background(), this.theme.effective()));
 
   protected readonly find = computed<Find | null>(() => {
     const offen = this.map.object();
@@ -73,17 +97,12 @@ export class ObjectSheetComponent {
     return this.eintraege.zones().find((candidate) => candidate.id === offen.id) ?? null;
   });
 
-  /** The point of the open object. For a zone, the centre of its corners. */
+  /** The point of an open find or marker. */
   protected readonly location = computed<readonly [number, number] | null>(() => {
     const find = this.find();
     if (find) return [find.lon, find.lat];
     const marker = this.marker();
-    if (marker) return [marker.lon, marker.lat];
-    const zone = this.zone();
-    if (!zone) return null;
-    const ring = zone.polygon.coordinates[0];
-    const sum = ring.reduce((left, point) => [left[0] + point[0], left[1] + point[1]], [0, 0]);
-    return [sum[0] / ring.length, sum[1] / ring.length];
+    return marker ? [marker.lon, marker.lat] : null;
   });
 
   /** The name of the sheet for assistive technology: find, marker or zone. */
@@ -108,6 +127,34 @@ export class ObjectSheetComponent {
   protected readonly editing = this.sheet.editing;
   /** While the finger moves zone corners, the map stays bright and takes each tap. */
   protected readonly editingCorners = this.sheet.editingCorners;
+  /** The crosshair looks for a new location of the marker or the find (boards `MarkerLocation`, `FindLocation`). */
+  protected readonly relocating = this.sheet.relocating;
+
+  private readonly cross = viewChild<ElementRef<HTMLElement>>('cross');
+
+  protected readonly aimTitle = computed(() =>
+    this.i18n.translate(this.marker() ? 'entry.setMarker.title' : 'entry.setLocation.title'),
+  );
+
+  /** Cancel and confirm, per `StepBar.dc.html`. */
+  protected readonly aimActions = computed<readonly StepAction[]>(() => [
+    {
+      label: this.i18n.translate('common.cancel'),
+      icon: 'close',
+      variant: 'secondary',
+      run: () => {
+        this.sheet.cancelRelocating();
+      },
+    },
+    {
+      label: this.i18n.translate('entry.confirmLocation'),
+      icon: 'check',
+      variant: 'primary',
+      run: () => {
+        this.adoptAim();
+      },
+    },
+  ]);
 
   constructor() {
     // A tap on an object moves the map to it. The tap on the map and the tap on an entry row use this path.
@@ -115,6 +162,68 @@ export class ObjectSheetComponent {
       const point = this.location();
       if (point !== null) this.adapter.flyTo(point, ZOOM_OBJECT);
     });
+    // The fit waits for the sheet height: the padding change of the map would stop a running fit.
+    effect((onCleanup) => {
+      const zone = this.zone();
+      this.map.overlayHeight();
+      if (zone === null || this.editingCorners()) return;
+      const timer = setTimeout(() => {
+        this.fitZone(zone);
+      }, PADDING_SETTLE_MS);
+      onCleanup(() => {
+        clearTimeout(timer);
+      });
+    });
+    // The crosshair starts on the object. It is in the DOM only after the render.
+    afterRenderEffect(() => {
+      const cross = this.cross()?.nativeElement;
+      if (this.relocating() && cross !== undefined) this.aimAtObject(cross);
+    });
+  }
+
+  /** A zone shows its full outline, so "Umriss ändern" has each corner on the screen. */
+  private fitZone(zone: Zone): void {
+    const ring = zone.polygon.coordinates[0];
+    const lons = ring.map((point) => point[0]);
+    const lats = ring.map((point) => point[1]);
+    this.adapter.rawMap()?.fitBounds(
+      [
+        [Math.min(...lons), Math.min(...lats)],
+        [Math.max(...lons), Math.max(...lats)],
+      ],
+      { padding: ZONE_PADDING, maxZoom: ZOOM_OBJECT, duration: 400 },
+    );
+  }
+
+  /** Moves the map so that the point of the form is below the crosshair. */
+  private aimAtObject(cross: HTMLElement): void {
+    const map = this.adapter.rawMap();
+    const point = this.sheet.moved() ?? this.location();
+    if (map === null || point === null) return;
+    const aim = cross.getBoundingClientRect();
+    const canvas = map.getCanvas().getBoundingClientRect();
+    const shown = map.project([point[0], point[1]]);
+    map.panBy(
+      [shown.x + canvas.left - (aim.left + aim.width / 2), shown.y + canvas.top - (aim.top + aim.height / 2)],
+      { duration: 300 },
+    );
+  }
+
+  private adoptAim(): void {
+    const box = this.cross()?.nativeElement.getBoundingClientRect();
+    const point =
+      box === undefined ? null : this.adapter.pointAt(box.left + box.width / 2, box.top + box.height / 2);
+    if (point === null) {
+      this.sheet.cancelRelocating();
+      return;
+    }
+    this.sheet.relocate([point[0], point[1]]);
+  }
+
+  /** Escape and a tap outside the sheet end the crosshair step first. */
+  protected hostClosed(): void {
+    if (this.relocating()) this.sheet.cancelRelocating();
+    else this.close();
   }
 
   protected close(): void {

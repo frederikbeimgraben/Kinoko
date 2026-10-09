@@ -15,6 +15,22 @@ const WIDE = { provide: ViewportService, useValue: { wide: signal(true) } };
 })
 class HostComponent {}
 
+@Component({
+  imports: [OverlayHostComponent],
+  template: `
+    <app-overlay-host [open]="true" (closed)="outer = outer + 1">
+      <p>Form</p>
+      <app-overlay-host [open]="true" (closed)="inner = inner + 1"
+        ><p class="picker">Picker</p></app-overlay-host
+      >
+    </app-overlay-host>
+  `,
+})
+class NestedComponent {
+  outer = 0;
+  inner = 0;
+}
+
 describe('OverlayHostComponent', () => {
   it('renders nothing while closed', async () => {
     const { container } = await render(OverlayHostComponent, { inputs: { open: false } });
@@ -51,6 +67,17 @@ describe('OverlayHostComponent', () => {
     await userEvent.keyboard('{Escape}');
 
     expect(calls).toBe(1);
+  });
+
+  it('closes only the top host on Escape in a nested picker', async () => {
+    const { container, fixture } = await render(NestedComponent);
+    const panels = [...container.querySelectorAll<HTMLElement>('.overlay__panel')];
+
+    panels.at(1)?.focus();
+    await userEvent.keyboard('{Escape}');
+
+    expect(fixture.componentInstance.inner).toBe(1);
+    expect(fixture.componentInstance.outer).toBe(0);
   });
 
   it('focuses the panel once it opens', async () => {

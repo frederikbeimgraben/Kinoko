@@ -2,6 +2,7 @@ import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { OverlayStackService } from '../../core/navigation/overlay-stack.service';
 import { EMPTY_FIND_DRAFT, type FindDraft } from './find-draft';
+import type { ObjectValues } from './object-form.component';
 
 /** A point on the map as [longitude, latitude], as in GeoJSON. */
 export type Location = readonly [number, number];
@@ -21,9 +22,17 @@ interface AddEntryStoreState {
   ring: readonly Location[];
   /** The find form choices while the person sets the location again. */
   findDraft: FindDraft;
+  /** The marker or zone form values while the person sets the point or the outline again. */
+  objectDraft: ObjectValues | null;
 }
 
-const CLEAR: AddEntryStoreState = { step: null, location: null, ring: [], findDraft: EMPTY_FIND_DRAFT };
+const CLEAR: AddEntryStoreState = {
+  step: null,
+  location: null,
+  ring: [],
+  findDraft: EMPTY_FIND_DRAFT,
+  objectDraft: null,
+};
 
 const FORMS: readonly Step[] = ['findForm', 'markerForm', 'zoneForm'];
 const AIMING: readonly Step[] = ['findLocation', 'markerLocation', 'zoneDraw'];
@@ -72,10 +81,18 @@ export const AddEntryStore = signalStore(
         }));
       },
       startMarker(): void {
-        patchState(store, { location: null, step: 'markerLocation' });
+        patchState(store, { location: null, step: 'markerLocation', objectDraft: null });
       },
       startZone(): void {
-        patchState(store, { ring: [], step: 'zoneDraw' });
+        patchState(store, { ring: [], step: 'zoneDraw', objectDraft: null });
+      },
+      /** Goes back from the marker form to its point and keeps the values. The crosshair aims again. */
+      editMarkerLocation(objectDraft: ObjectValues): void {
+        patchState(store, { objectDraft, step: 'markerLocation', location: null });
+      },
+      /** Goes back from the zone form to its corners and keeps the values and the corners. */
+      editZoneOutline(objectDraft: ObjectValues): void {
+        patchState(store, { objectDraft, step: 'zoneDraw' });
       },
       /** Sets the point and stays in the step. The point shows on the map. */
       setPoint(location: Location): void {

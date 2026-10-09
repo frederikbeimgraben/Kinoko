@@ -1242,7 +1242,7 @@ export interface components {
         /** @enum {string} */
         PhotoSize: "thumb" | "list" | "full";
         /** @enum {string} */
-        MarkerColour: "green" | "brown" | "blue" | "red" | "gold" | "grey";
+        MarkerColour: "green" | "yellow" | "orange" | "red" | "violet" | "grey";
         HexColour: string;
         GeoPoint: {
             /** @constant */

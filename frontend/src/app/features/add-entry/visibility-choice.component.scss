@@ -1,6 +1,10 @@
+@use '../../../styles/overlay-body' as overlay;
+
 :host {
   display: contents;
 }
+
+@include overlay.overlay-body;
 
 // Per `kit.css` `.field` with its `.lbl`.
 .choice {
@@ -32,4 +36,10 @@
 
 .choice__segment {
   inline-size: 160px;
+}
+
+.choice__empty {
+  margin: 0;
+  padding: 0 4px;
+  color: var(--text-var);
 }

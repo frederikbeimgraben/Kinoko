@@ -55,7 +55,7 @@ export class MapPanelBodyComponent {
   readonly saveRequested = output();
 
   /** The short name of the layer, as on the board `MapLayer`. */
-  protected readonly layerName = computed(() => this.view.layer()?.label ?? '');
+  protected readonly layerName = computed(() => this.view.layerName(this.view.layer()));
 
   protected readonly rampKind = computed<RampKind>(() =>
     RAIN_LAYERS.includes(this.view.layer()?.id ?? '') ? 'rain' : 'forecast',

@@ -9,8 +9,8 @@ import type {
 } from '../../core/api/models';
 import type { EntriesFilter } from './entry-filter';
 
-/** The result of a save. */
-export type SaveResult = 'gespeichert' | 'wartet' | 'verworfen';
+/** The result of a save. `abgelehnt`: the service refused the body, so the form stays open. */
+export type SaveResult = 'gespeichert' | 'wartet' | 'verworfen' | 'abgelehnt';
 
 /** The body that an object carries on the wire. */
 export type EntryBody = FindWrite | MarkerWrite | ZoneWrite;

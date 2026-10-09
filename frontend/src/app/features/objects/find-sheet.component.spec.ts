@@ -13,6 +13,9 @@ import { FIND } from '../../testing/entries-fixture';
 import { toastSpy, type ToastSpy } from '../../testing/toast-spy';
 import { FindSheetComponent } from './find-sheet.component';
 
+/** A shared find always has a group: the service refuses a share without one. */
+const GROUPED = { ...FIND, groupId: 'gruppe-eins' };
+
 /** The account and the catalogue are the same for each test of this sheet. */
 function provider(owns = true): (EnvironmentProviders | Provider)[] {
   return [
@@ -45,7 +48,7 @@ interface BuildOptions {
 }
 
 async function build(options: BuildOptions = {}): Promise<Setup> {
-  const { find = FIND, owns = true } = options;
+  const { find = GROUPED, owns = true } = options;
   const { container, detectChanges, fixture } = await render(FindSheetComponent, {
     inputs: { find },
     providers: provider(owns),
@@ -138,7 +141,7 @@ describe('FindSheetComponent', () => {
     await answerPhotos(setup, []);
   });
 
-  it('asks before the delete and closes after it', async () => {
+  it('asks before the delete and closes before the answer', async () => {
     const setup = await build();
 
     await userEvent.click(screen.getByRole('button', { name: 'Löschen' }));
@@ -146,12 +149,13 @@ describe('FindSheetComponent', () => {
     expect(screen.getByRole('heading', { name: 'Fund löschen?' })).toBeInTheDocument();
 
     await userEvent.click(screen.getAllByRole('button', { name: 'Löschen' })[1]);
+    expect(setup.closed).toBe(1);
     await vi.waitFor(() => {
       setup.http.expectOne(`/api/finds/${FIND.id}`).flush(null);
     });
 
     await vi.waitFor(() => {
-      expect(setup.closed).toBe(1);
+      expect(setup.toasts.success).not.toHaveLength(0);
     });
     expect(setup.toasts.success).toEqual(['Der Fund ist gelöscht.']);
   });

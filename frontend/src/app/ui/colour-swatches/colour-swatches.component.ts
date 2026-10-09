@@ -7,14 +7,14 @@ export interface ColourSwatch {
   label: string;
 }
 
-/** The six object colours. MapLibre accepts only real hex values. */
+/** The six object colours of `MarkerFormBody.dc.html`. MapLibre accepts only real hex values. */
 export const OBJECT_COLOURS: readonly `#${string}`[] = [
-  '#004225',
-  '#8c6820',
-  '#185468',
-  '#8c1c16',
-  '#876010',
-  '#3a3f3b',
+  '#4f8a3c',
+  '#e3b341',
+  '#d9822b',
+  '#c0302b',
+  '#7d3a78',
+  '#8d938e',
 ];
 
 export type SwatchSize = 's' | 'm' | 'l';

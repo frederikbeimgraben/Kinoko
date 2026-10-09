@@ -123,6 +123,48 @@ describe('AddEntryStore', () => {
     expect(flow.findDraft()).toEqual(EMPTY_FIND_DRAFT);
   });
 
+  it('keeps the marker values while the crosshair sets the point again', () => {
+    const flow = state();
+    const draft = {
+      name: 'Alter Fichtenbestand',
+      colour: 'orange',
+      note: null,
+      visibility: 'private',
+      groupId: null,
+    } as const;
+
+    flow.startMarker();
+    flow.adoptLocation([9, 48]);
+    flow.editMarkerLocation(draft);
+    expect([flow.step(), flow.location(), flow.objectDraft()]).toEqual(['markerLocation', null, draft]);
+
+    flow.adoptLocation([9.2, 48.2]);
+    expect([flow.step(), flow.objectDraft()]).toEqual(['markerForm', draft]);
+
+    flow.startMarker();
+    expect(flow.objectDraft()).toBeNull();
+  });
+
+  it('keeps the corners and the zone values for "Umriss ändern"', () => {
+    const flow = state();
+    const draft = {
+      name: 'Schönbuch Nord',
+      colour: 'green',
+      note: null,
+      visibility: 'private',
+      groupId: null,
+    } as const;
+    flow.startZone();
+    flow.addCorner([9, 48]);
+    flow.addCorner([9.1, 48]);
+    flow.addCorner([9.1, 48.1]);
+    flow.closeZone();
+
+    flow.editZoneOutline(draft);
+
+    expect([flow.step(), flow.ring().length, flow.objectDraft()]).toEqual(['zoneDraw', 3, draft]);
+  });
+
   it('adds a history step on open and removes it on stop', () => {
     const stack = TestBed.inject(OverlayStackService);
     const opened = vi.spyOn(stack, 'open');

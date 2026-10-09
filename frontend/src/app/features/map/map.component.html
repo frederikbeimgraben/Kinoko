@@ -2,7 +2,6 @@
   @if (wide() && !surfaceOnly() && !aiming()) {
     <div class="map__column">
       <app-map-column
-        [factor]="surface.inProgress()"
         (titleChosen)="overlayNav.openTitle()"
         (weekChosen)="playback.select($event)"
         (layerChosen)="overlayNav.set('layer')"
@@ -10,9 +9,6 @@
         (factorOpened)="overlayNav.openFactorFor($event)"
         (factorAdded)="overlayNav.set('factors')"
         (saveRequested)="overlayNav.requestSave()"
-        (factorApplied)="overlayNav.applyFactor($event)"
-        (factorRemoved)="overlayNav.removeFactor($event)"
-        (closed)="overlayNav.close()"
       />
     </div>
   }
@@ -27,7 +23,7 @@
       (objectHeld)="onObjectHeld($event)"
     ></div>
 
-    <app-map-attribution [note]="view.creditNote()" [above]="attributionAbove()" />
+    <app-map-attribution [note]="view.creditNote()" [base]="view.baseCredit()" [above]="attributionAbove()" />
 
     @if (view.loading()) {
       <app-skeleton class="map__skeleton" kind="map" />
