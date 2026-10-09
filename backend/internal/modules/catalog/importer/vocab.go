@@ -158,6 +158,21 @@ var Season = map[string]string{
 	"winter":    "winter",
 }
 
+// PartNoteKey maps the German body part of the table teilnotizen.
+var PartNoteKey = map[string]string{
+	"fruchtkoerper": "fruitbody",
+	"hut":           "cap",
+	"stiel":         "stem",
+	"ring":          "ring",
+	"stielbasis":    "stem_base",
+	"lamellen":      "gills",
+	"fleisch":       "flesh",
+	"sporenpulver":  "spore_print",
+	"sporen":        "spore",
+	"roehren":       "tubes",
+	"poren":         "pores",
+}
+
 // TaxonRank maps the German rank word.
 var TaxonRank = map[string]string{
 	"abteilung": "division",

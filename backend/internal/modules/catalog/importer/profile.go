@@ -24,6 +24,7 @@ type Profile struct {
 	Gefaehrdung        *string
 	SpeisewertHinweis  *string
 	SchutzHinweis      *string
+	Beschreibung       *string
 	Jahreszeiten       []string
 	Baeume             []string
 	BaeumeAusErfahrung *ExperienceTrees
@@ -45,6 +46,7 @@ type Profile struct {
 	Masse              []Span
 	Farben             []ColourSet
 	Merkmale           []TraitText
+	Teilnotizen        []PartNoteText
 }
 
 // ExperienceTrees are trees known from experience, not from the source.
@@ -144,6 +146,13 @@ type ColourSet struct {
 	Change  *ColourChange
 }
 
+// PartNoteText is one key of the table teilnotizen: the note and the comment of a body part.
+type PartNoteText struct {
+	Key          string
+	Beschreibung string `toml:"beschreibung"`
+	Kommentar    string `toml:"kommentar"`
+}
+
 // TraitText is one key of the table merkmale.
 type TraitText struct {
 	Key  string
@@ -163,6 +172,7 @@ type rawProfile struct {
 	Gefaehrdung        *string                   `toml:"gefaehrdung"`
 	SpeisewertHinweis  *string                   `toml:"speisewertHinweis"`
 	SchutzHinweis      *string                   `toml:"schutzHinweis"`
+	Beschreibung       *string                   `toml:"beschreibung"`
 	Jahreszeiten       []string                  `toml:"jahreszeiten"`
 	Baeume             []string                  `toml:"baeume"`
 	BaeumeAusErfahrung *ExperienceTrees          `toml:"baeumeAusErfahrung"`
@@ -184,6 +194,7 @@ type rawProfile struct {
 	Masse              map[string]Span           `toml:"masse"`
 	Farben             map[string]toml.Primitive `toml:"farben"`
 	Merkmale           map[string]string         `toml:"merkmale"`
+	Teilnotizen        map[string]PartNoteText   `toml:"teilnotizen"`
 }
 
 // ParseProfile reads one TOML profile. The source names the file in errors.
@@ -208,6 +219,7 @@ func ParseProfile(text, source string) (Profile, error) {
 		Gefaehrdung:        raw.Gefaehrdung,
 		SpeisewertHinweis:  raw.SpeisewertHinweis,
 		SchutzHinweis:      raw.SchutzHinweis,
+		Beschreibung:       raw.Beschreibung,
 		Jahreszeiten:       raw.Jahreszeiten,
 		Baeume:             raw.Baeume,
 		BaeumeAusErfahrung: raw.BaeumeAusErfahrung,
@@ -233,6 +245,10 @@ func ParseProfile(text, source string) (Profile, error) {
 		Farben: farben,
 		Merkmale: mapInOrder(keyOrder(meta, "merkmale"), raw.Merkmale, func(key, text string) TraitText {
 			return TraitText{Key: key, Text: text}
+		}),
+		Teilnotizen: mapInOrder(keyOrder(meta, "teilnotizen"), raw.Teilnotizen, func(key string, note PartNoteText) PartNoteText {
+			note.Key = key
+			return note
 		}),
 	}, nil
 }

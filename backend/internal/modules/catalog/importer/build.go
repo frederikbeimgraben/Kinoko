@@ -45,7 +45,7 @@ func BuildSpecies(ctx Context) (SpeciesRow, Children, error) {
 	steps := []func(Context, SpeciesRow) (Children, error){
 		nameRows, measurementRows, colourRows, changeRows,
 		capFeatureRows, capMarginRows, stemFeatureRows,
-		traitRows, sourceRows, seasonRows, speciesTermRows, lookalikeRows,
+		traitRows, partNoteRows, sourceRows, seasonRows, speciesTermRows, lookalikeRows,
 	}
 	children := Children{}
 	for _, step := range steps {
@@ -109,6 +109,7 @@ func speciesRow(ctx Context, taxonID *db.ID) (SpeciesRow, error) {
 		ForecastEnabled:  p.Karte != nil,
 		Frequency:        maybe(Frequency, p.Haeufigkeit, "haeufigkeit"),
 		RedList:          maybe(RedList, p.Gefaehrdung, "gefaehrdung"),
+		Description:      p.Beschreibung,
 		EdibilityNote:    p.SpeisewertHinweis,
 		Protection:       must(Protection, p.Schutz.Status, "schutz.status"),
 		ProtectionNote:   p.SchutzHinweis,

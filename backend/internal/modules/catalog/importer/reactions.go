@@ -230,6 +230,15 @@ func matcher(names catalogueNames, profiles []StemProfile) func(string) (db.ID, 
 	}
 }
 
+// SpeciesMatcher gives the species of a latin name as the reaction sync finds it.
+func SpeciesMatcher(ctx context.Context, q db.Querier, profiles []StemProfile) (func(string) (db.ID, bool), error) {
+	names, err := loadNames(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	return matcher(names, profiles), nil
+}
+
 // ReactionReport counts the result of one reaction sync.
 type ReactionReport struct {
 	Species        int
@@ -263,6 +272,9 @@ func SyncReactions(ctx context.Context, handle *sql.DB, data fs.FS, profiles []S
 			return ReactionReport{}, err
 		}
 		if err := writeReactions(ctx, tx, plan, terms, sources); err != nil {
+			return ReactionReport{}, err
+		}
+		if err := saveDigest(ctx, tx, data, ReactionsFile); err != nil {
 			return ReactionReport{}, err
 		}
 		return ReactionReport{

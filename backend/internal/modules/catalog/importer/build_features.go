@@ -131,6 +131,19 @@ func traitRows(ctx Context, _ SpeciesRow) (Children, error) {
 	return Children{Traits: rows}, nil
 }
 
+func partNoteRows(ctx Context, _ SpeciesRow) (Children, error) {
+	var rows []PartNoteRow
+	for _, note := range ctx.Profile.Teilnotizen {
+		part, err := Lookup(PartNoteKey, note.Key, "teilnotizen", ctx.Stem)
+		if err != nil {
+			return Children{}, err
+		}
+		rows = append(rows, PartNoteRow{SpeciesID: ctx.SpeciesID, Part: enums.BodyPart(part),
+			Description: note.Beschreibung, Comment: note.Kommentar})
+	}
+	return Children{PartNotes: rows}, nil
+}
+
 func hostnameTitle(raw string) string {
 	host := raw
 	if parsed, err := url.Parse(raw); err == nil && parsed.Hostname() != "" {

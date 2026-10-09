@@ -82,10 +82,10 @@ func inserts(c Catalog, now db.Time) []insert {
 			frequency, red_list, description, edibility_note, protection, protection_note, period_start_month,
 			period_end_month, period_peak_month, smell_text, taste_text, hymenium_type, gill_attachment, gill_spacing,
 			gill_edge, cap_shape_young, cap_shape_old, updated_at, updated_by_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
 			fn.Map(c.Species, func(r SpeciesRow) []any {
 				return []any{r.ID, r.Slug, r.Name, r.LatinName, r.TaxonID, r.GroupKey, r.Edibility, r.Marketable,
-					r.ForecastEnabled, r.Frequency, r.RedList, r.EdibilityNote, r.Protection, r.ProtectionNote,
+					r.ForecastEnabled, r.Frequency, r.RedList, r.Description, r.EdibilityNote, r.Protection, r.ProtectionNote,
 					r.PeriodStartMonth, r.PeriodEndMonth, r.PeriodPeakMonth, r.SmellText, r.TasteText, r.HymeniumType,
 					r.GillAttachment, r.GillSpacing, r.GillEdge, r.CapShapeYoung, r.CapShapeOld, now}
 			})},
@@ -105,6 +105,8 @@ func inserts(c Catalog, now db.Time) []insert {
 			fn.Map(ch.PartFeatures, func(r PartFeatureRow) []any { return []any{r.SpeciesID, r.Part, r.Feature, r.Phase} })},
 		{`INSERT INTO species_trait (species_id, "key", body) VALUES (?, ?, ?)`,
 			fn.Map(ch.Traits, func(r TraitRow) []any { return []any{r.SpeciesID, r.Key, r.Body} })},
+		{"INSERT INTO species_part_note (species_id, part, description, comment) VALUES (?, ?, ?, ?)",
+			fn.Map(ch.PartNotes, func(r PartNoteRow) []any { return []any{r.SpeciesID, r.Part, r.Description, r.Comment} })},
 		{"INSERT INTO species_source (species_id, position, scope, title, url, checked_on) VALUES (?, ?, ?, ?, ?, ?)",
 			fn.Map(ch.Sources, func(r SourceRow) []any {
 				return []any{r.SpeciesID, r.Position, r.Scope, r.Title, r.URL, r.CheckedOn}
