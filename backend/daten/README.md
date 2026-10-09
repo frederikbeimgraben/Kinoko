@@ -53,3 +53,40 @@ this procedure:
 4. Commit the new seed files.
 
 `docs/operations.md` ("Export the catalogue") describes the command.
+
+## Species descriptions
+
+A species file can have a short description. The species page shows it under
+the names, in the language of the interface. Without an English text, the page
+shows the German text.
+
+| Key | Content |
+|---|---|
+| `beschreibung` | The German description. |
+| `beschreibungEn` | The English description, with the same content as the German one. |
+| `entwurf` | `true` when nobody has reviewed the description. The page then shows the hint "Entwurf, nicht geprüft" ("Draft, not reviewed"). Remove the key after the review. |
+
+`steinpilz.toml`, `butterpilz.toml` and `pantherpilz.toml` are the reference
+for the style. Use these rules:
+
+- Write 2 to 4 plain sentences in German. Then write the English text with the
+  same content. Do not add or remove facts in one language.
+- Sentence 1: what the species looks like at a glance. Give the cap, the
+  hymenium (tubes or gills) and the stem.
+- Sentence 2: where and when it grows in Germany. Give the habitat, the host
+  trees and the months or seasons.
+- Sentence 3: the one feature that separates the species from its main
+  lookalike. Name the lookalike.
+- Use the data of the same file (`merkmale`, `vorkommen`, `zeit`, `zeitraum`,
+  `verwechslungen`) and established mycological knowledge. Do not contradict
+  the file.
+- Never contradict `speisewert`. A short sentence can state the edibility
+  class, for example "Der Pantherpilz ist tödlich giftig."
+- Do not give cooking advice, eating advice or tasting advice.
+- In English, write common names in lower case ("bitter bolete"), as in a
+  sentence.
+- Set `entwurf = true` on each new or changed description.
+
+A start of the service writes the description keys of a changed species file
+into the database. It does not change other fields of the species. A file
+without `beschreibung` keeps the description of the database.

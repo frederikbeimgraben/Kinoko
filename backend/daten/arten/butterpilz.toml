@@ -6,6 +6,9 @@ marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Die schleimige Huthaut vor dem Garen abziehen."
+beschreibung = "Mittelgroßer Röhrling mit glänzend braunem, schleimigem Hut, zitronengelben Röhren und gelblichem Stiel mit braunviolettem Ring. Er wächst in ganz Deutschland von Juni bis November und nur bei Kiefern, oft in jungen Kiefernbeständen und an grasigen Waldrändern. Vom ähnlichen Körnchenröhrling unterscheidet ihn vor allem der Ring am Stiel, denn der Körnchenröhrling hat keinen Ring."
+beschreibungEn = "A medium-sized bolete with a glossy brown, slimy cap, lemon-yellow tubes and a yellowish stem with a brownish-violet ring. It grows throughout Germany from June to November and only with pines, often in young pine stands and at grassy forest edges. The key difference from the similar weeping bolete is the ring on the stem, because the weeping bolete has no ring."
+entwurf = true
 weitereNamen = ["Butterröhrling", "Huasara", "Schmalzer", "Schmerzling", "Butter-Schmerling", "Schmalzling", "Schleimchen"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["ring", "voll"]

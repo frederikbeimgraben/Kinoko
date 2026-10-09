@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er enthält Ibotensäure, Muscimol, Muscazon sowie Stizolob- und Stizolobinsäure. Zu erkennen an den rein weißen Velumflöckchen auf braunem Hut, der abgesetzten Knolle mit söckchenartigen Gürtelzonen und dem Fleisch, das unter der Huthaut nicht gelb ist. Nach Regen können die weißen Schüppchen abgewaschen sein. Keine Kostversuche."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer Wulstling mit braunem bis graubraunem Hut voller rein weißer Flöckchen, weißen, freien Lamellen und weißem Stiel mit Ring und abgesetzter Knolle. Er wächst in ganz Deutschland vom Frühjahr bis zum Spätherbst, vor allem im Sommer, im Mischwald überwiegend bei Laubbäumen und gern auf sandigem Boden. Vom ähnlichen Perlpilz unterscheidet ihn vor allem das Fleisch, das nie rötet, denn der Perlpilz verfärbt sich an verletzten Stellen weinrötlich. Der Pantherpilz ist tödlich giftig."
+beschreibungEn = "A medium-sized amanita with a brown to grey-brown cap full of pure white flakes, white free gills and a white stem with a ring and a distinct bulb. It grows throughout Germany from spring to late autumn, mainly in summer, in mixed woods mostly with broadleaf trees and often on sandy soil. The key difference from the similar blusher is the flesh, which never turns red, because the blusher becomes wine-red where it is damaged. The panther cap is deadly poisonous."
+entwurf = true
 weitereNamen = ["Pantherwulstling"]
 synonyme = ["Amanitaria pantherina", "Amanita pantherina forma robusta", "Agaricus pantherinus", "Amanita pantherina var. abietum = tannen-pantherpilz"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
